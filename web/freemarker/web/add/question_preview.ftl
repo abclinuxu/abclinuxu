@@ -47,11 +47,11 @@ zvolte OK.</p>
    <td class="required">Dotaz</td>
    <td>
     <div class="form-edit">
-        <a href="javascript:insertAtCursor(document.form.text, '<b></b>');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
-        <a href="javascript:insertAtCursor(document.form.text, '<i></i>');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
-        <a href="javascript:insertAtCursor(document.form.text, '<a href=&quot;&quot;></a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
-        <a href="javascript:insertAtCursor(document.form.text, '<p></p>');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
-        <a href="javascript:insertAtCursor(document.form.text, '<pre></pre>');" id="mono" title="Vlo¾it znaèku formátovaného textu. Vhodné pro konfiguraèní soubory èi výpisy.">&lt;pre&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.text, '<b>', '</b>');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
+        <a href="javascript:insertAtCursor(document.form.text, '<i>', '</i>');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
+        <a href="javascript:insertAtCursor(document.form.text, '<a href=&quot;&quot;>', '</a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.text, '<p>', '</p>');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="Vlo¾it znaèku formátovaného textu. Vhodné pro konfiguraèní soubory èi výpisy.">&lt;pre&gt;</a>
     </div>
     <textarea tabindex="5" name="text" cols="60" rows="20">${PARAMS.text?if_exists?html}</textarea>
     <div class="error">${ERRORS.text?if_exists}</div>
@@ -70,11 +70,11 @@ zvolte OK.</p>
 </form>
 
 <h1>Nápovìda k formátování</h1>
-    
+
 <p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html">znaèky</a>:
 P, BR, B, I, A, PRE, UL, OL, LI, CODE, DIV, H1, H2, H3, EM, STRONG, CITE, BLOCKQUOTE,
 VAR, HR a IT.</p>
-    
+
 <p>Nejrychlej¹í zpùsob formátování je rozdìlovat
 text do odstavcù. Systém detekuje prázdné øádky
 (dvakrát enter) a nahradí je HTML znaèkou odstavce.
