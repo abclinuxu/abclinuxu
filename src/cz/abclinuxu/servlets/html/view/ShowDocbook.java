@@ -43,7 +43,7 @@ public class ShowDocbook implements AbcAction {
     public static final String PARAM_RELATION_ID = "relationId";
     public static final String PARAM_RELATION_ID_SHORT = "rid";
 
-    private RE reAmp = new RE("(&)([^aglq])", RE.MATCH_CASEINDEPENDENT);
+    private RE reAmp = new RE("(&)([^aglqn])", RE.MATCH_CASEINDEPENDENT);
 
     Writer writer;
 
