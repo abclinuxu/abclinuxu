@@ -208,8 +208,8 @@ public class FeedGenerator implements Configurable {
             List children = actual.getChildren();
             Tools.syncList(children);
             List list = Sorters2.byDate(children, Sorters2.DESCENDING);
-            for (int i = 0; i < 6 && i < list.size(); i++) {
-                Relation found = (Relation) list.get(i);
+            for (Iterator iter = list.iterator(); iter.hasNext();) {
+                Relation found = (Relation) iter.next();
                 Item item = (Item) found.getChild();
                 Document document = item.getData();
                 Node node = document.selectSingleNode("/data/author");
@@ -431,7 +431,7 @@ public class FeedGenerator implements Configurable {
             updateHardware();
         if (Arrays.binarySearch(args, "articles")>=0)
             updateArticles();
-        if (Arrays.binarySearch(args, "drivers")>=0)
+        if (Arrays.binarySearch(args, "drivers")>=0) 
             updateDrivers();
         if (Arrays.binarySearch(args, "forum")>=0)
             updateForum();
