@@ -2,19 +2,18 @@
 
 <@lib.showMessages/>
 
-<h1>Ne¾ polo¾íte dotaz</h1>
+<h1 class="st_nadpis">Ne¾ polo¾íte dotaz</h1>
 
 <p>Pøeètìte si èlánek na téma, <a href="/clanky/show/4006">jak øe¹it
 problémy</a>.</p>
 
-<h1>Jak psát titulek</h1>
+<h1 class="st_nadpis">Jak psát titulek</h1>
 
 <ol>
 <li>Nìkolika slovy popi¹te svùj problém.
-<li>Nepou¾ívejte slova jako help, please nebo pomoc.
-<li>Nepi¹te VELKÝMI písmeny, je to neslu¹né (jako byste køièeli).
+<li>Nepou¾ívejte slova jako help, pomoc èi zaèáteèník.
+<li>NEPI©TE VELKÝMI PÍSMENY, je to neslu¹né (jako byste køièeli).
 <li>Nepou¾ívejte vykøièníky.
-<li>Neuvádìjte zbyteènì jméno va¹i distribuce.
 <li>Nepokládejte více nesouvisejících dotazù.
 </ol>
 
@@ -23,14 +22,13 @@ problémy</a>.</p>
 <ol>
  <li>je to mo¾né???
  <li>HELP PLEASE!!!
- <li>Redhat a modem Lucent
  <li>Pøipojení na internet; zvukovka CMI
 </ol>
 
 <p>Administrátoøi mohou ¹patnì formulovaný titulek
 opravit!</p>
 
-<h1>Jak popsat problém</h1>
+<h1 class="st_nadpis">Jak popsat problém</h1>
 
 <p>Sna¾te se uvést co nejvíce relevantních informací,
 jako je verze distribuce, druh hardwaru èi verze
@@ -59,28 +57,22 @@ jako odpovìï. Pomù¾ete tak dal¹ím náv¹tìvníkùm, kteøí budou
 v budoucnu èíst vá¹ dotaz.
 </p>
 
-<h1>Archivace starých diskusí</h1>
-
-<p>Diskuse, které ji¾ skonèily, nebo na které bìhem dvou pracovních
-dnù nepøi¹la ¾ádná nová odpovìï, jsou zpracovány na¹imi administrátory.
-Pokud diskuse stojí za archivaci (napøíklad obsahuje øe¹ení,
-podnìtné námìty èi informace), tak ji pøesunou z diskusního fóra
-do nìkteré relevantní kategorie. Napøíklad dotazy o MPlayeru hledejte pod
-Software/Multimédia. Ostatní dotazy budou smazány, stejnì jako ty,
-které jsou duplicitní k ji¾ archivovaným diskusím.</p>
-
-<p>Pokud nemù¾ete najít svou diskusi a jste si jisti, ¾e nebyla
-z vý¹e uvedeného dùvodu smazána administrátorem, pøihla¹te se
-a ve svém profilu zvolte pøíkaz <code>Mé diskuse</code>.
-Dal¹í mo¾ností je pou¾ít fulltextové vyhledávání nebo procházení
-v¹ech diskusí podle datumu polo¾ení dotazu.
-</p>
+<h1 class="st_nadpis">Archiv va¹ich dotazù</h1>
 
 <#if ! USER?exists>
- <p>Nejste pøihlá¹en, co¾ je ¹koda. Pøijdete tak o øadu výhod,
- napøíklad o snadné vyhledání tohoto dotazu ve svém profilu.
+ <p>Pokud jste na abclinuxu registrováni, je výhodné
+ se nyní pøihlásit. Vá¹ dotaz mù¾ete nechat sledovat
+ Monitorem, který vám za¹le emailem upozornìní, kdy¾
+ nìkdo na vá¹ dotaz bude reagovat. A¾ jednou budete
+ diskusi znovu potøebovat, ve svém profilu ji velice
+ snadno najdete: pøíkaz <code>Mé diskuse</code>.
  Nový úèet mù¾ete zalo¾it
  <a href="${URL.noPrefix("/EditUser?action=add")}">zde</a>.
+ </p>
+ <p>Vá¹ dotaz najdete ve svém profilu pod pøíkazem
+ <code>Mé diskuse</code>. Chcete-li být bezprostøednì
+ informování o v¹ech reakcích, zapnìte si po ulo¾ení
+ dotazu Monitor.
  </p>
 </#if>
 

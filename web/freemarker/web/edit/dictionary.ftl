@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<h1>Úvod</h1>
+<h1 class="st_nadpis">Úvod</h1>
 
 <p>Cílem této slu¾by je vytvoøit rozsáhlý výkladový slovník
 nejrùznìj¹ích pojmù týkajících se Linuxu èi Unixu.  Èím více
@@ -11,7 +11,7 @@ v Linuxu a zvý¹í se ¹ance, ¾e nebudou klást otázky vyplývající
 z nepochopení základních principù tohoto operaèního systému.
 </p>
 
-<h1>Nový pojem</h1>
+<h1 class="st_nadpis">Nový pojem</h1>
 
 <p>Ka¾dý pojem ve slovníku se skládá z názvu a popisu. Název
 odpovídá pojmu v prvním pádì jednotného èísla. Napøíklad
@@ -23,7 +23,7 @@ pro nový odstavec.
 </p>
 
 <#if PARAMS.preview?exists>
- <h1>Náhled</h1>
+ <h1 class="st_nadpis">Náhled</h1>
  <table cellspacing="0" border="1" cellpadding="5" width="100%">
  <caption>${PARAMS.name?if_exists}</caption>
  <#if PARAMS.desc?exists>
@@ -42,7 +42,7 @@ pro nový odstavec.
   <tr>
    <td class="required">Pojem</td>
    <td>
-    <input type="text" name="name" value="${PARAMS.name?if_exists}" size="30" maxlength="40" tabindex="1" class="pole">
+    <input type="text" name="name" value="${PARAMS.name?if_exists}" size="30" maxlength="40" tabindex="1">
     <div class="error">${ERRORS.name?if_exists}</div>
    </td>
   </tr>
@@ -51,14 +51,14 @@ pro nový odstavec.
   </tr>
   <tr>
    <td colspan="2">
-    <textarea name="desc" cols="70" rows="20" tabindex="2" class="pole">${PARAMS.desc?if_exists?html}</textarea>
+    <textarea name="desc" cols="70" rows="20" tabindex="2">${PARAMS.desc?if_exists?html}</textarea>
     <div class="error">${ERRORS.desc?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td colspan="2">
-    <input type="submit" name="preview" value="Náhled" class="buton">
-    <#if PARAMS.preview?exists><input type="submit" name="submit" value="Dokonèi" class="buton"></#if>
+    <input type="submit" name="preview" value="Náhled">
+    <#if PARAMS.preview?exists><input type="submit" name="submit" value="Dokonèi"></#if>
    </td>
   </tr>
  </table>

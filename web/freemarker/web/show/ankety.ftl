@@ -6,22 +6,23 @@
 <#assign count=15, until=from+count>
 <#if (until>=ankety?size)><#assign until=ankety?size-1></#if>
 
-
-<div id="ankety">
-
+<h1 class="st_nadpis">Archiv anket</h1>
 <#if from==0 && USER?exists && USER.hasRole("poll admin")>
  <p>
-  <a href="${URL.make("/EditPoll?action=add&rid="+RELATION.id)}">
+  <a href="${URL.make("/EditPoll?action=add&amp;rid="+RELATION.id)}">
   <img src="/images/actions/attach.png" ALT="Vytvoø anketu" class="ikona22"></a>
  </p>
 </#if>
 
 <table>
 <#list ankety[from..(until-1)] as relation>
+<tbody>
  <tr>
-  <td class="datum">${DATE.show(relation.child.created, "CZ_DATE")}</td>
-  <td class="text"><a href="${URL.make("/show/"+relation.id)}">${relation.child.text}</a></td>
+  <td align="right" width="120px"><a href="${URL.make("/show/"+relation.id)}">
+    ${DATE.show(relation.child.created, "CZ_DATE")}</a></td>
+  <td>${relation.child.text}</td>
  </tr>
+</tbody>
 </#list>
 </table>
 
@@ -34,7 +35,5 @@
   <a href="${URL.make("/dir/"+RELATION.id+"?from="+until)}">Star¹í ankety</a>
  </#if>
 </p>
-
-</div>
 
 <#include "../footer.ftl">

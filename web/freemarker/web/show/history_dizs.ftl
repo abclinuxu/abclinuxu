@@ -2,25 +2,32 @@
 
 <#assign byCreated = FOUND.isQualifierSet("SORT_BY_CREATED")>
 
-<table width="99%" cellspacing="0" cellpadding="1" border="0">
- <tr>
-  <td><b>Dotaz</b></td>
-  <td align="center"><b>Odpovìdí</b></td>
-  <td align="right"><b>Datum</b></td>
- </tr>
+
+<div class="ds">
+   <table>
+     <thead>
+           <tr>
+                <td class="td01">Dotaz</td>
+                <td class="td02">Reakcí</td>
+                <td class="td03">Poslední</td>
+            </tr>
+        </thead>
+        <tbody>
  <#list TOOL.analyzeDiscussions(FOUND.data) as diz>
-  <tr>
-   <td>
-    <a href="/forum/show/${diz.relationId}">${TOOL.limit(diz.title,60," ..")}</a>
-   </td>
-   <td align="center">${diz.responseCount}</td>
-   <td align="right">
-    <#if byCreated>${DATE.show(diz.created,"CZ_FULL")}<#else>${DATE.show(diz.updated,"CZ_FULL")}</#if>
-   </td>
-  </tr>
-  <tr><td colspan="3"><@lib.separator double=!diz_has_next /></td></tr>
- </#list>
-</table>
+   <tr onmouseover="javascript:style.backgroundColor='#F7F7F7'" onmouseout="javascript:style.backgroundColor='#FFFFFF'">
+    <td class="td01">
+     <a href="/forum/show/${diz.relationId}">${TOOL.limit(diz.title,60," ..")}</a>
+    </td>
+    <td class="td02"><span class="pidi">${diz.responseCount}</span></td>
+    <td class="td03"><span class="pidi">
+      <#if byCreated>${DATE.show(diz.created,"CZ_FULL")}<#else>${DATE.show(diz.updated,"CZ_FULL")}</#if>
+    </td>
+   </tr>
+        </#list>
+        </tbody>
+  </table>
+</div>	
+
 
 <form action="/History">
 <table border="0"><tr>
@@ -30,8 +37,8 @@
 <th>Smìr</th>
 <td></td>
 </tr><tr>
-<td><input type="text" size="4" value="${FOUND.thisPage.row}" name="from" tabindex="1" class="pole"></td>
-<td><input type="text" size="3" value="${FOUND.pageSize}" name="count" tabindex="2" class="pole"></td>
+<td><input type="text" size="4" value="${FOUND.thisPage.row}" name="from" tabindex="1"></td>
+<td><input type="text" size="3" value="${FOUND.pageSize}" name="count" tabindex="2"></td>
 <td>
  <select name="orderBy" tabindex="3">
   <option value="update">data poslední odpovìdi</option>
@@ -44,7 +51,7 @@
   <option value="asc">vzestupnì</option>
  </select>
 </td>
-<td><input type="submit" value="Zobrazit" class="buton"></td>
+<td><input type="submit" value="Zobrazit"></td>
 </tr></table>
 <input type="hidden" name="type" value="${PARAMS.type}">
 <#if PARAMS.uid?exists><input type="hidden" name="uid" value="${PARAMS.uid}"></#if>

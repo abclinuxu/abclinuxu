@@ -2,8 +2,6 @@
 
 <@lib.showMessages/>
 
-<h1>Registrace na AbcLinuxu.cz</h1>
-
 <p>
 Dìkujeme vám, ¾e jste se rozhodli zaregistrovat
 se na na¹em portálu. Vìøíme, ¾e nabízené výhody
@@ -44,41 +42,41 @@ zajímavostí ze svìta Linuxu i z na¹eho portálu.
   <tr>
    <td class="required" width="60">Jméno</td>
    <td>
-    <input type="text" name="name" value="${PARAMS.name?if_exists}" size="16" tabindex="1" class="pole">
+    <input type="text" name="name" value="${PARAMS.name?if_exists}" size="16" tabindex="1">
     <div class="error">${ERRORS.name?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td class="required" width="60">Login</td>
    <td>
-    <input type="text" name="login" value="${PARAMS.login?if_exists}" size="24" tabindex="2" class="pole">
+    <input type="text" name="login" value="${PARAMS.login?if_exists}" size="24" tabindex="2">
     <div class="error">${ERRORS.login?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td class="required" width="60">Pøezdívka</td>
    <td>
-    <input type="text" name="nick" value="${PARAMS.nick?if_exists}" size="24" tabindex="3" class="pole">
+    <input type="text" name="nick" value="${PARAMS.nick?if_exists}" size="24" tabindex="3">
     <div class="error">${ERRORS.nick?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td class="required" width="160">Heslo</td>
    <td>
-    <input type="password" name="password" size="16" tabindex="4" class="pole">
+    <input type="password" name="password" size="16" tabindex="4">
     <div class="error">${ERRORS.password?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td class="required" width="160">Zopakujte heslo</td>
    <td>
-    <input type="password" name="password2" size="16" tabindex="5" class="pole">
+    <input type="password" name="password2" size="16" tabindex="5">
    </td>
   </tr>
   <tr>
    <td class="required" width="60">Email</td>
    <td>
-    <input type="text" name="email" value="${PARAMS.email?if_exists}" size="16" tabindex="6" class="pole">
+    <input type="text" name="email" value="${PARAMS.email?if_exists}" size="16" tabindex="6">
     <div class="error">${ERRORS.email?if_exists}</div>
    </td>
   </tr>
@@ -115,7 +113,7 @@ zajímavostí ze svìta Linuxu i z na¹eho portálu.
   </tr>
   <tr>
    <td width="60">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi" tabindex="10" class="buton"></td>
+   <td><input type="submit" value="Dokonèi" tabindex="10"></td>
   </tr>
  </table>
  <input type="hidden" name="action" value="register2">

@@ -24,41 +24,41 @@ zasílat jen ty informace, které si sami objednáte.
   <tr>
    <td class="required" width="60">Heslo</td>
    <td>
-    <input type="password" name="PASSWORD" size="16" tabindex="1" class="pole">
+    <input type="password" name="PASSWORD" size="16" tabindex="1">
     <div class="error">${ERRORS.PASSWORD?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td class="required" width="60">Jméno</td>
    <td>
-    <input type="text" name="name" value="${PARAMS.name?if_exists}" size="24" tabindex="2" class="pole">
+    <input type="text" name="name" value="${PARAMS.name?if_exists}" size="24" tabindex="2">
     <div class="error">${ERRORS.name?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td class="required" width="60">Login</td>
    <td>
-    <input type="text" name="login" value="${PARAMS.login?if_exists}" size="24" tabindex="3" class="pole">
+    <input type="text" name="login" value="${PARAMS.login?if_exists}" size="24" tabindex="3">
     <div class="error">${ERRORS.login?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td class="required" width="60">Email</td>
    <td>
-    <input type="text" name="email" value="${PARAMS.email?if_exists}" size="24" tabindex="4" class="pole">
+    <input type="text" name="email" value="${PARAMS.email?if_exists}" size="24" tabindex="4">
     <div class="error">${ERRORS.email?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td class="required" width="60">Pøezdívka</td>
    <td>
-    <input type="text" name="nick" value="${PARAMS.nick?if_exists}" size="24" tabindex="5" class="pole">
+    <input type="text" name="nick" value="${PARAMS.nick?if_exists}" size="24" tabindex="5">
     <div class="error">${ERRORS.nick?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td width="60">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi" tabindex="6" class="buton"></td>
+   <td><input type="submit" value="Dokonèi" tabindex="6"></td>
   </tr>
  </table>
  <input type="hidden" name="action" value="editBasic2">

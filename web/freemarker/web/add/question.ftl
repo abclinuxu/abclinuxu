@@ -2,18 +2,7 @@
 
 <@lib.showMessages/>
 
-<h1>Zmìna</h1>
-
-<p>V diskusním foru se objevuje pøíli¹ hodnì dotazù, které ji¾ byly
-mnohokrát polo¾eny a zodpovìzeny. Tyto dotazy svìdèí o tom, ¾e
-jejich autoøi jsou líní provést jednoduché fulltextové hledání,
-které by jim ihned zobrazilo hledané informace. Lidé, kteøí odpovídají
-v diskusním foru, jsou pak oprávnìnì na¹tvaní, ¾e tito jedinci
-nevyvinuli ani nejmen¹í osobní iniciativu. Proto jsme se rozhodli
-pøistoupit ke zmìnì a nastavit hledání jako povinný krok v pokládání
-otázky do diskusního fora.</p>
-
-<h1>Hledání</h1>
+<h1 class="st_nadpis">Hledání</h1>
 
 <p>Ne¾ mù¾ete polo¾it svùj dotaz, musíte nejdøíve prohledat na¹i databázi,
 zda ji¾ neobsahuje odpovìï na va¹i otázku. Databáze obsahuje více ne¾
@@ -21,18 +10,16 @@ zda ji¾ neobsahuje odpovìï na va¹i otázku. Databáze obsahuje více ne¾
 ¾e zde najdete potøebné informace. Pokud ne, na dal¹í stránce najdete
 odkaz na formuláø, kde budete moci polo¾it otázku do diskusního fora.</p>
 
-<h1>Jak hledat</h1>
+<h1 class="st_nadpis">Jak hledat</h1>
 
-<p>Fulltextové hledání pou¾ívá knihovnu <a href="http://jakarta.apache.org/lucene/">Jakarta Lucene</a>.
-Zadejte hledanou frázi. K dispozici máte logické
+<p>Zadejte hledanou frázi. K dispozici máte logické
 operatory AND, OR, NOT (velká písmena), respektive
-krat¹í varianty + a -. Hvìzdièka funguje jako zástupný
-znak. Plus a mínus patøí na zaèátek hledaného výrazu,
-umístìní na konci je chyba (proto dc++ nefunguje).
-Hledání je nezávislé na velikosti písmen a diakritice.
+krat¹í varianty + a -.  Plus a mínus patøí na zaèátek hledaného výrazu,
+umístìní na konci je chyba. Hvìzdièka funguje jako zástupný
+znak. Hledání je nezávislé na velikosti písmen a diakritice.
 <a href="/clanky/show/5024">Více informací</a>.</p>
 
-<h1>Pøíklady</h1>
+<h1 class="st_nadpis">Pøíklady</h1>
 
 <dl>
 <dt>nvidia</dt>

@@ -12,26 +12,26 @@ mít nejménì ètyøi znaky.</p>
   <tr>
    <td class="required" width="160">Souèasné heslo</td>
    <td>
-    <input type="password" name="PASSWORD" size="16" tabindex="1" class="pole">
+    <input type="password" name="PASSWORD" size="16" tabindex="1">
     <div class="error">${ERRORS.PASSWORD?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td class="required" width="160">Nové heslo</td>
    <td>
-    <input type="password" name="password" size="16" tabindex="2" class="pole">
+    <input type="password" name="password" size="16" tabindex="2">
     <div class="error">${ERRORS.password?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td class="required" width="160">Zopakujte nové heslo</td>
    <td>
-    <input type="password" name="password2" size="16" tabindex="3" class="pole">
+    <input type="password" name="password2" size="16" tabindex="3">
    </td>
   </tr>
   <tr>
    <td width="160">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi" tabindex="4" class="buton"></td>
+   <td><input type="submit" value="Dokonèi" tabindex="4"></td>
   </tr>
  </table>
  <input type="hidden" name="action" value="changePassword2">

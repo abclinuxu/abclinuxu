@@ -22,13 +22,13 @@ samotného záznamu.</p>
   <tr>
    <td width="120" class="required">Jméno polo¾ky</td>
    <td>
-    <input type="text" name="name" value="${PARAMS.name?if_exists}" size="16" maxlength="40" tabindex="1" class="pole">
+    <input type="text" name="name" value="${PARAMS.name?if_exists}" size="16" maxlength="40" tabindex="1">
     <div class="error">${ERRORS.name?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td width="120">&nbsp;</td>
-   <td><input type="submit" VALUE="Pokraèuj" TABINDEX="4" class="submit"></td>
+   <td><input type="submit" VALUE="Pokraèuj" TABINDEX="4"></td>
   </tr>
  </table>
 

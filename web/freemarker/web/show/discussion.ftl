@@ -1,12 +1,10 @@
 <#include "../header.ftl">
 
-<@lib.showParents PARENTS />
-
 <@lib.showMessages/>
 
 <#if USER?exists && USER.hasRole("discussion admin")>
- <a href="/SelectRelation?prefix=/hardware&url=/EditRelation&action=move&rid=${RELATION.id}">Pøesunout</a>
- <a href="${URL.noPrefix("/EditRelation?action=remove&rid="+RELATION.id+"&prefix="+URL.prefix)}">Sma¾ diskusi</a>
+ <a href="/SelectRelation?prefix=/hardware&amp;url=/EditRelation&amp;action=move&amp;rid=${RELATION.id}">Pøesunout</a>
+ <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix="+URL.prefix)}">Sma¾ diskusi</a>
 </#if>
 
 <p class="monitor"><b>AbcMonitor</b> vám emailem za¹le upozornìní pøi jakékoliv zmìnì v diskusi.
@@ -15,14 +13,14 @@
  <#else>
   <#assign monitorState="Zapni">
  </#if>
- <a href="${URL.make("/EditDiscussion?action=monitor&rid="+RELATION.id)}">${monitorState}</a>
+ <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+RELATION.id)}">${monitorState}</a>
  (${TOOL.getMonitorCount(ITEM.data)})
 </p>
 
 <#assign frozen=TOOL.xpath(ITEM,"/data/frozen")?exists>
 
 <#if TOOL.xpath(ITEM,"data/title")?exists>
- <h1>Otázka</h1>
+ <h1 class="st_nadpis">Otázka</h1>
  <@lib.showComment TOOL.createComment(ITEM), ITEM.id, RELATION.id, !frozen />
 
  <p class="wrongForum">
@@ -32,14 +30,13 @@
  prosím administrátory. Dìkujeme.
  </p>
 
- <#include "/include/linuxplus.txt">
- <h1>Odpovìdi</h1>
+ <h1 class="st_nadpis">Odpovìdi</h1>
 <#elseif !frozen>
- <a href="${URL.make("/EditDiscussion?action=add&threadId=0&dizId="+ITEM.id+"&rid="+RELATION.id)}">
+ <a href="${URL.make("/EditDiscussion?action=add&amp;threadId=0&amp;dizId="+ITEM.id+"&amp;rid="+RELATION.id)}">
  Vlo¾it dal¹í komentáø</a>
 </#if>
 
-<#if frozen><p>Diskuse byla administrátory uzamèena</p></#if>
+<#if frozen><p class="error">Diskuse byla administrátory uzamèena</p></#if>
 
 <p><b>Nástroje</b>: <a href="/forum/show/${RELATION.id}?varianta=print">Tisk</a></p>
 
@@ -48,6 +45,7 @@
  <#if frozen>Rozmrazit<#else>Zmrazit</#if> diskusi</a>
 </#if>
 
+<#if USER?exists><#assign MAX_COMMENT=TOOL.getLastSeenComment(ITEM,USER,true) in lib></#if>
 <#list TOOL.createDiscussionTree(ITEM) as thread>
  <@lib.showThread thread, 0, ITEM.id, RELATION.id, !frozen />
 </#list>

@@ -31,7 +31,7 @@ mo¾né odpovìdìt.
   <tr>
    <td class="required" width="60">Heslo</td>
    <td>
-    <input type="password" name="PASSWORD" size="16" tabindex="1" class="pole">
+    <input type="password" name="PASSWORD" size="16" tabindex="1">
     <div class="error">${ERRORS.PASSWORD?if_exists}</div>
    </td>
   </tr>
@@ -67,7 +67,7 @@ mo¾né odpovìdìt.
   </tr>
   <tr>
    <td width="60">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi" tabindex="5" class="buton"></td>
+   <td><input type="submit" value="Dokonèi" tabindex="5"></td>
   </tr>
  </table>
  <input type="hidden" name="action" value="subscribe2">

@@ -20,20 +20,20 @@ a 200 pixelù na vý¹ku. Maximální velikost souboru je
   <tr>
    <td class="required" width="120">Heslo</td>
    <td>
-    <input type="password" name="PASSWORD" size="20" tabindex="1" class="pole">
+    <input type="password" name="PASSWORD" size="20" tabindex="1">
     <div class="error">${ERRORS.PASSWORD?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td width="120">Fotografie</td>
    <td>
-    <input type="file" name="photo" size="20" tabindex="2" class="pole">
+    <input type="file" name="photo" size="20" tabindex="2">
     <div class="error">${ERRORS.photo?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td width="120">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi" tabindex="3" class="buton"></td>
+   <td><input type="submit" value="Dokonèi" tabindex="3"></td>
   </tr>
  </table>
 </form>

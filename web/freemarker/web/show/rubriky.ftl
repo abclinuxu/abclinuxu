@@ -1,7 +1,5 @@
 <#include "../header.ftl">
 
-<@lib.showParents PARENTS />
-
 <@lib.showMessages/>
 
 <#if USER?exists && USER.hasRole("category admin")>
@@ -19,7 +17,7 @@
  <p class="note">${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}</p>
 </#if>
 
-<h1>Seznam rubrik</h1>
+<h1 class="st_nadpis">Seznam rubrik</h1>
 
 <ul>
  <#list SORT.byName(CHILDREN) as relation>

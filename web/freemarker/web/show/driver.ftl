@@ -1,14 +1,12 @@
 <#include "../header.ftl">
 
-<@lib.showParents PARENTS />
-
 <#assign who=TOOL.createUser(ITEM.owner)>
 <p>
  Tuto polo¾ku naposledy upravil <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
  dne ${DATE.show(ITEM.created,"CZ_FULL")}.
 </p>
 <p>
- <a href="${URL.make("/edit?action=edit&rid="+RELATION.id)}">Vlo¾ novou verzi</a>
+ <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">Vlo¾ novou verzi</a>
 </p>
 
 <p class="monitor"><b>AbcMonitor</b> vám emailem za¹le upozornìní pøi zmìnì.
@@ -17,7 +15,7 @@
  <#else>
   <#assign monitorState="Zapni">
  </#if>
- <a href="${URL.make("/edit?action=monitor&rid="+RELATION.id+"&driverId="+ITEM.id)}">${monitorState}</a>
+ <a href="${URL.make("/edit?action=monitor&amp;rid="+RELATION.id+"&amp;driverId="+ITEM.id)}">${monitorState}</a>
  (${TOOL.getMonitorCount(ITEM.data)})
 </p>
 

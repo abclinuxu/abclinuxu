@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<h1>Úvod</h1>
+<h1 class="st_nadpis">Úvod</h1>
 
 <p>Právì se chystáte vlo¾it do databáze nový ovladaè. Pokud jste si
 jisti, ¾e v databázi není ulo¾ena jeho star¹í verze, pokraèujte
@@ -28,7 +28,7 @@ respektive jaké zmìny tato verze pøinesla.
 </p>
 
 <#if PARAMS.preview?exists>
- <h1>Náhled pøíspìvku</h1>
+ <h1 class="st_nadpis">Náhled pøíspìvku</h1>
 
  <table cellspacing=0 border=1 cellpadding=5 align="center">
   <tr>
@@ -49,7 +49,7 @@ respektive jaké zmìny tato verze pøinesla.
  </table>
 </#if>
 
-<h1>Nový ovladaè</h1>
+<h1 class="st_nadpis">Nový ovladaè</h1>
 
 <form action="${URL.make("/edit")}" method="POST">
  <table cellpadding="0" border="0" width="100%">

@@ -8,14 +8,14 @@
  </p>
 <#elseif USER.id==PROFILE.id>
  <#if PARAMS.LOGIN?exists>
-  <h1>Vítejte</h1>
+  <h1 class="st_nadpis">Vítejte</h1>
   <p>Dìkujeme vám za dal¹í náv¹tìvu portálu AbcLinuxu. Doufáme, ¾e vám
   pøinese cenné informace. Pokud budete spokojeni, doporuète nás svým pøátelùm
   a známým.
   </p>
  </#if>
 
- <h1>Moje domovská stránka</h1>
+ <h1 class="st_nadpis">Moje domovská stránka</h1>
 
  <p>Nacházíte se ve své veøejné domovské stránce, která slou¾í pro va¹i prezentaci.
  Pokud ji chcete doplnit èi nìjak upravit, pøejdìte na
@@ -35,7 +35,7 @@
 </#if>
 <img src="${photo}" style="float: right; padding: 3px">
 
-<h1>${PROFILE.name}</h1>
+<h1 class="st_nadpis">${PROFILE.name}</h1>
 
 <#if PROFILE.nick?exists><p>Pøezdívka: ${PROFILE.nick}</p></#if>
 
@@ -82,13 +82,13 @@
  <form action="${URL.noPrefix("/Profile")}">
   <input type="hidden" name="action" value="sendEmail">
   <input type="hidden" name="uid" value="${PROFILE.id}">
-  <input type="submit" value="Po¹lete mi email" class="buton">
+  <input type="submit" value="Po¹lete mi email">
  </form>
 <#else>
  <p class="error">Administrátoøi oznaèili email u¾ivatele za neplatný!</p>
 </#if>
 
-<h1>Mé</h1>
+<h1 class="st_nadpis">Mé</h1>
 <ol>
   <li><a href="${URL.noPrefix("/History?type=articles&amp;uid="+PROFILE.id)}">èlánky</a>
   (${COUNTS.article})

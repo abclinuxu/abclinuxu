@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<h1>Chyba</h1>
+<h1 class="st_nadpis">Chyba</h1>
 
 <p>${ERROR}</p>
 

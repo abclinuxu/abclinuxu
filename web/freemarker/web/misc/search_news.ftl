@@ -16,7 +16,7 @@
     }
 </script>
 
-<h1>Hledání</h1>
+<h1 class="st_nadpis">Hledání</h1>
 
 <form action="/Search" method="POST">
   <p><input type="text" name="query" value="${QUERY?if_exists?html}" size="50" tabindex="1">

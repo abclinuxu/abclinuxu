@@ -1,7 +1,5 @@
 <#include "../header.ftl">
 
-<@lib.showParents PARENTS />
-
 <@lib.showMessages/>
 
 <#if USER?exists && USER.hasRole("article admin")>
@@ -24,7 +22,7 @@
 
  <#list clanky[from..(until-1)] as clanek>
   <@lib.showArticle clanek, "CZ_FULL" />
-  <@lib.separator double=!clanek_has_next />
+  <hr>
  </#list>
 
  <p>

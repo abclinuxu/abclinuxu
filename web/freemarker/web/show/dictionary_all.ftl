@@ -1,6 +1,6 @@
 <#include "../header.ftl">
 
-<h1>Výkladový slovník portálu www.abclinuxu.cz</h1>
+<h1 class="st_nadpis">Výkladový slovník portálu www.abclinuxu.cz</h1>
 
 <p>Výkladový slovník na¹eho portálu je projekt, jen¾ se sna¾í èeským
 a slovenským u¾ivatelùm pøiblí¾it Linux. Málokterý nováèek se zaène
@@ -15,7 +15,7 @@ v¹echny základní pojmy, které se v Linuxu bì¾nì objevují. Pokud se chcete zapoji
 do tvorby této databáze, mù¾ete <a href="${URL.make("/slovnik/edit?action=add")}">vysvìtlit</a>
 nový pojem.</p>
 
-<table border="0" width="100%">
+<table border="0" class="siroka">
  <#list FOUND.data as rel>
   <#if rel_index % 3 == 0><tr></#if>
    <td><a href="/slovnik/${rel.child.subType}">${TOOL.xpath(rel.child,"data/name")}</a></td>
@@ -25,7 +25,7 @@ nový pojem.</p>
 
 <#if FOUND.nextPage?exists>
  <p>
-  <a href="/History?type=dictionary&from=${FOUND.pageSize+1}&count=25">Star¹í pojmy</a>
+  <a href="/History?type=dictionary&amp;from=${FOUND.pageSize+1}&amp;count=25">Star¹í pojmy</a>
  </p>
 </#if>
 

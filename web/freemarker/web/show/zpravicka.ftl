@@ -1,6 +1,6 @@
 <#include "../header.ftl">
 
-<h1 style="text-align: center">Zprávièka</h1>
+<h1 class="st_nadpis">Zprávièka</h1>
 
 <p>
  <#assign autor=TOOL.createUser(ITEM.owner)>
@@ -62,6 +62,7 @@
   <#if frozen>Rozmrazit<#else>Zmrazit</#if> diskusi</a>
  </#if>
 
+ <#if USER?exists><#assign MAX_COMMENT=TOOL.getLastSeenComment(DISCUSSION,USER,true) in lib></#if>
  <#list TOOL.createDiscussionTree(DISCUSSION) as thread>
   <@lib.showThread thread, 0, DISCUSSION.id, CHILDREN.discussion[0].id, !frozen />
  </#list>

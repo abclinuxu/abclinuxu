@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<h1>Pøístup odmítnut</h1>
+<h1 class="st_nadpis">Pøístup odmítnut</h1>
 
 <p>Pouze administrátor nebo vlastník tohoto
 objektu smí provést po¾adovanou akci!</p>

@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<h1>Úvod</h1>
+<h1 class="st_nadpis">Úvod</h1>
 
 <p>Polo¾ka ovladaèe slou¾í pro shroma¾ïování informací ohlednì ovladaèù,
 které nejsou standardní souèástí jádra. Typicky jde buï o Open Source
@@ -21,7 +21,7 @@ respektive jaké zmìny tato verze pøinesla.
 </p>
 
 <#if PARAMS.preview?exists>
- <h1>Náhled pøíspìvku</h1>
+ <h1 class="st_nadpis">Náhled pøíspìvku</h1>
 
  <table cellspacing=0 border=1 cellpadding=5 align="center">
   <tr>
@@ -42,28 +42,28 @@ respektive jaké zmìny tato verze pøinesla.
  </table>
 </#if>
 
-<h1>Zde mù¾ete provést své úpravy</h1>
+<h1 class="st_nadpis">Zde mù¾ete provést své úpravy</h1>
 
 <form action="${URL.make("/edit")}" method="POST">
  <table cellpadding="0" border="0" width="100%">
   <tr>
    <td class="required">Jméno ovladaèe</td>
    <td>
-    <input type="text" name="name" value="${PARAMS.name?if_exists}" size="30" maxlength="30" tabindex="1" class="pole">
+    <input type="text" name="name" value="${PARAMS.name?if_exists}" size="30" maxlength="30" tabindex="1">
     <div class="error">${ERRORS.name?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td class="required">Verze ovladaèe</td>
    <td>
-    <input type="text" name="version" value="${PARAMS.version?if_exists}" size="30" tabindex="2" class="pole">
+    <input type="text" name="version" value="${PARAMS.version?if_exists}" size="30" tabindex="2">
     <div class="error">${ERRORS.version?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td class="required">URL ovladaèe</td>
    <td>
-    <input type="text" name="url" value="${PARAMS.url?default("http://")}" size="50" tabindex="3" class="pole">
+    <input type="text" name="url" value="${PARAMS.url?default("http://")}" size="50" tabindex="3">
     <div class="error">${ERRORS.url?if_exists}</div>
    </td>
   </tr>
@@ -72,15 +72,15 @@ respektive jaké zmìny tato verze pøinesla.
   </tr>
   <tr>
    <td colspan="2">
-    <textarea name="note" cols="70" rows="15" tabindex="4" class="pole">${PARAMS.note?if_exists?html}</textarea>
+    <textarea name="note" cols="70" rows="15" tabindex="4">${PARAMS.note?if_exists?html}</textarea>
     <div class="error">${ERRORS.note?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td>&nbsp;</td>
    <td>
-    <input type="submit" name="preview" value="Náhled" class="buton">
-    <input type="submit" name="submit" value="Dokonèi" class="buton">
+    <input type="submit" name="preview" value="Náhled">
+    <input type="submit" name="submit" value="Dokonèi">
    </td>
   </tr>
  </table>

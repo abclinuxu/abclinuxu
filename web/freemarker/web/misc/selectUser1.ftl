@@ -1,8 +1,6 @@
 <#include "../header.ftl">
 
-<#if PARAMS.TITLE?exists><h1>${PARAMS.TITLE}</h1></#if>
-
-<h1>Hledání u¾ivatele</h1>
+<#if PARAMS.TITLE?exists><h1 class="st_nadpis">${PARAMS.TITLE}</h1></#if>
 
 <p>Tento formuláø slou¾í pro hledání u¾ivatele portálu
 www.abclinuxu.cz. Existuje nìkolik mo¾ností, jak mù¾ete
@@ -27,35 +25,35 @@ z nalezených u¾ivatelù, se kterým budete moci pokraèovat v této akci.</p>
    <tr>
     <td width="100">Èíslo u¾ivatele</td>
     <td>
-     <input type="text" name="uid" size="5" value="${PARAMS.uid?if_exists}" class="pole">
+     <input type="text" name="uid" size="5" value="${PARAMS.uid?if_exists}">
      <div class="error">${ERRORS.uid?if_exists}</div>
     </td>
    </tr>
    <tr>
     <td width="100">Pøihla¹ovací jméno</td>
     <td>
-     <input type="text" name="login" size="25" value="${PARAMS.login?if_exists}" class="pole">
+     <input type="text" name="login" size="25" value="${PARAMS.login?if_exists}">
      <div class="error">${ERRORS.login?if_exists}</div>
     </td>
    </tr>
    <tr>
     <td width="100">Jméno u¾ivatele</td>
     <td>
-     <input type="text" name="name" size="25" value="${PARAMS.name?if_exists}" class="pole">
+     <input type="text" name="name" size="25" value="${PARAMS.name?if_exists}">
      <div class="error">${ERRORS.name?if_exists}</div>
     </td>
    </tr>
    <tr>
     <td width="100">Email u¾ivatele</td>
     <td>
-     <input type="text" name="email" size="25" value="${PARAMS.email?if_exists}" class="pole">
+     <input type="text" name="email" size="25" value="${PARAMS.email?if_exists}">
      <div class="error">${ERRORS.email?if_exists}</div>
     </td>
    </tr>
    <tr>
     <td width="100">&nbsp;</td>
     <td>
-     <input type="submit" value="Pokraèuj" class="buton">
+     <input type="submit" value="Pokraèuj">
     </td>
    </tr>
   </table>

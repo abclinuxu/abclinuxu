@@ -8,7 +8,7 @@
   <tr>
    <td width="90" class="required">Titulek</td>
    <td>
-    <input type="text" name="title" value="${PARAMS.title?if_exists}" size=60 tabindex=1>
+    <input type="text" name="title" value="${PARAMS.title?if_exists?html}" size=60 tabindex=1>
     <div class="error">${ERRORS.title?if_exists}</div>
    </td>
   </tr>

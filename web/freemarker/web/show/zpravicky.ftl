@@ -14,14 +14,14 @@
     }
 </script>
 
-<h1 align="center">Zprávièky</h1>
+<h1 class="st_nadpis">Zprávièky</h1>
 
 <p>Zprávièky mù¾ete èíst i pøes mobil: wap.abclinuxu.cz</p>
 
 <p><a href="${URL.make("/news/edit?action=add")}">Pøidat zprávièku</a></p>
 
 <#list NEWS as rel>
- <@lib.showTemplateNews rel />
+ <@lib.showNews rel /><hr>
 </#list>
 
 <p>

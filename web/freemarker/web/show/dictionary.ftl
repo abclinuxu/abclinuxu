@@ -1,28 +1,26 @@
 <#include "../header.ftl">
 
-<h1 align="center">${TOOL.xpath(ITEM,"/data/name")}</h1>
+<h1 class="st_nadpis">${TOOL.xpath(ITEM,"/data/name")}</h1>
 
 <#assign RECORDS = CHILDREN.record>
 <#list RECORDS as REL_RECORD>
  <#assign RECORD = REL_RECORD.child, who=TOOL.createUser(RECORD.owner)>
 
- <div class="slovnik">
- ${TOOL.render(TOOL.element(RECORD.data,"/data/description"),USER?if_exists)}
- </div>
+  ${TOOL.render(TOOL.element(RECORD.data,"/data/description"),USER?if_exists)}
 
  <p align="right">
   <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>, ${DATE.show(RECORD.updated,"CZ_FULL")}<br>
-  <a href="${URL.make("/edit?action=edit&rid="+RELATION.id+"&recordId="+RECORD.id)}">Upravit</a>
+  <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id+"&amp;recordId="+RECORD.id)}">Upravit</a>
   <#if USER?exists && USER.hasRole("remove relation")>
    <#if RECORDS?size gt 1><#assign cislo=REL_RECORD.id><#else><#assign cislo=RELATION.id></#if>
-   <a href="${URL.noPrefix("/EditRelation?action=remove&prefix=/slovnik&rid="+cislo)}" title="Sma¾">Smazat</a>
+   <a href="${URL.noPrefix("/EditRelation?action=remove&amp;prefix=/slovnik&amp;rid="+cislo)}" title="Sma¾">Smazat</a>
   </#if>
  </p>
 </#list>
 
 <p>
  Pokud chcete doplnit èi zpøesnit popis tohoto pojmu, mù¾ete
- <a href="${URL.make("/edit?action=addRecord&rid="+RELATION.id)}">pøidat</a>
+ <a href="${URL.make("/edit?action=addRecord&amp;rid="+RELATION.id)}">pøidat</a>
  dal¹í záznam. Jste-li autorem popisu, pou¾ijte akci Upravit.
 </p>
 
@@ -38,10 +36,10 @@ ${TOOL.xpath(ITEM,"/data/name")} <#if (NEXT?size>0)>-</#if>
  <#else>
   <#assign monitorState="Zapni">
  </#if>
- <a href="${URL.make("/edit?action=monitor&rid="+RELATION.id)}">${monitorState}</a>
+ <a href="${URL.make("/edit?action=monitor&amp;rid="+RELATION.id)}">${monitorState}</a>
  (${TOOL.getMonitorCount(ITEM.data)})
 </p>
 
-<p><b>Nástroje</b>: <a href="/forum/show/${RELATION.id}?varianta=print">Tisk</a></p>
+<p><b>Nástroje</b>: <a href="/slovnik/${ITEM.subType}?varianta=print">Tisk</a></p>
 
 <#include "../footer.ftl">

@@ -40,7 +40,7 @@
  <#if map.news?exists>
   <#list SORT.byDate(map.news, "ASCENDING") as rel>
    <@showAdminNews rel />
-   <@lib.separator double=!rel_has_next />
+   <hr>
   </#list>
   <br>
  </#if>

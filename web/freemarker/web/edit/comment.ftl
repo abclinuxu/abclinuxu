@@ -1,9 +1,8 @@
-<#include "/include/macros.ftl">
 <#include "../header.ftl">
 
-<#call showMessages>
+<@lib.showMessages/>
 
-<h1>Úvod</h1>
+<h1 class="st_nadpis">Úvod</h1>
 
 <p>Tato stránka je urèena výhradnì administrátorùm. Jejím úèelem
 není provádìt cenzuru (na to jsou jiné nástroje) nebo
@@ -12,35 +11,35 @@ Napøíklad ¹patnì zvolený titulek u dotazu, titulek poru¹ující
 zásady (psán velkými písmeny apod.), nevhodné HTML znaèky ..</p>
 
 <#if PREVIEW?exists>
- <h1>Náhled pøíspìvku</h1>
- <#call showComment(PREVIEW 0 0 false)>
+ <h1 class="st_nadpis">Náhled pøíspìvku</h1>
+ <@lib.showComment PREVIEW, 0, 0, false />
 </#if>
 
-<h1>Zde mù¾ete provést své úpravy</h1>
+<h1 class="st_nadpis">Zde mù¾ete provést své úpravy</h1>
 
 <form action="${URL.make("/EditDiscussion")}" method="POST">
  <table cellpadding="5">
   <tr>
    <td class="required">Titulek</td>
    <td>
-    <input type="text" name="title" size="40" maxlength="70" value="${PARAMS.title?if_exists}" class="pole">
+    <input type="text" name="title" size="40" maxlength="70" value="${PARAMS.title?if_exists}">
     <div class="error">${ERRORS.title?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td class="required">Komentáø</td>
    <td>
-    <textarea name="text" cols="60" rows="20" class="pole">${PARAMS.text?if_exists?html}</textarea>
+    <textarea name="text" cols="60" rows="20">${PARAMS.text?if_exists?html}</textarea>
     <div>Smíte pou¾ívat základní HTML znaèky. Pokud je nepou¾ijete,
-    prázdé øádky budou nahrazeny novým odstavcem.</div>
+    prázdné øádky budou nahrazeny novým odstavcem.</div>
     <div class="error">${ERRORS.text?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td>&nbsp;</td>
    <td>
-    <input type="submit" name="preview" value="Zopakuj náhled" class="buton">
-    <input type="submit" name="finish" value="Dokonèi" class="buton">
+    <input type="submit" name="preview" value="Zopakuj náhled">
+    <input type="submit" name="finish" value="Dokonèi">
    </td>
   </tr>
  </table>

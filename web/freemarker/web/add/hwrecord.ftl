@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<h1>Nápovìda</h1>
+<h1 class="st_nadpis">Nápovìda</h1>
 
 <p>Vyplòte údaje záznamu. Sna¾te se pøitom zapsat co nejvíce podrobností,
 ale dávejte si pozor, aby vá¹ pøíspìvek nebyl pøíli¹
@@ -10,7 +10,7 @@ zamìøen na pou¾ití nástrojù va¹í distribuce. Linux je toti¾ jeden, tak¾e
 pokud vyplníte podstatné údaje (napøíklad název jaderného modulu),
 vá¹ pøíspìvek pomù¾e i u¾ivatelùm ostatních distribucí.</p>
 
-<h1>Formátování</h1>
+<h1 class="st_nadpis">Formátování</h1>
 
 <p>Smíte pou¾ívat základní HTML znaèky. Pokud je nepou¾ijete,
 prázdné øádky budou nahrazeny novým odstavcem.

@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<h1>Upozornìní</h1>
+<h1 class="st_nadpis">Upozornìní</h1>
 
 <p>Nyní si prohlédnìte vzhled va¹eho dotazu. Zkontrolujte
 si pravopis, obsah i tón va¹eho textu. Uvìdomte si, ¾e
@@ -12,11 +12,11 @@ opravte jej a zvolte Náhled. Pokud jste s ním spokojeni,
 zvolte OK.</p>
 
 <#if PREVIEW?exists>
- <h1>Náhled va¹eho dotazu</h1>
+ <h1 class="st_nadpis">Náhled va¹eho dotazu</h1>
  <@lib.showComment PREVIEW, 0, 0, false />
 </#if>
 
-<h1>Zde mù¾ete provést své úpravy</h1>
+<h1 class="st_nadpis">Zde mù¾ete provést své úpravy</h1>
 
 <form action="${URL.make("/EditDiscussion")}" method="POST">
  <table cellpadding="5">
@@ -39,7 +39,7 @@ zvolte OK.</p>
   <tr>
    <td class="required">Titulek</td>
    <td>
-    <input type="text" name="title" size="40" maxlength="70" value="${PARAMS.title?if_exists}">
+    <input type="text" name="title" size="40" maxlength="70" value="${PARAMS.title?if_exists?html}">
     <div class="error">${ERRORS.title?if_exists}</div>
    </td>
   </tr>

@@ -2,13 +2,13 @@
 
 <@lib.showMessages/>
 
-<h1>Nápovìda</h1>
+<h1 class="st_nadpis">Nápovìda</h1>
 
 <p>Vyplòte údaje záznamu. Sna¾te se pøitom zapsat co nejvíce podrobností.
 Mnohé detaily, které vám mohou pøipadat samozøejmé, jsou pro zaèáteèníky
 noèní mùrou.</p>
 
-<h1>Formátování</h1>
+<h1 class="st_nadpis">Formátování</h1>
 
 <p>Smíte pou¾ívat základní HTML znaèky. Pokud je nepou¾ijete,
 prázdné øádky budou nahrazeny novým odstavcem. Nedoporuèujeme

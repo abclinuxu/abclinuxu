@@ -2,8 +2,6 @@
 
 <h1 align="center">${TOOL.xpath(ITEM,"/data/name")}</h1>
 
-<@lib.showParents PARENTS />
-
 <#assign who=TOOL.createUser(ITEM.owner)>
 <p>
  Tuto polo¾ku vytvoøil <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
@@ -42,7 +40,7 @@
 <#list RECORDS as REL_RECORD>
  <#assign RECORD = REL_RECORD.child>
  <#assign who=TOOL.createUser(RECORD.owner)>
- <table cellspacing="0" border="1" cellpadding="5" width="100%">
+ <table cellspacing="0" border="1" cellpadding="5" class="siroka">
   <caption>Záznam èíslo ${REL_RECORD_index+1}</caption>
   <tr>
     <td colspan="2">Tento záznam pøidal <a href="/Profile/${who.id}">${who.name}</a>

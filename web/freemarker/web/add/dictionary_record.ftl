@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<h1>Úvod</h1>
+<h1 class="st_nadpis">Úvod</h1>
 
 <p>Cílem této slu¾by je vytvoøit rozsáhlý výkladový slovník
 nejrùznìj¹ích pojmù týkajících se Linuxu èi Unixu.  Èím více
@@ -11,7 +11,7 @@ v Linuxu a zvý¹í se ¹ance, ¾e nebudou klást otázky vyplývající
 z nepochopení základních principù tohoto operaèního systému.
 </p>
 
-<h1>Nový pojem</h1>
+<h1 class="st_nadpis">Nový pojem</h1>
 
 <p>Ka¾dý pojem ve slovníku se skládá z názvu a popisu. Název
 odpovídá pojmu v prvním pádì jednotného èísla. Napøíklad
@@ -23,7 +23,7 @@ pro nový odstavec.
 </p>
 
 <#if PARAMS.preview?exists && PARAMS.desc?exists>
- <h1>Náhled</h1>
+ <h1 class="st_nadpis">Náhled</h1>
   <p class="slovnik">
    ${TOOL.render(PARAMS.desc,USER?if_exists)}
   </p>

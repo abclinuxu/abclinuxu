@@ -20,7 +20,7 @@ Pro va¹i ochranu nejdøíve zadejte souèasné heslo.
   <tr>
    <td class="required" width="60">Heslo</td>
    <td>
-    <input type="password" name="PASSWORD" size="16" tabindex="1" class="pole">
+    <input type="password" name="PASSWORD" size="16" tabindex="1">
     <div class="error">${ERRORS.PASSWORD?if_exists}</div>
    </td>
   </tr>
@@ -37,38 +37,38 @@ Pro va¹i ochranu nejdøíve zadejte souèasné heslo.
   <tr>
    <td width="60">Rok narození</td>
    <td>
-    <input type="text" name="birth" value="${PARAMS.birth?if_exists}" size="24" tabindex="3" class="pole">
+    <input type="text" name="birth" value="${PARAMS.birth?if_exists}" size="24" tabindex="3">
     <div class="error">${ERRORS.birth?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td width="60">Mìsto</td>
    <td>
-    <input type="text" name="city" value="${PARAMS.city?if_exists}" size="24" tabindex="4" class="pole">
+    <input type="text" name="city" value="${PARAMS.city?if_exists}" size="24" tabindex="4">
    </td>
   </tr>
   <tr>
    <td width="60">Kraj</td>
    <td>
-    <input type="text" name="area" value="${PARAMS.area?if_exists}" size="24" tabindex="5" class="pole">
+    <input type="text" name="area" value="${PARAMS.area?if_exists}" size="24" tabindex="5">
    </td>
   </tr>
   <tr>
    <td width="60">Stát</td>
    <td>
-    <input type="text" name="country" value="${PARAMS.country?if_exists}" size="24" tabindex="6" class="pole">
+    <input type="text" name="country" value="${PARAMS.country?if_exists}" size="24" tabindex="6">
    </td>
   </tr>
   <tr>
    <td width="60">Patièka</td>
    <td>
-    <textarea name="signature" rows="4" cols="60" tabindex="7" class="pole">${PARAMS.signature?if_exists?html}</textarea>
+    <textarea name="signature" rows="4" cols="60" tabindex="7">${PARAMS.signature?if_exists?html}</textarea>
     <div class="error">${ERRORS.signature?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td width="60">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi" tabindex="8" class="buton"></td>
+   <td><input type="submit" value="Dokonèi" tabindex="8"></td>
   </tr>
  </table>
  <input type="hidden" name="action" value="editPersonal2">

@@ -16,7 +16,7 @@
     }
 </script>
 
-<h1>Hledání</h1>
+<h1 class="st_nadpis">Hledání</h1>
 
 <#if QUESTION_OK?exists>
  <p>Nyní si prosím projdìte nalezené dokumenty, zda neobsahují
@@ -26,9 +26,9 @@
  <#assign formURL=URL.make("/EditDiscussion")>
 </#if>
 
-<form action="${formURL?default("/Search")}" method="POST">
-  <p><input type="text" name="query" value="${QUERY?if_exists?html}" size="50" tabindex="1" class="pole">
-  <input type="submit" value="Hledej" tabindex="2" class="buton"></p>
+<form action="${formURL?default("/Search")}" method="get">
+  <p><input type="text" name="query" value="${QUERY?if_exists?html}" size="50" tabindex="1">
+  <input type="submit" value="Hledej" tabindex="2"></p>
 
   <#if ERRORS.query?exists><div class="error">${ERRORS.query}</div></#if>
 
@@ -67,21 +67,21 @@
  </p>
 
  <#if RESULT.prevPage?exists>
-  <input type="submit" name="from_0" value="0" class="buton">
-  <input type="submit" name="from_${RESULT.prevPage.row}" value="&lt;&lt;" class="buton">
+  <input type="submit" name="from_0" value="0">
+  <input type="submit" name="from_${RESULT.prevPage.row}" value="&lt;&lt;">
  <#else>
-  <button value="" disabled="disabled" class="buton">0</button>
-  <button value="" disabled="disabled" class="buton">&lt;&lt;</button>
+  <button value="" disabled="disabled">0</button>
+  <button value="" disabled="disabled">&lt;&lt;</button>
  </#if>
 
- <button value="" disabled="disabled" class="buton">${RESULT.thisPage.row}-${RESULT.thisPage.row+RESULT.thisPage.size}</button>
+ <button value="" disabled="disabled">${RESULT.thisPage.row}-${RESULT.thisPage.row+RESULT.thisPage.size}</button>
 
  <#if RESULT.nextPage?exists>
-  <input type="submit" name="from_${RESULT.nextPage.row?string["#"]}" value="&gt;&gt;" class="buton">
-  <input type="submit" name="from_${(RESULT.total-RESULT.pageSize)?string["#"]}" value="${RESULT.total}" class="buton">
+  <input type="submit" name="from_${RESULT.nextPage.row?string["#"]}" value="&gt;&gt;">
+  <input type="submit" name="from_${(RESULT.total-RESULT.pageSize)?string["#"]}" value="${RESULT.total}">
  <#else>
-  <button value="" disabled="disabled" class="buton">&gt;&gt;</button>
-  <button value="" disabled="disabled" class="buton">${RESULT.total}</button>
+  <button value="" disabled="disabled">&gt;&gt;</button>
+  <button value="" disabled="disabled">${RESULT.total}</button>
  </#if>
 
  <br>
@@ -102,21 +102,21 @@
  <#if (RESULT.thisPage.size>20) >
   <br>
   <#if RESULT.prevPage?exists>
-   <input type="submit" name="from_0" value="0" class="buton">
-   <input type="submit" name="from_${RESULT.prevPage.row}" value="&lt;&lt;" class="buton">
+   <input type="submit" name="from_0" value="0">
+   <input type="submit" name="from_${RESULT.prevPage.row}" value="&lt;&lt;">
   <#else>
-   <button value="" disabled="disabled" class="buton">0</button>
-   <button value="" disabled="disabled" class="buton">&lt;&lt;</button>
+   <button value="" disabled="disabled">0</button>
+   <button value="" disabled="disabled">&lt;&lt;</button>
   </#if>
 
-  <button value="" disabled="disabled" class="buton">${RESULT.thisPage.row}-${RESULT.thisPage.row+RESULT.thisPage.size}</button>
+  <button value="" disabled="disabled">${RESULT.thisPage.row}-${RESULT.thisPage.row+RESULT.thisPage.size}</button>
 
   <#if RESULT.nextPage?exists>
-   <input type="submit" name="from_${RESULT.nextPage.row?string["#"]}" value="&gt;&gt;" class="buton">
-   <input type="submit" name="from_${(RESULT.total-RESULT.pageSize)?string["#"]}" value="${RESULT.total}" class="buton">
+   <input type="submit" name="from_${RESULT.nextPage.row?string["#"]}" value="&gt;&gt;">
+   <input type="submit" name="from_${(RESULT.total-RESULT.pageSize)?string["#"]}" value="${RESULT.total}">
   <#else>
-   <button value="" disabled="disabled" class="buton">&gt;&gt;</button>
-   <button value="" disabled="disabled" class="buton">${RESULT.total}</button>
+   <button value="" disabled="disabled">&gt;&gt;</button>
+   <button value="" disabled="disabled">${RESULT.total}</button>
   </#if>
  </#if>
 
@@ -126,7 +126,7 @@
 
 <#if QUESTION_OK?exists>
  <p>Pokud jste peèlivì pro¹li nalezené dokumenty a pøesto jste nena¹li odpovìï,
- <a href="${URL.make("/EditDiscussion?action=addQuez3&rid="+PARAMS.rid)}">zde</a>
+ <a href="${URL.make("/EditDiscussion?action=addQuez3&amp;rid="+PARAMS.rid)}">zde</a>
  mù¾ete polo¾it otázku do zvoleného diskusního fora.</p>
 </#if>
 

@@ -3,12 +3,12 @@
 <#if TYPE=="articles">
  <#list FOUND.data as relation>
   <@lib.showArticle relation, "CZ_FULL" />
-  <@lib.separator double=!relation_has_next />
+  <hr>
  </#list>
 <#else>
  <#list FOUND.data as relation>
   <@lib.showNews relation />
-  <@lib.separator double=!relation_has_next />
+  <hr>
  </#list>
 </#if>
 

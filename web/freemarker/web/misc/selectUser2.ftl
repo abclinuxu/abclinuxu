@@ -1,6 +1,6 @@
 <#include "../header.ftl">
 
-<#if PARAMS.TITLE?exists><h1>${PARAMS.TITLE}</h1></#if>
+<#if PARAMS.TITLE?exists><h1 class="st_nadpis">${PARAMS.TITLE}</h1></#if>
 
 <@lib.showMessages/>
 

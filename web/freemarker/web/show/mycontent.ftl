@@ -5,7 +5,7 @@
 
 <#if HW?exists>
  <#if HW.currentPage.size gt 0>
-  <h1>Mé hardwarové záznamy</h1>
+  <h1 class="st_nadpis">Mé hardwarové záznamy</h1>
   <ol start="${HW.currentPage.row+1}">
   <#list HW.data as a>
    <li><a href="${URL.make("/hardware/ViewRelation?rid="+a.id)}">
@@ -28,7 +28,7 @@
 
 <#if SW?exists>
  <#if SW.currentPage.size gt 0>
-  <h1>Mé softwarové záznamy</h1>
+  <h1 class="st_nadpis">Mé softwarové záznamy</h1>
   <ol start="${SW.currentPage.row+1}">
   <#list SW.data as a>
    <li><a href="${URL.make("/software/ViewRelation?rid="+a.id)}">
@@ -51,7 +51,7 @@
 
 <#if ARTICLES?exists>
  <#if ARTICLES.currentPage.size gt 0>
-  <h1>Mé èlánky</h1>
+  <h1 class="st_nadpis">Mé èlánky</h1>
   <ol start="${ARTICLES.currentPage.row+1}">
   <#list ARTICLES.data as a>
    <li><a href="${URL.make("/clanky/ViewRelation?rid="+a.id)}">
@@ -74,7 +74,7 @@
 
 <#if NEWS?exists>
  <#if NEWS.currentPage.size gt 0>
-  <h1>Mé zprávièky</h1>
+  <h1 class="st_nadpis">Mé zprávièky</h1>
   <ol start="${NEWS.currentPage.row+1}">
   <#list NEWS.data as rel>
    <#call showNews(rel)>
@@ -96,7 +96,7 @@
 
 <#if DIZS?exists>
  <#if DIZS.currentPage.size gt 0>
-  <h1>Mé diskuse</h1>
+  <h1 class="st_nadpis">Mé diskuse</h1>
   <ol start="${DIZS.currentPage.row+1}">
   <#list DIZS.data as a>
    <li><a href="${URL.make("/software/ViewRelation?rid="+a.id)}">

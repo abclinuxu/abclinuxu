@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<h1>Nastavení va¹eho úètu</h1>
+<h1 class="st_nadpis">Nastavení va¹eho úètu</h1>
 
 <p>Pro va¹i ochranu nejdøíve zadejte va¹e heslo.</p>
 
@@ -11,7 +11,7 @@
   <tr>
    <td class="required">Heslo</td>
    <td>
-    <input type="password" name="PASSWORD" size="16" tabindex="1" class="pole">
+    <input type="password" name="PASSWORD" size="16" tabindex="1">
     <div class="error">${ERRORS.PASSWORD?if_exists}</div>
    </td>
   </tr>
@@ -124,7 +124,7 @@
   <tr>
    <td class="required">Poèet zprávièek</td>
    <td>
-    <input type="text" name="news" value="${PARAMS.news?if_exists}" size="3" tabindex="7" class="pole">
+    <input type="text" name="news" value="${PARAMS.news?if_exists}" size="3" tabindex="7">
     <div class="error">${ERRORS.news?if_exists}</div>
    </td>
   </tr>
@@ -137,7 +137,7 @@
   <tr>
    <td class="required">Velikost stránky pøi hledání</td>
    <td>
-    <input type="text" name="search" value="${PARAMS.search?if_exists}" size="3" tabindex="8" class="pole">
+    <input type="text" name="search" value="${PARAMS.search?if_exists}" size="3" tabindex="8">
     <div class="error">${ERRORS.search?if_exists}</div>
    </td>
   </tr>
@@ -148,7 +148,7 @@
   <tr>
    <td class="required">Velikost stránky diskusního fóra</td>
    <td>
-    <input type="text" name="forum" value="${PARAMS.forum?if_exists}" size="3" tabindex="9" class="pole">
+    <input type="text" name="forum" value="${PARAMS.forum?if_exists}" size="3" tabindex="9">
     <div class="error">${ERRORS.forum?if_exists}</div>
    </td>
   </tr>
@@ -158,7 +158,7 @@
 
   <tr>
    <td width="200">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi" tabindex="10" class="buton"></td>
+   <td><input type="submit" value="Dokonèi" tabindex="10"></td>
   </tr>
  </table>
  <input type="hidden" name="action" value="editSettings2">

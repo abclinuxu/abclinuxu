@@ -1,8 +1,6 @@
 <#include "../header.ftl">
 
-<h1 align="center">Sekce ${TOOL.xpath(CATEGORY,"/data/name")}</h1>
-
-<@lib.showParents PARENTS />
+<h1 class="st_nadpis">Sekce ${TOOL.xpath(CATEGORY,"/data/name")}</h1>
 
 <@lib.showMessages/>
 
@@ -37,65 +35,44 @@
 
 <#assign map=TOOL.groupByType(CHILDREN)>
 
+<div class="hw">
 <#if map.article?exists>
  <#list SORT.byDate(map.article, "DESCENDING") as clanek>
   <@lib.showArticle clanek, "CZ_FULL" />
-  <@lib.separator double=!clanek_has_next />
+  <hr>
  </#list>
  <br>
 </#if>
 
-<!-- novy obsah -->
-
-
 <#if map.category?exists>
-
-  <div class="hpboxy">
-
-  <h2>Sekce</h2>
-
-  <#list SORT.byName(map.category) as sekce>
-    <div class="hpbox5">
-	  <div class="hptit"><a href="${URL.make("/dir/"+sekce.id)}">${TOOL.childName(sekce)}</a></div>
-      <div class="hpbody">
-	   <center>
-		  <a href="${URL.make("/dir/"+sekce.id)}"><#if TOOL.childIcon(sekce)?exists><img src="${TOOL.childIcon(sekce)}" alt=""><br></#if>
-		  ${TOOL.childName(sekce)}</a>
- 	   </center>
-      </div>
-    </div>
-    </#list>
-
-  <br class="ac">
-
-  </div>
-
+ <table class="siroka" border="0" cellpadding="2">
+ <tr><td colspan="3" class="cerna3"><strong>Sekce</strong></td></tr>
+ <#list SORT.byName(map.category) as sekce>
+  <#if sekce_index%3==0><tr></#if>
+  <td width="33%">
+  <#if TOOL.childIcon(sekce)?exists><img src="${TOOL.childIcon(sekce)}" class="ikona" alt=""></#if>
+  <a href="${URL.make("/dir/"+sekce.id)}">${TOOL.childName(sekce)}</a>
+  </td>
+  <#if sekce_index%3==2></tr></#if>
+ </#list>
+ </table>
+ <br>
 </#if>
 
 <#if map.make?exists>
-
-  <div class="hpboxy">
-  <h2>Polo¾ky</h2>
-
-  <#list SORT.byName(map.make) as polozka>
-    <div class="hpbox5">
-	  <div class="hptit"><a href="${URL.make("/dir/"+RELATION.id)}">${TOOL.xpath(CATEGORY,"/data/name")}</a></div>
-      <div class="hpbody">
-	   <center>
-  		<a href="${URL.make("/show/"+polozka.id)}"><#if TOOL.childIcon(polozka)?exists><img src="${TOOL.childIcon(polozka)}" alt=""><br></#if>
-  		${TOOL.childName(polozka)}</a>
- 	   </center>
-      </div>
-    </div>
-    </#list>
-
-  <br class="ac">
-
-  </div>
-
+ <table border="0" cellpadding="2" class="siroka">
+ <tr><td colspan="3" class="cerna3"><strong>Polo¾ky</strong></td></tr>
+ <#list SORT.byName(map.make) as polozka>
+  <#if polozka_index%3==0><tr></#if>
+  <td width="33%">
+  <#if TOOL.childIcon(polozka)?exists><img src="${TOOL.childIcon(polozka)}" class="ikona" alt=""></#if>
+  <a href="${URL.make("/show/"+polozka.id)}">${TOOL.childName(polozka)}</a>
+  </td>
+  <#if polozka_index%3==2></tr></#if>
+ </#list>
+ </table>
+ <br>
 </#if>
-
-
-<!-- konec noveho obsahu -->
+</div>
 
 <#include "../footer.ftl">

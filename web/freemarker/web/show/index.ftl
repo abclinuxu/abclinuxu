@@ -1,127 +1,158 @@
+<#assign plovouci_sloupec>
+    <div class="ps_nad_reklama">
+    reklama
+        <div class="ps_reklama">
+        <#include "/include/hucek.txt">
+        </div>
+    </div>
+
+    <!-- ZAKLADY LINUXU -->
+    <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <a class="info" href="#">?<span class="tooltip">Co je to Linux a jak ho pou¾ít.</span></a>
+        <h1>Základy Linuxu</h1>
+    </div></div>
+    <div class="s_sekce">
+        <ul>
+            <li><a href="/clanky/show/26394">Co je to Linux?</a></li>
+            <li><a href="/clanky/show/12707">Je opravdu zdarma?</a></li>
+            <li><a href="/clanky/show/9503">Co jsou to distribuce?</a></li>
+            <li><a href="/clanky/show/14665">Náhrady Windows aplikací</a></li>
+            <li><a href="/clanky/show/20310">Rozcestník na¹ich seriálù</a>
+        </ul>
+    </div>
+
+    <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <a class="info" href="#">?<span class="tooltip">Databáze ovladaèù pro vá¹ hardware</span></a>
+        <h1><a href="/drivers/dir/318">Ovladaèe</a></h1>
+    </div></div>
+
+    <div class="s_sekce">
+        <ul>
+        <#list VARS.newDrivers as rel>
+            <li><a href="/drivers/show/${rel.id}">${TOOL.xpath(rel.child,"data/name")}</a></li>
+        </#list>
+        </ul>
+    </div>
+
+    <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <a class="info" href="#">?<span class="tooltip">Jestli nevíte, co znamená nìkteré slovo, podívejte se do na¹eho slovníku</span></a>
+        <h1><a href="/slovnik">Slovník</a></h1>
+    </div></div>
+    <div class="s_sekce">
+        <ul>
+        <#list DICTIONARY as rel>
+            <li><a href="/slovnik/${rel.child.subType}">${TOOL.xpath(rel.child,"data/name")}</a></li>
+        </#list>
+        </ul>
+    </div>
+
+    <!-- prace.abclinuxu.cz -->
+    <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <a class="info" href="#">?<span class="tooltip">První server s nabídkami práce (nejen) pro tuèòáky. Spojujeme lidi s prací v IT.</span></a>
+        <h1><a href="http://prace.abclinuxu.cz">Prace.abclinuxu.cz</a></h1>
+    </div></div>
+    <div class="s_sekce">
+        <#include "/include/prace_main.txt">
+    </div>
+
+    <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <a class="info" href="#">?<span class="tooltip">Obrovská databáze znalostí o hardwaru</span></a>
+        <h1><a href="/hardware/dir/1">Hardware</a></h1>
+    </div></div>
+    <div class="s_sekce">
+        <ul>
+        <#list VARS.newHardware as rel>
+             <li><a href="/hardware/show/${rel.id}">${TOOL.xpath(rel.child,"data/name")}</a></li>
+        </#list>
+        </ul>
+    </div>
+
+    <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <h1>Aktuální jádra</h1>
+    </div></div>
+    <div class="s_sekce">
+        <#include "/include/kernel.txt">
+    </div>
+
+    <!-- unixshop -->
+    <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <a class="info" href="#">?<span class="tooltip">Kvalitní ¾elezo pro va¹e serverovny za dostupné ceny</span></a>
+        <h1><a href="http://www.unixshop.cz">unixshop.cz</a></h1>
+    </div></div>
+    <div class="s_sekce">
+        <#include "/include/unixshop.txt">
+    </div>
+</#assign>
+
 <#include "../header.ftl">
 
-<!-- boxiky -->
+<#include "/include/zprava.txt">
+<@lib.showMessages/>
 
-  <div class="hp">
+<#list ARTICLES as rel>
+    <@lib.showArticle rel, "CZ_DATUM"/>
+    <hr>
+</#list>
 
-   <div class="hpboxec">
-      <div class="hptit"><div class="nolink">Reklama</div></div>
-	<#include "/include/box_index.txt">
-   </div>
-
-    <div class="hpbox2">
-      <div class="hptit"><a href="/hardware/dir/1"><img src="/images/site2/hpic/hpic-hw.gif"> Hardware</a></div>
-      <div class="hpbody">
-       <ul>
-          <#list VARS.newHardware as rel>
-          <li><a href="/hardware/show/${rel.id}">${TOOL.xpath(rel.child,"data/name")}</a></li>
-          </#list>
-       </ul>
-      </div>
-    </div>
-
-    <div class="hpbox1">
-      <div class="hptit"><a href="/drivers/dir/318"><img src="/images/site2/hpic/hpic-ovladac.gif"> Ovladaèe</a>
-	  </div>
-      <div class="hpbody">
-       <ul>
-            <#list VARS.newDrivers as rel>
-             <li><a href="/drivers/show/${rel.id}">${TOOL.xpath(rel.child,"data/name")}</a></li>
-            </#list>
-       </ul>
-     </div>
-    </div>
-
-    <div class="hpbox2">
-      <div class="hptit"><a href="/slovnik"><img src="/images/site2/hpic/hpic-slovnik.gif"> Výkladový slovník</a>
-	  </div>
-      <div class="hpbody">
-       <ul>
-            <#list DICTIONARY as rel>
-            <li><a href="/slovnik/${rel.child.subType}">${TOOL.xpath(rel.child,"data/name")}</a></li>
-            </#list>
-	     <p></p>
-            <li><a href="${URL.make("/slovnik/edit?action=add")}">Pøidat nový pojem</a></li>
-       </ul>
-      </div>
-    </div>
-
-    <div class="hpbox2">
-      <div class="hptit"><a href="ftp://ftp.fi.muni.cz/pub/linux/kernel"><img src="/images/site2/hpic/hpic-stable.gif"> Kernel</a></div>
-      <div class="hpbody">
-        <#include "/include/kernel.txt">
-      </div>
-    </div>
-
-    <div class="hpbox1">
-      <div class="hptit"><a href="/clanky/show/26394"><img src="/images/site2/hpic/hpic-linux.gif"> Co je to Linux?</a></div>
-      <div class="hpbody">
-       <ul>
-          <li><a href="/clanky/show/12707">Je opravdu zdarma?</a></li>
-          <li><a href="/clanky/show/9503">Co jsou to distribuce?</a></li>
-          <li><a href="/clanky/show/14665">Náhrady Windows aplikací</a></li>
-          <li><a href="/clanky/show/20310">Rozcestník na¹ich seriálù</a></li>
-       </ul>
-      </div>
-    </div>
-
-    <div class="hpbox4">
-      <div class="hptit"><a href="http://www.unixshop.cz" target="_blank"><img src="/images/site2/hpic/hpic-unixshop.gif"> unixshop.cz</a></div>
-      <div class="hpbody">
-        <#include "/include/unixshop.txt">
-      </div>
-    </div>
-
-  <br class="ac">
-
- <#include "/include/zprava.txt">
- <@lib.showMessages/>
-
- <#list ARTICLES as rel>
-  <@lib.showArticle rel, "CZ_SHORT"/>
-  <@lib.separator double=!rel_has_next/>
- </#list>
-
- <p>
-  <a href="/History?type=articles&from=${ARTICLES?size}&count=10" title="Dal¹í"><img src="/images/site2/older.gif" alt="Star¹í èlánky"></a>
- </p>
+<div class="st_uprostred">
+    <a href="/History?type=articles&amp;from=${ARTICLES?size}&amp;count=10">Star¹í èlánky</a>
+</div>
 
 <#flush>
 
-
 <#if FORUM?exists>
- <table width="99%" cellspacing="0" cellpadding="0" border="0" class="hpforum" align="center">
-  <tr>
-   <th colspan="3">
-    <strong><a href="/diskuse.jsp" title="Celé diskusní fórum" class="menu">Diskusní fórum</a></strong>
-    <a href="/diskuse.jsp" title="Celé diskusní fórum">
-    </a>
-   </th>
-  </tr>
-  <tr>
-   <td><b>Dotaz</b></td>
-   <td align="center"><b>Reakcí</b></td>
-   <td align="right"><b>Poslední</b></td>
-  </tr>
-  <#list FORUM.data as diz>
-   <tr bgcolor="#FFFFFF" onmouseover="javascript:style.backgroundColor='#EFEFEF'" onmouseout="javascript:style.backgroundColor='#FFFFFF'">
-    <td>
-     <a href="/forum/show/${diz.relationId}">${TOOL.limit(TOOL.xpath(diz.discussion,"data/title"),60," ..")}</a>
-    </td>
-    <td align="center">${diz.responseCount}</td>
-    <td align="right">${DATE.show(diz.updated,"CZ_SHORT")}</td>
-   </tr>
-   <tr><td colspan="3" class="nopad"><@lib.separator double=!diz_has_next /></td></tr>
-  </#list>
-   <tr>
-    <td colspan="3" align="right" class="nopad">
-	 <a href="/diskuse.jsp" class="sheet">Zobrazit diskusní fórum (polo¾it dotaz)</a>
-	 <a href="/History?type=discussions&from=${FORUM.nextPage.row}&count=20" class="sheet">Zobrazit star¹í dotazy</a>
-	</td>
-   </tr>
- </table>
+    <div class="ds">
+        <h1 class="st_nadpis"><a href="/diskuse.jsp" title="Celé diskusní fórum">Diskusní fórum</a></h1>
+
+        <table>
+        <thead>
+            <tr>
+                <td class="td01">Dotaz</td>
+                <td class="td02">Reakcí</td>
+                <td class="td03">Poslední</td>
+            </tr>
+        </thead>
+        <tbody>
+        <#list FORUM.data as diz>
+            <tr onmouseover="javascript:style.backgroundColor='#F7F7F7'" onmouseout="javascript:style.backgroundColor='#FFFFFF'">
+                <td class="td01"><a href="/forum/show/${diz.relationId}">${TOOL.limit(TOOL.xpath(diz.discussion,"data/title"),60," ..")}</a></td>
+                <td class="td02">${diz.responseCount}</td>
+                <td class="td03">${DATE.show(diz.updated,"CZ_SHORT")}</td>
+            </tr>
+        </#list>
+        </tbody>
+        </table>
+    </div>
+    <ul>
+        <li><a href="/diskuse.jsp">Polo¾it dotaz</a>
+        <li><a href="/History?type=discussions&amp;from=${FORUM.nextPage.row}&amp;count=20">Star¹í dotazy</a>
+    </ul>
+</#if>
+
+<#if IS_INDEX?exists>
+
+<div class="st_nad_rozc"><div class="st_rozc">
+    <h1 class="st_nadpis">Rozcestník</h1>
+	<div class="s"><div class="s_sekce"><div class="rozc">
+    <table>
+    <#list TOOL.createServers([1,13,12,3,2,5]) as server>
+        <#if server_index % 3 = 0><tr><#assign open=true></#if>
+        <td>
+        <a class="server" href="${server.url}">${server.name}</a>
+            <ul>
+            <#assign linky = TOOL.sublist(SORT.byDate(LINKS[server.name],"DESCENDING"),0,3)>
+            <#list linky as link>
+                <li><a href="${link.url}">${link.text}</a></li>
+            </#list>
+            </ul>
+        </td>
+        <#if server_index % 3 = 2></tr><#assign open=false></#if>
+    </#list>
+    <#if open></tr></#if>
+    </table>
+	</div></div></div>
+</div></div>
 
 </#if>
-  </div>
 
 <#include "../footer.ftl">
