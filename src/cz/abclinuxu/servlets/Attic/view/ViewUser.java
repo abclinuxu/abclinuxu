@@ -113,7 +113,7 @@ public class ViewUser extends AbcServlet {
      */
     protected String handleLogin2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         if ( ctx.get(VAR_USER)!=null )
-            return VariantTool.selectTemplate(request,ctx,"ViewIndex","show");
+            return VariantTool.selectTemplate(request,ctx,"ViewUser","profile");
         else
             return VariantTool.selectTemplate(request,ctx,"EditUser","login");
     }
