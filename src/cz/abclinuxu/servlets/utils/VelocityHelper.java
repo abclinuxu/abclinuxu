@@ -7,8 +7,7 @@
 package cz.abclinuxu.servlets.utils;
 
 import cz.abclinuxu.data.*;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.PersistanceException;
+import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.utils.Sorters;
 import org.dom4j.Document;
@@ -110,13 +109,6 @@ public class VelocityHelper {
         if ( node!=null ) value = node.getText();
 
         return value;
-    }
-
-    /**
-     * Converts string to encoding, which is best for servlets
-     */
-    private String normalizeEncoding(String in) {
-        return in;
     }
 
     /**
@@ -225,14 +217,7 @@ public class VelocityHelper {
      * in class Sorters. Ascending order.
      */
     public List sortByDateAscending(List list) throws PersistanceException {
-        for (Iterator iter = list.iterator(); iter.hasNext();) {
-            GenericObject obj = (GenericObject) iter.next();
-            if ( obj instanceof Relation ) {
-                sync(((Relation)obj).getChild());
-            } else {
-                sync(obj);
-            }
-        }
+        sync(list);
         Sorters.sortByDate(list,true);
         return list;
     }
@@ -242,16 +227,58 @@ public class VelocityHelper {
      * in class Sorters. Descending order.
      */
     public List sortByDateDescending(List list) throws PersistanceException {
-        for (Iterator iter = list.iterator(); iter.hasNext();) {
-            GenericObject obj = (GenericObject) iter.next();
-            if ( obj instanceof Relation ) {
-                sync(((Relation)obj).getChild());
-            } else {
-                sync(obj);
-            }
-        }
+        sync(list);
         Sorters.sortByDate(list,false);
         return list;
+    }
+
+    /**
+     * Sorts list of generic objects by id in ascending order. Details in class Sorters.
+     */
+    public List sortByIdAscending(List list) {
+        Sorters.sortById(list,true);
+        return list;
+    }
+
+    /**
+     * Sorts list of generic objects by id in descending order. Details in class Sorters.
+     */
+    public List sortByIdDescending(List list) {
+        Sorters.sortById(list,false);
+        return list;
+    }
+
+    /**
+     * Sorts list of generic objects by id in ascending order. Details in class Sorters.
+     */
+    public List sortByIdAscending(Set set) {
+        List list = new ArrayList(set);
+        Sorters.sortById(list,true);
+        return list;
+    }
+
+    /**
+     * Sorts list of generic objects by id in descending order. Details in class Sorters.
+     */
+    public List sortByIdDescending(Set set) {
+        List list = new ArrayList(set);
+        Sorters.sortById(list,false);
+        return list;
+    }
+
+    /**
+     * @return sublist of list, starting at <code>start</code> position and
+     * having maximum <code>count</code> items. List can be shortened, if
+     * IndexOutOfBounds would be thrown. It may even return null, if result
+     * is empty.
+     */
+    public List sublist(List list, int start, int count) {
+        if ( list==null ) return null;
+        if ( start>=list.size() ) return null;
+
+        int end = start+count;
+        if ( end>=list.size() ) end = list.size();
+        return list.subList(start,end);
     }
 
     /**
@@ -326,5 +353,33 @@ public class VelocityHelper {
      */
     public void sync(GenericObject obj) throws PersistanceException {
         if ( ! obj.isInitialized() ) PersistanceFactory.getPersistance().synchronize(obj);
+    }
+
+    /**
+     * Synchronizes objects in list.
+     */
+    public void sync(List list) throws PersistanceException {
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        for (Iterator iter = list.iterator(); iter.hasNext();) {
+            GenericObject obj = (GenericObject) iter.next();
+            if ( obj instanceof Relation ) {
+                persistance.synchronize(((Relation)obj).getChild());
+            } else {
+                persistance.synchronize(obj);
+            }
+        }
+    }
+
+    /**
+     * It is not possible directly instantiate object in Velocity. This method
+     * is a workaround for this. Pass classname and id and it will return you new instance
+     * of selected class or null, if class name was not recognized.
+     */
+    public GenericObject instantiate(String className, int id) {
+        if ( className.equalsIgnoreCase("Category") ) return new Category(id);
+        if ( className.equalsIgnoreCase("Server") ) return new Server(id);
+        if ( className.equalsIgnoreCase("Poll") ) return new Poll(id);
+        return null;
     }
 }

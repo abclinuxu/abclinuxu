@@ -28,6 +28,17 @@ public class Sorters {
     }
 
     /**
+     * Sorts objects by their id. If object is a relatiion, than it is
+     * sorted by its child's id. Objects doesn't need to be initialized.
+     * <p>This comparator is not consistent with equals.
+     * @param <code>ascendingOrder</code> Set it to true, if you wish list to be
+     * sorted in ascending order.
+     */
+    public static void sortById(List objects, boolean ascendingOrder) {
+        Collections.sort(objects, new IdComparator(ascendingOrder));
+    }
+
+    /**
      * Comparator for GenericObjects, which compares them by Updated or Created
      * field. If object doesn't define updated field or it is equal to null,
      * it is considered as more new.
@@ -78,6 +89,45 @@ public class Sorters {
             if ( obj instanceof Link ) return ((Link)obj).getUpdated();
             if ( obj instanceof Poll ) return ((Poll)obj).getCreated();
             return null;
+        }
+    }
+
+    /**
+     * Comparator for GenericObjects, which compares them by id.
+     */
+    static class IdComparator implements Comparator, Serializable {
+        boolean ascendingOrder;
+
+        public IdComparator(boolean ascendingOrder) {
+            this.ascendingOrder = ascendingOrder;
+        }
+
+        public int compare(Object o1, Object o2) {
+            GenericObject a = (GenericObject) o1, b = (GenericObject) o2;
+            if ( a instanceof Relation ) a = ((Relation)a).getChild();
+            if ( b instanceof Relation ) b = ((Relation)b).getChild();
+
+            int i1 = a.getId();
+            int i2 = b.getId();
+
+            if ( i1==i2 ) return 0;
+            return signum(i1<i2);
+        }
+
+        /**
+         * Helper method, which follows user's requested order.<p>
+         * <table>
+         * <tr><tr>ascendingOrder</tr><td>true</td><td>false</td></tr>
+         * <tr>firstIsSmaller is true<td></td><td>-1</td><td>+1</td></tr>
+         * <tr>firstIsSmaller is false<td></td><td>+1</td><td>-1</td></tr>
+         * </table>
+         */
+        int signum(boolean firstIsSmaller) {
+            if ( ascendingOrder ) {
+                return ( firstIsSmaller )? -1:1;
+            } else {
+                return ( firstIsSmaller )? 1:-1;
+            }
         }
     }
 }

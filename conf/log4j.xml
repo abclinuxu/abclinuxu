@@ -10,7 +10,7 @@
 	</appender>
 
 	<appender name="FILE" class="org.apache.log4j.FileAppender">
-           <param name="File" value="/home/literakl/java/tomcat/webapps/ROOT/logs/abc.log" />
+           <param name="File" value="/home/literakl/tomcat/webapps/ROOT/logs/abc.log" />
 	       <layout class="org.apache.log4j.PatternLayout">
              <param name="ConversionPattern" value="%d %-5p %C{1} - %m%n"/>
            </layout>
