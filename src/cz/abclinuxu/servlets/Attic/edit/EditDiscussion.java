@@ -49,8 +49,7 @@ public class EditDiscussion extends AbcServlet {
 
     public static final String ACTION_ADD_DISCUSSION = "addDiz";
     public static final String ACTION_ADD_QUESTION = "addQuez";
-    public static final String ACTION_ADD_QUESTION_PREVIEW = "addQuez2";
-    public static final String ACTION_ADD_QUESTION_STEP3 = "addQuez3";
+    public static final String ACTION_ADD_QUESTION_STEP2 = "addQuez2";
     public static final String ACTION_ADD_COMMENT = "add";
     public static final String ACTION_ADD_COMMENT_STEP2 = "add2";
 
@@ -66,7 +65,7 @@ public class EditDiscussion extends AbcServlet {
             relation = (Relation) persistance.findById(relation);
             persistance.synchronize(relation.getChild());
             ctx.put(VAR_RELATION,relation);
-        } else throw new Exception("Chybí parametr relationId!");
+        } else if ( !action.equals(ACTION_ADD_QUESTION) ) throw new Exception("Chybí parametr relationId!");
 
         if ( action==null || action.equals(ACTION_ADD_DISCUSSION) ) {
             return actionAddDiscussion(request,ctx);
@@ -77,6 +76,10 @@ public class EditDiscussion extends AbcServlet {
         } else if ( action.equals(ACTION_ADD_COMMENT_STEP2) ) {
             return  actionAddComment2(request,response,ctx);
 
+        } else if ( action.equals(ACTION_ADD_QUESTION) ) {
+            return getTemplate("add/question.vm");
+        } else if ( action.equals(ACTION_ADD_QUESTION_STEP2) ) {
+            return actionAddQuestion2(request,response,ctx);
         }
 
         return getTemplate("add/response.vm");
@@ -233,6 +236,66 @@ public class EditDiscussion extends AbcServlet {
         persistance.create(reaction);
         Relation rel = new Relation(discussion,reaction,0);
         persistance.create(rel);
+
+        redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
+        return null;
+    }
+
+    /**
+     * creates question
+     */
+    protected Template actionAddQuestion2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        Relation relation = (Relation) ctx.get(VAR_RELATION);
+        User user = (User) ctx.get(AbcServlet.VAR_USER);
+        Item discussion = new Item(0,Item.DISCUSSION);
+
+        Document document = DocumentHelper.createDocument();
+        Element root = document.addElement("data");
+        discussion.setData(document);
+
+        boolean error = false;
+        String tmp = (String) params.get(PARAM_AUTHOR);
+        if ( user!=null ) {
+            discussion.setOwner(user.getId());
+        } else {
+            if ( tmp!=null && tmp.length()>0 ) {
+                root.addElement("author").setText(tmp);
+            } else {
+                addError(PARAM_AUTHOR,"Slu¹ností je se pøedstavit!",ctx,null);
+                error = true;
+            }
+        }
+
+        tmp = (String) params.get(PARAM_TITLE);
+        if ( tmp!=null && tmp.length()>0 ) {
+            root.addElement("title").setText(tmp);
+        } else {
+            addError(PARAM_TITLE,"Zadejte titulek va¹eho dotazu!",ctx,null);
+            error = true;
+        }
+
+        tmp = (String) params.get(PARAM_TEXT);
+        if ( tmp!=null && tmp.length()>0 ) {
+            tmp = TextUtils.fixLines(tmp);
+            root.addElement("text").setText(tmp);
+        } else {
+            addError(PARAM_TEXT,"Zadejte text va¹eho dotazu!",ctx,null);
+            error = true;
+        }
+
+        if ( error || params.get(PARAM_PREVIEW)!=null ) {
+            discussion.setInitialized(true);
+            discussion.setUpdated(new Date());
+            ctx.put(VAR_THREAD,discussion);
+            return getTemplate("add/question2.vm");
+        }
+
+        persistance.create(discussion);
+        Relation rel2 = new Relation(relation.getChild(),discussion,relation.getId());
+        persistance.create(rel2);
 
         redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
         return null;
