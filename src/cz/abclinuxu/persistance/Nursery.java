@@ -30,7 +30,7 @@ public class Nursery implements Configurable {
     protected static Nursery singleton;
     static {
         singleton = new Nursery();
-        ConfigurationManager.getConfigurator().configureMe(singleton);
+        ConfigurationManager.getConfigurator().configureAndRememberMe(singleton);
     }
 
     protected Map cache;
@@ -154,7 +154,7 @@ public class Nursery implements Configurable {
     /**
      * Callback used to configure your class from preferences.
      */
-    public void configure(Preferences prefs) throws ConfigurationException {
+    public synchronized void configure(Preferences prefs) throws ConfigurationException {
         int size = prefs.getInt(PREF_CACHE_SIZE, 100);
         log.info("Initializing with cache size "+size);
 //        cache = Collections.synchronizedMap(new LinkedHashMap(size, 1.0f, true));
