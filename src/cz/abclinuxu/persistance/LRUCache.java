@@ -55,6 +55,11 @@ public class LRUCache implements Cache,Configurable {
         try {
             GenericObject key = (GenericObject) obj.getClass().newInstance();
             key.synchronizeWith(obj);
+            if (key instanceof Relation) {
+                Relation rel = (Relation) key;
+                rel.setParent(rel.getParent().makeLightClone());
+                rel.setChild(rel.getChild().makeLightClone());
+            }
             data.addElement(key, key);
         } catch (Exception e) {
             log.error("Cloning failed",e);
@@ -67,7 +72,15 @@ public class LRUCache implements Cache,Configurable {
      * @return cached object
      */
     public GenericObject load(GenericObject obj) {
-        return (GenericObject) data.getElement(obj);
+        GenericObject result = (GenericObject) data.getElement(obj);
+        if (result!=null && result instanceof Relation) {
+            Relation rel = (Relation) result.makeLightClone();
+            rel.synchronizeWith(result);
+            rel.setParent(rel.getParent().makeLightClone());
+            rel.setChild(rel.getChild().makeLightClone());
+            result = rel;
+        }
+        return result;
     }
 
     /**
