@@ -35,14 +35,15 @@
 		<div class="cistic">&nbsp;</div>
 
 		<div class="za_mn">
-		  	<a href="http://prace.abclinuxu.cz" class="za_mn_odkaz">Práce</a><!--
-			--><a href="/clanky/dir/315" class="za_mn_odkaz">Èlánky</a><!--
+			<a href="/diskuse.jsp" class="za_mn_odkaz">Diskuse</a><!--
 			--><a href="/hardware" class="za_mn_odkaz">Hardware</a><!--
-			--><a href="/diskuse.jsp" class="za_mn_odkaz">Diskuse</a><!--
+			--><a href="/clanky" class="za_mn_odkaz">Èlánky</a><!--
+			--><a href="/blog" class="za_mn_odkaz">Blogy</a><!--
+		  	--><a href="http://prace.abclinuxu.cz" class="za_mn_odkaz">Práce</a><!--
 			--><a href="/slovnik" class="za_mn_odkaz">Slovník</a><!--
-			--><a href="/drivers" class="za_mn_odkaz">Ovladaèe</a><!--
 			--><a href="/download/abicko.jsp" class="za_mn_odkaz">Abíèko</a><!--
-			--><a href="/clanky/dir/250" class="za_mn_odkaz">Ankety</a>
+			--><a href="/clanky/dir/250" class="za_mn_odkaz">Ankety</a><!--
+			--><a href="/drivers" class="za_mn_odkaz">Ovladaèe</a>
 		</div>
 
 	</div>
@@ -52,7 +53,9 @@
 	<div class="hl">
     	<div class="hl_vpravo">
             <#if USER?exists>
-                U¾ivatel: <a href="${URL.noPrefix("/Profile/"+USER.id)}">${USER.name}</a> |
+                <a href="${URL.noPrefix("/Profile/"+USER.id)}">${USER.name}</a> |
+                <#assign blogName = TOOL.xpath(USER,"/data/settings/blog/@name")?default("UNDEF")>
+                <#if blogName!="UNDEF"><a href="/blog/${blogName}">Blog</a> |</#if>
                 <a href="${URL.noPrefix("/Profile/"+USER.id+"?action=myPage")}">Nastavení</a> |
                 <a href="${URL.noPrefix("/Index?logout=true")}">Odhlá¹ení</a> |
             <#else>
