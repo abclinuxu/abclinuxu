@@ -251,6 +251,24 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Finds relations, where child is record of specified type owned by given user.
+     * Parent relations (distinct) are returned.
+     * Use Qualifiers to set additional parameters.
+     * @return List of initialized relations
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findRecordParentRelationsByUserAndType(int user, int type, Qualifier[] qualifiers) {
+        if (qualifiers==null) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(relationsParentRecordByType);
+        sb.append(" and pridal=?");
+        List params = new ArrayList();
+        params.add(new Integer(type));
+        params.add(new Integer(user));
+        appendQualifiers(sb,qualifiers,params);
+        return loadRelations(sb.toString(),params);
+    }
+
+    /**
      * Counts relations, where child is record of specified type.
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
      */
@@ -271,6 +289,20 @@ public final class SQLTool implements Configurable {
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(new Integer(type));
+        return loadNumber(sb.toString(),params);
+    }
+
+    /**
+     * Counts relations, where child is record of specified type owned by given user. Operates on distinct set of parent.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public int countRecordParentRelationsByUserAndType(int user, int type) {
+        StringBuffer sb = new StringBuffer(relationsParentRecordByType);
+        sb.append(" and pridal=?");
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        params.add(new Integer(type));
+        params.add(new Integer(user));
         return loadNumber(sb.toString(),params);
     }
 

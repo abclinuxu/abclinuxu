@@ -116,8 +116,8 @@ public class History implements AbcAction {
         } else if ( VALUE_TYPE_HARDWARE.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
             if ( uid>0 ) {
-                data = sqlTool.findRecordRelationsWithUserAndType(uid, Record.HARDWARE, qualifiers);
-                total = sqlTool.countRecordRelationsWithUserAndType(uid, Record.HARDWARE);
+                data = sqlTool.findRecordParentRelationsByUserAndType(uid, Record.HARDWARE, qualifiers);
+                total = sqlTool.countRecordParentRelationsByUserAndType(uid, Record.HARDWARE);
             } else {
                 data = sqlTool.findRecordParentRelationsWithType(Record.HARDWARE, qualifiers);
                 total = sqlTool.countRecordParentRelationsWithType(Record.HARDWARE);
@@ -128,8 +128,8 @@ public class History implements AbcAction {
         } else if ( VALUE_TYPE_SOFTWARE.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
             if ( uid>0 ) {
-                data = sqlTool.findRecordRelationsWithUserAndType(uid, Record.SOFTWARE, qualifiers);
-                total = sqlTool.countRecordRelationsWithUserAndType(uid, Record.SOFTWARE);
+                data = sqlTool.findRecordParentRelationsByUserAndType(uid, Record.SOFTWARE, qualifiers);
+                total = sqlTool.countRecordParentRelationsByUserAndType(uid, Record.SOFTWARE);
             } else {
                 data = sqlTool.findRecordParentRelationsWithType(Record.SOFTWARE, qualifiers);
                 total = sqlTool.countRecordParentRelationsWithType(Record.SOFTWARE);
