@@ -132,6 +132,25 @@ public class MySqlPersistance extends Persistance {
      * Synchronizes changes in the object with the persistant storage.
      */
     public void updateObject(GenericObject obj) throws PersistanceException {
+        try {
+            if (obj instanceof Record) {
+                updateRecord((Record)obj);
+            } else if (obj instanceof Item) {
+                updateItem((Item)obj);
+            } else if (obj instanceof Category) {
+                updateCategory((Category)obj);
+            } else if (obj instanceof Data) {
+                updateData((Data)obj);
+            } else if (obj instanceof Link) {
+                updateLink((Link)obj);
+            } else if (obj instanceof Poll) {
+                updatePoll((Poll)obj);
+            } else if (obj instanceof User) {
+                updateUser((User)obj);
+            }
+        } catch (SQLException e) {
+            throw new PersistanceException("Nemohu ulozit zmeny v "+obj.toString()+" do databaze!",e);
+        }
     }
 
     /**
@@ -700,25 +719,199 @@ public class MySqlPersistance extends Persistance {
 
             org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)((PoolManPreparedStatement)statement).getNativePreparedStatement();
             user.setId((int)mm.getLastInsertID());
+        } catch ( SQLException e ) {
+            if ( e.getErrorCode()==1062 ) {
+                throw new PersistanceException("Prihlasovaci jmeno "+user.getLogin()+" je uz registrovano!");
+            } else throw e;
+        } finally {
+            releaseSQLConnection(con);
+        }
+    }
 
+    /**
+     * updates record in database
+     */
+    protected void updateRecord(Record record) throws PersistanceException, SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("update zaznam set data=? where cislo=?");
+            statement.setBytes(1,record.getData().getBytes());
+            statement.setInt(2,record.getId());
+
+            int result = statement.executeUpdate();
+            if ( result!=1 ) {
+                throw new PersistanceException("Nepodarilo se ulozit zmeny v "+record.toString()+" do databaze!");
+            }
+        } finally {
+            releaseSQLConnection(con);
+        }
+    }
+
+    /**
+     * updates item in database
+     */
+    protected void updateItem(Item item) throws PersistanceException, SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("update polozka set data=? where cislo=?");
+            statement.setBytes(1,item.getData().getBytes());
+            statement.setInt(2,item.getId());
+
+            int result = statement.executeUpdate();
+            if ( result!=1 ) {
+                throw new PersistanceException("Nepodarilo se ulozit zmeny v "+item.toString()+" do databaze!");
+            }
+        } finally {
+            releaseSQLConnection(con);
+        }
+    }
+
+    /**
+     * updates category in database
+     */
+    protected void updateCategory(Category category) throws PersistanceException, SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("update kategorie set data=?,verejny=? where cislo=?");
+            statement.setBytes(1,category.getData().getBytes());
+            statement.setBoolean(2,category.isOpen());
+            statement.setInt(3,category.getId());
+
+            int result = statement.executeUpdate();
+            if ( result!=1 ) {
+                throw new PersistanceException("Nepodarilo se ulozit zmeny v "+category.toString()+" do databaze!");
+            }
+        } finally {
+            releaseSQLConnection(con);
+        }
+    }
+
+    /**
+     * updates data in database
+     */
+    protected void updateData(Data data) throws PersistanceException, SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("update objekty set data=?,format=? where cislo=?");
+            statement.setBytes(1,data.getData());
+            statement.setString(2,data.getFormat());
+            statement.setInt(3,data.getId());
+
+            int result = statement.executeUpdate();
+            if ( result!=1 ) {
+                throw new PersistanceException("Nepodarilo se ulozit zmeny v "+data.toString()+" do databaze!");
+            }
+        } finally {
+            releaseSQLConnection(con);
+        }
+    }
+
+    /**
+     * updates link in database
+     */
+    protected void updateLink(Link link) throws PersistanceException, SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("update odkazy set server=?,nazev=?,url=?,trvaly=? where cislo=?");
+            statement.setInt(1,link.getServer());
+            statement.setString(2,link.getText());
+            statement.setString(3,link.getUrl());
+            statement.setBoolean(4,link.isFixed());
+            statement.setInt(5,link.getId());
+
+            int result = statement.executeUpdate();
+            if ( result!=1 ) {
+                throw new PersistanceException("Nepodarilo se ulozit zmeny v "+link.toString()+" do databaze!");
+            }
+        } finally {
+            releaseSQLConnection(con);
+        }
+    }
+
+    /**
+     * updates poll in database
+     */
+    protected void updatePoll(Poll poll) throws PersistanceException, SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("update anketa set otazka=?,vice=? where cislo=?");
+            statement.setString(1,poll.getText());
+            statement.setBoolean(2,poll.isMultiChoice());
+            statement.setInt(3,poll.getId());
+
+            int result = statement.executeUpdate();
+            if ( result!=1 ) {
+                throw new PersistanceException("Nepodarilo se ulozit zmeny v "+poll.toString()+" do databaze!");
+            }
+
+            PollChoice[] choices = poll.getChoices();
+            if ( choices==null || choices.length<2 ) {
+                throw new PersistanceException("Anketa musi mit nejmene dve volby!");
+            }
+
+            statement = con.prepareStatement("update anketa_data set volba=? where cislo=? and anketa=?");
+            for (int i = 0; i<choices.length; i++) {
+                PollChoice choice = choices[i];
+                statement.clearParameters();
+                statement.setString(1,choice.getText());
+                statement.setInt(2,i);
+                statement.setInt(3,poll.getId());
+                result = statement.executeUpdate();
+            }
+        } finally {
+            releaseSQLConnection(con);
+        }
+    }
+
+    /**
+     * updates user in database
+     */
+    protected void updateUser(User user) throws PersistanceException, SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("update uzivatel set login=?,jmeno=?,email=?,heslo=? where cislo=?");
+            statement.setString(1,user.getLogin());
+            statement.setString(2,user.getName());
+            statement.setString(3,user.getEmail());
+            statement.setString(4,user.getPassword());
+            statement.setInt(5,user.getId());
+
+            int result = statement.executeUpdate();
+            if ( result!=1 ) {
+                throw new PersistanceException("Nepodarilo se ulozit zmeny v "+user.toString()+" do databaze!");
+            }
         } finally {
             releaseSQLConnection(con);
         }
     }
 
     public static void main(String[] args) throws Exception {
-        User obj = new User(0);
-        obj.setLogin("literakl");
-        obj.setName("Test user");
-        obj.setPassword("test");
-        obj.setEmail("test@test");
+        User obj = new User(4);
 
         Persistance persistance = PersistanceFactory.getPersistance();
         int  i;
         long start = System.currentTimeMillis();
 
         for (i=0; i<1; i++ ) {
-            persistance.storeObject(obj);
+            obj = (User)persistance.loadObject(obj);
+            System.out.println("obj = " + obj.toString());
+            obj.setEmail("test@test.cz");
+            persistance.updateObject(obj);
+            obj = (User)persistance.loadObject(obj);
             System.out.println("obj = " + obj.toString());
         }
         long end = System.currentTimeMillis();
