@@ -329,7 +329,7 @@
 
   <servlet name="ViewUser">
     <action name="profile">
-      <mapping template="web" content="web/show/profile.vm">
+      <mapping template="web" content="/web/show/profile.ftl">
         <var name="TITLE" value="Profil" />
       </mapping>
     </action>

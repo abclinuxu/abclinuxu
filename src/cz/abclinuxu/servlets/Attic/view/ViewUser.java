@@ -6,15 +6,14 @@
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcVelocityServlet;
-import cz.abclinuxu.servlets.utils.VelocityHelper;
-import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
+import cz.abclinuxu.servlets.AbcFMServlet;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.utils.InstanceUtils;
-import org.apache.velocity.Template;
-import org.apache.velocity.context.Context;
+import cz.abclinuxu.utils.Tools;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,7 +22,7 @@ import java.util.*;
 /**
  * Profile of the user
  */
-public class ViewUser extends AbcVelocityServlet {
+public class ViewUser extends AbcFMServlet {
     public static final String PARAM_USER = "userId";
     public static final String PARAM_URL = "url";
 
@@ -36,38 +35,39 @@ public class ViewUser extends AbcVelocityServlet {
     public static final String ACTION_LOGIN2 = "login2";
     public static final String ACTION_SEND_EMAIL = "sendEmail";
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        init(request,response,ctx);
-
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
-        String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
+    /**
+     * Put your processing here. Return null, if you have redirected browser to another URL.
+     * @param env holds all variables, that shall be available in template, when it is being processed.
+     * It may also contain VAR_USER and VAR_PARAMS objects.
+     * @return name of template to be executed or null
+     */
+    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        String action = (String) params.get(PARAM_ACTION);
 
         if ( action==null ) {
-            return handleProfile(request,ctx);
+            return handleProfile(request,env);
         }
 
         if ( action.equals(ACTION_LOGIN) ) {
-            return handleLogin(request,ctx);
+            return handleLogin(request,env);
         } else if ( action.equals(ACTION_LOGIN2) ) {
-            return handleLogin2(request,response,ctx);
-        } else if ( action.equals(ACTION_SEND_EMAIL) ) {
-            return handleEmail(request,response,ctx);
+            return handleLogin2(request,response,env);
         }
 
-        return handleProfile(request,ctx);
+        return handleProfile(request,env);
     }
 
     /**
      * shows profile for selected user
      */
-    protected String handleProfile(HttpServletRequest request, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+    protected String handleProfile(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
-        VelocityHelper helper = new VelocityHelper();
 
         User user = (User) InstanceUtils.instantiateParam(PARAM_USER,User.class,params);
         persistance.synchronize(user);
-        ctx.put(VAR_PROFILE,user);
+        env.put(VAR_PROFILE,user);
 
         Record record = new Record();
         record.setType(Record.HARDWARE);
@@ -83,8 +83,8 @@ public class ViewUser extends AbcVelocityServlet {
             rel.setChild((GenericObject) iter.next());
             hw.add(persistance.findByExample(rel)[0]);
         }
-        helper.sync(hw);
-        ctx.put(VAR_HW_RECORDS,hw);
+        Tools.sync(hw);
+        env.put(VAR_HW_RECORDS,hw);
 
         record.setType(Record.SOFTWARE);
         found = persistance.findByExample(list,null);
@@ -94,44 +94,31 @@ public class ViewUser extends AbcVelocityServlet {
             rel.setChild((GenericObject) iter.next());
             sw.add(persistance.findByExample(rel)[0]);
         }
-        helper.sync(sw);
-        ctx.put(VAR_SW_RECORDS,sw);
+        Tools.sync(sw);
+        env.put(VAR_SW_RECORDS,sw);
 
-        return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewUser","profile");
+        return FMTemplateSelector.select("ViewUser","profile",env,request);
     }
 
     /**
      * shows login screen
      */
-    protected String handleLogin(HttpServletRequest request, Context ctx) throws Exception {
-        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
+    protected String handleLogin(HttpServletRequest request, Map env) throws Exception {
+        return FMTemplateSelector.select("EditUser","login",env,request);
     }
 
     /**
      * handle login submit
      * @todo investigate, why after log in there is a login dialog
      */
-    protected String handleLogin2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        if ( ctx.get(VAR_USER)!=null ) {
-            Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
-            String id = new Integer(((User)ctx.get(VAR_USER)).getId()).toString();
+    protected String handleLogin2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        if ( env.get(Constants.VAR_USER)!=null ) {
+            Map params = (Map) env.get(Constants.VAR_PARAMS);
+            String id = new Integer(((User)env.get(Constants.VAR_USER)).getId()).toString();
             params.put(PARAM_USER,id);
-            return handleProfile(request,ctx);
+            return handleProfile(request,env);
         }
         else
-            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-    }
-
-    /**
-     * sending email address
-     */
-    protected String handleEmail(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
-        User user = (User) InstanceUtils.instantiateParam(PARAM_USER,User.class,params);
-        persistance.synchronize(user);
-        String url = "mailto:"+user.getEmail();
-        response.sendRedirect(url);
-        return null;
+            return FMTemplateSelector.select("EditUser","login",env,request);
     }
 }

@@ -30,6 +30,9 @@ import cz.abclinuxu.servlets.utils.UrlUtils;
 public abstract class AbcFMServlet extends HttpServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(AbcFMServlet.class);
 
+    /** holds action to be invoked */
+    public static final String PARAM_ACTION = "action";
+
     /** freemarker's main class */
     private Configuration config;
 
