@@ -699,7 +699,7 @@ public class Tools implements Configurable {
         sync(record);
         List nodes = record.getData().selectNodes("/data/comment");
         Discussion diz = new Discussion(nodes.size());
-        Map map = new HashMap(nodes.size()+1,1.0f);
+        Map map = new HashMap(nodes.size()/3, 0.9f);
 
         for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
             Element element = (Element) iter.next();
