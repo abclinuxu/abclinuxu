@@ -88,12 +88,12 @@ public class UpdateLinks extends TimerTask {
         definitions.put(new Server(SW),new ServerInfo("http://www.scienceworld.cz/sw.dat","Windows-1250",ServerInfo.TRAFIKA));
         definitions.put(new Server(UG),new ServerInfo("http://underground.cz/backend/czech.txt"));
         definitions.put(new Server(PENGUIN),new ServerInfo("http://www.penguin.cz/trafika.php3"));
-        definitions.put(new Server(WS),new ServerInfo("http://www.awdesign.cz/ws/ws.dat"));
-        definitions.put(new Server(KECZY),new ServerInfo("http://www.keczy.cz/index.php?headlines=czech"));
-        definitions.put(new Server(REBOOT),new ServerInfo("http://www.reboot.cz/reboot_lh.phtml"));
-        definitions.put(new Server(LINUXZONE),new ServerInfo("http://www.linuxzone.cz/export/last10.phtml"));
-        definitions.put(new Server(LINUXSK),new ServerInfo("http://www.linux.sk/backend.php",null,ServerInfo.RSS));
-        definitions.put(new Server(LDAP),new ServerInfo("http://www.ldap-obsession.sk/backend.php",null,ServerInfo.RSS));
+//        definitions.put(new Server(WS),new ServerInfo("http://www.awdesign.cz/ws/ws.dat"));
+//        definitions.put(new Server(KECZY),new ServerInfo("http://www.keczy.cz/index.php?headlines=czech"));
+//        definitions.put(new Server(REBOOT),new ServerInfo("http://www.reboot.cz/reboot_lh.phtml"));
+//        definitions.put(new Server(LINUXZONE),new ServerInfo("http://www.linuxzone.cz/export/last10.phtml"));
+//        definitions.put(new Server(LINUXSK),new ServerInfo("http://www.linux.sk/backend.php",null,ServerInfo.RSS));
+//        definitions.put(new Server(LDAP),new ServerInfo("http://www.ldap-obsession.sk/backend.php",null,ServerInfo.RSS));
         definitions.put(new Server(MANDRAKE),new ServerInfo("http://www.mandrake.cz/titles_abc.php"));
     }
 
@@ -131,8 +131,10 @@ public class UpdateLinks extends TimerTask {
             try {
                 synchronize(server,category,serverLinks);
             } catch (PersistanceException e) {
-                log.error("Cannot update links for server "+server+"!", e);
-            }
+                log.warn("Cannot update links for server "+server+"!", e);
+            } catch (Exception e) {
+                log.warn("Unknown exception caught!",e);
+	    }
         }
         log.debug("Finishing task "+getJobName());
     }

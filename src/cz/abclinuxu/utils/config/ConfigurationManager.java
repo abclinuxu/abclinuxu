@@ -18,8 +18,6 @@ public class ConfigurationManager {
      * from file specified by this system property.
      */
     public static final String PROPERTY_CONFIG_FILE = "abc.config";
-    /** last fallback value for reading preferences */
-    static final String DEFAULT_CONFIG_FILE = "/home/literakl/abc/source/conf/systemPrefs.xml";
 
     /** singleton */
     static Configurator configurator;
@@ -47,12 +45,8 @@ public class ConfigurationManager {
      */
     protected static synchronized void init() {
         if ( configurator!=null ) return;
-        String file = System.getProperty(PROPERTY_CONFIG_FILE,DEFAULT_CONFIG_FILE);
+        String file = System.getProperty(PROPERTY_CONFIG_FILE, null);
         Configurator aConfigurator = new SimpleConfigurator(file);
         setConfigurator(aConfigurator);
-    }
-
-    public static void main(String[] args) throws Exception {
-        SimpleConfigurator cfg = (SimpleConfigurator) getConfigurator();
     }
 }

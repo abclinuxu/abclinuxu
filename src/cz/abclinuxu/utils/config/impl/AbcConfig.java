@@ -25,7 +25,6 @@ public class AbcConfig implements Configurable {
     }
 
     public static final String PREF_DEPLOY_PATH = "deploy.path";
-    public static final String DEFAULT_DEPLOY_PATH = "/home/literakl/abc/deploy";
 
     static String deployPath;
 
@@ -33,7 +32,7 @@ public class AbcConfig implements Configurable {
      * Callback used to configure your class from preferences.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
-        deployPath = prefs.get(PREF_DEPLOY_PATH,DEFAULT_DEPLOY_PATH);
+        deployPath = prefs.get(PREF_DEPLOY_PATH, null);
     }
 
     /**

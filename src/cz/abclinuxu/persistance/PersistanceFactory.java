@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.prefs.Preferences;
 
-import org.apache.log4j.xml.DOMConfigurator;
 import org.logicalcobwebs.proxool.configuration.JAXPConfigurator;
 import org.logicalcobwebs.proxool.ProxoolException;
 import cz.abclinuxu.utils.config.Configurable;
@@ -27,11 +26,12 @@ import cz.abclinuxu.utils.Misc;
 public class PersistanceFactory implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(PersistanceFactory.class);
 
-    public static final String PREF_DEFAULT_URL = "url";
+    public static final String PREF_DEFAULT_URL = "url.live";
+    public static final String PREF_DEFAULT_TEST_URL = "url.test";
     public static final String PREF_PROXOOL = "proxool";
 
-    public static String defaultUrl = "jdbc:mysql://localhost/abc?user=literakl&password=lkaretil&useUnicode=true&characterEncoding=ISO-8859-2";
-    public static String defaultTestUrl = "jdbc:mysql://localhost/unit?user=literakl&password=lkaretil&useUnicode=true&characterEncoding=ISO-8859-2";
+    public static String defaultUrl = null;
+    public static String defaultTestUrl = null;
 
     static Map instances;
     static {
@@ -87,17 +87,16 @@ public class PersistanceFactory implements Configurable {
     }
 
     /**
-     * Sets default persistance URL.
-     */
-    public static void setDefaultUrl(String defaultUrl) {
-        PersistanceFactory.defaultUrl = defaultUrl;
-    }
-
-    /**
      * Callback used to configure your class from preferences.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
-        PersistanceFactory.defaultUrl = prefs.get(PREF_DEFAULT_URL,defaultUrl);
+        defaultUrl = prefs.get(PREF_DEFAULT_URL,null);
+        defaultTestUrl = prefs.get(PREF_DEFAULT_TEST_URL,null);
+
+        if ( defaultUrl==null ) {
+            log.fatal("You must provide valid JDBC URL!");
+            System.exit(1);
+        }
 
         String tmp = prefs.get(PREF_PROXOOL,null);
         if ( ! Misc.empty(tmp) ) {

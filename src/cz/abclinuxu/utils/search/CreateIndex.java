@@ -9,7 +9,6 @@ package cz.abclinuxu.utils.search;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.view.Search;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.utils.config.Configurable;
@@ -20,12 +19,8 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.xml.DOMConfigurator;
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
-import org.logicalcobwebs.proxool.configuration.JAXPConfigurator;
-import org.logicalcobwebs.proxool.ProxoolException;
 
 import java.util.*;
 import java.util.prefs.Preferences;
@@ -38,7 +33,6 @@ public class CreateIndex implements Configurable {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(CreateIndex.class);
 
     public static final String PREF_PATH = "path";
-    public static final String DEFAULT_PATH = "/home/literakl/abc/deploy/WEB-INF/index";
 
     static String indexPath;
 
@@ -108,7 +102,7 @@ public class CreateIndex implements Configurable {
      * @param relation relation, where to start. It must be already synchronized.
      * @param urlPrefix prefix for URL for this subtree
      *
-     * @todo why articles are stored under both article and make?
+     * todo why articles are stored under both article and make?
      */
     void makeIndexOn(Relation relation, String urlPrefix) throws Exception {
         Integer id = new Integer(relation.getId());
@@ -245,7 +239,7 @@ public class CreateIndex implements Configurable {
             // let's use parent's title, if this is discussion to article
             GenericObject parent = relation.getParent();
             if ( parent instanceof Item && ((Item)parent).getType()==Item.ARTICLE ) {
-                node = (Element) ((Item)parent).getData().selectSingleNode("data/name");
+                node = ((Item)parent).getData().selectSingleNode("data/name");
                 if ( node!=null )
                     title = "Diskuse k èlánku " + node.getText();
             }
@@ -392,7 +386,7 @@ public class CreateIndex implements Configurable {
      * Callback used to configure your class from preferences.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
-        indexPath = prefs.get(PREF_PATH,DEFAULT_PATH);
+        indexPath = prefs.get(PREF_PATH, null);
     }
 
     /**

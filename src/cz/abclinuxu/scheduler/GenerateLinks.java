@@ -10,7 +10,6 @@ import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.view.ShowOlder;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
@@ -19,7 +18,6 @@ import cz.abclinuxu.utils.config.impl.AbcConfig;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.File;
 import java.util.*;
 import java.util.prefs.Preferences;
 
@@ -31,13 +29,9 @@ public class GenerateLinks extends TimerTask implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(GenerateLinks.class);
 
     public static final String PREF_TRAFIKA = "trafika";
-    public static final String DEFAULT_TRAFIKA = "abc.dat";
     public static final String PREF_RSS = "rss";
-    public static final String DEFAULT_RSS = "abc.rss";
     public static final String PREF_ANNECA = "anneca";
-    public static final String DEFAULT_ANNECA = "abc2.dat";
     public static final String PREF_SZM = "szm";
-    public static final String DEFAULT_SZM = "abc_szm_sk.xml";
 
     String trafika, anneca, rss, szm;
 
@@ -69,10 +63,10 @@ public class GenerateLinks extends TimerTask implements Configurable {
      * Callback used to configure your class from preferences.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
-        trafika = prefs.get(PREF_TRAFIKA,DEFAULT_TRAFIKA);
-        anneca = prefs.get(PREF_ANNECA,DEFAULT_ANNECA);
-        rss = prefs.get(PREF_RSS,DEFAULT_RSS);
-        szm = prefs.get(PREF_SZM,DEFAULT_SZM);
+        trafika = prefs.get(PREF_TRAFIKA, null);
+        anneca = prefs.get(PREF_ANNECA, null);
+        rss = prefs.get(PREF_RSS, null);
+        szm = prefs.get(PREF_SZM, null);
     }
 
     public void run() {

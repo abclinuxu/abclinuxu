@@ -28,11 +28,8 @@ public class WeeklyEmail extends TimerTask implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(WeeklyEmail.class);
 
     public static final String PREF_SUBJECT = "subject";
-    public static final String DEFAULT_SUBJECT = "tydenni souhrn clanku";
     public static final String PREF_SENDER = "from";
-    public static final String DEFAULT_SENDER = "admin@abclinuxu.cz";
     public static final String PREF_TEMPLATE = "template";
-    public static final String DEFAULT_TEMPLATE = "/mail/weekly.ftl";
 
     public static final String VAR_ARTICLES = "ARTICLES";
     public static final String VAR_AUTHORS = "AUTHORS";
@@ -122,9 +119,9 @@ public class WeeklyEmail extends TimerTask implements Configurable {
      * Configures this instance.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
-        subject = prefs.get(PREF_SUBJECT,DEFAULT_SUBJECT);
-        sender = prefs.get(PREF_SENDER,DEFAULT_SENDER);
-        template = prefs.get(PREF_TEMPLATE,DEFAULT_TEMPLATE);
+        subject = prefs.get(PREF_SUBJECT, null);
+        sender = prefs.get(PREF_SENDER, null);
+        template = prefs.get(PREF_TEMPLATE, null);
     }
 
     public static void main(String[] args) {

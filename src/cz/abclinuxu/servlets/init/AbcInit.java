@@ -17,8 +17,6 @@ import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.Tools;
-import cz.abclinuxu.utils.config.ConfigurationManager;
-import cz.abclinuxu.utils.config.Configurator;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateExceptionHandler;
@@ -44,7 +42,6 @@ public class AbcInit extends HttpServlet {
 
     static {
         scheduler = new Timer(true);
-        Configurator configurator = ConfigurationManager.getConfigurator();
     }
 
     public void init() throws ServletException {
@@ -55,7 +52,6 @@ public class AbcInit extends HttpServlet {
 
         String tmp = getInitParameter("TEMPLATES");
         try {
-//            VelocityTemplateSelector.initialize(path+tmp);
             FMTemplateSelector.initialize(path+tmp);
         } catch (Exception e) {
             log.fatal("Nemohu inicializovat systém ¹ablon!", e);

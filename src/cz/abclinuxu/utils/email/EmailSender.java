@@ -34,7 +34,6 @@ public class EmailSender implements Configurable {
 
     /** preferences key for SMTP server, we shall used to send emails */
     public static final String PREF_SMTP_SERVER = "smtp.server";
-    public static final String DEFAULT_SMTP_SERVER = "localhost";
 
     static {
         Configurator configurator = ConfigurationManager.getConfigurator();
@@ -185,6 +184,6 @@ public class EmailSender implements Configurable {
      * Callback used to configure your class from preferences.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
-        smtpServer = prefs.get(PREF_SMTP_SERVER,DEFAULT_SMTP_SERVER);
+        smtpServer = prefs.get(PREF_SMTP_SERVER, null);
     }
 }

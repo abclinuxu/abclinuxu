@@ -61,7 +61,8 @@
           <map/>
           <node name="PersistanceFactory">
             <map>
-              <entry key="url" value="proxool.abc"/>
+              <entry key="url.live" value="proxool.abc"/>
+              <entry key="url.test" value="jdbc:mysql://localhost/unit?user=literakl&password=lkaretil&useUnicode=true&characterEncoding=ISO-8859-2"/>
               <entry key="proxool" value="WEB-INF/conf/proxool.xml"/>
             </map>
           </node>

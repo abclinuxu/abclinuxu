@@ -30,7 +30,7 @@ public class SimpleConfigurator implements Configurator {
     /**
      * Initializes system preferences from file configurationFile.
      * If file doesn't exist or it cannot be read, this event will
-     * be logged and constructor will silently proceed.
+     * be logged and application will be halted.
      */
     public SimpleConfigurator(String file) {
         this.configurationFile = file;
@@ -46,9 +46,11 @@ public class SimpleConfigurator implements Configurator {
             java.util.logging.Logger logger = java.util.logging.Logger.getLogger("java.util.prefs");
             logger.setLevel(java.util.logging.Level.OFF);
         } catch (IOException e) {
-            log.warn("Cannot read file '"+file+"'!",e);
+            log.fatal("Cannot read file '"+file+"'!",e);
+            System.exit(1);
         } catch (InvalidPreferencesFormatException e) {
-            log.warn("Preferences file '"+file+"' is corrupted!",e);
+            log.fatal("Preferences file '"+file+"' is corrupted!",e);
+            System.exit(1);
         } finally {
             try { if ( fis!=null) fis.close(); } catch (IOException e) { log.warn(e); }
         }

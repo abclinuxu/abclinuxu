@@ -27,35 +27,23 @@ public class UpdateKernel extends TimerTask implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(UpdateKernel.class);
 
     public static final String PREF_FILE = "file";
-    public static final String DEFAULT_FILE = "kernel.txt";
     public static final String PREF_SERVER = "server";
-    public static final String DEFAULT_SERVER = "finger.kernel.org";
     public static final String PREF_REGEXP_STABLE = "regexp.stable";
     public static final String PREF_URL_STABLE = "url.stable";
-    public static final String DEFAULT_REGEXP_STABLE = "(The latest stable[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
     public static final String PREF_REGEXP_STABLE_PRE = "regexp.stable.pre";
-    public static final String DEFAULT_REGEXP_STABLE_PRE = "(The latest prepatch for the stable[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
     public static final String PREF_REGEXP_DEVEL = "regexp.devel";
     public static final String PREF_URL_DEVEL = "url.devel";
-    public static final String DEFAULT_REGEXP_DEVEL = "(The latest beta[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
     public static final String PREF_REGEXP_DEVEL_PRE = "regexp.devel.pre";
-    public static final String DEFAULT_REGEXP_DEVEL_PRE = "(The latest prepatch for the beta[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
     public static final String PREF_REGEXP_22 = "regexp.22";
     public static final String PREF_URL_22 = "url.22";
-    public static final String DEFAULT_REGEXP_22 = "(The latest 2.2[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
     public static final String PREF_REGEXP_22_PRE = "regexp.22.pre";
-    public static final String DEFAULT_REGEXP_22_PRE = "(The latest prepatch for the 2.2[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
     public static final String PREF_REGEXP_20 = "regexp.20";
     public static final String PREF_URL_20 = "url.20";
-    public static final String DEFAULT_REGEXP_20 = "(The latest 2.0[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
     public static final String PREF_REGEXP_20_PRE = "regexp.20.pre";
-    public static final String DEFAULT_REGEXP_20_PRE = "(The latest prepatch for the 2.0[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
     public static final String PREF_REGEXP_AC = "regexp.ac";
     public static final String PREF_URL_AC = "url.ac";
-    public static final String DEFAULT_REGEXP_AC = "(The latest -ac[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
     public static final String PREF_REGEXP_DJ = "regexp.dj";
     public static final String PREF_URL_DJ = "url.dj";
-    public static final String DEFAULT_REGEXP_DJ = "(The latest -dj[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
 
     String fileName, server;
     String stable, stablePre, devel, develPre, old22, old22Pre, old20, old20Pre, ac, dj;
@@ -86,23 +74,23 @@ public class UpdateKernel extends TimerTask implements Configurable {
      * Callback used to configure your class from preferences.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
-        server = prefs.get(PREF_SERVER,DEFAULT_SERVER);
-        fileName = prefs.get(PREF_FILE,DEFAULT_FILE);
-        stable = prefs.get(PREF_REGEXP_STABLE,DEFAULT_REGEXP_STABLE);
+        server = prefs.get(PREF_SERVER, null);
+        fileName = prefs.get(PREF_FILE, null);
+        stable = prefs.get(PREF_REGEXP_STABLE, null);
         urlStable = prefs.get(PREF_URL_STABLE,null);
-        stablePre = prefs.get(PREF_REGEXP_STABLE_PRE,DEFAULT_REGEXP_STABLE_PRE);
-        devel = prefs.get(PREF_REGEXP_DEVEL,DEFAULT_REGEXP_DEVEL);
+        stablePre = prefs.get(PREF_REGEXP_STABLE_PRE, null);
+        devel = prefs.get(PREF_REGEXP_DEVEL, null);
         urlDevel = prefs.get(PREF_URL_DEVEL,null);
-        develPre = prefs.get(PREF_REGEXP_DEVEL_PRE,DEFAULT_REGEXP_DEVEL_PRE);
-        old22 = prefs.get(PREF_REGEXP_22,DEFAULT_REGEXP_22);
+        develPre = prefs.get(PREF_REGEXP_DEVEL_PRE, null);
+        old22 = prefs.get(PREF_REGEXP_22, null);
         url22 = prefs.get(PREF_URL_22,null);
-        old22Pre = prefs.get(PREF_REGEXP_22_PRE,DEFAULT_REGEXP_22_PRE);
-        old20 = prefs.get(PREF_REGEXP_20,DEFAULT_REGEXP_20);
+        old22Pre = prefs.get(PREF_REGEXP_22_PRE, null);
+        old20 = prefs.get(PREF_REGEXP_20, null);
         url20 = prefs.get(PREF_URL_20,null);
-        old20Pre = prefs.get(PREF_REGEXP_20_PRE,DEFAULT_REGEXP_20_PRE);
-        ac = prefs.get(PREF_REGEXP_AC,DEFAULT_REGEXP_AC);
+        old20Pre = prefs.get(PREF_REGEXP_20_PRE, null);
+        ac = prefs.get(PREF_REGEXP_AC, null);
         urlAC = prefs.get(PREF_URL_AC,null);
-        dj = prefs.get(PREF_REGEXP_DJ,DEFAULT_REGEXP_DJ);
+        dj = prefs.get(PREF_REGEXP_DJ, null);
         urlDJ = prefs.get(PREF_URL_DJ,null);
     }
 
@@ -153,10 +141,10 @@ public class UpdateKernel extends TimerTask implements Configurable {
                     ac = reAc.getParen(3);
                     continue;
                 }
-                if ( reDj.match(line) ) {
-                    dj = reDj.getParen(3);
-                    continue;
-                }
+//                if ( reDj.match(line) ) {
+//                    dj = reDj.getParen(3);
+//                    continue;
+//                }
             }
 
             if ( stable==null ) // sometimes finger returns an empty file
@@ -171,7 +159,7 @@ public class UpdateKernel extends TimerTask implements Configurable {
             writeTableRow(writer,"Øada 2.2:",url22,old22,old22Pre);
             writeTableRow(writer,"Øada 2.0:",url20,old20,old20Pre);
             writeTableRow(writer,"AC øada:",urlAC,ac,null);
-            writeTableRow(writer,"DJ øada:",urlDJ,dj,null);
+//            writeTableRow(writer,"DJ øada:",urlDJ,dj,null);
 
             writer.write("</table>");
             reader.close();

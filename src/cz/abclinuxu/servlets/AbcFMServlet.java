@@ -71,8 +71,8 @@ public abstract class AbcFMServlet extends HttpServlet {
             long endRender = System.currentTimeMillis();
             writer.flush();
 
-            if ( log.isInfoEnabled() )
-                log.info(templateName+"- execution: "+(endExec-startExec)+" ms, rendering: "+(endRender-startRender)+" ms.");
+            if ( log.isDebugEnabled() )
+                log.debug(templateName+"- execution: "+(endExec-startExec)+" ms, rendering: "+(endRender-startRender)+" ms.");
         } catch (Throwable e) {
             error(request,response,e);
         }

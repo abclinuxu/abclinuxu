@@ -11,7 +11,6 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Poll;
-import cz.abclinuxu.data.User;
 import cz.abclinuxu.AbcException;
 
 import java.util.prefs.Preferences;
@@ -29,31 +28,18 @@ public final class SQLTool implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(SQLTool.class);
 
     public static final String PREF_MAX_RECORD_CREATED_OF_ITEM = "max.record.created.of.item";
-    private static final String DEFAULT_MAX_RECORD_CREATED_OF_ITEM = "select max(vytvoreno) from relace R left join zaznam Z on Z.cislo=R.potomek where R.typ_predka='P' and R.predek=";
     public static final String PREF_RELATION_HARDWARE_BY_UPDATED = "hardware.relations.by.updated";
-    private static final String DEFAULT_RELATION_HARDWARE_BY_UPDATED = "select R.cislo from zaznam Z, relace R where typ=1 and Z.cislo=R.potomek and typ_potomka='Z' order by zmeneno desc";
     public static final String PREF_RELATION_SOFTWARE_BY_UPDATED = "software.relations.by.updated";
-    private static final String DEFAULT_RELATION_SOFTWARE_BY_UPDATED = "select R.cislo from zaznam Z, relace R where typ=2 and Z.cislo=R.potomek and typ_potomka='Z' order by zmeneno desc";
     public static final String PREF_RELATION_DRIVERS_BY_UPDATED = "driver.relations.by.updated";
-    private static final String DEFAULT_RELATION_DRIVERS_BY_UPDATED = "select R.cislo from polozka P, relace R where typ=5 and P.cislo=R.potomek and typ_potomka='P' order by zmeneno desc";
     public static final String PREF_RELATION_ARTICLES_BY_CREATED = "article.relations.by.created";
-    private static final String DEFAULT_RELATION_ARTICLES_BY_CREATED = "select R.cislo from polozka P, relace R where R.predchozi in (2,3,4,5,6,251,5324,8546,12448) and R.typ_potomka='P' and P.typ=2 and P.cislo=R.potomek and P.vytvoreno<now() order by vytvoreno desc";
     public static final String PREF_RELATION_DISCUSSIONS_BY_CREATED = "discussion.relations.by.created";
-    private static final String DEFAULT_RELATION_DISCUSSIONS_BY_CREATED = "select R.cislo from relace R left join polozka P on P.cislo=R.potomek where R.typ_potomka='P' and R.typ_predka='K' and P.typ=3 order by P.vytvoreno desc";
     public static final String PREF_COUNT_HARDWARE = "count.hardware.records";
-    private static final String DEFAULT_COUNT_HARDWARE = "select count(cislo) from zaznam where typ=1";
     public static final String PREF_COUNT_SOFTWARE = "count.software.records";
-    private static final String DEFAULT_COUNT_SOFTWARE = "select count(cislo) from zaznam where typ=2";
     public static final String PREF_COUNT_DRIVERS = "count.driver.items";
-    private static final String DEFAULT_COUNT_DRIVERS = "select count(cislo) from polozka where typ=5";
     public static final String PREF_MAX_POLL = "max.poll";
-    private static final String DEFAULT_MAX_POLL = "select max(cislo) from anketa";
     public static final String PREF_MAX_USER = "max.user";
-    private static final String DEFAULT_MAX_USER = "select max(cislo) from uzivatel";
     private static final String PREF_RELATION_ARTICLES_WITHIN_PERIOD = "article.relations.within.period";
-    private static final String DEFAULT_RELATION_ARTICLES_WITHIN_PERIOD = "select R.cislo from relace R left join polozka P on R.potomek=P.cislo where R.typ_potomka='P' and R.predchozi in (2,3,4,5,6,251,5324,8546,12448) and P.typ=2 and P.vytvoreno>? and P.vytvoreno<? order by vytvoreno asc";
     private static final String PREF_USERS_WITH_WEEKLY_MAIL = "users.email.weekly";
-    private static final String DEFAULT_USERS_WITH_WEEKLY_MAIL = "select cislo from uzivatel where data like '%<communication><email valid=\"yes\">%<weekly_summary>yes%'";
 
     private static SQLTool singleton;
 
@@ -330,18 +316,18 @@ public final class SQLTool implements Configurable {
      * Callback used to configure your class from preferences.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
-        maxPoll = prefs.get(PREF_MAX_POLL,DEFAULT_MAX_POLL);
-        maxUser = prefs.get(PREF_MAX_USER,DEFAULT_MAX_USER);
-        maxRecordCreatedOfItem = prefs.get(PREF_MAX_RECORD_CREATED_OF_ITEM,DEFAULT_MAX_RECORD_CREATED_OF_ITEM);
-        relationsArticleByCreated = prefs.get(PREF_RELATION_ARTICLES_BY_CREATED,DEFAULT_RELATION_ARTICLES_BY_CREATED);
-        relationsArticleWithinPeriod = prefs.get(PREF_RELATION_ARTICLES_WITHIN_PERIOD,DEFAULT_RELATION_ARTICLES_WITHIN_PERIOD);
-        relationsDiscussionByCreated = prefs.get(PREF_RELATION_DISCUSSIONS_BY_CREATED,DEFAULT_RELATION_DISCUSSIONS_BY_CREATED);
-        relationsDriverByUpdated = prefs.get(PREF_RELATION_DRIVERS_BY_UPDATED,DEFAULT_RELATION_DRIVERS_BY_UPDATED);
-        relationsHardwareByUpdated = prefs.get(PREF_RELATION_HARDWARE_BY_UPDATED,DEFAULT_RELATION_HARDWARE_BY_UPDATED);
-        relationsSoftwareByUpdated = prefs.get(PREF_RELATION_SOFTWARE_BY_UPDATED,DEFAULT_RELATION_SOFTWARE_BY_UPDATED);
-        countDrivers = prefs.get(PREF_COUNT_DRIVERS,DEFAULT_COUNT_DRIVERS);
-        countHardware = prefs.get(PREF_COUNT_HARDWARE,DEFAULT_COUNT_HARDWARE);
-        countSoftware = prefs.get(PREF_COUNT_SOFTWARE,DEFAULT_COUNT_SOFTWARE);
-        usersWithWeeklyMail = prefs.get(PREF_USERS_WITH_WEEKLY_MAIL,DEFAULT_USERS_WITH_WEEKLY_MAIL);
+        maxPoll = prefs.get(PREF_MAX_POLL,null);
+        maxUser = prefs.get(PREF_MAX_USER, null);
+        maxRecordCreatedOfItem = prefs.get(PREF_MAX_RECORD_CREATED_OF_ITEM, null);
+        relationsArticleByCreated = prefs.get(PREF_RELATION_ARTICLES_BY_CREATED, null);
+        relationsArticleWithinPeriod = prefs.get(PREF_RELATION_ARTICLES_WITHIN_PERIOD, null);
+        relationsDiscussionByCreated = prefs.get(PREF_RELATION_DISCUSSIONS_BY_CREATED, null);
+        relationsDriverByUpdated = prefs.get(PREF_RELATION_DRIVERS_BY_UPDATED, null);
+        relationsHardwareByUpdated = prefs.get(PREF_RELATION_HARDWARE_BY_UPDATED, null);
+        relationsSoftwareByUpdated = prefs.get(PREF_RELATION_SOFTWARE_BY_UPDATED, null);
+        countDrivers = prefs.get(PREF_COUNT_DRIVERS, null);
+        countHardware = prefs.get(PREF_COUNT_HARDWARE, null);
+        countSoftware = prefs.get(PREF_COUNT_SOFTWARE, null);
+        usersWithWeeklyMail = prefs.get(PREF_USERS_WITH_WEEKLY_MAIL, null);
     }
 }
