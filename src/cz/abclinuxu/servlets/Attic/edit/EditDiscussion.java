@@ -178,7 +178,6 @@ public class EditDiscussion extends AbcFMServlet {
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId());
-        // bug: after redirection the section doesn't contain new discussion, we must reload it to get it!
         return null;
     }
 
@@ -287,8 +286,6 @@ public class EditDiscussion extends AbcFMServlet {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId());
         return null;
-        // bug: after redirection discussion doesn't contain added reaction!
-        // first I have to add another reaction to display the previous one!
     }
 
     /**
@@ -299,7 +296,7 @@ public class EditDiscussion extends AbcFMServlet {
      */
     private Record getDiscussion(Map params, Item discussion, Persistance persistance) {
         Record record = (Record) InstanceUtils.instantiateParam(PARAM_THREAD,Record.class,params);
-        if ( record!=null )
+        if ( record!=null && record.getId()!=0 )
             record = (Record) persistance.findById(record);
         else {
             // Item.Discussion to Record.Discussion facade
