@@ -59,6 +59,7 @@ public class EditNews extends AbcFMServlet {
     public static final String PARAM_CONTENT = "content";
     public static final String PARAM_APPROVE = "approve";
     public static final String PARAM_MESSAGE = "message";
+    public static final String PARAM_PREVIEW = "preview";
 
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -112,6 +113,7 @@ public class EditNews extends AbcFMServlet {
         boolean canContinue = true;
         canContinue &= setContent(params, item, env);
         canContinue &= setCategory(params, item);
+
         if ( !canContinue )
             return actionAddStep1(request,env);
 
@@ -169,8 +171,12 @@ public class EditNews extends AbcFMServlet {
         boolean canContinue = true;
         canContinue &= setContent(params, item, env);
         canContinue &= setCategory(params, item);
-        if ( !canContinue )
-            return actionEditStep1(request,env);
+
+        if ( !canContinue || params.get(PARAM_PREVIEW)!=null) {
+            env.put(VAR_RELATION, relation);
+            env.put(VAR_CATEGORIES, NewsCategories.getAllCategories());
+            return FMTemplateSelector.select("EditNews", "edit", env, request);
+        }
 
         Element element = DocumentHelper.makeElement(item.getData(), "/data/approved_by");
         User user = (User) env.get(Constants.VAR_USER);

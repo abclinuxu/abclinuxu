@@ -9,25 +9,19 @@
 na zajímavou informaci, stránky èi událost ve svìtì Linuxu,
 Open Source, hnutí Free Software èi obecnì IT. Zprávièky
 neslou¾í pro soukromou inzerci èi oznámení, firemní oznámení
-musí být pøedem schváleny provozovatelem portálu.
+schvaluje i ma¾e pouze Leo¹ Literák.
 </p>
 
 <h2>Jak ji mám napsat?</h2>
 
-<p>Do textového pole napi¹te text va¹í zprávièky. Z HTML znaèek
-mù¾ete pou¾ívat napøíklad A pro odkazy, formátovací znaèky (FONT,
-italické èi tuèné písmo) a obrázky IMG jsou zapovìzeny. Doporuèujeme,
-aby zprávièka mìla aspoò dvì vìty a nejménì 20 slov, jinak bude
-pøíli¹ krátká a nebude vypadat hezky. Sna¾te se podat ètenáøùm dostatek
-informací, aby shledali va¹i zprávièku u¾iteènou. Na druhou stranu
-nepi¹te romány, jeden odstavec vìt¹inou bohatì staèí.
-</p>
+<p>Zprávièka by mìla obsahovat pouze text bez formátování, z HTML znaèek
+je povolen jen odkaz a pøípadnì paragraf. Formátovací znaèky (font,
+italické èi tuèné písmo) a obrázky jsou zapovìzeny.
+Pokud u¾ivatel zvolil nevhodnou kategorii, vyberte jinou.</p>
 
-<p>Po sepsání textu zprávièky si vyberte kategorii, do které
-bude zprávièka zaøazena. Buïte prosím pøesní, pøidáte tak
-va¹í zprávièce na kvalitì. U¾ivatelé pak budou moci pou¾ívat
-filtry pøi vyhledávání.
-</p>
+<h1>Náhled</h1>
+
+<#call showNews(RELATION)>
 
 <form action="${URL.make("/EditItem")}" method="POST">
  <table cellpadding="5" border="0">
@@ -56,7 +50,10 @@ filtry pøi vyhledávání.
   </tr>
   <tr>
    <td>&nbsp;</td>
-   <td><input type="submit" value="Schválit"></td>
+   <td>
+    <input name="preview" type="submit" value="Náhled">
+    <input type="submit" value="Schválit">
+   </td>
   </tr>
  </table>
  <input type="hidden" name="action" value="edit2">
