@@ -26,6 +26,7 @@ import org.dom4j.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.Iterator;
 
 /**
  * Class for removing relations or creating links.
@@ -37,17 +38,25 @@ public class EditRelation extends AbcFMServlet {
     public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_PREFIX = "prefix";
+    public static final String PARAM_TYPE = "type";
     public static final String PARAM_SELECTED = SelectRelation.PARAM_SELECTED;
 
     public static final String VAR_CURRENT = "CURRENT";
     public static final String VAR_SELECTED = "SELECTED";
     public static final String VAR_PARENTS = "PARENTS";
 
+    public static final String VALUE_DISCUSSIONS = "discussions";
+    public static final String VALUE_MAKES = "makes";
+    public static final String VALUE_ARTICLES = "articles";
+    public static final String VALUE_CATEGORIES = "categories";
+
     public static final String ACTION_LINK = "add";
     public static final String ACTION_LINK_STEP2 = "add2";
     public static final String ACTION_REMOVE = "remove";
     public static final String ACTION_REMOVE_STEP2 = "remove2";
     public static final String ACTION_MOVE = "move";
+    public static final String ACTION_MOVE_ALL = "moveAll";
+    public static final String ACTION_MOVE_ALL_STEP2 = "moveAll2";
 
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -74,6 +83,18 @@ public class EditRelation extends AbcFMServlet {
             if ( !user.hasRole(Roles.CATEGORY_ADMIN) )
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             return actionLinkStep2(request, response, env);
+        }
+
+        if ( action.equals(ACTION_MOVE_ALL) ) {
+            if ( !user.hasRole(Roles.CATEGORY_ADMIN) )
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+            return FMTemplateSelector.select("EditRelation", "moveAll", env, request);
+        }
+
+        if ( action.equals(ACTION_MOVE_ALL_STEP2) ) {
+            if ( !user.hasRole(Roles.CATEGORY_ADMIN) )
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+            return actionMoveAll(request, response, env);
         }
 
         GenericObject child = relation.getChild();
@@ -240,6 +261,53 @@ public class EditRelation extends AbcFMServlet {
         return null;
     }
 
+    /**
+     * Called, when user selects destination in SelectRelation. It replaces parent in relation with child
+     * in destination.
+     */
+    protected String actionMoveAll(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+        User user = (User) env.get(Constants.VAR_USER);
+        String type = (String) params.get(PARAM_TYPE);
+
+        Relation relation = (Relation) env.get(VAR_CURRENT);
+        persistance.synchronize(relation.getChild());
+        Relation destination = (Relation) InstanceUtils.instantiateParam(PARAM_SELECTED, Relation.class, params);
+        persistance.synchronize(destination);
+
+        for ( Iterator iter = relation.getChild().getContent().iterator(); iter.hasNext(); ) {
+            Relation childRelation = (Relation) iter.next();
+            GenericObject child = childRelation.getChild();
+            persistance.synchronize(child);
+            boolean move = false;
+            if (child instanceof Item) {
+                if (VALUE_ARTICLES.equals(type) && ((Item)child).getType()==Item.ARTICLE)
+                    move = true;
+                if (VALUE_DISCUSSIONS.equals(type) && ((Item)child).getType()==Item.DISCUSSION)
+                    move = true;
+                if (VALUE_MAKES.equals(type) && ((Item)child).getType()==Item.MAKE)
+                    move = true;
+            } else if ( VALUE_CATEGORIES.equals(type) && child instanceof Category)
+                move = true;
+
+            if (move) {
+                childRelation.setParent(destination.getChild());
+                childRelation.setUpper(destination.getId());
+                persistance.update(childRelation);
+
+                AdminLogger.logEvent(user, "  move | relation "+childRelation.getId()+" | from "+relation.getId()+" | to "+destination.getId());
+            }
+        }
+
+        String url = null;
+        String prefix = (String) params.get(PARAM_PREFIX);
+        url = (prefix!=null) ? prefix.concat("/ViewRelation?rid="+relation.getId()) : "/Index";
+
+        UrlUtils urlUtils = new UrlUtils("", response);
+        urlUtils.redirect(response, url);
+        return null;
+    }
     /**
      * Whether user wishes to be redirected after move of discussions
      * from discussion forum back to the forum.

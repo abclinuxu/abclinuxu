@@ -95,6 +95,9 @@
     <action name="remove" template="print" content="/remove/relation.ftl">
       <var name="TITLE" value="Smazání relace" />
     </action>
+    <action name="moveAll" template="print" content="/edit/move_content.ftl">
+      <var name="TITLE" value="Pøesun obsahu" />
+    </action>
   </servlet>
 
   <servlet name="EditRequest">
