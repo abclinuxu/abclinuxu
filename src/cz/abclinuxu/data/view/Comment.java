@@ -9,7 +9,6 @@ package cz.abclinuxu.data.view;
 import java.util.List;
 import java.util.Date;
 import java.util.ArrayList;
-import java.text.ParseException;
 
 import org.dom4j.Element;
 import cz.abclinuxu.servlets.Constants;
@@ -117,8 +116,8 @@ public class Comment {
             try {
                 if ( value!=null )
                     created = Constants.isoFormat.parse(value);
-            } catch (ParseException e) {
-                log.error("Oops, malformed date in comment "+getId()+"! It is "+value, e);
+            } catch (Exception e) {
+                log.error("Oops, malformed date in comment "+getId()+"! It is "+data.asXML(), e);
             }
         }
         return created;
