@@ -28,6 +28,9 @@ public class VariantTool {
     /** if not overriden, this variant will be used */
     static String DEFAULT_VARIANT = "web";
 
+    /** custom selection of variant */
+    public static final String PARAM_VARIANTA = "varianta";
+
     /** this context variable holds name of template to be included */
     public static final String VAR_CONTENT_TEMPLATE = "CONTENT";
     /** this context variable holds type of browser, which is used by visitor */
@@ -38,6 +41,8 @@ public class VariantTool {
     public static final String BROWSER_MOZILLA = "MOZILLA";
     /** Internet Explorer browser */
     public static final String BROWSER_IE = "IE";
+    /** plucker PDA browser */
+    public static final String BROWSER_PLUCKER = "PLUCKER";
     /** other browser */
     public static final String BROWSER_OTHER = "OTHER";
 
@@ -45,7 +50,7 @@ public class VariantTool {
     static VariantTool singleton;
 
     /** regular expressions to match UA */
-    RE reLynx, reWget;
+    RE reLynx, reWget, rePlucker;
 
     /**
      * Here we store mappings. key is concatenation of servlet name and action, value is map
@@ -60,8 +65,9 @@ public class VariantTool {
     protected VariantTool(int size) {
         mappings = new HashMap(size,0.9f);
         try {
-            reLynx = new RE("(Lynx)|(Plucker)",RE.MATCH_CASEINDEPENDENT);
-            reWget = new RE("(Wget)|(custo)",RE.MATCH_CASEINDEPENDENT);
+            reLynx = new RE("(Lynx)",RE.MATCH_CASEINDEPENDENT);
+            reLynx = new RE("(Plucker)",RE.MATCH_CASEINDEPENDENT);
+            reWget = new RE("(Wget)|(custo([^m]|($)))",RE.MATCH_CASEINDEPENDENT); // dont catch "custom"
         } catch (RESyntaxException e) {
             log.error("Wrong regexp!", e);
         }
@@ -124,17 +130,20 @@ public class VariantTool {
 
         String browser = request.getHeader("user-agent");
         if ( browser==null ) {
-            log.info("No user-agent header!");
+            log.debug("No user-agent header!");
         } else if ( reWget.match(browser) ) {
             return "lynx/other/nomirror.vm"; // mirroring forbidden
         } else if ( reLynx.match(browser) ) {
             ctx.put(VAR_BROWSER,BROWSER_LYNX);
             variant = "lynx";
+        } else if ( rePlucker.match(browser) ) {
+            ctx.put(VAR_BROWSER,BROWSER_PLUCKER);
+            variant = "lynx";
         } else {
             ctx.put(VAR_BROWSER,BROWSER_OTHER);
         }
 
-        String tmp = request.getParameter("varianta");
+        String tmp = request.getParameter(PARAM_VARIANTA);
         if ( tmp!=null ) {
             variant = tmp;
         }
