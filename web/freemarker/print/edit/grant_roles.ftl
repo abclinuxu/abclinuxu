@@ -34,6 +34,7 @@
      <input type="checkbox" name="roles" value="category admin" <@isDefined "category admin"/>> Administrátor sekcí<br>
      <input type="checkbox" name="roles" value="survey admin" <@isDefined "survey admin"/>> Administrátor anket<br>
      <input type="checkbox" name="roles" value="poll admin" <@isDefined "poll admin"/>> Administrátor malých anket<br>
+     <input type="checkbox" name="roles" value="requests admin" <@isDefined "requests admin"/>> Administrátor po¾adavkù<br>
      <input type="checkbox" name="roles" value="move relation" <@isDefined "move relation"/>> Smí pøesunout relaci<br>
      <input type="checkbox" name="roles" value="remove relation" <@isDefined "remove relation"/>> Smí smazat relaci a objekt<br>
      <input type="checkbox" name="roles" value="email invalidator" <@isDefined "email invalidator"/>> Smí invalidovat emaily

@@ -32,16 +32,16 @@ od Jirky Koska.
 <table cellpadding="5">
     <tr>
         <td>
+            <a class="info" href="#">?<span class="tooltip">Zde nastavíte titulek va¹eho zápisu. Je dùle¾itý pro RSS.</span></a>	
             <span class="required">Titulek zápisu</span>
-            <a class="info" href="#">?<span class="tooltip">Zde nastavíte titulek va¹eho zápisu. Je dùle¾itý pro RSS.</span></a>
             <input type="text" name="title" size="60" value="${PARAMS.title?if_exists?html}">
             <div class="error">${ERRORS.title?if_exists}</div>
         </td>
     </tr>
     <tr>
         <td>
+            <a class="info" href="#">?<span class="tooltip">Zde nastavíte kategorii va¹eho zápisu. Mù¾ete tak èlenit zápisy do rùzných kategorií.</span></a>	
             Kategorie zápisu
-            <a class="info" href="#">?<span class="tooltip">Zde nastavíte kategorii va¹eho zápisu. Mù¾ete tak èlenit zápisy do rùzných kategorií.</span></a>
             <select name="cid">
                 <#list CATEGORIES?keys as category>
                     <option value="${category}"<#if category==PARAMS.cid?default("UNDEF")> selected</#if>>${CATEGORIES[category]}</option>

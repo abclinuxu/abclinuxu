@@ -114,7 +114,7 @@
         </thead>
         <tbody>
         <#list FORUM.data as diz>
-            <tr onmouseover="javascript:style.backgroundColor='#F7F7F7'" onmouseout="javascript:style.backgroundColor='#FFFFFF'">
+            <tr>
                 <td class="td01"><a href="/forum/show/${diz.relationId}">${TOOL.limit(TOOL.xpath(diz.discussion,"data/title"),60," ..")}</a></td>
                 <td class="td02">${diz.responseCount}</td>
                 <td class="td03">${DATE.show(diz.updated,"CZ_SHORT")}</td>

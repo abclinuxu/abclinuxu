@@ -13,7 +13,7 @@
         tmp=TOOL.groupByType(clanek.children),
         rating=TOOL.ratingFor(clanek.data,"article")?default(0) >
     <#if tmp.discussion?exists><#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
-    <div class="cl">
+
         <h1 class="st_nadpis"><a href="/clanky/show/${relation.id}">${TOOL.xpath(clanek,"data/name")}</a></h1>
         <p>${TOOL.xpath(clanek,"/data/perex")}</p>
         <p class="cl_inforadek">${DATE.show(clanek.created, dateFormat[0])} |
@@ -26,7 +26,7 @@
             </#if>
             <#if rating!=0>| Hodnocení: ${rating?string["#0.00"]}</#if>
         </p>
-    </div>
+
 </#macro>
 
 <#macro showNews(relation)>
