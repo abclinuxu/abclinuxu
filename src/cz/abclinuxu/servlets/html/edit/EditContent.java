@@ -130,7 +130,7 @@ public class EditContent implements AbcAction {
         element = (Element) document.selectSingleNode("/data/java_class");
         if (element!=null)
             params.put(PARAM_CLASS, element.getText());
-        params.put(PARAM_URL, item.getSubType());
+        params.put(PARAM_URL, relation.getUrl());
 
         return FMTemplateSelector.select("EditContent", "edit", env, request);
     }
