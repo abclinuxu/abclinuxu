@@ -62,13 +62,15 @@ public class EditDiscussion extends AbcServlet {
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
         String action = (String) params.get(AbcServlet.PARAM_ACTION);
 
+        if ( action==null ) action = ACTION_ADD_QUESTION;
+
         if ( relation!=null ) {
             relation = (Relation) persistance.findById(relation);
             persistance.synchronize(relation.getChild());
             ctx.put(VAR_RELATION,relation);
         } else if ( !action.equals(ACTION_ADD_QUESTION) ) throw new Exception("Chybí parametr relationId!");
 
-        if ( action==null || action.equals(ACTION_ADD_DISCUSSION) ) {
+        if ( action.equals(ACTION_ADD_DISCUSSION) ) {
             return actionAddDiscussion(request,ctx);
 
         } else if ( action.equals(ACTION_ADD_COMMENT) ) {
