@@ -1,4 +1,4 @@
-<project name="AbcLinuxu" basedir="." default="deploy">
+<project name="AbcLinuxu" basedir="." default="build">
 
   <property name="src" value="src" />
   <property name="tomcat" value="../tomcat" />
@@ -31,12 +31,12 @@
 
 
   <target name="compile" depends="init">
-    <javac srcdir="${src}" destdir="${build}/WEB-INF/classes" classpathref="project.classpath" />
+    <javac srcdir="src" destdir="${build}/WEB-INF/classes" classpathref="project.classpath" debug="on" />
     <javac srcdir="test" destdir="${build}/WEB-INF/classes" classpathref="project.classpath" />
   </target>
 
 
-  <target name="deploy" depends="compile">
+  <target name="build" depends="compile">
     <copy todir="${build}">
       <fileset dir="web/velocity" />
     </copy>
@@ -62,6 +62,8 @@
       <fileset dir="libs" includes="*.jar" excludes="servlet.jar" />
     </copy>
   </target>
+
+  <target name="deploy" depends="clean,build" />
 
   <target name="backup">
     <delete dir="${backup}/abc" />
