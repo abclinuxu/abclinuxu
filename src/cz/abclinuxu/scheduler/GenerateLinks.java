@@ -2,7 +2,6 @@
  * User: literakl
  * Date: Feb 18, 2002
  * Time: 9:03:52 AM
- * (c)2001-2002 Tinnio
  */
 package cz.abclinuxu.scheduler;
 
@@ -93,7 +92,7 @@ public class GenerateLinks extends TimerTask implements Configurable {
                 Relation relation = (Relation) list.get(i);
                 Item item = (Item) relation.getChild();
 
-                url = "http://www.abclinuxu.cz/clanky/ViewRelation?rid="+relation.getId();
+                url = "http://www.abclinuxu.cz/clanky/show/"+relation.getId();
                 title = tools.xpath(item,"data/name");
                 desc = removeNewLines(tools.xpath(item,"data/perex"));
 
@@ -112,7 +111,7 @@ public class GenerateLinks extends TimerTask implements Configurable {
                 Item item = (Item) found.getParent();
                 persistance.synchronize(item);
 
-                url = "http://www.abclinuxu.cz/hardware/ViewRelation?rid="+found.getId();
+                url = "http://www.abclinuxu.cz/hardware/show/"+found.getId();
                 title = "H "+tools.xpath(item,"data/name");
 
                 for (int j = 0; j < generators.length; j++) {
@@ -127,7 +126,7 @@ public class GenerateLinks extends TimerTask implements Configurable {
                 Item item = (Item) found.getChild();
                 persistance.synchronize(item);
 
-                url = "http://www.abclinuxu.cz/drivers/ViewRelation?rid="+found.getId();
+                url = "http://www.abclinuxu.cz/drivers/show/"+found.getId();
                 title = "O "+tools.xpath(item,"data/name");
 
                 for (int j = 0; j < generators.length; j++) {
@@ -146,10 +145,9 @@ public class GenerateLinks extends TimerTask implements Configurable {
             list = SQLTool.getInstance().findDiscussionRelations(qualifiers);
             Tools.sync(list);
             List discussions = tools.analyzeDiscussions(list);
-//            Sorters2.byDate(discussions, Sorters2.DESCENDING);
             for ( Iterator iter = discussions.iterator(); iter.hasNext(); ) {
                 DiscussionHeader discussion = (DiscussionHeader) iter.next();
-                url = "http://www.abclinuxu.cz/forum/ViewRelation?rid="+discussion.getRelationId();
+                url = "http://www.abclinuxu.cz/forum/show/"+discussion.getRelationId();
                 title = tools.xpath(discussion.getDiscussion(), "data/title");
                 title = title.concat(", odpovìdí: "+discussion.getResponseCount());
                 title = tools.encodeSpecial(title);
