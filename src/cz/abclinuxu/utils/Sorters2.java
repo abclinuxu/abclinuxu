@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Comparator;
 import java.util.Collections;
 import java.util.Date;
+import java.text.Collator;
 
 /**
  * This class provides several methods for sorting relations
@@ -85,10 +86,12 @@ public class Sorters2 {
      * in ascending order.
      */
     static class NameComparator implements Comparator {
+        Collator collator = Collator.getInstance();
+
         public int compare(Object o1, Object o2) {
-            String s1 = getValue((Relation) o1,"data/name");
-            String s2 = getValue((Relation) o2,"data/name");
-            return s1.compareToIgnoreCase(s2);
+            String s1 = getValue((Relation) o1,"data/name").toLowerCase();
+            String s2 = getValue((Relation) o2,"data/name").toLowerCase();
+            return collator.compare(s1, s2);
         }
         /**
          * Extracts value of relation.
