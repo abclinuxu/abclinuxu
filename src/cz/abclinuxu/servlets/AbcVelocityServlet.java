@@ -334,7 +334,7 @@ public class AbcServlet extends VelocityServlet {
      */
     public void dispatch(String url, HttpServletRequest request, HttpServletResponse response, Context context) throws ServletException, IOException {
         UrlUtils urlUtils = (UrlUtils) context.get(AbcServlet.VAR_PREFIX);
-        url = urlUtils.constructDispatchURL("/ViewCategory");
+        url = urlUtils.constructDispatchURL(url);
         RequestDispatcher dispatcher = request.getRequestDispatcher(url);
         dispatcher.forward(request,response);
     }

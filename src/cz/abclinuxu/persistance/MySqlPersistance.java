@@ -1101,7 +1101,7 @@ public class MySqlPersistance implements Persistance {
             con = getSQLConnection();
             PreparedStatement statement = null;
             if ( obj instanceof Category ) {
-                statement = con.prepareStatement("update zaznam set data=?,verejny=? where cislo=?");
+                statement = con.prepareStatement("update kategorie set data=?,verejny=? where cislo=?");
                 statement.setBoolean(2,((Category)obj).isOpen());
                 statement.setInt(3,obj.getId());
             } else if ( obj instanceof Record) {
@@ -1120,7 +1120,7 @@ public class MySqlPersistance implements Persistance {
             // todo get updated field
             cache.store(obj);
         } catch (SQLException e) {
-            log.error("Nemohu ulozit zmeny v "+obj);
+            log.error("Nemohu ulozit zmeny v "+obj,e);
             throw new PersistanceException("Nemohu ulozit zmeny v "+obj.toString()+" do databaze!",AbcException.DB_UPDATE,null,e);
         } finally {
             releaseSQLConnection(con);

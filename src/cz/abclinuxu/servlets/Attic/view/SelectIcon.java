@@ -9,6 +9,7 @@
 package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.edit.EditCategory;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 
@@ -112,6 +113,7 @@ public class SelectIcon extends AbcServlet {
         map.remove(SelectIcon.PARAM_ICON);
         map.remove(SelectIcon.PARAM_URL);
         map.remove(SelectIcon.PARAM_RELOAD);
+        map.remove(EditCategory.PARAM_CHOOSE_ICON);
 
         HttpSession session = request.getSession();
         session.setAttribute(AbcServlet.ATTRIB_PARAMS,map);
