@@ -13,6 +13,7 @@ import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.AbcException;
 import cz.abclinuxu.servlets.utils.Email;
+import cz.abclinuxu.servlets.utils.VelocityHelper;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
@@ -118,7 +119,7 @@ public class EditUser extends AbcServlet {
 
         VelocityContext tmpContext = new VelocityContext();
         tmpContext.put(AbcServlet.VAR_USER,user);
-        String message = mergeTemplate("mail/welcome_user.vm",tmpContext);
+        String message = VelocityHelper.mergeTemplate("mail/welcome_user.vm",tmpContext);
         Email.sendEmail("admin@AbcLinuxu.cz",user.getEmail(),"Privitani",message);
 
         // log in user

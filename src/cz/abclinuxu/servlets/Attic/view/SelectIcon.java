@@ -9,6 +9,7 @@
 package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.servlets.edit.EditCategory;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
@@ -108,7 +109,7 @@ public class SelectIcon extends AbcServlet {
         String dir = "/ikony/"+request.getParameter(SelectIcon.PARAM_DIR)+"/";
         String icon = dir+request.getParameter(SelectIcon.PARAM_ICON);
 
-        Map map = putParamsToMap(request,null);
+        Map map = VelocityHelper.putParamsToMap(request,null);
         map.remove(SelectIcon.PARAM_DIR);
         map.remove(SelectIcon.PARAM_ICON);
         map.remove(SelectIcon.PARAM_URL);

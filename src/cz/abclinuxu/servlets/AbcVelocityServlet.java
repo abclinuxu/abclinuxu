@@ -14,17 +14,11 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.Template;
 import org.apache.velocity.app.Velocity;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.Cookie;
+import javax.servlet.http.*;
 import javax.servlet.ServletException;
 import javax.servlet.RequestDispatcher;
 
-import cz.abclinuxu.data.GenericObject;
-import cz.abclinuxu.data.User;
-import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.AccessRights;
+import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.AbcException;
@@ -35,7 +29,6 @@ import cz.abclinuxu.servlets.view.SelectIcon;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 /**
@@ -152,7 +145,6 @@ public class AbcServlet extends VelocityServlet {
      */
     protected void init(HttpServletRequest request, HttpServletResponse response, Context context) {
         HttpSession session = request.getSession();
-//        response.setContentType("text/html; charset=ISO-8859-2");
 
         doLogin(request,response,session,context);
 
@@ -160,7 +152,7 @@ public class AbcServlet extends VelocityServlet {
         if ( params!=null ) {
             session.removeAttribute(AbcServlet.ATTRIB_PARAMS);
         }
-        params = putParamsToMap(request,params);
+        params = VelocityHelper.putParamsToMap(request,params);
         request.setAttribute(AbcServlet.ATTRIB_PARAMS,params);
         context.put(AbcServlet.VAR_PARAMS,params);
 
@@ -350,43 +342,5 @@ public class AbcServlet extends VelocityServlet {
         html.append("</body>");
         html.append("</html>");
         response.getOutputStream().print( html.toString() );
-    }
-
-    /**
-     * Adds all parameters from request to specified map and returns it back.
-     * If map is null, new HashMap is created.
-     */
-    protected Map putParamsToMap(HttpServletRequest request, Map map) {
-        if ( map==null ) map = new HashMap();
-        Enumeration names = request.getParameterNames();
-        while (names.hasMoreElements()) {
-            String name = (String) names.nextElement();
-            String value = request.getParameter(name);
-            try {
-                value = new String(value.getBytes("ISO-8859-1"));
-            } catch (UnsupportedEncodingException e) {}
-            map.put(name,value);
-        }
-        return map;
-    }
-
-    /**
-     * Merges template specified in <code>templateName</code> with context
-     * and returns it as String. If an exception is caught, empty string
-     * is returned.
-     * @param templateName name of template
-     * @param context context holding parameters
-     * @return String holding the result og merge.
-     */
-    protected String mergeTemplate(String templateName, Context context) {
-        try {
-            Template template = Velocity.getTemplate(templateName);
-            StringWriter writer = new StringWriter();
-            template.merge(context,writer);
-            return writer.toString();
-        } catch (Exception e) {
-            log.error("Cannot merge template "+templateName,e);
-            return "";
-        }
     }
 }
