@@ -10,12 +10,21 @@
            </layout>	    
 	</appender>
 	
+	<appender name="FILE" class="org.apache.log4j.FileAppender">
+           <param name="File" value="logs/abc.log" />	
+	   <layout class="org.apache.log4j.PatternLayout">
+             <param name="ConversionPattern"
+		    value="%d %-5p [%t] %C{1} - %m%n"/>
+           </layout>	    
+	</appender>
+	
 	<category name="cz.abclinuxu">
 	  <priority value="info" />
 	</category>
 	
 	<root>
 	   <priority value ="info" />
+   	   <appender-ref ref="FILE" />
    	   <appender-ref ref="STDOUT" />
 	</root>
 	
