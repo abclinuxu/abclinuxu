@@ -9,10 +9,16 @@
           <var name="TITLE" value="Úprava èlánku"/>
       </action>
   </servlet>
-    
+
   <servlet name="Royalties">
       <action name="add" template="print" content="/add/honorar.ftl">
           <var name="TITLE" value="Vlo¾ení honoráøe"/>
+      </action>
+      <action name="form" template="print" content="/show/royalties_form.ftl">
+          <var name="TITLE" value="Hledání honoráøù"/>
+      </action>
+      <action name="report" template="print" content="/show/royalties_report.ftl">
+          <var name="TITLE" value="Nalezené honoráøe"/>
       </action>
   </servlet>
 
