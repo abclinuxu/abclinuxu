@@ -76,8 +76,11 @@ public class ShowArticle implements AbcAction {
         Persistance persistance = PersistanceFactory.getPersistance();
         Record record = null;
 
-        Map children = Tools.groupByType(item.getChildren());
-        env.put(VAR_CHILDREN_MAP, children);
+        Map children = (Map) env.get(VAR_CHILDREN_MAP);
+        if (children==null) {
+            children = Tools.groupByType(item.getChildren());
+            env.put(VAR_CHILDREN_MAP, children);
+        }
 
         List list = (List) children.get(Constants.TYPE_RECORD);
         if ( list==null || list.size()==0 )
