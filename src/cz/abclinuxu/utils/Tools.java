@@ -425,4 +425,62 @@ public class Tools {
         }
         return 0;
     }
+
+    /**
+     * Encodes all mapping from <code>params</code> except those listed
+     * in <<code>prohibited</code> list as form hidden input.
+     */
+    public String saveParams(Map params, List prohibited) {
+        if ( params==null || params.size()==0 )
+            return "";
+        if ( prohibited==null )
+            prohibited = new ArrayList(1);
+
+        StringBuffer sb = new StringBuffer(params.size()*50);
+        Set entries = params.keySet();
+        for (Iterator iter = entries.iterator(); iter.hasNext();) {
+            String key = (String) iter.next();
+            if ( prohibited.contains(key) )
+                continue;
+
+            List values = null;
+            if ( params.get(key) instanceof List ) {
+                values = (List) params.get(key);
+            } else {
+                values = new ArrayList(1);
+                values.add(params.get(key));
+            }
+
+            for (Iterator iter2 = values.iterator(); iter2.hasNext();) {
+                String value = (String) iter2.next();
+                sb.append("<input type=\"hidden\" name=\"");
+                sb.append(key);
+                sb.append("\" value=\"");
+                sb.append(encodeSpecial(value));
+                sb.append("\">\n");
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Does standard HTML conversions like & to &amp;amp; or &lt; to &amp;lt;.
+     * @return Modified String, which may be inserted into html page without affecting its structure.
+     */
+    public String encodeSpecial(String in) {
+        if ( in==null || in.length()==0 )
+            return "";
+        StringBuffer sb = new StringBuffer(in.length());
+        for (int i = 0; i < in.length(); i++) {
+            int c = in.charAt(i);
+            switch (c) {
+                case '"': sb.append("&quot;");break;
+                case '<': sb.append("&lt;");break;
+                case '>': sb.append("&gt;");break;
+                case '&': sb.append("&amp;");break;
+                default: sb.append((char)c);
+            }
+        }
+        return sb.toString();
+    }
 }
