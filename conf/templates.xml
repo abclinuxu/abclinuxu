@@ -196,6 +196,9 @@
     <action name="editSettings" content="/edit/user_settings.ftl">
       <var name="TITLE" value="Zmìna nastavení" />
     </action>
+    <action name="addBlog" content="/add/user_blog.ftl">
+      <var name="TITLE" value="Nastavení osobního blogu" />
+    </action>
     <action name="grantSelect" content="/edit/grant_select.ftl" template="print">
       <var name="TITLE" value="Zmìna rolí u¾ivatele - výbìr"/>
     </action>

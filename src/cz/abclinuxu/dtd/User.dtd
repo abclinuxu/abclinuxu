@@ -26,7 +26,7 @@ verze 2.0
 <!ELEMENT distributions (distribution)> <!-- ktere distribuce pouziva(l) -->
 <!ELEMENT distribution (#PCDATA)> <!-- jmeno distribuce -->
 
-<!ELEMENT settings (emoticons?,cookie_valid?,index_discussions?, return_to_forum?)>
+<!ELEMENT settings (emoticons?,cookie_valid?,index_discussions?, return_to_forum?, blog?)>
 <!ELEMENT emoticons (#PCDATA)> <!-- yes or no, zda nahrazovat emotikony obrazkem -->
 <!ELEMENT signatures (#PCDATA)> <!-- yes or no, zda zobrazovat signatury -->
 <!ELEMENT new_comments (#PCDATA)> <!-- yes or no, zda povolit cookie pro nové komentáøe -->
@@ -36,6 +36,7 @@ verze 2.0
 <!ELEMENT found_size (#PCDATA)> <!-- integer, pocet nalezenych objektu na strance -->
 <!ELEMENT forum_size (#PCDATA)> <!-- integer, pocet zobrazenych diskusi na strance -->
 <!ELEMENT return_to_forum (#PCDATA)> <!-- yes or no, zda se po presunu diskuse vratit do diskusniho fora -->
+<!ELEMENT blog (#PCDATA)> <!-- integer, cislo blogu -->
 
 <!ELEMENT system (registration_date?,last_login_date?,group?)>
 <!ELEMENT registration_date (#PCDATA)> <!-- ISO format, kdy se zaregistroval -->
