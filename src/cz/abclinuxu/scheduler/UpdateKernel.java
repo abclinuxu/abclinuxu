@@ -164,6 +164,8 @@ public class UpdateKernel extends TimerTask implements Configurable {
             writer.write("</table>");
             reader.close();
             writer.close();
+        } catch (IOException e) {
+            log.error("Cannot parse current kernel information because of I/O problems! "+e.getMessage());
         } catch (Exception e) {
             log.error("Cannot parse kernel headers!",e);
         }
