@@ -20,18 +20,21 @@ import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.freemarker.FMUtils;
+import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import org.apache.regexp.*;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.Node;
+import org.dom4j.*;
+import org.dom4j.io.DOMWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.ParseException;
 import java.util.*;
+
+import freemarker.ext.dom.NodeModel;
 
 /**
  * Class for manipulation of articles.
@@ -51,14 +54,27 @@ public class EditArticle implements AbcAction {
     public static final String PARAM_RELATED_ARTICLES = "related";
     public static final String PARAM_RESOURCES = "resources";
     public static final String PARAM_THUMBNAIL = "thumbnail";
+    public static final String PARAM_NAME = "name";
+    public static final String PARAM_MODERATOR = "moderator";
+    public static final String PARAM_ADDRESSES = "addresses";
+    public static final String PARAM_QUESTION_ID = "id";
 
     public static final String VAR_RELATION = "RELATION";
+    public static final String VAR_TALK_XML = "XML";
 
     public static final String ACTION_ADD_ITEM = "add";
     public static final String ACTION_ADD_ITEM_STEP2 = "add2";
     public static final String ACTION_EDIT_ITEM = "edit";
     public static final String ACTION_EDIT_ITEM_STEP2 = "edit2";
     public static final String ACTION_DOCBOOK = "docbook";
+    public static final String ACTION_SHOW_TALK = "showTalk";
+    public static final String ACTION_TALK_EMAILS = "talkEmails";
+    public static final String ACTION_TALK_EMAILS_STEP2 = "talkEmails2";
+    public static final String ACTION_ADD_QUESTION = "addQuestion";
+    public static final String ACTION_REMOVE_QUESTION = "removeQuestion";
+    public static final String ACTION_SEND_QUESTION = "sendQuestion";
+    public static final String ACTION_ADD_REPLY = "addReply";
+    public static final String ACTION_SUBMIT_REPLY = "submitReply";
 
     private static REProgram reBreak;
     static {
@@ -100,6 +116,30 @@ public class EditArticle implements AbcAction {
 
         if ( action.equals(ACTION_EDIT_ITEM_STEP2) )
             return actionEditItem2(request, response, env);
+
+        if (action.equals(ACTION_SHOW_TALK))
+            return actionShowTalk(request, env);
+
+        if (action.equals(ACTION_ADD_QUESTION))
+            return actionAddQuestion(request, response, env);
+
+        if (action.equals(ACTION_SEND_QUESTION))
+            return actionSendQuestion(request, response, env);
+
+        if (action.equals(ACTION_ADD_REPLY))
+            return actionAddReply(request, response, env);
+
+        if (action.equals(ACTION_SUBMIT_REPLY))
+            return actionSubmitReply(request, response, env);
+
+        if (action.equals(ACTION_REMOVE_QUESTION))
+            return actionRemoveQuestion(request, response, env);
+
+        if (action.equals(ACTION_TALK_EMAILS))
+            return actionSetTalkAddresses(request, env);
+
+        if (action.equals(ACTION_TALK_EMAILS_STEP2))
+            return actionSetTalkAddressesStep2(request, response, env);
 
         throw new MissingArgumentException("Chybí parametr action!");
     }
@@ -237,6 +277,238 @@ public class EditArticle implements AbcAction {
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/show/"+upper.getId());
+        return null;
+    }
+
+    /**
+     * If the article is not talk, converts it to talk. It also puts talk XML into environment.
+     * Main page for talks.
+     */
+    private String actionShowTalk(HttpServletRequest request, Map env) throws Exception {
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item item = (Item) relation.getChild();
+        Document document = item.getData();
+
+        Element talk = (Element) document.selectSingleNode("/data/talk");
+        if (talk == null) {
+            talk = DocumentHelper.makeElement(document, "/data/talk");
+            PersistanceFactory.getPersistance().update(item);
+        }
+        env.put(VAR_TALK_XML, NodeModel.wrap((new DOMWriter().write(document))));
+
+        return FMTemplateSelector.select("EditArticle", "talk", env, request);
+    }
+
+    /**
+     * Displayes email addresses of this talk.
+     */
+    protected String actionSetTalkAddresses(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item item = (Item) relation.getChild();
+        Document document = item.getData();
+
+        Element addresses = (Element) document.selectSingleNode("/data/talk/addresses");
+        if (addresses != null) {
+            StringBuffer sb = new StringBuffer();
+            for (Iterator iter = addresses.elements().iterator(); iter.hasNext();) {
+                Element email = (Element) iter.next();
+                sb.append(email.getTextTrim());
+                sb.append('\n');
+            }
+            params.put(PARAM_ADDRESSES, sb.toString());
+            params.put(PARAM_MODERATOR, addresses.attributeValue("moderator"));
+        }
+
+        return FMTemplateSelector.select("EditArticle", "talkAddresses", env, request);
+    }
+
+    /**
+     * Sets email addresses for this talk.
+     */
+    protected String actionSetTalkAddressesStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item item = (Item) relation.getChild();
+
+        boolean canContinue = setAddresses(params, item.getData(), env);
+        if (canContinue)
+            PersistanceFactory.getPersistance().update(item);
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/edit/" + relation.getId()+"?action=showTalk");
+        return null;
+    }
+
+    /**
+     * Adds new question.
+     */
+    protected String actionAddQuestion(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item item = (Item) relation.getChild();
+
+        boolean canContinue = addTalkQuestion(params, item.getData(), env);
+        if (canContinue)
+            PersistanceFactory.getPersistance().update(item);
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/edit/" + relation.getId()+"?action=showTalk");
+        return null;
+    }
+
+    /**
+     * Removes existing question.
+     */
+    protected String actionRemoveQuestion(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item item = (Item) relation.getChild();
+
+        int id = Misc.parseInt((String) params.get(PARAM_QUESTION_ID), -1);
+        if (id!=-1) {
+            Element question = (Element) item.getData().selectSingleNode("/data/talk/question[@id="+id+"]");
+            if (question!=null) {
+                question.detach();
+                PersistanceFactory.getPersistance().update(item);
+            }
+        }
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/edit/" + relation.getId()+"?action=showTalk");
+        return null;
+    }
+
+    /**
+     * Sends this question by email to all addresses.
+     */
+    protected String actionSendQuestion(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item item = (Item) relation.getChild();
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+
+        Document document = item.getData();
+        Element addresses = (Element) document.selectSingleNode("/data/talk/addresses");
+        if (addresses==null || addresses.elements().size()==0) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Nejsou definovány ¾ádné emailové adresy!", env, request.getSession());
+            urlUtils.redirect(response, "/edit/" + relation.getId() + "?action=showTalk");
+            return null;
+        }
+
+        Element question = null;
+        int id = Misc.parseInt((String) params.get(PARAM_QUESTION_ID), -1);
+        if (id != -1) {
+            question = (Element) document.selectSingleNode("/data/talk/question[@id=" + id + "]");
+            if (question == null) {
+                ServletUtils.addError(Constants.ERROR_GENERIC, "Otázka "+id+" nebyla nalezena!", env, request.getSession());
+                urlUtils.redirect(response, "/edit/" + relation.getId() + "?action=showTalk");
+                return null;
+            }
+        }
+
+        Map email = new HashMap();
+        email.put(EmailSender.KEY_SUBJECT, "otazka "+id);
+        email.put(EmailSender.KEY_FROM, addresses.attributeValue("moderator"));
+        email.put(EmailSender.KEY_BODY, question.getText());
+
+        for (Iterator iter = addresses.elements().iterator(); iter.hasNext();) {
+            Element element = (Element) iter.next();
+            email.put(EmailSender.KEY_TO, element.getTextTrim());
+            EmailSender.sendEmail(email);
+        }
+
+        urlUtils.redirect(response, "/edit/" + relation.getId()+"?action=showTalk");
+        return null;
+    }
+
+    /**
+     * Displays form, where article admin can change the question and adds replies.
+     */
+    protected String actionAddReply(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item item = (Item) relation.getChild();
+
+        int id = Misc.parseInt((String) params.get(PARAM_QUESTION_ID), -1);
+        if (id==-1) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Èíslo otázky "+id+" je neplatné!", env, request.getSession());
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, "/edit/" + relation.getId() + "?action=showTalk");
+            return null;
+        }
+
+        Element question = (Element) item.getData().selectSingleNode("/data/talk/question[@id=" + id + "]");
+        if (question==null) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Otázka èíslo " + id + " neexistuje!", env, request.getSession());
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, "/edit/" + relation.getId() + "?action=showTalk");
+            return null;
+        }
+
+        params.put(PARAM_NAME, question.attributeValue("name"));
+        params.put(PARAM_CONTENT, question.getText());
+
+        return FMTemplateSelector.select("EditArticle", "talkQuestion", env, request);
+    }
+
+    /**
+     * Edits the question, sets replies and renders the question and its replies to originated article.
+     */
+    protected String actionSubmitReply(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item item = (Item) relation.getChild();
+
+        int id = Misc.parseInt((String) params.get(PARAM_QUESTION_ID), -1);
+        if (id == -1) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Èíslo otázky " + id + " je neplatné!", env, request.getSession());
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, "/edit/" + relation.getId() + "?action=showTalk");
+            return null;
+        }
+
+        Element question = (Element) item.getData().selectSingleNode("/data/talk/question[@id=" + id + "]");
+        if (question == null) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Otázka èíslo " + id + " neexistuje!", env, request.getSession());
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, "/edit/" + relation.getId() + "?action=showTalk");
+            return null;
+        }
+
+        List responders = new ArrayList();
+        List responses = new ArrayList();
+
+        for (int i=1; i<=5; i++) {
+            String who = (String) params.get("responder"+i);
+            String reply = (String) params.get("reply"+i);
+            if (!Misc.empty(who) && !Misc.empty(reply)) {
+                responders.add(who.trim());
+                responses.add(reply.trim());
+            }
+        }
+
+        Map renderEnv = new HashMap();
+        renderEnv.put("QUESTIONER", params.get(PARAM_NAME));
+        renderEnv.put("QUESTION", params.get(PARAM_CONTENT));
+        renderEnv.put("RESPONDERS", responders);
+        renderEnv.put("RESPONSES", responses);
+
+        String renderedQuestion = FMUtils.executeTemplate("/include/misc/talk_question.ftl", renderEnv);
+
+        Persistance persistance = PersistanceFactory.getPersistance();
+        question.detach();
+        persistance.update(item);
+
+        Relation child = InstanceUtils.findFirstChildRecordOfType(item, Record.ARTICLE);
+        Record record = (Record) child.getChild();
+        Element article = (Element) record.getData().selectSingleNode("data/content");
+        String content = article.getText().concat(renderedQuestion);
+        article.setText(content);
+        persistance.update(record);
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/edit/" + relation.getId() + "?action=showTalk");
         return null;
     }
 
@@ -554,5 +826,80 @@ public class EditArticle implements AbcAction {
             }
             params.put(PARAM_CONTENT, sb.toString());
         }
+    }
+
+    /**
+     * Updates talk addresses from parameters. Changes are not synchronized with persistance.
+     *
+     * @param params map holding request's parameters
+     * @param document article's record to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setAddresses(Map params, Document document, Map env) {
+        String s = (String) params.get(PARAM_ADDRESSES);
+        if (s==null || s.length()==0) {
+            ServletUtils.addError(PARAM_ADDRESSES, "Zadejte adresy úèastníkù diskuse!", env, null);
+            return false;
+        }
+
+        String moderator = (String) params.get(PARAM_MODERATOR);
+        if (moderator==null || moderator.length()==0) {
+            ServletUtils.addError(PARAM_MODERATOR, "Zadejte adresu moderátora diskuse!", env, null);
+            return false;
+        }
+
+        Element talk = (Element) document.selectSingleNode("/data/talk");
+        Element addresses = talk.element("addresses");
+        if (addresses!=null)
+            addresses.elements().clear();
+        else
+            addresses = talk.addElement("addresses");
+
+        addresses.addAttribute("moderator", moderator);
+
+        StringTokenizer stk = new StringTokenizer(s);
+        while (stk.hasMoreTokens()) {
+            String email = stk.nextToken();
+            addresses.addElement("email").setText(email);
+        }
+
+        return true;
+    }
+
+    /**
+     * Updates one question to talk from parameters. Changes are not synchronized with persistance.
+     *
+     * @param params map holding request's parameters
+     * @param document article's record to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean addTalkQuestion(Map params, Document document, Map env) {
+        String name = (String) params.get(PARAM_NAME);
+        String content = (String) params.get(PARAM_CONTENT);
+
+        if (name==null || name.length()==0) {
+            ServletUtils.addError(PARAM_NAME, "Vyplòte jméno tazatele!", env, null);
+            return false;
+        }
+        if (content==null || content.length()==0) {
+            ServletUtils.addError(PARAM_CONTENT, "Zadejte otázku!", env, null);
+            return false;
+        }
+
+        int lastId = 1;
+        Element talk = (Element) document.selectSingleNode("/data/talk");
+        Attribute attrib = talk.attribute("lastid");
+        if (attrib!=null) {
+            lastId = Misc.parseInt(attrib.getValue(), 1);
+            attrib.setText(Integer.toString(++lastId));
+        } else
+            talk.addAttribute("lastid", "1");
+
+        Element question = talk.addElement("question");
+        question.setText(content);
+        question.addAttribute("name", name);
+        question.addAttribute("id", Integer.toString(lastId));
+
+        return true;
     }
 }

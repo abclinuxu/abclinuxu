@@ -8,6 +8,15 @@
       <action name="edit" template="print" content="/add/article.ftl">
           <var name="TITLE" value="Úprava èlánku"/>
       </action>
+      <action name="talk" template="print" content="/edit/article_talk.ftl">
+          <var name="TITLE" value="Rozhovor"/>
+      </action>
+      <action name="talkAddresses" template="print" content="/edit/talk_addresses.ftl">
+          <var name="TITLE" value="Adresy rozhovoru"/>
+      </action>
+      <action name="talkQuestion" template="print" content="/edit/talk_question.ftl">
+          <var name="TITLE" value="Vlo¾ení odpovìdi k otázce"/>
+      </action>
   </servlet>
 
   <servlet name="EditContent">
