@@ -17,6 +17,7 @@ import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.security.Guard;
+import cz.abclinuxu.transfer.FixRecords;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.dom4j.Document;
@@ -153,7 +154,7 @@ public class EditCategory extends AbcServlet {
         Element root = document.addElement("data");
         root.addElement("name").addText(name);
         if ( icon!=null && icon.length()>0 ) root.addElement("icon").addText(icon);
-        if ( note!=null && note.length()>0 ) root.addElement("note").addText(note);
+        if ( note!=null && note.length()>0 ) root.addElement("note").addText(FixRecords.fixLines(note));
         document.setRootElement(root);
 
         Relation upperRelation = (Relation) ctx.get(EditCategory.VAR_RELATION);
@@ -238,6 +239,7 @@ public class EditCategory extends AbcServlet {
 
         node = DocumentHelper.makeElement(document,"data/note");
         tmp = (String) params.get(EditCategory.PARAM_NOTE);
+        tmp = FixRecords.fixLines(tmp);
         node.setText(tmp);
 
         tmp = (String) params.get(EditCategory.PARAM_OPEN);

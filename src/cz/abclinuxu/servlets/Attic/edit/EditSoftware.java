@@ -11,6 +11,7 @@ import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.security.Guard;
+import cz.abclinuxu.transfer.FixRecords;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.dom4j.*;
@@ -195,7 +196,7 @@ public class EditSoftware extends AbcServlet {
 
         document = DocumentHelper.createDocument();
         root = document.addElement("data");
-        root.addElement("text").addText(text);
+        root.addElement("text").addText(FixRecords.fixLines(text));
         if ( url!=null && url.length()>0 ) root.addElement("url").addText(url);
         if ( version!=null && version.length()>0 ) root.addElement("version").addText(version);
 
@@ -235,7 +236,7 @@ public class EditSoftware extends AbcServlet {
 
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
-        root.addElement("text").addText(text);
+        root.addElement("text").addText(FixRecords.fixLines(text));
         if ( url!=null && url.length()>0 ) root.addElement("url").addText(url);
         if ( version!=null && version.length()>0 ) root.addElement("version").addText(version);
 
@@ -292,7 +293,7 @@ public class EditSoftware extends AbcServlet {
             return getTemplate("add/swrecord.vm");
         }
 
-        DocumentHelper.makeElement(document,"data/text").setText(text);
+        DocumentHelper.makeElement(document,"data/text").setText(FixRecords.fixLines(text));
         if ( url!=null ) DocumentHelper.makeElement(document,"data/url").setText(url);
         if ( version!=null ) DocumentHelper.makeElement(document,"data/version").setText(version);
 

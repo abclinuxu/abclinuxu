@@ -11,6 +11,7 @@ import cz.abclinuxu.servlets.view.SelectIcon;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.security.Guard;
+import cz.abclinuxu.transfer.FixRecords;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.dom4j.*;
@@ -207,10 +208,10 @@ public class EditHardware extends AbcServlet {
         root = document.addElement("data");
         if ( price!=null && price.length()>0 ) root.addElement("price").addText(price);
         if ( driver!=null && driver.length()>0 ) root.addElement("driver").addText(driver);
-        if ( setup!=null && setup.length()>0 ) root.addElement("setup").addText(setup);
-        if ( tech!=null && tech.length()>0 ) root.addElement("params").addText(tech);
-        if ( identification!=null && identification.length()>0 ) root.addElement("identification").addText(identification);
-        if ( note!=null && note.length()>0 ) root.addElement("note").addText(note);
+        if ( setup!=null && setup.length()>0 ) root.addElement("setup").addText(FixRecords.fixLines(setup));
+        if ( tech!=null && tech.length()>0 ) root.addElement("params").addText(FixRecords.fixLines(tech));
+        if ( identification!=null && identification.length()>0 ) root.addElement("identification").addText(FixRecords.fixLines(identification));
+        if ( note!=null && note.length()>0 ) root.addElement("note").addText(FixRecords.fixLines(note));
 
         Record record = new Record(0,Record.HARDWARE);
         record.setData(document);
@@ -253,10 +254,10 @@ public class EditHardware extends AbcServlet {
         Element root = document.addElement("data");
         if ( price!=null && price.length()>0 ) root.addElement("price").addText(price);
         if ( driver!=null && driver.length()>0 ) root.addElement("driver").addText(driver);
-        if ( setup!=null && setup.length()>0 ) root.addElement("setup").addText(setup);
-        if ( tech!=null && tech.length()>0 ) root.addElement("params").addText(tech);
-        if ( identification!=null && identification.length()>0 ) root.addElement("identification").addText(identification);
-        if ( note!=null && note.length()>0 ) root.addElement("note").addText(note);
+        if ( setup!=null && setup.length()>0 ) root.addElement("setup").addText(FixRecords.fixLines(setup));
+        if ( tech!=null && tech.length()>0 ) root.addElement("params").addText(FixRecords.fixLines(tech));
+        if ( identification!=null && identification.length()>0 ) root.addElement("identification").addText(FixRecords.fixLines(identification));
+        if ( note!=null && note.length()>0 ) root.addElement("note").addText(FixRecords.fixLines(note));
 
         Record record = new Record(0,Record.HARDWARE);
         record.setData(document);
@@ -359,10 +360,10 @@ public class EditHardware extends AbcServlet {
 
         DocumentHelper.makeElement(document,"data/driver").setText(driver);
         DocumentHelper.makeElement(document,"data/price").setText(price);
-        if ( setup!=null ) DocumentHelper.makeElement(document,"data/setup").setText(setup);
-        if ( tech!=null ) DocumentHelper.makeElement(document,"data/params").setText(tech);
-        if ( identification!=null ) DocumentHelper.makeElement(document,"data/identification").setText(identification);
-        if ( note!=null ) DocumentHelper.makeElement(document,"data/note").setText(note);
+        if ( setup!=null ) DocumentHelper.makeElement(document,"data/setup").setText(FixRecords.fixLines(setup));
+        if ( tech!=null ) DocumentHelper.makeElement(document,"data/params").setText(FixRecords.fixLines(tech));
+        if ( identification!=null ) DocumentHelper.makeElement(document,"data/identification").setText(FixRecords.fixLines(identification));
+        if ( note!=null ) DocumentHelper.makeElement(document,"data/note").setText(FixRecords.fixLines(note));
 
         persistance.update(record);
 

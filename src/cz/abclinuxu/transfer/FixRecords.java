@@ -30,6 +30,7 @@ public class FixRecords {
     }
 
     public static String fixLines(String str) {
+        if ( str==null ) return null;
         if ( (str.indexOf("&lt;")!=-1)&&(str.indexOf("&gt;")!=-1) ) return str;
         StringBuffer sb = new StringBuffer(str);
         for ( int i=0; i<sb.length(); i++ ) {
