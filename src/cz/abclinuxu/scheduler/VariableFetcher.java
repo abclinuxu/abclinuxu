@@ -60,11 +60,6 @@ public class VariableFetcher extends TimerTask implements Configurable {
         hwSize = prefs.getInt(PREF_HARDWARE_SIZE, 3);
         driversSize = prefs.getInt(PREF_DRIVERS_SIZE, 3);
         storiesSize = prefs.getInt(PREF_STORIES_SIZE, 3);
-
-        newHardware = new ArrayList(hwSize);
-        newDrivers = new ArrayList(driversSize);
-        newStories = new ArrayList(storiesSize);
-        counter = new HashMap(0, 1.0f);
     }
 
     /**
