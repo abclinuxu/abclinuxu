@@ -6,7 +6,7 @@
  */
 package cz.abclinuxu.servlets.edit;
 
-import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
@@ -33,7 +33,7 @@ import java.util.*;
  * <dd>Adds one response or answear to selected discussion.</dd>
  * </dl>
  */
-public class EditDiscussion extends AbcServlet {
+public class EditDiscussion extends AbcVelocityServlet {
     public static final String PARAM_RELATION = "relationId";
     public static final String PARAM_DISCUSSION = "dizId";
     public static final String PARAM_THREAD = "threadId";
@@ -57,10 +57,10 @@ public class EditDiscussion extends AbcServlet {
     protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
-        String action = (String) params.get(AbcServlet.PARAM_ACTION);
+        String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
 
         if ( action==null ) action = ACTION_ADD_QUESTION;
 
@@ -80,12 +80,12 @@ public class EditDiscussion extends AbcServlet {
             return  actionAddComment2(request,response,ctx);
 
         } else if ( action.equals(ACTION_ADD_QUESTION) ) {
-            return VariantTool.selectTemplate(request,ctx,"EditDiscussion","ask");
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditDiscussion","ask");
         } else if ( action.equals(ACTION_ADD_QUESTION_STEP2) ) {
             return actionAddQuestion2(request,response,ctx);
         }
 
-        return VariantTool.selectTemplate(request,ctx,"EditDiscussion","reply");
+        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditDiscussion","reply");
     }
 
     /**
@@ -93,11 +93,11 @@ public class EditDiscussion extends AbcServlet {
      * then opens form for adding new reaction.
      */
     protected String actionAddDiscussion(HttpServletRequest request, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
         Relation relation = (Relation) ctx.get(VAR_RELATION);
-        User user = (User) ctx.get(AbcServlet.VAR_USER);
+        User user = (User) ctx.get(AbcVelocityServlet.VAR_USER);
         GenericObject child = relation.getChild();
         Item discussion = null;
 
@@ -128,14 +128,14 @@ public class EditDiscussion extends AbcServlet {
         }
 
         ctx.put(VAR_DISCUSSION,discussion);
-        return VariantTool.selectTemplate(request,ctx,"EditDiscussion","reply");
+        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditDiscussion","reply");
     }
 
     /**
      * Displays add comment dialog
      */
     protected String actionAddComment(HttpServletRequest request, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION,Item.class,params);
@@ -158,14 +158,14 @@ public class EditDiscussion extends AbcServlet {
         }
         if ( VelocityHelper.getXPath(record,"data/title")!=null ) ctx.put(VAR_THREAD,record);
 
-        return VariantTool.selectTemplate(request,ctx,"EditDiscussion","reply");
+        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditDiscussion","reply");
     }
 
     /**
      * Adds new comment to selected discussion.
      */
     protected String actionAddComment2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION,Item.class,params);
@@ -173,7 +173,7 @@ public class EditDiscussion extends AbcServlet {
         persistance.synchronize(discussion);
 
         Relation relation = (Relation) ctx.get(VAR_RELATION);
-        User user = (User) ctx.get(AbcServlet.VAR_USER);
+        User user = (User) ctx.get(AbcVelocityServlet.VAR_USER);
 
         Record reaction = new Record(0,Record.DISCUSSION);
         boolean error = false;
@@ -223,7 +223,7 @@ public class EditDiscussion extends AbcServlet {
                 Record record = (Record) persistance.findById(new Record(upper));
                 ctx.put(VAR_THREAD,record);
             }
-            return VariantTool.selectTemplate(request,ctx,"EditDiscussion","reply");
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditDiscussion","reply");
         }
 
         ctx.put(VAR_CONTINUE,new Boolean(true));
@@ -238,7 +238,7 @@ public class EditDiscussion extends AbcServlet {
                 Record record = (Record) persistance.findById(new Record(upper));
                 ctx.put(VAR_THREAD,record);
             }
-            return VariantTool.selectTemplate(request,ctx,"EditDiscussion","reply");
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditDiscussion","reply");
         }
 
         persistance.create(reaction);
@@ -253,11 +253,11 @@ public class EditDiscussion extends AbcServlet {
      * creates question
      */
     protected String actionAddQuestion2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
         Relation relation = (Relation) ctx.get(VAR_RELATION);
-        User user = (User) ctx.get(AbcServlet.VAR_USER);
+        User user = (User) ctx.get(AbcVelocityServlet.VAR_USER);
         Item discussion = new Item(0,Item.DISCUSSION);
 
         Document document = DocumentHelper.createDocument();
@@ -297,7 +297,7 @@ public class EditDiscussion extends AbcServlet {
             discussion.setInitialized(true);
             discussion.setUpdated(new Date());
             ctx.put(VAR_THREAD,discussion);
-            return VariantTool.selectTemplate(request,ctx,"EditDiscussion","ask_confirm");
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditDiscussion","ask_confirm");
         }
 
         persistance.create(discussion);
