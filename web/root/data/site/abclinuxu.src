@@ -3,7 +3,7 @@
 # $Id$
 
 <search
-   name="Portál ABC Linuxu"
+   name="Portal ABC Linuxu"
    description="www.abclinuxu.cz - tady je tucnakum hej"
    method="GET"
    action="http://www.abclinuxu.cz/Search"
@@ -23,7 +23,7 @@
 </search>
 
 <browser
-   update="http://www.abclinuxu.cz/data/site/mozilla_search.src"
-   updateIcon="http://www.abclinuxu.cz/images/site/abc_fav.png"
+   update="http://www.abclinuxu.cz/data/site/abclinuxu.src"
+   updateIcon="http://www.abclinuxu.cz/images/site/abclinuxu.png"
    updateCheckDays="3"
 >
