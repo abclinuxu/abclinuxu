@@ -23,7 +23,6 @@ import org.dom4j.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
-import java.util.List;
 
 /**
  * Class for removing relations or creating links.
@@ -148,7 +147,6 @@ public class EditRelation extends AbcFMServlet {
     }
 
     protected String actionRemove1(HttpServletRequest request, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_CURRENT);
 
@@ -182,6 +180,7 @@ public class EditRelation extends AbcFMServlet {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_CURRENT);
+        int originalUpper = relation.getUpper();
 
         Relation destination = (Relation) InstanceUtils.instantiateParam(PARAM_SELECTED,Relation.class,params);
         persistance.synchronize(destination);
@@ -193,10 +192,13 @@ public class EditRelation extends AbcFMServlet {
         String url = null;
         String prefix = (String) params.get(PARAM_PREFIX);
         if ( prefix!=null ) {
-            url = prefix.concat("/ViewRelation?relationId="+relation.getUpper());
+            if ( originalUpper==Constants.REL_FORUM )
+                url = "/diskuse.jsp";
+            else
+                url = prefix.concat("/ViewRelation?relationId="+relation.getUpper());
         } else url = "/Index";
 
-        UrlUtils urlUtils = new UrlUtils(prefix, response);
+        UrlUtils urlUtils = new UrlUtils("", response);
         urlUtils.redirect(response, url);
         return null;
     }
