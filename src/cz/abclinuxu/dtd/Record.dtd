@@ -24,6 +24,16 @@
 <!ELEMENT url (#PCDATA)> <!-- URL, probably link to homepage of the software -->
 <!ELEMENT version (#PCDATA)> <!-- version of the software -->
 
+<!-- Record.Discussion ***NEW*** -->
+<!ELEMENT data (author|author_id,title,text,parent,created)>
+<!ATTLIST data id (#ID) #REQUIRED> <!-- URL of resource or article -->
+<!ELEMENT author (#PCDATA)> <!-- unknow user's name -->
+<!ELEMENT author_id (#PCDATA)> <!-- user id -->
+<!ELEMENT title (#PCDATA)> <!-- title of this reaction -->
+<!ELEMENT text (#PCDATA)> <!-- text of comment -->
+<!ELEMENT parent (#PCDATA)> <!-- int, id of parental discussion node, or 0 if this node is top level -->
+<!ELEMENT created (#PCDATA)> <!-- date, when this comment was created in ISO format -->
+
 <!-- Record.Discussion -->
 <!ELEMENT data (author?,text,url?,version?)>
 <!ELEMENT author (#PCDATA)> <!-- unknow user's name -->
