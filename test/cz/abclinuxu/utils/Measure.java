@@ -20,6 +20,7 @@ import cz.abclinuxu.utils.freemarker.Tools;
 import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * This class works as template for speed measurement.
@@ -34,22 +35,14 @@ public class Measure {
 
         // place initilizaton here
         Persistance persistance = PersistanceFactory.getPersistance();
-        SQLTool sqlTool = SQLTool.getInstance();
-        Qualifier[] qualifiers = new Qualifier[]{};
-        List data = sqlTool.findItemRelationsWithType(Item.DICTIONARY, qualifiers);
-        for (Iterator iter = data.iterator(); iter.hasNext();) {
-            Relation relation = (Relation) iter.next();
-            Tools.sync(relation);
-        }
-        List origData = new ArrayList(data);
-        Sorters2.byName(data);
+        DateTool dateTool = new DateTool();
+        String parse = "2001-12-22 07:35";
+        String d = dateTool.show(parse, "CZ_FULL_TXT");
 
         long start = System.currentTimeMillis();
-        for (i=0; i<145; i++) {
+        for (i=0; i<35000; i++) {
             //place your code to measure here
-            data.clear();
-            data.addAll(origData);
-            Sorters2.byName(data);
+            d = dateTool.show(parse, "CZ_FULL_TXT");
         }
         long end = System.currentTimeMillis();
 
