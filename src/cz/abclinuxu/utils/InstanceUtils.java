@@ -13,6 +13,7 @@ import java.util.Map;
  * Utilities related to classes and objects.
  */
 public class InstanceUtils {
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(InstanceUtils.class);
 
     /**
      * Retrieves parameter <code>name</code> from <code>params</code>. If it is not
@@ -31,6 +32,7 @@ public class InstanceUtils {
             obj.setId(id);
             return obj;
         } catch (Exception e) {
+            log.error("Cannot instantiate param "+name+"!", e);
             return null;
         }
     }

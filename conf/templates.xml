@@ -2,13 +2,13 @@
 <config>
 
   <servlet name="EditArticle">
-    <action name="add">
-      <mapping template="web" content="web/add/article.vm">
+    <action name="add" template="print">
+      <mapping template="print" content="/print/add/article.ftl">
         <var name="TITLE" value="Vlo¾ení èlánku" />
       </mapping>
     </action>
-    <action name="edit">
-      <mapping template="web" content="web/edit/article.vm">
+    <action name="edit" template="print">
+      <mapping template="print" content="/print/add/article.ftl">
         <var name="TITLE" value="Úprava èlánku" />
       </mapping>
     </action>
@@ -318,6 +318,11 @@
     <action name="login">
       <mapping template="web" content="/web/show/login.ftl">
         <var name="TITLE" value="Pøihlá¹ení do systému" />
+      </mapping>
+    </action>
+    <action name="forbidden">
+      <mapping template="web" content="/web/misc/forbidden.ftl">
+        <var name="TITLE" value="Pøístup odepøen" />
       </mapping>
     </action>
   </servlet>

@@ -78,23 +78,25 @@ public class ServletUtils {
     }
 
     /**
-     * Handles messages and errors. If they are in special session attribute,
-     * it moves them into environment.
+     * Sets messages and errors in env. If session contains them already,
+     * values from session are used, otherwise they are created.
      */
     public static void handleMessages(HttpServletRequest request, Map env) {
         HttpSession session = request.getSession();
 
         Map errors = (Map) session.getAttribute(Constants.VAR_ERRORS);
-        if ( errors!=null ) {
-            env.put(Constants.VAR_ERRORS,errors);
+        if ( errors!=null )
             session.removeAttribute(Constants.VAR_ERRORS);
-        }
+        else
+            errors = new HashMap(5);
+        env.put(Constants.VAR_ERRORS,errors);
 
         List messages = (List) session.getAttribute(Constants.VAR_MESSAGES);
-        if ( messages!=null ) {
-            env.put(Constants.VAR_MESSAGES,messages);
+        if ( messages!=null )
             session.removeAttribute(Constants.VAR_MESSAGES);
-        }
+        else
+            messages = new ArrayList(2);
+        env.put(Constants.VAR_MESSAGES,messages);
     }
 
     /**
@@ -113,6 +115,7 @@ public class ServletUtils {
         if ( logout ) {
             params.remove(PARAM_LOG_OUT);
             session.removeAttribute(Constants.VAR_USER);
+            session.invalidate();
             if ( cookie!=null )
                 deleteCookie(cookie,response);
             return;
@@ -120,7 +123,7 @@ public class ServletUtils {
 
         User user = (User) session.getAttribute(Constants.VAR_USER);
         if ( user!=null ) {
-            env.put(AbcVelocityServlet.VAR_USER,user);
+            env.put(Constants.VAR_USER,user);
             return;
         }
 
@@ -242,11 +245,6 @@ public class ServletUtils {
      */
     public static void addError(String key, String errorMessage, Map env, HttpSession session) {
         Map errors = (Map) env.get(Constants.VAR_ERRORS);
-        if ( errors==null ) {
-            errors = new HashMap(5);
-            env.put(Constants.VAR_ERRORS,errors);
-        }
-
         errors.put(key,errorMessage);
         if ( session!=null )
             session.setAttribute(Constants.VAR_ERRORS,errors);
@@ -258,11 +256,6 @@ public class ServletUtils {
      */
     public static void addMessage(String message, Map env, HttpSession session) {
         List messages = (List) env.get(Constants.VAR_MESSAGES);
-        if ( messages==null ) {
-            messages = new ArrayList(2);
-            env.put(Constants.VAR_MESSAGES,messages);
-        }
-
         messages.add(message);
         if ( session!=null )
             session.setAttribute(Constants.VAR_MESSAGES,messages);

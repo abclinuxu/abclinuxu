@@ -7,9 +7,9 @@ INPUT, SELECT { font-family: Helvetica; }
 LI { color: #444444; font-family: Lucida,Helvetica; font-size: 11pt }
 TD.obsah { padding: 2em 2em; }
 TD.bezmezer { padding: 0 0 0 0 }
-SPAN.povinne { font-weight: bolder }
-.error { color: RED; text-decoration: underline; font-size: bigger }
-.message { text-decoration: underline; padding: 1ex 0ex }
+.required { font-weight: bolder }
+.error { color: RED; font-size: bigger }
+.message { font-size: bigger; padding: 1ex 0ex }
 
 /* sablona */
 SPAN.piditucna { color: BLACK; font-family: Lucida,Verdana,Helvetica; font-size: 10pt; font-weight: bold }

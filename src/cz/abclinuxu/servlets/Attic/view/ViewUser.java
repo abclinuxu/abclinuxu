@@ -105,6 +105,21 @@ public class ViewUser extends AbcFMServlet {
     }
 
     /**
+     * handle login submit
+     * @todo investigate, why after log in there is a login dialog
+     */
+    protected String handleLogin2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        if ( env.get(Constants.VAR_USER)!=null ) {
+            Map params = (Map) env.get(Constants.VAR_PARAMS);
+            String id = new Integer(((User)env.get(Constants.VAR_USER)).getId()).toString();
+            params.put(PARAM_USER,id);
+            return handleProfile(request,env);
+        }
+        else
+            return FMTemplateSelector.select("ViewUser","login",env,request);
+    }
+
+    /**
      * shows login screen
      */
     protected String handleShowContent(HttpServletRequest request, Map env) throws Exception {
@@ -183,21 +198,6 @@ public class ViewUser extends AbcFMServlet {
         }
 
         return FMTemplateSelector.select("ViewUser","content",env,request);
-    }
-
-    /**
-     * handle login submit
-     * @todo investigate, why after log in there is a login dialog
-     */
-    protected String handleLogin2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        if ( env.get(Constants.VAR_USER)!=null ) {
-            Map params = (Map) env.get(Constants.VAR_PARAMS);
-            String id = new Integer(((User)env.get(Constants.VAR_USER)).getId()).toString();
-            params.put(PARAM_USER,id);
-            return handleProfile(request,env);
-        }
-        else
-            return FMTemplateSelector.select("ViewUser","login",env,request);
     }
 
     /**

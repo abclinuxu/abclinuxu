@@ -6,22 +6,18 @@
  */
 package cz.abclinuxu.servlets.edit;
 
-import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.utils.*;
-import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.servlets.view.SelectRelation;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Tools;
 import cz.abclinuxu.exceptions.MissingArgumentException;
-import org.apache.velocity.Template;
-import org.apache.velocity.context.Context;
-import org.dom4j.*;
 
+import org.dom4j.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.RequestDispatcher;
@@ -41,17 +37,19 @@ public class EditArticle extends AbcFMServlet {
     public static final String PARAM_PEREX = "perex";
     public static final String PARAM_CONTENT = "content";
     public static final String PARAM_PUBLISHED = "published";
-    public static final String PARAM_AUTHOR_ID = SelectRelation.PARAM_SELECTED;
+    public static final String PARAM_AUTHOR = "authorId";
 
     public static final String VAR_RELATION = "RELATION";
+    public static final String VAR_AUTHORS = "AUTHORS";
 
     public static final String ACTION_ADD_ITEM = "add";
     public static final String ACTION_ADD_ITEM_STEP2 = "add2";
     public static final String ACTION_EDIT_ITEM = "edit";
     public static final String ACTION_EDIT_ITEM_STEP2 = "edit2";
 
+
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         String action = (String) params.get(PARAM_ACTION);
 
@@ -68,10 +66,7 @@ public class EditArticle extends AbcFMServlet {
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
                 case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: {
-                    params.put(PARAM_PUBLISHED,Constants.isoFormat.format(new Date()));
-                    return FMTemplateSelector.select("EditArticle","add",env,request);
-                }
+                default: return actionAddStep1(request,env);
             }
 
         } else if ( action.equals(ACTION_ADD_ITEM_STEP2) ) {
@@ -99,52 +94,59 @@ public class EditArticle extends AbcFMServlet {
             }
 
         }
+        return actionAddStep1(request,env);
+    }
+
+    private String actionAddStep1(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+        params.put(PARAM_PUBLISHED,Constants.isoFormat.format(new Date()));
+        addAuthors(env);
         return FMTemplateSelector.select("EditArticle","add",env,request);
     }
 
     protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation upper = (Relation) env.get(VAR_RELATION);
-        User user = (User) env.get(AbcVelocityServlet.VAR_USER);
+        User user = (User) env.get(Constants.VAR_USER);
 
         boolean error = false;
         Date publish = null;
 
         String name = (String) params.get(PARAM_TITLE);
         if ( name==null || name.length()==0 ) {
-            ServletUtils.addError(PARAM_TITLE,"Nevyplnil jste titulek èlánku!",env,null); error = true;
+            ServletUtils.addError(PARAM_TITLE,"Vyplòte titulek èlánku!",env,null); error = true;
+        }
+
+        /** todo: support for author not listed in section Authors */
+        User author = (User) InstanceUtils.instantiateParam(PARAM_AUTHOR,User.class,params);
+        if ( author==null ) {
+            ServletUtils.addError(PARAM_AUTHOR,"Vyberte autora!",env,null); error = true;
+        } else {
+            persistance.synchronize(author);
         }
 
         String perex = (String) params.get(PARAM_PEREX);
         if ( perex==null || perex.length()==0 ) {
-            ServletUtils.addError(PARAM_PEREX,"Nevyplnil jste popis èlánku!",env,null); error = true;
+            ServletUtils.addError(PARAM_PEREX,"Vyplòte popis èlánku!",env,null); error = true;
         }
 
         String content = (String) params.get(PARAM_CONTENT);
         if ( content==null || content.length()==0 ) {
-            ServletUtils.addError(PARAM_CONTENT,"Nevyplnil jste obsah èlánku!",env,null); error = true;
+            ServletUtils.addError(PARAM_CONTENT,"Vyplòte obsah èlánku!",env,null); error = true;
         }
 
-        String str = (String) params.get(PARAM_PUBLISHED);
-        if ( str==null || str.length()<12 ) {
+        try {
+            publish = Constants.isoFormat.parse((String) params.get(PARAM_PUBLISHED));
+        } catch (ParseException e) {
             ServletUtils.addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",env,null); error = true;
-        } else {
-            try {
-                publish = Constants.isoFormat.parse(str);
-            } catch (ParseException e) {
-                ServletUtils.addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",env,null); error = true;
-            }
         }
 
         if ( error ) {
-            return FMTemplateSelector.select("EditArticle","add",env,request);
+            addAuthors(env);
+            return actionAddStep1(request,env);
         }
-
-        /** todo: support for author not listed in section Authors */
-        Relation tmp = (Relation) InstanceUtils.instantiateParam(PARAM_AUTHOR_ID,Relation.class,params);
-        persistance.synchronize(tmp);
-        User author = (User) tmp.getChild();
 
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
@@ -180,14 +182,14 @@ public class EditArticle extends AbcFMServlet {
             urlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId());
             return null;
         } catch (PersistanceException e) {
-            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,e.getMessage(),env, null);
-            return FMTemplateSelector.select("EditArticle","add",env,request);
+            ServletUtils.addError(Constants.ERROR_GENERIC,e.getMessage(),env, null);
+            return actionAddStep1(request,env);
         }
     }
 
     protected String actionEditItem(HttpServletRequest request, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
-        VelocityHelper helper = (VelocityHelper) env.get(AbcVelocityServlet.VAR_HELPER);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
 
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
@@ -196,29 +198,32 @@ public class EditArticle extends AbcFMServlet {
         Node node = document.selectSingleNode("data/name");
         params.put(PARAM_TITLE,node.getText());
         node = document.selectSingleNode("data/perex");
-        if ( node!=null ) params.put(PARAM_PEREX,helper.encodeSpecial(node.getText()));
+        if ( node!=null ) params.put(PARAM_PEREX,Tools.encodeSpecial(node.getText()));
         params.put(PARAM_PUBLISHED,item.getCreated());
+        node = document.selectSingleNode("data/author");
+        params.put(PARAM_AUTHOR,node.getText());
 
         Record record = null;
         for (Iterator iter = item.getContent().iterator(); iter.hasNext();) {
             Relation rel = (Relation) iter.next();
-            PersistanceFactory.getPersistance().synchronize(rel.getChild());
+            persistance.synchronize(rel.getChild());
             if ( rel.getChild() instanceof Record ) {
                 record = (Record) rel.getChild();
                 if ( record.getType()==Record.ARTICLE ) {
                     document = record.getData();
                     node = document.selectSingleNode("data/content");
-                    params.put(PARAM_CONTENT,helper.encodeSpecial(node.getText()));
+                    params.put(PARAM_CONTENT,Tools.encodeSpecial(node.getText()));
                     break;
                 }
             }
         }
 
+        addAuthors(env);
         return FMTemplateSelector.select("EditArticle","edit",env,request);
     }
 
     protected String actionEditItem2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation upper = (Relation) env.get(VAR_RELATION);
 
@@ -227,31 +232,35 @@ public class EditArticle extends AbcFMServlet {
 
         String name = (String) params.get(PARAM_TITLE);
         if ( name==null || name.length()==0 ) {
-            ServletUtils.addError(PARAM_TITLE,"Nevyplnil jste titulek èlánku!",env,null); error = true;
+            ServletUtils.addError(PARAM_TITLE,"Vyplòte titulek èlánku!",env,null); error = true;
+        }
+
+        /** todo: support for author not listed in section Authors */
+        User author = (User) InstanceUtils.instantiateParam(PARAM_AUTHOR,User.class,params);
+        if ( author==null ) {
+            ServletUtils.addError(PARAM_AUTHOR,"Vyberte autora!",env,null); error = true;
+        } else {
+            persistance.synchronize(author);
         }
 
         String perex = (String) params.get(PARAM_PEREX);
         if ( perex==null || perex.length()==0 ) {
-            ServletUtils.addError(PARAM_PEREX,"Nevyplnil jste popis èlánku!",env,null); error = true;
+            ServletUtils.addError(PARAM_PEREX,"Vyplòte popis èlánku!",env,null); error = true;
         }
 
         String content = (String) params.get(PARAM_CONTENT);
         if ( content==null || content.length()==0 ) {
-            ServletUtils.addError(PARAM_CONTENT,"Nevyplnil jste obsah èlánku!",env,null); error = true;
+            ServletUtils.addError(PARAM_CONTENT,"Vyplòte obsah èlánku!",env,null); error = true;
         }
 
-        String str = (String) params.get(PARAM_PUBLISHED);
-        if ( str==null || str.length()<12 ) {
+        try {
+            publish = Constants.isoFormat.parse((String) params.get(PARAM_PUBLISHED));
+        } catch (ParseException e) {
             ServletUtils.addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",env,null); error = true;
-        } else {
-            try {
-                publish = Constants.isoFormat.parse(str);
-            } catch (ParseException e) {
-                ServletUtils.addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",env,null); error = true;
-            }
         }
 
         if ( error ) {
+            addAuthors(env);
             return FMTemplateSelector.select("EditArticle","edit",env,request);
         }
 
@@ -260,6 +269,7 @@ public class EditArticle extends AbcFMServlet {
 
         Document document = item.getData();
         DocumentHelper.makeElement(document,"data/name").setText(name);
+        DocumentHelper.makeElement(document,"data/author").setText(Integer.toString(author.getId()));
         DocumentHelper.makeElement(document,"data/perex").setText(perex);
         persistance.update(item);
 
@@ -281,5 +291,29 @@ public class EditArticle extends AbcFMServlet {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/ViewRelation?relationId="+upper.getId());
         return null;
+    }
+
+    /**
+     * Adds list of authors (User) to env in VAR_AUTHORS.
+     */
+    private void addAuthors(Map env) {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        User user = null;
+
+        Category category = (Category) persistance.findById(new Category(Constants.CAT_AUTHORS));
+        List authors = new ArrayList(category.getContent().size());
+        for (Iterator it = category.getContent().iterator(); it.hasNext();) {
+            GenericObject child = ((Relation) it.next()).getChild();
+            if ( child instanceof User ) {
+                user = (User) persistance.findById(child);
+                authors.add(user);
+            }
+        }
+        env.put(VAR_AUTHORS,authors);
+
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        if ( params.get(PARAM_AUTHOR)==null ) {
+            params.put(PARAM_AUTHOR,Integer.toString(user.getId()));
+        }
     }
 }
