@@ -253,7 +253,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         if ( new Date().after(calendar.getTime()) ) {
-            calendar.add(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+            calendar.add(Calendar.DAY_OF_WEEK, 7);
         }
 
         scheduler.scheduleAtFixedRate(new WeeklyEmail(), calendar.getTime(), 7*24*60*60*1000);
@@ -274,7 +274,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         calendar.set(Calendar.MINUTE, 1);
         calendar.set(Calendar.SECOND, 0);
         if ( new Date().after(calendar.getTime()) ) {
-            calendar.add(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+            calendar.add(Calendar.DAY_OF_WEEK, 7);
         }
 
         scheduler.scheduleAtFixedRate(new WhatHappened(), calendar.getTime(), 7*24*60*60*1000);
