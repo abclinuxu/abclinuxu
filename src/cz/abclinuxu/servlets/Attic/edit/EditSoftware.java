@@ -199,7 +199,7 @@ public class EditSoftware extends AbcServlet {
 
         document = DocumentHelper.createDocument();
         root = document.addElement("data");
-        root.addElement("text").addText(VelocityHelper.fixLines(text));
+        root.addElement("text").addText(text);
         if ( url!=null && url.length()>0 ) root.addElement("url").addText(url);
         if ( version!=null && version.length()>0 ) root.addElement("version").addText(version);
 
@@ -239,7 +239,7 @@ public class EditSoftware extends AbcServlet {
 
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
-        root.addElement("text").addText(VelocityHelper.fixLines(text));
+        root.addElement("text").addText(text);
         if ( url!=null && url.length()>0 ) root.addElement("url").addText(url);
         if ( version!=null && version.length()>0 ) root.addElement("version").addText(version);
 
@@ -297,7 +297,7 @@ public class EditSoftware extends AbcServlet {
             return getTemplate("add/swrecord.vm");
         }
 
-        DocumentHelper.makeElement(document,"data/text").setText(VelocityHelper.fixLines(text));
+        DocumentHelper.makeElement(document,"data/text").setText(text);
         if ( url!=null ) DocumentHelper.makeElement(document,"data/url").setText(url);
         if ( version!=null ) DocumentHelper.makeElement(document,"data/version").setText(version);
 

@@ -83,6 +83,7 @@ public class AbcServlet extends VelocityServlet {
     /** used by template */
     public static final String VAR_RUBRIKY = "RUBRIKY";
     public static final String VAR_ABCLINUXU = "ABCLINUXU";
+    public static final String VAR_REKLAMA = "REKLAMA";
     public static final String VAR_ANKETA = "ANKETA";
     public static final String VAR_LINKS = "LINKS";
     public static final String VAR_COUNTS = "COUNTS";
@@ -327,6 +328,10 @@ public class AbcServlet extends VelocityServlet {
             helper.sync(abc.getContent());
             ctx.put(VAR_ABCLINUXU,abc.getContent());
 
+            Category reklama = (Category) persistance.findById(new Category(Constants.CAT_REKLAMA));
+            helper.sync(reklama.getContent());
+            ctx.put(VAR_REKLAMA,reklama.getContent());
+
             List list = persistance.findByCommand("select max(cislo) from anketa");
             Object[] objects = (Object[]) list.get(0);
             Poll poll = new Poll(((Integer)objects[0]).intValue());
@@ -352,6 +357,9 @@ public class AbcServlet extends VelocityServlet {
 
             Category forum = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
             counts.put("FORUM",new Integer(forum.getContent().size()));
+
+            Category requests = (Category) persistance.findById(new Category(Constants.CAT_REQUESTS));
+            counts.put("REQUESTS",new Integer(requests.getContent().size()));
 
             ctx.put(VAR_COUNTS,counts);
         } catch (PersistanceException e) {

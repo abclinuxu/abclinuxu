@@ -211,10 +211,10 @@ public class EditHardware extends AbcServlet {
         root = document.addElement("data");
         if ( price!=null && price.length()>0 ) root.addElement("price").addText(price);
         if ( driver!=null && driver.length()>0 ) root.addElement("driver").addText(driver);
-        if ( setup!=null && setup.length()>0 ) root.addElement("setup").addText(VelocityHelper.fixLines(setup));
-        if ( tech!=null && tech.length()>0 ) root.addElement("params").addText(VelocityHelper.fixLines(tech));
-        if ( identification!=null && identification.length()>0 ) root.addElement("identification").addText(VelocityHelper.fixLines(identification));
-        if ( note!=null && note.length()>0 ) root.addElement("note").addText(VelocityHelper.fixLines(note));
+        if ( setup!=null && setup.length()>0 ) root.addElement("setup").addText(setup);
+        if ( tech!=null && tech.length()>0 ) root.addElement("params").addText(tech);
+        if ( identification!=null && identification.length()>0 ) root.addElement("identification").addText(identification);
+        if ( note!=null && note.length()>0 ) root.addElement("note").addText(note);
 
         Record record = new Record(0,Record.HARDWARE);
         record.setData(document);
@@ -257,10 +257,10 @@ public class EditHardware extends AbcServlet {
         Element root = document.addElement("data");
         if ( price!=null && price.length()>0 ) root.addElement("price").addText(price);
         if ( driver!=null && driver.length()>0 ) root.addElement("driver").addText(driver);
-        if ( setup!=null && setup.length()>0 ) root.addElement("setup").addText(VelocityHelper.fixLines(setup));
-        if ( tech!=null && tech.length()>0 ) root.addElement("params").addText(VelocityHelper.fixLines(tech));
-        if ( identification!=null && identification.length()>0 ) root.addElement("identification").addText(VelocityHelper.fixLines(identification));
-        if ( note!=null && note.length()>0 ) root.addElement("note").addText(VelocityHelper.fixLines(note));
+        if ( setup!=null && setup.length()>0 ) root.addElement("setup").addText(setup);
+        if ( tech!=null && tech.length()>0 ) root.addElement("params").addText(tech);
+        if ( identification!=null && identification.length()>0 ) root.addElement("identification").addText(identification);
+        if ( note!=null && note.length()>0 ) root.addElement("note").addText(note);
 
         Record record = new Record(0,Record.HARDWARE);
         record.setData(document);
@@ -364,10 +364,10 @@ public class EditHardware extends AbcServlet {
 
         DocumentHelper.makeElement(document,"data/driver").setText(driver);
         DocumentHelper.makeElement(document,"data/price").setText(price);
-        if ( setup!=null ) DocumentHelper.makeElement(document,"data/setup").setText(VelocityHelper.fixLines(setup));
-        if ( tech!=null ) DocumentHelper.makeElement(document,"data/params").setText(VelocityHelper.fixLines(tech));
-        if ( identification!=null ) DocumentHelper.makeElement(document,"data/identification").setText(VelocityHelper.fixLines(identification));
-        if ( note!=null ) DocumentHelper.makeElement(document,"data/note").setText(VelocityHelper.fixLines(note));
+        if ( setup!=null ) DocumentHelper.makeElement(document,"data/setup").setText(setup);
+        if ( tech!=null ) DocumentHelper.makeElement(document,"data/params").setText(tech);
+        if ( identification!=null ) DocumentHelper.makeElement(document,"data/identification").setText(identification);
+        if ( note!=null ) DocumentHelper.makeElement(document,"data/note").setText(note);
 
         persistance.update(record);
 

@@ -110,7 +110,7 @@ public class EditRequest extends AbcServlet {
         Document document = DocumentHelper.createDocument();
         DocumentHelper.makeElement(document,"/data/author").addText(author);
         DocumentHelper.makeElement(document,"/data/email").addText(email);
-        DocumentHelper.makeElement(document,"/data/text").addText(VelocityHelper.fixLines(text));
+        DocumentHelper.makeElement(document,"/data/text").addText(text);
 
         req.setData(document);
 

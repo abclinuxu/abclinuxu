@@ -189,7 +189,7 @@ $!UTIL.saveParams($PARAMS, [])
 #end
 <span class="diz_header_prefix">Titulek:</span> $!UTIL.getXPath($reaction,'data/title')<br>
 </div>
-<p>$!UTIL.getXPath($reaction,'data/text')<br>
+<p>$UTIL.render($!UTIL.getXPath($reaction,'data/text'))<br>
 <form action="$!URL.make("/EditDiscussion")" method="post">
 <input type="hidden" name="action" value="add">
 <input type="hidden" name="dizId" value="$!diz.Id">

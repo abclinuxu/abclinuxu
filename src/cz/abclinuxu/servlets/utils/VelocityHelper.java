@@ -33,11 +33,15 @@ import java.text.ParseException;
 public class VelocityHelper {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(VelocityHelper.class);
 
-    static RE lineBreaks,emptyLine,ampersand;
+    static RE lineBreaks,emptyLine,usmev,smich,mrk,smutek;
     static {
         try {
             lineBreaks = new RE("(<br>)|(<p>)|(<div>)",RE.MATCH_CASEINDEPENDENT);
             emptyLine = new RE("(\r\n){2}|(\n){2}", RE.MATCH_MULTILINE);
+            usmev = new RE("([\\:][-]?[)]+)");
+            smich = new RE("([\\:][-]?[D]([^a-zA-Z]|$))");
+            mrk = new RE("([;][-]?[)]+)");
+            smutek = new RE("([\\:][-]?[(]+)");
         } catch (RESyntaxException e) {
             log.error("Cannot create regexp to find line breaks!", e);
         }
@@ -605,13 +609,20 @@ public class VelocityHelper {
     }
 
     /**
-     * Returns string with correct line breaks. If <code>str</code> already contains
-     * line breaks, original string is returned. Otherwise each empty line is replaced
-     * by paragraph break and modified string is returned.
+     * This method performs visualization enhancements. If string
+     * doesn't contain already HTML breaks (<p>, <br>), it inserts them.
+     * It also replaces smilies with appropriate images.
      */
-    public static String fixLines(String str) {
+    public String render(String str) {
         if ( str==null ) return null;
-        if ( lineBreaks.match(str) ) return str;
-        return emptyLine.subst(str,"<P>\n");
+        if ( str.length()==0 ) return str;
+
+        String tmp = smich.subst(str,"<img src=\"/images/smile/smich.gif\" width=19 height=19 alt=\":-D\">");
+        tmp = usmev.subst(tmp,"<img src=\"/images/smile/usmev.gif\" width=19 height=19 alt=\":-)\">");
+        tmp = mrk.subst(tmp,"<img src=\"/images/smile/mrk.gif\" width=19 height=19 alt=\";-)\">");
+        tmp = smutek.subst(tmp,"<img src=\"/images/smile/smutek.gif\" width=19 height=19 alt=\":-(\">");
+
+        if ( lineBreaks.match(tmp) ) return tmp;
+        return emptyLine.subst(tmp,"<P>\n");
     }
 }

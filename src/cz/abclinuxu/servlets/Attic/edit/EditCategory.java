@@ -155,7 +155,7 @@ public class EditCategory extends AbcServlet {
         Element root = document.addElement("data");
         root.addElement("name").addText(name);
         if ( icon!=null && icon.length()>0 ) root.addElement("icon").addText(icon);
-        if ( note!=null && note.length()>0 ) root.addElement("note").addText(VelocityHelper.fixLines(note));
+        if ( note!=null && note.length()>0 ) root.addElement("note").addText(note);
         document.setRootElement(root);
 
         Relation upperRelation = (Relation) ctx.get(EditCategory.VAR_RELATION);
@@ -241,7 +241,6 @@ public class EditCategory extends AbcServlet {
 
         node = DocumentHelper.makeElement(document,"data/note");
         tmp = (String) params.get(EditCategory.PARAM_NOTE);
-        tmp = VelocityHelper.fixLines(tmp);
         node.setText(tmp);
 
         tmp = (String) params.get(EditCategory.PARAM_OPEN);

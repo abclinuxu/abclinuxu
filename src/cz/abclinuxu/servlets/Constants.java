@@ -28,6 +28,9 @@ public interface Constants {
     public static final int CAT_REQUESTS = 256;
     public static final int CAT_FORUM = 265;
     public static final int CAT_ROOT = 248;
+    public static final int CAT_REKLAMA = 333;
+    public static final int CAT_SYSTEM = 338;
+    public static final int CAT_ARTICLEPOOL = 339;
 
     /** actual ids of selected relations in database */
     public static final int REL_POLLS = 250;
@@ -42,6 +45,9 @@ public interface Constants {
     public static final int REL_REQUESTS =  3500;
     public static final int REL_FORUM = 3739;
     public static final int REL_ABC = 5187;
+    public static final int REL_KOMERCE = 7223;
+    public static final int REL_SYSTEM = 8000;
+    public static final int REL_ARTICLEPOOL = 8082;
 
     /** types for VelocityHelper.groupByType() */
     public static final String TYPE_MAKE = "make";

@@ -173,7 +173,6 @@ public class EditDriver extends AbcServlet {
         DocumentHelper.makeElement(document,"data/version").setText(version);
         DocumentHelper.makeElement(document,"data/url").setText(url);
         if ( note!=null && note.length()>0 ) {
-            note = VelocityHelper.fixLines(note);
             DocumentHelper.makeElement(document,"data/note").setText(note);
         }
 
