@@ -107,12 +107,12 @@ public class ViewRelation extends AbcFMServlet {
         }
 
         if ( relation.getParent() instanceof Item )
-            return processItem(request,env,relation,parents);
+            return processItem(request,env,relation);
         else if ( relation.getParent() instanceof Category ) {
             if ( relation.getChild() instanceof Item )
-                return processItem(request,env,relation,parents);
+                return processItem(request,env,relation);
             else
-                return ViewCategory.processCategory(request,response,env,relation,parents);
+                return ViewCategory.processCategory(request,response,env,relation);
         }
         return null;
     }
@@ -121,7 +121,7 @@ public class ViewRelation extends AbcFMServlet {
      * Processes item - like article, discussion, driver etc.
      * @return template to be rendered
      */
-    String processItem(HttpServletRequest request, Map env, Relation relation, List parents) throws Exception {
+    String processItem(HttpServletRequest request, Map env, Relation relation) throws Exception {
         Item item = null;
         Record record = null;
         Relation upper = null;
@@ -129,7 +129,6 @@ public class ViewRelation extends AbcFMServlet {
         if ( relation.getChild() instanceof Item ) {
             item = (Item) relation.getChild();
             upper = relation;
-            if ( parents!=null ) parents.add(upper);
         } else if ( relation.getParent() instanceof Item ) {
             item = (Item) relation.getParent();
             upper = new Relation(relation.getUpper());

@@ -179,28 +179,30 @@ public class Tools {
         User user = (o instanceof User)? ((User)o) : null;
         if (parents.size()==0) return "";
         StringBuffer sb = new StringBuffer("<p>");
+        String title, url;
 
-        Relation first = (Relation) parents.get(0);
-        if (first.getUpper()==0 && (first.getParent() instanceof Category) ) {
+        Relation relation = (Relation) parents.get(0);
+        if ( relation.getUpper()==0 && (relation.getParent() instanceof Category) ) {
             boolean forbidden = false;
-            GenericObject parent = first.getParent();
+            GenericObject parent = relation.getParent();
             if (parent.getId()==Constants.CAT_ROOT || parent.getId()==Constants.CAT_SYSTEM ) {
                 if ( user==null || (! user.isMemberOf(Constants.GROUP_ADMINI)) )
                     forbidden = true;
             }
             if (!forbidden) {
-                appendURL(sb, urlUtils.make("/ViewCategory?parent=yes&rid="+first.getId()), xpath(parent, "/data/name"));
+                appendURL(sb, urlUtils.make("/ViewCategory?parent=yes&rid="+relation.getId()), xpath(parent, "/data/name"));
                 sb.append(" - ");
             }
         }
+        
         for ( Iterator iter = parents.iterator(); iter.hasNext(); ) {
-            Relation relation = (Relation) iter.next();
+            relation = (Relation) iter.next();
             GenericObject child = relation.getChild();
             if ( child instanceof Category && (child.getId()==Constants.CAT_ROOT || child.getId()==Constants.CAT_SYSTEM ))
                 if ( user==null || (!user.isMemberOf(Constants.GROUP_ADMINI)) )
                     continue;
 
-            String title = childName(relation), url = null;
+            title = childName(relation); url = null;
             if (relation.getId()==Constants.REL_FORUM)
                 url =  "/diskuse.jsp";
             else if (child instanceof Category) {
@@ -210,10 +212,8 @@ public class Tools {
                     url = urlUtils.make("/ViewCategory?rid="+relation.getId());
             } else
                 url = urlUtils.make("/ViewRelation?rid="+relation.getId());
-            if ( iter.hasNext() )
-                appendURL(sb,url,title);
-            else
-                sb.append(title);
+
+            appendURL(sb, url, title);
             if ( iter.hasNext() ) sb.append(" - ");
         }
         sb.append("</p>");

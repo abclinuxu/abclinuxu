@@ -75,7 +75,7 @@ public interface Persistance {
 
     /**
      * Finds all parents of this Relation. First element is top level relation, the second is its child and the
-     * last element is direct parent of this relation (last.getId()==relation.getUpper()).
+     * last element is this relation.
      * @return List of Relations, starting at top level.
      * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
      */

@@ -95,17 +95,14 @@ public class ViewCategory extends AbcFMServlet {
             }
         }
 
-        return processCategory(request,response,env,relation,parents);
+        return processCategory(request,response,env,relation);
     }
 
     /**
      * processes given category
      * @return template to be rendered
      */
-    public static String processCategory(HttpServletRequest request, HttpServletResponse response, Map env, Relation relation, List parents) throws Exception {
-        if ( parents!=null ) parents.add(relation);
-        Category category = null;
-
+    public static String processCategory(HttpServletRequest request, HttpServletResponse response, Map env, Relation relation) throws Exception {
         String tmp = (String) ((Map)env.get(Constants.VAR_PARAMS)).get(PARAM_PARENT);
         GenericObject obj;
         if ( Misc.same(tmp,"yes") )
@@ -113,6 +110,7 @@ public class ViewCategory extends AbcFMServlet {
         else
             obj = relation.getChild();
 
+        Category category = null;
         if ( !(obj instanceof Category) ) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());

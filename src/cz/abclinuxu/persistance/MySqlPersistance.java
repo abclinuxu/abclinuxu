@@ -251,47 +251,21 @@ public class MySqlPersistance implements Persistance {
     }
 
     /**
-     * todo unit test
+     * Finds all parents of this Relation. First element is top level relation, the second is its child and the
+     * last element is this relation.
      */
     public List findParents(Relation relation) {
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-        try {
-            con = getSQLConnection();
-            List result = new ArrayList(3);
-            int upper = relation.getUpper();
-            GenericObject parent = relation.getParent();
+        List result = new ArrayList(6);
+        result.add(relation);
 
-            while ( upper!=0 ) {
-                statement = con.prepareStatement("select predchozi,typ_predka,predek,data from relace where cislo=?");
-                statement.setInt(1,upper);
-                resultSet = statement.executeQuery();
-                if ( !resultSet.next() ) break;
-
-                relation = new Relation(upper);
-                upper = resultSet.getInt(1);
-                relation.setUpper(upper);
-                relation.setChild(parent);
-
-                char type = resultSet.getString(2).charAt(0);
-                int id = resultSet.getInt(3);
-                parent = instantiateFromTree(type,id);
-                relation.setParent(parent);
-
-                String tmp = resultSet.getString(4);
-                if ( tmp!=null ) {
-                    tmp = insertEncoding(tmp);
-                    relation.setData(new String(tmp));
-                }
-                relation.setInitialized(true);
-
-                result.add(0,relation);
-            }
-            return result;
-        } catch ( SQLException e ) {
-            throw new PersistanceException("Nepodarilo se zjistit predky!",e);
-        } finally {
-            releaseSQLResources(con,statement,resultSet);
+        int upper = relation.getUpper();
+        while ( upper!=0 ) {
+            relation = (Relation) findById(new Relation(upper));
+            result.add(0, relation);
+            upper = relation.getUpper();
         }
+
+        return result;
     }
 
     public Relation[] findByExample(Relation example) {
