@@ -213,10 +213,10 @@ $!UTIL.getXPath($reaction,'data/text')<p/>
 #####
 
 #macro(showDiscussions $DISCUSSIONS $WHERE_ADD)
-<TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="4" BORDER="0">
+<TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="3" BORDER="0">
 
-<TR><TD COLSPAN="3" CLASS="cerna3">
-<STRONG>Diskuse</STRONG><A HREF="/hardware/ViewRelation?relationId=3739" TITLE="Diskusní fórum"><IMG SRC="/images/site/sipka.gif" WIDTH="11" HEIGHT="7" BORDER="0" ALT="Diskusní fórum"></a>
+<TR><TD COLSPAN="3" CLASS="cerna2">
+<STRONG>Diskuse</STRONG><A HREF="/hardware/ViewRelation?relationId=3739" TITLE="Diskusní fórum"><IMG SRC="/images/site/sipka.gif" WIDTH="11" HEIGHT="7" BORDER="0" ALT="Diskusní fórum"></a><br>
 </TD></TR>
 
 <TR><TD COLSPAN="3">
@@ -224,7 +224,7 @@ $!UTIL.getXPath($reaction,'data/text')<p/>
 </TD></TR>
 
 <TR>
-<TD CLASS="seda1"><SPAN CLASS="piditucna">Autor: Dotaz</SPAN></TD>
+<TD CLASS="seda1"><SPAN CLASS="piditucna">Dotaz</SPAN></TD>
 <TD CLASS="seda1" ALIGN="CENTER"><SPAN CLASS="piditucna">Odp.</SPAN></TD>
 <TD CLASS="seda1" ALIGN="CENTER"><SPAN CLASS="piditucna">Poslední</SPAN></TD>
 </TR>

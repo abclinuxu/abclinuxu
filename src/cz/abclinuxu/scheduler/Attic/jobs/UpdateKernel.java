@@ -47,7 +47,7 @@ public class UpdateKernel implements Task {
             writer.write("<table border=0>\n");
             if ( version.match(line) ) {
                 String tmp = version.getParen(2);
-                writer.write("<tr><td>Stabilní:</td>");
+                writer.write("<tr><td class=\"jadro\">Stabilní:</td>");
                 writer.write("<td><a href=\"ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.4/linux-"+tmp);
                 writer.write(".tar.bz2\">"+tmp+"</a></td>");
             }
@@ -56,7 +56,7 @@ public class UpdateKernel implements Task {
 
             if ( version.match(reader.readLine()) ) {
                 String tmp = version.getParen(2);
-                writer.write("<tr><td>Vývojové:</td>");
+                writer.write("<tr><td class=\"jadro\">Vývojové:</td>");
                 writer.write("<td><a href=\"ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.5/linux-"+tmp);
                 writer.write(".tar.bz2\">"+tmp+"</a></td>");
             }
@@ -65,7 +65,7 @@ public class UpdateKernel implements Task {
 
             if ( version.match(reader.readLine()) ) {
                 String tmp = version.getParen(2);
-                writer.write("<tr><td>Øada 2.2:</td>");
+                writer.write("<tr><td class=\"jadro\">Øada 2.2:</td>");
                 writer.write("<td><a href=\"ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.2/linux-"+tmp);
                 writer.write(".tar.bz2\">"+tmp+"</a></td>");
             }
@@ -74,7 +74,7 @@ public class UpdateKernel implements Task {
 
             if ( version.match(reader.readLine()) ) {
                 String tmp = version.getParen(2);
-                writer.write("<tr><td>Øada 2.0:</td>");
+                writer.write("<tr><td class=\"jadro\">Øada 2.0:</td>");
                 writer.write("<td><a href=\"ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.0/linux-"+tmp);
                 writer.write(".tar.bz2\">"+tmp+"</a></td>");
             }
