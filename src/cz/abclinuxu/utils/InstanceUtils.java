@@ -33,8 +33,7 @@ public class InstanceUtils {
         if ( tmp==null || tmp.length()==0 )
             return null;
         try {
-            int id = Integer.parseInt(tmp);
-//            if ( ! GenericObject.class.isAssignableFrom(clazz) )
+            int id = Misc.parsePossiblyWrongInt(tmp);
             GenericObject obj = (GenericObject) clazz.newInstance();
             obj.setId(id);
             return obj;

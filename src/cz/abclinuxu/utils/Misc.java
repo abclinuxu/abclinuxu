@@ -5,6 +5,8 @@
  */
 package cz.abclinuxu.utils;
 
+import cz.abclinuxu.exceptions.InvalidInputException;
+
 import java.util.*;
 
 /**
@@ -25,6 +27,27 @@ public class Misc {
         } catch (NumberFormatException e) {
             return def;
         }
+    }
+
+    /**
+     * Parse str to integer. Str must start with digit(s). If it encounters a character,
+     * that is not decimal digit, it skips the rest of input.
+     * @throws InvalidInputException If the str doesn't start with any digit.
+     */
+    public static int parsePossiblyWrongInt(String str) throws InvalidInputException {
+        int last = 0;
+        char c;
+        for (int i=0; i<str.length(); i++) {
+            c = str.charAt(i);
+            if (c<'0' || c>'9')
+                continue;
+            last++;
+        }
+        if (last==0)
+            throw new InvalidInputException("Øetìzec '"+str+"' nemù¾e být pøeveden na èíslo!");
+        if (str.length()!=last)
+            str = str.substring(0,last);
+        return Integer.parseInt(str);
     }
 
     /**
