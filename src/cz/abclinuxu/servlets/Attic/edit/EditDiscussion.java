@@ -539,18 +539,30 @@ public class EditDiscussion extends AbcFMServlet {
         Relation relation = (Relation) discussion.getContent().get(0);
         Record record = (Record) relation.getChild();
         persistance.synchronize(record);
+        Document recordData = record.getData();
 
         String xpath = "//comment[parent/text()='"+threadId+"']";
-        Element element = (Element) record.getData().selectSingleNode(xpath);
+        Element element = (Element) recordData.selectSingleNode(xpath);
         if ( element!=null ) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Komentáø nesmí obsahovat ¾ádné reakce!", env, null);
             return FMTemplateSelector.select("EditDiscussion", "remove", env, request);
         }
 
         xpath = "//comment[@id='"+threadId+"']";
-        element = (Element) record.getData().selectSingleNode(xpath);
+        element = (Element) recordData.selectSingleNode(xpath);
         element.detach();
         persistance.update(record);
+
+        List commentList = recordData.getRootElement().selectNodes("comment");
+        int comments = commentList.size();
+        DocumentHelper.makeElement(discussion.getData().getRootElement(), "comments").setText(""+comments);
+        Date lastUpdate = discussion.getCreated();
+        if (comments>0) {
+            element = (Element) commentList.get(comments-1);
+            lastUpdate = Constants.isoFormat.parse(element.elementText("created"));
+        }
+        persistance.update(discussion);
+        SQLTool.getInstance().setUpdatedTimestamp(discussion, lastUpdate);
 
         User user = (User) env.get(Constants.VAR_USER);
         relation = (Relation) env.get(VAR_RELATION);
