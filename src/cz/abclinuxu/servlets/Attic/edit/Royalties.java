@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Date;
+import java.util.Calendar;
 import java.text.ParseException;
 
 import org.dom4j.DocumentHelper;
@@ -40,6 +41,8 @@ public class Royalties implements AbcAction {
     public static final String PARAM_NOTE = "note";
     public static final String PARAM_PUBLISHED = "published";
     public static final String PARAM_AUTHOR = "authorId";
+    public static final String PARAM_SINCE = "since";
+    public static final String PARAM_UNTIL = "until";
 
     public static final String VAR_RELATION = "RELATION";
 
@@ -47,6 +50,7 @@ public class Royalties implements AbcAction {
     public static final String ACTION_ADD_ROYALTIES_STEP2 = "add2";
     public static final String ACTION_EDIT_ROYALTIES = "edit";
     public static final String ACTION_EDIT_ROYALTIES_STEP2 = "edit2";
+    public static final String ACTION_REPORT = "report";
 
     /**
      * Processes request.
@@ -57,6 +61,18 @@ public class Royalties implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
+        // check permissions
+        if ( user==null )
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
+        if ( !user.hasRole(Roles.ARTICLE_ADMIN) )
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+        if ( action==null || action.length()==0 )
+            return actionReportStep1(request, env);
+
+        if ( ACTION_REPORT.equals(action) )
+            return actionReportStep2(request, env);
+
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation==null )
             throw new MissingArgumentException("Chybí parametr relationId!");
@@ -66,25 +82,49 @@ public class Royalties implements AbcAction {
         persistance.synchronize(relation.getChild());
         env.put(VAR_RELATION, relation);
 
-        // check permissions
-        if ( user==null )
-            return FMTemplateSelector.select("ViewUser", "login", env, request);
-        if ( !user.hasRole(Roles.ARTICLE_ADMIN) )
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
         if ( ACTION_ADD_ROYALTIES.equals(action) )
             return actionAddRoyaltiesStep1(request, env);
 
-        if ( action.equals(ACTION_ADD_ROYALTIES_STEP2) )
-            return actionAddRoyaltiesStep2(request, response, env);
+        if ( ACTION_ADD_ROYALTIES_STEP2.equals(action) )
+            return actionAddStep2(request, response, env);
 
         if ( ACTION_EDIT_ROYALTIES.equals(action) )
-            return actionEditRoyaltiesStep1(request, env);
+            return actionEditStep1(request, env);
 
-        if ( action.equals(ACTION_EDIT_ROYALTIES_STEP2) )
-            return actionEditRoyaltiesStep2(request, response, env);
+        if ( ACTION_EDIT_ROYALTIES_STEP2.equals(action) )
+            return actionEditStep2(request, response, env);
 
         throw new MissingArgumentException("Chybí parametr action!");
+    }
+
+    private String actionReportStep1(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        if ( params.get(PARAM_SINCE)==null ) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            calendar.add(Calendar.MONTH, -1);
+            params.put(PARAM_SINCE, Constants.isoFormatShort.format(calendar.getTime()));
+        }
+        if ( params.get(PARAM_UNTIL)==null ) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.DAY_OF_MONTH, 1);
+            calendar.add(Calendar.DAY_OF_MONTH, -1);
+            params.put(PARAM_UNTIL, Constants.isoFormatShort.format(calendar.getTime()));
+        }
+        return FMTemplateSelector.select("Royalties", "form", env, request);
+    }
+
+    private String actionReportStep2(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Relation upper = (Relation) env.get(VAR_RELATION);
+        Item article = (Item) upper.getChild();
+        if ( params.get(PARAM_AUTHOR)==null )
+            params.put(PARAM_AUTHOR, article.getData().getRootElement().elementText("author"));
+        if ( params.get(PARAM_PUBLISHED)==null )
+            params.put(PARAM_PUBLISHED, Constants.isoFormatShort.format(article.getCreated()));
+        if ( params.get(PARAM_AMOUNT)==null )
+            params.put(PARAM_AMOUNT, "0");
+        return FMTemplateSelector.select("Royalties", "add", env, request);
     }
 
     private String actionAddRoyaltiesStep1(HttpServletRequest request, Map env) throws Exception {
@@ -100,7 +140,7 @@ public class Royalties implements AbcAction {
         return FMTemplateSelector.select("Royalties", "add", env, request);
     }
 
-    protected String actionAddRoyaltiesStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation upper = (Relation) env.get(VAR_RELATION);
@@ -109,9 +149,9 @@ public class Royalties implements AbcAction {
         item.setData(DocumentHelper.createDocument());
 
         boolean canContinue = true;
-        canContinue &= setAuthorForRoyalties(params, item, env, request);
-        canContinue &= setPublishDateForRoyalties(params, item, env);
-        canContinue &= setPaidDateForRoyalties(params, item, env);
+        canContinue &= setAuthor(params, item, env, request);
+        canContinue &= setPublishDate(params, item, env);
+        canContinue &= setPaidDate(params, item, env);
         canContinue &= setAmount(params, item, env);
         canContinue &= setNote(params, item);
 
@@ -131,7 +171,7 @@ public class Royalties implements AbcAction {
         return null;
     }
 
-    private String actionEditRoyaltiesStep1(HttpServletRequest request, Map env) throws Exception {
+    private String actionEditStep1(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
@@ -149,21 +189,21 @@ public class Royalties implements AbcAction {
         return FMTemplateSelector.select("Royalties", "add", env, request);
     }
 
-    protected String actionEditRoyaltiesStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
 
         boolean canContinue = true;
-        canContinue &= setAuthorForRoyalties(params, item, env, request);
-        canContinue &= setPublishDateForRoyalties(params, item, env);
-        canContinue &= setPaidDateForRoyalties(params, item, env);
+        canContinue &= setAuthor(params, item, env, request);
+        canContinue &= setPublishDate(params, item, env);
+        canContinue &= setPaidDate(params, item, env);
         canContinue &= setAmount(params, item, env);
         canContinue &= setNote(params, item);
 
         if ( !canContinue )
-            return actionEditRoyaltiesStep1(request, env);
+            return actionEditStep1(request, env);
         persistance.update(item);
 
         User user = (User) env.get(Constants.VAR_USER);
@@ -184,7 +224,7 @@ public class Royalties implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setAuthorForRoyalties(Map params, Item item, Map env, HttpServletRequest request) {
+    private boolean setAuthor(Map params, Item item, Map env, HttpServletRequest request) {
         User author = (User) InstanceUtils.instantiateParam(PARAM_AUTHOR, User.class, params, request);
         if ( author==null ) {
             ServletUtils.addError(PARAM_AUTHOR, "Vyberte autora!", env, null);
@@ -201,7 +241,7 @@ public class Royalties implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setPublishDateForRoyalties(Map params, Item item, Map env) {
+    private boolean setPublishDate(Map params, Item item, Map env) {
         try {
             Date publish = Constants.isoFormatShort.parse((String) params.get(PARAM_PUBLISHED));
             item.setCreated(publish);
@@ -219,7 +259,7 @@ public class Royalties implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setPaidDateForRoyalties(Map params, Item item, Map env) {
+    private boolean setPaidDate(Map params, Item item, Map env) {
         try {
             Element element = (Element) item.getData().selectSingleNode("/data/paid");
             if ( element!=null )
