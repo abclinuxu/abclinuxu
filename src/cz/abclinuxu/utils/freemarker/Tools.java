@@ -430,28 +430,28 @@ public class Tools implements Configurable {
             sync(relation);
 
             GenericObject child = relation.getChild();
-            if ( child instanceof Category ) {
+            if ( child instanceof Category )
                 Misc.storeToMap(map,Constants.TYPE_CATEGORY,relation);
-            } else if ( child instanceof Item ) {
+            else if ( child instanceof Item ) {
                 Item item = (Item) child;
-                if ( item.getType()==Item.MAKE ) {
+                if ( item.getType()==Item.MAKE )
                     Misc.storeToMap(map,Constants.TYPE_MAKE,relation);
-                } else if ( item.getType()==Item.DISCUSSION ) {
+                else if ( item.getType()==Item.DISCUSSION )
                     Misc.storeToMap(map,Constants.TYPE_DISCUSSION,relation);
-                } else if ( item.getType()==Item.ARTICLE ) {
+                else if ( item.getType()==Item.ARTICLE )
                     Misc.storeToMap(map,Constants.TYPE_ARTICLE,relation);
-                } else if ( item.getType()==Item.DRIVER ) {
+                else if ( item.getType()==Item.DRIVER )
                     Misc.storeToMap(map,Constants.TYPE_DRIVER,relation);
-                } else if ( item.getType()==Item.NEWS ) {
+                else if ( item.getType()==Item.NEWS )
                     Misc.storeToMap(map,Constants.TYPE_NEWS,relation);
-                } else if ( item.getType()==Item.REQUEST ) {
+                else if ( item.getType()==Item.REQUEST )
                     Misc.storeToMap(map,Constants.TYPE_REQUEST,relation);
-                }
-            } else if ( child instanceof Record ) {
+                else if ( item.getType()==Item.ROYALTIES )
+                    Misc.storeToMap(map,Constants.TYPE_ROYALTIES,relation);
+            } else if ( child instanceof Record )
                 Misc.storeToMap(map,Constants.TYPE_RECORD,relation);
-            } else if ( child instanceof User ) {
+            else if ( child instanceof User )
                 Misc.storeToMap(map,Constants.TYPE_USER,relation);
-            }
         }
         return map;
     }

@@ -28,6 +28,8 @@ public class Item extends GenericDataObject {
     public static final int NEWS = 7;
     /** group */
     public static final int GROUP = 8;
+    /** royalties for articles */
+    public static final int ROYALTIES = 9;
 
 
     public Item() {

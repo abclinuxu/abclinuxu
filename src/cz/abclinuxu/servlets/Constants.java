@@ -62,6 +62,7 @@ public interface Constants {
     String TYPE_REQUEST = "request";
     String TYPE_DRIVER = "driver";
     String TYPE_NEWS = "news";
+    String TYPE_ROYALTIES = "royalties";
     String TYPE_CATEGORY = "category";
     String TYPE_RECORD = "record";
     String TYPE_USER = "user";
@@ -101,6 +102,7 @@ public interface Constants {
     String ERROR_GENERIC = "generic";
 
     SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    DateFormat isoFormatShort = new SimpleDateFormat("yyyy-MM-dd");
     DateFormat czFormat = new SimpleDateFormat("d.M.yyyy HH:mm");
     DateFormat czShortFormat = new SimpleDateFormat("d.M. HH:mm");
 }

@@ -2,12 +2,15 @@
 <config>
 
   <servlet name="EditArticle">
-    <action name="add" template="print" content="/add/article.ftl">
-      <var name="TITLE" value="Vlo¾ení èlánku" />
-    </action>
-    <action name="edit" template="print" content="/add/article.ftl">
-    <var name="TITLE" value="Úprava èlánku" />
-    </action>
+      <action name="add" template="print" content="/add/article.ftl">
+          <var name="TITLE" value="Vlo¾ení èlánku"/>
+      </action>
+      <action name="edit" template="print" content="/add/article.ftl">
+          <var name="TITLE" value="Úprava èlánku"/>
+      </action>
+      <action name="addRoyalties" template="print" content="/add/honorar.ftl">
+          <var name="TITLE" value="Vlo¾ení honoráøe"/>
+      </action>
   </servlet>
 
   <servlet name="EditCategory">
