@@ -37,7 +37,7 @@ import java.util.*;
  * and check of access rights.<p>
  * <u>Context variables introduced by AbcServlet</u>
  * <dl>
- * <dl><code>VAR_PERSISTANCE</code></dl>
+ * <dt><code>VAR_PERSISTANCE</code></dt>
  * <dd>Instance of actual persistance. To be used for synchronization purposes.</dd>
  * <dt><code>VAR_URL_UTILS</code></dt>
  * <dd>Helper class for manipulating URLs. It remembers current context and session id.</dd>

@@ -44,15 +44,32 @@ public class UpdateKernel implements Task {
             String line = reader.readLine();
             FileWriter writer = new FileWriter(fileName);
 
-            if ( version.match(line) ) writer.write("Stabilní øada: "+version.getParen(2));
-            line = reader.readLine();
-            if ( version.match(line) ) writer.write(" ("+version.getParen(2)+")<br>\n");
-            line = reader.readLine();
-            if ( version.match(line) ) writer.write("Vývojová øada: "+version.getParen(2));
-            line = reader.readLine();
-            if ( version.match(line) ) writer.write(" ("+version.getParen(2)+")<br>\n");
-            line = reader.readLine();
-            if ( version.match(line) ) writer.write("Produkèní øada: "+version.getParen(2)+"\n");
+            writer.write("<table border=0>\n");
+            if ( version.match(line) ) {
+                String tmp = version.getParen(2);
+                writer.write("<tr><td>Stabilní øada:</td>");
+                writer.write("<td><a href=\"ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.4/linux-"+tmp);
+                writer.write(".tar.bz2\">"+tmp+"</a></td>");
+            }
+            if ( version.match(reader.readLine()) ) writer.write("<td>("+version.getParen(2)+")</td>");
+            writer.write("</tr>\n");
+
+            if ( version.match(reader.readLine()) ) {
+                String tmp = version.getParen(2);
+                writer.write("<tr><td>Vývojová øada:</td>");
+                writer.write("<td><a href=\"ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.5/linux-"+tmp);
+                writer.write(".tar.bz2\">"+tmp+"</a></td>");
+            }
+            if ( version.match(reader.readLine()) ) writer.write("<td>("+version.getParen(2)+")</td>");
+            writer.write("</tr>\n");
+
+            if ( version.match(reader.readLine()) ) {
+                String tmp = version.getParen(2);
+                writer.write("<tr><td>Produkèní øada:</td>");
+                writer.write("<td colspan=2><a href=\"ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.2/linux-"+tmp);
+                writer.write(".tar.bz2\">"+tmp+"</a></td>");
+            }
+            writer.write("</tr>\n</table>");
 
             reader.close();
             writer.close();
@@ -92,12 +109,12 @@ public class UpdateKernel implements Task {
      * get stream with kernel headers
      */
     private BufferedReader getStream() throws IOException {
-//        BufferedReader reader = new BufferedReader(new FileReader("/home/literakl/penguin/obsahy/kernel.txt"));
+        BufferedReader reader = new BufferedReader(new FileReader("/home/literakl/penguin/obsahy/kernel.txt"));
 
-        Socket socket = new Socket(server,79);
-        socket.setSoTimeout(500);
-        socket.getOutputStream().write("\015\012".getBytes());
-        BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+//        Socket socket = new Socket(server,79);
+//        socket.setSoTimeout(500);
+//        socket.getOutputStream().write("\015\012".getBytes());
+//        BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         return reader;
     }
 }
