@@ -146,11 +146,29 @@ public class VariableFetcher extends TimerTask implements Configurable {
             Tools.sync(currentPoll);
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, hwSize)};
-            newHardware = sqlTool.findRecordParentRelationsWithType(Record.HARDWARE, qualifiers);
+            List list = sqlTool.findRecordParentRelationsWithType(Record.HARDWARE, qualifiers);
+            for (Iterator iter = list.iterator(); iter.hasNext();) {
+                Relation relation = (Relation) iter.next();
+                Tools.sync(relation.getChild());
+            }
+            newHardware = list;
+
             qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, driversSize)};
-            newDrivers = sqlTool.findItemRelationsWithType(Item.DRIVER, qualifiers);
+            list = sqlTool.findItemRelationsWithType(Item.DRIVER, qualifiers);
+            for (Iterator iter = list.iterator(); iter.hasNext();) {
+                Relation relation = (Relation) iter.next();
+                Tools.sync(relation.getChild());
+            }
+            newDrivers = list;
+
             qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, storiesSize)};
-            newStories = sqlTool.findItemRelationsWithType(Item.BLOG, qualifiers);
+            list = sqlTool.findItemRelationsWithType(Item.BLOG, qualifiers);
+            for (Iterator iter = list.iterator(); iter.hasNext();) {
+                Relation relation = (Relation) iter.next();
+                Tools.sync(relation.getParent());
+                Tools.sync(relation.getChild());
+            }
+            newStories = list;
 
             log.debug("finished fetching variables");
         } catch (Exception e) {
