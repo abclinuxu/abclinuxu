@@ -41,7 +41,7 @@ public class UpdateLinks implements Task {
     public static final int LINUXZONE = 9;
     public static final int LINUXSK = 10;
     /** id of last server, maximum id */
-    public static final int LAST_SERVER = LINUXSK;
+    public static final int LAST_SERVER = UpdateLinks2.LAST_SERVER;
 
     Persistance persistance;
     Category category = new Category(Constants.CAT_LINKS);
