@@ -111,22 +111,10 @@ public class VariableFetcher extends TimerTask {
         Persistance persistance = PersistanceFactory.getPersistance();
         try {
             // put counts into map
-            Integer i = new Integer(sqlTool.countRecordRelationsWithType(Record.HARDWARE));
-            counter.put("HARDWARE",i);
-            i = new Integer(sqlTool.countRecordRelationsWithType(Record.SOFTWARE));
-            counter.put("SOFTWARE",i);
-            i = new Integer(sqlTool.countItemRelationsWithType(Item.DRIVER));
-            counter.put("DRIVERS",i);
-            i = new Integer(sqlTool.countItemRelationsWithType(Item.NEWS));
-            counter.put("NEWS",i);
-            i = new Integer(sqlTool.countDiscussionRelations());
-            counter.put("FORUM",i);
             Category requests = (Category) persistance.findById(new Category(Constants.CAT_REQUESTS));
             counter.put("REQUESTS",new Integer(requests.getChildren().size()));
             Category news = (Category) persistance.findById(new Category(Constants.CAT_NEWS_POOL));
             counter.put("WAITING_NEWS",new Integer(news.getChildren().size()));
-            Category polls = (Category) persistance.findById(new Category(Constants.CAT_POLLS));
-            counter.put("POLLS",new Integer(polls.getChildren().size()));
             Item todo = (Item) persistance.findById(new Item(Constants.ITEM_DIZ_TODO));
             synchronized (todo.getData().getRootElement()) {
                 Node node = todo.getData().selectSingleNode("//comments");
