@@ -11,6 +11,8 @@ import junit.textui.TestRunner;
 
 import java.io.FileInputStream;
 
+import cz.abclinuxu.utils.Tools;
+
 public class TestCreateIndex extends TestCase {
 
     public TestCreateIndex(String s) {
@@ -20,13 +22,13 @@ public class TestCreateIndex extends TestCase {
     public void testRemoveTags() {
         String input = "toto <b>je <a href=\"http://www.abclinuxu.cz/~literakl/cgi?a=b\">maly</a> test</b>";
         String output = "toto je maly test";
-        assertEquals(output,CreateIndex.tagRE.subst(input,""));
+        assertEquals(output,Tools.removeTags(input));
         input = "toto 3<x je <b>spatne</a> html";
         output = "toto 3<x je spatne html";
-        assertEquals(output,CreateIndex.removeTags(input));
+        assertEquals(output,Tools.removeTags(input));
         input = "obrazek <img src=\"/images/clanky/stefan/corel.jpg\" \nwidth=\"100\"> konec";
         output = "obrazek  konec";
-        assertEquals(output,CreateIndex.removeTags(input));
+        assertEquals(output,Tools.removeTags(input));
     }
 
     /**
@@ -36,7 +38,7 @@ public class TestCreateIndex extends TestCase {
      */
     public void testStackOverflowRegexp() throws Exception {
         String str = readFile("/home/literakl/abc/source/test/cz/abclinuxu/utils/search/chyba.txt");
-        String result = CreateIndex.tagRE.subst(str,null);
+        String result = Tools.removeTags(str);
     }
 
     String readFile(String name) throws Exception {

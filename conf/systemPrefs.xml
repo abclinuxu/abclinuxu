@@ -106,6 +106,7 @@
             <node name="GenerateLinks">
               <map>
                 <entry key="rss" value="auto/abc.rss"/>
+                <entry key="diskuse.rss" value="auto/diskuse.rss"/>
                 <entry key="trafika" value="auto/abc.dat"/>
                 <entry key="anneca" value="auto/abc2.dat"/>
                 <entry key="szm" value="auto/abc_szm.xml"/>

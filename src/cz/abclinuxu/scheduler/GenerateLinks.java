@@ -9,6 +9,7 @@ package cz.abclinuxu.scheduler;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.PreparedDiscussion;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
@@ -16,6 +17,7 @@ import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.Tools;
 import cz.abclinuxu.utils.Sorters2;
+import cz.abclinuxu.utils.InstanceUtils;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -33,8 +35,9 @@ public class GenerateLinks extends TimerTask implements Configurable {
     public static final String PREF_RSS = "rss";
     public static final String PREF_ANNECA = "anneca";
     public static final String PREF_SZM = "szm";
+    public static final String PREF_DISCUSSIONS = "diskuse.rss";
 
-    String trafika, anneca, rss, szm;
+    String trafika, anneca, rss, szm, discussionsRSS;
 
     static RE lineBreak;
 
@@ -47,17 +50,19 @@ public class GenerateLinks extends TimerTask implements Configurable {
     }
 
     LinksGenerator[] generators;
+    LinksGenerator forumGenerator;
 
 
     public GenerateLinks() {
-        generators = new LinksGenerator[4];
-        generators[0] = new Trafika();
-        generators[1] = new Anneca();
-        generators[2] = new RSS();
-        generators[3] = new Szm();
-
         Configurator configurator = ConfigurationManager.getConfigurator();
         configurator.configureMe(this);
+
+        generators = new LinksGenerator[4];
+        generators[0] = new Trafika(trafika);
+        generators[1] = new Anneca(anneca);
+        generators[2] = new RSS(rss);
+        generators[3] = new Szm(szm);
+        forumGenerator = new RSS(discussionsRSS);
     }
 
     /**
@@ -68,21 +73,22 @@ public class GenerateLinks extends TimerTask implements Configurable {
         anneca = prefs.get(PREF_ANNECA, null);
         rss = prefs.get(PREF_RSS, null);
         szm = prefs.get(PREF_SZM, null);
+        discussionsRSS = prefs.get(PREF_DISCUSSIONS, null);
     }
 
     public void run() {
         try {
             Persistance persistance = PersistanceFactory.getPersistance();
             Tools tools = new Tools();
+            String url,title,desc,content;
+            Record record = null;
+
+            for ( int j = 0; j<generators.length; j++ )
+                generators[j].generateHeader();
+
             Category actual = (Category) persistance.findById(new Category(Constants.CAT_ACTUAL_ARTICLES));
             tools.sync(actual.getContent());
             List list = Sorters2.byDate(actual.getContent(), Sorters2.DESCENDING);
-
-            for (int j = 0; j < generators.length; j++)
-                generators[j].generateHeader();
-
-            String url,title,desc,content;
-            Record record = null;
             for(int i=0; i<6 && i<list.size(); i++ ) {
                 Relation relation = (Relation) list.get(i);
                 Item item = (Item) relation.getChild();
@@ -91,19 +97,8 @@ public class GenerateLinks extends TimerTask implements Configurable {
                 title = tools.xpath(item,"data/name");
                 desc = removeNewLines(tools.xpath(item,"data/perex"));
 
-                content = null; record = null;
-                for (Iterator iter = item.getContent().iterator(); iter.hasNext();) {
-                    Relation child = (Relation) iter.next();
-                    if ( child.getChild() instanceof Record ) {
-                        record = (Record) child.getChild();
-                        tools.sync(record);
-                        if ( record.getType()==Record.ARTICLE )
-                            break;
-                        record = null;
-                    }
-                }
-                if ( record!=null )
-                    content = tools.encodeSpecial(tools.xpath(record,"data/content"));
+                record = (Record) InstanceUtils.findFirstChildRecordOfType(item,Record.ARTICLE).getChild();
+                content = tools.encodeSpecial(tools.xpath(record,"data/content"));
 
                 for (int j = 0; j < generators.length; j++) {
                     generators[j].generateLink(title, url, desc, content);
@@ -140,6 +135,28 @@ public class GenerateLinks extends TimerTask implements Configurable {
 
             for (int j = 0; j < generators.length; j++)
                 generators[j].generateBottom();
+
+            // generate RSS feed for discussion forum
+
+            forumGenerator.generateHeader();
+
+            Category forum = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
+            tools.sync(forum.getContent());
+            List discussions = tools.analyzeDiscussions(forum.getContent());
+            Sorters2.byDate(discussions, Sorters2.DESCENDING);
+            for ( Iterator iter = discussions.iterator(); iter.hasNext(); ) {
+                PreparedDiscussion discussion = (PreparedDiscussion) iter.next();
+                url = "http://www.abclinuxu.cz/software/ViewRelation?relationId="+discussion.getRelationId();
+                title = tools.xpath(discussion.getDiscussion(), "data/title");
+                title = title.concat(", odpovìdí: "+discussion.getResponseCount());
+                title = tools.encodeSpecial(title);
+                desc = tools.xpath(discussion.getDiscussion(), "data/text");
+                desc = tools.removeTags(desc);
+                desc = tools.encodeSpecial(desc);
+                forumGenerator.generateLink(title,url,desc,null);
+            }
+
+            forumGenerator.generateBottom();
 
         } catch (Exception e) {
             log.error("Cannot generate links",e);
@@ -180,9 +197,14 @@ public class GenerateLinks extends TimerTask implements Configurable {
      */
     class Trafika implements LinksGenerator {
         FileWriter writer = null;
+        String path;
+
+        public Trafika(String path) {
+            this.path = path;
+        }
 
         public void generateHeader() throws IOException {
-            String file = AbcConfig.calculateDeployedPath(trafika);
+            String file = AbcConfig.calculateDeployedPath(path);
             writer = new FileWriter(file);
             writer.write(Constants.isoFormat.format(new Date()));
             writer.write('\n');
@@ -202,9 +224,14 @@ public class GenerateLinks extends TimerTask implements Configurable {
      */
     class Anneca implements LinksGenerator {
         FileWriter writer = null;
+        String path;
+
+        public Anneca(String path) {
+            this.path = path;
+        }
 
         public void generateHeader() throws IOException {
-            String file = AbcConfig.calculateDeployedPath(anneca);
+            String file = AbcConfig.calculateDeployedPath(path);
             writer = new FileWriter(file);
         }
 
@@ -222,9 +249,14 @@ public class GenerateLinks extends TimerTask implements Configurable {
      */
     class Szm implements LinksGenerator {
         FileWriter writer = null;
+        String path;
+
+        public Szm(String path) {
+            this.path = path;
+        }
 
         public void generateHeader() throws IOException {
-            String file = AbcConfig.calculateDeployedPath(szm);
+            String file = AbcConfig.calculateDeployedPath(path);
             writer = new FileWriter(file);
             writer.write("<?xml version=\"1.0\" encoding=\"iso-8859-2\" ?>\n");
             writer.write("<root generated=\""+Constants.isoFormat.format(new Date())+"\">\n");
@@ -253,9 +285,14 @@ public class GenerateLinks extends TimerTask implements Configurable {
      */
     class RSS implements LinksGenerator {
         FileWriter writer = null;
+        String path;
+
+        public RSS(String path) {
+            this.path = path;
+        }
 
         public void generateHeader() throws IOException {
-            String file = AbcConfig.calculateDeployedPath(rss);
+            String file = AbcConfig.calculateDeployedPath(path);
             writer = new FileWriter(file);
             writer.write("<?xml version=\"1.0\" encoding=\"iso-8859-2\" ?>\n");
             writer.write("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns=\"http://purl.org/rss/1.0/\">\n");
@@ -276,12 +313,6 @@ public class GenerateLinks extends TimerTask implements Configurable {
         }
 
         public void generateBottom() throws IOException {
-            writer.write("\t<textinput>\n");
-            writer.write("\t\t<title>Prohledej AbcLinuxu.cz</title>\n");
-            writer.write("\t\t<description>Hledej výraz v návodech, èláncích èi diskusích.</description>\n");
-            writer.write("\t\t<name>query</name>\n");
-            writer.write("\t\t<link>http://AbcLinuxu.cz/Search</link>\n");
-            writer.write("\t</textinput>\n");
             writer.write("</rdf:RDF>\n");
             writer.close();
         }

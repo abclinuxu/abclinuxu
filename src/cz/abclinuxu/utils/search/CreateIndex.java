@@ -18,8 +18,6 @@ import cz.abclinuxu.utils.Tools;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.regexp.RE;
-import org.apache.regexp.RESyntaxException;
 
 import java.util.*;
 import java.util.prefs.Preferences;
@@ -35,19 +33,11 @@ public class CreateIndex implements Configurable {
 
     static String indexPath;
     static Persistance persistance;
-    static RE tagRE;
 
     static {
         Configurator configurator = ConfigurationManager.getConfigurator();
         configurator.configureMe(new CreateIndex(null));
-
-        try {
-            persistance = PersistanceFactory.getPersistance(EmptyCache.class);
-//            tagRE = new RE("<[^<>]+>");
-            tagRE = new RE("<[\\w\\s\\d/=:.~?\"]+>", RE.MATCH_SINGLELINE);
-        } catch (RESyntaxException e) {
-            log.error("Cannot compile regexp!",e);
-        }
+        persistance = PersistanceFactory.getPersistance(EmptyCache.class);
     }
 
     IndexWriter indexWriter;
@@ -139,18 +129,6 @@ public class CreateIndex implements Configurable {
     }
 
     /**
-     * This method removes all tags from text.
-     */
-    static String removeTags(String text) {
-        try {
-            return tagRE.subst(text,"");
-        } catch (Throwable e) {
-            log.error("Oops, regexp failed on '"+text+"'!", e);
-            return text;
-        }
-    }
-
-    /**
      * Extracts data for indexing from category. Category must be synchronized.
      */
     static MyDocument indexCategory(Category category) {
@@ -170,7 +148,7 @@ public class CreateIndex implements Configurable {
             sb.append(node.getText());
         }
 
-        MyDocument doc = new MyDocument(removeTags(sb.toString()));
+        MyDocument doc = new MyDocument(Tools.removeTags(sb.toString()));
         if ( title!=null && title.length()>0 ) doc.setTitle(title);
         doc.setType(MyDocument.TYPE_CATEGORY);
         return doc;
@@ -218,7 +196,7 @@ public class CreateIndex implements Configurable {
             }
         }
 
-        MyDocument doc = new MyDocument(removeTags(sb.toString()));
+        MyDocument doc = new MyDocument(Tools.removeTags(sb.toString()));
         if ( title!=null && title.length()>0 ) doc.setTitle(title);
         doc.setType(MyDocument.TYPE_ARTICLE);
         return doc;
@@ -273,7 +251,7 @@ public class CreateIndex implements Configurable {
             }
         }
 
-        MyDocument doc = new MyDocument(removeTags(sb.toString()));
+        MyDocument doc = new MyDocument(Tools.removeTags(sb.toString()));
         if ( title!=null && title.length()>0 ) doc.setTitle(title);
         doc.setType(MyDocument.TYPE_DISCUSSION);
         return doc;
@@ -307,7 +285,7 @@ public class CreateIndex implements Configurable {
             sb.append(tmp);
         }
 
-        MyDocument doc = new MyDocument(removeTags(tmp));
+        MyDocument doc = new MyDocument(Tools.removeTags(tmp));
         if ( title!=null && title.length()>0 ) doc.setTitle(title);
         doc.setType(MyDocument.TYPE_MAKE);
         return doc;
@@ -333,7 +311,7 @@ public class CreateIndex implements Configurable {
             sb.append(node.getText());
         }
 
-        MyDocument doc = new MyDocument(removeTags(sb.toString()));
+        MyDocument doc = new MyDocument(Tools.removeTags(sb.toString()));
         if ( title!=null && title.length()>0 ) doc.setTitle(title);
         doc.setType(MyDocument.TYPE_DRIVER);
         return doc;
