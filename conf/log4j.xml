@@ -79,6 +79,11 @@
  	  <appender-ref ref="PROXOOL" />
 	</category>
 
+	<category name="freemarker" additivity="false">
+	  <priority value="warn" />
+ 	  <appender-ref ref="FILE" />
+	</category>
+
 	<root>
 	   <priority value="info" />
    	   <appender-ref ref="FILE" />
