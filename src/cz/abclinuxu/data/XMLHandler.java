@@ -6,14 +6,15 @@
  */
 package cz.abclinuxu.data;
 
-import org.dom4j.*;
+import cz.abclinuxu.AbcException;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import cz.abclinuxu.AbcException;
 
 /**
  * This class defines methods to work with DOM4J - conversions to/from String.

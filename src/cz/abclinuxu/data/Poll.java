@@ -3,10 +3,11 @@
  */
 package cz.abclinuxu.data;
 
-import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 
-import java.util.*;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * generic class for various polls

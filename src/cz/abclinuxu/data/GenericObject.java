@@ -3,10 +3,9 @@
  */
 package cz.abclinuxu.data;
 
-import java.util.*;
-import java.beans.*;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * superclass for all classes in this website

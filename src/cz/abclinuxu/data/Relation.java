@@ -5,14 +5,11 @@
  */
 package cz.abclinuxu.data;
 
-import org.dom4j.Document;
 import org.apache.log4j.Logger;
-import cz.abclinuxu.AbcException;
+import org.dom4j.Document;
 
 /**
  * This class contains one relation between two GenericObjects.
- * @todo change String name to Document data. XML may contain
- * not only name, but icon too. Or anything else.
  */
 public final class Relation extends GenericObject implements XMLContainer {
     static Logger log = Logger.getLogger(Relation.class);

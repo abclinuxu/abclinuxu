@@ -5,8 +5,6 @@ package cz.abclinuxu.data;
 
 import org.dom4j.Document;
 
-import java.util.Iterator;
-
 /**
  * Class containing basic user data
  * todo data/roles -> holds security roles, that user has.
