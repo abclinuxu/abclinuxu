@@ -70,7 +70,6 @@ public interface Persistance {
      * of your code.
      * @return List of arrays of primitive objects. You know, what it is.
      * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
-     * @deprecated
      */
     public List findByCommand(String command);
 

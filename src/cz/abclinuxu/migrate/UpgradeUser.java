@@ -23,6 +23,7 @@ import java.util.List;
 /**
  * This utility will migrate User's XML data
  * to new DTD.
+ * @deprecated this class is not maintained
  */
 public class UpgradeUser {
 

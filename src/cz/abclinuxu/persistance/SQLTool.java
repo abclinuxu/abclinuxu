@@ -16,7 +16,6 @@ import cz.abclinuxu.exceptions.PersistanceException;
 import java.util.prefs.Preferences;
 import java.util.Date;
 import java.util.List;
-import java.util.Iterator;
 import java.util.ArrayList;
 import java.sql.*;
 
@@ -71,13 +70,24 @@ public final class SQLTool implements Configurable {
     public Date getMaxCreatedDateOfRecordForItem(Item item) {
         if ( ! item.isInitialized() )
             throw new IllegalStateException("Item is not initialized!");
-        Persistance persistance = PersistanceFactory.getPersistance();
-        List objects = persistance.findByCommand(maxRecordCreatedOfItem+item.getId());
-        java.sql.Timestamp max = (java.sql.Timestamp) ((Object[])objects.get(0))[0];
-        if ( max==null )
-            return item.getCreated();
-        else
-            return new Date(max.getTime());
+
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(maxRecordCreatedOfItem);
+            statement.setInt(1, item.getId());
+
+            resultSet = statement.executeQuery();
+            if ( !resultSet.next() )
+                return item.getCreated();
+            java.sql.Timestamp max = resultSet.getTimestamp(1);
+            return (max==null) ? item.getCreated() : new Date(max.getTime());
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
     }
 
     /**
@@ -88,15 +98,27 @@ public final class SQLTool implements Configurable {
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
      */
     public List findHardwareRelationsByUpdated(int offset, int count) {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        List found = persistance.findByCommand(relationsHardwareByUpdated+" limit "+offset+","+count);
-        List result = new ArrayList(found.size());
-        for (Iterator iter = found.iterator(); iter.hasNext();) {
-            int id = ((Integer)((Object[]) iter.next())[0]).intValue();
-            Relation relation = (Relation) persistance.findById(new Relation(id));
-            result.add(relation);
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(relationsHardwareByUpdated);
+            statement.setInt(1, offset);
+            statement.setInt(2, count);
+
+            resultSet = statement.executeQuery();
+            List result = new ArrayList(count);
+            while ( resultSet.next() ) {
+                int id = resultSet.getInt(1);
+                Relation relation = (Relation) persistance.findById(new Relation(id));
+                result.add(relation);
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
         }
-        return result;
     }
 
     /**
@@ -107,15 +129,27 @@ public final class SQLTool implements Configurable {
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
      */
     public List findSoftwareRelationsByUpdated(int offset, int count) {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        List found = persistance.findByCommand(relationsSoftwareByUpdated+" limit "+offset+","+count);
-        List result = new ArrayList(found.size());
-        for (Iterator iter = found.iterator(); iter.hasNext();) {
-            int id = ((Integer)((Object[]) iter.next())[0]).intValue();
-            Relation relation = (Relation) persistance.findById(new Relation(id));
-            result.add(relation);
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(relationsSoftwareByUpdated);
+            statement.setInt(1, offset);
+            statement.setInt(2, count);
+
+            resultSet = statement.executeQuery();
+            List result = new ArrayList(count);
+            while ( resultSet.next() ) {
+                int id = resultSet.getInt(1);
+                Relation relation = (Relation) persistance.findById(new Relation(id));
+                result.add(relation);
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
         }
-        return result;
     }
 
     /**
@@ -126,15 +160,27 @@ public final class SQLTool implements Configurable {
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
      */
     public List findDriverRelationsByUpdated(int offset, int count) {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        List found = persistance.findByCommand(relationsDriverByUpdated+" limit "+offset+","+count);
-        List result = new ArrayList(found.size());
-        for (Iterator iter = found.iterator(); iter.hasNext();) {
-            int id = ((Integer)((Object[]) iter.next())[0]).intValue();
-            Relation relation = (Relation) persistance.findById(new Relation(id));
-            result.add(relation);
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(relationsDriverByUpdated);
+            statement.setInt(1, offset);
+            statement.setInt(2, count);
+
+            resultSet = statement.executeQuery();
+            List result = new ArrayList(count);
+            while ( resultSet.next() ) {
+                int id = resultSet.getInt(1);
+                Relation relation = (Relation) persistance.findById(new Relation(id));
+                result.add(relation);
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
         }
-        return result;
     }
 
     /**
@@ -145,15 +191,27 @@ public final class SQLTool implements Configurable {
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
      */
     public List findDiscussionRelationsByUpdated(int offset, int count) {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        List found = persistance.findByCommand(relationsDiscussionByCreated+" limit "+offset+","+count);
-        List result = new ArrayList(found.size());
-        for (Iterator iter = found.iterator(); iter.hasNext();) {
-            int id = ((Integer)((Object[]) iter.next())[0]).intValue();
-            Relation relation = (Relation) persistance.findById(new Relation(id));
-            result.add(relation);
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(relationsDiscussionByCreated);
+            statement.setInt(1, offset);
+            statement.setInt(2, count);
+
+            resultSet = statement.executeQuery();
+            List result = new ArrayList(count);
+            while ( resultSet.next() ) {
+                int id = resultSet.getInt(1);
+                Relation relation = (Relation) persistance.findById(new Relation(id));
+                result.add(relation);
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
         }
-        return result;
     }
 
     /**
@@ -165,15 +223,27 @@ public final class SQLTool implements Configurable {
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
      */
     public List findArticleRelationsByUpdated(int offset, int count) {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        List found = persistance.findByCommand(relationsArticleByCreated+" limit "+offset+","+count);
-        List result = new ArrayList(found.size());
-        for (Iterator iter = found.iterator(); iter.hasNext();) {
-            int id = ((Integer)((Object[]) iter.next())[0]).intValue();
-            Relation relation = (Relation) persistance.findById(new Relation(id));
-            result.add(relation);
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(relationsArticleByCreated);
+            statement.setInt(1, offset);
+            statement.setInt(2, count);
+
+            resultSet = statement.executeQuery();
+            List result = new ArrayList(count);
+            while ( resultSet.next() ) {
+                int id = resultSet.getInt(1);
+                Relation relation = (Relation) persistance.findById(new Relation(id));
+                result.add(relation);
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
         }
-        return result;
     }
 
     /**
@@ -238,9 +308,19 @@ public final class SQLTool implements Configurable {
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
      */
     public Integer getHardwareCount() {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        List found = persistance.findByCommand(countHardware);
-        return ((Integer)((Object[]) found.get(0))[0]);
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null; Statement statement = null; ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.createStatement();
+            resultSet = statement.executeQuery(countHardware);
+            resultSet.next();
+            return new Integer(resultSet.getInt(1));
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
     }
 
     /**
@@ -249,9 +329,19 @@ public final class SQLTool implements Configurable {
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
      */
     public Integer getSoftwareCount() {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        List found = persistance.findByCommand(countSoftware);
-        return ((Integer)((Object[]) found.get(0))[0]);
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null; Statement statement = null; ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.createStatement();
+            resultSet = statement.executeQuery(countSoftware);
+            resultSet.next();
+            return new Integer(resultSet.getInt(1));
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
     }
 
     /**
@@ -260,9 +350,19 @@ public final class SQLTool implements Configurable {
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
      */
     public Integer getDriversCount() {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        List found = persistance.findByCommand(countDrivers);
-        return ((Integer)((Object[]) found.get(0))[0]);
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null; Statement statement = null; ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.createStatement();
+            resultSet = statement.executeQuery(countDrivers);
+            resultSet.next();
+            return new Integer(resultSet.getInt(1));
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
     }
 
     /**
@@ -271,15 +371,24 @@ public final class SQLTool implements Configurable {
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
      */
     public Poll findActivePoll() {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        List list = persistance.findByCommand("select max(cislo) from anketa");
-        Object[] objects = (Object[]) list.get(0);
-        int id = ((Integer)objects[0]).intValue();
-        Poll poll = (Poll) persistance.findById(new Poll(id));
-        if ( poll.isClosed() )
-            return null;
-        else
-            return poll;
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.createStatement();
+            resultSet = statement.executeQuery(maxPoll);
+            resultSet.next();
+
+            int id = resultSet.getInt(1);
+            Poll poll = (Poll) persistance.findById(new Poll(id));
+            return (poll.isClosed()) ?  null : poll;
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
     }
 
     /**
