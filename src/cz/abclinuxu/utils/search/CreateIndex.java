@@ -78,7 +78,7 @@ public class CreateIndex implements Configurable {
 
             long end = System.currentTimeMillis();
 
-            FileWriter fos = new FileWriter(getLastRunFile());
+            FileWriter fos = new FileWriter(new File(PATH, lastRunFilename));
             fos.write(Constants.czFormat.format(new Date()));
             fos.close();
 
