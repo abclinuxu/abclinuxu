@@ -16,8 +16,7 @@ import cz.abclinuxu.servlets.Constants;
 
 import java.util.prefs.Preferences;
 import java.util.*;
-import java.io.Writer;
-import java.io.FileWriter;
+import java.io.*;
 
 import com.sun.syndication.feed.synd.*;
 import com.sun.syndication.io.SyndFeedOutput;
@@ -89,7 +88,7 @@ public class FeedGenerator implements Configurable {
             }
 
             String path = AbcConfig.calculateDeployedPath(fileDiscussions);
-            Writer writer = new FileWriter(path);
+            Writer writer = getWriter(path);
             SyndFeedOutput output = new SyndFeedOutput();
             output.output(feed, writer);
             writer.close();
@@ -106,6 +105,7 @@ public class FeedGenerator implements Configurable {
             Persistance persistance = PersistanceFactory.getPersistance();
 
             SyndFeed feed = new SyndFeedImpl();
+            feed.setEncoding("ISO-8859-2");
             feed.setFeedType(TYPE_RSS_1_0);
             feed.setTitle("abclinuxu - databáze ovladaèù");
             feed.setLink("http://www.abclinuxu.cz/drivers/dir/318");
@@ -130,7 +130,7 @@ public class FeedGenerator implements Configurable {
             }
 
             String path = AbcConfig.calculateDeployedPath(fileDrivers);
-            Writer writer = new FileWriter(path);
+            Writer writer = getWriter(path);
             SyndFeedOutput output = new SyndFeedOutput();
             output.output(feed, writer);
             writer.close();
@@ -172,7 +172,7 @@ public class FeedGenerator implements Configurable {
             }
 
             String path = AbcConfig.calculateDeployedPath(fileHardware);
-            Writer writer = new FileWriter(path);
+            Writer writer = getWriter(path);
             SyndFeedOutput output = new SyndFeedOutput();
             output.output(feed, writer);
             writer.close();
@@ -223,13 +223,13 @@ public class FeedGenerator implements Configurable {
             }
 
             String path = AbcConfig.calculateDeployedPath(fileArticles);
-            Writer writer = new FileWriter(path);
+            Writer writer = getWriter(path);
             SyndFeedOutput output = new SyndFeedOutput();
             output.output(feed, writer);
             writer.close();
 
             path = AbcConfig.calculateDeployedPath(fileTrafika);
-            writer = new FileWriter(path);
+            writer = getWriter(path);
             writer.write(Constants.isoFormat.format(new Date()));
             writer.write('\n');
             for (Iterator iter = feed.getEntries().iterator(); iter.hasNext();) {
@@ -241,7 +241,6 @@ public class FeedGenerator implements Configurable {
             log.error("Chyba pri generovani RSS pro clanky", e);
         }
     }
-
 
     /**
      * Generates RSS feed for selected and all blogs
@@ -276,7 +275,7 @@ public class FeedGenerator implements Configurable {
                 }
 
                 String path = AbcConfig.calculateDeployedPath(dirBlogs + blog.getSubType() + ".rss");
-                Writer writer = new FileWriter(path);
+                Writer writer = getWriter(path);
                 SyndFeedOutput output = new SyndFeedOutput();
                 output.output(feed, writer);
                 writer.close();
@@ -302,7 +301,7 @@ public class FeedGenerator implements Configurable {
             }
 
             String path = AbcConfig.calculateDeployedPath(fileBlog);
-            Writer writer = new FileWriter(path);
+            Writer writer = getWriter(path);
             SyndFeedOutput output = new SyndFeedOutput();
             output.output(feed, writer);
             writer.close();
@@ -336,6 +335,16 @@ public class FeedGenerator implements Configurable {
             entry.setDescription(description);
         }
         return entry;
+    }
+
+    /**
+     * Creates writer aware of correct encoding.
+     * @param path name of file to be created
+     * @return writer in UTF-8 encoding
+     * @throws IOException
+     */
+    private static Writer getWriter(String path) throws IOException {
+        return new OutputStreamWriter(new FileOutputStream(path), "UTF-8");
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {
