@@ -25,7 +25,7 @@ public class DiacriticRemover implements Configurable {
     public static final String PREF_UNICODE_DATA_FILE = "unicode.data.file";
     private static DiacriticRemover singleton;
 
-    private Hashtable table = new Hashtable(950,0.99f);
+    private Hashtable table = new Hashtable(60,0.99f);
 
     /**
      * Default non public constructor.
@@ -60,6 +60,7 @@ public class DiacriticRemover implements Configurable {
 
         // load LATIN and CYLIRIC characters
         try {
+            log.info("Loading Unicode translation table from file "+fileName);
             int i = 0;
             while ( utr.next() ) {
                 if ( utr.getCodePoint()>='\u0531' ) {
