@@ -105,6 +105,7 @@ public class ShowSurvey extends AbcVelocityServlet {
             return null;
         }
 
+        ctx.put("TITLE","Anketa");
         return VelocityTemplateSelector.selectTemplate(request,ctx,template.getTextTrim());
     }
 
