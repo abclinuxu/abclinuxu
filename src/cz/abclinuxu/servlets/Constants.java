@@ -37,6 +37,14 @@ public interface Constants {
     public static final int REL_REQUESTS =  3500;
     public static final int REL_FORUM = 3739;
 
+    /** types for VelocityHelper.groupByType() */
+    public static final String TYPE_MAKE = "make";
+    public static final String TYPE_ARTICLE = "article";
+    public static final String TYPE_DISCUSSION = "discussion";
+    public static final String TYPE_REQUEST = "request";
+    public static final String TYPE_DRIVER = "driver";
+    public static final String TYPE_CATEGORY = "category";
+
     SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     DateFormat defaultFormat = new SimpleDateFormat("d. M. yyyy HH:mm");
     DateFormat discussionFormat = new SimpleDateFormat("d.M. HH:mm");

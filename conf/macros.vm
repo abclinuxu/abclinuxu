@@ -205,3 +205,51 @@ $!UTIL.getXPath($reaction,'data/text')<p/>
 #set($ctx=$req.getAttribute('CONTEXT'))
 #set($rqwty=$ctx.remove($name))
 #end
+
+
+
+#####
+## Macros, that shows discussions
+#####
+
+#macro(showDiscussions $DISCUSSIONS $WHERE_ADD)
+<TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="4" BORDER="0">
+
+<TR><TD COLSPAN="3" CLASS="cerna3">
+<STRONG>Diskuse</STRONG><A HREF="/hardware/ViewRelation?relationId=3739" TITLE="Diskusní fórum"><IMG SRC="/images/site/sipka.gif" WIDTH="11" HEIGHT="7" BORDER="0" ALT="Diskusní fórum"></a>
+</TD></TR>
+
+<TR><TD COLSPAN="3">
+<A HREF="/hardware/EditDiscussion?action=addQuez&relationId=$WHERE_ADD">Polo¾it dotaz</A>
+</TD></TR>
+
+<TR>
+<TD CLASS="seda1"><SPAN CLASS="piditucna">Autor: Dotaz</SPAN></TD>
+<TD CLASS="seda1" ALIGN="CENTER"><SPAN CLASS="piditucna">Odp.</SPAN></TD>
+<TD CLASS="seda1" ALIGN="CENTER"><SPAN CLASS="piditucna">Poslední</SPAN></TD>
+</TR>
+
+#set($DIZS=$UTIL.sortByDateDescending($UTIL.getDiscussions($DISCUSSIONS)))
+
+#foreach($diz in $DIZS)
+<TR>
+<TD><A HREF="/hardware/ViewRelation?relationId=$diz.RelationId">$UTIL.getXPath($diz.Discussion,'data/title')</A></TD>
+<TD ALIGN="CENTER" VALIGN="MIDDLE"><SPAN CLASS="pidi">$diz.ResponseCount</SPAN></TD>
+<TD ALIGN="CENTER" VALIGN="MIDDLE"><SPAN CLASS="pidi">$UTIL.showDizDate($diz.LastUpdate)</SPAN></TD>
+</TR>
+
+#if($velocityCount<$DIZS.size())
+<TR><TD COLSPAN="3" CLASS="bezmezer">
+<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="---">
+</TD></TR>
+#end
+
+#end
+
+<TR><TD COLSPAN="3" CLASS="bezmezer">
+<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="=============================="><BR>
+<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" VSPACE="1" ALT=""><BR>
+</TD></TR>
+
+</TABLE>
+#end

@@ -525,6 +525,52 @@ public class VelocityHelper {
     }
 
     /**
+     * This method groups relations by their children's type. Each type represents
+     * one of Constants.TYPE_* strings. List of relations can be looked up for
+     * key.
+     */
+    public Map groupByType(List relations) throws PersistanceException {
+        Map map = new HashMap();
+        sync(relations);
+
+        for (Iterator iter = relations.iterator(); iter.hasNext();) {
+            Relation relation = (Relation) iter.next();
+            GenericObject child = relation.getChild();
+
+            if ( child instanceof Category ) {
+                storeToMap(map,Constants.TYPE_CATEGORY,relation);
+            } else if ( child instanceof Item ) {
+                Item item = (Item) child;
+                if ( item.getType()==Item.MAKE ) {
+                    storeToMap(map,Constants.TYPE_MAKE,relation);
+                } else if ( item.getType()==Item.DISCUSSION ) {
+                    storeToMap(map,Constants.TYPE_DISCUSSION,relation);
+                } else if ( item.getType()==Item.ARTICLE ) {
+                    storeToMap(map,Constants.TYPE_ARTICLE,relation);
+                } else if ( item.getType()==Item.DRIVER ) {
+                    storeToMap(map,Constants.TYPE_DRIVER,relation);
+                } else if ( item.getType()==Item.REQUEST ) {
+                    storeToMap(map,Constants.TYPE_REQUEST,relation);
+                }
+            }
+        }
+        return map;
+    }
+
+    /**
+     * Associates value with given key in the map. Each key contains
+     * list of values. If the list doesn't exist yet, it is created.
+     */
+    private void storeToMap(Map map, String key, GenericObject value) {
+        List list = (List) map.get(key);
+        if ( list==null ) {
+            list = new ArrayList(5);
+            map.put(key,list);
+        }
+        list.add(value);
+    }
+
+    /**
      * Gathers statistics on discussion.
      * @param item discussion, which must be initialized.
      */
