@@ -9,14 +9,14 @@
            <tr>
                 <td class="td01">Titulek</td>
                 <td class="td02">Reakcí</td>
-                <td class="td03">Poslední</td>
+                <td class="td03"><#if byCreated>Vytvoøeno<#else>Poslední</#if></td>
             </tr>
         </thead>
         <tbody>
  <#list TOOL.analyzeDiscussions(FOUND.data) as diz>
    <tr onmouseover="javascript:style.backgroundColor='#F7F7F7'" onmouseout="javascript:style.backgroundColor='#FFFFFF'">
     <td class="td01">
-     <a href="/forum/show/${diz.relationId}">${TOOL.limit(diz.title,60," ..")}</a>
+     <a href="/forum/show/${diz.relationId}">${TOOL.limit(diz.title,100," ..")}</a>
     </td>
     <td class="td02"><span class="pidi">${diz.responseCount}</span></td>
     <td class="td03"><span class="pidi">
