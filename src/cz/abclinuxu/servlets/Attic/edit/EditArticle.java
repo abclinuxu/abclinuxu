@@ -8,13 +8,16 @@ package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.view.SelectRelation;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.exceptions.MissingArgumentException;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.dom4j.*;
@@ -30,7 +33,7 @@ import java.text.ParseException;
  * Class for manipulation of articles.
  * @todo implement flow of checks: Author enters article, revisor corrects grammar, editor approves article and selects publish date.
  */
-public class EditArticle extends AbcVelocityServlet {
+public class EditArticle extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditArticle.class);
 
     public static final String PARAM_RELATION = "relationId";
@@ -47,98 +50,95 @@ public class EditArticle extends AbcVelocityServlet {
     public static final String ACTION_EDIT_ITEM = "edit";
     public static final String ACTION_EDIT_ITEM_STEP2 = "edit2";
 
-
-    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        init(request,response,ctx);
-
-        Relation relation = null;
+    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
-        String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
+        String action = (String) params.get(PARAM_ACTION);
 
-        relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
-        if ( relation!=null ) {
-            persistance.synchronize(relation);
-            persistance.synchronize(relation.getChild());
-            ctx.put(VAR_RELATION,relation);
-        } else throw new Exception("Chybí parametr relationId!");
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
+        if ( relation==null )
+            throw new MissingArgumentException("Chybí parametr relationId!");
 
-        if ( action==null || action.equals(ACTION_ADD_ITEM) ) {
-            int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
+        persistance.synchronize(relation);
+        persistance.synchronize(relation.getChild());
+        env.put(VAR_RELATION,relation);
+
+        if ( ACTION_ADD_ITEM.equals(action) ) {
+            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
+                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
+                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
                 default: {
                     params.put(PARAM_PUBLISHED,Constants.isoFormat.format(new Date()));
-                    return VelocityTemplateSelector.selectTemplate(request,ctx,"EditArticle","add");
+                    return FMTemplateSelector.select("EditArticle","add",env,request);
                 }
             }
 
         } else if ( action.equals(ACTION_ADD_ITEM_STEP2) ) {
-            int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
+            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
-                default: return actionAddStep2(request,response,ctx);
+                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
+                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
+                default: return actionAddStep2(request,response,env);
             }
 
         } else if ( action.equals(ACTION_EDIT_ITEM) ) {
-            int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_EDIT,null);
+            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation.getChild(),Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
-                default: return actionEditItem(request,ctx);
+                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
+                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
+                default: return actionEditItem(request,env);
             }
 
         } else if ( action.equals(ACTION_EDIT_ITEM_STEP2) ) {
-            int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_EDIT,null);
+            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation.getChild(),Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
-                default: return actionEditItem2(request,response,ctx);
+                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
+                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
+                default: return actionEditItem2(request,response,env);
             }
 
         }
-        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditArticle","add");
+        return FMTemplateSelector.select("EditArticle","add",env,request);
     }
 
-    protected String  actionAddStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
-        Relation upper = (Relation) ctx.get(VAR_RELATION);
-        User user = (User) ctx.get(AbcVelocityServlet.VAR_USER);
+        Relation upper = (Relation) env.get(VAR_RELATION);
+        User user = (User) env.get(AbcVelocityServlet.VAR_USER);
 
         boolean error = false;
         Date publish = null;
 
         String name = (String) params.get(PARAM_TITLE);
         if ( name==null || name.length()==0 ) {
-            ServletUtils.addError(PARAM_TITLE,"Nevyplnil jste titulek èlánku!",ctx,null); error = true;
+            ServletUtils.addError(PARAM_TITLE,"Nevyplnil jste titulek èlánku!",env,null); error = true;
         }
 
         String perex = (String) params.get(PARAM_PEREX);
         if ( perex==null || perex.length()==0 ) {
-            ServletUtils.addError(PARAM_PEREX,"Nevyplnil jste popis èlánku!",ctx,null); error = true;
+            ServletUtils.addError(PARAM_PEREX,"Nevyplnil jste popis èlánku!",env,null); error = true;
         }
 
         String content = (String) params.get(PARAM_CONTENT);
         if ( content==null || content.length()==0 ) {
-            ServletUtils.addError(PARAM_CONTENT,"Nevyplnil jste obsah èlánku!",ctx,null); error = true;
+            ServletUtils.addError(PARAM_CONTENT,"Nevyplnil jste obsah èlánku!",env,null); error = true;
         }
 
         String str = (String) params.get(PARAM_PUBLISHED);
         if ( str==null || str.length()<12 ) {
-            ServletUtils.addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",ctx,null); error = true;
+            ServletUtils.addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",env,null); error = true;
         } else {
             try {
                 publish = Constants.isoFormat.parse(str);
             } catch (ParseException e) {
-                ServletUtils.addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",ctx,null); error = true;
+                ServletUtils.addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",env,null); error = true;
             }
         }
 
         if ( error ) {
-            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditArticle","add");
+            return FMTemplateSelector.select("EditArticle","add",env,request);
         }
 
         /** todo: support for author not listed in section Authors */
@@ -176,19 +176,20 @@ public class EditArticle extends AbcVelocityServlet {
             persistance.create(record);
             persistance.create(new Relation(item,record,relation.getId()));
 
-            UrlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId(), ctx);
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId());
             return null;
         } catch (PersistanceException e) {
-            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
-            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditArticle","add");
+            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,e.getMessage(),env, null);
+            return FMTemplateSelector.select("EditArticle","add",env,request);
         }
     }
 
-    protected String  actionEditItem(HttpServletRequest request, Context ctx) throws Exception {
+    protected String actionEditItem(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
-        VelocityHelper helper = (VelocityHelper) ctx.get(AbcVelocityServlet.VAR_HELPER);
+        VelocityHelper helper = (VelocityHelper) env.get(AbcVelocityServlet.VAR_HELPER);
 
-        Relation relation = (Relation) ctx.get(VAR_RELATION);
+        Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
         Document document = item.getData();
 
@@ -213,45 +214,45 @@ public class EditArticle extends AbcVelocityServlet {
             }
         }
 
-        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditArticle","edit");
+        return FMTemplateSelector.select("EditArticle","edit",env,request);
     }
 
-    protected String actionEditItem2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionEditItem2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
-        Relation upper = (Relation) ctx.get(VAR_RELATION);
+        Relation upper = (Relation) env.get(VAR_RELATION);
 
         boolean error = false;
         Date publish = null;
 
         String name = (String) params.get(PARAM_TITLE);
         if ( name==null || name.length()==0 ) {
-            ServletUtils.addError(PARAM_TITLE,"Nevyplnil jste titulek èlánku!",ctx,null); error = true;
+            ServletUtils.addError(PARAM_TITLE,"Nevyplnil jste titulek èlánku!",env,null); error = true;
         }
 
         String perex = (String) params.get(PARAM_PEREX);
         if ( perex==null || perex.length()==0 ) {
-            ServletUtils.addError(PARAM_PEREX,"Nevyplnil jste popis èlánku!",ctx,null); error = true;
+            ServletUtils.addError(PARAM_PEREX,"Nevyplnil jste popis èlánku!",env,null); error = true;
         }
 
         String content = (String) params.get(PARAM_CONTENT);
         if ( content==null || content.length()==0 ) {
-            ServletUtils.addError(PARAM_CONTENT,"Nevyplnil jste obsah èlánku!",ctx,null); error = true;
+            ServletUtils.addError(PARAM_CONTENT,"Nevyplnil jste obsah èlánku!",env,null); error = true;
         }
 
         String str = (String) params.get(PARAM_PUBLISHED);
         if ( str==null || str.length()<12 ) {
-            ServletUtils.addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",ctx,null); error = true;
+            ServletUtils.addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",env,null); error = true;
         } else {
             try {
                 publish = Constants.isoFormat.parse(str);
             } catch (ParseException e) {
-                ServletUtils.addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",ctx,null); error = true;
+                ServletUtils.addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",env,null); error = true;
             }
         }
 
         if ( error ) {
-            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditArticle","edit");
+            return FMTemplateSelector.select("EditArticle","edit",env,request);
         }
 
         Item item = (Item) upper.getChild();
@@ -277,7 +278,8 @@ public class EditArticle extends AbcVelocityServlet {
             }
         }
 
-        UrlUtils.redirect(response, "/ViewRelation?relationId="+upper.getId(), ctx);
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/ViewRelation?relationId="+upper.getId());
         return null;
     }
 }

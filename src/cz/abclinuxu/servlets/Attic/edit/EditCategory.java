@@ -9,8 +9,11 @@
 package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcVelocityServlet;
+import cz.abclinuxu.servlets.AbcFMServlet;
+import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.view.SelectIcon;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.User;
@@ -56,7 +59,7 @@ import java.util.Map;
  * <dd>Relation, where current category is child.</dd>
  * </dl>
  */
-public class EditCategory extends AbcVelocityServlet {
+public class EditCategory extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditCategory.class);
 
     public static final String PARAM_RELATION = "relationId";
@@ -75,70 +78,64 @@ public class EditCategory extends AbcVelocityServlet {
     public static final String ACTION_EDIT = "edit";
     public static final String ACTION_EDIT2 = "edit2";
 
-
-    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        init(request,response,ctx);
-
-        Relation relation = null;
-        Category category = null;
-
+    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
 
-        category = (Category) InstanceUtils.instantiateParam(EditCategory.PARAM_CATEGORY,Category.class,params);
+        Category category = (Category) InstanceUtils.instantiateParam(EditCategory.PARAM_CATEGORY,Category.class,params);
         if ( category!=null ) {
             category = (Category) PersistanceFactory.getPersistance().findById(category);
-            ctx.put(EditCategory.VAR_CATEGORY,category);
+            env.put(EditCategory.VAR_CATEGORY,category);
         }
 
-        relation = (Relation) InstanceUtils.instantiateParam(EditCategory.PARAM_RELATION,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(EditCategory.PARAM_RELATION,Relation.class,params);
         if ( relation!=null ) {
             relation = (Relation) PersistanceFactory.getPersistance().findById(relation);
-            ctx.put(EditCategory.VAR_RELATION,relation);
+            env.put(EditCategory.VAR_RELATION,relation);
             category = (Category) relation.getChild();
-            ctx.put(EditCategory.VAR_CATEGORY,category);
+            env.put(EditCategory.VAR_CATEGORY,category);
         }
 
         if ( action==null || action.equals(EditCategory.ACTION_ADD) ) {
-            int rights = Guard.check((User)ctx.get(VAR_USER),category,Guard.OPERATION_ADD,Category.class);
+            int rights = Guard.check((User)env.get(Constants.VAR_USER),category,Guard.OPERATION_ADD,Category.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
-                default: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditCategory","add");
+                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
+                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
+                default: return FMTemplateSelector.select("EditCategory","add",env,request);
             }
 
         } else if ( action.equals(EditCategory.ACTION_ADD_STEP2) ) {
-            int rights = Guard.check((User)ctx.get(VAR_USER),category,Guard.OPERATION_ADD,Category.class);
+            int rights = Guard.check((User)env.get(Constants.VAR_USER),category,Guard.OPERATION_ADD,Category.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
-                default: return actionAddStep2(request,response,ctx);
+                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
+                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
+                default: return actionAddStep2(request,response,env);
             }
 
         } else if ( action.equals(EditCategory.ACTION_EDIT) ) {
-            int rights = Guard.check((User)ctx.get(VAR_USER),category,Guard.OPERATION_EDIT,null);
+            int rights = Guard.check((User)env.get(Constants.VAR_USER),category,Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
-                default: return actionEditStep1(request,ctx);
+                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
+                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
+                default: return actionEditStep1(request,env);
             }
 
         } else if ( action.equals(EditCategory.ACTION_EDIT2) ) {
-            int rights = Guard.check((User)ctx.get(VAR_USER),category,Guard.OPERATION_EDIT,null);
+            int rights = Guard.check((User)env.get(Constants.VAR_USER),category,Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
-                default: return actionEditStep2(request,response,ctx);
+                case Guard.ACCESS_LOGIN: FMTemplateSelector.select("ViewUser","login",env,request);
+                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
+                default: return actionEditStep2(request,response,env);
             }
 
         }
-        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditCategory","add");
+        return FMTemplateSelector.select("EditCategory","add",env,request);
     }
 
     /**
      * Creates new category
      */
-    protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
 
         String name = (String) params.get(EditCategory.PARAM_NAME);
@@ -147,8 +144,8 @@ public class EditCategory extends AbcVelocityServlet {
         String note = (String) params.get(EditCategory.PARAM_NOTE);
 
         if ( name==null || name.length()==0 ) {
-            ServletUtils.addError(EditCategory.PARAM_NAME,"Nezadal jste jméno kategorie!",ctx, null);
-            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditCategory","add");
+            ServletUtils.addError(EditCategory.PARAM_NAME,"Nezadal jste jméno kategorie!",env, null);
+            return FMTemplateSelector.select("EditCategory","add",env,request);
         }
 
         Document document = DocumentHelper.createDocument();
@@ -158,9 +155,9 @@ public class EditCategory extends AbcVelocityServlet {
         if ( note!=null && note.length()>0 ) root.addElement("note").addText(note);
         document.setRootElement(root);
 
-        Relation upperRelation = (Relation) ctx.get(EditCategory.VAR_RELATION);
-        Category upperCategory = (Category) ctx.get(EditCategory.VAR_CATEGORY);
-        User user = (User) ctx.get(AbcVelocityServlet.VAR_USER);
+        Relation upperRelation = (Relation) env.get(EditCategory.VAR_RELATION);
+        Category upperCategory = (Category) env.get(EditCategory.VAR_CATEGORY);
+        User user = (User) env.get(AbcVelocityServlet.VAR_USER);
         Category category = new Category();
 
         category.setOpen("yes".equals(open));
@@ -174,11 +171,12 @@ public class EditCategory extends AbcVelocityServlet {
             relation = new Relation(upperCategory,category,upper);
             PersistanceFactory.getPersistance().create(relation);
         } catch (PersistanceException e) {
-            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
-            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditCategory","add");
+            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,e.getMessage(),env, null);
+            return FMTemplateSelector.select("EditCategory","add",env,request);
         }
 
-        UrlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId(), ctx);
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId());
         return null;
     }
 
@@ -186,11 +184,11 @@ public class EditCategory extends AbcVelocityServlet {
      * First step for editing of category
      * @todo verify logic of ACTION check
      */
-    protected String actionEditStep1(HttpServletRequest request, Context ctx) throws Exception {
+    protected String actionEditStep1(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
-        VelocityHelper helper = (VelocityHelper) ctx.get(AbcVelocityServlet.VAR_HELPER);
+        VelocityHelper helper = (VelocityHelper) env.get(AbcVelocityServlet.VAR_HELPER);
 
-        Category category = (Category) ctx.get(EditCategory.VAR_CATEGORY);
+        Category category = (Category) env.get(EditCategory.VAR_CATEGORY);
         PersistanceFactory.getPersistance().synchronize(category);
         Document document = category.getData();
 
@@ -202,13 +200,13 @@ public class EditCategory extends AbcVelocityServlet {
         if (node!=null) params.put(EditCategory.PARAM_NOTE,helper.encodeSpecial(node.getText()));
         params.put(EditCategory.PARAM_OPEN, (category.isOpen())? "yes":"no");
 
-        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditCategory","edit");
+        return FMTemplateSelector.select("EditCategory","edit",env,request);
     }
 
     /**
      * Final step for editing of category
      */
-    protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
@@ -220,8 +218,8 @@ public class EditCategory extends AbcVelocityServlet {
             return null;
         }
 
-        Relation upperRelation = (Relation) ctx.get(EditCategory.VAR_RELATION);
-        Category category = (Category) ctx.get(EditCategory.VAR_CATEGORY);
+        Relation upperRelation = (Relation) env.get(EditCategory.VAR_RELATION);
+        Category category = (Category) env.get(EditCategory.VAR_CATEGORY);
         persistance.synchronize(category);
         Document document = category.getData();
 
@@ -242,10 +240,11 @@ public class EditCategory extends AbcVelocityServlet {
 
         persistance.update(category);
 
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         if ( upperRelation!=null ) {
-            UrlUtils.redirect(response, "/ViewRelation?relationId="+upperRelation.getId(), ctx);
+            urlUtils.redirect(response, "/ViewRelation?relationId="+upperRelation.getId());
         } else {
-            UrlUtils.redirect(response, "/ViewCategory?categoryId="+category.getId(), ctx);
+            urlUtils.redirect(response, "/ViewCategory?categoryId="+category.getId());
         }
         return null;
     }

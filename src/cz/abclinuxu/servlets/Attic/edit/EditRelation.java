@@ -7,9 +7,12 @@
 package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcVelocityServlet;
+import cz.abclinuxu.servlets.AbcFMServlet;
+import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.view.SelectRelation;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
@@ -38,7 +41,7 @@ import java.util.List;
  * <dd>Prefix of URL.</dd>
  * </dl>
  */
-public class EditRelation extends AbcVelocityServlet {
+public class EditRelation extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditRelation.class);
 
     public static final String PARAM_RELATION = "relationId";
@@ -54,70 +57,68 @@ public class EditRelation extends AbcVelocityServlet {
     public static final String ACTION_REMOVE_STEP2 = "remove2";
     public static final String ACTION_MOVE = "move";
 
-
-    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        init(request,response,ctx);
-
+    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(EditRelation.PARAM_RELATION,Relation.class,params);
         if ( relation!=null ) {
             relation = (Relation) PersistanceFactory.getPersistance().findById(relation);
-            ctx.put(EditRelation.VAR_CURRENT,relation);
+            env.put(EditRelation.VAR_CURRENT,relation);
         }
 
         if ( action==null || action.equals(ACTION_LINK) ) {
-            int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,null);
+            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation.getChild(),Guard.OPERATION_ADD,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
-                default: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditRelation","add");
+                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
+                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
+                default: return FMTemplateSelector.select("EditRelation","add",env,request);
             }
 
         } else if ( action.equals(ACTION_LINK_STEP2) ) {
-            int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,null);
+            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation.getChild(),Guard.OPERATION_ADD,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
-                default: return actionLinkStep2(request,response,ctx);
+                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
+                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
+                default: return actionLinkStep2(request,response,env);
             }
 
         } else if ( action.equals(ACTION_REMOVE) ) {
-            int rights = Guard.check((User)ctx.get(VAR_USER),relation,Guard.OPERATION_REMOVE,null);
+            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation,Guard.OPERATION_REMOVE,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
-                default: return actionRemove1(request,ctx);
+                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
+                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
+                default: return actionRemove1(request,env);
             }
 
         } else if ( action.equals(ACTION_REMOVE_STEP2) ) {
-            int rights = Guard.check((User)ctx.get(VAR_USER),relation,Guard.OPERATION_REMOVE,null);
+            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation,Guard.OPERATION_REMOVE,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
-                default: return actionRemove2(request,response,ctx);
+                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
+                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
+                default: return actionRemove2(request,response,env);
             }
 
         } else if ( action.equals(ACTION_MOVE) ) {
-            int rights = Guard.check((User)ctx.get(VAR_USER),relation,Guard.OPERATION_EDIT,null);
+            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation,Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
-                default: return actionMove(request,response,ctx);
+                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
+                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
+                default: return actionMove(request,response,env);
             }
 
         }
 
-        UrlUtils.redirect(response, "/Index", ctx);
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/Index");
         return null;
     }
 
-    protected String actionLinkStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionLinkStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        Relation parent = (Relation) ctx.get(EditRelation.VAR_CURRENT);
+        Relation parent = (Relation) env.get(EditRelation.VAR_CURRENT);
         Relation child = (Relation) InstanceUtils.instantiateParam(SelectRelation.PARAM_SELECTED,Relation.class,params);
         persistance.synchronize(child);
 
@@ -137,25 +138,26 @@ public class EditRelation extends AbcVelocityServlet {
         persistance.create(relation);
 
         String prefix = (String)params.get(EditRelation.PARAM_PREFIX);
-        ctx.put(AbcVelocityServlet.VAR_URL_UTILS,new UrlUtils(prefix, response));
-        UrlUtils.redirect(response, "/ViewRelation?relationId="+parent.getId(), ctx);
+        env.put(AbcVelocityServlet.VAR_URL_UTILS,new UrlUtils(prefix, response));
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/ViewRelation?relationId="+parent.getId());
         return null;
     }
 
-    protected String actionRemove1(HttpServletRequest request, Context ctx) throws Exception {
+    protected String actionRemove1(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
-        Relation relation = (Relation) ctx.get(VAR_CURRENT);
+        Relation relation = (Relation) env.get(VAR_CURRENT);
 
         Relation[] parents = persistance.findByExample(new Relation(null,relation.getChild(),0));
-        ctx.put(VAR_PARENTS,parents);
-        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditRelation","remove");
+        env.put(VAR_PARENTS,parents);
+        return FMTemplateSelector.select("EditRelation","remove",env,request);
     }
 
-    protected String actionRemove2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionRemove2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
-        Relation relation = (Relation) ctx.get(VAR_CURRENT);
+        Relation relation = (Relation) env.get(VAR_CURRENT);
 
         persistance.remove(relation);
         String url = null;
@@ -164,7 +166,8 @@ public class EditRelation extends AbcVelocityServlet {
             url = prefix.concat("/ViewRelation?relationId="+relation.getUpper());
         } else url = "/Index";
 
-        UrlUtils.redirect(response, url, ctx);
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, url);
         return null;
     }
 
@@ -172,10 +175,10 @@ public class EditRelation extends AbcVelocityServlet {
      * Called, when user selects destination in SelectRelation. It replaces parent in relation with child
      * in destination.
      */
-    protected String actionMove(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionMove(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
-        Relation relation = (Relation) ctx.get(VAR_CURRENT);
+        Relation relation = (Relation) env.get(VAR_CURRENT);
         Relation destination = (Relation) InstanceUtils.instantiateParam(SelectRelation.PARAM_SELECTED,Relation.class,params);
 
         persistance.synchronize(destination);
@@ -189,7 +192,8 @@ public class EditRelation extends AbcVelocityServlet {
             url = prefix.concat("/ViewRelation?relationId="+relation.getUpper());
         } else url = "/Index";
 
-        UrlUtils.redirect(response, url, ctx);
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, url);
         return null;
     }
 }

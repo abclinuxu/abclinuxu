@@ -7,6 +7,8 @@
 package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcVelocityServlet;
+import cz.abclinuxu.servlets.AbcFMServlet;
+import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.view.ViewUser;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Category;
@@ -20,6 +22,7 @@ import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
@@ -58,7 +61,7 @@ import java.util.ArrayList;
  * <dd>URL of user's homepage.</dd>
  * </dl>
  */
-public class EditUser extends AbcVelocityServlet {
+public class EditUser extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditUser.class);
 
     public static final String PARAM_LOGIN = "login";
@@ -85,47 +88,45 @@ public class EditUser extends AbcVelocityServlet {
     public static final String ACTION_PASSWORD = "password";
     public static final String ACTION_PASSWORD2 = "password2";
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        init(request,response,ctx);
-
+    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
 
         User managed = (User) InstanceUtils.instantiateParam(PARAM_USER,User.class,params);
-        User user = (User) ctx.get(AbcVelocityServlet.VAR_USER);
+        User user = (User) env.get(AbcVelocityServlet.VAR_USER);
         if ( managed==null ) managed = user;
-        ctx.put(VAR_MANAGED,managed);
+        env.put(VAR_MANAGED,managed);
 
         if (  action==null || action.equals(EditUser.ACTION_ADD) ) {
-            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","register");
+            return FMTemplateSelector.select("EditUser","register",env,request);
 
         } else if ( action.equals(EditUser.ACTION_ADD_STEP2) ) {
-            return actionAddStep2(request,response,ctx);
+            return actionAddStep2(request,response,env);
 
         } else if ( action.equals(EditUser.ACTION_EDIT) ) {
             PersistanceFactory.getPersistance().synchronize(managed);
             if ( user==null )
-                return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
+                return FMTemplateSelector.select("ViewUser","login",env,request);
             if ( user.getId()!=managed.getId() && user.isAdmin()==false )
-                return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
+                return FMTemplateSelector.select("ViewUser","forbidden",env,request);
             else
-                return actionEditStep1(request,ctx);
+                return actionEditStep1(request,env);
 
         } else if ( action.equals(EditUser.ACTION_EDIT_STEP2) ) {
             PersistanceFactory.getPersistance().synchronize(managed);
             int rights = Guard.check(user,managed,Guard.OPERATION_EDIT,params.get(PARAM_PASSCHECK));
 
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
+                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
                 case Guard.ACCESS_DENIED: {
                     if ( Misc.empty((String)params.get(PARAM_PASSCHECK)) ) {
-                        ServletUtils.addError(PARAM_PASSCHECK,"Zadejte heslo!",ctx,null);
-                        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","edit");
+                        ServletUtils.addError(PARAM_PASSCHECK,"Zadejte heslo!",env,null);
+                        return FMTemplateSelector.select("EditUser","edit",env,request);
                     } else {
-                        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
+                        return FMTemplateSelector.select("ViewUser","forbidden",env,request);
                     }
                 }
-                default: return actionEditStep2(request,response,ctx);
+                default: return actionEditStep2(request,response,env);
             }
 
         } else if ( action.equals(EditUser.ACTION_PASSWORD) ) {
@@ -134,9 +135,9 @@ public class EditUser extends AbcVelocityServlet {
             if ( user!=null && managed.equals(user) ) rights = Guard.ACCESS_OK;
 
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
-                default: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","passwd");
+                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
+                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
+                default: return FMTemplateSelector.select("EditUser","passwd",env,request);
             }
 
         } else if ( action.equals(EditUser.ACTION_PASSWORD2) ) {
@@ -144,29 +145,29 @@ public class EditUser extends AbcVelocityServlet {
             int rights = Guard.check(user,managed,Guard.OPERATION_EDIT,params.get(PARAM_PASSCHECK));
 
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
-                default: return actionPassword(request,response,ctx);
+                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
+                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
+                default: return actionPassword(request,response,env);
             }
         }
-        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","register");
+        return FMTemplateSelector.select("EditUser","register",env,request);
     }
 
     /**
      * Creates new user
      */
-    protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         User user = new User();
-        if ( !fillUser(request,user,ctx,true) )
-            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","register");
+        if ( !fillUser(request,user,env,true) )
+            return FMTemplateSelector.select("EditUser","register",env,request);
 
         try {
             PersistanceFactory.getPersistance().create(user);
         } catch ( PersistanceException e ) {
             if ( e.getStatus()==AbcException.DB_DUPLICATE ) {
-                ServletUtils.addError(PARAM_LOGIN,"Toto jméno je ji¾ pou¾íváno!",ctx, null);
+                ServletUtils.addError(PARAM_LOGIN,"Toto jméno je ji¾ pou¾íváno!",env, null);
             }
-            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","register");
+            return FMTemplateSelector.select("EditUser","register",env,request);
         }
 
         VelocityContext tmpContext = new VelocityContext();
@@ -175,17 +176,17 @@ public class EditUser extends AbcVelocityServlet {
         EmailSender.sendEmail("admin@AbcLinuxu.cz",user.getEmail(),"Privitani",message);
 
         HttpSession session = request.getSession();
-        session.setAttribute(VAR_USER,user);
-        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","welcome");
+        session.setAttribute(Constants.VAR_USER,user);
+        return FMTemplateSelector.select("EditUser","welcome",env,request);
     }
 
     /**
      * Prepares for an update of user
      */
-    protected String actionEditStep1(HttpServletRequest request, Context ctx) throws Exception {
-        User user = (User) ctx.get(VAR_MANAGED);
+    protected String actionEditStep1(HttpServletRequest request, Map env) throws Exception {
+        User user = (User) env.get(VAR_MANAGED);
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
-        VelocityHelper helper = (VelocityHelper) ctx.get(AbcVelocityServlet.VAR_HELPER);
+        VelocityHelper helper = (VelocityHelper) env.get(AbcVelocityServlet.VAR_HELPER);
         PersistanceFactory.getPersistance().synchronize(user);
 
         params.put(EditUser.PARAM_LOGIN,user.getLogin());
@@ -211,35 +212,36 @@ public class EditUser extends AbcVelocityServlet {
         node = document.selectSingleNode("data/personal");
         if (node!=null) params.put(EditUser.PARAM_PERSONAL,helper.encodeSpecial(node.getText()));
 
-        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","edit");
+        return FMTemplateSelector.select("EditUser","edit",env,request);
     }
 
     /**
      * Updates existing user
      */
-    protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        User user = (User) ctx.get(VAR_MANAGED);
+    protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        User user = (User) env.get(VAR_MANAGED);
         PersistanceFactory.getPersistance().synchronize(user);
 
-        if ( !fillUser(request,user,ctx,false) )
-            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","edit");
+        if ( !fillUser(request,user,env,false) )
+            return FMTemplateSelector.select("EditUser","edit",env,request);
 
         try {
             PersistanceFactory.getPersistance().update(user);
         } catch ( PersistanceException e ) {
             if ( e.getStatus()==AbcException.DB_DUPLICATE ) {
-                ServletUtils.addError(PARAM_LOGIN,"Toto jméno je ji¾ pou¾íváno!",ctx, null);
+                ServletUtils.addError(PARAM_LOGIN,"Toto jméno je ji¾ pou¾íváno!",env, null);
             }
-            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","edit");
+            return FMTemplateSelector.select("EditUser","edit",env,request);
         }
 
-        User sessionUser = (User) ctx.get(VAR_USER);
+        User sessionUser = (User) env.get(Constants.VAR_USER);
         if ( user.getId()==sessionUser.getId() ) {
             sessionUser.synchronizeWith(user);
         }
 
-        ServletUtils.addMessage("Zmìny byly ulo¾eny.",ctx, request.getSession());
-        UrlUtils.redirect(response, "/Index", ctx);
+        ServletUtils.addMessage("Zmìny byly ulo¾eny.",env, request.getSession());
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/Index");
         return null;
     }
 
@@ -247,7 +249,7 @@ public class EditUser extends AbcVelocityServlet {
      * Fills selected user with values from request. Common to add and edit.
      * @param updatePassword if true, it attempts to read and update password
      */
-    protected boolean fillUser(HttpServletRequest request, User user, Context ctx, boolean updatePassword) throws Exception {
+    protected boolean fillUser(HttpServletRequest request, User user, Map env, boolean updatePassword) throws Exception {
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         boolean error = false;
 
@@ -257,25 +259,25 @@ public class EditUser extends AbcVelocityServlet {
         String email = (String) params.get(EditUser.PARAM_EMAIL);
 
         if ( login==null || login.length()<3 ) {
-            ServletUtils.addError(PARAM_LOGIN,"Zadané pøihla¹ovací jméno je pøíli¹ krátké! Nejménì tøi znaky!",ctx, null);
+            ServletUtils.addError(PARAM_LOGIN,"Zadané pøihla¹ovací jméno je pøíli¹ krátké! Nejménì tøi znaky!",env, null);
             error = true;
         }
         if ( name==null || name.length()<5 ) {
-            ServletUtils.addError(PARAM_NAME,"Zadané jméno je pøíli¹ krátké!",ctx, null);
+            ServletUtils.addError(PARAM_NAME,"Zadané jméno je pøíli¹ krátké!",env, null);
             error = true;
         }
         if ( updatePassword ) {
             if ( password==null || password.length()<4 ) {
-                ServletUtils.addError(PARAM_PASSWORD,"Heslo je pøíli¹ krátké!",ctx, null);
+                ServletUtils.addError(PARAM_PASSWORD,"Heslo je pøíli¹ krátké!",env, null);
                 error = true;
             }
             if ( password!=null && !(password.equals((String) request.getParameter(EditUser.PARAM_PASSWORD2))) ) {
-                ServletUtils.addError(PARAM_PASSWORD,"Hesla se li¹í!",ctx, null);
+                ServletUtils.addError(PARAM_PASSWORD,"Hesla se li¹í!",env, null);
                 error = true;
             }
         }
         if ( email==null || email.length()<6 || email.indexOf('@')==-1 ) {
-            ServletUtils.addError(PARAM_EMAIL,"Neplatný email!",ctx, null);
+            ServletUtils.addError(PARAM_EMAIL,"Neplatný email!",env, null);
             error = true;
         }
 
@@ -310,29 +312,29 @@ public class EditUser extends AbcVelocityServlet {
     /**
      * Prepares for an update of user
      */
-    protected String actionPassword(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionPassword(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
-        User user = (User) ctx.get(VAR_MANAGED);
+        User user = (User) env.get(VAR_MANAGED);
         String pass = (String) params.get(PARAM_PASSWORD);
         String pass2 = (String) params.get(PARAM_PASSWORD2);
         boolean error = false;
 
         if ( pass==null || pass.length()<4 ) {
-            ServletUtils.addError(PARAM_PASSWORD,"Heslo je pøíli¹ krátké!",ctx, null);
+            ServletUtils.addError(PARAM_PASSWORD,"Heslo je pøíli¹ krátké!",env, null);
             error = true;
         }
         if ( pass!=null && !(pass.equals(pass2)) ) {
-            ServletUtils.addError(PARAM_PASSWORD,"Hesla se li¹í!",ctx, null);
+            ServletUtils.addError(PARAM_PASSWORD,"Hesla se li¹í!",env, null);
             error = true;
         }
 
         if ( error )
-            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","passwd");
+            return FMTemplateSelector.select("EditUser","passwd",env,request);
 
         user.setPassword(pass);
         PersistanceFactory.getPersistance().update(user);
 
-        ServletUtils.addMessage("Heslo bylo zmìnìno.",ctx, request.getSession());
+        ServletUtils.addMessage("Heslo bylo zmìnìno.",env, request.getSession());
 
         Cookie[] cookies = request.getCookies();
         for (int i = 0; user==null && cookies!=null && i<cookies.length; i++) {
@@ -343,7 +345,8 @@ public class EditUser extends AbcVelocityServlet {
             }
         }
 
-        UrlUtils.redirect(response, "/Index", ctx);
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/Index");
         return null;
     }
 }

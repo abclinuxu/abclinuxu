@@ -12,9 +12,12 @@ import org.apache.velocity.context.Context;
 import javax.servlet.http.*;
 
 import cz.abclinuxu.servlets.AbcVelocityServlet;
+import cz.abclinuxu.servlets.AbcFMServlet;
+import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.security.Guard;
@@ -40,7 +43,7 @@ import java.util.*;
  * <dd>User's choice(s), when he votes.</dd>
  * </dl>
  */
-public class EditPoll extends AbcVelocityServlet {
+public class EditPoll extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditPoll.class);
 
     public static final String PARAM_RELATION = "relationId";
@@ -67,77 +70,72 @@ public class EditPoll extends AbcVelocityServlet {
     /** this prefix will be used for marking user, that has already voted */
     static final String COOKIE_PREFIX = "P_";
 
-
-    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        init(request,response,ctx);
+    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
-        Relation relation = null;
-        Poll poll = null;
-
-        relation = (Relation) InstanceUtils.instantiateParam(EditPoll.PARAM_RELATION,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(EditPoll.PARAM_RELATION,Relation.class,params);
         if ( relation!=null ) {
             relation = (Relation) PersistanceFactory.getPersistance().findById(relation);
-            ctx.put(EditPoll.VAR_RELATION,relation);
+            env.put(EditPoll.VAR_RELATION,relation);
         }
 
-        poll = (Poll) InstanceUtils.instantiateParam(EditPoll.PARAM_POLL,Poll.class,params);
+        Poll poll = (Poll) InstanceUtils.instantiateParam(EditPoll.PARAM_POLL,Poll.class,params);
         if ( poll!=null ) {
             poll = (Poll) PersistanceFactory.getPersistance().findById(poll);
-            ctx.put(EditPoll.VAR_POLL,poll);
+            env.put(EditPoll.VAR_POLL,poll);
         }
 
         String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
 
         if ( action==null || action.equals(EditPoll.ACTION_ADD) ) {
             if ( relation==null ) throw new Exception("Chybí parametr relationId!");
-            int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Poll.class);
+            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Poll.class);
              switch (rights) {
-                 case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-                 case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
-                 default: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditPoll","add");
+                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
+                 case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
+                 default: return FMTemplateSelector.select("EditPoll","add",env,request);
              }
 
         } else if ( action.equals(EditPoll.ACTION_VOTE) ) {
             if ( poll==null ) throw new Exception("Chybí parametr pollId!");
-            return actionVote(request,response,ctx);
+            return actionVote(request,response,env);
 
         } else if ( action.equals(EditPoll.ACTION_ADD_STEP2) ) {
             if ( relation==null ) throw new Exception("Chybí parametr relationId!");
-            int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Poll.class);
+            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Poll.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
-                default: return actionAddStep2(request,response,ctx);
+                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
+                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
+                default: return actionAddStep2(request,response,env);
             }
 
         } else if ( action.equals(EditPoll.ACTION_EDIT) ) {
             if ( relation==null ) throw new Exception("Chybí parametr relationId!");
             if ( poll==null ) throw new Exception("Chybí parametr pollId!");
-            int rights = Guard.check((User)ctx.get(VAR_USER),poll,Guard.OPERATION_EDIT,null);
+            int rights = Guard.check((User)env.get(Constants.VAR_USER),poll,Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
-                default: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditPoll","edit");
+                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
+                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
+                default: return FMTemplateSelector.select("EditPoll","edit",env,request);
             }
 
         } else if ( action.equals(EditPoll.ACTION_EDIT2) ) {
             if ( relation==null ) throw new Exception("Chybí parametr relationId!");
             if ( poll==null ) throw new Exception("Chybí parametr pollId!");
-            int rights = Guard.check((User)ctx.get(VAR_USER),poll,Guard.OPERATION_EDIT,null);
+            int rights = Guard.check((User)env.get(Constants.VAR_USER),poll,Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
-                default: return actionEditStep2(request,response,ctx);
+                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
+                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
+                default: return actionEditStep2(request,response,env);
             }
 
         }
-        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditPoll","add");
+        return FMTemplateSelector.select("EditPoll","add",env,request);
     }
 
     /**
      * Creates new poll
      */
-    protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         boolean error = false;
 
@@ -145,7 +143,7 @@ public class EditPoll extends AbcVelocityServlet {
         boolean multiChoice = false;
         String text = (String) params.get(EditPoll.PARAM_TEXT);
         List choices = (List) params.get(EditPoll.PARAM_CHOICES);
-        Relation upperRelation = (Relation) ctx.get(EditPoll.VAR_RELATION);
+        Relation upperRelation = (Relation) env.get(EditPoll.VAR_RELATION);
 
         String tmp = (String) params.get(EditPoll.PARAM_TYPE);
         if ( "rating".equals(tmp) ) type = Poll.RATING;
@@ -153,7 +151,7 @@ public class EditPoll extends AbcVelocityServlet {
         if ( "yes".equals(tmp) ) multiChoice = true;
 
         if ( text==null || text.length()==0 ) {
-            ServletUtils.addError(EditPoll.PARAM_TEXT,"Nezadal jste otázku!",ctx, null);
+            ServletUtils.addError(EditPoll.PARAM_TEXT,"Nezadal jste otázku!",env, null);
             error = true;
         }
 
@@ -163,11 +161,11 @@ public class EditPoll extends AbcVelocityServlet {
         }
 
         if ( choices.size()<2 ) {
-            ServletUtils.addError(EditPoll.PARAM_CHOICES,"Vyplòte minimálnì dvì volby!",ctx, null);
+            ServletUtils.addError(EditPoll.PARAM_CHOICES,"Vyplòte minimálnì dvì volby!",env, null);
             error = true;
         }
 
-        if ( error ) return VelocityTemplateSelector.selectTemplate(request,ctx,"EditPoll","add");
+        if ( error ) return FMTemplateSelector.select("EditPoll","add",env,request);
 
         Poll poll = new Poll(0,type);
         poll.setText(text);
@@ -192,19 +190,20 @@ public class EditPoll extends AbcVelocityServlet {
             sb.append(tmp);
         }
 
-        UrlUtils.redirect(response, sb.toString(), ctx);
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, sb.toString());
         return null;
     }
 
     /**
      * Final step for editing of poll
      */
-    protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
 
         int type = Poll.SURVEY;
-        Relation upperRelation = (Relation) ctx.get(EditPoll.VAR_RELATION);
-        Poll poll = (Poll) ctx.get(EditPoll.VAR_POLL);
+        Relation upperRelation = (Relation) env.get(EditPoll.VAR_RELATION);
+        Poll poll = (Poll) env.get(EditPoll.VAR_POLL);
 
         String tmp = (String) params.get(EditPoll.PARAM_TYPE);
         if ( "rating".equals(tmp) ) {
@@ -239,22 +238,24 @@ public class EditPoll extends AbcVelocityServlet {
         }
         PersistanceFactory.getPersistance().update(poll);
 
-        UrlUtils.redirect(response, "/ViewRelation?relationId="+upperRelation.getId(), ctx);
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/ViewRelation?relationId="+upperRelation.getId());
         return null;
     }
 
     /**
      * Voting
      */
-    protected String actionVote(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionVote(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
-        Poll poll = (Poll) ctx.get(EditPoll.VAR_POLL);
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        Poll poll = (Poll) env.get(EditPoll.VAR_POLL);
         String url = (String) params.get(EditPoll.PARAM_URL);
         int max = 0;
 
         if ( poll.isClosed() ) {
-            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,"Litujeme, ale tato anketa je ji¾ uzavøena!",ctx,request.getSession());
-            UrlUtils.redirect(response, url, ctx);
+            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,"Litujeme, ale tato anketa je ji¾ uzavøena!",env,request.getSession());
+            urlUtils.redirect(response, url);
             return null;
         }
 
@@ -265,14 +266,14 @@ public class EditPoll extends AbcVelocityServlet {
 
         String[] values = request.getParameterValues(EditPoll.PARAM_VOTE_ID);
         if ( values==null ) {
-            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,"Nevybral jste ¾ádnou volbu!",ctx,request.getSession());
+            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,"Nevybral jste ¾ádnou volbu!",env,request.getSession());
         } else {
             max = values.length;
             if ( ! poll.isMultiChoice() ) max = 1;
         }
 
-        if ( hasAlreadyVoted(request,poll,ctx) ) {
-            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,"U¾ jste jednou volil!",ctx,request.getSession());
+        if ( hasAlreadyVoted(request,poll,env) ) {
+            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,"U¾ jste jednou volil!",env,request.getSession());
         } else if ( max>0 ) {
             try {
                 for (int i = 0; i<max; i++) {
@@ -280,15 +281,15 @@ public class EditPoll extends AbcVelocityServlet {
                     int voteId = Integer.parseInt(tmp);
                     PersistanceFactory.getPersistance().incrementCounter(poll.getChoices()[voteId]);
                 }
-                ServletUtils.addMessage("Vá¹ hlas do ankety byl pøijat.",ctx,request.getSession());
-                markAlreadyVoted(request,response,poll,ctx);
+                ServletUtils.addMessage("Vá¹ hlas do ankety byl pøijat.",env,request.getSession());
+                markAlreadyVoted(request,response,poll,env);
             } catch (Exception e) {
                 log.error("Vote bug: ",e);
-                ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,"Omlouváme se, ale nastala chyba.",ctx,request.getSession());
+                ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,"Omlouváme se, ale nastala chyba.",env,request.getSession());
             }
         }
 
-        UrlUtils.redirect(response, url, ctx);
+        urlUtils.redirect(response, url);
         return null;
     }
 
@@ -296,7 +297,7 @@ public class EditPoll extends AbcVelocityServlet {
      * Checks, whether this user has already voted for this poll.
      * @return true, if user is trying to vote again
      */
-    boolean hasAlreadyVoted(HttpServletRequest request, Poll poll, Context context) {
+    boolean hasAlreadyVoted(HttpServletRequest request, Poll poll, Map env) {
         String searched = COOKIE_PREFIX+poll.getId();
 
         HttpSession session = request.getSession();
@@ -315,7 +316,7 @@ public class EditPoll extends AbcVelocityServlet {
     /**
      * Marks user, that he has already voted for this poll.
      */
-    void markAlreadyVoted(HttpServletRequest request, HttpServletResponse response, Poll poll, Context context) {
+    void markAlreadyVoted(HttpServletRequest request, HttpServletResponse response, Poll poll, Map env) {
         String searched = COOKIE_PREFIX+poll.getId();
 
         HttpSession session = request.getSession();

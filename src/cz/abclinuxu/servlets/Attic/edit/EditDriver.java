@@ -8,8 +8,10 @@ package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.persistance.*;
@@ -26,7 +28,7 @@ import java.io.IOException;
 /**
  * @todo archive drivers replaced by newer version
  */
-public class EditDriver extends AbcVelocityServlet {
+public class EditDriver extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditDriver.class);
 
     public static final String PARAM_NAME = "name";
@@ -42,9 +44,7 @@ public class EditDriver extends AbcVelocityServlet {
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        init(request,response,ctx);
-
+    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
@@ -53,32 +53,32 @@ public class EditDriver extends AbcVelocityServlet {
         if ( relation!=null ) {
             persistance.synchronize(relation);
             persistance.synchronize(relation.getChild());
-            ctx.put(VAR_RELATION,relation);
+            env.put(VAR_RELATION,relation);
         } else throw new Exception("Chybí parametr relationId!");
 
         if ( action==null || action.equals(ACTION_ADD) ) {
-            int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
+            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
-                default: return actionAddStep(request,ctx);
+                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
+                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
+                default: return actionAddStep(request,env);
             }
 
         } else if ( action.equals(ACTION_ADD_STEP2) ) {
-            int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
+            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
-                default: return actionAddStep2(request,response,ctx);
+                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
+                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
+                default: return actionAddStep2(request,response,env);
             }
         }
 
-        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditDriver","add");
+        return FMTemplateSelector.select("EditDriver","add",env,request);
     }
 
-    protected String actionAddStep(HttpServletRequest request, Context ctx) throws Exception {
+    protected String actionAddStep(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
-        VelocityHelper helper = (VelocityHelper) ctx.get(AbcVelocityServlet.VAR_HELPER);
+        VelocityHelper helper = (VelocityHelper) env.get(AbcVelocityServlet.VAR_HELPER);
         Persistance persistance = PersistanceFactory.getPersistance();
 
         Item driver = (Item) InstanceUtils.instantiateParam(PARAM_DRIVER,Item.class,params);
@@ -105,42 +105,42 @@ public class EditDriver extends AbcVelocityServlet {
             if ( node!=null ) params.put(PARAM_NOTE,helper.encodeSpecial(node.getText()));
         }
 
-        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditDriver","add");
+        return FMTemplateSelector.select("EditDriver","add",env,request);
     }
 
     /**
      * add: if driver exists, its content is replaced by newer version. otherwise it is created.
      */
-    protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        Relation upper = (Relation) ctx.get(VAR_RELATION);
-        User user = (User) ctx.get(AbcVelocityServlet.VAR_USER);
+        Relation upper = (Relation) env.get(VAR_RELATION);
+        User user = (User) env.get(AbcVelocityServlet.VAR_USER);
 
         boolean error = false;
         String name = (String) params.get(PARAM_NAME);
         if ( name==null || name.length()==0 ) {
-            ServletUtils.addError(PARAM_NAME,"Nevyplnil jste název ovladaèe!",ctx,null);
+            ServletUtils.addError(PARAM_NAME,"Nevyplnil jste název ovladaèe!",env,null);
             error = true;
         }
         String version = (String) params.get(PARAM_VERSION);
         if ( version==null || version.length()==0 ) {
-            ServletUtils.addError(PARAM_VERSION,"Nevyplnil jste verzi ovladaèe!",ctx,null);
+            ServletUtils.addError(PARAM_VERSION,"Nevyplnil jste verzi ovladaèe!",env,null);
             error = true;
         }
         String url = (String) params.get(PARAM_URL);
         if ( url==null || url.length()==0 ) {
-            ServletUtils.addError(PARAM_URL,"Nevyplnil jste adresu ovladaèe!",ctx,null);
+            ServletUtils.addError(PARAM_URL,"Nevyplnil jste adresu ovladaèe!",env,null);
             error = true;
         } else if ( url.indexOf("tp://")==-1 || url.length()<12 ) {
-            ServletUtils.addError(PARAM_URL,"Neplatná adresa ovladaèe!",ctx,null);
+            ServletUtils.addError(PARAM_URL,"Neplatná adresa ovladaèe!",env,null);
             error = true;
         }
         String note = (String) params.get(PARAM_NOTE);
 
         if ( error ) {
-            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditDriver","add");
+            return FMTemplateSelector.select("EditDriver","add",env,request);
         }
 
         boolean created = true;
@@ -182,11 +182,12 @@ public class EditDriver extends AbcVelocityServlet {
                 persistance.update(driver);
             }
         } catch (PersistanceException e) {
-            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
-            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditDriver","add");
+            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,e.getMessage(),env, null);
+            return FMTemplateSelector.select("EditDriver","add",env,request);
         }
 
-        UrlUtils.redirect(response, "/ViewRelation?relationId="+Constants.REL_DRIVERS, ctx);
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/ViewRelation?relationId="+Constants.REL_DRIVERS);
         return null;
     }
 }
