@@ -1451,7 +1451,7 @@ public class MySqlPersistance implements Persistance {
     /**
      * @return SQL table name for this GenericObject
      */
-    private String getTable(GenericObject obj) {
+    public String getTable(GenericObject obj) {
         if (obj instanceof Relation) {
             return "relace";
         } else if (obj instanceof Record) {

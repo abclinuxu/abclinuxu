@@ -6,7 +6,7 @@
 package cz.abclinuxu.utils;
 
 import cz.abclinuxu.data.*;
-import cz.abclinuxu.servlets.utils.PreparedDiscussion;
+import cz.abclinuxu.data.view.DiscussionHeader;
 
 import java.util.List;
 import java.util.Comparator;
@@ -44,14 +44,14 @@ public class Sorters2 {
     }
 
     /**
-     * @return list of GenericObjects sorted in ascending order by their name.
+     * @return list of GenericObjects sorted in ascending order by their date.
      */
     public static List byDate(List relations) {
         return byDate(relations,ASCENDING);
     }
 
     /**
-     * @return list of GenericObjects sorted by their name in specified order.
+     * @return list of GenericObjects sorted by their date in specified order.
      */
     public static List byDate(List relations, String order) {
         Comparator comparator = new DateComparator();
@@ -62,14 +62,14 @@ public class Sorters2 {
     }
 
     /**
-     * @return list of GenericObjects sorted in ascending order by their name.
+     * @return list of GenericObjects sorted in ascending order by their id.
      */
     public static List byId(List relations) {
         return byId(relations,ASCENDING);
     }
 
     /**
-     * @return list of GenericObjects sorted by their name in specified order.
+     * @return list of GenericObjects sorted by their id in specified order.
      */
     public static List byId(List relations, String order) {
         Comparator comparator = new IdComparator();
@@ -122,8 +122,8 @@ public class Sorters2 {
 
             if ( obj instanceof Link )
                 return ((Link)obj).getUpdated();
-            if ( obj instanceof PreparedDiscussion )
-                return ((PreparedDiscussion)obj).getLastUpdate();
+            if ( obj instanceof DiscussionHeader )
+                return ((DiscussionHeader)obj).getLastUpdate();
             if ( obj instanceof GenericDataObject ) {
                 GenericDataObject gdo = (GenericDataObject) obj;
                 if ( gdo instanceof Item && gdo.getType()==Item.ARTICLE )

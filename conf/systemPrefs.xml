@@ -108,7 +108,6 @@
               <entry key="count.items.by.type" value="select count(*) from polozka where typ=?"/>
               <entry key="max.poll" value="select max(cislo) from anketa"/>
               <entry key="max.user" value="select max(cislo) from uzivatel"/>
-              <entry key="max.record.created.of.item" value="select max(vytvoreno) from relace R left join zaznam Z on Z.cislo=R.potomek where R.typ_predka='P' and R.predek=?"/>
               <entry key="users.email.weekly" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;>&lt;weekly_summary>yes%'"/>
               <entry key="users.with.roles" value="select cislo from uzivatel where data like '%&lt;roles>%'" />
             </map>

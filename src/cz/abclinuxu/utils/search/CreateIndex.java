@@ -25,6 +25,7 @@ import java.util.prefs.Preferences;
 /**
  * This class is responsible for creating and
  * maintaining Lucene's index.
+ * todo give score boost to titles and names of objects
  */
 public class CreateIndex implements Configurable {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(CreateIndex.class);
@@ -230,20 +231,26 @@ public class CreateIndex implements Configurable {
             sb.append(node.getText());
         }
 
-        for (Iterator iter = discussion.getContent().iterator(); iter.hasNext();) {
-            Relation child = (Relation) iter.next();
-            if ( child.getChild() instanceof Record ) {
-                Record record = (Record) child.getChild();
-                persistance.synchronize(record);
-                iter.remove();
+        if (discussion.getContent().size()>0) {
+            Record record = (Record) ((Relation) discussion.getContent().get(0)).getChild();
+            persistance.synchronize(record);
+            List nodes = record.getData().selectNodes("/data/comment");
 
-                sb.append(" ");
-                data = (Element) record.getData().selectSingleNode("data");
-
+            for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
+                data = (Element) iter.next();
                 node = data.selectSingleNode("title");
-                if ( node!=null ) sb.append(node.getText());
+                if ( node!=null ) {
+                    sb.append(" ");
+                    sb.append(node.getText());
+                }
 
                 node = data.selectSingleNode("text");
+                if ( node!=null ) {
+                    sb.append(" ");
+                    sb.append(node.getText());
+                }
+
+                node = data.selectSingleNode("author");
                 if ( node!=null ) {
                     sb.append(" ");
                     sb.append(node.getText());

@@ -9,7 +9,7 @@ package cz.abclinuxu.scheduler;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.utils.PreparedDiscussion;
+import cz.abclinuxu.data.view.DiscussionHeader;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
@@ -145,7 +145,7 @@ public class GenerateLinks extends TimerTask implements Configurable {
             List discussions = tools.analyzeDiscussions(forum.getContent());
             Sorters2.byDate(discussions, Sorters2.DESCENDING);
             for ( Iterator iter = discussions.iterator(); iter.hasNext(); ) {
-                PreparedDiscussion discussion = (PreparedDiscussion) iter.next();
+                DiscussionHeader discussion = (DiscussionHeader) iter.next();
                 url = "http://www.abclinuxu.cz/software/ViewRelation?relationId="+discussion.getRelationId();
                 title = tools.xpath(discussion.getDiscussion(), "data/title");
                 title = title.concat(", odpovìdí: "+discussion.getResponseCount());

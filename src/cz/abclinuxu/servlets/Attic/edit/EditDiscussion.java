@@ -11,6 +11,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
+import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.utils.InstanceUtils;
@@ -96,9 +97,10 @@ public class EditDiscussion extends AbcFMServlet {
         if ( relChild==null ) {
             discussion = new Item(0,Item.DISCUSSION);
             Document document = DocumentHelper.createDocument();
-            document.addElement("data");
+            document.addElement("data").addElement("comments").setText("0");
             discussion.setData(document);
-            if ( user!=null ) discussion.setOwner(user.getId());
+            if ( user!=null )
+                discussion.setOwner(user.getId());
 
             persistance.create(discussion);
             relChild = new Relation(relation.getChild(),discussion,relation.getId());
@@ -125,41 +127,17 @@ public class EditDiscussion extends AbcFMServlet {
 
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
+        root.addElement("comments").setText("0");
         discussion.setData(document);
 
-        boolean error = false;
-        String tmp = (String) params.get(PARAM_AUTHOR);
-        if ( user!=null ) {
-            discussion.setOwner(user.getId());
-        } else {
-            if ( tmp!=null && tmp.length()>0 ) {
-                root.addElement("author").setText(tmp);
-            } else {
-                ServletUtils.addError(PARAM_AUTHOR,"Slu¹ností je se pøedstavit!",env,null);
-                error = true;
-            }
-        }
+        boolean canContinue = true;
+        canContinue &= setTitle(params, root, env);
+        canContinue &= setText(params, root, env);
+        canContinue &= setItemAuthor(params, user, root, discussion, env);
 
-        tmp = (String) params.get(PARAM_TITLE);
-        if ( tmp!=null && tmp.length()>0 ) {
-            root.addElement("title").setText(tmp);
-        } else {
-            ServletUtils.addError(PARAM_TITLE,"Zadejte titulek va¹eho dotazu!",env,null);
-            error = true;
-        }
-
-        tmp = (String) params.get(PARAM_TEXT);
-        if ( tmp!=null && tmp.length()>0 ) {
-            root.addElement("text").setText(tmp);
-        } else {
-            ServletUtils.addError(PARAM_TEXT,"Zadejte text va¹eho dotazu!",env,null);
-            error = true;
-        }
-
-        if ( error || params.get(PARAM_PREVIEW)!=null ) {
-            discussion.setInitialized(true);
-            discussion.setUpdated(new Date());
-            env.put(VAR_PREVIEW,discussion);
+        if ( !canContinue || params.get(PARAM_PREVIEW)!=null ) {
+            Comment comment = new Comment(root,new Date(),null,null,user);
+            env.put(VAR_PREVIEW,comment);
             return FMTemplateSelector.select("EditDiscussion","ask_confirm",env,request);
         }
 
@@ -182,15 +160,13 @@ public class EditDiscussion extends AbcFMServlet {
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION,Item.class,params);
         if ( discussion==null )
             throw new MissingArgumentException("Chybí parametr dizId!");
-
         persistance.synchronize(discussion);
         env.put(VAR_DISCUSSION,discussion);
 
-        Record record = getDiscussion(params,discussion,persistance);
-        // display reaction, that is discussed, only if it has title
-        // (article discussions doesn't have it)
-        if ( Tools.xpath(record,"data/title")!=null )
-            env.put(VAR_THREAD,record);
+        // display discussed comment, only if it has title
+        Comment thread = getDiscussedComment(params, discussion, persistance);
+        if ( Tools.xpath(thread.getData(),"title")!=null )
+            env.put(VAR_THREAD,thread);
 
         return FMTemplateSelector.select("EditDiscussion","reply",env,request);
     }
@@ -206,94 +182,226 @@ public class EditDiscussion extends AbcFMServlet {
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION,Item.class,params);
         if ( discussion==null )
             throw new MissingArgumentException("Chybí parametr dizId!");
-
         persistance.synchronize(discussion);
-        Relation relation = (Relation) env.get(VAR_RELATION);
 
-        Record reaction = new Record(0,Record.DISCUSSION);
-        Document document = DocumentHelper.createDocument();
-        Element root = document.addElement("data");
-        reaction.setData(document);
-
-        boolean error = false;
-        String tmp = (String) params.get(PARAM_AUTHOR);
-        if ( user!=null ) {
-            reaction.setOwner(user.getId());
+        Record record = null; Element root = null, comment = null;
+        if ( discussion.getContent().size()>0 ) {
+            record = (Record) ((Relation)discussion.getContent().get(0)).getChild();
+            persistance.synchronize(record);
+            root = (Element) record.getData().selectSingleNode("/data");
         } else {
-            if ( tmp!=null && tmp.length()>0 ) {
-                root.addElement("author").setText(tmp);
-            } else {
-                ServletUtils.addError(PARAM_AUTHOR,"Slu¹ností je se pøedstavit!",env,null);
-                error = true;
+            record = new Record(0,Record.DISCUSSION);
+            Document document = DocumentHelper.createDocument();
+            record.setData(document);
+            root = document.addElement("data");
+        }
+        comment = DocumentHelper.createElement("comment");
+
+        // We can use root to synchronize threads, because Document is not cloned,
+        // so it is shared. Each discussion has only single Document in memory.
+        // The reason for this synchronization is, that if this code would run concurrently
+        // on same discussion, data would be corrupted.
+        synchronized(root) {
+
+            boolean canContinue = true;
+            canContinue &= setId(root, comment);
+            canContinue &= setCreated(comment);
+            canContinue &= setParent(params, comment);
+            canContinue &= setCommentAuthor(params, user, comment, env);
+            canContinue &= setTitle(params, comment, env);
+            canContinue &= setText(params, comment, env);
+
+            if ( !canContinue || params.get(PARAM_PREVIEW)!=null ) {
+                env.put(VAR_DISCUSSION, discussion);
+                if ( canContinue ) {
+                    Comment previewComment = new Comment(comment);
+                    env.put(VAR_PREVIEW, previewComment);
+                }
+                // display discussed comment, only if it has title
+                Comment thread = getDiscussedComment(params, discussion, persistance);
+                if ( Tools.xpath(thread.getData(), "title")!=null )
+                    env.put(VAR_THREAD, thread);
+
+                return FMTemplateSelector.select("EditDiscussion", "reply", env, request);
             }
+
+            // now it is safe to modify XML Document, because data were validated
+            root.add(comment);
+
+            if ( record.getId()==0 ) {
+                persistance.create(record);
+                Relation rel = new Relation(discussion, record, 0);
+                persistance.create(rel);
+            } else {
+                persistance.update(record);
+            }
+
+            persistance.synchronize(discussion);
+            setCommentsCount(discussion.getData().getRootElement(), root);
+            persistance.update(discussion);
         }
 
-        tmp = (String) params.get(PARAM_TITLE);
-        if ( tmp!=null && tmp.length()>0 ) {
-            root.addElement("title").setText(tmp);
-        } else {
-            ServletUtils.addError(PARAM_TITLE,"Zadejte titulek va¹eho pøíspìvku!",env,null);
-            error = true;
-        }
-
-        tmp = (String) params.get(PARAM_TEXT);
-        if ( tmp!=null && tmp.length()>0 ) {
-            root.addElement("text").setText(tmp);
-        } else {
-            ServletUtils.addError(PARAM_TEXT,"Zadejte text va¹eho pøíspìvku!",env,null);
-            error = true;
-        }
-
-        tmp = (String) params.get(PARAM_THREAD);
-        if ( tmp!=null && tmp.length()>0 )
-            root.addElement("thread").setText(tmp);
-
-        if ( error ) {
-            env.put(VAR_DISCUSSION,discussion);
-            Record record = getDiscussion(params,discussion,persistance);
-            if ( Tools.xpath(record,"data/title")!=null )
-                env.put(VAR_THREAD,record);
-            return FMTemplateSelector.select("EditDiscussion","reply",env,request);
-        }
-
-        if ( params.get(PARAM_PREVIEW)!=null ) {
-            env.put(VAR_DISCUSSION,discussion);
-            reaction.setInitialized(true);
-            reaction.setUpdated(new Date());
-            env.put(VAR_PREVIEW,reaction);
-            Record record = getDiscussion(params,discussion,persistance);
-            if ( Tools.xpath(record,"data/title")!=null )
-                env.put(VAR_THREAD,record);
-            return FMTemplateSelector.select("EditDiscussion","reply",env,request);
-        }
-
-        persistance.create(reaction);
-        Relation rel = new Relation(discussion,reaction,0);
-        persistance.create(rel);
-
+        Relation relation = (Relation) env.get(VAR_RELATION);
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId());
         return null;
     }
 
     /**
-     * Finds Record of type Discussion from PARAM_THREAD key in params or makes facade
-     * of given Item.
-     * @return initialized record
+     * Finds thread given by PARAM_THREAD key or makes facade around given Item.
+     * @return Comment to be displayed
      * @throws PersistanceException if PARAM_THREAD points to nonexisting record
      */
-    private Record getDiscussion(Map params, Item discussion, Persistance persistance) {
-        Record record = (Record) InstanceUtils.instantiateParam(PARAM_THREAD,Record.class,params);
-        if ( record!=null && record.getId()!=0 )
-            record = (Record) persistance.findById(record);
-        else {
-            // Item.Discussion to Record.Discussion facade
-            record = new Record();
-            record.setData(discussion.getData());
-            record.setUpdated(discussion.getUpdated());
-            record.setOwner(discussion.getOwner());
-            record.setInitialized(true);
+    private Comment getDiscussedComment(Map params, Item discussion, Persistance persistance) {
+        String thread = (String) params.get(PARAM_THREAD);
+        if ( thread!=null && thread.length()>0 && ! "0".equals(thread) ) {
+            Relation relation = (Relation) discussion.getContent().get(0);
+            Record record = (Record) relation.getChild();
+            persistance.synchronize(record);
+            String xpath = "//comment[@id='"+thread+"']";
+            Element element = (Element) record.getData().selectSingleNode(xpath);
+            if ( element!=null )
+                return new Comment(element);
         }
-        return record;
+        return new Comment(discussion);
+    }
+
+    /**
+     * Updates title from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param root root element of discussion to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setTitle(Map params, Element root, Map env) {
+        String tmp = (String) params.get(PARAM_TITLE);
+        if ( tmp!=null && tmp.length()>0 ) {
+            DocumentHelper.makeElement(root,"title").setText(tmp);
+        } else {
+            ServletUtils.addError(PARAM_TITLE, "Zadejte titulek va¹eho dotazu!", env, null);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Updates text of comment from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param root root element of discussion to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setText(Map params, Element root, Map env) {
+        String tmp = (String) params.get(PARAM_TEXT);
+        if ( tmp!=null && tmp.length()>0 ) {
+            DocumentHelper.makeElement(root,"text").setText(tmp);
+        } else {
+            ServletUtils.addError(PARAM_TEXT, "Zadejte text va¹eho dotazu!", env, null);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Updates author of comment from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param root root element of discussion to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setItemAuthor(Map params, User user, Element root, Item diz, Map env) {
+        if ( user!=null ) {
+            diz.setOwner(user.getId());
+        } else {
+            String tmp = (String) params.get(PARAM_AUTHOR);
+            if ( tmp!=null && tmp.length()>0 ) {
+                DocumentHelper.makeElement(root, "author").setText(tmp);
+            } else {
+                ServletUtils.addError(PARAM_AUTHOR, "Slu¹ností je se pøedstavit!", env, null);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Updates author of comment from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param root root element of discussion to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setCommentAuthor(Map params, User user, Element root, Map env) {
+        if ( user!=null ) {
+            DocumentHelper.makeElement(root, "author_id").setText(""+user.getId());
+        } else {
+            String tmp = (String) params.get(PARAM_AUTHOR);
+            if ( tmp!=null && tmp.length()>0 ) {
+                DocumentHelper.makeElement(root, "author").setText(tmp);
+            } else {
+                ServletUtils.addError(PARAM_AUTHOR, "Slu¹ností je se pøedstavit!", env, null);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Updates parent of this comment from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param root root element of discussion to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setParent(Map params, Element root) {
+        String tmp = (String) params.get(PARAM_THREAD);
+        if ( tmp==null || tmp.length()==0 )
+            tmp = "0";
+        DocumentHelper.makeElement(root, "parent").setText(tmp);
+        return true;
+    }
+
+    /**
+     * Updates parent of this comment from parameters. Changes are not synchronized with persistance.
+     * @param root root element of discussion to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setCreated(Element root) {
+        DocumentHelper.makeElement(root, "created").setText(Constants.isoFormat.format(new Date()));
+        return true;
+    }
+
+    /**
+     * Updates id of this comment. Id must be bigger than ids of all existing comments.
+     * Because we store comments serially in XML, it is enough to increment id of last
+     * comment.
+     * Changes are not synchronized with persistance.
+     * @param root root element of discussion
+     * @param comment element of comment to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setId(Element root, Element comment) {
+        int last = 0;
+        List comments = root.selectNodes("comment");
+        if ( comments!=null && comments.size()>0) {
+            Element element = (Element) comments.get(comments.size()-1);
+            String tmp = element.attributeValue("id");
+            last = Integer.parseInt(tmp);
+        }
+
+        last++;
+        comment.addAttribute("id",""+last);
+        return true;
+    }
+
+    /**
+     * Updates number of comments in discussion. Changes are not synchronized with persistance.
+     * @param itemRoot root element of item to be updated.
+     * @param recordRoot root element of record.
+     * @return false, if there is a major error.
+     */
+    private boolean setCommentsCount(Element itemRoot, Element recordRoot) {
+        List comments = recordRoot.selectNodes("comment");
+        DocumentHelper.makeElement(itemRoot,"comments").setText(""+comments.size());
+        return true;
     }
 }

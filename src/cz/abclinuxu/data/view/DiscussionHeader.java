@@ -4,7 +4,7 @@
 * Time: 6:43:25 PM
 * (c)2001-2002 Tinnio
 */
-package cz.abclinuxu.servlets.utils;
+package cz.abclinuxu.data.view;
 
 import cz.abclinuxu.data.Item;
 
@@ -13,7 +13,7 @@ import java.util.Date;
 /**
  * used to hold discussion statistics
  */
-public class PreparedDiscussion {
+public class DiscussionHeader {
     public Item discussion;
     public int relationId;
     /** count of responses in this discussion */
@@ -24,7 +24,7 @@ public class PreparedDiscussion {
      */
     public Date lastUpdate;
 
-    public PreparedDiscussion(Item discussion) {
+    public DiscussionHeader(Item discussion) {
         this.discussion = discussion;
     }
 

@@ -50,7 +50,7 @@ ALTER TABLE polozka ADD INDEX in_typ (typ);
 CREATE TABLE zaznam (
  cislo INT AUTO_INCREMENT PRIMARY KEY,  -- jednoznacny identifikator
  typ SMALLINT,                          -- typ zaznamu (HW, SW, clanek ..)
- data TEXT NOT NULL,                    -- XML s nazvem, poznamkou ...
+ data LONGTEXT NOT NULL,                    -- XML s nazvem, poznamkou ...
  pridal INT(6) NOT NULL,                -- odkaz na uzivatele
  vytvoreno DATETIME,       -- cas vytvoreni
  zmeneno TIMESTAMP NOT NULL             -- cas posledni zmeny

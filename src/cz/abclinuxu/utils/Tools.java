@@ -10,10 +10,10 @@ import cz.abclinuxu.exceptions.PersistanceException;
 import cz.abclinuxu.exceptions.InvalidDataException;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.utils.PreparedDiscussion;
-import cz.abclinuxu.servlets.utils.Discussion;
+import cz.abclinuxu.data.view.DiscussionHeader;
+import cz.abclinuxu.data.view.Comment;
+import cz.abclinuxu.data.view.Discussion;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.dom4j.Element;
@@ -63,13 +63,24 @@ public class Tools {
     }
 
     /**
-     * Extracts values of given xpath expression evaluated on document.
-     * @param doc XML tree
+     * Extracts value of given xpath expression evaluated on element.
+     * @param element XML element
+     * @param xpath xpath expression
+     * @return Strings
+     */
+    public static String xpath(Node element, String  xpath) {
+        Node node = element.selectSingleNode(xpath);
+        return (node==null)? null : node.getText();
+    }
+
+    /**
+     * Extracts values of given xpath expression evaluated on element.
+     * @param element XML element
      * @param xpath xpath expression
      * @return list of Strings
      */
-    public static List xpaths(Document doc, String xpath) {
-        List nodes = doc.selectNodes(xpath);
+    public static List xpaths(Node element, String xpath) {
+        List nodes = element.selectNodes(xpath);
         List result = new ArrayList(nodes.size());
         for (Iterator iter = nodes.iterator(); iter.hasNext();) {
             Node node = (Node) iter.next();
@@ -102,7 +113,7 @@ public class Tools {
                 Node node = data.selectSingleNode("data/name");
                 if ( node!=null )
                     return node.getText();
-                node = data.selectSingleNode("data/question");
+                node = data.selectSingleNode("data/title");
                 if ( node!=null )
                     return node.getText();
             }
@@ -224,37 +235,6 @@ public class Tools {
      */
     public String substring(String str, java.math.BigDecimal from) {
         return str.substring(from.intValue());
-    }
-
-    /**
-     * Gathers statistics on given discussion.
-     */
-    public static PreparedDiscussion analyzeDiscussion(Relation relation) {
-        if ( !InstanceUtils.checkType(relation.getChild(),Item.class,Item.DISCUSSION) ) {
-            log.error("Relation "+relation+" doesn't contain item!");
-            return null;
-        }
-        Item item = (Item) relation.getChild();
-        PreparedDiscussion discussion = new PreparedDiscussion(item);
-        discussion.lastUpdate = SQLTool.getInstance().getMaxCreatedDateOfRecordForItem(item);
-        discussion.responseCount = item.getContent().size();
-        discussion.relationId = relation.getId();
-        return discussion;
-    }
-
-    /**
-     * Prepares discussions for displaying.
-     * @param content List of Relations containing Items with type=Item.Discussion
-     * @return list of PreparedDiscussions.
-     */
-    public List analyzeDiscussions(List content) {
-        List list = new ArrayList(content.size());
-        for (Iterator iter = content.iterator(); iter.hasNext();) {
-            PreparedDiscussion preparedDiscussion = analyzeDiscussion((Relation) iter.next());
-            if ( preparedDiscussion!=null )
-                list.add(preparedDiscussion);
-        }
-        return list;
     }
 
     /**
@@ -436,40 +416,6 @@ public class Tools {
     }
 
     /**
-     * Converts Item with type==Discussion to tree structure. Tree is consisted from
-     * list of Discussion objects.
-     */
-    public List createDiscussionTree(GenericObject obj) throws PersistanceException {
-        if ( ! InstanceUtils.checkType(obj,Item.class,Item.DISCUSSION) )
-            throw new IllegalArgumentException("Not an discussion: "+obj);
-
-        List top = new ArrayList(5);
-        Map map = new HashMap();
-        sync(obj.getContent());
-        List records = Sorters2.byId(obj.getContent());
-
-        for (Iterator iter = records.iterator(); iter.hasNext();) {
-            Record record = (Record) ((Relation)iter.next()).getChild();
-            Node node = record.getData().selectSingleNode("data/thread");
-            int upperId = (node==null)? 0:Integer.parseInt(node.getText());
-
-            Discussion created = null, upper = null;
-            if ( upperId!=0 )
-                upper = (Discussion) map.get(new Record(upperId,Record.DISCUSSION));
-
-            if ( upper!=null ) {
-                created = upper.add(record);
-            } else {
-                created = new Discussion(record);
-                top.add(created);
-            }
-            map.put(record,created);
-        }
-
-        return top;
-    }
-
-    /**
      * Tests, whether specified object <code>obj</code> is instance of selected
      * class <code>clazz</code> and if even if it belongs to certain <code>type</code>
      * (for GenericDataObject subclasses). GenericObject <code>obj</code> shall be
@@ -619,11 +565,80 @@ public class Tools {
     }
 
     /**
+     * Converts Item with type==Discussion to tree structure. Tree is consisted from
+     * list of Discussion objects.
+     */
+    public Discussion createDiscussionTree(GenericObject obj) throws PersistanceException {
+        if ( !InstanceUtils.checkType(obj, Item.class, Item.DISCUSSION) )
+            throw new IllegalArgumentException("Not an discussion: "+obj);
+
+        if (obj.getContent().size()==0)
+            return new Discussion();
+
+        Relation child = (Relation) obj.getContent().get(0);
+        Record record = (Record) child.getChild();
+        sync(record);
+        List nodes = record.getData().selectNodes("/data/comment");
+        Discussion diz = new Discussion(nodes.size());
+        Map map = new HashMap(nodes.size()+1,1.0f);
+
+        for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
+            Element element = (Element) iter.next();
+            Comment current = new Comment(element), upper = null;
+            int upperId = 0;
+            if (current.getParent()!=null)
+                upperId = current.getParent().intValue();
+
+            if ( upperId!=0 ) {
+                upper = (Comment) map.get(new Integer(upperId));
+                upper.addChild(current);
+            } else
+                diz.add(current);
+
+            map.put(current.getId(), current);
+        }
+
+        return diz;
+    }
+
+    /**
+     * Gathers statistics on given discussion.
+     */
+    public static DiscussionHeader analyzeDiscussion(Relation relation) {
+        if ( !InstanceUtils.checkType(relation.getChild(), Item.class, Item.DISCUSSION) ) {
+            log.error("Relation "+relation+" doesn't contain item!");
+            return null;
+        }
+        Item item = (Item) relation.getChild();
+        DiscussionHeader discussion = new DiscussionHeader(item);
+        discussion.lastUpdate = item.getUpdated();
+        String value = item.getData().selectSingleNode("/data/comments").getText();
+        discussion.responseCount = Integer.parseInt(value);
+        discussion.relationId = relation.getId();
+        return discussion;
+    }
+
+    /**
+     * Prepares discussions for displaying.
+     * @param content List of Relations containing Items with type=Item.Discussion
+     * @return list of PreparedDiscussions.
+     */
+    public List analyzeDiscussions(List content) {
+        List list = new ArrayList(content.size());
+        for ( Iterator iter = content.iterator(); iter.hasNext(); ) {
+            DiscussionHeader preparedDiscussion = analyzeDiscussion((Relation) iter.next());
+            if ( preparedDiscussion!=null )
+                list.add(preparedDiscussion);
+        }
+        return list;
+    }
+
+    /**
      * Finds, how many comments is in discussion associated with this
-     * GenericObject. If there is more than one, it finds time of last comment too.
+     * GenericObject. If there is more than one comment, it sets its time too.
      * @return Map holding info about comments of this object.
      */
-    public static PreparedDiscussion findComments(GenericObject object) {
+    public static DiscussionHeader findComments(GenericObject object) {
         if ( !(object instanceof Item) )
             return null;
         for ( Iterator iter = object.getContent().iterator(); iter.hasNext(); ) {
@@ -638,6 +653,15 @@ public class Tools {
                 continue;
             return analyzeDiscussion(relation);
         }
-        return new PreparedDiscussion(null);
+        return new DiscussionHeader(null);
+    }
+
+    /**
+     * Creates facade around Item.
+     * @param item question
+     * @return Comment instance
+     */
+    public Comment createComment(Item item) {
+        return new Comment(item);
     }
 }

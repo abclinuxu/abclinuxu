@@ -8,9 +8,9 @@ package cz.abclinuxu.persistance;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
-import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Poll;
+import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.exceptions.PersistanceException;
 
 import java.util.prefs.Preferences;
@@ -25,8 +25,6 @@ import java.sql.*;
  */
 public final class SQLTool implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(SQLTool.class);
-
-    public static final String PREF_MAX_RECORD_CREATED_OF_ITEM = "max.record.created.of.item";
 
     public static final String PREF_MAX_POLL = "max.poll";
     public static final String PREF_MAX_USER = "max.user";
@@ -61,7 +59,7 @@ public final class SQLTool implements Configurable {
         ConfigurationManager.getConfigurator().configureMe(singleton);
     }
 
-    private String maxRecordCreatedOfItem, maxPoll, maxUser;
+    private String maxPoll, maxUser;
     private String recordRelationsByUpdated, itemRelationsByUpdated, discussionRelationsByCreated;
     private String articleRelationsByCreated, articleRelationsWithinPeriod;
     private String newsRelationByCreated, newsRelationByUser;
@@ -76,35 +74,6 @@ public final class SQLTool implements Configurable {
      */
     public static SQLTool getInstance() {
         return singleton;
-    }
-
-    /**
-     * Finds maximum value of created property of records belonging to given item.
-     * If the item doesn't have any associated records, its created property is
-     * returned. Argument shall be initialized.
-     * @throws cz.abclinuxu.exceptions.PersistanceException - sql errors ..
-     */
-    public Date getMaxCreatedDateOfRecordForItem(Item item) {
-        if ( ! item.isInitialized() )
-            throw new IllegalStateException("Item is not initialized!");
-
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-        try {
-            con = persistance.getSQLConnection();
-            statement = con.prepareStatement(maxRecordCreatedOfItem);
-            statement.setInt(1, item.getId());
-
-            resultSet = statement.executeQuery();
-            if ( !resultSet.next() )
-                return item.getCreated();
-            java.sql.Timestamp max = resultSet.getTimestamp(1);
-            return (max==null) ? item.getCreated() : new Date(max.getTime());
-        } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
-        } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
-        }
     }
 
     /**
@@ -666,6 +635,29 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Sets updated timestamp in database for given GenericObject.
+     * @param obj object to be modified.
+     * @param date timestamp to be set.
+     * @throws PersistanceException if object doesn't contain such property.
+     */
+    public void setUpdatedTimestamp(GenericObject obj, Date date) {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null; PreparedStatement statement = null;
+        try {
+            con = persistance.getSQLConnection();
+            String sql = "update "+persistance.getTable(obj)+" set zmeneno=? where cislo=?";
+            statement = con.prepareStatement(sql);
+            statement.setTimestamp(1,new Timestamp(date.getTime()));
+            statement.setInt(2,obj.getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, null);
+        }
+    }
+
+    /**
      * Private constructor
      */
     private SQLTool() {
@@ -677,7 +669,6 @@ public final class SQLTool implements Configurable {
     public void configure(Preferences prefs) throws ConfigurationException {
         maxPoll = prefs.get(PREF_MAX_POLL,null);
         maxUser = prefs.get(PREF_MAX_USER, null);
-        maxRecordCreatedOfItem = prefs.get(PREF_MAX_RECORD_CREATED_OF_ITEM, null);
         recordRelationsByUpdated = prefs.get(PREF_RECORD_RELATIONS_BY_TYPE_BY_UPDATED, null);
         itemRelationsByUpdated = prefs.get(PREF_ITEM_RELATIONS_BY_TYPE_BY_UPDATED, null);
         articleRelationsByCreated = prefs.get(PREF_ARTICLE_RELATIONS_BY_CREATED, null);
