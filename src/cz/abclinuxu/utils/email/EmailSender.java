@@ -25,6 +25,7 @@ import java.util.*;
 import java.util.prefs.Preferences;
 
 import org.apache.log4j.Logger;
+import org.dom4j.Element;
 
 /**
  * Helper class for sending emails.
@@ -147,6 +148,14 @@ public class EmailSender implements Configurable {
                 try {
                     user.setId(((Integer) iter.next()).intValue());
                     user = (User) persistance.findById(user);
+
+                    // check, that user has valid email
+                    Element tagEmail = (Element) user.getData().selectSingleNode("/data/communication/email");
+                    if ( ! "yes".equals(tagEmail.attribute("valid").getText()) ) {
+                        log.debug("Skipping user "+user.getId()+", his email is set as invalid.");
+                        continue;
+                    }
+
                     params.put(Constants.VAR_USER, user);
                     String to = user.getEmail();
 
