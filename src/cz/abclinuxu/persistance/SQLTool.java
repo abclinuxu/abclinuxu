@@ -28,6 +28,7 @@ public final class SQLTool implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(SQLTool.class);
 
     public static final String PREF_RECORD_RELATIONS_BY_TYPE = "relations.record.by.type";
+    public static final String PREF_RECORD_PARENT_RELATIONS_BY_TYPE = "relations.parent.record.by.type";
     public static final String PREF_ITEM_RELATIONS_BY_TYPE = "relations.item.by.type";
     public static final String PREF_SECTION_RELATIONS_BY_TYPE = "relations.section.by.type";
     public static final String PREF_DISCUSSION_RELATIONS = "relations.discussion";
@@ -58,7 +59,7 @@ public final class SQLTool implements Configurable {
         ConfigurationManager.getConfigurator().configureAndRememberMe(singleton);
     }
 
-    private String relationsRecordByType, relationsItemsByType, relationsSectionByType;
+    private String relationsRecordByType, relationsParentRecordByType, relationsItemsByType, relationsSectionByType;
     private String relationsDiscussion, relationsDiscussionInSection;
     private String relationsArticle, relationsArticleWithinPeriod;
     private String relationsNews, relationsNewsWithinPeriod;
@@ -228,6 +229,21 @@ public final class SQLTool implements Configurable {
     public List findRecordRelationsWithType(int type, Qualifier[] qualifiers) {
         if (qualifiers==null) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer(relationsRecordByType);
+        List params = new ArrayList();
+        params.add(new Integer(type));
+        appendQualifiers(sb,qualifiers,params);
+        return loadRelations(sb.toString(),params);
+    }
+
+    /**
+     * Finds relations, where child is record of specified type. Parent relations (distinct) are returned.
+     * Use Qualifiers to set additional parameters.
+     * @return List of initialized relations
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findRecordParentRelationsWithType(int type, Qualifier[] qualifiers) {
+        if (qualifiers==null) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(relationsParentRecordByType);
         List params = new ArrayList();
         params.add(new Integer(type));
         appendQualifiers(sb,qualifiers,params);
@@ -818,6 +834,7 @@ public final class SQLTool implements Configurable {
      */
     public void configure(Preferences prefs) throws ConfigurationException {
         relationsRecordByType = getValue(PREF_RECORD_RELATIONS_BY_TYPE, prefs);
+        relationsParentRecordByType = getValue(PREF_RECORD_PARENT_RELATIONS_BY_TYPE, prefs);
         relationsItemsByType = getValue(PREF_ITEM_RELATIONS_BY_TYPE, prefs);
         relationsSectionByType = getValue(PREF_SECTION_RELATIONS_BY_TYPE, prefs);
         relationsDiscussion = getValue(PREF_DISCUSSION_RELATIONS, prefs);

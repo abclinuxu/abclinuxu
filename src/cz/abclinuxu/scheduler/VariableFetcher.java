@@ -125,8 +125,8 @@ public class VariableFetcher extends TimerTask {
             currentPoll = sqlTool.findActivePoll();
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, SIZE)};
-            newHardware = sqlTool.findRecordRelationsWithType(Record.HARDWARE, qualifiers);
-            newSoftware = sqlTool.findRecordRelationsWithType(Record.SOFTWARE, qualifiers);
+            newHardware = sqlTool.findRecordParentRelationsWithType(Record.HARDWARE, qualifiers);
+            newSoftware = sqlTool.findRecordParentRelationsWithType(Record.SOFTWARE, qualifiers);
             newDrivers = sqlTool.findItemRelationsWithType(Item.DRIVER, qualifiers);
 
             log.debug("finished fetching variables");

@@ -66,10 +66,10 @@ public class ViewIndex implements AbcAction {
         }
 
         Qualifier[] qualifiers = { Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, 3) };
-        List data = sqlTool.findRecordRelationsWithType(Record.DICTIONARY, qualifiers);
+        List data = sqlTool.findRecordParentRelationsWithType(Record.DICTIONARY, qualifiers);
         for ( Iterator iter = data.iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
-            Tools.sync(relation.getParent());
+            Tools.sync(relation.getChild());
         }
         env.put(VAR_DICTIONARY, data);
 
