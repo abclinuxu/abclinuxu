@@ -357,11 +357,6 @@ public class AbcServlet extends VelocityServlet {
      * If map is null, new HashMap is created.
      */
     protected Map putParamsToMap(HttpServletRequest request, Map map) {
-        Locale locale = Locale.getDefault();
-        System.out.println("default locale = " + locale); // cs_Cz
-        locale = request.getLocale();
-        System.out.println("request locale = " + locale); // cs !!
-
         if ( map==null ) map = new HashMap();
         Enumeration names = request.getParameterNames();
         while (names.hasMoreElements()) {
