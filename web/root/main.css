@@ -96,7 +96,7 @@ p.cenzura { border-width: 2px; border-color: blue; border-style: solid; backgrou
 DIV.signature { margin-top: 8px; font-style: italic; font-size: smaller }
 
 /* slovnik */
-P.slovnik { background-color: #EEEEEE }
+DIV.slovnik { background-color: #EEEEEE }
 
 /* zpravicka */
 P.zpravicka { background-color: #EEEEEE }
