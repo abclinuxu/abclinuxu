@@ -31,7 +31,7 @@ import java.text.NumberFormat;
  * Performs search across the data.
  */
 public class Search extends AbcFMServlet {
-    org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(Search.class);
+    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(Search.class);
 
     /** contains relation, that match the expression */
     public static final String VAR_RESULT = "RESULT";
@@ -44,6 +44,10 @@ public class Search extends AbcFMServlet {
     public static final String PARAM_QUERY = "query";
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        return performSearch(request,env);
+    }
+
+    public static String performSearch(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String query = (String) params.get(PARAM_QUERY);
         if ( query == null || query.length()==0 ) {
@@ -63,10 +67,8 @@ public class Search extends AbcFMServlet {
             NumberFormat percentFormat = NumberFormat.getPercentInstance();
             for ( int i=0; i<length; i++ ) {
                 Document doc = hits.doc(i);
-                if ( hits.score(i)<0.01 )
-                    continue;
-                String score = percentFormat.format(hits.score(i));
-                doc.add(Field.UnIndexed("score",score));
+                float score = (hits.score(i)>0.01) ? hits.score(i) : 0.01f;
+                doc.add(Field.UnIndexed("score", percentFormat.format(score)));
                 Misc.storeToMap(map,doc.get(MyDocument.TYPE),doc);
             }
             env.put(VAR_RESULT,map);

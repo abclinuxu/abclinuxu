@@ -35,7 +35,10 @@
     <action name="ask" content="/add/question.ftl">
       <var name="TITLE" value="Polo¾it nový dotaz" />
     </action>
-    <action name="ask_confirm" content="/add/question2.ftl">
+    <action name="ask_form" content="/add/question_form.ftl">
+      <var name="TITLE" value="Polo¾it nový dotaz" />
+    </action>
+    <action name="ask_confirm" content="/add/question_preview.ftl">
       <var name="TITLE" value="Náhled va¹eho pøíspìvku" />
     </action>
     <action name="edit" content="/edit/comment.ftl">

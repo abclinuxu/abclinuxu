@@ -8,6 +8,7 @@ package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.view.Search;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
@@ -49,10 +50,14 @@ public class EditDiscussion extends AbcFMServlet {
     public static final String VAR_DISCUSSION = "DISCUSSION";
     public static final String VAR_THREAD = "THREAD";
     public static final String VAR_PREVIEW = "PREVIEW";
+    public static final String VAR_SEARCH_PERFORMED = "QUESTION_OK";
+    public static final String VAR_SEARCH_INVALID = "QUESTION_KO";
 
     public static final String ACTION_ADD_DISCUSSION = "addDiz";
     public static final String ACTION_ADD_QUESTION = "addQuez";
     public static final String ACTION_ADD_QUESTION_STEP2 = "addQuez2";
+    public static final String ACTION_ADD_QUESTION_STEP3 = "addQuez3";
+    public static final String ACTION_ADD_QUESTION_STEP4 = "addQuez4";
     public static final String ACTION_ADD_COMMENT = "add";
     public static final String ACTION_ADD_COMMENT_STEP2 = "add2";
     public static final String ACTION_CENSORE_COMMENT = "censore";
@@ -88,7 +93,13 @@ public class EditDiscussion extends AbcFMServlet {
             return FMTemplateSelector.select("EditDiscussion","ask",env,request);
 
         if ( ACTION_ADD_QUESTION_STEP2.equals(action) )
-            return actionAddQuestion2(request,response,env);
+            return actionAddQuestion2(request,env);
+
+        if ( ACTION_ADD_QUESTION_STEP3.equals(action) )
+            return FMTemplateSelector.select("EditDiscussion", "ask_form", env, request);
+
+        if ( ACTION_ADD_QUESTION_STEP4.equals(action) )
+            return actionAddQuestion4(request,response,env);
 
         // check permissions
         User user = (User) env.get(Constants.VAR_USER);
@@ -150,9 +161,23 @@ public class EditDiscussion extends AbcFMServlet {
     }
 
     /**
-     * creates question
+     * The second step is to display results of search. User can proceed to third
+     * page, where he can fill the form with question.
      */
-    protected String actionAddQuestion2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    protected String actionAddQuestion2(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        String query = (String) params.get(Search.PARAM_QUERY);
+        if (query!=null && query.trim().length()>0)
+            env.put(VAR_SEARCH_PERFORMED,Boolean.TRUE);
+        else
+            env.put(VAR_SEARCH_INVALID, Boolean.TRUE);
+        return Search.performSearch(request,env);
+    }
+
+    /**
+     * last step - either shows preview of question or saves new discussion
+     */
+    protected String actionAddQuestion4(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);

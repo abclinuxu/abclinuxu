@@ -26,6 +26,7 @@ import java.util.prefs.Preferences;
  * This class is responsible for creating and
  * maintaining Lucene's index.
  * todo give score boost to titles and names of objects
+ * todo replace recursion with stack based implementation 
  */
 public class CreateIndex implements Configurable {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(CreateIndex.class);
