@@ -34,6 +34,8 @@ import java.util.*;
  * </dl>
  */
 public class EditDiscussion extends AbcVelocityServlet {
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditDiscussion.class);
+
     public static final String PARAM_RELATION = "relationId";
     public static final String PARAM_DISCUSSION = "dizId";
     public static final String PARAM_THREAD = "threadId";
