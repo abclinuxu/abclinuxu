@@ -53,6 +53,7 @@ public class EditDiscussion implements AbcAction {
     public static final String PARAM_AUTHOR_ID = "author_id";
     public static final String PARAM_PREVIEW = "preview";
     public static final String PARAM_URL = "url";
+    public static final String PARAM_SOLVED = "solved";
 
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_DISCUSSION = "DISCUSSION";
@@ -80,6 +81,7 @@ public class EditDiscussion implements AbcAction {
     public static final String ACTION_RATE_COMMENT = "rate";
     public static final String ACTION_THREAD_TO_DIZ = "toQuestion";
     public static final String ACTION_THREAD_TO_DIZ_STEP2 = "toQuestion2";
+    public static final String ACTION_SOLVED = "solved";
 
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -120,6 +122,8 @@ public class EditDiscussion implements AbcAction {
 
         if ( ACTION_ALTER_MONITOR.equals(action) )
             return actionAlterMonitor(request, response, env);
+        if ( ACTION_SOLVED.equals(action) )
+            return actionSolved(request, response, env);
 
         // check permissions
         if ( !user.hasRole(Roles.DISCUSSION_ADMIN) )
@@ -374,6 +378,31 @@ public class EditDiscussion implements AbcAction {
         if (url==null)
             url = "/show/"+relation.getId()+"#"+commentId;
         urlUtils.redirect(response, url);
+        return null;
+    }
+
+    protected String actionSolved(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        User user = (User) env.get(Constants.VAR_USER);
+
+        SQLTool sqlTool = SQLTool.getInstance();
+        Date voted = sqlTool.getUserAction(user.getId(), relation.getId(), "solved");
+        if (voted!=null) {
+            ServletUtils.addError(Constants.ERROR_GENERIC,"Tuto akci smíte provést jen jednou.",env,request.getSession());
+        } else {
+            Item diz = (Item) persistance.findById(relation.getChild());
+            setSolved(params, diz.getData().getRootElement());
+            sqlTool.insertUserAction(user.getId(), relation.getId(), "solved");
+
+            Date updated = diz.getUpdated();
+            persistance.update(diz);
+            SQLTool.getInstance().setUpdatedTimestamp(diz, updated);
+        }
+
+        urlUtils.redirect(response, "/show/" + relation.getId());
         return null;
     }
 
@@ -1166,6 +1195,33 @@ public class EditDiscussion implements AbcAction {
     static boolean setCommentsCount(Element itemRoot, Element recordRoot) {
         List comments = recordRoot.selectNodes("comment");
         DocumentHelper.makeElement(itemRoot,"comments").setText(""+comments.size());
+        return true;
+    }
+
+    /**
+     * Updates solved from parameters.
+     * @param params map holding request's parameters
+     * @param root root element of discussion to be updated
+     * @return false, if there is a major error.
+     */
+    static boolean setSolved(Map params, Element root) {
+        String tmp = (String) params.get(PARAM_SOLVED);
+        Boolean solved = Boolean.valueOf(tmp);
+        Element element = DocumentHelper.makeElement(root, "solved");
+        Attribute attribute = null;
+        if (solved.booleanValue()) {
+            attribute = element.attribute("yes");
+            if (attribute==null)
+                element.addAttribute("yes","1");
+        } else {
+            attribute = element.attribute("no");
+            if (attribute == null)
+                element.addAttribute("no", "1");
+        }
+        if (attribute!=null) {
+            int count = Misc.parseInt(attribute.getText(), 0);
+            attribute.setText(Integer.toString(count + 1));
+        }
         return true;
     }
 }

@@ -291,6 +291,20 @@ public class Tools implements Configurable {
     }
 
     /**
+     * If number of votes for yes is higher than for no, than
+     * this question is considered to be solved.
+     * @return whether the question is solved
+     */
+    public boolean isQuestionSolved(Document document) {
+        Element solved = (Element) document.selectSingleNode("/data/solved");
+        if (solved==null)
+            return false;
+        int yes = Misc.parseInt(solved.attributeValue("yes"), 0);
+        int no = Misc.parseInt(solved.attributeValue("no"), 0);
+        return yes>no;
+    }
+
+    /**
      * @return String containing one asterisk for each ten percents.
      */
     public String percentBar(int percent) {

@@ -18,13 +18,16 @@
 
 
 <!-- Item.Discussion -->
-<!ELEMENT data (comments,author?,text,title?,frozen?)>
+<!ELEMENT data (comments,author?,text,title?,frozen?, solved?)>
 <!ELEMENT comments (#PCDATA)> <!-- integer, number of comments or replies -->
 <!ELEMENT author (#PCDATA)> <!-- unknow user's name -->
 <!ELEMENT title (#PCDATA)> <!-- title of this reaction, usually question -->
 <!ELEMENT text (#PCDATA)> <!-- its text -->
 <!ATTLIST text format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT frozen (#PCDATA)> <!-- if present, discussion is frozen and noone can add more comments -->
+<!ELEMENT solved (#PCDATA)> <!-- if present, discussion is frozen and noone can add more comments -->
+<!ATTLIST solved yes (#NMTOKEN) #REQUIRED> <!-- integer, number of votes, that question has been solved -->
+<!ATTLIST solved no (#NMTOKEN) #REQUIRED> <!-- integer, number of votes, that question has not been solved -->
 
 <!-- Item.Request -->
 <!ELEMENT data (author?,text,email?,category?)>

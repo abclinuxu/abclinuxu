@@ -1,4 +1,5 @@
 <#assign frozen=TOOL.xpath(ITEM,"/data/frozen")?exists>
+<#assign is_question=TOOL.xpath(ITEM,"data/title")?exists>
 <#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"'")?exists>
     <#assign monitorState="Pøestaò sledovat">
 <#else>
@@ -17,6 +18,18 @@
        <li><a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+RELATION.id)}">${monitorState}</a>
        (${TOOL.getMonitorCount(ITEM.data)})
        <a class="info" href="#">?<span class="tooltip">Za¹le ka¾dý nový komentáø emailem na va¹i adresu</span></a></li>
+       <#if is_question>
+           <li>
+              <a href="${URL.make("/EditDiscussion?action=solved&amp;rid="+RELATION.id+"&amp;solved=true")}">Otázka byla vyøe¹ena</a>
+              (${TOOL.xpath(ITEM,"//solved/@yes")?default("0")})
+              <a class="info" href="#">?<span class="tooltip">Pou¾ijte, pokud problém polo¾ený v otázce byl vyøe¹en. Smíte hlasovat jen jednou.</span></a></li>
+           </li>
+           <li>
+              <a href="${URL.make("/EditDiscussion?action=solved&amp;rid="+RELATION.id+"&amp;solved=false")}">Otázka nebyla vyøe¹ena</a>
+              (${TOOL.xpath(ITEM,"//solved/@no")?default("0")})
+              <a class="info" href="#">?<span class="tooltip">Pou¾ijte, pokud problém polo¾ený v otázce nebyl vyøe¹en. Smíte hlasovat jen jednou.</span></a></li>
+           </li>
+       </#if>
        <li><a href="/slovnik">Slovník pojmù</a></li>
 
       <#if USER?exists && (USER.hasRole("discussion admin") || USER.hasRole("move relation"))>
@@ -35,7 +48,7 @@
 <@lib.showMessages/>
 
 
-<#if TOOL.xpath(ITEM,"data/title")?exists>
+<#if is_question>
  <h1 class="st_nadpis">Otázka</h1>
  <@lib.showComment TOOL.createComment(ITEM), ITEM.id, RELATION.id, !frozen />
 
