@@ -195,6 +195,15 @@ public class Tools {
     }
 
     /**
+     * Extracts new string from str. Workaround for freemarker,
+     * which uses BigDecimal as integer holder, so String.substring(int)
+     * is not recognized by beans introspection.
+     */
+    public String substring(String str, java.math.BigDecimal from) {
+        return str.substring(from.intValue());
+    }
+
+    /**
      * Gathers statistics on given discussion.
      */
     public PreparedDiscussion analyzeDiscussion(Relation relation) {
