@@ -69,6 +69,11 @@ public interface Persistance {
     public List findByCommand(String command) throws PersistanceException;
 
     /**
+     * Finds all parents of this GenericObject. Their order is unspecified.
+     */
+    public List findParents(GenericObject obj) throws PersistanceException;
+
+    /**
      * Removes ownership relation between <code>parent</code> and <code>obj</code>. If
      * there is no other parent of <code>obj</code>, <code>obj</code> is deleted
      * including its siblings.<br>

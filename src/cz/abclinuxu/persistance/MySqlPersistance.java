@@ -306,6 +306,31 @@ public class MySqlPersistance implements Persistance {
         return null;
     }
 
+    public List findParents(GenericObject obj) throws PersistanceException {
+        Connection con = null;
+        try {
+            con = getSQLConnection();
+            List result = new ArrayList(3);
+
+            PreparedStatement statement = con.prepareStatement("select predek_typ,predek_id from strom where obsah_typ=? and obsah_id=?");
+            statement.setString(1,getTableId(obj));
+            statement.setInt(2,obj.getId());
+
+            ResultSet resultSet = statement.executeQuery();
+            while ( resultSet.next() ) {
+                char type = resultSet.getString(1).charAt(0);
+                int id = resultSet.getInt(2);
+                result.add(instantiateFromTree(type,id));
+            }
+            return result;
+        } catch ( SQLException e ) {
+            log.error("Nepodarilo se zjistit predky pro "+obj,e);
+            throw new PersistanceException("Nepodarilo se zjistit predky",AbcException.DB_FIND,obj,e);
+        } finally {
+            releaseSQLConnection(con);
+        }
+    }
+
     public void remove(GenericObject obj, GenericObject parent) throws PersistanceException {
         Connection con = null;
         PreparedStatement statement = null;
@@ -559,6 +584,31 @@ public class MySqlPersistance implements Persistance {
     }
 
     /**
+     * instantiates new GenericObject, which class is specified by <code>type</code> and
+     * with desired <code>id</code>.
+     */
+    private GenericObject instantiateFromTree(char type, int id) {
+        if ( type=='K' ) {
+            return new Category(id);
+        } else if ( type=='P' ) {
+            return new Item(id);
+        } else if ( type=='Z' ) {
+            return new Record(id);
+        } else if ( type=='A' ) {
+            return new Poll(id);
+        } else if ( type=='O' ) {
+            return new Data(id);
+        } else if ( type=='L' ) {
+            return new Link(id);
+        } else if ( type=='U' ) {
+            return new User(id);
+        } else if ( type=='X' ) {
+            return new AccessRights(id);
+        }
+        return null;
+    }
+
+    /**
      * lookup tree for children of <code>obj</code> with <code>treeId</code> and sets them
      * with <code>obj.setContent()</code> call.
      */
@@ -572,26 +622,7 @@ public class MySqlPersistance implements Persistance {
         while ( resultSet.next() ) {
             char type = resultSet.getString(1).charAt(0);
             int id = resultSet.getInt(2);
-
-            if ( type=='K' ) {
-                obj.addContent(new Category(id));
-            } else if ( type=='P' ) {
-                obj.addContent(new Item(id));
-            } else if ( type=='Z' ) {
-                obj.addContent(new Record(id));
-            } else if ( type=='A' ) {
-                obj.addContent(new Poll(id));
-            } else if ( type=='O' ) {
-                obj.addContent(new Data(id));
-            } else if ( type=='L' ) {
-                obj.addContent(new Link(id));
-            } else if ( type=='U' ) {
-                obj.addContent(new User(id));
-            } else if ( type=='X' ) {
-                obj.addContent(new AccessRights(id));
-            } else if ( type=='E' ) {
-                continue;
-            }
+            obj.addContent(instantiateFromTree(type,id));
         }
     }
 
