@@ -88,8 +88,8 @@ public class ViewCategory extends AbcFMServlet {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
             return null;
-
-        }
+        } else
+            category = (Category) obj;
 
         Tools.sync(category);
         Tools.sync(category.getContent());
