@@ -78,4 +78,22 @@ public class Category extends GenericObject {
     public void setOpen(boolean open) {
         this.open = open;
     }
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer("Category: id=");
+        sb.append(id);
+        if ( owner!=0 ) sb.append(",owner="+owner);
+        if ( data!=null ) sb.append(",data="+data);
+        if ( updated!=null ) sb.append(",updated="+updated);
+        if ( open ) sb.append(", otevrena"); else sb.append("uzavrena");
+        return sb.toString();
+    }
+
+    public boolean equals(Object o) {
+        if ( !( o instanceof Category) ) return false;
+        Category p = (Category)o;
+        if ( id==p.id && owner==p.owner && data.equals(p.data) &&
+             updated.equals(p.updated) && open==p.open ) return true;
+        return false;
+    }
 }

@@ -61,4 +61,20 @@ public class Data extends GenericObject {
     public void setFormat(String format) {
         this.format = format;
     }
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer("Data: id=");
+        sb.append(id);
+        if ( owner!=0 ) sb.append(",owner="+owner);
+        if ( data!=null ) sb.append(",data="+data);
+        if ( format!=null ) sb.append(",format="+format);
+        return sb.toString();
+    }
+
+    public boolean equals(Object o) {
+        if ( !( o instanceof Data) ) return false;
+        Data p = (Data)o;
+        if ( id==p.id && owner==p.owner && data.equals(p.data) && format.equals(p.format) ) return true;
+        return false;
+    }
 }

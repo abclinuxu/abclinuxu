@@ -68,4 +68,11 @@ public class Item extends GenericObject {
         if ( updated!=null ) sb.append(",updated="+updated);
         return sb.toString();
     }
+
+    public boolean equals(Object o) {
+        if ( !( o instanceof Item) ) return false;
+        Item p = (Item)o;
+        if ( id==p.id && owner==p.owner && data.equals(p.data) ) return true;
+        return false;
+    }
 }

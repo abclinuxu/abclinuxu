@@ -95,4 +95,12 @@ public class User extends GenericObject {
         if ( password!=null ) sb.append(",password="+password);
         return sb.toString();
     }
+
+    public boolean equals(Object o) {
+        if ( !( o instanceof User) ) return false;
+        User p = (User) o;
+        if ( id==p.id && login.equals(p.login) && name.equals(p.name) &&
+             email.equals(p.email) && password.equals(p.password) ) return true;
+        return false;
+    }
 }

@@ -90,4 +90,12 @@ public class Link extends GenericObject {
         if ( server!=0 ) sb.append(",server="+server);
         return sb.toString();
     }
+
+    public boolean equals(Object o) {
+        if ( !( o instanceof Link) ) return false;
+        Link p = (Link)o;
+        if ( id==p.id && text.equals(p.text) && url.equals(p.url) &&
+             server==p.server && fixed==p.fixed ) return true;
+        return false;
+    }
 }

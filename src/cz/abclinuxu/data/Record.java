@@ -68,4 +68,11 @@ public class Record extends GenericObject {
         if ( updated!=null ) sb.append(",updated="+updated);
         return sb.toString();
     }
+
+    public boolean equals(Object o) {
+        if ( !( o instanceof Record) ) return false;
+        Record p = (Record) o;
+        if ( id==p.id && owner==p.owner && data.equals(p.data) ) return true;
+        return false;
+    }
 }
