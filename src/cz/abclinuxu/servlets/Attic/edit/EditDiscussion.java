@@ -305,8 +305,15 @@ public class EditDiscussion extends AbcFMServlet {
             throw new MissingArgumentException("Chybí parametr dizId!");
         persistance.synchronize(discussion);
 
+        Relation relation;
         String thread = (String) params.get(PARAM_THREAD);
-        Relation relation = (Relation) discussion.getContent().get(0);
+        if ("0".equals(thread) || discussion.getContent().size()==0) {
+            ServletUtils.addError(Constants.ERROR_GENERIC,"Nejde cenzurovat otázku!",env,request.getSession());
+            relation = (Relation) env.get(VAR_RELATION);
+            urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+        }
+
+        relation = (Relation) discussion.getContent().get(0);
         Record record = (Record) relation.getChild();
         persistance.synchronize(record);
         String xpath = "//comment[@id='"+thread+"']";
