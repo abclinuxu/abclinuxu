@@ -453,7 +453,7 @@ public class Tools {
      * Does standard HTML conversions like & to &amp;amp; or &lt; to &amp;lt;.
      * @return Modified String, which may be inserted into html page without affecting its structure.
      */
-    public String encodeSpecial(String in) {
+    public static String encodeSpecial(String in) {
         if ( in==null || in.length()==0 )
             return "";
         StringBuffer sb = new StringBuffer(in.length());
