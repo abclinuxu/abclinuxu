@@ -29,6 +29,10 @@
             <action>cz.abclinuxu.servlets.html.view.History</action>
         </mapping>
         <mapping>
+            <pattern>^/blog/edit</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditBlog</action>
+        </mapping>
+        <mapping>
             <pattern>^/blog(/|$)</pattern>
             <action>cz.abclinuxu.servlets.html.view.ViewBlog</action>
         </mapping>
@@ -63,10 +67,6 @@
         <mapping>
             <pattern>EditDiscussion</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditDiscussion</action>
-        </mapping>
-        <mapping>
-            <pattern>^/blog/edit</pattern>
-            <action>cz.abclinuxu.servlets.html.edit.EditBlog</action>
         </mapping>
         <mapping>
             <pattern>^/hardware/edit</pattern>
