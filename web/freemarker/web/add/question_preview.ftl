@@ -1,3 +1,41 @@
+<#assign plovouci_sloupec>
+    <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <h1>Nápovìda k formátování</h1>
+    </div></div>
+
+    <p>
+        Existují dva zpùsoby, jak formátovat va¹e pøíspìvky.
+        První z nich je psaní textu podobnì, jako kdy¾ pí¹ete
+        dopis. Rozdìlujte va¹e texty do odstavcù, pokud vlo¾íte
+        prázdný øádek, systém automaticky bude zachovávat toto
+        formátování. Konce øádkù nemají ¾ádný speciální význam.
+        Pøi tomto zpùsobu je pou¾ít i HTML znaèky s vyjímkou znaèky
+        nového øádku a odstavce. jejich pou¾ití automaticky
+        pøepne do HTML modu, kde jste plnì odpovìdni za formátování.
+    </p>
+
+    <p>
+        Druhý zpùsob vám dává vìt¹í volnost pøi formátování.
+        Máte k dispozici relativnì velkou sadu HTML znaèek.
+        Pro zaèáteèníky mohu doporuèit star¹í
+        <a href="http://www.kosek.cz/clanky/html/01.html">rychlokurz</a>
+        tohoto formátovacího jazyka. Z rùzných dùvodù jsou
+        povoleny jen tyto <a href="http://www.w3.org/TR/html4/index/elements.html">znaèky</a>:
+        P, BR, B, I, A, PRE, UL, OL, LI, CODE, DIV, H1, H2, H3, EM, STRONG, CITE, BLOCKQUOTE,
+        VAR, HR a IT.
+    </p>
+
+    <p>
+        Pro oba styly platí, ¾e text musí být HTML validní. Èastým
+        problémem je, ¾e nìkdo se sna¾í vlo¾it text obsahující
+        znak men¹ítka èi vìt¹ítka. Tyto znaky se zapisují následovnì:
+        &lt; jako &amp;lt;,  &gt; jako &amp;gt;. Dal¹ím èastým problémem
+        je, jak vlo¾it výpis logu èi konfiguraèní soubor. V tomto
+        pøípadì pou¾ijte znaèku PRE a vá¹ text vlo¾te mezi znaèky,
+        pøíli¹ dlouhé øádky rozdìlte znakem enter.
+    </p>
+</#assign>
+
 <#include "../header.ftl">
 
 <@lib.showMessages/>
@@ -18,7 +56,7 @@ zvolte OK.</p>
 
 <h1 class="st_nadpis">Zde mù¾ete provést své úpravy</h1>
 
-<form action="${URL.make("/EditDiscussion")}" method="POST">
+<form action="${URL.make("/EditDiscussion")}" method="POST" name="form">
  <table cellpadding="5">
   <#if ! USER?exists>
    <tr>
@@ -46,9 +84,14 @@ zvolte OK.</p>
   <tr>
    <td class="required">Dotaz</td>
    <td>
+    <div class="form-edit">
+        <a href="javascript:insertAtCursor(document.form.text, '<b></b>');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
+        <a href="javascript:insertAtCursor(document.form.text, '<i></i>');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
+        <a href="javascript:insertAtCursor(document.form.text, '<a href=&quot;&quot;></a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.text, '<p></p>');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.text, '<pre></pre>');" id="mono" title="Vlo¾it znaèku formátovaného textu. Vhodné pro konfiguraèní soubory èi výpisy.">&lt;pre&gt;</a>
+    </div>
     <textarea name="text" cols="60" rows="20">${PARAMS.text?if_exists?html}</textarea>
-    <div>Smíte pou¾ívat základní HTML znaèky. Pokud je nepou¾ijete,
-    prázdé øádky budou nahrazeny novým odstavcem.</div>
     <div class="error">${ERRORS.text?if_exists}</div>
    </td>
   </tr>
@@ -60,7 +103,7 @@ zvolte OK.</p>
    </td>
   </tr>
  </table>
- <input type="hidden" name="action" value="addQuez4">
+ <input type="hidden" name="action" value="addQuez2">
  <input type="hidden" name="rid" value="${PARAMS.rid}">
 </form>
 

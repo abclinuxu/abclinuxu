@@ -70,7 +70,7 @@
       <#else>
         &nbsp;| <a href="/blog/${blog.subType}">blog</a>
       </#if>
-   </#if>
+   </#if>	
    <#local city=TOOL.xpath(who,"//personal/city")?default("UNDEF")><#if city!="UNDEF"> | ${city}</#if>
   <#else>
    ${TOOL.xpath(comment.data,"author")?if_exists}

@@ -1,21 +1,51 @@
+<#assign plovouci_sloupec>
+
+    <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <h1>Nápovìda</h1>
+    </div></div>
+
+    <p>
+        Existují dva zpùsoby, jak formátovat va¹e pøíspìvky.
+        První z nich je psaní textu podobnì, jako kdy¾ pí¹ete
+        dopis. Rozdìlujte va¹e texty do odstavcù, pokud vlo¾íte
+        prázdný øádek, systém automaticky bude zachovávat toto
+        formátování. Konce øádkù nemají ¾ádný speciální význam.
+        Pøi tomto zpùsobu je pou¾ít i HTML znaèky s vyjímkou znaèky
+        nového øádku a odstavce. jejich pou¾ití automaticky
+        pøepne do HTML modu, kde jste plnì odpovìdni za formátování.
+    </p>
+
+    <p>
+        Druhý zpùsob vám dává vìt¹í volnost pøi formátování.
+        Máte k dispozici relativnì velkou sadu HTML znaèek.
+        Pro zaèáteèníky mohu doporuèit star¹í
+        <a href="http://www.kosek.cz/clanky/html/01.html">rychlokurz</a>
+        tohoto formátovacího jazyka. Z rùzných dùvodù jsou
+        povoleny jen tyto <a href="http://www.w3.org/TR/html4/index/elements.html">znaèky</a>:
+        P, BR, B, I, A, PRE, UL, OL, LI, CODE, DIV, H1, H2, H3, EM, STRONG, CITE, BLOCKQUOTE,
+        VAR, HR a IT.
+    </p>
+
+    <p>
+        Pro oba styly platí, ¾e text musí být HTML validní. Èastým
+        problémem je, ¾e nìkdo se sna¾í vlo¾it text obsahující
+        znak men¹ítka èi vìt¹ítka. Tyto znaky se zapisují následovnì:
+        &lt; jako &amp;lt;,  &gt; jako &amp;gt;. Dal¹ím èastým problémem
+        je, jak vlo¾it výpis logu èi konfiguraèní soubor. V tomto
+        pøípadì pou¾ijte znaèku PRE a vá¹ text vlo¾te mezi znaèky,
+        pøíli¹ dlouhé øádky rozdìlte znakem enter.
+    </p>
+</#assign>
+
 <#include "../header.ftl">
 
 <@lib.showMessages/>
 
 <#if PREVIEW?exists>
- <p>Nyní si prohlédnìte vzhled va¹eho komentáøe. Zkontrolujte
- si pravopis, obsah i tón va¹eho textu. Nìkdy to vá¾nì
- chce klidnou hlavu. Pokud se vám text nìjak nelíbí,
- opravte jej a zvolte náhled. Pokud jste s ním spokojeni,
- zvolte OK.</p>
-<#else>
- <!--p>Chystáte se vlo¾it pøíspìvek do diskuse. Sna¾te
-se prosím být pøesní a slu¹ní. Do textu mù¾ete
-vkládat základní HTML znaèky, prázdný øádek bude
-automaticky konvertován na znaèku nového odstavce,
-pokud se o formátování nestaráte sami.
-Po odeslání si budete moci prohlédnout, jak vá¹
-pøíspìvek bude vypadat.</p-->
+ <p>Prohlédnìte si vzhled va¹eho komentáøe. Zkontrolujte
+ pravopis, obsah i tón va¹eho textu. Nìkdy to vá¾nì
+ chce chladnou hlavu. Opravte chyby a zvolte náhled.
+ Pokud jste s pøíspìvkem spokojeni, zvolte OK.</p>
 </#if>
 
 <#if ! USER?exists>
@@ -71,10 +101,17 @@ pøíspìvek bude vypadat.</p-->
    <div class="error">${ERRORS.title?if_exists}</div>
   </div>
   <div>
-   <span class="required">Vá¹ komentáø</span>
-   <#if THREAD?exists>
-    <input type="button" value="Cituj" onClick="cituj(document.replyForm.text)">
-   </#if>
+    <span class="required">Vá¹ komentáø</span>
+    <div class="form-edit">
+        <a href="javascript:insertAtCursor(document.replyForm.text, '<b></b>');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
+        <a href="javascript:insertAtCursor(document.replyForm.text, '<i></i>');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
+        <a href="javascript:insertAtCursor(document.replyForm.text, '<a href=&quot;&quot;></a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
+        <a href="javascript:insertAtCursor(document.replyForm.text, '<p></p>');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
+        <a href="javascript:insertAtCursor(document.replyForm.text, '<pre></pre>');" id="mono" title="Vlo¾it znaèku formátovaného textu. Vhodné pro konfiguraèní soubory èi výpisy.">&lt;pre&gt;</a>
+        <#if THREAD?exists>
+            <a href="javascript:cituj(document.replyForm.text);" id="mono" title="Vlo¾í komentovaný pøíspìvek jako citaci">Citace</a>
+        </#if>
+    </div>
    <div class="error">${ERRORS.text?if_exists}</div>
    <textarea name="text" cols="70" rows="20">${PARAMS.text?if_exists?html}</textarea>
   </div>

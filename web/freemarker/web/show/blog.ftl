@@ -8,7 +8,7 @@
     <#if title!="UNDEF">
         <div class="s_nad_h1"><div class="s_nad_pod_h1">
             <h1><a href="/blog/${BLOG.subType}">${title}</a></h1>
-	</div></div>
+	    </div></div>
     </#if>
 
   <div class="s_sekce">

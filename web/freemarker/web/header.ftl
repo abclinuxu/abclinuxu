@@ -175,7 +175,7 @@
             <div class="s_sekce">
                 <ul>
                   <li><a href="/clanky/show/44049">Tým AbcLinuxu</a></li>
-                  <li><a href="/clanky/show/44046">Export èlánkù a RSS</a></li>
+                  <li><a href="/doc/portal/jine_pristupy">Titulky, PDA a RSS</a></li>
                   <li><a href="/clanky/show/64410">Staòte se autorem</a></li>
                   <li><a href="/clanky/show/44043">Pøehled zmìn na portálu</a></li>
                   <li><a href="${URL.make("/clanky/dir/3500")}">Vzkazy správcùm</a> (${VARS.counter.REQUESTS})</li>

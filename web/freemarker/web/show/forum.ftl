@@ -23,12 +23,12 @@
         </thead>
         <tbody>
 	<#list TOOL.analyzeDiscussions(DIZS.data) as diz>
-   <tr onmouseover="javascript:style.backgroundColor='#F7F7F7'" onmouseout="javascript:style.backgroundColor='#FFFFFF'">
+   <tr>
     <td class="td01">
      <a href="/forum/show/${diz.relationId}">${TOOL.limit(diz.title,60," ..")}</a>
     </td>
-    <td class="td02"><span class="pidi">${diz.responseCount}</span></td>
-    <td class="td03"><span class="pidi">${DATE.show(diz.updated,"CZ_FULL")}</span></td>
+    <td class="td02">${diz.responseCount}</td>
+    <td class="td03">${DATE.show(diz.updated,"CZ_FULL")}</td>
    </tr>
         </#list>
         </tbody>
