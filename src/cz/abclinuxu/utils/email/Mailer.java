@@ -92,6 +92,7 @@ public class Mailer implements Configurable {
      * Shows instructions, how to use this application.
      */
     private static void showHelp() {
+        System.out.println("\n\n");
         System.out.println("Mailer is utility to send templated email to given list of users.\n");
         System.out.println("Usage: mailer.sh input template from subject");
         System.out.println("where");

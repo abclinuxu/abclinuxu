@@ -82,6 +82,8 @@
               <entry key="count.software.records" value="select count(cislo) from zaznam where typ=2"/>
               <entry key="count.driver.items" value="select count(cislo) from polozka where typ=5"/>
               <entry key="max.poll" value="select max(cislo) from anketa"/>
+              <entry key="article.relations.within.period" value="select R.cislo from relace R left join polozka P on R.potomek=P.cislo where R.typ_potomka='P' and R.predchozi in (2,3,4,5,6,251,5324,8546,12448) and P.typ=2 and P.vytvoreno&gt;? and P.vytvoreno&lt;? order by vytvoreno asc"/>
+              <entry key="users.email.weekly" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;>&lt;weekly_summary>yes%'"/>
             </map>
           </node>
         </node>
@@ -93,6 +95,13 @@
                 <entry key="trafika" value="auto/abc.dat"/>
                 <entry key="anneca" value="auto/abc2.dat"/>
                 <entry key="szm" value="auto/abc_szm.xml"/>
+              </map>
+            </node>
+            <node name="WeeklyEmail">
+              <map>
+                <entry key="subject" value="tydenni souhrn clanku"/>
+                <entry key="from" value="admin@abclinuxu.cz"/>
+                <entry key="template" value="/mail/weekly.ftl"/>
               </map>
             </node>
             <node name="UpdateKernel">

@@ -115,6 +115,9 @@ public class EmailSender implements Configurable {
      * @return number of sent emails.
      */
     public static int sendEmailToUsers(Map params, List users) {
+        if ( users.size()==0 )
+            return 0;
+
         Persistance persistance = PersistanceFactory.getPersistance();
         String from = (String) params.get(KEY_FROM), subject = (String) params.get(KEY_SUBJECT);
         Session session = Session.getDefaultInstance(new Properties(), null);

@@ -11,18 +11,22 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Poll;
+import cz.abclinuxu.data.User;
+import cz.abclinuxu.AbcException;
 
 import java.util.prefs.Preferences;
 import java.util.Date;
 import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.sql.*;
 
 /**
  * Thread-safe singleton, that encapsulates SQL commands
  * used outside of Persistance implementations.
  */
 public final class SQLTool implements Configurable {
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(SQLTool.class);
 
     public static final String PREF_MAX_RECORD_CREATED_OF_ITEM = "max.record.created.of.item";
     private static final String DEFAULT_MAX_RECORD_CREATED_OF_ITEM = "select max(vytvoreno) from relace R left join zaznam Z on Z.cislo=R.potomek where R.typ_predka='P' and R.predek=";
@@ -44,6 +48,10 @@ public final class SQLTool implements Configurable {
     private static final String DEFAULT_COUNT_DRIVERS = "select count(cislo) from polozka where typ=5";
     public static final String PREF_MAX_POLL = "max.poll";
     private static final String DEFAULT_MAX_POLL = "select max(cislo) from anketa";
+    private static final String PREF_RELATION_ARTICLES_WITHIN_PERIOD = "article.relations.within.period";
+    private static final String DEFAULT_RELATION_ARTICLES_WITHIN_PERIOD = "select R.cislo from relace R left join polozka P on R.potomek=P.cislo where R.typ_potomka='P' and R.predchozi in (2,3,4,5,6,251,5324,8546,12448) and P.typ=2 and P.vytvoreno>? and P.vytvoreno<? order by vytvoreno asc";
+    private static final String PREF_USERS_WITH_WEEKLY_MAIL = "users.email.weekly";
+    private static final String DEFAULT_USERS_WITH_WEEKLY_MAIL = "select cislo from uzivatel where data like '%<communication><email valid=\"yes\">%<weekly_summary>yes%'";
 
     private static SQLTool singleton;
 
@@ -54,8 +62,9 @@ public final class SQLTool implements Configurable {
 
     private String maxRecordCreatedOfItem, maxPoll;
     private String relationsHardwareByUpdated, relationsSoftwareByUpdated, relationsDriverByUpdated;
-    private String relationsArticleByCreated, relationsDiscsussionByCreated;
+    private String relationsArticleByCreated, relationsArticleWithinPeriod, relationsDiscussionByCreated;
     private String countHardware, countSoftware, countDrivers;
+    private String usersWithWeeklyMail;
 
 
     /**
@@ -149,7 +158,7 @@ public final class SQLTool implements Configurable {
      */
     public List findDiscussionRelationsByUpdated(int offset, int count) {
         Persistance persistance = PersistanceFactory.getPersistance();
-        List found = persistance.findByCommand(relationsDiscsussionByCreated+" limit "+offset+","+count);
+        List found = persistance.findByCommand(relationsDiscussionByCreated+" limit "+offset+","+count);
         List result = new ArrayList(found.size());
         for (Iterator iter = found.iterator(); iter.hasNext();) {
             int id = ((Integer)((Object[]) iter.next())[0]).intValue();
@@ -175,6 +184,64 @@ public final class SQLTool implements Configurable {
             int id = ((Integer)((Object[]) iter.next())[0]).intValue();
             Relation relation = (Relation) persistance.findById(new Relation(id));
             result.add(relation);
+        }
+        return result;
+    }
+
+    /**
+     * Finds relations, where child is an article item with created property, that is inside
+     * given time period. Items are sorted by created property in ascendant order.
+     * @param from starting point (exclusive) of time period
+     * @param until end point (exclusive) of time period
+     * @return List of initialized relations
+     */
+    public List findArticleRelationsWithinPeriod(Date from, Date until) throws PersistanceException {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
+        List result;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(relationsArticleWithinPeriod);
+            statement.setDate(1,new java.sql.Date(from.getTime()));
+            statement.setDate(2,new java.sql.Date(until.getTime()));
+
+            resultSet = statement.executeQuery();
+            result = new ArrayList();
+            while ( resultSet.next() ) {
+                Relation relation = new Relation(resultSet.getInt(1));
+                result.add(persistance.findById(relation));
+            }
+        } catch (SQLException e) {
+            log.error("Chyba pri hledani podle "+relationsArticleWithinPeriod,e);
+            throw new PersistanceException("Chyba pri hledani!",AbcException.DB_FIND);
+        } finally {
+            persistance.releaseSQLResources(con,statement,resultSet);
+        }
+        return result;
+    }
+
+    /**
+     * Finds users, that have active email and have subscribed weekly email.
+     * @return list of Integers of user ids.
+     */
+    public List findUsersWithWeeklyMail() {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null; Statement statement = null; ResultSet resultSet = null;
+        List result;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.createStatement();
+            resultSet = statement.executeQuery(usersWithWeeklyMail);
+            result = new ArrayList();
+            while ( resultSet.next() ) {
+                Integer id = new Integer(resultSet.getInt(1));
+                result.add(id);
+            }
+        } catch (SQLException e) {
+            log.error("Chyba pri hledani podle "+relationsArticleWithinPeriod,e);
+            throw new PersistanceException("Chyba pri hledani!",AbcException.DB_FIND);
+        } finally {
+            persistance.releaseSQLResources(con,statement,resultSet);
         }
         return result;
     }
@@ -242,12 +309,14 @@ public final class SQLTool implements Configurable {
         maxPoll = prefs.get(PREF_MAX_POLL,DEFAULT_MAX_POLL);
         maxRecordCreatedOfItem = prefs.get(PREF_MAX_RECORD_CREATED_OF_ITEM,DEFAULT_MAX_RECORD_CREATED_OF_ITEM);
         relationsArticleByCreated = prefs.get(PREF_RELATION_ARTICLES_BY_CREATED,DEFAULT_RELATION_ARTICLES_BY_CREATED);
-        relationsDiscsussionByCreated = prefs.get(PREF_RELATION_DISCUSSIONS_BY_CREATED,DEFAULT_RELATION_DISCUSSIONS_BY_CREATED);
+        relationsArticleWithinPeriod = prefs.get(PREF_RELATION_ARTICLES_WITHIN_PERIOD,DEFAULT_RELATION_ARTICLES_WITHIN_PERIOD);
+        relationsDiscussionByCreated = prefs.get(PREF_RELATION_DISCUSSIONS_BY_CREATED,DEFAULT_RELATION_DISCUSSIONS_BY_CREATED);
         relationsDriverByUpdated = prefs.get(PREF_RELATION_DRIVERS_BY_UPDATED,DEFAULT_RELATION_DRIVERS_BY_UPDATED);
         relationsHardwareByUpdated = prefs.get(PREF_RELATION_HARDWARE_BY_UPDATED,DEFAULT_RELATION_HARDWARE_BY_UPDATED);
         relationsSoftwareByUpdated = prefs.get(PREF_RELATION_SOFTWARE_BY_UPDATED,DEFAULT_RELATION_SOFTWARE_BY_UPDATED);
         countDrivers = prefs.get(PREF_COUNT_DRIVERS,DEFAULT_COUNT_DRIVERS);
         countHardware = prefs.get(PREF_COUNT_HARDWARE,DEFAULT_COUNT_HARDWARE);
         countSoftware = prefs.get(PREF_COUNT_SOFTWARE,DEFAULT_COUNT_SOFTWARE);
+        usersWithWeeklyMail = prefs.get(PREF_USERS_WITH_WEEKLY_MAIL,DEFAULT_USERS_WITH_WEEKLY_MAIL);
     }
 }

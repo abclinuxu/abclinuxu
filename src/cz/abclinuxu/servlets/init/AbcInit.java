@@ -67,6 +67,7 @@ public class AbcInit extends HttpServlet {
         startLinksUpdate();
         startGenerateLinks();
         startArticlePoolMonitor();
+        startSendingWeeklyEmails();
 
         log.info("Inicializace je hotova.");
     }
@@ -129,6 +130,22 @@ public class AbcInit extends HttpServlet {
      */
     protected void startArticlePoolMonitor() {
         scheduler.schedule(new ArticlePoolMonitor(),1*60*1000,3*60*1000);
+    }
+
+    /**
+     * Send weekly emails each saturday noon.
+     */
+    private void startSendingWeeklyEmails() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_WEEK,Calendar.SATURDAY);
+        calendar.set(Calendar.HOUR_OF_DAY,12);
+        calendar.set(Calendar.MINUTE,0);
+        calendar.set(Calendar.SECOND,0);
+        if ( new Date().after(calendar.getTime()) ) {
+            calendar.add(Calendar.DAY_OF_WEEK,7);
+        }
+
+        scheduler.scheduleAtFixedRate(new WeeklyEmail(),calendar.getTime(),7*24*60*60*1000);
     }
 
     /**
