@@ -88,7 +88,13 @@
             <#if category!="UNDEF">${category} |</#if>
     	    <@showDiscussions story, url/>
 	</p>
-        ${TOOL.xpath(story, "/data/content")}
+        <#assign text = TOOL.xpath(story, "/data/perex")?default("UNDEF")>
+        <#if text!="UNDEF">
+            ${text}
+            <p><a href="${url}">více ...</a></p>
+        <#else>
+            ${TOOL.xpath(story, "/data/content")}
+        </#if>
     </div>
     <hr>
 </#list>

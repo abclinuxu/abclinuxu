@@ -13,6 +13,14 @@ pøeètìte si <a href="http://www.kosek.cz/clanky/html/01.html">rychlokurz</a>
 od Jirky Koska.
 </p>
 
+<p>Pokud pí¹ete del¹í pøíspìvek, mìli byste jej rozdìlit na úvod
+a zbytek textu. Uèiníte tak vlo¾ením speciální znaèky <code>&lt;break&gt;</code>
+kdekoliv do textu zápisu. Text pøed znaèkou se bude zobrazovat
+jako upoutávka na vá¹ pøíspìvek, dohromady se pak zobrazí na stránce
+tohoto zápisu. Nicménì pokud pí¹ete jen pár odstavcù, není tøeba
+text lámat. Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
+</p>
+
 <#if PREVIEW?exists>
  <h1 class="st_nadpis">Náhled va¹eho zápisu</h1>
 
@@ -28,11 +36,11 @@ od Jirky Koska.
 
 <h1 class="st_nadpis">Zde mù¾ete provést své úpravy</h1>
 
-<form action="${URL.make("/blog/edit/"+REL_BLOG.id)}" method="POST">
+<form action="${URL.make("/blog/edit/"+REL_BLOG.id)}" method="POST" name="form">
 <table cellpadding="5">
     <tr>
         <td>
-            <a class="info" href="#">?<span class="tooltip">Zde nastavíte titulek va¹eho zápisu. Je dùle¾itý pro RSS.</span></a>	
+            <a class="info" href="#">?<span class="tooltip">Zde nastavíte titulek va¹eho zápisu. Je dùle¾itý pro RSS.</span></a>
             <span class="required">Titulek zápisu</span>
             <input type="text" name="title" size="60" value="${PARAMS.title?if_exists?html}">
             <div class="error">${ERRORS.title?if_exists}</div>
@@ -40,7 +48,7 @@ od Jirky Koska.
     </tr>
     <tr>
         <td>
-            <a class="info" href="#">?<span class="tooltip">Zde nastavíte kategorii va¹eho zápisu. Mù¾ete tak èlenit zápisy do rùzných kategorií.</span></a>	
+            <a class="info" href="#">?<span class="tooltip">Zde nastavíte kategorii va¹eho zápisu. Mù¾ete tak èlenit zápisy do rùzných kategorií.</span></a>
             Kategorie zápisu
             <select name="cid">
                 <#list CATEGORIES?keys as category>
@@ -52,6 +60,10 @@ od Jirky Koska.
     <tr>
         <td>
             <p class="required">Obsah zápisu</p>
+            <a href="javascript:insertAtCursor(document.form.content, '<b></b>');" title="Vlo¾it znaèku tuènì"><img src="/images/actions/bold.gif" width="16" height="16" border="0" alt="Vlo¾it znaèku tuènì"></a>
+            <a href="javascript:insertAtCursor(document.form.content, '<i></i>');" title="Vlo¾it znaèku italic"><img src="/images/actions/italic.gif" width="16" height="16" border="0" alt="Vlo¾it znaèku italic"></a>
+            <a href="javascript:insertAtCursor(document.form.content, '<u></u>');" title="Vlo¾it znaèku podtrhnout"><img src="/images/actions/under.gif" width="16" height="16" border="0" alt="Vlo¾it znaèku podtrhnout"></a>
+            <a href="javascript:insertAtCursor(document.form.content, '<break>');" title="Vlo¾it znaèku zlomu"><img src="/images/actions/story_break.gif" width="16" height="16" border="0" alt="Vlo¾it znaèku zlomu"></a>
             <textarea name="content" cols="80" rows="30">${PARAMS.content?if_exists?html}</textarea>
             <div class="error">${ERRORS.content?if_exists}</div>
         </td>

@@ -88,11 +88,13 @@ public class EditBlog implements AbcAction, Configurable {
     public static final String VAR_CATEGORIES = "CATEGORIES";
     public static final String VAR_PREVIEW = "PREVIEW";
 
+    public static final String BREAK_TAG = "<break>";
     public static final String PREF_RE_INVALID_BLOG_NAME = "regexp.invalid.blogname";
     public static final String PREF_MAX_STORY_TITLE_LENGTH = "max.story.title.length";
+    public static final String PREF_MAX_STORY_WORD_COUNT = "max.story.word.count";
 
     static RE reBlogName;
-    static int maxStoryTitleLength;
+    static int maxStoryTitleLength, maxStoryWordCount;
 
     static {
         EditBlog instance = new EditBlog();
@@ -273,8 +275,16 @@ public class EditBlog implements AbcAction, Configurable {
         Document document = story.getData();
         Node node = document.selectSingleNode("/data/name");
         params.put(PARAM_TITLE, node.getText());
+        String text = null;
+        node = document.selectSingleNode("/data/perex");
+        if (node!=null)
+            text = node.getText();
         node = document.selectSingleNode("/data/content");
-        params.put(PARAM_CONTENT, node.getText());
+        if (text!=null)
+            text += node.getText();
+        else
+            text = node.getText();
+        params.put(PARAM_CONTENT, text);
         params.put(PARAM_CATEGORY_ID, story.getSubType());
 
         storeCategories(blog, env);
@@ -628,17 +638,41 @@ public class EditBlog implements AbcAction, Configurable {
      * @return false, if there is a major error.
      */
     boolean setStoryContent(Map params, Element root, Map env) {
-        String s = (String) params.get(PARAM_CONTENT);
-        if (Misc.empty(s)) {
+        String content = (String) params.get(PARAM_CONTENT);
+        if (Misc.empty(content)) {
             ServletUtils.addError(PARAM_CONTENT, "Prosím zadejte hodnotu.", env, null);
             return false;
         }
+
+        int position = content.indexOf(BREAK_TAG);
+
+        if (position==-1) {
+            String stripped = Tools.removeTags(content);
+            StringTokenizer stk = new StringTokenizer(stripped, " \t\n\r\f,.");
+            if (stk.countTokens()>maxStoryWordCount) {
+                ServletUtils.addError(PARAM_CONTENT, "Vá¹ zápis je pøíli¹ dlouhý. Rozdìlte jej pomocí znaèky <break>.", env, null);
+                return false;
+            }
+        }
+
         // todo zkontroluj validitu HTML, ochrana pred XSS
-        Element content = root.element("content");
-        if (content==null)
-            content = root.addElement("content");
-        content.setText(s);
-        content.addAttribute("format", Integer.toString(Format.HTML.getId()));
+
+        if (position!=-1) {
+            String perex = content.substring(0, position);
+            content = content.substring(position+BREAK_TAG.length());
+
+            Element tagPerex = root.element("perex");
+            if (tagPerex==null)
+                tagPerex = root.addElement("perex");
+            tagPerex.setText(perex);
+            tagPerex.addAttribute("format", Integer.toString(Format.HTML.getId()));
+        }
+
+        Element tagContent = root.element("content");
+        if (tagContent==null)
+            tagContent = root.addElement("content");
+        tagContent.setText(content);
+        tagContent.addAttribute("format", Integer.toString(Format.HTML.getId()));
         return true;
     }
 
@@ -709,6 +743,7 @@ public class EditBlog implements AbcAction, Configurable {
 
     public void configure(Preferences prefs) throws ConfigurationException {
         maxStoryTitleLength = prefs.getInt(PREF_MAX_STORY_TITLE_LENGTH, maxStoryTitleLength);
+        maxStoryWordCount = prefs.getInt(PREF_MAX_STORY_WORD_COUNT, maxStoryWordCount);
         String re = prefs.get(PREF_RE_INVALID_BLOG_NAME, null);
         try {
             reBlogName = new RE(re);

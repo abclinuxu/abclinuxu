@@ -15,9 +15,9 @@ hr {
 	padding:	0px;
 }
 
-img {
-	border:		0px;
-}
+img { border: 0px }
+
+pre { width: 95%; overflow: auto }
 
 a {
 	color:		#27648D;
@@ -235,39 +235,21 @@ a.za_mn_odkaz:hover {
 }
 
 .st {
-	padding-top:	5px;
-	padding-left:	10px;
-	padding-right:	10px;
+	padding:	5px 10px 10px 15px;
 	margin-left:	270px;
 	border-left: 1px solid #F5F5F5;
 }
 
-.st h1 {
-	font-size:	115%;
-	text-indent:	5px;
-	font-weight:	bold;
-	margin-top:	15px;
-	margin-bottom:	10px;
-	text-indent:	0px;
-}
-
 .st h2 {
-	font-size:	105%;
-	text-indent:	5px;
-	font-weight:	bold;
-	margin-top:	10px;
-	margin-bottom:	5px;
-	text-indent:	0px;
-
+	font-size:	110%;
+	margin-bottom:	-0.2em;
 }
 
-h1.st_nadpis {
+.st h1 {
 	font-size:	130%;
-	text-indent:	5px;
 	font-weight:	bold;
-	margin:		0px;
-	padding-top:	5px;
-	text-indent:	0px;
+	margin:		0 0 -5px 0;
+	padding-top:	10px;
 }
 
 h1.st_nadpis a {
@@ -280,10 +262,9 @@ h1.st_nadpis a:hover {
 	background-color: transparent;
 }
 
-.st p {
-	margin-top:	5px;
-	margin-bottom:	0px;
-}
+.st hr { margin: 5px 0 0 -5px }
+
+.st p { margin:		0.7em 0 0 0; }
 
 .st a:hover img {
 	background-color: white;
@@ -306,26 +287,8 @@ td.pad, code.kod, pre.kod {
 	font-size:	100%;
 }
 
-.cl {
-	margin-top:	5px;
-	margin-left:	5px;
-	margin-right:	5px;
-	padding-bottom:	5px;
-}
-
-img.cl_vlevo {
-	float:		left;
-	margin:		2px;
-}
-
-img.cl_vpravo {
-	float:		right;
-	margin:		2px;
-}
-
 .cl_inforadek {
 	font-size:	80%;
-	padding-top:	5px;
 	color:		gray;
 }
 
@@ -342,7 +305,7 @@ img.cl_vpravo {
 }
 
 .cl_perex h1 {
-	margin-top:	5px;
+	margin-bottom:	5px;
 }
 
 .cl_rating {
@@ -368,7 +331,8 @@ img.cl_vpravo {
 
 .tpm {
 	width:		205px;
-	background:	url('/images/site2/teplomerstupnice.gif') left top no-repeat;
+	background:	url('/images/site2/teplomerstupnice.gif') left top
+no-repeat;
 	float:		left;
 	padding: 0px;
 }
@@ -387,37 +351,17 @@ img.cl_vpravo {
 	position: relative;
 }
 
-.tpm .stup .s0 {
+.s0, .s1, .s2, .s3 {
 	position:	absolute;
-	left:		0px;
 	top:		2px;
-	_top:   0px;
-	padding: 2px;
+	_top:   	0px;
+	padding: 	2px;
 }
 
-.tpm .stup .s1 {
-	position:	absolute;
-	left:		64px;
-	top:		2px;
-	_top:   0px;
-	padding: 2px;
-}
-
-.tpm .stup .s2 {
-	position:	absolute;
-	left:		128px;
-	top:		2px;
-	_top:   0px;
-	padding: 2px;
-}
-
-.tpm .stup .s3 {
-	position:	absolute;
-	left:		191px;
-	top:		2px;
-	_top:   0px;
-	padding: 2px;
-}
+.s0 { left: 0px; }
+.s1 { left: 64px; }
+.s2 { left: 128px; }
+.s3 { left: 191px; }
 
 .ds {
 	margin-top:	10px;
@@ -428,6 +372,7 @@ img.cl_vpravo {
 	margin-top:	5px;
 	border-width:	0px;
 	table-layout:	auto;
+	/*width:		100%*/
 }
 
 .ds thead td {
@@ -435,10 +380,6 @@ img.cl_vpravo {
 	border-bottom:	solid 1px silver;
 	font-size:	85%;
 	background-color: transparent;
-}
-
-.ds tr {
-	border-top: 	solid 1px silver;
 }
 
 .ds td.td01 {
@@ -453,6 +394,8 @@ img.cl_vpravo {
 	width:		300px;
 	text-align:	right;
 }
+
+.ds tbody tr:hover { background: #f7f7f7 }
 
 .ds_hlavicka, .ds_hlavicka_novy {
 	margin-top:	10px;
@@ -547,16 +490,19 @@ p.wrongForum {
 	padding-top:	1px;
 }
 
-.s_nad_h1 a.info {
-	position: 	relative;
-	float: 		right;
-	display: 	block;
+a.info { 
+	position:	relative;
 	border:		1px solid gray;
+	padding: 	0 0.3em 0 0.3em;
+	cursor: 	help;
+
+ }
+
+.s_nad_h1 a.info {
+	float: 		right;
 	color:		gray;
 	background: 	white;
-	padding: 	0 0.3em 0 0.3em;
 	margin-right:	2px;
-	cursor: 	help;
 }
 
 .s_nad_h1 a {
@@ -574,21 +520,25 @@ p.wrongForum {
 	color: 		black;
 }
 
-.s_nad_h1 a.info span.tooltip {
+a.info span.tooltip {
 	display:	none;
 }
 
-.s_nad_h1 a.info:hover span.tooltip {
+a.info:hover span.tooltip {
 	display:	block;
 	position:	absolute;
-	right:		0px;
+	left:		0px;
 	font-weight:	normal;
 	font-size:	90%;
-
+	width:		13em;
 	border:		1px solid gray;
 	background-color: white;
 	padding:	2px;
 	color:		black;
+}
+
+.s_nad_h1 a.info:hover span.tooltip {
+	left:		-12em;
 }
 
 .s_sekce {
@@ -632,8 +582,10 @@ p.wrongForum {
 	text-align:	left;
 }
 
-.ls li a, .ps li a, .st_rozc li a, .ds td a, .s_nad_h1 a, .ps_reklama a {text-decoration:none}
-.ls li a:hover, .ps li a:hover, .st_rozc li a:hover, .ds td a:hover, .ps_reklama a:hover {text-decoration:underline}
+.ls li a, .ps li a, .st_rozc li a, .ds td a, .s_nad_h1 a, .ps_reklama a,
+ .textad a {text-decoration:none}
+.ls li a:hover, .ps li a:hover, .st_rozc li a:hover, .ds td a:hover,
+.ps_reklama a:hover, .textad a:hover {text-decoration:underline}
 
 .ls_prepinac {
 	background-color: #27648D;
@@ -654,7 +606,11 @@ p.wrongForum {
 	margin:		5px;
 }
 
-.ank-odpov { margin: 0 3px 0.3em 0; display:block; border-top:1px solid lightgrey }
+.ank-odpov { 
+	margin: 0 3px 0.3em 0;
+	display:block; 
+	border-top:1px solid lightgrey; }
+
 .ank-otazka { margin-bottom:0.5em }
 
 .ls_zpr {
@@ -828,4 +784,28 @@ p.wrongForum {
 	background-color: transparent;
 	color:		#FFF8C3;
 }
-/*textarea {width: 100%;}*/
+
+.textad { 
+	border:1px solid lightgrey;
+	padding:5px;
+	margin:5px;
+	float:right;
+	background:#f6f6f6;
+	width:160px }
+
+.button {
+	border: 1px solid black;
+	padding: 0.1em;
+	font-weight: bold;
+	background: #717171;
+	color: white }
+
+.button:hover {
+	background: #efefef;
+	color: #717171 }
+
+.dict-item {
+	background:	#ececec;
+	margin:		0.5em 0.5em 0 0;
+	padding:	0.5em;
+}

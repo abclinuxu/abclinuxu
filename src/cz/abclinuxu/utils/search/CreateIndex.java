@@ -10,6 +10,7 @@ import cz.abclinuxu.persistance.cache.EmptyCache;
 import cz.abclinuxu.persistance.extra.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.Configurator;
@@ -55,28 +56,28 @@ public class CreateIndex implements Configurable {
         log.info("Starting to index data, using directory "+PATH);
 
         try {
-//            Relation articles = (Relation) persistance.findById(new Relation(Constants.REL_ARTICLES));
-//            Relation hardware = (Relation) persistance.findById(new Relation(Constants.REL_HARDWARE));
-//            Relation software = (Relation) persistance.findById(new Relation(Constants.REL_SOFTWARE));
-//            Relation drivers = (Relation) persistance.findById(new Relation(Constants.REL_DRIVERS));
-//            Relation abc = (Relation) persistance.findById(new Relation(Constants.REL_ABC));
+            Relation articles = (Relation) persistance.findById(new Relation(Constants.REL_ARTICLES));
+            Relation hardware = (Relation) persistance.findById(new Relation(Constants.REL_HARDWARE));
+            Relation software = (Relation) persistance.findById(new Relation(Constants.REL_SOFTWARE));
+            Relation drivers = (Relation) persistance.findById(new Relation(Constants.REL_DRIVERS));
+            Relation abc = (Relation) persistance.findById(new Relation(Constants.REL_ABC));
             Relation blogs = (Relation) persistance.findById(new Relation(Constants.REL_BLOGS));
-//            List forums = sqlTool.findSectionRelationsWithType(Category.SECTION_FORUM,null);
+            List forums = sqlTool.findSectionRelationsWithType(Category.SECTION_FORUM,null);
 
             long start = System.currentTimeMillis();
 
             IndexWriter indexWriter = new IndexWriter(PATH, new AbcCzechAnalyzer(), true);
 
-//            makeIndexOn(indexWriter, articles, UrlUtils.PREFIX_CLANKY);
-//            makeIndexOnNews(indexWriter, UrlUtils.PREFIX_NEWS);
+            makeIndexOn(indexWriter, articles, UrlUtils.PREFIX_CLANKY);
+            makeIndexOnNews(indexWriter, UrlUtils.PREFIX_NEWS);
             makeIndexOnDictionary(indexWriter);
             makeIndexOnBlogs(indexWriter, blogs.getChild().getChildren());
-//            makeIndexOnForums(indexWriter, forums, UrlUtils.PREFIX_FORUM);
-//            makeIndexOn(indexWriter, hardware, UrlUtils.PREFIX_HARDWARE);
-//            makeIndexOn(indexWriter, software, UrlUtils.PREFIX_SOFTWARE);
-//            makeIndexOn(indexWriter, drivers, UrlUtils.PREFIX_DRIVERS);
-//            makeIndexOn(indexWriter, abc, UrlUtils.PREFIX_CLANKY);
-//            makeIndexOnBlogs(indexWriter, blogs);
+            makeIndexOnForums(indexWriter, forums, UrlUtils.PREFIX_FORUM);
+            makeIndexOn(indexWriter, hardware, UrlUtils.PREFIX_HARDWARE);
+            makeIndexOn(indexWriter, software, UrlUtils.PREFIX_SOFTWARE);
+            makeIndexOn(indexWriter, drivers, UrlUtils.PREFIX_DRIVERS);
+            makeIndexOn(indexWriter, abc, UrlUtils.PREFIX_CLANKY);
+            makeIndexOnBlogs(indexWriter, blogs.getChild().getChildren());
 
             indexWriter.optimize();
             indexWriter.close();
@@ -332,7 +333,7 @@ public class CreateIndex implements Configurable {
      */
     static MyDocument indexStory(Relation relation, Category category) {
         StringBuffer sb = new StringBuffer();
-        String title = null;
+        String title = null, s;
         Item story = (Item) relation.getChild();
 
         Element data = story.getData().getRootElement();
@@ -340,9 +341,16 @@ public class CreateIndex implements Configurable {
         title = node.getText();
         sb.append(title);
 
+        node = data.selectSingleNode("perex");
+        if (node!=null) {
+            sb.append(" ");
+            s = node.getText();
+            sb.append(s);
+        }
+
         node = data.selectSingleNode("content");
         sb.append(" ");
-        String s = node.getText();
+        s = node.getText();
         sb.append(s);
 
         for (Iterator iter = story.getChildren().iterator(); iter.hasNext();) {

@@ -83,7 +83,11 @@
     Pøeèteno: ${TOOL.getCounterValue(STORY.child)}x
     <#if category!="UNDEF">| ${category}</#if>
 </p>
+
+<#assign text = TOOL.xpath(STORY.child, "/data/perex")?default("UNDEF")>
+<#if text!="UNDEF">${text}</#if>
 ${TOOL.xpath(STORY.child, "/data/content")}
+
 <p><b>Nástroje</b>: <a href="${url}?varianta=print">Tisk</a></p>
 
 <h2>Komentáøe</h2>

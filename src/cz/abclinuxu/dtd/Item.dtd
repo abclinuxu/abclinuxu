@@ -87,8 +87,10 @@
 <!ELEMENT java_class (#PCDATA)> <!-- java class to feed data to content -->
 
 <!-- Item.BLOG -->
-<!ELEMENT data (name, content, category?)>
+<!ELEMENT data (name, perex?,content, category?)>
 <!ELEMENT name (#PCDATA)> <!-- blog story's title -->
+<!ELEMENT perex (#PCDATA)> <!-- story's perex for long stories -->
+<!ATTLIST perex format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT content (#PCDATA)> <!-- content of the story -->
 <!ATTLIST content format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT category (#NMTOKEN)> <!-- integer, if od the category. See blog/categories -->

@@ -166,7 +166,9 @@ public class ViewBlog implements AbcAction, Configurable {
         if (user==null || user.getId()!=blog.getOwner()) {
             for (Iterator iter = stories.iterator(); iter.hasNext();) {
                 Relation relation = (Relation) iter.next();
-                persistance.incrementCounter(relation.getChild());
+                Item story = (Item) relation.getChild();
+                if (Tools.xpath(story,"/data/perex")==null)
+                    persistance.incrementCounter(story);
             }
         }
 
@@ -213,8 +215,10 @@ public class ViewBlog implements AbcAction, Configurable {
         for (Iterator iter = stories.iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
             Item story = (Item) relation.getChild();
-            if (user==null || user.getId()!=story.getOwner())
-                persistance.incrementCounter(story);
+            if (user==null || user.getId()!=story.getOwner()) {
+                if (Tools.xpath(story,"/data/perex")==null)
+                    persistance.incrementCounter(story);
+            }
         }
 
         Relation relation = (Relation) persistance.findById(new Relation(Constants.REL_BLOGS));
