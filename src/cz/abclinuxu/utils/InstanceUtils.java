@@ -31,7 +31,7 @@ public class InstanceUtils {
     public static GenericObject instantiateParam(String name, Class clazz, Map params) {
         String tmp = (String) params.get(name);
         if ( tmp==null || tmp.length()==0 )
-            throw new NotFoundException("Chybí parametr "+name+"!");
+            return null;
         try {
             int id = Integer.parseInt(tmp);
 //            if ( ! GenericObject.class.isAssignableFrom(clazz) )

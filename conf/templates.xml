@@ -306,7 +306,7 @@
     </action>
   </servlet>
 
-  <servlet name="ShowOlder">
+  <servlet name="History">
     <action name="articles" content="/show/history_articles.ftl">
       <var name="TITLE" value="Historie èlánkù" />
     </action>
