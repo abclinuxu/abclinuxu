@@ -1,4 +1,4 @@
-<!ELEMENT data (ilikeq?)>
+<!ELEMENT data (ilikeq?,news?,sex?,ads?,www?,personal?)>
 <!ELEMENT ilikeq (#PCDATA)> <!-- identification of user's I like Q account -->
 <!ELEMENT news (#PCDATA)> <!-- yes, if we may send email about news on this server -->
 <!ELEMENT sex (#PCDATA)> <!-- man or woman -->

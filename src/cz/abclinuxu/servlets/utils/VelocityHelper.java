@@ -475,7 +475,7 @@ public class VelocityHelper {
             int upperId = (node==null)? 0:Integer.parseInt(node.getText());
 
             Discussion upper = null;
-            if ( upperId!=0 ) upper = (Discussion) map.get(new Discussion(new Record(upperId,Record.DISCUSSION)));
+            if ( upperId!=0 ) upper = (Discussion) map.get(new Record(upperId,Record.DISCUSSION));
             Discussion created = null;
 
             if ( upper!=null ) {
@@ -485,7 +485,7 @@ public class VelocityHelper {
                 top.add(created);
             }
 
-            map.put(created,created);
+            map.put(record,created);
         }
 
         return top;

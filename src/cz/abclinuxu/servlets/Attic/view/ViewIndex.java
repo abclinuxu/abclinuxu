@@ -39,6 +39,7 @@ public class ViewIndex extends AbcServlet {
     public static final String VAR_SW_NEW = "SW_NEW";
     public static final String VAR_DRIVERS = "DRIVERS";
     public static final String VAR_ACTUAL = "NEW";
+    public static final String VAR_FORUM = "FORUM";
 
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
