@@ -64,27 +64,27 @@ ${TOOL.render(TOOL.getCompleteArticleText(ITEM),USER?if_exists)}
 
 <#flush>
 
-<#if CHILDREN.discussion?exists>
- <h1>Diskuse k tomuto èlánku</h1>
- <#global DISCUSSION=CHILDREN.discussion[0].child>
- <p>
-  <a href="${URL.make("/EditDiscussion?action=add&dizId="+DISCUSSION.id+"&threadId=0&rid="+CHILDREN.discussion[0].id)}">
-  Vlo¾it dal¹í komentáø</a>
- </p>
+<#if ! PARAMS.noDiz?exists>
+ <#if CHILDREN.discussion?exists>
+  <h1>Diskuse k tomuto èlánku</h1>
+  <#global DISCUSSION=CHILDREN.discussion[0].child>
+  <p>
+   <a href="${URL.make("/EditDiscussion?action=add&dizId="+DISCUSSION.id+"&threadId=0&rid="+CHILDREN.discussion[0].id)}">
+   Vlo¾it dal¹í komentáø</a>
+  </p>
+  <#if TOOL.xpath(DISCUSSION,"/data/frozen")?exists><#global frozen=true><#else><#global frozen=false></#if>
+  <#if USER?exists && USER.hasRole("discussion admin")>
+   <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+CHILDREN.discussion[0].id+"&amp;dizId="+DISCUSSION.id)}">
+   <#if frozen>Rozmrazit<#else>Zmrazit</#if> diskusi</a>
+  </#if>
 
- <#if TOOL.xpath(DISCUSSION,"/data/frozen")?exists><#global frozen=true><#else><#global frozen=false></#if>
-
- <#if USER?exists && USER.hasRole("discussion admin")>
-  <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+CHILDREN.discussion[0].id+"&amp;dizId="+DISCUSSION.id)}">
-  <#if frozen>Rozmrazit<#else>Zmrazit</#if> diskusi</a>
+  <#list TOOL.createDiscussionTree(DISCUSSION) as thread>
+   <#call showThread(thread 0 DISCUSSION.id CHILDREN.discussion[0].id !frozen)>
+  </#list>
+ <#elseif ALLOW_DISCUSSIONS>
+  <h1>Diskuse k tomuto èlánku</h1>
+  <a href="${URL.make("/EditDiscussion?action=addDiz&rid="+RELATION.id)}">Vlo¾it první komentáø</a>
  </#if>
-
- <#list TOOL.createDiscussionTree(DISCUSSION) as thread>
-  <#call showThread(thread 0 DISCUSSION.id CHILDREN.discussion[0].id !frozen)>
- </#list>
-<#elseif ALLOW_DISCUSSIONS>
- <h1>Diskuse k tomuto èlánku</h1>
- <a href="${URL.make("/EditDiscussion?action=addDiz&rid="+RELATION.id)}">Vlo¾it první komentáø</a>
 </#if>
 
 <#include "../footer.ftl">
