@@ -10,21 +10,14 @@ package cz.abclinuxu.persistance;
 import java.util.*;
 import junit.framework.*;
 import junit.textui.TestRunner;
-import org.apache.log4j.xml.DOMConfigurator;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Level;
 import cz.abclinuxu.data.*;
-import cz.abclinuxu.AbcException;
-import cz.abclinuxu.exceptions.PersistanceException;
 import cz.abclinuxu.exceptions.NotFoundException;
 
 public class TestMySqlPersistance extends TestCase {
 
     Persistance persistance;
-
-    static {
-        DOMConfigurator.configure("conf/log4j.xml");
-    }
 
     public TestMySqlPersistance(String s) {
         super(s);
@@ -55,9 +48,9 @@ public class TestMySqlPersistance extends TestCase {
      * test correctness of <code>remove</code>
      */
     public void testRemove() throws Exception {
-        Record a = new Record(0,Record.HARDWARE);
+        Item a = new Item(0,Item.MAKE);
         a.setOwner(1);
-        a.setData("<name>hw a</name>");
+        a.setData("<name>make</name>");
         persistance.create(a);
 
         Record b = new Record(0,Record.SOFTWARE);
@@ -74,9 +67,9 @@ public class TestMySqlPersistance extends TestCase {
         relation = new Relation(a,c,0);
         persistance.create(relation);
 
-        Record d = new Record(0,Record.SOFTWARE);
+        Category d = new Category(0);
         d.setOwner(2);
-        d.setData("<name>sw d</name>");
+        d.setData("<name>section</name>");
         persistance.create(d);
         relation = new Relation(d,c,0);
         persistance.create(relation);
