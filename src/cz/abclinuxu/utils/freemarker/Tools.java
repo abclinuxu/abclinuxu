@@ -48,7 +48,7 @@ public class Tools implements Configurable {
     public static final String PREF_REPLACEMENT_VLNKA = "REPLACEMENT_VLNKA";
 
     static Persistance persistance = PersistanceFactory.getPersistance();
-    static RE reRemoveTags, reVlnka;
+    static RE reRemoveTags, reVlnka, lineBreak;
     static String vlnkaReplacement;
 
     static {
@@ -66,6 +66,7 @@ public class Tools implements Configurable {
             pref = prefs.get(PREF_REGEXP_VLNKA, null);
             reVlnka = new RE(pref, RE.MATCH_MULTILINE);
             vlnkaReplacement = prefs.get(PREF_REPLACEMENT_VLNKA, null);
+            lineBreak = new RE("[\r\n$]+", RE.MATCH_MULTILINE);
         } catch (RESyntaxException e) {
             log.error("Cannot create regexp to find line breaks!", e);
         }
@@ -971,5 +972,12 @@ public class Tools implements Configurable {
         sb.append('/');
         sb.append(relation);
         return sb.toString();
+    }
+
+    /**
+     * Replaces new line characters with space.
+     */
+    public static String removeNewLines(String text) {
+        return lineBreak.subst(text, " ");
     }
 }

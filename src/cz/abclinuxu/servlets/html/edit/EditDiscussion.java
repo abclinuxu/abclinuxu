@@ -17,6 +17,7 @@ import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.email.monitor.*;
 import cz.abclinuxu.utils.email.forum.ForumPool;
@@ -228,8 +229,14 @@ public class EditDiscussion implements AbcAction {
         persistance.create(rel2);
         rel2.getParent().addChildRelation(rel2);
 
-        // run email forum
-        ForumPool.submitComment(rel2, discussion.getId(), 0, 0);
+        // run email forum and refresh RSS
+        if (relation.getParent() instanceof Category) {
+            Category parent = (Category) persistance.findById(relation.getParent());
+            if (parent.getType() == Category.SECTION_FORUM) {
+                ForumPool.submitComment(rel2, discussion.getId(), 0, 0);
+                FeedGenerator.updateForum();
+            }
+        }
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/show/"+rel2.getId());
@@ -358,13 +365,19 @@ public class EditDiscussion implements AbcAction {
         action.setProperty(DiscussionDecorator.PROPERTY_CONTENT, content);
         MonitorPool.scheduleMonitorAction(action);
 
-        // run email forum
-        int commentId = Misc.parseInt(comment.attributeValue("id"),0);
-        ForumPool.submitComment(relation, discussion.getId(), record.getId(), commentId);
+        int commentId = Misc.parseInt(comment.attributeValue("id"), 0);
+        // run email forum and update RSS
+        if (relation.getParent() instanceof Category) {
+            Category parent = (Category) persistance.findById(relation.getParent());
+            if (parent.getType() == Category.SECTION_FORUM) {
+                ForumPool.submitComment(relation, discussion.getId(), record.getId(), commentId);
+                FeedGenerator.updateForum();
+            }
+        }
 
         url = (String) params.get(PARAM_URL);
         if (url==null)
-            url = "/show/"+relation.getId();
+            url = "/show/"+relation.getId()+"#"+commentId;
         urlUtils.redirect(response, url);
         return null;
     }

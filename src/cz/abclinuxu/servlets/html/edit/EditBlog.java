@@ -20,6 +20,7 @@ import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.persistance.extra.CompareCondition;
@@ -259,6 +260,8 @@ public class EditBlog implements AbcAction, Configurable {
         persistance.create(relation);
         incrementArchiveRecord(blog.getData().getRootElement(), new Date());
         persistance.update(blog);
+
+        FeedGenerator.updateBlog(blog);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(),story.getCreated(),relation.getId()));

@@ -18,6 +18,7 @@ import cz.abclinuxu.data.User;
 import cz.abclinuxu.utils.search.CreateIndex;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.DateTool;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,6 +37,7 @@ public class AdminServlet implements AbcAction {
 
     public static final String ACTION_CLEAR_CACHE = "clearCache";
     public static final String ACTION_PERFORM_CHECK = "performCheck";
+    public static final String ACTION_RECREATE_RSS = "refreshRss";
 
     public static final String VAR_DATABASE_STATE = "DATABASE_VALID";
     public static final String VAR_FULLTEXT_STATE = "FULLTEXT_VALID";
@@ -46,6 +48,8 @@ public class AdminServlet implements AbcAction {
 
         if ( ACTION_PERFORM_CHECK.equals(action) )
             return performCheck(request, env);
+        if ( ACTION_RECREATE_RSS.equals(action) )
+            return refreshRss(request, env);
 
         User user = (User) env.get(Constants.VAR_USER);
         if ( user==null )
@@ -71,7 +75,7 @@ public class AdminServlet implements AbcAction {
         TemplateSelector.initialize(null);
         ConfigurationManager.reconfigureAll();
         Configuration.getDefaultConfiguration().clearTemplateCache();
-	DateTool.calculateTodayTimes();
+	    DateTool.calculateTodayTimes();
 
         ServletUtils.addMessage("Cache byla promazána.",env,null);
         return FMTemplateSelector.select("Admin", "show", env, request);
@@ -103,5 +107,17 @@ public class AdminServlet implements AbcAction {
         env.put(VAR_FULLTEXT_STATE, Boolean.valueOf(ok));
 
         return FMTemplateSelector.select("Admin", "check", env, request);
+    }
+
+    /**
+     * Creates all RSS from scratch again.
+     */
+    private final String refreshRss(HttpServletRequest request, Map env) throws Exception {
+        FeedGenerator.updateArticles();
+        FeedGenerator.updateBlog(null);
+        FeedGenerator.updateDrivers();
+        FeedGenerator.updateForum();
+        FeedGenerator.updateHardware();
+        return FMTemplateSelector.select("Admin", "show", env, request);
     }
 }

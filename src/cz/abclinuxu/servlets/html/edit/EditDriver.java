@@ -12,6 +12,7 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.email.monitor.*;
 import cz.abclinuxu.utils.format.Format;
@@ -113,6 +114,8 @@ public class EditDriver implements AbcAction {
         persistance.create(relation);
         relation.getParent().addChildRelation(relation);
 
+        FeedGenerator.updateDrivers();
+
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/show/"+relation.getId());
         return null;
@@ -170,6 +173,8 @@ public class EditDriver implements AbcAction {
         String url = "http://www.abclinuxu.cz/drivers/show/"+relation.getId();
         MonitorAction action = new MonitorAction(user,UserAction.EDIT,ObjectType.DRIVER,driver,url);
         MonitorPool.scheduleMonitorAction(action);
+
+        FeedGenerator.updateDrivers();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/show/"+relation.getId());

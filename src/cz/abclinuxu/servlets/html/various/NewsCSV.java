@@ -14,7 +14,6 @@ import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.persistance.extra.LimitQualifier;
 import cz.abclinuxu.persistance.extra.Qualifier;
-import cz.abclinuxu.scheduler.GenerateLinks;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.config.Configurable;
@@ -79,7 +78,7 @@ public class NewsCSV implements AbcAction, Configurable {
             writer.write("<a href=\"http://www.abclinuxu.cz/Profile/"+author.getId()+"\">"+author.getName()+"</a>");
             writer.write("|");
             String text = Tools.xpath(item, "data/content");
-            writer.write(GenerateLinks.removeNewLines(text));
+            writer.write(Tools.removeNewLines(text));
             writer.write("|");
             writer.write("http://www.abclinuxu.cz/news/show/"+relation.getId());
             writer.write("\n");

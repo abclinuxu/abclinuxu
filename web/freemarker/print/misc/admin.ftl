@@ -19,13 +19,13 @@ projeví.
 <dl>
 
 <dt>Pøiøazování rolí jednotlivým u¾ivatelùm.</dt>
-<dd><a href="${URL.noPrefix("/EditUser?action=grant")}">Grant roles</a></dd>
+<dd><a href="${URL.noPrefix("/EditUser?action=grant")}">pøiøaï roli</a></dd>
 
 <dt>Zneplatnìní emailu u¾ivatelùm</dt>
-<dd><a href="${URL.noPrefix("/EditUser?action=invalidateEmail")}">Invalidate emails</a></dd>
+<dd><a href="${URL.noPrefix("/EditUser?action=invalidateEmail")}">invaliduj emaily</a></dd>
 
 <dt>Seznam skupin</dt>
-<dd><a href="${URL.noPrefix("/Group?action=show")}">Show groups</a></dd>
+<dd><a href="${URL.noPrefix("/Group?action=show")}">uka¾ skupiny</a></dd>
 
 </dl>
 
@@ -37,16 +37,16 @@ projeví.
 
 <h1>Vytvoøení ankety</h1>
 
-<p>Zde je mo¾né vytvoøit anketu.</p>
+<p><a href="${URL.noPrefix("/EditSurvey?action=add")}">Vytvoø anketu</a></p>
 
-<p><a href="${URL.noPrefix("/EditSurvey?action=add")}">Create survey</a></p>
+<h1>Nové vygenerování RSS</h1>
+
+<p><a href="${URL.noPrefix("/Admin?action=refreshRss")}">Obnov RSS</a></p>
 
 
 <h1>Kontrola stavu a statistika</h1>
 
-<p>Kontrola stavu portálu</p>
-
-<p><a href="${URL.noPrefix("/Admin?action=performCheck")}">Perform check</a></p>
+<p><a href="${URL.noPrefix("/Admin?action=performCheck")}">Kontrola stavu portálu</a></p>
 
 <p>Statistické informace o JDBC poolu.</p>
 

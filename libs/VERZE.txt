@@ -7,3 +7,5 @@ commons-fileupload	1.0		http://jakarta.apache.org
 dom4j			1.4		http://dom4j.org/
 lucene			1.4.2		http://jakarta.apache.org
 htmlparser		1.4		http://htmlparser.sourceforge.net
+rome			0.5		http://rome.dev.java.net (RSS) (vyzaduje jdom)
+jdom			1.0		http://www.jdom.org

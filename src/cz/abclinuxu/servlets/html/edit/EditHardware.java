@@ -14,6 +14,7 @@ import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.email.monitor.*;
 import cz.abclinuxu.utils.format.Format;
@@ -194,6 +195,8 @@ public class EditHardware implements AbcAction {
         Relation recordRelation = new Relation(item, record, relation.getId());
         persistance.create(recordRelation);
         recordRelation.getParent().addChildRelation(recordRelation);
+
+        FeedGenerator.updateHardware();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/show/"+relation.getId());
