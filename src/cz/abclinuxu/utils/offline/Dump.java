@@ -9,27 +9,29 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.view.ViewRelation;
-import cz.abclinuxu.servlets.view.ViewCategory;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.template.TemplateSelector;
-import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.servlets.view.ViewCategory;
+import cz.abclinuxu.servlets.view.ViewRelation;
 import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.Sorters2;
+import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
+import cz.abclinuxu.utils.freemarker.FMUtils;
+import freemarker.template.Configuration;
+import freemarker.template.TemplateExceptionHandler;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.text.DecimalFormat;
 import java.text.FieldPosition;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-
-import freemarker.template.Configuration;
-import freemarker.template.TemplateExceptionHandler;
-import freemarker.template.Template;
-import freemarker.ext.beans.BeansWrapper;
+import java.util.Map;
+import java.util.prefs.Preferences;
 
 /**
  * This class is responsible for dumping all
@@ -39,13 +41,12 @@ import freemarker.ext.beans.BeansWrapper;
  * character (27%26=1 => 'a') a filename
  * consists of string "relace" and relationId
  * padded to 5 digits.
- * todo update and test it 
  */
-public class Dump {
+public class Dump implements Configurable {
     Persistance persistance;
     DecimalFormat df;
     Configuration config;
-    Map indexed = new HashMap(30000);
+    Map indexed = new HashMap(50000);
 
     public static void main(String[] args) throws Exception {
         Dump dumper = new Dump();
@@ -53,8 +54,11 @@ public class Dump {
     }
 
     public Dump() throws Exception {
+        ConfigurationManager.getConfigurator().configureMe(this);
         persistance = PersistanceFactory.getPersistance();
-        TemplateSelector.initialize("/home/literakl/abc/deploy/WEB-INF/conf/templates.xml");
+        FMUtils fmUtils = new FMUtils(); // force Freemarker initialization
+        String templateURI = AbcConfig.calculateDeployedPath("WEB-INF/conf/templates.xml");
+        TemplateSelector.initialize(templateURI);
 
         df = new DecimalFormat("#####");
         df.setDecimalSeparatorAlwaysShown(false);
@@ -62,12 +66,8 @@ public class Dump {
         df.setMaximumIntegerDigits(5);
 
         config = Configuration.getDefaultConfiguration();
-        config.setDefaultEncoding("ISO-8859-2");
-        config.setTemplateExceptionHandler(TemplateExceptionHandler.HTML_DEBUG_HANDLER);
-        config.setObjectWrapper(BeansWrapper.getDefaultInstance());
-        config.setStrictSyntaxMode(true);
-        config.setTemplateUpdateDelay(1);
-        config.setDirectoryForTemplateLoading(new File("/home/literakl/abc/deploy/WEB-INF/freemarker"));
+        config.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+        config.setTemplateUpdateDelay(100);
         config.setSharedVariable(Constants.VAR_TOOL,new Tools());
         config.setSharedVariable(Constants.VAR_DATE_TOOL,new DateTool());
         config.setSharedVariable(Constants.VAR_SORTER,new Sorters2());
@@ -122,7 +122,7 @@ public class Dump {
     File getFileName(Relation relation, File currentDir) {
         int id = relation.getId();
         StringBuffer sb = new StringBuffer();
-        sb.append((char)('a'+id%3));
+        sb.append((char)('a'+id%6));
         sb.append((char)('a'+id%26));
         File dir = new File(currentDir,sb.toString());
         dir.mkdirs();
@@ -147,7 +147,7 @@ public class Dump {
      */
     public String getFile(int relationId) {
         StringBuffer sb = new StringBuffer();
-        sb.append((char)('a'+relationId%3));
+        sb.append((char)('a'+relationId%6));
         sb.append((char)('a'+relationId%26));
         sb.append(File.separatorChar);
         sb.append("relace");
@@ -189,12 +189,12 @@ public class Dump {
 
         if ( item.getType()==Item.DISCUSSION ) {
             name = FMTemplateSelector.select("ViewRelation","discussion", env, "offline");
-            processTemplate(name,env,file);
+            FMUtils.executeTemplate(name,env,file);
             return;
         }
         if ( item.getType()==Item.DRIVER ) {
             name = FMTemplateSelector.select("ViewRelation","driver", env, "offline");
-            processTemplate(name,env,file);
+            FMUtils.executeTemplate(name,env,file);
             return;
         }
 
@@ -203,7 +203,7 @@ public class Dump {
 
         if ( item.getType()==Item.ARTICLE ) {
             name = FMTemplateSelector.select("ViewRelation","article", env, "offline");
-            processTemplate(name,env,file);
+            FMUtils.executeTemplate(name,env,file);
             return;
         }
 
@@ -222,7 +222,7 @@ public class Dump {
             else if ( record.getType()== Record.SOFTWARE )
                 name = FMTemplateSelector.select("ViewRelation","software", env, "offline");
 
-            processTemplate(name,env,file);
+            FMUtils.executeTemplate(name,env,file);
         }
     }
 
@@ -242,16 +242,12 @@ public class Dump {
         Tools.sync(category.getContent());
 
         String name = FMTemplateSelector.select("ViewCategory","sekce", env, "offline");
-        processTemplate(name,env,file);
+        FMUtils.executeTemplate(name,env,file);
     }
 
     /**
-     * processes given template and creates file.
+     * Force initialization of subsystems.
      */
-    void processTemplate(String template, Map env, File file) throws Exception {
-        Template tpl = config.getTemplate(template);
-        FileWriter writer = new FileWriter(file);
-        tpl.process(env,writer);
-        writer.close();
+    public void configure(Preferences prefs) throws ConfigurationException {
     }
 }
