@@ -784,12 +784,10 @@ public class MySqlPersistance implements Persistance {
             statement.setString(2,poll.getText());
             statement.setBoolean(3,poll.isMultiChoice());
             long when = 0;
-            if (poll.getCreated()!=null) {
+            if (poll.getCreated()!=null)
                 when = poll.getCreated().getTime();
-            } else {
-                when = new java.util.Date().getTime();
-                poll.setCreated(new java.util.Date(when));
-            }
+            else
+                poll.setCreated(new java.util.Date());
             statement.setTimestamp(4,new Timestamp(when));
             statement.setBoolean(5,poll.isClosed());
 
@@ -877,8 +875,8 @@ public class MySqlPersistance implements Persistance {
             item.setData(new String(tmp));
 
             item.setOwner(resultSet.getInt(5));
-            item.setCreated(resultSet.getTimestamp(6));
-            item.setUpdated(resultSet.getTimestamp(7));
+            item.setCreated(new java.util.Date(resultSet.getTimestamp(6).getTime()));
+            item.setUpdated(new java.util.Date(resultSet.getTimestamp(7).getTime()));
 
             return item;
         } finally {
@@ -983,7 +981,7 @@ public class MySqlPersistance implements Persistance {
             link.setUrl(resultSet.getString(4));
             link.setFixed(resultSet.getBoolean(5));
             link.setOwner(resultSet.getInt(6));
-            link.setUpdated(resultSet.getTimestamp(7));
+            link.setUpdated(new java.util.Date(resultSet.getTimestamp(7).getTime()));
 
             return link;
         } finally {
@@ -1010,7 +1008,7 @@ public class MySqlPersistance implements Persistance {
             Poll poll = new Poll(obj.getId(),resultSet.getInt(2));
             poll.setText(new String(resultSet.getString(3)));
             poll.setMultiChoice(resultSet.getBoolean(4));
-            poll.setCreated(resultSet.getTimestamp(5));
+            poll.setCreated(new java.util.Date(resultSet.getTimestamp(5).getTime()));
             poll.setClosed(resultSet.getBoolean(6));
 
             statement = con.prepareStatement("select volba,pocet from data_ankety where anketa=? order by cislo asc");
