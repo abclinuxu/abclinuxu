@@ -142,11 +142,13 @@ public class TemplateSelector {
         if ( servletAction!=null && ! Misc.empty(servletAction.getForcedTemplate()) )
             return servletAction.getForcedTemplate();
 
-        if ( ! Misc.empty(request.getParameter(PARAM_VARIANTA)) )
-            return request.getParameter(PARAM_VARIANTA);
+        String parameter = request.getParameter(PARAM_VARIANTA);
+        if ( ! Misc.empty(parameter) )
+            return parameter.toLowerCase();
 
-        if ( ! Misc.empty((String) request.getAttribute(PARAM_VARIANTA)) )
-            return (String) request.getAttribute(PARAM_VARIANTA);
+        parameter = (String) request.getAttribute(PARAM_VARIANTA);
+        if ( ! Misc.empty(parameter) )
+            return parameter.toLowerCase();
 
         if ( Misc.same(browser,BROWSER_LYNX) )
             return "lynx";
