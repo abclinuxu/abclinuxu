@@ -78,7 +78,7 @@ public class CommentDecorator {
         text = Tools.removeTags(text);
         env.put(VAR_CONTENT, text);
         env.put(VAR_RELATION_ID, Integer.toString(comment.relationId));
-        env.put(VAR_DISCUSSION_ID, Integer.toString(comment.relationId));
+        env.put(VAR_DISCUSSION_ID, Integer.toString(comment.discussionId));
         env.put(VAR_THREAD_ID, Integer.toString(comment.threadId));
 
         String subject = title+" ["+comment.relationId+","+comment.discussionId+","+comment.threadId+"]";
@@ -88,7 +88,7 @@ public class CommentDecorator {
             Address from = new InternetAddress("diskuse@abclinuxu.cz", authorName);
             env.put(EmailSender.KEY_FROM, from);
         } catch (UnsupportedEncodingException e) {
-            env.put(EmailSender.KEY_FROM, "diskuse@abclinuxu.cz");            
+            env.put(EmailSender.KEY_FROM, "diskuse@abclinuxu.cz");
         }
         env.put(EmailSender.KEY_REPLYTO, "bounce@abclinuxu.cz");
         env.put(EmailSender.KEY_TEMPLATE, "/mail/forum/comment.ftl");
