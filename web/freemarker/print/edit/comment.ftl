@@ -45,7 +45,7 @@ zásady (psán velkými písmeny apod.), nevhodné HTML znaèky ..</p>
   </tr>
  </table>
  <input type="hidden" name="action" value="edit2">
- <input type="hidden" name="rid" value="${PARAMS.rid}">
+ <input type="hidden" name="rid" value="${RELATION.id}">
  <input type="hidden" name="dizId" value="${PARAMS.dizId}">
  <input type="hidden" name="threadId" value="${PARAMS.threadId}">
 </form>

@@ -23,7 +23,7 @@
   </tr>
  </table>
  <input type="hidden" name="action" value="censore2">
- <input type="hidden" name="rid" value="${PARAMS.rid}">
+ <input type="hidden" name="rid" value="${RELATION.id}">
  <input type="hidden" name="dizId" value="${PARAMS.dizId}">
  <input type="hidden" name="threadId" value="${PARAMS.threadId}">
 </form>

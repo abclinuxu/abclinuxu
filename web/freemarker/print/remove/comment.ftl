@@ -21,7 +21,7 @@ musíte smazat v¹echny reakce, které na nìj odkazují.</p>
 <form action="${URL.make("/EditDiscussion")}" method="POST">
  <input type="submit" value="Smazat">
  <input type="hidden" name="action" value="rm2">
- <input type="hidden" name="rid" value="${PARAMS.rid}">
+ <input type="hidden" name="rid" value="${RELATION.id}">
  <input type="hidden" name="dizId" value="${PARAMS.dizId}">
  <input type="hidden" name="threadId" value="${PARAMS.threadId}">
 </form>
