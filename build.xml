@@ -38,7 +38,9 @@
       </fileset>
     </copy>
 
-    <copy todir="${build}/WEB-INF/lib" includes="libs/*.jar"/>
+    <copy todir="${build}/WEB-INF/lib">
+      <fileset dir="libs" includes="*.jar"/>
+    </copy>
   </target>
 
 </project>
