@@ -3,7 +3,6 @@
   <title>${TITLE}</title>
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2">
   <meta name="author" content="Leos Literak">
-  <meta name="design" content="megadesign">
   <meta name="keywords" content="linux,abclinuxu,hardware,USB,SCSI,modem,kernel,ovladač">
  </head>
 <body>
