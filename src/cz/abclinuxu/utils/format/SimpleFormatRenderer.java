@@ -37,7 +37,7 @@ public class SimpleFormatRenderer implements Renderer {
         if (params.containsKey(RENDER_EMOTICONS))
             return renderWithEmoticons(input);
         else
-            return renderWithEmoticons(input);
+            return renderWithoutEmoticons(input);
     }
 
     protected String renderWithEmoticons(String input) {
