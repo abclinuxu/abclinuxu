@@ -51,6 +51,7 @@ public final class SQLTool implements Configurable {
     public static final String PREF_COUNT_RECORDS_BY_TYPE = "count.records.by.type";
     public static final String PREF_COUNT_ITEMS_BY_TYPE = "count.items.by.type";
     public static final String PREF_USERS_WITH_WEEKLY_MAIL = "users.email.weekly";
+    public static final String PREF_USERS_WITH_ROLES = "users.with.roles";
 
 
     private static SQLTool singleton;
@@ -67,7 +68,7 @@ public final class SQLTool implements Configurable {
     private String recordRelationsByUser, articleRelationsByUser, questionRelationsByUser;
     private String countArticlesByUser, countRecordsByUser, countItemsByUser;
     private String countItemsByType, countRecordsByType, countQuestionsByUser;
-    private String usersWithWeeklyMail;
+    private String usersWithWeeklyMail, usersWithRoles;
 
 
     /**
@@ -310,6 +311,31 @@ public final class SQLTool implements Configurable {
             con = persistance.getSQLConnection();
             statement = con.createStatement();
             resultSet = statement.executeQuery(usersWithWeeklyMail);
+            result = new ArrayList();
+            while ( resultSet.next() ) {
+                Integer id = new Integer(resultSet.getInt(1));
+                result.add(id);
+            }
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!",e);
+        } finally {
+            persistance.releaseSQLResources(con,statement,resultSet);
+        }
+        return result;
+    }
+
+    /**
+     * Finds users, that have active email and have subscribed weekly email.
+     * @return list of Integers of user ids.
+     */
+    public List findUsersWithRoles() {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null; Statement statement = null; ResultSet resultSet = null;
+        List result;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.createStatement();
+            resultSet = statement.executeQuery(usersWithRoles);
             result = new ArrayList();
             while ( resultSet.next() ) {
                 Integer id = new Integer(resultSet.getInt(1));
@@ -669,5 +695,6 @@ public final class SQLTool implements Configurable {
         countRecordsByType = prefs.get(PREF_COUNT_RECORDS_BY_TYPE, null);
         countItemsByType = prefs.get(PREF_COUNT_ITEMS_BY_TYPE, null);
         usersWithWeeklyMail = prefs.get(PREF_USERS_WITH_WEEKLY_MAIL, null);
+        usersWithRoles = prefs.get(PREF_USERS_WITH_ROLES, null);
     }
 }

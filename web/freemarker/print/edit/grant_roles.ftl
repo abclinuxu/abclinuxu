@@ -13,9 +13,9 @@
    </td>
   </tr>
   <tr>
-   <td class="required" width="100">Èíslo u¾ivatele</td>
+   <td class="required" width="100">U¾ivatel</td>
    <td>
-    <input type="text" name="userId" value="${PARAMS.userId?if_exists}" size="4" tabindex="2">
+    ${MANAGED.name}
     <div class="error">${ERRORS.userId?if_exists}</div>
    </td>
   </tr>
@@ -26,7 +26,7 @@
   <tr>
    <td class="required" width="100">Jeho role</td>
    <td>
-     <select name="roles" tabindex="3" size="10" multiple="multiple">
+     <select name="roles" tabindex="2" size="10" multiple="multiple">
        <option value="root" <#call isDefined("root")>>Root</option>
        <option value="user admin" <#call isDefined("user admin")>>Administrátor u¾ivatelù</option>
        <option value="category admin" <#call isDefined("category admin")>>Administrátor sekcí</option>
@@ -42,10 +42,11 @@
   </tr>
   <tr>
    <td width="100">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi" tabindex="4"></td>
+   <td><input type="submit" value="Dokonèi" tabindex="3"></td>
   </tr>
  </table>
- <input type="hidden" name="action" value="grant2">
+ <input type="hidden" name="userId" value="${PARAMS.userId}">
+ <input type="hidden" name="action" value="grant3">
 </form>
 
 

@@ -11,6 +11,7 @@ import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.exceptions.DuplicateKeyException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -70,6 +71,7 @@ public class EditUser extends AbcFMServlet {
     public static final String VAR_MANAGED = "MANAGED";
     public static final String VAR_DEFAULT_DISCUSSION_COUNT = "DEFAULT_DISCUSSIONS";
     public static final String VAR_DEFAULT_NEWS_COUNT = "DEFAULT_NEWS";
+    public static final String VAR_USERS = "USERS";
 
     public static final String ACTION_REGISTER = "register";
     public static final String ACTION_REGISTER_STEP2 = "register2";
@@ -89,6 +91,7 @@ public class EditUser extends AbcFMServlet {
     public static final String ACTION_EDIT_SUBSCRIPTION_STEP2 = "subscribe2";
     public static final String ACTION_GRANT_ROLES = "grant";
     public static final String ACTION_GRANT_ROLES_STEP2 = "grant2";
+    public static final String ACTION_GRANT_ROLES_STEP3 = "grant3";
 
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -97,7 +100,8 @@ public class EditUser extends AbcFMServlet {
 
         User managed = (User) InstanceUtils.instantiateParam(PARAM_USER,User.class,params);
         User user = (User) env.get(Constants.VAR_USER);
-        if ( managed==null ) managed = user;
+        if ( managed==null )
+            managed = user;
         if ( managed!=null ) {
             PersistanceFactory.getPersistance().synchronize(managed);
             env.put(VAR_MANAGED, managed);
@@ -165,7 +169,10 @@ public class EditUser extends AbcFMServlet {
             return actionGrant(request, env);
 
         if ( action.equals(ACTION_GRANT_ROLES_STEP2) )
-            return actionGrant2(request, response, env);
+            return actionGrant2(request, env);
+
+        if ( action.equals(ACTION_GRANT_ROLES_STEP3) )
+            return actionGrant3(request, response, env);
 
         throw new MissingArgumentException("Chybí parametr action!");
     }
@@ -540,6 +547,14 @@ public class EditUser extends AbcFMServlet {
      * Shows form for granting roles to the user.
      */
     protected String actionGrant(HttpServletRequest request, Map env) throws Exception {
+        env.put(VAR_USERS,SQLTool.getInstance().findUsersWithRoles());
+        return FMTemplateSelector.select("EditUser", "grantSelect", env, request);
+    }
+
+    /**
+     * Shows form for granting roles to the user.
+     */
+    protected String actionGrant2(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
 
@@ -560,7 +575,7 @@ public class EditUser extends AbcFMServlet {
     /**
      * Manages roles of the user.
      */
-    protected String actionGrant2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    protected String actionGrant3(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
         User user = (User) env.get(Constants.VAR_USER);

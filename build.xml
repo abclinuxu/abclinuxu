@@ -75,10 +75,6 @@
       <fileset dir="web/freemarker" />
     </copy>
 
-    <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF/freemarker/include">
-      <fileset dir="web/include" />
-    </copy>
-
     <copy todir="${DEPLOY_ABCLINUXU}">
       <fileset dir="web/root" />
     </copy>
