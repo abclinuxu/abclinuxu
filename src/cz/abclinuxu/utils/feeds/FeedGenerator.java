@@ -229,7 +229,7 @@ public class FeedGenerator implements Configurable {
             writer.close();
 
             path = AbcConfig.calculateDeployedPath(fileTrafika);
-            writer = getWriter(path);
+            writer = new FileWriter(path);
             writer.write(Constants.isoFormat.format(new Date()));
             writer.write('\n');
             for (Iterator iter = feed.getEntries().iterator(); iter.hasNext();) {
