@@ -6,6 +6,7 @@
 package cz.abclinuxu.utils.search;
 
 import org.apache.lucene.analysis.*;
+import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.de.WordlistLoader;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
@@ -38,9 +39,10 @@ public class AbcCzechAnalyzer extends Analyzer implements Configurable {
      * Tokenizes stream.
      */
     public TokenStream tokenStream(String s, Reader reader) {
-        TokenStream result = new LowerCaseTokenizer(new RemoveDiacriticsReader(reader));
-        result = new StopFilter(result, stopTable);
-        return result;
+        TokenStream stream = new StandardTokenizer(new RemoveDiacriticsReader(reader));
+        stream = new LowerCaseFilter(stream);
+        stream = new StopFilter(stream, stopTable);
+        return stream;
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {

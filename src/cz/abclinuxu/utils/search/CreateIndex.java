@@ -272,7 +272,7 @@ public class CreateIndex implements Configurable {
      */
     static MyDocument indexMake(Item make) {
         Element data = (Element) make.getData().selectSingleNode("data");
-        String title = "", tmp = "", type = "";
+        String title = "", type = "", tmp;
 
         Node node = data.selectSingleNode("name");
         title = node.getText();
@@ -281,7 +281,7 @@ public class CreateIndex implements Configurable {
         for ( Iterator iter = make.getContent().iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
             if (!(relation.getChild() instanceof Record)) continue;
-            Record record = (Record) relation.getChild();
+            Record record = (Record) persistance.findById(relation.getChild());
 
             if ( record.getType()==Record.HARDWARE ) {
                 indexHardware(record, sb);
@@ -292,11 +292,13 @@ public class CreateIndex implements Configurable {
                 type = MyDocument.TYPE_SOFTWARE;
             }
             sb.append(" ");
-            sb.append(tmp);
         }
 
-        MyDocument doc = new MyDocument(Tools.removeTags(tmp));
+        tmp = Tools.removeTags(sb.toString());
+        MyDocument doc = new MyDocument(tmp);
         doc.setTitle(title);
+        if (type.length()==0)
+            log.warn("Unknown type for "+make);
         doc.setType(type);
         return doc;
     }

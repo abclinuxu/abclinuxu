@@ -55,7 +55,8 @@ public class MyDocument {
      * Sets title for the Document.
      */
     public Field setTitle(String title) {
-        Field field = Field.UnIndexed(TITLE,title);
+        Field field = Field.Text(TITLE,title);
+        field.setBoost(3);
         document.add(field);
         return field;
     }
