@@ -16,6 +16,7 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Tools;
 import cz.abclinuxu.utils.email.EmailSender;
+import cz.abclinuxu.exceptions.MissingArgumentException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -61,9 +62,8 @@ public class ViewUser extends AbcFMServlet {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String action = (String) params.get(PARAM_ACTION);
 
-        if ( action==null ) {
-            return handleProfile(request,env);
-        }
+        if ( action==null )
+            throw new MissingArgumentException("Chybí parametr action!");
 
         if ( action.equals(ACTION_LOGIN) ) {
             return handleLogin(request,env);
