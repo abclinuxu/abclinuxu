@@ -18,26 +18,26 @@ import org.apache.log4j.xml.DOMConfigurator;
 public class Measure {
 
     public static void main(String[] args) throws Exception {
-        DOMConfigurator.configure("WEB-INF/log4j.xml");
+        DOMConfigurator.configure("conf/log4j.xml");
         Persistance persistance = PersistanceFactory.getPersistance();
         int  i=0,j=0;
 
         // place initilizaton here
         User user = new User();
         user.setId(1);
-        Record record = new Record(0,Record.HARDWARE);
-        record.setOwner(1);
-        boolean admin=false;
+        Category category = new Category(1);
+        category = (Category) persistance.findById(category);
+        String s = category.getData().selectSingleNode("/data/icon").getText();
 
         long start = System.currentTimeMillis();
-        for (i=0; i<30000; i++) {
+        for (i=0; i<4000; i++) {
             //place your code to measure here
-            admin = record.isManagedBy(user);
+            s = category.getData().selectSingleNode("/data/icon").getText();
         }
         long end = System.currentTimeMillis();
 
         // place clean up here
-        System.out.println("admin = " + admin);
+        System.out.println("s = " + s);
 
         float avg = (end-start)/(float)i;
         System.out.println("celkem = "+(end-start)+" ,prumer = "+avg);
