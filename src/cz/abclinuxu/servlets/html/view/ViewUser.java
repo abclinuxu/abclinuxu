@@ -11,14 +11,19 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.persistance.*;
+import cz.abclinuxu.persistance.extra.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.security.Roles;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+
+import org.dom4j.Element;
 
 /**
  * Profile of the user
@@ -36,6 +41,7 @@ public class ViewUser implements AbcAction {
     public static final String ACTION_LOGIN2 = "login2";
     public static final String ACTION_SEND_EMAIL = "sendEmail";
     public static final String ACTION_SHOW_MY_PROFILE = "myPage";
+    public static final String ACTION_SHOW_MY_OBJECTS = "objekty";
     public static final String ACTION_SEND_PASSWORD = "forgottenPassword";
 
 
@@ -46,40 +52,48 @@ public class ViewUser implements AbcAction {
      * @return name of template to be executed or null
      */
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String action = (String) params.get(PARAM_ACTION);
 
-        if ( action==null )
-            return handleProfile(request, env);
-
-        if ( action.equals(ACTION_LOGIN) )
+        if ( ACTION_LOGIN.equals(action) )
             return handleLogin(request,env);
 
-        if ( action.equals(ACTION_LOGIN2) )
+        if ( ACTION_LOGIN2.equals(action) )
             return handleLogin2(request,response,env);
 
-        if ( action.equals(ACTION_SHOW_MY_PROFILE) ) {
+        User profile = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
+
+        if ( ACTION_SHOW_MY_PROFILE.equals(action) ) {
             User user = (User) env.get(Constants.VAR_USER);
-            User managed = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
-            if (managed==null) {
+            if (profile==null) {
                 if (user==null)
                     return FMTemplateSelector.select("ViewUser", "login", env, request);
                 else
-                    managed = user;
+                    profile = user;
             } else
-                managed = (User) PersistanceFactory.getPersistance().findById(managed);
+                profile = (User) persistance.findById(profile);
 
-            env.put(VAR_PROFILE, managed);
-            if (user==null || (user.getId()!=managed.getId() && !user.hasRole(Roles.USER_ADMIN)))
+            env.put(VAR_PROFILE, profile);
+            if (user==null || (user.getId()!=profile.getId() && !user.hasRole(Roles.USER_ADMIN)))
                 return handleProfile(request, env);
             else
                 return handleMyProfile(request,env);
         }
 
-        if (action.equals(ACTION_SEND_EMAIL))
+        if (profile == null)
+            return ServletUtils.showErrorPage("Chybí parametr uid!", env, request);
+
+        profile = (User) persistance.findById(profile);
+        env.put(VAR_PROFILE, profile);
+
+        if (ACTION_SHOW_MY_OBJECTS.equals(action))
+            return handleMyObjects(request, env);
+
+        if (ACTION_SEND_EMAIL.equals(action))
             return handleSendEmail(request, response, env);
 
-        if (action.equals(ACTION_SEND_PASSWORD))
+        if (ACTION_SEND_PASSWORD.equals(action))
             return handleSendForgottenPassword(request, response, env);
 
         return handleProfile(request,env);
@@ -89,17 +103,45 @@ public class ViewUser implements AbcAction {
      * shows profile for selected user
      */
     protected String handleProfile(HttpServletRequest request, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
         User user = (User) env.get(VAR_PROFILE);
-        if (user==null) {
-            Map params = (Map) env.get(Constants.VAR_PARAMS);
-            Persistance persistance = PersistanceFactory.getPersistance();
 
-            user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
-            if ( user==null )
-                return ServletUtils.showErrorPage("Chybí parametr uid!", env, request);
-            user = (User) persistance.findById(user);
-            env.put(VAR_PROFILE, user);
+        Element settingsBlog = (Element) user.getData().selectSingleNode("/data/settings/blog");
+        if (settingsBlog != null) {
+            int id = Misc.parseInt(settingsBlog.getText(), 0);
+            Category blog = (Category) persistance.findById(new Category(id));
+            env.put(ViewBlog.VAR_BLOG, blog);
+
+            Element element = (Element) blog.getData().selectSingleNode("//settings/page_size");
+            int count = Misc.parseInt((element != null) ? element.getText() : null, ViewBlog.getDefaultPageSize());
+
+            List qualifiers = new ArrayList();
+            qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, new Integer(user.getId())));
+            qualifiers.add(Qualifier.SORT_BY_CREATED);
+            qualifiers.add(Qualifier.ORDER_DESCENDING);
+            qualifiers.add(new LimitQualifier(0, count));
+
+            Qualifier[] qa = new Qualifier[qualifiers.size()];
+            List stories = SQLTool.getInstance().findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+            Tools.syncList(stories);
+            env.put(ViewBlog.VAR_STORIES, stories);
         }
+
+        return FMTemplateSelector.select("ViewUser","profile",env,request);
+    }
+
+    /**
+     * shows profile of logged in user
+     */
+    protected String handleMyProfile(HttpServletRequest request, Map env) throws Exception {
+        return FMTemplateSelector.select("ViewUser","myProfile",env,request);
+    }
+
+    /**
+     * shows numbers of objects
+     */
+    protected String handleMyObjects(HttpServletRequest request, Map env) throws Exception {
+        User user = (User) env.get(VAR_PROFILE);
 
         SQLTool sqlTool = SQLTool.getInstance();
         Map counts = new HashMap();
@@ -112,14 +154,7 @@ public class ViewUser implements AbcAction {
         counts.put("dictionary", new Integer(sqlTool.countRecordRelationsWithUserAndType(user.getId(), Record.DICTIONARY)));
         env.put(VAR_COUNTS, counts);
 
-        return FMTemplateSelector.select("ViewUser","profile",env,request);
-    }
-
-    /**
-     * shows profile of logged in user
-     */
-    protected String handleMyProfile(HttpServletRequest request, Map env) throws Exception {
-        return FMTemplateSelector.select("ViewUser","myProfile",env,request);
+        return FMTemplateSelector.select("ViewUser","counter",env,request);
     }
 
     /**
@@ -154,11 +189,7 @@ public class ViewUser implements AbcAction {
      * shows login screen
      */
     protected String handleSendEmail(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-
-        User user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
-        user = (User) persistance.findById(user);
+        User user = (User) env.get(VAR_PROFILE);
         request.getSession().setAttribute(SendEmail.PREFIX+EmailSender.KEY_TO, user.getEmail());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -170,11 +201,7 @@ public class ViewUser implements AbcAction {
      * Sends forgotten password.
      */
     protected String handleSendForgottenPassword(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-
-        User user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
-        persistance.synchronize(user);
+        User user = (User) env.get(VAR_PROFILE);
 
         Map data = new HashMap();
         data.put(Constants.VAR_USER, user);

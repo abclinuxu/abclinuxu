@@ -386,6 +386,9 @@
     <action name="content" content="/show/mycontent.ftl">
       <var name="TITLE" value="Mùj profil" />
     </action>
+    <action name="counter" content="/show/mycounter.ftl">
+      <var name="TITLE" value="Co jsem publikoval" />
+    </action>
     <action name="login" content="/show/login.ftl">
       <var name="TITLE" value="Pøihlá¹ení do systému" />
     </action>

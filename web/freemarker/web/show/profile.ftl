@@ -77,7 +77,29 @@
   </ul>
 </#if>
 
-<br>
+<#if BLOG?exists>
+    Mùj blog: <a href="/blog/${BLOG.subType}">${TOOL.xpath(BLOG,"//custom/title")?default("blog")}</a>
+    <ul>
+        <#list STORIES as relation>
+            <#assign story=relation.child, url=TOOL.getUrlForBlogStory(BLOG.subType, story.created, relation.id)>
+            <#assign CHILDREN=TOOL.groupByType(story.children)>
+            <#if CHILDREN.discussion?exists>
+                <#assign diz=TOOL.analyzeDiscussion(CHILDREN.discussion[0])>
+            <#else>
+                <#assign diz=TOOL.analyzeDiscussion("UNDEF")>
+            </#if>
+            <li>
+                <a href="${url}">${TOOL.xpath(story, "/data/name")}</a> | ${DATE.show(story.created, "CZ_DMY")}
+                | <span title="<#if diz.responseCount gt 0>poslední ${DATE.show(diz.updated, "CZ_SHORT")}</#if>">
+                    komentáøù: ${diz.responseCount}
+                  </span>
+            </li>
+        </#list>
+    </ul>
+</#if>
+
+<p><a href="/Profile/${PROFILE.id}?action=objekty">Seznam informací, které jsem publikoval na abclinuxu.cz</a></p>
+
 
 <#if TOOL.xpath(PROFILE,"/data/communication/email[@valid='yes']")?exists>
  <form action="${URL.noPrefix("/Profile")}">
@@ -88,23 +110,5 @@
 <#else>
  <p class="error">Administrátoøi oznaèili email u¾ivatele za neplatný!</p>
 </#if>
-
-<h1>Mé</h1>
-<ol>
-  <li><a href="${URL.noPrefix("/History?type=articles&amp;uid="+PROFILE.id)}">èlánky</a>
-  (${COUNTS.article})</li>
-  <li><a href="${URL.noPrefix("/History?type=news&amp;uid="+PROFILE.id)}">zprávièky</a>
-  (${COUNTS.news})</li>
-  <li><a href="${URL.noPrefix("/History?type=questions&amp;uid="+PROFILE.id)}">otázky ve fóru</a>
-  (${COUNTS.question})</li>
-  <li><a href="${URL.noPrefix("/History?type=comments&amp;uid="+PROFILE.id)}">komentáøe</a>
-  (${COUNTS.comment})</li>
-  <li><a href="${URL.noPrefix("/History?type=hardware&amp;uid="+PROFILE.id)}">hardwarové záznamy</a>
-  (${COUNTS.hardware})</li>
-  <li><a href="${URL.noPrefix("/History?type=software&amp;uid="+PROFILE.id)}">softwarové záznamy</a>
-  (${COUNTS.software})</li>
-  <li><a href="${URL.noPrefix("/History?type=dictionary&amp;uid="+PROFILE.id)}">pojmy ve slovníku</a>
-  (${COUNTS.dictionary})</li>
-</ol>
 
 <#include "../footer.ftl">
