@@ -9,8 +9,10 @@
            </layout>
 	</appender>
 
-	<appender name="FILE" class="org.apache.log4j.FileAppender">
+	<appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
            <param name="File" value="/home/literakl/tomcat/webapps/ROOT/logs/abc.log" />
+           <param name="DatePattern" value="'.'yyyy-MM-dd" />
+           <param name="Append" value="true" />
 	       <layout class="org.apache.log4j.PatternLayout">
              <param name="ConversionPattern" value="%d %-5p %C{1} - %m%n"/>
            </layout>
@@ -25,13 +27,13 @@
 	</category>
 
 	<category name="cz.abclinuxu.scheduler.jobs.UpdateLinks">
-	  <priority value="debug" />
+	  <priority value="info" />
 	</category>
 
 	<root>
 	   <priority value="info" />
    	   <appender-ref ref="FILE" />
-   	   <appender-ref ref="STDOUT" />
+<!--      <appender-ref ref="STDOUT" /> -->
 	</root>
 
 </log4j:configuration>
