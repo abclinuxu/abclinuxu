@@ -44,9 +44,7 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í a proto bez odpovìdi
   <tr>
    <td colspan="2">
     <span class="required">Po¾adavek</span><br>
-    <textarea name="text" cols="60" rows="15" tabindex="3">
-        ${PARAMS.text?if_exists?html}
-    </textarea>
+    <textarea name="text" cols="60" rows="15" tabindex="3">${PARAMS.text?if_exists?html}</textarea>
     <span class="error">${ERRORS.text?if_exists}</span>
   </td>
   </tr>
@@ -66,14 +64,22 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í a proto bez odpovìdi
   <#list CHILDREN as relation>
    <tr>
     <td>
-     <b>${DATE.show(relation.child.created,"CZ_FULL")} ${TOOL.xpath(relation.child,"data/author")}</b>
-     <br>
-     ${TOOL.render(TOOL.element(relation.child.data,"data/text"),USER?if_exists)}
-     <br>
-     <a href="${URL.make("/EditRequest?action=email&requestId="+relation.id)}">Poslat email</a>,
-     <a href="${URL.make("/EditRequest?action=deliver&requestId="+relation.id)}">Vyøízeno</a>,
-     <a href="${URL.make("/EditRequest?action=delete&requestId="+relation.id)}">Smazat</a>
-     <a href="${URL.make("/EditRequest?action=todo&requestId="+relation.id)}">Pøesunout do TODO</a>
+    <b>
+        ${DATE.show(relation.child.created,"CZ_FULL")}
+        ${TOOL.xpath(relation.child,"data/author")}
+        <#if USER?exists && USER.hasRole("root")>
+            ${TOOL.xpath(relation.child,"data/email")}
+        </#if>
+    </b>
+    <br>
+    ${TOOL.render(TOOL.element(relation.child.data,"data/text"),USER?if_exists)}
+    <#if USER?exists && USER.hasRole("root")>
+        <br>
+        <a href="${URL.make("/EditRequest?action=email&requestId="+relation.id)}">Poslat email</a>,
+        <a href="${URL.make("/EditRequest?action=deliver&requestId="+relation.id)}">Vyøízeno</a>,
+        <a href="${URL.make("/EditRequest?action=delete&requestId="+relation.id)}">Smazat</a>,
+        <a href="${URL.make("/EditRequest?action=todo&requestId="+relation.id)}">Pøesunout do TODO</a>
+    </#if>
     </td>
    </tr>
   </#list>
