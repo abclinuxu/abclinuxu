@@ -101,62 +101,51 @@ public class UpdateKernel extends TimerTask implements Configurable {
             String line, stable, stablepre, devel, develpre, old22, old22pre, old20, old20pre, ac, dj;
             line = stable = stablepre = devel = develpre = old22 = old22pre = old20 = old20pre = ac = dj = null;
 
-            boolean readSuccess = false;
             BufferedReader reader = getStream();
             while ((line = reader.readLine())!=null) {
                 if ( reStable.match(line) ) {
                     stable = reStable.getParen(3);
-                    readSuccess = true;
                     continue;
                 }
                 if ( reStablepre.match(line) ) {
                     stablepre = reStablepre.getParen(3);
-                    readSuccess = true;
                     continue;
                 }
                 if ( reDevel.match(line) ) {
                     devel = reDevel.getParen(3);
-                    readSuccess = true;
                     continue;
                 }
                 if ( reDevelpre.match(line) ) {
                     develpre = reDevelpre.getParen(3);
-                    readSuccess = true;
                     continue;
                 }
                 if ( reOld22.match(line) ) {
                     old22 = reOld22.getParen(3);
-                    readSuccess = true;
                     continue;
                 }
                 if ( reOld22pre.match(line) ) {
                     old22pre = reOld22pre.getParen(3);
-                    readSuccess = true;
                     continue;
                 }
                 if ( reOld20.match(line) ) {
                     old20 = reOld20.getParen(3);
-                    readSuccess = true;
                     continue;
                 }
                 if ( reOld20pre.match(line) ) {
                     old20pre = reOld20pre.getParen(3);
-                    readSuccess = true;
                     continue;
                 }
                 if ( reAc.match(line) ) {
                     ac = reAc.getParen(3);
-                    readSuccess = true;
                     continue;
                 }
                 if ( reDj.match(line) ) {
                     dj = reDj.getParen(3);
-                    readSuccess = true;
                     continue;
                 }
             }
 
-            if ( !readSuccess ) // sometimes finger returns empty file
+            if ( stable==null ) // sometimes finger returns an empty file
                 return;
 
             String file = AbcConfig.calculateDeployedPath(fileName);
