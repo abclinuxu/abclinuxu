@@ -488,7 +488,7 @@ public class EditHardware extends AbcFMServlet {
     private boolean setIdentification(Map params, Element root) {
         String tmp = (String) params.get(PARAM_IDENTIFICATION);
         if ( tmp!=null && tmp.length()>0 ) {
-            Element element = DocumentHelper.makeElement(root, "note");
+            Element element = DocumentHelper.makeElement(root, "identification");
             element.setText(tmp);
             Format format = FormatDetector.detect(tmp);
             element.addAttribute("format", Integer.toString(format.getId()));
@@ -505,7 +505,7 @@ public class EditHardware extends AbcFMServlet {
     private boolean setNote(Map params, Element root) {
         String tmp = (String) params.get(PARAM_NOTE);
         if ( tmp!=null && tmp.length()>0 ) {
-            Element element = DocumentHelper.makeElement(root, "identification");
+            Element element = DocumentHelper.makeElement(root, "note");
             element.setText(tmp);
             Format format = FormatDetector.detect(tmp);
             element.addAttribute("format", Integer.toString(format.getId()));
