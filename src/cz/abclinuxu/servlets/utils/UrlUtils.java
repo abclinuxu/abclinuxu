@@ -22,7 +22,6 @@ import cz.abclinuxu.servlets.AbcVelocityServlet;
 /**
  * Simple class used for generating URLs, which remembers
  * their prefix and session id.
- * @todo dont share response!
  */
 public class UrlUtils {
 
@@ -58,7 +57,6 @@ public class UrlUtils {
      * Constructs new URL, which doesn't lose context prefix and session id.
      * @param url URL to be encoded
      * @param prefix Prefix overiding default value or null
-     * @param response Valid HttpServletResponse object
      */
     public String make(String url, String prefix) {
         String out = null;
@@ -74,7 +72,6 @@ public class UrlUtils {
     /**
      * Constructs new URL, which doesn't lose context prefix and session id.
      * @param url URL to be encoded
-     * @param response Valid HttpServletResponse object
      */
     public String make(String url) {
         return make(url,null);
@@ -98,7 +95,6 @@ public class UrlUtils {
      * Constructs new URL, which doesn't lose context prefix and session id. This will work
      * with response.redirect().
      * @param url URL to be encoded
-     * @param response Valid HttpServletResponse object
      */
     public String constructRedirectURL(String url) {
         String out = url;
