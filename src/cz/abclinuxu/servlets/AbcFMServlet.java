@@ -47,11 +47,11 @@ public abstract class AbcFMServlet extends HttpServlet implements AbcAction {
             if (fixDeprecatedURL(request,response))
                 return;
 
-            Map data = new HashMap();
-            performInit(request,response,data);
+            Map env = new HashMap();
+            performInit(request,response,env);
 
             long startExec = System.currentTimeMillis();
-            String templateName = process(request,response,data);
+            String templateName = process(request,response,env);
             long endExec = System.currentTimeMillis();
             if ( Misc.empty(templateName) )
                 return;
@@ -67,7 +67,7 @@ public abstract class AbcFMServlet extends HttpServlet implements AbcAction {
             response.setHeader("Pragma","no-cache");
 
             long startRender = System.currentTimeMillis();
-            template.process(data,writer);
+            template.process(env,writer);
             long endRender = System.currentTimeMillis();
             writer.flush();
 

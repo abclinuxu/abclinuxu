@@ -103,10 +103,10 @@ public class ServletUtils implements Configurable {
                 String[] values = request.getParameterValues(name);
 
                 if ( values.length==1 ) {
-                    String value = request.getParameter(name);
+                    String value = values[0];
                     try {
                         value = new String(value.getBytes("ISO-8859-1"));
-                    } catch (UnsupportedEncodingException e) {}
+                    } catch (UnsupportedEncodingException e) {log.error(e);}
                     map.put(name, value.trim());
 
                 } else {
@@ -117,8 +117,7 @@ public class ServletUtils implements Configurable {
                             continue;
                         try {
                             value = new String(value.getBytes("ISO-8859-1"));
-                        } catch (UnsupportedEncodingException e) {
-                        }
+                        } catch (UnsupportedEncodingException e) {log.error(e);}
                         list.add(value);
                     }
                     map.put(name, list);
@@ -210,12 +209,14 @@ public class ServletUtils implements Configurable {
                 user = (User) persistance.findById(new User(loginCookie.id));
             } catch (PersistanceException e) {
                 deleteCookie(cookie,response);
+                log.warn("Nalezena cookie s neznámým u¾ivatelem!");
                 addError(Constants.ERROR_GENERIC,"Nalezena cookie s neznámým u¾ivatelem!",env, null);
                 return;
             }
 
             if ( user.getPassword().hashCode()!=loginCookie.hash ) {
                 deleteCookie(cookie,response);
+                log.warn("Nalezena cookie se ¹patným heslem!");
                 addError(Constants.ERROR_GENERIC,"Nalezena cookie se ¹patným heslem!",env, null);
                 return;
             }

@@ -1243,6 +1243,7 @@ public class MySqlPersistance implements Persistance {
             cache.store(user);
         } catch (SQLException e) {
             if ( e.getErrorCode()==1062 ) {
+                log.warn("Duplicate login. \nUser "+user+"\nStatement: "+statement.toString(),e);
                 throw new DuplicateKeyException("Prihlasovaci jmeno "+user.getLogin()+" je uz registrovano!");
             } else {
                 throw new PersistanceException("Nemohu ulozit zmeny do databaze!",e);
