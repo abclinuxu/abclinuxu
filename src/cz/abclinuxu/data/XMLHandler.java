@@ -25,7 +25,7 @@ public class XMLHandler implements Cloneable {
     /** XML parsed into DOM4J tree */
     protected Document data;
     /** original XML, it is here to allow lazy instantiation */
-    protected String string;
+    protected String stringData;
 
 
     /**
@@ -38,7 +38,7 @@ public class XMLHandler implements Cloneable {
      * Creates XMLHandler, which is not initialized.
      */
     public XMLHandler(String s) {
-        string = s;
+        stringData = s;
     }
 
     /**
@@ -52,7 +52,8 @@ public class XMLHandler implements Cloneable {
      * @return XML data of this object
      */
     public Document getData() {
-        if ( data==null && string!=null ) lazyInit();
+        if ( data==null && stringData!=null )
+            lazyInit();
         return data;
     }
 
@@ -62,7 +63,7 @@ public class XMLHandler implements Cloneable {
     public String getDataAsString() {
         try {
             if ( data==null ) {
-                return (string==null)? "":string;
+                return (stringData==null)? "":stringData;
             }
 
             ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -90,7 +91,7 @@ public class XMLHandler implements Cloneable {
      * sets XML data of this object in String format
      */
     public void setData(String data) {
-        string = data;
+        stringData = data;
     }
 
     /**
@@ -98,9 +99,10 @@ public class XMLHandler implements Cloneable {
      */
     protected void lazyInit() {
         try {
-            this.data = DocumentHelper.parseText(string);
+            this.data = DocumentHelper.parseText(stringData);
+            stringData = null;
         } catch (DocumentException e) {
-            throw new AbcException("Chyba v XML:"+string,AbcException.WRONG_DATA,e);
+            throw new AbcException("Chyba v XML:"+stringData,AbcException.WRONG_DATA,e);
         }
     }
 
@@ -108,7 +110,7 @@ public class XMLHandler implements Cloneable {
         if ( data!=null )
             return new XMLHandler(data);
         else
-            return new XMLHandler(string);
+            return new XMLHandler(stringData);
     }
 
     public String toString() {
