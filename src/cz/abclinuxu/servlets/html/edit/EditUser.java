@@ -861,11 +861,9 @@ public class EditUser implements AbcAction, Configurable {
             ServletUtils.addError(PARAM_EMAIL, "Neplatný email!", env, null);
             return false;
         }
-        if (!email.equals(user.getEmail())) {
-            user.setEmail(email);
-            Element tagEmail = DocumentHelper.makeElement(user.getData(), "/data/communication/email");
-            tagEmail.attribute("valid").setText("yes");
-        }
+        user.setEmail(email);
+        Element tagEmail = DocumentHelper.makeElement(user.getData(), "/data/communication/email");
+        tagEmail.attribute("valid").setText("yes");
         return true;
     }
 
