@@ -34,7 +34,7 @@ public class LRUCache implements Cache,Configurable {
      */
     public LRUCache() {
         try {
-            ConfigurationManager.getConfigurator().configureMe(this);
+            ConfigurationManager.getConfigurator().configureAndRememberMe(this);
         } catch (ConfigurationException e) { log.error(e); }
         data = new CacheLRU(size);
     }

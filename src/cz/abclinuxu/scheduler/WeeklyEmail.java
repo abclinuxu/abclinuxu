@@ -40,7 +40,7 @@ public class WeeklyEmail extends TimerTask implements Configurable {
      * Default constructor.
      */
     public WeeklyEmail() {
-        ConfigurationManager.getConfigurator().configureMe(this);
+        ConfigurationManager.getConfigurator().configureAndRememberMe(this);
     }
 
     public void run() {

@@ -41,7 +41,7 @@ public class EmailSender implements Configurable {
 
     static {
         Configurator configurator = ConfigurationManager.getConfigurator();
-        configurator.configureMe(new EmailSender());
+        configurator.configureAndRememberMe(new EmailSender());
     }
 
     /** FROM attribute of Email */

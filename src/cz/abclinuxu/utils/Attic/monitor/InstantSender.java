@@ -36,7 +36,7 @@ public class InstantSender extends Thread implements Configurable {
     int waitInterval;
 
     private InstantSender() {
-        ConfigurationManager.getConfigurator().configureMe(this);
+        ConfigurationManager.getConfigurator().configureAndRememberMe(this);
         setName("InstantSender");
     }
 

@@ -55,7 +55,7 @@ public class GenerateLinks extends TimerTask implements Configurable {
 
     public GenerateLinks() {
         Configurator configurator = ConfigurationManager.getConfigurator();
-        configurator.configureMe(this);
+        configurator.configureAndRememberMe(this);
 
         generators = new LinksGenerator[4];
         generators[0] = new Trafika(trafika);

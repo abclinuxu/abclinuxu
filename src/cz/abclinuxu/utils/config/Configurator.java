@@ -27,4 +27,15 @@ public interface Configurator {
      * Loads preferences for argument and calls configurable.configure().
      */
     public void configureMe(Configurable configurable) throws ConfigurationException;
+
+    /**
+     * Loads preferences for argument and calls configurable.configure(). It also
+     * remembers the instance, so reconfiguration is possible.
+     */
+    public void configureAndRememberMe(Configurable configurable) throws ConfigurationException;
+
+    /**
+     * Reloads preferences from external file and reconfigures instances, that wished it.
+     */
+    public void reconfigureAll() throws ConfigurationException;
 }

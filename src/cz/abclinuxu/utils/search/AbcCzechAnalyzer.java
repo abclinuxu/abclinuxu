@@ -28,7 +28,7 @@ public class AbcCzechAnalyzer extends Analyzer implements Configurable {
 
     static {
         try {
-            ConfigurationManager.getConfigurator().configureMe(new AbcCzechAnalyzer());
+            ConfigurationManager.getConfigurator().configureAndRememberMe(new AbcCzechAnalyzer());
         } catch (ConfigurationException e) {
             log.error("Cannot configure!", e);
         }

@@ -44,7 +44,7 @@ public class ServletUtils implements Configurable {
 
     static {
         Configurator configurator = ConfigurationManager.getConfigurator();
-        configurator.configureMe(new ServletUtils());
+        configurator.configureAndRememberMe(new ServletUtils());
     }
 
     public static final String PREF_UPLOAD_PATH = "upload.path";

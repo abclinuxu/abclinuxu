@@ -66,7 +66,7 @@ public class ItemDecorator implements Decorator, Configurable {
     }
 
     public ItemDecorator() {
-        ConfigurationManager.getConfigurator().configureMe(this);
+        ConfigurationManager.getConfigurator().configureAndRememberMe(this);
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {

@@ -57,7 +57,7 @@ public class DiscussionDecorator implements Decorator, Configurable {
     }
 
     public DiscussionDecorator() {
-        ConfigurationManager.getConfigurator().configureMe(this);
+        ConfigurationManager.getConfigurator().configureAndRememberMe(this);
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {

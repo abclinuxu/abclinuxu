@@ -15,6 +15,7 @@ import cz.abclinuxu.servlets.utils.template.TemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.utils.search.CreateIndex;
+import cz.abclinuxu.utils.config.ConfigurationManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -55,10 +56,10 @@ public class AdminServlet extends AbcFMServlet {
      * Clears all caches.
      */
     private final String clearCache(HttpServletRequest request, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        persistance.clearCache();
+        PersistanceFactory.getPersistance().clearCache();
         AbcInit.setSharedVariables();
         TemplateSelector.initialize(null);
+        ConfigurationManager.reconfigureAll();
 
         ServletUtils.addMessage("Cache byla promazána.",env,null);
         return FMTemplateSelector.select("Admin", "show", env, request);

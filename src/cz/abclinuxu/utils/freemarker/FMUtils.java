@@ -94,7 +94,7 @@ public class FMUtils implements Configurable {
         config.setDefaultEncoding("ISO-8859-2");
         config.setObjectWrapper(wrapper);
         config.setStrictSyntaxMode(true);
-        config.setTemplateUpdateDelay(1);
+        config.setTemplateUpdateDelay(3);
         String path = prefs.get(PREF_TEMPLATES_DIRECTORY,DEFAULT_TEMPLATES_DIRECTORY);
         String templatesDir = AbcConfig.calculateDeployedPath(path);
         try {

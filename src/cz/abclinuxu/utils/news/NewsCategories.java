@@ -37,8 +37,7 @@ public final class NewsCategories implements Configurable {
      * private constructor, inaccessible outside of this class.
      */
     private NewsCategories() {
-        ConfigurationManager.getConfigurator().configureMe(this);
-        loadCategories();
+        ConfigurationManager.getConfigurator().configureAndRememberMe(this);
     }
 
     /**
@@ -73,6 +72,7 @@ public final class NewsCategories implements Configurable {
      */
     public void configure(Preferences prefs) throws ConfigurationException {
         filename = prefs.get(PREF_NEWS_CATEGORIES_FILE,null);
+        loadCategories();
     }
 
     /**

@@ -21,7 +21,7 @@ public class AbcConfig implements Configurable {
 
     static {
         Configurator configurator = ConfigurationManager.getConfigurator();
-        configurator.configureMe(new AbcConfig());
+        configurator.configureAndRememberMe(new AbcConfig());
     }
 
     public static final String PREF_DEPLOY_PATH = "deploy.path";

@@ -50,7 +50,7 @@ public final class SQLTool implements Configurable {
 
     static {
         singleton = new SQLTool();
-        ConfigurationManager.getConfigurator().configureMe(singleton);
+        ConfigurationManager.getConfigurator().configureAndRememberMe(singleton);
     }
 
     private String relationsRecordByType, relationsItemsByType, relationsSectionByType;

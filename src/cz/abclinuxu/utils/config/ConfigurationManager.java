@@ -41,11 +41,23 @@ public class ConfigurationManager {
     }
 
     /**
+     * Reloads preferences from external file and reconfigures instances, that wished it.
+     */
+    public static void reconfigureAll() throws ConfigurationException {
+        configurator.reconfigureAll();
+    }
+
+    /**
      * Sets default configurator from system properties.
      */
     protected static synchronized void init() {
         if ( configurator!=null ) return;
         String file = System.getProperty(PROPERTY_CONFIG_FILE, null);
+        if ( file==null || file.length()==0 ) {
+            log.fatal("You must set property "+ConfigurationManager.PROPERTY_CONFIG_FILE+"!");
+            System.exit(1);
+        }
+
         Configurator aConfigurator = new SimpleConfigurator(file);
         setConfigurator(aConfigurator);
     }

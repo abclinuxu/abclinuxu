@@ -4,11 +4,6 @@
 <preferences EXTERNAL_XML_VERSION="1.0">
   <root type="system">
     <map/>
-    <node name="autoConfig">
-      <map>
-        <entry key="nodes" value="cz/abclinuxu/utils/config/impl/LoggingConfig"/>
-      </map>
-    </node>
     <node name="cz">
       <map/>
       <node name="abclinuxu">
@@ -21,7 +16,6 @@
               <map/>
               <node name="LoggingConfig">
                 <map>
-                  <entry key="autoConfig" value="cz.abclinuxu.utils.config.impl.LoggingConfig"/>
                   <entry key="file" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/log4j.xml"/>
                 </map>
               </node>
@@ -29,7 +23,7 @@
                 <map>
                   <entry key="deploy.path" value="@DEPLOY_ABCLINUXU@"/>
                   <entry key="viewuser.page.size" value="20"/>
-                  <entry key="viewindex.discussions.count" value="20"/>
+                  <entry key="viewindex.discussions.count" value="5"/>
                   <entry key="template.news.count" value="6"/>
                 </map>
               </node>
@@ -89,7 +83,7 @@
                 <entry key="subject" value="AbcMonitor: zmena v diskusi"/>
                 <entry key="action.add" value="pridal komentar"/>
                 <entry key="action.remove" value="smazal diskusi"/>
-                <entry key="action.censore" value="uvalil cenzura na komentar"/>
+                <entry key="action.censore" value="uvalil cenzuru na komentar"/>
               </map>
             </node>
           </node>
@@ -176,7 +170,7 @@
             </node>
             <node name="WeeklyEmail">
               <map>
-                <entry key="subject" value="tydenni souhrn clanku"/>
+                <entry key="subject" value="Tydenni souhrn clanku"/>
                 <entry key="from" value="admin@abclinuxu.cz"/>
                 <entry key="template" value="/mail/weekly.ftl"/>
               </map>

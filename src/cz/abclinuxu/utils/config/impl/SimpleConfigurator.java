@@ -8,12 +8,12 @@ package cz.abclinuxu.utils.config.impl;
 import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
-import cz.abclinuxu.utils.config.ConfigurationManager;
-import cz.abclinuxu.utils.Misc;
 
 import java.util.prefs.Preferences;
 import java.util.prefs.InvalidPreferencesFormatException;
-import java.util.StringTokenizer;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -28,6 +28,8 @@ public class SimpleConfigurator implements Configurator {
      */
     String configurationFile;
 
+    List watched = new ArrayList();
+
     /**
      * Initializes system preferences from file configurationFile.
      * If file doesn't exist or it cannot be read, this event will
@@ -35,30 +37,33 @@ public class SimpleConfigurator implements Configurator {
      */
     public SimpleConfigurator(String file) {
         this.configurationFile = file;
-        if ( file==null || file.length()==0 ) {
-            log.fatal("You must set property "+ConfigurationManager.PROPERTY_CONFIG_FILE+"!");
-            System.exit(1);
-        }
+        loadPreferences();
+        java.util.logging.Logger logger = java.util.logging.Logger.getLogger("java.util.prefs");
+        logger.setLevel(java.util.logging.Level.OFF);
+    }
 
-        log.info("Loading preferences from file '"+file+"'");
+    /**
+     * Imports Preferences from given file.
+     */
+    private void loadPreferences() {
+        log.info("Loading preferences from file '"+configurationFile+"'");
         FileInputStream fis = null;
         try {
-            fis = new FileInputStream(file);
+            fis = new FileInputStream(configurationFile);
             Preferences.importPreferences(fis);
             log.info("Preferences successfuly loaded!");
-            log.debug("Autoconfig starts ..");
-            autoConfigure();
-            log.debug("Finished autoconfig.");
-            java.util.logging.Logger logger = java.util.logging.Logger.getLogger("java.util.prefs");
-            logger.setLevel(java.util.logging.Level.OFF);
         } catch (IOException e) {
-            log.fatal("Cannot read file '"+file+"'!",e);
+            log.fatal("Cannot read file '"+configurationFile+"'!", e);
             System.exit(1);
         } catch (InvalidPreferencesFormatException e) {
-            log.fatal("Preferences file '"+file+"' is corrupted!",e);
+            log.fatal("Preferences file '"+configurationFile+"' is corrupted!", e);
             System.exit(1);
         } finally {
-            try { if ( fis!=null) fis.close(); } catch (IOException e) { log.warn(e); }
+            try {
+                if ( fis!=null ) fis.close();
+            } catch (IOException e) {
+                log.warn(e);
+            }
         }
     }
 
@@ -77,34 +82,22 @@ public class SimpleConfigurator implements Configurator {
     }
 
     /**
-     * Finds nodes, that shall be configured automatically at start up.
+     * Loads preferences for argument and calls configurable.configure(). It also
+     * remembers the instance, so reconfiguration is possible.
      */
-    void autoConfigure() {
-        Preferences root = Preferences.systemRoot();
-        Preferences auto = root.node(KEY_AUTOCONFIG);
-        String nodes = auto.get(KEY_NODES,"");
-        StringTokenizer stk = new StringTokenizer(nodes," ,\t\n\r\f");
-        while (stk.hasMoreTokens()) {
-            autoConfigureNode(root.node(stk.nextToken()));
-        }
+    public void configureAndRememberMe(Configurable configurable) throws ConfigurationException {
+        watched.add(configurable);
+        configureMe(configurable);
     }
 
     /**
-     * Recursively goes through all descendants and configures
-     * nodes containing KEY_AUTOCONFIG.
+     * Reloads preferences from external file and reconfigures instances, that wished it.
      */
-    void autoConfigureNode(Preferences node) {
-        String autoClass = node.get(KEY_AUTOCONFIG,null);
-        if ( !Misc.empty(autoClass) ) {
-            try {
-                Class aClass = Class.forName(autoClass);
-                Object o = aClass.newInstance();
-                if ( o instanceof Configurable )
-                    ((Configurable)o).configure(node);
-                log.debug("Node "+node.absolutePath()+" configured with class "+autoClass);
-            } catch (Exception e) {
-                log.error("Configuration problem with class '"+autoClass+"'!", e);
-            }
+    public void reconfigureAll() throws ConfigurationException {
+        loadPreferences();
+        for ( Iterator iter = watched.iterator(); iter.hasNext(); ) {
+            Configurable configurable = (Configurable) iter.next();
+            configureMe(configurable);
         }
     }
 

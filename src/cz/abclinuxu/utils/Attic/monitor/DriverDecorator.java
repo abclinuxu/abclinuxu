@@ -63,7 +63,7 @@ public class DriverDecorator implements Decorator, Configurable {
     }
 
     public DriverDecorator() {
-        ConfigurationManager.getConfigurator().configureMe(this);
+        ConfigurationManager.getConfigurator().configureAndRememberMe(this);
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {
