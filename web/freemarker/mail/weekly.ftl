@@ -19,19 +19,16 @@ Prehled zpravicek
 =================
 
 <#list NEWS as news>
- ${news.content}
  ${DATE.show(news.published, "CZ_FULL")} | ${news.author}
-
  Komentaru: ${news.comments}
+
+ ${news.content}
 
  http://www.abclinuxu.cz/news/show/${news.relationId}
 
  ---------------------
 
 </#list>
-
-
-
 Pokud si neprejete dale dostavat tyto emaily, muzete tak ucinit
 na adrese http://www.abclinuxu.cz/EditUser/${USER.id}?action=subscribe
 Vase prihlasovaci jmeno je ${USER.login}.
