@@ -22,6 +22,10 @@
           <param-name>KERNEL</param-name>
           <param-value>auto/kernel.txt</param-value>
         </init-param>
+        <init-param>
+          <param-name>LINKS</param-name>
+          <param-value>auto/abc.dat</param-value>
+        </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
 

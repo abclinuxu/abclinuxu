@@ -17,8 +17,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Category;
 import org.apache.velocity.app.Velocity;
 import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.scheduler.jobs.UpdateKernel;
-import cz.abclinuxu.scheduler.jobs.UpdateLinks;
+import cz.abclinuxu.scheduler.jobs.*;
 import cz.abclinuxu.scheduler.Scheduler;
 
 /**
@@ -56,9 +55,13 @@ public class AbcInit extends HttpServlet {
         String kernel = getInitParameter("KERNEL");
         if ( kernel!=null ) UpdateKernel.setFile(path+kernel);
 
+        String links = getInitParameter("LINKS");
+        if ( kernel!=null ) GenerateLinks.setFile(path+links);
+
         // start scheduler tasks
         startKernelUpdate();
         startLinksUpdate();
+        startGenerateLinks();
 
         log.info("Inicializace je hotova.");
     }
@@ -85,5 +88,12 @@ public class AbcInit extends HttpServlet {
      */
     protected void startKernelUpdate() {
         Scheduler.getScheduler().addTask(new UpdateKernel(),5*60*1000,0);
+    }
+
+    /**
+     * Generate file with newest links each hour, starting now
+     */
+    protected void startGenerateLinks() {
+        Scheduler.getScheduler().addTask(new GenerateLinks(),60*60*1000,0);
     }
 }
