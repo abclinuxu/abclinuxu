@@ -7,10 +7,9 @@ package cz.abclinuxu.scheduler;
 
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.view.ShowOlder;
-import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.SQLTool;
 
 import java.util.*;
 
@@ -29,14 +28,12 @@ public class VariableFetcher extends TimerTask {
     Poll currentPoll;
 
     Persistance persistance;
-    VelocityHelper helper;
 
     /**
      * Public constructor
      */
     public VariableFetcher() {
         persistance = PersistanceFactory.getPersistance();
-        helper = new VelocityHelper();
         newHardware = new ArrayList(3);
         newSoftware = new ArrayList(3);
         newDrivers = new ArrayList(3);
@@ -94,77 +91,22 @@ public class VariableFetcher extends TimerTask {
         log.debug("fetching variables");
         try {
             // put counts into map
-            List list = persistance.findByCommand("select count(cislo) from zaznam where typ=1");
-            List tmpList = null;
-
-            Object[] objects = (Object[]) list.get(0);
-            counter.put("HARDWARE",objects[0]);
-
-            list = persistance.findByCommand("select count(cislo) from zaznam where typ=2");
-            objects = (Object[]) list.get(0);
-            counter.put("SOFTWARE",objects[0]);
-
-            list = persistance.findByCommand("select count(cislo) from polozka where typ=5");
-            objects = (Object[]) list.get(0);
-            counter.put("DRIVERS",objects[0]);
-
+            Integer i = SQLTool.getInstance().getDriversCount();
+            counter.put("HARDWARE",i);
+            i = SQLTool.getInstance().getDriversCount();
+            counter.put("SOFTWARE",i);
+            i = SQLTool.getInstance().getDriversCount();
+            counter.put("DRIVERS",i);
             Category forum = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
             counter.put("FORUM",new Integer(forum.getContent().size()));
-
             Category requests = (Category) persistance.findById(new Category(Constants.CAT_REQUESTS));
             counter.put("REQUESTS",new Integer(requests.getContent().size()));
 
-            // find current poll
-            list = persistance.findByCommand("select max(cislo) from anketa");
-            objects = (Object[]) list.get(0);
-            int id = ((Integer)objects[0]).intValue();
-            currentPoll = (Poll) persistance.findById(new Poll(id));
-            if ( currentPoll.isClosed() )
-                currentPoll = null;
-
-            // find new hardware records
-            tmpList = new ArrayList(SIZE);
-            list = persistance.findByCommand(ShowOlder.SQL_HARDWARE+" limit "+SIZE);
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                objects = (Object[]) iter.next();
-                id = ((Integer)objects[0]).intValue();
-                Relation found = (Relation) persistance.findById(new Relation(id));
-                tmpList.add(found);
-            }
-            newHardware = tmpList;
-
-            // find new software
-            tmpList = new ArrayList(SIZE);
-            list = persistance.findByCommand(ShowOlder.SQL_SOFTWARE+" limit "+SIZE);
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                objects = (Object[]) iter.next();
-                id = ((Integer)objects[0]).intValue();
-                Relation found = (Relation) persistance.findById(new Relation(id));
-                tmpList.add(found);
-            }
-            newSoftware = tmpList;
-
-            // find new drivers
-            tmpList = new ArrayList(SIZE);
-            list = persistance.findByCommand(ShowOlder.SQL_DRIVERS+" limit "+SIZE);
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                objects = (Object[]) iter.next();
-                id = ((Integer)objects[0]).intValue();
-                Relation found = (Relation) persistance.findById(new Relation(id));
-                tmpList.add(found);
-            }
-            newDrivers = tmpList;
-
-            // find new articles
-            tmpList = new ArrayList(ARTICLE_SIZE);
-            list = persistance.findByCommand(ShowOlder.SQL_ARTICLES+" limit "+ARTICLE_SIZE);
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                objects = (Object[]) iter.next();
-                id = ((Integer)objects[0]).intValue();
-                Relation found = (Relation) persistance.findById(new Relation(id));
-                tmpList.add(found);
-            }
-            newArticles = tmpList;
+            currentPoll = SQLTool.getInstance().findActivePoll();
+            newHardware = SQLTool.getInstance().findHardwareRelationsByUpdated(0,SIZE);
+            newSoftware = SQLTool.getInstance().findSoftwareRelationsByUpdated(0,SIZE);
+            newDrivers = SQLTool.getInstance().findDriverRelationsByUpdated(0,SIZE);
+            newArticles = SQLTool.getInstance().findArticleRelationsByUpdated(0,ARTICLE_SIZE);
 
             log.debug("finished fetching variables");
         } catch (Exception e) {

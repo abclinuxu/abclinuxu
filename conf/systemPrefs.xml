@@ -65,6 +65,15 @@
           <node name="SQLTool">
             <map>
               <entry key="max.record.created.of.item" value="select max(vytvoreno) from relace R left join zaznam Z on Z.cislo=R.potomek where R.typ_predka='P' and R.predek="/>
+              <entry key="hardware.relations.by.updated" value="select R.cislo from zaznam Z, relace R where typ=1 and Z.cislo=R.potomek and typ_potomka='Z' order by zmeneno desc"/>
+              <entry key="software.relations.by.updated" value="select R.cislo from zaznam Z, relace R where typ=2 and Z.cislo=R.potomek and typ_potomka='Z' order by zmeneno desc"/>
+              <entry key="driver.relations.by.updated" value="select R.cislo from polozka P, relace R where typ=5 and P.cislo=R.potomek and typ_potomka='P' order by zmeneno desc"/>
+              <entry key="article.relations.by.created" value="select R.cislo from polozka P, relace R where R.predchozi in (2,3,4,5,6,251,5324,8546,12448) and R.typ_potomka='P' and P.typ=2 and P.cislo=R.potomek and P.vytvoreno&lt;now() order by vytvoreno desc"/>
+              <entry key="discussion.relations.by.created" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek where R.typ_potomka='P' and R.typ_predka='K' and P.typ=3 order by P.vytvoreno desc"/>
+              <entry key="count.hardware.records" value="select count(cislo) from zaznam where typ=1"/>
+              <entry key="count.software.records" value="select count(cislo) from zaznam where typ=2"/>
+              <entry key="count.driver.items" value="select count(cislo) from polozka where typ=5"/>
+              <entry key="max.poll" value="select max(cislo) from anketa"/>
             </map>
           </node>
         </node>

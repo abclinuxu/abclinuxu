@@ -116,11 +116,9 @@ public class GenerateLinks extends TimerTask implements Configurable {
                 }
             }
 
-            list = persistance.findByCommand(ShowOlder.SQL_HARDWARE+" limit "+3);
+            list = SQLTool.getInstance().findHardwareRelationsByUpdated(0,3);
             for (Iterator iter = list.iterator(); iter.hasNext();) {
-                Object[] objects = (Object[]) iter.next();
-                int id = ((Integer)objects[0]).intValue();
-                Relation found = (Relation) persistance.findById(new Relation(id));
+                Relation found = (Relation) iter.next();
                 Item item = (Item) found.getParent();
                 persistance.synchronize(item);
 
@@ -148,11 +146,9 @@ public class GenerateLinks extends TimerTask implements Configurable {
 //                }
 //            }
 
-            list = persistance.findByCommand(ShowOlder.SQL_DRIVERS+" limit "+1);
+            list = SQLTool.getInstance().findDriverRelationsByUpdated(0,1);
             for (Iterator iter = list.iterator(); iter.hasNext();) {
-                Object[] objects = (Object[]) iter.next();
-                int id = ((Integer)objects[0]).intValue();
-                Relation found = (Relation) persistance.findById(new Relation(id));
+                Relation found = (Relation) iter.next();
                 Item item = (Item) found.getChild();
                 persistance.synchronize(item);
 

@@ -12,6 +12,7 @@ import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.data.Relation;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,11 +48,6 @@ public class ShowOlder extends AbcFMServlet {
     /** normalized type */
     public static final String VAR_TYPE = "TYPE";
 
-    public static final String SQL_HARDWARE = "select R.cislo from zaznam Z, relace R where typ=1 and Z.cislo=R.potomek and typ_potomka='Z' order by zmeneno desc";
-    public static final String SQL_SOFTWARE = "select R.cislo from zaznam Z, relace R where typ=2 and Z.cislo=R.potomek and typ_potomka='Z' order by zmeneno desc";
-    public static final String SQL_DRIVERS = "select R.cislo from polozka P, relace R where typ=5 and P.cislo=R.potomek and typ_potomka='P' order by zmeneno desc";
-    public static final String SQL_ARTICLES = "select R.cislo from polozka P, relace R where R.predchozi in (2,3,4,5,6,251,5324,8546,12448) and R.typ_potomka='P' and P.typ=2 and P.cislo=R.potomek and P.vytvoreno<now() order by vytvoreno desc";
-
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
@@ -61,32 +57,26 @@ public class ShowOlder extends AbcFMServlet {
         int count = Misc.parseInt((String)params.get(PARAM_COUNT),10);
         count = Misc.limit(count,1,50);
 
-        List found = null, result = new ArrayList(count);
-        String sql = null;
+        List found = new ArrayList(count);
 
-        if ( "hardware".equalsIgnoreCase(type) ) {
-            sql = SQL_HARDWARE;
+        if ( "articles".equalsIgnoreCase(type) ) {
+            found = SQLTool.getInstance().findArticleRelationsByUpdated(from,count);
+            env.put(VAR_TYPE,"articles");
+        } else if ( "hardware".equalsIgnoreCase(type) ) {
+            found = SQLTool.getInstance().findHardwareRelationsByUpdated(from,count);
             env.put(VAR_TYPE,"hardware");
         } else if ( "software".equalsIgnoreCase(type) ) {
-            sql = SQL_SOFTWARE;
+            found = SQLTool.getInstance().findSoftwareRelationsByUpdated(from,count);
             env.put(VAR_TYPE,"software");
-        } else if ( "articles".equalsIgnoreCase(type) ) {
-            sql = SQL_ARTICLES;
-            env.put(VAR_TYPE,"articles");
+        } else if ( "discussions".equalsIgnoreCase(type) ) {
+            found = SQLTool.getInstance().findDiscussionRelationsByUpdated(from,count);
+            env.put(VAR_TYPE,"discussions");
         } else {
-            ServletUtils.addError(PARAM_TYPE,"Chybí parametr typ!",env,null);
+            ServletUtils.addError(PARAM_TYPE,"Chybí parametr type!",env,null);
             return FMTemplateSelector.select("ViewIndex","show",env,request);
         }
 
-        found = persistance.findByCommand(sql+" limit "+from+","+count);
-        for (Iterator iter = found.iterator(); iter.hasNext();) {
-            Object[] objects = (Object[]) iter.next();
-            int id = ((Integer)objects[0]).intValue();
-            Relation relation = (Relation) persistance.findById(new Relation(id));
-            result.add(relation);
-        }
-
-        env.put(VAR_FOUND,result);
+        env.put(VAR_FOUND,found);
         env.put(VAR_FROM,new Integer(from));
         env.put(VAR_COUNT,new Integer(count));
 
