@@ -37,6 +37,10 @@
 	  <priority value="info" />
 	</category>
 
+	<category name="cz.abclinuxu.utils.email">
+	  <priority value="debug" />
+	</category>
+
 	<category name="org.velocity">
 	  <priority value="fatal" />
 	</category>

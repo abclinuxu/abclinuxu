@@ -13,21 +13,24 @@ import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.data.User;
+import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistance.PersistanceFactory;
 
 import javax.mail.*;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.InternetAddress;
 import java.util.*;
 import java.util.prefs.Preferences;
-import java.io.IOException;
 
-import freemarker.template.TemplateException;
+import org.apache.log4j.Logger;
 
 /**
  * Helper class for sending emails.
  */
 public class EmailSender implements Configurable {
-    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EmailSender.class);
+    static Logger log = org.apache.log4j.Logger.getLogger(EmailSender.class);
 
     /** preferences key for SMTP server, we shall used to send emails */
     public static final String PREF_SMTP_SERVER = "smtp.server";
@@ -97,64 +100,70 @@ public class EmailSender implements Configurable {
      */
     public static boolean sendEmail(String from, String to, String subject, String content) {
         Map map = new HashMap(4);
-        map.put(KEY_FROM,from); map.put(KEY_TO,to);
-        map.put(KEY_SUBJECT,subject); map.put(KEY_BODY,content);
+        map.put(KEY_FROM,from);
+        map.put(KEY_TO,to);
+        map.put(KEY_SUBJECT,subject);
+        map.put(KEY_BODY,content);
         return sendEmail(map);
     }
 
     /**
-     * Sends bulk email.
-     * @param from sender information
-     * @param subject subject of the email
-     * @param data Map holding recepients/content. Recepient's email is a key for his content.
-     * @return number of successfully sent emails.
+     * Sends email to users from given list. Users are taken sequentally from database
+     * and inserted into map defaults under key Constants.VAR_USER.
+     * @param params map with parameters
+     * @param users list of Integers - ids of users.
+     * @return number of sent emails.
      */
-    public static int sendBulkEmail(String from, String subject, Map data) {
-        Properties props = new Properties();
-        Session session = Session.getDefaultInstance(props,null);
+    public static int sendEmailToUsers(Map params, List users) {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        String from = (String) params.get(KEY_FROM), subject = (String) params.get(KEY_SUBJECT);
+        Session session = Session.getDefaultInstance(new Properties(), null);
         session.setDebug(false);
-        Transport transport = null;
-        MimeMessage message = null;
+
+        int count = 0, total = users.size();
+        User user = new User();
+        log.info("sendEmailToUsers(): about to send email to "+total+" users.");
+        log.info("sendEmailToUsers(): from="+from+", subject="+subject);
 
         try {
-            transport = session.getTransport("smtp");
-            transport.connect(smtpServer,null,null);
+            Transport transport = session.getTransport("smtp");
+            transport.connect(smtpServer, null, null);
 
-            message = new MimeMessage(session);
-            Address fromAddress = new InternetAddress(from);
-            message.setFrom(fromAddress);
+            MimeMessage message = new MimeMessage(session);
             message.setSubject(subject);
-        } catch (MessagingException e) {
-            log.error("Cannot contact SMTP server!",e);
-            return 0;
-        }
+            message.setFrom(new InternetAddress(from));
 
-        Set keys = data.keySet();
-        int i = 0;
-        for (Iterator iter = keys.iterator(); iter.hasNext();i++) {
-            String to = (String) iter.next();
-            String content = (String) data.get(to);
-            try {
-                message.setText(content);
-                Address toAddress = new InternetAddress(to);
-                message.setRecipient(Message.RecipientType.TO,toAddress);
-                message.saveChanges();
+            for ( Iterator iter = users.iterator(); iter.hasNext(); ) {
+                try {
+                    user.setId(((Integer) iter.next()).intValue());
+                    user = (User) persistance.findById(user);
+                    params.put(Constants.VAR_USER, user);
+                    String to = user.getEmail();
 
-                transport.sendMessage(message,message.getAllRecipients());
+                    message.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
+                    message.setText(getEmailBody(params));
+                    message.saveChanges();
 
-                if ( log.isDebugEnabled() ) log.debug("Email sent from "+from+" to "+to+".");
-            } catch (MessagingException e) {
-                log.error("Cannot send email to "+to,e);
-                i--;
+                    transport.sendMessage(message, message.getAllRecipients());
+                    count++;
+                    if ( log.isDebugEnabled() ) log.debug("Email "+count+"/"+total+" sent to "+to+".");
+                } catch (Exception e) {
+                    log.warn("Cannot send email to user "+user.getId()+", TO="+user.getEmail(),e);
+                }
             }
+            transport.close();
+        } catch (MessagingException e) {
+            log.error("Error - is JavaMail set up correctly?", e);
         }
-        return i;
+        log.info("sendEmailToUsers(): sent "+count+" emails.");
+
+        return count;
     }
 
     /**
      * Finds content of email in params.
      */
-    static String getEmailBody(Map params) throws MissingArgumentException, NotFoundException {
+    private static String getEmailBody(Map params) throws MissingArgumentException, NotFoundException {
         String body = (String) params.get(KEY_BODY);
         if ( body!=null && body.length()>0 )
             return body;

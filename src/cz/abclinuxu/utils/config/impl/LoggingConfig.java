@@ -17,7 +17,7 @@ import org.apache.log4j.xml.DOMConfigurator;
 /**
  * Configures logging. It shall be one of the first
  * things to be called.
- * @todo: use -Dlog4j.configuration=log4j.xml everywhere
+ * todo: use -Dlog4j.configuration=log4j.xml everywhere
  * or look at jakarta logging for better solution.
  */
 public class LoggingConfig implements Configurable {
@@ -46,5 +46,11 @@ public class LoggingConfig implements Configurable {
             DOMConfigurator.configure(file);
             hasBeenConfigured = true;
         }
+    }
+
+    /**
+     * Initializes logging subsystem.
+     */
+    public static void initialize() {
     }
 }

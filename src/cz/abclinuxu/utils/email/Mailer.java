@@ -6,95 +6,144 @@
  */
 package cz.abclinuxu.utils.email;
 
-import cz.abclinuxu.persistance.*;
-import cz.abclinuxu.data.User;
-import cz.abclinuxu.data.GenericObject;
-import cz.abclinuxu.servlets.utils.VelocityHelper;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.config.impl.LoggingConfig;
+import cz.abclinuxu.utils.config.Configurator;
+import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationException;
 
 import java.util.*;
-import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
+import java.util.prefs.Preferences;
+import java.io.*;
 
 import org.apache.log4j.*;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
 
 /**
- * template for sending bulk sms
+ * Sends templated email to selected users.
  */
-public class Mailer {
+public class Mailer implements Configurable {
     static Logger log = Logger.getLogger(Mailer.class);
 
-    Persistance persistance = PersistanceFactory.getPersistance();
+    static {
+        Configurator configurator = ConfigurationManager.getConfigurator();
+        configurator.configureMe(new Mailer());
+    }
 
     public static void main(String[] args) throws Exception {
-        boolean test = true;
-        if ( args!=null && args.length==1 && args[0].equals("send") ) test = false;
+        showHelp();
 
-        setupLog();
-        Velocity.init("/home/literakl/abc/deploy/WEB-INF/velocity.properties");
-
-        Mailer mailer = new Mailer();
-        mailer.doWork(test);
-    }
-
-    void doWork(boolean test) {
-        int max = 1223;
-        Map data = new HashMap(10);
-
-        for ( int i=1; i<=max; i++ ) {
-            addUsersEmail(i,data);
-            if ( data.size()>9 ) {
-                if ( test ) {
-                    simulate(data);
-                } else {
-                    EmailSender.sendBulkEmail("admin@AbcLinuxu.cz","Zprava pro uzivatele Linux Hardware",data);
-                }
-                data.clear();
-            }
+        if (args.length!=4) {
+            System.out.println("Invalid number of parameters!\n");
+            System.exit(1);
         }
-        if ( test ) {
-            simulate(data);
-        } else {
-            if ( data.size()>0 ) EmailSender.sendBulkEmail("admin@AbcLinuxu.cz","Zprava pro uzivatele Linux Hardware",data);
+
+        String inputFile = args[0];
+        String template = args[1];
+        String sender = args[2];
+        String subject = args[3];
+
+        boolean error = false;
+        if ( Misc.empty(template) ) error = true;
+        if ( Misc.empty(sender) ) error = true;
+        if ( Misc.empty(subject) ) error = true;
+        List users = readIntegersFromFile(inputFile);
+        if (error) {
+            System.out.println("Invalid parameters! They cannot be empty!\n");
+            System.exit(1);
         }
-    }
 
-    private void addUsersEmail(int id, Map map) {
-        try {
-            LogManager.getRootLogger().setLevel(Level.OFF);
-            User user = (User) persistance.findById(new User(id));
-            LogManager.getRootLogger().setLevel(Level.ALL);
+        System.out.println("Press enter to continue with sending "+users.size()+" emails.");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        String tmp = reader.readLine();
+        System.out.println("This utility can be used only by administrators! Select users carefully!");
+        System.out.println("Send emails only to users, who subscribed them!");
+        System.out.println("\n\n");
 
-            VelocityContext tmpContext = new VelocityContext();
-            tmpContext.put("USER",user);
-            String message = VelocityHelper.mergeTemplate("mail/first.vm",tmpContext);
-
-            String email = user.getEmail();
-            map.put(email,message);
-        } catch (PersistanceException e) {
-            LogManager.getRootLogger().setLevel(Level.ALL);
+        System.out.println("Press enter to continue");
+        tmp = reader.readLine();
+        System.out.println("OK, about to send emails. If you are not sure, quit application now.");
+        int random = new Random().nextInt();
+        System.out.println("To prevent random usage, enter following number: "+random);
+        tmp = reader.readLine();
+        int answear = Misc.parseInt(tmp,Integer.MAX_VALUE);
+        if ( random!=answear ) {
+            System.out.println("Your answear differs, quitting now.");
+            System.exit(1);
         }
+
+        Map map = new HashMap(10);
+        map.put(EmailSender.KEY_FROM,sender);
+        map.put(EmailSender.KEY_SUBJECT,subject);
+        map.put(EmailSender.KEY_TEMPLATE,template);
+
+        LoggingConfig.initialize();
+        log.info("EmailSender called by "+System.getProperty("user.name")+", sender="+sender+
+                 ", subject="+subject+", template="+template+", "+users.size()+" recepients.");
+
+//        setupLog(); //redirect log to file in user's home directory
+
+        System.out.println("\n\nLet's rock n' roll!");
+        EmailSender.sendEmailToUsers(map,users);
+        System.out.println("Finished.\n");
     }
 
     /**
-     * Run Mailer with this method first to verify impact!
+     * Shows instructions, how to use this application.
      */
-    private void simulate(Map map) {
-        for (Iterator it = map.keySet().iterator(); it.hasNext();) {
-            String s = (String) it.next();
-            String d = (String) map.get(s);
-            log.info(s+"\n\n"+d);
-        }
+    private static void showHelp() {
+        System.out.println("Mailer is utility to send templated email to given list of users.\n");
+        System.out.println("Usage: mailer.sh input template from subject");
+        System.out.println("where");
+        System.out.println("\t input \t\t input file with users, one number per line");
+        System.out.println("\t template \t template with text, relative path to freemarker root");
+        System.out.println("\t from \t\t email address of sender of the email");
+        System.out.println("\t subject \t subject of the email");
+        System.out.println("Example");
+        System.out.println("mailer.sh ~/users.txt /mail/zpravodaj.ftl admin@abclinuxu.cz \"Zpravodaj 8/03\"");
+        System.out.println("\n\n");
     }
 
+    /**
+     * Converts text file with single number on line to list of Integers.
+     * Empty lines, texts, non-natural numbers are skipped.
+     * @param file
+     * @return
+     * @throws Exception
+     */
+    private static List readIntegersFromFile(String file) throws Exception {
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        List list = new ArrayList(500);
+        String line = reader.readLine();
+        int i = -1;
+        while (line!=null) {
+            i = Misc.parseInt(line,-1);
+            if (i>0)
+                list.add(new Integer(i));
+            line = reader.readLine();
+        }
+        return list;
+    }
+
+    /**
+     * Sets up logging.
+     */
     private static void setupLog() {
         try {
-            FileOutputStream os = new FileOutputStream("/home/literakl/mail_result.txt",true);
+            String home = System.getProperty("user.home");
+            FileOutputStream os = new FileOutputStream(home+File.separatorChar+"mail_result.txt",true);
             WriterAppender appender = new WriterAppender(new PatternLayout(),os);
             BasicConfigurator.configure(appender);
         } catch (FileNotFoundException e) {
             System.err.println(e.getMessage());
         }
+    }
+
+    /**
+     * To force configuration of log4j
+     * @param prefs
+     * @throws ConfigurationException
+     */
+    public void configure(Preferences prefs) throws ConfigurationException {
     }
 }

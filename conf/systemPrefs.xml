@@ -40,6 +40,14 @@
               </map>
             </node>
           </node>
+          <node name="freemarker">
+            <map/>
+            <node name="FMUtils">
+              <map>
+                <entry key="directory.templates" value="WEB-INF/freemarker"/>
+              </map>
+            </node>
+          </node>
           <node name="email">
             <map/>
             <node name="EmailSender">
@@ -59,7 +67,7 @@
           </node>
           <node name="LRUCache">
             <map>
-              <entry key="size" value="3000"/>
+              <entry key="size" value="4000"/>
             </map>
           </node>
           <node name="SQLTool">

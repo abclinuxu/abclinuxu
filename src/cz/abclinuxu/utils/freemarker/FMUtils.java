@@ -7,18 +7,36 @@ package cz.abclinuxu.utils.freemarker;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import freemarker.template.Configuration;
+import freemarker.ext.beans.BeansWrapper;
 
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.IOException;
+import java.io.File;
 import java.util.Map;
+import java.util.prefs.Preferences;
+
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.Configurator;
+import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 
 /**
  * Various FreeMarker's utilities.
  */
-public class FMUtils {
-    static Configuration config = Configuration.getDefaultConfiguration();
+public class FMUtils implements Configurable {
+
+    /** Directory, where templates are located. Use relative path to deploy_path */
+    public static final String PREF_TEMPLATES_DIRECTORY = "directory.templates";
+    public static final String DEFAULT_TEMPLATES_DIRECTORY = "WEB-INF/freemarker";
+
+    static freemarker.template.Configuration config;
+
+    static {
+        Configurator configurator = ConfigurationManager.getConfigurator();
+        configurator.configureMe(new FMUtils());
+    }
 
     /**
      * Executes given code using variables from data.
@@ -46,5 +64,26 @@ public class FMUtils {
         StringWriter writer = new StringWriter();
         template.process(data,writer);
         return writer.toString();
+    }
+
+    /**
+     * Callback to configure this instance.
+     * @param prefs
+     * @throws ConfigurationException
+     */
+    public void configure(Preferences prefs) throws ConfigurationException {
+        config = freemarker.template.Configuration.getDefaultConfiguration();
+        BeansWrapper wrapper = BeansWrapper.getDefaultInstance();
+        config.setDefaultEncoding("ISO-8859-2");
+        config.setObjectWrapper(wrapper);
+        config.setStrictSyntaxMode(true);
+        config.setTemplateUpdateDelay(1);
+        String path = prefs.get(PREF_TEMPLATES_DIRECTORY,DEFAULT_TEMPLATES_DIRECTORY);
+        String templatesDir = AbcConfig.calculateDeployedPath(path);
+        try {
+            config.setDirectoryForTemplateLoading(new File(templatesDir));
+        } catch (IOException e) {
+            throw new ConfigurationException("Cannot set Freemarker templates dir to "+templatesDir);
+        }
     }
 }
