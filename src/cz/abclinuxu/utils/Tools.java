@@ -341,6 +341,8 @@ public class Tools {
                 }
             } else if ( child instanceof Record ) {
                 Misc.storeToMap(map,Constants.TYPE_RECORD,relation);
+            } else if ( child instanceof User ) {
+                Misc.storeToMap(map,Constants.TYPE_USER,relation);
             }
         }
         return map;
