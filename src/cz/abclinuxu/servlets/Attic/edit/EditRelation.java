@@ -86,7 +86,7 @@ public class EditRelation implements AbcAction {
         String action = (String) params.get(PARAM_ACTION);
         User user = (User) env.get(Constants.VAR_USER);
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT,PARAM_RELATION,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         relation = (Relation) persistance.findById(relation);
         env.put(VAR_CURRENT, relation);
 
@@ -192,7 +192,7 @@ public class EditRelation implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_SELECTED,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_SELECTED, Relation.class, params, request);
         if ( relation!=null ) {
             relation = (Relation) persistance.findById(relation);
             env.put(VAR_SELECTED,relation);
@@ -205,7 +205,7 @@ public class EditRelation implements AbcAction {
         Persistance persistance = PersistanceFactory.getPersistance();
 
         Relation parent = (Relation) env.get(VAR_CURRENT);
-        Relation child = (Relation) InstanceUtils.instantiateParam(PARAM_SELECTED,Relation.class,params);
+        Relation child = (Relation) InstanceUtils.instantiateParam(PARAM_SELECTED, Relation.class, params, request);
         persistance.synchronize(child);
 
         Relation relation = new Relation();
@@ -225,7 +225,7 @@ public class EditRelation implements AbcAction {
 
         String prefix = (String)params.get(PARAM_PREFIX);
         UrlUtils urlUtils = new UrlUtils(prefix, response);
-        urlUtils.redirect(response, "/ViewRelation?rid="+parent.getId());
+        urlUtils.redirect(response, "/show/"+parent.getId());
         return null;
     }
 
@@ -254,7 +254,7 @@ public class EditRelation implements AbcAction {
         String url = null;
         String prefix = (String) params.get(PARAM_PREFIX);
         if ( prefix!=null ) {
-            url = prefix.concat("/ViewRelation?rid="+relation.getUpper());
+            url = prefix.concat("/show/"+relation.getUpper());
         } else
             url = "/Index";
 
@@ -274,7 +274,7 @@ public class EditRelation implements AbcAction {
 
         Relation relation = (Relation) env.get(VAR_CURRENT);
         int originalUpper = relation.getUpper();
-        Relation destination = (Relation) InstanceUtils.instantiateParam(PARAM_SELECTED,Relation.class,params);
+        Relation destination = (Relation) InstanceUtils.instantiateParam(PARAM_SELECTED, Relation.class, params, request);
         persistance.synchronize(destination);
 
         relation.setParent(destination.getChild());
@@ -289,7 +289,7 @@ public class EditRelation implements AbcAction {
             if ( originalUpper==Constants.REL_FORUM && returnBackToForum(user) )
                 url = "/diskuse.jsp";
             else
-                url = prefix.concat("/ViewRelation?rid="+relation.getUpper());
+                url = prefix.concat("/show/"+relation.getUpper());
         } else url = "/Index";
 
         UrlUtils urlUtils = new UrlUtils("", response);
@@ -309,7 +309,7 @@ public class EditRelation implements AbcAction {
 
         Relation relation = (Relation) env.get(VAR_CURRENT);
         persistance.synchronize(relation.getChild());
-        Relation destination = (Relation) InstanceUtils.instantiateParam(PARAM_SELECTED, Relation.class, params);
+        Relation destination = (Relation) InstanceUtils.instantiateParam(PARAM_SELECTED, Relation.class, params, request);
         persistance.synchronize(destination);
 
         for ( Iterator iter = relation.getChild().getContent().iterator(); iter.hasNext(); ) {
@@ -338,7 +338,7 @@ public class EditRelation implements AbcAction {
 
         String url = null;
         String prefix = (String) params.get(PARAM_PREFIX);
-        url = (prefix!=null) ? prefix.concat("/ViewRelation?rid="+relation.getId()) : "/Index";
+        url = (prefix!=null) ? prefix.concat("/show/"+relation.getId()) : "/Index";
 
         UrlUtils urlUtils = new UrlUtils("", response);
         urlUtils.redirect(response, url);

@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.dom4j.Element;
-import org.dom4j.DocumentHelper;
 import org.dom4j.io.XMLWriter;
 import org.apache.regexp.RE;
 
@@ -40,21 +39,26 @@ public class VariousTest extends TestCase {
     }
 
     public static void main(String[] args) throws Exception {
-//        TestRunner.run(suite());
-        VariousTest variousTest = new VariousTest(null);
-        variousTest.testRegexpSubst();
+        TestRunner.run(suite());
+//        VariousTest variousTest = new VariousTest(null);
+//        variousTest.testRegexpSubst();
     }
 
     public void testRegexpSubst() throws Exception {
 //        String s = "http://localhost:8080/clanky/ViewRelation?relationId=53458";
 //        String s = "http://localhost:8080/clanky/ViewRelation?rid=53458";
-        String s = "http://localhost:8080/";
+//        String s = "http://localhost:8080/";
+        String s = "http://localhost:8080/clanky/ViewCategory?rid=5";
 //        String pattern = "(ViewRelation?relationId=)([\\d]+)";
 //        String pattern = "ViewRelation\\?(relationId|rid)=";
-        String pattern = "/$";
-        String replace = "show/";
+//        String pattern = "/$";
+//        String pattern = "ViewCategory\\?(relationId|rid)=";
+        String pattern = "ViewCategory.+(relationId|rid)=([\\d]+).*";
+//        String replace = "show/";
+        String replace = "dir/$2";
         RE re = new RE(pattern);
-        String result = re.subst(s, replace, RE.REPLACE_FIRSTONLY);
+//        String result = re.subst(s, replace, RE.REPLACE_FIRSTONLY);
+        String result = re.subst(s, replace, RE.REPLACE_FIRSTONLY + RE.REPLACE_BACKREFERENCES);
         System.out.println("result = "+result);
     }
 

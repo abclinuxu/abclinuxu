@@ -61,7 +61,7 @@ public class EditSurvey implements AbcAction {
             return actionAddStep2(request, response, env);
 
         Persistance persistance = PersistanceFactory.getPersistance();
-        Item item = (Item) InstanceUtils.instantiateParam(PARAM_SURVEY, Item.class, params);
+        Item item = (Item) InstanceUtils.instantiateParam(PARAM_SURVEY, Item.class, params, request);
         if ( item==null )
             return ServletUtils.showErrorPage("Chybí parametr surveyId!",env,request);
 

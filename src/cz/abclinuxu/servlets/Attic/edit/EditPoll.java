@@ -60,7 +60,7 @@ public class EditPoll implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
-        Poll poll = (Poll) InstanceUtils.instantiateParam(PARAM_POLL,Poll.class,params);
+        Poll poll = (Poll) InstanceUtils.instantiateParam(PARAM_POLL, Poll.class, params, request);
         if ( poll!=null ) {
             poll = (Poll) persistance.findById(poll);
             env.put(EditPoll.VAR_POLL,poll);
@@ -75,7 +75,7 @@ public class EditPoll implements AbcAction {
         if ( !user.hasRole(Roles.POLL_ADMIN) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, PARAM_RELATION, Relation.class, params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation!=null ) {
             relation = (Relation) persistance.findById(relation);
             env.put(VAR_RELATION, relation);
@@ -150,7 +150,7 @@ public class EditPoll implements AbcAction {
         persistance.create(relation);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?rid="+upperRelation.getId());
+        urlUtils.redirect(response, "/show/"+upperRelation.getId());
         return null;
     }
 
@@ -197,7 +197,7 @@ public class EditPoll implements AbcAction {
         PersistanceFactory.getPersistance().update(poll);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?rid="+upperRelation.getId());
+        urlUtils.redirect(response, "/show/"+upperRelation.getId());
         return null;
     }
 

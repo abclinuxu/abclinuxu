@@ -52,7 +52,7 @@ public class EditDriver implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT,PARAM_RELATION,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation!=null ) {
             persistance.synchronize(relation);
             env.put(VAR_RELATION,relation);
@@ -110,7 +110,7 @@ public class EditDriver implements AbcAction {
         persistance.create(relation);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+        urlUtils.redirect(response, "/show/"+relation.getId());
         return null;
     }
 
@@ -163,12 +163,12 @@ public class EditDriver implements AbcAction {
         persistance.update(driver);
 
         // run monitor
-        String url = "http://www.abclinuxu.cz/drivers/ViewRelation?rid="+relation.getId();
+        String url = "http://www.abclinuxu.cz/drivers/show/"+relation.getId();
         MonitorAction action = new MonitorAction(user,UserAction.EDIT,ObjectType.DRIVER,driver,url);
         MonitorPool.scheduleMonitorAction(action);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+        urlUtils.redirect(response, "/show/"+relation.getId());
         return null;
     }
 
@@ -185,7 +185,7 @@ public class EditDriver implements AbcAction {
         persistance.update(driver);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+        urlUtils.redirect(response, "/show/"+relation.getId());
         return null;
     }
 

@@ -16,7 +16,7 @@
   <#list MEMBERS.data as user>
    <li>
     <input type="checkbox" name="uid" value="${user.id}">
-    <a href="/Profile?uid=${user.id}">${user.name}</a>
+    <a href="/Profile/${user.id}">${user.name}</a>
    </li>
   </#list>
  </ol>

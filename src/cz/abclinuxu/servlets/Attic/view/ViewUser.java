@@ -64,7 +64,7 @@ public class ViewUser implements AbcAction {
 
         if ( action.equals(ACTION_SHOW_MY_PROFILE) ) {
             User user = (User) env.get(Constants.VAR_USER);
-            User managed = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT,PARAM_USER, User.class, params);
+            User managed = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
             if ( user==null || (user.getId()!=managed.getId() && !user.hasRole(Roles.USER_ADMIN)) )
                 return handleProfile(request, env);
             else
@@ -90,7 +90,7 @@ public class ViewUser implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        User user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT,PARAM_USER,User.class,params);
+        User user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
         persistance.synchronize(user);
         env.put(VAR_PROFILE,user);
 
@@ -104,7 +104,7 @@ public class ViewUser implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        User user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT,PARAM_USER,User.class,params);
+        User user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
         persistance.synchronize(user);
         env.put(VAR_PROFILE,user);
 
@@ -189,7 +189,7 @@ public class ViewUser implements AbcAction {
         if ( chyba )
             return FMTemplateSelector.select("ViewUser","sendEmail",env,request);
 
-        User user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT,PARAM_USER,User.class,params);
+        User user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
         user = (User) persistance.findById(user);
 
         Map data = new HashMap();
@@ -212,7 +212,7 @@ public class ViewUser implements AbcAction {
         Persistance persistance = PersistanceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
-        User user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params);
+        User user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
         persistance.synchronize(user);
 
         Map data = new HashMap();

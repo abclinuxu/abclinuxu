@@ -1,1 +1,1 @@
-<% response.sendRedirect("/clanky/ViewRelation?rid=53089"); %>
+<% response.sendRedirect("/clanky/show/53089"); %>

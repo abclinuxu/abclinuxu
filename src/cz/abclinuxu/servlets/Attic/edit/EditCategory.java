@@ -62,13 +62,13 @@ public class EditCategory implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
-        Category category = (Category) InstanceUtils.instantiateParam(PARAM_CATEGORY,Category.class,params);
+        Category category = (Category) InstanceUtils.instantiateParam(PARAM_CATEGORY,Category.class,params, request);
         if ( category!=null ) {
             category = (Category) persistance.findById(category);
             env.put(VAR_CATEGORY,category);
         }
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT,PARAM_RELATION,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation!=null ) {
             relation = (Relation) persistance.findById(relation);
             category = (Category) relation.getChild();
@@ -147,7 +147,7 @@ public class EditCategory implements AbcAction {
         }
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+        urlUtils.redirect(response, "/dir/"+relation.getId());
         return null;
     }
 
@@ -212,9 +212,9 @@ public class EditCategory implements AbcAction {
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         if ( upperRelation!=null ) {
-            urlUtils.redirect(response, "/ViewRelation?rid="+upperRelation.getId());
+            urlUtils.redirect(response, "/dir/"+upperRelation.getId());
         } else {
-            urlUtils.redirect(response, "/ViewCategory?categoryId="+category.getId());
+            urlUtils.redirect(response, "/dir?categoryId="+category.getId());
         }
         return null;
     }

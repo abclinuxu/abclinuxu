@@ -6,10 +6,11 @@
 package cz.abclinuxu.servlets.select;
 
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.AbcFMServlet;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.edit.EditCategory;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,7 +43,7 @@ import java.util.*;
  * <dd>Indicates, whether user has changed directory.</dd>
  * </dl>
  */
-public class SelectIcon extends AbcFMServlet {
+public class SelectIcon implements AbcAction {
     public static final String PARAM_URL = "url";
     public static final String PARAM_DIR = "dir";
     public static final String PARAM_ICON = "icon";
@@ -65,7 +66,7 @@ public class SelectIcon extends AbcFMServlet {
      * Called, when we shall display list of icons
      */
     protected String actionReload(HttpServletRequest request, Map env) throws Exception {
-        String path = getServletContext().getRealPath("/ikony");
+        String path = AbcConfig.calculateDeployedPath("ikony");
         File ikony = new File(path);
         if ( path==null || !ikony.exists() ) throw new Exception("Nemohu nalezt adresar /ikony!");
 

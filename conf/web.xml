@@ -56,6 +56,11 @@
         <url-pattern>/ProxoolAdmin</url-pattern>
     </servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>jsp</servlet-name>
+        <url-pattern>/download/abicko.jsp</url-pattern>
+    </servlet-mapping>
+
     <!-- static resources -->
     <servlet-mapping>
         <servlet-name>default</servlet-name><url-pattern>/data/*</url-pattern>

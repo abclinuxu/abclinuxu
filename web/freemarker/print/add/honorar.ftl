@@ -3,7 +3,7 @@
 
 <#call showMessages>
 
-<form action="${URL.make("/EditItem")}" method="POST">
+<form action="${URL.make("/edit")}" method="POST">
 
  <table width=100 border=0 cellpadding=5>
   <tr>

@@ -74,7 +74,7 @@ public class ViewRelation implements AbcAction {
         if ( ACTION_SHOW_CENSORED.equals(action))
             return processCensored(request,env);
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT,PARAM_RELATION,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation==null ) {
             throw new MissingArgumentException("Parametr relationId je prázdný!");
         }
@@ -194,7 +194,7 @@ public class ViewRelation implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        Item diz = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params);
+        Item diz = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         diz = (Item) persistance.findById(diz);
         List children = diz.getContent();
         Record record = (Record) ((Relation)children.get(0)).getChild();

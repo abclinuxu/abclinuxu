@@ -46,7 +46,7 @@ public class ShowForum implements AbcAction {
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID_SHORT, Relation.class, params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID_SHORT, Relation.class, params, request);
         if ( relation==null ) {
             throw new MissingArgumentException("Parametr rid je prázdný!");
         }

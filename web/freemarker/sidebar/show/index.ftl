@@ -3,7 +3,7 @@
 <#macro showArticle(relation)>
  <#local clanek=relation.child>
  <p>
-  <a href="/clanky/ViewRelation?rid=${relation.id}" target="_content">
+  <a href="/clanky/show/${relation.id}" target="_content">
    ${TOOL.xpath(clanek,"data/name")}
   </a><br>
   ${DATE.show(clanek.created, "CZ_SHORT")}
@@ -18,7 +18,7 @@
  <p>${DATE.show(ITEM.created,"CZ_SHORT")}
  ${TOOL.xpath(ITEM,"data/content")}<br>
  <span style="font-size: 7pt">
-  <a href="/news/ViewRelation?rid=${relation.id}" target="_content" style="font-size: 7pt">Zobrazit</a>
+  <a href="/news/show/${relation.id}" target="_content" style="font-size: 7pt">Zobrazit</a>
   <#if diz.responseCount gt 0>
    Komentáøe: ${diz.responseCount}, poslední ${DATE.show(diz.updated, "CZ_FULL")}
   </#if>
@@ -41,7 +41,7 @@
 </form>
 </div>
 
-<a href="/clanky/ViewRelation?rid=5&src=sidebar" class="nadpis" target="_content">Èlánky</a>
+<a href="/clanky/show/5&src=sidebar" class="nadpis" target="_content">Èlánky</a>
 
 <#list ARTICLES as rel>
  <#call showArticle(rel)>

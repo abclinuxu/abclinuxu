@@ -26,7 +26,7 @@ public class Controller extends AbcFMServlet {
      * that fullfills the request.
      */
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        AbcAction action = urlMapper.findAction(request, env);
+        AbcAction action = urlMapper.findAction(request);
         return action.process(request, response, env);
     }
 }

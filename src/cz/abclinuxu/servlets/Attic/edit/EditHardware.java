@@ -71,7 +71,7 @@ public class EditHardware implements AbcAction {
         if ( action==null)
             throw new MissingArgumentException("Chybí parametr action!");
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT,PARAM_RELATION,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation!=null ) {
             relation = (Relation) persistance.findById(relation);
             persistance.synchronize(relation.getChild());
@@ -101,7 +101,7 @@ public class EditHardware implements AbcAction {
             return actionAddRecord(request, response, env);
 
         if ( action.equals(ACTION_EDIT_RECORD) || action.equals(ACTION_EDIT_RECORD_STEP2) ) {
-            Record record = (Record) InstanceUtils.instantiateParam(PARAM_RECORD_ID, Record.class, params);
+            Record record = (Record) InstanceUtils.instantiateParam(PARAM_RECORD_ID, Record.class, params, request);
             persistance.synchronize(record);
             env.put(VAR_RECORD, record);
 
@@ -190,7 +190,7 @@ public class EditHardware implements AbcAction {
         persistance.create(new Relation(item, record, relation.getId()));
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+        urlUtils.redirect(response, "/show/"+relation.getId());
         return null;
     }
 
@@ -230,12 +230,12 @@ public class EditHardware implements AbcAction {
         persistance.create(relation);
 
         // run monitor
-        String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/ViewRelation?rid="+upper.getId();
+        String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/show/"+upper.getId();
         Item item = (Item) persistance.findById(upper.getChild());
         MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.ITEM, item, url);
         MonitorPool.scheduleMonitorAction(action);
 
-        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+        urlUtils.redirect(response, "/show/"+relation.getId());
         return null;
     }
 
@@ -280,7 +280,7 @@ public class EditHardware implements AbcAction {
         persistance.update(item);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getUpper());
+        urlUtils.redirect(response, "/show/"+relation.getUpper());
         return null;
     }
 
@@ -345,13 +345,13 @@ public class EditHardware implements AbcAction {
             SQLTool.getInstance().setUpdatedTimestamp(record, updated);
 
         // run monitor
-        String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/ViewRelation?rid="+relation.getId();
+        String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/show/"+relation.getId();
         GenericObject obj = (relation.getParent() instanceof Item)? relation.getParent() : relation.getChild();
         Item item = (Item) persistance.findById(obj);
         MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.ITEM, item, url);
         MonitorPool.scheduleMonitorAction(action);
 
-        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+        urlUtils.redirect(response, "/show/"+relation.getId());
         return null;
     }
 
@@ -370,7 +370,7 @@ public class EditHardware implements AbcAction {
         SQLTool.getInstance().setUpdatedTimestamp(item, originalUpdated);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+        urlUtils.redirect(response, "/show/"+relation.getId());
         return null;
     }
 

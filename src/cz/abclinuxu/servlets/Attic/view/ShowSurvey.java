@@ -53,7 +53,7 @@ public class ShowSurvey implements AbcAction {
         Persistance persistance = PersistanceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
-        Item survey = (Item) InstanceUtils.instantiateParam(PARAM_SURVEY_ID, Item.class, params);
+        Item survey = (Item) InstanceUtils.instantiateParam(PARAM_SURVEY_ID, Item.class, params, request);
         if ( survey==null ) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Anketa nebyla nalezena!", env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);

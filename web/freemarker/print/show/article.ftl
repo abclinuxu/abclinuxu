@@ -6,7 +6,7 @@
 <h1>${TOOL.xpath(ITEM,"/data/name")}</h1>
 
 <div class="barva">
-${DATE.show(ITEM.created,"CZ_FULL")} | <a href="/Profile?uid=${autor.id}">${autor.name}</a>
+${DATE.show(ITEM.created,"CZ_FULL")} | <a href="/Profile/${autor.id}">${autor.name}</a>
 </div>
 
 ${TOOL.showParents(PARENTS,USER?if_exists,URL)}
@@ -34,7 +34,7 @@ ${TOOL.render(TOOL.getCompleteArticleText(ITEM),USER?if_exists)}
    <#if page_index==PAGE>
     ${page}
    <#else>
-    <a href="/clanky/ViewRelation?rid=${RELATION.id}&page=${page_index}&varianta=print">${page}</a>
+    <a href="/clanky/show/${RELATION.id}&page=${page_index}&varianta=print">${page}</a>
    </#if>
   </#list>
   </ol>

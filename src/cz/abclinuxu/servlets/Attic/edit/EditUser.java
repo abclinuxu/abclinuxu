@@ -110,7 +110,7 @@ public class EditUser implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String action = (String) params.get(PARAM_ACTION);
 
-        User managed = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT,PARAM_USER,User.class,params);
+        User managed = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
         User user = (User) env.get(Constants.VAR_USER);
         if ( managed==null )
             managed = user;

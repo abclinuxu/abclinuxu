@@ -44,7 +44,7 @@ public class EditRequest implements AbcAction {
         String action = (String) params.get(PARAM_ACTION);
         User user = (User) env.get(Constants.VAR_USER);
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_REQUEST,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_REQUEST, Relation.class, params, request);
         if ( relation!=null )
             env.put(VAR_REQUEST_RELATION,relation);
 
@@ -114,7 +114,7 @@ public class EditRequest implements AbcAction {
         ServletUtils.addMessage("Vá¹ po¾adavek byl pøijat.",env,request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?rid="+Constants.REL_REQUESTS);
+        urlUtils.redirect(response, "/show/"+Constants.REL_REQUESTS);
         return null;
     }
 
@@ -127,7 +127,7 @@ public class EditRequest implements AbcAction {
         ServletUtils.addMessage("Po¾adavek byl smazán.",env,request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?rid="+Constants.REL_REQUESTS);
+        urlUtils.redirect(response, "/show/"+Constants.REL_REQUESTS);
         return null;
     }
 
@@ -152,7 +152,7 @@ public class EditRequest implements AbcAction {
         ServletUtils.addMessage("Po¾adavek byl vyøízen.",env,request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?rid="+Constants.REL_REQUESTS);
+        urlUtils.redirect(response, "/show/"+Constants.REL_REQUESTS);
         return null;
     }
 }

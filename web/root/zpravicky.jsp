@@ -13,7 +13,7 @@
 <%!
     public static final String VAR_CATEGORIES = "CATEGORIES";
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, 10)};
         List news = SQLTool.getInstance().findNewsRelations(qualifiers);
         env.put("NEWS",news);

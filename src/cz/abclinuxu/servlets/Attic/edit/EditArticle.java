@@ -77,7 +77,7 @@ public class EditArticle implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT,PARAM_RELATION,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation==null )
             throw new MissingArgumentException("Chybí parametr relationId!");
 
@@ -141,7 +141,7 @@ public class EditArticle implements AbcAction {
 
         boolean canContinue = true;
         canContinue &= setTitle(params, item, env);
-        canContinue &= setAuthor(params, item, env);
+        canContinue &= setAuthor(params, item, env, request);
         canContinue &= setEditor(item, env);
         canContinue &= setPerex(params, item, env);
         canContinue &= setPublishDate(params, item, env);
@@ -163,7 +163,7 @@ public class EditArticle implements AbcAction {
             persistance.create(new Relation(item,record,relation.getId()));
 
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+            urlUtils.redirect(response, "/show/"+relation.getId());
             return null;
         } catch (PersistanceException e) {
             ServletUtils.addError(Constants.ERROR_GENERIC,e.getMessage(),env, null);
@@ -215,7 +215,7 @@ public class EditArticle implements AbcAction {
 
         boolean canContinue = true;
         canContinue &= setTitle(params, item, env);
-        canContinue &= setAuthor(params, item, env);
+        canContinue &= setAuthor(params, item, env, request);
         canContinue &= setEditor(item, env);
         canContinue &= setPerex(params, item, env);
         canContinue &= setPublishDate(params, item, env);
@@ -233,7 +233,7 @@ public class EditArticle implements AbcAction {
         persistance.update(record);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?rid="+upper.getId());
+        urlUtils.redirect(response, "/show/"+upper.getId());
         return null;
     }
 
@@ -259,7 +259,7 @@ public class EditArticle implements AbcAction {
         item.setData(DocumentHelper.createDocument());
 
         boolean canContinue = true;
-        canContinue &= setAuthorForRoyalties(params, item, env);
+        canContinue &= setAuthorForRoyalties(params, item, env, request);
         canContinue &= setPublishDateForRoyalties(params, item, env);
         canContinue &= setPaidDateForRoyalties(params, item, env);
         canContinue &= setAmount(params, item, env);
@@ -276,7 +276,7 @@ public class EditArticle implements AbcAction {
         AdminLogger.logEvent(user,"pøidal honoráø "+relation.getId());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?rid="+upper.getId());
+        urlUtils.redirect(response, "/show/"+upper.getId());
         return null;
     }
 
@@ -305,7 +305,7 @@ public class EditArticle implements AbcAction {
         Item item = (Item) relation.getChild();
 
         boolean canContinue = true;
-        canContinue &= setAuthorForRoyalties(params, item, env);
+        canContinue &= setAuthorForRoyalties(params, item, env, request);
         canContinue &= setPublishDateForRoyalties(params, item, env);
         canContinue &= setPaidDateForRoyalties(params, item, env);
         canContinue &= setAmount(params, item, env);
@@ -319,7 +319,7 @@ public class EditArticle implements AbcAction {
         AdminLogger.logEvent(user,"upravil honoráø "+relation.getId());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getUpper());
+        urlUtils.redirect(response, "/show/"+relation.getUpper());
         return null;
     }
 
@@ -370,8 +370,8 @@ public class EditArticle implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setAuthor(Map params, Item item, Map env) {
-        User author = (User) InstanceUtils.instantiateParam(PARAM_AUTHOR, User.class, params);
+    private boolean setAuthor(Map params, Item item, Map env, HttpServletRequest request) {
+        User author = (User) InstanceUtils.instantiateParam(PARAM_AUTHOR, User.class, params, request);
         if ( author==null ) {
             ServletUtils.addError(PARAM_AUTHOR, "Vyberte autora!", env, null);
             return false;
@@ -388,8 +388,8 @@ public class EditArticle implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setAuthorForRoyalties(Map params, Item item, Map env) {
-        User author = (User) InstanceUtils.instantiateParam(PARAM_AUTHOR, User.class, params);
+    private boolean setAuthorForRoyalties(Map params, Item item, Map env, HttpServletRequest request) {
+        User author = (User) InstanceUtils.instantiateParam(PARAM_AUTHOR, User.class, params, request);
         if ( author==null ) {
             ServletUtils.addError(PARAM_AUTHOR, "Vyberte autora!", env, null);
             return false;

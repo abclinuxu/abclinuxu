@@ -127,7 +127,7 @@ public class EditGroup implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        Item group = (Item) InstanceUtils.instantiateParam(PARAM_GROUP, Item.class, params);
+        Item group = (Item) InstanceUtils.instantiateParam(PARAM_GROUP, Item.class, params, request);
         if ( group==null )
             return ServletUtils.showErrorPage("Zadejte skupinu!", env, request);
         persistance.synchronize(group);
@@ -149,7 +149,7 @@ public class EditGroup implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        Item group = (Item) InstanceUtils.instantiateParam(PARAM_GROUP, Item.class, params);
+        Item group = (Item) InstanceUtils.instantiateParam(PARAM_GROUP, Item.class, params, request);
         if ( group==null )
             return ServletUtils.showErrorPage("Zadejte skupinu!", env, request);
         persistance.synchronize(group);
@@ -188,7 +188,7 @@ public class EditGroup implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        Item group = (Item) InstanceUtils.instantiateParam(PARAM_GROUP, Item.class, params);
+        Item group = (Item) InstanceUtils.instantiateParam(PARAM_GROUP, Item.class, params, request);
         persistance.synchronize(group);
         if ( group.getType()!=Item.GROUP )
             return ServletUtils.showErrorPage("Toto není skupina!", env, request);

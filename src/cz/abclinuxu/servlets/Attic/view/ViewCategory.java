@@ -63,7 +63,7 @@ public class ViewCategory implements AbcAction {
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID_SHORT,PARAM_RELATION_ID,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID_SHORT, Relation.class, params, request);
         if ( relation==null ) {
             throw new MissingArgumentException("Parametr relationId je prázdný!");
         }
@@ -110,7 +110,7 @@ public class ViewCategory implements AbcAction {
         Category category = null;
         if ( !(obj instanceof Category) ) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+            urlUtils.redirect(response, "/show/"+relation.getId());
             return null;
         } else
             category = (Category) obj;

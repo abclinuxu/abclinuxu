@@ -5,7 +5,7 @@
   extends="cz.abclinuxu.servlets.AbcFMServlet"
 %>
 <%!
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         return FMTemplateSelector.select("ShowForum", "main", env, request);
     }
 %>

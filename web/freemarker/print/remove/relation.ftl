@@ -12,7 +12,7 @@ Chystáte se smazat objekt ${TOOL.childName(CURRENT)}.
 <ul>
  <#list PARENTS as relation>
   <li>
-    <a href="${URL.make("/ViewRelation?rid="+relation.id,PARAMS.prefix)}">${TOOL.childName(relation)}</a>
+    <a href="${URL.make("/show/"+relation.id,PARAMS.prefix)}">${TOOL.childName(relation)}</a>
    </li>
  </#list>
 </ul>

@@ -76,7 +76,7 @@ public class EditDiscussion implements AbcAction {
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT,PARAM_RELATION,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         String action = (String) params.get(PARAM_ACTION);
 
         if ( relation!=null ) {
@@ -224,7 +224,7 @@ public class EditDiscussion implements AbcAction {
         ForumPool.submitComment(rel2, discussion.getId(), 0, 0);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?rid="+rel2.getId());
+        urlUtils.redirect(response, "/show/"+rel2.getId());
         return null;
     }
 
@@ -235,7 +235,7 @@ public class EditDiscussion implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION,Item.class,params);
+        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if ( discussion==null )
             throw new MissingArgumentException("Chybí parametr dizId!");
         persistance.synchronize(discussion);
@@ -264,7 +264,7 @@ public class EditDiscussion implements AbcAction {
         Relation relation = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
 
-        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION,Item.class,params);
+        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if ( discussion==null )
             throw new MissingArgumentException("Chybí parametr dizId!");
         persistance.synchronize(discussion);
@@ -332,7 +332,7 @@ public class EditDiscussion implements AbcAction {
         }
 
         // run monitor
-        String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/ViewRelation?rid="+relation.getId();
+        String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/show/"+relation.getId();
         MonitorAction action = null;
         if (user!=null)
             action = new MonitorAction(user, UserAction.ADD, ObjectType.DISCUSSION, discussion, url);
@@ -350,7 +350,7 @@ public class EditDiscussion implements AbcAction {
         int commentId = Misc.parseInt(comment.attributeValue("id"),0);
         ForumPool.submitComment(relation, discussion.getId(), record.getId(), commentId);
 
-        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+        urlUtils.redirect(response, "/show/"+relation.getId());
         return null;
     }
 
@@ -363,7 +363,7 @@ public class EditDiscussion implements AbcAction {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         User user = (User) env.get(Constants.VAR_USER);
 
-        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params);
+        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if ( discussion==null )
             throw new MissingArgumentException("Chybí parametr dizId!");
         persistance.synchronize(discussion);
@@ -373,7 +373,7 @@ public class EditDiscussion implements AbcAction {
         if ("0".equals(thread) || discussion.getContent().size()==0) {
             ServletUtils.addError(Constants.ERROR_GENERIC,"Nejde cenzurovat otázku!",env,request.getSession());
             relation = (Relation) env.get(VAR_RELATION);
-            urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+            urlUtils.redirect(response, "/show/"+relation.getId());
         }
 
         relation = (Relation) discussion.getContent().get(0);
@@ -397,7 +397,7 @@ public class EditDiscussion implements AbcAction {
                     censored.setText((String) params.get(PARAM_TEXT));
 
                     // run monitor
-                    String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/ViewRelation?rid="+relation.getId();
+                    String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/show/"+relation.getId();
                     MonitorAction monitor = new MonitorAction(user, UserAction.CENSORE, ObjectType.DISCUSSION, discussion, url);
                     String title = element.selectSingleNode("title").getText();
                     monitor.setProperty(DiscussionDecorator.PROPERTY_NAME, title);
@@ -412,7 +412,7 @@ public class EditDiscussion implements AbcAction {
         }
         persistance.update(record);
 
-        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+        urlUtils.redirect(response, "/show/"+relation.getId());
         return null;
     }
 
@@ -423,7 +423,7 @@ public class EditDiscussion implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params);
+        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if ( discussion==null )
             throw new MissingArgumentException("Chybí parametr dizId!");
         persistance.synchronize(discussion);
@@ -454,7 +454,7 @@ public class EditDiscussion implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params);
+        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if ( discussion==null )
             throw new MissingArgumentException("Chybí parametr dizId!");
         persistance.synchronize(discussion);
@@ -495,7 +495,7 @@ public class EditDiscussion implements AbcAction {
         AdminLogger.logEvent(user, "upravil vlakno "+threadId+" diskuse "+discussion.getId()+", relace "+relation.getId());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+        urlUtils.redirect(response, "/show/"+relation.getId());
         return null;
     }
 
@@ -506,7 +506,7 @@ public class EditDiscussion implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params);
+        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if ( discussion==null )
             throw new MissingArgumentException("Chybí parametr dizId!");
 
@@ -535,7 +535,7 @@ public class EditDiscussion implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         Relation mainRelation = (Relation) env.get(VAR_RELATION);
 
-        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params);
+        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if ( discussion==null )
             throw new MissingArgumentException("Chybí parametr dizId!");
 
@@ -587,7 +587,7 @@ public class EditDiscussion implements AbcAction {
         SQLTool.getInstance().setUpdatedTimestamp(discussion, lastUpdate);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?rid="+mainRelation.getId());
+        urlUtils.redirect(response, "/show/"+mainRelation.getId());
         return null;
     }
 
@@ -606,7 +606,7 @@ public class EditDiscussion implements AbcAction {
         SQLTool.getInstance().setUpdatedTimestamp(discussion, originalUpdated);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+        urlUtils.redirect(response, "/show/"+relation.getId());
         return null;
     }
 
@@ -634,7 +634,7 @@ public class EditDiscussion implements AbcAction {
         AdminLogger.logEvent(user, "zmrazil diskusi "+discussion.getId()+", relace "+relation.getId());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+        urlUtils.redirect(response, "/show/"+relation.getId());
         return null;
     }
 

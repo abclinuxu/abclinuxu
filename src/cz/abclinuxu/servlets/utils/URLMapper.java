@@ -77,19 +77,25 @@ public final class URLMapper implements Configurable {
             return false;
 
         url = ServletUtils.getURL(request);
-        String newURL = mapping.getRegexp().subst(url, mapping.getReplacement(), RE.REPLACE_FIRSTONLY);
+        String newURL = mapping.getRegexp().subst(url, mapping.getReplacement(), RE.REPLACE_FIRSTONLY + RE.REPLACE_BACKREFERENCES);
+        if (url.equals(newURL)) {
+            log.warn("Selhalo presmerovani adresy "+url);
+            String msg = "Selhalo presmerovani adresy "+url+". Informujte nas na adrese literakl@abclinuxu.cz. Dekuji.";
+            response.sendError(HttpServletResponse.SC_GONE, msg);
+            return true;
+        }
+
         response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
         response.sendRedirect(newURL);
         return true;
     }
 
     /**
-     * Finds AbcAction for URL represented by this request. As side effect, parameters may
-     * be extracted from URL and added to env.
+     * Finds AbcAction for URL represented by this request.
      * @return AbcAction for this URL.
-     * @throws NotFoundException if there is no mapping for thsi URL
+     * @throws NotFoundException if there is no mapping for this URL
      */
-    public AbcAction findAction(HttpServletRequest request, Map env) throws NotFoundException {
+    public AbcAction findAction(HttpServletRequest request) throws NotFoundException {
         PatternAction patternAction;
 
         String url = ServletUtils.combinePaths(request.getServletPath(), request.getPathInfo());

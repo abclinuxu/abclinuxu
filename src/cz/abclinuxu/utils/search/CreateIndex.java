@@ -115,7 +115,7 @@ public class CreateIndex implements Configurable {
             doc = null; indexChildren = true;
             if (child instanceof Category) {
                 doc = indexCategory((Category) child);
-                doc.setURL(urlPrefix+"/ViewCategory?rid="+relation.getId());
+                doc.setURL(urlPrefix+"/dir/"+relation.getId());
             } else if (child instanceof Item) {
                 item = (Item) child;
                 switch ( item.getType() ) {
@@ -129,7 +129,7 @@ public class CreateIndex implements Configurable {
                         doc = indexDriver(item); break;
                 }
                 indexChildren = false;
-                if (doc!=null) doc.setURL(urlPrefix+"/ViewRelation?rid="+relation.getId());
+                if (doc!=null) doc.setURL(urlPrefix+"/show/"+relation.getId());
             }
 
             if ( doc!=null ) {
@@ -182,7 +182,7 @@ public class CreateIndex implements Configurable {
                     if ( hasBeenIndexed(child) ) continue;
                     child = persistance.findById(child);
                     doc = indexDiscussion((Item)child);
-                    doc.setURL(urlPrefix+"/ViewRelation?rid="+relation2.getId());
+                    doc.setURL(urlPrefix+"/show/"+relation2.getId());
                     doc.setParent(relation2.getUpper());
                     indexWriter.addDocument(doc.getDocument());
                 }
@@ -212,7 +212,7 @@ public class CreateIndex implements Configurable {
 
                 child = persistance.findById(child);
                 doc = indexNews((Item) child);
-                doc.setURL(urlPrefix+"/ViewRelation?rid="+relation.getId());
+                doc.setURL(urlPrefix+"/show/"+relation.getId());
                 doc.setParent(relation.getUpper());
                 indexWriter.addDocument(doc.getDocument());
             }

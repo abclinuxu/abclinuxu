@@ -138,13 +138,13 @@ public class EditNews implements AbcAction {
         persistance.create(relation);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/news/ViewRelation?relationId="+relation.getId());
+        urlUtils.redirect(response, "/news/show/"+relation.getId());
         return null;
     }
 
     private String actionEditStep1(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, PARAM_RELATION, Relation.class, params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation==null )
             throw new MissingArgumentException("Chybí parametr relationId!");
 
@@ -166,7 +166,7 @@ public class EditNews implements AbcAction {
 
     protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, PARAM_RELATION, Relation.class, params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation==null )
             throw new MissingArgumentException("Chybí parametr relationId!");
 
@@ -200,13 +200,13 @@ public class EditNews implements AbcAction {
         }
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/news/ViewRelation?relationId="+relation.getId());
+        urlUtils.redirect(response, "/news/show/"+relation.getId());
         return null;
     }
 
     private String actionRemoveStep1(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, PARAM_RELATION, Relation.class, params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation==null )
             throw new MissingArgumentException("Chybí parametr relationId!");
 
@@ -221,7 +221,7 @@ public class EditNews implements AbcAction {
 
     protected String actionRemoveStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, PARAM_RELATION, Relation.class, params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation==null )
             throw new MissingArgumentException("Chybí parametr relationId!");
 

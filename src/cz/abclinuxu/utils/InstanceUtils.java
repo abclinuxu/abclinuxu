@@ -9,29 +9,62 @@ import cz.abclinuxu.data.Record;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.AbcException;
+import cz.abclinuxu.servlets.view.ViewUser;
+import cz.abclinuxu.servlets.view.ViewRelation;
+import cz.abclinuxu.servlets.utils.ServletUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Iterator;
+import java.util.HashMap;
+
+import org.apache.regexp.RE;
+import org.apache.regexp.RESyntaxException;
 
 /**
  * Utilities related to classes and objects.
  */
 public class InstanceUtils {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(InstanceUtils.class);
+    static Map deprecatedParams;
+    static RE impliedParam;
+
+    static {
+        deprecatedParams = new HashMap();
+        deprecatedParams.put(ViewUser.PARAM_USER_SHORT, ViewUser.PARAM_USER);
+        deprecatedParams.put(ViewRelation.PARAM_RELATION_SHORT, ViewRelation.PARAM_RELATION);
+        try {
+            impliedParam = new RE("/([0-9]+)$");
+        } catch (RESyntaxException e) {
+            log.error("Regexp cannot be compiled!", e);
+        }
+    }
 
     /**
      * Retrieves parameter <code>name</code> from <code>params</code>. If it is not
-     * defined, it returns null. Then it tries convert it to integer. If it is not
-     * successful, it returns null again. Then it tries to create new instance
-     * os <code>clazz</code>. If it fails, it returns null. Finally it calls setId
-     * with retrieved in as argument and returns created instance.
+     * defined, it seeks, whether there is deprecated variant of the name and uses it.
+     * If still the value of param is not retrieved, the attempt to extract it from request
+     * URL is made. If the param is empty, null is returned.<p>
+     * Next step is to convert the param to integer, instantiate the class and call
+     * setId(int) method on new object with parameter converted to int.
      */
-    public static GenericObject instantiateParam(String name, Class clazz, Map params) {
+    public static GenericObject instantiateParam(String name, Class clazz, Map params, HttpServletRequest request) {
         String tmp = (String) params.get(name);
+        if ( tmp==null && request!=null) {
+            String url = ServletUtils.combinePaths(request.getServletPath(), request.getPathInfo());
+            if ( impliedParam.match(url) ) {
+                tmp = impliedParam.getParen(1);
+            }
+        }
+        if ( tmp==null ) {
+            Object oldName = deprecatedParams.get(name);
+            if (oldName!=null)
+                tmp = (String) params.get(oldName);
+        }
         if ( tmp==null || tmp.length()==0 )
             return null;
+
         try {
             int id = Misc.parsePossiblyWrongInt(tmp);
             GenericObject obj = (GenericObject) clazz.newInstance();
@@ -40,19 +73,6 @@ public class InstanceUtils {
         } catch (Exception e) {
             throw new AbcException(e.getMessage(),e);
         }
-    }
-
-    /**
-     * Instantiates GenericObject from <<code>params</code>. It first looks up <<code>shortcut</code>
-     * and if it is not defined, it searches for <<code>name</code>.
-     * @see GenericObject instantiateParam(String, Class, Map)
-     */
-    public static GenericObject instantiateParam(String shortcut, String name, Class clazz, Map params) {
-        GenericObject obj = instantiateParam(shortcut,clazz,params);
-        if ( obj!=null )
-            return obj;
-        obj = instantiateParam(name, clazz, params);
-        return obj;
     }
 
     /**

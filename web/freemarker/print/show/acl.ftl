@@ -17,7 +17,7 @@ a zároveò je rùznì modifikovat.</p>
 
  <#list ACL as acl>
     <input type="checkbox" name="id" value="${acl.id}">
-    <#if acl.user?exists><a href="/Profile?uid=${acl.user.id}">${acl.user.name}</a></#if>
+    <#if acl.user?exists><a href="/Profile/${acl.user.id}">${acl.user.name}</a></#if>
     <#if acl.group?exists><a href="/Group?action=members&gid=${acl.group.id}">${TOOL.xpath(acl.group,"/data/name")}</a></#if>
     ${acl.right}: ${acl.value}<br>
  </#list>

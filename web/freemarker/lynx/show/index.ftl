@@ -19,31 +19,31 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
 
 <p>
  <b>Základy Linuxu</b><br>
- <a href="/clanky/ViewRelation?rid=26394">Co je to Linux?</a>,
- <a href="/clanky/ViewRelation?rid=12707">Je opravdu zdarma?</a>,
- <a href="/clanky/ViewRelation?rid=9503">Co jsou to distribuce?</a>,
- <a href="/clanky/ViewRelation?rid=14665">Èím nahradím aplikaci X?</a>,
- <a href="/clanky/ViewRelation?rid=20310">Rozcestník na¹ich seriálù</a>
+ <a href="/clanky/show/26394">Co je to Linux?</a>,
+ <a href="/clanky/show/12707">Je opravdu zdarma?</a>,
+ <a href="/clanky/show/9503">Co jsou to distribuce?</a>,
+ <a href="/clanky/show/14665">Èím nahradím aplikaci X?</a>,
+ <a href="/clanky/show/20310">Rozcestník na¹ich seriálù</a>
 </p>
 
 <p>
  <b>Ovladaèe</b><br>
  <#list VARS.newDrivers as rel>
-  <a href="/drivers/ViewRelation?rid=${rel.id}">
+  <a href="/drivers/show/${rel.id}">
   ${TOOL.xpath(rel.child,"data/name")}</a><#if rel_has_next>,</#if>
  </#list>
- <a href="/drivers/ViewCategory?rid=318">&gt;&gt;</a>
+ <a href="/drivers/dir/318">&gt;&gt;</a>
 </p>
 
 <p>
  <b>Hardware</b><br>
  <#list VARS.newHardware as rel>
-  <a href="/hardware/ViewRelation?rid=${rel.id}">
+  <a href="/hardware/show/${rel.id}">
   ${TOOL.xpath(rel.parent,"data/name")}</a><#if rel_has_next>,</#if>
  </#list>
  <a href="/History?type=hardware&from=0&count=25">&gt;&gt;</a><br>
  <#list SORT.byName(HARDWARE) as rel>
-  <a href="/hardware/ViewCategory?rid=${rel.id}">
+  <a href="/hardware/dir/${rel.id}">
   ${TOOL.childName(rel)}</a><#if rel_has_next>,</#if>
  </#list>
 </p>
@@ -51,12 +51,12 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
 <p>
  <b>Software</b><br>
  <#list VARS.newSoftware as rel>
-  <a href="/software/ViewRelation?rid=${rel.id}">
+  <a href="/software/show/${rel.id}">
   ${TOOL.xpath(rel.parent,"data/name")}</a><#if rel_has_next>,</#if>
  </#list>
  <a href="/History?type=software&from=0&count=25">&gt;&gt;</a><br>
  <#list SORT.byName(SOFTWARE) as rel>
-  <a href="/software/ViewCategory?rid=${rel.id}">
+  <a href="/software/dir/${rel.id}">
   ${TOOL.childName(rel)}</a><#if rel_has_next>,</#if>
  </#list>
 </p>
@@ -84,7 +84,7 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
  <p>
  <#list FORUM.data as diz>
   ${DATE.show(diz.updated,"CZ_SHORT")}, ${diz.responseCount} odp. :
-   <a href="/hardware/ViewRelation?rid=${diz.relationId}">
+   <a href="/hardware/show/${diz.relationId}">
    ${TOOL.limit(TOOL.xpath(diz.discussion,"data/title"),60," ..")}</a><br>
  </#list>
  </p>

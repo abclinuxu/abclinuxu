@@ -33,24 +33,24 @@
 
 <p>
  <b>Slu¾by</b>
- <a href="${URL.make("/hardware/ViewCategory?rid=1")}">Hardware
+ <a href="${URL.make("/hardware/dir/1")}">Hardware
  (${VARS.counter.HARDWARE})</a>,
- <a href="${URL.make("/software/ViewCategory?rid=317")}">Software
+ <a href="${URL.make("/software/dir/317")}">Software
  (${VARS.counter.SOFTWARE})</a>,
- <a href="${URL.make("/drivers/ViewCategory?rid=318")}">Ovladaèe
+ <a href="${URL.make("/drivers/dir/318")}">Ovladaèe
  (${VARS.counter.DRIVERS})</a>,
- <a href="${URL.make("/hardware/ViewCategory?rid=3739")}">Diskuse
+ <a href="${URL.make("/hardware/dir/3739")}">Diskuse
  (${VARS.counter.FORUM})</a>,
- <a href="${URL.make("/clanky/ViewCategory?rid=3500")}">Po¾adavky
+ <a href="${URL.make("/clanky/dir/3500")}">Po¾adavky
  (${VARS.counter.REQUESTS})</a>
 </p>
 
 <h1>O serveru</h1>
 <p>
- <a href="/clanky/ViewRelation?rid=44043">Pøehled zmìn</a>,
- <a href="/clanky/ViewRelation?rid=44046">Export èlánkù a RSS</a>,
- <a href="/clanky/ViewRelation?rid=44049">Tým AbcLinuxu</a>,
- <a href="/clanky/ViewRelation?rid=42393">Staòte se autorem</a>,
+ <a href="/clanky/show/44043">Pøehled zmìn</a>,
+ <a href="/clanky/show/44046">Export èlánkù a RSS</a>,
+ <a href="/clanky/show/44049">Tým AbcLinuxu</a>,
+ <a href="/clanky/show/42393">Staòte se autorem</a>,
  ISSN 1214-1267
 </p>
 

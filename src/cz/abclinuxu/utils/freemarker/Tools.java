@@ -226,7 +226,7 @@ public class Tools implements Configurable {
                     forbidden = true;
             }
             if (!forbidden) {
-                appendURL(sb, urlUtils.make("/ViewCategory?parent=yes&rid="+relation.getId()), xpath(parent, "/data/name"));
+                appendURL(sb, urlUtils.make("/dir/"+relation.getId()+"?parent=yes"), xpath(parent, "/data/name"));
                 sb.append(" - ");
             }
         }
@@ -243,11 +243,11 @@ public class Tools implements Configurable {
                 url =  "/diskuse.jsp";
             else if (child instanceof Category) {
                 if (((Category)child).getType()==Category.SECTION_FORUM)
-                    url = "/forum/Show?rid="+relation.getId();
+                    url = "/forum/dir/"+relation.getId();
                 else
-                    url = urlUtils.make("/ViewCategory?rid="+relation.getId());
+                    url = urlUtils.make("/dir/"+relation.getId());
             } else
-                url = urlUtils.make("/ViewRelation?rid="+relation.getId());
+                url = urlUtils.make("/show/"+relation.getId());
 
             appendURL(sb, url, title);
             if ( iter.hasNext() ) sb.append(" - ");

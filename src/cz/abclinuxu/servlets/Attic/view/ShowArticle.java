@@ -53,7 +53,7 @@ public class ShowArticle implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID_SHORT,PARAM_RELATION_ID, Relation.class, params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID_SHORT, Relation.class, params, request);
         if ( relation==null ) {
             throw new MissingArgumentException("Parametr relationId je prázdný!");
         }

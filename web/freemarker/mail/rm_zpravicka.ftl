@@ -6,7 +6,7 @@ zpravicka duplikuje jiz existujici zpravicku, neodpovida
 zamereni naseho portalu nebo jde o nepovolenou inzerci.
 
 Puvodni URL:
- http://www.abclinuxu.cz/news/ViewRelation?rid=${RELATION.id}
+ http://www.abclinuxu.cz/news/show/${RELATION.id}
 Datum:
  ${DATE.show(RELATION.child.created,"CZ_FULL")}
 

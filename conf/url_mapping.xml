@@ -5,20 +5,20 @@
             <action>cz.abclinuxu.servlets.view.ViewIndex</action>
         </mapping>
         <mapping>
-            <pattern>ViewRelation</pattern>
+            <pattern>show</pattern>
             <action>cz.abclinuxu.servlets.view.ViewRelation</action>
         </mapping>
         <mapping>
-            <pattern>ViewCategory</pattern>
+            <pattern>^/forum/dir</pattern>
+            <action>cz.abclinuxu.servlets.view.ShowForum</action>
+        </mapping>
+        <mapping>
+            <pattern>dir</pattern>
             <action>cz.abclinuxu.servlets.view.ViewCategory</action>
         </mapping>
         <mapping>
             <pattern>^/Search</pattern>
             <action>cz.abclinuxu.servlets.view.Search</action>
-        </mapping>
-        <mapping>
-            <pattern>^/forum/Show</pattern>
-            <action>cz.abclinuxu.servlets.view.ShowForum</action>
         </mapping>
         <mapping>
             <pattern>^/Profile</pattern>
@@ -41,15 +41,15 @@
             <action>cz.abclinuxu.servlets.edit.EditDiscussion</action>
         </mapping>
         <mapping>
-            <pattern>^/hardware/EditItem</pattern>
+            <pattern>^/hardware/edit</pattern>
             <action>cz.abclinuxu.servlets.edit.EditHardware</action>
         </mapping>
         <mapping>
-            <pattern>^/software/EditItem</pattern>
+            <pattern>^/software/edit</pattern>
             <action>cz.abclinuxu.servlets.edit.EditSoftware</action>
         </mapping>
         <mapping>
-            <pattern>^/clanky/EditItem</pattern>
+            <pattern>^/clanky/edit</pattern>
             <action>cz.abclinuxu.servlets.edit.EditArticle</action>
         </mapping>
         <mapping>
@@ -57,11 +57,11 @@
             <action>cz.abclinuxu.servlets.edit.EditRequest</action>
         </mapping>
         <mapping>
-            <pattern>^/drivers/EditItem</pattern>
+            <pattern>^/drivers/edit</pattern>
             <action>cz.abclinuxu.servlets.edit.EditDriver</action>
         </mapping>
         <mapping>
-            <pattern>^/news/EditItem</pattern>
+            <pattern>^/news/edit</pattern>
             <action>cz.abclinuxu.servlets.edit.EditNews</action>
         </mapping>
         <mapping>
@@ -83,6 +83,10 @@
         <mapping>
             <pattern>^/SelectUser</pattern>
             <action>cz.abclinuxu.servlets.select.SelectUser</action>
+        </mapping>
+        <mapping>
+            <pattern>^/SelectIcon</pattern>
+            <action>cz.abclinuxu.servlets.select.SelectIcon</action>
         </mapping>
         <mapping>
             <pattern>^/EditUser</pattern>
@@ -107,6 +111,21 @@
             <pattern input="host">^@DOMAIN_NAME@</pattern>
             <regexp>://</regexp>
             <replacement>://www.</replacement>
+        </mapping>
+        <mapping>
+            <pattern input="path">ViewRelation</pattern>
+            <regexp>ViewRelation.+(relationId|rid)=([\d]+).*</regexp>
+            <replacement>show/$2</replacement>
+        </mapping>
+        <mapping>
+            <pattern input="path">ViewCategory</pattern>
+            <regexp>ViewCategory.+(relationId|rid)=([\d]+).*</regexp>
+            <replacement>dir/$2</replacement>
+        </mapping>
+        <mapping>
+            <pattern input="path">Show</pattern>
+            <regexp>Show\?(relationId|rid)=</regexp>
+            <replacement>dir/</replacement>
         </mapping>
     </deprecated>
 </mappings>
