@@ -34,6 +34,8 @@ public interface Constants {
     int CAT_DICTIONARY = 569;
     int CAT_TIPS_POOL = 571;
     int CAT_TIPS = 572;
+    int CAT_DOCUMENTS = 587;
+    int CAT_BLOGS = 589;
 
     int ITEM_DIZ_TODO = 11606;
     int REC_DIZ_TODO = 38280;
@@ -59,6 +61,8 @@ public interface Constants {
     int REL_DICTIONARY = 60058;
     int REL_TIPS_POOL = 61138;
     int REL_TIPS = 61139;
+    int REL_DOCUMENTS = 66948;
+    int REL_BLOGS = 69275;
 
     int GROUP_ADMINI = 11246;
     int GROUP_AUTORI = 11247;
@@ -71,6 +75,7 @@ public interface Constants {
     String TYPE_DRIVER = "driver";
     String TYPE_NEWS = "news";
     String TYPE_ROYALTIES = "royalties";
+    String TYPE_DOCUMENTS = "documents";
     String TYPE_CATEGORY = "category";
     String TYPE_RECORD = "record";
     String TYPE_USER = "user";
@@ -105,6 +110,8 @@ public interface Constants {
     String VAR_SORTER = "SORT";
     /** holds DateTool instance */
     String VAR_DATE_TOOL = "DATE";
+    /** holds instance of NewsCategories */
+    String VAR_CATEGORIES = "NEWS_CATEGORIES";
 
     /** error, that is not related to specific form field */
     String ERROR_GENERIC = "generic";

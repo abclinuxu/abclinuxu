@@ -1,7 +1,6 @@
-<#include "/include/macros.ftl">
 <#include "../header.ftl">
 
-<#call showMessages>
+<@lib.showMessages/>
 
 <p>Tento formuláø slou¾í pro zneplatnìní emailu u¾ivatelùm.
 Pokud se nám vrátí nìkterý email jako nedoruèitelný,

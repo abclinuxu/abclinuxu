@@ -51,7 +51,7 @@ public class TemplateSelector {
     static {
         try {
             reLynx = new RE("(Lynx)",RE.MATCH_CASEINDEPENDENT);
-            rePlucker = new RE("(Plucker)",RE.MATCH_CASEINDEPENDENT);
+            rePlucker = new RE("(Plucker)|(Windows.?CE)",RE.MATCH_CASEINDEPENDENT);
         } catch (RESyntaxException e) {
             log.error("Wrong regexp!", e);
         }

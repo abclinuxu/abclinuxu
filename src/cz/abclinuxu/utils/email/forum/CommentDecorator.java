@@ -56,7 +56,10 @@ public class CommentDecorator {
             published = gdo.getCreated();
             if ( gdo.getOwner()!=0 ) {
                 User author = (User) persistance.findById(new User(gdo.getOwner()));
-                authorName = author.getName();
+                if (author.getNick()!=null)
+                    authorName = author.getNick();
+                else
+                    authorName = author.getName();
             } else
                 authorName = root.elementText("author");
         } else {
@@ -68,7 +71,10 @@ public class CommentDecorator {
             String tmp = root.elementText("author_id");
             if (tmp!=null) {
                 int id = Misc.parseInt(tmp, 0);
-                authorName = ((User) persistance.findById(new User(id))).getName();
+                User user = (User) persistance.findById(new User(id));
+                authorName = user.getNick();
+                if (authorName==null)
+                    authorName = user.getName();
             } else
                 authorName = root.elementText("author");
         }

@@ -121,19 +121,20 @@ public class ViewCategory implements AbcAction {
         List children = Tools.syncList(category.getChildren());
         env.put(VAR_CHILDREN, children);
 
-        if ( Misc.same(tmp,"yes") ) {
-            switch ( category.getId() ) {
-                case Constants.CAT_ARTICLES:
-                case Constants.CAT_ABC: return FMTemplateSelector.select("ViewCategory","rubriky",env, request);
-            }
-        } else {
-            switch (relation.getId()) {
-                case Constants.REL_POLLS: return FMTemplateSelector.select("ViewCategory","ankety",env, request);
-                case Constants.REL_DRIVERS: return FMTemplateSelector.select("ViewCategory","drivers",env, request);
-                case Constants.REL_NEWS_POOL: return FMTemplateSelector.select("ViewCategory","waiting_news",env, request);
-                case Constants.REL_REQUESTS: return FMTemplateSelector.select("EditRequest","view",env, request);
-            }
+        switch ( relation.getId() ) {
+            case Constants.REL_POLLS:
+                return FMTemplateSelector.select("ViewCategory", "ankety", env, request);
+            case Constants.REL_DRIVERS:
+                return FMTemplateSelector.select("ViewCategory", "drivers", env, request);
+            case Constants.REL_NEWS_POOL:
+                return FMTemplateSelector.select("ViewCategory", "waiting_news", env, request);
+            case Constants.REL_REQUESTS:
+                return FMTemplateSelector.select("EditRequest", "view", env, request);
+            case Constants.REL_DOCUMENTS:
+                return FMTemplateSelector.select("ViewCategory", "documents", env, request);
         }
+        if ( category.getId()==Constants.CAT_ARTICLES )
+                return FMTemplateSelector.select("ViewCategory","rubriky",env, request);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         tmp = urlUtils.getPrefix();

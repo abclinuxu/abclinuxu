@@ -2,7 +2,7 @@
 
 <web-app>
     <display-name>portal AbcLinuxu.cz</display-name>
-   
+
     <filter>
         <filter-name>Compress</filter-name>
         <filter-class>compressionFilters.CompressionFilter</filter-class>
@@ -16,16 +16,6 @@
         </init-param>
     </filter>
 
-    <!--filter>
-        <filter-name>Compress</filter-name>
-        <filter-class>cz.abclinuxu.servlets.filters.gz.GZIPFilter</filter-class>
-    </filter-->
-<!--
-    <filter-mapping>
-        <filter-name>Compress</filter-name>
-        <url-pattern>*.css</url-pattern>
-    </filter-mapping>
--->    
     <filter-mapping>
         <filter-name>Compress</filter-name>
         <url-pattern>*.jsp</url-pattern>
@@ -39,8 +29,8 @@
         <servlet-name>AbcInit</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.init.AbcInit</servlet-class>
         <init-param>
-          <param-name>FREEMARKER</param-name>
-          <param-value>WEB-INF/freemarker/</param-value>
+          <param-name>PREFERENCES</param-name>
+          <param-value>@DEPLOY_ABCLINUXU@/WEB-INF/conf/systemPrefs.xml</param-value>
         </init-param>
         <init-param>
           <param-name>TEMPLATES</param-name>
@@ -110,10 +100,19 @@
         <servlet-name>default</servlet-name><url-pattern>/auto/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>default</servlet-name><url-pattern>/palirna/*</url-pattern>
+        <servlet-name>default</servlet-name><url-pattern>/soutezici/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>default</servlet-name><url-pattern>/tmp/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name><url-pattern>*.tar.bz2</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name><url-pattern>*.tar.gz</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name><url-pattern>*.tgz</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>default</servlet-name><url-pattern>*.css</url-pattern>

@@ -9,6 +9,7 @@ import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.URLMapper;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.TemplateSelector;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -32,20 +33,16 @@ import org.apache.log4j.Logger;
  */
 public class HTMLVersion {
     static Logger log = Logger.getLogger(HTMLVersion.class);
+    static Logger logTemplate = Logger.getLogger("template");
 
     public static void process(HttpServletRequest request, HttpServletResponse response, Map env) throws IOException {
         try {
             URLMapper urlMapper = URLMapper.getInstance(URLMapper.Version.HTML);
             if ( urlMapper.redirectDeprecated(request, response) )
                 return;
+            setLayout(request, urlMapper);
 
-            AbcAction action = urlMapper.findAction(request);
-            String server = request.getServerName();
-            if ( server.startsWith("print") )
-                request.setAttribute(TemplateSelector.PARAM_VARIANTA, "print");
-            else if ( server.startsWith("new") )
-                request.setAttribute(TemplateSelector.PARAM_VARIANTA, "new");
-
+            AbcAction action = urlMapper.findAction(request, env);
             String templateName = action.process(request, response, env);
             if ( Misc.empty(templateName) )
                 return;
@@ -63,6 +60,17 @@ public class HTMLVersion {
             writer.flush();
         } catch (Exception e) {
             error(request, response, e);
+        }
+    }
+
+    public static void setLayout(HttpServletRequest request, URLMapper urlMapper) {
+        String serverName = request.getServerName();
+        int i = serverName.indexOf(urlMapper.getDomain());
+        if ( i>0 ) {
+            String server = serverName.substring(0, i-1);
+            if ( server.startsWith("www") || !FMTemplateSelector.layoutExists(server) )
+                return;
+            request.setAttribute(TemplateSelector.PARAM_VARIANTA, server);
         }
     }
 

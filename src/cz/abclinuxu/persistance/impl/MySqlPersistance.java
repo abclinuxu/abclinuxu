@@ -161,6 +161,37 @@ public class MySqlPersistance implements Persistance {
     }
 
     /**
+     * Finds all relations where obj is children.
+     * @param child
+     * @return list of initialized relations
+     * @throws PersistanceException
+     */
+    public List findRelations(GenericObject child) throws PersistanceException {
+        Connection con = null;Statement statement = null;ResultSet resultSet = null;
+        con = getSQLConnection();
+        List found = new ArrayList(5);
+
+        StringBuffer sb = new StringBuffer("select * from relace where ");
+        sb.append("typ_potomka='");
+        sb.append(getTableId(child));
+        sb.append("' and potomek=");
+        sb.append(child.getId());
+
+        try {
+            statement = con.createStatement();
+            resultSet = statement.executeQuery(sb.toString());
+            while ( resultSet.next() ) {
+                Relation relation = loadRelationFromResultSet(resultSet);
+                found.add(relation);
+            }
+            return found;
+        } catch (SQLException e) {
+            throw new PersistanceException("Nemohu smazat objekt!", e);
+        } finally {
+            releaseSQLResources(con, statement, resultSet);
+        }
+    }
+    /**
      * todo It always tries to parseInt, even on string. It catches NumberFormatException
      * to recover! That's terribly slow and ugly!
      */
@@ -307,29 +338,9 @@ public class MySqlPersistance implements Persistance {
             statement = con.createStatement();
             resultSet = statement.executeQuery(sb.toString());
             while ( resultSet.next() ) {
-                Relation relation = new Relation(resultSet.getInt(1));
-                relation.setUpper(resultSet.getInt(2));
-
-                char type = resultSet.getString(3).charAt(0);
-                int id = resultSet.getInt(4);
-                parent = instantiateFromTree(type,id);
-                relation.setParent(parent);
-
-                type = resultSet.getString(5).charAt(0);
-                id = resultSet.getInt(6);
-                child = instantiateFromTree(type,id);
-                relation.setChild(child);
-
-                String tmp = resultSet.getString(7);
-                if ( tmp!=null ) {
-                    tmp = insertEncoding(tmp);
-                    relation.setData(new String(tmp));
-                }
-
+                Relation relation = loadRelationFromResultSet(resultSet);
                 found.add(relation);
             }
-
-            if ( found==null ) return null;
 
             Relation[] relations = new Relation[found.size()];
             int i = 0;
@@ -529,28 +540,17 @@ public class MySqlPersistance implements Persistance {
     public List findChildren(GenericObject obj) {
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         List children = new ArrayList();
-        Relation relation; GenericObject child;
+        Relation relation;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select cislo,predchozi,typ_potomka,potomek,data from relace where typ_predka=? and predek=?");
+            statement = con.prepareStatement("select * from relace where typ_predka=? and predek=?");
             statement.setString(1,getTableId(obj));
             statement.setInt(2,obj.getId());
             resultSet = statement.executeQuery();
 
             while ( resultSet.next() ) {
-                relation = new Relation(resultSet.getInt(1));
-                relation.setUpper(resultSet.getInt(2));
-                child = instantiateFromTree(resultSet.getString(3).charAt(0), resultSet.getInt(4));
+                relation = loadRelationFromResultSet(resultSet);
                 relation.setParent(obj);
-                relation.setChild(child);
-
-                String tmp = resultSet.getString(5);
-                if ( tmp!=null) {
-                    tmp = insertEncoding(tmp);
-                    relation.setData(new String(tmp));
-                }
-
-                relation.setInitialized(true);
                 children.add(relation);
             }
             return (children.size()==0) ? Collections.EMPTY_LIST : children;
@@ -585,13 +585,15 @@ public class MySqlPersistance implements Persistance {
             gdo.setUpdated(new java.util.Date());
 
         } else if (obj instanceof Relation) {
-            sb.append("insert into relace values(0,?,?,?,?,?,?)");
-            conditions.add(new Integer(((Relation)obj).getUpper()));
-            conditions.add(getTableId(((Relation)obj).getParent()));
-            conditions.add(new Integer(((Relation)obj).getParent().getId()));
-            conditions.add(getTableId(((Relation)obj).getChild()));
-            conditions.add(new Integer(((Relation)obj).getChild().getId()));
-            String tmp = ((Relation)obj).getDataAsString();
+            sb.append("insert into relace values(0,?,?,?,?,?,?,?)");
+            Relation relation = (Relation)obj;
+            conditions.add(new Integer(relation.getUpper()));
+            conditions.add(getTableId(relation.getParent()));
+            conditions.add(new Integer(relation.getParent().getId()));
+            conditions.add(getTableId(relation.getChild()));
+            conditions.add(new Integer(relation.getChild().getId()));
+            conditions.add(relation.getUrl());
+            String tmp = relation.getDataAsString();
             conditions.add((tmp!=null)? tmp.getBytes():null);
 
         } else if (obj instanceof Data) {
@@ -899,29 +901,37 @@ public class MySqlPersistance implements Persistance {
                 throw new NotFoundException("Relace "+obj.getId()+" nebyla nalezena!");
             }
 
-            Relation relation = new Relation(resultSet.getInt(1));
-            relation.setUpper(resultSet.getInt(2));
-
-            char type = resultSet.getString(3).charAt(0);
-            int id = resultSet.getInt(4);
-            GenericObject parent = instantiateFromTree(type,id);
-            relation.setParent(parent);
-
-            type = resultSet.getString(5).charAt(0);
-            id = resultSet.getInt(6);
-            GenericObject child = instantiateFromTree(type,id);
-            relation.setChild(child);
-
-            String tmp = resultSet.getString(7);
-            if ( tmp!=null ) {
-                tmp = insertEncoding(tmp);
-                relation.setData(new String(tmp));
-            }
-
+            Relation relation = loadRelationFromResultSet(resultSet);
             return relation;
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }
+    }
+
+    private Relation loadRelationFromResultSet(ResultSet resultSet) throws SQLException {
+        Relation relation = new Relation(resultSet.getInt(1));
+        relation.setUpper(resultSet.getInt(2));
+
+        char type = resultSet.getString(3).charAt(0);
+        int id = resultSet.getInt(4);
+        GenericObject parent = instantiateFromTree(type,id);
+        relation.setParent(parent);
+
+        type = resultSet.getString(5).charAt(0);
+        id = resultSet.getInt(6);
+        GenericObject child = instantiateFromTree(type,id);
+        relation.setChild(child);
+
+        relation.setUrl(resultSet.getString(7));
+
+        String tmp = resultSet.getString(8);
+        if ( tmp!=null ) {
+            tmp = insertEncoding(tmp);
+            relation.setData(new String(tmp));
+        }
+
+        relation.setInitialized(true);
+        return relation;
     }
 
     /**
@@ -1095,7 +1105,7 @@ public class MySqlPersistance implements Persistance {
 
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("update relace set typ_predka=?,predek=?,typ_potomka=?,potomek=?,data=?,predchozi=? where cislo=?");
+            statement = con.prepareStatement("update relace set typ_predka=?,predek=?,typ_potomka=?,potomek=?,data=?,predchozi=?,url=? where cislo=?");
 
             statement.setString(1,getTableId(relation.getParent()));
             statement.setInt(2,relation.getParent().getId());
@@ -1109,7 +1119,8 @@ public class MySqlPersistance implements Persistance {
                 statement.setBytes(5,tmp.getBytes());
             }
             statement.setInt(6,relation.getUpper());
-            statement.setInt(7,relation.getId());
+            statement.setString(7,relation.getUrl());
+            statement.setInt(8,relation.getId());
 
             int result = statement.executeUpdate();
             if ( result!=1 ) {

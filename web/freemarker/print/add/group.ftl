@@ -1,7 +1,6 @@
-<#include "/include/macros.ftl">
 <#include "../header.ftl">
 
-<#call showMessages>
+<@lib.showMessages/>
 
 <form action="${URL.noPrefix("/Group")}" method="POST">
  <table width="100%" border=0 cellpadding=5>

@@ -9,10 +9,13 @@ package cz.abclinuxu.utils;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
-import cz.abclinuxu.data.Category;
+import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.utils.freemarker.Tools;
+
+import java.util.List;
 
 /**
  * This class works as template for speed measurement.
@@ -27,19 +30,23 @@ public class Measure {
 
         // place initilizaton here
         Persistance persistance = PersistanceFactory.getPersistance();
-        Category polls = (Category) persistance.findById(new Category(Constants.CAT_POLLS));
+        Relation dizRel = (Relation) persistance.findById(new Relation(62819));
+        Item diz = (Item) dizRel.getChild();
+        Tools tools = new Tools();
+        tools.sync(diz);
+        tools.createDiscussionTree(diz);
 
         long start = System.currentTimeMillis();
-        for (i=0; i<500; i++) {
+        for (i=0; i<4000; i++) {
             //place your code to measure here
-            polls = (Category) persistance.findById(new Category(Constants.CAT_POLLS));
+            tools.createDiscussionTree(diz);
         }
         long end = System.currentTimeMillis();
 
         // place clean up here
 
         float avg = (end-start)/(float)i;
-        System.out.println("celkem = "+(end-start)+" ms ,prumer = "+avg+ " ms.");
+        System.out.println("celkem = "+(end-start)+" ms, prumer = "+avg+ " ms.");
         LogManager.getRootLogger().setLevel(Level.ALL);
     }
 }

@@ -1,7 +1,6 @@
-<#include "/include/macros.ftl">
 <#include "../header.ftl">
 
-<#global autor=TOOL.createUser(TOOL.xpath(ITEM,"/data/author"))>
+<#assign autor=TOOL.createUser(TOOL.xpath(ITEM,"/data/author"))>
 
 <h1>${TOOL.xpath(ITEM,"/data/name")}</h1>
 
@@ -9,37 +8,26 @@
 ${DATE.show(ITEM.created,"CZ_FULL")} | <a href="/Profile/${autor.id}">${autor.name}</a>
 </div>
 
-${TOOL.showParents(PARENTS,USER?if_exists,URL)}
+<@lib.showParents PARENTS />
 
 <#if USER?exists && USER.hasRole("article admin")>
  <p>
-  <a href="${URL.make("/edit?action=edit&rid="+RELATION.id)}" title="Uprav">
-  <img src="/images/actions/pencil.png" class="ikona22" alt="Uprav"></a>
-  <a href="${URL.noPrefix("/SelectRelation?prefix=/clanky&url=/EditRelation&action=move&rid="+RELATION.id)}" title="Pøesunout">
-  <img src="/images/actions/cut.png" alt="Pøesunout" class="ikona"></a>
-  <a href="${URL.noPrefix("/EditRelation?action=remove&prefix=/clanky&rid="+RELATION.id)}" title="Sma¾">
-  <img src="/images/actions/delete.png" alt="Sma¾" class="ikona"></a>
+  <a href="${URL.make("/edit?action=edit&rid="+RELATION.id)}">Upravit</a>
+  <a href="${URL.noPrefix("/SelectRelation?prefix=/clanky&url=/EditRelation&action=move&rid="+RELATION.id)}">Pøesunout</a>
+  <a href="${URL.noPrefix("/EditRelation?action=remove&prefix=/clanky&rid="+RELATION.id)}">Smazat</a>
+  <a href="${URL.make("/honorare/"+RELATION.id+"?action=add")}">Vlo¾it honoráø</a>
+  <#if CHILDREN.royalties?exists>
+   <#list CHILDREN.royalties as honorar>
+    <a href="${URL.make("/honorare/"+honorar.id+"?action=edit")}">Upravit honoráø</a>
+   </#list>
+  </#if>
+  <a href="${URL.make("/"+RELATION.id+".docb")}">Docbook</a>
  </p>
 </#if>
 
 <p class="perex">${TOOL.xpath(ITEM,"/data/perex")}</p>
 
 ${TOOL.render(TOOL.getCompleteArticleText(ITEM),USER?if_exists)}
-
-<#if PAGES?exists>
- <div class="perex">
-  <h1>Jednotlivé podstránky èlánku</h1>
-  <ol>
-  <#list PAGES as page><li>
-   <#if page_index==PAGE>
-    ${page}
-   <#else>
-    <a href="/clanky/show/${RELATION.id}&page=${page_index}&varianta=print">${page}</a>
-   </#if>
-  </#list>
-  </ol>
- </div>
-</#if>
 
 <#if RELATED?exists || RESOURCES?exists>
  <div class="perex">
@@ -67,19 +55,19 @@ ${TOOL.render(TOOL.getCompleteArticleText(ITEM),USER?if_exists)}
 <#if ! PARAMS.noDiz?exists>
  <#if CHILDREN.discussion?exists>
   <h1>Diskuse k tomuto èlánku</h1>
-  <#global DISCUSSION=CHILDREN.discussion[0].child>
+  <#assign DISCUSSION=CHILDREN.discussion[0].child>
   <p>
    <a href="${URL.make("/EditDiscussion?action=add&dizId="+DISCUSSION.id+"&threadId=0&rid="+CHILDREN.discussion[0].id)}">
    Vlo¾it dal¹í komentáø</a>
   </p>
-  <#if TOOL.xpath(DISCUSSION,"/data/frozen")?exists><#global frozen=true><#else><#global frozen=false></#if>
+  <#assign frozen=TOOL.xpath(DISCUSSION,"/data/frozen")?exists>
   <#if USER?exists && USER.hasRole("discussion admin")>
    <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+CHILDREN.discussion[0].id+"&amp;dizId="+DISCUSSION.id)}">
    <#if frozen>Rozmrazit<#else>Zmrazit</#if> diskusi</a>
   </#if>
 
   <#list TOOL.createDiscussionTree(DISCUSSION) as thread>
-   <#call showThread(thread 0 DISCUSSION.id CHILDREN.discussion[0].id !frozen)>
+   <@lib.showThread thread, 0, DISCUSSION.id, CHILDREN.discussion[0].id, !frozen />
   </#list>
  <#elseif ALLOW_DISCUSSIONS>
   <h1>Diskuse k tomuto èlánku</h1>

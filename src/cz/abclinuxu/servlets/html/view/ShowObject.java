@@ -81,8 +81,6 @@ public class ShowObject implements AbcAction {
 
         Tools.sync(relation);
         env.put(VAR_RELATION,relation);
-        List parents = persistance.findParents(relation);
-        env.put(VAR_PARENTS,parents);
 
         // check ACL
         Document document = relation.getData();
@@ -103,17 +101,17 @@ public class ShowObject implements AbcAction {
             }
         }
 
-        if ( relation.getParent() instanceof Item )
+        List parents = persistance.findParents(relation);
+        env.put(VAR_PARENTS, parents);
+
+        if ( (relation.getParent() instanceof Item) || ( relation.getChild() instanceof Item ) )
             return processItem(env, relation, request, response);
         else if ( relation.getChild() instanceof Poll )
-            return processPoll(env, relation, request);
+            return processPoll(env, relation, request, response);
         else if ( relation.getParent() instanceof Category ) {
-            if ( relation.getChild() instanceof Item )
-                return processItem(env, relation, request, response);
-            else
-                return ViewCategory.processCategory(request,response,env,relation);
+            return ViewCategory.processCategory(request,response,env,relation);
         }
-        return null;
+        return null; // todo log object
     }
 
     /**
@@ -142,24 +140,18 @@ public class ShowObject implements AbcAction {
         env.put(VAR_UPPER, upper);
 
         if ( item.getType()==Item.ARTICLE )
-            return ShowArticle.show(env, item, request, response);
+            return ShowArticle.show(env, item, request);
 
         if ( item.getType()==Item.NEWS ) {
             env.put(EditNews.VAR_CATEGORY, NewsCategories.get(item.getSubType()));
-
-            List list = (List) children.get(Constants.TYPE_DISCUSSION);
-            if ( list!=null && list.size()==1 ) {
-                Item discussion = (Item) ((Relation) list.get(0)).getChild();
-                Tools.handleNewComments(discussion, env, request, response);
-            }
-
             return FMTemplateSelector.select("ShowObject", "news", env, request);
         }
 
-        if ( item.getType()==Item.DISCUSSION ) {
-            Tools.handleNewComments(item,env,request,response);
+        if ( item.getType()==Item.DISCUSSION )
             return FMTemplateSelector.select("ShowObject","discussion",env, request);
-        }
+
+        if ( item.getType()==Item.CONTENT )
+            return ViewContent.show(request, response, env);
 
         if ( item.getType()==Item.DRIVER )
             return FMTemplateSelector.select("ShowObject","driver",env, request);
@@ -205,10 +197,13 @@ public class ShowObject implements AbcAction {
     /**
      * Displays selected poll.
      */
-    String processPoll(Map env, Relation relation, HttpServletRequest request) throws Exception {
+    String processPoll(Map env, Relation relation, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
         Poll poll = (Poll) persistance.findById(relation.getChild());
         env.put(VAR_POLL, poll);
+
+        Map children = Tools.groupByType(poll.getChildren());
+        env.put(VAR_CHILDREN_MAP, children);
         return FMTemplateSelector.select("ShowObject", "poll", env, request);
     }
 }

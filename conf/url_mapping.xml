@@ -69,7 +69,7 @@
             <action>cz.abclinuxu.servlets.html.edit.EditArticle</action>
         </mapping>
         <mapping>
-            <pattern>^/clanky/EditRequest</pattern>
+            <pattern>EditRequest</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditRequest</action>
         </mapping>
         <mapping>
@@ -85,8 +85,16 @@
             <action>cz.abclinuxu.servlets.html.edit.EditNews</action>
         </mapping>
         <mapping>
+            <pattern>^/news/csv</pattern>
+            <action>cz.abclinuxu.servlets.html.various.NewsCSV</action>
+        </mapping>
+        <mapping>
             <pattern>^/EditSurvey</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditSurvey</action>
+        </mapping>
+        <mapping>
+            <pattern>^/editContent</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditContent</action>
         </mapping>
         <mapping>
             <pattern>^/EditRelation</pattern>
@@ -124,6 +132,10 @@
             <pattern>.docb</pattern>
             <action>cz.abclinuxu.servlets.html.view.ShowDocbook</action>
         </mapping>
+        <mapping>
+            <pattern>/whatHappened</pattern>
+            <action>cz.abclinuxu.scheduler.WhatHappened</action>
+        </mapping>
     </format>
     <format version="wap">
         <mapping>
@@ -159,7 +171,7 @@
         </mapping>
         <mapping>
             <pattern input="path">ViewCategory</pattern>
-            <regexp>ViewCategory.+(relationId|rid)=([\d]+).*</regexp>
+            <regexp>ViewCategory.+(relationId|rid|categoryId)=([\d]+).*</regexp>
             <replacement>dir/$2</replacement>
         </mapping>
         <mapping>

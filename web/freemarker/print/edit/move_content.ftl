@@ -1,7 +1,6 @@
-<#include "/include/macros.ftl">
 <#include "../header.ftl">
 
-<#call showMessages>
+<@lib.showMessages/>
 
 <p>Tato stránka slou¾í k pøesunutí obsahu objektu ${TOOL.childName(CURRENT)}
 do objektu, který si zvolíte na dal¹í stránce. Ve¹kerý obsah

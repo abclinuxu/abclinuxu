@@ -4,14 +4,14 @@
 </head>
 <body>
 <#if DATABASE_VALID>
- <#global PERSISTANCE="OK">
+ <#assign PERSISTANCE="OK">
 <#else>
- <#global PERSISTANCE="porucha">
+ <#assign PERSISTANCE="porucha">
 </#if>
 <#if FULLTEXT_VALID>
- <#global FULLTEXT="OK">
+ <#assign FULLTEXT="OK">
 <#else>
- <#global FULLTEXT="porucha">
+ <#assign FULLTEXT="porucha">
 </#if>
 Persistance:${PERSISTANCE}<br>
 Fulltext:${FULLTEXT}<br>

@@ -2,8 +2,6 @@
  * User: literakl
  * Date: Dec 19, 2001
  * Time: 5:55:35 PM
- *
- * Copyright by Leos Literak (literakl@centrum.cz) 2001
  */
 package cz.abclinuxu.servlets.init;
 
@@ -14,26 +12,25 @@ import cz.abclinuxu.scheduler.*;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.DateTool;
-import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.Sorters2;
+import cz.abclinuxu.utils.news.NewsCategories;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.utils.email.monitor.InstantSender;
 import cz.abclinuxu.utils.email.forum.CommentSender;
-import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.Configuration;
-import freemarker.template.TemplateExceptionHandler;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.prefs.Preferences;
+
 
 /**
  * This servlet initializes web application
@@ -44,11 +41,16 @@ public class AbcInit extends HttpServlet implements Configurable {
     public static final String PREF_START_RSS_MONITOR = "start.rss.monitor";
     public static final String PREF_START_RSS_GENERATOR = "start.rss.generator";
     public static final String PREF_START_RSS_KERNEL = "start.rss.kernel";
+    public static final String PREF_START_RSS_UNIXSHOP = "start.rss.unixshop";
+    public static final String PREF_START_RSS_PRACE = "start.rss.prace";
     public static final String PREF_START_VARIABLE_FETCHER = "start.variable.fetcher";
     public static final String PREF_START_ARTICLE_POOL_MONITOR = "start.article.pool.monitor";
     public static final String PREF_START_ABC_MONITOR = "start.abc.monitor";
     public static final String PREF_START_FORUM_MAIL_GATEWAY = "start.forum.mail.gateway";
     public static final String PREF_START_WEEKLY_EMAILS = "start.weekly.emails";
+    public static final String PREF_START_WEEKLY_SUMMARY = "start.weekly.summary";
+    public static final String PREF_START_UPDATE_DATETOOL = "start.datetool.service";
+    public static final String PREF_START_WATCHED_DISCUSSIONS_CLEANER = "start.watched.discussions.cleaner";
 
     /** scheduler used by all objects in project */
     static Timer scheduler;
@@ -58,38 +60,42 @@ public class AbcInit extends HttpServlet implements Configurable {
         scheduler = new Timer(true);
     }
 
-    private Map services = new HashMap(10, 0.9f);
-
+    private Map services = new HashMap(10, 1.0f);
 
     public void init() throws ServletException {
+        String tmp = getInitParameter("PREFERENCES");
+        ConfigurationManager.init(tmp);
         ConfigurationManager.getConfigurator().configureMe(this);
 
-        fetcher = new VariableFetcher();
+        fetcher = VariableFetcher.getInstance();
         String path = getServletContext().getRealPath("/")+"/";
         configureFreeMarker(path);
-        String tmp = getInitParameter("TEMPLATES");
+        tmp = getInitParameter("TEMPLATES");
         try {
             FMTemplateSelector.initialize(path+tmp);
         } catch (Exception e) {
             log.fatal("Nemohu inicializovat systém ¹ablon!", e);
         }
 
-        // start scheduler tasks
+        // start tasks
         startFetchingVariables();
         startKernelUpdate();
         startLinksUpdate();
+        startUnixshopUpdate();
+        startPraceUpdate();
         startGenerateLinks();
         startArticlePoolMonitor();
         startSendingWeeklyEmails();
+        startWeeklySummary();
         startObjectMonitor();
         startForumSender();
+        startDateToolUpdateService();
+        startWatchedDiscussionsCleaner();
 
         log.info("Inicializace je hotova.");
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // this servlet shall be never called directly
-    }
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {}
 
     /**
      * @return instance of scheduler
@@ -99,10 +105,10 @@ public class AbcInit extends HttpServlet implements Configurable {
     }
 
     /**
-     * Update links, each six hours, starting at 6:30+k*6, where k is minimal non-negativ integer
+     * Update links, each six hours, starting at 7:30+k*3, where k is minimal non-negativ integer
      */
     protected void startLinksUpdate() {
-        if (!isSet(PREF_START_RSS_MONITOR)) {
+        if ( !isSet(PREF_START_RSS_MONITOR) ) {
             log.info("RSS monitor configured not to run");
             return;
         }
@@ -115,11 +121,11 @@ public class AbcInit extends HttpServlet implements Configurable {
         Date now = new Date();
 
         while ( next.before(now) ) {
-            cal.add(Calendar.HOUR_OF_DAY,6);
+            cal.add(Calendar.HOUR_OF_DAY, 6);
             next = cal.getTime();
         }
 
-        scheduler.scheduleAtFixedRate(new UpdateLinks(),next,6*60*60*1000);
+        scheduler.scheduleAtFixedRate(new UpdateLinks(false), next, 3*60*60*1000);
     }
 
     /**
@@ -131,7 +137,31 @@ public class AbcInit extends HttpServlet implements Configurable {
             return;
         }
         log.info("Scheduling RSS kernel monitor");
-        scheduler.schedule(new UpdateKernel(),60*1000,1*60*60*1000);
+        scheduler.schedule(UpdateKernel.getInstance(), 60*1000, 1*60*60*1000);
+    }
+
+    /**
+     * Update unixshop RSS each two hours, starting after two minutes
+     */
+    protected void startUnixshopUpdate() {
+        if ( !isSet(PREF_START_RSS_UNIXSHOP) ) {
+            log.info("RSS Unixshop monitor configured not to run");
+            return;
+        }
+        log.info("Scheduling RSS unixshop monitor");
+        scheduler.schedule(new UnixshopFetcher(), 2*60*1000, 2*60*60*1000);
+    }
+
+    /**
+     * Update prace.abclinuxu.cz RSS each ten minutes, starting after one minute
+     */
+    protected void startPraceUpdate() {
+        if ( !isSet(PREF_START_RSS_PRACE) ) {
+            log.info("RSS prace monitor configured not to run");
+            return;
+        }
+        log.info("Scheduling RSS prace monitor");
+        scheduler.schedule(new PraceRSSFetcher(), 60*1000, 10*60*1000);
     }
 
     /**
@@ -143,7 +173,7 @@ public class AbcInit extends HttpServlet implements Configurable {
             return;
         }
         log.info("Scheduling RSS generator");
-        scheduler.schedule(new GenerateLinks(),30*1000,1*60*60*1000);
+        scheduler.schedule(new GenerateLinks(), 30*1000, 1*60*60*1000);
     }
 
     /**
@@ -156,7 +186,19 @@ public class AbcInit extends HttpServlet implements Configurable {
             return;
         }
         log.info("Scheduling template variables fetcher");
-        scheduler.schedule(fetcher,0,30*1000);
+        scheduler.schedule(fetcher, 0, 30*1000);
+    }
+
+    /**
+     * Cleaner starts after 5 minute from startup and repeats each six hours.
+     */
+    protected void startWatchedDiscussionsCleaner() {
+        if ( !isSet(PREF_START_WATCHED_DISCUSSIONS_CLEANER) ) {
+            log.info("Watched discussion cleaner configured not to run");
+            return;
+        }
+        log.info("Scheduling watched discussion cleaner");
+        scheduler.schedule(EnsureWatchedDiscussionsLimit.getInstance(), 2*60*1000, 6*60*60*1000);
     }
 
     /**
@@ -169,7 +211,7 @@ public class AbcInit extends HttpServlet implements Configurable {
             return;
         }
         log.info("Scheduling ArticlePool monitor");
-        scheduler.schedule(new ArticlePoolMonitor(),1*60*1000,3*60*1000);
+        scheduler.schedule(new ArticlePoolMonitor(), 1*60*1000, 3*60*1000);
     }
 
     /**
@@ -206,42 +248,65 @@ public class AbcInit extends HttpServlet implements Configurable {
         }
         log.info("Scheduling WeeklyEmail sender");
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_WEEK,Calendar.SATURDAY);
-        calendar.set(Calendar.HOUR_OF_DAY,12);
-        calendar.set(Calendar.MINUTE,0);
-        calendar.set(Calendar.SECOND,0);
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+        calendar.set(Calendar.HOUR_OF_DAY, 12);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
         if ( new Date().after(calendar.getTime()) ) {
-            calendar.add(Calendar.DAY_OF_WEEK,7);
+            calendar.add(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
         }
 
-        scheduler.scheduleAtFixedRate(new WeeklyEmail(),calendar.getTime(),7*24*60*60*1000);
+        scheduler.scheduleAtFixedRate(new WeeklyEmail(), calendar.getTime(), 7*24*60*60*1000);
+    }
+
+    /**
+     * Send weekly emails each saturday noon.
+     */
+    private void startWeeklySummary() {
+        if ( !isSet(PREF_START_WEEKLY_SUMMARY) ) {
+            log.info("Weekly summary configured not to be generated");
+            return;
+        }
+        log.info("Scheduling Weekly summary generator");
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 1);
+        calendar.set(Calendar.SECOND, 0);
+        if ( new Date().after(calendar.getTime()) ) {
+            calendar.add(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        }
+
+        scheduler.scheduleAtFixedRate(new WhatHappened(), calendar.getTime(), 7*24*60*60*1000);
+    }
+
+    /**
+     * Send weekly emails each saturday noon.
+     */
+    private void startDateToolUpdateService() {
+        if ( !isSet(PREF_START_UPDATE_DATETOOL) ) {
+            log.info("Weekly summary configured not to be generated");
+            return;
+        }
+        log.info("Scheduling DateTool update service");
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 10);
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+
+        scheduler.scheduleAtFixedRate(new UpdateDateTool(), calendar.getTime(), 24*60*60*1000);
     }
 
     /**
      * Sets some commonly used variables in freemarker templates.
      */
-    public static void setSharedVariables() {
-        try {
-            setSharedVariableLinks();
-        } catch (Exception e) {
-            log.error("cannot store shared variable!", e);
-        }
-    }
-
-    /**
-     * Sets LINKS variable in freemarker templates.
-     */
-    public static void setSharedVariableLinks() {
+    public static void setServerLinksAstSharedVariables() throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
-        Configuration cfg = Configuration.getDefaultConfiguration();
-
-        try {
-            Category linksCategory = (Category) persistance.findById(new Category(Constants.CAT_LINKS));
-            Map links = UpdateLinks.groupLinks(linksCategory, persistance);
-            cfg.setSharedVariable(Constants.VAR_LINKS, links);
-        } catch (Exception e) {
-            log.error("cannot store shared variable!", e);
-        }
+        Configuration cfg = FMUtils.getConfiguration();
+        Category linksCategory = (Category) persistance.findById(new Category(Constants.CAT_LINKS));
+        Map links = UpdateLinks.groupLinks(linksCategory, persistance);
+        cfg.setSharedVariable(Constants.VAR_LINKS, links);
     }
 
     /**
@@ -249,41 +314,20 @@ public class AbcInit extends HttpServlet implements Configurable {
      */
     void configureFreeMarker(String path) {
         log.info("Inicializuji FreeMarker");
+        Configuration cfg = FMUtils.getConfiguration();
 
-        Configuration cfg = Configuration.getDefaultConfiguration();
-        cfg.setDefaultEncoding("ISO-8859-2");
-        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.IGNORE_HANDLER);
-        cfg.setObjectWrapper(BeansWrapper.getDefaultInstance());
-        cfg.setTemplateUpdateDelay(1);
-        cfg.setStrictSyntaxMode(true);
-
-        setSharedVariables();
         try {
             cfg.setSharedVariable(Constants.VAR_TOOL,new Tools());
             cfg.setSharedVariable(Constants.VAR_DATE_TOOL,new DateTool());
             cfg.setSharedVariable(Constants.VAR_SORTER,new Sorters2());
-            cfg.setSharedVariable(Constants.VAR_FETCHER,fetcher);
+            cfg.setSharedVariable(Constants.VAR_FETCHER, VariableFetcher.getInstance());
+            cfg.setSharedVariable(Constants.VAR_CATEGORIES, NewsCategories.getInstance());
+            setServerLinksAstSharedVariables();
 
             log.info("Inicializace FreeMarkeru je hotova");
         } catch (Exception e) {
             log.error("cannot store shared variable!", e);
         }
-
-        String tmp = getInitParameter("FREEMARKER");
-        if ( ! Misc.empty(tmp) ) {
-            try {
-                cfg.setDirectoryForTemplateLoading(new File(path,tmp));
-            } catch (IOException e) {
-                log.error("Nemohu inicializovat FreeMarker!",e);
-            }
-        }
-    }
-
-    /**
-     * legacy method for compatibility with previous velocity based implementation
-     */
-    public static VariableFetcher getFetcher() {
-        return fetcher;
     }
 
     /**
@@ -296,8 +340,13 @@ public class AbcInit extends HttpServlet implements Configurable {
         services.put(PREF_START_RSS_GENERATOR, new Boolean(prefs.getBoolean(PREF_START_RSS_GENERATOR, true)));
         services.put(PREF_START_RSS_KERNEL, new Boolean(prefs.getBoolean(PREF_START_RSS_KERNEL, true)));
         services.put(PREF_START_RSS_MONITOR, new Boolean(prefs.getBoolean(PREF_START_RSS_MONITOR, true)));
+        services.put(PREF_START_RSS_UNIXSHOP, new Boolean(prefs.getBoolean(PREF_START_RSS_UNIXSHOP, true)));
+        services.put(PREF_START_RSS_PRACE, new Boolean(prefs.getBoolean(PREF_START_RSS_PRACE, true)));
         services.put(PREF_START_VARIABLE_FETCHER, new Boolean(prefs.getBoolean(PREF_START_VARIABLE_FETCHER, true)));
         services.put(PREF_START_WEEKLY_EMAILS, new Boolean(prefs.getBoolean(PREF_START_WEEKLY_EMAILS, true)));
+        services.put(PREF_START_WEEKLY_SUMMARY, new Boolean(prefs.getBoolean(PREF_START_WEEKLY_SUMMARY, true)));
+        services.put(PREF_START_UPDATE_DATETOOL, new Boolean(prefs.getBoolean(PREF_START_UPDATE_DATETOOL, true)));
+        services.put(PREF_START_WATCHED_DISCUSSIONS_CLEANER, new Boolean(prefs.getBoolean(PREF_START_WATCHED_DISCUSSIONS_CLEANER, true)));
     }
 
     /**

@@ -55,7 +55,7 @@
     <td align="center"><span class="pidi">${diz.responseCount}</span></td>
     <td align="center"><span class="pidi">${DATE.show(diz.updated,"CZ_FULL")}</span></td>
    </tr>
-   <tr><td colspan="3"><#if diz_has_next><#call separator><#else><#call doubleSeparator></#if></td></tr>
+   <tr><td colspan="3"><#if diz_has_next><@separator><#else><@doubleSeparator></#if></td></tr>
   </#list>
 
  </table>
@@ -83,12 +83,12 @@
 <#macro showThread(diz level dizId relId)>
  <#local space=level*15>
  <div style="padding-left: ${space}pt">
-  <#call showComment(diz dizId relId true)>
+  <@showComment(diz dizId relId true)>
  </div>
  <#if diz.children?exists>
   <#local level2=level+1>
   <#list diz.children as child>
-   <#call showThread(child level2 dizId relId)>
+   <@showThread(child level2 dizId relId)>
   </#list>
  </#if>
 </#macro>

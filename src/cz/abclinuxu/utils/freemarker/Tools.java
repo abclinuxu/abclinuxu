@@ -10,10 +10,10 @@ import cz.abclinuxu.exceptions.PersistanceException;
 import cz.abclinuxu.exceptions.InvalidDataException;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.edit.EditRating;
 import cz.abclinuxu.servlets.utils.UrlUtils;
-import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.data.view.DiscussionHeader;
 import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.data.view.Discussion;
@@ -23,6 +23,7 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.format.*;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.scheduler.EnsureWatchedDiscussionsLimit;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.dom4j.Element;
@@ -36,10 +37,6 @@ import java.util.prefs.Preferences;
 
 import freemarker.template.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Cookie;
-
 /**
  * Various utilities available for templates
  */
@@ -47,28 +44,28 @@ public class Tools implements Configurable {
     static Logger log = Logger.getLogger(Tools.class);
 
     public static final String PREF_REGEXP_REMOVE_TAGS = "RE_REMOVE_TAGS";
+    public static final String PREF_REGEXP_VLNKA = "RE_VLNKA";
+    public static final String PREF_REPLACEMENT_VLNKA = "REPLACEMENT_VLNKA";
 
     static Persistance persistance = PersistanceFactory.getPersistance();
-    static RE reRemoveTags;
+    static RE reRemoveTags, reVlnka;
+    static String vlnkaReplacement;
 
     static {
         Tools tools = new Tools();
         ConfigurationManager.getConfigurator().configureAndRememberMe(tools);
     }
 
-    /**
-     * Holds id of greatest thread id.
-     * See Tools.handleNewComments();
-     */
-    public static final String VAR_MAXIMUM_COMMENT_ID = "MAX_COMMENT";
-    /** name of cookie, that holds id of read discsussions/threads */
-    public static final String READ_DISCUSSIONS_COOKIE = "DIZS";
+    private static final Integer MAX_SEEN_COMMENT_ID = new Integer(Integer.MAX_VALUE);
 
 
     public void configure(Preferences prefs) throws ConfigurationException {
         try {
             String pref = prefs.get(PREF_REGEXP_REMOVE_TAGS, null);
             reRemoveTags = new RE(pref, RE.MATCH_MULTILINE);
+            pref = prefs.get(PREF_REGEXP_VLNKA, null);
+            reVlnka = new RE(pref, RE.MATCH_MULTILINE);
+            vlnkaReplacement = prefs.get(PREF_REPLACEMENT_VLNKA, null);
         } catch (RESyntaxException e) {
             log.error("Cannot create regexp to find line breaks!", e);
         }
@@ -226,62 +223,35 @@ public class Tools implements Configurable {
     }
 
     /**
-     * Generates line with links to parents of this object.
+     * Generates list of Links to parents of this object.
      * @param parents list of relations.
      * @param o it shall be User or undefined value
-     * @return HTML formatted string
+     * @return List of Links
      */
-    public String showParents(List parents, Object o, UrlUtils urlUtils) {
-        User user = (o instanceof User)? ((User)o) : null;
-        if (parents.size()==0) return "";
-        StringBuffer sb = new StringBuffer("<p>");
-        String title, url;
-
-        Relation relation = (Relation) parents.get(0);
-        if ( relation.getUpper()==0 && (relation.getParent() instanceof Category) ) {
-            boolean forbidden = false;
-            GenericObject parent = relation.getParent();
-            if (parent.getId()==Constants.CAT_ROOT || parent.getId()==Constants.CAT_SYSTEM ) {
-                if ( user==null || (! user.isMemberOf(Constants.GROUP_ADMINI)) )
-                    forbidden = true;
-            }
-            if (!forbidden) {
-                appendURL(sb, urlUtils.make("/dir/"+relation.getId()+"?parent=yes"), xpath(parent, "/data/name"));
-                sb.append(" - ");
-            }
-        }
-
+    public List getParents(List parents, Object o, UrlUtils urlUtils) {
+        if (parents.size()==0) return Collections.EMPTY_LIST;
+        List result = new ArrayList();
+        Relation relation = null;
         for ( Iterator iter = parents.iterator(); iter.hasNext(); ) {
+            Link link = new Link();
             relation = (Relation) iter.next();
             GenericObject child = relation.getChild();
             if ( child instanceof Category && (child.getId()==Constants.CAT_ROOT || child.getId()==Constants.CAT_SYSTEM ))
-                if ( user==null || (!user.isMemberOf(Constants.GROUP_ADMINI)) )
-                    continue;
+                continue;
 
-            title = childName(relation); url = null;
+            link.setText(childName(relation));
             if (relation.getId()==Constants.REL_FORUM)
-                url =  "/diskuse.jsp";
+                link.setUrl(urlUtils.noPrefix("/diskuse.jsp"));
             else if (child instanceof Category) {
                 if (((Category)child).getType()==Category.SECTION_FORUM)
-                    url = "/forum/dir/"+relation.getId();
+                    link.setUrl(urlUtils.make("/forum/dir/"+relation.getId()));
                 else
-                    url = urlUtils.make("/dir/"+relation.getId());
+                    link.setUrl(urlUtils.make("/dir/"+relation.getId()));
             } else
-                url = urlUtils.make("/show/"+relation.getId());
-
-            appendURL(sb, url, title);
-            if ( iter.hasNext() ) sb.append(" - ");
+                link.setUrl(urlUtils.make("/show/"+relation.getId()));
+            result.add(link);
         }
-        sb.append("</p>");
-        return sb.toString();
-    }
-
-    private void appendURL(StringBuffer sb, String url, String title) {
-        sb.append("<a href=\"");
-        sb.append(url);
-        sb.append("\">");
-        sb.append(title);
-        sb.append("</a>");
+        return result;
     }
 
     /**
@@ -448,6 +418,8 @@ public class Tools implements Configurable {
      * children are same type.
      */
     public static Map groupByType(List relations) throws PersistanceException {
+        if (relations==null)
+            return Collections.EMPTY_MAP;
         Map map = new HashMap();
 
         for (Iterator iter = relations.iterator(); iter.hasNext();) {
@@ -473,6 +445,8 @@ public class Tools implements Configurable {
                     Misc.storeToMap(map,Constants.TYPE_REQUEST,relation);
                 else if ( item.getType()==Item.ROYALTIES )
                     Misc.storeToMap(map,Constants.TYPE_ROYALTIES,relation);
+                else if ( item.getType()==Item.CONTENT )
+                    Misc.storeToMap(map,Constants.TYPE_DOCUMENTS,relation);
             } else if ( child instanceof Record )
                 Misc.storeToMap(map,Constants.TYPE_RECORD,relation);
             else if ( child instanceof User )
@@ -709,6 +683,8 @@ public class Tools implements Configurable {
      * list of Discussion objects.
      */
     public Discussion createDiscussionTree(GenericObject obj) throws PersistanceException {
+        if (!obj.isInitialized())
+            sync(obj);
         if ( !InstanceUtils.checkType(obj, Item.class, Item.DISCUSSION) )
             throw new IllegalArgumentException("Not an discussion: "+obj);
 
@@ -718,25 +694,38 @@ public class Tools implements Configurable {
         Relation child = (Relation) obj.getChildren().get(0);
         Record record = (Record) child.getChild();
         sync(record);
-        List nodes = record.getData().selectNodes("/data/comment");
+
+        List nodes = record.getData().getRootElement().elements("comment");
         Discussion diz = new Discussion(nodes.size());
-        Map map = new HashMap(nodes.size()/3, 0.9f);
+        Map map = new HashMap(nodes.size()+1, 1.0f);
+        Comment current, upper = null;
+        List alone = new ArrayList();
+        int upperId;
+        Element element;
 
         for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
-            Element element = (Element) iter.next();
-            Comment current = new Comment(element), upper = null;
-            int upperId = 0;
+            element = (Element) iter.next();
+            current = new Comment(element); upper = null; upperId = 0;
             if (current.getParent()!=null)
                 upperId = current.getParent().intValue();
 
             if ( upperId!=0 ) {
-                upper = (Comment) map.get(new Integer(upperId));
-                upper.addChild(current);
+                upper = (Comment) map.get(current.getParent());
+                if (upper!=null)
+                    upper.addChild(current);
+                else
+                    alone.add(current);
             } else
                 diz.add(current);
 
             map.put(current.getId(), current);
         }
+        if (alone.size()>0)
+            for ( Iterator iter = alone.iterator(); iter.hasNext(); ) {
+                current = (Comment) iter.next();
+                upper = (Comment) map.get(current.getParent());
+                upper.addChild(current);
+            }
 
         return diz;
     }
@@ -796,9 +785,10 @@ public class Tools implements Configurable {
      * @return Map holding info about comments of this object.
      */
     public static DiscussionHeader findComments(GenericObject object) {
-        if ( !(object instanceof Item) )
-            return null;
-        for ( Iterator iter = object.getChildren().iterator(); iter.hasNext(); ) {
+        List children = object.getChildren();
+        if (children==null)
+            return new DiscussionHeader(null);
+        for ( Iterator iter = children.iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
             GenericObject child = (relation).getChild();
             if ( !(child instanceof Item) )
@@ -824,80 +814,45 @@ public class Tools implements Configurable {
 
     /**
      * This method is responsible for finding greatest id of comment, that user has read already.
-     * It first reads cookie with such content [dizId,threadId],[dizId,threadId] .. If given discussion
-     * is present in the cookie, threadId is extracted and set as environmental variable, otherwise
-     * impossible large value is used for this variable. The couple consisting of the discussion id
-     * and the maximum comment id is added to start of cookie.
      * @param discussion It may be unitialized
      */
-    public static void handleNewComments(Item discussion, Map env, HttpServletRequest request, HttpServletResponse response) {
-        User user = (User) env.get(Constants.VAR_USER);
+    public static Integer getLastSeenComment(Item discussion, User user, boolean saveInfo) {
         if (user==null)
-            return;
+            return MAX_SEEN_COMMENT_ID;
+
         Node node = user.getData().selectSingleNode("//new_comments");
         if (node!=null && node.getText().equals("no"))
-            return;
-
-        int dizId = discussion.getId(), number, position, lastSeen = -1, tmpLength;
-        StringBuffer newContent = new StringBuffer();
-        String couples = "", tmp;
+            return MAX_SEEN_COMMENT_ID;
 
         List children = discussion.getChildren();
-        if (children.size()==0) {
-            env.put(VAR_MAXIMUM_COMMENT_ID, new Integer(Integer.MAX_VALUE));
-            return;
-        }
+        if (children.size()==0)
+            return MAX_SEEN_COMMENT_ID;
 
-        Cookie cookie = ServletUtils.getCookie(request,READ_DISCUSSIONS_COOKIE);
-        if (cookie!=null) couples = cookie.getValue();
-        StringTokenizer stk = new StringTokenizer(couples,"A");
-        while (stk.hasMoreTokens()) {
-            tmp = stk.nextToken();
-            tmpLength = tmp.length();
-            if (tmpLength<5 || tmp.charAt(0)!='[' || tmp.charAt(tmpLength-1)!=']') break;
+        SQLTool sqlTool = SQLTool.getInstance();
+        Integer lastSeen = sqlTool.getLastSeenComment(user.getId(), discussion.getId());
 
-            position = tmp.indexOf('B');
-            if (position==-1) break;
-            number = Misc.parseInt(tmp.substring(1,position),0);
-            if (number==dizId) {
-                lastSeen = Misc.parseInt(tmp.substring(position+1,tmpLength-1), -1);
-            } else {
-                newContent.append('A');
-                newContent.append(tmp);
+        if (saveInfo) {
+            Relation childRelation = (Relation) children.get(0);
+            GenericObject child = persistance.findById(childRelation.getChild());
+            if ( !(child instanceof Record) || ((Record) child).getType()!=Record.DISCUSSION ) {
+                log.warn(childRelation+" shall be Record holding discussion!");
+                return MAX_SEEN_COMMENT_ID;
+            }
+
+            Document data = ((Record) child).getData();
+            List comments = data.getRootElement().elements("comment");
+            if ( comments!=null && comments.size()>0 ) {
+                Element lastComment = (Element) comments.get(comments.size()-1);
+                String tmp = lastComment.attributeValue("id");
+                int total = Misc.parseInt(tmp, 0);
+                if (lastSeen==null || total>lastSeen.intValue()) {
+                    sqlTool.insertLastSeenComment(user.getId(), discussion.getId(), total);
+                    EnsureWatchedDiscussionsLimit.checkLimits(user.getId());
+                }
             }
         }
 
-        if (lastSeen!=-1)
-            env.put(VAR_MAXIMUM_COMMENT_ID, new Integer(lastSeen));
-        else
-            env.put(VAR_MAXIMUM_COMMENT_ID, new Integer(Integer.MAX_VALUE));
-
-        Relation childRelation = (Relation) children.get(0);
-        GenericObject child = persistance.findById(childRelation.getChild());
-        if (!(child instanceof Record) || ((Record)child).getType()!=Record.DISCUSSION) {
-            log.warn(childRelation+" shall be Record holding discussion!");
-            return;
-        }
-
-        number = lastSeen;
-        Document data = ((Record) child).getData();
-        List comments = data.getRootElement().elements("comment");
-        if ( comments!=null && comments.size()>0 ) {
-            Element lastComment = (Element) comments.get(comments.size()-1);
-            tmp = lastComment.attributeValue("id");
-            number = Misc.parseInt(tmp, 0);
-        }
-        if (number<=lastSeen)
-	    return;
-
-
-        tmp = "["+dizId+"B"+number+"]";
-        newContent.insert(0,tmp);
-
-        cookie = new Cookie(READ_DISCUSSIONS_COOKIE,newContent.toString());
-        cookie.setPath("/");
-        cookie.setMaxAge(321408000);
-        ServletUtils.addCookie(cookie,response);
+        return (lastSeen==null) ? MAX_SEEN_COMMENT_ID : lastSeen;
     }
 
     /**
@@ -916,5 +871,34 @@ public class Tools implements Configurable {
         float result = sum/(float)count;
 
         return new Float(result);
+    }
+
+    /**
+     * replaces spaces with html nonbreaking spaces in string
+     */
+    public String nonBreakingSpaces(String s) {
+        int length = s.length();
+        if (s==null || length==0) return "";
+        int i = s.indexOf(' '), j=0;
+        if (i==-1) return s;
+        StringBuffer sb = new StringBuffer();
+        while(i<length && i>-1) {
+            sb.append(s.substring(j, i));
+            sb.append("&nbsp;");
+            j = i+1;
+            i = s.indexOf(j, ' ');
+        }
+        if (i==-1 && j<length)
+            sb.append(s.substring(j));
+        return sb.toString();
+    }
+
+    /**
+     * @return string where spaces after one or two characters log words
+     * are replaced by non breaking spaces.
+     */
+    public String vlnka(String s) {
+        String modified = reVlnka.subst(s,vlnkaReplacement,RE.REPLACE_ALL+RE.REPLACE_BACKREFERENCES);
+        return modified;
     }
 }

@@ -1,7 +1,6 @@
-<#include "/include/macros.ftl">
 <#include "../header.ftl">
 
-<#call showMessages>
+<@lib.showMessages/>
 
 <#if PARAMS.icon?exists>
  <form action="${URL.make("/EditCategory")}" method="POST">

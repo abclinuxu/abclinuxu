@@ -5,6 +5,7 @@
 <link rel="StyleSheet" href="/main.css" type="text/css">
 </head>
 <body bgcolor="white" style="margin: 5px">
+<#import "macros.ftl" as lib>
 <#include "/include/pocitani.txt">
 <p>Portál <a href="http://www.abclinuxu.cz">AbcLinuxu</a>
 <#if USER?exists>, pøihlá¹en ${USER.name}</#if>

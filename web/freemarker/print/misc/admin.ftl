@@ -1,7 +1,6 @@
-<#include "/include/macros.ftl">
 <#include "../header.ftl">
 
-<#call showMessages>
+<@lib.showMessages/>
 
 <h1>Vyprázdnìní cache</h1>
 
@@ -29,6 +28,12 @@ projeví.
 <dd><a href="${URL.noPrefix("/Group?action=show")}">Show groups</a></dd>
 
 </dl>
+
+<h1>Dokument identifikovaný adresou</h1>
+
+<p><a href="${URL.noPrefix("/editContent?action=add")}">Vytvoø dokument</a></p>
+<p><a href="${URL.noPrefix("/clanky/dir/66948")}">Listuj dokumenty</a></p>
+
 
 <h1>Vytvoøení ankety</h1>
 

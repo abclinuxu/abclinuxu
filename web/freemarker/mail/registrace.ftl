@@ -23,6 +23,7 @@ Sluzby zdarma
  * Rozsahle diskusni forum
  * Databaze hardwarovych rad
  * Prehledny aktualizovany seznam ovladacu
+ * Slovnik linuxovych pojmu
  * Rozcestnik linuxovych serveru
  * Aktualni verze jadra Linuxu
  * PDF casopis Abicko

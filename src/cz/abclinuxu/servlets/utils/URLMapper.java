@@ -20,7 +20,11 @@ import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.servlets.AbcAction;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.html.view.ShowObject;
 import cz.abclinuxu.exceptions.NotFoundException;
+import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.data.Relation;
 
 import java.util.prefs.Preferences;
 import java.util.*;
@@ -34,6 +38,7 @@ public final class URLMapper implements Configurable {
     static Logger log = Logger.getLogger(URLMapper.class);
 
     public static final String PREF_FILE = "config";
+    public static final String PREF_DOMAIN = "domain";
 
     private static URLMapper htmlVersion, wapVersion;
     static {
@@ -44,6 +49,8 @@ public final class URLMapper implements Configurable {
 
     List actionMapping;
     List deprecatedMapping;
+    String domain;
+    static AbcAction showObject;
 
     private URLMapper() {
     }
@@ -84,7 +91,7 @@ public final class URLMapper implements Configurable {
         String newURL = mapping.getRegexp().subst(url, mapping.getReplacement(), RE.REPLACE_FIRSTONLY + RE.REPLACE_BACKREFERENCES);
         if (url.equals(newURL)) {
             log.warn("Selhalo presmerovani adresy "+url);
-            String msg = "Selhalo presmerovani adresy "+url+". Informujte nas na adrese literakl@abclinuxu.cz. Dekuji.";
+            String msg = "Adresa byla zmenena. Zkuste hledani";
             response.sendError(HttpServletResponse.SC_GONE, msg);
             return true;
         }
@@ -99,16 +106,23 @@ public final class URLMapper implements Configurable {
      * @return AbcAction for this URL.
      * @throws NotFoundException if there is no mapping for this URL
      */
-    public AbcAction findAction(HttpServletRequest request) throws NotFoundException {
+    public AbcAction findAction(HttpServletRequest request, Map env) throws NotFoundException {
         PatternAction patternAction;
 
         String url = ServletUtils.combinePaths(request.getServletPath(), request.getPathInfo());
+        Relation relation = SQLTool.getInstance().findRelationByURL(url);
+        if (relation!=null) {
+            Map params = (Map) env.get(Constants.VAR_PARAMS);
+            params.put(ShowObject.PARAM_RELATION_SHORT, Integer.toString(relation.getId()));
+            return showObject;
+        }
+
         for ( Iterator iter = actionMapping.iterator(); iter.hasNext(); ) {
             patternAction = (PatternAction) iter.next();
             if (patternAction.getRe().match(url))
                 return patternAction.getAction();
         }
-        throw new NotFoundException("Nemohu najit zadnou akci pro URL '"+url+"' !");
+        throw new NotFoundException("Nezname URL: "+url+" !");
     }
 
     /**
@@ -120,6 +134,14 @@ public final class URLMapper implements Configurable {
             log.error("Config file preference is missing!");
         else
             initialize(file);
+        domain = prefs.get(PREF_DOMAIN, "abclinuxu.cz");
+    }
+
+    /**
+     * @return domain name handled by this instance.
+     */
+    public String getDomain() {
+        return domain;
     }
 
     /**
@@ -177,6 +199,8 @@ public final class URLMapper implements Configurable {
                     actions.add(new PatternAction(regexp, (AbcAction) o));
                 else
                     log.warn("Action "+action+" does not implement AbcAction interface!");
+                if ( ShowObject.class.isInstance(o) )
+                    showObject = (AbcAction) o;
             }
         } catch (RESyntaxException e) {
             log.error("Pattern '"+pattern+"' cannot be compiled!", e);

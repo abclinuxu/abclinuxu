@@ -1,14 +1,13 @@
-<#include "/include/macros.ftl">
 <#include "../header.ftl">
 
 <#include "/include/zprava.txt">
-<#call showMessages>
+<@lib.showMessages/>
 
 Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum</a>
 
 <#list ARTICLES as rel>
- <#call showArticle(rel "CZ_SHORT")>
- <#if rel_has_next><#call separator><#else><#call doubleSeparator></#if>
+ <@lib.showArticle rel, "CZ_SHORT" />
+ <@lib.separator double=!rel_has_next />
 </#list>
 
 <p>
@@ -66,11 +65,11 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
  <#include "/include/kernel.txt">
 </p>
 
-<#global NEWS=VARS.getFreshNews(user?if_exists)>
+<#assign NEWS=VARS.getFreshNews(user?if_exists)>
 <a name="zpravicky"><h1>Zprávièky</h1></a>
 <#list NEWS as rel>
- <#call showNews(rel)>
- <#if rel_has_next><#call separator></#if>
+ <@lib.showNews rel/>
+ <#if rel_has_next><@lib.separator /></#if>
 </#list>
 <p>
  <a href="/History?type=news&from=${NEWS?size}&count=15" title="Dal¹í">Star¹í zprávièky</a>

@@ -48,6 +48,10 @@
 <!ATTLIST screen check (TRUE) #OPTIONAL> <!-- if set, perform check, that the user has not voted yet -->
 <!ELEMENT template (#PCDATA)> <!-- name of template, that shall be displayed to the user -->
 <!ELEMENT dump (dir,prefix,suffix)> <!-- instructs to dump all parameters to xml file -->
+<!ELEMENT email (to+,cc*)> <!-- send results via email -->
+<!ELEMENT to (#PCDATA)> <!-- TO recepient -->
+<!ELEMENT cc (#PCDATA)> <!-- CC recepient -->
+<!ELEMENT bcc (#PCDATA)> <!-- BCC recepient -->
 <!ELEMENT dir (#PCDATA)> <!-- directory, where to create a file -->
 <!ELEMENT prefix (#PCDATA)> <!-- file will start with this prefix -->
 <!ELEMENT suffix (#PCDATA)> <!-- file will end with this suffix -->
@@ -71,4 +75,12 @@
 <!ELEMENT note (#PCDATA)> <!-- additional information -->
 
 <!-- Item.DICTIONARY -->
-<!ELEMENT name (#PCDATA)> <!-- word to be explained ->
+<!ELEMENT data (name)>
+<!ELEMENT name (#PCDATA)> <!-- word to be explained -->
+
+<!-- Item.CONTENT -->
+<!ELEMENT data (name, content, class?)>
+<!ELEMENT name (#PCDATA)> <!-- HTML page's title -->
+<!ELEMENT content (#PCDATA)> <!-- content to be served -->
+<!ATTLIST content execute (yes|no) #REQUIRED> <!-- boolean, whether to execute content through template engine -->
+<!ELEMENT java_class (#PCDATA)> <!-- java class to feed data to content -->

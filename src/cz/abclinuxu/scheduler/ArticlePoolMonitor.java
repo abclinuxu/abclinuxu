@@ -12,10 +12,10 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.servlets.Constants;
 
-import java.util.TimerTask;
 import java.util.List;
 import java.util.Iterator;
 import java.util.Date;
+import java.util.TimerTask;
 
 /**
  * This class is responsible for monitoring of

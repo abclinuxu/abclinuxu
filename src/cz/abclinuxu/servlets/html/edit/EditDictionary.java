@@ -103,7 +103,7 @@ public class EditDictionary implements AbcAction, Configurable {
             persistance.synchronize(record);
             env.put(VAR_RECORD, record);
 
-            if ( user.getId()!=record.getOwner() && !user.hasRole(Roles.ROOT) )
+            if ( user.getId()!=record.getOwner() && !user.hasRole(Roles.DICTIONARY_ADMIN) )
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
             if ( action.equals(ACTION_EDIT) )

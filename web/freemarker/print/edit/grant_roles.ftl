@@ -1,7 +1,6 @@
-<#include "/include/macros.ftl">
 <#include "../header.ftl">
 
-<#call showMessages>
+<@lib.showMessages/>
 
 <form action="${URL.noPrefix("/EditUser")}" method="POST">
  <table width="100%" border=0 cellpadding=5>
@@ -25,19 +24,19 @@
   <tr>
    <td class="required" width="100">Jeho role</td>
    <td>
-     <input type="checkbox" name="roles" value="root" <#call isDefined("root")>> Root<br>
-     <input type="checkbox" name="roles" value="user admin" <#call isDefined("user admin")>> Administrátor u¾ivatelù<br>
-     <input type="checkbox" name="roles" value="discussion admin" <#call isDefined("discussion admin")>> Administrátor diskusí<br>
-     <input type="checkbox" name="roles" value="news admin" <#call isDefined("news admin")>> Administrátor zprávièek<br>
-     <input type="checkbox" name="roles" value="article admin" <#call isDefined("article admin")>> Administrátor èlánkù<br>
-     <input type="checkbox" name="roles" value="dictionary admin" <#call isDefined("dictionary admin")>> Administrátor slovníku<br>
-     <input type="checkbox" name="roles" value="tip admin" <#call isDefined("tip admin")>> Administrátor tipù<br>
-     <input type="checkbox" name="roles" value="category admin" <#call isDefined("category admin")>> Administrátor sekcí<br>
-     <input type="checkbox" name="roles" value="survey admin" <#call isDefined("survey admin")>> Administrátor anket<br>
-     <input type="checkbox" name="roles" value="poll admin" <#call isDefined("poll admin")>> Administrátor malých anket<br>
-     <input type="checkbox" name="roles" value="move relation" <#call isDefined("move relation")>> Smí pøesunout relaci<br>
-     <input type="checkbox" name="roles" value="remove relation" <#call isDefined("remove relation")>> Smí smazat relaci a objekt<br>
-     <input type="checkbox" name="roles" value="email invalidator" <#call isDefined("email invalidator")>> Smí invalidovat emaily
+     <input type="checkbox" name="roles" value="root" <@isDefined "root"/>> Root<br>
+     <input type="checkbox" name="roles" value="user admin" <@isDefined "user admin"/>> Administrátor u¾ivatelù<br>
+     <input type="checkbox" name="roles" value="discussion admin" <@isDefined "discussion admin"/>> Administrátor diskusí<br>
+     <input type="checkbox" name="roles" value="news admin" <@isDefined "news admin"/>> Administrátor zprávièek<br>
+     <input type="checkbox" name="roles" value="article admin" <@isDefined "article admin"/>> Administrátor èlánkù<br>
+     <input type="checkbox" name="roles" value="dictionary admin" <@isDefined "dictionary admin"/>> Administrátor slovníku<br>
+     <input type="checkbox" name="roles" value="tip admin" <@isDefined "tip admin"/>> Administrátor tipù<br>
+     <input type="checkbox" name="roles" value="category admin" <@isDefined "category admin"/>> Administrátor sekcí<br>
+     <input type="checkbox" name="roles" value="survey admin" <@isDefined "survey admin"/>> Administrátor anket<br>
+     <input type="checkbox" name="roles" value="poll admin" <@isDefined "poll admin"/>> Administrátor malých anket<br>
+     <input type="checkbox" name="roles" value="move relation" <@isDefined "move relation"/>> Smí pøesunout relaci<br>
+     <input type="checkbox" name="roles" value="remove relation" <@isDefined "remove relation"/>> Smí smazat relaci a objekt<br>
+     <input type="checkbox" name="roles" value="email invalidator" <@isDefined "email invalidator"/>> Smí invalidovat emaily
    </td>
   </tr>
   <tr>

@@ -34,7 +34,7 @@ public class WapVersion {
     public static void process(HttpServletRequest request, HttpServletResponse response, Map env) throws IOException {
         try {
             URLMapper urlMapper = URLMapper.getInstance(URLMapper.Version.WAP);
-            AbcAction action = urlMapper.findAction(request);
+            AbcAction action = urlMapper.findAction(request, env);
             String templateName = action.process(request, response, env);
             if ( Misc.empty(templateName) )
                 return;

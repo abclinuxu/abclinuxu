@@ -1,7 +1,6 @@
-<#include "/include/macros.ftl">
 <#include "../header.ftl">
 
-<#call showMessages>
+<@lib.showMessages/>
 
 <p>Na této stránce mù¾ete vytvoøit nové pøístupové
 právo pro zvoleného u¾ivatele nebo skupinu. Nejdøíve

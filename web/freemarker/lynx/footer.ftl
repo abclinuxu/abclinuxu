@@ -3,12 +3,11 @@
 <hr width="100%">
 
 <#if VARS.currentPoll?exists>
- <#global anketa = VARS.currentPoll>
- <#global total = anketa.totalVotes>
+ <#assign relAnketa = VARS.currentPoll, anketa = relAnketa.child, total = anketa.totalVotes>
  <#if anketa.multiChoice>
-  <#global type = "CHECKBOX">
+  <#assign type = "CHECKBOX">
   <#else>
-  <#global type = "RADIO">
+  <#assign type = "RADIO">
  </#if>
 
  <p>
@@ -16,7 +15,7 @@
   <form action="${URL.noPrefix("/EditPoll")}" method="POST">
   <i>${anketa.text}</i><br>
   <#list anketa.choices as choice>
-   <#global procento = TOOL.percent(choice.count,total)>
+   <#assign procento = TOOL.percent(choice.count,total)>
    <input type=${type} name="voteId" value="${choice.id}">
    ${choice.text} (${procento}%) ${TOOL.percentBar(procento)}<br>
   </#list>
@@ -28,6 +27,8 @@
   <input type="hidden" name="url" value="${URL.noPrefix("/Index")}">
   <input type="hidden" name="action" value="vote">
  </form>
+  <#assign diz=TOOL.findComments(anketa)>
+  <a href="/news/show/${relAnketa.id}">Komentáøù:</a> ${diz.responseCount}
  </p>
 </#if>
 
@@ -58,11 +59,11 @@
  <b>Rozcestník</b>
 </p>
 
-<#list TOOL.createServers([5,1,2,4,3,12]) as server>
+<#list TOOL.createServers([7,1,13,12,3,2,5,4]) as server>
 <p>
  <b><a href="${server.url}">${server.name}</a></b><br>
- <#global LINKY = SORT.byDate(LINKS.get(server),"DESCENDING")>
- <#list LINKY as link>
+ <#assign linky = TOOL.sublist(SORT.byDate(LINKS[server.name],"DESCENDING"),0,4)>
+ <#list linky as link>
   <a href="${link.url}">${link.text}</a><#if link_has_next>,</#if>
  </#list>
 </#list>

@@ -41,6 +41,13 @@ public final class NewsCategories implements Configurable {
     }
 
     /**
+     * @return singleton object of this class.
+     */
+    public static NewsCategories getInstance() {
+        return singleton;
+    }
+
+    /**
      * Finds NewsCategory for given key. Case-insensitive match is performed.
      * @param key
      * @return

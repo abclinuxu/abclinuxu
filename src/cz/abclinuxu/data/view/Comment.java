@@ -114,10 +114,12 @@ public class Comment {
         if (created==null) {
             String value = data.elementText("created");
             try {
-                if ( value!=null )
+                if ( value!=null && value.length()>0)
                     created = Constants.isoFormat.parse(value);
+                else
+                    log.error("Empty date in comment "+getId()+"! Comment:\n"+data.asXML());
             } catch (Exception e) {
-                log.error("Oops, malformed date in comment "+getId()+"! It is "+data.asXML(), e);
+                log.error("Malformed date in comment "+getId()+"! Value='"+value+"'. Comment:\n"+data.asXML(), e);
             }
         }
         return created;
@@ -145,5 +147,9 @@ public class Comment {
     public boolean equals(Object obj) {
         if ( !(obj instanceof Comment) ) return false;
         return getId().equals(((Comment)obj).getId());
+    }
+
+    public String toString() {
+        return data.asXML();
     }
 }

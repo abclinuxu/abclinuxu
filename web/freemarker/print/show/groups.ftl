@@ -1,7 +1,6 @@
-<#include "/include/macros.ftl">
 <#include "../header.ftl">
 
-<#call showMessages>
+<@lib.showMessages/>
 
 <p>Skupina je logický celek, ke kterému je mo¾no jednotnì pøistupovat
 na základì spoleèné charakteristiky jejich èlenù. Mohou existovat

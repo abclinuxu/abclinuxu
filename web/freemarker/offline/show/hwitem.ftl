@@ -1,9 +1,9 @@
 <#include "../macros.ftl">
 <#include "../header.ftl">
 
-<#call showParents>
+<@showParents>
 
-<#global who=TOOL.createUser(ITEM.owner)>
+<#assign who=TOOL.createUser(ITEM.owner)>
 <p>
  Tuto polo¾ku vytvoøil <a href="http://www.abclinuxu.cz/Profile/${who.id}">${who.name}</a>
  dne ${DATE.show(ITEM.created,"CZ_FULL")}.
@@ -15,10 +15,10 @@
  dal¹í záznam.
 </p>
 
-<#global RECORDS = CHILDREN.record>
+<#assign RECORDS = CHILDREN.record>
 <#list RECORDS as REL_RECORD>
- <#global RECORD = REL_RECORD.child>
- <#global who=TOOL.createUser(RECORD.owner)>
+ <#assign RECORD = REL_RECORD.child>
+ <#assign who=TOOL.createUser(RECORD.owner)>
  <table cellspacing="0" border="1" cellpadding="5" width="100%">
   <caption>Záznam èíslo ${REL_RECORD_index+1}</caption>
   <tr>

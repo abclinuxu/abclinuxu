@@ -89,26 +89,28 @@ public class ViewUser implements AbcAction {
      * shows profile for selected user
      */
     protected String handleProfile(HttpServletRequest request, Map env) throws Exception {
-        if (env.get(VAR_PROFILE)==null) {
+        User user = (User) env.get(VAR_PROFILE);
+        if (user==null) {
             Map params = (Map) env.get(Constants.VAR_PARAMS);
             Persistance persistance = PersistanceFactory.getPersistance();
 
-            User user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
+            user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
             if ( user==null )
                 return ServletUtils.showErrorPage("Chybí parametr uid!", env, request);
             user = (User) persistance.findById(user);
             env.put(VAR_PROFILE, user);
-
-            SQLTool sqlTool = SQLTool.getInstance();
-            Map counts = new HashMap();
-            counts.put("article", new Integer(sqlTool.countArticleRelationsByUser(user.getId())));
-            counts.put("news", new Integer(sqlTool.countNewsRelationsByUser(user.getId())));
-            counts.put("question", new Integer(sqlTool.countQuestionRelationsByUser(user.getId())));
-            counts.put("comment", new Integer(sqlTool.countCommentRelationsByUser(user.getId())));
-            counts.put("hardware", new Integer(sqlTool.countRecordRelationsWithUserAndType(user.getId(), Record.HARDWARE)));
-            counts.put("software", new Integer(sqlTool.countRecordRelationsWithUserAndType(user.getId(), Record.SOFTWARE)));
-            env.put(VAR_COUNTS, counts);
         }
+
+        SQLTool sqlTool = SQLTool.getInstance();
+        Map counts = new HashMap();
+        counts.put("article", new Integer(sqlTool.countArticleRelationsByUser(user.getId())));
+        counts.put("news", new Integer(sqlTool.countNewsRelationsByUser(user.getId())));
+        counts.put("question", new Integer(sqlTool.countQuestionRelationsByUser(user.getId())));
+        counts.put("comment", new Integer(sqlTool.countCommentRelationsByUser(user.getId())));
+        counts.put("hardware", new Integer(sqlTool.countRecordRelationsWithUserAndType(user.getId(), Record.HARDWARE)));
+        counts.put("software", new Integer(sqlTool.countRecordRelationsWithUserAndType(user.getId(), Record.SOFTWARE)));
+        counts.put("dictionary", new Integer(sqlTool.countRecordRelationsWithUserAndType(user.getId(), Record.DICTIONARY)));
+        env.put(VAR_COUNTS, counts);
 
         return FMTemplateSelector.select("ViewUser","profile",env,request);
     }
@@ -153,7 +155,7 @@ public class ViewUser implements AbcAction {
         request.getSession().setAttribute(SendEmail.PREFIX+EmailSender.KEY_TO, user.getEmail());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/Mail");
+        urlUtils.redirect(response, "/Mail?url=/Profile/"+user.getId());
         return null;
     }
 

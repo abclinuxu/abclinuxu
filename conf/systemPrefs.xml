@@ -3,7 +3,9 @@
 
 <preferences EXTERNAL_XML_VERSION="1.0">
   <root type="system">
-    <map/>
+    <map>
+        <entry key="location" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/systemPrefs.xml" />
+    </map>
     <node name="cz">
       <map/>
       <node name="abclinuxu">
@@ -60,12 +62,16 @@
               <map/>
               <node name="FMUtils">
                   <map>
-                      <entry key="directory.templates" value="WEB-INF/freemarker"/>
+                      <entry key="directory.templates" value="@DEPLOY_ABCLINUXU@/WEB-INF/freemarker"/>
+                      <entry key="template.update" value="@TEMPLATE.UPDATE.INTERVAL@"/>
+                      <entry key="error.handler" value="@TEMPLATE.ERROR.HANDLER@"/>
                   </map>
               </node>
               <node name="Tools">
                   <map>
                       <entry key="RE_REMOVE_TAGS" value="&lt;(/)?[a-zA-Z][^&gt;]*&gt;"/>
+                      <entry key="RE_VLNKA" value="((^|\s)\w)\s+(\S+)"/>
+                      <entry key="REPLACEMENT_VLNKA" value="$1&amp;nbsp;$3"/>
                   </map>
               </node>
           </node>
@@ -109,7 +115,7 @@
                       </map>
                   </node>
               </node>
-              <node name="monitor">
+              <node name="forum">
                   <map/>
                   <node name="CommentSender">
                       <map>
@@ -128,11 +134,17 @@
               <node name="SharedConfig">
                   <map>
                       <entry key="usmev" value="&lt;img src=&quot;/images/smile/usmev.gif&quot; alt=&quot;:-)&quot; class=&quot;emo&quot;&gt;"/>
-                      <entry key="smich" value="&lt;img src=&quot;/images/smile/smich.gif&quot; alt=&quot;:-D&quot; class==&quot;emo&quot;&gt;"/>
-                      <entry key="mrk" value="&lt;img src=&quot;/images/smile/mrk.gif&quot; alt=&quot;;-)&quot; class==&quot;emo&quot;&gt;"/>
-                      <entry key="smutek" value="&lt;img src=&quot;/images/smile/smutek.gif&quot; alt=&quot;:-(&quot; class==&quot;emo&quot;&gt;"/>
+                      <entry key="smich" value="&lt;img src=&quot;/images/smile/smich.gif&quot; alt=&quot;:-D&quot; class=&quot;emo&quot;&gt;"/>
+                      <entry key="mrk" value="&lt;img src=&quot;/images/smile/mrk.gif&quot; alt=&quot;;-)&quot; class=&quot;emo&quot;&gt;"/>
+                      <entry key="smutek" value="&lt;img src=&quot;/images/smile/smutek.gif&quot; alt=&quot;:-(&quot; class=&quot;emo&quot;&gt;"/>
                   </map>
               </node>
+          </node>
+          <node name="DateTool">
+              <map>
+                  <entry key="today" value="dnes" />
+                  <entry key="yesterday" value="vèera" />
+              </map>
           </node>
         </node>
         <node name="persistance">
@@ -161,21 +173,11 @@
               <map>
                   <entry key="cache.size" value="750"/>
 
-                  <entry key="no.children.for.section" value="A,B,C,D,E,F"/>
+                  <entry key="no.children.for.section" value="A,B"/>
                   <!-- zpravicky -->
                   <entry key="no.children.for.section.A" value="452"/>
-                  <!-- forum.distribuce -->
-                  <entry key="no.children.for.section.B" value="475,476,477,478,479,480,482,484,520,521,523"/>
-                  <!-- forum.hardware -->
-                  <entry key="no.children.for.section.C" value="486,487,488,489,490,504,492,493,494,495,496,497,498,499,503,501,502,525,526"/>
-                  <!-- forum.nastaveni -->
-                  <entry key="no.children.for.section.D" value="508,509,510,511,512,513,519,527,528,529,552"/>
-                  <!-- forum.aplikace -->
-                  <entry key="no.children.for.section.E" value="514,515,516,517,518,524,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,553,554,555"/>
-                  <!-- forum.ruzne -->
-                  <entry key="no.children.for.section.D" value="483,547,548,549"/>
                   <!-- vykladovy slovnik -->
-                  <entry key="no.children.for.section.A" value="569"/>
+                  <entry key="no.children.for.section.B" value="569"/>
               </map>
           </node>
           <node name="SQLTool">
@@ -196,12 +198,17 @@
               <entry key="relations.comment.by.user" value="select R.cislo from relace R, relace P, zaznam Z where R.potomek=P.predek and R.typ_potomka='P' and R.predek!=-1 and P.potomek=Z.cislo and P.typ_potomka='Z' and Z.typ=4 and Z.data like concat('%&lt;author_id&gt;',?,'&lt;/%')"/>
               <entry key="relations.section.by.type" value="select R.cislo from relace R left join kategorie K on (K.cislo=R.potomek) where typ_potomka='K' and K.typ=?"/>
               <entry key="relation.dictionary.by.urlname" value="select R.cislo from relace R, polozka P where R.typ_potomka='P' and R.potomek=P.cislo and P.typ=10 and P.podtyp=?"/>
+              <entry key="relation.by.url" value="select cislo from relace where url=?"/>
               <entry key="users.with.weekly.email" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;>&lt;weekly_summary>yes%'"/>
               <entry key="users.with.forum.by.email" value="select cislo from uzivatel where data like '%&lt;email valid=&quot;yes&quot;%&lt;forum&gt;yes%&lt;/email%'"/>
               <entry key="users.with.roles" value="select cislo from uzivatel where data like '%&lt;roles>%'"/>
               <entry key="users.in.group" value="select cislo from uzivatel where data like concat('%&lt;group&gt;',?,'&lt;/group%')"/>
               <entry key="max.poll" value="select max(cislo) from anketa"/>
               <entry key="max.user" value="select max(cislo) from uzivatel"/>
+              <entry key="insert.last.comment" value="replace into komentar values(?,?,?,NULL);"/>
+              <entry key="get.last.comment" value="select posledni from komentar where kdo=? and diskuse=?" />
+              <entry key="get.xth.comment.date" value="select kdy from komentar where kdo=? order by kdy desc limit ?,1" />
+              <entry key="delete.old.comments" value="delete from komentar where kdo=? and kdy&lt;=?" />
               <entry key="items.with.type" value="select cislo from polozka where typ=?"/>
               <entry key="count.articles.by.user" value="select count(*) from polozka where typ=2 and data like concat('%&lt;author&gt;',?,'&lt;/author%') and vytvoreno&lt;now()"/>
             </map>
@@ -223,6 +230,13 @@
                 <entry key="subject" value="Tydenni souhrn clanku"/>
                 <entry key="from" value="admin@abclinuxu.cz"/>
                 <entry key="template" value="/mail/weekly.ftl"/>
+              </map>
+            </node>
+            <node name="WhatHappened">
+              <map>
+                <entry key="title" value="Událo se v týdnu {0}/{1,number,#}"/>
+                <entry key="perex" value="Nový seriál pøiná¹ející pøehled èlánkù, zprávièek a diskusí za minulých 7 dní."/>
+                <entry key="author" value="5473"/>
               </map>
             </node>
             <node name="UpdateKernel">
@@ -250,6 +264,26 @@
                 <entry key="url.stable.mm" value="ftp://ftp.cz.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/"/>
               </map>
             </node>
+            <node name="UnixshopFetcher">
+                <map>
+                    <entry key="file" value="WEB-INF/freemarker/include/unixshop.txt"/>
+                    <entry key="uri" value="http://www.unixshop.cz/top_export.php"/>
+                </map>
+            </node>
+            <node name="PraceRSSFetcher">
+                <map>
+                    <entry key="file_template" value="WEB-INF/freemarker/include/prace.txt"/>
+                    <entry key="file_index" value="WEB-INF/freemarker/include/prace_main.txt"/>
+                    <entry key="count_template" value="10"/>
+                    <entry key="count_index" value="4"/>
+                    <entry key="uri" value="http://prace.abclinuxu.cz/www/cvs.php"/>
+                </map>
+            </node>
+            <node name="EnsureWatchedDiscussionsLimit">
+                <map>
+                    <entry key="watched.discussions.limit" value="75"/>
+                </map>
+            </node>
         </node>
         <node name="servlets">
           <map/>
@@ -264,6 +298,7 @@
             <node name="URLMapper">
               <map>
                   <entry key="config" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/url_mapping.xml"/>
+                  <entry key="domain" value="@DOMAIN_NAME@"/>
               </map>
             </node>
           </node>
@@ -274,11 +309,15 @@
                       <entry key="start.rss.monitor" value="@START.RSS.MONITOR@"/>
                       <entry key="start.rss.generator" value="@START.RSS.GENERATOR@"/>
                       <entry key="start.rss.kernel" value="@START.RSS.KERNEL@"/>
+                      <entry key="start.rss.unixshop" value="@START.RSS.UNIXSHOP@"/>
+                      <entry key="start.rss.prace" value="@START.RSS.PRACE@"/>
                       <entry key="start.variable.fetcher" value="@START.VARIABLE.FETCHER@"/>
                       <entry key="start.article.pool.monitor" value="@START.ARTICLE.POOL.MONITOR@"/>
                       <entry key="start.abc.monitor" value="@START.ABC.MONITOR@"/>
                       <entry key="start.forum.mail.gateway" value="@START.FORUM.GATEWAY@"/>
                       <entry key="start.weekly.emails" value="@START.WEEKLY.EMAILS@"/>
+                      <entry key="start.weekly.summary" value="@START.WEEKLY.SUMMARY@"/>
+                      <entry key="start.datetool.service" value="@START_UPDATE_DATETOOL@"/>
                   </map>
               </node>
           </node>
@@ -310,6 +349,15 @@
                         <map>
                             <entry key="regexp.name" value="(^/slovnik/)([^?;]+)"/>
                             <entry key="max.items" value="90"/>
+                        </map>
+                    </node>
+                </node>
+                <node name="various">
+                    <map/>
+                    <node name="NewsCSV">
+                        <map>
+                            <entry key="allowed.ip.addresses" value="127.0.0.1,212.67.79.50,195.70.144.6"/>
+                            <entry key="count" value="5"/>
                         </map>
                     </node>
                 </node>

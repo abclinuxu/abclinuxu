@@ -1,7 +1,6 @@
-<#include "/include/macros.ftl">
 <#include "../header.ftl">
 
-<#call showMessages>
+<@lib.showMessages/>
 
 <form action="${URL.make("/EditPoll")}" method="POST">
  <table width=100 border=0 cellpadding=5>
@@ -15,7 +14,7 @@
    <td class="required">Více mo¾ností</td>
    <td>
     <select name="multichoice" tabindex="2">
-     <#global multi=POLL.multiChoice>
+     <#assign multi=POLL.multiChoice>
      <option value="yes"<#if multi> SELECTED</#if>>Ano</option>
      <option value="no"<#if ! multi> SELECTED</#if>>Ne</option>
     </select>
@@ -25,7 +24,7 @@
    <td class="required">Uzavøená</td>
    <td>
     <select name="closed" tabindex="3">
-     <#global closed=POLL.isClosed()>
+     <#assign closed=POLL.isClosed()>
      <option value="yes"<#if closed> SELECTED</#if>>Ano</option>
      <option value="no"<#if ! closed> SELECTED</#if>>Ne</option>
     </select>

@@ -1,7 +1,6 @@
-<#include "/include/macros.ftl">
 <#include "../header.ftl">
 
-<#call showMessages>
+<@lib.showMessages/>
 
 <p>
 Chystáte se smazat objekt ${TOOL.childName(CURRENT)}.

@@ -2,7 +2,6 @@
  * User: literakl
  * Date: Apr 6, 2002
  * Time: 5:10:03 PM
- * (c)2001-2002 Tinnio
  */
 package cz.abclinuxu.scheduler;
 
@@ -19,6 +18,8 @@ import java.io.*;
 
 import org.dom4j.io.SAXReader;
 import org.dom4j.*;
+import org.apache.regexp.RE;
+import org.apache.regexp.RESyntaxException;
 
 /**
  * Updates Links from other servers.
@@ -48,39 +49,37 @@ public class UpdateLinks extends TimerTask {
     /** id of last server, maximum id */
     public static final int LAST_SERVER = CZILLA;
 
+    static RE ampersand;
+    
+    static {
+	try {
+	    ampersand = new RE("&");
+	} catch (RESyntaxException e) {
+	        log.error("Regexp cannot be compiled!", e);
+	}
+    }
+								    
     Category category = new Category(Constants.CAT_LINKS);
 
     /** contains definition of locations and preferences for all servers */
     Map definitions;
 
     /**
-     * Default constructor
+     * constructor
      */
-    public UpdateLinks() {
+    public UpdateLinks(boolean debug) {
         definitions = new HashMap();
 
-        definitions.put(new Server(ROOT),new ServerInfo("http://www.root.cz/share/ttitles.txt"));
-        definitions.put(new Server(LW),new ServerInfo("http://www.linuxworld.cz/lw.rss","Windows-1250",ServerInfo.RSS));
-        definitions.put(new Server(SW),new ServerInfo("http://www.scienceworld.cz/sw.rss","Windows-1250",ServerInfo.RSS));
-        definitions.put(new Server(UG),new ServerInfo("http://underground.cz/backend/czech.txt"));
-        definitions.put(new Server(PENGUIN),new ServerInfo("http://www.penguin.cz/trafika.php3"));
-        definitions.put(new Server(ABCLINUXU),new ServerInfo("http://localhost:8080/auto/abc.dat"));
-//        definitions.put(new Server(WS),new ServerInfo("http://www.awdesign.cz/ws/ws.dat"));
-//        definitions.put(new Server(KECZY),new ServerInfo("http://www.keczy.cz/index.php?headlines=czech"));
-//        definitions.put(new Server(REBOOT),new ServerInfo("http://www.reboot.cz/reboot_lh.phtml"));
-//        definitions.put(new Server(LINUXZONE),new ServerInfo("http://www.linuxzone.cz/export/last10.phtml"));
-//        definitions.put(new Server(LINUXSK),new ServerInfo("http://www.linux.sk/backend.php",null,ServerInfo.RSS));
-//        definitions.put(new Server(LDAP),new ServerInfo("http://www.ldap-obsession.sk/backend.php",null,ServerInfo.RSS));
-        definitions.put(new Server(MANDRAKE),new ServerInfo("http://www.mandrake.cz/titles_abc.php"));
-        definitions.put(new Server(CZILLA),new ServerInfo("http://www.czilla.cz/rss/rss.html", null, ServerInfo.RSS));
-    }
-
-    /**
-     * Constructor for test
-     */
-    public UpdateLinks(boolean nic) {
-        definitions = new HashMap();
-
+        if (!debug) {
+            definitions.put(new Server(ROOT), new ServerInfo("http://www.root.cz/share/ttitles.txt"));
+            definitions.put(new Server(LW), new ServerInfo("http://www.linuxworld.cz/lw.rss", "Windows-1250", ServerInfo.RSS));
+            definitions.put(new Server(SW), new ServerInfo("http://www.scienceworld.cz/sw.rss", "Windows-1250", ServerInfo.RSS));
+            definitions.put(new Server(UG), new ServerInfo("http://underground.cz/backend/czech.txt"));
+            definitions.put(new Server(PENGUIN), new ServerInfo("http://www.penguin.cz/trafika.php3"));
+            definitions.put(new Server(ABCLINUXU), new ServerInfo("http://localhost:8080/auto/abc.dat"));
+            definitions.put(new Server(MANDRAKE), new ServerInfo("http://www.mandrake.cz/titles_abc.php"));
+            definitions.put(new Server(CZILLA), new ServerInfo("http://www.czilla.cz/rss/rss.html", null, ServerInfo.RSS));
+        } else {
 //        definitions.put(new Server(ROOT),new ServerInfo("file:///home/literakl/abc/data/titulky/ttitles.txt"));
 //        definitions.put(new Server(LW),new ServerInfo("file:///home/literakl/abc/data/titulky/lw.dat","Windows-1250",ServerInfo.TRAFIKA));
 //        definitions.put(new Server(SW),new ServerInfo("file:///home/literakl/abc/data/titulky/sw.dat","Windows-1250",ServerInfo.TRAFIKA));
@@ -96,7 +95,8 @@ public class UpdateLinks extends TimerTask {
 //        definitions.put(new Server(CZILLA), new ServerInfo("file:///home/literakl/abc/data/titulky/mozilla_rss.html", null, ServerInfo.RSS));
 //        definitions.put(new Server(LW), new ServerInfo("http://www.linuxworld.cz/lw.rss", "Windows-1250", ServerInfo.RSS));
 //        definitions.put(new Server(SW), new ServerInfo("http://www.scienceworld.cz/sw.rss", "Windows-1250", ServerInfo.RSS));
-        definitions.put(new Server(ABCLINUXU), new ServerInfo("http://www.abclinuxu.cz/auto/abc.dat"));
+//            definitions.put(new Server(ABCLINUXU), new ServerInfo("http://www.abclinuxu.cz/auto/abc.dat"));
+        }
     }
 
     /**
@@ -109,17 +109,19 @@ public class UpdateLinks extends TimerTask {
         Map serverLinks = groupLinks(category,persistance);
 
         for (Iterator iter = definitions.keySet().iterator(); iter.hasNext();) {
-            Server server = (Server) iter.next();
+            Server server = (Server) persistance.findById((Server) iter.next());
             try {
                 synchronize(server, category, serverLinks, persistance);
-            } catch (PersistanceException e) {
-                log.warn("Cannot update links for server "+server+"!", e);
             } catch (Exception e) {
-                log.warn("Unknown exception caught!",e);
+                log.warn("Cannot update links for server "+server+"!", e);
 	        }
         }
         log.debug("Finishing task "+getJobName());
-        AbcInit.setSharedVariableLinks();
+        try {
+            AbcInit.setServerLinksAstSharedVariables();
+        } catch (Exception e) {
+            log.error("Cannot set links as shared variables!", e);
+        }
     }
 
     public String getJobName() {
@@ -148,7 +150,8 @@ public class UpdateLinks extends TimerTask {
             downloaded = downloaded.subList(0,LINKS_PER_SERVER);
         // remove from downloaded list links, that were already downloaded
         for (Iterator iter = downloaded.iterator(); iter.hasNext();) {
-            if ( removeLink(stored, (Link) iter.next()) ) iter.remove();
+            if ( removeLink(stored, (Link) iter.next()) )
+                iter.remove();
         }
 
         for (Iterator iter = downloaded.iterator(); iter.hasNext();) {
@@ -192,7 +195,7 @@ public class UpdateLinks extends TimerTask {
             while ( (line = in.readLine())!=null ) {
                 int where = line.indexOf("|\\");
                 if ( where==-1 ) continue;
-                String url = line.substring(0,where);
+                String url = fixAmpersand(line.substring(0,where));
                 String title = line.substring(where+2);
                 if ( title.length()>TEXT_LENGTH )
                     title = title.substring(0,TEXT_LENGTH);
@@ -229,7 +232,7 @@ public class UpdateLinks extends TimerTask {
                 String title = node.selectSingleNode("title").getText();
                 if ( title.length()>TEXT_LENGTH )
                     title = title.substring(0,TEXT_LENGTH);
-                String url = node.selectSingleNode("link").getText();
+                String url = fixAmpersand(node.selectSingleNode("link").getText());
 
                 Link link = new Link();
                 link.setUrl(url);
@@ -251,8 +254,10 @@ public class UpdateLinks extends TimerTask {
      * sorts them by time in descending order.
      */
     protected List loadStoredLinks(Server server, Map serverLinks) {
-        List links = (List) serverLinks.get(server);
-        if ( links==null ) return new LinkedList();
+        List links = (List) serverLinks.get(server.getName());
+        if ( links==null )
+            return new LinkedList();
+
         Sorters2.byDate(links,"DESCENDING");
         return links;
     }
@@ -277,8 +282,8 @@ public class UpdateLinks extends TimerTask {
     }
 
     /**
-     * Groups links by server. Each server will be key in map and value will be
-     * list of links. Fixed links will be discarded.
+     * Groups links by server. The server name will be key in map and value will be
+     * list of its links. Fixed links will be discarded.
      */
     public static Map groupLinks(Category category, Persistance persistance) {
         List[] links = new List[LAST_SERVER+1];
@@ -297,19 +302,27 @@ public class UpdateLinks extends TimerTask {
         }
 
         Map result = new HashMap();
-        for ( int i=1; i<=LAST_SERVER; i++ )
-            result.put(new Server(i),links[i]);
-
+        for ( int i=1; i<=LAST_SERVER; i++ ) {
+            Server server = (Server) persistance.findById(new Server(i));
+            result.put(server.getName(), links[i]);
+        }
         return result;
     }
 
     public static void main(String[] args) {
         org.apache.log4j.BasicConfigurator.configure();
-        UpdateLinks updater = new UpdateLinks(true);
+        String debug = (args==null)? "true":args[0];
+        UpdateLinks updater = new UpdateLinks(Boolean.valueOf(debug).booleanValue());
         updater.run();
     }
+    
+    private String fixAmpersand(String url) {
+        if (url==null || url.length()==0)
+	    return url;
+	return ampersand.subst(url,"&amp;",RE.REPLACE_ALL);
+    }
 
-    class ServerInfo {
+    static class ServerInfo {
         static final int TRAFIKA = 1;
         static final int RSS = 2;
 

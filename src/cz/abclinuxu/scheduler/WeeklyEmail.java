@@ -15,6 +15,8 @@ import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.persistance.extra.Qualifier;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.view.News;
+import cz.abclinuxu.data.view.Article;
 import cz.abclinuxu.servlets.Constants;
 
 import java.util.*;
@@ -46,7 +48,9 @@ public class WeeklyEmail extends TimerTask implements Configurable {
 
     public void run() {
         try {
-            int week = getCurrentWeek(), year = getCurrentYear();
+            Calendar calendar = Calendar.getInstance();
+            int week = calendar.get(Calendar.WEEK_OF_YEAR);
+            int year = calendar.get(Calendar.YEAR);
 
             Map params = new HashMap();
             params.put(EmailSender.KEY_FROM,sender);
@@ -120,22 +124,6 @@ public class WeeklyEmail extends TimerTask implements Configurable {
     }
 
     /**
-     * @return current week of year
-     */
-    private int getCurrentWeek() {
-        Calendar calendar = Calendar.getInstance();
-        return calendar.get(Calendar.WEEK_OF_YEAR);
-    }
-
-    /**
-     * @return current year
-     */
-    private int getCurrentYear() {
-        Calendar calendar = Calendar.getInstance();
-        return calendar.get(Calendar.YEAR);
-    }
-
-    /**
      * Configures this instance.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
@@ -147,85 +135,5 @@ public class WeeklyEmail extends TimerTask implements Configurable {
     public static void main(String[] args) {
         WeeklyEmail weeklyEmail = new WeeklyEmail();
         weeklyEmail.run();
-    }
-
-    public static class Article {
-        private String title, perex, author;
-        private Date published;
-        private int relationId;
-
-        public Article(String title, Date published, int relationId) {
-            this.title = title;
-            this.published = published;
-            this.relationId = relationId;
-        }
-
-        public void setPerex(String perex) {
-            this.perex = perex;
-        }
-
-        public void setAuthor(String author) {
-            this.author = author;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public String getPerex() {
-            return perex;
-        }
-
-        public String getAuthor() {
-            return author;
-        }
-
-        public Date getPublished() {
-            return published;
-        }
-
-        public int getRelationId() {
-            return relationId;
-        }
-    }
-
-    public static class News {
-        String content, author;
-        Date published;
-        int relationId, comments;
-
-        public News(String content, Date published, int relationId) {
-            this.content = content;
-            this.published = published;
-            this.relationId = relationId;
-        }
-
-        public void setAuthor(String author) {
-            this.author = author;
-        }
-
-        public void setComments(int comments) {
-            this.comments = comments;
-        }
-
-        public String getContent() {
-            return content;
-        }
-
-        public String getAuthor() {
-            return author;
-        }
-
-        public Date getPublished() {
-            return published;
-        }
-
-        public int getRelationId() {
-            return relationId;
-        }
-
-        public int getComments() {
-            return comments;
-        }
     }
 }

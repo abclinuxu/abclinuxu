@@ -8,8 +8,6 @@
 package cz.abclinuxu.persistance;
 
 import java.util.List;
-import java.sql.SQLException;
-
 import cz.abclinuxu.data.*;
 
 /**
@@ -88,6 +86,14 @@ public interface Persistance {
      * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
      */
     public List findParents(Relation relation);
+
+    /**
+     * Finds all relations where obj is children.
+     * @param child
+     * @return list of initialized relations
+     * @throws cz.abclinuxu.exceptions.PersistanceException
+     */
+    public List findRelations(GenericObject child);
 
     /**
      * Finds relation described by <code>example</code>. Just set child or parent.

@@ -34,8 +34,10 @@ public final class SQLTool implements Configurable {
     public static final String PREF_DISCUSSION_RELATIONS = "relations.discussion";
     public static final String PREF_DISCUSSION_RELATIONS_IN_SECTION = "relations.discussion.in.section";
     public static final String PREF_ARTICLE_RELATIONS = "relations.article";
+    // todo calculate it dynamically with findqualifier
     public static final String PREF_ARTICLE_RELATIONS_WITHIN_PERIOD = "relations.article.within.period";
     public static final String PREF_NEWS_RELATIONS = "relations.news";
+    // todo calculate it dynamically with findqualifier
     public static final String PREF_NEWS_RELATIONS_WITHIN_PERIOD = "relations.news.within.period";
     public static final String PREF_RECORD_RELATIONS_BY_USER_AND_TYPE = "relations.record.by.user.and.type";
     public static final String PREF_ARTICLE_RELATIONS_BY_USER = "relations.article.by.user";
@@ -51,6 +53,11 @@ public final class SQLTool implements Configurable {
     public static final String PREF_MAX_USER = "max.user";
     public static final String PREF_COUNT_ARTICLES_BY_USER = "count.articles.by.user";
     public static final String PREF_DICTIONARY_RELATION_BY_URL_NAME = "relation.dictionary.by.urlname";
+    public static final String PREF_RELATION_BY_URL = "relation.by.url";
+    public static final String PREF_INSERT_LAST_COMMENT = "insert.last.comment";
+    public static final String PREF_GET_LAST_COMMENT = "get.last.comment";
+    public static final String PREF_GET_OLD_COMMENT = "get.xth.comment.date";
+    public static final String PREF_DELETE_OLD_COMMENTS = "delete.old.comments";
 
     private static SQLTool singleton;
 
@@ -59,17 +66,19 @@ public final class SQLTool implements Configurable {
         ConfigurationManager.getConfigurator().configureAndRememberMe(singleton);
     }
 
+    // todo presun vsechny stringy do Mapy
     private String relationsRecordByType, relationsParentRecordByType, relationsItemsByType, relationsSectionByType;
     private String relationsDiscussion, relationsDiscussionInSection;
     private String relationsArticle, relationsArticleWithinPeriod;
     private String relationsNews, relationsNewsWithinPeriod;
     private String relationsNewsByUser, relationsRecordByUserAndType, relationsArticleByUser;
     private String relationsQuestionsByUser, relationsCommentsByUser;
-    private String relationDictionaryByUrlName;
+    private String relationDictionaryByUrlName, relationByURL;
     private String usersWithWeeklyEmail, usersWithForumByEmail, usersWithRoles, usersInGroup;
     private String maxPoll, maxUser;
     private String itemsByType;
     private String countArticlesByUser;
+    private String insertLastComment, getLastComment, getXthComment, deleteOldComments;
 
 
     /**
@@ -154,10 +163,10 @@ public final class SQLTool implements Configurable {
      * empty, PreparedStatement is created and fed up from params.
      * @param sql Command to execute.
      * @param params List of parameters. It must not be null.
-     * @return integer.
+     * @return integer or null.
      * @throws PersistanceException if something goes wrong.
      */
-    private int loadNumber(String sql, List params) throws PersistanceException {
+    private Integer loadNumber(String sql, List params) throws PersistanceException {
         MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
         Connection con = null;
         PreparedStatement statement = null;
@@ -171,9 +180,10 @@ public final class SQLTool implements Configurable {
 
             resultSet = statement.executeQuery();
             if (!resultSet.next())
-                throw new PersistanceException("SQL pøíkaz nevrátil ¾ádná data!");
+                return null;
 
-            return resultSet.getInt(1);
+            i = resultSet.getInt(1);
+            return new Integer(i);
         } catch (SQLException e) {
             throw new PersistanceException("Nemohu vykonat SQL pøíkaz "+sql, e);
         } finally {
@@ -279,7 +289,7 @@ public final class SQLTool implements Configurable {
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(new Integer(type));
-        return loadNumber(sb.toString(),params);
+        return loadNumber(sb.toString(),params).intValue();
     }
 
     /**
@@ -291,7 +301,7 @@ public final class SQLTool implements Configurable {
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(new Integer(type));
-        return loadNumber(sb.toString(),params);
+        return loadNumber(sb.toString(),params).intValue();
     }
 
     /**
@@ -305,7 +315,7 @@ public final class SQLTool implements Configurable {
         List params = new ArrayList();
         params.add(new Integer(type));
         params.add(new Integer(user));
-        return loadNumber(sb.toString(),params);
+        return loadNumber(sb.toString(),params).intValue();
     }
 
     /**
@@ -332,7 +342,7 @@ public final class SQLTool implements Configurable {
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(new Integer(type));
-        return loadNumber(sb.toString(), params);
+        return loadNumber(sb.toString(), params).intValue();
     }
 
     /**
@@ -359,7 +369,7 @@ public final class SQLTool implements Configurable {
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(new Integer(type));
-        return loadNumber(sb.toString(), params);
+        return loadNumber(sb.toString(), params).intValue();
     }
 
     /**
@@ -384,7 +394,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer(relationsDiscussion);
         changeToCountStatement(sb);
         List params = new ArrayList();
-        return loadNumber(sb.toString(), params);
+        return loadNumber(sb.toString(), params).intValue();
     }
 
     /**
@@ -411,7 +421,7 @@ public final class SQLTool implements Configurable {
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(new Integer(parent));
-        return loadNumber(sb.toString(), params);
+        return loadNumber(sb.toString(), params).intValue();
     }
 
     /**
@@ -438,7 +448,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer(relationsArticle);
         changeToCountStatement(sb);
         List params = new ArrayList();
-        return loadNumber(sb.toString(), params);
+        return loadNumber(sb.toString(), params).intValue();
     }
 
     /**
@@ -467,7 +477,7 @@ public final class SQLTool implements Configurable {
         List params = new ArrayList();
         params.add(new java.sql.Date(from.getTime()));
         params.add(new java.sql.Date(until.getTime()));
-        return loadNumber(sb.toString(), params);
+        return loadNumber(sb.toString(), params).intValue();
     }
 
     /**
@@ -494,7 +504,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer(relationsNews);
         changeToCountStatement(sb);
         List params = new ArrayList();
-        return loadNumber(sb.toString(), params);
+        return loadNumber(sb.toString(), params).intValue();
     }
 
     /**
@@ -523,7 +533,7 @@ public final class SQLTool implements Configurable {
         List params = new ArrayList();
         params.add(new java.sql.Date(from.getTime()));
         params.add(new java.sql.Date(until.getTime()));
-        return loadNumber(sb.toString(), params);
+        return loadNumber(sb.toString(), params).intValue();
     }
 
     /**
@@ -552,7 +562,7 @@ public final class SQLTool implements Configurable {
         List params = new ArrayList();
         params.add(new Integer(userId));
         params.add(new Integer(type));
-        return loadNumber(sb.toString(), params);
+        return loadNumber(sb.toString(), params).intValue();
     }
 
     /**
@@ -580,7 +590,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer(countArticlesByUser);
         List params = new ArrayList();
         params.add(new Integer(userId));
-        return loadNumber(sb.toString(), params);
+        return loadNumber(sb.toString(), params).intValue();
     }
 
     /**
@@ -609,7 +619,7 @@ public final class SQLTool implements Configurable {
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(new Integer(userId));
-        return loadNumber(sb.toString(), params);
+        return loadNumber(sb.toString(), params).intValue();
     }
 
     /**
@@ -636,7 +646,7 @@ public final class SQLTool implements Configurable {
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(new Integer(userId));
-        return loadNumber(sb.toString(), params);
+        return loadNumber(sb.toString(), params).intValue();
     }
 
 
@@ -664,11 +674,11 @@ public final class SQLTool implements Configurable {
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(new Integer(userId));
-        return loadNumber(sb.toString(), params);
+        return loadNumber(sb.toString(), params).intValue();
     }
 
     /**
-     * Finds dictionary item identifies by urlName.
+     * Finds dictionary item identified by urlName.
      * @param urlName name to be used in URI
      * @return relation of dictionary item or null
      */
@@ -676,6 +686,22 @@ public final class SQLTool implements Configurable {
         List params = new ArrayList();
         params.add(urlName);
         List result = loadRelations(relationDictionaryByUrlName, params);
+        if (result.size()==0)
+            return null;
+        return (Relation) result.get(0);
+    }
+
+    /**
+     * Finds relation identified by given url.
+     * @param url URL identification of resource
+     * @return found relation or null
+     */
+    public Relation findRelationByURL(String url) {
+        if ( url!=null && url.endsWith("/") )
+            url = url.substring(0, url.length()-1);
+        List params = new ArrayList();
+        params.add(url);
+        List result = loadRelations(relationByURL, params);
         if (result.size()==0)
             return null;
         return (Relation) result.get(0);
@@ -744,7 +770,7 @@ public final class SQLTool implements Configurable {
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(new Integer(group));
-        return loadNumber(sb.toString(), params);
+        return loadNumber(sb.toString(), params).intValue();
     }
 
     /**
@@ -752,7 +778,7 @@ public final class SQLTool implements Configurable {
      * @return last initialized poll, if it is active, null otherwise.
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
      */
-    public Poll findActivePoll() {
+    public Relation findActivePoll() {
         MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
         Connection con = null;
         Statement statement = null;
@@ -765,7 +791,10 @@ public final class SQLTool implements Configurable {
 
             int id = resultSet.getInt(1);
             Poll poll = (Poll) persistance.findById(new Poll(id));
-            return (poll.isClosed()) ? null : poll;
+            if (poll.isClosed())
+                return null;
+            List relations = persistance.findRelations(poll);
+            return (Relation) relations.get(0);
         } catch (SQLException e) {
             throw new PersistanceException("Chyba pri hledani!", e);
         } finally {
@@ -857,6 +886,73 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Finds items of given type and subtype ordered by id property in ascending order.
+     * @return List of itialized Items
+     * @throws PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findItemsWithTypeAndSubtype(int type, String subType) {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(itemsByType.concat(" and podtyp=? order by cislo asc"));
+            statement.setInt(1, type);
+            statement.setString(2, subType);
+
+            resultSet = statement.executeQuery();
+            List result = new ArrayList();
+            while ( resultSet.next() ) {
+                int id = resultSet.getInt(1);
+                Item item = (Item) persistance.findById(new Item(id));
+                result.add(item);
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
+     * Finds dictionary items that alphabetically neighbours selected one.
+     * @param smaller whether the returned items shall be smaller or greater
+     * @return List of itialized Items, first item is closest to selected one.
+     * @throws PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List getNeighbourDictionaryItems(String urlName, boolean smaller, int count) {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            if (smaller)
+                statement = con.prepareStatement(itemsByType.concat("  and podtyp<? order by podtyp desc limit ?"));
+            else
+                statement = con.prepareStatement(itemsByType.concat("  and podtyp>? order by podtyp asc limit ?"));
+            statement.setInt(1, Item.DICTIONARY);
+            statement.setString(2, urlName);
+            statement.setInt(3, count);
+
+            resultSet = statement.executeQuery();
+            List result = new ArrayList(count);
+            while ( resultSet.next() ) {
+                int id = resultSet.getInt(1);
+                Item item = (Item) persistance.findById(new Item(id));
+                result.add(item);
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
      * Finds items of given type.
      * @return Number of matched items
      * @throws PersistanceException if there is an error with the underlying persistent storage.
@@ -866,7 +962,81 @@ public final class SQLTool implements Configurable {
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(new Integer(type));
-        return loadNumber(sb.toString(), params);
+        return loadNumber(sb.toString(), params).intValue();
+    }
+
+    /**
+     * Finds id of last seen comment or returns null, if the discussion
+     * has not been opened by the user yet.
+     * @param userId id of the user
+     * @param discussion id of the discussion item
+     * @return id of the comment or null
+     */
+    public Integer getLastSeenComment(int userId, int discussion) {
+        List params = new ArrayList();
+        params.add(new Integer(userId));
+        params.add(new Integer(discussion));
+        return loadNumber(getLastComment, params);
+    }
+
+    /**
+     * Inserts into comments information about last comment of given discussion seen
+     * by selected user. If the discussion has been already displayed to this user,
+     * its previous lastComment value is replaced by new value.
+     * @param userId id of the user
+     * @param discussion id of the discussion item
+     * @param lastComment id of the comment that is currently displayed to the user
+     */
+    public void insertLastSeenComment(int userId, int discussion, int lastComment) {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null;
+        PreparedStatement statement = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(insertLastComment);
+            statement.setInt(1, userId);
+            statement.setInt(2, discussion);
+            statement.setInt(3, lastComment);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri ukladani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, null);
+        }
+    }
+
+    /**
+     * Deletes comment seen information for given user except
+     * preserveCount most fresh rows.
+     * @param userId id of the user
+     * @param preserveCount how many freshest rows to be preserved
+     * @return number of deleted discussions
+     */
+    public int deleteOldComments(int userId, int preserveCount) {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(getXthComment);
+            statement.setInt(1, userId);
+            statement.setInt(2, preserveCount);
+            resultSet = statement.executeQuery();
+            if ( !resultSet.next() )
+                return 0;
+
+            Timestamp timestamp = resultSet.getTimestamp(1);
+            statement = con.prepareStatement(deleteOldComments);
+            statement.setInt(1, userId);
+            statement.setTimestamp(2, timestamp);
+            int affected = statement.executeUpdate();
+            return affected;
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri ukladani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
     }
 
     /**
@@ -895,6 +1065,7 @@ public final class SQLTool implements Configurable {
         relationsQuestionsByUser = getValue(PREF_QUESTION_RELATIONS_BY_USER, prefs);
         relationsCommentsByUser = getValue(PREF_COMMENT_RELATIONS_BY_USER, prefs);
         relationDictionaryByUrlName = getValue(PREF_DICTIONARY_RELATION_BY_URL_NAME, prefs);
+        relationByURL = getValue(PREF_RELATION_BY_URL, prefs);
         usersWithWeeklyEmail = getValue(PREF_USERS_WITH_WEEKLY_EMAIL, prefs);
         usersWithForumByEmail = getValue(PREF_USERS_WITH_FORUM_BY_EMAIL, prefs);
         usersWithRoles = getValue(PREF_USERS_WITH_ROLES, prefs);
@@ -903,6 +1074,10 @@ public final class SQLTool implements Configurable {
         maxUser = getValue(PREF_MAX_USER, prefs);
         itemsByType = getValue(PREF_ITEMS_WITH_TYPE, prefs);
         countArticlesByUser = getValue(PREF_COUNT_ARTICLES_BY_USER, prefs);
+        insertLastComment = getValue(PREF_INSERT_LAST_COMMENT, prefs);
+        getLastComment = getValue(PREF_GET_LAST_COMMENT, prefs);
+        getXthComment = getValue(PREF_GET_OLD_COMMENT, prefs);
+        deleteOldComments = getValue(PREF_DELETE_OLD_COMMENTS, prefs);
     }
 
     /**
@@ -933,6 +1108,8 @@ public final class SQLTool implements Configurable {
             sb.append("cislo");
         else if (field==Field.TYPE)
             sb.append("typ");
+        else if (field==Field.SUBTYPE)
+            sb.append("podtyp");
         else if (field==Field.OWNER)
             sb.append("pridal");
         else if (field==Field.DATA)

@@ -18,6 +18,8 @@ public final class Relation extends GenericObject implements XMLContainer {
     int upper = 0;
     GenericObject parent;
     GenericObject child;
+    /** URL of this relation. It shall not end with slash. */
+    String url;
     /** XML with data of this object. There may be tags name and icon, which override default settings */
     protected XMLHandler documentHandler;
 
@@ -40,6 +42,7 @@ public final class Relation extends GenericObject implements XMLContainer {
         upper = copy.upper;
         parent = copy.parent;
         child = copy.child;
+        url = copy.url;
         documentHandler = copy.documentHandler;
     }
 
@@ -85,6 +88,24 @@ public final class Relation extends GenericObject implements XMLContainer {
     }
 
     /**
+     * @return URL for this relation.
+     */
+    public String getUrl() {
+        return url;
+    }
+
+    /**
+     * Sets url for this relation. It must start with slash.
+     * It must contain only characters [a-zA-Z0-9_/-] Last character
+     * cannot be slash (it is removed).
+     */
+    public void setUrl(String url) {
+        if (url!=null && url.endsWith("/"))
+            url = url.substring(0, url.length()-1);
+        this.url = url;
+    }
+
+    /**
      * @return XML data of this object
      */
     public Document getData() {
@@ -123,6 +144,7 @@ public final class Relation extends GenericObject implements XMLContainer {
         documentHandler = r.documentHandler;
         parent = r.getParent();
         child = r.getChild();
+        url = r.url;
     }
 
     public String toString() {

@@ -20,7 +20,6 @@
     <mkdir dir="${DEPLOY_ABCLINUXU}" />
     <mkdir dir="${DEPLOY_ABCLINUXU}/WEB-INF/classes" />
     <mkdir dir="${DEPLOY_LOGS}" />
-    <mkdir dir="${DEPLOY_FIRMA}" />
     <mkdir dir="${DEPLOY_BIN}" />
     <tstamp />
 
@@ -43,23 +42,33 @@
   </target>
 
 
-  <target name="deploy-abc" depends="build">
+  <target name="deploy" depends="build">
 
-    <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF">
+    <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF" filtering="true">
       <fileset dir="conf">
-        <include name="web.xml" />
+          <include name="web.xml" />
+      </fileset>
+    </copy>
+
+    <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF/conf">
+      <fileset dir="conf">
+          <include name="templates.xml"/>
+          <include name="news_categories.xml"/>
+          <include name="UnicodeData.txt"/>
+          <include name="stop_words.txt"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF/classes" filtering="true">
+      <fileset dir="conf">
+          <include name="log4j.xml"/>
       </fileset>
     </copy>
 
     <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF/conf" filtering="true">
       <fileset dir="conf">
-        <include name="templates.xml" />
         <include name="systemPrefs.xml" />
         <include name="proxool.xml" />
-        <include name="log4j.xml" />
-        <include name="UnicodeData.txt" />
-        <include name="stop_words.txt" />
-        <include name="news_categories.xml" />
         <include name="url_mapping.xml" />
       </fileset>
     </copy>
@@ -85,15 +94,5 @@
     </copy>
 
   </target>
-
-  <target name="deploy-firma" depends="build">
-
-    <copy todir="${DEPLOY_FIRMA}">
-      <fileset dir="web/firma" />
-    </copy>
-
-  </target>
-
-  <target name="deploy" depends="deploy-firma,deploy-abc" />
 
 </project>

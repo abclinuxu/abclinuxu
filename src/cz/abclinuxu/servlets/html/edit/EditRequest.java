@@ -15,6 +15,8 @@ import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.email.EmailSender;
@@ -28,8 +30,9 @@ import org.htmlparser.util.ParserException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
+
+import freemarker.template.SimpleHash;
 
 public class EditRequest implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditRequest.class);
@@ -38,14 +41,19 @@ public class EditRequest implements AbcAction {
     public static final String PARAM_EMAIL = "email";
     public static final String PARAM_TEXT = "text";
     public static final String PARAM_REQUEST = "requestId";
+    public static final String PARAM_RELATION_SHORT = "rid";
+    public static final String PARAM_FORUM_ID = "forumId";
 
     public static final String VAR_REQUEST_RELATION = "REQUEST";
+    public static final String VAR_FORUM_LIST = "FORUMS";
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_DELETE = "delete";
     public static final String ACTION_DELIVER = "deliver";
     public static final String ACTION_MOVE_TO_TODO = "todo";
     public static final String ACTION_MAIL = "email";
+    public static final String ACTION_CHOOSE_RIGHT_FORUM = "chooseRightForum";
+    public static final String ACTION_RIGHT_FORUM = "rightForum";
 
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -59,6 +67,12 @@ public class EditRequest implements AbcAction {
 
         if ( action==null || action.equals(ACTION_ADD) )
             return actionAdd(request,response,env);
+
+        if ( action.equals(ACTION_CHOOSE_RIGHT_FORUM) )
+            return actionChooseForum(request,env);
+
+        if ( action.equals(ACTION_RIGHT_FORUM) )
+            return actionAskForumChange(request,response,env);
 
         // check permissions
         if ( user==null )
@@ -138,9 +152,10 @@ public class EditRequest implements AbcAction {
         relation.getParent().addChildRelation(relation);
 
         ServletUtils.addMessage("Vá¹ po¾adavek byl pøijat.",env,request.getSession());
+        log.info("Pozadavek\nAutor: "+author+"("+email+")\nText:"+text);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/show/"+Constants.REL_REQUESTS);
+        urlUtils.redirect(response, "/hardware/show/"+Constants.REL_REQUESTS);
         return null;
     }
 
@@ -154,7 +169,7 @@ public class EditRequest implements AbcAction {
         ServletUtils.addMessage("Po¾adavek byl smazán.",env,request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/show/"+Constants.REL_REQUESTS);
+        urlUtils.redirect(response, "/hardware/show/"+Constants.REL_REQUESTS);
         return null;
     }
 
@@ -184,7 +199,7 @@ public class EditRequest implements AbcAction {
         ServletUtils.addMessage("Po¾adavek byl vyøízen.",env,request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/show/"+Constants.REL_REQUESTS);
+        urlUtils.redirect(response, "/hardware/show/"+Constants.REL_REQUESTS);
         return null;
     }
 
@@ -199,7 +214,7 @@ public class EditRequest implements AbcAction {
         session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_TO, email);
         session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_BCC, user.getEmail());
 
-        String url = response.encodeRedirectURL("/Mail");
+        String url = response.encodeRedirectURL("/Mail?url=/hardware/dir/"+Constants.REL_REQUESTS);
         response.sendRedirect(url);
         return null;
     }
@@ -264,7 +279,54 @@ public class EditRequest implements AbcAction {
         ServletUtils.addMessage("Po¾adavek byl pøesunut.", env, request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/show/"+Constants.REL_DIZ_TODO);
+        urlUtils.redirect(response, "/hardware/show/"+Constants.REL_DIZ_TODO);
         return null;
+    }
+
+    private String actionChooseForum(HttpServletRequest request, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Category forum = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
+        List content = Tools.syncList(forum.getChildren());
+
+        Map forums = new LinkedHashMap();
+        content = Sorters2.byName(content);
+        for ( Iterator iter = content.iterator(); iter.hasNext(); ) {
+            Relation relation = (Relation) iter.next();
+            String name = Tools.childName(relation);
+            List children = Tools.syncList(relation.getChild().getChildren());
+            children = Sorters2.byName(children);
+            forums.put(name, children);
+        }
+        env.put(VAR_FORUM_LIST, new SimpleHash(forums));
+
+        return FMTemplateSelector.select("EditRequest", "chooseRightForum", env, request);
+    }
+
+    private String actionAskForumChange(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        int forumId = Misc.parseInt((String) params.get(PARAM_FORUM_ID),0);
+        int relationId = Misc.parseInt((String) params.get(PARAM_RELATION_SHORT),0);
+        String text = (String) params.get(PARAM_TEXT);
+
+        if (forumId==0) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Zvolte prosím lep¹í diskusní fórum pro tuto diskusi.", env, null);
+            return actionChooseForum(request, env);
+        }
+
+        if (relationId==0) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Parametr rid je prázdný! Napi¹te prosím hlá¹ení chyby.", env, null);
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, "/hardware/show/"+Constants.REL_REQUESTS);
+            return null;
+        }
+
+        String dizName = Tools.childName(new Integer(relationId));
+        String forumName = Tools.childName(new Integer(forumId));
+        String action = "Pøesunout diskusi <a href=\"/forum/show/"+relationId+"\">"+dizName+
+                        "</a> do fora <a href=\""+forumId+"\">"+forumName+"</a> "+forumId;
+        if (!Misc.empty(text)) action = action+"<br>\n"+text;
+        params.put(PARAM_TEXT, action);
+
+        return actionAdd(request, response, env);
     }
 }

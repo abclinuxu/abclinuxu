@@ -6,8 +6,13 @@
 package cz.abclinuxu.utils;
 
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.ConfigurationException;
 
 import java.util.Date;
+import java.util.Calendar;
+import java.util.prefs.Preferences;
 import java.text.ParseException;
 
 import org.apache.log4j.Logger;
@@ -16,8 +21,13 @@ import org.apache.log4j.Logger;
  * Various methods for date manipulation
  * in template.
  */
-public class DateTool {
+public class DateTool implements Configurable {
     static Logger log = Logger.getLogger(DateTool.class);
+    static long yesterday, today, tommorow;
+    static {
+        calculateTodayTimes();
+        ConfigurationManager.getConfigurator().configureAndRememberMe(new DateTool());
+    }
 
     /** 2003-01-01 16:00 */
     public static final String ISO_FORMAT = "ISO";
@@ -30,11 +40,18 @@ public class DateTool {
     /** 1.1.2003 */
     public static final String CZ_ONLY_DATE = "CZ_DATE";
     /** 1.1. or Dnes or Vcera */
-    public static final String CZ_DAY_MONTH = "CZ_DM";
+    public static final String CZ_DAY_MONTH = "CZ_DATUM";
     /** 16:00 */
-    public static final String CZ_ONLY_TIME = "CZ_TIME";
+    public static final String CZ_ONLY_TIME = "TIME";
     /** Ctvrtek */
     public static final String CZ_ONLY_DAY = "CZ_DAY";
+
+    private static final int DAY_DURATION = 24*60*60*1000;
+
+    private static final String PREF_TODAY = "today";
+    private static final String PREF_YESTERDAY = "yesterday";
+
+    private static String textToday, textYesterday;
 
     /**
      * Formats given date according to selected format.
@@ -42,22 +59,29 @@ public class DateTool {
     public String show(Date date, String format) {
         if ( date==null ) return null;
 
-        if ( ISO_FORMAT.equalsIgnoreCase(format) )
-            return Constants.isoFormat.format(date);
         if ( CZ_SHORT.equalsIgnoreCase(format) )
             return Constants.czShortFormat.format(date);
-        if ( CZ_FULL.equalsIgnoreCase(format) )
-            return Constants.czFormat.format(date);
-        if ( CZ_FULL_TEXT.equalsIgnoreCase(format) )
-            return Constants.czFormatTxt.format(date);
-        if ( CZ_ONLY_DATE.equalsIgnoreCase(format) )
-            return Constants.czDateOnly.format(date);
         if ( CZ_ONLY_TIME.equalsIgnoreCase(format) )
             return Constants.czTimeOnly.format(date);
         if ( CZ_ONLY_DAY.equalsIgnoreCase(format) )
             return Constants.czDay.format(date);
-        if ( CZ_DAY_MONTH.equalsIgnoreCase(format) )
-            return Constants.czDayMonth.format(date);
+        if ( CZ_DAY_MONTH.equalsIgnoreCase(format) ) {
+            long ms = date.getTime();
+            if (ms<yesterday || ms>tommorow )
+                return Constants.czDayMonth.format(date);
+            if (ms<today)
+                return textYesterday;
+            else
+                return textToday;
+        }
+        if ( CZ_FULL.equalsIgnoreCase(format) )
+            return Constants.czFormat.format(date);
+        if ( CZ_ONLY_DATE.equalsIgnoreCase(format) )
+            return Constants.czDateOnly.format(date);
+        if ( ISO_FORMAT.equalsIgnoreCase(format) )
+            return Constants.isoFormat.format(date);
+        if ( CZ_FULL_TEXT.equalsIgnoreCase(format) )
+            return Constants.czFormatTxt.format(date);
 
         log.warn("Neznamy format data: "+format);
         return null;
@@ -79,13 +103,44 @@ public class DateTool {
     }
 
     /**
-     * @param date date to compare
-     * @return true, if date is equal to today
+     * Calculates cache values used to recognize today and yesterday.
+     * This method uses calendar, so it is slow, but precise. It is
+     * called at start up. For proper function this method or updateTodayTimes
+     * shall be called each day.
      */
-    public boolean isToday(Date date) {
-//        Date now = new Date();
-//        calendar.setTime(date);
-//        calendar.
-        return false;
+    public static synchronized void calculateTodayTimes() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        today = calendar.getTime().getTime();
+        tommorow = today + DAY_DURATION;
+        yesterday = today - DAY_DURATION;
+    }
+
+    /**
+     * Updates cached values used to recognize today and yesterday.
+     * It must be called exactly once a day, it moves cached values
+     * one day in forward. It is very fast.
+     */
+    public static synchronized void updateTodayTimes() {
+        long now = System.currentTimeMillis();
+        if (now<tommorow) {
+            log.warn("updateTodayTimes() shall be called next day!");
+            return;
+        }
+        if (now>tommorow+DAY_DURATION) {
+            log.warn("updateTodayTimes() has not been called next day!");
+            calculateTodayTimes();
+            return;
+        }
+        yesterday = today;
+        today = tommorow;
+        tommorow = today + DAY_DURATION;
+    }
+
+    public void configure(Preferences prefs) throws ConfigurationException {
+        textToday = prefs.get(PREF_TODAY,null);
+        textYesterday = prefs.get(PREF_YESTERDAY,null);
     }
 }

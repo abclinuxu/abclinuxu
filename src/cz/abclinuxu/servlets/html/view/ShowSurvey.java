@@ -17,6 +17,7 @@ import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.security.AccessKeeper;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -27,13 +28,8 @@ import org.dom4j.io.XMLWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
 /**
  * Survey implementation
@@ -171,31 +167,50 @@ public class ShowSurvey implements AbcAction {
      * Dumps data to file specified in element dump.
      */
     void dump(Document data, Element dump) throws Exception {
-        Element element = dump.element("dir");
-        if ( element==null || element.getTextTrim().length()==0 )
-            throw new InvalidDataException("No dir in survey!");
-        String dir = element.getTextTrim();
-
-        element = dump.element("prefix");
-        if ( element==null || element.getTextTrim().length()==0 )
-            throw new InvalidDataException("No prefix in survey!");
-        String prefix = element.getTextTrim();
-
-        String suffix = null;
-        element = dump.element("suffix");
-        if ( element!=null ) suffix = element.getTextTrim();
-
-        File directory = new File(dir);
-        if ( !directory.exists() )
-            directory.mkdirs();
-        File file = File.createTempFile(prefix,suffix,directory);
-        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
-
+        StringWriter sWriter = new StringWriter();
         OutputFormat format = OutputFormat.createPrettyPrint();
         format.setEncoding("ISO-8859-2");
-        XMLWriter writer = new XMLWriter(bos, format);
-        writer.write(data);
-        writer.flush();
-        bos.close();
+        XMLWriter xmlWriter = new XMLWriter(sWriter, format);
+        xmlWriter.write(data);
+        xmlWriter.flush();
+
+        Element emailElement = dump.element("email");
+        if (emailElement!=null) {
+            Map params = new HashMap();
+            // put addressees
+            for (Iterator iter = emailElement.elementIterator(); iter.hasNext(); ) {
+                Element element = (Element) iter.next();
+                params.put(element.getName().toUpperCase(), element.getTextTrim());
+            }
+            params.put(EmailSender.KEY_SUBJECT, "anketa");
+            params.put(EmailSender.KEY_BODY, sWriter.toString());
+            if ( !EmailSender.sendEmail(params) )
+                log.warn("Failed to send form data:\n"+sWriter.toString());
+        }
+
+        Element element = dump.element("dir");
+        if (element!=null) {
+            if ( element==null || element.getTextTrim().length()==0 )
+                throw new InvalidDataException("No dir in survey!");
+            String dir = element.getTextTrim();
+
+            element = dump.element("prefix");
+            if ( element==null || element.getTextTrim().length()==0 )
+                throw new InvalidDataException("No prefix in survey!");
+            String prefix = element.getTextTrim();
+
+            String suffix = null;
+            element = dump.element("suffix");
+            if ( element!=null ) suffix = element.getTextTrim();
+
+            File directory = new File(dir);
+            if ( !directory.exists() )
+                directory.mkdirs();
+
+            File file = File.createTempFile(prefix, suffix, directory);
+            Writer writer = new BufferedWriter(new FileWriter(file));
+            writer.write(sWriter.toString());
+            writer.close();
+        }
     }
 }

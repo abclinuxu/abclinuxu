@@ -1098,7 +1098,7 @@ public class EditUser implements AbcAction, Configurable {
             ServletUtils.addError(PARAM_SIGNATURE, e.getMessage(), env, null);
             return false;
         }
-        if (signature.length()>100) {
+        if (contentSize(signature)>100) {
             ServletUtils.addError(PARAM_SIGNATURE, "Maximální délka je 100 znakù!", env, null);
             return false;
         }
@@ -1398,5 +1398,14 @@ public class EditUser implements AbcAction, Configurable {
             return "";
         else
             return name.substring(i+1);
+    }
+
+    /**
+     * @param html non-empty string that may contain HTML
+     * @return number of text characters (length of string stripped of HTML tags)
+     */
+    private int contentSize(String html) {
+        String stripped = Tools.removeTags(html);
+        return stripped.length();
     }
 }

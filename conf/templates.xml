@@ -10,6 +10,15 @@
       </action>
   </servlet>
 
+  <servlet name="EditContent">
+      <action name="add" template="print" content="/add/content.ftl">
+          <var name="TITLE" value="Vlo¾ení stránky"/>
+      </action>
+      <action name="edit" template="print" content="/add/content.ftl">
+          <var name="TITLE" value="Úprava stránky"/>
+      </action>
+  </servlet>
+
   <servlet name="Royalties">
       <action name="add" template="print" content="/add/honorar.ftl">
           <var name="TITLE" value="Vlo¾ení honoráøe"/>
@@ -59,8 +68,14 @@
     <action name="remove" template="print" content="/remove/comment.ftl">
       <var name="TITLE" value="Smazání pøíspìvku" />
     </action>
+    <action name="move" template="print" content="/misc/move_thread.ftl">
+      <var name="TITLE" value="Pøesun vlákna" />
+    </action>
     <action name="censore" template="print" content="/edit/censore.ftl">
       <var name="TITLE" value="Cenzura pøíspìvku"/>
+    </action>
+    <action name="toQuestion" template="print" content="/add/threaddiz.ftl">
+      <var name="TITLE" value="Vlákno na otázku"/>
     </action>
   </servlet>
 
@@ -85,6 +100,11 @@
     </action>
     <action name="edit_item" content="/edit/item.ftl">
       <var name="TITLE" value="Uprav polo¾ku" />
+    </action>
+  </servlet>
+
+  <servlet name="WhatHappened">
+    <action name="content" template="print" content="/misc/what_happened.ftl">
     </action>
   </servlet>
 
@@ -130,6 +150,9 @@
   <servlet name="EditRequest">
     <action name="view" content="/show/requests.ftl">
       <var name="TITLE" value="Administrativní po¾adavky" />
+    </action>
+    <action name="chooseRightForum" content="/add/requestForum.ftl">
+      <var name="TITLE" value="Volba správného fóra" />
     </action>
   </servlet>
 
@@ -269,8 +292,16 @@
     <action name="news" content="/show/zpravicky.ftl">
       <var name="TITLE" value='Zprávièky' />
     </action>
+    <action name="documents" content="/show/dokumenty.ftl" template="print">
+      <var name="TITLE" value='Seznam dokumentù' />
+    </action>
   </servlet>
 
+  <servlet name="ViewContent">
+    <action name="view" content="/show/content.ftl">
+      <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
+    </action>
+  </servlet>
 
   <servlet name="ShowObject">
     <action name="hardware" content="/show/hwitem.ftl">
@@ -301,7 +332,7 @@
 
   <servlet name="ViewIndex">
     <action name="show" content="/show/index.ftl">
-      <var name="TITLE" value="AbcLinuxu.cz - tady je tuèòákùm hej!" />
+      <var name="TITLE" value="abclinuxu.cz - Linux na støíbrném podnose" />
       <var name="IS_INDEX" value="true" type="boolean" />
     </action>
   </servlet>

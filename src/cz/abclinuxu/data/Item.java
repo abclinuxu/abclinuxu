@@ -30,7 +30,8 @@ public class Item extends GenericDataObject {
     public static final int ROYALTIES = 9;
     /** dictionary */
     public static final int DICTIONARY = 10;
-
+    /** unspecified content to be served */
+    public static final int CONTENT = 11;
 
     public Item() {
         super();
@@ -60,6 +61,7 @@ public class Item extends GenericDataObject {
         }
         sb.append(": id="+id);
         if ( owner!=0 ) sb.append(",owner="+owner);
+        if ( subType!=null ) sb.append(",subtype="+subType);
         if ( documentHandler!=null ) sb.append(",data="+getDataAsString());
         return sb.toString();
     }

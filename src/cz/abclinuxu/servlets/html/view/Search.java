@@ -22,7 +22,6 @@ import org.apache.lucene.search.*;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.regexp.RE;
 import org.dom4j.Node;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,11 +35,6 @@ import java.text.NumberFormat;
 public class Search implements AbcAction {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(Search.class);
     static org.apache.log4j.Category seachLog = org.apache.log4j.Category.getInstance("search");
-
-    static RE reFixPlus;
-    static {
-        reFixPlus = new RE("([^\\+ ]+)(\\+)+([ ]|$)");
-    }
 
     /** contains relation, that match the expression */
     public static final String VAR_RESULT = "RESULT";
@@ -80,7 +74,6 @@ public class Search implements AbcAction {
         String queryString = (String) params.get(PARAM_QUERY);
         if ( queryString == null || queryString.length()==0 )
             return choosePage(onlyNews, request, env, newsCategoriesSet);
-        queryString = fixSearchString(queryString);
 
         env.put(VAR_QUERY,queryString);
 
@@ -184,17 +177,6 @@ public class Search implements AbcAction {
             return 50;
         else
             return Misc.limit(count, 10, 100);
-    }
-
-    /**
-     * If the search string contains known errors, it wiil try to fix them.
-     * For example plus sign at the end of world (like C++).
-     */
-    private static String fixSearchString(String search) {
-        if (reFixPlus.match(search)) {
-            search = reFixPlus.subst(search, "$1$3", RE.REPLACE_ALL|RE.REPLACE_BACKREFERENCES);
-        }
-        return search;
     }
 
     public static class NewsCategoriesSet extends AbstractCollection {

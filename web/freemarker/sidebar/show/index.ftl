@@ -11,10 +11,7 @@
 </#macro>
 
 <#macro showNews(relation)>
- <#local
-   ITEM=TOOL.sync(relation.child),
-   diz=TOOL.findComments(ITEM)
- >
+ <#local ITEM=TOOL.sync(relation.child), diz=TOOL.findComments(ITEM)>
  <p>${DATE.show(ITEM.created,"CZ_SHORT")}
  ${TOOL.xpath(ITEM,"data/content")}<br>
  <span style="font-size: 7pt">
@@ -44,14 +41,14 @@
 <a href="/clanky/show/5&src=sidebar" class="nadpis" target="_content">Èlánky</a>
 
 <#list ARTICLES as rel>
- <#call showArticle(rel)>
+ <@showArticle rel />
 </#list>
 
 <h3 class="nadpis">Zprávièky</h3>
 
-<#global NEWS=VARS.getFreshNews(user?if_exists)>
+<#assign NEWS=VARS.getFreshNews(user?if_exists)>
 <#list NEWS as rel>
- <#call showNews(rel)>
+ <@showNews rel />
 </#list>
 
 <#include "../footer.ftl">

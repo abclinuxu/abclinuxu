@@ -1,7 +1,6 @@
-<#include "/include/macros.ftl">
 <#include "../header.ftl">
 
-<#call showMessages>
+<@lib.showMessages/>
 
 <h2>Co je to zprávièka?</h2>
 
@@ -21,7 +20,7 @@ Pokud u¾ivatel zvolil nevhodnou kategorii, vyberte jinou.</p>
 
 <h1>Náhled</h1>
 
-<#call showNews(RELATION)>
+<@lib.showNews RELATION />
 
 <form action="${URL.make("/edit")}" method="POST">
  <table cellpadding="5" border="0">
@@ -35,7 +34,7 @@ Pokud u¾ivatel zvolil nevhodnou kategorii, vyberte jinou.</p>
   <tr>
    <td>Kategorie</td>
    <td>
-   <#global selected = PARAMS.category?if_exists>
+   <#assign selected = PARAMS.category?if_exists>
    <dl>
    <#list CATEGORIES as category>
     <dt>

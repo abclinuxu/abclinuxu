@@ -86,7 +86,7 @@ public class EditArticle implements AbcAction {
             return actionAddStep1(request, env);
 
         if ( action.equals(ACTION_ADD_ITEM_STEP2) )
-            return actionAddStep2(request, response, env);
+            return actionAddStep2(request, response, env, true);
 
         if ( action.equals(ACTION_EDIT_ITEM) )
             return actionEditItem(request, env);
@@ -103,7 +103,7 @@ public class EditArticle implements AbcAction {
         return FMTemplateSelector.select("EditArticle","add",env,request);
     }
 
-    protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation upper = (Relation) env.get(VAR_RELATION);
@@ -143,8 +143,12 @@ public class EditArticle implements AbcAction {
             persistance.create(recordRelation);
             recordRelation.getParent().addChildRelation(recordRelation);
 
-            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, "/show/"+relation.getId());
+            if (redirect) {
+                UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+                urlUtils.redirect(response, "/show/"+relation.getId());
+            } else {
+                env.put(VAR_RELATION, relation);
+            }
             return null;
         } catch (PersistanceException e) {
             ServletUtils.addError(Constants.ERROR_GENERIC,e.getMessage(),env, null);

@@ -47,9 +47,11 @@ public class EditDiscussion implements AbcAction {
     public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_DISCUSSION = "dizId";
     public static final String PARAM_THREAD = "threadId";
+    public static final String PARAM_PARENT_THREAD = "parentId";
     public static final String PARAM_TITLE = "title";
     public static final String PARAM_TEXT = "text";
     public static final String PARAM_AUTHOR = "author";
+    public static final String PARAM_AUTHOR_ID = "author_id";
     public static final String PARAM_PREVIEW = "preview";
 
     public static final String VAR_RELATION = "RELATION";
@@ -73,9 +75,13 @@ public class EditDiscussion implements AbcAction {
     public static final String ACTION_ALTER_MONITOR = "monitor";
     public static final String ACTION_REMOVE_COMMENT = "rm";
     public static final String ACTION_REMOVE_COMMENT_STEP2 = "rm2";
+    public static final String ACTION_MOVE_COMMENT = "move";
+    public static final String ACTION_MOVE_COMMENT_STEP2 = "move2";
     public static final String ACTION_FREEZE_DISCUSSION = "freeze";
     public static final String ACTION_DECREASE_LEVEL = "moveUp";
     public static final String ACTION_RATE_COMMENT = "rate";
+    public static final String ACTION_THREAD_TO_DIZ = "toQuestion";
+    public static final String ACTION_THREAD_TO_DIZ_STEP2 = "toQuestion2";
 
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -145,11 +151,23 @@ public class EditDiscussion implements AbcAction {
         if ( ACTION_REMOVE_COMMENT_STEP2.equals(action) )
             return actionRemoveComment2(request, response, env);
 
+        if ( ACTION_MOVE_COMMENT.equals(action) )
+            return actionMoveThread(request, env);
+
+        if ( ACTION_MOVE_COMMENT_STEP2.equals(action) )
+            return actionMoveThreadStep2(request, response, env);
+
         if ( ACTION_FREEZE_DISCUSSION.equals(action) )
             return actionAlterFreeze(request, response, env);
 
         if ( ACTION_DECREASE_LEVEL.equals(action) )
             return actionDecreaseThreadLevel(request, response, env);
+
+        if ( ACTION_THREAD_TO_DIZ.equals(action) )
+            return actionToNewDiscussion1(request, env);
+
+        if ( ACTION_THREAD_TO_DIZ_STEP2.equals(action) )
+            return actionToNewDiscussion2(request, response, env);
 
         throw new MissingArgumentException("Chybí parametr action!");
     }
@@ -462,6 +480,14 @@ public class EditDiscussion implements AbcAction {
         params.put(PARAM_TITLE,thread.getData().selectSingleNode("title").getText());
         params.put(PARAM_TEXT,thread.getData().selectSingleNode("text").getText());
 
+        User author = thread.getAuthor();
+        if (author!=null)
+            params.put(PARAM_AUTHOR_ID, new Integer(author.getId()));
+        else {
+            String authorName = thread.getData().elementText("author");
+            params.put(PARAM_AUTHOR, authorName);
+        }
+
         return FMTemplateSelector.select("EditDiscussion", "edit", env, request);
     }
 
@@ -492,6 +518,10 @@ public class EditDiscussion implements AbcAction {
         boolean canContinue = true;
         canContinue &= setTitle(params, comment, env);
         canContinue &= setText(params, comment, env);
+        if ( threadId==0 )
+            canContinue &= setItemAuthor(params, null, comment, discussion, env);
+        else
+            canContinue &= setCommentAuthor(params, null, comment, env);
 
         if ( !canContinue || params.get(PARAM_PREVIEW)!=null ) {
             if ( canContinue ) {
@@ -656,6 +686,60 @@ public class EditDiscussion implements AbcAction {
         return null;
     }
 
+    protected String actionMoveThread(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+
+        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
+        if ( discussion==null )
+            throw new MissingArgumentException("Chybí parametr dizId!");
+        Tools.sync(discussion);
+        env.put(VAR_DISCUSSION, discussion);
+
+        return FMTemplateSelector.select("EditDiscussion", "move", env, request);
+    }
+
+    protected String actionMoveThreadStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        User user = (User) env.get(Constants.VAR_USER);
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item discussion = (Item) persistance.findById(relation.getChild());
+
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        int threadId = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
+        if ( threadId==0 )
+            throw new MissingArgumentException("Chybí parametr threadId!");
+        int parentId = Misc.parseInt((String) params.get(PARAM_PARENT_THREAD), -1);
+        if ( parentId==-1 )
+            throw new MissingArgumentException("Chybí parametr parentId!");
+        if ( parentId==threadId ) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Pokou¹íte se vytvoøit smyèku ve stromì!", env, null);
+            return actionMoveThread(request, env);
+        }
+
+        Record record = (Record) ((Relation) discussion.getChildren().get(0)).getChild();
+        Tools.sync(record);
+        Document data = record.getData();
+
+        Element thread = (Element) data.selectSingleNode("//comment[@id='"+threadId+"']");
+        if (parentId!=0) {
+            Element threadParent = (Element) data.selectSingleNode("//comment[@id='"+parentId+"']");
+            if ( threadParent==null ) {
+                ServletUtils.addError(Constants.ERROR_GENERIC, "Takový pøedek neexistuje!", env, null);
+                return actionMoveThread(request, env);
+            }
+        }
+
+        Element parent = thread.element("parent");
+        String originalParentId = parent.getText();
+        parent.setText(Integer.toString(parentId));
+        persistance.update(record);
+        AdminLogger.logEvent(user, "presunul vlakno "+threadId+", puvodni predek="+originalParentId+", novy predek="+parentId+", relace "+relation.getId());
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/show/"+relation.getId());
+        return null;
+    }
+
     /**
      * Moves selected thread one level up. Top level threads are not changed.
      */
@@ -671,7 +755,7 @@ public class EditDiscussion implements AbcAction {
             throw new MissingArgumentException("Chybí parametr threadId!");
 
         Record record = (Record) ((Relation)discussion.getChildren().get(0)).getChild();
-        persistance.synchronize(record);
+        Tools.sync(record);
         Document data = record.getData();
 
         Element thread = (Element) data.selectSingleNode("//comment[@id='"+threadId+"']");
@@ -719,6 +803,149 @@ public class EditDiscussion implements AbcAction {
         return null;
     }
 
+    protected String actionToNewDiscussion1(HttpServletRequest request, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item discussion = (Item) persistance.findById(relation.getChild());
+
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        int threadId = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
+        if ( threadId==0 )
+            throw new MissingArgumentException("Chybí parametr threadId!");
+
+        Record record = (Record) ((Relation) discussion.getChildren().get(0)).getChild();
+        Tools.sync(record);
+        Document data = record.getData();
+        Element thread = (Element) data.selectSingleNode("//comment[@id='"+threadId+"']");
+
+        params.put(PARAM_TITLE, thread.elementText("title"));
+        params.put(PARAM_TEXT, "<a href=\"/"+urlUtils.getPrefix()+"/show/"+relation.getId()+"\">pùvodní diskuse</a>");
+
+        return FMTemplateSelector.select("EditDiscussion", "toQuestion", env, request);
+    }
+
+    /**
+     * Extracts selected thread in discussion to new separate discussion.
+     */
+    protected String actionToNewDiscussion2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+        User user = (User) env.get(Constants.VAR_USER);
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+
+        Relation currentDizRelation = (Relation) env.get(VAR_RELATION), newDizRelation;
+        Item currentDiz = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
+        if ( currentDiz==null )
+            throw new MissingArgumentException("Chybí parametr dizId!");
+        Tools.sync(currentDiz);
+        Element currentItemRoot = currentDiz.getData().getRootElement();
+
+        List children = currentDiz.getChildren();
+        Record currentRecord = (Record) ((Relation) children.get(0)).getChild();
+        Tools.sync(currentRecord);
+        Element currentRecordRoot = currentRecord.getData().getRootElement();
+        String thread = (String) params.get(PARAM_THREAD);
+        String xpath = "//comment[@id='"+thread+"']";
+
+        // vytvorit novou prazdnou diskusi
+        Item newDiz = new Item(0, Item.DISCUSSION);
+        Document newItemDoc = DocumentHelper.createDocument();
+        Element newItemRoot = newItemDoc.addElement("data");
+        newItemRoot.addElement("comments").setText("0");
+        newDiz.setData(newItemDoc);
+
+        Record newRecord = new Record(0, Record.DISCUSSION);
+        Document newRecordDoc = DocumentHelper.createDocument();
+        newRecord.setData(newRecordDoc);
+        Element newRecordRoot = newRecordDoc.addElement("data");
+
+        synchronized(currentRecordRoot) {
+            Element element = (Element) currentRecordRoot.selectSingleNode(xpath);
+
+            // otazka nove diskuse
+            Map newParams = new HashMap();
+            newParams.put(PARAM_TITLE, element.elementText("title"));
+            // specifikuj jmeno diskuse, pozor na diskuse ke clankum
+            String url = urlUtils.getPrefix()+"/show/"+currentDizRelation.getId();
+            newParams.put(PARAM_TEXT, "<p class=\"threadMoved\">Diskuse vznikla z vlákna <a href=\""+url+"\">této</a> diskuse.</p>");
+            setTitle(newParams, newItemRoot, env);
+            setTextNoHTMLCheck(newParams, newItemRoot, env);
+            setItemAuthor(newParams, user, newItemRoot, newDiz, env);
+
+            // extraktovany komentar jako prvni odpoved
+            Element newElement = element.createCopy();
+            setParent(newParams, newElement);
+            newRecordRoot.add(newElement);
+
+            // presun vsechny potomky (cele vlakno)
+            boolean found = false;
+            String id = null, parent;
+            Set parents = new HashSet();
+            parents.add(thread); // root prenaseneho vlakna
+            List comments = currentRecordRoot.elements("comment");
+            for ( Iterator iter = comments.iterator(); iter.hasNext(); ) {
+                Element comment = (Element) iter.next();
+                if ( !found ) {
+                    if ( comment.equals(element) )
+                        found = true;
+                    continue;
+                }
+
+                parent = comment.elementText("parent");
+                if ( !parents.contains(parent) )
+                    continue; // nepatri do threadu
+
+                id = comment.attributeValue("id");
+                parents.add(id);
+                comment.detach(); // smazat z puvodniho stromu
+                newRecordRoot.add(comment); // vlozit do noveho stromu
+            }
+
+            // nastavit hlavicku nove diskuse
+            List commentList = newRecordRoot.selectNodes("comment");
+            int commentsCount = commentList.size();
+            DocumentHelper.makeElement(newItemRoot, "comments").setText(""+commentsCount);
+            Element lastElement = (Element) commentList.get(commentsCount-1);
+            Date lastUpdate = Constants.isoFormat.parse(lastElement.elementText("created"));
+
+            persistance.create(newDiz);
+            SQLTool.getInstance().setUpdatedTimestamp(newDiz, lastUpdate);
+
+            // opravit hlavicku puvodni diskuse
+            commentList = currentRecordRoot.selectNodes("comment");
+            commentsCount = commentList.size();
+            DocumentHelper.makeElement(currentItemRoot, "comments").setText(""+commentsCount);
+            lastElement = (Element) commentList.get(commentsCount-1);
+            lastUpdate = Constants.isoFormat.parse(lastElement.elementText("created"));
+
+            persistance.update(currentDiz);
+            SQLTool.getInstance().setUpdatedTimestamp(currentDiz, lastUpdate);
+
+            // check whether new relation has correct parent. where to put article discussions?
+            newDizRelation = new Relation(currentDizRelation.getChild(), newDiz, currentDizRelation.getUpper());
+            persistance.create(newDizRelation);
+            newDizRelation.getParent().addChildRelation(newDizRelation);
+
+            persistance.create(newRecord);
+            Relation newRecordRelation = new Relation(newDiz, newRecord, newDizRelation.getId());
+            persistance.create(newRecordRelation);
+            newRecordRelation.getParent().addChildRelation(newRecordRelation);
+
+            // v puvodni diskusi ponechat vysvetlujici text
+            url = urlUtils.getPrefix()+"/show/"+newDizRelation.getId();
+            newParams.put(PARAM_TEXT, "<p class=\"threadMoved\">Vlákno bylo pøesunuto do <a href=\""+url+"\">samostatné</a> diskuse.</p>");
+            setTextNoHTMLCheck(newParams, element, env);
+            persistance.update(currentRecord);
+        }
+
+        AdminLogger.logEvent(user, "presunul vlakno "+thread+" diskuse rid="+currentDizRelation.getId()+" do nove diskuse rid="+newDizRelation);
+
+        urlUtils.redirect(response, "/show/"+newDizRelation.getId());
+        return null;
+    }
+
+
     /* ******** setters ********* */
 
     /**
@@ -750,6 +977,11 @@ public class EditDiscussion implements AbcAction {
     static boolean setTitle(Map params, Element root, Map env) {
         String tmp = (String) params.get(PARAM_TITLE);
         if ( tmp!=null && tmp.length()>0 ) {
+            if ( tmp.indexOf("<")!=-1 ) {
+                params.put(PARAM_TITLE, "");
+                ServletUtils.addError(PARAM_TITLE, "Pou¾ití HTML znaèek je zakázáno!", env, null);
+                return false;
+            }
             DocumentHelper.makeElement(root,"title").setText(tmp);
         } else {
             ServletUtils.addError(PARAM_TITLE, "Zadejte titulek va¹eho dotazu!", env, null);
@@ -790,6 +1022,28 @@ public class EditDiscussion implements AbcAction {
     }
 
     /**
+     * Updates text of comment from parameters. HTML is not checked for validity.
+     * Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param root root element of discussion to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    static boolean setTextNoHTMLCheck(Map params, Element root, Map env) {
+        String tmp = (String) params.get(PARAM_TEXT);
+        if ( tmp!=null && tmp.length()>0 ) {
+            Element element = DocumentHelper.makeElement(root,"text");
+            element.setText(tmp);
+            Format format = FormatDetector.detect(tmp);
+            element.addAttribute("format", Integer.toString(format.getId()));
+        } else {
+            ServletUtils.addError(PARAM_TEXT, "Zadejte text va¹eho dotazu!", env, null);
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Updates author of comment from parameters. Changes are not synchronized with persistance.
      * @param params map holding request's parameters
      * @param root root element of discussion to be updated
@@ -797,10 +1051,21 @@ public class EditDiscussion implements AbcAction {
      * @return false, if there is a major error.
      */
     static private boolean setItemAuthor(Map params, User user, Element root, Item diz, Map env) {
+        diz.setOwner(0);
+        Element previousAuthor = root.element("author");
+        if ( previousAuthor!=null )
+            previousAuthor.detach();
+
         if ( user!=null ) {
             diz.setOwner(user.getId());
         } else {
-            String tmp = (String) params.get(PARAM_AUTHOR);
+            String tmp = (String) params.get(PARAM_AUTHOR_ID);
+            if (tmp!=null && tmp.length()>0) {
+                diz.setOwner(Integer.parseInt(tmp));
+                return true;
+            }
+
+            tmp = (String) params.get(PARAM_AUTHOR);
             if ( tmp!=null && tmp.length()>0 ) {
                 DocumentHelper.makeElement(root, "author").setText(tmp);
             } else {
@@ -819,10 +1084,24 @@ public class EditDiscussion implements AbcAction {
      * @return false, if there is a major error.
      */
     static boolean setCommentAuthor(Map params, User user, Element root, Map env) {
+        Element previousAuthor = root.element("author_id");
+        if ( previousAuthor!=null )
+            previousAuthor.detach();
+        previousAuthor = root.element("author");
+        if ( previousAuthor!=null )
+            previousAuthor.detach();
+
         if ( user!=null ) {
             DocumentHelper.makeElement(root, "author_id").setText(Integer.toString(user.getId()));
         } else {
-            String tmp = (String) params.get(PARAM_AUTHOR);
+            String tmp = (String) params.get(PARAM_AUTHOR_ID);
+            if ( tmp!=null && tmp.length()>0 ) {
+                int authorId = Integer.parseInt(tmp);
+                DocumentHelper.makeElement(root, "author_id").setText(Integer.toString(authorId));
+                return true;
+            }
+
+            tmp = (String) params.get(PARAM_AUTHOR);
             if ( tmp!=null && tmp.length()>0 ) {
                 if (tmp.indexOf("<")!=-1) {
                     params.put(PARAM_AUTHOR,"");
@@ -840,6 +1119,7 @@ public class EditDiscussion implements AbcAction {
 
     /**
      * Updates parent of this comment from parameters. Changes are not synchronized with persistance.
+     * todo when thread is extracted, threadId may point to nonexistent thread. check it.
      * @param params map holding request's parameters
      * @param root root element of discussion to be updated
      * @return false, if there is a major error.

@@ -8,8 +8,10 @@ package cz.abclinuxu.scheduler;
 
 import java.io.*;
 import java.net.URL;
-import java.util.TimerTask;
 import java.util.prefs.Preferences;
+import java.util.Map;
+import java.util.LinkedHashMap;
+import java.util.TimerTask;
 
 import org.apache.regexp.*;
 import cz.abclinuxu.utils.config.Configurable;
@@ -17,6 +19,7 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
+import cz.abclinuxu.utils.freemarker.FMUtils;
 
 /**
  * This task is responsible for downloading
@@ -25,27 +28,33 @@ import cz.abclinuxu.utils.config.impl.AbcConfig;
 public class UpdateKernel extends TimerTask implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(UpdateKernel.class);
 
-    public static final String PREF_FILE = "file";
-    public static final String PREF_KERNEL_DIST_URI = "uri";
-    public static final String PREF_REGEXP_STABLE = "regexp.stable";
-    public static final String PREF_URL_STABLE = "url.stable";
-    public static final String PREF_REGEXP_STABLE_PRE = "regexp.stable.pre";
-    public static final String PREF_REGEXP_STABLE_MM = "regexp.stable.mm";
-    public static final String PREF_URL_STABLE_MM = "url.stable.mm";
-    public static final String PREF_REGEXP_DEVEL = "regexp.devel";
-    public static final String PREF_URL_DEVEL = "url.devel";
-    public static final String PREF_REGEXP_DEVEL_PRE = "regexp.devel.pre";
-    public static final String PREF_REGEXP_24 = "regexp.24";
-    public static final String PREF_URL_24 = "url.24";
-    public static final String PREF_REGEXP_24_PRE = "regexp.24.pre";
-    public static final String PREF_REGEXP_22 = "regexp.22";
-    public static final String PREF_URL_22 = "url.22";
-    public static final String PREF_REGEXP_22_PRE = "regexp.22.pre";
-    public static final String PREF_REGEXP_20 = "regexp.20";
-    public static final String PREF_URL_20 = "url.20";
-    public static final String PREF_REGEXP_20_PRE = "regexp.20.pre";
-    public static final String PREF_REGEXP_AC = "regexp.ac";
-    public static final String PREF_URL_AC = "url.ac";
+    static final String PREF_FILE = "file";
+    static final String PREF_KERNEL_DIST_URI = "uri";
+    static final String PREF_REGEXP_STABLE = "regexp.stable";
+    static final String PREF_URL_STABLE = "url.stable";
+    static final String PREF_REGEXP_STABLE_PRE = "regexp.stable.pre";
+    static final String PREF_REGEXP_STABLE_MM = "regexp.stable.mm";
+    static final String PREF_URL_STABLE_MM = "url.stable.mm";
+    static final String PREF_REGEXP_DEVEL = "regexp.devel";
+    static final String PREF_URL_DEVEL = "url.devel";
+    static final String PREF_REGEXP_DEVEL_PRE = "regexp.devel.pre";
+    static final String PREF_REGEXP_24 = "regexp.24";
+    static final String PREF_URL_24 = "url.24";
+    static final String PREF_REGEXP_24_PRE = "regexp.24.pre";
+    static final String PREF_REGEXP_22 = "regexp.22";
+    static final String PREF_URL_22 = "url.22";
+    static final String PREF_REGEXP_22_PRE = "regexp.22.pre";
+    static final String PREF_REGEXP_20 = "regexp.20";
+    static final String PREF_URL_20 = "url.20";
+    static final String PREF_REGEXP_20_PRE = "regexp.20.pre";
+    static final String PREF_REGEXP_AC = "regexp.ac";
+    static final String PREF_URL_AC = "url.ac";
+
+    static UpdateKernel instance;
+    static {
+        instance = new UpdateKernel();
+    }
+
 
     String fileName, uri;
     String stable, stablePre, stableMM, devel, develPre, old24, old24Pre, old22, old22Pre, old20, old20Pre, ac;
@@ -54,9 +63,10 @@ public class UpdateKernel extends TimerTask implements Configurable {
     RE reStable,reStablepre,reDevel,reDevelpre,reStableMM;
     RE reOld24,reOld24pre,reOld22,reOld22pre,reOld20,reOld20pre,reAc;
 
-    public UpdateKernel() {
+
+    private UpdateKernel() {
         Configurator configurator = ConfigurationManager.getConfigurator();
-        configurator.configureMe(this);
+        configurator.configureAndRememberMe(this);
         try {
             reStable = new RE(stable);
             reStablepre = new RE(stablePre);
@@ -73,6 +83,13 @@ public class UpdateKernel extends TimerTask implements Configurable {
         } catch (RESyntaxException e) {
             log.error("Cannot compile regexp!",e);
         }
+    }
+
+    /**
+     * @return singleton of this class
+     */
+    public static UpdateKernel getInstance() {
+        return instance;
     }
 
     /**
@@ -167,41 +184,29 @@ public class UpdateKernel extends TimerTask implements Configurable {
             if ( stable==null ) // sometimes finger returns an empty file
                 return;
 
+            Map kernels = new LinkedHashMap();
+            if (urlStable!=null)
+                kernels.put("v26", new KernelTree(urlStable, stable, stablePre));
+            if ( urlDevel!=null )
+                kernels.put("v27", new KernelTree(urlDevel,devel));
+            if ( urlStableMM!=null )
+                kernels.put("v26mm", new KernelTree(urlStableMM, stableMM));
+            if ( url24!=null )
+                kernels.put("v24", new KernelTree(url24,old24,old24Pre));
+            if ( url22!=null )
+                kernels.put("v22", new KernelTree(url22,old22,old22Pre));
+            if ( url20!=null )
+                kernels.put("v20", new KernelTree(url20,old20,old20Pre));
+            if ( urlAC!=null )
+                kernels.put("v26ac", new KernelTree(urlAC,ac));
+
             String file = AbcConfig.calculateDeployedPath(fileName);
-            FileWriter writer = new FileWriter(file);
-            writer.write("<table border=0>\n");
-
-            writeTableRow(writer,"Stabilní:",urlStable,stable,stablePre);
-            writeTableRow(writer,"Vývojová:",urlDevel,devel,null);
-            writeTableRow(writer,"MM øada:", urlStableMM, stableMM, null);
-            writeTableRow(writer,"Øada 2.4:",url24,old24,old24Pre);
-            writeTableRow(writer,"Øada 2.2:",url22,old22,old22Pre);
-            writeTableRow(writer,"Øada 2.0:",url20,old20,old20Pre);
-            writeTableRow(writer,"AC øada:",urlAC,ac,null);
-
-            writer.write("</table>");
-            reader.close();
-            writer.close();
+            FMUtils.executeTemplate("/include/misc/generate_kernel.ftl", kernels, new File(file));
         } catch (IOException e) {
             log.error("Cannot parse current kernel information because of I/O problems! "+e.getMessage());
         } catch (Exception e) {
             log.error("Cannot parse kernel headers!",e);
         }
-    }
-
-    private void writeTableRow(Writer writer, String desc, String url, String version, String preVersion) throws IOException {
-        if (version==null && preVersion==null) return;
-        writer.write("<tr>\n<td class=\"jadro_h\">");
-        if ( url!=null )
-            writer.write("<a href=\""+url+"\" class=\"ikona\">"+desc+"</a>");
-        else
-            writer.write(desc);
-        writer.write("</td>\n<td>");
-        if ( version!=null )
-            writer.write(version);
-        if ( preVersion!=null )
-            writer.write(" "+preVersion);
-        writer.write(" </td>\n</tr>\n");
     }
 
     /**
@@ -224,5 +229,39 @@ public class UpdateKernel extends TimerTask implements Configurable {
         Reader reader = new InputStreamReader(url.openStream());
         BufferedReader bufferedReader = new BufferedReader(reader);
         return bufferedReader;
+    }
+
+    /**
+     * Data holder about kernel.
+     */
+    public static class KernelTree {
+        String url, release, preRelease;
+
+        public KernelTree(String url, String release) {
+            this.url = url;
+            this.release = release;
+        }
+
+        public KernelTree(String url, String release, String pre_prelease) {
+            this.url = url;
+            this.release = release;
+            this.preRelease = pre_prelease;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public String getRelease() {
+            return release;
+        }
+
+        public String getPreRelease() {
+            return preRelease;
+        }
+
+        public String toString() {
+            return release+","+preRelease+","+url;
+        }
     }
 }

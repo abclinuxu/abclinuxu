@@ -95,8 +95,7 @@ public class GenerateLinks extends TimerTask implements Configurable {
 
                 url = "http://www.abclinuxu.cz/clanky/show/"+relation.getId();
                 title = tools.xpath(item,"data/name");
-                desc = removeNewLines(tools.xpath(item,"data/perex"));
-                desc = tools.encodeSpecial(desc);
+                desc = htmlNormalize(tools.xpath(item,"data/perex"));
                 record = (Record) InstanceUtils.findFirstChildRecordOfType(item,Record.ARTICLE).getChild();
                 content = tools.encodeSpecial(tools.xpath(record,"data/content"));
 
@@ -172,9 +171,18 @@ public class GenerateLinks extends TimerTask implements Configurable {
     }
 
     /**
-     * Converts new line characters to spaces.
+     * Normalizes string, that it encodes some character with special meaning in HTML
+     * and removes all new lines.
      */
-    String removeNewLines(String text) {
+    public static String htmlNormalize(String text) {
+        text = Tools.encodeSpecial(text);
+        return lineBreak.subst(text," ");
+    }
+
+    /**
+     * Replaces new line characters with space.
+     */
+    public static String removeNewLines(String text) {
         return lineBreak.subst(text," ");
     }
 
@@ -303,7 +311,7 @@ public class GenerateLinks extends TimerTask implements Configurable {
 
             for ( Iterator iter = links.iterator(); iter.hasNext(); ) {
                 Link link = (Link) iter.next();
-                writer.write("\t\t\t\t<rdf:li resource=\""+link.url+"\" />\n");
+                writer.write("\t\t\t\t<rdf:li rdf:resource=\""+link.url+"\" />\n");
             }
 
             writer.write("\t\t\t</rdf:Seq>\n");

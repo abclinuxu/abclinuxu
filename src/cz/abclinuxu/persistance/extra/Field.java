@@ -14,6 +14,7 @@ public class Field {
     public static final Field ID = new Field("ID");
     public static final Field DATA = new Field("DATA");
     public static final Field TYPE = new Field("TYPE");
+    public static final Field SUBTYPE = new Field("SUBTYPE");
     public static final Field OWNER = new Field("OWNER");
 
     private final String myName; // for debug only

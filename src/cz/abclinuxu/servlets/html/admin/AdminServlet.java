@@ -14,8 +14,10 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.template.TemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.data.Category;
+import cz.abclinuxu.data.User;
 import cz.abclinuxu.utils.search.CreateIndex;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.DateTool;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +26,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.io.File;
 
+import freemarker.template.Configuration;
+
 /**
  * Various administrative tasks.
  */
@@ -31,7 +35,7 @@ public class AdminServlet implements AbcAction {
     public static final String PARAM_RELATION_SHORT = "rid";
 
     public static final String ACTION_CLEAR_CACHE = "clearCache";
-    public static final String ACTION_PERFROM_CHECK = "performCheck";
+    public static final String ACTION_PERFORM_CHECK = "performCheck";
 
     public static final String VAR_DATABASE_STATE = "DATABASE_VALID";
     public static final String VAR_FULLTEXT_STATE = "FULLTEXT_VALID";
@@ -40,14 +44,20 @@ public class AdminServlet implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String action = (String) params.get(PARAM_ACTION);
 
+        if ( ACTION_PERFORM_CHECK.equals(action) )
+            return performCheck(request, env);
+
+        User user = (User) env.get(Constants.VAR_USER);
+        if ( user==null )
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
+        if ( !(user.isMemberOf(Constants.GROUP_ADMINI)) )
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
         if (action==null)
             return FMTemplateSelector.select("Admin", "show", env, request);
 
         if (ACTION_CLEAR_CACHE.equals(action) )
             return clearCache(request,env);
-
-        if (ACTION_PERFROM_CHECK.equals(action) )
-            return performCheck(request,env);
 
         return null;
     }
@@ -57,9 +67,11 @@ public class AdminServlet implements AbcAction {
      */
     private final String clearCache(HttpServletRequest request, Map env) throws Exception {
         PersistanceFactory.getPersistance().clearCache();
-        AbcInit.setSharedVariables();
+        AbcInit.setServerLinksAstSharedVariables();
         TemplateSelector.initialize(null);
         ConfigurationManager.reconfigureAll();
+        Configuration.getDefaultConfiguration().clearTemplateCache();
+	DateTool.calculateTodayTimes();
 
         ServletUtils.addMessage("Cache byla promazána.",env,null);
         return FMTemplateSelector.select("Admin", "show", env, request);

@@ -133,11 +133,13 @@ CREATE TABLE relace (
  predek INT NOT NULL,                   -- id predka
  typ_potomka CHAR(1) NOT NULL,          -- id tabulky obsahu
  potomek INT NOT NULL,                  -- id obsahu
+ url VARCHAR(255) DEFAULT NULL,         -- URL stranky
  data TEXT DEFAULT NULL                 -- volitelne jmeno vazby
 );
 ALTER TABLE relace ADD INDEX in_potomek (typ_potomka,potomek);
 ALTER TABLE relace ADD INDEX in_predek (typ_predka,predek);
 ALTER TABLE relace ADD INDEX in_predchozi (predchozi);
+ALTER TABLE relace ADD INDEX in_url (url);
 
 -- tabulka se ctennosti daneho objektu
 CREATE TABLE citac (
@@ -162,3 +164,11 @@ CREATE TABLE pravo (
  cislo INT(3) AUTO_INCREMENT PRIMARY KEY,  -- id tohoto radku
  admin CHAR(1)                             -- logicka, NULL pro FALSE
 );
+
+CREATE TABLE komentar (
+ kdo INT(5) NOT NULL,                            -- cislo uzivatele
+ diskuse INT(6) NOT NULL,                        -- cislo polozky
+ posledni INT(5) NOT NULL,                       -- cislo posledniho komentare
+ kdy TIMESTAMP                                   -- cas pridani
+);
+ALTER TABLE komentar ADD PRIMARY KEY komentar_pk (kdo,diskuse);

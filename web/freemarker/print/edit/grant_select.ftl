@@ -1,7 +1,6 @@
-<#include "/include/macros.ftl">
 <#include "../header.ftl">
 
-<#call showMessages>
+<@lib.showMessages/>
 
 <form action="${URL.noPrefix("/EditUser")}" method="POST">
  <table width="100%" border=0 cellpadding=5>
@@ -24,7 +23,7 @@
 
 <ol>
  <#list USERS as id>
-  <#global user=TOOL.createUser(id)>
+  <#assign user=TOOL.createUser(id)>
   <li><a href="${URL.noPrefix("/EditUser?action=grant2&amp;uid="+id)}">${user.name}</a>
  </#list>
 </ol>

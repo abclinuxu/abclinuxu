@@ -1,9 +1,8 @@
-<#include "/include/macros.ftl">
 <#include "../header.ftl">
 
-<#call showMessages>
+<@lib.showMessages/>
 
-<#call showComment(THREAD 0 0 false)>
+<@lib.showComment THREAD, 0, 0, false />
 
 <p>Napi¹te zde dùvod, proè cenzurujete tento pøíspìvek.</p>
 

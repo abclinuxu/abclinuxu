@@ -22,6 +22,7 @@ import java.io.IOException;
  */
 public class SimpleConfigurator implements Configurator {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(SimpleConfigurator.class);
+    public static final String PREF_LOCATION = "location";
 
     /**
      * A file, from which preferences were imported.
@@ -76,8 +77,15 @@ public class SimpleConfigurator implements Configurator {
     public void configureMe(Configurable configurable) throws ConfigurationException {
         if ( log.isDebugEnabled() )
             log.debug("Configuring class "+configurable.getClass());
+        Preferences preferences = Preferences.systemRoot();
+        String location = preferences.get(PREF_LOCATION, configurationFile);
+        if (!configurationFile.equals(location)) {
+            log.info("Oops, configuration file does not match Preferences, reloading");
+            loadPreferences();
+        }
+
         String nodePath = configurable.getClass().getName().replace('.', '/');
-        Preferences prefs = Preferences.systemRoot().node(nodePath);
+        Preferences prefs = preferences.node(nodePath);
         configurable.configure(prefs);
     }
 

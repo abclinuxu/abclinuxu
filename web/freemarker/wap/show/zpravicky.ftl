@@ -1,7 +1,7 @@
 <#include "../header.ftl">
 <card title="Zprávièky">
 <#list FOUND.data as relation>
- <#global ITEM=TOOL.sync(relation.child)>
+ <#assign ITEM=TOOL.sync(relation.child)>
   <p>${DATE.show(ITEM.created,"CZ_SHORT")}<br/>
   ${TOOL.removeTags(TOOL.xpath(ITEM,"data/content"))}
   <br/><br/></p>

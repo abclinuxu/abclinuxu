@@ -1,9 +1,9 @@
 <#include "../macros.ftl">
 <#include "../header.ftl">
 
-<#call showParents>
+<@showParents>
 
-<#global autor=TOOL.createUser(TOOL.xpath(ITEM,"/data/author"))>
+<#assign autor=TOOL.createUser(TOOL.xpath(ITEM,"/data/author"))>
 
 <h1>${TOOL.xpath(ITEM,"/data/name")}</h1>
 
@@ -20,9 +20,9 @@ ${TOOL.render(TOOL.xpath(CHILDREN.record[0].child,"/data/content"),USER?if_exist
 
 <#if CHILDREN.discussion?exists && CHILDREN.discussion[0].child.children?size gt 0>
 <h1>Diskuse k tomuto èlánku</h1>
- <#global DISCUSSION=CHILDREN.discussion[0].child>
+ <#assign DISCUSSION=CHILDREN.discussion[0].child>
  <#list TOOL.createDiscussionTree(DISCUSSION) as thread>
-  <#call showThread(thread 0 DISCUSSION.id RELATION.id)>
+  <@showThread(thread 0 DISCUSSION.id RELATION.id)>
  </#list>
 </#if>
 

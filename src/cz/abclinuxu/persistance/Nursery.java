@@ -116,6 +116,14 @@ public class Nursery implements Configurable {
     }
 
     protected List getChildrenInternal(GenericObject object) {
+        if (object instanceof Category) {
+            Category category = (Category) object;
+            switch (category.getType()) {
+                case Category.SECTION_FORUM:
+                case Category.SECTION_BLOG:
+                    return Collections.EMPTY_LIST;
+            }
+        }
         if ( noChildren.get(object)!=null )
             return Collections.EMPTY_LIST; // content of this object might be too big
 
@@ -141,10 +149,8 @@ public class Nursery implements Configurable {
      */
     private Relation cloneRelation(Relation relation) {
         Relation clone = (Relation) relation.makeLightClone();
-        if ( relation.isInitialized() ) {
-            clone.setUpper(relation.getUpper());
-            clone.setData(relation.getData());
-            clone.setInitialized(true);
+        if (relation.isInitialized()) {
+            clone.synchronizeWith(relation);
             clone.setParent(relation.getParent().makeLightClone());
             clone.setChild(relation.getChild().makeLightClone());
         }
@@ -163,7 +169,7 @@ public class Nursery implements Configurable {
         persistance = PersistanceFactory.getPersistance();
 
         // content of these sections shall not be loaded!
-        noChildren = new HashMap(100, 0.95f);
+        noChildren = new HashMap();
         Category category = null;
         String tmp = prefs.get(PREF_NO_CHILDREN_FOR_SECTION, "");
         StringTokenizer stk = new StringTokenizer(tmp, ",");

@@ -7,6 +7,7 @@ package cz.abclinuxu.servlets.html;
 
 import cz.abclinuxu.servlets.Controller;
 import cz.abclinuxu.servlets.utils.template.TemplateSelector;
+import cz.abclinuxu.servlets.utils.URLMapper;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.apache.log4j.Logger;
@@ -40,9 +41,9 @@ public class HTMLServlet extends Controller {
         try {
             Map env = new HashMap();
             performInit(request, response, env);
-            String server = request.getServerName();
-            if ( server.startsWith("print") )
-                request.setAttribute(TemplateSelector.PARAM_VARIANTA, "print");
+
+            URLMapper urlMapper = URLMapper.getInstance(URLMapper.Version.HTML);
+            HTMLVersion.setLayout(request, urlMapper);
 
             String templateName = process(request, response, env);
             Template template = Configuration.getDefaultConfiguration().getTemplate(templateName);

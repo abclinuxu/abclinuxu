@@ -44,6 +44,8 @@ public class ShowDictionary implements AbcAction, Configurable {
     public static final String VAR_ITEM = "ITEM";
     public static final String VAR_CHILDREN_MAP = "CHILDREN";
     public static final String VAR_FOUND = "FOUND";
+    public static final String VAR_NEXT = "NEXT";
+    public static final String VAR_PREVIOUS = "PREV";
 
     public static final String PREF_REGEXP_NAME = "regexp.name";
     public static final String PREF_MAX_ITEMS = "max.items";
@@ -94,6 +96,11 @@ public class ShowDictionary implements AbcAction, Configurable {
             throw new InvalidDataException("Záznam "+record.getId()+" není typu slovnik!");
 
         env.put(VAR_ITEM, item);
+        SQLTool sqlTool = SQLTool.getInstance();
+        List siblings = sqlTool.getNeighbourDictionaryItems(item.getSubType(), true, 3);
+        env.put(VAR_PREVIOUS, siblings);
+        siblings = sqlTool.getNeighbourDictionaryItems(item.getSubType(), false, 3);
+        env.put(VAR_NEXT, siblings);
         return FMTemplateSelector.select("Dictionary", "show", env, request);
     }
 

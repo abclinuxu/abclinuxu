@@ -1,7 +1,6 @@
-<#include "/include/macros.ftl">
 <#include "../header.ftl">
 
-<#call showMessages>
+<@lib.showMessages/>
 
 <p>Chystáte se smazat ní¾e zobrazený komentáø. Jedná se o naprosto
 ojedinìlou akci, kterou byste mìl pou¾ívat jen ve výjimeèných pøípadech.
@@ -15,7 +14,7 @@ vèetnì v¹ech potomkù!</p>
 
 <#if THREAD?exists>
  <h1>Náhled pøíspìvku</h1>
- <#call showComment(THREAD 0 0 false)>
+ <@lib.showComment THREAD, 0, 0, false />
 </#if>
 
 <form action="${URL.make("/EditDiscussion")}" method="POST">

@@ -1,9 +1,10 @@
 log4j			1.2.7		http://jakarta.apache.org
-freemarker		2.1		http://freemarker.org/
+freemarker		2.3		http://freemarker.org/
 proxool			0.7.2		http://proxool.sf.net
 mysql-connector		3.0.11		http://www.mysql.com
 regexp			1.4-dev		http://jakarta.apache.org (27.2.2004 - cvs)
 commons-fileupload	1.0		http://jakarta.apache.org
 dom4j			1.4		http://dom4j.org/
-lucene			1.3		http://jakarta.apache.org
+lucene			1.4.2		http://jakarta.apache.org
 htmlparser		1.4		http://htmlparser.sourceforge.net
+quartz			1.4.2		http://www.quartzscheduler.org/quartz

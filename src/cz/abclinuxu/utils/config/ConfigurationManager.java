@@ -61,4 +61,18 @@ public class ConfigurationManager {
         Configurator aConfigurator = new SimpleConfigurator(file);
         setConfigurator(aConfigurator);
     }
+
+    /**
+     * Sets default configurator from system properties.
+     */
+    public static synchronized void init(String file) {
+        if ( configurator!=null ) return;
+        if ( file==null || file.length()==0 ) {
+            log.fatal("You must set provide valid file!");
+            System.exit(1);
+        }
+
+        Configurator aConfigurator = new SimpleConfigurator(file);
+        setConfigurator(aConfigurator);
+    }
 }

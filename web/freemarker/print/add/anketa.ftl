@@ -1,7 +1,6 @@
-<#include "/include/macros.ftl">
 <#include "../header.ftl">
 
-<#call showMessages>
+<@lib.showMessages/>
 
 
 <p>Na této stránce mù¾ete vytvoøit novou anketu èi hodnocení.
@@ -9,7 +8,7 @@ Jsou povoleny základní html znaèky ( nový øádek, odkaz ).
 Mù¾ete také povolit souèasné vybrání více mo¾ností.</p>
 
 <form action="${URL.make("/EditPoll")}" method="POST">
- <#global choices=PARAMS.choices?if_exists>
+ <#assign choices=PARAMS.choices?if_exists>
  <table width=100 border=0 cellpadding=5>
   <tr>
    <td width="90" class="required">Otázka</td>
@@ -22,7 +21,7 @@ Mù¾ete také povolit souèasné vybrání více mo¾ností.</p>
    <td class="required">Více mo¾ností</td>
    <td>
     <select name="multichoice" tabindex="2">
-     <#global multi=PARAMS.multichoice?if_exists>
+     <#assign multi=PARAMS.multichoice?if_exists>
      <option value="yes"<#if multi=="yes"> SELECTED</#if>>Ano</option>
      <option value="no"<#if multi!="yes"> SELECTED</#if>>Ne</option>
     </select>

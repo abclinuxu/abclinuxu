@@ -1,7 +1,7 @@
 <#include "../macros.ftl">
 <#include "../header.ftl">
 
-<#global who=TOOL.createUser(ITEM.owner)>
+<#assign who=TOOL.createUser(ITEM.owner)>
 <p>
  Tuto polo¾ku vytvoøil <a href="http://www.abclinuxu.cz/Profile/${who.id}">${who.name}</a>
  dne ${DATE.show(ITEM.created,"CZ_FULL")}.
@@ -22,7 +22,7 @@
       <a href="${TOOL.xpath(ITEM,"data/url")}">${TOOL.limit(TOOL.xpath(ITEM,"data/url"),50," ..")}</a>
     </td>
   </tr>
-<#global note=TOOL.xpath(ITEM,"data/note")>
+<#assign note=TOOL.xpath(ITEM,"data/note")>
 <#if note?exists>
   <tr>
     <td valign="top">Poznámka</td><td>${TOOL.render(note,USER?if_exists)}</td>

@@ -110,4 +110,13 @@ public class FMTemplateSelector extends TemplateSelector {
             }
         }
     }
+
+    /**
+     * Verifies that layout identified by argument exists.
+     * @param layout name of layout
+     * @return whether it exists
+     */
+    public static boolean layoutExists(String layout) {
+        return FMUtils.fileExists(layout);
+    }
 }

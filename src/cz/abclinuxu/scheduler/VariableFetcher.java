@@ -12,6 +12,7 @@ import cz.abclinuxu.persistance.extra.LimitQualifier;
 import cz.abclinuxu.persistance.extra.Qualifier;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.freemarker.Tools;
 
 import java.util.*;
 
@@ -24,27 +25,38 @@ import org.dom4j.Node;
 public class VariableFetcher extends TimerTask {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(VariableFetcher.class);
 
+    static VariableFetcher instance;
+    static {
+	instance = new VariableFetcher();
+    }
+
     final static int SIZE = 3;
     final static int ARTICLE_SIZE = 15;
 
-    List newHardware, newSoftware, newDrivers, newArticles;
+    List newHardware, newSoftware, newDrivers;
     Map counter;
-    Poll currentPoll;
+    Relation currentPoll;
 
     long linksLastRun;
     SQLTool sqlTool;
 
     /**
-     * Public constructor
+     * Private constructor
      */
-    public VariableFetcher() {
+    private VariableFetcher() {
         sqlTool = SQLTool.getInstance();
         newHardware = new ArrayList(SIZE);
         newSoftware = new ArrayList(SIZE);
         newDrivers = new ArrayList(SIZE);
-        newArticles = new ArrayList(ARTICLE_SIZE);
         counter = new HashMap(0,1.0f);
         linksLastRun = System.currentTimeMillis();
+    }
+
+    /**
+     * @return singleton of this object
+     */
+    public static VariableFetcher getInstance() {
+        return instance;
     }
 
     /**
@@ -77,13 +89,6 @@ public class VariableFetcher extends TimerTask {
     }
 
     /**
-     * List of few freshest articles (relation).
-     */
-    public List getNewArticles() {
-        return newArticles;
-    }
-
-    /**
      * List of the freshest news (relation) limited by user settings.
      */
     public List getFreshNews(Object user) {
@@ -97,9 +102,9 @@ public class VariableFetcher extends TimerTask {
     }
 
     /**
-     * Actual poll.
+     * Actual poll relation.
      */
-    public Poll getCurrentPoll() {
+    public Relation getCurrentPoll() {
         return currentPoll;
     }
 
@@ -123,6 +128,7 @@ public class VariableFetcher extends TimerTask {
             }
 
             currentPoll = sqlTool.findActivePoll();
+            Tools.sync(currentPoll);
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, SIZE)};
             newHardware = sqlTool.findRecordParentRelationsWithType(Record.HARDWARE, qualifiers);

@@ -66,13 +66,13 @@ public class ShowArticle implements AbcAction {
         Item item = (Item) relation.getChild();
         Tools.sync(item);
 
-        return show(env, item, request, response);
+        return show(env, item, request);
     }
 
     /**
      * Shows the article.
      */
-    static String show(Map env, Item item, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    static String show(Map env, Item item, HttpServletRequest request) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
         Record record = null;
 
@@ -89,15 +89,8 @@ public class ShowArticle implements AbcAction {
         if ( record.getType()!=Record.ARTICLE )
             throw new InvalidDataException("Záznam "+record.getId()+" není typu èlánek!");
 
-        list = (List) children.get(Constants.TYPE_DISCUSSION);
-        if ( list!=null && list.size()==1 ) {
-            Item discussion = (Item)((Relation) list.get(0)).getChild();
-            Tools.handleNewComments(discussion,env,request,response);
-        }
-
-        Document document = item.getData();
-
         boolean allow = true;
+        Document document = item.getData();
         Node node = document.selectSingleNode("/data/forbid_discussions");
         if ( node!=null && "yes".equals(node.getText()))
             allow = false;

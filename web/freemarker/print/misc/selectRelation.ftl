@@ -1,7 +1,6 @@
-<#include "/include/macros.ftl">
 <#include "../header.ftl">
 
-<#call showMessages>
+<@lib.showMessages/>
 
 <#if PARAMS.rid?exists><h1>Objekt: <i>${TOOL.childName(PARAMS.rid)}</i></h1></#if>
 
@@ -26,7 +25,7 @@
    </td>
   </tr>
 
-  <#global map=TOOL.groupByType(CURRENT.child.children)>
+  <#assign map=TOOL.groupByType(CURRENT.child.children)>
 
   <#list map.keySet() as key>
    <tr><td coslpan="5"><b>${key}</b></td></tr>

@@ -1,7 +1,6 @@
-<#include "/include/macros.ftl">
 <#include "../header.ftl">
 
-<#call showMessages>
+<@lib.showMessages/>
 
 <h1>Pøístupová práva k relaci</h1>
 
@@ -19,7 +18,7 @@ a zároveò je rùznì modifikovat.</p>
     <input type="checkbox" name="id" value="${acl.id}">
     <#if acl.user?exists><a href="/Profile/${acl.user.id}">${acl.user.name}</a></#if>
     <#if acl.group?exists><a href="/Group?action=members&gid=${acl.group.id}">${TOOL.xpath(acl.group,"/data/name")}</a></#if>
-    ${acl.right}: ${acl.value}<br>
+    ${acl.right}: ${acl.value?string}<br>
  </#list>
 
  <br>

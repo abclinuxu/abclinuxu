@@ -182,7 +182,7 @@ public class EditNews implements AbcAction {
         session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_TO, user.getEmail());
         session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_BCC, "admini@abclinuxu.cz"); // inform group of admins too
 
-        String url = response.encodeRedirectURL("/Mail");
+        String url = response.encodeRedirectURL("/Mail?url=/news/dir/37672");
         response.sendRedirect(url);
         return null;
     }

@@ -12,6 +12,7 @@ import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.email.EmailSender;
+import cz.abclinuxu.utils.Misc;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +36,9 @@ public class SendEmail implements AbcAction {
     public static final String PARAM_SENDER = "sender";
     public static final String PARAM_SUBJECT = "subject";
     public static final String PARAM_MESSAGE = "message";
+    public static final String PARAM_CC = "cc";
+    public static final String PARAM_BCC = "bcc";
+    public static final String PARAM_URL = "url";
 
     public static final String ACTION_SEND = "finish";
 
@@ -52,10 +56,26 @@ public class SendEmail implements AbcAction {
      * shows send email form
      */
     protected String handleSendEmail(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
         if ( user!=null ) {
-            Map params = (Map) env.get(Constants.VAR_PARAMS);
             params.put(PARAM_SENDER, user.getEmail());
+        }
+
+        HttpSession session = request.getSession();
+        for ( Enumeration e = session.getAttributeNames(); e.hasMoreElements(); ) {
+            String name = (String) e.nextElement();
+            if ( name.startsWith(PREFIX) ) {
+                String name2 = name.substring(PREFIX.length());
+                if ( EmailSender.KEY_CC.equals(name2)) {
+                    params.put(PARAM_CC, session.getAttribute(name));
+                    session.removeAttribute(name);
+                }
+                else if ( EmailSender.KEY_BCC.equals(name2)) {
+                    params.put(PARAM_BCC, session.getAttribute(name));
+                    session.removeAttribute(name);
+                }
+            }
         }
 
         Integer kod = new Integer(new Random().nextInt(10000));
@@ -92,6 +112,16 @@ public class SendEmail implements AbcAction {
             ServletUtils.addError(PARAM_SENDER, "Zadejte platnou adresu!", env, null);
             chyba = true;
         }
+        String cc = (String) params.get(PARAM_CC);
+        if ( !Misc.empty(cc) && (cc.length()<6 || cc.indexOf('@')==-1 || cc.indexOf('.')==-1 )) {
+            ServletUtils.addError(PARAM_CC, "Zadejte platnou adresu!", env, null);
+            chyba = true;
+        }
+        String bcc = (String) params.get(PARAM_BCC);
+        if ( !Misc.empty(bcc) && (bcc.length()<6 || bcc.indexOf('@')==-1 || bcc.indexOf('.')==-1 )) {
+            ServletUtils.addError(PARAM_BCC, "Zadejte platnou adresu!", env, null);
+            chyba = true;
+        }
         String subject = (String) params.get(PARAM_SUBJECT);
         if ( subject==null || subject.length()==0 ) {
             ServletUtils.addError(PARAM_SUBJECT, "Zadejte pøedmìt!", env, null);
@@ -107,6 +137,10 @@ public class SendEmail implements AbcAction {
 
         Map data = new HashMap();
         data.put(EmailSender.KEY_FROM, from);
+        if ( !Misc.empty(cc) )
+            data.put(EmailSender.KEY_CC, cc);
+        if ( !Misc.empty(bcc))
+            data.put(EmailSender.KEY_BCC, bcc);
         data.put(EmailSender.KEY_SUBJECT, subject);
         data.put(EmailSender.KEY_BODY, message);
 
@@ -122,8 +156,10 @@ public class SendEmail implements AbcAction {
         else
             ServletUtils.addMessage("Litujeme, ale do¹lo k chybì pøi odesílání va¹i zprávy.", env, session);
 
+        String url = (String) params.get(PARAM_URL);
+        if (url==null || url.length()==0) url = "/";
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/");
+        urlUtils.redirect(response, url);
         return null;
     }
 }

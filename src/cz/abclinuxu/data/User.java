@@ -27,8 +27,11 @@ public class User extends GenericObject implements XMLContainer {
     private String password;
     /** XML with data or this object */
     private XMLHandler documentHandler;
+
     /** cache of granted user roles */
     private Map roles = null;
+    /** cache of user settings */
+    private Map settings = null;
 
 
     public User() {
@@ -190,6 +193,25 @@ public class User extends GenericObject implements XMLContainer {
         if ( roles.containsKey(role) )
             return true;
         return false;
+    }
+
+    /**
+     * todo implement. we can either test existence (/data/personal/signature)
+     * or equality [//settings/signatures==yes]
+     * @param xpath to evaluate against user
+     * @return true if the user has such setting
+     */
+    public boolean hasSetting(String xpath) {
+        if (settings==null)
+            settings = new HashMap(5);
+        return false;
+    }
+
+    /**
+     * Removes all cached setting values.
+     */
+    public void clearSettingsCache() {
+        settings.clear();
     }
 
     /**
