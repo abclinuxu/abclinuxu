@@ -103,6 +103,8 @@ P.zpravicka { background-color: #EEEEEE }
 
 /* hodnoceni */
 TABLE.rating { background-color: #EEEEEE; margin-top: 5px }
+P.rating { background-color: #EEEEEE; margin-top: 5px }
+IMG.star { border: 0; width: 16px; height: 16px; }
 
 #hucek1 { width: 114; height: 329; }
 #hucek2 { border: 2px #FFF solid; width: 110; height: 310; }
