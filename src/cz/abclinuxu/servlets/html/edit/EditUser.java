@@ -115,7 +115,7 @@ public class EditUser implements AbcAction, Configurable {
     public static final String ACTION_ADD_GROUP_MEMBER = "addToGroup";
 
     public static final String PREF_INVALID_NICK_REGEXP = "regexp.invalid.login";
-    private RE reLoginInvalid;
+    private static RE reLoginInvalid;
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new EditUser());
     }
