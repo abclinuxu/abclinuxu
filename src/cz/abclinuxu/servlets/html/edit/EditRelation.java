@@ -258,7 +258,7 @@ public class EditRelation implements AbcAction {
         if ( prefix!=null ) {
             url = prefix.concat("/show/"+relation.getUpper());
         } else
-            url = "/Index";
+            url = "/";
 
         UrlUtils urlUtils = new UrlUtils(prefix, response);
         urlUtils.redirect(response, url);
@@ -294,7 +294,7 @@ public class EditRelation implements AbcAction {
                 url = "/diskuse.jsp";
             else
                 url = prefix.concat("/show/"+relation.getUpper());
-        } else url = "/Index";
+        } else url = "/";
 
         UrlUtils urlUtils = new UrlUtils("", response);
         urlUtils.redirect(response, url);
@@ -344,7 +344,7 @@ public class EditRelation implements AbcAction {
 
         String url = null;
         String prefix = (String) params.get(PARAM_PREFIX);
-        url = (prefix!=null) ? prefix.concat("/show/"+relation.getId()) : "/Index";
+        url = (prefix!=null) ? prefix.concat("/show/"+relation.getId()) : "/";
 
         UrlUtils urlUtils = new UrlUtils("", response);
         urlUtils.redirect(response, url);

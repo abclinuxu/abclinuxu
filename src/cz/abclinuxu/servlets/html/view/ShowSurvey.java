@@ -59,7 +59,7 @@ public class ShowSurvey implements AbcAction {
         if ( survey==null ) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Anketa nebyla nalezena!", env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, "/Index");
+            urlUtils.redirect(response, "/");
             return null;
         }
 
@@ -67,7 +67,7 @@ public class ShowSurvey implements AbcAction {
         if ( survey.getType()!=Item.SURVEY ) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Tento objekt není anketa!", env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, "/Index");
+            urlUtils.redirect(response, "/");
             return null;
         }
 
@@ -85,7 +85,7 @@ public class ShowSurvey implements AbcAction {
             log.error("Survey "+survey.getId()+" does not define screen "+nextScreen+" (called from "+currentScreen+")!");
             ServletUtils.addError(Constants.ERROR_GENERIC, "Omlouváme se, ale v anketì nastala chyba.", env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, "/Index");
+            urlUtils.redirect(response, "/");
             return null;
         }
 
@@ -108,7 +108,7 @@ public class ShowSurvey implements AbcAction {
                 log.error("Error in survey "+survey.getId(), e);
                 ServletUtils.addError(Constants.ERROR_GENERIC, "Omlouváme se, ale v anketì nastala chyba.", env, request.getSession());
                 UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-                urlUtils.redirect(response, "/Index");
+                urlUtils.redirect(response, "/");
                 return null;
             }
             request.getSession().removeAttribute(ATTRIB_DATA);
@@ -119,7 +119,7 @@ public class ShowSurvey implements AbcAction {
             log.error("Survey "+survey.getId()+" does not define template in screen "+nextScreen+"!");
             ServletUtils.addError(Constants.ERROR_GENERIC, "Omlouváme se, ale v anketì nastala chyba.", env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, "/Index");
+            urlUtils.redirect(response, "/");
         }
 
         env.put("TITLE", "Anketa");

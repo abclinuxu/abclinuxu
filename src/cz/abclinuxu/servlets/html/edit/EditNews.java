@@ -234,7 +234,7 @@ public class EditNews implements AbcAction {
         persistance.remove(relation);
         relation.getParent().removeChildRelation(relation);
 
-        response.sendRedirect(response.encodeRedirectURL("/Index"));
+        response.sendRedirect(response.encodeRedirectURL("/"));
         return null;
     }
 

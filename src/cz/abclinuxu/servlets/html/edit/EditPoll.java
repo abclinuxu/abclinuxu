@@ -223,7 +223,7 @@ public class EditPoll implements AbcAction {
 
         if ( url==null || url.length()==0 ) {
             log.error("U ankety "+poll.getId()+" chybí parametr url!");
-            url = "/Index";
+            url = "/";
         }
 
         String[] values = request.getParameterValues(PARAM_VOTE_ID);
