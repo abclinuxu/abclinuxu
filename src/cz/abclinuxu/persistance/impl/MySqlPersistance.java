@@ -120,16 +120,16 @@ public class MySqlPersistance implements Persistance {
     public void update(GenericObject obj) {
         if (obj instanceof GenericDataObject) {
             update((GenericDataObject)obj);
+        } else if ( obj instanceof User ) {
+            update((User) obj);
         } else if (obj instanceof Relation) {
             update((Relation)obj);
+        } else if ( obj instanceof Poll ) {
+            update((Poll) obj);
         } else if (obj instanceof Data) {
             update((Data)obj);
         } else if (obj instanceof Link) {
             update((Link)obj);
-        } else if (obj instanceof Poll) {
-            update((Poll)obj);
-        } else if (obj instanceof User) {
-            update((User)obj);
         }
     }
 
@@ -600,11 +600,12 @@ public class MySqlPersistance implements Persistance {
             conditions.add(new Integer(((Data)obj).getOwner()));
 
         } else if (obj instanceof User) {
-            sb.append("insert into uzivatel values(0,?,?,?,?,?)");
+            sb.append("insert into uzivatel values(0,?,?,?,?,?,?)");
             conditions.add(((User)obj).getLogin());
             conditions.add(((User)obj).getName());
             conditions.add(((User)obj).getEmail());
             conditions.add(((User)obj).getPassword());
+            conditions.add(((User)obj).getNick());
             conditions.add(((User)obj).getDataAsString().getBytes());
 
         } else if (obj instanceof Link) {
@@ -684,6 +685,13 @@ public class MySqlPersistance implements Persistance {
             if ( tmp!=null && tmp.length()>0 ) {
                 if ( addAnd ) sb.append(" and ");
                 sb.append("email like ?");
+                conditions.add(tmp);
+            }
+
+            tmp = user.getNick();
+            if ( tmp!=null && tmp.length()>0 ) {
+                if ( addAnd ) sb.append(" and ");
+                sb.append("prezdivka like ?");
                 conditions.add(tmp);
             }
         }
@@ -825,7 +833,8 @@ public class MySqlPersistance implements Persistance {
             user.setName(resultSet.getString(3));
             user.setEmail(resultSet.getString(4));
             user.setPassword(resultSet.getString(5));
-            user.setData(insertEncoding(resultSet.getString(6)));
+            user.setNick(resultSet.getString(6));
+            user.setData(insertEncoding(resultSet.getString(7)));
 
             return user;
         } finally {
@@ -1227,13 +1236,14 @@ public class MySqlPersistance implements Persistance {
 
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("update uzivatel set login=?,jmeno=?,email=?,heslo=?,data=? where cislo=?");
+            statement = con.prepareStatement("update uzivatel set login=?,jmeno=?,email=?,heslo=?,prezdivka=?,data=? where cislo=?");
             statement.setString(1,user.getLogin());
             statement.setString(2,user.getName());
             statement.setString(3,user.getEmail());
             statement.setString(4,user.getPassword());
-            statement.setBytes(5,user.getDataAsString().getBytes());
-            statement.setInt(6,user.getId());
+            statement.setString(5,user.getNick());
+            statement.setBytes(6,user.getDataAsString().getBytes());
+            statement.setInt(7,user.getId());
 
             int result = statement.executeUpdate();
             if ( result!=1 ) {
@@ -1243,8 +1253,7 @@ public class MySqlPersistance implements Persistance {
             cache.store(user);
         } catch (SQLException e) {
             if ( e.getErrorCode()==1062 ) {
-                log.warn("Duplicate login. \nUser "+user+"\nStatement: "+statement.toString(),e);
-                throw new DuplicateKeyException("Prihlasovaci jmeno "+user.getLogin()+" je uz registrovano!");
+                throw new DuplicateKeyException("Pøihla¹ovací jméno (login) nebo pøezdívka jsou ji¾ pou¾ívány!");
             } else {
                 throw new PersistanceException("Nemohu ulozit zmeny do databaze!",e);
             }

@@ -16,5 +16,5 @@ http://www.abclinuxu.cz/forum/show/${RELATION_ID}
 =========
 
 Pokud si neprejete dale dostavat tyto emaily, muzete tak ucinit
-na adrese http://www.abclinuxu.cz/EditUser/ ${USER.id}?action=subscribe
+na adrese http://www.abclinuxu.cz/EditUser/${USER.id}?action=subscribe
 Vase prihlasovaci jmeno je ${USER.login}.</#if>

@@ -24,11 +24,15 @@ import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.email.forum.SubscribedUsers;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.regexp.RE;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -41,11 +45,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.util.*;
+import java.util.prefs.Preferences;
 
 /**
  * Class for manipulation with User.
  */
-public class EditUser implements AbcAction {
+public class EditUser implements AbcAction, Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditUser.class);
 
     public static final String PARAM_USER = ViewUser.PARAM_USER;
@@ -55,6 +60,7 @@ public class EditUser implements AbcAction {
     public static final String PARAM_EMAIL = "email";
     public static final String PARAM_PASSWORD = "password";
     public static final String PARAM_PASSWORD2 = "password2";
+    public static final String PARAM_NICK = "nick";
     public static final String PARAM_SEX = "sex";
     public static final String PARAM_CITY = "city";
     public static final String PARAM_AREA = "area";
@@ -65,6 +71,7 @@ public class EditUser implements AbcAction {
     public static final String PARAM_DISTRIBUTION = "distribution";
     public static final String PARAM_ABOUT_ME = "about";
     public static final String PARAM_EMOTICONS = "emoticons";
+    public static final String PARAM_SIGNATURE = "signature";
     public static final String PARAM_ENABLE_COMMENTS = "comments";
     public static final String PARAM_COOKIE_VALIDITY = "cookieValid";
     public static final String PARAM_DISCUSSIONS_COUNT = "discussions";
@@ -107,6 +114,17 @@ public class EditUser implements AbcAction {
     public static final String ACTION_INVALIDATE_EMAIL2 = "invalidateEmail2";
     public static final String ACTION_ADD_GROUP_MEMBER = "addToGroup";
 
+    public static final String PREF_INVALID_NICK_REGEXP = "regexp.invalid.login";
+    private RE reLoginInvalid;
+
+    public EditUser() {
+        ConfigurationManager.getConfigurator().configureAndRememberMe(this);
+    }
+
+    public void configure(Preferences prefs) throws ConfigurationException {
+        String tmp = prefs.get(PREF_INVALID_NICK_REGEXP, null);
+        reLoginInvalid = new RE(tmp);
+    }
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -116,10 +134,9 @@ public class EditUser implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         if ( managed==null )
             managed = user;
-        if ( managed!=null ) {
-            PersistanceFactory.getPersistance().synchronize(managed);
-            env.put(VAR_MANAGED, managed);
-        }
+        else
+            managed = (User) PersistanceFactory.getPersistance().findById(managed);
+        env.put(VAR_MANAGED, managed);
 
         // registration doesn't require user to be logged in
         if (  action==null || action.equals(ACTION_REGISTER) )
@@ -223,6 +240,7 @@ public class EditUser implements AbcAction {
         canContinue &= setLogin(params, managed, env);
         canContinue &= setPassword(params, managed, env);
         canContinue &= setName(params, managed, env);
+        canContinue &= setNick(params, managed, env);
         canContinue &= setEmail(params, managed, env);
         canContinue &= setSex(params, managed, env);
         canContinue &= setWeeklySummary(params, managed);
@@ -234,7 +252,7 @@ public class EditUser implements AbcAction {
         try {
             persistance.create(managed);
         } catch (DuplicateKeyException e) {
-            ServletUtils.addError(PARAM_LOGIN, "Toto jméno je ji¾ pou¾íváno!", env, null);
+            ServletUtils.addError(PARAM_LOGIN, "Pøihla¹ovací jméno nebo pøezdívka jsou ji¾ pou¾ívány!", env, null);
             return FMTemplateSelector.select("EditUser", "register", env, request);
         }
 
@@ -250,7 +268,7 @@ public class EditUser implements AbcAction {
         EmailSender.sendEmail(data);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/Profile?registrace=true&action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&userId="+managed.getId());
+        urlUtils.redirect(response, "/Profile?registrace=true&action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
         return null;
     }
 
@@ -263,6 +281,7 @@ public class EditUser implements AbcAction {
 
         params.put(PARAM_LOGIN,managed.getLogin());
         params.put(PARAM_NAME,managed.getName());
+        params.put(PARAM_NICK,managed.getNick());
         params.put(PARAM_EMAIL,managed.getEmail());
 
         return FMTemplateSelector.select("EditUser","editBasic",env,request);
@@ -282,6 +301,7 @@ public class EditUser implements AbcAction {
             canContinue &= checkPassword(params, managed, env);
         canContinue &= setLogin(params, managed, env);
         canContinue &= setName(params, managed, env);
+        canContinue &= setNick(params, managed, env);
         canContinue &= setEmail(params, managed, env);
 
         if ( !canContinue )
@@ -301,7 +321,7 @@ public class EditUser implements AbcAction {
 
         ServletUtils.addMessage("Zmìny byly ulo¾eny.",env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&userId="+managed.getId());
+        urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
         return null;
     }
 
@@ -330,7 +350,7 @@ public class EditUser implements AbcAction {
 
         ServletUtils.addMessage("Heslo bylo zmìnìno.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&userId="+managed.getId());
+        urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
         return null;
     }
 
@@ -345,6 +365,9 @@ public class EditUser implements AbcAction {
         Node node = document.selectSingleNode("/data/personal/sex");
         if ( node!=null )
             params.put(PARAM_SEX, node.getText());
+        node = document.selectSingleNode("/data/personal/signature");
+        if ( node!=null )
+            params.put(PARAM_SIGNATURE, node.getText());
         node = document.selectSingleNode("/data/personal/birth_year");
         if ( node!=null )
             params.put(PARAM_BIRTH_YEAR, node.getText());
@@ -373,6 +396,7 @@ public class EditUser implements AbcAction {
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
             canContinue &= checkPassword(params, managed, env);
+        canContinue &= setSignature(params, managed, env);
         canContinue &= setSex(params, managed, env);
         canContinue &= setBirthYear(params, managed, env);
         canContinue &= setCity(params, managed);
@@ -386,7 +410,7 @@ public class EditUser implements AbcAction {
 
         ServletUtils.addMessage("Zmìny byly ulo¾eny.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/Profile?userId="+managed.getId());
+        urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
         return null;
     }
 
@@ -438,7 +462,7 @@ public class EditUser implements AbcAction {
 
         ServletUtils.addMessage("Zmìny byly ulo¾eny.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/Profile?userId="+managed.getId());
+        urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
         return null;
     }
 
@@ -591,7 +615,7 @@ public class EditUser implements AbcAction {
 
         ServletUtils.addMessage("Zmìny byly ulo¾eny.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/Profile?userId="+managed.getId());
+        urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
         return null;
     }
 
@@ -774,6 +798,14 @@ public class EditUser implements AbcAction {
             ServletUtils.addError(PARAM_LOGIN, "Pøihla¹ovací jméno musí mít nejménì tøi znaky!", env, null);
             return false;
         }
+        if ( login.length()>16 ) {
+            ServletUtils.addError(PARAM_LOGIN, "Pøihla¹ovací jméno nesmí mít více ne¾ 16 znakù!", env, null);
+            return false;
+        }
+        if ( reLoginInvalid.match(login) ) {
+            ServletUtils.addError(PARAM_LOGIN, "Pøihla¹ovací jméno smí obsahovat pouze písmena A a¾ Z, èíslice, pomlèku, teèku a podtr¾ítko!", env, null);
+            return false;
+        }
         user.setLogin(login);
         return true;
     }
@@ -792,6 +824,28 @@ public class EditUser implements AbcAction {
             return false;
         }
         user.setName(name);
+        return true;
+    }
+
+    /**
+     * Updates nick from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setNick(Map params, User user, Map env) {
+        String nick = (String) params.get(PARAM_NICK);
+        if ( nick==null || nick.trim().length()==0) {
+            user.setNick(null);
+            return true;
+        }
+        nick = nick.trim();
+        if (nick.length()>20 ) {
+            ServletUtils.addError(PARAM_NICK, "Pøezdívka je pøíli¹ dlouhá!", env, null);
+            return false;
+        }
+        user.setNick(nick);
         return true;
     }
 
@@ -1012,6 +1066,35 @@ public class EditUser implements AbcAction {
             element.setText(distro);
             distributions.add(element);
         }
+        return true;
+    }
+
+    /**
+     * Updates signature from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setSignature(Map params, User user, Map env) {
+        String signature = (String) params.get(PARAM_SIGNATURE);
+        Element personal = DocumentHelper.makeElement(user.getData(), "/data/personal");
+        if ( signature==null || signature.length()==0 ) {
+            Node node = personal.element("signature");
+            if ( node!=null )
+                personal.remove(node);
+            return true;
+        }
+        try {
+            SafeHTMLGuard.check(signature);
+        } catch (ParserException e) {
+            log.error("ParseException on '"+signature+"'", e);
+            ServletUtils.addError(PARAM_SIGNATURE, e.getMessage(), env, null);
+            return false;
+        } catch (Exception e) {
+            ServletUtils.addError(PARAM_SIGNATURE, e.getMessage(), env, null);
+            return false;
+        }
+        DocumentHelper.makeElement(personal, "signature").setText(signature);
         return true;
     }
 

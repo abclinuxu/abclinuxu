@@ -19,6 +19,8 @@ public class User extends GenericObject implements XMLContainer {
     private String login;
     /** real name of the user */
     private String name;
+    /** nickname of the user */
+    private String nick;
     /** email of the user */
     private String email;
     /** (noncrypted) password */
@@ -63,6 +65,20 @@ public class User extends GenericObject implements XMLContainer {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     *  @return nickname of the user
+     */
+    public String getNick() {
+        return nick;
+    }
+
+    /**
+     *  Set nickname of the user
+     */
+    public void setNick(String nick) {
+        this.nick = nick;
     }
 
     /**
@@ -194,6 +210,7 @@ public class User extends GenericObject implements XMLContainer {
         User b = (User) obj;
         documentHandler = b.documentHandler;
         name = b.getName();
+        nick = b.getNick();
         login = b.getLogin();
         email = b.getEmail();
         password = b.getPassword();
@@ -214,6 +231,8 @@ public class User extends GenericObject implements XMLContainer {
         if (!Misc.same(login,p.login))
             return false;
         if (!Misc.same(name,p.name))
+            return false;
+        if (!Misc.same(nick,p.nick))
             return false;
         if (!Misc.same(email,p.email))
             return false;

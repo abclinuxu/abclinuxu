@@ -9,8 +9,8 @@ V drtivé vìt¹inì pøípadù byste mìli pou¾ít cenzuru. Pou¾ít jej mù¾ete
 napøíklad na komentáøe nìjakého ¹ílence (je¹tírci, paranoici),
 zakázanou reklamu a spamy a podobnì.</p>
 
-<p>Tato funkce není rekurzivní, tak¾e ne¾ mù¾ete smazat nìkterý komentáø,
-musíte smazat v¹echny reakce, které na nìj odkazují.</p>
+<p>Tato funkce je rekurzivní! Sma¾e tedy kompletní vlákno
+vèetnì v¹ech potomkù!</p>
 
 
 <#if THREAD?exists>

@@ -13,8 +13,10 @@ CREATE TABLE uzivatel (
  jmeno VARCHAR(35) NOT NULL,                -- realne jmeno uzivatele
  email VARCHAR(60) NOT NULL,                -- email
  heslo VARCHAR(12) NOT NULL,     	        -- nekryptovane heslo
+ prezdivka VARCHAR(20) NULL UNIQUE,         -- prezdivka
  data TEXT                                  -- XML s nazvem, ikonou, poznamkou ...
 );
+ALTER TABLE uzivatel ADD INDEX in_nick (prezdivka);
 
 
 -- tabulka s kategoriemi

@@ -2,12 +2,13 @@ verze 2.0
 
 <!ELEMENT data (personal,communication,profile,settings,system,roles?)>
 
-<!ELEMENT personal (sex,birth_year?,area?,city?,country?)>
+<!ELEMENT personal (sex,birth_year?,area?,city?,country?,signature?)>
 <!ELEMENT sex (#PCDATA)> <!-- man or woman -->
 <!ELEMENT birth_year (#PCDATA)> <!-- YYYY, v kterem roce se narodil -->
 <!ELEMENT area (#PCDATA)> <!-- nazev kraje -->
 <!ELEMENT city (#PCDATA)> <!-- jmeno mesta -->
 <!ELEMENT country (#PCDATA)> <!-- jmeno statu -->
+<!ELEMENT signature (#PCDATA)> <!-- podpis nebo citat vlozeny pro jeho prispevky do diskuse -->
 
 <!ELEMENT communication (email)>
 <!ELEMENT email (newsletter?,weekly_summary?,forum?)>
