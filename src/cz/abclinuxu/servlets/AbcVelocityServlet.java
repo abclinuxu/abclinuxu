@@ -156,7 +156,6 @@ public class AbcServlet extends VelocityServlet {
 
         doLogin(request,response,session,context);
 
-        // refactor it. move this code to separate method
         Map params = (Map) session.getAttribute(AbcServlet.ATTRIB_PARAMS);
         if ( params!=null ) {
             session.removeAttribute(AbcServlet.ATTRIB_PARAMS);
