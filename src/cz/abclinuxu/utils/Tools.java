@@ -6,7 +6,7 @@
 package cz.abclinuxu.utils;
 
 import cz.abclinuxu.data.*;
-import cz.abclinuxu.persistance.PersistanceException;
+import cz.abclinuxu.exceptions.PersistanceException;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.SQLTool;
@@ -46,7 +46,7 @@ public class Tools {
 
     /**
      * Returns text value of node selected by xpath expression for GenericObject.
-     * @throws PersistanceException if object cannot be synchronized
+     * @throws cz.abclinuxu.exceptions.PersistanceException if object cannot be synchronized
      */
     public static String xpath(GenericObject obj, String xpath) {
         if ( obj==null || !(obj instanceof XMLContainer) )

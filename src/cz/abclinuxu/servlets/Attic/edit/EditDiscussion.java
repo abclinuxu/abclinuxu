@@ -16,6 +16,7 @@ import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Tools;
 import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.exceptions.PersistanceException;
 
 import org.dom4j.*;
 import javax.servlet.http.HttpServletRequest;
@@ -94,7 +95,6 @@ public class EditDiscussion extends AbcFMServlet {
      * then opens form for adding new reaction.
      */
     protected String actionAddDiscussion(HttpServletRequest request, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -105,7 +105,7 @@ public class EditDiscussion extends AbcFMServlet {
         if ( relChild==null ) {
             discussion = new Item(0,Item.DISCUSSION);
             Document document = DocumentHelper.createDocument();
-            Element root = document.addElement("data");
+            document.addElement("data");
             discussion.setData(document);
             if ( user!=null ) discussion.setOwner(user.getId());
 
@@ -254,11 +254,8 @@ public class EditDiscussion extends AbcFMServlet {
         }
 
         tmp = (String) params.get(PARAM_THREAD);
-        int upper = 0;
-        if ( tmp!=null && tmp.length()>0 ) {
+        if ( tmp!=null && tmp.length()>0 )
             root.addElement("thread").setText(tmp);
-            upper = Integer.parseInt(tmp);
-        }
 
         if ( error ) {
             env.put(VAR_DISCUSSION,discussion);
@@ -292,7 +289,7 @@ public class EditDiscussion extends AbcFMServlet {
      * Finds Record of type Discussion from PARAM_THREAD key in params or makes facade
      * of given Item.
      * @return initialized record
-     * @throws PersistanceException, if PARAM_THREAD points to nonexisting record
+     * @throws PersistanceException if PARAM_THREAD points to nonexisting record
      */
     private Record getDiscussion(Map params, Item discussion, Persistance persistance) {
         Record record = (Record) InstanceUtils.instantiateParam(PARAM_THREAD,Record.class,params);
