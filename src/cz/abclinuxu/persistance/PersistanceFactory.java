@@ -30,7 +30,7 @@ public class PersistanceFactory {
      * @return instance of object, which implements <code>Persistance</code>.
      */
     public static Persistance getPersistance() {
-        return getPersistance(defaultUrl, DefaultCache.class);
+        return getPersistance(defaultUrl, LRUCache.class);
     }
 
     /**
@@ -38,8 +38,8 @@ public class PersistanceFactory {
      * <code>defaultUrl</code> is used.
      * @return instance of object, which implements <code>Persistance</code> interface
      */
-    public static synchronized Persistance getPersistance(String url) {
-        return getPersistance(url, DefaultCache.class);
+    public static Persistance getPersistance(String url) {
+        return getPersistance(url, LRUCache.class);
     }
 
     /**

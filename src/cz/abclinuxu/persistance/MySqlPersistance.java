@@ -16,6 +16,7 @@ import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.AbcException;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.logicalcobwebs.proxool.ProxoolException;
+import org.logicalcobwebs.proxool.ProxoolFacade;
 
 /**
  * This class provides persistance backed up by MySQl database. You should consult
@@ -44,13 +45,13 @@ public class MySqlPersistance implements Persistance {
     String dbUrl = null;
     Cache cache = null;
 
-//    static {
-//        try {
-//            Class.forName("com.mysql.jdbc.Driver");
-//        } catch (Exception e) {
-//            log.fatal("Nemohu vytvorit instanci JDBC driveru, zkontroluj CLASSPATH!",e);
-//        }
-//    }
+    static {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (Exception e) {
+            log.fatal("Nemohu vytvorit instanci JDBC driveru, zkontroluj CLASSPATH!",e);
+        }
+    }
 
     public MySqlPersistance(String dbUrl) {
         if ( dbUrl==null ) log.fatal("Neni mozne inicializovat MySqlPersistenci prazdnym URL!");
@@ -1383,7 +1384,9 @@ public class MySqlPersistance implements Persistance {
      */
     private void setAutoId(GenericObject obj, Statement statement) {
         try {
-            statement = org.logicalcobwebs.proxool.ProxoolFacade.getDelegateStatement(statement);
+//            if ( statement instanceof org.logicalcobwebs.proxool )
+            if ( statement.getClass().getPackage().getName().startsWith("org.logicalcobwebs.proxool") )
+                statement = ProxoolFacade.getDelegateStatement(statement);
             if ( statement instanceof com.mysql.jdbc.PreparedStatement ) {
                 com.mysql.jdbc.PreparedStatement mm = (com.mysql.jdbc.PreparedStatement) statement;
                 obj.setId((int)mm.getLastInsertID());
