@@ -3,7 +3,7 @@
 <@lib.showMessages/>
 
 <#if PARAMS.registrace?exists>
- <h1 class="st_nadpis">Pøivítání</h1>
+ <h1>Pøivítání</h1>
 
  <p>
  Dìkujeme vám za projevenou dùvìru. Vìøíme, ¾e budete spokojeni
@@ -14,7 +14,7 @@
  </p>
 </#if>
 
-<h1 class="st_nadpis">Va¹e soukromá stránka</h1>
+<h1>Va¹e soukromá stránka</h1>
 
 <p>Nacházíte se ve své soukromé stránce. Zde mù¾ete
 mìnit nastavení svého úètu, upravovat svùj profil

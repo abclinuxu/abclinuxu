@@ -18,7 +18,7 @@
 <#include "/include/pocitani.txt">
 	<div class="za">
 		<div class="za_logo">
-			<a href="/" class="bh"><img src="/images/site2/abc-logo.gif" width="200" height="80" alt="logo"></a>
+			<a href="/" class="bh"><img src="/images/site2/abc-logo.png" width="200" height="80" alt="logo"></a>
 			<#include "/include/pocitani.txt">
 		</div>
 

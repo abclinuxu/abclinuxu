@@ -23,7 +23,7 @@
     <#assign url=TOOL.getUrlForBlogStory(blog.subType, story.created, relation.id)>
     <#assign category = story.subType?default("UNDEF")>
     <#if category!="UNDEF"><#assign category=TOOL.xpath(blog, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
-    <div class="cl"
+    <div class="cl">
         <h1 class="st_nadpis"><a href="${url}">${TOOL.xpath(story, "/data/name")}</a></h1>
 	<p class="cl_inforadek">
             ${DATE.show(story.created, "CZ_SHORT")} |
@@ -35,7 +35,7 @@
         <#assign text = TOOL.xpath(story, "/data/perex")?default("UNDEF")>
         <#if text!="UNDEF">
             ${text}
-            <p><a href="${url}">více ...</a></p>
+            <div class="signature"><a href="${url}">více...</a></div>
         <#else>
             ${TOOL.xpath(story, "/data/content")}
         </#if>

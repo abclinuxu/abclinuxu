@@ -16,10 +16,10 @@
     >
     <#if tmp.discussion?exists><#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
 
-        <h1 class="st_nadpis"><a href="/clanky/show/${relation.id}">${TOOL.xpath(clanek,"data/name")}</a></h1>
         <#if thumbnail!="UNDEF">
-            <div style="float:right;padding:0px,5px,0px,15px">${thumbnail}</div>
+            <div style="float:right;margin:0.5em 0.4em 0 0">${thumbnail}</div>
         </#if>
+        <h1 class="st_nadpis"><a href="/clanky/show/${relation.id}">${TOOL.xpath(clanek,"data/name")}</a></h1>
         <p>${TOOL.xpath(clanek,"/data/perex")}</p>
         <p class="cl_inforadek">${DATE.show(clanek.created, dateFormat[0])} |
             <a href="/Profile/${autor.id}">${autor.name}</a> |
@@ -62,9 +62,16 @@
   <#if comment.author?exists>
    <#local who=TOOL.sync(comment.author)><a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
    <#local blog=TOOL.xpath(who, "//settings/blog")?default("UNDEF")>
-   <#if blog!="UNDEF"><#local blog=TOOL.createCategory(blog)><a href="/blog/${blog.subType}">blog</a></#if>
-   <#local city=TOOL.xpath(who,"//personal/city")?default("UNDEF")><#if city!="UNDEF">${city}</#if>
-   <#local kraj=TOOL.xpath(who,"//personal/area")?default("UNDEF")><#if kraj!="UNDEF">kraj ${kraj}</#if>
+   <#if blog!="UNDEF">
+      <#local blog=TOOL.createCategory(blog)>
+      <#local title=TOOL.xpath(blog,"//custom/title")?default("UNDEF")>
+      <#if title!="UNDEF">
+        &nbsp;| blog: <a href="/blog/${blog.subType}">${title}</a>
+      <#else>
+        &nbsp;| <a href="/blog/${blog.subType}">blog</a>
+      </#if>
+   </#if>
+   <#local city=TOOL.xpath(who,"//personal/city")?default("UNDEF")><#if city!="UNDEF"> | ${city}</#if>
   <#else>
    ${TOOL.xpath(comment.data,"author")?if_exists}
   </#if><br>

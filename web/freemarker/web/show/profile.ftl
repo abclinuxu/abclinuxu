@@ -8,14 +8,14 @@
  </p>
 <#elseif USER.id==PROFILE.id>
  <#if PARAMS.LOGIN?exists>
-  <h1 class="st_nadpis">Vítejte</h1>
+  <h1>Vítejte</h1>
   <p>Dìkujeme vám za dal¹í náv¹tìvu portálu AbcLinuxu. Doufáme, ¾e vám
   pøinese cenné informace. Pokud budete spokojeni, doporuète nás svým pøátelùm
   a známým.
   </p>
  </#if>
 
- <h1 class="st_nadpis">Moje domovská stránka</h1>
+ <h1>Moje domovská stránka</h1>
 
  <p>Nacházíte se ve své veøejné domovské stránce, která slou¾í pro va¹i prezentaci.
  Pokud ji chcete doplnit èi nìjak upravit, pøejdìte na
@@ -23,7 +23,7 @@
  Tam také mù¾ete zmìnit nastavení svého u¾ivatele, jako napøíklad pøihlásit se k odbìru zpravodaje.
  Text nad èarou vidíte pouze vy, ostatním náv¹tìvníkùm není zobrazen.
  </p>
- <hr width="80%" size="1" align="center">
+ <hr>
 <#elseif USER.hasRole("user admin")>
  <a href="${URL.noPrefix("/Profile/"+PROFILE.id+"?action=myPage")}">Upravit</a>
 </#if>
@@ -35,7 +35,7 @@
 </#if>
 <img src="${photo}" style="float: right; padding: 3px">
 
-<h1 class="st_nadpis">${PROFILE.name}</h1>
+<h1>${PROFILE.name}</h1>
 
 <#if PROFILE.nick?exists><p>Pøezdívka: ${PROFILE.nick}</p></#if>
 
@@ -45,7 +45,7 @@
 </#if>
 
 <#if TOOL.xpath(PROFILE,"/data/profile/about_myself")?exists>
- <div>O mnì: ${TOOL.render(TOOL.element(PROFILE.data,"/data/profile/about_myself"),USER?if_exists)}</div>
+ <p>O mnì: ${TOOL.render(TOOL.element(PROFILE.data,"/data/profile/about_myself"),USER?if_exists)}</p>
 </#if>
 
 <#if TOOL.xpath(PROFILE,"/data/personal/birth_year")?exists>
@@ -69,13 +69,12 @@
 </#if>
 
 <#if TOOL.xpath(PROFILE,"/data/profile/distributions")?exists>
- <div>Pou¾ívám tyto distribuce:
+ <p>Pou¾ívám tyto distribuce:</p>
   <ul>
    <#list TOOL.xpaths(PROFILE.data,"/data/profile/distributions/distribution") as dist>
     <li>${dist}
    </#list>
   </ul>
- </div>
 </#if>
 
 <#if TOOL.xpath(PROFILE,"/data/communication/email[@valid='yes']")?exists>
@@ -88,7 +87,7 @@
  <p class="error">Administrátoøi oznaèili email u¾ivatele za neplatný!</p>
 </#if>
 
-<h1 class="st_nadpis">Mé</h1>
+<h1>Mé</h1>
 <ol>
   <li><a href="${URL.noPrefix("/History?type=articles&amp;uid="+PROFILE.id)}">èlánky</a>
   (${COUNTS.article})

@@ -40,30 +40,33 @@ text lámat. Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
 <table cellpadding="5">
     <tr>
         <td>
-            <a class="info" href="#">?<span class="tooltip">Zde nastavíte titulek va¹eho zápisu. Je dùle¾itý pro RSS.</span></a>
             <span class="required">Titulek zápisu</span>
-            <input type="text" name="title" size="60" value="${PARAMS.title?if_exists?html}">
+            <input type="text" name="title" size="60" value="${PARAMS.title?if_exists?html}">&nbsp;
+	    <a class="info" href="#">?<span class="tooltip">Zde nastavíte titulek va¹eho zápisu. Je dùle¾itý pro RSS.</span></a>
             <div class="error">${ERRORS.title?if_exists}</div>
         </td>
     </tr>
     <tr>
         <td>
-            <a class="info" href="#">?<span class="tooltip">Zde nastavíte kategorii va¹eho zápisu. Mù¾ete tak èlenit zápisy do rùzných kategorií.</span></a>
             Kategorie zápisu
             <select name="cid">
                 <#list CATEGORIES?keys as category>
                     <option value="${category}"<#if category==PARAMS.cid?default("UNDEF")> selected</#if>>${CATEGORIES[category]}</option>
                 </#list>
-            </select>
+            </select>&nbsp;
+	    <a class="info" href="#">?<span class="tooltip">Zde nastavíte kategorii va¹eho zápisu. Mù¾ete tak èlenit zápisy do rùzných kategorií.</span></a>
         </td>
     </tr>
     <tr>
         <td>
-            <p class="required">Obsah zápisu</p>
-            <a href="javascript:insertAtCursor(document.form.content, '<b></b>');" title="Vlo¾it znaèku tuènì"><img src="/images/actions/bold.gif" width="16" height="16" border="0" alt="Vlo¾it znaèku tuènì"></a>
-            <a href="javascript:insertAtCursor(document.form.content, '<i></i>');" title="Vlo¾it znaèku italic"><img src="/images/actions/italic.gif" width="16" height="16" border="0" alt="Vlo¾it znaèku italic"></a>
-            <a href="javascript:insertAtCursor(document.form.content, '<u></u>');" title="Vlo¾it znaèku podtrhnout"><img src="/images/actions/under.gif" width="16" height="16" border="0" alt="Vlo¾it znaèku podtrhnout"></a>
-            <a href="javascript:insertAtCursor(document.form.content, '<break>');" title="Vlo¾it znaèku zlomu"><img src="/images/actions/story_break.gif" width="16" height="16" border="0" alt="Vlo¾it znaèku zlomu"></a>
+            <span class="required">Obsah zápisu</span>
+	    <div class="form-edit">
+	    <a href="javascript:insertAtCursor(document.form.content, '<b></b>');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
+            <a href="javascript:insertAtCursor(document.form.content, '<i></i>');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
+            <a href="javascript:insertAtCursor(document.form.content, '<u></u>');" id="serif" title="Vlo¾it znaèku podtrhnout"><u>U</u></a>
+            <a href="javascript:insertAtCursor(document.form.content, '<p></p>');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
+            <a href="javascript:insertAtCursor(document.form.content, '<break>');" id="mono" title="Vlo¾it znaèku zlomu">&lt;break&gt;</a>
+	    </div>
             <textarea name="content" cols="80" rows="30">${PARAMS.content?if_exists?html}</textarea>
             <div class="error">${ERRORS.content?if_exists}</div>
         </td>

@@ -91,7 +91,7 @@
         <#assign text = TOOL.xpath(story, "/data/perex")?default("UNDEF")>
         <#if text!="UNDEF">
             ${text}
-            <p><a href="${url}">více ...</a></p>
+            <div class="signature"><a href="${url}">více...</a></div>
         <#else>
             ${TOOL.xpath(story, "/data/content")}
         </#if>
