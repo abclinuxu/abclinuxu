@@ -806,7 +806,7 @@ public class MySqlPersistance implements Persistance {
             }
 
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("insert into anketa values(0,?,?,?,NULL,?)");
+            PreparedStatement statement = con.prepareStatement("insert into anketa values(0,?,?,?,?,?)");
 
             statement.setInt(1,poll.getType() );
             if ( poll.getType()==0 ) {
@@ -815,7 +815,8 @@ public class MySqlPersistance implements Persistance {
 
             statement.setString(2,poll.getText());
             statement.setBoolean(3,poll.isMultiChoice());
-            statement.setBoolean(4,poll.isClosed());
+            statement.setDate(4,new java.sql.Date(System.currentTimeMillis()));
+            statement.setBoolean(5,poll.isClosed());
 
             int result = statement.executeUpdate();
             if ( result==0 ) {
@@ -837,6 +838,17 @@ public class MySqlPersistance implements Persistance {
         } finally {
             releaseSQLConnection(con);
         }
+    }
+
+    /**
+     * This method is to be used to find actual value of <code>updated</code> property, which
+     * is affected by <code>create</code> method.
+     * @todo Finish this method, if you want to enhance cache to hold GenericDataObject,
+     * otherwise cache will not hold actual data!
+     */
+    protected void updateUpdated(GenericObject obj, Connection con) throws SQLException {
+        if ( !(obj instanceof GenericDataObject) && !(obj instanceof Link) ) return;
+        PreparedStatement statement = con.prepareStatement("insert into anketa values(0,?,?,?,?,?)");
     }
 
     /**
