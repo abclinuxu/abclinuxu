@@ -11,6 +11,7 @@ import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
+import cz.abclinuxu.persistance.versioning.VersioningFactory;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
@@ -28,7 +29,7 @@ import java.util.Map;
 import java.util.Date;
 
 /**
- * todo archive last three versions of driver
+ * Cotroller for working drivers manipulation.
  */
 public class EditDriver implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditDriver.class);
@@ -114,6 +115,11 @@ public class EditDriver implements AbcAction {
         persistance.create(relation);
         relation.getParent().addChildRelation(relation);
 
+        // commit new version
+        String path = Integer.toString(relation.getId());
+        String userId = Integer.toString(user.getId());
+        VersioningFactory.getVersioning().commit(document.asXML(), path, userId);
+
         FeedGenerator.updateDrivers();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -168,6 +174,11 @@ public class EditDriver implements AbcAction {
         driver.setOwner(user.getId());
         driver.setCreated(new Date());
         persistance.update(driver);
+
+        // commit new version
+        String path = Integer.toString(relation.getId());
+        String userId = Integer.toString(user.getId());
+        VersioningFactory.getVersioning().commit(document.asXML(), path, userId);
 
         // run monitor
         String url = "http://www.abclinuxu.cz/drivers/show/"+relation.getId();
