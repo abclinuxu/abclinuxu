@@ -37,7 +37,7 @@
 
 		<div class="za_mn">
 		  	<a href="http://prace.abclinuxu.cz" class="za_mn_odkaz">Práce</a><!--
-			--><a href="/clanky/dir/5?parent=yes" class="za_mn_odkaz">Èlánky</a><!--
+			--><a href="/clanky/dir/315" class="za_mn_odkaz">Èlánky</a><!--
 			--><a href="/hardware/dir/1" class="za_mn_odkaz">Hardware</a><!--
 			--><a href="/diskuse.jsp" class="za_mn_odkaz">Diskuse</a><!--
 			--><a href="/slovnik" class="za_mn_odkaz">Slovník</a><!--
@@ -105,7 +105,7 @@
                 <#assign diz=TOOL.findComments(anketa)>
                 <div class="ls_zpr">&nbsp;<a href="/news/show/${relAnketa.id}">Komentáøù:</a>
 		        ${diz.responseCount}<#if diz.responseCount gt 0>, poslední
-		        ${DATE.show(diz.updated,"CZ_DATUM")} ${DATE.show(diz.updated, "TIME")}</#if>
+		        ${DATE.show(diz.updated,"CZ_SHORT")}</#if>
 		        <br>&nbsp;<a href="/clanky/dir/3500">Navrhnìte novou anketu</a>
 		        </div>
             </#if>
@@ -128,7 +128,7 @@
                 <div class="ls_zpr">
                 <#list news as relation>
                     <#assign item=TOOL.sync(relation.child), autor=TOOL.createUser(item.owner), diz=TOOL.findComments(item)>
-                    ${DATE.show(item.created,"CZ_DATUM")} ${DATE.show(item.created,"TIME")} |
+                    ${DATE.show(item.created,"CZ_SHORT")} |
                     ${NEWS_CATEGORIES[item.subType].name}
                     <p>${TOOL.xpath(item,"data/content")}</p>
                     <a href="/Profile/${autor.id}">${TOOL.nonBreakingSpaces(autor.name)}</a>

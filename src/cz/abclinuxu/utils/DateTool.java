@@ -39,10 +39,8 @@ public class DateTool implements Configurable {
     public static final String CZ_FULL_TEXT = "CZ_FULL_TXT";
     /** 1.1.2003 */
     public static final String CZ_ONLY_DATE = "CZ_DATE";
-    /** 1.1. or Dnes or Vcera */
-    public static final String CZ_DAY_MONTH = "CZ_DATUM";
     /** 16:00 */
-    public static final String CZ_ONLY_TIME = "TIME";
+    public static final String ONLY_TIME = "TIME";
     /** Ctvrtek */
     public static final String CZ_ONLY_DAY = "CZ_DAY";
 
@@ -59,32 +57,49 @@ public class DateTool implements Configurable {
     public String show(Date date, String format) {
         if ( date==null ) return null;
 
-        if ( CZ_SHORT.equalsIgnoreCase(format) )
-            return Constants.czShortFormat.format(date);
-        if ( CZ_ONLY_TIME.equalsIgnoreCase(format) )
-            return Constants.czTimeOnly.format(date);
-        if ( CZ_ONLY_DAY.equalsIgnoreCase(format) )
-            return Constants.czDay.format(date);
-        if ( CZ_DAY_MONTH.equalsIgnoreCase(format) ) {
-            long ms = date.getTime();
-            if (ms<yesterday || ms>tommorow )
-                return Constants.czDayMonth.format(date);
-            if (ms<today)
-                return textYesterday;
-            else
-                return textToday;
-        }
-        if ( CZ_FULL.equalsIgnoreCase(format) )
-            return Constants.czFormat.format(date);
-        if ( CZ_ONLY_DATE.equalsIgnoreCase(format) )
-            return Constants.czDateOnly.format(date);
         if ( ISO_FORMAT.equalsIgnoreCase(format) )
             return Constants.isoFormat.format(date);
+        if ( ONLY_TIME.equalsIgnoreCase(format) )
+            return Constants.czTimeOnly.format(date);
+
+        long ms = date.getTime();
+        boolean dayNotText = ms<yesterday || ms>tommorow;
+
+        if ( CZ_SHORT.equalsIgnoreCase(format) ) {
+            if (dayNotText)
+                return Constants.czShortFormat.format(date);
+            else
+                return getCzDay(ms) + Constants.czTimeOnly.format(date);
+        }
+        if ( CZ_FULL.equalsIgnoreCase(format) ) {
+            if (dayNotText)
+                return Constants.czFormat.format(date);
+            else
+                return getCzDay(ms) + Constants.czTimeOnly.format(date);
+        }
+        if ( CZ_ONLY_DATE.equalsIgnoreCase(format) ) {
+            if (dayNotText)
+                return Constants.czDateOnly.format(date);
+            else
+                return getCzDay(ms);
+        }
         if ( CZ_FULL_TEXT.equalsIgnoreCase(format) )
             return Constants.czFormatTxt.format(date);
+        if ( CZ_ONLY_DAY.equalsIgnoreCase(format) )
+            return Constants.czDay.format(date);
 
         log.warn("Neznamy format data: "+format);
         return null;
+    }
+
+    /**
+     * @return text representation of date, ms must belong to today or yesterday.
+     */
+    private String getCzDay(long ms) {
+        if (ms<today)
+            return textYesterday;
+        else
+            return textToday;
     }
 
     /**

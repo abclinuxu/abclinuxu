@@ -22,7 +22,7 @@
             <#if diz?exists>
                 | <a href="/clanky/show/${diz.relationId}">
                 Komentáøù: ${diz.responseCount}</a
-                ><#if diz.responseCount gt 0>, poslední ${DATE.show(diz.updated, timeFormat)} ${DATE.show(diz.updated, "TIME")}</#if>
+                ><#if diz.responseCount gt 0>, poslední ${DATE.show(diz.updated, timeFormat)}</#if>
             </#if>
             <#if rating!=0>| Hodnocení: ${rating?string["#0.00"]}</#if>
         </p>
