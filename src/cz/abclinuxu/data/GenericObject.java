@@ -112,15 +112,6 @@ public class GenericObject {
     }
 
     /**
-     * @param user initialized User
-     * @return True, if this user may manage this resource
-     */
-    public boolean isManagedBy(User user) {
-        if ( user==null || user.getId()==0 ) return false;
-        return user.isAdmin();
-    }
-
-    /**
      * This is usual equals() implementation. It shall be used in unit tests, because it is
      * more complete than equal. For equals, we just need to test class and PK equality, but
      * that's not enough for unit test.

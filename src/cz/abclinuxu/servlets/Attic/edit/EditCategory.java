@@ -16,6 +16,7 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.security.Guard;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.dom4j.Document;
@@ -94,18 +95,18 @@ public class EditCategory extends AbcServlet {
         }
 
         if ( action==null || action.equals(EditCategory.ACTION_ADD) ) {
-            int rights = checkAccess(category,AbcServlet.METHOD_ADD,ctx);
+            int rights = Guard.check((User)ctx.get(VAR_USER),category,Guard.OPERATION_ADD,Category.class);
             switch (rights) {
-                case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
-                case AbcServlet.USER_INSUFFICIENT_RIGHTS: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return getTemplate("add/category.vm");
             }
 
         } else if ( action.equals(EditCategory.ACTION_ADD_STEP2) ) {
-            int rights = checkAccess(category,AbcServlet.METHOD_ADD,ctx);
+            int rights = Guard.check((User)ctx.get(VAR_USER),category,Guard.OPERATION_ADD,Category.class);
             switch (rights) {
-                case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
-                case AbcServlet.USER_INSUFFICIENT_RIGHTS: {
+                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_DENIED: {
                     addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                     return getTemplate("add/category.vm");
                 }
@@ -113,18 +114,18 @@ public class EditCategory extends AbcServlet {
             }
 
         } else if ( action.equals(EditCategory.ACTION_EDIT) ) {
-            int rights = checkAccess(category,AbcServlet.METHOD_EDIT,ctx);
+            int rights = Guard.check((User)ctx.get(VAR_USER),category,Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
-                case AbcServlet.USER_INSUFFICIENT_RIGHTS: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return actionEditStep1(request,ctx);
             }
 
         } else if ( action.equals(EditCategory.ACTION_EDIT2) ) {
-            int rights = checkAccess(category,AbcServlet.METHOD_EDIT,ctx);
+            int rights = Guard.check((User)ctx.get(VAR_USER),category,Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
-                case AbcServlet.USER_INSUFFICIENT_RIGHTS: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return actionEditStep2(request,response,ctx);
             }
 

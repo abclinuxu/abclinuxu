@@ -119,20 +119,6 @@ public abstract class GenericDataObject extends GenericObject {
     }
 
     /**
-     * @param user initialized User
-     * @return True, if this user may manage this resource
-     */
-    public boolean isManagedBy(User user) {
-        if ( user==null || user.getId()==0 ) return false;
-
-        if ( owner==user.getId() ) return true;
-        if ( this instanceof Category ) {
-            if ( ((Category)this).isOpen() ) return true;
-        }
-        return user.isAdmin();
-    }
-
-    /**
      * Sets elper (non-persistant) String for findByExample(), which
      * works as argument to search in <code>data</code>.
      **/

@@ -10,8 +10,10 @@ import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.view.SelectRelation;
 import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.User;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.security.Guard;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.dom4j.*;
@@ -58,18 +60,18 @@ public class EditRelation extends AbcServlet {
         }
 
         if ( action==null || action.equals(EditRelation.ACTION_LINK) ) {
-            int rights = checkAccess(relation.getChild(),AbcServlet.METHOD_ADD,ctx);
+            int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,null);
             switch (rights) {
-                case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
-                case AbcServlet.USER_INSUFFICIENT_RIGHTS: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return getTemplate("add/relation.vm");
             }
 
         } else if ( action.equals(EditCategory.ACTION_ADD_STEP2) ) {
-            int rights = checkAccess(relation.getChild(),AbcServlet.METHOD_ADD,ctx);
+            int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,null);
             switch (rights) {
-                case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
-                case AbcServlet.USER_INSUFFICIENT_RIGHTS: {
+                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_DENIED: {
                     addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                     return getTemplate("add/relation.vm");
                 }
@@ -83,8 +85,9 @@ public class EditRelation extends AbcServlet {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        Relation parent = (Relation) params.get(EditRelation.VAR_CURRENT);
+        Relation parent = (Relation) ctx.get(EditRelation.VAR_CURRENT);
         Relation child = (Relation) instantiateParam(SelectRelation.PARAM_SELECTED,Relation.class,params);
+        persistance.synchronize(child);
 
         Relation relation = new Relation();
         relation.setParent(parent.getChild());

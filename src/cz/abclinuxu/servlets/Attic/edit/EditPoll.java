@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.security.Guard;
 
 import java.util.*;
 
@@ -82,10 +83,10 @@ public class EditPoll extends AbcServlet {
 
         if ( action==null || action.equals(EditPoll.ACTION_ADD) ) {
             if ( relation==null ) throw new Exception("Chybí parametr relationId!");
-            int rights = checkAccess(relation.getChild(),AbcServlet.METHOD_ADD,ctx);
+            int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Poll.class);
              switch (rights) {
-                 case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
-                 case AbcServlet.USER_INSUFFICIENT_RIGHTS: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                 case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                 case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                  default: return getTemplate("add/poll.vm");
              }
 
@@ -95,10 +96,10 @@ public class EditPoll extends AbcServlet {
 
         } else if ( action.equals(EditPoll.ACTION_ADD_STEP2) ) {
             if ( relation==null ) throw new Exception("Chybí parametr relationId!");
-            int rights = checkAccess(relation.getChild(),AbcServlet.METHOD_ADD,ctx);
+            int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Poll.class);
             switch (rights) {
-                case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
-                case AbcServlet.USER_INSUFFICIENT_RIGHTS: {
+                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_DENIED: {
                     addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                     return getTemplate("add/poll.vm");
                 }
@@ -108,20 +109,20 @@ public class EditPoll extends AbcServlet {
         } else if ( action.equals(EditPoll.ACTION_EDIT) ) {
             if ( relation==null ) throw new Exception("Chybí parametr relationId!");
             if ( poll==null ) throw new Exception("Chybí parametr pollId!");
-            int rights = checkAccess(poll,AbcServlet.METHOD_EDIT,ctx);
+            int rights = Guard.check((User)ctx.get(VAR_USER),poll,Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
-                case AbcServlet.USER_INSUFFICIENT_RIGHTS: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx,null);
+                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx,null);
                 default: return getTemplate("edit/poll.vm");
             }
 
         } else if ( action.equals(EditPoll.ACTION_EDIT2) ) {
             if ( relation==null ) throw new Exception("Chybí parametr relationId!");
             if ( poll==null ) throw new Exception("Chybí parametr pollId!");
-            int rights = checkAccess(poll,AbcServlet.METHOD_EDIT,ctx);
+            int rights = Guard.check((User)ctx.get(VAR_USER),poll,Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
-                case AbcServlet.USER_INSUFFICIENT_RIGHTS: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx,null);
+                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx,null);
                 default: return actionEditStep2(request,response,ctx);
             }
 

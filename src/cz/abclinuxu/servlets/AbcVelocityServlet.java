@@ -88,22 +88,6 @@ public class AbcServlet extends VelocityServlet {
     /** use this value for addError, when message is not tight to form field */
     public static final String GENERIC_ERROR = "generic";
 
-    /** Public access is granted or user's right are sufficient. */
-    public static final int ACCESS_GRANTED = 0;
-    /** Public access is not granted, user must log in first. */
-    public static final int LOGIN_REQUIRED = 1;
-    /** Public access is not granted, session contains user, whose rights are not adequate enough. */
-    public static final int USER_INSUFFICIENT_RIGHTS = 2;
-
-    /** Only view access is desired to object. */
-    public static final int METHOD_VIEW = 0;
-    /** Modify access is desired */
-    public static final int METHOD_EDIT = 1;
-    /** Add access is desired */
-    public static final int METHOD_ADD = 2;
-    /** Remove access is desired */
-    public static final int METHOD_REMOVE = 3;
-
 
     /**
      *  Returns a context suitable to pass to the handleRequest() method
@@ -256,34 +240,6 @@ public class AbcServlet extends VelocityServlet {
             session.setAttribute(AbcServlet.VAR_USER,user);
             context.put(AbcServlet.VAR_USER,user);
         }
-    }
-
-    /**
-     * Checks session for <code>USER</code>, than returns, whether users rights for <code>obj</code>
-     * are sufficient for desired method. For <code>method</code>, use constant <code>METHOD_*</code>.
-     * @return one of constants <code>ACCESS_GRANTED</code>, <code>LOGIN_REQUIRED</code>,
-     * <code>USER_UNKNOWN</code>, <code>USER_BAD_PASSWORD</code> and <code>USER_INSUFFICIENT_RIGHTS</code>.
-     */
-    protected int checkAccess(GenericObject obj, int method, Context context) throws Exception {
-        if ( method==AbcServlet.METHOD_VIEW ) {
-            return AbcServlet.ACCESS_GRANTED;
-        }
-
-        User user = (User) context.get(AbcServlet.VAR_USER);
-        if ( user==null || !user.isInitialized() ) {
-            return AbcServlet.LOGIN_REQUIRED;
-        }
-
-        if ( obj==null ) return AbcServlet.USER_INSUFFICIENT_RIGHTS;
-        if ( !obj.isInitialized() ) {
-            PersistanceFactory.getPersistance().synchronize(obj);
-        }
-
-        if ( obj.isManagedBy(user) )  {
-            return AbcServlet.ACCESS_GRANTED;
-        }
-
-        return AbcServlet.USER_INSUFFICIENT_RIGHTS;
     }
 
     /**

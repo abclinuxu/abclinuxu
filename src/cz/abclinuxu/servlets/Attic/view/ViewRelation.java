@@ -51,6 +51,7 @@ public class ViewRelation extends AbcServlet {
         Persistance persistance = PersistanceFactory.getPersistance();
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Relation relation = (Relation) instantiateParam(PARAM_RELATION_ID,Relation.class,params);
+        persistance.synchronize(relation);
         ctx.put(VAR_RELATION,relation);
 
         List parents = persistance.findParents(relation);
