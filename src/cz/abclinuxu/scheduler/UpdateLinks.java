@@ -60,8 +60,8 @@ public class UpdateLinks extends TimerTask {
         definitions = new HashMap();
 
         definitions.put(new Server(ROOT),new ServerInfo("http://www.root.cz/share/ttitles.txt"));
-        definitions.put(new Server(LW),new ServerInfo("http://www.linuxworld.cz/lw.dat","Windows-1250",ServerInfo.TRAFIKA));
-        definitions.put(new Server(SW),new ServerInfo("http://www.scienceworld.cz/sw.dat","Windows-1250",ServerInfo.TRAFIKA));
+        definitions.put(new Server(LW),new ServerInfo("http://www.linuxworld.cz/lw.rss","Windows-1250",ServerInfo.RSS));
+        definitions.put(new Server(SW),new ServerInfo("http://www.scienceworld.cz/sw.rss","Windows-1250",ServerInfo.RSS));
         definitions.put(new Server(UG),new ServerInfo("http://underground.cz/backend/czech.txt"));
         definitions.put(new Server(PENGUIN),new ServerInfo("http://www.penguin.cz/trafika.php3"));
 //        definitions.put(new Server(WS),new ServerInfo("http://www.awdesign.cz/ws/ws.dat"));
@@ -92,7 +92,9 @@ public class UpdateLinks extends TimerTask {
 //        definitions.put(new Server(LINUXSK),new ServerInfo("file:///home/literakl/abc/data/titulky/backend.php",null,ServerInfo.RSS));
 //        definitions.put(new Server(LDAP),new ServerInfo("file:///home/literakl/abc/data/titulky/backend-ldap.php",null,ServerInfo.RSS));
 //        definitions.put(new Server(MANDRAKE), new ServerInfo("file:///home/literakl/abc/data/titulky/titles_abc.php"));
-        definitions.put(new Server(CZILLA), new ServerInfo("file:///home/literakl/abc/data/titulky/mozilla_rss.html", null, ServerInfo.RSS));
+//        definitions.put(new Server(CZILLA), new ServerInfo("file:///home/literakl/abc/data/titulky/mozilla_rss.html", null, ServerInfo.RSS));
+        definitions.put(new Server(LW), new ServerInfo("http://www.linuxworld.cz/lw.rss", "Windows-1250", ServerInfo.RSS));
+        definitions.put(new Server(SW), new ServerInfo("http://www.scienceworld.cz/sw.rss", "Windows-1250", ServerInfo.RSS));
     }
 
     /**
