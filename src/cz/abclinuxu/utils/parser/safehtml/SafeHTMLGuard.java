@@ -42,6 +42,7 @@ public class SafeHTMLGuard {
         TAGS.put("BLOCKQUOTE", new CheckedTag("BLOCKQUOTE", true, null));
         TAGS.put("VAR", new CheckedTag("VAR", true, null));
         TAGS.put("HR", new CheckedTag("HR", false, null));
+        TAGS.put("TT", new CheckedTag("TT", true, null));
     }
 
     /**
