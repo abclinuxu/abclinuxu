@@ -220,6 +220,15 @@
       <action name="rename" content="/edit/blog_name.ftl">
         <var name="TITLE" value="Zmìna jména blogu" />
       </action>
+      <action name="categories" content="/edit/blog_categories.ftl">
+        <var name="TITLE" value="Úprava seznamu kategorií" />
+      </action>
+      <action name="add_category" content="/add/blog_category.ftl">
+        <var name="TITLE" value="Pøidání kategorie" />
+      </action>
+      <action name="edit_category" content="/edit/blog_category.ftl">
+        <var name="TITLE" value="Pøejmenování kategorie" />
+      </action>
       <action name="remove" content="/remove/story.ftl">
         <var name="TITLE" value="Smazání zápisu" />
       </action>
