@@ -326,8 +326,27 @@ public class MySqlPersistance implements Persistance {
 
     /**
      * Removes <code>obj</code> from <code>parent</code> in the object tree.
+     * If <code>obj</code> was referenced only by <code>parent</code>, <code>obj</code>
+     * is removed from persistant storage.
      */
     public void removeObjectFromTree(GenericObject obj, GenericObject parent) throws PersistanceException {
+        Connection con = null;
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("delete from strom where id like ? and obsah like ?");
+            statement.setString(1,getTreeId(parent));
+            statement.setString(2,getTreeId(obj));
+            int result = statement.executeUpdate();
+
+            statement = con.prepareStatement("select id from strom where obsah like ?");
+            statement.setString(1,getTreeId(obj));
+            ResultSet resultSet = statement.executeQuery();
+            if ( !resultSet.next() ) removeObject(obj);
+        } catch ( SQLException e ) {
+            throw new PersistanceException("Nemohu smazat ze stromu dvojici ("+parent+","+obj+")",AbcException.DB_INSERT,obj,e);
+        } finally {
+            releaseSQLConnection(con);
+        }
     }
 
     /**

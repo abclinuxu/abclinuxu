@@ -85,7 +85,7 @@ public class Category extends GenericObject {
         if ( owner!=0 ) sb.append(",owner="+owner);
         if ( data!=null ) sb.append(",data="+data);
         if ( updated!=null ) sb.append(",updated="+updated);
-        if ( open ) sb.append(", otevrena"); else sb.append("uzavrena");
+        if ( open ) sb.append(", otevrena"); else sb.append(", uzavrena");
         return sb.toString();
     }
 

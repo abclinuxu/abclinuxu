@@ -184,6 +184,106 @@ public class TestMySqlPersistance extends TestCase {
     }
 
     /**
+     * tests functionality of tree
+     */
+    public void testTree() throws Exception {
+        org.apache.log4j.Category.getDefaultHierarchy().disableAll();
+
+        Category processors = new Category(0);
+        processors.setData("<name>Processors</name>");
+        persistance.storeObject(processors);
+
+        Category intel = new Category(0);
+        intel.setData("<name>Intel</name>");
+        persistance.storeObject(intel);
+
+        Make duron = new Make(0);
+        duron.setData("<name>Duron</name>");
+        persistance.storeObject(duron);
+
+        HardwareRecord duron1 = new HardwareRecord(0);
+        duron1.setData("<price>fine</price>");
+        persistance.storeObject(duron1);
+
+        Make pentium = new Make(0);
+        pentium.setData("<name>Pentium 4</name>");
+        persistance.storeObject(pentium);
+
+        HardwareRecord pentium1 = new HardwareRecord(0);
+        pentium1.setData("<price>expensive</price>");
+        persistance.storeObject(pentium1);
+
+        HardwareRecord pentium2 = new HardwareRecord(0);
+        pentium2.setData("<price>too expensive</price>");
+        persistance.storeObject(pentium2);
+
+        persistance.addObjectToTree(duron,processors);
+        persistance.addObjectToTree(pentium,processors);
+        persistance.addObjectToTree(pentium,intel);
+        persistance.addObjectToTree(duron1,duron);
+        persistance.addObjectToTree(pentium1,pentium);
+        persistance.addObjectToTree(pentium2,pentium);
+
+        processors = (Category) persistance.loadObject(processors);
+        intel = (Category) persistance.loadObject(intel);
+        duron = (Make) persistance.loadObject(duron);
+        pentium = (Make) persistance.loadObject(pentium);
+
+        // tests addObjectToTree and loadObject
+        List content = processors.getContent();
+        assertEquals(content.size(),2);
+        GenericObject first = (GenericObject)content.get(0);
+        GenericObject second = (GenericObject)content.get(1);
+        assertTrue(first.getId()==duron.getId() || second.getId()==duron.getId());
+        assertTrue(first.getId()==pentium.getId() || second.getId()==pentium.getId());
+
+        content = intel.getContent();
+        assertEquals(content.size(),1);
+        first = (GenericObject)content.get(0);
+        assertTrue(first.getId()==pentium.getId());
+
+        content = duron.getContent();
+        assertEquals(content.size(),1);
+        first = (GenericObject)content.get(0);
+        assertTrue(first.getId()==duron1.getId());
+
+        content = pentium.getContent();
+        assertEquals(content.size(),2);
+        first = (GenericObject)content.get(0);
+        second = (GenericObject)content.get(1);
+        assertTrue(first.getId()==pentium1.getId() || second.getId()==pentium1.getId());
+        assertTrue(first.getId()==pentium2.getId() || second.getId()==pentium2.getId());
+
+        // tests removeObjectFromTree and removeObject
+        persistance.removeObjectFromTree(duron,processors);
+        persistance.removeObjectFromTree(pentium,processors);
+
+        processors = (Category) persistance.loadObject(processors);
+        intel = (Category) persistance.loadObject(intel);
+        pentium = (Make) persistance.loadObject(pentium);
+
+        content = processors.getContent();
+        assertEquals(content.size(),0);
+
+        content = intel.getContent();
+        assertEquals(content.size(),1);
+
+        try {
+            duron = (Make) persistance.loadObject(duron);
+            fail("found deleted object " + duron);
+        } catch (PersistanceException e) {
+            assertTrue( e.getStatus()==AbcException.DB_NOT_FOUND );
+        }
+
+        // cleanup
+        persistance.removeObjectFromTree(pentium,intel);
+        persistance.removeObject(processors);
+        persistance.removeObject(intel);
+
+        org.apache.log4j.Category.getDefaultHierarchy().enableAll();
+    }
+
+    /**
      * Searches list of GenericObjects for object with id equal to id.
      */
     protected boolean containsId(List list, int id) {

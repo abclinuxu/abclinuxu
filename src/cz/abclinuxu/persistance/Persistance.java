@@ -81,6 +81,8 @@ public interface Persistance {
 
     /**
      * Removes <code>obj</code> from <code>parent</code> in the object tree.
+     * If <code>obj</code> was referenced only by <code>parent</code>, <code>obj</code>
+     * is removed from persistant storage.
      */
     public abstract void removeObjectFromTree(GenericObject obj, GenericObject parent) throws PersistanceException;
 

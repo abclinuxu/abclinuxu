@@ -16,6 +16,7 @@ public class GenericObject {
 
     public GenericObject(int id) {
         this.id = id;
+	content = new LinkedList();
     }
 
     /**
@@ -36,14 +37,11 @@ public class GenericObject {
      * adds another dependant object
      */
     public void addContent(GenericObject object) {
-        if ( content==null ) {
-            content = new LinkedList();
-        }
         content.add(object);
     }
 
     /**
-     * @return dependant objects. These objects don't contain data, except their <code>id<//code>.
+     * @return dependant objects. These objects don't contain data, except their <code>id</code>.
      * You should call Persistance.loadObject() to lookup them from persistable storage.
      */
     public List getContent() {
