@@ -24,6 +24,9 @@ public class TestCreateIndex extends TestCase {
         input = "toto 3<x je <b>spatne</a> html";
         output = "toto 3<x je spatne html";
         assertEquals(output,CreateIndex.removeTags(input));
+        input = "obrazek <img src=\"/images/clanky/stefan/corel.jpg\" \nwidth=\"100\"> konec";
+        output = "obrazek  konec";
+        assertEquals(output,CreateIndex.removeTags(input));
     }
 
     /**

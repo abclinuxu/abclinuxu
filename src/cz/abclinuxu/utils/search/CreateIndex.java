@@ -27,7 +27,6 @@ import java.util.prefs.Preferences;
 /**
  * This class is responsible for creating and
  * maintaining Lucene's index.
- * todo add czech analyzer
  */
 public class CreateIndex implements Configurable {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(CreateIndex.class);
@@ -35,7 +34,6 @@ public class CreateIndex implements Configurable {
     public static final String PREF_PATH = "path";
 
     static String indexPath;
-
     static Persistance persistance;
     static RE tagRE;
 
@@ -46,14 +44,15 @@ public class CreateIndex implements Configurable {
         try {
             persistance = PersistanceFactory.getPersistance(EmptyCache.class);
 //            tagRE = new RE("<[^<>]+>");
-            tagRE = new RE("<[\\w\\s\\d/=:.~?\"]+>");
+            tagRE = new RE("<[\\w\\s\\d/=:.~?\"]+>", RE.MATCH_SINGLELINE);
         } catch (RESyntaxException e) {
             log.error("Cannot compile regexp!",e);
         }
     }
 
     IndexWriter indexWriter;
-    HashMap indexed = new HashMap(15000);
+    HashMap indexedRelations = new HashMap(50000,0.9f);
+    HashMap indexedItems = new HashMap(10000,0.9f);
 
 
     public static void main(String[] args) throws Exception {
@@ -101,27 +100,29 @@ public class CreateIndex implements Configurable {
      * children. There must be no loops in tree!
      * @param relation relation, where to start. It must be already synchronized.
      * @param urlPrefix prefix for URL for this subtree
-     *
-     * todo why articles are stored under both article and make?
      */
     void makeIndexOn(Relation relation, String urlPrefix) throws Exception {
         Integer id = new Integer(relation.getId());
-        if ( indexed.containsKey(id) ) return;
-        indexed.put(id,id);
+        if ( indexedRelations.containsKey(id) ) return;
+        indexedRelations.put(id,id);
 
         GenericObject obj = relation.getChild();
         persistance.synchronize(obj);
 
         MyDocument doc = null;
         if ( obj instanceof Category ) {
-            doc = getCategoryIndexingString((Category)obj);
+            doc = indexCategory((Category)obj);
         } else if ( obj instanceof Item ) {
             Item item = (Item) obj;
+            id = new Integer(item.getId());
+            if ( indexedItems.containsKey(id) ) return;
+            indexedItems.put(id, id);
+
             switch ( item.getType() ) {
-                case Item.ARTICLE: doc = getArticleIndexingString(item);break;
-                case Item.DISCUSSION: doc = getDiscussionIndexingString(item,relation);break;
-                case Item.MAKE: doc = getMakeIndexingString(item);break;
-                case Item.DRIVER: doc = getDriverIndexingString(item);break;
+                case Item.ARTICLE: doc = indexArticle(item);break;
+                case Item.DISCUSSION: doc = indexDiscussion(item,relation);break;
+                case Item.MAKE: doc = indexMake(item);break;
+                case Item.DRIVER: doc = indexDriver(item);break;
             }
         }
 
@@ -152,7 +153,7 @@ public class CreateIndex implements Configurable {
     /**
      * Extracts data for indexing from category. Category must be synchronized.
      */
-    static MyDocument getCategoryIndexingString(Category category) {
+    static MyDocument indexCategory(Category category) {
         Element data = (Element) category.getData().selectSingleNode("data");
         StringBuffer sb = new StringBuffer();
         String title = null;
@@ -178,7 +179,7 @@ public class CreateIndex implements Configurable {
     /**
      * Extracts data for indexing from article. Item must be synchronized.
      */
-    static MyDocument getArticleIndexingString(Item article) {
+    static MyDocument indexArticle(Item article) {
         Element data = (Element) article.getData().selectSingleNode("data");
         StringBuffer sb = new StringBuffer();
         String title = null;
@@ -226,7 +227,7 @@ public class CreateIndex implements Configurable {
     /**
      * Extracts data for indexing from discussion. Item must be synchronized.
      */
-    static MyDocument getDiscussionIndexingString(Item discussion, Relation relation) {
+    static MyDocument indexDiscussion(Item discussion, Relation relation) {
         Element data = (Element) discussion.getData().selectSingleNode("data");
         StringBuffer sb = new StringBuffer();
         String title = null;
@@ -281,7 +282,7 @@ public class CreateIndex implements Configurable {
     /**
      * Extracts data for indexing from make. Item must be synchronized.
      */
-    static MyDocument getMakeIndexingString(Item make) {
+    static MyDocument indexMake(Item make) {
         Element data = (Element) make.getData().selectSingleNode("data");
         String title = "", tmp = "";
 
@@ -300,8 +301,8 @@ public class CreateIndex implements Configurable {
             Record record = (Record) relation.getChild();
             content.remove(relation);
 
-            if ( record.getType()==Record.HARDWARE ) tmp = getHardwareIndexingString(record);
-            if ( record.getType()==Record.SOFTWARE ) tmp = getSoftwareIndexingString(record);
+            if ( record.getType()==Record.HARDWARE ) tmp = indexHardware(record);
+            if ( record.getType()==Record.SOFTWARE ) tmp = indexSoftware(record);
             sb.append(" ");
             sb.append(tmp);
         }
@@ -315,7 +316,7 @@ public class CreateIndex implements Configurable {
     /**
      * Extracts data for indexing from driver. Item must be synchronized.
      */
-    static MyDocument getDriverIndexingString(Item driver) {
+    static MyDocument indexDriver(Item driver) {
         Element data = (Element) driver.getData().selectSingleNode("data");
         StringBuffer sb = new StringBuffer();
         String title = null;
@@ -341,7 +342,7 @@ public class CreateIndex implements Configurable {
     /**
      * Extracts data for indexing from hardware. Record must be synchronized.
      */
-    static String getHardwareIndexingString(Record record) {
+    static String indexHardware(Record record) {
         Element data = (Element) record.getData().selectSingleNode("data");
         StringBuffer sb = new StringBuffer();
 
@@ -372,7 +373,7 @@ public class CreateIndex implements Configurable {
     /**
      * Extracts data for indexing from software. Record must be synchronized.
      */
-    static String getSoftwareIndexingString(Record record) {
+    static String indexSoftware(Record record) {
         Element data = (Element) record.getData().selectSingleNode("data");
         String str = null;
 
