@@ -49,7 +49,7 @@ public class UnixshopFetcher extends TimerTask implements Configurable {
                 pos1 = line.indexOf('|');
                 pos2 = line.indexOf('|', pos1+1);
                 item = new Item();
-                item.setUrl(line.substring(0,pos1));
+                item.setUrl(UpdateLinks.fixAmpersand(line.substring(0,pos1)));
                 item.setName(line.substring(pos1+1,pos2));
                 tmp = line.substring(pos2+1);
                 item.setPrice(Integer.parseInt(tmp));
