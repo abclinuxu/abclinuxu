@@ -43,6 +43,11 @@ po schválení bude zprávièka zveøejnìna.
    <textarea name="content" cols="60" rows="10" tabindex="1">${PARAMS.content?if_exists?html}</textarea>
    <div class="error">${ERRORS.content?if_exists}</div>
   </p>
+  <#if USER?exists && USER.hasRole("news admin")>
+    Datum zveøejnìní: <input type="text" size="16" name="publish" value="${PARAMS.publish?if_exists}">
+    (zatím jen nastaví datum) Formát 2005-01-25 07:12
+    <div class="error">${ERRORS.publish?if_exists}</div>
+  </#if>
   <h3>Kategorie</h3>
    <#assign selected = PARAMS.category?default("RELEASE")>
    <dl>

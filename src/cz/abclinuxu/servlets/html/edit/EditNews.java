@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Date;
+import java.text.ParseException;
 
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -70,6 +71,7 @@ public class EditNews implements AbcAction {
     public static final String PARAM_APPROVE = "approve";
     public static final String PARAM_MESSAGE = "message";
     public static final String PARAM_PREVIEW = "preview";
+    public static final String PARAM_PUBLISH_DATE = "publish";
 
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -145,6 +147,7 @@ public class EditNews implements AbcAction {
         boolean canContinue = true;
         canContinue &= setContent(params, item, env);
         canContinue &= setCategory(params, item);
+        canContinue &= setPublishDate(params, item, env);
 
         if ( !canContinue || params.get(PARAM_PREVIEW)!=null) {
             Relation relation = new Relation(null,item,0);
@@ -205,6 +208,7 @@ public class EditNews implements AbcAction {
         boolean canContinue = true;
         canContinue &= setContent(params, item, env);
         canContinue &= setCategory(params, item);
+        canContinue &= setPublishDate(params, item, env);
 
         if ( !canContinue || params.get(PARAM_PREVIEW)!=null) {
             env.put(VAR_RELATION, relation);
@@ -364,5 +368,26 @@ public class EditNews implements AbcAction {
         }
 
         return true;
+    }
+
+    /**
+     * Updates news from parameters. Changes are not synchronized with persistance.
+     *
+     * @param params map holding request's parameters
+     * @param item   news to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setPublishDate(Map params, Item item, Map env) {
+        String tmp = (String) params.get(PARAM_PUBLISH_DATE);
+        if (tmp==null || tmp.length()==0)
+            return true;
+        try {
+            Date date = Constants.isoFormat.parse(tmp);
+            item.setCreated(date);
+            return true;
+        } catch (ParseException e) {
+            ServletUtils.addError(PARAM_PUBLISH_DATE, "Chybný formát datumu!", env, null);
+            return false;
+        }
     }
 }

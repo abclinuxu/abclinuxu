@@ -31,6 +31,16 @@ Pokud u¾ivatel zvolil nevhodnou kategorii, vyberte jinou.</p>
     <div class="error">${ERRORS.content?if_exists}</div>
    </td>
   </tr>
+  <#if USER?exists && USER.hasRole("news admin")>
+    <tr>
+        <td>Datum zveøejnìní</td>
+        <td>
+            <input type="text" size="16" name="publish" value="${PARAMS.publish?if_exists}">
+            (zatím jen nastaví datum) Formát 2005-01-25 07:12
+            <div class="error">${ERRORS.publish?if_exists}</div>
+        </td>
+    </tr>
+  </#if>
   <tr>
    <td>Kategorie</td>
    <td>
