@@ -1,18 +1,12 @@
 <project name="AbcLinuxu" basedir="." default="deploy">
 
   <property name="src" value="src" />
-  <property name="data" value="../data-abc" />
-  <property name="tomcat" value="/home/literakl/tomcat" />
-  <property name="build" value="/home/literakl/ROOT" />
-  <property name="backup" value="/home/literakl/tmp/ven" />
+  <property name="data" value="../data" />
+  <property name="build" value="../deploy" />
 
   <path id="project.classpath">
     <fileset dir="libs">
       <include name="*.jar" />
-    </fileset>
-    <fileset dir="${tomcat}/common/lib">
-      <include name="activation.jar" />
-      <include name="mail.jar" />
     </fileset>
   </path>
 
@@ -63,7 +57,7 @@
     </copy>
 
     <copy todir="${build}/ikony">
-      <fileset dir="web/ikony" />
+      <fileset dir="${data}/web/ikony" />
     </copy>
 
     <copy todir="${build}/images">
@@ -72,6 +66,7 @@
 
     <copy todir="${build}">
       <fileset dir="${data}/web/root" />
+      <fileset dir="web/root" />
     </copy>
 
     <copy todir="${build}/WEB-INF/lib">
