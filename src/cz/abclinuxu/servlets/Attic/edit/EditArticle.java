@@ -159,8 +159,12 @@ public class EditArticle implements AbcAction {
             persistance.create(item);
             Relation relation = new Relation(upper.getChild(),item,upper.getId());
             persistance.create(relation);
+            relation.getParent().addChildRelation(relation);
+
             persistance.create(record);
-            persistance.create(new Relation(item,record,relation.getId()));
+            Relation recordRelation = new Relation(item,record,relation.getId());
+            persistance.create(recordRelation);
+            recordRelation.getParent().addChildRelation(recordRelation);
 
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/show/"+relation.getId());
@@ -271,6 +275,7 @@ public class EditArticle implements AbcAction {
         persistance.create(item);
         Relation relation = new Relation(upper.getChild(), item, upper.getId());
         persistance.create(relation);
+        relation.getParent().addChildRelation(relation);
 
         User user = (User) env.get(Constants.VAR_USER);
         AdminLogger.logEvent(user,"pøidal honoráø "+relation.getId());
@@ -655,8 +660,9 @@ public class EditArticle implements AbcAction {
         User user = null;
 
         Category category = (Category) persistance.findById(new Category(Constants.CAT_AUTHORS));
-        List authors = new ArrayList(category.getContent().size());
-        for (Iterator it = category.getContent().iterator(); it.hasNext();) {
+        List children = category.getChildren();
+        List authors = new ArrayList(children.size());
+        for (Iterator it = children.iterator(); it.hasNext();) {
             GenericObject child = ((Relation) it.next()).getChild();
             if ( child instanceof User ) {
                 user = (User) persistance.findById(child);

@@ -40,7 +40,7 @@ public class ArticlePoolMonitor extends TimerTask {
             persistance.synchronize(pool);
             Date now = new Date();
 
-            List children = pool.getContent();
+            List children = pool.getChildren();
             for (Iterator iter = children.iterator(); iter.hasNext();) {
                 Relation relation = (Relation) iter.next();
                 if ( relation.getChild() instanceof Item ) {

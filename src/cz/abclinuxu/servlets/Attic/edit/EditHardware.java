@@ -186,8 +186,12 @@ public class EditHardware implements AbcAction {
         persistance.create(item);
         Relation relation = new Relation(upper.getChild(), item, upper.getId());
         persistance.create(relation);
+        relation.getParent().addChildRelation(relation);
+
         persistance.create(record);
-        persistance.create(new Relation(item, record, relation.getId()));
+        Relation recordRelation = new Relation(item, record, relation.getId());
+        persistance.create(recordRelation);
+        recordRelation.getParent().addChildRelation(recordRelation);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/show/"+relation.getId());
@@ -228,6 +232,7 @@ public class EditHardware implements AbcAction {
         Relation upper = (Relation) env.get(VAR_RELATION), relation = null;
         relation = new Relation(upper.getChild(), record, upper.getId());
         persistance.create(relation);
+        relation.getParent().addChildRelation(relation);
 
         // run monitor
         String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/show/"+upper.getId();

@@ -108,6 +108,7 @@ public class EditDriver implements AbcAction {
         persistance.create(driver);
         Relation relation = new Relation(new Category(Constants.CAT_DRIVERS), driver, Constants.REL_DRIVERS);
         persistance.create(relation);
+        relation.getParent().addChildRelation(relation);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/show/"+relation.getId());

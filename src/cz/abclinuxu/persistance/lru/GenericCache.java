@@ -75,11 +75,6 @@ import java.util.*;
  * @author <a href="mailto:oro-dev@jakarta.apache.org">Daniel F. Savarese</a>
  * @version @version@
  * @since 1.0
- * @see Cache
- * @see CacheLRU
- * @see CacheFIFO
- * @see CacheFIFO2
- * @see CacheRandom
  */
 public abstract class GenericCache implements Cache, java.io.Serializable {
   /**
@@ -145,4 +140,15 @@ public abstract class GenericCache implements Cache, java.io.Serializable {
   public final int capacity() { return _cache.length; }
 
   public final boolean isFull() { return (_numEntries >= _cache.length); }
+
+    /**
+     * Resets cache.
+     */
+    public void clear() {
+        for ( int i = 0; i<_cache.length; i++ )
+            _cache[i] = null;
+        
+        _table.clear();
+        _numEntries = 0;
+    }
 }

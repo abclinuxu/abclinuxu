@@ -57,6 +57,7 @@ public class ViewCategory implements AbcAction {
     public static final String PARAM_RELATION_ID_SHORT = "rid";
     /** holds category to be displayed */
     public static final String VAR_CATEGORY = "CATEGORY";
+    public static final String VAR_CHILDREN = "CHILDREN";
 
     static Persistance persistance = PersistanceFactory.getPersistance();
 
@@ -116,8 +117,9 @@ public class ViewCategory implements AbcAction {
             category = (Category) obj;
 
         Tools.sync(category);
-        Tools.sync(category.getContent());
-        env.put(VAR_CATEGORY,category);
+        env.put(VAR_CATEGORY, category);
+        List children = Tools.syncList(category.getChildren());
+        env.put(VAR_CHILDREN, children);
 
         if ( Misc.same(tmp,"yes") ) {
             switch ( category.getId() ) {

@@ -8,6 +8,7 @@
 package cz.abclinuxu.persistance;
 
 import java.util.List;
+import java.sql.SQLException;
 
 import cz.abclinuxu.data.*;
 
@@ -72,6 +73,13 @@ public interface Persistance {
      * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
      */
     public List findByCommand(String command);
+
+    /**
+     * Finds children of given GenericObject. Children are not initialized.
+     * If there is no child for the obj, empty list is returned.
+     * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
+     */
+    public List findChildren(GenericObject obj);
 
     /**
      * Finds all parents of this Relation. First element is top level relation, the second is its child and the

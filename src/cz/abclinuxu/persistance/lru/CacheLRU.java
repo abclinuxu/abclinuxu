@@ -130,7 +130,7 @@ public class CacheLRU extends GenericCache {
 
     /**
      * Moves element identified by index to the end of cache.
-     * @author Leos Literak
+     * author Leos Literak
      */
     private void __moveToTail(int index) {
         if ( index==__tail )
@@ -211,7 +211,7 @@ public class CacheLRU extends GenericCache {
      * So it will be first element to be removed, when the cache becomes
      * full.
      * @return element associated with key, that was removed, null otherwise.
-     * @author Leos Literak
+     * author Leos Literak
      */
     public synchronized Object removeElement(Object key) {
         Object obj = _table.remove(key);
@@ -223,9 +223,18 @@ public class CacheLRU extends GenericCache {
         return null;
     }
 
+    public void clear() {
+        __head = __tail = 0;
+        for ( int i = 0; i<__next.length; i++ )
+            __next[i] = -1;
+        for ( int i = 0; i<__prev.length; i++ )
+            __prev[i] = -1;
+        super.clear();
+    }
+
     /**
      * Gets cached element without reordering content.
-     * @author Leos Literak
+     * author Leos Literak
      */
     public synchronized Object getElementNoLRU(Object key) {
         Object obj = _table.get(key);
@@ -239,7 +248,7 @@ public class CacheLRU extends GenericCache {
     /**
      * Appends all keys in cache by frequency of the usage.
      * @param fromTail whether to start printing from tail or from head of LRU
-     * @author Leos Literak
+     * author Leos Literak
      */
     String printKeys(boolean fromTail) {
         StringBuffer sb = new StringBuffer();

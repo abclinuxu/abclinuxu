@@ -5,8 +5,6 @@ package cz.abclinuxu.data;
 
 import cz.abclinuxu.utils.Misc;
 
-import java.util.Collections;
-
 public class Record extends GenericDataObject {
 
     public static final int HARDWARE = 1;
@@ -32,18 +30,15 @@ public class Record extends GenericDataObject {
 
     public Record() {
         super();
-        content = Collections.EMPTY_LIST;
     }
 
     public Record(int id) {
         super(id);
-        content = Collections.EMPTY_LIST;
     }
 
     public Record(int id, int type) {
         super(id);
         this.type = type;
-        content = Collections.EMPTY_LIST;
     }
 
     public String toString() {
@@ -56,7 +51,6 @@ public class Record extends GenericDataObject {
             default: sb.append("Unknown Record");
         }
         sb.append(": id="+id);
-        sb.append(", "+content.size()+" children");
         if ( owner!=0 ) sb.append(",owner="+owner);
         if ( documentHandler!=null ) sb.append(",data="+getDataAsString());
         return sb.toString();

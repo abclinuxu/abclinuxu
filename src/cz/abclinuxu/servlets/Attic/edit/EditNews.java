@@ -136,6 +136,7 @@ public class EditNews implements AbcAction {
         else
             relation = new Relation(new Category(Constants.CAT_NEWS_POOL),item,Constants.REL_NEWS_POOL);
         persistance.create(relation);
+        relation.getParent().addChildRelation(relation);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/news/show/"+relation.getId());
@@ -250,6 +251,7 @@ public class EditNews implements AbcAction {
 
         AdminLogger.logEvent(user, "  remove | news "+relation.getId());
         persistance.remove(relation);
+        relation.getParent().removeChildRelation(relation);
 
         response.sendRedirect(response.encodeRedirectURL("/Index"));
         return null;

@@ -138,7 +138,7 @@ public class CreateIndex implements Configurable {
             }
 
             if (indexChildren)
-                for ( Iterator iter = child.getContent().iterator(); iter.hasNext(); )
+                for ( Iterator iter = child.getChildren().iterator(); iter.hasNext(); )
                     stack.add(iter.next());
         }
     }
@@ -264,8 +264,8 @@ public class CreateIndex implements Configurable {
             sb.append(node.getText());
         }
 
-        if ( discussion.getContent().size()>0 ) {
-            Record record = (Record) ((Relation) discussion.getContent().get(0)).getChild();
+        if ( discussion.getChildren().size()>0 ) {
+            Record record = (Record) ((Relation) discussion.getChildren().get(0)).getChild();
             persistance.synchronize(record);
 
             Iterator nodes = record.getData().getRootElement().elementIterator("comment");
@@ -308,7 +308,7 @@ public class CreateIndex implements Configurable {
         title = node.getText();
 
         StringBuffer sb = new StringBuffer(title);
-        for ( Iterator iter = make.getContent().iterator(); iter.hasNext(); ) {
+        for ( Iterator iter = make.getChildren().iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
             if (!(relation.getChild() instanceof Record)) continue;
             Record record = (Record) persistance.findById(relation.getChild());
@@ -418,7 +418,7 @@ public class CreateIndex implements Configurable {
             sb.append(" ");
         }
 
-        for ( Iterator iter = article.getContent().iterator(); iter.hasNext(); ) {
+        for ( Iterator iter = article.getChildren().iterator(); iter.hasNext(); ) {
             Relation child = (Relation) iter.next();
 
             if ( child.getChild() instanceof Record ) {
@@ -475,7 +475,7 @@ public class CreateIndex implements Configurable {
         if (node!=null)
             category = node.getText();
 
-        for ( Iterator iter = news.getContent().iterator(); iter.hasNext(); ) {
+        for ( Iterator iter = news.getChildren().iterator(); iter.hasNext(); ) {
             Relation child = (Relation) iter.next();
 
             if ( child.getChild() instanceof Item ) {

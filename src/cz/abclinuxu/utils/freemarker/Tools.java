@@ -375,12 +375,18 @@ public class Tools implements Configurable {
     }
 
     /**
-     * Synchronizes GenericOjects in list.
+     * Synchronizes list of GenericObjects.
      */
-    public static void sync(Collection list) throws PersistanceException {
+    public static List syncList(Collection collection) throws PersistanceException {
+        List list = null;
+        if (! (collection instanceof List) )
+            list = new ArrayList(collection);
+        else
+            list = (List) collection;
         for (Iterator iter = list.iterator(); iter.hasNext();) {
             sync((GenericObject) iter.next());
         }
+        return list;
     }
 
     /**
@@ -419,8 +425,7 @@ public class Tools implements Configurable {
     /**
      * This method groups relations by their children's type. Each type represents
      * one of Constants.TYPE_* strings. The key represents list of relations, where
-     * children are same type. As side effect, the relations and their objects
-     * are initialized.
+     * children are same type.
      */
     public static Map groupByType(List relations) throws PersistanceException {
         Map map = new HashMap();
@@ -643,7 +648,7 @@ public class Tools implements Configurable {
      * @return complete text of the article
      */
     public static String getCompleteArticleText(Item article) {
-        Map children = Tools.groupByType(article.getContent());
+        Map children = Tools.groupByType(article.getChildren());
         List records = (List) children.get(Constants.TYPE_RECORD);
         Record record = (Record) ((Relation) records.get(0)).getChild();
         if ( !record.isInitialized() )
@@ -687,10 +692,10 @@ public class Tools implements Configurable {
         if ( !InstanceUtils.checkType(obj, Item.class, Item.DISCUSSION) )
             throw new IllegalArgumentException("Not an discussion: "+obj);
 
-        if (obj.getContent().size()==0)
+        if (obj.getChildren().size()==0)
             return new Discussion();
 
-        Relation child = (Relation) obj.getContent().get(0);
+        Relation child = (Relation) obj.getChildren().get(0);
         Record record = (Record) child.getChild();
         sync(record);
         List nodes = record.getData().selectNodes("/data/comment");
@@ -773,7 +778,7 @@ public class Tools implements Configurable {
     public static DiscussionHeader findComments(GenericObject object) {
         if ( !(object instanceof Item) )
             return null;
-        for ( Iterator iter = object.getContent().iterator(); iter.hasNext(); ) {
+        for ( Iterator iter = object.getChildren().iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
             GenericObject child = (relation).getChild();
             if ( !(child instanceof Item) )
@@ -803,22 +808,22 @@ public class Tools implements Configurable {
      * is present in the cookie, threadId is extracted and set as environmental variable, otherwise
      * impossible large value is used for this variable. The couple consisting of the discussion id
      * and the maximum comment id is added to start of cookie.
-     * @param discussion completely initialized discussion.
+     * @param discussion It may be unitialized
      */
     public static void handleNewComments(Item discussion, Map env, HttpServletRequest request, HttpServletResponse response) {
         User user = (User) env.get(Constants.VAR_USER);
         if (user==null)
-	   return;
+            return;
         Node node = user.getData().selectSingleNode("//new_comments");
         if (node!=null && node.getText().equals("no"))
-	    return;
-
+            return;
 
         int dizId = discussion.getId(), number, position, lastSeen = -1, tmpLength;
         StringBuffer newContent = new StringBuffer();
         String couples = "", tmp;
 
-        if (discussion.getContent().size()==0) {
+        List children = discussion.getChildren();
+        if (children.size()==0) {
             env.put(VAR_MAXIMUM_COMMENT_ID, new Integer(Integer.MAX_VALUE));
             return;
         }
@@ -847,14 +852,15 @@ public class Tools implements Configurable {
         else
             env.put(VAR_MAXIMUM_COMMENT_ID, new Integer(Integer.MAX_VALUE));
 
-        Relation child = (Relation) discussion.getContent().get(0);
-        if (!(child.getChild() instanceof Record) || ((Record)child.getChild()).getType()!=Record.DISCUSSION) {
-            log.warn(child+" shall be Record holding discussion!");
+        Relation childRelation = (Relation) children.get(0);
+        GenericObject child = persistance.findById(childRelation.getChild());
+        if (!(child instanceof Record) || ((Record)child).getType()!=Record.DISCUSSION) {
+            log.warn(childRelation+" shall be Record holding discussion!");
             return;
         }
 
         number = lastSeen;
-        Document data = ((Record) child.getChild()).getData();
+        Document data = ((Record) child).getData();
         List comments = data.getRootElement().elements("comment");
         if ( comments!=null && comments.size()>0 ) {
             Element lastComment = (Element) comments.get(comments.size()-1);

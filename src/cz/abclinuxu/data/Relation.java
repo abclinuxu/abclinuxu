@@ -8,8 +8,6 @@ package cz.abclinuxu.data;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 
-import java.util.Collections;
-
 /**
  * This class contains one relation between two GenericObjects.
  */
@@ -25,12 +23,11 @@ public final class Relation extends GenericObject implements XMLContainer {
 
 
     public Relation() {
-        content = Collections.EMPTY_LIST;
+        super();
     }
 
     public Relation(int id) {
-        this.id = id;
-        content = Collections.EMPTY_LIST;
+        super(id);
     }
 
     /**
@@ -113,32 +110,6 @@ public final class Relation extends GenericObject implements XMLContainer {
         documentHandler = r.documentHandler;
         parent = r.getParent();
         child = r.getChild();
-    }
-
-    /**
-     * Creates lightweight clone of this relation. Such clone is almost same as original,
-     * but child and parent objects are not initialized (just PK is set).
-     */
-    public Relation cloneRelation() {
-        Relation clone = new Relation();
-        clone.id = this.id;
-        clone.initialized = this.initialized;
-        clone.upper = this.upper;
-        clone.documentHandler = this.documentHandler;
-
-        try {
-            GenericObject tmp = (GenericObject)this.getParent().getClass().newInstance();
-            tmp.setId(this.getParent().getId());
-            clone.setParent(tmp);
-
-            tmp = (GenericObject)this.getChild().getClass().newInstance();
-            tmp.setId(this.getChild().getId());
-            clone.setChild(tmp);
-        } catch (Exception e) {
-            log.error("Exception while cloning relation!"+this,e);
-        }
-
-        return clone;
     }
 
     public String toString() {

@@ -3,8 +3,6 @@
  */
 package cz.abclinuxu.data;
 
-import java.util.ArrayList;
-
 /**
  * Contains information about server, from which we download
  * links to their resources
@@ -20,12 +18,10 @@ public class Server extends GenericObject {
 
     public Server() {
         super();
-        content = new ArrayList(5);
     }
 
     public Server(int id) {
         super(id);
-        content = new ArrayList(5);
     }
 
     /**

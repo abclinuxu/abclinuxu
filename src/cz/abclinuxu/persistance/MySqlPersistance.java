@@ -357,7 +357,6 @@ public class MySqlPersistance implements Persistance {
                 statement = con.prepareStatement("delete from "+getTable(obj)+" where cislo=?");
                 statement.setInt(1,obj.getId());
                 statement.executeUpdate();
-                cache.remove(obj);
 
                 if ( obj instanceof Poll ) {
                     statement = con.prepareStatement("delete from data_ankety where anketa=?");
@@ -377,12 +376,13 @@ public class MySqlPersistance implements Persistance {
                     continue; // relation doesn't have content
                 }
 
-                findChildren(obj,con);
-                for (Iterator iter = obj.getContent().iterator(); iter.hasNext();) {
+                List children = Nursery.getInstance().getChildren(obj);
+                for (Iterator iter = children.iterator(); iter.hasNext();) {
                     Relation child = (Relation) iter.next();
                     queue.add(child);
                 }
 
+                cache.remove(obj);
                 if ( log.isDebugEnabled() ) log.debug("Smazan objekt "+obj);
             } while ( queue.size()!=0 );
         } catch ( SQLException e ) {
@@ -519,29 +519,26 @@ public class MySqlPersistance implements Persistance {
     }
 
     /**
-     * lookup tree for children of <code>obj</code> with <code>treeId</code> and sets them
-     * with <code>obj.setContent()</code> call. Children are not initialized.
+     * Finds children of given GenericObject. Children are not initialized.
+     * If there is no child for the obj, empty list is returned.
+     * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
      */
-    private void findChildren(GenericObject obj, Connection con) throws SQLException {
-        PreparedStatement statement = null; ResultSet resultSet = null;
-        if (PersistanceFactory.isLoadingChildrenForbidden(obj))
-            return; // content of this object might be too big
-
+    public List findChildren(GenericObject obj) {
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
+        List children = new ArrayList();
+        Relation relation; GenericObject child;
         try {
+            con = getSQLConnection();
             statement = con.prepareStatement("select cislo,predchozi,typ_potomka,potomek,data from relace where typ_predka=? and predek=?");
             statement.setString(1,getTableId(obj));
             statement.setInt(2,obj.getId());
             resultSet = statement.executeQuery();
 
-            obj.clearContent();
             while ( resultSet.next() ) {
-                Relation relation = new Relation(resultSet.getInt(1));
+                relation = new Relation(resultSet.getInt(1));
                 relation.setUpper(resultSet.getInt(2));
+                child = instantiateFromTree(resultSet.getString(3).charAt(0), resultSet.getInt(4));
                 relation.setParent(obj);
-
-                char type = resultSet.getString(3).charAt(0);
-                int id = resultSet.getInt(4);
-                GenericObject child = instantiateFromTree(type,id);
                 relation.setChild(child);
 
                 String tmp = resultSet.getString(5);
@@ -551,10 +548,14 @@ public class MySqlPersistance implements Persistance {
                 }
 
                 relation.setInitialized(true);
-                obj.addContent(relation);
+                children.add(relation);
             }
+            return (children.size()==0) ? Collections.EMPTY_LIST : children;
+        } catch (SQLException e) {
+            log.error("Selhalo hledání potomkù pro "+obj, e);
+            throw new PersistanceException("Selhalo hledání potomkù pro " + obj);
         } finally {
-            releaseSQLResources(null,statement,resultSet);
+            releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -846,13 +847,11 @@ public class MySqlPersistance implements Persistance {
             }
 
             GenericDataObject item = null;
-            if ( obj instanceof Category ) {
+            if ( obj instanceof Category )
                 item = new Category(obj.getId());
-                findChildren(item, con);
-            } else if ( obj instanceof Item ) {
+            else if ( obj instanceof Item )
                 item = new Item(obj.getId());
-                findChildren(item, con);
-            } else
+            else
                 item = new Record(obj.getId());
 
             item.setType(resultSet.getInt(2));

@@ -219,6 +219,7 @@ public class EditDiscussion implements AbcAction {
         persistance.create(discussion);
         Relation rel2 = new Relation(relation.getChild(),discussion,relation.getId());
         persistance.create(rel2);
+        rel2.getParent().addChildRelation(rel2);
 
         // run email forum
         ForumPool.submitComment(rel2, discussion.getId(), 0, 0);
@@ -275,8 +276,9 @@ public class EditDiscussion implements AbcAction {
             return ServletUtils.showErrorPage("Diskuse byla zmrazena - není mo¾né pøidat dal¹í komentáø!", env, request);
 
         Record record = null; Element root = null, comment = null;
-        if ( discussion.getContent().size()>0 ) {
-            record = (Record) ((Relation)discussion.getContent().get(0)).getChild();
+        List children = discussion.getChildren();
+        if ( children.size()>0 ) {
+            record = (Record) ((Relation)children.get(0)).getChild();
             persistance.synchronize(record);
             root = (Element) record.getData().selectSingleNode("/data");
         } else {
@@ -322,6 +324,7 @@ public class EditDiscussion implements AbcAction {
                 persistance.create(record);
                 Relation rel = new Relation(discussion, record, 0);
                 persistance.create(rel);
+                rel.getParent().addChildRelation(rel);
             } else {
                 persistance.update(record);
             }
@@ -370,13 +373,14 @@ public class EditDiscussion implements AbcAction {
 
         Relation relation;
         String thread = (String) params.get(PARAM_THREAD);
-        if ("0".equals(thread) || discussion.getContent().size()==0) {
+        List children = discussion.getChildren();
+        if ("0".equals(thread) || children.size()==0) {
             ServletUtils.addError(Constants.ERROR_GENERIC,"Nejde cenzurovat otázku!",env,request.getSession());
             relation = (Relation) env.get(VAR_RELATION);
             urlUtils.redirect(response, "/show/"+relation.getId());
         }
 
-        relation = (Relation) discussion.getContent().get(0);
+        relation = (Relation) children.get(0);
         Record record = (Record) relation.getChild();
         persistance.synchronize(record);
         String xpath = "//comment[@id='"+thread+"']";
@@ -433,7 +437,7 @@ public class EditDiscussion implements AbcAction {
         if (threadId==0)
             thread = new Comment(discussion);
         else {
-            Relation relation = (Relation) discussion.getContent().get(0);
+            Relation relation = (Relation) discussion.getChildren().get(0);
             Record record = (Record) relation.getChild();
             persistance.synchronize(record);
             String xpath = "//comment[@id='"+threadId+"']";
@@ -464,7 +468,7 @@ public class EditDiscussion implements AbcAction {
         if ( threadId==0 )
             comment = discussion.getData().getRootElement();
         else {
-            Relation relation = (Relation) discussion.getContent().get(0);
+            Relation relation = (Relation) discussion.getChildren().get(0);
             record = (Record) relation.getChild();
             persistance.synchronize(record);
             String xpath = "//comment[@id='"+threadId+"']";
@@ -516,7 +520,7 @@ public class EditDiscussion implements AbcAction {
 
         persistance.synchronize(discussion);
 
-        Relation relation = (Relation) discussion.getContent().get(0);
+        Relation relation = (Relation) discussion.getChildren().get(0);
         Record record = (Record) relation.getChild();
         persistance.synchronize(record);
         String xpath = "//comment[@id='"+threadId+"']";
@@ -545,7 +549,7 @@ public class EditDiscussion implements AbcAction {
 
         persistance.synchronize(discussion);
 
-        Relation relation = (Relation) discussion.getContent().get(0);
+        Relation relation = (Relation) discussion.getChildren().get(0);
         Record record = (Record) relation.getChild();
         persistance.synchronize(record);
         Document recordData = record.getData();
@@ -648,7 +652,7 @@ public class EditDiscussion implements AbcAction {
     private Comment getDiscussedComment(Map params, Item discussion, Persistance persistance) {
         String thread = (String) params.get(PARAM_THREAD);
         if ( thread!=null && thread.length()>0 && ! "0".equals(thread) ) {
-            Relation relation = (Relation) discussion.getContent().get(0);
+            Relation relation = (Relation) discussion.getChildren().get(0);
             Record record = (Record) relation.getChild();
             persistance.synchronize(record);
             String xpath = "//comment[@id='"+thread+"']";

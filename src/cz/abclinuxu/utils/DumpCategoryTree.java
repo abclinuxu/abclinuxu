@@ -36,7 +36,7 @@ public class DumpCategoryTree {
         File current = new File(parent,name);
         current.mkdir();
 
-        List children = category.getContent();
+        List children = category.getChildren();
         for (Iterator iter = children.iterator(); iter.hasNext();) {
             Relation child = (Relation) iter.next();
             if ( map.get(new Relation(child.getId()))!=null )

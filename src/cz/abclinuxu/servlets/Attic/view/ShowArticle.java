@@ -75,7 +75,7 @@ public class ShowArticle implements AbcAction {
         Persistance persistance = PersistanceFactory.getPersistance();
         Record record = null;
 
-        Map children = Tools.groupByType(item.getContent());
+        Map children = Tools.groupByType(item.getChildren());
         env.put(VAR_CHILDREN_MAP, children);
 
         List list = (List) children.get(Constants.TYPE_RECORD);
@@ -88,7 +88,6 @@ public class ShowArticle implements AbcAction {
         list = (List) children.get(Constants.TYPE_DISCUSSION);
         if ( list!=null && list.size()==1 ) {
             Item discussion = (Item)((Relation) list.get(0)).getChild();
-            Tools.sync(discussion.getContent());
             Tools.handleNewComments(discussion,env,request,response);
         }
 

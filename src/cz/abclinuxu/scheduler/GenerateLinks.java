@@ -86,8 +86,8 @@ public class GenerateLinks extends TimerTask implements Configurable {
                 generators[j].generateHeader();
 
             Category actual = (Category) persistance.findById(new Category(Constants.CAT_ACTUAL_ARTICLES));
-            tools.sync(actual.getContent());
-            List list = Sorters2.byDate(actual.getContent(), Sorters2.DESCENDING);
+            tools.syncList(actual.getChildren());
+            List list = Sorters2.byDate(actual.getChildren(), Sorters2.DESCENDING);
             for(int i=0; i<6 && i<list.size(); i++ ) {
                 Relation relation = (Relation) list.get(i);
                 Item item = (Item) relation.getChild();
@@ -143,7 +143,7 @@ public class GenerateLinks extends TimerTask implements Configurable {
 
             qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, 20)};
             list = SQLTool.getInstance().findDiscussionRelations(qualifiers);
-            Tools.sync(list);
+            Tools.syncList(list);
             List discussions = tools.analyzeDiscussions(list);
             for ( Iterator iter = discussions.iterator(); iter.hasNext(); ) {
                 DiscussionHeader discussion = (DiscussionHeader) iter.next();

@@ -113,7 +113,7 @@ public class Dump implements Configurable {
             dumpCategory(relation, (Category) obj, file, prefix);
         }
 
-        for (Iterator iter = obj.getContent().iterator(); iter.hasNext();) {
+        for (Iterator iter = obj.getChildren().iterator(); iter.hasNext();) {
             dumpTree( (Relation)iter.next(), currentDir, prefix);
         }
     }
@@ -191,7 +191,7 @@ public class Dump implements Configurable {
             return;
         }
 
-        Map children = Tools.groupByType(item.getContent());
+        Map children = Tools.groupByType(item.getChildren());
         env.put(ShowObject.VAR_CHILDREN_MAP,children);
 
         if ( item.getType()==Item.ARTICLE ) {
@@ -233,7 +233,7 @@ public class Dump implements Configurable {
         env.put(ViewCategory.VAR_CATEGORY,category);
 
         Tools.sync(category);
-        Tools.sync(category.getContent());
+        Tools.syncList(category.getChildren());
 
         String name = FMTemplateSelector.select("ViewCategory","sekce", env, "offline");
         FMUtils.executeTemplate(name,env,file);

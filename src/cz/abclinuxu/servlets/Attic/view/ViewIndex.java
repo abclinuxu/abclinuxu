@@ -40,21 +40,22 @@ public class ViewIndex implements AbcAction {
         Tools tools = new Tools();
 
         Category currentArticles = (Category) persistance.findById(new Category(Constants.CAT_ACTUAL_ARTICLES));
-        tools.sync(currentArticles.getContent());
-        List articles = Sorters2.byDate(currentArticles.getContent(), Sorters2.DESCENDING);
+        List children = currentArticles.getChildren();
+        tools.syncList(children);
+        List articles = Sorters2.byDate(children, Sorters2.DESCENDING);
         env.put(ViewIndex.VAR_ARTICLES,articles);
 
         Category hw = (Category) persistance.findById(new Category(Constants.CAT_386));
-        env.put(ViewIndex.VAR_HARDWARE,hw.getContent());
+        env.put(ViewIndex.VAR_HARDWARE,hw.getChildren());
 
         Category sw = (Category) persistance.findById(new Category(Constants.CAT_SOFTWARE));
-        env.put(ViewIndex.VAR_SOFTWARE,sw.getContent());
+        env.put(ViewIndex.VAR_SOFTWARE,sw.getChildren());
 
         int userLimit = getNumberOfDiscussions(user);
         if ( userLimit>0 ) {
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, userLimit)};
             List found = SQLTool.getInstance().findDiscussionRelations(qualifiers);
-            Tools.sync(found);
+            Tools.syncList(found);
             List discussions = tools.analyzeDiscussions(found);
             Paging paging = new Paging(discussions, 0, userLimit);
             env.put(ViewIndex.VAR_FORUM, paging);

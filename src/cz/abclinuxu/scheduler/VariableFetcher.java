@@ -120,11 +120,11 @@ public class VariableFetcher extends TimerTask {
             i = new Integer(sqlTool.countDiscussionRelations());
             counter.put("FORUM",i);
             Category requests = (Category) persistance.findById(new Category(Constants.CAT_REQUESTS));
-            counter.put("REQUESTS",new Integer(requests.getContent().size()));
+            counter.put("REQUESTS",new Integer(requests.getChildren().size()));
             Category news = (Category) persistance.findById(new Category(Constants.CAT_NEWS_POOL));
-            counter.put("WAITING_NEWS",new Integer(news.getContent().size()));
+            counter.put("WAITING_NEWS",new Integer(news.getChildren().size()));
             Category polls = (Category) persistance.findById(new Category(Constants.CAT_POLLS));
-            counter.put("POLLS",new Integer(polls.getContent().size()));
+            counter.put("POLLS",new Integer(polls.getChildren().size()));
 
             currentPoll = sqlTool.findActivePoll();
 

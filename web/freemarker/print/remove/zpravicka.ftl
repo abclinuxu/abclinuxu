@@ -22,7 +22,7 @@ zprávièka nevyhovuje. Je slu¹ností tak uèinit.
 
 <p>${TOOL.xpath(RELATION.child,"data/content")}</p>
 
-<form action="${URL.make("/EditItem")}" method="POST">
+<form action="${URL.make("/edit")}" method="POST">
  <table cellpadding="5" border="0">
   <tr>
    <td class="required">Vá¹ vzkaz</td>

@@ -65,7 +65,7 @@ public class ShowForum implements AbcAction {
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
         List discussions = sqlTool.findDiscussionRelationsWithParent(relation.getId(),qualifiers);
         int total = sqlTool.countDiscussionRelationsWithParent(relation.getId());
-        Tools.sync(discussions);
+        Tools.syncList(discussions);
 
         Paging paging = new Paging(discussions, from, count, total);
         env.put(VAR_DISCUSSIONS,paging);

@@ -24,7 +24,7 @@
    </td>
   </tr>
 
-  <#global map=TOOL.groupByType(CURRENT.child.content)>
+  <#global map=TOOL.groupByType(CURRENT.child.children)>
 
   <#list map.keySet() as key>
    <tr><td coslpan="5"><b>${key}</b></td></tr>

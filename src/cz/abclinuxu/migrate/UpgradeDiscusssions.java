@@ -81,7 +81,7 @@ public class UpgradeDiscusssions {
      * @throws Exception
      */
     private static boolean removeEmptyDiscussion(Item item) throws Exception {
-        if (item.getData().selectSingleNode("/data/title")==null && item.getContent().size()==0) {
+        if (item.getData().selectSingleNode("/data/title")==null && item.getChildren().size()==0) {
             MySqlPersistance mp = (MySqlPersistance) persistance;
             mp.remove(item);
             Connection con = null; PreparedStatement statement = null;
@@ -109,10 +109,10 @@ public class UpgradeDiscusssions {
         Date lastResponse = item.getUpdated();
         int comments = 0;
 
-        Tools.sync(item.getContent());
-        Sorters2.byId(item.getContent());
+        Tools.syncList(item.getChildren());
+        Sorters2.byId(item.getChildren());
 
-        for ( Iterator iter = item.getContent().iterator(); iter.hasNext(); ) {
+        for ( Iterator iter = item.getChildren().iterator(); iter.hasNext(); ) {
             Relation child = (Relation) iter.next();
             Record record = (Record) child.getChild();
 

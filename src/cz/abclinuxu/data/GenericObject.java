@@ -3,18 +3,23 @@
  */
 package cz.abclinuxu.data;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import cz.abclinuxu.exceptions.InternalException;
+import cz.abclinuxu.persistance.Nursery;
+
 import java.util.List;
 
 /**
- * superclass for all classes in this website
+ * Superclass for all classes in this website
  */
 public abstract class GenericObject {
+    protected static Nursery nursery;
+
+    static {
+        nursery = Nursery.getInstance();
+    }
+
     /** unique identifier of this object */
     protected int id;
-    /** list of Relations, where relation.getParent()==this and relation.getChild().getId()!=0 */
-    protected List content;
     /** tells, whether this object was already initialized by Persistance */
     protected boolean initialized = false;
 
@@ -42,36 +47,28 @@ public abstract class GenericObject {
     }
 
     /**
-     * Adds another dependant object. If <code>object</code> has been already stored,
-     * it will be replaced by this (hopefully) fresher version.
+     * Adds relation to new child. This object must equal to parent in the relation.
      */
-    public void addContent(Relation object) {
-        content.remove(object);
-        content.add(object);
+    public void addChildRelation(Relation relation) {
+        if (!relation.getParent().equals(this))
+            throw new InternalException("Cannot add "+relation+" as child of "+this);
+        nursery.addChild(relation);
     }
 
     /**
-     * @return Relations, where getParent()==this. If getChild().isInitialized()==false,
-     * you shall call Persistance.synchronize() to load data from persistant storage.
-     * todo find usages of this method and make sure, they dont modify content of the list directly
+     * Removes child relation. This object must equal to parent in the relation.
      */
-    public List getContent() {
-//        return Collections.unmodifiableList(content);
-        return content;
+    public void removeChildRelation(Relation relation) {
+        if (!relation.getParent().equals(this))
+            throw new InternalException("Cannot remove "+relation+" as child of "+this);
+        nursery.removeChild(relation);
     }
 
     /**
-     * Sets content. Null parameter is prohibited! (only Persistance may call this method!)
+     * @return list of child Relations
      */
-    public void setContent(List content) {
-        this.content = content;
-    }
-
-    /**
-     * Removes all references to children. (only Persistance may call this method!)
-     */
-    public void clearContent() {
-        content.clear();
+    public List getChildren() {
+        return nursery.getChildren(this);
     }
 
     /**
@@ -81,12 +78,23 @@ public abstract class GenericObject {
     public void synchronizeWith(GenericObject obj) {
         if ( obj==this ) return;
         id = obj.getId();
-        content = new ArrayList(obj.getContent().size());
-        for (Iterator iter = obj.getContent().iterator(); iter.hasNext();) {
-            content.add(iter.next());
-        }
         initialized = obj.isInitialized();
-    };
+    }
+
+    /**
+     * Creates light clone of this object. Such clone is not
+     * initialized except id, so its method equals will work.
+     * @return same object, but only id is set
+     */
+    public GenericObject makeLightClone() {
+        try {
+            GenericObject o = (GenericObject) this.getClass().newInstance();
+            o.setId(id);
+            return o;
+        } catch (Exception e) {
+            throw new InternalException("Cannot create light clone of "+this,e);
+        }
+    }
 
     public String toString() {
         StringBuffer sb = new StringBuffer(this.getClass().getName());

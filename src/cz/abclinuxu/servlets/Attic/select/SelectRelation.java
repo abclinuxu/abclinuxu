@@ -75,15 +75,15 @@ public class SelectRelation implements AbcAction {
         }
 
         Category clanky = (Category) persistance.findById(new Category(Constants.CAT_ARTICLES));
-        List content = clanky.getContent();
+        List content = clanky.getChildren();
         env.put(VAR_CLANKY,content);
 
         Category sw = (Category) persistance.findById(new Category(Constants.CAT_SOFTWARE));
-        content = sw.getContent();
+        content = sw.getChildren();
         env.put(VAR_SOFTWARE,content);
 
         Category hw386 = (Category) persistance.findById(new Category(Constants.CAT_386));
-        content = hw386.getContent();
+        content = hw386.getChildren();
         env.put(VAR_386,content);
         return FMTemplateSelector.select("SelectRelation","step1",env,request);
     }

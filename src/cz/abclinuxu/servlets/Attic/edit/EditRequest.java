@@ -110,6 +110,7 @@ public class EditRequest implements AbcAction {
         persistance.create(req);
         Relation relation = new Relation(new Category(Constants.CAT_REQUESTS),req,Constants.REL_REQUESTS);
         persistance.create(relation);
+        relation.getParent().addChildRelation(relation);
 
         ServletUtils.addMessage("Vá¹ po¾adavek byl pøijat.",env,request.getSession());
 
@@ -124,6 +125,7 @@ public class EditRequest implements AbcAction {
         Relation relation = (Relation) env.get(VAR_REQUEST_RELATION);
         persistance.synchronize(relation);
         persistance.remove(relation);
+        relation.getParent().removeChildRelation(relation);
         ServletUtils.addMessage("Po¾adavek byl smazán.",env,request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -140,6 +142,7 @@ public class EditRequest implements AbcAction {
         Item req = (Item) relation.getChild();
         persistance.synchronize(req);
         persistance.remove(relation);
+        relation.getParent().removeChildRelation(relation);
 
         String requestor = req.getData().selectSingleNode("data/email").getText();
         String text = "Hotovo.\n"+user.getName()+"\n\n\nVas pozadavek\n\n";

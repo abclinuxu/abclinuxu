@@ -141,6 +141,7 @@ public class EditCategory implements AbcAction {
             int upper = (upperRelation!=null)? upperRelation.getId():0;
             relation = new Relation(upperCategory,category,upper);
             persistance.create(relation);
+            relation.getParent().addChildRelation(relation);
         } catch (PersistanceException e) {
             ServletUtils.addError(Constants.ERROR_GENERIC,e.getMessage(),env, null);
             return FMTemplateSelector.select("EditCategory","add",env,request);

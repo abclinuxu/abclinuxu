@@ -103,7 +103,7 @@ public class InstanceUtils {
     public static Relation findFirstChildRecordOfType(Item item, int recordType) {
         Persistance persistance = PersistanceFactory.getPersistance();
         Record record = null;
-        for (Iterator iter = item.getContent().iterator(); iter.hasNext();) {
+        for (Iterator iter = item.getChildren().iterator(); iter.hasNext();) {
             Relation rel = (Relation) iter.next();
             if ( rel.getChild() instanceof Record ) {
                 persistance.synchronize(rel.getChild());
@@ -123,7 +123,7 @@ public class InstanceUtils {
     public static Relation findFirstChildItemOfType(GenericObject obj, int itemType) {
         Persistance persistance = PersistanceFactory.getPersistance();
         Item item = null;
-        for (Iterator iter = obj.getContent().iterator(); iter.hasNext();) {
+        for (Iterator iter = obj.getChildren().iterator(); iter.hasNext();) {
             Relation rel = (Relation) iter.next();
             if ( rel.getChild() instanceof Item ) {
                 persistance.synchronize(rel.getChild());

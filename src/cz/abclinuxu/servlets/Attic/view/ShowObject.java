@@ -137,6 +137,10 @@ public class ShowObject implements AbcAction {
 
         Tools.sync(item);
         env.put(VAR_ITEM, item);
+        Map children = Tools.groupByType(item.getChildren());
+        env.put(VAR_CHILDREN_MAP, children);
+        Tools.sync(upper);
+        env.put(VAR_UPPER, upper);
 
         if ( item.getType()==Item.ARTICLE )
             return ShowArticle.show(env, item, request, response);
@@ -146,32 +150,22 @@ public class ShowObject implements AbcAction {
             if ( node!=null )
                 env.put(EditNews.VAR_CATEGORY, NewsCategories.get(node.getText()));
 
-            Map children = Tools.groupByType(item.getContent());
-            env.put(VAR_CHILDREN_MAP, children);
-
             List list = (List) children.get(Constants.TYPE_DISCUSSION);
             if ( list!=null && list.size()==1 ) {
                 Item discussion = (Item) ((Relation) list.get(0)).getChild();
-                Tools.sync(discussion.getContent());
                 Tools.handleNewComments(discussion, env, request, response);
             }
 
             return FMTemplateSelector.select("ShowObject", "news", env, request);
         }
 
-        Tools.sync(upper); env.put(VAR_UPPER,upper);
-
         if ( item.getType()==Item.DISCUSSION ) {
-            Tools.sync(item.getContent());
             Tools.handleNewComments(item,env,request,response);
             return FMTemplateSelector.select("ShowObject","discussion",env, request);
         }
 
         if ( item.getType()==Item.DRIVER )
             return FMTemplateSelector.select("ShowObject","driver",env, request);
-
-        Map children = Tools.groupByType(item.getContent());
-        env.put(VAR_CHILDREN_MAP,children);
 
         if ( record==null ) {
             List records = (List) children.get(Constants.TYPE_RECORD);
@@ -199,7 +193,7 @@ public class ShowObject implements AbcAction {
 
         Item diz = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         diz = (Item) persistance.findById(diz);
-        List children = diz.getContent();
+        List children = diz.getChildren();
         Record record = (Record) ((Relation)children.get(0)).getChild();
         persistance.synchronize(record);
 

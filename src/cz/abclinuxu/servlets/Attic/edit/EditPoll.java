@@ -148,6 +148,7 @@ public class EditPoll implements AbcAction {
         persistance.create(poll);
         Relation relation = new Relation(upperRelation.getChild(),poll,upperRelation.getId());
         persistance.create(relation);
+        relation.getParent().addChildRelation(relation);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/show/"+upperRelation.getId());

@@ -26,8 +26,9 @@ public class TestMySqlPersistance extends TestCase {
     protected void setUp() throws Exception {
         LogManager.getRootLogger().setLevel(Level.OFF);
         super.setUp();
-        persistance = new MySqlPersistance(PersistanceFactory.defaultTestUrl);
-        persistance.setCache(new LRUCache());
+//        persistance = new MySqlPersistance(PersistanceFactory.defaultTestUrl);
+//        persistance.setCache(new LRUCache());
+        persistance = PersistanceFactory.getPersistance(PersistanceFactory.defaultTestUrl, LRUCache.class);
     }
 
     protected void tearDown() throws Exception {
@@ -57,22 +58,28 @@ public class TestMySqlPersistance extends TestCase {
         b.setOwner(2);
         b.setData("<name>sw b</name>");
         persistance.create(b);
+
         Relation relation = new Relation(a,b,0);
         persistance.create(relation);
+        a.addChildRelation(relation);
 
         Record c = new Record(0,Record.ARTICLE);
         c.setOwner(1);
         c.setData("<name>article c</name>");
         persistance.create(c);
+
         relation = new Relation(a,c,0);
         persistance.create(relation);
+        a.addChildRelation(relation);
 
         Category d = new Category(0);
         d.setOwner(2);
         d.setData("<name>section</name>");
         persistance.create(d);
+
         relation = new Relation(d,c,0);
         persistance.create(relation);
+        d.addChildRelation(relation);
 
         persistance.remove(a);
 
@@ -99,6 +106,7 @@ public class TestMySqlPersistance extends TestCase {
 
         // now clean up database
         persistance.remove(relation);
+        d.removeChildRelation(relation);
 
         try {
             test = persistance.findById(c);
@@ -214,34 +222,46 @@ public class TestMySqlPersistance extends TestCase {
         Item duron = new Item(0,Item.MAKE);
         duron.setData("<name>Duron</name>");
         persistance.create(duron);
+
         Relation relProcDur = new Relation(processors,duron,0);
         persistance.create(relProcDur);
+        processors.addChildRelation(relProcDur);
 
         Record duron1 = new Record(0,Record.HARDWARE);
         duron1.setData("<price>fine</price>");
         persistance.create(duron1);
+
         Relation relDurDur1 = new Relation(duron,duron1,relProcDur.getId());
         persistance.create(relDurDur1);
+        duron.addChildRelation(relDurDur1);
 
         Item pentium = new Item(0,Item.MAKE);
         pentium.setData("<name>Pentium 4</name>");
         persistance.create(pentium);
+
         Relation relProcPent = new Relation(processors,pentium,0);
         persistance.create(relProcPent);
+        processors.addChildRelation(relProcPent);
+
         Relation relIntPent = new Relation(intel,pentium,0);
         persistance.create(relIntPent);
+        intel.addChildRelation(relIntPent);
 
         Record pentium1 = new Record(0,Record.HARDWARE);
         pentium1.setData("<price>expensive</price>");
         persistance.create(pentium1);
+
         Relation relPentPent1 = new Relation(pentium,pentium1,relProcPent.getId());
         persistance.create(relPentPent1);
+        pentium.addChildRelation(relPentPent1);
 
         Record pentium2 = new Record(0,Record.HARDWARE);
         pentium2.setData("<price>too expensive</price>");
         persistance.create(pentium2);
+
         Relation relPentPent2 = new Relation(pentium,pentium2,relProcPent.getId());
         persistance.create(relPentPent2);
+        pentium.addChildRelation(relPentPent2);
 
         processors = (Category) persistance.findById(processors);
         intel = (Category) persistance.findById(intel);
@@ -249,24 +269,24 @@ public class TestMySqlPersistance extends TestCase {
         pentium = (Item) persistance.findById(pentium);
 
         // tests create()
-        List content = processors.getContent();
+        List content = processors.getChildren();
         assertEquals(2,content.size());
         GenericObject first = ((Relation)content.get(0)).getChild();
         GenericObject second = ((Relation)content.get(1)).getChild();
         assertTrue(first.getId()==duron.getId() || second.getId()==duron.getId());
         assertTrue(first.getId()==pentium.getId() || second.getId()==pentium.getId());
 
-        content = intel.getContent();
+        content = intel.getChildren();
         assertEquals(1,content.size());
         first = ((Relation)content.get(0)).getChild();
         assertTrue(first.getId()==pentium.getId());
 
-        content = duron.getContent();
+        content = duron.getChildren();
         assertEquals(1,content.size());
         first = ((Relation)content.get(0)).getChild();
         assertTrue(first.getId()==duron1.getId());
 
-        content = pentium.getContent();
+        content = pentium.getChildren();
         assertEquals(2,content.size());
         first = ((Relation)content.get(0)).getChild();
         second = ((Relation)content.get(1)).getChild();
@@ -275,16 +295,18 @@ public class TestMySqlPersistance extends TestCase {
 
         // tests remove()
         persistance.remove(relProcDur);
+        processors.removeChildRelation(relProcDur);
         persistance.remove(relProcPent);
+        processors.removeChildRelation(relProcPent);
 
         processors = (Category) persistance.findById(processors);
         intel = (Category) persistance.findById(intel);
         pentium = (Item) persistance.findById(pentium);
 
-        content = processors.getContent();
+        content = processors.getChildren();
         assertEquals(0,content.size());
 
-        content = intel.getContent();
+        content = intel.getChildren();
         assertEquals(1,content.size());
 
         try {
@@ -296,6 +318,7 @@ public class TestMySqlPersistance extends TestCase {
 
         // cleanup
         persistance.remove(relIntPent);
+        intel.removeChildRelation(relIntPent);
         persistance.remove(processors);
         persistance.remove(intel);
     }
@@ -329,26 +352,30 @@ public class TestMySqlPersistance extends TestCase {
         Category intel = new Category(0);
         intel.setData("<name>Intel</name>");
         persistance.create(intel);
+
         Relation relProcPent = new Relation(processors,intel,0);
         persistance.create(relProcPent);
+        processors.addChildRelation(relProcPent);
 
         Item duron = new Item(0,Item.MAKE);
         duron.setData("<name>Duron</name>");
         persistance.create(duron);
+        
         Relation relProcDur = new Relation(processors,duron,0);
         persistance.create(relProcDur);
+        processors.addChildRelation(relProcDur);
 
         processors = (Category) persistance.findById(processors);
-        List content = processors.getContent();
+        List content = processors.getChildren();
         assertEquals(2,content.size());
 
         Category tmp = new Category(processors.getId());
         persistance.synchronize(tmp);
-        content = processors.getContent();
+        content = processors.getChildren();
         assertEquals(2,content.size());
 
         tmp = (Category) persistance.findById(processors);
-        content = processors.getContent();
+        content = processors.getChildren();
         assertEquals(2,content.size());
 
         persistance.remove(processors);
@@ -358,36 +385,39 @@ public class TestMySqlPersistance extends TestCase {
      * Bug - when relation changes parent and is updated, the content
      * of previous and new parent in cache is not updated!
      */
-    public void testRelationCache() throws Exception {
-        Category first = new Category(); first.setData("<data/>");
-        Category second = new Category(); second.setData("<data/>");
-        Item item = new Item(); item.setData("<data/>");
-
-        persistance.create(first);
-        persistance.create(second);
-        persistance.create(item);
-
-        Relation relation = new Relation(first,item,0);
-        persistance.create(relation);
-
-        Category cacheFirst = (Category) persistance.findById(first);
-        assertEquals(1,cacheFirst.getContent().size());
-
-        relation.setParent(second);
-        persistance.update(relation);
-        cacheFirst = (Category) persistance.findById(first);
-        assertEquals(0,cacheFirst.getContent().size());
-        Category cacheSecond = (Category) persistance.findById(second);
-        assertEquals(1,cacheSecond.getContent().size());
-
-        persistance.remove(relation);
-        persistance.remove(item);
-        cacheSecond = (Category) persistance.findById(second);
-        assertEquals(0,cacheSecond.getContent().size());
-
-        persistance.remove(first);
-        persistance.remove(second);
-    }
+    // Since Nursery introduction, this behaviour is normal. It is application developer responsibility
+    // to remove child relation from old parent and add it to new parent.
+//    public void testRelationCache() throws Exception {
+//        Category first = new Category(); first.setData("<data/>");
+//        Category second = new Category(); second.setData("<data/>");
+//        Item item = new Item(); item.setData("<data/>");
+//
+//        persistance.create(first);
+//        persistance.create(second);
+//        persistance.create(item);
+//
+//        Relation relation = new Relation(first,item,0);
+//        persistance.create(relation);
+//        first.addChildRelation(relation);
+//
+//        Category cacheFirst = (Category) persistance.findById(first);
+//        assertEquals(1,cacheFirst.getChildren().size());
+//
+//        relation.setParent(second);
+//        persistance.update(relation);
+//        cacheFirst = (Category) persistance.findById(first);
+//        assertEquals(0,cacheFirst.getChildren().size());
+//        Category cacheSecond = (Category) persistance.findById(second);
+//        assertEquals(1,cacheSecond.getChildren().size());
+//
+//        persistance.remove(relation);
+//        persistance.remove(item);
+//        cacheSecond = (Category) persistance.findById(second);
+//        assertEquals(0,cacheSecond.getChildren().size());
+//
+//        persistance.remove(first);
+//        persistance.remove(second);
+//    }
 
     /**
      * Searches list of GenericObjects for object with id equal to id.

@@ -174,7 +174,7 @@ public class EditRelation implements AbcAction {
         }
         if ( child instanceof Poll )
             canRemove |= user.hasRole(Roles.POLL_ADMIN);
-
+        // todo check ownership
         if ( !canRemove )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
@@ -222,6 +222,7 @@ public class EditRelation implements AbcAction {
         }
 
         persistance.create(relation);
+        relation.getParent().addChildRelation(relation);
 
         String prefix = (String)params.get(PARAM_PREFIX);
         UrlUtils urlUtils = new UrlUtils(prefix, response);
@@ -249,6 +250,7 @@ public class EditRelation implements AbcAction {
 
         runMonitor(relation,user);
         persistance.remove(relation);
+        relation.getParent().removeChildRelation(relation);
         AdminLogger.logEvent(user, "remove | relation "+relation.getId()+" | "+Tools.childName(relation));
 
         String url = null;
@@ -277,9 +279,11 @@ public class EditRelation implements AbcAction {
         Relation destination = (Relation) InstanceUtils.instantiateParam(PARAM_SELECTED, Relation.class, params, request);
         persistance.synchronize(destination);
 
+        relation.getParent().removeChildRelation(relation);
         relation.setParent(destination.getChild());
         relation.setUpper(destination.getId());
         persistance.update(relation);
+        relation.getParent().addChildRelation(relation);
 
         AdminLogger.logEvent(user, "  move | relation "+relation.getId()+" | from "+originalUpper+" | to "+destination.getId());
 
@@ -312,7 +316,7 @@ public class EditRelation implements AbcAction {
         Relation destination = (Relation) InstanceUtils.instantiateParam(PARAM_SELECTED, Relation.class, params, request);
         persistance.synchronize(destination);
 
-        for ( Iterator iter = relation.getChild().getContent().iterator(); iter.hasNext(); ) {
+        for ( Iterator iter = relation.getChild().getChildren().iterator(); iter.hasNext(); ) {
             Relation childRelation = (Relation) iter.next();
             GenericObject child = childRelation.getChild();
             persistance.synchronize(child);
@@ -328,9 +332,11 @@ public class EditRelation implements AbcAction {
                 move = true;
 
             if (move) {
+                childRelation.getParent().removeChildRelation(childRelation);
                 childRelation.setParent(destination.getChild());
                 childRelation.setUpper(destination.getId());
                 persistance.update(childRelation);
+                childRelation.getParent().addChildRelation(childRelation);
 
                 AdminLogger.logEvent(user, "  move | relation "+childRelation.getId()+" | from "+relation.getId()+" | to "+destination.getId());
             }
