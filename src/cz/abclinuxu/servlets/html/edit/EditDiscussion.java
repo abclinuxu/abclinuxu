@@ -230,13 +230,8 @@ public class EditDiscussion implements AbcAction {
         rel2.getParent().addChildRelation(rel2);
 
         // run email forum and refresh RSS
-        if (relation.getParent() instanceof Category) {
-            Category parent = (Category) persistance.findById(relation.getParent());
-            if (parent.getType() == Category.SECTION_FORUM) {
-                ForumPool.submitComment(rel2, discussion.getId(), 0, 0);
-                FeedGenerator.updateForum();
-            }
-        }
+        ForumPool.submitComment(rel2, discussion.getId(), 0, 0);
+        FeedGenerator.updateForum();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/show/"+rel2.getId());
