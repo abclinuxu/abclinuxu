@@ -45,12 +45,12 @@ public class SimpleFormatRenderer implements Renderer {
         StringBuffer sb = new StringBuffer((int) (1.2*input.length()));
 
         int c = 'X', d = 'X', e = 'X';
+        boolean ending, in_pre = false;
         try {
             c = reader.read();
 
-            START:
             while ( c!=-1 ) {
-                if ( c=='\n' ) {
+                if ( c=='\n' && !in_pre ) {
                     sb.append((char) c);
                     d = reader.read();
                     if (d=='\n') {
@@ -64,7 +64,8 @@ public class SimpleFormatRenderer implements Renderer {
                             sb.append((char) e);
                         }
                     } else {
-                        sb.append((char) d);
+                        c = d;
+                        continue;
                     }
                 } else if ( c==':' || c==';' ) {
                     d = reader.read();
@@ -85,7 +86,7 @@ public class SimpleFormatRenderer implements Renderer {
                                 sb.append((char) c);
                                 sb.append((char) d);
                                 c = e;
-                                continue START;
+                                continue;
                             case -1:
                                 sb.append((char) c);
                                 sb.append((char) d);
@@ -99,10 +100,52 @@ public class SimpleFormatRenderer implements Renderer {
                         sb.append((char) c);
                         if ( d=='\n' ) {
                             c = d;
-                            continue START;
+                            continue;
                         } else if ( d!=-1 )
                                 sb.append((char) d);
                     }
+                } else if ( c=='<' ) {
+                    sb.append((char) c);
+                    c = reader.read();
+                    if ( c=='\n' )
+                        continue;
+                    else if ( c=='/' ) {
+                          ending = true;
+                          sb.append((char) c);
+                          c = reader.read();
+                          if ( c=='\n' )
+                              continue;
+                    }
+                    else
+                        ending = false;
+
+                    if ( c=='p' || c=='P' ) {
+                        sb.append((char) c);
+                        c = reader.read();
+                        if ( c=='\n' )
+                            continue;
+                        else if ( c=='r' || c=='R' ) {
+                            sb.append((char) c);
+                            c = reader.read();
+                            if ( c=='\n' )
+                                continue;
+                            else if ( c=='e' || c=='E' ) {
+                                sb.append((char) c);
+                                c = reader.read();
+                                if ( c=='\n' )
+                                    continue;
+                                else if ( c=='>' ) {
+                                     /* Do nothing in invalid cases and hope
+                                      * it will resolve later */
+                                     if ( in_pre && ending )
+                                         in_pre = false;
+                                     else if ( !in_pre && !ending )
+                                         in_pre = true;
+                                }
+                            }
+                        }
+                    }
+                    sb.append((char) c);
                 } else {
                     sb.append((char) c);
                 }
@@ -122,10 +165,12 @@ public class SimpleFormatRenderer implements Renderer {
         StringBuffer sb = new StringBuffer((int) (1.2*input.length()));
 
         int c = 'X', d = 'X', e = 'X';
+        boolean ending, in_pre = false;
         try {
             c = reader.read();
+
             while ( c!=-1 ) {
-                if ( c=='\n' ) {
+                if ( c=='\n' && !in_pre ) {
                     sb.append((char) c);
                     d = reader.read();
                     if (d=='\n') {
@@ -139,8 +184,51 @@ public class SimpleFormatRenderer implements Renderer {
                             sb.append((char) e);
                         }
                     } else {
-                        sb.append((char) d);
+                        c = d;
+                        continue;
                     }
+                } else if ( c=='<' ) {
+                    sb.append((char) c);
+                    c = reader.read();
+                    if ( c=='\n' )
+                        continue;
+                    else if ( c=='/' ) {
+                          ending = true;
+                          sb.append((char) c);
+                          c = reader.read();
+                          if ( c=='\n' )
+                              continue;
+                    }
+                    else
+                        ending = false;
+
+                    if ( c=='p' || c=='P' ) {
+                        sb.append((char) c);
+                        c = reader.read();
+                        if ( c=='\n' )
+                            continue;
+                        else if ( c=='r' || c=='R' ) {
+                            sb.append((char) c);
+                            c = reader.read();
+                            if ( c=='\n' )
+                                continue;
+                            else if ( c=='e' || c=='E' ) {
+                                sb.append((char) c);
+                                c = reader.read();
+                                if ( c=='\n' )
+                                    continue;
+                                else if ( c=='>' ) {
+                                     /* Do nothing in invalid cases and hope
+                                      * it will resolve later */
+                                     if ( in_pre && ending )
+                                         in_pre = false;
+                                     else if ( !in_pre && !ending )
+                                         in_pre = true;
+                                }
+                            }
+                        }
+                    }
+                    sb.append((char) c);
                 } else {
                     sb.append((char) c);
                 }
