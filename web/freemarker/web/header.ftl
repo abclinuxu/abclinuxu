@@ -75,7 +75,8 @@
 	<div class="obal_ls">
         <div class="ls_prepinac" id="ls_prepinac">
             <img id="ls_prepinac_img" src="/images/site2/sipkaon-text.gif" width="42" height="12"
-	    title="Skrýt sloupec" alt="Skrýt sloupec" onclick="prepni_sloupec()" align="bottom"></div>
+	        title="Skrýt sloupec" alt="Skrýt sloupec" onclick="prepni_sloupec()" align="bottom">
+	    </div>
 
         <div class="ls" id="ls"><div class="s">
             <div class="ls_reklama"><div class="ad">
@@ -204,7 +205,7 @@
 	</div> <!-- obal_ls -->
 
     <#if plovouci_sloupec?exists>
-        <div class="obal_ps">
+        <div class="obal_ps" style="width: ${ps_sirka?default(300)}px">
             <div class="ps_prepinac" id="ps_prepinac">
             <!-- i kdyz to bude prazdne, tak to tu musi byt -->
             </div>
