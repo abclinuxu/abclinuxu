@@ -18,12 +18,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Cookie;
 import javax.servlet.ServletException;
+import javax.servlet.RequestDispatcher;
 
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.AbcException;
+import cz.abclinuxu.servlets.utils.UrlUtils;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -39,6 +41,8 @@ import java.util.HashMap;
  * and check of access rights.<p>
  * <u>Context variables introduced by AbcServlet</u>
  * <dl>
+ * <dt><code>VAR_PREFIX</code></dt>
+ * <dd>Specifies prefix of URL (/hardware,/software,/clanky). It distinguishes context.</dd>
  * <dt><code>USER</code></dt>
  * <dd>instance of User, if any.</dd>
  * <dt><code>ERRORS</code></dt>
@@ -56,11 +60,16 @@ public class AbcServlet extends VelocityServlet {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(AbcServlet.class);
 
     /** Name of key in HttpServletsRequest, used for context chaining. */
-    public static final String VAR_CONTEXT = "CONTEXT";
+    public static final String ATTRIB_CONTEXT = "CONTEXT";
+    public static final String VAR_PREFIX = "PREFIX";
     public static final String VAR_USER = "USER";
     public static final String VAR_ERRORS = "ERRORS";
     public static final String VAR_MESSAGES = "MESSAGES";
     public static final String PARAM_ACTION = "action";
+
+    public static final String PREFIX_HARDWARE = "/hardware";
+    public static final String PREFIX_SOFTWARE = "/software";
+    public static final String PREFIX_CLANKY = "/clanky";
 
     /** Public access is granted or user's right are sufficient. */
     public static final int ACCESS_GRANTED = 0;
@@ -95,7 +104,7 @@ public class AbcServlet extends VelocityServlet {
      *  @return context
      */
     protected Context createContext(HttpServletRequest request, HttpServletResponse response) {
-        Context chained = (Context) request.getAttribute(AbcServlet.VAR_CONTEXT);
+        Context chained = (Context) request.getAttribute(AbcServlet.ATTRIB_CONTEXT);
         Context context = null;
         if ( chained!=null ) {
             context = new VelocityContext(chained);
@@ -103,8 +112,19 @@ public class AbcServlet extends VelocityServlet {
             context.put(RESPONSE, response);
         } else {
             context = super.createContext(request, response);
+
+            String url = request.getRequestURI();
+            if ( url.startsWith(AbcServlet.PREFIX_HARDWARE) ) {
+                context.put(AbcServlet.VAR_PREFIX,new UrlUtils(AbcServlet.PREFIX_HARDWARE));
+            } else if ( url.startsWith(AbcServlet.PREFIX_SOFTWARE) ) {
+                context.put(AbcServlet.VAR_PREFIX,new UrlUtils(AbcServlet.PREFIX_SOFTWARE));
+            } else if ( url.startsWith(AbcServlet.PREFIX_CLANKY) ) {
+                context.put(AbcServlet.VAR_PREFIX,new UrlUtils(AbcServlet.PREFIX_CLANKY));
+            } else {
+                context.put(AbcServlet.VAR_PREFIX,new UrlUtils(null));
+            }
         }
-        request.setAttribute(AbcServlet.VAR_CONTEXT,context);
+        request.setAttribute(AbcServlet.ATTRIB_CONTEXT,context);
         return context;
     }
 
@@ -190,6 +210,25 @@ public class AbcServlet extends VelocityServlet {
         List errors = (List) context.get(VAR_MESSAGES);
         if ( errors==null ) errors = new ArrayList(3);
         errors.add(message);
+    }
+
+    /**
+     * Redirects to desired URL, keeping session and prefix.
+     */
+    public void redirect(String url, HttpServletResponse response, Context context) throws IOException {
+        UrlUtils urlUtils = (UrlUtils) context.get(AbcServlet.VAR_PREFIX);
+        String url2 = urlUtils.constructRedirectURL(url,response);
+        response.sendRedirect(url2);
+    }
+
+    /**
+     * Dispatches to desired URL, keeping prefix.
+     */
+    public void dispatch(String url, HttpServletRequest request, HttpServletResponse response, Context context) throws ServletException, IOException {
+        UrlUtils urlUtils = (UrlUtils) context.get(AbcServlet.VAR_PREFIX);
+        url = urlUtils.constructDispatchURL("/ViewCategory");
+        RequestDispatcher dispatcher = request.getRequestDispatcher(url);
+        dispatcher.forward(request,response);
     }
 
     /**

@@ -9,6 +9,7 @@
 package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Category;
@@ -58,8 +59,8 @@ public class ViewRelation extends AbcServlet {
         if ( relation.getParent() instanceof Item ) return null;// redirect to item
         if ( relation.getParent() instanceof Category ) {
             if ( relation.getChild() instanceof Item ) return null;// redirect to item
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/ViewCategory");
-            dispatcher.forward(request,response);
+            // redirect to category otherwise
+            dispatch("/ViewCategory",request,response,ctx);
         }
         return null;
     }

@@ -43,21 +43,49 @@
 
     <servlet-mapping>
         <servlet-name>ViewCategory</servlet-name>
-        <url-pattern>/ViewCategory</url-pattern>
+        <url-pattern>/hardware/ViewCategory</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewCategory</servlet-name>
+        <url-pattern>/software/ViewCategory</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewCategory</servlet-name>
+        <url-pattern>/clanky/ViewCategory</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>ViewRelation</servlet-name>
-        <url-pattern>/ViewRelation</url-pattern>
+        <url-pattern>/hardware/ViewRelation</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewRelation</servlet-name>
+        <url-pattern>/software/ViewRelation</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewRelation</servlet-name>
+        <url-pattern>/clanky/ViewRelation</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>EditCategory</servlet-name>
-        <url-pattern>/EditCategory</url-pattern>
+        <url-pattern>/hardware/EditCategory</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditCategory</servlet-name>
+        <url-pattern>/software/EditCategory</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditCategory</servlet-name>
+        <url-pattern>/clanky/EditCategory</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>ViewIcons</servlet-name>
         <url-pattern>/SelectIcon</url-pattern>
     </servlet-mapping>
+
+    <welcome-file-list>
+        <welcome-file>index.vm</welcome-file>
+    </welcome-file-list>
 </web-app>

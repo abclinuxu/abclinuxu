@@ -36,7 +36,7 @@ public class Cache {
      */
     public void store(GenericObject obj) {
         try {
-            if ( obj instanceof Category ) {
+            if ( obj instanceof Category || obj instanceof User ) {
                 data.put(obj,new CachedObject(obj,System.currentTimeMillis()+SYNC_INTERVAL));
                 modCount++;
                 return;
@@ -62,7 +62,7 @@ public class Cache {
      */
     public GenericObject load(GenericObject obj) {
         try {
-            if ( obj instanceof Category ) {
+            if ( obj instanceof Category || obj instanceof User ) {
                 CachedObject cached = (CachedObject) data.get(obj);
                 if ( cached!=null ) {
                     return cached.object;
@@ -80,7 +80,7 @@ public class Cache {
      */
     public void remove(GenericObject obj) {
         try {
-            if ( obj instanceof Category ) {
+            if ( obj instanceof Category || obj instanceof User ) {
                 data.remove(obj);
                 modCount++;
                 return;
@@ -103,7 +103,7 @@ public class Cache {
      */
     private CachedObject loadCachedObject(GenericObject obj) {
         try {
-            if ( obj instanceof Category ) {
+            if ( obj instanceof Category || obj instanceof User ) {
                 return (CachedObject) data.get(obj);
             }
         } catch (Exception e) {

@@ -120,8 +120,7 @@ public class EditCategory extends AbcServlet {
             return getTemplate("add/category.vm");
         }
 
-        String url = response.encodeRedirectURL("/ViewRelation?relationId="+relation.getId());
-        response.sendRedirect(url);
+        redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
         return null;
     }
 }

@@ -33,21 +33,11 @@ import java.util.List;
  * <dl>
  * <dt>PARAM_CATEGORY_ID</dt>
  * <dd>PK of asked Category, number.</dd>
- * <dt>PARAM_CATEGORY_KIND</dt>
- * <dd>Specifies kind of category. Possible values are <code>KIND_ARTICLE</code>, <code>KIND_HARDWARE</code>
- * and <code>KIND_SOFTWARE</code>. Different kinds may have different behaviour (HW and SW displays all
- * objects, sorted alphabetically, article displays only few freshest articles). They also offer different
- * kinds of Items to be created.</dd>
  * </dl>
  */
 public class ViewCategory extends AbcServlet {
     public static final String VAR_CATEGORY = "CATEGORY";
     public static final String PARAM_CATEGORY_ID = "categoryId";
-    public static final String PARAM_CATEGORY_KIND = "kind";
-
-    public static final String KIND_ARTICLE = "article";
-    public static final String KIND_HARDWARE = "hw";
-    public static final String KIND_SOFTWARE = "sw";
 
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         validateUserSession(request,response,ctx);
