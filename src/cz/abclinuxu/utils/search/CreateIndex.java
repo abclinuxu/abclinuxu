@@ -13,7 +13,7 @@ import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.ConfigurationException;
-import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.utils.freemarker.Tools;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.apache.lucene.index.IndexWriter;

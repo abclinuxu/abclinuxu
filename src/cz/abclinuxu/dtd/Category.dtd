@@ -2,4 +2,4 @@
 <!ELEMENT name (#PCDATA)> <!-- maximum length is few words -->
 <!ELEMENT icon (#PCDATA)> <!-- absolute path including protocol, or relative path to icon directory -->
 <!ELEMENT desc (#PCDATA)> <!-- longer description of this category, to be displayed at the top of category view -->
-<!ELEMENT note (#PCDATA)> <!-- notes about this category. to be displayed at bottom of the category view -->
+<!ATTLIST desc format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->

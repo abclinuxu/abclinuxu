@@ -1,0 +1,195 @@
+options {
+   STATIC = false;
+   UNICODE_INPUT = true;
+   IGNORE_CASE = true;
+   DEBUG_PARSER = false;
+   DEBUG_TOKEN_MANAGER = false;
+}
+
+PARSER_BEGIN(StripTags)
+
+package cz.abclinuxu.utils.parser.strip;
+
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.InputStreamReader;
+
+public class StripTags {
+    StringBuffer content = new StringBuffer();
+    StringBuffer tag = new StringBuffer();
+    boolean isClosed;
+
+    public static String process(String input) throws Exception {
+        Reader reader = new StringReader(input);
+	return process(reader);
+    }
+    
+    public static String process(Reader input) throws Exception {
+	StripTags parser = new StripTags(input);	
+        return parser.start();
+    }
+        
+    public static void main(String[] args) {
+        try {
+        String result;
+	if (args.length==0) {
+            Reader reader = new InputStreamReader(System.in);
+	    result = process(reader);
+	} else
+	    result = process(args[0]);
+	
+        System.out.println(result);
+	} catch (Throwable t) {
+	    t.printStackTrace();
+	}
+    }
+    
+    void appendTag(String s) {
+        tag.insert(0,s);
+//	log("Appended to TAG: "+s);
+    }
+    
+    void appendContent(String s) {
+        content.append(s);
+//	log("Appended to CONTENT: "+s);
+    }
+    
+    void log(String s) {
+        StringBuffer content = new StringBuffer();
+	for(int i=0;i<s.length();i++) content.append('#');
+        System.out.println(content.toString());
+	System.out.println(s);
+        System.out.println(content.toString());
+    }
+}
+
+PARSER_END(StripTags)
+
+SKIP : 
+{
+  < "<!--" ( ~[">"] )* "->" >
+}
+
+TOKEN :
+{
+   <OTAG:	   "<"  	>  : TAG
+|  <CTAG:	   "</" 	>  : TAG
+|  <PCDATA:	   ( ~["<"] )+  >
+}
+
+<TAG> TOKEN :
+{
+  <TAG_NAME: (["a"-"z","0"-"9"])+ > : ATTRIBS
+| <NOT_TAG_NAME:  (~["a"-"z","0"-"9","<"])* > : DEFAULT
+}
+
+<ATTRIBS> TOKEN :
+{
+   <ETAG:	   ">" >       : DEFAULT
+|  <EQUAL:	   "=" >       : ATTRVAL
+|  <#ALPHA:	   ["a"-"z"]                >
+|  <#NUM:	   ["0"-"9"]		    >
+|  <#ALPHANUM:     <ALPHA> | <NUM>	    >
+|  <ATRIB_NAME:	   <ALPHA> ( <ALPHANUM> )*  >
+|  <SPACE:         (" " | "\t" | "\n" | "\r")+ >
+|  <WRONG_ATTRIB:  ( ~[">","=","a"-"z","0"-"9"," ","\t","\n","\r"] )*  > : DEFAULT
+}
+
+
+<ATTRVAL> TOKEN :
+{
+   <CDATA:   "'" ( ~["'"] )* "'"
+	   | "\"" ( ~["\""] )* "\""
+	   | ( ~[">", "\"", "'", " ", "\t", "\n", "\r"] )+
+                      > : ATTRIBS
+|  <EMPTY_VALUE:   ([])? > : ATTRIBS
+}
+
+
+// parser
+
+String start() : 
+{ Token s,t; isClosed = false; tag.setLength(0); }
+{
+   (
+      <OTAG> openTag() { if (!isClosed) appendContent(tag.toString()); }
+    |
+      <CTAG> closeTag() { if (!isClosed) appendContent(tag.toString()); }
+    | 
+      content()
+   )*
+   <EOF>
+   { return content.toString(); }
+}
+
+void openTag() : {Token s; }
+{
+  (
+      s = <NOT_TAG_NAME> { appendTag("<"+s.image); }
+    |
+      s = <TAG_NAME> tagBody() { appendTag("<"+s.image); }
+  )
+}
+
+
+void tagBody() : {Token s;}
+{
+ try {
+  ( 
+      <ETAG> { isClosed = true; }
+    |
+      s = <SPACE> tagBody() { appendTag(s.image); }
+    |
+      s = <WRONG_ATTRIB> { appendTag(s.image); }
+    |
+      s = <ATRIB_NAME> [ attribValue() ] tagBody() { appendTag(s.image); }
+    |
+      <EOF>
+  )
+  } catch (ParseException e) {
+    isClosed = false;
+    token_source.SwitchTo(DEFAULT);
+  }
+}
+
+
+void attribValue() : {Token s;}
+{
+  (
+      <EMPTY_VALUE> 
+    |
+      <EQUAL> attribValue() { appendTag("="); }
+    |
+      s = <CDATA> { appendTag(s.image); }
+  )
+}
+
+void closeTag() : {Token s;}
+{
+ try {
+  (
+      s = <NOT_TAG_NAME> { appendTag(s.image); appendTag("</"); }
+    |
+      s = <TAG_NAME> finishCloseTag() { appendTag(s.image); appendTag("</"); }
+  )
+  } catch (Throwable e) {
+    isClosed = false;
+    token_source.SwitchTo(DEFAULT);
+  }
+}
+
+void finishCloseTag(): {Token s;}
+{
+     <ETAG> { isClosed = true; }
+   |
+     (s = <EQUAL> | s = <SPACE> | s = <ATRIB_NAME> | s = <WRONG_ATTRIB>)
+     { appendTag(s.image); token_source.SwitchTo(DEFAULT); }
+}
+
+void content() : { Token s; }
+{
+    ( s = <PCDATA> | s = <EQUAL> )
+    {
+      appendContent(s.image);
+    }
+}

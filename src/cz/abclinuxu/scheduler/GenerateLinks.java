@@ -15,7 +15,7 @@ import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
-import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.InstanceUtils;
 

@@ -12,7 +12,6 @@ import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.servlets.select.SelectIcon;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Relation;
@@ -22,6 +21,8 @@ import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.format.Format;
+import cz.abclinuxu.utils.format.FormatDetector;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -34,7 +35,7 @@ import javax.servlet.RequestDispatcher;
 import java.util.Map;
 
 /**
- * Class for manipulation with Category.<p>
+ * Class for manipulation with Category.
  */
 public class EditCategory extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditCategory.class);
@@ -123,7 +124,12 @@ public class EditCategory extends AbcFMServlet {
         Element root = document.addElement("data");
         root.addElement("name").addText(name);
         if ( icon!=null && icon.length()>0 ) root.addElement("icon").addText(icon);
-        if ( note!=null && note.length()>0 ) root.addElement("note").addText(note);
+        if ( note!=null && note.length()>0 ) {
+            Element element = root.addElement("note");
+            element.addText(note);
+            Format format = FormatDetector.detect(note);
+            element.addAttribute("format", Integer.toString(format.getId()));
+        }
         document.setRootElement(root);
 
         Category category = new Category();
@@ -187,7 +193,7 @@ public class EditCategory extends AbcFMServlet {
         Category category = (Category) env.get(VAR_CATEGORY);
         persistance.synchronize(category);
         Document document = category.getData();
-        Node node = DocumentHelper.makeElement(document,"data/name");
+        Element node = DocumentHelper.makeElement(document,"data/name");
         tmp = (String) params.get(PARAM_NAME);
         node.setText(tmp);
 
@@ -198,6 +204,8 @@ public class EditCategory extends AbcFMServlet {
         node = DocumentHelper.makeElement(document,"data/note");
         tmp = (String) params.get(PARAM_NOTE);
         node.setText(tmp);
+        Format format = FormatDetector.detect(tmp);
+        node.addAttribute("format", Integer.toString(format.getId()));
 
         tmp = (String) params.get(PARAM_OPEN);
         category.setOpen( "yes".equals(tmp) );

@@ -12,7 +12,7 @@ import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.utils.InstanceUtils;
-import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.exceptions.MissingArgumentException;

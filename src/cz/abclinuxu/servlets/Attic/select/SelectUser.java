@@ -10,7 +10,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.config.impl.AbcConfig;

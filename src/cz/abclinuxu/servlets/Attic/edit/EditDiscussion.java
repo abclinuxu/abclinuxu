@@ -17,8 +17,10 @@ import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.utils.InstanceUtils;
-import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.format.Format;
+import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.monitor.*;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.PersistanceException;
@@ -675,7 +677,10 @@ public class EditDiscussion extends AbcFMServlet {
     private boolean setText(Map params, Element root, Map env) {
         String tmp = (String) params.get(PARAM_TEXT);
         if ( tmp!=null && tmp.length()>0 ) {
-            DocumentHelper.makeElement(root,"text").setText(tmp);
+            Element element = DocumentHelper.makeElement(root,"text");
+            element.setText(tmp);
+            Format format = FormatDetector.detect(tmp);
+            element.addAttribute("format", Integer.toString(format.getId()));
         } else {
             ServletUtils.addError(PARAM_TEXT, "Zadejte text va¹eho dotazu!", env, null);
             return false;

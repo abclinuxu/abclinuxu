@@ -15,6 +15,8 @@ import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.format.Format;
+import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.monitor.*;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.PersistanceException;
@@ -169,7 +171,12 @@ public class EditSoftware extends AbcFMServlet {
 
         document = DocumentHelper.createDocument();
         root = document.addElement("data");
-        root.addElement("text").addText(text);
+
+        Element element = root.addElement("text");
+        element.addText(text);
+        Format format = FormatDetector.detect(text);
+        element.addAttribute("format", Integer.toString(format.getId()));
+
         if ( url!=null && url.length()>0 )
             root.addElement("url").addText(url);
         if ( version!=null && version.length()>0 )
@@ -213,7 +220,12 @@ public class EditSoftware extends AbcFMServlet {
 
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
-        root.addElement("text").addText(text);
+
+        Element element = root.addElement("text");
+        element.addText(text);
+        Format format = FormatDetector.detect(text);
+        element.addAttribute("format", Integer.toString(format.getId()));
+
         if ( url!=null && url.length()>0 )
             root.addElement("url").addText(url);
         if ( version!=null && version.length()>0 )
@@ -275,7 +287,11 @@ public class EditSoftware extends AbcFMServlet {
             return FMTemplateSelector.select("EditSoftware","edit_record",env,request);
         }
 
-        DocumentHelper.makeElement(document,"data/text").setText(text);
+        Element element = DocumentHelper.makeElement(document,"data/text");
+        element.setText(text);
+        Format format = FormatDetector.detect(text);
+        element.addAttribute("format", Integer.toString(format.getId()));
+        
         if ( url!=null )
             DocumentHelper.makeElement(document,"data/url").setText(url);
         if ( version!=null )

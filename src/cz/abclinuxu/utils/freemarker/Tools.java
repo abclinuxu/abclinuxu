@@ -3,7 +3,7 @@
  * Date: Jan 4, 2003
  * Time: 3:23:18 PM
  */
-package cz.abclinuxu.utils;
+package cz.abclinuxu.utils.freemarker;
 
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.exceptions.PersistanceException;
@@ -19,6 +19,9 @@ import cz.abclinuxu.data.view.Discussion;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.format.*;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.InstanceUtils;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.dom4j.Element;
@@ -28,7 +31,6 @@ import org.apache.regexp.RESyntaxException;
 
 import java.util.*;
 import java.util.prefs.Preferences;
-import java.io.StringReader;
 import java.io.IOException;
 
 import freemarker.template.*;
@@ -43,12 +45,10 @@ import javax.servlet.http.Cookie;
 public class Tools implements Configurable {
     static Logger log = Logger.getLogger(Tools.class);
 
-    public static final String PREF_REGEXP_EMPTY_LINE = "RE_EMPTY_LINE";
-    public static final String PREF_REGEXP_LINE_BREAK = "RE_LINE_BREAK";
     public static final String PREF_REGEXP_REMOVE_TAGS = "RE_REMOVE_TAGS";
 
     static Persistance persistance = PersistanceFactory.getPersistance();
-    static RE lineBreaks, reRemoveTags, emptyLine;
+    static RE reRemoveTags;
 
     static {
         Tools tools = new Tools();
@@ -66,11 +66,7 @@ public class Tools implements Configurable {
 
     public void configure(Preferences prefs) throws ConfigurationException {
         try {
-            String pref = prefs.get(PREF_REGEXP_LINE_BREAK,null);
-            lineBreaks = new RE(pref, RE.MATCH_CASEINDEPENDENT);
-            pref = prefs.get(PREF_REGEXP_EMPTY_LINE, null);
-            emptyLine = new RE(pref, RE.MATCH_MULTILINE);
-            pref = prefs.get(PREF_REGEXP_REMOVE_TAGS, null);
+            String pref = prefs.get(PREF_REGEXP_REMOVE_TAGS, null);
             reRemoveTags = new RE(pref, RE.MATCH_SINGLELINE);
         } catch (RESyntaxException e) {
             log.error("Cannot create regexp to find line breaks!", e);
@@ -102,6 +98,16 @@ public class Tools implements Configurable {
     public static String xpath(Node element, String xpath) {
         Node node = element.selectSingleNode(xpath);
         return (node==null)? null : node.getText();
+    }
+
+    /**
+     * Extracts element found by xpath from element.
+     * @param element XML element
+     * @param xpath xpath expression
+     * @return extracted Element
+     */
+    public static Element element(Node element, String xpath) {
+        return (Element) element.selectSingleNode(xpath);
     }
 
     /**
@@ -451,16 +457,6 @@ public class Tools implements Configurable {
     }
 
     /**
-     * @deprecated use method below
-     * @param str
-     * @return
-     */
-    public String render(String str) {
-        log.warn("render with one argument called!");
-        return render(str,null);
-    }
-
-    /**
      * This method performs visualization enhancements. If string
      * doesn't contain already HTML breaks (&lt;p>, &lt;br>), it inserts them.
      * It also replaces smilies with appropriate images.
@@ -468,67 +464,55 @@ public class Tools implements Configurable {
     public String render(String str, Object o) {
         if ( Misc.empty(str) ) return "";
 
+        Map params = new HashMap(1,1.0f);
         boolean renderEmoticons = true;
         if ( o!=null && (o instanceof User) ) {
             Node node = ((User)o).getData().selectSingleNode("/data/settings/emoticons");
             if ( node!=null && "no".equals(node.getText()) )
                 renderEmoticons = false;
         }
+        if (renderEmoticons)
+            params.put(Renderer.RENDER_EMOTICONS, Boolean.TRUE);
 
-        String tmp = str;
+        Format format = FormatDetector.detect(str);
+        if (format.equals(Format.SIMPLE))
+            return SimpleFormatRenderer.getInstance().render(str,params);
+        else
+            return HTMLFormatRenderer.getInstance().render(str,params);
+    }
 
-        if (renderEmoticons) {
-            StringReader reader = new StringReader(str);
-            StringBuffer sb = new StringBuffer((int)(1.1*str.length()));
+    /**
+     * This method renders given Element. It may contain attribute, which specify
+     * format of the text.
+     */
+    public String render(Object el, Object o) {
+        if (el==null || !(el instanceof Element))
+            return "";
 
-            try {
-                int c = reader.read(), d, e;
-                while (c!=-1) {
-                    if (c==':' || c==';') {
-                        d = reader.read();
-                        if ( d=='-' ) {
-                            e = reader.read();
-                            switch (e) {
-                                case -1 :
-                                    sb.append((char) c);
-                                    sb.append((char) d);
-                                    break;
-                                case ')':
-                                    if (c==':')
-                                        sb.append("<img src=\"/images/smile/usmev.gif\" alt=\":-)\" class=\"emo\">");
-                                    else
-                                        sb.append("<img src=\"/images/smile/mrk.gif\" alt=\";-)\" class=\"emo\">");
-                                    break;
-                                case '(':
-                                    sb.append("<img src=\"/images/smile/smutek.gif\" alt=\":-(\" class=\"emo\">");
-                                    break;
-                                case 'D':
-                                    sb.append("<img src=\"/images/smile/smich.gif\" alt=\":-D\" class=\"emo\">");
-                                    break;
-                                default:
-                                    sb.append((char) c);
-                                    sb.append((char) d);
-                                    sb.append((char) e);
-                            }
-                        } else {
-                            sb.append((char) c);
-                            if (d!=-1)
-                                sb.append((char) d);
-                        }
-                    } else {
-                        sb.append((char)c);
-                    }
-                    c = reader.read();
-                }
-            } catch (IOException e) {
-                log.error("Error while rendering emoticons!", e);
-            }
+        Map params = new HashMap(1,1.0f);
+        boolean renderEmoticons = true;
+        if ( o!=null && (o instanceof User) ) {
+            Node node = ((User)o).getData().selectSingleNode("/data/settings/emoticons");
+            if ( node!=null && "no".equals(node.getText()) )
+                renderEmoticons = false;
+        }
+        if (renderEmoticons)
+            params.put(Renderer.RENDER_EMOTICONS, Boolean.TRUE);
 
-            tmp = sb.toString();
+        Format format = null;
+        Element element = (Element) el;
+        String input = element.getText();
+        int f = Misc.parseInt(element.attributeValue("format"),-1);
+        switch(f) {
+            case -1: format = FormatDetector.detect(input); break;
+            case 0: format = Format.SIMPLE; break;
+            case 1: format = Format.HTML;
         }
 
-        if ( lineBreaks.match(tmp) ) return tmp;
-        return emptyLine.subst(tmp,"<p>\n");
+        if (format.equals(Format.SIMPLE))
+            return SimpleFormatRenderer.getInstance().render(input,params);
+        else
+            return HTMLFormatRenderer.getInstance().render(input,params);
     }
 
     /**

@@ -11,7 +11,7 @@ import junit.textui.TestRunner;
 
 import java.io.FileInputStream;
 
-import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.utils.freemarker.Tools;
 
 public class TestCreateIndex extends TestCase {
 

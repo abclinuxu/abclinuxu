@@ -18,7 +18,7 @@ import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.InstanceUtils;
-import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.edit.EditRelation;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;

@@ -12,6 +12,8 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.format.Format;
+import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.monitor.*;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 
@@ -255,7 +257,10 @@ public class EditDriver extends AbcFMServlet {
     private boolean setNote(Map params, Document document, Map env) {
         String tmp = (String) params.get(PARAM_NOTE);
         if ( tmp!=null && tmp.length()>0 ) {
-            DocumentHelper.makeElement(document, "data/note").setText(tmp);
+            Element element = DocumentHelper.makeElement(document, "data/note");
+            element.setText(tmp);
+            Format format = FormatDetector.detect(tmp);
+            element.addAttribute("format", Integer.toString(format.getId()));
         } else {
             ServletUtils.addError(PARAM_NOTE, "Zadejte poznámku!", env, null);
             return false;

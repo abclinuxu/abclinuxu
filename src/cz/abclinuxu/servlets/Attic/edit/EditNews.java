@@ -21,6 +21,7 @@ import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.utils.news.NewsCategories;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.email.EmailSender;
 
 import javax.servlet.http.HttpServletRequest;
@@ -269,6 +270,7 @@ public class EditNews extends AbcFMServlet {
         }
         Element element = DocumentHelper.makeElement(item.getData(), "/data/content");
         element.setText(text);
+        element.addAttribute("format", Integer.toString(Format.HTML.getId()));
         return true;
     }
 

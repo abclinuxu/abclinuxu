@@ -2,7 +2,6 @@
  * User: literakl
  * Date: Feb 4, 2002
  * Time: 2:06:36 PM
- * (c)2001-2002 Tinnio
  */
 package cz.abclinuxu.servlets.edit;
 

@@ -7,7 +7,7 @@ package cz.abclinuxu.utils;
 
 import junit.framework.*;
 import junit.textui.TestRunner;
-import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.utils.freemarker.Tools;
 
 /**
  * Test of Tools features

@@ -22,6 +22,7 @@
 <!ELEMENT author (#PCDATA)> <!-- unknow user's name -->
 <!ELEMENT title (#PCDATA)> <!-- title of this reaction, usually question -->
 <!ELEMENT text (#PCDATA)> <!-- its text -->
+<!ATTLIST text format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT frozen (#PCDATA)> <!-- if present, discussion is frozen and noone can add more comments -->
 
 <!-- Item.Request -->
@@ -36,6 +37,7 @@
 <!ELEMENT version (#PCDATA)> <!-- driver's version -->
 <!ELEMENT url (#PCDATA)> <!-- its url -->
 <!ELEMENT note (#PCDATA)> <!-- its description -->
+<!ATTLIST note format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 
 <!-- Item.Survey -->
 <!ELEMENT anketa (title?,screen+,choices?)>
@@ -54,6 +56,7 @@
 <!ELEMENT data (category?, content, approved_by?)>
 <!ELEMENT category (#PCDATA)> <!-- key of category, to which the news was assigned to -->
 <!ELEMENT content (#PCDATA)> <!-- text of the news -->
+<!ATTLIST content format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT approved_by (#PCDATA)> <!-- id of admin, who approved the news -->
 
 <!-- Item.GROUP -->

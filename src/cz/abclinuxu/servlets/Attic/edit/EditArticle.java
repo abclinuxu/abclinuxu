@@ -14,6 +14,8 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.format.Format;
+import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.PersistanceException;
 
@@ -29,7 +31,6 @@ import java.text.ParseException;
 
 /**
  * Class for manipulation of articles.
- * todo implement flow of checks: Author enters article, revisor corrects grammar, editor approves article and selects publish date.
  */
 public class EditArticle extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditArticle.class);
@@ -321,6 +322,7 @@ public class EditArticle extends AbcFMServlet {
         for ( Iterator iter = nodes.iterator(); iter.hasNext(); )
             ((Node) iter.next()).detach();
 
+        Format format = FormatDetector.detect(content);
         if ( reBreak.match(content) ) {
             StringCharacterIterator stringIter = new StringCharacterIterator(content);
             String title, page; int start, end; boolean canContinue;
@@ -336,10 +338,12 @@ public class EditArticle extends AbcFMServlet {
 
                 Element element = data.addElement("content");
                 element.addAttribute("title", title);
+                element.addAttribute("format", Integer.toString(format.getId()));
                 element.setText(page);
             } while (canContinue);
         } else {
             Element element = DocumentHelper.makeElement(record.getData(), "data/content");
+            element.addAttribute("format", Integer.toString(format.getId()));
             element.setText(content);
         }
 

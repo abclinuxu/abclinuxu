@@ -9,6 +9,7 @@ package cz.abclinuxu.utils;
 import junit.framework.*;
 import junit.textui.TestRunner;
 import org.apache.log4j.BasicConfigurator;
+import cz.abclinuxu.utils.freemarker.Tools;
 
 public class TestText extends TestCase {
 

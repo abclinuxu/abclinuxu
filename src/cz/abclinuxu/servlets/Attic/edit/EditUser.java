@@ -20,7 +20,9 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.view.ViewUser;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.utils.format.Format;
+import cz.abclinuxu.utils.format.FormatDetector;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.security.Roles;
@@ -960,7 +962,10 @@ public class EditUser extends AbcFMServlet {
                 profile.remove(node);
             return true;
         }
-        DocumentHelper.makeElement(profile, "about_myself").setText(about);
+        Element element = DocumentHelper.makeElement(profile, "about_myself");
+        element.setText(about);
+        Format format = FormatDetector.detect(about);
+        element.addAttribute("format", Integer.toString(format.getId()));
         return true;
     }
 

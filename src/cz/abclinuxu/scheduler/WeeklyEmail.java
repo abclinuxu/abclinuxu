@@ -10,7 +10,7 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.DateTool;
-import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;

@@ -11,7 +11,7 @@ import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
-import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.config.impl.AbcConfig;

@@ -88,12 +88,17 @@
             </node>
           </node>
           <node name="freemarker">
-            <map/>
-            <node name="FMUtils">
-              <map>
-                <entry key="directory.templates" value="WEB-INF/freemarker"/>
-              </map>
-            </node>
+              <map/>
+              <node name="FMUtils">
+                  <map>
+                      <entry key="directory.templates" value="WEB-INF/freemarker"/>
+                  </map>
+              </node>
+              <node name="Tools">
+                  <map>
+                      <entry key="RE_REMOVE_TAGS" value="&lt;[\w\s\d/=:.~?\&quot;]+&gt;"/>
+                  </map>
+              </node>
           </node>
           <node name="email">
             <map/>
@@ -105,12 +110,21 @@
               </map>
             </node>
           </node>
-          <node name="Tools">
-              <map>
-                  <entry key="RE_LINE_BREAK" value="(&lt;br&gt;)|(&lt;p&gt;)|(&lt;div&gt;)"/>
-                  <entry key="RE_EMPTY_LINE" value="(\r\n){2}|(\n){2}"/>
-                  <entry key="RE_REMOVE_TAGS" value="&lt;[\w\s\d/=:.~?\,_&quot;]+&gt;"/>
-              </map>
+          <node name="format">
+              <map/>
+              <node name="FormatDetector">
+                  <map>
+                      <entry key="RE_BREAK" value="(&lt;br&gt;)|(&lt;p&gt;)|(&lt;div&gt;)"/>
+                  </map>
+              </node>
+              <node name="SharedConfig">
+                  <map>
+                      <entry key="usmev" value="&lt;img src=&quot;/images/smile/usmev.gif&quot; alt=&quot;:-)&quot; class=&quot;emo&quot;&gt;"/>
+                      <entry key="smich" value="&lt;img src=&quot;/images/smile/smich.gif&quot; alt=&quot;:-D&quot; class==&quot;emo&quot;&gt;"/>
+                      <entry key="mrk" value="&lt;img src=&quot;/images/smile/mrk.gif&quot; alt=&quot;;-)&quot; class==&quot;emo&quot;&gt;"/>
+                      <entry key="smutek" value="&lt;img src=&quot;/images/smile/smutek.gif&quot; alt=&quot;:-(&quot; class==&quot;emo&quot;&gt;"/>
+                  </map>
+              </node>
           </node>
         </node>
         <node name="persistance">

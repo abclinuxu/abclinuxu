@@ -3,6 +3,7 @@
 <!ELEMENT data (content+,related?,resources?)>
 <!ELEMENT content (#PCDATA)> <!-- content of the article (or its part) -->
 <!ATTLIST content title (#PCDATA) #OPTIONAL> <!-- if there are multiple pages, you must name them -->
+<!ATTLIST content format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT related (link+)> <!-- related articles on portal -->
 <!ELEMENT resources (link+)> <!-- related resources outside of portal -->
 <!ELEMENT link (#PCDATA)> <!-- contains text of link -->
@@ -13,13 +14,18 @@
 <!ELEMENT price (#PCDATA)> <!-- user's evaluation of price -->
 <!ELEMENT driver (#PCDATA)> <!-- kind of driver: kernel, XFree, binary -->
 <!ELEMENT setup (#PCDATA)> <!-- how to set up this hardware -->
+<!ATTLIST setup format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT params (#PCDATA)> <!-- technical parameters (resolution, max syncs, ..) -->
+<!ATTLIST params format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT identification (#PCDATA)> <!-- how Linux identifies this hardware (/proc, lspci) -->
+<!ATTLIST identification format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT note (#PCDATA)> <!-- other note, user's experience -->
+<!ATTLIST note format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 
 <!-- Record.SOFTWARE -->
 <!ELEMENT data (text,url?,version?)>
 <!ELEMENT text (#PCDATA)> <!-- instructions -->
+<!ATTLIST text format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT url (#PCDATA)> <!-- URL, probably link to homepage of the software -->
 <!ELEMENT version (#PCDATA)> <!-- version of the software -->
 
@@ -33,4 +39,5 @@
 <!ELEMENT author_id (#PCDATA)> <!-- id of known user -->
 <!ELEMENT title (#PCDATA)> <!-- title of this reaction -->
 <!ELEMENT text (#PCDATA)> <!-- text of comment -->
+<!ATTLIST text format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT censored (#PCDATA)> <!-- if present, the comment is being censored -->

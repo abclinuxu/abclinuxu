@@ -15,7 +15,7 @@ import cz.abclinuxu.servlets.view.ViewCategory;
 import cz.abclinuxu.servlets.view.ViewRelation;
 import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.Sorters2;
-import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;

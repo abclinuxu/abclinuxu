@@ -19,7 +19,7 @@ import cz.abclinuxu.data.view.ACL;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.utils.InstanceUtils;
-import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.news.NewsCategories;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.security.Roles;

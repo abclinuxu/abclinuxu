@@ -12,7 +12,7 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Record;
 import cz.abclinuxu.utils.InstanceUtils;
-import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.InvalidDataException;
