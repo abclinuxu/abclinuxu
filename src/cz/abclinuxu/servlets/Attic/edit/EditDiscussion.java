@@ -60,7 +60,7 @@ public class EditDiscussion extends AbcFMServlet {
             relation = (Relation) persistance.findById(relation);
             persistance.synchronize(relation.getChild());
             env.put(VAR_RELATION,relation);
-        } else if ( !action.equals(ACTION_ADD_QUESTION) )
+        } else if ( ! ACTION_ADD_QUESTION.equals(action) )
             throw new MissingArgumentException("Chybí parametr relationId!");
 
         if ( ACTION_ADD_DISCUSSION.equals(action) )

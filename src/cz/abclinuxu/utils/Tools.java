@@ -375,7 +375,7 @@ public class Tools {
         boolean renderEmoticons = true;
         if ( o!=null && (o instanceof User) ) {
             Node node = ((User)o).getData().selectSingleNode("/data/settings/emoticons");
-            if ( "no".equals(node.getText()) )
+            if ( node!=null && "no".equals(node.getText()) )
                 renderEmoticons = false;
         }
 
