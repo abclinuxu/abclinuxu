@@ -40,6 +40,7 @@ public final class SQLTool implements Configurable {
     public static final String PREF_QUESTION_RELATIONS_BY_USER = "relations.question.by.user";
     public static final String PREF_COMMENT_RELATIONS_BY_USER = "relations.comment.by.user";
     public static final String PREF_USERS_WITH_WEEKLY_EMAIL = "users.with.weekly.email";
+    public static final String PREF_USERS_WITH_FORUM_BY_EMAIL = "users.with.forum.by.email";
     public static final String PREF_USERS_WITH_ROLES = "users.with.roles";
     public static final String PREF_USERS_IN_GROUP = "users.in.group";
     public static final String PREF_ITEMS_WITH_TYPE = "items.with.type";
@@ -60,7 +61,7 @@ public final class SQLTool implements Configurable {
     private String relationsNews, relationsNewsWithinPeriod;
     private String relationsNewsByUser, relationsRecordByUserAndType, relationsArticleByUser;
     private String relationsQuestionsByUser, relationsCommentsByUser;
-    private String usersWithWeeklyEmail, usersWithRoles, usersInGroup;
+    private String usersWithWeeklyEmail, usersWithForumByEmail, usersWithRoles, usersInGroup;
     private String maxPoll, maxUser;
     private String itemsByType;
     private String countArticlesByUser;
@@ -613,6 +614,19 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Finds users, that have active email and have subscribed forum by email.
+     * Use Qualifiers to set additional parameters.
+     * @return list of Integers of user ids.
+     */
+    public List findUsersWithForumByEmail(Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(usersWithForumByEmail);
+        List params = new ArrayList();
+        appendQualifiers(sb, qualifiers, params);
+        return loadUsers(sb.toString(), params);
+    }
+
+    /**
      * Finds users, that have at least one role.
      * Use Qualifiers to set additional parameters.
      * @return list of Integers of user ids.
@@ -786,6 +800,7 @@ public final class SQLTool implements Configurable {
         relationsQuestionsByUser = getValue(PREF_QUESTION_RELATIONS_BY_USER, prefs);
         relationsCommentsByUser = getValue(PREF_COMMENT_RELATIONS_BY_USER, prefs);
         usersWithWeeklyEmail = getValue(PREF_USERS_WITH_WEEKLY_EMAIL, prefs);
+        usersWithForumByEmail = getValue(PREF_USERS_WITH_FORUM_BY_EMAIL, prefs);
         usersWithRoles = getValue(PREF_USERS_WITH_ROLES, prefs);
         usersInGroup = getValue(PREF_USERS_IN_GROUP, prefs);
         maxPoll = getValue(PREF_MAX_POLL, prefs);

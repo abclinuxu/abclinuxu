@@ -20,6 +20,7 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.email.monitor.*;
+import cz.abclinuxu.utils.email.forum.ForumPool;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -210,7 +211,7 @@ public class EditDiscussion extends AbcFMServlet {
         canContinue &= setItemAuthor(params, user, root, discussion, env);
 
         if ( !canContinue || params.get(PARAM_PREVIEW)!=null ) {
-            Comment comment = new Comment(root,new Date(),null,null,user);
+            Comment comment = new Comment(root,new Date(),new Integer(0),null,user);
             env.put(VAR_PREVIEW,comment);
             return FMTemplateSelector.select("EditDiscussion","ask_confirm",env,request);
         }
@@ -218,6 +219,9 @@ public class EditDiscussion extends AbcFMServlet {
         persistance.create(discussion);
         Relation rel2 = new Relation(relation.getChild(),discussion,relation.getId());
         persistance.create(rel2);
+
+        // run email forum
+        ForumPool.submitComment(rel2, discussion.getId(), 0, 0);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/ViewRelation?rid="+rel2.getId());
@@ -341,6 +345,10 @@ public class EditDiscussion extends AbcFMServlet {
         String content = comment.elementText("text");
         action.setProperty(DiscussionDecorator.PROPERTY_CONTENT, content);
         MonitorPool.scheduleMonitorAction(action);
+
+        // run email forum
+        int commentId = Misc.parseInt(comment.attributeValue("id"),0);
+        ForumPool.submitComment(relation, discussion.getId(), record.getId(), commentId);
 
         urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
         return null;
@@ -721,7 +729,7 @@ public class EditDiscussion extends AbcFMServlet {
      */
     private boolean setCommentAuthor(Map params, User user, Element root, Map env) {
         if ( user!=null ) {
-            DocumentHelper.makeElement(root, "author_id").setText(""+user.getId());
+            DocumentHelper.makeElement(root, "author_id").setText(Integer.toString(user.getId()));
         } else {
             String tmp = (String) params.get(PARAM_AUTHOR);
             if ( tmp!=null && tmp.length()>0 ) {
@@ -782,7 +790,7 @@ public class EditDiscussion extends AbcFMServlet {
         }
 
         last++;
-        comment.addAttribute("id",""+last);
+        comment.addAttribute("id",Integer.toString(last));
         return true;
     }
 

@@ -25,6 +25,7 @@ import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.email.EmailSender;
+import cz.abclinuxu.utils.email.forum.SubscribedUsers;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
 import org.apache.commons.fileupload.FileItem;
@@ -71,6 +72,7 @@ public class EditUser extends AbcFMServlet {
     public static final String PARAM_FORUM_PAGE_SIZE = "forum";
     public static final String PARAM_SUBSCRIBE_MONTHLY = "monthly";
     public static final String PARAM_SUBSCRIBE_WEEKLY = "weekly";
+    public static final String PARAM_SUBSCRIBE_FORUM = "forum";
     public static final String PARAM_PHOTO = "photo";
     public static final String PARAM_RETURN_TO_FORUM = "moveback";
     public static final String PARAM_USER_ROLES = "roles";
@@ -528,6 +530,9 @@ public class EditUser extends AbcFMServlet {
         node = document.selectSingleNode("/data/communication/email/newsletter");
         if ( node!=null )
             params.put(PARAM_SUBSCRIBE_MONTHLY, node.getText());
+        node = document.selectSingleNode("/data/communication/email/forum");
+        if ( node!=null )
+            params.put(PARAM_SUBSCRIBE_FORUM, node.getText());
 
         return FMTemplateSelector.select("EditUser", "editSubscription", env, request);
     }
@@ -544,8 +549,11 @@ public class EditUser extends AbcFMServlet {
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
             canContinue &= checkPassword(params, managed, env);
-        canContinue &= setWeeklySummary(params, managed);
-        canContinue &= setMonthlySummary(params, managed);
+        if (canContinue) {
+            canContinue &= setWeeklySummary(params, managed);
+            canContinue &= setMonthlySummary(params, managed);
+            canContinue &= setForumByEmail(params, managed);
+        }
 
         if ( !canContinue )
             return FMTemplateSelector.select("EditUser", "editSubscription", env, request);
@@ -1140,6 +1148,24 @@ public class EditUser extends AbcFMServlet {
         Element element = DocumentHelper.makeElement(user.getData(), "/data/communication/email/newsletter");
         String value = ("yes".equals(subscription))? "yes":"no";
         element.setText(value);
+        return true;
+    }
+
+    /**
+     * Subscribes user to email forum from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setForumByEmail(Map params, User user) {
+        String subscription = (String) params.get(PARAM_SUBSCRIBE_FORUM);
+        Element element = DocumentHelper.makeElement(user.getData(), "/data/communication/email/forum");
+        String value = ("yes".equals(subscription))? "yes":"no";
+        element.setText(value);
+        if("yes".equals(value))
+            SubscribedUsers.getInstance().addUser(user.getId(), user.getEmail());
+        else
+            SubscribedUsers.getInstance().removeUser(user.getId());
         return true;
     }
 

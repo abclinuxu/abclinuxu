@@ -18,6 +18,7 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.email.monitor.InstantSender;
+import cz.abclinuxu.utils.email.forum.CommentSender;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateExceptionHandler;
@@ -65,6 +66,7 @@ public class AbcInit extends HttpServlet {
         startArticlePoolMonitor();
         startSendingWeeklyEmails();
         startObjectMonitor();
+        startForumSender();
 
         log.info("Inicializace je hotova.");
     }
@@ -135,6 +137,14 @@ public class AbcInit extends HttpServlet {
     protected void startObjectMonitor() {
         InstantSender monitor = InstantSender.getInstance();
         monitor.start();
+    }
+
+    /**
+     * Sends notifications, when monitored object is changed.
+     */
+    protected void startForumSender() {
+        CommentSender sender = CommentSender.getInstance();
+        sender.start();
     }
 
     /**

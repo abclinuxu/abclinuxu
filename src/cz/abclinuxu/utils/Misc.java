@@ -8,6 +8,8 @@ package cz.abclinuxu.utils;
 import cz.abclinuxu.exceptions.InvalidInputException;
 
 import java.util.*;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
 
 /**
  * Miscallenous utilities.
@@ -48,6 +50,17 @@ public class Misc {
         if (str.length()!=last)
             str = str.substring(0,last);
         return Integer.parseInt(str);
+    }
+
+    /**
+     * Parses date using given format. If it fails, it returns current date.
+     */
+    public static Date parseDate(String date, SimpleDateFormat format) {
+        try {
+            return format.parse(date);
+        } catch (ParseException e) {
+            return new Date();
+        }
     }
 
     /**

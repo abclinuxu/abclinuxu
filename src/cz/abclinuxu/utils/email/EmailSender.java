@@ -29,6 +29,9 @@ import org.dom4j.Element;
 
 /**
  * Helper class for sending emails.
+ * todo create variant of sendEmails toUsers, which doesn't read database, but relies on its arguments.
+ * todo it shall extract neccessary data (emails) using reflection
+ * todo Use it in ForumSender
  */
 public class EmailSender implements Configurable {
     static Logger log = org.apache.log4j.Logger.getLogger(EmailSender.class);

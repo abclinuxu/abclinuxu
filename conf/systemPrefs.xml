@@ -109,6 +109,14 @@
                       </map>
                   </node>
               </node>
+              <node name="monitor">
+                  <map/>
+                  <node name="CommentSender">
+                      <map>
+                          <entry key="sleep" value="30"/>
+                      </map>
+                  </node>
+              </node>
           </node>
           <node name="format">
               <map/>
@@ -171,6 +179,7 @@
               <entry key="relations.comment.by.user" value="select R.cislo from relace R, relace P, zaznam Z where R.potomek=P.predek and R.typ_potomka='P' and R.predek!=-1 and P.potomek=Z.cislo and P.typ_potomka='Z' and Z.typ=4 and Z.data like concat('%&lt;author_id&gt;',?,'&lt;/%')"/>
               <entry key="relations.section.by.type" value="select R.cislo from relace R left join kategorie K on (K.cislo=R.potomek) where typ_potomka='K' and K.typ=?"/>
               <entry key="users.with.weekly.email" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;>&lt;weekly_summary>yes%'"/>
+              <entry key="users.with.forum.by.email" value="select cislo from uzivatel where data like '%&lt;email valid=&quot;yes&quot;%&lt;forum&gt;yes%&lt;/email%'"/>
               <entry key="users.with.roles" value="select cislo from uzivatel where data like '%&lt;roles>%'"/>
               <entry key="users.in.group" value="select cislo from uzivatel where data like concat('%&lt;group&gt;',?,'&lt;/group%')"/>
               <entry key="max.poll" value="select max(cislo) from anketa"/>
