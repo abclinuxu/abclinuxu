@@ -251,9 +251,7 @@ public class AbcServlet extends VelocityServlet {
             if ( cookie.getName().equals(AbcServlet.VAR_USER) ) {
                 try {
                     if ( logout ) {
-                        cookie.setMaxAge(0);
-                        cookie.setPath("/");
-                        response.addCookie(cookie);
+                        deleteCookie(cookie,response);
                         break;
                     }
 
@@ -267,11 +265,13 @@ public class AbcServlet extends VelocityServlet {
                     try {
                         user = (User) persistance.findById(new User(id));
                     } catch (PersistanceException e) {
+                        deleteCookie(cookie,response);
                         addError(AbcServlet.GENERIC_ERROR,"Nalezena cookie s neznámým u¾ivatelem!",context, null);
                         break;
                     }
 
                     if ( user.getPassword().hashCode() != hash ) {
+                        deleteCookie(cookie,response);
                         addError(AbcServlet.GENERIC_ERROR,"Nalezena cookie se ¹patným heslem!",context, null);
                         user = null;
                     }
@@ -392,5 +392,14 @@ public class AbcServlet extends VelocityServlet {
         html.append("</body>");
         html.append("</html>");
         response.getOutputStream().print( html.toString() );
+    }
+
+    /**
+     * Removes cookie
+     */
+    private void deleteCookie(Cookie cookie, HttpServletResponse response) {
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
     }
 }
