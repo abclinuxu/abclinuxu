@@ -16,6 +16,8 @@ import org.dom4j.Node;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.Template;
 import org.apache.velocity.app.Velocity;
+import org.apache.regexp.RE;
+import org.apache.regexp.RESyntaxException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -30,6 +32,16 @@ import java.text.ParseException;
  */
 public class VelocityHelper {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(VelocityHelper.class);
+
+    static RE lineBreaks,emptyLine;
+    static {
+        try {
+            lineBreaks = new RE("(<br>)|(<p>)|(<div>)",RE.MATCH_CASEINDEPENDENT);
+            emptyLine = new RE("(\r\n){2}|(\n){2}", RE.MATCH_MULTILINE);
+        } catch (RESyntaxException e) {
+            log.error("Cannot create regexp to find line breaks!", e);
+        }
+    }
 
     /**
      * Get name of this child in this relation context. Default name
@@ -514,6 +526,7 @@ public class VelocityHelper {
      * class <code>clazz</code> and if even if it belongs to certain <code>type</code>
      * (for GenericDataObject subclasses). GenericObject <code>obj</code> shall be
      * initialized.
+     * @deprecated
      */
     public boolean is(GenericObject obj, String clazz, String type) {
         if ( "Item".equalsIgnoreCase(clazz) ) {
@@ -620,5 +633,16 @@ public class VelocityHelper {
         }
 
         return list;
+    }
+
+    /**
+     * Returns string with correct line breaks. If <code>str</code> already contains
+     * line breaks, original string is returned. Otherwise each empty line is replaced
+     * by paragraph break and modified string is returned.
+     */
+    public static String fixLines(String str) {
+        if ( str==null ) return null;
+        if ( lineBreaks.match(str) ) return str;
+        return emptyLine.subst(str,"<P>\n");
     }
 }

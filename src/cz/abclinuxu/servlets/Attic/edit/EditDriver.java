@@ -9,6 +9,7 @@ package cz.abclinuxu.servlets.edit;
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.TextUtils;
+import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.persistance.*;
@@ -171,7 +172,7 @@ public class EditDriver extends AbcServlet {
         DocumentHelper.makeElement(document,"data/version").setText(version);
         DocumentHelper.makeElement(document,"data/url").setText(url);
         if ( note!=null && note.length()>0 ) {
-            note = TextUtils.fixLines(note);
+            note = VelocityHelper.fixLines(note);
             DocumentHelper.makeElement(document,"data/note").setText(note);
         }
 

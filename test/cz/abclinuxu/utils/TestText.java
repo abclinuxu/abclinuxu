@@ -9,6 +9,7 @@ package cz.abclinuxu.utils;
 import junit.framework.*;
 import junit.textui.TestRunner;
 import cz.abclinuxu.servlets.utils.TextUtils;
+import cz.abclinuxu.servlets.utils.VelocityHelper;
 import org.apache.log4j.BasicConfigurator;
 
 public class TestText extends TestCase {
@@ -28,11 +29,11 @@ public class TestText extends TestCase {
         String str5 = "Hello\r\n\r\nMy name is Bond.\r\n\r\nJames Bond.";
         String exp5 = "Hello<P>\nMy name is Bond.<P>\nJames Bond.";
 
-        assertEquals(exp1,TextUtils.fixLines(str1));
-        assertEquals(exp2,TextUtils.fixLines(str2));
-        assertEquals(exp3,TextUtils.fixLines(str3));
-        assertEquals(exp4,TextUtils.fixLines(str4));
-        assertEquals(exp5,TextUtils.fixLines(str5));
+        assertEquals(exp1,VelocityHelper.fixLines(str1));
+        assertEquals(exp2,VelocityHelper.fixLines(str2));
+        assertEquals(exp3,VelocityHelper.fixLines(str3));
+        assertEquals(exp4,VelocityHelper.fixLines(str4));
+        assertEquals(exp5,VelocityHelper.fixLines(str5));
     }
 
     public TestText(String s) {

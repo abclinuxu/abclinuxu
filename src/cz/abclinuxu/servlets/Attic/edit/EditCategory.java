@@ -10,6 +10,7 @@ package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.utils.TextUtils;
+import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.servlets.view.SelectIcon;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.User;
@@ -154,7 +155,7 @@ public class EditCategory extends AbcServlet {
         Element root = document.addElement("data");
         root.addElement("name").addText(name);
         if ( icon!=null && icon.length()>0 ) root.addElement("icon").addText(icon);
-        if ( note!=null && note.length()>0 ) root.addElement("note").addText(TextUtils.fixLines(note));
+        if ( note!=null && note.length()>0 ) root.addElement("note").addText(VelocityHelper.fixLines(note));
         document.setRootElement(root);
 
         Relation upperRelation = (Relation) ctx.get(EditCategory.VAR_RELATION);
@@ -239,7 +240,7 @@ public class EditCategory extends AbcServlet {
 
         node = DocumentHelper.makeElement(document,"data/note");
         tmp = (String) params.get(EditCategory.PARAM_NOTE);
-        tmp = TextUtils.fixLines(tmp);
+        tmp = VelocityHelper.fixLines(tmp);
         node.setText(tmp);
 
         tmp = (String) params.get(EditCategory.PARAM_OPEN);

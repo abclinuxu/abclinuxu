@@ -8,8 +8,7 @@ package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.utils.Email;
-import cz.abclinuxu.servlets.utils.TextUtils;
+import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
@@ -110,7 +109,7 @@ public class EditRequest extends AbcServlet {
         Document document = DocumentHelper.createDocument();
         DocumentHelper.makeElement(document,"/data/author").addText(author);
         DocumentHelper.makeElement(document,"/data/email").addText(email);
-        DocumentHelper.makeElement(document,"/data/text").addText(TextUtils.fixLines(text));
+        DocumentHelper.makeElement(document,"/data/text").addText(VelocityHelper.fixLines(text));
 
         req.setData(document);
 
