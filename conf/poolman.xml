@@ -13,9 +13,9 @@
     <password></password>
 
     <minimumSize>1</minimumSize>
-    <maximumSize>10</maximumSize>
+    <maximumSize>2</maximumSize>
 
-    <logFile>/home/literakl/poolman-abc.log</logFile>
+    <logFile>logs/poolman.log</logFile>
 
   </datasource>
 </poolman>
