@@ -61,6 +61,7 @@ public class CreateIndex {
             Relation hardware = (Relation) persistance.findById(new Relation(Constants.REL_HARDWARE));
             Relation software = (Relation) persistance.findById(new Relation(Constants.REL_SOFTWARE));
             Relation drivers = (Relation) persistance.findById(new Relation(Constants.REL_DRIVERS));
+            Relation abc = (Relation) persistance.findById(new Relation(Constants.REL_ABC));
 
             long start = System.currentTimeMillis();
 
@@ -68,6 +69,7 @@ public class CreateIndex {
             test.makeIndexOn(hardware,UrlUtils.PREFIX_HARDWARE);
             test.makeIndexOn(software,UrlUtils.PREFIX_SOFTWARE);
             test.makeIndexOn(drivers,UrlUtils.PREFIX_DRIVERS);
+            test.makeIndexOn(abc,UrlUtils.PREFIX_CLANKY);
 
             indexWriter.optimize();
             indexWriter.close();
