@@ -31,18 +31,14 @@ public class FixRecords {
 
     public static String fixLines(String str) {
         if ( str==null ) return null;
-        if ( (str.indexOf("&lt;")!=-1)&&(str.indexOf("&gt;")!=-1) ) return str;
+        if ( (str.indexOf("<")!=-1)&&(str.indexOf(">")!=-1) ) return str;
+
         StringBuffer sb = new StringBuffer(str);
         for ( int i=0; i<sb.length(); i++ ) {
             char c = sb.charAt(i);
-            if ( c=='\r' ) {
-                sb.deleteCharAt(i);
-                i--;
-                continue;
-            }
             if ( c=='\n' ) {
-                sb.insert(i,"&lt;BR&gt;");
-                i += 10;
+                sb.insert(i,"<BR>");
+                i += 4;
             }
         }
         return sb.toString();
