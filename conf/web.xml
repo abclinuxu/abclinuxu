@@ -46,6 +46,12 @@
     </servlet>
 
     <servlet>
+        <servlet-name>ViewUser</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.view.ViewUser</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+
+    <servlet>
         <servlet-name>EditCategory</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.edit.EditCategory</servlet-class>
         <load-on-startup>3</load-on-startup>
@@ -189,6 +195,10 @@
 
     <servlet-mapping>
         <servlet-name>ViewIndex</servlet-name><url-pattern>/index.html</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ViewUser</servlet-name><url-pattern>/Profile</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

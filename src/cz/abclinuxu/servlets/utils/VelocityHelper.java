@@ -392,6 +392,7 @@ public class VelocityHelper {
         for (Iterator iter = list.iterator(); iter.hasNext();) {
             GenericObject obj = (GenericObject) iter.next();
             if ( obj instanceof Relation ) {
+                persistance.synchronize(obj);
                 persistance.synchronize(((Relation)obj).getChild());
             } else {
                 persistance.synchronize(obj);

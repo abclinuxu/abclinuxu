@@ -76,6 +76,11 @@ public interface Persistance {
     public List findParents(Relation relation) throws PersistanceException;
 
     /**
+     * Finds relation described by <code>example</code>. Just set child or parent.
+     */
+    public Relation findByExample(Relation example) throws PersistanceException;
+
+    /**
      * Removes GenericObject from Persistant storage. If <code>obj</code> is Relation,
      * this method removes this relation. If relation.getChild() becomes unreferenced,
      * it is removed too. If <code>obj</code> is not Relation, this object plus all its references

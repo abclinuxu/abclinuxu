@@ -287,6 +287,72 @@ public class MySqlPersistance implements Persistance {
         }
     }
 
+    public Relation findByExample(Relation example) throws PersistanceException {
+        Connection con = null;
+        con = getSQLConnection();
+
+        StringBuffer sb = new StringBuffer("select * from relace where ");
+        boolean addAnd = false;
+
+        if ( example.getUpper()!=0 ) {
+            sb.append("predchozi=");
+            sb.append(example.getUpper());
+            addAnd = true;
+        }
+
+        GenericObject child = example.getChild();
+        if ( child!=null ) {
+            if ( addAnd ) sb.append(" and "); else addAnd = true;
+            sb.append("typ_potomka='");
+            sb.append(getTableId(child));
+            sb.append("' and potomek=");
+            sb.append(child.getId());
+        }
+
+        GenericObject parent = example.getParent();
+        if ( parent!=null ) {
+            if ( addAnd ) sb.append(" and ");
+            sb.append("typ_predka='");
+            sb.append(getTableId(parent));
+            sb.append("' and predek=");
+            sb.append(parent.getId());
+        }
+
+        try {
+            Statement statement = con.createStatement();
+            ResultSet rs = statement.executeQuery(sb.toString());
+            if ( !rs.next() ) return null;
+
+            Relation relation = new Relation(rs.getInt(1));
+            relation.setUpper(rs.getInt(2));
+
+            char type = rs.getString(3).charAt(0);
+            int id = rs.getInt(4);
+            parent = instantiateFromTree(type,id);
+            relation.setParent(parent);
+
+            type = rs.getString(5).charAt(0);
+            id = rs.getInt(6);
+            child = instantiateFromTree(type,id);
+            relation.setChild(child);
+
+            try {
+                String tmp = rs.getString(7);
+                if ( tmp!=null ) {
+                    tmp = insertEncoding(tmp);
+                    relation.setData(new String(tmp));
+                }
+            } catch (AbcException e) {
+                throw new PersistanceException(e.getMessage(),e.getStatus(),e.getSinner(),e.getNestedException());
+            }
+
+            return relation;
+        } catch (SQLException e) {
+            log.error("Cannot find relation "+example,e);
+            return null;
+        }
+    }
+
     public void remove(GenericObject obj) throws PersistanceException {
         Connection con = null;
         PreparedStatement statement = null;

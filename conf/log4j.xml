@@ -17,7 +17,7 @@
 	</appender>
 
 	<category name="cz">
-	  <priority value="debug" />
+	  <priority value="info" />
 	</category>
 
 	<category name="cz.abclinuxu.persistance.Cache">

@@ -4,3 +4,4 @@
 <!ELEMENT sex (#PCDATA)> <!-- man or woman -->
 <!ELEMENT ads (#PCDATA)> <!-- yes, if we may send two email advertisements a month -->
 <!ELEMENT www (#PCDATA)> <!-- URL of user's homepage -->
+<!ELEMENT personal (#PCDATA)> <!-- user's description of itself -->
