@@ -135,7 +135,14 @@ public class ViewUser implements AbcAction {
     protected String handleLogin2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         if ( env.get(Constants.VAR_USER)!=null ) {
             Map params = (Map) env.get(Constants.VAR_PARAMS);
-            String id = new Integer(((User)env.get(Constants.VAR_USER)).getId()).toString();
+            String url = (String) params.get(PARAM_URL);
+            if (url!=null) {
+                UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+                urlUtils.redirect(response, url);
+                return null;
+            }
+
+            String id = Integer.toString(((User)env.get(Constants.VAR_USER)).getId());
             params.put(PARAM_USER,id);
             return handleProfile(request,env);
         }
