@@ -749,7 +749,7 @@ public final class SQLTool implements Configurable {
      * Finds items of given type ordered by id property in ascending order.
      * Use offset to skip some record .
      * @return List of itialized Items
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     * @throws PersistanceException if there is an error with the underlying persistent storage.
      */
     public List findItemsWithType(int type, int offset, int count) {
         MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
@@ -758,7 +758,7 @@ public final class SQLTool implements Configurable {
         ResultSet resultSet = null;
         try {
             con = persistance.getSQLConnection();
-            statement = con.prepareStatement(itemsByType);
+            statement = con.prepareStatement(itemsByType.concat(" order by cislo asc limit ?,?"));
             statement.setInt(1, type);
             statement.setInt(2, offset);
             statement.setInt(3, count);
@@ -776,6 +776,19 @@ public final class SQLTool implements Configurable {
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
+    }
+
+    /**
+     * Finds items of given type.
+     * @return Number of matched items
+     * @throws PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public int countItemsWithType(int type) {
+        StringBuffer sb = new StringBuffer(itemsByType);
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        params.add(new Integer(type));
+        return loadNumber(sb.toString(), params);
     }
 
     /**

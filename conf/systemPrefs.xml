@@ -198,7 +198,7 @@
               <entry key="users.in.group" value="select cislo from uzivatel where data like concat('%&lt;group&gt;',?,'&lt;/group%')"/>
               <entry key="max.poll" value="select max(cislo) from anketa"/>
               <entry key="max.user" value="select max(cislo) from uzivatel"/>
-              <entry key="items.with.type" value="select cislo from polozka where typ=? order by cislo asc limit ?,?"/>
+              <entry key="items.with.type" value="select cislo from polozka where typ=?"/>
               <entry key="count.articles.by.user" value="select count(*) from polozka where typ=2 and data like concat('%&lt;author&gt;',?,'&lt;/author%') and vytvoreno&lt;now()"/>
             </map>
           </node>
