@@ -24,7 +24,7 @@ public class DumpCategoryTree {
     Persistance persistance = PersistanceFactory.getPersistance(PersistanceFactory.defaultUrl,EmptyCache.class);
     HashMap map = new HashMap(1000);
 
-    public void dumpTree(Relation relation, Writer writer) throws Exception {
+    public void dumpTree(File parent, Relation relation) throws Exception {
         Relation i = new Relation(relation.getId());
         map.put(i,i);
         persistance.synchronize(relation);
@@ -33,29 +33,25 @@ public class DumpCategoryTree {
 
         Category category = (Category) relation.getChild();
         String name = VelocityHelper.getXPath(category,"data/name")+" ("+relation.getId()+")";
-        writer.write("mkdir \""+name+"\"\n");
-        writer.write("cd \""+name+"\"\n");
+        File current = new File(parent,name);
+        current.mkdir();
 
         List children = category.getContent();
         for (Iterator iter = children.iterator(); iter.hasNext();) {
             Relation child = (Relation) iter.next();
             if ( map.get(new Relation(child.getId()))!=null )
                 continue;
-            dumpTree(child,writer);
+            dumpTree(current,child);
         }
-        writer.write("cd ..\n");
     }
 
     public static void main(String[] args) throws Exception {
         DumpCategoryTree dumper = new DumpCategoryTree();
-        BufferedWriter writer = new BufferedWriter(new FileWriter("create_tree.sh"));
-        writer.write("#!/bin/sh\n");
+        File current = new File("abc_tree");
 
-        dumper.dumpTree(new Relation(Constants.REL_ARTICLES), writer);
-        dumper.dumpTree(new Relation(Constants.REL_ABC), writer);
-        dumper.dumpTree(new Relation(Constants.REL_HARDWARE), writer);
-        dumper.dumpTree(new Relation(Constants.REL_SOFTWARE), writer);
-
-        writer.close();
+        dumper.dumpTree(current, new Relation(Constants.REL_ARTICLES));
+        dumper.dumpTree(current, new Relation(Constants.REL_ABC));
+        dumper.dumpTree(current, new Relation(Constants.REL_HARDWARE));
+        dumper.dumpTree(current, new Relation(Constants.REL_SOFTWARE));
     }
 }
