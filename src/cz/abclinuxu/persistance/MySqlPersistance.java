@@ -191,6 +191,8 @@ public class MySqlPersistance implements Persistance {
             a.setServer(b.getServer());
             a.setText(b.getText());
             a.setFixed(b.isFixed());
+            a.setOwner(b.getOwner());
+            a.setUpdated(b.getUpdated());
         } else if (obj instanceof Poll) {
             Poll a = (Poll) obj, b= (Poll) temp;
             a.setChoices(b.getChoices());
@@ -586,7 +588,7 @@ public class MySqlPersistance implements Persistance {
             conditions.add(new Integer(((Category)obj).getOwner()));
 
         } else if (obj instanceof Data) {
-            sb.append("insert into objekty values(0,?,?,?)");
+            sb.append("insert into objekt values(0,?,?,?)");
             conditions.add(((Data)obj).getFormat());
             conditions.add(((Data)obj).getData());
             conditions.add(new Integer(((Data)obj).getOwner()));
@@ -599,11 +601,12 @@ public class MySqlPersistance implements Persistance {
             conditions.add(((User)obj).getPassword());
 
         } else if (obj instanceof Link) {
-            sb.append("insert into odkazy values(0,?,?,?,?)");
+            sb.append("insert into odkaz values(0,?,?,?,?,?,NULL)");
             conditions.add(new Integer(((Link)obj).getServer()));
             conditions.add(((Link)obj).getText());
             conditions.add(((Link)obj).getUrl());
             conditions.add(new Boolean(((Link)obj).isFixed()));
+            conditions.add(new Integer(((Link)obj).getOwner()));
         }
     }
 
@@ -707,6 +710,11 @@ public class MySqlPersistance implements Persistance {
             if ( ((Link)obj).getServer()!=0 ) {
                 sb.append("and server=?");
                 conditions.add(new Integer(((Link)obj).getServer()));
+            }
+
+            if ( ((Link)obj).getOwner()!=0 ) {
+                sb.append("and pridal=?");
+                conditions.add(new Integer(((Link)obj).getOwner()));
             }
 
             if ( ((Link)obj).getText()!=null ) {
@@ -1019,6 +1027,9 @@ public class MySqlPersistance implements Persistance {
             link.setServer(resultSet.getInt(2));
             link.setText(resultSet.getString(3));
             link.setUrl(resultSet.getString(4));
+            link.setFixed(resultSet.getBoolean(5));
+            link.setOwner(resultSet.getInt(6));
+            link.setUpdated(resultSet.getTimestamp(7));
 
             return link;
         } finally {
@@ -1169,12 +1180,13 @@ public class MySqlPersistance implements Persistance {
 
         try {
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("update odkaz set server=?,nazev=?,url=?,trvaly=? where cislo=?");
+            PreparedStatement statement = con.prepareStatement("update odkaz set server=?,nazev=?,url=?,trvaly=?,pridal=? where cislo=?");
             statement.setInt(1,link.getServer());
             statement.setString(2,link.getText());
             statement.setString(3,link.getUrl());
             statement.setBoolean(4,link.isFixed());
-            statement.setInt(5,link.getId());
+            statement.setInt(5,link.getOwner());
+            statement.setInt(6,link.getId());
 
             int result = statement.executeUpdate();
             if ( result!=1 ) {

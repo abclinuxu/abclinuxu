@@ -3,6 +3,8 @@
  */
 package cz.abclinuxu.data;
 
+import java.util.Date;
+
 /**
  * This class contains link to external URL
  */
@@ -18,6 +20,10 @@ public class Link extends GenericObject {
      * with newer link (e.g. links to articles at news servers.
      */
     protected boolean fixed;
+    /** identifier of owner of this object */
+    protected int owner;
+    /** creation date or last update of this object */
+    protected Date updated;
 
 
     public Link() {
@@ -86,6 +92,34 @@ public class Link extends GenericObject {
         this.fixed = fixed;
     }
 
+    /**
+     * @return owner's id
+     */
+    public int getOwner() {
+        return owner;
+    }
+
+    /**
+     * sets owner's id
+     */
+    public void setOwner(int owner) {
+        this.owner = owner;
+    }
+
+    /**
+     * @return last updated (or creation) date
+     */
+    public Date getUpdated() {
+        return updated;
+    }
+
+    /**
+     * sets last updated (or creation) date
+     */
+    public void setUpdated(Date updated) {
+        this.updated = updated;
+    }
+
     public String toString() {
         StringBuffer sb = new StringBuffer("Link: id=");
         sb.append(id);
@@ -99,7 +133,7 @@ public class Link extends GenericObject {
         if ( !( o instanceof Link) ) return false;
         Link p = (Link)o;
         if ( id==p.id && text.equals(p.text) && url.equals(p.url) &&
-             server==p.server && fixed==p.fixed ) return true;
+             server==p.server && fixed==p.fixed && owner==p.owner ) return true;
         return false;
     }
 }
