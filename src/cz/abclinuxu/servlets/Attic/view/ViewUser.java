@@ -109,6 +109,7 @@ public class ViewUser extends AbcServlet {
 
     /**
      * handle login submit
+     * @todo investigate, why after log in there is a login dialog
      */
     protected String handleLogin2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         if ( ctx.get(VAR_USER)!=null )
