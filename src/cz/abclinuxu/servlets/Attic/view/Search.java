@@ -6,17 +6,15 @@
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcVelocityServlet;
-import cz.abclinuxu.servlets.utils.VelocityHelper;
+import cz.abclinuxu.servlets.AbcFMServlet;
+import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.search.MyDocument;
 import cz.abclinuxu.utils.search.CreateIndex;
-import org.apache.velocity.Template;
-import org.apache.velocity.context.Context;
 import org.apache.lucene.search.*;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -24,18 +22,18 @@ import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.log4j.Category;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.HashMap;
 import java.io.*;
+import java.text.NumberFormat;
 
 /**
  * Performs search across the data.
  */
-public class Search extends AbcVelocityServlet {
+public class Search extends AbcFMServlet {
     org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(Search.class);
 
     /** contains relation, that match the expression */
@@ -48,40 +46,40 @@ public class Search extends AbcVelocityServlet {
     /** expression to be searched */
     public static final String PARAM_QUERY = "query";
 
-
-    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        init(request,response,ctx);
-
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         String query = (String) params.get(PARAM_QUERY);
         if ( query == null || query.length()==0 ) {
-            ServletUtils.addError(PARAM_QUERY,"Prosím zadejte hledaný øetìzec!",ctx,null);
-            return VelocityTemplateSelector.selectTemplate(request,ctx,"Search","show");
+            ServletUtils.addError(PARAM_QUERY,"Prosím zadejte hledaný øetìzec!",env,null);
+            return FMTemplateSelector.select("Search","show",env,request);
         }
+        env.put(VAR_QUERY,query);
 
         try {
             Searcher searcher = new IndexSearcher(CreateIndex.getIndexPath());
             Query q = QueryParser.parse(query, "contents", new StandardAnalyzer());
-            ctx.put(VAR_QUERY,q.toString("contents"));
 
             Hits hits = searcher.search(q);
+
             int length = hits.length();
-            Map map = new HashMap(5/4 * length + 1); //no rehash
+            Map map = new HashMap(length + 1,1.0f); //no rehash
+            NumberFormat percentFormat = NumberFormat.getPercentInstance();
             for ( int i=0; i<length; i++ ) {
                 Document doc = (Document) hits.doc(i);
-                String score = new Float(hits.score(i)).toString();
+//                String score = new Float(hits.score(i)).toString();
+                String score = percentFormat.format(hits.score(i));
                 doc.add(Field.UnIndexed("score",score));
                 Misc.storeToMap(map,doc.get(MyDocument.TYPE),doc);
             }
-            ctx.put(VAR_RESULT,map);
-            ctx.put(VAR_TOTAL,new Integer(length));
+            env.put(VAR_RESULT,map);
+            env.put(VAR_TOTAL,new Integer(length));
         } catch (Exception e) {
             log.error("Cannot search "+query,e);
-            ServletUtils.addError(PARAM_QUERY,"Nemohu provést dané hledání. Zadejte jiný øetìzec!",ctx,null);
-            return VelocityTemplateSelector.selectTemplate(request,ctx,"Search","show");
+            ServletUtils.addError(PARAM_QUERY,"Nemohu provést dané hledání. Zadejte jiný øetìzec!",env,null);
+            return FMTemplateSelector.select("Search","show",env,request);
         }
 
-        return VelocityTemplateSelector.selectTemplate(request,ctx,"Search","show");
+        return FMTemplateSelector.select("Search","show",env,request);
     }
 
     public static void main(String[] args) throws Exception {

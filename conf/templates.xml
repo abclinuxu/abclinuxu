@@ -181,7 +181,7 @@
 
   <servlet name="Search">
     <action name="show">
-      <mapping template="web" content="web/misc/search.vm">
+      <mapping template="web" content="/web/misc/search.ftl">
         <var name="TITLE" value="Hledání" />
       </mapping>
     </action>
@@ -296,34 +296,6 @@
         <var name="TITLE" value="AbcLinuxu.cz - tady je tuèòákùm hej!" />
       </mapping>
       <mapping template="sidebar" content="sidebar/show/index.ftl" />
-    </action>
-  </servlet>
-
-  <servlet name="ViewItem">
-    <action name="hardware">
-      <mapping template="web" content="web/show/hwitem.vm">
-        <var name="TITLE" value="$!UTIL.getXPath($ITEM,'data/name')" type="Lazy" />
-      </mapping>
-    </action>
-    <action name="software">
-      <mapping template="web" content="web/show/switem.vm">
-        <var name="TITLE" value="$!UTIL.getXPath($ITEM,'data/name')" type="Lazy" />
-      </mapping>
-    </action>
-    <action name="discussion">
-      <mapping template="web" content="web/show/discussion.vm">
-        <var name="TITLE" value="#if($UTIL.getXPath($ITEM,'data/title')) $UTIL.getXPath($ITEM,'data/title')#else Diskuse#end" type="Lazy" />
-      </mapping>
-    </action>
-    <action name="article">
-      <mapping template="web" content="web/show/article.vm">
-        <var name="TITLE" value="$!UTIL.getXPath($ITEM,'data/name')" type="Lazy" />
-      </mapping>
-    </action>
-    <action name="driver">
-      <mapping template="web" content="web/show/driver.vm">
-        <var name="TITLE" value="$UTIL.getXPath($ITEM,'data/name') - $UTIL.getXPath($ITEM,'data/version')" type="Lazy" />
-      </mapping>
     </action>
   </servlet>
 
