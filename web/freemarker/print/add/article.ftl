@@ -33,6 +33,12 @@
    </td>
   </tr>
   <tr>
+   <td width="90" class="required">Zakázat hodnocení</td>
+   <td>
+    <input type="checkbox" name="forbid_rating" <#if PARAMS.forbid_rating?exists>checked</#if> value="yes">
+   </td>
+  </tr>
+  <tr>
    <td width="90" class="required">Perex</td>
    <td>
     <textarea name="perex" cols="100" rows="4" tabindex="4">${PARAMS.perex?if_exists?html}</textarea>
@@ -48,7 +54,7 @@
 
     <p>V¹echna URL na èlánky, obrázky a soubory z na¹eho serveru musí být relativní!</p>
 
-    <textarea name="content" cols="100" rows="30" tabindex="5">${PARAMS.content?if_exists?html}</textarea>
+    <textarea name="content" cols="100" rows="45" tabindex="5">${PARAMS.content?if_exists?html}</textarea>
     <div class="error">${ERRORS.content?if_exists}</div>
    </td>
   </tr>

@@ -47,7 +47,6 @@ public class ShowArticle implements AbcAction {
     public static final String VAR_PAGES = "PAGES";
     public static final String VAR_PAGE = "PAGE";
     public static final String VAR_ARTICLE_TEXT = "TEXT";
-    public static final String VAR_ALLOW_DISCUSSIONS = "ALLOW_DISCUSSIONS";
     public static final String VAR_RELATED_ARTICLES = "RELATED";
     public static final String VAR_RELATED_RESOURCES = "RESOURCES";
 
@@ -91,15 +90,7 @@ public class ShowArticle implements AbcAction {
         if ( record.getType()!=Record.ARTICLE )
             throw new InvalidDataException("Záznam "+record.getId()+" není typu èlánek!");
 
-        boolean allow = true;
-        Document document = item.getData();
-        Node node = document.selectSingleNode("/data/forbid_discussions");
-        if ( node!=null && "yes".equals(node.getText()))
-            allow = false;
-        env.put(VAR_ALLOW_DISCUSSIONS, new Boolean(allow));
-
-        document = record.getData();
-
+        Document document = record.getData();
         List nodes = document.selectNodes("/data/content");
         if ( nodes.size()==0 ) {
             throw new InvalidDataException("Záznam "+record.getId()+" má ¹patný obsah!");
