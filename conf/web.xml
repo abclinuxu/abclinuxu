@@ -31,7 +31,7 @@
 
     <servlet>
         <servlet-name>redirect</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.view.Redirect</servlet-class>
+        <servlet-class>cz.abclinuxu.servlets.html.view.Redirect</servlet-class>
         <load-on-startup>3</load-on-startup>
     </servlet>
 
