@@ -31,6 +31,19 @@ public final class Relation extends GenericObject implements XMLContainer {
     }
 
     /**
+     * Copy constructor.
+     * @param copy object to be cloned.
+     */
+    public Relation(Relation copy) {
+        id = copy.id;
+        initialized = copy.initialized;
+        upper = copy.upper;
+        parent = copy.parent;
+        child = copy.child;
+        documentHandler = copy.documentHandler;
+    }
+
+    /**
      * Constructs new Relation between <code>parent</code> and <code>child</code> (in this order).
      * If this relation is not top-level (e.g. it has its parent), you shall set <code>upper</code>
      * to <code>id</code> of this upper-level relation, otherwise set it to 0.
