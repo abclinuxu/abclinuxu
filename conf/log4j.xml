@@ -18,12 +18,12 @@
            </layout>	    
 	</appender>
 	
-	<category name="cz.abclinuxu">
+	<category name="cz">
 	  <priority value="info" />
 	</category>
 	
 	<root>
-	   <priority value ="info" />
+	   <priority value="info" />
    	   <appender-ref ref="FILE" />
    	   <appender-ref ref="STDOUT" />
 	</root>

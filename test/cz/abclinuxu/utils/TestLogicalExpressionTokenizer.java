@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import junit.framework.*;
 import junit.textui.TestRunner;
 import cz.abclinuxu.persistance.TestMySqlPersistance;
+import cz.abclinuxu.persistance.LogicalExpressionTokenizer;
 
 public class TestLogicalExpressionTokenizer extends TestCase {
 

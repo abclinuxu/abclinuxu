@@ -61,7 +61,7 @@ public class Item extends GenericObject {
     }
 
     public String toString() {
-        StringBuffer sb = new StringBuffer("Item: id=");
+        StringBuffer sb = new StringBuffer("Record: id=");
         sb.append(id);
         if ( owner!=0 ) sb.append(",owner="+owner);
         if ( data!=null ) sb.append(",data="+data);

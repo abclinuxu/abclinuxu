@@ -10,7 +10,6 @@ package cz.abclinuxu;
 import org.apache.log4j.Category;
 
 public class AbcException extends Exception {
-    static Category log = Category.getInstance(AbcException.class);
 
     /** indicates unknown error */
     public static final int UNKNOWN = 0;
@@ -60,7 +59,6 @@ public class AbcException extends Exception {
         super(desc);
         this.code = code;
         this.sinner = sinner;
-        log.error("Exception: "+desc+", code="+code+", sinner="+sinner,(e==null)?this:e);
     }
 
     /**

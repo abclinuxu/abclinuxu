@@ -28,7 +28,7 @@ public class TestMySqlPersistance extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        persistance = PersistanceFactory.getPersistance("jdbc:mysql://localhost/unit?user=literakl");
+        persistance = new MySqlPersistance("jdbc:mysql://localhost/unit?user=literakl");
     }
 
     public static Test suite() {
@@ -49,63 +49,60 @@ public class TestMySqlPersistance extends TestCase {
         Record a = new HardwareRecord(0);
         a.setOwner(1);
         a.setData("hw a");
-        persistance.storeObject(a);
+        persistance.create(a,null);
 
         Record b = new SoftwareRecord(0);
         b.setOwner(2);
         b.setData("sw b");
-        persistance.storeObject(b);
+        persistance.create(b,a);
 
         Record c = new ArticleRecord(0);
         c.setOwner(1);
         c.setData("article c");
-        persistance.storeObject(c);
+        persistance.create(c,a);
 
         Record d = new SoftwareRecord(0);
         d.setOwner(2);
         d.setData("sw d");
-        persistance.storeObject(d);
+        persistance.create(d,null);
+        persistance.create(c,d);
 
-        persistance.addObjectToTree(b,a);
-        persistance.addObjectToTree(c,a);
-        persistance.addObjectToTree(c,d);
-
-        persistance.removeObject(a);
+        persistance.remove(a,null);
 
         // now only c and d shall exist
-        GenericObject test = persistance.loadObject(c);
+        GenericObject test = persistance.findById(c);
         assertEquals(c,test);
 
-        test = persistance.loadObject(d);
+        test = persistance.findById(d);
         assertEquals(d,test);
 
         try {
-            test = persistance.loadObject(a);
+            test = persistance.findById(a);
             fail("found deleted object " + a);
         } catch (PersistanceException e) {
             assertTrue( e.getStatus()==AbcException.DB_NOT_FOUND );
         }
 
         try {
-            test = persistance.loadObject(b);
+            test = persistance.findById(b);
             fail("found deleted object " + b);
         } catch (PersistanceException e) {
             assertTrue( e.getStatus()==AbcException.DB_NOT_FOUND );
         }
 
         // now clean up database
-        persistance.removeObject(c);
-        persistance.removeObject(d);
+        persistance.remove(c,d);
 
         try {
-            test = persistance.loadObject(c);
+            test = persistance.findById(c);
             fail("found deleted object " + c);
         } catch (PersistanceException e) {
             assertTrue( e.getStatus()==AbcException.DB_NOT_FOUND );
         }
 
+        persistance.remove(d,null);
         try {
-            test = persistance.loadObject(d);
+            test = persistance.findById(d);
             fail("found deleted object " + d);
         } catch (PersistanceException e) {
             assertTrue( e.getStatus()==AbcException.DB_NOT_FOUND );
@@ -118,24 +115,24 @@ public class TestMySqlPersistance extends TestCase {
         Record a = new HardwareRecord(0);
         a.setData("HP DeskJet 840C");
         a.setOwner(1);
-        persistance.storeObject(a);
+        persistance.create(a,null);
 
         Record b = new HardwareRecord(0);
         b.setData("Lehponen XT");
         b.setOwner(3);
-        persistance.storeObject(b);
+        persistance.create(b,null);
 
         Record c = new SoftwareRecord(0);
         c.setData("Laserjet II");
         c.setOwner(2);
-        persistance.storeObject(c);
+        persistance.create(c,null);
 
         // find a and b, don't find c
         List examples = new ArrayList();
         Record qa = new Record(0);
         qa.setData("%HP%");
         examples.add(qa);
-        List found = persistance.findByExample(examples);
+        List found = persistance.findByExample(examples,null);
         assertTrue(containsId(found,a.getId()));
         assertTrue(containsId(found,b.getId()));
         assertTrue( ! containsId(found,c.getId()));
@@ -145,7 +142,7 @@ public class TestMySqlPersistance extends TestCase {
         qa.setData("%HP%");
         qa.setOwner(1);
         examples.add(qa);
-        found = persistance.findByExample(examples);
+        found = persistance.findByExample(examples,null);
         assertTrue(containsId(found,a.getId()));
         assertTrue( ! containsId(found,b.getId()));
         assertTrue( ! containsId(found,c.getId()));
@@ -154,7 +151,7 @@ public class TestMySqlPersistance extends TestCase {
         SoftwareRecord qb = new SoftwareRecord(0);
         qb.setOwner(2);
         examples.add(qb);
-        found = persistance.findByExample(examples);
+        found = persistance.findByExample(examples,null);
         assertTrue(containsId(found,a.getId()));
         assertTrue( ! containsId(found,b.getId()));
         assertTrue(containsId(found,c.getId()));
@@ -178,9 +175,9 @@ public class TestMySqlPersistance extends TestCase {
         assertTrue( containsId(found,b.getId()));
         assertTrue( containsId(found,c.getId()));
 
-        persistance.removeObject(a);
-        persistance.removeObject(b);
-        persistance.removeObject(c);
+        persistance.remove(a,null);
+        persistance.remove(b,null);
+        persistance.remove(c,null);
     }
 
     /**
@@ -191,45 +188,39 @@ public class TestMySqlPersistance extends TestCase {
 
         Category processors = new Category(0);
         processors.setData("<name>Processors</name>");
-        persistance.storeObject(processors);
+        persistance.create(processors,null);
 
         Category intel = new Category(0);
         intel.setData("<name>Intel</name>");
-        persistance.storeObject(intel);
+        persistance.create(intel,null);
 
         Make duron = new Make(0);
         duron.setData("<name>Duron</name>");
-        persistance.storeObject(duron);
+        persistance.create(duron,processors);
 
         HardwareRecord duron1 = new HardwareRecord(0);
         duron1.setData("<price>fine</price>");
-        persistance.storeObject(duron1);
+        persistance.create(duron1,duron);
 
         Make pentium = new Make(0);
         pentium.setData("<name>Pentium 4</name>");
-        persistance.storeObject(pentium);
+        persistance.create(pentium,processors);
+        persistance.create(pentium,intel);
 
         HardwareRecord pentium1 = new HardwareRecord(0);
         pentium1.setData("<price>expensive</price>");
-        persistance.storeObject(pentium1);
+        persistance.create(pentium1,pentium);
 
         HardwareRecord pentium2 = new HardwareRecord(0);
         pentium2.setData("<price>too expensive</price>");
-        persistance.storeObject(pentium2);
+        persistance.create(pentium2,pentium);
 
-        persistance.addObjectToTree(duron,processors);
-        persistance.addObjectToTree(pentium,processors);
-        persistance.addObjectToTree(pentium,intel);
-        persistance.addObjectToTree(duron1,duron);
-        persistance.addObjectToTree(pentium1,pentium);
-        persistance.addObjectToTree(pentium2,pentium);
+        processors = (Category) persistance.findById(processors);
+        intel = (Category) persistance.findById(intel);
+        duron = (Make) persistance.findById(duron);
+        pentium = (Make) persistance.findById(pentium);
 
-        processors = (Category) persistance.loadObject(processors);
-        intel = (Category) persistance.loadObject(intel);
-        duron = (Make) persistance.loadObject(duron);
-        pentium = (Make) persistance.loadObject(pentium);
-
-        // tests addObjectToTree and loadObject
+        // tests create()
         List content = processors.getContent();
         assertEquals(content.size(),2);
         GenericObject first = (GenericObject)content.get(0);
@@ -254,13 +245,13 @@ public class TestMySqlPersistance extends TestCase {
         assertTrue(first.getId()==pentium1.getId() || second.getId()==pentium1.getId());
         assertTrue(first.getId()==pentium2.getId() || second.getId()==pentium2.getId());
 
-        // tests removeObjectFromTree and removeObject
-        persistance.removeObjectFromTree(duron,processors);
-        persistance.removeObjectFromTree(pentium,processors);
+        // tests remove()
+        persistance.remove(duron,processors);
+        persistance.remove(pentium,processors);
 
-        processors = (Category) persistance.loadObject(processors);
-        intel = (Category) persistance.loadObject(intel);
-        pentium = (Make) persistance.loadObject(pentium);
+        processors = (Category) persistance.findById(processors);
+        intel = (Category) persistance.findById(intel);
+        pentium = (Make) persistance.findById(pentium);
 
         content = processors.getContent();
         assertEquals(content.size(),0);
@@ -269,16 +260,16 @@ public class TestMySqlPersistance extends TestCase {
         assertEquals(content.size(),1);
 
         try {
-            duron = (Make) persistance.loadObject(duron);
+            duron = (Make) persistance.findById(duron);
             fail("found deleted object " + duron);
         } catch (PersistanceException e) {
             assertTrue( e.getStatus()==AbcException.DB_NOT_FOUND );
         }
 
         // cleanup
-        persistance.removeObjectFromTree(pentium,intel);
-        persistance.removeObject(processors);
-        persistance.removeObject(intel);
+        persistance.remove(pentium,intel);
+        persistance.remove(processors,null);
+        persistance.remove(intel,null);
 
         org.apache.log4j.Category.getDefaultHierarchy().enableAll();
     }

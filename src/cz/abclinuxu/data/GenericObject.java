@@ -16,7 +16,7 @@ public class GenericObject {
 
     public GenericObject(int id) {
         this.id = id;
-	content = new LinkedList();
+        content = new ArrayList(3);
     }
 
     /**
@@ -27,7 +27,7 @@ public class GenericObject {
     }
 
     /**
-     * sets id (only Persistance may call this method!)
+     * Sets id. (only Persistance may call this method!)
      */
     public void setId(int id) {
         this.id = id;
@@ -46,6 +46,20 @@ public class GenericObject {
      */
     public List getContent() {
         return content;
+    }
+
+    /**
+     * Sets content. Null parameter is prohibited! (only Persistance may call this method!)
+     */
+    public void setContent(List content) {
+        this.content = content;
+    }
+
+    /**
+     * Removes all references to children. (only Persistance may call this method!)
+     */
+    public void clearContent() {
+        content.clear();
     }
 
     public String toString() {

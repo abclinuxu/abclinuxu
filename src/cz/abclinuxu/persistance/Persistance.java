@@ -1,93 +1,89 @@
 /*
  * User: literakl
- * Date: Nov 17, 2001
- * Time: 8:20:28 AM
+ * Date: Dec 5, 2001
+ * Time: 2:47:14 PM
  *
  * Copyright by Leos Literak (literakl@centrum.cz) 2001
  */
 package cz.abclinuxu.persistance;
 
 import java.util.List;
-import cz.abclinuxu.data.*;
+import cz.abclinuxu.data.GenericObject;
+import cz.abclinuxu.persistance.PersistanceException;
 
 /**
- * This interface defines methods, how to store data objects
- * into persitant storage.
+ * This interface defines responsibility of any class, that provides persistance
+ * for this object model.
  */
 public interface Persistance {
 
     /**
-     * Downloads object described by <code>obj</code> (id and class name) from persistant storage.
-     * It also fills its <code>content</code> field with uninitialized objects (only <code>id</code>).
-     * They may be downloaded on request with this method again.
+     * Stores into persistant storage new object and updates dependancies.
+     * If <code>obj.getId()</code> is 0, <code>obj</code> is stored to persistant
+     * storage and updated. If <code>parent</code> is not null, ownership relation
+     * will be created for this couple. But if <code>parent.getId()</code> is 0,
+     * exception will be thrown!
      */
-    public abstract GenericObject loadObject(GenericObject obj) throws PersistanceException;
+    public void create(GenericObject obj, GenericObject parent) throws PersistanceException;
 
     /**
-     * Makes object peristant. It may modify <code>id</code> of argument.
+     * Synchronizes persistant storage with changes made in <code>obj</code>.
      */
-    public abstract void storeObject(GenericObject obj) throws PersistanceException;
+    public void update(GenericObject obj) throws PersistanceException;
 
     /**
-     * Synchronizes changes in the object with the persistant storage.
+     * Synchronizes <code>obj</code> with external changes made in persistant storage.
      */
-    public abstract void updateObject(GenericObject obj) throws PersistanceException;
+    public void synchronize(GenericObject obj) throws PersistanceException;
 
     /**
-     * Remove object and its references in tree from persistant storage.
+     * Finds object, whose <code>id</code> is same as in <code>obj</code>.
+     * @return New instance of GenericObject's subclass.
      */
-    public abstract void removeObject(GenericObject obj) throws PersistanceException;
+    public GenericObject findById(GenericObject obj) throws PersistanceException;
 
     /**
-     * Finds objects, that are similar to suppplied arguments.<ul>
+     * Finds objects, that are similar to suppplied arguments.
+     * <br><u>Rules:</u><ul>
      * <li>All objects in the list <code>objects</code>, must be of same class, which is extended of
      * GenericObject. The subclasses of this class are allowed. E.g. {Record, Record, SoftwareRecord}
      * is valid argument, {Link, Poll, Article} is wrong.
      * <li>For each object, only initialized fields are used, <code>id</code> and <code>updated</code>
-     * are excluded. Because it is not possible to distinguish uninitialized boolean
-     * fields from false, boolean fields are allways used. If there is more used field in one
-     * object, AND relation is used for them.
+     * fields are excluded, boolean fields are always used. If there are more such fields in one
+     * object, there is an AND relation between them.
      * <li>If <code>relations</code> is null, OR relation is used between all objects.
-     * <li>For <code>relations</code> argument, you may use keywords AND, OR and parentheses.
-     * You use indexes to <code>objects</code> as logical variables, first index is 0, maximum index is 9.
+     * <li>For <code>relations</code> argument, you may use keywords AND, OR and parentheses
+     * and indexes to <code>objects</code> as logical variables. First index is 0, maximum index is 9.
      * <li>Examples of <code>relations</code>:"0 AND 1", "0 OR 1", "0 OR (1 AND 2)", "(0 AND 1) OR (0 AND 2)"
      * </ul>
-     * @return list of objects, which are of same class, as <code>objects</code>.
+     * @return List of objects, which are of same class, as <code>objects</code>.
      */
-    public abstract List findByExample(List objects, String relations) throws PersistanceException;
+    public List findByExample(List objects, String relations) throws PersistanceException;
 
     /**
-     * Finds objects, that are similar to suppplied argument. Same as findByExample(objects, null).
-     * @see findByExample(List objects, String relations)
+     * Finds objects, that fulfill <code>command</code>. Usage of this emthod requires deep knowledge
+     * of persistance structure (such as SQL commands, database schema), which decreases portability
+     * of your code.
+     * @return List of array of objects. You know, what it is.
      */
-    public abstract List findByExample(List objects) throws PersistanceException;
+    public List findByCommand(String command) throws PersistanceException;
 
     /**
-     * Searches persistant storage according to rules specified by <code>command</code>.
-     * Command syntax is Persistance's subclass specific (usually SQL). Each record
-     * will be stored as <code>returnType</code>, which may be any GenericObject's
-     * subclass or List.
-     * <p>
-     * <b>Warning!</b> Usage of this method requires deep knowledge of persistance
-     * (like database structure) and makes system less portable! You shall
-     * not use it, if it is possible.
+     * Removes ownership relation between <code>parent</code> and <code>obj</code>. If
+     * there is no other parent of <code>obj</code>, <code>obj</code> is deleted
+     * including its siblings.<br>
+     * If you need to delete top-level object, which has no parent, set <code>parent</code>
+     * to null.
      */
-    public abstract List findByCommand(String command, Class returnType) throws PersistanceException;
+    public void remove(GenericObject obj, GenericObject parent) throws PersistanceException;
 
     /**
-     * Adds <code>obj</code> under <code>parent</code> in the object tree.
+     * Increments counter for specified object.
      */
-    public abstract void addObjectToTree(GenericObject obj, GenericObject parent) throws PersistanceException;
+    public void incrementCounter(GenericObject obj) throws PersistanceException;
 
     /**
-     * Removes <code>obj</code> from <code>parent</code> in the object tree.
-     * If <code>obj</code> was referenced only by <code>parent</code>, <code>obj</code>
-     * is removed from persistant storage.
+     * @return Actual value of counter for specified object.
      */
-    public abstract void removeObjectFromTree(GenericObject obj, GenericObject parent) throws PersistanceException;
-
-    /**
-     * Increments counter for <code>obj</code>. This method can be used for ArticleRecord or Link.
-     */
-    public abstract void incrementCounter(GenericObject obj) throws PersistanceException;
+    public int getCounterValue(GenericObject obj) throws PersistanceException;
 }

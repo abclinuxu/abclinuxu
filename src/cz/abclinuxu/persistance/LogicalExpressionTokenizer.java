@@ -5,7 +5,7 @@
  *
  * Copyright by Leos Literak (literakl@centrum.cz) 2001
  */
-package cz.abclinuxu.utils;
+package cz.abclinuxu.persistance;
 
 import java.util.List;
 
