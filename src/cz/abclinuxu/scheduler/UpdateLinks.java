@@ -44,8 +44,9 @@ public class UpdateLinks extends TimerTask {
     public static final int LINUXSK = 10;
     public static final int LDAP = 11;
     public static final int MANDRAKE = 12;
+    public static final int CZILLA = 13;
     /** id of last server, maximum id */
-    public static final int LAST_SERVER = MANDRAKE;
+    public static final int LAST_SERVER = CZILLA;
 
     Category category = new Category(Constants.CAT_LINKS);
 
@@ -70,6 +71,7 @@ public class UpdateLinks extends TimerTask {
 //        definitions.put(new Server(LINUXSK),new ServerInfo("http://www.linux.sk/backend.php",null,ServerInfo.RSS));
 //        definitions.put(new Server(LDAP),new ServerInfo("http://www.ldap-obsession.sk/backend.php",null,ServerInfo.RSS));
         definitions.put(new Server(MANDRAKE),new ServerInfo("http://www.mandrake.cz/titles_abc.php"));
+        definitions.put(new Server(CZILLA),new ServerInfo("http://www.czilla.cz/rss/rss.html", null, ServerInfo.RSS));
     }
 
     /**
@@ -78,18 +80,19 @@ public class UpdateLinks extends TimerTask {
     public UpdateLinks(boolean nic) {
         definitions = new HashMap();
 
-        definitions.put(new Server(ROOT),new ServerInfo("file:///home/literakl/abc/biz/titulky/ttitles.txt"));
-//        definitions.put(new Server(LW),new ServerInfo("file:///home/literakl/abc/biz/titulky/lw.dat","Windows-1250",ServerInfo.TRAFIKA));
-//        definitions.put(new Server(SW),new ServerInfo("file:///home/literakl/abc/biz/titulky/sw.dat","Windows-1250",ServerInfo.TRAFIKA));
-//        definitions.put(new Server(UG),new ServerInfo("file:///home/literakl/abc/biz/titulky/czech.txt"));
-//        definitions.put(new Server(PENGUIN),new ServerInfo("file:///home/literakl/abc/biz/titulky/trafika.php3"));
-//        definitions.put(new Server(WS),new ServerInfo("file:///home/literakl/abc/biz/titulky/ws.dat"));
-//        definitions.put(new Server(KECZY),new ServerInfo("file:///home/literakl/abc/biz/titulky/headline.php3"));
-//        definitions.put(new Server(REBOOT),new ServerInfo("file:///home/literakl/abc/biz/titulky/reboot_lh.phtml"));
-//        definitions.put(new Server(LINUXZONE),new ServerInfo("file:///home/literakl/abc/biz/titulky/last10.phtml"));
-//        definitions.put(new Server(LINUXSK),new ServerInfo("file:///home/literakl/abc/biz/titulky/backend.php",null,ServerInfo.RSS));
-//        definitions.put(new Server(LDAP),new ServerInfo("file:///home/literakl/abc/biz/titulky/backend-ldap.php",null,ServerInfo.RSS));
-        definitions.put(new Server(MANDRAKE), new ServerInfo("file:///home/literakl/abc/biz/titulky/titles_abc.php"));
+//        definitions.put(new Server(ROOT),new ServerInfo("file:///home/literakl/abc/data/titulky/ttitles.txt"));
+//        definitions.put(new Server(LW),new ServerInfo("file:///home/literakl/abc/data/titulky/lw.dat","Windows-1250",ServerInfo.TRAFIKA));
+//        definitions.put(new Server(SW),new ServerInfo("file:///home/literakl/abc/data/titulky/sw.dat","Windows-1250",ServerInfo.TRAFIKA));
+//        definitions.put(new Server(UG),new ServerInfo("file:///home/literakl/abc/data/titulky/czech.txt"));
+//        definitions.put(new Server(PENGUIN),new ServerInfo("file:///home/literakl/abc/data/titulky/trafika.php3"));
+//        definitions.put(new Server(WS),new ServerInfo("file:///home/literakl/abc/data/titulky/ws.dat"));
+//        definitions.put(new Server(KECZY),new ServerInfo("file:///home/literakl/abc/data/titulky/headline.php3"));
+//        definitions.put(new Server(REBOOT),new ServerInfo("file:///home/literakl/abc/data/titulky/reboot_lh.phtml"));
+//        definitions.put(new Server(LINUXZONE),new ServerInfo("file:///home/literakl/abc/data/titulky/last10.phtml"));
+//        definitions.put(new Server(LINUXSK),new ServerInfo("file:///home/literakl/abc/data/titulky/backend.php",null,ServerInfo.RSS));
+//        definitions.put(new Server(LDAP),new ServerInfo("file:///home/literakl/abc/data/titulky/backend-ldap.php",null,ServerInfo.RSS));
+//        definitions.put(new Server(MANDRAKE), new ServerInfo("file:///home/literakl/abc/data/titulky/titles_abc.php"));
+        definitions.put(new Server(CZILLA), new ServerInfo("file:///home/literakl/abc/data/titulky/mozilla_rss.html", null, ServerInfo.RSS));
     }
 
     /**
@@ -298,7 +301,7 @@ public class UpdateLinks extends TimerTask {
 
     public static void main(String[] args) {
         org.apache.log4j.BasicConfigurator.configure();
-        UpdateLinks updater = new UpdateLinks();
+        UpdateLinks updater = new UpdateLinks(true);
         updater.run();
     }
 
