@@ -58,7 +58,7 @@ public class FMTemplateSelector extends TemplateSelector {
 
         ServletAction servletAction = (ServletAction) mappings.get(servlet + action);
         if ( servletAction==null )
-            throw new AbcException("Neexistuje sablona pro kombinaci "+servlet +","+ action);
+            throw new AbcException("Neexistuje ¹ablona pro kombinaci "+servlet +","+ action);
 
         String template = selectTemplate(servletAction,browser,request);
         if ( Misc.empty(content) ) {
@@ -71,7 +71,7 @@ public class FMTemplateSelector extends TemplateSelector {
         data.put(VAR_BROWSER,browser);
         data.put(VAR_OS,os);
 
-        return template+"/template.vm";
+        return template+"/template.ftl";
     }
 
     /**
@@ -81,7 +81,7 @@ public class FMTemplateSelector extends TemplateSelector {
     public static String select(String servlet, String action, String template, Map data) {
         ServletAction servletAction = (ServletAction) mappings.get(servlet + action);
         if ( servletAction==null )
-            throw new AbcException("Neexistuje sablona pro kombinaci "+servlet +","+ action);
+            throw new AbcException("Neexistuje ¹ablona pro kombinaci "+servlet +","+ action);
 
         Mapping mapping = servletAction.getMapping(template);
         String content = mapping.getContent();
