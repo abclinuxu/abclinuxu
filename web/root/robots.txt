@@ -7,25 +7,20 @@ Disallow: /
 User-agent: WebTrends
 Disallow: /
 
-User-agent: wget
-Disallow: /
-
 User-agent: *
-Disallow: /software/Edit
-Disallow: /hardware/Edit
-Disallow: /clanky/Edit
-Disallow: /drivers/Edit
-Disallow: /Edit
-Disallow: /images
-Disallow: /download
-Disallow: /Profile
+Disallow: /software/edit
+Disallow: /hardware/edit
+Disallow: /clanky/edit
+Disallow: /drivers/edit
+Disallow: /EditUser
+Disallow: /EditRelation
+Disallow: /clanky/EditDiscussion
+Disallow: /news/EditDiscussion
+Disallow: /hardware/EditDiscussion
+Disallow: /software/EditDiscussion
+Disallow: /forum/EditDiscussion
+Disallow: /SelectUser
+Disallow: /SelectRelation
 Disallow: /Search
-Disallow: /Reward
 Disallow: /History
-Allow: /Index
-Allow: /hardware/View
-Allow: /software/View
-Allow: /clanky/View
-Allow: /drivers/View
-
 
