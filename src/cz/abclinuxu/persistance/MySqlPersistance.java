@@ -901,7 +901,6 @@ public class MySqlPersistance implements Persistance {
             user.setPassword(resultSet.getString(5));
             user.setData(insertEncoding(resultSet.getString(6)));
 
-            findChildren(user,con);
             return user;
         } finally {
             releaseSQLResources(con,statement,resultSet);
@@ -925,11 +924,13 @@ public class MySqlPersistance implements Persistance {
             }
 
             GenericDataObject item = null;
-            if ( obj instanceof Category )
+            if ( obj instanceof Category ) {
                 item = new Category(obj.getId());
-            else if ( obj instanceof Item )
+                findChildren(item, con);
+            } else if ( obj instanceof Item ) {
                 item = new Item(obj.getId());
-            else
+                findChildren(item, con);
+            } else
                 item = new Record(obj.getId());
 
             item.setType(resultSet.getInt(2));
@@ -942,7 +943,6 @@ public class MySqlPersistance implements Persistance {
             item.setCreated(resultSet.getTimestamp(5));
             item.setUpdated(resultSet.getTimestamp(6));
 
-            findChildren(item,con);
             return item;
         } finally {
             releaseSQLResources(con,statement,resultSet);
@@ -1084,7 +1084,6 @@ public class MySqlPersistance implements Persistance {
             }
             poll.setChoices(choices);
 
-            findChildren(poll,con);
             return poll;
         } finally {
             releaseSQLResources(con,statement,resultSet);
