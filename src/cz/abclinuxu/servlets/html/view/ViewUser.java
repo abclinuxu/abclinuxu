@@ -65,8 +65,15 @@ public class ViewUser implements AbcAction {
         if ( action.equals(ACTION_SHOW_MY_PROFILE) ) {
             User user = (User) env.get(Constants.VAR_USER);
             User managed = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
-            if (managed==null)
-                return ServletUtils.showErrorPage("Chybí parametr uid!", env, request);
+            if (managed==null) {
+                if (user==null)
+                    return FMTemplateSelector.select("ViewUser", "login", env, request);
+                else
+                    managed = user;
+            } else
+                managed = (User) PersistanceFactory.getPersistance().findById(managed);
+            
+            env.put(VAR_PROFILE, managed);
             if (user==null || (user.getId()!=managed.getId() && !user.hasRole(Roles.USER_ADMIN)))
                 return handleProfile(request, env);
             else
@@ -89,14 +96,16 @@ public class ViewUser implements AbcAction {
      * shows profile for selected user
      */
     protected String handleProfile(HttpServletRequest request, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        if (env.get(VAR_PROFILE)==null) {
+            Map params = (Map) env.get(Constants.VAR_PARAMS);
+            Persistance persistance = PersistanceFactory.getPersistance();
 
-        User user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
-        if ( user==null )
-            return ServletUtils.showErrorPage("Chybí parametr uid!", env, request);
-        user = (User) persistance.findById(user);
-        env.put(VAR_PROFILE,user);
+            User user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
+            if ( user==null )
+                return ServletUtils.showErrorPage("Chybí parametr uid!", env, request);
+            user = (User) persistance.findById(user);
+            env.put(VAR_PROFILE, user);
+        }
 
         return FMTemplateSelector.select("ViewUser","profile",env,request);
     }
@@ -105,13 +114,6 @@ public class ViewUser implements AbcAction {
      * shows profile of logged in user
      */
     protected String handleMyProfile(HttpServletRequest request, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
-
-        User user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
-        user = (User) persistance.findById(user);
-        env.put(VAR_PROFILE,user);
-
         return FMTemplateSelector.select("ViewUser","myProfile",env,request);
     }
 
