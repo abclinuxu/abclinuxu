@@ -8,9 +8,6 @@ package cz.abclinuxu.data;
  */
 public class Survey extends Poll {
 
-    /** whether the user may select multiple choices */
-    protected boolean multiChoice;
-
 
     public Survey(int id) {
         super(id);

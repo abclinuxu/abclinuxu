@@ -26,6 +26,13 @@ public class GenericObject {
     }
 
     /**
+     * sets id (only Persistance may call this method!)
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    /**
      * adds another dependant object
      */
     public void addContent(GenericObject object) {

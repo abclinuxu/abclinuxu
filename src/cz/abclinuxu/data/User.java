@@ -85,4 +85,14 @@ public class User extends GenericObject {
     public boolean validatePassword(String pass) {
         return password.equals(pass);
     }
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer("User: id=");
+        sb.append(id);
+        if ( login!=null ) sb.append(",login="+login);
+        if ( name!=null ) sb.append(",name="+name);
+        if ( email!=null ) sb.append(",email="+email);
+        if ( password!=null ) sb.append(",password="+password);
+        return sb.toString();
+    }
 }

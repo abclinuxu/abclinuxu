@@ -15,6 +15,8 @@ public class Poll extends GenericObject {
     protected PollChoice[] choices;
     /** creation date or last update of this object */
     protected Date updated;
+    /** whether the user may select multiple choices */
+    protected boolean multiChoice;
 
 
     public Poll(int id) {
@@ -74,6 +76,19 @@ public class Poll extends GenericObject {
             PollChoice choice = (PollChoice) iterator.next();
             this.choices[i++] = choice;
         }
+    }
+
+    /**
+     * @return whether the user may select multiple choices
+     */
+    public boolean isMultiChoice() {
+        return false;
+    }
+
+    /**
+     * sets whether the user may select multiple choices
+     */
+    public void setMultiChoice(boolean multiChoice) {
     }
 
     /**

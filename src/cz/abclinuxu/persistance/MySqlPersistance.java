@@ -11,6 +11,7 @@ import java.sql.*;
 import java.io.*;
 import java.util.*;
 import cz.abclinuxu.data.*;
+import com.codestudio.sql.PoolManPreparedStatement;
 
 /**
  * This class provides persistance backed up by MySQl database. You should consult
@@ -97,7 +98,7 @@ public class MySqlPersistance extends Persistance {
                 return loadUser((User)obj);
             }
         } catch (SQLException e) {
-            throw new PersistanceException("Nemuzu nahrat "+obj.toString()+" z databaze!",e);
+            throw new PersistanceException("Nemohu nahrat "+obj.toString()+" z databaze!",e);
         }
         return null;
     }
@@ -106,6 +107,25 @@ public class MySqlPersistance extends Persistance {
      * Makes object peristant. It may modify <code>id</code> of argument.
      */
     public void storeObject(GenericObject obj) throws PersistanceException {
+        try {
+            if (obj instanceof Record) {
+                storeRecord((Record)obj);
+            } else if (obj instanceof Item) {
+                storeItem((Item)obj);
+            } else if (obj instanceof Category) {
+                storeCategory((Category)obj);
+            } else if (obj instanceof Data) {
+                storeData((Data)obj);
+            } else if (obj instanceof Link) {
+                storeLink((Link)obj);
+            } else if (obj instanceof Poll) {
+                storePoll((Poll)obj);
+            } else if (obj instanceof User) {
+                storeUser((User)obj);
+            }
+        } catch (SQLException e) {
+            throw new PersistanceException("Nemohu ulozit "+obj.toString()+" do databaze!",e);
+        }
     }
 
     /**
@@ -150,6 +170,17 @@ public class MySqlPersistance extends Persistance {
     }
 
     /**
+     * closes database connection and logs any errors
+     */
+    protected void releaseSQLConnection(Connection con) {
+        try {
+            con.close();
+        } catch (Exception e) {
+            log.error("Problems during closing connection to database!",e);
+        }
+    }
+
+    /**
      * @return <code>obj.getId()</code> with table's prefix
      */
     protected static String getTreeId(GenericObject obj) {
@@ -174,205 +205,227 @@ public class MySqlPersistance extends Persistance {
      * @return user from mysql db
      */
     protected GenericObject loadUser(User obj) throws PersistanceException, SQLException {
-        Connection con = getSQLConnection();
-        PreparedStatement statement = con.prepareStatement("select * from uzivatel where cislo=?");
-        statement.setInt(1,obj.getId());
+        Connection con = null;
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("select * from uzivatel where cislo=?");
+            statement.setInt(1,obj.getId());
 
-        ResultSet result = statement.executeQuery();
-        if ( !result.next() ) {
-            con.close();
-            throw new PersistanceException("Uzivatel "+obj.getId()+" nebyl nalezen!");
+            ResultSet result = statement.executeQuery();
+            if ( !result.next() ) {
+                throw new PersistanceException("Uzivatel "+obj.getId()+" nebyl nalezen!");
+            }
+
+            User user = new User(obj.getId());
+            user.setLogin(result.getString(2));
+            user.setName(result.getString(3));
+            user.setEmail(result.getString(4));
+            user.setPassword(result.getString(5));
+
+            return user;
+        } finally {
+            releaseSQLConnection(con);
         }
-
-        User user = new User(obj.getId());
-        user.setLogin(result.getString(2));
-        user.setName(result.getString(3));
-        user.setEmail(result.getString(4));
-        user.setPassword(result.getString(5));
-
-        con.close();
-        return user;
     }
 
     /**
      * @return item descendant from mysql db
      */
     protected GenericObject loadItem(Item obj) throws PersistanceException, SQLException {
-        Connection con = getSQLConnection();
-        PreparedStatement statement = con.prepareStatement("select * from polozka where cislo=?");
-        statement.setInt(1,obj.getId());
+        Connection con = null;
 
-        ResultSet result = statement.executeQuery();
-        if ( !result.next() ) {
-            con.close();
-            throw new PersistanceException("Polozka "+obj.getId()+" nebyla nalezena!");
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("select * from polozka where cislo=?");
+            statement.setInt(1,obj.getId());
+
+            ResultSet result = statement.executeQuery();
+            if ( !result.next() ) {
+                throw new PersistanceException("Polozka "+obj.getId()+" nebyla nalezena!");
+            }
+
+            Item item = null;
+            switch ( result.getInt(2) ) {
+                case 1: item = new Make(obj.getId());break;
+                case 2: item = new Article(obj.getId());break;
+                case 3: item = new Question(obj.getId());break;
+                case 4: item = new Request(obj.getId());break;
+                default: throw new PersistanceException("Nalezena polozka "+obj.getId()+" neznameho typu "+result.getInt(2)+"!");
+            }
+            item.setData(new String(result.getBytes(3)));
+            item.setOwner(result.getInt(4));
+            item.setUpdated(result.getTimestamp(5));
+
+            findChildren(item,"P"+item.getId());
+            return item;
+        } finally {
+            releaseSQLConnection(con);
         }
-
-        Item item = null;
-        switch ( result.getInt(2) ) {
-            case 1: item = new Make(obj.getId());break;
-            case 2: item = new Article(obj.getId());break;
-            case 3: item = new Question(obj.getId());break;
-            case 4: item = new Request(obj.getId());break;
-            default: con.close();
-                     throw new PersistanceException("Nalezena polozka "+obj.getId()+" neznameho typu "+result.getInt(2)+"!");
-        }
-        item.setData(new String(result.getBytes(3)));
-        item.setOwner(result.getInt(4));
-        item.setUpdated(result.getTimestamp(5));
-
-        con.close();
-        findChildren(item,"P"+item.getId());
-        return item;
     }
 
     /**
      * @return item descendant from mysql db
      */
     protected GenericObject loadRecord(Record obj) throws PersistanceException, SQLException {
-        Connection con = getSQLConnection();
-        PreparedStatement statement = con.prepareStatement("select * from zaznam where cislo=?");
-        statement.setInt(1,obj.getId());
+        Connection con = null;
 
-        ResultSet result = statement.executeQuery();
-        if ( !result.next() ) {
-            con.close();
-            throw new PersistanceException("Zaznam "+obj.getId()+" nebyl nalezen!");
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("select * from zaznam where cislo=?");
+            statement.setInt(1,obj.getId());
+
+            ResultSet result = statement.executeQuery();
+            if ( !result.next() ) {
+                throw new PersistanceException("Zaznam "+obj.getId()+" nebyl nalezen!");
+            }
+
+            Record record = null;
+            switch ( result.getInt(2) ) {
+                case 1: record = new HardwareRecord(obj.getId());break;
+                case 2: record = new SoftwareRecord(obj.getId());break;
+                case 3: record = new ArticleRecord(obj.getId());break;
+                default: throw new PersistanceException("Nalezen zaznam "+obj.getId()+" neznameho typu "+result.getInt(2)+"!");
+            }
+            record.setData(new String(result.getBytes(3)));
+            record.setOwner(result.getInt(4));
+            record.setUpdated(result.getTimestamp(5));
+
+            findChildren(record,"Z"+record.getId());
+            return record;
+        } finally {
+            releaseSQLConnection(con);
         }
-
-        Record record = null;
-        switch ( result.getInt(2) ) {
-            case 1: record = new HardwareRecord(obj.getId());break;
-            case 2: record = new SoftwareRecord(obj.getId());break;
-            case 3: record = new ArticleRecord(obj.getId());break;
-            default: con.close();
-                     throw new PersistanceException("Nalezen zaznam "+obj.getId()+" neznameho typu "+result.getInt(2)+"!");
-        }
-        record.setData(new String(result.getBytes(3)));
-        record.setOwner(result.getInt(4));
-        record.setUpdated(result.getTimestamp(5));
-
-        con.close();
-        findChildren(record,"Z"+record.getId());
-        return record;
     }
 
     /**
      * @return category from mysql db
      */
     protected GenericObject loadCategory(Category obj) throws PersistanceException, SQLException {
-        Connection con = getSQLConnection();
-        PreparedStatement statement = con.prepareStatement("select * from kategorie where cislo=?");
-        statement.setInt(1,obj.getId());
+        Connection con = null;
 
-        ResultSet result = statement.executeQuery();
-        if ( !result.next() ) {
-            con.close();
-            throw new PersistanceException("Kategorie "+obj.getId()+" nebyla nalezena!");
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("select * from kategorie where cislo=?");
+            statement.setInt(1,obj.getId());
+
+            ResultSet result = statement.executeQuery();
+            if ( !result.next() ) {
+                throw new PersistanceException("Kategorie "+obj.getId()+" nebyla nalezena!");
+            }
+
+            Category ctg = new Category(obj.getId());
+            ctg.setData(new String(result.getBytes(2)));
+            ctg.setOpen(result.getBoolean(3));
+            ctg.setOwner(result.getInt(4));
+            ctg.setUpdated(result.getTimestamp(5));
+
+            findChildren(ctg,"K"+ctg.getId());
+            return ctg;
+        } finally {
+            releaseSQLConnection(con);
         }
-
-        Category ctg = new Category(obj.getId());
-        ctg.setData(new String(result.getBytes(2)));
-        ctg.setOpen(result.getBoolean(3));
-        ctg.setOwner(result.getInt(4));
-        ctg.setUpdated(result.getTimestamp(5));
-
-        con.close();
-        findChildren(ctg,"K"+ctg.getId());
-        return ctg;
     }
 
     /**
      * @return data from mysql db
      */
     protected GenericObject loadData(Data obj) throws PersistanceException, SQLException {
-        Connection con = getSQLConnection();
-        PreparedStatement statement = con.prepareStatement("select * from objekty where cislo=?");
-        statement.setInt(1,obj.getId());
+        Connection con = null;
 
-        ResultSet result = statement.executeQuery();
-        if ( !result.next() ) {
-            con.close();
-            throw new PersistanceException("Datovy objekt "+obj.getId()+" nebyl nalezen!");
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("select * from objekty where cislo=?");
+            statement.setInt(1,obj.getId());
+
+            ResultSet result = statement.executeQuery();
+            if ( !result.next() ) {
+                throw new PersistanceException("Datovy objekt "+obj.getId()+" nebyl nalezen!");
+            }
+
+            Data data = new Data(obj.getId());
+            data.setFormat(result.getString(2));
+            data.setData(result.getBytes(3));
+            data.setOwner(result.getInt(4));
+
+            return data;
+        } finally {
+            releaseSQLConnection(con);
         }
-
-        Data data = new Data(obj.getId());
-        data.setOwner(result.getInt(2));
-        data.setFormat(result.getString(3));
-        data.setData(result.getBytes(4));
-
-        con.close();
-        return data;
     }
 
     /**
      * @return link from mysql db
      */
     protected GenericObject loadLink(Link obj) throws PersistanceException, SQLException {
-        Connection con = getSQLConnection();
-        PreparedStatement statement = con.prepareStatement("select * from odkazy where cislo=?");
-        statement.setInt(1,obj.getId());
+        Connection con = null;
 
-        ResultSet result = statement.executeQuery();
-        if ( !result.next() ) {
-            con.close();
-            throw new PersistanceException("Odkaz "+obj.getId()+" nebyl nalezen!");
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("select * from odkazy where cislo=?");
+            statement.setInt(1,obj.getId());
+
+            ResultSet result = statement.executeQuery();
+            if ( !result.next() ) {
+                throw new PersistanceException("Odkaz "+obj.getId()+" nebyl nalezen!");
+            }
+
+            Link link = new Link(obj.getId());
+            link.setServer(result.getInt(2));
+            link.setText(result.getString(3));
+            link.setUrl(result.getString(4));
+
+            return link;
+        } finally {
+            releaseSQLConnection(con);
         }
-
-        Link link = new Link(obj.getId());
-        link.setServer(new Server(result.getInt(2)));
-        link.setText(result.getString(3));
-        link.setUrl(result.getString(4));
-
-        con.close();
-        return link;
     }
 
     /**
      * @return poll from mysql db
      */
     protected GenericObject loadPoll(Poll obj) throws PersistanceException, SQLException {
-        Connection con = getSQLConnection();
-        PreparedStatement statement = con.prepareStatement("select * from anketa where cislo=?");
-        statement.setInt(1,obj.getId());
+        Connection con = null;
 
-        ResultSet result = statement.executeQuery();
-        if ( !result.next() ) {
-            con.close();
-            throw new PersistanceException("Kategorie "+obj.getId()+" nebyla nalezena!");
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("select * from anketa where cislo=?");
+            statement.setInt(1,obj.getId());
+
+            ResultSet result = statement.executeQuery();
+            if ( !result.next() ) {
+                throw new PersistanceException("Kategorie "+obj.getId()+" nebyla nalezena!");
+            }
+
+            Poll poll = null;
+            switch ( result.getInt(2) ) {
+                case 1: poll = new Survey(obj.getId());break;
+                case 2: poll = new Rating(obj.getId());break;
+                default: throw new PersistanceException("Nalezena anketa "+obj.getId()+" neznameho typu "+result.getInt(2)+"!");
+            }
+            poll.setText(new String(result.getString(3)));
+            poll.setMultiChoice(result.getBoolean(4));
+            poll.setUpdated(result.getTimestamp(5));
+
+            statement = con.prepareStatement("select volba,pocet from anketa_data where anketa=? order by cislo asc");
+            statement.setInt(1,obj.getId());
+
+            result = statement.executeQuery();
+            List choices = new ArrayList();
+            while ( result.next() ) {
+                PollChoice choice = new PollChoice(result.getString(1));
+                choice.setCount(result.getInt(2));
+                choices.add(choice);
+            }
+            if ( choices.size()==0 ) {
+                throw new PersistanceException("Anketa "+obj.getId()+" nema zadne volby!");
+            }
+            poll.setChoices(choices);
+
+            findChildren(poll,"A"+poll.getId());
+            return poll;
+        } finally {
+            releaseSQLConnection(con);
         }
-
-        Poll poll = null;
-        boolean isSurvey = false;
-        switch ( result.getInt(2) ) {
-            case 1: poll = new Survey(obj.getId()); isSurvey = true; break;
-            case 2: poll = new Rating(obj.getId());break;
-            default: con.close();
-                     throw new PersistanceException("Nalezena anketa "+obj.getId()+" neznameho typu "+result.getInt(2)+"!");
-        }
-        poll.setText(new String(result.getString(3)));
-        if ( isSurvey ) ((Survey)poll).setMultiChoice(result.getBoolean(4));
-        poll.setUpdated(result.getTimestamp(5));
-
-        statement = con.prepareStatement("select volba,pocet from anketa_data where anketa=? order by cislo asc");
-        statement.setInt(1,obj.getId());
-
-        result = statement.executeQuery();
-        List choices = new ArrayList();
-        while ( result.next() ) {
-            PollChoice choice = new PollChoice(result.getString(1));
-            choice.setCount(result.getInt(2));
-            choices.add(choice);
-        }
-        if ( choices.size()==0 ) {
-            con.close();
-            throw new PersistanceException("Anketa "+obj.getId()+" nema zadne volby!");
-        }
-        poll.setChoices(choices);
-
-        con.close();
-        findChildren(poll,"A"+poll.getId());
-        return poll;
     }
 
     /**
@@ -380,57 +433,293 @@ public class MySqlPersistance extends Persistance {
      * with <code>obj.setContent()</code> call.
      */
     protected void findChildren(GenericObject obj, String treeId) throws PersistanceException, SQLException {
-        Connection con = getSQLConnection();
-        PreparedStatement statement = con.prepareStatement("select obsah from strom where id=?");
-        statement.setString(1,treeId);
+        Connection con = null;
 
-        ResultSet result = statement.executeQuery();
-        while ( result.next() ) {
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("select obsah from strom where id=?");
+            statement.setString(1,treeId);
 
-            String tmp = result.getString(1);
-            try {
-                char type = tmp.charAt(0);
-                int id = Integer.parseInt(tmp.substring(1));
+            ResultSet result = statement.executeQuery();
+            while ( result.next() ) {
+                String tmp = result.getString(1);
+                try {
+                    char type = tmp.charAt(0);
+                    int id = Integer.parseInt(tmp.substring(1));
 
-                GenericObject child = null;
-                if ( type=='K' ) {
-                    child = new Category(id);
-                } else if ( type=='P' ) {
-                    child = new Item(id);
-                } else if ( type=='Z' ) {
-                    child = new Record(id);
-                } else if ( type=='A' ) {
-                    child = new Poll(id);
-                } else if ( type=='O' ) {
-                    child = new Data(id);
-                } else if ( type=='L' ) {
-                    child = new Link(id);
-                } else if ( type=='E' ) {
-                    continue;
+                    GenericObject child = null;
+                    if ( type=='K' ) {
+                        child = new Category(id);
+                    } else if ( type=='P' ) {
+                        child = new Item(id);
+                    } else if ( type=='Z' ) {
+                        child = new Record(id);
+                    } else if ( type=='A' ) {
+                        child = new Poll(id);
+                    } else if ( type=='O' ) {
+                        child = new Data(id);
+                    } else if ( type=='L' ) {
+                        child = new Link(id);
+                    } else if ( type=='E' ) {
+                        continue;
+                    }
+
+                    obj.addContent(child);
+                } catch (Exception e) {
+                    log.error("Cannot convert "+tmp+" from tree to GenericObject!",e);
                 }
-
-                obj.addContent(child);
-            } catch (Exception e) {
-                log.error("Cannot convert "+tmp+" from tree to GenericObject!",e);
             }
+        } finally {
+            releaseSQLConnection(con);
+        }
+    }
+
+    /**
+     * stores record to database and updates <code>id</code>
+     */
+    protected void storeRecord(Record record) throws PersistanceException, SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("insert into zaznam values(0,?,?,?,NULL)");
+
+            if ( record instanceof HardwareRecord ) {
+                statement.setInt(1,1);
+            } else if ( record instanceof SoftwareRecord ) {
+                statement.setInt(1,2);
+            } else if ( record instanceof ArticleRecord ) {
+                statement.setInt(1,3);
+            } else {
+                throw new PersistanceException("Neznamy typ zaznamu "+ record.toString()+"!");
+            }
+
+            statement.setBytes(2,record.getData().getBytes());
+            statement.setInt(3,record.getOwner());
+
+            int result = statement.executeUpdate();
+            if ( result==0 ) {
+                throw new PersistanceException("Nepodarilo se vlozit zaznam "+record.toString()+" do databaze!");
+            }
+
+            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)((PoolManPreparedStatement)statement).getNativePreparedStatement();
+            record.setId((int)mm.getLastInsertID());
+
+        } finally {
+            releaseSQLConnection(con);
+        }
+    }
+
+    /**
+     * stores item to database and updates <code>id</code>
+     */
+    protected void storeItem(Item item) throws PersistanceException, SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("insert into polozka values(0,?,?,?,NULL)");
+
+            if ( item instanceof Make ) {
+                statement.setInt(1,1);
+            } else if ( item instanceof Article ) {
+                statement.setInt(1,2);
+            } else if ( item instanceof Question ) {
+                statement.setInt(1,3);
+            } else if ( item instanceof Request ) {
+                statement.setInt(1,4);
+            } else {
+                throw new PersistanceException("Neznamy typ polozky "+ item.toString()+"!");
+            }
+
+            statement.setBytes(2,item.getData().getBytes());
+            statement.setInt(3,item.getOwner());
+
+            int result = statement.executeUpdate();
+            if ( result==0 ) {
+                throw new PersistanceException("Nepodarilo se vlozit polozku "+item.toString()+" do databaze!");
+            }
+
+            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)((PoolManPreparedStatement)statement).getNativePreparedStatement();
+            item.setId((int)mm.getLastInsertID());
+
+        } finally {
+            releaseSQLConnection(con);
+        }
+    }
+
+    /**
+     * stores category to database and updates <code>id</code>
+     */
+    protected void storeCategory(Category category) throws PersistanceException, SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("insert into kategorie values(0,?,?,?,NULL)");
+
+            statement.setBytes(1,category.getData().getBytes());
+            statement.setBoolean(2,category.isOpen());
+            statement.setInt(3,category.getOwner());
+
+            int result = statement.executeUpdate();
+            if ( result==0 ) {
+                throw new PersistanceException("Nepodarilo se vlozit kategorii "+category.toString()+" do databaze!");
+            }
+
+            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)((PoolManPreparedStatement)statement).getNativePreparedStatement();
+            category.setId((int)mm.getLastInsertID());
+
+        } finally {
+            releaseSQLConnection(con);
+        }
+    }
+
+    /**
+     * stores data to database and updates <code>id</code>
+     */
+    protected void storeData(Data data) throws PersistanceException, SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("insert into objekty values(0,?,?,?)");
+
+            statement.setString(1,data.getFormat());
+            statement.setBytes(2,data.getData());
+            statement.setInt(3,data.getOwner());
+
+            int result = statement.executeUpdate();
+            if ( result==0 ) {
+                throw new PersistanceException("Nepodarilo se vlozit objekt "+data.toString()+" do databaze!");
+            }
+
+            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)((PoolManPreparedStatement)statement).getNativePreparedStatement();
+            data.setId((int)mm.getLastInsertID());
+
+        } finally {
+            releaseSQLConnection(con);
+        }
+    }
+
+    /**
+     * stores link to database and updates <code>id</code>
+     */
+    protected void storeLink(Link link) throws PersistanceException, SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("insert into odkazy values(0,?,?,?,?)");
+
+            statement.setInt(1,link.getServer());
+            statement.setString(2,link.getText());
+            statement.setString(3,link.getUrl());
+            statement.setBoolean(4,link.isFixed());
+
+            int result = statement.executeUpdate();
+            if ( result==0 ) {
+                throw new PersistanceException("Nepodarilo se vlozit objekt "+link.toString()+" do databaze!");
+            }
+
+            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)((PoolManPreparedStatement)statement).getNativePreparedStatement();
+            link.setId((int)mm.getLastInsertID());
+
+        } finally {
+            releaseSQLConnection(con);
+        }
+    }
+
+    /**
+     * stores poll to database and updates <code>id</code>
+     */
+    protected void storePoll(Poll poll) throws PersistanceException, SQLException {
+        Connection con = null;
+
+        try {
+            PollChoice[] choices = poll.getChoices();
+            if ( choices==null || choices.length<2 ) {
+                throw new PersistanceException("Anketa musi mit nejmene dve volby!");
+            }
+
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("insert into anketa values(0,?,?,?,NULL)");
+
+            if ( poll instanceof Survey ) {
+                statement.setInt(1,1);
+            } else if ( poll instanceof Rating ) {
+                statement.setInt(1,2);
+            } else {
+                throw new PersistanceException("Neznamy typ ankety "+ poll.toString()+"!");
+            }
+
+            statement.setString(2,poll.getText());
+            statement.setBoolean(3,poll.isMultiChoice());
+
+            int result = statement.executeUpdate();
+            if ( result==0 ) {
+                throw new PersistanceException("Nepodarilo se vlozit anketu "+poll.toString()+" do databaze!");
+            }
+
+            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)((PoolManPreparedStatement)statement).getNativePreparedStatement();
+            poll.setId((int)mm.getLastInsertID());
+
+            statement = con.prepareStatement("insert into anketa_data values(?,?,?,0)");
+            for ( int i=0; i<choices.length; i++ ) {
+                statement.clearParameters();
+                statement.setInt(1,i);
+                statement.setInt(2,poll.getId());
+                statement.setString(3,choices[i].getText());
+
+                result = statement.executeUpdate();
+            }
+        } finally {
+            releaseSQLConnection(con);
+        }
+    }
+
+    /**
+     * stores user to database and updates <code>id</code>
+     */
+    protected void storeUser(User user) throws PersistanceException, SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("insert into uzivatel values(0,?,?,?,?)");
+
+            statement.setString(1,user.getLogin());
+            statement.setString(2,user.getName());
+            statement.setString(3,user.getEmail());
+            statement.setString(4,user.getPassword());
+
+            int result = statement.executeUpdate();
+            if ( result==0 ) {
+                throw new PersistanceException("Nepodarilo se vlozit objekt "+user.toString()+" do databaze!");
+            }
+
+            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)((PoolManPreparedStatement)statement).getNativePreparedStatement();
+            user.setId((int)mm.getLastInsertID());
+
+        } finally {
+            releaseSQLConnection(con);
         }
     }
 
     public static void main(String[] args) throws Exception {
-        GenericObject obj = new Make(1);
+        User obj = new User(0);
+        obj.setLogin("literakl");
+        obj.setName("Test user");
+        obj.setPassword("test");
+        obj.setEmail("test@test");
+
         Persistance persistance = PersistanceFactory.getPersistance();
         int  i;
         long start = System.currentTimeMillis();
 
         for (i=0; i<1; i++ ) {
-            GenericObject obj2 = persistance.loadObject(obj);
-            System.out.println("obj2 = " + obj2.toString());
-            List children = obj2.getContent();
-            for (Iterator it = children.iterator(); it.hasNext();) {
-                GenericObject obj3 = (GenericObject) it.next();
-                obj3 = persistance.loadObject(obj3);
-                System.out.println("obj3 = " + obj3.toString());
-            }
+            persistance.storeObject(obj);
+            System.out.println("obj = " + obj.toString());
         }
         long end = System.currentTimeMillis();
         float avg = (end-start)/(float)i;

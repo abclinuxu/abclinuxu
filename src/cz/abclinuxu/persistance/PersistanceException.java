@@ -17,7 +17,7 @@ public class PersistanceException extends Exception {
     static Category log = Category.getInstance(PersistanceException.class);
 
     public PersistanceException(String s, Exception e) {
-        super(s);
+        super(new StringBuffer(s).append(" (").append(e.getMessage()).append(")").toString());
         log.error("Caught an exception: "+s,e);
     }
 

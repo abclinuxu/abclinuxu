@@ -12,7 +12,12 @@ public class Link extends GenericObject {
     /** URL */
     protected String url;
     /** server, where this link belongs to */
-    protected Server server;
+    protected int server;
+    /**
+     * if false, then this link is periodically checked and may be replaced
+     * with newer link (e.g. links to articles at news servers.
+     */
+    protected boolean fixed;
 
 
     public Link(int id) {
@@ -50,14 +55,39 @@ public class Link extends GenericObject {
     /**
      * @return server, where this link belongs to
      */
-    public Server getServer() {
+    public int getServer() {
         return server;
     }
 
     /**
      * sets server, where this link belongs to
      */
-    public void setServer(Server server) {
+    public void setServer(int server) {
         this.server = server;
+    }
+
+    /**
+     * if false, then this link is periodically checked and may be replaced
+     * with newer link (e.g. links to articles at news servers.
+     */
+    public boolean isFixed() {
+        return fixed;
+    }
+
+    /**
+     * if false, then this link is periodically checked and may be replaced
+     * with newer link (e.g. links to articles at news servers.
+     */
+    public void setFixed(boolean fixed) {
+        this.fixed = fixed;
+    }
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer("Link: id=");
+        sb.append(id);
+        if ( text!=null ) sb.append(",text="+text);
+        if ( url!=null ) sb.append(",url="+url);
+        if ( server!=0 ) sb.append(",server="+server);
+        return sb.toString();
     }
 }
