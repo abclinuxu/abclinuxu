@@ -69,7 +69,7 @@ public class EmailSender implements Configurable {
      * KEY_FROM, KEY_TO, KEY_SUBJECT and KEY_BODY or KEY_TEMPLATE.
      * @return true, when message has been successfully sent.
      */
-    public synchronized static boolean sendEmail(Map params) {
+    public static boolean sendEmail(Map params) {
         Properties props = new Properties();
         String from = (String) params.get(KEY_FROM), to = (String) params.get(KEY_TO);
         if ( from==null || from.length()==0 )
@@ -110,7 +110,7 @@ public class EmailSender implements Configurable {
      * @param content message itself
      * @return true, if message has been sent successfully
      */
-    public synchronized static boolean sendEmail(String from, String to, String subject, String content) {
+    public static boolean sendEmail(String from, String to, String subject, String content) {
         Map map = new HashMap(4);
         map.put(KEY_FROM,from);
         map.put(KEY_TO,to);
