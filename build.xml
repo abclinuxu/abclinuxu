@@ -1,9 +1,10 @@
-<project name="AbcLinuxu" basedir="." default="deploy">
+<project name="AbcLinuxu" default="deploy">
 
-  <property name="src" value="src" />
-  <property name="data" value="../data" />
-  <property name="deploy" value="../deploy" />
-  <property name="deploy_firma" value="../firma" />
+  <property file="conf_deploy.properties" />
+  
+  <property name="src" location="src" />
+  <property name="javac.debug" value="off" />
+  <property name="javac.optimize" value="on" />
 
   <path id="project.classpath">
     <fileset dir="libs">
@@ -13,11 +14,14 @@
 
 
   <target name="init">
+ 
+    <filter filtersfile="conf_deploy.properties"/>
 
-    <mkdir dir="${deploy}" />
-    <mkdir dir="${deploy}/WEB-INF/classes" />
-    <mkdir dir="${deploy}/WEB-INF/logs" />
-    <mkdir dir="${deploy_firma}" />
+    <mkdir dir="${DEPLOY_ABCLINUXU}" />
+    <mkdir dir="${DEPLOY_ABCLINUXU}/WEB-INF/classes" />
+    <mkdir dir="${DEPLOY_LOGS}" />
+    <mkdir dir="${DEPLOY_FIRMA}" />
+    <mkdir dir="${DEPLOY_BIN}" />
     <tstamp />
 
   </target>
@@ -32,57 +36,31 @@
 
   <target name="build" depends="init">
 
-    <javac srcdir="src" destdir="${deploy}/WEB-INF/classes" classpathref="project.classpath" debug="on" />
-    <javac srcdir="test" destdir="${deploy}/WEB-INF/classes" classpathref="project.classpath" />
+    <javac srcdir="src" destdir="${DEPLOY_ABCLINUXU}/WEB-INF/classes" classpathref="project.classpath"
+              debug="${javac.debug}" optimize="${javac.optimize}"
+    />
 
   </target>
 
 
   <target name="deploy-abc" depends="build">
 
-    <copy todir="${deploy}/WEB-INF">
+    <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF">
       <fileset dir="conf">
         <include name="web.xml" />
       </fileset>
     </copy>
 
-    <copy todir="${deploy}/WEB-INF/conf">
+    <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF/conf" filtering="true">
       <fileset dir="conf">
         <include name="templates.xml" />
         <include name="systemPrefs.xml" />
         <include name="proxool.xml" />
         <include name="log4j.xml" />
-        <include name="velocity.properties" />
       </fileset>
     </copy>
 
-    <copy todir="${deploy}/WEB-INF/velocity">
-      <fileset dir="web/velocity" />
-      <fileset dir="conf" includes="macros.vm" />
-    </copy>
-
-    <copy todir="${deploy}/WEB-INF/freemarker">
-      <fileset dir="web/freemarker" />
-    </copy>
-
-    <copy todir="${deploy}/WEB-INF/freemarker/include">
-      <fileset dir="web/include" />
-    </copy>
-
-    <copy todir="${deploy}/ikony">
-      <fileset dir="${data}/web/ikony" />
-    </copy>
-
-    <copy todir="${deploy}/images">
-      <fileset dir="${data}/web/images" />
-    </copy>
-
-    <copy todir="${deploy}">
-      <fileset dir="${data}/web/root" />
-      <fileset dir="web/root" />
-    </copy>
-
-    <copy todir="${deploy}/WEB-INF/lib">
+    <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF/lib">
       <fileset dir="libs" includes="*.jar">
         <exclude name="servlet.jar" />
         <exclude name="crimson.jar" />
@@ -90,11 +68,27 @@
       </fileset>
     </copy>
 
+    <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF/freemarker">
+      <fileset dir="web/freemarker" />
+    </copy>
+
+    <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF/freemarker/include">
+      <fileset dir="web/include" />
+    </copy>
+
+    <copy todir="${DEPLOY_ABCLINUXU}">
+      <fileset dir="web/root" />
+    </copy>
+
+    <copy todir="${DEPLOY_BIN}" filtering="true">
+      <fileset dir="bin" />
+    </copy>
+
   </target>
 
   <target name="deploy-firma" depends="build">
 
-    <copy todir="${deploy_firma}">
+    <copy todir="${DEPLOY_FIRMA}">
       <fileset dir="web/firma" />
     </copy>
 
