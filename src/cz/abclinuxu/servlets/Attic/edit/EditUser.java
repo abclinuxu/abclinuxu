@@ -622,7 +622,9 @@ public class EditUser extends AbcFMServlet {
         StringBuffer sb = new StringBuffer();
         int count = 0;
 
-        String tmp = (String) params.get(PARAM_USERS);
+        String tmp = (String) params.get(PARAM_USER_SHORT);
+        if (tmp==null)
+            tmp = (String) params.get(PARAM_USERS);
         if ( tmp==null ) tmp = "";
         StringTokenizer stk = new StringTokenizer(tmp,"\r\n");
         while (stk.hasMoreTokens()) {
@@ -633,7 +635,7 @@ public class EditUser extends AbcFMServlet {
             User managed = null;
             try {
                 managed = (User) persistance.findById(new User(id));
-                Element tagEmail = DocumentHelper.makeElement(user.getData(), "/data/communication/email");
+                Element tagEmail = DocumentHelper.makeElement(managed.getData(), "/data/communication/email");
                 tagEmail.attribute("valid").setText("no");
                 persistance.update(managed);
                 AdminLogger.logEvent(user, "zneplatnil email uzivateli "+managed.getName()+" - "+managed.getId());
