@@ -6,7 +6,7 @@ package cz.abclinuxu.data;
 import java.util.Date;
 
 /**
- * Category is a node of the tree (not leaf) */
+ * Category is a node of the tree (not leaf)
  */
 public class Category extends GenericObject {
     /** identifier of owner of this object */

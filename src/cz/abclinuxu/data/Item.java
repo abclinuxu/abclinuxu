@@ -59,4 +59,13 @@ public class Item extends GenericObject {
     public void setData(String data) {
         this.data = data;
     }
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer("Item: id=");
+        sb.append(id);
+        if ( owner!=0 ) sb.append(",owner="+owner);
+        if ( data!=null ) sb.append(",data="+data);
+        if ( updated!=null ) sb.append(",updated="+updated);
+        return sb.toString();
+    }
 }

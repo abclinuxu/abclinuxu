@@ -13,10 +13,26 @@ public class Poll extends GenericObject {
     protected String text;
     /** list of the choices */
     protected PollChoice[] choices;
+    /** creation date or last update of this object */
+    protected Date updated;
 
 
     public Poll(int id) {
         super(id);
+    }
+
+    /**
+     * @return last updated (or creation) date
+     */
+    public Date getUpdated() {
+        return updated;
+    }
+
+    /**
+     * sets last updated (or creation) date
+     */
+    public void setUpdated(Date updated) {
+        this.updated = updated;
     }
 
     /**
@@ -56,7 +72,7 @@ public class Poll extends GenericObject {
 
         for (Iterator iterator = choices.iterator(); iterator.hasNext();) {
             PollChoice choice = (PollChoice) iterator.next();
-            choices[i++] = choice;
+            this.choices[i++] = choice;
         }
     }
 

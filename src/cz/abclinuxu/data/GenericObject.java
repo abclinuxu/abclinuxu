@@ -11,7 +11,7 @@ import java.util.*;
 public class GenericObject {
     /** unique identifier of this object */
     protected int id;
-    /** dependant GenericObjects */
+    /** dependant GenericObjects, just empty instances with filled <code>id</code> */
     protected List content;
 
     public GenericObject(int id) {
@@ -36,9 +36,16 @@ public class GenericObject {
     }
 
     /**
-     * @return dependant objects
+     * @return dependant objects. These objects don't contain data, except their <code>id<//code>.
+     * You should call Persistance.loadObject() to lookup them from persistable storage.
      */
     public List getContent() {
         return content;
+    }
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer(this.getClass().getName());
+        sb.append(": id="+id);
+        return sb.toString();
     }
 }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<poolman>
+  <management-mode>local</management-mode>
+  <datasource>
+
+    <dbname>AbcDB</dbname>
+    <jndiName>AbcDB</jndiName>
+    <driver>org.gjt.mm.mysql.Driver</driver>
+    <url>jdbc:mysql://localhost/abc</url>
+
+    <username>literakl</username>
+    <password></password>
+
+    <minimumSize>1</minimumSize>
+    <maximumSize>10</maximumSize>
+
+    <logFile>/home/literakl/poolman-abc.log</logFile>
+
+  </datasource>
+</poolman>
+
+
+
+
