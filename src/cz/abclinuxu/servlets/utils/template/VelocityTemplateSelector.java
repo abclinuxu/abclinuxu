@@ -61,14 +61,13 @@ public class VelocityTemplateSelector extends TemplateSelector {
         }
 
         String name = servlet + action;
-        Map map = (Map) mappings.get(name);
-        if ( map==null ) {
-            throw new AbcException("Cannot find mapping for ["+servlet+","+action+"]!",AbcException.RUNTIME);
-        }
+        ServletAction servletAction = (ServletAction) mappings.get(servlet + action);
+        if ( servletAction==null )
+            throw new AbcException("Neexistuje sablona pro kombinaci "+servlet +","+ action);
 
-        Mapping mapping = (Mapping) map.get(variant);
+        Mapping mapping = servletAction.getMapping(variant);
         if ( mapping==null && ! DEFAULT_TEMPLATE.equals(variant) ) {
-            mapping = (Mapping) map.get(DEFAULT_TEMPLATE); // use default variant
+            mapping = servletAction.getMapping(DEFAULT_TEMPLATE); // use default variant
         }
 
         if ( mapping==null ) {
