@@ -43,7 +43,7 @@ public class Controller extends HttpServlet {
     /**
      * This step consolidates common initialization tasks like parsing parameters, autenthification etc.
      */
-    private void performInit(HttpServletRequest request, HttpServletResponse response, Map env) throws InvalidInputException {
+    protected void performInit(HttpServletRequest request, HttpServletResponse response, Map env) throws InvalidInputException {
         Map params = ServletUtils.putParamsToMap(request);
         env.put(Constants.VAR_PARAMS, params);
         env.put(Constants.VAR_URL_UTILS, new UrlUtils(request.getRequestURI(), response));

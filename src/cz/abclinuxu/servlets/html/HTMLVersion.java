@@ -62,7 +62,7 @@ public class HTMLVersion {
     /**
      * Displays error page.
      */
-    private static void error(HttpServletRequest request, HttpServletResponse response, Throwable e) throws IOException {
+    public static void error(HttpServletRequest request, HttpServletResponse response, Throwable e) throws IOException {
         response.setContentType("text/html; charset=ISO-8859-2");
         Writer writer = response.getWriter();
         String url = ServletUtils.getURL(request);

@@ -1,14 +1,13 @@
-<%@ page import="java.io.IOException,
-                 java.util.Map,
-                 cz.abclinuxu.servlets.utils.template.FMTemplateSelector,
+<%@ page import="java.util.Map,
                  cz.abclinuxu.persistance.extra.Qualifier,
                  cz.abclinuxu.persistance.extra.LimitQualifier,
-                 java.util.List,
                  cz.abclinuxu.persistance.SQLTool,
+                 cz.abclinuxu.servlets.Constants,
                  cz.abclinuxu.servlets.html.view.Search,
-                 cz.abclinuxu.servlets.Constants"%>
+                 cz.abclinuxu.servlets.utils.template.FMTemplateSelector,
+                 java.util.List"%>
 <%@ page
-  extends="cz.abclinuxu.servlets.AbcFMServlet"
+  extends="cz.abclinuxu.servlets.html.HTMLServlet"
 %>
 <%!
     public static final String VAR_CATEGORIES = "CATEGORIES";
