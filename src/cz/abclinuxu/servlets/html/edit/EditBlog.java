@@ -350,6 +350,8 @@ public class EditBlog implements AbcAction, Configurable {
     protected String actionRemoveStoryStep2(HttpServletRequest request, HttpServletResponse response, Relation story, Category blog, Map env) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
         persistance.remove(story);
+        decrementArchiveRecord(blog.getData().getRootElement(), ((Item)story.getChild()).getCreated());
+        persistance.update(blog);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/blog/"+blog.getSubType()+"/");
@@ -638,7 +640,7 @@ public class EditBlog implements AbcAction, Configurable {
     }
 
     /**
-     * Inserts (or increments) archive record for this month.
+     * Inserts (or increments) archive story counter for this month.
      * @param root
      * @param date
      */
@@ -662,6 +664,31 @@ public class EditBlog implements AbcAction, Configurable {
         } else {
             int count = Misc.parseInt(month.getText(), 1);
             month.setText(Integer.toString(count+1));
+        }
+    }
+
+    /**
+     * Decrements archive story counter for specified date.
+     * @param root
+     * @param date
+     */
+    void decrementArchiveRecord(Element root, Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        Element year = (Element) root.selectSingleNode("//archive/year[@value="+calendar.get(Calendar.YEAR)+"]");
+        if (year==null)
+            return;
+        Element month = (Element) year.selectSingleNode("month[@value="+(calendar.get(Calendar.MONTH)+1)+"]");
+        if (month==null)
+            return;
+        int count = Misc.parseInt(month.getText(), 1);
+        if (count>1)
+            month.setText(Integer.toString(count-1));
+        else {
+            month.detach();
+            if (year.elements().size()==0)
+                year.detach();
         }
     }
 
