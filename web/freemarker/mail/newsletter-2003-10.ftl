@@ -8,12 +8,12 @@ nasem portale a prozradime seznam novych sluzeb.
 
 
 Abicko
-------
+======
 
 Zacatkem kazdeho mesice vychazi nas popularni PDF casopis
 Abicko. Jedna se o specialni vyber tech nejzajimavejsich
 clanku z naseho portalu plus Zpravicek z Roota v podobe
-vhodne pro tisk ci snadne cteni z obrazovky.
+vhodne pro tisk i snadne cteni z obrazovky.
 
 Srpnove cislo ma XX stran a zabira YYY KB. Stahnout
 jej muzete ze stranky
@@ -26,7 +26,7 @@ Obsah:
 
 
 Novinky na AbcLinuxu
---------------------
+====================
 
 Aktualni novinky urcite potesi spousty z vas. I nas portal konecne
 obsahuje zpravicky! Oproti konkurenci zpravicky vytvarite primo
@@ -50,7 +50,7 @@ http://www.abclinuxu.cz/clanky/ViewRelation?rid=22809
 
 
 Pripravujeme
-------------
+============
 
 V blizke dobe se dockate techto novych sluzeb:
 
@@ -60,7 +60,7 @@ V blizke dobe se dockate techto novych sluzeb:
 * softwarovy adresar
 
 Reklama
--------
+=======
 
 Spolecnost AbcLinuxu s.r.o. poskytuje firmam i rozpoctovym
 organizacim kvalitni profesionalni sluzby. Provedeme analyzu
@@ -70,14 +70,6 @@ zrychlit pristup na internet pouzitim ABC Speed Internet.
 Mate moznost konecne se zbavit spamu a ochranit se pred viry
 nasazenim ABC Secure Mail. Navrhneme a vytvorime vam zalohovaci
 strategii. Vice na http://firma.abclinuxu.cz
-
-Komentar
---------
-
-Kdy se dockame jadra 2.6
-
-
-
 
 
 Preji vam hezky den
