@@ -1,8 +1,9 @@
 <!ELEMENT data (ilikeq?,news?,sex?,ads?,www?,personal?)>
 <!ELEMENT ilikeq (#PCDATA)> <!-- identification of user's I like Q account -->
 <!ATTLIST ilikeq amount NMTOKEN #IMPLIED> <!-- total sum of rewards -->
-<!ELEMENT news (#PCDATA)> <!-- yes, if we may send email about news on this server -->
 <!ELEMENT sex (#PCDATA)> <!-- man or woman -->
+<!ELEMENT news (#PCDATA)> <!-- yes, if we may send email about news on this server -->
 <!ELEMENT ads (#PCDATA)> <!-- yes, if we may send two email advertisements a month -->
+<!ELEMENT active (#PCDATA)> <!-- yes, if we the user is active. we dont send emails to inactive users -->
 <!ELEMENT www (#PCDATA)> <!-- URL of user's homepage -->
 <!ELEMENT personal (#PCDATA)> <!-- user's description of itself -->

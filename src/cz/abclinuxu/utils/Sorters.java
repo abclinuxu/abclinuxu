@@ -88,10 +88,16 @@ public class Sorters {
         }
 
         /**
-         * Extracts Updated property froms several wel known classes.
+         * Extracts Updated property froms several well known classes.
          */
         Date getDate(Object obj) {
-            if ( obj instanceof GenericDataObject ) return ((GenericDataObject)obj).getUpdated();
+            if ( obj instanceof GenericDataObject ) {
+                GenericDataObject gdo = (GenericDataObject) obj;
+                if ( gdo instanceof Item && gdo.getType()==Item.ARTICLE )
+                    return gdo.getCreated();
+                else
+                    return gdo.getUpdated();
+            }
             if ( obj instanceof PreparedDiscussion ) return ((PreparedDiscussion)obj).getLastUpdate();
             if ( obj instanceof Poll ) return ((Poll)obj).getCreated();
             if ( obj instanceof Link ) return ((Link)obj).getUpdated();

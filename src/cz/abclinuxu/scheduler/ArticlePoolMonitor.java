@@ -16,10 +16,6 @@ import java.util.TimerTask;
 import java.util.List;
 import java.util.Iterator;
 import java.util.Date;
-import java.text.ParseException;
-
-import org.dom4j.Document;
-import org.dom4j.Node;
 
 /**
  * This class is responsible for monitoring of
@@ -53,24 +49,7 @@ public class ArticlePoolMonitor extends TimerTask {
                     persistance.synchronize(item);
                     if ( item.getType()==Item.ARTICLE ) {
                         persistance.synchronize(item);
-
-                        Document document = item.getData();
-                        Node node = document.selectSingleNode("data/published");
-                        if ( node==null ) continue;
-
-                        String tmp = node.getText();
-                        if ( tmp==null || tmp.length()==0 ) continue;
-                        Date when = null;
-                        try {
-                            when = Constants.isoFormat.parse(tmp);
-                        } catch (ParseException e) {
-                            log.error("Cannot parse published date "+tmp+" for article "+item.getId(),e);
-                            continue;
-                        }
-
-                        if ( now.after(when) )  {
-//                            item.setUpdated(when);
-//                            persistance.update(item);
+                        if ( now.after(item.getCreated()) ) {
                             relation.setParent(articles);
                             relation.setUpper(Constants.REL_ACTUAL_ARTICLES);
                             persistance.update(relation);

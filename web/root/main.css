@@ -48,8 +48,8 @@ TD.jadro_p { font-family: Lucida,Verdana,Helvetica; font-size: 10pt }
 DIV.nadpis_in { color:BLACK; font-family:Helvetica,Arial; font-size:18pt; font-weight:bold }
 P.perex_in { border-width: 1 0; border-color: black; border-style: solid; background-color: #EEEEEE; padding: 1ex 0ex; }
 DIV.barva { color: #225577; font-family: Lucida,Verdana,Helvetica; }
-DIV.sub1 { color: BLACK; font-family: Lucida, Helvetica; font-size:14pt; font-weight: BOLD; padding: 1ex 0em }
-DIV.sub2 { color: BLACK; font-family: Lucida, Helvetica; font-size:13pt; font-weight: BOLD; padding: 1ex 0em }
+DIV.sub1 { color: BLACK; font-family: Lucida, Helvetica; font-size:14pt; font-weight: BOLD; padding: 0ex 0em }
+DIV.sub2 { color: BLACK; font-family: Lucida, Helvetica; font-size:13pt; font-weight: BOLD; padding: 0ex 0em }
 DIV.paticka {font-style: italic; padding-top: 1ex; }
 
 /* kategorie */

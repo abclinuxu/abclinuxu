@@ -68,6 +68,7 @@ public class EditUser extends AbcServlet {
     public static final String PARAM_SEX = "sex";
     public static final String PARAM_WWW = "www";
     public static final String PARAM_PERSONAL = "personal";
+    public static final String PARAM_ACTIVE = "active";
     public static final String PARAM_USER = ViewUser.PARAM_USER;
 
     public static final String VAR_MANAGED = "MANAGED";
@@ -281,6 +282,7 @@ public class EditUser extends AbcServlet {
         String sex = (String) params.get(EditUser.PARAM_SEX);
         String ads = (String) params.get(EditUser.PARAM_ADS);
         String www = (String) params.get(EditUser.PARAM_WWW);
+        String active = (String) params.get(EditUser.PARAM_ACTIVE);
 
         Document document = DocumentHelper.createDocument();
         if ( ilikeq!=null && ilikeq.length()>0 ) DocumentHelper.makeElement(document,"/data/ilikeq").addText(ilikeq);
@@ -288,6 +290,7 @@ public class EditUser extends AbcServlet {
         if ( news!=null && news.length()>0 ) DocumentHelper.makeElement(document,"data/news").addText(news);
         if ( sex!=null && sex.length()>0 ) DocumentHelper.makeElement(document,"data/sex").addText(sex);
         if ( ads!=null && ads.length()>0 ) DocumentHelper.makeElement(document,"data/ads").addText(ads);
+        if ( active!=null && active.length()>0 ) DocumentHelper.makeElement(document,"data/active").addText(ads);
         if ( www!=null && www.length()>13 && www.startsWith("http://") ) DocumentHelper.makeElement(document,"data/www").addText(www);
 
         user.setName(name);

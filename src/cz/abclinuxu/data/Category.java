@@ -11,8 +11,11 @@ import java.util.Date;
  * Category is a node of the tree (not leaf)
  */
 public class Category extends GenericDataObject {
-    /** tells, whether normal users (non-administrators) can add items to this category */
-    protected boolean open;
+
+    /** normal category, only admin can insert content */
+    public static final int CLOSED_CATEGORY = 0;
+    /** normal category, every logged user can insert content */
+    public static final int OPEN_CATEGORY = 1;
 
 
     public Category() {
@@ -27,25 +30,14 @@ public class Category extends GenericDataObject {
      * @return whether normal users may add content to this category
      */
     public boolean isOpen() {
-        return open;
+        return type==OPEN_CATEGORY;
     }
 
     /**
      * sets whether normal users may add content to this category
      */
     public void setOpen(boolean open) {
-        this.open = open;
-    }
-
-    /**
-     * Initialize this object with values from <code>obj</code>, if
-     * this.getClass.equals(obj.getClass()).
-     */
-    public void synchronizeWith(GenericObject obj) {
-        if ( ! (obj instanceof Category) ) return;
-        if ( obj==this ) return;
-        super.synchronizeWith(obj);
-        open = ((Category)obj).isOpen();
+        type = (open)? OPEN_CATEGORY:CLOSED_CATEGORY;
     }
 
     public String toString() {
@@ -54,15 +46,15 @@ public class Category extends GenericDataObject {
         if ( owner!=0 ) sb.append(",owner="+owner);
         if ( documentHandler!=null ) sb.append(",data="+getDataAsString());
 //        if ( updated!=null ) sb.append(",updated="+updated);
-        if ( open ) sb.append(", otevrena"); else sb.append(", uzavrena");
+        if ( isOpen() ) sb.append(", otevrena"); else sb.append(", uzavrena");
         return sb.toString();
     }
 
     public boolean preciseEquals(Object o) {
         if ( !( o instanceof Category) ) return false;
         if ( id!=((GenericObject)o).getId() ) return false;
-        if ( open!=((Category)o).isOpen() ) return false;
-        if ( owner!=((GenericDataObject)o).getOwner() ) return false;
+        if ( type!=((GenericDataObject)o).type ) return false;
+        if ( owner!=((GenericDataObject)o).owner ) return false;
         if ( ! InstanceUtils.same(getDataAsString(),((GenericDataObject)o).getDataAsString()) ) return false;
         return true;
     }

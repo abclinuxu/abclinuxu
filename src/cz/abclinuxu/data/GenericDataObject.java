@@ -17,12 +17,15 @@ import org.dom4j.Document;
  * which have very similar functionality and usage.
  */
 public abstract class GenericDataObject extends GenericObject {
-
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(GenericDataObject.class);
 
     /** identifier of owner of this object */
     protected int owner;
-    /** creation date of last update of this object */
+    /** Type of the object. You must set it before storing with Persistance! */
+    int type = 0;
+    /** when this object was created */
+    protected Date created;
+    /** last update of this object */
     protected Date updated;
     /** XML with data of this object */
     protected XMLHandler documentHandler;
@@ -54,17 +57,45 @@ public abstract class GenericDataObject extends GenericObject {
     }
 
     /**
-     * @return last updated (or creation) date
+     * @return Type of Record
+     */
+    public int getType() {
+        return type;
+    }
+
+    /**
+     * Sets type of Record
+     */
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    /**
+     * @return last updated date
      */
     public Date getUpdated() {
         return updated;
     }
 
     /**
-     * sets last updated (or creation) date
+     * sets last updated date
      */
     public void setUpdated(Date updated) {
         this.updated = updated;
+    }
+
+    /**
+     * @return date, when this object was created
+     */
+    public Date getCreated() {
+        return created;
+    }
+
+    /**
+     * sets date, when this object was created
+     */
+    public void setCreated(Date created) {
+        this.created = created;
     }
 
     /**
@@ -98,16 +129,19 @@ public abstract class GenericDataObject extends GenericObject {
 
     /**
      * Initialize this object with values from <code>obj</code>, if
-     * this.getClass.equals(obj.getClass()).
+     * this.getClass().equals(obj.getClass()).
      */
     public void synchronizeWith(GenericObject obj) {
-        if ( ! (obj instanceof GenericDataObject) ) return;
+        if ( ! (this.getClass().equals(obj.getClass())) ) return;
         if ( obj==this ) return;
         super.synchronizeWith(obj);
+
         GenericDataObject b = (GenericDataObject) obj;
+        owner = b.owner;
+        type = b.type;
         documentHandler = new XMLHandler(b.getData());
-        owner = b.getOwner();
-        updated = b.getUpdated();
+        created = b.created;
+        updated = b.updated;
     }
 
     /**

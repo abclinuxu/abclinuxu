@@ -29,8 +29,6 @@ public class Record extends GenericDataObject {
     public static final String VAL_HW_PRICE_HIGH = "high";
     public static final String VAL_HW_PRICE_TOOHIGH = "toohigh";
 
-    /** Specifies type of record. You must set it, before you stores it with Persistance! */
-    int type = 0;
 
     public Record() {
         super();
@@ -43,30 +41,6 @@ public class Record extends GenericDataObject {
     public Record(int id, int type) {
         super(id);
         this.type = type;
-    }
-
-    /**
-     * @return Type of Record
-     */
-    public int getType() {
-        return type;
-    }
-
-    /**
-     * Sets type of Record
-     */
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    /**
-     * Initialize this object with values from <code>obj</code>, if
-     * this.getClass.equals(obj.getClass()).
-     */
-    public void synchronizeWith(GenericObject obj) {
-        if ( ! (obj instanceof Record) ) return;
-        super.synchronizeWith(obj);
-        type = ((Record)obj).getType();
     }
 
     public String toString() {
@@ -88,8 +62,8 @@ public class Record extends GenericDataObject {
     public boolean preciseEquals(Object o) {
         if ( !( o instanceof Record) ) return false;
         if ( id!=((GenericObject)o).getId() ) return false;
-        if ( type!=((Record)o).getType() ) return false;
-        if ( owner!=((GenericDataObject)o).getOwner() ) return false;
+        if ( type!=((GenericDataObject)o).type ) return false;
+        if ( owner!=((GenericDataObject)o).owner ) return false;
         if ( ! InstanceUtils.same(getDataAsString(),((GenericDataObject)o).getDataAsString()) ) return false;
         return true;
     }

@@ -11,7 +11,10 @@ public class Item extends GenericDataObject {
 
     /** Leaf of the category. It contains at least one hardware or software record. */
     public static final int MAKE = 1;
-    /** Article header. The article is consisted from this header and at least one Article record. */
+    /**
+     * Article header. The article is consisted from this header and at least
+     * one Article record. Created field has meaning of Published dated.
+     **/
     public static final int ARTICLE = 2;
     /** Discussion defines one discussion. It may contain initial question. */
     public static final int DISCUSSION = 3;
@@ -19,9 +22,6 @@ public class Item extends GenericDataObject {
     public static final int REQUEST = 4;
     /** driver information */
     public static final int DRIVER = 5;
-
-    /** Specifies type of Item. You must set it, before you stores it with Persistance! */
-    int type = 0;
 
 
     public Item() {
@@ -35,30 +35,6 @@ public class Item extends GenericDataObject {
     public Item(int id, int type) {
         super(id);
         this.type = type;
-    }
-
-    /**
-     * @return Type of Record
-     */
-    public int getType() {
-        return type;
-    }
-
-    /**
-     * Sets type of Record
-     */
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    /**
-     * Initialize this object with values from <code>obj</code>, if
-     * this.getClass.equals(obj.getClass()).
-     */
-    public void synchronizeWith(GenericObject obj) {
-        if ( ! (obj instanceof Item) ) return;
-        super.synchronizeWith(obj);
-        type = ((Item)obj).getType();
     }
 
     public String toString() {
@@ -81,8 +57,8 @@ public class Item extends GenericDataObject {
     public boolean preciseEquals(Object o) {
         if ( !( o instanceof Item) ) return false;
         if ( id!=((GenericObject)o).getId() ) return false;
-        if ( type!=((Item)o).getType() ) return false;
-        if ( owner!=((GenericDataObject)o).getOwner() ) return false;
+        if ( type!=((GenericDataObject)o).type ) return false;
+        if ( owner!=((GenericDataObject)o).owner ) return false;
         if ( ! InstanceUtils.same(getDataAsString(),((GenericDataObject)o).getDataAsString()) ) return false;
         return true;
     }

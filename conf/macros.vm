@@ -136,7 +136,7 @@ $!UTIL.saveParams($PARAMS, [])
 #set($author=$UTIL.instantiate('User',$!UTIL.getXPath($clanek,'/data/author')))#sync($author)
 <p>
 <A CLASS="nadpis_out" HREF="/clanky/ViewRelation?relationId=$relation.Id">$!UTIL.getXPath($clanek,'/data/name')</A><BR>
-<SPAN CLASS="barva">$!UTIL.showDate($!UTIL.getXPath($clanek,'/data/published')) |
+<SPAN CLASS="barva">$!UTIL.showDate($clanek.Created) |
 <A HREF="/Profile?userId=$!author.Id">$!author.Name</A></SPAN>
 </p>
 <DIV class="perex_out">$!UTIL.getXPath($clanek,'/data/perex')</DIV>
@@ -152,7 +152,7 @@ $!UTIL.saveParams($PARAMS, [])
 <IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT=""><BR>
 <IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" VSPACE="1" BORDER="0" ALT=""><BR>
 #else
-<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="----------------------------------------">
+<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="-------------------------------">
 #end
 </p>
 #end

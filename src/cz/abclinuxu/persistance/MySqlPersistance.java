@@ -567,24 +567,24 @@ public class MySqlPersistance implements Persistance {
      * @return SQL table name for this GenericObject
      */
     private String getTable(GenericObject obj) {
-        if (obj instanceof Record) {
+        if (obj instanceof Relation) {
+            return "relace";
+        } else if (obj instanceof Record) {
             return "zaznam";
         } else if (obj instanceof Item) {
             return "polozka";
         } else if (obj instanceof Category) {
             return "kategorie";
-        } else if (obj instanceof Relation) {
-            return "relace";
-        } else if (obj instanceof Data) {
-            return "objekt";
         } else if (obj instanceof Link) {
             return "odkaz";
-        } else if (obj instanceof Poll) {
-            return "anketa";
         } else if (obj instanceof User) {
             return "uzivatel";
+        } else if (obj instanceof Poll) {
+            return "anketa";
         } else if (obj instanceof Server) {
             return "server";
+        } else if (obj instanceof Data) {
+            return "objekt";
         } else if (obj instanceof AccessRights) {
             return "pravo";
         }
@@ -633,16 +633,16 @@ public class MySqlPersistance implements Persistance {
             result = loadDataObject((GenericDataObject)obj);
         } else if (obj instanceof Relation) {
             result = loadRelation((Relation)obj);
-        } else if (obj instanceof Data) {
-            result = loadData((Data)obj);
-        } else if (obj instanceof Link) {
-            result = loadLink((Link)obj);
-        } else if (obj instanceof Poll) {
-            result = loadPoll((Poll)obj);
         } else if (obj instanceof User) {
             result = loadUser((User)obj);
         } else if (obj instanceof Server) {
             result = loadServer((Server)obj);
+        } else if (obj instanceof Link) {
+            result = loadLink((Link)obj);
+        } else if (obj instanceof Poll) {
+            result = loadPoll((Poll)obj);
+        } else if (obj instanceof Data) {
+            result = loadData((Data)obj);
         } else if (obj instanceof AccessRights) {
             result = loadRights((AccessRights)obj);
         }
@@ -686,23 +686,21 @@ public class MySqlPersistance implements Persistance {
      * to <code>conditions</code> for each asterisk in prepared statement.
      */
     private void appendCreateParams(GenericObject obj, StringBuffer sb, List conditions ) {
-        int type = 0;
         if (obj instanceof GenericDataObject) {
-            sb.append("insert into "+getTable(obj)+" values(0,?,?,?,?)");
-            if ( obj instanceof Category ) {
-                conditions.add(new Boolean(((Category)obj).isOpen()));
-            } else {
-                type = ( obj instanceof Item )? ((Item)obj).getType() : ((Record)obj).getType();
-                conditions.add(new Integer(type));
-                if ( type==0 ) {
-                    log.warn("Type not set! "+obj.toString());
-                }
+            GenericDataObject gdo = (GenericDataObject) obj;
+            sb.append("insert into "+getTable(obj)+" values(0,?,?,?,?,now())");
+            if ( !(obj instanceof Category) && gdo.getType()==0 ) {
+                log.warn("Type not set! "+obj.toString());
             }
-            conditions.add(((GenericDataObject)obj).getDataAsString().getBytes());
-            conditions.add(new Integer(((GenericDataObject)obj).getOwner()));
-            long now = System.currentTimeMillis();
-            conditions.add(new Timestamp(now));
-            ((GenericDataObject)obj).setUpdated(new java.util.Date(now));
+            conditions.add(new Integer(gdo.getType()));
+            conditions.add(gdo.getDataAsString().getBytes());
+            conditions.add(new Integer(gdo.getOwner()));
+
+            java.util.Date d = ( gdo.getCreated()!=null ) ? gdo.getCreated() : new java.util.Date();
+            conditions.add(new Timestamp(d.getTime()));
+
+            gdo.setCreated(d);
+            gdo.setUpdated(new java.util.Date());
 
         } else if (obj instanceof Relation) {
             sb.append("insert into relace values(0,?,?,?,?,?,?)");
@@ -747,36 +745,29 @@ public class MySqlPersistance implements Persistance {
      */
     private void appendFindParams(GenericObject obj, StringBuffer sb, List conditions ) {
         boolean addAnd = false;
-        int type = 0;
 
         if (obj instanceof GenericDataObject) {
-            GenericDataObject dataObject = (GenericDataObject) obj;
-            if ( dataObject.getOwner()!=0 ) {
+            GenericDataObject gdo = (GenericDataObject) obj;
+
+            if ( gdo.getOwner()!=0 ) {
                 addAnd = true;
                 sb.append("pridal=?");
-                conditions.add(new Integer(dataObject.getOwner()));
+                conditions.add(new Integer(gdo.getOwner()));
             }
 
-            String search = dataObject.getSearchString();
+            String search = gdo.getSearchString();
             if ( (search!=null && search.length()>0 )) {
-                if ( addAnd ) sb.append(" and ");
+                if ( addAnd ) sb.append(" and "); else addAnd = true;
                 sb.append("data like ?");
                 conditions.add(search);
             }
 
-            if ( obj instanceof Category ) {
+            if ( gdo.getType()!=0 ) {
                 if ( addAnd ) sb.append(" and ");
-                addAnd = true;
-                sb.append("verejny=?");
-                conditions.add(new Boolean(((Category)obj).isOpen()));
-            } else {
-                type = ( obj instanceof Item )? ((Item)obj).getType() : ((Record)obj).getType();
-                if ( type!=0 ) {
-                    if ( addAnd ) sb.append(" and ");
-                    sb.append("typ=?");
-                    conditions.add(new Integer(type));
-                }
+                sb.append("typ=?");
+                conditions.add(new Integer(gdo.getType()));
             }
+
             return;
 
         } else if (obj instanceof Data) {
@@ -828,11 +819,10 @@ public class MySqlPersistance implements Persistance {
             return;
 
         } else if (obj instanceof Poll) {
-            type = ((Poll)obj).getType();
-            if ( type!=0 ) {
+            if ( ((Poll)obj).getType()!=0 ) {
                 addAnd = true;
                 sb.append("typ=?");
-                conditions.add(new Integer(type));
+                conditions.add(new Integer(((Poll)obj).getType()));
             }
 
             if ( ((Poll)obj).getText()!=null ) {
@@ -1033,21 +1023,22 @@ public class MySqlPersistance implements Persistance {
             }
 
             GenericDataObject item = null;
-            if ( obj instanceof Category ) {
+            if ( obj instanceof Category )
                 item = new Category(obj.getId());
-                ((Category)item).setOpen(resultSet.getBoolean(2));
-            } else {
-                if ( obj instanceof Item ) {
-                    item = new Item(obj.getId(),resultSet.getInt(2));
-                } else {
-                    item = new Record(obj.getId(),resultSet.getInt(2));
-                }
-            }
+            else if ( obj instanceof Item )
+                item = new Item(obj.getId());
+            else
+                item = new Record(obj.getId());
+
+            item.setType(resultSet.getInt(2));
+
             String tmp = resultSet.getString(3);
             tmp = insertEncoding(tmp);
             item.setData(new String(tmp));
+
             item.setOwner(resultSet.getInt(4));
-            item.setUpdated(resultSet.getTimestamp(5));
+            item.setCreated(resultSet.getTimestamp(5));
+            item.setUpdated(resultSet.getTimestamp(6));
 
             findChildren(item,con);
             return item;
@@ -1260,25 +1251,20 @@ public class MySqlPersistance implements Persistance {
         try {
             con = getSQLConnection();
             PreparedStatement statement = null;
-            if ( obj instanceof Category ) {
-                statement = con.prepareStatement("update kategorie set data=?,verejny=? where cislo=?");
-                statement.setBoolean(2,((Category)obj).isOpen());
-                statement.setInt(3,obj.getId());
-            } else if ( obj instanceof Record) {
-                statement = con.prepareStatement("update zaznam set data=? where cislo=?");
-                statement.setInt(2,obj.getId());
-            } else {
-                statement = con.prepareStatement("update polozka set data=? where cislo=?");
-                statement.setInt(2,obj.getId());
-            }
-            statement.setBytes(1,obj.getDataAsString().getBytes());
+
+            statement = con.prepareStatement("update "+getTable(obj)+" set typ=?,data=?,pridal=?,vytvoreno=? where cislo=?");
+            statement.setInt(1,obj.getType());
+            statement.setBytes(2,obj.getDataAsString().getBytes());
+            statement.setInt(3,obj.getOwner());
+            statement.setTimestamp(4,new Timestamp(obj.getCreated().getTime()));
+            statement.setInt(5,obj.getId());
 
             int result = statement.executeUpdate();
             if ( result!=1 ) {
                 throw new PersistanceException("Nepodarilo se ulozit zmeny v "+obj.toString()+" do databaze!", AbcException.DB_UPDATE);
             }
 
-            ((GenericDataObject)obj).setUpdated(new java.util.Date());
+            obj.setUpdated(new java.util.Date());
             cache.store(obj);
         } catch (SQLException e) {
             log.error("Nemohu ulozit zmeny v "+obj,e);
@@ -1297,7 +1283,7 @@ public class MySqlPersistance implements Persistance {
 
         try {
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("update relace set typ_predka=?,predek=?,typ_potomka=?,potomek=?,data=? where cislo=?");
+            PreparedStatement statement = con.prepareStatement("update relace set typ_predka=?,predek=?,typ_potomka=?,potomek=?,data=?,predchozi=? where cislo=?");
 
             statement.setString(1,getTableId(relation.getParent()));
             statement.setInt(2,relation.getParent().getId());
@@ -1310,7 +1296,8 @@ public class MySqlPersistance implements Persistance {
             } else {
                 statement.setBytes(5,tmp.getBytes());
             }
-            statement.setInt(6,relation.getId());
+            statement.setInt(6,relation.getUpper());
+            statement.setInt(7,relation.getId());
 
             int result = statement.executeUpdate();
             if ( result!=1 ) {

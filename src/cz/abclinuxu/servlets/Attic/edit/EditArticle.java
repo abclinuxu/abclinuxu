@@ -109,6 +109,8 @@ public class EditArticle extends AbcServlet {
         User user = (User) ctx.get(AbcServlet.VAR_USER);
 
         boolean error = false;
+        Date publish = null;
+
         String name = (String) params.get(PARAM_TITLE);
         if ( name==null || name.length()==0 ) {
             ServletUtils.addError(PARAM_TITLE,"Nevyplnil jste titulek èlánku!",ctx,null); error = true;
@@ -124,12 +126,12 @@ public class EditArticle extends AbcServlet {
             ServletUtils.addError(PARAM_CONTENT,"Nevyplnil jste obsah èlánku!",ctx,null); error = true;
         }
 
-        String published = (String) params.get(PARAM_PUBLISHED);
-        if ( published==null || published.length()<12 ) {
+        String str = (String) params.get(PARAM_PUBLISHED);
+        if ( str==null || str.length()<12 ) {
             ServletUtils.addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",ctx,null); error = true;
         } else {
             try {
-                Date d = Constants.isoFormat.parse(published);
+                publish = Constants.isoFormat.parse(str);
             } catch (ParseException e) {
                 ServletUtils.addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",ctx,null); error = true;
             }
@@ -139,6 +141,7 @@ public class EditArticle extends AbcServlet {
             return VariantTool.selectTemplate(request,ctx,"EditArticle","add");
         }
 
+        /** todo: support for author not listed in section Authors */
         Relation tmp = (Relation) InstanceUtils.instantiateParam(PARAM_AUTHOR_ID,Relation.class,params);
         persistance.synchronize(tmp);
         User author = (User) tmp.getChild();
@@ -146,7 +149,6 @@ public class EditArticle extends AbcServlet {
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
         root.addElement("name").addText(name);
-        root.addElement("published").addText(published);
         root.addElement("author").addText(""+author.getId());
         root.addElement("editor").addText(""+user.getId());
         root.addElement("revisor").addText(""+user.getId());
@@ -156,6 +158,7 @@ public class EditArticle extends AbcServlet {
         Item item = new Item(0,Item.ARTICLE);
         item.setData(document);
         item.setOwner(user.getId());
+        item.setCreated(publish);
 
         document = DocumentHelper.createDocument();
         root = document.addElement("data");
@@ -191,10 +194,9 @@ public class EditArticle extends AbcServlet {
 
         Node node = document.selectSingleNode("data/name");
         params.put(PARAM_TITLE,node.getText());
-        node = document.selectSingleNode("data/published");
-        if ( node!=null ) params.put(PARAM_PUBLISHED,node.getText());
         node = document.selectSingleNode("data/perex");
         if ( node!=null ) params.put(PARAM_PEREX,helper.encodeSpecial(node.getText()));
+        params.put(PARAM_PUBLISHED,item.getCreated());
 
         Record record = null;
         for (Iterator iter = item.getContent().iterator(); iter.hasNext();) {
@@ -220,6 +222,8 @@ public class EditArticle extends AbcServlet {
         Relation upper = (Relation) ctx.get(VAR_RELATION);
 
         boolean error = false;
+        Date publish = null;
+
         String name = (String) params.get(PARAM_TITLE);
         if ( name==null || name.length()==0 ) {
             ServletUtils.addError(PARAM_TITLE,"Nevyplnil jste titulek èlánku!",ctx,null); error = true;
@@ -235,12 +239,12 @@ public class EditArticle extends AbcServlet {
             ServletUtils.addError(PARAM_CONTENT,"Nevyplnil jste obsah èlánku!",ctx,null); error = true;
         }
 
-        String published = (String) params.get(PARAM_PUBLISHED);
-        if ( published==null || published.length()<12 ) {
+        String str = (String) params.get(PARAM_PUBLISHED);
+        if ( str==null || str.length()<12 ) {
             ServletUtils.addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",ctx,null); error = true;
         } else {
             try {
-                Date d = Constants.isoFormat.parse(published);
+                publish = Constants.isoFormat.parse(str);
             } catch (ParseException e) {
                 ServletUtils.addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",ctx,null); error = true;
             }
@@ -251,9 +255,10 @@ public class EditArticle extends AbcServlet {
         }
 
         Item item = (Item) upper.getChild();
+        item.setCreated(publish);
+
         Document document = item.getData();
         DocumentHelper.makeElement(document,"data/name").setText(name);
-        DocumentHelper.makeElement(document,"data/published").setText(published);
         DocumentHelper.makeElement(document,"data/perex").setText(perex);
         persistance.update(item);
 
