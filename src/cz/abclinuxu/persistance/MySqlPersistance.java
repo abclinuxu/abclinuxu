@@ -744,7 +744,7 @@ public class MySqlPersistance implements Persistance {
      */
     private void appendIncrementUpdateParams(GenericObject obj, StringBuffer sb, List conditions ) throws PersistanceException {
         if (obj instanceof Link) {
-            sb.append("update redirect set soucet=soucet+1 where server=? and den=curdate()");
+            sb.append("update presmerovani set soucet=soucet+1 where server=? and den=curdate()");
             conditions.add(new Integer(((Link)obj).getServer()));
         } else {
             sb.append("update citac set soucet=soucet+1 where typ like ? and cislo=?");
@@ -759,7 +759,7 @@ public class MySqlPersistance implements Persistance {
      */
     private void appendIncrementInsertParams(GenericObject obj, StringBuffer sb, List conditions ) throws PersistanceException {
         if (obj instanceof Link) {
-            sb.append("insert into redirect values(curdate(),?,1)");
+            sb.append("insert into presmerovani values(curdate(),?,1)");
             conditions.add(new Integer(((Link)obj).getServer()));
         } else {
             sb.append("insert into citac values(?,?,1)");
@@ -774,7 +774,7 @@ public class MySqlPersistance implements Persistance {
      */
     private void appendIncrementSelectParams(GenericObject obj, StringBuffer sb, List conditions ) throws PersistanceException {
         if (obj instanceof Link) {
-            sb.append("select soucet from redirect where server=? and den=curdate()");
+            sb.append("select soucet from presmerovani where server=? and den=curdate()");
             conditions.add(new Integer(((Link)obj).getServer()));
         } else {
             sb.append("select soucet from citac where typ like ? and cislo=?");
@@ -789,7 +789,7 @@ public class MySqlPersistance implements Persistance {
      */
     private void appendIncrementDeleteParams(GenericObject obj, StringBuffer sb, List conditions ) throws PersistanceException {
         if (obj instanceof Link) {
-            sb.append("delete from redirect where server=? and den=curdate()");
+            sb.append("delete from presmerovani where server=? and den=curdate()");
             conditions.add(new Integer(((Link)obj).getServer()));
         } else {
             sb.append("delete from citac where typ like ? and cislo=?");
