@@ -291,6 +291,7 @@ public class MySqlPersistance implements Persistance, Configurable {
                     tmp = insertEncoding(tmp);
                     relation.setData(new String(tmp));
                 }
+                relation.setInitialized(true);
 
                 result.add(0,relation);
             }

@@ -11,6 +11,7 @@ import cz.abclinuxu.exceptions.InvalidDataException;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.data.view.DiscussionHeader;
 import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.data.view.Discussion;
@@ -166,6 +167,65 @@ public class Tools {
         String name = xpath(relation,"data/icon");
         if ( ! Misc.empty(name) ) return name;
         return xpath(relation.getChild(),"data/icon");
+    }
+
+    /**
+     * Generates line with links to parents of this object.
+     * @param parents list of relations.
+     * @param o it shall be User or undefined value
+     * @return HTML formatted string
+     */
+    public String showParents(List parents, Object o, UrlUtils urlUtils) {
+        User user = (o instanceof User)? ((User)o) : null;
+        if (parents.size()==0) return "";
+        StringBuffer sb = new StringBuffer("<p>");
+
+        Relation first = (Relation) parents.get(0);
+        if (first.getUpper()==0 && (first.getParent() instanceof Category) ) {
+            boolean forbidden = false;
+            GenericObject parent = first.getParent();
+            if (parent.getId()==Constants.CAT_ROOT || parent.getId()==Constants.CAT_SYSTEM ) {
+                if ( user==null || (! user.isMemberOf(Constants.GROUP_ADMINI)) )
+                    forbidden = true;
+            }
+            if (!forbidden) {
+                appendURL(sb, urlUtils.make("/ViewCategory?parent=yes&rid="+first.getId()), xpath(parent, "/data/name"));
+                sb.append(" - ");
+            }
+        }
+        for ( Iterator iter = parents.iterator(); iter.hasNext(); ) {
+            Relation relation = (Relation) iter.next();
+            GenericObject child = relation.getChild();
+            if ( child instanceof Category && (child.getId()==Constants.CAT_ROOT || child.getId()==Constants.CAT_SYSTEM ))
+                if ( user==null || (!user.isMemberOf(Constants.GROUP_ADMINI)) )
+                    continue;
+
+            String title = childName(relation), url = null;
+            if (relation.getId()==Constants.REL_FORUM)
+                url =  "/diskuse.jsp";
+            else if (child instanceof Category) {
+                if (((Category)child).getType()==Category.SECTION_FORUM)
+                    url = "/forum/Show?rid="+relation.getId();
+                else
+                    url = urlUtils.make("/ViewCategory?rid="+relation.getId());
+            } else
+                url = urlUtils.make("/ViewRelation?rid="+relation.getId());
+            if ( iter.hasNext() )
+                appendURL(sb,url,title);
+            else
+                sb.append(title);
+            if ( iter.hasNext() ) sb.append(" - ");
+        }
+        sb.append("</p>");
+        return sb.toString();
+    }
+
+    private void appendURL(StringBuffer sb, String url, String title) {
+        sb.append("<a href=\"");
+        sb.append(url);
+        sb.append("\">");
+        sb.append(title);
+        sb.append("</a>");
     }
 
     /**

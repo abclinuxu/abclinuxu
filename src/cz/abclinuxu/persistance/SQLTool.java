@@ -34,6 +34,8 @@ public final class SQLTool implements Configurable {
     public static final String PREF_NEWS_RELATIONS_WITHIN_PERIOD = "news.relations.within.period";
     public static final String PREF_ARTICLE_RELATIONS_WITHIN_PERIOD = "article.relations.within.period";
     public static final String PREF_DISCUSSION_RELATIONS_BY_CREATED = "discussion.relations.by.created";
+    public static final String PREF_DISCUSSION_RELATIONS_BY_CREATED_IN = "discussion.relations.by.created.in";
+    public static final String PREF_COUNT_DISCUSSION_RELATIONS_IN = "count.discussion.relations.in";
 
     public static final String PREF_ITEMS_BY_TYPE_BY_ID = "items.by.type.by.id";
 
@@ -63,8 +65,9 @@ public final class SQLTool implements Configurable {
     }
 
     private String maxPoll, maxUser;
-    private String recordRelationsByUpdated, itemRelationsByUpdated, discussionRelationsByCreated;
+    private String recordRelationsByUpdated, itemRelationsByUpdated;
     private String articleRelationsByCreated, articleRelationsWithinPeriod;
+    private String discussionRelationsByCreated, discussionRelationsByCreatedIn, countDiscussionRelationsIn;
     private String newsRelationsByCreated, newsRelationsByUser, newsRelationsWithinPeriod;
     private String recordRelationsByUser, articleRelationsByUser, questionRelationsByUser;
     private String countArticlesByUser, countRecordsByUser, countItemsByUser;
@@ -159,6 +162,38 @@ public final class SQLTool implements Configurable {
             statement = con.prepareStatement(discussionRelationsByCreated);
             statement.setInt(1, offset);
             statement.setInt(2, count);
+
+            resultSet = statement.executeQuery();
+            List result = new ArrayList(count);
+            while ( resultSet.next() ) {
+                int id = resultSet.getInt(1);
+                Relation relation = (Relation) persistance.findById(new Relation(id));
+                result.add(relation);
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
+     * Finds relations, where child is discussion item with given parent ordered by created property.
+     * The order is descendant - the freshest items first. Use offset to skip
+     * some items and count to manage count of returned relations.
+     * @return List of initialized relations
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findDiscussionRelationsByCreatedIn(int parent, int offset, int count) {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(discussionRelationsByCreatedIn);
+            statement.setInt(1, parent);
+            statement.setInt(2, offset);
+            statement.setInt(3, count);
 
             resultSet = statement.executeQuery();
             List result = new ArrayList(count);
@@ -367,6 +402,28 @@ public final class SQLTool implements Configurable {
             con = persistance.getSQLConnection();
             statement = con.prepareStatement(countRecordsByType);
             statement.setInt(1, type);
+
+            resultSet = statement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt(1);
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
+     * Finds count of discussions, that have given parent.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
+     */
+    public int getDiscussionCountIn(int parent) {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(countDiscussionRelationsIn);
+            statement.setInt(1, parent);
 
             resultSet = statement.executeQuery();
             resultSet.next();
@@ -808,6 +865,8 @@ public final class SQLTool implements Configurable {
         newsRelationsWithinPeriod = prefs.get(PREF_NEWS_RELATIONS_WITHIN_PERIOD, null);
         newsRelationsByUser = prefs.get(PREF_NEWS_RELATIONS_BY_USER, null);
         discussionRelationsByCreated = prefs.get(PREF_DISCUSSION_RELATIONS_BY_CREATED, null);
+        discussionRelationsByCreatedIn = prefs.get(PREF_DISCUSSION_RELATIONS_BY_CREATED_IN, null);
+        countDiscussionRelationsIn = prefs.get(PREF_COUNT_DISCUSSION_RELATIONS_IN, null);
         recordRelationsByUser = prefs.get(PREF_RECORD_RELATIONS_BY_TYPE_BY_USER, null);
         articleRelationsByUser = prefs.get(PREF_ARTICLE_RELATIONS_BY_USER, null);
         questionRelationsByUser = prefs.get(PREF_QUESTION_RELATIONS_BY_USER, null);

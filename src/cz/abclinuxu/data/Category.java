@@ -16,6 +16,8 @@ public class Category extends GenericDataObject {
     public static final int CLOSED_CATEGORY = 0;
     /** normal category, every logged user can insert content */
     public static final int OPEN_CATEGORY = 1;
+    /** mark for forum */
+    public static final int SECTION_FORUM = 2;
 
 
     public Category() {

@@ -12,6 +12,7 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.utils.Tools;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.Misc;
@@ -54,12 +55,10 @@ public class ViewIndex extends AbcFMServlet {
 
         int userLimit = getNumberOfDiscussions(user);
         if ( userLimit>0 ) {
-            Category forum = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
-            tools.sync(forum.getContent());
-            List discussions = tools.analyzeDiscussions(forum.getContent());
-            Sorters2.byDate(discussions, Sorters2.DESCENDING);
-            int limit = Math.min(userLimit, discussions.size());
-            Paging paging = new Paging(discussions.subList(0, limit), 0, limit, discussions.size());
+            List found = SQLTool.getInstance().findDiscussionRelationsByCreated(0, userLimit);
+            Tools.sync(found);
+            List discussions = tools.analyzeDiscussions(found);
+            Paging paging = new Paging(discussions, 0, userLimit);
             env.put(ViewIndex.VAR_FORUM, paging);
         }
 
@@ -80,7 +79,7 @@ public class ViewIndex extends AbcFMServlet {
         if ( node==null )
             return defaultValue;
         int count = Misc.parseInt(node.getText(),defaultValue);
-        if (count==-1) count = 1000000;
+        if (count==-1) count = defaultValue;
         return count;
     }
 }

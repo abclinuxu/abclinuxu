@@ -112,6 +112,7 @@ public class ViewCategory extends AbcFMServlet {
             obj = relation.getParent();
         else
             obj = relation.getChild();
+
         if ( !(obj instanceof Category) ) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());

@@ -26,16 +26,18 @@ public class UrlUtils {
     public static final String PREFIX_CLANKY = "/clanky";
     public static final String PREFIX_DRIVERS = "/drivers";
     public static final String PREFIX_NEWS = "/news";
+    public static final String PREFIX_FORUM = "/forum";
     public static final String PREFIX_NONE = "";
 
     static List prefixes = null;
     static {
-        prefixes = new ArrayList(3);
+        prefixes = new ArrayList(6);
         prefixes.add(PREFIX_HARDWARE);
         prefixes.add(PREFIX_SOFTWARE);
         prefixes.add(PREFIX_CLANKY);
         prefixes.add(PREFIX_DRIVERS);
         prefixes.add(PREFIX_NEWS);
+        prefixes.add(PREFIX_FORUM);
     }
 
     /** default prefix to URL */
@@ -73,13 +75,6 @@ public class UrlUtils {
      */
     public String make(String url) {
         return make(url,null);
-    }
-
-    /**
-     * Constructs new URL, which doesn't contains prexif and doesn't loose session id.
-     */
-    public String makePrefixless(String url) {
-        return response.encodeURL(url);
     }
 
     /**

@@ -6,9 +6,6 @@
  */
 package cz.abclinuxu.servlets;
 
-import org.dom4j.QName;
-import org.dom4j.DocumentHelper;
-
 import java.text.SimpleDateFormat;
 import java.text.DateFormat;
 
@@ -31,7 +28,6 @@ public interface Constants {
     int CAT_REQUESTS = 256;
     int CAT_FORUM = 265;
     int CAT_ROOT = 248;
-//    int CAT_REKLAMA = 333;
     int CAT_SYSTEM = 338;
     int CAT_ARTICLEPOOL = 339;
     int CAT_NEWS_POOL = 445;
@@ -55,6 +51,9 @@ public interface Constants {
     int REL_ARTICLEPOOL = 8082;
     int REL_NEWS_POOL = 37672;
     int REL_NEWS = 42932;
+
+    int GROUP_ADMINI = 11246;
+    int GROUP_AUTORI = 11247;
 
     // types for VelocityHelper.groupByType()
     String TYPE_MAKE = "make";

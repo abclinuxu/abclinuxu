@@ -1,8 +1,6 @@
 <#include "/include/macros.ftl">
 <#include "../header.ftl">
 
-<#call showParents>
-
 <#global autor=TOOL.createUser(TOOL.xpath(ITEM,"/data/author"))>
 
 <h1>${TOOL.xpath(ITEM,"/data/name")}</h1>
@@ -10,6 +8,8 @@
 <div class="barva">
 ${DATE.show(ITEM.created,"CZ_FULL")} | <a href="/Profile?uid=${autor.id}">${autor.name}</a>
 </div>
+
+${TOOL.showParents(PARENTS,USER?if_exists,URL)}
 
 <#if USER?exists && USER.hasRole("article admin")>
  <p>

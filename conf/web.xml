@@ -42,6 +42,12 @@
     </servlet>
 
     <servlet>
+        <servlet-name>Forum</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.view.ShowForum</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+
+    <servlet>
         <servlet-name>Search</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.view.Search</servlet-class>
         <load-on-startup>2</load-on-startup>
@@ -198,6 +204,9 @@
     <servlet-mapping>
         <servlet-name>ViewCategory</servlet-name><url-pattern>/news/ViewCategory</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewCategory</servlet-name><url-pattern>/forum/ViewCategory</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>ViewRelation</servlet-name><url-pattern>/hardware/ViewRelation</url-pattern>
@@ -213,6 +222,9 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ViewRelation</servlet-name><url-pattern>/news/ViewRelation</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewRelation</servlet-name><url-pattern>/forum/ViewRelation</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -243,6 +255,9 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EditDiscussion</servlet-name><url-pattern>/news/EditDiscussion</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditDiscussion</servlet-name><url-pattern>/forum/EditDiscussion</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -311,6 +326,10 @@
 
     <servlet-mapping>
         <servlet-name>ViewIndex</servlet-name><url-pattern>/Index</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Forum</servlet-name><url-pattern>/forum/Show</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
