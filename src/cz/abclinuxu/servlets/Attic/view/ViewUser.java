@@ -291,7 +291,7 @@ public class ViewUser extends AbcFMServlet {
         data.put(EmailSender.KEY_TEMPLATE, "/mail/password.ftl");
         EmailSender.sendEmail(data);
 
-        ServletUtils.addMessage("Heslo odesláno na adresu "+user.getEmail()+".", env, request.getSession());
+        ServletUtils.addMessage("Heslo bylo odesláno na adresu "+user.getEmail()+".", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Index");
         return null;
