@@ -569,34 +569,36 @@ public class EditUser implements AbcAction, Configurable {
         Persistance persistance = PersistanceFactory.getPersistance();
 
         Element settings = (Element) user.getData().selectSingleNode("/data/settings");
-//        if ( settings.element("blog")!=null ) {
-//            ServletUtils.addError(Constants.ERROR_GENERIC,"Chyba: blog ji¾ existuje!",env,request.getSession());
-//            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-//            urlUtils.redirect(response, "/Profile/"+user.getId()+"?action="+ViewUser.ACTION_SHOW_MY_PROFILE);
-//            return null;
-//        }
+        if ( settings.element("blog")!=null ) {
+            ServletUtils.addError(Constants.ERROR_GENERIC,"Chyba: blog ji¾ existuje!",env,request.getSession());
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, "/Profile/"+user.getId()+"?action="+ViewUser.ACTION_SHOW_MY_PROFILE);
+            return null;
+        }
 
-        Category blogCategory = new Category();
-        boolean canContinue = EditBlog.setBlogName(params, blogCategory, env);
+        Category blog = new Category();
+        boolean canContinue = EditBlog.setBlogName(params, blog, env);
 
         if ( !canContinue )
             return FMTemplateSelector.select("EditUser", "addBlog", env, request);
 
-        blogCategory.setOwner(user.getId());
-        blogCategory.setType(Category.SECTION_BLOG);
+        blog.setOwner(user.getId());
+        blog.setType(Category.SECTION_BLOG);
         Document document = DocumentHelper.createDocument();
-        document.addElement("data");
-        blogCategory.setData(document);
-        persistance.create(blogCategory);
+        Element data = document.addElement("data");
+        DocumentHelper.makeElement(data, "/custom/page_title").setText(blog.getSubType());
+        DocumentHelper.makeElement(data, "/custom/title").setText(blog.getSubType());
+        blog.setData(document);
+        persistance.create(blog);
 
-        Relation relation = new Relation(new Category(Constants.CAT_BLOGS), blogCategory, Constants.REL_BLOGS);
+        Relation relation = new Relation(new Category(Constants.CAT_BLOGS), blog, Constants.REL_BLOGS);
         persistance.create(relation);
 
-        DocumentHelper.makeElement(settings,"blog").setText(Integer.toString(blogCategory.getId()));
+        DocumentHelper.makeElement(settings,"blog").setText(Integer.toString(blog.getId()));
         persistance.update(user);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/blog/"+blogCategory.getSubType()+"/");
+        urlUtils.redirect(response, "/blog/"+blog.getSubType()+"/");
         return null;
     }
 
