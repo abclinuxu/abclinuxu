@@ -36,7 +36,7 @@ public final class VersioningFactory implements Configurable {
         log.info("VersioningFactory will use the class "+className+".");
         try {
             Class aClass = Class.forName(className);
-            if (!aClass.isAssignableFrom(Versioning.class))
+            if (!Versioning.class.isAssignableFrom(aClass))
                 throw new ConfigurationException("Class '" + className + "' does not implement Versioning!");
             instance = (Versioning) aClass.newInstance();
         } catch (ClassNotFoundException e) {
