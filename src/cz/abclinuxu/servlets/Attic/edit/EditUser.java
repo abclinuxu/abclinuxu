@@ -15,6 +15,7 @@ import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.AbcException;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.servlets.utils.*;
 import org.apache.velocity.Template;
@@ -98,27 +99,33 @@ public class EditUser extends AbcVelocityServlet {
             return actionAddStep2(request,response,ctx);
 
         } else if ( action.equals(EditUser.ACTION_EDIT) ) {
-            if ( managed!=null ) PersistanceFactory.getPersistance().synchronize(managed);
-            int rights = Guard.check(user,managed,Guard.OPERATION_EDIT,params.get(PARAM_PASSWORD));
-
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-                    //case Guard.ACCESS_DENIED: addError(AbcVelocityServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
-                default: return actionEditStep1(request,ctx);
-            }
+            PersistanceFactory.getPersistance().synchronize(managed);
+            if ( user==null )
+                return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
+            if ( user.getId()!=managed.getId() )
+                return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
+            else
+                return actionEditStep1(request,ctx);
 
         } else if ( action.equals(EditUser.ACTION_EDIT_STEP2) ) {
-            if ( managed!=null ) PersistanceFactory.getPersistance().synchronize(managed);
+            PersistanceFactory.getPersistance().synchronize(managed);
             int rights = Guard.check(user,managed,Guard.OPERATION_EDIT,params.get(PARAM_PASSCHECK));
 
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
+                case Guard.ACCESS_DENIED: {
+                    if ( Misc.empty((String)params.get(PARAM_PASSCHECK)) ) {
+                        ServletUtils.addError(PARAM_PASSCHECK,"Zadejte heslo!",ctx,null);
+                        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","edit");
+                    } else {
+                        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
+                    }
+                }
                 default: return actionEditStep2(request,response,ctx);
             }
 
         } else if ( action.equals(EditUser.ACTION_PASSWORD) ) {
-            if ( managed!=null ) PersistanceFactory.getPersistance().synchronize(managed);
+            PersistanceFactory.getPersistance().synchronize(managed);
             int rights = Guard.check(user,managed,Guard.OPERATION_EDIT,params.get(PARAM_PASSCHECK));
             if ( user!=null && managed.equals(user) ) rights = Guard.ACCESS_OK;
 
@@ -129,7 +136,7 @@ public class EditUser extends AbcVelocityServlet {
             }
 
         } else if ( action.equals(EditUser.ACTION_PASSWORD2) ) {
-            if ( managed!=null ) PersistanceFactory.getPersistance().synchronize(managed);
+            PersistanceFactory.getPersistance().synchronize(managed);
             int rights = Guard.check(user,managed,Guard.OPERATION_EDIT,params.get(PARAM_PASSCHECK));
 
             switch (rights) {
