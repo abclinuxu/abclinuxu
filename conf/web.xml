@@ -3,6 +3,24 @@
 <web-app>
     <display-name>portal AbcLinuxu.cz</display-name>
 
+    <filter>
+        <filter-name>Compress</filter-name>
+        <filter-class>cz.abclinuxu.servlets.filters.gz.GZIPFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>Compress</filter-name>
+        <url-pattern>*.css</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>Compress</filter-name>
+        <url-pattern>*.jsp</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>Compress</filter-name>
+        <servlet-name>Controller</servlet-name>
+    </filter-mapping>
+
     <servlet>
         <servlet-name>AbcInit</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.init.AbcInit</servlet-class>
