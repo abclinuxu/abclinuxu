@@ -11,6 +11,7 @@ package cz.abclinuxu.servlets.view;
 import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Category;
+import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.utils.Misc;
@@ -66,22 +67,29 @@ public class ViewCategory extends AbcFMServlet {
         List parents = persistance.findParents(relation);
         env.put(ViewRelation.VAR_PARENTS,parents);
 
-        return processCategory(request,env,relation,parents);
+        return processCategory(request,response,env,relation,parents);
     }
 
     /**
      * processes given category
      * @return template to be rendered
      */
-    public static String processCategory(HttpServletRequest request, Map env, Relation relation, List parents) throws Exception {
+    public static String processCategory(HttpServletRequest request, HttpServletResponse response, Map env, Relation relation, List parents) throws Exception {
         if ( parents!=null ) parents.add(relation);
         Category category = null;
 
         String tmp = (String) ((Map)env.get(Constants.VAR_PARAMS)).get(PARAM_PARENT);
+        GenericObject obj;
         if ( Misc.same(tmp,"yes") )
-            category = (Category) relation.getParent();
+            obj = relation.getParent();
         else
-            category = (Category) relation.getChild();
+            obj = relation.getChild();
+        if ( !(obj instanceof Category) ) {
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+            return null;
+
+        }
 
         Tools.sync(category);
         Tools.sync(category.getContent());

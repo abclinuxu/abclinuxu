@@ -90,7 +90,7 @@ public class ViewRelation extends AbcFMServlet {
             if ( relation.getChild() instanceof Item )
                 return processItem(request,env,relation,parents);
             else
-                return ViewCategory.processCategory(request,env,relation,parents);
+                return ViewCategory.processCategory(request,response,env,relation,parents);
         }
         return null;
     }
