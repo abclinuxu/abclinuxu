@@ -280,7 +280,7 @@ public class EditSoftware extends AbcFMServlet {
             params.put(PARAM_VERSION,node.getText());
         node = document.selectSingleNode("data/text");
         if ( node!=null )
-            params.put(PARAM_TEXT,node.getText()); //encodeSpecial
+            params.put(PARAM_TEXT,node.getText());
 
         params.put(PARAM_ACTION,ACTION_EDIT_RECORD_STEP2);
         return FMTemplateSelector.select("EditSoftware","edit_record",env,request);
