@@ -159,7 +159,7 @@ public class AbcInit extends HttpServlet {
         BeansWrapper wrapper = BeansWrapper.getDefaultInstance();
 
         cfg.setDefaultEncoding("ISO-8859-2");
-        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.HTML_DEBUG_HANDLER);
+        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.DEBUG_HANDLER);
         cfg.setObjectWrapper(wrapper);
         cfg.setTemplateUpdateDelay(1);
         cfg.setStrictSyntaxMode(true);

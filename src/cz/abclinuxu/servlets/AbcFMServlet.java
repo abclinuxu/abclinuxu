@@ -73,7 +73,7 @@ public abstract class AbcFMServlet extends HttpServlet {
 
             if ( log.isInfoEnabled() )
                 log.info(templateName+"- execution: "+(endExec-startExec)+" ms, rendering: "+(endRender-startRender)+" ms.");
-        } catch (Exception e) {
+        } catch (Throwable e) {
             error(request,response,e);
         }
     }
@@ -100,7 +100,7 @@ public abstract class AbcFMServlet extends HttpServlet {
     /**
      * Displays error page.
      */
-    private void error(HttpServletRequest request, HttpServletResponse response, Exception e) throws IOException {
+    private void error(HttpServletRequest request, HttpServletResponse response, Throwable e) throws IOException {
         response.setContentType("text/html; charset=ISO-8859-2");
         Writer writer = response.getWriter();
         String  url = ServletUtils.getURL(request);
@@ -116,8 +116,12 @@ public abstract class AbcFMServlet extends HttpServlet {
         } else if ( e instanceof NotAuthorizedException ) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             template = config.getTemplate("/errors/denied.ftl");
+        } else if ( e.getClass().getName().startsWith("freemarker") ) {
+            log.error("Template error at "+url+", message: "+e.getMessage());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            template = config.getTemplate("/errors/generic.ftl");
         } else {
-            log.error("Unknown error: "+url,e);
+            log.error("Unknown error at "+url,e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             template = config.getTemplate("/errors/generic.ftl");
         }
