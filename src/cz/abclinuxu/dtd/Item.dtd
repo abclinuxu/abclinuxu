@@ -17,11 +17,12 @@
 <!ELEMENT forbid_discussions (#PCDATA)> <!-- yes will prohibit discussions to this article -->
 
 <!-- Item.Discussion -->
-<!ELEMENT data (comments,author?,text,title?)>
+<!ELEMENT data (comments,author?,text,title?,frozen?)>
 <!ELEMENT comments (#PCDATA)> <!-- integer, number of comments or replies -->
 <!ELEMENT author (#PCDATA)> <!-- unknow user's name -->
 <!ELEMENT title (#PCDATA)> <!-- title of this reaction, usually question -->
 <!ELEMENT text (#PCDATA)> <!-- its text -->
+<!ELEMENT frozen (#PCDATA)> <!-- if present, discussion is frozen and noone can add more comments -->
 
 <!-- Item.Request -->
 <!ELEMENT data (author?,text,email?)>

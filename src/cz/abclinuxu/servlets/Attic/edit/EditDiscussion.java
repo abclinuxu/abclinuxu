@@ -134,6 +134,9 @@ public class EditDiscussion extends AbcFMServlet {
         if ( ACTION_REMOVE_COMMENT_STEP2.equals(action) )
             return actionRemoveComment2(request, response, env);
 
+        if ( ACTION_FREEZE_DISCUSSION.equals(action) )
+            return actionAlterFreeze(request, response, env);
+
         throw new MissingArgumentException("Chybí parametr action!");
     }
 
@@ -230,7 +233,12 @@ public class EditDiscussion extends AbcFMServlet {
         if ( discussion==null )
             throw new MissingArgumentException("Chybí parametr dizId!");
         persistance.synchronize(discussion);
-        env.put(VAR_DISCUSSION,discussion);
+        env.put(VAR_DISCUSSION, discussion);
+
+        String xpath = "/data/frozen";
+        Element element = (Element) discussion.getData().selectSingleNode(xpath);
+        if ( element!=null )
+            return ServletUtils.showErrorPage("Diskuse byla zmrazena - není mo¾né pøidat dal¹í komentáø!", env, request);
 
         // display discussed comment, only if it has title
         Comment thread = getDiscussedComment(params, discussion, persistance);
@@ -254,6 +262,11 @@ public class EditDiscussion extends AbcFMServlet {
         if ( discussion==null )
             throw new MissingArgumentException("Chybí parametr dizId!");
         persistance.synchronize(discussion);
+
+        String xpath = "/data/frozen";
+        Element element = (Element) discussion.getData().selectSingleNode(xpath);
+        if ( element!=null )
+            return ServletUtils.showErrorPage("Diskuse byla zmrazena - není mo¾né pøidat dal¹í komentáø!", env, request);
 
         Record record = null; Element root = null, comment = null;
         if ( discussion.getContent().size()>0 ) {
@@ -561,6 +574,34 @@ public class EditDiscussion extends AbcFMServlet {
         MonitorTools.alterMonitor(discussion.getData().getRootElement(), user);
         persistance.update(discussion);
         SQLTool.getInstance().setUpdatedTimestamp(discussion, originalUpdated);
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+        return null;
+    }
+
+    /**
+     * Reverts current state of frozen attribute.
+     */
+    protected String actionAlterFreeze(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item discussion = (Item) persistance.findById(relation.getChild());
+
+        String xpath = "/data/frozen";
+        Document data = discussion.getData();
+        Element element = (Element) data.selectSingleNode(xpath);
+        if ( element!=null )
+            element.detach();
+        else
+            DocumentHelper.makeElement(data,xpath);
+
+        Date originalUpdated = discussion.getUpdated();
+        persistance.update(discussion);
+        SQLTool.getInstance().setUpdatedTimestamp(discussion, originalUpdated);
+
+        User user = (User) env.get(Constants.VAR_USER);
+        AdminLogger.logEvent(user, "zmrazil diskusi "+discussion.getId()+", relace "+relation.getId());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
