@@ -7,8 +7,11 @@
 package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.servlets.view.SelectRelation;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.Persistance;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 
@@ -22,17 +25,18 @@ import java.util.Map;
  * <dl>
  * <dt><code>PARAM_RELATION</code></dt>
  * <dd>Id of base relation for this operation.</dd>
- * <dt><code>PARAM_LINKED</code></dt>
- * <dd>Id of relation, whose child will be linked as children of PARAM_RELATION.getChild().</dd>
+ * <dt><code>PARAM_NAME</code></dt>
+ * <dd>Name used in new relation, overrides default.</dd>
  * </dl>
  */
 public class EditRelation extends AbcServlet {
     public static final String PARAM_RELATION = "relationId";
-    public static final String PARAM_LINKED = "linkedId";
+    public static final String PARAM_NAME = "name";
+
+    public static final String VAR_CURRENT = "CURRENT";
 
     public static final String ACTION_LINK = "add";
     public static final String ACTION_LINK_STEP2 = "add2";
-    public static final String ACTION_LINK_STEP3 = "add3";
     public static final String ACTION_REMOVE = "rm";
     public static final String ACTION_REMOVE_STEP2 = "rm2";
 
@@ -42,9 +46,11 @@ public class EditRelation extends AbcServlet {
 
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         String action = (String) params.get(AbcServlet.PARAM_ACTION);
+
         String tmp = (String) params.get(EditRelation.PARAM_RELATION);
         int relationId = Integer.parseInt(tmp);
         Relation relation = (Relation) PersistanceFactory.getPersistance().findById(new Relation(relationId));
+        ctx.put(EditRelation.VAR_CURRENT,relation);
 
         if ( action==null || action.equals(EditRelation.ACTION_LINK) ) {
             int rights = checkAccess(relation.getChild(),AbcServlet.METHOD_ADD,ctx);
@@ -69,6 +75,28 @@ public class EditRelation extends AbcServlet {
     }
 
     protected Template actionLinkStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        String tmp = (String) params.get(EditRelation.PARAM_RELATION);
+        int relationId = Integer.parseInt(tmp);
+        Relation parent = (Relation) persistance.findById(new Relation(relationId));
+
+        tmp = (String) params.get(SelectRelation.PARAM_SELECTED);
+        relationId = Integer.parseInt(tmp);
+        Relation child = (Relation) persistance.findById(new Relation(relationId));
+
+        Relation relation = new Relation();
+        relation.setParent(parent.getChild());
+        relation.setChild(child.getChild());
+        relation.setUpper(parent.getId());
+
+        tmp = (String) params.get(EditRelation.PARAM_NAME);
+        if ( tmp!=null && tmp.length()>0 ) relation.setName(tmp);
+        persistance.create(relation);
+
+        ctx.put(AbcServlet.VAR_PREFIX,new UrlUtils((String)params.get(AbcServlet.VAR_PREFIX)));
+        redirect("/ViewRelation?relationId="+parent.getId(),response,ctx);
         return null;
     }
 }

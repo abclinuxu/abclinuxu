@@ -47,6 +47,11 @@
     </servlet>
 
     <servlet>
+        <servlet-name>EditRelation</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.edit.EditRelation</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>EditUser</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.edit.EditUser</servlet-class>
     </servlet>
@@ -93,6 +98,10 @@
 
     <servlet-mapping>
         <servlet-name>SelectRelation</servlet-name><url-pattern>/SelectRelation</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>EditRelation</servlet-name><url-pattern>/EditRelation</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * Servlet for interactive selection of relation. When user chooses the relation, flow is redirected
+ * Servlet for interactive selection of relation. When user chooses the relation, flow is forwarded
  * to <code>PARAM_URL</code> with all parameters propagated to new location plus
  * <code>SelectRelation.PARAM_SELECTED</code> set.<p>
  * <u>Parameters used by SelectIcon</u>
@@ -130,7 +130,7 @@ public class SelectRelation extends AbcServlet {
         String manual = request.getParameter(SelectRelation.PARAM_ENTERED);
         String tmp = request.getParameter(SelectRelation.PARAM_CURRENT);
 
-        if ( manual!=null ) {
+        if ( manual!=null && manual.length()>0 ) {
             try {
                 result = Integer.parseInt(manual);
             } catch (NumberFormatException e) {
@@ -144,33 +144,28 @@ public class SelectRelation extends AbcServlet {
             }
         }
 
-        try {
-            Relation current = (Relation) PersistanceFactory.getPersistance().findById(new Relation(result));
-            ctx.put(SelectRelation.VAR_CURRENT,current);
-            return getTemplate("view/selectRelationConfirm.vm");
-        } catch (Exception e) {
-            addErrorMessage(AbcServlet.GENERIC_ERROR,"Relace nebyla nzalezena!",ctx);
-            return getTemplate("view/selectRelation.vm");
-        }
+        Relation current = (Relation) PersistanceFactory.getPersistance().findById(new Relation(result));
+        ctx.put(SelectRelation.VAR_CURRENT,current);
+        return getTemplate("view/selectRelationConfirm.vm");
     }
 
     /**
-     * Called, when user confirms his choice
+     * Called, when user confirms his choice. It redirects flow to PARAM_URL and puts all parameters
+     * to session map AbcServlet.ATTRIB_PARAMS. There will be also result under name PARAM_SELECTED.
      */
     protected Template actionFinish(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         String choice = request.getParameter(SelectRelation.PARAM_CURRENT);
 
         Map map = putParamsToMap(request,null);
+        map.put(SelectRelation.PARAM_SELECTED,map.get(SelectRelation.PARAM_CURRENT));
         map.remove(SelectRelation.PARAM_CURRENT);
         map.remove(SelectRelation.PARAM_URL);
-        map.remove(AbcServlet.PARAM_ACTION);
 
         HttpSession session = request.getSession();
         session.setAttribute(AbcServlet.ATTRIB_PARAMS,map);
 
         String url = request.getParameter(SelectRelation.PARAM_URL);
-        String newUrl = url + "?"+SelectRelation.PARAM_SELECTED+"="+choice;
-        redirect(newUrl,response,ctx);
+        redirect(url,response,ctx);
         return null;
     }
 }

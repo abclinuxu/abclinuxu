@@ -66,4 +66,11 @@ public class UrlUtils {
     public String constructDispatchURL(String url) {
         return ( prefix!=null )? prefix+url : url;
     }
+
+    /**
+     * @return Prefix used by this instance
+     */
+    public String getPrefix() {
+        return prefix;
+    }
 }
