@@ -399,7 +399,7 @@ public class Tools implements Configurable {
      * This method instantiates user and synchronizes it.
      * @return synchronized User.
      */
-    public User createUser(String id) {
+    public static User createUser(String id) {
         int i = Integer.parseInt(id);
         User user = new User(i);
         return (User) persistance.findById(user);
@@ -409,7 +409,7 @@ public class Tools implements Configurable {
      * This method instantiates user and synchronizes it.
      * @return synchronized User.
      */
-    public User createUser(int id) {
+    public static User createUser(int id) {
         User user = new User(id);
         return (User) persistance.findById(user);
     }
@@ -418,7 +418,7 @@ public class Tools implements Configurable {
      * This method instantiates category and synchronizes it.
      * @return synchronized category.
      */
-    public Category createCategory(int id) {
+    public static Category createCategory(int id) {
         Category category = new Category(id);
         return (Category) persistance.findById(category);
     }
@@ -427,7 +427,7 @@ public class Tools implements Configurable {
      * This method instantiates category and synchronizes it.
      * @return synchronized category.
      */
-    public Category createCategory(String id) {
+    public static Category createCategory(String id) {
         int i = Integer.parseInt(id);
         Category category = new Category(i);
         return (Category) persistance.findById(category);
