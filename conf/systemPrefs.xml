@@ -283,7 +283,7 @@
             <map/>
             <node name="AccessKeeper">
                 <map>
-                    <entry key="block.same.ua.for" value="3700" />
+                    <entry key="block.same.ua.for" value="1900" />
                     <entry key="block.same.ip.for" value="600" />
                 </map>
             </node>
