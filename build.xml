@@ -2,8 +2,8 @@
 
   <property name="src" value="src" />
   <property name="data" value="../data" />
-  <property name="build" value="../deploy" />
-  <property name="build-firma" value="../firma" />
+  <property name="deploy" value="../deploy" />
+  <property name="deploy_firma" value="../firma" />
 
   <path id="project.classpath">
     <fileset dir="libs">
@@ -14,14 +14,10 @@
 
   <target name="init">
 
-    <mkdir dir="${build}" />
-    <mkdir dir="${build}/WEB-INF" />
-    <mkdir dir="${build}/WEB-INF/lib" />
-    <mkdir dir="${build}/WEB-INF/classes" />
-    <mkdir dir="${build}/WEB-INF/velocity" />
-    <mkdir dir="${build}/WEB-INF/logs" />
-    <mkdir dir="${build}/auto" />
-    <mkdir dir="${build-firma}" />
+    <mkdir dir="${deploy}" />
+    <mkdir dir="${deploy}/WEB-INF/classes" />
+    <mkdir dir="${deploy}/WEB-INF/logs" />
+    <mkdir dir="${deploy_firma}" />
     <tstamp />
 
   </target>
@@ -29,53 +25,66 @@
 
   <target name="clean">
 
-    <delete dir="${build}/WEB-INF/classes" />
+    <delete dir="${deploy}/WEB-INF/classes" />
 
   </target>
 
 
   <target name="build" depends="init">
 
-    <javac srcdir="src" destdir="${build}/WEB-INF/classes" classpathref="project.classpath" debug="on" />
-    <javac srcdir="test" destdir="${build}/WEB-INF/classes" classpathref="project.classpath" />
+    <javac srcdir="src" destdir="${deploy}/WEB-INF/classes" classpathref="project.classpath" debug="on" />
+    <javac srcdir="test" destdir="${deploy}/WEB-INF/classes" classpathref="project.classpath" />
 
   </target>
 
 
   <target name="deploy-abc" depends="build">
 
-    <copy todir="${build}/WEB-INF">
+    <copy todir="${deploy}/WEB-INF">
       <fileset dir="conf">
         <include name="web.xml" />
+      </fileset>
+    </copy>
+
+    <copy todir="${deploy}/WEB-INF/conf">
+      <fileset dir="conf">
         <include name="templates.xml" />
         <include name="log4j.xml" />
         <include name="velocity.properties" />
       </fileset>
     </copy>
 
-    <copy todir="${build}/WEB-INF/velocity">
+    <copy todir="${deploy}/WEB-INF/velocity">
       <fileset dir="web/velocity" />
       <fileset dir="conf" includes="macros.vm" />
     </copy>
 
-    <copy todir="${build}/ikony">
+    <copy todir="${deploy}/WEB-INF/freemarker">
+      <fileset dir="web/freemarker" />
+    </copy>
+
+    <copy todir="${deploy}/WEB-INF/include">
+      <fileset dir="web/include" />
+    </copy>
+
+    <copy todir="${deploy}/ikony">
       <fileset dir="${data}/web/ikony" />
     </copy>
 
-    <copy todir="${build}/images">
+    <copy todir="${deploy}/images">
       <fileset dir="${data}/web/images" />
     </copy>
 
-    <copy todir="${build}">
+    <copy todir="${deploy}">
       <fileset dir="${data}/web/root" />
       <fileset dir="web/root" />
     </copy>
 
-    <copy todir="${build}/WEB-INF/lib">
+    <copy todir="${deploy}/WEB-INF/lib">
       <fileset dir="libs" includes="*.jar">
         <exclude name="servlet.jar" />
         <exclude name="crimson.jar" />
-        <exclude name="velocity-dep-1.3.1-rc2.jar" />
+        <exclude name="junit.jar" />
       </fileset>
     </copy>
 
@@ -83,19 +92,20 @@
 
   <target name="deploy-firma" depends="build">
 
-    <copy todir="${build-firma}">
+    <copy todir="${deploy_firma}">
       <fileset dir="web/firma" />
     </copy>
 
-    <copy todir="${build-firma}/WEB-INF/classes">
-      <fileset dir="${build}/WEB-INF/classes/">
-       <include name="cz/abclinuxu/servlets/utils/DumpVelocityServlet.class" />
+    <copy todir="${deploy_firma}/WEB-INF/classes">
+      <fileset dir="${deploy}/WEB-INF/classes/">
+       <include name="cz/abclinuxu/servlets/utils/TemplateEngineServlet.class" />
+       <include name="cz/abclinuxu/utils/Misc.class" />
       </fileset>
     </copy>
 
-    <copy todir="${build-firma}/WEB-INF/lib">
+    <copy todir="${deploy_firma}/WEB-INF/lib">
       <fileset dir="libs">
-        <include name="velocity-dep-1.3.1-rc2.jar" />
+        <include name="freemarker.jar" />
         <include name="log4j.jar" />
       </fileset>
     </copy>
