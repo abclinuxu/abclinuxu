@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="ISO-8859-2" ?>
+<categories>
+    <category>
+        <key>ARTICLE</key>
+        <name>Zajímavý článek</name>
+        <desc>Zprávička upozorňující na zajímavý článek.</desc>
+    </category>
+    <category>
+        <key>RELEASE</key>
+        <name>Nová verze</name>
+        <desc>Upozornění na novou verzi softwaru, jádra či ovladače.</desc>
+    </category>
+    <category>
+        <key>SFTW</key>
+        <name>Zajímavý software</name>
+        <desc>Informace o neznámém či zcela novém softwaru.</desc>
+    </category>
+    <category>
+        <key>PROJECT</key>
+        <name>Zajímavý projekt</name>
+        <desc>Zprávička informující o zajímavých stránkách.</desc>
+    </category>
+    <category>
+        <key>ALERT</key>
+        <name>Bezpečnostní alerty</name>
+        <desc>Upozornění na bezpečnostní chybu.</desc>
+    </category>
+    <category>
+        <key>FOSS</key>
+        <name>Komunita</name>
+        <desc>Dění v komunitě kolem Linuxu, Open Source a Free Software.</desc>
+    </category>
+    <category>
+        <key>DEPLOY</key>
+        <name>Nasazení Linuxu</name>
+        <desc>Zajímavá použití a nasazení Linuxu.</desc>
+    </category>
+    <category>
+        <key>IT</key>
+        <name>IT novinky</name>
+        <desc>Ostatní události a zprávy ze světa výpočetní techniky.</desc>
+    </category>
+    <category>
+        <key>INVITE</key>
+        <name>Pozvánky</name>
+        <desc>Pozvánky na veletrhy, semináře a setkání.</desc>
+    </category>
+    <category>
+        <key>INFO</key>
+        <name>Upozornění</name>
+        <desc>Rozličná upozornění, například na upgrade portálu.</desc>
+    </category>
+    <category>
+        <key>ADVRT</key>
+        <name>Komerce</name>
+        <desc>Informace komerčních firem.</desc>
+    </category>
+</categories>

@@ -59,6 +59,7 @@
         <include name="log4j.xml" />
         <include name="UnicodeData.txt" />
         <include name="stop_words.txt" />
+        <include name="news_categories.xml" />
       </fileset>
     </copy>
 

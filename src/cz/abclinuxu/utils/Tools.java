@@ -14,7 +14,6 @@ import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.PreparedDiscussion;
 import cz.abclinuxu.servlets.utils.Discussion;
-import cz.abclinuxu.utils.search.CreateIndex;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.dom4j.Element;
@@ -40,8 +39,8 @@ public class Tools {
             lineBreaks = new RE("(<br>)|(<p>)|(<div>)",RE.MATCH_CASEINDEPENDENT);
             emptyLine = new RE("(\r\n){2}|(\n){2}", RE.MATCH_MULTILINE);
             reRemoveTags = new RE("<[\\w\\s\\d/=:.~?\"]+>", RE.MATCH_SINGLELINE);
-            usmev = new RE("(\\:-\\)+)");
-            smich = new RE("(\\:-D([^a-zA-Z]|$))");
+            usmev = new RE("(\\:-\\))");
+            smich = new RE("(\\:-D)([^a-zA-Z]|$)");
             mrk = new RE("(;-\\))");
             smutek = new RE("(\\:-\\()");
         } catch (RESyntaxException e) {
@@ -232,7 +231,7 @@ public class Tools {
     /**
      * Gathers statistics on given discussion.
      */
-    public PreparedDiscussion analyzeDiscussion(Relation relation) {
+    public static PreparedDiscussion analyzeDiscussion(Relation relation) {
         if ( !InstanceUtils.checkType(relation.getChild(),Item.class,Item.DISCUSSION) ) {
             log.error("Relation "+relation+" doesn't contain item!");
             return null;
@@ -343,6 +342,8 @@ public class Tools {
                     Misc.storeToMap(map,Constants.TYPE_ARTICLE,relation);
                 } else if ( item.getType()==Item.DRIVER ) {
                     Misc.storeToMap(map,Constants.TYPE_DRIVER,relation);
+                } else if ( item.getType()==Item.NEWS ) {
+                    Misc.storeToMap(map,Constants.TYPE_NEWS,relation);
                 } else if ( item.getType()==Item.REQUEST ) {
                     Misc.storeToMap(map,Constants.TYPE_REQUEST,relation);
                 }
@@ -553,5 +554,28 @@ public class Tools {
             log.warn("Oops, remove tags regexp failed on '"+text+"'!", e);
             return text;
         }
+    }
+
+    /**
+     * Finds, how many comments is in discussion associated with this
+     * GenericObject. If there is more than one, it finds time of last comment too.
+     * @return Map holding info about comments of this object.
+     */
+    public static PreparedDiscussion findComments(GenericObject object) {
+        if ( !(object instanceof Item) )
+            return null;
+        for ( Iterator iter = object.getContent().iterator(); iter.hasNext(); ) {
+            Relation relation = (Relation) iter.next();
+            GenericObject child = (relation).getChild();
+            if ( !(child instanceof Item) )
+                continue;
+            Item item = (Item) child;
+            if ( !item.isInitialized() )
+                persistance.synchronize(item);
+            if ( item.getType()!=Item.DISCUSSION )
+                continue;
+            return analyzeDiscussion(relation);
+        }
+        return new PreparedDiscussion(null);
     }
 }
