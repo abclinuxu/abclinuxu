@@ -15,6 +15,8 @@ import javax.servlet.ServletException;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.velocity.app.Velocity;
+import org.logicalcobwebs.proxool.configuration.JAXPConfigurator;
+import org.logicalcobwebs.proxool.ProxoolException;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.scheduler.*;
@@ -58,6 +60,18 @@ public class AbcInit extends HttpServlet {
         if ( ! Misc.empty(tmp) ) {
             log.info("Inicializuji vrstvu persistence pomoci URL "+tmp);
             PersistanceFactory.setDefaultUrl(tmp);
+        }
+
+        tmp = getInitParameter("PROXOOL_CONF");
+        if ( ! Misc.empty(tmp) ) {
+            try {
+                JAXPConfigurator.configure(path+tmp,false);
+                Class.forName("org.logicalcobwebs.proxool.ProxoolDriver");
+            } catch (ProxoolException e) {
+                log.error("Cannot configure proxool with "+(path+tmp), e);
+            } catch (ClassNotFoundException e) {
+                log.error("Add proxool to your classpath.", e);
+            }
         }
 
         tmp = getInitParameter("VELOCITY");

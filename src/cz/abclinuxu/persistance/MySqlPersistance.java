@@ -15,6 +15,7 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.AbcException;
 import org.apache.log4j.xml.DOMConfigurator;
+import org.logicalcobwebs.proxool.ProxoolException;
 
 /**
  * This class provides persistance backed up by MySQl database. You should consult
@@ -45,7 +46,8 @@ public class MySqlPersistance implements Persistance {
 
     static {
         try {
-            Class.forName("org.gjt.mm.mysql.Driver");
+//            Class.forName("org.gjt.mm.mysql.Driver");
+            Class.forName("com.mysql.jdbc.Driver");
         } catch (Exception e) {
             log.fatal("Nemohu vytvorit instanci JDBC driveru, zkontroluj CLASSPATH!",e);
         }
@@ -84,8 +86,7 @@ public class MySqlPersistance implements Persistance {
                     log.error("Nepodarilo se vlozit "+obj+" do databaze!");
                     throw new PersistanceException("Nepodarilo se vlozit "+obj+" do databaze!", AbcException.DB_INSERT);
                 }
-                com.mysql.jdbc.PreparedStatement mm = (com.mysql.jdbc.PreparedStatement)statement;
-                obj.setId((int)mm.getLastInsertID());
+                setAutoId(obj,statement);
             }
             obj.setInitialized(true);
             cache.store(obj);
@@ -1471,5 +1472,20 @@ public class MySqlPersistance implements Persistance {
 
         sb.append(size);
         return sb.toString();
+    }
+
+    /**
+     * Sets id to object, which has been autoincremented.
+     */
+    private void setAutoId(GenericObject obj, Statement statement) {
+        try {
+            statement = org.logicalcobwebs.proxool.ProxoolFacade.getDelegateStatement(statement);
+            if ( statement instanceof com.mysql.jdbc.PreparedStatement ) {
+                com.mysql.jdbc.PreparedStatement mm = (com.mysql.jdbc.PreparedStatement) statement;
+                obj.setId((int)mm.getLastInsertID());
+            }
+        } catch (ProxoolException e) {
+            log.error("Proxool cannot get delegated statement from "+statement, e);
+        }
     }
 }
