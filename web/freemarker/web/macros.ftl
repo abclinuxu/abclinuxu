@@ -50,7 +50,7 @@
  <#if double><img src="/images/site/sedybod.gif" width="100%" height="1" border="0" alt="" vspace="1"><br></#if>
 </#macro>
 
-<#macro showComment(comment dizId relId showControls) >
+<#macro showComment(comment dizId relId showControls extra...) >
  <div class="ds_hlavicka<#if (MAX_COMMENT?default(99999) < comment.id) >_novy</#if>">
   <a name="${comment.id}"></a>
   ${DATE.show(comment.created,"CZ_FULL")}
@@ -62,7 +62,7 @@
   </#if><br>
   ${TOOL.xpath(comment.data,"title")?if_exists}<br>
   <#if showControls>
-   <a href="${URL.make("/EditDiscussion/"+relId+"?action=add&amp;dizId="+dizId+"&amp;threadId="+comment.id)}">Odpovìdìt</a> |
+   <a href="${URL.make("/EditDiscussion/"+relId+"?action=add&amp;dizId="+dizId+"&amp;threadId="+comment.id+extra[0]?default(""))}">Odpovìdìt</a> |
    <a href="${URL.make("#"+comment.id)}">Link</a>
    <#if (comment.parent>0)>
     | <a href="#${comment.parent}">Nahoru</a>
@@ -100,15 +100,15 @@
  </#if>
 </#macro>
 
-<#macro showThread(diz level dizId relId showControls)>
+<#macro showThread(diz level dizId relId showControls extra...)>
  <#local space=level*15>
  <div style="padding-left: ${space}pt">
-  <@showComment diz, dizId, relId, showControls />
+  <@showComment diz, dizId, relId, showControls, extra[0]?if_exists />
  </div>
  <#if diz.children?exists>
   <#local level2=level+1>
   <#list diz.children as child>
-   <@showThread child, level2, dizId, relId, showControls />
+    <@showThread child, level2, dizId, relId, showControls, extra[0]?if_exists />
   </#list>
  </#if>
 </#macro>
