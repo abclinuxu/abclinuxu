@@ -58,7 +58,7 @@ public class Tools {
     }
 
     /**
-     * @returns name of child in this relation.
+     * @return name of child in this relation.
      */
     public static String childName(Relation relation) {
         if ( relation==null || relation.getChild()==null ) return null;
@@ -83,7 +83,7 @@ public class Tools {
                 if ( node!=null )
                     return node.getText();
             }
-            if ( (child instanceof Item) && ((Item)child).getId()==Item.DISCUSSION )
+            if ( (child instanceof Item) && child.getId()==Item.DISCUSSION )
                 return "Diskuse";
         }
 
