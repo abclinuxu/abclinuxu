@@ -139,7 +139,7 @@ public class EditDictionary implements AbcAction, Configurable {
 
         boolean canContinue = true;
         canContinue &= setName(params, rootItem, env);
-        canContinue &= setURLName(item, rootItem);
+        canContinue &= setURLName(item, rootItem, env);
         canContinue &= setDescription(params, rootRecord, env);
         if (!canContinue || params.get(PARAM_PREVIEW)!=null)
             return FMTemplateSelector.select("Dictionary", "add_item", env, request);
@@ -225,7 +225,7 @@ public class EditDictionary implements AbcAction, Configurable {
 
         boolean canContinue = true;
         canContinue &= setName(params, rootItem, env);
-        canContinue &= setURLName(item, rootItem);
+        canContinue &= setURLName(item, rootItem, env);
         canContinue &= setDescription(params, rootRecord, env);
         if ( !canContinue )
             return FMTemplateSelector.select("Dictionary", "edit", env, request);
@@ -298,14 +298,20 @@ public class EditDictionary implements AbcAction, Configurable {
      * Changes are not synchronized with persistance.
      * @param root root element of item to be updated
      * @return false, if there is a major error.
-     * todo verify uniqueness in database
      */
-    private boolean setURLName(Item item, Element root) {
+    private boolean setURLName(Item item, Element root, Map env) {
         String name = root.elementText("name");
         if (name==null) return false;
-        String tmp = DiacriticRemover.getInstance().removeDiacritics(name);
-        tmp = new RE(reInvalidCharacters, RE.REPLACE_ALL).subst(tmp, "_");
-        item.setSubType(tmp.toLowerCase());
+        String urlName = DiacriticRemover.getInstance().removeDiacritics(name);
+        urlName = new RE(reInvalidCharacters, RE.REPLACE_ALL).subst(urlName, "_");
+
+        Relation relation = SQLTool.getInstance().findDictionaryByURLName(urlName);
+        if (relation!=null) {
+            ServletUtils.addError(PARAM_NAME, "Tento pojem ji¾ byl vysvìtlen!", env, null);
+            return false;
+        }
+
+        item.setSubType(urlName.toLowerCase());
         return true;
     }
 
