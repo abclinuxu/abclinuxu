@@ -25,7 +25,7 @@
   <tr>
    <td width="120">Poznámka</td>
    <td>
-    <textarea name="note" cols="40" rows="7" tabindex="3">${PARAMS.note?if_exists?html}</textarea>
+    <textarea name="note" cols="80" rows="15" tabindex="3">${PARAMS.note?if_exists?html}</textarea>
     <div class="error">${ERRORS.note?if_exists}</div>
    </td>
   </tr>
