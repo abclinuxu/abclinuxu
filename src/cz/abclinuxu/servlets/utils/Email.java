@@ -9,8 +9,7 @@ package cz.abclinuxu.servlets.utils;
 import javax.mail.*;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.InternetAddress;
-import java.util.Properties;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Helper class for sending emails.
@@ -65,10 +64,50 @@ public class Email {
      * Sends bulk email.
      * @param from sender information
      * @param subject subject of the email
-     * @param data Map holding recepients/content. Recepient's email is a key for hist content.
+     * @param data Map holding recepients/content. Recepient's email is a key for his content.
      * @return number of successfully sent emails.
      */
     public static int sendBulkEmail(String from, String subject, Map data) {
-        return 0;
+        Properties props = new Properties();
+        Session session = Session.getDefaultInstance(props,null);
+        session.setDebug(false);
+        Transport transport = null;
+        MimeMessage message = null;
+
+        try {
+            transport = session.getTransport("smtp");
+            transport.connect("localhost",null,null);
+
+            message = new MimeMessage(session);
+            Address fromAddress = new InternetAddress(from);
+            message.setFrom(fromAddress);
+            message.setSubject(subject);
+        } catch (MessagingException e) {
+            log.error("Cannot contact SMTP server!",e);
+            return 0;
+        }
+
+        Set keys = data.keySet();
+        int i = 0;
+        for (Iterator iter = keys.iterator(); iter.hasNext();i++) {
+            String to = (String) iter.next();
+            String content = (String) data.get(to);
+            try {
+                message.setText(content);
+                Address toAddress = new InternetAddress(to);
+                message.setRecipient(Message.RecipientType.TO,toAddress);
+                message.saveChanges();
+
+                transport.sendMessage(message,message.getAllRecipients());
+
+                if ( log.isInfoEnabled() ) {
+                    log.info("Email sent. To: "+to+", From: "+from+", Subject: "+subject);
+                }
+            } catch (MessagingException e) {
+                log.error("Cannot send email to user "+to,e);
+                i--;
+            }
+        }
+        return i;
     }
 }
