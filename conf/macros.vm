@@ -138,17 +138,20 @@ $!UTIL.saveParams($PARAMS, [])
 <A CLASS="nadpis_out" HREF="/clanky/ViewRelation?relationId=$relation.Id">$!UTIL.getXPath($clanek,'/data/name')</A><BR>
 <SPAN CLASS="barva">$!UTIL.showDate($!UTIL.getXPath($clanek,'/data/published')) |
 <A HREF="/Profile?userId=$!author.Id">$!author.Name</A></SPAN>
-<P class="perex_out">$!UTIL.getXPath($clanek,'/data/perex')</P>
+<DIV class="perex_out">$!UTIL.getXPath($clanek,'/data/perex')</DIV>
 <SPAN CLASS="barva">Pøeèteno: $!PERSISTANCE.getCounterValue($clanek)x
 #if($diz)
 | <a href="/clanky/ViewRelation?relationId=$!diz.RelationId">Komentáøù: $!diz.ResponseCount</a>
 #if($diz.ResponseCount>0), poslední $UTIL.showDizDate($diz.LastUpdate)#end
 #undef('diz')
 #end
-</SPAN><BR><BR>
-<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="---"><BR>
-#if($last)<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" VSPACE="1" BORDER="0"><BR>#end
-<P/>
+</SPAN><BR>
+#if($last)
+<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="=========="><BR>
+<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" VSPACE="1" BORDER="0" ALT=""><BR>
+#else
+<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="---">
+#end
 #end
 
 
@@ -213,15 +216,13 @@ $!UTIL.getXPath($reaction,'data/text')<p/>
 #####
 
 #macro(showDiscussions $DISCUSSIONS $WHERE_ADD)
-<TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="3" BORDER="0">
+<TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="1" BORDER="0">
 
 <TR><TD COLSPAN="3" CLASS="cerna2">
 <STRONG>Diskuse</STRONG><A HREF="/hardware/ViewRelation?relationId=3739" TITLE="Diskusní fórum"><IMG SRC="/images/site/sipka.gif" WIDTH="11" HEIGHT="7" BORDER="0" ALT="Diskusní fórum"></a><br>
 </TD></TR>
 
-<TR><TD COLSPAN="3">
-<A HREF="/hardware/EditDiscussion?action=addQuez&relationId=$WHERE_ADD">Polo¾it dotaz</A>
-</TD></TR>
+<TR><TD COLSPAN="3"><A HREF="/hardware/EditDiscussion?action=addQuez&relationId=$WHERE_ADD">Polo¾it dotaz</A><BR></TD></TR>
 
 <TR>
 <TD CLASS="seda1"><SPAN CLASS="piditucna">Dotaz</SPAN></TD>
@@ -239,15 +240,13 @@ $!UTIL.getXPath($reaction,'data/text')<p/>
 </TR>
 
 #if($velocityCount<$DIZS.size())
-<TR><TD COLSPAN="3" CLASS="bezmezer">
-<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="---">
-</TD></TR>
+<TR><TD COLSPAN="3"><IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="---"></TD></TR>
 #end
 
 #end
 
 <TR><TD COLSPAN="3" CLASS="bezmezer">
-<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="=============================="><BR>
+<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="============"><BR>
 <IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" VSPACE="1" ALT=""><BR>
 </TD></TR>
 
