@@ -176,7 +176,7 @@
                         </node>
                         <node name="SynchronizedCache">
                             <map>
-                                <entry key="size" value="3000"/>
+                                <entry key="size" value="10000"/>
                             </map>
                         </node>
                     </node>
