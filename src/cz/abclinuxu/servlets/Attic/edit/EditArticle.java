@@ -19,9 +19,9 @@ import org.dom4j.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.RequestDispatcher;
-import java.util.Map;
-import java.util.Date;
+import java.util.*;
 import java.text.SimpleDateFormat;
+import java.text.ParseException;
 
 /**
  * Class for manipulation of articles.
@@ -32,15 +32,15 @@ public class EditArticle extends AbcServlet {
     public static final String PARAM_TITLE = "title";
     public static final String PARAM_PEREX = "perex";
     public static final String PARAM_CONTENT = "content";
+    public static final String PARAM_PUBLISHED = "published";
     public static final String PARAM_AUTHOR_ID = SelectRelation.PARAM_SELECTED;
 
     public static final String VAR_RELATION = "RELATION";
 
-    public static final String ACTION_ADD_ITEM = "addItem";
-    public static final String ACTION_ADD_ITEM_STEP2 = "addItem2";
-    public static final String ACTION_ADD_ITEM_STEP3 = "addItem3";
-    public static final String ACTION_EDIT_ITEM = "editItem";
-    public static final String ACTION_EDIT_ITEM_STEP2 = "editItem2";
+    public static final String ACTION_ADD_ITEM = "add";
+    public static final String ACTION_ADD_ITEM_STEP2 = "add2";
+    public static final String ACTION_EDIT_ITEM = "edit";
+    public static final String ACTION_EDIT_ITEM_STEP2 = "edit2";
 
 
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
@@ -63,7 +63,10 @@ public class EditArticle extends AbcServlet {
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
                 case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
-                default: return getTemplate("add/article.vm");
+                default: {
+                    params.put(PARAM_PUBLISHED,Constants.isoFormat.format(new Date()));
+                    return getTemplate("add/article.vm");
+                }
             }
 
         } else if ( action.equals(ACTION_ADD_ITEM_STEP2) ) {
@@ -103,21 +106,34 @@ public class EditArticle extends AbcServlet {
         Relation upper = (Relation) ctx.get(VAR_RELATION);
         User user = (User) ctx.get(AbcServlet.VAR_USER);
 
+        boolean error = false;
         String name = (String) params.get(PARAM_TITLE);
         if ( name==null || name.length()==0 ) {
-            addError(PARAM_TITLE,"Nevyplnil jste titulek èlánku!",ctx,null);
-            return getTemplate("add/article.vm");
+            addError(PARAM_TITLE,"Nevyplnil jste titulek èlánku!",ctx,null); error = true;
         }
 
         String perex = (String) params.get(PARAM_PEREX);
         if ( perex==null || perex.length()==0 ) {
-            addError(PARAM_PEREX,"Nevyplnil jste popis èlánku!",ctx,null);
-            return getTemplate("add/article.vm");
+            addError(PARAM_PEREX,"Nevyplnil jste popis èlánku!",ctx,null); error = true;
         }
 
         String content = (String) params.get(PARAM_CONTENT);
         if ( content==null || content.length()==0 ) {
-            addError(PARAM_CONTENT,"Nevyplnil jste obsah èlánku!",ctx,null);
+            addError(PARAM_CONTENT,"Nevyplnil jste obsah èlánku!",ctx,null); error = true;
+        }
+
+        String published = (String) params.get(PARAM_PUBLISHED);
+        if ( published==null || published.length()<12 ) {
+            addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",ctx,null); error = true;
+        } else {
+            try {
+                Date d = Constants.isoFormat.parse(published);
+            } catch (ParseException e) {
+                addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",ctx,null); error = true;
+            }
+        }
+
+        if ( error ) {
             return getTemplate("add/article.vm");
         }
 
@@ -128,11 +144,11 @@ public class EditArticle extends AbcServlet {
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
         root.addElement("name").addText(name);
-        root.addElement("perex").addText(perex);
-        root.addElement("published").addText(Constants.isoFormat.format(new Date()));
+        root.addElement("published").addText(published);
         root.addElement("author").addText(""+author.getId());
         root.addElement("editor").addText(""+user.getId());
         root.addElement("revisor").addText(""+user.getId());
+        root.addElement("perex").addText(perex);
 
 
         Item item = new Item(0,Item.ARTICLE);
@@ -170,33 +186,89 @@ public class EditArticle extends AbcServlet {
         Item item = (Item) relation.getChild();
         Document document = item.getData();
 
-//        Node node = document.selectSingleNode("data/name");
-//        params.put(PARAM_NAME,node.getText());
-//        node = document.selectSingleNode("data/icon");
-//        if ( node!=null ) params.put(PARAM_ICON,node.getText());
+        Node node = document.selectSingleNode("data/name");
+        params.put(PARAM_TITLE,node.getText());
+        node = document.selectSingleNode("data/published");
+        if ( node!=null ) params.put(PARAM_PUBLISHED,node.getText());
+        node = document.selectSingleNode("data/perex");
+        if ( node!=null ) params.put(PARAM_PEREX,node.getText());
 
-        return getTemplate("edit/item.vm");
+        Record record = null;
+        for (Iterator iter = item.getContent().iterator(); iter.hasNext();) {
+            Relation rel = (Relation) iter.next();
+            PersistanceFactory.getPersistance().synchronize(rel.getChild());
+            if ( rel.getChild() instanceof Record ) {
+                record = (Record) rel.getChild();
+                if ( record.getType()==Record.ARTICLE ) {
+                    document = record.getData();
+                    node = document.selectSingleNode("data/content");
+                    params.put(PARAM_CONTENT,node.getText());
+                    break;
+                }
+            }
+        }
+
+        return getTemplate("edit/article.vm");
     }
 
     protected Template actionEditItem2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
-        Relation relation = (Relation) ctx.get(VAR_RELATION);
+        Relation upper = (Relation) ctx.get(VAR_RELATION);
 
-        Item item = (Item) relation.getChild();
+        boolean error = false;
+        String name = (String) params.get(PARAM_TITLE);
+        if ( name==null || name.length()==0 ) {
+            addError(PARAM_TITLE,"Nevyplnil jste titulek èlánku!",ctx,null); error = true;
+        }
+
+        String perex = (String) params.get(PARAM_PEREX);
+        if ( perex==null || perex.length()==0 ) {
+            addError(PARAM_PEREX,"Nevyplnil jste popis èlánku!",ctx,null); error = true;
+        }
+
+        String content = (String) params.get(PARAM_CONTENT);
+        if ( content==null || content.length()==0 ) {
+            addError(PARAM_CONTENT,"Nevyplnil jste obsah èlánku!",ctx,null); error = true;
+        }
+
+        String published = (String) params.get(PARAM_PUBLISHED);
+        if ( published==null || published.length()<12 ) {
+            addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",ctx,null); error = true;
+        } else {
+            try {
+                Date d = Constants.isoFormat.parse(published);
+            } catch (ParseException e) {
+                addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",ctx,null); error = true;
+            }
+        }
+
+        if ( error ) {
+            return getTemplate("edit/article.vm");
+        }
+
+        Item item = (Item) upper.getChild();
+
         Document document = item.getData();
-        Node node = document.selectSingleNode("data/name");
+        DocumentHelper.makeElement(document,"data/name").setText(name);
+        DocumentHelper.makeElement(document,"data/published").setText(published);
+        DocumentHelper.makeElement(document,"data/perex").setText(perex);
 
-//        String tmp = (String) params.get(PARAM_NAME);
-//        if ( tmp==null || tmp.length()==0 ) {
-//            addError(PARAM_NAME,"Nevyplnil jste název druhu!",ctx,null);
-//            return getTemplate("edit/item.vm");
-//        }
-//
-//        node.setText(tmp);
-//        persistance.update(item);
-//
-//        redirect("/ViewRelation?relationId="+relation.getUpper(),response,ctx);
+        Record record = null;
+        for (Iterator iter = item.getContent().iterator(); iter.hasNext();) {
+            Relation rel = (Relation) iter.next();
+            PersistanceFactory.getPersistance().synchronize(rel.getChild());
+            if ( rel.getChild() instanceof Record ) {
+                record = (Record) rel.getChild();
+                if ( record.getType()==Record.ARTICLE ) {
+                    document = record.getData();
+                    DocumentHelper.makeElement(document,"data/content").setText(content);
+                    break;
+                }
+            }
+        }
+
+        redirect("/ViewRelation?relationId="+upper.getId(),response,ctx);
         return null;
     }
 }

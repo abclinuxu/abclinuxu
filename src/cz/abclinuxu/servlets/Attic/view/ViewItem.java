@@ -52,10 +52,11 @@ public class ViewItem extends AbcServlet {
         }
         if ( item==null ) throw new Exception("Chybí parametry!");
 
-        persistance.synchronize(item);
+        persistance.synchronize(item); ctx.put(VAR_ITEM,item);
+        persistance.synchronize(upper); ctx.put(VAR_UPPER,upper);
+
         VelocityHelper helper = new VelocityHelper();
         helper.sortByDateDescending(item.getContent());
-
         if ( record==null && item.getType()!=Item.DRIVER ) {
             for (Iterator iter = item.getContent().iterator(); iter.hasNext();) {
                 Relation rel = (Relation) iter.next();
@@ -66,9 +67,7 @@ public class ViewItem extends AbcServlet {
             }
         }
 
-        ctx.put(VAR_ITEM,item);
         if ( record!=null ) ctx.put(VAR_RECORD,record);
-        ctx.put(VAR_UPPER,upper);
 
         if ( item.getType()==Item.MAKE ) {
             switch ( record.getType() ) {
