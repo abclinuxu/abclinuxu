@@ -10,7 +10,7 @@
 	</appender>
 
 	<appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
-           <param name="File" value="/home/literakl/abc/deploy/WEB-INF/logs/abc.log" />
+           <param name="File" value="@DEPLOY_LOGS@/abc.log" />
            <param name="Append" value="true" />
 	   <layout class="org.apache.log4j.PatternLayout">
              <param name="ConversionPattern" value="%d %-5p %C{1} - %m%n"/>
@@ -18,7 +18,7 @@
 	</appender>
 
 	<appender name="PROXOOL" class="org.apache.log4j.FileAppender">
-           <param name="File" value="/home/literakl/abc/deploy/WEB-INF/logs/proxool.log" />
+           <param name="File" value="@DEPLOY_LOGS@/proxool.log" />
            <param name="Append" value="true" />
 	   <layout class="org.apache.log4j.PatternLayout">
              <param name="ConversionPattern" value="%d | %m%n"/>

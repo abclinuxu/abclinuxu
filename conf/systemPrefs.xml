@@ -22,12 +22,12 @@
               <node name="LoggingConfig">
                 <map>
                   <entry key="autoConfig" value="cz.abclinuxu.utils.config.impl.LoggingConfig"/>
-                  <entry key="file" value="/home/literakl/abc/deploy/WEB-INF/conf/log4j.xml"/>
+                  <entry key="file" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/log4j.xml"/>
                 </map>
               </node>
               <node name="AbcConfig">
                 <map>
-                  <entry key="deploy.path" value="/home/literakl/abc/deploy"/>
+                  <entry key="deploy.path" value="@DEPLOY_ABCLINUXU@"/>
                 </map>
               </node>
             </node>
@@ -36,7 +36,7 @@
             <map/>
             <node name="CreateIndex">
               <map>
-                <entry key="path" value="/home/literakl/abc/deploy/WEB-INF/index/"/>
+                <entry key="path" value="@DEPLOY_ABCLINUXU@/WEB-INF/index/"/>
               </map>
             </node>
           </node>

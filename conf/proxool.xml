@@ -4,8 +4,8 @@
   <driver-url>jdbc:mysql://localhost/abc?useUnicode=true&amp;characterEncoding=ISO-8859-2</driver-url>
   <driver-class>com.mysql.jdbc.Driver</driver-class>
   <driver-properties>
-    <property name="user" value="literakl"/>
-    <property name="password" value="lkaretil"/>
+    <property name="user" value="@DB_USER@"/>
+    <property name="password" value="@DB_PASSWORD@"/>
   </driver-properties>
   
   <minimum-connection-count>1</minimum-connection-count>
