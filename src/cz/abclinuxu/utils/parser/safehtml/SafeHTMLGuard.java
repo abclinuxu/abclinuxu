@@ -27,7 +27,7 @@ public class SafeHTMLGuard {
         TAGS.put("P", new CheckedTag("P", false, null));
         TAGS.put("BR", new CheckedTag("BR", false, null));
         TAGS.put("A", new CheckedTag("A", true, new String[]{"HREF"}));
-        TAGS.put("PRE", new CheckedTag("PRE", true, null));
+        TAGS.put("PRE", new CheckedTag("PRE", true, new String[]{"WIDTH"}));
         TAGS.put("LI", new CheckedTag("LI", false, null));
         TAGS.put("UL", new CheckedTag("UL", true, null));
         TAGS.put("OL", new CheckedTag("OL", true, null));
@@ -36,6 +36,10 @@ public class SafeHTMLGuard {
         TAGS.put("H1", new CheckedTag("H1", true, null));
         TAGS.put("H2", new CheckedTag("H2", true, null));
         TAGS.put("H3", new CheckedTag("H3", true, null));
+        TAGS.put("EM", new CheckedTag("EM", true, null));
+        TAGS.put("STRONG", new CheckedTag("STRONG", true, null));
+        TAGS.put("CITE", new CheckedTag("CITE", true, null));
+        TAGS.put("BLOCKQUOTE", new CheckedTag("BLOCKQUOTE", true, null));
     }
 
     /**
