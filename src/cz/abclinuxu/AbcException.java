@@ -34,6 +34,8 @@ public class AbcException extends Exception {
     public static final int DB_UNKNOWN_CLASS = 1006;
     /** indicates, that supplied class are incomplete */
     public static final int DB_INCOMPLETE = 1007;
+    /** indicates, that supplied data are in incorrect format */
+    public static final int DB_WRONG_DATA = 1008;
 
     /**
      * code code of error. These codes may be mapped

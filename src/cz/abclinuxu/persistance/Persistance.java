@@ -41,12 +41,12 @@ public abstract class Persistance {
     public abstract void updateObject(GenericObject obj) throws PersistanceException;
 
     /**
-     * Remove object and references in tree from persistant storage.
+     * Remove object and its references in tree from persistant storage.
      */
     public abstract void removeObject(GenericObject obj) throws PersistanceException;
 
     /**
-     * Searches persistant storage for object, which are similar to arguments. For each
+     * Searches persistant storage for objects, which are similar to arguments. For each
      * GenericObject: find objects, which have same values. <code>Id</code> field is
      * ignored, same as all null fields. There is a <code>and</code> relationship between
      * non-null fields (non-zero for integer fields). There is a <code>or</code>

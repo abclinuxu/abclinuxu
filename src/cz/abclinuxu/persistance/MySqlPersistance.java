@@ -13,6 +13,7 @@ import java.util.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.AbcException;
 import com.codestudio.sql.PoolManPreparedStatement;
+import org.apache.log4j.xml.DOMConfigurator;
 
 /**
  * This class provides persistance backed up by MySQl database. You should consult
@@ -155,13 +156,32 @@ public class MySqlPersistance extends Persistance {
     }
 
     /**
-     * Remove object and references in tree from persistant storage.
+     * Remove object and its references in tree from persistant storage.
      */
     public void removeObject(GenericObject obj) throws PersistanceException {
+        try {
+            if (obj instanceof Record) {
+                removeRecord((Record)obj);
+            } else if (obj instanceof Item) {
+                removeItem((Item)obj);
+            } else if (obj instanceof Category) {
+                removeCategory((Category)obj);
+            } else if (obj instanceof Data) {
+                removeData((Data)obj);
+            } else if (obj instanceof Link) {
+                removeLink((Link)obj);
+            } else if (obj instanceof Poll) {
+                removePoll((Poll)obj);
+            } else if (obj instanceof User) {
+                removeUser((User)obj);
+            }
+        } catch (SQLException e) {
+            throw new PersistanceException("Nemohu smazat "+obj.toString()+" z databaze!",AbcException.DB_REMOVE,obj,e);
+        }
     }
 
     /**
-     * Searches persistant storage for object, which are similar to arguments. For each
+     * Searches persistant storage for objects, which are similar to arguments. For each
      * GenericObject: find objects, which have same values. <code>Id</code> field is
      * ignored, same as all null fields. There is a <code>and</code> relationship between
      * non-null fields (non-zero for integer fields). There is a <code>or</code>
@@ -208,6 +228,19 @@ public class MySqlPersistance extends Persistance {
      * Adds <code>obj</code> under <code>parent</code> in the object tree.
      */
     public void addObjectToTree(GenericObject obj, GenericObject parent) throws PersistanceException {
+        Connection con = null;
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("insert into strom values(?,?)");
+            statement.setString(1,getTreeId(parent));
+            statement.setString(2,getTreeId(obj));
+
+            int result = statement.executeUpdate();
+        } catch ( SQLException e ) {
+            throw new PersistanceException("Nemohu vlozit do stromu dvojici ("+parent+","+obj+")",AbcException.DB_INSERT,obj,e);
+        } finally {
+            releaseSQLConnection(con);
+        }
     }
 
     /**
@@ -241,6 +274,57 @@ public class MySqlPersistance extends Persistance {
             con.close();
         } catch (Exception e) {
             log.error("Problems while closing connection to database!",e);
+        }
+    }
+
+    /**
+     * @return <code>obj.getId()</code> with table's prefix
+     */
+    protected static String getTreeId(GenericObject obj) {
+        if (obj instanceof Record) {
+            return "Z" + obj.getId();
+        } else if (obj instanceof Item) {
+            return "P" + obj.getId();
+        } else if (obj instanceof Category) {
+            return "K" + obj.getId();
+        } else if (obj instanceof Data) {
+            return "O" + obj.getId();
+        } else if (obj instanceof Link) {
+            return "L" + obj.getId();
+        } else if (obj instanceof Poll) {
+            return "A" + obj.getId();
+        }
+        log.error("getTreeId called with object, which can't be stored in tree!");
+        return "E" + obj.getId();
+    }
+
+    /**
+     * @return generic object, which is described by <code>id</code> in tree
+     * convention (not filled with values, just primary key)
+     */
+    protected GenericObject getObjectFromTreeId(String id) throws PersistanceException {
+        char classKey = id.charAt(0);
+        int i = 0;
+        try {
+            i = Integer.parseInt(id.substring(1));
+        } catch (NumberFormatException e) {
+            throw new PersistanceException(id+" is not valid tree identifier!",AbcException.DB_WRONG_DATA,id,e);
+        }
+
+        if ( classKey=='Z' ) {
+            return new Record(i);
+        } else if ( classKey=='P' ) {
+            return new Item(i);
+        } else if ( classKey=='K' ) {
+            return new Category(i);
+        } else if ( classKey=='O' ) {
+            return new Data(i);
+        } else if ( classKey=='L' ) {
+            return new Link(i);
+        } else if ( classKey=='A' ) {
+            return new Poll(i);
+        } else {
+            throw new PersistanceException(id+" is not valid tree identifier!",AbcException.DB_WRONG_DATA,id,null);
         }
     }
 
@@ -927,6 +1011,84 @@ public class MySqlPersistance extends Persistance {
         }
     }
 
+    /**
+     * removes record from database
+     */
+    protected void removeRecord(Record record) throws PersistanceException, SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+            // kill all siblings
+            PreparedStatement statement = con.prepareStatement("select obsah from strom where id=?");
+            statement.setString(1,"Z"+record.getId());
+
+            ResultSet result = statement.executeQuery();
+            while ( result.next() ) {
+                String child = result.getString(1);
+                statement = con.prepareStatement("select id from strom where id!=? and obsah=?");
+                statement.setString(1,"Z"+record.getId());
+                statement.setString(2,child);
+
+                ResultSet sibling = statement.executeQuery();
+                if ( !sibling.next() ) {
+                    removeObject(getObjectFromTreeId(child));
+                }
+                sibling.close();
+            }
+            result.close();
+
+            // remove all references from tree
+            statement = con.prepareStatement("delete from strom where id=? or obsah=?");
+            statement.setString(1,"Z"+record.getId());
+            statement.setString(2,"Z"+record.getId());
+            statement.executeUpdate();
+
+            // kill record itself
+            statement = con.prepareStatement("delete from zaznam where cislo=?");
+            statement.setInt(1,record.getId());
+            statement.executeUpdate();
+        } finally {
+            releaseSQLConnection(con);
+        }
+    }
+
+    /**
+     * removes item from database
+     */
+    protected void removeItem(Item item) throws PersistanceException, SQLException {
+    }
+
+    /**
+     * removes category from database
+     */
+    protected void removeCategory(Category category) throws PersistanceException, SQLException {
+    }
+
+    /**
+     * removes data from database
+     */
+    protected void removeData(Data data) throws PersistanceException, SQLException {
+    }
+
+    /**
+     * removes link from database
+     */
+    protected void removeLink(Link link) throws PersistanceException, SQLException {
+    }
+
+    /**
+     * removes poll from database
+     */
+    protected void removePoll(Poll poll) throws PersistanceException, SQLException {
+    }
+
+    /**
+     * removes user from database
+     */
+    protected void removeUser(User user) throws PersistanceException, SQLException {
+    }
+
     public void findRecordByExample(Record record,List result) throws PersistanceException,SQLException {}
     public void findItemByExample(Item item,List result) throws PersistanceException,SQLException {}
     public void findCategoryByExample(Category category,List result) throws PersistanceException,SQLException {}
@@ -936,14 +1098,42 @@ public class MySqlPersistance extends Persistance {
     public void findUserByExample(User user,List result) throws PersistanceException,SQLException {}
 
     public static void main(String[] args) throws Exception {
-        User obj = new User(4);
-
+        DOMConfigurator.configure("WEB-INF/log4j.xml");
         Persistance persistance = PersistanceFactory.getPersistance();
         int  i=0,j=0;
-        boolean bool;
         long start = System.currentTimeMillis();
 
-        for (j=0; j<10000 ;j++) {
+        for (j=0; j<1 ;j++) {
+            Record a = new HardwareRecord(0);
+            a.setOwner(1);
+            a.setData("hw a");
+            persistance.storeObject(a);
+
+            Record b = new SoftwareRecord(0);
+            b.setOwner(2);
+            b.setData("sw b");
+            persistance.storeObject(b);
+
+            Record c = new ArticleRecord(0);
+            c.setOwner(1);
+            c.setData("article c");
+            persistance.storeObject(c);
+
+            Record d = new SoftwareRecord(0);
+            d.setOwner(2);
+            d.setData("sw d");
+            persistance.storeObject(d);
+
+            System.out.println("a = " + a);
+            System.out.println("b = " + b);
+            System.out.println("c = " + c);
+            System.out.println("d = " + d);
+
+            persistance.addObjectToTree(b,a);
+            persistance.addObjectToTree(c,a);
+            persistance.addObjectToTree(c,d);
+
+            persistance.removeObject(a);
         }
         long end = System.currentTimeMillis();
         float avg = (end-start)/(float)(j*i);
