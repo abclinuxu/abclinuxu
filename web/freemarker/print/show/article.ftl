@@ -28,21 +28,7 @@ ${TOOL.render(TOOLS.getCompleteArticleText(ITEM))}
 
 <#if PAGES?exists>
  <div class="perex">
-  <h1>Jednotlivé èásti èlánku</h1>
-  <table border="0" width="100%">
-   <tr>
-    <td align="left">
-    <#if (PAGE > 0)>
-     <a href="/clanky/ViewRelation?relationId=${RELATION.id}&page=${PAGE-1}&varianta=print">${PAGES[PAGE-1]}</a>
-    </#if>
-    </td>
-    <td align="right">
-    <#if (PAGE+1 < PAGES?size)>
-     <a href="/clanky/ViewRelation?relationId=${RELATION.id}&page=${PAGE+1}&varianta=print">${PAGES[PAGE+1]}</a>
-    </#if>
-    </td>
-   </tr>
-  </table>
+  <h1>Jednotlivé podstránky èlánku</h1>
   <ol>
   <#list PAGES as page><li>
    <#if page_index==PAGE>
