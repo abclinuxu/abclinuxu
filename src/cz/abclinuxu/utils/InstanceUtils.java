@@ -9,6 +9,8 @@ import cz.abclinuxu.data.Record;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.exceptions.NotFoundException;
+import cz.abclinuxu.AbcException;
 
 import java.util.Map;
 import java.util.Iterator;
@@ -29,17 +31,15 @@ public class InstanceUtils {
     public static GenericObject instantiateParam(String name, Class clazz, Map params) {
         String tmp = (String) params.get(name);
         if ( tmp==null || tmp.length()==0 )
-            return null;
+            throw new NotFoundException("Chybí parametr "+name+"!");
         try {
             int id = Integer.parseInt(tmp);
-            if ( ! GenericObject.class.isAssignableFrom(clazz) )
-                return null;
+//            if ( ! GenericObject.class.isAssignableFrom(clazz) )
             GenericObject obj = (GenericObject) clazz.newInstance();
             obj.setId(id);
             return obj;
         } catch (Exception e) {
-            log.error("Cannot instantiate param "+name+"!", e);
-            return null;
+            throw new AbcException(e.getMessage(),e);
         }
     }
 
