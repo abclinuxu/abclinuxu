@@ -12,6 +12,7 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.utils.Tools;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.Misc;
@@ -32,6 +33,7 @@ public class ViewIndex extends AbcFMServlet {
     public static final String VAR_SOFTWARE = "SOFTWARE";
     public static final String VAR_FORUM = "FORUM";
     public static final String VAR_ARTICLES = "ARTICLES";
+    public static final String VAR_NEWS = "NEWS";
 
     /**
      * Evaluate the request.
@@ -52,15 +54,21 @@ public class ViewIndex extends AbcFMServlet {
         Category sw = (Category) persistance.findById(new Category(Constants.CAT_SOFTWARE));
         env.put(ViewIndex.VAR_SOFTWARE,sw.getContent());
 
-        int userLimit = getUserLimit(user);
-        if ( userLimit!=0 ) {
+        int userLimit = getNumberOfDiscussions(user);
+        if ( userLimit>0 ) {
             Category forum = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
             tools.sync(forum.getContent());
             List discussions = tools.analyzeDiscussions(forum.getContent());
             Sorters2.byDate(discussions, Sorters2.DESCENDING);
             int limit = Math.min(userLimit, discussions.size());
             Paging paging = new Paging(discussions.subList(0, limit), 0, limit, discussions.size());
-            env.put(ViewIndex.VAR_FORUM, paging);            
+            env.put(ViewIndex.VAR_FORUM, paging);
+        }
+
+        userLimit = getNumberOfNews(user);
+        if ( userLimit>0 ) {
+            List news = SQLTool.getInstance().findNewsRelationsByCreated(0, userLimit);
+            env.put(VAR_NEWS, news);
         }
 
         return FMTemplateSelector.select("ViewIndex","show",env, request);
@@ -72,7 +80,7 @@ public class ViewIndex extends AbcFMServlet {
      * @param user
      * @return number of discussions to be displayed
      */
-    private int getUserLimit(User user) {
+    private int getNumberOfDiscussions(User user) {
         int defaultValue = AbcConfig.getViewIndexDiscussionsCount();
         if ( user==null )
             return defaultValue;
@@ -81,6 +89,23 @@ public class ViewIndex extends AbcFMServlet {
             return defaultValue;
         int count = Misc.parseInt(node.getText(),defaultValue);
         if (count==-1) count = 1000000;
+        return count;
+    }
+
+    /**
+     * Gets limit on news displayed on main page. If user is not authenticated or he didn't
+     * configured this value, default value will be used.
+     * @param user
+     * @return number of news to be displayed
+     */
+    private int getNumberOfNews(User user) {
+        int defaultValue = AbcConfig.getViewIndexNewsCount();
+        if ( user==null )
+            return defaultValue;
+        Node node = user.getData().selectSingleNode("/data/settings/index_news");
+        if ( node==null )
+            return defaultValue;
+        int count = Misc.parseInt(node.getText(),defaultValue);
         return count;
     }
 }

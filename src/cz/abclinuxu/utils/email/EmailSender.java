@@ -32,8 +32,10 @@ import org.apache.log4j.Logger;
 public class EmailSender implements Configurable {
     static Logger log = org.apache.log4j.Logger.getLogger(EmailSender.class);
 
-    /** preferences key for SMTP server, we shall used to send emails */
+    /** preferences key for SMTP server, which will send emails */
     public static final String PREF_SMTP_SERVER = "smtp.server";
+    /** if from is missing, this will be default sender of emails */
+    public static final String PREF_ADMIN_EMAIL_ADDRESS = "admin.address";
 
     static {
         Configurator configurator = ConfigurationManager.getConfigurator();
@@ -55,7 +57,7 @@ public class EmailSender implements Configurable {
     /** template to be rendered and used as content of Email */
     public static final String KEY_TEMPLATE = "TEMPLATE";
 
-    static String smtpServer;
+    static String smtpServer, defaultFrom;
 
     /**
      * Sends an email. Params shall hold neccessary atributes like
@@ -65,6 +67,9 @@ public class EmailSender implements Configurable {
     public static boolean sendEmail(Map params) {
         Properties props = new Properties();
         String from = (String) params.get(KEY_FROM), to = (String) params.get(KEY_TO);
+        if ( from==null || from.length()==0 )
+            from = defaultFrom;
+
         Session session = Session.getDefaultInstance(props,null);
         session.setDebug(false);
 
@@ -119,6 +124,9 @@ public class EmailSender implements Configurable {
 
         Persistance persistance = PersistanceFactory.getPersistance();
         String from = (String) params.get(KEY_FROM), subject = (String) params.get(KEY_SUBJECT);
+        if ( from==null || from.length()==0 )
+            from = defaultFrom;
+
         Session session = Session.getDefaultInstance(new Properties(), null);
         session.setDebug(false);
 
@@ -185,5 +193,6 @@ public class EmailSender implements Configurable {
      */
     public void configure(Preferences prefs) throws ConfigurationException {
         smtpServer = prefs.get(PREF_SMTP_SERVER, null);
+        defaultFrom = prefs.get(PREF_ADMIN_EMAIL_ADDRESS, null);
     }
 }

@@ -47,3 +47,9 @@
 <!ELEMENT dir (#PCDATA)> <!-- directory, where to create a file -->
 <!ELEMENT prefix (#PCDATA)> <!-- file will start with this prefix -->
 <!ELEMENT suffix (#PCDATA)> <!-- file will end with this suffix -->
+
+<!-- Item.NEWS -->
+<!ELEMENT data (category?, content, approved_by?)>
+<!ELEMENT category (#PCDATA)> <!-- key of category, to which the news was assigned to -->
+<!ELEMENT content (#PCDATA)> <!-- text of the news -->
+<!ELEMENT approved_by (#PCDATA)> <!-- id of admin, who approved the news -->

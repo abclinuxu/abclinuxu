@@ -60,6 +60,7 @@ public class EditUser extends AbcFMServlet {
     public static final String PARAM_EMOTICONS = "emoticons";
     public static final String PARAM_COOKIE_VALIDITY = "cookieValid";
     public static final String PARAM_DISCUSSIONS_COUNT = "discussions";
+    public static final String PARAM_NEWS_COUNT = "news";
     public static final String PARAM_SUBSCRIBE_MONTHLY = "monthly";
     public static final String PARAM_SUBSCRIBE_WEEKLY = "weekly";
     public static final String PARAM_PHOTO = "photo";
@@ -68,6 +69,7 @@ public class EditUser extends AbcFMServlet {
 
     public static final String VAR_MANAGED = "MANAGED";
     public static final String VAR_DEFAULT_DISCUSSION_COUNT = "DEFAULT_DISCUSSIONS";
+    public static final String VAR_DEFAULT_NEWS_COUNT = "DEFAULT_NEWS";
 
     public static final String ACTION_REGISTER = "register";
     public static final String ACTION_REGISTER_STEP2 = "register2";
@@ -414,6 +416,8 @@ public class EditUser extends AbcFMServlet {
         User managed = (User) env.get(VAR_MANAGED);
 
         env.put(VAR_DEFAULT_DISCUSSION_COUNT,new Integer(AbcConfig.getViewIndexDiscussionsCount()));
+        env.put(VAR_DEFAULT_NEWS_COUNT,new Integer(AbcConfig.getViewIndexNewsCount()));
+
         Document document = managed.getData();
         Node node = document.selectSingleNode("/data/settings/emoticons");
         if ( node!=null )
@@ -424,6 +428,9 @@ public class EditUser extends AbcFMServlet {
         node = document.selectSingleNode("/data/settings/index_discussions");
         if ( node!=null )
             params.put(PARAM_DISCUSSIONS_COUNT, node.getText());
+        node = document.selectSingleNode("/data/settings/index_news");
+        if ( node!=null )
+            params.put(PARAM_NEWS_COUNT, node.getText());
         node = document.selectSingleNode("/data/settings/return_to_forum");
         if ( node!=null )
             params.put(PARAM_RETURN_TO_FORUM, node.getText());
@@ -446,6 +453,7 @@ public class EditUser extends AbcFMServlet {
         canContinue &= setCookieValidity(params, managed);
         canContinue &= setEmoticons(params, managed);
         canContinue &= setDiscussionsSizeLimit(params, managed);
+        canContinue &= setNewsSizeLimit(params, managed, env);
         canContinue &= setReturnBackToForum(params, managed);
 
         if ( !canContinue )
@@ -900,6 +908,31 @@ public class EditUser extends AbcFMServlet {
                 node.getParent().remove(node);
         } else {
             Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/index_discussions");
+            element.setText(limit);
+        }
+        return true;
+    }
+
+    /**
+     * Updates size limit for news on index page from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setNewsSizeLimit(Map params, User user, Map env) {
+        String limit = (String) params.get(PARAM_NEWS_COUNT);
+        if ( limit==null || limit.length()==0 ) {
+            Node node = user.getData().selectSingleNode("/data/settings/index_news");
+            if ( node!=null )
+                node.detach();
+        } else {
+            int tmp = Misc.parseInt(limit, -2);
+            if ( tmp<0 || tmp>100 ) {
+                ServletUtils.addError(PARAM_NEWS_COUNT, "Zadejte èíslo v rozsahu 0-100!", env, null);
+                return false;
+            }
+            Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/index_news");
             element.setText(limit);
         }
         return true;

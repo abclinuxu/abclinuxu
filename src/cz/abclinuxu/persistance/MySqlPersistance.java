@@ -13,6 +13,7 @@ import java.sql.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.exceptions.*;
 import cz.abclinuxu.AbcException;
+import cz.abclinuxu.servlets.Constants;
 import org.logicalcobwebs.proxool.ProxoolException;
 import org.logicalcobwebs.proxool.ProxoolFacade;
 
@@ -545,6 +546,8 @@ public class MySqlPersistance implements Persistance {
      */
     private void findChildren(GenericObject obj, Connection con) throws SQLException {
         PreparedStatement statement = null; ResultSet resultSet = null;
+        if (obj.getId()==Constants.CAT_NEWS && obj instanceof Category)
+            return; // this category might grow too much over time
 
         try {
             statement = con.prepareStatement("select cislo,predchozi,typ_potomka,potomek,data from relace where typ_predka=? and predek=?");

@@ -10,6 +10,7 @@ package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcFMServlet;
+import cz.abclinuxu.servlets.edit.EditNews;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
@@ -19,12 +20,15 @@ import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.utils.news.NewsCategories;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
+
+import org.dom4j.Node;
 
 /**
  * Servlet, which loads Relation specified by parameter <code>relationId</code>
@@ -101,12 +105,19 @@ public class ViewRelation extends AbcFMServlet {
         env.put(VAR_ITEM, item);
         if ( item.getType()==Item.ARTICLE )
             return ShowArticle.show(request, env, item);
+        if ( item.getType()==Item.NEWS ) {
+            Node node = item.getData().selectSingleNode("/data/category");
+            if ( node!=null )
+                env.put(EditNews.VAR_CATEGORY, NewsCategories.get(node.getText()));
+            Map children = Tools.groupByType(item.getContent());
+            env.put(VAR_CHILDREN_MAP, children);
+            return FMTemplateSelector.select("ViewRelation", "news", env, request);
+        }
 
         Tools.sync(upper); env.put(VAR_UPPER,upper);
 
-        if ( item.getType()==Item.DISCUSSION ) {
+        if ( item.getType()==Item.DISCUSSION )
             return FMTemplateSelector.select("ViewRelation","discussion",env, request);
-        }
         if ( item.getType()==Item.DRIVER )
             return FMTemplateSelector.select("ViewRelation","driver",env, request);
 

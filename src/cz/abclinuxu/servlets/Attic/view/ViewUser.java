@@ -35,6 +35,7 @@ public class ViewUser extends AbcFMServlet {
     public static final String VAR_HW_RECORDS = "HW";
     public static final String VAR_ARTICLES = "ARTICLES";
     public static final String VAR_DISCUSSIONS = "DIZS";
+    public static final String VAR_NEWS = "NEWS";
     public static final String VAR_KOD = "KOD";
 
     public static final String PARAM_USER = "userId";
@@ -55,6 +56,7 @@ public class ViewUser extends AbcFMServlet {
     public static final String CONTENT_SOFTWARE = "software";
     public static final String CONTENT_ARTICLES = "articles";
     public static final String CONTENT_DISCUSSIONS = "discussions";
+    public static final String CONTENT_NEWS = "news";
 
     /**
      * Put your processing here. Return null, if you have redirected browser to another URL.
@@ -178,6 +180,11 @@ public class ViewUser extends AbcFMServlet {
             int total = sqlTool.getQuestionCountbyUser(user.getId());
             Paging paging = new Paging(list, from, pageSize, total);
             env.put(VAR_DISCUSSIONS, paging);
+        } else if ( params.containsKey(CONTENT_NEWS) ) {
+            List list = sqlTool.findNewsRelationsByUser(user.getId(), from, pageSize);
+            int total = sqlTool.getItemCountbyUser(user.getId(), Item.NEWS);
+            Paging paging = new Paging(list, from, pageSize, total);
+            env.put(VAR_NEWS, paging);
         }
 
         return FMTemplateSelector.select("ViewUser","content",env,request);

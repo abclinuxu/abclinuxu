@@ -70,6 +70,18 @@
     </action>
   </servlet>
 
+  <servlet name="EditNews">
+    <action name="add" content="/add/zpravicka.ftl">
+      <var name="TITLE" value="Vytvoø zprávièku" />
+    </action>
+    <action name="edit" template="print" content="/edit/zpravicka.ftl">
+      <var name="TITLE" value="Uprav zprávièku" />
+    </action>
+    <action name="remove" template="print" content="/remove/zpravicka.ftl">
+      <var name="TITLE" value="Sma¾ zprávièku" />
+    </action>
+  </servlet>
+
   <servlet name="EditRelation">
     <action name="add" template="print" content="/add/relation.ftl">
       <var name="TITLE" value="Vytvoø link" />
@@ -176,6 +188,9 @@
     <action name="rubriky" content="/show/rubriky.ftl">
       <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
     </action>
+    <action name="news" content="/show/zpravicky.ftl">
+      <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
+    </action>
   </servlet>
 
 
@@ -194,6 +209,9 @@
     </action>
     <action name="driver" content="/show/driver.ftl">
       <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")} - ${TOOL.xpath(ITEM,"data/version")}' type="Lazy" />
+    </action>
+    <action name="news" content="/show/zpravicka.ftl">
+      <var name="TITLE" value="Zprávièka"/>
     </action>
   </servlet>
 

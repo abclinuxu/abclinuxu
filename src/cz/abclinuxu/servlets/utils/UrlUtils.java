@@ -25,6 +25,7 @@ public class UrlUtils {
     public static final String PREFIX_SOFTWARE = "/software";
     public static final String PREFIX_CLANKY = "/clanky";
     public static final String PREFIX_DRIVERS = "/drivers";
+    public static final String PREFIX_NEWS = "/news";
     public static final String PREFIX_NONE = "";
 
     static List prefixes = null;
@@ -34,6 +35,7 @@ public class UrlUtils {
         prefixes.add(PREFIX_SOFTWARE);
         prefixes.add(PREFIX_CLANKY);
         prefixes.add(PREFIX_DRIVERS);
+        prefixes.add(PREFIX_NEWS);
     }
 
     /** default prefix to URL */

@@ -94,6 +94,7 @@ public class ViewCategory extends AbcFMServlet {
             switch (relation.getId()) {
                 case Constants.REL_POLLS: return FMTemplateSelector.select("ViewCategory","ankety",env, request);
                 case Constants.REL_DRIVERS: return FMTemplateSelector.select("ViewCategory","drivers",env, request);
+                case Constants.REL_NEWS_POOL: return FMTemplateSelector.select("ViewCategory","news",env, request);
                 case Constants.REL_REQUESTS: return FMTemplateSelector.select("EditRequest","view",env, request);
             }
         }

@@ -31,6 +31,8 @@ public interface Constants {
 //    int CAT_REKLAMA = 333;
     int CAT_SYSTEM = 338;
     int CAT_ARTICLEPOOL = 339;
+    int CAT_NEWS_POOL = 445;
+    int CAT_NEWS = 452;
 
     // actual ids of selected relations in database
     int REL_POLLS = 250;
@@ -48,6 +50,8 @@ public interface Constants {
     int REL_KOMERCE = 7223;
     int REL_SYSTEM = 8000;
     int REL_ARTICLEPOOL = 8082;
+    int REL_NEWS_POOL = 37672;
+    int REL_NEWS = 42932;
 
     // types for VelocityHelper.groupByType()
     String TYPE_MAKE = "make";
@@ -55,6 +59,7 @@ public interface Constants {
     String TYPE_DISCUSSION = "discussion";
     String TYPE_REQUEST = "request";
     String TYPE_DRIVER = "driver";
+    String TYPE_NEWS = "news";
     String TYPE_CATEGORY = "category";
     String TYPE_RECORD = "record";
     String TYPE_USER = "user";

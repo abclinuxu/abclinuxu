@@ -32,4 +32,10 @@
  <#call showArticle(rel)>
 </#list>
 
+<#if NEWS?exists>
+ <#list NEWS as rel>
+  <#call showNews(rel)>
+ </#list>
+</#if>
+
 <#include "../footer.ftl">

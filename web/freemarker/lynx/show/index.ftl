@@ -64,6 +64,18 @@
  <#include "/include/kernel.txt">
 </p>
 
+<#if NEWS?exists>
+ <h1>Zprávièky</h1>
+ <#list NEWS as rel>
+  <#call showNews(rel)>
+  <#if rel_has_next><#call separator></#if>
+ </#list>
+ <p>
+  <a href="/History?type=news&from=${NEWS?size}&count=15" title="Dal¹í">Star¹í zprávièky</a>
+  <a href="${URL.make("/news/EditItem?action=add")}">Vytvoøit zprávièku</a>
+ </p>
+</#if>
+
 <#flush>
 
 <#if FORUM?exists>

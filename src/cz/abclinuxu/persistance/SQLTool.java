@@ -34,12 +34,14 @@ public final class SQLTool implements Configurable {
     public static final String PREF_RECORD_RELATIONS_BY_TYPE_BY_UPDATED = "record.relations.by.type.by.updated";
     public static final String PREF_ITEM_RELATIONS_BY_TYPE_BY_UPDATED = "item.relations.by.type.by.updated";
     public static final String PREF_ARTICLE_RELATIONS_BY_CREATED = "article.relations.by.created";
+    public static final String PREF_NEWS_RELATIONS_BY_CREATED = "news.relations.by.created";
     public static final String PREF_ARTICLE_RELATIONS_WITHIN_PERIOD = "article.relations.within.period";
     public static final String PREF_DISCUSSION_RELATIONS_BY_CREATED = "discussion.relations.by.created";
 
     public static final String PREF_RECORD_RELATIONS_BY_TYPE_BY_USER = "record.relations.by.type.by.user";
     public static final String PREF_ARTICLE_RELATIONS_BY_USER = "article.relations.by.user";
     public static final String PREF_QUESTION_RELATIONS_BY_USER = "question.relations.by.user";
+    public static final String PREF_NEWS_RELATIONS_BY_USER = "news.relations.by.user";
 
     public static final String PREF_COUNT_ARTICLES_BY_USER = "count.articles.by.user";
     public static final String PREF_COUNT_QUESTIONS_BY_USER = "count.questions.by.user";
@@ -61,6 +63,7 @@ public final class SQLTool implements Configurable {
     private String maxRecordCreatedOfItem, maxPoll, maxUser;
     private String recordRelationsByUpdated, itemRelationsByUpdated, discussionRelationsByCreated;
     private String articleRelationsByCreated, articleRelationsWithinPeriod;
+    private String newsRelationByCreated, newsRelationByUser;
     private String recordRelationsByUser, articleRelationsByUser, questionRelationsByUser;
     private String countArticlesByUser, countRecordsByUser, countItemsByUser;
     private String countItemsByType, countRecordsByType, countQuestionsByUser;
@@ -259,6 +262,40 @@ public final class SQLTool implements Configurable {
             persistance.releaseSQLResources(con,statement,resultSet);
         }
         return result;
+    }
+
+    /**
+     * Finds relations, where child is news item ordered by created property.
+     * The order is descendant - the freshest items first. Use offset to skip
+     * some items and count to manage count of returned relations. Items with
+     * created property in future and in newspool are skipped.
+     * @return List of initialized relations
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findNewsRelationsByCreated(int offset, int count) {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(newsRelationByCreated);
+            statement.setInt(1, offset);
+            statement.setInt(2, count);
+
+            resultSet = statement.executeQuery();
+            List result = new ArrayList(count);
+            while ( resultSet.next() ) {
+                int id = resultSet.getInt(1);
+                Relation relation = (Relation) persistance.findById(new Relation(id));
+                result.add(relation);
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
     }
 
     /**
@@ -493,6 +530,39 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Finds user's relations, where child is news ordered by updated property.
+     * The order is descendant - the freshest records first. Use offset to skip
+     * some items and count to manage count of returned relations.
+     * @return List of initialized relations
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findNewsRelationsByUser(int userId, int offset, int count) {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
+
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(newsRelationByUser);
+            statement.setString(1, String.valueOf(userId));
+            statement.setInt(2, offset);
+            statement.setInt(3, count);
+
+            resultSet = statement.executeQuery();
+            List result = new ArrayList(count);
+            while ( resultSet.next() ) {
+                int id = resultSet.getInt(1);
+                Relation relation = (Relation) persistance.findById(new Relation(id));
+                result.add(relation);
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
      * Finds user's relations, where child is question ordered by updated property.
      * The order is descendant - the freshest questions first. Use offset to skip
      * some record and count to manage count of returned relations.
@@ -586,6 +656,8 @@ public final class SQLTool implements Configurable {
         itemRelationsByUpdated = prefs.get(PREF_ITEM_RELATIONS_BY_TYPE_BY_UPDATED, null);
         articleRelationsByCreated = prefs.get(PREF_ARTICLE_RELATIONS_BY_CREATED, null);
         articleRelationsWithinPeriod = prefs.get(PREF_ARTICLE_RELATIONS_WITHIN_PERIOD, null);
+        newsRelationByCreated = prefs.get(PREF_NEWS_RELATIONS_BY_CREATED, null);
+        newsRelationByUser = prefs.get(PREF_NEWS_RELATIONS_BY_USER, null);
         discussionRelationsByCreated = prefs.get(PREF_DISCUSSION_RELATIONS_BY_CREATED, null);
         recordRelationsByUser = prefs.get(PREF_RECORD_RELATIONS_BY_TYPE_BY_USER, null);
         articleRelationsByUser = prefs.get(PREF_ARTICLE_RELATIONS_BY_USER, null);

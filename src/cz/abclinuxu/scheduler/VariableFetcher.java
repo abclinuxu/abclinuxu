@@ -43,7 +43,7 @@ public class VariableFetcher extends TimerTask {
         newDrivers = new ArrayList(SIZE);
         selectedProfiles = new ArrayList(SIZE);
         newArticles = new ArrayList(ARTICLE_SIZE);
-        counter = new HashMap(4);
+        counter = new HashMap(5,0.99f);
         profileLastRun = Calendar.getInstance();
         profileLastRun.add(Calendar.DAY_OF_MONTH,-1);
         linksLastRun = System.currentTimeMillis();
@@ -117,6 +117,8 @@ public class VariableFetcher extends TimerTask {
             counter.put("FORUM",new Integer(forum.getContent().size()));
             Category requests = (Category) persistance.findById(new Category(Constants.CAT_REQUESTS));
             counter.put("REQUESTS",new Integer(requests.getContent().size()));
+            Category news = (Category) persistance.findById(new Category(Constants.CAT_NEWS_POOL));
+            counter.put("NEWS",new Integer(news.getContent().size()));
 
             currentPoll = sqlTool.findActivePoll();
             newHardware = sqlTool.findRecordRelationsByUpdated(Record.HARDWARE, 0,SIZE);

@@ -58,6 +58,9 @@ public class ShowOlder extends AbcFMServlet {
         if ( "articles".equalsIgnoreCase(type) ) {
             found = SQLTool.getInstance().findArticleRelationsByCreated(from,count);
             env.put(VAR_TYPE,"articles");
+        } else if ( "news".equalsIgnoreCase(type) ) {
+            found = SQLTool.getInstance().findNewsRelationsByCreated(from,count);
+            env.put(VAR_TYPE,"news");
         } else if ( "hardware".equalsIgnoreCase(type) ) {
             found = SQLTool.getInstance().findRecordRelationsByUpdated(Record.HARDWARE, from,count);
             env.put(VAR_TYPE,"hardware");

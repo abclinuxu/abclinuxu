@@ -132,6 +132,12 @@
     </servlet>
 
     <servlet>
+        <servlet-name>EditNews</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.edit.EditNews</servlet-class>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+
+    <servlet>
         <servlet-name>EditSurvey</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.edit.EditSurvey</servlet-class>
         <load-on-startup>3</load-on-startup>
@@ -183,6 +189,9 @@
     <servlet-mapping>
         <servlet-name>ViewCategory</servlet-name><url-pattern>/drivers/ViewCategory</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewCategory</servlet-name><url-pattern>/news/ViewCategory</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>ViewRelation</servlet-name><url-pattern>/hardware/ViewRelation</url-pattern>
@@ -195,6 +204,9 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ViewRelation</servlet-name><url-pattern>/drivers/ViewRelation</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewRelation</servlet-name><url-pattern>/news/ViewRelation</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -224,23 +236,23 @@
         <servlet-name>EditDiscussion</servlet-name><url-pattern>/clanky/EditDiscussion</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>EditDiscussion</servlet-name><url-pattern>/drivers/EditDiscussion</url-pattern>
+        <servlet-name>EditDiscussion</servlet-name><url-pattern>/news/EditDiscussion</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>EditHardware</servlet-name><url-pattern>/hardware/EditItem</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>EditSoftware</servlet-name><url-pattern>/software/EditItem</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>EditArticle</servlet-name><url-pattern>/clanky/EditItem</url-pattern>
     </servlet-mapping>
-
     <servlet-mapping>
         <servlet-name>EditDriver</servlet-name><url-pattern>/drivers/EditItem</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditNews</servlet-name><url-pattern>/news/EditItem</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
