@@ -9,6 +9,7 @@ package cz.abclinuxu.persistance;
 
 import java.util.List;
 import cz.abclinuxu.data.GenericObject;
+import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.persistance.PersistanceException;
 
 /**
@@ -18,13 +19,11 @@ import cz.abclinuxu.persistance.PersistanceException;
 public interface Persistance {
 
     /**
-     * Stores into persistant storage new object and updates dependancies.
-     * If <code>obj.getId()</code> is 0, <code>obj</code> is stored to persistant
-     * storage and updated. If <code>parent</code> is not null, ownership relation
-     * will be created for this couple. But if <code>parent.getId()</code> is 0,
-     * exception will be thrown!
+     * Stores new object into persistant storage and updates several fields like <code>id</code>.
+     * If you are storing Relation, both <code>parent</code> and <code>child</code> must exist
+     * in persistant storage!
      */
-    public void create(GenericObject obj, GenericObject parent) throws PersistanceException;
+    public void create(GenericObject obj) throws PersistanceException;
 
     /**
      * Synchronizes persistant storage with changes made in <code>obj</code>.
@@ -69,18 +68,19 @@ public interface Persistance {
     public List findByCommand(String command) throws PersistanceException;
 
     /**
-     * Finds all parents of this GenericObject. Their order is unspecified.
+     * Finds all parents of this Relation. First element is top level relation, the second is its child and the
+     * last element is direct parent of this relation (last.getId()==relation.getUpper()).
+     * @return List of Relations, starting at top level.
      */
-    public List findParents(GenericObject obj) throws PersistanceException;
+    public List findParents(Relation relation) throws PersistanceException;
 
     /**
-     * Removes ownership relation between <code>parent</code> and <code>obj</code>. If
-     * there is no other parent of <code>obj</code>, <code>obj</code> is deleted
-     * including its siblings.<br>
-     * If you need to delete top-level object, which has no parent, set <code>parent</code>
-     * to null.
+     * Removes GenericObject from Persistant storage. If <code>obj</code> is Relation,
+     * this method removes this relation. If relation.getChild() becomes unreferenced,
+     * it is removed too. If <code>obj</code> is not Relation, this object plus all its references
+     * is deleted.
      */
-    public void remove(GenericObject obj, GenericObject parent) throws PersistanceException;
+    public void remove(GenericObject obj) throws PersistanceException;
 
     /**
      * Increments counter for specified object.

@@ -120,6 +120,22 @@ public class Link extends GenericObject {
         this.updated = updated;
     }
 
+    /**
+     * Initialize this object with values from <code>obj</code>, if
+     * this.getClass.equals(obj.getClass()).
+     */
+    public void synchronizeWith(GenericObject obj) {
+        if ( ! (obj instanceof Link) ) return;
+        Link b = (Link) obj;
+        content = b.getContent();
+        text = b.getText();
+        url = b.getUrl();
+        owner = b.getOwner();
+        updated = b.getUpdated();
+        server = b.getServer();
+        fixed = b.isFixed();
+    }
+
     public String toString() {
         StringBuffer sb = new StringBuffer("Link: id=");
         sb.append(id);

@@ -3,6 +3,8 @@
  */
 package cz.abclinuxu.data;
 
+import cz.abclinuxu.utils.InstanceUtils;
+
 import java.util.Date;
 
 /**
@@ -35,6 +37,20 @@ public class Category extends GenericDataObject {
         this.open = open;
     }
 
+    /**
+     * Initialize this object with values from <code>obj</code>, if
+     * this.getClass.equals(obj.getClass()).
+     */
+    public void synchronizeWith(GenericObject obj) {
+        if ( ! (obj instanceof Category) ) return;
+        Category b = (Category) obj;
+        content = b.getContent();
+        data = b.getData();
+        owner = b.getOwner();
+        updated = b.getUpdated();
+        open = b.isOpen();
+    }
+
     public String toString() {
         StringBuffer sb = new StringBuffer("Category: id=");
         sb.append(id);
@@ -47,6 +63,10 @@ public class Category extends GenericDataObject {
 
     public boolean equals(Object o) {
         if ( !( o instanceof Category) ) return false;
-        return super.equals(o) && ((Category)o).isOpen();
+        if ( id!=((GenericObject)o).getId() ) return false;
+        if ( open!=((Category)o).isOpen() ) return false;
+        if ( owner!=((GenericDataObject)o).getOwner() ) return false;
+        if ( ! InstanceUtils.same(getDataAsString(),((GenericDataObject)o).getDataAsString()) ) return false;
+        return true;
     }
 }

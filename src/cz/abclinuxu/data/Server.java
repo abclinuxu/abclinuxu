@@ -65,4 +65,17 @@ public class Server extends GenericObject {
     public void setContact(String contact) {
         this.contact = contact;
     }
+
+    /**
+     * Initialize this object with values from <code>obj</code>, if
+     * this.getClass.equals(obj.getClass()).
+     */
+    public void synchronizeWith(GenericObject obj) {
+        if ( ! (obj instanceof Server) ) return;
+        Server b = (Server) obj;
+        content = b.getContent();
+        name = b.getName();
+        url = b.getUrl();
+        contact = b.getContact();
+    }
 }

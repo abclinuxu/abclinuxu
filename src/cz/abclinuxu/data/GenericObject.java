@@ -14,9 +14,9 @@ import java.lang.reflect.InvocationTargetException;
 public class GenericObject {
     /** unique identifier of this object */
     protected int id;
-    /** dependant GenericObjects, just empty instances with filled <code>id</code> */
+    /** list of Relations, where relation.getParent()==this and relation.getChild().getId()!=0 */
     protected List content;
-    /** tells, whether this object was already intitilized by Persistance */
+    /** tells, whether this object was already initialized by Persistance */
     protected boolean initialized = false;
 
 
@@ -54,8 +54,8 @@ public class GenericObject {
     }
 
     /**
-     * @return dependant objects. These objects don't contain data, except their <code>id</code>.
-     * You should call Persistance.loadObject() to lookup them from persistable storage.
+     * @return Relations, where getParent()==this. If getChild().isInitialized()==false,
+     * you shall call Persistance.synchronize() to load data from persistant storage.
      */
     public List getContent() {
         return content;
@@ -75,6 +75,12 @@ public class GenericObject {
         content.clear();
     }
 
+    /**
+     * Initialize this object with values from <code>obj</code>, if
+     * this.getClass.equals(obj.getClass()).
+     */
+    public void synchronizeWith(GenericObject obj) {};
+
     public String toString() {
         StringBuffer sb = new StringBuffer(this.getClass().getName());
         sb.append(": id="+id);
@@ -89,7 +95,7 @@ public class GenericObject {
     }
 
     /**
-     * Sets initialization flad. To be used by Persistance.
+     * Sets initialization flag. To be used by Persistance.
      */
     public void setInitialized(boolean initialized) {
         this.initialized = initialized;

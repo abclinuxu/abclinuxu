@@ -143,6 +143,21 @@ public class User extends GenericObject {
         }
     }
 
+    /**
+     * Initialize this object with values from <code>obj</code>, if
+     * this.getClass.equals(obj.getClass()).
+     */
+    public void synchronizeWith(GenericObject obj) {
+        if ( ! (obj instanceof User) ) return;
+        User b = (User) obj;
+        content = b.getContent();
+        data = b.getData();
+        name = b.getName();
+        login = b.getLogin();
+        email = b.getEmail();
+        password = b.getPassword();
+    }
+
     public String toString() {
         StringBuffer sb = new StringBuffer("User: id=");
         sb.append(id);

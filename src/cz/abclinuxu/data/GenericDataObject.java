@@ -115,6 +115,19 @@ public abstract class GenericDataObject extends GenericObject {
     }
 
     /**
+     * Initialize this object with values from <code>obj</code>, if
+     * this.getClass.equals(obj.getClass()).
+     */
+    public void synchronizeWith(GenericObject obj) {
+        if ( ! (obj instanceof GenericDataObject) ) return;
+        GenericDataObject b = (GenericDataObject) obj;
+        content = b.getContent();
+        data = b.getData();
+        owner = b.getOwner();
+        updated = b.getUpdated();
+    }
+
+    /**
      * @return Helper (non-persistant) String for findByExample(), which
      * works as argument to search in <code>data</code>.
      **/

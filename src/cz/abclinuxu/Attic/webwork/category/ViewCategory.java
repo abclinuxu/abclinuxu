@@ -19,10 +19,14 @@ import cz.abclinuxu.persistance.PersistanceFactory;
  */
 public class ViewCategory implements Action {
     Category category;
-    int categoryId;
+//    int categoryId;
 
     public Category getCategory() {
         return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public void setCategoryId(int id) {

@@ -66,6 +66,19 @@ public class Data extends GenericObject {
         this.format = format;
     }
 
+    /**
+     * Initialize this object with values from <code>obj</code>, if
+     * this.getClass.equals(obj.getClass()).
+     */
+    public void synchronizeWith(GenericObject obj) {
+        if ( ! (obj instanceof Data) ) return;
+        Data b = (Data) obj;
+        content = b.getContent();
+        data = b.getData();
+        owner = b.getOwner();
+        format = b.getFormat();
+    }
+
     public String toString() {
         StringBuffer sb = new StringBuffer("Data: id=");
         sb.append(id);

@@ -25,7 +25,7 @@ public class Measure {
         // place initilizaton here
         User user = new User();
         user.setId(1);
-        Record record = new HardwareRecord();
+        Record record = new Record(0,Record.HARDWARE);
         record.setOwner(1);
         boolean admin=false;
 

@@ -3,14 +3,24 @@
  */
 package cz.abclinuxu.data;
 
+import cz.abclinuxu.utils.InstanceUtils;
+
 import java.util.*;
 
 /**
  * generic class for various polls
  */
 public class Poll extends GenericObject {
+
+    public static final int SURVEY = 1;
+    public static final int RATING = 2;
+
+    /** Specifies type of Item. You must set it, before you stores it with Persistance! */
+    int type = 0;
     /** question of the poll */
     protected String text;
+    /** Indicates, that poll is closed and no further voting is possible */
+    boolean closed = false;
     /** list of the choices */
     protected PollChoice[] choices;
     /** creation date or last update of this object */
@@ -25,6 +35,11 @@ public class Poll extends GenericObject {
 
     public Poll(int id) {
         super(id);
+    }
+
+    public Poll(int id, int type) {
+        super(id);
+        this.type = type;
     }
 
     /**
@@ -105,5 +120,69 @@ public class Poll extends GenericObject {
             sum += choices[i].count;
         }
         return sum;
+    }
+
+    /**
+     * @return Type of Record
+     */
+    public int getType() {
+        return type;
+    }
+
+    /**
+     * Sets type of Record
+     */
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    /**
+     * @return Whether it is possible to vote in this poll or not.
+     */
+    public boolean isClosed() {
+        return closed;
+    }
+
+    /**
+     * Sets, whether it is possible to vote in this poll or not.
+     */
+    public void setClosed(boolean closed) {
+        this.closed = closed;
+    }
+
+    /**
+     * Initialize this object with values from <code>obj</code>, if
+     * this.getClass.equals(obj.getClass()).
+     */
+    public void synchronizeWith(GenericObject obj) {
+        if ( ! (obj instanceof Poll) ) return;
+        Poll b = (Poll) obj;
+        content = b.getContent();
+        text = b.getText();
+        closed = b.isClosed();
+        multiChoice = b.isMultiChoice();
+        updated = b.getUpdated();
+        type = b.getType();
+        choices = b.getChoices();
+    }
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        switch ( type ) {
+            case 1: sb.append("Survey");break;
+            case 2: sb.append("Rating");break;
+            default: sb.append("Unknown Poll");
+        }
+        sb.append(": id="+id);
+        if ( text!=null ) sb.append(",text="+text);
+        return sb.toString();
+    }
+
+    public boolean equals(Object o) {
+        if ( !( o instanceof Poll) ) return false;
+        if ( id!=((GenericObject)o).getId() ) return false;
+        if ( type!=((Poll)o).getType() ) return false;
+        if ( ! InstanceUtils.same(this.text,((Poll)o).getText()) ) return false;
+        return true;
     }
 }
