@@ -42,7 +42,6 @@ public class AbcInit extends HttpServlet implements Configurable {
     public static final String PREF_START_RSS_GENERATOR = "start.rss.generator";
     public static final String PREF_START_RSS_KERNEL = "start.rss.kernel";
     public static final String PREF_START_RSS_UNIXSHOP = "start.rss.unixshop";
-    public static final String PREF_START_RSS_PRACE = "start.rss.prace";
     public static final String PREF_START_VARIABLE_FETCHER = "start.variable.fetcher";
     public static final String PREF_START_ARTICLE_POOL_MONITOR = "start.article.pool.monitor";
     public static final String PREF_START_ABC_MONITOR = "start.abc.monitor";
@@ -328,7 +327,6 @@ public class AbcInit extends HttpServlet implements Configurable {
         services.put(PREF_START_RSS_KERNEL, new Boolean(prefs.getBoolean(PREF_START_RSS_KERNEL, true)));
         services.put(PREF_START_RSS_MONITOR, new Boolean(prefs.getBoolean(PREF_START_RSS_MONITOR, true)));
         services.put(PREF_START_RSS_UNIXSHOP, new Boolean(prefs.getBoolean(PREF_START_RSS_UNIXSHOP, true)));
-        services.put(PREF_START_RSS_PRACE, new Boolean(prefs.getBoolean(PREF_START_RSS_PRACE, true)));
         services.put(PREF_START_VARIABLE_FETCHER, new Boolean(prefs.getBoolean(PREF_START_VARIABLE_FETCHER, true)));
         services.put(PREF_START_WEEKLY_EMAILS, new Boolean(prefs.getBoolean(PREF_START_WEEKLY_EMAILS, true)));
         services.put(PREF_START_WEEKLY_SUMMARY, new Boolean(prefs.getBoolean(PREF_START_WEEKLY_SUMMARY, true)));
