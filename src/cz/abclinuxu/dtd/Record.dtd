@@ -1,3 +1,12 @@
+
+<!-- Record.ARTICLE -->
+<!ELEMENT data (name?,icon?)>
+<!ELEMENT name (#PCDATA)> <!-- if Article is divided into several ArticleRecords, use it to give name to each one -->
+<!ELEMENT icon (#PCDATA)> <!-- absolute path including protocol, or relative path to icon directory -->
+<!ELEMENT  (#PCDATA)> <!--  -->
+
+
+<!-- Record.HARDWARE -->
 <!ELEMENT data (os,price?,driver?,settings?,params?,identification?,note?)>
 <!ELEMENT os (#PCDATA)> <!-- operating system, for which this record is written -->
 <!ELEMENT price (#PCDATA)> <!-- user's evaluation of price -->
@@ -6,3 +15,4 @@
 <!ELEMENT params (#PCDATA)> <!-- technical parameters (resolution, max syncs, ..) -->
 <!ELEMENT identification (#PCDATA)> <!-- how Linux identifies this hardware (/proc, lspci) -->
 <!ELEMENT note (#PCDATA)> <!-- other note, user's experience -->
+

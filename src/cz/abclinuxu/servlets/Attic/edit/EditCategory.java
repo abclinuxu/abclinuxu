@@ -65,10 +65,12 @@ public class EditCategory extends AbcServlet {
 
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         String action = (String) params.get(AbcServlet.PARAM_ACTION);
+
         if ( action==null || action.equals(EditCategory.ACTION_ADD) ) {
             // check rights
             return getTemplate("add/category.vm");
         } else if ( action.equals(EditCategory.ACTION_ADD_STEP2) ) {
+            // check rights
             actionAddStep2(request,response,ctx);
         } else if ( action.equals(EditCategory.ACTION_EDIT) ) {
         } else if ( action.equals(EditCategory.ACTION_LINK) ) {

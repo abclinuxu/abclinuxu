@@ -1,3 +1,11 @@
+
+<!-- Item.MAKE -->
+<!ELEMENT data (name,icon?)>
+<!ELEMENT name (#PCDATA)> <!-- maximum length is few words -->
+<!ELEMENT icon (#PCDATA)> <!-- absolute path including protocol, or relative path to icon directory -->
+
+
+<!-- Item.ARTICLE -->
 <!ELEMENT data (name,icon?,author,email?,published?,editor?,revised?)>
 <!ELEMENT name (#PCDATA)> <!-- name of the Article -->
 <!ELEMENT icon (#PCDATA)> <!-- absolute path including protocol, or relative path to icon directory -->
@@ -6,3 +14,4 @@
 <!ELEMENT published (#PCDATA)> <!-- ISO representation of day and time, when this article has been published -->
 <!ELEMENT editor (#PCDATA)> <!-- who approved this article -->
 <!ELEMENT revised (#PCDATA)> <!-- who checked grammar and spelling -->
+

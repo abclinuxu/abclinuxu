@@ -1,0 +1,2 @@
+<!ELEMENT data (ilikeq?)>
+<!ELEMENT ilikeq (#PCDATA)> <!-- identification of user's I like Q account -->
