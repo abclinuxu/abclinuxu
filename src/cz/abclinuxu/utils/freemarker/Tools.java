@@ -939,9 +939,10 @@ public class Tools implements Configurable {
      * Finds rating of specified type for given object.
      * @param object object that might have rating
      * @param type type of rating we are interested in
-     * @return current value or null, if such rating doesn't exist
+     * @return null, if such rating doesn't exist. Otherwise map will contain
+     * keys "sum", "count" and "result".
      */
-    public Float ratingFor(Branch object, String type) {
+    public Map ratingFor(Branch object, String type) {
         Element rating = (Element) object.selectSingleNode("//rating[type/text()=\""+type+"\"]");
         if ( rating==null )
             return null;
@@ -950,7 +951,12 @@ public class Tools implements Configurable {
         int count = Misc.parseInt(rating.elementText("count"), EditRating.VALUE_MIN);
         float result = sum/(float)count;
 
-        return new Float(result);
+        Map map = new HashMap();
+        map.put("sum", new Integer(sum));
+        map.put("count", new Integer(count));
+        map.put("result", new Float(result));
+
+        return map;
     }
 
     /**

@@ -75,14 +75,14 @@ ${TOOL.render(TEXT,USER?if_exists)}
     <#macro starLink rid rvalue rtype value>
     <a href="${URL.make("/rating/"+rid+"?action=rate&amp;rtype="+rtype+"&amp;rvalue="+rvalue)}" target="rating" title="Va¹e hodnocení: <#list 1..rvalue as x>*</#list>"><@lib.star value /></a>
     </#macro>
-    <#assign rating=TOOL.ratingFor(ITEM.data,"article")?default(0)>
+    <#assign rating=TOOL.ratingFor(ITEM.data,"article")?default("UNDEF")>
 
     <div class="cl_rating">
      <h1 class="st_nadpis">Hodnocení&nbsp;&nbsp;<iframe name="rating" width="300" frameborder="0" height="20" scrolling="no" class="rating"></iframe></h1>
      <div class="hdn">
-     <div class="text">Stav: <#if rating!=0>${rating?string["#0.00"]} <#else>bez hodnocení</#if></div>
+     <div class="text">Stav: <#if rating!="UNDEF">${rating.result?string["#0.00"]} <#else>bez hodnocení</#if></div>
      <div class="tpm">
-        <img src="/images/site2/teplomerrtut.gif" height="5" width="<#if rating!=0>${3+(rating/3)*191} <#else>3</#if>" title="${rating?string["#0.00"]}">
+        <img src="/images/site2/teplomerrtut.gif" alt="hodnoceni" height="5" width="<#if rating!="UNDEF">${3+(rating.result/3)*191} <#else>3</#if>" title="${rating.result?string["#0.00"]}">
         <#if USER?exists>
             <div class="stup">
                 <a class="s0" href="${URL.make("/rating/"+RELATION.id+"?action=rate&amp;rtype=article&amp;rvalue=0")}" target="rating" title="Va¹e hodnocení: 0">0</a>
@@ -92,8 +92,8 @@ ${TOOL.render(TEXT,USER?if_exists)}
             </div>
         </#if>
      </div>
-     <#if rating!=0>
-        <div class="text">Poèet hlasù: ${TOOL.xpath(ITEM,"//rating[type/text()='article']/count")}</div>
+     <#if rating!="UNDEF">
+        <div class="text">Poèet hlasù: ${rating.count}</div>
      </#if>
      <br><br><div>&nbsp;</div>
      </div>
@@ -103,7 +103,7 @@ ${TOOL.render(TEXT,USER?if_exists)}
 <#flush>
 
 <#if CHILDREN.discussion?exists>
- <h1 class=st_nadpis">Diskuse k tomuto èlánku</h1>
+ <h1 class="st_nadpis">Diskuse k tomuto èlánku</h1>
  <#assign DISCUSSION=CHILDREN.discussion[0].child>
 
  <p class="monitor"><b>AbcMonitor</b> vám emailem za¹le upozornìní pøi zmìnì.

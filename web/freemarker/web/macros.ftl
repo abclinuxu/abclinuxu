@@ -12,7 +12,7 @@
         autor=TOOL.createUser(TOOL.xpath(clanek,"/data/author")),
         thumbnail=TOOL.xpath(clanek,"/data/thumbnail")?default("UNDEF"),
         tmp=TOOL.groupByType(clanek.children),
-        rating=TOOL.ratingFor(clanek.data,"article")?default(0)
+        rating=TOOL.ratingFor(clanek.data,"article")?default("UNDEF")
     >
     <#if tmp.discussion?exists><#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
 
@@ -29,7 +29,7 @@
                 Komentáøù: ${diz.responseCount}</a
                 ><#if diz.responseCount gt 0>, poslední ${DATE.show(diz.updated, dateFormat[1]?default(dateFormat[0]))}</#if>
             </#if>
-            <#if rating!=0>| Hodnocení: ${rating?string["#0.00"]}</#if>
+            <#if rating!="UNDEF">| Hodnocení: <span title="Hlasù: ${rating.count}">${rating.result?string["#0.00"]}</span></#if>
         </p>
 
 </#macro>
@@ -70,7 +70,7 @@
       <#else>
         &nbsp;| <a href="/blog/${blog.subType}">blog</a>
       </#if>
-   </#if>	
+   </#if>
    <#local city=TOOL.xpath(who,"//personal/city")?default("UNDEF")><#if city!="UNDEF"> | ${city}</#if>
   <#else>
    ${TOOL.xpath(comment.data,"author")?if_exists}
