@@ -12,6 +12,11 @@ import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistance.extra.CompareCondition;
+import cz.abclinuxu.persistance.extra.Field;
+import cz.abclinuxu.persistance.extra.Operation;
+import cz.abclinuxu.persistance.extra.Qualifier;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
@@ -20,12 +25,14 @@ import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.freemarker.Tools;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Date;
 import java.util.Calendar;
+import java.util.List;
 import java.text.ParseException;
 
 import org.dom4j.DocumentHelper;
@@ -45,6 +52,7 @@ public class Royalties implements AbcAction {
     public static final String PARAM_UNTIL = "until";
 
     public static final String VAR_RELATION = "RELATION";
+    public static final String VAR_RESULT = "RESULT";
 
     public static final String ACTION_ADD_ROYALTIES = "add";
     public static final String ACTION_ADD_ROYALTIES_STEP2 = "add2";
@@ -116,15 +124,22 @@ public class Royalties implements AbcAction {
 
     private String actionReportStep2(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Relation upper = (Relation) env.get(VAR_RELATION);
-        Item article = (Item) upper.getChild();
-        if ( params.get(PARAM_AUTHOR)==null )
-            params.put(PARAM_AUTHOR, article.getData().getRootElement().elementText("author"));
-        if ( params.get(PARAM_PUBLISHED)==null )
-            params.put(PARAM_PUBLISHED, Constants.isoFormatShort.format(article.getCreated()));
-        if ( params.get(PARAM_AMOUNT)==null )
-            params.put(PARAM_AMOUNT, "0");
-        return FMTemplateSelector.select("Royalties", "add", env, request);
+        String tmp = (String) params.get(PARAM_SINCE);
+        if (tmp==null)
+            return actionReportStep1(request, env);
+        Date since = Constants.isoFormatShort.parse(tmp);
+        tmp = (String) params.get(PARAM_UNTIL);
+        if (tmp==null)
+            return actionReportStep1(request, env);
+        Date until = Constants.isoFormatShort.parse(tmp);
+
+        CompareCondition conditionFrom = new CompareCondition(Field.CREATED, Operation.GREATER_OR_EQUAL, since);
+        CompareCondition conditionTo = new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, until);
+        Qualifier[] qualifiers = new Qualifier[]{conditionFrom, conditionTo, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING};
+        List list = SQLTool.getInstance().findItemRelationsWithType(Item.ROYALTIES, qualifiers);
+
+        env.put(VAR_RESULT, Tools.syncList(list));
+        return FMTemplateSelector.select("Royalties", "report", env, request);
     }
 
     private String actionAddRoyaltiesStep1(HttpServletRequest request, Map env) throws Exception {
