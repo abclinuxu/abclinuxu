@@ -24,7 +24,7 @@ ${DATE.show(ITEM.created,"CZ_FULL")} | <a href="/Profile?userId=${autor.id}">${a
 
 <p class="perex">${TOOL.xpath(ITEM,"/data/perex")}</p>
 
-${TOOL.render(TOOLS.getCompleteArticleText(ITEM))}
+${TOOL.render(TOOL.getCompleteArticleText(ITEM))}
 
 <#if PAGES?exists>
  <div class="perex">
