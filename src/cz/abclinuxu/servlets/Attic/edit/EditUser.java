@@ -44,6 +44,7 @@ public class EditUser extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditUser.class);
 
     public static final String PARAM_USER = ViewUser.PARAM_USER;
+    public static final String PARAM_USER_SHORT = ViewUser.PARAM_USER_SHORT;
     public static final String PARAM_LOGIN = "login";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_EMAIL = "email";
@@ -98,7 +99,7 @@ public class EditUser extends AbcFMServlet {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String action = (String) params.get(PARAM_ACTION);
 
-        User managed = (User) InstanceUtils.instantiateParam(PARAM_USER,User.class,params);
+        User managed = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT,PARAM_USER,User.class,params);
         User user = (User) env.get(Constants.VAR_USER);
         if ( managed==null )
             managed = user;

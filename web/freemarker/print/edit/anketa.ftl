@@ -47,7 +47,7 @@
  </table>
 
  <input type="hidden" name="action" value="edit2">
- <input type="hidden" name="relationId" value="${RELATION.id}">
+ <input type="hidden" name="rid" value="${RELATION.id}">
  <input type="hidden" name="pollId" value="${POLL.id}">
 </form>
 

@@ -118,7 +118,7 @@ public class CreateIndex implements Configurable {
         }
 
         if ( doc!=null ) {
-            doc.setURL(urlPrefix+"/ViewRelation?relationId="+relation.getId());
+            doc.setURL(urlPrefix+"/ViewRelation?rid="+relation.getId());
             indexWriter.addDocument(doc.getDocument());
         }
 

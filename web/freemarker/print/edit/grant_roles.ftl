@@ -16,7 +16,7 @@
    <td class="required" width="100">U¾ivatel</td>
    <td>
     ${MANAGED.name}
-    <div class="error">${ERRORS.userId?if_exists}</div>
+    <div class="error">${ERRORS.uid?if_exists}</div>
    </td>
   </tr>
   <#macro isDefined(name)>
@@ -45,7 +45,7 @@
    <td><input type="submit" value="Dokonèi" tabindex="3"></td>
   </tr>
  </table>
- <input type="hidden" name="userId" value="${PARAMS.userId}">
+ <input type="hidden" name="uid" value="${PARAMS.uid}">
  <input type="hidden" name="action" value="grant3">
 </form>
 

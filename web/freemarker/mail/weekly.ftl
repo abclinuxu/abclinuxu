@@ -6,7 +6,7 @@ Souhrn clanku pro tyden ${WEEK}/${YEAR}
 
  ${TOOL.xpath(clanek,"/data/perex")}
 
- http://www.abclinuxu.cz/clanky/ViewRelation?relationId=${relation.id}
+ http://www.abclinuxu.cz/clanky/ViewRelation?rid=${relation.id}
 
  ---------------------
 
@@ -14,6 +14,6 @@ Souhrn clanku pro tyden ${WEEK}/${YEAR}
 
 Zasilani teto sluzby muzete zrusit na adrese:
 
-http://www.abclinuxu.cz/Profile?action=myPage&userId=${USER.id}
+http://www.abclinuxu.cz/Profile?action=myPage&uid=${USER.id}
 
 Vase prihlasovaci jmeno je ${USER.login}.

@@ -31,7 +31,7 @@ pùvodní jméno.
 
  <input type="hidden" name="action" value="add2">
  <input type="hidden" name="prefix" value="${PARAMS.prefix}">
- <input type="hidden" name="relationId" value="${PARAMS.relationId}">
+ <input type="hidden" name="rid" value="${PARAMS.rid}">
  <input type="hidden" name="selectedId" value="${PARAMS.selectedId}">
 </form>
 

@@ -3,7 +3,7 @@
 
 <#global who=TOOL.createUser(ITEM.owner)>
 <p>
- Tuto polo¾ku vytvoøil <a href="http://www.abclinuxu.cz/Profile?userId=${who.id}">${who.name}</a>
+ Tuto polo¾ku vytvoøil <a href="http://www.abclinuxu.cz/Profile?uid=${who.id}">${who.name}</a>
  dne ${DATE.show(ITEM.created,"CZ_FULL")}.
 </p>
 

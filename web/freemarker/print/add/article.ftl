@@ -86,7 +86,7 @@
   <#else>
   <input type="hidden" name="action" value="edit2">
  </#if>
- <input type="hidden" name="relationId" value="${PARAMS.relationId}">
+ <input type="hidden" name="rid" value="${PARAMS.rid}">
 </form>
 
 

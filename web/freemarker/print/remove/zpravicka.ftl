@@ -36,7 +36,7 @@ zprávièka nevyhovuje. Je slu¹ností tak uèinit.
   </tr>
  </table>
  <input type="hidden" name="action" value="remove2">
- <input type="hidden" name="relationId" value="${RELATION.id}">
+ <input type="hidden" name="rid" value="${RELATION.id}">
 </form>
 
 

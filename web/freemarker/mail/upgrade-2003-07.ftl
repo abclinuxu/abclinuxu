@@ -28,7 +28,7 @@ noveho cisla casopisu Abicko, novinky na nasem portalu a dalsi
 zajimavosti.
 
 Prihlasit se k odberu techto novych sluzeb muzete na adrese:
-http://www.abclinuxu.cz/Profile?action=myPage&userId=${USER.id}
+http://www.abclinuxu.cz/Profile?action=myPage&uid=${USER.id}
 Na portalu jste zaregistrovan s temito udaji:
 
 Jmeno a prijmeni:   ${USER.name}

@@ -23,7 +23,7 @@
 ${DATE.show("CZ_FULL")}
  <#if USER?exists>
   U¾ivatel: ${USER.name}
-  <a href="${URL.noPrefix("/Profile?userId="+USER.id)}">Mùj profil</a>,
+  <a href="${URL.noPrefix("/Profile?uid="+USER.id)}">Mùj profil</a>,
   <a href="${URL.noPrefix("/Index?logout=true")}">Odhlá¹ení</a>
  <#else>
   <a href="${URL.noPrefix("/Profile?action=login")}">Pøihlá¹ení</a>,
@@ -34,18 +34,18 @@ ${DATE.show("CZ_FULL")}
 <p>
  <b>Rubriky</b>
   <#if USER?exists && USER.hasRole("article admin")>
-   <a href="/clanky/ViewCategory?relationId=5">Aktuální</a>,
+   <a href="/clanky/ViewCategory?rid=5">Aktuální</a>,
   </#if>
-  <a href="/clanky/ViewCategory?relationId=4731">Abíèko</a>,
-  <a href="/clanky/ViewCategory?relationId=4">Jaderné noviny</a>,
-  <a href="/clanky/ViewCategory?relationId=3">Návody</a>,
-  <a href="/clanky/ViewCategory?relationId=251">Novinky</a>,
-  <a href="/clanky/ViewCategory?relationId=14358">Programování</a>,
-  <a href="/clanky/ViewCategory?relationId=2">Recenze</a>,
-  <a href="/clanky/ViewCategory?relationId=5324">Rùzné</a>,
-  <a href="/clanky/ViewCategory?relationId=8546">Téma</a>,
-  <a href="/clanky/ViewCategory?relationId=12448">Tutoriály</a>,
-  <a href="/clanky/ViewCategory?relationId=6">PR èlánky</a>
+  <a href="/clanky/ViewCategory?rid=4731">Abíèko</a>,
+  <a href="/clanky/ViewCategory?rid=4">Jaderné noviny</a>,
+  <a href="/clanky/ViewCategory?rid=3">Návody</a>,
+  <a href="/clanky/ViewCategory?rid=251">Novinky</a>,
+  <a href="/clanky/ViewCategory?rid=14358">Programování</a>,
+  <a href="/clanky/ViewCategory?rid=2">Recenze</a>,
+  <a href="/clanky/ViewCategory?rid=5324">Rùzné</a>,
+  <a href="/clanky/ViewCategory?rid=8546">Téma</a>,
+  <a href="/clanky/ViewCategory?rid=12448">Tutoriály</a>,
+  <a href="/clanky/ViewCategory?rid=6">PR èlánky</a>
 </p>
 
 <p>
@@ -53,7 +53,7 @@ ${DATE.show("CZ_FULL")}
   <b>Vyhledávání</b>
   <input type="text" name="query" size="14">
   <input type="submit" value="Hledej">
-  <a href="${URL.make("/clanky/ViewRelation?relationId"+5024)}">Nápovìda</a>
+  <a href="${URL.make("/clanky/ViewRelation?rid"+5024)}">Nápovìda</a>
  </form>
 </p>
 

@@ -106,7 +106,7 @@ Mù¾ete také povolit souèasné vybrání více mo¾ností.</p>
  </table>
 
  <input type="hidden" name="action" value="add2">
- <input type="hidden" name="relationId" value="${RELATION.id}">
+ <input type="hidden" name="rid" value="${RELATION.id}">
 </form>
 
 

@@ -8,16 +8,16 @@
 <h1>${TOOL.xpath(ITEM,"/data/name")}</h1>
 
 <div class="barva">
-${DATE.show(ITEM.created,"CZ_FULL")} | <a href="/Profile?userId=${autor.id}">${autor.name}</a>
+${DATE.show(ITEM.created,"CZ_FULL")} | <a href="/Profile?uid=${autor.id}">${autor.name}</a>
 </div>
 
 <#if USER?exists && USER.hasRole("article admin")>
  <p>
-  <a href="${URL.make("/EditItem?action=edit&relationId="+RELATION.id)}" title="Uprav">
+  <a href="${URL.make("/EditItem?action=edit&rid="+RELATION.id)}" title="Uprav">
   <img src="/images/actions/pencil.png" class="ikona22" alt="Uprav"></a>
-  <a href="${URL.noPrefix("/SelectRelation?prefix=/clanky&url=/EditRelation&action=move&relationId="+RELATION.id)}" title="Pøesunout">
+  <a href="${URL.noPrefix("/SelectRelation?prefix=/clanky&url=/EditRelation&action=move&rid="+RELATION.id)}" title="Pøesunout">
   <img src="/images/actions/cut.png" alt="Pøesunout" class="ikona"></a>
-  <a href="${URL.noPrefix("/EditRelation?action=remove&prefix=/clanky&relationId="+RELATION.id)}" title="Sma¾">
+  <a href="${URL.noPrefix("/EditRelation?action=remove&prefix=/clanky&rid="+RELATION.id)}" title="Sma¾">
   <img src="/images/actions/delete.png" alt="Sma¾" class="ikona"></a>
  </p>
 </#if>
@@ -34,7 +34,7 @@ ${TOOL.render(TOOL.getCompleteArticleText(ITEM),USER?if_exists)}
    <#if page_index==PAGE>
     ${page}
    <#else>
-    <a href="/clanky/ViewRelation?relationId=${RELATION.id}&page=${page_index}&varianta=print">${page}</a>
+    <a href="/clanky/ViewRelation?rid=${RELATION.id}&page=${page_index}&varianta=print">${page}</a>
    </#if>
   </#list>
   </ol>
@@ -68,7 +68,7 @@ ${TOOL.render(TOOL.getCompleteArticleText(ITEM),USER?if_exists)}
  <h1>Diskuse k tomuto èlánku</h1>
  <#global DISCUSSION=CHILDREN.discussion[0].child>
  <p>
-  <a href="${URL.make("/EditDiscussion?action=add&dizId="+DISCUSSION.id+"&threadId=0&relationId="+CHILDREN.discussion[0].id)}">
+  <a href="${URL.make("/EditDiscussion?action=add&dizId="+DISCUSSION.id+"&threadId=0&rid="+CHILDREN.discussion[0].id)}">
   Vlo¾it dal¹í komentáø</a>
  </p>
  <#list TOOL.createDiscussionTree(DISCUSSION) as thread>
@@ -76,7 +76,7 @@ ${TOOL.render(TOOL.getCompleteArticleText(ITEM),USER?if_exists)}
  </#list>
 <#elseif ALLOW_DISCUSSIONS>
  <h1>Diskuse k tomuto èlánku</h1>
- <a href="${URL.make("/EditDiscussion?action=addDiz&relationId="+RELATION.id)}">Vlo¾it první komentáø</a>
+ <a href="${URL.make("/EditDiscussion?action=addDiz&rid="+RELATION.id)}">Vlo¾it první komentáø</a>
 </#if>
 
 <#include "../footer.ftl">

@@ -48,8 +48,8 @@ nejen administratorum ci vyvojarum, vybiram tyto:
 * zkratky na caste URL
  - www.abclinuxu.cz/diskuse.jsp
  - www.abclinuxu.cz/download/abicko.jsp
- 
-* pocet diskusi na hlavni strance se da 
+
+* pocet diskusi na hlavni strance se da
 nakonfigurovat v profilu.
 
 * vyhledavani je nezavisle na diakritice
@@ -59,7 +59,7 @@ diky kodu od Lukase Zapletala
  - www.abclinuxu.cz/auto/diskuse.rss
 
 Vsechny zmeny najdete v clanku na adrese
-www.abclinuxu.cz/clanky/ViewRelation?relationId=22809
+www.abclinuxu.cz/clanky/ViewRelation?rid=22809
 
 
 Pripravujeme
@@ -93,7 +93,7 @@ SCO tvrdi, ze jejich naroky vychazeji z nalezu kusu zdrojoveho kodu v
 linuxovem jadre, ktere jsou identicke (dokonce vcetne programatorskych
 komentaru) s kodem SCO/Unix. Po dlouhou dobu vsak SCO odmitalo verejnosti
 nebo i firme IBM predlozit dukazy v podobe zkopirovaneho kodu (viz komentar
-v clanku http://abclinuxu.cz/clanky/ViewRelation?relationId=30258).
+v clanku http://abclinuxu.cz/clanky/ViewRelation?rid=30258).
 
 Mnohem vice svetla do celeho pripadu vnesla srpnova prezentace firmy SCO v
 Las Vegas, kde byly ukazany male kousky kodu, ktere SCO povazuje za
@@ -126,6 +126,6 @@ Za portal www.abclinuxu.cz
 
 Zasilani teto sluzby muzete zrusit na adrese:
 
-http://www.abclinuxu.cz/Profile?action=myPage&userId=${USER.id}
+http://www.abclinuxu.cz/Profile?action=myPage&uid=${USER.id}
 
 Vase prihlasovaci jmeno je ${USER.login}.

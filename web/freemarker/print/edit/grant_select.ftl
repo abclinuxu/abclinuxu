@@ -8,8 +8,8 @@
   <tr>
    <td class="required" width="100">»Ìslo uæivatele</td>
    <td>
-    <input type="text" name="userId" value="${PARAMS.userId?if_exists}" size="4" tabindex="1">
-    <div class="error">${ERRORS.userId?if_exists}</div>
+    <input type="text" name="uid" value="${PARAMS.uid?if_exists}" size="4" tabindex="1">
+    <div class="error">${ERRORS.uid?if_exists}</div>
    </td>
   </tr>
   <tr>
@@ -25,7 +25,7 @@
 <ol>
  <#list USERS as id>
   <#global user=TOOL.createUser(id)>
-  <li><a href="${URL.noPrefix("/EditUser?action=grant2&userId="+id)}">${user.name}</a>
+  <li><a href="${URL.noPrefix("/EditUser?action=grant2&uid="+id)}">${user.name}</a>
  </#list>
 </ol>
 

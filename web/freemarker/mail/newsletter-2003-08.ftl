@@ -16,7 +16,7 @@ vhodne pro tisk ci snadne cteni z obrazovky.
 
 Srpnove cislo ma XX stran a zabira YYY KB. Stahnout
 jej muzete ze stranky
-http://www.abclinuxu.cz/clanky/ViewCategory?relationId=4731
+http://www.abclinuxu.cz/clanky/ViewCategory?rid=4731
 
 Obsah:
 *
@@ -63,6 +63,6 @@ Za portal www.abclinuxu.cz
 
 Zasilani teto sluzby muzete zrusit na adrese:
 
-http://www.abclinuxu.cz/Profile?action=myPage&userId=${USER.id}
+http://www.abclinuxu.cz/Profile?action=myPage&uid=${USER.id}
 
 Vase prihlasovaci jmeno je ${USER.login}.

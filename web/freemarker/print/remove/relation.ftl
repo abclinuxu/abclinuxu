@@ -12,7 +12,7 @@ Chystáte se smazat objekt ${TOOL.childName(CURRENT)}.
 <ul>
  <#list PARENTS as relation>
   <li>
-    <a href="${URL.make("/ViewRelation?relationId="+relation.id,PARAMS.prefix)}">${TOOL.childName(relation)}</a>
+    <a href="${URL.make("/ViewRelation?rid="+relation.id,PARAMS.prefix)}">${TOOL.childName(relation)}</a>
    </li>
  </#list>
 </ul>
@@ -30,5 +30,5 @@ Chystáte se smazat objekt ${TOOL.childName(CURRENT)}.
  <input type="submit" VALUE="Dokonèi" tabindex="1">
  <input type="hidden" name="action" value="remove2">
  <input type="hidden" name="prefix" value="${PARAMS.prefix}">
- <input type="hidden" name="relationId" value="${PARAMS.relationId}">
+ <input type="hidden" name="rid" value="${PARAMS.rid}">
 </form>

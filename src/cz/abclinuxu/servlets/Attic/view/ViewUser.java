@@ -39,6 +39,7 @@ public class ViewUser extends AbcFMServlet {
     public static final String VAR_KOD = "KOD";
 
     public static final String PARAM_USER = "userId";
+    public static final String PARAM_USER_SHORT = "uid";
     public static final String PARAM_URL = "url";
     public static final String PARAM_SENDER = "sender";
     public static final String PARAM_SUBJECT = "subject";
@@ -82,7 +83,7 @@ public class ViewUser extends AbcFMServlet {
 
         if ( action.equals(ACTION_SHOW_MY_PROFILE) ) {
             User user = (User) env.get(Constants.VAR_USER);
-            User managed = (User) InstanceUtils.instantiateParam(PARAM_USER, User.class, params);
+            User managed = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT,PARAM_USER, User.class, params);
             if ( user==null || (user.getId()!=managed.getId() && !user.hasRole(Roles.USER_ADMIN)) )
                 return handleProfile(request, env);
             else
@@ -105,7 +106,7 @@ public class ViewUser extends AbcFMServlet {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        User user = (User) InstanceUtils.instantiateParam(PARAM_USER,User.class,params);
+        User user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT,PARAM_USER,User.class,params);
         persistance.synchronize(user);
         env.put(VAR_PROFILE,user);
 
@@ -119,7 +120,7 @@ public class ViewUser extends AbcFMServlet {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        User user = (User) InstanceUtils.instantiateParam(PARAM_USER,User.class,params);
+        User user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT,PARAM_USER,User.class,params);
         persistance.synchronize(user);
         env.put(VAR_PROFILE,user);
 
@@ -152,7 +153,7 @@ public class ViewUser extends AbcFMServlet {
      */
     protected String handleShowContent(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        User user = (User) InstanceUtils.instantiateParam(PARAM_USER,User.class,params);
+        User user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT,PARAM_USER,User.class,params);
         SQLTool sqlTool = SQLTool.getInstance();
         int from = Misc.parseInt((String)params.get(PARAM_FROM),0);
         int pageSize = AbcConfig.getViewUserPageSize();
@@ -247,7 +248,7 @@ public class ViewUser extends AbcFMServlet {
         if ( chyba )
             return FMTemplateSelector.select("ViewUser","sendEmail",env,request);
 
-        User user = (User) InstanceUtils.instantiateParam(PARAM_USER,User.class,params);
+        User user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT,PARAM_USER,User.class,params);
         user = (User) persistance.findById(user);
 
         Map data = new HashMap();

@@ -36,6 +36,7 @@ import org.dom4j.Document;
  */
 public class ShowArticle extends AbcFMServlet {
     public static final String PARAM_RELATION_ID = "relationId";
+    public static final String PARAM_RELATION_ID_SHORT = "rid";
     public static final String PARAM_PAGE = "page";
 
     public static final String VAR_RELATION = "RELATION";
@@ -52,7 +53,7 @@ public class ShowArticle extends AbcFMServlet {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID, Relation.class, params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID_SHORT,PARAM_RELATION_ID, Relation.class, params);
         if ( relation==null ) {
             throw new MissingArgumentException("Parametr relationId je prázdný!");
         }

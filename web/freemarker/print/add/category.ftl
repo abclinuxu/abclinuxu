@@ -43,7 +43,7 @@
  </table>
 
  <input type="hidden" name="action" value="add2">
- <input type="hidden" name="relationId" value="${PARAMS.relationId}">
+ <input type="hidden" name="rid" value="${PARAMS.rid}">
  <input type="hidden" name="categoryId" value="${PARAMS.categoryId}">
 </form>
 

@@ -28,10 +28,12 @@ public class InstanceUtils {
      */
     public static GenericObject instantiateParam(String name, Class clazz, Map params) {
         String tmp = (String) params.get(name);
-        if ( tmp==null || tmp.length()==0 ) return null;
+        if ( tmp==null || tmp.length()==0 )
+            return null;
         try {
             int id = Integer.parseInt(tmp);
-            if ( ! GenericObject.class.isAssignableFrom(clazz) ) return null;
+            if ( ! GenericObject.class.isAssignableFrom(clazz) )
+                return null;
             GenericObject obj = (GenericObject) clazz.newInstance();
             obj.setId(id);
             return obj;
@@ -39,6 +41,19 @@ public class InstanceUtils {
             log.error("Cannot instantiate param "+name+"!", e);
             return null;
         }
+    }
+
+    /**
+     * Instantiates GenericObject from <<code>params</code>. It first looks up <<code>shortcut</code>
+     * and if it is not defined, it searches for <<code>name</code>.
+     * @see GenericObject instantiateParam(String, Class, Map)
+     */
+    public static GenericObject instantiateParam(String shortcut, String name, Class clazz, Map params) {
+        GenericObject obj = instantiateParam(shortcut,clazz,params);
+        if ( obj!=null )
+            return obj;
+        obj = instantiateParam(name, clazz, params);
+        return obj;
     }
 
     /**

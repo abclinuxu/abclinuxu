@@ -46,6 +46,8 @@ import java.util.List;
 public class ViewCategory extends AbcFMServlet {
     /** if set, it indicates to display parent in the relation of two categories */
     public static final String PARAM_PARENT = "parent";
+    public static final String PARAM_RELATION_ID = "relationId";
+    public static final String PARAM_RELATION_ID_SHORT = "rid";
     /** holds category to be displayed */
     public static final String VAR_CATEGORY = "CATEGORY";
 
@@ -54,7 +56,7 @@ public class ViewCategory extends AbcFMServlet {
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(ViewRelation.PARAM_RELATION_ID,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID_SHORT,PARAM_RELATION_ID,Relation.class,params);
         if ( relation==null ) {
             throw new MissingArgumentException("Parametr relationId je prázdný!");
         }

@@ -8,9 +8,9 @@ Prihlasovaci jmeno: ${USER.login}
 Heslo:              ${USER.password}
 
 Vas profil najdete na teto adrese:
-http://www.abclinuxu.cz/Profile?userId=${USER.id} .
+http://www.abclinuxu.cz/Profile?uid=${USER.id} .
 Ucet si muzete nastavit na adrese
-http://www.abclinuxu.cz/Profile?action=myPageuserId=${USER.id} .
+http://www.abclinuxu.cz/Profile?action=myPageuid=${USER.id} .
 
 Pokud budete provadet jakekoliv zmeny, je treba se prihlasit.
 System vam v takovem pripade sam nabidne formular pro prihlaseni.

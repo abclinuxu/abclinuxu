@@ -9,7 +9,7 @@
 
 <div class="barva">
 ${DATE.show(ITEM.created,"CZ_FULL")} |
-<a href="http://www.abclinuxu.cz/Profile?userId=${autor.id}">${autor.name}</a>
+<a href="http://www.abclinuxu.cz/Profile?uid=${autor.id}">${autor.name}</a>
 </div>
 
 <br clear="all">

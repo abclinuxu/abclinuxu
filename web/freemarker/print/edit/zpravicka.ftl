@@ -60,7 +60,7 @@ filtry pøi vyhledávání.
   </tr>
  </table>
  <input type="hidden" name="action" value="edit2">
- <input type="hidden" name="relationId" value="${RELATION.id}">
+ <input type="hidden" name="rid" value="${RELATION.id}">
 </form>
 
 

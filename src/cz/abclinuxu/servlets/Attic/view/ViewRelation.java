@@ -48,6 +48,7 @@ import org.dom4j.Node;
  */
 public class ViewRelation extends AbcFMServlet {
     public static final String PARAM_RELATION_ID = "relationId";
+    public static final String PARAM_RELATION_ID_SHORT = "rid";
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_PARENTS = "PARENTS";
     public static final String VAR_ITEM = "ITEM";
@@ -61,7 +62,7 @@ public class ViewRelation extends AbcFMServlet {
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID_SHORT,PARAM_RELATION_ID,Relation.class,params);
         if ( relation==null ) {
             throw new MissingArgumentException("Parametr relationId je prázdný!");
         }
