@@ -1,205 +1,306 @@
+<?xml version="1.0" encoding="ISO-8859-2" ?>
 <config>
 
   <servlet name="EditArticle">
     <action name="add">
-      <mapping variant="web" template="web/add/article.vm" />
+      <mapping variant="web" template="web/add/article.vm">
+        <var name="TITLE" value="Vložení článku" />
+      </mapping>
     </action>
     <action name="edit">
-      <mapping variant="web" template="web/edit/article.vm" />
+      <mapping variant="web" template="web/edit/article.vm">
+        <var name="TITLE" value="Úprava článku" />
+      </mapping>
     </action>
   </servlet>
 
   <servlet name="EditCategory">
     <action name="add">
-      <mapping variant="web" template="web/add/category.vm" />
+      <mapping variant="web" template="web/add/category.vm">
+        <var name="TITLE" value="Vložení kategorie" />
+      </mapping>
     </action>
     <action name="edit">
-      <mapping variant="web" template="web/edit/category.vm" />
+      <mapping variant="web" template="web/edit/category.vm">
+        <var name="TITLE" value="Úprava kategorie" />
+      </mapping>
     </action>
   </servlet>
 
   <servlet name="EditDiscussion">
     <action name="reply">
-      <mapping variant="web" template="web/add/reply.vm" />
+      <mapping variant="web" template="web/add/reply.vm">
+        <var name="TITLE" value="Vlož reakci do diskuse" />
+      </mapping>
     </action>
     <action name="ask">
-      <mapping variant="web" template="web/add/ask.vm" />
+      <mapping variant="web" template="web/add/ask.vm">
+        <var name="TITLE" value="Položit nový dotaz" />
+      </mapping>
     </action>
     <action name="ask_confirm">
-      <mapping variant="web" template="web/add/ask_confirm.vm" />
+      <mapping variant="web" template="web/add/ask_confirm.vm">
+        <var name="TITLE" value="Potvrzení" />
+      </mapping>
     </action>
   </servlet>
 
   <servlet name="EditDriver">
     <action name="add">
-      <mapping variant="web" template="web/add/driver.vm" />
+      <mapping variant="web" template="web/add/driver.vm">
+        <var name="TITLE" value="Vlož ovladač" />
+      </mapping>
     </action>
   </servlet>
 
   <servlet name="EditHardware">
     <action name="add_record">
-      <mapping variant="web" template="web/add/hwrecord.vm" />
+      <mapping variant="web" template="web/add/hwrecord.vm">
+        <var name="TITLE" value="Vlož záznam" />
+      </mapping>
     </action>
     <action name="edit_record">
-      <mapping variant="web" template="web/add/hwrecord.vm" />
+      <mapping variant="web" template="web/add/hwrecord.vm">
+        <var name="TITLE" value="Uprav záznam" />
+      </mapping>
     </action>
     <action name="add_item">
-      <mapping variant="web" template="web/add/item.vm" />
+      <mapping variant="web" template="web/add/item.vm">
+        <var name="TITLE" value="Přidání nové položky" />
+      </mapping>
     </action>
     <action name="edit_item">
-      <mapping variant="web" template="web/edit/item.vm" />
+      <mapping variant="web" template="web/edit/item.vm">
+        <var name="TITLE" value="Uprav položku" />
+      </mapping>
     </action>
   </servlet>
 
   <servlet name="EditPoll">
     <action name="add">
-      <mapping variant="web" template="web/add/poll.vm" />
+      <mapping variant="web" template="web/add/poll.vm">
+        <var name="TITLE" value="Vytvoř anketu" />
+      </mapping>
     </action>
     <action name="edit">
-      <mapping variant="web" template="web/edit/poll.vm" />
+      <mapping variant="web" template="web/edit/poll.vm">
+        <var name="TITLE" value="Uprav anketu" />
+      </mapping>
     </action>
   </servlet>
 
   <servlet name="EditRelation">
     <action name="add">
-      <mapping variant="web" template="web/add/relation.vm" />
+      <mapping variant="web" template="web/add/relation.vm">
+        <var name="TITLE" value="Vytvoř link" />
+      </mapping>
     </action>
     <action name="remove">
-      <mapping variant="web" template="web/remove/relation.vm" />
+      <mapping variant="web" template="web/remove/relation.vm">
+        <var name="TITLE" value="Smazání relace" />
+      </mapping>
     </action>
   </servlet>
 
   <servlet name="EditRequest">
     <action name="view">
-      <mapping variant="web" template="web/show/requests.vm" />
+      <mapping variant="web" template="web/show/requests.vm">
+        <var name="TITLE" value="Administrativní požadavky" />
+      </mapping>
     </action>
   </servlet>
 
   <servlet name="EditSoftware">
     <action name="add_record">
-      <mapping variant="web" template="web/add/swrecord.vm" />
+      <mapping variant="web" template="web/add/swrecord.vm">
+        <var name="TITLE" value="Vlož záznam" />
+      </mapping>
     </action>
     <action name="edit_record">
-      <mapping variant="web" template="web/add/swrecord.vm" />
+      <mapping variant="web" template="web/add/swrecord.vm">
+        <var name="TITLE" value="Uprav záznam" />
+      </mapping>
     </action>
     <action name="add_item">
-      <mapping variant="web" template="web/add/item.vm" />
+      <mapping variant="web" template="web/add/item.vm">
+        <var name="TITLE" value="Přidání nové položky" />
+      </mapping>
     </action>
     <action name="edit_item">
-      <mapping variant="web" template="web/edit/item.vm" />
+      <mapping variant="web" template="web/edit/item.vm">
+        <var name="TITLE" value="Uprav položku" />
+      </mapping>
     </action>
   </servlet>
 
   <servlet name="EditUser">
     <action name="login">
-      <mapping variant="web" template="web/login.vm" />
+      <mapping variant="web" template="web/login.vm">
+        <var name="TITLE" value="Přihlášení se do systému" />
+      </mapping>
     </action>
     <action name="forbidden">
-      <mapping variant="web" template="web/misc/forbidden.vm" />
+      <mapping variant="web" template="web/misc/forbidden.vm">
+        <var name="TITLE" value="Přístup odepřen" />
+      </mapping>
     </action>
     <action name="register">
-      <mapping variant="web" template="web/add/user.vm" />
+      <mapping variant="web" template="web/add/user.vm">
+        <var name="TITLE" value="Registrace" />
+      </mapping>
     </action>
     <action name="welcome">
-      <mapping variant="web" template="web/show/welcome_user.vm" />
+      <mapping variant="web" template="web/show/welcome_user.vm">
+        <var name="TITLE" value="Přivítání" />
+      </mapping>
     </action>
     <action name="edit">
-      <mapping variant="web" template="web/edit/user.vm" />
+      <mapping variant="web" template="web/edit/user.vm">
+        <var name="TITLE" value="Úprava nastavení" />
+      </mapping>
     </action>
     <action name="passwd">
-      <mapping variant="web" template="web/edit/password.vm" />
+      <mapping variant="web" template="web/edit/password.vm">
+        <var name="TITLE" value="Změna hesla" />
+      </mapping>
     </action>
   </servlet>
 
   <servlet name="ForgottenPassword">
     <action name="step1">
-      <mapping variant="web" template="web/misc/forgotten.vm" />
+      <mapping variant="web" template="web/misc/forgotten.vm">
+        <var name="TITLE" value="Zaslání zapomenutého hesla" />
+      </mapping>
     </action>
     <action name="step2">
-      <mapping variant="web" template="web/misc/forgotten2.vm" />
+      <mapping variant="web" template="web/misc/forgotten2.vm">
+        <var name="TITLE" value="Zaslání zapomenutého hesla" />
+      </mapping>
     </action>
   </servlet>
 
   <servlet name="Search">
     <action name="show">
-      <mapping variant="web" template="web/misc/search.vm" />
+      <mapping variant="web" template="web/misc/search.vm">
+        <var name="TITLE" value="Hledání" />
+      </mapping>
     </action>
   </servlet>
 
   <servlet name="SelectIcon">
     <action name="show">
-      <mapping variant="web" template="web/misc/selectIcon.vm" />
+      <mapping variant="web" template="web/misc/selectIcon.vm">
+        <var name="TITLE" value="Vyběr ikony" />
+      </mapping>
     </action>
   </servlet>
 
   <servlet name="SelectRelation">
     <action name="step1">
-      <mapping variant="web" template="web/misc/selectRelation.vm" />
+      <mapping variant="web" template="web/misc/selectRelation.vm">
+        <var name="TITLE" value="Výběr relace" />
+      </mapping>
     </action>
     <action name="step2">
-      <mapping variant="web" template="web/misc/selectRelation2.vm" />
+      <mapping variant="web" template="web/misc/selectRelation2.vm">
+        <var name="TITLE" value="Potvrzení relace" />
+      </mapping>
     </action>
   </servlet>
 
   <servlet name="ViewCategory">
     <action name="category">
-      <mapping variant="web" template="web/show/category.vm" />
+      <mapping variant="web" template="web/show/category.vm">
+        <var name="TITLE" value="$!UTIL.getXPath($CATEGORY,'data/name')" type="Lazy" />
+      </mapping>
     </action>
     <action name="clanky">
-      <mapping variant="web" template="web/show/clanky.vm" />
+      <mapping variant="web" template="web/show/clanky.vm">
+        <var name="TITLE" value="$!UTIL.getXPath($CATEGORY,'data/name')" type="Lazy" />
+      </mapping>
     </action>
     <action name="discussions">
-      <mapping variant="web" template="web/show/discussions.vm" />
+      <mapping variant="web" template="web/show/discussions.vm">
+        <var name="TITLE" value="$!UTIL.getXPath($CATEGORY,'data/name')" type="Lazy" />
+      </mapping>
     </action>
     <action name="polls">
-      <mapping variant="web" template="web/show/ankety.vm" />
+      <mapping variant="web" template="web/show/ankety.vm">
+        <var name="TITLE" value="Archiv anket" />
+      </mapping>
     </action>
     <action name="links">
-      <mapping variant="web" template="web/show/links.vm" />
+      <mapping variant="web" template="web/show/links.vm">
+        <var name="TITLE" value="Rozcestník po linuxových serverech" />
+      </mapping>
     </action>
     <action name="drivers">
-      <mapping variant="web" template="web/show/drivers.vm" />
+      <mapping variant="web" template="web/show/drivers.vm">
+        <var name="TITLE" value="$!UTIL.getXPath($CATEGORY,'data/name')" type="Lazy" />
+      </mapping>
     </action>
     <action name="rubriky">
-      <mapping variant="web" template="web/show/rubriky.vm" />
+      <mapping variant="web" template="web/show/rubriky.vm">
+        <var name="TITLE" value="$!UTIL.getXPath($CATEGORY,'data/name')" type="Lazy" />
+      </mapping>
     </action>
   </servlet>
 
   <servlet name="ViewIndex">
     <action name="show">
-      <mapping variant="web" template="web/show/index.vm" />
-      <mapping variant="lynx" template="lynx/show/index.vm" />
+      <mapping variant="web" template="web/show/index.vm">
+        <var name="TITLE" value="AbcLinuxu.cz - tady je tučňákům hej!" />
+        <var name="NOSURROUND" value="true" type="Boolean" />
+      </mapping>
+      <mapping variant="lynx" template="lynx/show/index.vm">
+        <var name="TITLE" value="AbcLinuxu.cz - tady je tučňákům hej!" />
+      </mapping>
       <mapping variant="sidebar" template="sidebar/show/index.vm" />
     </action>
   </servlet>
 
   <servlet name="ViewItem">
     <action name="hardware">
-      <mapping variant="web" template="web/show/hwitem.vm" />
+      <mapping variant="web" template="web/show/hwitem.vm">
+        <var name="TITLE" value="$!UTIL.getXPath($ITEM,'data/name')" type="Lazy" />
+      </mapping>
     </action>
     <action name="software">
-      <mapping variant="web" template="web/show/switem.vm" />
+      <mapping variant="web" template="web/show/switem.vm">
+        <var name="TITLE" value="$!UTIL.getXPath($ITEM,'data/name')" type="Lazy" />
+      </mapping>
     </action>
     <action name="discussion">
-      <mapping variant="web" template="web/show/discussion.vm" />
+      <mapping variant="web" template="web/show/discussion.vm">
+        <var name="TITLE" value="#if($UTIL.getXPath($ITEM,'data/title')) $UTIL.getXPath($ITEM,'data/title')#else Diskuse#end" type="Lazy" />
+      </mapping>
     </action>
     <action name="article">
-      <mapping variant="web" template="web/show/article.vm" />
+      <mapping variant="web" template="web/show/article.vm">
+        <var name="TITLE" value="$!UTIL.getXPath($ITEM,'data/name')" type="Lazy" />
+      </mapping>
     </action>
     <action name="driver">
-      <mapping variant="web" template="web/show/driver.vm" />
+      <mapping variant="web" template="web/show/driver.vm">
+        <var name="TITLE" value="$UTIL.getXPath($ITEM,'data/name') - $UTIL.getXPath($ITEM,'data/version')" type="Lazy" />
+      </mapping>
     </action>
   </servlet>
 
   <servlet name="ViewUser">
     <action name="profile">
-      <mapping variant="web" template="web/show/profile.vm" />
+      <mapping variant="web" template="web/show/profile.vm">
+        <var name="TITLE" value="Profil" />
+      </mapping>
     </action>
   </servlet>
 
   <servlet name="ShowOlder">
     <action name="show">
-      <mapping variant="web" template="web/show/history.vm" />
+      <mapping variant="web" template="web/show/history.vm">
+        <var name="TITLE" value="Starší příspěvky" />
+      </mapping>
     </action>
   </servlet>
+
 </config>

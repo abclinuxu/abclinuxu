@@ -11,43 +11,26 @@ import org.dom4j.io.SAXReader;
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
 import org.apache.velocity.context.Context;
+import org.apache.velocity.app.Velocity;
+import org.apache.velocity.exception.ParseErrorException;
+import org.apache.velocity.exception.MethodInvocationException;
+import org.apache.velocity.exception.ResourceNotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.io.StringWriter;
+import java.io.IOException;
 
 import cz.abclinuxu.AbcException;
+import cz.abclinuxu.utils.Misc;
 
 /**
  * This class is responsible for selecting presentation variant
  * and template mapping.<p>
  *
  */
-public class VelocityTemplateSelector {
+public class VelocityTemplateSelector extends TemplateSelector {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(VelocityTemplateSelector.class);
-
-    /** if not overriden, this variant will be used */
-    static String DEFAULT_VARIANT = "web";
-
-    /** custom selection of variant */
-    public static final String PARAM_VARIANTA = "varianta";
-
-    /** this context variable holds name of template to be included */
-    public static final String VAR_CONTENT_TEMPLATE = "CONTENT";
-    /** this context variable holds type of browser, which is used by visitor */
-    public static final String VAR_BROWSER = "BROWSER";
-    /** lynx broswer */
-    public static final String BROWSER_LYNX = "LYNX";
-    /** mozilla browser */
-    public static final String BROWSER_MOZILLA = "MOZILLA";
-    /** Internet Explorer browser */
-    public static final String BROWSER_IE = "IE";
-    /** plucker PDA browser */
-    public static final String BROWSER_PLUCKER = "PLUCKER";
-    /** other browser */
-    public static final String BROWSER_OTHER = "OTHER";
-
-    /** singleton. Dont forget to initialize it! */
-    static VelocityTemplateSelector singleton;
 
     /** regular expressions to match UA */
     static RE reLynx, reWget, rePlucker;
@@ -63,56 +46,6 @@ public class VelocityTemplateSelector {
     }
 
     /**
-     * Here we store mappings. key is concatenation of servlet name and action, value is map
-     * where key is variant and value is templet name.
-     */
-    HashMap mappings;
-
-    /**
-     * nonpublic constructor
-     * @param size initial size of hash map.
-     */
-    protected VelocityTemplateSelector(int size) {
-        mappings = new HashMap(size,0.9f);
-    }
-
-    /**
-     * Loads configuration and instantiates singleton of VelocityTemplateSelector.
-     * @param filename name of configuration file
-     * @return initialized instance of VelocityTemplateSelector
-     */
-    public static void initialize(String filename) throws Exception {
-        Document document = new SAXReader().read(filename);
-        List servlets = document.getRootElement().elements("servlet");
-        VelocityTemplateSelector variants = new VelocityTemplateSelector(servlets.size()*3);
-
-        for (Iterator servletIter = servlets.iterator(); servletIter.hasNext();) { // for each servlet
-            Element servlet = (Element) servletIter.next();
-            String servletName = servlet.attributeValue("name");
-            List actions = servlet.elements("action");
-
-            for (Iterator actionIter = actions.iterator(); actionIter.hasNext();) { // for each action
-                Element action = (Element) actionIter.next();
-                String actionName = action.attributeValue("name");
-                List mappings = action.elements("mapping");
-                HashMap mappingsMap = new HashMap(mappings.size()+1,0.95f);
-
-                for (Iterator mappingIter = mappings.iterator(); mappingIter.hasNext();) { // for each mapping
-                    Element mapping = (Element) mappingIter.next();
-                    String variant = mapping.attributeValue("variant");
-                    String template = mapping.attributeValue("template");
-                    mappingsMap.put(variant,template);
-                }
-
-                String name = servletName + actionName;
-                variants.mappings.put(name,mappingsMap);
-            }
-        }
-
-        singleton = variants;
-    }
-
-    /**
      * Based on browser's characteristics and user's preference this method selects presentation
      * variant and returns Template for given servlet and action. The variables VAR_BROWSER and
      * VAR_CONTENT_TEMPLATE are put into context.
@@ -122,7 +55,29 @@ public class VelocityTemplateSelector {
      * @return Name of template to be rendered or null, if no mapping found
      */
     public static String selectTemplate(HttpServletRequest request, Context ctx, String servlet, String action) {
-        return singleton.doSelectTemplate(request,ctx,servlet,action);
+        String variant = selectVariant(request,ctx);
+        if ( Misc.same((String) ctx.get(VAR_BROWSER),BROWSER_MIRROR) ) {
+            return "lynx/other/nomirror.vm";
+        }
+
+        String name = servlet + action;
+        Map map = (Map) mappings.get(name);
+        if ( map==null ) {
+            throw new AbcException("Cannot find mapping for ["+servlet+","+action+"]!",AbcException.RUNTIME);
+        }
+
+        Mapping mapping = (Mapping) map.get(variant);
+        if ( mapping==null && ! DEFAULT_VARIANT.equals(variant) ) {
+            mapping = (Mapping) map.get(DEFAULT_VARIANT); // use default variant
+        }
+
+        if ( mapping==null ) {
+            throw new AbcException("Cannot find template for ["+servlet+","+action+","+variant+"]!",AbcException.RUNTIME);
+        }
+
+        storeVariablesIntoContext(ctx,mapping.getVariables());
+        ctx.put(VAR_CONTENT_TEMPLATE,mapping.getTemplate());
+        return variant+"/template.vm";
     }
 
     /**
@@ -134,8 +89,33 @@ public class VelocityTemplateSelector {
      */
     public static String selectTemplate(HttpServletRequest request, Context ctx, String template) {
         String variant = selectVariant(request,ctx);
+        if ( Misc.same((String) ctx.get(VAR_BROWSER),BROWSER_MIRROR) ) {
+            return "lynx/other/nomirror.vm";
+        }
         ctx.put(VAR_CONTENT_TEMPLATE,template);
         return variant+"/template.vm";
+    }
+
+    /**
+     * Stores list of Variable into context. It also evaluates LazyVar before storing it as String.
+     */
+    static void storeVariablesIntoContext(Context ctx, List variables) {
+        if ( variables==null ) return;
+        for (Iterator iter = variables.iterator(); iter.hasNext();) {
+            Variable variable = (Variable) iter.next();
+            Object value = variable.getValue();
+            if ( value instanceof LazyVar ) {
+                try {
+                    StringWriter sw = new StringWriter();
+                    Velocity.evaluate(ctx,sw,"log tag",((LazyVar)value).getValue());
+                    ctx.put(variable.getName(),sw.toString());
+                } catch (Exception e) {
+                    log.error("Cannot evaluate lazy variable "+variable.getName()+"["+((LazyVar)value).getValue()+"]!", e);
+                }
+            } else {
+                ctx.put(variable.getName(),value);
+            }
+        }
     }
 
     /**
@@ -147,9 +127,9 @@ public class VelocityTemplateSelector {
         String browser = request.getHeader("user-agent");
 
         if ( browser==null ) {
-            log.debug("No user-agent header!");
-        } else if ( reWget.match(browser) ) {
-            return "lynx/other/nomirror.vm"; // mirroring forbidden
+        } else if ( reWget.match(browser) ) { // mirroring forbidden
+            ctx.put(VAR_BROWSER,BROWSER_MIRROR);
+            variant = "lynx";
         } else if ( reLynx.match(browser) ) {
             ctx.put(VAR_BROWSER,BROWSER_LYNX);
             variant = "lynx";
@@ -161,36 +141,10 @@ public class VelocityTemplateSelector {
         }
 
         String tmp = request.getParameter(PARAM_VARIANTA);
-        if ( tmp!=null ) {
+        if ( !Misc.empty(tmp) ) {
             variant = tmp;
         }
 
         return variant;
-    }
-
-    /**
-     * real processing is done here
-     */
-    String doSelectTemplate(HttpServletRequest request, Context ctx, String servlet, String action) {
-        String variant = selectVariant(request,ctx);
-
-        String name = servlet + action, content = null;
-        Map map = (Map) mappings.get(name);
-        if ( map==null ) {
-            throw new AbcException("Cannot find mapping for ["+servlet+","+action+"]!",AbcException.RUNTIME);
-        }
-
-        content = (String) map.get(variant);
-        if ( content==null && ! DEFAULT_VARIANT.equals(variant) ) {
-             // if current variant is not specified, use default
-            content = (String) map.get(DEFAULT_VARIANT);
-        }
-
-        if ( content==null ) {
-            throw new AbcException("Cannot find template for ["+servlet+","+action+","+variant+"]!",AbcException.RUNTIME);
-        }
-
-        ctx.put(VAR_CONTENT_TEMPLATE,content);
-        return variant+"/template.vm";
     }
 }

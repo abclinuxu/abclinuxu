@@ -58,10 +58,28 @@ public class Misc {
     }
 
     /**
-     * Finds out, whether string is empy.
+     * Finds out, whether string is empty.
      * @return true, if s is null or zero length
      */
     public static boolean empty(String s) {
         return ( s==null || s.length()==0 );
+    }
+
+    /**
+     * Finds out, whether list is empty.
+     * @return true, if list is null or zero length
+     */
+    public static boolean empty(List list) {
+        return ( list==null || list.size()==0 );
+    }
+
+    /**
+     * Compares two string for equality
+     */
+    public static boolean same(String a, String b) {
+        if ( a==null ) {
+            return (b==null);
+        }
+        return a.equals(b);
     }
 }
