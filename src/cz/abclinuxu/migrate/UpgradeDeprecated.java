@@ -22,10 +22,11 @@ import org.apache.regexp.StringCharacterIterator;
  */
 public class UpgradeDeprecated {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(UpgradeDeprecated.class);
-    static RE reViewRelation, reProfile;
+    static RE reViewRelation, reProfile, reIndex;
 
     static {
         try {
+            reIndex = new RE("(href=\"/)(Index[^\"]*)");
             reProfile = new RE("(href=\"/Profile\\?(userId|uid)=)([\\d]+)([^\"]*)", RE.MATCH_CASEINDEPENDENT);
             reViewRelation = new RE("(href=\"[a-z/]+)(ViewRelation[^\"]+(relationId|rid)=)([\\d]+)([^#\"]*)", RE.MATCH_CASEINDEPENDENT);
         } catch (RESyntaxException e) {
@@ -88,12 +89,20 @@ public class UpgradeDeprecated {
                     total++;
                 }
 
+                stringIter = new StringCharacterIterator(value);
+                position = 0;
+                while (reIndex.match(stringIter,position)) {
+                    position = reIndex.getParenEnd(0);
+                    System.out.println("Record "+key+" contains old URL: "+reIndex.getParen(0));
+                    total++;
+                }
+
                 resultSet.close(); resultSet = null;
             }
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
-        System.out.println("Total number of absolute URLS: "+total);
+        System.out.println("Total number of deprecated URLS: "+total);
     }
 
     /**
@@ -160,6 +169,29 @@ public class UpgradeDeprecated {
                                 sb.append(reProfile.getParen(3));
                                 position = reProfile.getParenEnd(0);
                             } while ( reProfile.match(stringIter, position) );
+                            sb.append(stringIter.substring(position));
+
+                            value = sb.toString();
+                            modified = true;
+                            total++;
+                        } catch (Exception e) {
+                            log.error("position="+position+", start="+start, e);
+                            System.exit(1);
+                        }
+                    }
+
+                    if ( reIndex.match(value) ) {
+                        position = 0;
+                        StringBuffer sb = new StringBuffer();
+                        StringCharacterIterator stringIter = new StringCharacterIterator(value);
+
+                        try {
+                            do {
+                                start = reIndex.getParenStart(0);
+                                sb.append(stringIter.substring(position, start));
+                                sb.append(reIndex.getParen(1));
+                                position = reIndex.getParenEnd(0);
+                            } while ( reIndex.match(stringIter, position) );
                             sb.append(stringIter.substring(position));
 
                             value = sb.toString();
