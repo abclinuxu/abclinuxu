@@ -172,7 +172,7 @@ public class Dump implements Configurable {
         Map env = new HashMap();
 
         env.put(ViewRelation.VAR_RELATION,relation);
-        env.put(VAR_ONLINE_URL, PORTAL_URL+"/"+prefix+"/ViewRelation?relationId="+relation.getId());
+        env.put(VAR_ONLINE_URL, PORTAL_URL+prefix+"/ViewRelation?relationId="+relation.getId());
         List parents = persistance.findParents(relation);
         parents.add(relation);
         env.put(ViewRelation.VAR_PARENTS,parents);
