@@ -13,7 +13,7 @@ ${TOOL.showParents(PARENTS,USER?if_exists,URL)}
 
 <#if USER?exists && USER.hasRole("article admin")>
  <p>
-  <a href="${URL.make("/EditItem?action=edit&rid="+RELATION.id)}" title="Uprav">
+  <a href="${URL.make("/edit?action=edit&rid="+RELATION.id)}" title="Uprav">
   <img src="/images/actions/pencil.png" class="ikona22" alt="Uprav"></a>
   <a href="${URL.noPrefix("/SelectRelation?prefix=/clanky&url=/EditRelation&action=move&rid="+RELATION.id)}" title="Pøesunout">
   <img src="/images/actions/cut.png" alt="Pøesunout" class="ikona"></a>
