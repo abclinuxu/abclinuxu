@@ -45,7 +45,10 @@
 
   <servlet name="EditDriver">
     <action name="add" content="/add/driver.ftl">
-      <var name="TITLE" value="Vlo¾ ovladaè" />
+      <var name="TITLE" value="Vlo¾ nový ovladaè" />
+    </action>
+    <action name="edit" content="/edit/driver.ftl">
+      <var name="TITLE" value="Uprav existující ovladaè" />
     </action>
   </servlet>
 

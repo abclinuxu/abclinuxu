@@ -7,12 +7,11 @@
  */
 package cz.abclinuxu.utils;
 
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
-
-import java.util.Calendar;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 
 /**
  * This class works as template for speed measurement.
@@ -22,21 +21,20 @@ public class Measure {
     public static void main(String[] args) throws Exception {
 //        DOMConfigurator.configure("conf/log4j.xml");
         LogManager.getRootLogger().setLevel(Level.OFF);
-        Persistance persistance = PersistanceFactory.getPersistance();
         int i=0,j=0;
         long l = 0;
-        String line = null;
 
         // place initilizaton here
-        Calendar profileLastRun = Calendar.getInstance();
-        profileLastRun.add(Calendar.DAY_OF_MONTH,-1);
+        Document doc = DocumentHelper.createDocument();
+        Element monitor = doc.addElement("monitor","monitor");
+        for(i=0;i<100;i++)
+            monitor.addElement("id").setText(new Integer(i).toString());
+        Element cloned = monitor.createCopy();
 
         long start = System.currentTimeMillis();
-        for (i=0; i<250000; i++) {
+        for (i=0; i<4000; i++) {
             //place your code to measure here
-            Calendar calendar = Calendar.getInstance();
-            int r = calendar.get(Calendar.DAY_OF_MONTH);
-            int z = profileLastRun.get(Calendar.DAY_OF_MONTH);
+            cloned = monitor.createCopy();
         }
         long end = System.currentTimeMillis();
 

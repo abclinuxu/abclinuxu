@@ -61,6 +61,19 @@
               </map>
             </node>
           </node>
+          <node name="monitor">
+            <map/>
+            <node name="InstantSender">
+              <map>
+                <entry key="sleep" value="15"/>
+              </map>
+            </node>
+            <node name="DriverDecorator">
+              <map>
+                <entry key="subject" value="AbcMonitor: uprava ovladace"/>
+              </map>
+            </node>
+          </node>
           <node name="freemarker">
             <map/>
             <node name="FMUtils">
@@ -75,6 +88,7 @@
               <map>
                 <entry key="smtp.server" value="localhost"/>
                 <entry key="admin.address" value="admin@abclinuxu.cz"/>
+                <entry key="debug.smtp" value="true"/>
               </map>
             </node>
           </node>

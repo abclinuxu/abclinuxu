@@ -37,6 +37,7 @@ public class EmailSender implements Configurable {
     public static final String PREF_SMTP_SERVER = "smtp.server";
     /** if from is missing, this will be default sender of emails */
     public static final String PREF_ADMIN_EMAIL_ADDRESS = "admin.address";
+    public static final String PREF_DEBUG_SMTP = "debug.smtp";
 
     static {
         Configurator configurator = ConfigurationManager.getConfigurator();
@@ -59,20 +60,21 @@ public class EmailSender implements Configurable {
     public static final String KEY_TEMPLATE = "TEMPLATE";
 
     static String smtpServer, defaultFrom;
+    static boolean debugSMTP;
 
     /**
      * Sends an email. Params shall hold neccessary atributes like
      * KEY_FROM, KEY_TO, KEY_SUBJECT and KEY_BODY or KEY_TEMPLATE.
      * @return true, when message has been successfully sent.
      */
-    public static boolean sendEmail(Map params) {
+    public synchronized static boolean sendEmail(Map params) {
         Properties props = new Properties();
         String from = (String) params.get(KEY_FROM), to = (String) params.get(KEY_TO);
         if ( from==null || from.length()==0 )
             from = defaultFrom;
 
         Session session = Session.getDefaultInstance(props,null);
-        session.setDebug(false);
+        session.setDebug(debugSMTP);
 
         try {
             MimeMessage message = new MimeMessage(session);
@@ -87,7 +89,8 @@ public class EmailSender implements Configurable {
             transport.sendMessage(message,message.getAllRecipients());
             transport.close();
 
-            if ( log.isDebugEnabled() ) log.debug("Email sent from "+from+" to "+to+".");
+            if ( log.isDebugEnabled() )
+                log.debug("Email sent from "+from+" to "+to+".");
             return true;
         } catch (MessagingException e) {
             log.error("Cannot send email sent from "+from+" to "+to+".",e);
@@ -103,7 +106,7 @@ public class EmailSender implements Configurable {
      * @param content message itself
      * @return true, if message has been sent successfully
      */
-    public static boolean sendEmail(String from, String to, String subject, String content) {
+    public synchronized static boolean sendEmail(String from, String to, String subject, String content) {
         Map map = new HashMap(4);
         map.put(KEY_FROM,from);
         map.put(KEY_TO,to);
@@ -119,7 +122,7 @@ public class EmailSender implements Configurable {
      * @param users list of Integers - ids of users.
      * @return number of sent emails.
      */
-    public static int sendEmailToUsers(Map params, List users) {
+    public synchronized static int sendEmailToUsers(Map params, List users) {
         if ( users.size()==0 )
             return 0;
 
@@ -129,12 +132,13 @@ public class EmailSender implements Configurable {
             from = defaultFrom;
 
         Session session = Session.getDefaultInstance(new Properties(), null);
-        session.setDebug(false);
+        session.setDebug(debugSMTP);
 
         int count = 0, total = users.size();
         User user = new User();
-        log.info("sendEmailToUsers(): about to send email to "+total+" users.");
-        log.info("sendEmailToUsers(): from="+from+", subject="+subject);
+        log.info("Sending email to "+total+" users.");
+        if (log.isDebugEnabled())
+            log.debug("Email header: from="+from+", subject="+subject);
 
         try {
             Transport transport = session.getTransport("smtp");
@@ -165,7 +169,8 @@ public class EmailSender implements Configurable {
 
                     transport.sendMessage(message, message.getAllRecipients());
                     count++;
-                    if ( log.isDebugEnabled() ) log.debug("Email "+count+"/"+total+" sent to "+to+".");
+                    if ( log.isDebugEnabled() )
+                        log.debug("Email "+count+" of "+total+" sent to "+to);
                 } catch (Exception e) {
                     log.warn("Cannot send email to user "+user.getId()+", TO="+user.getEmail(),e);
                 }
@@ -174,7 +179,7 @@ public class EmailSender implements Configurable {
         } catch (MessagingException e) {
             log.error("Error - is JavaMail set up correctly?", e);
         }
-        log.info("sendEmailToUsers(): sent "+count+" emails.");
+        log.info("Sent "+count+" emails.");
 
         return count;
     }
@@ -203,5 +208,6 @@ public class EmailSender implements Configurable {
     public void configure(Preferences prefs) throws ConfigurationException {
         smtpServer = prefs.get(PREF_SMTP_SERVER, null);
         defaultFrom = prefs.get(PREF_ADMIN_EMAIL_ADDRESS, null);
+        debugSMTP = prefs.getBoolean(PREF_DEBUG_SMTP,false);
     }
 }
