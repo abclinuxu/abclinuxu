@@ -142,7 +142,7 @@ public class Search extends AbcFMServlet {
         if (count==-1)
             return 50;
         else
-            return Misc.limit(count, 1, 100);
+            return Misc.limit(count, 10, 100);
     }
 
     public static class Types {

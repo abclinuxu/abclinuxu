@@ -66,6 +66,7 @@ public class EditUser extends AbcFMServlet {
     public static final String PARAM_DISCUSSIONS_COUNT = "discussions";
     public static final String PARAM_NEWS_COUNT = "news";
     public static final String PARAM_FOUND_PAGE_SIZE = "search";
+    public static final String PARAM_FORUM_PAGE_SIZE = "forum";
     public static final String PARAM_SUBSCRIBE_MONTHLY = "monthly";
     public static final String PARAM_SUBSCRIBE_WEEKLY = "weekly";
     public static final String PARAM_PHOTO = "photo";
@@ -447,21 +448,31 @@ public class EditUser extends AbcFMServlet {
         Node node = document.selectSingleNode("/data/settings/emoticons");
         if ( node!=null )
             params.put(PARAM_EMOTICONS, node.getText());
+
         node = document.selectSingleNode("/data/settings/new_comments");
         if ( node!=null )
             params.put(PARAM_ENABLE_COMMENTS, node.getText());
+
         node = document.selectSingleNode("/data/settings/cookie_valid");
         if ( node!=null )
             params.put(PARAM_COOKIE_VALIDITY, node.getText());
+
         node = document.selectSingleNode("/data/settings/index_discussions");
         if ( node!=null )
             params.put(PARAM_DISCUSSIONS_COUNT, node.getText());
+
         node = document.selectSingleNode("/data/settings/index_news");
         if ( node!=null )
             params.put(PARAM_NEWS_COUNT, node.getText());
+
         node = document.selectSingleNode("/data/settings/found_size");
         if ( node!=null )
             params.put(PARAM_FOUND_PAGE_SIZE, node.getText());
+
+        node = document.selectSingleNode("/data/settings/forum_size");
+        if ( node!=null )
+            params.put(PARAM_FORUM_PAGE_SIZE, node.getText());
+
         node = document.selectSingleNode("/data/settings/return_to_forum");
         if ( node!=null )
             params.put(PARAM_RETURN_TO_FORUM, node.getText());
@@ -487,6 +498,7 @@ public class EditUser extends AbcFMServlet {
         canContinue &= setDiscussionsSizeLimit(params, managed);
         canContinue &= setNewsSizeLimit(params, managed, env);
         canContinue &= setFoundPageSize(params, managed, env);
+        canContinue &= setForumPageSize(params, managed, env);
         canContinue &= setReturnBackToForum(params, managed);
 
         if ( !canContinue )
@@ -1063,11 +1075,36 @@ public class EditUser extends AbcFMServlet {
                 node.detach();
         } else {
             int tmp = Misc.parseInt(limit, -2);
-            if ( tmp<=0 || tmp>100 ) {
-                ServletUtils.addError(PARAM_FOUND_PAGE_SIZE, "Zadejte èíslo v rozsahu 1-100!", env, null);
+            if ( tmp<10 || tmp>100 ) {
+                ServletUtils.addError(PARAM_FOUND_PAGE_SIZE, "Zadejte èíslo v rozsahu 10-100!", env, null);
                 return false;
             }
             Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/found_size");
+            element.setText(limit);
+        }
+        return true;
+    }
+
+    /**
+     * Updates page size for forum from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setForumPageSize(Map params, User user, Map env) {
+        String limit = (String) params.get(PARAM_FORUM_PAGE_SIZE);
+        if ( limit==null || limit.length()==0 ) {
+            Node node = user.getData().selectSingleNode("/data/settings/forum_size");
+            if ( node!=null )
+                node.detach();
+        } else {
+            int tmp = Misc.parseInt(limit, -2);
+            if ( tmp<10 || tmp>100 ) {
+                ServletUtils.addError(PARAM_FORUM_PAGE_SIZE, "Zadejte èíslo v rozsahu 10-100!", env, null);
+                return false;
+            }
+            Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/forum_size");
             element.setText(limit);
         }
         return true;

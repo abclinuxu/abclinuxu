@@ -10,6 +10,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.User;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Tools;
 import cz.abclinuxu.utils.Misc;
@@ -20,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.List;
+
+import org.dom4j.Node;
 
 /**
  * Used to display content of the selected discussion forum.
@@ -55,11 +58,11 @@ public class ShowForum extends AbcFMServlet {
         env.put(ViewRelation.VAR_PARENTS, parents);
 
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
-        int count = Misc.parseInt((String) params.get(PARAM_COUNT), 40);
+        int count = getPageSize(params, env);
         count = Misc.limit(count, 1, 50);
 
         SQLTool sqlTool = SQLTool.getInstance();
-        Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
+        Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
         List discussions = sqlTool.findDiscussionRelationsWithParent(relation.getId(),qualifiers);
         int total = sqlTool.countDiscussionRelationsWithParent(relation.getId());
         Tools.sync(discussions);
@@ -68,5 +71,28 @@ public class ShowForum extends AbcFMServlet {
         env.put(VAR_DISCUSSIONS,paging);
 
         return FMTemplateSelector.select("ShowForum","show",env,request);
+    }
+
+    /**
+     * Gets page size for found discussions. Paramaters take precendence over user settings.
+     * @return page size for found documents.
+     */
+    private int getPageSize(Map params, Map env) {
+        int count = -1;
+        String str = (String) params.get(PARAM_COUNT);
+        if ( str!=null && str.length()>0 )
+            count = Misc.parseInt(str, -1);
+
+        User user = (User) env.get(Constants.VAR_USER);
+        if ( user!=null && count<0 ) {
+            Node node = user.getData().selectSingleNode("/data/settings/forum_size");
+            if ( node!=null )
+                count = Misc.parseInt(node.getText(), -1);
+        }
+
+        if ( count==-1 )
+            return 40;
+        else
+            return Misc.limit(count, 10, 100);
     }
 }
