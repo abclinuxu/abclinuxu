@@ -18,6 +18,19 @@ public class Record extends GenericDataObject {
     /** one reaction in Discussion */
     public static final int DISCUSSION_ITEM = 5;
 
+    /** constants to be used in Data for HARDWARE record */
+    public static final String VAL_HW_DRIVER_KERNEL = "kernel";
+    public static final String VAL_HW_DRIVER_XFREE = "xfree";
+    public static final String VAL_HW_DRIVER_MAKER = "maker";
+    public static final String VAL_HW_DRIVER_OTHER = "other";
+    public static final String VAL_HW_DRIVER_NONE = "none";
+
+    public static final String VAL_HW_PRICE_VERYLOW = "verylow";
+    public static final String VAL_HW_PRICE_LOW = "low";
+    public static final String VAL_HW_PRICE_GOOD = "good";
+    public static final String VAL_HW_PRICE_HIGH = "high";
+    public static final String VAL_HW_PRICE_TOOHIGH = "toohigh";
+
     /** Specifies type of record. You must set it, before you stores it with Persistance! */
     int type = 0;
 
