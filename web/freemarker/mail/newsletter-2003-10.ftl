@@ -35,6 +35,15 @@ Zpravicky muzete zaradit do jedne z 11 kategorii, v budoucnu bude
 mozne podle nich vyhledavat. Pocet zobrazenych zpravicek je mozne
 nastavit v uzivatelskem profilu.
 
+Novou, sikovnou sluzbou je AbcMonitor. Jedna se o nastroj, ktery
+za vas sleduje zvoleny objekt a pokud v nem dojde k nejake zmene,
+ihned vam posle email. Muzete jej pouzit napriklad na monitorovani
+diskuse ke clanku, dotazu v diskusnim foru, ovladace ci hardwaroveho
+zaznamu. Pokud nekdo prida komentar, upravi ovladac ci zaznam,
+respektive prida dalsi zaznam k hardwarove ci softwarove polezce,
+AbcMonitor ihned vygeneruje a zasle o dane akci informaci emailem
+tem lidem, kteri si jej pro dany objekt zapnuli.
+
 Na vasi zadost jsem i implementoval moznost zakazani nahrazovani
 emotikonu obrazky. Zasadni zmena pod povrchem se tyka diskusi,
 ktere by tak mohly byt rychlejsi a budou pouzivat mene systemovych
@@ -54,10 +63,8 @@ Pripravujeme
 
 V blizke dobe se dockate techto novych sluzeb:
 
-* emailovy monitor
 * FAQ - diskuse na obecne tema
 * pokrocile funkce kolem zpravicek
-* softwarovy adresar
 
 Reklama
 =======

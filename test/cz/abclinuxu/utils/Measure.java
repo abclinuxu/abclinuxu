@@ -9,9 +9,10 @@ package cz.abclinuxu.utils;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
+import cz.abclinuxu.data.Category;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistance.PersistanceFactory;
 
 /**
  * This class works as template for speed measurement.
@@ -25,16 +26,13 @@ public class Measure {
         long l = 0;
 
         // place initilizaton here
-        Document doc = DocumentHelper.createDocument();
-        Element monitor = doc.addElement("monitor","monitor");
-        for(i=0;i<100;i++)
-            monitor.addElement("id").setText(new Integer(i).toString());
-        Element cloned = monitor.createCopy();
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Category polls = (Category) persistance.findById(new Category(Constants.CAT_POLLS));
 
         long start = System.currentTimeMillis();
-        for (i=0; i<4000; i++) {
+        for (i=0; i<500; i++) {
             //place your code to measure here
-            cloned = monitor.createCopy();
+            polls = (Category) persistance.findById(new Category(Constants.CAT_POLLS));
         }
         long end = System.currentTimeMillis();
 
