@@ -19,7 +19,7 @@
    </td>
   </tr>
 
-  <#macro isDefined(name)><#if ! PARAMS.roles?exists><#return></#if><#if PARAMS.roles.contains(name)>checked</#if></#macro>
+  <#macro isDefined(name)><#if PARAMS.roles?exists and PARAMS.roles.contains(name)>checked</#if></#macro>
 
   <tr>
    <td class="required" width="100">Jeho role</td>
