@@ -19,8 +19,10 @@
        <a class="info" href="#">?<span class="tooltip">Za¹le ka¾dý nový komentáø emailem na va¹i adresu</span></a></li>
        <li><a href="/slovnik">Slovník pojmù</a></li>
 
-      <#if USER?exists && USER.hasRole("discussion admin")>
+      <#if USER?exists && (USER.hasRole("discussion admin") || USER.hasRole("move relation"))>
           <li><a href="/SelectRelation?prefix=/hardware&amp;url=/EditRelation&amp;action=move&amp;rid=${RELATION.id}">Pøesunout</a></li>
+      </#if>
+      <#if USER?exists && USER.hasRole("discussion admin")>
           <li><a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix="+URL.prefix)}">Sma¾ diskusi</a></li>
           <li><a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+RELATION.id+"&amp;dizId="+ITEM.id)}"><#if frozen>Rozmrazit<#else>Zmrazit</#if> diskusi</a></li>
       </#if>
