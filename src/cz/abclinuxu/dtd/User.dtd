@@ -30,6 +30,7 @@ verze 2.0
 <!ELEMENT cookie_valid (#PCDATA)> <!-- integer, doba platnosti prihlasovaci cookie -->
 <!ELEMENT index_discussions (#PCDATA)> <!-- integer, pocet diskusi na hlavni strance. -1 : vsechny -->
 <!ELEMENT index_news (#PCDATA)> <!-- integer, pocet zpravicek na hlavni strance -->
+<!ELEMENT found_size (#PCDATA)> <!-- integer, pocet nalezenych objektu na strance -->
 <!ELEMENT return_to_forum (#PCDATA)> <!-- yes or no, zda se po presunu diskuse vratit do diskusniho fora -->
 
 <!ELEMENT system (registration_date?,last_login_date?,group?)>

@@ -39,23 +39,39 @@ public class AbcQueryParser extends QueryParser {
         queryParser.setOperator(QueryParser.DEFAULT_OPERATOR_AND);
         Query query = queryParser.parse(queryString);
 
-        if (!types.isNoneSelected()) {
-            BooleanQuery typeQuery = new BooleanQuery();
-            TermQuery termQuery;
-            String type;
+        if (types.isNothingSelected() || types.isEverythingSelected())
+            return query;
 
-            for ( Iterator iter = types.getMap().keySet().iterator(); iter.hasNext(); ) {
-                type = (String) iter.next();
-                termQuery = new TermQuery(new Term(MyDocument.TYPE,type));
-                typeQuery.add(termQuery,false,false);
-            }
+        BooleanQuery typeQuery = new BooleanQuery();
+        TermQuery termQuery;
+        String type;
 
-            BooleanQuery combined = new BooleanQuery();
-            combined.add(query,true,false);
-            combined.add(typeQuery,true,false);
-            query = combined;
+        for ( Iterator iter = types.getMap().keySet().iterator(); iter.hasNext(); ) {
+            type = (String) iter.next();
+            termQuery = new TermQuery(new Term(MyDocument.TYPE, type));
+            typeQuery.add(termQuery, false, false);
         }
 
+        BooleanQuery combined = new BooleanQuery();
+        combined.add(query, true, false);
+        combined.add(typeQuery, true, false);
+        query = combined;
+
         return query;
+    }
+
+    /**
+     * Add parent to query, if it is defined.
+     * @return modified query
+     */
+    public static Query addParentToQuery(String parent, Query query) {
+        if (parent==null || parent.length()==0)
+            return query;
+
+        BooleanQuery combined = new BooleanQuery();
+        combined.add(query, true, false);
+        TermQuery parentQuery = new TermQuery(new Term(MyDocument.PARENT, parent));
+        combined.add(parentQuery, true, false);
+        return combined;
     }
 }

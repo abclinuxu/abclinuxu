@@ -628,7 +628,7 @@ public final class SQLTool implements Configurable {
     /**
      * Finds users, that are members of given group.
      * Use Qualifiers to set additional parameters.
-     * @return List of itialized users.
+     * @return list of Integers of user ids.
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
      */
     public List findUsersInGroup(int group, Qualifier[] qualifiers) {

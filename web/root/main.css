@@ -1,7 +1,7 @@
 /* spolecne */
 BODY { background-color: WHITE; color: #444444; font-family: sans-serif, Lucida, Verdana, Helvetica; font-size: 11pt }
 TD { color: #444444; font-size: 11pt }
-A { color:#447799; font-size: 11pt; text-decoration: underline }
+A { color:#447799; text-decoration: underline }
 A:hover { color:#002244; text-decoration: none }
 P, DIV, SPAN { color: #444444; font-size: 11pt }
 LI { color: #444444; font-size: 11pt }

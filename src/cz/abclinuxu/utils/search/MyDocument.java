@@ -20,6 +20,7 @@ public class MyDocument {
     public static final String TYPE_DRIVER = "ovladac";
     public static final String TYPE_ARTICLE = "clanek";
     public static final String TYPE_NEWS = "zpravicka";
+    public static final int ALL_TYPES_COUNT = 7;
 
     /** Object's text to be tokenized and indexed. */
     public static final String CONTENT = "obsah";

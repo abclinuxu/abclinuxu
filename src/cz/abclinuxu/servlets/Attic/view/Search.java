@@ -15,10 +15,12 @@ import cz.abclinuxu.utils.search.CreateIndex;
 import cz.abclinuxu.utils.search.AbcCzechAnalyzer;
 import cz.abclinuxu.utils.search.AbcQueryParser;
 import cz.abclinuxu.utils.search.MyDocument;
+import cz.abclinuxu.data.User;
 import org.apache.lucene.search.*;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.dom4j.Node;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +32,7 @@ import java.text.NumberFormat;
  */
 public class Search extends AbcFMServlet {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(Search.class);
+    static org.apache.log4j.Category seachLog = org.apache.log4j.Category.getInstance("search");
 
     /** contains relation, that match the expression */
     public static final String VAR_RESULT = "RESULT";
@@ -48,6 +51,8 @@ public class Search extends AbcFMServlet {
     public static final String PARAM_FROM = "from";
     /** how many objects to display */
     public static final String PARAM_COUNT = "count";
+    /** id of parental relation */
+    public static final String PARAM_PARENT = "parent";
 
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -68,6 +73,8 @@ public class Search extends AbcFMServlet {
         Query query = null;
         try {
             query = AbcQueryParser.parse(queryString, new AbcCzechAnalyzer(), types);
+            query = AbcQueryParser.addParentToQuery((String)params.get(PARAM_PARENT), query);
+            seachLog.info(query.toString());
         } catch (ParseException e) {
             ServletUtils.addError(PARAM_QUERY, "Hledaný øetìzec obsahuje chybu!", env, null);
             return FMTemplateSelector.select("Search", "show", env, request);
@@ -75,8 +82,7 @@ public class Search extends AbcFMServlet {
 
         try {
             int from = getFrom(params);
-            int count = Misc.parseInt((String) params.get(PARAM_COUNT), 50);
-            count = Misc.limit(count, 1, 100);
+            int count = getPageSize(params, env);
             List list = new ArrayList(count);
             NumberFormat percentFormat = NumberFormat.getPercentInstance();
 
@@ -116,6 +122,29 @@ public class Search extends AbcFMServlet {
         return 0;
     }
 
+    /**
+     * Gets page size for found documents. Paramaters take precendence over user settings.
+     * @return page size for found documents.
+     */
+    private static int getPageSize(Map params, Map env) {
+        int count = -1;
+        String str = (String) params.get(PARAM_COUNT);
+        if (str!=null && str.length()>0)
+            count = Misc.parseInt(str, -1);
+
+        User user = (User) env.get(Constants.VAR_USER);
+        if (user!=null && count<0) {
+            Node node = user.getData().selectSingleNode("/data/settings/found_size");
+            if ( node!=null )
+                count = Misc.parseInt(node.getText(),-1);
+        }
+
+        if (count==-1)
+            return 50;
+        else
+            return Misc.limit(count, 1, 100);
+    }
+
     public static class Types {
         Map map = new HashMap();
 
@@ -136,8 +165,12 @@ public class Search extends AbcFMServlet {
             }
         }
 
-        public boolean isNoneSelected() {
+        public boolean isNothingSelected() {
             return map.size()==0;
+        }
+
+        public boolean isEverythingSelected() {
+            return map.size()==MyDocument.ALL_TYPES_COUNT;
         }
 
         public boolean isSection() {
