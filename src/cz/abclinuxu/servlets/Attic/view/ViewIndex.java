@@ -37,6 +37,7 @@ public class ViewIndex extends AbcServlet {
     public static final String VAR_SOFTWARE = "SOFTWARE";
     public static final String VAR_HW_NEW = "HW_NEW";
     public static final String VAR_SW_NEW = "SW_NEW";
+    public static final String VAR_ACTUAL = "NEW";
 
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
@@ -51,6 +52,10 @@ public class ViewIndex extends AbcServlet {
         Category sw = (Category) persistance.findById(new Category(Constants.CAT_SOFTWARE));
         helper.sync(sw.getContent());
         ctx.put(ViewIndex.VAR_SOFTWARE,sw.getContent());
+
+        Category actual = (Category) persistance.findById(new Category(Constants.CAT_ACTUAL_ARTICLES));
+        helper.sync(actual.getContent());
+        ctx.put(VAR_ACTUAL,actual);
 
         List hwNew = new ArrayList(3);
         List list = persistance.findByCommand("select cislo from zaznam where typ=1 order by kdy desc limit 3");

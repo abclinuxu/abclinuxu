@@ -19,6 +19,7 @@ public interface Constants {
     public static final int CAT_HARDWARE = 2;
     public static final int CAT_SOFTWARE = 3;
     public static final int CAT_ABC = 4;
+    public static final int CAT_ACTUAL_ARTICLES = 8;
     public static final int CAT_386 = 10;
     public static final int CAT_POLLS = 240;
     public static final int CAT_LINKS = 14;
