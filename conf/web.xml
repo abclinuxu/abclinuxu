@@ -11,10 +11,20 @@
 
     <servlet>
         <servlet-name>log4j-init</servlet-name>
-        <servlet-class>cz.abclinuxu.webwork.Log4JInit</servlet-class>
+        <servlet-class>cz.abclinuxu.webwork.init.Log4JInit</servlet-class>
         <init-param>
           <param-name>CONFIG</param-name>
           <param-value>WEB-INF/log4j.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>persistance-init</servlet-name>
+        <servlet-class>cz.abclinuxu.webwork.init.PersistanceInit</servlet-class>
+        <init-param>
+          <param-name>URL</param-name>
+          <param-value>jdbc:mysql://localhost/abc?user=literakl</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>

@@ -65,21 +65,19 @@ public class MySqlPersistance implements Persistance {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(MySqlPersistance.class);
 
     /** contains URL to database connection */
-    String dbUrl = "jdbc:mysql://localhost/abc?user=literakl";
+    String dbUrl = null;
 
     static {
         try {
             Class.forName("org.gjt.mm.mysql.Driver");
         } catch (Exception e) {
-            log.fatal("Nemuzu vytvorit instanci JDBC driveru, zkontroluj CLASSPATH!",e);
+            log.fatal("Nemohu vytvorit instanci JDBC driveru, zkontroluj CLASSPATH!",e);
         }
     }
 
-    public MySqlPersistance() {
-    }
-
     public MySqlPersistance(String dbUrl) {
-        if ( dbUrl!=null ) this.dbUrl = dbUrl;
+        if ( dbUrl==null ) log.fatal("Neni mozne inicializovat MySqlPersistenci prazdnym URL!");
+        this.dbUrl = dbUrl;
     }
 
     public void create(GenericObject obj, GenericObject parent) throws PersistanceException {

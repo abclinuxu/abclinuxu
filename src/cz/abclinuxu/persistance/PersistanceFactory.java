@@ -16,33 +16,39 @@ import org.apache.log4j.xml.DOMConfigurator;
  */
 public class PersistanceFactory {
     static Map instances;
+    static String defaultUrl = "jdbc:mysql://localhost/abc?user=literakl";
 
     static {
         instances = new HashMap();
     }
 
     /**
-     * @return instance of object, which implements <code>Persistance</code>
+     * Get default persistance.
+     * @return instance of object, which implements <code>Persistance</code>.
      */
     public static Persistance getPersistance() {
-        Persistance persistance = (Persistance) instances.get(null);
-        if ( persistance==null ) {
-            persistance = new MySqlPersistance();
-            instances.put(null,persistance);
-        }
-        return persistance;
+        return getPersistance(defaultUrl);
     }
 
     /**
      * @return instance of object, which implements <code>Persistance</code>
-     * and is described by <code>url</code>
+     * and is described by <code>url</code>. If <code>url</code> is null,
+     * <code>defaultUrl</code> is used.
      */
     public static Persistance getPersistance(String url) {
+        if ( url==null ) url = defaultUrl;
         Persistance persistance = (Persistance) instances.get(url);
         if ( persistance==null ) {
             persistance = new MySqlPersistance(url);
             instances.put(url,persistance);
         }
         return persistance;
+    }
+
+    /**
+     * Sets default persistance URL.
+     */
+    public static void setDefaultUrl(String defaultUrl) {
+        PersistanceFactory.defaultUrl = defaultUrl;
     }
 }

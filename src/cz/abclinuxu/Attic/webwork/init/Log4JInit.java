@@ -5,7 +5,7 @@
  *
  * Copyright by Leos Literak (literakl@centrum.cz) 2001
  */
-package cz.abclinuxu.webwork;
+package cz.abclinuxu.webwork.init;
 
 import java.io.IOException;
 import javax.servlet.http.*;
