@@ -18,6 +18,8 @@ public interface Constants {
     public static final int CAT_ABC = 4;
     public static final int CAT_386 = 10;
     public static final int CAT_POLLS = 240;
+    public static final int CAT_LINKS = 14;
+    public static final int CAT_DRIVERS = 13;
 
     /** actual ids of selected relations in database */
     public static final int REL_POLLS = 250;

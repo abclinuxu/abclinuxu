@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.io.UnsupportedEncodingException;
 import java.io.StringWriter;
+import java.text.DateFormat;
 
 /**
  * This class provides several methods, that
@@ -27,6 +28,7 @@ import java.io.StringWriter;
  */
 public class VelocityHelper {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(VelocityHelper.class);
+    static DateFormat dateFormat = DateFormat.getDateTimeInstance();
 
     /**
      * Get name of this child in this relation context. Default name
@@ -300,6 +302,14 @@ public class VelocityHelper {
             } catch (NumberFormatException e) {}
         }
         return 0;
+    }
+
+    /**
+     * Returns formatted String according to current locale.
+     */
+    public String showDate(Date date) {
+        if ( date==null ) return null;
+        return dateFormat.format(date);
     }
 
     /**
