@@ -31,28 +31,35 @@ public class UpdateKernel extends TimerTask implements Configurable {
     public static final String PREF_SERVER = "server";
     public static final String DEFAULT_SERVER = "finger.kernel.org";
     public static final String PREF_REGEXP_STABLE = "regexp.stable";
+    public static final String PREF_URL_STABLE = "url.stable";
     public static final String DEFAULT_REGEXP_STABLE = "(The latest stable[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
     public static final String PREF_REGEXP_STABLE_PRE = "regexp.stable.pre";
     public static final String DEFAULT_REGEXP_STABLE_PRE = "(The latest prepatch for the stable[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
     public static final String PREF_REGEXP_DEVEL = "regexp.devel";
+    public static final String PREF_URL_DEVEL = "url.devel";
     public static final String DEFAULT_REGEXP_DEVEL = "(The latest beta[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
     public static final String PREF_REGEXP_DEVEL_PRE = "regexp.devel.pre";
     public static final String DEFAULT_REGEXP_DEVEL_PRE = "(The latest prepatch for the beta[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
     public static final String PREF_REGEXP_22 = "regexp.22";
+    public static final String PREF_URL_22 = "url.22";
     public static final String DEFAULT_REGEXP_22 = "(The latest 2.2[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
     public static final String PREF_REGEXP_22_PRE = "regexp.22.pre";
     public static final String DEFAULT_REGEXP_22_PRE = "(The latest prepatch for the 2.2[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
     public static final String PREF_REGEXP_20 = "regexp.20";
+    public static final String PREF_URL_20 = "url.20";
     public static final String DEFAULT_REGEXP_20 = "(The latest 2.0[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
     public static final String PREF_REGEXP_20_PRE = "regexp.20.pre";
     public static final String DEFAULT_REGEXP_20_PRE = "(The latest prepatch for the 2.0[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
     public static final String PREF_REGEXP_AC = "regexp.ac";
+    public static final String PREF_URL_AC = "url.ac";
     public static final String DEFAULT_REGEXP_AC = "(The latest -ac[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
     public static final String PREF_REGEXP_DJ = "regexp.dj";
+    public static final String PREF_URL_DJ = "url.dj";
     public static final String DEFAULT_REGEXP_DJ = "(The latest -dj[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
 
     String fileName, server;
     String stable, stablePre, devel, develPre, old22, old22Pre, old20, old20Pre, ac, dj;
+    String urlStable, urlDevel, url22, url20, urlAC, urlDJ;
 
     RE reStable,reStablepre,reDevel,reDevelpre,reOld22,reOld22pre,reOld20,reOld20pre,reAc,reDj;
 
@@ -82,15 +89,21 @@ public class UpdateKernel extends TimerTask implements Configurable {
         server = prefs.get(PREF_SERVER,DEFAULT_SERVER);
         fileName = prefs.get(PREF_FILE,DEFAULT_FILE);
         stable = prefs.get(PREF_REGEXP_STABLE,DEFAULT_REGEXP_STABLE);
+        urlStable = prefs.get(PREF_URL_STABLE,null);
         stablePre = prefs.get(PREF_REGEXP_STABLE_PRE,DEFAULT_REGEXP_STABLE_PRE);
         devel = prefs.get(PREF_REGEXP_DEVEL,DEFAULT_REGEXP_DEVEL);
+        urlDevel = prefs.get(PREF_URL_DEVEL,null);
         develPre = prefs.get(PREF_REGEXP_DEVEL_PRE,DEFAULT_REGEXP_DEVEL_PRE);
         old22 = prefs.get(PREF_REGEXP_22,DEFAULT_REGEXP_22);
+        url22 = prefs.get(PREF_URL_22,null);
         old22Pre = prefs.get(PREF_REGEXP_22_PRE,DEFAULT_REGEXP_22_PRE);
         old20 = prefs.get(PREF_REGEXP_20,DEFAULT_REGEXP_20);
+        url20 = prefs.get(PREF_URL_20,null);
         old20Pre = prefs.get(PREF_REGEXP_20_PRE,DEFAULT_REGEXP_20_PRE);
         ac = prefs.get(PREF_REGEXP_AC,DEFAULT_REGEXP_AC);
+        urlAC = prefs.get(PREF_URL_AC,null);
         dj = prefs.get(PREF_REGEXP_DJ,DEFAULT_REGEXP_DJ);
+        urlDJ = prefs.get(PREF_URL_DJ,null);
     }
 
     /**
@@ -99,8 +112,8 @@ public class UpdateKernel extends TimerTask implements Configurable {
      */
     public void run() {
         try {
-            String line, stable, stablepre, devel, develpre, old22, old22pre, old20, old20pre, ac, dj;
-            line = stable = stablepre = devel = develpre = old22 = old22pre = old20 = old20pre = ac = dj = null;
+            String line;
+            line = stable = stablePre = devel = develPre = old22 = old22Pre = old20 = old20Pre = ac = dj = null;
 
             BufferedReader reader = getStream();
             while ((line = reader.readLine())!=null) {
@@ -109,7 +122,7 @@ public class UpdateKernel extends TimerTask implements Configurable {
                     continue;
                 }
                 if ( reStablepre.match(line) ) {
-                    stablepre = reStablepre.getParen(3);
+                    stablePre = reStablepre.getParen(3);
                     continue;
                 }
                 if ( reDevel.match(line) ) {
@@ -117,7 +130,7 @@ public class UpdateKernel extends TimerTask implements Configurable {
                     continue;
                 }
                 if ( reDevelpre.match(line) ) {
-                    develpre = reDevelpre.getParen(3);
+                    develPre = reDevelpre.getParen(3);
                     continue;
                 }
                 if ( reOld22.match(line) ) {
@@ -125,7 +138,7 @@ public class UpdateKernel extends TimerTask implements Configurable {
                     continue;
                 }
                 if ( reOld22pre.match(line) ) {
-                    old22pre = reOld22pre.getParen(3);
+                    old22Pre = reOld22pre.getParen(3);
                     continue;
                 }
                 if ( reOld20.match(line) ) {
@@ -133,7 +146,7 @@ public class UpdateKernel extends TimerTask implements Configurable {
                     continue;
                 }
                 if ( reOld20pre.match(line) ) {
-                    old20pre = reOld20pre.getParen(3);
+                    old20Pre = reOld20pre.getParen(3);
                     continue;
                 }
                 if ( reAc.match(line) ) {
@@ -153,39 +166,12 @@ public class UpdateKernel extends TimerTask implements Configurable {
             FileWriter writer = new FileWriter(file);
             writer.write("<table border=0>\n");
 
-            writer.write("<tr><td class=\"jadro_h\"><a href=\"ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.4\" class=\"ikona\">Stabilní:</a></td>\n");
-            writer.write("<td>");
-            if ( stable!=null ) writer.write(stable);
-            if ( stablepre!=null ) writer.write(" "+stablepre);
-            writer.write("</td></tr>\n");
-
-            writer.write("<tr><td class=\"jadro_h\"><a href=\"ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.5\" class=\"ikona\">Vývojové:</a></td>\n");
-            writer.write("<td>");
-            if ( devel!=null ) writer.write(devel);
-//            if ( develpre!=null ) writer.write(" "+develpre);
-            writer.write("</td></tr>\n");
-
-            writer.write("<tr><td class=\"jadro_h\"><a href=\"ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.2\" class=\"ikona\">Øada 2.2:</a></td>\n");
-            writer.write("<td>");
-            if ( old22!=null ) writer.write(old22);
-            if ( old22pre!=null ) writer.write(" "+old22pre);
-            writer.write("</td></tr>\n");
-
-            writer.write("<tr><td class=\"jadro_h\"><a href=\"ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.0\" class=\"ikona\">Øada 2.0:</a></td>\n");
-            writer.write("<td>");
-            if ( old20!=null ) writer.write(old20);
-            if ( old20pre!=null ) writer.write(" "+old20pre);
-            writer.write("</td></tr>\n");
-
-            writer.write("<tr><td class=\"jadro_h\"><a href=\"http://www.kernel.org/pub/linux/kernel/people/alan/linux-2.4/\" class=\"ikona\">AC øada:</a></td>\n");
-            writer.write("<td>");
-            if ( ac!=null ) writer.write(ac);
-            writer.write("</td></tr>\n");
-
-            writer.write("<tr><td class=\"jadro_h\"><a href=\"http://www.kernel.org/pub/linux/kernel/people/davej/patches/2.5/\" class=\"ikona\">DJ øada:</a></td>\n");
-            writer.write("<td>");
-            if ( dj!=null ) writer.write(dj);
-            writer.write("</td></tr>\n");
+            writeTableRow(writer,"Stabilní:",urlStable,stable,stablePre);
+            writeTableRow(writer,"Vývojové:",urlDevel,devel,null);
+            writeTableRow(writer,"Øada 2.2:",url22,old22,old22Pre);
+            writeTableRow(writer,"Øada 2.0:",url20,old20,old20Pre);
+            writeTableRow(writer,"AC øada:",urlAC,ac,null);
+            writeTableRow(writer,"DJ øada:",urlDJ,dj,null);
 
             writer.write("</table>");
             reader.close();
@@ -193,6 +179,20 @@ public class UpdateKernel extends TimerTask implements Configurable {
         } catch (Exception e) {
             log.error("Cannot parse kernel headers!",e);
         }
+    }
+
+    private void writeTableRow(Writer writer, String desc, String url, String version, String preVersion) throws IOException {
+        writer.write("<tr>\n<td class=\"jadro_h\">");
+        if ( url!=null )
+            writer.write("<a href=\""+url+"\" class=\"ikona\">"+desc+"</a>");
+        else
+            writer.write(desc);
+        writer.write("</td>\n<td>");
+        if ( version!=null )
+            writer.write(version);
+        if ( preVersion!=null )
+            writer.write(" "+preVersion);
+        writer.write(" </td>\n</tr>\n");
     }
 
     /**
