@@ -10,8 +10,7 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.utils.Sorters;
-import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.*;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.apache.velocity.context.Context;
@@ -546,38 +545,25 @@ public class VelocityHelper {
             GenericObject child = relation.getChild();
 
             if ( child instanceof Category ) {
-                storeToMap(map,Constants.TYPE_CATEGORY,relation);
+                Misc.storeToMap(map,Constants.TYPE_CATEGORY,relation);
             } else if ( child instanceof Item ) {
                 Item item = (Item) child;
                 if ( item.getType()==Item.MAKE ) {
-                    storeToMap(map,Constants.TYPE_MAKE,relation);
+                    Misc.storeToMap(map,Constants.TYPE_MAKE,relation);
                 } else if ( item.getType()==Item.DISCUSSION ) {
-                    storeToMap(map,Constants.TYPE_DISCUSSION,relation);
+                    Misc.storeToMap(map,Constants.TYPE_DISCUSSION,relation);
                 } else if ( item.getType()==Item.ARTICLE ) {
-                    storeToMap(map,Constants.TYPE_ARTICLE,relation);
+                    Misc.storeToMap(map,Constants.TYPE_ARTICLE,relation);
                 } else if ( item.getType()==Item.DRIVER ) {
-                    storeToMap(map,Constants.TYPE_DRIVER,relation);
+                    Misc.storeToMap(map,Constants.TYPE_DRIVER,relation);
                 } else if ( item.getType()==Item.REQUEST ) {
-                    storeToMap(map,Constants.TYPE_REQUEST,relation);
+                    Misc.storeToMap(map,Constants.TYPE_REQUEST,relation);
                 }
             } else if ( child instanceof Record ) {
-                storeToMap(map,Constants.TYPE_RECORD,relation);
+                Misc.storeToMap(map,Constants.TYPE_RECORD,relation);
             }
         }
         return map;
-    }
-
-    /**
-     * Associates value with given key in the map. Each key contains
-     * list of values. If the list doesn't exist yet, it is created.
-     */
-    private void storeToMap(Map map, String key, GenericObject value) {
-        List list = (List) map.get(key);
-        if ( list==null ) {
-            list = new ArrayList(5);
-            map.put(key,list);
-        }
-        list.add(value);
     }
 
     /**

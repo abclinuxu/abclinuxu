@@ -41,6 +41,10 @@
           <param-value>WEB-INF/templates/auto/kernel.txt</param-value>
         </init-param>
         <init-param>
+          <param-name>INDEX_PATH</param-name>
+          <param-value>WEB-INF/index</param-value>
+        </init-param>
+        <init-param>
           <param-name>LINKS_TRAFIKA</param-name>
           <param-value>auto/abc.dat</param-value>
         </init-param>

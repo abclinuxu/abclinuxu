@@ -10,6 +10,7 @@ import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.servlets.utils.VelocityHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.apache.lucene.index.IndexWriter;
@@ -35,9 +36,7 @@ public class CreateIndex {
 
     static {
         DOMConfigurator.configure(DEPLOY+"/WEB-INF/log4j.xml");
-
-        persistance = new MySqlPersistance(PersistanceFactory.defaultUrl);
-        persistance.setCache(new EmptyCache());
+        persistance = PersistanceFactory.getPersistance(PersistanceFactory.defaultUrl,EmptyCache.class);
 
         try {
             tagRE = new RE("<[^>]+>");
@@ -47,7 +46,7 @@ public class CreateIndex {
     }
 
     IndexWriter indexWriter;
-    HashMap indexed = new HashMap(5000);
+    HashMap indexed = new HashMap(15000);
 
 
     public static void main(String[] args) throws Exception {
@@ -105,21 +104,13 @@ public class CreateIndex {
         MyDocument doc = null;
         if ( obj instanceof Category ) {
             doc = getCategoryIndexingString((Category)obj);
-
         } else if ( obj instanceof Item ) {
             Item item = (Item) obj;
             switch ( item.getType() ) {
                 case Item.ARTICLE: doc = getArticleIndexingString(item);break;
-                case Item.DISCUSSION: doc = getDiscussionIndexingString(item);break;
+                case Item.DISCUSSION: doc = getDiscussionIndexingString(item,relation);break;
                 case Item.MAKE: doc = getMakeIndexingString(item);break;
                 case Item.DRIVER: doc = getDriverIndexingString(item);break;
-            }
-
-        } else if ( obj instanceof Record ) {
-            Record record = (Record) obj;
-            switch ( record.getType() ) {
-                case Record.HARDWARE: doc = getHardwareIndexingString(record);break;
-                case Record.SOFTWARE: doc = getSoftwareIndexingString(record);break;
             }
         }
 
@@ -130,7 +121,8 @@ public class CreateIndex {
 
         for (Iterator iter = obj.getContent().iterator(); iter.hasNext();) {
             Relation child = (Relation) iter.next();
-            makeIndexOn(child,urlPrefix);
+            if ( ! (child.getChild() instanceof Record) )
+                makeIndexOn(child,urlPrefix);
         }
     }
 
@@ -218,7 +210,7 @@ public class CreateIndex {
     /**
      * Extracts data for indexing from discussion. Item must be synchronized.
      */
-    static MyDocument getDiscussionIndexingString(Item discussion) {
+    static MyDocument getDiscussionIndexingString(Item discussion, Relation relation) {
         Element data = (Element) discussion.getData().selectSingleNode("data");
         StringBuffer sb = new StringBuffer();
         String title = null;
@@ -227,6 +219,14 @@ public class CreateIndex {
         if ( node!=null ) {
             title = node.getText();
             sb.append(title);
+        } else {
+            // let's use parent's title, if this is discussion to article
+            GenericObject parent = relation.getParent();
+            if ( parent instanceof Item && ((Item)parent).getType()==Item.ARTICLE ) {
+                node = (Element) ((Item)parent).getData().selectSingleNode("data/name");
+                if ( node!=null )
+                    title = "Diskuse k èlánku " + node.getText();
+            }
         }
 
         node = data.selectSingleNode("text");
@@ -267,14 +267,30 @@ public class CreateIndex {
      */
     static MyDocument getMakeIndexingString(Item make) {
         Element data = (Element) make.getData().selectSingleNode("data");
-        String title = null;
+        String title = "", tmp = "";
 
         Node node = data.selectSingleNode("name");
         if ( node!=null ) {
             title = node.getText();
         }
+        StringBuffer sb = new StringBuffer(title);
 
-        MyDocument doc = new MyDocument(removeTags(title));
+        List content = make.getContent();
+        Map children = new VelocityHelper().groupByType(content);
+        List records = (List) children.get(Constants.TYPE_RECORD);
+
+        for (Iterator iter = records.iterator(); iter.hasNext();) {
+            Relation relation = (Relation)iter.next();
+            Record record = (Record) relation.getChild();
+            content.remove(relation);
+
+            if ( record.getType()==Record.HARDWARE ) tmp = getHardwareIndexingString(record);
+            if ( record.getType()==Record.SOFTWARE ) tmp = getSoftwareIndexingString(record);
+            sb.append(" ");
+            sb.append(tmp);
+        }
+
+        MyDocument doc = new MyDocument(removeTags(tmp));
         if ( title!=null && title.length()>0 ) doc.setTitle(title);
         doc.setType(MyDocument.TYPE_MAKE);
         return doc;
@@ -309,7 +325,7 @@ public class CreateIndex {
     /**
      * Extracts data for indexing from hardware. Record must be synchronized.
      */
-    static MyDocument getHardwareIndexingString(Record record) {
+    static String getHardwareIndexingString(Record record) {
         Element data = (Element) record.getData().selectSingleNode("data");
         StringBuffer sb = new StringBuffer();
 
@@ -334,23 +350,19 @@ public class CreateIndex {
             sb.append(node.getText());
         }
 
-        MyDocument doc = new MyDocument(removeTags(sb.toString()));
-        doc.setType(MyDocument.TYPE_RECORD);
-        return doc;
+        return sb.toString();
     }
 
     /**
      * Extracts data for indexing from software. Record must be synchronized.
      */
-    static MyDocument getSoftwareIndexingString(Record record) {
+    static String getSoftwareIndexingString(Record record) {
         Element data = (Element) record.getData().selectSingleNode("data");
         String str = null;
 
         Node node = data.selectSingleNode("text");
         if ( node!=null ) str = node.getText();
 
-        MyDocument doc = new MyDocument(removeTags(str));
-        doc.setType(MyDocument.TYPE_RECORD);
-        return doc;
+        return str;
     }
 }

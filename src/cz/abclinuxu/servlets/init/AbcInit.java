@@ -21,6 +21,7 @@ import org.apache.velocity.app.Velocity;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.scheduler.*;
 import cz.abclinuxu.servlets.utils.VariantTool;
+import cz.abclinuxu.servlets.view.Search;
 
 /**
  * This servlet initializes Log4J
@@ -79,6 +80,10 @@ public class AbcInit extends HttpServlet {
         } catch (Exception e) {
             log.fatal("Cannot initialize template system!", e);
         }
+
+        tmp = getInitParameter("INDEX_PATH");
+        if ( tmp!=null )
+            Search.setIndexPath(path+tmp);
 
         // start scheduler tasks
         startFetchingVariables();

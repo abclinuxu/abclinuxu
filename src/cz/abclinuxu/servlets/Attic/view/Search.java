@@ -12,6 +12,8 @@ import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.VariantTool;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.search.MyDocument;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.apache.lucene.search.*;
@@ -20,20 +22,26 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.HashMap;
 import java.io.*;
 
 /**
  * Performs search across the data.
  */
 public class Search extends AbcServlet {
+    static String INDEX_PATH = "/home/literakl/ROOT/WEB-INF/index";
+
     /** contains relation, that match the expression */
     public static final String VAR_RESULT = "RESULT";
     /** query to be searched */
     public static final String VAR_QUERY = "QUERY";
+    /** total number of found documents */
+    public static final String VAR_TOTAL = "TOTAL";
 
     /** expression to be searched */
     public static final String PARAM_QUERY = "query";
@@ -50,11 +58,21 @@ public class Search extends AbcServlet {
         }
 
         try {
-            Searcher searcher = new IndexSearcher("/home/literakl/ROOT/WEB-INF/index");
+            Searcher searcher = new IndexSearcher(INDEX_PATH);
             Query q = QueryParser.parse(query, "contents", new StandardAnalyzer());
             ctx.put(VAR_QUERY,q.toString("contents"));
+
             Hits hits = searcher.search(q);
-            ctx.put(VAR_RESULT,hits);
+            int length = hits.length();
+            Map map = new HashMap(5/4 * length + 1); //no rehash
+            for ( int i=0; i<length; i++ ) {
+                Document doc = (Document) hits.doc(i);
+                String score = new Float(hits.score(i)).toString();
+                doc.add(Field.UnIndexed("score",score));
+                Misc.storeToMap(map,doc.get(MyDocument.TYPE),doc);
+            }
+            ctx.put(VAR_RESULT,map);
+            ctx.put(VAR_TOTAL,new Integer(length));
         } catch (Exception e) {
             ServletUtils.addError(PARAM_QUERY,"Nemohu provést dané hledání. Zadejte jiný øetìzec!",ctx,null);
             return VariantTool.selectTemplate(request,ctx,"Search","show");
@@ -63,8 +81,15 @@ public class Search extends AbcServlet {
         return VariantTool.selectTemplate(request,ctx,"Search","show");
     }
 
+    /**
+     * Sets path to directory with index files.
+     */
+    public static void setIndexPath(String path) {
+        Search.INDEX_PATH = path;
+    }
+
     public static void main(String[] args) throws Exception {
-        Searcher searcher = new IndexSearcher("/home/literakl/ROOT/WEB-INF/index");
+        Searcher searcher = new IndexSearcher(INDEX_PATH);
         Analyzer analyzer = new StandardAnalyzer();
 
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));

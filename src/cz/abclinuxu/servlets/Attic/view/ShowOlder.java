@@ -8,7 +8,7 @@ package cz.abclinuxu.servlets.view;
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.utils.VariantTool;
 import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.utils.velocity.Misc;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.data.Relation;
@@ -49,7 +49,7 @@ public class ShowOlder extends AbcServlet {
     public static final String SQL_HARDWARE = "select R.cislo from zaznam Z, relace R where typ=1 and Z.cislo=R.potomek and typ_potomka='Z' order by zmeneno desc";
     public static final String SQL_SOFTWARE = "select R.cislo from zaznam Z, relace R where typ=2 and Z.cislo=R.potomek and typ_potomka='Z' order by zmeneno desc";
     public static final String SQL_DRIVERS = "select R.cislo from polozka P, relace R where typ=5 and P.cislo=R.potomek and typ_potomka='P' order by zmeneno desc";
-    public static final String SQL_ARTICLES = "select R.cislo from polozka P, relace R where typ=2 and P.cislo=R.potomek and typ_potomka='P' order by zmeneno desc";
+    public static final String SQL_ARTICLES = "select R.cislo from polozka P, relace R where typ=2 and P.cislo=R.potomek and typ_potomka='P' and vytvoreno<now() order by zmeneno desc";
 
     /**
      * Put your processing here. Return null, if you redirected browser to another URL.

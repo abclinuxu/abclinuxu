@@ -21,6 +21,11 @@ public class MyDocument {
     public static final String TYPE_DRIVER = "ovladac";
     public static final String TYPE_ARTICLE = "clanek";
 
+    public static final String TYPE = "typ";
+    public static final String CONTENT = "contents";
+    public static final String URL = "url";
+    public static final String TITLE = "title";
+
     Document document;
 
     /**
@@ -28,28 +33,28 @@ public class MyDocument {
      */
     public MyDocument(String content) {
         document = new Document();
-        document.add(Field.Text("contents",content));
+        document.add(Field.Text(CONTENT,content));
     }
 
     /**
      * Associates URL with Document.
      */
     public void setURL(String url) {
-        document.add(Field.UnIndexed("url",url));
+        document.add(Field.UnIndexed(URL,url));
     }
 
     /**
      * Sets title for the Document.
      */
     public void setTitle(String title) {
-        document.add(Field.UnIndexed("title",title));
+        document.add(Field.UnIndexed(TITLE,title));
     }
 
     /**
      * Sets type of the Document.
      */
     public void setType(String type) {
-        document.add(Field.Keyword("typ",type));
+        document.add(Field.Keyword(TYPE,type));
     }
 
     /**

@@ -15,10 +15,12 @@ import org.apache.log4j.xml.DOMConfigurator;
  * Factory, which select Persistance class
  */
 public class PersistanceFactory {
-    static Map instances;
+    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(PersistanceFactory.class);
+
     public static String defaultUrl = "jdbc:mysql://localhost/abc?user=literakl&password=lkaretil&useUnicode=true&characterEncoding=ISO-8859-2";
     public static String defaultTestUrl = "jdbc:mysql://localhost/unit?user=literakl&password=lkaretil&useUnicode=true&characterEncoding=ISO-8859-2";
 
+    static Map instances;
     static {
         instances = new HashMap();
     }
@@ -28,20 +30,34 @@ public class PersistanceFactory {
      * @return instance of object, which implements <code>Persistance</code>.
      */
     public static Persistance getPersistance() {
-        return getPersistance(defaultUrl);
+        return getPersistance(defaultUrl, DefaultCache.class);
     }
 
     /**
-     * @return instance of object, which implements <code>Persistance</code>
-     * and is described by <code>url</code>. If <code>url</code> is null,
+     * Get default persistance connected to specific url. If <code>url</code> is null,
      * <code>defaultUrl</code> is used.
+     * @return instance of object, which implements <code>Persistance</code> interface
      */
-    public static synchronized Persistance getPersistance(String url) { // verify load impact
+    public static synchronized Persistance getPersistance(String url) {
+        return getPersistance(url, DefaultCache.class);
+    }
+
+    /**
+     * Get default persistance connected to specific url and using specified Cache.
+     * If <code>url</code> is null, <code>defaultUrl</code> is used.
+     * @return instance of object, which implements <code>Persistance</code> interface
+     */
+    public static synchronized Persistance getPersistance(String url, Class cache) {
         if ( url==null ) url = defaultUrl;
         Persistance persistance = (Persistance) instances.get(url);
         if ( persistance==null ) {
             persistance = new MySqlPersistance(url);
-            persistance.setCache(new DefaultCache());
+            try {
+                persistance.setCache((Cache)cache.newInstance());
+            } catch (Exception e) {
+                log.error("Cannot use Cache "+cache.toString(), e);
+                persistance.setCache(new DefaultCache());
+            }
             instances.put(url,persistance);
         }
         return persistance;
