@@ -73,7 +73,7 @@ public class SimpleFormatRenderer implements Renderer {
                         switch ( e ) {
                             case ')':
                                 if ( c==':' )
-                                    sb.append(SharedConfig.getImageOfSmich());
+                                    sb.append(SharedConfig.getImageOfUsmev());
                                 else
                                     sb.append(SharedConfig.getImageOfMrk());
                                 break;
