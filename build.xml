@@ -1,19 +1,44 @@
 <project name="AbcLinuxu" basedir="." default="compile">
   <property name="src" value="src"/>
   <property name="build" value="build"/>
-  <property name="deploy" value="src"/>
+  <property name="deploy" value="../tomcat/webapps"/>
 
   <path id="project.classpath">
-    <fileset dir="${build}/WEB-INF/lib">
+    <fileset dir="libs">
       <include name="*.jar"/>
     </fileset>
   </path>
 
   <target name="init">
+    <mkdir dir="${build}"/>
+    <mkdir dir="${build}/WEB-INF"/>
+    <mkdir dir="${build}/WEB-INF/lib"/>
+    <mkdir dir="${build}/WEB-INF/classes"/>
+    <mkdir dir="${build}/logs"/>
     <tstamp/>
   </target>
 
   <target name="compile" depends="init">
     <javac srcdir="${src}" destdir="${build}/WEB-INF/classes" classpathref="project.classpath"/>
   </target>
+
+  <target name="dist" depends="compile">
+    <copy todir="${build}/WEB-INF">
+      <fileset dir="conf">
+        <include name="web.xml"/>
+        <include name="log4j.xml"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${build}/WEB-INF/classes">
+      <fileset dir="conf">
+        <include name="poolman.xml"/>
+        <include name="views.properties"/>
+        <include name="webwork.properties"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${build}/WEB-INF/lib" includes="libs/*.jar"/>
+  </target>
+
 </project>
