@@ -14,6 +14,7 @@ import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.exceptions.PersistanceException;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.ConfigurationManager;
@@ -60,6 +61,8 @@ public class ServletUtils implements Configurable {
     public static final String PARAM_LOG_PASSWORD = "PASSWORD";
     /** indicates, that user wishes to logout */
     public static final String PARAM_LOG_OUT = "logout";
+
+    public static final String VAR_ERROR_MESSAGE = "ERROR";
 
     static DefaultFileItemFactory uploadFactory;
     static int uploadSizeLimit;
@@ -260,6 +263,18 @@ public class ServletUtils implements Configurable {
                 return cookie;
         }
         return null;
+    }
+
+    /**
+     * Displays standard error page with custom message.
+     * @param message message to be displayed
+     * @param env environment
+     * @param request http servlet request
+     * @return page to be displayed
+     */
+    public static String showErrorPage(String message, Map env, HttpServletRequest request) {
+        env.put(VAR_ERROR_MESSAGE,message);
+        return FMTemplateSelector.select("ServletUtils", "errorPage", env, request);
     }
 
     /**

@@ -19,6 +19,15 @@
     </action>
   </servlet>
 
+  <servlet name="EditSurvey">
+    <action name="add" template="print" content="/add/survey.ftl">
+    <var name="TITLE" value="Vytvoøení ankety" />
+    </action>
+    <action name="edit" template="print" content="/add/survey.ftl">
+      <var name="TITLE" value="Úprava ankety" />
+    </action>
+  </servlet>
+
   <servlet name="EditDiscussion">
     <action name="reply" content="/add/reply.ftl">
       <var name="TITLE" value="Vlo¾ reakci do diskuse" />
@@ -216,6 +225,12 @@
   <servlet name="ShowOlder">
     <action name="show" content="/show/history.ftl">
       <var name="TITLE" value="Star¹í pøíspìvky" />
+    </action>
+  </servlet>
+
+  <servlet name="ServletUtils">
+    <action name="errorPage" content="/misc/error.ftl">
+      <var name="TITLE" value="Chyba!" />
     </action>
   </servlet>
 

@@ -34,3 +34,16 @@
 <!ELEMENT version (#PCDATA)> <!-- driver's version -->
 <!ELEMENT url (#PCDATA)> <!-- its url -->
 <!ELEMENT note (#PCDATA)> <!-- its description -->
+
+<!-- Item.Survey -->
+<!ELEMENT anketa (title?,screen+,choices?)>
+<!ELEMENT title (#PCDATA)> <!-- name of survey -->
+<!ELEMENT choices (#PCDATA)> <!-- which parameters are choices (aka they are not texts) -->
+<!ELEMENT choice (#PCDATA)> <!-- name of choice parameter-->
+<!ELEMENT screen (#PCDATA)> <!-- definition of one screen -->
+<!ATTLIST screen id (ID) #REQUIRED> <!-- identifier of the screen, first screen must have id "START" -->
+<!ELEMENT template (#PCDATA)> <!-- name of template, that shall be displayed to the user -->
+<!ELEMENT dump (dir,prefix,suffix)> <!-- instructs to dump all parameters to xml file -->
+<!ELEMENT dir (#PCDATA)> <!-- directory, where to create a file -->
+<!ELEMENT prefix (#PCDATA)> <!-- file will start with this prefix -->
+<!ELEMENT suffix (#PCDATA)> <!-- file will end with this suffix -->

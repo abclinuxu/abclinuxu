@@ -11,7 +11,11 @@ import org.dom4j.io.SAXReader;
 import java.io.File;
 import java.io.PrintStream;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.util.*;
+
+import cz.abclinuxu.data.Item;
+import cz.abclinuxu.persistance.PersistanceFactory;
 
 
 /**
@@ -19,23 +23,74 @@ import java.util.*;
  */
 public class AnalyzeSurveyXML {
     static String TOTAL = "TOTAL";
-
-    Map data = new HashMap(50);
     SAXReader reader = new SAXReader();
-    /** contains names of already processed options in this file */
-    List processedOptions = new ArrayList(30);
+
+    static Map options = new HashMap(30);
+
+    Map data = new HashMap(20);
 
     public static void main(String[] args) throws Exception {
+        if ( args.length!=1 ) {
+            System.err.println("Chybi parametr - cislo polozky s anketou!");
+            System.exit(1);
+        }
+        int id = Integer.parseInt(args[0]);
+        Item survey = (Item) PersistanceFactory.getPersistance().findById(new Item(id));
+        if (survey.getType()!=Item.SURVEY) {
+            System.err.println("Tato polozka neni anketou!");
+            System.exit(1);
+        }
+
+        List tagDumps = survey.getData().selectNodes("//dump");
+        if ( tagDumps==null || tagDumps.size()==0 )  {
+            System.err.println("Anketa neobsahuje zadnou znacku dump!");
+            System.exit(1);
+        }
+
+        List tagOptions = survey.getData().selectNodes("//choice");
+        if ( tagOptions!=null && tagOptions.size()>0 ) {
+            for ( Iterator iter = tagOptions.iterator(); iter.hasNext(); ) {
+                Node node = (Node) iter.next();
+                options.put(node.getText(), node.getText());
+            }
+        }
+
         AnalyzeSurveyXML analyzer = new AnalyzeSurveyXML();
-        List files = analyzer.getFiles();
-        System.out.println("Starting to process "+files.size()+" files.");
-        for (Iterator iter = files.iterator(); iter.hasNext();) {
+        for ( Iterator iter = tagDumps.iterator(); iter.hasNext(); ) {
+            Element dump = (Element) iter.next();
+            String screenId = dump.getParent().attributeValue("id");
+            analyzer.processDump(dump, screenId);
+        }
+    }
+
+    /**
+     * Processes given dump.
+     */
+    void processDump(Element dump, String id) throws Exception {
+        String dir = dump.element("dir").getTextTrim();
+        String prefix = dump.element("prefix").getTextTrim();
+        List files = getFiles(dir,prefix);
+
+        data.clear();
+        System.out.println("Processing dump of screen "+id+", "+files.size()+" files.");
+        for ( Iterator iter = files.iterator(); iter.hasNext(); ) {
             File file = (File) iter.next();
-            analyzer.processFiles(file);
+            processFiles(file);
         }
         System.out.println("Finished processing.");
-        analyzer.generateOutput();
+        generateOutput(prefix);
         System.out.println("Output written.");
+    }
+
+    /**
+     * @return list of files to be processed
+     */
+    List getFiles(String dir, String prefix) {
+        FilenameFilter filter = new PrefixFileNameFilter(prefix);
+        File directory = new File(dir);
+        File[] files = directory.listFiles(filter);
+        List list = Arrays.asList(files);
+        return list;
     }
 
     /**
@@ -43,6 +98,7 @@ public class AnalyzeSurveyXML {
      */
     void processFiles(File f) throws Exception {
         Document d = reader.read(f);
+        List processedOptions = new ArrayList(30);
         processedOptions.clear();
         List nodes = d.selectNodes("/*/*/*");
 
@@ -51,7 +107,7 @@ public class AnalyzeSurveyXML {
             String name = node.getName();
             String value = node.getText();
             if ( isOption(name) ) {
-                processOption(name,value);
+                processOption(name,value, processedOptions);
             } else {
                 processText(name,value);
             }
@@ -63,7 +119,7 @@ public class AnalyzeSurveyXML {
      * as key incrementing its counter. If tag hasn't been processed
      * yet, it also increments its TOTAL counter.
      */
-    void processOption(String name, String value) {
+    void processOption(String name, String value, List processedOptions) {
         Map options = (Map) data.get(name);
         if ( options==null ) {
             options = new HashMap(10);
@@ -104,32 +160,15 @@ public class AnalyzeSurveyXML {
      * @return true, if this tag is option (has fixed value).
      */
     boolean isOption(String name) {
-        if ( "vzkaz".equals(name) )
-            return false;
-        if ( "sluzby_chybi".equals(name) )
-            return false;
-        return true;
-    }
-
-    /**
-     * @return list of files to be processed
-     */
-    List getFiles() {
-//        List list = new ArrayList();
-//        list.add(new File("/home/literakl/tmp/new/abc1/data/answear_27929.xml"));
-//        list.add(new File("/home/literakl/tmp/new/abc1/data/answear_27926.xml"));
-        File dir = new File("/home/literakl/tmp/new/abc1/data");
-        File[] files = dir.listFiles();
-        List list = Arrays.asList(files);
-        return list;
+        return options.get(name)!=null;
     }
 
     /**
      * Prints statistics.
      */
-    void generateOutput() throws Exception {
-        PrintStream psOption = new PrintStream(new FileOutputStream("options.csv"));
-        PrintStream psTexts = new PrintStream(new FileOutputStream("texts.txt"));
+    void generateOutput(String prefix) throws Exception {
+        PrintStream psOption = new PrintStream(new FileOutputStream(prefix+"options.csv"));
+        PrintStream psTexts = new PrintStream(new FileOutputStream(prefix+"texts.txt"));
 
         for (Iterator iter = data.keySet().iterator(); iter.hasNext();) {
             String tag = (String) iter.next();
@@ -175,6 +214,21 @@ public class AnalyzeSurveyXML {
             if ( TOTAL.equals(o1) ) return -1;
             if ( TOTAL.equals(o2) ) return 1;
             return ((String)o1).compareTo(o2);
+        }
+    }
+
+    /**
+     * Selects only files, whose names start with given prefix.
+     */
+    class PrefixFileNameFilter implements FilenameFilter {
+        String prefix;
+
+        public PrefixFileNameFilter(String prefix) {
+            this.prefix = prefix;
+        }
+
+        public boolean accept(File dir, String name) {
+            return name.startsWith(prefix);
         }
     }
 }

@@ -12,7 +12,7 @@
  <input type="hidden" name="url" value="${URL.make("/EditCategory")}">
 </#if>
 
- <table width=100 border=0 cellpadding=5>
+ <table width="100%" border=0 cellpadding=5>
   <tr>
    <td width="120" class="required">Jméno kategorie</td>
    <td>
@@ -32,13 +32,13 @@
   <tr>
    <td width="120">Poznámka</td>
    <td>
-    <textarea name="note" cols="40" rows="7" tabindex="3">${PARAMS.note?if_exists?html}</textarea>
+    <textarea name="note" cols="60" rows="7" tabindex="3">${PARAMS.note?if_exists?html}</textarea>
     <div class="error">${ERRORS.note?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td width="120">&nbsp;</td>
-   <td><input type="submit" VALUE="Pokraèuj" TABINDEX="4"></td>
+   <td><input type="submit" VALUE="Pokraèuj" tabindex="4"></td>
   </tr>
  </table>
 
