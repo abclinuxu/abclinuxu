@@ -384,7 +384,7 @@ public class EditHardware extends AbcFMServlet {
 
         // run monitor
         String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/ViewRelation?rid="+relation.getId();
-        Item item = (Item) persistance.findById(relation.getChild());
+        Item item = (Item) persistance.findById(relation.getParent());
         MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.ITEM, item, url);
         MonitorPool.scheduleMonitorAction(action);
 
