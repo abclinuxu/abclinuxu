@@ -20,7 +20,6 @@ import cz.abclinuxu.utils.Tools;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateExceptionHandler;
-import freemarker.template.TemplateModelException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -165,8 +164,6 @@ public class AbcInit extends HttpServlet {
             Tools.sync(rubriky.getContent());
             Category abc = (Category) persistance.findById(new Category(Constants.CAT_ABC));
             Tools.sync(abc.getContent());
-            Category reklama = (Category) persistance.findById(new Category(Constants.CAT_REKLAMA));
-            Tools.sync(reklama.getContent());
             Category linksCategory = (Category) persistance.findById(new Category(Constants.CAT_LINKS));
             Map links = UpdateLinks.groupLinks(linksCategory,persistance);
 
@@ -179,7 +176,7 @@ public class AbcInit extends HttpServlet {
             cfg.setSharedVariable(Constants.VAR_FETCHER,fetcher);
 
             log.info("Inicializace FreeMarkeru je hotova");
-        } catch (TemplateModelException e) {
+        } catch (Exception e) {
             log.error("cannot store shared variable!", e);
         }
 

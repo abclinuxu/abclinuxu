@@ -24,9 +24,10 @@ verze 2.0
 <!ELEMENT distributions (distribution)> <!-- ktere distribuce pouziva(l) -->
 <!ELEMENT distribution (#PCDATA)> <!-- jmeno distribuce -->
 
-<!ELEMENT settings (emoticons?,cookie_valid?)>
+<!ELEMENT settings (emoticons?,cookie_valid?,index_discussions?)>
 <!ELEMENT emoticons (#PCDATA)> <!-- yes or no, zda nahrazovat emotikony obrazkem -->
 <!ELEMENT cookie_valid (#PCDATA)> <!-- integer, doba platnosti prihlasovaci cookie -->
+<!ELEMENT index_discussions (#PCDATA)> <!-- integer, pocet diskusi na hlavni strance. -1 : vsechny -->
 
 
 <!ELEMENT system (registration_date?,last_login_date?)>

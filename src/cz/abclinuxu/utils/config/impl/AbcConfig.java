@@ -26,9 +26,10 @@ public class AbcConfig implements Configurable {
 
     public static final String PREF_DEPLOY_PATH = "deploy.path";
     public static final String PREF_VIEWUSER_PAGINGSIZE = "viewuser.page.size";
+    public static final String PREF_VIEWINDEX_DISCUSSIONS_COUNT = "viewindex.discussions.count";
 
     static String deployPath;
-    static int viewUserPageSize;
+    static int viewUserPageSize, viewIndexDiscussions;
 
     /**
      * Callback used to configure your class from preferences.
@@ -36,6 +37,7 @@ public class AbcConfig implements Configurable {
     public void configure(Preferences prefs) throws ConfigurationException {
         deployPath = prefs.get(PREF_DEPLOY_PATH, null);
         viewUserPageSize = prefs.getInt(PREF_VIEWUSER_PAGINGSIZE,20);
+        viewIndexDiscussions = prefs.getInt(PREF_VIEWINDEX_DISCUSSIONS_COUNT,20);
     }
 
     /**
@@ -65,5 +67,12 @@ public class AbcConfig implements Configurable {
      */
     public static int getViewUserPageSize() {
         return viewUserPageSize;
+    }
+
+    /**
+     * @return default maximum for discussions count on Index page
+     */
+    public static int getViewIndexDiscussionsCount() {
+        return viewIndexDiscussions;
     }
 }

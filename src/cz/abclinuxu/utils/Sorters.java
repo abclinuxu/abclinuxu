@@ -14,7 +14,7 @@ import java.io.Serializable;
 
 /**
  * A lot of sorts.
- * todo decide, which Sorter shall be used and remove the other one
+ * @deprecated
  */
 public class Sorters {
 

@@ -13,10 +13,16 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.utils.Sorters2;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
+import cz.abclinuxu.utils.paging.Paging;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+
+import org.dom4j.Node;
 
 /**
  * This servlet renders index page of AbcLinuxu.
@@ -31,6 +37,7 @@ public class ViewIndex extends AbcFMServlet {
      */
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
+        User user = (User) env.get(Constants.VAR_USER);
         Tools tools = new Tools();
 
         Category hw = (Category) persistance.findById(new Category(Constants.CAT_386));
@@ -41,8 +48,30 @@ public class ViewIndex extends AbcFMServlet {
 
         Category forum = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
         tools.sync(forum.getContent());
-        env.put(ViewIndex.VAR_FORUM,forum);
+        List discussions = tools.analyzeDiscussions(forum.getContent());
+        Sorters2.byDate(discussions, "DESCENDING");
+        int limit = Math.min(getUserLimit(user),discussions.size());
+        Paging paging = new Paging(discussions.subList(0,limit),0,limit,discussions.size());
+        env.put(ViewIndex.VAR_FORUM,paging);
 
         return FMTemplateSelector.select("ViewIndex","show",env, request);
+    }
+
+    /**
+     * Gets limit on discussions displayed on main page. If user is not authenticated or he didn't
+     * configured this value, default value will be used.
+     * @param user
+     * @return number of discussions to be displayed
+     */
+    private int getUserLimit(User user) {
+        int defaultValue = AbcConfig.getViewIndexDiscussionsCount();
+        if ( user==null )
+            return defaultValue;
+        Node node = user.getData().selectSingleNode("/data/settings/index_discussions");
+        if ( node==null )
+            return defaultValue;
+        int count = Misc.parseInt(node.getText(),defaultValue);
+        if (count==-1) count = 1000000;
+        return count;
     }
 }

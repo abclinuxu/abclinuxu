@@ -60,11 +60,13 @@ public class EditUser extends AbcFMServlet {
     public static final String PARAM_ABOUT_ME = "about";
     public static final String PARAM_EMOTICONS = "emoticons";
     public static final String PARAM_COOKIE_VALIDITY = "cookieValid";
+    public static final String PARAM_DISCUSSIONS_COUNT = "discussions";
     public static final String PARAM_SUBSCRIBE_MONTHLY = "monthly";
     public static final String PARAM_SUBSCRIBE_WEEKLY = "weekly";
     public static final String PARAM_PHOTO = "photo";
 
     public static final String VAR_MANAGED = "MANAGED";
+    public static final String VAR_DEFAULT_DISCUSSION_COUNT = "DEFAULT_DISCUSSIONS";
 
     public static final String ACTION_REGISTER = "register";
     public static final String ACTION_REGISTER_STEP2 = "register2";
@@ -404,6 +406,7 @@ public class EditUser extends AbcFMServlet {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
 
+        env.put(VAR_DEFAULT_DISCUSSION_COUNT,new Integer(AbcConfig.getViewIndexDiscussionsCount()));
         Document document = managed.getData();
         Node node = document.selectSingleNode("/data/settings/emoticons");
         if ( node!=null )
@@ -411,6 +414,9 @@ public class EditUser extends AbcFMServlet {
         node = document.selectSingleNode("/data/settings/cookie_valid");
         if ( node!=null )
             params.put(PARAM_COOKIE_VALIDITY, node.getText());
+        node = document.selectSingleNode("/data/settings/index_discussions");
+        if ( node!=null )
+            params.put(PARAM_DISCUSSIONS_COUNT, node.getText());
 
         return FMTemplateSelector.select("EditUser", "editSettings", env, request);
     }
@@ -429,6 +435,7 @@ public class EditUser extends AbcFMServlet {
             canContinue &= checkPassword(params, managed, env);
         canContinue &= setCookieValidity(params, managed);
         canContinue &= setEmoticons(params, managed);
+        canContinue &= setDiscussionsSizeLimit(params, managed);
 
         if ( !canContinue )
             return FMTemplateSelector.select("EditUser", "Settings", env, request);
@@ -815,6 +822,26 @@ public class EditUser extends AbcFMServlet {
         String validity = (String) params.get(PARAM_COOKIE_VALIDITY);
         Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/cookie_valid");
         element.setText(validity);
+        return true;
+    }
+
+    /**
+     * Updates size limit of discussions on main page from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setDiscussionsSizeLimit(Map params, User user) {
+        String limit = (String) params.get(PARAM_DISCUSSIONS_COUNT);
+        int tmp = Misc.parseInt(limit,0);
+        if ( tmp==0 ) {
+            Node node = user.getData().selectSingleNode("/data/settings/index_discussions");
+            if ( node!=null )
+                node.getParent().remove(node);
+        } else {
+            Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/index_discussions");
+            element.setText(limit);
+        }
         return true;
     }
 

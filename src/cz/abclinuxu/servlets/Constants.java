@@ -28,7 +28,7 @@ public interface Constants {
     int CAT_REQUESTS = 256;
     int CAT_FORUM = 265;
     int CAT_ROOT = 248;
-    int CAT_REKLAMA = 333;
+//    int CAT_REKLAMA = 333;
     int CAT_SYSTEM = 338;
     int CAT_ARTICLEPOOL = 339;
 

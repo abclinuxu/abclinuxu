@@ -345,10 +345,6 @@ public abstract class AbcVelocityServlet extends VelocityServlet {
             helper.sync(abc.getContent());
             ctx.put(VAR_ABCLINUXU,abc.getContent());
 
-            Category reklama = (Category) persistance.findById(new Category(Constants.CAT_REKLAMA));
-            helper.sync(reklama.getContent());
-            ctx.put(VAR_REKLAMA,reklama.getContent());
-
             Category linksCategory = (Category) persistance.findById(new Category(Constants.CAT_LINKS));
             Map links = UpdateLinks.groupLinks(linksCategory,persistance);
             ctx.put(VAR_LINKS,links);
