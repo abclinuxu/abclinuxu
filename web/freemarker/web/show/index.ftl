@@ -115,7 +115,18 @@
         <tbody>
         <#list FORUM.data as diz>
             <tr>
-                <td class="td01"><a href="/forum/show/${diz.relationId}">${TOOL.limit(TOOL.xpath(diz.discussion,"data/title"),60," ..")}</a></td>
+                <td class="td01">
+                    <a href="/forum/show/${diz.relationId}">${TOOL.limit(TOOL.xpath(diz.discussion,"data/title"),60," ..")}</a>
+                    <#if TOOL.xpath(diz.discussion,"/data/frozen")?exists>
+                        <img src="/images/site2/zamceno.gif" alt="Z" title="Diskuse byla administrátory uzamèena">
+                    </#if>
+                    <#if TOOL.isQuestionSolved(diz.discussion.data)>
+                        <img src="/images/site2/vyreseno.gif" alt="V" title="Diskuse byla podle ètenáøù vyøe¹ena">
+                    </#if>
+                    <#if USER?exists && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"'")?exists>
+                        <img src="/images/site2/sledovano.gif" alt="S" title="Tuto diskusi sledujete monitorem">
+                    </#if>
+                </td>
                 <td class="td02">${diz.responseCount}</td>
                 <td class="td03">${DATE.show(diz.updated,"CZ_SHORT")}</td>
             </tr>
