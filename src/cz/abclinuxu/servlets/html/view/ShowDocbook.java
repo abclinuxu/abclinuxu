@@ -26,8 +26,6 @@ import org.htmlparser.tags.Tag;
 import org.htmlparser.tags.LinkTag;
 import org.htmlparser.tags.ImageTag;
 import org.htmlparser.visitors.NodeVisitor;
-import org.apache.regexp.RE;
-import org.apache.regexp.StringCharacterIterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,8 +40,6 @@ import java.util.Map;
 public class ShowDocbook implements AbcAction {
     public static final String PARAM_RELATION_ID = "relationId";
     public static final String PARAM_RELATION_ID_SHORT = "rid";
-
-    private RE reAmp = new RE("(&)([^aglqn])", RE.MATCH_CASEINDEPENDENT);
 
     Writer writer;
 
@@ -143,10 +139,14 @@ public class ShowDocbook implements AbcAction {
                 visitH1Start();
             else if ("H2".equals(tagName))
                 visitH2Start();
+            else if ("H3".equals(tagName))
+                visitH3Start();
             else if ( "P".equals(tagName) )
                 visitPStart(tag);
             else if ( "DIV".equals(tagName) )
                 visitDivStart(tag);
+            else if ( "PRE".equals(tagName) )
+                visitPreStart();
             else if ( "A".equals(tagName) )
                 visitAStart((LinkTag)tag);
             else if ( "UL".equals(tagName) )
@@ -173,8 +173,12 @@ public class ShowDocbook implements AbcAction {
                 visitIStart();
             else if ( "B".equals(tagName) )
                 visitBStart();
+            else if ( "STRONG".equals(tagName) )
+                visitStrongStart();
             else if ( "CODE".equals(tagName) )
                 visitCodeStart();
+            else if ( "HR".equals(tagName) )
+                visitHr();
             else
                 print("start of unknown tag "+tag.getTagName(), 2, true);
         }
@@ -185,10 +189,14 @@ public class ShowDocbook implements AbcAction {
                 visitH1End();
             else if ( "H2".equals(tagName) )
                 visitH2End();
+            else if ( "H3".equals(tagName) )
+                visitH3End();
             else if ( "P".equals(tagName) )
                 visitPEnd();
             else if ( "DIV".equals(tagName) )
                 visitDivEnd();
+            else if ( "PRE".equals(tagName) )
+                visitPreEnd();
             else if ( "A".equals(tagName) )
                 visitAEnd();
             else if ( "UL".equals(tagName) )
@@ -211,6 +219,8 @@ public class ShowDocbook implements AbcAction {
                 visitIEnd();
             else if ( "B".equals(tagName) )
                 visitBEnd();
+            else if ( "STRONG".equals(tagName) )
+                visitStrongEnd();
             else if ( "CODE".equals(tagName) )
                 visitCodeEnd();
             else
@@ -225,21 +235,10 @@ public class ShowDocbook implements AbcAction {
         }
 
         public void visitStringNode(StringNode stringNode) {
-            String content = stringNode.getText().trim();
+            String content = stringNode.getText();
             if (content.length()==0)
                 return;
-
-            StringBuffer sb = new StringBuffer();
-            StringCharacterIterator stringIter = new StringCharacterIterator(content);
-            int position = 0, start;
-            if ( reAmp.match(stringIter, position) ) {
-                start = reAmp.getParenStart(2);
-                sb.append(stringIter.substring(position, start));
-                sb.append("amp;");
-                sb.append(reAmp.getParen(2));
-                position = reAmp.getParenEnd(0);
-            }
-            sb.append(stringIter.substring(position));
+            content = escapeAmpersand(content);
 
             if (inline)
                 print(content, 0, false);
@@ -248,6 +247,8 @@ public class ShowDocbook implements AbcAction {
         }
 
         private void visitH1Start() {
+            if (h3Open)
+                print("</section>", 3, true);
             if (h2Open)
                 print("</section>", 2, true);
             if (h1Open)
@@ -267,16 +268,34 @@ public class ShowDocbook implements AbcAction {
         }
 
         private void visitH2Start() {
+            if (h3Open)
+                print("</section>", 3, true);
             if (h2Open)
                 print("</section>", 2, true);
             println();
             print("<section>", 2, true);
             print("<title>", 3, false);
             h2Open = true;
+            h3Open = false;
             inline = true;
         }
 
         private void visitH2End() {
+            print("</title>", 0, true);
+            inline = false;
+        }
+
+        private void visitH3Start() {
+            if (h3Open)
+                print("</section>", 3, true);
+            println();
+            print("<section>", 3, true);
+            print("<title>", 4, false);
+            h3Open = true;
+            inline = true;
+        }
+
+        private void visitH3End() {
             print("</title>", 0, true);
             inline = false;
         }
@@ -323,6 +342,15 @@ public class ShowDocbook implements AbcAction {
             inline = false;
         }
 
+        private void visitPreStart() {
+            print("<programlisting>", 2, false);
+        }
+
+        private void visitPreEnd() {
+            print("</programlisting>", 2, true);
+            inline = false;
+        }
+
         private void visitSpanStart(Tag tag) {
             Attribute attribute = tag.getAttributeEx("class");
             if ( attribute!=null && "kt_citace".equals(attribute.getValue()) ) {
@@ -351,19 +379,8 @@ public class ShowDocbook implements AbcAction {
         }
 
         private void visitAStart(LinkTag tag) {
-            StringBuffer sb = new StringBuffer();
-            StringCharacterIterator stringIter = new StringCharacterIterator(tag.getLink());
-            int position = 0, start;
-            if (reAmp.match(stringIter, position)) {
-                start = reAmp.getParenStart(2);
-                sb.append(stringIter.substring(position, start));
-                sb.append("amp;");
-                sb.append(reAmp.getParen(2));
-                position = reAmp.getParenEnd(0);
-            }
-            sb.append(stringIter.substring(position));
-
-            print("<ulink url=\""+sb.toString()+"\">", 0, false);
+            String address = escapeAmpersand(tag.getLink());
+            print("<ulink url=\""+address+"\">", 0, false);
             inline = true;
         }
 
@@ -405,18 +422,18 @@ public class ShowDocbook implements AbcAction {
         }
 
         private void visitLiStart() {
-            print("<listitem>", 3, true);
+            print("<listitem><para>", 3, true);
             inline = false;
         }
 
         private void visitLiEnd() {
-            print("</listitem>", 2, true);
+            print("</para></listitem>", 2, true);
             inline = false;
         }
 
         private void visitTableStart() {
             print("<informaltable>", 2, true);
-            print("<tgroup>", 2, true);
+            print("<tgroup cols=\"XXX\">", 2, true);
             print("<tbody>", 2, true);
             inline = false;
         }
@@ -464,7 +481,21 @@ public class ShowDocbook implements AbcAction {
             inline = false;
         }
 
-        private void visitBr() {}
+        private void visitStrongStart() {
+            print("<emphasis>", 0, false);
+            inline = true;
+        }
+
+        private void visitStrongEnd() {
+            print("</emphasis>", 0, false);
+            inline = false;
+        }
+
+        private void visitBr() {
+            print("[BR]", 0, true);
+        }
+
+        private void visitHr() {}
         private void visitTbodyStart() {}
         private void visitTbodyEnd() {}
 
@@ -477,6 +508,10 @@ public class ShowDocbook implements AbcAction {
             print("</command>", 0, false);
             inline = false;
         }
+    }
+
+    private String escapeAmpersand(String input) {
+        return input.replaceAll("&","&amp;");
     }
 
     public static void main(String[] args) throws Exception {
