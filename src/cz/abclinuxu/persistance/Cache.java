@@ -161,7 +161,6 @@ public class Cache implements Task {
      * will scan all CachedObjects, and LRU objects are removed from cache.
      */
     public void runJob() {
-        log.info("Cache synchronization starts ...");
         long expectedModCount = modCount;
 
         try {
@@ -181,6 +180,9 @@ public class Cache implements Task {
         } catch (ConcurrentModificationException e) {
             log.warn("Bad timing in CacheSynchronizationDaemon!");
         }
-        log.info("... cache synchronization is finished.");
+    }
+
+    public String getJobName() {
+        return "Cache";
     }
 }
