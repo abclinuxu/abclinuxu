@@ -778,12 +778,16 @@ public class EditBlog implements AbcAction, Configurable {
                 pageSize.detach();
         } else {
             try {
-                Integer.parseInt(s);
+                int size = Integer.parseInt(s);
+                if (size<1) {
+                    ServletUtils.addError(PARAM_PAGE_SIZE, "Prosím zadejte èíslo vìt¹í ne¾ nula.", env, null);
+                    return false;
+                }
+                pageSize.setText(Integer.toString(size));
             } catch (NumberFormatException e) {
                 ServletUtils.addError(PARAM_PAGE_SIZE, "Prosím zadejte celé èíslo.", env, null);
                 return false;
             }
-            pageSize.setText(s);
         }
         return true;
     }
