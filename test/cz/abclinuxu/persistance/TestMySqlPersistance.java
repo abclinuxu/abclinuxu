@@ -30,6 +30,7 @@ public class TestMySqlPersistance extends TestCase {
         org.apache.log4j.Category.getDefaultHierarchy().disableAll();
         super.setUp();
         persistance = new MySqlPersistance("jdbc:mysql://localhost/unit?user=literakl");
+        persistance.setCache(new Cache(persistance));
     }
 
     public static Test suite() {
@@ -235,24 +236,24 @@ public class TestMySqlPersistance extends TestCase {
 
         // tests create()
         List content = processors.getContent();
-        assertEquals(content.size(),2);
+        assertEquals(2,content.size());
         GenericObject first = ((Relation)content.get(0)).getChild();
         GenericObject second = ((Relation)content.get(1)).getChild();
         assertTrue(first.getId()==duron.getId() || second.getId()==duron.getId());
         assertTrue(first.getId()==pentium.getId() || second.getId()==pentium.getId());
 
         content = intel.getContent();
-        assertEquals(content.size(),1);
+        assertEquals(1,content.size());
         first = ((Relation)content.get(0)).getChild();
         assertTrue(first.getId()==pentium.getId());
 
         content = duron.getContent();
-        assertEquals(content.size(),1);
+        assertEquals(1,content.size());
         first = ((Relation)content.get(0)).getChild();
         assertTrue(first.getId()==duron1.getId());
 
         content = pentium.getContent();
-        assertEquals(content.size(),2);
+        assertEquals(2,content.size());
         first = ((Relation)content.get(0)).getChild();
         second = ((Relation)content.get(1)).getChild();
         assertTrue(first.getId()==pentium1.getId() || second.getId()==pentium1.getId());
@@ -267,10 +268,10 @@ public class TestMySqlPersistance extends TestCase {
         pentium = (Item) persistance.findById(pentium);
 
         content = processors.getContent();
-        assertEquals(content.size(),0);
+        assertEquals(0,content.size());
 
         content = intel.getContent();
-        assertEquals(content.size(),1);
+        assertEquals(1,content.size());
 
         try {
             duron = (Item) persistance.findById(duron);

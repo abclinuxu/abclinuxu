@@ -49,7 +49,7 @@ public class GenericObject {
     /**
      * adds another dependant object
      */
-    public void addContent(GenericObject object) {
+    public void addContent(Relation object) {
         content.add(object);
     }
 
@@ -135,5 +135,9 @@ public class GenericObject {
         }
 
         return false;
+    }
+
+    public int hashCode() {
+        return id;
     }
 }

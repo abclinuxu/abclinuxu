@@ -40,6 +40,7 @@ public class MySqlPersistance implements Persistance {
 
     /** contains URL to database connection */
     String dbUrl = null;
+    Cache cache = null;
 
     static {
         try {
@@ -52,6 +53,10 @@ public class MySqlPersistance implements Persistance {
     public MySqlPersistance(String dbUrl) {
         if ( dbUrl==null ) log.fatal("Neni mozne inicializovat MySqlPersistenci prazdnym URL!");
         this.dbUrl = dbUrl;
+    }
+
+    public void setCache(Cache cache) {
+        this.cache = cache;
     }
 
     public void create(GenericObject obj) throws PersistanceException {
@@ -82,6 +87,7 @@ public class MySqlPersistance implements Persistance {
                 obj.setId((int)mm.getLastInsertID());
             }
             obj.setInitialized(true);
+            cache.store(obj);
             log.info("Objekt ["+obj+"] ulozen");
         } catch ( SQLException e ) {
             log.error("Nemohu ulozit "+obj+"!",e);
@@ -111,6 +117,7 @@ public class MySqlPersistance implements Persistance {
             } else if (obj instanceof User) {
                 updateUser((User)obj);
             }
+            cache.store(obj);
         } catch (SQLException e) {
             log.error("Nemohu ulozit zmeny v "+obj);
             throw new PersistanceException("Nemohu ulozit zmeny v "+obj.toString()+" do databaze!",AbcException.DB_UPDATE,obj,e);
@@ -118,33 +125,35 @@ public class MySqlPersistance implements Persistance {
     }
 
     public void synchronize(GenericObject obj) throws PersistanceException {
-        obj.synchronizeWith(findById(obj));
+        if ( obj==null ) return;
+        GenericObject found = cache.load(obj);
+        if ( found!=null ) found = findById(obj);
+
+        obj.synchronizeWith(found);
         obj.setInitialized(true);
+    }
+
+    public void synchronizeCached(CachedObject cached) {
+        try {
+            GenericObject obj = cached.object;
+            obj.synchronizeWith(loadObject(obj));
+            obj.setInitialized(true);
+            cached.nextSync = System.currentTimeMillis()+Cache.SYNC_INTERVAL;
+        } catch (Exception e) {
+            log.warn("Cannot synchronize cached object.",e);
+        }
     }
 
     public GenericObject findById(GenericObject obj) throws PersistanceException {
         if ( obj==null ) throw new PersistanceException("Objekt nebyl nalezen!",AbcException.DB_NOT_FOUND,obj,null);
-        GenericObject result = null;
+        GenericObject result = cache.load(obj);
+        if ( result!=null ) return result;
+
         if ( log.isDebugEnabled() ) log.debug("Hledam podle PK objekt "+obj);
         try {
-            if (obj instanceof GenericDataObject) {
-                result = loadDataObject((GenericDataObject)obj);
-            } else if (obj instanceof Relation) {
-                result = loadRelation((Relation)obj);
-            } else if (obj instanceof Data) {
-                result = loadData((Data)obj);
-            } else if (obj instanceof Link) {
-                result = loadLink((Link)obj);
-            } else if (obj instanceof Poll) {
-                result = loadPoll((Poll)obj);
-            } else if (obj instanceof User) {
-                result = loadUser((User)obj);
-            } else if (obj instanceof Server) {
-                result = loadServer((Server)obj);
-            } else if (obj instanceof AccessRights) {
-                result = loadRights((AccessRights)obj);
-            }
+            result = loadObject(obj);
             if ( result!=null ) result.setInitialized(true);
+            cache.store(result);
             return result;
         } catch (SQLException e) {
             log.error("Chyba pri hledani "+obj,e);
@@ -195,7 +204,13 @@ public class MySqlPersistance implements Persistance {
                 try {
                     GenericObject o = (GenericObject) kind.newInstance();
                     o.setId(resultSet.getInt(1));
-                    synchronize(o);
+                    GenericObject tmp = cache.load(obj);
+                    if ( tmp!=null ) {
+                        o = tmp;
+                    } else {
+                        o = findById(o);
+                        cache.store(o);
+                    }
                     result.add(o);
                 } catch (Exception e) {
                     log.error("Cannot instantiate "+kind);
@@ -239,9 +254,10 @@ public class MySqlPersistance implements Persistance {
                 upper = resultSet.getInt(1);
                 relation.setUpper(upper);
                 relation.setChild(parent);
+
                 char type = resultSet.getString(2).charAt(0);
                 int id = resultSet.getInt(3);
-                parent = instantiateFromTree(type,id);
+                parent = findById(instantiateFromTree(type,id));
                 relation.setParent(parent);
                 result.add(0,relation);
             }
@@ -269,6 +285,7 @@ public class MySqlPersistance implements Persistance {
                 statement = con.prepareStatement("delete from "+getTable(obj)+" where cislo=?");
                 statement.setInt(1,obj.getId());
                 statement.executeUpdate();
+                cache.remove(obj);
 
                 if ( obj instanceof Poll ) {
                     statement = con.prepareStatement("delete from data_ankety where anketa=?");
@@ -487,15 +504,40 @@ public class MySqlPersistance implements Persistance {
     }
 
     /**
+     * Loads object by PK from database.
+     */
+    private GenericObject loadObject(GenericObject obj) throws PersistanceException, SQLException {
+        GenericObject result = null;
+        if (obj instanceof GenericDataObject) {
+            result = loadDataObject((GenericDataObject)obj);
+        } else if (obj instanceof Relation) {
+            result = loadRelation((Relation)obj);
+        } else if (obj instanceof Data) {
+            result = loadData((Data)obj);
+        } else if (obj instanceof Link) {
+            result = loadLink((Link)obj);
+        } else if (obj instanceof Poll) {
+            result = loadPoll((Poll)obj);
+        } else if (obj instanceof User) {
+            result = loadUser((User)obj);
+        } else if (obj instanceof Server) {
+            result = loadServer((Server)obj);
+        } else if (obj instanceof AccessRights) {
+            result = loadRights((AccessRights)obj);
+        }
+        return result;
+    }
+
+    /**
      * lookup tree for children of <code>obj</code> with <code>treeId</code> and sets them
-     * with <code>obj.setContent()</code> call.
+     * with <code>obj.setContent()</code> call. Children are not initialized.
      */
     private void findChildren(GenericObject obj, Connection con) throws PersistanceException, SQLException {
         PreparedStatement statement = con.prepareStatement("select cislo,predchozi,typ_potomka,potomek,jmeno from strom where typ_predka=? and predek=?");
         statement.setString(1,getTableId(obj));
         statement.setInt(2,obj.getId());
-
         ResultSet resultSet = statement.executeQuery();
+
         obj.clearContent();
         while ( resultSet.next() ) {
             Relation relation = new Relation(resultSet.getInt(1));

@@ -85,4 +85,11 @@ public final class Relation extends GenericObject {
     public String toString() {
         return "Relation " +id+",upper="+upper;
     }
+
+    public boolean equals(Object obj) {
+        if ( ! (obj instanceof Relation ) ) return false;
+        Relation o = (Relation) obj;
+        if ( upper==o.getUpper() && parent==o.getParent() && child==o.getChild() ) return true;
+        return false;
+    }
 }

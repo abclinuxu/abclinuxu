@@ -40,6 +40,7 @@ public class PersistanceFactory {
         Persistance persistance = (Persistance) instances.get(url);
         if ( persistance==null ) {
             persistance = new MySqlPersistance(url);
+            persistance.setCache(new Cache(persistance));
             instances.put(url,persistance);
         }
         return persistance;
