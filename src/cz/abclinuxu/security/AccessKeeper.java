@@ -81,9 +81,6 @@ public class AccessKeeper implements Configurable {
 
     public void checkAccessInternal(Relation relation, User user, String type, HttpServletRequest request, HttpServletResponse response) throws AccessDeniedException {
         String id = getSystemId(relation.getChild());
-        String remoteAddress = request.getRemoteAddr();
-        String browser = request.getHeader("user-agent");
-        long now = System.currentTimeMillis();
 
         if (user!=null) {
             SQLTool sqlTool = SQLTool.getInstance();
@@ -102,6 +99,10 @@ public class AccessKeeper implements Configurable {
             if ( cookie.getName().equals(id) )
                 throw new AccessDeniedException("Object has been already used!", false);
         }
+
+        String remoteAddress = getClientIPAddress(request);
+        String browser = request.getHeader("user-agent");
+        long now = System.currentTimeMillis();
 
         Map storedSessions = (Map) sessionsMap.get(id);
         if (storedSessions!=null) {
@@ -132,6 +133,29 @@ public class AccessKeeper implements Configurable {
 
         Session savedSession = new Session(remoteAddress, now, browser);
         storedSessions.put(remoteAddress, savedSession);
+    }
+
+    /**
+     * Proxy aware code, that extracts IP address of the client.
+     */
+    private String getClientIPAddress(HttpServletRequest request) {
+        String ip = request.getHeader("CLIENT-IP");
+        if (ip!=null)
+            return ip;
+
+        ip = request.getHeader("X_FORWARDED_FOR");
+        if (ip!=null)
+            return ip;
+
+        ip = request.getHeader("FORWARDED_FOR");
+        if (ip!=null)
+            return ip;
+
+        ip = request.getHeader("FORWARDED");
+        if (ip!=null)
+            return ip;
+
+        return request.getRemoteAddr();
     }
 
     /**
