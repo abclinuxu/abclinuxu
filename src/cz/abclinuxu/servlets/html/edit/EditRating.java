@@ -37,11 +37,9 @@ public class EditRating implements AbcAction, Configurable {
     public static final String PARAM_TYPE = "rtype";
     public static final String PARAM_VALUE = "rvalue";
 
-    public static final int VALUE_MIN = 1;
+    public static final int VALUE_MIN = 0;
     public static final int VALUE_MAX = 5;
 
-//    public static final String PREF_TEMPLATE_START = "template.start";
-//    public static final String PREF_TEMPLATE_END = "template.end";
     public static final String PREF_MESSAGE_OK = "msg.ok";
     public static final String PREF_MESSAGE_MISSING_DATA = "msg.data.missing";
     public static final String PREF_MESSAGE_ALREADY_RATED = "msg.already.rated";
