@@ -20,6 +20,7 @@ import java.sql.*;
 /**
  * Thread-safe singleton, that encapsulates SQL commands
  * used outside of Persistance implementations.
+ * todo refactor this. e.g. use templates, which taks as argument String sql and Map of parameters
  */
 public final class SQLTool implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(SQLTool.class);
@@ -36,6 +37,7 @@ public final class SQLTool implements Configurable {
     public static final String PREF_DISCUSSION_RELATIONS_BY_CREATED = "discussion.relations.by.created";
     public static final String PREF_DISCUSSION_RELATIONS_BY_CREATED_IN = "discussion.relations.by.created.in";
     public static final String PREF_COUNT_DISCUSSION_RELATIONS_IN = "count.discussion.relations.in";
+    public static final String PREF_SECTION_RELATIONS_BY_TYPE = "section.relations.by.type";
 
     public static final String PREF_ITEMS_BY_TYPE_BY_ID = "items.by.type.by.id";
 
@@ -73,7 +75,7 @@ public final class SQLTool implements Configurable {
     private String countArticlesByUser, countRecordsByUser, countItemsByUser;
     private String countItemsByType, countRecordsByType, countQuestionsByUser, countUsersByGroup;
     private String usersWithWeeklyMail, usersWithRoles, usersByGroup;
-    private String itemsByTypeById;
+    private String itemsByTypeById, sectionRelationsByType;
 
 
     /**
@@ -134,6 +136,34 @@ public final class SQLTool implements Configurable {
 
             resultSet = statement.executeQuery();
             List result = new ArrayList(count);
+            while ( resultSet.next() ) {
+                int id = resultSet.getInt(1);
+                Relation relation = (Relation) persistance.findById(new Relation(id));
+                result.add(relation);
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
+     * Finds relations, where child is a category of specified type.
+     * @return List of initialized relations
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findSectionRelationsByType(int type) {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(sectionRelationsByType);
+            statement.setInt(1, type);
+
+            resultSet = statement.executeQuery();
+            List result = new ArrayList();
             while ( resultSet.next() ) {
                 int id = resultSet.getInt(1);
                 Relation relation = (Relation) persistance.findById(new Relation(id));
@@ -881,5 +911,6 @@ public final class SQLTool implements Configurable {
         itemsByTypeById = prefs.get(PREF_ITEMS_BY_TYPE_BY_ID, null);
         usersByGroup = prefs.get(PREF_USERS_BY_GROUP, null);
         countUsersByGroup = prefs.get(PREF_COUNT_USERS_BY_GROUP, null);
+        sectionRelationsByType = prefs.get(PREF_SECTION_RELATIONS_BY_TYPE, null);
     }
 }

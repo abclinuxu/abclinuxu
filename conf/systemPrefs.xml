@@ -119,20 +119,16 @@
               <entry key="url.live" value="proxool.abc"/>
               <entry key="url.test" value="jdbc:mysql://localhost/unit?user=literakl&amp;password=lkaretil&amp;useUnicode=true&amp;characterEncoding=ISO-8859-2"/>
               <entry key="proxool" value="WEB-INF/conf/proxool.xml"/>
-            </map>
-          </node>
-          <node name="MySqlPersistance">
-            <map>
               <entry key="no.children.for.section" value="A,B,C,D,E"/>
-	      <!-- zpravicky -->
+              <!-- zpravicky -->
               <entry key="no.children.for.section.A" value="452"/>
-	      <!-- forum.distribuce -->
+              <!-- forum.distribuce -->
               <entry key="no.children.for.section.B" value="475,476,477,478,479,480,482,483,484,520,521,523"/>
-	      <!-- forum.hardware -->
+              <!-- forum.hardware -->
               <entry key="no.children.for.section.C" value="486,487,488,489,490,504,492,493,494,495,496,497,498,499,503,501,502,525,526"/>
-	      <!-- forum.nastaveni -->
+              <!-- forum.nastaveni -->
               <entry key="no.children.for.section.D" value="519,508,509,510,511,512,513,527,528,529"/>
-	      <!-- forum.aplikace -->
+              <!-- forum.aplikace -->
               <entry key="no.children.for.section.E" value="514,515,516,517,518,524,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545"/>
             </map>
           </node>
@@ -149,6 +145,7 @@
               <entry key="article.relations.within.period" value="select R.cislo from relace R left join polozka P on R.potomek=P.cislo where R.typ_potomka='P' and R.predchozi in (2,3,4,5,6,251,5324,8546,12448) and P.typ=2 and P.vytvoreno&gt;? and P.vytvoreno&lt;? order by vytvoreno asc"/>
               <entry key="news.relations.by.created" value="select R.cislo from polozka P, relace R where R.predchozi=42932 and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek order by vytvoreno desc limit ?,?"/>
               <entry key="news.relations.within.period" value="select R.cislo from polozka P, relace R where R.predchozi=42932 and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek and vytvoreno&gt;? and vytvoreno&lt;?"/>
+              <entry key="section.relations.by.type" value="select R.cislo from relace R left join kategorie K on (K.cislo=R.potomek) where typ_potomka='K' and K.typ=?"/>
               <entry key="discussion.relations.by.created" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek where R.typ_potomka='P' and R.typ_predka='K' and P.typ=3 order by P.vytvoreno desc limit ?,?"/>
               <entry key="discussion.relations.by.created.in" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek where R.predchozi=? and P.typ=3 order by P.vytvoreno desc limit ?,?"/>
               <entry key="count.discussion.relations.in" value="select count(*) from relace R left join polozka P on P.cislo=R.potomek where R.predchozi=? and P.typ=3"/>

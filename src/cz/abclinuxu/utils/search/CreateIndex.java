@@ -29,6 +29,7 @@ import java.io.FileWriter;
  * maintaining Lucene's index.
  * todo give score boost to titles and names of objects
  * todo replace recursion with stack based implementation
+ * todo complete rewrite
  */
 public class CreateIndex implements Configurable {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(CreateIndex.class);
@@ -40,11 +41,13 @@ public class CreateIndex implements Configurable {
 
     static String indexPath,lastRunFilename;
     static Persistance persistance;
+    static SQLTool sqlTool;
 
     static {
         Configurator configurator = ConfigurationManager.getConfigurator();
         configurator.configureMe(new CreateIndex(null));
         persistance = PersistanceFactory.getPersistance(EmptyCache.class);
+        sqlTool = SQLTool.getInstance();
     }
 
     IndexWriter indexWriter;
@@ -65,10 +68,12 @@ public class CreateIndex implements Configurable {
             Relation software = (Relation) persistance.findById(new Relation(Constants.REL_SOFTWARE));
             Relation drivers = (Relation) persistance.findById(new Relation(Constants.REL_DRIVERS));
             Relation abc = (Relation) persistance.findById(new Relation(Constants.REL_ABC));
+            List forums = sqlTool.findSectionRelationsByType(Category.SECTION_FORUM);
 
             long start = System.currentTimeMillis();
 
             test.makeIndexOn(articles,UrlUtils.PREFIX_CLANKY);
+            test.indexForums(forums);
             test.makeIndexOn(hardware,UrlUtils.PREFIX_HARDWARE);
             test.makeIndexOn(software,UrlUtils.PREFIX_SOFTWARE);
             test.makeIndexOn(drivers,UrlUtils.PREFIX_DRIVERS);
@@ -76,6 +81,7 @@ public class CreateIndex implements Configurable {
 
             indexWriter.optimize();
             indexWriter.close();
+            
             long end = System.currentTimeMillis();
 
             FileWriter fos = new FileWriter(getLastRunFile());
@@ -86,6 +92,7 @@ public class CreateIndex implements Configurable {
             System.out.println("Indexing of "+indexWriter.docCount()+" documents took "+(end-start)/1000+" seconds.");
         } catch (Throwable e) {
             log.error("Indexing failed!",e);
+            e.printStackTrace();
         }
     }
 
@@ -94,6 +101,24 @@ public class CreateIndex implements Configurable {
      */
     public CreateIndex(IndexWriter writer) {
         indexWriter = writer;
+    }
+
+    /**
+     * Indexes content of given forums.
+     */
+    void indexForums(List forums) throws Exception {
+        int total, i;
+        for ( Iterator iter = forums.iterator(); iter.hasNext(); ) {
+            Relation relation = (Relation) iter.next();
+            total = sqlTool.getDiscussionCountIn(relation.getId());
+
+            for (i=0;i<total;) {
+                List discussions = sqlTool.findDiscussionRelationsByCreatedIn(relation.getId(), i, 50);
+                i += discussions.size();
+                for ( Iterator iter2 = discussions.iterator(); iter2.hasNext(); )
+                    makeIndexOn((Relation) iter2.next(),UrlUtils.PREFIX_FORUM);
+            }
+        }
     }
 
     /**
@@ -231,7 +256,7 @@ public class CreateIndex implements Configurable {
             if ( parent instanceof Item && ((Item)parent).getType()==Item.ARTICLE ) {
                 node = ((Item)parent).getData().selectSingleNode("data/name");
                 if ( node!=null )
-                    title = "Diskuse k èlánku " + node.getText();
+                    title = "Diskuse k: " + node.getText();
             }
         }
 
@@ -296,8 +321,10 @@ public class CreateIndex implements Configurable {
             Record record = (Record) relation.getChild();
             content.remove(relation);
 
-            if ( record.getType()==Record.HARDWARE ) tmp = indexHardware(record);
-            if ( record.getType()==Record.SOFTWARE ) tmp = indexSoftware(record);
+            if ( record.getType()==Record.HARDWARE )
+                tmp = indexHardware(record);
+            if ( record.getType()==Record.SOFTWARE )
+                tmp = indexSoftware(record);
             sb.append(" ");
             sb.append(tmp);
         }
@@ -394,7 +421,7 @@ public class CreateIndex implements Configurable {
     }
 
     /**
-     * @return File, which serves as timestamp of last indexing.
+     * @return File, which serves as timestamp of last indexing. Used for monitoring.
      */
     public static File getLastRunFile() {
         return new File(indexPath,lastRunFilename);

@@ -8,16 +8,11 @@
 package cz.abclinuxu.persistance;
 
 import java.util.*;
-import java.util.prefs.Preferences;
 import java.sql.*;
 
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.exceptions.*;
 import cz.abclinuxu.AbcException;
-import cz.abclinuxu.utils.config.Configurable;
-import cz.abclinuxu.utils.config.ConfigurationManager;
-import cz.abclinuxu.utils.config.ConfigurationException;
-import cz.abclinuxu.utils.Misc;
 import org.logicalcobwebs.proxool.ProxoolException;
 import org.logicalcobwebs.proxool.ProxoolFacade;
 
@@ -41,15 +36,12 @@ import org.logicalcobwebs.proxool.ProxoolFacade;
  * <tr><td>error</td><td>E</td></tr>
  * </table>
  */
-public class MySqlPersistance implements Persistance, Configurable {
+public class MySqlPersistance implements Persistance {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(MySqlPersistance.class);
-
-    public static final String PREF_NO_CHILDREN_FOR_SECTION = "no.children.for.section";
 
     /** contains URL to database connection */
     String dbUrl = null;
     Cache cache = null;
-    Map noChildren = null;
 
     static {
         try {
@@ -63,7 +55,6 @@ public class MySqlPersistance implements Persistance, Configurable {
         if ( dbUrl==null )
             throw new MissingArgumentException("Neni mozne inicializovat MySqlPersistenci prazdnym URL!");
         this.dbUrl = dbUrl;
-        ConfigurationManager.getConfigurator().configureMe(this);
     }
 
     public void setCache(Cache cache) {
@@ -559,7 +550,7 @@ public class MySqlPersistance implements Persistance, Configurable {
      */
     private void findChildren(GenericObject obj, Connection con) throws SQLException {
         PreparedStatement statement = null; ResultSet resultSet = null;
-        if (noChildren.get(obj)!=null)
+        if (PersistanceFactory.isLoadingChildrenForbidden(obj))
             return; // content of this object might be too big
 
         try {
@@ -1437,23 +1428,5 @@ public class MySqlPersistance implements Persistance, Configurable {
     private String insertEncoding(String xml) {
         if ( xml==null || xml.startsWith("<?xml") ) return xml;
         return "<?xml version=\"1.0\" encoding=\"ISO-8859-2\" ?>\n"+xml;
-    }
-
-    public void configure(Preferences prefs) throws ConfigurationException {
-        noChildren = new HashMap(100,0.95f);
-        Category category = null;
-
-        String tmp = prefs.get(PREF_NO_CHILDREN_FOR_SECTION,"");
-        StringTokenizer stk = new StringTokenizer(tmp,",");
-        while (stk.hasMoreTokens()) {
-            String key = PREF_NO_CHILDREN_FOR_SECTION+"."+stk.nextToken();
-            String values = prefs.get(key,"");
-
-            StringTokenizer stk2 = new StringTokenizer(values, ",");
-            while(stk2.hasMoreTokens()) {
-                category = new Category(Misc.parseInt(stk2.nextToken(),0));
-                noChildren.put(category,Boolean.TRUE);
-            }
-        }
     }
 }

@@ -56,7 +56,6 @@ public class LRUCache implements Cache,Configurable {
         try {
             if ( obj instanceof Relation ) {
                 GenericObject parent = ((Relation) obj).getParent();
-                Relation clone = ((Relation) obj).cloneRelation();
 
                 // if parent has been changed on stored relation (aka child was moved),
                 // we must remove relation first, otherwise parent would be inconsistent.
@@ -64,9 +63,11 @@ public class LRUCache implements Cache,Configurable {
                 if ( original!=null && (! original.getParent().equals(parent)) )
                     remove(original);
 
-                // if parent has been already cached, add relation to it
+                Relation clone = ((Relation) obj).cloneRelation();
+
+                // if parent has been already cached and is allowed to laod children, add relation to it
                 GenericObject cached = (GenericObject) data.getElementNoLRU(parent);
-                if ( cached!=null ) {
+                if ( cached!=null && !PersistanceFactory.isLoadingChildrenForbidden(cached)) {
                     synchronized (cached) {
                         cached.addContent(clone);
                     }
