@@ -3,8 +3,8 @@
 <@lib.showMessages/>
 
 <p>Blogy jsou moderní formou vedení deníèku na internetu.
-Na Abíèku budou va¹e pøíspìvky ihned dostipné desítkám tisícùm
-ètenáøù. Ve svém blogu mù¾ete zapisovat rady a návody,
+Na Abíèku budou va¹e pøíspìvky ihned dostupné desítkám tisícù
+ètenáøù. Ve svém blogu mù¾ete psát rady a návody,
 nebo pokroky va¹eho Open Source projektu, komentovat
 dìní na linuxové scénì èi jako zaèáteèník popisovat své
 pokroky s Linuxem (v kombinaci s diskusním fórem díky
@@ -14,14 +14,23 @@ nebudete poru¹ovat zákony èi normy slu¹ného chování,
 mù¾ete psát na libovolné téma.
 </p>
 
-<p>Prvním krokem je zalo¾ení blogu. Potøebujeme
-od vás vìdìt jeho název, pod kterým bude blog dostupný.
-Napøíklad pojmenujete-li si blog snehulak, jeho
-adresa bude www.abclinuxu.cz/blog/snehulak. Název blogu
-by mìl obsahovat pouze písmena A-Z, èíslice a podtr¾ítko.
+<p>Momentálnì blogy nejsou je¹tì zcela hotovy a chybí
+spousta funkènosti, namátkou RSS èi indexování pro fulltextové
+hledání. Narazíte-li na chybu èi budete-li chtít nìco
+doimplementovat, napi¹te nám <a href="/clanky/dir/3500">vzkaz</a>.
 </p>
 
-<p>Volitelnì mù¾ete u¾ teï vytvoøit a¾ tøi kategorie,
+<p>Prvním krokem je zalo¾ení blogu. Musíte zvolit
+jméno blogu. Toto jméno bude pevnou a nedílnou
+souèástí URL va¹eho blogu, proto mù¾e obsahovat
+jen písmena anglické abecedy, èíslice a podtr¾ítko
+(navíc první písmeno nesmí být èíslice).
+Napøíklad pojmenujete-li si blog snehulak, jeho
+adresa bude www.abclinuxu.cz/blog/snehulak. Jméno
+blogu mù¾ete pozdìji zmìnit, pøestane-li vám vyhovovat.
+</p>
+
+<p>Dále mù¾ete vytvoøit a¾ tøi kategorie,
 do kterých budete zaøazovat své pøíspìvky. Napøíklad
 <i>Linux</i>, <i>©kola</i>, <i>Básnièky</i> èi <i>GNU</i>.
 </p>
