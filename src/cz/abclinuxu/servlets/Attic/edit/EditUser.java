@@ -201,7 +201,7 @@ public class EditUser extends AbcServlet {
         if (node!=null) params.put(EditUser.PARAM_WWW,node.getText());
 
         node = document.selectSingleNode("data/personal");
-        if (node!=null) params.put(EditUser.PARAM_PERSONAL,node.getText());
+        if (node!=null) params.put(EditUser.PARAM_PERSONAL,VelocityHelper.escapeAmpersand(node.getText()));
 
         return getTemplate("edit/user.vm");
     }

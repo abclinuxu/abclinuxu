@@ -9,7 +9,6 @@
 package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcServlet;
-import cz.abclinuxu.servlets.utils.TextUtils;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.servlets.view.SelectIcon;
 import cz.abclinuxu.data.Category;
@@ -202,7 +201,7 @@ public class EditCategory extends AbcServlet {
             if (node!=null) params.put(EditCategory.PARAM_ICON,node.getText());
 
             node = document.selectSingleNode("data/note");
-            if (node!=null) params.put(EditCategory.PARAM_NOTE,node.getText());
+            if (node!=null) params.put(EditCategory.PARAM_NOTE,VelocityHelper.escapeAmpersand(node.getText()));
 
             params.put(EditCategory.PARAM_OPEN, (category.isOpen())? "yes":"no");
         }

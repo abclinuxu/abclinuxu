@@ -8,7 +8,6 @@ package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.view.SelectIcon;
 import cz.abclinuxu.servlets.AbcServlet;
-import cz.abclinuxu.servlets.utils.TextUtils;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
@@ -271,7 +270,7 @@ public class EditSoftware extends AbcServlet {
         node = document.selectSingleNode("data/version");
         if ( node!=null ) params.put(PARAM_VERSION,node.getText());
         node = document.selectSingleNode("data/text");
-        if ( node!=null ) params.put(PARAM_TEXT,node.getText());
+        if ( node!=null ) params.put(PARAM_TEXT,VelocityHelper.escapeAmpersand(node.getText()));
 
         params.put(PARAM_ACTION,ACTION_EDIT_RECORD_STEP2);
         return getTemplate("add/swrecord.vm");

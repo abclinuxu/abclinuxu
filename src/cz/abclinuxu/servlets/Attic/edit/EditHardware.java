@@ -7,7 +7,6 @@
 package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcServlet;
-import cz.abclinuxu.servlets.utils.TextUtils;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.servlets.view.SelectIcon;
 import cz.abclinuxu.data.*;
@@ -327,13 +326,13 @@ public class EditHardware extends AbcServlet {
         node = document.selectSingleNode("data/price");
         if ( node!=null ) params.put(PARAM_PRICE,node.getText());
         node = document.selectSingleNode("data/setup");
-        if ( node!=null ) params.put(PARAM_SETUP,node.getText());
+        if ( node!=null ) params.put(PARAM_SETUP,VelocityHelper.escapeAmpersand(node.getText()));
         node = document.selectSingleNode("data/params");
-        if ( node!=null ) params.put(PARAM_TECHPARAM,node.getText());
+        if ( node!=null ) params.put(PARAM_TECHPARAM,VelocityHelper.escapeAmpersand(node.getText()));
         node = document.selectSingleNode("data/identification");
-        if ( node!=null ) params.put(PARAM_IDENTIFICATION,node.getText());
+        if ( node!=null ) params.put(PARAM_IDENTIFICATION,VelocityHelper.escapeAmpersand(node.getText()));
         node = document.selectSingleNode("data/note");
-        if ( node!=null ) params.put(PARAM_NOTE,node.getText());
+        if ( node!=null ) params.put(PARAM_NOTE,VelocityHelper.escapeAmpersand(node.getText()));
 
         params.put(PARAM_ACTION,ACTION_EDIT_RECORD_STEP2);
         return getTemplate("add/hwrecord.vm");

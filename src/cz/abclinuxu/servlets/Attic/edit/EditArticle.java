@@ -8,6 +8,7 @@ package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.servlets.view.SelectRelation;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
@@ -191,7 +192,7 @@ public class EditArticle extends AbcServlet {
         node = document.selectSingleNode("data/published");
         if ( node!=null ) params.put(PARAM_PUBLISHED,node.getText());
         node = document.selectSingleNode("data/perex");
-        if ( node!=null ) params.put(PARAM_PEREX,node.getText());
+        if ( node!=null ) params.put(PARAM_PEREX,VelocityHelper.escapeAmpersand(node.getText()));
 
         Record record = null;
         for (Iterator iter = item.getContent().iterator(); iter.hasNext();) {
@@ -201,7 +202,7 @@ public class EditArticle extends AbcServlet {
                 record = (Record) rel.getChild();
                 if ( record.getType()==Record.ARTICLE ) {
                     document = record.getData();
-                    node = document.selectSingleNode("data/content");
+                    node = document.selectSingleNode(VelocityHelper.escapeAmpersand("data/content"));
                     params.put(PARAM_CONTENT,node.getText());
                     break;
                 }

@@ -33,11 +33,12 @@ import java.text.ParseException;
 public class VelocityHelper {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(VelocityHelper.class);
 
-    static RE lineBreaks,emptyLine;
+    static RE lineBreaks,emptyLine,ampersand;
     static {
         try {
             lineBreaks = new RE("(<br>)|(<p>)|(<div>)",RE.MATCH_CASEINDEPENDENT);
             emptyLine = new RE("(\r\n){2}|(\n){2}", RE.MATCH_MULTILINE);
+            ampersand = new RE("&");
         } catch (RESyntaxException e) {
             log.error("Cannot create regexp to find line breaks!", e);
         }
@@ -644,5 +645,16 @@ public class VelocityHelper {
         if ( str==null ) return null;
         if ( lineBreaks.match(str) ) return str;
         return emptyLine.subst(str,"<P>\n");
+    }
+
+    /**
+     * This method escapes ampersand using html convention.
+     * The reason is, that if you escape some entity and
+     * edit it in textarea, html browser (at least mozilla)
+     * unescapes it! So you lose escape sequence!
+     */
+    public static String escapeAmpersand(String str) {
+        if ( str==null ) return null;
+        return ampersand.subst(str,"&amp;");
     }
 }

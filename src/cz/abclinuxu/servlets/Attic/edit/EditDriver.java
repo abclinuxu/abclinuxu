@@ -8,7 +8,6 @@ package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.utils.TextUtils;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.security.Guard;
@@ -107,7 +106,7 @@ public class EditDriver extends AbcServlet {
             node = document.selectSingleNode("data/url");
             if ( node!=null ) params.put(PARAM_URL,node.getText());
             node = document.selectSingleNode("data/note");
-            if ( node!=null ) params.put(PARAM_NOTE,node.getText());
+            if ( node!=null ) params.put(PARAM_NOTE,VelocityHelper.escapeAmpersand(node.getText()));
         }
 
         return getTemplate("add/driver.vm");
