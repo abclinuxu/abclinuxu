@@ -4,12 +4,12 @@
  <#global ITEM=TOOL.sync(relation.child)>
   <p>${DATE.show(ITEM.created,"CZ_SHORT")}<br/>
   ${TOOL.removeTags(TOOL.xpath(ITEM,"data/content"))?xml}
-  <br/></p>
+  <br/><br/></p>
 </#list>
-<p>
 <#if FOUND.nextPage?exists>
-<anchor>Dal¹í<go href="/zpravicky" method="post"><postfield name="from" value="${FOUND.nextPage.row}"/></go></anchor>
-</#if>
+<p>
+ <anchor>Dal¹í<go href="/zpravicky" method="post"><postfield name="from" value="${FOUND.nextPage.row}"/></go></anchor>
 </p>
+</#if>
 </card>
 <#include "../footer.ftl">
