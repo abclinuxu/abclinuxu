@@ -7,6 +7,7 @@ package cz.abclinuxu.utils;
 
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.exceptions.PersistanceException;
+import cz.abclinuxu.exceptions.InvalidDataException;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.SQLTool;
@@ -15,6 +16,7 @@ import cz.abclinuxu.servlets.utils.PreparedDiscussion;
 import cz.abclinuxu.servlets.utils.Discussion;
 import org.dom4j.Document;
 import org.dom4j.Node;
+import org.dom4j.Element;
 import org.apache.log4j.Logger;
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
@@ -510,6 +512,28 @@ public class Tools {
                 case '&': sb.append("&amp;");break;
                 default: sb.append((char)c);
             }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Concatenates all pages of the article.
+     * @return complete text of the article
+     */
+    public static String getCompleteArticleText(Item article) {
+        Map children = Tools.groupByType(article.getContent());
+        List records = (List) children.get(Constants.TYPE_RECORD);
+        Record record = (Record) ((Relation) records.get(0)).getChild();
+        if ( !record.isInitialized() )
+            persistance.synchronize(record);
+
+        StringBuffer sb = new StringBuffer(5000);
+        List nodes = record.getData().selectNodes("/data/content");
+        if ( nodes.size()==0 )
+            throw new InvalidDataException("Záznam "+record.getId()+" má ¹patný obsah!");
+        else {
+            for ( Iterator iter = nodes.iterator(); iter.hasNext(); )
+                sb.append(((Element) iter.next()).getText());
         }
         return sb.toString();
     }
