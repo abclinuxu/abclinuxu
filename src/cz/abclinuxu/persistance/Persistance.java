@@ -70,7 +70,7 @@ public interface Persistance {
      * Finds objects, that fulfill <code>command</code>. Usage of this emthod requires deep knowledge
      * of persistance structure (such as SQL commands, database schema), which decreases portability
      * of your code.
-     * @return List of array of objects. You know, what it is.
+     * @return List of arrays of primitive objects. You know, what it is.
      */
     public List findByCommand(String command) throws PersistanceException;
 

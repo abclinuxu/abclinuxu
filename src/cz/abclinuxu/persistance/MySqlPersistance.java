@@ -222,7 +222,33 @@ public class MySqlPersistance implements Persistance {
     }
 
     public List findByCommand(String command) throws PersistanceException {
-        return null;
+        Connection con = null;
+        if ( command==null || command.length()==0 ) throw new PersistanceException("Neni mozne ulozit prazdny objekt!",AbcException.DB_INCOMPLETE,command,null);
+        List result = new ArrayList(5);
+
+        try {
+            con = getSQLConnection();
+            if (log.isDebugEnabled()) log.debug("Chystam se hledat podle "+command);
+
+            Statement statement = con.createStatement();
+            ResultSet resultSet = statement.executeQuery(command);
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            int columns = metaData.getColumnCount();
+
+            while ( resultSet.next() ) {
+                Object[] objects = new Object[columns];
+                for ( int i=0; i<columns; i++ ) {
+                    objects[i] = resultSet.getObject(i+1);
+                }
+                result.add(objects);
+            }
+        } catch ( SQLException e ) {
+            log.error("Chyba pri hledani "+command,e);
+            throw new PersistanceException("Chyba pri hledani!",AbcException.DB_FIND,command,e);
+        } finally {
+            releaseSQLConnection(con);
+        }
+        return result;
     }
 
     /**

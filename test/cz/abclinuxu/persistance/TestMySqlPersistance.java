@@ -188,6 +188,20 @@ public class TestMySqlPersistance extends TestCase {
         persistance.remove(c);
     }
 
+    public void testFindByCommand() throws Exception {
+        Category processors = new Category(0);
+        processors.setData("<name>Processors</name>");
+        persistance.create(processors);
+
+        List list = persistance.findByCommand("select cislo from kategorie where cislo="+processors.getId());
+        assertEquals(1,list.size());
+        Object[] objects = (Object[]) list.get(0);
+        assertEquals(1,objects.length);
+        assertEquals(new Integer(processors.getId()),objects[0]);
+
+        persistance.remove(processors);
+    }
+
     /**
      * tests functionality of tree
      */
