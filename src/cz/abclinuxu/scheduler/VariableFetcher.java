@@ -14,6 +14,9 @@ import cz.abclinuxu.exceptions.PersistanceException;
 
 import java.util.*;
 
+import freemarker.template.Configuration;
+import freemarker.template.TemplateModelException;
+
 /**
  * This class is responsible for periodic fetching
  * of template and index variables from database.
@@ -29,14 +32,13 @@ public class VariableFetcher extends TimerTask {
     Poll currentPoll;
 
     Calendar profileLastRun;
+    long linksLastRun;
     SQLTool sqlTool;
-    Persistance persistance;
 
     /**
      * Public constructor
      */
     public VariableFetcher() {
-        persistance = PersistanceFactory.getPersistance();
         sqlTool = SQLTool.getInstance();
         newHardware = new ArrayList(SIZE);
         newSoftware = new ArrayList(SIZE);
@@ -46,6 +48,7 @@ public class VariableFetcher extends TimerTask {
         counter = new HashMap(4);
         profileLastRun = Calendar.getInstance();
         profileLastRun.add(Calendar.DAY_OF_MONTH,-1);
+        linksLastRun = System.currentTimeMillis();
     }
 
     /**
@@ -103,6 +106,7 @@ public class VariableFetcher extends TimerTask {
      */
     public void run() {
         log.debug("fetching variables");
+        Persistance persistance = PersistanceFactory.getPersistance();
         try {
             // put counts into map
             Integer i = new Integer(sqlTool.getRecordCount(Record.HARDWARE));
@@ -121,7 +125,8 @@ public class VariableFetcher extends TimerTask {
             newSoftware = sqlTool.findRecordRelationsByUpdated(Record.SOFTWARE, 0,SIZE);
             newDrivers = sqlTool.findItemRelationsByUpdated(Item.DRIVER, 0,SIZE);
             newArticles = sqlTool.findArticleRelationsByCreated(0,ARTICLE_SIZE);
-            updateProfiles();
+            updateProfiles(persistance);
+            updateLinks(persistance);
 
             log.debug("finished fetching variables");
         } catch (Exception e) {
@@ -132,7 +137,7 @@ public class VariableFetcher extends TimerTask {
     /**
      * Each day randomly selects SIZE profiles.
      */
-    private void updateProfiles() {
+    private void updateProfiles(Persistance persistance) {
         Calendar calendar = Calendar.getInstance();
         if ( calendar.get(Calendar.DAY_OF_MONTH)==profileLastRun.get(Calendar.DAY_OF_MONTH) )
             return;
@@ -151,6 +156,21 @@ public class VariableFetcher extends TimerTask {
             } catch (PersistanceException e) {
                 // user doesn't exist, lets skip it.
             }
+        }
+    }
+
+    /**
+     * Workaround for outdated links on website. Even cache contains correct data!
+     */
+    private void updateLinks(Persistance persistance) {
+        if ( System.currentTimeMillis()-linksLastRun<15*360000)
+            return;
+        try {
+            Category linksCategory = (Category) persistance.findById(new Category(Constants.CAT_LINKS));
+            Map links = UpdateLinks.groupLinks(linksCategory, persistance);
+            Configuration.getDefaultConfiguration().setSharedVariable(Constants.VAR_LINKS, links);
+        } catch (TemplateModelException e) {
+            log.warn(e);
         }
     }
 }

@@ -3,10 +3,7 @@
  */
 package cz.abclinuxu.data;
 
-import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
-
-import java.util.Date;
 
 /**
  * Category is a node of the tree (not leaf)

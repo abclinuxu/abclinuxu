@@ -9,7 +9,7 @@ package cz.abclinuxu.scheduler;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.utils.Sorters;
+import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.exceptions.PersistanceException;
 
 import java.util.*;
@@ -19,6 +19,12 @@ import java.io.*;
 import org.dom4j.io.SAXReader;
 import org.dom4j.*;
 
+/**
+ * Updates Links from other servers.
+ * todo There is a bug, probably in template.ftl, which causes, that links displayed on web
+ * are not same, as in cache and database. It seems to me, that it is because template
+ * doesn't try to synchronize its FreeMarker shared variable with persistance. 
+ */
 public class UpdateLinks extends TimerTask {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(UpdateLinks.class);
 
@@ -43,43 +49,15 @@ public class UpdateLinks extends TimerTask {
     /** id of last server, maximum id */
     public static final int LAST_SERVER = MANDRAKE;
 
-    Persistance persistance;
     Category category = new Category(Constants.CAT_LINKS);
 
     /** contains definition of locations and preferences for all servers */
     Map definitions;
 
-    class ServerInfo {
-        static final int TRAFIKA = 1;
-        static final int RSS = 2;
-
-        /** where to download new links */
-        String url;
-        /** null fore default, otherwise valid encoding name of text */
-        String encoding;
-        /** in which format data are stored */
-        int format = TRAFIKA;
-
-        public ServerInfo(String url) {
-            this.url = url;
-        }
-
-        public ServerInfo(String url, String encoding, int format) {
-            this.url = url;
-            this.encoding = encoding;
-            this.format = format;
-        }
-
-        public String toString() {
-            return url;
-        }
-    }
-
     /**
      * Default constructor
      */
     public UpdateLinks() {
-        persistance = PersistanceFactory.getPersistance();
         definitions = new HashMap();
 
         definitions.put(new Server(ROOT),new ServerInfo("http://www.root.cz/share/ttitles.txt"));
@@ -100,20 +78,20 @@ public class UpdateLinks extends TimerTask {
      * Constructor for test
      */
     public UpdateLinks(boolean nic) {
-        persistance = PersistanceFactory.getPersistance();
         definitions = new HashMap();
 
-        definitions.put(new Server(ROOT),new ServerInfo("file:///home/literakl/java/abc/bussiness/obsahy/ttitles.txt"));
-        definitions.put(new Server(LW),new ServerInfo("file:///home/literakl/java/abc/bussiness/obsahy/lw.dat","Windows-1250",ServerInfo.TRAFIKA));
-        definitions.put(new Server(SW),new ServerInfo("file:///home/literakl/java/abc/bussiness/obsahy/sw.dat","Windows-1250",ServerInfo.TRAFIKA));
-        definitions.put(new Server(UG),new ServerInfo("file:///home/literakl/java/abc/bussiness/obsahy/czech.txt"));
-        definitions.put(new Server(PENGUIN),new ServerInfo("file:///home/literakl/java/abc/bussiness/obsahy/trafika.php3"));
-        definitions.put(new Server(WS),new ServerInfo("file:///home/literakl/java/abc/bussiness/obsahy/ws.dat"));
-        definitions.put(new Server(KECZY),new ServerInfo("file:///home/literakl/java/abc/bussiness/obsahy/headline.php3"));
-        definitions.put(new Server(REBOOT),new ServerInfo("file:///home/literakl/java/abc/bussiness/obsahy/reboot_lh.phtml"));
-        definitions.put(new Server(LINUXZONE),new ServerInfo("file:///home/literakl/java/abc/bussiness/obsahy/last10.phtml"));
-        definitions.put(new Server(LINUXSK),new ServerInfo("file:///home/literakl/java/abc/bussiness/obsahy/backend.php",null,ServerInfo.RSS));
-        definitions.put(new Server(LDAP),new ServerInfo("file:///home/literakl/java/abc/bussiness/obsahy/backend-ldap.php",null,ServerInfo.RSS));
+        definitions.put(new Server(ROOT),new ServerInfo("file:///home/literakl/abc/biz/titulky/ttitles.txt"));
+//        definitions.put(new Server(LW),new ServerInfo("file:///home/literakl/abc/biz/titulky/lw.dat","Windows-1250",ServerInfo.TRAFIKA));
+//        definitions.put(new Server(SW),new ServerInfo("file:///home/literakl/abc/biz/titulky/sw.dat","Windows-1250",ServerInfo.TRAFIKA));
+//        definitions.put(new Server(UG),new ServerInfo("file:///home/literakl/abc/biz/titulky/czech.txt"));
+//        definitions.put(new Server(PENGUIN),new ServerInfo("file:///home/literakl/abc/biz/titulky/trafika.php3"));
+//        definitions.put(new Server(WS),new ServerInfo("file:///home/literakl/abc/biz/titulky/ws.dat"));
+//        definitions.put(new Server(KECZY),new ServerInfo("file:///home/literakl/abc/biz/titulky/headline.php3"));
+//        definitions.put(new Server(REBOOT),new ServerInfo("file:///home/literakl/abc/biz/titulky/reboot_lh.phtml"));
+//        definitions.put(new Server(LINUXZONE),new ServerInfo("file:///home/literakl/abc/biz/titulky/last10.phtml"));
+//        definitions.put(new Server(LINUXSK),new ServerInfo("file:///home/literakl/abc/biz/titulky/backend.php",null,ServerInfo.RSS));
+//        definitions.put(new Server(LDAP),new ServerInfo("file:///home/literakl/abc/biz/titulky/backend-ldap.php",null,ServerInfo.RSS));
+        definitions.put(new Server(MANDRAKE), new ServerInfo("file:///home/literakl/abc/biz/titulky/titles_abc.php"));
     }
 
     /**
@@ -121,13 +99,14 @@ public class UpdateLinks extends TimerTask {
      */
     public void run() {
         log.debug("Starting task "+getJobName());
+        Persistance persistance = PersistanceFactory.getPersistance();
         category = (Category) persistance.findById(category);
         Map serverLinks = groupLinks(category,persistance);
 
         for (Iterator iter = definitions.keySet().iterator(); iter.hasNext();) {
             Server server = (Server) iter.next();
             try {
-                synchronize(server,category,serverLinks);
+                synchronize(server, category, serverLinks, persistance);
             } catch (PersistanceException e) {
                 log.warn("Cannot update links for server "+server+"!", e);
             } catch (Exception e) {
@@ -147,7 +126,7 @@ public class UpdateLinks extends TimerTask {
      * @param category Category, where to put new Links
      * @param serverLinks Map, where key is Server and value is list of its links.
      */
-    protected void synchronize(Server server, Category category, Map serverLinks) throws PersistanceException {
+    protected void synchronize(Server server, Category category, Map serverLinks, Persistance persistance) throws PersistanceException {
         ServerInfo definition = (ServerInfo) definitions.get(server);
         List stored = loadStoredLinks(server,serverLinks);
         List downloaded = null;
@@ -268,7 +247,7 @@ public class UpdateLinks extends TimerTask {
     protected List loadStoredLinks(Server server, Map serverLinks) {
         List links = (List) serverLinks.get(server);
         if ( links==null ) return new LinkedList();
-        Sorters.sortByDate(links,false);
+        Sorters2.byDate(links,"DESCENDING");
         return links;
     }
 
@@ -297,20 +276,24 @@ public class UpdateLinks extends TimerTask {
      */
     public static Map groupLinks(Category category, Persistance persistance) {
         List[] links = new List[LAST_SERVER+1];
-        for ( int i=0; i<=LAST_SERVER; i++ ) links[i] = new ArrayList();
+        for ( int i=0; i<=LAST_SERVER; i++ )
+            links[i] = new ArrayList();
 
         for (Iterator iter = category.getContent().iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
             try {
                 Link link = (Link) persistance.findById(relation.getChild());
-                if ( !link.isFixed()) links[link.getServer()].add(link);
+                if ( !link.isFixed() )
+                    links[link.getServer()].add(link);
             } catch (PersistanceException e) {
                 log.error("Cannot find child Link in "+relation,e);
             }
         }
 
         Map result = new HashMap();
-        for ( int i=1; i<=LAST_SERVER; i++ ) result.put(new Server(i),links[i]);
+        for ( int i=1; i<=LAST_SERVER; i++ )
+            result.put(new Server(i),links[i]);
+
         return result;
     }
 
@@ -318,5 +301,31 @@ public class UpdateLinks extends TimerTask {
         org.apache.log4j.BasicConfigurator.configure();
         UpdateLinks updater = new UpdateLinks();
         updater.run();
+    }
+
+    class ServerInfo {
+        static final int TRAFIKA = 1;
+        static final int RSS = 2;
+
+        /** where to download new links */
+        String url;
+        /** null fore default, otherwise valid encoding name of text */
+        String encoding;
+        /** in which format data are stored */
+        int format = TRAFIKA;
+
+        public ServerInfo(String url) {
+            this.url = url;
+        }
+
+        public ServerInfo(String url, String encoding, int format) {
+            this.url = url;
+            this.encoding = encoding;
+            this.format = format;
+        }
+
+        public String toString() {
+            return url;
+        }
     }
 }

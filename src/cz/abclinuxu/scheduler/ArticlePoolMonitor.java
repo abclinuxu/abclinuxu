@@ -25,12 +25,10 @@ import java.util.Date;
 public class ArticlePoolMonitor extends TimerTask {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ArticlePoolMonitor.class);
 
-    Persistance persistance;
     Category pool = new Category(Constants.CAT_ARTICLEPOOL);
     Category articles = new Category(Constants.CAT_ACTUAL_ARTICLES);
 
     public ArticlePoolMonitor() {
-        persistance = PersistanceFactory.getPersistance();
     }
 
     /**
@@ -38,6 +36,7 @@ public class ArticlePoolMonitor extends TimerTask {
      */
     public void run() {
         try {
+            Persistance persistance = PersistanceFactory.getPersistance();
             persistance.synchronize(pool);
             Date now = new Date();
 

@@ -94,7 +94,8 @@ public class AbcInit extends HttpServlet {
             next = cal.getTime();
         }
 
-        AbcInit.getScheduler().scheduleAtFixedRate(new UpdateLinks(),next,6*60*60*1000);
+        AbcInit.getScheduler().schedule(new UpdateLinks(),0,6*60*60*1000);
+//        AbcInit.getScheduler().scheduleAtFixedRate(new UpdateLinks(),next,6*60*60*1000);
     }
 
     /**
@@ -151,11 +152,10 @@ public class AbcInit extends HttpServlet {
 
         Persistance persistance = PersistanceFactory.getPersistance();
         Configuration cfg = Configuration.getDefaultConfiguration();
-        BeansWrapper wrapper = BeansWrapper.getDefaultInstance();
 
         cfg.setDefaultEncoding("ISO-8859-2");
-        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.DEBUG_HANDLER);
-        cfg.setObjectWrapper(wrapper);
+        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.IGNORE_HANDLER);
+        cfg.setObjectWrapper(BeansWrapper.getDefaultInstance());
         cfg.setTemplateUpdateDelay(1);
         cfg.setStrictSyntaxMode(true);
 
