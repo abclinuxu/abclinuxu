@@ -31,6 +31,16 @@
         <servlet-class>cz.abclinuxu.servlets.view.ViewRelation</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>EditCategory</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.edit.EditCategory</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ViewIcons</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.view.ViewIcons</servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>ViewCategory</servlet-name>
         <url-pattern>/ViewCategory</url-pattern>
@@ -39,5 +49,15 @@
     <servlet-mapping>
         <servlet-name>ViewRelation</servlet-name>
         <url-pattern>/ViewRelation</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>EditCategory</servlet-name>
+        <url-pattern>/EditCategory</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ViewIcons</servlet-name>
+        <url-pattern>/SelectIcon</url-pattern>
     </servlet-mapping>
 </web-app>

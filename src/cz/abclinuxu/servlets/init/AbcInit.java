@@ -47,6 +47,7 @@ public class AbcInit extends HttpServlet {
             log.info("Inicializuji vrstvu persistence pomoci URL "+url);
             PersistanceFactory.setDefaultUrl(url);
         }
+        log.info("Inicializace je hotova.");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -28,6 +28,10 @@ import cz.abclinuxu.AbcException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.PrintWriter;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Base class for all servlets. It provides several useful
@@ -38,7 +42,7 @@ import java.io.PrintWriter;
  * <dt><code>USER</code></dt>
  * <dd>instance of User, if any.</dd>
  * <dt><code>ERRORS</code></dt>
- * <dd>List of error messages.</dd>
+ * <dd>Map of error messages. For form validation, use field name as key.</dd>
  * <dt><code>MESSAGES</code></dt>
  * <dd>List of informational messages.</dd>
  * </dl>
@@ -53,13 +57,9 @@ public class AbcServlet extends VelocityServlet {
 
     /** Name of key in HttpServletsRequest, used for context chaining. */
     public static final String VAR_CONTEXT = "CONTEXT";
-    /** Name of key in Session and Context, used to store User. */
     public static final String VAR_USER = "USER";
-    /** Name of key in Context, used to store list of error messages. */
     public static final String VAR_ERRORS = "ERRORS";
-    /** Name of key in Context, used to store list of informational messages. */
     public static final String VAR_MESSAGES = "MESSAGES";
-    /** name of parameter holding shorthand of method to be executed */
     public static final String PARAM_ACTION = "action";
 
     /** Public access is granted or user's right are sufficient. */
@@ -172,6 +172,24 @@ public class AbcServlet extends VelocityServlet {
             return AbcServlet.ACCESS_GRANTED;
         }
         return AbcServlet.USER_INSUFFICIENT_RIGHTS;
+    }
+
+    /**
+     * Adds message to <code>VAR_ERRORS</code> map.
+     */
+    protected void addErrorMessage(String key, String errorMessage, Context context) {
+        Map errors = (Map) context.get(VAR_ERRORS);
+        if ( errors==null ) errors = new HashMap(4);
+        errors.put(key,errorMessage);
+    }
+
+    /**
+     * Adds message to <code>VAR_MESSAGES</code> list.
+     */
+    protected void addMessage(String message, Context context) {
+        List errors = (List) context.get(VAR_MESSAGES);
+        if ( errors==null ) errors = new ArrayList(3);
+        errors.add(message);
     }
 
     /**
