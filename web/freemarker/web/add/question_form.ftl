@@ -57,9 +57,9 @@ jako odpovìï. Pomù¾ete tak dal¹ím náv¹tìvníkùm, kteøí budou
 v budoucnu èíst vá¹ dotaz.
 </p>
 
-<h1 class="st_nadpis">Archiv va¹ich dotazù</h1>
-
 <#if ! USER?exists>
+ <h1 class="st_nadpis">Proè se pøihlásit</h1>
+
  <p>Pokud jste na abclinuxu registrováni, je výhodné
  se nyní pøihlásit. Vá¹ dotaz mù¾ete nechat sledovat
  Monitorem, který vám za¹le emailem upozornìní, kdy¾
