@@ -30,4 +30,6 @@ public class Roles {
     public static final String POLL_ADMIN = "poll admin";
     /** user can edit other users */
     public static final String USER_ADMIN = "user admin";
+    /** user can invalidate emails of other users */
+    public static final String CAN_INVALIDATE_EMAILS = "email invalidator";
 }

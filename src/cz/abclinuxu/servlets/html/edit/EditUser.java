@@ -174,6 +174,15 @@ public class EditUser implements AbcAction {
             return actionUploadPhoto2(request, response, env);
 
         // these actions are restricted to admin only
+
+        if ( user.hasRole(Roles.USER_ADMIN) || user.hasRole(Roles.CAN_INVALIDATE_EMAILS) ) {
+            if ( action.equals(ACTION_INVALIDATE_EMAIL) )
+                return FMTemplateSelector.select("EditUser", "invalidateEmail", env, request);
+
+            if ( action.equals(ACTION_INVALIDATE_EMAIL2) )
+                return actionInvalidateEmail(request, response, env);
+        }
+
         if ( ! user.hasRole(Roles.USER_ADMIN) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
@@ -185,12 +194,6 @@ public class EditUser implements AbcAction {
 
         if ( action.equals(ACTION_GRANT_ROLES_STEP3) )
             return actionGrant3(request, response, env);
-
-        if ( action.equals(ACTION_INVALIDATE_EMAIL) )
-            return FMTemplateSelector.select("EditUser", "invalidateEmail", env, request);
-
-        if ( action.equals(ACTION_INVALIDATE_EMAIL2) )
-            return actionInvalidateEmail(request, response, env);
 
         if ( action.equals(ACTION_ADD_GROUP_MEMBER) )
             return actionAddToGroup(request, response, env);
