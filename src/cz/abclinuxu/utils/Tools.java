@@ -333,10 +333,10 @@ public class Tools {
     public String render(String str) {
         if ( Misc.empty(str) ) return "";
 
-        String tmp = smich.subst(str,"<img src=\"/images/smile/smich.gif\" width=14 height=14 alt=\":-D\">");
-        tmp = usmev.subst(tmp,"<img src=\"/images/smile/usmev.gif\" width=14 height=14 alt=\":-)\">");
-        tmp = mrk.subst(tmp,"<img src=\"/images/smile/mrk.gif\" width=14 height=14 alt=\";-)\">");
-        tmp = smutek.subst(tmp,"<img src=\"/images/smile/smutek.gif\" width=14 height=14 alt=\":-(\">");
+        String tmp = smich.subst(str,"<img src=\"/images/smile/smich.gif\" alt=\":-D\" class=\"emo\">");
+        tmp = usmev.subst(tmp,"<img src=\"/images/smile/usmev.gif\" alt=\":-)\" class=\"emo\">");
+        tmp = mrk.subst(tmp,"<img src=\"/images/smile/mrk.gif\" alt=\";-)\" class=\"emo\">");
+        tmp = smutek.subst(tmp,"<img src=\"/images/smile/smutek.gif\" alt=\":-(\" class=\"emo\">");
 
         if ( lineBreaks.match(tmp) ) return tmp;
         return emptyLine.subst(tmp,"<p>\n");
