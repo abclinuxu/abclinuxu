@@ -1,7 +1,7 @@
 <project name="AbcLinuxu" basedir="." default="compile">
   <property name="src" value="src"/>
   <property name="build" value="build"/>
-  <property name="deploy" value="../tomcat/webapps/abc"/>
+  <property name="deploy" value="../tomcat/webapps/ROOT"/>
 
   <path id="project.classpath">
     <fileset dir="libs">
@@ -35,15 +35,12 @@
       </fileset>
     </copy>
 
-    <copy todir="${build}/WEB-INF/classes">
+<!--    <copy todir="${build}/WEB-INF/classes">
       <fileset dir="conf">
-<!--        <include name="poolman.xml"/> -->
-        <include name="views.properties"/>
-        <include name="actions.xml"/>
         <include name="webwork.properties"/>
       </fileset>
     </copy>
-
+-->
     <copy todir="${build}/WEB-INF/lib">
       <fileset dir="libs" includes="*.jar"/>
     </copy>
