@@ -307,7 +307,7 @@ public class EditDictionary implements AbcAction, Configurable {
 
         Relation relation = SQLTool.getInstance().findDictionaryByURLName(urlName);
         if (relation!=null) {
-            ServletUtils.addError(PARAM_NAME, "Tento pojem ji¾ byl vysvìtlen!", env, null);
+            ServletUtils.addError(PARAM_NAME, "Tento pojem ji¾ byl <a href=\"/slovnik/"+urlName+"\">vysvìtlen</a>.", env, null);
             return false;
         }
 
