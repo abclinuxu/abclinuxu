@@ -134,29 +134,44 @@
   </servlet>
 
   <servlet name="EditUser">
-    <action name="forbidden">
-      <mapping template="web" content="web/misc/forbidden.vm">
-        <var name="TITLE" value="Pøístup odepøen" />
-      </mapping>
-    </action>
     <action name="register">
-      <mapping template="web" content="web/add/user.vm">
+      <mapping template="web" content="/web/add/user.ftl">
         <var name="TITLE" value="Registrace" />
       </mapping>
     </action>
-    <action name="welcome">
-      <mapping template="web" content="web/show/welcome_user.vm">
-        <var name="TITLE" value="Pøivítání" />
+    <action name="editBasic">
+      <mapping template="web" content="/web/edit/user_basic.ftl">
+        <var name="TITLE" value="Úprava úètu" />
       </mapping>
     </action>
-    <action name="edit">
-      <mapping template="web" content="web/edit/user.vm">
-        <var name="TITLE" value="Úprava nastavení" />
-      </mapping>
-    </action>
-    <action name="passwd">
-      <mapping template="web" content="web/edit/password.vm">
+    <action name="changePassword">
+      <mapping template="web" content="/web/edit/user_password.ftl">
         <var name="TITLE" value="Zmìna hesla" />
+      </mapping>
+    </action>
+    <action name="editPersonal">
+      <mapping template="web" content="/web/edit/user_personal.ftl">
+        <var name="TITLE" value="Úprava osobních dat" />
+      </mapping>
+    </action>
+    <action name="editProfile">
+      <mapping template="web" content="/web/edit/user_profile.ftl">
+        <var name="TITLE" value="Úprava profilu" />
+      </mapping>
+    </action>
+    <action name="uploadPhoto">
+      <mapping template="web" content="/web/edit/user_photo.ftl">
+        <var name="TITLE" value="Nahrání fotografie" />
+      </mapping>
+    </action>
+    <action name="editSubscription">
+      <mapping template="web" content="/web/edit/user_subscribe.ftl">
+        <var name="TITLE" value="Objednávka zasílání informací" />
+      </mapping>
+    </action>
+    <action name="editSettings">
+      <mapping template="web" content="/web/edit/user_settings.ftl">
+        <var name="TITLE" value="Zmìna nastavení" />
       </mapping>
     </action>
   </servlet>
