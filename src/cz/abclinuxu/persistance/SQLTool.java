@@ -11,6 +11,7 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Poll;
 import cz.abclinuxu.data.GenericObject;
+import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.exceptions.PersistanceException;
 
 import java.util.prefs.Preferences;
@@ -640,8 +641,11 @@ public final class SQLTool implements Configurable {
      * @param date timestamp to be set.
      * @throws PersistanceException if object doesn't contain such property.
      */
-    public void setUpdatedTimestamp(GenericObject obj, Date date) {
+    public void setUpdatedTimestamp(GenericDataObject obj, Date date) {
         MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        obj.setUpdated(date);
+        persistance.storeInCache(obj);
+
         Connection con = null; PreparedStatement statement = null;
         try {
             con = persistance.getSQLConnection();

@@ -14,8 +14,10 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.PersistanceException;
 import cz.abclinuxu.security.Roles;
@@ -53,6 +55,8 @@ public class EditDiscussion extends AbcFMServlet {
     public static final String ACTION_ADD_COMMENT = "add";
     public static final String ACTION_ADD_COMMENT_STEP2 = "add2";
     public static final String ACTION_CENSORE_COMMENT = "censore";
+    public static final String ACTION_EDIT_COMMENT = "edit";
+    public static final String ACTION_EDIT_COMMENT_STEP2 = "edit2";
 
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -93,6 +97,12 @@ public class EditDiscussion extends AbcFMServlet {
 
         if ( ACTION_CENSORE_COMMENT.equals(action) )
             return actionCensore(request, response, env);
+
+        if ( ACTION_EDIT_COMMENT.equals(action) )
+            return actionEditComment(request, env);
+
+        if ( ACTION_EDIT_COMMENT_STEP2.equals(action) )
+            return actionEditComment2(request, response, env);
 
         throw new MissingArgumentException("Chybí parametr action!");
     }
@@ -300,6 +310,91 @@ public class EditDiscussion extends AbcFMServlet {
         urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
         return null;
     }
+
+    /**
+     * Displays add comment dialog
+     */
+    protected String actionEditComment(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params);
+        if ( discussion==null )
+            throw new MissingArgumentException("Chybí parametr dizId!");
+        persistance.synchronize(discussion);
+
+        Comment thread = null;
+        int threadId = Misc.parseInt((String) params.get(PARAM_THREAD),0);
+        if (threadId==0)
+            thread = new Comment(discussion);
+        else {
+            Relation relation = (Relation) discussion.getContent().get(0);
+            Record record = (Record) relation.getChild();
+            persistance.synchronize(record);
+            String xpath = "//comment[@id='"+threadId+"']";
+            Element element = (Element) record.getData().selectSingleNode(xpath);
+            thread = new Comment(element);
+        }
+
+        params.put(PARAM_TITLE,thread.getData().selectSingleNode("title").getText());
+        params.put(PARAM_TEXT,thread.getData().selectSingleNode("text").getText());
+
+        return FMTemplateSelector.select("EditDiscussion", "edit", env, request);
+    }
+
+    /**
+     * Adds new comment to selected discussion.
+     */
+    protected String actionEditComment2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params);
+        if ( discussion==null )
+            throw new MissingArgumentException("Chybí parametr dizId!");
+        persistance.synchronize(discussion);
+
+        Element comment = null; Record record = null;
+        int threadId = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
+        if ( threadId==0 )
+            comment = discussion.getData().getRootElement();
+        else {
+            Relation relation = (Relation) discussion.getContent().get(0);
+            record = (Record) relation.getChild();
+            persistance.synchronize(record);
+            String xpath = "//comment[@id='"+threadId+"']";
+            comment = (Element) record.getData().selectSingleNode(xpath);
+        }
+
+        boolean canContinue = true;
+        canContinue &= setTitle(params, comment, env);
+        canContinue &= setText(params, comment, env);
+
+        if ( !canContinue || params.get(PARAM_PREVIEW)!=null ) {
+            if ( canContinue ) {
+                Comment previewComment = new Comment(comment);
+                env.put(VAR_PREVIEW, previewComment);
+            }
+            return FMTemplateSelector.select("EditDiscussion", "edit", env, request);
+        }
+
+        if ( threadId==0 ) {
+            Date updated = discussion.getUpdated();
+            persistance.update(discussion);
+            SQLTool.getInstance().setUpdatedTimestamp(discussion,updated);
+        } else
+            persistance.update(record);
+
+        User user = (User) env.get(Constants.VAR_USER);
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        AdminLogger.logEvent(user, "upravil vlakno "+threadId+" diskuse "+discussion.getId()+", relace "+relation.getId());
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+        return null;
+    }
+
+    /* ***************** */
 
     /**
      * Finds thread given by PARAM_THREAD key or makes facade around given Item.

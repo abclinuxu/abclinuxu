@@ -69,6 +69,13 @@ public class MySqlPersistance implements Persistance {
         cache.clear();
     }
 
+    /**
+     * Stores given object in cache. For use in SQLTool only! 
+     */
+    public void storeInCache(GenericObject obj) {
+        cache.store(obj);
+    }
+
     public void create(GenericObject obj) {
         Connection con = null; PreparedStatement statement = null;
         if ( obj==null )
