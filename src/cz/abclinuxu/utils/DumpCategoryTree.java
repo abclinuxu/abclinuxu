@@ -7,6 +7,7 @@
 package cz.abclinuxu.utils;
 
 import cz.abclinuxu.persistance.*;
+import cz.abclinuxu.persistance.cache.EmptyCache;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.servlets.Constants;

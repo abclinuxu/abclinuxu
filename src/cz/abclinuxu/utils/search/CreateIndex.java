@@ -6,6 +6,9 @@
 package cz.abclinuxu.utils.search;
 
 import cz.abclinuxu.persistance.*;
+import cz.abclinuxu.persistance.cache.EmptyCache;
+import cz.abclinuxu.persistance.extra.LimitQualifier;
+import cz.abclinuxu.persistance.extra.Qualifier;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.UrlUtils;

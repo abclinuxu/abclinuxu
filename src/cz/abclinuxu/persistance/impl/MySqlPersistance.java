@@ -5,7 +5,7 @@
  *
  * Copyright by Leos Literak (literakl@centrum.cz) 2001
  */
-package cz.abclinuxu.persistance;
+package cz.abclinuxu.persistance.impl;
 
 import java.util.*;
 import java.sql.*;
@@ -13,6 +13,9 @@ import java.sql.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.exceptions.*;
 import cz.abclinuxu.AbcException;
+import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistance.Cache;
+import cz.abclinuxu.persistance.Nursery;
 import org.logicalcobwebs.proxool.ProxoolException;
 import org.logicalcobwebs.proxool.ProxoolFacade;
 

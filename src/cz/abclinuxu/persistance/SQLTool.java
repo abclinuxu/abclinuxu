@@ -10,6 +10,9 @@ import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.exceptions.PersistanceException;
+import cz.abclinuxu.persistance.extra.LimitQualifier;
+import cz.abclinuxu.persistance.extra.Qualifier;
+import cz.abclinuxu.persistance.impl.MySqlPersistance;
 
 import java.util.prefs.Preferences;
 import java.util.Date;

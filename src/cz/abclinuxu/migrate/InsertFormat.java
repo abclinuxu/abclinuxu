@@ -6,6 +6,8 @@
 package cz.abclinuxu.migrate;
 
 import cz.abclinuxu.persistance.*;
+import cz.abclinuxu.persistance.impl.MySqlPersistance;
+import cz.abclinuxu.persistance.cache.EmptyCache;
 import cz.abclinuxu.data.Record;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Category;

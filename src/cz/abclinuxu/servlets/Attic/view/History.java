@@ -13,8 +13,8 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.Qualifier;
-import cz.abclinuxu.persistance.LimitQualifier;
+import cz.abclinuxu.persistance.extra.Qualifier;
+import cz.abclinuxu.persistance.extra.LimitQualifier;
 import cz.abclinuxu.data.Record;
 
 import javax.servlet.http.HttpServletRequest;

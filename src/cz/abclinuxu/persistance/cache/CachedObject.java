@@ -5,7 +5,7 @@
  *
  * Copyright by Leos Literak (literakl@centrum.cz) 2001
  */
-package cz.abclinuxu.persistance;
+package cz.abclinuxu.persistance.cache;
 
 import cz.abclinuxu.data.GenericObject;
 

@@ -3,9 +3,11 @@
  * Date: May 29, 2003
  * Time: 8:55:15 PM
  */
-package cz.abclinuxu.persistance;
+package cz.abclinuxu.persistance.cache;
 
 import cz.abclinuxu.persistance.lru.CacheLRU;
+import cz.abclinuxu.persistance.Cache;
+import cz.abclinuxu.persistance.Nursery;
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.utils.config.ConfigurationManager;

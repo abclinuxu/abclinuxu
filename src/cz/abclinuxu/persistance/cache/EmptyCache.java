@@ -4,9 +4,10 @@
  * Time: 15:27:32
  * (c) 2001-2002 Tinnio
  */
-package cz.abclinuxu.persistance;
+package cz.abclinuxu.persistance.cache;
 
 import cz.abclinuxu.data.GenericObject;
+import cz.abclinuxu.persistance.Cache;
 
 /**
  * Version of cache, which does nothing.

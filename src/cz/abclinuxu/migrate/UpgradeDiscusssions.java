@@ -7,7 +7,7 @@ package cz.abclinuxu.migrate;
 
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.MySqlPersistance;
+import cz.abclinuxu.persistance.impl.MySqlPersistance;
 import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;

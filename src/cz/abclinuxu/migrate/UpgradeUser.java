@@ -6,7 +6,7 @@
 package cz.abclinuxu.migrate;
 
 import cz.abclinuxu.data.User;
-import cz.abclinuxu.persistance.EmptyCache;
+import cz.abclinuxu.persistance.cache.EmptyCache;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import org.dom4j.Document;

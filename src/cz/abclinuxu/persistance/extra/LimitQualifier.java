@@ -3,7 +3,8 @@
  * Date: 21.12.2003
  * Time: 14:01:32
  */
-package cz.abclinuxu.persistance;
+package cz.abclinuxu.persistance.extra;
+
 
 /**
  * Sets limit of returned data.

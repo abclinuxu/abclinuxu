@@ -14,6 +14,7 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Level;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.exceptions.NotFoundException;
+import cz.abclinuxu.persistance.cache.LRUCache;
 
 public class TestMySqlPersistance extends TestCase {
 
@@ -360,7 +361,7 @@ public class TestMySqlPersistance extends TestCase {
         Item duron = new Item(0,Item.MAKE);
         duron.setData("<name>Duron</name>");
         persistance.create(duron);
-        
+
         Relation relProcDur = new Relation(processors,duron,0);
         persistance.create(relProcDur);
         processors.addChildRelation(relProcDur);

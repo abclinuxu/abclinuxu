@@ -5,7 +5,7 @@
  */
 package cz.abclinuxu.migrate;
 
-import cz.abclinuxu.persistance.MySqlPersistance;
+import cz.abclinuxu.persistance.impl.MySqlPersistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 
 import java.sql.*;

@@ -17,6 +17,8 @@ import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.persistance.cache.LRUCache;
+import cz.abclinuxu.persistance.impl.MySqlPersistance;
 
 /**
  * Factory, which select Persistance class

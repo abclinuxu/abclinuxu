@@ -3,7 +3,7 @@
  * Date: 21.12.2003
  * Time: 13:56:31
  */
-package cz.abclinuxu.persistance;
+package cz.abclinuxu.persistance.extra;
 
 /**
  * Definition of behaviour of SQL commands or Persistance calls.

@@ -12,6 +12,7 @@ import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.persistance.*;
+import cz.abclinuxu.persistance.extra.Qualifier;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.servlets.Constants;
