@@ -1,0 +1,43 @@
+Navrh novych diskusi
+
+Soucasne diskuse zacinaji byt prilis narocne na administraci
+(administratori musi rucne presouvat stare diskuse do spravnych
+sekci). Zaroven nektere sekce obsahuji prilis mnoho diskusi, coz vede
+ke zpomalovani nacitani a ma i negativni vliv na vyuzivani cache.
+
+Puvodne jsem chtel, aby diskuse byly se vsemi ostatnimi objekty
+na stejnem miste. Takze byste nasli hardwarove zaznamy, clanky 
+i diskuse napriklad o sitovych kartach v (pod) sekci Sitove karty.
+Vyhody jsou zrejme, clovek pri brouzdani najde ruzne zdroje
+informaci na jedinem miste. Nicmene nevyhody jsou napsany v prvnim
+odstavci.
+
+Je zde jine reseni, ktere jsem jiz diskutoval s Alonerem a jemu
+se zamlouva vice, nez soucasne reseni. Je to reseni, ktere najdete 
+napriklad na www.jguru.com. Jedna se o vytvoreni jedne stranky,
+ktera by obsahovala tematicky razena diskusni fora. Jguru se tyka
+javy, takze tam maji napriklad sekce J2EE obsahujici diskusni fora
+pro servlety, JSP, JMS, EJB, sekci Core language obsahujici fora
+tykajici se Collections, threadu ci IO. Uzivatele si sami vyberou 
+diskusni forum, a do nej vlozi svuj dotaz.
+
+My bychom mohli udelat neco podobneho. Tedy stranku, ktera bude
+clenena na nekolik zakladnich sekci (Sekce ma zde vyznam cleneni) a
+ty budou cleneny do diskusnich for. Napriklad sekce Hardware, kde
+bude treba vypalovani, ukladani dat ci scannery, sekce Site, kde bude
+wifi, modemy, ADSL, ci sluzby typu DNS nebo obecne nastavovani, sekce
+Software s MPlayerem, Mozillou atd. Presny obsah je veci diskuse. 
+
+Do techto sekci bychom presunuli obsah vsech diskusi. Vytvorim na
+to novou html stranku, kde muzete prenest vsechny objekty urciteho
+typu z jedne relace do druhe. Napriklad najednou prenest ze softwaru /
+multimedii / mplayer vsechny diskuse do forum/mplayer.
+
+Kazda sekce by zobrazovala diskuse podle casu, napriklad pouze deset
+nejnovejsich. Podobne by fungovalo forum na hlavni strance, to
+by vsak zobrazovalo nejnovejsi diskuse nezavisle na jejich umisteni.
+
+Vyhody: minimalni zatez administratoru, ti by jen presouvali spatne
+zarazene dotazy. Nizsi zatez portalu. Umoznilo by vetsi prehlednost,
+protoze bychom pak mohli smazat spoustu zbytecnych sekci.
+

@@ -1,0 +1,107 @@
+AbcLinuxu Admin Howto
+
+Portal je napsan jako java web aplikace pouzivajici servlety, jsp
+a jdbc. Jako backend slouzi MySQL verze 3.23 (ci novejsi). Jako
+servlet container pouzivam jetty.
+
+Veskere zdrojove kody jsou ulozeny v adresari /home/literakl/abc/source.
+Prava jsou nastavena na abcgroup, takze clenove teto skupiny je mohou
+upravovat. 
+
+Ziva data jsou v adresari /home/www-data/deploy. Portal pak ma 
+podadresar abclinuxu, dalsi podadresar abclinux slouzi jako redirekt
+na portal. Pak jsou zde adresare palirna, coz je redirekt na 
+www.abclinuxu.cz/palirna, firma obsahujici firemni webovou prezentaci
+a logs, kam se ukladaji vsechny logy. Data v techto adresarich vlastni
+vetsinou opet skupina abcgroup, aby je mohla v pripade potreby 
+upravovat. V pripade abclinuxu je zde par adresaru, jejichz obsah 
+vlastni pro zapis uzivatel www-data, jedna se napriklad o upload fotek 
+ci index fulltextu. 
+
+Obecne vsechna prava tykajici se portalu a zdrojovych kodu ma na 
+starosti skript /home/www-data/fixRights.sh. Ten kdyz je spusten,
+tak projde potrebne adresare a pripadne nastavi prava. Az bude jednou
+odladen a bude bezpecny, byl bych rad, aby dostal setuid skript
+pro skupinu abcgroup. Takze jeji clenove by mohli sami i bez roota
+opravit pripadne chyby, kdyz nekdo neco pokazi.
+
+Jetty je v adresari /home/www-data/jetty (link na adresar ve stejnem
+adresari s aktualne pouzivanou verzi). Jetty bezi pod uzivatelem
+www-data. Nikdy jej nespoustejte pod jinym uzivatelem! Napriklad
+literakl ci root je spatne, musi to byt www-data. Za prve kvuli pravum,
+ktera jsou takto nachystana a treba by nemuselo fungovat uploadovani
+fotek ci zapisovani logu, za druhe mailman je kompilovan pro tento uid.
+
+Jetty se spousti z podadresare bin pomoci skriptu jetty.sh. Ten ma
+na zacatku nachystane nejake promenne, napriklad cestu a parametry
+pro javu. Dulezita je i prommena jazyk, bez ni by nefungovala cestina!
+Jetty spustite ./jetty.sh start, zastavit ./jetty.sh stop. Argument
+restart by to mel restartovat, ale ja radeji to nejdrive zastavim,
+pres ps si overim, ze nebezi zadna java a pak spustim. Jen pro jistotu,
+kdyby portal bezel dvakrat, byl by to maler. 
+
+Cijoml udelal i nejaky skript v /etc/init.d, nejspise funguje, protoze
+se server jiz parkrat uspesne restartoval. Osobne vsak radeji pouzivam
+jetty.sh, protoze vim, co dela, narozdil od skriptu cijomla. Zatim
+jsem jej nestudoval.
+
+Deployovani (instalace, kopirovani zmen) vyuziva ant, coz je neco jako
+make v jave, ale podstatne mocnejsi. Ant vyzaduje, aby byly nastaveny 
+dve promenne - JAVA_HOME a ANT_HOME. Zaroven musi PATH obsahovat
+JAVA_HOME/bin a ANT_HOME/bin. Deployovani je snadne. Zmenite adresar
+na ~literakl/abc/source a spustite v shellu prikaz ant. Ten automaticky
+zkopiruje novejsi soubory pres starsi a zkompiluje nove zdrojove kody.
+Nicmene spravna funkce vyzaduje, aby byl nastaven spravny cas. Takze
+pokud prinesete soubory se spatnou casovou znackou, nemusi fungovat
+spravne.
+
+Ant proces je zkonfigurovan souborem source/conf_deploy.properties. To 
+je symbolicky link do adresare conf na jeden ze dvou souboru. Na serveru
+to musi vzdycky byt conf_abclinuxu.properties. Pokud ne, deploy 
+neprobehne spravne, data se zkopiruji do spatneho adresare.
+
+Pokud potrebujete provest nejake zmeny na portalu (napriklad zmenit
+text v sablone), vzdycky to delejte ve zdrojacich a zmeny nasadte
+pres ant! Duvodem je, ze jinak az nasadim novou verzi, tak vam je
+prepisu. Sledovat zmeny ve dvou adresarich je prilis narocne.
+Takhle mam napsan skript synchronize.sh, jez mi v domovskem adresari
+vytvori tgz se zmenenymi soubory.
+
+Veskere html soubory s definici vzhledu portalu jsou v adresari
+source/web/freemarker. Zde je dulezity adresar include, ktery obsahuje
+par souboru, co se automaticky zaclenuji do html stranek. Napriklad
+banner.txt, pocitani.txt nebo hucek.txt. Dalsi adresar mail obsahuje
+sablony pro odesilane emaily. Davaji se zde napriklad i mesicni 
+zpravodaje. Ostatni adresare odpovidaji podle jmen jednotlivym vzhledum.
+Napriklad lynx obsahuje sablony pro textove prohlizece, sidebar pro
+mozilla sidebar, plucker je pro PDA a print je pro minimalistickou
+sablonu bez jakychkoliv grafickych prvku. Pouziva se casto pro akce
+administratoru. 
+
+Poslednim a hlavnim adresarem je web, ten je urcen pro bezne prohlizece 
+a ostatni vzhledove verze linkuji jeho obsah, pokud jej 
+nepredefinovavaji. Zde je napriklad soubor header.ftl, jez obsahuje
+definici graficke sablony. V podadresari show je zase soubor index.ftl,
+ktery definuje obsah a vzhled titulni stranky. Vsechny soubory 
+s priponou ftl jsou psany v jazyce Freemarker.
+
+Uzivatel literakl ma nekolik dulezitych uloh v cronu. Napriklad 
+o pulnoci se spousti zalohovani log souboru, ktere jsou presouvany do 
+/home/literakl/logs. Dale spousti indexovani fulltextu.
+
+Dalsi sluzbou abclinuxu jsou emailove konference. Ty ma na starosti
+mailman, ktery je v /home/mailman. Je provazan s postfixem a jetty.
+Nicmene neni nakonfigurovan idealne, nektere URL nefunguji.
+
+Konecne je zde postfix. Mam pocit, ze ta konfigurace neni dobra. Zvlaste
+ty aliasy jsou divne. Jsou jak v /etc/aliases, tak v /etc/postfix.
+Nezda se mi, ze to je takhle dobre. Vypada to divne. Sam nevim, kam
+co pridat, kdyz vytvorim novou konferenci.
+
+Pak tu mame otevrene SMTP. To je vyzadovano portalem pro odesilani
+emailu. Zaroven bylo otevreno pro nasi kancelar, ale to je mozne
+zakazat. Pak tu mame secure POP3 pro stahovani emailu do kancelare.
+Dost uvazuju o tom, ze by bylo lepsi nasadit IMAP, protoze 
+synchronizovat emaily na abicku (pine), v kanclu a doma je peklo.
+
+Tak to je asi vse.
