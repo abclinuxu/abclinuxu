@@ -259,7 +259,7 @@ public class EditDriver implements AbcAction {
         if ( url==null || url.length()==0 ) {
             ServletUtils.addError(PARAM_URL, "Zadejte adresu ovladaèe!", env, null);
             return false;
-        } else if ( url.indexOf("tp://")==-1 || url.length()<12 ) {
+        } else if ( url.indexOf("://")==-1 || url.length()<12 ) {
             ServletUtils.addError(PARAM_URL, "Neplatná adresa ovladaèe!", env, null);
             return false;
         }
