@@ -34,14 +34,14 @@
   <tr>
    <td width="90" class="required">Perex</td>
    <td>
-    <textarea name="perex" cols="80" rows="5" tabindex="4">${PARAMS.perex?if_exists}</textarea>
+    <textarea name="perex" cols="80" rows="5" tabindex="4">${PARAMS.perex?if_exists?html}</textarea>
     <div class="error">${ERRORS.perex?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td width="90" class="required">Obsah èlánku</td>
    <td>
-    <textarea name="content" cols="80" rows="30" tabindex="5">${PARAMS.content?if_exists}</textarea>
+    <textarea name="content" cols="80" rows="30" tabindex="5">${PARAMS.content?if_exists?html}</textarea>
     <div class="error">${ERRORS.content?if_exists}</div>
    </td>
   </tr>

@@ -8,11 +8,9 @@
  */
 package cz.abclinuxu.servlets.edit;
 
-import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.*;
-import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.view.SelectIcon;
 import cz.abclinuxu.data.Category;
@@ -23,8 +21,7 @@ import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.utils.InstanceUtils;
-import org.apache.velocity.Template;
-import org.apache.velocity.context.Context;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -199,7 +196,7 @@ public class EditCategory extends AbcFMServlet {
         node = document.selectSingleNode("data/icon");
         if (node!=null) params.put(PARAM_ICON,node.getText());
         node = document.selectSingleNode("data/note");
-        if (node!=null) params.put(PARAM_NOTE,node.getText()); //encodeSpecial
+        if (node!=null) params.put(PARAM_NOTE,node.getText());
         params.put(PARAM_OPEN, (category.isOpen())? "yes":"no");
 
         return FMTemplateSelector.select("EditCategory","edit",env,request);

@@ -14,7 +14,6 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.utils.InstanceUtils;
-import cz.abclinuxu.utils.Tools;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 
 import org.dom4j.*;
@@ -198,7 +197,7 @@ public class EditArticle extends AbcFMServlet {
         Node node = document.selectSingleNode("data/name");
         params.put(PARAM_TITLE,node.getText());
         node = document.selectSingleNode("data/perex");
-        if ( node!=null ) params.put(PARAM_PEREX,Tools.encodeSpecial(node.getText()));
+        if ( node!=null ) params.put(PARAM_PEREX,node.getText());
         params.put(PARAM_PUBLISHED,item.getCreated());
         node = document.selectSingleNode("data/author");
         params.put(PARAM_AUTHOR,node.getText());
@@ -212,7 +211,7 @@ public class EditArticle extends AbcFMServlet {
                 if ( record.getType()==Record.ARTICLE ) {
                     document = record.getData();
                     node = document.selectSingleNode("data/content");
-                    params.put(PARAM_CONTENT,Tools.encodeSpecial(node.getText()));
+                    params.put(PARAM_CONTENT,node.getText());
                     break;
                 }
             }
