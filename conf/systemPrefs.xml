@@ -138,7 +138,7 @@
                                 <entry key="trafika" value="auto/abc.dat"/>
                                 <entry key="anneca" value="auto/abc2.dat"/>
                                 <entry key="szm" value="auto/abc_szm.xml"/>
-                                <entry key="news.word.limit" value="10"/>
+                                <entry key="news.word.limit" value="17"/>
                             </map>
                         </node>
                     </node>
@@ -384,7 +384,7 @@
                             </node>
                             <node name="ViewBlog">
                                 <map>
-                                    <entry key="regexp.blog.url" value="^/blog/?([a-zA-Z][a-zA-Z0-9_]+)?/?([0-9]{4})?/?([0-9]{1,2})?/?([0-9]{1,2})?/?([0-9]+)?"/>
+                                    <entry key="regexp.blog.url" value="^/blog/?([a-zA-Z][a-zA-Z0-9_]*)?/?([0-9]{4})?/?([0-9]{1,2})?/?([0-9]{1,2})?/?([0-9]+)?"/>
                                     <entry key="page.size" value="10"/>
                                 </map>
                             </node>
