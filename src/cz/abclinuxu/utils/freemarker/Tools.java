@@ -719,11 +719,6 @@ public class Tools implements Configurable {
             return reRemoveTags.subst(text,"");
         } catch (Throwable e) {
             log.warn("Oops, remove tags regexp failed on '"+text+"'!", e);
-//            try {
-//                System.in.read();
-//            } catch (IOException e1) {
-//                log.error("", e1);
-//            }
             return text;
         }
     }
@@ -813,7 +808,7 @@ public class Tools implements Configurable {
             if (!parent.isInitialized()) persistance.synchronize(parent);
             if (parent instanceof Item) {
                 item = (Item) parent;
-                if (item.getType()==Item.ARTICLE) {
+                if (item.getType()==Item.ARTICLE || item.getType()==Item.BLOG) {
                     node = item.getData().selectSingleNode("data/name");
                     discussion.title = node.getText();
                 } else if ( item.getType()==Item.NEWS )
