@@ -115,7 +115,7 @@ public class EditRequest extends AbcFMServlet {
         ServletUtils.addMessage("Vá¹ po¾adavek byl pøijat.",env,request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?relationId="+Constants.REL_REQUESTS);
+        urlUtils.redirect(response, "/ViewRelation?rid="+Constants.REL_REQUESTS);
         return null;
     }
 
@@ -128,7 +128,7 @@ public class EditRequest extends AbcFMServlet {
         ServletUtils.addMessage("Po¾adavek byl smazán.",env,request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?relationId="+Constants.REL_REQUESTS);
+        urlUtils.redirect(response, "/ViewRelation?rid="+Constants.REL_REQUESTS);
         return null;
     }
 
@@ -153,7 +153,7 @@ public class EditRequest extends AbcFMServlet {
         ServletUtils.addMessage("Po¾adavek byl vyøízen.",env,request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?relationId="+Constants.REL_REQUESTS);
+        urlUtils.redirect(response, "/ViewRelation?rid="+Constants.REL_REQUESTS);
         return null;
     }
 }

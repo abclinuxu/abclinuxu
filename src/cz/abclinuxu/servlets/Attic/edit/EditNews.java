@@ -54,6 +54,7 @@ public class EditNews extends AbcFMServlet {
     public static final String VAR_ADMIN = "ADMIN";
 
     public static final String PARAM_RELATION = "relationId";
+    public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_CATEGORY = "category";
     public static final String PARAM_CONTENT = "content";
     public static final String PARAM_APPROVE = "approve";
@@ -134,7 +135,7 @@ public class EditNews extends AbcFMServlet {
 
     private String actionEditStep1(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, PARAM_RELATION, Relation.class, params);
         if ( relation==null )
             throw new MissingArgumentException("Chybí parametr relationId!");
 
@@ -156,7 +157,7 @@ public class EditNews extends AbcFMServlet {
 
     protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, PARAM_RELATION, Relation.class, params);
         if ( relation==null )
             throw new MissingArgumentException("Chybí parametr relationId!");
 
@@ -192,7 +193,7 @@ public class EditNews extends AbcFMServlet {
 
     private String actionRemoveStep1(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, PARAM_RELATION, Relation.class, params);
         if ( relation==null )
             throw new MissingArgumentException("Chybí parametr relationId!");
 
@@ -207,7 +208,7 @@ public class EditNews extends AbcFMServlet {
 
     protected String actionRemoveStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, PARAM_RELATION, Relation.class, params);
         if ( relation==null )
             throw new MissingArgumentException("Chybí parametr relationId!");
 

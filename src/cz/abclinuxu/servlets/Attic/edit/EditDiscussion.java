@@ -171,7 +171,7 @@ public class EditDiscussion extends AbcFMServlet {
         persistance.create(rel2);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId());
+        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
         return null;
     }
 

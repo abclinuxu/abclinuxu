@@ -33,6 +33,7 @@ public class EditRelation extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditRelation.class);
 
     public static final String PARAM_RELATION = "relationId";
+    public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_PREFIX = "prefix";
     public static final String PARAM_SELECTED = SelectRelation.PARAM_SELECTED;
@@ -54,7 +55,7 @@ public class EditRelation extends AbcFMServlet {
         String action = (String) params.get(PARAM_ACTION);
         User user = (User) env.get(Constants.VAR_USER);
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT,PARAM_RELATION,Relation.class,params);
         relation = (Relation) persistance.findById(relation);
         env.put(VAR_CURRENT, relation);
 
@@ -166,7 +167,7 @@ public class EditRelation extends AbcFMServlet {
 
         String prefix = (String)params.get(PARAM_PREFIX);
         UrlUtils urlUtils = new UrlUtils(prefix, response);
-        urlUtils.redirect(response, "/ViewRelation?relationId="+parent.getId());
+        urlUtils.redirect(response, "/ViewRelation?rid="+parent.getId());
         return null;
     }
 
@@ -193,7 +194,7 @@ public class EditRelation extends AbcFMServlet {
         String url = null;
         String prefix = (String) params.get(PARAM_PREFIX);
         if ( prefix!=null ) {
-            url = prefix.concat("/ViewRelation?relationId="+relation.getUpper());
+            url = prefix.concat("/ViewRelation?rid="+relation.getUpper());
         } else url = "/Index";
 
         UrlUtils urlUtils = new UrlUtils(prefix, response);
@@ -227,7 +228,7 @@ public class EditRelation extends AbcFMServlet {
             if ( originalUpper==Constants.REL_FORUM && returnBackToForum(user) )
                 url = "/diskuse.jsp";
             else
-                url = prefix.concat("/ViewRelation?relationId="+relation.getUpper());
+                url = prefix.concat("/ViewRelation?rid="+relation.getUpper());
         } else url = "/Index";
 
         UrlUtils urlUtils = new UrlUtils("", response);

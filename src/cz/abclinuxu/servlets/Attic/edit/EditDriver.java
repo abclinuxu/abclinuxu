@@ -32,6 +32,7 @@ public class EditDriver extends AbcFMServlet {
     public static final String PARAM_URL = "url";
     public static final String PARAM_NOTE = "note";
     public static final String PARAM_RELATION = "relationId";
+    public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_DRIVER = "driverId";
 
     public static final String VAR_DRIVER = "DRIVER";
@@ -47,7 +48,7 @@ public class EditDriver extends AbcFMServlet {
         Persistance persistance = PersistanceFactory.getPersistance();
         String action = (String) params.get(PARAM_ACTION);
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT,PARAM_RELATION,Relation.class,params);
         if ( relation!=null ) {
             persistance.synchronize(relation);
             persistance.synchronize(relation.getChild());
@@ -173,7 +174,7 @@ public class EditDriver extends AbcFMServlet {
         }
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?relationId="+Constants.REL_DRIVERS);
+        urlUtils.redirect(response, "/ViewRelation?rid="+Constants.REL_DRIVERS);
         return null;
     }
 }

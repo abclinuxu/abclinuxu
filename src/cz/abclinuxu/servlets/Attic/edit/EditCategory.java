@@ -40,6 +40,7 @@ public class EditCategory extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditCategory.class);
 
     public static final String PARAM_RELATION = "relationId";
+    public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_CATEGORY = "categoryId";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_OPEN = "open";
@@ -68,7 +69,7 @@ public class EditCategory extends AbcFMServlet {
             env.put(VAR_CATEGORY,category);
         }
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT,PARAM_RELATION,Relation.class,params);
         if ( relation!=null ) {
             relation = (Relation) persistance.findById(relation);
             category = (Category) relation.getChild();
@@ -142,7 +143,7 @@ public class EditCategory extends AbcFMServlet {
         }
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId());
+        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
         return null;
     }
 
@@ -205,7 +206,7 @@ public class EditCategory extends AbcFMServlet {
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         if ( upperRelation!=null ) {
-            urlUtils.redirect(response, "/ViewRelation?relationId="+upperRelation.getId());
+            urlUtils.redirect(response, "/ViewRelation?rid="+upperRelation.getId());
         } else {
             urlUtils.redirect(response, "/ViewCategory?categoryId="+category.getId());
         }

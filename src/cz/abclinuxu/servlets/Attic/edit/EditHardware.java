@@ -33,6 +33,7 @@ public class EditHardware extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditHardware.class);
 
     public static final String PARAM_RELATION = "relationId";
+    public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_ICON = "icon";
     public static final String PARAM_DRIVER = "driver";
@@ -67,7 +68,7 @@ public class EditHardware extends AbcFMServlet {
         if ( action==null)
             throw new MissingArgumentException("Chybí parametr action!");
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT,PARAM_RELATION,Relation.class,params);
         if ( relation!=null ) {
             relation = (Relation) persistance.findById(relation);
             persistance.synchronize(relation.getChild());
@@ -197,7 +198,7 @@ public class EditHardware extends AbcFMServlet {
             persistance.create(new Relation(item,record,relation.getId()));
 
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId());
+            urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
             return null;
         } catch (PersistanceException e) {
             ServletUtils.addError(Constants.ERROR_GENERIC,e.getMessage(),env, null);
@@ -248,7 +249,7 @@ public class EditHardware extends AbcFMServlet {
             persistance.create(relation);
 
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId());
+            urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
             return null;
         } catch (PersistanceException e) {
             ServletUtils.addError(Constants.ERROR_GENERIC,e.getMessage(),env, null);
@@ -307,7 +308,7 @@ public class EditHardware extends AbcFMServlet {
         persistance.update(item);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?relationId="+relation.getUpper());
+        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getUpper());
         return null;
     }
 
@@ -373,7 +374,7 @@ public class EditHardware extends AbcFMServlet {
         persistance.update(record);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId());
+        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
         return null;
     }
 }

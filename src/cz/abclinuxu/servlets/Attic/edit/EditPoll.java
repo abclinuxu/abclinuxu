@@ -30,6 +30,7 @@ public class EditPoll extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditPoll.class);
 
     public static final String PARAM_RELATION = "relationId";
+    public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_POLL = "pollId";
     public static final String PARAM_QUESTION = "question";
     public static final String PARAM_TYPE = "type";
@@ -74,7 +75,7 @@ public class EditPoll extends AbcFMServlet {
         if ( !user.hasRole(Roles.POLL_ADMIN) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, PARAM_RELATION, Relation.class, params);
         if ( relation!=null ) {
             relation = (Relation) persistance.findById(relation);
             env.put(VAR_RELATION, relation);
@@ -149,7 +150,7 @@ public class EditPoll extends AbcFMServlet {
         persistance.create(relation);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?relationId="+upperRelation.getId());
+        urlUtils.redirect(response, "/ViewRelation?rid="+upperRelation.getId());
         return null;
     }
 
@@ -196,7 +197,7 @@ public class EditPoll extends AbcFMServlet {
         PersistanceFactory.getPersistance().update(poll);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?relationId="+upperRelation.getId());
+        urlUtils.redirect(response, "/ViewRelation?rid="+upperRelation.getId());
         return null;
     }
 

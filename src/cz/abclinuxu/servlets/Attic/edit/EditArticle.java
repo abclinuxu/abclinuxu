@@ -35,6 +35,7 @@ public class EditArticle extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditArticle.class);
 
     public static final String PARAM_RELATION = "relationId";
+    public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_TITLE = "title";
     public static final String PARAM_PEREX = "perex";
     public static final String PARAM_CONTENT = "content";
@@ -67,7 +68,7 @@ public class EditArticle extends AbcFMServlet {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT,PARAM_RELATION,Relation.class,params);
         if ( relation==null )
             throw new MissingArgumentException("Chybí parametr relationId!");
 
@@ -141,7 +142,7 @@ public class EditArticle extends AbcFMServlet {
             persistance.create(new Relation(item,record,relation.getId()));
 
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId());
+            urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
             return null;
         } catch (PersistanceException e) {
             ServletUtils.addError(Constants.ERROR_GENERIC,e.getMessage(),env, null);
@@ -211,7 +212,7 @@ public class EditArticle extends AbcFMServlet {
         persistance.update(record);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?relationId="+upper.getId());
+        urlUtils.redirect(response, "/ViewRelation?rid="+upper.getId());
         return null;
     }
 
