@@ -21,9 +21,10 @@ import javax.servlet.RequestDispatcher;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.AbcException;
+import cz.abclinuxu.scheduler.jobs.UpdateLinks;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.servlets.utils.UrlUtils;
-import cz.abclinuxu.servlets.view.SelectIcon;
+import cz.abclinuxu.servlets.view.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -64,6 +65,8 @@ import java.util.*;
  * <dd>Contains password of user wishing to log in.</dd>
  * <dt><code>PARAM_LOG_OUT</code></dt>
  * <dd>Exists, if user wishes to log out.</dd>
+ * <dt><code>VAR_LINKS</code></dt>
+ * <dd>Map, where key is Server and value is list of Links, where link.server==server.id && link.fixed==false.</dd>
  * </dl>
  */
 public class AbcServlet extends VelocityServlet {
@@ -81,6 +84,11 @@ public class AbcServlet extends VelocityServlet {
     public static final String VAR_MESSAGES = "MESSAGES";
     public static final String VAR_PARAMS = "PARAMS";
     public static final String VAR_HELPER = "UTIL";
+    /** used by template */
+    public static final String VAR_RUBRIKY = "RUBRIKY";
+    public static final String VAR_ABCLINUXU = "ABCLINUXU";
+    public static final String VAR_ANKETA = "ANKETA";
+    public static final String VAR_LINKS = "LINKS";
 
     public static final String PARAM_ACTION = "action";
     public static final String PARAM_LOG_USER = "LOGIN";
@@ -104,19 +112,48 @@ public class AbcServlet extends VelocityServlet {
      */
     protected Context createContext(HttpServletRequest request, HttpServletResponse response) {
         Context chained = (Context) request.getAttribute(AbcServlet.ATTRIB_CONTEXT);
-        Context context = null;
+        Context ctx = null;
         if ( chained!=null ) {
-            context = new VelocityContext(chained);
-            context.put(REQUEST, request);
-            context.put(RESPONSE, response);
+            ctx = new VelocityContext(chained);
+            ctx.put(REQUEST, request);
+            ctx.put(RESPONSE, response);
         } else {
-            context = super.createContext(request, response);
-            context.put(AbcServlet.VAR_PERSISTANCE,PersistanceFactory.getPersistance());
-            context.put(AbcServlet.VAR_HELPER,new VelocityHelper());
-            context.put(AbcServlet.VAR_URL_UTILS,new UrlUtils(request.getRequestURI(), response));
+            ctx = super.createContext(request, response);
+
+            Persistance persistance = PersistanceFactory.getPersistance();
+            ctx.put(AbcServlet.VAR_PERSISTANCE,persistance);
+
+            VelocityHelper helper = new VelocityHelper();
+            ctx.put(AbcServlet.VAR_HELPER,helper);
+
+            ctx.put(AbcServlet.VAR_URL_UTILS,new UrlUtils(request.getRequestURI(), response));
+
+            /** template variables */
+
+            try {
+                Category rubriky = (Category) persistance.findById(new Category(Constants.CAT_ARTICLES));
+                helper.sync(rubriky.getContent());
+                ctx.put(VAR_RUBRIKY,rubriky.getContent());
+
+                Category abc = (Category) persistance.findById(new Category(Constants.CAT_ABC));
+                helper.sync(abc.getContent());
+                ctx.put(VAR_ABCLINUXU,abc.getContent());
+
+                List list = persistance.findByCommand("select max(cislo) from anketa");
+                Object[] objects = (Object[]) list.get(0);
+                Poll poll = new Poll(((Integer)objects[0]).intValue());
+                poll = (Poll) persistance.findById(poll);
+                ctx.put(VAR_ANKETA,poll);
+
+                Category linksCategory = (Category) persistance.findById(new Category(Constants.CAT_LINKS));
+                Map links = UpdateLinks.groupLinks(linksCategory,persistance);
+                ctx.put(VAR_LINKS,links);
+            } catch (PersistanceException e) {
+                log.warn("Cannot get default objects!",e);
+            }
         }
-        request.setAttribute(AbcServlet.ATTRIB_CONTEXT,context);
-        return context;
+        request.setAttribute(AbcServlet.ATTRIB_CONTEXT,ctx);
+        return ctx;
     }
 
     /**

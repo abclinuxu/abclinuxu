@@ -21,3 +21,10 @@
 <!ELEMENT text (#PCDATA)> <!-- instructions -->
 <!ELEMENT url (#PCDATA)> <!-- URL, probably link to homepage of the software -->
 <!ELEMENT version (#PCDATA)> <!-- version of the software -->
+
+<!-- Record.Discussion -->
+<!ELEMENT data (author?,text,url?,version?)>
+<!ELEMENT author (#PCDATA)> <!-- unknow user's name -->
+<!ELEMENT title (#PCDATA)> <!-- title of this reaction -->
+<!ELEMENT text (#PCDATA)> <!-- its text -->
+<!ELEMENT upper (#PCDATA)> <!-- int, id of previous Record.Discussion -->

@@ -30,17 +30,13 @@ import java.util.*;
  * <dd>List of Relations, where parent() is /Hardware/386 category. All children are initialized.</dd>
  * <dt><code>VAR_SOFTWARE</code></dt>
  * <dd>List of Relations, where parent() is /Software category. All children are initialized.</dd>
- * <dt><code>VAR_LINKS</code></dt>
- * <dd>Map, where key is Server and value is list of Links, where link.server==server.id && link.fixed==false.</dd>
  * </dl>
  */
 public class ViewIndex extends AbcServlet {
     public static final String VAR_HARDWARE = "HARDWARE";
     public static final String VAR_SOFTWARE = "SOFTWARE";
-    public static final String VAR_CLANKY = "CLANKY";
-    public static final String VAR_ABCLINUXU = "ABCLINUXU";
-    public static final String VAR_ANKETA = "ANKETA";
-    public static final String VAR_LINKS = "LINKS";
+    public static final String VAR_HW_NEW = "HW_NEW";
+    public static final String VAR_SW_NEW = "SW_NEW";
 
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
@@ -56,23 +52,25 @@ public class ViewIndex extends AbcServlet {
         helper.sync(sw.getContent());
         ctx.put(ViewIndex.VAR_SOFTWARE,sw.getContent());
 
-        Category clanky = (Category) persistance.findById(new Category(Constants.CAT_ARTICLES));
-        helper.sync(clanky.getContent());
-        ctx.put(ViewIndex.VAR_CLANKY,clanky.getContent());
+        List hwNew = new ArrayList(3);
+        List list = persistance.findByCommand("select cislo from zaznam where typ=1 order by kdy desc limit 3");
+        for (Iterator iter = list.iterator(); iter.hasNext();) {
+            Object[] objects = (Object[]) iter.next();
+            Relation child = new Relation(null,new Record(((Integer)objects[0]).intValue(),Record.HARDWARE),0);
+            Relation found = persistance.findByExample(child);
+            hwNew.add(found);
+        }
+        ctx.put(VAR_HW_NEW,hwNew);
 
-        Category abc = (Category) persistance.findById(new Category(Constants.CAT_ABC));
-        helper.sync(abc.getContent());
-        ctx.put(ViewIndex.VAR_ABCLINUXU,abc.getContent());
-
-        List list = persistance.findByCommand("select max(cislo) from anketa");
-        Object[] objects = (Object[]) list.get(0);
-        Poll poll = new Poll(((Integer)objects[0]).intValue());
-        poll = (Poll) persistance.findById(poll);
-        ctx.put(ViewIndex.VAR_ANKETA,poll);
-
-        Category linksCategory = (Category) persistance.findById(new Category(Constants.CAT_LINKS));
-        Map links = UpdateLinks.groupLinks(linksCategory,persistance);
-        ctx.put(ViewLinks.VAR_LINKS,links);
+        List swNew = new ArrayList(3);
+        list = persistance.findByCommand("select cislo from zaznam where typ=2 order by kdy desc limit 3");
+        for (Iterator iter = list.iterator(); iter.hasNext();) {
+            Object[] objects = (Object[]) iter.next();
+            Relation child = new Relation(null,new Record(((Integer)objects[0]).intValue(),Record.SOFTWARE),0);
+            Relation found = persistance.findByExample(child);
+            swNew.add(found);
+        }
+        ctx.put(VAR_SW_NEW,swNew);
 
         return getTemplate("index.vm");
     }

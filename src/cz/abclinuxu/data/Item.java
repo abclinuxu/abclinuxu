@@ -13,7 +13,7 @@ public class Item extends GenericDataObject {
     public static final int MAKE = 1;
     /** Article header. The article is consisted from this header and at least one Article record. */
     public static final int ARTICLE = 2;
-    /** Discussion may contain one DiscussionQuestion and many DiscussionItems. */
+    /** Discussion defines one discussion. It may contain initial question. */
     public static final int DISCUSSION = 3;
     /** User's request to administrators. */
     public static final int REQUEST = 4;

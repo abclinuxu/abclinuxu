@@ -46,7 +46,7 @@ import java.util.Map;
  * <dd>List of Relations, where parent() is /Hardware category.</dd>
  * <dt><code>VAR_SOFTWARE</code></dt>
  * <dd>List of Relations, where parent() is /Software category.</dd>
- * <dt><code>VAR_CLANKY</code></dt>
+ * <dt><code>VAR_RUBRIKY</code></dt>
  * <dd>List of Relations, where parent() is /Clanky category.</dd>
  * <dt><code>VAR_H386</code></dt>
  * <dd>List of Relations, where parent() is /Hardware/386 category.</dd>

@@ -60,6 +60,7 @@ public class Scheduler extends Thread {
     protected Scheduler() {
         jobs = new ArrayList();
         setName("Scheduler");
+        setDaemon(true);
         start();
     }
 
@@ -85,13 +86,13 @@ public class Scheduler extends Thread {
         Calendar next = Calendar.getInstance();
         next.setTime(now);
         next.set(Calendar.HOUR,7);
-        next.set(Calendar.MINUTE,15);
+        next.set(Calendar.MINUTE,30);
 
         Calendar tmp = Calendar.getInstance();
         tmp.setTime(now);
         if ( next.before(tmp) ) next.add(Calendar.HOUR, 24);
 
-        addTask(new UpdateLinks(),24*60*60*1000,next.getTime().getTime()); // each 24 hours, starting at 7 AM
+        addTask(new UpdateLinks(),12*60*60*1000,next.getTime().getTime()); // each 12 hours, starting at 7:30 AM
     }
 
     class JobItem {

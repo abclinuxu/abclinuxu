@@ -364,6 +364,13 @@ public class VelocityHelper {
     }
 
     /**
+     * Returns formatted String according to current locale. Uses current time.
+     */
+    public String showDate() {
+        return Constants.defaultFormat.format(new Date());
+    }
+
+    /**
      * Returns formatted String according to current locale. isoDate must be in iso format (2002-01-03 12:32)
      */
     public String showDate(String isoDate) {

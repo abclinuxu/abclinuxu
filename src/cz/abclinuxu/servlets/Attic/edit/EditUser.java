@@ -102,7 +102,7 @@ public class EditUser extends AbcServlet {
 
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
-                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
+                //case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
                 default: return actionEditStep1(request,ctx);
             }
 
@@ -112,7 +112,10 @@ public class EditUser extends AbcServlet {
 
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
-                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
+                case Guard.ACCESS_DENIED: {
+                    addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
+                    actionEditStep1(request,ctx);
+                }
                 default: return actionEditStep2(request,response,ctx);
             }
 
@@ -132,7 +135,10 @@ public class EditUser extends AbcServlet {
 
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
-                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
+                case Guard.ACCESS_DENIED: {
+                    addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
+                    return getTemplate("edit/password.vm");
+                }
                 default: return actionPassword(request,response,ctx);
             }
         }
