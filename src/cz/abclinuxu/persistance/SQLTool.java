@@ -112,7 +112,7 @@ public final class SQLTool implements Configurable {
      * empty, PreparedStatement is created and fed up from params.
      * @param sql Command to execute.
      * @param params List of parameters. It must not be null.
-     * @return List of initialized users.
+     * @return List of Integers.
      * @throws PersistanceException if something goes wrong.
      */
     private List loadUsers(String sql, List params) throws PersistanceException {
@@ -130,9 +130,7 @@ public final class SQLTool implements Configurable {
             resultSet = statement.executeQuery();
             List result = new ArrayList();
             while ( resultSet.next() ) {
-                int id = resultSet.getInt(1);
-                User user = (User) persistance.findById(new User(id));
-                result.add(user);
+                result.add(new Integer(resultSet.getInt(1)));
             }
             return result;
         } catch (SQLException e) {

@@ -30,7 +30,7 @@ public final class NewsCategories implements Configurable {
         singleton = new NewsCategories();
     }
 
-    private Map map = new LinkedHashMap(11,1.0f);
+    private Map map;
     private String filename;
 
     /**
@@ -83,6 +83,7 @@ public final class NewsCategories implements Configurable {
         try {
             Document document = new SAXReader().read(filename);
             String key, name, desc;
+            Map aMap = new LinkedHashMap(11, 1.0f);
             List categoryTags = document.getRootElement().elements("category");
             for ( Iterator iter = categoryTags.iterator(); iter.hasNext(); ) {
                 Element tagCategory = (Element) iter.next();
@@ -90,8 +91,9 @@ public final class NewsCategories implements Configurable {
                 name = tagCategory.elementTextTrim("name");
                 desc = tagCategory.elementTextTrim("desc");
                 NewsCategory category = new NewsCategory(key, name, desc);
-                map.put(key,category);
+                aMap.put(key,category);
             }
+            map = aMap;
             log.info("Loaded "+map.size()+" news categories.");
         } catch (Exception e) {
             log.error("Cannot load list of news categories.", e);
