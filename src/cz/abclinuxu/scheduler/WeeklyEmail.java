@@ -14,7 +14,7 @@ import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.persistance.extra.Qualifier;
 import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.Item;
 import cz.abclinuxu.servlets.Constants;
 
 import java.util.*;
@@ -31,7 +31,7 @@ public class WeeklyEmail extends TimerTask implements Configurable {
     public static final String PREF_TEMPLATE = "template";
 
     public static final String VAR_ARTICLES = "ARTICLES";
-    public static final String VAR_AUTHORS = "AUTHORS";
+    public static final String VAR_NEWS = "NEWS";
     public static final String VAR_WEEK = "WEEK";
     public static final String VAR_YEAR = "YEAR";
 
@@ -81,7 +81,7 @@ public class WeeklyEmail extends TimerTask implements Configurable {
     private boolean setArticles(Map params) {
         Persistance persistance = PersistanceFactory.getPersistance();
         Tools tools = new Tools();
-        boolean found = false;
+        Item item;
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
@@ -90,21 +90,33 @@ public class WeeklyEmail extends TimerTask implements Configurable {
 
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING};
         List relations = SQLTool.getInstance().findArticleRelationsWithinPeriod(calendar.getTime(), new Date(), qualifiers);
-        List authors = new ArrayList(relations.size());
+        List articles = new ArrayList(relations.size());
 
         for (Iterator iter = relations.iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
-            persistance.synchronize(relation.getChild());
-            String tmp = tools.xpath(relation.getChild(),"/data/author");
-            User user = tools.createUser(tmp);
-            authors.add(user);
-            found = true;
+            item = (Item) persistance.findById(relation.getChild());
+            String tmp = tools.xpath(item,"/data/author");
+            Article article = new Article(tools.xpath(item, "data/name"),item.getCreated(),relation.getId());
+            article.setAuthor(tools.createUser(tmp).getName());
+            article.setPerex(tools.xpath(item, "data/perex"));
+            articles.add(article);
         }
 
-        params.put(VAR_ARTICLES,relations);
-        params.put(VAR_AUTHORS,authors);
+        relations = SQLTool.getInstance().findNewsRelationsWithinPeriod(calendar.getTime(), new Date(), qualifiers);
+        List news = new ArrayList(relations.size());
 
-        return found;
+        for ( Iterator iter = relations.iterator(); iter.hasNext(); ) {
+            Relation relation = (Relation) iter.next();
+            item = (Item) persistance.findById(relation.getChild());
+            News newz = new News(tools.xpath(item, "data/content"), item.getCreated(), relation.getId());
+            newz.setAuthor(tools.createUser(item.getOwner()).getName());
+            newz.setComments(tools.findComments(item).getResponseCount());
+            news.add(newz);
+        }
+
+        params.put(VAR_ARTICLES, articles);
+        params.put(VAR_NEWS, news);
+        return articles.size()>0;
     }
 
     /**
@@ -135,5 +147,85 @@ public class WeeklyEmail extends TimerTask implements Configurable {
     public static void main(String[] args) {
         WeeklyEmail weeklyEmail = new WeeklyEmail();
         weeklyEmail.run();
+    }
+
+    public static class Article {
+        private String title, perex, author;
+        private Date published;
+        private int relationId;
+
+        public Article(String title, Date published, int relationId) {
+            this.title = title;
+            this.published = published;
+            this.relationId = relationId;
+        }
+
+        public void setPerex(String perex) {
+            this.perex = perex;
+        }
+
+        public void setAuthor(String author) {
+            this.author = author;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getPerex() {
+            return perex;
+        }
+
+        public String getAuthor() {
+            return author;
+        }
+
+        public Date getPublished() {
+            return published;
+        }
+
+        public int getRelationId() {
+            return relationId;
+        }
+    }
+
+    public static class News {
+        String content, author;
+        Date published;
+        int relationId, comments;
+
+        public News(String content, Date published, int relationId) {
+            this.content = content;
+            this.published = published;
+            this.relationId = relationId;
+        }
+
+        public void setAuthor(String author) {
+            this.author = author;
+        }
+
+        public void setComments(int comments) {
+            this.comments = comments;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public String getAuthor() {
+            return author;
+        }
+
+        public Date getPublished() {
+            return published;
+        }
+
+        public int getRelationId() {
+            return relationId;
+        }
+
+        public int getComments() {
+            return comments;
+        }
     }
 }

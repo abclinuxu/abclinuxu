@@ -1,17 +1,37 @@
-Souhrn clanku pro tyden ${WEEK}/${YEAR}
+Tyden ${WEEK}/${YEAR}
 
-<#list ARTICLES as relation> <#global clanek=relation.child>
- ${TOOL.xpath(clanek,"data/name")}
- ${DATE.show(clanek.created, "CZ_FULL")} | ${AUTHORS[relation_index].name}
+Prehled clanku
+==============
 
- ${TOOL.xpath(clanek,"/data/perex")}
+<#list ARTICLES as clanek>
+ ${clanek.title}
+ ${DATE.show(clanek.published, "CZ_FULL")} | ${clanek.author}
 
- http://www.abclinuxu.cz/clanky/show/${relation.id}
+ ${clanek.perex}
+
+ http://www.abclinuxu.cz/clanky/show/${clanek.relationId}
 
  ---------------------
 
 </#list>
 
+Prehled zpravicek
+=================
+
+<#list NEWS as news>
+ ${news.content}
+ ${DATE.show(news.published, "CZ_FULL")} | ${news.author}
+
+ Komentaru: ${news.comments}
+
+ http://www.abclinuxu.cz/news/show/${news.relationId}
+
+ ---------------------
+
+</#list>
+
+
+
 Pokud si neprejete dale dostavat tyto emaily, muzete tak ucinit
-na adrese http://www.abclinuxu.cz/EditUser/ ${USER.id}?action=subscribe
+na adrese http://www.abclinuxu.cz/EditUser/${USER.id}?action=subscribe
 Vase prihlasovaci jmeno je ${USER.login}.
