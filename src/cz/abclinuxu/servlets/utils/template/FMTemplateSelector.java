@@ -54,7 +54,7 @@ public class FMTemplateSelector extends TemplateSelector {
      * @throws NotFoundException when such combination of servlet and action doesn't exist
      */
     public static String select(String servlet, String action, Map data, HttpServletRequest request) {
-        String browser = findBrowser(request), os = findOS(request);
+        String browser = findBrowser(request);
         if ( Misc.same(browser,BROWSER_MIRROR) )
             return "/lynx/other/nomirror.vm";
 
@@ -66,9 +66,7 @@ public class FMTemplateSelector extends TemplateSelector {
         Mapping mapping = servletAction.getMapping(template);
         String page = mapping.getContent();
         storeVariables(data,mapping.getVariables());
-
         data.put(VAR_BROWSER,browser);
-        data.put(VAR_OS,os);
 
         return page;
     }

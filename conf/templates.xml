@@ -191,14 +191,14 @@
   </servlet>
 
   <servlet name="SelectRelation">
-    <action name="step1">
-      <mapping template="web" content="web/misc/selectRelation.vm">
+    <action name="step1" template="print">
+      <mapping template="print" content="/print/misc/selectRelation.ftl">
         <var name="TITLE" value="Výbìr relace" />
       </mapping>
     </action>
-    <action name="step2">
-      <mapping template="web" content="web/misc/selectRelation2.vm">
-        <var name="TITLE" value="Potvrzení relace" />
+    <action name="step2" template="print">
+      <mapping template="print" content="/print/misc/selectRelation2.ftl">
+        <var name="TITLE" value="Potvrzení výbìru" />
       </mapping>
     </action>
   </servlet>

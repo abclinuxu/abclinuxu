@@ -8,14 +8,17 @@ package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.GenericObject;
+import cz.abclinuxu.utils.Misc;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 
@@ -43,8 +46,6 @@ import java.util.Map;
  * </dl>
  * <u>Context variables introduced by AbcVelocityServlet</u>
  * <dl>
- * <dt><code>VAR_HARDWARE</code></dt>
- * <dd>List of Relations, where parent() is /Hardware category.</dd>
  * <dt><code>VAR_SOFTWARE</code></dt>
  * <dd>List of Relations, where parent() is /Software category.</dd>
  * <dt><code>VAR_RUBRIKY</code></dt>
@@ -55,120 +56,108 @@ import java.util.Map;
  * <dd>Actual Relation, equivalent of PARAM_CURRENT.</dd>
  * </dl>
  */
-public class SelectRelation extends AbcVelocityServlet {
+public class SelectRelation extends AbcFMServlet {
     public static final String PARAM_SELECTED = "selectedId";
     public static final String PARAM_CURRENT = "currentId";
     public static final String PARAM_ENTERED = "enteredId";
     public static final String PARAM_URL = "url";
     public static final String PARAM_FINISH = "finish";
     public static final String PARAM_CONFIRM = "confirm";
-
-    public static final String VAR_HARDWARE = "HARDWARE";
     public static final String VAR_SOFTWARE = "SOFTWARE";
     public static final String VAR_CLANKY = "CLANKY";
     public static final String VAR_386 = "H386";
     public static final String VAR_CURRENT = "CURRENT";
 
-
-    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        init(request,response,ctx);
-
-        String confirm = request.getParameter(SelectRelation.PARAM_CONFIRM);
-        String finish = request.getParameter(SelectRelation.PARAM_FINISH);
+    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        String confirm = request.getParameter(PARAM_CONFIRM);
+        String finish = request.getParameter(PARAM_FINISH);
 
         if ( finish!=null && finish.length()>0 ) {
-            return actionFinish(request,response,ctx);
+            return actionFinish(request,response,env);
         }
 
         if ( confirm!=null && confirm.length()>0 ) {
-            return actionConfirm(request,ctx);
+            return actionConfirm(request,env);
         }
-        return actionNext(request,ctx);
+        return actionNext(request,env);
     }
 
     /**
      * Called, when we shall descend to another relation
      */
-    protected String actionNext(HttpServletRequest request, Context ctx) throws Exception {
+    protected String actionNext(HttpServletRequest request, Map env) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
-        String manual = request.getParameter(SelectRelation.PARAM_ENTERED);
-        String tmp = request.getParameter(SelectRelation.PARAM_CURRENT);
+        String manual = request.getParameter(PARAM_ENTERED);
+        String tmp = request.getParameter(PARAM_CURRENT);
 
         if ( tmp!=null ) {
             try {
-                int currentId = Integer.parseInt( (manual!=null && manual.length()>0)? manual:tmp);
+                int currentId = Integer.parseInt( (Misc.empty(manual))? tmp:manual);
                 Relation current = (Relation) persistance.findById(new Relation(currentId));
-                ctx.put(SelectRelation.VAR_CURRENT,current);
-                return VelocityTemplateSelector.selectTemplate(request,ctx,"SelectRelation","step1");
+                env.put(VAR_CURRENT,current);
+                return FMTemplateSelector.select("SelectRelation","step1",env,request);
             } catch (NumberFormatException e) {
-                ServletUtils.addError(SelectRelation.PARAM_ENTERED,"Èíslo vìt¹í ne¾ nula!",ctx, null);
+                ServletUtils.addError(PARAM_ENTERED,"Èíslo vìt¹í ne¾ nula!",env, null);
             } catch (PersistanceException e) {
-                ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,"Nebyla zvolena platná relace!",ctx, null);
+                ServletUtils.addError(Constants.ERROR_GENERIC,"Nebyla zvolena platná relace!",env, null);
             }
         }
 
         Category clanky = (Category) persistance.findById(new Category(Constants.CAT_ARTICLES));
         List content = clanky.getContent();
-        ctx.put(SelectRelation.VAR_CLANKY,content);
-
-        Category hw = (Category) persistance.findById(new Category(Constants.CAT_HARDWARE));
-        content = hw.getContent();
-        ctx.put(SelectRelation.VAR_HARDWARE,content);
+        env.put(VAR_CLANKY,content);
 
         Category sw = (Category) persistance.findById(new Category(Constants.CAT_SOFTWARE));
         content = sw.getContent();
-        ctx.put(SelectRelation.VAR_SOFTWARE,content);
+        env.put(VAR_SOFTWARE,content);
 
         Category hw386 = (Category) persistance.findById(new Category(Constants.CAT_386));
         content = hw386.getContent();
-        ctx.put(SelectRelation.VAR_386,content);
-        return VelocityTemplateSelector.selectTemplate(request,ctx,"SelectRelation","step1");
+        env.put(VAR_386,content);
+        return FMTemplateSelector.select("SelectRelation","step1",env,request);
     }
 
     /**
      * Called, when user select relation.
      */
-    protected String actionConfirm(HttpServletRequest request, Context ctx) throws Exception {
+    protected String actionConfirm(HttpServletRequest request, Map env) throws Exception {
         int result = 0;
-        String manual = request.getParameter(SelectRelation.PARAM_ENTERED);
-        String tmp = request.getParameter(SelectRelation.PARAM_CURRENT);
+        String manual = request.getParameter(PARAM_ENTERED);
+        String tmp = request.getParameter(PARAM_CURRENT);
 
         if ( manual!=null && manual.length()>0 ) {
             try {
                 result = Integer.parseInt(manual);
             } catch (NumberFormatException e) {
-                ServletUtils.addError(SelectRelation.PARAM_ENTERED,"Císlo vìt¹í ne¾ nula!",ctx, null);
+                ServletUtils.addError(PARAM_ENTERED,"Císlo vìt¹í ne¾ nula!",env, null);
             }
         } else {
             try {
                 result = Integer.parseInt(tmp);
             } catch (NumberFormatException e) {
-                ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,"Nebyla zvolena platná relace!",ctx, null);
+                ServletUtils.addError(Constants.ERROR_GENERIC,"Nebyla zvolena platná relace!",env, null);
             }
         }
 
         Relation current = (Relation) PersistanceFactory.getPersistance().findById(new Relation(result));
-        ctx.put(SelectRelation.VAR_CURRENT,current);
-        return VelocityTemplateSelector.selectTemplate(request,ctx,"SelectRelation","step2");
+        env.put(VAR_CURRENT,current);
+        return FMTemplateSelector.select("SelectRelation","step2",env,request);
     }
 
     /**
      * Called, when user confirms his choice. It redirects flow to PARAM_URL and puts all parameters
      * to session map AbcVelocityServlet.ATTRIB_PARAMS. There will be also result under name PARAM_SELECTED.
      */
-    protected String actionFinish(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        String choice = request.getParameter(SelectRelation.PARAM_CURRENT);
+    protected String actionFinish(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        String choice = request.getParameter(PARAM_CURRENT);
 
         Map map = ServletUtils.putParamsToMap(request);
-        map.put(SelectRelation.PARAM_SELECTED,map.get(SelectRelation.PARAM_CURRENT));
-        map.remove(SelectRelation.PARAM_CURRENT);
-        map.remove(SelectRelation.PARAM_URL);
+        map.put(PARAM_SELECTED,map.get(PARAM_CURRENT));
+        String url = (String) map.remove(PARAM_URL);
+        map.remove(PARAM_CURRENT);
+        request.getSession().setAttribute(Constants.VAR_PARAMS,map);
 
-        HttpSession session = request.getSession();
-        session.setAttribute(AbcVelocityServlet.ATTRIB_PARAMS,map);
-
-        String url = request.getParameter(SelectRelation.PARAM_URL);
-        UrlUtils.redirect(response, url, ctx);
+        ((UrlUtils) env.get(Constants.VAR_URL_UTILS)).redirect(response, url);
         return null;
     }
 }

@@ -124,8 +124,7 @@ public class SelectIcon extends AbcFMServlet {
         map.remove(EditCategory.PARAM_CHOOSE_ICON);
         request.getSession().setAttribute(Constants.VAR_PARAMS,map);
 
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, url);
+        ((UrlUtils) env.get(Constants.VAR_URL_UTILS)).redirect(response, url);
         return null;
     }
 }
