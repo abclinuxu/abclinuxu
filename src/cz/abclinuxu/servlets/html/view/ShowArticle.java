@@ -60,6 +60,7 @@ public class ShowArticle implements AbcAction {
 
         Tools.sync(relation);
         env.put(VAR_RELATION, relation);
+
         List parents = persistance.findParents(relation);
         env.put(VAR_PARENTS, parents);
         Item item = (Item) relation.getChild();
@@ -143,6 +144,7 @@ public class ShowArticle implements AbcAction {
         persistance.incrementCounter(item);
         return FMTemplateSelector.select("ShowObject", "article", env, request);
     }
+
     /**
      * Holder of one link from related articles or resources.
      */

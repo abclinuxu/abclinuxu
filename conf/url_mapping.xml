@@ -104,6 +104,10 @@
             <pattern>^/Admin</pattern>
             <action>cz.abclinuxu.servlets.html.admin.AdminServlet</action>
         </mapping>
+        <mapping>
+            <pattern>.docb</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ShowDocbook</action>
+        </mapping>
     </format>
     <format version="wap">
         <mapping>

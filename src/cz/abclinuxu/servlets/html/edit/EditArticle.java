@@ -51,6 +51,7 @@ public class EditArticle implements AbcAction {
     public static final String ACTION_ADD_ITEM_STEP2 = "add2";
     public static final String ACTION_EDIT_ITEM = "edit";
     public static final String ACTION_EDIT_ITEM_STEP2 = "edit2";
+    public static final String ACTION_DOCBOOK = "docbook";
 
     private static RE reBreak;
     static {
@@ -213,7 +214,6 @@ public class EditArticle implements AbcAction {
         urlUtils.redirect(response, "/show/"+upper.getId());
         return null;
     }
-
 
     // setters
 
