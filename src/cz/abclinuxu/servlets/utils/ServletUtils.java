@@ -158,7 +158,6 @@ public class ServletUtils {
             LoginCookie loginCookie = new LoginCookie(cookie);
             try {
                 user = (User) persistance.findById(new User(loginCookie.id));
-                handleLoggedIn(user,true,null);
             } catch (PersistanceException e) {
                 deleteCookie(cookie,response);
                 addError(Constants.ERROR_GENERIC,"Nalezena cookie s neznámým u¾ivatelem!",env, null);
@@ -170,6 +169,7 @@ public class ServletUtils {
                 addError(Constants.ERROR_GENERIC,"Nalezena cookie se ¹patným heslem!",env, null);
                 return;
             }
+            handleLoggedIn(user, true, null);
         } else {
             return;
         }
