@@ -43,7 +43,7 @@ public class VariableFetcher extends TimerTask {
         newSoftware = new ArrayList(SIZE);
         newDrivers = new ArrayList(SIZE);
         newArticles = new ArrayList(ARTICLE_SIZE);
-        counter = new HashMap(8,1.0f);
+        counter = new HashMap(0,1.0f);
         linksLastRun = System.currentTimeMillis();
     }
 
@@ -127,6 +127,10 @@ public class VariableFetcher extends TimerTask {
             counter.put("WAITING_NEWS",new Integer(news.getChildren().size()));
             Category polls = (Category) persistance.findById(new Category(Constants.CAT_POLLS));
             counter.put("POLLS",new Integer(polls.getChildren().size()));
+            Item todo = (Item) persistance.findById(new Item(Constants.ITEM_DIZ_TODO));
+            Node node = todo.getData().selectSingleNode("//comments");
+            if (node!=null)
+                counter.put("TODO",node.getText());
 
             currentPoll = sqlTool.findActivePoll();
 
