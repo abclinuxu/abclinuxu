@@ -55,22 +55,22 @@
 
   <servlet name="EditHardware">
     <action name="add_record">
-      <mapping template="web" content="web/add/hwrecord.vm">
+      <mapping template="web" content="/web/add/hwrecord.ftl">
         <var name="TITLE" value="Vlo¾ záznam" />
       </mapping>
     </action>
     <action name="edit_record">
-      <mapping template="web" content="web/add/hwrecord.vm">
+      <mapping template="web" content="/web/add/hwrecord.ftl">
         <var name="TITLE" value="Uprav záznam" />
       </mapping>
     </action>
     <action name="add_item">
-      <mapping template="web" content="web/add/item.vm">
+      <mapping template="web" content="/web/add/item.ftl">
         <var name="TITLE" value="Pøidání nové polo¾ky" />
       </mapping>
     </action>
     <action name="edit_item">
-      <mapping template="web" content="web/edit/item.vm">
+      <mapping template="web" content="/web/edit/item.ftl">
         <var name="TITLE" value="Uprav polo¾ku" />
       </mapping>
     </action>

@@ -6,23 +6,21 @@
  */
 package cz.abclinuxu.servlets.edit;
 
-import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.*;
-import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.servlets.view.SelectIcon;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.utils.InstanceUtils;
-import org.apache.velocity.Template;
-import org.apache.velocity.context.Context;
+import cz.abclinuxu.utils.Misc;
+
 import org.dom4j.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.RequestDispatcher;
 import java.util.Map;
 
 /**
@@ -34,7 +32,7 @@ public class EditHardware extends AbcFMServlet {
 
     public static final String PARAM_RELATION = "relationId";
     public static final String PARAM_NAME = "name";
-    public static final String PARAM_ICON = SelectIcon.PARAM_ICON;
+    public static final String PARAM_ICON = "icon";
     public static final String PARAM_DRIVER = "driver";
     public static final String PARAM_PRICE = "price";
     public static final String PARAM_SETUP = "setup";
@@ -42,6 +40,7 @@ public class EditHardware extends AbcFMServlet {
     public static final String PARAM_IDENTIFICATION = "identification";
     public static final String PARAM_NOTE = "note";
     public static final String PARAM_RECORD_ID = "recordId";
+    public static final String PARAM_CHOOSE_ICON = "iconChooser";
 
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_RECORD = "RECORD";
@@ -61,7 +60,7 @@ public class EditHardware extends AbcFMServlet {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
-        String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
+        String action = (String) params.get(PARAM_ACTION);
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
         if ( relation!=null ) {
@@ -135,7 +134,7 @@ public class EditHardware extends AbcFMServlet {
                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
                 case Guard.ACCESS_OK: return actionEditRecord2(request,response,env);
                 case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionEditRecord(request,env);
+                default: return actionEditRecord2(request,response,env);
             }
 
         } else if ( action.equals(ACTION_EDIT_ITEM) ) {
@@ -152,7 +151,7 @@ public class EditHardware extends AbcFMServlet {
                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
                 case Guard.ACCESS_OK: return actionEditItem2(request,response,env);
                 case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionEditItem(request, env);
+                default: return actionEditItem2(request,response,env);
             }
 
         }
@@ -165,7 +164,7 @@ public class EditHardware extends AbcFMServlet {
 
         String name = (String) params.get(PARAM_NAME);
         if ( name==null || name.length()==0 ) {
-            ServletUtils.addError(PARAM_NAME,"Nevyplnil jste název druhu!",env,null);
+            ServletUtils.addError(PARAM_NAME,"Zadejte název druhu!",env,null);
             return FMTemplateSelector.select("EditHardware","add_item",env,request);
         }
         return FMTemplateSelector.select("EditHardware","add_record",env,request);
@@ -179,7 +178,7 @@ public class EditHardware extends AbcFMServlet {
 
         String name = (String) params.get(PARAM_NAME);
         if ( name==null || name.length()==0 ) {
-            ServletUtils.addError(PARAM_NAME,"Nevyplnil jste název druhu!",env,null);
+            ServletUtils.addError(PARAM_NAME,"Zadejte název druhu!",env,null);
             return FMTemplateSelector.select("EditHardware","add_item",env,request);
         }
         String icon = (String) params.get(PARAM_ICON);
@@ -207,12 +206,18 @@ public class EditHardware extends AbcFMServlet {
 
         document = DocumentHelper.createDocument();
         root = document.addElement("data");
-        if ( price!=null && price.length()>0 ) root.addElement("price").addText(price);
-        if ( driver!=null && driver.length()>0 ) root.addElement("driver").addText(driver);
-        if ( setup!=null && setup.length()>0 ) root.addElement("setup").addText(setup);
-        if ( tech!=null && tech.length()>0 ) root.addElement("params").addText(tech);
-        if ( identification!=null && identification.length()>0 ) root.addElement("identification").addText(identification);
-        if ( note!=null && note.length()>0 ) root.addElement("note").addText(note);
+        if ( !Misc.empty(price) )
+            root.addElement("price").addText(price);
+        if ( !Misc.empty(driver) )
+            root.addElement("driver").addText(driver);
+        if ( !Misc.empty(setup) )
+            root.addElement("setup").addText(setup);
+        if ( !Misc.empty(tech) )
+            root.addElement("params").addText(tech);
+        if ( !Misc.empty(identification) )
+            root.addElement("identification").addText(identification);
+        if ( !Misc.empty(note) )
+            root.addElement("note").addText(note);
 
         Record record = new Record(0,Record.HARDWARE);
         record.setData(document);
@@ -237,7 +242,6 @@ public class EditHardware extends AbcFMServlet {
     protected String actionAddRecord(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
-        Relation upper = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
 
         String driver = (String) params.get(PARAM_DRIVER);
@@ -254,16 +258,23 @@ public class EditHardware extends AbcFMServlet {
 
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
-        if ( price!=null && price.length()>0 ) root.addElement("price").addText(price);
-        if ( driver!=null && driver.length()>0 ) root.addElement("driver").addText(driver);
-        if ( setup!=null && setup.length()>0 ) root.addElement("setup").addText(setup);
-        if ( tech!=null && tech.length()>0 ) root.addElement("params").addText(tech);
-        if ( identification!=null && identification.length()>0 ) root.addElement("identification").addText(identification);
-        if ( note!=null && note.length()>0 ) root.addElement("note").addText(note);
+        if ( !Misc.empty(price) )
+            root.addElement("price").addText(price);
+        if ( !Misc.empty(driver) )
+            root.addElement("driver").addText(driver);
+        if ( !Misc.empty(setup) )
+            root.addElement("setup").addText(setup);
+        if ( !Misc.empty(tech) )
+            root.addElement("params").addText(tech);
+        if ( !Misc.empty(identification) )
+            root.addElement("identification").addText(identification);
+        if ( !Misc.empty(note) )
+            root.addElement("note").addText(note);
 
         Record record = new Record(0,Record.HARDWARE);
         record.setData(document);
         record.setOwner(user.getId());
+        Relation upper = (Relation) env.get(VAR_RELATION);
 
         try {
             persistance.create(record);
@@ -289,27 +300,44 @@ public class EditHardware extends AbcFMServlet {
         Node node = document.selectSingleNode("data/name");
         params.put(PARAM_NAME,node.getText());
         node = document.selectSingleNode("data/icon");
-        if ( node!=null ) params.put(PARAM_ICON,node.getText());
+        if ( node!=null )
+            params.put(PARAM_ICON,node.getText());
 
         return FMTemplateSelector.select("EditHardware","edit_item",env,request);
     }
 
     protected String actionEditItem2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
-        Relation relation = (Relation) env.get(VAR_RELATION);
 
-        Item item = (Item) relation.getChild();
-        Document document = item.getData();
-        Node node = document.selectSingleNode("data/name");
-
-        String tmp = (String) params.get(PARAM_NAME);
-        if ( tmp==null || tmp.length()==0 ) {
-            ServletUtils.addError(PARAM_NAME,"Nevyplnil jste název druhu!",env,null);
-            return FMTemplateSelector.select("EditHardware","edit_item",env,request);
+        String tmp = (String) params.get(PARAM_CHOOSE_ICON);
+        if ( tmp!=null && tmp.length()>0 ) {
+            // it is not possible to use UrlUtils.dispatch(), because it would prepend prefix!
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/SelectIcon");
+            dispatcher.forward(request,response);
+            return null;
         }
 
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item item = (Item) relation.getChild();
+        Document document = item.getData();
+
+        Node node = DocumentHelper.makeElement(document,"data/name");
+        tmp = (String) params.get(PARAM_NAME);
+        if ( tmp==null || tmp.length()==0 ) {
+            ServletUtils.addError(PARAM_NAME,"Zadejte název druhu!",env,null);
+            return FMTemplateSelector.select("EditHardware","edit_item",env,request);
+        }
         node.setText(tmp);
+
+        node = DocumentHelper.makeElement(document,"data/icon");
+        tmp = (String) params.get(PARAM_ICON);
+        if ( tmp==null || tmp.length()==0 ) {
+            ServletUtils.addError(PARAM_ICON,"Zadejte ikonu!",env,null);
+            return FMTemplateSelector.select("EditHardware","edit_item",env,request);
+        }
+        node.setText(tmp);
+
         persistance.update(item);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -319,25 +347,30 @@ public class EditHardware extends AbcFMServlet {
 
     protected String actionEditRecord(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        VelocityHelper helper = (VelocityHelper) env.get(AbcVelocityServlet.VAR_HELPER);
         Persistance persistance = PersistanceFactory.getPersistance();
 
         Relation upper = (Relation) env.get(VAR_RELATION);
         Record record = (Record) env.get(VAR_RECORD);
-
         Document document = record.getData();
+
         Node node = document.selectSingleNode("data/driver");
-        if ( node!=null ) params.put(PARAM_DRIVER,node.getText());
+        if ( node!=null )
+            params.put(PARAM_DRIVER,node.getText());
         node = document.selectSingleNode("data/price");
-        if ( node!=null ) params.put(PARAM_PRICE,node.getText());
+        if ( node!=null )
+            params.put(PARAM_PRICE,node.getText());
         node = document.selectSingleNode("data/setup");
-        if ( node!=null ) params.put(PARAM_SETUP,helper.encodeSpecial(node.getText()));
+        if ( node!=null )
+            params.put(PARAM_SETUP,node.getText());
         node = document.selectSingleNode("data/params");
-        if ( node!=null ) params.put(PARAM_TECHPARAM,helper.encodeSpecial(node.getText()));
+        if ( node!=null )
+            params.put(PARAM_TECHPARAM,node.getText());
         node = document.selectSingleNode("data/identification");
-        if ( node!=null ) params.put(PARAM_IDENTIFICATION,helper.encodeSpecial(node.getText()));
+        if ( node!=null )
+            params.put(PARAM_IDENTIFICATION,node.getText());
         node = document.selectSingleNode("data/note");
-        if ( node!=null ) params.put(PARAM_NOTE,helper.encodeSpecial(node.getText()));
+        if ( node!=null )
+            params.put(PARAM_NOTE,node.getText());
 
         params.put(PARAM_ACTION,ACTION_EDIT_RECORD_STEP2);
         return FMTemplateSelector.select("EditHardware","edit_record",env,request);
@@ -347,10 +380,6 @@ public class EditHardware extends AbcFMServlet {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        Relation relation = (Relation) env.get(VAR_RELATION);
-        Record record = (Record) env.get(VAR_RECORD);
-        Document document = record.getData();
-
         String driver = (String) params.get(PARAM_DRIVER);
         String price = (String) params.get(PARAM_PRICE);
         String setup = (String) params.get(PARAM_SETUP);
@@ -358,17 +387,25 @@ public class EditHardware extends AbcFMServlet {
         String note = (String) params.get(PARAM_NOTE);
         String identification = (String) params.get(PARAM_IDENTIFICATION);
 
-        if ( (note==null || note.length()==0) && (setup==null || setup.length()==0) ) {
+        if ( Misc.empty(note) && Misc.empty(setup) ) {
             ServletUtils.addError(PARAM_SETUP,"Vyplòte postup zprovoznìní nebo poznámku!",env,null);
             return FMTemplateSelector.select("EditHardware","edit_record",env,request);
         }
 
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Record record = (Record) env.get(VAR_RECORD);
+        Document document = record.getData();
+
         DocumentHelper.makeElement(document,"data/driver").setText(driver);
         DocumentHelper.makeElement(document,"data/price").setText(price);
-        if ( setup!=null ) DocumentHelper.makeElement(document,"data/setup").setText(setup);
-        if ( tech!=null ) DocumentHelper.makeElement(document,"data/params").setText(tech);
-        if ( identification!=null ) DocumentHelper.makeElement(document,"data/identification").setText(identification);
-        if ( note!=null ) DocumentHelper.makeElement(document,"data/note").setText(note);
+        if ( !Misc.empty(setup) )
+            DocumentHelper.makeElement(document,"data/setup").setText(setup);
+        if ( !Misc.empty(tech) )
+            DocumentHelper.makeElement(document,"data/params").setText(tech);
+        if ( !Misc.empty(identification) )
+            DocumentHelper.makeElement(document,"data/identification").setText(identification);
+        if ( !Misc.empty(note) )
+            DocumentHelper.makeElement(document,"data/note").setText(note);
 
         persistance.update(record);
 

@@ -10,7 +10,6 @@
  <form action="${URL.noPrefix("/SelectIcon")}" method="POST">
  <input type="hidden" name="dir" value="${TOOL.substring(URL.prefix,1)}">
  <input type="hidden" name="url" value="${URL.make("/EditCategory")}">
- <!--input type="hidden" name="varianta" value="print"-->
 </#if>
 
  <table width=100 border=0 cellpadding=5>
