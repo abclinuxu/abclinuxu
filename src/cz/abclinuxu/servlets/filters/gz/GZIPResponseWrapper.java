@@ -40,7 +40,8 @@ public class GZIPResponseWrapper extends HttpServletResponseWrapper {
     }
 
     public void flushBuffer() throws IOException {
-        stream.flush();
+        if ( stream!=null )
+            stream.flush();
     }
 
     public ServletOutputStream getOutputStream() throws IOException {
@@ -64,7 +65,6 @@ public class GZIPResponseWrapper extends HttpServletResponseWrapper {
 
         stream = createOutputStream();
         String encoding = origResponse.getCharacterEncoding();
-        writer = new PrintWriter(new OutputStreamWriter(stream, "UTF-8"));
         writer = new PrintWriter(new OutputStreamWriter(stream, encoding));
         return (writer);
     }
