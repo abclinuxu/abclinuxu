@@ -33,8 +33,10 @@ public class EditHardware extends AbcServlet {
     public static final String PARAM_TECHPARAM = "params";
     public static final String PARAM_IDENTIFICATION = "identification";
     public static final String PARAM_NOTE = "note";
+    public static final String PARAM_RECORD_ID = "recordId";
 
     public static final String VAR_RELATION = "RELATION";
+    public static final String VAR_RECORD = "RECORD";
 
     public static final String ACTION_ADD_ITEM = "addItem";
     public static final String ACTION_ADD_ITEM_STEP2 = "addItem2";
@@ -109,6 +111,30 @@ public class EditHardware extends AbcServlet {
                 case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
                 case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return actionAddRecord(request,response,ctx);
+            }
+
+        } else if ( action.equals(ACTION_EDIT_RECORD) ) {
+            Record record = (Record) instantiateParam(PARAM_RECORD_ID,Record.class,params);
+            persistance.synchronize(record);
+            ctx.put(VAR_RECORD,record);
+
+            int rights = Guard.check((User)ctx.get(VAR_USER),record,Guard.OPERATION_EDIT,null);
+            switch (rights) {
+                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                default: return actionEditRecord(request,ctx);
+            }
+
+        } else if ( action.equals(ACTION_EDIT_RECORD_STEP2) ) {
+            Record record = (Record) instantiateParam(PARAM_RECORD_ID,Record.class,params);
+            persistance.synchronize(record);
+            ctx.put(VAR_RECORD,record);
+
+            int rights = Guard.check((User)ctx.get(VAR_USER),record,Guard.OPERATION_EDIT,null);
+            switch (rights) {
+                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                default: return actionEditRecord2(request,response,ctx);
             }
 
         } else if ( action.equals(ACTION_EDIT_ITEM) ) {
@@ -283,6 +309,64 @@ public class EditHardware extends AbcServlet {
         persistance.update(item);
 
         redirect("/ViewRelation?relationId="+relation.getUpper(),response,ctx);
+        return null;
+    }
+
+    protected Template actionEditRecord(HttpServletRequest request, Context ctx) throws Exception {
+        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        Relation upper = (Relation) ctx.get(VAR_RELATION);
+        Record record = (Record) ctx.get(VAR_RECORD);
+
+        Document document = record.getData();
+        Node node = document.selectSingleNode("data/driver");
+        if ( node!=null ) params.put(PARAM_DRIVER,node.getText());
+        node = document.selectSingleNode("data/price");
+        if ( node!=null ) params.put(PARAM_PRICE,node.getText());
+        node = document.selectSingleNode("data/setup");
+        if ( node!=null ) params.put(PARAM_SETUP,node.getText());
+        node = document.selectSingleNode("data/params");
+        if ( node!=null ) params.put(PARAM_TECHPARAM,node.getText());
+        node = document.selectSingleNode("data/identification");
+        if ( node!=null ) params.put(PARAM_IDENTIFICATION,node.getText());
+        node = document.selectSingleNode("data/note");
+        if ( node!=null ) params.put(PARAM_NOTE,node.getText());
+
+        params.put(PARAM_ACTION,ACTION_EDIT_RECORD_STEP2);
+        return getTemplate("add/hwrecord.vm");
+    }
+
+    protected Template actionEditRecord2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        Relation relation = (Relation) ctx.get(VAR_RELATION);
+        Record record = (Record) ctx.get(VAR_RECORD);
+        Document document = record.getData();
+
+        String driver = (String) params.get(PARAM_DRIVER);
+        String price = (String) params.get(PARAM_PRICE);
+        String setup = (String) params.get(PARAM_SETUP);
+        String tech = (String) params.get(PARAM_TECHPARAM);
+        String note = (String) params.get(PARAM_NOTE);
+        String identification = (String) params.get(PARAM_IDENTIFICATION);
+
+        if ( (note==null || note.length()==0) && (setup==null || setup.length()==0) ) {
+            addError(PARAM_SETUP,"Vyplòte postup zprovoznìní nebo poznámku!",ctx,null);
+            return getTemplate("add/hwrecord.vm");
+        }
+
+        DocumentHelper.makeElement(document,"data/driver").setText(driver);
+        DocumentHelper.makeElement(document,"data/price").setText(price);
+        if ( setup!=null ) DocumentHelper.makeElement(document,"data/setup").setText(setup);
+        if ( tech!=null ) DocumentHelper.makeElement(document,"data/params").setText(tech);
+        if ( identification!=null ) DocumentHelper.makeElement(document,"data/identification").setText(identification);
+        if ( note!=null ) DocumentHelper.makeElement(document,"data/note").setText(note);
+
+        persistance.update(record);
+
+        redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
         return null;
     }
 }
