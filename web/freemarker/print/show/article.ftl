@@ -11,7 +11,7 @@
 ${DATE.show(ITEM.created,"CZ_FULL")} | <a href="/Profile?userId=${autor.id}">${autor.name}</a>
 </div>
 
-<#if USER?exists && USER.isAdmin()>
+<#if USER?exists && USER.hasRole("article admin")>
  <p>
   <a href="${URL.make("/EditItem?action=edit&relationId="+RELATION.id)}" title="Uprav">
   <img src="/images/actions/pencil.png" class="ikona22" alt="Uprav"></a>

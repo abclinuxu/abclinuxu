@@ -9,6 +9,7 @@ package cz.abclinuxu.servlets.edit;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.exceptions.DuplicateKeyException;
+import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
@@ -21,6 +22,7 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.Tools;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.email.EmailSender;
+import cz.abclinuxu.security.Roles;
 import org.apache.commons.fileupload.FileItem;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -32,10 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class for manipulation with User.
@@ -65,6 +64,7 @@ public class EditUser extends AbcFMServlet {
     public static final String PARAM_SUBSCRIBE_WEEKLY = "weekly";
     public static final String PARAM_PHOTO = "photo";
     public static final String PARAM_RETURN_TO_FORUM = "moveback";
+    public static final String PARAM_USER_ROLES = "roles";
 
     public static final String VAR_MANAGED = "MANAGED";
     public static final String VAR_DEFAULT_DISCUSSION_COUNT = "DEFAULT_DISCUSSIONS";
@@ -85,6 +85,8 @@ public class EditUser extends AbcFMServlet {
     public static final String ACTION_EDIT_SETTINGS_STEP2 = "editSettings2";
     public static final String ACTION_EDIT_SUBSCRIPTION = "subscribe";
     public static final String ACTION_EDIT_SUBSCRIPTION_STEP2 = "subscribe2";
+    public static final String ACTION_GRANT_ROLES = "grant";
+    public static final String ACTION_GRANT_ROLES_STEP2 = "grant2";
 
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -100,66 +102,70 @@ public class EditUser extends AbcFMServlet {
         }
 
         // registration doesn't require user to be logged in
-        if (  action==null || action.equals(ACTION_REGISTER) ) {
+        if (  action==null || action.equals(ACTION_REGISTER) )
             return FMTemplateSelector.select("EditUser","register",env,request);
-
-        } else if ( action.equals(ACTION_REGISTER_STEP2) ) {
+        else if ( action.equals(ACTION_REGISTER_STEP2) )
             return actionAddStep2(request,response,env);
-
-        }
 
         // all other actions require user to be logged in and to have rights for this action
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
-
-        if ( ! (user.getId()==managed.getId() || user.isAdmin()) )
+        if ( ! (user.getId()==managed.getId() || user.hasRole(Roles.USER_ADMIN)) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-
-        if ( action.equals(ACTION_EDIT_BASIC) ) {
+        if ( action.equals(ACTION_EDIT_BASIC) )
             return actionEditBasic(request, env);
 
-        } else if ( action.equals(ACTION_EDIT_BASIC_STEP2) ) {
+        if ( action.equals(ACTION_EDIT_BASIC_STEP2) )
             return actionEditBasic2(request, response, env);
 
-        } else if ( action.equals(ACTION_CHANGE_PASSWORD) ) {
+        if ( action.equals(ACTION_CHANGE_PASSWORD) )
             return FMTemplateSelector.select("EditUser", "changePassword", env, request);
 
-        } else if ( action.equals(ACTION_CHANGE_PASSWORD_STEP2) ) {
+        if ( action.equals(ACTION_CHANGE_PASSWORD_STEP2) )
             return actionPassword2(request, response, env);
 
-        } else if ( action.equals(ACTION_EDIT_PERSONAL) ) {
+        if ( action.equals(ACTION_EDIT_PERSONAL) )
             return actionEditPersonal(request, env);
 
-        } else if ( action.equals(ACTION_EDIT_PERSONAL_STEP2) ) {
+        if ( action.equals(ACTION_EDIT_PERSONAL_STEP2) )
             return actionEditPersonal2(request, response, env);
 
-        } else if ( action.equals(ACTION_EDIT_PROFILE) ) {
+        if ( action.equals(ACTION_EDIT_PROFILE) )
             return actionEditProfile(request, env);
 
-        } else if ( action.equals(ACTION_EDIT_PROFILE_STEP2) ) {
+        if ( action.equals(ACTION_EDIT_PROFILE_STEP2) )
             return actionEditProfile2(request, response, env);
 
-        } else if ( action.equals(ACTION_EDIT_SETTINGS) ) {
+        if ( action.equals(ACTION_EDIT_SETTINGS) )
             return actionEditSettings(request, env);
 
-        } else if ( action.equals(ACTION_EDIT_SETTINGS_STEP2) ) {
+        if ( action.equals(ACTION_EDIT_SETTINGS_STEP2) )
             return actionEditSettings2(request, response, env);
 
-        } else if ( action.equals(ACTION_EDIT_SUBSCRIPTION) ) {
+        if ( action.equals(ACTION_EDIT_SUBSCRIPTION) )
             return actionEditSubscription(request, env);
 
-        } else if ( action.equals(ACTION_EDIT_SUBSCRIPTION_STEP2) ) {
+        if ( action.equals(ACTION_EDIT_SUBSCRIPTION_STEP2) )
             return actionEditSubscription2(request, response, env);
 
-        } else if ( action.equals(ACTION_UPLOAD_PHOTO) ) {
+        if ( action.equals(ACTION_UPLOAD_PHOTO) )
             return FMTemplateSelector.select("EditUser", "uploadPhoto", env, request);
 
-        } else if ( action.equals(ACTION_UPLOAD_PHOTO_STEP2) ) {
+        if ( action.equals(ACTION_UPLOAD_PHOTO_STEP2) )
             return actionUploadPhoto2(request, response, env);
 
-        }
-        return null;
+        // these actions are restricted to admin only
+        if ( ! user.hasRole(Roles.USER_ADMIN) )
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+        if ( action.equals(ACTION_GRANT_ROLES) )
+            return actionGrant(request, env);
+
+        if ( action.equals(ACTION_GRANT_ROLES_STEP2) )
+            return actionGrant2(request, response, env);
+
+        throw new MissingArgumentException("Chybí parametr action!");
     }
 
     /**
@@ -236,7 +242,7 @@ public class EditUser extends AbcFMServlet {
         Persistance persistance = PersistanceFactory.getPersistance();
 
         boolean canContinue = true;
-        if ( !user.isAdmin() )
+        if ( !user.hasRole(Roles.USER_ADMIN) )
             canContinue &= checkPassword(params, managed, env);
         canContinue &= setLogin(params, managed, env);
         canContinue &= setName(params, managed, env);
@@ -273,7 +279,7 @@ public class EditUser extends AbcFMServlet {
         Persistance persistance = PersistanceFactory.getPersistance();
 
         boolean canContinue = true;
-        if ( !user.isAdmin() )
+        if ( !user.hasRole(Roles.USER_ADMIN) )
             canContinue &= checkPassword(params, managed, env);
         canContinue &= setPassword(params,managed,env);
 
@@ -329,7 +335,7 @@ public class EditUser extends AbcFMServlet {
         Persistance persistance = PersistanceFactory.getPersistance();
 
         boolean canContinue = true;
-        if ( !user.isAdmin() )
+        if ( !user.hasRole(Roles.USER_ADMIN) )
             canContinue &= checkPassword(params, managed, env);
         canContinue &= setSex(params, managed, env);
         canContinue &= setBirthYear(params, managed, env);
@@ -382,7 +388,7 @@ public class EditUser extends AbcFMServlet {
         Persistance persistance = PersistanceFactory.getPersistance();
 
         boolean canContinue = true;
-        if ( !user.isAdmin() )
+        if ( !user.hasRole(Roles.USER_ADMIN) )
             canContinue &= checkPassword(params, managed, env);
         canContinue &= setMyPage(params, managed, env);
         canContinue &= setLinuxUserFrom(params, managed);
@@ -435,7 +441,7 @@ public class EditUser extends AbcFMServlet {
         Persistance persistance = PersistanceFactory.getPersistance();
 
         boolean canContinue = true;
-        if ( !user.isAdmin() )
+        if ( !user.hasRole(Roles.USER_ADMIN) )
             canContinue &= checkPassword(params, managed, env);
         canContinue &= setCookieValidity(params, managed);
         canContinue &= setEmoticons(params, managed);
@@ -481,7 +487,7 @@ public class EditUser extends AbcFMServlet {
         Persistance persistance = PersistanceFactory.getPersistance();
 
         boolean canContinue = true;
-        if ( !user.isAdmin() )
+        if ( !user.hasRole(Roles.USER_ADMIN) )
             canContinue &= checkPassword(params, managed, env);
         canContinue &= setWeeklySummary(params, managed);
         canContinue &= setMonthlySummary(params, managed);
@@ -507,7 +513,7 @@ public class EditUser extends AbcFMServlet {
         Persistance persistance = PersistanceFactory.getPersistance();
 
         boolean canContinue = true;
-        if ( !user.isAdmin() )
+        if ( !user.hasRole(Roles.USER_ADMIN) )
             canContinue &= checkPassword(params, managed, env);
         canContinue &= setPhoto(params, managed, env);
 
@@ -521,6 +527,55 @@ public class EditUser extends AbcFMServlet {
         urlUtils.redirect(response, "/Profile?userId="+managed.getId());
         return null;
     }
+
+    /**
+     * Shows form for granting roles to the user.
+     */
+    protected String actionGrant(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User managed = (User) env.get(VAR_MANAGED);
+
+        Document document = managed.getData();
+        List nodes = document.selectNodes("/data/roles/role");
+        if ( nodes!=null && nodes.size()>0 ) {
+            List roles = new ArrayList(nodes.size());
+            for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
+                Node node = (Node) iter.next();
+                roles.add(node.getText());
+            }
+            params.put(PARAM_USER_ROLES,roles);
+        }
+
+        return FMTemplateSelector.select("EditUser", "grantRoles", env, request);
+    }
+
+    /**
+     * Manages roles of the user.
+     */
+    protected String actionGrant2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User managed = (User) env.get(VAR_MANAGED);
+        User user = (User) env.get(Constants.VAR_USER);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        boolean canContinue = true;
+        canContinue &= checkPassword(params, user, env);
+        canContinue &= setUserRoles(params, managed);
+
+        if ( !canContinue )
+            return FMTemplateSelector.select("EditUser", "grantRoles", env, request);
+
+        persistance.update(managed);
+
+        ServletUtils.addMessage("Zmìny rolí u¾ivatele "+managed.getName()+" byly ulo¾eny.", env, request.getSession());
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&userId="+managed.getId());
+        return null;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    //                          Setters                                      //
+    ///////////////////////////////////////////////////////////////////////////
 
     /**
      * Checks password from parameters.
@@ -891,6 +946,35 @@ public class EditUser extends AbcFMServlet {
         Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/return_to_forum");
         String value = ("yes".equals(tmp))? "yes":"no";
         element.setText(value);
+        return true;
+    }
+
+    /**
+     * Sets user roles from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setUserRoles(Map params, User user) {
+        Element nodeRoles = (Element) user.getData().selectSingleNode("/data/roles");
+        if ( nodeRoles!=null )
+            nodeRoles.detach();
+
+        Object tmp = params.get(PARAM_USER_ROLES);
+        if ( tmp==null || (tmp instanceof List && ((List)tmp).size()==0) ) {
+            return true;
+        }
+        if ( tmp instanceof String ) {
+            List list = new ArrayList(1);
+            list.add(tmp);
+            tmp = list;
+        }
+
+        nodeRoles = DocumentHelper.makeElement(user.getData(), "/data/roles");
+        for ( Iterator iter = ((List) tmp).iterator(); iter.hasNext(); ) {
+            String role = (String) iter.next();
+            nodeRoles.addElement("role").setText(role);
+        }
         return true;
     }
 

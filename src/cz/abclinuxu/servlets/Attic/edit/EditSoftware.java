@@ -13,7 +13,7 @@ import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
-import cz.abclinuxu.security.Guard;
+import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -58,6 +58,9 @@ public class EditSoftware extends AbcFMServlet {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
+        if ( action==null )
+            throw new MissingArgumentException("Chybí parametr action!");
+
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
         if ( relation!=null ) {
             persistance.synchronize(relation);
@@ -66,94 +69,53 @@ public class EditSoftware extends AbcFMServlet {
         } else
             throw new MissingArgumentException("Chybí parametr relationId!");
 
-        if ( action==null || action.equals(ACTION_ADD_ITEM) ) {
-            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_ADD,Item.class);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return FMTemplateSelector.select("EditSoftware","add_item",env,request);
-            }
+        // check permissions
+        if ( user==null )
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
 
-        } else if ( action.equals(ACTION_ADD_ITEM_STEP2) ) {
-            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_ADD,Item.class);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionAddStep2(request,env);
-            }
+        if ( action.equals(ACTION_ADD_ITEM) )
+            return FMTemplateSelector.select("EditSoftware", "add_item", env, request);
 
-        } else if ( action.equals(ACTION_ADD_ITEM_STEP3) ) {
-            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_ADD,Item.class);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionAddStep3(request,response,env);
-            }
+        if ( action.equals(ACTION_ADD_ITEM_STEP2) )
+            return actionAddStep2(request, env);
 
-        } else if ( action.equals(ACTION_ADD_RECORD) ) {
-            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_ADD,Record.class);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: {
-                    params.put(PARAM_ACTION,ACTION_ADD_RECORD_STEP2);
-                    return FMTemplateSelector.select("EditSoftware","add_record",env,request);
-                }
-            }
+        if ( action.equals(ACTION_ADD_ITEM_STEP3) )
+            return actionAddStep3(request, response, env);
 
-        } else if ( action.equals(ACTION_ADD_RECORD_STEP2) ) {
-            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_ADD,Record.class);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionAddRecord(request,response,env);
-            }
-
-        } else if ( action.equals(ACTION_EDIT_RECORD) ) {
-            Record record = (Record) InstanceUtils.instantiateParam(PARAM_RECORD_ID,Record.class,params);
-            persistance.synchronize(record);
-            env.put(VAR_RECORD,record);
-
-            int rights = Guard.check(user,record,Guard.OPERATION_EDIT,null);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionEditRecord(request,env);
-            }
-
-        } else if ( action.equals(ACTION_EDIT_RECORD_STEP2) ) {
-            Record record = (Record) InstanceUtils.instantiateParam(PARAM_RECORD_ID,Record.class,params);
-            persistance.synchronize(record);
-            env.put(VAR_RECORD,record);
-
-            int rights = Guard.check(user,record,Guard.OPERATION_EDIT,null);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_OK: return actionEditRecord2(request,response,env);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionEditRecord2(request,response,env);
-            }
-
-        } else if ( action.equals(ACTION_EDIT_ITEM) ) {
-            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_EDIT,null);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionEditItem(request,env);
-            }
-
-        } else if ( action.equals(ACTION_EDIT_ITEM_STEP2) ) {
-            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_EDIT,null);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_OK: return actionEditItem2(request,response,env);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionEditItem2(request,response,env);
-            }
-
+        if ( action.equals(ACTION_ADD_RECORD) ) {
+            params.put(PARAM_ACTION, ACTION_ADD_RECORD_STEP2);
+            return FMTemplateSelector.select("EditSoftware", "add_record", env, request);
         }
 
-        return FMTemplateSelector.select("EditSoftware","add_item",env,request);
+        if ( action.equals(ACTION_ADD_RECORD_STEP2) )
+            return actionAddRecord(request, response, env);
+
+        if ( action.equals(ACTION_EDIT_RECORD) || action.equals(ACTION_EDIT_RECORD_STEP2) ) {
+            Record record = (Record) InstanceUtils.instantiateParam(PARAM_RECORD_ID, Record.class, params);
+            persistance.synchronize(record);
+            env.put(VAR_RECORD, record);
+
+            if ( user.getId()!=record.getOwner() && !user.hasRole(Roles.ROOT) )
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+            if ( action.equals(ACTION_EDIT_RECORD) )
+                return actionEditRecord(request, env);
+            else
+                return actionEditRecord2(request, response, env);
+        }
+
+        if ( action.equals(ACTION_EDIT_ITEM) || action.equals(ACTION_EDIT_ITEM_STEP2) ) {
+            Item item = (Item) relation.getChild();
+            if ( user.getId()!=item.getOwner() && !user.hasRole(Roles.ROOT) )
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+            if ( action.equals(ACTION_EDIT_ITEM) )
+                return actionEditItem(request, env);
+            else
+                return actionEditItem2(request, response, env);
+        }
+
+        throw new MissingArgumentException("Chybí parametr action!");
     }
 
     protected String actionAddStep2(HttpServletRequest request, Map env) throws Exception {

@@ -16,8 +16,9 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.security.Guard;
+import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.exceptions.MissingArgumentException;
 
 import java.util.*;
 
@@ -58,62 +59,40 @@ public class EditPoll extends AbcFMServlet {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
-        if ( relation!=null ) {
-            relation = (Relation) persistance.findById(relation);
-            env.put(VAR_RELATION,relation);
-        }
-
         Poll poll = (Poll) InstanceUtils.instantiateParam(PARAM_POLL,Poll.class,params);
         if ( poll!=null ) {
             poll = (Poll) persistance.findById(poll);
             env.put(EditPoll.VAR_POLL,poll);
         }
 
-        if ( action==null || action.equals(ACTION_ADD) ) {
-            if ( relation==null ) throw new Exception("Chybí parametr relationId!");
-            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_ADD,Poll.class);
-             switch (rights) {
-                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                 case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                 default: return FMTemplateSelector.select("EditPoll","add",env,request);
-             }
+        if ( action.equals(ACTION_VOTE) )
+            return actionVote(request, response, env);
 
-        } else if ( action.equals(ACTION_VOTE) ) {
-            if ( poll==null ) throw new Exception("Chybí parametr pollId!");
-            return actionVote(request,response,env);
+        // check permissions
+        if ( user==null )
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
+        if ( !user.hasRole(Roles.POLL_ADMIN) )
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-        } else if ( action.equals(ACTION_ADD_STEP2) ) {
-            if ( relation==null ) throw new Exception("Chybí parametr relationId!");
-            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_ADD,Poll.class);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionAddStep2(request,response,env);
-            }
-
-        } else if ( action.equals(ACTION_EDIT) ) {
-            if ( relation==null ) throw new Exception("Chybí parametr relationId!");
-            if ( poll==null ) throw new Exception("Chybí parametr pollId!");
-            int rights = Guard.check(user,poll,Guard.OPERATION_EDIT,null);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return FMTemplateSelector.select("EditPoll","edit",env,request);
-            }
-
-        } else if ( action.equals(ACTION_EDIT2) ) {
-            if ( relation==null ) throw new Exception("Chybí parametr relationId!");
-            if ( poll==null ) throw new Exception("Chybí parametr pollId!");
-            int rights = Guard.check(user,poll,Guard.OPERATION_EDIT,null);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionEditStep2(request,response,env);
-            }
-
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params);
+        if ( relation!=null ) {
+            relation = (Relation) persistance.findById(relation);
+            env.put(VAR_RELATION, relation);
         }
-        return FMTemplateSelector.select("EditPoll","add",env,request);
+
+        if ( action.equals(ACTION_ADD) )
+            return FMTemplateSelector.select("EditPoll", "add", env, request);
+
+        if ( action.equals(ACTION_ADD_STEP2) )
+            return actionAddStep2(request, response, env);
+
+        if ( action.equals(ACTION_EDIT) )
+            return FMTemplateSelector.select("EditPoll", "edit", env, request);
+
+        if ( action.equals(ACTION_EDIT2) )
+            return actionEditStep2(request, response, env);
+
+        throw new MissingArgumentException("Chybí parametr action!");
     }
 
     /**

@@ -4,10 +4,15 @@
 package cz.abclinuxu.data;
 
 import org.dom4j.Document;
+import org.dom4j.Node;
+
+import java.util.List;
+import java.util.Iterator;
+
+import cz.abclinuxu.security.Roles;
 
 /**
  * Class containing basic user data
- * todo data/roles -> holds security roles, that user has.
  */
 public class User extends GenericObject implements XMLContainer {
     /** login name of the user */
@@ -18,8 +23,6 @@ public class User extends GenericObject implements XMLContainer {
     private String email;
     /** (noncrypted) password */
     private String password;
-    /** whether he is admin or not */
-    private boolean admin = false;
     /** XML with data or this object */
     private XMLHandler documentHandler;
 
@@ -130,14 +133,33 @@ public class User extends GenericObject implements XMLContainer {
      * @return True, if user is an administrator
      */
     public boolean isAdmin() {
-        return admin;
+        throw new RuntimeException("Deprecated method isAdmin called!");
     }
 
     /**
-     * Sets flag, whether user is admin.
+     * Finds out, whether user is in given role.
+     * @param role name of role.
+     * @return true, if user is in give role.
+     * @see cz.abclinuxu.security.Roles
      */
-    public void setAdmin(boolean admin) {
-        this.admin = admin;
+    public boolean hasRole(String role) {
+        if ( id==1 ) return true;
+        if ( role==null || role.length()==0 ) return false;
+        Document data = getData();
+        if ( data==null ) return false;
+
+        List nodes = data.selectNodes("/data/roles/role");
+        if (nodes==null || nodes.size()==0)
+            return false;
+
+        for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
+            String value = ((Node) iter.next()).getText();
+            if ( Roles.ROOT.equals(value))
+                return true;
+            if ( role.equals(value) )
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -159,11 +181,7 @@ public class User extends GenericObject implements XMLContainer {
     public String toString() {
         StringBuffer sb = new StringBuffer("User: id=");
         sb.append(id);
-        if ( login!=null ) sb.append(",login="+login);
         if ( name!=null ) sb.append(",name="+name);
-        if ( email!=null ) sb.append(",email="+email);
-        if ( password!=null ) sb.append(",password="+password);
-        if ( documentHandler!=null ) sb.append(",data="+getDataAsString());
         return sb.toString();
     }
 

@@ -12,7 +12,7 @@ import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
-import cz.abclinuxu.security.Guard;
+import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.PersistanceException;
@@ -75,40 +75,25 @@ public class EditArticle extends AbcFMServlet {
         persistance.synchronize(relation.getChild());
         env.put(VAR_RELATION,relation);
 
-        if ( ACTION_ADD_ITEM.equals(action) ) {
-            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_ADD,Item.class);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionAddStep1(request,env);
-            }
+        // check permissions
+        if ( user==null )
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
+        if ( !user.hasRole(Roles.ARTICLE_ADMIN) )
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-        } else if ( action.equals(ACTION_ADD_ITEM_STEP2) ) {
-            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_ADD,Item.class);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionAddStep2(request,response,env);
-            }
+        if ( ACTION_ADD_ITEM.equals(action) )
+            return actionAddStep1(request, env);
 
-        } else if ( action.equals(ACTION_EDIT_ITEM) ) {
-            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_EDIT,null);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionEditItem(request,env);
-            }
+        if ( action.equals(ACTION_ADD_ITEM_STEP2) )
+            return actionAddStep2(request, response, env);
 
-        } else if ( action.equals(ACTION_EDIT_ITEM_STEP2) ) {
-            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_EDIT,null);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionEditItem2(request,response,env);
-            }
+        if ( action.equals(ACTION_EDIT_ITEM) )
+            return actionEditItem(request, env);
 
-        }
-        return actionAddStep1(request,env);
+        if ( action.equals(ACTION_EDIT_ITEM_STEP2) )
+            return actionEditItem2(request, response, env);
+
+        throw new MissingArgumentException("Chybí parametr action!");
     }
 
     private String actionAddStep1(HttpServletRequest request, Map env) throws Exception {
@@ -454,6 +439,7 @@ public class EditArticle extends AbcFMServlet {
 
     /**
      * Adds list of authors (User) to env in VAR_AUTHORS.
+     * todo sort authors by name
      */
     private void addAuthors(Map env) {
         Persistance persistance = PersistanceFactory.getPersistance();

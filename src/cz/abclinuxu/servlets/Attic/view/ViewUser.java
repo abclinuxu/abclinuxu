@@ -19,6 +19,7 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.email.EmailSender;
+import cz.abclinuxu.security.Roles;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -68,24 +69,29 @@ public class ViewUser extends AbcFMServlet {
         if ( action==null )
             return handleProfile(request, env);
 
-        if ( action.equals(ACTION_LOGIN) ) {
+        if ( action.equals(ACTION_LOGIN) )
             return handleLogin(request,env);
-        } else if ( action.equals(ACTION_LOGIN2) ) {
+
+        if ( action.equals(ACTION_LOGIN2) )
             return handleLogin2(request,response,env);
-        } else if ( action.equals(ACTION_SHOW_CONTENT) ) {
+
+        if ( action.equals(ACTION_SHOW_CONTENT) )
             return handleShowContent(request,env);
-        } else if ( action.equals(ACTION_SHOW_MY_PROFILE) ) {
+
+        if ( action.equals(ACTION_SHOW_MY_PROFILE) ) {
             User user = (User) env.get(Constants.VAR_USER);
             User managed = (User) InstanceUtils.instantiateParam(PARAM_USER, User.class, params);
-            if ( user==null || (user.getId()!=managed.getId() && !user.isAdmin()) )
+            if ( user==null || (user.getId()!=managed.getId() && !user.hasRole(Roles.USER_ADMIN)) )
                 return handleProfile(request, env);
             else
                 return handleMyProfile(request,env);
-        } else if (action.equals(ACTION_SEND_EMAIL)) {
-            return handleSendEmail(request, env);
-        } else if (action.equals(ACTION_FINISH_SEND_EMAIL)) {
-            return handleSendEmail2(request, response, env);
         }
+
+        if (action.equals(ACTION_SEND_EMAIL))
+            return handleSendEmail(request, env);
+
+        if (action.equals(ACTION_FINISH_SEND_EMAIL))
+            return handleSendEmail2(request, response, env);
 
         return handleProfile(request,env);
     }

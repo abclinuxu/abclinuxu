@@ -125,6 +125,9 @@
     <action name="editSettings" content="/edit/user_settings.ftl">
       <var name="TITLE" value="Zmìna nastavení" />
     </action>
+    <action name="grantRoles" content="/edit/grant_roles.ftl" template="print">
+      <var name="TITLE" value="Zmìna rolí u¾ivatele"/>
+    </action>
   </servlet>
 
   <servlet name="ForgottenPassword">

@@ -11,12 +11,12 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.view.SelectRelation;
-import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.security.Guard;
+import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.exceptions.MissingArgumentException;
 
 import org.dom4j.*;
 
@@ -53,56 +53,78 @@ public class EditRelation extends AbcFMServlet {
         User user = (User) env.get(Constants.VAR_USER);
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
-        if ( relation!=null ) {
-            relation = (Relation) persistance.findById(relation);
-            env.put(VAR_CURRENT,relation);
+        relation = (Relation) persistance.findById(relation);
+        env.put(VAR_CURRENT, relation);
+
+        // check permissions
+        if ( user==null )
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
+
+        if ( action.equals(ACTION_LINK) ) {
+            if ( !user.hasRole(Roles.CATEGORY_ADMIN) )
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+            return actionLinkStep1(request,env);
         }
 
-        if ( action==null || action.equals(ACTION_LINK) ) {
-            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_ADD,null);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionLinkStep1(request,env);
+        if ( action.equals(ACTION_LINK_STEP2) ) {
+            if ( !user.hasRole(Roles.CATEGORY_ADMIN) )
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+            return actionLinkStep2(request, response, env);
+        }
+
+        GenericObject child = relation.getChild();
+        persistance.synchronize(child);
+
+        if ( action.equals(ACTION_MOVE) ) {
+            // check permissions
+            boolean canMove = false;
+            canMove |= user.hasRole(Roles.CAN_MOVE_RELATION);
+            if (child instanceof Category )
+                canMove |= user.hasRole(Roles.CATEGORY_ADMIN);
+            if (child instanceof Item ) {
+                switch ( ((Item)child).getType() ) {
+                    case Item.DISCUSSION:
+                        canMove |= user.hasRole(Roles.DISCUSSION_ADMIN); break;
+                    case Item.ARTICLE:
+                        canMove |= user.hasRole(Roles.ARTICLE_ADMIN); break;
+                }
             }
 
-        } else if ( action.equals(ACTION_LINK_STEP2) ) {
-            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_ADD,null);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionLinkStep2(request,response,env);
-            }
+            if ( !canMove )
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-        } else if ( action.equals(ACTION_REMOVE) ) {
-            int rights = Guard.check(user,relation,Guard.OPERATION_REMOVE,null);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionRemove1(request,env);
+            return actionMove(request, response, env);
+        }
+
+        // check permissions
+        boolean canRemove = false;
+        canRemove |= user.hasRole(Roles.CAN_REMOVE_RELATION);
+        if ( child instanceof Category )
+            canRemove |= user.hasRole(Roles.CATEGORY_ADMIN);
+        if ( child instanceof Item ) {
+            switch ( ((Item) child).getType() ) {
+                case Item.DISCUSSION:
+                    canRemove |= user.hasRole(Roles.DISCUSSION_ADMIN); break;
+                case Item.ARTICLE:
+                    canRemove |= user.hasRole(Roles.ARTICLE_ADMIN); break;
+                case Item.SURVEY:
+                    canRemove |= user.hasRole(Roles.SURVEY_ADMIN); break;
             }
+        }
+        if ( child instanceof Poll )
+            canRemove |= user.hasRole(Roles.POLL_ADMIN);
+
+        if ( !canRemove )
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+        if ( action.equals(ACTION_REMOVE) ) {
+            return actionRemove1(request, env);
 
         } else if ( action.equals(ACTION_REMOVE_STEP2) ) {
-            int rights = Guard.check(user,relation,Guard.OPERATION_REMOVE,null);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionRemove2(request,response,env);
-            }
-
-        } else if ( action.equals(ACTION_MOVE) ) {
-            int rights = Guard.check(user,relation,Guard.OPERATION_EDIT,null);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionMove(request,response,env);
-            }
-
+            return actionRemove2(request, response, env);
         }
 
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/Index");
-        return null;
+        throw new MissingArgumentException("Chybí parametr action!");
     }
 
     protected String actionLinkStep1(HttpServletRequest request, Map env) throws Exception {
@@ -206,7 +228,7 @@ public class EditRelation extends AbcFMServlet {
 
     /**
      * Whether user wishes to be redirected after move of discussions
-     * from discussion forum back to the forum. 
+     * from discussion forum back to the forum.
      * @param user
      * @return
      */

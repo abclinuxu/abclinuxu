@@ -17,6 +17,7 @@ import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.XMLHandler;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.security.Roles;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,7 +52,7 @@ public class EditSurvey extends AbcFMServlet {
 
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
-        if ( !user.isAdmin() )
+        if ( !user.hasRole(Roles.SURVEY_ADMIN) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if ( ACTION_ADD.equals(action) )

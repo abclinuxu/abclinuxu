@@ -2,7 +2,6 @@
  * User: literakl
  * Date: Feb 6, 2002
  * Time: 6:32:36 PM
- * (c)2001-2002 Tinnio
  */
 package cz.abclinuxu.servlets.edit;
 
@@ -11,10 +10,11 @@ import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
-import cz.abclinuxu.security.Guard;
+import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.exceptions.PersistanceException;
+import cz.abclinuxu.exceptions.MissingArgumentException;
 
 import org.dom4j.*;
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
- * todo archive drivers replaced by newer version. really?
+ * todo archive last three versions of driver
  */
 public class EditDriver extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditDriver.class);
@@ -54,40 +54,30 @@ public class EditDriver extends AbcFMServlet {
             env.put(VAR_RELATION,relation);
         } else throw new Exception("Chybí parametr relationId!");
 
-        if ( ACTION_ADD.equals(action) ) {
-            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_ADD,Item.class);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionAddStep(request,env);
-            }
-
-        } else if ( ACTION_ADD_STEP2.equals(action) ) {
-            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_ADD,Item.class);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionAddStep2(request,response,env);
-            }
+        Item driver = (Item) InstanceUtils.instantiateParam(PARAM_DRIVER, Item.class, params);
+        if ( driver!=null ) {
+            persistance.synchronize(driver);
+            env.put(VAR_DRIVER,driver);
         }
 
-        return FMTemplateSelector.select("EditDriver","add",env,request);
+        // check permissions
+        if ( user==null )
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
+        if ( driver!=null && user.getId()!=driver.getOwner() && !user.hasRole(Roles.ROOT) )
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+        if ( ACTION_ADD.equals(action) )
+            return actionAddStep(request, env);
+
+        if ( ACTION_ADD_STEP2.equals(action) )
+            return actionAddStep2(request, response, env);
+
+        throw new MissingArgumentException("Chybí parametr action!");
     }
 
     protected String actionAddStep(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
-
-        Item driver = (Item) InstanceUtils.instantiateParam(PARAM_DRIVER,Item.class,params);
-        if ( driver!=null ) {
-            try {
-                persistance.synchronize(driver);
-            } catch (PersistanceException e) {
-                log.warn("Driver doesn't exist, creating new one.",e);
-                params.remove(PARAM_DRIVER);
-                driver = null;
-            }
-        }
+        Item driver = (Item) env.get(VAR_DRIVER);
 
         if ( driver!=null ) {
             Document document = driver.getData();
@@ -98,7 +88,7 @@ public class EditDriver extends AbcFMServlet {
             node = document.selectSingleNode("data/url");
             if ( node!=null ) params.put(PARAM_URL,node.getText());
             node = document.selectSingleNode("data/note");
-            if ( node!=null ) params.put(PARAM_NOTE,node.getText()); //encodeSpecial
+            if ( node!=null ) params.put(PARAM_NOTE,node.getText());
         }
 
         return FMTemplateSelector.select("EditDriver","add",env,request);

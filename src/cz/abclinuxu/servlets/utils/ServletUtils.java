@@ -6,9 +6,6 @@
  */
 package cz.abclinuxu.servlets.utils;
 
-import cz.abclinuxu.data.AccessRights;
-import cz.abclinuxu.data.GenericObject;
-import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.exceptions.PersistanceException;
@@ -224,15 +221,6 @@ public class ServletUtils implements Configurable {
                 return;
             }
             handleLoggedIn(user, true, null);
-        }
-
-        // todo: remove it, when new security model is finished
-        for ( Iterator iter = user.getContent().iterator(); iter.hasNext(); ) {
-            GenericObject obj = ((Relation) iter.next()).getChild();
-            if ( obj instanceof AccessRights ) {
-                persistance.synchronize(obj);
-                user.setAdmin(((AccessRights)obj).isAdmin());
-            }
         }
 
         session.setAttribute(Constants.VAR_USER, user);

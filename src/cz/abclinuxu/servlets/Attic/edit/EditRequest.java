@@ -13,9 +13,10 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.security.Guard;
+import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.email.EmailSender;
+import cz.abclinuxu.exceptions.MissingArgumentException;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -48,26 +49,22 @@ public class EditRequest extends AbcFMServlet {
         if ( relation!=null )
             env.put(VAR_REQUEST_RELATION,relation);
 
-        if ( action==null || action.equals(ACTION_ADD) ) {
+        if ( action==null || action.equals(ACTION_ADD) )
             return actionAdd(request,response,env);
 
-        } else if ( action.equals(ACTION_DELETE) ) {
-            int rights = Guard.check(user,relation,Guard.OPERATION_REMOVE,null);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionDelete(request,response,env);
-            }
+        // check permissions
+        if ( user==null )
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
+        if ( !user.hasRole(Roles.ROOT) )
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-        } else if ( action.equals(ACTION_DELIVER) ) {
-            int rights = Guard.check(user,relation,Guard.OPERATION_REMOVE,null);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionDeliver(request,response,env);
-            }
-        }
-        return actionAdd(request,response,env);
+        if ( action.equals(ACTION_DELETE) )
+            return actionDelete(request, response, env);
+
+        if ( action.equals(ACTION_DELIVER) )
+            return actionDeliver(request, response, env);
+
+        throw new MissingArgumentException("Chybí parametr action!");
     }
 
     protected String actionAdd(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {

@@ -18,8 +18,9 @@ import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.exceptions.PersistanceException;
+import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.security.Guard;
+import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.utils.InstanceUtils;
 
 import org.dom4j.Document;
@@ -34,27 +35,6 @@ import java.util.Map;
 
 /**
  * Class for manipulation with Category.<p>
- * <u>Parameters used by EditCategory</u>
- * <dl>
- * <dt><code>PARAM_RELATION</code></dt>
- * <dd>Relation, where current category is child.</dd>
- * <dt><code>PARAM_CATEGORY</code></dt>
- * <dd>Current category.</dd>
- * <dt><code>PARAM_NAME</code></dt>
- * <dd>Specifies name of this category.</dd>
- * <dt><code>PARAM_OPEN</code></dt>
- * <dd>Specifies, whether normal user may add content to this category.</dd>
- * <dt><code>PARAM_ICON</code></dt>
- * <dd>Specifies name of the icon assigned to this category.</dd>
- * <dt><code>PARAM_NOTE</code></dt>
- * <dd>Specifies note related to this category.</dd>
- * <dt><code>PARAM_ICON_CHOOSER</code></dt>
- * <dd>If user selects Choose Icon button in edit context.</dd>
- * <p><u>Parameters used by EditCategory</u>
- * <dl>
- * <dt><code>VAR_RELATION</code></dt>
- * <dd>Relation, where current category is child.</dd>
- * </dl>
  */
 public class EditCategory extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditCategory.class);
@@ -96,40 +76,25 @@ public class EditCategory extends AbcFMServlet {
             env.put(VAR_CATEGORY,category);
         }
 
-        if ( ACTION_ADD.equals(action) ) {
-            int rights = Guard.check(user,category,Guard.OPERATION_ADD,Category.class);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return FMTemplateSelector.select("EditCategory","add",env,request);
-            }
+        // check permissions
+        if ( user==null )
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
+        if ( !user.hasRole(Roles.CATEGORY_ADMIN) )
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-        } else if ( ACTION_ADD_STEP2.equals(action) ) {
-            int rights = Guard.check(user,category,Guard.OPERATION_ADD,Category.class);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionAddStep2(request,response,env);
-            }
+        if ( ACTION_ADD.equals(action) )
+            return FMTemplateSelector.select("EditCategory", "add", env, request);
 
-        } else if ( ACTION_EDIT.equals(action) ) {
-            int rights = Guard.check(user,category,Guard.OPERATION_EDIT,null);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionEditStep1(request,env);
-            }
+        if ( ACTION_ADD_STEP2.equals(action) )
+            return actionAddStep2(request, response, env);
 
-        } else if ( ACTION_EDIT2.equals(action) ) {
-            int rights = Guard.check(user,category,Guard.OPERATION_EDIT,null);
-            switch (rights) {
-                case Guard.ACCESS_LOGIN: FMTemplateSelector.select("ViewUser","login",env,request);
-                case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionEditStep2(request,response,env);
-            }
+        if ( ACTION_EDIT.equals(action) )
+            return actionEditStep1(request, env);
 
-        }
-        return FMTemplateSelector.select("EditCategory","add",env,request);
+        if ( ACTION_EDIT2.equals(action) )
+            return actionEditStep2(request, response, env);
+
+        throw new MissingArgumentException("Chybí parametr action!");
     }
 
     /**
@@ -183,7 +148,6 @@ public class EditCategory extends AbcFMServlet {
 
     /**
      * First step for editing of category
-     * todo verify logic of ACTION check
      */
     protected String actionEditStep1(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
