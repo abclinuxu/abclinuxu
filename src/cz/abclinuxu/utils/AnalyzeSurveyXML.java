@@ -97,7 +97,13 @@ public class AnalyzeSurveyXML {
      * Processes one xml file, affecting data map.
      */
     void processFiles(File f) throws Exception {
-        Document d = reader.read(f);
+        Document d = null;
+        try {
+            d = reader.read(f);
+        } catch (DocumentException e) {
+            System.out.println(f.getName());
+            throw e;
+        }
         List processedOptions = new ArrayList(30);
         processedOptions.clear();
         List nodes = d.selectNodes("/*/*/*");
@@ -174,20 +180,16 @@ public class AnalyzeSurveyXML {
             String tag = (String) iter.next();
             if ( isOption(tag) ) {
                 Map values = (Map) data.get(tag);
-                List counters = new ArrayList();
                 List keys = new ArrayList(values.keySet());
                 Collections.sort(keys, new TotalComparator());
 
                 psOption.println(tag);
                 for (Iterator iter2 = keys.iterator(); iter2.hasNext();) {
                     String s = (String) iter2.next();
-                    psOption.print(s+" ; ");
-                    counters.add(values.get(s));
-                }
-                psOption.println();
-                for (Iterator iter2 = counters.iterator(); iter2.hasNext();) {
-                    Integer i = (Integer) iter2.next();
-                    psOption.print(i+" ; ");
+                    psOption.print(s);
+                    psOption.print(" ; ");
+                    psOption.print(values.get(s));
+                    psOption.println();
                 }
                 psOption.println("\n\n");
             } else {

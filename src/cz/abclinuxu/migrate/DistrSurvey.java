@@ -20,6 +20,7 @@ import java.io.*;
 public class DistrSurvey {
     static SAXReader saxReader = new SAXReader();
     static OutputFormat format = null;
+
     static {
         format = OutputFormat.createPrettyPrint();
         format.setEncoding("ISO-8859-2");
@@ -29,26 +30,44 @@ public class DistrSurvey {
     static void fixFile(File file) throws IOException, DocumentException {
         Document document = saxReader.read(file);
         Element top = (Element) document.selectSingleNode("//screen");
-        replace_jina(top, "jina1");
-        replace_jina(top, "jina2");
-        replace_jina(top, "jina3");
+        replace_jina(top, "jina1", file.getName());
+        replace_jina(top, "jina2", file.getName());
+        replace_jina(top, "jina3", file.getName());
         print("fixed/"+file.getName(), document);
     }
 
-    static void replace_jina(Element top, String tagName) {
+    static void replace_jina(Element top, String tagName, String fileName) {
         Element tag = top.element(tagName);
         if (tag==null)
             return;
         String name = tag.getTextTrim();
         if (name==null || name.length()==0)
             return;
-        name = name.toLowerCase();
+        name = normalize(name, fileName);
         tag.setName("distribuce");
         tag.setText(name);
 
         tag = top.element(tagName+"_pocet");
         if ( tag!=null )
             tag.setName(name+"_pocet");
+    }
+
+    static String normalize(String name, String fileName) {
+        StringBuffer sb = new StringBuffer(name);
+        for ( int i = 0; i<sb.length(); i++ ) {
+            char c = sb.charAt(i);
+            if (c==' ') {
+                sb.deleteCharAt(i);
+                i--;
+                continue;
+            }
+            if (c=='-') c = '_';
+            c = Character.toLowerCase(c);
+            if (c<'a'||c>'z')
+                System.out.println(fileName+" : "+name);
+            sb.setCharAt(i, c);
+        }
+        return sb.toString();
     }
 
     public static void main(String[] args) throws Exception {
