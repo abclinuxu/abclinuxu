@@ -73,6 +73,7 @@ public class ViewItem extends AbcServlet {
         if ( item.getType()==Item.MAKE ) {
             switch ( record.getType() ) {
                 case Record.HARDWARE: return getTemplate("view/hwitem.vm");
+                case Record.SOFTWARE: return getTemplate("view/switem.vm");
             }
         }
         return null;

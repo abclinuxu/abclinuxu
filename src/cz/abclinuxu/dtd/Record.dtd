@@ -1,9 +1,10 @@
 
 <!-- Record.ARTICLE -->
-<!ELEMENT data (name?,icon?)>
+<!ELEMENT data (name?,icon?,text,part?)>
 <!ELEMENT name (#PCDATA)> <!-- if Article is divided into several ArticleRecords, use it to give name to each one -->
 <!ELEMENT icon (#PCDATA)> <!-- absolute path including protocol, or relative path to icon directory -->
-<!ELEMENT  (#PCDATA)> <!--  -->
+<!ELEMENT content (#PCDATA)> <!-- content of the article (or its part) -->
+<!ELEMENT part (#PCDATA)> <!-- part of the article (for multiple records per one article), starting at 0 -->
 
 
 <!-- Record.HARDWARE -->
@@ -15,3 +16,8 @@
 <!ELEMENT identification (#PCDATA)> <!-- how Linux identifies this hardware (/proc, lspci) -->
 <!ELEMENT note (#PCDATA)> <!-- other note, user's experience -->
 
+<!-- Record.SOFTWARE -->
+<!ELEMENT data (text,url?,version?)>
+<!ELEMENT text (#PCDATA)> <!-- instructions -->
+<!ELEMENT url (#PCDATA)> <!-- URL, probably link to homepage of the software -->
+<!ELEMENT version (#PCDATA)> <!-- version of the software -->
