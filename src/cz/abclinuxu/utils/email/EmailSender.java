@@ -2,7 +2,6 @@
  * User: literakl
  * Date: Jan 13, 2002
  * Time: 8:41:38 PM
- * (c)2001-2002 Tinnio
  */
 package cz.abclinuxu.utils.email;
 
@@ -78,6 +77,7 @@ public class EmailSender implements Configurable {
     public static boolean sendEmail(Map params) {
         Properties props = new Properties();
         String from = (String) params.get(KEY_FROM), to = (String) params.get(KEY_TO);
+        String cc = (String) params.get(KEY_CC);
         if ( from==null || from.length()==0 )
             from = defaultFrom;
 
@@ -89,6 +89,8 @@ public class EmailSender implements Configurable {
             message.setSubject((String) params.get(KEY_SUBJECT));
             message.setFrom(new InternetAddress(from));
             message.setRecipient(Message.RecipientType.TO,new InternetAddress(to));
+            if (cc!=null)
+                message.setRecipient(Message.RecipientType.CC,new InternetAddress(cc));
             message.setText(getEmailBody(params));
             Date sentDate = getSentDate(params);
             message.setSentDate(sentDate);
