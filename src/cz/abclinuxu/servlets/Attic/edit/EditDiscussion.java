@@ -511,11 +511,6 @@ public class EditDiscussion extends AbcFMServlet {
         Element element = (Element) record.getData().selectSingleNode(xpath);
         env.put(VAR_THREAD, new Comment(element));
 
-        xpath = "//comment[parent/text()='"+threadId+"']";
-        element = (Element) record.getData().selectSingleNode(xpath);
-        if (element!=null)
-            ServletUtils.addError(Constants.ERROR_GENERIC,"Komentáø nesmí obsahovat ¾ádné reakce!",env,null);
-
         return FMTemplateSelector.select("EditDiscussion", "remove", env, request);
     }
 
@@ -525,6 +520,8 @@ public class EditDiscussion extends AbcFMServlet {
     protected String actionRemoveComment2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
+        User user = (User) env.get(Constants.VAR_USER);
+        Relation mainRelation = (Relation) env.get(VAR_RELATION);
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params);
         if ( discussion==null )
@@ -541,16 +538,29 @@ public class EditDiscussion extends AbcFMServlet {
         persistance.synchronize(record);
         Document recordData = record.getData();
 
-        String xpath = "//comment[parent/text()='"+threadId+"']";
-        Element element = (Element) recordData.selectSingleNode(xpath);
-        if ( element!=null ) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Komentáø nesmí obsahovat ¾ádné reakce!", env, null);
-            return FMTemplateSelector.select("EditDiscussion", "remove", env, request);
-        }
+        List stack = new ArrayList();
+        stack.add(new Integer(threadId));
 
-        xpath = "//comment[@id='"+threadId+"']";
-        element = (Element) recordData.selectSingleNode(xpath);
-        element.detach();
+        String xpath;
+        Element element;
+        List children;
+
+        while(stack.size()>0) {
+            threadId = ((Integer)stack.remove(0)).intValue();
+            xpath = "//comment[@id='"+threadId+"']";
+            recordData.selectSingleNode(xpath).detach();
+            AdminLogger.logEvent(user, "smazal vlakno "+threadId+", relace "+mainRelation.getId());
+
+            xpath = "//comment[parent/text()='"+threadId+"']";
+            children = recordData.selectNodes(xpath);
+            if (children==null || children.size()==0)
+                continue;
+            for ( Iterator iter = children.iterator(); iter.hasNext(); ) {
+                element = (Element) iter.next();
+                threadId = Misc.parseInt(element.attributeValue("id"),0);
+                stack.add(new Integer(threadId));
+            }
+        }
         persistance.update(record);
 
         List commentList = recordData.getRootElement().selectNodes("comment");
@@ -564,12 +574,8 @@ public class EditDiscussion extends AbcFMServlet {
         persistance.update(discussion);
         SQLTool.getInstance().setUpdatedTimestamp(discussion, lastUpdate);
 
-        User user = (User) env.get(Constants.VAR_USER);
-        relation = (Relation) env.get(VAR_RELATION);
-        AdminLogger.logEvent(user, "smazal vlakno "+threadId+" diskuse "+discussion.getId()+", relace "+relation.getId());
-
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+        urlUtils.redirect(response, "/ViewRelation?rid="+mainRelation.getId());
         return null;
     }
 
