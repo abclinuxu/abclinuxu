@@ -124,7 +124,7 @@ public class ShowArticle implements AbcAction {
             List articles = new ArrayList(nodes.size());
             for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
                 Element element = (Element) iter.next();
-                Link link = new Link(element.getText(), element.attributeValue("url"));
+                Link link = new Link(element.getText(), element.attributeValue("url"), element.attributeValue("description"));
                 articles.add(link);
             }
             env.put(VAR_RELATED_ARTICLES,articles);
@@ -135,7 +135,7 @@ public class ShowArticle implements AbcAction {
             List resources = new ArrayList(nodes.size());
             for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
                 Element element = (Element) iter.next();
-                Link link = new Link(element.getText(), element.attributeValue("url"));
+                Link link = new Link(element.getText(), element.attributeValue("url"), element.attributeValue("description"));
                 resources.add(link);
             }
             env.put(VAR_RELATED_RESOURCES,resources);
@@ -149,11 +149,12 @@ public class ShowArticle implements AbcAction {
      * Holder of one link from related articles or resources.
      */
     public static class Link {
-        private String url, title;
+        private String url, title, description;
 
-        public Link(String title, String url) {
+        public Link(String title, String url, String description) {
             this.url = url;
             this.title = title;
+            this.description = description;
         }
 
         public String getUrl() {
@@ -162,6 +163,10 @@ public class ShowArticle implements AbcAction {
 
         public String getTitle() {
             return title;
+        }
+
+        public String getDescription() {
+            return description;
         }
 
         public String toString() {

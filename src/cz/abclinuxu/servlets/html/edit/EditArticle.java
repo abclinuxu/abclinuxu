@@ -388,7 +388,8 @@ public class EditArticle implements AbcAction {
 
         related = DocumentHelper.makeElement(record.getData(), "data/related");
         StringTokenizer stk = new StringTokenizer(links,"\n");
-        String url, title;
+        String url, title, desc;
+        int position;
         while ( stk.hasMoreTokens() ) {
             url = stk.nextToken();
             if ( url.trim().length()==0 )
@@ -398,9 +399,15 @@ public class EditArticle implements AbcAction {
                 return false;
             }
             title = stk.nextToken();
+            position = title.indexOf('|');
+            if (position!=-1) {
+                desc = title.substring(position+1);
+                title = title.substring(0, position);
+            } else desc = null;
 
             Element link = related.addElement("link");
             link.addAttribute("url",url);
+            link.addAttribute("description",desc);
             link.setText(title);
         }
         return true;
@@ -424,7 +431,8 @@ public class EditArticle implements AbcAction {
 
         resources = DocumentHelper.makeElement(record.getData(), "data/resources");
         StringTokenizer stk = new StringTokenizer(links,"\n");
-        String url, title;
+        String url, title, desc;
+        int position;
         while ( stk.hasMoreTokens() ) {
             url = stk.nextToken();
             if ( url.trim().length()==0 )
@@ -434,9 +442,16 @@ public class EditArticle implements AbcAction {
                 return false;
             }
             title = stk.nextToken();
+            position = title.indexOf('|');
+            if ( position!=-1 ) {
+                desc = title.substring(position+1);
+                title = title.substring(0, position);
+            } else
+                desc = null;
 
             Element link = resources.addElement("link");
             link.addAttribute("url",url);
+            link.addAttribute("description", desc);
             link.setText(title);
         }
         return true;

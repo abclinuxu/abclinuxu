@@ -8,6 +8,7 @@
 <!ELEMENT resources (link+)> <!-- related resources outside of portal -->
 <!ELEMENT link (#PCDATA)> <!-- contains text of link -->
 <!ATTLIST link url (#PCDATA) #REQUIRED> <!-- URL of resource or article -->
+<!ATTLIST link description (#PCDATA) #OPTIONAL> <!-- contains description of resource or article, that shall not be linked -->
 
 <!-- Record.HARDWARE -->
 <!ELEMENT data (price?,driver?,setup?,params?,identification?,note?)>
