@@ -1,11 +1,16 @@
 <project name="AbcLinuxu" basedir="." default="compile">
   <property name="src" value="src"/>
   <property name="build" value="build"/>
-  <property name="deploy" value="../tomcat/webapps/ROOT"/>
+  <property name="tomcat" value="../tomcat"/>
+  <property name="deploy" value="${tomcat}/webapps/ROOT"/>
 
   <path id="project.classpath">
     <fileset dir="libs">
       <include name="*.jar"/>
+    </fileset>
+    <fileset dir="${tomcat}/common/lib">
+      <include name="activation.jar"/>
+      <include name="mail.jar"/>
     </fileset>
   </path>
 
