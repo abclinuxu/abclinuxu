@@ -16,6 +16,9 @@ import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.data.view.DiscussionHeader;
 import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.data.view.Discussion;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.ConfigurationManager;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.dom4j.Element;
@@ -24,6 +27,7 @@ import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
 
 import java.util.*;
+import java.util.prefs.Preferences;
 import java.io.StringReader;
 import java.io.IOException;
 
@@ -36,20 +40,19 @@ import javax.servlet.http.Cookie;
 /**
  * Various utilities available for templates
  */
-public class Tools {
+public class Tools implements Configurable {
     static Logger log = Logger.getLogger(Tools.class);
+
+    public static final String PREF_REGEXP_EMPTY_LINE = "RE_EMPTY_LINE";
+    public static final String PREF_REGEXP_LINE_BREAK = "RE_LINE_BREAK";
+    public static final String PREF_REGEXP_REMOVE_TAGS = "RE_REMOVE_TAGS";
 
     static Persistance persistance = PersistanceFactory.getPersistance();
     static RE lineBreaks, reRemoveTags, emptyLine;
+
     static {
-        try {
-            // todo move it to systemPrefs.xml
-            lineBreaks = new RE("(<br>)|(<p>)|(<div>)",RE.MATCH_CASEINDEPENDENT);
-            emptyLine = new RE("(\r\n){2}|(\n){2}", RE.MATCH_MULTILINE);
-            reRemoveTags = new RE("<[\\w\\s\\d/=:.~?\"]+>", RE.MATCH_SINGLELINE);
-        } catch (RESyntaxException e) {
-            log.error("Cannot create regexp to find line breaks!", e);
-        }
+        Tools tools = new Tools();
+        ConfigurationManager.getConfigurator().configureAndRememberMe(tools);
     }
 
     /**
@@ -59,6 +62,20 @@ public class Tools {
     public static final String VAR_MAXIMUM_COMMENT_ID = "MAX_COMMENT";
     /** name of cookie, that holds id of read discsussions/threads */
     public static final String READ_DISCUSSIONS_COOKIE = "DIZS";
+
+
+    public void configure(Preferences prefs) throws ConfigurationException {
+        try {
+            String pref = prefs.get(PREF_REGEXP_LINE_BREAK,null);
+            lineBreaks = new RE(pref, RE.MATCH_CASEINDEPENDENT);
+            pref = prefs.get(PREF_REGEXP_EMPTY_LINE, null);
+            emptyLine = new RE(pref, RE.MATCH_MULTILINE);
+            pref = prefs.get(PREF_REGEXP_REMOVE_TAGS, null);
+            reRemoveTags = new RE(pref, RE.MATCH_SINGLELINE);
+        } catch (RESyntaxException e) {
+            log.error("Cannot create regexp to find line breaks!", e);
+        }
+    }
 
     /**
      * Returns text value of node selected by xpath expression for GenericObject.
@@ -663,10 +680,17 @@ public class Tools {
      * This method removes all tags from text.
      */
     public static String removeTags(String text) {
+        if (text==null || text.length()==0) return "";
         try {
+//            return StripTags.process(text);
             return reRemoveTags.subst(text,"");
         } catch (Throwable e) {
             log.warn("Oops, remove tags regexp failed on '"+text+"'!", e);
+            try {
+                System.in.read();
+            } catch (IOException e1) {
+                log.error("", e1);
+            }
             return text;
         }
     }

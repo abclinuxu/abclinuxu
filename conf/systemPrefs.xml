@@ -105,6 +105,13 @@
               </map>
             </node>
           </node>
+          <node name="Tools">
+              <map>
+                  <entry key="RE_LINE_BREAK" value="(&lt;br&gt;)|(&lt;p&gt;)|(&lt;div&gt;)"/>
+                  <entry key="RE_EMPTY_LINE" value="(\r\n){2}|(\n){2}"/>
+                  <entry key="RE_REMOVE_TAGS" value="&lt;[\w\s\d/=:.~?\&quot;]+&gt;"/>
+              </map>
+          </node>
         </node>
         <node name="persistance">
           <map/>
@@ -121,9 +128,9 @@
               <!-- forum.hardware -->
               <entry key="no.children.for.section.C" value="486,487,488,489,490,504,492,493,494,495,496,497,498,499,503,501,502,525,526"/>
               <!-- forum.nastaveni -->
-              <entry key="no.children.for.section.D" value="508,509,510,511,512,513,519,527,528,529"/>
+              <entry key="no.children.for.section.D" value="508,509,510,511,512,513,519,527,528,529,552"/>
               <!-- forum.aplikace -->
-              <entry key="no.children.for.section.E" value="514,515,516,517,518,524,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545"/>
+              <entry key="no.children.for.section.E" value="514,515,516,517,518,524,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,553,554,555"/>
               <!-- forum.ruzne -->
               <entry key="no.children.for.section.D" value="483,547,548,549"/>
             </map>
