@@ -67,9 +67,6 @@ public class EditPoll implements AbcAction {
             env.put(VAR_RELATION, relation);
         }
 
-        Poll poll = (Poll) persistance.findById(relation.getChild());
-        env.put(EditPoll.VAR_POLL, poll);
-
         if ( action.equals(ACTION_VOTE) )
             return actionVote(request, response, env);
 
@@ -84,6 +81,9 @@ public class EditPoll implements AbcAction {
 
         if ( action.equals(ACTION_ADD_STEP2) )
             return actionAddStep2(request, response, env);
+
+        Poll poll = (Poll) persistance.findById(relation.getChild());
+        env.put(EditPoll.VAR_POLL, poll);
 
         if ( action.equals(ACTION_EDIT) )
             return FMTemplateSelector.select("EditPoll", "edit", env, request);
@@ -149,7 +149,7 @@ public class EditPoll implements AbcAction {
         relation.getParent().addChildRelation(relation);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/show/"+upperRelation.getId());
+        urlUtils.redirect(response, "/show/"+relation.getId());
         return null;
     }
 
@@ -205,12 +205,15 @@ public class EditPoll implements AbcAction {
      */
     protected String actionVote(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         User user = (User) env.get(Constants.VAR_USER);
         Relation relation = (Relation) env.get(VAR_RELATION);
-        Poll poll = (Poll) env.get(VAR_POLL);
         String url = (String) params.get(PARAM_URL);
         int max = 0;
+
+        Poll poll = (Poll) persistance.findById(relation.getChild());
+        env.put(EditPoll.VAR_POLL, poll);
 
         if ( poll.isClosed() ) {
             ServletUtils.addError(Constants.ERROR_GENERIC,"Litujeme, ale tato anketa je ji¾ uzavøena!",env,request.getSession());
