@@ -85,6 +85,7 @@ public class UpdateKernel extends TimerTask implements Configurable {
         urlStable = prefs.get(PREF_URL_STABLE,null);
         stablePre = prefs.get(PREF_REGEXP_STABLE_PRE, null);
         stableMM = prefs.get(PREF_REGEXP_STABLE_MM, null);
+        urlStableMM = prefs.get(PREF_URL_STABLE_MM, null);
         devel = prefs.get(PREF_REGEXP_DEVEL, null);
         urlDevel = prefs.get(PREF_URL_DEVEL,null);
         develPre = prefs.get(PREF_REGEXP_DEVEL_PRE, null);
