@@ -32,7 +32,7 @@ pøíspìvek bude vypadat.</p-->
     original = "${TOOL.xpath(THREAD.data,"text")?js_string}";
     original = "<blockquote>"+original+"</blockquote>";
     function cituj(input) {
-      input.value = original;
+      input.value += original;
     }
  </script>
 </#if>
