@@ -254,7 +254,7 @@ public class MySqlPersistance implements Persistance {
                 try {
                     int index = Integer.parseInt(token);
                     if ( getBaseClass(obj)!=kind ) {
-                        throw new PersistanceException("Ruzne objekty v listu objects!",AbcException.DB_WRONG_DATA,obj,null);
+                        throw new PersistanceException("Ruzne objekty v listu objects!",AbcException.WRONG_FORMAT,obj,null);
                     }
                     sb.append('(');
                     obj = (GenericObject) objects.get(index);
@@ -284,7 +284,7 @@ public class MySqlPersistance implements Persistance {
             }
             return result;
         } catch ( SQLException e ) {
-            throw new PersistanceException("Nemohu ",AbcException.DB_INSERT,objects,e);
+            throw new PersistanceException("Nemohu provest zadane vyhledavani.",AbcException.DB_WRONG_COMMAND,objects,e);
         } finally {
             releaseSQLConnection(con);
         }
@@ -597,7 +597,7 @@ public class MySqlPersistance implements Persistance {
                     throw new PersistanceException("Neznamy typ tridy "+ obj.toString()+"!",AbcException.DB_UNKNOWN_CLASS,obj,null);
                 }
             }
-            conditions.add(((GenericDataObject)obj).getData().getBytes());
+            conditions.add(((GenericDataObject)obj).getDataAsString().getBytes());
             conditions.add(new Integer(((GenericDataObject)obj).getOwner()));
 
         } else if (obj instanceof Data) {
@@ -638,10 +638,10 @@ public class MySqlPersistance implements Persistance {
                 conditions.add(new Integer(((GenericDataObject)obj).getOwner()));
             }
 
-            if ( ((GenericDataObject)obj).getData()!=null ) {
+            if ( ((GenericDataObject)obj).getSearchString()!=null ) {
                 if ( addAnd ) sb.append(" and ");
                 sb.append("data like ?");
-                conditions.add(((GenericDataObject)obj).getData());
+                conditions.add(((GenericDataObject)obj).getSearchString());
             }
 
             if ( obj instanceof Category ) {
@@ -898,7 +898,11 @@ public class MySqlPersistance implements Persistance {
                     }
                 }
             }
-            item.setData(new String(resultSet.getBytes(3)));
+            try {
+                item.setData(new String(resultSet.getBytes(3)));
+            } catch (AbcException e) {
+                throw new PersistanceException(e.getMessage(),e.getStatus(),e.getSinner(),e.getNestedException());
+            }
             item.setOwner(resultSet.getInt(4));
             item.setUpdated(resultSet.getTimestamp(5));
 
@@ -1086,7 +1090,7 @@ public class MySqlPersistance implements Persistance {
                 statement = con.prepareStatement("update polozka set data=? where cislo=?");
                 statement.setInt(2,obj.getId());
             }
-            statement.setBytes(1,obj.getData().getBytes());
+            statement.setBytes(1,obj.getDataAsString().getBytes());
 
             int result = statement.executeUpdate();
             if ( result!=1 ) {

@@ -48,22 +48,22 @@ public class TestMySqlPersistance extends TestCase {
 
         Record a = new HardwareRecord(0);
         a.setOwner(1);
-        a.setData("hw a");
+        a.setData("<name>hw a</name>");
         persistance.create(a,null);
 
         Record b = new SoftwareRecord(0);
         b.setOwner(2);
-        b.setData("sw b");
+        b.setData("<name>sw b</name>");
         persistance.create(b,a);
 
         Record c = new ArticleRecord(0);
         c.setOwner(1);
-        c.setData("article c");
+        c.setData("<name>article c</name>");
         persistance.create(c,a);
 
         Record d = new SoftwareRecord(0);
         d.setOwner(2);
-        d.setData("sw d");
+        d.setData("<name>sw d</name>");
         persistance.create(d,null);
         persistance.create(c,d);
 
@@ -113,24 +113,24 @@ public class TestMySqlPersistance extends TestCase {
 
     public void testFindByExample() throws Exception {
         Record a = new HardwareRecord(0);
-        a.setData("HP DeskJet 840C");
+        a.setData("<name>HP DeskJet 840C</name>");
         a.setOwner(1);
         persistance.create(a,null);
 
         Record b = new HardwareRecord(0);
-        b.setData("Lehponen XT");
+        b.setData("<name>Lehponen XT</name>");
         b.setOwner(3);
         persistance.create(b,null);
 
         Record c = new SoftwareRecord(0);
-        c.setData("Laserjet II");
+        c.setData("<name>Laserjet II</name>");
         c.setOwner(2);
         persistance.create(c,null);
 
         // find a and b, don't find c
         List examples = new ArrayList();
         Record qa = new Record(0);
-        qa.setData("%HP%");
+        qa.setSearchString("%HP%");
         examples.add(qa);
         List found = persistance.findByExample(examples,null);
         assertTrue(containsId(found,a.getId()));
@@ -139,7 +139,7 @@ public class TestMySqlPersistance extends TestCase {
 
         // find only a
         examples.clear();
-        qa.setData("%HP%");
+        qa.setSearchString("%HP%");
         qa.setOwner(1);
         examples.add(qa);
         found = persistance.findByExample(examples,null);

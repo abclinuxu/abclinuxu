@@ -7,14 +7,16 @@
  */
 package cz.abclinuxu;
 
-import org.apache.log4j.Category;
-
 public class AbcException extends Exception {
 
     /** indicates unknown error */
     public static final int UNKNOWN = 0;
     /** indicates run time exception, usually error in code - e.g. NullPointerException */
     public static final int RUNTIME = 1;
+    /** data has invalid value */
+    public static final int WRONG_DATA = 2;
+    /** indicates, that supplied data are in incorrect format */
+    public static final int WRONG_FORMAT = 3;
     /** indicates, that connection to database failed */
     public static final int DB_REFUSED = 1000;
     /** indicates, that insert sql call failed */
@@ -33,8 +35,6 @@ public class AbcException extends Exception {
     public static final int DB_UNKNOWN_CLASS = 1006;
     /** indicates, that supplied class are incomplete */
     public static final int DB_INCOMPLETE = 1007;
-    /** indicates, that supplied data are in incorrect format */
-    public static final int DB_WRONG_DATA = 1008;
     /** indicates, that command supplied to findByCommand method was wrong */
     public static final int DB_WRONG_COMMAND = 1009;
 
@@ -43,10 +43,11 @@ public class AbcException extends Exception {
      * by user interfaces to custom error explanations.
      */
     int code;
-    /**
-     * object, which caused this exception (if known)
-     */
+    /** object, which caused this exception (if known) */
     Object sinner;
+    /** nested exception */
+    Exception nestedException;
+
 
     /**
      * constructs new exception and logs relevant information
@@ -59,6 +60,7 @@ public class AbcException extends Exception {
         super(desc);
         this.code = code;
         this.sinner = sinner;
+        nestedException = e;
     }
 
     /**
@@ -74,5 +76,12 @@ public class AbcException extends Exception {
      */
     public Object getSinner() {
         return sinner;
+    }
+
+    /**
+     * @return Nested exception
+     */
+    public Exception getNestedException() {
+        return nestedException;
     }
 }
