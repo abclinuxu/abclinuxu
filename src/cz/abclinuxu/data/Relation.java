@@ -8,6 +8,8 @@ package cz.abclinuxu.data;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 
+import java.util.Collections;
+
 /**
  * This class contains one relation between two GenericObjects.
  */
@@ -23,10 +25,12 @@ public final class Relation extends GenericObject implements XMLContainer {
 
 
     public Relation() {
+        content = Collections.EMPTY_LIST;
     }
 
     public Relation(int id) {
         this.id = id;
+        content = Collections.EMPTY_LIST;
     }
 
     /**

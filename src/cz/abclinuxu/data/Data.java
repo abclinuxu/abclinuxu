@@ -3,6 +3,8 @@
  */
 package cz.abclinuxu.data;
 
+import java.util.Collections;
+
 /**
  * Class for storage various binary objects like images,
  * sounds or video
@@ -18,10 +20,12 @@ public class Data extends GenericObject {
 
     public Data() {
         super();
+        content = Collections.EMPTY_LIST;
     }
 
     public Data(int id) {
         super(id);
+        content = Collections.EMPTY_LIST;
     }
 
     /**

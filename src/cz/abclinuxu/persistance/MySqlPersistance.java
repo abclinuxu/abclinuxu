@@ -70,7 +70,7 @@ public class MySqlPersistance implements Persistance {
     }
 
     /**
-     * Stores given object in cache. For use in SQLTool only! 
+     * Stores given object in cache. For use in SQLTool only!
      */
     public void storeInCache(GenericObject obj) {
         cache.store(obj);
@@ -541,8 +541,6 @@ public class MySqlPersistance implements Persistance {
             return loadPoll((Poll)obj);
         } else if (obj instanceof Data) {
             return loadData((Data)obj);
-        } else if (obj instanceof AccessRights) {
-            return loadRights((AccessRights)obj);
         }
         return null;
     }
@@ -1120,31 +1118,6 @@ public class MySqlPersistance implements Persistance {
     }
 
     /**
-     * @return link from mysql db
-     */
-    protected GenericObject loadRights(AccessRights obj) throws SQLException {
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-
-        try {
-            con = getSQLConnection();
-            statement = con.prepareStatement("select * from pravo where cislo=?");
-            statement.setInt(1,obj.getId());
-
-            resultSet = statement.executeQuery();
-            if ( !resultSet.next() ) {
-                throw new NotFoundException("Pravo "+obj.getId()+" nebylo nalezen!");
-            }
-
-            AccessRights rights = new AccessRights(obj.getId());
-            rights.setAdmin(resultSet.getBoolean(2));
-
-            return rights;
-        } finally {
-            releaseSQLResources(con,statement,resultSet);
-        }
-    }
-
-    /**
      * updates record in database
      */
     public void update(GenericDataObject obj) {
@@ -1449,8 +1422,6 @@ public class MySqlPersistance implements Persistance {
             return "A";
         } else if (obj instanceof User) {
             return "U";
-        } else if (obj instanceof AccessRights) {
-            return "X";
         }
         throw new InvalidDataException("Nepodporovany typ tridy!");
     }
@@ -1477,8 +1448,6 @@ public class MySqlPersistance implements Persistance {
             return "server";
         } else if (obj instanceof Data) {
             return "objekt";
-        } else if (obj instanceof AccessRights) {
-            return "pravo";
         }
         throw new InvalidDataException("Nepodporovany typ tridy!");
     }
@@ -1502,8 +1471,6 @@ public class MySqlPersistance implements Persistance {
             return new Link(id);
         } else if ( type=='U' ) {
             return new User(id);
-        } else if ( type=='X' ) {
-            return new AccessRights(id);
         }
         return null;
     }

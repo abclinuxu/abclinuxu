@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * superclass for all classes in this website
  */
-public class GenericObject {
+public abstract class GenericObject {
     /** unique identifier of this object */
     protected int id;
     /** list of Relations, where relation.getParent()==this and relation.getChild().getId()!=0 */
@@ -21,12 +21,10 @@ public class GenericObject {
 
     public GenericObject() {
         id = 0;
-        content = new ArrayList(5);
     }
 
     public GenericObject(int id) {
         this.id = id;
-        content = new ArrayList(5);
     }
 
     /**
@@ -55,8 +53,10 @@ public class GenericObject {
     /**
      * @return Relations, where getParent()==this. If getChild().isInitialized()==false,
      * you shall call Persistance.synchronize() to load data from persistant storage.
+     * todo find usages of this method and make sure, they dont modify content of the list directly
      */
     public List getContent() {
+//        return Collections.unmodifiableList(content);
         return content;
     }
 

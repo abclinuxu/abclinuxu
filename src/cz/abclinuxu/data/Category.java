@@ -5,6 +5,8 @@ package cz.abclinuxu.data;
 
 import cz.abclinuxu.utils.Misc;
 
+import java.util.ArrayList;
+
 /**
  * Category is a node of the tree (not leaf)
  */
@@ -18,10 +20,12 @@ public class Category extends GenericDataObject {
 
     public Category() {
         super();
+        content = new ArrayList();
     }
 
     public Category(int id) {
         super(id);
+        content = new ArrayList();
     }
 
     /**
@@ -43,7 +47,6 @@ public class Category extends GenericDataObject {
         sb.append(", "+content.size()+" children");
         if ( owner!=0 ) sb.append(",owner="+owner);
         if ( documentHandler!=null ) sb.append(",data="+getDataAsString());
-//        if ( updated!=null ) sb.append(",updated="+updated);
         if ( isOpen() ) sb.append(", otevrena"); else sb.append(", uzavrena");
         return sb.toString();
     }

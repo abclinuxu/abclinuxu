@@ -8,6 +8,7 @@ import cz.abclinuxu.utils.Misc;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Collections;
 
 /**
  * generic class for various polls
@@ -33,15 +34,18 @@ public class Poll extends GenericObject {
 
     public Poll() {
         super();
+        content = Collections.EMPTY_LIST;
     }
 
     public Poll(int id) {
         super(id);
+        content = Collections.EMPTY_LIST;
     }
 
     public Poll(int id, int type) {
         super(id);
         this.type = type;
+        content = Collections.EMPTY_LIST;
     }
 
     /**

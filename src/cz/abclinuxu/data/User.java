@@ -30,10 +30,12 @@ public class User extends GenericObject implements XMLContainer {
 
     public User() {
         super();
+        content = Collections.EMPTY_LIST;
     }
 
     public User(int id) {
         super(id);
+        content = Collections.EMPTY_LIST;
     }
 
     /**

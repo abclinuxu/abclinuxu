@@ -5,6 +5,8 @@ package cz.abclinuxu.data;
 
 import cz.abclinuxu.utils.Misc;
 
+import java.util.ArrayList;
+
 public class Item extends GenericDataObject {
 
     /** Leaf of the category. It contains at least one hardware or software record. */
@@ -28,15 +30,18 @@ public class Item extends GenericDataObject {
 
     public Item() {
         super();
+        content = new ArrayList(2);
     }
 
     public Item(int id) {
         super(id);
+        content = new ArrayList(2);
     }
 
     public Item(int id, int type) {
         super(id);
         this.type = type;
+        content = new ArrayList(2);
     }
 
     public String toString() {

@@ -64,5 +64,4 @@ public class Polymorphism {
     public String getTable(Poll obj) throws PersistanceException     { return "anketa";}
     public String getTable(User obj) throws PersistanceException     { return "uzivatel";}
     public String getTable(Server obj) throws PersistanceException   { return "server";}
-    public String getTable(AccessRights obj) throws PersistanceException { return "pravo";}
 }

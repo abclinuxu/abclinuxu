@@ -4,6 +4,7 @@
 package cz.abclinuxu.data;
 
 import java.util.Date;
+import java.util.Collections;
 
 /**
  * This class contains link to external URL
@@ -28,10 +29,12 @@ public class Link extends GenericObject {
 
     public Link() {
         super();
+        content = Collections.EMPTY_LIST;
     }
 
     public Link(int id) {
         super(id);
+        content = Collections.EMPTY_LIST;
     }
 
     /**
