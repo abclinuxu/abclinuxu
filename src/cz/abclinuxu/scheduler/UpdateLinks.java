@@ -16,10 +16,12 @@ import java.util.*;
 import java.net.URL;
 import java.io.*;
 
-import org.dom4j.io.SAXReader;
-import org.dom4j.*;
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
+import com.sun.syndication.io.SyndFeedInput;
+import com.sun.syndication.io.XmlReader;
+import com.sun.syndication.feed.synd.SyndFeed;
+import com.sun.syndication.feed.synd.SyndEntry;
 
 /**
  * Updates Links from other servers.
@@ -46,8 +48,10 @@ public class UpdateLinks extends TimerTask {
     public static final int LDAP = 11;
     public static final int MANDRAKE = 12;
     public static final int CZILLA = 13;
+    public static final int OPENOFFICE = 14;
+    public static final int SLASHDOT = 15;
     /** id of last server, maximum id */
-    public static final int LAST_SERVER = CZILLA;
+    public static final int LAST_SERVER = SLASHDOT;
 
     static RE ampersand;
     
@@ -64,6 +68,11 @@ public class UpdateLinks extends TimerTask {
     /** contains definition of locations and preferences for all servers */
     Map definitions;
 
+    // todo: link will be independant object, no relations, parent Category object.
+    // just some category identifier inside the row. there will be soem database
+    // table, which will contain information about RSS channels that shall be
+    // fetched and the refresh period.
+
     /**
      * constructor
      */
@@ -71,14 +80,16 @@ public class UpdateLinks extends TimerTask {
         definitions = new HashMap();
 
         if (!debug) {
-            definitions.put(new Server(ROOT), new ServerInfo("http://www.root.cz/share/ttitles.txt"));
+            definitions.put(new Server(ROOT), new ServerInfo("http://www.root.cz/rss/", null, ServerInfo.RSS));
             definitions.put(new Server(LW), new ServerInfo("http://www.linuxworld.cz/lw.rss", "Windows-1250", ServerInfo.RSS));
             definitions.put(new Server(SW), new ServerInfo("http://www.scienceworld.cz/sw.rss", "Windows-1250", ServerInfo.RSS));
-            definitions.put(new Server(UG), new ServerInfo("http://underground.cz/backend/czech.txt"));
-            definitions.put(new Server(PENGUIN), new ServerInfo("http://www.penguin.cz/trafika.php3"));
-            definitions.put(new Server(ABCLINUXU), new ServerInfo("http://localhost:8080/auto/abc.dat"));
+            definitions.put(new Server(UG), new ServerInfo("http://underground.cz/backend.php", null, ServerInfo.RSS));
+            definitions.put(new Server(PENGUIN), new ServerInfo("http://www.penguin.cz/rss.php3", null, ServerInfo.RSS));
+            definitions.put(new Server(ABCLINUXU), new ServerInfo("http://localhost:8080/auto/abc.rss", null, ServerInfo.RSS));
             definitions.put(new Server(MANDRAKE), new ServerInfo("http://www.mandrake.cz/titles_abc.php"));
             definitions.put(new Server(CZILLA), new ServerInfo("http://www.czilla.cz/rss/rss.html", null, ServerInfo.RSS));
+            definitions.put(new Server(OPENOFFICE), new ServerInfo("http://klub.openoffice.cz/rss", null, ServerInfo.RSS));
+            definitions.put(new Server(SLASHDOT), new ServerInfo("http://slashdot.org/index.rss", null, ServerInfo.RSS));
         } else {
 //        definitions.put(new Server(ROOT),new ServerInfo("file:///home/literakl/abc/data/titulky/ttitles.txt"));
 //        definitions.put(new Server(LW),new ServerInfo("file:///home/literakl/abc/data/titulky/lw.dat","Windows-1250",ServerInfo.TRAFIKA));
@@ -221,18 +232,18 @@ public class UpdateLinks extends TimerTask {
      */
     protected List parseRSS(ServerInfo definition) {
         List result = new ArrayList();
-        SAXReader reader = new SAXReader();
+        SyndFeedInput input = new SyndFeedInput();
 
         try {
-            Document doc = reader.read(new URL(definition.url));
-            List items = doc.selectNodes("rss/channel/item");
+            SyndFeed feed = input.build(new XmlReader(new URL(definition.url)));
+            List items = feed.getEntries();
             if ( items==null ) return result;
             for (Iterator iter = items.iterator(); iter.hasNext();) {
-                Node node = (Node) iter.next();
-                String title = node.selectSingleNode("title").getText();
+                SyndEntry entry = (SyndEntry) iter.next();
+                String title = entry.getTitle();
                 if ( title.length()>TEXT_LENGTH )
                     title = title.substring(0,TEXT_LENGTH);
-                String url = fixAmpersand(node.selectSingleNode("link").getText());
+                String url = fixAmpersand(entry.getLink());
 
                 Link link = new Link();
                 link.setUrl(url);
@@ -311,15 +322,15 @@ public class UpdateLinks extends TimerTask {
 
     public static void main(String[] args) {
         org.apache.log4j.BasicConfigurator.configure();
-        String debug = (args==null)? "true":args[0];
+        String debug = (args==null || args.length==0)? "true":args[0];
         UpdateLinks updater = new UpdateLinks(Boolean.valueOf(debug).booleanValue());
         updater.run();
     }
     
     private String fixAmpersand(String url) {
         if (url==null || url.length()==0)
-	    return url;
-	return ampersand.subst(url,"&amp;",RE.REPLACE_ALL);
+	        return url;
+	    return ampersand.subst(url,"&amp;",RE.REPLACE_ALL);
     }
 
     static class ServerInfo {
