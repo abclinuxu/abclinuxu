@@ -229,7 +229,7 @@ public class EditHardware extends AbcFMServlet {
             urlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId());
             return null;
         } catch (PersistanceException e) {
-            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,e.getMessage(),env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC,e.getMessage(),env, null);
             return FMTemplateSelector.select("EditHardware","add_record",env,request);
         }
     }
@@ -274,7 +274,7 @@ public class EditHardware extends AbcFMServlet {
             urlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId());
             return null;
         } catch (PersistanceException e) {
-            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,e.getMessage(),env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC,e.getMessage(),env, null);
             return FMTemplateSelector.select("EditHardware","add_record",env,request);
         }
     }
