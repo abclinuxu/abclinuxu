@@ -158,14 +158,6 @@ public class History implements AbcAction {
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_COMMENTS;
 
-        } else if ( VALUE_TYPE_COMMENTS.equalsIgnoreCase(type) ) {
-            qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
-            data = sqlTool.findCommentRelationsByUser(uid, qualifiers);
-            total = sqlTool.countCommentRelationsByUser(uid);
-            found = new Paging(data, from, count, total, qualifiers);
-            type = VALUE_TYPE_COMMENTS;
-
-
         } else if ( VALUE_TYPE_DICTIONARY.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
             if ( uid>0 ) {
@@ -175,6 +167,7 @@ public class History implements AbcAction {
                 data = sqlTool.findRecordParentRelationsWithType(Record.DICTIONARY, qualifiers);
                 total = sqlTool.countRecordParentRelationsWithType(Record.DICTIONARY);
             }
+            // todo neni to zbytecne, viz Tools.syncList ?
             for ( Iterator iter = data.iterator(); iter.hasNext(); ) {
                 Relation relation = (Relation) iter.next();
                 Tools.sync(relation);
