@@ -104,7 +104,7 @@ public class ViewUser extends AbcFMServlet {
      * shows login screen
      */
     protected String handleLogin(HttpServletRequest request, Map env) throws Exception {
-        return FMTemplateSelector.select("EditUser","login",env,request);
+        return FMTemplateSelector.select("ViewUser","login",env,request);
     }
 
     /**
@@ -119,6 +119,6 @@ public class ViewUser extends AbcFMServlet {
             return handleProfile(request,env);
         }
         else
-            return FMTemplateSelector.select("EditUser","login",env,request);
+            return FMTemplateSelector.select("ViewUser","login",env,request);
     }
 }

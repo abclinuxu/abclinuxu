@@ -82,6 +82,7 @@ public abstract class AbcFMServlet extends HttpServlet {
         Map params = ServletUtils.putParamsToMap(request);
         env.put(Constants.VAR_PARAMS,params);
         env.put(Constants.VAR_URL_UTILS,new UrlUtils(request.getRequestURI(), response));
+        env.put(Constants.VAR_REQUEST_URI,request.getRequestURI());
         ServletUtils.handleMessages(request,env);
         ServletUtils.handleLogin(request,response,env);
     }

@@ -134,11 +134,6 @@
   </servlet>
 
   <servlet name="EditUser">
-    <action name="login">
-      <mapping template="web" content="web/login.vm">
-        <var name="TITLE" value="Pøihlá¹ení se do systému" />
-      </mapping>
-    </action>
     <action name="forbidden">
       <mapping template="web" content="web/misc/forbidden.vm">
         <var name="TITLE" value="Pøístup odepøen" />
@@ -295,7 +290,7 @@
       <mapping template="plucker" content="/plucker/show/index.ftl">
         <var name="TITLE" value="AbcLinuxu.cz - tady je tuèòákùm hej!" />
       </mapping>
-      <mapping template="sidebar" content="sidebar/show/index.ftl" />
+      <mapping template="sidebar" content="/sidebar/show/index.ftl" />
     </action>
   </servlet>
 
@@ -303,6 +298,11 @@
     <action name="profile">
       <mapping template="web" content="/web/show/profile.ftl">
         <var name="TITLE" value="Profil" />
+      </mapping>
+    </action>
+    <action name="login">
+      <mapping template="web" content="/web/show/login.ftl">
+        <var name="TITLE" value="Pøihlá¹ení do systému" />
       </mapping>
     </action>
   </servlet>

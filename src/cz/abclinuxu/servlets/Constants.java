@@ -80,6 +80,8 @@ public interface Constants {
     String VAR_ERRORS = "ERRORS";
     /** holds list of messages for last request */
     String VAR_MESSAGES = "MESSAGES";
+    /** holds request's URI */
+    String VAR_REQUEST_URI = "REQUEST_URI";
     /** holds Tools instance */
     String VAR_TOOL = "TOOL";
     /** holds Sorters2 instance */
