@@ -148,6 +148,11 @@
             <replacement>http://www.abclinuxu.cz/forum/dir/50239</replacement>
         </mapping>
         <mapping>
+            <pattern input="host">palirna</pattern>
+            <regexp>.*</regexp>
+            <replacement>http://www.abclinuxu.cz/</replacement>
+        </mapping>
+        <mapping>
             <pattern input="path">ViewRelation</pattern>
             <regexp>ViewRelation.+(relationId|rid)=([\d]+).*</regexp>
             <replacement>show/$2</replacement>
