@@ -24,6 +24,7 @@ import cz.abclinuxu.utils.Tools;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.security.AdminLogger;
 import org.apache.commons.fileupload.FileItem;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -68,6 +69,7 @@ public class EditUser extends AbcFMServlet {
     public static final String PARAM_PHOTO = "photo";
     public static final String PARAM_RETURN_TO_FORUM = "moveback";
     public static final String PARAM_USER_ROLES = "roles";
+    public static final String PARAM_USERS = "users";
 
     public static final String VAR_MANAGED = "MANAGED";
     public static final String VAR_DEFAULT_DISCUSSION_COUNT = "DEFAULT_DISCUSSIONS";
@@ -93,6 +95,8 @@ public class EditUser extends AbcFMServlet {
     public static final String ACTION_GRANT_ROLES = "grant";
     public static final String ACTION_GRANT_ROLES_STEP2 = "grant2";
     public static final String ACTION_GRANT_ROLES_STEP3 = "grant3";
+    public static final String ACTION_INVALIDATE_EMAIL = "invalidateEmail";
+    public static final String ACTION_INVALIDATE_EMAIL2 = "invalidateEmail2";
 
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -174,6 +178,12 @@ public class EditUser extends AbcFMServlet {
 
         if ( action.equals(ACTION_GRANT_ROLES_STEP3) )
             return actionGrant3(request, response, env);
+
+        if ( action.equals(ACTION_INVALIDATE_EMAIL) )
+            return FMTemplateSelector.select("EditUser", "invalidateEmail", env, request);
+
+        if ( action.equals(ACTION_INVALIDATE_EMAIL2) )
+            return actionInvalidateEmail(request, response, env);
 
         throw new MissingArgumentException("Chybí parametr action!");
     }
@@ -597,6 +607,45 @@ public class EditUser extends AbcFMServlet {
         return null;
     }
 
+    /**
+     * Invalidates emails of set of users.
+     */
+    protected String actionInvalidateEmail(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User user = (User) env.get(Constants.VAR_USER);
+        Persistance persistance = PersistanceFactory.getPersistance();
+        StringBuffer sb = new StringBuffer();
+        int count = 0;
+
+        String tmp = (String) params.get(PARAM_USERS);
+        if ( tmp==null ) tmp = "";
+        StringTokenizer stk = new StringTokenizer(tmp,"\r\n");
+        while (stk.hasMoreTokens()) {
+            int id = Misc.parseInt(stk.nextToken(),0);
+            if (id==0)
+                continue;
+
+            User managed = null;
+            try {
+                managed = (User) persistance.findById(new User(id));
+                Element tagEmail = DocumentHelper.makeElement(user.getData(), "/data/communication/email");
+                tagEmail.attribute("valid").setText("no");
+                persistance.update(managed);
+                AdminLogger.logEvent(user, "zneplatnil email uzivateli "+managed.getName()+" - "+managed.getId());
+                count++;
+            } catch (Exception e) {
+                sb.append("U¾ivatel "+id+" nebyl nalezen!<br>");
+            }
+        }
+
+        if ( sb.length()>0 )
+            ServletUtils.addError(Constants.ERROR_GENERIC, sb.toString(), env, request.getSession());
+        ServletUtils.addMessage(count+" u¾ivatelùm byl zneplatnìn email.", env, request.getSession());
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/Admin");
+        return null;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     //                          Setters                                      //
     ///////////////////////////////////////////////////////////////////////////
@@ -692,7 +741,11 @@ public class EditUser extends AbcFMServlet {
             ServletUtils.addError(PARAM_EMAIL, "Neplatný email!", env, null);
             return false;
         }
-        user.setEmail(email);
+        if (!email.equals(user.getEmail())) {
+            user.setEmail(email);
+            Element tagEmail = DocumentHelper.makeElement(user.getData(), "/data/communication/email");
+            tagEmail.attribute("valid").setText("yes");
+        }
         return true;
     }
 

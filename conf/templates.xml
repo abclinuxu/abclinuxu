@@ -146,6 +146,9 @@
     <action name="grantRoles" content="/edit/grant_roles.ftl" template="print">
       <var name="TITLE" value="Zmìna rolí u¾ivatele"/>
     </action>
+    <action name="invalidateEmail" content="/edit/invalidate_emails.ftl" template="print">
+      <var name="TITLE" value="Zneplatnìní emailu u¾ivatelùm"/>
+    </action>
   </servlet>
 
   <servlet name="ForgottenPassword">

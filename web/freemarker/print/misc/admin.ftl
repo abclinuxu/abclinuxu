@@ -4,10 +4,10 @@
 <#call showMessages>
 
 <p>Tato stránka slou¾í jako rozcestník pro
-administrátory. K ní samotné není øízen
+administrátory. K ní samotné není kontrolován
 pøístup, zda u¾ivatel má dostateèná práva
 èi nikoliv. K nìkterým akcím v¹ak ji¾
-potøebujete správná práva.
+potøebujete dostateèná práva.
 </p>
 
 <h1>Vyprázdnìní cache</h1>
@@ -27,6 +27,10 @@ projeví.
 <p>Pøiøazování rolí jednotlivým u¾ivatelùm.</p>
 
 <p><a href="${URL.noPrefix("/EditUser?action=grant")}">Grant roles</a></p>
+
+<p>Zneplatnìní emailu u¾ivatelùm</p>
+
+<p><a href="${URL.noPrefix("/EditUser?action=invalidateEmail")}">Invalidate emails</a></p>
 
 
 <h1>Vytvoøení ankety</h1>
