@@ -95,7 +95,7 @@ public final class Guard {
         if ( subject instanceof User ) {
             String password = (String) param;
             if ( actor.getId()!=subject.getId() ) return ACCESS_DENIED;
-            if ( ((User)actor).validatePassword(password) ) return ACCESS_OK;
+            if ( actor.validatePassword(password) ) return ACCESS_OK;
             return ACCESS_DENIED;
         }
         // Link

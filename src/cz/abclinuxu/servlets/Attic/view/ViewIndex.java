@@ -8,12 +8,10 @@ package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcFMServlet;
-import cz.abclinuxu.servlets.init.AbcInit;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.utils.Tools;
 
 import javax.servlet.http.HttpServletRequest;

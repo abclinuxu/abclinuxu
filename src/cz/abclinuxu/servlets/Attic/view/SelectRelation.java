@@ -12,17 +12,14 @@ import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.PersistanceException;
+import cz.abclinuxu.exceptions.PersistanceException;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.utils.Misc;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.List;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -124,8 +121,6 @@ public class SelectRelation extends AbcFMServlet {
      * todo replace usage of ServletUtils with env.
      */
     protected String actionFinish(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        String choice = request.getParameter(PARAM_CURRENT);
-
         Map map = ServletUtils.putParamsToMap(request);
         map.put(PARAM_SELECTED,map.get(PARAM_CURRENT));
         String url = (String) map.remove(PARAM_URL);

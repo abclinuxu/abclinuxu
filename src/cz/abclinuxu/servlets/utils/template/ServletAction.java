@@ -5,7 +5,6 @@
  */
 package cz.abclinuxu.servlets.utils.template;
 
-import java.util.HashMap;
 import java.util.List;
 
 /**

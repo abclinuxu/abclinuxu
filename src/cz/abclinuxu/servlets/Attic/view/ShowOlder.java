@@ -10,10 +10,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.data.Relation;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,12 +19,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * This servlet is responsible for displaying
  * the range of objects in specified time interval.
- * @todo odstranit duplicitu u linkovanych objektu u SQL_ARTICLES
+ * todo odstranit duplicitu u linkovanych objektu u SQL_ARTICLES
  */
 public class ShowOlder extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ShowOlder.class);
@@ -50,7 +46,6 @@ public class ShowOlder extends AbcFMServlet {
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
 
         String type = (String) params.get(PARAM_TYPE);
         int from = Misc.parseInt((String)params.get(PARAM_FROM),0);

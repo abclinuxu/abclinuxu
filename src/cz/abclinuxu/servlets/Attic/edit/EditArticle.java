@@ -15,18 +15,17 @@ import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.exceptions.PersistanceException;
 
 import org.dom4j.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.RequestDispatcher;
 import java.util.*;
-import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
 /**
  * Class for manipulation of articles.
- * @todo implement flow of checks: Author enters article, revisor corrects grammar, editor approves article and selects publish date.
+ * todo implement flow of checks: Author enters article, revisor corrects grammar, editor approves article and selects publish date.
  */
 public class EditArticle extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditArticle.class);
@@ -99,7 +98,6 @@ public class EditArticle extends AbcFMServlet {
 
     private String actionAddStep1(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
         params.put(PARAM_PUBLISHED,Constants.isoFormat.format(new Date()));
         addAuthors(env);
         return FMTemplateSelector.select("EditArticle","add",env,request);
@@ -189,7 +187,6 @@ public class EditArticle extends AbcFMServlet {
 
     protected String actionEditItem(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
 
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
@@ -275,6 +272,7 @@ public class EditArticle extends AbcFMServlet {
 
     /**
      * Adds list of authors (User) to env in VAR_AUTHORS.
+     * todo Robert kratky says, that some authors are missing, for example default author
      */
     private void addAuthors(Map env) {
         Persistance persistance = PersistanceFactory.getPersistance();

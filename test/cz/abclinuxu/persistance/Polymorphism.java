@@ -9,7 +9,7 @@
 package cz.abclinuxu.persistance;
 
 import cz.abclinuxu.data.*;
-import cz.abclinuxu.AbcException;
+import cz.abclinuxu.exceptions.PersistanceException;
 
 public class Polymorphism {
     boolean rekurze;

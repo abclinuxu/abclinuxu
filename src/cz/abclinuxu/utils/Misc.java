@@ -5,8 +5,6 @@
  */
 package cz.abclinuxu.utils;
 
-import cz.abclinuxu.data.GenericObject;
-
 import java.util.*;
 
 /**

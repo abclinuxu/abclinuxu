@@ -11,7 +11,7 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Poll;
-import cz.abclinuxu.AbcException;
+import cz.abclinuxu.exceptions.PersistanceException;
 
 import java.util.prefs.Preferences;
 import java.util.Date;
@@ -66,7 +66,7 @@ public final class SQLTool implements Configurable {
      * Finds maximum value of created property of records belonging to given item.
      * If the item doesn't have any associated records, its created property is
      * returned. Argument shall be initialized.
-     * @throws PersistanceException - sql errors ..
+     * @throws cz.abclinuxu.exceptions.PersistanceException - sql errors ..
      */
     public Date getMaxCreatedDateOfRecordForItem(Item item) {
         if ( ! item.isInitialized() )
@@ -85,7 +85,7 @@ public final class SQLTool implements Configurable {
      * The order is descendant - the freshest records first. Use offset to skip
      * some record and count to manage count of returned relations.
      * @return List of initialized relations
-     * @throws PersistanceException if there is an error with the underlying persistent storage.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
      */
     public List findHardwareRelationsByUpdated(int offset, int count) {
         Persistance persistance = PersistanceFactory.getPersistance();
@@ -104,7 +104,7 @@ public final class SQLTool implements Configurable {
      * The order is descendant - the freshest records first. Use offset to skip
      * some record and count to manage count of returned relations.
      * @return List of initialized relations
-     * @throws PersistanceException if there is an error with the underlying persistent storage.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
      */
     public List findSoftwareRelationsByUpdated(int offset, int count) {
         Persistance persistance = PersistanceFactory.getPersistance();
@@ -123,7 +123,7 @@ public final class SQLTool implements Configurable {
      * The order is descendant - the freshest items first. Use offset to skip
      * some items and count to manage count of returned relations.
      * @return List of initialized relations
-     * @throws PersistanceException if there is an error with the underlying persistent storage.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
      */
     public List findDriverRelationsByUpdated(int offset, int count) {
         Persistance persistance = PersistanceFactory.getPersistance();
@@ -142,7 +142,7 @@ public final class SQLTool implements Configurable {
      * The order is descendant - the freshest items first. Use offset to skip
      * some items and count to manage count of returned relations.
      * @return List of initialized relations
-     * @throws PersistanceException if there is an error with the underlying persistent storage.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
      */
     public List findDiscussionRelationsByUpdated(int offset, int count) {
         Persistance persistance = PersistanceFactory.getPersistance();
@@ -162,7 +162,7 @@ public final class SQLTool implements Configurable {
      * some items and count to manage count of returned relations. Items with
      * created property in future and outside of typical columns are skipped.
      * @return List of initialized relations
-     * @throws PersistanceException if there is an error with the underlying persistent storage.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
      */
     public List findArticleRelationsByUpdated(int offset, int count) {
         Persistance persistance = PersistanceFactory.getPersistance();
@@ -200,8 +200,7 @@ public final class SQLTool implements Configurable {
                 result.add(persistance.findById(relation));
             }
         } catch (SQLException e) {
-            log.error("Chyba pri hledani podle "+relationsArticleWithinPeriod,e);
-            throw new PersistanceException("Chyba pri hledani!",AbcException.DB_FIND);
+            throw new PersistanceException("Chyba pri hledani!",e);
         } finally {
             persistance.releaseSQLResources(con,statement,resultSet);
         }
@@ -226,8 +225,7 @@ public final class SQLTool implements Configurable {
                 result.add(id);
             }
         } catch (SQLException e) {
-            log.error("Chyba pri hledani podle "+relationsArticleWithinPeriod,e);
-            throw new PersistanceException("Chyba pri hledani!",AbcException.DB_FIND);
+            throw new PersistanceException("Chyba pri hledani!",e);
         } finally {
             persistance.releaseSQLResources(con,statement,resultSet);
         }
@@ -237,7 +235,7 @@ public final class SQLTool implements Configurable {
     /**
      * Finds count of hardware records.
      * @return number of hardware records in persistant storage
-     * @throws PersistanceException if there is an error with the underlying persistant storage.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
      */
     public Integer getHardwareCount() {
         Persistance persistance = PersistanceFactory.getPersistance();
@@ -248,7 +246,7 @@ public final class SQLTool implements Configurable {
     /**
      * Finds count of software records.
      * @return number of software records in persistant storage
-     * @throws PersistanceException if there is an error with the underlying persistant storage.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
      */
     public Integer getSoftwareCount() {
         Persistance persistance = PersistanceFactory.getPersistance();
@@ -259,7 +257,7 @@ public final class SQLTool implements Configurable {
     /**
      * Finds count of drivers records.
      * @return number of hardware records in persistant storage
-     * @throws PersistanceException if there is an error with the underlying persistant storage.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
      */
     public Integer getDriversCount() {
         Persistance persistance = PersistanceFactory.getPersistance();
@@ -270,7 +268,7 @@ public final class SQLTool implements Configurable {
     /**
      * Finds the last poll. If it is not active, null is returned.
      * @return last initialized poll, if it is active, null otherwise.
-     * @throws PersistanceException if there is an error with the underlying persistant storage.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
      */
     public Poll findActivePoll() {
         Persistance persistance = PersistanceFactory.getPersistance();
@@ -299,8 +297,7 @@ public final class SQLTool implements Configurable {
             Integer id = new Integer(resultSet.getInt(1));
             return id.intValue();
         } catch (SQLException e) {
-            log.error("Chyba pri hledani podle "+maxUser+"! Duvod: "+e.getMessage());
-            throw new PersistanceException("Chyba pri hledani!",AbcException.DB_FIND);
+            throw new PersistanceException("Chyba pri hledani!",e);
         } finally {
             persistance.releaseSQLResources(con,statement,resultSet);
         }

@@ -19,6 +19,7 @@ import java.util.*;
  * Thjis class creates directory tree, which looks
  * similar to tree of Abc objects. Useful for
  * discussion administrators.
+ * todo remove dependancy on velocity
  */
 public class DumpCategoryTree {
     Persistance persistance = PersistanceFactory.getPersistance(PersistanceFactory.defaultUrl,EmptyCache.class);

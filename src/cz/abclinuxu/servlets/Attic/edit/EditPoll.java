@@ -6,9 +6,6 @@
  */
 package cz.abclinuxu.servlets.edit;
 
-import org.apache.velocity.Template;
-import org.apache.velocity.context.Context;
-
 import javax.servlet.http.*;
 
 import cz.abclinuxu.servlets.AbcFMServlet;
@@ -26,7 +23,7 @@ import java.util.*;
 
 /**
  * Servlet for manipulation with Polls.
- * @todo create rating of articles, records and replies
+ * todo create rating of articles, records and replies
  */
 public class EditPoll extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditPoll.class);
@@ -183,7 +180,6 @@ public class EditPoll extends AbcFMServlet {
     protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
-        int type = Poll.SURVEY;
         Relation upperRelation = (Relation) env.get(VAR_RELATION);
         Poll poll = (Poll) env.get(VAR_POLL);
 

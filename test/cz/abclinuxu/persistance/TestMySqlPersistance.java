@@ -15,6 +15,8 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Level;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.AbcException;
+import cz.abclinuxu.exceptions.PersistanceException;
+import cz.abclinuxu.exceptions.NotFoundException;
 
 public class TestMySqlPersistance extends TestCase {
 
@@ -91,15 +93,15 @@ public class TestMySqlPersistance extends TestCase {
         try {
             test = persistance.findById(a);
             fail("found deleted object " + a);
-        } catch (PersistanceException e) {
-            assertTrue( e.getStatus()==AbcException.DB_NOT_FOUND );
+        } catch (NotFoundException e) {
+            assertTrue( true );
         }
 
         try {
             test = persistance.findById(b);
             fail("found deleted object " + b);
-        } catch (PersistanceException e) {
-            assertTrue( e.getStatus()==AbcException.DB_NOT_FOUND );
+        } catch (NotFoundException e) {
+            assertTrue(true);
         }
 
         // now clean up database
@@ -108,16 +110,16 @@ public class TestMySqlPersistance extends TestCase {
         try {
             test = persistance.findById(c);
             fail("found deleted object " + c);
-        } catch (PersistanceException e) {
-            assertTrue( e.getStatus()==AbcException.DB_NOT_FOUND );
+        } catch (NotFoundException e) {
+            assertTrue(true);
         }
 
         persistance.remove(d);
         try {
             test = persistance.findById(d);
             fail("found deleted object " + d);
-        } catch (PersistanceException e) {
-            assertTrue( e.getStatus()==AbcException.DB_NOT_FOUND );
+        } catch (NotFoundException e) {
+            assertTrue(true);
         }
     }
 
@@ -295,8 +297,8 @@ public class TestMySqlPersistance extends TestCase {
         try {
             duron = (Item) persistance.findById(duron);
             fail("found deleted object " + duron);
-        } catch (PersistanceException e) {
-            assertTrue( e.getStatus()==AbcException.DB_NOT_FOUND );
+        } catch (NotFoundException e) {
+            assertTrue(true);
         }
 
         // cleanup

@@ -10,7 +10,6 @@ package cz.abclinuxu.persistance;
 import java.util.List;
 
 import cz.abclinuxu.data.*;
-import cz.abclinuxu.persistance.PersistanceException;
 
 /**
  * This interface defines responsibility of any class, that provides persistance
@@ -23,26 +22,26 @@ public interface Persistance {
      * Stores new object into persistant storage and updates several fields like <code>id</code>.
      * If you are storing Relation, both <code>parent</code> and <code>child</code> must exist
      * in persistant storage!
-     * @throws PersistanceException When something goes wrong.
+     * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
      */
     public void create(GenericObject obj);
 
     /**
      * Synchronizes persistant storage with changes made in <code>obj</code>.
-     * @throws PersistanceException When something goes wrong.
+     * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
      */
     public void update(GenericObject obj);
 
     /**
      * Synchronizes <code>obj</code> with external changes made in persistant storage.
-     * @throws PersistanceException When something goes wrong.
+     * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
      */
     public void synchronize(GenericObject obj);
 
     /**
      * Finds object, whose <code>id</code> is same as in <code>obj</code>.
      * @return New instance of GenericObject's subclass.
-     * @throws PersistanceException When something goes wrong.
+     * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
      */
     public GenericObject findById(GenericObject obj);
 
@@ -61,7 +60,7 @@ public interface Persistance {
      * <li>Examples of <code>relations</code>:"0 AND 1", "0 OR 1", "0 OR (1 AND 2)", "(0 AND 1) OR (0 AND 2)"
      * </ul>
      * @return List of objects, which are of same class, as <code>objects</code>.
-     * @throws PersistanceException When something goes wrong.
+     * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
      */
     public List findByExample(List objects, String relations);
 
@@ -70,7 +69,8 @@ public interface Persistance {
      * of persistance structure (such as SQL commands, database schema), which decreases portability
      * of your code.
      * @return List of arrays of primitive objects. You know, what it is.
-     * @throws PersistanceException When something goes wrong.
+     * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
+     * @deprecated
      */
     public List findByCommand(String command);
 
@@ -78,13 +78,13 @@ public interface Persistance {
      * Finds all parents of this Relation. First element is top level relation, the second is its child and the
      * last element is direct parent of this relation (last.getId()==relation.getUpper()).
      * @return List of Relations, starting at top level.
-     * @throws PersistanceException When something goes wrong.
+     * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
      */
     public List findParents(Relation relation);
 
     /**
      * Finds relation described by <code>example</code>. Just set child or parent.
-     * @throws PersistanceException When something goes wrong.
+     * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
      */
     public Relation[] findByExample(Relation example);
 
@@ -93,31 +93,31 @@ public interface Persistance {
      * this method removes this relation. If relation.getChild() becomes unreferenced,
      * it is removed too. If <code>obj</code> is not Relation, this object plus all its references
      * is deleted.
-     * @throws PersistanceException When something goes wrong.
+     * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
      */
     public void remove(GenericObject obj);
 
     /**
      * Increments counter for specified object.
-     * @throws PersistanceException When something goes wrong.
+     * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
      */
     public void incrementCounter(GenericObject obj);
 
     /**
      * Increments counter for specified choice od the poll.
-     * @throws PersistanceException When something goes wrong.
+     * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
      */
     public void incrementCounter(PollChoice choice);
 
     /**
      * @return Actual value of counter for specified object.
-     * @throws PersistanceException When something goes wrong.
+     * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
      */
     public int getCounterValue(GenericObject obj);
 
     /**
      * Removes counter for specified object. To be used to clean up database after unit test.
-     * @throws PersistanceException When something goes wrong.
+     * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
      */
     public void removeCounter(GenericObject obj);
 

@@ -8,13 +8,11 @@ package cz.abclinuxu.utils.offline;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.EmptyCache;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.view.ViewRelation;
 import cz.abclinuxu.servlets.view.ViewCategory;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.template.TemplateSelector;
-import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.utils.Tools;
 import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.Sorters2;
@@ -41,6 +39,7 @@ import freemarker.ext.beans.BeansWrapper;
  * character (27%26=1 => 'a') a filename
  * consists of string "relace" and relationId
  * padded to 5 digits.
+ * todo update and test it 
  */
 public class Dump {
     Persistance persistance;

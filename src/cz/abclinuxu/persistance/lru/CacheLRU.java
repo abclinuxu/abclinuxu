@@ -60,7 +60,6 @@ package cz.abclinuxu.persistance.lru;
 /*
 * $Id$
 */
-import java.util.*;
 
 /**
  * This class is a GenericCache subclass implementing an LRU

@@ -16,6 +16,7 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.AbcException;
+import cz.abclinuxu.exceptions.InvalidDataException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -154,12 +155,12 @@ public class ShowSurvey extends AbcVelocityServlet {
     void dump(Document data, Element dump) throws Exception {
         Element element = dump.element("dir");
         if ( element==null || element.getTextTrim().length()==0 )
-            throw new AbcException("No dir in survey!",0);
+            throw new InvalidDataException("No dir in survey!");
         String dir = element.getTextTrim();
 
         element = dump.element("prefix");
         if ( element==null || element.getTextTrim().length()==0 )
-            throw new AbcException("No prefix in survey!",0);
+            throw new InvalidDataException("No prefix in survey!");
         String prefix = element.getTextTrim();
 
         String suffix = null;

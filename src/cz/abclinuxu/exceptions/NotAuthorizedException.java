@@ -9,7 +9,7 @@ import cz.abclinuxu.AbcException;
 
 /**
  * This exception is thrown, when user tries to perform
- * action, where his rights are not sufficient.
+ * action, for which his rights are not sufficient.
  */
 public class NotAuthorizedException extends AbcException {
 

@@ -17,7 +17,7 @@ import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.PersistanceException;
+import cz.abclinuxu.exceptions.PersistanceException;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.utils.InstanceUtils;
@@ -183,7 +183,7 @@ public class EditCategory extends AbcFMServlet {
 
     /**
      * First step for editing of category
-     * @todo verify logic of ACTION check
+     * todo verify logic of ACTION check
      */
     protected String actionEditStep1(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);

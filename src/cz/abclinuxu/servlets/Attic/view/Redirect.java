@@ -23,11 +23,8 @@ public class Redirect extends HttpServlet {
 
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String linkId = request.getParameter(PARAM_LINK);
-        String ip = request.getRemoteAddr();
-
         Link link = findLink(linkId);
         String url = link.getUrl();
-
         logRedirect.info(linkId);
         response.sendRedirect(response.encodeRedirectURL(url));
     }

@@ -28,6 +28,8 @@ import java.util.prefs.Preferences;
 /**
  * This class is responsible for creating and
  * maintaining Lucene's index.
+ * todo remove dependancy on Velocity
+ * todo add czech analyzer 
  */
 public class CreateIndex implements Configurable {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(CreateIndex.class);

@@ -11,6 +11,7 @@ import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.*;
+import cz.abclinuxu.exceptions.PersistanceException;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.apache.velocity.context.Context;
@@ -29,6 +30,7 @@ import java.text.ParseException;
 /**
  * This class provides several methods, that
  * make velocity developer's life easier.
+ * @deprecated
  */
 public class VelocityHelper {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(VelocityHelper.class);

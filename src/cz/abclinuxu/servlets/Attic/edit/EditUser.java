@@ -6,10 +6,9 @@
  */
 package cz.abclinuxu.servlets.edit;
 
-import cz.abclinuxu.AbcException;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceException;
+import cz.abclinuxu.exceptions.DuplicateKeyException;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
@@ -189,10 +188,8 @@ public class EditUser extends AbcFMServlet {
 
         try {
             persistance.create(managed);
-        } catch (PersistanceException e) {
-            if ( e.getStatus()==AbcException.DB_DUPLICATE ) {
-                ServletUtils.addError(PARAM_LOGIN, "Toto jméno je ji¾ pou¾íváno!", env, null);
-            }
+        } catch (DuplicateKeyException e) {
+            ServletUtils.addError(PARAM_LOGIN, "Toto jméno je ji¾ pou¾íváno!", env, null);
             return FMTemplateSelector.select("EditUser", "register", env, request);
         }
 
@@ -247,10 +244,8 @@ public class EditUser extends AbcFMServlet {
 
         try {
             persistance.update(managed);
-        } catch ( PersistanceException e ) {
-            if ( e.getStatus()==AbcException.DB_DUPLICATE ) {
-                ServletUtils.addError(PARAM_LOGIN,"Toto jméno je ji¾ pou¾íváno!",env, null);
-            }
+        } catch ( DuplicateKeyException e ) {
+            ServletUtils.addError(PARAM_LOGIN, "Toto jméno je ji¾ pou¾íváno!", env, null);
             return FMTemplateSelector.select("EditUser","editBasic",env,request);
         }
 

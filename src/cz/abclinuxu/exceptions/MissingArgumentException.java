@@ -18,11 +18,4 @@ public class MissingArgumentException extends AbcException {
     public MissingArgumentException(String desc) {
         super(desc);
     }
-
-    /**
-     * This exception is thrown, when some argument is missing.
-     */
-    public MissingArgumentException(String desc, Exception e) {
-        super(desc, e);
-    }
 }

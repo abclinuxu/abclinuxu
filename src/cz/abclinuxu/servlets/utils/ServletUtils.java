@@ -11,7 +11,7 @@ import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceException;
+import cz.abclinuxu.exceptions.PersistanceException;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.Misc;

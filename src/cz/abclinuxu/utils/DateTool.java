@@ -9,7 +9,6 @@ import cz.abclinuxu.servlets.Constants;
 
 import java.util.Date;
 import java.text.ParseException;
-import java.sql.Timestamp;
 
 /**
  * Various methods for date manipulation

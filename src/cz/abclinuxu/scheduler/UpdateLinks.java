@@ -9,12 +9,11 @@ package cz.abclinuxu.scheduler;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.init.AbcInit;
 import cz.abclinuxu.utils.Sorters;
+import cz.abclinuxu.exceptions.PersistanceException;
 
 import java.util.*;
 import java.net.URL;
-import java.net.MalformedURLException;
 import java.io.*;
 
 import org.dom4j.io.SAXReader;
@@ -127,7 +126,6 @@ public class UpdateLinks extends TimerTask {
 
         for (Iterator iter = definitions.keySet().iterator(); iter.hasNext();) {
             Server server = (Server) iter.next();
-            ServerInfo definition = (ServerInfo) definitions.get(server);
             try {
                 synchronize(server,category,serverLinks);
             } catch (PersistanceException e) {
@@ -161,7 +159,8 @@ public class UpdateLinks extends TimerTask {
             downloaded = parseTrafika(definition);
         }
 
-        if ( downloaded.size()>LINKS_PER_SERVER ) downloaded = downloaded.subList(0,LINKS_PER_SERVER);
+        if ( downloaded.size()>LINKS_PER_SERVER )
+            downloaded = downloaded.subList(0,LINKS_PER_SERVER);
         // remove from downloaded list links, that were already downloaded
         for (Iterator iter = downloaded.iterator(); iter.hasNext();) {
             if ( removeLink(stored, (Link) iter.next()) ) iter.remove();
@@ -210,7 +209,8 @@ public class UpdateLinks extends TimerTask {
                 if ( where==-1 ) continue;
                 String url = line.substring(0,where);
                 String title = line.substring(where+2);
-                if ( title.length()>TEXT_LENGTH ) title = title.substring(0,TEXT_LENGTH);
+                if ( title.length()>TEXT_LENGTH )
+                    title = title.substring(0,TEXT_LENGTH);
 
                 Link link = new Link();
                 link.setUrl(url);
@@ -219,6 +219,8 @@ public class UpdateLinks extends TimerTask {
                 result.add(link);
             }
             in.close();
+        } catch (IOException e) {
+            log.error("IO problems for "+definition.url+": "+e.getMessage());
         } catch (Exception e) {
             log.error("Cannot parse links from "+definition.url, e);
         }
@@ -240,7 +242,8 @@ public class UpdateLinks extends TimerTask {
             for (Iterator iter = items.iterator(); iter.hasNext();) {
                 Node node = (Node) iter.next();
                 String title = node.selectSingleNode("title").getText();
-                if ( title.length()>TEXT_LENGTH ) title = title.substring(0,TEXT_LENGTH);
+                if ( title.length()>TEXT_LENGTH )
+                    title = title.substring(0,TEXT_LENGTH);
                 String url = node.selectSingleNode("link").getText();
 
                 Link link = new Link();
@@ -249,7 +252,9 @@ public class UpdateLinks extends TimerTask {
 
                 result.add(link);
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
+            log.error("IO problems for "+definition.url+": "+e.getMessage());
+        }  catch (Exception e) {
             log.error("Cannot parse links from "+definition.url, e);
         }
 

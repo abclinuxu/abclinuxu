@@ -79,7 +79,7 @@ public class PersistanceFactory implements Configurable {
                 persistance.setCache((Cache)cache.newInstance());
             } catch (Exception e) {
                 log.error("Cannot use Cache "+cache.toString(), e);
-                persistance.setCache(new DefaultCache());
+                persistance.setCache(new LRUCache());
             }
             instances.put(url,persistance);
         }

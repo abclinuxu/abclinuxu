@@ -17,7 +17,8 @@ import java.util.Date;
  * This class provides several methods for sorting relations
  * based on some criteria and order. Refactoring of Sorters.
  *
- * @todo write unit tests
+ * todo decide, which Sorter shall be used and remove the other one
+ * todo write unit tests
  */
 public class Sorters2 {
     /** ascending order */

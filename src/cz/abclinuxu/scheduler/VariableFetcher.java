@@ -10,7 +10,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.PersistanceException;
+import cz.abclinuxu.exceptions.PersistanceException;
 
 import java.util.*;
 

@@ -14,6 +14,7 @@ import java.io.Serializable;
 
 /**
  * A lot of sorts.
+ * todo decide, which Sorter shall be used and remove the other one
  */
 public class Sorters {
 
@@ -21,7 +22,7 @@ public class Sorters {
      * Sorts list of objects by date. If objects are relations, then their children are
      * compared. Objects shall be initialized to provide valid results!<p>
      * This comparator is not consistent with equals.
-     * @param <code>ascendingOrder</code> Set it to true, if you wish list to be
+     * @param ascendingOrder Set it to true, if you wish list to be
      * sorted in ascending order.
      */
     public static void sortByDate(List objects, boolean ascendingOrder) {
@@ -33,7 +34,7 @@ public class Sorters {
      * Sorts objects by their id. If object is a relatiion, than it is
      * sorted by its child's id. Objects doesn't need to be initialized.
      * <p>This comparator is not consistent with equals.
-     * @param <code>ascendingOrder</code> Set it to true, if you wish list to be
+     * @param ascendingOrder Set it to true, if you wish list to be
      * sorted in ascending order.
      */
     public static void sortById(List objects, boolean ascendingOrder) {

@@ -7,14 +7,12 @@ package cz.abclinuxu.servlets.utils.template;
 
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.FMUtils;
-import cz.abclinuxu.AbcException;
 import cz.abclinuxu.exceptions.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.List;
 import java.util.Iterator;
-import java.io.StringWriter;
 
 /**
  * This template selector is for FreeMarker template engine.
@@ -29,7 +27,6 @@ public class FMTemplateSelector extends TemplateSelector {
      * @param servlet name of servlet
      * @param action name of action
      * @param data map, where method can store variables like browser
-     * @param content page to be processed or null
      * @param request used for browser identification
      * @return page to be processed
      * @throws NotFoundException when such combination of servlet and action doesn't exist

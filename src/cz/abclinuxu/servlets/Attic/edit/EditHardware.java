@@ -16,6 +16,7 @@ import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.exceptions.PersistanceException;
 
 import org.dom4j.*;
 

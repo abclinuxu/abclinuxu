@@ -14,6 +14,7 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.exceptions.PersistanceException;
 
 import org.dom4j.*;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
- * @todo archive drivers replaced by newer version
+ * todo archive drivers replaced by newer version. really?
  */
 public class EditDriver extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditDriver.class);

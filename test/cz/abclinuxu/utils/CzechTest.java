@@ -11,7 +11,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 
-import java.sql.*;
 import java.io.ByteArrayOutputStream;
 
 import org.dom4j.Document;

@@ -6,7 +6,7 @@
  */
 package cz.abclinuxu.data;
 
-import cz.abclinuxu.AbcException;
+import cz.abclinuxu.exceptions.InvalidDataException;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -103,7 +103,7 @@ public class XMLHandler implements Cloneable {
             this.data = DocumentHelper.parseText(stringData);
             stringData = null;
         } catch (DocumentException e) {
-            throw new AbcException("Chyba v XML:"+stringData,AbcException.WRONG_DATA,e);
+            throw new InvalidDataException("Chyba v XML: \n"+stringData,e);
         }
     }
 

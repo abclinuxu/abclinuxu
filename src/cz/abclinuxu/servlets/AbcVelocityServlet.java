@@ -20,6 +20,7 @@ import javax.servlet.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.AbcException;
+import cz.abclinuxu.exceptions.PersistanceException;
 import cz.abclinuxu.scheduler.UpdateLinks;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.servlets.utils.*;
@@ -67,6 +68,7 @@ import java.net.SocketException;
  * <dt><code>VAR_LINKS</code></dt>
  * <dd>Map, where key is Server and value is list of Links, where link.server==server.id && link.fixed==false.</dd>
  * </dl>
+ * @deprecated
  */
 public abstract class AbcVelocityServlet extends VelocityServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(AbcVelocityServlet.class);
@@ -155,7 +157,7 @@ public abstract class AbcVelocityServlet extends VelocityServlet {
      * into <code>AbcVelocityServlet.ATTRIB_PARAMS</code>. Thus you have uniform way of dealing
      * with parameters.
      * It is mandatory to use this method at the very beginning of <code>handleRequest()</code>.
-     * @todo delete bad cookie
+     * todo delete bad cookie
      */
     protected void init(HttpServletRequest request, HttpServletResponse response, Context context) {
         doLogin(request,response,context);
@@ -297,7 +299,7 @@ public abstract class AbcVelocityServlet extends VelocityServlet {
 
     /**
      * Invoked when there is an error thrown in any part of doRequest() processing.
-     * @todo Find, what to use instead of deprecated HttpUtils.getRequestURL
+     * todo Find, what to use instead of deprecated HttpUtils.getRequestURL
      */
     protected void error(HttpServletRequest request, HttpServletResponse response, Exception cause) throws ServletException, IOException {
         StringBuffer url = request.getRequestURL();
@@ -309,11 +311,7 @@ public abstract class AbcVelocityServlet extends VelocityServlet {
 
         boolean notLog = false;
         if ( cause instanceof AbcException ) {
-            AbcException ee = (AbcException) cause;
-            if ( ee.getStatus()==AbcException.MISSING_ARGUMENT )
-                notLog = true;
-            else
-                url.append("\n Status was: "+ee.getStatus());
+            notLog = true;
         }
         if ( notLog || cause instanceof IOException || cause instanceof SocketException ) {
             // do not log

@@ -6,7 +6,6 @@
  */
 package cz.abclinuxu.servlets.utils;
 
-import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.Constants;
 
 import javax.servlet.http.*;
@@ -16,6 +15,7 @@ import java.util.*;
 
 /**
  * This class dumps all request's parameters (except PARAM_URL) to log file.
+ * @deprecated I think, that is useless now
  */
 public class DumpRequest extends HttpServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(DumpRequest.class);
