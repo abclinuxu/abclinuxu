@@ -57,6 +57,7 @@ public class AbcConfig implements Configurable {
      * @return absolute path
      */
     public static String calculateDeployedPath(String path) {
+        if ( path==null ) throw new NullPointerException("path cannot be null!");
         if ( path.startsWith(File.separator) )
             return path;
         if ( deployPath.endsWith(File.separator) )

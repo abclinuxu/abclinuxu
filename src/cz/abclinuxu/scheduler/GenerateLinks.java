@@ -70,9 +70,9 @@ public class GenerateLinks extends TimerTask implements Configurable {
      */
     public void configure(Preferences prefs) throws ConfigurationException {
         trafika = prefs.get(PREF_TRAFIKA,DEFAULT_TRAFIKA);
-        trafika = prefs.get(PREF_ANNECA,DEFAULT_ANNECA);
-        trafika = prefs.get(PREF_RSS,DEFAULT_RSS);
-        trafika = prefs.get(PREF_SZM,DEFAULT_SZM);
+        anneca = prefs.get(PREF_ANNECA,DEFAULT_ANNECA);
+        rss = prefs.get(PREF_RSS,DEFAULT_RSS);
+        szm = prefs.get(PREF_SZM,DEFAULT_SZM);
     }
 
     public void run() {

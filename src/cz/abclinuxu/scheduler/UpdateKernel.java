@@ -79,6 +79,7 @@ public class UpdateKernel extends TimerTask implements Configurable {
      * Callback used to configure your class from preferences.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
+        server = prefs.get(PREF_SERVER,DEFAULT_SERVER);
         stable = prefs.get(PREF_REGEXP_STABLE,DEFAULT_REGEXP_STABLE);
         stablePre = prefs.get(PREF_REGEXP_STABLE_PRE,DEFAULT_REGEXP_STABLE_PRE);
         devel = prefs.get(PREF_REGEXP_DEVEL,DEFAULT_REGEXP_DEVEL);
