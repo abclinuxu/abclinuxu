@@ -14,17 +14,12 @@ provozovatelem portálu.
 <h2>Jak ji mám napsat?</h2>
 
 <p>Do textového pole napi¹te text va¹í zprávièky. Zprávièka smí
-obsahovat pouze text (vèetnì diakritiky), z HTML znaèek
-je povolen pouze odkaz a pøípadnì nový odstavec. Doporuèujeme,
-aby zprávièka mìla aspoò dvì vìty, jinak bude pøíli¹ krátká.
-Sna¾te se podat ètenáøùm dostatek informací, ana druhou stranu
-nepi¹te romány, jeden odstavec vìt¹inou bohatì staèí.
-</p>
-
-<p>Po sepsání textu zprávièky si vyberte kategorii, do které
-bude zprávièka zaøazena. Buïte prosím pøesní, pøidáte tak
-va¹í zprávièce na kvalitì. U¾ivatelé pak budou moci pou¾ívat
-filtry pøi vyhledávání.
+obsahovat pouze text, z HTML znaèek je povolen pouze odkaz a
+pøípadnì nový odstavec. Doporuèujeme, aby zprávièka mìla aspoò dvì vìty,
+jinak bude pøíli¹ krátká. Pokud bude zprávièka pøíli¹ chudá na
+informace nebo nebude obsahovat diakritiku (háèky a èárky),
+administrátoøi vás po¾ádají o doplnìní. Jsme portál o Linuxu,
+tak¾e zprávièky ze svìta Microsoftu nás opravdu nezajímají.
 </p>
 
 <h2>A co dále?</h2>
