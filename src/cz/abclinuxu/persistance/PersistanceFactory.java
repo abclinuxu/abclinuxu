@@ -16,7 +16,7 @@ public class PersistanceFactory {
      * @return instance of object, which implements <code>Persistance</code>
      */
     public static Persistance getPersistance() {
-        return MySqlPersistance.getInstance();
+        return new MySqlPersistance();
     }
 
     /**
@@ -24,6 +24,6 @@ public class PersistanceFactory {
      * and is described by <code>url</code>
      */
     public static Persistance getPersistance(String url) {
-        return MySqlPersistance.getInstance(url);
+        return new MySqlPersistance(url);
     }
 }

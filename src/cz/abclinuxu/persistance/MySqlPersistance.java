@@ -10,7 +10,9 @@ package cz.abclinuxu.persistance;
 import java.sql.*;
 import java.io.*;
 import java.util.*;
+import java.lang.reflect.InvocationTargetException;
 import cz.abclinuxu.data.*;
+import cz.abclinuxu.utils.LogicalExpressionTokenizer;
 import cz.abclinuxu.AbcException;
 import com.codestudio.sql.PoolManPreparedStatement;
 import org.apache.log4j.xml.DOMConfigurator;
@@ -58,11 +60,9 @@ import org.apache.log4j.xml.DOMConfigurator;
  * <tr><td>error</td><td>E</td></tr>
  * </table>
  */
-public class MySqlPersistance extends Persistance {
+public class MySqlPersistance implements Persistance {
 
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(MySqlPersistance.class);
-    /** contains map of singletons, for each dbUrl one */
-    static HashMap singletons;
 
     /** contains URL to database connection */
     String dbUrl = "jdbc:mysql://localhost/abc?user=literakl";
@@ -71,38 +71,16 @@ public class MySqlPersistance extends Persistance {
         try {
 //            Class.forName("com.codestudio.sql.PoolMan").newInstance();
             Class.forName("org.gjt.mm.mysql.Driver");
-            singletons = new HashMap();
         } catch (Exception e) {
             log.fatal("Nemuzu vytvorit instanci PoolMana, zkontroluj CLASSPATH!",e);
         }
     }
 
-    /**
-     * @return instance (or singleton) of this object
-     * @todo add another constructor with string parameter, which gives option to specify
-     * other database (to be used by unit tests)
-     */
-    public static Persistance getInstance() {
-        Persistance persistance = (Persistance) singletons.get(null);
-        if ( persistance == null ) {
-            persistance = new MySqlPersistance();
-            singletons.put(null,persistance);
-        }
-        return persistance;
+    public MySqlPersistance() {
     }
 
-    /**
-     * @return instance (or singleton) of object, which implements Persistance interface
-     * and is described by <code>url</code>.
-     */
-    public static Persistance getInstance(String url) {
-        MySqlPersistance persistance = (MySqlPersistance) singletons.get(url);
-        if ( persistance == null ) {
-            persistance = new MySqlPersistance();
-            persistance.dbUrl = url;
-            singletons.put(url,persistance);
-        }
-        return persistance;
+    public MySqlPersistance(String dbUrl) {
+        this.dbUrl = dbUrl;
     }
 
     /**
@@ -209,47 +187,99 @@ public class MySqlPersistance extends Persistance {
     }
 
     /**
-     * Searches persistant storage for objects, which are similar to arguments. For each
-     * GenericObject: find objects, which have same values. <code>Id</code> field is
-     * ignored, same as all null fields. There is a <code>and</code> relationship between
-     * non-null fields (non-zero for integer fields). There is a <code>or</code>
-     * relationship between objects in <code>objects</code> list.<p>
-     * For text pattern search, you can use wildchars '%' and '?', in SQL meaning.<p>
-     * Example: find all open categories, which have 'HP' in their names<br>
-     * <pre>Category cat = new Category(0);
-     *cat.setOpen(true);
-     *cat.setData("%&lt;name>%HP%&lt;/name>%");
-     *List objects = new ArrayList().add(cat);
-     *List result = findByExample(objects);
-     *</pre>
-     * @return List of GenericObjects
+     * Finds objects, that are similar to suppplied arguments.<ul>
+     * <li>All objects in the list <code>objects</code>, must be of same class, which is extended of
+     * GenericObject. The subclasses of this class are allowed. E.g. {Record, Record, SoftwareRecord}
+     * is valid argument, {Link, Poll, Article} is wrong.
+     * <li>For each object, only initialized fields are used, <code>id</code> and <code>updated</code>
+     * are excluded. Because it is not possible to distinguish uninitialized boolean
+     * fields from false, boolean fields are allways used. If there is more used field in one
+     * object, AND relation is used for them.
+     * <li>If <code>relations</code> is null, OR relation is used between all objects.
+     * <li>For <code>relations</code> argument, you may use keywords AND, OR and parentheses.
+     * You use indexes to <code>objects</code> as logical variables, first index is 0, maximum index is 9.
+     * <li>Examples of <code>relations</code>:"0 AND 1", "0 OR 1", "0 OR (1 AND 2)", "(0 AND 1) OR (0 AND 2)"
+     * </ul>
+     * @return list of objects, which are of same class, as <code>objects</code>.
+     */
+    public List findByExample(List objects, String relations) throws PersistanceException {
+        Connection con = null;
+        if ( objects.size()==0 ) return new ArrayList();
+        if ( relations==null ) relations = LogicalExpressionTokenizer.makeOrRelation(objects);
+
+        try {
+            con = getSQLConnection();
+
+            List result = new ArrayList(), conditions = new ArrayList();
+            StringBuffer sb = new StringBuffer("SELECT cislo FROM ");
+            GenericObject obj = (GenericObject) objects.get(0);
+            Class kind = getClass(obj);
+
+            if (obj instanceof Record) {
+                sb.append(" zaznam ");
+            } else if (obj instanceof Item) {
+                sb.append(" druh ");
+            } else if (obj instanceof Category) {
+                sb.append(" kategorie ");
+            } else if (obj instanceof Data) {
+                sb.append(" objekty ");
+            } else if (obj instanceof Link) {
+                sb.append(" odkazy ");
+            } else if (obj instanceof Poll) {
+                sb.append(" ankety ");
+            } else if (obj instanceof User) {
+                sb.append(" uzivatel ");
+            } else {
+                throw new PersistanceException("Neznamy nebo nepodporovany objekt "+obj,AbcException.DB_UNKNOWN_CLASS,obj,null);
+            }
+
+            sb.append(" where ");
+            LogicalExpressionTokenizer stk = new LogicalExpressionTokenizer(relations);
+            String token = null;
+            while ( (token = stk.nextToken())!=null ) {
+                try {
+                    int index = Integer.parseInt(token);
+                    sb.append('(');
+                    obj = (GenericObject) objects.get(index);
+                    if ( getClass(obj)!=kind ) {
+                        throw new PersistanceException("Ruzne objekty v listu objects!",AbcException.DB_WRONG_DATA,obj,null);
+                    }
+                    appendFindParams(obj,sb, conditions);
+                    sb.append(')');
+                } catch ( NumberFormatException e ) {
+                    sb.append(token);
+                }
+            }
+
+            PreparedStatement statement = con.prepareStatement(sb.toString());
+            for ( int i=0; i<conditions.size(); i++ ) {
+                Object o = conditions.get(i);
+                statement.setObject(i+1,o);
+            }
+
+            ResultSet resultSet = statement.executeQuery();
+            while ( resultSet.next() ) {
+                Object[] objs = new Object[]{new Integer(resultSet.getInt(1))};
+                try {
+                    result.add(kind.getConstructor(new Class[]{int.class}).newInstance(objs));
+                } catch (Exception e) {
+                    log.error("Cannot instantiate "+kind);
+                }
+            }
+            return result;
+        } catch ( SQLException e ) {
+            throw new PersistanceException("Nemohu ",AbcException.DB_INSERT,objects,e);
+        } finally {
+            releaseSQLConnection(con);
+        }
+    }
+
+    /**
+     * Finds objects, that are similar to suppplied argument. Same as findByExample(objects, null).
+     * @see findByExample(List objects, String relations)
      */
     public List findByExample(List objects) throws PersistanceException {
-        List result = new LinkedList();
-        for (Iterator iter = objects.iterator(); iter.hasNext();) {
-            GenericObject obj = null;
-            try {
-                obj = (GenericObject) iter.next();
-                if (obj instanceof Record) {
-                    findRecordByExample((Record)obj,result);
-                } else if (obj instanceof Item) {
-                    findItemByExample((Item)obj,result);
-                } else if (obj instanceof Category) {
-                    findCategoryByExample((Category)obj,result);
-                } else if (obj instanceof User) {
-                    findUserByExample((User)obj,result);
-                } else if (obj instanceof Link) {
-                    findLinkByExample((Link)obj,result);
-                } else if (obj instanceof Poll) {
-                    findPollByExample((Poll)obj,result);
-                } else if (obj instanceof Data) {
-                    findDataByExample((Data)obj,result);
-                }
-            } catch (SQLException e) {
-                throw new PersistanceException("Nemohu najit "+obj.toString()+" v databazi!",AbcException.DB_FIND,obj,e);
-            }
-        }
-        return result;
+        return findByExample(objects,null);
     }
 
     /**
@@ -261,7 +291,17 @@ public class MySqlPersistance extends Persistance {
      * (like database structure) and makes system less portable! You shall
      * not use it, if it is possible.
      */
-    public List findByCommand(String command, Class returnType) {
+    public List findByCommand(String command, Class returnType) throws PersistanceException {
+//        Connection con = null;
+//        try {
+//            con = getSQLConnection();
+//            Statement statement = con.createStatement();
+//            int result = statement.executeUpdate();
+//        } catch ( SQLException e ) {
+//            throw new PersistanceException("Nemohu vlozit do stromu dvojici ("+parent+","+obj+")",AbcException.DB_INSERT,obj,e);
+//        } finally {
+//            releaseSQLConnection(con);
+//        }
         return null;
     }
 
@@ -1255,307 +1295,154 @@ public class MySqlPersistance extends Persistance {
     }
 
     /**
-     * Searches Record table for all rows, which match <code>record</code> and adds their references
-     * to <code>list</code>.
+     * append SQL statements to <code>sb</code> and objects to <code>conditions</code>
+     * as PreparedStatement requires.
      */
-    protected void findRecordByExample(Record record, List list) throws PersistanceException,SQLException {
-        Connection con = null;
+    protected void appendFindParams(GenericObject obj, StringBuffer sb, List conditions ) {
+        boolean addAnd = false;
+        int type = 0;
 
-        try {
-            con = getSQLConnection();
-
-            StringBuffer sb = new StringBuffer("select cislo from zaznam where ");
-            List conditions = new ArrayList();
-
-            if ( record.getOwner()!=0 ) {
+        if (obj instanceof Record) {
+            if ( ((Record)obj).getOwner()!=0 ) {
+                addAnd = true;
                 sb.append("pridal=?");
-                conditions.add(new Integer(record.getOwner()));
+                conditions.add(new Integer(((Record)obj).getOwner()));
             }
-            if ( record.getData()!=null ) {
-                if ( conditions.size()>0 ) sb.append(" and ");
-                sb.append("data like ?");
-                conditions.add(record.getData());
-            }
-            int i=0;
-            if ( record instanceof HardwareRecord ) i = 1;
-            else if ( record instanceof SoftwareRecord ) i = 2;
-            else if ( record instanceof ArticleRecord ) i = 3;
-            if ( i!=0 ) {
-                if ( conditions.size()>0 ) sb.append(" and ");
+
+            if ( obj instanceof HardwareRecord ) type = 1;
+            else if ( obj instanceof SoftwareRecord ) type = 2;
+            else if ( obj instanceof ArticleRecord ) type = 3;
+            if ( type!=0 ) {
+                if ( addAnd ) sb.append(" and ");
+                addAnd = true;
                 sb.append("typ=?");
-                conditions.add(new Integer(i));
+                conditions.add(new Integer(type));
             }
 
-            PreparedStatement statement = con.prepareStatement(sb.toString());
-            for ( i=0; i<conditions.size(); i++ ) {
-                Object o = conditions.get(i);
-                statement.setObject(i+1,o);
-            }
-
-            ResultSet result = statement.executeQuery();
-            while ( result.next() ) {
-                list.add(new Record(result.getInt(1)));
-            }
-        } finally {
-            releaseSQLConnection(con);
-        }
-    }
-
-    /**
-     * Searches Item table for all rows, which match <code>item</code> and adds their references
-     * to <code>list</code>.
-     */
-    protected void findItemByExample(Item item, List list) throws PersistanceException,SQLException {
-        Connection con = null;
-
-        try {
-            con = getSQLConnection();
-
-            StringBuffer sb = new StringBuffer("select cislo from polozka where ");
-            List conditions = new ArrayList();
-
-            if ( item.getOwner()!=0 ) {
-                sb.append("pridal=?");
-                conditions.add(new Integer(item.getOwner()));
-            }
-            if ( item.getData()!=null ) {
-                if ( conditions.size()>0 ) sb.append(" and ");
+            if ( ((Record)obj).getData()!=null ) {
+                if ( addAnd ) sb.append(" and ");
                 sb.append("data like ?");
-                conditions.add(item.getData());
+                conditions.add(((Record)obj).getData());
             }
-            int i=0;
-            if ( item instanceof Make ) i = 1;
-            else if ( item instanceof Article ) i = 2;
-            else if ( item instanceof Question ) i = 3;
-            else if ( item instanceof Request ) i = 4;
-            if ( i!=0 ) {
-                if ( conditions.size()>0 ) sb.append(" and ");
+            return;
+        } else if (obj instanceof Item) {
+            if ( ((Item)obj).getOwner()!=0 ) {
+                addAnd = true;
+                sb.append("pridal=?");
+                conditions.add(new Integer(((Item)obj).getOwner()));
+            }
+
+            if ( obj instanceof Make ) type = 1;
+            else if ( obj instanceof Article ) type = 2;
+            else if ( obj instanceof Question ) type = 3;
+            else if ( obj instanceof Request ) type = 4;
+            if ( type!=0 ) {
+                if ( addAnd ) sb.append(" and ");
+                addAnd = true;
                 sb.append("typ=?");
-                conditions.add(new Integer(i));
+                conditions.add(new Integer(type));
             }
 
-            PreparedStatement statement = con.prepareStatement(sb.toString());
-            for ( i=0; i<conditions.size(); i++ ) {
-                Object o = conditions.get(i);
-                statement.setObject(i+1,o);
-            }
-
-            ResultSet result = statement.executeQuery();
-            while ( result.next() ) {
-                list.add(new Item(result.getInt(1)));
-            }
-        } finally {
-            releaseSQLConnection(con);
-        }
-    }
-
-    /**
-     * Searches Category table for all rows, which match <code>category</code> and adds their references
-     * to <code>list</code>.
-     */
-    protected void findCategoryByExample(Category category, List list) throws PersistanceException,SQLException {
-        Connection con = null;
-
-        try {
-            con = getSQLConnection();
-
-            StringBuffer sb = new StringBuffer("select cislo from kategorie where ");
-            List conditions = new ArrayList();
-
-            if ( category.getOwner()!=0 ) {
-                sb.append("pridal=?");
-                conditions.add(new Integer(category.getOwner()));
-            }
-            if ( category.getData()!=null ) {
-                if ( conditions.size()>0 ) sb.append(" and ");
+            if ( ((Item)obj).getData()!=null ) {
+                if ( addAnd ) sb.append(" and ");
                 sb.append("data like ?");
-                conditions.add(category.getData());
+                conditions.add(((Item)obj).getData());
             }
-            if ( conditions.size()>0 ) sb.append(" and ");
-            sb.append("verejny like ?");
-            conditions.add(new Boolean(category.isOpen()));
+            return;
+        } else if (obj instanceof Category) {
+            sb.append("verejny=?");
+            conditions.add(new Boolean(((Category)obj).isOpen()));
 
-            PreparedStatement statement = con.prepareStatement(sb.toString());
-            for ( int i=0; i<conditions.size(); i++ ) {
-                Object o = conditions.get(i);
-                statement.setObject(i+1,o);
+            if ( ((Category)obj).getOwner()!=0 ) {
+                sb.append("and pridal=?");
+                conditions.add(new Integer(((Category)obj).getOwner()));
             }
 
-            ResultSet result = statement.executeQuery();
-            while ( result.next() ) {
-                list.add(new Category(result.getInt(1)));
+            if ( ((Category)obj).getData()!=null ) {
+                sb.append("and data like ?");
+                conditions.add(((Category)obj).getData());
             }
-        } finally {
-            releaseSQLConnection(con);
-        }
-    }
-
-    /**
-     * Searches Data table for all rows, which match <code>data</code> and adds their references
-     * to <code>list</code>.
-     */
-    protected void findDataByExample(Data data, List list) throws PersistanceException,SQLException {
-        Connection con = null;
-
-        try {
-            con = getSQLConnection();
-
-            StringBuffer sb = new StringBuffer("select cislo from objekty where ");
-            List conditions = new ArrayList();
-
-            if ( data.getOwner()!=0 ) {
+            return;
+        } else if (obj instanceof Data) {
+            if ( ((Data)obj).getOwner()!=0 ) {
+                addAnd = true;
                 sb.append("pridal=?");
-                conditions.add(new Integer(data.getOwner()));
+                conditions.add(new Integer(((Data)obj).getOwner()));
             }
-            if ( data.getFormat()!=null ) {
-                if ( conditions.size()>0 ) sb.append(" and ");
+
+            if ( ((Data)obj).getData()!=null ) {
+                if ( addAnd ) sb.append(" and ");
+                addAnd = true;
+                sb.append("data like ?");
+                conditions.add(((Data)obj).getData());
+            }
+
+            if ( ((Data)obj).getFormat()!=null ) {
+                if ( addAnd ) sb.append(" and ");
                 sb.append("format like ?");
-                conditions.add(data.getFormat());
+                conditions.add(((Data)obj).getFormat());
+            }
+            return;
+        } else if (obj instanceof Link) {
+            sb.append("trvaly=?");
+            conditions.add(new Boolean(((Link)obj).isFixed()));
+
+            if ( ((Link)obj).getServer()!=0 ) {
+                sb.append("and server=?");
+                conditions.add(new Integer(((Link)obj).getServer()));
             }
 
-            PreparedStatement statement = con.prepareStatement(sb.toString());
-            for ( int i=0; i<conditions.size(); i++ ) {
-                Object o = conditions.get(i);
-                statement.setObject(i+1,o);
+            if ( ((Link)obj).getText()!=null ) {
+                sb.append("and nazev like ?");
+                conditions.add(((Link)obj).getText());
             }
 
-            ResultSet result = statement.executeQuery();
-            while ( result.next() ) {
-                list.add(new Data(result.getInt(1)));
+            if ( ((Link)obj).getUrl()!=null ) {
+                sb.append("and url like ?");
+                conditions.add(((Link)obj).getUrl());
             }
-        } finally {
-            releaseSQLConnection(con);
-        }
-    }
-
-    /**
-     * Searches Link table for all rows, which match <code>link</code> and adds their references
-     * to <code>list</code>.
-     */
-    protected void findLinkByExample(Link link, List list) throws PersistanceException,SQLException {
-        Connection con = null;
-
-        try {
-            con = getSQLConnection();
-
-            StringBuffer sb = new StringBuffer("select cislo from odkazy where ");
-            List conditions = new ArrayList();
-
-            if ( link.getServer()!=0 ) {
-                sb.append("server=?");
-                conditions.add(new Integer(link.getServer()));
-            }
-            if ( link.getText()!=null ) {
-                if ( conditions.size()>0 ) sb.append(" and ");
-                sb.append("nazev like ?");
-                conditions.add(link.getText());
-            }
-            if ( link.getUrl()!=null ) {
-                if ( conditions.size()>0 ) sb.append(" and ");
-                sb.append("url like ?");
-                conditions.add(link.getUrl());
-            }
-            if ( conditions.size()>0 ) sb.append(" and ");
-            sb.append("trvaly like ?");
-            conditions.add(new Boolean(link.isFixed()));
-
-            PreparedStatement statement = con.prepareStatement(sb.toString());
-            for ( int i=0; i<conditions.size(); i++ ) {
-                Object o = conditions.get(i);
-                statement.setObject(i+1,o);
-            }
-
-            ResultSet result = statement.executeQuery();
-            while ( result.next() ) {
-                list.add(new Data(result.getInt(1)));
-            }
-        } finally {
-            releaseSQLConnection(con);
-        }
-    }
-
-    /**
-     * Searches Poll table for all rows, which match <code>poll</code> and adds their references
-     * to <code>list</code>.
-     */
-    protected void findPollByExample(Poll poll, List list) throws PersistanceException,SQLException {
-        Connection con = null;
-
-        try {
-            con = getSQLConnection();
-
-            StringBuffer sb = new StringBuffer("select cislo from anketa where ");
-            List conditions = new ArrayList();
-
-            if ( poll.getText()!=null ) {
-                sb.append("otazka like ?");
-                conditions.add(poll.getText());
-            }
-            int i=0;
-            if ( poll instanceof Survey ) i = 1;
-            else if ( poll instanceof Rating ) i = 2;
-            if ( i!=0 ) {
-                if ( conditions.size()>0 ) sb.append(" and ");
+            return;
+        } else if (obj instanceof Poll) {
+            if ( obj instanceof Survey ) type = 1;
+            else if ( obj instanceof Rating ) type = 2;
+            if ( type!=0 ) {
+                addAnd = true;
                 sb.append("typ=?");
-                conditions.add(new Integer(i));
+                conditions.add(new Integer(type));
             }
 
-            PreparedStatement statement = con.prepareStatement(sb.toString());
-            for ( i=0; i<conditions.size(); i++ ) {
-                Object o = conditions.get(i);
-                statement.setObject(i+1,o);
+            if ( ((Poll)obj).getText()!=null ) {
+                if ( addAnd ) sb.append(" and ");
+                sb.append("otazka like ?");
+                conditions.add(((Poll)obj).getText());
             }
-
-            ResultSet result = statement.executeQuery();
-            while ( result.next() ) {
-                list.add(new Poll(result.getInt(1)));
-            }
-        } finally {
-            releaseSQLConnection(con);
+            return;
         }
     }
 
     /**
-     * Searches User table for all rows, which match <code>user</code> and adds their references
-     * to <code>list</code>.
+     * @return first descendant of GenericObject. E.g. for Category,
+     * Data, User, Link, Item, Record and Poll it returns associated class.
+     * But for HardwareRecord, SoftwareRecord, Make, Question, Rating etc.
+     * it returns its superclass.
      */
-    protected void findUserByExample(User user, List list) throws PersistanceException,SQLException {
-        Connection con = null;
-
-        try {
-            con = getSQLConnection();
-
-            StringBuffer sb = new StringBuffer("select cislo from uzivatel where ");
-            List conditions = new ArrayList();
-
-            if ( user.getLogin()!=null ) {
-                sb.append("login like ?");
-                conditions.add(user.getLogin());
-            }
-            if ( user.getName()!=null ) {
-                if ( conditions.size()>0 ) sb.append(" and ");
-                sb.append("jmeno like ?");
-                conditions.add(user.getName());
-            }
-            if ( user.getEmail()!=null ) {
-                if ( conditions.size()>0 ) sb.append(" and ");
-                sb.append("email like ?");
-                conditions.add(user.getEmail());
-            }
-
-            PreparedStatement statement = con.prepareStatement(sb.toString());
-            for ( int i=0; i<conditions.size(); i++ ) {
-                Object o = conditions.get(i);
-                statement.setObject(i+1,o);
-            }
-
-            ResultSet result = statement.executeQuery();
-            while ( result.next() ) {
-                list.add(new User(result.getInt(1)));
-            }
-        } finally {
-            releaseSQLConnection(con);
+    protected Class getClass(GenericObject obj) throws PersistanceException {
+        if (obj instanceof Record) {
+            return Record.class;
+        } else if (obj instanceof Item) {
+            return Item.class;
+        } else if (obj instanceof Category) {
+            return Category.class;
+        } else if (obj instanceof Data) {
+            return Data.class;
+        } else if (obj instanceof Link) {
+            return Link.class;
+        } else if (obj instanceof Poll) {
+            return Poll.class;
+        } else if (obj instanceof User) {
+            return User.class;
         }
+        throw new PersistanceException("Nepodporovany typ tridy!",AbcException.DB_UNKNOWN_CLASS,obj,null);
     }
 
     public static void main(String[] args) throws Exception {

@@ -159,6 +159,25 @@ public class TestMySqlPersistance extends TestCase {
         assertTrue( ! containsId(found,b.getId()));
         assertTrue(containsId(found,c.getId()));
 
+        // find b only
+        examples.clear();
+        qa.setOwner(0);
+        examples.add(qa);
+        HardwareRecord qc = new HardwareRecord(0);
+        qc.setOwner(3);
+        examples.add(qc);
+        found = persistance.findByExample(examples,"0 AND 1");
+        assertTrue( ! containsId(found,a.getId()));
+        assertTrue( containsId(found,b.getId()));
+        assertTrue( ! containsId(found,c.getId()));
+
+        // find b and c
+        examples.add(qb);
+        found = persistance.findByExample(examples,"(0 AND 1) OR 2");
+        assertTrue( ! containsId(found,a.getId()));
+        assertTrue( containsId(found,b.getId()));
+        assertTrue( containsId(found,c.getId()));
+
         persistance.removeObject(a);
         persistance.removeObject(b);
         persistance.removeObject(c);

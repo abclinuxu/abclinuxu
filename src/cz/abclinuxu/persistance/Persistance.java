@@ -14,22 +14,7 @@ import cz.abclinuxu.data.*;
  * This interface defines methods, how to store data objects
  * into persitant storage.
  */
-public abstract class Persistance {
-
-    /**
-     * @return instance (or singleton) of object, which implements Persistance interface
-     */
-    public static Persistance getInstance() {
-        return null;
-    }
-
-    /**
-     * @return instance (or singleton) of object, which implements Persistance interface
-     * and is described by <code>url</code>
-     */
-    public static Persistance getInstance(String url) {
-        return null;
-    }
+public interface Persistance {
 
     /**
      * Downloads object described by <code>obj</code> (id and class name) from persistant storage.
@@ -54,20 +39,26 @@ public abstract class Persistance {
     public abstract void removeObject(GenericObject obj) throws PersistanceException;
 
     /**
-     * Searches persistant storage for objects, which are similar to arguments. For each
-     * GenericObject: find objects, which have same values. <code>Id</code> field is
-     * ignored, same as all null fields. There is a <code>and</code> relationship between
-     * non-null fields (non-zero for integer fields). There is a <code>or</code>
-     * relationship between objects in <code>objects</code> list.<p>
-     * For text pattern search, you can use wildchars '%' and '?', in SQL meaning.<p>
-     * Example: find all open categories, which have 'HP' in their names<br>
-     * <pre>Category cat = new Category(0);
-     *cat.setOpen(true);
-     *cat.setData("%&lt;name>%HP%&lt;/name>%");
-     *List objects = new ArrayList().add(cat);
-     *List result = findByExample(objects);
-     *</pre>
-     * @return List of GenericObjects
+     * Finds objects, that are similar to suppplied arguments.<ul>
+     * <li>All objects in the list <code>objects</code>, must be of same class, which is extended of
+     * GenericObject. The subclasses of this class are allowed. E.g. {Record, Record, SoftwareRecord}
+     * is valid argument, {Link, Poll, Article} is wrong.
+     * <li>For each object, only initialized fields are used, <code>id</code> and <code>updated</code>
+     * are excluded. Because it is not possible to distinguish uninitialized boolean
+     * fields from false, boolean fields are allways used. If there is more used field in one
+     * object, AND relation is used for them.
+     * <li>If <code>relations</code> is null, OR relation is used between all objects.
+     * <li>For <code>relations</code> argument, you may use keywords AND, OR and parentheses.
+     * You use indexes to <code>objects</code> as logical variables, first index is 0, maximum index is 9.
+     * <li>Examples of <code>relations</code>:"0 AND 1", "0 OR 1", "0 OR (1 AND 2)", "(0 AND 1) OR (0 AND 2)"
+     * </ul>
+     * @return list of objects, which are of same class, as <code>objects</code>.
+     */
+    public abstract List findByExample(List objects, String relations) throws PersistanceException;
+
+    /**
+     * Finds objects, that are similar to suppplied argument. Same as findByExample(objects, null).
+     * @see findByExample(List objects, String relations)
      */
     public abstract List findByExample(List objects) throws PersistanceException;
 
@@ -81,7 +72,7 @@ public abstract class Persistance {
      * (like database structure) and makes system less portable! You shall
      * not use it, if it is possible.
      */
-    public abstract List findByCommand(String command, Class returnType);
+    public abstract List findByCommand(String command, Class returnType) throws PersistanceException;
 
     /**
      * Adds <code>obj</code> under <code>parent</code> in the object tree.

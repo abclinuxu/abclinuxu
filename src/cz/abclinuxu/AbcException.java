@@ -36,6 +36,8 @@ public class AbcException extends Exception {
     public static final int DB_INCOMPLETE = 1007;
     /** indicates, that supplied data are in incorrect format */
     public static final int DB_WRONG_DATA = 1008;
+    /** indicates, that command supplied to findByCommand method was wrong */
+    public static final int DB_WRONG_COMMAND = 1009;
 
     /**
      * code code of error. These codes may be mapped
