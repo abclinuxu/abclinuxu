@@ -281,7 +281,7 @@ public class ServletUtils {
      */
     private static void handleLoggedIn(User user, boolean cookieExists, HttpServletResponse response) {
         String now = Constants.isoFormat.format(new Date());
-        DocumentHelper.makeElement(user.getData(), "data/system/last_login_date").addText(now);
+        DocumentHelper.makeElement(user.getData(), "data/system/last_login_date").setText(now);
         PersistanceFactory.getPersistance().update(user);
 
         if ( !cookieExists ) {
