@@ -1,8 +1,4 @@
-AbcMonitor zaznamenal zmenu objektu
-
-AbcMonitor je sluzba uzivatelum portalu www.abclinuxu.cz, ktera za ne
-sleduje stav vybranych objektu. Pokud jej u zvoleneho objektu zapnete
-a nekdo objekt nejak upravi, zasleme vam email s upozornenim.
+AbcMonitor zaznamenal zmenu:
 
 Kdo:   ${ACTOR}
 Akce:  ${ACTION}
