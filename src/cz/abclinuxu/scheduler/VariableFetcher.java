@@ -15,9 +15,6 @@ import cz.abclinuxu.exceptions.NotFoundException;
 
 import java.util.*;
 
-import freemarker.template.Configuration;
-import freemarker.template.TemplateModelException;
-
 /**
  * This class is responsible for periodic fetching
  * of template and index variables from database.
@@ -127,7 +124,6 @@ public class VariableFetcher extends TimerTask {
             newDrivers = sqlTool.findItemRelationsByUpdated(Item.DRIVER, 0,SIZE);
             newArticles = sqlTool.findArticleRelationsByCreated(0,ARTICLE_SIZE);
             updateProfiles(persistance);
-            updateLinks(persistance);
 
             log.debug("finished fetching variables");
         } catch (Exception e) {
@@ -159,24 +155,6 @@ public class VariableFetcher extends TimerTask {
             } catch (PersistanceException e) {
                 log.warn(e);
             }
-        }
-    }
-
-    /**
-     * Workaround for outdated links on website. Even cache contains correct data!
-     */
-    private void updateLinks(Persistance persistance) {
-        long diff = System.currentTimeMillis()-linksLastRun;
-        if ( diff<5*60*1000)
-            return;
-        linksLastRun = System.currentTimeMillis();
-
-        try {
-            Category linksCategory = (Category) persistance.findById(new Category(Constants.CAT_LINKS));
-            Map links = UpdateLinks.groupLinks(linksCategory, persistance);
-            Configuration.getDefaultConfiguration().setSharedVariable(Constants.VAR_LINKS, links);
-        } catch (TemplateModelException e) {
-            log.warn(e);
         }
     }
 }

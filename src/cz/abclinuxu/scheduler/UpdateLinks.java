@@ -9,6 +9,7 @@ package cz.abclinuxu.scheduler;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.init.AbcInit;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.exceptions.PersistanceException;
 
@@ -21,9 +22,6 @@ import org.dom4j.*;
 
 /**
  * Updates Links from other servers.
- * todo There is a bug, probably in template.ftl, which causes, that links displayed on web
- * are not same, as in cache and database. It seems to me, that it is because template
- * doesn't try to synchronize its FreeMarker shared variable with persistance. 
  */
 public class UpdateLinks extends TimerTask {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(UpdateLinks.class);
@@ -111,9 +109,10 @@ public class UpdateLinks extends TimerTask {
                 log.warn("Cannot update links for server "+server+"!", e);
             } catch (Exception e) {
                 log.warn("Unknown exception caught!",e);
-	    }
+	        }
         }
         log.debug("Finishing task "+getJobName());
+        AbcInit.setSharedVariableLinks();
     }
 
     public String getJobName() {

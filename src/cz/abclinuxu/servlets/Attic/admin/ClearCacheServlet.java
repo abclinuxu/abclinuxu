@@ -7,6 +7,7 @@ package cz.abclinuxu.servlets.admin;
 
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.servlets.init.AbcInit;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +27,7 @@ public class ClearCacheServlet extends HttpServlet {
         try {
             Persistance persistance = PersistanceFactory.getPersistance();
             persistance.clearCache();
+            AbcInit.setSharedVariables();
             result = "OK";
         } catch (Exception e) {
             result = "Failed";

@@ -144,31 +144,57 @@ public class AbcInit extends HttpServlet {
     }
 
     /**
-     * set ups freemarker
+     * Sets some commonly used variables in freemarker templates.
      */
-    void configureFreeMarker(String path) {
-        log.info("Inicializuji FreeMarker");
-
+    public static void setSharedVariables() {
         Persistance persistance = PersistanceFactory.getPersistance();
         Configuration cfg = Configuration.getDefaultConfiguration();
-
-        cfg.setDefaultEncoding("ISO-8859-2");
-        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.IGNORE_HANDLER);
-        cfg.setObjectWrapper(BeansWrapper.getDefaultInstance());
-        cfg.setTemplateUpdateDelay(1);
-        cfg.setStrictSyntaxMode(true);
 
         try {
             Category rubriky = (Category) persistance.findById(new Category(Constants.CAT_ARTICLES));
             Tools.sync(rubriky.getContent());
             Category abc = (Category) persistance.findById(new Category(Constants.CAT_ABC));
             Tools.sync(abc.getContent());
-            Category linksCategory = (Category) persistance.findById(new Category(Constants.CAT_LINKS));
-            Map links = UpdateLinks.groupLinks(linksCategory,persistance);
 
-            cfg.setSharedVariable(Constants.VAR_RUBRIKY,rubriky.getContent());
-            cfg.setSharedVariable(Constants.VAR_ABCLINUXU,abc.getContent());
-            cfg.setSharedVariable(Constants.VAR_LINKS,links);
+            cfg.setSharedVariable(Constants.VAR_RUBRIKY, rubriky);
+            cfg.setSharedVariable(Constants.VAR_ABCLINUXU, abc);
+            setSharedVariableLinks();
+        } catch (Exception e) {
+            log.error("cannot store shared variable!", e);
+        }
+    }
+
+    /**
+     * Sets LINKS variable in freemarker templates.
+     */
+    public static void setSharedVariableLinks() {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Configuration cfg = Configuration.getDefaultConfiguration();
+
+        try {
+            Category linksCategory = (Category) persistance.findById(new Category(Constants.CAT_LINKS));
+            Map links = UpdateLinks.groupLinks(linksCategory, persistance);
+            cfg.setSharedVariable(Constants.VAR_LINKS, links);
+        } catch (Exception e) {
+            log.error("cannot store shared variable!", e);
+        }
+    }
+
+    /**
+     * set ups freemarker
+     */
+    void configureFreeMarker(String path) {
+        log.info("Inicializuji FreeMarker");
+
+        Configuration cfg = Configuration.getDefaultConfiguration();
+        cfg.setDefaultEncoding("ISO-8859-2");
+        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.IGNORE_HANDLER);
+        cfg.setObjectWrapper(BeansWrapper.getDefaultInstance());
+        cfg.setTemplateUpdateDelay(1);
+        cfg.setStrictSyntaxMode(true);
+
+        setSharedVariables();
+        try {
             cfg.setSharedVariable(Constants.VAR_TOOL,new Tools());
             cfg.setSharedVariable(Constants.VAR_DATE_TOOL,new DateTool());
             cfg.setSharedVariable(Constants.VAR_SORTER,new Sorters2());
