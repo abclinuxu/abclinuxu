@@ -7,11 +7,9 @@ package cz.abclinuxu.utils.search;
 
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.persistance.cache.EmptyCache;
-import cz.abclinuxu.persistance.extra.LimitQualifier;
-import cz.abclinuxu.persistance.extra.Qualifier;
+import cz.abclinuxu.persistance.extra.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.Configurator;
@@ -57,24 +55,28 @@ public class CreateIndex implements Configurable {
         log.info("Starting to index data, using directory "+PATH);
 
         try {
-            Relation articles = (Relation) persistance.findById(new Relation(Constants.REL_ARTICLES));
-            Relation hardware = (Relation) persistance.findById(new Relation(Constants.REL_HARDWARE));
-            Relation software = (Relation) persistance.findById(new Relation(Constants.REL_SOFTWARE));
-            Relation drivers = (Relation) persistance.findById(new Relation(Constants.REL_DRIVERS));
-            Relation abc = (Relation) persistance.findById(new Relation(Constants.REL_ABC));
-            List forums = sqlTool.findSectionRelationsWithType(Category.SECTION_FORUM,null);
+//            Relation articles = (Relation) persistance.findById(new Relation(Constants.REL_ARTICLES));
+//            Relation hardware = (Relation) persistance.findById(new Relation(Constants.REL_HARDWARE));
+//            Relation software = (Relation) persistance.findById(new Relation(Constants.REL_SOFTWARE));
+//            Relation drivers = (Relation) persistance.findById(new Relation(Constants.REL_DRIVERS));
+//            Relation abc = (Relation) persistance.findById(new Relation(Constants.REL_ABC));
+            Relation blogs = (Relation) persistance.findById(new Relation(Constants.REL_BLOGS));
+//            List forums = sqlTool.findSectionRelationsWithType(Category.SECTION_FORUM,null);
 
             long start = System.currentTimeMillis();
 
             IndexWriter indexWriter = new IndexWriter(PATH, new AbcCzechAnalyzer(), true);
 
-            makeIndexOn(indexWriter, articles, UrlUtils.PREFIX_CLANKY);
-            makeIndexOnNews(indexWriter, UrlUtils.PREFIX_NEWS);
-            makeIndexOnForums(indexWriter, forums, UrlUtils.PREFIX_FORUM);
-            makeIndexOn(indexWriter, hardware, UrlUtils.PREFIX_HARDWARE);
-            makeIndexOn(indexWriter, software, UrlUtils.PREFIX_SOFTWARE);
-            makeIndexOn(indexWriter, drivers, UrlUtils.PREFIX_DRIVERS);
-            makeIndexOn(indexWriter, abc, UrlUtils.PREFIX_CLANKY);
+//            makeIndexOn(indexWriter, articles, UrlUtils.PREFIX_CLANKY);
+//            makeIndexOnNews(indexWriter, UrlUtils.PREFIX_NEWS);
+            makeIndexOnDictionary(indexWriter);
+            makeIndexOnBlogs(indexWriter, blogs.getChild().getChildren());
+//            makeIndexOnForums(indexWriter, forums, UrlUtils.PREFIX_FORUM);
+//            makeIndexOn(indexWriter, hardware, UrlUtils.PREFIX_HARDWARE);
+//            makeIndexOn(indexWriter, software, UrlUtils.PREFIX_SOFTWARE);
+//            makeIndexOn(indexWriter, drivers, UrlUtils.PREFIX_DRIVERS);
+//            makeIndexOn(indexWriter, abc, UrlUtils.PREFIX_CLANKY);
+//            makeIndexOnBlogs(indexWriter, blogs);
 
             indexWriter.optimize();
             indexWriter.close();
@@ -194,6 +196,25 @@ public class CreateIndex implements Configurable {
     }
 
     /**
+     * Indexes dictionary.
+     */
+    static void makeIndexOnDictionary(IndexWriter indexWriter) throws Exception {
+        Item child;
+        MyDocument doc;
+        List relations = sqlTool.findItemRelationsWithType(Item.DICTIONARY, new Qualifier[0]);
+        Relation relation;
+
+        for (Iterator iter = relations.iterator(); iter.hasNext();) {
+            relation = (Relation) iter.next();
+            child = (Item) relation.getChild();
+            if ( hasBeenIndexed(child) ) continue;
+            child = (Item) persistance.findById(child);
+            doc = indexDictionary(child);
+            indexWriter.addDocument(doc.getDocument());
+        }
+    }
+
+    /**
      * Indexes news.
      */
     static void makeIndexOnNews(IndexWriter indexWriter, String urlPrefix) throws Exception {
@@ -220,6 +241,131 @@ public class CreateIndex implements Configurable {
                 indexWriter.addDocument(doc.getDocument());
             }
         }
+    }
+
+    /**
+     * Indexes blogs and stories.
+     */
+    static void makeIndexOnBlogs(IndexWriter indexWriter, List blogs) throws Exception {
+        Relation relation;
+        GenericObject child;
+        MyDocument doc;
+
+        for (Iterator iter = blogs.iterator(); iter.hasNext();) {
+            relation = (Relation) iter.next();
+            Tools.sync(relation);
+            child = relation.getChild();
+
+            doc = indexBlog((Category) child);
+            indexWriter.addDocument(doc.getDocument());
+            makeIndexOnBlog(indexWriter, (Category) child);
+        }
+    }
+
+    /**
+     * Indexes blogs and stories.
+     */
+    static void makeIndexOnBlog(IndexWriter indexWriter, Category blog) throws Exception {
+        Relation relation;
+        GenericObject child;
+        MyDocument doc;
+
+        List qualifiers = new ArrayList();
+        qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL,new Integer(blog.getOwner())));
+        Qualifier[] qa = new Qualifier[qualifiers.size()];
+        int total = sqlTool.countItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+        for ( int i = 0; i<total; ) {
+            qualifiers.add(Qualifier.SORT_BY_CREATED);
+            qualifiers.add(Qualifier.ORDER_ASCENDING);
+            qualifiers.add(new LimitQualifier(i, 100));
+            List data = sqlTool.findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+            i += data.size();
+
+            for ( Iterator iter2 = data.iterator(); iter2.hasNext(); ) {
+                relation = (Relation) iter2.next();
+                child = relation.getChild();
+                if ( hasBeenIndexed(child) )
+                    continue;
+
+                Tools.sync(relation);
+                doc = indexStory(relation, blog);
+                doc.setParent(relation.getUpper());
+                indexWriter.addDocument(doc.getDocument());
+            }
+        }
+    }
+
+    /**
+     * Extracts data for indexing from blog.
+     */
+    static MyDocument indexBlog(Category category) {
+        StringBuffer sb = new StringBuffer();
+        String title = null;
+
+        Element data = (Element) category.getData().selectSingleNode("//custom");
+        Node node = data.selectSingleNode("page_title");
+        title = node.getText();
+        sb.append(title);
+
+        node = data.selectSingleNode("title");
+        if ( node!=null ) {
+            sb.append(" ");
+            sb.append(node.getText());
+        }
+
+        node = data.selectSingleNode("intro");
+        if ( node!=null ) {
+            sb.append(" ");
+            sb.append(node.getText());
+        }
+
+        MyDocument doc = new MyDocument(Tools.removeTags(sb.toString()));
+        doc.setTitle(title);
+        doc.setURL("/blog/"+category.getSubType());
+        doc.setType(MyDocument.TYPE_BLOG);
+        return doc;
+    }
+
+    /**
+     * Extracts data for indexing from blog.
+     * @param relation story relation
+     */
+    static MyDocument indexStory(Relation relation, Category category) {
+        StringBuffer sb = new StringBuffer();
+        String title = null;
+        Item story = (Item) relation.getChild();
+
+        Element data = story.getData().getRootElement();
+        Node node = data.selectSingleNode("name");
+        title = node.getText();
+        sb.append(title);
+
+        node = data.selectSingleNode("content");
+        sb.append(" ");
+        String s = node.getText();
+        sb.append(s);
+
+        for (Iterator iter = story.getChildren().iterator(); iter.hasNext();) {
+            Relation child = (Relation) iter.next();
+            if ( child.getChild() instanceof Item ) {
+                Item item = (Item) persistance.findById(child.getChild());
+                if (item.getType()!=Item.DISCUSSION)
+                    continue;
+
+                MyDocument doc = indexDiscussion(item);
+                s = doc.getDocument().get(MyDocument.CONTENT);
+                if (s!=null) {
+                    sb.append(" ");
+                    sb.append(s);
+                }
+            }
+        }
+
+        MyDocument doc = new MyDocument(Tools.removeTags(sb.toString()));
+        doc.setTitle(title);
+        doc.setURL(Tools.getUrlForBlogStory(category.getSubType(), story.getCreated(), relation.getId()));
+        doc.setType(MyDocument.TYPE_BLOG);
+        return doc;
     }
 
     /**
@@ -498,6 +644,32 @@ public class CreateIndex implements Configurable {
         doc.setType(MyDocument.TYPE_NEWS);
         if (category!=null)
             doc.setNewsCategory(category);
+        return doc;
+    }
+
+    /**
+     * Extracts text from dictionary item (and its records) for indexing.
+     * @param dictionary initialized item
+     */
+    static MyDocument indexDictionary(Item dictionary) {
+        String title = Tools.xpath(dictionary, "/data/name"), s;
+        StringBuffer sb = new StringBuffer(title);
+        Relation relation;
+        Record record;
+
+        for (Iterator iter = dictionary.getChildren().iterator(); iter.hasNext();) {
+            relation = (Relation) iter.next();
+            record = (Record) persistance.findById(relation.getChild());
+            s = Tools.xpath(record, "//description");
+            sb.append(' ');
+            sb.append(Tools.removeTags(s));
+        }
+
+        MyDocument doc = new MyDocument(sb.toString());
+        doc.setTitle(title);
+        doc.setType(MyDocument.TYPE_DICTIONARY);
+        doc.setURL("/slovnik/"+dictionary.getSubType());
+
         return doc;
     }
 

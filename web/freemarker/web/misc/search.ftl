@@ -46,7 +46,8 @@
     <td><input type="checkbox" name="type" value="hardware" <#if TYPES.hardware>checked</#if>>Hardware</td>
     <td><input type="checkbox" name="type" value="software" <#if TYPES.software>checked</#if>>Software</td>
     <td><input type="checkbox" name="type" value="ovladac" <#if TYPES.driver>checked</#if>>Ovladaèe</td>
-    <td></td>
+    <td><input type="checkbox" name="type" value="dictionary" <#if TYPES.dictionary>checked</#if>>Pojmy</td>
+    <td><input type="checkbox" name="type" value="blog" <#if TYPES.blog>checked</#if>>Blogy</td>
    </tr>
   </table>
 
