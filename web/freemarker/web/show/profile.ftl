@@ -90,19 +90,19 @@
 <h1>Mé</h1>
 <ol>
   <li><a href="${URL.noPrefix("/History?type=articles&amp;uid="+PROFILE.id)}">èlánky</a>
-  (${COUNTS.article})
+  (${COUNTS.article})</li>
   <li><a href="${URL.noPrefix("/History?type=news&amp;uid="+PROFILE.id)}">zprávièky</a>
-  (${COUNTS.news})
+  (${COUNTS.news})</li>
   <li><a href="${URL.noPrefix("/History?type=questions&amp;uid="+PROFILE.id)}">otázky ve fóru</a>
-  (${COUNTS.question})
+  (${COUNTS.question})</li>
   <li><a href="${URL.noPrefix("/History?type=comments&amp;uid="+PROFILE.id)}">komentáøe</a>
-  (${COUNTS.comment})
+  (${COUNTS.comment})</li>
   <li><a href="${URL.noPrefix("/History?type=hardware&amp;uid="+PROFILE.id)}">hardwarové záznamy</a>
-  (${COUNTS.hardware})
+  (${COUNTS.hardware})</li>
   <li><a href="${URL.noPrefix("/History?type=software&amp;uid="+PROFILE.id)}">softwarové záznamy</a>
-  (${COUNTS.software})
+  (${COUNTS.software})</li>
   <li><a href="${URL.noPrefix("/History?type=dictionary&amp;uid="+PROFILE.id)}">pojmy ve slovníku</a>
-  (${COUNTS.dictionary})
+  (${COUNTS.dictionary})</li>
 </ol>
 
 <#include "../footer.ftl">

@@ -3,12 +3,16 @@
     <a class="info" href="#">?<span class="tooltip">Vlastní blog si po pøihlá¹ení mù¾ete zalo¾it v nastavení svého profilu.</span></a>
     <h1><a href="/blog">Blogy na AbcLinuxu</a></h1>
   </div></div>
-  
+
     <div class="s_sekce">
         Pøehled blogù za dané období pro v¹echny u¾ivatele.
+
         <p>Chcete-li také psát svùj blog, pøihla¹te se a v nastavení
         si jej mù¾ete zalo¾it.</p>
-	Více o této nové funkci se dozvíte z <a href="/blog/leos/2005/1/2/72133">oznámení</a>.
+
+        <a href="/auto/blog.rss">RSS kanál</a>
+
+	    Více o této nové funkci se dozvíte z <a href="/blog/leos/2005/1/2/72133">oznámení</a>.
     </div>
 </#assign>
 
