@@ -9,6 +9,7 @@ package cz.abclinuxu.utils.search;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.view.Search;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
 import org.dom4j.Element;
@@ -28,8 +29,8 @@ import java.util.*;
  */
 public class CreateIndex {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(CreateIndex.class);
-    static String DEPLOY = "/home/literakl/tomcat/webapps/ROOT";
-    static String PATH = DEPLOY+"/WEB-INF/index";
+    static String DEPLOY = "/home/literakl/abc/deploy";
+    static String PATH = Search.getIndexPath();
 
     static Persistance persistance;
     static RE tagRE;

@@ -49,6 +49,7 @@ public class Email {
             transport.connect("localhost",null,null);
             message.saveChanges();
             transport.sendMessage(message,message.getAllRecipients());
+            transport.close();
 
             if ( log.isInfoEnabled() ) {
                 log.info("Email sent. To: "+to+", From: "+from+", Subject: "+subject);

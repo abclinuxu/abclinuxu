@@ -112,8 +112,12 @@ public class ViewUser extends AbcServlet {
      * @todo investigate, why after log in there is a login dialog
      */
     protected String handleLogin2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        if ( ctx.get(VAR_USER)!=null )
-            return VariantTool.selectTemplate(request,ctx,"ViewUser","profile");
+        if ( ctx.get(VAR_USER)!=null ) {
+            Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+            String id = new Integer(((User)ctx.get(VAR_USER)).getId()).toString();
+            params.put(PARAM_USER,id);
+            return handleProfile(request,ctx);
+        }
         else
             return VariantTool.selectTemplate(request,ctx,"EditUser","login");
     }

@@ -47,13 +47,10 @@ public class ArticlePoolMonitor extends TimerTask {
                 if ( relation.getChild() instanceof Item ) {
                     Item item = (Item) relation.getChild();
                     persistance.synchronize(item);
-                    if ( item.getType()==Item.ARTICLE ) {
-                        persistance.synchronize(item);
-                        if ( now.after(item.getCreated()) ) {
-                            relation.setParent(articles);
-                            relation.setUpper(Constants.REL_ACTUAL_ARTICLES);
-                            persistance.update(relation);
-                        }
+                    if ( item.getType()==Item.ARTICLE && now.after(item.getCreated()) ) {
+                        relation.setParent(articles);
+                        relation.setUpper(Constants.REL_ACTUAL_ARTICLES);
+                        persistance.update(relation);
                     }
                 }
             }

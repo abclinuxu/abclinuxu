@@ -88,6 +88,13 @@ public class Search extends AbcServlet {
         Search.INDEX_PATH = path;
     }
 
+    /**
+     * @return path, where index files are stored.
+     */
+    public static String getIndexPath() {
+        return INDEX_PATH;
+    }
+
     public static void main(String[] args) throws Exception {
         Searcher searcher = new IndexSearcher(INDEX_PATH);
         Analyzer analyzer = new StandardAnalyzer();

@@ -9,6 +9,7 @@ package cz.abclinuxu.servlets.view;
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.VariantTool;
+import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.utils.InstanceUtils;
@@ -18,6 +19,7 @@ import cz.abclinuxu.AbcException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.velocity.context.Context;
 import org.dom4j.*;
@@ -58,12 +60,13 @@ public class ShowSurvey extends AbcServlet {
         persistance.synchronize(survey);
         if ( survey.getType()!=Item.SURVEY ) {
             ServletUtils.addError(null,"Tento objekt není anketa!",ctx,request.getSession());
-            return VariantTool.selectTemplate(request,ctx,"ViewIndex","show");
+            UrlUtils.redirect("/Index",response,ctx);
+            return null;
         }
 
         String currentScreen = (String) params.get(PARAM_SCREEN_CURRENT);
         if ( ! Misc.empty(currentScreen) ) {
-            saveParameters(request,params,currentScreen);
+            saveParameters(request.getSession(),params,currentScreen);
         }
 
         String nextScreen = (String) params.get(PARAM_SCREEN_NEXT);
@@ -76,27 +79,30 @@ public class ShowSurvey extends AbcServlet {
             log.error("Survey "+survey.getId()+" does not define screen "+nextScreen+
                       " (called from "+currentScreen+")!");
             ServletUtils.addError(null,"Omlouváme se, ale v anketì nastala chyba.",ctx,request.getSession());
-            return VariantTool.selectTemplate(request,ctx,"ViewIndex","show");
+            UrlUtils.redirect("/Index",response,ctx);
+            return null;
         }
 
         Element dump = screen.element("dump");
         if ( dump!=null ) {
-            Document data = (Document) request.getAttribute(ATTRIB_DATA);
+            Document data = (Document) request.getSession().getAttribute(ATTRIB_DATA);
             try {
                 dump(data,dump);
             } catch (Exception e) {
                 log.error("Error in survey "+survey.getId(),e);
                 ServletUtils.addError(null,"Omlouváme se, ale v anketì nastala chyba.",ctx,request.getSession());
-                return VariantTool.selectTemplate(request,ctx,"ViewIndex","show");
+                UrlUtils.redirect("/Index",response,ctx);
+                return null;
             }
-            request.removeAttribute(ATTRIB_DATA);
+            request.getSession().removeAttribute(ATTRIB_DATA);
         }
 
         Element template = screen.element("template");
         if ( template==null || template.getTextTrim().length()==0 ) {
             log.error("Survey "+survey.getId()+" does not define template in screen "+nextScreen+"!");
             ServletUtils.addError(null,"Omlouváme se, ale v anketì nastala chyba.",ctx,request.getSession());
-            return VariantTool.selectTemplate(request,ctx,"ViewIndex","show");
+            UrlUtils.redirect("/Index",response,ctx);
+            return null;
         }
 
         return VariantTool.selectTemplate(request,ctx,template.getTextTrim());
@@ -106,12 +112,12 @@ public class ShowSurvey extends AbcServlet {
      * this method ads all parameters, that shall be saved, to Document data bound to
      * atrribute in session.
      */
-    void saveParameters(HttpServletRequest request, Map params, String currentScreen) {
-        Document data = (Document) request.getAttribute(ATTRIB_DATA);
+    void saveParameters(HttpSession session, Map params, String currentScreen) {
+        Document data = (Document) session.getAttribute(ATTRIB_DATA);
         if ( data==null ) {
             data = DocumentHelper.createDocument();
             data.addElement("anketa");
-            request.setAttribute(ATTRIB_DATA,data);
+            session.setAttribute(ATTRIB_DATA,data);
         }
         Element screen = data.getRootElement().addElement("screen");
         screen.addAttribute("id",currentScreen);
@@ -124,14 +130,15 @@ public class ShowSurvey extends AbcServlet {
             String var = stk.nextToken();
             Object value = params.get(var);
             if ( value instanceof String ) {
-                screen.addElement(var).addText((String)value);
+                String s = (String) value;
+                if ( !Misc.empty(s) )
+                    screen.addElement(var).addText(s);
             } else {
                 List list = (List) value;
                 for (Iterator iter = list.iterator(); iter.hasNext();) {
                     String s = (String) iter.next();
-                    Element element = screen.addElement("var");
-                    element.addAttribute("name",var);
-                    element.addAttribute("value",s);
+                    if ( !Misc.empty(s) )
+                        screen.addElement(var).addText(s);
                 }
             }
         }

@@ -10,7 +10,7 @@
 	</appender>
 
 	<appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
-           <param name="File" value="/home/literakl/ROOT/WEB-INF/logs/abc.log" />
+           <param name="File" value="/home/literakl/abc/deploy/WEB-INF/logs/abc.log" />
            <param name="Append" value="true" />
 	   <layout class="org.apache.log4j.PatternLayout">
              <param name="ConversionPattern" value="%d %-5p %C{1} - %m%n"/>
@@ -18,7 +18,7 @@
 	</appender>
 
 	<appender name="REDIRECT" class="org.apache.log4j.FileAppender">
-           <param name="File" value="/home/literakl/ROOT/WEB-INF/logs/redirect.log" />
+           <param name="File" value="/home/literakl/abc/deploy/WEB-INF/logs/redirect.log" />
            <param name="Append" value="true" />
 	   <layout class="org.apache.log4j.PatternLayout">
              <param name="ConversionPattern" value="%d | %m%n"/>
@@ -26,7 +26,7 @@
 	</appender>
 
 	<appender name="REQUESTS" class="org.apache.log4j.FileAppender">
-           <param name="File" value="/home/literakl/ROOT/WEB-INF/logs/requests.log" />
+           <param name="File" value="/home/literakl/abc/deploy/WEB-INF/logs/requests.log" />
            <param name="Append" value="true" />
 	   <layout class="org.apache.log4j.PatternLayout">
              <param name="ConversionPattern" value="%d%n%m%n-----%n"/>
@@ -34,7 +34,7 @@
 	</appender>
 
 	<appender name="REWARDS" class="org.apache.log4j.FileAppender">
-           <param name="File" value="/home/literakl/ROOT/WEB-INF/logs/rewards.log" />
+           <param name="File" value="/home/literakl/abc/deploy/WEB-INF/logs/rewards.log" />
            <param name="Append" value="true" />
 	   <layout class="org.apache.log4j.PatternLayout">
              <param name="ConversionPattern" value="%d | %m%n"/>
