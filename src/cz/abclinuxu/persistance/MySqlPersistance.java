@@ -54,17 +54,24 @@ import org.apache.log4j.xml.DOMConfigurator;
  * <tr><td>Record</td><td>Z</td></tr>
  * <tr><td>Category</td><td>K</td></tr>
  * <tr><td>Link</td><td>L</td></tr>
+ * <tr><td>User</td><td>U</td></tr>
  * <tr><td>error</td><td>E</td></tr>
  * </table>
  */
 public class MySqlPersistance extends Persistance {
 
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(MySqlPersistance.class);
+    /** contains map of singletons, for each dbUrl one */
+    static HashMap singletons;
+
+    /** contains URL to database connection */
+    String dbUrl = "jdbc:mysql://localhost/abc?user=literakl";
 
     static {
         try {
 //            Class.forName("com.codestudio.sql.PoolMan").newInstance();
             Class.forName("org.gjt.mm.mysql.Driver");
+            singletons = new HashMap();
         } catch (Exception e) {
             log.fatal("Nemuzu vytvorit instanci PoolMana, zkontroluj CLASSPATH!",e);
         }
@@ -72,9 +79,29 @@ public class MySqlPersistance extends Persistance {
 
     /**
      * @return instance (or singleton) of this object
+     * @todo add another constructor with string parameter, which gives option to specify
+     * other database (to be used by unit tests)
      */
     public static Persistance getInstance() {
-        MySqlPersistance persistance = new MySqlPersistance();
+        Persistance persistance = (Persistance) singletons.get(null);
+        if ( persistance == null ) {
+            persistance = new MySqlPersistance();
+            singletons.put(null,persistance);
+        }
+        return persistance;
+    }
+
+    /**
+     * @return instance (or singleton) of object, which implements Persistance interface
+     * and is described by <code>url</code>.
+     */
+    public static Persistance getInstance(String url) {
+        MySqlPersistance persistance = (MySqlPersistance) singletons.get(url);
+        if ( persistance == null ) {
+            persistance = new MySqlPersistance();
+            persistance.dbUrl = url;
+            singletons.put(url,persistance);
+        }
         return persistance;
     }
 
@@ -262,7 +289,7 @@ public class MySqlPersistance extends Persistance {
     protected Connection getSQLConnection() throws PersistanceException {
         try {
 //            return DriverManager.getConnection("jdbc:poolman");
-            return DriverManager.getConnection("jdbc:mysql://localhost/abc?user=literakl");
+            return DriverManager.getConnection(dbUrl);
         } catch (SQLException e) {
             throw new PersistanceException("Spojeni s databazi selhalo!",AbcException.DB_REFUSED,null,e);
         }
@@ -351,6 +378,7 @@ public class MySqlPersistance extends Persistance {
             user.setEmail(result.getString(4));
             user.setPassword(result.getString(5));
 
+            findChildren(obj,"U"+obj.getId());
             return user;
         } finally {
             releaseSQLConnection(con);
@@ -1069,24 +1097,122 @@ public class MySqlPersistance extends Persistance {
      * removes item from database
      */
     protected void removeItem(Item item) throws PersistanceException, SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+            // kill all siblings
+            PreparedStatement statement = con.prepareStatement("select obsah from strom where id=?");
+            statement.setString(1,"P"+item.getId());
+
+            ResultSet result = statement.executeQuery();
+            LinkedList children = new LinkedList();
+            while ( result.next() ) {
+                children.add(result.getString(1));
+            }
+
+            for (Iterator iter = children.iterator(); iter.hasNext();) {
+                String child = (String) iter.next();
+                statement = con.prepareStatement("select id from strom where id!=? and obsah=?");
+                statement.setString(1,"P"+item.getId());
+                statement.setString(2,child);
+
+                ResultSet sibling = statement.executeQuery();
+                if ( !sibling.next() ) {
+                    removeObject(getObjectFromTreeId(child));
+                }
+            }
+
+            // remove all references from tree
+            statement = con.prepareStatement("delete from strom where id=? or obsah=?");
+            statement.setString(1,"P"+item.getId());
+            statement.setString(2,"P"+item.getId());
+            statement.executeUpdate();
+
+            // kill item itself
+            statement = con.prepareStatement("delete from polozka where cislo=?");
+            statement.setInt(1,item.getId());
+            statement.executeUpdate();
+        } finally {
+            releaseSQLConnection(con);
+        }
     }
 
     /**
      * removes category from database
      */
     protected void removeCategory(Category category) throws PersistanceException, SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+            // kill all siblings
+            PreparedStatement statement = con.prepareStatement("select obsah from strom where id=?");
+            statement.setString(1,"K"+category.getId());
+
+            ResultSet result = statement.executeQuery();
+            LinkedList children = new LinkedList();
+            while ( result.next() ) {
+                children.add(result.getString(1));
+            }
+
+            for (Iterator iter = children.iterator(); iter.hasNext();) {
+                String child = (String) iter.next();
+                statement = con.prepareStatement("select id from strom where id!=? and obsah=?");
+                statement.setString(1,"K"+category.getId());
+                statement.setString(2,child);
+
+                ResultSet sibling = statement.executeQuery();
+                if ( !sibling.next() ) {
+                    removeObject(getObjectFromTreeId(child));
+                }
+            }
+
+            // remove all references from tree
+            statement = con.prepareStatement("delete from strom where id=? or obsah=?");
+            statement.setString(1,"K"+category.getId());
+            statement.setString(2,"K"+category.getId());
+            statement.executeUpdate();
+
+            // kill category itself
+            statement = con.prepareStatement("delete from kategorie where cislo=?");
+            statement.setInt(1,category.getId());
+            statement.executeUpdate();
+        } finally {
+            releaseSQLConnection(con);
+        }
     }
 
     /**
      * removes data from database
      */
     protected void removeData(Data data) throws PersistanceException, SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("delete from objekty where cislo=?");
+            statement.setInt(1,data.getId());
+            statement.executeUpdate();
+        } finally {
+            releaseSQLConnection(con);
+        }
     }
 
     /**
      * removes link from database
      */
     protected void removeLink(Link link) throws PersistanceException, SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("delete from odkazy where cislo=?");
+            statement.setInt(1,link.getId());
+            statement.executeUpdate();
+        } finally {
+            releaseSQLConnection(con);
+        }
     }
 
     /**
@@ -1099,6 +1225,45 @@ public class MySqlPersistance extends Persistance {
      * removes user from database
      */
     protected void removeUser(User user) throws PersistanceException, SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+            // kill all siblings
+            PreparedStatement statement = con.prepareStatement("select obsah from strom where id=?");
+            statement.setString(1,"U"+user.getId());
+
+            ResultSet result = statement.executeQuery();
+            LinkedList children = new LinkedList();
+            while ( result.next() ) {
+                children.add(result.getString(1));
+            }
+
+            for (Iterator iter = children.iterator(); iter.hasNext();) {
+                String child = (String) iter.next();
+                statement = con.prepareStatement("select id from strom where id!=? and obsah=?");
+                statement.setString(1,"U"+user.getId());
+                statement.setString(2,child);
+
+                ResultSet sibling = statement.executeQuery();
+                if ( !sibling.next() ) {
+                    removeObject(getObjectFromTreeId(child));
+                }
+            }
+
+            // remove all references from tree
+            statement = con.prepareStatement("delete from strom where id=? or obsah=?");
+            statement.setString(1,"U"+user.getId());
+            statement.setString(2,"U"+user.getId());
+            statement.executeUpdate();
+
+            // kill user itself
+            statement = con.prepareStatement("delete from uzivatel where cislo=?");
+            statement.setInt(1,user.getId());
+            statement.executeUpdate();
+        } finally {
+            releaseSQLConnection(con);
+        }
     }
 
     public void findRecordByExample(Record record,List result) throws PersistanceException,SQLException {}

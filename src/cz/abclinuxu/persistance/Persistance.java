@@ -24,6 +24,14 @@ public abstract class Persistance {
     }
 
     /**
+     * @return instance (or singleton) of object, which implements Persistance interface
+     * and is described by <code>url</code>
+     */
+    public static Persistance getInstance(String url) {
+        return null;
+    }
+
+    /**
      * Downloads object described by <code>obj</code> (id and class name) from persistant storage.
      * It also fills its <code>content</code> field with uninitialized objects (only <code>id</code>).
      * They may be downloaded on request with this method again.
