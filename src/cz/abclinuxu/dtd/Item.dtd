@@ -54,7 +54,6 @@
 
 <!-- Item.NEWS -->
 <!ELEMENT data (category?, content, approved_by?)>
-<!ELEMENT category (#PCDATA)> <!-- key of category, to which the news was assigned to -->
 <!ELEMENT content (#PCDATA)> <!-- text of the news -->
 <!ATTLIST content format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT approved_by (#PCDATA)> <!-- id of admin, who approved the news -->

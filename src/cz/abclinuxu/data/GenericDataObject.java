@@ -155,6 +155,7 @@ public abstract class GenericDataObject extends GenericObject implements XMLCont
         GenericDataObject b = (GenericDataObject) obj;
         owner = b.owner;
         type = b.type;
+        subType = b.subType;
 //        documentHandler = (XMLHandler) b.documentHandler.clone();
         documentHandler = b.documentHandler;
         created = b.created;

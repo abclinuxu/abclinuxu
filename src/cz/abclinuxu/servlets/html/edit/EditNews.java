@@ -34,7 +34,6 @@ import java.util.Date;
 
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.dom4j.Node;
 import org.htmlparser.util.ParserException;
 
 /**
@@ -159,8 +158,7 @@ public class EditNews implements AbcAction {
 
         Element element = (Element) item.getData().selectSingleNode("/data/content");
         params.put(PARAM_CONTENT,element.getText());
-        element = (Element) item.getData().selectSingleNode("/data/category");
-        params.put(PARAM_CATEGORY,element.getText());
+        params.put(PARAM_CATEGORY,item.getSubType());
 
         env.put(VAR_CATEGORIES, NewsCategories.getAllCategories());
 
@@ -299,16 +297,12 @@ public class EditNews implements AbcAction {
      */
     private boolean setCategory(Map params, Item item) {
         String text = (String) params.get(PARAM_CATEGORY);
-        Node node = item.getData().selectSingleNode("/data/category");
-        if (node!=null)
-            node.detach();
         if (text==null || text.length()==0)
             return true;
 
         List categories = NewsCategories.listKeys();
         if ( categories.contains(text) ) {
-            Element element = DocumentHelper.makeElement(item.getData(), "/data/category");
-            element.setText(text);
+            item.setSubType(text);
         } else {
             log.warn("Nalezena neznama kategorie zpravicek '"+text+"'!");
         }

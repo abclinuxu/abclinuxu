@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.dom4j.Node;
 import org.dom4j.Element;
 import org.dom4j.Document;
 
@@ -146,9 +145,7 @@ public class ShowObject implements AbcAction {
             return ShowArticle.show(env, item, request, response);
 
         if ( item.getType()==Item.NEWS ) {
-            Node node = item.getData().selectSingleNode("/data/category");
-            if ( node!=null )
-                env.put(EditNews.VAR_CATEGORY, NewsCategories.get(node.getText()));
+            env.put(EditNews.VAR_CATEGORY, NewsCategories.get(item.getSubType()));
 
             List list = (List) children.get(Constants.TYPE_DISCUSSION);
             if ( list!=null && list.size()==1 ) {
