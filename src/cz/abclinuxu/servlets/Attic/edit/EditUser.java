@@ -198,7 +198,8 @@ public class EditUser extends AbcFMServlet {
 
         Document document = DocumentHelper.createDocument();
         DocumentHelper.makeElement(document, "/data/settings");
-        DocumentHelper.makeElement(document, "/data/system");
+        Element system = DocumentHelper.makeElement(document, "/data/system");
+        system.addElement("registration_date").setText(Constants.isoFormat.format(new Date()));
         Element email = DocumentHelper.makeElement(document, "/data/communication/email");
         email.addAttribute("valid", "yes");
         managed.setData(document);
@@ -720,7 +721,7 @@ public class EditUser extends AbcFMServlet {
      */
     private boolean setName(Map params, User user, Map env) {
         String name = (String) params.get(PARAM_NAME);
-        if ( name==null || name.length()<5 ) {
+        if ( name==null || name.length()<4 ) {
             ServletUtils.addError(PARAM_NAME, "Jméno je pøíli¹ krátké!", env, null);
             return false;
         }
