@@ -32,7 +32,7 @@ public class Discussion {
      * @throws java.lang.IllegalArgumentException
      */
     public Discussion(Record record) {
-        if ( record.getType()!=Record.DISCUSSION ) throw new IllegalArgumentException("Record is not discussion!");
+        if ( record.getType()!=Record.DISCUSSION ) throw new IllegalArgumentException("Record "+record.getId()+" is not discussion!");
         this.record = record;
     }
 
@@ -40,7 +40,7 @@ public class Discussion {
      * Adds Discussion to <code>list</code>. You create a new branch with this method.
      */
     public void add(Discussion discussion) {
-        if ( list==null ) list = new ArrayList(4);
+        if ( list==null ) list = new ArrayList(3);
         list.add(discussion);
     }
 
@@ -50,7 +50,7 @@ public class Discussion {
      */
     public Discussion add(Record record) {
         Discussion discussion = new Discussion(record);
-        if ( list==null ) list = new ArrayList(4);
+        if ( list==null ) list = new ArrayList(3);
         list.add(discussion);
         return discussion;
     }

@@ -41,6 +41,8 @@ IMG.puntik2 { padding-top: 2px; width: 6px; height: 8px; }
 IMG.graf { padding: 2px 4px; border: 0; height: 3px; }
 IMG.sipka { border: 0; width: 11px; height: 7px; }
 IMG.ikona { border: 0; width: 32px; height: 32px;}
+IMG.ikona22 { border: 0; width: 22px; height: 22px;}
+
 
 /* index */
 P.perex_out { padding: 0ex 0ex;  }
@@ -70,5 +72,5 @@ DIV.note { padding-top: 10pt; padding-bottom: 5pt; /* font-style: italic; */}
 
 /* komentare, diskusni forum */
 DIV.diz_list { background-color: #EEEEEE; }
-DIV.diz_header { background-color: #EEEEEE; }
+P.diz_header { background-color: #EEEEEE; }
 SPAN.diz_header_prefix { font-style: italic; }

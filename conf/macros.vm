@@ -19,7 +19,8 @@
 <div class="parents">
 #foreach($parent in $PARENTS)
 #if($velocityCount==1) #sync($parent.Parent)
-<a href="$!URL.make("/ViewCategory?categoryId=$parent.Parent.Id")">$!UTIL.getXPath($parent.Parent,'data/name')</a>
+<a href="$!URL.make("/ViewCategory?categoryId=$parent.Parent.Id")">
+$!UTIL.getXPath($parent.Parent,'data/name')</a>
 #end
 - <a href="$!URL.make("/ViewRelation?relationId=$parent.Id")">$!UTIL.getChildName($parent)</a>
 #end</div>#end#end

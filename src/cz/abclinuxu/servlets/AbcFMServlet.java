@@ -19,6 +19,7 @@ import java.util.HashMap;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.exceptions.NotAuthorizedException;
+import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 
@@ -48,15 +49,24 @@ public abstract class AbcFMServlet extends HttpServlet {
         try {
             Map data = new HashMap();
             performInit(request,response,data);
+
+            long startExec = System.currentTimeMillis();
             String templateName = process(request,response,data);
+            long endExec = System.currentTimeMillis();
             if ( Misc.empty(templateName) )
                 return;
 
             Template template = config.getTemplate(templateName);
             response.setContentType("text/html; charset=ISO-8859-2");
             Writer writer = response.getWriter();
+
+            long startRender = System.currentTimeMillis();
             template.process(data,writer);
+            long endRender = System.currentTimeMillis();
             writer.flush();
+
+            if ( log.isInfoEnabled() )
+                log.info(templateName+"- execution: "+(endExec-startExec)+" ms, rendering: "+(endRender-startRender)+" ms.");
         } catch (Exception e) {
             error(request,response,e);
         }
@@ -93,6 +103,9 @@ public abstract class AbcFMServlet extends HttpServlet {
             log.error("Not found: "+url);
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             template = config.getTemplate("errors/notfound.ftl");
+        } else if ( e instanceof MissingArgumentException ) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            template = config.getTemplate("errors/generic.ftl");
         } else if ( e instanceof NotAuthorizedException ) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             template = config.getTemplate("errors/denied.ftl");

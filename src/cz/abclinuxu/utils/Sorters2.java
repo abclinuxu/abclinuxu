@@ -119,6 +119,7 @@ public class Sorters2 {
         private Date getValue(Object obj) {
             if ( obj instanceof Relation )
                 obj = ((Relation)obj).getChild();
+
             if ( obj instanceof Link )
                 return ((Link)obj).getUpdated();
             if ( obj instanceof PreparedDiscussion )

@@ -8,22 +8,25 @@
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcVelocityServlet;
-import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.utils.UrlUtils;
-import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
+import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
-import org.apache.velocity.Template;
-import org.apache.velocity.context.Context;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.AbcException;
+import cz.abclinuxu.exceptions.MissingArgumentException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Iterator;
+import java.util.Map;
 import java.util.List;
+
 
 /**
  * Servlet, which loads Category specified by parameter <code>categoryId</code> (or
@@ -41,54 +44,66 @@ import java.util.List;
  * <dd>used by clanky.vm. Defines range of shown objects.</dd>
  * </dl>
  */
-public class ViewCategory extends AbcVelocityServlet {
+public class ViewCategory extends AbcFMServlet {
+    /** if set, it indicates to display parent in the relation of two categories */
+    public static final String PARAM_PARENT = "parent";
+    /** holds category to be displayed */
     public static final String VAR_CATEGORY = "CATEGORY";
-    public static final String PARAM_CATEGORY_ID = "categoryId";
-    public static final String PARAM_FROM = "from";
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        init(request,response,ctx);
+    static Persistance persistance = PersistanceFactory.getPersistance();
 
-        // find category and store it into Context
+    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+
+        Relation relation = (Relation) InstanceUtils.instantiateParam(ViewRelation.PARAM_RELATION_ID,Relation.class,params);
+        if ( relation==null ) {
+            throw new MissingArgumentException("Parametr relationId je prázdný!");
+        }
+
+        Tools.sync(relation);
+        env.put(ViewRelation.VAR_RELATION,relation);
+        List parents = persistance.findParents(relation);
+        env.put(ViewRelation.VAR_PARENTS,parents);
+
+        return processCategory(request,env,relation,parents);
+    }
+
+    /**
+     * processes given category
+     * @return template to be rendered
+     */
+    public static String processCategory(HttpServletRequest request, Map env, Relation relation, List parents) throws Exception {
+        if ( parents!=null ) parents.add(relation);
         Category category = null;
-        Relation relation = (Relation) ctx.get(ViewRelation.VAR_RELATION);
-        List parents = (List) ctx.get(ViewRelation.VAR_PARENTS);
-        if ( parents!=null && relation!=null ) parents.add(relation);
 
-        Persistance persistance = PersistanceFactory.getPersistance();
-        String tmp = request.getParameter(ViewCategory.PARAM_CATEGORY_ID);
-        if ( tmp!=null ) {
-            category = new Category(Integer.parseInt(tmp));
-        } else {
-            if ( relation==null ) {
-                ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,"Nebyla vybrána ¾ádná kategorie!",ctx, request.getSession());
-                response.sendRedirect("/Index");
-                return null;
-            }
+        String tmp = (String) ((Map)env.get(Constants.VAR_PARAMS)).get(PARAM_PARENT);
+        if ( Misc.same(tmp,"yes") )
+            category = (Category) relation.getParent();
+        else
             category = (Category) relation.getChild();
-        }
-        category = (Category) persistance.findById(category);
-        ctx.put(VAR_CATEGORY,category);
 
-        UrlUtils urlUtils = (UrlUtils) ctx.get(AbcVelocityServlet.VAR_URL_UTILS);
-        tmp = urlUtils.getPrefix();
+        Tools.sync(category);
+        Tools.sync(category.getContent());
+        env.put(VAR_CATEGORY,category);
 
-        if ( relation!=null ) {
-            switch (relation.getId()) {
-                case Constants.REL_FORUM: return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewCategory","discussions");
-                case Constants.REL_POLLS: return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewCategory","polls");
-                case Constants.REL_LINKS: return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewCategory","links");
-                case Constants.REL_DRIVERS: return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewCategory","drivers");
-                case Constants.REL_REQUESTS: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditRequest","view");
-//                case Constants.REL_REKLAMA: return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewCategory","reklama");
+        if ( Misc.same(tmp,"yes") ) {
+            switch ( category.getId() ) {
+                case Constants.CAT_ARTICLES:
+                case Constants.CAT_ABC: return FMTemplateSelector.select("ViewCategory","rubriky",env,request,null);
             }
         } else {
-            switch ( category.getId() ) {
-                case Constants.CAT_ARTICLES: return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewCategory","rubriky");
-                case Constants.CAT_ABC: return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewCategory","rubriky");
+            switch (relation.getId()) {
+                case Constants.REL_POLLS: return FMTemplateSelector.select("ViewCategory","ankety",env,request,null);
+                case Constants.REL_DRIVERS: return FMTemplateSelector.select("ViewCategory","drivers",env,request,null);
+                case Constants.REL_REQUESTS: return FMTemplateSelector.select("EditRequest","view",env,request,null);
             }
         }
-        if ( UrlUtils.PREFIX_CLANKY.equals(tmp) ) return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewCategory","clanky");
-        return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewCategory","category");
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        tmp = urlUtils.getPrefix();
+        if ( Misc.same(tmp,UrlUtils.PREFIX_CLANKY) )
+            return FMTemplateSelector.select("ViewCategory","rubrika",env,request,null);
+        else
+            return FMTemplateSelector.select("ViewCategory","sekce",env,request,null);
     }
 }

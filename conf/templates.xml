@@ -104,7 +104,7 @@
 
   <servlet name="EditRequest">
     <action name="view">
-      <mapping template="web" content="web/show/requests.vm">
+      <mapping template="web" content="/web/show/requests.ftl">
         <var name="TITLE" value="Administrativní po¾adavky" />
       </mapping>
     </action>
@@ -209,39 +209,58 @@
   </servlet>
 
   <servlet name="ViewCategory">
-    <action name="category">
-      <mapping template="web" content="web/show/category.vm">
-        <var name="TITLE" value="$!UTIL.getXPath($CATEGORY,'data/name')" type="Lazy" />
+    <action name="sekce">
+      <mapping template="web" content="/web/show/sekce.ftl">
+        <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
       </mapping>
     </action>
-    <action name="clanky">
-      <mapping template="web" content="web/show/clanky.vm">
-        <var name="TITLE" value="$!UTIL.getXPath($CATEGORY,'data/name')" type="Lazy" />
+    <action name="rubrika">
+      <mapping template="web" content="/web/show/rubrika.ftl">
+        <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
       </mapping>
     </action>
-    <action name="discussions">
-      <mapping template="web" content="web/show/discussions.vm">
-        <var name="TITLE" value="$!UTIL.getXPath($CATEGORY,'data/name')" type="Lazy" />
-      </mapping>
-    </action>
-    <action name="polls">
-      <mapping template="web" content="web/show/ankety.vm">
+    <action name="ankety">
+      <mapping template="web" content="/web/show/ankety.ftl">
         <var name="TITLE" value="Archiv anket" />
       </mapping>
     </action>
-    <action name="links">
-      <mapping template="web" content="web/show/links.vm">
-        <var name="TITLE" value="Rozcestník po linuxových serverech" />
-      </mapping>
-    </action>
     <action name="drivers">
-      <mapping template="web" content="web/show/drivers.vm">
-        <var name="TITLE" value="$!UTIL.getXPath($CATEGORY,'data/name')" type="Lazy" />
+      <mapping template="web" content="/web/show/drivers.ftl">
+        <var name="TITLE" value="Seznam ovladaèù" />
       </mapping>
     </action>
     <action name="rubriky">
-      <mapping template="web" content="web/show/rubriky.vm">
-        <var name="TITLE" value="$!UTIL.getXPath($CATEGORY,'data/name')" type="Lazy" />
+      <mapping template="web" content="/web/show/rubriky.ftl">
+        <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
+      </mapping>
+    </action>
+  </servlet>
+
+
+  <servlet name="ViewRelation">
+    <action name="hardware">
+      <mapping template="web" content="/web/show/hwitem.ftl">
+        <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
+      </mapping>
+    </action>
+    <action name="software">
+      <mapping template="web" content="/web/show/switem.ftl">
+        <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
+      </mapping>
+    </action>
+    <action name="discussion">
+      <mapping template="web" content="/web/show/discussion.ftl">
+        <var name="TITLE" value='&lt;#if TOOL.xpath(ITEM,"data/title")?exists&gt;${TOOL.xpath(ITEM,"data/title")}&lt;#else&gt;Diskuse&lt;/#if&gt;' type="Lazy" />
+      </mapping>
+    </action>
+    <action name="article">
+      <mapping template="web" content="/web/show/article.ftl">
+        <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
+      </mapping>
+    </action>
+    <action name="driver">
+      <mapping template="web" content="/web/show/driver.ftl">
+        <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")} - ${TOOL.xpath(ITEM,"data/version")}' type="Lazy" />
       </mapping>
     </action>
   </servlet>
@@ -250,6 +269,7 @@
     <action name="show">
       <mapping template="web" content="/web/show/index.ftl">
         <var name="TITLE" value="AbcLinuxu.cz - tady je tuèòákùm hej!" />
+        <var name="IS_INDEX" value="true" type="boolean" />
       </mapping>
       <mapping template="lynx" content="/lynx/show/index.ftl">
         <var name="TITLE" value="AbcLinuxu.cz - tady je tuèòákùm hej!" />
