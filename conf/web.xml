@@ -16,7 +16,7 @@
         </init-param>
         <init-param>
           <param-name>URL</param-name>
-          <param-value>jdbc:mysql://localhost/abc?user=literakl&amp;useUnicode=true&amp;characterEncoding=ISO-8859-2</param-value>
+          <param-value>jdbc:mysql://localhost/abc?user=literakl&amp;password=lkaretil&amp;useUnicode=true&amp;characterEncoding=ISO-8859-2</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>

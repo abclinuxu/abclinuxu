@@ -29,7 +29,7 @@ public class TestMySqlPersistance extends TestCase {
     protected void setUp() throws Exception {
         org.apache.log4j.Category.getDefaultHierarchy().disableAll();
         super.setUp();
-        persistance = new MySqlPersistance("jdbc:mysql://localhost/unit?user=literakl");
+        persistance = new MySqlPersistance("jdbc:mysql://localhost/unit?user=literakl&password=lkaretil");
         persistance.setCache(new Cache(persistance));
     }
 
