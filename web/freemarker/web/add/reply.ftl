@@ -1,39 +1,32 @@
+<#assign ps_sirka=150>
 <#assign plovouci_sloupec>
-
     <div class="s_nad_h1"><div class="s_nad_pod_h1">
-        <h1>Nápovìda</h1>
+        <h1>Nápovìda k formátování</h1>
     </div></div>
 
     <p>
-        Existují dva zpùsoby, jak formátovat va¹e pøíspìvky.
-        První z nich je psaní textu podobnì, jako kdy¾ pí¹ete
-        dopis. Rozdìlujte va¹e texty do odstavcù, pokud vlo¾íte
-        prázdný øádek, systém automaticky bude zachovávat toto
-        formátování. Konce øádkù nemají ¾ádný speciální význam.
-        Pøi tomto zpùsobu je pou¾ít i HTML znaèky s vyjímkou znaèky
-        nového øádku a odstavce. jejich pou¾ití automaticky
-        pøepne do HTML modu, kde jste plnì odpovìdni za formátování.
+        Nejrychlej¹í zpùsob formátování je rozdìlovat
+        text do odstavcù. Systém detekuje prázdné øádky
+        (dvakrát enter) a nahradí je HTML znaèkou odstavce.
+        Pokud ale v textu pou¾ijete znaèku P èi BR,
+        pak pøedpokládáme, ¾e o formátování se budete starat
+        sami a tato konverze nebude aktivována.
     </p>
 
     <p>
-        Druhý zpùsob vám dává vìt¹í volnost pøi formátování.
-        Máte k dispozici relativnì velkou sadu HTML znaèek.
-        Pro zaèáteèníky mohu doporuèit star¹í
-        <a href="http://www.kosek.cz/clanky/html/01.html">rychlokurz</a>
-        tohoto formátovacího jazyka. Z rùzných dùvodù jsou
-        povoleny jen tyto <a href="http://www.w3.org/TR/html4/index/elements.html">znaèky</a>:
+        Pokud neovládáte HTML, doporuèuji si pøeèíst jeho
+        <a href="http://www.kosek.cz/clanky/html/01.html">rychlokurz</a>.
+        Z rùzných dùvodù jsou povoleny jen tyto
+        <a href="http://www.w3.org/TR/html4/index/elements.html">znaèky</a>:
         P, BR, B, I, A, PRE, UL, OL, LI, CODE, DIV, H1, H2, H3, EM, STRONG, CITE, BLOCKQUOTE,
         VAR, HR a IT.
     </p>
 
     <p>
-        Pro oba styly platí, ¾e text musí být HTML validní. Èastým
-        problémem je, ¾e nìkdo se sna¾í vlo¾it text obsahující
-        znak men¹ítka èi vìt¹ítka. Tyto znaky se zapisují následovnì:
-        &lt; jako &amp;lt;,  &gt; jako &amp;gt;. Dal¹ím èastým problémem
+        Text musí být HTML validní, proto znak men¹ítka èi vìt¹ítka zapisujte takto:
+        &lt; jako &amp;lt; a &gt; jako &amp;gt;. Dal¹ím èastým problémem
         je, jak vlo¾it výpis logu èi konfiguraèní soubor. V tomto
-        pøípadì pou¾ijte znaèku PRE a vá¹ text vlo¾te mezi znaèky,
-        pøíli¹ dlouhé øádky rozdìlte znakem enter.
+        pøípadì vá¹ text vlo¾te mezi znaèky PRE, pøíli¹ dlouhé øádky rozdìlte klávesou enter.
     </p>
 </#assign>
 
