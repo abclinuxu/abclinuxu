@@ -80,7 +80,7 @@ public class MySqlPersistance implements Persistance {
     }
 
     public MySqlPersistance(String dbUrl) {
-        this.dbUrl = dbUrl;
+        if ( dbUrl!=null ) this.dbUrl = dbUrl;
     }
 
     public void create(GenericObject obj, GenericObject parent) throws PersistanceException {
