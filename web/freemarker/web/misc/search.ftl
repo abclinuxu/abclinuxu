@@ -36,18 +36,18 @@
 
   <table>
    <tr>
-    <td><input type="checkbox" name="type" value="clanek" <#if TYPES.article>checked</#if>>Èlánky</td>
-    <td><input type="checkbox" name="type" value="diskuse" <#if TYPES.discussion>checked</#if>>Diskuse</td>
-    <td><input type="checkbox" name="type" value="zpravicka" <#if TYPES.news>checked</#if>>Zprávièky</td>
-    <td><input type="checkbox" name="type" value="sekce" <#if TYPES.section>checked</#if>>Sekce</td>
+    <td><label><input type="checkbox" name="type" value="clanek" <#if TYPES.article>checked</#if>>Èlánky</label></td>
+    <td><label><input type="checkbox" name="type" value="diskuse" <#if TYPES.discussion>checked</#if>>Diskuse</label></td>
+    <td><label><input type="checkbox" name="type" value="zpravicka" <#if TYPES.news>checked</#if>>Zprávièky</label></td>
+    <td><label><input type="checkbox" name="type" value="sekce" <#if TYPES.section>checked</#if>>Sekce</label></td>
     <td rowspan="2"><button type="button" onclick="toggle(this)">V¹e/nic</button></td>
    </tr>
    <tr>
-    <td><input type="checkbox" name="type" value="hardware" <#if TYPES.hardware>checked</#if>>Hardware</td>
-    <td><input type="checkbox" name="type" value="software" <#if TYPES.software>checked</#if>>Software</td>
-    <td><input type="checkbox" name="type" value="ovladac" <#if TYPES.driver>checked</#if>>Ovladaèe</td>
-    <td><input type="checkbox" name="type" value="dictionary" <#if TYPES.dictionary>checked</#if>>Pojmy</td>
-    <td><input type="checkbox" name="type" value="blog" <#if TYPES.blog>checked</#if>>Blogy</td>
+    <td><label><input type="checkbox" name="type" value="hardware" <#if TYPES.hardware>checked</#if>>Hardware</label></td>
+    <td><label><input type="checkbox" name="type" value="software" <#if TYPES.software>checked</#if>>Software</label></td>
+    <td><label><input type="checkbox" name="type" value="ovladac" <#if TYPES.driver>checked</#if>>Ovladaèe</label></td>
+    <td><label><input type="checkbox" name="type" value="dictionary" <#if TYPES.dictionary>checked</#if>>Pojmy</label></td>
+    <td><label><input type="checkbox" name="type" value="blog" <#if TYPES.blog>checked</#if>>Blogy</label></td>
    </tr>
   </table>
 
