@@ -17,7 +17,7 @@
     <mkdir dir="${build}/WEB-INF" />
     <mkdir dir="${build}/WEB-INF/lib" />
     <mkdir dir="${build}/WEB-INF/classes" />
-    <mkdir dir="${build}/WEB-INF/templates" />
+    <mkdir dir="${build}/WEB-INF/velocity" />
     <mkdir dir="${build}/WEB-INF/logs" />
     <mkdir dir="${build}/auto" />
     <tstamp />
@@ -51,8 +51,8 @@
       </fileset>
     </copy>
 
-    <copy todir="${build}/WEB-INF/templates">
-      <fileset dir="web/templates" />
+    <copy todir="${build}/WEB-INF/velocity">
+      <fileset dir="web/velocity" />
       <fileset dir="conf" includes="macros.vm" />
     </copy>
 
