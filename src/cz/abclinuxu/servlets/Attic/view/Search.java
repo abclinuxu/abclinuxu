@@ -10,8 +10,6 @@ import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.search.MyDocument;
 import cz.abclinuxu.utils.search.CreateIndex;
@@ -19,7 +17,6 @@ import org.apache.lucene.search.*;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryParser.QueryParser;
-import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 
@@ -65,8 +62,9 @@ public class Search extends AbcFMServlet {
             Map map = new HashMap(length + 1,1.0f); //no rehash
             NumberFormat percentFormat = NumberFormat.getPercentInstance();
             for ( int i=0; i<length; i++ ) {
-                Document doc = (Document) hits.doc(i);
-//                String score = new Float(hits.score(i)).toString();
+                Document doc = hits.doc(i);
+                if ( hits.score(i)<0.01 )
+                    continue;
                 String score = percentFormat.format(hits.score(i));
                 doc.add(Field.UnIndexed("score",score));
                 Misc.storeToMap(map,doc.get(MyDocument.TYPE),doc);
