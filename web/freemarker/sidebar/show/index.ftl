@@ -41,7 +41,7 @@
 </form>
 </div>
 
-<a href="/clanky/ViewRelation?rid=5&src=sidebar" class="nadpis">Èlánky</a>
+<a href="/clanky/ViewRelation?rid=5&src=sidebar" class="nadpis" target="_content">Èlánky</a>
 
 <#list ARTICLES as rel>
  <#call showArticle(rel)>
