@@ -27,7 +27,7 @@ na <a href="/Profile/${PROFILE.id}">této</a> stránce.
 <h2>Základní údaje</h2>
 
 <p>Mezi základní údaje patøí va¹e jméno (${PROFILE.name}),
-va¹e pøihla¹ovací jméno (${PROFILE.login}),
+pøihla¹ovací jméno (${PROFILE.login}),
 pøezdívka (${PROFILE.nick?default("není nastavena")}),
 email (${PROFILE.email}) a heslo.
 </p>
@@ -35,53 +35,69 @@ email (${PROFILE.email}) a heslo.
 <#if TOOL.xpath(PROFILE,"/data/communication/email[@valid='no']")?exists>
  <p class="error">Administrátoøi oznaèili vá¹ email za neplatný!
  Stane se tak tehdy, pokud se nìkterý odeslaný email vrátí jako
- trvale nedoruèitelný. Dokud si nezmìníte email, ¾ádný dal¹í vám
+ trvale nedoruèitelný. Dokud si nezmìníte adresu, ¾ádný dal¹í email vám
  nebude zaslán.</p>
 </#if>
 
 <ul>
-<li>
-<a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editBasic")}">
-zmìnit údaje</a>
-<li>
-<a href="${URL.noPrefix("/Profile/"+PROFILE.id+"?action=forgottenPassword")}">
-poslat heslo emailem</a>
-<li>
-<a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=changePassword")}">
-zmìnit heslo</a>
+    <li>
+        <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editBasic")}">
+        zmìnit základní údaje</a>
+    <li>
+        <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=changePassword")}">
+        zmìnit heslo</a>
+    <li>
+        <a href="${URL.noPrefix("/Profile/"+PROFILE.id+"?action=forgottenPassword")}">
+        poslat heslo emailem</a>
 </ul>
 
 <h2>Profil</h2>
 
 <p>Portál www.abclinuxu.cz vám umo¾òuje bohaté nastavení va¹í osobní stránky,
 která slou¾í pro va¹i prezentaci. Mù¾ete zadat ¹irokou paletu strukturovaných
-informací, napøíklad geografické informace o místì, kde ¾ijete, jak dlouho pracujete
-s Linuxem nebo jaké pou¾íváte linuxové distribuce. Novì mù¾ete zadat patièku,
-která se bude zobrazovat u ka¾dého va¹eho pøíspìvku v diskusi.
-</p>
-
-<p>Dále mù¾ete zadat rok narození, adresu va¹ich stránek nebo zmìnit svou fotku.
-Poslední polo¾kou je text <i>O mnì</i>. Jak název napovídá, je urèen k tomu, abyste
-zde svìtu sdìlili dal¹í informace, napøíklad záliby, koníèky èi ¾ivotní krédo.
+informací, napøíklad bydli¹tì, rok narození, adresu va¹ich webových stránek,
+pou¾ívané distribuce, nebo jak dlouho pou¾íváte Linux. Dále si mù¾ete vytvoøit
+patièku zobrazovanou v diskusích u va¹ich pøíspìvkù, nahrát svou fotku
+èi upravit profil.
 </p>
 
 <ul>
-<li>
-<a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editPersonal")}">
-zmìnit osobní údaje</a>
-<li>
-<a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editProfile")}">
-upravit profil</a>
-<li>
-<a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=uploadPhoto")}">
-zmìnit fotku</a>
+    <li>
+        <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editPersonal")}">
+        zmìnit osobní údaje</a>
+    <li>
+        <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editProfile")}">
+        upravit profil</a>
+    <li>
+        <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=uploadPhoto")}">
+        zmìnit fotku</a>
+</ul>
+
+<h2>Blog</h2>
+
+<p>®havou novinkou Abíèka jsou blogy. Pro ty z vás, kteøí tento termín vidíte poprvé:
+jedná se o moderní formu vedení deníèku na internetu. Pokud zaèínáte s Linuxem, mù¾ete
+zde postupnì psát své zku¹enosti a pokroky, v kombinaci s diskusním fórem pak snáze
+dosáhnete svého cíle. Pokud jste pokroèilý u¾ivatel, máte mo¾nost pou¾ít blogy pro
+zveøejòování rad a návodù. A nebo si pi¹te blog jen tak, pro radost.
+</p>
+
+<ul>
+    <li>
+        <#if TOOL.xpath(PROFILE, "//settings/blog")?exists>
+            <#assign blog=TOOL.createCategory(TOOL.xpath(PROFILE, "//settings/blog"))>
+            <a href="/blog/${blog.subType}">zobrazit blog</a>
+        <#else>
+            <a href="${URL.noPrefix("/blog/edit/"+PROFILE.id+"?action=addBlog")}">vytvoøit blog</a>
+        </#if>
 </ul>
 
 <h2>Zasílání informací</h2>
 
 <p>Máte rádi ná¹ portál, ale nemáte èas nás nav¹tìvovat dennì? Nastavte
-si zasílání Mìsíèního zpravodaje a Týdenní souhrn èlánkù. Obì jsou zdarma!
-Novinkou je emailové rozhraní k diskusnímu fóru.
+si zasílání Mìsíèního zpravodaje a Týdenní souhrn èlánkù. Dále zde mù¾ete
+zapnout zasílání dotazù a komentáøù z diskusního fóra, tak¾e vám ¾ádná odpovìï
+neuteèe.
 </p>
 
 <ul><li>
@@ -95,9 +111,10 @@ objednat/odhlásit</a>
 se jedná o personalizaci portálu, kde mù¾ete upravit jeho chování
 dle svých pøedstav.</p>
 
-<ul><li>
-<a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editSettings")}">
-zmìnit nastavení</a>
+<ul>
+    <li>
+        <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editSettings")}">
+        zmìnit nastavení</a>
 </ul>
 
 <h2>Va¹e veøejná stránka</h2>
