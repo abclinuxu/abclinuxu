@@ -63,7 +63,7 @@
   ${TOOL.xpath(comment.data,"title")?if_exists}<br>
   <#if showControls>
    <a href="${URL.make("/EditDiscussion/"+relId+"?action=add&amp;dizId="+dizId+"&amp;threadId="+comment.id)}">Odpovìdìt</a> |
-   <a href="${URL.make("/show/"+relId+"#"+comment.id)}">Link</a>
+   <a href="${URL.make("#"+comment.id)}">Link</a>
    <#if (comment.parent>0)>
     | <a href="#${comment.parent}">Nahoru</a>
    </#if>
