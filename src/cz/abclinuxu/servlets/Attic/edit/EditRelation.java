@@ -185,6 +185,7 @@ public class EditRelation extends AbcServlet {
 
         persistance.synchronize(destination);
         relation.setParent(destination.getChild());
+        relation.setUpper(destination.getId());
         persistance.update(relation);
 
         String url = null;
