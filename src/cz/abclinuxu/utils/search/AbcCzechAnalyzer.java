@@ -16,6 +16,7 @@ import cz.finesoft.socd.analyzer.RemoveDiacriticsReader;
 import java.util.prefs.Preferences;
 import java.util.Hashtable;
 import java.io.Reader;
+import java.io.IOException;
 
 /**
  * Lucene Analyzer, that strips diacritics and uses LowerCaseFilter and custom StopFilter.
@@ -48,7 +49,11 @@ public class AbcCzechAnalyzer extends Analyzer implements Configurable {
     public void configure(Preferences prefs) throws ConfigurationException {
         String file = prefs.get(PREF_STOP_WORDS_FILE,null);
         log.info("Loading stop words from file '"+file+"'.");
-        stopTable = WordlistLoader.getWordtable(file);
+        try {
+            stopTable = WordlistLoader.getWordtable(file);
+        } catch (IOException e) {
+            throw new ConfigurationException(e);
+        }
         log.info(stopTable.size()+" stop words loaded.");
     }
 }
