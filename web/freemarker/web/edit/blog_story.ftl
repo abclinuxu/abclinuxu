@@ -59,11 +59,13 @@ text lámat. Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
     <tr>
         <td>
             <p class="required">Obsah zápisu</p>
-            <a href="javascript:insertAtCursor(document.form.content, '<b></b>');" title="Vlo¾it znaèku tuènì"><img src="/images/actions/bold.gif" width="16" height="16" border="0" alt="Vlo¾it znaèku tuènì"></a>
-            <a href="javascript:insertAtCursor(document.form.content, '<i></i>');" title="Vlo¾it znaèku italic"><img src="/images/actions/italic.gif" width="16" height="16" border="0" alt="Vlo¾it znaèku italic"></a>
-            <a href="javascript:insertAtCursor(document.form.content, '<u></u>');" title="Vlo¾it znaèku podtrhnout"><img src="/images/actions/under.gif" width="16" height="16" border="0" alt="Vlo¾it znaèku podtrhnout"></a>
-            <a href="javascript:insertAtCursor(document.form.content, '<break>');" title="Vlo¾it znaèku zlomu"><img src="/images/actions/story_break.gif" width="16" height="16" border="0" alt="Vlo¾it znaèku zlomu"></a>
-            <br>
+            <div class="form-edit">
+                <a href="javascript:insertAtCursor(document.form.content, '<b></b>');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
+                <a href="javascript:insertAtCursor(document.form.content, '<i></i>');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
+                <a href="javascript:insertAtCursor(document.form.content, '<a href=&quot;&quot;></a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
+                <a href="javascript:insertAtCursor(document.form.content, '<p></p>');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
+                <a href="javascript:insertAtCursor(document.form.content, '<break>');" id="mono" title="Vlo¾it znaèku zlomu">&lt;break&gt;</a>
+            </div>
             <textarea name="content" cols="80" rows="30">${PARAMS.content?if_exists?html}</textarea>
             <div class="error">${ERRORS.content?if_exists}</div>
         </td>
