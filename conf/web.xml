@@ -193,12 +193,6 @@
         <load-on-startup>4</load-on-startup>
     </servlet>
 
-    <servlet>
-        <servlet-name>Reward</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.utils.Reward</servlet-class>
-        <load-on-startup>4</load-on-startup>
-    </servlet>
-
 
     <servlet-mapping>
         <servlet-name>ViewCategory</servlet-name><url-pattern>/hardware/ViewCategory</url-pattern>
@@ -342,10 +336,6 @@
 
     <servlet-mapping>
         <servlet-name>Dumper</servlet-name><url-pattern>/DumpRequest</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>Reward</servlet-name><url-pattern>/Reward</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
