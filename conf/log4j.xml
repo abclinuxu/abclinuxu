@@ -17,7 +17,7 @@
 	</appender>
 
 	<category name="cz">
-	  <priority value="info" />
+	  <priority value="debug" />
 	</category>
 
 	<root>

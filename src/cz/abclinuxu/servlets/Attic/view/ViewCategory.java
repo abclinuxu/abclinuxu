@@ -19,6 +19,7 @@ import org.apache.velocity.context.Context;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Servlet, which loads Category specified by parameter <code>categoryId</code> (or
@@ -43,13 +44,16 @@ public class ViewCategory extends AbcServlet {
 
         // find category and store it into Context
         Category category = null;
+        Relation relation = (Relation) ctx.get(ViewRelation.VAR_RELATION);
+        List parents = (List) ctx.get(ViewRelation.VAR_PARENTS);
+        if ( parents!=null && relation!=null ) parents.add(relation);
+
         Persistance persistance = PersistanceFactory.getPersistance();
         String tmp = request.getParameter(ViewCategory.PARAM_CATEGORY_ID);
         if ( tmp!=null ) {
             int pk = Integer.parseInt(tmp);
             category = new Category(pk);
         } else {
-            Relation relation = (Relation) ctx.get(ViewRelation.VAR_RELATION);
             if ( relation==null ) return null;
             category = (Category) relation.getChild();
         }
