@@ -9,6 +9,7 @@
 package cz.abclinuxu.servlets.utils;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.*;
 
 /**
  * Simple class used for generating URLs, which remembers
@@ -21,6 +22,14 @@ public class UrlUtils {
     public static final String PREFIX_CLANKY = "/clanky";
     public static final String PREFIX_NONE = "";
 
+    static List prefixes = null;
+    static {
+        prefixes = new ArrayList(3);
+        prefixes.add(PREFIX_HARDWARE);
+        prefixes.add(PREFIX_SOFTWARE);
+        prefixes.add(PREFIX_CLANKY);
+    }
+
     /** default prefix to URL */
     String prefix;
     HttpServletResponse response;
@@ -30,15 +39,7 @@ public class UrlUtils {
      * @param url Request URI
      */
     public UrlUtils(String url, HttpServletResponse response) {
-        if ( url.startsWith(PREFIX_HARDWARE) ) {
-            prefix = PREFIX_HARDWARE;
-        } else if ( url.startsWith(PREFIX_SOFTWARE) ) {
-            prefix = PREFIX_SOFTWARE;
-        } else if ( url.startsWith(PREFIX_CLANKY) ) {
-            prefix = PREFIX_CLANKY;
-        } else {
-            prefix = PREFIX_NONE;
-        }
+        this.prefix = getPrefix(url);
         this.response = response;
     }
 
@@ -51,7 +52,11 @@ public class UrlUtils {
     public String make(String url, String prefix) {
         String out = null;
         if ( prefix==null ) prefix = this.prefix;
-        out = (prefix!=null && !url.startsWith(prefix))? prefix+url : url;
+        if ( getPrefix(url)!=PREFIX_NONE ) {
+            out = url;
+        } else {
+            out = prefix+url;
+        }
         return response.encodeURL(out);
     }
 
@@ -79,7 +84,7 @@ public class UrlUtils {
      */
     public String constructRedirectURL(String url) {
         String out = url;
-        if ( prefix!=null && !url.startsWith(prefix) ) out = prefix+url;
+        if ( getPrefix(url)!=PREFIX_NONE ) out = prefix+url;
         return response.encodeRedirectURL(out);
     }
 
@@ -97,5 +102,17 @@ public class UrlUtils {
      */
     public String getPrefix() {
         return prefix;
+    }
+
+    /**
+     * Finds prefix used in presented url.
+     */
+    public static String getPrefix(String url) {
+        if ( url==null || url.length()==0 ) return PREFIX_NONE;
+        for (Iterator iter = prefixes.iterator(); iter.hasNext();) {
+            String prefix = (String) iter.next();
+            if ( url.startsWith(prefix) ) return prefix;
+        }
+        return PREFIX_NONE;
     }
 }
