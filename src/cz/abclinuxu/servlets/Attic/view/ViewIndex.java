@@ -49,7 +49,7 @@ public class ViewIndex extends AbcFMServlet {
         Category forum = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
         tools.sync(forum.getContent());
         List discussions = tools.analyzeDiscussions(forum.getContent());
-        Sorters2.byDate(discussions, "DESCENDING");
+        Sorters2.byDate(discussions, Sorters2.DESCENDING);
         int limit = Math.min(getUserLimit(user),discussions.size());
         Paging paging = new Paging(discussions.subList(0,limit),0,limit,discussions.size());
         env.put(ViewIndex.VAR_FORUM,paging);

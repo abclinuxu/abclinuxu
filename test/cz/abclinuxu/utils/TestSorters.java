@@ -53,7 +53,7 @@ public class TestSorters extends TestCase {
 
         List list = new ArrayList();
         list.add(fourth); list.add(first); list.add(third); list.add(second);
-        Sorters.sortByDate(list,true);
+        Sorters2.byDate(list,Sorters2.ASCENDING);
         assertEquals(first,list.get(0));
         assertEquals(second,list.get(1));
         assertEquals(third,list.get(2));
@@ -61,7 +61,7 @@ public class TestSorters extends TestCase {
 
         list.clear();
         list.add(fourth); list.add(first); list.add(third); list.add(second);
-        Sorters.sortByDate(list,false);
+        Sorters2.byDate(list, Sorters2.DESCENDING);
         assertEquals(first,list.get(3));
         assertEquals(second,list.get(2));
         assertEquals(third,list.get(1));
