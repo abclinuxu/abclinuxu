@@ -19,7 +19,7 @@ public class Job extends Thread {
     }
 
     public void run() {
-        if ( log.isDebugEnabled() ) log.debug("Starting task.");
+        if ( log.isDebugEnabled() ) log.debug("Starting task "+task.getJobName());
 
         try {
             task.runJob();
@@ -27,6 +27,6 @@ public class Job extends Thread {
             log.error("Task has thrown exception!",e);
         }
 
-        if ( log.isDebugEnabled() ) log.debug("Finishing task.");
+        if ( log.isDebugEnabled() ) log.debug("Finishing task "+task.getJobName());
     }
 }

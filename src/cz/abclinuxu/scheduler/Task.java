@@ -17,4 +17,9 @@ public interface Task {
      * When it is time to schedule this task, this method will be invoked.
      */
     public void runJob();
+
+    /**
+     * for logging
+     */
+    public String getJobName();
 }

@@ -34,7 +34,7 @@ public class Scheduler extends Thread {
                 JobItem item = (JobItem) jobs.get(i);
 
                 if ( item.next<now ) {
-                    item.next += item.increment;
+                    item.next = now+item.increment;
                     Job job = new Job(item.task);
                     job.start();
                     if ( next<item.next ) next = item.next;
@@ -88,11 +88,7 @@ public class Scheduler extends Thread {
         next.set(Calendar.HOUR,7);
         next.set(Calendar.MINUTE,30);
 
-        Calendar tmp = Calendar.getInstance();
-        tmp.setTime(now);
-        if ( next.before(tmp) ) next.add(Calendar.HOUR, 24);
-
-        addTask(new UpdateLinks(),12*60*60*1000,next.getTime().getTime()); // each 12 hours, starting at 7:30 AM
+        addTask(new UpdateLinks(),6*60*60*1000,next.getTime().getTime()); // each 6 hours, starting at 7:30 AM
     }
 
     class JobItem {

@@ -107,6 +107,10 @@ public class UpdateLinks implements Task {
         }
     }
 
+    public String getJobName() {
+        return "UpdateLinks";
+    }
+
     /**
      * Groups links by server. Each server will be key in map and value will be
      * list of links. Fixed links will be discarded.
