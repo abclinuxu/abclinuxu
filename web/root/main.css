@@ -102,9 +102,8 @@ P.slovnik { background-color: #EEEEEE }
 P.zpravicka { background-color: #EEEEEE }
 
 /* hodnoceni */
-P.rating { background-color: #EEEEEE; margin-top: 5px }
+P.rating { background-color: #EEEEEE; margin-top: 5px; padding: 2px; }
 IMG.star { border: 0; width: 16px; height: 16px; }
 IFRAME.rating { background-color: #EEEEEE; border: 0;}
 
-#hucek1 { width: 114; height: 329; }
-#hucek2 { border: 2px #FFF solid; width: 110; height: 310; }
+#hucek { border: 0px; width: 110; height: 300;  margin-top: 8px; }
