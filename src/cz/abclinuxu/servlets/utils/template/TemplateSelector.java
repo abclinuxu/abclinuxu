@@ -37,42 +37,21 @@ public class TemplateSelector {
 
     /** this variable holds name of template to be included */
     public static final String VAR_CONTENT = "CONTENT";
-    /** this variable holds type of browser, which is used by visitor */
-    public static final String VAR_BROWSER = "BROWSER";
-    /** this variable holds browser's operating system */
-    public static final String VAR_OS = "OS";
 
     /** lynx broswer */
     public static final String BROWSER_LYNX = "LYNX";
-    /** mozilla browser */
-    public static final String BROWSER_MOZILLA = "MOZILLA";
-    /** Internet Explorer browser */
-    public static final String BROWSER_EXPLORER = "EXPLORER";
-    /** forbidden mirroring tool like wget or Custo */
-    public static final String BROWSER_MIRROR = "MIRROR";
     /** plucker PDA browser */
     public static final String BROWSER_PLUCKER = "PLUCKER";
     /** other browser */
     public static final String BROWSER_UNKNOWN = "OTHER";
 
-    /** OS Linux */
-    public static final String OS_LINUX = "LINUX";
-    /** OS Windows */
-    public static final String OS_WINDOWS = "WINDOWS";
-    /** OS Unknown */
-    public static final String OS_UNKNOWN = "UNKNOWN";
-
     /** regular expressions to match UA */
-    static RE reLynx, reWget, rePlucker, reExplorer, reLinux, reWindows;
+    static RE reLynx, rePlucker;
 
     static {
         try {
             reLynx = new RE("(Lynx)",RE.MATCH_CASEINDEPENDENT);
             rePlucker = new RE("(Plucker)",RE.MATCH_CASEINDEPENDENT);
-            reWget = new RE("(wget)|(custo([^m]|($)))",RE.MATCH_CASEINDEPENDENT); // dont catch "custom"
-            reExplorer = new RE("(MSIE)");
-            reLinux = new RE("Linux");
-            reWindows = new RE("Windows");
         } catch (RESyntaxException e) {
             log.error("Wrong regexp!", e);
         }
@@ -178,7 +157,6 @@ public class TemplateSelector {
 
     /**
      * @return browser, that requests this page.
-     * todo regexp for mozilla - performance gain
      */
     static String findBrowser(HttpServletRequest request) {
         if ( request==null ) return BROWSER_UNKNOWN;
@@ -186,32 +164,13 @@ public class TemplateSelector {
         if ( browser==null )
             return BROWSER_UNKNOWN;
         try {
-            if ( reExplorer.match(browser) )
-                return BROWSER_EXPLORER;
             if ( reLynx.match(browser) )
                 return BROWSER_LYNX;
             if ( rePlucker.match(browser) )
                 return BROWSER_PLUCKER;
-            if ( reWget.match(browser) )
-                return BROWSER_MIRROR;
         } catch (Exception e) {
             log.warn("Error on parsing User Agent '"+browser+"' ! "+e.getMessage());
         }
         return BROWSER_UNKNOWN;
-    }
-
-    /**
-     * @return browser, that requests this page.
-     */
-    static String findOS(HttpServletRequest request) {
-        if ( request==null ) return OS_UNKNOWN;
-        String os = request.getHeader("user-agent");
-        if ( os==null )
-            return OS_UNKNOWN;
-        if ( reWindows.match(os) )
-            return OS_WINDOWS;
-        if ( reLinux.match(os) )
-            return OS_LINUX;
-        return OS_UNKNOWN;
     }
 }

@@ -5,7 +5,6 @@
  */
 package cz.abclinuxu.servlets.utils.template;
 
-import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.exceptions.NotFoundException;
 
@@ -32,16 +31,13 @@ public class FMTemplateSelector extends TemplateSelector {
      * @throws NotFoundException when such combination of servlet and action doesn't exist
      */
     public static String select(String servlet, String action, Map data, HttpServletRequest request) {
-        String browser = findBrowser(request);
-        if ( Misc.same(browser,BROWSER_MIRROR) )
-            return "/lynx/show/nomirror.ftl";
-
         ServletAction servletAction = (ServletAction) mappings.get(servlet + action);
         if ( servletAction==null ) {
             log.warn("Neexistuje ¹ablona pro kombinaci "+servlet +","+ action);
             throw new NotFoundException("Neexistuje ¹ablona pro kombinaci "+servlet +","+ action);
         }
 
+        String browser = findBrowser(request);
         String template = selectTemplate(servletAction,browser,request);
         String page = servletAction.getContent();
         storeVariables(data,servletAction.getVariables());
@@ -68,7 +64,7 @@ public class FMTemplateSelector extends TemplateSelector {
             log.warn("Neexistuje ¹ablona pro kombinaci "+servlet+","+action);
             throw new NotFoundException("Neexistuje ¹ablona pro kombinaci "+servlet +","+ action);
         }
-        
+
         String page = servletAction.getContent();
         storeVariables(data,servletAction.getVariables());
 
@@ -86,9 +82,6 @@ public class FMTemplateSelector extends TemplateSelector {
      */
     public static String select(String page, Map data, HttpServletRequest request) {
         String browser = findBrowser(request);
-        if ( Misc.same(browser, BROWSER_MIRROR) )
-            return "/lynx/show/nomirror.ftl";
-
         String template = selectTemplate(null, browser, request);
 
         StringBuffer sb = new StringBuffer("/");
