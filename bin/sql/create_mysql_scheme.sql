@@ -165,6 +165,7 @@ CREATE TABLE pravo (
  admin CHAR(1)                             -- logicka, NULL pro FALSE
 );
 
+-- seznam poslednich komentaru, ktere si uzivatel precetl
 CREATE TABLE komentar (
  kdo INT(5) NOT NULL,                            -- cislo uzivatele
  diskuse INT(6) NOT NULL,                        -- cislo polozky
@@ -172,3 +173,12 @@ CREATE TABLE komentar (
  kdy TIMESTAMP                                   -- cas pridani
 );
 ALTER TABLE komentar ADD PRIMARY KEY komentar_pk (kdo,diskuse);
+
+CREATE TABLE akce (
+ kdo INT(5) NOT NULL,                            -- cislo uzivatele
+ relace INT,                                     -- cislo relace
+ typ VARCHAR(20),                                -- identifikator akce
+ kdy TIMESTAMP                                   -- cas pridani
+);
+
+ALTER TABLE akce ADD INDEX akce_index (kdo,relace);

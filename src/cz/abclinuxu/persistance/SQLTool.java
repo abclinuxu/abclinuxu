@@ -58,6 +58,8 @@ public final class SQLTool implements Configurable {
     public static final String PREF_GET_LAST_COMMENT = "get.last.comment";
     public static final String PREF_GET_OLD_COMMENT = "get.xth.comment.date";
     public static final String PREF_DELETE_OLD_COMMENTS = "delete.old.comments";
+    public static final String PREF_INSERT_USER_ACTION = "insert.user.action";
+    public static final String PREF_GET_USER_ACTION = "get.user.action";
 
     private static SQLTool singleton;
 
@@ -79,6 +81,7 @@ public final class SQLTool implements Configurable {
     private String itemsByType;
     private String countArticlesByUser;
     private String insertLastComment, getLastComment, getXthComment, deleteOldComments;
+    private String insertUserAction, getUserAction;
 
 
     /**
@@ -184,6 +187,39 @@ public final class SQLTool implements Configurable {
 
             i = resultSet.getInt(1);
             return new Integer(i);
+        } catch (SQLException e) {
+            throw new PersistanceException("Nemohu vykonat SQL pøíkaz "+sql, e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
+     * Gets date from database using given SQL command. If list params is not
+     * empty, PreparedStatement is created and fed up from params.
+     * @param sql Command to execute.
+     * @param params List of parameters. It must not be null.
+     * @return date or null.
+     * @throws PersistanceException if something goes wrong.
+     */
+    private Date loadDate(String sql, List params) throws PersistanceException {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(sql);
+            int i = 1;
+            for ( Iterator iter = params.iterator(); iter.hasNext(); )
+                statement.setObject(i++, iter.next());
+
+            resultSet = statement.executeQuery();
+            if (!resultSet.next())
+                return null;
+
+            Date date = resultSet.getTimestamp(1);
+            return new Date(date.getTime());
         } catch (SQLException e) {
             throw new PersistanceException("Nemohu vykonat SQL pøíkaz "+sql, e);
         } finally {
@@ -1042,6 +1078,46 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Inserts information about what user has performed on selected relation.
+     * The purpose is to be able to limit multiple actions.
+     * @param userId id of the user
+     * @param rid  id of the relation where the user performed the action
+     * @param type optional type of the user action on given relation
+     */
+    public void insertUserAction(int userId, int rid, String type) {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null;
+        PreparedStatement statement = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(insertUserAction);
+            statement.setInt(1, userId);
+            statement.setInt(2, rid);
+            statement.setString(3, type);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri ukladani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, null);
+        }
+    }
+
+    /**
+     * Retrieves information when user performed specified action on selected relation.
+     * The purpose is to be able to limit multiple actions.
+     * @param userId id of the user
+     * @param rid  id of the relation where the user performed the action
+     * @param type optional type of the user action on given relation
+     */
+    public Date getUserAction(int userId, int rid, String type) {
+        List params = new ArrayList();
+        params.add(new Integer(userId));
+        params.add(new Integer(rid));
+        params.add(type);
+        return loadDate(getUserAction, params);
+    }
+
+    /**
      * Private constructor
      */
     private SQLTool() {
@@ -1080,6 +1156,8 @@ public final class SQLTool implements Configurable {
         getLastComment = getValue(PREF_GET_LAST_COMMENT, prefs);
         getXthComment = getValue(PREF_GET_OLD_COMMENT, prefs);
         deleteOldComments = getValue(PREF_DELETE_OLD_COMMENTS, prefs);
+        insertUserAction = getValue(PREF_INSERT_USER_ACTION, prefs);
+        getUserAction = getValue(PREF_GET_USER_ACTION, prefs);
     }
 
     /**

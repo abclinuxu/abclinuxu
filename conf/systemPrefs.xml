@@ -227,6 +227,8 @@
               <entry key="delete.old.comments" value="delete from komentar where kdo=? and kdy&lt;=?" />
               <entry key="items.with.type" value="select cislo from polozka where typ=?"/>
               <entry key="count.articles.by.user" value="select count(*) from polozka where typ=2 and data like concat('%&lt;author&gt;',?,'&lt;/author%') and vytvoreno&lt;now()"/>
+              <entry key="insert.user.action" value="insert into akce values(?,?,?,NULL)" />
+              <entry key="get.user.action" value="select kdy from akce where kdo=? and relace=? and typ=?" /> 
             </map>
           </node>
         </node>
