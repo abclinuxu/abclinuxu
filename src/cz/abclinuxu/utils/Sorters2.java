@@ -88,7 +88,7 @@ public class Sorters2 {
         public int compare(Object o1, Object o2) {
             String s1 = getValue((Relation) o1,"data/name");
             String s2 = getValue((Relation) o2,"data/name");
-            return s1.compareTo(s2);
+            return s1.compareToIgnoreCase(s2);
         }
         /**
          * Extracts value of relation.
