@@ -84,6 +84,10 @@ public class GenericObject {
     public void synchronizeWith(GenericObject obj) {
         id = obj.getId();
         content = obj.getContent();
+        content = new ArrayList(obj.getContent().size()+2);
+        for (Iterator iter = obj.getContent().iterator(); iter.hasNext();) {
+            content.add(iter.next());
+        }
         initialized = obj.isInitialized();
     };
 
