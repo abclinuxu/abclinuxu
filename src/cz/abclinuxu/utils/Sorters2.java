@@ -16,10 +16,10 @@ import java.util.Date;
 /**
  * This class provides several methods for sorting relations
  * based on some criteria and order. Refactoring of Sorters.
- *
- * todo write unit tests
  */
 public class Sorters2 {
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Sorters2.class);
+
     /** ascending order */
     public static final String ASCENDING = "ASCENDING";
     /** descending order */
@@ -133,7 +133,9 @@ public class Sorters2 {
             }
             if ( obj instanceof Poll )
                 return ((Poll)obj).getCreated();
-            return null;
+
+            log.warn("Don't know how to handle "+obj);
+            return new Date(0);
         }
     }
 

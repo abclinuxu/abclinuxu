@@ -1,17 +1,16 @@
 <#include "/include/macros.ftl">
 <#include "../header.ftl">
+
 <#include "/include/zprava.txt">
 <#call showMessages>
 
-<#global articleCount=8>
-<#list TOOL.sublist(VARS.newArticles,0,articleCount) as rel>
+<#list ARTICLES as rel>
  <#call showArticle(rel)>
  <#if rel_has_next><#call separator><#else><#call doubleSeparator></#if>
 </#list>
 
 <p>
- <a href="/History?type=articles&from=${articleCount-1}&count=5">
- Star¹í èlánky</a>
+ <a href="/History?type=articles&from=${ARTICLES?size}&count=10" title="Dal¹í">Star¹í èlánky</a>
 </p>
 
 <#flush>
@@ -29,7 +28,7 @@
  <b>Ovladaèe</b><br>
  <#list VARS.newDrivers as rel>
   <a href="/drivers/ViewRelation?relationId=${rel.id}">
-  ${TOOL.xpath(rel.child,"data/name")}</a><#if rel_has_next>,</#if>  
+  ${TOOL.xpath(rel.child,"data/name")}</a><#if rel_has_next>,</#if>
  </#list>
  <a href="/drivers/ViewCategory?relationId=318">&gt;&gt;</a>
 </p>
@@ -71,7 +70,7 @@
  <#global diskuse=TOOL.sublist(SORT.byDate(TOOL.analyzeDiscussions(FORUM.content),"DESCENDING"),0,15)>
  <b>Diskusní fórum:</b> výbìr ${diskuse?size} aktivních diskusí ze ${FORUM.content?size}<br>
  <#list diskuse as diz>
-  ${DATE.show(diz.lastUpdate,"CZ_SHORT")}, ${diz.responseCount} odp. : 
+  ${DATE.show(diz.lastUpdate,"CZ_SHORT")}, ${diz.responseCount} odp. :
    <a href="/hardware/ViewRelation?relationId=${diz.relationId}">
    ${TOOL.limit(TOOL.xpath(diz.discussion,"data/title"),60," ..")}</a><br>
  </#list>

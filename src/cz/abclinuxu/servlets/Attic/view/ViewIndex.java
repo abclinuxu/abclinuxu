@@ -31,6 +31,7 @@ public class ViewIndex extends AbcFMServlet {
     public static final String VAR_HARDWARE = "HARDWARE";
     public static final String VAR_SOFTWARE = "SOFTWARE";
     public static final String VAR_FORUM = "FORUM";
+    public static final String VAR_ARTICLES = "ARTICLES";
 
     /**
      * Evaluate the request.
@@ -39,6 +40,11 @@ public class ViewIndex extends AbcFMServlet {
         Persistance persistance = PersistanceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
         Tools tools = new Tools();
+
+        Category currentArticles = (Category) persistance.findById(new Category(Constants.CAT_ACTUAL_ARTICLES));
+        tools.sync(currentArticles.getContent());
+        List articles = Sorters2.byDate(currentArticles.getContent(), Sorters2.DESCENDING);
+        env.put(ViewIndex.VAR_ARTICLES,articles);
 
         Category hw = (Category) persistance.findById(new Category(Constants.CAT_386));
         env.put(ViewIndex.VAR_HARDWARE,hw.getContent());

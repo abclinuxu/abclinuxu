@@ -76,7 +76,7 @@ public class GenerateLinks extends TimerTask implements Configurable {
             Tools tools = new Tools();
             Category actual = (Category) persistance.findById(new Category(Constants.CAT_ACTUAL_ARTICLES));
             tools.sync(actual.getContent());
-            List list = Sorters2.byDate(actual.getContent(),"DESCENDING");
+            List list = Sorters2.byDate(actual.getContent(), Sorters2.DESCENDING);
 
             for (int j = 0; j < generators.length; j++)
                 generators[j].generateHeader();

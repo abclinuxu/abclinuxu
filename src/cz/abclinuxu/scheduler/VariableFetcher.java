@@ -122,7 +122,7 @@ public class VariableFetcher extends TimerTask {
             newHardware = sqlTool.findRecordRelationsByUpdated(Record.HARDWARE, 0,SIZE);
             newSoftware = sqlTool.findRecordRelationsByUpdated(Record.SOFTWARE, 0,SIZE);
             newDrivers = sqlTool.findItemRelationsByUpdated(Item.DRIVER, 0,SIZE);
-            newArticles = sqlTool.findArticleRelationsByCreated(0,ARTICLE_SIZE);
+//            newArticles = sqlTool.findArticleRelationsByCreated(0,ARTICLE_SIZE);
             updateProfiles(persistance);
 
             log.debug("finished fetching variables");
