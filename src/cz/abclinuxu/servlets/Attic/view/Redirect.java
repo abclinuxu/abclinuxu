@@ -28,7 +28,7 @@ public class Redirect extends HttpServlet {
         Link link = findLink(linkId);
         String url = link.getUrl();
 
-        logRedirect.info(linkId+" | "+ip);
+        logRedirect.info(linkId);
         response.sendRedirect(response.encodeRedirectURL(url));
     }
 
