@@ -12,13 +12,17 @@ problémy</a>.</p>
 <ol>
 <li>Nìkolika slovy popi¹te svùj problém.
 <li>Nepou¾ívejte slova jako help, pomoc èi zaèáteèník.
-<li>NEPI©TE VELKÝMI PÍSMENY, je to neslu¹né (jako byste køièeli).
-<li>Nepou¾ívejte vykøièníky.
+<li>NEPI©TE VELKÝMI PÍSMENY, nepou¾ívejte vykøièníky.
 <li>Nepokládejte více nesouvisejících dotazù.
 </ol>
 
 <p>Administrátoøi mohou ¹patnì formulovaný titulek
-opravit!</p>
+opravit.</p>
+
+<p>Pro u¾ivatele windows: jsme portál o Linuxu, tak¾e
+dotazy na nefunkènost Windows sem opravdu nepatøí,
+leda by zde byla jasná souvislost problému s Linuxem (napøíklad
+samba).</p>
 
 <h1 class="st_nadpis">Jak popsat problém</h1>
 
@@ -28,7 +32,7 @@ knihoven. Napi¹te také vá¹ postup, který nevede k cíli.
 </p>
 
 <p>Èasto je dobré vlo¾it ukázku konfiguraèního souboru, výpis
-dmesg èi lspci. Nicménì buïte opatrní a vkládejte jen skuteènì
+dmesg èi lspci. Nicménì vkládejte jen skuteènì
 zajímavé èásti související s problémem, maximálnì deset a¾
 patnáct øádek. Vìt¹í soubory umístìte nìkam na internet
 a do diskuse vlo¾te jen URL. Pokud toto pravidlo nebudete
