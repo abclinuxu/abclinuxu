@@ -25,7 +25,7 @@
         <ul>
         <#list year.month as month>
             <li>
-                <a href="/blog/${BLOG.subType}/${year.@value}"><@lib.month month=month.@value/>${year.@value} (${month})</a>
+                <a href="/blog/${BLOG.subType}/${year.@value}/${month.@value}/"><@lib.month month=month.@value/>${year.@value} (${month})</a>
             </li>
         </#list>
         </ul>
