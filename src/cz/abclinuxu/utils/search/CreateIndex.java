@@ -463,11 +463,17 @@ public class CreateIndex implements Configurable {
         String title;
 
         Element data = (Element) news.getData().selectSingleNode("data");
-        Node node = data.selectSingleNode("content");
-        String content = node.getText();
+        String content = data.selectSingleNode("content").getText();
         sb.append(content);
         sb.append(" ");
-        title = Tools.limit(Tools.removeTags(content),50," ..");
+
+        String tmp = Tools.removeTags(content);
+        title = Tools.limit(tmp,50," ..");
+
+        Node node = data.selectSingleNode("category");
+        String category = null;
+        if (node!=null)
+            category = node.getText();
 
         for ( Iterator iter = news.getContent().iterator(); iter.hasNext(); ) {
             Relation child = (Relation) iter.next();
@@ -487,6 +493,8 @@ public class CreateIndex implements Configurable {
         MyDocument doc = new MyDocument(Tools.removeTags(sb.toString()));
         doc.setTitle(title);
         doc.setType(MyDocument.TYPE_NEWS);
+        if (category!=null)
+            doc.setNewsCategory(category);
         return doc;
     }
 
