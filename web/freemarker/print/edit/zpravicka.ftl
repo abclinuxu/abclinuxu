@@ -23,7 +23,7 @@ Pokud u¾ivatel zvolil nevhodnou kategorii, vyberte jinou.</p>
 
 <#call showNews(RELATION)>
 
-<form action="${URL.make("/EditItem")}" method="POST">
+<form action="${URL.make("/edit")}" method="POST">
  <table cellpadding="5" border="0">
   <tr>
    <td class="required">Obsah zprávièky</td>
