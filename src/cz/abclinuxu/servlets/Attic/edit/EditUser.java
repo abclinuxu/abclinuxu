@@ -18,6 +18,7 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.servlets.utils.*;
+import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;

@@ -34,11 +34,16 @@ TD.cerna2 { background-image: url(/images/site/oblouk2.gif); background-repeat: 
 TD.cerna3 { background-image: url(/images/site/oblouk3.gif); background-repeat: no-repeat; background-color: BLACK; color: WHITE; font-family: Verdana,Helvetica; font-size:10pt }
 TD.barva1 { background-image: url(/images/site/bgprechod.gif); background-repeat: repeat-x; background-color: #3A5E75; color: WHITE }
 TD.barva2 { background-image: url(/images/site/bod.gif); background-color: #5F8EAC; color: WHITE; padding: 2 2 3 8 }
-TD.seda { background-repeat: no-repeat; background-color: #EEEEEE; color: BLACK }
+.seda { background-repeat: no-repeat; background-color: #EEEEEE; color: BLACK }
 TD.banner { background-repeat: no-repeat; background-color: #EEEEEE; color: BLACK }
+IMG.puntik { padding: 2px 2px 2px 6px; width: 6px; height: 8px; }
+IMG.puntik2 { padding-top: 2px; width: 6px; height: 8px; }
+IMG.graf { padding: 2px 4px; border: 0; height: 3px; }
+IMG.sipka { border: 0; width: 11px; height: 7px; }
+IMG.ikona { border: 0; width: 32px; height: 32px;}
 
 /* index */
-DIV.perex_out { padding: 0ex 0ex;  }
+P.perex_out { padding: 0ex 0ex;  }
 A.nadpis_out { color:BLACK; font-family:Helvetica,Arial; font-size:14pt; font-weight:bold }
 A.nadpis_out:hover { color:#003355 }
 TD.jadro_h { font-weight: bold; font-family: Lucida,Verdana,Helvetica; font-size: 10pt}
@@ -49,8 +54,8 @@ H1.nadpis { color:BLACK; font-family:Helvetica,Arial; font-size:18pt; font-weigh
 H1,DIV.sub1 { color: BLACK; font-family: Lucida, Helvetica; font-size:14pt; font-weight: BOLD; padding: 0ex 0em }
 H2,DIV.sub2 { color: BLACK; font-family: Lucida, Helvetica; font-size:13pt; font-weight: BOLD; padding: 0ex 0em }
 .perex { border-width: 1 0; border-color: black; border-style: solid; background-color: #EEEEEE; padding: 1ex; }
+.barva { color: #225577; font-family: Lucida,Verdana,Helvetica; }
 DIV.linky { padding: 0 1ex; }
-DIV.barva { color: #225577; font-family: Lucida,Verdana,Helvetica; }
 
 /* kernel traffic */
 DIV.paticka,DIV.kt_paticka { font-style: italic; padding-top: 1ex; }

@@ -6,7 +6,7 @@
 package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.AbcVelocityServlet;
-import cz.abclinuxu.servlets.utils.VelocityTemplateSelector;
+import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.persistance.Persistance;

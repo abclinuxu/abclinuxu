@@ -10,6 +10,7 @@ package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.utils.*;
+import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
 import cz.abclinuxu.servlets.view.SelectIcon;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.User;

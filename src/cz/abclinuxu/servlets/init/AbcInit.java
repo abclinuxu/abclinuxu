@@ -18,7 +18,7 @@ import org.apache.velocity.app.Velocity;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.scheduler.*;
-import cz.abclinuxu.servlets.utils.VelocityTemplateSelector;
+import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.utils.Tools;
 import cz.abclinuxu.servlets.view.Search;

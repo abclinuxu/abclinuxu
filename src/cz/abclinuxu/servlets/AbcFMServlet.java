@@ -52,11 +52,10 @@ public abstract class AbcFMServlet extends HttpServlet {
             if ( Misc.empty(templateName) )
                 return;
 
-            SimpleHash root = new SimpleHash(data,new BeansWrapper());
             Template template = config.getTemplate(templateName);
             response.setContentType("text/html; charset=ISO-8859-2");
             Writer writer = response.getWriter();
-            template.process(root,writer);
+            template.process(data,writer);
             writer.flush();
         } catch (Exception e) {
             error(request,response,e);

@@ -3,7 +3,8 @@
 <!ATTLIST servlet name CDATA #REQUIRED>
 <!ELEMENT action (mapping+)>
 <!ATTLIST action name CDATA #REQUIRED>
+<!ATTLIST action template CDATA #OPTIONAL> <!-- overrides template selection -->
 <!ELEMENT mapping (#EMPTY)>
-<!ATTLIST mapping variant CDATA #REQUIRED   <!-- variant holds name of presentation variant -->
-                  template CDATA #REQUIRED> <!-- template holds template name -->
+<!ATTLIST mapping content CDATA #REQUIRED   <!-- name of page to be processed -->
+                  template CDATA #REQUIRED> <!-- name of template to be served -->
 

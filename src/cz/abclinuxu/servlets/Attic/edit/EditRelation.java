@@ -9,7 +9,7 @@ package cz.abclinuxu.servlets.edit;
 import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.servlets.utils.VelocityTemplateSelector;
+import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
 import cz.abclinuxu.servlets.view.SelectRelation;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
