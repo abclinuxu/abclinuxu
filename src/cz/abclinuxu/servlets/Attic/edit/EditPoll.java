@@ -49,6 +49,7 @@ public class EditPoll extends AbcServlet {
     public static final String PARAM_COUNTS = "counts";
     public static final String PARAM_URL = "url";
     public static final String PARAM_VOTE_ID = "voteId";
+    public static final String PARAM_FROM = "from";
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
@@ -180,7 +181,15 @@ public class EditPoll extends AbcServlet {
         Relation relation = new Relation(upperRelation.getChild(),poll,upperRelation.getId());
         PersistanceFactory.getPersistance().create(relation);
 
-        redirect("/ViewRelation?relationId="+upperRelation.getId(),response,ctx);
+        StringBuffer sb = new StringBuffer("/ViewRelation?relationId=");
+        sb.append(upperRelation.getId());
+        tmp = request.getParameter(EditPoll.PARAM_FROM);
+        if ( tmp!=null ) {
+            sb.append("&from=");
+            sb.append(tmp);
+        }
+
+        redirect(sb.toString(),response,ctx);
         return null;
     }
 

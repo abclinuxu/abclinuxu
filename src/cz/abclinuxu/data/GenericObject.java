@@ -22,13 +22,13 @@ public class GenericObject {
 
     public GenericObject() {
         id = 0;
-        content = new ArrayList(3);
+        content = new ArrayList(5);
         initialized = false;
     }
 
     public GenericObject(int id) {
         this.id = id;
-        content = new ArrayList(3);
+        content = new ArrayList(5);
         initialized = false;
     }
 

@@ -28,7 +28,7 @@ import java.text.DateFormat;
  */
 public class VelocityHelper {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(VelocityHelper.class);
-    static DateFormat dateFormat = DateFormat.getDateTimeInstance();
+    static DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.FULL,DateFormat.SHORT);
 
     /**
      * Get name of this child in this relation context. Default name

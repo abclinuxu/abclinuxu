@@ -56,8 +56,8 @@ public class Cache {
             } else {
                 GenericObject key = (GenericObject) obj.getClass().newInstance();
                 key.synchronizeWith(obj);
-
                 key.clearContent();
+
                 for (Iterator iter = obj.getContent().iterator(); iter.hasNext();) {
                     Relation relation = cloneRelation((Relation)iter.next());
                     key.addContent(relation);
@@ -96,9 +96,10 @@ public class Cache {
 
                 return relation;
             } else {
-                GenericObject result = found.object;
-//                if ( log.isDebugEnabled() ) { log.debug("Loaded "+result); }
-                return result;
+                GenericObject stored = found.object;
+                GenericObject clone = (GenericObject) stored.getClass().newInstance();
+                clone.synchronizeWith(stored);
+                return clone;
             }
         } catch (Exception e) {
             log.error("Cannot get "+obj+" from cache!",e);

@@ -33,3 +33,92 @@
 #if($!ERRORS.get('generic'))<div class="error">$ERRORS.get('generic')</div>#set($found=true)#end
 #if($found)<br>#end
 #end
+
+
+
+#####
+## Macro, that displays closed poll
+#####
+
+#macro(showClosedPoll $poll $displayCreated)
+##
+#set ($total = $poll.TotalVotes)
+<table border="0" cellpadding="3">
+<tr><td colspan=3 class="hlavicka_ankety">$!poll.Text</td></tr>
+#####################################
+#foreach ($choice in $poll.Choices)## Iterates over choices in poll
+#####################################
+#set($procento=$UTIL.percent($choice.Count,$total))
+##
+<tr><td class="volby_ankety">$choice.Text</td>
+<td><img src="/images/site/poll.gif" height=11 width=$procento alt="$!UTIL.percentBar($procento)"></td>
+<td class="volby_ankety">${procento}% ($choice.Count)</td></tr>
+######
+#end## end of iteration over poll choices
+######
+<tr><td colspan=2 class="vysledek_ankety">Celkem $total hlasù</td>
+<td>
+##
+#if($USER.Id==1)
+<a href="$!URL.make("/EditPoll?relationId=$RELATION.Id&pollId=$poll.Id&action=edit")">
+<img src="/images/actions/pencil.png" alt="" border=0></a>
+#end
+##
+</td></tr>
+##
+#if ($displayCreated)
+<tr><td colspan=3>Vytvoøeno: $!UTIL.showDate($poll.Created)</td></tr>
+#end
+##
+</table>
+##
+#end
+
+
+
+#####
+## Macro, that displays open poll
+#####
+
+#macro (showOpenPoll $poll $url)
+#set ($total = $poll.TotalVotes)
+<form action="$!URL.make('/EditPoll')" method="POST">
+<table border="0" cellpadding="3">
+<tr><td colspan=3 class="hlavicka_ankety">$!poll.Text</td></tr>
+#####################################
+#foreach ($choice in $poll.Choices)## Iterates choices in poll
+#####################################
+#set($procento=$UTIL.percent($choice.Count,$total))
+##
+<tr><td class="volby_ankety">
+#if ( $poll.isMultiChoice() )
+<input type="checkbox" name="voteId" value="$!choice.Id" #if($velocityCount==1) checked #end>
+#else
+<input type="radio" name="voteId" value="$!choice.Id" #if($velocityCount==1) checked #end>
+#end
+$choice.Text</td>
+<td><img src="/images/site/poll.gif" height=11 width=$procento alt="$!UTIL.percentBar($procento)"></td>
+<td class="volby_ankety">${procento}% ($choice.Count)</td></tr>
+######
+#end## end of iteration over poll choices
+######
+<tr><td colspan=2 class="vysledek_ankety">Celkem $total hlasù</td>
+<td>
+##
+#if($USER.Id==1)
+<a href="$!URL.make("/EditPoll?relationId=$RELATION.Id&pollId=$poll.Id&action=edit")">
+<img src="/images/actions/pencil.png" alt="" border=0></a>
+#end
+##
+</td></tr>
+<tr><td colspan=2><input type="submit" value="Hlasuj"></td></tr>
+</table>
+##
+$!UTIL.saveParams($PARAMS, [])
+<input type="hidden" name="pollId" value="$!poll.Id">
+<input type="hidden" name="url" value="$url">
+<input type="hidden" name="action" value="vote">
+</form>
+#end
+
+
