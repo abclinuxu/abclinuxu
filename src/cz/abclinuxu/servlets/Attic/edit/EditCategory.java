@@ -58,6 +58,8 @@ public class EditCategory extends AbcServlet {
 
 
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+        validateUserSession(request,response,ctx);
+
         String action = request.getParameter(AbcServlet.PARAM_ACTION);
         if ( action==null || action.equals(EditCategory.ACTION_ADD) ) {
             // check rights

@@ -43,16 +43,16 @@ import java.util.HashMap;
  * <dl>
  * <dt><code>VAR_PREFIX</code></dt>
  * <dd>Specifies prefix of URL (/hardware,/software,/clanky). It distinguishes context.</dd>
- * <dt><code>USER</code></dt>
+ * <dt><code>VAR_USER</code></dt>
  * <dd>instance of User, if any.</dd>
- * <dt><code>ERRORS</code></dt>
+ * <dt><code>VAR_ERRORS</code></dt>
  * <dd>Map of error messages. For form validation, use field name as key.</dd>
- * <dt><code>MESSAGES</code></dt>
+ * <dt><code>VAR_MESSAGES</code></dt>
  * <dd>List of informational messages.</dd>
  * </dl>
  * <u>Parameters used by AbcServlet's descendants</u>
  * <dl>
- * <dt><code>ACTION</code></dt>
+ * <dt><code>PARAM_ACTION</code></dt>
  * <dd>Contains shorthand of method to be executed. E.g. STEP1 for doStep1 or FINISH for doFinish.</dd>
  * </dl>
  */
@@ -199,7 +199,7 @@ public class AbcServlet extends VelocityServlet {
      */
     protected void addErrorMessage(String key, String errorMessage, Context context) {
         Map errors = (Map) context.get(VAR_ERRORS);
-        if ( errors==null ) errors = new HashMap(4);
+        if ( errors==null ) errors = new HashMap(5);
         errors.put(key,errorMessage);
     }
 
@@ -208,7 +208,7 @@ public class AbcServlet extends VelocityServlet {
      */
     protected void addMessage(String message, Context context) {
         List errors = (List) context.get(VAR_MESSAGES);
-        if ( errors==null ) errors = new ArrayList(3);
+        if ( errors==null ) errors = new ArrayList(5);
         errors.add(message);
     }
 
