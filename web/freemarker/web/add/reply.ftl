@@ -16,8 +16,10 @@
 </#if>
 
 <#if THREAD?exists>
- <h1>Pøíspìvek na který reagujete</h1>
- <@lib.showComment THREAD, 0, 0, false />
+ <#if ! PREVIEW?exists>
+     <h1>Pøíspìvek na který reagujete</h1>
+     <@lib.showComment THREAD, 0, 0, false />
+ </#if>
 
  <script language="javascript1.2" type="text/javascript">
     original = "${TOOL.xpath(THREAD.data,"text")?js_string}";
@@ -35,7 +37,7 @@
  </div>
 </#if>
 
-<h1>Zde mù¾ete provést své úpravy</h1>
+<h1>Vá¹ komentáø</h1>
 
 <form action="${URL.make("/EditDiscussion")}" method="POST" name="replyForm">
   <#if ! USER?exists>
@@ -64,11 +66,11 @@
   <p>
     <span class="required">Vá¹ komentáø</span>
     <div class="form-edit">
-        <a href="javascript:insertAtCursor(document.replyForm.text, '<b></b>');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
-        <a href="javascript:insertAtCursor(document.replyForm.text, '<i></i>');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
-        <a href="javascript:insertAtCursor(document.replyForm.text, '<a href=&quot;&quot;></a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
-        <a href="javascript:insertAtCursor(document.replyForm.text, '<p></p>');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
-        <a href="javascript:insertAtCursor(document.replyForm.text, '<pre></pre>');" id="mono" title="Vlo¾it znaèku formátovaného textu. Vhodné pro konfiguraèní soubory èi výpisy.">&lt;pre&gt;</a>
+        <a href="javascript:insertAtCursor(document.replyForm.text, '<b>', '</b>');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
+        <a href="javascript:insertAtCursor(document.replyForm.text, '<i>', '</i>');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
+        <a href="javascript:insertAtCursor(document.replyForm.text, '<a href=&quot;&quot;>', '</a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
+        <a href="javascript:insertAtCursor(document.replyForm.text, '<p>', '</p>');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
+        <a href="javascript:insertAtCursor(document.replyForm.text, '<pre>', '</pre>');" id="mono" title="Vlo¾it znaèku formátovaného textu. Vhodné pro konfiguraèní soubory èi výpisy.">&lt;pre&gt;</a>
         <#if THREAD?exists>
             <a href="javascript:cituj(document.replyForm.text);" id="mono" title="Vlo¾í komentovaný pøíspìvek jako citaci">Citace</a>
         </#if>
