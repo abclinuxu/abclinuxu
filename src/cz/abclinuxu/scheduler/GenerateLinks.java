@@ -83,9 +83,7 @@ public class GenerateLinks extends TimerTask implements Configurable {
             Tools tools = new Tools();
             String url,title,desc,content;
             Record record = null;
-
-            for ( int j = 0; j<generators.length; j++ )
-                generators[j].generateHeader();
+            List links = new ArrayList(15);
 
             Category actual = (Category) persistance.findById(new Category(Constants.CAT_ACTUAL_ARTICLES));
             List children = actual.getChildren();
@@ -98,13 +96,11 @@ public class GenerateLinks extends TimerTask implements Configurable {
                 url = "http://www.abclinuxu.cz/clanky/show/"+relation.getId();
                 title = tools.xpath(item,"data/name");
                 desc = removeNewLines(tools.xpath(item,"data/perex"));
-
+                desc = tools.encodeSpecial(desc);
                 record = (Record) InstanceUtils.findFirstChildRecordOfType(item,Record.ARTICLE).getChild();
                 content = tools.encodeSpecial(tools.xpath(record,"data/content"));
 
-                for (int j = 0; j < generators.length; j++) {
-                    generators[j].generateLink(title, url, desc, content);
-                }
+                links.add(new Link(title, url, desc, content));
             }
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED,Qualifier.ORDER_DESCENDING, new LimitQualifier(0,3)};
@@ -116,10 +112,7 @@ public class GenerateLinks extends TimerTask implements Configurable {
 
                 url = "http://www.abclinuxu.cz/hardware/show/"+found.getId();
                 title = "H "+tools.xpath(item,"data/name");
-
-                for (int j = 0; j < generators.length; j++) {
-                    generators[j].generateLink(title, url, "", null);
-                }
+                links.add(new Link(title, url, "", null));
             }
 
             qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, 1)};
@@ -131,18 +124,14 @@ public class GenerateLinks extends TimerTask implements Configurable {
 
                 url = "http://www.abclinuxu.cz/drivers/show/"+found.getId();
                 title = "O "+tools.xpath(item,"data/name");
-
-                for (int j = 0; j < generators.length; j++) {
-                    generators[j].generateLink(title, url, "", null);
-                }
+                links.add(new Link(title, url, "", null));
             }
 
             for (int j = 0; j < generators.length; j++)
-                generators[j].generateBottom();
+                generators[j].generate(links);
 
             // generate RSS feed for discussion forum
-
-            forumGenerator.generateHeader();
+            links.clear();
 
             qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, 20)};
             list = SQLTool.getInstance().findDiscussionRelations(qualifiers);
@@ -157,13 +146,24 @@ public class GenerateLinks extends TimerTask implements Configurable {
                 desc = tools.xpath(discussion.getDiscussion(), "data/text");
                 desc = tools.removeTags(desc);
                 desc = tools.encodeSpecial(desc);
-                forumGenerator.generateLink(title,url,desc,null);
+                links.add(new Link(title,url,desc,null));
             }
 
-            forumGenerator.generateBottom();
+            forumGenerator.generate(links);
 
         } catch (Exception e) {
             log.error("Cannot generate links",e);
+        }
+    }
+
+    private static class Link {
+        String title, url, desc, content;
+
+        public Link(String title, String url, String desc, String content) {
+            this.title = title;
+            this.url = url;
+            this.desc = desc;
+            this.content = content;
         }
     }
 
@@ -187,19 +187,15 @@ public class GenerateLinks extends TimerTask implements Configurable {
     /**
      * For event based generation of files with links.
      */
-    interface LinksGenerator {
-        /** called at start */
-        public void generateHeader() throws IOException;
-        /** called at end */
-        public void generateBottom() throws IOException;
-        /** called for each article */
-        public void generateLink(String title, String url, String desc, String content) throws IOException;
+    private interface LinksGenerator {
+        /** generates content of the feed */
+        public void generate(List links) throws IOException;
     }
 
     /**
      * classical trafika format
      */
-    class Trafika implements LinksGenerator {
+    private static class Trafika implements LinksGenerator {
         FileWriter writer = null;
         String path;
 
@@ -207,26 +203,25 @@ public class GenerateLinks extends TimerTask implements Configurable {
             this.path = path;
         }
 
-        public void generateHeader() throws IOException {
+        public void generate(List links) throws IOException {
             String file = AbcConfig.calculateDeployedPath(path);
             writer = new FileWriter(file);
             writer.write(Constants.isoFormat.format(new Date()));
             writer.write('\n');
-        }
 
-        public void generateBottom() throws IOException {
+            for ( Iterator iter = links.iterator(); iter.hasNext(); ) {
+                Link link = (Link) iter.next();
+                writer.write(link.url+"|\\"+link.title+"\n");
+            }
+
             writer.close();
-        }
-
-        public void generateLink(String title, String url, String desc, String content) throws IOException {
-            writer.write(url+"|\\"+title+"\n");
         }
     }
 
     /**
      * Slightly modified and enhanced Trafika format
      */
-    class Anneca implements LinksGenerator {
+    private static class Anneca implements LinksGenerator {
         FileWriter writer = null;
         String path;
 
@@ -234,16 +229,15 @@ public class GenerateLinks extends TimerTask implements Configurable {
             this.path = path;
         }
 
-        public void generateHeader() throws IOException {
+        public void generate(List links) throws IOException {
             String file = AbcConfig.calculateDeployedPath(path);
             writer = new FileWriter(file);
-        }
 
-        public void generateLink(String title, String url, String desc, String content) throws IOException {
-            writer.write(url+"|"+title+"|"+desc+"\n");
-        }
+            for ( Iterator iter = links.iterator(); iter.hasNext(); ) {
+                Link link = (Link) iter.next();
+                writer.write(link.url+"|"+link.title+"|"+link.desc+"\n");
+            }
 
-        public void generateBottom() throws IOException {
             writer.close();
         }
     }
@@ -251,7 +245,7 @@ public class GenerateLinks extends TimerTask implements Configurable {
     /**
      * Full version used by szm.sk.
      */
-    class Szm implements LinksGenerator {
+    private static class Szm implements LinksGenerator {
         FileWriter writer = null;
         String path;
 
@@ -259,7 +253,7 @@ public class GenerateLinks extends TimerTask implements Configurable {
             this.path = path;
         }
 
-        public void generateHeader() throws IOException {
+        public void generate(List links) throws IOException {
             String file = AbcConfig.calculateDeployedPath(path);
             writer = new FileWriter(file);
             writer.write("<?xml version=\"1.0\" encoding=\"iso-8859-2\" ?>\n");
@@ -267,18 +261,17 @@ public class GenerateLinks extends TimerTask implements Configurable {
             writer.write("<copyright>AbcLinuxu s.r.o.</copyright>\n");
             writer.write("<note>Tento soubor je urcen pro szm.sk.");
             writer.write(" Obsah clanku smi byt indexovan, ale nesmi byt zverejnen.</note>\n");
-        }
 
-        public void generateLink(String title, String url, String desc, String content) throws IOException {
-            writer.write("<item>\n");
-            writer.write("\t<title>"+title+"</title>\n");
-            writer.write("\t<link>"+url+"</link>\n");
-            writer.write("\t<description>"+desc+"</description>\n");
-            writer.write("\t<content>"+content+"</content>\n");
-            writer.write("</item>\n\n");
-        }
+            for ( Iterator iter = links.iterator(); iter.hasNext(); ) {
+                Link link = (Link) iter.next();
+                writer.write("<item>\n");
+                writer.write("\t<title>"+link.title+"</title>\n");
+                writer.write("\t<link>"+link.url+"</link>\n");
+                writer.write("\t<description>"+link.desc+"</description>\n");
+                writer.write("\t<content>"+link.content+"</content>\n");
+                writer.write("</item>\n\n");
+            }
 
-        public void generateBottom() throws IOException {
             writer.write("</root>\n");
             writer.close();
         }
@@ -287,7 +280,7 @@ public class GenerateLinks extends TimerTask implements Configurable {
     /**
      * Standard RSS
      */
-    class RSS implements LinksGenerator {
+    private static class RSS implements LinksGenerator {
         FileWriter writer = null;
         String path;
 
@@ -295,30 +288,37 @@ public class GenerateLinks extends TimerTask implements Configurable {
             this.path = path;
         }
 
-        public void generateHeader() throws IOException {
+        public void generate(List links) throws IOException {
             String file = AbcConfig.calculateDeployedPath(path);
             writer = new FileWriter(file);
             writer.write("<?xml version=\"1.0\" encoding=\"iso-8859-2\" ?>\n");
             writer.write("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns=\"http://purl.org/rss/1.0/\">\n");
-            writer.write("<channel rdf:about=\"http://www.abclinuxu.cz\">\n");
-            writer.write("\t<title>AbcLinuxu.cz - tady je tuèòákùm hej!</title>\n");
-            writer.write("\t<link>http://www.abclinuxu.cz</link>\n");
-            writer.write("\t<description>Centrála pro výmìnu rad, zku¹eností a návodù pod Linuxem.</description>\n");
-            writer.write("\t<image rdf:resource=\"http://www.abclinuxu.cz/images/site/logo2.png\" />\n");
-            writer.write("\t<items>\n");
-        }
+            writer.write("\t<channel rdf:about=\"http://www.abclinuxu.cz\">\n");
+            writer.write("\t\t<title>AbcLinuxu.cz - tady je tuèòákùm hej!</title>\n");
+            writer.write("\t\t<link>http://www.abclinuxu.cz</link>\n");
+            writer.write("\t\t<description>Centrála pro výmìnu rad, zku¹eností a návodù pod Linuxem.</description>\n");
+            writer.write("\t\t<image rdf:resource=\"http://www.abclinuxu.cz/images/site/logo2.png\" />\n");
+            writer.write("\t\t<items>\n");
+            writer.write("\t\t\t<rdf:Seq>\n");
 
-        public void generateLink(String title, String url, String desc, String content) throws IOException {
-            writer.write("\t\t<item rdf:about=\""+url+"\">\n");
-            writer.write("\t\t\t<title>"+title+"</title>\n");
-            writer.write("\t\t\t<link>"+url+"</link>\n");
-            writer.write("\t\t\t<description>"+desc+"</description>\n");
-            writer.write("\t\t</item>\n");
-        }
+            for ( Iterator iter = links.iterator(); iter.hasNext(); ) {
+                Link link = (Link) iter.next();
+                writer.write("\t\t\t\t<rdf:li resource=\""+link.url+"\" />\n");
+            }
 
-        public void generateBottom() throws IOException {
-            writer.write("\t</items>\n");
-            writer.write("</channel>\n");
+            writer.write("\t\t\t</rdf:Seq>\n");
+            writer.write("\t\t</items>\n");
+            writer.write("\t</channel>\n");
+
+            for ( Iterator iter = links.iterator(); iter.hasNext(); ) {
+                Link link = (Link) iter.next();
+                writer.write("\t<item rdf:about=\""+link.url+"\">\n");
+                writer.write("\t\t<title>"+link.title+"</title>\n");
+                writer.write("\t\t<link>"+link.url+"</link>\n");
+                writer.write("\t\t<description>"+link.desc+"</description>\n");
+                writer.write("\t</item>\n");
+            }
+
             writer.write("</rdf:RDF>\n");
             writer.close();
         }
