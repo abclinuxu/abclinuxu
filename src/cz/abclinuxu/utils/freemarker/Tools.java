@@ -675,11 +675,11 @@ public class Tools implements Configurable {
             return reRemoveTags.subst(text,"");
         } catch (Throwable e) {
             log.warn("Oops, remove tags regexp failed on '"+text+"'!", e);
-            try {
-                System.in.read();
-            } catch (IOException e1) {
-                log.error("", e1);
-            }
+//            try {
+//                System.in.read();
+//            } catch (IOException e1) {
+//                log.error("", e1);
+//            }
             return text;
         }
     }
