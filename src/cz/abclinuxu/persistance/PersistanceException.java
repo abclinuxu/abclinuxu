@@ -7,22 +7,21 @@
  */
 package cz.abclinuxu.persistance;
 
-import org.apache.log4j.Category;
+import cz.abclinuxu.AbcException;
 
 /**
- * Exception related to persitance
+ * Exception related to persistance
  */
-public class PersistanceException extends Exception {
+public class PersistanceException extends AbcException {
 
-    static Category log = Category.getInstance(PersistanceException.class);
-
-    public PersistanceException(String s, Exception e) {
-        super(new StringBuffer(s).append(" (").append(e.getMessage()).append(")").toString());
-        log.error("Caught an exception: "+s,e);
-    }
-
-    public PersistanceException(String s) {
-        super(s);
-        log.error("Caught an exception: "+s,this);
+    /**
+     * constructs new exception and logs relevant information
+     * @param desc description of exception
+     * @param code error code of exception
+     * @param sinner if known or relevant, object, which caused this exception (or null, if unknown)
+     * @param e caught exception or null
+     */
+    public PersistanceException(String desc, int code, Object sinner, Exception e) {
+        super(desc, code, sinner, e);
     }
 }

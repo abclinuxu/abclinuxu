@@ -7,8 +7,8 @@
  */
 package cz.abclinuxu.persistance;
 
-import cz.abclinuxu.data.GenericObject;
-import cz.abclinuxu.data.Link;
+import java.util.List;
+import cz.abclinuxu.data.*;
 
 /**
  * This interface defines methods, how to store data objects
@@ -44,6 +44,24 @@ public abstract class Persistance {
      * Remove object and references in tree from persistant storage.
      */
     public abstract void removeObject(GenericObject obj) throws PersistanceException;
+
+    /**
+     * Searches persistant storage for object, which are similar to arguments. For each
+     * GenericObject: find objects, which have same values. <code>Id</code> field is
+     * ignored, same as all null fields. There is a <code>and</code> relationship between
+     * non-null fields (non-zero for integer fields). There is a <code>or</code>
+     * relationship between objects in <code>objects</code> list.<p>
+     * For text pattern search, you can use wildchars '%' and '?', in SQL meaning.<p>
+     * Example: find all open categories, which have 'HP' in their names<br>
+     * <pre>Category cat = new Category(0);
+     *cat.setOpen(true);
+     *cat.setData("%&lt;name>%HP%&lt;/name>%");
+     *List objects = new ArrayList().add(cat);
+     *List result = findByExample(objects);
+     *</pre>
+     * @return List of GenericObjects
+     */
+    public abstract List findByExample(List objects) throws PersistanceException;
 
     /**
      * Adds <code>obj</code> under <code>parent</code> in the object tree.
