@@ -55,6 +55,8 @@ public class EmailSender implements Configurable {
     public static final String KEY_BODY = "BODY";
     /** CC attribute of Email */
     public static final String KEY_CC = "CC";
+    /** BCC attribute of Email */
+    public static final String KEY_BCC = "BCC";
     /** REPLYTO attribute of Email */
     public static final String KEY_REPLYTO = "REPLYTO";
     /** template to be rendered and used as content of Email */
@@ -78,6 +80,7 @@ public class EmailSender implements Configurable {
         Properties props = new Properties();
         String from = (String) params.get(KEY_FROM), to = (String) params.get(KEY_TO);
         String cc = (String) params.get(KEY_CC);
+        String bcc = (String) params.get(KEY_BCC);
         if ( from==null || from.length()==0 )
             from = defaultFrom;
 
@@ -91,6 +94,8 @@ public class EmailSender implements Configurable {
             message.setRecipient(Message.RecipientType.TO,new InternetAddress(to));
             if (cc!=null)
                 message.setRecipient(Message.RecipientType.CC,new InternetAddress(cc));
+            if (bcc!=null)
+                message.setRecipient(Message.RecipientType.BCC,new InternetAddress(bcc));
             message.setText(getEmailBody(params));
             Date sentDate = getSentDate(params);
             message.setSentDate(sentDate);
