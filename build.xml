@@ -1,90 +1,108 @@
-<project name="AbcLinuxu" basedir="." default="compile">
-  <property name="src" value="src"/>
-  <property name="build" value="build"/>
-  <property name="tomcat" value="../tomcat"/>
-  <property name="deploy" value="${tomcat}/webapps/ROOT"/>
+<project name="AbcLinuxu" basedir="." default="deploy">
+
+  <property name="src" value="src" />
+  <property name="tomcat" value="../tomcat" />
+  <property name="build" value="${tomcat}/webapps/ROOT" />
+  <property name="backup" value="/home/literakl/tmp/ven" />
 
   <path id="project.classpath">
     <fileset dir="libs">
-      <include name="*.jar"/>
+      <include name="*.jar" />
     </fileset>
     <fileset dir="${tomcat}/common/lib">
-      <include name="activation.jar"/>
-      <include name="mail.jar"/>
+      <include name="activation.jar" />
+      <include name="mail.jar" />
     </fileset>
   </path>
 
 
   <target name="init">
-    <mkdir dir="${build}"/>
-    <mkdir dir="${build}/WEB-INF"/>
-    <mkdir dir="${build}/WEB-INF/lib"/>
-    <mkdir dir="${build}/WEB-INF/classes"/>
-    <mkdir dir="${build}/logs"/>
-    <mkdir dir="${deploy}"/>
-    <tstamp/>
+    <mkdir dir="${build}" />
+    <mkdir dir="${build}/WEB-INF" />
+    <mkdir dir="${build}/WEB-INF/lib" />
+    <mkdir dir="${build}/WEB-INF/classes" />
+    <mkdir dir="${build}/logs" />
+    <tstamp />
   </target>
 
 
   <target name="compile" depends="init">
-    <javac srcdir="${src}" destdir="${build}/WEB-INF/classes" classpathref="project.classpath"/>
-    <javac srcdir="test" destdir="${build}/WEB-INF/classes" classpathref="project.classpath"/>
+    <javac srcdir="${src}" destdir="${build}/WEB-INF/classes" classpathref="project.classpath" />
+    <javac srcdir="test" destdir="${build}/WEB-INF/classes" classpathref="project.classpath" />
   </target>
 
 
-  <target name="dist" depends="compile">
+  <target name="deploy" depends="compile">
     <copy todir="${build}">
-      <fileset dir="web/velocity"/>
+      <fileset dir="web/velocity" />
     </copy>
 
     <copy todir="${build}/ikony">
-      <fileset dir="web/ikony"/>
+      <fileset dir="web/ikony" />
     </copy>
 
     <copy todir="${build}/images">
-      <fileset dir="web/images"/>
+      <fileset dir="web/images" />
     </copy>
 
     <copy todir="${build}/WEB-INF">
       <fileset dir="conf">
-        <include name="web.xml"/>
-        <include name="log4j.xml"/>
-        <include name="velocity.properties"/>
-        <include name="macros.vm"/>
+        <include name="web.xml" />
+        <include name="log4j.xml" />
+        <include name="velocity.properties" />
+        <include name="macros.vm" />
       </fileset>
     </copy>
 
     <copy todir="${build}/WEB-INF/lib">
-      <fileset dir="libs" includes="*.jar" excludes="servlet.jar"/>
+      <fileset dir="libs" includes="*.jar" excludes="servlet.jar" />
     </copy>
   </target>
 
+  <target name="backup">
+    <delete dir="${backup}/abc" />
+    <mkdir dir="${backup}/abc" />
 
-  <target name="deploy" depends="dist">
-    <copy todir="${deploy}">
-      <fileset dir="${build}"/>
+    <copy todir="${backup}/abc">
+      <fileset dir=".">
+        <include name="src/**" />
+        <include name="web/**" />
+        <include name="test/**" />
+        <include name="conf/**" />
+        <include name="conf/**" />
+        <include name="bin/**" />
+        <include name="build.xml" />
+      </fileset>
     </copy>
+
+    <tar tarfile="${backup}/source.tar" basedir="${backup}/abc" />
+    <gzip zipfile="/home/literakl/source.tgz" src="${backup}/source.tar" />
+    <delete file="${backup}/source.tar" />
   </target>
 
-  <target name="transfer">
-    <zip zipfile="/home/literakl/src_abc.zip">
-      <zipfileset dir="src" prefix="abc/src/" />
-      <zipfileset dir="web" prefix="abc/web/" />
-      <zipfileset dir="test" prefix="abc/test/" />
-      <zipfileset dir="conf" prefix="abc/conf/" />
-      <zipfileset dir="bin" prefix="abc/bin/" />
-      <zipfileset dir="." includes="build.xml" fullpath="abc/build.xml" />
-    </zip>
+  <target name="backup-no-images">
+    <delete dir="${backup}/abc" />
+    <mkdir dir="${backup}/abc" />
+    <delete file="${backup}/source.tar.bz2" />
+
+    <copy todir="${backup}/abc">
+      <fileset dir=".">
+        <include name="src/**" />
+        <include name="web/velocity/**" />
+        <include name="test/**" />
+        <include name="conf/**" />
+        <include name="conf/**" />
+        <include name="bin/**" />
+        <include name="build.xml" />
+      </fileset>
+    </copy>
+
+    <tar tarfile="${backup}/source.tar" basedir="${backup}/abc" />
+    <exec executable="bzip2">
+      <arg value="${backup}/source.tar" />
+    </exec>
+
+    <move file="${backup}/source.tar.bz2" todir="/home/literakl" />
   </target>
 
-  <target name="transfer-no-images">
-    <zip zipfile="/home/literakl/src_abc.zip">
-      <zipfileset dir="src" prefix="abc/src/" />
-      <zipfileset dir="web/velocity" prefix="abc/web/velocity/" />
-      <zipfileset dir="test" prefix="abc/test/" />
-      <zipfileset dir="conf" prefix="abc/conf/" />
-      <zipfileset dir="bin" prefix="abc/bin/" />
-      <zipfileset dir="." includes="build.xml" fullpath="abc/build.xml" />
-    </zip>
-  </target>
 </project>
