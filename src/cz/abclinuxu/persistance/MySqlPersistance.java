@@ -63,7 +63,8 @@ public class MySqlPersistance extends Persistance {
 
     static {
         try {
-            Class.forName("com.codestudio.sql.PoolMan").newInstance();
+//            Class.forName("com.codestudio.sql.PoolMan").newInstance();
+            Class.forName("org.gjt.mm.mysql.Driver");
         } catch (Exception e) {
             log.fatal("Nemuzu vytvorit instanci PoolMana, zkontroluj CLASSPATH!",e);
         }
@@ -260,7 +261,8 @@ public class MySqlPersistance extends Persistance {
      */
     protected Connection getSQLConnection() throws PersistanceException {
         try {
-            return DriverManager.getConnection("jdbc:poolman");
+//            return DriverManager.getConnection("jdbc:poolman");
+            return DriverManager.getConnection("jdbc:mysql://localhost/abc?user=literakl");
         } catch (SQLException e) {
             throw new PersistanceException("Spojeni s databazi selhalo!",AbcException.DB_REFUSED,null,e);
         }
@@ -629,7 +631,8 @@ public class MySqlPersistance extends Persistance {
                 throw new PersistanceException("Nepodarilo se vlozit zaznam "+record.toString()+" do databaze!", AbcException.DB_INSERT, record, null);
             }
 
-            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)((PoolManPreparedStatement)statement).getNativePreparedStatement();
+//            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)((PoolManPreparedStatement)statement).getNativePreparedStatement();
+            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)statement;
             record.setId((int)mm.getLastInsertID());
 
         } finally {
@@ -667,7 +670,8 @@ public class MySqlPersistance extends Persistance {
                 throw new PersistanceException("Nepodarilo se vlozit polozku "+item.toString()+" do databaze!", AbcException.DB_INSERT, item, null);
             }
 
-            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)((PoolManPreparedStatement)statement).getNativePreparedStatement();
+//            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)((PoolManPreparedStatement)statement).getNativePreparedStatement();
+            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)statement;
             item.setId((int)mm.getLastInsertID());
 
         } finally {
@@ -694,7 +698,8 @@ public class MySqlPersistance extends Persistance {
                 throw new PersistanceException("Nepodarilo se vlozit kategorii "+category.toString()+" do databaze!", AbcException.DB_INSERT, category, null);
             }
 
-            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)((PoolManPreparedStatement)statement).getNativePreparedStatement();
+//            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)((PoolManPreparedStatement)statement).getNativePreparedStatement();
+            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)statement;
             category.setId((int)mm.getLastInsertID());
 
         } finally {
@@ -721,7 +726,8 @@ public class MySqlPersistance extends Persistance {
                 throw new PersistanceException("Nepodarilo se vlozit objekt "+data.toString()+" do databaze!", AbcException.DB_INSERT, data, null);
             }
 
-            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)((PoolManPreparedStatement)statement).getNativePreparedStatement();
+//            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)((PoolManPreparedStatement)statement).getNativePreparedStatement();
+            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)statement;
             data.setId((int)mm.getLastInsertID());
 
         } finally {
@@ -749,7 +755,8 @@ public class MySqlPersistance extends Persistance {
                 throw new PersistanceException("Nepodarilo se vlozit objekt "+link.toString()+" do databaze!", AbcException.DB_INSERT, link, null);
             }
 
-            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)((PoolManPreparedStatement)statement).getNativePreparedStatement();
+//            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)((PoolManPreparedStatement)statement).getNativePreparedStatement();
+            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)statement;
             link.setId((int)mm.getLastInsertID());
 
         } finally {
@@ -788,7 +795,8 @@ public class MySqlPersistance extends Persistance {
                 throw new PersistanceException("Nepodarilo se vlozit anketu "+poll.toString()+" do databaze!", AbcException.DB_INSERT, poll, null);
             }
 
-            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)((PoolManPreparedStatement)statement).getNativePreparedStatement();
+//            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)((PoolManPreparedStatement)statement).getNativePreparedStatement();
+            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)statement;
             poll.setId((int)mm.getLastInsertID());
 
             statement = con.prepareStatement("insert into anketa_data values(?,?,?,0)");
@@ -825,7 +833,8 @@ public class MySqlPersistance extends Persistance {
                 throw new PersistanceException("Nepodarilo se vlozit objekt "+user.toString()+" do databaze!", AbcException.DB_INSERT, user, null);
             }
 
-            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)((PoolManPreparedStatement)statement).getNativePreparedStatement();
+//            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)((PoolManPreparedStatement)statement).getNativePreparedStatement();
+            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)statement;
             user.setId((int)mm.getLastInsertID());
         } catch ( SQLException e ) {
             if ( e.getErrorCode()==1062 ) {
@@ -1024,8 +1033,13 @@ public class MySqlPersistance extends Persistance {
             statement.setString(1,"Z"+record.getId());
 
             ResultSet result = statement.executeQuery();
+            LinkedList children = new LinkedList();
             while ( result.next() ) {
-                String child = result.getString(1);
+                children.add(result.getString(1));
+            }
+
+            for (Iterator iter = children.iterator(); iter.hasNext();) {
+                String child = (String) iter.next();
                 statement = con.prepareStatement("select id from strom where id!=? and obsah=?");
                 statement.setString(1,"Z"+record.getId());
                 statement.setString(2,child);
@@ -1034,9 +1048,7 @@ public class MySqlPersistance extends Persistance {
                 if ( !sibling.next() ) {
                     removeObject(getObjectFromTreeId(child));
                 }
-                sibling.close();
             }
-            result.close();
 
             // remove all references from tree
             statement = con.prepareStatement("delete from strom where id=? or obsah=?");
@@ -1103,7 +1115,7 @@ public class MySqlPersistance extends Persistance {
         int  i=0,j=0;
         long start = System.currentTimeMillis();
 
-        for (j=0; j<1 ;j++) {
+        for (j=0; j<100 ;j++) {
             Record a = new HardwareRecord(0);
             a.setOwner(1);
             a.setData("hw a");
@@ -1124,11 +1136,6 @@ public class MySqlPersistance extends Persistance {
             d.setData("sw d");
             persistance.storeObject(d);
 
-            System.out.println("a = " + a);
-            System.out.println("b = " + b);
-            System.out.println("c = " + c);
-            System.out.println("d = " + d);
-
             persistance.addObjectToTree(b,a);
             persistance.addObjectToTree(c,a);
             persistance.addObjectToTree(c,d);
@@ -1136,7 +1143,7 @@ public class MySqlPersistance extends Persistance {
             persistance.removeObject(a);
         }
         long end = System.currentTimeMillis();
-        float avg = (end-start)/(float)(j*i);
+        float avg = (end-start)/(float)j;
         System.out.println("celkem = "+(end-start)+" ,prumer = "+avg);
     }
 }
