@@ -8,7 +8,8 @@
 <h1>${TOOL.xpath(ITEM,"/data/name")}</h1>
 
 <div class="barva">
-${DATE.show(ITEM.created,"CZ_FULL")} | ${autor.name}
+${DATE.show(ITEM.created,"CZ_FULL")} |
+<a href="http://www.abclinuxu.cz/Profile?userId=${autor.id}">${autor.name}</a>
 </div>
 
 <br clear="all">
@@ -17,7 +18,7 @@ ${DATE.show(ITEM.created,"CZ_FULL")} | ${autor.name}
 
 ${TOOL.render(TOOL.xpath(CHILDREN.record[0].child,"/data/content"))}
 
-<#if CHILDREN.discussion?exists && CHILDREN.discussion?size gt 0>
+<#if CHILDREN.discussion?exists && CHILDREN.discussion[0].child.content?size gt 0>
 <h1>Diskuse k tomuto èlánku</h1>
  <#global DISCUSSION=CHILDREN.discussion[0].child>
  <#list TOOL.createDiscussionTree(DISCUSSION) as thread>

@@ -10,7 +10,8 @@
    ${TOOL.xpath(clanek,"data/name")}
   </a><br>
   <span class="barva">
-   ${DATE.show(clanek.created, "CZ_FULL")} | ${autor.name}
+   ${DATE.show(clanek.created, "CZ_FULL")} |
+   <a href="http://www.abclinuxu.cz/Profile?userId=${autor.id}">${autor.name}</a>
   </span>
  </p>
  <p class="perex_out">
@@ -20,7 +21,7 @@
   Pøeèteno: ${TOOL.getCounterValue(clanek)}x
   <#if diz?exists>
    | <a href="../${DUMP.getFile(diz.relationId)}">Komentáøù: ${diz.responseCount}</a>
-   <#if diz.responseCount gt 0>, poslední ${DATE.show(diz.lastUpdate, "CZ_SHORT")}</#if>
+   <#if diz.responseCount gt 0>, poslední ${DATE.show(diz.lastUpdate, "CZ_FULL")}</#if>
   </#if>
  </p>
 </#macro>
@@ -52,7 +53,7 @@
      <a href="../${DUMP.getFile(diz.relationId)}">${TOOL.limit(TOOL.xpath(diz.discussion,"data/title"),60," ..")}</a>
     </td>
     <td align="center"><span class="pidi">${diz.responseCount}</span></td>
-    <td align="center"><span class="pidi">${DATE.show(diz.lastUpdate,"CZ_SHORT")}</span></td>
+    <td align="center"><span class="pidi">${DATE.show(diz.lastUpdate,"CZ_FULL")}</span></td>
    </tr>
    <tr><td colspan="3"><#if diz_has_next><#call separator><#else><#call doubleSeparator></#if></td></tr>
   </#list>
@@ -66,7 +67,7 @@
   <span class="diz_header_prefix">Od:</span>
   <#if reaction.owner!=0>
    <#local who=TOOL.createUser(reaction.owner)>
-   ${who.name}<br>
+   <a href="http://www.abclinuxu.cz/Profile?userId=${who.id}">${who.name}</a><br>
   <#else>
    ${TOOL.xpath(reaction,"data/author")}<br>
   </#if>
@@ -89,14 +90,20 @@
 </#macro>
 
 <#macro showParents>
- <#if PARENTS?exists>
-  <p>
-   <#list PARENTS as relation>
-    <a href="../${DUMP.getFile(relation.id)}">${TOOL.childName(relation)}</a>
-    <#if relation_has_next> - </#if>
-   </#list>
-  </p>
- </#if>
+ <table border="0" width="100%">
+  <tr>
+   <td>
+    <#if PARENTS?exists>
+     <#list PARENTS as relation>
+      <a href="../${DUMP.getFile(relation.id)}">${TOOL.childName(relation)}</a><#if relation_has_next> - </#if>
+     </#list>
+    </#if>
+   </td>
+   <td align="right">
+    <a href="${ONLINE}"><img src="../../images/tl-online.gif" width="59" height="23" border="0" alt="online"></a>
+   </td>
+  </tr>
+ </table>
 </#macro>
 
 <#macro showPoll(poll url)>

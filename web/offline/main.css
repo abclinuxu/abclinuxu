@@ -1,75 +1,165 @@
 BODY {
+	font-family: Lucida, Helvetica;
+	font-size: 11pt;
+	background-color: white;
+	color: #666666;
 	margin: 0px;
-	background-color: #3a5e75;
-	color: black;
-	font-family: Verdana, Helvetica;
-	font-size: 11pt
-}
-
-P {
-	color: #444444;
-	font-family: Lucida,Helvetica;
-	font-size: 11pt
-}
-
-P.svetly {
-	color: #c1ccd6;
-	font-family: Lucida,Helvetica;
-	font-size: 11pt
-}
-
-B.svetly {
-	color: #c1ccd6;
-	font-family: Lucida,Helvetica;
-	font-size: 11pt
 }
 
 TD {
-	font-family: Lucida, Lucida Sans, Verdana, Helvetica;
-	font-size: 11pt;
-	color: black;
-}
-
-TD.noBorder {
-	margin: 0px;
-	padding: 0px
-}
-
-TD.content {
-	background-color: white;
-	padding: 1em;
-}
-
-A {
-	font-family: Lucida, Lucida Sans, Verdana, Helvetica;
-	font-size: 11pt;
-	color: #c1ccd6;
-	text-decoration: none;
-}
-
-A:hover {
-	text-decoration: underline;
-}
-
-H1.nadpis {
-	color:BLACK;
-	font-family:Helvetica,Arial;
-	font-size:18pt;
-	font-weight:bold
-}
-
-H1,DIV.sub1 {
-	color: black;
 	font-family: Lucida, Helvetica;
-	font-size:14pt;
-	font-weight: BOLD;
+	font-size: 11pt;
+	color: #666666;
+}
+
+TD.noPadding {
+	padding: 0px;
+}
+
+TD.left {
+	background-repeat: repeat-y;
+}
+
+TD.obsah {
+	background-color: white;
+	padding: 10px 30px;
+}
+
+TD.blue {
+	background-image: url(images/bg-blue.gif);
+	background-color: #176594;
+	color: white;
+}
+
+TD.silver {
+	background-image: url(images/bg-silver.gif);
+	background-repeat: repeat-x;
+	background-color: white;
+	color: #222222;
+}
+
+SPAN.small {
+	font-family: Lucida, Helvetica;
+	font-size: 8pt;
+	color: white;
+}
+
+H1, DIV.sub1 {
+	color: black;
+	font-family: Lucida, Helvetica, sans-serif;
+	font-size: 14pt;
+	font-weight: bold;
 	padding: 0ex 0em
 }
 
-.perex {
+H1.nadpis {
+	color: black;
+	font-family: Helvetica, Arial, sans-serif;
+	font-size: 18pt;
+	font-weight:bold
+}
+
+H2, DIV.sub2 {
+	color: black;
+	font-family: Lucida, Helvetica, sans-serif;
+	font-size: 12pt;
+	font-weight: bold;
+	padding: 0ex 0em
+}
+
+P {
+	font-family: Lucida, Helvetica;
+	font-size: 11pt;
+	color: #666666;
+}
+
+DIV.perex, P.perex {
 	border-width: 1 0;
 	border-color: black;
 	border-style: solid;
 	background-color: #EEEEEE;
-	padding: 1ex
+	padding: 1ex;
+	margin-top: 1em
+}
+
+A {
+	color: #447799;
+	font-family: Lucida, Verdana, Helvetica, sans-serif;
+	font-size: 11pt;
+	text-decoration: underline
+}
+
+A:hover {
+	color: #002244;
+	text-decoration: none
+}
+
+A.small {
+	font-family: Lucida, Helvetica;
+	font-weight: bold;
+	font-size: 8pt;
+	color: #8dd5ef;
+	text-decoration: none;
+}
+
+A.small:hover {
+	text-decoration: underline;
+}
+
+DIV.linky {
+    padding: 0 1ex;
+}
+
+table.source {
+    background-color: #e6e6e6;
+    border-width: 1;
+    border-style: solid;
+    border-color: #838383;
+}
+
+td.pad {
+    padding-left: 1ex;
+    padding-right: 1ex;
+}
+
+SPAN.odsazeni {
+    padding-left: 2ex;
+}
+
+DIV.kt_citace {
+    color:#880000;
+}
+
+DIV.kt_citace OL LI {
+    color:#880000;
+}
+
+DIV.kt_citace P {
+    color:#880000;
+}
+
+DIV.kt_citace UL LI {
+    color:#880000;
+}
+
+DIV.paticka,DIV.kt_paticka {
+    font-style: italic;
+    padding-top: 1ex;
+}
+
+DIV.note {
+    padding-top: 10pt;
+    padding-bottom: 5pt;
+}
+
+DIV.diz_list {
+    background-color: #EEEEEE;
+}
+
+P.diz_header {
+    background-color: #EEEEEE;
+}
+
+SPAN.diz_header_prefix {
+    font-style: italic; 
 }

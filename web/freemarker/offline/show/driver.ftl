@@ -3,8 +3,11 @@
 
 <#global who=TOOL.createUser(ITEM.owner)>
 <p>
- Tuto polo¾ku vytvoøil ${who.name} dne ${DATE.show(ITEM.created,"CZ_FULL")}.
+ Tuto polo¾ku vytvoøil <a href="http://www.abclinuxu.cz/Profile?userId=${who.id}">${who.name}</a>
+ dne ${DATE.show(ITEM.created,"CZ_FULL")}.
 </p>
+
+<div align="right"><a href="${ONLINE}"><img src="../../images/tl-online.gif" width="59" height="23" border="0" alt="online"></a></div>
 
 <table cellspacing=0 border=1 cellpadding=5 align="center">
   <tr>
