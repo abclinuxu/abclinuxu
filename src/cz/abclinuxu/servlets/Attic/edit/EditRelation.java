@@ -14,6 +14,7 @@ import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
+import org.dom4j.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -95,7 +96,13 @@ public class EditRelation extends AbcServlet {
         relation.setUpper(parent.getId());
 
         tmp = (String) params.get(EditRelation.PARAM_NAME);
-        if ( tmp!=null && tmp.length()>0 ) relation.setName(tmp);
+        if ( tmp!=null && tmp.length()>0 ) {
+            Document document = DocumentHelper.createDocument();
+            Element root = document.addElement("data");
+            root.addElement("name").addText(tmp);
+            relation.setData(document);
+        }
+
         persistance.create(relation);
 
         String prefix = (String)params.get(EditRelation.PARAM_PREFIX);

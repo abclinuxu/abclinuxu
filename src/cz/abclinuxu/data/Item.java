@@ -71,7 +71,7 @@ public class Item extends GenericDataObject {
         sb.append(": id="+id);
         sb.append(", "+content.size()+" children");
         if ( owner!=0 ) sb.append(",owner="+owner);
-        if ( data!=null ) sb.append(",data="+getDataAsString());
+        if ( documentHandler!=null ) sb.append(",data="+getDataAsString());
         return sb.toString();
     }
 

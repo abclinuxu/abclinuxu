@@ -5,6 +5,9 @@
  */
 package cz.abclinuxu.data;
 
+import org.dom4j.Document;
+import cz.abclinuxu.AbcException;
+
 /**
  * This class contains one relation between two GenericObjects.
  * @todo change String name to Document data. XML may contain
@@ -16,8 +19,8 @@ public final class Relation extends GenericObject {
     int upper = 0;
     GenericObject parent;
     GenericObject child;
-    /** Name of the relation. Used, when child's name is not descriptive (or unique) enough in parent's context. */
-    String name;
+    /** XML with data of this object. There may be tags name and icon, which override default settings */
+    protected XMLHandler documentHandler;
 
 
     public Relation() {
@@ -36,22 +39,6 @@ public final class Relation extends GenericObject {
         this.parent = parent;
         this.child = child;
         this.upper = upper;
-    }
-
-    /**
-     * @return Name of the relation. Used, when child's name is not descriptive (or unique) enough in parent's context.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Sets name of the relation. Used, when child's name is not descriptive (or unique) enough
-     * in parent's context. Imagine Category USB from Modems, when linked to Category USB devices.
-     * It is better to name this new relation as Modems.
-     */
-    public void setName(String name) {
-        this.name = name;
     }
 
     public GenericObject getChild() {
@@ -84,13 +71,42 @@ public final class Relation extends GenericObject {
         this.upper = upper;
     }
 
+    /**
+     * @return XML data of this object
+     */
+    public Document getData() {
+        return (documentHandler!=null)? documentHandler.getData():null;
+    }
+
+    /**
+     * @return XML data in String format
+     */
+    public String getDataAsString() {
+        return (documentHandler!=null)? documentHandler.getDataAsString():null;
+    }
+
+    /**
+     * sets XML data of this object
+     */
+    public void setData(Document data) {
+        documentHandler = new XMLHandler(data);
+    }
+
+    /**
+     * sets XML data of this object in String format
+     */
+    public void setData(String data) throws AbcException {
+        documentHandler = new XMLHandler();
+        documentHandler.setData(data);
+    }
+
     public void synchronizeWith(GenericObject obj) {
         if ( !(obj instanceof Relation) ) return;
         if ( obj==this ) return;
         super.synchronizeWith(obj);
         Relation r = (Relation) obj;
         upper = r.getUpper();
-        name = r.getName();
+        documentHandler = new XMLHandler(r.getData());
         parent = r.getParent();
         child = r.getChild();
     }

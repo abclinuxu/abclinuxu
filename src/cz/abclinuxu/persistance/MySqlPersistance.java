@@ -235,7 +235,7 @@ public class MySqlPersistance implements Persistance {
             GenericObject parent = relation.getParent();
 
             while ( upper!=0 ) {
-                PreparedStatement statement = con.prepareStatement("select predchozi,typ_predka,predek,jmeno from strom where cislo=?");
+                PreparedStatement statement = con.prepareStatement("select predchozi,typ_predka,predek,data from relace where cislo=?");
                 statement.setInt(1,upper);
                 ResultSet resultSet = statement.executeQuery();
                 if ( !resultSet.next() ) break;
@@ -250,7 +250,16 @@ public class MySqlPersistance implements Persistance {
                 parent = instantiateFromTree(type,id);
                 relation.setParent(parent);
 
-                relation.setName(resultSet.getString(4));
+                try {
+                    String tmp = resultSet.getString(4);
+                    if ( tmp!=null ) {
+                        tmp = insertEncoding(tmp);
+                        relation.setData(new String(tmp));
+                    }
+                } catch (AbcException e) {
+                    throw new PersistanceException(e.getMessage(),e.getStatus(),e.getSinner(),e.getNestedException());
+                }
+
                 result.add(0,relation);
             }
             return result;
@@ -287,7 +296,7 @@ public class MySqlPersistance implements Persistance {
 
                 // if relation.getChild() became unreferenced, delete that child
                 if ( obj instanceof Relation ) {
-                    statement = con.prepareStatement("select predek from strom where typ_potomka=? and potomek=?");
+                    statement = con.prepareStatement("select predek from relace where typ_potomka=? and potomek=?");
                     GenericObject child = ((Relation)obj).getChild();
                     statement.setString(1,getTableId(child));
                     statement.setInt(2,child.getId());
@@ -453,7 +462,7 @@ public class MySqlPersistance implements Persistance {
         } else if (obj instanceof Category) {
             return "kategorie";
         } else if (obj instanceof Relation) {
-            return "strom";
+            return "relace";
         } else if (obj instanceof Data) {
             return "objekt";
         } else if (obj instanceof Link) {
@@ -533,7 +542,7 @@ public class MySqlPersistance implements Persistance {
      * with <code>obj.setContent()</code> call. Children are not initialized.
      */
     private void findChildren(GenericObject obj, Connection con) throws PersistanceException, SQLException {
-        PreparedStatement statement = con.prepareStatement("select cislo,predchozi,typ_potomka,potomek,jmeno from strom where typ_predka=? and predek=?");
+        PreparedStatement statement = con.prepareStatement("select cislo,predchozi,typ_potomka,potomek,data from relace where typ_predka=? and predek=?");
         statement.setString(1,getTableId(obj));
         statement.setInt(2,obj.getId());
         ResultSet resultSet = statement.executeQuery();
@@ -549,7 +558,16 @@ public class MySqlPersistance implements Persistance {
             GenericObject child = instantiateFromTree(type,id);
             relation.setChild(child);
 
-            relation.setName(resultSet.getString(5));
+            try {
+                String tmp = resultSet.getString(5);
+                if ( tmp!=null) {
+                    tmp = insertEncoding(tmp);
+                    relation.setData(new String(tmp));
+                }
+            } catch (AbcException e) {
+                throw new PersistanceException(e.getMessage(),e.getStatus(),e.getSinner(),e.getNestedException());
+            }
+
             relation.setInitialized(true);
             obj.addContent(relation);
         }
@@ -576,13 +594,14 @@ public class MySqlPersistance implements Persistance {
             conditions.add(new Integer(((GenericDataObject)obj).getOwner()));
 
         } else if (obj instanceof Relation) {
-            sb.append("insert into strom values(0,?,?,?,?,?,?)");
+            sb.append("insert into relace values(0,?,?,?,?,?,?)");
             conditions.add(new Integer(((Relation)obj).getUpper()));
             conditions.add(getTableId(((Relation)obj).getParent()));
             conditions.add(new Integer(((Relation)obj).getParent().getId()));
             conditions.add(getTableId(((Relation)obj).getChild()));
             conditions.add(new Integer(((Relation)obj).getChild().getId()));
-            conditions.add(((Relation)obj).getName());
+            String tmp = ((Relation)obj).getDataAsString();
+            conditions.add((tmp!=null)? tmp.getBytes():null);
 
         } else if (obj instanceof Data) {
             sb.append("insert into objekt values(0,?,?,?)");
@@ -920,7 +939,7 @@ public class MySqlPersistance implements Persistance {
         Connection con = null;
         try {
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("select * from strom where cislo=?");
+            PreparedStatement statement = con.prepareStatement("select * from relace where cislo=?");
             statement.setInt(1,obj.getId());
 
             ResultSet resultSet = statement.executeQuery();
@@ -941,7 +960,15 @@ public class MySqlPersistance implements Persistance {
             GenericObject child = instantiateFromTree(type,id);
             relation.setChild(child);
 
-            relation.setName(resultSet.getString(7));
+            try {
+                String tmp = resultSet.getString(7);
+                if ( tmp!=null ) {
+                    tmp = insertEncoding(tmp);
+                    relation.setData(new String(tmp));
+                }
+            } catch (AbcException e) {
+                throw new PersistanceException(e.getMessage(),e.getStatus(),e.getSinner(),e.getNestedException());
+            }
 
             return relation;
         } finally {
@@ -1148,8 +1175,8 @@ public class MySqlPersistance implements Persistance {
 
         try {
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("update strom set jmeno=? where cislo=?");
-            statement.setString(1,relation.getName());
+            PreparedStatement statement = con.prepareStatement("update relace set data=? where cislo=?");
+            statement.setBytes(1,relation.getDataAsString().getBytes());
             statement.setInt(2,relation.getId());
 
             int result = statement.executeUpdate();

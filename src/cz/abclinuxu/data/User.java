@@ -3,10 +3,7 @@
  */
 package cz.abclinuxu.data;
 
-import java.io.ByteArrayOutputStream;
-import org.dom4j.*;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
+import org.dom4j.Document;
 import cz.abclinuxu.AbcException;
 
 /**
@@ -25,7 +22,7 @@ public class User extends GenericObject {
     /** (noncrypted) password */
     private String password;
     /** XML with data or this object */
-    protected Document data;
+    protected XMLHandler documentHandler;
 
 
     public User() {
@@ -105,43 +102,29 @@ public class User extends GenericObject {
      * @return XML data of this object
      */
     public Document getData() {
-        return data;
+        return (documentHandler!=null)? documentHandler.getData():null;
     }
 
     /**
      * @return XML data in String format
      */
     public String getDataAsString() {
-        try {
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            OutputFormat format = new OutputFormat(null,false,"ISO-8859-2");
-            format.setSuppressDeclaration(true);
-            XMLWriter writer = new XMLWriter(os,format);
-            writer.write(data);
-            return os.toString();
-        } catch (Exception e) {
-            log.error("Nemohu prevest XML data na string! "+data.toString(),e);
-            return "";
-        }
+        return (documentHandler!=null)? documentHandler.getDataAsString():null;
     }
 
     /**
      * sets XML data of this object
      */
     public void setData(Document data) {
-        this.data = data;
+        documentHandler = new XMLHandler(data);
     }
 
     /**
      * sets XML data of this object in String format
      */
     public void setData(String data) throws AbcException {
-        try {
-            this.data = DocumentHelper.parseText(data);
-        } catch (DocumentException e) {
-            log.warn("Nemuzu konvertovat data do XML! Exception: "+e.getMessage()+" ("+data+")");
-            throw new AbcException("Nemuzu konvertovat data do XML!",AbcException.WRONG_DATA,data,e);
-        }
+        documentHandler = new XMLHandler();
+        documentHandler.setData(data);
     }
 
     /**
@@ -153,7 +136,7 @@ public class User extends GenericObject {
         if ( obj==this ) return;
         super.synchronizeWith(obj);
         User b = (User) obj;
-        data = b.getData();
+        documentHandler = new XMLHandler(b.getData());
         name = b.getName();
         login = b.getLogin();
         email = b.getEmail();
@@ -167,7 +150,7 @@ public class User extends GenericObject {
         if ( name!=null ) sb.append(",name="+name);
         if ( email!=null ) sb.append(",email="+email);
         if ( password!=null ) sb.append(",password="+password);
-        if ( data!=null ) sb.append(",data="+getDataAsString());
+        if ( documentHandler!=null ) sb.append(",data="+getDataAsString());
         return sb.toString();
     }
 

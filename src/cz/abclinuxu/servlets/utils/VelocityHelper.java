@@ -30,12 +30,12 @@ public class VelocityHelper {
 
     /**
      * Get name of this child in this relation context. Default name
-     * from getChild may be overriden by Name attribute of relation.
-     * If child doesn't have any name, it return class name.
+     * from getChild may be overriden by relation.
+     * If child doesn't have any name, it returns class name.
      */
     public String getChildName(Relation relation) throws PersistanceException {
         if ( relation==null || relation.getChild()==null ) return null;
-        String name = relation.getName();
+        String name = getXPath(relation,"data/name");
         if ( name!=null && name.length()>0) return name;
 
         GenericObject child = relation.getChild();
@@ -64,7 +64,22 @@ public class VelocityHelper {
         if ( name==null || name.length()==0) {
             name = child.getClass().getName().substring(name.lastIndexOf('.')+1);
         }
-        return normalizeEncoding(name);
+        return name;
+    }
+
+    /**
+     * Retrieves icon for child of this relation. If relation declares icon,
+     * it will be used. Otherwise relation's child's icon will be returned.
+     * If there is no icon at all, null will be returned.
+     */
+    public String getChildIcon(Relation relation) throws PersistanceException {
+        if ( relation==null || relation.getChild()==null ) return null;
+        String name = getXPath(relation,"data/icon");
+        if ( name!=null && name.length()>0) return name;
+
+        GenericObject child = relation.getChild();
+        name = getXPath(child,"data/icon");
+        return name;
     }
 
     /**
@@ -72,7 +87,7 @@ public class VelocityHelper {
      * If <code>obj</code> doesn't contain <code>Document data</code> field
      * or xpath element doesn't exist, null is returned.
      */
-    public String getXPath(GenericObject obj, String xpath) throws PersistanceException {
+    public static String getXPath(GenericObject obj, String xpath) throws PersistanceException {
         if ( obj==null ) return null;
         if ( !obj.isInitialized() ) PersistanceFactory.getPersistance().synchronize(obj);
         Document doc = null;
@@ -80,6 +95,8 @@ public class VelocityHelper {
 
         if ( obj instanceof GenericDataObject ) {
             doc = ((GenericDataObject)obj).getData();
+        } else if ( obj instanceof Relation ) {
+            doc = ((Relation)obj).getData();
         } else if ( obj instanceof User ) {
             doc = ((User)obj).getData();
         }
@@ -88,7 +105,7 @@ public class VelocityHelper {
         Node node = doc.selectSingleNode(xpath);
         if ( node!=null ) value = node.getText();
 
-        return normalizeEncoding(value);
+        return value;
     }
 
     /**

@@ -33,6 +33,11 @@ public class TestMySqlPersistance extends TestCase {
         persistance.setCache(new Cache(persistance));
     }
 
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        org.apache.log4j.Category.getDefaultHierarchy().enableAll();
+    }
+
     public static Test suite() {
         TestSuite suite = new TestSuite(TestMySqlPersistance.class);
         return suite;
@@ -112,8 +117,6 @@ public class TestMySqlPersistance extends TestCase {
         } catch (PersistanceException e) {
             assertTrue( e.getStatus()==AbcException.DB_NOT_FOUND );
         }
-
-        org.apache.log4j.Category.getDefaultHierarchy().enableAll();
     }
 
     public void testFindByExample() throws Exception {
@@ -284,8 +287,6 @@ public class TestMySqlPersistance extends TestCase {
         persistance.remove(relIntPent);
         persistance.remove(processors);
         persistance.remove(intel);
-
-        org.apache.log4j.Category.getDefaultHierarchy().enableAll();
     }
 
     public void testIncrement() throws Exception {

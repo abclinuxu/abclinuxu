@@ -9,13 +9,8 @@ package cz.abclinuxu.data;
 
 import java.util.Date;
 import java.util.Iterator;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import org.dom4j.*;
-import org.dom4j.io.XMLWriter;
-import org.dom4j.io.OutputFormat;
 import cz.abclinuxu.AbcException;
-import cz.abclinuxu.persistance.MySqlPersistance;
+import org.dom4j.Document;
 
 /**
  * This class serves as base class for Item, Category and Record,
@@ -27,10 +22,10 @@ public abstract class GenericDataObject extends GenericObject {
 
     /** identifier of owner of this object */
     protected int owner;
-    /** creation date or last update of this object */
+    /** creation date of last update of this object */
     protected Date updated;
-    /** XML with data or this object */
-    protected Document data;
+    /** XML with data of this object */
+    protected XMLHandler documentHandler;
     /**
      * Helper (non-persistant) String for findByExample(),
      * which works as argument to search in <code>data</code>.
@@ -76,47 +71,29 @@ public abstract class GenericDataObject extends GenericObject {
      * @return XML data of this object
      */
     public Document getData() {
-        return data;
+        return (documentHandler!=null)? documentHandler.getData():null;
     }
 
     /**
      * @return XML data in String format
      */
     public String getDataAsString() {
-        try {
-            if ( data==null ) return "";
-
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            OutputFormat format = new OutputFormat(null,false,"ISO-8859-2");
-            format.setSuppressDeclaration(true);
-            XMLWriter writer = new XMLWriter(os,format);
-
-            writer.write(data);
-            String result = os.toString();
-            return result;
-        } catch (Exception e) {
-            log.error("Nemohu prevest XML data na string! "+data.toString(),e);
-            return "";
-        }
+        return (documentHandler!=null)? documentHandler.getDataAsString():null;
     }
 
     /**
      * sets XML data of this object
      */
     public void setData(Document data) {
-        this.data = data;
+        documentHandler = new XMLHandler(data);
     }
 
     /**
      * sets XML data of this object in String format
      */
     public void setData(String data) throws AbcException {
-        try {
-            this.data = DocumentHelper.parseText(data);
-        } catch (DocumentException e) {
-            log.warn("Nemuzu konvertovat data do XML! Exception: "+e.getMessage()+" ("+data+")");
-            throw new AbcException("Nemuzu konvertovat data do XML!",AbcException.WRONG_DATA,data,e);
-        }
+        documentHandler = new XMLHandler();
+        documentHandler.setData(data);
     }
 
     /**
@@ -128,7 +105,7 @@ public abstract class GenericDataObject extends GenericObject {
         if ( obj==this ) return;
         super.synchronizeWith(obj);
         GenericDataObject b = (GenericDataObject) obj;
-        data = b.getData();
+        documentHandler = new XMLHandler(b.getData());
         owner = b.getOwner();
         updated = b.getUpdated();
     }
