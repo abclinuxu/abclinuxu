@@ -176,7 +176,7 @@ public class ViewUser extends AbcFMServlet {
             env.put(VAR_SW_RECORDS, paging);
 
         } else if ( params.containsKey(CONTENT_ARTICLES) ) {
-            Qualifier[] qualifiers = new Qualifier[]{new LimitQualifier(from, pageSize)};
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING, new LimitQualifier(from, pageSize)};
             List list = sqlTool.findArticleRelationsByUser(user.getId(), qualifiers);
             int total = sqlTool.countArticleRelationsByUser(user.getId());
             Paging paging = new Paging(list, from, pageSize, total);
@@ -190,7 +190,7 @@ public class ViewUser extends AbcFMServlet {
             env.put(VAR_DISCUSSIONS, paging);
 
         } else if ( params.containsKey(CONTENT_NEWS) ) {
-            Qualifier[] qualifiers = new Qualifier[]{new LimitQualifier(from, pageSize)};
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED,Qualifier.ORDER_ASCENDING,new LimitQualifier(from, pageSize)};
             List list = sqlTool.findNewsRelationsByUser(user.getId(), qualifiers);
             int total = sqlTool.countNewsRelationsByUser(user.getId());
             Paging paging = new Paging(list, from, pageSize, total);

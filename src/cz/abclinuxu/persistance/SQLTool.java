@@ -44,6 +44,7 @@ public final class SQLTool implements Configurable {
     public static final String PREF_ITEMS_WITH_TYPE = "items.with.type";
     public static final String PREF_MAX_POLL = "max.poll";
     public static final String PREF_MAX_USER = "max.user";
+    public static final String PREF_COUNT_ARTICLES_BY_USER = "count.articles.by.user";
 
     private static SQLTool singleton;
 
@@ -61,6 +62,7 @@ public final class SQLTool implements Configurable {
     private String usersWithWeeklyEmail, usersWithRoles, usersInGroup;
     private String maxPoll, maxUser;
     private String itemsByType;
+    private String countArticlesByUser;
 
 
     /**
@@ -509,8 +511,7 @@ public final class SQLTool implements Configurable {
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
      */
     public int countArticleRelationsByUser(int userId) {
-        StringBuffer sb = new StringBuffer(relationsArticleByUser);
-        changeToCountStatement(sb);
+        StringBuffer sb = new StringBuffer(countArticlesByUser);
         List params = new ArrayList();
         params.add(new Integer(userId));
         return loadNumber(sb.toString(), params);
@@ -763,5 +764,6 @@ public final class SQLTool implements Configurable {
         maxPoll = prefs.get(PREF_MAX_POLL,null);
         maxUser = prefs.get(PREF_MAX_USER, null);
         itemsByType = prefs.get(PREF_ITEMS_WITH_TYPE, null);
+        countArticlesByUser = prefs.get(PREF_COUNT_ARTICLES_BY_USER, null);
     }
 }

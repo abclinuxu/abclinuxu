@@ -53,7 +53,7 @@ public class ViewIndex extends AbcFMServlet {
 
         int userLimit = getNumberOfDiscussions(user);
         if ( userLimit>0 ) {
-            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, userLimit)};
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, userLimit)};
             List found = SQLTool.getInstance().findDiscussionRelations(qualifiers);
             Tools.sync(found);
             List discussions = tools.analyzeDiscussions(found);
