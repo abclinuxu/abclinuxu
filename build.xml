@@ -40,7 +40,8 @@
       <fileset dir="conf">
         <include name="web.xml"/>
         <include name="log4j.xml"/>
-	<include name="velocity.properties"/>
+        <include name="velocity.properties"/>
+        <include name="macros.vm"/>
       </fileset>
     </copy>
 
