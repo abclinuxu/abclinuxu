@@ -184,7 +184,7 @@
 
   <servlet name="SelectIcon">
     <action name="show">
-      <mapping template="web" content="web/misc/selectIcon.vm">
+      <mapping template="web" content="/web/misc/selectIcon.ftl">
         <var name="TITLE" value="Vybìr ikony" />
       </mapping>
     </action>

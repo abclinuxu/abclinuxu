@@ -9,8 +9,11 @@
 package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.AbcVelocityServlet;
+import cz.abclinuxu.servlets.AbcFMServlet;
+import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.edit.EditCategory;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
@@ -47,7 +50,7 @@ import java.util.*;
  * <dd>Indicates, whether user has changed directory.</dd>
  * </dl>
  */
-public class SelectIcon extends AbcVelocityServlet {
+public class SelectIcon extends AbcFMServlet {
     public static final String PARAM_URL = "url";
     public static final String PARAM_DIR = "dir";
     public static final String PARAM_ICON = "icon";
@@ -57,25 +60,22 @@ public class SelectIcon extends AbcVelocityServlet {
     public static final String VAR_DIRS = "DIRS";
     public static final String VAR_ICONS = "ICONS";
 
-
-    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        init(request,response,ctx);
-
+    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         String reload = request.getParameter(SelectIcon.PARAM_RELOAD);
         if ( "no".equals(reload) ) {
-            return actionFinish(request,response,ctx);
+            return actionFinish(request,response,env);
         } else {
-            return actionReload(request,ctx);
+            return actionReload(request,env);
         }
     }
 
     /**
      * Called, when we shall display list of icons
      */
-    protected String actionReload(HttpServletRequest request, Context ctx) throws Exception {
+    protected String actionReload(HttpServletRequest request, Map env) throws Exception {
         String path = getServletContext().getRealPath("/ikony");
         File ikony = new File(path);
-        if ( path==null || !ikony.exists() ) throw new Exception("Nemohu nalezti adresar /ikony!");
+        if ( path==null || !ikony.exists() ) throw new Exception("Nemohu nalezt adresar /ikony!");
 
         File[] iconsContent = ikony.listFiles();
         List dirs = new ArrayList(5);
@@ -84,16 +84,17 @@ public class SelectIcon extends AbcVelocityServlet {
                 dirs.add(iconsContent[i].getName());
             }
         }
-        ctx.put(SelectIcon.VAR_DIRS,dirs);
+        env.put(VAR_DIRS,dirs);
 
-        String dir = request.getParameter(SelectIcon.PARAM_DIR);
-        if ( dir==null || dir.length()==0 ) dir = (String) dirs.get(0);
+        String dir = request.getParameter(PARAM_DIR);
+        if ( dir==null || dir.length()==0 )
+            dir = (String) dirs.get(0);
         File file = new File(ikony,dir);
         if ( !file.exists() ) {
             dir = (String) dirs.get(0);
             file = new File(ikony,dir);
         }
-        ctx.put(SelectIcon.VAR_DIR,dir);
+        env.put(SelectIcon.VAR_DIR,dir);
 
         iconsContent = file.listFiles();
         List icons = new ArrayList(12);
@@ -103,30 +104,28 @@ public class SelectIcon extends AbcVelocityServlet {
             }
         }
         java.util.Collections.sort(icons);
-        ctx.put(SelectIcon.VAR_ICONS,icons);
-        return VelocityTemplateSelector.selectTemplate(request,ctx,"SelectIcon","show");
+        env.put(VAR_ICONS,icons);
+        return FMTemplateSelector.select("SelectIcon","show",env,request);
     }
 
     /**
      * Called, when we shall display list of icons
      */
-    protected String actionFinish(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        String url = request.getParameter(SelectIcon.PARAM_URL);
-        String dir = "/ikony/"+request.getParameter(SelectIcon.PARAM_DIR)+"/";
-        String icon = dir+request.getParameter(SelectIcon.PARAM_ICON);
+    protected String actionFinish(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        String url = request.getParameter(PARAM_URL);
+        String dir = "/ikony/"+request.getParameter(PARAM_DIR)+"/";
+        String newIcon = dir+request.getParameter(PARAM_ICON);
 
         Map map = ServletUtils.putParamsToMap(request);
-        map.remove(SelectIcon.PARAM_DIR);
-        map.remove(SelectIcon.PARAM_ICON);
-        map.remove(SelectIcon.PARAM_URL);
-        map.remove(SelectIcon.PARAM_RELOAD);
+        map.put(PARAM_ICON,newIcon);
+        map.remove(PARAM_DIR);
+        map.remove(PARAM_URL);
+        map.remove(PARAM_RELOAD);
         map.remove(EditCategory.PARAM_CHOOSE_ICON);
+        request.getSession().setAttribute(Constants.VAR_PARAMS,map);
 
-        HttpSession session = request.getSession();
-        session.setAttribute(AbcVelocityServlet.ATTRIB_PARAMS,map);
-
-        String newUrl = url + "?icon="+icon;
-        UrlUtils.redirect(response, newUrl, ctx);
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, url);
         return null;
     }
 }
