@@ -20,7 +20,7 @@
  <span style="font-size: 7pt">
   <a href="/news/ViewRelation?rid=${relation.id}" target="_content" style="font-size: 7pt">Zobrazit</a>
   <#if diz.responseCount gt 0>
-   Komentáøe: ${diz.responseCount}, poslední ${DATE.show(diz.lastUpdate, "CZ_FULL")}
+   Komentáøe: ${diz.responseCount}, poslední ${DATE.show(diz.updated, "CZ_FULL")}
   </#if>
  </span>
  </p>

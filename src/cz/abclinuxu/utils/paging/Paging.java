@@ -5,7 +5,11 @@
  */
 package cz.abclinuxu.utils.paging;
 
+import cz.abclinuxu.persistance.Qualifier;
+
 import java.util.List;
+import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * Holds information about single page of listing
@@ -17,6 +21,7 @@ public final class Paging {
     private Page currentPage;
     private int pageSize;
     private List data;
+    private List qualifiers;
 
     /**
      * Creates new Paging instance.
@@ -42,6 +47,39 @@ public final class Paging {
         this.total = new Integer(total);
         this.pageSize = pageSize;
         this.data = data;
+    }
+
+    /**
+     * Creates new Paging instance.
+     * @param row initial row of this page (first element has row equal to zero).
+     * @param pageSize default page size.
+     * @param data list of objects within the page. It must not be null and its size shall be not bigger than pageSize.
+     * @param total number of elements in whole set (e.g. sum of sizes of all Pages).
+     * @param qualifiers List of qualifiers, that affected data selection of this page.
+     */
+    public Paging(List data, int row, int pageSize, int total, Qualifier[] qualifiers) {
+        currentPage = new Page(row, data.size());
+        this.total = new Integer(total);
+        this.pageSize = pageSize;
+        this.data = data;
+        if (qualifiers!=null)
+            this.qualifiers = Arrays.asList(qualifiers);
+    }
+
+    /**
+     * Creates new Paging instance.
+     * @param row initial row of this page (first element has row equal to zero).
+     * @param pageSize default page size.
+     * @param data list of objects within the page. It must not be null and its size shall be not bigger than pageSize.
+     * @param total number of elements in whole set (e.g. sum of sizes of all Pages).
+     * @param qualifiers List of qualifiers, that affected data selection of this page.
+     */
+    public Paging(List data, int row, int pageSize, int total, List qualifiers) {
+        currentPage = new Page(row, data.size());
+        this.total = new Integer(total);
+        this.pageSize = pageSize;
+        this.data = data;
+        this.qualifiers = qualifiers;
     }
 
     /**
@@ -91,6 +129,13 @@ public final class Paging {
     }
 
     /**
+     * @return information about current Page.
+     */
+    public Page getThisPage() {
+        return currentPage;
+    }
+
+    /**
      * @return size of this Paging. E.g. size of window, through which you look at whole set.
      */
     public int getPageSize() {
@@ -102,5 +147,24 @@ public final class Paging {
      */
     public List getData() {
         return data;
+    }
+
+    /**
+     * @return List of qualifiers, that affected data selection of this page.
+     */
+    public List getQualifiers() {
+        return qualifiers;
+    }
+
+    /**
+     * Test, whether qualifier of given name was used during data selection of this page.
+     */
+    public boolean isQualifierSet(String name) {
+        if (qualifiers==null) return false;
+        for ( Iterator iter = qualifiers.iterator(); iter.hasNext(); ) {
+            if ( iter.next().toString().equals(name))
+                return true;
+        }
+        return false;
     }
 }

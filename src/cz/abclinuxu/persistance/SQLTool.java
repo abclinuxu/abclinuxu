@@ -178,9 +178,10 @@ public final class SQLTool implements Configurable {
      * Appends qualifiers to StringBufefr holding SQL command.
      */
     private void appendQualifiers(StringBuffer sb, Qualifier[] qualifiers, List params) {
+        Qualifier qualifier;
         boolean sort = false;
         for ( int i = 0; i<qualifiers.length; i++ ) {
-            Qualifier qualifier = qualifiers[i];
+            qualifier = qualifiers[i];
             if ( qualifier.equals(Qualifier.SORT_BY_CREATED) ) {
                 sb.append(" order by vytvoreno");
                 sort = true;
@@ -188,7 +189,6 @@ public final class SQLTool implements Configurable {
                 sb.append(" order by zmeneno");
                 sort = true;
             } else if ( qualifier.equals(Qualifier.SORT_BY_ID) ) {
-                // todo sometimes it is neccessary to sort by R.cislo
                 sb.append(" order by cislo");
                 sort = true;
             } else if ( sort && qualifier.equals(Qualifier.ORDER_ASCENDING) ) {

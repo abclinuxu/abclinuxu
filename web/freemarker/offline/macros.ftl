@@ -21,7 +21,7 @@
   Pøeèteno: ${TOOL.getCounterValue(clanek)}x
   <#if diz?exists>
    | <a href="../${DUMP.getFile(diz.relationId)}">Komentáøù: ${diz.responseCount}</a>
-   <#if diz.responseCount gt 0>, poslední ${DATE.show(diz.lastUpdate, "CZ_FULL")}</#if>
+   <#if diz.responseCount gt 0>, poslední ${DATE.show(diz.updated, "CZ_FULL")}</#if>
   </#if>
  </p>
 </#macro>
@@ -53,7 +53,7 @@
      <a href="../${DUMP.getFile(diz.relationId)}">${TOOL.limit(TOOL.xpath(diz.discussion,"data/title"),60," ..")}</a>
     </td>
     <td align="center"><span class="pidi">${diz.responseCount}</span></td>
-    <td align="center"><span class="pidi">${DATE.show(diz.lastUpdate,"CZ_FULL")}</span></td>
+    <td align="center"><span class="pidi">${DATE.show(diz.updated,"CZ_FULL")}</span></td>
    </tr>
    <tr><td colspan="3"><#if diz_has_next><#call separator><#else><#call doubleSeparator></#if></td></tr>
   </#list>

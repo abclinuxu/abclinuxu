@@ -12,8 +12,8 @@ public class Qualifier {
     public static final Qualifier SORT_BY_CREATED = new Qualifier("SORT_BY_CREATED");
     public static final Qualifier SORT_BY_UPDATED = new Qualifier("SORT_BY_UPDATED");
     public static final Qualifier SORT_BY_ID = new Qualifier("SORT_BY_ID");
-    public static final Qualifier ORDER_ASCENDING = new Qualifier("ASCENDING_ORDER");
-    public static final Qualifier ORDER_DESCENDING = new Qualifier("DESCENDING_ORDER");
+    public static final Qualifier ORDER_ASCENDING = new Qualifier("ORDER_ASCENDING");
+    public static final Qualifier ORDER_DESCENDING = new Qualifier("ORDER_DESCENDING");
 
     private final String name;
 
@@ -26,8 +26,9 @@ public class Qualifier {
     }
 
     public boolean equals(Object obj) {
-        if (! (obj instanceof Qualifier)) return false;
-        return ((Qualifier)obj).name.equals(name);
+        if (obj instanceof Qualifier)
+            return ((Qualifier)obj).name.equals(name);
+        return false;
     }
 
     public int hashCode() {

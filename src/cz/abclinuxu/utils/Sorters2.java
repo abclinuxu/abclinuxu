@@ -123,7 +123,7 @@ public class Sorters2 {
             if ( obj instanceof Link )
                 return ((Link)obj).getUpdated();
             if ( obj instanceof DiscussionHeader )
-                return ((DiscussionHeader)obj).getLastUpdate();
+                return ((DiscussionHeader)obj).getUpdated();
             if ( obj instanceof GenericDataObject ) {
                 GenericDataObject gdo = (GenericDataObject) obj;
                 if ( gdo instanceof Item && gdo.getType()==Item.ARTICLE )

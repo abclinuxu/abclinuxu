@@ -194,7 +194,7 @@ public class Tools {
                 sb.append(" - ");
             }
         }
-        
+
         for ( Iterator iter = parents.iterator(); iter.hasNext(); ) {
             relation = (Relation) iter.next();
             GenericObject child = relation.getChild();
@@ -700,14 +700,15 @@ public class Tools {
      */
     public static DiscussionHeader analyzeDiscussion(Relation relation) {
         if ( !InstanceUtils.checkType(relation.getChild(), Item.class, Item.DISCUSSION) ) {
-            log.error("Relation "+relation+" doesn't contain item!");
+            log.error("Relation "+relation.getId()+" doesn't contain item!");
             return null;
         }
         Item item = (Item) relation.getChild();
         DiscussionHeader discussion = new DiscussionHeader(item);
-        discussion.lastUpdate = item.getUpdated();
+        discussion.updated = item.getUpdated();
+        discussion.created = item.getCreated();
         String value = item.getData().selectSingleNode("/data/comments").getText();
-        discussion.responseCount = Integer.parseInt(value);
+        discussion.responseCount = Misc.parseInt(value,0);
         discussion.relationId = relation.getId();
         return discussion;
     }

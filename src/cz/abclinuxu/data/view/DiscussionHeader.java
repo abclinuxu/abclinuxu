@@ -22,7 +22,8 @@ public class DiscussionHeader {
      * When the discussion was modified for the last time.
      * If there were no responses, than creation time of the dicsussion.
      */
-    public Date lastUpdate;
+    public Date updated;
+    public Date created;
 
     public DiscussionHeader(Item discussion) {
         this.discussion = discussion;
@@ -36,8 +37,12 @@ public class DiscussionHeader {
         return responseCount;
     }
 
-    public Date getLastUpdate() {
-        return lastUpdate;
+    public Date getUpdated() {
+        return updated;
+    }
+
+    public Date getCreated() {
+        return created;
     }
 
     public int getRelationId() {

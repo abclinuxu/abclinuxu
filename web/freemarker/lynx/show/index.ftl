@@ -83,7 +83,7 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
  <a name="diskuse"><h1>Diskusní fórum</h1></a>
  <p>
  <#list FORUM.data as diz>
-  ${DATE.show(diz.lastUpdate,"CZ_SHORT")}, ${diz.responseCount} odp. :
+  ${DATE.show(diz.updated,"CZ_SHORT")}, ${diz.responseCount} odp. :
    <a href="/hardware/ViewRelation?rid=${diz.relationId}">
    ${TOOL.limit(TOOL.xpath(diz.discussion,"data/title"),60," ..")}</a><br>
  </#list>
