@@ -26,7 +26,6 @@ import java.util.*;
 
 /**
  * Servlet for manipulation with Polls.
- * todo create rating of articles, records and replies
  */
 public class EditPoll implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditPoll.class);
@@ -62,11 +61,14 @@ public class EditPoll implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
-        Poll poll = (Poll) InstanceUtils.instantiateParam(PARAM_POLL, Poll.class, params, request);
-        if ( poll!=null ) {
-            poll = (Poll) persistance.findById(poll);
-            env.put(EditPoll.VAR_POLL,poll);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
+        if (relation != null) {
+            relation = (Relation) persistance.findById(relation);
+            env.put(VAR_RELATION, relation);
         }
+
+        Poll poll = (Poll) persistance.findById(relation.getChild());
+        env.put(EditPoll.VAR_POLL, poll);
 
         if ( action.equals(ACTION_VOTE) )
             return actionVote(request, response, env);
@@ -76,12 +78,6 @@ public class EditPoll implements AbcAction {
             return FMTemplateSelector.select("ViewUser", "login", env, request);
         if ( !user.hasRole(Roles.POLL_ADMIN) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
-        if ( relation!=null ) {
-            relation = (Relation) persistance.findById(relation);
-            env.put(VAR_RELATION, relation);
-        }
 
         if ( action.equals(ACTION_ADD) )
             return FMTemplateSelector.select("EditPoll", "add", env, request);
@@ -210,7 +206,8 @@ public class EditPoll implements AbcAction {
     protected String actionVote(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-
+        User user = (User) env.get(Constants.VAR_USER);
+        Relation relation = (Relation) env.get(VAR_RELATION);
         Poll poll = (Poll) env.get(VAR_POLL);
         String url = (String) params.get(PARAM_URL);
         int max = 0;
@@ -236,7 +233,7 @@ public class EditPoll implements AbcAction {
 
         if ( max>0 ) {
             try {
-                AccessKeeper.checkAccess(poll, request, response);
+                AccessKeeper.checkAccess(relation, user, "vote", request, response);
                 for ( int i = 0; i<max; i++ ) {
                     String tmp = values[i];
                     int voteId = Integer.parseInt(tmp);

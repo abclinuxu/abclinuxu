@@ -6,6 +6,8 @@
 package cz.abclinuxu.servlets.html.view;
 
 import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.User;
 import cz.abclinuxu.exceptions.InvalidDataException;
 import cz.abclinuxu.exceptions.AccessDeniedException;
 import cz.abclinuxu.persistance.Persistance;
@@ -47,9 +49,15 @@ public class ShowSurvey implements AbcAction {
     /** screen with this id starts survey */
     public static final String START_ID = "START";
 
+    /* because we dont have always relation for survey, we have to simulate it with high enough number,
+     * so collision with existing relation is not possible
+     */
+    public static final int SURVEY_PREFIX = 30000000;
+
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User user = (User) env.get(Constants.VAR_USER);
 
         Item survey = (Item) InstanceUtils.instantiateParam(PARAM_SURVEY_ID, Item.class, params, request);
         if ( survey==null ) {
@@ -87,7 +95,9 @@ public class ShowSurvey implements AbcAction {
 
         if (screen.attributeValue("check")!=null)
             try {
-                AccessKeeper.checkAccess(survey, request, response);
+                Relation relation = new Relation(survey, survey, 0);
+                relation.setId(survey.getId()+SURVEY_PREFIX);
+                AccessKeeper.checkAccess(relation, user, "survey", request, response);
             } catch (AccessDeniedException e) {
                 if ( e.isIpAddressBlocked() )
                     return ServletUtils.showErrorPage("Z této IP adresy se u¾ volilo. Zkuste to pozdìji.", env, request);

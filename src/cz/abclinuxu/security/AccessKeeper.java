@@ -5,13 +5,12 @@
  */
 package cz.abclinuxu.security;
 
-import cz.abclinuxu.data.GenericObject;
-import cz.abclinuxu.data.Poll;
-import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.*;
 import cz.abclinuxu.exceptions.AccessDeniedException;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.persistance.SQLTool;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -71,21 +70,29 @@ public class AccessKeeper implements Configurable {
     /**
      * Checks, whether current request can be processed. For example
      * user may vote once per survey.
-     * @param obj object to be guarded
+     * @param relation child object shall be guarded. It must be synchronized already.
+     * @param user user that us performing action. It may be null.
+     * @param type type of action
      * @throws AccessDeniedException If access is denied.
      */
-    public static void checkAccess(GenericObject obj, HttpServletRequest request, HttpServletResponse response) throws AccessDeniedException {
-        singleton.checkAccessInternal(obj, request, response);
+    public static void checkAccess(Relation relation, User user, String type, HttpServletRequest request, HttpServletResponse response) throws AccessDeniedException {
+        singleton.checkAccessInternal(relation, user, type, request, response);
     }
 
-    public void checkAccessInternal(GenericObject obj, HttpServletRequest request, HttpServletResponse response) throws AccessDeniedException {
-        // check
-        String id = getSystemId(obj);
+    public void checkAccessInternal(Relation relation, User user, String type, HttpServletRequest request, HttpServletResponse response) throws AccessDeniedException {
+        String id = getSystemId(relation.getChild());
         String remoteAddress = request.getRemoteAddr();
         String browser = request.getHeader("user-agent");
         long now = System.currentTimeMillis();
-        HttpSession session = request.getSession();
 
+        if (user!=null) {
+            SQLTool sqlTool = SQLTool.getInstance();
+            if (sqlTool.getUserAction(user.getId(), relation.getId(), type)!=null)
+                throw new AccessDeniedException("Object has been already used!", false);
+            sqlTool.insertUserAction(user.getId(), relation.getId(), type);
+        }
+
+        HttpSession session = request.getSession();
         if ( session.getAttribute(id)!=null )
             throw new AccessDeniedException("Object has been already used!", false);
 

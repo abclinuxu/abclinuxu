@@ -228,7 +228,7 @@
               <entry key="items.with.type" value="select cislo from polozka where typ=?"/>
               <entry key="count.articles.by.user" value="select count(*) from polozka where typ=2 and data like concat('%&lt;author&gt;',?,'&lt;/author%') and vytvoreno&lt;now()"/>
               <entry key="insert.user.action" value="insert into akce values(?,?,?,NULL)" />
-              <entry key="get.user.action" value="select kdy from akce where kdo=? and relace=? and typ=?" /> 
+              <entry key="get.user.action" value="select kdy from akce where kdo=? and relace=? and typ=?" />
             </map>
           </node>
         </node>
@@ -356,6 +356,7 @@
                             <entry key="msg.ok" value="Va¹e hodnocení bylo pøijato"/>
                             <entry key="msg.data.missing" value="Chyba v parametrech pro hlasování"/>
                             <entry key="msg.already.rated" value="Mù¾ete hodnotit jen jednou!"/>
+                            <entry key="msg.not.logged" value="Hlasovat smí jen pøihlá¹ení u¾ivatelé!"/>
                         </map>
                     </node>
                     <node name="EditRequest">
