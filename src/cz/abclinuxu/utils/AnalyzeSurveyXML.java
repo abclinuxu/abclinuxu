@@ -50,8 +50,8 @@ public class AnalyzeSurveyXML {
         List tagOptions = survey.getData().selectNodes("//choice");
         if ( tagOptions!=null && tagOptions.size()>0 ) {
             for ( Iterator iter = tagOptions.iterator(); iter.hasNext(); ) {
-                Node node = (Node) iter.next();
-                options.put(node.getText(), node.getText());
+                String option = ((Node) iter.next()).getText();
+                options.put(option, option);
             }
         }
 
@@ -75,7 +75,7 @@ public class AnalyzeSurveyXML {
         System.out.println("Processing dump of screen "+id+", "+files.size()+" files.");
         for ( Iterator iter = files.iterator(); iter.hasNext(); ) {
             File file = (File) iter.next();
-            processFiles(file);
+            processFile(file);
         }
         System.out.println("Finished processing.");
         generateOutput(prefix);
@@ -96,7 +96,7 @@ public class AnalyzeSurveyXML {
     /**
      * Processes one xml file, affecting data map.
      */
-    void processFiles(File f) throws Exception {
+    void processFile(File f) throws Exception {
         Document d = null;
         try {
             d = reader.read(f);
@@ -105,7 +105,6 @@ public class AnalyzeSurveyXML {
             throw e;
         }
         List processedOptions = new ArrayList(30);
-        processedOptions.clear();
         List nodes = d.selectNodes("/*/*/*");
 
         for (Iterator iter = nodes.iterator(); iter.hasNext();) {
