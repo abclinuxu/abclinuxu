@@ -1,6 +1,7 @@
 <project name="AbcLinuxu" basedir="." default="deploy">
 
   <property name="src" value="src" />
+  <property name="data" value="../data-abc" />
   <property name="tomcat" value="/home/literakl/tomcat" />
   <property name="build" value="/home/literakl/ROOT" />
   <property name="backup" value="/home/literakl/tmp/ven" />
@@ -61,16 +62,16 @@
       <fileset dir="conf" includes="macros.vm" />
     </copy>
 
-    <copy todir="${build}">
-      <fileset dir="web/root" />
-    </copy>
-
     <copy todir="${build}/ikony">
       <fileset dir="web/ikony" />
     </copy>
 
     <copy todir="${build}/images">
-      <fileset dir="web/images" />
+      <fileset dir="${data}/web/images" />
+    </copy>
+
+    <copy todir="${build}">
+      <fileset dir="${data}/web/root" />
     </copy>
 
     <copy todir="${build}/WEB-INF/lib">
