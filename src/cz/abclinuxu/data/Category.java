@@ -8,13 +8,7 @@ import java.util.Date;
 /**
  * Category is a node of the tree (not leaf)
  */
-public class Category extends GenericObject {
-    /** identifier of owner of this object */
-    protected int owner;
-    /** creation date or last update of this object */
-    protected Date updated;
-    /** XML with data or this object */
-    protected String data;
+public class Category extends GenericDataObject {
     /** tells, whether normal users (non-administrators) can add items to this category */
     protected boolean open;
 
@@ -25,48 +19,6 @@ public class Category extends GenericObject {
 
     public Category(int id) {
         super(id);
-    }
-
-    /**
-     * @return owner's id
-     */
-    public int getOwner() {
-        return owner;
-    }
-
-    /**
-     * sets owner's id
-     */
-    public void setOwner(int owner) {
-        this.owner = owner;
-    }
-
-    /**
-     * @return last updated (or creation) date
-     */
-    public Date getUpdated() {
-        return updated;
-    }
-
-    /**
-     * sets last updated (or creation) date
-     */
-    public void setUpdated(Date updated) {
-        this.updated = updated;
-    }
-
-    /**
-     * @return data of this object in XML
-     */
-    public String getData() {
-        return data;
-    }
-
-    /**
-     * sets data of this object in XML
-     */
-    public void setData(String data) {
-        this.data = data;
     }
 
     /**
@@ -95,9 +47,6 @@ public class Category extends GenericObject {
 
     public boolean equals(Object o) {
         if ( !( o instanceof Category) ) return false;
-        Category p = (Category)o;
-        if ( id==p.id && owner==p.owner && data.equals(p.data) &&
-             updated.equals(p.updated) && open==p.open ) return true;
-        return false;
+        return super.equals(o) && ((Category)o).isOpen();
     }
 }

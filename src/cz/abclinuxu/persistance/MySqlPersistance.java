@@ -146,11 +146,11 @@ public class MySqlPersistance implements Persistance {
     public void update(GenericObject obj) throws PersistanceException {
         try {
             if (obj instanceof Record) {
-                updateRecord((Record)obj);
+                updateDataObject((Record)obj);
             } else if (obj instanceof Item) {
-                updateItem((Item)obj);
+                updateDataObject((Item)obj);
             } else if (obj instanceof Category) {
-                updateCategory((Category)obj);
+                updateDataObject((Category)obj);
             } else if (obj instanceof Data) {
                 updateData((Data)obj);
             } else if (obj instanceof Link) {
@@ -168,22 +168,14 @@ public class MySqlPersistance implements Persistance {
     public void synchronize(GenericObject obj) throws PersistanceException {
         GenericObject temp = findById(obj);
         obj.setContent(temp.getContent());
-        if (obj instanceof Record) {
-            Record a = (Record) obj, b= (Record) temp;
+        if (obj instanceof GenericDataObject) {
+            GenericDataObject a = (GenericDataObject) obj, b= (GenericDataObject) temp;
             a.setData(b.getData());
             a.setOwner(b.getOwner());
             a.setUpdated(b.getUpdated());
-        } else if (obj instanceof Item) {
-            Item a = (Item) obj, b= (Item) temp;
-            a.setData(b.getData());
-            a.setOwner(b.getOwner());
-            a.setUpdated(b.getUpdated());
-        } else if (obj instanceof Category) {
-            Category a = (Category) obj, b= (Category) temp;
-            a.setData(b.getData());
-            a.setOwner(b.getOwner());
-            a.setUpdated(b.getUpdated());
-            a.setOpen(b.isOpen());
+            if (obj instanceof Category) {
+                ((Category)a).setOpen(((Category)b).isOpen());
+            }
         } else if (obj instanceof Data) {
             Data a = (Data) obj, b= (Data) temp;
             a.setData(b.getData());
@@ -216,11 +208,11 @@ public class MySqlPersistance implements Persistance {
         GenericObject result = null;
         try {
             if (obj instanceof Record) {
-                result = loadRecord((Record)obj);
+                result = loadDataObject((Record)obj);
             } else if (obj instanceof Item) {
-                result = loadItem((Item)obj);
+                result = loadDataObject((Item)obj);
             } else if (obj instanceof Category) {
-                result = loadCategory((Category)obj);
+                result = loadDataObject((Category)obj);
             } else if (obj instanceof Data) {
                 result = loadData((Data)obj);
             } else if (obj instanceof Link) {
@@ -252,7 +244,7 @@ public class MySqlPersistance implements Persistance {
             List result = new ArrayList(), conditions = new ArrayList();
             StringBuffer sb = new StringBuffer("SELECT cislo FROM ");
             GenericObject obj = (GenericObject) objects.get(0);
-            Class kind = getClass(obj);
+            Class kind = getBaseClass(obj);
 
             sb.append(getTable(obj));
             sb.append(" where ");
@@ -261,7 +253,7 @@ public class MySqlPersistance implements Persistance {
                 String token = stk.nextToken();
                 try {
                     int index = Integer.parseInt(token);
-                    if ( getClass(obj)!=kind ) {
+                    if ( getBaseClass(obj)!=kind ) {
                         throw new PersistanceException("Ruzne objekty v listu objects!",AbcException.DB_WRONG_DATA,obj,null);
                     }
                     sb.append('(');
@@ -500,12 +492,12 @@ public class MySqlPersistance implements Persistance {
     }
 
     /**
-     * @return first descendant of GenericObject. E.g. for Category,
+     * @return base class of object. For Category,
      * Data, User, Link, Item, Record and Poll it returns associated class.
      * But for HardwareRecord, SoftwareRecord, Make, DiscussionQuestion, Rating etc.
      * it returns its superclass.
      */
-    private Class getClass(GenericObject obj) throws PersistanceException {
+    private Class getBaseClass(GenericObject obj) throws PersistanceException {
         if (obj instanceof Record) {
             return Record.class;
         } else if (obj instanceof Item) {
@@ -593,33 +585,20 @@ public class MySqlPersistance implements Persistance {
      */
     private void appendCreateParams(GenericObject obj, StringBuffer sb, List conditions ) throws PersistanceException {
         int type = 0;
-        if (obj instanceof Item) {
-            sb.append("insert into polozka values(0,?,?,?,NULL)");
-            type = getSubType(obj);
-            if ( type!=0 ) {
-                conditions.add(new Integer(type));
+        if (obj instanceof GenericDataObject) {
+            sb.append("insert into "+getTable(obj)+" values(0,?,?,?,NULL)");
+            if ( obj instanceof Category ) {
+                conditions.add(new Boolean(((Category)obj).isOpen()));
             } else {
-                throw new PersistanceException("Neznamy typ polozky "+ obj.toString()+"!",AbcException.DB_UNKNOWN_CLASS,obj,null);
+                type = getSubType(obj);
+                if ( type!=0 ) {
+                    conditions.add(new Integer(type));
+                } else {
+                    throw new PersistanceException("Neznamy typ tridy "+ obj.toString()+"!",AbcException.DB_UNKNOWN_CLASS,obj,null);
+                }
             }
-            conditions.add(((Item)obj).getData().getBytes());
-            conditions.add(new Integer(((Item)obj).getOwner()));
-
-        } else if (obj instanceof Record) {
-            sb.append("insert into zaznam values(0,?,?,?,NULL)");
-            type = getSubType(obj);
-            if ( type!=0 ) {
-                conditions.add(new Integer(type));
-            } else {
-                throw new PersistanceException("Neznamy typ zaznamu "+ obj.toString()+"!",AbcException.DB_UNKNOWN_CLASS,obj,null);
-            }
-            conditions.add(((Record)obj).getData().getBytes());
-            conditions.add(new Integer(((Record)obj).getOwner()));
-
-        } else if (obj instanceof Category) {
-            sb.append("insert into kategorie values(0,?,?,?,NULL)");
-            conditions.add(((Category)obj).getData().getBytes());
-            conditions.add(new Boolean(((Category)obj).isOpen()));
-            conditions.add(new Integer(((Category)obj).getOwner()));
+            conditions.add(((GenericDataObject)obj).getData().getBytes());
+            conditions.add(new Integer(((GenericDataObject)obj).getOwner()));
 
         } else if (obj instanceof Data) {
             sb.append("insert into objekt values(0,?,?,?)");
@@ -652,62 +631,31 @@ public class MySqlPersistance implements Persistance {
         boolean addAnd = false;
         int type = 0;
 
-        if (obj instanceof Record) {
-            if ( ((Record)obj).getOwner()!=0 ) {
+        if (obj instanceof GenericDataObject) {
+            if ( ((GenericDataObject)obj).getOwner()!=0 ) {
                 addAnd = true;
                 sb.append("pridal=?");
-                conditions.add(new Integer(((Record)obj).getOwner()));
+                conditions.add(new Integer(((GenericDataObject)obj).getOwner()));
             }
 
-            type = getSubType(obj);
-            if ( type!=0 ) {
-                if ( addAnd ) sb.append(" and ");
-                addAnd = true;
-                sb.append("typ=?");
-                conditions.add(new Integer(type));
-            }
-
-            if ( ((Record)obj).getData()!=null ) {
+            if ( ((GenericDataObject)obj).getData()!=null ) {
                 if ( addAnd ) sb.append(" and ");
                 sb.append("data like ?");
-                conditions.add(((Record)obj).getData());
-            }
-            return;
-
-        } else if (obj instanceof Item) {
-            if ( ((Item)obj).getOwner()!=0 ) {
-                addAnd = true;
-                sb.append("pridal=?");
-                conditions.add(new Integer(((Item)obj).getOwner()));
+                conditions.add(((GenericDataObject)obj).getData());
             }
 
-            type = getSubType(obj);
-            if ( type!=0 ) {
+            if ( obj instanceof Category ) {
                 if ( addAnd ) sb.append(" and ");
                 addAnd = true;
-                sb.append("typ=?");
-                conditions.add(new Integer(type));
-            }
-
-            if ( ((Item)obj).getData()!=null ) {
-                if ( addAnd ) sb.append(" and ");
-                sb.append("data like ?");
-                conditions.add(((Item)obj).getData());
-            }
-            return;
-
-        } else if (obj instanceof Category) {
-            sb.append("verejny=?");
-            conditions.add(new Boolean(((Category)obj).isOpen()));
-
-            if ( ((Category)obj).getOwner()!=0 ) {
-                sb.append("and pridal=?");
-                conditions.add(new Integer(((Category)obj).getOwner()));
-            }
-
-            if ( ((Category)obj).getData()!=null ) {
-                sb.append("and data like ?");
-                conditions.add(((Category)obj).getData());
+                sb.append("verejny=?");
+                conditions.add(new Boolean(((Category)obj).isOpen()));
+            } else {
+                type = getSubType(obj);
+                if ( type!=0 ) {
+                    if ( addAnd ) sb.append(" and ");
+                    sb.append("typ=?");
+                    conditions.add(new Integer(type));
+                }
             }
             return;
 
@@ -913,12 +861,12 @@ public class MySqlPersistance implements Persistance {
     /**
      * @return item descendant from mysql db
      */
-    protected GenericObject loadItem(Item obj) throws PersistanceException, SQLException {
+    protected GenericDataObject loadDataObject(GenericDataObject obj) throws PersistanceException, SQLException {
         Connection con = null;
 
         try {
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("select * from polozka where cislo=?");
+            PreparedStatement statement = con.prepareStatement("select * from "+getTable(obj)+" where cislo=?");
             statement.setInt(1,obj.getId());
 
             ResultSet resultSet = statement.executeQuery();
@@ -926,13 +874,29 @@ public class MySqlPersistance implements Persistance {
                 throw new PersistanceException("Polozka "+obj.getId()+" nebyla nalezena!",AbcException.DB_NOT_FOUND,obj,null);
             }
 
-            Item item = null;
-            switch ( resultSet.getInt(2) ) {
-                case 1: item = new Make(obj.getId());break;
-                case 2: item = new Article(obj.getId());break;
-                case 3: item = new Discussion(obj.getId());break;
-                case 4: item = new Request(obj.getId());break;
-                default: throw new PersistanceException("Nalezena polozka "+obj.getId()+" neznameho typu "+resultSet.getInt(2)+"!",AbcException.DB_UNKNOWN_CLASS,obj,null);
+            GenericDataObject item = null;
+            if ( obj instanceof Category ) {
+                item = new Category(obj.getId());
+                ((Category)item).setOpen(resultSet.getBoolean(2));
+            } else {
+                if ( obj instanceof Item ) {
+                    switch ( resultSet.getInt(2) ) {
+                        case 1: item = new Make(obj.getId());break;
+                        case 2: item = new Article(obj.getId());break;
+                        case 3: item = new Discussion(obj.getId());break;
+                        case 4: item = new Request(obj.getId());break;
+                        default: throw new PersistanceException("Nalezena polozka "+obj.getId()+" neznameho typu "+resultSet.getInt(2)+"!",AbcException.DB_UNKNOWN_CLASS,obj,null);
+                    }
+                } else {
+                    switch ( resultSet.getInt(2) ) {
+                        case 1: item = new HardwareRecord(obj.getId());break;
+                        case 2: item = new SoftwareRecord(obj.getId());break;
+                        case 3: item = new ArticleRecord(obj.getId());break;
+                        case 4: item = new DiscussionQuestion(obj.getId());break;
+                        case 5: item = new DiscussionItem(obj.getId());break;
+                        default: throw new PersistanceException("Nalezen zaznam "+obj.getId()+" neznameho typu "+resultSet.getInt(2)+"!",AbcException.DB_UNKNOWN_CLASS,obj,null);
+                    }
+                }
             }
             item.setData(new String(resultSet.getBytes(3)));
             item.setOwner(resultSet.getInt(4));
@@ -940,71 +904,6 @@ public class MySqlPersistance implements Persistance {
 
             findChildren(item,con);
             return item;
-        } finally {
-            releaseSQLConnection(con);
-        }
-    }
-
-    /**
-     * @return item descendant from mysql db
-     */
-    protected GenericObject loadRecord(Record obj) throws PersistanceException, SQLException {
-        Connection con = null;
-
-        try {
-            con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("select * from zaznam where cislo=?");
-            statement.setInt(1,obj.getId());
-
-            ResultSet resultSet = statement.executeQuery();
-            if ( !resultSet.next() ) {
-                throw new PersistanceException("Zaznam "+obj.getId()+" nebyl nalezen!",AbcException.DB_NOT_FOUND,obj,null);
-            }
-
-            Record record = null;
-            switch ( resultSet.getInt(2) ) {
-                case 1: record = new HardwareRecord(obj.getId());break;
-                case 2: record = new SoftwareRecord(obj.getId());break;
-                case 3: record = new ArticleRecord(obj.getId());break;
-                case 4: record = new DiscussionQuestion(obj.getId());break;
-                case 5: record = new DiscussionItem(obj.getId());break;
-                default: throw new PersistanceException("Nalezen zaznam "+obj.getId()+" neznameho typu "+resultSet.getInt(2)+"!",AbcException.DB_UNKNOWN_CLASS,obj,null);
-            }
-            record.setData(new String(resultSet.getBytes(3)));
-            record.setOwner(resultSet.getInt(4));
-            record.setUpdated(resultSet.getTimestamp(5));
-
-            findChildren(record,con);
-            return record;
-        } finally {
-            releaseSQLConnection(con);
-        }
-    }
-
-    /**
-     * @return category from mysql db
-     */
-    protected GenericObject loadCategory(Category obj) throws PersistanceException, SQLException {
-        Connection con = null;
-
-        try {
-            con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("select * from kategorie where cislo=?");
-            statement.setInt(1,obj.getId());
-
-            ResultSet resultSet = statement.executeQuery();
-            if ( !resultSet.next() ) {
-                throw new PersistanceException("Kategorie "+obj.getId()+" nebyla nalezena!",AbcException.DB_NOT_FOUND,obj,null);
-            }
-
-            Category ctg = new Category(obj.getId());
-            ctg.setData(new String(resultSet.getBytes(2)));
-            ctg.setOpen(resultSet.getBoolean(3));
-            ctg.setOwner(resultSet.getInt(4));
-            ctg.setUpdated(resultSet.getTimestamp(5));
-
-            findChildren(ctg,con);
-            return ctg;
         } finally {
             releaseSQLConnection(con);
         }
@@ -1170,61 +1069,28 @@ public class MySqlPersistance implements Persistance {
     /**
      * updates record in database
      */
-    private void updateRecord(Record record) throws PersistanceException, SQLException {
+    private void updateDataObject(GenericDataObject obj) throws PersistanceException, SQLException {
         Connection con = null;
 
         try {
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("update zaznam set data=? where cislo=?");
-            statement.setBytes(1,record.getData().getBytes());
-            statement.setInt(2,record.getId());
-
-            int result = statement.executeUpdate();
-            if ( result!=1 ) {
-                throw new PersistanceException("Nepodarilo se ulozit zmeny v "+record.toString()+" do databaze!", AbcException.DB_UPDATE, record, null);
+            PreparedStatement statement = null;
+            if ( obj instanceof Category ) {
+                statement = con.prepareStatement("update zaznam set data=?,verejny=? where cislo=?");
+                statement.setBoolean(2,((Category)obj).isOpen());
+                statement.setInt(3,obj.getId());
+            } else if ( obj instanceof Record) {
+                statement = con.prepareStatement("update zaznam set data=? where cislo=?");
+                statement.setInt(2,obj.getId());
+            } else {
+                statement = con.prepareStatement("update polozka set data=? where cislo=?");
+                statement.setInt(2,obj.getId());
             }
-        } finally {
-            releaseSQLConnection(con);
-        }
-    }
-
-    /**
-     * updates item in database
-     */
-    private void updateItem(Item item) throws PersistanceException, SQLException {
-        Connection con = null;
-
-        try {
-            con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("update polozka set data=? where cislo=?");
-            statement.setBytes(1,item.getData().getBytes());
-            statement.setInt(2,item.getId());
+            statement.setBytes(1,obj.getData().getBytes());
 
             int result = statement.executeUpdate();
             if ( result!=1 ) {
-                throw new PersistanceException("Nepodarilo se ulozit zmeny v "+item.toString()+" do databaze!", AbcException.DB_UPDATE, item, null);
-            }
-        } finally {
-            releaseSQLConnection(con);
-        }
-    }
-
-    /**
-     * updates category in database
-     */
-    private void updateCategory(Category category) throws PersistanceException, SQLException {
-        Connection con = null;
-
-        try {
-            con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("update kategorie set data=?,verejny=? where cislo=?");
-            statement.setBytes(1,category.getData().getBytes());
-            statement.setBoolean(2,category.isOpen());
-            statement.setInt(3,category.getId());
-
-            int result = statement.executeUpdate();
-            if ( result!=1 ) {
-                throw new PersistanceException("Nepodarilo se ulozit zmeny v "+category.toString()+" do databaze!", AbcException.DB_UPDATE, category, null);
+                throw new PersistanceException("Nepodarilo se ulozit zmeny v "+obj.toString()+" do databaze!", AbcException.DB_UPDATE, obj, null);
             }
         } finally {
             releaseSQLConnection(con);

@@ -5,13 +5,7 @@ package cz.abclinuxu.data;
 
 import java.util.Date;
 
-public class Item extends GenericObject {
-    /** identifier of owner of this object */
-    protected int owner;
-    /** creation date or last update of this object */
-    protected Date updated;
-    /** XML with data or this object */
-    protected String data;
+public class Item extends GenericDataObject {
 
     public Item() {
         super();
@@ -21,50 +15,8 @@ public class Item extends GenericObject {
         super(id);
     }
 
-    /**
-     * @return owner's id
-     */
-    public int getOwner() {
-        return owner;
-    }
-
-    /**
-     * sets owner's id
-     */
-    public void setOwner(int owner) {
-        this.owner = owner;
-    }
-
-    /**
-     * @return last updated (or creation) date
-     */
-    public Date getUpdated() {
-        return updated;
-    }
-
-    /**
-     * sets last updated (or creation) date
-     */
-    public void setUpdated(Date updated) {
-        this.updated = updated;
-    }
-
-    /**
-     * @return data of this object in XML
-     */
-    public String getData() {
-        return data;
-    }
-
-    /**
-     * sets data of this object in XML
-     */
-    public void setData(String data) {
-        this.data = data;
-    }
-
     public String toString() {
-        StringBuffer sb = new StringBuffer("Record: id=");
+        StringBuffer sb = new StringBuffer("Item: id=");
         sb.append(id);
         if ( owner!=0 ) sb.append(",owner="+owner);
         if ( data!=null ) sb.append(",data="+data);
@@ -74,8 +26,6 @@ public class Item extends GenericObject {
 
     public boolean equals(Object o) {
         if ( !( o instanceof Item) ) return false;
-        Item p = (Item)o;
-        if ( id==p.id && owner==p.owner && data.equals(p.data) ) return true;
-        return false;
+        return super.equals(o);
     }
 }
