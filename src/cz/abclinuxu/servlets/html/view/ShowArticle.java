@@ -11,6 +11,7 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Record;
+import cz.abclinuxu.data.User;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
@@ -19,6 +20,7 @@ import cz.abclinuxu.exceptions.InvalidDataException;
 import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.security.Roles;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -137,7 +139,9 @@ public class ShowArticle implements AbcAction {
             env.put(VAR_RELATED_RESOURCES,resources);
         }
 
-        persistance.incrementCounter(item);
+        User user = (User) env.get(Constants.VAR_USER);
+        if ( user==null || !user.hasRole(Roles.ARTICLE_ADMIN) )
+            persistance.incrementCounter(item);
         return FMTemplateSelector.select("ShowObject", "article", env, request);
     }
 
