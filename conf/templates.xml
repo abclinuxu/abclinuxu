@@ -340,6 +340,15 @@
     </action>
   </servlet>
 
+  <servlet name="ViewBlog">
+    <action name="blog" content="/show/blog.ftl">
+      <var name="TITLE" value="${TOOL.childName(BLOG)}" type="Lazy"/>
+    </action>
+    <action name="blogspace" content="/show/blogs_all.ftl">
+      <var name="TITLE" value="Blogy na abclinuxu" />
+    </action>
+  </servlet>
+
   <servlet name="ViewUser">
     <action name="profile" content="/show/profile.ftl">
       <var name="TITLE" value="Profil - ${PROFILE.name}" type="Lazy" />

@@ -57,6 +57,10 @@
             <action>cz.abclinuxu.servlets.html.edit.EditDiscussion</action>
         </mapping>
         <mapping>
+            <pattern>^/blog(/|$)</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ViewBlog</action>
+        </mapping>
+        <mapping>
             <pattern>^/hardware/edit</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditHardware</action>
         </mapping>
