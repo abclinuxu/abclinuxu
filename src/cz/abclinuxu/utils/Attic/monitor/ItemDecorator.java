@@ -20,8 +20,12 @@ import java.util.prefs.Preferences;
 /**
  * Decorator for Discussions.
  */
-public class DriverDecorator implements Decorator, Configurable {
-    String subject;
+public class ItemDecorator implements Decorator, Configurable {
+    public static final String PREF_ACTION_ADD = "action.add";
+    public static final String PREF_ACTION_EDIT = "action.edit";
+    public static final String PREF_ACTION_REMOVE = "action.remove";
+
+    String subject, actionAdd, actionEdit, actionRemove;
 
     /**
      * Creates environment for given MonitorAction. This
@@ -34,28 +38,40 @@ public class DriverDecorator implements Decorator, Configurable {
         Map env = new HashMap();
 
         env.put(EmailSender.KEY_SUBJECT, subject);
-        env.put(EmailSender.KEY_TEMPLATE, "/mail/monitor/notif_driver.ftl");
+        env.put(EmailSender.KEY_TEMPLATE, "/mail/monitor/notif_item.ftl");
 
         env.put(VAR_URL, action.url);
         env.put(VAR_ACTOR, action.actor);
         env.put(VAR_PERFORMED, action.performed);
 
+        String changeMessage = "";
+        if ( UserAction.ADD.equals(action.action) )
+            changeMessage = actionAdd;
+        else if ( UserAction.EDIT.equals(action.action) )
+            changeMessage = actionEdit;
+        else if ( UserAction.REMOVE.equals(action.action) )
+            changeMessage = actionRemove;
+        env.put(VAR_ACTION, changeMessage);
+
         String name = (String) action.getProperty(PROPERTY_NAME);
-        if ( name==null ) {
+        if (name==null) {
             Persistance persistance = PersistanceFactory.getPersistance();
             Item driver = (Item) persistance.findById(action.object);
             name = driver.getData().selectSingleNode("/data/name").getText();
         }
-        env.put(VAR_NAME, name);
+        env.put(VAR_NAME,name);
 
         return env;
     }
 
-    public DriverDecorator() {
+    public ItemDecorator() {
         ConfigurationManager.getConfigurator().configureMe(this);
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {
         subject = prefs.get(PREF_SUBJECT,"AbcMonitor");
+        actionAdd = prefs.get(PREF_ACTION_ADD, "");
+        actionEdit = prefs.get(PREF_ACTION_EDIT, "");
+        actionRemove = prefs.get(PREF_ACTION_REMOVE, "");
     }
 }

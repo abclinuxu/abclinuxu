@@ -73,12 +73,20 @@
                 <entry key="subject" value="AbcMonitor: uprava ovladace"/>
               </map>
             </node>
+            <node name="ItemDecorator">
+              <map>
+                <entry key="subject" value="AbcMonitor: zmena v polozce"/>
+                  <entry key="action.add" value="pridal zaznam"/>
+                  <entry key="action.edit" value="upravil zaznam"/>
+                  <entry key="action.remove" value="smazal polozku"/>
+              </map>
+            </node>
             <node name="DiscussionDecorator">
               <map>
                 <entry key="subject" value="AbcMonitor: zmena v diskusi"/>
-                <entry key="action.add" value="pridan komentar"/>
-                <entry key="action.remove" value="diskuse byla smazana"/>
-                <entry key="action.censore" value="uvalena cenzura na komentar"/>
+                <entry key="action.add" value="pridal komentar"/>
+                <entry key="action.remove" value="smazal diskusi"/>
+                <entry key="action.censore" value="uvalil cenzura na komentar"/>
               </map>
             </node>
           </node>

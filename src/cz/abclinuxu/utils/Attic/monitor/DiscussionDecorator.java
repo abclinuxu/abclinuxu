@@ -18,18 +18,10 @@ import java.util.prefs.Preferences;
  * Decorator for Discussions.
  */
 public class DiscussionDecorator implements Decorator, Configurable {
-    public static final String PREF_SUBJECT = "subject";
     public static final String PREF_ACTION_ADD = "action.add";
     public static final String PREF_ACTION_REMOVE = "action.remove";
     public static final String PREF_ACTION_CENSORE = "action.censore";
 
-    public static final String VAR_URL = "URL";
-    public static final String VAR_NAME = "NAME";
-    public static final String VAR_ACTION = "ACTION";
-    public static final String VAR_ACTOR = "ACTOR";
-    public static final String VAR_PERFORMED = "PERFORMED";
-
-    public static final String PROPERTY_NAME = "NAME";
 
     String subject, actionAdd, actionRemove, actionCensore;
 

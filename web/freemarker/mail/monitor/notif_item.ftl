@@ -5,7 +5,7 @@ sleduje stav vybranych objektu. Pokud jej u zvoleneho objektu zapnete
 a nekdo objekt nejak upravi, zasleme vam email s upozornenim.
 
 Kdo:   ${ACTOR}
-Akce:  upravil ovladac
+Akce:  ${ACTION}
 Jmeno: ${NAME}
 Datum: ${DATE.show(PERFORMED,"CZ_FULL")}
 URL:   ${URL}

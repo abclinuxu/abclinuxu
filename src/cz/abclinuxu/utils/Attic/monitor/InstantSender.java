@@ -31,6 +31,7 @@ public class InstantSender extends Thread implements Configurable {
     static InstantSender singleton = new InstantSender();
     static Decorator discussionDecorator = new DiscussionDecorator();
     static Decorator driverDecorator = new DriverDecorator();
+    static Decorator itemDecorator = new ItemDecorator();
 
     int waitInterval;
 
@@ -81,6 +82,8 @@ public class InstantSender extends Thread implements Configurable {
             return driverDecorator;
         if (ObjectType.DISCUSSION.equals(action.type) )
             return discussionDecorator;
+        if (ObjectType.ITEM.equals(action.type) )
+            return itemDecorator;
         return null;
     }
 

@@ -15,6 +15,15 @@ import java.util.Map;
  * that will display the object.
  */
 public interface Decorator {
+    public static final String PREF_SUBJECT = "subject";
+
+    public static final String PROPERTY_NAME = "NAME";
+
+    public static final String VAR_URL = "URL";
+    public static final String VAR_NAME = "NAME";
+    public static final String VAR_ACTOR = "ACTOR";
+    public static final String VAR_ACTION = "ACTION";
+    public static final String VAR_PERFORMED = "PERFORMED";
 
     /**
      * Creates environment for given MonitorAction. This

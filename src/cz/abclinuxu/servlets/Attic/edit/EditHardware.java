@@ -15,6 +15,7 @@ import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.monitor.*;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.PersistanceException;
 
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.RequestDispatcher;
 import java.util.Map;
+import java.util.Date;
 
 /**
  * This class is responsible for adding and
@@ -57,6 +59,7 @@ public class EditHardware extends AbcFMServlet {
     public static final String ACTION_EDIT_ITEM_STEP2 = "editItem2";
     public static final String ACTION_EDIT_RECORD = "editRecord";
     public static final String ACTION_EDIT_RECORD_STEP2 = "editRecord2";
+    public static final String ACTION_ALTER_MONITOR = "monitor";
 
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -121,6 +124,9 @@ public class EditHardware extends AbcFMServlet {
             else
                 return actionEditItem2(request, response, env);
         }
+
+        if ( ACTION_ALTER_MONITOR.equals(action) )
+            return actionAlterMonitor(request, response, env);
 
         throw new MissingArgumentException("Chybí parametr action!");
     }
@@ -209,6 +215,7 @@ public class EditHardware extends AbcFMServlet {
     protected String actionAddRecord(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         User user = (User) env.get(Constants.VAR_USER);
 
         String driver = (String) params.get(PARAM_DRIVER);
@@ -241,20 +248,20 @@ public class EditHardware extends AbcFMServlet {
         Record record = new Record(0,Record.HARDWARE);
         record.setData(document);
         record.setOwner(user.getId());
-        Relation upper = (Relation) env.get(VAR_RELATION);
+        Relation upper = (Relation) env.get(VAR_RELATION), relation = null;
 
-        try {
-            persistance.create(record);
-            Relation relation = new Relation(upper.getChild(),record,upper.getId());
-            persistance.create(relation);
+        persistance.create(record);
+        relation = new Relation(upper.getChild(), record, upper.getId());
+        persistance.create(relation);
 
-            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
-            return null;
-        } catch (PersistanceException e) {
-            ServletUtils.addError(Constants.ERROR_GENERIC,e.getMessage(),env, null);
-            return FMTemplateSelector.select("EditHardware","add_record",env,request);
-        }
+        // run monitor
+        String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/ViewRelation?rid="+upper.getId();
+        Item item = (Item) persistance.findById(upper.getChild());
+        MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.ITEM, item, url);
+        MonitorPool.scheduleMonitorAction(action);
+
+        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+        return null;
     }
 
     protected String actionEditItem(HttpServletRequest request, Map env) throws Exception {
@@ -343,6 +350,8 @@ public class EditHardware extends AbcFMServlet {
     protected String actionEditRecord2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        User user = (User) env.get(Constants.VAR_USER);
 
         String driver = (String) params.get(PARAM_DRIVER);
         String price = (String) params.get(PARAM_PRICE);
@@ -372,6 +381,30 @@ public class EditHardware extends AbcFMServlet {
             DocumentHelper.makeElement(document,"data/note").setText(note);
 
         persistance.update(record);
+
+        // run monitor
+        String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/ViewRelation?rid="+relation.getId();
+        Item item = (Item) persistance.findById(relation.getChild());
+        MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.ITEM, item, url);
+        MonitorPool.scheduleMonitorAction(action);
+
+        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+        return null;
+    }
+
+    /**
+     * Reverts current monitor state for the user on this driver.
+     */
+    protected String actionAlterMonitor(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item item = (Item) persistance.findById(relation.getChild());
+        User user = (User) env.get(Constants.VAR_USER);
+
+        Date originalUpdated = item.getUpdated();
+        MonitorTools.alterMonitor(item.getData().getRootElement(), user);
+        persistance.update(item);
+        SQLTool.getInstance().setUpdatedTimestamp(item, originalUpdated);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
