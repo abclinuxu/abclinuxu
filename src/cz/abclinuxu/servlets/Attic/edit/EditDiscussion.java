@@ -295,7 +295,7 @@ public class EditDiscussion extends AbcFMServlet {
 
         Element element = (Element) record.getData().selectSingleNode(xpath);
         if (element!=null) {
-            Node node = element.selectSingleNode("//censored");
+            Node node = element.selectSingleNode("censored");
             if (node!=null) {
                 node.detach();
                 AdminLogger.logEvent(user,"odstranena cenzura na vlakno "+thread+" diskuse "+discussion.getId()+", relace "+relation.getId());
