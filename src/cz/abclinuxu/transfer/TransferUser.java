@@ -25,8 +25,8 @@ public class TransferUser {
      * main routine
      */
     public void transfer(int start) throws Exception {
-        Connection conHw = DriverManager.getConnection("jdbc:mysql://localhost/hardware?user=literakl");
         Connection conAbc = DriverManager.getConnection("jdbc:mysql://localhost/abc?user=literakl&password=lkaretil&useUnicode=true&characterEncoding=ISO-8859-2");
+        Connection conHw = DriverManager.getConnection("jdbc:mysql://localhost/hardware?user=literakl&password=lkaretil&useUnicode=true&characterEncoding=ISO-8859-2");
 
         PreparedStatement statement = conHw.prepareStatement("select cislo,login,jmeno,email from uzivatel where cislo>?");
         statement.setInt(1,start);
