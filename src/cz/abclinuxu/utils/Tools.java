@@ -11,9 +11,12 @@ import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.PreparedDiscussion;
+import cz.abclinuxu.servlets.utils.Discussion;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.apache.log4j.Logger;
+import org.apache.regexp.RE;
+import org.apache.regexp.RESyntaxException;
 
 import java.util.*;
 
@@ -26,9 +29,22 @@ import freemarker.template.TemplateNumberModel;
  * Various utilities available for templates
  */
 public class Tools {
-    Logger log = Logger.getLogger(Tools.class);
+    static Logger log = Logger.getLogger(Tools.class);
 
     static Persistance persistance = PersistanceFactory.getPersistance();
+    static RE lineBreaks,emptyLine,usmev,smich,mrk,smutek;
+    static {
+        try {
+            lineBreaks = new RE("(<br>)|(<p>)|(<div>)",RE.MATCH_CASEINDEPENDENT);
+            emptyLine = new RE("(\r\n){2}|(\n){2}", RE.MATCH_MULTILINE);
+            usmev = new RE("([\\:][-][)]+)");
+            smich = new RE("([\\:][-][D]([^a-zA-Z]|$))");
+            mrk = new RE("([;][-][)])");
+            smutek = new RE("([\\:][-][(])");
+        } catch (RESyntaxException e) {
+            log.error("Cannot create regexp to find line breaks!", e);
+        }
+    }
 
     /**
      * Returns text value of node selected by xpath expression for GenericObject.
@@ -69,6 +85,8 @@ public class Tools {
                 if ( node!=null )
                     return node.getText();
             }
+            if ( (child instanceof Item) && ((Item)child).getId()==Item.DISCUSSION )
+                return "Diskuse";
         }
 
         if ( child instanceof Link )
@@ -261,6 +279,15 @@ public class Tools {
     }
 
     /**
+     * This method instantiates user and synchronizes it.
+     * @return synchronized User.
+     */
+    public User createUser(int id) {
+        User user = new User(id);
+        return (User) persistance.findById(user);
+    }
+
+    /**
      * @return counter value for selected GenericObject
      */
     public int getCounterValue(GenericObject obj) {
@@ -273,7 +300,7 @@ public class Tools {
      * children are same type. As side effect, the relations and their objects
      * are initialized.
      */
-    public Map groupByType(List relations) throws PersistanceException {
+    public static Map groupByType(List relations) throws PersistanceException {
         Map map = new HashMap();
 
         for (Iterator iter = relations.iterator(); iter.hasNext();) {
@@ -301,5 +328,101 @@ public class Tools {
             }
         }
         return map;
+    }
+
+    /**
+     * This method performs visualization enhancements. If string
+     * doesn't contain already HTML breaks (<p>, <br>), it inserts them.
+     * It also replaces smilies with appropriate images.
+     */
+    public String render(String str) {
+        if ( Misc.empty(str) ) return "";
+
+        String tmp = smich.subst(str,"<img src=\"/images/smile/smich.gif\" width=12 height=12 alt=\":-D\">");
+        tmp = usmev.subst(tmp,"<img src=\"/images/smile/usmev.gif\" width=12 height=12 alt=\":-)\">");
+        tmp = mrk.subst(tmp,"<img src=\"/images/smile/mrk.gif\" width=12 height=12 alt=\";-)\">");
+        tmp = smutek.subst(tmp,"<img src=\"/images/smile/smutek.gif\" width=12 height=12 alt=\":-(\">");
+
+        if ( lineBreaks.match(tmp) ) return tmp;
+        return emptyLine.subst(tmp,"<p>\n");
+    }
+
+    /**
+     * Converts Item with type==Discussion to tree structure. Tree is consisted from
+     * list of Discussion objects.
+     */
+    public List createDiscussionTree(GenericObject obj) throws PersistanceException {
+        if ( ! InstanceUtils.checkType(obj,Item.class,Item.DISCUSSION) )
+            throw new IllegalArgumentException("Not an discussion: "+obj);
+
+        List top = new ArrayList(5);
+        Map map = new HashMap();
+        sync(obj.getContent());
+        List records = Sorters2.byId(obj.getContent());
+
+        for (Iterator iter = records.iterator(); iter.hasNext();) {
+            Record record = (Record) ((Relation)iter.next()).getChild();
+            Node node = record.getData().selectSingleNode("data/thread");
+            int upperId = (node==null)? 0:Integer.parseInt(node.getText());
+
+            Discussion created = null, upper = null;
+            if ( upperId!=0 )
+                upper = (Discussion) map.get(new Record(upperId,Record.DISCUSSION));
+
+            if ( upper!=null ) {
+                created = upper.add(record);
+            } else {
+                created = new Discussion(record);
+                top.add(created);
+            }
+            map.put(record,created);
+        }
+
+        return top;
+    }
+
+    /**
+     * Tests, whether specified object <code>obj</code> is instance of selected
+     * class <code>clazz</code> and if even if it belongs to certain <code>type</code>
+     * (for GenericDataObject subclasses). GenericObject <code>obj</code> shall be
+     * initialized.
+     * @deprecated
+     */
+    public boolean is(GenericObject obj, String clazz, String type) {
+        if ( "Item".equalsIgnoreCase(clazz) ) {
+            if ( ! (obj instanceof Item) ) return false;
+            if ( type==null ) return true;
+            switch (((Item)obj).getType()) {
+                case 1: return "Make".equalsIgnoreCase(type);
+                case 2: return "Article".equalsIgnoreCase(type);
+                case 3: return "Discussion".equalsIgnoreCase(type);
+                case 4: return "Request".equalsIgnoreCase(type);
+                case 5: return "Driver".equalsIgnoreCase(type);
+                default: return false;
+            }
+        }
+        if ( "Category".equalsIgnoreCase(clazz) ) {
+            return (obj instanceof Category);
+        }
+        return false;
+    }
+
+    /**
+     * Increments usage counter of GenericObject.
+     */
+    public void incrementCounter(GenericObject obj) {
+        persistance.incrementCounter(obj);
+    }
+
+    /**
+     * @return integer value of <code>str</code> or 0
+     */
+    public int parseInt(String str) {
+        if ( ! Misc.empty(str) ) {
+            try {
+                return Integer.parseInt(str);
+            } catch (NumberFormatException e) {}
+        }
+        return 0;
     }
 }
