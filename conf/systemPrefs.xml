@@ -189,24 +189,24 @@
                 <entry key="file" value="WEB-INF/freemarker/include/kernel.txt"/>
                 <entry key="uri" value="http://www.kernel.org/kdist/finger_banner"/>
                 <entry key="regexp.stable" value="(The latest stable[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                <entry key="url.stable" value="ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.6"/>
-                <entry key="regexp.stable.pre" value="(The latest snapshot for the stable[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+                <entry key="url.stable" value="ftp://ftp.cz.kernel.org/pub/linux/kernel/v2.6"/>
+                <entry key="regexp.stable.pre" value="(The latest prepatch for the stable[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
                 <entry key="regexp.devel" value="(The latest beta[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                <entry key="url.devel" value="ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.7"/>
+                <entry key="url.devel" value="ftp://ftp.cz.kernel.org/pub/linux/kernel/v2.7"/>
                 <entry key="regexp.devel.pre" value="(The latest prepatch for the beta[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
                 <entry key="regexp.24" value="(The latest 2.4[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                <entry key="url.24" value="ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.4"/>
+                <entry key="url.24" value="ftp://ftp.cz.kernel.org/pub/linux/kernel/v2.4"/>
                 <entry key="regexp.24.pre" value="(The latest prepatch for the 2.4[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
                 <entry key="regexp.22" value="(The latest 2.2[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                <entry key="url.22" value="ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.2"/>
+                <entry key="url.22" value="ftp://ftp.cz.kernel.org/pub/linux/kernel/v2.2"/>
                 <entry key="regexp.22.pre" value="(The latest prepatch for the 2.2[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
                 <entry key="regexp.20" value="(The latest 2.0[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                <entry key="url.20" value="ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.0"/>
+                <entry key="url.20" value="ftp://ftp.cz.kernel.org/pub/linux/kernel/v2.0"/>
                 <entry key="regexp.20.pre" value="(The latest prepatch for the 2.0[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
                 <entry key="regexp.ac" value="(The latest -ac patch to the beta[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
                 <entry key="url.ac" value="http://www.kernel.org/pub/linux/kernel/people/alan/linux-2.6/"/>
                 <entry key="regexp.stable.mm" value="(The latest -mm patch to the stable[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                <entry key="url.stable.mm" value="ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.6"/>
+                <entry key="url.stable.mm" value="ftp://ftp.cz.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/"/>
               </map>
             </node>
         </node>
