@@ -5,7 +5,7 @@ package abc;
 public class HardwareRecord extends Record {
     /**
      * @clientCardinality 1..*
-     * @supplierCardinality 0..1 
+     * @supplierCardinality 1
      */
     private Make lnkMake;
 }

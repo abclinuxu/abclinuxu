@@ -4,7 +4,9 @@ package abc;
 
 public class GenericObject {
     protected int id;
-    protected int owner;
-    protected Date updated;
-    protected String data;
+
+    /**
+     * @supplierCardinality 0..* 
+     */
+    private GenericObject lnkGenericObject;
 }

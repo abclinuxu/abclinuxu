@@ -2,13 +2,12 @@
 
 package abc;
 
-public class User {
+public class User extends GenericObject {
     public boolean isPasswordValid(String pass) {
     }
 
-    private int id;
-    private String login;
-    private String name;
-    private String email;
-    private String password;
+    protected String login;
+    protected String name;
+    protected String email;
+    protected String password;
 }

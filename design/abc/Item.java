@@ -8,4 +8,7 @@ public class Item extends GenericObject {
      * @clientCardinality 0..* 
      */
     private Category lnkCategory;
+    protected int owner;
+    protected Date updated;
+    protected String data;
 }

@@ -4,4 +4,7 @@ package abc;
 
 public class Category extends GenericObject {
     protected boolean open;
+    protected int owner;
+    protected Date updated;
+    protected String data;
 }

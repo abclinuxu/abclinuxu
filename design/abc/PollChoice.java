@@ -8,8 +8,8 @@ public class PollChoice {
     protected int count;
 
     /**
-     * @clientCardinality 1
-     * @supplierCardinality 1..* 
+     * @clientCardinality 1..*
+     * @supplierCardinality 1
      */
     private Poll lnkSurvey;
 }

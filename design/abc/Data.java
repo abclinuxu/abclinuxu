@@ -2,8 +2,7 @@
 
 package abc;
 
-public class Data {
-    protected int id;
+public class Data extends GenericObject {
     protected int owner;
     protected byte[] data;
     protected String format;

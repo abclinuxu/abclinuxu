@@ -3,4 +3,5 @@
 package abc;
 
 public class Survey extends Poll {
+    protected boolean multiChoice;
 }

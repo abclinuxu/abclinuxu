@@ -3,9 +3,7 @@
 package abc;
 
 public class Record extends GenericObject {
-    /**
-     * @supplierCardinality 1
-     * @clientCardinality 0..* 
-     */
-    private Item lnkItem;
+    protected int owner;
+    protected Date updated;
+    protected String data;
 }

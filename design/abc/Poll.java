@@ -2,8 +2,6 @@
 
 package abc;
 
-public class Poll {
-    protected int id;
+public class Poll extends GenericObject {
     protected String text;
-    protected boolean multiChoice;
 }
