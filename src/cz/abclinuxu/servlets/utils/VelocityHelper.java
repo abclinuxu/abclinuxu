@@ -39,10 +39,10 @@ public class VelocityHelper {
         try {
             lineBreaks = new RE("(<br>)|(<p>)|(<div>)",RE.MATCH_CASEINDEPENDENT);
             emptyLine = new RE("(\r\n){2}|(\n){2}", RE.MATCH_MULTILINE);
-            usmev = new RE("([\\:][-]?[)]+)");
-            smich = new RE("([\\:][-]?[D]([^a-zA-Z]|$))");
-            mrk = new RE("([;][-]?[)]+)");
-            smutek = new RE("([\\:][-]?[(]+)");
+            usmev = new RE("([\\:][-][)]+)");
+            smich = new RE("([\\:][-][D]([^a-zA-Z]|$))");
+            mrk = new RE("([;][-][)]+)");
+            smutek = new RE("([\\:][-][(]+)");
         } catch (RESyntaxException e) {
             log.error("Cannot create regexp to find line breaks!", e);
         }
