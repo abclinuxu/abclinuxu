@@ -90,23 +90,24 @@ public class VariableFetcher extends TimerTask {
     public void run() {
         log.debug("fetching variables");
         try {
+            SQLTool sqlTool = SQLTool.getInstance();
             // put counts into map
-            Integer i = SQLTool.getInstance().getDriversCount();
+            Integer i = sqlTool.getHardwareCount();
             counter.put("HARDWARE",i);
-            i = SQLTool.getInstance().getDriversCount();
+            i = sqlTool.getSoftwareCount();
             counter.put("SOFTWARE",i);
-            i = SQLTool.getInstance().getDriversCount();
+            i = sqlTool.getDriversCount();
             counter.put("DRIVERS",i);
             Category forum = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
             counter.put("FORUM",new Integer(forum.getContent().size()));
             Category requests = (Category) persistance.findById(new Category(Constants.CAT_REQUESTS));
             counter.put("REQUESTS",new Integer(requests.getContent().size()));
 
-            currentPoll = SQLTool.getInstance().findActivePoll();
-            newHardware = SQLTool.getInstance().findHardwareRelationsByUpdated(0,SIZE);
-            newSoftware = SQLTool.getInstance().findSoftwareRelationsByUpdated(0,SIZE);
-            newDrivers = SQLTool.getInstance().findDriverRelationsByUpdated(0,SIZE);
-            newArticles = SQLTool.getInstance().findArticleRelationsByUpdated(0,ARTICLE_SIZE);
+            currentPoll = sqlTool.findActivePoll();
+            newHardware = sqlTool.findHardwareRelationsByUpdated(0,SIZE);
+            newSoftware = sqlTool.findSoftwareRelationsByUpdated(0,SIZE);
+            newDrivers = sqlTool.findDriverRelationsByUpdated(0,SIZE);
+            newArticles = sqlTool.findArticleRelationsByUpdated(0,ARTICLE_SIZE);
 
             log.debug("finished fetching variables");
         } catch (Exception e) {
