@@ -388,7 +388,7 @@ public class EditBlog implements AbcAction, Configurable {
         Element root = blog.getData().getRootElement();
 
         boolean canContinue = setPageTitle(params, root, env);
-        canContinue &= setBlogTitle(params, root);
+        canContinue &= setBlogTitle(params, root, env);
         canContinue &= setBlogIntro(params, root);
         canContinue &= setPageSize(params, root, env);
 
@@ -511,6 +511,11 @@ public class EditBlog implements AbcAction, Configurable {
             ServletUtils.addError(PARAM_PAGE_TITLE, "Prosím zadejte hodnotu.", env, null);
             return false;
         }
+        if ( s.indexOf("<")!=-1 ) {
+            params.put(PARAM_PAGE_TITLE, "");
+            ServletUtils.addError(PARAM_PAGE_TITLE, "Pou¾ití HTML znaèek je v titulku zakázáno!", env, null);
+            return false;
+        }
         title.setText(s);
         return true;
     }
@@ -521,7 +526,7 @@ public class EditBlog implements AbcAction, Configurable {
      * @param root XML document
      * @return false, if there is a major error.
      */
-    boolean setBlogTitle(Map params, Element root) {
+    boolean setBlogTitle(Map params, Element root, Map env) {
         Element custom = root.element("custom");
         Element title = custom.element("title");
         String s = (String) params.get(PARAM_TITLE);
@@ -529,6 +534,11 @@ public class EditBlog implements AbcAction, Configurable {
             if (title!=null)
                 title.detach();
         } else {
+            if ( s.indexOf("<")!=-1 ) {
+                params.put(PARAM_TITLE, "");
+                ServletUtils.addError(PARAM_TITLE, "Pou¾ití HTML znaèek je v titulku zakázáno!", env, null);
+                return false;
+            }
             if (title==null)
                 title = custom.addElement("title");
             title.setText(s);
@@ -596,6 +606,11 @@ public class EditBlog implements AbcAction, Configurable {
         s = s.trim();
         if (s.length()>maxStoryTitleLength) {
             ServletUtils.addError(PARAM_TITLE, "Prosím zadejte krat¹í titulek. Maximální povolená délka je "+maxStoryTitleLength+".", env, null);
+            return false;
+        }
+        if ( s.indexOf("<")!=-1 ) {
+            params.put(PARAM_TITLE, "");
+            ServletUtils.addError(PARAM_TITLE, "Pou¾ití HTML znaèek je v titulku zakázáno!", env, null);
             return false;
         }
 
