@@ -194,9 +194,11 @@ public class EditNews implements AbcAction {
         AdminLogger.logEvent(user, "  edit | news "+relation.getId());
 
         if ( relation.getParent().getId()==Constants.CAT_NEWS_POOL ) {
+            relation.getParent().removeChildRelation(relation);
             relation.getParent().setId(Constants.CAT_NEWS);
             relation.setUpper(Constants.REL_NEWS);
             persistance.update(relation);
+            relation.getParent().addChildRelation(relation);
             AdminLogger.logEvent(user, "  approve | news "+relation.getId());
         }
 
@@ -239,6 +241,7 @@ public class EditNews implements AbcAction {
         map.put(VAR_AUTHOR, author);
         map.put(VAR_ADMIN, user);
         map.put(EmailSender.KEY_FROM, null); // use default admin email address
+        map.put(EmailSender.KEY_CC, "admini@abclinuxu.cz"); // inform group of admins too
         map.put(EmailSender.KEY_TO, author.getEmail());
         map.put(EmailSender.KEY_SUBJECT, "admin: zpravicka byla smazana");
         map.put(EmailSender.KEY_TEMPLATE, "/mail/rm_zpravicka.ftl");
