@@ -51,9 +51,12 @@ public class Cache implements Task {
                 Relation relation = (Relation) obj;
 
                 // if parent has been changed on already stored relation, we must dismiss this link
-                Relation original = (Relation) ((CachedObject)data.get(relation)).object; // chyba!
-                if ( original!=null && !original.getParent().equals(relation.getParent()) ) {
-                    remove(original);
+                CachedObject cached = (CachedObject)data.get(relation);
+                if ( cached!=null ) {
+                    Relation original = (Relation) cached.object;
+                    if ( ! original.getParent().equals(relation.getParent()) ) {
+                        remove(original);
+                    }
                 }
 
                 Relation key = cloneRelation(relation);
@@ -61,7 +64,7 @@ public class Cache implements Task {
                 modCount++;
 
                 // add this relation to affected object.
-                CachedObject cached = (CachedObject) data.get(relation.getParent());
+                cached = (CachedObject) data.get(relation.getParent());
                 if ( cached!=null ) {
                     cached.object.addContent((Relation)key);
                 }
