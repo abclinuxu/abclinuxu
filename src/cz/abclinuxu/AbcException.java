@@ -17,6 +17,8 @@ public class AbcException extends RuntimeException {
     public static final int WRONG_DATA = 2;
     /** indicates, that supplied data are in incorrect format */
     public static final int WRONG_FORMAT = 3;
+    /** argument is missing */
+    public static final int MISSING_ARGUMENT = 4;
     /** indicates, that connection to database failed */
     public static final int DB_REFUSED = 1000;
     /** indicates, that insert sql call failed */

@@ -631,4 +631,22 @@ public class VelocityHelper {
         if ( lineBreaks.match(tmp) ) return tmp;
         return emptyLine.subst(tmp,"<P>\n");
     }
+
+    /**
+     * If <code>str</code> is longer than <code>max</code>, it
+     * is shortened to length of <code>max-suffix.length()</code>
+     * and <code>suffix</code> is appended.
+     */
+    public String limit(String str, int max, String suffix) {
+        if ( str==null || str.length()==0 ) return "";
+        if ( str.length()<=max ) return str;
+        if ( suffix==null ) suffix = "";
+        str = str.substring(0,max-suffix.length());
+        StringBuffer sb = new StringBuffer(str);
+        if ( suffix.length()>0 ) {
+            sb.insert(max-suffix.length(),suffix);
+        }
+        sb.setLength(max);
+        return sb.toString();
+    }
 }

@@ -628,25 +628,24 @@ public class MySqlPersistance implements Persistance {
      * Loads object by PK from database.
      */
     private GenericObject loadObject(GenericObject obj) throws SQLException {
-        GenericObject result = null;
         if (obj instanceof GenericDataObject) {
-            result = loadDataObject((GenericDataObject)obj);
+            return loadDataObject((GenericDataObject)obj);
         } else if (obj instanceof Relation) {
-            result = loadRelation((Relation)obj);
+            return loadRelation((Relation)obj);
         } else if (obj instanceof User) {
-            result = loadUser((User)obj);
+            return loadUser((User)obj);
         } else if (obj instanceof Server) {
-            result = loadServer((Server)obj);
+            return loadServer((Server)obj);
         } else if (obj instanceof Link) {
-            result = loadLink((Link)obj);
+            return loadLink((Link)obj);
         } else if (obj instanceof Poll) {
-            result = loadPoll((Poll)obj);
+            return loadPoll((Poll)obj);
         } else if (obj instanceof Data) {
-            result = loadData((Data)obj);
+            return loadData((Data)obj);
         } else if (obj instanceof AccessRights) {
-            result = loadRights((AccessRights)obj);
+            return loadRights((AccessRights)obj);
         }
-        return result;
+        return null;
     }
 
     /**

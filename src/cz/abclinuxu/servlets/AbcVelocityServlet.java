@@ -313,8 +313,15 @@ public abstract class AbcServlet extends VelocityServlet {
             url.append(request.getQueryString());
         }
 
-        if ( cause instanceof AbcException ) url.append("\n Status was: "+((AbcException)cause).getStatus());
-        if ( cause instanceof IOException || cause instanceof SocketException ) {
+        boolean notLog = false;
+        if ( cause instanceof AbcException ) {
+            AbcException ee = (AbcException) cause;
+            if ( ee.getStatus()==AbcException.MISSING_ARGUMENT )
+                notLog = true;
+            else
+                url.append("\n Status was: "+ee.getStatus());
+        }
+        if ( notLog || cause instanceof IOException || cause instanceof SocketException ) {
             // do not log
         } else {
             log.error(url.toString(),cause);

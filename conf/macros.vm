@@ -241,7 +241,7 @@ $!UTIL.saveParams($PARAMS, [])
 
 #foreach($diz in $DIZS)
 <TR>
-<TD><A HREF="/hardware/ViewRelation?relationId=$diz.RelationId">$UTIL.getXPath($diz.Discussion,'data/title')</A></TD>
+<TD><A HREF="/hardware/ViewRelation?relationId=$diz.RelationId">$UTIL.limit($UTIL.getXPath($diz.Discussion,'data/title'),40," ..")</A></TD>
 <TD ALIGN="CENTER" VALIGN="MIDDLE"><SPAN CLASS="pidi">$diz.ResponseCount</SPAN></TD>
 <TD ALIGN="CENTER" VALIGN="MIDDLE"><SPAN CLASS="pidi">$UTIL.showDizDate($diz.LastUpdate)</SPAN></TD>
 </TR>

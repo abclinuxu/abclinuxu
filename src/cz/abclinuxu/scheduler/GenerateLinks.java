@@ -10,6 +10,7 @@ import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.view.ShowOlder;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -72,11 +73,11 @@ public class GenerateLinks extends TimerTask {
                 }
             }
 
-            list = persistance.findByCommand("select cislo from zaznam where typ=1 order by kdy desc limit 2");
+            list = persistance.findByCommand(ShowOlder.SQL_HARDWARE+" limit "+2);
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 Object[] objects = (Object[]) iter.next();
-                Relation child = new Relation(null,new Record(((Integer)objects[0]).intValue(),Record.HARDWARE),0);
-                Relation found = persistance.findByExample(child)[0];
+                int id = ((Integer)objects[0]).intValue();
+                Relation found = (Relation) persistance.findById(new Relation(id));
                 Item item = (Item) found.getParent();
                 persistance.synchronize(item);
 
@@ -88,11 +89,11 @@ public class GenerateLinks extends TimerTask {
                 }
             }
 
-            list = persistance.findByCommand("select cislo from zaznam where typ=2 order by kdy desc limit 2");
+            list = persistance.findByCommand(ShowOlder.SQL_SOFTWARE+" limit "+2);
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 Object[] objects = (Object[]) iter.next();
-                Relation child = new Relation(null,new Record(((Integer)objects[0]).intValue(),Record.SOFTWARE),0);
-                Relation found = persistance.findByExample(child)[0];
+                int id = ((Integer)objects[0]).intValue();
+                Relation found = (Relation) persistance.findById(new Relation(id));
                 Item item = (Item) found.getParent();
                 persistance.synchronize(item);
 
@@ -104,11 +105,11 @@ public class GenerateLinks extends TimerTask {
                 }
             }
 
-            list = persistance.findByCommand("select cislo from polozka where typ=5 order by kdy desc limit 2");
+            list = persistance.findByCommand(ShowOlder.SQL_DRIVERS+" limit "+2);
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 Object[] objects = (Object[]) iter.next();
-                Relation child = new Relation(null,new Item(((Integer)objects[0]).intValue(),Item.DRIVER),0);
-                Relation found = persistance.findByExample(child)[0];
+                int id = ((Integer)objects[0]).intValue();
+                Relation found = (Relation) persistance.findById(new Relation(id));
                 Item item = (Item) found.getChild();
                 persistance.synchronize(item);
 

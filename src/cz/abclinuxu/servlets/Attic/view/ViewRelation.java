@@ -16,6 +16,7 @@ import cz.abclinuxu.data.Category;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.AbcException;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 
@@ -57,7 +58,7 @@ public class ViewRelation extends AbcServlet {
 
         List parents = null;
         if ( relation==null ) {
-            throw new Exception("Relation is null!");
+            throw new AbcException("Relation is null!",AbcException.MISSING_ARGUMENT);
         }
 
         parents = persistance.findParents(relation);
