@@ -27,18 +27,6 @@
    </td>
   </tr>
   <tr>
-   <td width="90" class="required">Zakázat diskuse</td>
-   <td>
-    <input type="checkbox" name="forbid_discussions" <#if PARAMS.forbid_discussions?exists>checked</#if> value="yes">
-   </td>
-  </tr>
-  <tr>
-   <td width="90" class="required">Zakázat hodnocení</td>
-   <td>
-    <input type="checkbox" name="forbid_rating" <#if PARAMS.forbid_rating?exists>checked</#if> value="yes">
-   </td>
-  </tr>
-  <tr>
    <td width="90" class="required">Perex</td>
    <td>
     <textarea name="perex" cols="100" rows="4" tabindex="4">${PARAMS.perex?if_exists?html}</textarea>
@@ -76,6 +64,27 @@
     znak |, zbytek textu øádky bude slou¾it jako komentáø, nebude souèástí odkazu. <br>
     <textarea name="resources" cols="80" rows="5" tabindex="7">${PARAMS.resources?if_exists}</textarea>
     <div class="error">${ERRORS.resources?if_exists}</div>
+   </td>
+  </tr>
+  <tr>
+   <td width="90" class="required">Zakázat diskuse</td>
+   <td>
+    <input type="checkbox" name="forbid_discussions" <#if PARAMS.forbid_discussions?exists>checked</#if> value="yes">
+   </td>
+  </tr>
+  <tr>
+   <td width="90" class="required">Zakázat hodnocení</td>
+   <td>
+    <input type="checkbox" name="forbid_rating" <#if PARAMS.forbid_rating?exists>checked</#if> value="yes">
+   </td>
+  </tr>
+  <tr>
+   <td width="90">Ikonka</td>
+   <td>
+    Pokud chcete, aby se ve výpise èlánkù zobrazovala ikonka, vlo¾te zde její HTML kód.
+    Nedávejte zde formátování, to se øe¹í v ¹ablonì. Jen definici tagu IMG. <br>
+    <textarea name="thumbnail" cols="80" rows="5" tabindex="7">${PARAMS.thumbnail?if_exists}</textarea>
+    <div class="error">${ERRORS.thumbnail?if_exists}</div>
    </td>
   </tr>
   <tr>

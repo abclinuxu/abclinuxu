@@ -45,6 +45,7 @@ public class EditArticle implements AbcAction {
     public static final String PARAM_FORBID_RATING = "forbid_rating";
     public static final String PARAM_RELATED_ARTICLES = "related";
     public static final String PARAM_RESOURCES = "resources";
+    public static final String PARAM_THUMBNAIL = "thumbnail";
 
     public static final String VAR_RELATION = "RELATION";
 
@@ -125,6 +126,8 @@ public class EditArticle implements AbcAction {
         canContinue &= setPerex(params, item, env);
         canContinue &= setPublishDate(params, item, env);
         canContinue &= setForbidDiscussions(params, item);
+        canContinue &= setForbidRating(params, item);
+        canContinue &= setThumbnail(params, item);
         canContinue &= setArticleContent(params, record, env);
         canContinue &= setRelatedArticles(params, record, env);
         canContinue &= setResources(params, record, env);
@@ -179,6 +182,9 @@ public class EditArticle implements AbcAction {
         node = document.selectSingleNode("/data/forbid_rating");
         if ( node!=null && "yes".equals(node.getText()) )
             params.put(PARAM_FORBID_RATING, node.getText());
+        node = document.selectSingleNode("/data/thumbnail");
+        if ( node!=null )
+            params.put(PARAM_THUMBNAIL, node.getText());
 
         Relation child = InstanceUtils.findFirstChildRecordOfType(item,Record.ARTICLE);
         Record record = (Record) child.getChild();
@@ -208,6 +214,7 @@ public class EditArticle implements AbcAction {
         canContinue &= setPublishDate(params, item, env);
         canContinue &= setForbidDiscussions(params, item);
         canContinue &= setForbidRating(params, item);
+        canContinue &= setThumbnail(params, item);
         canContinue &= setArticleContent(params, record, env);
         canContinue &= setRelatedArticles(params, record, env);
         canContinue &= setResources(params, record, env);
@@ -395,6 +402,26 @@ public class EditArticle implements AbcAction {
             return true;
 
         element = DocumentHelper.makeElement(item.getData(), "/data/forbid_rating");
+        element.setText(content);
+        return true;
+    }
+
+    /**
+     * Updates thumbnail from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param item article  to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setThumbnail(Map params, Item item) {
+        String content = (String) params.get(PARAM_THUMBNAIL);
+        Element element = (Element) item.getData().selectSingleNode("/data/thumbnail");
+        if ( element!=null )
+            element.detach();
+
+        if ( content==null || content.trim().length()==0 )
+            return true;
+
+        element = DocumentHelper.makeElement(item.getData(), "/data/thumbnail");
         element.setText(content);
         return true;
     }

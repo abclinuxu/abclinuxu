@@ -10,11 +10,16 @@
 <#macro showArticle(relation dateFormat...)>
     <#local clanek=relation.child,
         autor=TOOL.createUser(TOOL.xpath(clanek,"/data/author")),
+        thumbnail=TOOL.xpath(clanek,"/data/thumbnail")?default("UNDEF"),
         tmp=TOOL.groupByType(clanek.children),
-        rating=TOOL.ratingFor(clanek.data,"article")?default(0) >
+        rating=TOOL.ratingFor(clanek.data,"article")?default(0)
+    >
     <#if tmp.discussion?exists><#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
 
         <h1 class="st_nadpis"><a href="/clanky/show/${relation.id}">${TOOL.xpath(clanek,"data/name")}</a></h1>
+        <#if thumbnail!="UNDEF">
+            <div style="float:right;padding:0px,5px,0px,15px">${thumbnail}</div>
+        </#if>
         <p>${TOOL.xpath(clanek,"/data/perex")}</p>
         <p class="cl_inforadek">${DATE.show(clanek.created, dateFormat[0])} |
             <a href="/Profile/${autor.id}">${autor.name}</a> |
