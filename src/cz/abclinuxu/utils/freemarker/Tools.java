@@ -26,6 +26,7 @@ import cz.abclinuxu.utils.InstanceUtils;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.dom4j.Element;
+import org.dom4j.Branch;
 import org.apache.log4j.Logger;
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
@@ -886,7 +887,7 @@ public class Tools implements Configurable {
      * @param type type of rating we are interested in
      * @return current value or null, if such rating doesn't exist
      */
-    public Float ratingFor(Element object, String type) {
+    public Float ratingFor(Branch object, String type) {
         Element rating = (Element) object.selectSingleNode("rating[type/text()=\""+type+"\"]");
         if ( rating==null )
             return null;
