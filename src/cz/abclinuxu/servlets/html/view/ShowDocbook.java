@@ -157,6 +157,8 @@ public class ShowDocbook implements AbcAction {
                 visitLiStart();
             else if ( "TABLE".equals(tagName) )
                 visitTableStart();
+            else if ( "THEAD".equals(tagName) )
+                visitTheadStart();
             else if ( "TR".equals(tagName) )
                 visitTrStart();
             else if ( "TBODY".equals(tagName) )
@@ -173,12 +175,24 @@ public class ShowDocbook implements AbcAction {
                 visitIStart();
             else if ( "B".equals(tagName) )
                 visitBStart();
+            else if ( "EM".equals(tagName) )
+                visitEmStart();
             else if ( "STRONG".equals(tagName) )
                 visitStrongStart();
             else if ( "CODE".equals(tagName) )
                 visitCodeStart();
+            else if ( "SUB".equals(tagName) )
+                visitSubStart();
+            else if ( "SUP".equals(tagName) )
+                visitSupStart();
             else if ( "HR".equals(tagName) )
                 visitHr();
+            else if ( "DL".equals(tagName) )
+                visitDlStart();
+            else if ( "DT".equals(tagName) )
+                visitDtStart();
+            else if ( "DD".equals(tagName) )
+                visitDdStart();
             else
                 print("start of unknown tag "+tag.getTagName(), 2, true);
         }
@@ -207,6 +221,8 @@ public class ShowDocbook implements AbcAction {
                 visitLiEnd();
             else if ( "TABLE".equals(tagName) )
                 visitTableEnd();
+            else if ( "THEAD".equals(tagName) )
+                visitTheadEnd();
             else if ( "TBODY".equals(tagName) )
                 visitTbodyEnd();
             else if ( "TR".equals(tagName) )
@@ -219,10 +235,22 @@ public class ShowDocbook implements AbcAction {
                 visitIEnd();
             else if ( "B".equals(tagName) )
                 visitBEnd();
+            else if ( "EM".equals(tagName) )
+                visitEmEnd();
             else if ( "STRONG".equals(tagName) )
                 visitStrongEnd();
             else if ( "CODE".equals(tagName) )
                 visitCodeEnd();
+            else if ( "SUB".equals(tagName) )
+                visitSubEnd();
+            else if ( "SUP".equals(tagName) )
+                visitSupEnd();
+            else if ( "DL".equals(tagName) )
+                visitDlEnd();
+            else if ( "DT".equals(tagName) )
+                visitDtEnd();
+            else if ( "DD".equals(tagName) )
+                visitDdEnd();
             else
                 print("end of unknown tag "+tag.getTagName(), 2, true);
         }
@@ -427,7 +455,7 @@ public class ShowDocbook implements AbcAction {
         }
 
         private void visitLiEnd() {
-            print("</para></listitem>", 2, true);
+            print("</para></listitem>", 3, true);
             inline = false;
         }
 
@@ -481,6 +509,16 @@ public class ShowDocbook implements AbcAction {
             inline = false;
         }
 
+        private void visitEmStart() {
+            print("<emphasis>", 0, false);
+            inline = true;
+        }
+
+        private void visitEmEnd() {
+            print("</emphasis>", 0, false);
+            inline = false;
+        }
+
         private void visitStrongStart() {
             print("<emphasis>", 0, false);
             inline = true;
@@ -491,13 +529,65 @@ public class ShowDocbook implements AbcAction {
             inline = false;
         }
 
+        private void visitSubStart() {
+            print("<subscript>", 0, false);
+            inline = true;
+        }
+
+        private void visitSubEnd() {
+            print("</subscript>", 0, false);
+            inline = false;
+        }
+
+        private void visitSupStart() {
+            print("<superscript>", 0, false);
+            inline = true;
+        }
+
+        private void visitSupEnd() {
+            print("</superscript>", 0, false);
+            inline = false;
+        }
+
         private void visitBr() {
             print("[BR]", 0, true);
+        }
+
+        private void visitDlStart() {
+            print("<variablelist>", 2, true);
+            inline = false;
+        }
+
+        private void visitDlEnd() {
+            print("</variablelist>", 2, true);
+            inline = false;
+        }
+
+        private void visitDtStart() {
+            print("<varlistentry><term>", 3, true);
+            inline = false;
+        }
+
+        private void visitDtEnd() {
+            print("</term></varlistentry>", 3, true);
+            inline = false;
+        }
+
+        private void visitDdStart() {
+            print("<listitem><para>", 3, true);
+            inline = false;
+        }
+
+        private void visitDdEnd() {
+            print("</para></listitem>", 3, true);
+            inline = false;
         }
 
         private void visitHr() {}
         private void visitTbodyStart() {}
         private void visitTbodyEnd() {}
+        private void visitTheadStart() {}
+        private void visitTheadEnd() {}
 
         private void visitCodeStart() {
             print("<command>", 0, false);
