@@ -34,7 +34,7 @@ public class SelectRelation implements AbcAction {
     public static final String PARAM_FINISH = "finish";
     public static final String PARAM_CONFIRM = "confirm";
 
-    public static final String VAR_SOFTWARE = "SOFTWARE";
+    public static final String VAR_FORUM = "FORUM";
     public static final String VAR_CLANKY = "CLANKY";
     public static final String VAR_386 = "H386";
     public static final String VAR_CURRENT = "CURRENT";
@@ -78,9 +78,9 @@ public class SelectRelation implements AbcAction {
         List content = clanky.getChildren();
         env.put(VAR_CLANKY,content);
 
-        Category sw = (Category) persistance.findById(new Category(Constants.CAT_SOFTWARE));
+        Category sw = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
         content = sw.getChildren();
-        env.put(VAR_SOFTWARE,content);
+        env.put(VAR_FORUM,content);
 
         Category hw386 = (Category) persistance.findById(new Category(Constants.CAT_386));
         content = hw386.getChildren();

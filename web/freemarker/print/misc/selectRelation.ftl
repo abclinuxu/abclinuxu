@@ -58,8 +58,8 @@
     <#if i_index%5==4></tr></#if>
    </#list>
 
-   <tr><th colspan="5">Software</th></tr>
-   <#list SORT.byName(SOFTWARE) as i>
+   <tr><th colspan="5">Diskuse</th></tr>
+   <#list SORT.byName(FORUM) as i>
     <#if i_index%5==0><tr></#if>
     <td>
      <input type="radio" name="currentId" value="${i.id}">${TOOL.childName(i)}
