@@ -25,15 +25,16 @@ import java.util.*;
  * Profile of the user
  */
 public class ViewUser extends AbcFMServlet {
-    public static final String PARAM_USER = "userId";
-    public static final String PARAM_URL = "url";
 
     public static final String VAR_PROFILE = "PROFILE";
     public static final String VAR_SW_RECORDS = "SW";
     public static final String VAR_HW_RECORDS = "HW";
-    public static final String VAR_ARTICLES = "ARTICLE";
+    public static final String VAR_ARTICLES = "ARTICLES";
+    public static final String VAR_DISCUSSIONS = "DIZS";
     public static final String VAR_KOD = "KOD";
 
+    public static final String PARAM_USER = "userId";
+    public static final String PARAM_URL = "url";
     public static final String PARAM_FROM = "from";
     public static final String PARAM_SUBJECT = "subject";
     public static final String PARAM_MESSAGE = "message";
@@ -42,6 +43,12 @@ public class ViewUser extends AbcFMServlet {
     public static final String ACTION_LOGIN2 = "login2";
     public static final String ACTION_SEND_EMAIL = "sendEmail";
     public static final String ACTION_FINISH_SEND_EMAIL = "sendEmail2";
+    public static final String ACTION_SHOW_CONTENT = "showContent";
+
+    public static final String CONTENT_HARDWARE = "hardware";
+    public static final String CONTENT_SOFTWARE = "software";
+    public static final String CONTENT_ARTICLES = "articles";
+    public static final String CONTENT_DISCUSSIONS = "discussions";
 
     /**
      * Put your processing here. Return null, if you have redirected browser to another URL.
@@ -65,6 +72,8 @@ public class ViewUser extends AbcFMServlet {
             return handleSendEmail(request,env);
         } else if ( action.equals(ACTION_FINISH_SEND_EMAIL) ) {
             return handleSendEmail2(request,response,env);
+        } else if ( action.equals(ACTION_SHOW_CONTENT) ) {
+            return handleShowContent(request,env);
         }
 
         return handleProfile(request,env);
@@ -85,34 +94,6 @@ public class ViewUser extends AbcFMServlet {
         if ( ! user.equals(loggedIn) ) // other user is lookig at profile
             return FMTemplateSelector.select("ViewUser","profile",env,request);
 
-        Record record = new Record();
-        record.setType(Record.HARDWARE);
-        record.setOwner(user.getId());
-
-        List list = new ArrayList(1);
-        list.add(record);
-        List found = persistance.findByExample(list,null);
-
-        List hw = new ArrayList(found.size());
-        Relation rel = new Relation();
-        for (Iterator iter = found.iterator(); iter.hasNext();) {
-            rel.setChild((GenericObject) iter.next());
-            hw.add(persistance.findByExample(rel)[0]);
-        }
-        Tools.sync(hw);
-        env.put(VAR_HW_RECORDS,hw);
-
-        record.setType(Record.SOFTWARE);
-        found = persistance.findByExample(list,null);
-
-        List sw = new ArrayList(found.size());
-        for (Iterator iter = found.iterator(); iter.hasNext();) {
-            rel.setChild((GenericObject) iter.next());
-            sw.add(persistance.findByExample(rel)[0]);
-        }
-        Tools.sync(sw);
-        env.put(VAR_SW_RECORDS,sw);
-
         return FMTemplateSelector.select("ViewUser","myProfile",env,request);
     }
 
@@ -121,6 +102,87 @@ public class ViewUser extends AbcFMServlet {
      */
     protected String handleLogin(HttpServletRequest request, Map env) throws Exception {
         return FMTemplateSelector.select("ViewUser","login",env,request);
+    }
+
+    /**
+     * shows login screen
+     */
+    protected String handleShowContent(HttpServletRequest request, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User user = (User) InstanceUtils.instantiateParam(PARAM_USER,User.class,params);
+
+        List list = new ArrayList(1);
+
+        if ( params.containsKey(CONTENT_HARDWARE) ) {
+            Record record = new Record();
+            record.setOwner(user.getId());
+            record.setType(Record.HARDWARE);
+            list.add(record);
+
+            List found = persistance.findByExample(list,null);
+
+            List hw = new ArrayList(found.size());
+            Relation rel = new Relation();
+            for (Iterator iter = found.iterator(); iter.hasNext();) {
+                rel.setChild((GenericObject) iter.next());
+                hw.add(persistance.findByExample(rel)[0]);
+            }
+            Tools.sync(hw);
+            env.put(VAR_HW_RECORDS,hw);
+
+        } else if ( params.containsKey(CONTENT_SOFTWARE) ) {
+            Record record = new Record();
+            record.setOwner(user.getId());
+            record.setType(Record.SOFTWARE);
+            list.add(record);
+
+            List found = persistance.findByExample(list,null);
+            List sw = new ArrayList(found.size());
+            Relation rel = new Relation();
+            for (Iterator iter = found.iterator(); iter.hasNext();) {
+                rel.setChild((GenericObject) iter.next());
+                sw.add(persistance.findByExample(rel)[0]);
+            }
+            Tools.sync(sw);
+            env.put(VAR_SW_RECORDS,sw);
+
+        } else if ( params.containsKey(CONTENT_ARTICLES) ) {
+            Item item = new Item();
+            item.setType(Item.ARTICLE);
+            item.setSearchString("%<author>"+user.getId()+"</author>%");
+            list.add(item);
+            List found = persistance.findByExample(list,null);
+
+            List articles = new ArrayList(found.size());
+            Relation rel = new Relation();
+            for (Iterator iter = found.iterator(); iter.hasNext();) {
+                rel.setChild((GenericObject) iter.next());
+                articles.add(persistance.findByExample(rel)[0]);
+            }
+            Tools.sync(articles);
+            env.put(VAR_ARTICLES,articles);
+
+        } else if ( params.containsKey(CONTENT_DISCUSSIONS) ) {
+            Item item = new Item();
+            item.setType(Item.DISCUSSION);
+            item.setOwner(user.getId());
+            list.add(item);
+            List found = persistance.findByExample(list,null);
+
+            List dizs = new ArrayList(found.size());
+            Relation rel = new Relation();
+            for (Iterator iter = found.iterator(); iter.hasNext();) {
+                rel.setChild((GenericObject) iter.next());
+                Relation diz = persistance.findByExample(rel)[0];
+                if ( diz.getParent() instanceof Category && diz.getParent().getId()!=-1 )
+                    dizs.add(diz);
+            }
+            Tools.sync(dizs);
+            env.put(VAR_DISCUSSIONS,dizs);
+        }
+
+        return FMTemplateSelector.select("ViewUser","content",env,request);
     }
 
     /**

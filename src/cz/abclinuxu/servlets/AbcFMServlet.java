@@ -106,17 +106,17 @@ public abstract class AbcFMServlet extends HttpServlet {
         if ( e instanceof NotFoundException ) {
             log.error("Not found: "+url);
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            template = config.getTemplate("errors/notfound.ftl");
+            template = config.getTemplate("/errors/notfound.ftl");
         } else if ( e instanceof MissingArgumentException ) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            template = config.getTemplate("errors/generic.ftl");
+            template = config.getTemplate("/errors/generic.ftl");
         } else if ( e instanceof NotAuthorizedException ) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            template = config.getTemplate("errors/denied.ftl");
+            template = config.getTemplate("/errors/denied.ftl");
         } else {
             log.error("Unknown error: "+url,e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            template = config.getTemplate("errors/generic.ftl");
+            template = config.getTemplate("/errors/generic.ftl");
         }
         SimpleHash root = new SimpleHash();
         root.put("EXCEPTION",e.toString());

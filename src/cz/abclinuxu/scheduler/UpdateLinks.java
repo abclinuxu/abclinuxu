@@ -40,8 +40,9 @@ public class UpdateLinks extends TimerTask {
     public static final int LINUXZONE = 9;
     public static final int LINUXSK = 10;
     public static final int LDAP = 11;
+    public static final int MANDRAKE = 12;
     /** id of last server, maximum id */
-    public static final int LAST_SERVER = LDAP;
+    public static final int LAST_SERVER = MANDRAKE;
 
     Persistance persistance;
     Category category = new Category(Constants.CAT_LINKS);
@@ -89,6 +90,7 @@ public class UpdateLinks extends TimerTask {
         definitions.put(new Server(LINUXZONE),new ServerInfo("http://www.linuxzone.cz/export/last10.phtml"));
         definitions.put(new Server(LINUXSK),new ServerInfo("http://www.linux.sk/backend.php",null,ServerInfo.RSS));
         definitions.put(new Server(LDAP),new ServerInfo("http://www.ldap-obsession.sk/backend.php",null,ServerInfo.RSS));
+        definitions.put(new Server(MANDRAKE),new ServerInfo("http://www.mandrake.cz/titles_abc.php"));
     }
 
     /**

@@ -305,6 +305,11 @@
         <var name="TITLE" value="Mùj profil" />
       </mapping>
     </action>
+    <action name="content">
+      <mapping template="web" content="/web/show/mycontent.ftl">
+        <var name="TITLE" value="Mùj profil" />
+      </mapping>
+    </action>
     <action name="sendEmail">
       <mapping template="web" content="/web/misc/sendEmail.ftl">
         <var name="TITLE" value="Mùj profil" />
