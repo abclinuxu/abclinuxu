@@ -27,7 +27,6 @@ import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.parser.safehtml.NewsGuard;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.email.EmailSender;
-import cz.abclinuxu.scheduler.UpdateLinks;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -340,7 +339,7 @@ public class EditNews implements AbcAction {
         }
         try {
             NewsGuard.check(text);
-            text = UpdateLinks.fixAmpersand(text);
+//            text = UpdateLinks.fixAmpersand(text); //todo opravuj ampersand jen uvnitr atributu HREF
         } catch (ParserException e) {
             log.error("ParseException on '"+text+"'", e);
             ServletUtils.addError(PARAM_CONTENT, e.getMessage(), env, null);
