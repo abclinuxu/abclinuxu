@@ -7,6 +7,7 @@ package cz.abclinuxu.servlets.html.edit;
 
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
+import cz.abclinuxu.servlets.html.view.SendEmail;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
@@ -14,6 +15,7 @@ import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -25,6 +27,7 @@ import org.htmlparser.util.ParserException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -42,6 +45,7 @@ public class EditRequest implements AbcAction {
     public static final String ACTION_DELETE = "delete";
     public static final String ACTION_DELIVER = "deliver";
     public static final String ACTION_MOVE_TO_TODO = "todo";
+    public static final String ACTION_MAIL = "email";
 
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -61,6 +65,9 @@ public class EditRequest implements AbcAction {
             return FMTemplateSelector.select("ViewUser", "login", env, request);
         if ( !user.hasRole(Roles.ROOT) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+        if ( action.equals(ACTION_MAIL) )
+            return actionSendEmail(request, response, env);
 
         if ( action.equals(ACTION_DELETE) )
             return actionDelete(request, response, env);
@@ -165,7 +172,7 @@ public class EditRequest implements AbcAction {
         Map emailParams = new HashMap();
         emailParams.put(EmailSender.KEY_TO,req.getData().selectSingleNode("data/email").getText());
         emailParams.put(EmailSender.KEY_FROM,user.getEmail());
-        emailParams.put(EmailSender.KEY_CC,user.getEmail());
+        emailParams.put(EmailSender.KEY_BCC,user.getEmail());
         String text = "Hotovo.\n"+user.getName()+"\n\n\nVas pozadavek\n\n";
         text = text.concat(req.getData().selectSingleNode("data/text").getText());
         emailParams.put(EmailSender.KEY_BODY, text);
@@ -178,6 +185,22 @@ public class EditRequest implements AbcAction {
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/show/"+Constants.REL_REQUESTS);
+        return null;
+    }
+
+    protected String actionSendEmail(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        HttpSession session = request.getSession();
+        User user = (User) env.get(Constants.VAR_USER);
+        Relation relation = (Relation) env.get(VAR_REQUEST_RELATION);
+        Tools.sync(relation);
+        Item req = (Item) relation.getChild();
+
+        String email = req.getData().selectSingleNode("data/email").getText();
+        session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_TO, email);
+        session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_BCC, user.getEmail());
+
+        String url = response.encodeRedirectURL("/Mail");
+        response.sendRedirect(url);
         return null;
     }
 
@@ -229,7 +252,7 @@ public class EditRequest implements AbcAction {
         Map emailParams = new HashMap();
         emailParams.put(EmailSender.KEY_TO, req.getData().selectSingleNode("data/email").getText());
         emailParams.put(EmailSender.KEY_FROM, user.getEmail());
-        emailParams.put(EmailSender.KEY_CC, user.getEmail());
+        emailParams.put(EmailSender.KEY_BCC, user.getEmail());
         String text = "Pozadavek byl presunut do seznamu ukolu.\n"+user.getName()+"\n\n\nVas pozadavek\n\n";
         text = text.concat(req.getData().selectSingleNode("data/text").getText());
         emailParams.put(EmailSender.KEY_BODY, text);
