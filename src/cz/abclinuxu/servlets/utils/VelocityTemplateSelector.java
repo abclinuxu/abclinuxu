@@ -22,8 +22,8 @@ import cz.abclinuxu.AbcException;
  * and template mapping.<p>
  *
  */
-public class VariantTool {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(VariantTool.class);
+public class VelocityTemplateSelector {
+    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(VelocityTemplateSelector.class);
 
     /** if not overriden, this variant will be used */
     static String DEFAULT_VARIANT = "web";
@@ -47,7 +47,7 @@ public class VariantTool {
     public static final String BROWSER_OTHER = "OTHER";
 
     /** singleton. Dont forget to initialize it! */
-    static VariantTool singleton;
+    static VelocityTemplateSelector singleton;
 
     /** regular expressions to match UA */
     static RE reLynx, reWget, rePlucker;
@@ -72,19 +72,19 @@ public class VariantTool {
      * nonpublic constructor
      * @param size initial size of hash map.
      */
-    protected VariantTool(int size) {
+    protected VelocityTemplateSelector(int size) {
         mappings = new HashMap(size,0.9f);
     }
 
     /**
-     * Loads configuration and instantiates singleton of VariantTool.
+     * Loads configuration and instantiates singleton of VelocityTemplateSelector.
      * @param filename name of configuration file
-     * @return initialized instance of VariantTool
+     * @return initialized instance of VelocityTemplateSelector
      */
     public static void initialize(String filename) throws Exception {
         Document document = new SAXReader().read(filename);
         List servlets = document.getRootElement().elements("servlet");
-        VariantTool variants = new VariantTool(servlets.size()*3);
+        VelocityTemplateSelector variants = new VelocityTemplateSelector(servlets.size()*3);
 
         for (Iterator servletIter = servlets.iterator(); servletIter.hasNext();) { // for each servlet
             Element servlet = (Element) servletIter.next();

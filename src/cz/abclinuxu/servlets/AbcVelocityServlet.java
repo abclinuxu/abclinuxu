@@ -33,7 +33,7 @@ import java.net.SocketException;
  * Base class for all servlets. It provides several useful
  * methods for accessing Context, session manipulation
  * and check of access rights.<p>
- * <u>Context variables introduced by AbcServlet</u>
+ * <u>Context variables introduced by AbcVelocityServlet</u>
  * <dl>
  * <dt><code>VAR_PERSISTANCE</code></dt>
  * <dd>Instance of actual persistance. To be used for synchronization purposes.</dd>
@@ -53,7 +53,7 @@ import java.net.SocketException;
  * <dt><code>VAR_INT</code></dt>
  * <dd>Instance of Integer, used for conversions from string to int.</dd>
  * </dl>
- * <u>Parameters used by AbcServlet's descendants</u>
+ * <u>Parameters used by AbcVelocityServlet's descendants</u>
  * <dl>
  * <dt><code>PARAM_ACTION</code></dt>
  * <dd>Contains shorthand of method to be executed. E.g. STEP1 for doStep1 or FINISH for doFinish.</dd>
@@ -67,8 +67,8 @@ import java.net.SocketException;
  * <dd>Map, where key is Server and value is list of Links, where link.server==server.id && link.fixed==false.</dd>
  * </dl>
  */
-public abstract class AbcServlet extends VelocityServlet {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(AbcServlet.class);
+public abstract class AbcVelocityServlet extends VelocityServlet {
+    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(AbcVelocityServlet.class);
 
     /** Name of key in HttpServletsRequest, used for context chaining. */
     public static final String ATTRIB_CONTEXT = "CONTEXT";
@@ -124,7 +124,7 @@ public abstract class AbcServlet extends VelocityServlet {
      *  @return context
      */
     protected Context createContext(HttpServletRequest request, HttpServletResponse response) {
-        Context chained = (Context) request.getAttribute(AbcServlet.ATTRIB_CONTEXT);
+        Context chained = (Context) request.getAttribute(AbcVelocityServlet.ATTRIB_CONTEXT);
         Context ctx = null;
         if ( chained!=null ) {
             ctx = new VelocityContext(chained);
@@ -134,27 +134,27 @@ public abstract class AbcServlet extends VelocityServlet {
             ctx = super.createContext(request, response);
 
             Persistance persistance = PersistanceFactory.getPersistance();
-            ctx.put(AbcServlet.VAR_PERSISTANCE,persistance);
+            ctx.put(AbcVelocityServlet.VAR_PERSISTANCE,persistance);
 
             VelocityHelper helper = new VelocityHelper();
-            ctx.put(AbcServlet.VAR_HELPER,helper);
+            ctx.put(AbcVelocityServlet.VAR_HELPER,helper);
 
-            ctx.put(AbcServlet.VAR_URL_UTILS,new UrlUtils(request.getRequestURI(), response));
+            ctx.put(AbcVelocityServlet.VAR_URL_UTILS,new UrlUtils(request.getRequestURI(), response));
 
             addTemplateVariables(ctx,persistance, helper);
         }
-        request.setAttribute(AbcServlet.ATTRIB_CONTEXT,ctx);
+        request.setAttribute(AbcVelocityServlet.ATTRIB_CONTEXT,ctx);
         return ctx;
     }
 
     /**
-     * Performs initialization tasks. First, it checks, whether session contains <code>AbcServlet.VAR_USER</code>.
+     * Performs initialization tasks. First, it checks, whether session contains <code>AbcVelocityServlet.VAR_USER</code>.
      * If not, it searches for cookie with same name. If the search was sucessful, it verifies password
      * and pushes new user to session and context.<br>
      * Cookie contains user's id, comma and password hash.<p>
      * Next it checks for parameter SelectIcon.PARAM_CHECK_SESSION. If found, it gets map
      * SelectIcon.ATTRIB_PARAMS from session and combines it with request's parameters map
-     * into <code>AbcServlet.ATTRIB_PARAMS</code>. Thus you have uniform way of dealing
+     * into <code>AbcVelocityServlet.ATTRIB_PARAMS</code>. Thus you have uniform way of dealing
      * with parameters.
      * It is mandatory to use this method at the very beginning of <code>handleRequest()</code>.
      * @todo delete bad cookie
@@ -163,24 +163,24 @@ public abstract class AbcServlet extends VelocityServlet {
         doLogin(request,response,context);
 
         HttpSession session = request.getSession();
-        Map params = (Map) session.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) session.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         if ( params!=null ) {
-            session.removeAttribute(AbcServlet.ATTRIB_PARAMS);
+            session.removeAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         }
         params = ServletUtils.putParamsToMap(request,params);
-        request.setAttribute(AbcServlet.ATTRIB_PARAMS,params);
-        context.put(AbcServlet.VAR_PARAMS,params);
+        request.setAttribute(AbcVelocityServlet.ATTRIB_PARAMS,params);
+        context.put(AbcVelocityServlet.VAR_PARAMS,params);
 
-        Map errors = (Map) session.getAttribute(AbcServlet.VAR_ERRORS);
+        Map errors = (Map) session.getAttribute(AbcVelocityServlet.VAR_ERRORS);
         if ( errors!=null ) {
-            context.put(AbcServlet.VAR_ERRORS,errors);
-            session.removeAttribute(AbcServlet.VAR_ERRORS);
+            context.put(AbcVelocityServlet.VAR_ERRORS,errors);
+            session.removeAttribute(AbcVelocityServlet.VAR_ERRORS);
         }
 
-        List messages = (List) session.getAttribute(AbcServlet.VAR_MESSAGES);
+        List messages = (List) session.getAttribute(AbcVelocityServlet.VAR_MESSAGES);
         if ( messages!=null ) {
-            context.put(AbcServlet.VAR_MESSAGES,messages);
-            session.removeAttribute(AbcServlet.VAR_MESSAGES);
+            context.put(AbcVelocityServlet.VAR_MESSAGES,messages);
+            session.removeAttribute(AbcVelocityServlet.VAR_MESSAGES);
         }
 
         return;
@@ -188,12 +188,12 @@ public abstract class AbcServlet extends VelocityServlet {
 
     /**
      * Checks login information. If user has not logged in yet, this method will first check
-     * form parameter <code>AbcServlet.PARAM_LOG_USER</code> and next cookie <code>AbcServlet.VAR_USER</code>.
-     * If user was found and approved, it is appended to context under name <code>AbcServlet.VAR_USER</code>.
+     * form parameter <code>AbcVelocityServlet.PARAM_LOG_USER</code> and next cookie <code>AbcVelocityServlet.VAR_USER</code>.
+     * If user was found and approved, it is appended to context under name <code>AbcVelocityServlet.VAR_USER</code>.
      */
     protected void doLogin(HttpServletRequest request, HttpServletResponse response, Context context) {
         HttpSession session = request.getSession();
-        User user = (User) session.getAttribute(AbcServlet.VAR_USER);
+        User user = (User) session.getAttribute(AbcVelocityServlet.VAR_USER);
         boolean logout = (request.getParameter(PARAM_LOG_OUT)!=null);
         Persistance persistance = PersistanceFactory.getPersistance();
 
@@ -202,11 +202,11 @@ public abstract class AbcServlet extends VelocityServlet {
             session.removeAttribute(VAR_USER);
         }
         if ( user!=null ) {
-            context.put(AbcServlet.VAR_USER,user);
+            context.put(AbcVelocityServlet.VAR_USER,user);
             return;
         }
 
-        String login = (String) request.getParameter(AbcServlet.PARAM_LOG_USER);
+        String login = (String) request.getParameter(AbcVelocityServlet.PARAM_LOG_USER);
         if ( login!=null && login.length()>0 ) {
             User tmpUser = new User(); tmpUser.setLogin(login);
             List searched = new ArrayList(); searched.add(tmpUser);
@@ -214,7 +214,7 @@ public abstract class AbcServlet extends VelocityServlet {
             try {
                 List found = (List) persistance.findByExample(searched,null);
                 if ( found.size()==0 ) {
-                    ServletUtils.addError(AbcServlet.PARAM_LOG_USER,"Pøihla¹ovací jméno nenalezeno!",context, null);
+                    ServletUtils.addError(AbcVelocityServlet.PARAM_LOG_USER,"Pøihla¹ovací jméno nenalezeno!",context, null);
                     return;
                 }
                 user = (User) found.get(0);
@@ -224,13 +224,13 @@ public abstract class AbcServlet extends VelocityServlet {
                 return;
             }
 
-            if ( !user.validatePassword((String) request.getParameter(AbcServlet.PARAM_LOG_PASSWORD)) ) {
-                ServletUtils.addError(AbcServlet.PARAM_LOG_PASSWORD,"©patne heslo!",context, null);
+            if ( !user.validatePassword((String) request.getParameter(AbcVelocityServlet.PARAM_LOG_PASSWORD)) ) {
+                ServletUtils.addError(AbcVelocityServlet.PARAM_LOG_PASSWORD,"©patne heslo!",context, null);
                 return;
             }
 
             String content = user.getId()+":"+user.getPassword().hashCode();
-            Cookie cookie = new Cookie(AbcServlet.VAR_USER,content);
+            Cookie cookie = new Cookie(AbcVelocityServlet.VAR_USER,content);
             cookie.setPath("/");
             cookie.setMaxAge(6*30*24*3600); // six months
             response.addCookie(cookie);
@@ -239,7 +239,7 @@ public abstract class AbcServlet extends VelocityServlet {
         Cookie[] cookies = request.getCookies();
         for (int i = 0; user==null && cookies!=null && i<cookies.length; i++) {
             Cookie cookie = cookies[i];
-            if ( cookie.getName().equals(AbcServlet.VAR_USER) ) {
+            if ( cookie.getName().equals(AbcVelocityServlet.VAR_USER) ) {
                 try {
                     if ( logout ) {
                         ServletUtils.deleteCookie(cookie,response);
@@ -270,13 +270,13 @@ public abstract class AbcServlet extends VelocityServlet {
                         user = (User) persistance.findById(new User(id));
                     } catch (PersistanceException e) {
                         ServletUtils.deleteCookie(cookie,response);
-                        ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Nalezena cookie s neznámým u¾ivatelem!",context, null);
+                        ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,"Nalezena cookie s neznámým u¾ivatelem!",context, null);
                         break;
                     }
 
                     if ( user.getPassword().hashCode() != hash ) {
                         ServletUtils.deleteCookie(cookie,response);
-                        ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Nalezena cookie se ¹patným heslem!",context, null);
+                        ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,"Nalezena cookie se ¹patným heslem!",context, null);
                         user = null;
                     }
                     break;
@@ -296,8 +296,8 @@ public abstract class AbcServlet extends VelocityServlet {
                 }
             }
 
-            session.setAttribute(AbcServlet.VAR_USER,user);
-            context.put(AbcServlet.VAR_USER,user);
+            session.setAttribute(AbcVelocityServlet.VAR_USER,user);
+            context.put(AbcVelocityServlet.VAR_USER,user);
         }
     }
 

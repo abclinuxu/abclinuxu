@@ -8,11 +8,11 @@
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.servlets.utils.VariantTool;
+import cz.abclinuxu.servlets.utils.VelocityTemplateSelector;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.persistance.Persistance;
@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * Servlet, which loads Category specified by parameter <code>categoryId</code> (or
  * by relation.getChild() from Context) and displays the result.<p>
- * <u>Context variables introduced by AbcServlet</u>
+ * <u>Context variables introduced by AbcVelocityServlet</u>
  * <dl>
  * <dt><code>VAR_CATEGORY</code></dt>
  * <dd>instance of Category.</dd>
@@ -41,7 +41,7 @@ import java.util.List;
  * <dd>used by clanky.vm. Defines range of shown objects.</dd>
  * </dl>
  */
-public class ViewCategory extends AbcServlet {
+public class ViewCategory extends AbcVelocityServlet {
     public static final String VAR_CATEGORY = "CATEGORY";
     public static final String PARAM_CATEGORY_ID = "categoryId";
     public static final String PARAM_FROM = "from";
@@ -61,7 +61,7 @@ public class ViewCategory extends AbcServlet {
             category = new Category(Integer.parseInt(tmp));
         } else {
             if ( relation==null ) {
-                ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Nebyla vybrána ¾ádná kategorie!",ctx, request.getSession());
+                ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,"Nebyla vybrána ¾ádná kategorie!",ctx, request.getSession());
                 response.sendRedirect("/Index");
                 return null;
             }
@@ -70,25 +70,25 @@ public class ViewCategory extends AbcServlet {
         category = (Category) persistance.findById(category);
         ctx.put(VAR_CATEGORY,category);
 
-        UrlUtils urlUtils = (UrlUtils) ctx.get(AbcServlet.VAR_URL_UTILS);
+        UrlUtils urlUtils = (UrlUtils) ctx.get(AbcVelocityServlet.VAR_URL_UTILS);
         tmp = urlUtils.getPrefix();
 
         if ( relation!=null ) {
             switch (relation.getId()) {
-                case Constants.REL_FORUM: return VariantTool.selectTemplate(request,ctx,"ViewCategory","discussions");
-                case Constants.REL_POLLS: return VariantTool.selectTemplate(request,ctx,"ViewCategory","polls");
-                case Constants.REL_LINKS: return VariantTool.selectTemplate(request,ctx,"ViewCategory","links");
-                case Constants.REL_DRIVERS: return VariantTool.selectTemplate(request,ctx,"ViewCategory","drivers");
-                case Constants.REL_REQUESTS: return VariantTool.selectTemplate(request,ctx,"EditRequest","view");
-//                case Constants.REL_REKLAMA: return VariantTool.selectTemplate(request,ctx,"ViewCategory","reklama");
+                case Constants.REL_FORUM: return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewCategory","discussions");
+                case Constants.REL_POLLS: return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewCategory","polls");
+                case Constants.REL_LINKS: return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewCategory","links");
+                case Constants.REL_DRIVERS: return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewCategory","drivers");
+                case Constants.REL_REQUESTS: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditRequest","view");
+//                case Constants.REL_REKLAMA: return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewCategory","reklama");
             }
         } else {
             switch ( category.getId() ) {
-                case Constants.CAT_ARTICLES: return VariantTool.selectTemplate(request,ctx,"ViewCategory","rubriky");
-                case Constants.CAT_ABC: return VariantTool.selectTemplate(request,ctx,"ViewCategory","rubriky");
+                case Constants.CAT_ARTICLES: return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewCategory","rubriky");
+                case Constants.CAT_ABC: return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewCategory","rubriky");
             }
         }
-        if ( UrlUtils.PREFIX_CLANKY.equals(tmp) ) return VariantTool.selectTemplate(request,ctx,"ViewCategory","clanky");
-        return VariantTool.selectTemplate(request,ctx,"ViewCategory","category");
+        if ( UrlUtils.PREFIX_CLANKY.equals(tmp) ) return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewCategory","clanky");
+        return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewCategory","category");
     }
 }

@@ -6,7 +6,7 @@
  */
 package cz.abclinuxu.servlets.edit;
 
-import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.view.SelectRelation;
@@ -29,7 +29,7 @@ import java.text.ParseException;
  * Class for manipulation of articles.
  * @todo implement flow of checks: Author enters article, revisor corrects grammar, editor approves article and selects publish date.
  */
-public class EditArticle extends AbcServlet {
+public class EditArticle extends AbcVelocityServlet {
     public static final String PARAM_RELATION = "relationId";
     public static final String PARAM_TITLE = "title";
     public static final String PARAM_PEREX = "perex";
@@ -49,9 +49,9 @@ public class EditArticle extends AbcServlet {
         init(request,response,ctx);
 
         Relation relation = null;
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
-        String action = (String) params.get(AbcServlet.PARAM_ACTION);
+        String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
 
         relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
         if ( relation!=null ) {
@@ -63,47 +63,47 @@ public class EditArticle extends AbcServlet {
         if ( action==null || action.equals(ACTION_ADD_ITEM) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
+                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
+                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: {
                     params.put(PARAM_PUBLISHED,Constants.isoFormat.format(new Date()));
-                    return VariantTool.selectTemplate(request,ctx,"EditArticle","add");
+                    return VelocityTemplateSelector.selectTemplate(request,ctx,"EditArticle","add");
                 }
             }
 
         } else if ( action.equals(ACTION_ADD_ITEM_STEP2) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
+                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
+                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionAddStep2(request,response,ctx);
             }
 
         } else if ( action.equals(ACTION_EDIT_ITEM) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
+                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
+                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionEditItem(request,ctx);
             }
 
         } else if ( action.equals(ACTION_EDIT_ITEM_STEP2) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
+                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
+                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionEditItem2(request,response,ctx);
             }
 
         }
-        return VariantTool.selectTemplate(request,ctx,"EditArticle","add");
+        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditArticle","add");
     }
 
     protected String  actionAddStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation upper = (Relation) ctx.get(VAR_RELATION);
-        User user = (User) ctx.get(AbcServlet.VAR_USER);
+        User user = (User) ctx.get(AbcVelocityServlet.VAR_USER);
 
         boolean error = false;
         Date publish = null;
@@ -135,7 +135,7 @@ public class EditArticle extends AbcServlet {
         }
 
         if ( error ) {
-            return VariantTool.selectTemplate(request,ctx,"EditArticle","add");
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditArticle","add");
         }
 
         /** todo: support for author not listed in section Authors */
@@ -176,14 +176,14 @@ public class EditArticle extends AbcServlet {
             UrlUtils.redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
             return null;
         } catch (PersistanceException e) {
-            ServletUtils.addError(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
-            return VariantTool.selectTemplate(request,ctx,"EditArticle","add");
+            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditArticle","add");
         }
     }
 
     protected String  actionEditItem(HttpServletRequest request, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
-        VelocityHelper helper = (VelocityHelper) ctx.get(AbcServlet.VAR_HELPER);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        VelocityHelper helper = (VelocityHelper) ctx.get(AbcVelocityServlet.VAR_HELPER);
 
         Relation relation = (Relation) ctx.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
@@ -210,11 +210,11 @@ public class EditArticle extends AbcServlet {
             }
         }
 
-        return VariantTool.selectTemplate(request,ctx,"EditArticle","edit");
+        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditArticle","edit");
     }
 
     protected String actionEditItem2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation upper = (Relation) ctx.get(VAR_RELATION);
 
@@ -248,7 +248,7 @@ public class EditArticle extends AbcServlet {
         }
 
         if ( error ) {
-            return VariantTool.selectTemplate(request,ctx,"EditArticle","edit");
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditArticle","edit");
         }
 
         Item item = (Item) upper.getChild();

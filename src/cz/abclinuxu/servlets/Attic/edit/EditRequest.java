@@ -6,7 +6,7 @@
  */
 package cz.abclinuxu.servlets.edit;
 
-import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.data.*;
@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
-public class EditRequest extends AbcServlet {
+public class EditRequest extends AbcVelocityServlet {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(EditRequest.class);
 
     public static final String PARAM_AUTHOR = "author";
@@ -40,8 +40,8 @@ public class EditRequest extends AbcServlet {
     protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
-        String action = (String) params.get(AbcServlet.PARAM_ACTION);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_REQUEST,Relation.class,params);
         if ( relation!=null ) ctx.put(VAR_REQUEST_RELATION,relation);
 
@@ -51,16 +51,16 @@ public class EditRequest extends AbcServlet {
         } else if ( action.equals(ACTION_DELETE) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation,Guard.OPERATION_REMOVE,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
+                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
+                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionDelete(request,response,ctx);
             }
 
         } else if ( action.equals(ACTION_DELIVER) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation,Guard.OPERATION_REMOVE,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
+                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
+                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionDeliver(request,response,ctx);
             }
         }
@@ -69,7 +69,7 @@ public class EditRequest extends AbcServlet {
 
     protected String actionAdd(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         User user = (User) ctx.get(VAR_USER);
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
 
         String author = (String) params.get(PARAM_AUTHOR);
         String email = (String) params.get(PARAM_EMAIL);
@@ -94,7 +94,7 @@ public class EditRequest extends AbcServlet {
             error = true;
         }
 
-        if ( error ) return VariantTool.selectTemplate(request,ctx,"EditRequest","view");
+        if ( error ) return VelocityTemplateSelector.selectTemplate(request,ctx,"EditRequest","view");
 
         Item req = new Item(0,Item.REQUEST);
         if ( user!=null ) req.setOwner(user.getId());

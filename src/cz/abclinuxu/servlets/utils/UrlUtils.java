@@ -17,7 +17,7 @@ import javax.servlet.RequestDispatcher;
 import java.util.*;
 import java.io.IOException;
 
-import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.AbcVelocityServlet;
 
 /**
  * Simple class used for generating URLs, which remembers
@@ -132,7 +132,7 @@ public class UrlUtils {
      * Redirects to desired URL, keeping session and prefix.
      */
     public static void redirect(String url, HttpServletResponse response, Context context) throws IOException {
-        UrlUtils urlUtils = (UrlUtils) context.get(AbcServlet.VAR_URL_UTILS);
+        UrlUtils urlUtils = (UrlUtils) context.get(AbcVelocityServlet.VAR_URL_UTILS);
         String url2 = urlUtils.constructRedirectURL(url);
         response.sendRedirect(url2);
     }
@@ -141,7 +141,7 @@ public class UrlUtils {
      * Dispatches to desired URL, keeping prefix.
      */
     public static void dispatch(String url, HttpServletRequest request, HttpServletResponse response, Context context) throws ServletException, IOException {
-        UrlUtils urlUtils = (UrlUtils) context.get(AbcServlet.VAR_URL_UTILS);
+        UrlUtils urlUtils = (UrlUtils) context.get(AbcVelocityServlet.VAR_URL_UTILS);
         url = urlUtils.constructDispatchURL(url);
         RequestDispatcher dispatcher = request.getRequestDispatcher(url);
         dispatcher.forward(request,response);

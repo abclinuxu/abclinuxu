@@ -8,7 +8,7 @@ package cz.abclinuxu.servlets.utils;
 
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
-import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.*;
 import org.dom4j.Document;

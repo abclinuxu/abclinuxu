@@ -6,9 +6,9 @@
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
-import cz.abclinuxu.servlets.utils.VariantTool;
+import cz.abclinuxu.servlets.utils.VelocityTemplateSelector;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.data.*;
@@ -23,7 +23,7 @@ import java.util.*;
 /**
  * Profile of the user
  */
-public class ViewUser extends AbcServlet {
+public class ViewUser extends AbcVelocityServlet {
     public static final String PARAM_USER = "userId";
     public static final String PARAM_URL = "url";
 
@@ -39,8 +39,8 @@ public class ViewUser extends AbcServlet {
     protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
-        String action = (String) params.get(AbcServlet.PARAM_ACTION);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
 
         if ( action==null ) {
             return handleProfile(request,ctx);
@@ -61,7 +61,7 @@ public class ViewUser extends AbcServlet {
      * shows profile for selected user
      */
     protected String handleProfile(HttpServletRequest request, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         VelocityHelper helper = new VelocityHelper();
 
@@ -97,14 +97,14 @@ public class ViewUser extends AbcServlet {
         helper.sync(sw);
         ctx.put(VAR_SW_RECORDS,sw);
 
-        return VariantTool.selectTemplate(request,ctx,"ViewUser","profile");
+        return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewUser","profile");
     }
 
     /**
      * shows login screen
      */
     protected String handleLogin(HttpServletRequest request, Context ctx) throws Exception {
-        return VariantTool.selectTemplate(request,ctx,"EditUser","login");
+        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
     }
 
     /**
@@ -113,20 +113,20 @@ public class ViewUser extends AbcServlet {
      */
     protected String handleLogin2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         if ( ctx.get(VAR_USER)!=null ) {
-            Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+            Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
             String id = new Integer(((User)ctx.get(VAR_USER)).getId()).toString();
             params.put(PARAM_USER,id);
             return handleProfile(request,ctx);
         }
         else
-            return VariantTool.selectTemplate(request,ctx,"EditUser","login");
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
     }
 
     /**
      * sending email address
      */
     protected String handleEmail(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         User user = (User) InstanceUtils.instantiateParam(PARAM_USER,User.class,params);
         persistance.synchronize(user);

@@ -6,7 +6,7 @@
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.persistance.*;
@@ -24,7 +24,7 @@ import java.util.List;
  * Simple servlet, which redirects browser to URL, which
  * contains correct prefix.
  */
-public class FindContext extends AbcServlet {
+public class FindContext extends AbcVelocityServlet {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(FindContext.class);
 
     public static final String PARAM_RELATION = "relationId";
@@ -32,7 +32,7 @@ public class FindContext extends AbcServlet {
     protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
         if ( relation==null ) throw new Exception("Chybí parametr relationId!");

@@ -5,8 +5,8 @@
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcServlet;
-import cz.abclinuxu.servlets.utils.VariantTool;
+import cz.abclinuxu.servlets.AbcVelocityServlet;
+import cz.abclinuxu.servlets.utils.VelocityTemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.persistance.Persistance;
@@ -27,7 +27,7 @@ import java.util.Iterator;
  * This servlet is responsible for displaying
  * the range of objects in specified time interval.
  */
-public class ShowOlder extends AbcServlet {
+public class ShowOlder extends AbcVelocityServlet {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(ShowOlder.class);
 
     /** type of object to display */
@@ -56,7 +56,7 @@ public class ShowOlder extends AbcServlet {
      */
     protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
         String type = (String) params.get(PARAM_TYPE);
@@ -78,7 +78,7 @@ public class ShowOlder extends AbcServlet {
             ctx.put(VAR_TYPE,"articles");
         } else {
             ServletUtils.addError(PARAM_TYPE,"Chybí parametr typ!",ctx,null);
-            return VariantTool.selectTemplate(request,ctx,"ViewIndex","show");
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewIndex","show");
         }
 
         found = persistance.findByCommand(sql+" limit "+from+","+count);
@@ -93,6 +93,6 @@ public class ShowOlder extends AbcServlet {
         ctx.put(VAR_FROM,new Integer(from));
         ctx.put(VAR_COUNT,new Integer(count));
 
-        return VariantTool.selectTemplate(request,ctx,"ShowOlder","show");
+        return VelocityTemplateSelector.selectTemplate(request,ctx,"ShowOlder","show");
     }
 }

@@ -6,9 +6,9 @@
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.servlets.utils.VariantTool;
+import cz.abclinuxu.servlets.utils.VelocityTemplateSelector;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
@@ -34,7 +34,7 @@ import java.io.FileOutputStream;
 /**
  * Survey implementation
  */
-public class ShowSurvey extends AbcServlet {
+public class ShowSurvey extends AbcVelocityServlet {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(ShowSurvey.class);
 
     public static final String PARAM_SCREEN_CURRENT = "SCREEN_CURRENT";
@@ -51,11 +51,11 @@ public class ShowSurvey extends AbcServlet {
         init(request,response,ctx);
 
         Persistance persistance = PersistanceFactory.getPersistance();
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Item survey = (Item) InstanceUtils.instantiateParam(PARAM_SURVEY_ID,Item.class,params);
         if ( survey==null ) {
             ServletUtils.addError(null,"Anketa nebyla nalezena!",ctx,request.getSession());
-            return VariantTool.selectTemplate(request,ctx,"ViewIndex","show");
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewIndex","show");
         }
         persistance.synchronize(survey);
         if ( survey.getType()!=Item.SURVEY ) {
@@ -105,7 +105,7 @@ public class ShowSurvey extends AbcServlet {
             return null;
         }
 
-        return VariantTool.selectTemplate(request,ctx,template.getTextTrim());
+        return VelocityTemplateSelector.selectTemplate(request,ctx,template.getTextTrim());
     }
 
     /**

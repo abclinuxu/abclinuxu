@@ -20,7 +20,7 @@ import org.apache.log4j.Category;
 import org.apache.velocity.app.Velocity;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.scheduler.*;
-import cz.abclinuxu.servlets.utils.VariantTool;
+import cz.abclinuxu.servlets.utils.VelocityTemplateSelector;
 import cz.abclinuxu.servlets.view.Search;
 
 /**
@@ -76,7 +76,7 @@ public class AbcInit extends HttpServlet {
 
         String tmp = getInitParameter("TEMPLATES");
         try {
-            VariantTool.initialize(path+tmp);
+            VelocityTemplateSelector.initialize(path+tmp);
         } catch (Exception e) {
             log.fatal("Cannot initialize template system!", e);
         }

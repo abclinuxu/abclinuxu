@@ -6,7 +6,7 @@
  */
 package cz.abclinuxu.servlets.edit;
 
-import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.view.SelectIcon;
 import cz.abclinuxu.data.*;
@@ -25,7 +25,7 @@ import java.util.Map;
  * This class is responsible for adding and
  * editing of hardware items and records.
  */
-public class EditHardware extends AbcServlet {
+public class EditHardware extends AbcVelocityServlet {
     public static final String PARAM_RELATION = "relationId";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_ICON = SelectIcon.PARAM_ICON;
@@ -55,9 +55,9 @@ public class EditHardware extends AbcServlet {
         init(request,response,ctx);
 
         Relation relation = null;
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
-        String action = (String) params.get(AbcServlet.PARAM_ACTION);
+        String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
 
         relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
         if ( relation!=null ) {
@@ -69,43 +69,43 @@ public class EditHardware extends AbcServlet {
         if ( action==null || action.equals(ACTION_ADD_ITEM) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
-                default: return VariantTool.selectTemplate(request,ctx,"EditHardware","add_item");
+                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
+                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
+                default: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditHardware","add_item");
             }
 
         } else if ( action.equals(ACTION_ADD_ITEM_STEP2) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
+                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
+                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionAddStep2(request,ctx);
             }
 
         } else if ( action.equals(ACTION_ADD_ITEM_STEP3) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
+                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
+                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionAddStep3(request,response,ctx);
             }
 
         } else if ( action.equals(ACTION_ADD_RECORD) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Record.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
+                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
+                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: {
                     params.put(PARAM_ACTION,ACTION_ADD_RECORD_STEP2);
-                    return VariantTool.selectTemplate(request,ctx,"EditHardware","add_record");
+                    return VelocityTemplateSelector.selectTemplate(request,ctx,"EditHardware","add_record");
                 }
             }
 
         } else if ( action.equals(ACTION_ADD_RECORD_STEP2) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Record.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
+                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
+                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionAddRecord(request,response,ctx);
             }
 
@@ -116,8 +116,8 @@ public class EditHardware extends AbcServlet {
 
             int rights = Guard.check((User)ctx.get(VAR_USER),record,Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
+                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
+                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionEditRecord(request,ctx);
             }
 
@@ -128,55 +128,55 @@ public class EditHardware extends AbcServlet {
 
             int rights = Guard.check((User)ctx.get(VAR_USER),record,Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
+                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_OK: return actionEditRecord2(request,response,ctx);
-                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
+                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionEditRecord(request,ctx);
             }
 
         } else if ( action.equals(ACTION_EDIT_ITEM) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
+                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
+                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionEditItem(request,ctx);
             }
 
         } else if ( action.equals(ACTION_EDIT_ITEM_STEP2) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
+                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_OK: return actionEditItem2(request,response,ctx);
-                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
+                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionEditItem(request, ctx);
             }
 
         }
 
-        return VariantTool.selectTemplate(request,ctx,"EditHardware","add_item");
+        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditHardware","add_item");
     }
 
     protected String actionAddStep2(HttpServletRequest request, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
 
         String name = (String) params.get(PARAM_NAME);
         if ( name==null || name.length()==0 ) {
             ServletUtils.addError(PARAM_NAME,"Nevyplnil jste název druhu!",ctx,null);
-            return VariantTool.selectTemplate(request,ctx,"EditHardware","add_item");
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditHardware","add_item");
         }
-        return VariantTool.selectTemplate(request,ctx,"EditHardware","add_record");
+        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditHardware","add_record");
     }
 
     protected String actionAddStep3(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation upper = (Relation) ctx.get(VAR_RELATION);
-        User user = (User) ctx.get(AbcServlet.VAR_USER);
+        User user = (User) ctx.get(AbcVelocityServlet.VAR_USER);
 
         String name = (String) params.get(PARAM_NAME);
         if ( name==null || name.length()==0 ) {
             ServletUtils.addError(PARAM_NAME,"Nevyplnil jste název druhu!",ctx,null);
-            return VariantTool.selectTemplate(request,ctx,"EditHardware","add_item");
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditHardware","add_item");
         }
         String icon = (String) params.get(PARAM_ICON);
 
@@ -198,7 +198,7 @@ public class EditHardware extends AbcServlet {
 
         if ( (note==null || note.length()==0) && (setup==null || setup.length()==0) ) {
             ServletUtils.addError(PARAM_SETUP,"Vyplòte postup zprovoznìní nebo poznámku!",ctx,null);
-            return VariantTool.selectTemplate(request,ctx,"EditHardware","add_record");
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditHardware","add_record");
         }
 
         document = DocumentHelper.createDocument();
@@ -224,16 +224,16 @@ public class EditHardware extends AbcServlet {
             UrlUtils.redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
             return null;
         } catch (PersistanceException e) {
-            ServletUtils.addError(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
-            return VariantTool.selectTemplate(request,ctx,"EditHardware","add_record");
+            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditHardware","add_record");
         }
     }
 
     protected String actionAddRecord(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation upper = (Relation) ctx.get(VAR_RELATION);
-        User user = (User) ctx.get(AbcServlet.VAR_USER);
+        User user = (User) ctx.get(AbcVelocityServlet.VAR_USER);
 
         String driver = (String) params.get(PARAM_DRIVER);
         String price = (String) params.get(PARAM_PRICE);
@@ -244,7 +244,7 @@ public class EditHardware extends AbcServlet {
 
         if ( (note==null || note.length()==0) && (setup==null || setup.length()==0) ) {
             ServletUtils.addError(PARAM_SETUP,"Vyplòte postup zprovoznìní nebo poznámku!",ctx,null);
-            return VariantTool.selectTemplate(request,ctx,"EditHardware","add_record");
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditHardware","add_record");
         }
 
         Document document = DocumentHelper.createDocument();
@@ -268,13 +268,13 @@ public class EditHardware extends AbcServlet {
             UrlUtils.redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
             return null;
         } catch (PersistanceException e) {
-            ServletUtils.addError(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
-            return VariantTool.selectTemplate(request,ctx,"EditHardware","add_record");
+            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditHardware","add_record");
         }
     }
 
     protected String actionEditItem(HttpServletRequest request, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
 
         Relation relation = (Relation) ctx.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
@@ -285,11 +285,11 @@ public class EditHardware extends AbcServlet {
         node = document.selectSingleNode("data/icon");
         if ( node!=null ) params.put(PARAM_ICON,node.getText());
 
-        return VariantTool.selectTemplate(request,ctx,"EditHardware","edit_item");
+        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditHardware","edit_item");
     }
 
     protected String actionEditItem2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) ctx.get(VAR_RELATION);
 
@@ -300,7 +300,7 @@ public class EditHardware extends AbcServlet {
         String tmp = (String) params.get(PARAM_NAME);
         if ( tmp==null || tmp.length()==0 ) {
             ServletUtils.addError(PARAM_NAME,"Nevyplnil jste název druhu!",ctx,null);
-            return VariantTool.selectTemplate(request,ctx,"EditHardware","edit_item");
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditHardware","edit_item");
         }
 
         node.setText(tmp);
@@ -311,8 +311,8 @@ public class EditHardware extends AbcServlet {
     }
 
     protected String actionEditRecord(HttpServletRequest request, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
-        VelocityHelper helper = (VelocityHelper) ctx.get(AbcServlet.VAR_HELPER);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        VelocityHelper helper = (VelocityHelper) ctx.get(AbcVelocityServlet.VAR_HELPER);
         Persistance persistance = PersistanceFactory.getPersistance();
 
         Relation upper = (Relation) ctx.get(VAR_RELATION);
@@ -333,11 +333,11 @@ public class EditHardware extends AbcServlet {
         if ( node!=null ) params.put(PARAM_NOTE,helper.encodeSpecial(node.getText()));
 
         params.put(PARAM_ACTION,ACTION_EDIT_RECORD_STEP2);
-        return VariantTool.selectTemplate(request,ctx,"EditHardware","edit_record");
+        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditHardware","edit_record");
     }
 
     protected String actionEditRecord2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
         Relation relation = (Relation) ctx.get(VAR_RELATION);
@@ -353,7 +353,7 @@ public class EditHardware extends AbcServlet {
 
         if ( (note==null || note.length()==0) && (setup==null || setup.length()==0) ) {
             ServletUtils.addError(PARAM_SETUP,"Vyplòte postup zprovoznìní nebo poznámku!",ctx,null);
-            return VariantTool.selectTemplate(request,ctx,"EditHardware","edit_record");
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditHardware","edit_record");
         }
 
         DocumentHelper.makeElement(document,"data/driver").setText(driver);

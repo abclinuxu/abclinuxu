@@ -8,7 +8,7 @@
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.edit.EditCategory;
 import org.apache.velocity.Template;
@@ -24,7 +24,7 @@ import java.util.*;
  * Servlet for interactive selection of icon. When user chooses the icon, flow is redirected
  * to <code>PARAM_URL</code> with all parameters propagated to new location plus
  * <code>PARAM_ICON</code> set.<p>
- * <u>Context variables introduced by AbcServlet</u>
+ * <u>Context variables introduced by AbcVelocityServlet</u>
  * <dl>
  * <dt><code>VAR_ICONS</code></dt>
  * <dd>Holds names of files in directory /ikony/$DIR.</dd>
@@ -46,7 +46,7 @@ import java.util.*;
  * <dd>Indicates, whether user has changed directory.</dd>
  * </dl>
  */
-public class SelectIcon extends AbcServlet {
+public class SelectIcon extends AbcVelocityServlet {
     public static final String PARAM_URL = "url";
     public static final String PARAM_DIR = "dir";
     public static final String PARAM_ICON = "icon";
@@ -103,7 +103,7 @@ public class SelectIcon extends AbcServlet {
         }
         java.util.Collections.sort(icons);
         ctx.put(SelectIcon.VAR_ICONS,icons);
-        return VariantTool.selectTemplate(request,ctx,"SelectIcon","show");
+        return VelocityTemplateSelector.selectTemplate(request,ctx,"SelectIcon","show");
     }
 
     /**
@@ -122,7 +122,7 @@ public class SelectIcon extends AbcServlet {
         map.remove(EditCategory.PARAM_CHOOSE_ICON);
 
         HttpSession session = request.getSession();
-        session.setAttribute(AbcServlet.ATTRIB_PARAMS,map);
+        session.setAttribute(AbcVelocityServlet.ATTRIB_PARAMS,map);
 
         String newUrl = url + "?icon="+icon;
         UrlUtils.redirect(newUrl,response,ctx);

@@ -8,7 +8,7 @@
  */
 package cz.abclinuxu.servlets.edit;
 
-import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.view.SelectIcon;
 import cz.abclinuxu.data.Category;
@@ -55,7 +55,7 @@ import java.util.Map;
  * <dd>Relation, where current category is child.</dd>
  * </dl>
  */
-public class EditCategory extends AbcServlet {
+public class EditCategory extends AbcVelocityServlet {
     public static final String PARAM_RELATION = "relationId";
     public static final String PARAM_CATEGORY = "categoryId";
     public static final String PARAM_NAME = "name";
@@ -79,8 +79,8 @@ public class EditCategory extends AbcServlet {
         Relation relation = null;
         Category category = null;
 
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
-        String action = (String) params.get(AbcServlet.PARAM_ACTION);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
 
         category = (Category) InstanceUtils.instantiateParam(EditCategory.PARAM_CATEGORY,Category.class,params);
         if ( category!=null ) {
@@ -99,44 +99,44 @@ public class EditCategory extends AbcServlet {
         if ( action==null || action.equals(EditCategory.ACTION_ADD) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),category,Guard.OPERATION_ADD,Category.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
-                default: return VariantTool.selectTemplate(request,ctx,"EditCategory","add");
+                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
+                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
+                default: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditCategory","add");
             }
 
         } else if ( action.equals(EditCategory.ACTION_ADD_STEP2) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),category,Guard.OPERATION_ADD,Category.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
+                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
+                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionAddStep2(request,response,ctx);
             }
 
         } else if ( action.equals(EditCategory.ACTION_EDIT) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),category,Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
+                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
+                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionEditStep1(request,ctx);
             }
 
         } else if ( action.equals(EditCategory.ACTION_EDIT2) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),category,Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
+                case Guard.ACCESS_LOGIN: VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
+                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionEditStep2(request,response,ctx);
             }
 
         }
-        return VariantTool.selectTemplate(request,ctx,"EditCategory","add");
+        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditCategory","add");
     }
 
     /**
      * Creates new category
      */
     protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
 
         String name = (String) params.get(EditCategory.PARAM_NAME);
         String icon = (String) params.get(EditCategory.PARAM_ICON);
@@ -145,7 +145,7 @@ public class EditCategory extends AbcServlet {
 
         if ( name==null || name.length()==0 ) {
             ServletUtils.addError(EditCategory.PARAM_NAME,"Nezadal jste jméno kategorie!",ctx, null);
-            return VariantTool.selectTemplate(request,ctx,"EditCategory","add");
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditCategory","add");
         }
 
         Document document = DocumentHelper.createDocument();
@@ -157,7 +157,7 @@ public class EditCategory extends AbcServlet {
 
         Relation upperRelation = (Relation) ctx.get(EditCategory.VAR_RELATION);
         Category upperCategory = (Category) ctx.get(EditCategory.VAR_CATEGORY);
-        User user = (User) ctx.get(AbcServlet.VAR_USER);
+        User user = (User) ctx.get(AbcVelocityServlet.VAR_USER);
         Category category = new Category();
 
         category.setOpen("yes".equals(open));
@@ -171,8 +171,8 @@ public class EditCategory extends AbcServlet {
             relation = new Relation(upperCategory,category,upper);
             PersistanceFactory.getPersistance().create(relation);
         } catch (PersistanceException e) {
-            ServletUtils.addError(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
-            return VariantTool.selectTemplate(request,ctx,"EditCategory","add");
+            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditCategory","add");
         }
 
         UrlUtils.redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
@@ -184,8 +184,8 @@ public class EditCategory extends AbcServlet {
      * @todo verify logic of ACTION check
      */
     protected String actionEditStep1(HttpServletRequest request, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
-        VelocityHelper helper = (VelocityHelper) ctx.get(AbcServlet.VAR_HELPER);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        VelocityHelper helper = (VelocityHelper) ctx.get(AbcVelocityServlet.VAR_HELPER);
 
         Category category = (Category) ctx.get(EditCategory.VAR_CATEGORY);
         PersistanceFactory.getPersistance().synchronize(category);
@@ -199,19 +199,19 @@ public class EditCategory extends AbcServlet {
         if (node!=null) params.put(EditCategory.PARAM_NOTE,helper.encodeSpecial(node.getText()));
         params.put(EditCategory.PARAM_OPEN, (category.isOpen())? "yes":"no");
 
-        return VariantTool.selectTemplate(request,ctx,"EditCategory","edit");
+        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditCategory","edit");
     }
 
     /**
      * Final step for editing of category
      */
     protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
         String tmp = (String) params.get(EditCategory.PARAM_CHOOSE_ICON);
         if ( tmp!=null && tmp.length()>0 ) {
-            // it is not possible to use AbcServlet.dispatch(), because it would prepend prefix!
+            // it is not possible to use AbcVelocityServlet.dispatch(), because it would prepend prefix!
             RequestDispatcher dispatcher = request.getRequestDispatcher("/SelectIcon");
             dispatcher.forward(request,response);
             return null;

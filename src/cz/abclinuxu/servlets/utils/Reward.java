@@ -6,7 +6,7 @@
  */
 package cz.abclinuxu.servlets.utils;
 
-import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.edit.EditUser;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * This class works as interface to ILikeQ payments.
  */
-public class Reward extends AbcServlet {
+public class Reward extends AbcVelocityServlet {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(Reward.class);
     static org.apache.log4j.Category logReward = org.apache.log4j.Category.getInstance("rewards");
 
@@ -45,7 +45,7 @@ public class Reward extends AbcServlet {
 
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        String action = (String) request.getParameter(AbcServlet.PARAM_ACTION);
+        String action = (String) request.getParameter(AbcVelocityServlet.PARAM_ACTION);
 
         if ( action==null || action.length()==0 ) {
             throw new Exception("Chybí paramater action!");

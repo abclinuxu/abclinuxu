@@ -6,10 +6,10 @@
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
-import cz.abclinuxu.servlets.utils.VariantTool;
+import cz.abclinuxu.servlets.utils.VelocityTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
@@ -25,7 +25,7 @@ import java.util.*;
  * This servlet is used to create index page on this
  * site. It puts some variables to context and
  * renders velocity page.<p>
- * <u>Context variables introduced by AbcServlet</u>
+ * <u>Context variables introduced by AbcVelocityServlet</u>
  * <dl>
  * <dt><code>VAR_HARDWARE</code></dt>
  * <dd>List of Relations, where parent() is /Hardware/386 category. All children are initialized.</dd>
@@ -33,7 +33,7 @@ import java.util.*;
  * <dd>List of Relations, where parent() is /Software category. All children are initialized.</dd>
  * </dl>
  */
-public class ViewIndex extends AbcServlet {
+public class ViewIndex extends AbcVelocityServlet {
     public static final String VAR_HARDWARE = "HARDWARE";
     public static final String VAR_SOFTWARE = "SOFTWARE";
     public static final String VAR_HW_NEW = "HW_NEW";
@@ -68,6 +68,6 @@ public class ViewIndex extends AbcServlet {
         helper.sync(forum.getContent());
         ctx.put(VAR_FORUM,forum);
 
-        return VariantTool.selectTemplate(request,ctx,"ViewIndex","show");
+        return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewIndex","show");
     }
 }

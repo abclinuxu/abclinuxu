@@ -12,7 +12,7 @@ import javax.servlet.http.*;
 import java.util.*;
 import java.io.UnsupportedEncodingException;
 
-import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.AbcVelocityServlet;
 
 /**
  * Class to hold useful methods related to servlets
@@ -66,13 +66,13 @@ public class ServletUtils {
      * <p>If session is not null, store messages into session. Handy for redirects and dispatches.
      */
     public static void addError(String key, String errorMessage, Context context, HttpSession session) {
-        Map errors = (Map) context.get(AbcServlet.VAR_ERRORS);
+        Map errors = (Map) context.get(AbcVelocityServlet.VAR_ERRORS);
 
         if ( errors==null ) {
             errors = new HashMap(5);
-            context.put(AbcServlet.VAR_ERRORS,errors);
+            context.put(AbcVelocityServlet.VAR_ERRORS,errors);
         }
-        if ( session!=null ) session.setAttribute(AbcServlet.VAR_ERRORS,errors);
+        if ( session!=null ) session.setAttribute(AbcVelocityServlet.VAR_ERRORS,errors);
         errors.put(key,errorMessage);
     }
 
@@ -82,13 +82,13 @@ public class ServletUtils {
      */
     public static void addMessage(String message, Context context, HttpSession session) {
         boolean created = false;
-        List messages = (List) context.get(AbcServlet.VAR_MESSAGES);
+        List messages = (List) context.get(AbcVelocityServlet.VAR_MESSAGES);
 
         if ( messages==null ) {
             messages = new ArrayList(5);
-            context.put(AbcServlet.VAR_MESSAGES,messages);
+            context.put(AbcVelocityServlet.VAR_MESSAGES,messages);
         }
-        if ( session!=null ) session.setAttribute(AbcServlet.VAR_MESSAGES,messages);
+        if ( session!=null ) session.setAttribute(AbcVelocityServlet.VAR_MESSAGES,messages);
         messages.add(message);
     }
 }

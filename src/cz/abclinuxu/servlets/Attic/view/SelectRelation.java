@@ -6,7 +6,7 @@
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.persistance.Persistance;
@@ -40,7 +40,7 @@ import java.util.Map;
  * <dt><code>PARAM_ENTERED</code></dt>
  * <dd>Hand written relation id.</dd>
  * </dl>
- * <u>Context variables introduced by AbcServlet</u>
+ * <u>Context variables introduced by AbcVelocityServlet</u>
  * <dl>
  * <dt><code>VAR_HARDWARE</code></dt>
  * <dd>List of Relations, where parent() is /Hardware category.</dd>
@@ -54,7 +54,7 @@ import java.util.Map;
  * <dd>Actual Relation, equivalent of PARAM_CURRENT.</dd>
  * </dl>
  */
-public class SelectRelation extends AbcServlet {
+public class SelectRelation extends AbcVelocityServlet {
     public static final String PARAM_SELECTED = "selectedId";
     public static final String PARAM_CURRENT = "currentId";
     public static final String PARAM_ENTERED = "enteredId";
@@ -98,11 +98,11 @@ public class SelectRelation extends AbcServlet {
                 int currentId = Integer.parseInt( (manual!=null && manual.length()>0)? manual:tmp);
                 Relation current = (Relation) persistance.findById(new Relation(currentId));
                 ctx.put(SelectRelation.VAR_CURRENT,current);
-                return VariantTool.selectTemplate(request,ctx,"SelectRelation","step1");
+                return VelocityTemplateSelector.selectTemplate(request,ctx,"SelectRelation","step1");
             } catch (NumberFormatException e) {
                 ServletUtils.addError(SelectRelation.PARAM_ENTERED,"Èíslo vìt¹í ne¾ nula!",ctx, null);
             } catch (PersistanceException e) {
-                ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Nebyla zvolena platná relace!",ctx, null);
+                ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,"Nebyla zvolena platná relace!",ctx, null);
             }
         }
 
@@ -121,7 +121,7 @@ public class SelectRelation extends AbcServlet {
         Category hw386 = (Category) persistance.findById(new Category(Constants.CAT_386));
         content = hw386.getContent();
         ctx.put(SelectRelation.VAR_386,content);
-        return VariantTool.selectTemplate(request,ctx,"SelectRelation","step1");
+        return VelocityTemplateSelector.selectTemplate(request,ctx,"SelectRelation","step1");
     }
 
     /**
@@ -142,18 +142,18 @@ public class SelectRelation extends AbcServlet {
             try {
                 result = Integer.parseInt(tmp);
             } catch (NumberFormatException e) {
-                ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Nebyla zvolena platná relace!",ctx, null);
+                ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,"Nebyla zvolena platná relace!",ctx, null);
             }
         }
 
         Relation current = (Relation) PersistanceFactory.getPersistance().findById(new Relation(result));
         ctx.put(SelectRelation.VAR_CURRENT,current);
-        return VariantTool.selectTemplate(request,ctx,"SelectRelation","step2");
+        return VelocityTemplateSelector.selectTemplate(request,ctx,"SelectRelation","step2");
     }
 
     /**
      * Called, when user confirms his choice. It redirects flow to PARAM_URL and puts all parameters
-     * to session map AbcServlet.ATTRIB_PARAMS. There will be also result under name PARAM_SELECTED.
+     * to session map AbcVelocityServlet.ATTRIB_PARAMS. There will be also result under name PARAM_SELECTED.
      */
     protected String actionFinish(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         String choice = request.getParameter(SelectRelation.PARAM_CURRENT);
@@ -164,7 +164,7 @@ public class SelectRelation extends AbcServlet {
         map.remove(SelectRelation.PARAM_URL);
 
         HttpSession session = request.getSession();
-        session.setAttribute(AbcServlet.ATTRIB_PARAMS,map);
+        session.setAttribute(AbcVelocityServlet.ATTRIB_PARAMS,map);
 
         String url = request.getParameter(SelectRelation.PARAM_URL);
         UrlUtils.redirect(url,response,ctx);

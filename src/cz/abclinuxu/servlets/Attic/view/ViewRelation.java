@@ -8,7 +8,7 @@
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * Servlet, which loads Relation specified by parameter <code>relationId</code>
  * and redirects execution to servlet handling one of relation's GenericObjects.<p>
- * <u>Context variables introduced by AbcServlet</u>
+ * <u>Context variables introduced by AbcVelocityServlet</u>
  * <dl>
  * <dt><code>VAR_RELATION</code></dt>
  * <dd>instance of Relation.</dd>
@@ -42,7 +42,7 @@ import java.util.Map;
  * <dd>PK of asked relation, number.</dd>
  * </dl>
  */
-public class ViewRelation extends AbcServlet {
+public class ViewRelation extends AbcVelocityServlet {
     public static final String PARAM_RELATION_ID = "relationId";
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_PARENTS = "PARENTS";
@@ -51,7 +51,7 @@ public class ViewRelation extends AbcServlet {
         init(request,response,ctx);
 
         Persistance persistance = PersistanceFactory.getPersistance();
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID,Relation.class,params);
         persistance.synchronize(relation);
         ctx.put(VAR_RELATION,relation);

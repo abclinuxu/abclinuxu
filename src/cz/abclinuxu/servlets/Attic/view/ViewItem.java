@@ -6,10 +6,10 @@
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
-import cz.abclinuxu.servlets.utils.VariantTool;
+import cz.abclinuxu.servlets.utils.VelocityTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
@@ -24,7 +24,7 @@ import java.util.*;
  * Servlet for viewing items. Can decide, what kind of item
  * it is and how to display it on fly.
  */
-public class ViewItem extends AbcServlet {
+public class ViewItem extends AbcVelocityServlet {
     public static final String VAR_ITEM = "ITEM";
     /** Relation upper to selected relation Item-Record */
     public static final String VAR_UPPER = "REL_ITEM";
@@ -58,16 +58,16 @@ public class ViewItem extends AbcServlet {
         persistance.synchronize(upper); ctx.put(VAR_UPPER,upper);
 
         if ( item.getType()==Item.DRIVER )
-            return VariantTool.selectTemplate(request,ctx,"ViewItem","driver");
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewItem","driver");
         if ( item.getType()==Item.DISCUSSION )
-            return VariantTool.selectTemplate(request,ctx,"ViewItem","discussion");
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewItem","discussion");
 
         VelocityHelper helper = new VelocityHelper();
         Map children = helper.groupByType(item.getContent());
         ctx.put(VAR_CHILDREN_MAP,children);
 
         if ( item.getType()==Item.ARTICLE )
-            return VariantTool.selectTemplate(request,ctx,"ViewItem","article");
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewItem","article");
 
         if ( record==null ) {
             List records = (List) children.get(Constants.TYPE_RECORD);
@@ -77,8 +77,8 @@ public class ViewItem extends AbcServlet {
 
         if ( item.getType()==Item.MAKE && record!=null ) {
             switch ( record.getType() ) {
-                case Record.HARDWARE: return VariantTool.selectTemplate(request,ctx,"ViewItem","hardware");
-                case Record.SOFTWARE: return VariantTool.selectTemplate(request,ctx,"ViewItem","software");
+                case Record.HARDWARE: return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewItem","hardware");
+                case Record.SOFTWARE: return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewItem","software");
             }
         }
         return null;

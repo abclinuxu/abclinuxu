@@ -6,7 +6,7 @@
  */
 package cz.abclinuxu.servlets.edit;
 
-import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.data.*;
@@ -25,7 +25,7 @@ import java.io.IOException;
 /**
  * @todo archive drivers replaced by newer version
  */
-public class EditDriver extends AbcServlet {
+public class EditDriver extends AbcVelocityServlet {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(EditDriver.class);
 
     public static final String PARAM_NAME = "name";
@@ -44,9 +44,9 @@ public class EditDriver extends AbcServlet {
     protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
-        String action = (String) params.get(AbcServlet.PARAM_ACTION);
+        String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
 
         if ( relation!=null ) {
@@ -58,26 +58,26 @@ public class EditDriver extends AbcServlet {
         if ( action==null || action.equals(ACTION_ADD) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
+                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
+                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionAddStep(request,ctx);
             }
 
         } else if ( action.equals(ACTION_ADD_STEP2) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
+                case Guard.ACCESS_LOGIN: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
+                case Guard.ACCESS_DENIED: return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionAddStep2(request,response,ctx);
             }
         }
 
-        return VariantTool.selectTemplate(request,ctx,"EditDriver","add");
+        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditDriver","add");
     }
 
     protected String actionAddStep(HttpServletRequest request, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
-        VelocityHelper helper = (VelocityHelper) ctx.get(AbcServlet.VAR_HELPER);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        VelocityHelper helper = (VelocityHelper) ctx.get(AbcVelocityServlet.VAR_HELPER);
         Persistance persistance = PersistanceFactory.getPersistance();
 
         Item driver = (Item) InstanceUtils.instantiateParam(PARAM_DRIVER,Item.class,params);
@@ -104,18 +104,18 @@ public class EditDriver extends AbcServlet {
             if ( node!=null ) params.put(PARAM_NOTE,helper.encodeSpecial(node.getText()));
         }
 
-        return VariantTool.selectTemplate(request,ctx,"EditDriver","add");
+        return VelocityTemplateSelector.selectTemplate(request,ctx,"EditDriver","add");
     }
 
     /**
      * add: if driver exists, its content is replaced by newer version. otherwise it is created.
      */
     protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
         Relation upper = (Relation) ctx.get(VAR_RELATION);
-        User user = (User) ctx.get(AbcServlet.VAR_USER);
+        User user = (User) ctx.get(AbcVelocityServlet.VAR_USER);
 
         boolean error = false;
         String name = (String) params.get(PARAM_NAME);
@@ -139,7 +139,7 @@ public class EditDriver extends AbcServlet {
         String note = (String) params.get(PARAM_NOTE);
 
         if ( error ) {
-            return VariantTool.selectTemplate(request,ctx,"EditDriver","add");
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditDriver","add");
         }
 
         boolean created = true;
@@ -181,8 +181,8 @@ public class EditDriver extends AbcServlet {
                 persistance.update(driver);
             }
         } catch (PersistanceException e) {
-            ServletUtils.addError(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
-            return VariantTool.selectTemplate(request,ctx,"EditDriver","add");
+            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"EditDriver","add");
         }
 
         UrlUtils.redirect("/ViewRelation?relationId="+Constants.REL_DRIVERS,response,ctx);

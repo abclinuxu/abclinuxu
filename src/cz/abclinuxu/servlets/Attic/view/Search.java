@@ -6,10 +6,10 @@
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.servlets.utils.VariantTool;
+import cz.abclinuxu.servlets.utils.VelocityTemplateSelector;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.utils.Misc;
@@ -33,7 +33,7 @@ import java.io.*;
 /**
  * Performs search across the data.
  */
-public class Search extends AbcServlet {
+public class Search extends AbcVelocityServlet {
     static String INDEX_PATH = "/home/literakl/ROOT/WEB-INF/index";
 
     /** contains relation, that match the expression */
@@ -50,11 +50,11 @@ public class Search extends AbcServlet {
     protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
         String query = (String) params.get(PARAM_QUERY);
         if ( query == null || query.length()==0 ) {
             ServletUtils.addError(PARAM_QUERY,"Prosím zadejte hledaný øetìzec!",ctx,null);
-            return VariantTool.selectTemplate(request,ctx,"Search","show");
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"Search","show");
         }
 
         try {
@@ -75,10 +75,10 @@ public class Search extends AbcServlet {
             ctx.put(VAR_TOTAL,new Integer(length));
         } catch (Exception e) {
             ServletUtils.addError(PARAM_QUERY,"Nemohu provést dané hledání. Zadejte jiný øetìzec!",ctx,null);
-            return VariantTool.selectTemplate(request,ctx,"Search","show");
+            return VelocityTemplateSelector.selectTemplate(request,ctx,"Search","show");
         }
 
-        return VariantTool.selectTemplate(request,ctx,"Search","show");
+        return VelocityTemplateSelector.selectTemplate(request,ctx,"Search","show");
     }
 
     /**
