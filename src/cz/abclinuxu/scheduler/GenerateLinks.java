@@ -8,13 +8,14 @@ package cz.abclinuxu.scheduler;
 
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.*;
-import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
+import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.utils.Sorters2;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -72,14 +73,13 @@ public class GenerateLinks extends TimerTask implements Configurable {
     public void run() {
         try {
             Persistance persistance = PersistanceFactory.getPersistance();
-            VelocityHelper helper = new VelocityHelper();
+            Tools tools = new Tools();
             Category actual = (Category) persistance.findById(new Category(Constants.CAT_ACTUAL_ARTICLES));
-            helper.sync(actual.getContent());
-            List list = helper.sortByDateDescending(actual.getContent());
+            tools.sync(actual.getContent());
+            List list = Sorters2.byDate(actual.getContent(),"DESCENDING");
 
-            for (int j = 0; j < generators.length; j++) {
+            for (int j = 0; j < generators.length; j++)
                 generators[j].generateHeader();
-            }
 
             String url,title,desc,content;
             Record record = null;
@@ -88,22 +88,22 @@ public class GenerateLinks extends TimerTask implements Configurable {
                 Item item = (Item) relation.getChild();
 
                 url = "http://www.abclinuxu.cz/clanky/ViewRelation?relationId="+relation.getId();
-                title = helper.getXPath(item,"data/name");
-                desc = removeNewLines(helper.getXPath(item,"data/perex"));
+                title = tools.xpath(item,"data/name");
+                desc = removeNewLines(tools.xpath(item,"data/perex"));
 
                 content = null; record = null;
                 for (Iterator iter = item.getContent().iterator(); iter.hasNext();) {
                     Relation child = (Relation) iter.next();
                     if ( child.getChild() instanceof Record ) {
                         record = (Record) child.getChild();
-                        helper.sync(record);
+                        tools.sync(record);
                         if ( record.getType()==Record.ARTICLE )
                             break;
                         record = null;
                     }
                 }
                 if ( record!=null )
-                    content = helper.encodeSpecial(helper.getXPath(record,"data/content"));
+                    content = tools.encodeSpecial(tools.xpath(record,"data/content"));
 
                 for (int j = 0; j < generators.length; j++) {
                     generators[j].generateLink(title, url, desc, content);
@@ -117,28 +117,12 @@ public class GenerateLinks extends TimerTask implements Configurable {
                 persistance.synchronize(item);
 
                 url = "http://www.abclinuxu.cz/hardware/ViewRelation?relationId="+found.getId();
-                title = "H "+helper.getXPath(item,"data/name");
+                title = "H "+tools.xpath(item,"data/name");
 
                 for (int j = 0; j < generators.length; j++) {
                     generators[j].generateLink(title, url, "", null);
                 }
             }
-
-//            list = persistance.findByCommand(ShowOlder.SQL_SOFTWARE+" limit "+2);
-//            for (Iterator iter = list.iterator(); iter.hasNext();) {
-//                Object[] objects = (Object[]) iter.next();
-//                int id = ((Integer)objects[0]).intValue();
-//                Relation found = (Relation) persistance.findById(new Relation(id));
-//                Item item = (Item) found.getParent();
-//                persistance.synchronize(item);
-//
-//                url = "http://AbcLinuxu.cz/software/ViewRelation?relationId="+found.getId();
-//                title = "S "+helper.getXPath(item,"data/name");
-//
-//                for (int j = 0; j < generators.length; j++) {
-//                    generators[j].generateLink(title,"",url);
-//                }
-//            }
 
             list = SQLTool.getInstance().findItemRelationsByUpdated(Item.DRIVER, 0,1);
             for (Iterator iter = list.iterator(); iter.hasNext();) {
@@ -147,16 +131,16 @@ public class GenerateLinks extends TimerTask implements Configurable {
                 persistance.synchronize(item);
 
                 url = "http://www.abclinuxu.cz/drivers/ViewRelation?relationId="+found.getId();
-                title = "O "+helper.getXPath(item,"data/name");
+                title = "O "+tools.xpath(item,"data/name");
 
                 for (int j = 0; j < generators.length; j++) {
                     generators[j].generateLink(title, url, "", null);
                 }
             }
 
-            for (int j = 0; j < generators.length; j++) {
+            for (int j = 0; j < generators.length; j++)
                 generators[j].generateBottom();
-            }
+
         } catch (Exception e) {
             log.error("Cannot generate links",e);
         }
