@@ -197,9 +197,15 @@ public class EditGroup extends AbcFMServlet {
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
         int pageSize = AbcConfig.getViewUserPageSize();
         SQLTool sqlTool = SQLTool.getInstance();
-        List list = sqlTool.findUsersInGroup(group.getId(), new Qualifier[] {Qualifier.SORT_BY_ID,new LimitQualifier(from, pageSize)});
+        List keys = sqlTool.findUsersInGroup(group.getId(), new Qualifier[] {Qualifier.SORT_BY_ID,new LimitQualifier(from, pageSize)});
+        List users = new ArrayList(keys.size());
+        for ( Iterator iter = keys.iterator(); iter.hasNext(); ) {
+            Integer key = (Integer) iter.next();
+            users.add(persistance.findById(new User(key.intValue())));
+        }
+
         int total = sqlTool.countUsersInGroup(group.getId());
-        Paging paging = new Paging(list, from, pageSize, total);
+        Paging paging = new Paging(users, from, pageSize, total);
         env.put(VAR_MEMBERS,paging);
 
         return FMTemplateSelector.select("EditGroup", "showMembers", env, request);
