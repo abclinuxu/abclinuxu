@@ -15,7 +15,6 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.email.monitor.*;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
-import cz.abclinuxu.utils.monitor.*;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 
 import org.dom4j.*;
