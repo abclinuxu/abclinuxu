@@ -37,7 +37,7 @@ public class InsertFormat {
         persistance = PersistanceFactory.getPersistance(EmptyCache.class);
 
         System.out.println("This utility must not be run, if portal is running!");
-        System.out.println("Press enter");
+        System.err.println("Press enter");
         System.in.read();
 
         System.out.println("Starting ..\n");
