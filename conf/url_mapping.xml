@@ -1,7 +1,7 @@
 <mappings>
     <format version="www">
         <mapping>
-            <pattern>^/Index</pattern>
+            <pattern>^/$</pattern>
             <action>cz.abclinuxu.servlets.html.view.ViewIndex</action>
         </mapping>
         <mapping>
@@ -113,14 +113,19 @@
     </format>
     <deprecated version="www">
         <mapping>
-            <pattern input="path">^/$</pattern>
-            <regexp>/$</regexp>
-            <replacement>/Index</replacement>
+            <pattern input="path">^/Index$</pattern>
+            <regexp>/Index</regexp>
+            <replacement>/</replacement>
         </mapping>
         <mapping>
             <pattern input="host">^@DOMAIN_NAME@</pattern>
             <regexp>://</regexp>
             <replacement>://www.</replacement>
+        </mapping>
+        <mapping>
+            <pattern input="host">abclinux.cz</pattern>
+            <regexp>.*</regexp>
+            <replacement>http://www.abclinuxu.cz/forum/dir/50239</replacement>
         </mapping>
         <mapping>
             <pattern input="path">ViewRelation</pattern>
