@@ -64,6 +64,7 @@ text lámat. Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
                 <a href="javascript:insertAtCursor(document.form.content, '<i></i>');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
                 <a href="javascript:insertAtCursor(document.form.content, '<a href=&quot;&quot;></a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
                 <a href="javascript:insertAtCursor(document.form.content, '<p></p>');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
+                <a href="javascript:insertAtCursor(document.form.content, '<pre></pre>');" id="mono" title="Vlo¾it formátovaný text. Vhodné pro konfiguraèní soubory èi výpisy.">&lt;pre&gt;</a>
                 <a href="javascript:insertAtCursor(document.form.content, '<break>');" id="mono" title="Vlo¾it znaèku zlomu">&lt;break&gt;</a>
             </div>
             <textarea name="content" cols="80" rows="30">${PARAMS.content?if_exists?html}</textarea>
