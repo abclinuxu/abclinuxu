@@ -576,6 +576,7 @@ public class EditRelation extends AbcFMServlet {
             action.setProperty(Decorator.PROPERTY_NAME, title.getText());
         }
 
-        MonitorPool.scheduleMonitorAction(action);
+        if (action!=null)
+            MonitorPool.scheduleMonitorAction(action);
     }
 }
