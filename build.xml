@@ -1,7 +1,7 @@
 <project name="AbcLinuxu" default="deploy">
 
   <property file="conf_deploy.properties" />
-  
+
   <property name="src" location="src" />
   <property name="javac.debug" value="off" />
   <property name="javac.optimize" value="on" />
@@ -14,7 +14,7 @@
 
 
   <target name="init">
- 
+
     <filter filtersfile="conf_deploy.properties"/>
 
     <mkdir dir="${DEPLOY_ABCLINUXU}" />
@@ -57,6 +57,8 @@
         <include name="systemPrefs.xml" />
         <include name="proxool.xml" />
         <include name="log4j.xml" />
+        <include name="UnicodeData.txt" />
+        <include name="stop_words.txt" />
       </fileset>
     </copy>
 
