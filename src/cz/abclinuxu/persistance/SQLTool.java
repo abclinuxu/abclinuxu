@@ -180,7 +180,7 @@ public final class SQLTool implements Configurable {
         for ( int i = 0; i<qualifiers.length; i++ ) {
             Qualifier qualifier = qualifiers[i];
             if ( qualifier.equals(Qualifier.SORT_BY_CREATED) ) {
-                sb.append(" sort by vytvoreno");
+                sb.append(" order by vytvoreno");
                 sort = true;
             } else if ( qualifier.equals(Qualifier.SORT_BY_UPDATED) ) {
                 sb.append(" order by zmeneno");
