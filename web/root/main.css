@@ -11,6 +11,7 @@ TD.bezmezer { padding: 0 0 0 0 }
 .error { color: RED; font-size: bigger }
 .message { font-size: bigger; color:blue; padding: 1ex 0ex }
 .required { font-weight: bolder }
+P.monitor { border-width: 1; border-color: blue; border-style: dashed; padding: 1ex; margin-top: 1em}
 
 /* sablona */
 SPAN.barva { color: #225577; font-family: Lucida, Verdana, Helvetica, sans-serif; font-size: 10pt }

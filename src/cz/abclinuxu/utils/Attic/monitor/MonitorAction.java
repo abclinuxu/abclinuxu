@@ -10,6 +10,8 @@ import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.GenericDataObject;
 
 import java.util.Date;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Holder of data for monitor, when the event
@@ -25,6 +27,7 @@ public class MonitorAction {
     Element monitor;
     GenericDataObject object;
     Date performed;
+    Map map;
 
     /**
      * Creates new instance of MonitorAction.
@@ -96,4 +99,25 @@ public class MonitorAction {
         return performed;
     }
 
+    /**
+     * Sets value identified by key as property.
+     * @param key name of property
+     * @param value property
+     */
+    public void setProperty(String key, Object value) {
+        if (map==null)
+            map = new HashMap(3,1.0f);
+        map.put(key,value);
+    }
+
+    /**
+     * Gets value of property identified by key.
+     * @param key name of property
+     * @return property
+     */
+    public Object getProperty(String key) {
+        if (map==null)
+            return null;
+        return map.get(key);
+    }
 }

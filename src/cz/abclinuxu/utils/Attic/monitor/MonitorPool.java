@@ -63,17 +63,21 @@ public class MonitorPool {
      * @param action
      */
     public static void scheduleMonitorAction(MonitorAction action) {
-        Element monitor = (Element) action.object.getData().selectSingleNode("//monitor");
-        if (monitor==null)
-            return;
+        if ( action.object!=null ) {
+            Element monitor = (Element) action.object.getData().selectSingleNode("//monitor");
+            if ( monitor==null )
+                return;
+            action.monitor = monitor.createCopy();
+        }
 
-        action.monitor = monitor.createCopy();
         action.performed = new Date();
 
         try {
-            GenericDataObject clone = (GenericDataObject) action.object.getClass().newInstance();
-            clone.setId(action.object.getId());
-            action.object = clone;
+            if (action.object!=null) {
+                GenericDataObject clone = (GenericDataObject) action.object.getClass().newInstance();
+                clone.setId(action.object.getId());
+                action.object = clone;
+            }
         } catch (Exception e) {
             log.error("Cannot create copy of "+action.object, e);
         }

@@ -18,6 +18,7 @@ import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Tools;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.monitor.*;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.PersistanceException;
 import cz.abclinuxu.security.Roles;
@@ -57,6 +58,7 @@ public class EditDiscussion extends AbcFMServlet {
     public static final String ACTION_CENSORE_COMMENT = "censore";
     public static final String ACTION_EDIT_COMMENT = "edit";
     public static final String ACTION_EDIT_COMMENT_STEP2 = "edit2";
+    public static final String ACTION_ALTER_MONITOR = "monitor";
 
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -92,6 +94,10 @@ public class EditDiscussion extends AbcFMServlet {
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
 
+        if ( ACTION_ALTER_MONITOR.equals(action) )
+            return actionAlterMonitor(request, response, env);
+
+        // check permissions
         if ( !user.hasRole(Roles.DISCUSSION_ADMIN) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
@@ -202,6 +208,8 @@ public class EditDiscussion extends AbcFMServlet {
     protected String actionAddComment2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        Relation relation = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION,Item.class,params);
@@ -266,8 +274,19 @@ public class EditDiscussion extends AbcFMServlet {
             persistance.update(discussion);
         }
 
-        Relation relation = (Relation) env.get(VAR_RELATION);
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        // run monitor
+        String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/ViewRelation?rid="+relation.getId();
+        MonitorAction action = null;
+        if (user!=null)
+            action = new MonitorAction(user, UserAction.ADD, ObjectType.DISCUSSION, discussion, url);
+        else {
+            String author = (String) params.get(PARAM_AUTHOR);
+            action = new MonitorAction(author, UserAction.ADD, ObjectType.DISCUSSION, discussion, url);
+        }
+        String title = comment.selectSingleNode("title").getText();
+        action.setProperty(DiscussionDecorator.PROPERTY_NAME, title);
+        MonitorPool.scheduleMonitorAction(action);
+
         urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
         return null;
     }
@@ -278,6 +297,7 @@ public class EditDiscussion extends AbcFMServlet {
     protected String actionCensore(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         User user = (User) env.get(Constants.VAR_USER);
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params);
@@ -301,12 +321,19 @@ public class EditDiscussion extends AbcFMServlet {
                 AdminLogger.logEvent(user,"odstranena cenzura na vlakno "+thread+" diskuse "+discussion.getId()+", relace "+relation.getId());
             } else {
                 element.addElement("censored").setText("Admin "+user.getName()+", "+Constants.czFormat.format(new Date()));
+
+                // run monitor
+                String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/ViewRelation?rid="+relation.getId();
+                MonitorAction action = new MonitorAction(user, UserAction.CENSORE, ObjectType.DISCUSSION, discussion, url);
+                String title = element.selectSingleNode("title").getText();
+                action.setProperty(DiscussionDecorator.PROPERTY_NAME,title);
+                MonitorPool.scheduleMonitorAction(action);
+
                 AdminLogger.logEvent(user, "uvalena cenzura na vlakno "+thread+" diskuse "+discussion.getId()+", relace "+relation.getId());
             }
         }
         persistance.update(record);
 
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
         return null;
     }
@@ -394,7 +421,26 @@ public class EditDiscussion extends AbcFMServlet {
         return null;
     }
 
-    /* ***************** */
+    /**
+     * Reverts current monitor state for the user on this driver.
+     */
+    protected String actionAlterMonitor(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item discussion = (Item) persistance.findById(relation.getChild());
+        User user = (User) env.get(Constants.VAR_USER);
+
+        Date originalUpdated = discussion.getUpdated();
+        MonitorTools.alterMonitor(discussion.getData().getRootElement(), user);
+        persistance.update(discussion);
+        SQLTool.getInstance().setUpdatedTimestamp(discussion, originalUpdated);
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+        return null;
+    }
+
+    /* ******** setters ********* */
 
     /**
      * Finds thread given by PARAM_THREAD key or makes facade around given Item.

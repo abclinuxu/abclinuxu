@@ -5,12 +5,33 @@
  */
 package cz.abclinuxu.utils.monitor;
 
+import cz.abclinuxu.utils.email.EmailSender;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.ConfigurationManager;
+
 import java.util.Map;
+import java.util.HashMap;
+import java.util.prefs.Preferences;
 
 /**
  * Decorator for Discussions.
  */
-public class DiscussionDecorator implements Decorator {
+public class DiscussionDecorator implements Decorator, Configurable {
+    public static final String PREF_SUBJECT = "subject";
+    public static final String PREF_ACTION_ADD = "action.add";
+    public static final String PREF_ACTION_REMOVE = "action.remove";
+    public static final String PREF_ACTION_CENSORE = "action.censore";
+
+    public static final String VAR_URL = "URL";
+    public static final String VAR_NAME = "NAME";
+    public static final String VAR_ACTION = "ACTION";
+    public static final String VAR_ACTOR = "ACTOR";
+    public static final String VAR_PERFORMED = "PERFORMED";
+
+    public static final String PROPERTY_NAME = "NAME";
+
+    String subject, actionAdd, actionRemove, actionCensore;
 
     /**
      * Creates environment for given MonitorAction. This
@@ -20,6 +41,36 @@ public class DiscussionDecorator implements Decorator {
      * @return environment
      */
     public Map getEnvironment(MonitorAction action) {
-        return null;
+        Map env = new HashMap();
+
+        env.put(EmailSender.KEY_SUBJECT, subject);
+        env.put(EmailSender.KEY_TEMPLATE, "/mail/monitor/notif_discussion.ftl");
+
+        env.put(VAR_URL, action.url);
+        env.put(VAR_ACTOR, action.actor);
+        env.put(VAR_PERFORMED, action.performed);
+        env.put(VAR_NAME, action.getProperty(PROPERTY_NAME));
+
+        String changeMessage = "";
+        if (UserAction.ADD.equals(action.action))
+            changeMessage = actionAdd;
+        else if (UserAction.REMOVE.equals(action.action))
+            changeMessage = actionRemove;
+        else if (UserAction.CENSORE.equals(action.action))
+            changeMessage = actionCensore;
+        env.put(VAR_ACTION,changeMessage);
+
+        return env;
+    }
+
+    public DiscussionDecorator() {
+        ConfigurationManager.getConfigurator().configureMe(this);
+    }
+
+    public void configure(Preferences prefs) throws ConfigurationException {
+        subject = prefs.get(PREF_SUBJECT, "AbcMonitor");
+        actionAdd = prefs.get(PREF_ACTION_ADD, "");
+        actionRemove = prefs.get(PREF_ACTION_REMOVE, "");
+        actionCensore = prefs.get(PREF_ACTION_CENSORE, "");
     }
 }

@@ -14,6 +14,7 @@ public class UserAction {
     public static final UserAction ADD = new UserAction("add");
     public static final UserAction EDIT = new UserAction("edit");
     public static final UserAction REMOVE = new UserAction("remove");
+    public static final UserAction CENSORE = new UserAction("censore");
 
     private UserAction(String name) {
         this.name = name;

@@ -43,12 +43,12 @@ public class DriverDecorator implements Decorator, Configurable {
         env.put(EmailSender.KEY_SUBJECT, subject);
         env.put(EmailSender.KEY_TEMPLATE, "/mail/monitor/notif_driver.ftl");
 
-        env.put(VAR_URL,action.getUrl());
-        env.put(VAR_ACTOR,action.getActor());
-        env.put(VAR_PERFORMED,action.getPerformed());
+        env.put(VAR_URL, action.url);
+        env.put(VAR_ACTOR, action.actor);
+        env.put(VAR_PERFORMED, action.performed);
 
         Persistance persistance = PersistanceFactory.getPersistance();
-        Item driver = (Item) persistance.findById(action.getObject());
+        Item driver = (Item) persistance.findById(action.object);
         env.put(VAR_NAME,driver.getData().selectSingleNode("/data/name").getText());
 
         return env;
