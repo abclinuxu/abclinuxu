@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<proxool>
+  <alias>abc</alias>
+  <driver-url>jdbc:mysql://localhost/abc?useUnicode=true&amp;characterEncoding=ISO-8859-2</driver-url>
+  <driver-class>com.mysql.jdbc.Driver</driver-class>
+  <driver-properties>
+    <property name="user" value="literakl"/>
+    <property name="password" value="lkaretil"/>
+  </driver-properties>
+  <minimum-connection-count>1</minimum-connection-count>
+  <maximum-connection-count>15</maximum-connection-count>
+  <maximum-connection-lifetime>1800000</maximum-connection-lifetime>
+  <house-keeping-test-sql>select CURRENT_DATE</house-keeping-test-sql>
+  <statistics>1m,1h,1d</statistics>
+</proxool>
