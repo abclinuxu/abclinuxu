@@ -30,7 +30,7 @@ text lámat. Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
         Pøeèteno: 0x
         <#if PARAMS.cid?exists>| ${CATEGORIES[PARAMS.cid]?if_exists}</#if>
     </p>
-    ${TOOL.xpath(PREVIEW, "/data/perex")}
+    ${TOOL.xpath(PREVIEW, "/data/perex")?if_exists}
     ${TOOL.xpath(PREVIEW, "/data/content")?if_exists}
  </div>
 </#if>
