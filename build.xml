@@ -41,6 +41,10 @@
       <fileset dir="web/ikony"/>
     </copy>
 
+    <copy todir="${build}/images">
+      <fileset dir="web/images"/>
+    </copy>
+
     <copy todir="${build}/WEB-INF">
       <fileset dir="conf">
         <include name="web.xml"/>
