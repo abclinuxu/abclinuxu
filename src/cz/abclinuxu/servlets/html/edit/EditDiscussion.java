@@ -386,18 +386,14 @@ public class EditDiscussion implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
 
         SQLTool sqlTool = SQLTool.getInstance();
-        Date voted = sqlTool.getUserAction(user.getId(), relation.getId(), "solved");
-        if (voted!=null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC,"Tuto akci smíte provést jen jednou.",env,request.getSession());
-        } else {
-            Item diz = (Item) persistance.findById(relation.getChild());
-            setSolved(params, diz.getData().getRootElement());
-            sqlTool.insertUserAction(user.getId(), relation.getId(), "solved");
-
+        Item diz = (Item) persistance.findById(relation.getChild());
+        boolean canContinue = setSolved(params, diz.getData().getRootElement(), sqlTool, relation.getId(), user);
+        if (canContinue) {
             Date updated = diz.getUpdated();
             persistance.update(diz);
             SQLTool.getInstance().setUpdatedTimestamp(diz, updated);
-        }
+        } else
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Tuto akci smíte provést jen jednou.", env, request.getSession());
 
         urlUtils.redirect(response, "/show/" + relation.getId());
         return null;
@@ -1177,28 +1173,54 @@ public class EditDiscussion implements AbcAction {
     }
 
     /**
-     * Updates solved from parameters.
+     * Updates solved from parameters. User may vote only once for given choice,
+     * but he may changed his decision by voting to opposite (this will undo his
+     * previous choice).
      * @param params map holding request's parameters
      * @param root root element of discussion to be updated
      * @return false, if there is a major error.
      */
-    static boolean setSolved(Map params, Element root) {
+    static boolean setSolved(Map params, Element root, SQLTool sqlTool, int rid, User user) {
         String tmp = (String) params.get(PARAM_SOLVED);
-        Boolean solved = Boolean.valueOf(tmp);
+        boolean solved = Boolean.valueOf(tmp).booleanValue();
+        String type = (solved)? "solved" : "notsolved";
+
+        Date voted = sqlTool.getUserAction(user.getId(), rid, type);
+        if (voted!=null)
+            return false;
+
+        sqlTool.insertUserAction(user.getId(), rid, type);
+
+        type = (solved) ? "notsolved" : "solved";
+        voted = sqlTool.getUserAction(user.getId(), rid, type);
+        if (voted!=null)
+            sqlTool.removeUserAction(user.getId(), rid, type);
+
         Element element = DocumentHelper.makeElement(root, "solved");
-        Attribute attribute = null;
-        if (solved.booleanValue()) {
-            attribute = element.attribute("yes");
-            if (attribute==null)
+        Attribute attribSolved = element.attribute("yes");
+        Attribute attribNotSolved = element.attribute("no");
+        if (solved) {
+            if (attribSolved==null)
                 element.addAttribute("yes","1");
+            else {
+                int count = Misc.parseInt(attribSolved.getText(), 0);
+                attribSolved.setText(Integer.toString(count + 1));
+            }
+            if (voted!=null && attribNotSolved!=null) {
+                int count = Misc.parseInt(attribNotSolved.getText(), 1);
+                attribNotSolved.setText(Integer.toString(count - 1));
+            }
         } else {
-            attribute = element.attribute("no");
-            if (attribute == null)
+            if (attribNotSolved == null)
                 element.addAttribute("no", "1");
-        }
-        if (attribute!=null) {
-            int count = Misc.parseInt(attribute.getText(), 0);
-            attribute.setText(Integer.toString(count + 1));
+            else {
+                int count = Misc.parseInt(attribNotSolved.getText(), 0);
+                attribNotSolved.setText(Integer.toString(count + 1));
+            }
+            if (voted != null && attribSolved != null) {
+                int count = Misc.parseInt(attribSolved.getText(), 1);
+                attribSolved.setText(Integer.toString(count - 1));
+            }
         }
         return true;
     }
