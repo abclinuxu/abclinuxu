@@ -49,6 +49,8 @@ import java.util.ArrayList;
  * <dd>If this value is "yes", we may send two advertisements a month to the user.</dd>
  * <dt><code>PARAM_SEX</code></dt>
  * <dd>Sex of the user - "man" or "woman".</dd>
+ * <dt><code>PARAM_WWW</code></dt>
+ * <dd>URL of user's homepage.</dd>
  * </dl>
  */
 public class EditUser extends AbcServlet {
@@ -61,6 +63,7 @@ public class EditUser extends AbcServlet {
     public static final String PARAM_NEWS = "news";
     public static final String PARAM_ADS = "ads";
     public static final String PARAM_SEX = "sex";
+    public static final String PARAM_WWW = "www";
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
@@ -150,6 +153,9 @@ public class EditUser extends AbcServlet {
         node = document.selectSingleNode("data/sex");
         if (node!=null) params.put(EditUser.PARAM_SEX,node.getText());
 
+        node = document.selectSingleNode("data/www");
+        if (node!=null) params.put(EditUser.PARAM_WWW,node.getText());
+
         return getTemplate("edit/user.vm");
     }
 
@@ -177,12 +183,13 @@ public class EditUser extends AbcServlet {
      * @param updatePassword if true, it attempts to read and update password
      */
     protected boolean fillUser(HttpServletRequest request, User user, Context ctx, boolean updatePassword) throws Exception {
+        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         boolean error = false;
 
-        String login = (String) request.getParameter(EditUser.PARAM_LOGIN);
-        String name = (String) request.getParameter(EditUser.PARAM_NAME);
-        String password = (String) request.getParameter(EditUser.PARAM_PASSWORD);
-        String email = (String) request.getParameter(EditUser.PARAM_EMAIL);
+        String login = (String) params.get(EditUser.PARAM_LOGIN);
+        String name = (String) params.get(EditUser.PARAM_NAME);
+        String password = (String) params.get(EditUser.PARAM_PASSWORD);
+        String email = (String) params.get(EditUser.PARAM_EMAIL);
 
         if ( login==null || login.length()<4 ) {
             addErrorMessage(PARAM_LOGIN,"Zadane prihlasovaci jmeno je prilis kratke!",ctx);
@@ -209,10 +216,11 @@ public class EditUser extends AbcServlet {
 
         if ( error ) return false;
 
-        String ilikeq = (String) request.getParameter(EditUser.PARAM_ILIKEQ);
-        String news = (String) request.getParameter(EditUser.PARAM_NEWS);
-        String sex = (String) request.getParameter(EditUser.PARAM_SEX);
-        String ads = (String) request.getParameter(EditUser.PARAM_ADS);
+        String ilikeq = (String) params.get(EditUser.PARAM_ILIKEQ);
+        String news = (String) params.get(EditUser.PARAM_NEWS);
+        String sex = (String) params.get(EditUser.PARAM_SEX);
+        String ads = (String) params.get(EditUser.PARAM_ADS);
+        String www = (String) params.get(EditUser.PARAM_WWW);
 
         // make it less aggresive. if document exists, just replace these values
         Document document = DocumentHelper.createDocument();
@@ -221,6 +229,7 @@ public class EditUser extends AbcServlet {
         if ( news!=null && news.length()>0 ) root.addElement("news").addText(news);
         if ( sex!=null && sex.length()>0 ) root.addElement("sex").addText(sex);
         if ( ads!=null && ads.length()>0 ) root.addElement("ads").addText(ads);
+        if ( www!=null && www.length()>13 && www.startsWith("http://") ) root.addElement("www").addText(www);
 
         user.setName(name);
         user.setEmail(email);

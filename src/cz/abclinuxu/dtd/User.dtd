@@ -3,3 +3,4 @@
 <!ELEMENT news (#PCDATA)> <!-- yes, if we may send email about news on this server -->
 <!ELEMENT sex (#PCDATA)> <!-- man or woman -->
 <!ELEMENT ads (#PCDATA)> <!-- yes, if we may send two email advertisements a month -->
+<!ELEMENT www (#PCDATA)> <!-- URL of user's homepage -->
