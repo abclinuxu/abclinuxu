@@ -65,7 +65,12 @@ public class VelocityHelper {
             Document data = ((GenericDataObject)child).getData();
             if ( data!=null ) {
                 Node node = data.selectSingleNode("data/name");
-                if ( node!=null ) name = node.getText();
+                if ( node!=null )
+                    name = node.getText();
+                else {
+                    node = data.selectSingleNode("data/question");
+                    if ( node!=null ) name = node.getText();
+                }
             }
 
         } else if ( child instanceof Link ) {
@@ -379,6 +384,14 @@ public class VelocityHelper {
     /**
      * Returns formatted String according to current locale.
      */
+    public String showISODate(Date date) {
+        if ( date==null ) return null;
+        return Constants.isoFormat.format(date);
+    }
+
+    /**
+     * Returns formatted String according to current locale.
+     */
     public String showDizDate(Date date) {
         if ( date==null ) return null;
         return Constants.discussionFormat.format(date);
@@ -520,8 +533,9 @@ public class VelocityHelper {
 
     /**
      * This method groups relations by their children's type. Each type represents
-     * one of Constants.TYPE_* strings. List of relations can be looked up for
-     * key.
+     * one of Constants.TYPE_* strings. The key represents list of relations, where
+     * children are same type. As side effect, the relations and their objects
+     * are initialized.
      */
     public Map groupByType(List relations) throws PersistanceException {
         Map map = new HashMap();
@@ -546,6 +560,8 @@ public class VelocityHelper {
                 } else if ( item.getType()==Item.REQUEST ) {
                     storeToMap(map,Constants.TYPE_REQUEST,relation);
                 }
+            } else if ( child instanceof Record ) {
+                storeToMap(map,Constants.TYPE_RECORD,relation);
             }
         }
         return map;

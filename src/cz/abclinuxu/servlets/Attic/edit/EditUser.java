@@ -113,10 +113,7 @@ public class EditUser extends AbcServlet {
 
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: {
-                    ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
-                    return actionEditStep1(request,ctx);
-                }
+                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionEditStep2(request,response,ctx);
             }
 
@@ -127,7 +124,7 @@ public class EditUser extends AbcServlet {
 
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
+                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return VariantTool.selectTemplate(request,ctx,"EditUser","passwd");
             }
 
@@ -137,10 +134,7 @@ public class EditUser extends AbcServlet {
 
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: {
-                    ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
-                    return VariantTool.selectTemplate(request,ctx,"EditUser","passwd");
-                }
+                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionPassword(request,response,ctx);
             }
         }

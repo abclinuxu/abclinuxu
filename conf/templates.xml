@@ -94,6 +94,9 @@
     <action name="login">
       <mapping variant="web" template="web/login.vm" />
     </action>
+    <action name="forbidden">
+      <mapping variant="web" template="web/misc/forbidden.vm" />
+    </action>
     <action name="register">
       <mapping variant="web" template="web/add/user.vm" />
     </action>

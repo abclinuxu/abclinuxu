@@ -59,11 +59,7 @@ public class EditDriver extends AbcServlet {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: {
-                    ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, request.getSession());
-                    UrlUtils.redirect("/drivers/ViewRelation?relationId="+Constants.REL_DRIVERS,response,ctx);
-                    return null;
-                }
+                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionAddStep(request,ctx);
             }
 
@@ -71,10 +67,7 @@ public class EditDriver extends AbcServlet {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: {
-                    ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
-                    return VariantTool.selectTemplate(request,ctx,"EditDriver","add");
-                }
+                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionAddStep2(request,response,ctx);
             }
         }

@@ -56,6 +56,7 @@ public interface Constants {
     public static final String TYPE_REQUEST = "request";
     public static final String TYPE_DRIVER = "driver";
     public static final String TYPE_CATEGORY = "category";
+    public static final String TYPE_RECORD = "record";
 
     SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     DateFormat defaultFormat = new SimpleDateFormat("d. M. yyyy HH:mm");

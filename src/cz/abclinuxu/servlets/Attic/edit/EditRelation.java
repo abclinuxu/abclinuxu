@@ -69,7 +69,7 @@ public class EditRelation extends AbcServlet {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return VariantTool.selectTemplate(request,ctx,"EditRelation","add");
             }
 
@@ -77,10 +77,7 @@ public class EditRelation extends AbcServlet {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: {
-                    ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
-                    return VariantTool.selectTemplate(request,ctx,"EditRelation","add");
-                }
+                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionLinkStep2(request,response,ctx);
             }
 
@@ -88,10 +85,7 @@ public class EditRelation extends AbcServlet {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation,Guard.OPERATION_REMOVE,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: {
-                    ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
-                    return VariantTool.selectTemplate(request,ctx,"EditRelation","remove");
-                }
+                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionRemove1(request,ctx);
             }
 
@@ -99,10 +93,7 @@ public class EditRelation extends AbcServlet {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation,Guard.OPERATION_REMOVE,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: {
-                    ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
-                    return VariantTool.selectTemplate(request,ctx,"EditRelation","remove");
-                }
+                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionRemove2(request,response,ctx);
             }
 
@@ -110,11 +101,7 @@ public class EditRelation extends AbcServlet {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation,Guard.OPERATION_EDIT,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
-                case Guard.ACCESS_DENIED: {
-                    ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
-                    UrlUtils.redirect("/Index",response,ctx);
-                    return null;
-                }
+                case Guard.ACCESS_DENIED: return VariantTool.selectTemplate(request,ctx,"EditUser","forbidden");
                 default: return actionMove(request,response,ctx);
             }
 

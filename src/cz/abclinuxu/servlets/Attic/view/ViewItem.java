@@ -7,6 +7,7 @@
 package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.servlets.utils.VariantTool;
 import cz.abclinuxu.data.*;
@@ -17,8 +18,7 @@ import org.apache.velocity.context.Context;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Servlet for viewing items. Can decide, what kind of item
@@ -26,9 +26,10 @@ import java.util.Iterator;
  */
 public class ViewItem extends AbcServlet {
     public static final String VAR_ITEM = "ITEM";
-    public static final String VAR_RECORD = "RECORD";
     /** Relation upper to selected relation Item-Record */
-    public static final String VAR_UPPER = "UPPER";
+    public static final String VAR_UPPER = "REL_ITEM";
+    /** children relation of Item, grouped by their type */
+    public static final String VAR_CHILDREN_MAP = "CHILDREN";
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
@@ -56,29 +57,30 @@ public class ViewItem extends AbcServlet {
         persistance.synchronize(item); ctx.put(VAR_ITEM,item);
         persistance.synchronize(upper); ctx.put(VAR_UPPER,upper);
 
+        if ( item.getType()==Item.DRIVER )
+            return VariantTool.selectTemplate(request,ctx,"ViewItem","driver");
+        if ( item.getType()==Item.DISCUSSION )
+            return VariantTool.selectTemplate(request,ctx,"ViewItem","discussion");
+
         VelocityHelper helper = new VelocityHelper();
-        helper.sortByDateDescending(item.getContent());
-        if ( record==null && item.getType()!=Item.DRIVER ) {
-            for (Iterator iter = item.getContent().iterator(); iter.hasNext();) {
-                Relation rel = (Relation) iter.next();
-                if ( rel.getChild() instanceof Record ) {
-                    record = (Record) rel.getChild();
-                    break;
-                }
-            }
+        Map children = helper.groupByType(item.getContent());
+        ctx.put(VAR_CHILDREN_MAP,children);
+
+        if ( item.getType()==Item.ARTICLE )
+            return VariantTool.selectTemplate(request,ctx,"ViewItem","article");
+
+        if ( record==null ) {
+            List records = (List) children.get(Constants.TYPE_RECORD);
+            if ( records!=null && records.size()>0 )
+                record = (Record) ((Relation)records.get(0)).getChild();
         }
 
-        if ( record!=null ) ctx.put(VAR_RECORD,record);
-
-        if ( item.getType()==Item.MAKE ) {
+        if ( item.getType()==Item.MAKE && record!=null ) {
             switch ( record.getType() ) {
                 case Record.HARDWARE: return VariantTool.selectTemplate(request,ctx,"ViewItem","hardware");
                 case Record.SOFTWARE: return VariantTool.selectTemplate(request,ctx,"ViewItem","software");
             }
         }
-        if ( item.getType()==Item.DISCUSSION ) return VariantTool.selectTemplate(request,ctx,"ViewItem","discussion");
-        if ( item.getType()==Item.ARTICLE ) return VariantTool.selectTemplate(request,ctx,"ViewItem","article");
-        if ( item.getType()==Item.DRIVER ) return VariantTool.selectTemplate(request,ctx,"ViewItem","driver");
         return null;
     }
 }
