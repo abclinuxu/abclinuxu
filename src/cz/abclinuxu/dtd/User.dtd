@@ -17,8 +17,7 @@ verze 2.0
 <!ELEMENT weekly_summary (#PCDATA)> <!-- yes or no, tydenni sumar clanku a zajimavosti -->
 <!ELEMENT forum (#PCDATA)> <!-- yes or no, emailove rozhrani k diskusnimu foru -->
 
-<!ELEMENT profile (my_page?,about_myself?,home_page?,photo?,distributions?,linux_user_from_year?)>
-<!ELEMENT my_page (#PCDATA)> <!-- kompletni obsah osobni stranky -->
+<!ELEMENT profile (about_myself?,home_page?,photo?,distributions?,linux_user_from_year?)>
 <!ELEMENT about_myself (#PCDATA)> <!-- popis uzivatele -->
 <!ELEMENT home_page (#PCDATA)> <!-- URL domovske stranky -->
 <!ELEMENT photo (#PCDATA)> <!-- URL fotky uzivatele -->

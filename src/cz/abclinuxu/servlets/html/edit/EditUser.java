@@ -991,7 +991,7 @@ public class EditUser implements AbcAction, Configurable {
         String page = (String) params.get(PARAM_HOME_PAGE);
         Element profile = DocumentHelper.makeElement(user.getData(), "/data/profile");
         if ( page==null || page.length()==0 ) {
-            Node node = profile.element("my_page");
+            Node node = profile.element("home_page");
             if (node!=null)
                 profile.remove(node);
             return true;
