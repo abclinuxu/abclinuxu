@@ -219,7 +219,7 @@ public class EditRelation extends AbcFMServlet {
         relation.setUpper(destination.getId());
         persistance.update(relation);
 
-        AdminLogger.logEvent(user, "  move | relation "+relation.getId()+" | to "+destination);
+        AdminLogger.logEvent(user, "  move | relation "+relation.getId()+" | from "+originalUpper+" | to "+destination.getId());
 
         String url = null;
         String prefix = (String) params.get(PARAM_PREFIX);
