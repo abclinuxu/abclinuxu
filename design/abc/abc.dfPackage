@@ -96,6 +96,11 @@ class reference34 {
 @__modelType reference 
 */
 class reference36 {
+}/**
+@__ref <oiref:java#Class#abc.Redirect:oiref><oihard>
+@__modelType reference 
+*/
+class reference3 {
 }}/**
 @__tags
 @shapeType ClassDiagram 
