@@ -249,16 +249,16 @@ public class MySqlPersistance implements Persistance {
 
             sb.append(getTable(obj));
             sb.append(" where ");
-            LogicalExpressionTokenizer stk = new LogicalExpressionTokenizer(relations);
-            String token = null;
-            while ( (token = stk.nextToken())!=null ) {
+            StringTokenizer stk = new StringTokenizer(relations," ()",true);
+            while ( stk.hasMoreTokens() ) {
+                String token = stk.nextToken();
                 try {
                     int index = Integer.parseInt(token);
-                    sb.append('(');
-                    obj = (GenericObject) objects.get(index);
                     if ( getClass(obj)!=kind ) {
                         throw new PersistanceException("Ruzne objekty v listu objects!",AbcException.DB_WRONG_DATA,obj,null);
                     }
+                    sb.append('(');
+                    obj = (GenericObject) objects.get(index);
                     appendFindParams(obj,sb, conditions);
                     sb.append(')');
                 } catch ( NumberFormatException e ) {

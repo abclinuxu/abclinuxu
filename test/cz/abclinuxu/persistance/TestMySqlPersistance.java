@@ -170,7 +170,7 @@ public class TestMySqlPersistance extends TestCase {
 
         // find b and c
         examples.add(qb);
-        found = persistance.findByExample(examples,"(0 AND 1) OR 2");
+        found = persistance.findByExample(examples,"(0 AND 1) OR 2 ORDER BY data ASC");
         assertTrue( ! containsId(found,a.getId()));
         assertTrue( containsId(found,b.getId()));
         assertTrue( containsId(found,c.getId()));

@@ -53,7 +53,7 @@ public interface Persistance {
      * object, there is an AND relation between them.
      * <li>If <code>relations</code> is null, OR relation is used between all objects.
      * <li>For <code>relations</code> argument, you may use keywords AND, OR and parentheses
-     * and indexes to <code>objects</code> as logical variables. First index is 0, maximum index is 9.
+     * and indexes to <code>objects</code> as logical variables. First index is 0.
      * <li>Examples of <code>relations</code>:"0 AND 1", "0 OR 1", "0 OR (1 AND 2)", "(0 AND 1) OR (0 AND 2)"
      * </ul>
      * @return List of objects, which are of same class, as <code>objects</code>.
