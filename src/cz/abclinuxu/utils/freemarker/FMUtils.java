@@ -7,6 +7,7 @@ package cz.abclinuxu.utils.freemarker;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import freemarker.template.Configuration;
 
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -17,6 +18,7 @@ import java.util.Map;
  * Various FreeMarker's utilities.
  */
 public class FMUtils {
+    static Configuration config = Configuration.getDefaultConfiguration();
 
     /**
      * Executes given code using variables from data.
@@ -24,9 +26,23 @@ public class FMUtils {
      * @param data data model used within execution of code
      * @return result of execution
      */
-    public static String execute(String code, Map data) throws IOException, TemplateException {
+    public static String executeCode(String code, Map data) throws IOException, TemplateException {
         StringReader reader = new StringReader(code);
         Template template = new Template("tmp",reader);
+        StringWriter writer = new StringWriter();
+        template.process(data,writer);
+        return writer.toString();
+    }
+
+
+    /**
+     * Executes template specified by name using variables from data.
+     * @param name name of template
+     * @param data data model used within execution of code
+     * @return executed template
+     */
+    public static String executeTemplate(String name, Map data) throws IOException, TemplateException {
+        Template template = config.getTemplate(name);
         StringWriter writer = new StringWriter();
         template.process(data,writer);
         return writer.toString();

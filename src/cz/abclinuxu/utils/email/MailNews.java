@@ -4,13 +4,12 @@
  * Time: 9:26:17 PM
  * (c)2001-2002 Tinnio
  */
-package cz.abclinuxu.utils;
+package cz.abclinuxu.utils.email;
 
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
-import cz.abclinuxu.servlets.utils.Email;
 
 import java.util.*;
 import java.io.FileOutputStream;
@@ -19,12 +18,13 @@ import java.io.FileNotFoundException;
 import org.apache.log4j.*;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.dom4j.Document;
 
 /**
- * template for sending bulk sms
+ * Sends sms to all users, that allowed sending news emails.
  */
-public class Mailer {
-    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Mailer.class);
+public class MailNews {
+    static Logger log = Logger.getLogger(MailNews.class);
 
     Persistance persistance = PersistanceFactory.getPersistance();
 
@@ -35,12 +35,12 @@ public class Mailer {
         setupLog();
         Velocity.init("/home/literakl/abc/deploy/WEB-INF/velocity.properties");
 
-        Mailer mailer = new Mailer();
+        MailNews mailer = new MailNews();
         mailer.doWork(test);
     }
 
     void doWork(boolean test) {
-        int max = 1223;
+        int max = getLastUserId();
         Map data = new HashMap(10);
 
         for ( int i=1; i<=max; i++ ) {
@@ -49,7 +49,7 @@ public class Mailer {
                 if ( test ) {
                     simulate(data);
                 } else {
-                    Email.sendBulkEmail("admin@AbcLinuxu.cz","Zprava pro uzivatele Linux Hardware",data);
+                    EmailSender.sendBulkEmail("admin@AbcLinuxu.cz","AbcLinuxu: casopis Abicko",data);
                 }
                 data.clear();
             }
@@ -57,7 +57,7 @@ public class Mailer {
         if ( test ) {
             simulate(data);
         } else {
-            if ( data.size()>0 ) Email.sendBulkEmail("admin@AbcLinuxu.cz","Zprava pro uzivatele Linux Hardware",data);
+            if ( data.size()>0 ) EmailSender.sendBulkEmail("admin@AbcLinuxu.cz","AbcLinuxu: casopis abicko",data);
         }
     }
 
@@ -67,9 +67,14 @@ public class Mailer {
             User user = (User) persistance.findById(new User(id));
             LogManager.getRootLogger().setLevel(Level.ALL);
 
+            Document document = user.getData();
+            String str = document.selectSingleNode("data/news").getText();
+            if ( str==null ) return;
+            if ( !str.equalsIgnoreCase("yes") ) return;
+
             VelocityContext tmpContext = new VelocityContext();
             tmpContext.put("USER",user);
-            String message = VelocityHelper.mergeTemplate("mail/first.vm",tmpContext);
+            String message = VelocityHelper.mergeTemplate("mail/abicko.vm",tmpContext);
 
             String email = user.getEmail();
             map.put(email,message);
@@ -85,17 +90,31 @@ public class Mailer {
         for (Iterator it = map.keySet().iterator(); it.hasNext();) {
             String s = (String) it.next();
             String d = (String) map.get(s);
-            log.info(s+"\n\n"+d);
+            log.info(s+"\n"+d+"----\n\n");
         }
     }
 
     private static void setupLog() {
         try {
-            FileOutputStream os = new FileOutputStream("/home/literakl/mail_result.txt",true);
+            FileOutputStream os = new FileOutputStream("/home/literakl/mail_result.txt",false);
             WriterAppender appender = new WriterAppender(new PatternLayout(),os);
             BasicConfigurator.configure(appender);
         } catch (FileNotFoundException e) {
             System.err.println(e.getMessage());
+        }
+    }
+
+    /**
+     * @return id of latest user
+     */
+    private int getLastUserId() {
+        try {
+            List list = persistance.findByCommand("select max(cislo) from uzivatel");
+            Object[] objects = (Object[]) list.get(0);
+            return ((Integer)objects[0]).intValue();
+        } catch (Exception e) {
+            log.error("Cannot get last user's id!", e);
+            return 0;
         }
     }
 }

@@ -104,7 +104,7 @@ public class FMTemplateSelector extends TemplateSelector {
             if ( value instanceof LazyVar ) {
                 String code = ((LazyVar)value).getValue();
                 try {
-                    data.put(variable.getName(),FMUtils.execute(code,data));
+                    data.put(variable.getName(),FMUtils.executeCode(code,data));
                 } catch (Exception e) {
                     log.error("Cannot evaluate lazy variable "+variable.getName()+"["+code+"]!", e);
                 }

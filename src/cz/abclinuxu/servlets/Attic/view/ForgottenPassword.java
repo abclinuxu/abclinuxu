@@ -15,9 +15,7 @@ import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.utils.InstanceUtils;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.context.Context;
+import cz.abclinuxu.utils.email.EmailSender;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -89,12 +87,15 @@ public class ForgottenPassword extends AbcFMServlet {
         User user = (User) InstanceUtils.instantiateParam(PARAM_USER_ID,User.class,params);
         PersistanceFactory.getPersistance().synchronize(user);
 
-        VelocityContext tmpContext = new VelocityContext();
-        tmpContext.put(Constants.VAR_USER,user);
-        String message = VelocityHelper.mergeTemplate("mail/password.vm",tmpContext);
-        Email.sendEmail("admin@abclinuxu.cz",user.getEmail(),"Zapomenute heslo",message);
+        Map data = new HashMap();
+        data.put(Constants.VAR_USER,user);
+        data.put(EmailSender.KEY_FROM,"admin@abclinuxu.cz");
+        data.put(EmailSender.KEY_TO,user.getEmail());
+        data.put(EmailSender.KEY_SUBJECT,"Zapomenute heslo");
+        data.put(EmailSender.KEY_TEMPLATE,"/mail/password.ftl");
+        EmailSender.sendEmail(data);
 
-        ServletUtils.addMessage("Heslo odeslano na adresu "+user.getEmail(),env,request.getSession());
+        ServletUtils.addMessage("Heslo odesláno na adresu "+user.getEmail(),env,request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Index");
         return null;

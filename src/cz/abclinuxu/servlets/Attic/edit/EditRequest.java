@@ -15,6 +15,7 @@ import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.email.EmailSender;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.dom4j.Document;
@@ -142,7 +143,7 @@ public class EditRequest extends AbcVelocityServlet {
         String requestor = req.getData().selectSingleNode("data/email").getText();
         String text = "Hotovo.\n"+user.getName()+"\n\n\nVas pozadavek\n\n";
         text = text.concat(req.getData().selectSingleNode("data/text").getText());
-        Email.sendEmail(user.getEmail(),requestor,"Vas pozadavek na AbcLinuxu byl vyrizen",text);
+        EmailSender.sendEmail(user.getEmail(),requestor,"Vas pozadavek na AbcLinuxu byl vyrizen",text);
 
         persistance.remove(relation);
         ServletUtils.addMessage("Po¾adavek byl vyøízen.",ctx,request.getSession());

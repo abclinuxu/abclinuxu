@@ -300,6 +300,16 @@
         <var name="TITLE" value="Profil" />
       </mapping>
     </action>
+    <action name="myProfile">
+      <mapping template="web" content="/web/show/myprofile.ftl">
+        <var name="TITLE" value="Mùj profil" />
+      </mapping>
+    </action>
+    <action name="sendEmail">
+      <mapping template="web" content="/web/misc/sendEmail.ftl">
+        <var name="TITLE" value="Mùj profil" />
+      </mapping>
+    </action>
     <action name="login">
       <mapping template="web" content="/web/show/login.ftl">
         <var name="TITLE" value="Pøihlá¹ení do systému" />

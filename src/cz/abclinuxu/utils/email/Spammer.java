@@ -4,13 +4,13 @@
  * Time: 9:26:17 PM
  * (c)2001-2002 Tinnio
  */
-package cz.abclinuxu.utils;
+package cz.abclinuxu.utils.email;
 
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
-import cz.abclinuxu.servlets.utils.Email;
+import cz.abclinuxu.utils.Misc;
 
 import java.util.*;
 import java.io.FileOutputStream;
@@ -19,13 +19,16 @@ import java.io.FileNotFoundException;
 import org.apache.log4j.*;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.apache.regexp.RE;
 import org.dom4j.Document;
+import org.dom4j.Node;
 
 /**
- * Sends sms to all users, that allowed sending news emails.
+ * Sends sms to all users, that allowed sending adds emails.
  */
-public class MailNews {
-    static Logger log = Logger.getLogger(MailNews.class);
+public class Spammer {
+    static Logger log = Logger.getLogger(Spammer.class);
+    static RE re;
 
     Persistance persistance = PersistanceFactory.getPersistance();
 
@@ -33,10 +36,11 @@ public class MailNews {
         boolean test = true;
         if ( args!=null && args.length==1 && args[0].equals("send") ) test = false;
 
+        re = new RE("^[A-Z]*$");
         setupLog();
         Velocity.init("/home/literakl/abc/deploy/WEB-INF/velocity.properties");
 
-        MailNews mailer = new MailNews();
+        Spammer mailer = new Spammer();
         mailer.doWork(test);
     }
 
@@ -44,13 +48,19 @@ public class MailNews {
         int max = getLastUserId();
         Map data = new HashMap(10);
 
+        if ( test ) {
+            System.out.println("Running test");
+        } else {
+            System.out.println("Running REAL mode - will send mass mail!");
+        }
+
         for ( int i=1; i<=max; i++ ) {
             addUsersEmail(i,data);
             if ( data.size()>9 ) {
                 if ( test ) {
                     simulate(data);
                 } else {
-                    Email.sendBulkEmail("admin@AbcLinuxu.cz","AbcLinuxu: casopis Abicko",data);
+                    EmailSender.sendBulkEmail("reklama@abclinuxu.cz","nabidka sluzeb",data);
                 }
                 data.clear();
             }
@@ -58,7 +68,7 @@ public class MailNews {
         if ( test ) {
             simulate(data);
         } else {
-            if ( data.size()>0 ) Email.sendBulkEmail("admin@AbcLinuxu.cz","AbcLinuxu: casopis abicko",data);
+            if ( data.size()>0 ) EmailSender.sendBulkEmail("reklama@abclinuxu.cz","nabidka sluzeb",data);
         }
     }
 
@@ -69,13 +79,30 @@ public class MailNews {
             LogManager.getRootLogger().setLevel(Level.ALL);
 
             Document document = user.getData();
-            String str = document.selectSingleNode("data/news").getText();
-            if ( str==null ) return;
-            if ( !str.equalsIgnoreCase("yes") ) return;
+            String str = document.selectSingleNode("data/ads").getText();
+            if ( ! Misc.same(str,"yes") ) {
+                System.out.println("not including user "+user.getId()+", forbidden ads: "+str);
+                return;
+            }
+
+            Node node = document.selectSingleNode("data/active");
+            if ( node!=null ) {
+                str = node.getText();
+                if ( Misc.same(str,"no") ) {
+                    System.out.println("not including user "+user.getId()+", not active");
+                    return;
+                }
+            }
+
+            str = user.getPassword();
+            if ( str.length()==6 && re.match(str) ) {
+                System.out.println("not including user "+user.getId()+", password is "+str);
+                return;
+            }
 
             VelocityContext tmpContext = new VelocityContext();
             tmpContext.put("USER",user);
-            String message = VelocityHelper.mergeTemplate("mail/abicko.vm",tmpContext);
+            String message = VelocityHelper.mergeTemplate("mail/sro.vm",tmpContext);
 
             String email = user.getEmail();
             map.put(email,message);
@@ -91,13 +118,13 @@ public class MailNews {
         for (Iterator it = map.keySet().iterator(); it.hasNext();) {
             String s = (String) it.next();
             String d = (String) map.get(s);
-            log.info(s+"\n"+d+"----\n\n");
+            log.info(s+"\n"+d+"----\n");
         }
     }
 
     private static void setupLog() {
         try {
-            FileOutputStream os = new FileOutputStream("/home/literakl/mail_result.txt",false);
+            FileOutputStream os = new FileOutputStream("/home/literakl/spam_result.txt",false);
             WriterAppender appender = new WriterAppender(new PatternLayout(),os);
             BasicConfigurator.configure(appender);
         } catch (FileNotFoundException e) {

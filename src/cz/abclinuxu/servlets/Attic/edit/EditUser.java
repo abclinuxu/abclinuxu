@@ -16,6 +16,7 @@ import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.AbcException;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
@@ -171,7 +172,7 @@ public class EditUser extends AbcVelocityServlet {
         VelocityContext tmpContext = new VelocityContext();
         tmpContext.put(AbcVelocityServlet.VAR_USER,user);
         String message = VelocityHelper.mergeTemplate("mail/welcome.vm",tmpContext);
-        Email.sendEmail("admin@AbcLinuxu.cz",user.getEmail(),"Privitani",message);
+        EmailSender.sendEmail("admin@AbcLinuxu.cz",user.getEmail(),"Privitani",message);
 
         HttpSession session = request.getSession();
         session.setAttribute(VAR_USER,user);
