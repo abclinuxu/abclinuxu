@@ -17,6 +17,7 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Record;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.ConfigurationException;
@@ -109,16 +110,15 @@ public class ShowDictionary implements AbcAction, Configurable {
      */
     static String showMany(Map env, HttpServletRequest request) throws Exception {
         SQLTool sqlTool = SQLTool.getInstance();
-        int from = 0, count = maxItems;
-        Qualifier[] qualifiers = {Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from,count)};
-        List data = sqlTool.findRecordParentRelationsWithType(Record.DICTIONARY, qualifiers);
+        Qualifier[] qualifiers = new Qualifier[]{};
+        List data = sqlTool.findItemRelationsWithType(Item.DICTIONARY, qualifiers);
         for ( Iterator iter = data.iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
             Tools.sync(relation);
         }
-        int total = sqlTool.countRecordParentRelationsWithType(Record.DICTIONARY);
+        Sorters2.byName(data);
 
-        Paging found = new Paging(data, from, count, total, qualifiers);
+        Paging found = new Paging(data, 0, data.size(), data.size(), qualifiers);
         env.put(VAR_FOUND, found);
         return FMTemplateSelector.select("Dictionary", "showList", env, request);
     }
