@@ -223,6 +223,9 @@
       <action name="rename" content="/edit/blog_name.ftl">
         <var name="TITLE" value="Zmìna jména blogu" />
       </action>
+      <action name="remove" content="/remove/story.ftl">
+        <var name="TITLE" value="Smazání zápisu" />
+      </action>
   </servlet>
 
   <servlet name="EditGroup">
