@@ -31,6 +31,8 @@ public class MyDocument {
     public static final String TITLE = "title";
     /** Id of parent object. */
     public static final String PARENT = "parent";
+    /** News category */
+    public static final String NEWS_CATEGORY = "kategorie";
 
     Document document;
 
@@ -56,7 +58,6 @@ public class MyDocument {
      */
     public Field setTitle(String title) {
         Field field = Field.Text(TITLE,title);
-        field.setBoost(3);
         document.add(field);
         return field;
     }
@@ -75,6 +76,15 @@ public class MyDocument {
      */
     public Field setParent(int parent) {
         Field field = Field.Keyword(PARENT,new Integer(parent).toString());
+        document.add(field);
+        return field;
+    }
+
+    /**
+     * Sets id of parent object.
+     */
+    public Field setNewsCategory(String category) {
+        Field field = Field.Keyword(NEWS_CATEGORY, category);
         document.add(field);
         return field;
     }

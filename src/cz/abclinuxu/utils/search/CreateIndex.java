@@ -66,7 +66,8 @@ public class CreateIndex implements Configurable {
             IndexWriter indexWriter = new IndexWriter(PATH, new AbcCzechAnalyzer(), true);
 
             makeIndexOn(indexWriter, articles, UrlUtils.PREFIX_CLANKY);
-            indexForums(indexWriter, forums, UrlUtils.PREFIX_FORUM);
+            makeIndexOnNews(indexWriter, UrlUtils.PREFIX_NEWS);
+            makeIndexOnForums(indexWriter, forums, UrlUtils.PREFIX_FORUM);
             makeIndexOn(indexWriter, hardware, UrlUtils.PREFIX_HARDWARE);
             makeIndexOn(indexWriter, software, UrlUtils.PREFIX_SOFTWARE);
             makeIndexOn(indexWriter, drivers, UrlUtils.PREFIX_DRIVERS);
@@ -160,7 +161,7 @@ public class CreateIndex implements Configurable {
     /**
      * Indexes content of given forums.
      */
-    static void indexForums(IndexWriter indexWriter, List forums, String urlPrefix) throws Exception {
+    static void makeIndexOnForums(IndexWriter indexWriter, List forums, String urlPrefix) throws Exception {
         int total, i;
         Relation relation, relation2;
         GenericObject child;
@@ -185,6 +186,35 @@ public class CreateIndex implements Configurable {
                     doc.setParent(relation2.getUpper());
                     indexWriter.addDocument(doc.getDocument());
                 }
+            }
+        }
+    }
+
+    /**
+     * Indexes news.
+     */
+    static void makeIndexOnNews(IndexWriter indexWriter, String urlPrefix) throws Exception {
+        int total = sqlTool.countNewsRelations(), i;
+        Relation relation;
+        GenericObject child;
+        MyDocument doc;
+
+        for ( i = 0; i<total; ) {
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING, new LimitQualifier(i, 100)};
+            List data = sqlTool.findNewsRelations(qualifiers);
+            i += data.size();
+
+            for ( Iterator iter2 = data.iterator(); iter2.hasNext(); ) {
+                relation = (Relation) iter2.next();
+                child = relation.getChild();
+                if ( hasBeenIndexed(child) )
+                    continue;
+
+                child = persistance.findById(child);
+                doc = indexNews((Item) child);
+                doc.setURL(urlPrefix+"/ViewRelation?rid="+relation.getId());
+                doc.setParent(relation.getUpper());
+                indexWriter.addDocument(doc.getDocument());
             }
         }
     }
@@ -422,6 +452,49 @@ public class CreateIndex implements Configurable {
         MyDocument doc = new MyDocument(Tools.removeTags(sb.toString()));
         doc.setTitle(title);
         doc.setType(MyDocument.TYPE_ARTICLE);
+        return doc;
+    }
+
+    /**
+     * Extracts data for indexing from news. Item must be synchronized.
+     */
+    static MyDocument indexNews(Item news) {
+        StringBuffer sb = new StringBuffer();
+        String title, category = null;
+
+        Element data = (Element) news.getData().selectSingleNode("data");
+        Node node = data.selectSingleNode("content");
+        String content = node.getText();
+        sb.append(content);
+        sb.append(" ");
+        title = Tools.limit(Tools.removeTags(content),40," ..");
+
+        node = data.selectSingleNode("category");
+        if ( node!=null )
+            category = node.getText();
+
+        for ( Iterator iter = news.getContent().iterator(); iter.hasNext(); ) {
+            Relation child = (Relation) iter.next();
+
+            if ( child.getChild() instanceof Item ) {
+                Item item = (Item) persistance.findById(child.getChild());
+                if (item.getType()!=Item.DISCUSSION) continue;
+                MyDocument doc = indexDiscussion(item);
+                String diz = doc.getDocument().get(MyDocument.CONTENT);
+                if (diz!=null) {
+                    sb.append(diz);
+                    sb.append(" ");
+                }
+            }
+        }
+
+        MyDocument doc = new MyDocument(Tools.removeTags(sb.toString()));
+        doc.setTitle(title);
+        doc.setType(MyDocument.TYPE_NEWS);
+        if (category!=null)
+            doc.setNewsCategory(category);
+        else
+            log.warn("News "+news.getId()+" doesn't define category!");
         return doc;
     }
 
