@@ -8,8 +8,7 @@ package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.data.Category;
-import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import org.apache.velocity.Template;
@@ -37,6 +36,7 @@ public class ViewIndex extends AbcServlet {
     public static final String VAR_SOFTWARE = "SOFTWARE";
     public static final String VAR_CLANKY = "CLANKY";
     public static final String VAR_ABCLINUXU = "ABCLINUXU";
+    public static final String VAR_ANKETA = "ANKETA";
 
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
@@ -73,6 +73,12 @@ public class ViewIndex extends AbcServlet {
             persistance.synchronize(relation.getChild());
         }
         ctx.put(ViewIndex.VAR_ABCLINUXU,content);
+
+        List list = persistance.findByCommand("select max(cislo) from anketa");
+        Object[] objects = (Object[]) list.get(0);
+        Poll poll = new Poll(((Integer)objects[0]).intValue());
+        poll = (Poll) persistance.findById(poll);
+        ctx.put(ViewIndex.VAR_ANKETA,poll);
 
         return getTemplate("index.vm");
     }

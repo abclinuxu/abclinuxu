@@ -115,6 +115,9 @@
     <servlet-mapping>
         <servlet-name>EditPoll</servlet-name><url-pattern>/clanky/EditPoll</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditPoll</servlet-name><url-pattern>/EditPoll</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>SelectIcon</servlet-name><url-pattern>/SelectIcon</url-pattern>
