@@ -58,6 +58,8 @@ public class EmailSender implements Configurable {
     public static final String KEY_REPLYTO = "REPLYTO";
     /** template to be rendered and used as content of Email */
     public static final String KEY_TEMPLATE = "TEMPLATE";
+    /** messahe header sent date */
+    public static final String KEY_SENT_DATE = "SENT";
 
     static String smtpServer, defaultFrom;
     static boolean debugSMTP;
@@ -82,7 +84,8 @@ public class EmailSender implements Configurable {
             message.setFrom(new InternetAddress(from));
             message.setRecipient(Message.RecipientType.TO,new InternetAddress(to));
             message.setText(getEmailBody(params));
-            message.setSentDate(new Date());
+            Date sentDate = getSentDate(params);
+            message.setSentDate(sentDate);
 
             Transport transport = session.getTransport("smtp");
             transport.connect(smtpServer,null,null);
@@ -166,7 +169,8 @@ public class EmailSender implements Configurable {
 
                     message.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
                     message.setText(getEmailBody(params));
-                    message.setSentDate(new Date());
+                    Date sentDate = getSentDate(params);
+                    message.setSentDate(sentDate);
                     message.saveChanges();
 
                     transport.sendMessage(message, message.getAllRecipients());
@@ -184,6 +188,14 @@ public class EmailSender implements Configurable {
         log.info("Sent "+count+" emails.");
 
         return count;
+    }
+
+    /**
+     * Date, when this email was (shall have been) sent.
+     */
+    private static Date getSentDate(Map params) {
+        Date sentDate = (Date) params.get(KEY_SENT_DATE);
+        return (sentDate!=null)? sentDate : new Date();
     }
 
     /**

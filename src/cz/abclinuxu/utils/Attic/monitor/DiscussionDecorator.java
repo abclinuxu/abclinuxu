@@ -43,6 +43,7 @@ public class DiscussionDecorator implements Decorator, Configurable {
             env.put(VAR_URL, action.url);
         env.put(VAR_ACTOR, action.actor);
         env.put(VAR_PERFORMED, action.performed);
+        env.put(EmailSender.KEY_SENT_DATE, action.performed);
         env.put(VAR_NAME, action.getProperty(PROPERTY_NAME));
 
         String changeMessage = "";
