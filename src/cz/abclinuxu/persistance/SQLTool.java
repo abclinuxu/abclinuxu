@@ -38,6 +38,7 @@ public final class SQLTool implements Configurable {
     public static final String PREF_ARTICLE_RELATIONS_BY_USER = "relations.article.by.user";
     public static final String PREF_NEWS_RELATIONS_BY_USER = "relations.news.by.user";
     public static final String PREF_QUESTION_RELATIONS_BY_USER = "relations.question.by.user";
+    public static final String PREF_COMMENT_RELATIONS_BY_USER = "relations.comment.by.user";
     public static final String PREF_USERS_WITH_WEEKLY_EMAIL = "users.with.weekly.email";
     public static final String PREF_USERS_WITH_ROLES = "users.with.roles";
     public static final String PREF_USERS_IN_GROUP = "users.in.group";
@@ -58,7 +59,7 @@ public final class SQLTool implements Configurable {
     private String relationsArticle, relationsArticleWithinPeriod;
     private String relationsNews, relationsNewsWithinPeriod;
     private String relationsNewsByUser, relationsRecordByUserAndType, relationsArticleByUser;
-    private String relationsQuestionsByUser;
+    private String relationsQuestionsByUser, relationsCommentsByUser;
     private String usersWithWeeklyEmail, usersWithRoles, usersInGroup;
     private String maxPoll, maxUser;
     private String itemsByType;
@@ -544,7 +545,7 @@ public final class SQLTool implements Configurable {
     }
 
     /**
-     * Finds relations, where child is question item submiited by user.
+     * Finds relations, where child is question item submited by user.
      * Use Qualifiers to set additional parameters.
      * @return List of initialized relations
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
@@ -559,11 +560,39 @@ public final class SQLTool implements Configurable {
     }
 
     /**
-     * Counts relations, where child is question item submiited by user.
+     * Counts relations, where child is question item submited by user.
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
      */
     public int countQuestionRelationsByUser(int userId) {
         StringBuffer sb = new StringBuffer(relationsQuestionsByUser);
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        params.add(new Integer(userId));
+        return loadNumber(sb.toString(), params);
+    }
+
+
+    /**
+     * Finds relations, where child is discussion item with comment from user.
+     * Use Qualifiers to set additional parameters.
+     * @return List of initialized relations
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findCommentRelationsByUser(int userId, Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(relationsCommentsByUser);
+        List params = new ArrayList();
+        params.add(new Integer(userId));
+        appendQualifiers(sb, qualifiers, params);
+        return loadRelations(sb.toString(), params);
+    }
+
+    /**
+     * Counts relations, where child is discussion item with comment from user.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public int countCommentRelationsByUser(int userId) {
+        StringBuffer sb = new StringBuffer(relationsCommentsByUser);
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(new Integer(userId));
@@ -742,25 +771,39 @@ public final class SQLTool implements Configurable {
      * Callback used to configure your class from preferences.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
-        relationsRecordByType = prefs.get(PREF_RECORD_RELATIONS_BY_TYPE, null);
-        relationsItemsByType = prefs.get(PREF_ITEM_RELATIONS_BY_TYPE, null);
-        relationsSectionByType = prefs.get(PREF_SECTION_RELATIONS_BY_TYPE, null);
-        relationsDiscussion = prefs.get(PREF_DISCUSSION_RELATIONS, null);
-        relationsDiscussionInSection = prefs.get(PREF_DISCUSSION_RELATIONS_IN_SECTION, null);
-        relationsArticle = prefs.get(PREF_ARTICLE_RELATIONS, null);
-        relationsArticleWithinPeriod = prefs.get(PREF_ARTICLE_RELATIONS_WITHIN_PERIOD, null);
-        relationsNews = prefs.get(PREF_NEWS_RELATIONS, null);
-        relationsNewsWithinPeriod = prefs.get(PREF_NEWS_RELATIONS_WITHIN_PERIOD, null);
-        relationsNewsByUser = prefs.get(PREF_NEWS_RELATIONS_BY_USER, null);
-        relationsRecordByUserAndType = prefs.get(PREF_RECORD_RELATIONS_BY_USER_AND_TYPE, null);
-        relationsArticleByUser = prefs.get(PREF_ARTICLE_RELATIONS_BY_USER, null);
-        relationsQuestionsByUser = prefs.get(PREF_QUESTION_RELATIONS_BY_USER, null);
-        usersWithWeeklyEmail = prefs.get(PREF_USERS_WITH_WEEKLY_EMAIL, null);
-        usersWithRoles = prefs.get(PREF_USERS_WITH_ROLES, null);
-        usersInGroup = prefs.get(PREF_USERS_IN_GROUP, null);
-        maxPoll = prefs.get(PREF_MAX_POLL,null);
-        maxUser = prefs.get(PREF_MAX_USER, null);
-        itemsByType = prefs.get(PREF_ITEMS_WITH_TYPE, null);
-        countArticlesByUser = prefs.get(PREF_COUNT_ARTICLES_BY_USER, null);
+        relationsRecordByType = getValue(PREF_RECORD_RELATIONS_BY_TYPE, prefs);
+        relationsItemsByType = getValue(PREF_ITEM_RELATIONS_BY_TYPE, prefs);
+        relationsSectionByType = getValue(PREF_SECTION_RELATIONS_BY_TYPE, prefs);
+        relationsDiscussion = getValue(PREF_DISCUSSION_RELATIONS, prefs);
+        relationsDiscussionInSection = getValue(PREF_DISCUSSION_RELATIONS_IN_SECTION, prefs);
+        relationsArticle = getValue(PREF_ARTICLE_RELATIONS, prefs);
+        relationsArticleWithinPeriod = getValue(PREF_ARTICLE_RELATIONS_WITHIN_PERIOD, prefs);
+        relationsNews = getValue(PREF_NEWS_RELATIONS, prefs);
+        relationsNewsWithinPeriod = getValue(PREF_NEWS_RELATIONS_WITHIN_PERIOD, prefs);
+        relationsNewsByUser = getValue(PREF_NEWS_RELATIONS_BY_USER, prefs);
+        relationsRecordByUserAndType = getValue(PREF_RECORD_RELATIONS_BY_USER_AND_TYPE, prefs);
+        relationsArticleByUser = getValue(PREF_ARTICLE_RELATIONS_BY_USER, prefs);
+        relationsQuestionsByUser = getValue(PREF_QUESTION_RELATIONS_BY_USER, prefs);
+        relationsCommentsByUser = getValue(PREF_COMMENT_RELATIONS_BY_USER, prefs);
+        usersWithWeeklyEmail = getValue(PREF_USERS_WITH_WEEKLY_EMAIL, prefs);
+        usersWithRoles = getValue(PREF_USERS_WITH_ROLES, prefs);
+        usersInGroup = getValue(PREF_USERS_IN_GROUP, prefs);
+        maxPoll = getValue(PREF_MAX_POLL, prefs);
+        maxUser = getValue(PREF_MAX_USER, prefs);
+        itemsByType = getValue(PREF_ITEMS_WITH_TYPE, prefs);
+        countArticlesByUser = getValue(PREF_COUNT_ARTICLES_BY_USER, prefs);
+    }
+
+    /**
+     * Gets value from preferences. If value is not defined, it dumps info
+     * into logs.
+     */
+    private String getValue(String name, Preferences prefs) {
+        String sql = prefs.get(name,null);
+        if (sql!=null)
+            return sql;
+
+        log.fatal("Hodnota SQL prikazu "+name+" nebyla nastavena!");
+        return null;
     }
 }

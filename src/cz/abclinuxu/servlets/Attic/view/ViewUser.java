@@ -14,9 +14,6 @@ import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.utils.InstanceUtils;
-import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.paging.Paging;
-import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.security.Roles;
 
@@ -30,11 +27,6 @@ import java.util.*;
 public class ViewUser extends AbcFMServlet {
 
     public static final String VAR_PROFILE = "PROFILE";
-    public static final String VAR_SW_RECORDS = "SW";
-    public static final String VAR_HW_RECORDS = "HW";
-    public static final String VAR_ARTICLES = "ARTICLES";
-    public static final String VAR_DISCUSSIONS = "DIZS";
-    public static final String VAR_NEWS = "NEWS";
     public static final String VAR_KOD = "KOD";
 
     public static final String PARAM_USER = "userId";
@@ -43,21 +35,14 @@ public class ViewUser extends AbcFMServlet {
     public static final String PARAM_SENDER = "sender";
     public static final String PARAM_SUBJECT = "subject";
     public static final String PARAM_MESSAGE = "message";
-    public static final String PARAM_FROM = "from";
 
     public static final String ACTION_LOGIN = "login";
     public static final String ACTION_LOGIN2 = "login2";
     public static final String ACTION_SEND_EMAIL = "sendEmail";
     public static final String ACTION_FINISH_SEND_EMAIL = "sendEmail2";
-    public static final String ACTION_SHOW_CONTENT = "showContent";
     public static final String ACTION_SHOW_MY_PROFILE = "myPage";
     public static final String ACTION_SEND_PASSWORD = "forgottenPassword";
 
-    public static final String CONTENT_HARDWARE = "hardware";
-    public static final String CONTENT_SOFTWARE = "software";
-    public static final String CONTENT_ARTICLES = "articles";
-    public static final String CONTENT_DISCUSSIONS = "discussions";
-    public static final String CONTENT_NEWS = "news";
 
     /**
      * Put your processing here. Return null, if you have redirected browser to another URL.
@@ -77,9 +62,6 @@ public class ViewUser extends AbcFMServlet {
 
         if ( action.equals(ACTION_LOGIN2) )
             return handleLogin2(request,response,env);
-
-        if ( action.equals(ACTION_SHOW_CONTENT) )
-            return handleShowContent(request,env);
 
         if ( action.equals(ACTION_SHOW_MY_PROFILE) ) {
             User user = (User) env.get(Constants.VAR_USER);
@@ -149,55 +131,6 @@ public class ViewUser extends AbcFMServlet {
         }
         else
             return FMTemplateSelector.select("ViewUser","login",env,request);
-    }
-
-    /**
-     * shows login screen
-     */
-    protected String handleShowContent(HttpServletRequest request, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        User user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT,PARAM_USER,User.class,params);
-        SQLTool sqlTool = SQLTool.getInstance();
-        int from = Misc.parseInt((String)params.get(PARAM_FROM),0);
-        int pageSize = AbcConfig.getViewUserPageSize();
-
-        if ( params.containsKey(CONTENT_HARDWARE) ) {
-            Qualifier[] qualifiers = new Qualifier[]{new LimitQualifier(from, pageSize)};
-            List list = sqlTool.findRecordRelationsWithUserAndType(user.getId(), Record.HARDWARE, qualifiers);
-            int total = sqlTool.countRecordRelationsWithUserAndType(user.getId(), Record.HARDWARE);
-            Paging paging = new Paging(list, from, pageSize, total);
-            env.put(VAR_HW_RECORDS, paging);
-
-        } else if ( params.containsKey(CONTENT_SOFTWARE) ) {
-            Qualifier[] qualifiers = new Qualifier[]{new LimitQualifier(from, pageSize)};
-            List list = sqlTool.findRecordRelationsWithUserAndType(user.getId(), Record.SOFTWARE, qualifiers);
-            int total = sqlTool.countRecordRelationsWithUserAndType(user.getId(), Record.SOFTWARE);
-            Paging paging = new Paging(list, from, pageSize, total);
-            env.put(VAR_SW_RECORDS, paging);
-
-        } else if ( params.containsKey(CONTENT_ARTICLES) ) {
-            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING, new LimitQualifier(from, pageSize)};
-            List list = sqlTool.findArticleRelationsByUser(user.getId(), qualifiers);
-            int total = sqlTool.countArticleRelationsByUser(user.getId());
-            Paging paging = new Paging(list, from, pageSize, total);
-            env.put(VAR_ARTICLES, paging);
-
-        } else if ( params.containsKey(CONTENT_DISCUSSIONS) ) {
-            Qualifier[] qualifiers = new Qualifier[]{new LimitQualifier(from, pageSize)};
-            List list = sqlTool.findQuestionRelationsByUser(user.getId(), qualifiers);
-            int total = sqlTool.countQuestionRelationsByUser(user.getId());
-            Paging paging = new Paging(list, from, pageSize, total);
-            env.put(VAR_DISCUSSIONS, paging);
-
-        } else if ( params.containsKey(CONTENT_NEWS) ) {
-            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED,Qualifier.ORDER_ASCENDING,new LimitQualifier(from, pageSize)};
-            List list = sqlTool.findNewsRelationsByUser(user.getId(), qualifiers);
-            int total = sqlTool.countNewsRelationsByUser(user.getId());
-            Paging paging = new Paging(list, from, pageSize, total);
-            env.put(VAR_NEWS, paging);
-        }
-
-        return FMTemplateSelector.select("ViewUser","content",env,request);
     }
 
     /**

@@ -308,19 +308,25 @@
 
   <servlet name="ShowOlder">
     <action name="articles" content="/show/history_articles.ftl">
-      <var name="TITLE" value="Star¹í èlánky" />
+      <var name="TITLE" value="Historie èlánkù" />
     </action>
     <action name="news" content="/show/history_articles.ftl">
-      <var name="TITLE" value="Star¹í zprávièky" />
+      <var name="TITLE" value="Historie zprávièek" />
     </action>
     <action name="discussions" content="/show/history_dizs.ftl">
-      <var name="TITLE" value="Star¹í diskuse" />
+      <var name="TITLE" value="Historie diskusí" />
+    </action>
+    <action name="questions" content="/show/history_dizs.ftl">
+      <var name="TITLE" value="Historie otázek" />
+    </action>
+    <action name="comments" content="/show/history_dizs.ftl">
+      <var name="TITLE" value="Historie komentáøù" />
     </action>
     <action name="hardware" content="/show/history_records.ftl">
-      <var name="TITLE" value="Star¹í záznamy" />
+      <var name="TITLE" value="Historie hardwaru" />
     </action>
     <action name="software" content="/show/history_records.ftl">
-      <var name="TITLE" value="Star¹í záznamy" />
+      <var name="TITLE" value="Historie softwaru" />
     </action>
   </servlet>
 

@@ -55,7 +55,7 @@
 
     <servlet>
         <servlet-name>History</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.view.ShowOlder</servlet-class>
+        <servlet-class>cz.abclinuxu.servlets.view.History</servlet-class>
         <load-on-startup>2</load-on-startup>
     </servlet>
 

@@ -718,11 +718,27 @@ public class Tools {
         }
         Item item = (Item) relation.getChild();
         DiscussionHeader discussion = new DiscussionHeader(item);
+        discussion.relationId = relation.getId();
         discussion.updated = item.getUpdated();
         discussion.created = item.getCreated();
-        String value = item.getData().selectSingleNode("/data/comments").getText();
-        discussion.responseCount = Misc.parseInt(value,0);
-        discussion.relationId = relation.getId();
+
+        Document data = item.getData();
+        discussion.responseCount = Misc.parseInt(data.selectSingleNode("/data/comments").getText(),0);
+        Node node = data.selectSingleNode("data/title");
+        if (node==null) {
+            GenericObject parent = relation.getParent();
+            if (!parent.isInitialized()) persistance.synchronize(parent);
+            if (parent instanceof Item) {
+                item = (Item) parent;
+                if (item.getType()==Item.ARTICLE) {
+                    node = item.getData().selectSingleNode("data/name");
+                    discussion.title = node.getText();
+                } else if ( item.getType()==Item.NEWS )
+                    discussion.title = "Zprávièka";
+            }
+        } else
+            discussion.title = node.getText();
+
         return discussion;
     }
 
@@ -786,9 +802,9 @@ public class Tools {
         if (user==null)
 	   return;
         Node node = user.getData().selectSingleNode("//new_comments");
-        if (node!=null && node.getText().equals("no")) 
+        if (node!=null && node.getText().equals("no"))
 	    return;
-	    
+
 
         int dizId = discussion.getId(), number, position, lastSeen = -1, tmpLength;
         StringBuffer newContent = new StringBuffer();
@@ -847,6 +863,6 @@ public class Tools {
         cookie = new Cookie(READ_DISCUSSIONS_COOKIE,newContent.toString());
         cookie.setPath("/");
         cookie.setMaxAge(321408000);
-        ServletUtils.addCookie(cookie,response);	
+        ServletUtils.addCookie(cookie,response);
     }
 }

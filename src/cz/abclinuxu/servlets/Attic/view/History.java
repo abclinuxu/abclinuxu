@@ -29,8 +29,8 @@ import java.util.ArrayList;
  * the range of objects in specified time interval.
  * todo odstranit duplicitu u linkovanych objektu u SQL_ARTICLES
  */
-public class ShowOlder extends AbcFMServlet {
-    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ShowOlder.class);
+public class History extends AbcFMServlet {
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(History.class);
 
     /** type of object to display */
     public static final String PARAM_TYPE = "type";
@@ -42,6 +42,8 @@ public class ShowOlder extends AbcFMServlet {
     public static final String PARAM_ORDER_BY = "orderBy";
     /** specifies direction of sort order */
     public static final String PARAM_ORDER_DIR = "orderDir";
+    /** specifies, which user created the data */
+    public static final String PARAM_USER_SHORT = ViewUser.PARAM_USER_SHORT;
 
     public static final String VALUE_ORDER_BY_CREATED = "create";
     public static final String VALUE_ORDER_BY_UPDATED = "update";
@@ -55,6 +57,8 @@ public class ShowOlder extends AbcFMServlet {
     public static final String VALUE_TYPE_HARDWARE = "hardware";
     public static final String VALUE_TYPE_SOFTWARE = "software";
     public static final String VALUE_TYPE_DISCUSSION = "discussions";
+    public static final String VALUE_TYPE_QUESTIONS = "questions";
+    public static final String VALUE_TYPE_COMMENTS = "comments";
 
     static final Qualifier[] QUALIFIERS_ARRAY = new Qualifier[]{};
 
@@ -62,6 +66,10 @@ public class ShowOlder extends AbcFMServlet {
     public static final String VAR_FOUND = "FOUND";
     /** normalized type */
     public static final String VAR_TYPE = "TYPE";
+    /** Starting part of URL, until value of from parameter */
+    public static final String VAR_URL_BEFORE_FROM = "URL_BEFORE_FROM";
+    /** Final part of URL, after value of from parameter */
+    public static final String VAR_URL_AFTER_FROM = "URL_AFTER_FROM";
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -69,54 +77,111 @@ public class ShowOlder extends AbcFMServlet {
 
         String type = (String) params.get(PARAM_TYPE);
         int from = Misc.parseInt((String)params.get(PARAM_FROM),0);
-        int count = Misc.parseInt((String)params.get(PARAM_COUNT),10);
-        count = Misc.limit(count,1,50);
+        int count = Misc.parseInt((String)params.get(PARAM_COUNT),20);
+        count = Misc.limit(count, 1, 50);
+        int uid = Misc.parseInt((String)params.get(PARAM_USER_SHORT),0);
 
+        List data = null;
+        int total = 0;
         Paging found = null;
         Qualifier[] qualifiers;
 
         if ( VALUE_TYPE_ARTICLES.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
-            List data = sqlTool.findArticleRelations(qualifiers);
-            int total = sqlTool.countArticleRelations();
+            if (uid>0) {
+                data = sqlTool.findArticleRelationsByUser(uid, qualifiers);
+                total = sqlTool.countArticleRelationsByUser(uid);
+            } else {
+                data = sqlTool.findArticleRelations(qualifiers);
+                total = sqlTool.countArticleRelations();
+            }
             found = new Paging(data,from,count,total,qualifiers);
             type = VALUE_TYPE_ARTICLES;
 
         } else if ( VALUE_TYPE_NEWS.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
-            List data = sqlTool.findNewsRelations(qualifiers);
-            int total = sqlTool.countNewsRelations();
+            if ( uid>0 ) {
+                data = sqlTool.findNewsRelationsByUser(uid, qualifiers);
+                total = sqlTool.countNewsRelationsByUser(uid);
+            } else {
+                data = sqlTool.findNewsRelations(qualifiers);
+                total = sqlTool.countNewsRelations();
+            }
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_NEWS;
 
         } else if ( VALUE_TYPE_HARDWARE.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
-            List data = sqlTool.findRecordRelationsWithType(Record.HARDWARE, qualifiers);
-            int total = sqlTool.countRecordRelationsWithType(Record.HARDWARE);
+            if ( uid>0 ) {
+                data = sqlTool.findRecordRelationsWithUserAndType(uid, Record.HARDWARE, qualifiers);
+                total = sqlTool.countRecordRelationsWithUserAndType(uid, Record.HARDWARE);
+            } else {
+                data = sqlTool.findRecordRelationsWithType(Record.HARDWARE, qualifiers);
+                total = sqlTool.countRecordRelationsWithType(Record.HARDWARE);
+            }
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_HARDWARE;
 
         } else if ( VALUE_TYPE_SOFTWARE.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
-            List data = sqlTool.findRecordRelationsWithType(Record.SOFTWARE, qualifiers);
-            int total = sqlTool.countRecordRelationsWithType(Record.SOFTWARE);
+            if ( uid>0 ) {
+                data = sqlTool.findRecordRelationsWithType(Record.SOFTWARE, qualifiers);
+                total = sqlTool.countRecordRelationsWithUserAndType(uid, Record.SOFTWARE);
+            } else {
+                data = sqlTool.findRecordRelationsWithType(Record.SOFTWARE, qualifiers);
+                total = sqlTool.countRecordRelationsWithType(Record.SOFTWARE);
+            }
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_SOFTWARE;
 
         } else if ( VALUE_TYPE_DISCUSSION.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
-            List data = sqlTool.findDiscussionRelations(qualifiers);
-            int total = sqlTool.countDiscussionRelations();
+            data = sqlTool.findDiscussionRelations(qualifiers);
+            total = sqlTool.countDiscussionRelations();
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_DISCUSSION;
+
+        } else if ( VALUE_TYPE_QUESTIONS.equalsIgnoreCase(type) ) {
+            qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
+            data = sqlTool.findQuestionRelationsByUser(uid, qualifiers);
+            total = sqlTool.countQuestionRelationsByUser(uid);
+            found = new Paging(data, from, count, total, qualifiers);
+            type = VALUE_TYPE_QUESTIONS;
+
+        } else if ( VALUE_TYPE_COMMENTS.equalsIgnoreCase(type) ) {
+            qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
+            data = sqlTool.findCommentRelationsByUser(uid, qualifiers);
+            total = sqlTool.countCommentRelationsByUser(uid);
+            found = new Paging(data, from, count, total, qualifiers);
+            type = VALUE_TYPE_COMMENTS;
 
         } else
             return ServletUtils.showErrorPage("Chybí parametr type!",env,request);
 
         Tools.sync(found.getData());
+
+        StringBuffer sb = new StringBuffer("&amp;count=");
+        sb.append(found.getPageSize());
+        if (found.isQualifierSet(Qualifier.SORT_BY_CREATED.toString()))
+            sb.append("&amp;orderBy=create");
+        else if (found.isQualifierSet(Qualifier.SORT_BY_UPDATED.toString()))
+            sb.append("&amp;orderBy=update");
+        else if (found.isQualifierSet(Qualifier.SORT_BY_ID.toString()))
+            sb.append("&amp;orderBy=id");
+        if ( found.isQualifierSet(Qualifier.ORDER_DESCENDING.toString()) )
+            sb.append("&amp;orderDir=desc");
+        else if ( found.isQualifierSet(Qualifier.ORDER_ASCENDING.toString()) )
+            sb.append("&amp;orderDir=asc");
+        if (uid>0) {
+            sb.append("&amp;uid=");
+            sb.append(uid);
+        }
+
+        env.put(VAR_URL_BEFORE_FROM, "/History?type="+type+"&amp;from=");
+        env.put(VAR_URL_AFTER_FROM, sb.toString());
         env.put(VAR_FOUND,found);
         env.put(VAR_TYPE, type);
-        return FMTemplateSelector.select("ShowOlder",type,env,request);
+        return FMTemplateSelector.select("History",type,env,request);
     }
 
     /**

@@ -24,6 +24,7 @@ public class DiscussionHeader {
      */
     public Date updated;
     public Date created;
+    public String title;
 
     public DiscussionHeader(Item discussion) {
         this.discussion = discussion;
@@ -47,5 +48,9 @@ public class DiscussionHeader {
 
     public int getRelationId() {
         return relationId;
+    }
+
+    public String getTitle() {
+        return title;
     }
 }
