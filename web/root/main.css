@@ -1,11 +1,10 @@
 /* spolecne */
-BODY { background-color: WHITE; color: #444444; font-family: Lucida, Helvetica, sans-serif; font-size: 11pt }
-TD { color: #444444; font-family: Lucida, Verdana, Helvetica, sans-serif; font-size: 11pt }
-A { color:#447799; font-family: Lucida, Verdana, Helvetica, sans-serif; font-size: 11pt; text-decoration: underline }
+BODY { background-color: WHITE; color: #444444; font-family: sans-serif, Lucida, Verdana, Helvetica; font-size: 11pt }
+TD { color: #444444; font-size: 11pt }
+A { color:#447799; font-size: 11pt; text-decoration: underline }
 A:hover { color:#002244; text-decoration: none }
-P, DIV, SPAN { color: #444444; font-family: Lucida, Helvetica, sans-serif; font-size: 11pt }
-INPUT, SELECT { font-family: Helvetica; }
-LI { color: #444444; font-family: Lucida, Helvetica, sans-serif; font-size: 11pt }
+P, DIV, SPAN { color: #444444; font-size: 11pt }
+LI { color: #444444; font-size: 11pt }
 TD.obsah { padding: 2em 2em; }
 TD.bezmezer { padding: 0 0 0 0 }
 .error { color: RED; font-size: bigger }
@@ -14,31 +13,31 @@ TD.bezmezer { padding: 0 0 0 0 }
 P.monitor { }
 
 /* sablona */
-SPAN.barva { color: #225577; font-family: Lucida, Verdana, Helvetica, sans-serif; font-size: 10pt }
-SPAN.barva1 { color: #AADDEE; font-family: Lucida, Verdana, Helvetica, sans-serif; font-size: 10pt }
-SPAN.pidianketa { color: WHITE; font-family: Helvetica; font-size: 10pt }
-SPAN.pidibila { color: WHITE; font-family: Lucida, Verdana, Helvetica, sans-serif; font-size: 10pt }
-SPAN.pidibilatucna { color: WHITE; font-family: Lucida, Verdana, Helvetica, sans-serif; font-size: 10pt; font-weight: bold }
-SPAN.piditucna { color: BLACK; font-family: Lucida, Verdana, Helvetica, sans-serif; font-size: 10pt; font-weight: bold }
-SPAN.sro { color:white; font-family: Verdana, Helvetica, sans-serif; font-size: 15pt; font-weight: bold }
-INPUT.menu { font-family: Helvetica; font-size: 8pt }
-A.sro { color:white; font-family: Verdana, Helvetica, sans-serif; font-size: 15pt; font-weight: bold; text-decoration: none; position: relative }
+SPAN.barva { color: #225577; font-size: 10pt }
+SPAN.barva1 { color: #AADDEE; font-size: 10pt }
+SPAN.pidianketa { color: WHITE; font-size: 10pt }
+SPAN.pidibila { color: WHITE; font-size: 10pt }
+SPAN.pidibilatucna { color: WHITE; font-size: 10pt; font-weight: bold }
+SPAN.piditucna { color: BLACK; font-size: 10pt; font-weight: bold }
+SPAN.sro { color:white; font-size: 13pt; font-weight: bold }
+INPUT.menu { font-size: 8pt }
+A.sro { color:white; font-size: 12pt; font-weight: bold; text-decoration: none; position: relative }
 A.sro:hover { color: #AADDEE; position: relative; left: 1px; top: 1px }
-A.bila { color: WHITE; font-family: Lucida, Verdana, Helvetica, sans-serif; font-size: 10pt; text-decoration: underline }
+A.bila { color: WHITE; font-size: 10pt; text-decoration: underline }
 A.bila:hover { color: WHITE; text-decoration: none }
-A.menu { color:white; font-family:Lucida, Verdana, Helvetica, sans-serif; font-size:10pt; text-decoration:none }
+A.menu { color:white; font-size:10pt; text-decoration:none }
 A.menu:hover { color:#AADDEE; text-decoration:underline }
-A.server { color: #DDFFFF; font-family: Verdana, Helvetica, sans-serif; font-size: 10pt; text-decoration: none; font-weight: bold }
+A.server { color: #DDFFFF; font-size: 10pt; text-decoration: none; font-weight: bold }
 A.server:hover { color:WHITE; text-decoration: underline }
-A.ikona { color:#447799; font-family: Helvetica, sans-serif; font-size: 10pt; border: 0px; text-decoration: underline }
+A.ikona { color:#447799; font-size: 10pt; border: 0px; text-decoration: underline }
 A.ikona:hover { color:#002244; text-decoration: none }
 TD.barva1 { background-image: url(/images/site/bgprechod.gif); background-repeat: repeat-x; background-color: #3A5E75; color: WHITE }
 TD.barva2 { background-image: url(/images/site/bod.gif); background-color: #5F8EAC; color: white; padding: 2 2 3 8 }
-TD.cerna { background-image: url(/images/site/oblouk.gif); background-repeat: no-repeat; background-color: BLACK; color: WHITE; font-family: Verdana,Helvetica; font-size:10pt; padding: 2 2 2 4 }
-TD.cerna0 { background-repeat: no-repeat; background-position: bottom left; background-color: BLACK; color: WHITE; font-family: Lucida,Verdana,Helvetica; font-size: 10pt }
-TD.cerna2 { background-image: url(/images/site/oblouk2.gif); background-repeat: no-repeat; background-color: BLACK; color: WHITE; font-family: Verdana,Helvetica; font-size:10pt; padding: 2 2 2 6 }
-TD.cerna3 { background-image: url(/images/site/oblouk3.gif); background-repeat: no-repeat; background-color: BLACK; color: WHITE; font-family: Verdana,Helvetica; font-size:10pt }
-TD.lista { background-repeat: no-repeat; background-position: bottom left; color: white; font-family: Lucida,Verdana,Helvetica; font-size: 10pt; padding: 0px }
+TD.cerna { background-image: url(/images/site/oblouk.gif); background-repeat: no-repeat; background-color: BLACK; color: WHITE; font-size:10pt; padding: 2 2 2 4 }
+TD.cerna0 { background-repeat: no-repeat; background-position: bottom left; background-color: BLACK; color: WHITE; font-size: 10pt }
+TD.cerna2 { background-image: url(/images/site/oblouk2.gif); background-repeat: no-repeat; background-color: BLACK; color: WHITE; font-size:10pt; padding: 2 2 2 6 }
+TD.cerna3 { background-image: url(/images/site/oblouk3.gif); background-repeat: no-repeat; background-color: BLACK; color: WHITE; font-size:10pt }
+TD.lista { background-repeat: no-repeat; background-position: bottom left; color: white; font-size: 10pt; padding: 0px }
 TD.listaBG1 { background-color: #3d5365 }
 TD.listaBG2 { background-color: #6689a1 }
 TD.seda { background-repeat: no-repeat; background-color: #EEEEEE; color: BLACK }
@@ -57,18 +56,18 @@ IMG.sipka { border: 0; width: 11px; height: 7px; }
 
 /* index */
 P.perex_out { padding: 0ex 0ex;  }
-A.nadpis_out { color:BLACK; font-family:Helvetica, Arial, sans-serif; font-size:14pt; font-weight:bold }
+A.nadpis_out { color:BLACK; font-family: Helvetica, Arial, sans-serif; font-size: 14pt; font-weight:bold }
 A.nadpis_out:hover { color:#003355 }
-TD.jadro_h { font-weight: bold; font-family: Lucida, Verdana, Helvetica, sans-serif; font-size: 10pt}
-TD.jadro_p { font-family: Lucida, Verdana, Helvetica, sans-serif; font-size: 10pt }
+TD.jadro_h { font-weight: bold; font-size: 10pt}
+TD.jadro_p { font-size: 10pt }
 
 /* clanek */
-H1.nadpis { color:BLACK; font-family:Helvetica, Arial, sans-serif; font-size:18pt; font-weight:bold }
-H1,DIV.sub1 { color: BLACK; font-family: Lucida, Helvetica, sans-serif; font-size:14pt; font-weight: BOLD; padding: 0ex 0em }
-H2,DIV.sub2 { color: BLACK; font-family: Lucida, Helvetica, sans-serif; font-size:13pt; font-weight: BOLD; padding: 0ex 0em }
-Div.perex, P.perex { border-width: 1 0; border-color: black; border-style: solid; background-color: #EEEEEE; padding: 1ex; margin-top: 1em }
+H1.nadpis { color:BLACK; font-size:18pt; font-weight:bold }
+H1,DIV.sub1 { color: BLACK; font-size:14pt; font-weight: BOLD; padding: 0ex 0em }
+H2,DIV.sub2 { color: BLACK; font-size:13pt; font-weight: BOLD; padding: 0ex 0em }
+Div.perex, P.perex { border-width: thin 0; border-color: black; border-style: solid; background-color: #EEEEEE; padding: 1ex; margin-top: 1em }
 DIV.linky { padding: 0 1ex; }
-table.source { background-color: #e6e6e6; border-width: 1; border-style: solid;  border-color: #838383;}
+table.source { background-color: #e6e6e6; border-width: thin; border-style: solid;  border-color: #838383;}
 td.pad { padding-left: 1ex; padding-right: 1ex;}
 SPAN.odsazeni { padding-left: 2ex; }
 DIV.kt_citace { color:#880000; }
