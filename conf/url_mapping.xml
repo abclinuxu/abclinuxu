@@ -1,5 +1,5 @@
 <mappings>
-    <format version="html">
+    <format version="www">
         <mapping>
             <pattern>^/Index</pattern>
             <action>cz.abclinuxu.servlets.html.view.ViewIndex</action>
@@ -105,7 +105,13 @@
             <action>cz.abclinuxu.servlets.html.admin.AdminServlet</action>
         </mapping>
     </format>
-    <deprecated version="html">
+    <format version="wap">
+        <mapping>
+            <pattern>.*</pattern>
+            <action>cz.abclinuxu.servlets.wap.view.ShowNews</action>
+        </mapping>
+    </format>
+    <deprecated version="www">
         <mapping>
             <pattern input="path">^/$</pattern>
             <regexp>/$</regexp>

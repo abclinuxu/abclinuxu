@@ -214,7 +214,7 @@ public final class URLMapper implements Configurable {
     }
 
     public static class Version {
-        public static final Version HTML = new Version("html");
+        public static final Version HTML = new Version("www");
         public static final Version WAP = new Version("wap");
         String value;
 

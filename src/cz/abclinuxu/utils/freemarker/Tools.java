@@ -31,7 +31,6 @@ import org.apache.regexp.RESyntaxException;
 
 import java.util.*;
 import java.util.prefs.Preferences;
-import java.io.IOException;
 
 import freemarker.template.*;
 
@@ -67,7 +66,7 @@ public class Tools implements Configurable {
     public void configure(Preferences prefs) throws ConfigurationException {
         try {
             String pref = prefs.get(PREF_REGEXP_REMOVE_TAGS, null);
-            reRemoveTags = new RE(pref, RE.MATCH_SINGLELINE);
+            reRemoveTags = new RE(pref, RE.MATCH_MULTILINE);
         } catch (RESyntaxException e) {
             log.error("Cannot create regexp to find line breaks!", e);
         }
