@@ -42,6 +42,15 @@
            </layout>
 	</appender>
 
+	<appender name="WAP" class="org.apache.log4j.DailyRollingFileAppender">
+           <param name="File" value="@DEPLOY_LOGS@/wap.log" />
+           <param name="DatePattern" value="'.'yyyy-MM" />
+           <param name="Append" value="true" />
+           <layout class="org.apache.log4j.PatternLayout">
+             <param name="ConversionPattern" value="%m%n"/>
+           </layout>
+	</appender>
+
 	<category name="cz">
 	  <priority value="info" />
 	</category>
@@ -58,6 +67,11 @@
 	<category name="search" additivity="false">
 	  <priority value="info" />
       <appender-ref ref="SEARCH"/>
+	</category>
+
+	<category name="wap" additivity="false">
+	  <priority value="info" />
+      <appender-ref ref="WAP"/>
 	</category>
 
 	<category name="org.logicalcobwebs.proxool" additivity="false">
