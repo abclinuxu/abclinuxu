@@ -5,12 +5,12 @@ sleduje stav vybranych objektu. Pokud jej u zvoleneho objektu zapnete
 a nekdo objekt nejak upravi, zasleme vam email s upozornenim.
 
 Kdo:   ${ACTOR}
-Akce:  upravil ovladac
+Akce:  ${ACTION}
 Jmeno: ${NAME}
 Datum: ${DATE.show(PERFORMED,"CZ_FULL")}
-URL:   ${URL}
+URL:   ${URL?default("neni dostupne")}
 
 Sledovani tohoto objektu muzete zrusit na adrese:
-${URL}
+${URL?if_exists}
 Vase prihlasovaci jmeno je ${USER.login}.
 

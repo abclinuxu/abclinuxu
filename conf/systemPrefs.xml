@@ -65,12 +65,14 @@
             <map/>
             <node name="InstantSender">
               <map>
-                <entry key="sleep" value="15"/>
+                <entry key="sleep" value="60"/>
               </map>
             </node>
             <node name="DriverDecorator">
               <map>
                 <entry key="subject" value="AbcMonitor: uprava ovladace"/>
+                <entry key="action.edit" value="upravil ovladac"/>
+                <entry key="action.remove" value="smazal ovladac"/>
               </map>
             </node>
             <node name="ItemDecorator">

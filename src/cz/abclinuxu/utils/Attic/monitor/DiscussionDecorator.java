@@ -38,7 +38,8 @@ public class DiscussionDecorator implements Decorator, Configurable {
         env.put(EmailSender.KEY_SUBJECT, subject);
         env.put(EmailSender.KEY_TEMPLATE, "/mail/monitor/notif_discussion.ftl");
 
-        env.put(VAR_URL, action.url);
+        if (action.url!=null)
+            env.put(VAR_URL, action.url);
         env.put(VAR_ACTOR, action.actor);
         env.put(VAR_PERFORMED, action.performed);
         env.put(VAR_NAME, action.getProperty(PROPERTY_NAME));

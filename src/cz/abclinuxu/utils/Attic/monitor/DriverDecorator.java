@@ -21,7 +21,10 @@ import java.util.prefs.Preferences;
  * Decorator for Discussions.
  */
 public class DriverDecorator implements Decorator, Configurable {
-    String subject;
+    public static final String PREF_ACTION_EDIT = "action.edit";
+    public static final String PREF_ACTION_REMOVE = "action.remove";
+
+    String subject, actionEdit, actionRemove;
 
     /**
      * Creates environment for given MonitorAction. This
@@ -36,9 +39,17 @@ public class DriverDecorator implements Decorator, Configurable {
         env.put(EmailSender.KEY_SUBJECT, subject);
         env.put(EmailSender.KEY_TEMPLATE, "/mail/monitor/notif_driver.ftl");
 
-        env.put(VAR_URL, action.url);
+        if ( action.url!=null )
+            env.put(VAR_URL, action.url);
         env.put(VAR_ACTOR, action.actor);
         env.put(VAR_PERFORMED, action.performed);
+
+        String changeMessage = "";
+        if ( UserAction.EDIT.equals(action.action) )
+            changeMessage = actionEdit;
+        else if ( UserAction.REMOVE.equals(action.action) )
+            changeMessage = actionRemove;
+        env.put(VAR_ACTION, changeMessage);
 
         String name = (String) action.getProperty(PROPERTY_NAME);
         if ( name==null ) {
@@ -57,5 +68,7 @@ public class DriverDecorator implements Decorator, Configurable {
 
     public void configure(Preferences prefs) throws ConfigurationException {
         subject = prefs.get(PREF_SUBJECT,"AbcMonitor");
+        actionEdit = prefs.get(PREF_ACTION_EDIT, "");
+        actionRemove = prefs.get(PREF_ACTION_REMOVE, "");
     }
 }

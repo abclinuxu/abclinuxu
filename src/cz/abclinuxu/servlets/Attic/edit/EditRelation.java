@@ -18,6 +18,7 @@ import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.utils.monitor.*;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 
 import org.dom4j.*;
@@ -188,14 +189,17 @@ public class EditRelation extends AbcFMServlet {
 
         persistance.synchronize(relation);
         persistance.synchronize(relation.getChild());
-        AdminLogger.logEvent(user,"remove | relation "+relation.getId()+" | "+Tools.childName(relation));
+
+        runMonitor(relation,user);
         persistance.remove(relation);
+        AdminLogger.logEvent(user, "remove | relation "+relation.getId()+" | "+Tools.childName(relation));
 
         String url = null;
         String prefix = (String) params.get(PARAM_PREFIX);
         if ( prefix!=null ) {
             url = prefix.concat("/ViewRelation?rid="+relation.getUpper());
-        } else url = "/Index";
+        } else
+            url = "/Index";
 
         UrlUtils urlUtils = new UrlUtils(prefix, response);
         urlUtils.redirect(response, url);
@@ -247,5 +251,35 @@ public class EditRelation extends AbcFMServlet {
         if ( node!=null )
             return "yes".equals(node.getText());
         return false;
+    }
+
+    /**
+     * Runs monitor, if deleted object was driver, make or discussion (question).
+     */
+    private void runMonitor(Relation relation, User user) {
+        MonitorAction action = null;
+
+        GenericObject child = relation.getChild();
+        if ( ! (child instanceof Item) )
+            return;
+
+        Item item = (Item) child;
+        if (item.getType()==Item.DRIVER) {
+            action = new MonitorAction(user, UserAction.REMOVE, ObjectType.DRIVER, item, null);
+            String name = item.getData().selectSingleNode("/data/name").getText();
+            action.setProperty(Decorator.PROPERTY_NAME, name);
+        } else if (item.getType()==Item.MAKE) {
+            action = new MonitorAction(user, UserAction.REMOVE, ObjectType.ITEM, item, null);
+            String name = item.getData().selectSingleNode("/data/name").getText();
+            action.setProperty(Decorator.PROPERTY_NAME, name);
+        } else if (item.getType()==Item.DISCUSSION) {
+            action = new MonitorAction(user, UserAction.REMOVE, ObjectType.DISCUSSION, item, null);
+            Element title = (Element) item.getData().selectSingleNode("/data/title");
+            if (title==null)
+                return;
+            action.setProperty(Decorator.PROPERTY_NAME, title.getText());
+        }
+
+        MonitorPool.scheduleMonitorAction(action);
     }
 }
