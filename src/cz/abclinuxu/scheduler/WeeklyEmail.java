@@ -60,7 +60,10 @@ public class WeeklyEmail extends TimerTask implements Configurable {
             List users = SQLTool.getInstance().findUsersWithWeeklyEmail(null);
             log.info("Weekly emails have subscribed "+users.size()+" users.");
 
-            setArticles(params);
+            if (!setArticles(params)) {
+                log.warn("No articles were found!");
+                return;
+            }
 
             int count = EmailSender.sendEmailToUsers(params,users);
             log.info("Weekly email sucessfully sent to "+count+" addressses.");
@@ -72,10 +75,12 @@ public class WeeklyEmail extends TimerTask implements Configurable {
     /**
      * Finds articles, that shall be sent and initializes them.
      * Then it puts them into params with other information.
+     * @return true, if there was at least one article
      */
-    private void setArticles(Map params) {
+    private boolean setArticles(Map params) {
         Persistance persistance = PersistanceFactory.getPersistance();
         Tools tools = new Tools();
+        boolean found = false;
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
@@ -92,10 +97,13 @@ public class WeeklyEmail extends TimerTask implements Configurable {
             String tmp = tools.xpath(relation.getChild(),"/data/author");
             User user = tools.createUser(tmp);
             authors.add(user);
+            found = true;
         }
 
         params.put(VAR_ARTICLES,relations);
         params.put(VAR_AUTHORS,authors);
+
+        return found;
     }
 
     /**
