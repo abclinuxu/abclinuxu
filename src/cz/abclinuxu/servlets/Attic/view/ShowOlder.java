@@ -26,6 +26,7 @@ import java.util.Iterator;
 /**
  * This servlet is responsible for displaying
  * the range of objects in specified time interval.
+ * @todo odstranit duplicitu u linkovanych objektu u SQL_ARTICLES
  */
 public class ShowOlder extends AbcVelocityServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ShowOlder.class);
@@ -49,7 +50,7 @@ public class ShowOlder extends AbcVelocityServlet {
     public static final String SQL_HARDWARE = "select R.cislo from zaznam Z, relace R where typ=1 and Z.cislo=R.potomek and typ_potomka='Z' order by zmeneno desc";
     public static final String SQL_SOFTWARE = "select R.cislo from zaznam Z, relace R where typ=2 and Z.cislo=R.potomek and typ_potomka='Z' order by zmeneno desc";
     public static final String SQL_DRIVERS = "select R.cislo from polozka P, relace R where typ=5 and P.cislo=R.potomek and typ_potomka='P' order by zmeneno desc";
-    public static final String SQL_ARTICLES = "select R.cislo from polozka P, relace R where typ=2 and P.cislo=R.potomek and typ_potomka='P' and vytvoreno<now() order by zmeneno desc";
+    public static final String SQL_ARTICLES = "select R.cislo from polozka P, relace R where typ=2 and P.cislo=R.potomek and typ_potomka='P' and vytvoreno<now() order by vytvoreno desc";
 
     /**
      * Put your processing here. Return null, if you redirected browser to another URL.
