@@ -2,50 +2,53 @@
 BODY { background-color: WHITE; color: #444444; font-family: Lucida,Helvetica; font-size: 11pt }
 TD { color: #444444; font-family: Lucida,Verdana,Helvetica; font-size: 11pt }
 A { color:#447799; font-family: Lucida,Verdana,Helvetica; font-size: 11pt; text-decoration: underline }
+A:hover { color:#002244; text-decoration: none }
 P, DIV, SPAN { color: #444444; font-family: Lucida,Helvetica; font-size: 11pt }
 INPUT, SELECT { font-family: Helvetica; }
 LI { color: #444444; font-family: Lucida,Helvetica; font-size: 11pt }
 TD.obsah { padding: 2em 2em; }
 TD.bezmezer { padding: 0 0 0 0 }
-.required { font-weight: bolder }
 .error { color: RED; font-size: bigger }
-.message { font-size: bigger; padding: 1ex 0ex }
+.message { font-size: bigger; color:blue; padding: 1ex 0ex }
+.required { font-weight: bolder }
 
 /* sablona */
-SPAN.piditucna { color: BLACK; font-family: Lucida,Verdana,Helvetica; font-size: 10pt; font-weight: bold }
-SPAN.pidibila { color: WHITE; font-family: Lucida,Verdana,Helvetica; font-size: 10pt }
-SPAN.pidianketa { color: WHITE; font-family: Helvetica; font-size: 10pt }
-SPAN.pidibilatucna { color: WHITE; font-family: Lucida,Verdana,Helvetica; font-size: 10pt; font-weight: bold }
 SPAN.barva { color: #225577; font-family: Lucida,Verdana,Helvetica; font-size: 10pt }
 SPAN.barva1 { color: #AADDEE; font-family: Lucida,Verdana,Helvetica; font-size: 10pt }
-SPAN.sro { color:#a2cfe3; font-family: Lucida,Verdana,Helvetica; font-size: 14pt; }
+SPAN.pidianketa { color: WHITE; font-family: Helvetica; font-size: 10pt }
+SPAN.pidibila { color: WHITE; font-family: Lucida,Verdana,Helvetica; font-size: 10pt }
+SPAN.pidibilatucna { color: WHITE; font-family: Lucida,Verdana,Helvetica; font-size: 10pt; font-weight: bold }
+SPAN.piditucna { color: BLACK; font-family: Lucida,Verdana,Helvetica; font-size: 10pt; font-weight: bold }
+SPAN.sro { color:white; font-family: Verdana,Helvetica; font-size: 9pt; font-weight: bold }
 INPUT.menu { font-family: Helvetica; font-size: 8pt }
-A:hover { color:#002244; text-decoration: none }
-A.sro { color:#a2cfe3; font-family: Lucida,Verdana,Helvetica; font-size: 14pt; text-decoration: underline }
-A.sro:hover { text-decoration: none }
-A.menu { color:WHITE; font-family:Lucida,Verdana,Helvetica; font-size:10pt; text-decoration:none }
+A.sro { color:white; font-family: Verdana,Helvetica; font-size: 9pt; font-weight: bold; text-decoration: none; position: relative }
+A.sro:hover { color: #AADDEE; position: relative; left: 1px; top: 1px }
+A.bila { color: WHITE; font-family: Lucida,Verdana,Helvetica; font-size: 10pt; text-decoration: underline }
+A.bila:hover { color: WHITE; text-decoration: none }
+A.menu { color:white; font-family:Lucida,Verdana,Helvetica; font-size:10pt; text-decoration:none }
 A.menu:hover { color:#AADDEE; text-decoration:underline }
 A.server { color: #DDFFFF; font-family: Verdana,Helvetica; font-size: 10pt; text-decoration: none; font-weight: bold }
 A.server:hover { color:WHITE; text-decoration: underline }
-A.bila { color: WHITE; font-family: Lucida,Verdana,Helvetica; font-size: 10pt; text-decoration: underline }
-A.bila:hover { color: WHITE; text-decoration: none }
 A.ikona { color:#447799; font-family: Helvetica; font-size: 10pt; text-decoration: underline }
 A.ikona:hover { color:#002244; text-decoration: none }
+TD.barva1 { background-image: url(/images/site/bgprechod.gif); background-repeat: repeat-x; background-color: #3A5E75; color: WHITE }
+TD.barva2 { background-image: url(/images/site/bod.gif); background-color: #5F8EAC; color: white; padding: 2 2 3 8 }
 TD.cerna { background-image: url(/images/site/oblouk.gif); background-repeat: no-repeat; background-color: BLACK; color: WHITE; font-family: Verdana,Helvetica; font-size:10pt; padding: 2 2 2 4 }
 TD.cerna0 { background-repeat: no-repeat; background-position: bottom left; background-color: BLACK; color: WHITE; font-family: Lucida,Verdana,Helvetica; font-size: 10pt }
 TD.cerna2 { background-image: url(/images/site/oblouk2.gif); background-repeat: no-repeat; background-color: BLACK; color: WHITE; font-family: Verdana,Helvetica; font-size:10pt; padding: 2 2 2 6 }
 TD.cerna3 { background-image: url(/images/site/oblouk3.gif); background-repeat: no-repeat; background-color: BLACK; color: WHITE; font-family: Verdana,Helvetica; font-size:10pt }
-TD.barva1 { background-image: url(/images/site/bgprechod.gif); background-repeat: repeat-x; background-color: #3A5E75; color: WHITE }
-TD.barva2 { background-image: url(/images/site/bod.gif); background-color: #5F8EAC; color: WHITE; padding: 2 2 3 8 }
-.seda { background-repeat: no-repeat; background-color: #EEEEEE; color: BLACK }
-TD.banner { background-repeat: no-repeat; background-color: #EEEEEE; color: BLACK }
+TD.lista { background-repeat: no-repeat; background-position: bottom left; color: white; font-family: Lucida,Verdana,Helvetica; font-size: 10pt; padding: 0px }
+TD.listaBG1 { background-color: #3d5365 }
+TD.listaBG2 { background-color: #6689a1 }
+TD.seda { background-repeat: no-repeat; background-color: #EEEEEE; color: BLACK }
+TD.banner { background-repeat: repeat-x; background-color: #EEEEEE; background-image: url(/images/site/lista-stin.gif); color: BLACK }
+IMG.emo { border: 0; width: 14px; height: 14px; vertical-align: middle; }
+IMG.graf { padding: 2px 4px; border: 0; height: 3px; }
+IMG.ikona { border: 0; width: 32px; height: 32px;}
+IMG.ikona22 { border: 0; width: 22px; height: 22px; }
 IMG.puntik { padding: 2px 2px 2px 6px; width: 6px; height: 8px; }
 IMG.puntik2 { padding-top: 2px; width: 6px; height: 8px; }
-IMG.graf { padding: 2px 4px; border: 0; height: 3px; }
 IMG.sipka { border: 0; width: 11px; height: 7px; }
-IMG.ikona { border: 0; width: 32px; height: 32px;}
-IMG.ikona22 { border: 0; width: 22px; height: 22px;}
-
 
 /* index */
 P.perex_out { padding: 0ex 0ex;  }
@@ -58,20 +61,19 @@ TD.jadro_p { font-family: Lucida,Verdana,Helvetica; font-size: 10pt }
 H1.nadpis { color:BLACK; font-family:Helvetica,Arial; font-size:18pt; font-weight:bold }
 H1,DIV.sub1 { color: BLACK; font-family: Lucida, Helvetica; font-size:14pt; font-weight: BOLD; padding: 0ex 0em }
 H2,DIV.sub2 { color: BLACK; font-family: Lucida, Helvetica; font-size:13pt; font-weight: BOLD; padding: 0ex 0em }
-.perex { border-width: 1 0; border-color: black; border-style: solid; background-color: #EEEEEE; padding: 1ex; }
-.barva { color: #225577; font-family: Lucida,Verdana,Helvetica; }
+P.perex { border-width: 1 0; border-color: black; border-style: solid; background-color: #EEEEEE; padding: 1ex; }
 DIV.linky { padding: 0 1ex; }
-
-/* kernel traffic */
-DIV.paticka,DIV.kt_paticka { font-style: italic; padding-top: 1ex; }
+table.source { background-color: #e6e6e6; border-width: 1; border-style: solid;  border-color: #838383;}
+td.pad { padding-left: 1ex; padding-right: 1ex;}
+SPAN.odsazeni { padding-left: 2ex; }
 DIV.kt_citace { color:#880000; }
+DIV.kt_citace OL LI { color:#880000; }
 DIV.kt_citace P { color:#880000; }
 DIV.kt_citace UL LI { color:#880000; }
-DIV.kt_citace OL LI { color:#880000; }
-
+DIV.paticka,DIV.kt_paticka { font-style: italic; padding-top: 1ex; }
 
 /* kategorie */
-DIV.note { padding-top: 10pt; padding-bottom: 5pt; /* font-style: italic; */}
+DIV.note { padding-top: 10pt; padding-bottom: 5pt;}
 
 /* komentare, diskusni forum */
 DIV.diz_list { background-color: #EEEEEE; }
