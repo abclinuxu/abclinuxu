@@ -84,6 +84,7 @@ public class MySqlPersistance implements Persistance {
 
     public void create(GenericObject obj, GenericObject parent) throws PersistanceException {
         Connection con = null;
+        if ( obj==null ) throw new PersistanceException("Neni mozne ulozit prazdny objekt!",AbcException.DB_INCOMPLETE,obj,null);
 
         try {
             con = getSQLConnection();
@@ -147,6 +148,7 @@ public class MySqlPersistance implements Persistance {
     }
 
     public void update(GenericObject obj) throws PersistanceException {
+        if ( obj==null ) throw new PersistanceException("Neni mozne ulozit prazdny objekt!",AbcException.DB_INCOMPLETE,obj,null);
         try {
             if (obj instanceof Record) {
                 updateDataObject((Record)obj);
@@ -209,6 +211,7 @@ public class MySqlPersistance implements Persistance {
     }
 
     public GenericObject findById(GenericObject obj) throws PersistanceException {
+        if ( obj==null ) throw new PersistanceException("Objekt nebyl nalezen!",AbcException.DB_NOT_FOUND,obj,null);
         GenericObject result = null;
         if ( log.isDebugEnabled() ) log.debug("Hledam podle PK objekt "+obj);
         try {
@@ -465,7 +468,8 @@ public class MySqlPersistance implements Persistance {
         try {
             return DriverManager.getConnection(dbUrl);
         } catch (SQLException e) {
-            throw new PersistanceException("Spojeni s databazi selhalo!",AbcException.DB_REFUSED,null,e);
+            log.fatal("Nemohu se spojit s databazi!",e);
+            throw new PersistanceException("Nemohu se spojit s databazi!",AbcException.DB_REFUSED,null,e);
         }
     }
 
@@ -474,7 +478,7 @@ public class MySqlPersistance implements Persistance {
      */
     private void releaseSQLConnection(Connection con) {
         try {
-            con.close();
+            if ( con!=null ) con.close();
         } catch (Exception e) {
             log.error("Problems while closing connection to database!",e);
         }

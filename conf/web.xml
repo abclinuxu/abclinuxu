@@ -8,9 +8,15 @@
         <servlet-class>webwork.dispatcher.ServletDispatcher</servlet-class>
         <load-on-startup/>
     </servlet>
+
     <servlet>
-        <servlet-name>xslt</servlet-name>
-        <servlet-class>webwork.xslt.XSLTServlet</servlet-class>
+        <servlet-name>log4j-init</servlet-name>
+        <servlet-class>cz.abclinuxu.webwork.Log4JInit</servlet-class>
+        <init-param>
+          <param-name>CONFIG</param-name>
+          <param-value>WEB-INF/log4j.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
     </servlet>
 
     <servlet-mapping>
@@ -18,15 +24,11 @@
         <url-pattern>*.action</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>xslt</servlet-name>
-        <url-pattern>*.xslt</url-pattern>
-    </servlet-mapping>
-
-
+<!--
     <welcome-file-list>
 	<welcome-file>helloworld.action</welcome-file>
     </welcome-file-list>
+-->
 
     <taglib>
         <taglib-uri>webwork</taglib-uri>

@@ -19,7 +19,7 @@ public class TestMySqlPersistance extends TestCase {
     Persistance persistance;
 
     static {
-        DOMConfigurator.configure("WEB-INF/log4j.xml");
+        DOMConfigurator.configure("conf/log4j.xml");
     }
 
     public TestMySqlPersistance(String s) {

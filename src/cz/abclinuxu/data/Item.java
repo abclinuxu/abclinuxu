@@ -19,7 +19,7 @@ public class Item extends GenericDataObject {
         StringBuffer sb = new StringBuffer("Item: id=");
         sb.append(id);
         if ( owner!=0 ) sb.append(",owner="+owner);
-        if ( data!=null ) sb.append(",data="+data);
+        if ( data!=null ) sb.append(",data="+getDataAsString());
         if ( updated!=null ) sb.append(",updated="+updated);
         return sb.toString();
     }

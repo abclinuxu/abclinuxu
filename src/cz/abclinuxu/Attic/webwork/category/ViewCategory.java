@@ -19,6 +19,7 @@ import cz.abclinuxu.persistance.PersistanceFactory;
  */
 public class ViewCategory implements Action {
     Category category;
+    int categoryId;
 
     public Category getCategory() {
         return category;
@@ -28,7 +29,7 @@ public class ViewCategory implements Action {
         this.category = category;
     }
 
-    public void setCategory(int id) {
+    public void setCategoryId(int id) {
         category = new Category(id);
     }
 

@@ -39,7 +39,7 @@ public class Category extends GenericDataObject {
         StringBuffer sb = new StringBuffer("Category: id=");
         sb.append(id);
         if ( owner!=0 ) sb.append(",owner="+owner);
-        if ( data!=null ) sb.append(",data="+data);
+        if ( data!=null ) sb.append(",data="+getDataAsString());
         if ( updated!=null ) sb.append(",updated="+updated);
         if ( open ) sb.append(", otevrena"); else sb.append(", uzavrena");
         return sb.toString();

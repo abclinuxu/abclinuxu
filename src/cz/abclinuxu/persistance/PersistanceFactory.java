@@ -9,12 +9,17 @@ package cz.abclinuxu.persistance;
 
 import java.util.Map;
 import java.util.HashMap;
+import org.apache.log4j.xml.DOMConfigurator;
 
 /**
  * Factory, which select Persistance class
  */
 public class PersistanceFactory {
-    static Map instances = new HashMap();
+    static Map instances;
+
+    static {
+        instances = new HashMap();
+    }
 
     /**
      * @return instance of object, which implements <code>Persistance</code>
