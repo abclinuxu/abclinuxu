@@ -1,23 +1,35 @@
+<#assign frozen=TOOL.xpath(ITEM,"/data/frozen")?exists>
+<#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"'")?exists>
+    <#assign monitorState="vypni">
+<#else>
+    <#assign monitorState="zapni">
+</#if>
+
+<#assign plovouci_sloupec>
+
+    <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <h1>Funkce</h1>
+    </div></div>
+
+   <div class="s_sekce">
+    <a href="/forum/show/${RELATION.id}?varianta=print">Tisk</a><br>
+    Sledování <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+RELATION.id)}">${monitorState}</a>
+    (${TOOL.getMonitorCount(ITEM.data)})
+    <a class="info" href="#">?<span class="tooltip">Za¹le ka¾dý nový komentáø emailem na va¹i adresu</span></a><br>
+
+    <#if USER?exists && USER.hasRole("discussion admin")>
+        <a href="/SelectRelation?prefix=/hardware&amp;url=/EditRelation&amp;action=move&amp;rid=${RELATION.id}">Pøesunout</a><br>
+        <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix="+URL.prefix)}">Sma¾ diskusi</a><br>
+        <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+RELATION.id+"&amp;dizId="+ITEM.id)}">
+        <#if frozen>Rozmrazit<#else>Zmrazit</#if> diskusi</a><br>
+    </#if>
+   </div>
+</#assign>
+
 <#include "../header.ftl">
 
 <@lib.showMessages/>
 
-<#if USER?exists && USER.hasRole("discussion admin")>
- <a href="/SelectRelation?prefix=/hardware&amp;url=/EditRelation&amp;action=move&amp;rid=${RELATION.id}">Pøesunout</a>
- <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix="+URL.prefix)}">Sma¾ diskusi</a>
-</#if>
-
-<p class="monitor"><b>AbcMonitor</b> vám emailem za¹le upozornìní pøi jakékoliv zmìnì v diskusi.
- <#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"'")?exists>
-  <#assign monitorState="Vypni">
- <#else>
-  <#assign monitorState="Zapni">
- </#if>
- <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+RELATION.id)}">${monitorState}</a>
- (${TOOL.getMonitorCount(ITEM.data)})
-</p>
-
-<#assign frozen=TOOL.xpath(ITEM,"/data/frozen")?exists>
 
 <#if TOOL.xpath(ITEM,"data/title")?exists>
  <h1 class="st_nadpis">Otázka</h1>
@@ -37,13 +49,6 @@
 </#if>
 
 <#if frozen><p class="error">Diskuse byla administrátory uzamèena</p></#if>
-
-<p><b>Nástroje</b>: <a href="/forum/show/${RELATION.id}?varianta=print">Tisk</a></p>
-
-<#if USER?exists && USER.hasRole("discussion admin")>
- <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+RELATION.id+"&amp;dizId="+ITEM.id)}">
- <#if frozen>Rozmrazit<#else>Zmrazit</#if> diskusi</a>
-</#if>
 
 <#if USER?exists><#assign MAX_COMMENT=TOOL.getLastSeenComment(ITEM,USER,true) in lib></#if>
 <#list TOOL.createDiscussionTree(ITEM) as thread>
