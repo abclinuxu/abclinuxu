@@ -47,6 +47,7 @@
 
 <@lib.showMessages/>
 
+<#assign diz = TOOL.createDiscussionTree(ITEM)>
 
 <#if is_question>
  <h1 class="st_nadpis">Otázka</h1>
@@ -59,7 +60,11 @@
  prosím administrátory. Dìkujeme.
  </p>
 
- <h1 class="st_nadpis">Odpovìdi</h1>
+ <#if diz?size==0>
+    <p>Na otázku zatím nikdo bohu¾el neodpovìdìl.</p>
+ <#else>
+     <h1 class="st_nadpis">Odpovìdi</h1>
+ </#if>
 <#elseif !frozen>
  <a href="${URL.make("/EditDiscussion?action=add&amp;threadId=0&amp;dizId="+ITEM.id+"&amp;rid="+RELATION.id)}">
  Vlo¾it dal¹í komentáø</a>
@@ -68,7 +73,7 @@
 <#if frozen><p class="error">Diskuse byla administrátory uzamèena</p></#if>
 
 <#if USER?exists><#assign MAX_COMMENT=TOOL.getLastSeenComment(ITEM,USER,true) in lib></#if>
-<#list TOOL.createDiscussionTree(ITEM) as thread>
+<#list diz as thread>
  <@lib.showThread thread, 0, ITEM.id, RELATION.id, !frozen />
 </#list>
 
