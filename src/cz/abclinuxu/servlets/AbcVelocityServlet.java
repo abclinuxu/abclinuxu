@@ -89,6 +89,7 @@ public class AbcServlet extends VelocityServlet {
     public static final String VAR_ABCLINUXU = "ABCLINUXU";
     public static final String VAR_ANKETA = "ANKETA";
     public static final String VAR_LINKS = "LINKS";
+    public static final String VAR_COUNTS = "COUNTS";
 
     public static final String PARAM_ACTION = "action";
     public static final String PARAM_LOG_USER = "LOGIN";
@@ -128,29 +129,7 @@ public class AbcServlet extends VelocityServlet {
 
             ctx.put(AbcServlet.VAR_URL_UTILS,new UrlUtils(request.getRequestURI(), response));
 
-            /** template variables */
-
-            try {
-                Category rubriky = (Category) persistance.findById(new Category(Constants.CAT_ARTICLES));
-                helper.sync(rubriky.getContent());
-                ctx.put(VAR_RUBRIKY,rubriky.getContent());
-
-                Category abc = (Category) persistance.findById(new Category(Constants.CAT_ABC));
-                helper.sync(abc.getContent());
-                ctx.put(VAR_ABCLINUXU,abc.getContent());
-
-                List list = persistance.findByCommand("select max(cislo) from anketa");
-                Object[] objects = (Object[]) list.get(0);
-                Poll poll = new Poll(((Integer)objects[0]).intValue());
-                poll = (Poll) persistance.findById(poll);
-                ctx.put(VAR_ANKETA,poll);
-
-                Category linksCategory = (Category) persistance.findById(new Category(Constants.CAT_LINKS));
-                Map links = UpdateLinks.groupLinks(linksCategory,persistance);
-                ctx.put(VAR_LINKS,links);
-            } catch (PersistanceException e) {
-                log.warn("Cannot get default objects!",e);
-            }
+            addTemplateVariables(ctx,persistance, helper);
         }
         request.setAttribute(AbcServlet.ATTRIB_CONTEXT,ctx);
         return ctx;
@@ -401,5 +380,47 @@ public class AbcServlet extends VelocityServlet {
         cookie.setMaxAge(0);
         cookie.setPath("/");
         response.addCookie(cookie);
+    }
+
+    /**
+     * Initializes and stores variables used by template
+     */
+    private void addTemplateVariables(Context ctx, Persistance persistance, VelocityHelper helper) {
+        try {
+            Category rubriky = (Category) persistance.findById(new Category(Constants.CAT_ARTICLES));
+            helper.sync(rubriky.getContent());
+            ctx.put(VAR_RUBRIKY,rubriky.getContent());
+
+            Category abc = (Category) persistance.findById(new Category(Constants.CAT_ABC));
+            helper.sync(abc.getContent());
+            ctx.put(VAR_ABCLINUXU,abc.getContent());
+
+            List list = persistance.findByCommand("select max(cislo) from anketa");
+            Object[] objects = (Object[]) list.get(0);
+            Poll poll = new Poll(((Integer)objects[0]).intValue());
+            poll = (Poll) persistance.findById(poll);
+            ctx.put(VAR_ANKETA,poll);
+
+            Category linksCategory = (Category) persistance.findById(new Category(Constants.CAT_LINKS));
+            Map links = UpdateLinks.groupLinks(linksCategory,persistance);
+            ctx.put(VAR_LINKS,links);
+
+            Map counts = new HashMap(4);
+            list = persistance.findByCommand("select count(cislo) from zaznam where typ=1");
+            objects = (Object[]) list.get(0);
+            counts.put("HARDWARE",objects[0]);
+
+            list = persistance.findByCommand("select count(cislo) from zaznam where typ=2");
+            objects = (Object[]) list.get(0);
+            counts.put("SOFTWARE",objects[0]);
+
+            list = persistance.findByCommand("select count(cislo) from polozka where typ=5");
+            objects = (Object[]) list.get(0);
+            counts.put("DRIVERS",objects[0]);
+
+            ctx.put(VAR_COUNTS,counts);
+        } catch (PersistanceException e) {
+            log.warn("Cannot get default objects!",e);
+        }
     }
 }
