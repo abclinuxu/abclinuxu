@@ -36,6 +36,11 @@
         <desc>Zajímavá pou¾ití a nasazení Linuxu.</desc>
     </category>
     <category>
+        <key>FUN</key>
+        <name>Humor</name>
+        <desc>Zábavná zprávièka týkající se Linuxu èi IT.</desc>
+    </category>
+    <category>
         <key>IT</key>
         <name>IT novinky</name>
         <desc>Ostatní události a zprávy ze svìta výpoèetní techniky.</desc>
