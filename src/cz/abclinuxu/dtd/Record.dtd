@@ -10,7 +10,7 @@
 <!ATTLIST link url (#PCDATA) #REQUIRED> <!-- URL of resource or article -->
 
 <!-- Record.HARDWARE -->
-<!ELEMENT data (os,price?,driver?,settings?,params?,identification?,note?)>
+<!ELEMENT data (price?,driver?,setup?,params?,identification?,note?)>
 <!ELEMENT price (#PCDATA)> <!-- user's evaluation of price -->
 <!ELEMENT driver (#PCDATA)> <!-- kind of driver: kernel, XFree, binary -->
 <!ELEMENT setup (#PCDATA)> <!-- how to set up this hardware -->
@@ -31,7 +31,7 @@
 
 <!-- Record.Discussion -->
 <!ELEMENT data (comment+)> <!-- container for comments -->
-<!ELEMENT comment (created,parent,author|author_id,title,text, censored)> <!-- comment holds one response/reaction -->
+<!ELEMENT comment (created,parent,author|author_id,title,text, censored?)> <!-- comment holds one response/reaction -->
 <!ATTLIST comment id (#ID) #REQUIRED> <!-- identifier of comment -->
 <!ELEMENT created (#PCDATA)> <!-- date, when this comment was created in ISO format -->
 <!ELEMENT parent (#PCDATA)> <!-- int, id of parental discussion node, or 0 if this node is top level -->
