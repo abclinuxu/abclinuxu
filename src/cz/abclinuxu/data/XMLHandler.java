@@ -11,6 +11,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import cz.abclinuxu.AbcException;
 
@@ -108,5 +109,21 @@ public class XMLHandler implements Cloneable {
             return new XMLHandler(data);
         else
             return new XMLHandler(string);
+    }
+
+    public String toString() {
+        OutputFormat format = OutputFormat.createPrettyPrint();
+        format.setEncoding("ISO-8859-2");
+        format.setSuppressDeclaration(true);
+
+        try {
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            XMLWriter writer = new XMLWriter(os, format);
+            writer.write(data);
+            return os.toString();
+        } catch (IOException e) {
+            log.warn(e);
+            return "Error while serializing xml: ".concat(e.getMessage());
+        }
     }
 }

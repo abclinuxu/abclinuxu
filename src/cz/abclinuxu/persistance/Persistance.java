@@ -66,7 +66,7 @@ public interface Persistance {
     public List findByExample(List objects, String relations);
 
     /**
-     * Finds objects, that fulfill <code>command</code>. Usage of this emthod requires deep knowledge
+     * Finds objects, that fulfill <code>command</code>. Usage of this method requires deep knowledge
      * of persistance structure (such as SQL commands, database schema), which decreases portability
      * of your code.
      * @return List of arrays of primitive objects. You know, what it is.
