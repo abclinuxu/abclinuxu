@@ -20,6 +20,7 @@ import cz.abclinuxu.servlets.html.view.ViewUser;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
+import cz.abclinuxu.utils.parser.safehtml.ProfileGuard;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -71,6 +72,7 @@ public class EditUser implements AbcAction, Configurable {
     public static final String PARAM_DISTRIBUTION = "distribution";
     public static final String PARAM_ABOUT_ME = "about";
     public static final String PARAM_EMOTICONS = "emoticons";
+    public static final String PARAM_SIGNATURES = "signatures";
     public static final String PARAM_SIGNATURE = "signature";
     public static final String PARAM_ENABLE_COMMENTS = "comments";
     public static final String PARAM_COOKIE_VALIDITY = "cookieValid";
@@ -480,6 +482,10 @@ public class EditUser implements AbcAction, Configurable {
         if ( node!=null )
             params.put(PARAM_EMOTICONS, node.getText());
 
+        node = document.selectSingleNode("/data/settings/signatures");
+        if ( node!=null )
+            params.put(PARAM_SIGNATURES, node.getText());
+
         node = document.selectSingleNode("/data/settings/new_comments");
         if ( node!=null )
             params.put(PARAM_ENABLE_COMMENTS, node.getText());
@@ -525,6 +531,7 @@ public class EditUser implements AbcAction, Configurable {
             canContinue &= checkPassword(params, managed, env);
         canContinue &= setCookieValidity(params, managed);
         canContinue &= setEmoticons(params, managed);
+        canContinue &= setSignatures(params, managed);
         canContinue &= setNewComments(params, managed);
         canContinue &= setDiscussionsSizeLimit(params, managed);
         canContinue &= setNewsSizeLimit(params, managed, env);
@@ -1026,7 +1033,7 @@ public class EditUser implements AbcAction, Configurable {
             return true;
         }
         try {
-            SafeHTMLGuard.check(about);
+            ProfileGuard.check(about);
         } catch (ParserException e) {
             log.error("ParseException on '"+about+"'", e);
             ServletUtils.addError(PARAM_ABOUT_ME, e.getMessage(), env, null);
@@ -1091,6 +1098,10 @@ public class EditUser implements AbcAction, Configurable {
             ServletUtils.addError(PARAM_SIGNATURE, e.getMessage(), env, null);
             return false;
         }
+        if (signature.length()>100) {
+            ServletUtils.addError(PARAM_SIGNATURE, "Maximální délka je 100 znakù!", env, null);
+            return false;
+        }
         DocumentHelper.makeElement(personal, "signature").setText(signature);
         return true;
     }
@@ -1104,6 +1115,20 @@ public class EditUser implements AbcAction, Configurable {
     private boolean setEmoticons(Map params, User user) {
         String emoticons = (String) params.get(PARAM_EMOTICONS);
         Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/emoticons");
+        String value = ("yes".equals(emoticons))? "yes":"no";
+        element.setText(value);
+        return true;
+    }
+
+    /**
+     * Updates signatures from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setSignatures(Map params, User user) {
+        String emoticons = (String) params.get(PARAM_SIGNATURES);
+        Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/signatures");
         String value = ("yes".equals(emoticons))? "yes":"no";
         element.setText(value);
         return true;
