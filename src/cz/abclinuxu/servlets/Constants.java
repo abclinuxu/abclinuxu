@@ -94,6 +94,6 @@ public interface Constants {
     String ERROR_GENERIC = "generic";
 
     SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-    DateFormat czFormat = new SimpleDateFormat("d. M. yyyy HH:mm");
+    DateFormat czFormat = new SimpleDateFormat("d.M.yyyy HH:mm");
     DateFormat czShortFormat = new SimpleDateFormat("d.M. HH:mm");
 }

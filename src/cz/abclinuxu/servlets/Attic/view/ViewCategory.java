@@ -19,7 +19,6 @@ import cz.abclinuxu.utils.Tools;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.UrlUtils;
-import cz.abclinuxu.AbcException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 
 import javax.servlet.http.HttpServletRequest;
