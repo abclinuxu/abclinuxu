@@ -13,6 +13,17 @@ import cz.abclinuxu.data.*;
 
 /**
  * Cache of GenericObjects. Only selected classes are cached.
+ * @todo Complete rewrite needed. Add Date lru to CacheObject.
+ * Use it as LRU, delete objects not accessed within 30 minutes.
+ * Store all objects. Check size of queue and if it is larger
+ * than 5 MB, start to shrink it. Don't store initialized Relation
+ * as content of GenericObject. Just PK. If object is requested,
+ * synchronize (search) relations first. Relations shall be cached
+ * too. Ensure, that stored object contains correct updated field.<p>
+ * Find good policy for synchronization of content of searched
+ * objects. Synchronize children - OK, but synchronize also their
+ * children? And if yes, synchronize only their data or lalso their
+ * content?
  */
 public class Cache {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(Cache.class);
@@ -35,24 +46,24 @@ public class Cache {
      * PK is already stored in the cache, it is replaced by new version.
      */
     public void store(GenericObject obj) {
-        try {
-            if ( obj instanceof Category || obj instanceof User ) {
-                data.put(obj,new CachedObject(obj,System.currentTimeMillis()+SYNC_INTERVAL));
-                modCount++;
-                return;
-            }
-            if ( obj instanceof Relation ) {
-                GenericObject parent = ((Relation) obj).getParent();
-                CachedObject cached = loadCachedObject(parent);
-                if ( cached!=null ) {
-                    if ( ! cached.object.getContent().contains(obj) ) {
-                        cached.object.addContent((Relation)obj);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            log.error("Problems in cache",e);
-        }
+//        try {
+//            if ( obj instanceof Category || obj instanceof User ) {
+//                data.put(obj,new CachedObject(obj,System.currentTimeMillis()+SYNC_INTERVAL));
+//                modCount++;
+//                return;
+//            }
+//            if ( obj instanceof Relation ) {
+//                GenericObject parent = ((Relation) obj).getParent();
+//                CachedObject cached = loadCachedObject(parent);
+//                if ( cached!=null ) {
+//                    if ( ! cached.object.getContent().contains(obj) ) {
+//                        cached.object.addContent((Relation)obj);
+//                    }
+//                }
+//            }
+//        } catch (Exception e) {
+//            log.error("Problems in cache",e);
+//        }
     }
 
     /**
@@ -61,16 +72,16 @@ public class Cache {
      * @return cached object or null, if it is not found.
      */
     public GenericObject load(GenericObject obj) {
-        try {
-            if ( obj instanceof Category || obj instanceof User ) {
-                CachedObject cached = (CachedObject) data.get(obj);
-                if ( cached!=null ) {
-                    return cached.object;
-                }
-            }
-        } catch (Exception e) {
-            log.error("Problems in cache",e);
-        }
+//        try {
+//            if ( obj instanceof Category || obj instanceof User ) {
+//                CachedObject cached = (CachedObject) data.get(obj);
+//                if ( cached!=null ) {
+//                    return cached.object;
+//                }
+//            }
+//        } catch (Exception e) {
+//            log.error("Problems in cache",e);
+//        }
         return null;
     }
 
@@ -79,22 +90,22 @@ public class Cache {
      * delete it from Persistant storage too. Otherwise inconsistency occurs.
      */
     public void remove(GenericObject obj) {
-        try {
-            if ( obj instanceof Category || obj instanceof User ) {
-                data.remove(obj);
-                modCount++;
-                return;
-            }
-            if ( obj instanceof Relation ) {
-                GenericObject parent = ((Relation) obj).getParent();
-                CachedObject cached = loadCachedObject(parent);
-                if ( cached!=null ) {
-                    cached.object.getContent().remove(obj);
-                }
-            }
-        } catch (Exception e) {
-            log.error("Problems in cache",e);
-        }
+//        try {
+//            if ( obj instanceof Category || obj instanceof User ) {
+//                data.remove(obj);
+//                modCount++;
+//                return;
+//            }
+//            if ( obj instanceof Relation ) {
+//                GenericObject parent = ((Relation) obj).getParent();
+//                CachedObject cached = loadCachedObject(parent);
+//                if ( cached!=null ) {
+//                    cached.object.getContent().remove(obj);
+//                }
+//            }
+//        } catch (Exception e) {
+//            log.error("Problems in cache",e);
+//        }
     }
 
     /**
