@@ -49,6 +49,7 @@
     <copy todir="${deploy}/WEB-INF/conf">
       <fileset dir="conf">
         <include name="templates.xml" />
+        <include name="systemPrefs.xml" />
         <include name="proxool.xml" />
         <include name="log4j.xml" />
         <include name="velocity.properties" />
