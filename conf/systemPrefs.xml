@@ -23,7 +23,7 @@
                 <map>
                   <entry key="deploy.path" value="@DEPLOY_ABCLINUXU@"/>
                   <entry key="viewuser.page.size" value="20"/>
-                  <entry key="viewindex.discussions.count" value="5"/>
+                  <entry key="viewindex.discussions.count" value="10"/>
                   <entry key="template.news.count" value="6"/>
                 </map>
               </node>
