@@ -7,7 +7,7 @@
    <table>
      <thead>
            <tr>
-                <td class="td01">Dotaz</td>
+                <td class="td01">Titulek</td>
                 <td class="td02">Reakcí</td>
                 <td class="td03">Poslední</td>
             </tr>
