@@ -73,7 +73,7 @@
   </#if>
   <span class="diz_header_prefix">Titulek:</span> ${TOOL.xpath(reaction,"data/title")}<br>
  </p>
- <p>${TOOL.render(TOOL.xpath(reaction,"data/text"))}</p>
+ <p>${TOOL.render(TOOL.xpath(reaction,"data/text"),USER?if_exists)}</p>
 </#macro>
 
 <#macro showThread(diz level dizId relId)>

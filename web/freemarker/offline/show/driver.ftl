@@ -25,7 +25,7 @@
 <#global note=TOOL.xpath(ITEM,"data/note")>
 <#if note?exists>
   <tr>
-    <td valign="top">Poznámka</td><td>${TOOL.render(note)}</td>
+    <td valign="top">Poznámka</td><td>${TOOL.render(note,USER?if_exists)}</td>
   </tr>
 </#if>
 </table>

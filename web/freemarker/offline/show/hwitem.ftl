@@ -58,25 +58,25 @@
   <#if TOOL.xpath(RECORD,"data/setup")?exists>
    <tr>
     <td width="90">Postup zprovoznìní pod Linuxem</td>
-    <td>${TOOL.render(TOOL.xpath(RECORD,"data/setup"))}</td>
+    <td>${TOOL.render(TOOL.xpath(RECORD,"data/setup"),USER?if_exists)}</td>
    </tr>
   </#if>
   <#if TOOL.xpath(RECORD,"data/params")?exists>
    <tr>
     <td width="90">Technické parametry</td>
-    <td>${TOOL.render(TOOL.xpath(RECORD,"data/params"))}</td>
+    <td>${TOOL.render(TOOL.xpath(RECORD,"data/params"),USER?if_exists)}</td>
    </tr>
   </#if>
   <#if TOOL.xpath(RECORD,"data/identification")?exists>
    <tr>
     <td width="90">Linux jej identifikuje jako:</td>
-    <td>${TOOL.render(TOOL.xpath(RECORD,"data/identification"))}</td>
+    <td>${TOOL.render(TOOL.xpath(RECORD,"data/identification"),USER?if_exists)}</td>
    </tr>
   </#if>
   <#if TOOL.xpath(RECORD,"data/note")?exists>
    <tr>
     <td width="90">Poznámka</td>
-    <td>${TOOL.render(TOOL.xpath(RECORD,"data/note"))}</td>
+    <td>${TOOL.render(TOOL.xpath(RECORD,"data/note"),USER?if_exists)}</td>
    </tr>
   </#if>
  </table>

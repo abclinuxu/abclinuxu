@@ -4,7 +4,7 @@
 <#call showParents>
 
 <#if TOOL.xpath(CATEGORY,"data/note")?exists>
- <p class="note">${TOOL.render(TOOL.xpath(CATEGORY,"data/note"))}</p>
+ <p class="note">${TOOL.render(TOOL.xpath(CATEGORY,"data/note"),USER?if_exists)}</p>
 </#if>
 
 <#global map=TOOL.groupByType(CATEGORY.content)>

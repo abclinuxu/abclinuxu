@@ -43,7 +43,7 @@
   </#if>
   <tr>
    <td width="90">Návod èi poznámka</td>
-   <td>${TOOL.render(TOOL.xpath(RECORD,"data/text"))}</a></td>
+   <td>${TOOL.render(TOOL.xpath(RECORD,"data/text"),USER?if_exists)}</a></td>
   </tr>
  </table>
  <br>

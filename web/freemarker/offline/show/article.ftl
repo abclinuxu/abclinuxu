@@ -16,7 +16,7 @@ ${DATE.show(ITEM.created,"CZ_FULL")} |
 
 <p class="perex">${TOOL.xpath(ITEM,"/data/perex")}</p>
 
-${TOOL.render(TOOL.xpath(CHILDREN.record[0].child,"/data/content"))}
+${TOOL.render(TOOL.xpath(CHILDREN.record[0].child,"/data/content"),USER?if_exists)}
 
 <#if CHILDREN.discussion?exists && CHILDREN.discussion[0].child.content?size gt 0>
 <h1>Diskuse k tomuto èlánku</h1>

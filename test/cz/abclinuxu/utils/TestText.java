@@ -29,11 +29,11 @@ public class TestText extends TestCase {
         String str5 = "Hello\r\n\r\nMy name is Bond.\r\n\r\nJames Bond.";
         String exp5 = "Hello<P>\nMy name is Bond.<P>\nJames Bond.";
 
-        assertEquals(exp1,tools.render(str1));
-        assertEquals(exp2,tools.render(str2));
-        assertEquals(exp3,tools.render(str3));
-        assertEquals(exp4,tools.render(str4));
-        assertEquals(exp5,tools.render(str5));
+        assertEquals(exp1,tools.render(str1,null));
+        assertEquals(exp2,tools.render(str2, null));
+        assertEquals(exp3,tools.render(str3, null));
+        assertEquals(exp4,tools.render(str4, null));
+        assertEquals(exp5,tools.render(str5, null));
     }
 
     public TestText(String s) {
