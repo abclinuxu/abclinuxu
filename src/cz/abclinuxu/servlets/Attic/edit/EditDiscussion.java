@@ -166,6 +166,7 @@ public class EditDiscussion implements AbcAction {
             persistance.create(discussion);
             relChild = new Relation(relation.getChild(),discussion,relation.getId());
             persistance.create(relChild);
+            relChild.getParent().addChildRelation(relChild);
         } else {
             discussion = (Item) relChild.getChild();
         }
