@@ -4,6 +4,9 @@
 package cz.abclinuxu.data;
 
 import java.util.*;
+import java.beans.*;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * superclass for all classes in this website
@@ -90,5 +93,41 @@ public class GenericObject {
      */
     public void setInitialized(boolean initialized) {
         this.initialized = initialized;
+    }
+
+    /**
+     * @param user initialized User
+     * @return True, if this user may manage this resource
+     */
+    public boolean isManagedBy(User user) {
+        if ( user==null || user.getId()==0 ) return false;
+
+        // search use for admin flag
+        if ( user.isInitialized() ) {
+            for (Iterator iter = user.getContent().iterator(); iter.hasNext();) {
+                GenericObject obj = (GenericObject) iter.next();
+                if ( obj instanceof AccessRights ) {
+                    return ((AccessRights)obj).isAdmin();
+                }
+            }
+        }
+
+        // use introspection to find owner field
+        try {
+            BeanInfo info = Introspector.getBeanInfo(this.getClass());
+            PropertyDescriptor[] pd = info.getPropertyDescriptors();
+            for ( int i=0; i<pd.length; i++ ) {
+                Method method = pd[i].getReadMethod();
+                if ( method.getName().equals("getOwner") ) {
+                    int owner = ((Integer)method.invoke(this,new Object[0])).intValue();
+                    if ( owner==user.getId() ) return true;
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            return false;
+        }
+
+        return false;
     }
 }

@@ -57,6 +57,7 @@ import org.apache.log4j.xml.DOMConfigurator;
  * <tr><td>Category</td><td>K</td></tr>
  * <tr><td>Link</td><td>L</td></tr>
  * <tr><td>User</td><td>U</td></tr>
+ * <tr><td>AccessRights</td><td>X</td></tr>
  * <tr><td>error</td><td>E</td></tr>
  * </table>
  */
@@ -230,6 +231,8 @@ public class MySqlPersistance implements Persistance {
                 result = loadUser((User)obj);
             } else if (obj instanceof Server) {
                 result = loadServer((Server)obj);
+            } else if (obj instanceof AccessRights) {
+                result = loadRights((AccessRights)obj);
             }
             if ( result!=null ) result.setInitialized(true);
             return result;
@@ -463,6 +466,8 @@ public class MySqlPersistance implements Persistance {
             return "A";
         } else if (obj instanceof User) {
             return "U";
+        } else if (obj instanceof AccessRights) {
+            return "X";
         }
         log.error("getTableId called with object, which can't be stored in tree! "+obj);
         return "E";
@@ -488,6 +493,8 @@ public class MySqlPersistance implements Persistance {
             return "uzivatel";
         } else if (obj instanceof Server) {
             return "server";
+        } else if (obj instanceof AccessRights) {
+            return "pravo";
         }
         throw new PersistanceException("Nepodporovany typ tridy!",AbcException.DB_UNKNOWN_CLASS,obj,null);
     }
@@ -513,6 +520,8 @@ public class MySqlPersistance implements Persistance {
             return Poll.class;
         } else if (obj instanceof User) {
             return User.class;
+        } else if (obj instanceof AccessRights) {
+            return AccessRights.class;
         }
         throw new PersistanceException("Nepodporovany typ tridy!",AbcException.DB_UNKNOWN_CLASS,obj,null);
     }
@@ -570,6 +579,8 @@ public class MySqlPersistance implements Persistance {
                 obj.addContent(new Link(id));
             } else if ( type=='U' ) {
                 obj.addContent(new User(id));
+            } else if ( type=='X' ) {
+                obj.addContent(new AccessRights(id));
             } else if ( type=='E' ) {
                 continue;
             }
@@ -1126,6 +1137,31 @@ public class MySqlPersistance implements Persistance {
             server.setUrl(resultSet.getString(3));
             server.setContact(resultSet.getString(4));
             return server;
+        } finally {
+            releaseSQLConnection(con);
+        }
+    }
+
+    /**
+     * @return link from mysql db
+     */
+    protected GenericObject loadRights(AccessRights obj) throws PersistanceException, SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("select * from pravo where cislo=?");
+            statement.setInt(1,obj.getId());
+
+            ResultSet resultSet = statement.executeQuery();
+            if ( !resultSet.next() ) {
+                throw new PersistanceException("Pravo "+obj.getId()+" nebylo nalezen!",AbcException.DB_NOT_FOUND,obj,null);
+            }
+
+            AccessRights rights = new AccessRights(obj.getId());
+            rights.setAdmin(resultSet.getBoolean(2));
+
+            return rights;
         } finally {
             releaseSQLConnection(con);
         }
