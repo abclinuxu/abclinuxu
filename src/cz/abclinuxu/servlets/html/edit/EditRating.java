@@ -21,8 +21,10 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.GenericDataObject;
+import cz.abclinuxu.data.User;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 
 import javax.servlet.http.HttpSession;
@@ -41,12 +43,11 @@ public class EditRating implements AbcAction, Configurable {
     public static final int VALUE_MAX = 5;
 
     public static final String PREF_MESSAGE_OK = "msg.ok";
+    public static final String PREF_MESSAGE_NOT_LOGGED = "msg.not.logged";
     public static final String PREF_MESSAGE_MISSING_DATA = "msg.data.missing";
     public static final String PREF_MESSAGE_ALREADY_RATED = "msg.already.rated";
 
-    public static final String SESSION_PREFIX = "rating_";
-
-    static String msgOK, msgMissingData, msgAlreadyRated;
+    static String msgOK, msgMissingData, msgAlreadyRated, msgNotLogged;
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new EditRating());
     }
@@ -65,36 +66,24 @@ public class EditRating implements AbcAction, Configurable {
         } else
             throw new MissingArgumentException("Chybí parametr relationId!");
 
-        // todo jen prihlaseni uzivatele. otevrit v novem okne
+        User user = (User) env.get(Constants.VAR_USER);
+        if (user==null) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, msgOK, env, null);
+            return "/print/misc/rating_result.ftl";
+        }
 
         GenericDataObject object = ((GenericDataObject)relation.getChild());
         Document data = object.getData();
         synchronized (data.getRootElement()) {
-            String key = generateKey(relation.getId());
-            boolean result = EditRating.rate(data.getRootElement(), key, params, env, request.getSession());
+            boolean result = rate(user, relation.getId(), data.getRootElement(), params, env, request.getSession());
             if ( result ) {
                 ServletUtils.addError(Constants.ERROR_GENERIC, msgOK, env, null);
                 persistance.update(object);
             }
         }
+        SQLTool.getInstance().getUserAction(user.getId(), relation.getId(), "rating");
 
         return "/print/misc/rating_result.ftl";
-    }
-
-    /**
-     * @param id identificator of the object
-     * @return key to be used in rate method
-     */
-    public static String generateKey(int id) {
-        return SESSION_PREFIX+id;
-    }
-
-    /**
-     * @param id identificator of the object
-     * @return key to be used in rate method
-     */
-    public static String generateKey(int id, int subId) {
-        return SESSION_PREFIX+id+"_"+subId;
     }
 
     /**
@@ -102,11 +91,10 @@ public class EditRating implements AbcAction, Configurable {
      * doesn't care of either synchronization or persistance.
      * This shall be handled by caller.
      * @param object root element for the rated object.
-     * @param key this object's key used to track multiple rating
      * @param params parameters
      * @return true if rating was successfull
      */
-    public static boolean rate(Element object, String key, Map params, Map env, HttpSession session) {
+    public static boolean rate(User user, int relationId, Element object, Map params, Map env, HttpSession session) {
         String type = (String) params.get(PARAM_TYPE);
         int value = Misc.parseInt((String) params.get(PARAM_VALUE), 0);
         if (type==null || type.length()==0 || value<VALUE_MIN || value>VALUE_MAX) {
@@ -114,8 +102,8 @@ public class EditRating implements AbcAction, Configurable {
             return false;
         }
 
-        key = key + "_" + type;
-        if (session.getAttribute(key)!=null) {
+        SQLTool sqlTool = SQLTool.getInstance();
+        if (sqlTool.getUserAction(user.getId(), relationId, "rating")!=null) {
             ServletUtils.addError(Constants.ERROR_GENERIC, msgAlreadyRated, env, session);
             return false;
         }
@@ -134,8 +122,6 @@ public class EditRating implements AbcAction, Configurable {
 
         rating.element("sum").setText(Integer.toString(sum+value));
         rating.element("count").setText(Integer.toString(count+1));
-
-        session.setAttribute(key, Boolean.TRUE);
         return true;
     }
 
