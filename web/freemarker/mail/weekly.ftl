@@ -8,9 +8,10 @@ Souhrn clanku pro tyden ${WEEK}/${YEAR}
 
  http://www.abclinuxu.cz/clanky/ViewRelation?relationId=${relation.id}
 
- <#if relation_has_next>---------------------</#if>
+ ---------------------
 
 </#list>
+
 Zasilani teto sluzby muzete zrusit na adrese:
 
 http://www.abclinuxu.cz/Profile?action=myPage&userId=${USER.id}
