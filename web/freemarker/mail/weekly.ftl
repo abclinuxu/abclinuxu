@@ -12,8 +12,6 @@ Souhrn clanku pro tyden ${WEEK}/${YEAR}
 
 </#list>
 
-Zasilani teto sluzby muzete zrusit na adrese:
-
-http://www.abclinuxu.cz/Profile/${USER.id}?action=myPage
-
+Pokud si neprejete dale dostavat tyto emaily, muzete tak ucinit
+na adrese http://www.abclinuxu.cz/EditUser/ ${USER.id}?action=subscribe
 Vase prihlasovaci jmeno je ${USER.login}.
