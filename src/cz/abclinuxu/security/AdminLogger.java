@@ -19,6 +19,6 @@ public class AdminLogger {
      * @param message description of his activity
      */
     public static void logEvent(User user, String message) {
-        log.info(user.getName()+"|"+message);
+        log.info(user.getName()+" | "+message);
     }
 }

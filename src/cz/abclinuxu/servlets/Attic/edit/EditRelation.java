@@ -15,7 +15,9 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Tools;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 
 import org.dom4j.*;
@@ -181,8 +183,13 @@ public class EditRelation extends AbcFMServlet {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_CURRENT);
+        User user = (User) env.get(Constants.VAR_USER);
 
+        persistance.synchronize(relation);
+        persistance.synchronize(relation.getChild());
+        AdminLogger.logEvent(user,"remove | relation "+relation.getId()+" | "+Tools.childName(relation));
         persistance.remove(relation);
+
         String url = null;
         String prefix = (String) params.get(PARAM_PREFIX);
         if ( prefix!=null ) {
@@ -211,6 +218,8 @@ public class EditRelation extends AbcFMServlet {
         relation.setParent(destination.getChild());
         relation.setUpper(destination.getId());
         persistance.update(relation);
+
+        AdminLogger.logEvent(user, "  move | relation "+relation.getId()+" | to "+destination);
 
         String url = null;
         String prefix = (String) params.get(PARAM_PREFIX);
