@@ -73,18 +73,22 @@
           </node>
           <node name="SQLTool">
             <map>
-              <entry key="max.record.created.of.item" value="select max(vytvoreno) from relace R left join zaznam Z on Z.cislo=R.potomek where R.typ_predka='P' and R.predek=?"/>
-              <entry key="hardware.relations.by.updated" value="select R.cislo from zaznam Z, relace R where typ=1 and Z.cislo=R.potomek and typ_potomka='Z' order by zmeneno desc limit ?,?"/>
-              <entry key="software.relations.by.updated" value="select R.cislo from zaznam Z, relace R where typ=2 and Z.cislo=R.potomek and typ_potomka='Z' order by zmeneno desc limit ?,?"/>
-              <entry key="driver.relations.by.updated" value="select R.cislo from polozka P, relace R where typ=5 and P.cislo=R.potomek and typ_potomka='P' order by zmeneno desc limit ?,?"/>
+              <entry key="record.relations.by.type.by.updated" value="select R.cislo from zaznam Z, relace R where typ=? and Z.cislo=R.potomek and typ_potomka='Z' order by zmeneno desc limit ?,?"/>
+              <entry key="item.relations.by.type.by.updated" value="select R.cislo from polozka P, relace R where typ=? and P.cislo=R.potomek and typ_potomka='P' order by zmeneno desc limit ?,?"/>
               <entry key="article.relations.by.created" value="select R.cislo from polozka P, relace R where R.predchozi in (2,3,4,5,6,251,5324,8546,12448) and R.typ_potomka='P' and P.typ=2 and P.cislo=R.potomek and P.vytvoreno&lt;now() order by vytvoreno desc limit ?,?"/>
+              <entry key="article.relations.within.period" value="select R.cislo from relace R left join polozka P on R.potomek=P.cislo where R.typ_potomka='P' and R.predchozi in (2,3,4,5,6,251,5324,8546,12448) and P.typ=2 and P.vytvoreno&gt;? and P.vytvoreno&lt;? order by vytvoreno asc"/>
               <entry key="discussion.relations.by.created" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek where R.typ_potomka='P' and R.typ_predka='K' and P.typ=3 order by P.vytvoreno desc limit ?,?"/>
-              <entry key="count.hardware.records" value="select count(cislo) from zaznam where typ=1"/>
-              <entry key="count.software.records" value="select count(cislo) from zaznam where typ=2"/>
-              <entry key="count.driver.items" value="select count(cislo) from polozka where typ=5"/>
+              <entry key="record.relations.by.type.by.user" value="select R.cislo from relace R left join zaznam Z on R.potomek=Z.cislo where R.typ_potomka='Z' and Z.typ=? and Z.pridal=? order by R.cislo limit ?,?"/>
+              <entry key="article.relations.by.user" value="select R.cislo from relace R left join polozka P on (P.cislo=R.potomek) where typ_potomka='P' and P.typ=2 and P.data like concat('%&lt;author&gt;',?,'&lt;/author%') and P.vytvoreno&lt;now() group by potomek order by vytvoreno asc limit ?,?"/>
+              <entry key="question.relations.by.user" value="select R.cislo from relace R, polozka P where R.typ_potomka='P' and R.potomek=P.cislo and R.typ_predka='K' and R.predek!=-1 and P.typ=3 and P.pridal=? order by vytvoreno asc limit ?,?"/>
+              <entry key="count.articles.by.user" value="select count(*) from polozka where typ=2 and data like concat('%&lt;author&gt;',?,'&lt;/author%') and vytvoreno&lt;now()"/>
+              <entry key="count.records.by.user.by.type" value="select count(*) from zaznam where typ=? and pridal=?"/>
+              <entry key="count.items.by.user.by.type" value="select count(*) from polozka where typ=? and pridal=?"/>
+              <entry key="count.records.by.type" value="select count(*) from zaznam where typ=?"/>
+              <entry key="count.items.by.type" value="select count(*) from polozka where typ=?"/>
               <entry key="max.poll" value="select max(cislo) from anketa"/>
               <entry key="max.user" value="select max(cislo) from uzivatel"/>
-              <entry key="article.relations.within.period" value="select R.cislo from relace R left join polozka P on R.potomek=P.cislo where R.typ_potomka='P' and R.predchozi in (2,3,4,5,6,251,5324,8546,12448) and P.typ=2 and P.vytvoreno&gt;? and P.vytvoreno&lt;? order by vytvoreno asc"/>
+              <entry key="max.record.created.of.item" value="select max(vytvoreno) from relace R left join zaznam Z on Z.cislo=R.potomek where R.typ_predka='P' and R.predek=?"/>
               <entry key="users.email.weekly" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;>&lt;weekly_summary>yes%'"/>
             </map>
           </node>

@@ -12,11 +12,11 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Tools;
 import cz.abclinuxu.utils.email.EmailSender;
-import cz.abclinuxu.exceptions.MissingArgumentException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -63,7 +63,7 @@ public class ViewUser extends AbcFMServlet {
         String action = (String) params.get(PARAM_ACTION);
 
         if ( action==null )
-            throw new MissingArgumentException("Chybí parametr action!");
+            return handleProfile(request, env);
 
         if ( action.equals(ACTION_LOGIN) ) {
             return handleLogin(request,env);
@@ -140,78 +140,28 @@ public class ViewUser extends AbcFMServlet {
      * shows login screen
      */
     protected String handleShowContent(HttpServletRequest request, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) InstanceUtils.instantiateParam(PARAM_USER,User.class,params);
 
-        List list = new ArrayList(1);
-
         if ( params.containsKey(CONTENT_HARDWARE) ) {
-            Record record = new Record();
-            record.setOwner(user.getId());
-            record.setType(Record.HARDWARE);
-            list.add(record);
-
-            List found = persistance.findByExample(list,null);
-
-            List hw = new ArrayList(found.size());
-            Relation rel = new Relation();
-            for (Iterator iter = found.iterator(); iter.hasNext();) {
-                rel.setChild((GenericObject) iter.next());
-                hw.add(persistance.findByExample(rel)[0]);
-            }
-            Tools.sync(hw);
-            env.put(VAR_HW_RECORDS,hw);
+            List list = SQLTool.getInstance().findRecordRelationsByUser(user.getId(), Record.HARDWARE, 0,100);
+            Tools.sync(list);
+            env.put(VAR_HW_RECORDS,list);
 
         } else if ( params.containsKey(CONTENT_SOFTWARE) ) {
-            Record record = new Record();
-            record.setOwner(user.getId());
-            record.setType(Record.SOFTWARE);
-            list.add(record);
-
-            List found = persistance.findByExample(list,null);
-            List sw = new ArrayList(found.size());
-            Relation rel = new Relation();
-            for (Iterator iter = found.iterator(); iter.hasNext();) {
-                rel.setChild((GenericObject) iter.next());
-                sw.add(persistance.findByExample(rel)[0]);
-            }
-            Tools.sync(sw);
-            env.put(VAR_SW_RECORDS,sw);
+            List list = SQLTool.getInstance().findRecordRelationsByUser(user.getId(), Record.SOFTWARE, 0, 100);
+            Tools.sync(list);
+            env.put(VAR_SW_RECORDS,list);
 
         } else if ( params.containsKey(CONTENT_ARTICLES) ) {
-            Item item = new Item();
-            item.setType(Item.ARTICLE);
-            item.setSearchString("%<author>"+user.getId()+"</author>%");
-            list.add(item);
-            List found = persistance.findByExample(list,null);
-
-            List articles = new ArrayList(found.size());
-            Relation rel = new Relation();
-            for (Iterator iter = found.iterator(); iter.hasNext();) {
-                rel.setChild((GenericObject) iter.next());
-                articles.add(persistance.findByExample(rel)[0]);
-            }
-            Tools.sync(articles);
-            env.put(VAR_ARTICLES,articles);
+            List list = SQLTool.getInstance().findArticleRelationsByUser(user.getId(), 0, 200);
+            Tools.sync(list);
+            env.put(VAR_ARTICLES,list);
 
         } else if ( params.containsKey(CONTENT_DISCUSSIONS) ) {
-            Item item = new Item();
-            item.setType(Item.DISCUSSION);
-            item.setOwner(user.getId());
-            list.add(item);
-            List found = persistance.findByExample(list,null);
-
-            List dizs = new ArrayList(found.size());
-            Relation rel = new Relation();
-            for (Iterator iter = found.iterator(); iter.hasNext();) {
-                rel.setChild((GenericObject) iter.next());
-                Relation diz = persistance.findByExample(rel)[0];
-                if ( diz.getParent() instanceof Category && diz.getParent().getId()!=-1 )
-                    dizs.add(diz);
-            }
-            Tools.sync(dizs);
-            env.put(VAR_DISCUSSIONS,dizs);
+            List list = SQLTool.getInstance().findQuestionRelationsByUser(user.getId(), 0, 200);
+            Tools.sync(list);
+            env.put(VAR_DISCUSSIONS,list);
         }
 
         return FMTemplateSelector.select("ViewUser","content",env,request);

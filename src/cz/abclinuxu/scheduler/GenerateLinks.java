@@ -110,7 +110,7 @@ public class GenerateLinks extends TimerTask implements Configurable {
                 }
             }
 
-            list = SQLTool.getInstance().findHardwareRelationsByUpdated(0,3);
+            list = SQLTool.getInstance().findRecordRelationsByUpdated(Record.HARDWARE, 0,3);
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
                 Item item = (Item) found.getParent();
@@ -140,7 +140,7 @@ public class GenerateLinks extends TimerTask implements Configurable {
 //                }
 //            }
 
-            list = SQLTool.getInstance().findDriverRelationsByUpdated(0,1);
+            list = SQLTool.getInstance().findItemRelationsByUpdated(Item.DRIVER, 0,1);
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
                 Item item = (Item) found.getChild();

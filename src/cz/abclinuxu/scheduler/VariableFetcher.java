@@ -105,11 +105,11 @@ public class VariableFetcher extends TimerTask {
         log.debug("fetching variables");
         try {
             // put counts into map
-            Integer i = sqlTool.getHardwareCount();
+            Integer i = sqlTool.getRecordCount(Record.HARDWARE);
             counter.put("HARDWARE",i);
-            i = sqlTool.getSoftwareCount();
+            i = sqlTool.getRecordCount(Record.SOFTWARE);
             counter.put("SOFTWARE",i);
-            i = sqlTool.getDriversCount();
+            i = sqlTool.getItemCount(Item.DRIVER);
             counter.put("DRIVERS",i);
             Category forum = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
             counter.put("FORUM",new Integer(forum.getContent().size()));
@@ -117,10 +117,10 @@ public class VariableFetcher extends TimerTask {
             counter.put("REQUESTS",new Integer(requests.getContent().size()));
 
             currentPoll = sqlTool.findActivePoll();
-            newHardware = sqlTool.findHardwareRelationsByUpdated(0,SIZE);
-            newSoftware = sqlTool.findSoftwareRelationsByUpdated(0,SIZE);
-            newDrivers = sqlTool.findDriverRelationsByUpdated(0,SIZE);
-            newArticles = sqlTool.findArticleRelationsByUpdated(0,ARTICLE_SIZE);
+            newHardware = sqlTool.findRecordRelationsByUpdated(Record.HARDWARE, 0,SIZE);
+            newSoftware = sqlTool.findRecordRelationsByUpdated(Record.SOFTWARE, 0,SIZE);
+            newDrivers = sqlTool.findItemRelationsByUpdated(Item.DRIVER, 0,SIZE);
+            newArticles = sqlTool.findArticleRelationsByCreated(0,ARTICLE_SIZE);
             updateProfiles();
 
             log.debug("finished fetching variables");

@@ -11,6 +11,7 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.data.Record;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -55,16 +56,16 @@ public class ShowOlder extends AbcFMServlet {
         List found = new ArrayList(count);
 
         if ( "articles".equalsIgnoreCase(type) ) {
-            found = SQLTool.getInstance().findArticleRelationsByUpdated(from,count);
+            found = SQLTool.getInstance().findArticleRelationsByCreated(from,count);
             env.put(VAR_TYPE,"articles");
         } else if ( "hardware".equalsIgnoreCase(type) ) {
-            found = SQLTool.getInstance().findHardwareRelationsByUpdated(from,count);
+            found = SQLTool.getInstance().findRecordRelationsByUpdated(Record.HARDWARE, from,count);
             env.put(VAR_TYPE,"hardware");
         } else if ( "software".equalsIgnoreCase(type) ) {
-            found = SQLTool.getInstance().findSoftwareRelationsByUpdated(from,count);
+            found = SQLTool.getInstance().findRecordRelationsByUpdated(Record.SOFTWARE, from,count);
             env.put(VAR_TYPE,"software");
         } else if ( "discussions".equalsIgnoreCase(type) ) {
-            found = SQLTool.getInstance().findDiscussionRelationsByUpdated(from,count);
+            found = SQLTool.getInstance().findDiscussionRelationsByCreated(from,count);
             env.put(VAR_TYPE,"discussions");
         } else {
             ServletUtils.addError(PARAM_TYPE,"Chybí parametr type!",env,null);
