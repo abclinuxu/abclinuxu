@@ -112,9 +112,6 @@ public class EditDiscussion implements AbcAction {
         if ( ACTION_ADD_QUESTION_STEP2.equals(action) )
             return actionAddQuestion2(request, response, env);
 
-        if ( ACTION_RATE_COMMENT.equals(action) )
-            return actionRateComment(request,response,env);
-
         // check permissions
         User user = (User) env.get(Constants.VAR_USER);
         if ( user==null )
