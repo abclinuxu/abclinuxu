@@ -55,8 +55,11 @@
   <a name="${comment.id}"></a>
   ${DATE.show(comment.created,"CZ_FULL")}
   <#if comment.author?exists>
-   <#local who=TOOL.sync(comment.author)>
-   <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
+   <#local who=TOOL.sync(comment.author)><a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
+   <#local blog=TOOL.xpath(who, "//settings/blog")?default("UNDEF")>
+   <#if blog!="UNDEF"><#local blog=TOOL.createCategory(blog)><a href="/blog/${blog.subType}">blog</a></#if>
+   <#local city=TOOL.xpath(who,"//personal/city")?default("UNDEF")><#if city!="UNDEF">${city}</#if>
+   <#local kraj=TOOL.xpath(who,"//personal/area")?default("UNDEF")><#if kraj!="UNDEF">kraj ${kraj}</#if>
   <#else>
    ${TOOL.xpath(comment.data,"author")?if_exists}
   </#if><br>
