@@ -1,6 +1,16 @@
+#####
+## Macro, that synchronizes selected generic object with persistance
+#####
+
 #macro(sync $object)
 #if(!$object.isInitialized()) $PERSISTANCE.synchronize($object)#end
 #end
+
+
+
+#####
+## Macro, that displays parents of selected generic object
+#####
 
 #macro(parents)
 #if($RELATION)
@@ -11,3 +21,15 @@
 #end
 - <a href="$!URL.make("/ViewRelation?relationId=$parent.Id")">$!UTIL.getChildName($parent)</a>
 #end</div>#end#end
+
+
+
+#####
+## Macro, that shows messages and generic errors
+#####
+
+#macro(showMessages)
+#foreach ($msg in $MESSAGES)<div class="message">$msg</div>#set($found=true)#end
+#if($!ERRORS.get('generic'))<div class="error">$ERRORS.get('generic')</div>#set($found=true)#end
+#if($found)<br>#end
+#end

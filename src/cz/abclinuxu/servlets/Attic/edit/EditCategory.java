@@ -99,7 +99,7 @@ public class EditCategory extends AbcServlet {
             int rights = checkAccess(category,AbcServlet.METHOD_ADD,ctx);
             switch (rights) {
                 case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
-                case AbcServlet.USER_INSUFFICIENT_RIGHTS: addErrorMessage(AbcServlet.GENERIC_ERROR,"Vase prava nejsou dostatecna pro tuto operaci!",ctx);
+                case AbcServlet.USER_INSUFFICIENT_RIGHTS: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return getTemplate("add/category.vm");
             }
 
@@ -108,7 +108,7 @@ public class EditCategory extends AbcServlet {
             switch (rights) {
                 case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
                 case AbcServlet.USER_INSUFFICIENT_RIGHTS: {
-                    addErrorMessage(AbcServlet.GENERIC_ERROR,"Vase prava nejsou dostatecna pro tuto operaci!",ctx);
+                    addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                     return getTemplate("add/category.vm");
                 }
                 default: return actionAddStep2(request,response,ctx);
@@ -118,7 +118,7 @@ public class EditCategory extends AbcServlet {
             int rights = checkAccess(category,AbcServlet.METHOD_EDIT,ctx);
             switch (rights) {
                 case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
-                case AbcServlet.USER_INSUFFICIENT_RIGHTS: addErrorMessage(AbcServlet.GENERIC_ERROR,"Vase prava nejsou dostatecna pro tuto operaci!",ctx);
+                case AbcServlet.USER_INSUFFICIENT_RIGHTS: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return actionEditStep1(request,ctx);
             }
 
@@ -126,7 +126,7 @@ public class EditCategory extends AbcServlet {
             int rights = checkAccess(category,AbcServlet.METHOD_EDIT,ctx);
             switch (rights) {
                 case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
-                case AbcServlet.USER_INSUFFICIENT_RIGHTS: addErrorMessage(AbcServlet.GENERIC_ERROR,"Vase prava nejsou dostatecna pro tuto operaci!",ctx);
+                case AbcServlet.USER_INSUFFICIENT_RIGHTS: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return actionEditStep2(request,response,ctx);
             }
 
@@ -144,11 +144,9 @@ public class EditCategory extends AbcServlet {
         String icon = (String) params.get(EditCategory.PARAM_ICON);
         String open = (String) params.get(EditCategory.PARAM_OPEN);
         String note = (String) params.get(EditCategory.PARAM_NOTE);
-        if ( name!=null) name = name.trim();
-        if ( note!=null) note = note.trim();
 
         if ( name==null || name.length()==0 ) {
-            addErrorMessage(EditCategory.PARAM_NAME,"Nezadal jste jméno kategorie!",ctx);
+            addError(EditCategory.PARAM_NAME,"Nezadal jste jméno kategorie!",ctx, null);
             return getTemplate("add/category.vm");
         }
 
@@ -175,7 +173,7 @@ public class EditCategory extends AbcServlet {
             relation = new Relation(upperCategory,category,upper);
             PersistanceFactory.getPersistance().create(relation);
         } catch (PersistanceException e) {
-            addErrorMessage(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx);
+            addError(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
             return getTemplate("add/category.vm");
         }
 

@@ -115,7 +115,7 @@ public class EditUser extends AbcServlet {
             PersistanceFactory.getPersistance().create(user);
         } catch ( PersistanceException e ) {
             if ( e.getStatus()==AbcException.DB_DUPLICATE ) {
-                addErrorMessage(PARAM_LOGIN,"Toto jmeno je jiz pouzivano!",ctx);
+                addError(PARAM_LOGIN,"Toto jmeno je jiz pouzivano!",ctx, null);
             }
             return getTemplate("add/user.vm");
         }
@@ -166,14 +166,14 @@ public class EditUser extends AbcServlet {
         User user = (User) ctx.get(AbcServlet.VAR_USER);
         String pass = request.getParameter(EditUser.PARAM_PASSWORD);
         if ( !user.validatePassword(pass) ) {
-            addErrorMessage(PARAM_PASSWORD,"Neplatne heslo!",ctx);
+            addError(PARAM_PASSWORD,"Neplatné heslo!",ctx, null);
             return getTemplate("edit/user.vm");
         }
 
         if ( !fillUser(request,user,ctx,false) ) return getTemplate("edit/user.vm");
         PersistanceFactory.getPersistance().update(user);
 
-        addMessage("Zmeny byly ulozeny.",ctx);
+        addMessage("Zmìny byly ulo¾eny.",ctx, request.getSession());
         redirect("/",response,ctx);
         return null;
     }
@@ -192,25 +192,25 @@ public class EditUser extends AbcServlet {
         String email = (String) params.get(EditUser.PARAM_EMAIL);
 
         if ( login==null || login.length()<4 ) {
-            addErrorMessage(PARAM_LOGIN,"Zadane prihlasovaci jmeno je prilis kratke!",ctx);
+            addError(PARAM_LOGIN,"Zadané pøihla¹ovací jméno je pøíli¹ krátké!",ctx, null);
             error = true;
         }
         if ( name==null || name.length()<5 ) {
-            addErrorMessage(PARAM_NAME,"Zadane jmeno je prilis kratke!",ctx);
+            addError(PARAM_NAME,"Zadane jmeno je pøíli¹ krátké!",ctx, null);
             error = true;
         }
         if ( updatePassword ) {
             if ( password==null || password.length()<4 ) {
-                addErrorMessage(PARAM_PASSWORD,"Heslo je prilis kratke!",ctx);
+                addError(PARAM_PASSWORD,"Heslo je pøíli¹ krátké!",ctx, null);
                 error = true;
             }
             if ( password!=null && !(password.equals((String) request.getParameter(EditUser.PARAM_PASSWORD2))) ) {
-                addErrorMessage(PARAM_PASSWORD,"Hesla se lisi!",ctx);
+                addError(PARAM_PASSWORD,"Hesla se li¹í!",ctx, null);
                 error = true;
             }
         }
         if ( email==null || email.length()<6 || email.indexOf('@')==-1 ) {
-            addErrorMessage(PARAM_EMAIL,"Neplatny email!",ctx);
+            addError(PARAM_EMAIL,"Neplatný email!",ctx, null);
             error = true;
         }
 

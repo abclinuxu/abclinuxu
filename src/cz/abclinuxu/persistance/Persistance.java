@@ -8,8 +8,8 @@
 package cz.abclinuxu.persistance;
 
 import java.util.List;
-import cz.abclinuxu.data.GenericObject;
-import cz.abclinuxu.data.Relation;
+
+import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.PersistanceException;
 
 /**
@@ -93,6 +93,11 @@ public interface Persistance {
      * Increments counter for specified object.
      */
     public void incrementCounter(GenericObject obj) throws PersistanceException;
+
+    /**
+     * Increments counter for specified choice od the poll.
+     */
+    public void incrementCounter(PollChoice choice) throws PersistanceException;
 
     /**
      * @return Actual value of counter for specified object.

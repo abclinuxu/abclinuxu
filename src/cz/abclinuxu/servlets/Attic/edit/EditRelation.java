@@ -60,7 +60,7 @@ public class EditRelation extends AbcServlet {
             int rights = checkAccess(relation.getChild(),AbcServlet.METHOD_ADD,ctx);
             switch (rights) {
                 case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
-                case AbcServlet.USER_INSUFFICIENT_RIGHTS: addErrorMessage(AbcServlet.GENERIC_ERROR,"Vase prava nejsou dostatecna pro tuto operaci!",ctx);
+                case AbcServlet.USER_INSUFFICIENT_RIGHTS: addError(AbcServlet.GENERIC_ERROR,"Vase prava nejsou dostatecna pro tuto operaci!",ctx, null);
                 default: return getTemplate("add/relation.vm");
             }
 
@@ -69,7 +69,7 @@ public class EditRelation extends AbcServlet {
             switch (rights) {
                 case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
                 case AbcServlet.USER_INSUFFICIENT_RIGHTS: {
-                    addErrorMessage(AbcServlet.GENERIC_ERROR,"Vase prava nejsou dostatecna pro tuto operaci!",ctx);
+                    addError(AbcServlet.GENERIC_ERROR,"Vase prava nejsou dostatecna pro tuto operaci!",ctx, null);
                     return getTemplate("add/relation.vm");
                 }
                 default: return actionLinkStep2(request,response,ctx);

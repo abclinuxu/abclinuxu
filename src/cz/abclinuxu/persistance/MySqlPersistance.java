@@ -354,6 +354,30 @@ public class MySqlPersistance implements Persistance {
         }
     }
 
+    public void incrementCounter(PollChoice choice) throws PersistanceException {
+        Connection con = null;
+        try {
+            con = getSQLConnection();
+
+            PreparedStatement statement = con.prepareStatement("update data_ankety set pocet=pocet+1 where cislo=? and anketa=?");
+            statement.setInt(1,choice.getId());
+            statement.setInt(2,choice.getPoll());
+            statement.executeUpdate();
+
+            statement = con.prepareStatement("select pocet from data_ankety where cislo=? and anketa=?");
+            statement.setInt(1,choice.getId());
+            statement.setInt(2,choice.getPoll());
+
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            choice.setCount(resultSet.getInt(1));
+        } catch ( SQLException e ) {
+            log.error("Nepodarilo se zvysit citac pro "+choice,e);
+        } finally {
+            releaseSQLConnection(con);
+        }
+    }
+
     public int getCounterValue(GenericObject obj) throws PersistanceException {
         Connection con = null;
         try {
@@ -839,7 +863,7 @@ public class MySqlPersistance implements Persistance {
             org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)statement;
             poll.setId((int)mm.getLastInsertID());
 
-            statement = con.prepareStatement("insert into anketa_data values(?,?,?,0)");
+            statement = con.prepareStatement("insert into data_ankety values(?,?,?,0)");
             for ( int i=0; i<choices.length; i++ ) {
                 statement.clearParameters();
                 statement.setInt(1,i);
@@ -847,6 +871,7 @@ public class MySqlPersistance implements Persistance {
                 statement.setString(3,choices[i].getText());
 
                 result = statement.executeUpdate();
+                choices[i].setPoll(poll.getId());
             }
         } finally {
             releaseSQLConnection(con);
@@ -1052,7 +1077,7 @@ public class MySqlPersistance implements Persistance {
             Poll poll = new Poll(obj.getId(),resultSet.getInt(2));
             poll.setText(new String(resultSet.getString(3)));
             poll.setMultiChoice(resultSet.getBoolean(4));
-            poll.setUpdated(resultSet.getTimestamp(5));
+            poll.setCreated(resultSet.getDate(5));
             poll.setClosed(resultSet.getBoolean(6));
 
             statement = con.prepareStatement("select volba,pocet from data_ankety where anketa=? order by cislo asc");
@@ -1060,6 +1085,7 @@ public class MySqlPersistance implements Persistance {
 
             resultSet = statement.executeQuery();
             List choices = new ArrayList();
+            int i = 0;
             while ( resultSet.next() ) {
                 PollChoice choice = new PollChoice(resultSet.getString(1));
                 choice.setCount(resultSet.getInt(2));

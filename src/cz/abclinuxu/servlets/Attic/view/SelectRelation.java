@@ -7,6 +7,7 @@
 package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
@@ -99,25 +100,25 @@ public class SelectRelation extends AbcServlet {
                 ctx.put(SelectRelation.VAR_CURRENT,current);
                 return getTemplate("view/selectRelation.vm");
             } catch (NumberFormatException e) {
-                addErrorMessage(SelectRelation.PARAM_ENTERED,"Cislo vetsi nez nula!",ctx);
+                addError(SelectRelation.PARAM_ENTERED,"Cislo vetsi nez nula!",ctx, null);
             } catch (PersistanceException e) {
-                addErrorMessage(AbcServlet.GENERIC_ERROR,"Nebyla zvolena platna relace!",ctx);
+                addError(AbcServlet.GENERIC_ERROR,"Nebyla zvolena platna relace!",ctx, null);
             }
         }
 
-        Category clanky = (Category) persistance.findById(new Category(1));
+        Category clanky = (Category) persistance.findById(new Category(Constants.CAT_ARTICLES));
         List content = clanky.getContent();
         ctx.put(SelectRelation.VAR_CLANKY,content);
 
-        Category hw = (Category) persistance.findById(new Category(2));
+        Category hw = (Category) persistance.findById(new Category(Constants.CAT_HARDWARE));
         content = hw.getContent();
         ctx.put(SelectRelation.VAR_HARDWARE,content);
 
-        Category sw = (Category) persistance.findById(new Category(3));
+        Category sw = (Category) persistance.findById(new Category(Constants.CAT_SOFTWARE));
         content = sw.getContent();
         ctx.put(SelectRelation.VAR_SOFTWARE,content);
 
-        Category hw386 = (Category) persistance.findById(new Category(4));
+        Category hw386 = (Category) persistance.findById(new Category(Constants.CAT_386));
         content = hw386.getContent();
         ctx.put(SelectRelation.VAR_386,content);
         return getTemplate("view/selectRelation.vm");
@@ -135,13 +136,13 @@ public class SelectRelation extends AbcServlet {
             try {
                 result = Integer.parseInt(manual);
             } catch (NumberFormatException e) {
-                addErrorMessage(SelectRelation.PARAM_ENTERED,"Cislo vetsi nez nula!",ctx);
+                addError(SelectRelation.PARAM_ENTERED,"Cislo vetsi nez nula!",ctx, null);
             }
         } else {
             try {
                 result = Integer.parseInt(tmp);
             } catch (NumberFormatException e) {
-                addErrorMessage(AbcServlet.GENERIC_ERROR,"Nebyla zvolena platna relace!",ctx);
+                addError(AbcServlet.GENERIC_ERROR,"Nebyla zvolena platna relace!",ctx, null);
             }
         }
 

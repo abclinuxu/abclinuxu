@@ -18,6 +18,9 @@ public class PollChoice {
     /** associated poll's id */
     protected int poll;
 
+    /** order of choice in the poll, used by incrementCounter */
+    protected int id;
+
 
     public PollChoice(String text) {
         this.text = text;
@@ -60,10 +63,24 @@ public class PollChoice {
     }
 
     /**
-     * Sets poll's is.<br>
+     * Sets poll's id.<br>
      * This method may be called only from Persistance!
      */
     public void setPoll(int poll) {
         this.poll = poll;
+    }
+
+    /**
+     * @return order of choice in the poll, used by incrementCounter
+     */
+    public int getId() {
+        return id;
+    }
+
+    /**
+     * Sets order of choice in the poll
+     */
+    public void setId(int id) {
+        this.id = id;
     }
 }

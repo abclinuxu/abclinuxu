@@ -9,6 +9,7 @@
 package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.persistance.Persistance;
@@ -54,14 +55,22 @@ public class ViewCategory extends AbcServlet {
             category = new Category(Integer.parseInt(tmp));
         } else {
             if ( relation==null ) {
-                addErrorMessage(AbcServlet.GENERIC_ERROR,"Neni vybrana zadna kategorie!",ctx);
-                return getTemplate("view/category.vm");
+                addError(AbcServlet.GENERIC_ERROR,"Nebyla vybrána ¾ádná kategorie!",ctx, request.getSession());
+                response.sendRedirect("/");
+                return null;
             }
             category = (Category) relation.getChild();
         }
         category = (Category) persistance.findById(category);
         ctx.put(VAR_CATEGORY,category);
 
-        return getTemplate("view/category.vm");
+        UrlUtils urlUtils = (UrlUtils) ctx.get(AbcServlet.VAR_URL_UTILS);
+        tmp = urlUtils.getPrefix();
+
+        if ( UrlUtils.PREFIX_CLANKY.equals(tmp) ) {
+            return getTemplate("view/clanky.vm");
+        } else {
+            return getTemplate("view/category.vm");
+        }
     }
 }

@@ -7,6 +7,7 @@
 package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.persistance.Persistance;
@@ -34,26 +35,44 @@ import java.util.Iterator;
 public class ViewIndex extends AbcServlet {
     public static final String VAR_HARDWARE = "HARDWARE";
     public static final String VAR_SOFTWARE = "SOFTWARE";
+    public static final String VAR_CLANKY = "CLANKY";
+    public static final String VAR_ABCLINUXU = "ABCLINUXU";
 
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
         Persistance persistance = PersistanceFactory.getPersistance();
-        Category hw = (Category) persistance.findById(new Category(4));
-        List hwcontent = hw.getContent();
-        for (Iterator iter = hwcontent.iterator(); iter.hasNext();) {
+        Category hw = (Category) persistance.findById(new Category(Constants.CAT_386));
+        List content = hw.getContent();
+        for (Iterator iter = content.iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
             persistance.synchronize(relation.getChild());
         }
-        ctx.put(ViewIndex.VAR_HARDWARE,hwcontent);
+        ctx.put(ViewIndex.VAR_HARDWARE,content);
 
-        Category sw = (Category) persistance.findById(new Category(3));
-        List swcontent = sw.getContent();
-        for (Iterator iter = swcontent.iterator(); iter.hasNext();) {
+        Category sw = (Category) persistance.findById(new Category(Constants.CAT_SOFTWARE));
+        content = sw.getContent();
+        for (Iterator iter = content.iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
             persistance.synchronize(relation.getChild());
         }
-        ctx.put(ViewIndex.VAR_SOFTWARE,swcontent);
+        ctx.put(ViewIndex.VAR_SOFTWARE,content);
+
+        Category clanky = (Category) persistance.findById(new Category(Constants.CAT_ARTICLES));
+        content = clanky.getContent();
+        for (Iterator iter = content.iterator(); iter.hasNext();) {
+            Relation relation = (Relation) iter.next();
+            persistance.synchronize(relation.getChild());
+        }
+        ctx.put(ViewIndex.VAR_CLANKY,content);
+
+        Category abc = (Category) persistance.findById(new Category(Constants.CAT_ABC));
+        content = abc.getContent();
+        for (Iterator iter = content.iterator(); iter.hasNext();) {
+            Relation relation = (Relation) iter.next();
+            persistance.synchronize(relation.getChild());
+        }
+        ctx.put(ViewIndex.VAR_ABCLINUXU,content);
 
         return getTemplate("index.vm");
     }

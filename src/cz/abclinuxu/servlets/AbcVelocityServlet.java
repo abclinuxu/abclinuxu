@@ -83,7 +83,7 @@ public class AbcServlet extends VelocityServlet {
     public static final String PARAM_LOG_USER = "LOGIN";
     public static final String PARAM_LOG_PASSWORD = "PASSWORD";
 
-    /** use this value for addErrorMessage, when message is not tight to form field */
+    /** use this value for addError, when message is not tight to form field */
     public static final String GENERIC_ERROR = "generic";
 
     /** Public access is granted or user's right are sufficient. */
@@ -144,10 +144,9 @@ public class AbcServlet extends VelocityServlet {
      * @todo delete bad cookie
      */
     protected void init(HttpServletRequest request, HttpServletResponse response, Context context) {
+        doLogin(request,response,context);
+
         HttpSession session = request.getSession();
-
-        doLogin(request,response,session,context);
-
         Map params = (Map) session.getAttribute(AbcServlet.ATTRIB_PARAMS);
         if ( params!=null ) {
             session.removeAttribute(AbcServlet.ATTRIB_PARAMS);
@@ -155,6 +154,18 @@ public class AbcServlet extends VelocityServlet {
         params = VelocityHelper.putParamsToMap(request,params);
         request.setAttribute(AbcServlet.ATTRIB_PARAMS,params);
         context.put(AbcServlet.VAR_PARAMS,params);
+
+        Map errors = (Map) session.getAttribute(AbcServlet.VAR_ERRORS);
+        if ( errors!=null ) {
+            context.put(AbcServlet.VAR_ERRORS,errors);
+            session.removeAttribute(AbcServlet.VAR_ERRORS);
+        }
+
+        List messages = (List) session.getAttribute(AbcServlet.VAR_MESSAGES);
+        if ( messages!=null ) {
+            context.put(AbcServlet.VAR_MESSAGES,messages);
+            session.removeAttribute(AbcServlet.VAR_MESSAGES);
+        }
 
         return;
     }
@@ -164,7 +175,8 @@ public class AbcServlet extends VelocityServlet {
      * form parameter <code>AbcServlet.PARAM_LOG_USER</code> and next cookie <code>AbcServlet.VAR_USER</code>.
      * If user was found and approved, it is appended to context under name <code>AbcServlet.VAR_USER</code>.
      */
-    protected void doLogin(HttpServletRequest request, HttpServletResponse response, HttpSession session, Context context) {
+    protected void doLogin(HttpServletRequest request, HttpServletResponse response, Context context) {
+        HttpSession session = request.getSession();
         User user = (User) session.getAttribute(AbcServlet.VAR_USER);
 
         if ( user!=null ) {
@@ -180,7 +192,7 @@ public class AbcServlet extends VelocityServlet {
             try {
                 List found = (List) PersistanceFactory.getPersistance().findByExample(searched,null);
                 if ( found.size()==0 ) {
-                    addErrorMessage(AbcServlet.PARAM_LOG_USER,"Prihlasovaci jmeno nenalezeno!",context);
+                    addError(AbcServlet.PARAM_LOG_USER,"Pøihla¹ovací jméno nenalezeno!",context, null);
                     return;
                 }
                 user = (User) found.get(0);
@@ -190,7 +202,7 @@ public class AbcServlet extends VelocityServlet {
             }
 
             if ( !user.validatePassword((String) request.getParameter(AbcServlet.PARAM_LOG_PASSWORD)) ) {
-                addErrorMessage(AbcServlet.PARAM_LOG_PASSWORD,"Spatne heslo!",context);
+                addError(AbcServlet.PARAM_LOG_PASSWORD,"©patne heslo!",context, null);
                 return;
             }
 
@@ -214,12 +226,12 @@ public class AbcServlet extends VelocityServlet {
                     try {
                         user = (User) PersistanceFactory.getPersistance().findById(new User(id));
                     } catch (PersistanceException e) {
-                        addErrorMessage(AbcServlet.GENERIC_ERROR,"Nalezena cookie s neznamym uzivatelem!",context);
+                        addError(AbcServlet.GENERIC_ERROR,"Nalezena cookie s neznámým u¾ivatelem!",context, null);
                         break;
                     }
 
                     if ( user.getPassword().hashCode() != hash ) {
-                        addErrorMessage(AbcServlet.GENERIC_ERROR,"Nalezena cookie se spatnym heslem!",context);
+                        addError(AbcServlet.GENERIC_ERROR,"Nalezena cookie se ¹patným heslem!",context, null);
                         user = null;
                     }
                     break;
@@ -274,21 +286,24 @@ public class AbcServlet extends VelocityServlet {
 
     /**
      * Adds message to <code>VAR_ERRORS</code> map.
+     * <p>If session is not null, store messages into session. Handy for redirects and dispatches.
      */
-    protected void addErrorMessage(String key, String errorMessage, Context context) {
+    protected void addError(String key, String errorMessage, Context context, HttpSession session) {
         Map errors = (Map) context.get(VAR_ERRORS);
 
         if ( errors==null ) {
             errors = new HashMap(5);
             context.put(AbcServlet.VAR_ERRORS,errors);
         }
+        if ( session!=null ) session.setAttribute(AbcServlet.VAR_ERRORS,errors);
         errors.put(key,errorMessage);
     }
 
     /**
      * Adds message to <code>VAR_MESSAGES</code> list.
+     * <p>If session is not null, store messages into session. Handy for redirects and dispatches.
      */
-    protected void addMessage(String message, Context context) {
+    protected void addMessage(String message, Context context, HttpSession session) {
         boolean created = false;
         List messages = (List) context.get(VAR_MESSAGES);
 
@@ -296,6 +311,7 @@ public class AbcServlet extends VelocityServlet {
             messages = new ArrayList(5);
             context.put(AbcServlet.VAR_MESSAGES,messages);
         }
+        if ( session!=null ) session.setAttribute(AbcServlet.VAR_MESSAGES,messages);
         messages.add(message);
     }
 

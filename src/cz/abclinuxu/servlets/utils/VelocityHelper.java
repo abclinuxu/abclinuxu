@@ -63,6 +63,7 @@ public class VelocityHelper {
 
         if ( name==null || name.length()==0) {
             name = child.getClass().getName().substring(name.lastIndexOf('.')+1);
+            name = name.concat(" "+child.getId());
         }
         return name;
     }
@@ -117,18 +118,32 @@ public class VelocityHelper {
 
     /**
      * Adds all parameters from request to specified map and returns it back.
-     * If map is null, new HashMap is created.
+     * If map is null, new HashMap is created. <p>
+     * If there is only one value for a parameter, it will be stored directly
+     * associated with parameter's name. But if there are at least two values,
+     * they will be stored in list associated with parameter's name.
      */
     public static Map putParamsToMap(HttpServletRequest request, Map map) {
         if ( map==null ) map = new HashMap();
         Enumeration names = request.getParameterNames();
         while (names.hasMoreElements()) {
             String name = (String) names.nextElement();
-            String value = request.getParameter(name);
-            try {
-                value = new String(value.getBytes("ISO-8859-1"));
-            } catch (UnsupportedEncodingException e) {}
-            map.put(name,value);
+            String[] values = request.getParameterValues(name);
+
+            if ( values.length==1 ) {
+                String value = request.getParameter(name);
+                try { value = new String(value.getBytes("ISO-8859-1")); } catch (UnsupportedEncodingException e) {}
+                map.put(name,value.trim());
+
+            } else {
+                List list = new ArrayList(values.length);
+                for (int i = 0; i < values.length; i++) {
+                    String value = values[i];
+                    try { value = new String(value.getBytes("ISO-8859-1")); } catch (UnsupportedEncodingException e) {}
+                    list.add(value.trim());
+                }
+                map.put(name,list);
+            }
         }
         return map;
     }
@@ -176,6 +191,59 @@ public class VelocityHelper {
     }
 
     /**
+     * Takes list of relations in argument and sorts them by
+     * relations.get(0).getChild().getUpdated() in descendant order
+     * (freshest objects first). If generic object doesn't contain
+     * such field, it will be appended to the end of list.
+     * @return new list, where relations are sorted by date
+     */
+    public List sortByDate(List relations) {
+        List sorted = new ArrayList(relations.size());
+        int size = 0, i = 0;
+
+        for (Iterator iter = relations.iterator(); iter.hasNext();) {
+            Relation relation = (Relation) iter.next();
+
+            for (i=size;i>0;) {
+                Relation current = (Relation) sorted.get(i-1);
+                if ( ! isOlder(current.getChild(),relation.getChild()) ) break;
+                i--;
+            }
+            sorted.add(i,relation);
+            size++;
+        }
+
+        return sorted;
+    }
+
+    /**
+     * Takes list of relations in argument and sorts them by
+     * relations.get(0).getChild()'s name in ascendant order.
+     * If generic object doesn't contain property name,
+     * it will be appended to the end of list.
+     * @return new list, where relations are sorted by date
+     */
+    public List sortByName(List relations) throws PersistanceException {
+        List sorted = new ArrayList(relations.size());
+        int size = 0, i = 0;
+
+        for (Iterator iter = relations.iterator(); iter.hasNext();) {
+            Relation relation = (Relation) iter.next();
+
+            for (i=size;i>0;) {
+                String current = getChildName((Relation) sorted.get(i-1));
+                String used = getChildName(relation);
+                if ( current.compareTo(used)<0 ) break;
+                i--;
+            }
+            sorted.add(i,relation);
+            size++;
+        }
+
+        return sorted;
+    }
+
+    /**
      * Does standard HTML conversions like & to &amp;amp; or &lt; to &amp;lt;.
      * @return Modified String, which may be inserted into html page without affecting its structure.
      */
@@ -192,5 +260,34 @@ public class VelocityHelper {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * @return true, if <code>a</code> is older than <code>b</code>.
+     * If one argument doesn't contain updated property, it is considered
+     * as older than the other one.
+     */
+    private boolean isOlder(GenericObject a, GenericObject b) {
+
+        try {
+            if ( !a.isInitialized() ) PersistanceFactory.getPersistance().synchronize(a);
+            if ( !b.isInitialized() ) PersistanceFactory.getPersistance().synchronize(b);
+            Date aDate = null, bDate = null;
+
+            if ( a instanceof GenericDataObject ) aDate = ((GenericDataObject)a).getUpdated();
+            else if ( a instanceof Link ) aDate = ((Link)a).getUpdated();
+            else if ( a instanceof Poll ) aDate = ((Poll)a).getCreated();
+            else return true; // a is older
+
+            if ( b instanceof GenericDataObject ) bDate = ((GenericDataObject)b).getUpdated();
+            else if ( b instanceof Link ) bDate = ((Link)b).getUpdated();
+            else if ( b instanceof Poll ) bDate = ((Poll)b).getCreated();
+            else return false; // a is fresher
+
+            return aDate.before(bDate);
+        } catch (Exception e) {
+            log.error("isOlder bug: "+a.toString()+" | "+b.toString(),e);
+            return true;
+        }
     }
 }

@@ -23,8 +23,8 @@ public class Poll extends GenericObject {
     boolean closed = false;
     /** list of the choices */
     protected PollChoice[] choices;
-    /** creation date or last update of this object */
-    protected Date updated;
+    /** creation date of this poll */
+    protected Date created;
     /** whether the user may select multiple choices */
     protected boolean multiChoice;
 
@@ -43,17 +43,17 @@ public class Poll extends GenericObject {
     }
 
     /**
-     * @return last updated (or creation) date
+     * @return creation date
      */
-    public Date getUpdated() {
-        return updated;
+    public Date getCreated() {
+        return created;
     }
 
     /**
-     * sets last updated (or creation) date
+     * sets creation date
      */
-    public void setUpdated(Date updated) {
-        this.updated = updated;
+    public void setCreated(Date updated) {
+        this.created = updated;
     }
 
     /**
@@ -93,6 +93,7 @@ public class Poll extends GenericObject {
 
         for (Iterator iterator = choices.iterator(); iterator.hasNext();) {
             PollChoice choice = (PollChoice) iterator.next();
+            choice.setId(i);
             this.choices[i++] = choice;
         }
     }
@@ -162,7 +163,7 @@ public class Poll extends GenericObject {
         text = b.getText();
         closed = b.isClosed();
         multiChoice = b.isMultiChoice();
-        updated = b.getUpdated();
+        created = b.getCreated();
         type = b.getType();
         choices = b.getChoices();
     }
