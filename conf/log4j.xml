@@ -59,6 +59,10 @@
 	  <priority value="info" />
 	</category>
 
+	<category name="cz.abclinuxu.persistance.SQLTool">
+	  <priority value="warn" />
+	</category>
+
 	<category name="cz.abclinuxu.security" additivity="false">
 	  <priority value="info" />
       <appender-ref ref="ADMIN"/>
