@@ -8,7 +8,7 @@ package cz.abclinuxu.utils.news;
 /**
  * Holder of category for news.
  */
-public final class NewsCategory {
+public class NewsCategory {
     String key, name, desc;
 
     /**

@@ -197,6 +197,9 @@
     <action name="show" content="/misc/search.ftl">
       <var name="TITLE" value="Hledání" />
     </action>
+    <action name="news" content="/misc/search_news.ftl">
+      <var name="TITLE" value="Hledání" />
+    </action>
   </servlet>
 
   <servlet name="Admin">
@@ -248,8 +251,11 @@
     <action name="rubriky" content="/show/rubriky.ftl">
       <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
     </action>
+    <action name="waiting_news" content="/show/sekce_zpravicky.ftl">
+      <var name="TITLE" value='Èekající zprávièky' />
+    </action>
     <action name="news" content="/show/zpravicky.ftl">
-      <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
+      <var name="TITLE" value='Zprávièky' />
     </action>
   </servlet>
 

@@ -10,6 +10,8 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.news.NewsCategories;
+import cz.abclinuxu.utils.news.NewsCategory;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.search.CreateIndex;
 import cz.abclinuxu.utils.search.AbcCzechAnalyzer;
@@ -42,6 +44,7 @@ public class Search extends AbcFMServlet {
     public static final String VAR_TOTAL = "TOTAL";
     /** holds map of chosen types */
     public static final String VAR_TYPES = "TYPES";
+    public static final String VAR_NEWS_CATEGORIES = "CATEGORIES";
 
     /** expression to be searched */
     public static final String PARAM_QUERY = "query";
@@ -53,6 +56,8 @@ public class Search extends AbcFMServlet {
     public static final String PARAM_COUNT = "count";
     /** id of parental relation */
     public static final String PARAM_PARENT = "parent";
+    /** news category */
+    public static final String PARAM_CATEGORY = "category";
 
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -61,23 +66,25 @@ public class Search extends AbcFMServlet {
 
     public static String performSearch(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-
-        String queryString = (String) params.get(PARAM_QUERY);
-        if ( queryString == null || queryString.length()==0 ) {
-            return FMTemplateSelector.select("Search","show",env,request);
-        }
-        env.put(VAR_QUERY,queryString);
         Types types = new Types(params.get(PARAM_TYPE));
         env.put(VAR_TYPES, types);
+        boolean onlyNews = types.size()==1 && types.isNews();
+        NewsCategoriesSet newsCategoriesSet = getNewsCategories(params);
+
+        String queryString = (String) params.get(PARAM_QUERY);
+        if ( queryString == null || queryString.length()==0 )
+            return choosePage(onlyNews, request, env, newsCategoriesSet);
+
+        env.put(VAR_QUERY,queryString);
 
         Query query = null;
         try {
-            query = AbcQueryParser.parse(queryString, new AbcCzechAnalyzer(), types);
+            query = AbcQueryParser.parse(queryString, new AbcCzechAnalyzer(), types, newsCategoriesSet);
             query = AbcQueryParser.addParentToQuery((String)params.get(PARAM_PARENT), query);
             seachLog.info(query.toString());
         } catch (ParseException e) {
             ServletUtils.addError(PARAM_QUERY, "Hledaný øetìzec obsahuje chybu!", env, null);
-            return FMTemplateSelector.select("Search", "show", env, request);
+            return choosePage(onlyNews, request, env, newsCategoriesSet);
         }
 
         try {
@@ -102,10 +109,37 @@ public class Search extends AbcFMServlet {
         } catch (Exception e) {
             log.error("Cannot search "+query,e);
             ServletUtils.addError(PARAM_QUERY,"Nemohu provést dané hledání. Zadejte jiný øetìzec!",env,null);
-            return FMTemplateSelector.select("Search","show",env,request);
+            return choosePage(onlyNews, request, env, newsCategoriesSet);
         }
 
-        return FMTemplateSelector.select("Search","show",env,request);
+        return choosePage(onlyNews, request, env, newsCategoriesSet);
+    }
+
+    private static String choosePage(boolean displayNews, HttpServletRequest request, Map env, NewsCategoriesSet newsCategories) throws Exception {
+        if (displayNews) {
+            env.put(VAR_NEWS_CATEGORIES, newsCategories);
+            return FMTemplateSelector.select("Search", "news", env, request);
+        } else
+            return FMTemplateSelector.select("Search", "show", env, request);
+    }
+
+    /**
+     * Converts selected categories to list.
+     */
+    private static List getSelectedCategories(Map params) {
+        Object o = params.get(PARAM_CATEGORY);
+        if (o==null)
+            return Collections.EMPTY_LIST;
+        if (o instanceof List)
+            return (List) o;
+        List list = new ArrayList(1);
+        list.add(o);
+        return list;
+    }
+
+    public static NewsCategoriesSet getNewsCategories(Map params) {
+        List selected = getSelectedCategories(params);
+        return new NewsCategoriesSet(selected);
     }
 
     /**
@@ -143,6 +177,69 @@ public class Search extends AbcFMServlet {
             return 50;
         else
             return Misc.limit(count, 10, 100);
+    }
+
+    public static class NewsCategoriesSet extends AbstractCollection {
+        List list;
+        List selected;
+
+        public NewsCategoriesSet(List selected) {
+            this.selected = selected;
+            Collection categories = NewsCategories.getAllCategories();
+            list = new ArrayList(categories.size());
+            for ( Iterator iter = categories.iterator(); iter.hasNext(); ) {
+                NewsCategory newsCategory = (NewsCategory) iter.next();
+                add(new SelectedNewsCategory(newsCategory, selected));
+            }
+        }
+
+        public boolean isNothingSelected() {
+            return selected.size()==0;
+        }
+
+        public boolean isEverythingSelected() {
+            return selected.size()==list.size();
+        }
+
+        public List getSelected() {
+            return selected;
+        }
+
+        public Iterator iterator() {
+            return list.iterator();
+        }
+
+        public int size() {
+            return list.size();
+        }
+
+        public boolean add(Object o) {
+            return list.add(o);
+        }
+    }
+
+    public static class SelectedNewsCategory extends NewsCategory {
+        boolean set;
+
+        public SelectedNewsCategory(NewsCategory category, List selected) {
+            super(category.getKey(), category.getName(), category.getDesc());
+            setSet(selected);
+        }
+
+        public boolean isSet() {
+            return set;
+        }
+
+        public void setSet(boolean set) {
+            this.set = set;
+        }
+
+        public void setSet(List selected) {
+            if (selected.size()==0)
+                set = true;
+            else
+                set = selected.contains(getKey());
+        }
     }
 
     public static class Types {
@@ -217,6 +314,10 @@ public class Search extends AbcFMServlet {
 
         public Map getMap() {
             return Collections.unmodifiableMap(map);
+        }
+
+        public int size() {
+            return map.size();
         }
     }
 }

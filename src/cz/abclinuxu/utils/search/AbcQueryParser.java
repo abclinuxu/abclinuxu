@@ -34,30 +34,42 @@ public class AbcQueryParser extends QueryParser {
      * @param analyzer Analyzer to use
      * @throws ParseException if query parsing fails
      */
-    public static Query parse(String queryString, Analyzer analyzer, Search.Types types) throws ParseException {
+    public static Query parse(String queryString, Analyzer analyzer, Search.Types types, Search.NewsCategoriesSet categories) throws ParseException {
         QueryParser queryParser = new QueryParser(MyDocument.CONTENT, analyzer);
         queryParser.setOperator(QueryParser.DEFAULT_OPERATOR_AND);
         Query query = queryParser.parse(queryString);
 
-        if (types.isNothingSelected() || types.isEverythingSelected())
-            return query;
-
-        BooleanQuery typeQuery = new BooleanQuery();
-        TermQuery termQuery;
-        String type;
-
-        for ( Iterator iter = types.getMap().keySet().iterator(); iter.hasNext(); ) {
-            type = (String) iter.next();
-            termQuery = new TermQuery(new Term(MyDocument.TYPE, type));
-            typeQuery.add(termQuery, false, false);
-        }
-
         BooleanQuery combined = new BooleanQuery();
         combined.add(query, true, false);
-        combined.add(typeQuery, true, false);
-        query = combined;
+        boolean combination = false;
 
-        return query;
+        BooleanQuery typeQuery = new BooleanQuery();
+        BooleanQuery categoryQuery = new BooleanQuery();
+        TermQuery termQuery;
+
+        if ( !(types.isNothingSelected() || types.isEverythingSelected()) ) {
+            String type;
+            for ( Iterator iter = types.getMap().keySet().iterator(); iter.hasNext(); ) {
+                type = (String) iter.next();
+                termQuery = new TermQuery(new Term(MyDocument.TYPE, type));
+                typeQuery.add(termQuery, false, false);
+            }
+            combined.add(typeQuery, true, false);
+            combination = true;
+        }
+
+        if ( !(categories.isNothingSelected() || categories.isEverythingSelected()) ) {
+            String category;
+            for ( Iterator iter = categories.getSelected().iterator(); iter.hasNext(); ) {
+                category = (String) iter.next();
+                termQuery = new TermQuery(new Term(MyDocument.NEWS_CATEGORY, category));
+                categoryQuery.add(termQuery, false, false);
+            }
+            combined.add(categoryQuery, true, false);
+            combination = true;
+        }
+
+        return (combination)? combined : query;
     }
 
     /**
