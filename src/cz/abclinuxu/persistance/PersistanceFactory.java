@@ -17,7 +17,7 @@ import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.persistance.cache.LRUCache;
+import cz.abclinuxu.persistance.cache.SynchronizedCache;
 import cz.abclinuxu.persistance.impl.MySqlPersistance;
 
 /**
@@ -47,7 +47,7 @@ public class PersistanceFactory implements Configurable {
     public static Persistance getPersistance() {
         if ( persistance!=null )
             return persistance;
-        return getPersistance(defaultUrl, LRUCache.class);
+        return getPersistance(defaultUrl, SynchronizedCache.class);
     }
 
     /**
@@ -59,7 +59,7 @@ public class PersistanceFactory implements Configurable {
     public static Persistance getPersistance(String url) {
         if ( persistance!=null )
             return persistance;
-        return getPersistance(url, LRUCache.class);
+        return getPersistance(url, SynchronizedCache.class);
     }
 
     /**
@@ -91,7 +91,7 @@ public class PersistanceFactory implements Configurable {
             persistance.setCache((Cache) cache.newInstance());
         } catch (Exception e) {
             log.error("Cannot use Cache "+cache.toString(), e);
-            persistance.setCache(new LRUCache());
+            persistance.setCache(new SynchronizedCache());
         }
         return persistance;
     }

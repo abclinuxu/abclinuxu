@@ -137,6 +137,19 @@
         </node>
         <node name="persistance">
           <map/>
+          <node name="cache">
+              <map/>
+              <node name="LRUCache">
+                  <map>
+                      <entry key="size" value="3000"/>
+                  </map>
+              </node>
+              <node name="SynchronizedCache">
+                  <map>
+                      <entry key="size" value="3000"/>
+                  </map>
+              </node>
+          </node>
           <node name="PersistanceFactory">
             <map>
               <entry key="url.live" value="proxool.abc"/>
@@ -144,14 +157,9 @@
               <entry key="proxool" value="WEB-INF/conf/proxool.xml"/>
             </map>
           </node>
-          <node name="LRUCache">
-            <map>
-              <entry key="size" value="4000"/>
-            </map>
-          </node>
           <node name="Nursery">
               <map>
-                  <entry key="cache.size" value="500"/>
+                  <entry key="cache.size" value="750"/>
 
                   <entry key="no.children.for.section" value="A,B,C,D,E"/>
                   <!-- zpravicky -->
