@@ -784,10 +784,12 @@ public class MySqlPersistance implements Persistance {
             statement.setString(2,poll.getText());
             statement.setBoolean(3,poll.isMultiChoice());
             long when = 0;
-            if (poll.getCreated()!=null)
+            if (poll.getCreated()!=null) {
                 when = poll.getCreated().getTime();
-            else
-                poll.setCreated(new java.util.Date());
+            } else {
+                when = System.currentTimeMillis();
+                poll.setCreated(new java.util.Date(when));
+            }
             statement.setTimestamp(4,new Timestamp(when));
             statement.setBoolean(5,poll.isClosed());
 
