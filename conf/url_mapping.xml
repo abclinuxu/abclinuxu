@@ -5,7 +5,7 @@
             <action>cz.abclinuxu.servlets.html.view.ViewIndex</action>
         </mapping>
         <mapping>
-            <pattern>/show/</pattern>
+            <pattern>/show</pattern>
             <action>cz.abclinuxu.servlets.html.view.ShowObject</action>
         </mapping>
         <mapping>
