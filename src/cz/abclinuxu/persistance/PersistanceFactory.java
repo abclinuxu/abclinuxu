@@ -7,16 +7,25 @@
  */
 package cz.abclinuxu.persistance;
 
+import java.util.Map;
+import java.util.HashMap;
+
 /**
  * Factory, which select Persistance class
  */
 public class PersistanceFactory {
+    static Map instances = new HashMap();
 
     /**
      * @return instance of object, which implements <code>Persistance</code>
      */
     public static Persistance getPersistance() {
-        return new MySqlPersistance();
+        Persistance persistance = (Persistance) instances.get(null);
+        if ( persistance==null ) {
+            persistance = new MySqlPersistance();
+            instances.put(null,persistance);
+        }
+        return persistance;
     }
 
     /**
@@ -24,6 +33,11 @@ public class PersistanceFactory {
      * and is described by <code>url</code>
      */
     public static Persistance getPersistance(String url) {
-        return new MySqlPersistance(url);
+        Persistance persistance = (Persistance) instances.get(url);
+        if ( persistance==null ) {
+            persistance = new MySqlPersistance(url);
+            instances.put(url,persistance);
+        }
+        return persistance;
     }
 }
