@@ -6,7 +6,6 @@
 package cz.abclinuxu.utils.email.monitor;
 
 import cz.abclinuxu.utils.email.EmailSender;
-import cz.abclinuxu.utils.email.monitor.Decorator;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
@@ -36,10 +35,6 @@ public class DiscussionDecorator implements Decorator, Configurable {
      */
     public Map getEnvironment(MonitorAction action) {
         Map env = new HashMap();
-
-        env.put(EmailSender.KEY_SUBJECT, subject);
-        env.put(EmailSender.KEY_TEMPLATE, "/mail/monitor/notif_discussion.ftl");
-
         if (action.url!=null)
             env.put(VAR_URL, action.url);
         env.put(VAR_ACTOR, action.actor);
@@ -55,7 +50,10 @@ public class DiscussionDecorator implements Decorator, Configurable {
             changeMessage = actionRemove;
         else if (UserAction.CENSORE.equals(action.action))
             changeMessage = actionCensore;
+
         env.put(VAR_ACTION,changeMessage);
+        env.put(EmailSender.KEY_SUBJECT, (String) action.getProperty(PROPERTY_NAME));
+        env.put(EmailSender.KEY_TEMPLATE, "/mail/monitor/notif_discussion.ftl");
 
         return env;
     }

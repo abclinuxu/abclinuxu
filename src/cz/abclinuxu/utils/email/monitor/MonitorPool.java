@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.Collections;
 
 import cz.abclinuxu.data.GenericDataObject;
-import cz.abclinuxu.utils.email.monitor.MonitorAction;
 
 /**
  * Pool for triggered actions used by InstantSender.
