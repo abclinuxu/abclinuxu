@@ -15,6 +15,14 @@ v¹echny základní pojmy, které se v Linuxu bì¾nì objevují. Pokud se chcete zapoji
 do tvorby této databáze, mù¾ete <a href="${URL.make("/slovnik/edit?action=add")}">vysvìtlit</a>
 nový pojem.</p>
 
+<p>Pokud nenajdete nìkterý pojem v na¹em slovníku a rozumíte anglicky, urèitì
+jej najdete ve <a href="http://en.wikipedia.org/wiki/Category:Computing">Wikipedii</a>
+nebo <a href="http://www.acronymdictionary.co.uk">seznamu akronymù</a>. K dispozici
+existuje i <a href="http://www.ucc.ie/cgi-bin/acronym">hledání</a> akronymù.
+</p>
+
+<br>
+
 <table border="0" class="siroka">
  <#list FOUND.data as rel>
   <#if rel_index % 3 == 0><tr></#if>
