@@ -38,7 +38,7 @@ public class UpdateLinks extends TimerTask {
     public static final int UG = 4;
     public static final int PENGUIN = 5;
     public static final int WS = 6;
-    public static final int KECZY = 7;
+    public static final int ABCLINUXU = 7;
     public static final int REBOOT = 8;
     public static final int LINUXZONE = 9;
     public static final int LINUXSK = 10;
@@ -64,6 +64,7 @@ public class UpdateLinks extends TimerTask {
         definitions.put(new Server(SW),new ServerInfo("http://www.scienceworld.cz/sw.rss","Windows-1250",ServerInfo.RSS));
         definitions.put(new Server(UG),new ServerInfo("http://underground.cz/backend/czech.txt"));
         definitions.put(new Server(PENGUIN),new ServerInfo("http://www.penguin.cz/trafika.php3"));
+        definitions.put(new Server(ABCLINUXU), new ServerInfo("http://www.abclinuxu.cz/auto/abc.dat"));
 //        definitions.put(new Server(WS),new ServerInfo("http://www.awdesign.cz/ws/ws.dat"));
 //        definitions.put(new Server(KECZY),new ServerInfo("http://www.keczy.cz/index.php?headlines=czech"));
 //        definitions.put(new Server(REBOOT),new ServerInfo("http://www.reboot.cz/reboot_lh.phtml"));
@@ -93,8 +94,9 @@ public class UpdateLinks extends TimerTask {
 //        definitions.put(new Server(LDAP),new ServerInfo("file:///home/literakl/abc/data/titulky/backend-ldap.php",null,ServerInfo.RSS));
 //        definitions.put(new Server(MANDRAKE), new ServerInfo("file:///home/literakl/abc/data/titulky/titles_abc.php"));
 //        definitions.put(new Server(CZILLA), new ServerInfo("file:///home/literakl/abc/data/titulky/mozilla_rss.html", null, ServerInfo.RSS));
-        definitions.put(new Server(LW), new ServerInfo("http://www.linuxworld.cz/lw.rss", "Windows-1250", ServerInfo.RSS));
-        definitions.put(new Server(SW), new ServerInfo("http://www.scienceworld.cz/sw.rss", "Windows-1250", ServerInfo.RSS));
+//        definitions.put(new Server(LW), new ServerInfo("http://www.linuxworld.cz/lw.rss", "Windows-1250", ServerInfo.RSS));
+//        definitions.put(new Server(SW), new ServerInfo("http://www.scienceworld.cz/sw.rss", "Windows-1250", ServerInfo.RSS));
+        definitions.put(new Server(ABCLINUXU), new ServerInfo("http://www.abclinuxu.cz/auto/abc.dat"));
     }
 
     /**
