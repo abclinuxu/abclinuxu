@@ -21,6 +21,7 @@ import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.utils.news.NewsCategories;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.parser.safehtml.NewsGuard;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.email.EmailSender;
 
@@ -34,6 +35,7 @@ import java.util.Date;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
+import org.htmlparser.util.ParserException;
 
 /**
  * This servlet manipulates with News.
@@ -271,6 +273,16 @@ public class EditNews implements AbcAction {
         String text = (String) params.get(PARAM_CONTENT);
         if ( text==null || text.trim().length()==0 ) {
             ServletUtils.addError(PARAM_CONTENT, "Vyplòte obsah zprávièky", env, null);
+            return false;
+        }
+        try {
+            NewsGuard.check(text);
+        } catch (ParserException e) {
+            log.error("ParseException on '"+text+"'", e);
+            ServletUtils.addError(PARAM_CONTENT, e.getMessage(), env, null);
+            return false;
+        } catch (Exception e) {
+            ServletUtils.addError(PARAM_CONTENT, e.getMessage(), env, null);
             return false;
         }
         Element element = DocumentHelper.makeElement(item.getData(), "/data/content");
