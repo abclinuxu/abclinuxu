@@ -27,12 +27,12 @@ public class Measure {
         user.setId(1);
         Category category = new Category(1);
         category = (Category) persistance.findById(category);
-        String s = category.getData().selectSingleNode("/data/icon").getText();
+        String s = category.getDataAsString();
 
         long start = System.currentTimeMillis();
-        for (i=0; i<4000; i++) {
+        for (i=0; i<2600; i++) {
             //place your code to measure here
-            s = category.getData().selectSingleNode("/data/icon").getText();
+            s = category.getDataAsString();
         }
         long end = System.currentTimeMillis();
 
