@@ -10,6 +10,7 @@ import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.SQLTool;
@@ -52,6 +53,7 @@ public class ViewUser extends AbcFMServlet {
     public static final String ACTION_FINISH_SEND_EMAIL = "sendEmail2";
     public static final String ACTION_SHOW_CONTENT = "showContent";
     public static final String ACTION_SHOW_MY_PROFILE = "myPage";
+    public static final String ACTION_SEND_PASSWORD = "forgottenPassword";
 
     public static final String CONTENT_HARDWARE = "hardware";
     public static final String CONTENT_SOFTWARE = "software";
@@ -95,6 +97,9 @@ public class ViewUser extends AbcFMServlet {
 
         if (action.equals(ACTION_FINISH_SEND_EMAIL))
             return handleSendEmail2(request, response, env);
+
+        if (action.equals(ACTION_SEND_PASSWORD))
+            return handleSendForgottenPassword(request, response, env);
 
         return handleProfile(request,env);
     }
@@ -262,5 +267,29 @@ public class ViewUser extends AbcFMServlet {
             ServletUtils.addMessage("Litujeme, ale do¹lo k chybì pøi odesílání va¹i zprávy.",env,null);
 
         return handleProfile(request,env);
+    }
+
+    /**
+     * Sends forgotten password.
+     */
+    protected String handleSendForgottenPassword(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+
+        User user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params);
+        persistance.synchronize(user);
+
+        Map data = new HashMap();
+        data.put(Constants.VAR_USER, user);
+        data.put(EmailSender.KEY_FROM, "admin@abclinuxu.cz");
+        data.put(EmailSender.KEY_TO, user.getEmail());
+        data.put(EmailSender.KEY_SUBJECT, "Zapomenute heslo");
+        data.put(EmailSender.KEY_TEMPLATE, "/mail/password.ftl");
+        EmailSender.sendEmail(data);
+
+        ServletUtils.addMessage("Heslo odesláno na adresu "+user.getEmail()+".", env, request.getSession());
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/Index");
+        return null;
     }
 }

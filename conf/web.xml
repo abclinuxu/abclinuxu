@@ -54,12 +54,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>ForgottenPassword</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.view.ForgottenPassword</servlet-class>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
-
-    <servlet>
         <servlet-name>Redirect</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.view.Redirect</servlet-class>
         <load-on-startup>2</load-on-startup>
@@ -321,10 +315,6 @@
 
     <servlet-mapping>
         <servlet-name>ViewUser</servlet-name><url-pattern>/Profile</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>ForgottenPassword</servlet-name><url-pattern>/ForgottenPassword</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
