@@ -50,7 +50,7 @@ public class EditRequest extends AbcServlet {
         } else if ( action.equals(ACTION_DELETE) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation,Guard.OPERATION_REMOVE,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: {
                     addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, request.getSession());
                     redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);
@@ -62,7 +62,7 @@ public class EditRequest extends AbcServlet {
         } else if ( action.equals(ACTION_DELIVER) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation,Guard.OPERATION_REMOVE,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: {
                     addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, request.getSession());
                     redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);

@@ -23,15 +23,32 @@ import java.util.*;
  */
 public class ViewUser extends AbcServlet {
     public static final String PARAM_USER = "userId";
+    public static final String PARAM_URL = "url";
 
     public static final String VAR_PROFILE = "PROFILE";
     public static final String VAR_SW_RECORDS = "SW";
     public static final String VAR_HW_RECORDS = "HW";
     public static final String VAR_ARTICLES = "ARTICLE";
 
+    public static final String ACTION_LOGIN = "login";
+
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
+        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        String action = (String) params.get(AbcServlet.PARAM_ACTION);
+
+        if ( action!=null && action.equals(ACTION_LOGIN) ) {
+            return handleLogin(request,ctx);
+        }
+
+        return handleProfile(request,ctx);
+    }
+
+    /**
+     * shows profile for selected user
+     */
+    protected Template handleProfile(HttpServletRequest request, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         VelocityHelper helper = new VelocityHelper();
@@ -69,5 +86,12 @@ public class ViewUser extends AbcServlet {
         ctx.put(VAR_SW_RECORDS,sw);
 
         return getTemplate("view/profile.vm");
+    }
+
+    /**
+     * shows login screen
+     */
+    protected Template handleLogin(HttpServletRequest request, Context ctx) throws Exception {
+        return getTemplate("view/prihlaseni.vm");
     }
 }

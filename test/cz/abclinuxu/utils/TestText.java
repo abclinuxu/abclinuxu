@@ -8,7 +8,6 @@ package cz.abclinuxu.utils;
 
 import junit.framework.*;
 import junit.textui.TestRunner;
-import cz.abclinuxu.servlets.utils.TextUtils;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
 import org.apache.log4j.BasicConfigurator;
 

@@ -62,7 +62,7 @@ public class EditArticle extends AbcServlet {
         if ( action==null || action.equals(ACTION_ADD_ITEM) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: {
                     params.put(PARAM_PUBLISHED,Constants.isoFormat.format(new Date()));
@@ -73,7 +73,7 @@ public class EditArticle extends AbcServlet {
         } else if ( action.equals(ACTION_ADD_ITEM_STEP2) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: {
                     addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                     return getTemplate("add/article.vm");
@@ -84,7 +84,7 @@ public class EditArticle extends AbcServlet {
         } else if ( action.equals(ACTION_EDIT_ITEM) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return actionEditItem(request,ctx);
             }
@@ -92,7 +92,7 @@ public class EditArticle extends AbcServlet {
         } else if ( action.equals(ACTION_EDIT_ITEM_STEP2) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return actionEditItem2(request,response,ctx);
             }

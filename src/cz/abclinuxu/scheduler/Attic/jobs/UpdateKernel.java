@@ -56,11 +56,11 @@ public class UpdateKernel implements Task {
 
             if ( version.match(reader.readLine()) ) {
                 String tmp = version.getParen(2);
-                writer.write("<tr><td class=\"jadro_h\">Vývojové:</td>");
+                writer.write("<tr><td class=\"jadro_h\" colspan=\"2\">Vývojové:</td>");
                 writer.write("<td><a href=\"ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.5/linux-"+tmp);
                 writer.write(".tar.bz2\" class=\"ikona\">"+tmp+"</a></td>");
             }
-            if ( version.match(reader.readLine()) ) writer.write("<td class=\"jadro_p\">("+version.getParen(2)+")</td>");
+            reader.readLine();
             writer.write("</tr>\n");
 
             if ( version.match(reader.readLine()) ) {

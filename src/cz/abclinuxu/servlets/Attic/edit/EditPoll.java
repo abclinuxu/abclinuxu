@@ -85,7 +85,7 @@ public class EditPoll extends AbcServlet {
             if ( relation==null ) throw new Exception("Chybí parametr relationId!");
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Poll.class);
              switch (rights) {
-                 case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                  case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                  default: return getTemplate("add/poll.vm");
              }
@@ -98,7 +98,7 @@ public class EditPoll extends AbcServlet {
             if ( relation==null ) throw new Exception("Chybí parametr relationId!");
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Poll.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: {
                     addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                     return getTemplate("add/poll.vm");
@@ -111,7 +111,7 @@ public class EditPoll extends AbcServlet {
             if ( poll==null ) throw new Exception("Chybí parametr pollId!");
             int rights = Guard.check((User)ctx.get(VAR_USER),poll,Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx,null);
                 default: return getTemplate("edit/poll.vm");
             }
@@ -121,7 +121,7 @@ public class EditPoll extends AbcServlet {
             if ( poll==null ) throw new Exception("Chybí parametr pollId!");
             int rights = Guard.check((User)ctx.get(VAR_USER),poll,Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx,null);
                 default: return actionEditStep2(request,response,ctx);
             }

@@ -101,7 +101,7 @@ public class EditUser extends AbcServlet {
             int rights = Guard.check(user,managed,Guard.OPERATION_EDIT,params.get(PARAM_PASSWORD));
 
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 //case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
                 default: return actionEditStep1(request,ctx);
             }
@@ -111,7 +111,7 @@ public class EditUser extends AbcServlet {
             int rights = Guard.check(user,managed,Guard.OPERATION_EDIT,params.get(PARAM_PASSCHECK));
 
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: {
                     addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
                     return actionEditStep1(request,ctx);
@@ -125,7 +125,7 @@ public class EditUser extends AbcServlet {
             if ( user!=null && managed.equals(user) ) rights = Guard.ACCESS_OK;
 
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
                 default: return getTemplate("edit/password.vm");
             }
@@ -135,7 +135,7 @@ public class EditUser extends AbcServlet {
             int rights = Guard.check(user,managed,Guard.OPERATION_EDIT,params.get(PARAM_PASSCHECK));
 
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: {
                     addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
                     return getTemplate("edit/password.vm");
