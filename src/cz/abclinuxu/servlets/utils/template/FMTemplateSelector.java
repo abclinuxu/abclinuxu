@@ -64,6 +64,10 @@ public class FMTemplateSelector extends TemplateSelector {
 
         String template = selectTemplate(servletAction,browser,request);
         Mapping mapping = servletAction.getMapping(template);
+        if ( mapping==null ) {
+            throw new NotFoundException("Neexistuje ¹ablona pro kombinaci ["+servlet+","+action+","+template+"]!");
+        }
+
         String page = mapping.getContent();
         storeVariables(data,mapping.getVariables());
         data.put(VAR_BROWSER,browser);

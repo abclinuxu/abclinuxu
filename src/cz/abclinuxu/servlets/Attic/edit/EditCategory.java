@@ -78,25 +78,27 @@ public class EditCategory extends AbcFMServlet {
     public static final String ACTION_EDIT = "edit";
     public static final String ACTION_EDIT2 = "edit2";
 
+
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
-        String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+        String action = (String) params.get(PARAM_ACTION);
 
-        Category category = (Category) InstanceUtils.instantiateParam(EditCategory.PARAM_CATEGORY,Category.class,params);
+        Category category = (Category) InstanceUtils.instantiateParam(PARAM_CATEGORY,Category.class,params);
         if ( category!=null ) {
-            category = (Category) PersistanceFactory.getPersistance().findById(category);
-            env.put(EditCategory.VAR_CATEGORY,category);
+            category = (Category) persistance.findById(category);
+            env.put(VAR_CATEGORY,category);
         }
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(EditCategory.PARAM_RELATION,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
         if ( relation!=null ) {
-            relation = (Relation) PersistanceFactory.getPersistance().findById(relation);
-            env.put(EditCategory.VAR_RELATION,relation);
+            relation = (Relation) persistance.findById(relation);
             category = (Category) relation.getChild();
-            env.put(EditCategory.VAR_CATEGORY,category);
+            env.put(VAR_RELATION,relation);
+            env.put(VAR_CATEGORY,category);
         }
 
-        if ( action==null || action.equals(EditCategory.ACTION_ADD) ) {
+        if ( ACTION_ADD.equals(action) ) {
             int rights = Guard.check((User)env.get(Constants.VAR_USER),category,Guard.OPERATION_ADD,Category.class);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
@@ -104,7 +106,7 @@ public class EditCategory extends AbcFMServlet {
                 default: return FMTemplateSelector.select("EditCategory","add",env,request);
             }
 
-        } else if ( action.equals(EditCategory.ACTION_ADD_STEP2) ) {
+        } else if ( ACTION_ADD_STEP2.equals(action) ) {
             int rights = Guard.check((User)env.get(Constants.VAR_USER),category,Guard.OPERATION_ADD,Category.class);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
@@ -112,7 +114,7 @@ public class EditCategory extends AbcFMServlet {
                 default: return actionAddStep2(request,response,env);
             }
 
-        } else if ( action.equals(EditCategory.ACTION_EDIT) ) {
+        } else if ( ACTION_EDIT.equals(action) ) {
             int rights = Guard.check((User)env.get(Constants.VAR_USER),category,Guard.OPERATION_EDIT,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
@@ -120,7 +122,7 @@ public class EditCategory extends AbcFMServlet {
                 default: return actionEditStep1(request,env);
             }
 
-        } else if ( action.equals(EditCategory.ACTION_EDIT2) ) {
+        } else if ( ACTION_EDIT2.equals(action) ) {
             int rights = Guard.check((User)env.get(Constants.VAR_USER),category,Guard.OPERATION_EDIT,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: FMTemplateSelector.select("ViewUser","login",env,request);
@@ -136,17 +138,22 @@ public class EditCategory extends AbcFMServlet {
      * Creates new category
      */
     protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
 
-        String name = (String) params.get(EditCategory.PARAM_NAME);
-        String icon = (String) params.get(EditCategory.PARAM_ICON);
-        String open = (String) params.get(EditCategory.PARAM_OPEN);
-        String note = (String) params.get(EditCategory.PARAM_NOTE);
+        String name = (String) params.get(PARAM_NAME);
+        String icon = (String) params.get(PARAM_ICON);
+        String open = (String) params.get(PARAM_OPEN);
+        String note = (String) params.get(PARAM_NOTE);
 
         if ( name==null || name.length()==0 ) {
-            ServletUtils.addError(EditCategory.PARAM_NAME,"Nezadal jste jméno kategorie!",env, null);
+            ServletUtils.addError(PARAM_NAME,"Zadejte jméno kategorie!",env, null);
             return FMTemplateSelector.select("EditCategory","add",env,request);
         }
+
+        Relation upperRelation = (Relation) env.get(VAR_RELATION);
+        Category upperCategory = (Category) env.get(VAR_CATEGORY);
+        User user = (User) env.get(Constants.VAR_USER);
 
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
@@ -155,23 +162,19 @@ public class EditCategory extends AbcFMServlet {
         if ( note!=null && note.length()>0 ) root.addElement("note").addText(note);
         document.setRootElement(root);
 
-        Relation upperRelation = (Relation) env.get(EditCategory.VAR_RELATION);
-        Category upperCategory = (Category) env.get(EditCategory.VAR_CATEGORY);
-        User user = (User) env.get(AbcVelocityServlet.VAR_USER);
         Category category = new Category();
-
         category.setOpen("yes".equals(open));
         category.setData(document);
         category.setOwner(user.getId());
         Relation relation = null;
 
         try {
-            PersistanceFactory.getPersistance().create(category);
+            persistance.create(category);
             int upper = (upperRelation!=null)? upperRelation.getId():0;
             relation = new Relation(upperCategory,category,upper);
-            PersistanceFactory.getPersistance().create(relation);
+            persistance.create(relation);
         } catch (PersistanceException e) {
-            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,e.getMessage(),env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC,e.getMessage(),env, null);
             return FMTemplateSelector.select("EditCategory","add",env,request);
         }
 
@@ -185,20 +188,19 @@ public class EditCategory extends AbcFMServlet {
      * @todo verify logic of ACTION check
      */
     protected String actionEditStep1(HttpServletRequest request, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
-        VelocityHelper helper = (VelocityHelper) env.get(AbcVelocityServlet.VAR_HELPER);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
 
-        Category category = (Category) env.get(EditCategory.VAR_CATEGORY);
-        PersistanceFactory.getPersistance().synchronize(category);
+        Category category = (Category) env.get(VAR_CATEGORY);
+        persistance.synchronize(category);
         Document document = category.getData();
-
         Node node = document.selectSingleNode("data/name");
-        if (node!=null) params.put(EditCategory.PARAM_NAME,node.getText());
+        if (node!=null) params.put(PARAM_NAME,node.getText());
         node = document.selectSingleNode("data/icon");
-        if (node!=null) params.put(EditCategory.PARAM_ICON,node.getText());
+        if (node!=null) params.put(PARAM_ICON,node.getText());
         node = document.selectSingleNode("data/note");
-        if (node!=null) params.put(EditCategory.PARAM_NOTE,helper.encodeSpecial(node.getText()));
-        params.put(EditCategory.PARAM_OPEN, (category.isOpen())? "yes":"no");
+        if (node!=null) params.put(PARAM_NOTE,node.getText()); //encodeSpecial
+        params.put(PARAM_OPEN, (category.isOpen())? "yes":"no");
 
         return FMTemplateSelector.select("EditCategory","edit",env,request);
     }
@@ -207,35 +209,34 @@ public class EditCategory extends AbcFMServlet {
      * Final step for editing of category
      */
     protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        String tmp = (String) params.get(EditCategory.PARAM_CHOOSE_ICON);
+        String tmp = (String) params.get(PARAM_CHOOSE_ICON);
         if ( tmp!=null && tmp.length()>0 ) {
-            // it is not possible to use AbcVelocityServlet.dispatch(), because it would prepend prefix!
+            // it is not possible to use UrlUtils.dispatch(), because it would prepend prefix!
             RequestDispatcher dispatcher = request.getRequestDispatcher("/SelectIcon");
             dispatcher.forward(request,response);
             return null;
         }
 
-        Relation upperRelation = (Relation) env.get(EditCategory.VAR_RELATION);
-        Category category = (Category) env.get(EditCategory.VAR_CATEGORY);
+        Relation upperRelation = (Relation) env.get(VAR_RELATION);
+        Category category = (Category) env.get(VAR_CATEGORY);
         persistance.synchronize(category);
         Document document = category.getData();
-
         Node node = DocumentHelper.makeElement(document,"data/name");
-        tmp = (String) params.get(EditCategory.PARAM_NAME);
+        tmp = (String) params.get(PARAM_NAME);
         node.setText(tmp);
 
         node = DocumentHelper.makeElement(document,"data/icon");
-        tmp = (String) params.get(EditCategory.PARAM_ICON);
+        tmp = (String) params.get(PARAM_ICON);
         node.setText(tmp);
 
         node = DocumentHelper.makeElement(document,"data/note");
-        tmp = (String) params.get(EditCategory.PARAM_NOTE);
+        tmp = (String) params.get(PARAM_NOTE);
         node.setText(tmp);
 
-        tmp = (String) params.get(EditCategory.PARAM_OPEN);
+        tmp = (String) params.get(PARAM_OPEN);
         category.setOpen( "yes".equals(tmp) );
 
         persistance.update(category);

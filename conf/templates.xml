@@ -15,13 +15,13 @@
   </servlet>
 
   <servlet name="EditCategory">
-    <action name="add">
-      <mapping template="web" content="web/add/category.vm">
+    <action name="add" template="print">
+      <mapping template="print" content="/print/add/category.ftl">
         <var name="TITLE" value="Vlo¾ení kategorie" />
       </mapping>
     </action>
-    <action name="edit">
-      <mapping template="web" content="web/edit/category.vm">
+    <action name="edit" template="print">
+      <mapping template="print" content="/print/edit/category.ftl">
         <var name="TITLE" value="Úprava kategorie" />
       </mapping>
     </action>
