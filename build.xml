@@ -28,25 +28,24 @@
 
 
   <target name="dist" depends="compile">
+    <copy todir="${build}">
+      <fileset dir="web/velocity"/>
+    </copy>
+
+    <copy todir="${build}/ikony">
+      <fileset dir="web/ikony"/>
+    </copy>
+
     <copy todir="${build}/WEB-INF">
       <fileset dir="conf">
         <include name="web.xml"/>
         <include name="log4j.xml"/>
+	<include name="velocity.properties"/>
       </fileset>
     </copy>
 
-<!--    <copy todir="${build}/WEB-INF/classes">
-      <fileset dir="conf">
-        <include name="webwork.properties"/>
-      </fileset>
-    </copy>
--->
     <copy todir="${build}/WEB-INF/lib">
-      <fileset dir="libs" includes="*.jar"/>
-    </copy>
-
-    <copy todir="${build}">
-      <fileset dir="jsp"/>
+      <fileset dir="libs" includes="*.jar" excludes="servlet.jar"/>
     </copy>
   </target>
 
@@ -54,9 +53,6 @@
   <target name="deploy" depends="dist">
     <copy todir="${deploy}">
       <fileset dir="${build}"/>
-    </copy>
-    <copy todir="${deploy}/ikony">
-      <fileset dir="ikony"/>
     </copy>
   </target>
 </project>
