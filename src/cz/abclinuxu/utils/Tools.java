@@ -20,10 +20,7 @@ import org.apache.regexp.RESyntaxException;
 
 import java.util.*;
 
-import freemarker.template.SimpleSequence;
-import freemarker.template.TemplateModel;
-import freemarker.template.TemplateModelException;
-import freemarker.template.TemplateNumberModel;
+import freemarker.template.*;
 
 /**
  * Various utilities available for templates
@@ -430,17 +427,24 @@ public class Tools {
      * Encodes all mapping from <code>params</code> except those listed
      * in <<code>prohibited</code> list as form hidden input.
      */
-    public String saveParams(Map params, List prohibited) {
+    public String saveParams(Map params, SimpleSequence prohibited) throws TemplateModelException {
+        List exceptions;
         if ( params==null || params.size()==0 )
             return "";
         if ( prohibited==null )
-            prohibited = new ArrayList(1);
+            exceptions = new ArrayList(1);
+        else {
+            exceptions = new ArrayList(prohibited.size());
+            for ( int i = 0, j = prohibited.size(); i<j; i++ ) {
+                exceptions.add(((TemplateScalarModel)prohibited.get(i)).getAsString());
+            }
+        }
 
         StringBuffer sb = new StringBuffer(params.size()*50);
         Set entries = params.keySet();
         for (Iterator iter = entries.iterator(); iter.hasNext();) {
             String key = (String) iter.next();
-            if ( prohibited.contains(key) )
+            if ( exceptions.contains(key) )
                 continue;
 
             List values = null;
