@@ -7,6 +7,7 @@ package cz.abclinuxu.servlets.html.edit;
 
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
+import cz.abclinuxu.servlets.html.view.SendEmail;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -28,6 +29,7 @@ import cz.abclinuxu.utils.email.EmailSender;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.Map;
 import java.util.List;
 import java.util.HashMap;
@@ -49,6 +51,7 @@ public class EditNews implements AbcAction {
     public static final String ACTION_EDIT_STEP2 = "edit2";
     public static final String ACTION_REMOVE = "remove";
     public static final String ACTION_REMOVE_STEP2 = "remove2";
+    public static final String ACTION_SEND_EMAIL = "mail";
 
     public static final String VAR_CATEGORIES = "CATEGORIES";
     public static final String VAR_CATEGORY = "CATEGORY";
@@ -107,6 +110,9 @@ public class EditNews implements AbcAction {
         if ( ACTION_REMOVE_STEP2.equals(action) )
             return actionRemoveStep2(request, response, env);
 
+        if ( ACTION_SEND_EMAIL.equals(action) )
+            return actionSendEmail(request, response, env);
+
         throw new MissingArgumentException("Chybí parametr action!");
     }
 
@@ -152,6 +158,24 @@ public class EditNews implements AbcAction {
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/news/show/"+relation.getId());
+        return null;
+    }
+
+    /**
+     * Adds admini mailing list to session and redirects to send email screen.
+     */
+    private String actionSendEmail(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        HttpSession session = request.getSession();
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item item = (Item) relation.getChild();
+        User user = (User) persistance.findById(new User(item.getOwner()));
+
+        session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_TO, user.getEmail());
+        session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_BCC, "admini@abclinuxu.cz"); // inform group of admins too
+
+        String url = response.encodeRedirectURL("/Mail");
+        response.sendRedirect(url);
         return null;
     }
 
