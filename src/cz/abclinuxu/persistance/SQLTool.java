@@ -48,6 +48,8 @@ public final class SQLTool implements Configurable {
     private static final String DEFAULT_COUNT_DRIVERS = "select count(cislo) from polozka where typ=5";
     public static final String PREF_MAX_POLL = "max.poll";
     private static final String DEFAULT_MAX_POLL = "select max(cislo) from anketa";
+    public static final String PREF_MAX_USER = "max.user";
+    private static final String DEFAULT_MAX_USER = "select max(cislo) from uzivatel";
     private static final String PREF_RELATION_ARTICLES_WITHIN_PERIOD = "article.relations.within.period";
     private static final String DEFAULT_RELATION_ARTICLES_WITHIN_PERIOD = "select R.cislo from relace R left join polozka P on R.potomek=P.cislo where R.typ_potomka='P' and R.predchozi in (2,3,4,5,6,251,5324,8546,12448) and P.typ=2 and P.vytvoreno>? and P.vytvoreno<? order by vytvoreno asc";
     private static final String PREF_USERS_WITH_WEEKLY_MAIL = "users.email.weekly";
@@ -60,7 +62,7 @@ public final class SQLTool implements Configurable {
         ConfigurationManager.getConfigurator().configureMe(singleton);
     }
 
-    private String maxRecordCreatedOfItem, maxPoll;
+    private String maxRecordCreatedOfItem, maxPoll, maxUser;
     private String relationsHardwareByUpdated, relationsSoftwareByUpdated, relationsDriverByUpdated;
     private String relationsArticleByCreated, relationsArticleWithinPeriod, relationsDiscussionByCreated;
     private String countHardware, countSoftware, countDrivers;
@@ -297,6 +299,28 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Finds maximum id between users.
+     */
+    public int getMaximumUserId() {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null; Statement statement = null; ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.createStatement();
+            resultSet = statement.executeQuery(maxUser);
+            if ( ! resultSet.next() )
+                return 0;
+            Integer id = new Integer(resultSet.getInt(1));
+            return id.intValue();
+        } catch (SQLException e) {
+            log.error("Chyba pri hledani podle "+maxUser+"! Duvod: "+e.getMessage());
+            throw new PersistanceException("Chyba pri hledani!",AbcException.DB_FIND);
+        } finally {
+            persistance.releaseSQLResources(con,statement,resultSet);
+        }
+    }
+
+    /**
      * Private constructor
      */
     private SQLTool() {
@@ -307,6 +331,7 @@ public final class SQLTool implements Configurable {
      */
     public void configure(Preferences prefs) throws ConfigurationException {
         maxPoll = prefs.get(PREF_MAX_POLL,DEFAULT_MAX_POLL);
+        maxUser = prefs.get(PREF_MAX_USER,DEFAULT_MAX_USER);
         maxRecordCreatedOfItem = prefs.get(PREF_MAX_RECORD_CREATED_OF_ITEM,DEFAULT_MAX_RECORD_CREATED_OF_ITEM);
         relationsArticleByCreated = prefs.get(PREF_RELATION_ARTICLES_BY_CREATED,DEFAULT_RELATION_ARTICLES_BY_CREATED);
         relationsArticleWithinPeriod = prefs.get(PREF_RELATION_ARTICLES_WITHIN_PERIOD,DEFAULT_RELATION_ARTICLES_WITHIN_PERIOD);

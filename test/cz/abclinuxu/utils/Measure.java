@@ -16,6 +16,8 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Level;
 
 import java.util.List;
+import java.util.Calendar;
+import java.util.Random;
 import java.io.*;
 
 /**
@@ -24,7 +26,7 @@ import java.io.*;
 public class Measure {
 
     public static void main(String[] args) throws Exception {
-        DOMConfigurator.configure("conf/log4j.xml");
+//        DOMConfigurator.configure("conf/log4j.xml");
         LogManager.getRootLogger().setLevel(Level.OFF);
         Persistance persistance = PersistanceFactory.getPersistance();
         int i=0,j=0;
@@ -32,14 +34,15 @@ public class Measure {
         String line = null;
 
         // place initilizaton here
-        BufferedReader in = new BufferedReader(new FileReader("/home/literakl/test.txt"));
-        while ( (line=in.readLine())!=null );
+        Calendar profileLastRun = Calendar.getInstance();
+        profileLastRun.add(Calendar.DAY_OF_MONTH,-1);
 
         long start = System.currentTimeMillis();
-        for (i=0; i<2450; i++) {
+        for (i=0; i<250000; i++) {
             //place your code to measure here
-            in = new BufferedReader(new FileReader("/home/literakl/test.txt"));
-            while ( (line=in.readLine())!=null );
+            Calendar calendar = Calendar.getInstance();
+            int r = calendar.get(Calendar.DAY_OF_MONTH);
+            int z = profileLastRun.get(Calendar.DAY_OF_MONTH);
         }
         long end = System.currentTimeMillis();
 

@@ -10,6 +10,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistance.PersistanceException;
 
 import java.util.*;
 
@@ -23,10 +24,12 @@ public class VariableFetcher extends TimerTask {
     final static int SIZE = 3;
     final static int ARTICLE_SIZE = 15;
 
-    List newHardware, newSoftware, newDrivers, newArticles;
+    List newHardware, newSoftware, newDrivers, newArticles, selectedProfiles;
     Map counter;
     Poll currentPoll;
 
+    Calendar profileLastRun;
+    SQLTool sqlTool;
     Persistance persistance;
 
     /**
@@ -34,11 +37,15 @@ public class VariableFetcher extends TimerTask {
      */
     public VariableFetcher() {
         persistance = PersistanceFactory.getPersistance();
-        newHardware = new ArrayList(3);
-        newSoftware = new ArrayList(3);
-        newDrivers = new ArrayList(3);
+        sqlTool = SQLTool.getInstance();
+        newHardware = new ArrayList(SIZE);
+        newSoftware = new ArrayList(SIZE);
+        newDrivers = new ArrayList(SIZE);
+        selectedProfiles = new ArrayList(SIZE);
         newArticles = new ArrayList(ARTICLE_SIZE);
         counter = new HashMap(4);
+        profileLastRun = Calendar.getInstance();
+        profileLastRun.add(Calendar.DAY_OF_MONTH,-1);
     }
 
     /**
@@ -78,6 +85,13 @@ public class VariableFetcher extends TimerTask {
     }
 
     /**
+     * List of few freshest users.
+     */
+    public List getSelectedProfiles() {
+        return selectedProfiles;
+    }
+
+    /**
      * Actual poll.
      */
     public Poll getCurrentPoll() {
@@ -90,7 +104,6 @@ public class VariableFetcher extends TimerTask {
     public void run() {
         log.debug("fetching variables");
         try {
-            SQLTool sqlTool = SQLTool.getInstance();
             // put counts into map
             Integer i = sqlTool.getHardwareCount();
             counter.put("HARDWARE",i);
@@ -108,10 +121,36 @@ public class VariableFetcher extends TimerTask {
             newSoftware = sqlTool.findSoftwareRelationsByUpdated(0,SIZE);
             newDrivers = sqlTool.findDriverRelationsByUpdated(0,SIZE);
             newArticles = sqlTool.findArticleRelationsByUpdated(0,ARTICLE_SIZE);
+            updateProfiles();
 
             log.debug("finished fetching variables");
         } catch (Exception e) {
             log.error("Cannot fetch variables!", e);
+        }
+    }
+
+    /**
+     * Each day randomly selects SIZE profiles.
+     */
+    private void updateProfiles() {
+        Calendar calendar = Calendar.getInstance();
+        if ( calendar.get(Calendar.DAY_OF_MONTH)==profileLastRun.get(Calendar.DAY_OF_MONTH) )
+            return;
+        profileLastRun = calendar;
+
+        int limit = 10;
+        int max = sqlTool.getMaximumUserId();
+        Random random = new Random();
+        selectedProfiles.clear();
+
+        for (int i=0; i<limit && selectedProfiles.size()<3; i++) {
+            int id = random.nextInt(max);
+            try {
+                User user = (User) persistance.findById(new User(id));
+                selectedProfiles.add(user);
+            } catch (PersistanceException e) {
+                // user doesn't exist, lets skip it.
+            }
         }
     }
 }
