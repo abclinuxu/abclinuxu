@@ -43,6 +43,9 @@ import java.util.prefs.Preferences;
  * padded to 5 digits.
  */
 public class Dump implements Configurable {
+    public static final String VAR_ONLINE_URL = "ONLINE";
+    static final String PORTAL_URL = "http://www.abclinuxu.cz";
+
     Persistance persistance;
     DecimalFormat df;
     Configuration config;
@@ -56,7 +59,7 @@ public class Dump implements Configurable {
     public Dump() throws Exception {
         ConfigurationManager.getConfigurator().configureMe(this);
         persistance = PersistanceFactory.getPersistance();
-        FMUtils fmUtils = new FMUtils(); // force Freemarker initialization
+        FMUtils fmUtils = new FMUtils();
         String templateURI = AbcConfig.calculateDeployedPath("WEB-INF/conf/templates.xml");
         TemplateSelector.initialize(templateURI);
 
@@ -65,7 +68,7 @@ public class Dump implements Configurable {
         df.setMinimumIntegerDigits(5);
         df.setMaximumIntegerDigits(5);
 
-        config = Configuration.getDefaultConfiguration();
+        config = fmUtils.getConfiguration();
         config.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
         config.setTemplateUpdateDelay(100);
         config.setSharedVariable(Constants.VAR_TOOL,new Tools());
@@ -83,10 +86,10 @@ public class Dump implements Configurable {
         Relation drivers = (Relation) persistance.findById(new Relation(Constants.REL_DRIVERS));
 
         long start = System.currentTimeMillis();
-        dumpTree(articles,dirRoot);
-        dumpTree(drivers,dirRoot);
-        dumpTree(software,dirRoot);
-        dumpTree(hardware,dirRoot);
+        dumpTree(articles,dirRoot, "/clanky");
+        dumpTree(drivers,dirRoot, "/drivers");
+        dumpTree(software,dirRoot, "/software");
+        dumpTree(hardware,dirRoot, "/hardware");
         long end = System.currentTimeMillis();
         System.out.println("Dumping of "+indexed.size()+" documents took "+(end-start)/1000+" seconds.");
     }
@@ -94,7 +97,7 @@ public class Dump implements Configurable {
     /**
      * Recursively dumps relation and all its objects.
      */
-    void dumpTree(Relation relation, File currentDir) throws Exception {
+    void dumpTree(Relation relation, File currentDir, String prefix) throws Exception {
         Integer id = new Integer(relation.getId());
         if ( indexed.containsKey(id) ) return;
         indexed.put(id,id);
@@ -104,10 +107,14 @@ public class Dump implements Configurable {
         Tools.sync(obj);
 
         File file = getFileName(relation,currentDir);
-        dumpObject(relation,obj,file);
+        if ( obj instanceof Item ) {
+            dumpItem(relation, (Item) obj, file, prefix);
+        } else if ( obj instanceof Category ) {
+            dumpCategory(relation, (Category) obj, file, prefix);
+        }
 
         for (Iterator iter = obj.getContent().iterator(); iter.hasNext();) {
-            dumpTree( (Relation)iter.next(),currentDir );
+            dumpTree( (Relation)iter.next(), currentDir, prefix);
         }
     }
 
@@ -159,27 +166,13 @@ public class Dump implements Configurable {
     }
 
     /**
-     * Dumps html file with formatted object obj into
-     * file file.
-     */
-    void dumpObject(Relation relation, GenericObject obj, File file) throws Exception {
-        if ( obj instanceof Item ) {
-            dumpItem(relation,(Item)obj,file);
-            return;
-        }
-        if ( obj instanceof Category ) {
-            dumpCategory(relation,(Category)obj,file);
-            return;
-        }
-    }
-
-    /**
      * dumps article into html file.
      */
-    void dumpItem(Relation relation, Item item, File file) throws Exception {
+    void dumpItem(Relation relation, Item item, File file, String prefix) throws Exception {
         Map env = new HashMap();
 
         env.put(ViewRelation.VAR_RELATION,relation);
+        env.put(VAR_ONLINE_URL, PORTAL_URL+"/"+prefix+"/ViewRelation?relationId="+relation.getId());
         List parents = persistance.findParents(relation);
         parents.add(relation);
         env.put(ViewRelation.VAR_PARENTS,parents);
@@ -229,10 +222,11 @@ public class Dump implements Configurable {
     /**
      * dumps category into html file.
      */
-    void dumpCategory(Relation relation, Category category, File file) throws Exception {
+    void dumpCategory(Relation relation, Category category, File file, String prefix) throws Exception {
         Map env = new HashMap();
 
         env.put(ViewRelation.VAR_RELATION,relation);
+        env.put(VAR_ONLINE_URL, PORTAL_URL+prefix+"/ViewCategory?relationId="+relation.getId());
         List parents = persistance.findParents(relation);
         parents.add(relation);
         env.put(ViewRelation.VAR_PARENTS,parents);

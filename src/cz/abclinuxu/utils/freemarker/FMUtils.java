@@ -7,6 +7,7 @@ package cz.abclinuxu.utils.freemarker;
 
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import freemarker.template.Configuration;
 import freemarker.ext.beans.BeansWrapper;
 
 import java.io.*;
@@ -28,7 +29,7 @@ public class FMUtils implements Configurable {
     public static final String PREF_TEMPLATES_DIRECTORY = "directory.templates";
     public static final String DEFAULT_TEMPLATES_DIRECTORY = "WEB-INF/freemarker";
 
-    static freemarker.template.Configuration config;
+    static Configuration config;
 
     static {
         Configurator configurator = ConfigurationManager.getConfigurator();
@@ -48,7 +49,6 @@ public class FMUtils implements Configurable {
         template.process(data,writer);
         return writer.toString();
     }
-
 
     /**
      * Executes template specified by name using variables from data.
@@ -74,6 +74,13 @@ public class FMUtils implements Configurable {
         FileWriter writer = new FileWriter(file);
         tpl.process(env, writer);
         writer.close();
+    }
+
+    /**
+     * @return Configuration used by this object.
+     */
+    public static Configuration getConfiguration() {
+        return config;
     }
 
     /**

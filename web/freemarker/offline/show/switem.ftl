@@ -1,4 +1,6 @@
-<#include "/offline/macros.ftl">
+<#include "../macros.ftl">
+<#include "../header.ftl">
+
 <#call showParents>
 
 <#global who=TOOL.createUser(ITEM.owner)>
@@ -9,7 +11,7 @@
 
 <p>
  Máte-li doplòující informace, mù¾ete
- <a href="http://abclinuxu.cz/EditItem?action=addRecord&relationId=${REL_ITEM.id}">pøidat</a> 
+ <a href="http://abclinuxu.cz/EditItem?action=addRecord&relationId=${REL_ITEM.id}">pøidat</a>
  dal¹í záznam.
 </p>
 
@@ -46,3 +48,5 @@
  </table>
  <br>
 </#list>
+
+<#include "../footer.ftl">

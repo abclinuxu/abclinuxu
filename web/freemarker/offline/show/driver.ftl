@@ -1,4 +1,5 @@
-<#include "/offline/macros.ftl">
+<#include "../macros.ftl">
+<#include "../header.ftl">
 
 <#global who=TOOL.createUser(ITEM.owner)>
 <p>
@@ -25,3 +26,5 @@
   </tr>
 </#if>
 </table>
+
+<#include "../footer.ftl">

@@ -1,4 +1,6 @@
-<#include "/offline/macros.ftl">
+<#include "../macros.ftl">
+<#include "../header.ftl">
+
 <#call showParents>
 
 <#if TOOL.xpath(ITEM,"data/title")?exists>
@@ -11,3 +13,5 @@
 <#list TOOL.createDiscussionTree(ITEM) as thread>
  <#call showThread(thread 0 ITEM.id RELATION.id)>
 </#list>
+
+<#include "../footer.ftl">

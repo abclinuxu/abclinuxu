@@ -1,4 +1,6 @@
-<#include "/offline/macros.ftl">
+<#include "../macros.ftl">
+<#include "../header.ftl">
+
 <#call showParents>
 
 <#if TOOL.xpath(CATEGORY,"data/note")?exists>
@@ -57,3 +59,5 @@
 <#if map.discussion?exists>
  <#call showDiscussions(map.discussion)>
 </#if>
+
+<#include "../footer.ftl">
