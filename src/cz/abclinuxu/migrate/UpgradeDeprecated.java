@@ -28,7 +28,7 @@ public class UpgradeDeprecated {
         try {
             reIndex = new RE("(href=\"/)(Index[^\"]*)");
             reProfile = new RE("(href=\"/Profile\\?(userId|uid)=)([\\d]+)([^\"]*)", RE.MATCH_CASEINDEPENDENT);
-            reViewRelation = new RE("(href=\"[a-z/]+)(ViewRelation[^\"]+(relationId|rid)=)([\\d]+)([^#\"]*)", RE.MATCH_CASEINDEPENDENT);
+            reViewRelation = new RE("((href|url)=\"[a-z/]+)(ViewRelation[^\"]+(relationId|rid)=)([\\d]+)([^#\"]*)", RE.MATCH_CASEINDEPENDENT);
         } catch (RESyntaxException e) {
             log.error("regexp syntax troubles", e);
         }
@@ -142,7 +142,7 @@ public class UpgradeDeprecated {
                                 sb.append(stringIter.substring(position, start));
                                 sb.append(reViewRelation.getParen(1));
                                 sb.append("show/");
-                                sb.append(reViewRelation.getParen(4));
+                                sb.append(reViewRelation.getParen(5));
                                 position = reViewRelation.getParenEnd(0);
                             } while ( reViewRelation.match(stringIter, position) );
                             sb.append(stringIter.substring(position));
