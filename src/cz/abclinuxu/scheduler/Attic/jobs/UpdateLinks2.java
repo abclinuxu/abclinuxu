@@ -150,7 +150,7 @@ public class UpdateLinks2 implements Task {
                 Link existingLink = (Link) stored.remove(0);
                 existingLink.setText(link.getText());
                 existingLink.setUrl(link.getUrl());
-                persistance.update(link);
+                persistance.update(existingLink);
             } else {
                 link.setOwner(1);
                 link.setServer(server.getId());
