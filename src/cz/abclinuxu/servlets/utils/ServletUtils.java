@@ -8,6 +8,7 @@ package cz.abclinuxu.servlets.utils;
 
 import org.apache.velocity.context.Context;
 import org.apache.log4j.Logger;
+import org.dom4j.DocumentHelper;
 
 import javax.servlet.http.*;
 import java.util.*;
@@ -15,6 +16,7 @@ import java.io.UnsupportedEncodingException;
 
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.Tools;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceException;
@@ -107,8 +109,7 @@ public class ServletUtils {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Cookie cookie = getCookie(request,Constants.VAR_USER);
 
-        boolean logout = params.get(PARAM_LOG_OUT)!=null;
-        if ( logout ) {
+        if ( params.get(PARAM_LOG_OUT) != null ) {
             params.remove(PARAM_LOG_OUT);
             session.removeAttribute(Constants.VAR_USER);
             session.invalidate();
@@ -144,14 +145,13 @@ public class ServletUtils {
                 return;
             }
 
-            // todo: configurable
-            cookie = new LoginCookie(user).getCookie();
-            cookie.setMaxAge(6*30*24*3600); // six months
-            response.addCookie(cookie);
+            handleLoggedIn(user,false,response);
+
         } else if ( cookie!=null ) {
             LoginCookie loginCookie = new LoginCookie(cookie);
             try {
                 user = (User) persistance.findById(new User(loginCookie.id));
+                handleLoggedIn(user,true,null);
             } catch (PersistanceException e) {
                 deleteCookie(cookie,response);
                 addError(Constants.ERROR_GENERIC,"Nalezena cookie s neznámým u¾ivatelem!",env, null);
@@ -268,6 +268,31 @@ public class ServletUtils {
             url.append(query);
         }
         return url.toString();
+    }
+
+    /**
+     * Handles situation, when user logs in. It checks his
+     * setting, whether it shall create new cookie to simplify
+     * next login (and how long cookie shall be valid) and
+     * records time of last login.
+     * @param user logged in user
+     * @param cookieExists if true, it makes no sense to create cookie
+     * @param response cookie will be placed here
+     */
+    private static void handleLoggedIn(User user, boolean cookieExists, HttpServletResponse response) {
+        String now = Constants.isoFormat.format(new Date());
+        DocumentHelper.makeElement(user.getData(), "data/system/last_login_date").addText(now);
+        PersistanceFactory.getPersistance().update(user);
+
+        if ( !cookieExists ) {
+            String tmp = Tools.xpath(user,"/data/settings/login_cookie_validity");
+            int valid = Misc.parseInt(tmp, 6 * 30 * 24 * 3600); // six months
+            if ( valid!=0 ) {
+                Cookie cookie = new LoginCookie(user).getCookie();
+                cookie.setMaxAge(valid);
+                response.addCookie(cookie);
+            }
+        }
     }
 
     /**
