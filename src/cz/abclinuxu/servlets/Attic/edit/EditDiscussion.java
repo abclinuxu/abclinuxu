@@ -56,6 +56,7 @@ public class EditDiscussion extends AbcFMServlet {
     public static final String ACTION_ADD_COMMENT = "add";
     public static final String ACTION_ADD_COMMENT_STEP2 = "add2";
     public static final String ACTION_CENSORE_COMMENT = "censore";
+    public static final String ACTION_CENSORE_COMMENT_STEP2 = "censore2";
     public static final String ACTION_EDIT_COMMENT = "edit";
     public static final String ACTION_EDIT_COMMENT_STEP2 = "edit2";
     public static final String ACTION_ALTER_MONITOR = "monitor";
@@ -102,6 +103,9 @@ public class EditDiscussion extends AbcFMServlet {
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if ( ACTION_CENSORE_COMMENT.equals(action) )
+            return actionCensore(request, response, env);
+
+        if ( ACTION_CENSORE_COMMENT_STEP2.equals(action) )
             return actionCensore(request, response, env);
 
         if ( ACTION_EDIT_COMMENT.equals(action) )
@@ -292,7 +296,7 @@ public class EditDiscussion extends AbcFMServlet {
     }
 
     /**
-     * Changes censore flag on give thread.
+     * Changes censore flag on given thread.
      */
     protected String actionCensore(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -327,16 +331,24 @@ public class EditDiscussion extends AbcFMServlet {
                 node.detach();
                 AdminLogger.logEvent(user,"odstranena cenzura na vlakno "+thread+" diskuse "+discussion.getId()+", relace "+relation.getId());
             } else {
-                element.addElement("censored").setText("Admin "+user.getName()+", "+Constants.czFormat.format(new Date()));
+                String action = (String) params.get(PARAM_ACTION);
+                if ( ACTION_CENSORE_COMMENT_STEP2.equals(action) ) {
+                    Element censored = element.addElement("censored");
+                    censored.addAttribute("admin",new Integer(user.getId()).toString());
+                    censored.setText((String) params.get(PARAM_TEXT));
 
-                // run monitor
-                String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/ViewRelation?rid="+relation.getId();
-                MonitorAction action = new MonitorAction(user, UserAction.CENSORE, ObjectType.DISCUSSION, discussion, url);
-                String title = element.selectSingleNode("title").getText();
-                action.setProperty(DiscussionDecorator.PROPERTY_NAME,title);
-                MonitorPool.scheduleMonitorAction(action);
+                    // run monitor
+                    String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/ViewRelation?rid="+relation.getId();
+                    MonitorAction monitor = new MonitorAction(user, UserAction.CENSORE, ObjectType.DISCUSSION, discussion, url);
+                    String title = element.selectSingleNode("title").getText();
+                    monitor.setProperty(DiscussionDecorator.PROPERTY_NAME, title);
+                    MonitorPool.scheduleMonitorAction(monitor);
 
-                AdminLogger.logEvent(user, "uvalena cenzura na vlakno "+thread+" diskuse "+discussion.getId()+", relace "+relation.getId());
+                    AdminLogger.logEvent(user, "uvalil cenzuru na vlakno "+thread+" diskuse "+discussion.getId()+", relace "+relation.getId());
+                } else {
+                    env.put(VAR_THREAD, new Comment(element));
+                    return FMTemplateSelector.select("EditDiscussion", "censore", env, request);
+                }
             }
         }
         persistance.update(record);

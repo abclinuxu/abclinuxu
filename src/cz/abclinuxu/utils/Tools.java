@@ -68,9 +68,26 @@ public class Tools {
      * @param xpath xpath expression
      * @return Strings
      */
-    public static String xpath(Node element, String  xpath) {
+    public static String xpath(Node element, String xpath) {
         Node node = element.selectSingleNode(xpath);
         return (node==null)? null : node.getText();
+    }
+
+    /**
+     * Extracts value of given xpath expression evaluated on element.
+     * @param element XML element
+     * @param xpath xpath expression
+     * @return object, that is result of xpath expression, or null
+     */
+    public static Object xpathValue(Node element, String xpath) {
+        if ( element==null )
+            return null;
+        Object result = element.selectObject(xpath);
+        if ( result==null )
+            return null;
+        if ( result instanceof Node )
+            return ((Node) result).getText();
+        return result.toString();
     }
 
     /**
@@ -159,6 +176,15 @@ public class Tools {
         if ( base<=0 ) return 0;
         double percent = 100*count/(double)base;
         return (int)(percent+0.5);
+    }
+
+    /**
+     * Gets number of activated monitors in given document.
+     * @return integer
+     */
+    public Integer getMonitorCount(Document document) {
+        Object value = document.selectObject("count(//monitor/id)");
+        return new Integer(((Double) value).intValue());
     }
 
     /**

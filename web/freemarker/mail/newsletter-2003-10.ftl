@@ -1,6 +1,6 @@
 Mesicni zpravodaj portalu www.abclinuxu.cz
 
-Vazeny uzivateli,
+Vazeny uzivateli ${USER.name},
 
 dovolte mi uvitat vas u dalsiho cisla naseho zpravodaje.
 Doctete se v nem o obsahu noveho Abicka, novinkach na
@@ -15,14 +15,19 @@ Abicko. Jedna se o specialni vyber tech nejzajimavejsich
 clanku z naseho portalu plus Zpravicek z Roota v podobe
 vhodne pro tisk i snadne cteni z obrazovky.
 
-Srpnove cislo ma XX stran a zabira YYY KB. Stahnout
+Srpnove cislo ma 48 stran a zabira 880 KB. Stahnout
 jej muzete ze stranky
 http://www.abclinuxu.cz/download/abicko.jsp
 
 Obsah:
-*
+
+* Mandrake Linux 9.2 GPL set
+* Nastavení po¹tovního subsystému v Linuxu
+* Co mo¾ná (ne)víte o Javì
+* Editor VIM prakticky - II
+* Zajímavosti ze svìta Linuxu 4
 * Zprávièky z Roota
-* Jaderné noviny 223 - 225
+* Jaderné noviny 233 - 235
 
 
 Novinky na AbcLinuxu

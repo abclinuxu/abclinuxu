@@ -12,7 +12,7 @@
 
   <servlet name="EditCategory">
     <action name="add" template="print" content="/add/category.ftl">
-    <var name="TITLE" value="Vlo¾ení kategorie" />
+      <var name="TITLE" value="Vlo¾ení kategorie" />
     </action>
     <action name="edit" template="print" content="/edit/category.ftl">
       <var name="TITLE" value="Úprava kategorie" />
@@ -40,6 +40,9 @@
     </action>
     <action name="edit" content="/edit/comment.ftl">
       <var name="TITLE" value="Úprava pøíspìvku" />
+    </action>
+    <action name="censore" template="print" content="/edit/censore.ftl">
+      <var name="TITLE" value="Cenzura pøíspìvku"/>
     </action>
   </servlet>
 

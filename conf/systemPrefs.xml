@@ -106,7 +106,7 @@
               <map>
                 <entry key="smtp.server" value="localhost"/>
                 <entry key="admin.address" value="admin@abclinuxu.cz"/>
-                <entry key="debug.smtp" value="true"/>
+                <entry key="debug.smtp" value="false"/>
               </map>
             </node>
           </node>
