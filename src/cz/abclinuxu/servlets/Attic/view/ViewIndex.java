@@ -8,6 +8,7 @@ package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
@@ -45,37 +46,23 @@ public class ViewIndex extends AbcServlet {
         init(request,response,ctx);
 
         Persistance persistance = PersistanceFactory.getPersistance();
+        VelocityHelper helper = new VelocityHelper();
+
         Category hw = (Category) persistance.findById(new Category(Constants.CAT_386));
-        List content = hw.getContent();
-        for (Iterator iter = content.iterator(); iter.hasNext();) {
-            Relation relation = (Relation) iter.next();
-            persistance.synchronize(relation.getChild());
-        }
-        ctx.put(ViewIndex.VAR_HARDWARE,content);
+        helper.sync(hw.getContent());
+        ctx.put(ViewIndex.VAR_HARDWARE,hw.getContent());
 
         Category sw = (Category) persistance.findById(new Category(Constants.CAT_SOFTWARE));
-        content = sw.getContent();
-        for (Iterator iter = content.iterator(); iter.hasNext();) {
-            Relation relation = (Relation) iter.next();
-            persistance.synchronize(relation.getChild());
-        }
-        ctx.put(ViewIndex.VAR_SOFTWARE,content);
+        helper.sync(sw.getContent());
+        ctx.put(ViewIndex.VAR_SOFTWARE,sw.getContent());
 
         Category clanky = (Category) persistance.findById(new Category(Constants.CAT_ARTICLES));
-        content = clanky.getContent();
-        for (Iterator iter = content.iterator(); iter.hasNext();) {
-            Relation relation = (Relation) iter.next();
-            persistance.synchronize(relation.getChild());
-        }
-        ctx.put(ViewIndex.VAR_CLANKY,content);
+        helper.sync(clanky.getContent());
+        ctx.put(ViewIndex.VAR_CLANKY,clanky.getContent());
 
         Category abc = (Category) persistance.findById(new Category(Constants.CAT_ABC));
-        content = abc.getContent();
-        for (Iterator iter = content.iterator(); iter.hasNext();) {
-            Relation relation = (Relation) iter.next();
-            persistance.synchronize(relation.getChild());
-        }
-        ctx.put(ViewIndex.VAR_ABCLINUXU,content);
+        helper.sync(abc.getContent());
+        ctx.put(ViewIndex.VAR_ABCLINUXU,abc.getContent());
 
         List list = persistance.findByCommand("select max(cislo) from anketa");
         Object[] objects = (Object[]) list.get(0);

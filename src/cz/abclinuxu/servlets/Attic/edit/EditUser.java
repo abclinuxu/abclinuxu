@@ -115,7 +115,7 @@ public class EditUser extends AbcServlet {
             PersistanceFactory.getPersistance().create(user);
         } catch ( PersistanceException e ) {
             if ( e.getStatus()==AbcException.DB_DUPLICATE ) {
-                addError(PARAM_LOGIN,"Toto jmeno je jiz pouzivano!",ctx, null);
+                addError(PARAM_LOGIN,"Toto jméno je ji¾ pou¾íváno!",ctx, null);
             }
             return getTemplate("add/user.vm");
         }
@@ -196,7 +196,7 @@ public class EditUser extends AbcServlet {
             error = true;
         }
         if ( name==null || name.length()<5 ) {
-            addError(PARAM_NAME,"Zadane jmeno je pøíli¹ krátké!",ctx, null);
+            addError(PARAM_NAME,"Zadané jméno je pøíli¹ krátké!",ctx, null);
             error = true;
         }
         if ( updatePassword ) {

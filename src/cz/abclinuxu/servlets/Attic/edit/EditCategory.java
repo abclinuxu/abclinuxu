@@ -79,17 +79,15 @@ public class EditCategory extends AbcServlet {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         String action = (String) params.get(AbcServlet.PARAM_ACTION);
 
-        String tmp = (String) params.get(EditCategory.PARAM_CATEGORY);
-        if ( tmp!=null && tmp.length()>0 ) {
-            int categoryId = Integer.parseInt(tmp);
-            category = (Category) PersistanceFactory.getPersistance().findById(new Category(categoryId));
+        category = (Category) instantiateParam(EditCategory.PARAM_CATEGORY,Category.class,params);
+        if ( category!=null ) {
+            category = (Category) PersistanceFactory.getPersistance().findById(category);
             ctx.put(EditCategory.VAR_CATEGORY,category);
         }
 
-        tmp = (String) params.get(EditCategory.PARAM_RELATION);
-        if ( tmp!=null && tmp.length()>0 ) {
-            int relationId = Integer.parseInt(tmp);
-            relation = (Relation) PersistanceFactory.getPersistance().findById(new Relation(relationId));
+        relation = (Relation) instantiateParam(EditCategory.PARAM_RELATION,Relation.class,params);
+        if ( relation!=null ) {
+            relation = (Relation) PersistanceFactory.getPersistance().findById(relation);
             ctx.put(EditCategory.VAR_RELATION,relation);
             category = (Category) relation.getChild();
             ctx.put(EditCategory.VAR_CATEGORY,category);

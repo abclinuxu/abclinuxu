@@ -51,16 +51,17 @@ public class EditRelation extends AbcServlet {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         String action = (String) params.get(AbcServlet.PARAM_ACTION);
 
-        String tmp = (String) params.get(EditRelation.PARAM_RELATION);
-        int relationId = Integer.parseInt(tmp);
-        Relation relation = (Relation) PersistanceFactory.getPersistance().findById(new Relation(relationId));
-        ctx.put(EditRelation.VAR_CURRENT,relation);
+        Relation relation = (Relation) instantiateParam(EditRelation.PARAM_RELATION,Relation.class,params);
+        if ( relation!=null ) {
+            relation = (Relation) PersistanceFactory.getPersistance().findById(relation);
+            ctx.put(EditRelation.VAR_CURRENT,relation);
+        }
 
         if ( action==null || action.equals(EditRelation.ACTION_LINK) ) {
             int rights = checkAccess(relation.getChild(),AbcServlet.METHOD_ADD,ctx);
             switch (rights) {
                 case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
-                case AbcServlet.USER_INSUFFICIENT_RIGHTS: addError(AbcServlet.GENERIC_ERROR,"Vase prava nejsou dostatecna pro tuto operaci!",ctx, null);
+                case AbcServlet.USER_INSUFFICIENT_RIGHTS: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return getTemplate("add/relation.vm");
             }
 
@@ -69,7 +70,7 @@ public class EditRelation extends AbcServlet {
             switch (rights) {
                 case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
                 case AbcServlet.USER_INSUFFICIENT_RIGHTS: {
-                    addError(AbcServlet.GENERIC_ERROR,"Vase prava nejsou dostatecna pro tuto operaci!",ctx, null);
+                    addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                     return getTemplate("add/relation.vm");
                 }
                 default: return actionLinkStep2(request,response,ctx);
@@ -82,20 +83,15 @@ public class EditRelation extends AbcServlet {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        String tmp = (String) params.get(EditRelation.PARAM_RELATION);
-        int relationId = Integer.parseInt(tmp);
-        Relation parent = (Relation) persistance.findById(new Relation(relationId));
-
-        tmp = (String) params.get(SelectRelation.PARAM_SELECTED);
-        relationId = Integer.parseInt(tmp);
-        Relation child = (Relation) persistance.findById(new Relation(relationId));
+        Relation parent = (Relation) params.get(EditRelation.VAR_CURRENT);
+        Relation child = (Relation) instantiateParam(SelectRelation.PARAM_SELECTED,Relation.class,params);
 
         Relation relation = new Relation();
         relation.setParent(parent.getChild());
         relation.setChild(child.getChild());
         relation.setUpper(parent.getId());
 
-        tmp = (String) params.get(EditRelation.PARAM_NAME);
+        String tmp = (String) params.get(EditRelation.PARAM_NAME);
         if ( tmp!=null && tmp.length()>0 ) {
             Document document = DocumentHelper.createDocument();
             Element root = document.addElement("data");

@@ -66,17 +66,15 @@ public class EditPoll extends AbcServlet {
         Relation relation = null;
         Poll poll = null;
 
-        String tmp = (String) params.get(EditPoll.PARAM_RELATION);
-        if ( tmp!=null && tmp.length()>0 ) {
-            int id = Integer.parseInt(tmp);
-            relation = (Relation) PersistanceFactory.getPersistance().findById(new Relation(id));
+        relation = (Relation) instantiateParam(EditPoll.PARAM_RELATION,Relation.class,params);
+        if ( relation!=null ) {
+            relation = (Relation) PersistanceFactory.getPersistance().findById(relation);
             ctx.put(EditPoll.VAR_RELATION,relation);
         }
 
-        tmp = (String) params.get(EditPoll.PARAM_POLL);
-        if ( tmp!=null && tmp.length()>0 ) {
-            int id = Integer.parseInt(tmp);
-            poll = (Poll) PersistanceFactory.getPersistance().findById(new Poll(id));
+        poll = (Poll) instantiateParam(EditPoll.PARAM_POLL,Poll.class,params);
+        if ( poll!=null ) {
+            poll = (Poll) PersistanceFactory.getPersistance().findById(poll);
             ctx.put(EditPoll.VAR_POLL,poll);
         }
 

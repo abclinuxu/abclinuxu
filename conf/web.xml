@@ -64,6 +64,12 @@
     </servlet>
 
     <servlet>
+        <servlet-name>EditHardware</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.edit.EditHardware</servlet-class>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+
+    <servlet>
         <servlet-name>SelectIcon</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.view.SelectIcon</servlet-class>
         <load-on-startup>4</load-on-startup>
@@ -104,6 +110,10 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EditCategory</servlet-name><url-pattern>/clanky/EditCategory</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>EditHardware</servlet-name><url-pattern>/hardware/EditItem</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

@@ -100,9 +100,9 @@ public class SelectRelation extends AbcServlet {
                 ctx.put(SelectRelation.VAR_CURRENT,current);
                 return getTemplate("view/selectRelation.vm");
             } catch (NumberFormatException e) {
-                addError(SelectRelation.PARAM_ENTERED,"Cislo vetsi nez nula!",ctx, null);
+                addError(SelectRelation.PARAM_ENTERED,"Èíslo vìt¹í ne¾ nula!",ctx, null);
             } catch (PersistanceException e) {
-                addError(AbcServlet.GENERIC_ERROR,"Nebyla zvolena platna relace!",ctx, null);
+                addError(AbcServlet.GENERIC_ERROR,"Nebyla zvolena platná relace!",ctx, null);
             }
         }
 
@@ -136,13 +136,13 @@ public class SelectRelation extends AbcServlet {
             try {
                 result = Integer.parseInt(manual);
             } catch (NumberFormatException e) {
-                addError(SelectRelation.PARAM_ENTERED,"Cislo vetsi nez nula!",ctx, null);
+                addError(SelectRelation.PARAM_ENTERED,"Císlo vìt¹í ne¾ nula!",ctx, null);
             }
         } else {
             try {
                 result = Integer.parseInt(tmp);
             } catch (NumberFormatException e) {
-                addError(AbcServlet.GENERIC_ERROR,"Nebyla zvolena platna relace!",ctx, null);
+                addError(AbcServlet.GENERIC_ERROR,"Nebyla zvolena platná relace!",ctx, null);
             }
         }
 

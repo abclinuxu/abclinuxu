@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.RequestDispatcher;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Servlet, which loads Relation specified by parameter <code>relationId</code>
@@ -47,10 +48,9 @@ public class ViewRelation extends AbcServlet {
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
-        int pk = Integer.parseInt(request.getParameter(PARAM_RELATION_ID));
-        Relation relation = new Relation(pk);
         Persistance persistance = PersistanceFactory.getPersistance();
-        relation = (Relation) persistance.findById(relation);
+        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Relation relation = (Relation) instantiateParam(PARAM_RELATION_ID,Relation.class,params);
         ctx.put(VAR_RELATION,relation);
 
         List parents = persistance.findParents(relation);
