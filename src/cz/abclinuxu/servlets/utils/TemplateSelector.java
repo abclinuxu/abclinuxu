@@ -31,22 +31,29 @@ public class TemplateSelector {
     public static final String PARAM_VARIANTA = "varianta";
 
     /** this variable holds name of template to be included */
-    public static final String VAR_CONTENT_TEMPLATE = "CONTENT";
+    public static final String VAR_CONTENT = "CONTENT";
     /** this variable holds type of browser, which is used by visitor */
     public static final String VAR_BROWSER = "BROWSER";
+    /** this variable holds browser's operating system */
+    public static final String VAR_OS = "OS";
 
     /** lynx broswer */
     public static final String BROWSER_LYNX = "LYNX";
     /** mozilla browser */
     public static final String BROWSER_MOZILLA = "MOZILLA";
     /** Internet Explorer browser */
-    public static final String BROWSER_IE = "IE";
+    public static final String BROWSER_IE = "EXPLORER";
     /** forbidden mirroring tool like wget or Custo */
     public static final String BROWSER_MIRROR = "MIRROR";
     /** plucker PDA browser */
     public static final String BROWSER_PLUCKER = "PLUCKER";
     /** other browser */
     public static final String BROWSER_OTHER = "OTHER";
+
+    /** OS Linux */
+    public static final String OS_LINUX = "LINUX";
+    /** OS Windows */
+    public static final String OS_WINDOWS = "WINDOWS";
 
     /**
      * Here we store mappings. key is concatenation of servlet name and action, value is map
@@ -76,8 +83,8 @@ public class TemplateSelector {
 
                 for (Iterator mappingIter = tagMappings.iterator(); mappingIter.hasNext();) { // for each mapping
                     Element tagMapping = (Element) mappingIter.next();
-                    String variant = tagMapping.attributeValue("variant");
-                    Mapping mapping = new Mapping(tagMapping.attributeValue("template"));
+                    String variant = tagMapping.attributeValue("template");
+                    Mapping mapping = new Mapping(tagMapping.attributeValue("content"));
 
                     List tagVariables = tagMapping.elements("var");
                     if ( !Misc.empty(tagVariables) ) {
@@ -124,19 +131,19 @@ public class TemplateSelector {
      * instances of Variable.
      */
     static class Mapping {
-        String template;
+        String content;
         List variables;
 
-        public Mapping(String template) {
-            this.template = template;
+        public Mapping(String content) {
+            this.content = content;
         }
 
         public void setVariables(List variables) {
             this.variables = variables;
         }
 
-        public String getTemplate() {
-            return template;
+        public String getContent() {
+            return content;
         }
 
         public List getVariables() {

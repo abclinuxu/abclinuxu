@@ -19,13 +19,16 @@ import java.io.FileNotFoundException;
 import org.apache.log4j.*;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.apache.regexp.RE;
 import org.dom4j.Document;
+import org.dom4j.Node;
 
 /**
  * Sends sms to all users, that allowed sending adds emails.
  */
 public class Spammer {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Spammer.class);
+    static RE re;
 
     Persistance persistance = PersistanceFactory.getPersistance();
 
@@ -33,9 +36,9 @@ public class Spammer {
         boolean test = true;
         if ( args!=null && args.length==1 && args[0].equals("send") ) test = false;
 
+        re = new RE("^[A-Z]*$");
         setupLog();
-	System.out.println("Toto se musi objevit na vystupu!");
-        Velocity.init("/home/literakl/tomcat/webapps/ROOT/WEB-INF/velocity.properties");
+        Velocity.init("/home/literakl/abc/deploy/WEB-INF/velocity.properties");
 
         Spammer mailer = new Spammer();
         mailer.doWork(test);
@@ -46,10 +49,10 @@ public class Spammer {
         Map data = new HashMap(10);
 
         if ( test ) {
-	    System.out.println("Running test");
-	} else {
-	    System.out.println("Running REAL mode - will send mass mail!");
-	}
+            System.out.println("Running test");
+        } else {
+            System.out.println("Running REAL mode - will send mass mail!");
+        }
 
         for ( int i=1; i<=max; i++ ) {
             addUsersEmail(i,data);
@@ -57,7 +60,7 @@ public class Spammer {
                 if ( test ) {
                     simulate(data);
                 } else {
-                    Email.sendBulkEmail("reklama@abclinuxu.cz","nabidka tricek AbcLinuxu",data);
+                    Email.sendBulkEmail("reklama@abclinuxu.cz","nabidka sluzeb",data);
                 }
                 data.clear();
             }
@@ -65,7 +68,7 @@ public class Spammer {
         if ( test ) {
             simulate(data);
         } else {
-            if ( data.size()>0 ) Email.sendBulkEmail("reklama@abclinuxu.cz","nabidka tricek AbcLinuxu",data);
+            if ( data.size()>0 ) Email.sendBulkEmail("reklama@abclinuxu.cz","nabidka sluzeb",data);
         }
     }
 
@@ -77,12 +80,29 @@ public class Spammer {
 
             Document document = user.getData();
             String str = document.selectSingleNode("data/ads").getText();
-            if ( str==null ) return;
-            if ( !str.equalsIgnoreCase("yes") ) return;
+            if ( ! Misc.same(str,"yes") ) {
+                System.out.println("not including user "+user.getId()+", forbidden ads: "+str);
+                return;
+            }
+
+            Node node = document.selectSingleNode("data/active");
+            if ( node!=null ) {
+                str = node.getText();
+                if ( Misc.same(str,"no") ) {
+                    System.out.println("not including user "+user.getId()+", not active");
+                    return;
+                }
+            }
+
+            str = user.getPassword();
+            if ( str.length()==6 && re.match(str) ) {
+                System.out.println("not including user "+user.getId()+", password is "+str);
+                return;
+            }
 
             VelocityContext tmpContext = new VelocityContext();
             tmpContext.put("USER",user);
-            String message = VelocityHelper.mergeTemplate("mail/tricko.vm",tmpContext);
+            String message = VelocityHelper.mergeTemplate("mail/sro.vm",tmpContext);
 
             String email = user.getEmail();
             map.put(email,message);
@@ -98,7 +118,7 @@ public class Spammer {
         for (Iterator it = map.keySet().iterator(); it.hasNext();) {
             String s = (String) it.next();
             String d = (String) map.get(s);
-            log.info(s+"\n"+d+"----\n\n");
+            log.info(s+"\n"+d+"----\n");
         }
     }
 

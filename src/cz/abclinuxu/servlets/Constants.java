@@ -15,70 +15,79 @@ import java.text.DateFormat;
 public interface Constants {
 
     /** actual ids of selected categories in database */
-    public static final int CAT_ARTICLES = 1;
-    public static final int CAT_HARDWARE = 2;
-    public static final int CAT_SOFTWARE = 3;
-    public static final int CAT_ABC = 4;
-    public static final int CAT_ACTUAL_ARTICLES = 8;
-    public static final int CAT_386 = 10;
-    public static final int CAT_POLLS = 240;
-    public static final int CAT_LINKS = 14;
-    public static final int CAT_DRIVERS = 13;
-    public static final int CAT_AUTHORS = 247;
-    public static final int CAT_REQUESTS = 256;
-    public static final int CAT_FORUM = 265;
-    public static final int CAT_ROOT = 248;
-    public static final int CAT_REKLAMA = 333;
-    public static final int CAT_SYSTEM = 338;
-    public static final int CAT_ARTICLEPOOL = 339;
+    int CAT_ARTICLES = 1;
+    int CAT_HARDWARE = 2;
+    int CAT_SOFTWARE = 3;
+    int CAT_ABC = 4;
+    int CAT_ACTUAL_ARTICLES = 8;
+    int CAT_386 = 10;
+    int CAT_POLLS = 240;
+    int CAT_LINKS = 14;
+    int CAT_DRIVERS = 13;
+    int CAT_AUTHORS = 247;
+    int CAT_REQUESTS = 256;
+    int CAT_FORUM = 265;
+    int CAT_ROOT = 248;
+    int CAT_REKLAMA = 333;
+    int CAT_SYSTEM = 338;
+    int CAT_ARTICLEPOOL = 339;
 
     // actual ids of selected relations in database
-    public static final int REL_POLLS = 250;
-    public static final int REL_REKLAMA = 308;
-    public static final int REL_AUTHORS = 314;
-    public static final int REL_ARTICLES = 315;
-    public static final int REL_HARDWARE = 316;
-    public static final int REL_SOFTWARE = 317;
-    public static final int REL_DRIVERS = 318;
-    public static final int REL_LINKS =  319;
-    public static final int REL_ACTUAL_ARTICLES = 5;
-    public static final int REL_REQUESTS =  3500;
-    public static final int REL_FORUM = 3739;
-    public static final int REL_ABC = 5187;
-    public static final int REL_KOMERCE = 7223;
-    public static final int REL_SYSTEM = 8000;
-    public static final int REL_ARTICLEPOOL = 8082;
+    int REL_POLLS = 250;
+    int REL_REKLAMA = 308;
+    int REL_AUTHORS = 314;
+    int REL_ARTICLES = 315;
+    int REL_HARDWARE = 316;
+    int REL_SOFTWARE = 317;
+    int REL_DRIVERS = 318;
+    int REL_LINKS =  319;
+    int REL_ACTUAL_ARTICLES = 5;
+    int REL_REQUESTS =  3500;
+    int REL_FORUM = 3739;
+    int REL_ABC = 5187;
+    int REL_KOMERCE = 7223;
+    int REL_SYSTEM = 8000;
+    int REL_ARTICLEPOOL = 8082;
 
     // types for VelocityHelper.groupByType()
-    public static final String TYPE_MAKE = "make";
-    public static final String TYPE_ARTICLE = "article";
-    public static final String TYPE_DISCUSSION = "discussion";
-    public static final String TYPE_REQUEST = "request";
-    public static final String TYPE_DRIVER = "driver";
-    public static final String TYPE_CATEGORY = "category";
-    public static final String TYPE_RECORD = "record";
+    String TYPE_MAKE = "make";
+    String TYPE_ARTICLE = "article";
+    String TYPE_DISCUSSION = "discussion";
+    String TYPE_REQUEST = "request";
+    String TYPE_DRIVER = "driver";
+    String TYPE_CATEGORY = "category";
+    String TYPE_RECORD = "record";
 
     // template variables
 
     /** holds VariableFetcher */
-    public static final String VAR_VARIABLES = "VARS";
+    String VAR_FETCHER = "VARS";
     /** holds category Rubriky */
-    public static final String VAR_RUBRIKY = "RUBRIKY";
-    public static final String VAR_ABCLINUXU = "ABCLINUXU";
-    public static final String VAR_REKLAMA = "REKLAMA";
-    public static final String VAR_LINKS = "ROZCESTNIK";
+    String VAR_RUBRIKY = "RUBRIKY";
+    /** holds category Abclinuxu */
+    String VAR_ABCLINUXU = "ABCLINUXU";
+    /** holds category Reklama */
+    String VAR_REKLAMA = "REKLAMA";
+    /** holds category Links */
+    String VAR_LINKS = "LINKS";
     /** holds current user instance */
-    public static final String VAR_USER = "USER";
+    String VAR_USER = "USER";
     /** holds request's parameters */
-    public static final String VAR_PARAMS = "PARAMS";
+    String VAR_PARAMS = "PARAMS";
     /** holds url manipulation tool */
-    public static final String VAR_URL_UTILS = "URL";
+    String VAR_URL_UTILS = "URL";
     /** holds map of errors for last request */
     String VAR_ERRORS = "ERRORS";
     /** holds list of messages for last request */
     String VAR_MESSAGES = "MESSAGES";
+    /** holds Tools instance */
+    String VAR_TOOL = "TOOL";
+    /** holds Sorters2 instance */
+    String VAR_SORTER = "SORT";
+    /** holds DateTool instance */
+    String VAR_DATE_TOOL = "DATE";
 
     SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-    DateFormat defaultFormat = new SimpleDateFormat("d. M. yyyy HH:mm");
-    DateFormat discussionFormat = new SimpleDateFormat("d.M. HH:mm");
+    DateFormat czFormat = new SimpleDateFormat("d. M. yyyy HH:mm");
+    DateFormat czShortFormat = new SimpleDateFormat("d.M. HH:mm");
 }

@@ -24,6 +24,7 @@ import cz.abclinuxu.scheduler.UpdateLinks;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.view.*;
+import cz.abclinuxu.servlets.init.AbcInit;
 
 import java.io.*;
 import java.util.*;
@@ -354,8 +355,8 @@ public abstract class AbcVelocityServlet extends VelocityServlet {
             Map links = UpdateLinks.groupLinks(linksCategory,persistance);
             ctx.put(VAR_LINKS,links);
 
-            ctx.put(VAR_ANKETA,VariableFetcher.getCurrentPoll());
-            ctx.put(VAR_COUNTS,VariableFetcher.getItemCounts());
+            ctx.put(VAR_ANKETA,AbcInit.getFetcher().getCurrentPoll());
+            ctx.put(VAR_COUNTS,AbcInit.getFetcher().getCounter());
         } catch (PersistanceException e) {
             log.warn("Cannot get default objects!",e);
         }

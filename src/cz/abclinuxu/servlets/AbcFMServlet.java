@@ -20,6 +20,7 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.exceptions.NotAuthorizedException;
 import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.servlets.utils.UrlUtils;
 
 /**
  * Superclass for all servlets. It does some initialization
@@ -53,12 +54,9 @@ public abstract class AbcFMServlet extends HttpServlet {
 
             SimpleHash root = new SimpleHash(data,new BeansWrapper());
             Template template = config.getTemplate(templateName);
-            StringWriter stringWriter = new StringWriter();
-            template.process(root,stringWriter);
-
             response.setContentType("text/html; charset=ISO-8859-2");
             Writer writer = response.getWriter();
-            writer.write(stringWriter.toString());
+            template.process(root,writer);
             writer.flush();
         } catch (Exception e) {
             error(request,response,e);
@@ -71,6 +69,7 @@ public abstract class AbcFMServlet extends HttpServlet {
     private void performInit(HttpServletRequest request, HttpServletResponse response, Map env) {
         Map params = ServletUtils.putParamsToMap(request);
         env.put(Constants.VAR_PARAMS,params);
+        env.put(Constants.VAR_URL_UTILS,new UrlUtils(request.getRequestURI(), response));
         ServletUtils.handleMessages(request,env);
         ServletUtils.handleLogin(request,response,env);
     }

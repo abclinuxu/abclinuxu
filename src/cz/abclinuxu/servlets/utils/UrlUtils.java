@@ -88,6 +88,13 @@ public class UrlUtils {
     }
 
     /**
+     * Constructs new URL, which doesn't contain prefix and doesn't loose session id.
+     */
+    public String noPrefix(String url) {
+        return response.encodeURL(url);
+    }
+
+    /**
      * Constructs new URL, which doesn't lose context prefix and session id. This will work
      * with response.redirect().
      * @param url URL to be encoded

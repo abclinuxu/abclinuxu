@@ -76,7 +76,7 @@ public class VelocityTemplateSelector extends TemplateSelector {
         }
 
         storeVariablesIntoContext(ctx,mapping.getVariables());
-        ctx.put(VAR_CONTENT_TEMPLATE,mapping.getTemplate());
+        ctx.put(VAR_CONTENT,mapping.getContent());
         return variant+"/template.vm";
     }
 
@@ -92,7 +92,7 @@ public class VelocityTemplateSelector extends TemplateSelector {
         if ( Misc.same((String) ctx.get(VAR_BROWSER),BROWSER_MIRROR) ) {
             return "lynx/other/nomirror.vm";
         }
-        ctx.put(VAR_CONTENT_TEMPLATE,template);
+        ctx.put(VAR_CONTENT,template);
         return variant+"/template.vm";
     }
 

@@ -373,7 +373,7 @@ public class VelocityHelper {
      */
     public String showDate(Date date) {
         if ( date==null ) return null;
-        return Constants.defaultFormat.format(date);
+        return Constants.czFormat.format(date);
     }
 
     /**
@@ -389,14 +389,14 @@ public class VelocityHelper {
      */
     public String showDizDate(Date date) {
         if ( date==null ) return null;
-        return Constants.discussionFormat.format(date);
+        return Constants.czShortFormat.format(date);
     }
 
     /**
      * Returns formatted String according to current locale. Uses current time.
      */
     public String showDate() {
-        return Constants.defaultFormat.format(new Date());
+        return Constants.czFormat.format(new Date());
     }
 
     /**
@@ -406,7 +406,7 @@ public class VelocityHelper {
         if ( isoDate==null ) return null;
         try {
             Date date = Constants.isoFormat.parse(isoDate);
-            return Constants.defaultFormat.format(date);
+            return Constants.czFormat.format(date);
         } catch (ParseException e) {
             return null;
         }

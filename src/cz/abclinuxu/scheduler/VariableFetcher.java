@@ -22,21 +22,14 @@ public class VariableFetcher extends TimerTask {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(VariableFetcher.class);
 
     final static int SIZE = 3;
+    final static int ARTICLE_SIZE = 15;
 
-    static List newHW, newSW, newDrv;
-    static Map counts;
-    static Poll poll;
+    List newHardware, newSoftware, newDrivers, newArticles;
+    Map counter;
+    Poll currentPoll;
 
     Persistance persistance;
     VelocityHelper helper;
-
-    static {
-        newHW = new ArrayList(3);
-        newSW = new ArrayList(3);
-        newDrv = new ArrayList(3);
-        counts = new HashMap(4);
-    }
-
 
     /**
      * Public constructor
@@ -44,42 +37,54 @@ public class VariableFetcher extends TimerTask {
     public VariableFetcher() {
         persistance = PersistanceFactory.getPersistance();
         helper = new VelocityHelper();
+        newHardware = new ArrayList(3);
+        newSoftware = new ArrayList(3);
+        newDrivers = new ArrayList(3);
+        newArticles = new ArrayList(ARTICLE_SIZE);
+        counter = new HashMap(4);
     }
 
     /**
      * Map, where each service name is mapped to
      * count of objects of that service.
      */
-    public static Map getItemCounts() {
-        return counts;
+    public Map getCounter() {
+        return counter;
     }
 
     /**
      * List of few freshest hardware records (relation).
      */
-    public static List getNewHardwareList() {
-        return newHW;
+    public List getNewHardware() {
+        return newHardware;
     }
 
     /**
      * List of few freshest software records (relation).
      */
-    public static List getNewSoftwareList() {
-        return newSW;
+    public List getNewSoftware() {
+        return newSoftware;
     }
 
     /**
      * List of few freshest drivers (relation).
      */
-    public static List getNewDriversList() {
-        return newDrv;
+    public List getNewDrivers() {
+        return newDrivers;
+    }
+
+    /**
+     * List of few freshest articles (relation).
+     */
+    public List getNewArticles() {
+        return newArticles;
     }
 
     /**
      * Actual poll.
      */
-    public static Poll getCurrentPoll() {
-        return poll;
+    public Poll getCurrentPoll() {
+        return currentPoll;
     }
 
     /**
@@ -93,29 +98,29 @@ public class VariableFetcher extends TimerTask {
             List tmpList = null;
 
             Object[] objects = (Object[]) list.get(0);
-            counts.put("HARDWARE",objects[0]);
+            counter.put("HARDWARE",objects[0]);
 
             list = persistance.findByCommand("select count(cislo) from zaznam where typ=2");
             objects = (Object[]) list.get(0);
-            counts.put("SOFTWARE",objects[0]);
+            counter.put("SOFTWARE",objects[0]);
 
             list = persistance.findByCommand("select count(cislo) from polozka where typ=5");
             objects = (Object[]) list.get(0);
-            counts.put("DRIVERS",objects[0]);
+            counter.put("DRIVERS",objects[0]);
 
             Category forum = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
-            counts.put("FORUM",new Integer(forum.getContent().size()));
+            counter.put("FORUM",new Integer(forum.getContent().size()));
 
             Category requests = (Category) persistance.findById(new Category(Constants.CAT_REQUESTS));
-            counts.put("REQUESTS",new Integer(requests.getContent().size()));
+            counter.put("REQUESTS",new Integer(requests.getContent().size()));
 
             // find current poll
             list = persistance.findByCommand("select max(cislo) from anketa");
             objects = (Object[]) list.get(0);
             int id = ((Integer)objects[0]).intValue();
-            poll = (Poll) persistance.findById(new Poll(id));
-            if ( poll.isClosed() )
-                poll = null;
+            currentPoll = (Poll) persistance.findById(new Poll(id));
+            if ( currentPoll.isClosed() )
+                currentPoll = null;
 
             // find new hardware records
             tmpList = new ArrayList(SIZE);
@@ -126,7 +131,7 @@ public class VariableFetcher extends TimerTask {
                 Relation found = (Relation) persistance.findById(new Relation(id));
                 tmpList.add(found);
             }
-            newHW = tmpList;
+            newHardware = tmpList;
 
             // find new software
             tmpList = new ArrayList(SIZE);
@@ -137,7 +142,7 @@ public class VariableFetcher extends TimerTask {
                 Relation found = (Relation) persistance.findById(new Relation(id));
                 tmpList.add(found);
             }
-            newSW = tmpList;
+            newSoftware = tmpList;
 
             // find new drivers
             tmpList = new ArrayList(SIZE);
@@ -148,7 +153,18 @@ public class VariableFetcher extends TimerTask {
                 Relation found = (Relation) persistance.findById(new Relation(id));
                 tmpList.add(found);
             }
-            newDrv = tmpList;
+            newDrivers = tmpList;
+
+            // find new articles
+            tmpList = new ArrayList(ARTICLE_SIZE);
+            list = persistance.findByCommand(ShowOlder.SQL_ARTICLES+" limit "+ARTICLE_SIZE);
+            for (Iterator iter = list.iterator(); iter.hasNext();) {
+                objects = (Object[]) iter.next();
+                id = ((Integer)objects[0]).intValue();
+                Relation found = (Relation) persistance.findById(new Relation(id));
+                tmpList.add(found);
+            }
+            newArticles = tmpList;
 
             log.debug("finished fetching variables");
         } catch (Exception e) {

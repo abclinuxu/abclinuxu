@@ -8,6 +8,7 @@ package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.init.AbcInit;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.servlets.utils.VelocityTemplateSelector;
 import cz.abclinuxu.data.*;
@@ -60,9 +61,9 @@ public class ViewIndex extends AbcVelocityServlet {
         helper.sync(actual.getContent());
         ctx.put(VAR_ACTUAL,actual);
 
-        ctx.put(VAR_HW_NEW,VariableFetcher.getNewHardwareList());
-        ctx.put(VAR_SW_NEW,VariableFetcher.getNewSoftwareList());
-        ctx.put(VAR_DRIVERS,VariableFetcher.getNewDriversList());
+        ctx.put(VAR_HW_NEW,AbcInit.getFetcher().getNewHardware());
+        ctx.put(VAR_SW_NEW,AbcInit.getFetcher().getNewSoftware());
+        ctx.put(VAR_DRIVERS,AbcInit.getFetcher().getNewDrivers());
 
         Category forum = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
         helper.sync(forum.getContent());

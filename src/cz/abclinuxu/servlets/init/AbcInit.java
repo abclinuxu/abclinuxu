@@ -20,9 +20,12 @@ import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.scheduler.*;
 import cz.abclinuxu.servlets.utils.VelocityTemplateSelector;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
+import cz.abclinuxu.utils.Tools;
 import cz.abclinuxu.servlets.view.Search;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.Sorters2;
+import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.data.Category;
 import freemarker.template.*;
 import freemarker.ext.beans.BeansWrapper;
@@ -35,6 +38,7 @@ public class AbcInit extends HttpServlet {
 
     /** scheduler used by all objects in project */
     static Timer scheduler;
+    static VariableFetcher fetcher;
 
     static {
         scheduler = new Timer(true);
@@ -66,6 +70,7 @@ public class AbcInit extends HttpServlet {
             }
         }
 
+        fetcher = new VariableFetcher();
         configureFreeMarker(path);
 
         tmp = getInitParameter("KERNEL");
@@ -150,10 +155,11 @@ public class AbcInit extends HttpServlet {
     }
 
     /**
-     * Fetches some context variables each 30 seconds, starting now
+     * Fetches some context variables each 30 seconds, starting now.
+     * It must be called before Freemarker's init.
      */
     protected void startFetchingVariables() {
-        scheduler.schedule(new VariableFetcher(),0,30*1000);
+        scheduler.schedule(fetcher,0,30*1000);
     }
 
     /**
@@ -170,34 +176,35 @@ public class AbcInit extends HttpServlet {
     void configureFreeMarker(String path) {
         log.info("Inicializuji FreeMarker");
 
-        Configuration cfg = Configuration.getDefaultConfiguration();
-        cfg.setDefaultEncoding("ISO-8859-2");
-        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.HTML_DEBUG_HANDLER);
-
-        BeansWrapper wrapper = BeansWrapper.getDefaultInstance();
-        cfg.setObjectWrapper(wrapper);
-        TemplateHashModel statics = wrapper.getStaticModels();
         VelocityHelper helper = new VelocityHelper();
         Persistance persistance = PersistanceFactory.getPersistance();
+        Configuration cfg = Configuration.getDefaultConfiguration();
+        BeansWrapper wrapper = BeansWrapper.getDefaultInstance();
+
+        cfg.setDefaultEncoding("ISO-8859-2");
+        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.HTML_DEBUG_HANDLER);
+        cfg.setObjectWrapper(wrapper);
+        cfg.setTemplateUpdateDelay(1);
+        cfg.setStrictSyntaxMode(true);
 
         try {
-            cfg.setSharedVariable(Constants.VAR_VARIABLES,statics.get("cz.abclinuxu.scheduler.VariableFetcher"));
-
             Category rubriky = (Category) persistance.findById(new Category(Constants.CAT_ARTICLES));
             helper.sync(rubriky.getContent());
-            cfg.setSharedVariable(Constants.VAR_RUBRIKY,rubriky.getContent());
-
             Category abc = (Category) persistance.findById(new Category(Constants.CAT_ABC));
             helper.sync(abc.getContent());
-            cfg.setSharedVariable(Constants.VAR_ABCLINUXU,abc.getContent());
-
             Category reklama = (Category) persistance.findById(new Category(Constants.CAT_REKLAMA));
             helper.sync(reklama.getContent());
-            cfg.setSharedVariable(Constants.VAR_REKLAMA,reklama.getContent());
-
             Category linksCategory = (Category) persistance.findById(new Category(Constants.CAT_LINKS));
             Map links = UpdateLinks.groupLinks(linksCategory,persistance);
+
+            cfg.setSharedVariable(Constants.VAR_RUBRIKY,rubriky.getContent());
+            cfg.setSharedVariable(Constants.VAR_ABCLINUXU,abc.getContent());
+//            cfg.setSharedVariable(Constants.VAR_REKLAMA,reklama.getContent());
             cfg.setSharedVariable(Constants.VAR_LINKS,links);
+            cfg.setSharedVariable(Constants.VAR_TOOL,new Tools());
+            cfg.setSharedVariable(Constants.VAR_DATE_TOOL,new DateTool());
+            cfg.setSharedVariable(Constants.VAR_SORTER,new Sorters2());
+            cfg.setSharedVariable(Constants.VAR_FETCHER,fetcher);
 
             log.info("Inicializace FreeMarkeru je hotova");
         } catch (TemplateModelException e) {
@@ -212,5 +219,12 @@ public class AbcInit extends HttpServlet {
                 log.error("Nemohu inicializovat FreeMarker!",e);
             }
         }
+    }
+
+    /**
+     * legacy method for compatibility with previous velocity based implementation
+     */
+    public static VariableFetcher getFetcher() {
+        return fetcher;
     }
 }
