@@ -39,4 +39,5 @@ public interface Constants {
 
     SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     DateFormat defaultFormat = new SimpleDateFormat("d. M. yyyy HH:mm");
+    DateFormat discussionFormat = new SimpleDateFormat("d.M. HH:mm");
 }

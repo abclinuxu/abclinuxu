@@ -84,10 +84,10 @@ public class AbcInit extends HttpServlet {
     }
 
     /**
-     * Update kernel versions each 5 minutes, starting now
+     * Update kernel versions each 30 minutes, starting now
      */
     protected void startKernelUpdate() {
-        Scheduler.getScheduler().addTask(new UpdateKernel(),5*60*1000,0);
+        Scheduler.getScheduler().addTask(new UpdateKernel(),30*60*1000,0);
     }
 
     /**

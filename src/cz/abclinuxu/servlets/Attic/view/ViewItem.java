@@ -75,6 +75,7 @@ public class ViewItem extends AbcServlet {
                 case Record.SOFTWARE: return getTemplate("view/switem.vm");
             }
         }
+        if ( item.getType()==Item.DISCUSSION ) return getTemplate("view/discussion.vm");
         if ( item.getType()==Item.ARTICLE ) return getTemplate("view/article.vm");
         if ( item.getType()==Item.DRIVER ) return getTemplate("view/drvitem.vm");
         return null;

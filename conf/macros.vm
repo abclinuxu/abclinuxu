@@ -144,10 +144,10 @@ $!UTIL.saveParams($PARAMS, [])
 | Komentáøù:
 #if($diz)$diz.Content.size()#undef('diz')#else 0#end
 </SPAN>
-<P>
+<P/>
 <IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="---">
-#if($last)<BR><IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="---">#end
-<P>
+#if($last)<BR><IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" VSPACE="1" BORDER="0" ALT="---">#end
+<P/>
 #end
 
 
@@ -186,7 +186,11 @@ $!UTIL.saveParams($PARAMS, [])
 <span class="diz_header_prefix">Titulek:</span> $!UTIL.getXPath($reaction,'data/title')<p/>
 </div>
 $!UTIL.getXPath($reaction,'data/text')<p/>
+#if($UTIL.is($reaction,'Item','Discussion'))
+<a href="$!URL.make("/EditDiscussion?action=add&dizId=$!diz.Id&threadId=0&relationId=$!relation.Id")">Odpovìdìt</a>
+#else
 <a href="$!URL.make("/EditDiscussion?action=add&dizId=$!diz.Id&threadId=$!reaction.Id&relationId=$!relation.Id")">Odpovìdìt</a>
+#end
 <p/>
 #end
 

@@ -112,7 +112,7 @@ public final class Relation extends GenericObject {
     }
 
     public String toString() {
-        return "Relation " +id+",upper="+upper;
+        return "Relation " +id+",upper="+upper+",parent="+parent.getId()+",child="+child.getId();
     }
 
     public boolean preciseEquals(Object obj) {

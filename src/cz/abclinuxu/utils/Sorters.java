@@ -7,6 +7,7 @@
 package cz.abclinuxu.utils;
 
 import cz.abclinuxu.data.*;
+import cz.abclinuxu.servlets.utils.PreparedDiscussion;
 
 import java.util.*;
 import java.io.Serializable;
@@ -39,7 +40,7 @@ public class Sorters {
     }
 
     /**
-     * Comparator for GenericObjects, which compares them by Updated or Created
+     * Comparator for GenericObjects or PreparedDiscussions, which compares them by Updated or Created
      * field. If object doesn't define updated field or it is equal to null,
      * it is considered as more new.
      */
@@ -51,7 +52,7 @@ public class Sorters {
         }
 
         public int compare(Object o1, Object o2) {
-            GenericObject a = (GenericObject) o1, b = (GenericObject) o2;
+            Object a = o1, b = o2;
             if ( a instanceof Relation ) a = ((Relation)a).getChild();
             if ( b instanceof Relation ) b = ((Relation)b).getChild();
 
@@ -84,10 +85,14 @@ public class Sorters {
             }
         }
 
-        Date getDate(GenericObject obj) {
+        /**
+         * Extracts Updated property froms several wel known classes.
+         */
+        Date getDate(Object obj) {
             if ( obj instanceof GenericDataObject ) return ((GenericDataObject)obj).getUpdated();
-            if ( obj instanceof Link ) return ((Link)obj).getUpdated();
+            if ( obj instanceof PreparedDiscussion ) return ((PreparedDiscussion)obj).getLastUpdate();
             if ( obj instanceof Poll ) return ((Poll)obj).getCreated();
+            if ( obj instanceof Link ) return ((Link)obj).getUpdated();
             return null;
         }
     }

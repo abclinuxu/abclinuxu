@@ -83,6 +83,10 @@ public class ViewIndex extends AbcServlet {
         }
         ctx.put(VAR_SW_NEW,swNew);
 
+        Category forum = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
+        helper.sync(forum.getContent());
+        ctx.put(VAR_FORUM,forum);
+
         return getTemplate("index.vm");
     }
 }

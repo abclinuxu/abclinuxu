@@ -384,6 +384,14 @@ public class VelocityHelper {
     }
 
     /**
+     * Returns formatted String according to current locale.
+     */
+    public String showDizDate(Date date) {
+        if ( date==null ) return null;
+        return Constants.discussionFormat.format(date);
+    }
+
+    /**
      * Returns formatted String according to current locale. Uses current time.
      */
     public String showDate() {
@@ -417,10 +425,13 @@ public class VelocityHelper {
         Persistance persistance = PersistanceFactory.getPersistance();
 
         for (Iterator iter = list.iterator(); iter.hasNext();) {
-            GenericObject obj = (GenericObject) iter.next();
+            Object o = iter.next();
+            if ( !(o instanceof GenericObject) ) continue;
+            GenericObject obj = (GenericObject)o;
             if ( obj instanceof Relation ) {
                 persistance.synchronize(obj);
-                persistance.synchronize(((Relation)obj).getChild());
+                GenericObject child = ((Relation)obj).getChild();
+                persistance.synchronize(child);
             } else {
                 persistance.synchronize(obj);
             }
@@ -511,5 +522,50 @@ public class VelocityHelper {
             }
         }
         return false;
+    }
+
+    /**
+     * Gathers statistics on discussion.
+     * @param item discussion, which must be initialized.
+     */
+    public PreparedDiscussion prepareDiscussion(Relation relation) throws PersistanceException {
+        Item item = (Item) relation.getChild();
+        if ( item.getType()!=Item.DISCUSSION ) return null;
+        PreparedDiscussion discussion = new PreparedDiscussion(item);
+        sync(item.getContent());
+
+        Date lastUpdate = item.getUpdated();
+        int count = 0;
+
+        for (Iterator iter = item.getContent().iterator(); iter.hasNext(); ) {
+            Relation rel = (Relation) iter.next();
+            Record record = (Record) rel.getChild();
+            if ( record.getType()==Record.DISCUSSION ) {
+                count++;
+                if ( lastUpdate.before(record.getUpdated()) ) lastUpdate = record.getUpdated();
+            }
+        }
+
+        discussion.lastUpdate = lastUpdate;
+        discussion.responseCount = count;
+        discussion.relationId = relation.getId();
+        return discussion;
+    }
+
+    /**
+     * @param content List of Relations containing Items with type=Item.Discussion
+     * @return list of PreparedDiscussions.
+     */
+    public List getDiscussions(List content) throws PersistanceException {
+        List list = new ArrayList(content.size());
+
+        for (Iterator iter = content.iterator(); iter.hasNext();) {
+            Relation relation = (Relation) iter.next();
+            sync(relation.getChild());
+            PreparedDiscussion p = prepareDiscussion(relation);
+            list.add(p);
+        }
+
+        return list;
     }
 }
