@@ -250,7 +250,9 @@ public class Tools {
     public List analyzeDiscussions(List content) {
         List list = new ArrayList(content.size());
         for (Iterator iter = content.iterator(); iter.hasNext();) {
-            list.add(analyzeDiscussion((Relation)iter.next()));
+            PreparedDiscussion preparedDiscussion = analyzeDiscussion((Relation) iter.next());
+            if ( preparedDiscussion!=null )
+                list.add(preparedDiscussion);
         }
         return list;
     }
