@@ -37,8 +37,9 @@
 
     <copy todir="${build}/WEB-INF/classes">
       <fileset dir="conf">
-        <include name="poolman.xml"/>
+<!--        <include name="poolman.xml"/> -->
         <include name="views.properties"/>
+        <include name="actions.xml"/>
         <include name="webwork.properties"/>
       </fileset>
     </copy>
