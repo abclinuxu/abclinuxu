@@ -12,20 +12,29 @@ import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.GenericObject;
+import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.view.ACL;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Tools;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.edit.EditRelation;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.security.Roles;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.dom4j.Document;
+import org.dom4j.Element;
 
 
 /**
@@ -66,6 +75,25 @@ public class ViewCategory extends AbcFMServlet {
         env.put(ViewRelation.VAR_RELATION,relation);
         List parents = persistance.findParents(relation);
         env.put(ViewRelation.VAR_PARENTS,parents);
+
+        // check ACL
+        Document document = relation.getData();
+        if ( document!=null && document.selectSingleNode("/data/acl")!=null ) {
+            User user = (User) env.get(Constants.VAR_USER);
+            if ( user==null )
+                return FMTemplateSelector.select("ViewUser", "login", env, request);
+
+            if ( !user.hasRole(Roles.ROOT) ) {
+                List elements = document.selectNodes("/data/acl");
+                List acls = new ArrayList(elements.size());
+                for ( Iterator iter = elements.iterator(); iter.hasNext(); ) {
+                    ACL acl = EditRelation.getACL((Element) iter.next());
+                    acls.add(acl);
+                }
+                if ( !ACL.isGranted(user, ACL.RIGHT_READ, acls) )
+                    return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+            }
+        }
 
         return processCategory(request,response,env,relation,parents);
     }

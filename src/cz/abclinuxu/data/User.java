@@ -179,6 +179,13 @@ public class User extends GenericObject implements XMLContainer {
     }
 
     /**
+     * @return true, if user is member of specified group.
+     */
+    public boolean isMemberOf(int group) {
+        return getData().selectSingleNode("/data/system/group[text()='"+group+"']")!=null;
+    }
+
+    /**
      * Initialize this object with values from <code>obj</code>, if
      * this.getClass.equals(obj.getClass()).
      */

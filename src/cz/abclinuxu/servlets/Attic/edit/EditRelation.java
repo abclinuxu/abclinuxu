@@ -517,7 +517,7 @@ public class EditRelation extends AbcFMServlet {
     /**
      * Converts DOM4J Element to ACL.
      */
-    private ACL getACL(Element element) {
+    public static ACL getACL(Element element) {
         Persistance persistance = PersistanceFactory.getPersistance();
 
         int id = Misc.parseInt(element.attributeValue("id"),0);
