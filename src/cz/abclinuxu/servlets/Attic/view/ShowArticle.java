@@ -65,29 +65,32 @@ public class ShowArticle extends AbcFMServlet {
         Item item = (Item) relation.getChild();
         Tools.sync(item);
 
-        return show(request, env, item);
+        return show(env, item, request, response);
     }
 
     /**
      * Shows the article.
      */
-    static String show(HttpServletRequest request, Map env, Item item) throws Exception {
+    static String show(Map env, Item item, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
         Record record = null;
 
         Map children = Tools.groupByType(item.getContent());
         env.put(VAR_CHILDREN_MAP, children);
-        List records = (List) children.get(Constants.TYPE_RECORD);
-        if ( records!=null && records.size()>0 ) {
-            record = (Record) ((Relation) records.get(0)).getChild();
-            if ( !record.isInitialized() )
-                persistance.synchronize(record);
-        }
 
-        if ( record==null)
+        List list = (List) children.get(Constants.TYPE_RECORD);
+        if ( list==null || list.size()==0 )
             throw new NotFoundException("Èlánek "+item.getId()+" nemá obsah!");
+        record = (Record) ((Relation) list.get(0)).getChild();
         if ( record.getType()!=Record.ARTICLE )
             throw new InvalidDataException("Záznam "+record.getId()+" není typu èlánek!");
+
+        list = (List) children.get(Constants.TYPE_DISCUSSION);
+        if ( list!=null && list.size()==1 ) {
+            Item discussion = (Item)((Relation) list.get(0)).getChild();
+            Tools.sync(discussion.getContent());
+            Tools.handleNewComments(discussion,env,request,response);
+        }
 
         Document document = item.getData();
 

@@ -61,6 +61,7 @@ public class EditUser extends AbcFMServlet {
     public static final String PARAM_DISTRIBUTION = "distribution";
     public static final String PARAM_ABOUT_ME = "about";
     public static final String PARAM_EMOTICONS = "emoticons";
+    public static final String PARAM_ENABLE_COMMENTS = "comments";
     public static final String PARAM_COOKIE_VALIDITY = "cookieValid";
     public static final String PARAM_DISCUSSIONS_COUNT = "discussions";
     public static final String PARAM_NEWS_COUNT = "news";
@@ -445,6 +446,9 @@ public class EditUser extends AbcFMServlet {
         Node node = document.selectSingleNode("/data/settings/emoticons");
         if ( node!=null )
             params.put(PARAM_EMOTICONS, node.getText());
+        node = document.selectSingleNode("/data/settings/new_comments");
+        if ( node!=null )
+            params.put(PARAM_ENABLE_COMMENTS, node.getText());
         node = document.selectSingleNode("/data/settings/cookie_valid");
         if ( node!=null )
             params.put(PARAM_COOKIE_VALIDITY, node.getText());
@@ -475,6 +479,7 @@ public class EditUser extends AbcFMServlet {
             canContinue &= checkPassword(params, managed, env);
         canContinue &= setCookieValidity(params, managed);
         canContinue &= setEmoticons(params, managed);
+        canContinue &= setNewComments(params, managed);
         canContinue &= setDiscussionsSizeLimit(params, managed);
         canContinue &= setNewsSizeLimit(params, managed, env);
         canContinue &= setReturnBackToForum(params, managed);
@@ -1077,6 +1082,23 @@ public class EditUser extends AbcFMServlet {
         if ( tmp==null || tmp.length()==0 )
             return true;
         Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/return_to_forum");
+        String value = ("yes".equals(tmp))? "yes":"no";
+        element.setText(value);
+        return true;
+    }
+
+    /**
+     * Sets flag, whether to track new comments in discussion from parameters.
+     * Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setNewComments(Map params, User user) {
+        String tmp = (String) params.get(PARAM_ENABLE_COMMENTS);
+        if ( tmp==null || tmp.length()==0 )
+            return true;
+        Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/new_comments");
         String value = ("yes".equals(tmp))? "yes":"no";
         element.setText(value);
         return true;

@@ -82,5 +82,6 @@ DIV.note { padding-top: 10pt; padding-bottom: 5pt;}
 /* komentare, diskusni forum */
 DIV.diz_list { background-color: #EEEEEE; }
 P.diz_header { background-color: #EEEEEE; }
-SPAN.diz_header_prefix { font-style: italic; }
+SPAN.diz_header_new { font-size: bigger; font-style: italic; color:blue; }
+SPAN.diz_header_prefix { font-style: italic; }.
 p.cenzura { border-width: 2px; border-color: blue; border-style: solid; background-color: #EEEEEE; padding: 1ex; margin-top: 6px}

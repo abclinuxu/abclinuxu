@@ -107,10 +107,10 @@ public class ViewRelation extends AbcFMServlet {
         }
 
         if ( relation.getParent() instanceof Item )
-            return processItem(request,env,relation);
+            return processItem(env, relation, request, response);
         else if ( relation.getParent() instanceof Category ) {
             if ( relation.getChild() instanceof Item )
-                return processItem(request,env,relation);
+                return processItem(env, relation, request, response);
             else
                 return ViewCategory.processCategory(request,response,env,relation);
         }
@@ -121,7 +121,7 @@ public class ViewRelation extends AbcFMServlet {
      * Processes item - like article, discussion, driver etc.
      * @return template to be rendered
      */
-    String processItem(HttpServletRequest request, Map env, Relation relation) throws Exception {
+    String processItem(Map env, Relation relation, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Item item = null;
         Record record = null;
         Relation upper = null;
@@ -137,21 +137,36 @@ public class ViewRelation extends AbcFMServlet {
 
         Tools.sync(item);
         env.put(VAR_ITEM, item);
+
         if ( item.getType()==Item.ARTICLE )
-            return ShowArticle.show(request, env, item);
+            return ShowArticle.show(env, item, request, response);
+
         if ( item.getType()==Item.NEWS ) {
             Node node = item.getData().selectSingleNode("/data/category");
             if ( node!=null )
                 env.put(EditNews.VAR_CATEGORY, NewsCategories.get(node.getText()));
+
             Map children = Tools.groupByType(item.getContent());
             env.put(VAR_CHILDREN_MAP, children);
+
+            List list = (List) children.get(Constants.TYPE_DISCUSSION);
+            if ( list!=null && list.size()==1 ) {
+                Item discussion = (Item) ((Relation) list.get(0)).getChild();
+                Tools.sync(discussion.getContent());
+                Tools.handleNewComments(discussion, env, request, response);
+            }
+
             return FMTemplateSelector.select("ViewRelation", "news", env, request);
         }
 
         Tools.sync(upper); env.put(VAR_UPPER,upper);
 
-        if ( item.getType()==Item.DISCUSSION )
+        if ( item.getType()==Item.DISCUSSION ) {
+            Tools.sync(item.getContent());
+            Tools.handleNewComments(item,env,request,response);
             return FMTemplateSelector.select("ViewRelation","discussion",env, request);
+        }
+
         if ( item.getType()==Item.DRIVER )
             return FMTemplateSelector.select("ViewRelation","driver",env, request);
 

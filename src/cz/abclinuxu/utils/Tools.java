@@ -12,6 +12,7 @@ import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.data.view.DiscussionHeader;
 import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.data.view.Discussion;
@@ -27,6 +28,10 @@ import java.io.StringReader;
 import java.io.IOException;
 
 import freemarker.template.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Cookie;
 
 /**
  * Various utilities available for templates
@@ -46,6 +51,14 @@ public class Tools {
             log.error("Cannot create regexp to find line breaks!", e);
         }
     }
+
+    /**
+     * Holds id of greatest thread id.
+     * See Tools.handleNewComments();
+     */
+    public static final String VAR_MAXIMUM_COMMENT_ID = "MAX_COMMENT";
+    /** name of cookie, that holds id of read discsussions/threads */
+    public static final String READ_DISCUSSIONS_COOKIE = "DIZS";
 
     /**
      * Returns text value of node selected by xpath expression for GenericObject.
@@ -758,5 +771,77 @@ public class Tools {
      */
     public Comment createComment(Item item) {
         return new Comment(item);
+    }
+
+    /**
+     * This method is responsible for finding greatest id of comment, that user has read already.
+     * It first reads cookie with such content [dizId,threadId],[dizId,threadId] .. If given discussion
+     * is present in the cookie, threadId is extracted and set as environmental variable, otherwise
+     * impossible large value is used for this variable. The couple consisting of the discussion id
+     * and the maximum comment id is added to start of cookie.
+     * @param discussion completely initialized discussion.
+     */
+    public static void handleNewComments(Item discussion, Map env, HttpServletRequest request, HttpServletResponse response) {
+        User user = (User) env.get(Constants.VAR_USER);
+        if (user==null) return;
+        Node node = user.getData().selectSingleNode("//new_comments");
+        if (node!=null && !node.getText().equals("yes")) return;
+
+        int dizId = discussion.getId(), number, position, lastSeen = -1, tmpLength;
+        StringBuffer newContent = new StringBuffer();
+        String couples = "", tmp;
+
+        if (discussion.getContent().size()==0) {
+            env.put(VAR_MAXIMUM_COMMENT_ID, new Integer(Integer.MAX_VALUE));
+            return;
+        }
+
+        Cookie cookie = ServletUtils.getCookie(request,READ_DISCUSSIONS_COOKIE);
+        if (cookie!=null) couples = cookie.getValue();
+        StringTokenizer stk = new StringTokenizer(couples,"A");
+        while (stk.hasMoreTokens()) {
+            tmp = stk.nextToken();
+            tmpLength = tmp.length();
+            if (tmpLength<5 || tmp.charAt(0)!='[' || tmp.charAt(tmpLength-1)!=']') break;
+
+            position = tmp.indexOf('B');
+            if (position==-1) break;
+            number = Misc.parseInt(tmp.substring(1,position),0);
+            if (number==dizId) {
+                lastSeen = Misc.parseInt(tmp.substring(position+1,tmpLength-1), -1);
+            } else {
+                newContent.append('A');
+                newContent.append(tmp);
+            }
+        }
+
+        if (lastSeen!=-1)
+            env.put(VAR_MAXIMUM_COMMENT_ID, new Integer(lastSeen));
+        else
+            env.put(VAR_MAXIMUM_COMMENT_ID, new Integer(Integer.MAX_VALUE));
+
+        Relation child = (Relation) discussion.getContent().get(0);
+        if (!(child.getChild() instanceof Record) || ((Record)child.getChild()).getType()!=Record.DISCUSSION) {
+            log.warn(child+" shall be Record holding discussion!");
+            return;
+        }
+
+        number = lastSeen;
+        Document data = ((Record) child.getChild()).getData();
+        List comments = data.getRootElement().elements("comment");
+        if ( comments!=null && comments.size()>0 ) {
+            Element lastComment = (Element) comments.get(comments.size()-1);
+            tmp = lastComment.attributeValue("id");
+            number = Misc.parseInt(tmp, 0);
+        }
+        if (number<=lastSeen) return;
+
+        tmp = "["+dizId+"B"+number+"]";
+        newContent.insert(0,tmp);
+
+        cookie = new Cookie(READ_DISCUSSIONS_COOKIE,newContent.toString());
+        cookie.setPath("/");
+        cookie.setMaxAge(Integer.MAX_VALUE);
+        ServletUtils.addCookie(cookie,response);
     }
 }

@@ -749,7 +749,7 @@ public class EditDiscussion extends AbcFMServlet {
      */
     private boolean setId(Element root, Element comment) {
         int last = 0;
-        List comments = root.selectNodes("comment");
+        List comments = root.elements("comment");
         if ( comments!=null && comments.size()>0) {
             Element element = (Element) comments.get(comments.size()-1);
             String tmp = element.attributeValue("id");

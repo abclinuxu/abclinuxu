@@ -228,6 +228,15 @@ public class ServletUtils implements Configurable {
     }
 
     /**
+     * Adds cookie. This method must not be called, if header was written to response already.
+     * @param cookie
+     * @param response
+     */
+    public static void addCookie(Cookie cookie, HttpServletResponse response) {
+        response.addCookie(cookie);
+    }
+
+    /**
      * Removes cookie from browser
      */
     public static void deleteCookie(Cookie cookie, HttpServletResponse response) {
@@ -322,7 +331,7 @@ public class ServletUtils implements Configurable {
             if ( valid!=0 ) {
                 Cookie cookie = new LoginCookie(user).getCookie();
                 cookie.setMaxAge(valid);
-                response.addCookie(cookie);
+                addCookie(cookie,response);
             }
         }
     }
