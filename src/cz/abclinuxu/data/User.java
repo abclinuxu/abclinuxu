@@ -97,6 +97,7 @@ public class User extends GenericObject {
      * @return true, if supplied password is valid
      */
     public boolean validatePassword(String pass) {
+        if ( pass==null ) return false;
         return password.equals(pass);
     }
 

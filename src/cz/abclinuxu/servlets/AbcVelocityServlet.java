@@ -23,6 +23,8 @@ import javax.servlet.RequestDispatcher;
 
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.AccessRights;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.AbcException;
@@ -58,6 +60,10 @@ import java.util.*;
  * <dl>
  * <dt><code>PARAM_ACTION</code></dt>
  * <dd>Contains shorthand of method to be executed. E.g. STEP1 for doStep1 or FINISH for doFinish.</dd>
+ * <dt><code>PARAM_LOG_USER</code></dt>
+ * <dd>Contains login of user wishing to log in.</dd>
+ * <dt><code>PARAM_LOG_PASSWORD</code></dt>
+ * <dd>Contains password of user wishing to log in.</dd>
  * </dl>
  */
 public class AbcServlet extends VelocityServlet {
@@ -76,21 +82,22 @@ public class AbcServlet extends VelocityServlet {
     public static final String VAR_PARAMS = "PARAMS";
 
     public static final String PARAM_ACTION = "action";
+    public static final String PARAM_LOG_USER = "LOGIN";
+    public static final String PARAM_LOG_PASSWORD = "PASSWORD";
 
     public static final String PREFIX_HARDWARE = "/hardware";
     public static final String PREFIX_SOFTWARE = "/software";
     public static final String PREFIX_CLANKY = "/clanky";
 
+    /** use this value for addErrorMessage, when message is not tight to form field */
+    public static final String GENERIC_ERROR = "generic";
+
     /** Public access is granted or user's right are sufficient. */
     public static final int ACCESS_GRANTED = 0;
     /** Public access is not granted, user must log in first. */
     public static final int LOGIN_REQUIRED = 1;
-    /** Public access is not granted, session contains invalid user. */
-    public static final int USER_UNKNOWN = 2;
-    /** Public access is not granted, session contains user with invalid password. */
-    public static final int USER_BAD_PASSWORD = 3;
     /** Public access is not granted, session contains user, whose rights are not adequate enough. */
-    public static final int USER_INSUFFICIENT_RIGHTS = 4;
+    public static final int USER_INSUFFICIENT_RIGHTS = 2;
 
     /** Only view access is desired to object. */
     public static final int METHOD_VIEW = 0;
@@ -153,39 +160,10 @@ public class AbcServlet extends VelocityServlet {
      */
     protected void init(HttpServletRequest request, HttpServletResponse response, Context context) {
         HttpSession session = request.getSession();
-        User user = (User) session.getAttribute(AbcServlet.VAR_USER);
-        if ( user==null ) {
-            Cookie[] cookies = request.getCookies();
-            for (int i = 0; cookies!=null && i<cookies.length; i++) {
-                Cookie cookie = cookies[i];
-                if ( cookie.getName().equals(AbcServlet.VAR_USER) ) {
-                    try {
-                        String value = cookie.getValue();
-                        int position = value.indexOf(',');
-                        int id = Integer.parseInt(value.substring(0,position));
-                        int hash = Integer.parseInt(value.substring(position));
 
-                        try {
-                            user = (User) PersistanceFactory.getPersistance().findById(new User(id));
-                        } catch (PersistanceException e) {
-                            addErrorMessage(null,"Nalezena cookie s neznamym uzivatelem!",context);
-                            break;
-                        }
+        doLogin(request,response,session,context);
 
-                        if ( user.getPassword().hashCode() != hash ) {
-                            addErrorMessage(null,"Nalezena cookie se spatnym heslem!",context);
-                            break;
-                        }
-                        session.setAttribute(AbcServlet.VAR_USER,user);
-                        break;
-                    } catch (Exception e) {
-                        log.error("Cannot load user information from cookie "+cookie.getValue(),e);
-                    }
-                }
-            }
-        }
-        if ( user!=null ) context.put(AbcServlet.VAR_USER,user);
-
+        // refactor it. move this code to separate method and constant from ViewIcons here
         String checkSession = request.getParameter(ViewIcons.PARAM_CHECK_SESSION);
         Map params = null;
         if ( checkSession!=null ) {
@@ -206,22 +184,115 @@ public class AbcServlet extends VelocityServlet {
     }
 
     /**
+     * Checks login information. If user has not logged in yet, this method will first check
+     * form parameter <code>AbcServlet.PARAM_LOG_USER</code> and next cookie <code>AbcServlet.VAR_USER</code>.
+     * If user was found and approved, it is appended to context under name <code>AbcServlet.VAR_USER</code>.
+     */
+    protected void doLogin(HttpServletRequest request, HttpServletResponse response, HttpSession session, Context context) {
+        User user = (User) session.getAttribute(AbcServlet.VAR_USER);
+
+        if ( user!=null ) {
+            context.put(AbcServlet.VAR_USER,user);
+            return;
+        }
+
+        String login = (String) request.getParameter(AbcServlet.PARAM_LOG_USER);
+        if ( login!=null ) {
+            User tmpUser = new User(); tmpUser.setLogin(login);
+            List searched = new ArrayList(); searched.add(tmpUser);
+
+            try {
+                List found = (List) PersistanceFactory.getPersistance().findByExample(searched,null);
+                if ( found.size()==0 ) {
+                    addErrorMessage(AbcServlet.PARAM_LOG_USER,"Prihlasovaci jmeno nenalezeno!",context);
+                    return;
+                }
+                user = (User) found.get(0);
+            } catch (PersistanceException e) {
+                log.error("Cannot verify login info",e);
+                return;
+            }
+
+            if ( !user.validatePassword((String) request.getParameter(AbcServlet.PARAM_LOG_PASSWORD)) ) {
+                addErrorMessage(AbcServlet.PARAM_LOG_PASSWORD,"Spatne heslo!",context);
+                return;
+            }
+
+            String content = user.getId()+":"+user.getPassword().hashCode();
+            Cookie cookie = new Cookie(AbcServlet.VAR_USER,content);
+            cookie.setPath("/");
+            cookie.setMaxAge(6*30*24*3600); // six months
+            response.addCookie(cookie);
+        }
+
+        Cookie[] cookies = request.getCookies();
+        for (int i = 0; user==null && cookies!=null && i<cookies.length; i++) {
+            Cookie cookie = cookies[i];
+            if ( cookie.getName().equals(AbcServlet.VAR_USER) ) {
+                try {
+                    String value = cookie.getValue();
+                    int position = value.indexOf(':');
+                    int id = Integer.parseInt(value.substring(0,position));
+                    int hash = Integer.parseInt(value.substring(position+1));
+
+                    try {
+                        user = (User) PersistanceFactory.getPersistance().findById(new User(id));
+                    } catch (PersistanceException e) {
+                        addErrorMessage(AbcServlet.GENERIC_ERROR,"Nalezena cookie s neznamym uzivatelem!",context);
+                        break;
+                    }
+
+                    if ( user.getPassword().hashCode() != hash ) {
+                        addErrorMessage(AbcServlet.GENERIC_ERROR,"Nalezena cookie se spatnym heslem!",context);
+                        user = null;
+                    }
+                    break;
+                } catch (Exception e) {
+                    log.error("Cannot load user information from cookie "+cookie.getValue(),e);
+                }
+            }
+        }
+
+        if ( user!=null ) {
+            for (Iterator iter = user.getContent().iterator(); iter.hasNext();) {
+                GenericObject obj = (GenericObject) ((Relation) iter.next()).getChild();
+                try {
+                    PersistanceFactory.getPersistance().synchronize(obj);
+                } catch (PersistanceException e) {
+                    log.error("Cannot initialize content of user!",e);
+                }
+            }
+
+            session.setAttribute(AbcServlet.VAR_USER,user);
+            context.put(AbcServlet.VAR_USER,user);
+        }
+    }
+
+    /**
      * Checks session for <code>USER</code>, than returns, whether users rights for <code>obj</code>
      * are sufficient for desired method. For <code>method</code>, use constant <code>METHOD_*</code>.
      * @return one of constants <code>ACCESS_GRANTED</code>, <code>LOGIN_REQUIRED</code>,
      * <code>USER_UNKNOWN</code>, <code>USER_BAD_PASSWORD</code> and <code>USER_INSUFFICIENT_RIGHTS</code>.
      */
-    protected int checkAccess(GenericObject obj, int method, Context context) {
+    protected int checkAccess(GenericObject obj, int method, Context context) throws Exception {
         if ( method==AbcServlet.METHOD_VIEW ) {
             return AbcServlet.ACCESS_GRANTED;
         }
+
         User user = (User) context.get(AbcServlet.VAR_USER);
-        if ( user==null || user.isInitialized()==false ) {
+        if ( user==null || !user.isInitialized() ) {
             return AbcServlet.LOGIN_REQUIRED;
         }
+
+        if ( obj==null ) return AbcServlet.USER_INSUFFICIENT_RIGHTS;
+        if ( !obj.isInitialized() ) {
+            PersistanceFactory.getPersistance().synchronize(obj);
+        }
+
         if ( obj.isManagedBy(user) )  {
             return AbcServlet.ACCESS_GRANTED;
         }
+
         return AbcServlet.USER_INSUFFICIENT_RIGHTS;
     }
 

@@ -54,7 +54,7 @@ public class ViewCategory extends AbcServlet {
             category = new Category(Integer.parseInt(tmp));
         } else {
             if ( relation==null ) {
-                addErrorMessage(null,"Neni vybrana zadna kategorie!",ctx);
+                addErrorMessage(AbcServlet.GENERIC_ERROR,"Neni vybrana zadna kategorie!",ctx);
                 return getTemplate("view/category.vm");
             }
             category = (Category) relation.getChild();

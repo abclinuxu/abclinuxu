@@ -8,6 +8,7 @@
 package cz.abclinuxu.data;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import org.dom4j.*;
@@ -134,6 +135,31 @@ public abstract class GenericDataObject extends GenericObject {
      **/
     public String getSearchString() {
         return searchString;
+    }
+
+    /**
+     * @param user initialized User
+     * @return True, if this user may manage this resource
+     */
+    public boolean isManagedBy(User user) {
+        if ( user==null || user.getId()==0 ) return false;
+
+        if ( owner==user.getId() ) return true;
+        if ( this instanceof Category ) {
+            if ( ((Category)this).isOpen() ) return true;
+        }
+
+        // search user for admin flag
+        if ( user.isInitialized() ) {
+            for (Iterator iter = user.getContent().iterator(); iter.hasNext();) {
+                GenericObject obj = (GenericObject) ((Relation) iter.next()).getChild();
+                if ( obj instanceof AccessRights ) {
+                    return ((AccessRights)obj).isAdmin();
+                }
+            }
+        }
+
+        return false;
     }
 
     /**

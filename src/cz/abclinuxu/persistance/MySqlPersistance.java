@@ -145,7 +145,7 @@ public class MySqlPersistance implements Persistance {
         GenericObject result = cache.load(obj);
         if ( result!=null && result.isInitialized() ) return result;
 
-        if ( log.isDebugEnabled() ) log.debug("Hledam podle PK objekt "+obj);
+        if ( log.isDebugEnabled() ) log.debug("Hledam podle PK "+obj);
         try {
             result = loadObject(obj);
             if ( result!=null ) result.setInitialized(true);
@@ -852,7 +852,7 @@ public class MySqlPersistance implements Persistance {
                 throw new PersistanceException(e.getMessage(),e.getStatus(),e.getSinner(),e.getNestedException());
             }
 
-            findChildren(obj,con);
+            findChildren(user,con);
             return user;
         } finally {
             releaseSQLConnection(con);

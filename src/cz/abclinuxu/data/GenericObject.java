@@ -118,30 +118,14 @@ public class GenericObject {
     public boolean isManagedBy(User user) {
         if ( user==null || user.getId()==0 ) return false;
 
-        // search use for admin flag
+        // search user for admin flag
         if ( user.isInitialized() ) {
             for (Iterator iter = user.getContent().iterator(); iter.hasNext();) {
-                GenericObject obj = (GenericObject) iter.next();
+                GenericObject obj = (GenericObject) ((Relation) iter.next()).getChild();
                 if ( obj instanceof AccessRights ) {
                     return ((AccessRights)obj).isAdmin();
                 }
             }
-        }
-
-        // use introspection to find owner field
-        try {
-            BeanInfo info = Introspector.getBeanInfo(this.getClass());
-            PropertyDescriptor[] pd = info.getPropertyDescriptors();
-            for ( int i=0; i<pd.length; i++ ) {
-                Method method = pd[i].getReadMethod();
-                if ( method.getName().equals("getOwner") ) {
-                    int owner = ((Integer)method.invoke(this,new Object[0])).intValue();
-                    if ( owner==user.getId() ) return true;
-                    return false;
-                }
-            }
-        } catch (Exception e) {
-            return false;
         }
 
         return false;
