@@ -28,12 +28,12 @@ public class Measure {
         long l = 0;
 
         // place initilizaton here
-        List list = persistance.findByCommand("select cislo from zaznam where typ=1 order by kdy desc limit 3");
+        List list = persistance.findByCommand("select count(cislo) from zaznam where typ=1");
 
         long start = System.currentTimeMillis();
-        for (i=0; i<100; i++) {
+        for (i=0; i<300; i++) {
             //place your code to measure here
-            list = persistance.findByCommand("select cislo from zaznam where typ=1 order by kdy desc limit 3");
+            list = persistance.findByCommand("select count(cislo) from zaznam where typ=1");
         }
         long end = System.currentTimeMillis();
 
