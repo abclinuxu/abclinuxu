@@ -11,19 +11,25 @@
 
 	<appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
            <param name="File" value="/home/literakl/tomcat/webapps/ROOT/logs/abc.log" />
-           <param name="DatePattern" value="'.'yyyy-MM-dd" />
            <param name="Append" value="true" />
-	       <layout class="org.apache.log4j.PatternLayout">
+	   <layout class="org.apache.log4j.PatternLayout">
              <param name="ConversionPattern" value="%d %-5p %C{1} - %m%n"/>
            </layout>
 	</appender>
 
 	<appender name="REDIRECT" class="org.apache.log4j.FileAppender">
            <param name="File" value="/home/literakl/tomcat/webapps/ROOT/logs/redirect.log" />
-           <param name="DatePattern" value="yyyy-MM-dd" />
            <param name="Append" value="true" />
-	       <layout class="org.apache.log4j.PatternLayout">
+	   <layout class="org.apache.log4j.PatternLayout">
              <param name="ConversionPattern" value="%d | %m%n"/>
+           </layout>
+	</appender>
+
+	<appender name="REQUESTS" class="org.apache.log4j.FileAppender">
+           <param name="File" value="/home/literakl/tomcat/webapps/ROOT/logs/requests.log" />
+           <param name="Append" value="true" />
+	   <layout class="org.apache.log4j.PatternLayout">
+             <param name="ConversionPattern" value="%d%n%m%n-----%n"/>
            </layout>
 	</appender>
 
@@ -31,17 +37,14 @@
 	  <priority value="info" />
 	</category>
 
-	<category name="cz.abclinuxu.persistance.Cache">
-	  <priority value="info" />
-	</category>
-
-	<category name="cz.abclinuxu.scheduler">
-	  <priority value="info" />
-	</category>
-
 	<category name="redirect" additivity="false">
 	  <priority value="info" />
  	  <appender-ref ref="REDIRECT" />
+	</category>
+
+	<category name="RequestLog" additivity="false">
+	  <priority value="info" />
+ 	  <appender-ref ref="REQUESTS" />
 	</category>
 
 	<root>
