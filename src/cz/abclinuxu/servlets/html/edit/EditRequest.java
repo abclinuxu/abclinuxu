@@ -17,6 +17,9 @@ import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.Sorters2;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.email.EmailSender;
@@ -31,10 +34,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.*;
+import java.util.prefs.Preferences;
 
 import freemarker.template.SimpleHash;
 
-public class EditRequest implements AbcAction {
+public class EditRequest implements AbcAction, Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditRequest.class);
     static org.apache.log4j.Logger logRequests = org.apache.log4j.Logger.getLogger("requests");
 
@@ -44,9 +48,11 @@ public class EditRequest implements AbcAction {
     public static final String PARAM_REQUEST = "requestId";
     public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_FORUM_ID = "forumId";
+    public static final String PARAM_CATEGORY = "category";
 
     public static final String VAR_REQUEST_RELATION = "REQUEST";
     public static final String VAR_FORUM_LIST = "FORUMS";
+    public static final String VAR_CATEGORIES = "CATEGORIES";
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_DELETE = "delete";
@@ -56,6 +62,13 @@ public class EditRequest implements AbcAction {
     public static final String ACTION_CHOOSE_RIGHT_FORUM = "chooseRightForum";
     public static final String ACTION_RIGHT_FORUM = "rightForum";
 
+    public static final String PREF_CATEGORIES = "categories";
+
+    public static String[] categories;
+    static {
+        EditRequest action = new EditRequest();
+        ConfigurationManager.getConfigurator().configureAndRememberMe(action);
+    }
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -78,7 +91,7 @@ public class EditRequest implements AbcAction {
         // check permissions
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
-        if ( !user.hasRole(Roles.ROOT) )
+        if ( !user.hasRole(Roles.REQUESTS_ADMIN) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if ( action.equals(ACTION_MAIL) )
@@ -103,6 +116,7 @@ public class EditRequest implements AbcAction {
         String author = (String) params.get(PARAM_AUTHOR);
         String email = (String) params.get(PARAM_EMAIL);
         String text = (String) params.get(PARAM_TEXT);
+        String category = (String) params.get(PARAM_CATEGORY);
         boolean error = false;
 
         if ( author==null || author.length()==0 ) {
@@ -133,8 +147,10 @@ public class EditRequest implements AbcAction {
             error = true;
         }
 
-        if ( error )
+        if ( error ) {
+            env.put(EditRequest.VAR_CATEGORIES, EditRequest.categories);
             return FMTemplateSelector.select("EditRequest","view",env,request);
+        }
 
         Item req = new Item(0,Item.REQUEST);
         if ( user!=null ) req.setOwner(user.getId());
@@ -143,6 +159,8 @@ public class EditRequest implements AbcAction {
         DocumentHelper.makeElement(document,"/data/author").addText(author);
         DocumentHelper.makeElement(document,"/data/email").addText(email);
         DocumentHelper.makeElement(document,"/data/text").addText(text);
+        if(!Misc.empty(category))
+            DocumentHelper.makeElement(document,"/data/category").addText(category);
 
         req.setData(document);
 
@@ -329,5 +347,15 @@ public class EditRequest implements AbcAction {
         params.put(PARAM_TEXT, action);
 
         return actionAdd(request, response, env);
+    }
+
+    public void configure(Preferences prefs) throws ConfigurationException {
+        String tmp = prefs.get(PREF_CATEGORIES,"");
+        StringTokenizer stk = new StringTokenizer(tmp,",");
+        categories = new String[stk.countTokens()];
+        int i = 0;
+        while(stk.hasMoreTokens()) {
+            categories[i++] = stk.nextToken();
+        }
     }
 }

@@ -18,6 +18,7 @@ import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.html.edit.EditRelation;
+import cz.abclinuxu.servlets.html.edit.EditRequest;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -128,8 +129,10 @@ public class ViewCategory implements AbcAction {
                 return FMTemplateSelector.select("ViewCategory", "drivers", env, request);
             case Constants.REL_NEWS_POOL:
                 return FMTemplateSelector.select("ViewCategory", "waiting_news", env, request);
-            case Constants.REL_REQUESTS:
+            case Constants.REL_REQUESTS: {
+                env.put(EditRequest.VAR_CATEGORIES, EditRequest.categories);
                 return FMTemplateSelector.select("EditRequest", "view", env, request);
+            }
             case Constants.REL_DOCUMENTS:
                 return FMTemplateSelector.select("ViewCategory", "documents", env, request);
         }

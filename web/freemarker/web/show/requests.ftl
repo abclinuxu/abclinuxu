@@ -18,7 +18,7 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í a proto bez odpovìdi
 <form action="${URL.make("/EditRequest")}" method="POST">
  <table border=0 cellpadding=5 style="padding-top: 10px">
   <tr>
-   <td class="required" width="100px">Va¹e jméno</td>
+   <td class="required">Va¹e jméno</td>
    <#if PARAMS.author?exists>
     <#assign author=PARAMS.author>
    <#elseif USER?exists>
@@ -40,6 +40,16 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í a proto bez odpovìdi
     <input type="text" name="email" value="${email?if_exists}" size="20" tabindex="2">
     <span class="error">${ERRORS.email?if_exists}</span>
    </td>
+  </tr>
+  <tr>
+    <td>Typ po¾adavku</td>
+    <td>
+        <select name="category">
+            <#list CATEGORIES as category>
+                <option<#if PARAMS.category?default("Hlá¹ení chyby")==category> selected</#if>>${category}</option>
+            </#list>
+        </select>
+    </td>
   </tr>
   <tr>
    <td colspan="2">
@@ -66,14 +76,13 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í a proto bez odpovìdi
     <td>
     <b>
         ${DATE.show(relation.child.created,"CZ_FULL")}
+        <#if TOOL.xpath(relation.child,"/data/category")?exists>${TOOL.xpath(relation.child,"/data/category")}, </#if>
         ${TOOL.xpath(relation.child,"data/author")}
-        <#if USER?exists && USER.hasRole("root")>
-            ${TOOL.xpath(relation.child,"data/email")}
-        </#if>
+        <#if USER?exists && USER.hasRole("root")>${TOOL.xpath(relation.child,"data/email")}</#if>
     </b>
     <br>
     ${TOOL.render(TOOL.element(relation.child.data,"data/text"),USER?if_exists)}
-    <#if USER?exists && USER.hasRole("root")>
+    <#if USER?exists && USER.hasRole("requests admin")>
         <br>
         <a href="${URL.make("/EditRequest?action=email&requestId="+relation.id)}">Poslat email</a>,
         <a href="${URL.make("/EditRequest?action=deliver&requestId="+relation.id)}">Vyøízeno</a>,

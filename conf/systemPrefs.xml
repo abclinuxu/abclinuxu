@@ -348,6 +348,11 @@
                             <entry key="msg.already.rated" value="Mù¾ete hodnotit jen jednou!"/>
                         </map>
                     </node>
+                    <node name="EditRequest">
+                        <map>
+                            <entry key="categories" value="Návrh na anketu,Hlá¹ení chyby,Námìt na vylep¹ení,Problém s úètem"/>
+                        </map>
+                    </node>
                 </node>
                 <node name="view">
                     <map/>
