@@ -9,6 +9,8 @@ package cz.abclinuxu.persistance;
 
 import java.util.*;
 import java.sql.*;
+import java.sql.Date;
+
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.AbcException;
@@ -843,7 +845,7 @@ public class MySqlPersistance implements Persistance {
             }
 
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("insert into anketa values(0,?,?,?,now(),?)");
+            PreparedStatement statement = con.prepareStatement("insert into anketa values(0,?,?,?,?,?)");
 
             statement.setInt(1,poll.getType() );
             if ( poll.getType()==0 ) {
@@ -852,7 +854,9 @@ public class MySqlPersistance implements Persistance {
 
             statement.setString(2,poll.getText());
             statement.setBoolean(3,poll.isMultiChoice());
-            statement.setBoolean(4,poll.isClosed());
+            long when = (poll.getCreated()!=null) ? poll.getCreated().getTime() : new java.util.Date().getTime();
+            statement.setTimestamp(4,new Timestamp(when));
+            statement.setBoolean(5,poll.isClosed());
 
             int result = statement.executeUpdate();
             if ( result==0 ) {
@@ -862,12 +866,13 @@ public class MySqlPersistance implements Persistance {
             org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)statement;
             poll.setId((int)mm.getLastInsertID());
 
-            statement = con.prepareStatement("insert into data_ankety values(?,?,?,0)");
+            statement = con.prepareStatement("insert into data_ankety values(?,?,?,?)");
             for ( int i=0; i<choices.length; i++ ) {
                 statement.clearParameters();
                 statement.setInt(1,i);
                 statement.setInt(2,poll.getId());
                 statement.setString(3,choices[i].getText());
+                statement.setInt(4,choices[i].getCount());
 
                 result = statement.executeUpdate();
                 choices[i].setPoll(poll.getId());

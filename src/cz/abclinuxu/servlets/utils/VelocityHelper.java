@@ -323,6 +323,8 @@ public class VelocityHelper {
             else if ( b instanceof Poll ) bDate = ((Poll)b).getCreated();
             else return false; // a is fresher
 
+            if ( a==null ) return false; // just created
+            if ( b==null ) return true;
             return aDate.before(bDate);
         } catch (Exception e) {
             log.error("isOlder bug: "+a.toString()+" | "+b.toString(),e);
