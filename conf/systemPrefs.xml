@@ -121,7 +121,7 @@
             <node name="UpdateKernel">
               <map>
                 <entry key="file" value="WEB-INF/freemarker/include/kernel.txt"/>
-                <entry key="server" value="finger.kernel.org"/>
+                <entry key="uri" value="http://www.kernel.org/kdist/finger_banner"/>
                 <entry key="regexp.stable" value="(The latest stable[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
                 <entry key="url.stable" value="ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.4"/>
                 <entry key="regexp.stable.pre" value="(The latest prepatch for the stable[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
@@ -134,10 +134,8 @@
                 <entry key="regexp.20" value="(The latest 2.0[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
                 <entry key="url.20" value="ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.0"/>
                 <entry key="regexp.20.pre" value="(The latest prepatch for the 2.0[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                <entry key="regexp.ac" value="(The latest -ac[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                <entry key="url.ac" value="http://www.kernel.org/pub/linux/kernel/people/alan/linux-2.4/"/>
-                <entry key="regexp.dj" value="(The latest -dj[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                <entry key="url.dj" value="http://www.kernel.org/pub/linux/kernel/people/davej/patches/2.5/"/>
+                <entry key="regexp.ac" value="(The latest -ac patch to the beta[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+                <entry key="url.ac" value="http://www.kernel.org/pub/linux/kernel/people/alan/linux-2.6/"/>
               </map>
             </node>
         </node>

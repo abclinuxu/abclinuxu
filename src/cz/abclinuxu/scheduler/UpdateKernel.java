@@ -7,12 +7,11 @@
 package cz.abclinuxu.scheduler;
 
 import java.io.*;
-import java.net.Socket;
+import java.net.URL;
 import java.util.TimerTask;
 import java.util.prefs.Preferences;
 
 import org.apache.regexp.*;
-import org.apache.log4j.BasicConfigurator;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.Configurator;
@@ -27,7 +26,7 @@ public class UpdateKernel extends TimerTask implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(UpdateKernel.class);
 
     public static final String PREF_FILE = "file";
-    public static final String PREF_SERVER = "server";
+    public static final String PREF_KERNEL_DIST_URI = "uri";
     public static final String PREF_REGEXP_STABLE = "regexp.stable";
     public static final String PREF_URL_STABLE = "url.stable";
     public static final String PREF_REGEXP_STABLE_PRE = "regexp.stable.pre";
@@ -42,14 +41,12 @@ public class UpdateKernel extends TimerTask implements Configurable {
     public static final String PREF_REGEXP_20_PRE = "regexp.20.pre";
     public static final String PREF_REGEXP_AC = "regexp.ac";
     public static final String PREF_URL_AC = "url.ac";
-    public static final String PREF_REGEXP_DJ = "regexp.dj";
-    public static final String PREF_URL_DJ = "url.dj";
 
-    String fileName, server;
-    String stable, stablePre, devel, develPre, old22, old22Pre, old20, old20Pre, ac, dj;
-    String urlStable, urlDevel, url22, url20, urlAC, urlDJ;
+    String fileName, uri;
+    String stable, stablePre, devel, develPre, old22, old22Pre, old20, old20Pre, ac;
+    String urlStable, urlDevel, url22, url20, urlAC;
 
-    RE reStable,reStablepre,reDevel,reDevelpre,reOld22,reOld22pre,reOld20,reOld20pre,reAc,reDj;
+    RE reStable,reStablepre,reDevel,reDevelpre,reOld22,reOld22pre,reOld20,reOld20pre,reAc;
 
     public UpdateKernel() {
         Configurator configurator = ConfigurationManager.getConfigurator();
@@ -64,7 +61,6 @@ public class UpdateKernel extends TimerTask implements Configurable {
             reOld20 = new RE(old20);
             reOld20pre = new RE(old20Pre);
             reAc = new RE(ac);
-            reDj = new RE(dj);
         } catch (RESyntaxException e) {
             log.error("Cannot compile regexp!",e);
         }
@@ -74,7 +70,7 @@ public class UpdateKernel extends TimerTask implements Configurable {
      * Callback used to configure your class from preferences.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
-        server = prefs.get(PREF_SERVER, null);
+        uri = prefs.get(PREF_KERNEL_DIST_URI, null);
         fileName = prefs.get(PREF_FILE, null);
         stable = prefs.get(PREF_REGEXP_STABLE, null);
         urlStable = prefs.get(PREF_URL_STABLE,null);
@@ -90,8 +86,6 @@ public class UpdateKernel extends TimerTask implements Configurable {
         old20Pre = prefs.get(PREF_REGEXP_20_PRE, null);
         ac = prefs.get(PREF_REGEXP_AC, null);
         urlAC = prefs.get(PREF_URL_AC,null);
-        dj = prefs.get(PREF_REGEXP_DJ, null);
-        urlDJ = prefs.get(PREF_URL_DJ,null);
     }
 
     /**
@@ -101,7 +95,7 @@ public class UpdateKernel extends TimerTask implements Configurable {
     public void run() {
         try {
             String line;
-            line = stable = stablePre = devel = develPre = old22 = old22Pre = old20 = old20Pre = ac = dj = null;
+            line = stable = stablePre = devel = develPre = old22 = old22Pre = old20 = old20Pre = ac = null;
 
             BufferedReader reader = getStream();
             while ((line = reader.readLine())!=null) {
@@ -141,10 +135,6 @@ public class UpdateKernel extends TimerTask implements Configurable {
                     ac = reAc.getParen(3);
                     continue;
                 }
-//                if ( reDj.match(line) ) {
-//                    dj = reDj.getParen(3);
-//                    continue;
-//                }
             }
 
             if ( stable==null ) // sometimes finger returns an empty file
@@ -159,7 +149,6 @@ public class UpdateKernel extends TimerTask implements Configurable {
             writeTableRow(writer,"Øada 2.2:",url22,old22,old22Pre);
             writeTableRow(writer,"Øada 2.0:",url20,old20,old20Pre);
             writeTableRow(writer,"AC øada:",urlAC,ac,null);
-//            writeTableRow(writer,"DJ øada:",urlDJ,dj,null);
 
             writer.write("</table>");
             reader.close();
@@ -193,7 +182,6 @@ public class UpdateKernel extends TimerTask implements Configurable {
     }
 
     public static void main(String[] args) {
-        BasicConfigurator.configure();
         UpdateKernel updateKernel = new UpdateKernel();
         updateKernel.run();
     }
@@ -202,13 +190,9 @@ public class UpdateKernel extends TimerTask implements Configurable {
      * get stream with kernel headers
      */
     private BufferedReader getStream() throws IOException {
-//        BufferedReader reader = new BufferedReader(new FileReader("/home/literakl/penguin/obsahy/kernel.txt"));
-//        BufferedReader reader = new BufferedReader(new FileReader("/home/literakl/finger.txt"));
-
-        Socket socket = new Socket(server,79);
-        socket.setSoTimeout(500);
-        socket.getOutputStream().write("\015\012".getBytes());
-        BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        return reader;
+        URL url = new URL(uri);
+        Reader reader = new InputStreamReader(url.openStream());
+        BufferedReader bufferedReader = new BufferedReader(reader);
+        return bufferedReader;
     }
 }
