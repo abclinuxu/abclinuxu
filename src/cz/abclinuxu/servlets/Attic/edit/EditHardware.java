@@ -42,7 +42,9 @@ public class EditHardware extends AbcServlet {
     public static final String ACTION_ADD_RECORD = "addRecord";
     public static final String ACTION_ADD_RECORD_STEP2 = "addRecord2";
     public static final String ACTION_EDIT_ITEM = "editItem";
+    public static final String ACTION_EDIT_ITEM_STEP2 = "editItem2";
     public static final String ACTION_EDIT_RECORD = "editRecord";
+    public static final String ACTION_EDIT_RECORD_STEP2 = "editRecord2";
 
 
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
@@ -108,6 +110,23 @@ public class EditHardware extends AbcServlet {
                 case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return actionAddRecord(request,response,ctx);
             }
+
+        } else if ( action.equals(ACTION_EDIT_ITEM) ) {
+            int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_EDIT,null);
+            switch (rights) {
+                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                default: return actionEditItem(request,ctx);
+            }
+
+        } else if ( action.equals(ACTION_EDIT_ITEM_STEP2) ) {
+            int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_EDIT,null);
+            switch (rights) {
+                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                default: return actionEditItem2(request,response,ctx);
+            }
+
         }
 
         return getTemplate("add/item.vm");
@@ -228,5 +247,42 @@ public class EditHardware extends AbcServlet {
             addError(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
             return getTemplate("add/hwrecord.vm");
         }
+    }
+
+    protected Template actionEditItem(HttpServletRequest request, Context ctx) throws Exception {
+        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+
+        Relation relation = (Relation) ctx.get(VAR_RELATION);
+        Item item = (Item) relation.getChild();
+        Document document = item.getData();
+
+        Node node = document.selectSingleNode("data/name");
+        params.put(PARAM_NAME,node.getText());
+        node = document.selectSingleNode("data/icon");
+        if ( node!=null ) params.put(PARAM_ICON,node.getText());
+
+        return getTemplate("edit/item.vm");
+    }
+
+    protected Template actionEditItem2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Relation relation = (Relation) ctx.get(VAR_RELATION);
+
+        Item item = (Item) relation.getChild();
+        Document document = item.getData();
+        Node node = document.selectSingleNode("data/name");
+
+        String tmp = (String) params.get(PARAM_NAME);
+        if ( tmp==null || tmp.length()==0 ) {
+            addError(PARAM_NAME,"Nevyplnil jste název druhu!",ctx,null);
+            return getTemplate("edit/item.vm");
+        }
+
+        node.setText(tmp);
+        persistance.update(item);
+
+        redirect("/ViewRelation?relationId="+relation.getUpper(),response,ctx);
+        return null;
     }
 }
