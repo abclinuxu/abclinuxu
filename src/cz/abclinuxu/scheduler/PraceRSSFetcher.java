@@ -49,7 +49,7 @@ public class PraceRSSFetcher extends TimerTask implements Configurable {
                 pos1 = line.indexOf('|');
                 item = new Item();
                 item.setName(line.substring(0,pos1));
-                item.setUrl(line.substring(pos1+1));
+                item.setUrl(UpdateLinks.fixAmpersand(line.substring(pos1+1)));
                 list.add(item);
                 line = reader.readLine();
             }

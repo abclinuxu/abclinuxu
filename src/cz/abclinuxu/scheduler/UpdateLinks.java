@@ -54,7 +54,7 @@ public class UpdateLinks extends TimerTask {
     public static final int LAST_SERVER = SLASHDOT;
 
     static RE ampersand;
-    
+
     static {
 	try {
 	    ampersand = new RE("&");
@@ -62,7 +62,7 @@ public class UpdateLinks extends TimerTask {
 	        log.error("Regexp cannot be compiled!", e);
 	}
     }
-								    
+
     Category category = new Category(Constants.CAT_LINKS);
 
     /** contains definition of locations and preferences for all servers */
@@ -326,8 +326,8 @@ public class UpdateLinks extends TimerTask {
         UpdateLinks updater = new UpdateLinks(Boolean.valueOf(debug).booleanValue());
         updater.run();
     }
-    
-    private String fixAmpersand(String url) {
+
+    public static String fixAmpersand(String url) {
         if (url==null || url.length()==0)
 	        return url;
 	    return ampersand.subst(url,"&amp;",RE.REPLACE_ALL);
