@@ -9,6 +9,7 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.PreparedDiscussion;
 import cz.abclinuxu.servlets.utils.Discussion;
@@ -202,25 +203,9 @@ public class Tools {
             return null;
         }
         Item item = (Item) relation.getChild();
-        Date lastUpdate = item.getUpdated();
-        int count = 0;
-
-        for (Iterator iter = item.getContent().iterator(); iter.hasNext(); ) {
-            Relation rel = (Relation) iter.next();
-            sync(rel);
-            if ( !InstanceUtils.checkType(rel.getChild(),Record.class,Record.DISCUSSION) ) {
-                log.error("Relation "+rel+" isn't discussion record!");
-                continue;
-            }
-            Record record = (Record) rel.getChild();
-            if ( lastUpdate.before(record.getUpdated()) )
-                lastUpdate = record.getUpdated();
-            count++;
-        }
-
         PreparedDiscussion discussion = new PreparedDiscussion(item);
-        discussion.lastUpdate = lastUpdate;
-        discussion.responseCount = count;
+        discussion.lastUpdate = SQLTool.getInstance().getMaxCreatedDateOfRecordForItem(item);
+        discussion.responseCount = item.getContent().size();
         discussion.relationId = relation.getId();
         return discussion;
     }
@@ -232,12 +217,9 @@ public class Tools {
      */
     public List analyzeDiscussions(List content) {
         List list = new ArrayList(content.size());
-
         for (Iterator iter = content.iterator(); iter.hasNext();) {
-            PreparedDiscussion p = analyzeDiscussion((Relation)iter.next());
-            list.add(p);
+            list.add(analyzeDiscussion((Relation)iter.next()));
         }
-
         return list;
     }
 
