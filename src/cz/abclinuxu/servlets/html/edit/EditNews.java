@@ -21,6 +21,7 @@ import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.utils.news.NewsCategories;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.parser.safehtml.NewsGuard;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.email.EmailSender;
@@ -80,8 +81,14 @@ public class EditNews implements AbcAction {
         if ( ACTION_ADD_STEP2.equals(action) )
             return actionAddStep2(request, response, env);
 
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
+        if ( relation==null )
+            throw new MissingArgumentException("Chybí parametr relationId!");
+        Tools.sync(relation);
+        env.put(VAR_RELATION, relation);
+
         // check permissions
-        if ( !user.hasRole(Roles.NEWS_ADMIN) )
+        if ( !(user.hasRole(Roles.NEWS_ADMIN) || relation.getUpper()==Constants.REL_NEWS_POOL))
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if ( ACTION_EDIT.equals(action) )
@@ -90,8 +97,12 @@ public class EditNews implements AbcAction {
         if ( ACTION_EDIT_STEP2.equals(action) )
             return actionEditStep2(request, response, env);
 
+        // check permissions
+        if ( !user.hasRole(Roles.NEWS_ADMIN) )
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
         if ( ACTION_REMOVE.equals(action) )
-            return actionRemoveStep1(request, env);
+            return FMTemplateSelector.select("EditNews", "remove", env, request);
 
         if ( ACTION_REMOVE_STEP2.equals(action) )
             return actionRemoveStep2(request, response, env);
@@ -105,8 +116,8 @@ public class EditNews implements AbcAction {
     }
 
     protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
 
         Item item = new Item(0, Item.NEWS);
@@ -146,15 +157,8 @@ public class EditNews implements AbcAction {
 
     private String actionEditStep1(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
-        if ( relation==null )
-            throw new MissingArgumentException("Chybí parametr relationId!");
-
-        Persistance persistance = PersistanceFactory.getPersistance();
-        persistance.synchronize(relation);
-        env.put(VAR_RELATION, relation);
+        Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
-        persistance.synchronize(item);
 
         Element element = (Element) item.getData().selectSingleNode("/data/content");
         params.put(PARAM_CONTENT,element.getText());
@@ -166,15 +170,10 @@ public class EditNews implements AbcAction {
     }
 
     protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
-        if ( relation==null )
-            throw new MissingArgumentException("Chybí parametr relationId!");
-
         Persistance persistance = PersistanceFactory.getPersistance();
-        persistance.synchronize(relation);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
-        persistance.synchronize(item);
 
         boolean canContinue = true;
         canContinue &= setContent(params, item, env);
@@ -193,7 +192,7 @@ public class EditNews implements AbcAction {
         persistance.update(item);
         AdminLogger.logEvent(user, "  edit | news "+relation.getId());
 
-        if ( relation.getParent().getId()==Constants.CAT_NEWS_POOL ) {
+        if ( relation.getParent().getId()==Constants.CAT_NEWS_POOL && user.hasRole(Roles.NEWS_ADMIN)) {
             relation.getParent().removeChildRelation(relation);
             relation.getParent().setId(Constants.CAT_NEWS);
             relation.setUpper(Constants.REL_NEWS);
@@ -207,33 +206,12 @@ public class EditNews implements AbcAction {
         return null;
     }
 
-    private String actionRemoveStep1(HttpServletRequest request, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
-        if ( relation==null )
-            throw new MissingArgumentException("Chybí parametr relationId!");
-
-        Persistance persistance = PersistanceFactory.getPersistance();
-        persistance.synchronize(relation);
-        env.put(VAR_RELATION, relation);
-        Item item = (Item) relation.getChild();
-        persistance.synchronize(item);
-
-        return FMTemplateSelector.select("EditNews", "remove", env, request);
-    }
-
     protected String actionRemoveStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
-        if ( relation==null )
-            throw new MissingArgumentException("Chybí parametr relationId!");
-
         Persistance persistance = PersistanceFactory.getPersistance();
-        persistance.synchronize(relation);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Relation relation = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
-
         Item item = (Item) relation.getChild();
-        persistance.synchronize(item);
         User author = (User) persistance.findById(new User(item.getOwner()));
 
         Map map = new HashMap();
@@ -259,6 +237,8 @@ public class EditNews implements AbcAction {
         response.sendRedirect(response.encodeRedirectURL("/Index"));
         return null;
     }
+
+    // setters
 
     /**
      * Updates news' content from parameters. Changes are not synchronized with persistance.
