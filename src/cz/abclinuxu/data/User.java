@@ -107,7 +107,6 @@ public class User extends GenericObject implements XMLContainer {
         return (documentHandler!=null)? documentHandler.getData():null;
     }
 
-    public XMLHandler getHandler() { return documentHandler; }
     /**
      * @return XML data in String format
      */
