@@ -176,6 +176,9 @@
     <action name="show" template="print" content="/misc/admin.ftl">
       <var name="TITLE" value="Administrace portálu" />
     </action>
+    <action name="check" template="print" content="/misc/admin_check.ftl">
+      <var name="TITLE" value="Kontrola portálu" />
+    </action>
   </servlet>
 
   <servlet name="SelectIcon">

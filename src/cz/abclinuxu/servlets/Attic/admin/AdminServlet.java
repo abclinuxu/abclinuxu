@@ -14,6 +14,7 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.template.TemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.Category;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,15 +25,18 @@ import java.util.Map;
  */
 public class AdminServlet extends AbcFMServlet {
     public static final String ACTION_CLEAR_CACHE = "clearCache";
+    public static final String ACTION_PERFROM_CHECK = "performCheck";
+
+    public static final String VAR_DATABASE_STATE = "DATABASE_VALID";
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String action = (String) params.get(PARAM_ACTION);
-        User user = (User) env.get(Constants.VAR_USER);
 
-        if (ACTION_CLEAR_CACHE.equals(action) ) {
+        if (ACTION_CLEAR_CACHE.equals(action) )
             return clearCache(request,env);
-        }
+        if (ACTION_PERFROM_CHECK.equals(action) )
+            return performCheck(request,env);
 
         return FMTemplateSelector.select("Admin", "show", env, request);
     }
@@ -48,5 +52,21 @@ public class AdminServlet extends AbcFMServlet {
 
         ServletUtils.addMessage("Cache byla promazána.",env,null);
         return FMTemplateSelector.select("Admin", "show", env, request);
+    }
+
+    /**
+     * Utility method for monitoring health of portal. Used by Broadnet.
+     * Content of page is defined in web/freemarker/print/misc/admin_check.ftl
+     * todo add other checks, e.g. fulltext, jobs and threads
+     */
+    private final String performCheck(HttpServletRequest request, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        try {
+            persistance.findById(new Category(Constants.CAT_HARDWARE));
+            env.put(VAR_DATABASE_STATE, Boolean.TRUE);
+        } catch (Exception e) {
+            env.put(VAR_DATABASE_STATE,Boolean.FALSE);
+        }
+        return FMTemplateSelector.select("Admin", "check", env, request);
     }
 }

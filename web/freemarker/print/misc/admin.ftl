@@ -40,7 +40,11 @@ projeví.
 <p><a href="${URL.noPrefix("/EditSurvey?action=add")}">Create survey</a></p>
 
 
-<h1>Statistika JDBC poolu</h1>
+<h1>Kontrola stavu a statistika</h1>
+
+<p>Kontrola stavu portálu</p>
+
+<p><a href="${URL.noPrefix("/Admin?action=performCheck")}">Perform check</a></p>
 
 <p>Statistické informace o JDBC poolu.</p>
 
