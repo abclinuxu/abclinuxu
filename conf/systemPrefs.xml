@@ -55,6 +55,11 @@
                 <entry key="categories.file" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/news_categories.xml"/>
               </map>
             </node>
+            <node name="Lottery">
+              <map>
+                <entry key="admins" value="2687,2121,1083,1768,403,1742,682,1"/>
+              </map>
+            </node>
           </node>
           <node name="freemarker">
             <map/>
@@ -95,6 +100,7 @@
               <entry key="article.relations.by.created" value="select R.cislo from polozka P, relace R where R.predchozi in (2,3,4,5,6,251,5324,8546,12448) and R.typ_potomka='P' and P.typ=2 and P.cislo=R.potomek and P.vytvoreno&lt;now() order by vytvoreno desc limit ?,?"/>
               <entry key="article.relations.within.period" value="select R.cislo from relace R left join polozka P on R.potomek=P.cislo where R.typ_potomka='P' and R.predchozi in (2,3,4,5,6,251,5324,8546,12448) and P.typ=2 and P.vytvoreno&gt;? and P.vytvoreno&lt;? order by vytvoreno asc"/>
               <entry key="news.relations.by.created" value="select R.cislo from polozka P, relace R where R.predchozi=42932 and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek order by vytvoreno desc limit ?,?"/>
+              <entry key="news.relations.within.period" value="select R.cislo from polozka P, relace R where R.predchozi=42932 and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek and vytvoreno&gt;? and vytvoreno&lt;?"/>
               <entry key="discussion.relations.by.created" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek where R.typ_potomka='P' and R.typ_predka='K' and P.typ=3 order by P.vytvoreno desc limit ?,?"/>
               <entry key="record.relations.by.type.by.user" value="select R.cislo from relace R left join zaznam Z on R.potomek=Z.cislo where R.typ_potomka='Z' and Z.typ=? and Z.pridal=? order by R.cislo limit ?,?"/>
               <entry key="article.relations.by.user" value="select R.cislo from relace R left join polozka P on (P.cislo=R.potomek) where typ_potomka='P' and P.typ=2 and P.data like concat('%&lt;author&gt;',?,'&lt;/author%') and P.vytvoreno&lt;now() group by potomek order by vytvoreno asc limit ?,?"/>

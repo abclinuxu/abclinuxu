@@ -200,7 +200,7 @@ public class Tools {
      * is shortened to length of <code>max-suffix.length()</code>
      * and <code>suffix</code> is appended.
      */
-    public String limit(String str, int max, String suffix) {
+    public static String limit(String str, int max, String suffix) {
         if ( str==null || str.length()==0 ) return "";
         if ( str.length()<=max ) return str;
 

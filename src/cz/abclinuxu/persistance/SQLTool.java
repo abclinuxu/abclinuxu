@@ -10,7 +10,6 @@ import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Poll;
-import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.exceptions.PersistanceException;
 
@@ -34,6 +33,7 @@ public final class SQLTool implements Configurable {
     public static final String PREF_ITEM_RELATIONS_BY_TYPE_BY_UPDATED = "item.relations.by.type.by.updated";
     public static final String PREF_ARTICLE_RELATIONS_BY_CREATED = "article.relations.by.created";
     public static final String PREF_NEWS_RELATIONS_BY_CREATED = "news.relations.by.created";
+    public static final String PREF_NEWS_RELATIONS_WITHIN_PERIOD = "news.relations.within.period";
     public static final String PREF_ARTICLE_RELATIONS_WITHIN_PERIOD = "article.relations.within.period";
     public static final String PREF_DISCUSSION_RELATIONS_BY_CREATED = "discussion.relations.by.created";
 
@@ -63,7 +63,7 @@ public final class SQLTool implements Configurable {
     private String maxPoll, maxUser;
     private String recordRelationsByUpdated, itemRelationsByUpdated, discussionRelationsByCreated;
     private String articleRelationsByCreated, articleRelationsWithinPeriod;
-    private String newsRelationByCreated, newsRelationByUser;
+    private String newsRelationsByCreated, newsRelationsByUser, newsRelationsWithinPeriod;
     private String recordRelationsByUser, articleRelationsByUser, questionRelationsByUser;
     private String countArticlesByUser, countRecordsByUser, countItemsByUser;
     private String countItemsByType, countRecordsByType, countQuestionsByUser;
@@ -250,7 +250,7 @@ public final class SQLTool implements Configurable {
         ResultSet resultSet = null;
         try {
             con = persistance.getSQLConnection();
-            statement = con.prepareStatement(newsRelationByCreated);
+            statement = con.prepareStatement(newsRelationsByCreated);
             statement.setInt(1, offset);
             statement.setInt(2, count);
 
@@ -267,6 +267,39 @@ public final class SQLTool implements Configurable {
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
+    }
+
+    /**
+     * Finds relations, where child is an article item with created property, that is inside
+     * given time period. Items are sorted by created property in ascendant order.
+     * @param from starting point (exclusive) of time period
+     * @param until end point (exclusive) of time period
+     * @return List of initialized relations
+     */
+    public List findNewsRelationsWithinPeriod(Date from, Date until) throws PersistanceException {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        List result;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(newsRelationsWithinPeriod);
+            statement.setDate(1, new java.sql.Date(from.getTime()));
+            statement.setDate(2, new java.sql.Date(until.getTime()));
+
+            resultSet = statement.executeQuery();
+            result = new ArrayList();
+            while ( resultSet.next() ) {
+                Relation relation = new Relation(resultSet.getInt(1));
+                result.add(persistance.findById(relation));
+            }
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
+        return result;
     }
 
     /**
@@ -538,7 +571,7 @@ public final class SQLTool implements Configurable {
 
         try {
             con = persistance.getSQLConnection();
-            statement = con.prepareStatement(newsRelationByUser);
+            statement = con.prepareStatement(newsRelationsByUser);
             statement.setString(1, String.valueOf(userId));
             statement.setInt(2, offset);
             statement.setInt(3, count);
@@ -677,8 +710,9 @@ public final class SQLTool implements Configurable {
         itemRelationsByUpdated = prefs.get(PREF_ITEM_RELATIONS_BY_TYPE_BY_UPDATED, null);
         articleRelationsByCreated = prefs.get(PREF_ARTICLE_RELATIONS_BY_CREATED, null);
         articleRelationsWithinPeriod = prefs.get(PREF_ARTICLE_RELATIONS_WITHIN_PERIOD, null);
-        newsRelationByCreated = prefs.get(PREF_NEWS_RELATIONS_BY_CREATED, null);
-        newsRelationByUser = prefs.get(PREF_NEWS_RELATIONS_BY_USER, null);
+        newsRelationsByCreated = prefs.get(PREF_NEWS_RELATIONS_BY_CREATED, null);
+        newsRelationsWithinPeriod = prefs.get(PREF_NEWS_RELATIONS_WITHIN_PERIOD, null);
+        newsRelationsByUser = prefs.get(PREF_NEWS_RELATIONS_BY_USER, null);
         discussionRelationsByCreated = prefs.get(PREF_DISCUSSION_RELATIONS_BY_CREATED, null);
         recordRelationsByUser = prefs.get(PREF_RECORD_RELATIONS_BY_TYPE_BY_USER, null);
         articleRelationsByUser = prefs.get(PREF_ARTICLE_RELATIONS_BY_USER, null);
