@@ -256,7 +256,7 @@ public class EditRelation implements AbcAction {
         String url = null;
         String prefix = (String) params.get(PARAM_PREFIX);
         if ( prefix!=null ) {
-            url = prefix.concat("/show/"+relation.getUpper());
+            url = prefix.concat("/dir/"+relation.getUpper());
         } else
             url = "/";
 
