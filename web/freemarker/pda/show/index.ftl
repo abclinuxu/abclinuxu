@@ -3,8 +3,7 @@
 <#include "/include/zprava.txt">
 <#call showMessages>
 
-<#global articleCount=8>
-<#list TOOL.sublist(VARS.newArticles,0,articleCount) as rel>
+<#list ARTICLES as rel>
  <#call showArticle(rel)>
  <#if rel_has_next><#call separator><#else><#call doubleSeparator></#if>
 </#list>
