@@ -50,7 +50,7 @@ public class MailNews {
                 if ( test ) {
                     simulate(data);
                 } else {
-                    Email.sendBulkEmail("admin@AbcLinuxu.cz","AbcLinuxu.cz predstavuje Abicko",data);
+                    Email.sendBulkEmail("admin@AbcLinuxu.cz","AbcLinuxu: casopis Abicko",data);
                 }
                 data.clear();
             }
@@ -58,7 +58,7 @@ public class MailNews {
         if ( test ) {
             simulate(data);
         } else {
-            if ( data.size()>0 ) Email.sendBulkEmail("admin@AbcLinuxu.cz","Zprava pro uzivatele Linux Hardware",data);
+            if ( data.size()>0 ) Email.sendBulkEmail("admin@AbcLinuxu.cz","AbcLinuxu: casopis abicko",data);
         }
     }
 
@@ -91,7 +91,7 @@ public class MailNews {
         for (Iterator it = map.keySet().iterator(); it.hasNext();) {
             String s = (String) it.next();
             String d = (String) map.get(s);
-            log.info(s+"\n"+d+"\n----\n");
+            log.info(s+"\n"+d+"----\n\n");
         }
     }
 
