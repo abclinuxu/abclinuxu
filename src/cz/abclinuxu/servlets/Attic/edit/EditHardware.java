@@ -15,6 +15,7 @@ import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.exceptions.MissingArgumentException;
 
 import org.dom4j.*;
 
@@ -67,7 +68,8 @@ public class EditHardware extends AbcFMServlet {
             relation = (Relation) persistance.findById(relation);
             persistance.synchronize(relation.getChild());
             env.put(VAR_RELATION,relation);
-        } else throw new Exception("Chybí parametr relationId!");
+        } else
+            throw new MissingArgumentException("Chybí parametr relationId!");
 
         if ( action==null || action.equals(ACTION_ADD_ITEM) ) {
             int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_ADD,Item.class);
@@ -186,7 +188,8 @@ public class EditHardware extends AbcFMServlet {
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
         root.addElement("name").addText(name);
-        if ( icon!=null && icon.length()>0 ) root.addElement("icon").addText(icon);
+        if ( icon!=null && icon.length()>0 )
+            root.addElement("icon").addText(icon);
 
         Item item = new Item(0,Item.MAKE);
         item.setData(document);
@@ -310,7 +313,7 @@ public class EditHardware extends AbcFMServlet {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
         String tmp = (String) params.get(PARAM_CHOOSE_ICON);
-        if ( tmp!=null && tmp.length()>0 ) {
+        if ( !Misc.empty(tmp) ) {
             // it is not possible to use UrlUtils.dispatch(), because it would prepend prefix!
             RequestDispatcher dispatcher = request.getRequestDispatcher("/SelectIcon");
             dispatcher.forward(request,response);
@@ -347,9 +350,6 @@ public class EditHardware extends AbcFMServlet {
 
     protected String actionEditRecord(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
-
-        Relation upper = (Relation) env.get(VAR_RELATION);
         Record record = (Record) env.get(VAR_RECORD);
         Document document = record.getData();
 

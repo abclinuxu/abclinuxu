@@ -7,22 +7,22 @@
 package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.view.SelectIcon;
-import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.*;
-import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.utils.InstanceUtils;
-import org.apache.velocity.Template;
-import org.apache.velocity.context.Context;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.exceptions.MissingArgumentException;
+
 import org.dom4j.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.RequestDispatcher;
 import java.util.Map;
 
 public class EditSoftware extends AbcFMServlet {
@@ -35,6 +35,7 @@ public class EditSoftware extends AbcFMServlet {
     public static final String PARAM_TEXT = "text";
     public static final String PARAM_VERSION = "version";
     public static final String PARAM_RECORD_ID = "recordId";
+    public static final String PARAM_CHOOSE_ICON = "iconChooser";
 
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_RECORD = "RECORD";
@@ -54,14 +55,15 @@ public class EditSoftware extends AbcFMServlet {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
-        String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
+        String action = (String) params.get(PARAM_ACTION);
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
         if ( relation!=null ) {
             persistance.synchronize(relation);
             persistance.synchronize(relation.getChild());
             env.put(VAR_RELATION,relation);
-        } else throw new Exception("Chybí parametr relationId!");
+        } else
+            throw new MissingArgumentException("Chybí parametr relationId!");
 
         if ( action==null || action.equals(ACTION_ADD_ITEM) ) {
             int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_ADD,Item.class);
@@ -128,7 +130,7 @@ public class EditSoftware extends AbcFMServlet {
                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
                 case Guard.ACCESS_OK: return actionEditRecord2(request,response,env);
                 case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionEditRecord(request,env);
+                default: return actionEditRecord2(request,response,env);
             }
 
         } else if ( action.equals(ACTION_EDIT_ITEM) ) {
@@ -145,7 +147,7 @@ public class EditSoftware extends AbcFMServlet {
                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
                 case Guard.ACCESS_OK: return actionEditItem2(request,response,env);
                 case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return actionEditItem(request,env);
+                default: return actionEditItem2(request,response,env);
             }
 
         }
@@ -171,7 +173,7 @@ public class EditSoftware extends AbcFMServlet {
         User user = (User) env.get(Constants.VAR_USER);
 
         String name = (String) params.get(PARAM_NAME);
-        if ( name==null || name.length()==0 ) {
+        if ( Misc.empty(name) ) {
             ServletUtils.addError(PARAM_NAME,"Nevyplnil jste název druhu!",env,null);
             return FMTemplateSelector.select("EditSoftware","add_item",env,request);
         }
@@ -180,7 +182,8 @@ public class EditSoftware extends AbcFMServlet {
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
         root.addElement("name").addText(name);
-        if ( icon!=null && icon.length()>0 ) root.addElement("icon").addText(icon);
+        if ( icon!=null && icon.length()>0 )
+            root.addElement("icon").addText(icon);
 
         Item item = new Item(0,Item.MAKE);
         item.setData(document);
@@ -190,7 +193,7 @@ public class EditSoftware extends AbcFMServlet {
         String text = (String) params.get(PARAM_TEXT);
         String version = (String) params.get(PARAM_VERSION);
 
-        if ( text==null || text.length()==0 ) {
+        if ( Misc.empty(text) ) {
             ServletUtils.addError(PARAM_TEXT,"Vyplòte návod!",env,null);
             return FMTemplateSelector.select("EditSoftware","add_record",env,request);
         }
@@ -198,8 +201,10 @@ public class EditSoftware extends AbcFMServlet {
         document = DocumentHelper.createDocument();
         root = document.addElement("data");
         root.addElement("text").addText(text);
-        if ( url!=null && url.length()>0 ) root.addElement("url").addText(url);
-        if ( version!=null && version.length()>0 ) root.addElement("version").addText(version);
+        if ( url!=null && url.length()>0 )
+            root.addElement("url").addText(url);
+        if ( version!=null && version.length()>0 )
+            root.addElement("version").addText(version);
 
         Record record = new Record(0,Record.SOFTWARE);
         record.setData(document);
@@ -231,7 +236,7 @@ public class EditSoftware extends AbcFMServlet {
         String text = (String) params.get(PARAM_TEXT);
         String version = (String) params.get(PARAM_VERSION);
 
-        if ( text==null || text.length()==0 ) {
+        if ( Misc.empty(text) ) {
             ServletUtils.addError(PARAM_TEXT,"Vyplòte návod!",env,null);
             return FMTemplateSelector.select("EditSoftware","add_record",env,request);
         }
@@ -239,8 +244,10 @@ public class EditSoftware extends AbcFMServlet {
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
         root.addElement("text").addText(text);
-        if ( url!=null && url.length()>0 ) root.addElement("url").addText(url);
-        if ( version!=null && version.length()>0 ) root.addElement("version").addText(version);
+        if ( url!=null && url.length()>0 )
+            root.addElement("url").addText(url);
+        if ( version!=null && version.length()>0 )
+            root.addElement("version").addText(version);
 
         Record record = new Record(0,Record.SOFTWARE);
         record.setData(document);
@@ -262,19 +269,18 @@ public class EditSoftware extends AbcFMServlet {
 
     protected String actionEditRecord(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        VelocityHelper helper = (VelocityHelper) env.get(AbcVelocityServlet.VAR_HELPER);
-        Persistance persistance = PersistanceFactory.getPersistance();
-
-        Relation upper = (Relation) env.get(VAR_RELATION);
         Record record = (Record) env.get(VAR_RECORD);
 
         Document document = record.getData();
         Node node = document.selectSingleNode("data/url");
-        if ( node!=null ) params.put(PARAM_URL,node.getText());
+        if ( node!=null )
+            params.put(PARAM_URL,node.getText());
         node = document.selectSingleNode("data/version");
-        if ( node!=null ) params.put(PARAM_VERSION,node.getText());
+        if ( node!=null )
+            params.put(PARAM_VERSION,node.getText());
         node = document.selectSingleNode("data/text");
-        if ( node!=null ) params.put(PARAM_TEXT,helper.encodeSpecial(node.getText()));
+        if ( node!=null )
+            params.put(PARAM_TEXT,node.getText()); //encodeSpecial
 
         params.put(PARAM_ACTION,ACTION_EDIT_RECORD_STEP2);
         return FMTemplateSelector.select("EditSoftware","edit_record",env,request);
@@ -292,14 +298,16 @@ public class EditSoftware extends AbcFMServlet {
         String text = (String) params.get(PARAM_TEXT);
         String version = (String) params.get(PARAM_VERSION);
 
-        if ( text==null || text.length()==0 ) {
+        if ( Misc.empty(text) ) {
             ServletUtils.addError(PARAM_TEXT,"Vyplòte návod!",env,null);
             return FMTemplateSelector.select("EditSoftware","edit_record",env,request);
         }
 
         DocumentHelper.makeElement(document,"data/text").setText(text);
-        if ( url!=null ) DocumentHelper.makeElement(document,"data/url").setText(url);
-        if ( version!=null ) DocumentHelper.makeElement(document,"data/version").setText(version);
+        if ( url!=null )
+            DocumentHelper.makeElement(document,"data/url").setText(url);
+        if ( version!=null )
+            DocumentHelper.makeElement(document,"data/version").setText(version);
 
         persistance.update(record);
 
@@ -318,7 +326,8 @@ public class EditSoftware extends AbcFMServlet {
         Node node = document.selectSingleNode("data/name");
         params.put(PARAM_NAME,node.getText());
         node = document.selectSingleNode("data/icon");
-        if ( node!=null ) params.put(PARAM_ICON,node.getText());
+        if ( node!=null )
+            params.put(PARAM_ICON,node.getText());
 
         return FMTemplateSelector.select("EditSoftware","edit_item",env,request);
     }
@@ -332,11 +341,27 @@ public class EditSoftware extends AbcFMServlet {
         Document document = item.getData();
         Node node = document.selectSingleNode("data/name");
 
-        String tmp = (String) params.get(PARAM_NAME);
-        if ( tmp==null || tmp.length()==0 ) {
+        String tmp = (String) params.get(PARAM_CHOOSE_ICON);
+        if ( ! Misc.empty(tmp) ) {
+            // it is not possible to use UrlUtils.dispatch(), because it would prepend prefix!
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/SelectIcon");
+            dispatcher.forward(request, response);
+            return null;
+        }
+
+        tmp = (String) params.get(PARAM_NAME);
+        if ( Misc.empty(tmp) ) {
             ServletUtils.addError(PARAM_NAME,"Nevyplnil jste název druhu!",env,null);
             return FMTemplateSelector.select("EditSoftware","edit_item",env,request);
         }
+
+        node = DocumentHelper.makeElement(document, "data/icon");
+        tmp = (String) params.get(PARAM_ICON);
+        if (tmp == null || tmp.length() == 0) {
+            ServletUtils.addError(PARAM_ICON, "Zadejte ikonu!", env, null);
+            return FMTemplateSelector.select("EditHardware", "edit_item", env, request);
+        }
+        node.setText(tmp);
 
         node.setText(tmp);
         persistance.update(item);
