@@ -37,6 +37,7 @@ verze 2.0
 <!ELEMENT forum_size (#PCDATA)> <!-- integer, pocet zobrazenych diskusi na strance -->
 <!ELEMENT return_to_forum (#PCDATA)> <!-- yes or no, zda se po presunu diskuse vratit do diskusniho fora -->
 <!ELEMENT blog (#PCDATA)> <!-- integer, cislo blogu -->
+<!ATTLIST blog name (#PCDATA) #REQUIRED> <!-- name of blog, part of URL -->
 
 <!ELEMENT system (registration_date?,last_login_date?,group?)>
 <!ELEMENT registration_date (#PCDATA)> <!-- ISO format, kdy se zaregistroval -->

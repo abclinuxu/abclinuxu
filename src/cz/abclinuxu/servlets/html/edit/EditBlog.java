@@ -231,7 +231,9 @@ public class EditBlog implements AbcAction, Configurable {
         Relation relation = new Relation(new Category(Constants.CAT_BLOGS), blog, Constants.REL_BLOGS);
         persistance.create(relation);
 
-        DocumentHelper.makeElement(settings,"blog").setText(Integer.toString(blog.getId()));
+        Element element = DocumentHelper.makeElement(settings,"blog");
+        element.setText(Integer.toString(blog.getId()));
+        element.addAttribute("name", blog.getSubType());
         persistance.update(user);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -363,8 +365,13 @@ public class EditBlog implements AbcAction, Configurable {
         if ( !canContinue )
             return actionRenameBlogStep1(request, blog, env);
 
+        User user = (User) env.get(Constants.VAR_USER);
+        Element element = (Element) user.getData().selectSingleNode("//settings/blog");
+        element.addAttribute("name", blog.getSubType());
+
         Persistance persistance = PersistanceFactory.getPersistance();
         persistance.update(blog);
+        persistance.update(user);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/blog/"+blog.getSubType()+"/");
