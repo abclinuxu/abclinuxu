@@ -1,16 +1,19 @@
 <html>
 <head>
  <title>${TITLE}</title>
- <style type="text/css">
-   span { color: red }
- </style>
 </head>
 <body>
 <#if DATABASE_VALID>
  <#global PERSISTANCE="OK">
 <#else>
- <#global PERSISTANCE="<span>porucha</span>">
+ <#global PERSISTANCE="porucha">
 </#if>
-Persistance: ${PERSISTANCE}<br>
+<#if FULLTEXT_VALID>
+ <#global FULLTEXT="OK">
+<#else>
+ <#global FULLTEXT="porucha">
+</#if>
+Persistance:${PERSISTANCE}<br>
+Fulltext:${FULLTEXT}<br>
 </body>
 </html>

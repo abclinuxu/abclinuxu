@@ -21,19 +21,24 @@ import org.apache.lucene.index.IndexWriter;
 
 import java.util.*;
 import java.util.prefs.Preferences;
+import java.io.File;
+import java.io.FileWriter;
 
 /**
  * This class is responsible for creating and
  * maintaining Lucene's index.
  * todo give score boost to titles and names of objects
- * todo replace recursion with stack based implementation 
+ * todo replace recursion with stack based implementation
  */
 public class CreateIndex implements Configurable {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(CreateIndex.class);
 
     public static final String PREF_PATH = "path";
+    public static final String PREF_LAST_RUN_NAME = "last.run.file";
 
-    static String indexPath;
+    private final String LAST_RUN_FILE = "last_run.txt";
+
+    static String indexPath,lastRunFilename;
     static Persistance persistance;
 
     static {
@@ -72,6 +77,10 @@ public class CreateIndex implements Configurable {
             indexWriter.optimize();
             indexWriter.close();
             long end = System.currentTimeMillis();
+
+            FileWriter fos = new FileWriter(getLastRunFile());
+            fos.write(Constants.czFormat.format(new Date()));
+            fos.close();
 
             log.info("Indexing of "+indexWriter.docCount()+" documents took "+(end-start)/1000+" seconds.");
             System.out.println("Indexing of "+indexWriter.docCount()+" documents took "+(end-start)/1000+" seconds.");
@@ -374,6 +383,7 @@ public class CreateIndex implements Configurable {
      */
     public void configure(Preferences prefs) throws ConfigurationException {
         indexPath = prefs.get(PREF_PATH, null);
+        lastRunFilename = prefs.get(PREF_LAST_RUN_NAME, LAST_RUN_FILE);
     }
 
     /**
@@ -381,5 +391,12 @@ public class CreateIndex implements Configurable {
      */
     public static String getIndexPath() {
         return indexPath;
+    }
+
+    /**
+     * @return File, which serves as timestamp of last indexing.
+     */
+    public static File getLastRunFile() {
+        return new File(indexPath,lastRunFilename);
     }
 }

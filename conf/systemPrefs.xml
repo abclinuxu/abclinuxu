@@ -45,6 +45,7 @@
             <node name="CreateIndex">
               <map>
                 <entry key="path" value="@DEPLOY_ABCLINUXU@/WEB-INF/index/"/>
+                <entry key="last.run.file" value="last_run.txt"/>
               </map>
             </node>
           </node>
