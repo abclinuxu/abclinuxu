@@ -408,6 +408,16 @@ public class Tools implements Configurable {
     }
 
     /**
+     * This method instantiates category and synchronizes it.
+     * @return synchronized category.
+     */
+    public Category createCategory(String id) {
+        int i = Integer.parseInt(id);
+        Category category = new Category(i);
+        return (Category) persistance.findById(category);
+    }
+
+    /**
      * Increments usage counter of GenericObject.
      */
     public void incrementCounter(GenericObject obj) {
