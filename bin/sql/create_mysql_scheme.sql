@@ -39,7 +39,8 @@ CREATE TABLE polozka (
  vytvoreno DATETIME,       -- cas vytvoreni
  zmeneno TIMESTAMP NOT NULL             -- cas posledni zmeny
 );
-
+ALTER TABLE polozka ADD INDEX in_vytvoreno (vytvoreno);
+ALTER TABLE polozka ADD INDEX in_typ (typ);
 
 -- kazdy uzivatel muze pridat k polozce svuj zaznam, kazda polozka
 -- ma nejmene jeden zaznam od autora polozky
@@ -54,6 +55,8 @@ CREATE TABLE zaznam (
  vytvoreno DATETIME,       -- cas vytvoreni
  zmeneno TIMESTAMP NOT NULL             -- cas posledni zmeny
 );
+ALTER TABLE zaznam ADD INDEX in_zmeneno (z);
+ALTER TABLE zaznam ADD INDEX in_typ (typ);
 
 
 -- tabulka s definicemi serveru, kterym zobrazujeme odkazy
@@ -130,9 +133,9 @@ CREATE TABLE relace (
  potomek INT NOT NULL,                  -- id obsahu
  data TEXT DEFAULT NULL                 -- volitelne jmeno vazby
 );
-
 ALTER TABLE relace ADD INDEX in_potomek (typ_potomka,potomek);
 ALTER TABLE relace ADD INDEX in_predek (typ_predka,predek);
+ALTER TABLE relace ADD INDEX in_predchozi (predchozi);
 
 -- tabulka se ctennosti daneho objektu
 CREATE TABLE citac (
