@@ -52,6 +52,8 @@ public class EditNews implements AbcAction {
     public static final String ACTION_REMOVE = "remove";
     public static final String ACTION_REMOVE_STEP2 = "remove2";
     public static final String ACTION_SEND_EMAIL = "mail";
+    public static final String ACTION_LOCK = "lock";
+    public static final String ACTION_UNLOCK = "unlock";
 
     public static final String VAR_CATEGORIES = "CATEGORIES";
     public static final String VAR_CATEGORY = "CATEGORY";
@@ -112,6 +114,12 @@ public class EditNews implements AbcAction {
 
         if ( ACTION_SEND_EMAIL.equals(action) )
             return actionSendEmail(request, response, env);
+
+        if ( ACTION_LOCK.equals(action) )
+            return actionLock(request, response, env);
+
+        if ( ACTION_UNLOCK.equals(action) )
+            return actionUnlock(request, response, env);
 
         throw new MissingArgumentException("Chybí parametr action!");
     }
@@ -259,6 +267,40 @@ public class EditNews implements AbcAction {
         relation.getParent().removeChildRelation(relation);
 
         response.sendRedirect(response.encodeRedirectURL("/"));
+        return null;
+    }
+
+    protected String actionLock(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item item = (Item) relation.getChild();
+
+        Element element = DocumentHelper.makeElement(item.getData(), "/data/locked_by");
+        User user = (User) env.get(Constants.VAR_USER);
+        element.setText(new Integer(user.getId()).toString());
+
+        persistance.update(item);
+        AdminLogger.logEvent(user, "  lock | news "+relation.getId());
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/news/show/"+relation.getId());
+        return null;
+    }
+
+    protected String actionUnlock(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item item = (Item) relation.getChild();
+
+        Element element = (Element) item.getData().selectSingleNode("/data/locked_by");
+        element.detach();
+        persistance.update(item);
+
+        User user = (User) env.get(Constants.VAR_USER);
+        AdminLogger.logEvent(user, "  unlock | news "+relation.getId());
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/news/show/"+relation.getId());
         return null;
     }
 

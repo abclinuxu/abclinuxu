@@ -57,6 +57,7 @@
 <!ELEMENT content (#PCDATA)> <!-- text of the news -->
 <!ATTLIST content format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT approved_by (#PCDATA)> <!-- id of admin, who approved the news -->
+<!ELEMENT locked_by (#PCDATA)> <!-- id of admin, who locked this news -->
 
 <!-- Item.GROUP -->
 <!ELEMENT data (name, desc)>
