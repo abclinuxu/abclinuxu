@@ -125,7 +125,7 @@ public class SelectIcon extends AbcVelocityServlet {
         session.setAttribute(AbcVelocityServlet.ATTRIB_PARAMS,map);
 
         String newUrl = url + "?icon="+icon;
-        UrlUtils.redirect(response, newUrl);
+        UrlUtils.redirect(response, newUrl, ctx);
         return null;
     }
 }

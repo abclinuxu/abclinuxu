@@ -109,7 +109,7 @@ public class EditRelation extends AbcVelocityServlet {
 
         }
 
-        UrlUtils.redirect(response, "/Index");
+        UrlUtils.redirect(response, "/Index", ctx);
         return null;
     }
 
@@ -138,7 +138,7 @@ public class EditRelation extends AbcVelocityServlet {
 
         String prefix = (String)params.get(EditRelation.PARAM_PREFIX);
         ctx.put(AbcVelocityServlet.VAR_URL_UTILS,new UrlUtils(prefix, response));
-        UrlUtils.redirect(response, "/ViewRelation?relationId="+parent.getId());
+        UrlUtils.redirect(response, "/ViewRelation?relationId="+parent.getId(), ctx);
         return null;
     }
 
@@ -164,7 +164,7 @@ public class EditRelation extends AbcVelocityServlet {
             url = prefix.concat("/ViewRelation?relationId="+relation.getUpper());
         } else url = "/Index";
 
-        UrlUtils.redirect(response, url);
+        UrlUtils.redirect(response, url, ctx);
         return null;
     }
 
@@ -189,7 +189,7 @@ public class EditRelation extends AbcVelocityServlet {
             url = prefix.concat("/ViewRelation?relationId="+relation.getUpper());
         } else url = "/Index";
 
-        UrlUtils.redirect(response, url);
+        UrlUtils.redirect(response, url, ctx);
         return null;
     }
 }

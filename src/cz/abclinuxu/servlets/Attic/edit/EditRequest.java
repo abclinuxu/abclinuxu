@@ -113,7 +113,7 @@ public class EditRequest extends AbcVelocityServlet {
 
         ServletUtils.addMessage("Vá¹ po¾adavek byl pøijat.",ctx,request.getSession());
 
-        UrlUtils.redirect(response, "/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS);
+        UrlUtils.redirect(response, "/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS, ctx);
         return null;
     }
 
@@ -125,7 +125,7 @@ public class EditRequest extends AbcVelocityServlet {
         persistance.remove(relation);
         ServletUtils.addMessage("Po¾adavek byl smazán.",ctx,request.getSession());
 
-        UrlUtils.redirect(response, "/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS);
+        UrlUtils.redirect(response, "/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS, ctx);
         return null;
     }
 
@@ -146,7 +146,7 @@ public class EditRequest extends AbcVelocityServlet {
         persistance.remove(relation);
         ServletUtils.addMessage("Po¾adavek byl vyøízen.",ctx,request.getSession());
 
-        UrlUtils.redirect(response, "/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS);
+        UrlUtils.redirect(response, "/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS, ctx);
         return null;
     }
 }

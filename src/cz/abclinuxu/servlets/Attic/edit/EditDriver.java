@@ -185,7 +185,7 @@ public class EditDriver extends AbcVelocityServlet {
             return VelocityTemplateSelector.selectTemplate(request,ctx,"EditDriver","add");
         }
 
-        UrlUtils.redirect(response, "/ViewRelation?relationId="+Constants.REL_DRIVERS);
+        UrlUtils.redirect(response, "/ViewRelation?relationId="+Constants.REL_DRIVERS, ctx);
         return null;
     }
 }

@@ -192,7 +192,7 @@ public class EditPoll extends AbcVelocityServlet {
             sb.append(tmp);
         }
 
-        UrlUtils.redirect(response, sb.toString());
+        UrlUtils.redirect(response, sb.toString(), ctx);
         return null;
     }
 
@@ -239,7 +239,7 @@ public class EditPoll extends AbcVelocityServlet {
         }
         PersistanceFactory.getPersistance().update(poll);
 
-        UrlUtils.redirect(response, "/ViewRelation?relationId="+upperRelation.getId());
+        UrlUtils.redirect(response, "/ViewRelation?relationId="+upperRelation.getId(), ctx);
         return null;
     }
 
@@ -254,7 +254,7 @@ public class EditPoll extends AbcVelocityServlet {
 
         if ( poll.isClosed() ) {
             ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,"Litujeme, ale tato anketa je ji¾ uzavøena!",ctx,request.getSession());
-            UrlUtils.redirect(response, url);
+            UrlUtils.redirect(response, url, ctx);
             return null;
         }
 
@@ -288,7 +288,7 @@ public class EditPoll extends AbcVelocityServlet {
             }
         }
 
-        UrlUtils.redirect(response, url);
+        UrlUtils.redirect(response, url, ctx);
         return null;
     }
 

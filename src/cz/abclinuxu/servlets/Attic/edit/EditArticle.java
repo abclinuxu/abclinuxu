@@ -175,7 +175,7 @@ public class EditArticle extends AbcVelocityServlet {
             persistance.create(record);
             persistance.create(new Relation(item,record,relation.getId()));
 
-            UrlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId());
+            UrlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId(), ctx);
             return null;
         } catch (PersistanceException e) {
             ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
@@ -276,7 +276,7 @@ public class EditArticle extends AbcVelocityServlet {
             }
         }
 
-        UrlUtils.redirect(response, "/ViewRelation?relationId="+upper.getId());
+        UrlUtils.redirect(response, "/ViewRelation?relationId="+upper.getId(), ctx);
         return null;
     }
 }

@@ -104,7 +104,7 @@ public class EditUser extends AbcVelocityServlet {
             PersistanceFactory.getPersistance().synchronize(managed);
             if ( user==null )
                 return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","login");
-            if ( user.getId()!=managed.getId() )
+            if ( user.getId()!=managed.getId() && user.isAdmin()==false )
                 return VelocityTemplateSelector.selectTemplate(request,ctx,"EditUser","forbidden");
             else
                 return actionEditStep1(request,ctx);
@@ -237,7 +237,7 @@ public class EditUser extends AbcVelocityServlet {
         }
 
         ServletUtils.addMessage("Zmìny byly ulo¾eny.",ctx, request.getSession());
-        UrlUtils.redirect(response, "/Index");
+        UrlUtils.redirect(response, "/Index", ctx);
         return null;
     }
 
@@ -341,7 +341,7 @@ public class EditUser extends AbcVelocityServlet {
             }
         }
 
-        UrlUtils.redirect(response, "/Index");
+        UrlUtils.redirect(response, "/Index", ctx);
         return null;
     }
 }

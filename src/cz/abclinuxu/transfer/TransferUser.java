@@ -11,6 +11,8 @@ import cz.abclinuxu.data.User;
 import java.sql.*;
 
 import org.dom4j.*;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Level;
 
 /**
  * Simple routine for conversion of users from linux hardware tables.
@@ -93,7 +95,7 @@ public class TransferUser {
     }
 
     public static void main(String[] args) throws Exception {
-        org.apache.log4j.Category.getDefaultHierarchy().disableAll();
+        LogManager.getRootLogger().setLevel(Level.OFF);
         TransferUser transfer = new TransferUser();
         if ( args==null || args.length==0 ) {
             System.out.println("Usage: java cz.abclinuxu.transfer.TransferUser last");

@@ -23,6 +23,7 @@ import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.log4j.Category;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,6 +35,8 @@ import java.io.*;
  * Performs search across the data.
  */
 public class Search extends AbcVelocityServlet {
+    org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(Search.class);
+
     static String INDEX_PATH = "/home/literakl/abc/deploy/WEB-INF/index";
 
     /** contains relation, that match the expression */
@@ -74,6 +77,7 @@ public class Search extends AbcVelocityServlet {
             ctx.put(VAR_RESULT,map);
             ctx.put(VAR_TOTAL,new Integer(length));
         } catch (Exception e) {
+            log.error("Cannot search "+query,e);
             ServletUtils.addError(PARAM_QUERY,"Nemohu provést dané hledání. Zadejte jiný øetìzec!",ctx,null);
             return VelocityTemplateSelector.selectTemplate(request,ctx,"Search","show");
         }

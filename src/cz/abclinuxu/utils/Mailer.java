@@ -63,9 +63,9 @@ public class Mailer {
 
     private void addUsersEmail(int id, Map map) {
         try {
-            //Category.getDefaultHierarchy().disableAll();
+            LogManager.getRootLogger().setLevel(Level.OFF);
             User user = (User) persistance.findById(new User(id));
-            //Category.getDefaultHierarchy().enableAll();
+            LogManager.getRootLogger().setLevel(Level.ALL);
 
             VelocityContext tmpContext = new VelocityContext();
             tmpContext.put("USER",user);
@@ -74,7 +74,7 @@ public class Mailer {
             String email = user.getEmail();
             map.put(email,message);
         } catch (PersistanceException e) {
-            //Category.getDefaultHierarchy().enableAll();
+            LogManager.getRootLogger().setLevel(Level.ALL);
         }
     }
 

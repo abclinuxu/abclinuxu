@@ -11,6 +11,8 @@ import java.util.*;
 import junit.framework.*;
 import junit.textui.TestRunner;
 import org.apache.log4j.xml.DOMConfigurator;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Level;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.AbcException;
 
@@ -27,7 +29,7 @@ public class TestMySqlPersistance extends TestCase {
     }
 
     protected void setUp() throws Exception {
-//        org.apache.log4j.Category.getDefaultHierarchy().disableAll();
+        LogManager.getRootLogger().setLevel(Level.OFF);
         super.setUp();
         persistance = new MySqlPersistance(PersistanceFactory.defaultTestUrl);
         persistance.setCache(new DefaultCache());
@@ -35,7 +37,7 @@ public class TestMySqlPersistance extends TestCase {
 
     protected void tearDown() throws Exception {
         super.tearDown();
-//        org.apache.log4j.Category.getDefaultHierarchy().enableAll();
+        LogManager.getRootLogger().setLevel(Level.ALL);
     }
 
     public static Test suite() {

@@ -132,18 +132,18 @@ public class UrlUtils {
     /**
      * Redirects to desired URL, keeping session and prefix.
      */
-    public static void redirect(HttpServletResponse response, String url) throws IOException {
-//        UrlUtils urlUtils = new UrlUtils(url,response);
-//        String url2 = urlUtils.constructRedirectURL(url);
-        response.sendRedirect(url);
+    public static void redirect(HttpServletResponse response, String url, Context context) throws IOException {
+        UrlUtils urlUtils = (UrlUtils) context.get(AbcVelocityServlet.VAR_URL_UTILS);
+        String url2 = urlUtils.constructRedirectURL(url);
+        response.sendRedirect(url2);
     }
 
     /**
      * Dispatches to desired URL, keeping prefix.
      */
-    public static void dispatch(HttpServletRequest request, HttpServletResponse response, String url) throws ServletException, IOException {
-//        UrlUtils urlUtils = (UrlUtils) context.get(AbcVelocityServlet.VAR_URL_UTILS);
-//        url = urlUtils.constructDispatchURL(url);
+    public static void dispatch(HttpServletRequest request, HttpServletResponse response, String url, Context context) throws ServletException, IOException {
+        UrlUtils urlUtils = (UrlUtils) context.get(AbcVelocityServlet.VAR_URL_UTILS);
+        url = urlUtils.constructDispatchURL(url);
         RequestDispatcher dispatcher = request.getRequestDispatcher(url);
         dispatcher.forward(request,response);
     }

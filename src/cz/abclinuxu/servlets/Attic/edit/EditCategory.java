@@ -177,7 +177,7 @@ public class EditCategory extends AbcVelocityServlet {
             return VelocityTemplateSelector.selectTemplate(request,ctx,"EditCategory","add");
         }
 
-        UrlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId());
+        UrlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId(), ctx);
         return null;
     }
 
@@ -242,9 +242,9 @@ public class EditCategory extends AbcVelocityServlet {
         persistance.update(category);
 
         if ( upperRelation!=null ) {
-            UrlUtils.redirect(response, "/ViewRelation?relationId="+upperRelation.getId());
+            UrlUtils.redirect(response, "/ViewRelation?relationId="+upperRelation.getId(), ctx);
         } else {
-            UrlUtils.redirect(response, "/ViewCategory?categoryId="+category.getId());
+            UrlUtils.redirect(response, "/ViewCategory?categoryId="+category.getId(), ctx);
         }
         return null;
     }

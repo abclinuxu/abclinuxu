@@ -12,6 +12,8 @@ import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
 import org.apache.log4j.xml.DOMConfigurator;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Level;
 
 import java.util.List;
 import java.io.*;
@@ -23,7 +25,7 @@ public class Measure {
 
     public static void main(String[] args) throws Exception {
         DOMConfigurator.configure("conf/log4j.xml");
-//        org.apache.log4j.Category.getDefaultHierarchy().disableAll();
+        LogManager.getRootLogger().setLevel(Level.OFF);
         Persistance persistance = PersistanceFactory.getPersistance();
         int i=0,j=0;
         long l = 0;
@@ -45,6 +47,6 @@ public class Measure {
 
         float avg = (end-start)/(float)i;
         System.out.println("celkem = "+(end-start)+" ms ,prumer = "+avg+ " ms.");
-//        org.apache.log4j.Category.getDefaultHierarchy().enableAll();
+        LogManager.getRootLogger().setLevel(Level.ALL);
     }
 }

@@ -45,12 +45,20 @@ TD.jadro_h { font-weight: bold; font-family: Lucida,Verdana,Helvetica; font-size
 TD.jadro_p { font-family: Lucida,Verdana,Helvetica; font-size: 10pt }
 
 /* clanek */
-DIV.nadpis_in { color:BLACK; font-family:Helvetica,Arial; font-size:18pt; font-weight:bold }
-P.perex_in { border-width: 1 0; border-color: black; border-style: solid; background-color: #EEEEEE; padding: 1ex 0ex; }
+H1.nadpis { color:BLACK; font-family:Helvetica,Arial; font-size:18pt; font-weight:bold }
+H1,DIV.sub1 { color: BLACK; font-family: Lucida, Helvetica; font-size:14pt; font-weight: BOLD; padding: 0ex 0em }
+H2,DIV.sub2 { color: BLACK; font-family: Lucida, Helvetica; font-size:13pt; font-weight: BOLD; padding: 0ex 0em }
+.perex { border-width: 1 0; border-color: black; border-style: solid; background-color: #EEEEEE; padding: 1ex; }
+DIV.linky { padding: 0 1ex; }
 DIV.barva { color: #225577; font-family: Lucida,Verdana,Helvetica; }
-DIV.sub1 { color: BLACK; font-family: Lucida, Helvetica; font-size:14pt; font-weight: BOLD; padding: 0ex 0em }
-DIV.sub2 { color: BLACK; font-family: Lucida, Helvetica; font-size:13pt; font-weight: BOLD; padding: 0ex 0em }
-DIV.paticka {font-style: italic; padding-top: 1ex; }
+
+/* kernel traffic */
+DIV.paticka,DIV.kt_paticka { font-style: italic; padding-top: 1ex; }
+DIV.kt_citace { color:#880000; }
+DIV.kt_citace P { color:#880000; }
+DIV.kt_citace UL LI { color:#880000; }
+DIV.kt_citace OL LI { color:#880000; }
+
 
 /* kategorie */
 DIV.note { padding-top: 10pt; padding-bottom: 5pt; /* font-style: italic; */}

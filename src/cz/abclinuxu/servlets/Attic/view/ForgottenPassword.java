@@ -89,7 +89,7 @@ public class ForgottenPassword extends AbcVelocityServlet {
         Email.sendEmail("admin@AbcLinuxu.cz",user.getEmail(),"Zapomenute heslo",message);
 
         ServletUtils.addMessage("Heslo odeslano na adresu "+user.getEmail(),ctx,request.getSession());
-        UrlUtils.redirect(response, "/Index");
+        UrlUtils.redirect(response, "/Index", ctx);
         return null;
     }
 }
