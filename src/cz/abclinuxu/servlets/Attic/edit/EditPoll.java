@@ -71,7 +71,9 @@ public class EditPoll extends AbcFMServlet {
     static final String COOKIE_PREFIX = "P_";
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User user = (User) env.get(Constants.VAR_USER);
+
         Relation relation = (Relation) InstanceUtils.instantiateParam(EditPoll.PARAM_RELATION,Relation.class,params);
         if ( relation!=null ) {
             relation = (Relation) PersistanceFactory.getPersistance().findById(relation);
@@ -88,7 +90,7 @@ public class EditPoll extends AbcFMServlet {
 
         if ( action==null || action.equals(EditPoll.ACTION_ADD) ) {
             if ( relation==null ) throw new Exception("Chybí parametr relationId!");
-            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Poll.class);
+            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_ADD,Poll.class);
              switch (rights) {
                  case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
                  case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
@@ -101,7 +103,7 @@ public class EditPoll extends AbcFMServlet {
 
         } else if ( action.equals(EditPoll.ACTION_ADD_STEP2) ) {
             if ( relation==null ) throw new Exception("Chybí parametr relationId!");
-            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Poll.class);
+            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_ADD,Poll.class);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
                 case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
@@ -111,7 +113,7 @@ public class EditPoll extends AbcFMServlet {
         } else if ( action.equals(EditPoll.ACTION_EDIT) ) {
             if ( relation==null ) throw new Exception("Chybí parametr relationId!");
             if ( poll==null ) throw new Exception("Chybí parametr pollId!");
-            int rights = Guard.check((User)env.get(Constants.VAR_USER),poll,Guard.OPERATION_EDIT,null);
+            int rights = Guard.check(user,poll,Guard.OPERATION_EDIT,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
                 case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
@@ -121,7 +123,7 @@ public class EditPoll extends AbcFMServlet {
         } else if ( action.equals(EditPoll.ACTION_EDIT2) ) {
             if ( relation==null ) throw new Exception("Chybí parametr relationId!");
             if ( poll==null ) throw new Exception("Chybí parametr pollId!");
-            int rights = Guard.check((User)env.get(Constants.VAR_USER),poll,Guard.OPERATION_EDIT,null);
+            int rights = Guard.check(user,poll,Guard.OPERATION_EDIT,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
                 case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
@@ -136,7 +138,7 @@ public class EditPoll extends AbcFMServlet {
      * Creates new poll
      */
     protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         boolean error = false;
 
         int type = Poll.SURVEY;
@@ -199,7 +201,7 @@ public class EditPoll extends AbcFMServlet {
      * Final step for editing of poll
      */
     protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
 
         int type = Poll.SURVEY;
         Relation upperRelation = (Relation) env.get(EditPoll.VAR_RELATION);
@@ -247,7 +249,7 @@ public class EditPoll extends AbcFMServlet {
      * Voting
      */
     protected String actionVote(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         Poll poll = (Poll) env.get(EditPoll.VAR_POLL);
         String url = (String) params.get(EditPoll.PARAM_URL);

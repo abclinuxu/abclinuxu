@@ -50,6 +50,7 @@ public class EditArticle extends AbcFMServlet {
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
+        User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
@@ -61,7 +62,7 @@ public class EditArticle extends AbcFMServlet {
         env.put(VAR_RELATION,relation);
 
         if ( ACTION_ADD_ITEM.equals(action) ) {
-            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
+            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
                 case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
@@ -69,7 +70,7 @@ public class EditArticle extends AbcFMServlet {
             }
 
         } else if ( action.equals(ACTION_ADD_ITEM_STEP2) ) {
-            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
+            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
                 case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
@@ -77,7 +78,7 @@ public class EditArticle extends AbcFMServlet {
             }
 
         } else if ( action.equals(ACTION_EDIT_ITEM) ) {
-            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation.getChild(),Guard.OPERATION_EDIT,null);
+            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_EDIT,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
                 case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
@@ -85,7 +86,7 @@ public class EditArticle extends AbcFMServlet {
             }
 
         } else if ( action.equals(ACTION_EDIT_ITEM_STEP2) ) {
-            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation.getChild(),Guard.OPERATION_EDIT,null);
+            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_EDIT,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
                 case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);

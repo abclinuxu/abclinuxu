@@ -43,8 +43,10 @@ public class EditRequest extends AbcFMServlet {
 
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
+        User user = (User) env.get(Constants.VAR_USER);
+
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_REQUEST,Relation.class,params);
         if ( relation!=null ) env.put(VAR_REQUEST_RELATION,relation);
 
@@ -52,7 +54,7 @@ public class EditRequest extends AbcFMServlet {
             return actionAdd(request,response,env);
 
         } else if ( action.equals(ACTION_DELETE) ) {
-            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation,Guard.OPERATION_REMOVE,null);
+            int rights = Guard.check(user,relation,Guard.OPERATION_REMOVE,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
                 case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
@@ -60,7 +62,7 @@ public class EditRequest extends AbcFMServlet {
             }
 
         } else if ( action.equals(ACTION_DELIVER) ) {
-            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation,Guard.OPERATION_REMOVE,null);
+            int rights = Guard.check(user,relation,Guard.OPERATION_REMOVE,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
                 case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
@@ -72,7 +74,7 @@ public class EditRequest extends AbcFMServlet {
 
     protected String actionAdd(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         User user = (User) env.get(Constants.VAR_USER);
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
 
         String author = (String) params.get(PARAM_AUTHOR);
         String email = (String) params.get(PARAM_EMAIL);

@@ -58,8 +58,9 @@ public class EditRelation extends AbcFMServlet {
     public static final String ACTION_MOVE = "move";
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
+        User user = (User) env.get(Constants.VAR_USER);
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(EditRelation.PARAM_RELATION,Relation.class,params);
         if ( relation!=null ) {
@@ -68,7 +69,7 @@ public class EditRelation extends AbcFMServlet {
         }
 
         if ( action==null || action.equals(ACTION_LINK) ) {
-            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation.getChild(),Guard.OPERATION_ADD,null);
+            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_ADD,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
                 case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
@@ -76,7 +77,7 @@ public class EditRelation extends AbcFMServlet {
             }
 
         } else if ( action.equals(ACTION_LINK_STEP2) ) {
-            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation.getChild(),Guard.OPERATION_ADD,null);
+            int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_ADD,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
                 case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
@@ -84,7 +85,7 @@ public class EditRelation extends AbcFMServlet {
             }
 
         } else if ( action.equals(ACTION_REMOVE) ) {
-            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation,Guard.OPERATION_REMOVE,null);
+            int rights = Guard.check(user,relation,Guard.OPERATION_REMOVE,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
                 case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
@@ -92,7 +93,7 @@ public class EditRelation extends AbcFMServlet {
             }
 
         } else if ( action.equals(ACTION_REMOVE_STEP2) ) {
-            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation,Guard.OPERATION_REMOVE,null);
+            int rights = Guard.check(user,relation,Guard.OPERATION_REMOVE,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
                 case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
@@ -100,7 +101,7 @@ public class EditRelation extends AbcFMServlet {
             }
 
         } else if ( action.equals(ACTION_MOVE) ) {
-            int rights = Guard.check((User)env.get(Constants.VAR_USER),relation,Guard.OPERATION_EDIT,null);
+            int rights = Guard.check(user,relation,Guard.OPERATION_EDIT,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
                 case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
@@ -115,7 +116,7 @@ public class EditRelation extends AbcFMServlet {
     }
 
     protected String actionLinkStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
         Relation parent = (Relation) env.get(EditRelation.VAR_CURRENT);
@@ -145,7 +146,7 @@ public class EditRelation extends AbcFMServlet {
     }
 
     protected String actionRemove1(HttpServletRequest request, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_CURRENT);
 
@@ -155,7 +156,7 @@ public class EditRelation extends AbcFMServlet {
     }
 
     protected String actionRemove2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_CURRENT);
 
@@ -176,7 +177,7 @@ public class EditRelation extends AbcFMServlet {
      * in destination.
      */
     protected String actionMove(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_CURRENT);
         Relation destination = (Relation) InstanceUtils.instantiateParam(SelectRelation.PARAM_SELECTED,Relation.class,params);

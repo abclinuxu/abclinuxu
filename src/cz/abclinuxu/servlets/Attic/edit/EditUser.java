@@ -89,11 +89,11 @@ public class EditUser extends AbcFMServlet {
     public static final String ACTION_PASSWORD2 = "password2";
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
-        String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        String action = (String) params.get(PARAM_ACTION);
 
         User managed = (User) InstanceUtils.instantiateParam(PARAM_USER,User.class,params);
-        User user = (User) env.get(AbcVelocityServlet.VAR_USER);
+        User user = (User) env.get(Constants.VAR_USER);
         if ( managed==null ) managed = user;
         env.put(VAR_MANAGED,managed);
 
@@ -185,7 +185,7 @@ public class EditUser extends AbcFMServlet {
      */
     protected String actionEditStep1(HttpServletRequest request, Map env) throws Exception {
         User user = (User) env.get(VAR_MANAGED);
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         VelocityHelper helper = (VelocityHelper) env.get(AbcVelocityServlet.VAR_HELPER);
         PersistanceFactory.getPersistance().synchronize(user);
 
@@ -250,7 +250,7 @@ public class EditUser extends AbcFMServlet {
      * @param updatePassword if true, it attempts to read and update password
      */
     protected boolean fillUser(HttpServletRequest request, User user, Map env, boolean updatePassword) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         boolean error = false;
 
         String login = (String) params.get(EditUser.PARAM_LOGIN);
@@ -313,7 +313,7 @@ public class EditUser extends AbcFMServlet {
      * Prepares for an update of user
      */
     protected String actionPassword(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(VAR_MANAGED);
         String pass = (String) params.get(PARAM_PASSWORD);
         String pass2 = (String) params.get(PARAM_PASSWORD2);
