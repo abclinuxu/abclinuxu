@@ -184,7 +184,7 @@ public class VelocityHelper {
             sb.append("<input type=\"hidden\" name=\"");
             sb.append(key);
             sb.append("\" value=\"");
-            sb.append(encode((String) params.get(key)));
+            sb.append(encodeSpecial((String) params.get(key)));
             sb.append("\">\n");
         }
         return sb.toString();
@@ -271,22 +271,11 @@ public class VelocityHelper {
     }
 
     /**
-     * @return int value of <code>str</code> or 0
-     */
-    public int parseInt(String str) {
-        if ( str!=null && str.length()>0 ) {
-            try {
-                return Integer.parseInt(str);
-            } catch (NumberFormatException e) {}
-        }
-        return 0;
-    }
-
-    /**
      * Does standard HTML conversions like & to &amp;amp; or &lt; to &amp;lt;.
      * @return Modified String, which may be inserted into html page without affecting its structure.
      */
-    private String encode(String in) {
+    public String encodeSpecial(String in) {
+        if ( in==null ) return null;
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < in.length(); i++) {
             int c = in.charAt(i);
@@ -299,6 +288,18 @@ public class VelocityHelper {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * @return int value of <code>str</code> or 0
+     */
+    public int parseInt(String str) {
+        if ( str!=null && str.length()>0 ) {
+            try {
+                return Integer.parseInt(str);
+            } catch (NumberFormatException e) {}
+        }
+        return 0;
     }
 
     /**
