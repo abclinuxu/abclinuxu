@@ -282,15 +282,6 @@
                             <entry key="uri" value="http://www.unixshop.cz/top_export.php"/>
                         </map>
                     </node>
-                    <node name="PraceRSSFetcher">
-                        <map>
-                            <entry key="file_template" value="WEB-INF/freemarker/include/prace.txt"/>
-                            <entry key="file_index" value="WEB-INF/freemarker/include/prace_main.txt"/>
-                            <entry key="count_template" value="10"/>
-                            <entry key="count_index" value="4"/>
-                            <entry key="uri" value="http://prace.abclinuxu.cz/www/cvs.php"/>
-                        </map>
-                    </node>
                     <node name="EnsureWatchedDiscussionsLimit">
                         <map>
                             <entry key="watched.discussions.limit" value="75"/>

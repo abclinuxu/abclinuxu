@@ -82,7 +82,6 @@ public class AbcInit extends HttpServlet implements Configurable {
         startKernelUpdate();
         startLinksUpdate();
         startUnixshopUpdate();
-        startPraceUpdate();
         startGenerateLinks();
         startArticlePoolMonitor();
         startSendingWeeklyEmails();
@@ -150,18 +149,6 @@ public class AbcInit extends HttpServlet implements Configurable {
         }
         log.info("Scheduling RSS unixshop monitor");
         scheduler.schedule(new UnixshopFetcher(), 2*60*1000, 2*60*60*1000);
-    }
-
-    /**
-     * Update prace.abclinuxu.cz RSS each ten minutes, starting after one minute
-     */
-    protected void startPraceUpdate() {
-        if ( !isSet(PREF_START_RSS_PRACE) ) {
-            log.info("RSS prace monitor configured not to run");
-            return;
-        }
-        log.info("Scheduling RSS prace monitor");
-        scheduler.schedule(new PraceRSSFetcher(), 60*1000, 10*60*1000);
     }
 
     /**
