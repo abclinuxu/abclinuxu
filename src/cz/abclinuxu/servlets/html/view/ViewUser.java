@@ -26,20 +26,15 @@ import java.util.*;
 public class ViewUser implements AbcAction {
 
     public static final String VAR_PROFILE = "PROFILE";
-    public static final String VAR_KOD = "KOD";
     public static final String VAR_COUNTS = "COUNTS";
 
     public static final String PARAM_USER = "userId";
     public static final String PARAM_USER_SHORT = "uid";
     public static final String PARAM_URL = "url";
-    public static final String PARAM_SENDER = "sender";
-    public static final String PARAM_SUBJECT = "subject";
-    public static final String PARAM_MESSAGE = "message";
 
     public static final String ACTION_LOGIN = "login";
     public static final String ACTION_LOGIN2 = "login2";
     public static final String ACTION_SEND_EMAIL = "sendEmail";
-    public static final String ACTION_FINISH_SEND_EMAIL = "sendEmail2";
     public static final String ACTION_SHOW_MY_PROFILE = "myPage";
     public static final String ACTION_SEND_PASSWORD = "forgottenPassword";
 
@@ -82,10 +77,7 @@ public class ViewUser implements AbcAction {
         }
 
         if (action.equals(ACTION_SEND_EMAIL))
-            return handleSendEmail(request, env);
-
-        if (action.equals(ACTION_FINISH_SEND_EMAIL))
-            return handleSendEmail2(request, response, env);
+            return handleSendEmail(request, response, env);
 
         if (action.equals(ACTION_SEND_PASSWORD))
             return handleSendForgottenPassword(request, response, env);
@@ -152,74 +144,17 @@ public class ViewUser implements AbcAction {
     /**
      * shows login screen
      */
-    protected String handleSendEmail(HttpServletRequest request, Map env) throws Exception {
-        User user = (User) env.get(Constants.VAR_USER);
-        if ( user!=null ) {
-            Map params = (Map) env.get(Constants.VAR_PARAMS);
-            params.put(PARAM_SENDER,user.getEmail());
-        }
-
-        Integer kod = new Integer(new Random().nextInt(10000));
-        request.getSession().setAttribute(VAR_KOD,kod);
-        env.put(VAR_KOD,kod);
-
-        return FMTemplateSelector.select("ViewUser","sendEmail",env,request);
-    }
-
-    /**
-     * shows login screen
-     */
-    protected String handleSendEmail2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
+    protected String handleSendEmail(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
-
-        boolean chyba = false;
-
-        String kod = (String) params.get(VAR_KOD);
-        try {
-            Integer ulozenyKod = (Integer) request.getSession().getAttribute(VAR_KOD);
-            env.put(VAR_KOD,ulozenyKod);
-            Integer nalezenyKod = Integer.valueOf(kod);
-            if ( ! nalezenyKod.equals(ulozenyKod) ) {
-                ServletUtils.addError(VAR_KOD,"Vyplòte správný kód!",env,null);
-                chyba = true;
-            }
-        } catch (Exception e) {
-            ServletUtils.addError(VAR_KOD,"Vyplòte správný kód!",env,null);
-            chyba = true;
-        }
-        String from = (String) params.get(PARAM_SENDER);
-        if ( from==null || from.length()<6 || from.indexOf('@')==-1 ) {
-            ServletUtils.addError(PARAM_SENDER,"Zadejte platnou adresu!",env,null);
-            chyba = true;
-        }
-        String subject = (String) params.get(PARAM_SUBJECT);
-        if ( subject==null || subject.length()==0 ) {
-            ServletUtils.addError(PARAM_SUBJECT,"Zadejte pøedmìt!",env,null);
-            chyba = true;
-        }
-        String message = (String) params.get(PARAM_MESSAGE);
-        if ( message==null || message.length()==0 ) {
-            ServletUtils.addError(PARAM_MESSAGE,"Zadejte zprávu!",env,null);
-            chyba = true;
-        }
-        if ( chyba )
-            return FMTemplateSelector.select("ViewUser","sendEmail",env,request);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
 
         User user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
         user = (User) persistance.findById(user);
+        request.getSession().setAttribute(SendEmail.PREFIX+EmailSender.KEY_TO, user.getEmail());
 
-        Map data = new HashMap();
-        data.put(EmailSender.KEY_FROM,from);
-        data.put(EmailSender.KEY_TO,user.getEmail());
-        data.put(EmailSender.KEY_SUBJECT,subject);
-        data.put(EmailSender.KEY_BODY,message);
-        if ( EmailSender.sendEmail(data) )
-            ServletUtils.addMessage("Va¹e zpráva byla odeslána.",env,null);
-        else
-            ServletUtils.addMessage("Litujeme, ale do¹lo k chybì pøi odesílání va¹i zprávy.",env,null);
-
-        return handleProfile(request,env);
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/Mail");
+        return null;
     }
 
     /**
@@ -242,7 +177,7 @@ public class ViewUser implements AbcAction {
 
         ServletUtils.addMessage("Heslo bylo odesláno na adresu "+user.getEmail()+".", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/Index");
+        urlUtils.redirect(response, "/");
         return null;
     }
 }

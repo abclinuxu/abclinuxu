@@ -316,14 +316,17 @@
     <action name="content" content="/show/mycontent.ftl">
       <var name="TITLE" value="Mùj profil" />
     </action>
-    <action name="sendEmail" content="/misc/sendEmail.ftl">
-      <var name="TITLE" value="Mùj profil" />
-    </action>
     <action name="login" content="/show/login.ftl">
       <var name="TITLE" value="Pøihlá¹ení do systému" />
     </action>
     <action name="forbidden" content="/misc/forbidden.ftl">
       <var name="TITLE" value="Pøístup odepøen" />
+    </action>
+  </servlet>
+
+  <servlet name="SendEmail">
+    <action name="show" content="/misc/sendEmail.ftl">
+      <var name="TITLE" value="Zaslání zprávy emailem" />
     </action>
   </servlet>
 

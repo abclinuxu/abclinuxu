@@ -41,6 +41,10 @@
             <action>cz.abclinuxu.servlets.html.view.ShowSurvey</action>
         </mapping>
         <mapping>
+            <pattern>^/Mail</pattern>
+            <action>cz.abclinuxu.servlets.html.view.SendEmail</action>
+        </mapping>
+        <mapping>
             <pattern>EditCategory</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditCategory</action>
         </mapping>
