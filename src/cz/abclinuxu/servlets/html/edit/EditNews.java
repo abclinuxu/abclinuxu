@@ -22,6 +22,7 @@ import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.utils.news.NewsCategories;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.parser.safehtml.NewsGuard;
 import cz.abclinuxu.utils.format.Format;
@@ -219,6 +220,7 @@ public class EditNews implements AbcAction {
         persistance.update(item);
         User user = (User) env.get(Constants.VAR_USER);
         AdminLogger.logEvent(user, "  edit | news "+relation.getId());
+        FeedGenerator.updateNews();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/news/show/"+relation.getId());
@@ -247,6 +249,7 @@ public class EditNews implements AbcAction {
         persistance.update(relation);
         relation.getParent().addChildRelation(relation);
         AdminLogger.logEvent(user, "  approve | news " + relation.getId());
+        FeedGenerator.updateNews();
 
         urlUtils.redirect(response, "/news/show/" + relation.getId());
         return null;
@@ -276,9 +279,10 @@ public class EditNews implements AbcAction {
 
         EmailSender.sendEmail(map);
 
-        AdminLogger.logEvent(user, "  remove | news "+relation.getId());
         persistance.remove(relation);
         relation.getParent().removeChildRelation(relation);
+        AdminLogger.logEvent(user, "  remove | news " + relation.getId());
+        FeedGenerator.updateNews();
 
         response.sendRedirect(response.encodeRedirectURL("/"));
         return null;
