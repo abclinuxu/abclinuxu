@@ -658,7 +658,11 @@ public class EditDiscussion implements AbcAction {
         SQLTool.getInstance().setUpdatedTimestamp(discussion, originalUpdated);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/show/"+relation.getId());
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        String url = (String) params.get(PARAM_URL);
+        if (url==null)
+            url = "/show/"+relation.getId();
+        urlUtils.redirect(response, url);
         return null;
     }
 
