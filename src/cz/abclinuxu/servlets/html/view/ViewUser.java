@@ -65,7 +65,9 @@ public class ViewUser implements AbcAction {
         if ( action.equals(ACTION_SHOW_MY_PROFILE) ) {
             User user = (User) env.get(Constants.VAR_USER);
             User managed = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
-            if ( user==null || (user.getId()!=managed.getId() && !user.hasRole(Roles.USER_ADMIN)) )
+            if ( user==null)
+                return ServletUtils.showErrorPage("Chybí parametr uid!", env, request);
+            if (user.getId()!=managed.getId() && !user.hasRole(Roles.USER_ADMIN))
                 return handleProfile(request, env);
             else
                 return handleMyProfile(request,env);
@@ -91,6 +93,9 @@ public class ViewUser implements AbcAction {
         Persistance persistance = PersistanceFactory.getPersistance();
 
         User user = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
+        if ( user==null )
+            return ServletUtils.showErrorPage("Chybí parametr uid!", env, request);
+
         persistance.synchronize(user);
         env.put(VAR_PROFILE,user);
 
