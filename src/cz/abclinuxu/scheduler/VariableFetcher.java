@@ -11,10 +11,14 @@ import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.persistance.extra.LimitQualifier;
 import cz.abclinuxu.persistance.extra.Qualifier;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
 
 import java.util.*;
+import java.util.prefs.Preferences;
 
 import org.dom4j.Node;
 
@@ -22,18 +26,22 @@ import org.dom4j.Node;
  * This class is responsible for periodic fetching
  * of template and index variables from database.
  */
-public class VariableFetcher extends TimerTask {
+public class VariableFetcher extends TimerTask implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(VariableFetcher.class);
 
     static VariableFetcher instance;
     static {
-	instance = new VariableFetcher();
+        instance = new VariableFetcher();
+        ConfigurationManager.getConfigurator().configureAndRememberMe(instance);
     }
 
-    final static int SIZE = 3;
-    final static int ARTICLE_SIZE = 15;
+    static final String PREF_HARDWARE_SIZE = "hardware";
+    static final String PREF_DRIVERS_SIZE = "drivers";
+    static final String PREF_STORIES_SIZE = "stories";
 
-    List newHardware, newSoftware, newDrivers;
+    int hwSize, driversSize,storiesSize;
+
+    List newHardware, newDrivers, newStories;
     Map counter;
     Relation currentPoll;
 
@@ -45,11 +53,18 @@ public class VariableFetcher extends TimerTask {
      */
     private VariableFetcher() {
         sqlTool = SQLTool.getInstance();
-        newHardware = new ArrayList(SIZE);
-        newSoftware = new ArrayList(SIZE);
-        newDrivers = new ArrayList(SIZE);
-        counter = new HashMap(0,1.0f);
         linksLastRun = System.currentTimeMillis();
+    }
+
+    public void configure(Preferences prefs) throws ConfigurationException {
+        hwSize = prefs.getInt(PREF_HARDWARE_SIZE, 3);
+        driversSize = prefs.getInt(PREF_DRIVERS_SIZE, 3);
+        storiesSize = prefs.getInt(PREF_STORIES_SIZE, 3);
+
+        newHardware = new ArrayList(hwSize);
+        newDrivers = new ArrayList(driversSize);
+        newStories = new ArrayList(storiesSize);
+        counter = new HashMap(0, 1.0f);
     }
 
     /**
@@ -75,17 +90,17 @@ public class VariableFetcher extends TimerTask {
     }
 
     /**
-     * List of few freshest software records (relation).
-     */
-    public List getNewSoftware() {
-        return newSoftware;
-    }
-
-    /**
      * List of few freshest drivers (relation).
      */
     public List getNewDrivers() {
         return newDrivers;
+    }
+
+    /**
+     * @return List of relations with new stories.
+     */
+    public List getNewStories() {
+        return newStories;
     }
 
     /**
@@ -130,10 +145,12 @@ public class VariableFetcher extends TimerTask {
             currentPoll = sqlTool.findActivePoll();
             Tools.sync(currentPoll);
 
-            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, SIZE)};
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, hwSize)};
             newHardware = sqlTool.findRecordParentRelationsWithType(Record.HARDWARE, qualifiers);
-            newSoftware = sqlTool.findRecordParentRelationsWithType(Record.SOFTWARE, qualifiers);
+            qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, driversSize)};
             newDrivers = sqlTool.findItemRelationsWithType(Item.DRIVER, qualifiers);
+            qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, storiesSize)};
+            newStories = sqlTool.findItemRelationsWithType(Item.BLOG, qualifiers);
 
             log.debug("finished fetching variables");
         } catch (Exception e) {

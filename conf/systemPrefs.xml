@@ -293,6 +293,13 @@
                     <entry key="watched.discussions.limit" value="75"/>
                 </map>
             </node>
+            <node name="VariableFetcher">
+                <map>
+                    <entry key="hardware" value="3"/>
+                    <entry key="drivers" value="3"/>
+                    <entry key="stories" value="6"/>
+                </map>
+            </node>
         </node>
         <node name="servlets">
           <map/>
