@@ -28,5 +28,6 @@ email, dokud si sami nezmìní adresu.</p>
  <input type="hidden" name="action" value="invalidateEmail2">
 </form>
 
+<a href="${URL.make("/SelectUser?sAction=form&amp;url=/EditUser&amp;action=invalidateEmail2")}">Najdi u¾ivatele</a>
 
 <#include "../footer.ftl">
