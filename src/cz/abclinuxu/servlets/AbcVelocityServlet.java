@@ -12,6 +12,7 @@ import org.apache.velocity.servlet.VelocityServlet;
 import org.apache.velocity.context.Context;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.Template;
+import org.apache.velocity.app.Velocity;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -317,5 +318,25 @@ public class AbcServlet extends VelocityServlet {
             map.put(name,request.getParameter(name));
         }
         return map;
+    }
+
+    /**
+     * Merges template specified in <code>templateName</code> with context
+     * and returns it as String. If an exception is caught, empty string
+     * is returned.
+     * @param templateName name of template
+     * @param context context holding parameters
+     * @return String holding the result og merge.
+     */
+    protected String mergeTemplate(String templateName, Context context) {
+        try {
+            Template template = Velocity.getTemplate(templateName);
+            StringWriter writer = new StringWriter();
+            template.merge(context,writer);
+            return writer.toString();
+        } catch (Exception e) {
+            log.error("Cannot merge template "+templateName,e);
+            return "";
+        }
     }
 }

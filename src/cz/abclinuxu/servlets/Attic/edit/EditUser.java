@@ -12,7 +12,9 @@ import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.AbcException;
+import cz.abclinuxu.utils.Email;
 import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -39,6 +41,10 @@ import java.util.ArrayList;
  * <dd>Check of password.</dd>
  * <dt><code>PARAM_ILIKEQ</code></dt>
  * <dd>I Like Q account id.</dd>
+ * <dt><code>PARAM_NEWS</code></dt>
+ * <dd>If the value is "yes", we may to send news about this server to the user.</dd>
+ * <dt><code>PARAM_SEX</code></dt>
+ * <dd>Sex of the user - "man" or "woman".</dd>
  * </dl>
  */
 public class EditUser extends AbcServlet {
@@ -48,6 +54,8 @@ public class EditUser extends AbcServlet {
     public static final String PARAM_PASSWORD = "password";
     public static final String PARAM_PASSWORD2 = "password2";
     public static final String PARAM_ILIKEQ = "ilikeq";
+    public static final String PARAM_NEWS = "news";
+    public static final String PARAM_SEX = "sex";
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
@@ -63,7 +71,7 @@ public class EditUser extends AbcServlet {
             if ( action.equals(EditUser.ACTION_ADD) ) {
                 return getTemplate("add/user.vm");
             } else if ( action.equals(EditUser.ACTION_ADD_STEP2) ) {
-                actionAddStep2(request,response,ctx);
+                return actionAddStep2(request,response,ctx);
             } else if ( action.equals(EditUser.ACTION_EDIT) ) {
                 return getTemplate("edit/user.vm");
             }
@@ -84,18 +92,18 @@ public class EditUser extends AbcServlet {
         boolean error = false;
 
         String login = (String) request.getParameter(EditUser.PARAM_LOGIN);
+        String name = (String) request.getParameter(EditUser.PARAM_NAME);
+        String password = (String) request.getParameter(EditUser.PARAM_PASSWORD);
+        String email = (String) request.getParameter(EditUser.PARAM_EMAIL);
+
         if ( login==null || login.length()<4 ) {
             addErrorMessage(PARAM_LOGIN,"Zadane prihlasovaci jmeno je prilis kratke!",ctx);
             error = true;
         }
-
-        String name = (String) request.getParameter(EditUser.PARAM_NAME);
         if ( name==null || name.length()<5 ) {
             addErrorMessage(PARAM_NAME,"Zadane jmeno je prilis kratke!",ctx);
             error = true;
         }
-
-        String password = (String) request.getParameter(EditUser.PARAM_PASSWORD);
         if ( password==null || password.length()<4 ) {
             addErrorMessage(PARAM_PASSWORD,"Heslo je prilis kratke!",ctx);
             error = true;
@@ -104,20 +112,22 @@ public class EditUser extends AbcServlet {
             addErrorMessage(PARAM_PASSWORD,"Hesla se lisi!",ctx);
             error = true;
         }
-
-        String email = (String) request.getParameter(EditUser.PARAM_EMAIL);
         if ( email==null || email.length()<6 || email.indexOf('@')==-1 ) {
             addErrorMessage(PARAM_EMAIL,"Neplatny email!",ctx);
             error = true;
         }
 
-        String ilikeq = (String) request.getParameter(EditUser.PARAM_ILIKEQ);
-
         if ( error ) return getTemplate("add/user.vm");
+
+        String ilikeq = (String) request.getParameter(EditUser.PARAM_ILIKEQ);
+        String news = (String) request.getParameter(EditUser.PARAM_NEWS);
+        String sex = (String) request.getParameter(EditUser.PARAM_SEX);
 
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
         if ( ilikeq!=null && ilikeq.length()>0 ) root.addElement("ilikeq").addText(ilikeq);
+        if ( news!=null && news.length()>0 ) root.addElement("news").addText(news);
+        if ( sex!=null && sex.length()>0 ) root.addElement("sex").addText(sex);
 
         User user = new User();
         user.setName(name);
@@ -130,12 +140,17 @@ public class EditUser extends AbcServlet {
             PersistanceFactory.getPersistance().create(user);
         } catch ( PersistanceException e ) {
             if ( e.getStatus()==AbcException.DB_DUPLICATE ) {
-                addErrorMessage(PARAM_NAME,"Zadane prihlasovaci jmeno je prilis kratke!",ctx);
+                addErrorMessage(PARAM_LOGIN,"Toto jmeno je jiz pouzivano!",ctx);
                 return getTemplate("add/user.vm");
             }
         }
 
-        addMessage("Dekujeme vam za registraci.",ctx);
-        return getTemplate("add/user.vm"); // zmen to na thanks page
+        VelocityContext tmpContext = new VelocityContext();
+        tmpContext.put(AbcServlet.VAR_USER,user);
+        String message = mergeTemplate("mail/welcome_user.vm",tmpContext);
+        Email.sendEmail("admin@AbcLinuxu.cz",user.getEmail(),"Privitani",message);
+
+        // log in user
+        return getTemplate("messages/welcome_user.vm");
     }
 }

@@ -20,6 +20,10 @@
 	  <priority value="debug" />
 	</category>
 
+	<category name="cz.abclinuxu.utils.Email">
+	  <priority value="info" />
+	</category>
+
 	<root>
 	   <priority value="info" />
    	   <appender-ref ref="FILE" />

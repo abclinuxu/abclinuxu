@@ -24,7 +24,7 @@ public class MailTest {
             message.setSubject("javamail works! ");
             message.setText("wow, it really works! Yabadabadoo");
 
-            Address to = new InternetAddress("root");
+            Address to = new InternetAddress("literakl@centrum.cz");
             Address from = new InternetAddress("literakl@raketa");
 
             message.setFrom(from);
