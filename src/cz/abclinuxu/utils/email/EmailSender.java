@@ -82,6 +82,7 @@ public class EmailSender implements Configurable {
             message.setFrom(new InternetAddress(from));
             message.setRecipient(Message.RecipientType.TO,new InternetAddress(to));
             message.setText(getEmailBody(params));
+            message.setSentDate(new Date());
 
             Transport transport = session.getTransport("smtp");
             transport.connect(smtpServer,null,null);
@@ -165,6 +166,7 @@ public class EmailSender implements Configurable {
 
                     message.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
                     message.setText(getEmailBody(params));
+                    message.setSentDate(new Date());
                     message.saveChanges();
 
                     transport.sendMessage(message, message.getAllRecipients());
