@@ -7,6 +7,7 @@
  */
 package cz.abclinuxu.persistance;
 
+import java.util.*;
 import junit.framework.*;
 import junit.textui.TestRunner;
 import org.apache.log4j.xml.DOMConfigurator;
@@ -27,7 +28,7 @@ public class TestMySqlPersistance extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        persistance = PersistanceFactory.getPersistance();
+        persistance = PersistanceFactory.getPersistance("jdbc:mysql://localhost/unit?user=literakl");
     }
 
     public static Test suite() {
@@ -111,5 +112,66 @@ public class TestMySqlPersistance extends TestCase {
         }
 
         org.apache.log4j.Category.getDefaultHierarchy().enableAll();
+    }
+
+    public void testFindByExample() throws Exception {
+        Record a = new HardwareRecord(0);
+        a.setData("HP DeskJet 840C");
+        a.setOwner(1);
+        persistance.storeObject(a);
+
+        Record b = new HardwareRecord(0);
+        b.setData("Lehponen XT");
+        b.setOwner(3);
+        persistance.storeObject(b);
+
+        Record c = new SoftwareRecord(0);
+        c.setData("Laserjet II");
+        c.setOwner(2);
+        persistance.storeObject(c);
+
+        // find a and b, don't find c
+        List examples = new ArrayList();
+        Record qa = new Record(0);
+        qa.setData("%HP%");
+        examples.add(qa);
+        List found = persistance.findByExample(examples);
+        assertTrue(containsId(found,a.getId()));
+        assertTrue(containsId(found,b.getId()));
+        assertTrue( ! containsId(found,c.getId()));
+
+        // find only a
+        examples.clear();
+        qa.setData("%HP%");
+        qa.setOwner(1);
+        examples.add(qa);
+        found = persistance.findByExample(examples);
+        assertTrue(containsId(found,a.getId()));
+        assertTrue( ! containsId(found,b.getId()));
+        assertTrue( ! containsId(found,c.getId()));
+
+        // qa finds a only, qb finds c only
+        SoftwareRecord qb = new SoftwareRecord(0);
+        qb.setOwner(2);
+        examples.add(qb);
+        found = persistance.findByExample(examples);
+        assertTrue(containsId(found,a.getId()));
+        assertTrue( ! containsId(found,b.getId()));
+        assertTrue(containsId(found,c.getId()));
+
+        persistance.removeObject(a);
+        persistance.removeObject(b);
+        persistance.removeObject(c);
+    }
+
+    /**
+     * Searches list of GenericObjects for object with id equal to id.
+     */
+    protected boolean containsId(List list, int id) {
+        for (Iterator iter = list.iterator(); iter.hasNext();) {
+            GenericObject object = (GenericObject) iter.next();
+            if ( object.getId()==id ) return true;
+        }
+        return false;
     }
 }
