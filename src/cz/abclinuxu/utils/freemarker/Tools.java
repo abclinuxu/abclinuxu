@@ -888,7 +888,7 @@ public class Tools implements Configurable {
      * @return current value or null, if such rating doesn't exist
      */
     public Float ratingFor(Branch object, String type) {
-        Element rating = (Element) object.selectSingleNode("rating[type/text()=\""+type+"\"]");
+        Element rating = (Element) object.selectSingleNode("//rating[type/text()=\""+type+"\"]");
         if ( rating==null )
             return null;
 
