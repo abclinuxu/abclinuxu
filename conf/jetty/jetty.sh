@@ -1,7 +1,7 @@
 #!/bin/sh  
 
 export JETTY_HOME=/home/www-data/jetty429
-export JAVA_OPTIONS="-Xms50m -Xmx300m"
+export JAVA_OPTIONS="-Xms50m -Xmx300m -Dlog4j.configuration=file:/home/www-data/deploy/abclinuxu/WEB-INF/conf/log4j.xml"
 export LANG=czech
 export JETTY_CONSOLE="/home/www-data/deploy/logs/jetty_`date -I`.log"
 export JETTY_RUN=${JETTY_HOME}/run

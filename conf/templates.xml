@@ -29,18 +29,18 @@
 
   <servlet name="EditDiscussion">
     <action name="reply">
-      <mapping template="web" content="web/add/reply.vm">
+      <mapping template="web" content="/web/add/reply.ftl">
         <var name="TITLE" value="Vlo¾ reakci do diskuse" />
       </mapping>
     </action>
     <action name="ask">
-      <mapping template="web" content="web/add/ask.vm">
+      <mapping template="web" content="/web/add/question.ftl">
         <var name="TITLE" value="Polo¾it nový dotaz" />
       </mapping>
     </action>
     <action name="ask_confirm">
-      <mapping template="web" content="web/add/ask_confirm.vm">
-        <var name="TITLE" value="Potvrzení" />
+      <mapping template="web" content="/web/add/question2.ftl">
+        <var name="TITLE" value="Náhled va¹eho pøíspìvku" />
       </mapping>
     </action>
   </servlet>

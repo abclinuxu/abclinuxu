@@ -202,20 +202,10 @@ public class EditArticle extends AbcFMServlet {
         node = document.selectSingleNode("data/author");
         params.put(PARAM_AUTHOR,node.getText());
 
-        Record record = null;
-        for (Iterator iter = item.getContent().iterator(); iter.hasNext();) {
-            Relation rel = (Relation) iter.next();
-            persistance.synchronize(rel.getChild());
-            if ( rel.getChild() instanceof Record ) {
-                record = (Record) rel.getChild();
-                if ( record.getType()==Record.ARTICLE ) {
-                    document = record.getData();
-                    node = document.selectSingleNode("data/content");
-                    params.put(PARAM_CONTENT,node.getText());
-                    break;
-                }
-            }
-        }
+        Relation child = InstanceUtils.findFirstChildRecordOfType(item,Record.ARTICLE);
+        Record record = (Record) child.getChild();
+        node = record.getData().selectSingleNode("data/content");
+        params.put(PARAM_CONTENT,node.getText());
 
         addAuthors(env);
         return FMTemplateSelector.select("EditArticle","edit",env,request);
@@ -272,20 +262,10 @@ public class EditArticle extends AbcFMServlet {
         DocumentHelper.makeElement(document,"data/perex").setText(perex);
         persistance.update(item);
 
-        Record record = null;
-        for (Iterator iter = item.getContent().iterator(); iter.hasNext();) {
-            Relation rel = (Relation) iter.next();
-            PersistanceFactory.getPersistance().synchronize(rel.getChild());
-            if ( rel.getChild() instanceof Record ) {
-                record = (Record) rel.getChild();
-                if ( record.getType()==Record.ARTICLE ) {
-                    document = record.getData();
-                    DocumentHelper.makeElement(document,"data/content").setText(content);
-                    persistance.update(record);
-                    break;
-                }
-            }
-        }
+        Relation child = InstanceUtils.findFirstChildRecordOfType(item,Record.ARTICLE);
+        Record record = (Record) child.getChild();
+        DocumentHelper.makeElement(record.getData(),"data/content").setText(content);
+        persistance.update(record);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/ViewRelation?relationId="+upper.getId());

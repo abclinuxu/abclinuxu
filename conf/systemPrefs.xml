@@ -89,7 +89,7 @@
             </node>
             <node name="UpdateKernel">
               <map>
-                <entry key="file" value="WEB-INF/velocity/auto/kernel.txt"/>
+                <entry key="file" value="WEB-INF/freemarker/include/kernel.txt"/>
                 <entry key="server" value="finger.kernel.org"/>
                 <entry key="regexp.stable" value="(The latest stable[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
                 <entry key="regexp.stable.pre" value="(The latest prepatch for the stable[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>

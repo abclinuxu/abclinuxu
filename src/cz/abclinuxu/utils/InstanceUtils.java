@@ -6,8 +6,12 @@ package cz.abclinuxu.utils;
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Record;
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistance.PersistanceFactory;
 
 import java.util.Map;
+import java.util.Iterator;
 
 /**
  * Utilities related to classes and objects.
@@ -55,5 +59,45 @@ public class InstanceUtils {
             return true;
         }
         return true;
+    }
+
+    /**
+     * Finds first child of item, that is Record and has type recordType.
+     * If there is no such child, null is returned. As side efect, child
+     * is initialized.
+     */
+    public static Relation findFirstChildRecordOfType(Item item, int recordType) {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Record record = null;
+        for (Iterator iter = item.getContent().iterator(); iter.hasNext();) {
+            Relation rel = (Relation) iter.next();
+            if ( rel.getChild() instanceof Record ) {
+                persistance.synchronize(rel.getChild());
+                record = (Record) rel.getChild();
+                if ( record.getType()==recordType )
+                    return rel;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Finds first child of item, that is Item and has type itemType.
+     * If there is no such child, null is returned. As side efect, child
+     * is initialized.
+     */
+    public static Relation findFirstChildItemOfType(GenericObject obj, int itemType) {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Item item = null;
+        for (Iterator iter = obj.getContent().iterator(); iter.hasNext();) {
+            Relation rel = (Relation) iter.next();
+            if ( rel.getChild() instanceof Item ) {
+                persistance.synchronize(rel.getChild());
+                item = (Item) rel.getChild();
+                if ( item.getType()==itemType )
+                    return rel;
+            }
+        }
+        return null;
     }
 }
