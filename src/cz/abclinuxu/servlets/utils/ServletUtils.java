@@ -189,7 +189,7 @@ public class ServletUtils implements Configurable {
                 return;
             }
             user = (User) found.get(0);
-            persistance.synchronize(user);
+            user = (User) persistance.findById(user);
 
             String password = (String) params.get(PARAM_LOG_PASSWORD);
             if ( !user.validatePassword(password) ) {

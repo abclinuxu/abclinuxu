@@ -68,11 +68,21 @@ public class SynchronizedCache implements Cache, Configurable {
      */
     public GenericObject load(GenericObject obj) {
         GenericObject result = (GenericObject) data.get(obj);
-        if ( result!=null && result instanceof Relation ) {
+        if ( result==null )
+            return null;
+        if ( result instanceof Relation ) {
             Relation rel = new Relation((Relation)result);
             rel.setParent(rel.getParent().makeLightClone());
             rel.setChild(rel.getChild().makeLightClone());
             result = rel;
+        } else {
+            try {
+                GenericObject o = (GenericObject) result.getClass().newInstance();
+                o.synchronizeWith(result);
+                result = o;
+            } catch (Exception e) {
+                log.error("Cannot clone "+result, e);
+            }
         }
         return result;
     }
@@ -83,6 +93,7 @@ public class SynchronizedCache implements Cache, Configurable {
      */
     public void remove(GenericObject obj) {
         data.remove(obj);
+        // todo this shall be handled at application level. why it doesn't print anything to logs
         if ( obj instanceof Relation )
             Nursery.getInstance().removeChild((Relation) obj);
         else

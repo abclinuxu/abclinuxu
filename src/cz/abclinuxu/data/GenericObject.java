@@ -12,12 +12,6 @@ import java.util.List;
  * Superclass for all classes in this website
  */
 public abstract class GenericObject {
-    protected static Nursery nursery;
-
-    static {
-        nursery = Nursery.getInstance();
-    }
-
     /** unique identifier of this object */
     protected int id;
     /** tells, whether this object was already initialized by Persistance */
@@ -52,7 +46,7 @@ public abstract class GenericObject {
     public void addChildRelation(Relation relation) {
         if (!relation.getParent().equals(this))
             throw new InternalException("Cannot add "+relation+" as child of "+this);
-        nursery.addChild(relation);
+        Nursery.getInstance().addChild(relation);
     }
 
     /**
@@ -61,14 +55,14 @@ public abstract class GenericObject {
     public void removeChildRelation(Relation relation) {
         if (!relation.getParent().equals(this))
             throw new InternalException("Cannot remove "+relation+" as child of "+this);
-        nursery.removeChild(relation);
+        Nursery.getInstance().removeChild(relation);
     }
 
     /**
      * @return list of child Relations
      */
     public List getChildren() {
-        return nursery.getChildren(this);
+        return Nursery.getInstance().getChildren(this);
     }
 
     /**
