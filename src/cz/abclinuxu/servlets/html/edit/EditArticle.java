@@ -479,7 +479,7 @@ public class EditArticle implements AbcAction {
             url = stk.nextToken();
             url = url.trim();
             if ( url.length()==0 )
-                break; // whitespaces on empty line
+                continue; // whitespaces on empty line
             if ( ! stk.hasMoreTokens() ) {
                 ServletUtils.addError(param, "Chybí titulek pro URL "+url+"!", env, null);
                 return false;
