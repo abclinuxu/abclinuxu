@@ -177,7 +177,9 @@ public class ViewUser implements AbcAction {
                 return null;
             }
 
-            String id = Integer.toString(((User)env.get(Constants.VAR_USER)).getId());
+            User user = (User)env.get(Constants.VAR_USER);
+            env.put(VAR_PROFILE, user);
+            String id = Integer.toString(user.getId());
             params.put(PARAM_USER,id);
             return handleProfile(request,env);
         }
