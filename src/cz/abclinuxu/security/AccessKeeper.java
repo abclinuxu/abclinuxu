@@ -58,7 +58,6 @@ public class AccessKeeper implements Configurable {
      * Private constructor.
      */
     private AccessKeeper() {
-        sessionsMap = Collections.synchronizedMap(new HashMap());
     }
 
     /**
@@ -154,6 +153,7 @@ public class AccessKeeper implements Configurable {
     public void configure(Preferences prefs) throws ConfigurationException {
         sameUABlockPeriod = 1000 * prefs.getInt(PREF_BLOCK_SAME_UA_IP_FOR, 7200);
         differentUABlockPeriod = 1000 * prefs.getInt(PREF_BLOCK_SAME_IP_FOR, 600);
+        sessionsMap = Collections.synchronizedMap(new HashMap());
     }
 
     /** Data holder about one session */
