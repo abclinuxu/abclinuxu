@@ -178,17 +178,8 @@ public class EditDiscussion implements AbcAction {
         Item discussion = null;
 
         if ( relChild==null ) {
-            discussion = new Item(0,Item.DISCUSSION);
-            Document document = DocumentHelper.createDocument();
-            document.addElement("data").addElement("comments").setText("0");
-            discussion.setData(document);
-            if ( user!=null )
-                discussion.setOwner(user.getId());
-
-            persistance.create(discussion);
-            relChild = new Relation(relation.getChild(),discussion,relation.getId());
-            persistance.create(relChild);
-            relChild.getParent().addChildRelation(relChild);
+            relChild = createEmptyDiscussion(relation, user, persistance);
+            discussion = (Item) relChild.getChild();
         } else {
             discussion = (Item) relChild.getChild();
         }
@@ -196,6 +187,28 @@ public class EditDiscussion implements AbcAction {
         env.put(VAR_RELATION,relChild);
         env.put(VAR_DISCUSSION,discussion);
         return FMTemplateSelector.select("EditDiscussion","reply",env,request);
+    }
+
+    /**
+     * Creates and persists empty discussion.
+     * @param relation parent relation
+     * @param user user that created this discussion (may be empty).
+     * @param persistance
+     * @return relation between created discussion and its parent
+     */
+    public static Relation createEmptyDiscussion(Relation relation, User user, Persistance persistance) {
+        Item discussion = new Item(0, Item.DISCUSSION);
+        Document document = DocumentHelper.createDocument();
+        document.addElement("data").addElement("comments").setText("0");
+        discussion.setData(document);
+        if ( user!=null )
+            discussion.setOwner(user.getId());
+
+        persistance.create(discussion);
+        Relation relChild = new Relation(relation.getChild(), discussion, relation.getId());
+        persistance.create(relChild);
+        relChild.getParent().addChildRelation(relChild);
+        return relChild;
     }
 
     /**
@@ -660,10 +673,7 @@ public class EditDiscussion implements AbcAction {
         Item discussion = (Item) persistance.findById(relation.getChild());
         User user = (User) env.get(Constants.VAR_USER);
 
-        Date originalUpdated = discussion.getUpdated();
-        MonitorTools.alterMonitor(discussion.getData().getRootElement(), user);
-        persistance.update(discussion);
-        SQLTool.getInstance().setUpdatedTimestamp(discussion, originalUpdated);
+        alterDiscussionMonitor(discussion, user, persistance);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -672,6 +682,16 @@ public class EditDiscussion implements AbcAction {
             url = "/show/"+relation.getId();
         urlUtils.redirect(response, url);
         return null;
+    }
+
+    /**
+     * Reverts the current state of monitor on specified discussion.
+     */ 
+    public static void alterDiscussionMonitor(Item discussion, User user, Persistance persistance) {
+        Date originalUpdated = discussion.getUpdated();
+        MonitorTools.alterMonitor(discussion.getData().getRootElement(), user);
+        persistance.update(discussion);
+        SQLTool.getInstance().setUpdatedTimestamp(discussion, originalUpdated);
     }
 
     /**
