@@ -68,7 +68,7 @@ public class ServletUtils implements Configurable {
      * Combines request's parameters with parameters stored in special session
      * attribute and returns result as map. If parameter holds single value,
      * simple String->String mapping is created. If parameter holds multiple values,
-     * String->Array of Strings mapping is created. The key is always parameter's name.
+     * String->List of Strings mapping is created. The key is always parameter's name.
      */
     public static Map putParamsToMap(HttpServletRequest request) throws InvalidInputException {
         HttpSession session = request.getSession();
