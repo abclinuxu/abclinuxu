@@ -1300,7 +1300,7 @@ public class MySqlPersistance implements Persistance {
                 throw new PersistanceException("Anketa musi mit nejmene dve volby!", AbcException.DB_INCOMPLETE, poll, null);
             }
 
-            statement = con.prepareStatement("update _data_ankety set volba=? where cislo=? and anketa=?");
+            statement = con.prepareStatement("update data_ankety set volba=? where cislo=? and anketa=?");
             for (int i = 0; i<choices.length; i++) {
                 PollChoice choice = choices[i];
                 statement.clearParameters();

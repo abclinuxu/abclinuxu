@@ -24,14 +24,23 @@ import java.util.*;
  * <dl>
  * <dt><code>PARAM_RELATION</code></dt>
  * <dd>Relation, where child is/will be parent for this Poll.</dd>
+ * <dt><code>PARAM_POLL</code></dt>
+ * <dd>Poll to be edited.</dd>
+ * <dt><code>PARAM_TEXT</code></dt>
+ * <dd>Question of the poll</dd>
+ * <dt><code>PARAM_TYPE</code></dt>
+ * <dd>Constant defining type of the poll.</dd>
  * </dl>
  */
 public class EditPoll extends AbcServlet {
     public static final String PARAM_RELATION = "relationId";
+    public static final String PARAM_POLL = "pollId";
     public static final String PARAM_TEXT = "text";
     public static final String PARAM_TYPE = "type";
     public static final String PARAM_MULTICHOICE = "multichoice";
+    public static final String PARAM_CLOSED = "closed";
     public static final String PARAM_CHOICES = "choices";
+    public static final String PARAM_COUNTS = "counts";
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
@@ -39,18 +48,27 @@ public class EditPoll extends AbcServlet {
     public static final String ACTION_EDIT2 = "edit2";
 
     public static final String VAR_RELATION = "relation";
+    public static final String VAR_POLL = "POLL";
 
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
-        Relation relation = null;
-
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
-        String tmp = (String) params.get(EditCategory.PARAM_RELATION);
+        Relation relation = null;
+        Poll poll = null;
+
+        String tmp = (String) params.get(EditPoll.PARAM_RELATION);
         if ( tmp!=null && tmp.length()>0 ) {
-            int relationId = Integer.parseInt(tmp);
-            relation = (Relation) PersistanceFactory.getPersistance().findById(new Relation(relationId));
+            int id = Integer.parseInt(tmp);
+            relation = (Relation) PersistanceFactory.getPersistance().findById(new Relation(id));
             ctx.put(EditPoll.VAR_RELATION,relation);
         } else throw new Exception("Chybí parametr relationId!");
+
+        tmp = (String) params.get(EditPoll.PARAM_POLL);
+        if ( tmp!=null && tmp.length()>0 ) {
+            int id = Integer.parseInt(tmp);
+            poll = (Poll) PersistanceFactory.getPersistance().findById(new Poll(id));
+            ctx.put(EditPoll.VAR_POLL,poll);
+        }
 
         String action = (String) params.get(AbcServlet.PARAM_ACTION);
 
@@ -74,20 +92,22 @@ public class EditPoll extends AbcServlet {
             }
 
         } else if ( action.equals(EditPoll.ACTION_EDIT) ) {
-//            int rights = checkAccess(category,AbcServlet.METHOD_EDIT,ctx);
-//            switch (rights) {
-//                case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
-//            case AbcServlet.USER_INSUFFICIENT_RIGHTS: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx);
-//                default: return actionEditStep1(request,ctx);
-//            }
+            if ( poll==null ) throw new Exception("Chybí parametr pollId!");
+            int rights = checkAccess(poll,AbcServlet.METHOD_EDIT,ctx);
+            switch (rights) {
+                case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
+                case AbcServlet.USER_INSUFFICIENT_RIGHTS: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx,null);
+                default: return getTemplate("edit/poll.vm");
+            }
 
         } else if ( action.equals(EditPoll.ACTION_EDIT2) ) {
-//            int rights = checkAccess(category,AbcServlet.METHOD_EDIT,ctx);
-//            switch (rights) {
-//                case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
-//            case AbcServlet.USER_INSUFFICIENT_RIGHTS: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx);
-//                default: return actionEditStep2(request,response,ctx);
-//            }
+            if ( poll==null ) throw new Exception("Chybí parametr pollId!");
+            int rights = checkAccess(poll,AbcServlet.METHOD_EDIT,ctx);
+            switch (rights) {
+                case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
+                case AbcServlet.USER_INSUFFICIENT_RIGHTS: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx,null);
+                default: return actionEditStep2(request,response,ctx);
+            }
 
         }
         return getTemplate("add/poll.vm");
@@ -142,6 +162,54 @@ public class EditPoll extends AbcServlet {
         PersistanceFactory.getPersistance().create(poll);
         Relation relation = new Relation(upperRelation.getChild(),poll,upperRelation.getId());
         PersistanceFactory.getPersistance().create(relation);
+
+        redirect("/ViewRelation?relationId="+upperRelation.getId(),response,ctx);
+        return null;
+    }
+
+    /**
+     * Final step for editing of poll
+     */
+    protected Template actionEditStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+
+        int type = Poll.SURVEY;
+        boolean multiChoice = false;
+        Relation upperRelation = (Relation) ctx.get(EditPoll.VAR_RELATION);
+        Poll poll = (Poll) ctx.get(EditPoll.VAR_POLL);
+
+        String tmp = (String) params.get(EditPoll.PARAM_TYPE);
+        if ( "rating".equals(tmp) ) {
+            poll.setType(Poll.RATING);
+        } else {
+            poll.setType(Poll.SURVEY);
+        }
+
+        tmp = (String) params.get(EditPoll.PARAM_MULTICHOICE);
+        poll.setMultiChoice( ("yes".equals(tmp)) );
+
+        tmp = (String) params.get(EditPoll.PARAM_CLOSED);
+        poll.setClosed( ("yes".equals(tmp)) );
+
+        tmp = (String) params.get(EditPoll.PARAM_TEXT);
+        if ( tmp!=null && tmp.length()>0 ) {
+            poll.setText(tmp);
+        }
+
+        List choices = (List) params.get(EditPoll.PARAM_CHOICES);
+        List counts = (List) params.get(EditPoll.PARAM_COUNTS);
+        PollChoice[] pollChoices = poll.getChoices();
+
+        int max = choices.size();
+        for ( int i=0; i<max; i++ ) {
+            tmp = (String) choices.get(i);
+            if ( tmp!=null && tmp.length()>0 ) pollChoices[i].setText(tmp);
+            tmp = (String) counts.get(i);
+            if ( tmp!=null && tmp.length()>0 ) {
+                try { pollChoices[i].setCount(Integer.parseInt(tmp)); } catch (NumberFormatException e) {}
+            }
+        }
+        PersistanceFactory.getPersistance().update(poll);
 
         redirect("/ViewRelation?relationId="+upperRelation.getId(),response,ctx);
         return null;

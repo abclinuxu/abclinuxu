@@ -183,6 +183,7 @@ public class EditCategory extends AbcServlet {
 
     /**
      * First step for editing of category
+     * @todo verify logic of ACTION check
      */
     protected Template actionEditStep1(HttpServletRequest request, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
@@ -192,7 +193,7 @@ public class EditCategory extends AbcServlet {
         Document document = category.getData();
 
         String tmp = (String) params.get(AbcServlet.PARAM_ACTION);
-        if ( EditCategory.ACTION_EDIT.equals(tmp) ) {
+        if ( EditCategory.ACTION_EDIT.equals(tmp) ) { // IS NOT THIS CHECK DUPLICATE ?!!?!
             Node node = document.selectSingleNode("data/name");
             if (node!=null) params.put(EditCategory.PARAM_NAME,node.getText());
 
