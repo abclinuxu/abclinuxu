@@ -133,10 +133,10 @@ $!UTIL.saveParams($PARAMS, [])
 #set($clanek=$relation.Child)
 #set($author=$UTIL.instantiate('User',$!UTIL.getXPath($clanek,'/data/author')))
 #sync($author)
-<A CLASS="nadpis" HREF="$!URL.make("/clanky/ViewRelation?relationId=$relation.Id")">$!UTIL.getXPath($clanek,'/data/name')</A><BR>
+<A CLASS="nadpis_out" HREF="$!URL.make("/clanky/ViewRelation?relationId=$relation.Id")">$!UTIL.getXPath($clanek,'/data/name')</A><BR>
 <SPAN CLASS="barva">$!UTIL.showDate($!UTIL.getXPath($clanek,'/data/published')) |
 <A HREF="mailto:$!author.Email">$!author.Name</A></SPAN>
-<P class="perex">$!UTIL.getXPath($clanek,'/data/perex')</P>
+<P class="perex_out">$!UTIL.getXPath($clanek,'/data/perex')</P>
 <SPAN CLASS="barva">Pøeèteno: $!PERSISTANCE.getCounterValue($clanek)x </SPAN>
 <BR><BR>
 #if($separator)<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="---"><BR><BR>#end
