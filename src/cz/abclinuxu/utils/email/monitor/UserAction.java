@@ -3,7 +3,7 @@
  * Date: 7.11.2003
  * Time: 8:17:39
  */
-package cz.abclinuxu.utils.monitor;
+package cz.abclinuxu.utils.email.monitor;
 
 /**
  * Enumaration of available action, that user can perform on monitored objects.

@@ -17,7 +17,7 @@ import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.utils.monitor.InstantSender;
+import cz.abclinuxu.utils.email.monitor.InstantSender;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateExceptionHandler;

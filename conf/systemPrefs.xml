@@ -56,37 +56,6 @@
               </map>
             </node>
           </node>
-          <node name="monitor">
-            <map/>
-            <node name="InstantSender">
-              <map>
-                <entry key="sleep" value="60"/>
-              </map>
-            </node>
-            <node name="DriverDecorator">
-              <map>
-                <entry key="subject" value="AbcMonitor: uprava ovladace"/>
-                <entry key="action.edit" value="upravil ovladac"/>
-                <entry key="action.remove" value="smazal ovladac"/>
-              </map>
-            </node>
-            <node name="ItemDecorator">
-              <map>
-                <entry key="subject" value="AbcMonitor: zmena v polozce"/>
-                  <entry key="action.add" value="pridal zaznam"/>
-                  <entry key="action.edit" value="upravil zaznam"/>
-                  <entry key="action.remove" value="smazal polozku"/>
-              </map>
-            </node>
-            <node name="DiscussionDecorator">
-              <map>
-                <entry key="subject" value="AbcMonitor: zmena v diskusi"/>
-                <entry key="action.add" value="pridal komentar"/>
-                <entry key="action.remove" value="smazal diskusi"/>
-                <entry key="action.censore" value="uvalil cenzuru na komentar"/>
-              </map>
-            </node>
-          </node>
           <node name="freemarker">
               <map/>
               <node name="FMUtils">
@@ -101,14 +70,45 @@
               </node>
           </node>
           <node name="email">
-            <map/>
-            <node name="EmailSender">
-              <map>
-                <entry key="smtp.server" value="localhost"/>
-                <entry key="admin.address" value="admin@abclinuxu.cz"/>
-                <entry key="debug.smtp" value="false"/>
-              </map>
-            </node>
+              <map/>
+              <node name="EmailSender">
+                  <map>
+                      <entry key="smtp.server" value="localhost"/>
+                      <entry key="admin.address" value="admin@abclinuxu.cz"/>
+                      <entry key="debug.smtp" value="false"/>
+                  </map>
+              </node>
+              <node name="monitor">
+                  <map/>
+                  <node name="InstantSender">
+                      <map>
+                          <entry key="sleep" value="60"/>
+                      </map>
+                  </node>
+                  <node name="DriverDecorator">
+                      <map>
+                          <entry key="subject" value="AbcMonitor: uprava ovladace"/>
+                          <entry key="action.edit" value="upravil ovladac"/>
+                          <entry key="action.remove" value="smazal ovladac"/>
+                      </map>
+                  </node>
+                  <node name="ItemDecorator">
+                      <map>
+                          <entry key="subject" value="AbcMonitor: zmena v polozce"/>
+                          <entry key="action.add" value="pridal zaznam"/>
+                          <entry key="action.edit" value="upravil zaznam"/>
+                          <entry key="action.remove" value="smazal polozku"/>
+                      </map>
+                  </node>
+                  <node name="DiscussionDecorator">
+                      <map>
+                          <entry key="subject" value="AbcMonitor: zmena v diskusi"/>
+                          <entry key="action.add" value="pridal komentar"/>
+                          <entry key="action.remove" value="smazal diskusi"/>
+                          <entry key="action.censore" value="uvalil cenzuru na komentar"/>
+                      </map>
+                  </node>
+              </node>
           </node>
           <node name="format">
               <map/>

@@ -3,7 +3,7 @@
  * Date: 6.11.2003
  * Time: 12:08:11
  */
-package cz.abclinuxu.utils.monitor;
+package cz.abclinuxu.utils.email.monitor;
 
 import org.dom4j.Element;
 
@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.Date;
 
 import cz.abclinuxu.data.GenericDataObject;
+import cz.abclinuxu.utils.email.monitor.MonitorAction;
 
 /**
  * Pool for triggered actions used by InstantSender.
@@ -51,7 +52,7 @@ public class MonitorPool {
     /**
      * Extracts the first MonitorAction from the queue.
      * @return first MonitorAction
-     * @throws IndexOutOfBoundsException If there is no element in the pool.
+     * @throws java.lang.IndexOutOfBoundsException If there is no element in the pool.
      */
     public synchronized MonitorAction getFirst() {
         return (MonitorAction) pool.remove(0);

@@ -3,7 +3,7 @@
  * Date: 6.11.2003
  * Time: 12:09:26
  */
-package cz.abclinuxu.utils.monitor;
+package cz.abclinuxu.utils.email.monitor;
 
 import org.dom4j.Element;
 import cz.abclinuxu.data.User;

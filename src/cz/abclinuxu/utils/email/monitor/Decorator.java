@@ -1,4 +1,4 @@
-package cz.abclinuxu.utils.monitor;
+package cz.abclinuxu.utils.email.monitor;
 
 import java.util.Map;
 

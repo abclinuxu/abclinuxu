@@ -3,12 +3,15 @@
  * Date: 6.11.2003
  * Time: 12:10:43
  */
-package cz.abclinuxu.utils.monitor;
+package cz.abclinuxu.utils.email.monitor;
 
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.email.EmailSender;
+import cz.abclinuxu.utils.email.monitor.Decorator;
+import cz.abclinuxu.utils.email.monitor.DiscussionDecorator;
+import cz.abclinuxu.utils.email.monitor.DriverDecorator;
 
 import java.util.prefs.Preferences;
 import java.util.Map;

@@ -15,6 +15,7 @@ import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.email.monitor.*;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.monitor.*;
@@ -291,7 +292,7 @@ public class EditSoftware extends AbcFMServlet {
         element.setText(text);
         Format format = FormatDetector.detect(text);
         element.addAttribute("format", Integer.toString(format.getId()));
-        
+
         if ( url!=null )
             DocumentHelper.makeElement(document,"data/url").setText(url);
         if ( version!=null )
