@@ -38,6 +38,7 @@ public class LRUCache implements Cache,Configurable {
             ConfigurationManager.getConfigurator().configureAndRememberMe(this);
         } catch (ConfigurationException e) { log.error(e); }
         data = new CacheLRU(size);
+        log.info("Cache started with size "+size);
     }
 
     /**
@@ -104,6 +105,7 @@ public class LRUCache implements Cache,Configurable {
         data.clear();
         data = null;
         data = new CacheLRU(size);
+        log.info("Cache restarted with size "+size);
     }
 
     /**
