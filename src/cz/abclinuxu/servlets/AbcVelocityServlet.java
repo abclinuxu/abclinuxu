@@ -349,17 +349,23 @@ public class AbcServlet extends VelocityServlet {
      * @todo Find, what to use instead of deprecated HttpUtils.getRequestURL
      */
     protected void error(HttpServletRequest request, HttpServletResponse response, Exception cause) throws ServletException, IOException {
-        StringBuffer url = HttpUtils.getRequestURL(request);
+        StringBuffer url = request.getRequestURL();
         url.insert(0,"Cannot display page ");
-        if ( cause instanceof AbcException ) url.append("Status was: "+((AbcException)cause).getStatus());
-        log.error(url.toString(),cause);
+        if ( request.getQueryString()!=null ) {
+            url.append('?');
+            url.append(request.getQueryString());
+        }
+
+        if ( cause instanceof AbcException ) url.append("\n Status was: "+((AbcException)cause).getStatus());
+        if ( !(cause instanceof IOException) )
+            log.error(url.toString(),cause);
 
         ServletOutputStream os = response.getOutputStream();
         os.println("<html><body bgcolor=\"#ffffff\">");
         os.println("<h2>Stránka nebyla nalezena</h2>");
         os.println("Omlouváme se, ale systém nebyl schopen zobrazit zvolenou stránku. ");
-        os.println("Mozná byla zmenena její adresa.<p>");
-        os.println("Dekujeme za pochopeni.");
+        os.println("Mo¾ná byla zmìnìna její adresa.<p>");
+        os.println("Dìkujeme za pochopeni.");
         os.println("<p>Událost byla zalogována.");
         os.println("</body></html>");
         os.flush();
