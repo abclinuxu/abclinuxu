@@ -423,7 +423,7 @@ public class EditUser extends AbcFMServlet {
         User managed = (User) env.get(VAR_MANAGED);
 
         env.put(VAR_DEFAULT_DISCUSSION_COUNT,new Integer(AbcConfig.getViewIndexDiscussionsCount()));
-        env.put(VAR_DEFAULT_NEWS_COUNT,new Integer(AbcConfig.getViewIndexNewsCount()));
+        env.put(VAR_DEFAULT_NEWS_COUNT,new Integer(AbcConfig.getNewsCount()));
 
         Document document = managed.getData();
         Node node = document.selectSingleNode("/data/settings/emoticons");

@@ -147,17 +147,7 @@ public class AbcInit extends HttpServlet {
      * Sets some commonly used variables in freemarker templates.
      */
     public static void setSharedVariables() {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        Configuration cfg = Configuration.getDefaultConfiguration();
-
         try {
-            Category rubriky = (Category) persistance.findById(new Category(Constants.CAT_ARTICLES));
-            Tools.sync(rubriky.getContent());
-            Category abc = (Category) persistance.findById(new Category(Constants.CAT_ABC));
-            Tools.sync(abc.getContent());
-
-            cfg.setSharedVariable(Constants.VAR_RUBRIKY, rubriky);
-            cfg.setSharedVariable(Constants.VAR_ABCLINUXU, abc);
             setSharedVariableLinks();
         } catch (Exception e) {
             log.error("cannot store shared variable!", e);

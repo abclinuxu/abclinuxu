@@ -2,15 +2,30 @@
 
 <#macro showArticle(relation)>
  <#local clanek=relation.child>
- <#local autor=TOOL.createUser(TOOL.xpath(clanek,"/data/author"))>
  <p>
   <a href="/clanky/ViewRelation?relationId=${relation.id}" target="_content">
    ${TOOL.xpath(clanek,"data/name")}
   </a><br>
-  ${DATE.show(clanek.created, "CZ_FULL")}<br>
-  <a href="/Profile?userId=${autor.id}">${autor.name}</a><br>
+  ${DATE.show(clanek.created, "CZ_FULL")}
  </p>
 </#macro>
+
+<#macro showNews(relation)>
+ <#local
+   ITEM=TOOL.sync(relation.child),
+   diz=TOOL.findComments(ITEM)
+ >
+ <p>${DATE.show(ITEM.created,"CZ_SHORT")}
+ ${TOOL.xpath(ITEM,"data/content")}<br>
+ <span style="font-size: 7pt">
+  <a href="/news/ViewRelation?relationId=${relation.id}" target="_content" style="font-size: 7pt">Zobrazit</a>
+  <#if diz.responseCount gt 0>
+   Komentáøe: ${diz.responseCount}, poslední ${DATE.show(diz.lastUpdate, "CZ_FULL")}
+  </#if>
+ </span>
+ </p>
+</#macro>
+
 
 <div align="center">
 <a href="/Index?src=sidebar" title="AbcLinuxu.cz" target="_content">
@@ -32,10 +47,11 @@
  <#call showArticle(rel)>
 </#list>
 
-<#if NEWS?exists>
- <#list NEWS as rel>
-  <#call showNews(rel)>
- </#list>
-</#if>
+<h3 class="nadpis">Zprávièky</h3>
+
+<#global NEWS=VARS.getFreshNews(user?if_exists)>
+<#list NEWS as rel>
+ <#call showNews(rel)>
+</#list>
 
 <#include "../footer.ftl">

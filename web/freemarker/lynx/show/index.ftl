@@ -4,6 +4,8 @@
 <#include "/include/zprava.txt">
 <#call showMessages>
 
+Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum</a>
+
 <#list ARTICLES as rel>
  <#call showArticle(rel)>
  <#if rel_has_next><#call separator><#else><#call doubleSeparator></#if>
@@ -64,23 +66,22 @@
  <#include "/include/kernel.txt">
 </p>
 
-<#if NEWS?exists>
- <h1>Zprávièky</h1>
- <#list NEWS as rel>
-  <#call showNews(rel)>
-  <#if rel_has_next><#call separator></#if>
- </#list>
- <p>
-  <a href="/History?type=news&from=${NEWS?size}&count=15" title="Dal¹í">Star¹í zprávièky</a>
-  <a href="${URL.make("/news/EditItem?action=add")}">Vytvoøit zprávièku</a>
- </p>
-</#if>
+<#global NEWS=VARS.getFreshNews(user?if_exists)>
+<a name="zpravicky"><h1>Zprávièky</h1></a>
+<#list NEWS as rel>
+ <#call showNews(rel)>
+ <#if rel_has_next><#call separator></#if>
+</#list>
+<p>
+ <a href="/History?type=news&from=${NEWS?size}&count=15" title="Dal¹í">Star¹í zprávièky</a>
+ <a href="${URL.make("/news/EditItem?action=add")}">Vytvoøit zprávièku</a>
+</p>
 
 <#flush>
 
 <#if FORUM?exists>
+<a name="diskuse"><h1>Diskusní fórum</h1></a>
 <p>
- <b>Diskusní fórum:</b> výbìr ${FORUM.currentPage.size} aktivních diskusí ze ${FORUM.total}<br>
  <#list FORUM.data as diz>
   ${DATE.show(diz.lastUpdate,"CZ_SHORT")}, ${diz.responseCount} odp. :
    <a href="/hardware/ViewRelation?relationId=${diz.relationId}">

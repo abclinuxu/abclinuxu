@@ -33,10 +33,19 @@ ${DATE.show("CZ_FULL")}
 
 <p>
  <b>Rubriky</b>
- <#list SORT.byName(RUBRIKY.content) as rel>
-  <a href="${URL.make("/clanky/ViewCategory?relationId="+rel.id)}">
-  ${TOOL.childName(rel)}</a><#if rel_has_next>,</#if>
- </#list>
+  <#if USER?exists && USER.hasRole("article admin")>
+   <a href="/clanky/ViewCategory?relationId=5">Aktuální</a>,
+  </#if>
+  <a href="/clanky/ViewCategory?relationId=4731">Abíèko</a>,
+  <a href="/clanky/ViewCategory?relationId=4">Jaderné noviny</a>,
+  <a href="/clanky/ViewCategory?relationId=3">Návody</a>,
+  <a href="/clanky/ViewCategory?relationId=251">Novinky</a>,
+  <a href="/clanky/ViewCategory?relationId=14358">Programování</a>,
+  <a href="/clanky/ViewCategory?relationId=2">Recenze</a>,
+  <a href="/clanky/ViewCategory?relationId=5324">Rùzné</a>,
+  <a href="/clanky/ViewCategory?relationId=8546">Téma</a>,
+  <a href="/clanky/ViewCategory?relationId=12448">Tutoriály</a>,
+  <a href="/clanky/ViewCategory?relationId=6">PR èlánky</a>
 </p>
 
 <p>

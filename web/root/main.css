@@ -19,9 +19,9 @@ SPAN.pidianketa { color: WHITE; font-family: Helvetica; font-size: 10pt }
 SPAN.pidibila { color: WHITE; font-family: Lucida, Verdana, Helvetica, sans-serif; font-size: 10pt }
 SPAN.pidibilatucna { color: WHITE; font-family: Lucida, Verdana, Helvetica, sans-serif; font-size: 10pt; font-weight: bold }
 SPAN.piditucna { color: BLACK; font-family: Lucida, Verdana, Helvetica, sans-serif; font-size: 10pt; font-weight: bold }
-SPAN.sro { color:white; font-family: Verdana, Helvetica, sans-serif; font-size: 9pt; font-weight: bold }
+SPAN.sro { color:white; font-family: Verdana, Helvetica, sans-serif; font-size: 15pt; font-weight: bold }
 INPUT.menu { font-family: Helvetica; font-size: 8pt }
-A.sro { color:white; font-family: Verdana, Helvetica, sans-serif; font-size: 9pt; font-weight: bold; text-decoration: none; position: relative }
+A.sro { color:white; font-family: Verdana, Helvetica, sans-serif; font-size: 15pt; font-weight: bold; text-decoration: none; position: relative }
 A.sro:hover { color: #AADDEE; position: relative; left: 1px; top: 1px }
 A.bila { color: WHITE; font-family: Lucida, Verdana, Helvetica, sans-serif; font-size: 10pt; text-decoration: underline }
 A.bila:hover { color: WHITE; text-decoration: none }
@@ -42,6 +42,10 @@ TD.listaBG1 { background-color: #3d5365 }
 TD.listaBG2 { background-color: #6689a1 }
 TD.seda { background-repeat: no-repeat; background-color: #EEEEEE; color: BLACK }
 TD.banner { background-repeat: repeat-x; background-color: #EEEEEE; background-image: url(/images/site/lista-stin.gif); color: BLACK }
+TD.zpravicky P { color: black }
+TD.zpravicky P A { color: navy }
+TD.zpravicky SPAN { color: black }
+TD.zpravicky SPAN A { color: navy }
 IMG.emo { border: 0; width: 14px; height: 14px; vertical-align: middle; }
 IMG.graf { padding: 2px 4px; border: 0; height: 3px; }
 IMG.ikona { border: 0; width: 32px; height: 32px;}

@@ -45,12 +45,12 @@
  (${VARS.counter.REQUESTS})</a>
 </p>
 
+<h1>O serveru</h1>
 <p>
- <b>O serveru</b>
- <#list SORT.byName(ABCLINUXU.content) as rel>
-  <a href="${URL.make("/clanky/ViewCategory?relationId="+rel.id)}">
-  ${TOOL.childName(rel)}</a>,
- </#list>
+ <a href="/clanky/ViewRelation?relationId=44043">Pøehled zmìn</a>,
+ <a href="/clanky/ViewRelation?relationId=44046">Export èlánkù a RSS</a>,
+ <a href="/clanky/ViewRelation?relationId=44049">Tým AbcLinuxu</a>,
+ <a href="/clanky/ViewRelation?relationId=42393">Staòte se autorem</a>,
  ISSN 1214-1267
 </p>
 

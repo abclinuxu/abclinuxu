@@ -27,10 +27,10 @@ public class AbcConfig implements Configurable {
     public static final String PREF_DEPLOY_PATH = "deploy.path";
     public static final String PREF_VIEWUSER_PAGINGSIZE = "viewuser.page.size";
     public static final String PREF_VIEWINDEX_DISCUSSIONS_COUNT = "viewindex.discussions.count";
-    public static final String PREF_VIEWINDEX_NEWS_COUNT = "viewindex.news.count";
+    public static final String PREF_TEMPLATE_NEWS_COUNT = "template.news.count";
 
     static String deployPath;
-    static int viewUserPageSize, viewIndexDiscussions, viewIndexNewsCount;
+    static int viewUserPageSize, viewIndexDiscussions, newsCount;
 
     /**
      * Callback used to configure your class from preferences.
@@ -39,7 +39,7 @@ public class AbcConfig implements Configurable {
         deployPath = prefs.get(PREF_DEPLOY_PATH, null);
         viewUserPageSize = prefs.getInt(PREF_VIEWUSER_PAGINGSIZE,20);
         viewIndexDiscussions = prefs.getInt(PREF_VIEWINDEX_DISCUSSIONS_COUNT,20);
-        viewIndexNewsCount = prefs.getInt(PREF_VIEWINDEX_NEWS_COUNT,5);
+        newsCount = prefs.getInt(PREF_TEMPLATE_NEWS_COUNT,5);
     }
 
     /**
@@ -80,9 +80,9 @@ public class AbcConfig implements Configurable {
     }
 
     /**
-     * @return default maximum for news count on Index page
+     * @return default limit for displayed news
      */
-    public static int getViewIndexNewsCount() {
-        return viewIndexNewsCount;
+    public static int getNewsCount() {
+        return newsCount;
     }
 }

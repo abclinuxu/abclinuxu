@@ -10,10 +10,12 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.exceptions.PersistanceException;
-import cz.abclinuxu.exceptions.NotFoundException;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
+import cz.abclinuxu.utils.Misc;
 
 import java.util.*;
+
+import org.dom4j.Node;
 
 /**
  * This class is responsible for periodic fetching
@@ -25,11 +27,10 @@ public class VariableFetcher extends TimerTask {
     final static int SIZE = 3;
     final static int ARTICLE_SIZE = 15;
 
-    List newHardware, newSoftware, newDrivers, newArticles, selectedProfiles;
+    List newHardware, newSoftware, newDrivers, newArticles;
     Map counter;
     Poll currentPoll;
 
-    Calendar profileLastRun;
     long linksLastRun;
     SQLTool sqlTool;
 
@@ -41,11 +42,8 @@ public class VariableFetcher extends TimerTask {
         newHardware = new ArrayList(SIZE);
         newSoftware = new ArrayList(SIZE);
         newDrivers = new ArrayList(SIZE);
-        selectedProfiles = new ArrayList(SIZE);
         newArticles = new ArrayList(ARTICLE_SIZE);
         counter = new HashMap(5,0.99f);
-        profileLastRun = Calendar.getInstance();
-        profileLastRun.add(Calendar.DAY_OF_MONTH,-1);
         linksLastRun = System.currentTimeMillis();
     }
 
@@ -86,10 +84,15 @@ public class VariableFetcher extends TimerTask {
     }
 
     /**
-     * List of few freshest users.
+     * List of the freshest news (relation) limited by user settings.
      */
-    public List getSelectedProfiles() {
-        return selectedProfiles;
+    public List getFreshNews(Object user) {
+        int userLimit = getNumberOfNews(user);
+        if ( userLimit>0 ) {
+            List news = SQLTool.getInstance().findNewsRelationsByCreated(0, userLimit);
+            return news;
+        }
+        return Collections.EMPTY_LIST;
     }
 
     /**
@@ -124,8 +127,6 @@ public class VariableFetcher extends TimerTask {
             newHardware = sqlTool.findRecordRelationsByUpdated(Record.HARDWARE, 0,SIZE);
             newSoftware = sqlTool.findRecordRelationsByUpdated(Record.SOFTWARE, 0,SIZE);
             newDrivers = sqlTool.findItemRelationsByUpdated(Item.DRIVER, 0,SIZE);
-//            newArticles = sqlTool.findArticleRelationsByCreated(0,ARTICLE_SIZE);
-            updateProfiles(persistance);
 
             log.debug("finished fetching variables");
         } catch (Exception e) {
@@ -134,29 +135,19 @@ public class VariableFetcher extends TimerTask {
     }
 
     /**
-     * Each day randomly selects SIZE profiles.
+     * Gets limit of displayed news. If user is not authenticated or he didn't
+     * configured this value, default value will be used.
+     * @param user
+     * @return number of news to be displayed
      */
-    private void updateProfiles(Persistance persistance) {
-        Calendar calendar = Calendar.getInstance();
-        if ( calendar.get(Calendar.DAY_OF_MONTH)==profileLastRun.get(Calendar.DAY_OF_MONTH) )
-            return;
-        profileLastRun = calendar;
-
-        int limit = 10;
-        int max = sqlTool.getMaximumUserId();
-        Random random = new Random();
-        selectedProfiles.clear();
-
-        for (int i=0; i<limit && selectedProfiles.size()<3; i++) {
-            int id = random.nextInt(max);
-            try {
-                User user = (User) persistance.findById(new User(id));
-                selectedProfiles.add(user);
-            } catch (NotFoundException e) {
-                // user doesn't exist, lets skip it.
-            } catch (PersistanceException e) {
-                log.warn(e);
-            }
-        }
+    private int getNumberOfNews(Object user) {
+        int defaultValue = AbcConfig.getNewsCount();
+        if ( user==null || !(user instanceof User))
+            return defaultValue;
+        Node node = ((User)user).getData().selectSingleNode("/data/settings/index_news");
+        if ( node==null )
+            return defaultValue;
+        int count = Misc.parseInt(node.getText(), defaultValue);
+        return count;
     }
 }
