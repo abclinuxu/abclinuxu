@@ -1,9 +1,15 @@
 <#assign plovouci_sloupec>
-    <p>
+  <div class="s_nad_h1"><div class="s_nad_pod_h1">
+    <a class="info" href="#">?<span class="tooltip">Vlastní blog si po pøihlá¹ení mù¾ete zalo¾it v nastavení svého profilu.</span></a>
+    <h1><a href="/blog">Blogy na AbcLinuxu</a></h1>
+  </div></div>
+  
+    <div class="s_sekce">
         Pøehled blogù za dané období pro v¹echny u¾ivatele.
-        Chcete-li také psát svùj blog, pøihla¹te se a v nastavení
-        si mù¾ete zalo¾it svùj blog.
-    </p>
+        <p>Chcete-li také psát svùj blog, pøihla¹te se a v nastavení
+        si jej mù¾ete zalo¾it.</p>
+	Více o této nové funkci se dozvíte z <a href="/blog/leos/2005/1/2/72133">oznámení</a>.
+    </div>
 </#assign>
 
 <#include "../header.ftl">
@@ -17,15 +23,18 @@
     <#assign url=TOOL.getUrlForBlogStory(blog.subType, story.created, relation.id)>
     <#assign category = story.subType?default("UNDEF")>
     <#if category!="UNDEF"><#assign category=TOOL.xpath(blog, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
-    <h1 class="st_nadpis"><a href="${url}">${TOOL.xpath(story, "/data/name")}</a></h1>
-    <p class="cl_inforadek">
-        ${DATE.show(story.created, "CZ_SHORT")} |
-        <a href="/blog/${blog.subType}">${author.name}</a> |
-        Pøeèteno: ${TOOL.getCounterValue(story)}x |
-        <#if category!="UNDEF">${category} |</#if>
-        <@showDiscussions story, url/>
-    </p>
-    ${TOOL.xpath(story, "/data/content")}
+    <div class="cl"
+        <h1 class="st_nadpis"><a href="${url}">${TOOL.xpath(story, "/data/name")}</a></h1>
+	<p class="cl_inforadek">
+            ${DATE.show(story.created, "CZ_SHORT")} |
+    	    <a href="/blog/${blog.subType}">${author.name}</a> |
+	    Pøeèteno: ${TOOL.getCounterValue(story)}x |
+            <#if category!="UNDEF">${category} |</#if>
+    	    <@showDiscussions story, url/>
+	</p>
+        ${TOOL.xpath(story, "/data/content")}
+    </div>
+    <hr>
 </#list>
 
 <p>

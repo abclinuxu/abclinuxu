@@ -19,7 +19,7 @@
 <tbody>
  <tr>
   <td align="right" width="120px"><a href="${URL.make("/show/"+relation.id)}">
-    ${DATE.show(relation.child.created, "CZ_DATE")}</a></td>
+    ${DATE.show(relation.child.created, "CZ_DMY")}</a></td>
   <td>${relation.child.text}</td>
  </tr>
 </tbody>

@@ -90,7 +90,7 @@
 <@lib.showMessages/>
 
 <#list ARTICLES as rel>
-    <@lib.showArticle rel, "CZ_SHORT"/>
+    <@lib.showArticle rel, "CZ_DM", "CZ_SHORT"/>
     <hr>
 </#list>
 

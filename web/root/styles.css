@@ -593,7 +593,7 @@ p.wrongForum {
 
 .s_sekce {
 	font-size:	90%;
-	padding-left:	3px;
+	padding:	0 3px 0 3px;
 }
 
 .s ul {

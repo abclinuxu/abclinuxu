@@ -353,7 +353,7 @@ public class EditDiscussion implements AbcAction {
 
             if ( record.getId()==0 ) {
                 persistance.create(record);
-                Relation rel = new Relation(discussion, record, 0);
+                Relation rel = new Relation(discussion, record, 0); // todo set parent relation
                 persistance.create(rel);
                 rel.getParent().addChildRelation(rel);
             } else {

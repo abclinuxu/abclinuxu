@@ -120,9 +120,9 @@ public interface Constants {
     DateFormat isoFormatShort = new SimpleDateFormat("yyyy-MM-dd");
     DateFormat czFormat = new SimpleDateFormat("d.M.yyyy HH:mm");
     DateFormat czFormatTxt = new SimpleDateFormat("d. MMMMM yyyy HH:mm");
-    DateFormat czDateOnly = new SimpleDateFormat("d. M. yyyy");
-    DateFormat czTimeOnly = new SimpleDateFormat("HH:mm");
     DateFormat czShortFormat = new SimpleDateFormat("d.M. HH:mm");
+    DateFormat czDayMonthYear = new SimpleDateFormat("d. M. yyyy");
     DateFormat czDayMonth = new SimpleDateFormat("d.M.");
+    DateFormat czTimeOnly = new SimpleDateFormat("HH:mm");
     DateFormat czDay = new SimpleDateFormat("EEEE");
 }

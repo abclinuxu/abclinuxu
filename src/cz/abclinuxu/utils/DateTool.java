@@ -38,7 +38,9 @@ public class DateTool implements Configurable {
     /** 1. leden 2003 16:00 */
     public static final String CZ_FULL_TEXT = "CZ_FULL_TXT";
     /** 1.1.2003 */
-    public static final String CZ_ONLY_DATE = "CZ_DATE";
+    public static final String CZ_DAY_MONTH_YEAR = "CZ_DMY";
+    /** 1.1. */
+    public static final String CZ_DAY_MONTH = "CZ_DM";
     /** 16:00 */
     public static final String ONLY_TIME = "TIME";
     /** Ctvrtek */
@@ -77,9 +79,15 @@ public class DateTool implements Configurable {
             else
                 return getCzDay(ms) + " " + Constants.czTimeOnly.format(date);
         }
-        if ( CZ_ONLY_DATE.equalsIgnoreCase(format) ) {
+        if ( CZ_DAY_MONTH_YEAR.equalsIgnoreCase(format) ) {
             if (dayNotText)
-                return Constants.czDateOnly.format(date);
+                return Constants.czDayMonthYear.format(date);
+            else
+                return getCzDay(ms);
+        }
+        if ( CZ_DAY_MONTH.equalsIgnoreCase(format) ) {
+            if (dayNotText)
+                return Constants.czDayMonth.format(date);
             else
                 return getCzDay(ms);
         }

@@ -4,14 +4,24 @@
 <#assign owner=TOOL.createUser(BLOG.owner)>
 
 <#assign plovouci_sloupec>
+
     <#if title!="UNDEF">
-        <h1 class="st_nadpis" style="text-align: center; margin: 0px; font-size: 120%;"><a href="/blog/${BLOG.subType}">${title}</a></h1>
+        <div class="s_nad_h1"><div class="s_nad_pod_h1">
+            <h1><a href="/blog/${BLOG.subType}">${title}</a></h1>
+	</div></div>
     </#if>
+
+  <div class="s_sekce">
     <#if intro!="UNDEF">${intro}</#if>
     <br>Autorem blogu je <a href="/Profile/${owner.id}">${owner.name}</a>
-
-    <hr>
-    <h2 style="text-align: center; margin: 0px; font-size: 110%;">Archiv</h2>
+  </div>
+  
+    <div class="s_nad_h1"><div class="s_nad_pod_h1">
+            <a class="info" href="#">?<span class="tooltip">Pøístup k archivovaným zápisùm za jednotlivé mìsíce.</span></a>
+            <h1>Archív</h1>
+    </div></div>
+  
+  <div class="s_sekce">
     <#list BLOG_XML.data.archive.year as year>
         <ul>
         <#list year.month as month>
@@ -21,13 +31,30 @@
         </#list>
         </ul>
     </#list>
+  </div>
 
+  <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <a class="info" href="#">?<span class="tooltip">Pøístup na osobní hlavní stranu a na hlavní stranu v¹ech blogù.</span></a>
+        <h1>Navigace</h1>
+  </div></div>
+  
+  <div class="s_sekce">
+    <ul>
+        <#if title!="UNDEF">
+	    <li><a href="/blog/${BLOG.subType}">${title}, hlavní strana</a></li>
+        </#if>
+        <li><a href="/blog">Blogy na AbcLinuxu</a></li>	
+    </ul>
+  </div>
+  
     <#if (USER?exists && USER.id==BLOG.owner) || (! USER?exists)>
         <div class="s_nad_h1"><div class="s_nad_pod_h1">
             <a class="info" href="#">?<span class="tooltip">Tato sekce sdru¾uje akce pro majitele blogu.</span></a>
             <h1>Nastavení</h1>
         </div></div>
     </#if>
+    
+  <div class="s_sekce">
     <#if USER?exists>
         <#if USER.id==BLOG.owner>
             <ul>
@@ -41,6 +68,7 @@
     <#else>
         <a href="${URL.noPrefix("/Profile?action=login&amp;url="+REQUEST_URI)}">Pøihlásit se</a>
     </#if>
+  </div>
 </#assign>
 
 <#include "../header.ftl">

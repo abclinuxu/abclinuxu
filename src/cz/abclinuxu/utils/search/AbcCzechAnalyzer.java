@@ -50,10 +50,12 @@ public class AbcCzechAnalyzer extends Analyzer implements Configurable {
         String file = prefs.get(PREF_STOP_WORDS_FILE,null);
         log.info("Loading stop words from file '"+file+"'.");
         try {
-            stopTable = WordlistLoader.getWordtable(file);
-        } catch (IOException e) {
-            throw new ConfigurationException(e);
-        }
-        log.info(stopTable.size()+" stop words loaded.");
+	        stopTable = WordlistLoader.getWordtable(file);
+	} catch (IOException e) {
+	        throw new ConfigurationException(e);
+	}
+		
+	log.info(stopTable.size()+" stop words loaded.");
+	
     }
 }

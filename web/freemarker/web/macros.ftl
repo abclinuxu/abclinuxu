@@ -7,7 +7,7 @@
  </#if>
 </#macro>
 
-<#macro showArticle(relation timeFormat)>
+<#macro showArticle(relation dateFormat...)>
     <#local clanek=relation.child,
         autor=TOOL.createUser(TOOL.xpath(clanek,"/data/author")),
         tmp=TOOL.groupByType(clanek.children),
@@ -16,13 +16,13 @@
     <div class="cl">
         <h1 class="st_nadpis"><a href="/clanky/show/${relation.id}">${TOOL.xpath(clanek,"data/name")}</a></h1>
         <p>${TOOL.xpath(clanek,"/data/perex")}</p>
-        <p class="cl_inforadek">${DATE.show(clanek.created, timeFormat)} |
+        <p class="cl_inforadek">${DATE.show(clanek.created, dateFormat[0])} |
             <a href="/Profile/${autor.id}">${autor.name}</a> |
             Pøeèteno: ${TOOL.getCounterValue(clanek)}x
             <#if diz?exists>
                 | <a href="/clanky/show/${diz.relationId}">
                 Komentáøù: ${diz.responseCount}</a
-                ><#if diz.responseCount gt 0>, poslední ${DATE.show(diz.updated, timeFormat)}</#if>
+                ><#if diz.responseCount gt 0>, poslední ${DATE.show(diz.updated, dateFormat[1]?default(dateFormat[0]))}</#if>
             </#if>
             <#if rating!=0>| Hodnocení: ${rating?string["#0.00"]}</#if>
         </p>
@@ -63,7 +63,7 @@
   ${TOOL.xpath(comment.data,"title")?if_exists}<br>
   <#if showControls>
    <a href="${URL.make("/EditDiscussion/"+relId+"?action=add&amp;dizId="+dizId+"&amp;threadId="+comment.id+extra[0]?default(""))}">Odpovìdìt</a> |
-   <a href="${URL.make("#"+comment.id)}">Link</a>
+   <a href="#${comment.id}">Link</a>
    <#if (comment.parent>0)>
     | <a href="#${comment.parent}">Nahoru</a>
    </#if>

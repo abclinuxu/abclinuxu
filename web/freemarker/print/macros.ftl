@@ -16,7 +16,7 @@
  </p>
 </#macro>
 
-<#macro showArticle(relation timeFormat)>
+<#macro showArticle(relation dateFormat...)>
  <#local clanek=relation.child,
          autor=TOOL.createUser(TOOL.xpath(clanek,"/data/author")),
          tmp=TOOL.groupByType(clanek.children) >
@@ -24,14 +24,14 @@
   <h1 class="uvod"><a href="/clanky/show/${relation.id}">
   ${TOOL.xpath(clanek,"data/name")}</a></h1>
   <span class="uvod">
-   ${DATE.show(clanek.created, timeFormat)}
+   ${DATE.show(clanek.created, dateFormat[0])}
    | <a href="/Profile/${autor.id}">${autor.name}</a>
    | Pøeèteno: ${TOOL.getCounterValue(clanek)}x
 
   <#if diz?exists>
    | <a href="/clanky/show/${diz.relationId}">
    Komentáøù: ${diz.responseCount}</a
-     ><#if diz.responseCount gt 0>, poslední ${DATE.show(diz.updated, timeFormat)}</#if>
+     ><#if diz.responseCount gt 0>, poslední ${DATE.show(diz.updated, dateFormat[1]?default(dateFormat[0]))}</#if>
   </#if>
 
   | Hodnocení:

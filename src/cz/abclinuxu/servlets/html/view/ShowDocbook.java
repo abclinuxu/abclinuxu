@@ -68,7 +68,7 @@ public class ShowDocbook implements AbcAction {
         print("<title>"+Tools.xpath(doc, "/data/name")+"</title>", 0, true);
 
         print("<articleinfo>", 0, true);
-        print("<date>"+Constants.czDateOnly.format(article.getCreated())+"</date>", 1, true);
+        print("<date>"+Constants.czDayMonthYear.format(article.getCreated())+"</date>", 1, true);
         printAuthor(writer, doc, persistance);
         print("</articleinfo>", 0, true);
 

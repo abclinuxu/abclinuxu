@@ -10,7 +10,7 @@
  <#assign honorar=relation.child, clanek=TOOL.sync(relation.parent), autor=TOOL.createUser(honorar.owner)>
   <td><a href="/Profile/${autor.id}">${autor.name}</a></td>
   <td align="right">${TOOL.xpath(honorar,"/data/amount")}</td>
-  <td align="right">${DATE.show(honorar.created, "CZ_DATE")}</td>
+  <td align="right">${DATE.show(honorar.created, "CZ_DMY")}</td>
   <td>${TOOL.xpath(clanek,"/data/name")}</td>
  </tr>
 </#list>
