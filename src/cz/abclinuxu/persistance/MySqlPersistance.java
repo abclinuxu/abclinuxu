@@ -61,6 +61,13 @@ public class MySqlPersistance implements Persistance {
         this.cache = cache;
     }
 
+    /**
+     * Removes content of associated cache.
+     */
+    public void clearCache() {
+        cache.clear();
+    }
+
     public void create(GenericObject obj) {
         Connection con = null; PreparedStatement statement = null;
         if ( obj==null ) throw new PersistanceException("Pokus ulozit prazdny objekt!",AbcException.DB_INCOMPLETE);

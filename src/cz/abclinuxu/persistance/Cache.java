@@ -31,4 +31,9 @@ public interface Cache {
      * it is wise to delete it from cache too. Otherwise inconsistency occurs.
      */
     void remove(GenericObject obj);
+
+    /**
+     * Flushes content of Cache, so after this call it will be empty.
+     */
+    void clear();
 }

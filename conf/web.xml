@@ -204,6 +204,11 @@
         <servlet-name>ProxoolAdmin</servlet-name>
         <servlet-class>org.logicalcobwebs.proxool.admin.servlet.AdminServlet</servlet-class>
     </servlet>
+   
+    <servlet>
+        <servlet-name>ClearCacheServlet</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.admin.ClearCacheServlet</servlet-class>
+    </servlet>
 
 
     <servlet-mapping>
@@ -363,8 +368,13 @@
         <servlet-name>Survey</servlet-name><url-pattern>/Survey</url-pattern>
     </servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>ClearCacheServlet</servlet-name><url-pattern>/ClearCache</url-pattern>
+    </servlet-mapping>
+
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
         <welcome-file>index.html</welcome-file>
+        <welcome-file>index.htm</welcome-file>
     </welcome-file-list>
 </web-app>

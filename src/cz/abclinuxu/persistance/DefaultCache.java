@@ -33,7 +33,7 @@ public class DefaultCache extends TimerTask implements Cache {
     public static final int MAX_LRU = 5*60*1000; // 5 minutes
 
     public DefaultCache() {
-        data = new HashMap(100);
+        data = new HashMap(1000);
         modCount = 0;
         AbcInit.getScheduler().schedule(this,((int)1.5*MAX_LRU),MAX_LRU);
 //        AbcInit.getScheduler().schedule(this,((int)0.5*MAX_LRU),3*60*1000);
@@ -148,6 +148,15 @@ public class DefaultCache extends TimerTask implements Cache {
         } catch (Exception e) {
             log.error("Cannot delete "+obj+" from cache!",e);
         }
+    }
+
+    /**
+     * Flushes content of Cache, so after this call it will be empty.
+     */
+    public void clear() {
+        data.clear();
+        modCount++;
+        log.info("Cache cleared upon request.");
     }
 
     /**

@@ -125,4 +125,9 @@ public interface Persistance {
      * Sets cache.
      */
     public void setCache(Cache cache);
+
+    /**
+     * Removes content of associated cache.
+     */
+    public void clearCache();
 }

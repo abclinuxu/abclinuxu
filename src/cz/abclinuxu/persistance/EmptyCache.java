@@ -24,4 +24,7 @@ public class EmptyCache implements Cache {
 
     public void remove(GenericObject obj) {
     }
+
+    public void clear() {
+    }
 }
