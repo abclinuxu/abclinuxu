@@ -16,10 +16,8 @@
 </#if>
 
 <#if THREAD?exists>
- <#if ! PREVIEW?exists>
-     <h1>Pøíspìvek na kterı reagujete</h1>
-     <@lib.showComment THREAD, 0, 0, false />
- </#if>
+ <h1>Pøíspìvek na kterı reagujete</h1>
+ <@lib.showComment THREAD, 0, 0, false />
 
  <script language="javascript1.2" type="text/javascript">
     original = "${TOOL.xpath(THREAD.data,"text")?js_string}";
