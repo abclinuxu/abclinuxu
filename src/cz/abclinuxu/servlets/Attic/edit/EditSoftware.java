@@ -312,26 +312,27 @@ public class EditSoftware extends AbcFMServlet {
 
     protected String actionEditItem2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
-        Relation relation = (Relation) env.get(VAR_RELATION);
-
-        Item item = (Item) relation.getChild();
-        Document document = item.getData();
-        Node node = document.selectSingleNode("data/name");
 
         String tmp = (String) params.get(PARAM_CHOOSE_ICON);
-        if ( ! Misc.empty(tmp) ) {
+        if ( !Misc.empty(tmp) ) {
             // it is not possible to use UrlUtils.dispatch(), because it would prepend prefix!
             RequestDispatcher dispatcher = request.getRequestDispatcher("/SelectIcon");
             dispatcher.forward(request, response);
             return null;
         }
 
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item item = (Item) relation.getChild();
+        Document document = item.getData();
+
+        Node node = document.selectSingleNode("data/name");
         tmp = (String) params.get(PARAM_NAME);
         if ( Misc.empty(tmp) ) {
             ServletUtils.addError(PARAM_NAME,"Nevyplnil jste název druhu!",env,null);
             return FMTemplateSelector.select("EditSoftware","edit_item",env,request);
         }
+        node.setText(tmp);
 
         node = DocumentHelper.makeElement(document, "data/icon");
         tmp = (String) params.get(PARAM_ICON);
@@ -341,7 +342,6 @@ public class EditSoftware extends AbcFMServlet {
         }
         node.setText(tmp);
 
-        node.setText(tmp);
         persistance.update(item);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
