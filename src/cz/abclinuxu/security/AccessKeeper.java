@@ -127,7 +127,7 @@ public class AccessKeeper implements Configurable {
         response.addCookie(cookie);
 
         if (storedSessions==null) {
-            storedSessions = new HashMap();
+            storedSessions = Collections.synchronizedMap(new HashMap());
             sessionsMap.put(id, storedSessions);
         }
 
@@ -139,23 +139,25 @@ public class AccessKeeper implements Configurable {
      * Proxy aware code, that extracts IP address of the client.
      */
     private String getClientIPAddress(HttpServletRequest request) {
-        String ip = request.getHeader("CLIENT-IP");
-        if (ip!=null)
-            return ip;
+        String remoteAddress = request.getRemoteAddr();
 
-        ip = request.getHeader("X_FORWARDED_FOR");
-        if (ip!=null)
-            return ip;
+        String header = request.getHeader("CLIENT-IP");
+        if (header!=null)
+            return remoteAddress+"#"+header;
 
-        ip = request.getHeader("FORWARDED_FOR");
-        if (ip!=null)
-            return ip;
+        header = request.getHeader("X_FORWARDED_FOR");
+        if (header!=null)
+            return remoteAddress + "#" + header;
 
-        ip = request.getHeader("FORWARDED");
-        if (ip!=null)
-            return ip;
+        header = request.getHeader("FORWARDED_FOR");
+        if (header!=null)
+            return remoteAddress + "#" + header;
 
-        return request.getRemoteAddr();
+        header = request.getHeader("FORWARDED");
+        if (header!=null)
+            return remoteAddress + "#" + header;
+
+        return remoteAddress;
     }
 
     /**
