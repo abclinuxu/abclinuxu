@@ -6,7 +6,6 @@
  */
 package cz.abclinuxu.servlets.edit;
 
-import cz.abclinuxu.servlets.select.SelectIcon;
 import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.*;
@@ -286,7 +285,7 @@ public class EditSoftware extends AbcFMServlet {
 
         // run monitor
         url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/ViewRelation?rid="+relation.getId();
-        Item item = (Item) persistance.findById(relation.getParent());
+        Item item = (Item) persistance.findById(relation.getChild());
         MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.ITEM, item, url);
         MonitorPool.scheduleMonitorAction(action);
 
