@@ -46,6 +46,12 @@
     </servlet>
 
     <servlet>
+        <servlet-name>FindContext</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.view.FindContext</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+
+    <servlet>
         <servlet-name>ViewCategory</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.view.ViewCategory</servlet-class>
         <load-on-startup>2</load-on-startup>
@@ -60,6 +66,12 @@
     <servlet>
         <servlet-name>ViewUser</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.view.ViewUser</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Search</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.view.Search</servlet-class>
         <load-on-startup>2</load-on-startup>
     </servlet>
 
@@ -179,6 +191,13 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ViewRelation</servlet-name><url-pattern>/drivers/ViewRelation</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FindContext</servlet-name><url-pattern>/ViewRelation</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Search</servlet-name><url-pattern>/Search</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
