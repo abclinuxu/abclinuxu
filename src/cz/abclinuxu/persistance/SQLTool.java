@@ -10,8 +10,7 @@ import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.exceptions.PersistanceException;
-import cz.abclinuxu.persistance.extra.LimitQualifier;
-import cz.abclinuxu.persistance.extra.Qualifier;
+import cz.abclinuxu.persistance.extra.*;
 import cz.abclinuxu.persistance.impl.MySqlPersistance;
 
 import java.util.prefs.Preferences;
@@ -203,7 +202,8 @@ public final class SQLTool implements Configurable {
                 LimitQualifier limitQualifier = (LimitQualifier) qualifier;
                 params.add(new Integer(limitQualifier.getOffset()));
                 params.add(new Integer(limitQualifier.getCount()));
-            }
+            } else if ( qualifier instanceof CompareCondition )
+                appendCompareCondition(sb, (CompareCondition) qualifier,  params);
         }
     }
 
@@ -823,5 +823,49 @@ public final class SQLTool implements Configurable {
 
         log.fatal("Hodnota SQL prikazu "+name+" nebyla nastavena!");
         return null;
+    }
+
+    /**
+     * Append comparation condition to stringbuffer.
+     */
+    private void appendCompareCondition(StringBuffer sb, CompareCondition condition, List params) {
+        sb.append(" and "); // expect, that each sql command starts with at least one condition
+
+        Field field = condition.getField();
+        if (field==Field.CREATED)
+            sb.append("vytvoreno");
+        else if (field==Field.UPDATED)
+            sb.append("zmeneno");
+        else if (field==Field.ID)
+            sb.append("cislo");
+        else if (field==Field.TYPE)
+            sb.append("typ");
+        else if (field==Field.OWNER)
+            sb.append("pridal");
+        else if (field==Field.DATA)
+            sb.append("data");
+
+        Operation operation = condition.getOperation();
+        if (operation==Operation.GREATER)
+            sb.append(">");
+        else if (operation==Operation.GREATER_OR_EQUAL)
+            sb.append(">=");
+        else if (operation==Operation.SMALLER)
+            sb.append("<");
+        else if (operation==Operation.SMALLER_OR_EQUAL)
+            sb.append("<=");
+        else if (operation==Operation.EQUAL)
+            sb.append("=");
+        else if (operation==Operation.NOT_EQUAL)
+            sb.append("!=");
+        else if (operation==Operation.LIKE)
+            sb.append(" like ");
+
+        sb.append("? ");
+
+        Object value = condition.getValue();
+        if (value instanceof Date)
+            value = new java.sql.Date(((Date)value).getTime());
+        params.add(value);
     }
 }
