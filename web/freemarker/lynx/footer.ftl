@@ -33,14 +33,6 @@
 
 <p>
  <b>Slu¾by</b>
- <a href="${URL.make("/hardware/dir/1")}">Hardware
- (${VARS.counter.HARDWARE})</a>,
- <a href="${URL.make("/software/dir/317")}">Software
- (${VARS.counter.SOFTWARE})</a>,
- <a href="${URL.make("/drivers/dir/318")}">Ovladaèe
- (${VARS.counter.DRIVERS})</a>,
- <a href="${URL.make("/hardware/dir/3739")}">Diskuse
- (${VARS.counter.FORUM})</a>,
  <a href="${URL.make("/clanky/dir/3500")}">Po¾adavky
  (${VARS.counter.REQUESTS})</a>
 </p>
