@@ -59,42 +59,76 @@ public class DateTool implements Configurable {
     public String show(Date date, String format) {
         if ( date==null ) return null;
 
-        if ( ISO_FORMAT.equalsIgnoreCase(format) )
-            return Constants.isoFormat.format(date);
-        if ( ONLY_TIME.equalsIgnoreCase(format) )
-            return Constants.czTimeOnly.format(date);
+        if ( ISO_FORMAT.equalsIgnoreCase(format) ) {
+            synchronized (Constants.isoFormat) {
+                return Constants.isoFormat.format(date);
+            }
+        }
+
+        if ( ONLY_TIME.equalsIgnoreCase(format) ) {
+            synchronized (Constants.czTimeOnly) {
+                return Constants.czTimeOnly.format(date);
+            }
+        }
 
         long ms = date.getTime();
         boolean dayNotText = ms<yesterday || ms>tommorow;
 
         if ( CZ_SHORT.equalsIgnoreCase(format) ) {
-            if (dayNotText)
-                return Constants.czShortFormat.format(date);
-            else
-                return getCzDay(ms) + " " + Constants.czTimeOnly.format(date);
+            if (dayNotText) {
+                synchronized (Constants.czShortFormat) {
+                    return Constants.czShortFormat.format(date);
+                }
+            } else {
+                synchronized (Constants.czTimeOnly) {
+                    return getCzDay(ms) + " " + Constants.czTimeOnly.format(date);
+                }
+            }
         }
+
         if ( CZ_FULL.equalsIgnoreCase(format) ) {
-            if (dayNotText)
-                return Constants.czFormat.format(date);
-            else
-                return getCzDay(ms) + " " + Constants.czTimeOnly.format(date);
+            if (dayNotText) {
+                synchronized (Constants.czFormat) {
+                    return Constants.czFormat.format(date);
+                }
+            } else {
+                synchronized (Constants.czTimeOnly) {
+                    return getCzDay(ms) + " " + Constants.czTimeOnly.format(date);
+                }
+            }
         }
+
         if ( CZ_DAY_MONTH_YEAR.equalsIgnoreCase(format) ) {
-            if (dayNotText)
-                return Constants.czDayMonthYear.format(date);
-            else
+            if (dayNotText) {
+                synchronized (Constants.czDayMonthYear) {
+                    return Constants.czDayMonthYear.format(date);
+                }
+            } else {
                 return getCzDay(ms);
+            }
         }
+
         if ( CZ_DAY_MONTH.equalsIgnoreCase(format) ) {
-            if (dayNotText)
-                return Constants.czDayMonth.format(date);
-            else
+            if (dayNotText) {
+                synchronized (Constants.czDayMonth) {
+                    return Constants.czDayMonth.format(date);
+                }
+            } else {
                 return getCzDay(ms);
+            }
         }
-        if ( CZ_FULL_TEXT.equalsIgnoreCase(format) )
-            return Constants.czFormatTxt.format(date);
-        if ( CZ_ONLY_DAY.equalsIgnoreCase(format) )
-            return Constants.czDay.format(date);
+
+        if ( CZ_FULL_TEXT.equalsIgnoreCase(format) ) {
+            synchronized (Constants.czFormatTxt) {
+                return Constants.czFormatTxt.format(date);
+            }
+        }
+
+        if ( CZ_ONLY_DAY.equalsIgnoreCase(format) ) {
+            synchronized (Constants.czDay) {
+                return Constants.czDay.format(date);
+            }
+        }
 
         log.warn("Neznamy format data: "+format);
         return null;
@@ -121,7 +155,10 @@ public class DateTool implements Configurable {
      * Parses string in ISO format and formats it according to selected format.
      */
     public String show(String date, String format) throws ParseException {
-        Date d = Constants.isoFormat.parse(date);
+        Date d = null;
+        synchronized(Constants.isoFormat) {
+            d = Constants.isoFormat.parse(date);
+        }
         return show(d,format);
     }
 

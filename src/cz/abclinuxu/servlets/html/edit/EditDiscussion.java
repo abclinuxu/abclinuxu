@@ -643,7 +643,9 @@ public class EditDiscussion implements AbcAction {
         Date lastUpdate = discussion.getCreated();
         if (comments>0) {
             element = (Element) commentList.get(comments-1);
-            lastUpdate = Constants.isoFormat.parse(element.elementText("created"));
+            synchronized (Constants.isoFormat) {
+                lastUpdate = Constants.isoFormat.parse(element.elementText("created"));
+            }
         }
         persistance.update(discussion);
         SQLTool.getInstance().setUpdatedTimestamp(discussion, lastUpdate);
@@ -895,7 +897,10 @@ public class EditDiscussion implements AbcAction {
             int commentsCount = commentList.size();
             DocumentHelper.makeElement(newItemRoot, "comments").setText(""+commentsCount);
             Element lastElement = (Element) commentList.get(commentsCount-1);
-            Date lastUpdate = Constants.isoFormat.parse(lastElement.elementText("created"));
+            Date lastUpdate = null;
+            synchronized (Constants.isoFormat) {
+                lastUpdate = Constants.isoFormat.parse(lastElement.elementText("created"));
+            }
 
             persistance.create(newDiz);
             SQLTool.getInstance().setUpdatedTimestamp(newDiz, lastUpdate);
@@ -905,7 +910,9 @@ public class EditDiscussion implements AbcAction {
             commentsCount = commentList.size();
             DocumentHelper.makeElement(currentItemRoot, "comments").setText(""+commentsCount);
             lastElement = (Element) commentList.get(commentsCount-1);
-            lastUpdate = Constants.isoFormat.parse(lastElement.elementText("created"));
+            synchronized (Constants.isoFormat) {
+                lastUpdate = Constants.isoFormat.parse(lastElement.elementText("created"));
+            }
 
             persistance.update(currentDiz);
             SQLTool.getInstance().setUpdatedTimestamp(currentDiz, lastUpdate);
@@ -1126,7 +1133,11 @@ public class EditDiscussion implements AbcAction {
      * @return false, if there is a major error.
      */
     static boolean setCreated(Element root) {
-        DocumentHelper.makeElement(root, "created").setText(Constants.isoFormat.format(new Date()));
+        String date;
+        synchronized (Constants.isoFormat) {
+            date = Constants.isoFormat.format(new Date());
+        }
+        DocumentHelper.makeElement(root, "created").setText(date);
         return true;
     }
 

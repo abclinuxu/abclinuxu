@@ -101,7 +101,9 @@ public class EditArticle implements AbcAction {
 
     private String actionAddStep1(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        params.put(PARAM_PUBLISHED,Constants.isoFormat.format(new Date()));
+        synchronized (Constants.isoFormat) {
+            params.put(PARAM_PUBLISHED,Constants.isoFormat.format(new Date()));
+        }
         return FMTemplateSelector.select("EditArticle","add",env,request);
     }
 
@@ -173,7 +175,9 @@ public class EditArticle implements AbcAction {
         node = document.selectSingleNode("/data/perex");
         if ( node!=null )
             params.put(PARAM_PEREX,node.getText());
-        params.put(PARAM_PUBLISHED, Constants.isoFormat.format(item.getCreated()));
+        synchronized (Constants.isoFormat) {
+            params.put(PARAM_PUBLISHED, Constants.isoFormat.format(item.getCreated()));
+        }
         node = document.selectSingleNode("/data/author");
         params.put(PARAM_AUTHOR,node.getText());
         node = document.selectSingleNode("/data/forbid_discussions");
@@ -310,7 +314,10 @@ public class EditArticle implements AbcAction {
      */
     private boolean setPublishDate(Map params, Item item, Map env) {
         try {
-            Date publish = Constants.isoFormat.parse((String) params.get(PARAM_PUBLISHED));
+            Date publish = null;
+            synchronized (Constants.isoFormat) {
+                publish = Constants.isoFormat.parse((String) params.get(PARAM_PUBLISHED));
+            }
             item.setCreated(publish);
         } catch (ParseException e) {
             ServletUtils.addError(PARAM_PUBLISHED, "Správný formát je 2002-02-10 06:22", env, null);

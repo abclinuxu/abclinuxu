@@ -57,7 +57,9 @@ public class Misc {
      */
     public static Date parseDate(String date, SimpleDateFormat format) {
         try {
-            return format.parse(date);
+            synchronized (format) {
+                return format.parse(date);
+            }
         } catch (ParseException e) {
             return new Date();
         }

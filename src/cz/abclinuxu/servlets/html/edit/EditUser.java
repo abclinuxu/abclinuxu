@@ -232,7 +232,11 @@ public class EditUser implements AbcAction, Configurable {
         Document document = DocumentHelper.createDocument();
         DocumentHelper.makeElement(document, "/data/settings");
         Element system = DocumentHelper.makeElement(document, "/data/system");
-        system.addElement("registration_date").setText(Constants.isoFormat.format(new Date()));
+        String date;
+        synchronized (Constants.isoFormat) {
+            date = Constants.isoFormat.format(new Date());
+        }
+        system.addElement("registration_date").setText(date);
         Element email = DocumentHelper.makeElement(document, "/data/communication/email");
         email.addAttribute("valid", "yes");
         managed.setData(document);

@@ -334,7 +334,10 @@ public class ServletUtils implements Configurable {
      * @param response cookie will be placed here
      */
     private static void handleLoggedIn(User user, boolean cookieExists, HttpServletResponse response) {
-        String now = Constants.isoFormat.format(new Date());
+        String now;
+        synchronized (Constants.isoFormat) {
+            now = Constants.isoFormat.format(new Date());
+        }
         DocumentHelper.makeElement(user.getData(), "data/system/last_login_date").setText(now);
         PersistanceFactory.getPersistance().update(user); // session bug here
 

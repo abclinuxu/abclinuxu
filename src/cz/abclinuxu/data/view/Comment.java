@@ -115,7 +115,9 @@ public class Comment {
             String value = data.elementText("created");
             try {
                 if ( value!=null && value.length()>0)
-                    created = Constants.isoFormat.parse(value);
+                    synchronized (Constants.isoFormat) {
+                        created = Constants.isoFormat.parse(value);
+                    }
                 else
                     log.error("Empty date in comment "+getId()+"! Comment:\n"+data.asXML());
             } catch (Exception e) {

@@ -388,7 +388,10 @@ public class EditNews implements AbcAction {
         if (tmp==null || tmp.length()==0)
             return true;
         try {
-            Date date = Constants.isoFormat.parse(tmp);
+            Date date;
+            synchronized (Constants.isoFormat) {
+                date = Constants.isoFormat.parse(tmp);
+            }
             item.setCreated(date);
             return true;
         } catch (ParseException e) {
