@@ -235,8 +235,21 @@ public class AbcServlet extends VelocityServlet {
                     if ( value==null || value.length()<6 ) break;
 
                     int position = value.indexOf(':');
-                    int id = Integer.parseInt(value.substring(0,position));
-                    int hash = Integer.parseInt(value.substring(position+1));
+                    String sid="",shash="";
+                    if ( position!=-1 ) {
+                        sid = value.substring(0,position);
+                        shash = value.substring(position+1);
+                    } else {
+                        position = value.indexOf("%3A");
+                        if ( position==-1 ) {
+                            log.debug("Cookie doesn't contain colon: "+value);
+                            break;
+                        }
+                        sid = value.substring(0,position);
+                        shash = value.substring(position+3);
+                    }
+                    int id = Integer.parseInt(sid);
+                    int hash = Integer.parseInt(shash);
 
                     try {
                         user = (User) persistance.findById(new User(id));
@@ -341,6 +354,7 @@ public class AbcServlet extends VelocityServlet {
         if ( !(cause instanceof IOException) )
             log.error(url.toString(),cause);
 
+//        response.setLocale(); this may help fix the issue with non ISO-8859-1 character
         ServletOutputStream os = response.getOutputStream();
         os.println("<html><body bgcolor=\"#ffffff\">");
         os.println("<h2>Stránka nebyla nalezena</h2>");
