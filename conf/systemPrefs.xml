@@ -2,430 +2,430 @@
 <!DOCTYPE preferences SYSTEM "http://java.sun.com/dtd/preferences.dtd">
 
 <preferences EXTERNAL_XML_VERSION="1.0">
-  <root type="system">
-    <map>
-        <entry key="location" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/systemPrefs.xml" />
-    </map>
-    <node name="cz">
-      <map/>
-      <node name="abclinuxu">
-        <map/>
-        <node name="utils">
-          <map/>
-          <node name="config">
+    <root type="system">
+        <map>
+            <entry key="location" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/systemPrefs.xml" />
+        </map>
+        <node name="cz">
             <map/>
-            <node name="impl">
-              <map/>
-              <node name="LoggingConfig">
-                <map>
-                  <entry key="file" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/log4j.xml"/>
-                </map>
-              </node>
-              <node name="AbcConfig">
-                <map>
-                  <entry key="deploy.path" value="@DEPLOY_ABCLINUXU@"/>
-                  <entry key="viewuser.page.size" value="20"/>
-                  <entry key="viewindex.discussions.count" value="15"/>
-                  <entry key="template.news.count" value="10"/>
-                </map>
-              </node>
-            </node>
-          </node>
-          <node name="search">
-            <map/>
-            <node name="AbcCzechAnalyzer">
-              <map>
-                <entry key="stop.words.file" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/stop_words.txt"/>
-              </map>
-            </node>
-            <node name="CreateIndex">
-              <map>
-                <entry key="path" value="@DEPLOY_ABCLINUXU@/WEB-INF/index/"/>
-                <entry key="last.run.file" value="last_run.txt"/>
-              </map>
-            </node>
-          </node>
-          <node name="news">
-            <map/>
-            <node name="NewsCategories">
-              <map>
-                <entry key="categories.file" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/news_categories.xml"/>
-              </map>
-            </node>
-            <node name="Lottery">
-              <map>
-                <entry key="admins" value="2121,1083,1768,403,1742,682,1,2105,1561"/>
-              </map>
-            </node>
-          </node>
-          <node name="freemarker">
-              <map/>
-              <node name="FMUtils">
-                  <map>
-                      <entry key="directory.templates" value="@DEPLOY_ABCLINUXU@/WEB-INF/freemarker"/>
-                      <entry key="template.update" value="@TEMPLATE.UPDATE.INTERVAL@"/>
-                      <entry key="error.handler" value="@TEMPLATE.ERROR.HANDLER@"/>
-                  </map>
-              </node>
-              <node name="Tools">
-                  <map>
-                      <entry key="RE_REMOVE_TAGS" value="&lt;(/)?[a-zA-Z][^&gt;]*&gt;"/>
-                      <entry key="RE_VLNKA" value="((^|\s)\w)\s+(\S+)"/>
-                      <entry key="REPLACEMENT_VLNKA" value="$1&amp;nbsp;$3"/>
-                  </map>
-              </node>
-          </node>
-          <node name="email">
-              <map/>
-              <node name="EmailSender">
-                  <map>
-                      <entry key="smtp.server" value="localhost"/>
-                      <entry key="admin.address" value="admin@abclinuxu.cz"/>
-                      <entry key="debug.smtp" value="false"/>
-                  </map>
-              </node>
-              <node name="monitor">
-                  <map/>
-                  <node name="InstantSender">
-                      <map>
-                          <entry key="sleep" value="60"/>
-                      </map>
-                  </node>
-                  <node name="DriverDecorator">
-                      <map>
-                          <entry key="subject" value="AbcMonitor: uprava ovladace"/>
-                          <entry key="action.edit" value="upravil ovladac"/>
-                          <entry key="action.remove" value="smazal ovladac"/>
-                      </map>
-                  </node>
-                  <node name="ItemDecorator">
-                      <map>
-                          <entry key="subject" value="AbcMonitor: zmena v polozce"/>
-                          <entry key="action.add" value="pridal zaznam"/>
-                          <entry key="action.edit" value="upravil zaznam"/>
-                          <entry key="action.remove" value="smazal polozku"/>
-                      </map>
-                  </node>
-                  <node name="DiscussionDecorator">
-                      <map>
-                          <entry key="subject" value="AbcMonitor: zmena v diskusi"/>
-                          <entry key="action.add" value="pridal komentar"/>
-                          <entry key="action.remove" value="smazal diskusi"/>
-                          <entry key="action.censore" value="uvalil cenzuru na komentar"/>
-                      </map>
-                  </node>
-              </node>
-              <node name="forum">
-                  <map/>
-                  <node name="CommentSender">
-                      <map>
-                          <entry key="sleep" value="30"/>
-                      </map>
-                  </node>
-              </node>
-          </node>
-          <node name="feeds">
-              <map/>
-              <node name="FeedGenerator">
-                  <map>
-                      <entry key="clanky" value="auto/abc.rss"/>
-                      <entry key="diskuse" value="auto/diskuse.rss"/>
-                      <entry key="ovladace" value="auto/ovladace.rss"/>
-                      <entry key="hardware" value="auto/hardware.rss"/>
-                      <entry key="zpravicky" value="auto/zpravicky.rss"/>
-                      <entry key="blog" value="auto/blog.rss"/>
-                      <entry key="blogs" value="auto/blog/"/>
-                      <entry key="trafika" value="auto/abc.dat"/>
-                      <entry key="anneca" value="auto/abc2.dat"/>
-                      <entry key="szm" value="auto/abc_szm.xml"/>
-                      <entry key="news.word.limit" value="10"/>
-                  </map>
-              </node>
-          </node>
-          <node name="format">
-              <map/>
-              <node name="FormatDetector">
-                  <map>
-                      <entry key="RE_BREAK" value="(&lt;br&gt;)|(&lt;p&gt;)|(&lt;div&gt;)"/>
-                  </map>
-              </node>
-              <node name="SharedConfig">
-                  <map>
-                      <entry key="usmev" value="&lt;img src=&quot;/images/smile/usmev.gif&quot; alt=&quot;:-)&quot; class=&quot;emo&quot;&gt;"/>
-                      <entry key="smich" value="&lt;img src=&quot;/images/smile/smich.gif&quot; alt=&quot;:-D&quot; class=&quot;emo&quot;&gt;"/>
-                      <entry key="mrk" value="&lt;img src=&quot;/images/smile/mrk.gif&quot; alt=&quot;;-)&quot; class=&quot;emo&quot;&gt;"/>
-                      <entry key="smutek" value="&lt;img src=&quot;/images/smile/smutek.gif&quot; alt=&quot;:-(&quot; class=&quot;emo&quot;&gt;"/>
-                  </map>
-              </node>
-          </node>
-          <node name="DateTool">
-              <map>
-                  <entry key="today" value="dnes" />
-                  <entry key="yesterday" value="vèera" />
-              </map>
-          </node>
-        </node>
-        <node name="persistance">
-          <map/>
-          <node name="cache">
-              <map/>
-              <node name="LRUCache">
-                  <map>
-                      <entry key="size" value="3000"/>
-                  </map>
-              </node>
-              <node name="SynchronizedCache">
-                  <map>
-                      <entry key="size" value="3000"/>
-                  </map>
-              </node>
-          </node>
-          <node name="PersistanceFactory">
-            <map>
-              <entry key="url.live" value="proxool.abc"/>
-              <entry key="url.test" value="jdbc:mysql://localhost/unit?user=literakl&amp;password=lkaretil&amp;useUnicode=true&amp;characterEncoding=ISO-8859-2"/>
-              <entry key="proxool" value="WEB-INF/conf/proxool.xml"/>
-            </map>
-          </node>
-          <node name="Nursery">
-              <map>
-                  <entry key="cache.size" value="750"/>
-
-                  <entry key="no.children.for.section" value="A,B"/>
-                  <!-- zpravicky -->
-                  <entry key="no.children.for.section.A" value="452"/>
-                  <!-- vykladovy slovnik -->
-                  <entry key="no.children.for.section.B" value="569"/>
-              </map>
-          </node>
-          <node name="SQLTool">
-            <map>
-              <entry key="relations.record.by.type" value="select R.cislo from zaznam Z, relace R where typ=? and Z.cislo=R.potomek and typ_potomka='Z'"/>
-              <entry key="relations.parent.record.by.type" value="select distinct R.predchozi from zaznam Z, relace R where typ=? and Z.cislo=R.potomek and typ_potomka='Z'"/>
-              <entry key="relations.item.by.type" value="select R.cislo from polozka P, relace R where typ=? and P.cislo=R.potomek and typ_potomka='P'"/>
-              <entry key="relations.discussion" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek where R.typ_potomka='P' and R.typ_predka='K' and P.typ=3"/>
-              <entry key="relations.discussion.in.section" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek where R.predchozi=? and P.typ=3"/>
-              <entry key="relations.article" value="select R.cislo from polozka P, relace R where R.predchozi in (2,3,4,5,6,251,5324,8546,12448,14358) and R.typ_potomka='P' and P.typ=2 and P.cislo=R.potomek and P.vytvoreno&lt;now()"/>
-              <entry key="relations.article.within.period" value="select R.cislo from relace R left join polozka P on R.potomek=P.cislo where R.typ_potomka='P' and R.predchozi in (2,3,4,5,6,251,5324,8546,12448) and P.typ=2 and P.vytvoreno&gt;? and P.vytvoreno&lt;?"/>
-              <entry key="relations.news" value="select R.cislo from polozka P, relace R where R.predchozi=42932 and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek"/>
-              <entry key="relations.news.within.period" value="select R.cislo from polozka P, relace R where R.predchozi=42932 and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek and vytvoreno&gt;? and vytvoreno&lt;?"/>
-              <entry key="relations.news.by.user" value="select R.cislo from polozka P, relace R where P.pridal=? and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek"/>
-              <entry key="relations.record.by.user.and.type" value="select R.cislo from relace R left join zaznam Z on R.potomek=Z.cislo where R.typ_potomka='Z' and Z.pridal=? and Z.typ=?"/>
-              <entry key="relations.article.by.user" value="select R.cislo from relace R left join polozka P on (P.cislo=R.potomek) where R.predchozi in (2,3,4,5,6,251,5324,8546,12448,14358) and typ_potomka='P' and P.typ=2 and P.data like concat('%&lt;author&gt;',?,'&lt;/author%') and P.vytvoreno&lt;now() group by potomek"/>
-              <entry key="relations.question.by.user" value="select R.cislo from relace R, polozka P where R.typ_potomka='P' and R.potomek=P.cislo and R.typ_predka='K' and R.predek!=-1 and P.typ=3 and P.pridal=?"/>
-              <entry key="relations.comment.by.user" value="select R.cislo from relace R, relace P, zaznam Z where R.potomek=P.predek and R.typ_potomka='P' and R.predek!=-1 and P.potomek=Z.cislo and P.typ_potomka='Z' and Z.typ=4 and Z.data like concat('%&lt;author_id&gt;',?,'&lt;/%')"/>
-              <entry key="relations.section.by.type" value="select R.cislo from relace R left join kategorie K on (K.cislo=R.potomek) where typ_potomka='K' and K.typ=?"/>
-              <entry key="relation.dictionary.by.urlname" value="select R.cislo from relace R, polozka P where R.typ_potomka='P' and R.potomek=P.cislo and P.typ=10 and P.podtyp=?"/>
-              <entry key="relation.by.url" value="select cislo from relace where url=?"/>
-              <entry key="users.with.weekly.email" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;>&lt;weekly_summary>yes%'"/>
-              <entry key="users.with.forum.by.email" value="select cislo from uzivatel where data like '%&lt;email valid=&quot;yes&quot;%&lt;forum&gt;yes%&lt;/email%'"/>
-              <entry key="users.with.roles" value="select cislo from uzivatel where data like '%&lt;roles>%'"/>
-              <entry key="users.in.group" value="select cislo from uzivatel where data like concat('%&lt;group&gt;',?,'&lt;/group%')"/>
-              <entry key="max.poll" value="select max(cislo) from anketa"/>
-              <entry key="max.user" value="select max(cislo) from uzivatel"/>
-              <entry key="insert.last.comment" value="replace into komentar values(?,?,?,NULL);"/>
-              <entry key="get.last.comment" value="select posledni from komentar where kdo=? and diskuse=?" />
-              <entry key="get.xth.comment.date" value="select kdy from komentar where kdo=? order by kdy desc limit ?,1" />
-              <entry key="delete.old.comments" value="delete from komentar where kdo=? and kdy&lt;=?" />
-              <entry key="items.with.type" value="select cislo from polozka where typ=?"/>
-              <entry key="count.articles.by.user" value="select count(*) from polozka where typ=2 and data like concat('%&lt;author&gt;',?,'&lt;/author%') and vytvoreno&lt;now()"/>
-              <entry key="insert.user.action" value="insert into akce values(?,?,?,NULL)" />
-              <entry key="get.user.action" value="select kdy from akce where kdo=? and relace=? and typ=?" />
-            </map>
-          </node>
-        </node>
-        <node name="scheduler">
-          <map/>
-            <node name="WeeklyEmail">
-              <map>
-                <entry key="subject" value="Tydenni souhrn clanku"/>
-                <entry key="from" value="admin@abclinuxu.cz"/>
-                <entry key="template" value="/mail/weekly.ftl"/>
-              </map>
-            </node>
-            <node name="WhatHappened">
-              <map>
-                <entry key="title" value="Událo se v týdnu {0}/{1,number,#}"/>
-                <entry key="perex" value="Ucelený pøehled èlánkù, zprávièek a diskusí za minulých 7 dní."/>
-                <entry key="author" value="5473"/>
-              </map>
-            </node>
-            <node name="UpdateKernel">
-              <map>
-                <entry key="file" value="WEB-INF/freemarker/include/kernel.txt"/>
-                <entry key="uri" value="http://www.kernel.org/kdist/finger_banner"/>
-                <entry key="regexp.stable" value="(The latest stable[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                <entry key="url.stable" value="ftp://ftp.cz.kernel.org/pub/linux/kernel/v2.6"/>
-                <entry key="regexp.stable.pre" value="(The latest prepatch for the stable[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                <entry key="regexp.devel" value="(The latest beta[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                <entry key="url.devel" value="ftp://ftp.cz.kernel.org/pub/linux/kernel/v2.7"/>
-                <entry key="regexp.devel.pre" value="(The latest prepatch for the beta[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                <entry key="regexp.24" value="(The latest 2.4[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                <entry key="url.24" value="ftp://ftp.cz.kernel.org/pub/linux/kernel/v2.4"/>
-                <entry key="regexp.24.pre" value="(The latest prepatch for the 2.4[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                <entry key="regexp.22" value="(The latest 2.2[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                <entry key="url.22" value="ftp://ftp.cz.kernel.org/pub/linux/kernel/v2.2"/>
-                <entry key="regexp.22.pre" value="(The latest prepatch for the 2.2[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                <entry key="regexp.20" value="(The latest 2.0[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                <entry key="url.20" value="ftp://ftp.cz.kernel.org/pub/linux/kernel/v2.0"/>
-                <entry key="regexp.20.pre" value="(The latest prepatch for the 2.0[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                <entry key="regexp.ac" value="(The latest -ac patch to the beta[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                <entry key="url.ac" value="http://www.kernel.org/pub/linux/kernel/people/alan/linux-2.6/"/>
-                <entry key="regexp.stable.mm" value="(The latest -mm patch to the stable[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                <entry key="url.stable.mm" value="ftp://ftp.cz.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/"/>
-              </map>
-            </node>
-            <node name="UnixshopFetcher">
-                <map>
-                    <entry key="file" value="WEB-INF/freemarker/include/unixshop.txt"/>
-                    <entry key="uri" value="http://www.unixshop.cz/top_export.php"/>
-                </map>
-            </node>
-            <node name="PraceRSSFetcher">
-                <map>
-                    <entry key="file_template" value="WEB-INF/freemarker/include/prace.txt"/>
-                    <entry key="file_index" value="WEB-INF/freemarker/include/prace_main.txt"/>
-                    <entry key="count_template" value="10"/>
-                    <entry key="count_index" value="4"/>
-                    <entry key="uri" value="http://prace.abclinuxu.cz/www/cvs.php"/>
-                </map>
-            </node>
-            <node name="EnsureWatchedDiscussionsLimit">
-                <map>
-                    <entry key="watched.discussions.limit" value="75"/>
-                </map>
-            </node>
-            <node name="VariableFetcher">
-                <map>
-                    <entry key="hardware" value="3"/>
-                    <entry key="drivers" value="3"/>
-                    <entry key="stories" value="6"/>
-                </map>
-            </node>
-        </node>
-        <node name="servlets">
-          <map/>
-          <node name="utils">
-            <map/>
-            <node name="ServletUtils">
-              <map>
-                  <entry key="upload.path" value="/tmp/upload"/>
-                  <entry key="max.upload.size" value="51200"/>
-              </map>
-            </node>
-            <node name="URLMapper">
-              <map>
-                  <entry key="config" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/url_mapping.xml"/>
-                  <entry key="domain" value="@DOMAIN_NAME@"/>
-              </map>
-            </node>
-          </node>
-          <node name="init">
-              <map/>
-              <node name="AbcInit">
-                  <map>
-                      <entry key="start.rss.monitor" value="@START.RSS.MONITOR@"/>
-                      <entry key="start.rss.generator" value="@START.RSS.GENERATOR@"/>
-                      <entry key="start.rss.kernel" value="@START.RSS.KERNEL@"/>
-                      <entry key="start.rss.unixshop" value="@START.RSS.UNIXSHOP@"/>
-                      <entry key="start.rss.prace" value="@START.RSS.PRACE@"/>
-                      <entry key="start.variable.fetcher" value="@START.VARIABLE.FETCHER@"/>
-                      <entry key="start.article.pool.monitor" value="@START.ARTICLE.POOL.MONITOR@"/>
-                      <entry key="start.abc.monitor" value="@START.ABC.MONITOR@"/>
-                      <entry key="start.forum.mail.gateway" value="@START.FORUM.GATEWAY@"/>
-                      <entry key="start.weekly.emails" value="@START.WEEKLY.EMAILS@"/>
-                      <entry key="start.weekly.summary" value="@START.WEEKLY.SUMMARY@"/>
-                      <entry key="start.datetool.service" value="@START_UPDATE_DATETOOL@"/>
-                  </map>
-              </node>
-          </node>
-            <node name="html">
+            <node name="abclinuxu">
                 <map/>
-                <node name="edit">
+                <node name="utils">
                     <map/>
-                    <node name="EditUser">
-                        <map>
-                            <entry key="regexp.invalid.login" value="[^a-zA-Z0-9_.\-]"/>
-                        </map>
+                    <node name="config">
+                        <map/>
+                        <node name="impl">
+                            <map/>
+                            <node name="LoggingConfig">
+                                <map>
+                                    <entry key="file" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/log4j.xml"/>
+                                </map>
+                            </node>
+                            <node name="AbcConfig">
+                                <map>
+                                    <entry key="deploy.path" value="@DEPLOY_ABCLINUXU@"/>
+                                    <entry key="viewuser.page.size" value="20"/>
+                                    <entry key="viewindex.discussions.count" value="15"/>
+                                    <entry key="template.news.count" value="10"/>
+                                </map>
+                            </node>
+                        </node>
                     </node>
-                    <node name="EditBlog">
-                        <map>
-                            <entry key="regexp.invalid.blogname" value="[^a-zA-Z0-9_]|(^[0-9_])"/>
-                            <entry key="max.story.title.length" value="60"/>
-                            <entry key="max.story.word.count" value="150"/>
-                        </map>
+                    <node name="search">
+                        <map/>
+                        <node name="AbcCzechAnalyzer">
+                            <map>
+                                <entry key="stop.words.file" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/stop_words.txt"/>
+                            </map>
+                        </node>
+                        <node name="CreateIndex">
+                            <map>
+                                <entry key="path" value="@DEPLOY_ABCLINUXU@/WEB-INF/index/"/>
+                                <entry key="last.run.file" value="last_run.txt"/>
+                            </map>
+                        </node>
                     </node>
-                    <node name="EditDictionary">
-                        <map>
-                            <entry key="regexp.invalid.characters" value="[^a-zA-Z0-9_.]+"/>
-                        </map>
+                    <node name="news">
+                        <map/>
+                        <node name="NewsCategories">
+                            <map>
+                                <entry key="categories.file" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/news_categories.xml"/>
+                            </map>
+                        </node>
+                        <node name="Lottery">
+                            <map>
+                                <entry key="admins" value="2121,1083,1768,403,1742,682,1,2105,1561"/>
+                            </map>
+                        </node>
                     </node>
-                    <node name="EditRating">
-                        <map>
-                            <entry key="msg.ok" value="Va¹e hodnocení bylo pøijato"/>
-                            <entry key="msg.data.missing" value="Chyba v parametrech pro hlasování"/>
-                            <entry key="msg.already.rated" value="Mù¾ete hodnotit jen jednou!"/>
-                            <entry key="msg.not.logged" value="Hlasovat smí jen pøihlá¹ení u¾ivatelé!"/>
-                        </map>
+                    <node name="freemarker">
+                        <map/>
+                        <node name="FMUtils">
+                            <map>
+                                <entry key="directory.templates" value="@DEPLOY_ABCLINUXU@/WEB-INF/freemarker"/>
+                                <entry key="template.update" value="@TEMPLATE.UPDATE.INTERVAL@"/>
+                                <entry key="error.handler" value="@TEMPLATE.ERROR.HANDLER@"/>
+                            </map>
+                        </node>
+                        <node name="Tools">
+                            <map>
+                                <entry key="RE_REMOVE_TAGS" value="&lt;(/)?[a-zA-Z][^&gt;]*&gt;"/>
+                                <entry key="RE_VLNKA" value="((^|\s)\w)\s+(\S+)"/>
+                                <entry key="REPLACEMENT_VLNKA" value="$1&amp;nbsp;$3"/>
+                            </map>
+                        </node>
                     </node>
-                    <node name="EditRequest">
+                    <node name="email">
+                        <map/>
+                        <node name="EmailSender">
+                            <map>
+                                <entry key="smtp.server" value="localhost"/>
+                                <entry key="admin.address" value="admin@abclinuxu.cz"/>
+                                <entry key="debug.smtp" value="false"/>
+                            </map>
+                        </node>
+                        <node name="monitor">
+                            <map/>
+                            <node name="InstantSender">
+                                <map>
+                                    <entry key="sleep" value="60"/>
+                                </map>
+                            </node>
+                            <node name="DriverDecorator">
+                                <map>
+                                    <entry key="subject" value="AbcMonitor: uprava ovladace"/>
+                                    <entry key="action.edit" value="upravil ovladac"/>
+                                    <entry key="action.remove" value="smazal ovladac"/>
+                                </map>
+                            </node>
+                            <node name="ItemDecorator">
+                                <map>
+                                    <entry key="subject" value="AbcMonitor: zmena v polozce"/>
+                                    <entry key="action.add" value="pridal zaznam"/>
+                                    <entry key="action.edit" value="upravil zaznam"/>
+                                    <entry key="action.remove" value="smazal polozku"/>
+                                </map>
+                            </node>
+                            <node name="DiscussionDecorator">
+                                <map>
+                                    <entry key="subject" value="AbcMonitor: zmena v diskusi"/>
+                                    <entry key="action.add" value="pridal komentar"/>
+                                    <entry key="action.remove" value="smazal diskusi"/>
+                                    <entry key="action.censore" value="uvalil cenzuru na komentar"/>
+                                </map>
+                            </node>
+                        </node>
+                        <node name="forum">
+                            <map/>
+                            <node name="CommentSender">
+                                <map>
+                                    <entry key="sleep" value="30"/>
+                                </map>
+                            </node>
+                        </node>
+                    </node>
+                    <node name="feeds">
+                        <map/>
+                        <node name="FeedGenerator">
+                            <map>
+                                <entry key="clanky" value="auto/abc.rss"/>
+                                <entry key="diskuse" value="auto/diskuse.rss"/>
+                                <entry key="ovladace" value="auto/ovladace.rss"/>
+                                <entry key="hardware" value="auto/hardware.rss"/>
+                                <entry key="zpravicky" value="auto/zpravicky.rss"/>
+                                <entry key="blog" value="auto/blog.rss"/>
+                                <entry key="blogs" value="auto/blog/"/>
+                                <entry key="trafika" value="auto/abc.dat"/>
+                                <entry key="anneca" value="auto/abc2.dat"/>
+                                <entry key="szm" value="auto/abc_szm.xml"/>
+                                <entry key="news.word.limit" value="10"/>
+                            </map>
+                        </node>
+                    </node>
+                    <node name="format">
+                        <map/>
+                        <node name="FormatDetector">
+                            <map>
+                                <entry key="RE_BREAK" value="(&lt;br&gt;)|(&lt;p&gt;)|(&lt;div&gt;)"/>
+                            </map>
+                        </node>
+                        <node name="SharedConfig">
+                            <map>
+                                <entry key="usmev" value="&lt;img src=&quot;/images/smile/usmev.gif&quot; alt=&quot;:-)&quot; class=&quot;emo&quot;&gt;"/>
+                                <entry key="smich" value="&lt;img src=&quot;/images/smile/smich.gif&quot; alt=&quot;:-D&quot; class=&quot;emo&quot;&gt;"/>
+                                <entry key="mrk" value="&lt;img src=&quot;/images/smile/mrk.gif&quot; alt=&quot;;-)&quot; class=&quot;emo&quot;&gt;"/>
+                                <entry key="smutek" value="&lt;img src=&quot;/images/smile/smutek.gif&quot; alt=&quot;:-(&quot; class=&quot;emo&quot;&gt;"/>
+                            </map>
+                        </node>
+                    </node>
+                    <node name="DateTool">
                         <map>
-                            <entry key="categories" value="Návrh na anketu,Hlá¹ení chyby,Námìt na vylep¹ení,Problém s úètem"/>
+                            <entry key="today" value="dnes" />
+                            <entry key="yesterday" value="vèera" />
                         </map>
                     </node>
                 </node>
-                <node name="view">
+                <node name="persistance">
                     <map/>
-                    <node name="ShowDictionary">
+                    <node name="cache">
+                        <map/>
+                        <node name="LRUCache">
+                            <map>
+                                <entry key="size" value="3000"/>
+                            </map>
+                        </node>
+                        <node name="SynchronizedCache">
+                            <map>
+                                <entry key="size" value="3000"/>
+                            </map>
+                        </node>
+                    </node>
+                    <node name="PersistanceFactory">
                         <map>
-                            <entry key="regexp.name" value="(^/slovnik/)([^?;]+)"/>
-                            <entry key="max.items" value="90"/>
+                            <entry key="url.live" value="proxool.abc"/>
+                            <entry key="url.test" value="jdbc:mysql://localhost/unit?user=literakl&amp;password=lkaretil&amp;useUnicode=true&amp;characterEncoding=ISO-8859-2"/>
+                            <entry key="proxool" value="WEB-INF/conf/proxool.xml"/>
                         </map>
                     </node>
-                    <node name="ViewBlog">
+                    <node name="Nursery">
                         <map>
-                            <entry key="regexp.blog.url" value="^/blog/?([a-zA-Z][a-zA-Z0-9_]+)?/?([0-9]{4})?/?([0-9]{1,2})?/?([0-9]{1,2})?/?([0-9]+)?"/>
-                            <entry key="page.size" value="10"/>
+                            <entry key="cache.size" value="750"/>
+
+                            <entry key="no.children.for.section" value="A,B"/>
+                            <!-- zpravicky -->
+                            <entry key="no.children.for.section.A" value="452"/>
+                            <!-- vykladovy slovnik -->
+                            <entry key="no.children.for.section.B" value="569"/>
+                        </map>
+                    </node>
+                    <node name="SQLTool">
+                        <map>
+                            <entry key="relations.record.by.type" value="select R.cislo from zaznam Z, relace R where typ=? and Z.cislo=R.potomek and typ_potomka='Z'"/>
+                            <entry key="relations.parent.record.by.type" value="select distinct R.predchozi from zaznam Z, relace R where typ=? and Z.cislo=R.potomek and typ_potomka='Z'"/>
+                            <entry key="relations.item.by.type" value="select R.cislo from polozka P, relace R where typ=? and P.cislo=R.potomek and typ_potomka='P'"/>
+                            <entry key="relations.discussion" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek where R.typ_potomka='P' and R.typ_predka='K' and P.typ=3"/>
+                            <entry key="relations.discussion.in.section" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek where R.predchozi=? and P.typ=3"/>
+                            <entry key="relations.article" value="select R.cislo from polozka P, relace R where R.predchozi in (2,3,4,5,6,251,5324,8546,12448,14358) and R.typ_potomka='P' and P.typ=2 and P.cislo=R.potomek and P.vytvoreno&lt;now()"/>
+                            <entry key="relations.article.within.period" value="select R.cislo from relace R left join polozka P on R.potomek=P.cislo where R.typ_potomka='P' and R.predchozi in (2,3,4,5,6,251,5324,8546,12448) and P.typ=2 and P.vytvoreno&gt;? and P.vytvoreno&lt;?"/>
+                            <entry key="relations.news" value="select R.cislo from polozka P, relace R where R.predchozi=42932 and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek"/>
+                            <entry key="relations.news.within.period" value="select R.cislo from polozka P, relace R where R.predchozi=42932 and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek and vytvoreno&gt;? and vytvoreno&lt;?"/>
+                            <entry key="relations.news.by.user" value="select R.cislo from polozka P, relace R where P.pridal=? and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek"/>
+                            <entry key="relations.record.by.user.and.type" value="select R.cislo from relace R left join zaznam Z on R.potomek=Z.cislo where R.typ_potomka='Z' and Z.pridal=? and Z.typ=?"/>
+                            <entry key="relations.article.by.user" value="select R.cislo from relace R left join polozka P on (P.cislo=R.potomek) where R.predchozi in (2,3,4,5,6,251,5324,8546,12448,14358) and typ_potomka='P' and P.typ=2 and P.data like concat('%&lt;author&gt;',?,'&lt;/author%') and P.vytvoreno&lt;now() group by potomek"/>
+                            <entry key="relations.question.by.user" value="select R.cislo from relace R, polozka P where R.typ_potomka='P' and R.potomek=P.cislo and R.typ_predka='K' and R.predek!=-1 and P.typ=3 and P.pridal=?"/>
+                            <entry key="relations.comment.by.user" value="select R.cislo from relace R, relace P, zaznam Z where R.potomek=P.predek and R.typ_potomka='P' and R.predek!=-1 and P.potomek=Z.cislo and P.typ_potomka='Z' and Z.typ=4 and Z.data like concat('%&lt;author_id&gt;',?,'&lt;/%')"/>
+                            <entry key="relations.section.by.type" value="select R.cislo from relace R left join kategorie K on (K.cislo=R.potomek) where typ_potomka='K' and K.typ=?"/>
+                            <entry key="relation.dictionary.by.urlname" value="select R.cislo from relace R, polozka P where R.typ_potomka='P' and R.potomek=P.cislo and P.typ=10 and P.podtyp=?"/>
+                            <entry key="relation.by.url" value="select cislo from relace where url=?"/>
+                            <entry key="users.with.weekly.email" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;>&lt;weekly_summary>yes%'"/>
+                            <entry key="users.with.forum.by.email" value="select cislo from uzivatel where data like '%&lt;email valid=&quot;yes&quot;%&lt;forum&gt;yes%&lt;/email%'"/>
+                            <entry key="users.with.roles" value="select cislo from uzivatel where data like '%&lt;roles>%'"/>
+                            <entry key="users.in.group" value="select cislo from uzivatel where data like concat('%&lt;group&gt;',?,'&lt;/group%')"/>
+                            <entry key="max.poll" value="select max(cislo) from anketa"/>
+                            <entry key="max.user" value="select max(cislo) from uzivatel"/>
+                            <entry key="insert.last.comment" value="replace into komentar values(?,?,?,NULL);"/>
+                            <entry key="get.last.comment" value="select posledni from komentar where kdo=? and diskuse=?" />
+                            <entry key="get.xth.comment.date" value="select kdy from komentar where kdo=? order by kdy desc limit ?,1" />
+                            <entry key="delete.old.comments" value="delete from komentar where kdo=? and kdy&lt;=?" />
+                            <entry key="items.with.type" value="select cislo from polozka where typ=?"/>
+                            <entry key="count.articles.by.user" value="select count(*) from polozka where typ=2 and data like concat('%&lt;author&gt;',?,'&lt;/author%') and vytvoreno&lt;now()"/>
+                            <entry key="insert.user.action" value="insert into akce values(?,?,?,NULL)" />
+                            <entry key="get.user.action" value="select kdy from akce where kdo=? and relace=? and typ=?" />
                         </map>
                     </node>
                 </node>
-                <node name="various">
+                <node name="scheduler">
                     <map/>
-                    <node name="NewsCSV">
+                    <node name="WeeklyEmail">
                         <map>
-                            <entry key="allowed.ip.addresses" value="127.0.0.1,212.67.79.50,195.70.144.6"/>
-                            <entry key="count" value="5"/>
+                            <entry key="subject" value="Tydenni souhrn clanku"/>
+                            <entry key="from" value="admin@abclinuxu.cz"/>
+                            <entry key="template" value="/mail/weekly.ftl"/>
+                        </map>
+                    </node>
+                    <node name="WhatHappened">
+                        <map>
+                            <entry key="title" value="Událo se v týdnu {0}/{1,number,#}"/>
+                            <entry key="perex" value="Ucelený pøehled èlánkù, zprávièek a diskusí za minulých 7 dní."/>
+                            <entry key="author" value="5473"/>
+                        </map>
+                    </node>
+                    <node name="UpdateKernel">
+                        <map>
+                            <entry key="file" value="WEB-INF/freemarker/include/kernel.txt"/>
+                            <entry key="uri" value="http://www.kernel.org/kdist/finger_banner"/>
+                            <entry key="regexp.stable" value="(The latest stable[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+                            <entry key="url.stable" value="ftp://ftp.cz.kernel.org/pub/linux/kernel/v2.6"/>
+                            <entry key="regexp.stable.pre" value="(The latest prepatch for the stable[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+                            <entry key="regexp.devel" value="(The latest beta[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+                            <entry key="url.devel" value="ftp://ftp.cz.kernel.org/pub/linux/kernel/v2.7"/>
+                            <entry key="regexp.devel.pre" value="(The latest prepatch for the beta[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+                            <entry key="regexp.24" value="(The latest 2.4[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+                            <entry key="url.24" value="ftp://ftp.cz.kernel.org/pub/linux/kernel/v2.4"/>
+                            <entry key="regexp.24.pre" value="(The latest prepatch for the 2.4[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+                            <entry key="regexp.22" value="(The latest 2.2[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+                            <entry key="url.22" value="ftp://ftp.cz.kernel.org/pub/linux/kernel/v2.2"/>
+                            <entry key="regexp.22.pre" value="(The latest prepatch for the 2.2[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+                            <entry key="regexp.20" value="(The latest 2.0[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+                            <entry key="url.20" value="ftp://ftp.cz.kernel.org/pub/linux/kernel/v2.0"/>
+                            <entry key="regexp.20.pre" value="(The latest prepatch for the 2.0[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+                            <entry key="regexp.ac" value="(The latest -ac patch to the beta[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+                            <entry key="url.ac" value="http://www.kernel.org/pub/linux/kernel/people/alan/linux-2.6/"/>
+                            <entry key="regexp.stable.mm" value="(The latest -mm patch to the stable[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+                            <entry key="url.stable.mm" value="ftp://ftp.cz.kernel.org/pub/linux/kernel/people/akpm/patches/2.6/"/>
+                        </map>
+                    </node>
+                    <node name="UnixshopFetcher">
+                        <map>
+                            <entry key="file" value="WEB-INF/freemarker/include/unixshop.txt"/>
+                            <entry key="uri" value="http://www.unixshop.cz/top_export.php"/>
+                        </map>
+                    </node>
+                    <node name="PraceRSSFetcher">
+                        <map>
+                            <entry key="file_template" value="WEB-INF/freemarker/include/prace.txt"/>
+                            <entry key="file_index" value="WEB-INF/freemarker/include/prace_main.txt"/>
+                            <entry key="count_template" value="10"/>
+                            <entry key="count_index" value="4"/>
+                            <entry key="uri" value="http://prace.abclinuxu.cz/www/cvs.php"/>
+                        </map>
+                    </node>
+                    <node name="EnsureWatchedDiscussionsLimit">
+                        <map>
+                            <entry key="watched.discussions.limit" value="75"/>
+                        </map>
+                    </node>
+                    <node name="VariableFetcher">
+                        <map>
+                            <entry key="hardware" value="3"/>
+                            <entry key="drivers" value="3"/>
+                            <entry key="stories" value="6"/>
+                        </map>
+                    </node>
+                </node>
+                <node name="servlets">
+                    <map/>
+                    <node name="utils">
+                        <map/>
+                        <node name="ServletUtils">
+                            <map>
+                                <entry key="upload.path" value="/tmp/upload"/>
+                                <entry key="max.upload.size" value="51200"/>
+                            </map>
+                        </node>
+                        <node name="URLMapper">
+                            <map>
+                                <entry key="config" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/url_mapping.xml"/>
+                                <entry key="domain" value="@DOMAIN_NAME@"/>
+                            </map>
+                        </node>
+                    </node>
+                    <node name="init">
+                        <map/>
+                        <node name="AbcInit">
+                            <map>
+                                <entry key="start.rss.monitor" value="@START.RSS.MONITOR@"/>
+                                <entry key="start.rss.generator" value="@START.RSS.GENERATOR@"/>
+                                <entry key="start.rss.kernel" value="@START.RSS.KERNEL@"/>
+                                <entry key="start.rss.unixshop" value="@START.RSS.UNIXSHOP@"/>
+                                <entry key="start.rss.prace" value="@START.RSS.PRACE@"/>
+                                <entry key="start.variable.fetcher" value="@START.VARIABLE.FETCHER@"/>
+                                <entry key="start.article.pool.monitor" value="@START.ARTICLE.POOL.MONITOR@"/>
+                                <entry key="start.abc.monitor" value="@START.ABC.MONITOR@"/>
+                                <entry key="start.forum.mail.gateway" value="@START.FORUM.GATEWAY@"/>
+                                <entry key="start.weekly.emails" value="@START.WEEKLY.EMAILS@"/>
+                                <entry key="start.weekly.summary" value="@START.WEEKLY.SUMMARY@"/>
+                                <entry key="start.datetool.service" value="@START_UPDATE_DATETOOL@"/>
+                            </map>
+                        </node>
+                    </node>
+                    <node name="html">
+                        <map/>
+                        <node name="edit">
+                            <map/>
+                            <node name="EditUser">
+                                <map>
+                                    <entry key="regexp.invalid.login" value="[^a-zA-Z0-9_.\-]"/>
+                                </map>
+                            </node>
+                            <node name="EditBlog">
+                                <map>
+                                    <entry key="regexp.invalid.blogname" value="[^a-zA-Z0-9_]|(^[0-9_])"/>
+                                    <entry key="max.story.title.length" value="60"/>
+                                    <entry key="max.story.word.count" value="150"/>
+                                </map>
+                            </node>
+                            <node name="EditDictionary">
+                                <map>
+                                    <entry key="regexp.invalid.characters" value="[^a-zA-Z0-9_.]+"/>
+                                </map>
+                            </node>
+                            <node name="EditRating">
+                                <map>
+                                    <entry key="msg.ok" value="Va¹e hodnocení bylo pøijato"/>
+                                    <entry key="msg.data.missing" value="Chyba v parametrech pro hlasování"/>
+                                    <entry key="msg.already.rated" value="Mù¾ete hodnotit jen jednou!"/>
+                                    <entry key="msg.not.logged" value="Hlasovat smí jen pøihlá¹ení u¾ivatelé!"/>
+                                </map>
+                            </node>
+                            <node name="EditRequest">
+                                <map>
+                                    <entry key="categories" value="Návrh na anketu,Hlá¹ení chyby,Námìt na vylep¹ení,Problém s úètem"/>
+                                </map>
+                            </node>
+                        </node>
+                        <node name="view">
+                            <map/>
+                            <node name="ShowDictionary">
+                                <map>
+                                    <entry key="regexp.name" value="(^/slovnik/)([^?;]+)"/>
+                                    <entry key="max.items" value="90"/>
+                                </map>
+                            </node>
+                            <node name="ViewBlog">
+                                <map>
+                                    <entry key="regexp.blog.url" value="^/blog/?([a-zA-Z][a-zA-Z0-9_]+)?/?([0-9]{4})?/?([0-9]{1,2})?/?([0-9]{1,2})?/?([0-9]+)?"/>
+                                    <entry key="page.size" value="10"/>
+                                </map>
+                            </node>
+                        </node>
+                        <node name="various">
+                            <map/>
+                            <node name="NewsCSV">
+                                <map>
+                                    <entry key="allowed.ip.addresses" value="127.0.0.1,212.67.79.50,195.70.144.6"/>
+                                    <entry key="count" value="5"/>
+                                </map>
+                            </node>
+                        </node>
+                    </node>
+                </node>
+                <node name="security">
+                    <map/>
+                    <node name="AccessKeeper">
+                        <map>
+                            <entry key="block.same.ua.for" value="1900" />
+                            <entry key="block.same.ip.for" value="600" />
                         </map>
                     </node>
                 </node>
             </node>
-        </node>
-        <node name="security">
-            <map/>
-            <node name="AccessKeeper">
-                <map>
-                    <entry key="block.same.ua.for" value="1900" />
-                    <entry key="block.same.ip.for" value="600" />
-                </map>
+            <node name="finesoft">
+                <map/>
+                <node name="socd">
+                    <map/>
+                    <node name="analyzer">
+                        <map/>
+                        <node name="DiacriticRemover">
+                            <map>
+                                <entry key="unicode.data.file" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/UnicodeData.txt"/>
+                            </map>
+                        </node>
+                    </node>
+                </node>
             </node>
         </node>
-      </node>
-      <node name="finesoft">
-        <map/>
-        <node name="socd">
-          <map/>
-          <node name="analyzer">
-            <map/>
-            <node name="DiacriticRemover">
-              <map>
-                <entry key="unicode.data.file" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/UnicodeData.txt"/>
-              </map>
-            </node>
-          </node>
-        </node>
-      </node>
-    </node>
-  </root>
+    </root>
 </preferences>
 
 
