@@ -149,6 +149,9 @@
               <entry key="max.user" value="select max(cislo) from uzivatel"/>
               <entry key="users.email.weekly" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;>&lt;weekly_summary>yes%'"/>
               <entry key="users.with.roles" value="select cislo from uzivatel where data like '%&lt;roles>%'" />
+              <entry key="users.by.group" value="select cislo from uzivatel where data like concat('%&lt;group&gt;',?,'&lt;/group%') order by cislo limit ?,?" />
+              <entry key="count.users.by.group" value="select count(*) from uzivatel where data like concat('%&lt;group&gt;',?,'&lt;/group%')" />
+              <entry key="items.by.type.by.id" value="select cislo from polozka where typ=? order by cislo asc limit ?,?"/>
             </map>
           </node>
         </node>

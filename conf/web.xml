@@ -90,6 +90,12 @@
     </servlet>
 
     <servlet>
+        <servlet-name>EditGroup</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.edit.EditGroup</servlet-class>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+
+    <servlet>
         <servlet-name>EditRelation</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.edit.EditRelation</servlet-class>
         <load-on-startup>3</load-on-startup>
@@ -145,13 +151,19 @@
 
     <servlet>
         <servlet-name>SelectIcon</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.view.SelectIcon</servlet-class>
+        <servlet-class>cz.abclinuxu.servlets.select.SelectIcon</servlet-class>
         <load-on-startup>4</load-on-startup>
     </servlet>
 
     <servlet>
         <servlet-name>SelectRelation</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.view.SelectRelation</servlet-class>
+        <servlet-class>cz.abclinuxu.servlets.select.SelectRelation</servlet-class>
+        <load-on-startup>4</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>SelectUser</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.select.SelectUser</servlet-class>
         <load-on-startup>4</load-on-startup>
     </servlet>
 
@@ -284,6 +296,10 @@
     </servlet-mapping>
 
     <servlet-mapping>
+        <servlet-name>SelectUser</servlet-name><url-pattern>/SelectUser</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>EditRelation</servlet-name><url-pattern>/EditRelation</url-pattern>
     </servlet-mapping>
 
@@ -293,6 +309,10 @@
 
     <servlet-mapping>
         <servlet-name>EditUser</servlet-name><url-pattern>/EditUser</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>EditGroup</servlet-name><url-pattern>/Group</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

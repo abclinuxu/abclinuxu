@@ -4,7 +4,7 @@
  * Time: 9:59:02 AM
  * (c)2001-2002 Tinnio
  */
-package cz.abclinuxu.servlets.view;
+package cz.abclinuxu.servlets.select;
 
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcFMServlet;
@@ -34,6 +34,7 @@ public class SelectRelation extends AbcFMServlet {
     public static final String PARAM_URL = "url";
     public static final String PARAM_FINISH = "finish";
     public static final String PARAM_CONFIRM = "confirm";
+    
     public static final String VAR_SOFTWARE = "SOFTWARE";
     public static final String VAR_CLANKY = "CLANKY";
     public static final String VAR_386 = "H386";

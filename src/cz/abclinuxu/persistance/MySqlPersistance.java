@@ -168,8 +168,6 @@ public class MySqlPersistance implements Persistance {
         if ( relations==null ) relations = makeOrRelation(objects);
 
         try {
-            con = getSQLConnection();
-
             List result = new ArrayList(), conditions = new ArrayList();
             StringBuffer sb = new StringBuffer("SELECT cislo FROM ");
             GenericObject obj = (GenericObject) objects.get(0);
@@ -194,6 +192,7 @@ public class MySqlPersistance implements Persistance {
                 }
             }
 
+            con = getSQLConnection();
             statement = con.prepareStatement(sb.toString());
             for ( int i=0; i<conditions.size(); i++ ) {
                 Object o = conditions.get(i);
@@ -653,8 +652,14 @@ public class MySqlPersistance implements Persistance {
         if (obj instanceof GenericDataObject) {
             GenericDataObject gdo = (GenericDataObject) obj;
 
-            if ( gdo.getOwner()!=0 ) {
+            if ( gdo.getId()>0 ) {
                 addAnd = true;
+                sb.append("cislo=?");
+                conditions.add(new Integer(gdo.getId()));
+            }
+
+            if ( gdo.getOwner()!=0 ) {
+                if ( addAnd ) sb.append(" and "); else addAnd = true;
                 sb.append("pridal=?");
                 conditions.add(new Integer(gdo.getOwner()));
             }
@@ -674,82 +679,25 @@ public class MySqlPersistance implements Persistance {
 
             return;
 
-        } else if (obj instanceof Data) {
-            Data data = (Data) obj;
-            if ( data.getOwner()!=0 ) {
-                addAnd = true;
-                sb.append("pridal=?");
-                conditions.add(new Integer(data.getOwner()));
-            }
-
-            if (data.getData()!=null ) {
-                if ( addAnd ) sb.append(" and ");
-                addAnd = true;
-                sb.append("data like ?");
-                conditions.add(data.getData());
-            }
-
-            if ( data.getFormat()!=null && data.getFormat().length()>0 ) {
-                if ( addAnd ) sb.append(" and ");
-                sb.append("format like ?");
-                conditions.add(data.getFormat());
-            }
-            return;
-
-        } else if (obj instanceof Link) {
-            Link link = (Link) obj;
-            sb.append("trvaly=?");
-            conditions.add(new Boolean(link.isFixed()));
-
-            if ( link.getServer()!=0 ) {
-                sb.append("and server=?");
-                conditions.add(new Integer(link.getServer()));
-            }
-
-            if ( link.getOwner()!=0 ) {
-                sb.append("and pridal=?");
-                conditions.add(new Integer(link.getOwner()));
-            }
-
-            if ( link.getText()!=null ) {
-                sb.append("and nazev like ?");
-                conditions.add(link.getText());
-            }
-
-            if ( ((Link)obj).getUrl()!=null ) {
-                sb.append("and url like ?");
-                conditions.add(link.getUrl());
-            }
-            return;
-
-        } else if (obj instanceof Poll) {
-            if ( ((Poll)obj).getType()!=0 ) {
-                addAnd = true;
-                sb.append("typ=?");
-                conditions.add(new Integer(((Poll)obj).getType()));
-            }
-
-            if ( ((Poll)obj).getText()!=null ) {
-                if ( addAnd ) sb.append(" and ");
-                sb.append("otazka like ?");
-                conditions.add(((Poll)obj).getText());
-            }
-            return;
-
         } else if ( obj instanceof User ) {
             User user = (User) obj;
 
+            if ( user.getId()>0 ) {
+                addAnd = true;
+                sb.append("cislo=?");
+                conditions.add(new Integer(user.getId()));
+            }
+
             String tmp = user.getLogin();
             if ( tmp!=null && tmp.length()>0 ) {
-                addAnd = true;
+                if ( addAnd ) sb.append(" and "); else addAnd = true;
                 sb.append("login like ?");
                 conditions.add(tmp);
             }
 
             tmp = user.getName();
             if ( tmp!=null && tmp.length()>0 ) {
-                if ( addAnd ) sb.append(" and ");
-                addAnd = true;
+                if ( addAnd ) sb.append(" and "); else addAnd = true;
                 sb.append("jmeno like ?");
                 conditions.add(tmp);
             }

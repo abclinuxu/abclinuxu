@@ -54,3 +54,8 @@
 <!ELEMENT category (#PCDATA)> <!-- key of category, to which the news was assigned to -->
 <!ELEMENT content (#PCDATA)> <!-- text of the news -->
 <!ELEMENT approved_by (#PCDATA)> <!-- id of admin, who approved the news -->
+
+<!-- Item.GROUP -->
+<!ELEMENT data (name, desc)>
+<!ELEMENT name (#PCDATA)> <!-- word(s) giving name to group -->
+<!ELEMENT desc (#PCDATA)> <!-- sentence describing group -->

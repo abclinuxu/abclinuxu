@@ -494,7 +494,7 @@ public class Tools {
      * Encodes all mapping from <code>params</code> except those listed
      * in <<code>prohibited</code> list as form hidden input.
      */
-    public String saveParams(Map params, SimpleSequence prohibited) throws TemplateModelException {
+    public static String saveParams(Map params, SimpleSequence prohibited) throws TemplateModelException {
         List exceptions;
         if ( params==null || params.size()==0 )
             return "";
@@ -532,6 +532,14 @@ public class Tools {
             }
         }
         return sb.toString();
+    }
+
+    /**
+     * Encodes all mapping from <code>params</code> except those listed
+     * in <<code>prohibited</code> list as form hidden input.
+     */
+    public static String saveParams(Map params, List prohibited) throws TemplateModelException {
+        return saveParams(params, new SimpleSequence(prohibited));
     }
 
     /**

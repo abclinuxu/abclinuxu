@@ -1,6 +1,6 @@
 verze 2.0
 
-<!ELEMENT data (personal,communication,profile,settings,system)>
+<!ELEMENT data (personal,communication,profile,settings,system,roles?)>
 
 <!ELEMENT personal (sex,birth_year?,area?,city?,country?)>
 <!ELEMENT sex (#PCDATA)> <!-- man or woman -->
@@ -31,22 +31,10 @@ verze 2.0
 <!ELEMENT index_news (#PCDATA)> <!-- integer, pocet zpravicek na hlavni strance -->
 <!ELEMENT return_to_forum (#PCDATA)> <!-- yes or no, zda se po presunu diskuse vratit do diskusniho fora -->
 
-
-<!ELEMENT system (registration_date?,last_login_date?)>
+<!ELEMENT system (registration_date?,last_login_date?,group?)>
 <!ELEMENT registration_date (#PCDATA)> <!-- ISO format, kdy se zaregistroval -->
 <!ELEMENT last_login_date (#PCDATA)> <!-- ISO format, kdy se naposledy prihlasil -->
+<!ELEMENT group (#PCDATA)> <!-- integer, id of group, to which user belongs -->
 
-
-
-verze 1.0
-
-<!ELEMENT data (ilikeq?,news?,sex?,ads?,www?,personal?)>
-<!ELEMENT ilikeq (#PCDATA)> <!-- identification of user's I like Q account -->
-<!ATTLIST ilikeq amount NMTOKEN #IMPLIED> <!-- total sum of rewards -->
-<!ELEMENT sex (#PCDATA)> <!-- man or woman -->
-<!ELEMENT news (#PCDATA)> <!-- yes, if we may send email about news on this server -->
-<!ELEMENT ads (#PCDATA)> <!-- yes, if we may send two email advertisements a month -->
-<!ELEMENT active (#PCDATA)> <!-- yes, if we the user is active. we dont send emails to inactive users -->
-<!ELEMENT www (#PCDATA)> <!-- URL of user's homepage -->
-<!ELEMENT personal (#PCDATA)> <!-- user's description of itself -->
-
+<!ELEMENT roles (role+)>
+<!ELEMENT role (#PCDATA)> <!-- id of role, see Roles.java -->

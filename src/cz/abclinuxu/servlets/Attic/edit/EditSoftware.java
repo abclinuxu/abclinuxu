@@ -6,7 +6,7 @@
  */
 package cz.abclinuxu.servlets.edit;
 
-import cz.abclinuxu.servlets.view.SelectIcon;
+import cz.abclinuxu.servlets.select.SelectIcon;
 import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.*;
@@ -34,7 +34,7 @@ public class EditSoftware extends AbcFMServlet {
     public static final String PARAM_RELATION = "relationId";
     public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_NAME = "name";
-    public static final String PARAM_ICON = SelectIcon.PARAM_ICON;
+    public static final String PARAM_ICON = cz.abclinuxu.servlets.select.SelectIcon.PARAM_ICON;
     public static final String PARAM_URL = "url";
     public static final String PARAM_TEXT = "text";
     public static final String PARAM_VERSION = "version";

@@ -9,6 +9,7 @@ import org.dom4j.Node;
 import java.util.*;
 
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.utils.Misc;
 
 /**
  * Class containing basic user data
@@ -203,10 +204,19 @@ public class User extends GenericObject implements XMLContainer {
     public boolean preciseEquals(Object o) {
         if ( !( o instanceof User) ) return false;
         User p = (User) o;
-        if ( id==p.id && login.equals(p.login) && name.equals(p.name) &&
-             email.equals(p.email) && password.equals(p.password) &&
-             getDataAsString().equals(p.getDataAsString()) ) return true;
-        return false;
+        if ( id!=p.id )
+            return false;
+        if (!Misc.same(login,p.login))
+            return false;
+        if (!Misc.same(name,p.name))
+            return false;
+        if (!Misc.same(email,p.email))
+            return false;
+        if (!Misc.same(password,p.password))
+            return false;
+        if (!Misc.same(getDataAsString(),p.getDataAsString()))
+            return false;
+        return true;
     }
 
     public int hashCode() {

@@ -97,6 +97,7 @@ public class EditUser extends AbcFMServlet {
     public static final String ACTION_GRANT_ROLES_STEP3 = "grant3";
     public static final String ACTION_INVALIDATE_EMAIL = "invalidateEmail";
     public static final String ACTION_INVALIDATE_EMAIL2 = "invalidateEmail2";
+    public static final String ACTION_ADD_GROUP_MEMBER = "addToGroup";
 
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -184,6 +185,9 @@ public class EditUser extends AbcFMServlet {
 
         if ( action.equals(ACTION_INVALIDATE_EMAIL2) )
             return actionInvalidateEmail(request, response, env);
+
+        if ( action.equals(ACTION_ADD_GROUP_MEMBER) )
+            return actionAddToGroup(request, response, env);
 
         throw new MissingArgumentException("Chybí parametr action!");
     }
@@ -644,6 +648,30 @@ public class EditUser extends AbcFMServlet {
         ServletUtils.addMessage(count+" u¾ivatelùm byl zneplatnìn email.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Admin");
+        return null;
+    }
+
+    /**
+     * Adds selected user to given group.
+     */
+    protected String actionAddToGroup(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User managed = (User) env.get(VAR_MANAGED);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        int group = Misc.parseInt((String) params.get(EditGroup.PARAM_GROUP), 0);
+        if (group==0)
+            return ServletUtils.showErrorPage("Chybí èíslo skupiny!",env,request);
+
+        Element system = (Element) managed.getData().selectSingleNode("/data/system");
+        system.addElement("group").setText(new Integer(group).toString());
+        persistance.update(managed);
+
+        User user = (User) env.get(Constants.VAR_USER);
+        AdminLogger.logEvent(user,"vlozil uzivatele "+managed.getId()+" do skupiny "+group);
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/Group?action=members&gid="+group);
         return null;
     }
 

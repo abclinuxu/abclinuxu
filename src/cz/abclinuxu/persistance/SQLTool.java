@@ -8,9 +8,7 @@ package cz.abclinuxu.persistance;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
-import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.Poll;
-import cz.abclinuxu.data.GenericDataObject;
+import cz.abclinuxu.data.*;
 import cz.abclinuxu.exceptions.PersistanceException;
 
 import java.util.prefs.Preferences;
@@ -37,6 +35,8 @@ public final class SQLTool implements Configurable {
     public static final String PREF_ARTICLE_RELATIONS_WITHIN_PERIOD = "article.relations.within.period";
     public static final String PREF_DISCUSSION_RELATIONS_BY_CREATED = "discussion.relations.by.created";
 
+    public static final String PREF_ITEMS_BY_TYPE_BY_ID = "items.by.type.by.id";
+
     public static final String PREF_RECORD_RELATIONS_BY_TYPE_BY_USER = "record.relations.by.type.by.user";
     public static final String PREF_ARTICLE_RELATIONS_BY_USER = "article.relations.by.user";
     public static final String PREF_QUESTION_RELATIONS_BY_USER = "question.relations.by.user";
@@ -51,6 +51,8 @@ public final class SQLTool implements Configurable {
     public static final String PREF_COUNT_ITEMS_BY_TYPE = "count.items.by.type";
     public static final String PREF_USERS_WITH_WEEKLY_MAIL = "users.email.weekly";
     public static final String PREF_USERS_WITH_ROLES = "users.with.roles";
+    public static final String PREF_USERS_BY_GROUP = "users.by.group";
+    public static final String PREF_COUNT_USERS_BY_GROUP = "count.users.by.group";
 
 
     private static SQLTool singleton;
@@ -66,8 +68,9 @@ public final class SQLTool implements Configurable {
     private String newsRelationsByCreated, newsRelationsByUser, newsRelationsWithinPeriod;
     private String recordRelationsByUser, articleRelationsByUser, questionRelationsByUser;
     private String countArticlesByUser, countRecordsByUser, countItemsByUser;
-    private String countItemsByType, countRecordsByType, countQuestionsByUser;
-    private String usersWithWeeklyMail, usersWithRoles;
+    private String countItemsByType, countRecordsByType, countQuestionsByUser, countUsersByGroup;
+    private String usersWithWeeklyMail, usersWithRoles, usersByGroup;
+    private String itemsByTypeById;
 
 
     /**
@@ -695,6 +698,97 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Finds items of given type ordered by id property in ascending order.
+     * Use offset to skip some record .
+     * @return List of itialized Items
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findItemsByTypeById(int type, int offset, int count) {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(itemsByTypeById);
+            statement.setInt(1, type);
+            statement.setInt(2, offset);
+            statement.setInt(3, count);
+
+            resultSet = statement.executeQuery();
+            List result = new ArrayList(count);
+            while ( resultSet.next() ) {
+                int id = resultSet.getInt(1);
+                Item item = (Item) persistance.findById(new Item(id));
+                result.add(item);
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
+     * Finds users, that are members of given group ordered by id property in ascending order.
+     * Use offset to skip some record .
+     * @return List of itialized users.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findUsersByGroup(int group, int offset, int count) {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(usersByGroup);
+            statement.setInt(1, group);
+            statement.setInt(2, offset);
+            statement.setInt(3, count);
+
+            resultSet = statement.executeQuery();
+            List result = new ArrayList(count);
+            while ( resultSet.next() ) {
+                int id = resultSet.getInt(1);
+                User user = (User) persistance.findById(new User(id));
+                result.add(user);
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
+     * Finds count of members of given group.
+     * @return number of members.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
+     */
+    public int getUsersCountByGroup(int groupId) {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(countUsersByGroup);
+            statement.setInt(1, groupId);
+
+            resultSet = statement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt(1);
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
      * Private constructor
      */
     private SQLTool() {
@@ -725,5 +819,8 @@ public final class SQLTool implements Configurable {
         countItemsByType = prefs.get(PREF_COUNT_ITEMS_BY_TYPE, null);
         usersWithWeeklyMail = prefs.get(PREF_USERS_WITH_WEEKLY_MAIL, null);
         usersWithRoles = prefs.get(PREF_USERS_WITH_ROLES, null);
+        itemsByTypeById = prefs.get(PREF_ITEMS_BY_TYPE_BY_ID, null);
+        usersByGroup = prefs.get(PREF_USERS_BY_GROUP, null);
+        countUsersByGroup = prefs.get(PREF_COUNT_USERS_BY_GROUP, null);
     }
 }

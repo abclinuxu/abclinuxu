@@ -12,7 +12,7 @@ import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.servlets.view.SelectIcon;
+import cz.abclinuxu.servlets.select.SelectIcon;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Relation;
@@ -44,7 +44,7 @@ public class EditCategory extends AbcFMServlet {
     public static final String PARAM_CATEGORY = "categoryId";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_OPEN = "open";
-    public static final String PARAM_ICON = SelectIcon.PARAM_ICON;
+    public static final String PARAM_ICON = cz.abclinuxu.servlets.select.SelectIcon.PARAM_ICON;
     public static final String PARAM_NOTE = "note";
     public static final String PARAM_CHOOSE_ICON = "iconChooser";
 

@@ -10,7 +10,7 @@ import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.servlets.view.SelectRelation;
+import cz.abclinuxu.servlets.select.SelectRelation;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
@@ -39,7 +39,7 @@ public class EditRelation extends AbcFMServlet {
     public static final String PARAM_NAME = "name";
     public static final String PARAM_PREFIX = "prefix";
     public static final String PARAM_TYPE = "type";
-    public static final String PARAM_SELECTED = SelectRelation.PARAM_SELECTED;
+    public static final String PARAM_SELECTED = cz.abclinuxu.servlets.select.SelectRelation.PARAM_SELECTED;
 
     public static final String VAR_CURRENT = "CURRENT";
     public static final String VAR_SELECTED = "SELECTED";

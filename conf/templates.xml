@@ -163,6 +163,18 @@
     </action>
   </servlet>
 
+  <servlet name="EditGroup">
+    <action name="create" content="/add/group.ftl" template="print">
+      <var name="TITLE" value="Skupina"/>
+    </action>
+    <action name="showGroups" content="/show/groups.ftl" template="print">
+      <var name="TITLE" value="Seznam skupin"/>
+    </action>
+    <action name="showMembers" content="/show/group_members.ftl" template="print">
+      <var name="TITLE" value='Skupina ${TOOL.xpath(GROUP,"data/name")}' type="Lazy"/>
+    </action>
+  </servlet>
+
   <servlet name="ForgottenPassword">
     <action name="step1" content="/misc/forgotten.ftl">
       <var name="TITLE" value="Zaslání zapomenutého hesla" />
@@ -191,6 +203,15 @@
     <action name="show" content="/misc/selectIcon.ftl">
       <var name="TITLE" value="Vybìr ikony" />
     </action>
+  </servlet>
+
+  <servlet name="SelectUser">
+      <action name="form" content="/misc/selectUser1.ftl">
+          <var name="TITLE" value="Popis u¾ivatele"/>
+      </action>
+      <action name="result" content="/misc/selectUser2.ftl">
+          <var name="TITLE" value="Volba u¾ivatele"/>
+      </action>
   </servlet>
 
   <servlet name="SelectRelation">

@@ -3,13 +3,6 @@
 
 <#call showMessages>
 
-<p>Tato stránka slou¾í jako rozcestník pro
-administrátory. K ní samotné není kontrolován
-pøístup, zda u¾ivatel má dostateèná práva
-èi nikoliv. K nìkterým akcím v¹ak ji¾
-potøebujete dostateèná práva.
-</p>
-
 <h1>Vyprázdnìní cache</h1>
 
 <p>Tato akce slou¾í pro vyprázdnìní transparentní
@@ -24,14 +17,18 @@ projeví.
 
 <h1>Správa práv u¾ivatelù</h1>
 
-<p>Pøiøazování rolí jednotlivým u¾ivatelùm.</p>
+<dl>
 
-<p><a href="${URL.noPrefix("/EditUser?action=grant")}">Grant roles</a></p>
+<dt>Pøiøazování rolí jednotlivým u¾ivatelùm.</dt>
+<dd><a href="${URL.noPrefix("/EditUser?action=grant")}">Grant roles</a></dd>
 
-<p>Zneplatnìní emailu u¾ivatelùm</p>
+<dt>Zneplatnìní emailu u¾ivatelùm</dt>
+<dd><a href="${URL.noPrefix("/EditUser?action=invalidateEmail")}">Invalidate emails</a></dd>
 
-<p><a href="${URL.noPrefix("/EditUser?action=invalidateEmail")}">Invalidate emails</a></p>
+<dt>Seznam skupin</dt>
+<dd><a href="${URL.noPrefix("/Group?action=show")}">Show groups</a></dd>
 
+</dl>
 
 <h1>Vytvoøení ankety</h1>
 
