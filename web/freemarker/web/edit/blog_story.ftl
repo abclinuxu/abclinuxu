@@ -25,9 +25,10 @@ text lámat. Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
  <div style="padding-left: 30pt">
     <h2>${TOOL.xpath(PREVIEW, "/data/name")}</h2>
     <p class="cl_inforadek">${DATE.show(PREVIEW.created, "CZ_SHORT")} |
-        Pøeèteno: ${TOOL.getCounterValue(PREVIEW.child)}x
+        Pøeèteno: ${TOOL.getCounterValue(PREVIEW)}x
         <#if PREVIEW.subType?exists>| ${CATEGORIES[PREVIEW.subType]?if_exists}</#if>
     </p>
+    ${TOOL.xpath(PREVIEW, "/data/perex")}
     ${TOOL.xpath(PREVIEW, "/data/content")}
  </div>
 </#if>
