@@ -80,20 +80,20 @@ public class AbcInit extends HttpServlet {
         next.set(Calendar.HOUR,7);
         next.set(Calendar.MINUTE,30);
 
-        Scheduler.getScheduler().addTask(new UpdateLinks(),6*60*60*1000,next.getTime().getTime());
+        Scheduler.getScheduler().addTask(new UpdateLinks2(),6*60*60*1000,next.getTime().getTime());
     }
 
     /**
-     * Update kernel versions each 30 minutes, starting now
+     * Update kernel versions each hour, starting now
      */
     protected void startKernelUpdate() {
-        Scheduler.getScheduler().addTask(new UpdateKernel(),30*60*1000,0);
+        Scheduler.getScheduler().addTask(new UpdateKernel(),1*60*60*1000,0);
     }
 
     /**
      * Generate file with newest links each hour, starting now
      */
     protected void startGenerateLinks() {
-        Scheduler.getScheduler().addTask(new GenerateLinks(),60*60*1000,0);
+        Scheduler.getScheduler().addTask(new GenerateLinks(),1*60*60*1000,0);
     }
 }

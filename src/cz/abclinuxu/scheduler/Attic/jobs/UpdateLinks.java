@@ -39,8 +39,9 @@ public class UpdateLinks implements Task {
     public static final int KECZY = 7;
     public static final int REBOOT = 8;
     public static final int LINUXZONE = 9;
+    public static final int LINUXSK = 10;
     /** id of last server, maximum id */
-    public static final int MAX = LINUXZONE;
+    public static final int LAST_SERVER = LINUXSK;
 
     Persistance persistance;
     Category category = new Category(Constants.CAT_LINKS);
@@ -62,6 +63,7 @@ public class UpdateLinks implements Task {
         mapLinks.put(new Server(KECZY),"http://www.keczy.cz/latin2/headline.php3");
         mapLinks.put(new Server(REBOOT),"http://www.reboot.cz/reboot_lh.phtml");
         mapLinks.put(new Server(LINUXZONE),"http://www.linuxzone.cz/export/last10.phtml");
+        mapLinks.put(new Server(LINUXSK),"http://www.linux.sk/backend.phtml");
     }
 
     /**
@@ -111,8 +113,8 @@ public class UpdateLinks implements Task {
      * list of links. Fixed links will be discarded.
      */
     public static Map groupLinks(Category category, Persistance persistance) {
-        List[] links = new List[MAX+1];
-        for ( int i=0; i<=MAX; i++ ) links[i] = new ArrayList();
+        List[] links = new List[LAST_SERVER+1];
+        for ( int i=0; i<=LAST_SERVER; i++ ) links[i] = new ArrayList();
 
         for (Iterator iter = category.getContent().iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
@@ -125,7 +127,7 @@ public class UpdateLinks implements Task {
         }
 
         Map result = new HashMap();
-        for ( int i=1; i<=MAX; i++ ) result.put(new Server(i),links[i]);
+        for ( int i=1; i<=LAST_SERVER; i++ ) result.put(new Server(i),links[i]);
         return result;
     }
 
@@ -202,17 +204,6 @@ public class UpdateLinks implements Task {
             }
         }
         return false;
-    }
-
-    /**
-     * @return true, if a is older than b.
-     */
-    private boolean isOlder(Link a, Link b) {
-        Date ad = a.getUpdated();
-        if ( ad==null ) return false;
-        Date bd = b.getUpdated();
-        if ( bd==null ) return true;
-        return ad.before(bd);
     }
 
     public static void main(String[] args) {
