@@ -1,0 +1,91 @@
+Hi,
+
+most sites use some templating mechanism. E.g. they have separate
+file for header and footer and use them on each page. That's good
+approach. In Velocity it may look this way:
+
+#include('header.vm')
+Hello world
+#include('footer.vm')
+
+If you try do add support for additional devices or browsers, you
+realize, that you need another tree(s). So you split your files to 
+directory structure like this:
+
+* normal
+   * templates
+      * header.vm
+      * footer.vm
+   * edit
+      * article.vm
+   * main
+      * index.vm   
+
+* special
+   * templates
+      * header.vm
+      * footer.vm
+   * edit
+      * article.vm
+   * main
+      * index.vm   
+
+If normal contains files for web and special is for wap, that's fine.
+But if for example you want to create text-based browsers friendly
+version of your site, that this is waste of space and worse - hard to
+maintain. Especially if most files are identical for both versions.
+So you modify your tree this way:
+
+* web
+   * templates
+      * header.vm
+      * footer.vm
+   * edit
+      * article.vm
+   * main
+      * index.vm
+      * about.vm  
+
+* lynx
+   * templates
+      * header.vm
+      * footer.vm
+   * main
+      * index.vm   
+
+and create some hack, how to choose correct tree:
+
+#if($variant=='lynx')
+#include('lynx/templates/header.vm')
+#else
+#include('web/templates/header.vm')
+#end
+Hello world
+#if($variant=='lynx')
+#include('lynx/templates/footer.vm')
+#else
+#include('web/templates/footer.vm')
+#end
+
+If you need to select only few files from few variants, it is OK and you can
+create better solution (select variant in controller and pass template name
+in context). But if number of variant raises and especially if many templates
+must be selected, the complexity grows enormenously.
+
+And this is, where VariantFileResourceLoader comes handy. It is designed
+exactly for the situation, where your template directory contains several
+variants with same structure, where one variant is defined as default.
+Such default variant shall contain all files and if search in selected
+variant for template is unsuccessful, template from default variant is used.
+
+#include('lynx/templates/footer.vm') -> /my/dir/lynx/templates/footer.vm
+#include('lynx/main/about.vm')       -> /my/dir/web/main/about.vm
+
+Do you see the idea? You can create some naming convention
+for selection of template and use it anywhere. If template
+doesn't exist in selected site's variant, it is taken from
+default variant.
+
+For example I want to create variant for lynx. So I need to modify
+header and footer (make them empty, no fancy tables) and welcome page.
+The rest is shared with default content.

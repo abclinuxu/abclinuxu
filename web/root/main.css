@@ -1,0 +1,61 @@
+/* spolecne */
+BODY { background-color: WHITE; color: #444444; font-family: Lucida,Helvetica; font-size: 11pt }
+TD { color: #444444; font-family: Lucida,Verdana,Helvetica; font-size: 11pt }
+A { color:#447799; font-family: Lucida,Verdana,Helvetica; font-size: 11pt; text-decoration: underline }
+P, DIV, SPAN { color: #444444; font-family: Lucida,Helvetica; font-size: 11pt }
+INPUT, SELECT { font-family: Helvetica; }
+LI { color: #444444; font-family: Lucida,Helvetica; font-size: 11pt }
+TD.obsah { padding: 2em 2em; }
+TD.bezmezer { padding: 0 0 0 0 }
+SPAN.povinne { font-weight: bolder }
+.error { color: RED; text-decoration: underline; font-size: bigger }
+.message { text-decoration: underline; padding: 1ex 0ex }
+
+/* sablona */
+SPAN.piditucna { color: BLACK; font-family: Lucida,Verdana,Helvetica; font-size: 10pt; font-weight: bold }
+SPAN.pidibila { color: WHITE; font-family: Lucida,Verdana,Helvetica; font-size: 10pt }
+SPAN.pidianketa { color: WHITE; font-family: Helvetica; font-size: 10pt }
+SPAN.pidibilatucna { color: WHITE; font-family: Lucida,Verdana,Helvetica; font-size: 10pt; font-weight: bold }
+SPAN.barva { color: #225577; font-family: Lucida,Verdana,Helvetica; font-size: 10pt }
+SPAN.barva1 { color: #AADDEE; font-family: Lucida,Verdana,Helvetica; font-size: 10pt }
+INPUT.menu { font-family: Helvetica; font-size: 8pt }
+A:hover { color:#002244; text-decoration: none }
+A.menu { color:WHITE; font-family:Lucida,Verdana,Helvetica; font-size:10pt; text-decoration:none }
+A.menu:hover { color:#AADDEE; text-decoration:underline }
+A.server { color: #DDFFFF; font-family: Verdana,Helvetica; font-size: 10pt; text-decoration: none; font-weight: bold }
+A.server:hover { color:WHITE; text-decoration: underline }
+A.bila { color: WHITE; font-family: Lucida,Verdana,Helvetica; font-size: 10pt; text-decoration: underline }
+A.bila:hover { color: WHITE; text-decoration: none }
+A.ikona { color:#447799; font-family: Helvetica; font-size: 10pt; text-decoration: underline }
+A.ikona:hover { color:#002244; text-decoration: none }
+TD.cerna { background-image: url(/images/site/oblouk.gif); background-repeat: no-repeat; background-color: BLACK; color: WHITE; font-family: Verdana,Helvetica; font-size:10pt; padding: 2 2 2 4 }
+TD.cerna0 { background-repeat: no-repeat; background-position: bottom left; background-color: BLACK; color: WHITE; font-family: Lucida,Verdana,Helvetica; font-size: 10pt }
+TD.cerna2 { background-image: url(/images/site/oblouk2.gif); background-repeat: no-repeat; background-color: BLACK; color: WHITE; font-family: Verdana,Helvetica; font-size:10pt; padding: 2 2 2 6 }
+TD.cerna3 { background-image: url(/images/site/oblouk3.gif); background-repeat: no-repeat; background-color: BLACK; color: WHITE; font-family: Verdana,Helvetica; font-size:10pt }
+TD.barva1 { background-image: url(/images/site/bgprechod.gif); background-repeat: repeat-x; background-color: #3A5E75; color: WHITE }
+TD.barva2 { background-image: url(/images/site/bod.gif); background-color: #5F8EAC; color: WHITE; padding: 2 2 3 8 }
+TD.seda { background-repeat: no-repeat; background-color: #EEEEEE; color: BLACK }
+TD.banner { background-repeat: no-repeat; background-color: #EEEEEE; color: BLACK }
+
+/* index */
+DIV.perex_out { padding: 0ex 0ex;  }
+A.nadpis_out { color:BLACK; font-family:Helvetica,Arial; font-size:14pt; font-weight:bold }
+A.nadpis_out:hover { color:#003355 }
+TD.jadro_h { font-weight: bold; font-family: Lucida,Verdana,Helvetica; font-size: 10pt}
+TD.jadro_p { font-family: Lucida,Verdana,Helvetica; font-size: 10pt }
+
+/* clanek */
+DIV.nadpis_in { color:BLACK; font-family:Helvetica,Arial; font-size:18pt; font-weight:bold }
+P.perex_in { border-width: 1 0; border-color: black; border-style: solid; background-color: #EEEEEE; padding: 1ex 0ex; }
+DIV.barva { color: #225577; font-family: Lucida,Verdana,Helvetica; }
+DIV.sub1 { color: BLACK; font-family: Lucida, Helvetica; font-size:14pt; font-weight: BOLD; padding: 1ex 0em }
+DIV.sub2 { color: BLACK; font-family: Lucida, Helvetica; font-size:13pt; font-weight: BOLD; padding: 1ex 0em }
+DIV.paticka {font-style: italic; padding-top: 1ex; }
+
+/* kategorie */
+DIV.note { padding-top: 10pt; padding-bottom: 5pt; /* font-style: italic; */}
+
+/* komentare, diskusni forum */
+DIV.diz_list { background-color: #EEEEEE; }
+DIV.diz_header { background-color: #EEEEEE; }
+SPAN.diz_header_prefix { font-style: italic; }

@@ -1,0 +1,14 @@
+/* spolecne */
+BODY { font-family: Lucida,Verdana,Helvetica; font-size: 8pt; 
+       background-color: #3a5e75; color: WHITE; 
+       padding: 0 0 0 0}
+
+A { color: WHITE;
+    text-decoration: underline }
+
+A:hover { text-decoration: none }
+
+A.nadpis {  font-weight: bold;
+            color:#ffcc33 }
+
+

@@ -1,0 +1,9 @@
+<!ELEMENT config (servlet+)>
+<!ELEMENT servlet (action+)>
+<!ATTLIST servlet name CDATA #REQUIRED>
+<!ELEMENT action (mapping+)>
+<!ATTLIST action name CDATA #REQUIRED>
+<!ELEMENT mapping (#EMPTY)>
+<!ATTLIST mapping variant CDATA #REQUIRED   <!-- variant holds name of presentation variant -->
+                  template CDATA #REQUIRED> <!-- template holds template name -->
+

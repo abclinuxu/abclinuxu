@@ -1,0 +1,31 @@
+User-agent: custo
+Disallow: /
+
+User-agent: WebZIP
+Disallow: /
+
+User-agent: WebTrends
+Disallow: /
+
+User-agent: wget
+Disallow: /
+
+User-agent: *
+Disallow: /software/Edit
+Disallow: /hardware/Edit
+Disallow: /clanky/Edit
+Disallow: /drivers/Edit
+Disallow: /Edit
+Disallow: /images
+Disallow: /download
+Disallow: /Profile
+Disallow: /Search
+Disallow: /Reward
+Disallow: /History
+Allow: /Index
+Allow: /hardware/View
+Allow: /software/View
+Allow: /clanky/View
+Allow: /drivers/View
+
+

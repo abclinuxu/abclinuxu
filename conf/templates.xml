@@ -1,0 +1,202 @@
+<config>
+
+  <servlet name="EditArticle">
+    <action name="add">
+      <mapping variant="web" template="web/add/article.vm" />
+    </action>
+    <action name="edit">
+      <mapping variant="web" template="web/edit/article.vm" />
+    </action>
+  </servlet>
+
+  <servlet name="EditCategory">
+    <action name="add">
+      <mapping variant="web" template="web/add/category.vm" />
+    </action>
+    <action name="edit">
+      <mapping variant="web" template="web/edit/category.vm" />
+    </action>
+  </servlet>
+
+  <servlet name="EditDiscussion">
+    <action name="reply">
+      <mapping variant="web" template="web/add/reply.vm" />
+    </action>
+    <action name="ask">
+      <mapping variant="web" template="web/add/ask.vm" />
+    </action>
+    <action name="ask_confirm">
+      <mapping variant="web" template="web/add/ask_confirm.vm" />
+    </action>
+  </servlet>
+
+  <servlet name="EditDriver">
+    <action name="add">
+      <mapping variant="web" template="web/add/driver.vm" />
+    </action>
+  </servlet>
+
+  <servlet name="EditHardware">
+    <action name="add_record">
+      <mapping variant="web" template="web/add/hwrecord.vm" />
+    </action>
+    <action name="edit_record">
+      <mapping variant="web" template="web/add/hwrecord.vm" />
+    </action>
+    <action name="add_item">
+      <mapping variant="web" template="web/add/item.vm" />
+    </action>
+    <action name="edit_item">
+      <mapping variant="web" template="web/edit/item.vm" />
+    </action>
+  </servlet>
+
+  <servlet name="EditPoll">
+    <action name="add">
+      <mapping variant="web" template="web/add/poll.vm" />
+    </action>
+    <action name="edit">
+      <mapping variant="web" template="web/edit/poll.vm" />
+    </action>
+  </servlet>
+
+  <servlet name="EditRelation">
+    <action name="add">
+      <mapping variant="web" template="web/add/relation.vm" />
+    </action>
+    <action name="remove">
+      <mapping variant="web" template="web/remove/relation.vm" />
+    </action>
+  </servlet>
+
+  <servlet name="EditRequest">
+    <action name="view">
+      <mapping variant="web" template="web/show/requests.vm" />
+    </action>
+  </servlet>
+
+  <servlet name="EditSoftware">
+    <action name="add_record">
+      <mapping variant="web" template="web/add/swrecord.vm" />
+    </action>
+    <action name="edit_record">
+      <mapping variant="web" template="web/add/swrecord.vm" />
+    </action>
+    <action name="add_item">
+      <mapping variant="web" template="web/add/item.vm" />
+    </action>
+    <action name="edit_item">
+      <mapping variant="web" template="web/edit/item.vm" />
+    </action>
+  </servlet>
+
+  <servlet name="EditUser">
+    <action name="login">
+      <mapping variant="web" template="web/login.vm" />
+    </action>
+    <action name="register">
+      <mapping variant="web" template="web/add/user.vm" />
+    </action>
+    <action name="welcome">
+      <mapping variant="web" template="web/show/welcome_user.vm" />
+    </action>
+    <action name="edit">
+      <mapping variant="web" template="web/edit/user.vm" />
+    </action>
+    <action name="passwd">
+      <mapping variant="web" template="web/edit/password.vm" />
+    </action>
+  </servlet>
+
+  <servlet name="ForgottenPassword">
+    <action name="step1">
+      <mapping variant="web" template="web/misc/forgotten.vm" />
+    </action>
+    <action name="step2">
+      <mapping variant="web" template="web/misc/forgotten2.vm" />
+    </action>
+  </servlet>
+
+  <servlet name="Search">
+    <action name="show">
+      <mapping variant="web" template="web/misc/search.vm" />
+    </action>
+  </servlet>
+
+  <servlet name="SelectIcon">
+    <action name="show">
+      <mapping variant="web" template="web/misc/selectIcon.vm" />
+    </action>
+  </servlet>
+
+  <servlet name="SelectRelation">
+    <action name="step1">
+      <mapping variant="web" template="web/misc/selectRelation.vm" />
+    </action>
+    <action name="step2">
+      <mapping variant="web" template="web/misc/selectRelation2.vm" />
+    </action>
+  </servlet>
+
+  <servlet name="ViewCategory">
+    <action name="category">
+      <mapping variant="web" template="web/show/category.vm" />
+    </action>
+    <action name="clanky">
+      <mapping variant="web" template="web/show/clanky.vm" />
+    </action>
+    <action name="discussions">
+      <mapping variant="web" template="web/show/discussions.vm" />
+    </action>
+    <action name="polls">
+      <mapping variant="web" template="web/show/ankety.vm" />
+    </action>
+    <action name="links">
+      <mapping variant="web" template="web/show/links.vm" />
+    </action>
+    <action name="drivers">
+      <mapping variant="web" template="web/show/drivers.vm" />
+    </action>
+    <action name="rubriky">
+      <mapping variant="web" template="web/show/rubriky.vm" />
+    </action>
+  </servlet>
+
+  <servlet name="ViewIndex">
+    <action name="show">
+      <mapping variant="web" template="web/show/index.vm" />
+      <mapping variant="lynx" template="lynx/show/index.vm" />
+      <mapping variant="sidebar" template="sidebar/show/index.vm" />
+    </action>
+  </servlet>
+
+  <servlet name="ViewItem">
+    <action name="hardware">
+      <mapping variant="web" template="web/show/hwitem.vm" />
+    </action>
+    <action name="software">
+      <mapping variant="web" template="web/show/switem.vm" />
+    </action>
+    <action name="discussion">
+      <mapping variant="web" template="web/show/discussion.vm" />
+    </action>
+    <action name="article">
+      <mapping variant="web" template="web/show/article.vm" />
+    </action>
+    <action name="driver">
+      <mapping variant="web" template="web/show/driver.vm" />
+    </action>
+  </servlet>
+
+  <servlet name="ViewUser">
+    <action name="profile">
+      <mapping variant="web" template="web/show/profile.vm" />
+    </action>
+  </servlet>
+
+  <servlet name="ShowOlder">
+    <action name="show">
+      <mapping variant="web" template="web/show/history.vm" />
+    </action>
+  </servlet>
+</config>
