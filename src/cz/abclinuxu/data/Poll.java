@@ -102,13 +102,14 @@ public class Poll extends GenericObject {
      * @return whether the user may select multiple choices
      */
     public boolean isMultiChoice() {
-        return false;
+        return multiChoice;
     }
 
     /**
      * sets whether the user may select multiple choices
      */
     public void setMultiChoice(boolean multiChoice) {
+        this.multiChoice = multiChoice;
     }
 
     /**
@@ -177,6 +178,17 @@ public class Poll extends GenericObject {
         }
         sb.append(": id="+id);
         if ( text!=null ) sb.append(",text="+text);
+        sb.append(",closed="+closed);
+        sb.append(",multichoice="+multiChoice);
+        if ( choices!=null ) {
+            sb.append(" [");
+            for (int i = 0; i < choices.length; i++) {
+                PollChoice choice = choices[i];
+                sb.append(choice.text+":"+choice.count);
+                if ( i<choices.length-1 ) sb.append("|");
+            }
+            sb.append("]");
+        }
         return sb.toString();
     }
 

@@ -30,9 +30,15 @@ import java.util.*;
  * <dd>Question of the poll</dd>
  * <dt><code>PARAM_TYPE</code></dt>
  * <dd>Constant defining type of the poll.</dd>
+ * <dt><code>PARAM_URL</code></dt>
+ * <dd>When user votes, redirect page to this URL.</dd>
+ * <dt><code>PARAM_VOTE_ID</code></dt>
+ * <dd>User's choice(s), when he votes.</dd>
  * </dl>
  */
 public class EditPoll extends AbcServlet {
+    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(EditPoll.class);
+
     public static final String PARAM_RELATION = "relationId";
     public static final String PARAM_POLL = "pollId";
     public static final String PARAM_TEXT = "text";
@@ -41,11 +47,14 @@ public class EditPoll extends AbcServlet {
     public static final String PARAM_CLOSED = "closed";
     public static final String PARAM_CHOICES = "choices";
     public static final String PARAM_COUNTS = "counts";
+    public static final String PARAM_URL = "url";
+    public static final String PARAM_VOTE_ID = "voteId";
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
     public static final String ACTION_EDIT = "edit";
     public static final String ACTION_EDIT2 = "edit2";
+    public static final String ACTION_VOTE = "vote";
 
     public static final String VAR_RELATION = "relation";
     public static final String VAR_POLL = "POLL";
@@ -61,7 +70,7 @@ public class EditPoll extends AbcServlet {
             int id = Integer.parseInt(tmp);
             relation = (Relation) PersistanceFactory.getPersistance().findById(new Relation(id));
             ctx.put(EditPoll.VAR_RELATION,relation);
-        } else throw new Exception("Chybí parametr relationId!");
+        }
 
         tmp = (String) params.get(EditPoll.PARAM_POLL);
         if ( tmp!=null && tmp.length()>0 ) {
@@ -73,14 +82,20 @@ public class EditPoll extends AbcServlet {
         String action = (String) params.get(AbcServlet.PARAM_ACTION);
 
         if ( action==null || action.equals(EditPoll.ACTION_ADD) ) {
-           int rights = checkAccess(relation.getChild(),AbcServlet.METHOD_ADD,ctx);
-            switch (rights) {
-                case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
-                case AbcServlet.USER_INSUFFICIENT_RIGHTS: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
-                default: return getTemplate("add/poll.vm");
-            }
+            if ( relation==null ) throw new Exception("Chybí parametr relationId!");
+            int rights = checkAccess(relation.getChild(),AbcServlet.METHOD_ADD,ctx);
+             switch (rights) {
+                 case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
+                 case AbcServlet.USER_INSUFFICIENT_RIGHTS: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                 default: return getTemplate("add/poll.vm");
+             }
+
+        } else if ( action.equals(EditPoll.ACTION_VOTE) ) {
+            if ( poll==null ) throw new Exception("Chybí parametr pollId!");
+            return actionVote(request,response,ctx);
 
         } else if ( action.equals(EditPoll.ACTION_ADD_STEP2) ) {
+            if ( relation==null ) throw new Exception("Chybí parametr relationId!");
             int rights = checkAccess(relation.getChild(),AbcServlet.METHOD_ADD,ctx);
             switch (rights) {
                 case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
@@ -92,6 +107,7 @@ public class EditPoll extends AbcServlet {
             }
 
         } else if ( action.equals(EditPoll.ACTION_EDIT) ) {
+            if ( relation==null ) throw new Exception("Chybí parametr relationId!");
             if ( poll==null ) throw new Exception("Chybí parametr pollId!");
             int rights = checkAccess(poll,AbcServlet.METHOD_EDIT,ctx);
             switch (rights) {
@@ -101,6 +117,7 @@ public class EditPoll extends AbcServlet {
             }
 
         } else if ( action.equals(EditPoll.ACTION_EDIT2) ) {
+            if ( relation==null ) throw new Exception("Chybí parametr relationId!");
             if ( poll==null ) throw new Exception("Chybí parametr pollId!");
             int rights = checkAccess(poll,AbcServlet.METHOD_EDIT,ctx);
             switch (rights) {
@@ -174,7 +191,6 @@ public class EditPoll extends AbcServlet {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
 
         int type = Poll.SURVEY;
-        boolean multiChoice = false;
         Relation upperRelation = (Relation) ctx.get(EditPoll.VAR_RELATION);
         Poll poll = (Poll) ctx.get(EditPoll.VAR_POLL);
 
@@ -186,7 +202,7 @@ public class EditPoll extends AbcServlet {
         }
 
         tmp = (String) params.get(EditPoll.PARAM_MULTICHOICE);
-        poll.setMultiChoice( ("yes".equals(tmp)) );
+        poll.setMultiChoice( "yes".equals(tmp) );
 
         tmp = (String) params.get(EditPoll.PARAM_CLOSED);
         poll.setClosed( ("yes".equals(tmp)) );
@@ -212,6 +228,38 @@ public class EditPoll extends AbcServlet {
         PersistanceFactory.getPersistance().update(poll);
 
         redirect("/ViewRelation?relationId="+upperRelation.getId(),response,ctx);
+        return null;
+    }
+
+    /**
+     * Voting
+     */
+    protected Template actionVote(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Poll poll = (Poll) ctx.get(EditPoll.VAR_POLL);
+        String url = (String) params.get(EditPoll.PARAM_URL);
+
+        if ( url==null || url.length()==0 ) {
+            addError(AbcServlet.GENERIC_ERROR,"Chybí parametr url!",ctx,request.getSession());
+        }
+
+        try {
+            String[] values = request.getParameterValues(EditPoll.PARAM_VOTE_ID);
+            int max = 1;
+            if ( poll.isMultiChoice() ) max = values.length;
+            for (int i = 0; i < values.length; i++) {
+                String tmp = values[i];
+                int voteId = Integer.parseInt(tmp);
+                PersistanceFactory.getPersistance().incrementCounter(poll.getChoices()[voteId]);
+            }
+        } catch (Exception e) {
+            log.error("Vote bug: ",e);
+            addError(AbcServlet.GENERIC_ERROR,"Nevybral jste ¾ádnou volbu!",ctx,request.getSession());
+            redirect(url,response,ctx);
+            return null;
+        }
+
+        redirect(url,response,ctx);
         return null;
     }
 }

@@ -271,6 +271,18 @@ public class VelocityHelper {
     }
 
     /**
+     * @return int value of <code>str</code> or 0
+     */
+    public int parseInt(String str) {
+        if ( str!=null && str.length()>0 ) {
+            try {
+                return Integer.parseInt(str);
+            } catch (NumberFormatException e) {}
+        }
+        return 0;
+    }
+
+    /**
      * Does standard HTML conversions like & to &amp;amp; or &lt; to &amp;lt;.
      * @return Modified String, which may be inserted into html page without affecting its structure.
      */

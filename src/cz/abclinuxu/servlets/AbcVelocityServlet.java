@@ -80,7 +80,6 @@ public class AbcServlet extends VelocityServlet {
     public static final String VAR_MESSAGES = "MESSAGES";
     public static final String VAR_PARAMS = "PARAMS";
     public static final String VAR_HELPER = "UTIL";
-    public static final String VAR_INT = "int";
 
     public static final String PARAM_ACTION = "action";
     public static final String PARAM_LOG_USER = "LOGIN";
@@ -129,7 +128,6 @@ public class AbcServlet extends VelocityServlet {
             context.put(AbcServlet.VAR_PERSISTANCE,PersistanceFactory.getPersistance());
             context.put(AbcServlet.VAR_HELPER,new VelocityHelper());
             context.put(AbcServlet.VAR_URL_UTILS,new UrlUtils(request.getRequestURI(), response));
-            context.put(AbcServlet.VAR_INT,new Integer(0));
         }
         request.setAttribute(AbcServlet.ATTRIB_CONTEXT,context);
         return context;

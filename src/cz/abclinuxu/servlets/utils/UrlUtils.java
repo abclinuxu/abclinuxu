@@ -81,7 +81,8 @@ public class UrlUtils {
      * @param response Valid HttpServletResponse object
      */
     public String constructRedirectURL(String url) {
-        String out = ( prefix!=null )? prefix+url : url;
+        String out = url;
+        if ( prefix!=null && !url.startsWith(prefix) ) out = prefix+url;
         return response.encodeRedirectURL(out);
     }
 
