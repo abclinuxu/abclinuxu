@@ -532,6 +532,11 @@ public class EditDiscussion extends AbcFMServlet {
         } else {
             String tmp = (String) params.get(PARAM_AUTHOR);
             if ( tmp!=null && tmp.length()>0 ) {
+                if (tmp.indexOf("<")!=-1) {
+                    params.put(PARAM_AUTHOR,"");
+                    ServletUtils.addError(PARAM_AUTHOR, "Pou¾ití HTML znaèek je zakázáno!", env, null);
+                    return false;
+                }
                 DocumentHelper.makeElement(root, "author").setText(tmp);
             } else {
                 ServletUtils.addError(PARAM_AUTHOR, "Slu¹ností je se pøedstavit!", env, null);
