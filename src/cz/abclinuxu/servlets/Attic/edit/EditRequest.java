@@ -13,6 +13,7 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.security.Guard;
+import cz.abclinuxu.utils.InstanceUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.dom4j.Document;
@@ -41,7 +42,7 @@ public class EditRequest extends AbcServlet {
 
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         String action = (String) params.get(AbcServlet.PARAM_ACTION);
-        Relation relation = (Relation) instantiateParam(PARAM_REQUEST,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_REQUEST,Relation.class,params);
         if ( relation!=null ) ctx.put(VAR_REQUEST_RELATION,relation);
 
         if ( action==null || action.equals(ACTION_ADD) ) {
@@ -52,7 +53,7 @@ public class EditRequest extends AbcServlet {
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: {
-                    addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, request.getSession());
+                    ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, request.getSession());
                     UrlUtils.redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);
                     return null;
                 }
@@ -64,7 +65,7 @@ public class EditRequest extends AbcServlet {
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: {
-                    addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, request.getSession());
+                    ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, request.getSession());
                     UrlUtils.redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);
                     return null;
                 }
@@ -84,20 +85,20 @@ public class EditRequest extends AbcServlet {
         boolean error = false;
 
         if ( author==null || author.length()==0 ) {
-            addError(PARAM_AUTHOR,"Slu¹ností je pøedstavit se.",ctx,null);
+            ServletUtils.addError(PARAM_AUTHOR,"Slu¹ností je pøedstavit se.",ctx,null);
             error = true;
         }
 
         if ( email==null || email.length()==0 ) {
-            addError(PARAM_EMAIL,"Nevím, kam poslat vyrozumìní.",ctx,null);
+            ServletUtils.addError(PARAM_EMAIL,"Nevím, kam poslat vyrozumìní.",ctx,null);
             error = true;
         } else if ( email.length()<6 || email.indexOf('@')==-1 ) {
-            addError(PARAM_EMAIL,"Nelatný email!.",ctx,null);
+            ServletUtils.addError(PARAM_EMAIL,"Nelatný email!.",ctx,null);
             error = true;
         }
 
         if ( text==null || text.length()==0 ) {
-            addError(PARAM_TEXT,"Co potøebujete?",ctx,null);
+            ServletUtils.addError(PARAM_TEXT,"Co potøebujete?",ctx,null);
             error = true;
         }
 
@@ -118,7 +119,7 @@ public class EditRequest extends AbcServlet {
         Relation relation = new Relation(new Category(Constants.CAT_REQUESTS),req,Constants.REL_REQUESTS);
         persistance.create(relation);
 
-        addMessage("Vá¹ po¾adavek byl pøijat.",ctx,request.getSession());
+        ServletUtils.addMessage("Vá¹ po¾adavek byl pøijat.",ctx,request.getSession());
 
         UrlUtils.redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);
         return null;
@@ -130,7 +131,7 @@ public class EditRequest extends AbcServlet {
         Relation relation = (Relation) ctx.get(VAR_REQUEST_RELATION);
         persistance.synchronize(relation);
         persistance.remove(relation);
-        addMessage("Po¾adavek byl smazán.",ctx,request.getSession());
+        ServletUtils.addMessage("Po¾adavek byl smazán.",ctx,request.getSession());
 
         UrlUtils.redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);
         return null;
@@ -151,7 +152,7 @@ public class EditRequest extends AbcServlet {
         Email.sendEmail(user.getEmail(),requestor,"Vas pozadavek na AbcLinuxu byl vyrizen",text);
 
         persistance.remove(relation);
-        addMessage("Po¾adavek byl vyøízen.",ctx,request.getSession());
+        ServletUtils.addMessage("Po¾adavek byl vyøízen.",ctx,request.getSession());
 
         UrlUtils.redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);
         return null;

@@ -11,6 +11,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.*;
+import cz.abclinuxu.utils.InstanceUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 
@@ -33,7 +34,7 @@ public class FindContext extends AbcServlet {
 
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
-        Relation relation = (Relation) instantiateParam(PARAM_RELATION,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
         if ( relation==null ) throw new Exception("Chybí parametr relationId!");
 
         persistance.synchronize(relation);

@@ -11,6 +11,7 @@ import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.utils.InstanceUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
@@ -59,8 +60,8 @@ public class ForgottenPassword extends AbcServlet {
         if ( login!=null ) login = login.trim(); else login = "";
 
         if ( name.length()<3 && login.length()<3 ) {
-            if ( name.length()<3 ) addError(PARAM_NAME,"Zadejte nejménì tøi písmena!",ctx,null);
-            if ( login.length()<3 ) addError(PARAM_LOGIN,"Zadejte nejménì tøi písmena!",ctx,null);
+            if ( name.length()<3 ) ServletUtils.addError(PARAM_NAME,"Zadejte nejménì tøi písmena!",ctx,null);
+            if ( login.length()<3 ) ServletUtils.addError(PARAM_LOGIN,"Zadejte nejménì tøi písmena!",ctx,null);
             return getTemplate("view/forgotten.vm");
         }
 
@@ -69,7 +70,7 @@ public class ForgottenPassword extends AbcServlet {
 
         List found = persistance.findByExample(list,null);
         if ( found.size()==0 ) {
-            addMessage("Nenalezen ¾ádný u¾ivatel!",ctx,null);
+            ServletUtils.addMessage("Nenalezen ¾ádný u¾ivatel!",ctx,null);
             return getTemplate("view/forgotten.vm");
         }
 
@@ -79,7 +80,7 @@ public class ForgottenPassword extends AbcServlet {
 
     protected Template actionSend(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
-        User user = (User) instantiateParam(PARAM_USER_ID,User.class,params);
+        User user = (User) InstanceUtils.instantiateParam(PARAM_USER_ID,User.class,params);
         PersistanceFactory.getPersistance().synchronize(user);
 
         VelocityContext tmpContext = new VelocityContext();
@@ -87,8 +88,8 @@ public class ForgottenPassword extends AbcServlet {
         String message = VelocityHelper.mergeTemplate("mail/password.vm",tmpContext);
         Email.sendEmail("admin@AbcLinuxu.cz",user.getEmail(),"Zapomenute heslo",message);
 
-        addMessage("Heslo odeslano na adresu "+user.getEmail(),ctx,request.getSession());
-        UrlUtils.redirect("/index.html",response,ctx);
+        ServletUtils.addMessage("Heslo odeslano na adresu "+user.getEmail(),ctx,request.getSession());
+        UrlUtils.redirect("/Index",response,ctx);
         return null;
     }
 }

@@ -8,8 +8,7 @@ package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.utils.VelocityHelper;
-import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.PersistanceException;
@@ -101,9 +100,9 @@ public class SelectRelation extends AbcServlet {
                 ctx.put(SelectRelation.VAR_CURRENT,current);
                 return getTemplate("view/selectRelation.vm");
             } catch (NumberFormatException e) {
-                addError(SelectRelation.PARAM_ENTERED,"Èíslo vìt¹í ne¾ nula!",ctx, null);
+                ServletUtils.addError(SelectRelation.PARAM_ENTERED,"Èíslo vìt¹í ne¾ nula!",ctx, null);
             } catch (PersistanceException e) {
-                addError(AbcServlet.GENERIC_ERROR,"Nebyla zvolena platná relace!",ctx, null);
+                ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Nebyla zvolena platná relace!",ctx, null);
             }
         }
 
@@ -137,13 +136,13 @@ public class SelectRelation extends AbcServlet {
             try {
                 result = Integer.parseInt(manual);
             } catch (NumberFormatException e) {
-                addError(SelectRelation.PARAM_ENTERED,"Císlo vìt¹í ne¾ nula!",ctx, null);
+                ServletUtils.addError(SelectRelation.PARAM_ENTERED,"Císlo vìt¹í ne¾ nula!",ctx, null);
             }
         } else {
             try {
                 result = Integer.parseInt(tmp);
             } catch (NumberFormatException e) {
-                addError(AbcServlet.GENERIC_ERROR,"Nebyla zvolena platná relace!",ctx, null);
+                ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Nebyla zvolena platná relace!",ctx, null);
             }
         }
 
@@ -159,7 +158,7 @@ public class SelectRelation extends AbcServlet {
     protected Template actionFinish(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         String choice = request.getParameter(SelectRelation.PARAM_CURRENT);
 
-        Map map = VelocityHelper.putParamsToMap(request,null);
+        Map map = ServletUtils.putParamsToMap(request,null);
         map.put(SelectRelation.PARAM_SELECTED,map.get(SelectRelation.PARAM_CURRENT));
         map.remove(SelectRelation.PARAM_CURRENT);
         map.remove(SelectRelation.PARAM_URL);

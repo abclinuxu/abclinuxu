@@ -9,8 +9,7 @@
 package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcServlet;
-import cz.abclinuxu.servlets.utils.VelocityHelper;
-import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.view.SelectIcon;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.User;
@@ -19,6 +18,7 @@ import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.security.Guard;
+import cz.abclinuxu.utils.InstanceUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.dom4j.Document;
@@ -82,13 +82,13 @@ public class EditCategory extends AbcServlet {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         String action = (String) params.get(AbcServlet.PARAM_ACTION);
 
-        category = (Category) instantiateParam(EditCategory.PARAM_CATEGORY,Category.class,params);
+        category = (Category) InstanceUtils.instantiateParam(EditCategory.PARAM_CATEGORY,Category.class,params);
         if ( category!=null ) {
             category = (Category) PersistanceFactory.getPersistance().findById(category);
             ctx.put(EditCategory.VAR_CATEGORY,category);
         }
 
-        relation = (Relation) instantiateParam(EditCategory.PARAM_RELATION,Relation.class,params);
+        relation = (Relation) InstanceUtils.instantiateParam(EditCategory.PARAM_RELATION,Relation.class,params);
         if ( relation!=null ) {
             relation = (Relation) PersistanceFactory.getPersistance().findById(relation);
             ctx.put(EditCategory.VAR_RELATION,relation);
@@ -100,7 +100,7 @@ public class EditCategory extends AbcServlet {
             int rights = Guard.check((User)ctx.get(VAR_USER),category,Guard.OPERATION_ADD,Category.class);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
-                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return getTemplate("add/category.vm");
             }
 
@@ -109,7 +109,7 @@ public class EditCategory extends AbcServlet {
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: {
-                    addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                    ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                     return getTemplate("add/category.vm");
                 }
                 default: return actionAddStep2(request,response,ctx);
@@ -119,7 +119,7 @@ public class EditCategory extends AbcServlet {
             int rights = Guard.check((User)ctx.get(VAR_USER),category,Guard.OPERATION_EDIT,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
-                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return actionEditStep1(request,ctx);
             }
 
@@ -127,7 +127,7 @@ public class EditCategory extends AbcServlet {
             int rights = Guard.check((User)ctx.get(VAR_USER),category,Guard.OPERATION_EDIT,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
-                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return actionEditStep2(request,response,ctx);
             }
 
@@ -147,7 +147,7 @@ public class EditCategory extends AbcServlet {
         String note = (String) params.get(EditCategory.PARAM_NOTE);
 
         if ( name==null || name.length()==0 ) {
-            addError(EditCategory.PARAM_NAME,"Nezadal jste jméno kategorie!",ctx, null);
+            ServletUtils.addError(EditCategory.PARAM_NAME,"Nezadal jste jméno kategorie!",ctx, null);
             return getTemplate("add/category.vm");
         }
 
@@ -174,7 +174,7 @@ public class EditCategory extends AbcServlet {
             relation = new Relation(upperCategory,category,upper);
             PersistanceFactory.getPersistance().create(relation);
         } catch (PersistanceException e) {
-            addError(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
+            ServletUtils.addError(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
             return getTemplate("add/category.vm");
         }
 
@@ -188,6 +188,7 @@ public class EditCategory extends AbcServlet {
      */
     protected Template actionEditStep1(HttpServletRequest request, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        VelocityHelper helper = (VelocityHelper) ctx.get(AbcServlet.VAR_HELPER);
 
         Category category = (Category) ctx.get(EditCategory.VAR_CATEGORY);
         PersistanceFactory.getPersistance().synchronize(category);
@@ -202,7 +203,7 @@ public class EditCategory extends AbcServlet {
             if (node!=null) params.put(EditCategory.PARAM_ICON,node.getText());
 
             node = document.selectSingleNode("data/note");
-            if (node!=null) params.put(EditCategory.PARAM_NOTE,VelocityHelper.escapeAmpersand(node.getText()));
+            if (node!=null) params.put(EditCategory.PARAM_NOTE,helper.encodeSpecial(node.getText()));
 
             params.put(EditCategory.PARAM_OPEN, (category.isOpen())? "yes":"no");
         }

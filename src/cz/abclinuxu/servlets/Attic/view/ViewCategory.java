@@ -11,6 +11,7 @@ package cz.abclinuxu.servlets.view;
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.persistance.Persistance;
@@ -59,7 +60,7 @@ public class ViewCategory extends AbcServlet {
             category = new Category(Integer.parseInt(tmp));
         } else {
             if ( relation==null ) {
-                addError(AbcServlet.GENERIC_ERROR,"Nebyla vybrána ¾ádná kategorie!",ctx, request.getSession());
+                ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Nebyla vybrána ¾ádná kategorie!",ctx, request.getSession());
                 response.sendRedirect("/");
                 return null;
             }

@@ -180,22 +180,26 @@ $!UTIL.saveParams($PARAMS, [])
 
 #macro(comment $reaction $diz $relation)
 <div class="diz_header">
-<span class="diz_header_prefix">Datum:</span> $!UTIL.showDate($reaction.Updated)<br/>
+<span class="diz_header_prefix">Datum:</span> $!UTIL.showDate($reaction.Updated)<br>
 #if($reaction.Owner!=0)
-#set($author=$UTIL.instantiate('User',$reaction.Owner))#sync($author)
-<span class="diz_header_prefix">Od:</span> <A HREF="/Profile?userId=$!author.Id">$!author.Name</A><br/>
+#set($autor=$UTIL.instantiate('User',$reaction.Owner))#sync($autor)
+<span class="diz_header_prefix">Od:</span> <A HREF="/Profile?userId=$!autor.Id">$!autor.Name</A><br>
 #else
-<span class="diz_header_prefix">Od:</span> $!UTIL.getXPath($reaction,'data/author')<br/>
+<span class="diz_header_prefix">Od:</span> $!UTIL.getXPath($reaction,'data/author')<br>
 #end
-<span class="diz_header_prefix">Titulek:</span> $!UTIL.getXPath($reaction,'data/title')<p/>
+<span class="diz_header_prefix">Titulek:</span> $!UTIL.getXPath($reaction,'data/title')<br>
 </div>
-$!UTIL.getXPath($reaction,'data/text')<p/>
-#if($UTIL.is($reaction,'Item','Discussion'))
-<a href="$!URL.make("/EditDiscussion?action=add&dizId=$!diz.Id&threadId=0&relationId=$!relation.Id")">Odpovìdìt</a>
-#else
-<a href="$!URL.make("/EditDiscussion?action=add&dizId=$!diz.Id&threadId=$!reaction.Id&relationId=$!relation.Id")">Odpovìdìt</a>
-#end
-<p/>
+<p>$!UTIL.getXPath($reaction,'data/text')<br>
+<form action="$!URL.make("/EditDiscussion")" method="post">
+<input type="hidden" name="action" value="add">
+<input type="hidden" name="dizId" value="$!diz.Id">
+<input type="hidden" name="relationId" value="$!relation.Id">
+<input type="hidden" name="threadId" value=#if($UTIL.is($reaction,'Item','Discussion')) "0" #else "$!reaction.Id" #end>
+<input type="submit" value="Odpovìdìt">
+</form>
+#if($reaction.Owner!=0) #showReward($autor) #end
+#undef('autor')
+</p>
 #end
 
 
@@ -212,7 +216,7 @@ $!UTIL.getXPath($reaction,'data/text')<p/>
 
 
 #####
-## Macros, that shows discussions
+## Macros, that shows list of discussions
 #####
 
 #macro(showDiscussions $DISCUSSIONS $WHERE_ADD)
@@ -251,4 +255,24 @@ $!UTIL.getXPath($reaction,'data/text')<p/>
 </TD></TR>
 
 </TABLE>
+#end
+
+
+
+#####
+## Macros, that shows reward form
+#####
+
+#macro (showReward $odmenen)
+#set($penezenka=$UTIL.getXPath($odmenen,'data/ilikeq'))
+#if($penezenka)
+<form action="https://www.ilikeq.cz/ilikeq/usr/tnx.xsp" method="post">
+<input type="hidden" name="name" value="$!penezenka">
+<input type="hidden" name="descr" value="Zaslani odmeny">
+<input type="hidden" name="detail1" value="Odmena za prispevek na AbcLinuxu.cz">
+<input type="hidden" name="url" value="http://AbcLinuxu.cz/Reward?action=thanks&who=$!odmenen.Id">
+<input type="hidden" name="curl" value="http://AbcLinuxu.cz/Reward?action=log&who=$!odmenen.Id">
+<input type="submit" value="Zaslat odmìnu pøes I LIKE Q">
+</form>
+#end
 #end

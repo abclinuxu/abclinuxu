@@ -8,12 +8,12 @@ package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.utils.VelocityHelper;
-import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.view.SelectRelation;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.security.Guard;
+import cz.abclinuxu.utils.InstanceUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.dom4j.*;
@@ -53,7 +53,7 @@ public class EditArticle extends AbcServlet {
         Persistance persistance = PersistanceFactory.getPersistance();
         String action = (String) params.get(AbcServlet.PARAM_ACTION);
 
-        relation = (Relation) instantiateParam(PARAM_RELATION,Relation.class,params);
+        relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
         if ( relation!=null ) {
             persistance.synchronize(relation);
             persistance.synchronize(relation.getChild());
@@ -64,7 +64,7 @@ public class EditArticle extends AbcServlet {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
-                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: {
                     params.put(PARAM_PUBLISHED,Constants.isoFormat.format(new Date()));
                     return getTemplate("add/article.vm");
@@ -76,7 +76,7 @@ public class EditArticle extends AbcServlet {
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: {
-                    addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                    ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                     return getTemplate("add/article.vm");
                 }
                 default: return actionAddStep2(request,response,ctx);
@@ -86,7 +86,7 @@ public class EditArticle extends AbcServlet {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_EDIT,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
-                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return actionEditItem(request,ctx);
             }
 
@@ -94,7 +94,7 @@ public class EditArticle extends AbcServlet {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_EDIT,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
-                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return actionEditItem2(request,response,ctx);
             }
 
@@ -111,27 +111,27 @@ public class EditArticle extends AbcServlet {
         boolean error = false;
         String name = (String) params.get(PARAM_TITLE);
         if ( name==null || name.length()==0 ) {
-            addError(PARAM_TITLE,"Nevyplnil jste titulek èlánku!",ctx,null); error = true;
+            ServletUtils.addError(PARAM_TITLE,"Nevyplnil jste titulek èlánku!",ctx,null); error = true;
         }
 
         String perex = (String) params.get(PARAM_PEREX);
         if ( perex==null || perex.length()==0 ) {
-            addError(PARAM_PEREX,"Nevyplnil jste popis èlánku!",ctx,null); error = true;
+            ServletUtils.addError(PARAM_PEREX,"Nevyplnil jste popis èlánku!",ctx,null); error = true;
         }
 
         String content = (String) params.get(PARAM_CONTENT);
         if ( content==null || content.length()==0 ) {
-            addError(PARAM_CONTENT,"Nevyplnil jste obsah èlánku!",ctx,null); error = true;
+            ServletUtils.addError(PARAM_CONTENT,"Nevyplnil jste obsah èlánku!",ctx,null); error = true;
         }
 
         String published = (String) params.get(PARAM_PUBLISHED);
         if ( published==null || published.length()<12 ) {
-            addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",ctx,null); error = true;
+            ServletUtils.addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",ctx,null); error = true;
         } else {
             try {
                 Date d = Constants.isoFormat.parse(published);
             } catch (ParseException e) {
-                addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",ctx,null); error = true;
+                ServletUtils.addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",ctx,null); error = true;
             }
         }
 
@@ -139,7 +139,7 @@ public class EditArticle extends AbcServlet {
             return getTemplate("add/article.vm");
         }
 
-        Relation tmp = (Relation) instantiateParam(PARAM_AUTHOR_ID,Relation.class,params);
+        Relation tmp = (Relation) InstanceUtils.instantiateParam(PARAM_AUTHOR_ID,Relation.class,params);
         persistance.synchronize(tmp);
         User author = (User) tmp.getChild();
 
@@ -176,13 +176,14 @@ public class EditArticle extends AbcServlet {
             UrlUtils.redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
             return null;
         } catch (PersistanceException e) {
-            addError(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
+            ServletUtils.addError(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
             return getTemplate("add/article.vm");
         }
     }
 
     protected Template actionEditItem(HttpServletRequest request, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        VelocityHelper helper = (VelocityHelper) ctx.get(AbcServlet.VAR_HELPER);
 
         Relation relation = (Relation) ctx.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
@@ -193,7 +194,7 @@ public class EditArticle extends AbcServlet {
         node = document.selectSingleNode("data/published");
         if ( node!=null ) params.put(PARAM_PUBLISHED,node.getText());
         node = document.selectSingleNode("data/perex");
-        if ( node!=null ) params.put(PARAM_PEREX,VelocityHelper.escapeAmpersand(node.getText()));
+        if ( node!=null ) params.put(PARAM_PEREX,helper.encodeSpecial(node.getText()));
 
         Record record = null;
         for (Iterator iter = item.getContent().iterator(); iter.hasNext();) {
@@ -203,8 +204,8 @@ public class EditArticle extends AbcServlet {
                 record = (Record) rel.getChild();
                 if ( record.getType()==Record.ARTICLE ) {
                     document = record.getData();
-                    node = document.selectSingleNode(VelocityHelper.escapeAmpersand("data/content"));
-                    params.put(PARAM_CONTENT,node.getText());
+                    node = document.selectSingleNode("data/content");
+                    params.put(PARAM_CONTENT,helper.encodeSpecial(node.getText()));
                     break;
                 }
             }
@@ -221,27 +222,27 @@ public class EditArticle extends AbcServlet {
         boolean error = false;
         String name = (String) params.get(PARAM_TITLE);
         if ( name==null || name.length()==0 ) {
-            addError(PARAM_TITLE,"Nevyplnil jste titulek èlánku!",ctx,null); error = true;
+            ServletUtils.addError(PARAM_TITLE,"Nevyplnil jste titulek èlánku!",ctx,null); error = true;
         }
 
         String perex = (String) params.get(PARAM_PEREX);
         if ( perex==null || perex.length()==0 ) {
-            addError(PARAM_PEREX,"Nevyplnil jste popis èlánku!",ctx,null); error = true;
+            ServletUtils.addError(PARAM_PEREX,"Nevyplnil jste popis èlánku!",ctx,null); error = true;
         }
 
         String content = (String) params.get(PARAM_CONTENT);
         if ( content==null || content.length()==0 ) {
-            addError(PARAM_CONTENT,"Nevyplnil jste obsah èlánku!",ctx,null); error = true;
+            ServletUtils.addError(PARAM_CONTENT,"Nevyplnil jste obsah èlánku!",ctx,null); error = true;
         }
 
         String published = (String) params.get(PARAM_PUBLISHED);
         if ( published==null || published.length()<12 ) {
-            addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",ctx,null); error = true;
+            ServletUtils.addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",ctx,null); error = true;
         } else {
             try {
                 Date d = Constants.isoFormat.parse(published);
             } catch (ParseException e) {
-                addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",ctx,null); error = true;
+                ServletUtils.addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",ctx,null); error = true;
             }
         }
 

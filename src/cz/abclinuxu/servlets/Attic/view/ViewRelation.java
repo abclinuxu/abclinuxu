@@ -15,6 +15,7 @@ import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.utils.InstanceUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 
@@ -50,7 +51,7 @@ public class ViewRelation extends AbcServlet {
 
         Persistance persistance = PersistanceFactory.getPersistance();
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
-        Relation relation = (Relation) instantiateParam(PARAM_RELATION_ID,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID,Relation.class,params);
         persistance.synchronize(relation);
         ctx.put(VAR_RELATION,relation);
 

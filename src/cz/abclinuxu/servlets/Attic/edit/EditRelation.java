@@ -8,12 +8,14 @@ package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.view.SelectRelation;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.security.Guard;
+import cz.abclinuxu.utils.InstanceUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.dom4j.*;
@@ -56,7 +58,7 @@ public class EditRelation extends AbcServlet {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         String action = (String) params.get(AbcServlet.PARAM_ACTION);
 
-        Relation relation = (Relation) instantiateParam(EditRelation.PARAM_RELATION,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(EditRelation.PARAM_RELATION,Relation.class,params);
         if ( relation!=null ) {
             relation = (Relation) PersistanceFactory.getPersistance().findById(relation);
             ctx.put(EditRelation.VAR_CURRENT,relation);
@@ -66,7 +68,7 @@ public class EditRelation extends AbcServlet {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
-                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return getTemplate("add/relation.vm");
             }
 
@@ -75,7 +77,7 @@ public class EditRelation extends AbcServlet {
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: {
-                    addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                    ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                     return getTemplate("add/relation.vm");
                 }
                 default: return actionLinkStep2(request,response,ctx);
@@ -86,7 +88,7 @@ public class EditRelation extends AbcServlet {
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: {
-                    addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                    ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                     return getTemplate("edit/removeRelation.vm");
                 }
                 default: return actionRemove1(request,ctx);
@@ -97,7 +99,7 @@ public class EditRelation extends AbcServlet {
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: {
-                    addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                    ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                     return getTemplate("edit/removeRelation.vm");
                 }
                 default: return actionRemove2(request,response,ctx);
@@ -108,7 +110,7 @@ public class EditRelation extends AbcServlet {
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: {
-                    addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                    ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                     return getTemplate("edit/removeRelation.vm"); // that is not correct, but it shall work
                 }
                 default: return actionMove(request,response,ctx);
@@ -123,7 +125,7 @@ public class EditRelation extends AbcServlet {
         Persistance persistance = PersistanceFactory.getPersistance();
 
         Relation parent = (Relation) ctx.get(EditRelation.VAR_CURRENT);
-        Relation child = (Relation) instantiateParam(SelectRelation.PARAM_SELECTED,Relation.class,params);
+        Relation child = (Relation) InstanceUtils.instantiateParam(SelectRelation.PARAM_SELECTED,Relation.class,params);
         persistance.synchronize(child);
 
         Relation relation = new Relation();
@@ -181,7 +183,7 @@ public class EditRelation extends AbcServlet {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) ctx.get(VAR_CURRENT);
-        Relation destination = (Relation) instantiateParam(SelectRelation.PARAM_SELECTED,Relation.class,params);
+        Relation destination = (Relation) InstanceUtils.instantiateParam(SelectRelation.PARAM_SELECTED,Relation.class,params);
 
         persistance.synchronize(destination);
         relation.setParent(destination.getChild());

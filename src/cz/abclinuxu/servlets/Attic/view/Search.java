@@ -8,6 +8,7 @@ package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
+import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import org.apache.velocity.Template;
@@ -43,7 +44,7 @@ public class Search extends AbcServlet {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         String query = (String) params.get(PARAM_QUERY);
         if ( query == null || query.length()==0 ) {
-            addError(PARAM_QUERY,"Prosím zadejte hledaný øetìzec!",ctx,null);
+            ServletUtils.addError(PARAM_QUERY,"Prosím zadejte hledaný øetìzec!",ctx,null);
             return getTemplate("view/search.vm");
         }
 
@@ -54,7 +55,7 @@ public class Search extends AbcServlet {
             Hits hits = searcher.search(q);
             ctx.put(VAR_RESULT,hits);
         } catch (Exception e) {
-            addError(PARAM_QUERY,"Nemohu provést dané hledání. Zadejte jiný øetìzec!",ctx,null);
+            ServletUtils.addError(PARAM_QUERY,"Nemohu provést dané hledání. Zadejte jiný øetìzec!",ctx,null);
             return getTemplate("view/search.vm");
         }
 

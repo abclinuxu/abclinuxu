@@ -8,11 +8,11 @@ package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.utils.VelocityHelper;
-import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.persistance.*;
+import cz.abclinuxu.utils.InstanceUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.dom4j.*;
@@ -47,7 +47,7 @@ public class EditDriver extends AbcServlet {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         String action = (String) params.get(AbcServlet.PARAM_ACTION);
-        Relation relation = (Relation) instantiateParam(PARAM_RELATION,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
 
         if ( relation!=null ) {
             persistance.synchronize(relation);
@@ -60,7 +60,7 @@ public class EditDriver extends AbcServlet {
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: {
-                    addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, request.getSession());
+                    ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, request.getSession());
                     UrlUtils.redirect("/drivers/ViewRelation?relationId="+Constants.REL_DRIVERS,response,ctx);
                     return null;
                 }
@@ -72,7 +72,7 @@ public class EditDriver extends AbcServlet {
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: {
-                    addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                    ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                     return getTemplate("add/driver.vm");
                 }
                 default: return actionAddStep2(request,response,ctx);
@@ -84,9 +84,10 @@ public class EditDriver extends AbcServlet {
 
     protected Template actionAddStep(HttpServletRequest request, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        VelocityHelper helper = (VelocityHelper) ctx.get(AbcServlet.VAR_HELPER);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        Item driver = (Item) instantiateParam(PARAM_DRIVER,Item.class,params);
+        Item driver = (Item) InstanceUtils.instantiateParam(PARAM_DRIVER,Item.class,params);
 
         if ( driver!=null ) {
             try {
@@ -107,7 +108,7 @@ public class EditDriver extends AbcServlet {
             node = document.selectSingleNode("data/url");
             if ( node!=null ) params.put(PARAM_URL,node.getText());
             node = document.selectSingleNode("data/note");
-            if ( node!=null ) params.put(PARAM_NOTE,VelocityHelper.escapeAmpersand(node.getText()));
+            if ( node!=null ) params.put(PARAM_NOTE,helper.encodeSpecial(node.getText()));
         }
 
         return getTemplate("add/driver.vm");
@@ -126,20 +127,20 @@ public class EditDriver extends AbcServlet {
         boolean error = false;
         String name = (String) params.get(PARAM_NAME);
         if ( name==null || name.length()==0 ) {
-            addError(PARAM_NAME,"Nevyplnil jste název ovladaèe!",ctx,null);
+            ServletUtils.addError(PARAM_NAME,"Nevyplnil jste název ovladaèe!",ctx,null);
             error = true;
         }
         String version = (String) params.get(PARAM_VERSION);
         if ( version==null || version.length()==0 ) {
-            addError(PARAM_VERSION,"Nevyplnil jste verzi ovladaèe!",ctx,null);
+            ServletUtils.addError(PARAM_VERSION,"Nevyplnil jste verzi ovladaèe!",ctx,null);
             error = true;
         }
         String url = (String) params.get(PARAM_URL);
         if ( url==null || url.length()==0 ) {
-            addError(PARAM_URL,"Nevyplnil jste adresu ovladaèe!",ctx,null);
+            ServletUtils.addError(PARAM_URL,"Nevyplnil jste adresu ovladaèe!",ctx,null);
             error = true;
         } else if ( url.indexOf("tp://")==-1 || url.length()<12 ) {
-            addError(PARAM_URL,"Neplatná adresa ovladaèe!",ctx,null);
+            ServletUtils.addError(PARAM_URL,"Neplatná adresa ovladaèe!",ctx,null);
             error = true;
         }
         String note = (String) params.get(PARAM_NOTE);
@@ -149,7 +150,7 @@ public class EditDriver extends AbcServlet {
         }
 
         boolean created = true;
-        Item driver = (Item) instantiateParam(PARAM_DRIVER,Item.class,params);
+        Item driver = (Item) InstanceUtils.instantiateParam(PARAM_DRIVER,Item.class,params);
         Document document = null;
 
         if ( driver!=null ) {
@@ -188,7 +189,7 @@ public class EditDriver extends AbcServlet {
                 persistance.update(driver);
             }
         } catch (PersistanceException e) {
-            addError(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
+            ServletUtils.addError(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
             return getTemplate("add/driver.vm");
         }
 

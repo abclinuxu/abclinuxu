@@ -14,6 +14,7 @@ import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.AbcException;
+import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.servlets.utils.*;
 import org.apache.velocity.Template;
@@ -84,7 +85,7 @@ public class EditUser extends AbcServlet {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         String action = (String) params.get(AbcServlet.PARAM_ACTION);
 
-        User managed = (User) instantiateParam(PARAM_USER,User.class,params);
+        User managed = (User) InstanceUtils.instantiateParam(PARAM_USER,User.class,params);
         User user = (User) ctx.get(AbcServlet.VAR_USER);
         if ( managed==null ) managed = user;
         ctx.put(VAR_MANAGED,managed);
@@ -112,7 +113,7 @@ public class EditUser extends AbcServlet {
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: {
-                    addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
+                    ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
                     return actionEditStep1(request,ctx);
                 }
                 default: return actionEditStep2(request,response,ctx);
@@ -125,7 +126,7 @@ public class EditUser extends AbcServlet {
 
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
-                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
+                case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
                 default: return getTemplate("edit/password.vm");
             }
 
@@ -136,7 +137,7 @@ public class EditUser extends AbcServlet {
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: {
-                    addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
+                    ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
                     return getTemplate("edit/password.vm");
                 }
                 default: return actionPassword(request,response,ctx);
@@ -156,7 +157,7 @@ public class EditUser extends AbcServlet {
             PersistanceFactory.getPersistance().create(user);
         } catch ( PersistanceException e ) {
             if ( e.getStatus()==AbcException.DB_DUPLICATE ) {
-                addError(PARAM_LOGIN,"Toto jméno je ji¾ pou¾íváno!",ctx, null);
+                ServletUtils.addError(PARAM_LOGIN,"Toto jméno je ji¾ pou¾íváno!",ctx, null);
             }
             return getTemplate("add/user.vm");
         }
@@ -177,6 +178,7 @@ public class EditUser extends AbcServlet {
     protected Template actionEditStep1(HttpServletRequest request, Context ctx) throws Exception {
         User user = (User) ctx.get(VAR_MANAGED);
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        VelocityHelper helper = (VelocityHelper) ctx.get(AbcServlet.VAR_HELPER);
         PersistanceFactory.getPersistance().synchronize(user);
 
         params.put(EditUser.PARAM_LOGIN,user.getLogin());
@@ -200,7 +202,7 @@ public class EditUser extends AbcServlet {
         if (node!=null) params.put(EditUser.PARAM_WWW,node.getText());
 
         node = document.selectSingleNode("data/personal");
-        if (node!=null) params.put(EditUser.PARAM_PERSONAL,VelocityHelper.escapeAmpersand(node.getText()));
+        if (node!=null) params.put(EditUser.PARAM_PERSONAL,helper.encodeSpecial(node.getText()));
 
         return getTemplate("edit/user.vm");
     }
@@ -217,7 +219,7 @@ public class EditUser extends AbcServlet {
             PersistanceFactory.getPersistance().update(user);
         } catch ( PersistanceException e ) {
             if ( e.getStatus()==AbcException.DB_DUPLICATE ) {
-                addError(PARAM_LOGIN,"Toto jméno je ji¾ pou¾íváno!",ctx, null);
+                ServletUtils.addError(PARAM_LOGIN,"Toto jméno je ji¾ pou¾íváno!",ctx, null);
             }
             return getTemplate("edit/user.vm");
         }
@@ -227,7 +229,7 @@ public class EditUser extends AbcServlet {
             sessionUser.synchronizeWith(user);
         }
 
-        addMessage("Zmìny byly ulo¾eny.",ctx, request.getSession());
+        ServletUtils.addMessage("Zmìny byly ulo¾eny.",ctx, request.getSession());
         UrlUtils.redirect("/Index",response,ctx);
         return null;
     }
@@ -245,26 +247,26 @@ public class EditUser extends AbcServlet {
         String password = (String) params.get(EditUser.PARAM_PASSWORD);
         String email = (String) params.get(EditUser.PARAM_EMAIL);
 
-        if ( login==null || login.length()<4 ) {
-            addError(PARAM_LOGIN,"Zadané pøihla¹ovací jméno je pøíli¹ krátké!",ctx, null);
+        if ( login==null || login.length()<3 ) {
+            ServletUtils.addError(PARAM_LOGIN,"Zadané pøihla¹ovací jméno je pøíli¹ krátké! Nejménì tøi znaky!",ctx, null);
             error = true;
         }
         if ( name==null || name.length()<5 ) {
-            addError(PARAM_NAME,"Zadané jméno je pøíli¹ krátké!",ctx, null);
+            ServletUtils.addError(PARAM_NAME,"Zadané jméno je pøíli¹ krátké!",ctx, null);
             error = true;
         }
         if ( updatePassword ) {
             if ( password==null || password.length()<4 ) {
-                addError(PARAM_PASSWORD,"Heslo je pøíli¹ krátké!",ctx, null);
+                ServletUtils.addError(PARAM_PASSWORD,"Heslo je pøíli¹ krátké!",ctx, null);
                 error = true;
             }
             if ( password!=null && !(password.equals((String) request.getParameter(EditUser.PARAM_PASSWORD2))) ) {
-                addError(PARAM_PASSWORD,"Hesla se li¹í!",ctx, null);
+                ServletUtils.addError(PARAM_PASSWORD,"Hesla se li¹í!",ctx, null);
                 error = true;
             }
         }
         if ( email==null || email.length()<6 || email.indexOf('@')==-1 ) {
-            addError(PARAM_EMAIL,"Neplatný email!",ctx, null);
+            ServletUtils.addError(PARAM_EMAIL,"Neplatný email!",ctx, null);
             error = true;
         }
 
@@ -305,11 +307,11 @@ public class EditUser extends AbcServlet {
         boolean error = false;
 
         if ( pass==null || pass.length()<4 ) {
-            addError(PARAM_PASSWORD,"Heslo je pøíli¹ krátké!",ctx, null);
+            ServletUtils.addError(PARAM_PASSWORD,"Heslo je pøíli¹ krátké!",ctx, null);
             error = true;
         }
         if ( pass!=null && !(pass.equals(pass2)) ) {
-            addError(PARAM_PASSWORD,"Hesla se li¹í!",ctx, null);
+            ServletUtils.addError(PARAM_PASSWORD,"Hesla se li¹í!",ctx, null);
             error = true;
         }
 
@@ -317,13 +319,13 @@ public class EditUser extends AbcServlet {
         user.setPassword(pass);
         PersistanceFactory.getPersistance().update(user);
 
-        addMessage("Heslo bylo zmìnìno.",ctx, request.getSession());
+        ServletUtils.addMessage("Heslo bylo zmìnìno.",ctx, request.getSession());
 
         Cookie[] cookies = request.getCookies();
         for (int i = 0; user==null && cookies!=null && i<cookies.length; i++) {
             Cookie cookie = cookies[i];
             if ( cookie.getName().equals(AbcServlet.VAR_USER) ) {
-                deleteCookie(cookie,response);
+                ServletUtils.deleteCookie(cookie,response);
                 break;
             }
         }

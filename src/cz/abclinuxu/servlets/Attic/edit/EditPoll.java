@@ -13,9 +13,11 @@ import javax.servlet.http.*;
 
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.security.Guard;
+import cz.abclinuxu.utils.InstanceUtils;
 
 import java.util.*;
 
@@ -71,13 +73,13 @@ public class EditPoll extends AbcServlet {
         Relation relation = null;
         Poll poll = null;
 
-        relation = (Relation) instantiateParam(EditPoll.PARAM_RELATION,Relation.class,params);
+        relation = (Relation) InstanceUtils.instantiateParam(EditPoll.PARAM_RELATION,Relation.class,params);
         if ( relation!=null ) {
             relation = (Relation) PersistanceFactory.getPersistance().findById(relation);
             ctx.put(EditPoll.VAR_RELATION,relation);
         }
 
-        poll = (Poll) instantiateParam(EditPoll.PARAM_POLL,Poll.class,params);
+        poll = (Poll) InstanceUtils.instantiateParam(EditPoll.PARAM_POLL,Poll.class,params);
         if ( poll!=null ) {
             poll = (Poll) PersistanceFactory.getPersistance().findById(poll);
             ctx.put(EditPoll.VAR_POLL,poll);
@@ -90,7 +92,7 @@ public class EditPoll extends AbcServlet {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Poll.class);
              switch (rights) {
                  case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
-                 case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                 case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                  default: return getTemplate("add/poll.vm");
              }
 
@@ -104,7 +106,7 @@ public class EditPoll extends AbcServlet {
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: {
-                    addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                    ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                     return getTemplate("add/poll.vm");
                 }
                 default: return actionAddStep2(request,response,ctx);
@@ -116,7 +118,7 @@ public class EditPoll extends AbcServlet {
             int rights = Guard.check((User)ctx.get(VAR_USER),poll,Guard.OPERATION_EDIT,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
-                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx,null);
+                case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx,null);
                 default: return getTemplate("edit/poll.vm");
             }
 
@@ -126,7 +128,7 @@ public class EditPoll extends AbcServlet {
             int rights = Guard.check((User)ctx.get(VAR_USER),poll,Guard.OPERATION_EDIT,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
-                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx,null);
+                case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx,null);
                 default: return actionEditStep2(request,response,ctx);
             }
 
@@ -153,7 +155,7 @@ public class EditPoll extends AbcServlet {
         if ( "yes".equals(tmp) ) multiChoice = true;
 
         if ( text==null || text.length()==0 ) {
-            addError(EditPoll.PARAM_TEXT,"Nezadal jste otázku!",ctx, null);
+            ServletUtils.addError(EditPoll.PARAM_TEXT,"Nezadal jste otázku!",ctx, null);
             error = true;
         }
 
@@ -163,7 +165,7 @@ public class EditPoll extends AbcServlet {
         }
 
         if ( choices.size()<2 ) {
-            addError(EditPoll.PARAM_CHOICES,"Vyplòte minimálnì dvì volby!",ctx, null);
+            ServletUtils.addError(EditPoll.PARAM_CHOICES,"Vyplòte minimálnì dvì volby!",ctx, null);
             error = true;
         }
 
@@ -253,19 +255,19 @@ public class EditPoll extends AbcServlet {
         int max = 0;
 
         if ( url==null || url.length()==0 ) {
-            addError(AbcServlet.GENERIC_ERROR,"Chybí parametr url!",ctx,request.getSession());
+            ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Chybí parametr url!",ctx,request.getSession());
         }
 
         String[] values = request.getParameterValues(EditPoll.PARAM_VOTE_ID);
         if ( values==null ) {
-            addError(AbcServlet.GENERIC_ERROR,"Nevybral jste ¾ádnou volbu!",ctx,request.getSession());
+            ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Nevybral jste ¾ádnou volbu!",ctx,request.getSession());
         } else {
             max = values.length;
             if ( ! poll.isMultiChoice() ) max = 1;
         }
 
         if ( hasAlreadyVoted(request,poll,ctx) ) {
-            addError(AbcServlet.GENERIC_ERROR,"U¾ jste jednou volil!",ctx,request.getSession());
+            ServletUtils.addError(AbcServlet.GENERIC_ERROR,"U¾ jste jednou volil!",ctx,request.getSession());
         } else if ( max>0 ) {
             try {
                 for (int i = 0; i<max; i++) {
@@ -273,11 +275,11 @@ public class EditPoll extends AbcServlet {
                     int voteId = Integer.parseInt(tmp);
                     PersistanceFactory.getPersistance().incrementCounter(poll.getChoices()[voteId]);
                 }
-                addMessage("Vá¹ hlas do ankety byl pøijat.",ctx,request.getSession());
+                ServletUtils.addMessage("Vá¹ hlas do ankety byl pøijat.",ctx,request.getSession());
                 markAlreadyVoted(request,response,poll,ctx);
             } catch (Exception e) {
                 log.error("Vote bug: ",e);
-                addError(AbcServlet.GENERIC_ERROR,"Omlouváme se, ale nastala chyba.",ctx,request.getSession());
+                ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Omlouváme se, ale nastala chyba.",ctx,request.getSession());
             }
         }
 

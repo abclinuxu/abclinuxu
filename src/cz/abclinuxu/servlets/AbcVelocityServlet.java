@@ -21,8 +21,7 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.AbcException;
 import cz.abclinuxu.scheduler.jobs.UpdateLinks;
-import cz.abclinuxu.servlets.utils.VelocityHelper;
-import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.view.*;
 
 import java.io.*;
@@ -152,7 +151,7 @@ public class AbcServlet extends VelocityServlet {
         if ( params!=null ) {
             session.removeAttribute(AbcServlet.ATTRIB_PARAMS);
         }
-        params = VelocityHelper.putParamsToMap(request,params);
+        params = ServletUtils.putParamsToMap(request,params);
         request.setAttribute(AbcServlet.ATTRIB_PARAMS,params);
         context.put(AbcServlet.VAR_PARAMS,params);
 
@@ -199,7 +198,7 @@ public class AbcServlet extends VelocityServlet {
             try {
                 List found = (List) persistance.findByExample(searched,null);
                 if ( found.size()==0 ) {
-                    addError(AbcServlet.PARAM_LOG_USER,"Pøihla¹ovací jméno nenalezeno!",context, null);
+                    ServletUtils.addError(AbcServlet.PARAM_LOG_USER,"Pøihla¹ovací jméno nenalezeno!",context, null);
                     return;
                 }
                 user = (User) found.get(0);
@@ -210,7 +209,7 @@ public class AbcServlet extends VelocityServlet {
             }
 
             if ( !user.validatePassword((String) request.getParameter(AbcServlet.PARAM_LOG_PASSWORD)) ) {
-                addError(AbcServlet.PARAM_LOG_PASSWORD,"©patne heslo!",context, null);
+                ServletUtils.addError(AbcServlet.PARAM_LOG_PASSWORD,"©patne heslo!",context, null);
                 return;
             }
 
@@ -227,7 +226,7 @@ public class AbcServlet extends VelocityServlet {
             if ( cookie.getName().equals(AbcServlet.VAR_USER) ) {
                 try {
                     if ( logout ) {
-                        deleteCookie(cookie,response);
+                        ServletUtils.deleteCookie(cookie,response);
                         break;
                     }
 
@@ -254,14 +253,14 @@ public class AbcServlet extends VelocityServlet {
                     try {
                         user = (User) persistance.findById(new User(id));
                     } catch (PersistanceException e) {
-                        deleteCookie(cookie,response);
-                        addError(AbcServlet.GENERIC_ERROR,"Nalezena cookie s neznámým u¾ivatelem!",context, null);
+                        ServletUtils.deleteCookie(cookie,response);
+                        ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Nalezena cookie s neznámým u¾ivatelem!",context, null);
                         break;
                     }
 
                     if ( user.getPassword().hashCode() != hash ) {
-                        deleteCookie(cookie,response);
-                        addError(AbcServlet.GENERIC_ERROR,"Nalezena cookie se ¹patným heslem!",context, null);
+                        ServletUtils.deleteCookie(cookie,response);
+                        ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Nalezena cookie se ¹patným heslem!",context, null);
                         user = null;
                     }
                     break;
@@ -287,58 +286,6 @@ public class AbcServlet extends VelocityServlet {
     }
 
     /**
-     * Retrieves parameter <code>name</code> from <code>params</code>. If it is not
-     * defined, it returns null. Then it tries convert it to integer. If it is not
-     * successful, it returns null again. Then it tries to create new instance
-     * os <code>clazz</code>. If it fails, it returns null. Finally it calls setId
-     * with retrieved in as argument and returns created instance.
-     */
-    protected GenericObject instantiateParam(String name, Class clazz, Map params) {
-        String tmp = (String) params.get(name);
-        if ( tmp==null || tmp.length()==0 ) return null;
-        try {
-            int id = Integer.parseInt(tmp);
-            if ( ! GenericObject.class.isAssignableFrom(clazz) ) return null;
-            GenericObject obj = (GenericObject) clazz.newInstance();
-            obj.setId(id);
-            return obj;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /**
-     * Adds message to <code>VAR_ERRORS</code> map.
-     * <p>If session is not null, store messages into session. Handy for redirects and dispatches.
-     */
-    protected void addError(String key, String errorMessage, Context context, HttpSession session) {
-        Map errors = (Map) context.get(VAR_ERRORS);
-
-        if ( errors==null ) {
-            errors = new HashMap(5);
-            context.put(AbcServlet.VAR_ERRORS,errors);
-        }
-        if ( session!=null ) session.setAttribute(AbcServlet.VAR_ERRORS,errors);
-        errors.put(key,errorMessage);
-    }
-
-    /**
-     * Adds message to <code>VAR_MESSAGES</code> list.
-     * <p>If session is not null, store messages into session. Handy for redirects and dispatches.
-     */
-    protected void addMessage(String message, Context context, HttpSession session) {
-        boolean created = false;
-        List messages = (List) context.get(VAR_MESSAGES);
-
-        if ( messages==null ) {
-            messages = new ArrayList(5);
-            context.put(AbcServlet.VAR_MESSAGES,messages);
-        }
-        if ( session!=null ) session.setAttribute(AbcServlet.VAR_MESSAGES,messages);
-        messages.add(message);
-    }
-
-    /**
      * Invoked when there is an error thrown in any part of doRequest() processing.
      * @todo Find, what to use instead of deprecated HttpUtils.getRequestURL
      */
@@ -354,26 +301,17 @@ public class AbcServlet extends VelocityServlet {
         if ( !(cause instanceof IOException) )
             log.error(url.toString(),cause);
 
-//        response.setLocale(); this may help fix the issue with non ISO-8859-1 character
         ServletOutputStream os = response.getOutputStream();
-        os.println("<html><body bgcolor=\"#ffffff\">");
-        os.println("<h2>Stránka nebyla nalezena</h2>");
-        os.println("Omlouváme se, ale systém nebyl schopen zobrazit zvolenou stránku. ");
-        os.println("Mo¾ná byla zmìnìna její adresa.<p>");
-        os.println("Dìkujeme za pochopeni.");
-        os.println("<p>Událost byla zalogována.");
-        os.println("</body></html>");
-        os.flush();
-        os.close();
-    }
-
-    /**
-     * Removes cookie
-     */
-    public void deleteCookie(Cookie cookie, HttpServletResponse response) {
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
-        response.addCookie(cookie);
+        OutputStreamWriter writer = new OutputStreamWriter(os,"ISO-8859-2");
+        writer.write("<html><body bgcolor=\"#ffffff\">");
+        writer.write("<h2>Stránka nebyla nalezena</h2>");
+        writer.write("Omlouváme se, ale systém nebyl schopen zobrazit zvolenou stránku. ");
+        writer.write("Mo¾ná byla zmìnìna její adresa.<p>");
+        writer.write("Dìkujeme za pochopeni.");
+        writer.write("<p>Událost byla zalogována.");
+        writer.write("</body></html>");
+        writer.flush();
+        writer.close();
     }
 
     /**

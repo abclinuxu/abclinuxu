@@ -11,6 +11,7 @@ import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.data.*;
+import cz.abclinuxu.utils.InstanceUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 
@@ -60,7 +61,7 @@ public class ViewUser extends AbcServlet {
         Persistance persistance = PersistanceFactory.getPersistance();
         VelocityHelper helper = new VelocityHelper();
 
-        User user = (User) instantiateParam(PARAM_USER,User.class,params);
+        User user = (User) InstanceUtils.instantiateParam(PARAM_USER,User.class,params);
         persistance.synchronize(user);
         ctx.put(VAR_PROFILE,user);
 

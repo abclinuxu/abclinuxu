@@ -38,7 +38,6 @@ public class VelocityHelper {
         try {
             lineBreaks = new RE("(<br>)|(<p>)|(<div>)",RE.MATCH_CASEINDEPENDENT);
             emptyLine = new RE("(\r\n){2}|(\n){2}", RE.MATCH_MULTILINE);
-            ampersand = new RE("&");
         } catch (RESyntaxException e) {
             log.error("Cannot create regexp to find line breaks!", e);
         }
@@ -124,38 +123,6 @@ public class VelocityHelper {
         if ( node!=null ) value = node.getText();
 
         return value;
-    }
-
-    /**
-     * Adds all parameters from request to specified map and returns it back.
-     * If map is null, new HashMap is created. <p>
-     * If there is only one value for a parameter, it will be stored directly
-     * associated with parameter's name. But if there are at least two values,
-     * they will be stored in list associated with parameter's name.
-     */
-    public static Map putParamsToMap(HttpServletRequest request, Map map) {
-        if ( map==null ) map = new HashMap();
-        Enumeration names = request.getParameterNames();
-        while (names.hasMoreElements()) {
-            String name = (String) names.nextElement();
-            String[] values = request.getParameterValues(name);
-
-            if ( values.length==1 ) {
-                String value = request.getParameter(name);
-                try { value = new String(value.getBytes("ISO-8859-1")); } catch (UnsupportedEncodingException e) {}
-                map.put(name,value.trim());
-
-            } else {
-                List list = new ArrayList(values.length);
-                for (int i = 0; i < values.length; i++) {
-                    String value = values[i];
-                    try { value = new String(value.getBytes("ISO-8859-1")); } catch (UnsupportedEncodingException e) {}
-                    list.add(value.trim());
-                }
-                map.put(name,list);
-            }
-        }
-        return map;
     }
 
     /**
@@ -369,6 +336,7 @@ public class VelocityHelper {
      */
     public String encodeSpecial(String in) {
         if ( in==null ) return null;
+        if ( in.length()==0 ) return in;
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < in.length(); i++) {
             int c = in.charAt(i);
@@ -645,16 +613,5 @@ public class VelocityHelper {
         if ( str==null ) return null;
         if ( lineBreaks.match(str) ) return str;
         return emptyLine.subst(str,"<P>\n");
-    }
-
-    /**
-     * This method escapes ampersand using html convention.
-     * The reason is, that if you escape some entity and
-     * edit it in textarea, html browser (at least mozilla)
-     * unescapes it! So you lose escape sequence!
-     */
-    public static String escapeAmpersand(String str) {
-        if ( str==null ) return null;
-        return ampersand.subst(str,"&amp;");
     }
 }
