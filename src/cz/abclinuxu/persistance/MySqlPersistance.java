@@ -134,7 +134,7 @@ public class MySqlPersistance implements Persistance {
             GenericObject obj = cached.object;
             obj.synchronizeWith(loadObject(obj));
             obj.setInitialized(true);
-            cached.nextSync = System.currentTimeMillis()+Cache.SYNC_INTERVAL;
+            cached.lastSync = System.currentTimeMillis();
         } catch (Exception e) {
             log.warn("Cannot synchronize cached object.",e);
         }
@@ -537,7 +537,6 @@ public class MySqlPersistance implements Persistance {
             char type = resultSet.getString(3).charAt(0);
             int id = resultSet.getInt(4);
             GenericObject child = instantiateFromTree(type,id);
-            synchronize(child);
             relation.setChild(child);
 
             relation.setName(resultSet.getString(5));
@@ -800,7 +799,7 @@ public class MySqlPersistance implements Persistance {
 
             statement.setString(2,poll.getText());
             statement.setBoolean(3,poll.isMultiChoice());
-	    statement.setDate(4,new java.sql.Date(System.currentTimeMillis()));
+            statement.setDate(4,new java.sql.Date(System.currentTimeMillis()));
             statement.setBoolean(5,poll.isClosed());
 
             int result = statement.executeUpdate();
@@ -921,13 +920,11 @@ public class MySqlPersistance implements Persistance {
             char type = resultSet.getString(3).charAt(0);
             int id = resultSet.getInt(4);
             GenericObject parent = instantiateFromTree(type,id);
-            synchronize(parent);
             relation.setParent(parent);
 
             type = resultSet.getString(5).charAt(0);
             id = resultSet.getInt(6);
             GenericObject child = instantiateFromTree(type,id);
-            synchronize(child);
             relation.setChild(child);
 
             relation.setName(resultSet.getString(7));

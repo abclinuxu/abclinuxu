@@ -55,12 +55,8 @@ public class Item extends GenericDataObject {
      */
     public void synchronizeWith(GenericObject obj) {
         if ( ! (obj instanceof Item) ) return;
-        Item b = (Item) obj;
-        content = b.getContent();
-        data = b.getData();
-        owner = b.getOwner();
-        updated = b.getUpdated();
-        type = b.getType();
+        super.synchronizeWith(obj);
+        type = ((Item)obj).getType();
     }
 
     public String toString() {
@@ -86,5 +82,10 @@ public class Item extends GenericDataObject {
         if ( owner!=((GenericDataObject)o).getOwner() ) return false;
         if ( ! InstanceUtils.same(getDataAsString(),((GenericDataObject)o).getDataAsString()) ) return false;
         return true;
+    }
+
+    public int hashCode() {
+        String tmp = "Item"+id;
+        return tmp.hashCode();
     }
 }

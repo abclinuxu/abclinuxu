@@ -156,8 +156,8 @@ public class Poll extends GenericObject {
      */
     public void synchronizeWith(GenericObject obj) {
         if ( ! (obj instanceof Poll) ) return;
+        super.synchronizeWith(obj);
         Poll b = (Poll) obj;
-        content = b.getContent();
         text = b.getText();
         closed = b.isClosed();
         multiChoice = b.isMultiChoice();
@@ -184,5 +184,10 @@ public class Poll extends GenericObject {
         if ( type!=((Poll)o).getType() ) return false;
         if ( ! InstanceUtils.same(this.text,((Poll)o).getText()) ) return false;
         return true;
+    }
+
+    public int hashCode() {
+        String tmp = "Poll"+id;
+        return tmp.hashCode();
     }
 }

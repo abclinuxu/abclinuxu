@@ -25,19 +25,16 @@ public class Measure {
         // place initilizaton here
         User user = new User();
         user.setId(1);
-        Category category = new Category(1);
-        category = (Category) persistance.findById(category);
-        String s = category.getDataAsString();
 
         long start = System.currentTimeMillis();
-        for (i=0; i<2600; i++) {
+        for (i=0; i<100000; i++) {
             //place your code to measure here
-            s = category.getDataAsString();
+            user.equals(user);
         }
         long end = System.currentTimeMillis();
 
         // place clean up here
-        System.out.println("s = " + s);
+        System.out.println("j = " + j);
 
         float avg = (end-start)/(float)i;
         System.out.println("celkem = "+(end-start)+" ,prumer = "+avg);

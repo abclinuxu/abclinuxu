@@ -149,8 +149,8 @@ public class User extends GenericObject {
      */
     public void synchronizeWith(GenericObject obj) {
         if ( ! (obj instanceof User) ) return;
+        super.synchronizeWith(obj);
         User b = (User) obj;
-        content = b.getContent();
         data = b.getData();
         name = b.getName();
         login = b.getLogin();
@@ -176,5 +176,10 @@ public class User extends GenericObject {
              email.equals(p.email) && password.equals(p.password) &&
              getDataAsString().equals(p.getDataAsString()) ) return true;
         return false;
+    }
+
+    public int hashCode() {
+        String tmp = "User"+id;
+        return tmp.hashCode();
     }
 }

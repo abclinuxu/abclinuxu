@@ -15,15 +15,6 @@ import cz.abclinuxu.data.*;
  * Cache of GenericObjects. Only selected classes are cached.
  * @todo Complete rewrite needed. Add Date lru to CacheObject.
  * Use it as LRU, delete objects not accessed within 30 minutes.
- * Store all objects. Check size of queue and if it is larger
- * than 5 MB, start to shrink it. Don't store initialized Relation
- * as content of GenericObject. Just PK. If object is requested,
- * synchronize (search) relations first. Relations shall be cached
- * too. Ensure, that stored object contains correct updated field.<p>
- * Find good policy for synchronization of content of searched
- * objects. Synchronize children - OK, but synchronize also their
- * children? And if yes, synchronize only their data or lalso their
- * content?
  */
 public class Cache {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(Cache.class);
@@ -31,96 +22,136 @@ public class Cache {
     Persistance persistance;
     CacheSynchronizationDaemon daemon;
     Map data;
-    int modCount;
+    long modCount;
 
     public static final int SYNC_INTERVAL = 5*60*1000; // 5 minutes
+    /** cached objects, which were not accessed within this interval, will be deleted */
+    public static final int MAX_LRU = 30*60000; // 30 minutes
 
     public Cache(Persistance persistance) {
         this.persistance = persistance;
-        data = new HashMap();
+        data = new HashMap(100);
+        modCount = 0;
     }
 
     /**
-     * This method stores object into cache, so it can be retrieved
+     * This method stores copy of object into cache, so it can be retrieved
      * later without queueing database. If <code>obj</code> with same
      * PK is already stored in the cache, it is replaced by new version.
      */
     public void store(GenericObject obj) {
-//        try {
-//            if ( obj instanceof Category || obj instanceof User ) {
-//                data.put(obj,new CachedObject(obj,System.currentTimeMillis()+SYNC_INTERVAL));
-//                modCount++;
-//                return;
-//            }
-//            if ( obj instanceof Relation ) {
-//                GenericObject parent = ((Relation) obj).getParent();
-//                CachedObject cached = loadCachedObject(parent);
-//                if ( cached!=null ) {
-//                    if ( ! cached.object.getContent().contains(obj) ) {
-//                        cached.object.addContent((Relation)obj);
-//                    }
-//                }
-//            }
-//        } catch (Exception e) {
-//            log.error("Problems in cache",e);
-//        }
+        try {
+            if ( obj instanceof Relation ) {
+                Relation relation = (Relation) obj;
+                Relation key = cloneRelation(relation);
+                data.put(key,new CachedObject(key));
+                modCount++;
+
+                // add this relation to affected object.
+                CachedObject cached = (CachedObject) data.get(relation.getParent());
+                if ( cached!=null ) {
+                    cached.object.addContent((Relation)key);
+                }
+            } else {
+                GenericObject key = (GenericObject) obj.getClass().newInstance();
+                key.synchronizeWith(obj);
+
+                key.clearContent();
+                for (Iterator iter = obj.getContent().iterator(); iter.hasNext();) {
+                    Relation relation = cloneRelation((Relation)iter.next());
+                    key.addContent(relation);
+                    data.put(relation,new CachedObject(relation));
+                    modCount++;
+                }
+
+                data.put(key,new CachedObject(key));
+                modCount++;
+            }
+        } catch (Exception e) {
+            log.error("Cannot put "+obj+" to cache!",e);
+        }
     }
 
     /**
      * This method searches cache for specified object. If it is found, returns
      * cached object, otherwise it returns null.
-     * @return cached object or null, if it is not found.
+     * @return cached object
      */
     public GenericObject load(GenericObject obj) {
-//        try {
-//            if ( obj instanceof Category || obj instanceof User ) {
-//                CachedObject cached = (CachedObject) data.get(obj);
-//                if ( cached!=null ) {
-//                    return cached.object;
-//                }
-//            }
-//        } catch (Exception e) {
-//            log.error("Problems in cache",e);
-//        }
-        return null;
-    }
-
-    /**
-     * If <code>obj</code> is not available anymore, it is good practice to
-     * delete it from Persistant storage too. Otherwise inconsistency occurs.
-     */
-    public void remove(GenericObject obj) {
-//        try {
-//            if ( obj instanceof Category || obj instanceof User ) {
-//                data.remove(obj);
-//                modCount++;
-//                return;
-//            }
-//            if ( obj instanceof Relation ) {
-//                GenericObject parent = ((Relation) obj).getParent();
-//                CachedObject cached = loadCachedObject(parent);
-//                if ( cached!=null ) {
-//                    cached.object.getContent().remove(obj);
-//                }
-//            }
-//        } catch (Exception e) {
-//            log.error("Problems in cache",e);
-//        }
-    }
-
-    /**
-     * This method searches cache for specified object.
-     * @return CachedObject or null, if it is not found.
-     */
-    private CachedObject loadCachedObject(GenericObject obj) {
         try {
-            if ( obj instanceof Category || obj instanceof User ) {
-                return (CachedObject) data.get(obj);
+            CachedObject found = (CachedObject) data.get(obj);
+            if ( found==null ) return null;
+            touch(found);
+
+            if ( obj instanceof Relation ) {
+                Relation relation = (Relation) found.object;
+
+                GenericObject tmp = load(relation.getChild());
+                if ( tmp!=null ) relation.setChild(tmp);
+
+                tmp = load(relation.getParent());
+                if ( tmp!=null ) relation.setParent(tmp);
+
+                return relation;
+            } else {
+                return found.object;
             }
         } catch (Exception e) {
-            log.error("Problems in cache",e);
+            log.error("Cannot get "+obj+" from cache!",e);
+            return null;
         }
-        return null;
+    }
+
+    /**
+     * If <code>obj</code> is deleted from from persistant storage,
+     * it is wise to delete it from cache too. Otherwise inconsistency occurs.
+     */
+    public void remove(GenericObject obj) {
+        try {
+            if ( data.remove(obj)==null ) return;
+            modCount++;
+
+            if ( obj instanceof Relation ) {
+                GenericObject parent = ((Relation) obj).getParent();
+                CachedObject cached = (CachedObject) data.get(parent);
+                if ( cached!=null ) {
+                    cached.object.getContent().remove(obj);
+                }
+            }
+        } catch (Exception e) {
+            log.error("Cannot delete "+obj+" from cache!",e);
+        }
+    }
+
+    /**
+     * Creates lightweight clone of selected relation. Such clone is almost same as original,
+     * but child and parent objects are not initialized (just PK is set).
+     */
+    public Relation cloneRelation(Relation relation) {
+        Relation clone = new Relation();
+        clone.synchronizeWith(relation);
+
+        try {
+            GenericObject tmp = (GenericObject)relation.getParent().getClass().newInstance();
+            tmp.setId(relation.getParent().getId());
+            clone.setParent(tmp);
+
+            tmp = (GenericObject)relation.getChild().getClass().newInstance();
+            tmp.setId(relation.getChild().getId());
+            clone.setChild(tmp);
+        } catch (Exception e) {
+            log.error("Exception while cloning relation!",e);
+        }
+
+        return clone;
+    }
+
+    /**
+     * Analogue of unix's command touch. It doesn't affect content of object, just changes
+     * last modification timestamp.
+     */
+    public void touch(CachedObject cachedObject) {
+        cachedObject.lastAccessed = System.currentTimeMillis();
     }
 
     /**
@@ -145,7 +176,7 @@ public class Cache {
 
     class CacheSynchronizationDaemon extends Thread {
         boolean stop = false;
-        int expectedModCount;
+        long expectedModCount;
         long nextSync = System.currentTimeMillis()+SYNC_INTERVAL;
 
         public void run() {
@@ -159,10 +190,10 @@ public class Cache {
 
                     while ( expectedModCount==modCount && iterator.hasNext() ) {
                         CachedObject cached = (CachedObject) iterator.next();
-                        if ( cached.nextSync<System.currentTimeMillis() ) {
+                        if ( cached.lastSync<System.currentTimeMillis() ) {
                             persistance.synchronizeCached(cached);
                         }
-                        if ( cached.nextSync<nextSync ) nextSync = cached.nextSync;
+                        if ( cached.lastSync<nextSync ) nextSync = cached.lastSync;
                         yield();
                     }
                     if ( expectedModCount!=modCount ) { // concurrent modification of data

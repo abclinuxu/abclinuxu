@@ -16,24 +16,28 @@ import cz.abclinuxu.data.GenericObject;
 public class CachedObject {
 
     public GenericObject object;
-    /** time, when Persistance.synchronizedCached(object) shall be called */
-    public long nextSync;
+    /** last updated time */
+    public long lastSync;
+    /** last accessed time */
+    public long lastAccessed;
 
 
     public CachedObject() {
     }
 
-    public CachedObject(GenericObject object, long nextSync) {
+    public CachedObject(GenericObject object) {
         this.object = object;
-        this.nextSync = nextSync;
+        lastAccessed = lastSync = System.currentTimeMillis();
     }
 
     public boolean equals(Object o) {
         CachedObject o2 = (CachedObject) o;
+        if ( !object.getClass().isInstance(o) ) return false;
         return o2.object.getId()==object.getId();
     }
 
     public int hashCode() {
-        return object.getId();
+        String tmp = getClass().getName()+object.getId();
+        return tmp.hashCode();
     }
 }

@@ -43,12 +43,8 @@ public class Category extends GenericDataObject {
      */
     public void synchronizeWith(GenericObject obj) {
         if ( ! (obj instanceof Category) ) return;
-        Category b = (Category) obj;
-        content = b.getContent();
-        data = b.getData();
-        owner = b.getOwner();
-        updated = b.getUpdated();
-        open = b.isOpen();
+        super.synchronizeWith(obj);
+        open = ((Category)obj).isOpen();
     }
 
     public String toString() {
@@ -68,5 +64,10 @@ public class Category extends GenericDataObject {
         if ( owner!=((GenericDataObject)o).getOwner() ) return false;
         if ( ! InstanceUtils.same(getDataAsString(),((GenericDataObject)o).getDataAsString()) ) return false;
         return true;
+    }
+
+    public int hashCode() {
+        String tmp = "Category"+id;
+        return tmp.hashCode();
     }
 }

@@ -126,8 +126,8 @@ public class Link extends GenericObject {
      */
     public void synchronizeWith(GenericObject obj) {
         if ( ! (obj instanceof Link) ) return;
+        super.synchronizeWith(obj);
         Link b = (Link) obj;
-        content = b.getContent();
         text = b.getText();
         url = b.getUrl();
         owner = b.getOwner();
@@ -151,5 +151,10 @@ public class Link extends GenericObject {
         if ( id==p.id && text.equals(p.text) && url.equals(p.url) &&
              server==p.server && fixed==p.fixed && owner==p.owner ) return true;
         return false;
+    }
+
+    public int hashCode() {
+        String tmp = "Link"+id;
+        return tmp.hashCode();
     }
 }

@@ -33,4 +33,15 @@ public class AccessRights extends GenericObject {
     public void setAdmin(boolean admin) {
         this.admin = admin;
     }
+
+    public int hashCode() {
+        String tmp = "AccessRights"+id;
+        return tmp.hashCode();
+    }
+
+    public void synchronizeWith(GenericObject obj) {
+        if ( !(obj instanceof AccessRights) ) return;
+        super.synchronizeWith(obj);
+        admin = ((AccessRights)obj).isAdmin();
+    }
 }

@@ -47,9 +47,11 @@ public class GenericObject {
     }
 
     /**
-     * adds another dependant object
+     * Adds another dependant object. If <code>object</code> has been already stored,
+     * it will be replaced by this (hopefully) fresher version.
      */
     public void addContent(Relation object) {
+        content.remove(object);
         content.add(object);
     }
 
@@ -79,7 +81,11 @@ public class GenericObject {
      * Initialize this object with values from <code>obj</code>, if
      * this.getClass.equals(obj.getClass()).
      */
-    public void synchronizeWith(GenericObject obj) {};
+    public void synchronizeWith(GenericObject obj) {
+        id = obj.getId();
+        content = obj.getContent();
+        initialized = obj.isInitialized();
+    };
 
     public String toString() {
         StringBuffer sb = new StringBuffer(this.getClass().getName());
@@ -151,12 +157,12 @@ public class GenericObject {
      * by HashMaps and Lists (especially in cache).
      */
     public boolean equals(Object obj) {
-        if ( this.getClass()!=obj.getClass() ) return false;
-        if ( ! (obj instanceof GenericObject ) ) return false;
+        if ( !getClass().isInstance(obj) ) return false;
         return id==((GenericObject)obj).getId();
     }
 
     public int hashCode() {
-        return id;
+        String tmp = "GenericObject"+id;
+        return tmp.hashCode();
     }
 }

@@ -14,7 +14,8 @@ import cz.abclinuxu.persistance.PersistanceException;
 
 /**
  * This interface defines responsibility of any class, that provides persistance
- * for this object model.
+ * for this object model. There is a policy, that all children are not initialized.
+ * ( ((Relation)getContent().get(0)).getChild().isInitialized()==false )
  */
 public interface Persistance {
 

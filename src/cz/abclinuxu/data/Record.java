@@ -54,12 +54,8 @@ public class Record extends GenericDataObject {
      */
     public void synchronizeWith(GenericObject obj) {
         if ( ! (obj instanceof Record) ) return;
-        Record b = (Record) obj;
-        content = b.getContent();
-        data = b.getData();
-        owner = b.getOwner();
-        updated = b.getUpdated();
-        type = b.getType();
+        super.synchronizeWith(obj);
+        type = ((Record)obj).getType();
     }
 
     public String toString() {
@@ -86,5 +82,10 @@ public class Record extends GenericDataObject {
         if ( owner!=((GenericDataObject)o).getOwner() ) return false;
         if ( ! InstanceUtils.same(getDataAsString(),((GenericDataObject)o).getDataAsString()) ) return false;
         return true;
+    }
+
+    public int hashCode() {
+        String tmp = "Record"+id;
+        return tmp.hashCode();
     }
 }

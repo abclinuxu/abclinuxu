@@ -72,10 +72,15 @@ public class Server extends GenericObject {
      */
     public void synchronizeWith(GenericObject obj) {
         if ( ! (obj instanceof Server) ) return;
+        super.synchronizeWith(obj);
         Server b = (Server) obj;
-        content = b.getContent();
         name = b.getName();
         url = b.getUrl();
         contact = b.getContact();
+    }
+
+    public int hashCode() {
+        String tmp = "Server"+id;
+        return tmp.hashCode();
     }
 }

@@ -72,8 +72,8 @@ public class Data extends GenericObject {
      */
     public void synchronizeWith(GenericObject obj) {
         if ( ! (obj instanceof Data) ) return;
+        super.synchronizeWith(obj);
         Data b = (Data) obj;
-        content = b.getContent();
         data = b.getData();
         owner = b.getOwner();
         format = b.getFormat();
@@ -93,5 +93,10 @@ public class Data extends GenericObject {
         Data p = (Data)o;
         if ( id==p.id && owner==p.owner && data.equals(p.data) && format.equals(p.format) ) return true;
         return false;
+    }
+
+    public int hashCode() {
+        String tmp = "Data"+id;
+        return tmp.hashCode();
     }
 }

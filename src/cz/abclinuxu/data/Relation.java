@@ -82,6 +82,16 @@ public final class Relation extends GenericObject {
         this.upper = upper;
     }
 
+    public void synchronizeWith(GenericObject obj) {
+        if ( !(obj instanceof Relation) ) return;
+        super.synchronizeWith(obj);
+        Relation r = (Relation) obj;
+        upper = r.getUpper();
+        name = r.getName();
+        parent = r.getParent();
+        child = r.getChild();
+    }
+
     public String toString() {
         return "Relation " +id+",upper="+upper;
     }
@@ -91,5 +101,10 @@ public final class Relation extends GenericObject {
         Relation o = (Relation) obj;
         if ( upper==o.getUpper() && parent==o.getParent() && child==o.getChild() ) return true;
         return false;
+    }
+
+    public int hashCode() {
+        String tmp = "Relation"+id;
+        return tmp.hashCode();
     }
 }
