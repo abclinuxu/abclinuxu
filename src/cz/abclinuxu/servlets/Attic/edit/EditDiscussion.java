@@ -6,20 +6,18 @@
  */
 package cz.abclinuxu.servlets.edit;
 
-import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.*;
-import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.utils.InstanceUtils;
-import org.apache.velocity.Template;
-import org.apache.velocity.context.Context;
-import org.dom4j.*;
+import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.exceptions.MissingArgumentException;
 
+import org.dom4j.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -52,7 +50,6 @@ public class EditDiscussion extends AbcFMServlet {
     public static final String VAR_DISCUSSION = "DISCUSSION";
     public static final String VAR_THREAD = "THREAD";
     public static final String VAR_PREVIEW = "PREVIEW";
-    public static final String VAR_CONTINUE = "CONTINUE";
 
     public static final String ACTION_ADD_DISCUSSION = "addDiz";
     public static final String ACTION_ADD_QUESTION = "addQuez";
@@ -61,35 +58,35 @@ public class EditDiscussion extends AbcFMServlet {
     public static final String ACTION_ADD_COMMENT_STEP2 = "add2";
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
-        String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
-
-        if ( action==null ) action = ACTION_ADD_QUESTION;
+        String action = (String) params.get(PARAM_ACTION);
 
         if ( relation!=null ) {
             relation = (Relation) persistance.findById(relation);
             persistance.synchronize(relation.getChild());
             env.put(VAR_RELATION,relation);
-        } else if ( !action.equals(ACTION_ADD_QUESTION) ) throw new Exception("Chybí parametr relationId!");
+        } else if ( !action.equals(ACTION_ADD_QUESTION) )
+            throw new MissingArgumentException("Chybí parametr relationId!");
 
-        if ( action.equals(ACTION_ADD_DISCUSSION) ) {
+        if ( ACTION_ADD_DISCUSSION.equals(action) ) {
             return actionAddDiscussion(request,env);
 
-        } else if ( action.equals(ACTION_ADD_COMMENT) ) {
+        } else if ( ACTION_ADD_COMMENT.equals(action) ) {
             return actionAddComment(request,env);
 
-        } else if ( action.equals(ACTION_ADD_COMMENT_STEP2) ) {
+        } else if ( ACTION_ADD_COMMENT_STEP2.equals(action) ) {
             return  actionAddComment2(request,response,env);
 
-        } else if ( action.equals(ACTION_ADD_QUESTION) ) {
+        } else if ( ACTION_ADD_QUESTION.equals(action) ) {
             return FMTemplateSelector.select("EditDiscussion","ask",env,request);
-        } else if ( action.equals(ACTION_ADD_QUESTION_STEP2) ) {
+
+        } else if ( ACTION_ADD_QUESTION_STEP2.equals(action) ) {
             return actionAddQuestion2(request,response,env);
         }
 
-        return FMTemplateSelector.select("EditDiscussion","reply",env,request);
+        return actionAddComment(request,env);
     }
 
     /**
@@ -97,172 +94,42 @@ public class EditDiscussion extends AbcFMServlet {
      * then opens form for adding new reaction.
      */
     protected String actionAddDiscussion(HttpServletRequest request, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
+        User user = (User) env.get(Constants.VAR_USER);
 
         Relation relation = (Relation) env.get(VAR_RELATION);
-        User user = (User) env.get(AbcVelocityServlet.VAR_USER);
-        GenericObject child = relation.getChild();
+        Relation relChild = InstanceUtils.findFirstChildItemOfType(relation.getChild(),Item.DISCUSSION);
         Item discussion = null;
 
-        for (Iterator iter = child.getContent().iterator(); iter.hasNext();) {
-            Relation rel = (Relation) iter.next();
-            persistance.synchronize(rel.getChild());
-            if ( rel.getChild() instanceof Item ) {
-                Item item = (Item) rel.getChild();
-                if ( item.getType()==Item.DISCUSSION ) {
-                    discussion = item;
-                    break;
-                }
-            }
-        }
-
-        if ( discussion==null ) {
+        if ( relChild==null ) {
             discussion = new Item(0,Item.DISCUSSION);
-
             Document document = DocumentHelper.createDocument();
             Element root = document.addElement("data");
             discussion.setData(document);
-
             if ( user!=null ) discussion.setOwner(user.getId());
+
             persistance.create(discussion);
-
-            Relation tmp = new Relation(relation.getChild(),discussion,relation.getId());
-            persistance.create(tmp);
+            relChild = new Relation(relation.getChild(),discussion,relation.getId());
+            persistance.create(relChild);
+        } else {
+            discussion = (Item) relChild.getChild();
         }
 
+        env.put(VAR_RELATION,relChild);
         env.put(VAR_DISCUSSION,discussion);
         return FMTemplateSelector.select("EditDiscussion","reply",env,request);
-    }
-
-    /**
-     * Displays add comment dialog
-     */
-    protected String actionAddComment(HttpServletRequest request, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
-
-        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION,Item.class,params);
-        if ( discussion==null ) throw new Exception("Chybí parametr dizId!");
-        persistance.synchronize(discussion);
-        env.put(VAR_DISCUSSION,discussion);
-
-        Record record = new Record();
-        record.setData(discussion.getData());
-        record.setUpdated(discussion.getUpdated());
-        record.setOwner(discussion.getOwner());
-        record.setInitialized(true);
-
-        String tmp = (String) params.get(PARAM_THREAD);
-        if ( tmp!=null && tmp.length()>0 ) {
-            int upper = Integer.parseInt(tmp);
-            if ( upper!=0 ) {
-                record = (Record) persistance.findById(new Record(upper));
-            }
-        }
-        if ( VelocityHelper.getXPath(record,"data/title")!=null ) env.put(VAR_THREAD,record);
-
-        return FMTemplateSelector.select("EditDiscussion","reply",env,request);
-    }
-
-    /**
-     * Adds new comment to selected discussion.
-     */
-    protected String actionAddComment2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
-
-        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION,Item.class,params);
-        if ( discussion==null ) throw new Exception("Chybí parametr dizId!");
-        persistance.synchronize(discussion);
-
-        Relation relation = (Relation) env.get(VAR_RELATION);
-        User user = (User) env.get(AbcVelocityServlet.VAR_USER);
-
-        Record reaction = new Record(0,Record.DISCUSSION);
-        boolean error = false;
-
-        Document document = DocumentHelper.createDocument();
-        Element root = document.addElement("data");
-        reaction.setData(document);
-
-        String tmp = (String) params.get(PARAM_AUTHOR);
-        if ( user!=null ) {
-            reaction.setOwner(user.getId());
-        } else {
-            if ( tmp!=null && tmp.length()>0 ) {
-                root.addElement("author").setText(tmp);
-            } else {
-                ServletUtils.addError(PARAM_AUTHOR,"Slu¹ností je se pøedstavit!",env,null);
-                error = true;
-            }
-        }
-
-        tmp = (String) params.get(PARAM_TITLE);
-        if ( tmp!=null && tmp.length()>0 ) {
-            root.addElement("title").setText(tmp);
-        } else {
-            ServletUtils.addError(PARAM_TITLE,"Zadejte titulek va¹eho pøíspìvku!",env,null);
-            error = true;
-        }
-
-        tmp = (String) params.get(PARAM_TEXT);
-        if ( tmp!=null && tmp.length()>0 ) {
-            root.addElement("text").setText(tmp);
-        } else {
-            ServletUtils.addError(PARAM_TEXT,"Zadejte text va¹eho pøíspìvku!",env,null);
-            error = true;
-        }
-
-        tmp = (String) params.get(PARAM_THREAD);
-        int upper = 0;
-        if ( tmp!=null && tmp.length()>0 ) {
-            root.addElement("thread").setText(tmp);
-            upper = Integer.parseInt(tmp);
-        }
-
-        if ( error ) {
-            env.put(VAR_DISCUSSION,discussion);
-            if ( upper!=0 ) {
-                Record record = (Record) persistance.findById(new Record(upper));
-                env.put(VAR_THREAD,record);
-            }
-            return FMTemplateSelector.select("EditDiscussion","reply",env,request);
-        }
-
-        env.put(VAR_CONTINUE,new Boolean(true));
-
-        if ( params.get(PARAM_PREVIEW)!=null ) {
-            env.put(VAR_DISCUSSION,discussion);
-            reaction.setInitialized(true);
-            reaction.setUpdated(new Date());
-            env.put(VAR_PREVIEW,reaction);
-
-            if ( upper!=0 ) {
-                Record record = (Record) persistance.findById(new Record(upper));
-                env.put(VAR_THREAD,record);
-            }
-            return FMTemplateSelector.select("EditDiscussion","reply",env,request);
-        }
-
-        persistance.create(reaction);
-        Relation rel = new Relation(discussion,reaction,0);
-        persistance.create(rel);
-
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId());
-        return null;
     }
 
     /**
      * creates question
      */
     protected String actionAddQuestion2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
+        User user = (User) env.get(Constants.VAR_USER);
 
         Relation relation = (Relation) env.get(VAR_RELATION);
-        User user = (User) env.get(AbcVelocityServlet.VAR_USER);
         Item discussion = new Item(0,Item.DISCUSSION);
 
         Document document = DocumentHelper.createDocument();
@@ -301,7 +168,7 @@ public class EditDiscussion extends AbcFMServlet {
         if ( error || params.get(PARAM_PREVIEW)!=null ) {
             discussion.setInitialized(true);
             discussion.setUpdated(new Date());
-            env.put(VAR_THREAD,discussion);
+            env.put(VAR_PREVIEW,discussion);
             return FMTemplateSelector.select("EditDiscussion","ask_confirm",env,request);
         }
 
@@ -311,6 +178,137 @@ public class EditDiscussion extends AbcFMServlet {
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId());
+        // bug: after redirection the section doesn't contain new discussion, we must reload it to get it!
         return null;
+    }
+
+    /**
+     * Displays add comment dialog
+     */
+    protected String actionAddComment(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION,Item.class,params);
+        if ( discussion==null )
+            throw new MissingArgumentException("Chybí parametr dizId!");
+
+        persistance.synchronize(discussion);
+        env.put(VAR_DISCUSSION,discussion);
+
+        Record record = getDiscussion(params,discussion,persistance);
+        // display reaction, that is discussed, only if it has title
+        // (article discussions doesn't have it)
+        if ( Tools.xpath(record,"data/title")!=null )
+            env.put(VAR_THREAD,record);
+
+        return FMTemplateSelector.select("EditDiscussion","reply",env,request);
+    }
+
+    /**
+     * Adds new comment to selected discussion.
+     */
+    protected String actionAddComment2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+        User user = (User) env.get(Constants.VAR_USER);
+
+        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION,Item.class,params);
+        if ( discussion==null )
+            throw new MissingArgumentException("Chybí parametr dizId!");
+
+        persistance.synchronize(discussion);
+        Relation relation = (Relation) env.get(VAR_RELATION);
+
+        Record reaction = new Record(0,Record.DISCUSSION);
+        Document document = DocumentHelper.createDocument();
+        Element root = document.addElement("data");
+        reaction.setData(document);
+
+        boolean error = false;
+        String tmp = (String) params.get(PARAM_AUTHOR);
+        if ( user!=null ) {
+            reaction.setOwner(user.getId());
+        } else {
+            if ( tmp!=null && tmp.length()>0 ) {
+                root.addElement("author").setText(tmp);
+            } else {
+                ServletUtils.addError(PARAM_AUTHOR,"Slu¹ností je se pøedstavit!",env,null);
+                error = true;
+            }
+        }
+
+        tmp = (String) params.get(PARAM_TITLE);
+        if ( tmp!=null && tmp.length()>0 ) {
+            root.addElement("title").setText(tmp);
+        } else {
+            ServletUtils.addError(PARAM_TITLE,"Zadejte titulek va¹eho pøíspìvku!",env,null);
+            error = true;
+        }
+
+        tmp = (String) params.get(PARAM_TEXT);
+        if ( tmp!=null && tmp.length()>0 ) {
+            root.addElement("text").setText(tmp);
+        } else {
+            ServletUtils.addError(PARAM_TEXT,"Zadejte text va¹eho pøíspìvku!",env,null);
+            error = true;
+        }
+
+        tmp = (String) params.get(PARAM_THREAD);
+        int upper = 0;
+        if ( tmp!=null && tmp.length()>0 ) {
+            root.addElement("thread").setText(tmp);
+            upper = Integer.parseInt(tmp);
+        }
+
+        if ( error ) {
+            env.put(VAR_DISCUSSION,discussion);
+            Record record = getDiscussion(params,discussion,persistance);
+            if ( Tools.xpath(record,"data/title")!=null )
+                env.put(VAR_THREAD,record);
+            return FMTemplateSelector.select("EditDiscussion","reply",env,request);
+        }
+
+        if ( params.get(PARAM_PREVIEW)!=null ) {
+            env.put(VAR_DISCUSSION,discussion);
+            reaction.setInitialized(true);
+            reaction.setUpdated(new Date());
+            env.put(VAR_PREVIEW,reaction);
+            Record record = getDiscussion(params,discussion,persistance);
+            if ( Tools.xpath(record,"data/title")!=null )
+                env.put(VAR_THREAD,record);
+            return FMTemplateSelector.select("EditDiscussion","reply",env,request);
+        }
+
+        persistance.create(reaction);
+        Relation rel = new Relation(discussion,reaction,0);
+        persistance.create(rel);
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId());
+        return null;
+        // bug: after redirection discussion doesn't contain added reaction!
+        // first I have to add another reaction to display the previous one!
+    }
+
+    /**
+     * Finds Record of type Discussion from PARAM_THREAD key in params or makes facade
+     * of given Item.
+     * @return initialized record
+     * @throws PersistanceException, if PARAM_THREAD points to nonexisting record
+     */
+    private Record getDiscussion(Map params, Item discussion, Persistance persistance) {
+        Record record = (Record) InstanceUtils.instantiateParam(PARAM_THREAD,Record.class,params);
+        if ( record!=null )
+            record = (Record) persistance.findById(record);
+        else {
+            // Item.Discussion to Record.Discussion facade
+            record = new Record();
+            record.setData(discussion.getData());
+            record.setUpdated(discussion.getUpdated());
+            record.setOwner(discussion.getOwner());
+            record.setInitialized(true);
+        }
+        return record;
     }
 }

@@ -381,11 +381,22 @@ public class Tools {
             if ( ! (obj instanceof Item) ) return false;
             if ( type==null ) return true;
             switch (((Item)obj).getType()) {
-                case 1: return "Make".equalsIgnoreCase(type);
-                case 2: return "Article".equalsIgnoreCase(type);
-                case 3: return "Discussion".equalsIgnoreCase(type);
-                case 4: return "Request".equalsIgnoreCase(type);
-                case 5: return "Driver".equalsIgnoreCase(type);
+                case Item.MAKE: return "Make".equalsIgnoreCase(type);
+                case Item.ARTICLE: return "Article".equalsIgnoreCase(type);
+                case Item.DISCUSSION: return "Discussion".equalsIgnoreCase(type);
+                case Item.REQUEST: return "Request".equalsIgnoreCase(type);
+                case Item.DRIVER: return "Driver".equalsIgnoreCase(type);
+                default: return false;
+            }
+        }
+        if ( "Record".equalsIgnoreCase(clazz) ) {
+            if ( ! (obj instanceof Record) ) return false;
+            if ( type==null ) return true;
+            switch (((Record)obj).getType()) {
+                case Record.HARDWARE: return "Hardware".equalsIgnoreCase(type);
+                case Record.SOFTWARE: return "Software".equalsIgnoreCase(type);
+                case Record.ARTICLE: return "Article".equalsIgnoreCase(type);
+                case Record.DISCUSSION: return "Discussion".equalsIgnoreCase(type);
                 default: return false;
             }
         }
