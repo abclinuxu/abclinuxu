@@ -75,6 +75,7 @@ public class EditDiscussion implements AbcAction {
     public static final String ACTION_REMOVE_COMMENT_STEP2 = "rm2";
     public static final String ACTION_FREEZE_DISCUSSION = "freeze";
     public static final String ACTION_DECREASE_LEVEL = "moveUp";
+    public static final String ACTION_RATE_COMMENT = "rate";
 
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -110,6 +111,9 @@ public class EditDiscussion implements AbcAction {
 
         if ( ACTION_ADD_QUESTION_STEP4.equals(action) )
             return actionAddQuestion4(request,response,env);
+
+        if ( ACTION_RATE_COMMENT.equals(action) )
+            return actionRateComment(request,response,env);
 
         // check permissions
         User user = (User) env.get(Constants.VAR_USER);
@@ -678,6 +682,35 @@ public class EditDiscussion implements AbcAction {
             threadParent.setText(newParent.getText());
             persistance.update(record);
             AdminLogger.logEvent(user, "presunul vlakno "+threadId+" o uroven vys, relace "+relation.getId());
+        }
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/show/"+relation.getId());
+        return null;
+    }
+
+    /**
+     * Adds vote to rating of this object.
+     */
+    protected String actionRateComment(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item discussion = (Item) persistance.findById(relation.getChild());
+
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        int threadId = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
+        if ( threadId==0 )
+            throw new MissingArgumentException("Chybí parametr threadId!");
+
+        Record record = (Record) ((Relation) discussion.getChildren().get(0)).getChild();
+        Tools.sync(record);
+        Document data = record.getData();
+
+        synchronized (data.getRootElement()) {
+            Element thread = (Element) data.selectSingleNode("//comment[@id='"+threadId+"']");
+            boolean result = EditRating.rate(thread, params, env, request.getSession());
+            if (result)
+                persistance.update(record);
         }
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);

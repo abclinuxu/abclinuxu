@@ -1,0 +1,4 @@
+<!ELEMENT rating (type, sum, count)>
+<!ELEMENT type (#PCDATA)> <!-- short name identifying type of rating -->
+<!ELEMENT sum (#PCDATA)> <!-- integer, sum of all ratings of this type for this object -->
+<!ELEMENT count (#PCDATA)> <!-- integer, count of ratings of this type for this object -->

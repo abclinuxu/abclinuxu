@@ -11,6 +11,7 @@ import cz.abclinuxu.exceptions.InvalidDataException;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.html.edit.EditRating;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.data.view.DiscussionHeader;
@@ -877,5 +878,23 @@ public class Tools implements Configurable {
         cookie.setPath("/");
         cookie.setMaxAge(321408000);
         ServletUtils.addCookie(cookie,response);
+    }
+
+    /**
+     * Finds rating of specified type for given object.
+     * @param object object that might have rating
+     * @param type type of rating we are interested in
+     * @return current value or null, if such rating doesn't exist
+     */
+    public Float ratingFor(Element object, String type) {
+        Element rating = (Element) object.selectSingleNode("rating[type/text()=\""+type+"\"]");
+        if ( rating==null )
+            return null;
+
+        int sum = Misc.parseInt(rating.elementText("sum"), EditRating.VALUE_MIN);
+        int count = Misc.parseInt(rating.elementText("count"), EditRating.VALUE_MIN);
+        float result = sum/(float)count;
+
+        return new Float(result);
     }
 }

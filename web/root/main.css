@@ -91,9 +91,8 @@ DIV.note { padding-top: 10pt; padding-bottom: 5pt;}
 DIV.diz_list { background-color: #EEEEEE; }
 P.diz_header { background-color: #EEEEEE; }
 SPAN.diz_header_new { font-size: bigger; font-style: italic; color:blue; }
-SPAN.diz_header_prefix { font-style: italic; }.
 p.cenzura { border-width: 2px; border-color: blue; border-style: solid; background-color: #EEEEEE; padding: 1ex; margin-top: 6px}
-.textbanner { background-color: #CCFFFF; border: 1px solid #66CCCC; color: #000000; }
+.textbanner { background-color: #CCFFFF; border: 1px solid #66CCCC; color: #000000; } /* softwaremedia */
 DIV.signature { margin-top: 8px; font-style: italic; font-size: smaller }
 
 /* slovnik */
@@ -101,6 +100,9 @@ P.slovnik { background-color: #EEEEEE }
 
 /* zpravicka */
 P.zpravicka { background-color: #EEEEEE }
+
+/* hodnoceni */
+TABLE.rating { background-color: #EEEEEE; margin-top: 5px }
 
 #hucek1 { width: 114; height: 329; }
 #hucek2 { border: 2px #FFF solid; width: 110; height: 310; }
