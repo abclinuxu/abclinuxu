@@ -57,6 +57,10 @@
             <action>cz.abclinuxu.servlets.edit.EditRequest</action>
         </mapping>
         <mapping>
+            <pattern>^/clanky/honorare</pattern>
+            <action>cz.abclinuxu.servlets.edit.Royalties</action>
+        </mapping>
+        <mapping>
             <pattern>^/drivers/edit</pattern>
             <action>cz.abclinuxu.servlets.edit.EditDriver</action>
         </mapping>

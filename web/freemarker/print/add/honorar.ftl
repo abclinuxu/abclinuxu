@@ -3,7 +3,7 @@
 
 <#call showMessages>
 
-<form action="${URL.make("/edit")}" method="POST">
+<form action="${URL.make("/honorare/"+RELATION.id)}" method="POST">
 
  <table width=100 border=0 cellpadding=5>
   <tr>
@@ -46,12 +46,11 @@
    <td><input type="submit" value="Pokraèuj" tabindex="8"></td>
   </tr>
  </table>
- <#if PARAMS.action=="addRoyalties" || PARAMS.action="addRoyalties2" >
-  <input type="hidden" name="action" value="addRoyalties2">
+ <#if PARAMS.action=="add" || PARAMS.action="add2" >
+  <input type="hidden" name="action" value="add2">
   <#else>
-  <input type="hidden" name="action" value="editRoyalties2">
+  <input type="hidden" name="action" value="edit2">
  </#if>
- <input type="hidden" name="rid" value="${PARAMS.rid}">
 </form>
 
 
