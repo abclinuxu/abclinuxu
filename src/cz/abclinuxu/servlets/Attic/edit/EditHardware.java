@@ -134,8 +134,9 @@ public class EditHardware extends AbcServlet {
             int rights = Guard.check((User)ctx.get(VAR_USER),record,Guard.OPERATION_EDIT,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_OK: return actionEditRecord2(request,response,ctx);
                 case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
-                default: return actionEditRecord2(request,response,ctx);
+                default: return actionEditRecord(request,ctx);
             }
 
         } else if ( action.equals(ACTION_EDIT_ITEM) ) {
@@ -150,8 +151,9 @@ public class EditHardware extends AbcServlet {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_EDIT,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_OK: return actionEditItem2(request,response,ctx);
                 case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
-                default: return actionEditItem2(request,response,ctx);
+                default: return actionEditItem(request, ctx);
             }
 
         }
