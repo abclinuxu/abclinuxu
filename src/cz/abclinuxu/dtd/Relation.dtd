@@ -1,3 +1,9 @@
-<!ELEMENT data (name,icon?)>
+<!ELEMENT data (name,icon?,acl?)>
 <!ELEMENT name (#PCDATA)> <!-- maximum length is few words -->
 <!ELEMENT icon (#PCDATA)> <!-- absolute path including protocol, or relative path to icon directory -->
+<!ELEMENT acl (#EMPTY)>
+<!ATTLIST acl id (#ID) #REQUIRED> <!-- id of this ACL -->
+<!ATTLIST acl right (read) #REQUIRED> <!-- name of access right for this object -->
+<!ATTLIST acl value (yes|no) #REQUIRED> <!-- value of this access right -->
+<!ATTLIST acl uid (NMTOKEN) #OPTIONAL> <!-- id of user -->
+<!ATTLIST acl gid (NMTOKEN) #OPTIONAL> <!-- id of group -->

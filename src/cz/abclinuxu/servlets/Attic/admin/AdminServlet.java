@@ -24,9 +24,11 @@ import java.util.Date;
 import java.io.File;
 
 /**
- * When called, clears content of cache of default persistance.
+ * Various administrative tasks.
  */
 public class AdminServlet extends AbcFMServlet {
+    public static final String PARAM_RELATION_SHORT = "rid";
+
     public static final String ACTION_CLEAR_CACHE = "clearCache";
     public static final String ACTION_PERFROM_CHECK = "performCheck";
 
@@ -37,12 +39,16 @@ public class AdminServlet extends AbcFMServlet {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String action = (String) params.get(PARAM_ACTION);
 
+        if (action==null)
+            return FMTemplateSelector.select("Admin", "show", env, request);
+
         if (ACTION_CLEAR_CACHE.equals(action) )
             return clearCache(request,env);
+
         if (ACTION_PERFROM_CHECK.equals(action) )
             return performCheck(request,env);
 
-        return FMTemplateSelector.select("Admin", "show", env, request);
+        return null;
     }
 
     /**
@@ -61,7 +67,7 @@ public class AdminServlet extends AbcFMServlet {
     /**
      * Utility method for monitoring health of portal. Used by Broadnet.
      * Content of page is defined in web/freemarker/print/misc/admin_check.ftl
-     * todo add other checks, e.g. fulltext, jobs and threads
+     * todo add other checks, e.g. jobs and threads
      */
     private final String performCheck(HttpServletRequest request, Map env) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();

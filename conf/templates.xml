@@ -104,6 +104,12 @@
     <action name="moveAll" template="print" content="/edit/move_content.ftl">
       <var name="TITLE" value="Pøesun obsahu" />
     </action>
+    <action name="showACL" template="print" content="/show/acl.ftl">
+      <var name="TITLE" value="Uka¾ pøístupová práva" />
+    </action>
+    <action name="addACL" template="print" content="/add/acl.ftl">
+      <var name="TITLE" value="Vytvoø pøístupová práva" />
+    </action>
   </servlet>
 
   <servlet name="EditRequest">

@@ -8,16 +8,22 @@ package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.utils.UrlUtils;
-import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.servlets.view.ViewUser;
 import cz.abclinuxu.servlets.select.SelectRelation;
+import cz.abclinuxu.servlets.select.SelectUser;
+import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
+import cz.abclinuxu.data.view.ACL;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.monitor.*;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 
@@ -27,6 +33,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Class for removing relations or creating links.
@@ -39,11 +47,19 @@ public class EditRelation extends AbcFMServlet {
     public static final String PARAM_NAME = "name";
     public static final String PARAM_PREFIX = "prefix";
     public static final String PARAM_TYPE = "type";
-    public static final String PARAM_SELECTED = cz.abclinuxu.servlets.select.SelectRelation.PARAM_SELECTED;
+    public static final String PARAM_SELECTED = SelectRelation.PARAM_SELECTED;
+    public static final String PARAM_ACL_ID = "id";
+    public static final String PARAM_ACL_TYPE = "right";
+    public static final String PARAM_ACL_VALUE = "value";
+    public static final String PARAM_ACL_WHO = "who";
+    public static final String PARAM_USER = ViewUser.PARAM_USER_SHORT;
+    public static final String PARAM_GROUP = EditGroup.PARAM_GROUP;
 
     public static final String VAR_CURRENT = "CURRENT";
     public static final String VAR_SELECTED = "SELECTED";
     public static final String VAR_PARENTS = "PARENTS";
+    public static final String VAR_ACL = "ACL";
+    public static final String VAR_GROUPS = EditGroup.VAR_GROUPS;
 
     public static final String VALUE_DISCUSSIONS = "discussions";
     public static final String VALUE_MAKES = "makes";
@@ -57,8 +73,14 @@ public class EditRelation extends AbcFMServlet {
     public static final String ACTION_MOVE = "move";
     public static final String ACTION_MOVE_ALL = "moveAll";
     public static final String ACTION_MOVE_ALL_STEP2 = "moveAll2";
+    public static final String ACTION_SHOW_ACL = "showACL";
+    public static final String ACTION_ADD_ACL = "addACL";
+    public static final String ACTION_ADD_ACL_STEP2 = "addACL2";
+    public static final String ACTION_ADD_ACL_STEP3 = "addACL3";
+    public static final String ACTION_REMOVE_ACL = "removeACL";
 
 
+    // todo move permission checks to called methods from here.
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
@@ -96,6 +118,21 @@ public class EditRelation extends AbcFMServlet {
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             return actionMoveAll(request, response, env);
         }
+
+        if ( action.equals(ACTION_SHOW_ACL) )
+            return actionShowACL(request,env);
+
+        if ( action.equals(ACTION_ADD_ACL) )
+            return actionAddACLStep1(request,env);
+
+        if ( action.equals(ACTION_ADD_ACL_STEP2) )
+            return actionAddACLStep2(request,response,env);
+
+        if ( action.equals(ACTION_ADD_ACL_STEP3) )
+            return actionAddACLStep3(request,env);
+
+        if ( action.equals(ACTION_REMOVE_ACL) )
+            return actionRemoveACL(request, env);
 
         GenericObject child = relation.getChild();
         persistance.synchronize(child);
@@ -308,6 +345,197 @@ public class EditRelation extends AbcFMServlet {
         urlUtils.redirect(response, url);
         return null;
     }
+
+    /**
+     * Shows ACL for given relation.
+     */
+    private String actionShowACL(HttpServletRequest request, Map env) throws Exception {
+        User user = (User) env.get(Constants.VAR_USER);
+        if ( !user.hasRole(Roles.ROOT) )
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+        Relation relation = (Relation) env.get(VAR_CURRENT);
+        if (relation.getData()!=null) {
+            List nodes = relation.getData().selectNodes("/data/acl");
+            List acls = new ArrayList(nodes.size());
+            for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
+                Element element = (Element) iter.next();
+                ACL acl = getACL(element);
+                acls.add(acl);
+            }
+            if (acls.size()>0)
+                env.put(VAR_ACL,acls);
+        }
+
+        return FMTemplateSelector.select("EditRelation", "showACL", env, request);
+    }
+
+    /**
+     * Adds new ACL for given relation.
+     */
+    private String actionAddACLStep1(HttpServletRequest request, Map env) throws Exception {
+        User user = (User) env.get(Constants.VAR_USER);
+        if ( !user.hasRole(Roles.ROOT) )
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+        List items = SQLTool.getInstance().findItemsByTypeById(Item.GROUP, 0, EditGroup.DEFAULT_MAX_NUMBER_OF_GROUPS);
+        env.put(VAR_GROUPS, items);
+
+        return FMTemplateSelector.select("EditRelation", "addACL", env, request);
+    }
+
+    /**
+     * Adds new ACL for given relation.
+     */
+    private String actionAddACLStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        User user = (User) env.get(Constants.VAR_USER);
+        if ( !user.hasRole(Roles.ROOT) )
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        String who = (String) params.remove(PARAM_ACL_WHO);
+        if ( "user".equals(who) ) {
+            String url = "/SelectUser";
+            params.put(SelectUser.PARAM_ACTION,SelectUser.ACTION_SHOW_FORM);
+            params.put(SelectUser.PARAM_URL, "/EditRelation");
+            params.put(PARAM_ACTION, ACTION_ADD_ACL_STEP3);
+            request.getSession().setAttribute(Constants.VAR_PARAMS, params);
+
+            ((UrlUtils) env.get(Constants.VAR_URL_UTILS)).redirect(response, url);
+            return null;
+        } else
+            return actionAddACLStep3(request,env);
+    }
+
+    /**
+     * Adds new ACL for given relation.
+     */
+    private String actionAddACLStep3(HttpServletRequest request, Map env) throws Exception {
+        User user = (User) env.get(Constants.VAR_USER);
+        if ( !user.hasRole(Roles.ROOT) )
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Relation relation = (Relation) env.get(VAR_CURRENT);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        boolean canContinue = setACL(params,relation,env);
+        if (canContinue) {
+            persistance.update(relation);
+            AdminLogger.logEvent(user, "vytvoril nove ACL pro relaci "+relation.getId());
+        }
+
+        return actionShowACL(request,env);
+    }
+
+    /**
+     * Removes selected ACLs.
+     */
+    protected String actionRemoveACL(HttpServletRequest request, Map env) throws Exception {
+        User user = (User) env.get(Constants.VAR_USER);
+        if ( !user.hasRole(Roles.ROOT) )
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Relation relation = (Relation) env.get(VAR_CURRENT);
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Document document = relation.getData();
+
+        List acls = null;
+        Object tmp = params.get(PARAM_ACL_ID);
+        if ( tmp instanceof String ) {
+            acls = new ArrayList(1);
+            acls.add(tmp);
+        } else
+            acls = (List) tmp;
+
+        for ( Iterator iter = acls.iterator(); iter.hasNext(); ) {
+            String id = (String) iter.next();
+            Element element = (Element) document.selectSingleNode("/data/acl[@id='"+id+"']");
+            if ( element==null )
+                continue;
+            element.detach();
+            AdminLogger.logEvent(user, "zrusil ACL "+id+" z relace "+relation.getId());
+        }
+        persistance.update(relation);
+
+        return actionShowACL(request, env);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    //                          Setters                                      //
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Creates ACL from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param relation relation to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setACL(Map params, Relation relation, Map env) {
+        String right = (String) params.get(PARAM_ACL_TYPE);
+        String value = (String) params.get(PARAM_ACL_VALUE);
+        int gid = Misc.parseInt((String) params.get(PARAM_GROUP),0);
+        int uid = Misc.parseInt((String) params.get(PARAM_USER),0);
+
+        Document document = relation.getData();
+        if ( document==null ) {
+            document = DocumentHelper.createDocument();
+            relation.setData(document);
+        }
+
+        int id = 0;
+        List acls = document.selectNodes("/data/acl");
+        for ( Iterator iter = acls.iterator(); iter.hasNext(); ) {
+            Element element = (Element) iter.next();
+            int tmp = Misc.parseInt(element.attributeValue("id"),0);
+            if (tmp>=id) id = tmp+1;
+        }
+
+        Element data = document.getRootElement();
+        if (data==null) {
+            document.setRootElement(DocumentHelper.createElement("data"));
+            data = document.getRootElement();
+        }
+
+        Element acl = data.addElement("acl");
+        acl.addAttribute("id",new Integer(id).toString());
+        acl.addAttribute("right",right);
+        acl.addAttribute("value",value);
+        if (uid>0)
+            acl.addAttribute("uid", new Integer(uid).toString());
+        else if (gid>0)
+            acl.addAttribute("gid", new Integer(gid).toString());
+        else {
+            ServletUtils.addError(Constants.ERROR_GENERIC,"Musíte zadat èíslo skupiny nebo u¾ivatele!",env,null);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Converts DOM4J Element to ACL.
+     */
+    private ACL getACL(Element element) {
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        int id = Misc.parseInt(element.attributeValue("id"),0);
+        int gid = Misc.parseInt(element.attributeValue("gid"),0);
+        int uid = Misc.parseInt(element.attributeValue("uid"),0);
+
+        ACL acl;
+        if (uid!=0)
+            acl = new ACL(id,(User) persistance.findById(new User(uid)));
+        else
+            acl = new ACL(id, (Item) persistance.findById(new Item(gid)));
+
+        boolean value = "yes".equals(element.attributeValue("value"));
+        acl.setRight(element.attributeValue("right"),value);
+
+        return acl;
+    }
+
     /**
      * Whether user wishes to be redirected after move of discussions
      * from discussion forum back to the forum.
