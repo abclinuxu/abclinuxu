@@ -6,8 +6,6 @@
 package cz.abclinuxu.servlets.html.edit;
 
 import cz.abclinuxu.data.User;
-import cz.abclinuxu.data.Category;
-import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.exceptions.DuplicateKeyException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -117,8 +115,6 @@ public class EditUser implements AbcAction, Configurable {
     public static final String ACTION_INVALIDATE_EMAIL = "invalidateEmail";
     public static final String ACTION_INVALIDATE_EMAIL2 = "invalidateEmail2";
     public static final String ACTION_ADD_GROUP_MEMBER = "addToGroup";
-    public static final String ACTION_ADD_BLOG = "addBlog";
-    public static final String ACTION_ADD_BLOG_STEP2 = "addBlog2";
 
     public static final String PREF_INVALID_NICK_REGEXP = "regexp.invalid.login";
     private static RE reLoginInvalid;
@@ -184,12 +180,6 @@ public class EditUser implements AbcAction, Configurable {
 
         if ( action.equals(ACTION_EDIT_SETTINGS_STEP2) )
             return actionEditSettings2(request, response, env);
-
-        if ( action.equals(ACTION_ADD_BLOG) )
-            return FMTemplateSelector.select("EditUser", "addBlog", env, request);
-
-        if ( action.equals(ACTION_ADD_BLOG_STEP2) )
-            return actionAddBlog(request, response, env);
 
         if ( action.equals(ACTION_EDIT_SUBSCRIPTION) )
             return actionEditSubscription(request, env);
@@ -557,48 +547,6 @@ public class EditUser implements AbcAction, Configurable {
         ServletUtils.addMessage("Zmìny byly ulo¾eny.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&userId="+managed.getId());
-        return null;
-    }
-
-    /**
-     * Adds category with blog for current user.
-     */
-    protected String actionAddBlog(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        User user = (User) env.get(Constants.VAR_USER);
-        Persistance persistance = PersistanceFactory.getPersistance();
-
-        Element settings = (Element) user.getData().selectSingleNode("/data/settings");
-        if ( settings.element("blog")!=null ) {
-            ServletUtils.addError(Constants.ERROR_GENERIC,"Chyba: blog ji¾ existuje!",env,request.getSession());
-            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, "/Profile/"+user.getId()+"?action="+ViewUser.ACTION_SHOW_MY_PROFILE);
-            return null;
-        }
-
-        Category blog = new Category();
-        boolean canContinue = EditBlog.setBlogName(params, blog, env);
-
-        if ( !canContinue )
-            return FMTemplateSelector.select("EditUser", "addBlog", env, request);
-
-        blog.setOwner(user.getId());
-        blog.setType(Category.SECTION_BLOG);
-        Document document = DocumentHelper.createDocument();
-        Element data = document.addElement("data");
-        DocumentHelper.makeElement(data, "/custom/page_title").setText(blog.getSubType());
-        DocumentHelper.makeElement(data, "/custom/title").setText(blog.getSubType());
-        blog.setData(document);
-        persistance.create(blog);
-
-        Relation relation = new Relation(new Category(Constants.CAT_BLOGS), blog, Constants.REL_BLOGS);
-        persistance.create(relation);
-
-        DocumentHelper.makeElement(settings,"blog").setText(Integer.toString(blog.getId()));
-        persistance.update(user);
-
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/blog/"+blog.getSubType()+"/");
         return null;
     }
 
