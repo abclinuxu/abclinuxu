@@ -109,7 +109,7 @@
               <map>
                   <entry key="RE_LINE_BREAK" value="(&lt;br&gt;)|(&lt;p&gt;)|(&lt;div&gt;)"/>
                   <entry key="RE_EMPTY_LINE" value="(\r\n){2}|(\n){2}"/>
-                  <entry key="RE_REMOVE_TAGS" value="&lt;[\w\s\d/=:.~?\&quot;]+&gt;"/>
+                  <entry key="RE_REMOVE_TAGS" value="&lt;[\w\s\d/=:.~?\,_&quot;]+&gt;"/>
               </map>
           </node>
         </node>
