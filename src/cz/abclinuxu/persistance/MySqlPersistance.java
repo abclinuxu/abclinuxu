@@ -11,7 +11,6 @@ import java.util.*;
 import java.sql.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.PersistanceException;
-import cz.abclinuxu.persistance.LogicalExpressionTokenizer;
 import cz.abclinuxu.AbcException;
 import org.apache.log4j.xml.DOMConfigurator;
 
@@ -243,7 +242,7 @@ public class MySqlPersistance implements Persistance {
     public List findByExample(List objects, String relations) throws PersistanceException {
         Connection con = null;
         if ( objects.size()==0 ) return new ArrayList();
-        if ( relations==null ) relations = LogicalExpressionTokenizer.makeOrRelation(objects);
+        if ( relations==null ) relations = makeOrRelation(objects);
 
         try {
             con = getSQLConnection();
@@ -1285,5 +1284,26 @@ public class MySqlPersistance implements Persistance {
         } finally {
             releaseSQLConnection(con);
         }
+    }
+
+    /**
+     * @return String, where each object in list <code>objects</code>
+     * is represented by its index (starting at 0, maximum size is 10)
+     * and there is OR relation between all objects.
+     */
+    private String makeOrRelation(List objects) {
+        StringBuffer sb = new StringBuffer();
+        if (objects.size()==1) return "0";
+
+        int size = objects.size() - 1;
+        if (size>9) size = 9;
+
+        for (int i = 0; i<size; i++) {
+            sb.append(i);
+            sb.append(" OR ");
+        }
+
+        sb.append(size);
+        return sb.toString();
     }
 }
