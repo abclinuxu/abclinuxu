@@ -5,10 +5,7 @@
  */
 package cz.abclinuxu.migrate;
 
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.EmptyCache;
-import cz.abclinuxu.persistance.MySqlPersistance;
+import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.Record;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Category;
@@ -18,6 +15,7 @@ import cz.abclinuxu.utils.format.FormatDetector;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Date;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -31,10 +29,12 @@ import org.dom4j.Element;
 public class InsertFormat {
     private static final String FORMAT = "format";
     static Persistance persistance;
+    static SQLTool sqlTool;
     static int column = 0;
 
     public static void main(String[] args) throws Exception {
         persistance = PersistanceFactory.getPersistance(EmptyCache.class);
+        sqlTool = SQLTool.getInstance();
 
         System.out.println("This utility must not be run, if portal is running!");
         System.err.println("Press enter");
@@ -62,6 +62,7 @@ public class InsertFormat {
         Integer key;
         Element element;
         List nodes;
+        boolean modified = false;
 
         List articles = getRecords(Record.ARTICLE);
         for ( Iterator iter = articles.iterator(); iter.hasNext(); ) {
@@ -73,9 +74,14 @@ public class InsertFormat {
                 if (element.attributeValue(FORMAT)==null) {
                     hash();
                     element.addAttribute(FORMAT, Integer.toString(Format.HTML.getId()));
+                    modified = true;
                 }
             }
-            persistance.update(article);
+            if (modified) {
+                Date lastModified = article.getUpdated();
+                persistance.update(article);
+                sqlTool.setUpdatedTimestamp(article, lastModified);
+            }
         }
         resetHash();
         int seconds = (int) (System.currentTimeMillis()-start)/1000;
@@ -89,6 +95,7 @@ public class InsertFormat {
         Integer key;
         Element element;
         Format format;
+        boolean modified = false;
 
         List questions = getItems(Item.DISCUSSION);
         for ( Iterator iter = questions.iterator(); iter.hasNext(); ) {
@@ -99,8 +106,13 @@ public class InsertFormat {
                 hash();
                 format = FormatDetector.detect(element.getText());
                 element.addAttribute(FORMAT, Integer.toString(format.getId()));
+                modified = true;
             }
-            persistance.update(item);
+            if ( modified ) {
+                Date lastModified = item.getUpdated();
+                persistance.update(item);
+                sqlTool.setUpdatedTimestamp(item, lastModified);
+            }
         }
         resetHash();
         int seconds = (int) (System.currentTimeMillis()-start)/1000;
@@ -114,6 +126,7 @@ public class InsertFormat {
         Integer key;
         Element element;
         Format format;
+        boolean modified = false;
 
         List drivers = getItems(Item.DRIVER);
         for ( Iterator iter = drivers.iterator(); iter.hasNext(); ) {
@@ -124,8 +137,13 @@ public class InsertFormat {
                 hash();
                 format = FormatDetector.detect(element.getText());
                 element.addAttribute(FORMAT, Integer.toString(format.getId()));
+                modified = true;
             }
-            persistance.update(item);
+            if ( modified ) {
+                Date lastModified = item.getUpdated();
+                persistance.update(item);
+                sqlTool.setUpdatedTimestamp(item, lastModified);
+            }
         }
         resetHash();
         int seconds = (int) (System.currentTimeMillis()-start)/1000;
@@ -138,6 +156,7 @@ public class InsertFormat {
         Item item;
         Integer key;
         Element element;
+        boolean modified = false;
 
         List news = getItems(Item.NEWS);
         for ( Iterator iter = news.iterator(); iter.hasNext(); ) {
@@ -147,8 +166,13 @@ public class InsertFormat {
             if ( element.attributeValue(FORMAT)==null ) {
                 hash();
                 element.addAttribute(FORMAT, Integer.toString(Format.HTML.getId()));
+                modified = true;
             }
-            persistance.update(item);
+            if ( modified ) {
+                Date lastModified = item.getUpdated();
+                persistance.update(item);
+                sqlTool.setUpdatedTimestamp(item, lastModified);
+            }
         }
         resetHash();
         int seconds = (int) (System.currentTimeMillis()-start)/1000;
@@ -162,6 +186,7 @@ public class InsertFormat {
         Integer key;
         Element element;
         Format format;
+        boolean modified = false;
 
         List categories = getCategories();
         for ( Iterator iter = categories.iterator(); iter.hasNext(); ) {
@@ -172,8 +197,13 @@ public class InsertFormat {
                 hash();
                 format = FormatDetector.detect(element.getText());
                 element.addAttribute(FORMAT, Integer.toString(format.getId()));
+                modified = true;
             }
-            persistance.update(category);
+            if ( modified ) {
+                Date lastModified = category.getUpdated();
+                persistance.update(category);
+                sqlTool.setUpdatedTimestamp(category, lastModified);
+            }
         }
         resetHash();
         int seconds = (int) (System.currentTimeMillis()-start)/1000;
@@ -187,6 +217,7 @@ public class InsertFormat {
         Integer key;
         Element element;
         Format format;
+        boolean modified = false;
 
         List records = getRecords(Record.HARDWARE);
         for ( Iterator iter = records.iterator(); iter.hasNext(); ) {
@@ -198,6 +229,7 @@ public class InsertFormat {
                 hash();
                 format = FormatDetector.detect(element.getText());
                 element.addAttribute(FORMAT, Integer.toString(format.getId()));
+                modified = true;
             }
 
             element = (Element) hardware.getData().selectSingleNode("/data/identification");
@@ -205,6 +237,7 @@ public class InsertFormat {
                 hash();
                 format = FormatDetector.detect(element.getText());
                 element.addAttribute(FORMAT, Integer.toString(format.getId()));
+                modified = true;
             }
 
             element = (Element) hardware.getData().selectSingleNode("/data/params");
@@ -212,6 +245,7 @@ public class InsertFormat {
                 hash();
                 format = FormatDetector.detect(element.getText());
                 element.addAttribute(FORMAT, Integer.toString(format.getId()));
+                modified = true;
             }
 
             element = (Element) hardware.getData().selectSingleNode("/data/note");
@@ -219,9 +253,13 @@ public class InsertFormat {
                 hash();
                 format = FormatDetector.detect(element.getText());
                 element.addAttribute(FORMAT, Integer.toString(format.getId()));
+                modified = true;
             }
-
-            persistance.update(hardware);
+            if ( modified ) {
+                Date lastModified = hardware.getUpdated();
+                persistance.update(hardware);
+                sqlTool.setUpdatedTimestamp(hardware, lastModified);
+            }
         }
         resetHash();
         int seconds = (int) (System.currentTimeMillis()-start)/1000;
@@ -235,6 +273,7 @@ public class InsertFormat {
         Integer key;
         Element element;
         Format format;
+        boolean modified = false;
 
         List records = getRecords(Record.SOFTWARE);
         for ( Iterator iter = records.iterator(); iter.hasNext(); ) {
@@ -246,9 +285,13 @@ public class InsertFormat {
                 hash();
                 format = FormatDetector.detect(element.getText());
                 element.addAttribute(FORMAT, Integer.toString(format.getId()));
+                modified = true;
             }
-
-            persistance.update(software);
+            if ( modified ) {
+                Date lastModified = software.getUpdated();
+                persistance.update(software);
+                sqlTool.setUpdatedTimestamp(software, lastModified);
+            }
         }
         resetHash();
         int seconds = (int) (System.currentTimeMillis()-start)/1000;
@@ -262,6 +305,7 @@ public class InsertFormat {
         Integer key;
         Element element;
         List nodes;
+        boolean modified = false;
 
         List records = getRecords(Record.DISCUSSION);
         for ( Iterator iter = records.iterator(); iter.hasNext(); ) {
@@ -274,9 +318,14 @@ public class InsertFormat {
                 if ( element.attributeValue(FORMAT)==null ) {
                     hash();
                     element.addAttribute(FORMAT, Integer.toString(Format.HTML.getId()));
+                    modified = true;
                 }
             }
-            persistance.update(comment);
+            if ( modified ) {
+                Date lastModified = comment.getUpdated();
+                persistance.update(comment);
+                sqlTool.setUpdatedTimestamp(comment, lastModified);
+            }
         }
         resetHash();
         int seconds = (int) (System.currentTimeMillis()-start)/1000;
