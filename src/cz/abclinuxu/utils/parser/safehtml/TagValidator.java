@@ -9,6 +9,7 @@ import org.htmlparser.util.ParserException;
 import org.htmlparser.lexer.Lexer;
 import org.htmlparser.lexer.nodes.TagNode;
 import org.htmlparser.lexer.nodes.Attribute;
+import org.htmlparser.lexer.nodes.PageAttribute;
 import org.htmlparser.Node;
 
 import java.util.Vector;
@@ -59,7 +60,7 @@ public class TagValidator {
             removeTagAttribute(attributes);
 
             if ( checkedTag.attributes==null && attributes.size()>0 )
-                throw new AttributeNotAllowedException("Znaèka "+tag.getTagName()+" nesmí obsahovat ¾ádné atributy!");
+                throw new AttributeNotAllowedException("Znaèka "+checkedTag.name+" nesmí obsahovat ¾ádné atributy!");
 
             for ( Iterator iter = attributes.iterator(); iter.hasNext(); ) {
                 boolean found = false;
@@ -75,7 +76,7 @@ public class TagValidator {
                     }
                 }
                 if ( !found )
-                    throw new AttributeNotAllowedException("Znaèka "+tag.getTagName()+" nesmí obsahovat atribut "+name+"!");
+                    throw new AttributeNotAllowedException("Znaèka "+checkedTag.name+" nesmí obsahovat atribut "+name+"!");
             }
         }
         if (openTags.size()>0)
@@ -89,5 +90,16 @@ public class TagValidator {
         if (attributes==null)
             return;
         attributes.remove(0);
+        for ( Iterator iter = attributes.iterator(); iter.hasNext(); ) {
+            PageAttribute attribute = (PageAttribute) iter.next();
+            if (attribute.isWhitespace()) {
+                iter.remove();
+                continue;
+            }
+            if ("/".equals(attribute.getName())) {
+                iter.remove();
+                continue;
+            }
+        }
     }
 }
