@@ -248,11 +248,11 @@ public class EditArticle extends AbcServlet {
         }
 
         Item item = (Item) upper.getChild();
-
         Document document = item.getData();
         DocumentHelper.makeElement(document,"data/name").setText(name);
         DocumentHelper.makeElement(document,"data/published").setText(published);
         DocumentHelper.makeElement(document,"data/perex").setText(perex);
+        persistance.update(item);
 
         Record record = null;
         for (Iterator iter = item.getContent().iterator(); iter.hasNext();) {
@@ -263,6 +263,7 @@ public class EditArticle extends AbcServlet {
                 if ( record.getType()==Record.ARTICLE ) {
                     document = record.getData();
                     DocumentHelper.makeElement(document,"data/content").setText(content);
+                    persistance.update(record);
                     break;
                 }
             }

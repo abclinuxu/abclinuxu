@@ -1277,6 +1277,7 @@ public class MySqlPersistance implements Persistance {
             if ( result!=1 ) {
                 throw new PersistanceException("Nepodarilo se ulozit zmeny v "+obj.toString()+" do databaze!", AbcException.DB_UPDATE);
             }
+
             ((GenericDataObject)obj).setUpdated(new java.util.Date());
             cache.store(obj);
         } catch (SQLException e) {
@@ -1315,6 +1316,7 @@ public class MySqlPersistance implements Persistance {
             if ( result!=1 ) {
                 throw new PersistanceException("Nepodarilo se ulozit zmeny v "+relation.toString()+" do databaze!", AbcException.DB_UPDATE);
             }
+
             cache.store(relation);
         } catch (SQLException e) {
             log.error("Nemohu ulozit zmeny v "+relation,e);
@@ -1342,6 +1344,7 @@ public class MySqlPersistance implements Persistance {
             if ( result!=1 ) {
                 throw new PersistanceException("Nepodarilo se ulozit zmeny v "+data.toString()+" do databaze!", AbcException.DB_UPDATE);
             }
+
             cache.store(data);
         } catch (SQLException e) {
             log.error("Nemohu ulozit zmeny v "+data,e);
@@ -1372,6 +1375,7 @@ public class MySqlPersistance implements Persistance {
             if ( result!=1 ) {
                 throw new PersistanceException("Nepodarilo se ulozit zmeny v "+link.toString()+" do databaze!", AbcException.DB_UPDATE);
             }
+
             ((Link)link).setUpdated(new java.util.Date());
             cache.store(link);
         } catch (SQLException e) {
@@ -1418,6 +1422,7 @@ public class MySqlPersistance implements Persistance {
                 statement.setInt(4,poll.getId());
                 result = statement.executeUpdate();
             }
+
             cache.store(poll);
         } catch (SQLException e) {
             log.error("Nemohu ulozit zmeny v "+poll,e);
@@ -1448,6 +1453,7 @@ public class MySqlPersistance implements Persistance {
             if ( result!=1 ) {
                 throw new PersistanceException("Nepodarilo se ulozit zmeny v "+user.toString()+" do databaze!", AbcException.DB_UPDATE);
             }
+
             cache.store(user);
         } catch (SQLException e) {
             log.error("Nemohu ulozit zmeny v "+user,e);
