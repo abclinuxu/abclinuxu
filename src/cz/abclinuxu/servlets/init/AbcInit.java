@@ -5,26 +5,36 @@
  *
  * Copyright by Leos Literak (literakl@centrum.cz) 2001
  */
-package cz.abclinuxu.webwork.init;
+package cz.abclinuxu.servlets.init;
 
 import java.io.IOException;
 import javax.servlet.http.*;
 import javax.servlet.ServletException;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Category;
+import cz.abclinuxu.persistance.PersistanceFactory;
 
 /**
  * This servlet initializes Log4J
  */
-public class Log4JInit extends HttpServlet {
+public class AbcInit extends HttpServlet {
+    static Category log = Category.getInstance(AbcInit.class);
 
     public void init() throws ServletException {
         String path = getServletContext().getRealPath("/");
+
         String file = getInitParameter("CONFIG");
         if ( file!=null ) {
             DOMConfigurator.configure(path+file);
         } else {
-            //BasicConfigurator.configure();
+            BasicConfigurator.configure();
+        }
+
+        String url = getInitParameter("URL");
+        if ( url!=null ) {
+            log.info("Inicializuji vrstvu persistence pomoci URL "+url);
+            PersistanceFactory.setDefaultUrl(url);
         }
     }
 
