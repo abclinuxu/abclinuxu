@@ -47,6 +47,10 @@ public class PraceRSSFetcher extends TimerTask implements Configurable {
             String line = reader.readLine();
             while(line!=null) {
                 pos1 = line.indexOf('|');
+                if (pos1==-1) {
+                    log.warn("spatny format RSS z prace, chybi oddelovac |\n"+line);
+                    continue;
+                }
                 item = new Item();
                 item.setName(line.substring(0,pos1));
                 item.setUrl(UpdateLinks.fixAmpersand(line.substring(pos1+1)));
