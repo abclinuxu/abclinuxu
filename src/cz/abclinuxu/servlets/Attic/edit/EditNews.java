@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.List;
 import java.util.HashMap;
+import java.util.Date;
 
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -114,8 +115,13 @@ public class EditNews extends AbcFMServlet {
         canContinue &= setContent(params, item, env);
         canContinue &= setCategory(params, item);
 
-        if ( !canContinue )
+        if ( !canContinue || params.get(PARAM_PREVIEW)!=null) {
+            Relation relation = new Relation(null,item,0);
+            item.setInitialized(true);
+            item.setCreated(new Date());
+            env.put(VAR_RELATION, relation);
             return actionAddStep1(request,env);
+        }
 
         if ( user.hasRole(Roles.NEWS_ADMIN) ) {
             Element element = DocumentHelper.makeElement(item.getData(), "/data/approved_by");
