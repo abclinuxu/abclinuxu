@@ -50,7 +50,17 @@ public class VariantTool {
     static VariantTool singleton;
 
     /** regular expressions to match UA */
-    RE reLynx, reWget, rePlucker;
+    static RE reLynx, reWget, rePlucker;
+
+    static {
+        try {
+            reLynx = new RE("(Lynx)",RE.MATCH_CASEINDEPENDENT);
+            rePlucker = new RE("(Plucker)",RE.MATCH_CASEINDEPENDENT);
+            reWget = new RE("(Wget)|(custo([^m]|($)))",RE.MATCH_CASEINDEPENDENT); // dont catch "custom"
+        } catch (RESyntaxException e) {
+            log.error("Wrong regexp!", e);
+        }
+    }
 
     /**
      * Here we store mappings. key is concatenation of servlet name and action, value is map
@@ -64,13 +74,6 @@ public class VariantTool {
      */
     protected VariantTool(int size) {
         mappings = new HashMap(size,0.9f);
-        try {
-            reLynx = new RE("(Lynx)",RE.MATCH_CASEINDEPENDENT);
-            reLynx = new RE("(Plucker)",RE.MATCH_CASEINDEPENDENT);
-            reWget = new RE("(Wget)|(custo([^m]|($)))",RE.MATCH_CASEINDEPENDENT); // dont catch "custom"
-        } catch (RESyntaxException e) {
-            log.error("Wrong regexp!", e);
-        }
     }
 
     /**
@@ -116,19 +119,33 @@ public class VariantTool {
      * @param request request information
      * @param servlet servlet name, same as in configuration file
      * @param action action name, same as in configuration file
-     * @return Name of emplate to be rendered or null, if no mapping found
+     * @return Name of template to be rendered or null, if no mapping found
      */
     public static String selectTemplate(HttpServletRequest request, Context ctx, String servlet, String action) {
         return singleton.doSelectTemplate(request,ctx,servlet,action);
     }
 
     /**
-     * real processing is done here
+     * Based on browser's characteristics and user's preference this method selects presentation
+     * variant and returns template. The variables VAR_BROWSER and
+     * VAR_CONTENT_TEMPLATE are put into context.
+     * @param request request information
+     * @return Name of template to be rendered
      */
-    String doSelectTemplate(HttpServletRequest request, Context ctx, String servlet, String action) {
-        String variant = DEFAULT_VARIANT;
+    public static String selectTemplate(HttpServletRequest request, Context ctx, String template) {
+        String variant = selectVariant(request,ctx);
+        ctx.put(VAR_CONTENT_TEMPLATE,template);
+        return variant+"/template.vm";
+    }
 
+    /**
+     * Finds variant based on browser characteristics and user's preferences.
+     * It also puts browser information into context.
+     */
+    static String selectVariant(HttpServletRequest request, Context ctx) {
+        String variant = DEFAULT_VARIANT;
         String browser = request.getHeader("user-agent");
+
         if ( browser==null ) {
             log.debug("No user-agent header!");
         } else if ( reWget.match(browser) ) {
@@ -147,6 +164,15 @@ public class VariantTool {
         if ( tmp!=null ) {
             variant = tmp;
         }
+
+        return variant;
+    }
+
+    /**
+     * real processing is done here
+     */
+    String doSelectTemplate(HttpServletRequest request, Context ctx, String servlet, String action) {
+        String variant = selectVariant(request,ctx);
 
         String name = servlet + action, content = null;
         Map map = (Map) mappings.get(name);

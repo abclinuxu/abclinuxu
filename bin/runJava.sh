@@ -1,6 +1,7 @@
 #!/bin/sh
 
-export LC_CTYPE=cs_Cz
+#export LC_CTYPE=cs_Cz
+export LC_CTYPE=czech
 BUILD=/home/literakl/ROOT/WEB-INF
 LIBS=${BUILD}/lib
 TOMCAT=/home/literakl/tomcat/common/lib
@@ -12,4 +13,4 @@ JARS=$JARS:$TOMCAT/xercesImpl.jar:$TOMCAT/xmlParserAPIs.jar:$TOMCAT/servlet.jar
 
 export CLASSPATH=$CLASSPATH:$BUILD/classes:$JARS
 
-java -cp $CLASSPATH $1 $2 $3 $4 $5
+java -Xmx94m -cp $CLASSPATH $1 $2 $3 $4 $5

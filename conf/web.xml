@@ -120,6 +120,12 @@
     </servlet>
 
     <servlet>
+        <servlet-name>Survey</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.view.ShowSurvey</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+
+    <servlet>
         <servlet-name>EditCategory</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.edit.EditCategory</servlet-class>
         <load-on-startup>3</load-on-startup>
@@ -354,6 +360,10 @@
 
     <servlet-mapping>
         <servlet-name>History</servlet-name><url-pattern>/History</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Survey</servlet-name><url-pattern>/Survey</url-pattern>
     </servlet-mapping>
 
     <welcome-file-list>

@@ -56,4 +56,12 @@ public class Misc {
         }
         list.add(value);
     }
+
+    /**
+     * Finds out, whether string is empy.
+     * @return true, if s is null or zero length
+     */
+    public static boolean empty(String s) {
+        return ( s==null || s.length()==0 );
+    }
 }

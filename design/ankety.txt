@@ -1,0 +1,104 @@
+Design anket
+
+Anketa je v systemu vedena jako Item typu Survey.
+Jeji nedilnou soucasti je soubor sablon, ktere
+definuji vzhled jednotlivych obrazovek a take
+otazky a odpovedi.
+
+Item pouziva nasledujici strukturu:
+
+<anketa>
+  <screen id="START">
+    <template>ankety/abc1/vitejte.vm</template>
+  </screen>
+  <screen id="2">
+    <template>ankety/abc1/otazka.vm</template>
+  </screen>
+  <screen id="3">
+    <template>ankety/abc1/dekujeme.vm</template>
+    <dump>
+      <dir>/tmp</dir>
+      <prefix>abc1</prefix>
+      <suffix>.xml</suffix>
+    </dump>
+  </screen>
+</anketa>
+
+Predchozi priklad definuje anketu o trech krocich.
+Nejdrive se zobrazi stranka ankety/abc1/vitejte.vm,
+nasleduje ankety/abc1/otazka.vm a anketa konci
+zobrazenim stranky ankety/abc1/dekujeme.vm, pricemz
+se sesbirana data ulozi do souboru v adresari
+/tmp zacinajicim abc1 a koncicim na .xml.
+
+Jednotlive screeny obsahuji unikatni identifikatory,
+atribut prvniho screenu musi mit hodnotu START.
+
+V prubehu ankety se veskera sesbirana data ukladaji
+do souboru XML:
+
+<anketa>
+  <screen id="1">
+  </screen>
+  <screen id="2">
+    <vek>23</vek>
+    <jmeno>Jan</jmeno>
+  </screen>
+  <screen id="3">
+  </screen>
+</anketa>
+
+Soubor ma podobnou strukturu, jen se posbirana data
+ukladaji do patricne vetve, kde nazev promenne slouzi
+jako nazev tagu a jeji hodnota jako jeho obsah.
+
+Konvence:
+
+Sablony jsou bezne html stranky, ktere obsahuji
+formular. Formular musi obsahovat URL a nekolik
+dalsich parametru, ktere nastavi administrator.
+Vase dotazy vkladejte do formulare za pomoci
+standardnich HTML znacek. Jako nazvy parametru
+pouzivejte vystizna jmena v ASCII kodovani bez
+mezer a specialnich znaku.
+
+Ridici promenne:
+
+SCREEN_CURRENT - id aktualniho screenu
+SCREEN_NEXT - id nasledujiciho screenu
+SAVE_PARAMS - seznam carkou oddelenych parametru,
+ktere se maji ulozit
+surveyId - identifikator ankety
+
+Priklad sablony:
+
+<html>
+ <body>
+  <form action="/Survey">
+   Vase jmeno: <input type="text" name="jmeno"><br>
+   Vas vek: <input type="text" name="vek"><br>
+   <input type="submit" name="Dokoncit">
+   <input type="hidden" name="SCREEN_CURRENT" value="2">
+   <input type="hidden" name="SCREEN_NEXT" value="3">
+   <input type="hidden" name="surveyId" value="10324">
+   <input type="hidden" name="SAVE_PARAMS" value="jmeno,vek">
+  </form>
+ </body>
+</html>
+
+Pri vykonani dalsiho kroku SCREEN_NEXT system ulozi
+parametry definovane v SAVE_PARAMS do XML dokumentu
+ulozeneho v session navstevnika. Jako hodnota atributu id
+znacky session se pouzije SCREEN_CURRENT. Pokud
+SCREEN_CURRENT chybi, nebudou ulozena zadna data z dane
+sablony.
+
+Pokud system pri zpracovani aktualniho screenu narazi
+na znacku dump, tak ulozi obsah XML dokumentu do
+souboru definovaneho touto znackou a XML dokument
+v session smaze.
+
+Pozor - pokud v nektere z dalsich screenu opet pouzijete
+znacku dump, nebude mozne spolehlive priradit oba soubory
+k sobe! Duvodem je moznost vytvoreni nastroje, ve kterem
+jsou informace z pruzkumu oddeleny od osobnich udaju.

@@ -22,6 +22,8 @@ public class Item extends GenericDataObject {
     public static final int REQUEST = 4;
     /** driver information */
     public static final int DRIVER = 5;
+    /** data for survey */
+    public static final int SURVEY = 6;
 
 
     public Item() {
@@ -45,6 +47,7 @@ public class Item extends GenericDataObject {
             case 3: sb.append("Discussion");break;
             case 4: sb.append("Request");break;
             case 5: sb.append("Driver");break;
+            case 6: sb.append("Survey");break;
             default: sb.append("Unknown Item");
         }
         sb.append(": id="+id);
