@@ -25,7 +25,7 @@
 <ol>
  <#list USERS as id>
   <#global user=TOOL.createUser(id)>
-  <li><a href="${URL.noPrefix("/EditUser?action=grant2&uid="+id)}">${user.name}</a>
+  <li><a href="${URL.noPrefix("/EditUser?action=grant2&amp;uid="+id)}">${user.name}</a>
  </#list>
 </ol>
 

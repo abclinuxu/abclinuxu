@@ -41,8 +41,11 @@
     <action name="ask_confirm" content="/add/question_preview.ftl">
       <var name="TITLE" value="Náhled va¹eho pøíspìvku" />
     </action>
-    <action name="edit" content="/edit/comment.ftl">
+    <action name="edit" template="print" content="/edit/comment.ftl">
       <var name="TITLE" value="Úprava pøíspìvku" />
+    </action>
+    <action name="remove" template="print" content="/remove/comment.ftl">
+      <var name="TITLE" value="Smazání pøíspìvku" />
     </action>
     <action name="censore" template="print" content="/edit/censore.ftl">
       <var name="TITLE" value="Cenzura pøíspìvku"/>

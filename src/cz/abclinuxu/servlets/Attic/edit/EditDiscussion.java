@@ -65,6 +65,9 @@ public class EditDiscussion extends AbcFMServlet {
     public static final String ACTION_EDIT_COMMENT = "edit";
     public static final String ACTION_EDIT_COMMENT_STEP2 = "edit2";
     public static final String ACTION_ALTER_MONITOR = "monitor";
+    public static final String ACTION_REMOVE_COMMENT = "rm";
+    public static final String ACTION_REMOVE_COMMENT_STEP2 = "rm2";
+    public static final String ACTION_FREEZE_DISCUSSION = "freeze";
 
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -124,6 +127,12 @@ public class EditDiscussion extends AbcFMServlet {
 
         if ( ACTION_EDIT_COMMENT_STEP2.equals(action) )
             return actionEditComment2(request, response, env);
+
+        if ( ACTION_REMOVE_COMMENT.equals(action) )
+            return actionRemoveComment(request, env);
+
+        if ( ACTION_REMOVE_COMMENT_STEP2.equals(action) )
+            return actionRemoveComment2(request, response, env);
 
         throw new MissingArgumentException("Chybí parametr action!");
     }
@@ -459,6 +468,80 @@ public class EditDiscussion extends AbcFMServlet {
         User user = (User) env.get(Constants.VAR_USER);
         Relation relation = (Relation) env.get(VAR_RELATION);
         AdminLogger.logEvent(user, "upravil vlakno "+threadId+" diskuse "+discussion.getId()+", relace "+relation.getId());
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+        return null;
+    }
+
+    /**
+     * Displays remove comment dialog
+     */
+    protected String actionRemoveComment(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params);
+        if ( discussion==null )
+            throw new MissingArgumentException("Chybí parametr dizId!");
+
+        int threadId = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
+        if ( threadId==0 )
+            throw new MissingArgumentException("Chybí parametr threadId!");
+
+        persistance.synchronize(discussion);
+
+        Relation relation = (Relation) discussion.getContent().get(0);
+        Record record = (Record) relation.getChild();
+        persistance.synchronize(record);
+        String xpath = "//comment[@id='"+threadId+"']";
+        Element element = (Element) record.getData().selectSingleNode(xpath);
+        env.put(VAR_THREAD, new Comment(element));
+
+        xpath = "//comment[parent/text()='"+threadId+"']";
+        element = (Element) record.getData().selectSingleNode(xpath);
+        if (element!=null)
+            ServletUtils.addError(Constants.ERROR_GENERIC,"Komentáø nesmí obsahovat ¾ádné reakce!",env,null);
+
+        return FMTemplateSelector.select("EditDiscussion", "remove", env, request);
+    }
+
+    /**
+     * Removes selected comment.
+     */
+    protected String actionRemoveComment2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params);
+        if ( discussion==null )
+            throw new MissingArgumentException("Chybí parametr dizId!");
+
+        int threadId = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
+        if ( threadId==0 )
+            throw new MissingArgumentException("Chybí parametr threadId!");
+
+        persistance.synchronize(discussion);
+
+        Relation relation = (Relation) discussion.getContent().get(0);
+        Record record = (Record) relation.getChild();
+        persistance.synchronize(record);
+
+        String xpath = "//comment[parent/text()='"+threadId+"']";
+        Element element = (Element) record.getData().selectSingleNode(xpath);
+        if ( element!=null ) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Komentáø nesmí obsahovat ¾ádné reakce!", env, null);
+            return FMTemplateSelector.select("EditDiscussion", "remove", env, request);
+        }
+
+        xpath = "//comment[@id='"+threadId+"']";
+        element = (Element) record.getData().selectSingleNode(xpath);
+        element.detach();
+        persistance.update(record);
+
+        User user = (User) env.get(Constants.VAR_USER);
+        relation = (Relation) env.get(VAR_RELATION);
+        AdminLogger.logEvent(user, "smazal vlakno "+threadId+" diskuse "+discussion.getId()+", relace "+relation.getId());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
