@@ -19,8 +19,7 @@ import javax.servlet.ServletException;
 import javax.servlet.RequestDispatcher;
 
 import cz.abclinuxu.data.*;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.PersistanceException;
+import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.AbcException;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.servlets.utils.UrlUtils;
@@ -168,6 +167,7 @@ public class AbcServlet extends VelocityServlet {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(AbcServlet.VAR_USER);
         boolean logout = (request.getParameter(PARAM_LOG_OUT)!=null);
+        Persistance persistance = PersistanceFactory.getPersistance();
 
         if ( logout ) {
             user = null;
@@ -184,12 +184,13 @@ public class AbcServlet extends VelocityServlet {
             List searched = new ArrayList(); searched.add(tmpUser);
 
             try {
-                List found = (List) PersistanceFactory.getPersistance().findByExample(searched,null);
+                List found = (List) persistance.findByExample(searched,null);
                 if ( found.size()==0 ) {
                     addError(AbcServlet.PARAM_LOG_USER,"Pøihla¹ovací jméno nenalezeno!",context, null);
                     return;
                 }
                 user = (User) found.get(0);
+                persistance.synchronize(user);
             } catch (PersistanceException e) {
                 log.error("Cannot verify login info",e);
                 return;
@@ -227,7 +228,7 @@ public class AbcServlet extends VelocityServlet {
                     int hash = Integer.parseInt(value.substring(position+1));
 
                     try {
-                        user = (User) PersistanceFactory.getPersistance().findById(new User(id));
+                        user = (User) persistance.findById(new User(id));
                     } catch (PersistanceException e) {
                         addError(AbcServlet.GENERIC_ERROR,"Nalezena cookie s neznámým u¾ivatelem!",context, null);
                         break;
@@ -248,7 +249,7 @@ public class AbcServlet extends VelocityServlet {
             for (Iterator iter = user.getContent().iterator(); iter.hasNext();) {
                 GenericObject obj = (GenericObject) ((Relation) iter.next()).getChild();
                 try {
-                    PersistanceFactory.getPersistance().synchronize(obj);
+                    persistance.synchronize(obj);
                 } catch (PersistanceException e) {
                     log.error("Cannot initialize content of user!",e);
                 }
