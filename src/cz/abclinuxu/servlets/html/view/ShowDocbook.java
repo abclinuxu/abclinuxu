@@ -165,6 +165,8 @@ public class ShowDocbook implements AbcAction {
                 visitTbodyStart();
             else if ( "TD".equals(tagName) )
                 visitTdStart();
+	    else if ( "TH".equals(tagName) )
+		visitTdStart();
             else if ( "IMG".equals(tagName) )
                 visitImg((ImageTag) tag);
             else if ( "BR".equals(tagName) )
@@ -173,7 +175,9 @@ public class ShowDocbook implements AbcAction {
                 visitSpanStart(tag);
             else if ( "I".equals(tagName) )
                 visitIStart();
-            else if ( "B".equals(tagName) )
+	    else if ( "Q".equals(tagName) )
+		visitIStart(); // todo fix
+	    else if ( "B".equals(tagName) )
                 visitBStart();
             else if ( "EM".equals(tagName) )
                 visitEmStart();
@@ -229,11 +233,15 @@ public class ShowDocbook implements AbcAction {
                 visitTrEnd();
             else if ( "TD".equals(tagName) )
                 visitTdEnd();
-            else if ( "SPAN".equals(tagName) )
+            else if ( "TH".equals(tagName) )
+		visitTdEnd();	    
+	    else if ( "SPAN".equals(tagName) )
                 visitSpanEnd();
             else if ( "I".equals(tagName) )
                 visitIEnd();
-            else if ( "B".equals(tagName) )
+            else if ( "Q".equals(tagName) ) //todo fix
+		visitIEnd();
+	    else if ( "B".equals(tagName) )
                 visitBEnd();
             else if ( "EM".equals(tagName) )
                 visitEmEnd();

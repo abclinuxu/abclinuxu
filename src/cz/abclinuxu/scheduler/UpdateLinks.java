@@ -64,7 +64,7 @@ public class UpdateLinks extends TimerTask {
         definitions.put(new Server(SW),new ServerInfo("http://www.scienceworld.cz/sw.rss","Windows-1250",ServerInfo.RSS));
         definitions.put(new Server(UG),new ServerInfo("http://underground.cz/backend/czech.txt"));
         definitions.put(new Server(PENGUIN),new ServerInfo("http://www.penguin.cz/trafika.php3"));
-        definitions.put(new Server(ABCLINUXU), new ServerInfo("http://www.abclinuxu.cz/auto/abc.dat"));
+        definitions.put(new Server(ABCLINUXU),new ServerInfo("http://localhost:8080/auto/abc.dat"));
 //        definitions.put(new Server(WS),new ServerInfo("http://www.awdesign.cz/ws/ws.dat"));
 //        definitions.put(new Server(KECZY),new ServerInfo("http://www.keczy.cz/index.php?headlines=czech"));
 //        definitions.put(new Server(REBOOT),new ServerInfo("http://www.reboot.cz/reboot_lh.phtml"));
