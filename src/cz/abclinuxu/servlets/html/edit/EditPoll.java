@@ -67,7 +67,7 @@ public class EditPoll implements AbcAction {
             env.put(VAR_RELATION, relation);
         }
 
-        if ( action.equals(ACTION_VOTE) )
+        if ( ACTION_VOTE.equals(action) )
             return actionVote(request, response, env);
 
         // check permissions
@@ -76,19 +76,19 @@ public class EditPoll implements AbcAction {
         if ( !user.hasRole(Roles.POLL_ADMIN) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-        if ( action.equals(ACTION_ADD) )
+        if ( ACTION_ADD.equals(action) )
             return FMTemplateSelector.select("EditPoll", "add", env, request);
 
-        if ( action.equals(ACTION_ADD_STEP2) )
+        if ( ACTION_ADD_STEP2.equals(action) )
             return actionAddStep2(request, response, env);
 
         Poll poll = (Poll) persistance.findById(relation.getChild());
         env.put(EditPoll.VAR_POLL, poll);
 
-        if ( action.equals(ACTION_EDIT) )
+        if ( ACTION_EDIT.equals(action) )
             return FMTemplateSelector.select("EditPoll", "edit", env, request);
 
-        if ( action.equals(ACTION_EDIT2) )
+        if ( ACTION_EDIT2.equals(action) )
             return actionEditStep2(request, response, env);
 
         throw new MissingArgumentException("Chybí parametr action!");
