@@ -606,7 +606,7 @@ public class MySqlPersistance implements Persistance {
     private void appendCreateParams(GenericObject obj, StringBuffer sb, List conditions ) throws PersistanceException {
         int type = 0;
         if (obj instanceof GenericDataObject) {
-            sb.append("insert into "+getTable(obj)+" values(0,?,?,?,NULL)");
+            sb.append("insert into "+getTable(obj)+" values(0,?,?,?,?)");
             if ( obj instanceof Category ) {
                 conditions.add(new Boolean(((Category)obj).isOpen()));
             } else {
@@ -618,6 +618,9 @@ public class MySqlPersistance implements Persistance {
             }
             conditions.add(((GenericDataObject)obj).getDataAsString().getBytes());
             conditions.add(new Integer(((GenericDataObject)obj).getOwner()));
+            long now = System.currentTimeMillis();
+            conditions.add(new Timestamp(now));
+            ((GenericDataObject)obj).setUpdated(new java.util.Date(now));
 
         } else if (obj instanceof Relation) {
             sb.append("insert into relace values(0,?,?,?,?,?,?)");
@@ -644,12 +647,15 @@ public class MySqlPersistance implements Persistance {
             conditions.add(((User)obj).getDataAsString().getBytes());
 
         } else if (obj instanceof Link) {
-            sb.append("insert into odkaz values(0,?,?,?,?,?,NULL)");
+            sb.append("insert into odkaz values(0,?,?,?,?,?,?)");
             conditions.add(new Integer(((Link)obj).getServer()));
             conditions.add(((Link)obj).getText());
             conditions.add(((Link)obj).getUrl());
             conditions.add(new Boolean(((Link)obj).isFixed()));
             conditions.add(new Integer(((Link)obj).getOwner()));
+            long now = System.currentTimeMillis();
+            conditions.add(new Timestamp(now));
+            ((Link)obj).setUpdated(new java.util.Date(now));
         }
     }
 
@@ -854,7 +860,13 @@ public class MySqlPersistance implements Persistance {
 
             statement.setString(2,poll.getText());
             statement.setBoolean(3,poll.isMultiChoice());
-            long when = (poll.getCreated()!=null) ? poll.getCreated().getTime() : new java.util.Date().getTime();
+            long when = 0;
+            if (poll.getCreated()!=null) {
+                when = poll.getCreated().getTime();
+            } else {
+                when = new java.util.Date().getTime();
+                poll.setCreated(new java.util.Date(when));
+            }
             statement.setTimestamp(4,new Timestamp(when));
             statement.setBoolean(5,poll.isClosed());
 
@@ -1186,7 +1198,7 @@ public class MySqlPersistance implements Persistance {
             if ( result!=1 ) {
                 throw new PersistanceException("Nepodarilo se ulozit zmeny v "+obj.toString()+" do databaze!", AbcException.DB_UPDATE, obj, null);
             }
-            // todo get updated field
+            ((GenericDataObject)obj).setUpdated(new java.util.Date());
             cache.store(obj);
         } catch (SQLException e) {
             log.error("Nemohu ulozit zmeny v "+obj,e);
@@ -1271,6 +1283,7 @@ public class MySqlPersistance implements Persistance {
             if ( result!=1 ) {
                 throw new PersistanceException("Nepodarilo se ulozit zmeny v "+link.toString()+" do databaze!", AbcException.DB_UPDATE, link, null);
             }
+            ((Link)link).setUpdated(new java.util.Date());
             cache.store(link);
         } catch (SQLException e) {
             log.error("Nemohu ulozit zmeny v "+link);
