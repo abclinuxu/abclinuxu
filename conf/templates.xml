@@ -47,7 +47,7 @@
 
   <servlet name="EditDriver">
     <action name="add">
-      <mapping template="web" content="web/add/driver.vm">
+      <mapping template="web" content="/web/add/driver.ftl">
         <var name="TITLE" value="Vlo¾ ovladaè" />
       </mapping>
     </action>
