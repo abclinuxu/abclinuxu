@@ -80,20 +80,18 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
 <#flush>
 
 <#if FORUM?exists>
-<a name="diskuse"><h1>Diskusní fórum</h1></a>
-<p>
+ <a name="diskuse"><h1>Diskusní fórum</h1></a>
+ <p>
  <#list FORUM.data as diz>
   ${DATE.show(diz.lastUpdate,"CZ_SHORT")}, ${diz.responseCount} odp. :
    <a href="/hardware/ViewRelation?rid=${diz.relationId}">
    ${TOOL.limit(TOOL.xpath(diz.discussion,"data/title"),60," ..")}</a><br>
  </#list>
-</p>
+ </p>
 
  <ul>
-  <li><a href="${URL.make("/hardware/EditDiscussion?action=addQuez&rid=3739")}">Polo¾it nový dotaz</a>
-  <li><a href="/diskuse.jsp">Zobrazit celé diskusní fórum</a> (${FORUM.total} dotazù)
-  <li><a href="/History?type=discussions&from=${FORUM.nextPage?if_exists.row?if_exists}&count=20">
-   Listovat dotazy podle èasu vytvoøení</a>
+  <li><a href="/diskuse.jsp">Zobrazit diskusní fórum (polo¾it dotaz)</a>
+  <li><a href="/History?type=discussions&from=${FORUM.nextPage.row}&count=20">Zobrazit star¹í dotazy</a>
  </ul>
 </#if>
 
