@@ -467,7 +467,7 @@ public class CreateIndex implements Configurable {
         String content = node.getText();
         sb.append(content);
         sb.append(" ");
-        title = Tools.limit(Tools.removeTags(content),40," ..");
+        title = Tools.limit(Tools.removeTags(content),50," ..");
 
         for ( Iterator iter = news.getContent().iterator(); iter.hasNext(); ) {
             Relation child = (Relation) iter.next();
