@@ -159,15 +159,14 @@ public class ServletUtils implements Configurable {
      * instance of User is stored in both session attribute and environment.
      */
     public static void handleLogin(HttpServletRequest request, HttpServletResponse response, Map env) {
-        Persistance persistance = PersistanceFactory.getPersistance();
         HttpSession session = request.getSession();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Cookie cookie = getCookie(request,Constants.VAR_USER);
 
         if ( params.get(PARAM_LOG_OUT) != null ) {
             params.remove(PARAM_LOG_OUT);
             session.removeAttribute(Constants.VAR_USER);
             session.invalidate();
+            Cookie cookie = getCookie(request, Constants.VAR_USER);
             if ( cookie!=null )
                 deleteCookie(cookie,response);
             return;
@@ -179,6 +178,7 @@ public class ServletUtils implements Configurable {
             return;
         }
 
+        Persistance persistance = PersistanceFactory.getPersistance();
         String login = (String) params.get(PARAM_LOG_USER);
         if ( ! Misc.empty(login) ) {
             user = new User();
@@ -202,7 +202,11 @@ public class ServletUtils implements Configurable {
 
             handleLoggedIn(user,false,response);
 
-        } else if ( cookie!=null ) {
+        } else {
+            Cookie cookie = getCookie(request, Constants.VAR_USER);
+            if ( cookie==null )
+                return;
+
             LoginCookie loginCookie = new LoginCookie(cookie);
             try {
                 user = (User) persistance.findById(new User(loginCookie.id));
@@ -218,8 +222,6 @@ public class ServletUtils implements Configurable {
                 return;
             }
             handleLoggedIn(user, true, null);
-        } else {
-            return;
         }
 
         // todo: remove it, when new security model is finished
