@@ -279,6 +279,15 @@
               </node>
           </node>
         </node>
+        <node name="security">
+            <map/>
+            <node name="AccessKeeper">
+                <map>
+                    <entry key="block.same.ua.for" value="3700" />
+                    <entry key="block.same.ip.for" value="600" />
+                </map>
+            </node>
+        </node>
       </node>
       <node name="finesoft">
         <map/>

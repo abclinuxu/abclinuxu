@@ -103,7 +103,7 @@ public class EditSurvey implements AbcAction {
         ServletUtils.addMessage("Anketa byla úspì¹nì vytvoøena s èíslem "+survey.getId(),env,request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/Index");
+        urlUtils.redirect(response, "/EditSurvey/"+survey.getId()+"?action=edit");
 
         return null;
     }
@@ -151,7 +151,7 @@ public class EditSurvey implements AbcAction {
         ServletUtils.addMessage("Zmìny byly ulo¾eny.", env, request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/Index");
+        urlUtils.redirect(response, "/EditSurvey/"+survey.getId()+"?action=edit");
 
         return null;
     }

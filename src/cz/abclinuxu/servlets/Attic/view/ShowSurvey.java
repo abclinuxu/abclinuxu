@@ -7,6 +7,7 @@ package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.exceptions.InvalidDataException;
+import cz.abclinuxu.exceptions.AccessDeniedException;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.servlets.Constants;
@@ -16,6 +17,7 @@ import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.security.AccessKeeper;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -87,6 +89,16 @@ public class ShowSurvey implements AbcAction {
             return null;
         }
 
+        if (screen.attributeValue("check")!=null)
+            try {
+                AccessKeeper.checkAccess(survey, request, response);
+            } catch (AccessDeniedException e) {
+                if ( e.isIpAddressBlocked() )
+                    return ServletUtils.showErrorPage("Z této IP adresy se u¾ volilo. Zkuste to pozdìji.", env, request);
+                else
+                    return ServletUtils.showErrorPage("U¾ jste jednou volil!", env, request);
+            }
+
         Element dump = screen.element("dump");
         if ( dump!=null ) {
             Document data = (Document) request.getSession().getAttribute(ATTRIB_DATA);
@@ -130,11 +142,14 @@ public class ShowSurvey implements AbcAction {
 
         String saveParams = (String) params.get(PARAM_SAVE_PARAMS);
         if ( saveParams==null ) saveParams = "";
-        StringTokenizer stk = new StringTokenizer(saveParams,",");
+        StringTokenizer stk = new StringTokenizer(saveParams,", \r\n");
 
         while ( stk.hasMoreTokens() ) {
             String var = stk.nextToken();
+            var = var.trim();
             Object value = params.get(var);
+            if (value==null)
+                continue;
             if ( value instanceof String ) {
                 String s = (String) value;
                 if ( !Misc.empty(s) )

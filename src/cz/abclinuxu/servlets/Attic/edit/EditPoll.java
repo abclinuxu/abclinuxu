@@ -17,8 +17,10 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.security.AccessKeeper;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.exceptions.AccessDeniedException;
 
 import java.util.*;
 
@@ -232,59 +234,27 @@ public class EditPoll implements AbcAction {
             if ( ! poll.isMultiChoice() ) max = 1;
         }
 
-        if ( hasAlreadyVoted(request,poll,env) ) {
-            ServletUtils.addError(Constants.ERROR_GENERIC,"U¾ jste jednou volil!",env,request.getSession());
-        } else if ( max>0 ) {
+        if ( max>0 ) {
             try {
-                for (int i = 0; i<max; i++) {
+                AccessKeeper.checkAccess(poll, request, response);
+                for ( int i = 0; i<max; i++ ) {
                     String tmp = values[i];
                     int voteId = Integer.parseInt(tmp);
                     PersistanceFactory.getPersistance().incrementCounter(poll.getChoices()[voteId]);
                 }
-                ServletUtils.addMessage("Vá¹ hlas do ankety byl pøijat.",env,request.getSession());
-                markAlreadyVoted(request,response,poll,env);
+                ServletUtils.addMessage("Vá¹ hlas do ankety byl pøijat.", env, request.getSession());
+            } catch (AccessDeniedException e) {
+                if (e.isIpAddressBlocked())
+                    ServletUtils.addError(Constants.ERROR_GENERIC, "Z této IP adresy se u¾ volilo. Zkuste to pozdìji.", env, request.getSession());
+                else
+                    ServletUtils.addError(Constants.ERROR_GENERIC, "U¾ jste jednou volil!", env, request.getSession());
             } catch (Exception e) {
-                log.error("Vote bug: ",e);
-                ServletUtils.addError(Constants.ERROR_GENERIC,"Omlouváme se, ale nastala chyba.",env,request.getSession());
+                log.error("Vote bug: ", e);
+                ServletUtils.addError(Constants.ERROR_GENERIC, "Omlouváme se, ale nastala chyba.", env, request.getSession());
             }
         }
 
         urlUtils.redirect(response, url);
         return null;
-    }
-
-    /**
-     * Checks, whether this user has already voted for this poll.
-     * @return true, if user is trying to vote again
-     */
-    boolean hasAlreadyVoted(HttpServletRequest request, Poll poll, Map env) {
-        String searched = COOKIE_PREFIX+poll.getId();
-
-        HttpSession session = request.getSession();
-        if ( session.getAttribute(searched)!=null ) return true;
-
-        Cookie[] cookies = request.getCookies();
-        for (int i = 0; cookies!=null && i<cookies.length; i++) {
-            Cookie cookie = cookies[i];
-            if ( cookie.getName().equals(searched) ) return true;
-        }
-
-        // check IP address in future
-        return false;
-    }
-
-    /**
-     * Marks user, that he has already voted for this poll.
-     */
-    void markAlreadyVoted(HttpServletRequest request, HttpServletResponse response, Poll poll, Map env) {
-        String searched = COOKIE_PREFIX+poll.getId();
-
-        HttpSession session = request.getSession();
-        session.setAttribute(searched,new Boolean(true));
-
-        Cookie cookie = new Cookie(searched,""+poll.getId());
-        cookie.setPath("/");
-        cookie.setMaxAge(1*30*24*3600); // one month
-        response.addCookie(cookie);
     }
 }
