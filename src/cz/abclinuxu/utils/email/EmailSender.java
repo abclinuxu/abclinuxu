@@ -19,7 +19,6 @@ import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 
 import javax.mail.*;
-import javax.mail.internet.MimeMessage;
 import javax.mail.internet.InternetAddress;
 import java.util.*;
 import java.util.prefs.Preferences;
@@ -61,8 +60,12 @@ public class EmailSender implements Configurable {
     public static final String KEY_REPLYTO = "REPLYTO";
     /** template to be rendered and used as content of Email */
     public static final String KEY_TEMPLATE = "TEMPLATE";
-    /** messahe header sent date */
+    /** message header sent date */
     public static final String KEY_SENT_DATE = "SENT";
+    /** message header message-id */
+    public static final String KEY_MESSAGE_ID = "MESSAGE_ID";
+    /** message header references */
+    public static final String KEY_REFERENCES = "REFERENCES";
 
     static String smtpServer, defaultFrom;
     static boolean debugSMTP;
@@ -82,13 +85,15 @@ public class EmailSender implements Configurable {
         session.setDebug(debugSMTP);
 
         try {
-            MimeMessage message = new MimeMessage(session);
+            AbcEmail message = new AbcEmail(session);
             message.setSubject((String) params.get(KEY_SUBJECT));
             message.setFrom(new InternetAddress(from));
             message.setRecipient(Message.RecipientType.TO,new InternetAddress(to));
             message.setText(getEmailBody(params));
             Date sentDate = getSentDate(params);
             message.setSentDate(sentDate);
+            message.setMessageId((String) params.get(KEY_MESSAGE_ID));
+            message.setReferences((String) params.get(KEY_REFERENCES));
 
             Transport transport = session.getTransport("smtp");
             transport.connect(smtpServer,null,null);
@@ -153,7 +158,7 @@ public class EmailSender implements Configurable {
             Transport transport = session.getTransport("smtp");
             transport.connect(smtpServer, null, null);
 
-            MimeMessage message = new MimeMessage(session);
+            AbcEmail message = new AbcEmail(session);
             message.setSubject(subject);
 
             if (from instanceof Address)
@@ -161,6 +166,8 @@ public class EmailSender implements Configurable {
             else
                 sender = new InternetAddress((String) from);
             message.setFrom(sender);
+            message.setMessageId((String) params.get(KEY_MESSAGE_ID));
+            message.setReferences((String) params.get(KEY_REFERENCES));
 
             for ( Iterator iter = users.iterator(); iter.hasNext(); ) {
                 try {

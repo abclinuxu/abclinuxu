@@ -76,6 +76,8 @@ public class CommentDecorator {
         String title = root.elementText("title");
         String text = root.elementText("text");
         text = Tools.removeTags(text);
+        String parent = root.elementText("parent");
+
         env.put(VAR_CONTENT, text);
         env.put(VAR_RELATION_ID, Integer.toString(comment.relationId));
         env.put(VAR_DISCUSSION_ID, Integer.toString(comment.discussionId));
@@ -93,6 +95,9 @@ public class CommentDecorator {
         env.put(EmailSender.KEY_REPLYTO, "bounce@abclinuxu.cz");
         env.put(EmailSender.KEY_TEMPLATE, "/mail/forum/comment.ftl");
         env.put(EmailSender.KEY_SENT_DATE, published);
+        env.put(EmailSender.KEY_MESSAGE_ID, ""+comment.discussionId+"."+comment.threadId+"@abclinuxu.cz");
+        if (parent!=null)
+            env.put(EmailSender.KEY_REFERENCES, ""+comment.discussionId+"."+parent+"@abclinuxu.cz");
 
         return env;
     }
