@@ -2,7 +2,6 @@
  * User: literakl
  * Date: Apr 21, 2002
  * Time: 8:51:06 AM
- * (c)2001-2002 Tinnio
  */
 package cz.abclinuxu.servlets.view;
 
@@ -11,20 +10,18 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.search.MyDocument;
 import cz.abclinuxu.utils.search.CreateIndex;
 import cz.abclinuxu.utils.search.AbcCzechAnalyzer;
 import org.apache.lucene.search.*;
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
-import java.util.HashMap;
-import java.io.*;
+import java.util.*;
 import java.text.NumberFormat;
 
 /**
@@ -42,9 +39,15 @@ public class Search extends AbcFMServlet {
 
     /** expression to be searched */
     public static final String PARAM_QUERY = "query";
+    /** type of object to search */
+    public static final String PARAM_TYPE = "type";
+    /** n-th oldest object, from where to display */
+    public static final String PARAM_FROM = "from";
+    /** how many objects to display */
+    public static final String PARAM_COUNT = "count";
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        return performSearch(request,env);
+        return performSearch(request, env);
     }
 
     public static String performSearch(HttpServletRequest request, Map env) throws Exception {
@@ -58,21 +61,28 @@ public class Search extends AbcFMServlet {
 
         try {
             Searcher searcher = new IndexSearcher(CreateIndex.getIndexPath());
-            Query q = QueryParser.parse(query, "contents", new AbcCzechAnalyzer());
+            Query q = QueryParser.parse(query, MyDocument.CONTENT, new AbcCzechAnalyzer());
 
             Hits hits = searcher.search(q);
 
-            int length = hits.length();
-            Map map = new HashMap(length + 1,1.0f); //no rehash
+            int from = getFrom(params);
+            int count = Misc.parseInt((String) params.get(PARAM_COUNT), 50);
+            count = Misc.limit(count, 1, 100);
+
+            List list = new ArrayList(count);
+            int total = hits.length();
             NumberFormat percentFormat = NumberFormat.getPercentInstance();
-            for ( int i=0; i<length; i++ ) {
+
+            for ( int i=from,j=0; i<total && j<count; i++, j++ ) {
                 Document doc = hits.doc(i);
                 float score = (hits.score(i)>0.01) ? hits.score(i) : 0.01f;
                 doc.add(Field.UnIndexed("score", percentFormat.format(score)));
-                Misc.storeToMap(map,doc.get(MyDocument.TYPE),doc);
+                list.add(doc);
             }
-            env.put(VAR_RESULT,map);
-            env.put(VAR_TOTAL,new Integer(length));
+
+            Paging paging = new Paging(list,from,count,total);
+            env.put(VAR_RESULT,paging);
+            env.put(VAR_TOTAL,new Integer(total));
         } catch (Exception e) {
             log.error("Cannot search "+query,e);
             ServletUtils.addError(PARAM_QUERY,"Nemohu provést dané hledání. Zadejte jiný øetìzec!",env,null);
@@ -82,39 +92,17 @@ public class Search extends AbcFMServlet {
         return FMTemplateSelector.select("Search","show",env,request);
     }
 
-    public static void main(String[] args) throws Exception {
-        Searcher searcher = new IndexSearcher(CreateIndex.getIndexPath());
-        Analyzer analyzer = new AbcCzechAnalyzer();
-
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-        while (true) {
-            System.out.print("Query: ");
-            String line = in.readLine();
-            if ( line.length()==0 ) break;
-
-            Query query = QueryParser.parse(line, "contents", analyzer);
-            System.out.println("Searching for: " + query.toString("contents"));
-
-            Hits hits = searcher.search(query);
-            System.out.println(hits.length() + " total matching documents");
-
-            final int HITS_PER_PAGE = 10;
-            for (int start = 0; start < hits.length(); start += HITS_PER_PAGE) {
-                int end = Math.min(hits.length(), start + HITS_PER_PAGE);
-                for (int i = start; i < end; i++) {
-                    Document doc = hits.doc(i);
-                    String url = doc.get("url");
-                    System.out.println(i + ". ("+hits.score(i)+") " + url);
-                }
-
-                if ( hits.length()>end ) {
-                    System.out.print("more (y/n) ? ");
-                    line = in.readLine();
-                    if ( line.length()==0 || line.charAt(0)=='n' )
-                        break;
-                }
-            }
+    /**
+     * Extracts value of FROM encoded in parameter name.
+     */
+    private static int getFrom(Map params) {
+        for ( Iterator iter = params.keySet().iterator(); iter.hasNext(); ) {
+            String param = (String) iter.next();
+            if (!param.startsWith(PARAM_FROM)) continue;
+            if (param.length()<6) continue;
+            int from = Misc.parseInt(param.substring(5), 0);
+            return from;
         }
-        searcher.close();
+        return 0;
     }
 }

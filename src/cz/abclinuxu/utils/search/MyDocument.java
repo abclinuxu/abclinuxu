@@ -2,7 +2,6 @@
  * User: literakl
  * Date: 17.5.2002
  * Time: 13:29:24
- * (c) 2001-2002 Tinnio
  */
 package cz.abclinuxu.utils.search;
 
@@ -14,17 +13,24 @@ import org.apache.lucene.document.Field;
  * You must set URL before you get Document.
  */
 public class MyDocument {
-    public static final String TYPE_CATEGORY = "oddil";
-    public static final String TYPE_MAKE = "polozka";
+    public static final String TYPE_CATEGORY = "sekce";
+    public static final String TYPE_HARDWARE = "hardware";
+    public static final String TYPE_SOFTWARE = "software";
     public static final String TYPE_DISCUSSION = "diskuse";
-    public static final String TYPE_RECORD = "zaznam";
     public static final String TYPE_DRIVER = "ovladac";
     public static final String TYPE_ARTICLE = "clanek";
+    public static final String TYPE_NEWS = "zpravicka";
 
+    /** Object's text to be tokenized and indexed. */
+    public static final String CONTENT = "obsah";
+    /** Type of the object. */
     public static final String TYPE = "typ";
-    public static final String CONTENT = "contents";
+    /** URL, where to display the object. */
     public static final String URL = "url";
+    /** User friendly title. */
     public static final String TITLE = "title";
+    /** Id of parent object. */
+    public static final String PARENT = "parent";
 
     Document document;
 
@@ -33,28 +39,43 @@ public class MyDocument {
      */
     public MyDocument(String content) {
         document = new Document();
-        document.add(Field.Text(CONTENT,content));
+        document.add(Field.UnStored(CONTENT,content));
     }
 
     /**
      * Associates URL with Document.
      */
-    public void setURL(String url) {
-        document.add(Field.UnIndexed(URL,url));
+    public Field setURL(String url) {
+        Field field = Field.UnIndexed(URL,url);
+        document.add(field);
+        return field;
     }
 
     /**
      * Sets title for the Document.
      */
-    public void setTitle(String title) {
-        document.add(Field.UnIndexed(TITLE,title));
+    public Field setTitle(String title) {
+        Field field = Field.UnIndexed(TITLE,title);
+        document.add(field);
+        return field;
     }
 
     /**
      * Sets type of the Document.
      */
-    public void setType(String type) {
-        document.add(Field.Keyword(TYPE,type));
+    public Field setType(String type) {
+        Field field = Field.Keyword(TYPE,type);
+        document.add(field);
+        return field;
+    }
+
+    /**
+     * Sets id of parent object.
+     */
+    public Field setParent(int parent) {
+        Field field = Field.Keyword(PARENT,new Integer(parent).toString());
+        document.add(field);
+        return field;
     }
 
     /**

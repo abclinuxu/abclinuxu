@@ -1,7 +1,6 @@
 
 <!-- Record.ARTICLE -->
-<!ELEMENT data (name?,content+,related?,resources?)>
-<!ELEMENT name (#PCDATA)> <!-- if Article is divided into several ArticleRecords, use it to give name to each one -->
+<!ELEMENT data (content+,related?,resources?)>
 <!ELEMENT content (#PCDATA)> <!-- content of the article (or its part) -->
 <!ATTLIST content title (#PCDATA) #OPTIONAL> <!-- if there are multiple pages, you must name them -->
 <!ELEMENT related (link+)> <!-- related articles on portal -->
