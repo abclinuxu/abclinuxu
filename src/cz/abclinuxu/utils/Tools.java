@@ -783,9 +783,12 @@ public class Tools {
      */
     public static void handleNewComments(Item discussion, Map env, HttpServletRequest request, HttpServletResponse response) {
         User user = (User) env.get(Constants.VAR_USER);
-        if (user==null) return;
+        if (user==null)
+	   return;
         Node node = user.getData().selectSingleNode("//new_comments");
-        if (node!=null && !node.getText().equals("yes")) return;
+        if (node!=null && node.getText().equals("no")) 
+	    return;
+	    
 
         int dizId = discussion.getId(), number, position, lastSeen = -1, tmpLength;
         StringBuffer newContent = new StringBuffer();
@@ -834,14 +837,16 @@ public class Tools {
             tmp = lastComment.attributeValue("id");
             number = Misc.parseInt(tmp, 0);
         }
-        if (number<=lastSeen) return;
+        if (number<=lastSeen)
+	    return;
+
 
         tmp = "["+dizId+"B"+number+"]";
         newContent.insert(0,tmp);
 
         cookie = new Cookie(READ_DISCUSSIONS_COOKIE,newContent.toString());
         cookie.setPath("/");
-        cookie.setMaxAge(Integer.MAX_VALUE);
-        ServletUtils.addCookie(cookie,response);
+        cookie.setMaxAge(321408000);
+        ServletUtils.addCookie(cookie,response);	
     }
 }

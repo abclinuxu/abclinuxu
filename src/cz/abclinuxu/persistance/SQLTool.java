@@ -275,7 +275,6 @@ public final class SQLTool implements Configurable {
     public List findSectionRelationsWithType(int type, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer(relationsSectionByType);
-        changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(new Integer(type));
         appendQualifiers(sb, qualifiers, params);
