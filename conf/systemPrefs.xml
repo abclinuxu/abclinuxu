@@ -85,7 +85,7 @@
                 <entry key="trafika" value="auto/abc.dat"/>
                 <entry key="anneca" value="auto/abc2.dat"/>
                 <entry key="szm" value="auto/abc_szm.xml"/>
-	      </map>
+              </map>
             </node>
             <node name="UpdateKernel">
               <map>
@@ -101,8 +101,20 @@
                 <entry key="regexp.20.pre" value="(The latest prepatch for the 2.0[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
                 <entry key="regexp.ac" value="(The latest -ac[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
                 <entry key="regexp.dj" value="(The latest -dj[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-	      </map>
+              </map>
             </node>
+        </node>
+        <node name="servlet">
+          <map/>
+          <node name="utils">
+            <map/>
+            <node name="ServletUtils">
+              <map>
+                  <entry key="upload.path" value="/tmp/upload"/>
+                  <entry key="max.upload.size" value="51200"/>
+              </map>
+            </node>
+          </node>
         </node>
       </node>
     </node>

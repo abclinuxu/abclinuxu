@@ -121,6 +121,7 @@ public class SelectRelation extends AbcFMServlet {
     /**
      * Called, when user confirms his choice. It redirects flow to PARAM_URL and puts all parameters
      * to session map AbcVelocityServlet.ATTRIB_PARAMS. There will be also result under name PARAM_SELECTED.
+     * todo replace usage of ServletUtils with env.
      */
     protected String actionFinish(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         String choice = request.getParameter(PARAM_CURRENT);

@@ -7,28 +7,12 @@
         <servlet-name>AbcInit</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.init.AbcInit</servlet-class>
         <init-param>
-          <param-name>LOG4J</param-name>
-          <param-value>WEB-INF/conf/log4j.xml</param-value>
-        </init-param>
-        <init-param>
-          <param-name>VELOCITY</param-name>
-          <param-value>WEB-INF/conf/velocity.properties</param-value>
-        </init-param>
-        <init-param>
           <param-name>FREEMARKER</param-name>
           <param-value>WEB-INF/freemarker/</param-value>
         </init-param>
         <init-param>
           <param-name>TEMPLATES</param-name>
           <param-value>WEB-INF/conf/templates.xml</param-value>
-        </init-param>
-        <init-param>
-          <param-name>INDEX_PATH</param-name>
-          <param-value>WEB-INF/index</param-value>
-        </init-param>
-        <init-param>
-          <param-name>KERNEL</param-name>
-          <param-value>WEB-INF/include/kernel.txt</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
@@ -164,12 +148,12 @@
         <servlet-class>cz.abclinuxu.servlets.utils.DumpRequest</servlet-class>
         <load-on-startup>4</load-on-startup>
     </servlet>
-   
+
     <servlet>
         <servlet-name>ProxoolAdmin</servlet-name>
         <servlet-class>org.logicalcobwebs.proxool.admin.servlet.AdminServlet</servlet-class>
     </servlet>
-   
+
     <servlet>
         <servlet-name>ClearCacheServlet</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.admin.ClearCacheServlet</servlet-class>

@@ -5,23 +5,26 @@
  */
 package cz.abclinuxu.servlets;
 
-import freemarker.template.*;
-import freemarker.ext.beans.BeansWrapper;
+import cz.abclinuxu.exceptions.InvalidInputException;
+import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.exceptions.NotAuthorizedException;
+import cz.abclinuxu.exceptions.NotFoundException;
+import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.utils.Misc;
+import freemarker.template.Configuration;
+import freemarker.template.SimpleHash;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
-import java.io.*;
-import java.util.Map;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashMap;
-
-import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.exceptions.NotFoundException;
-import cz.abclinuxu.exceptions.NotAuthorizedException;
-import cz.abclinuxu.exceptions.MissingArgumentException;
-import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.servlets.utils.UrlUtils;
+import java.util.Map;
 
 /**
  * Superclass for all servlets. It does some initialization
@@ -78,7 +81,7 @@ public abstract class AbcFMServlet extends HttpServlet {
     /**
      * This step consolidates common initialization tasks like parsing parameters, autenthification etc.
      */
-    private void performInit(HttpServletRequest request, HttpServletResponse response, Map env) {
+    private void performInit(HttpServletRequest request, HttpServletResponse response, Map env) throws InvalidInputException {
         Map params = ServletUtils.putParamsToMap(request);
         env.put(Constants.VAR_PARAMS,params);
         env.put(Constants.VAR_URL_UTILS,new UrlUtils(request.getRequestURI(), response));

@@ -3,5 +3,5 @@ freemarker		2.1		http://freemarker.org/
 proxool			0.7.2		http://proxool.sf.net
 mysql-connector		3.0.6-stable	http://www.mysql.com
 regexp			1.2		http://jakarta.apache.org
-commons-fileupload	1.0-rc1		http://jakarta.apache.org
+commons-fileupload	1.0		http://jakarta.apache.org
 dom4j			1.4		http://dom4j.org/

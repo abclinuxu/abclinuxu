@@ -15,8 +15,17 @@ import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.config.Configurator;
+import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.exceptions.InvalidInputException;
 import org.apache.log4j.Logger;
 import org.apache.velocity.context.Context;
+import org.apache.commons.fileupload.DiskFileUpload;
+import org.apache.commons.fileupload.DefaultFileItemFactory;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
 
@@ -25,14 +34,26 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
+import java.io.File;
 import java.util.*;
+import java.util.prefs.Preferences;
 
 /**
  * Class to hold useful methods related to servlets
  * environment.
  */
-public class ServletUtils {
+public class ServletUtils implements Configurable {
     static Logger log = Logger.getLogger(ServletUtils.class);
+
+    static {
+        Configurator configurator = ConfigurationManager.getConfigurator();
+        configurator.configureMe(new ServletUtils());
+    }
+
+    public static final String PREF_UPLOAD_PATH = "upload.path";
+    public static final String DEFAULT_UPLOAD_PATH = "/tmp/upload";
+    public static final String PREF_MAX_UPLOAD_SIZE = "max.upload.size";
+    public static final int DEFAULT_MAX_UPLOAD_SIZE = 50*1024;
 
     /** holds username when performing login */
     public static final String PARAM_LOG_USER = "LOGIN";
@@ -41,13 +62,16 @@ public class ServletUtils {
     /** indicates, that user wishes to logout */
     public static final String PARAM_LOG_OUT = "logout";
 
+    static DefaultFileItemFactory uploadFactory;
+    static int uploadSizeLimit;
+
     /**
      * Combines request's parameters with parameters stored in special session
      * attribute and returns result as map. If parameter holds single value,
      * simple String->String mapping is created. If parameter holds multiple values,
      * String->Array of Strings mapping is created. The key is always parameter's name.
      */
-    public static Map putParamsToMap(HttpServletRequest request) {
+    public static Map putParamsToMap(HttpServletRequest request) throws InvalidInputException {
         HttpSession session = request.getSession();
         Map map = (Map) session.getAttribute(Constants.VAR_PARAMS);
         if ( map!=null )
@@ -55,28 +79,52 @@ public class ServletUtils {
         else
             map = new HashMap();
 
-        Enumeration names = request.getParameterNames();
-        while ( names.hasMoreElements() ) {
-            String name = (String) names.nextElement();
-            String[] values = request.getParameterValues(name);
+        if ( DiskFileUpload.isMultipartContent(request) ) {
+            DiskFileUpload uploader = new DiskFileUpload(uploadFactory);
+            uploader.setSizeMax(uploadSizeLimit);
+            try {
+                List items = uploader.parseRequest(request);
+                for ( Iterator iter = items.iterator(); iter.hasNext(); ) {
+                    FileItem fileItem = (FileItem) iter.next();
+                    if ( fileItem.isFormField() ) {
+                        try {
+                            String value = fileItem.getString("ISO-8859-1");
+                            map.put(fileItem.getFieldName(), value.trim());
+                        } catch (UnsupportedEncodingException e) {}
+                    } else {
+                        map.put(fileItem.getFieldName(), fileItem);
+                    }
+                }
+            } catch (FileUploadException e) {
+                throw new InvalidInputException("Chyba pøi ètení dat. Není zvolený soubor pøíli¹ velký?");
+            }
+        } else {
+            Enumeration names = request.getParameterNames();
+            while ( names.hasMoreElements() ) {
+                String name = (String) names.nextElement();
+                String[] values = request.getParameterValues(name);
 
-            if ( values.length==1 ) {
-                String value = request.getParameter(name);
-                try { value = new String(value.getBytes("ISO-8859-1")); } catch (UnsupportedEncodingException e) {}
-                map.put(name,value.trim());
-
-            } else {
-                List list = new ArrayList(values.length);
-                for (int i = 0; i < values.length; i++) {
-                    String value = values[i].trim();
-                    if (value.length()==0)
-                        continue;
+                if ( values.length==1 ) {
+                    String value = request.getParameter(name);
                     try {
                         value = new String(value.getBytes("ISO-8859-1"));
                     } catch (UnsupportedEncodingException e) {}
-                    list.add(value);
+                    map.put(name, value.trim());
+
+                } else {
+                    List list = new ArrayList(values.length);
+                    for ( int i = 0; i<values.length; i++ ) {
+                        String value = values[i].trim();
+                        if ( value.length()==0 )
+                            continue;
+                        try {
+                            value = new String(value.getBytes("ISO-8859-1"));
+                        } catch (UnsupportedEncodingException e) {
+                        }
+                        list.add(value);
+                    }
+                    map.put(name, list);
                 }
-                map.put(name,list);
             }
         }
         return map;
@@ -305,6 +353,19 @@ public class ServletUtils {
                 response.addCookie(cookie);
             }
         }
+    }
+
+    /**
+     * Callback to configure this class.
+     * @param prefs
+     * @throws ConfigurationException
+     */
+    public void configure(Preferences prefs) throws ConfigurationException {
+        String uploadPath = prefs.get(PREF_UPLOAD_PATH,DEFAULT_UPLOAD_PATH);
+        uploadSizeLimit = prefs.getInt(PREF_MAX_UPLOAD_SIZE, DEFAULT_MAX_UPLOAD_SIZE);
+        File file = new File(uploadPath);
+        file.mkdirs();
+        uploadFactory = new DefaultFileItemFactory(1024,file);
     }
 
     /**

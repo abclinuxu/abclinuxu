@@ -20,7 +20,9 @@ import cz.abclinuxu.servlets.view.ViewUser;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.email.EmailSender;
+import org.apache.commons.fileupload.FileItem;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -30,6 +32,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -60,6 +63,7 @@ public class EditUser extends AbcFMServlet {
     public static final String PARAM_COOKIE_VALIDITY = "cookieValid";
     public static final String PARAM_SUBSCRIBE_MONTHLY = "monthly";
     public static final String PARAM_SUBSCRIBE_WEEKLY = "weekly";
+    public static final String PARAM_PHOTO = "photo";
 
     public static final String VAR_MANAGED = "MANAGED";
 
@@ -145,6 +149,12 @@ public class EditUser extends AbcFMServlet {
 
         } else if ( action.equals(ACTION_EDIT_SUBSCRIPTION_STEP2) ) {
             return actionEditSubscription2(request, response, env);
+
+        } else if ( action.equals(ACTION_UPLOAD_PHOTO) ) {
+            return FMTemplateSelector.select("EditUser", "uploadPhoto", env, request);
+
+        } else if ( action.equals(ACTION_UPLOAD_PHOTO_STEP2) ) {
+            return actionUploadPhoto2(request, response, env);
 
         }
         return null;
@@ -477,6 +487,31 @@ public class EditUser extends AbcFMServlet {
         ServletUtils.addMessage("Zmìny byly ulo¾eny.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&userId="+managed.getId());
+        return null;
+    }
+
+    /**
+     * Uploads photo.
+     */
+    protected String actionUploadPhoto2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User managed = (User) env.get(VAR_MANAGED);
+        User user = (User) env.get(Constants.VAR_USER);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        boolean canContinue = true;
+        if ( !user.isAdmin() )
+            canContinue &= checkPassword(params, managed, env);
+        canContinue &= setPhoto(params, managed, env);
+
+        if ( !canContinue )
+            return FMTemplateSelector.select("EditUser", "uploadPhoto", env, request);
+
+        persistance.update(managed);
+
+        ServletUtils.addMessage("Zmìny byly ulo¾eny.", env, request.getSession());
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/Profile?userId="+managed.getId());
         return null;
     }
 
@@ -814,5 +849,55 @@ public class EditUser extends AbcFMServlet {
         String value = ("yes".equals(subscription))? "yes":"no";
         element.setText(value);
         return true;
+    }
+
+    /**
+     * Uploads photo from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setPhoto(Map params, User user, Map env) {
+        FileItem fileItem = (FileItem) params.get(PARAM_PHOTO);
+        if ( fileItem==null ) {
+            ServletUtils.addError(PARAM_PHOTO, "Vyberte soubor s va¹í fotografií!", env, null);
+            return false;
+        }
+
+        String suffix = getFileSuffix(fileItem.getName()).toLowerCase();
+        if ( !(suffix.equals("jpg") || suffix.equals("jpeg") || suffix.equals("png") || suffix.equals("gif")) ) {
+            ServletUtils.addError(PARAM_PHOTO, "Soubor musí být typu JPG, GIF nebo JPEG!", env, null);
+            return false;
+        }
+
+        String fileName = "images/faces/"+user.getId()+"."+suffix;
+        File file = new File(AbcConfig.calculateDeployedPath(fileName));
+        try {
+            fileItem.write(file);
+        } catch (Exception e) {
+            ServletUtils.addError(PARAM_PHOTO, "Chyba pøi zápisu na disk!", env, null);
+            log.error("Neni mozne ulozit fotografii "+file.getAbsolutePath()+" na disk!",e);
+            return false;
+        }
+
+        Element photo = DocumentHelper.makeElement(user.getData(), "/data/profile/photo");
+        photo.setText("/"+fileName);
+        return true;
+    }
+
+    /**
+     * Extracts text after last dot in string.
+     * @param name
+     * @return
+     */
+    private String getFileSuffix(String name) {
+        if ( name==null )
+            return "";
+        int i = name.lastIndexOf('.');
+        if ( i==-1 )
+            return "";
+        else
+            return name.substring(i+1);
     }
 }

@@ -7,30 +7,30 @@
  */
 package cz.abclinuxu.servlets.init;
 
-import java.io.IOException;
-import java.io.File;
-import java.util.*;
-import javax.servlet.http.*;
-import javax.servlet.ServletException;
-import org.apache.log4j.xml.DOMConfigurator;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.velocity.app.Velocity;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.data.Category;
 import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.scheduler.*;
-import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
-import cz.abclinuxu.servlets.utils.VelocityHelper;
-import cz.abclinuxu.utils.Tools;
-import cz.abclinuxu.servlets.view.Search;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.Sorters2;
-import cz.abclinuxu.utils.DateTool;
+import cz.abclinuxu.utils.Tools;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.Configurator;
-import cz.abclinuxu.data.Category;
-import freemarker.template.*;
 import freemarker.ext.beans.BeansWrapper;
+import freemarker.template.Configuration;
+import freemarker.template.TemplateExceptionHandler;
+import freemarker.template.TemplateModelException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * This servlet initializes Log4J
@@ -50,22 +50,13 @@ public class AbcInit extends HttpServlet {
     public void init() throws ServletException {
         String path = getServletContext().getRealPath("/")+"/";
 
-        String tmp = getInitParameter("VELOCITY");
-        if ( ! Misc.empty(tmp) ) {
-            try {
-                log.info("Inicializuji Velocity");
-                Velocity.init(path+tmp);
-            } catch (Exception e) {
-                log.error("Nemohu inicializovat Velocity!",e);
-            }
-        }
-
         fetcher = new VariableFetcher();
         configureFreeMarker(path);
 
-        tmp = getInitParameter("TEMPLATES");
+        String tmp = getInitParameter("TEMPLATES");
         try {
-            VelocityTemplateSelector.initialize(path+tmp);
+//            VelocityTemplateSelector.initialize(path+tmp);
+            FMTemplateSelector.initialize(path+tmp);
         } catch (Exception e) {
             log.fatal("Nemohu inicializovat systém ¹ablon!", e);
         }
@@ -146,7 +137,6 @@ public class AbcInit extends HttpServlet {
     void configureFreeMarker(String path) {
         log.info("Inicializuji FreeMarker");
 
-        VelocityHelper helper = new VelocityHelper();
         Persistance persistance = PersistanceFactory.getPersistance();
         Configuration cfg = Configuration.getDefaultConfiguration();
         BeansWrapper wrapper = BeansWrapper.getDefaultInstance();
@@ -159,17 +149,16 @@ public class AbcInit extends HttpServlet {
 
         try {
             Category rubriky = (Category) persistance.findById(new Category(Constants.CAT_ARTICLES));
-            helper.sync(rubriky.getContent());
+            Tools.sync(rubriky.getContent());
             Category abc = (Category) persistance.findById(new Category(Constants.CAT_ABC));
-            helper.sync(abc.getContent());
+            Tools.sync(abc.getContent());
             Category reklama = (Category) persistance.findById(new Category(Constants.CAT_REKLAMA));
-            helper.sync(reklama.getContent());
+            Tools.sync(reklama.getContent());
             Category linksCategory = (Category) persistance.findById(new Category(Constants.CAT_LINKS));
             Map links = UpdateLinks.groupLinks(linksCategory,persistance);
 
             cfg.setSharedVariable(Constants.VAR_RUBRIKY,rubriky.getContent());
             cfg.setSharedVariable(Constants.VAR_ABCLINUXU,abc.getContent());
-//            cfg.setSharedVariable(Constants.VAR_REKLAMA,reklama.getContent());
             cfg.setSharedVariable(Constants.VAR_LINKS,links);
             cfg.setSharedVariable(Constants.VAR_TOOL,new Tools());
             cfg.setSharedVariable(Constants.VAR_DATE_TOOL,new DateTool());

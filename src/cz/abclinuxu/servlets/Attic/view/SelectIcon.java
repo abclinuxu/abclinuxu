@@ -109,7 +109,8 @@ public class SelectIcon extends AbcFMServlet {
     }
 
     /**
-     * Called, when we shall display list of icons
+     * Called, when we shall display list of icons.
+     * todo replace usage of ServletUtils with env.
      */
     protected String actionFinish(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         String url = request.getParameter(PARAM_URL);
