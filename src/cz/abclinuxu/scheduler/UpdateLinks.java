@@ -19,6 +19,7 @@ import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.init.AbcInit;
 import cz.abclinuxu.utils.Sorters2;
+import cz.abclinuxu.utils.freemarker.Tools;
 import org.apache.regexp.RE;
 import org.apache.regexp.RECompiler;
 import org.apache.regexp.REProgram;
@@ -91,7 +92,7 @@ public class UpdateLinks extends TimerTask {
             definitions.put(new Server(ROOT), new ServerInfo("http://www.root.cz/rss/", null, ServerInfo.RSS));
             definitions.put(new Server(LW), new ServerInfo("http://www.linuxworld.cz/lw.rss", "Windows-1250", ServerInfo.RSS));
             definitions.put(new Server(SW), new ServerInfo("http://www.scienceworld.cz/sw.rss", "Windows-1250", ServerInfo.RSS));
-            definitions.put(new Server(UG), new ServerInfo("http://underground.cz/backend.php", null, ServerInfo.RSS));
+//            definitions.put(new Server(UG), new ServerInfo("http://underground.cz/backend.php", null, ServerInfo.RSS));
             definitions.put(new Server(PENGUIN), new ServerInfo("http://www.penguin.cz/rss.php3", null, ServerInfo.RSS));
             definitions.put(new Server(ABCLINUXU), new ServerInfo("http://localhost:8080/auto/abc.rss", null, ServerInfo.RSS));
             definitions.put(new Server(MANDRAKE), new ServerInfo("http://www.mandrake.cz/titles_abc.php"));
@@ -216,6 +217,7 @@ public class UpdateLinks extends TimerTask {
                 if ( where==-1 ) continue;
                 String url = fixAmpersand(line.substring(0,where));
                 String title = line.substring(where+2);
+                title = Tools.encodeSpecial(title);
                 if ( title.length()>TEXT_LENGTH )
                     title = title.substring(0,TEXT_LENGTH);
 
@@ -249,6 +251,7 @@ public class UpdateLinks extends TimerTask {
             for (Iterator iter = items.iterator(); iter.hasNext();) {
                 SyndEntry entry = (SyndEntry) iter.next();
                 String title = entry.getTitle();
+                title = Tools.encodeSpecial(title);
                 if ( title.length()>TEXT_LENGTH )
                     title = title.substring(0,TEXT_LENGTH);
                 String url = fixAmpersand(entry.getLink());
