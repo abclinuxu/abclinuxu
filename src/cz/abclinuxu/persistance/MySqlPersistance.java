@@ -8,12 +8,16 @@
 package cz.abclinuxu.persistance;
 
 import java.util.*;
+import java.util.prefs.Preferences;
 import java.sql.*;
 
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.exceptions.*;
 import cz.abclinuxu.AbcException;
-import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.Misc;
 import org.logicalcobwebs.proxool.ProxoolException;
 import org.logicalcobwebs.proxool.ProxoolFacade;
 
@@ -37,12 +41,15 @@ import org.logicalcobwebs.proxool.ProxoolFacade;
  * <tr><td>error</td><td>E</td></tr>
  * </table>
  */
-public class MySqlPersistance implements Persistance {
+public class MySqlPersistance implements Persistance, Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(MySqlPersistance.class);
+
+    public static final String PREF_NO_CHILDREN_FOR_SECTION = "no.children.for.section";
 
     /** contains URL to database connection */
     String dbUrl = null;
     Cache cache = null;
+    Map noChildren = null;
 
     static {
         try {
@@ -56,6 +63,7 @@ public class MySqlPersistance implements Persistance {
         if ( dbUrl==null )
             throw new MissingArgumentException("Neni mozne inicializovat MySqlPersistenci prazdnym URL!");
         this.dbUrl = dbUrl;
+        ConfigurationManager.getConfigurator().configureMe(this);
     }
 
     public void setCache(Cache cache) {
@@ -103,7 +111,7 @@ public class MySqlPersistance implements Persistance {
             }
             obj.setInitialized(true);
             cache.store(obj);
-            log.debug("Objekt ["+obj+"] ulozen");
+            if ( log.isDebugEnabled() ) log.debug("Objekt ["+obj+"] ulozen");
         } catch ( SQLException e ) {
             if ( e.getErrorCode()==1062 ) {
                 throw new DuplicateKeyException("Duplikátní údaj!");
@@ -399,7 +407,7 @@ public class MySqlPersistance implements Persistance {
                     statement.setInt(2,child.getId());
                     resultSet = statement.executeQuery();
                     if ( !resultSet.next() ) queue.add(child);
-                    log.debug("Smazan objekt "+obj);
+                    if ( log.isDebugEnabled() ) log.debug("Smazan objekt "+obj);
                     continue; // relation doesn't have content
                 }
 
@@ -409,7 +417,7 @@ public class MySqlPersistance implements Persistance {
                     queue.add(child);
                 }
 
-                log.debug("Smazan objekt "+obj);
+                if ( log.isDebugEnabled() ) log.debug("Smazan objekt "+obj);
             } while ( queue.size()!=0 );
         } catch ( SQLException e ) {
             throw new PersistanceException("Nemohu smazat objekt!",e);
@@ -550,8 +558,8 @@ public class MySqlPersistance implements Persistance {
      */
     private void findChildren(GenericObject obj, Connection con) throws SQLException {
         PreparedStatement statement = null; ResultSet resultSet = null;
-        if (obj.getId()==Constants.CAT_NEWS && obj instanceof Category)
-            return; // this category might grow too much over time
+        if (noChildren.get(obj)!=null)
+            return; // content of this object might be too big
 
         try {
             statement = con.prepareStatement("select cislo,predchozi,typ_potomka,potomek,data from relace where typ_predka=? and predek=?");
@@ -1333,21 +1341,21 @@ public class MySqlPersistance implements Persistance {
                 rs.close();
             rs = null;
         } catch (Exception e) {
-            log.debug("Problems while closing ResultSet!",e);
+            log.warn("Problems while closing ResultSet!",e);
         }
         try {
             if ( statement!=null )
                 statement.close();
             statement = null;
         } catch (Exception e) {
-            log.debug("Problems while closing statement!",e);
+            log.warn("Problems while closing statement!",e);
         }
         try {
             if ( con!=null )
                 con.close();
             con = null;
         } catch (Exception e) {
-            log.debug("Problems while closing connection to database!",e);
+            log.warn("Problems while closing connection to database!",e);
         }
     }
 
@@ -1428,5 +1436,23 @@ public class MySqlPersistance implements Persistance {
     private String insertEncoding(String xml) {
         if ( xml==null || xml.startsWith("<?xml") ) return xml;
         return "<?xml version=\"1.0\" encoding=\"ISO-8859-2\" ?>\n"+xml;
+    }
+
+    public void configure(Preferences prefs) throws ConfigurationException {
+        noChildren = new HashMap(100,0.95f);
+        Category category = null;
+
+        String tmp = prefs.get(PREF_NO_CHILDREN_FOR_SECTION,"");
+        StringTokenizer stk = new StringTokenizer(tmp,",");
+        while (stk.hasMoreTokens()) {
+            String key = PREF_NO_CHILDREN_FOR_SECTION+"."+stk.nextToken();
+            String values = prefs.get(key,"");
+
+            StringTokenizer stk2 = new StringTokenizer(values, ",");
+            while(stk2.hasMoreTokens()) {
+                category = new Category(Misc.parseInt(stk2.nextToken(),0));
+                noChildren.put(category,Boolean.TRUE);
+            }
+        }
     }
 }

@@ -121,6 +121,21 @@
               <entry key="proxool" value="WEB-INF/conf/proxool.xml"/>
             </map>
           </node>
+          <node name="MySqlPersistance">
+            <map>
+              <entry key="no.children.for.section" value="A,B,C,D,E"/>
+	      <!-- zpravicky -->
+              <entry key="no.children.for.section.A" value="452"/>
+	      <!-- forum.distribuce -->
+              <entry key="no.children.for.section.B" value="475,476,477,478,479,480,482,483,484,520,521,523"/>
+	      <!-- forum.hardware -->
+              <entry key="no.children.for.section.C" value="486,487,488,489,490,504,492,493,494,495,496,497,498,499,503,501,502,525,526"/>
+	      <!-- forum.nastaveni -->
+              <entry key="no.children.for.section.D" value="519,508,509,510,511,512,513,527,528,529"/>
+	      <!-- forum.aplikace -->
+              <entry key="no.children.for.section.E" value="514,515,516,517,518,524,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545"/>
+            </map>
+          </node>
           <node name="LRUCache">
             <map>
               <entry key="size" value="4000"/>
