@@ -29,6 +29,7 @@ import org.apache.log4j.Logger;
  * For example for surveys it forces single
  * access within specified period for one user.
  * todo multiple policies, that can be set per object in configuration
+ * todo create Task, that periodically cleans up expired Sessions
  */
 public class AccessKeeper implements Configurable {
     static Logger log = Logger.getLogger(AccessKeeper.class);
