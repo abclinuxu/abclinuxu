@@ -42,6 +42,7 @@ public class ViewBlog implements AbcAction, Configurable {
 
     public static final String VAR_BLOG_RELATION = "REL_BLOG";
     public static final String VAR_BLOG = "BLOG";
+    public static final String VAR_BLOGS = "BLOGS";
     public static final String VAR_BLOG_XML = "BLOG_XML";
     public static final String VAR_STORIES = "STORIES";
     public static final String VAR_STORY = "STORY";
@@ -66,6 +67,9 @@ public class ViewBlog implements AbcAction, Configurable {
         String name = null;
 
         String uri = (String) env.get(Constants.VAR_REQUEST_URI);
+        if (uri.startsWith("/blogy"))
+            return processBlogs(request, env);
+
 //        uri = "/blog/Yeti/2004/12/12/124545";
         RE regexp = new RE(reUrl);
         regexp.match(uri);
@@ -105,17 +109,17 @@ public class ViewBlog implements AbcAction, Configurable {
             env.put(VAR_BLOG_XML, NodeModel.wrap((new DOMWriter().write(blog.getData()))));
 
             if (rid!=0)
-                return processStory(blogRelation, rid, request, response, env);
+                return processStory(blogRelation, rid, request, env);
             else
-                return processStories(blogRelation, year, month, day, request, response, env);
+                return processStories(blogRelation, year, month, day, request, env);
         } else
-            return processBlogSpace(request, response, year, month, day, env);
+            return processBlogSpace(request, year, month, day, env);
     }
 
     /**
      * Displays one blogRelation content. Its stories may be limited to given year, month or day.
      */
-    protected String processStory(Relation blogRelation, int rid, HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    protected String processStory(Relation blogRelation, int rid, HttpServletRequest request, Map env) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) persistance.findById(new Relation(rid));
         Tools.sync(relation);
@@ -129,13 +133,13 @@ public class ViewBlog implements AbcAction, Configurable {
         List parents = persistance.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
-        return FMTemplateSelector.select("ViewBlog", "blog", env, request);
+        return FMTemplateSelector.select("ViewBlog", "story", env, request);
     }
 
     /**
      * Displays one blogRelation content. Its stories may be limited to given year, month or day.
      */
-    protected String processStories(Relation blogRelation, int year, int month, int day, HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    protected String processStories(Relation blogRelation, int year, int month, int day, HttpServletRequest request, Map env) throws Exception {
         SQLTool sqlTool = SQLTool.getInstance();
         Persistance persistance = PersistanceFactory.getPersistance();
 
@@ -176,14 +180,13 @@ public class ViewBlog implements AbcAction, Configurable {
         List parents = persistance.findParents(blogRelation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
-        return FMTemplateSelector.select("ViewBlog", "blogs", env, request);
+        return FMTemplateSelector.select("ViewBlog", "blog", env, request);
     }
 
     /**
-     * Entry page for blogs. Displays all available blogs
-     * plus most fresh entries.
+     * Entry page for blogs. Displays most fresh stories across all blogs.
      */
-    protected String processBlogSpace(HttpServletRequest request, HttpServletResponse response, int year, int month, int day, Map env) throws Exception {
+    protected String processBlogSpace(HttpServletRequest request, int year, int month, int day, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
         Persistance persistance = PersistanceFactory.getPersistance();
@@ -227,6 +230,44 @@ public class ViewBlog implements AbcAction, Configurable {
         env.put(ShowObject.VAR_PARENTS, parents);
 
         return FMTemplateSelector.select("ViewBlog", "blogspace", env, request);
+    }
+
+    /**
+     * Displays all available blogs
+     * todo paging, sort by number of stories
+     */
+    protected String processBlogs(HttpServletRequest request, Map env) throws Exception {
+        SQLTool sqlTool = SQLTool.getInstance();
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Relation relation;
+        Category blog;
+        User author;
+        Map map;
+        List months;
+
+        List blogs = sqlTool.findSectionRelationsWithType(Category.SECTION_BLOG, null);
+        List result = new ArrayList(blogs.size());
+        for (Iterator iter = blogs.iterator(); iter.hasNext();) {
+            relation = (Relation) iter.next();
+            blog = (Category) persistance.findById(relation.getChild());
+            author = (User) persistance.findById(new User(blog.getOwner()));
+
+            int count = 0;
+            months = blog.getData().selectNodes("//archive/year/month");
+            for (Iterator iter2 = months.iterator(); iter2.hasNext();) {
+                Element month = (Element) iter2.next();
+                count += Misc.parseInt(month.getText(), 0);
+            }
+
+            map = new HashMap();
+            map.put("blog", blog);
+            map.put("author", author);
+            map.put("stories", new Integer(count));
+            result.add(map);
+        }
+        env.put(VAR_BLOGS, result);
+
+        return FMTemplateSelector.select("ViewBlog", "blogs", env, request);
     }
 
     /**

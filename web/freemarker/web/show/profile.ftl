@@ -98,8 +98,9 @@
     </ul>
 </#if>
 
-<p><a href="/Profile/${PROFILE.id}?action=objekty">Seznam informací, které jsem publikoval na abclinuxu.cz</a></p>
-
+<p><a href="/Profile/${PROFILE.id}?action=objekty">Seznam pøíspìvkù na abclinuxu.cz</a><br>
+(èlánky, komentáøe, dotazy, zprávièky, hardwarové a softwarové záznamy, pojmy ve slovníku).</p>
+<br>
 
 <#if TOOL.xpath(PROFILE,"/data/communication/email[@valid='yes']")?exists>
  <form action="${URL.noPrefix("/Profile")}">

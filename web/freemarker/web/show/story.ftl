@@ -6,19 +6,19 @@
 <#assign plovouci_sloupec>
 
     <#if title!="UNDEF">
-	<div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <div class="s_nad_h1"><div class="s_nad_pod_h1">
             <h1><a href="/blog/${BLOG.subType}">${title}</a></h1>
-	</div></div>
+	    </div></div>
     </#if>
 
   <div class="s_sekce">
     <#if intro!="UNDEF">${intro}</#if>
   </div>
 
-  <div class="s_nad_h1"><div class="s_nad_pod_h1">
-        <a class="info" href="#">?<span class="tooltip">Pøístup k archivovaným zápisùm za jednotlivé mìsíce.</span></a>
-        <h1>Archív</h1>
-  </div></div>
+    <div class="s_nad_h1"><div class="s_nad_pod_h1">
+            <a class="info" href="#">?<span class="tooltip">Pøístup k archivovaným zápisùm za jednotlivé mìsíce.</span></a>
+            <h1>Archív</h1>
+    </div></div>
 
   <div class="s_sekce">
     <#list BLOG_XML.data.archive.year as year>
@@ -48,7 +48,6 @@
     </ul>
   </div>
 
-
     <#if (USER?exists && USER.id==BLOG.owner) || (! USER?exists)>
         <div class="s_nad_h1"><div class="s_nad_pod_h1">
             <a class="info" href="#">?<span class="tooltip">Tato sekce sdru¾uje akce pro majitele blogu.</span></a>
@@ -61,6 +60,8 @@
     <#if USER?exists>
         <#if USER.id==BLOG.owner>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=add")}">Vlo¾ nový zápis</a></li>
+            <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=edit")}">Uprav zápis</a></li>
+            <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=remove")}">Sma¾ zápis</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=custom")}">Uprav vzhled</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}">Pøejmenovat blog</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=categories")}">Upravit kategorie</a></li>
@@ -74,54 +75,49 @@
 
 <#include "../header.ftl">
 
-<#if STORIES.total==0>
-    <p>Va¹emu výbìru neodpovídá ¾ádný zápis.</p>
-</#if>
+<#assign CHILDREN=TOOL.groupByType(STORY.child.children), category = STORY.child.subType?default("UNDEF")>
+<#assign url = TOOL.getUrlForBlogStory(BLOG.subType, STORY.child.created, STORY.id)>
+<#if category!="UNDEF"><#assign category=TOOL.xpath(BLOG, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
 
-<#list STORIES.data as relation>
-    <#assign story=relation.child, url=TOOL.getUrlForBlogStory(BLOG.subType, story.created, relation.id)>
-    <#assign category = story.subType?default("UNDEF")>
-    <#if category!="UNDEF"><#assign category=TOOL.xpath(BLOG, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
-    <div class="cl">
-	<h1 class="st_nadpis"><a href="${url}">${TOOL.xpath(story, "/data/name")}</a></h1>
-        <p class="cl_inforadek">
-    	    ${DATE.show(story.created, "CZ_SHORT")} |
-	    Pøeèteno: ${TOOL.getCounterValue(story)}x |
-            <#if category!="UNDEF">${category} |</#if>
-    	    <@showDiscussions story, url/>
-	</p>
-        <#assign text = TOOL.xpath(story, "/data/perex")?default("UNDEF")>
-        <#if text!="UNDEF">
-            ${text}
-            <div class="signature"><a href="${url}">více...</a></div>
-        <#else>
-            ${TOOL.xpath(story, "/data/content")}
-        </#if>
-    </div>
-    <hr>
-</#list>
-
-<p>
-    <#assign url="/blog/"+BLOG.subType><#if YEAR?exists><#assign url=url+YEAR+"/"></#if>
-    <#if MONTH?exists><#assign url=url+MONTH+"/"></#if><#if DAY?exists><#assign url=url+DAY+"/"></#if>
-    <#if (STORIES.currentPage.row > 0) >
-        <#assign start=STORIES.currentPage.row-STORIES.pageSize><#if (start<0)><#assign start=0></#if>
-        <a href="${url}?from=${start}">Novìj¹í zápisy</a>
-    </#if>
-    <#assign start=STORIES.currentPage.row + STORIES.pageSize>
-    <#if (start < STORIES.total) >
-        <a href="${url}?from=${start}">Star¹í zápisy</a>
-    </#if>
+<h2>${TOOL.xpath(STORY.child, "/data/name")}</h2>
+<p class="cl_inforadek">
+    ${DATE.show(STORY.child.created, "CZ_SHORT")} |
+    Pøeèteno: ${TOOL.getCounterValue(STORY.child)}x
+    <#if category!="UNDEF">| ${category}</#if>
 </p>
 
-<#macro showDiscussions (story url)>
-    <#local CHILDREN=TOOL.groupByType(story.children)>
-    <#if CHILDREN.discussion?exists>
-        <#local diz=TOOL.analyzeDiscussion(CHILDREN.discussion[0])>
-    <#else>
-        <#local diz=TOOL.analyzeDiscussion("UNDEF")>
-    </#if>
-    <a href="${url}">Komentáøù:</a> ${diz.responseCount}<#if diz.responseCount gt 0>, poslední ${DATE.show(diz.updated, "CZ_SHORT")}</#if>
-</#macro>
+<#assign text = TOOL.xpath(STORY.child, "/data/perex")?default("UNDEF")>
+<#if text!="UNDEF">${text}</#if>
+${TOOL.xpath(STORY.child, "/data/content")}
+
+<p><b>Nástroje</b>: <a href="${url}?varianta=print">Tisk</a></p>
+
+<h2>Komentáøe</h2>
+<#if CHILDREN.discussion?exists>
+    <#assign DISCUSSION=CHILDREN.discussion[0].child>
+
+    <p class="monitor"><b>AbcMonitor</b> vám emailem za¹le upozornìní pøi zmìnì.
+        <#if USER?exists && TOOL.xpath(DISCUSSION,"//monitor/id[text()='"+USER.id+"'")?exists>
+            <#assign monitorState="Vypni">
+        <#else>
+            <#assign monitorState="Zapni">
+        </#if>
+        <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+CHILDREN.discussion[0].id+"&amp;url="+url)}">${monitorState}</a>
+        (${TOOL.getMonitorCount(DISCUSSION.data)})
+    </p>
+
+    <p>
+        <a href="${URL.make("/EditDiscussion?action=add&amp;dizId="+DISCUSSION.id+"&amp;threadId=0&amp;rid="+CHILDREN.discussion[0].id+"&amp;url="+url)}">
+        Vlo¾it dal¹í komentáø</a>
+    </p>
+
+    <#if USER?exists><#assign MAX_COMMENT=TOOL.getLastSeenComment(DISCUSSION,USER,true) in lib></#if>
+    <#list TOOL.createDiscussionTree(DISCUSSION) as thread>
+        <@lib.showThread thread, 0, DISCUSSION.id, CHILDREN.discussion[0].id, true, "&amp;url="+url/>
+    </#list>
+<#else>
+    <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+STORY.id+"&amp;url="+url)}">Vlo¾it první komentáø</a>
+</#if>
+
 
 <#include "../footer.ftl">

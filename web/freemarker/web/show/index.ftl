@@ -33,28 +33,6 @@
         </ul>
     </div>
 
-    <!-- prace.abclinuxu.cz -->
-    <div class="s_nad_h1"><div class="s_nad_pod_h1">
-        <a class="info" href="#">?<span class="tooltip">První server s nabídkami práce (nejen) pro tuèòáky. Spojujeme lidi s prací v IT.</span></a>
-        <h1><a href="http://prace.abclinuxu.cz">Prace.abclinuxu.cz</a></h1>
-    </div></div>
-    <div class="s_sekce">
-        <#include "/include/prace_main.txt">
-    </div>
-
-    <div class="s_nad_h1"><div class="s_nad_pod_h1">
-        <a class="info" href="#">?<span class="tooltip">Databáze ovladaèù pro vá¹ hardware</span></a>
-        <h1><a href="/drivers/dir/318">Ovladaèe</a></h1>
-    </div></div>
-
-    <div class="s_sekce">
-        <ul>
-        <#list VARS.newDrivers as rel>
-            <li><a href="/drivers/show/${rel.id}">${TOOL.xpath(rel.child,"data/name")}</a></li>
-        </#list>
-        </ul>
-    </div>
-
     <div class="s_nad_h1"><div class="s_nad_pod_h1">
         <a class="info" href="#">?<span class="tooltip">Jestli nevíte, co znamená nìkteré slovo, podívejte se do na¹eho slovníku</span></a>
         <h1><a href="/slovnik">Slovník</a></h1>
@@ -66,6 +44,28 @@
         </#list>
         </ul>
     </div>
+
+    <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <a class="info" href="#">?<span class="tooltip">Databáze ovladaèù pro vá¹ hardware</span></a>
+        <h1><a href="/drivers/dir/318">Ovladaèe</a></h1>
+    </div></div>
+    <div class="s_sekce">
+        <ul>
+        <#list VARS.newDrivers as rel>
+            <li><a href="/drivers/show/${rel.id}">${TOOL.xpath(rel.child,"data/name")}</a></li>
+        </#list>
+        </ul>
+    </div>
+    
+    <!-- prace.abclinuxu.cz -->
+    <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <a class="info" href="#">?<span class="tooltip">První server s nabídkami práce (nejen) pro tuèòáky. Spojujeme lidi s prací v IT.</span></a>
+        <h1><a href="http://prace.abclinuxu.cz">Prace.abclinuxu.cz</a></h1>
+    </div></div>
+    <div class="s_sekce">
+        <#include "/include/prace_main.txt">
+    </div>
+
 
     <div class="s_nad_h1"><div class="s_nad_pod_h1">
         <h1>Aktuální jádra</h1>
@@ -112,9 +112,9 @@
                             <#else>
                                 <#assign diz=TOOL.analyzeDiscussion("UNDEF")>
                             </#if>
-                            <a href="${url}" title="Komentáøù: ${diz.responseCount}<#if diz.responseCount gt 0>, poslední ${DATE.show(diz.updated, "CZ_SHORT")}</#if>">${TOOL.xpath(story, "/data/name")}</a>
-                            | ${DATE.show(story.created, "CZ_DM")}
-                            <#if title!="UNDEF"> | <a href="/blog/${blog.subType}">${title}</a></#if>
+                            <a href="${url}" title="Komentáøù:&nbsp;${diz.responseCount}<#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if>">${TOOL.xpath(story, "/data/name")}</a>
+                            <span>| ${DATE.show(story.created, "CZ_DM")}
+                            <#if title!="UNDEF"> | <a href="/blog/${blog.subType}">${title}</a></#if></span>
                         </li>
                     </#list>
                 </ul>

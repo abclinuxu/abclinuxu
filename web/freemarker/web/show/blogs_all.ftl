@@ -5,15 +5,17 @@
   </div></div>
 
     <div class="s_sekce">
-        Pøehled blogù za dané období pro v¹echny u¾ivatele.
+        Pøehled zápisù ze v¹ech blogù.
 
         <p>Chcete-li také psát svùj blog, pøihla¹te se a v nastavení
         si jej mù¾ete zalo¾it.</p>
 
-	<p>Více o této nové funkci se dozvíte z <a href="/blog/leos/2005/1/2/72133">oznámení</a>.</p>
-	<ul>
-	  <li><a href="/auto/blog.rss">RSS kanál</a></li>
-	</ul>
+        <p>Více o této nové funkci se dozvíte z <a href="/blog/leos/2005/1/2/72133">oznámení</a>.</p>
+
+        <ul>
+          <li><a href="/blogy">seznam blogù</a></li>
+          <li><a href="/auto/blog.rss">RSS kanál</a></li>
+        </ul>
     </div>
 </#assign>
 
@@ -26,14 +28,16 @@
 <#list STORIES.data as relation>
     <#assign story=relation.child, blog=relation.parent, author=TOOL.createUser(blog.owner)>
     <#assign url=TOOL.getUrlForBlogStory(blog.subType, story.created, relation.id)>
+    <#assign title=TOOL.xpath(blog,"//custom/title")?default("blog")>
     <#assign category = story.subType?default("UNDEF")>
     <#if category!="UNDEF"><#assign category=TOOL.xpath(blog, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
     <div class="cl">
         <h1 class="st_nadpis"><a href="${url}">${TOOL.xpath(story, "/data/name")}</a></h1>
 	<p class="cl_inforadek">
             ${DATE.show(story.created, "CZ_SHORT")} |
-    	    <a href="/blog/${blog.subType}">${author.name}</a> |
-	    Pøeèteno: ${TOOL.getCounterValue(story)}x |
+    	    <a href="/blog/${blog.subType}">${title}</a> |
+    	    <a href="/Profile/${author.id}">${author.name}</a> |
+	        Pøeèteno: ${TOOL.getCounterValue(story)}x |
             <#if category!="UNDEF">${category} |</#if>
     	    <@showDiscussions story, url/>
 	</p>

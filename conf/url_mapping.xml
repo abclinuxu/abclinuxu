@@ -9,6 +9,10 @@
             <action>cz.abclinuxu.servlets.html.view.ShowObject</action>
         </mapping>
         <mapping>
+            <pattern>^/Search</pattern>
+            <action>cz.abclinuxu.servlets.html.view.Search</action>
+        </mapping>
+        <mapping>
             <pattern>^/forum/dir</pattern>
             <action>cz.abclinuxu.servlets.html.view.ShowForum</action>
         </mapping>
@@ -17,16 +21,20 @@
             <action>cz.abclinuxu.servlets.html.view.ViewCategory</action>
         </mapping>
         <mapping>
-            <pattern>^/Search</pattern>
-            <action>cz.abclinuxu.servlets.html.view.Search</action>
-        </mapping>
-        <mapping>
             <pattern>^/Profile</pattern>
             <action>cz.abclinuxu.servlets.html.view.ViewUser</action>
         </mapping>
         <mapping>
             <pattern>^/History</pattern>
             <action>cz.abclinuxu.servlets.html.view.History</action>
+        </mapping>
+        <mapping>
+            <pattern>^/blog(/|$)</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ViewBlog</action>
+        </mapping>
+        <mapping>
+            <pattern>^/blogy</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ViewBlog</action>
         </mapping>
         <mapping>
             <pattern>^/slovnik/edit</pattern>
@@ -59,10 +67,6 @@
         <mapping>
             <pattern>^/blog/edit</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditBlog</action>
-        </mapping>
-        <mapping>
-            <pattern>^/blog(/|$)</pattern>
-            <action>cz.abclinuxu.servlets.html.view.ViewBlog</action>
         </mapping>
         <mapping>
             <pattern>^/hardware/edit</pattern>

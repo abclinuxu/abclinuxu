@@ -365,13 +365,16 @@
   </servlet>
 
   <servlet name="ViewBlog">
-    <action name="blog" content="/show/blog.ftl">
+    <action name="story" content="/show/story.ftl">
       <var name="TITLE" value='${TOOL.childName(STORY)}' type="Lazy"/>
     </action>
-    <action name="blogs" content="/show/blogs.ftl">
+    <action name="blog" content="/show/blog.ftl">
       <var name="TITLE" value='${TOOL.xpath(BLOG,"/data/custom/page_title")}' type="Lazy"/>
     </action>
     <action name="blogspace" content="/show/blogs_all.ftl">
+      <var name="TITLE" value="Blogy na abclinuxu" />
+    </action>
+    <action name="blogs" content="/show/blogs.ftl">
       <var name="TITLE" value="Blogy na abclinuxu" />
     </action>
   </servlet>
