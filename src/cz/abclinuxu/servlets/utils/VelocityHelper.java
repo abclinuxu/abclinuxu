@@ -224,7 +224,15 @@ public class VelocityHelper {
      * Sorts list of generic objects by updated or created field. More info
      * in class Sorters. Ascending order.
      */
-    public List sortByDateAscending(List list) {
+    public List sortByDateAscending(List list) throws PersistanceException {
+        for (Iterator iter = list.iterator(); iter.hasNext();) {
+            GenericObject obj = (GenericObject) iter.next();
+            if ( obj instanceof Relation ) {
+                sync(((Relation)obj).getChild());
+            } else {
+                sync(obj);
+            }
+        }
         Sorters.sortByDate(list,true);
         return list;
     }
@@ -233,7 +241,15 @@ public class VelocityHelper {
      * Sorts list of generic objects by updated or created field. More info
      * in class Sorters. Descending order.
      */
-    public List sortByDateDescending(List list) {
+    public List sortByDateDescending(List list) throws PersistanceException {
+        for (Iterator iter = list.iterator(); iter.hasNext();) {
+            GenericObject obj = (GenericObject) iter.next();
+            if ( obj instanceof Relation ) {
+                sync(((Relation)obj).getChild());
+            } else {
+                sync(obj);
+            }
+        }
         Sorters.sortByDate(list,false);
         return list;
     }
@@ -306,33 +322,9 @@ public class VelocityHelper {
     }
 
     /**
-     * @return true, if <code>a</code> is older than <code>b</code>.
-     * If one argument doesn't contain updated property, it is considered
-     * as older than the other one.
+     * Synchronizes object
      */
-    private boolean isOlder(GenericObject a, GenericObject b) {
-
-        try {
-            if ( !a.isInitialized() ) PersistanceFactory.getPersistance().synchronize(a);
-            if ( !b.isInitialized() ) PersistanceFactory.getPersistance().synchronize(b);
-            Date aDate = null, bDate = null;
-
-            if ( a instanceof GenericDataObject ) aDate = ((GenericDataObject)a).getUpdated();
-            else if ( a instanceof Link ) aDate = ((Link)a).getUpdated();
-            else if ( a instanceof Poll ) aDate = ((Poll)a).getCreated();
-            else return true; // a is older
-
-            if ( b instanceof GenericDataObject ) bDate = ((GenericDataObject)b).getUpdated();
-            else if ( b instanceof Link ) bDate = ((Link)b).getUpdated();
-            else if ( b instanceof Poll ) bDate = ((Poll)b).getCreated();
-            else return false; // a is fresher
-
-            if ( a==null ) return false; // just created
-            if ( b==null ) return true;
-            return aDate.before(bDate);
-        } catch (Exception e) {
-            log.error("isOlder bug: "+a.toString()+" | "+b.toString(),e);
-            return true;
-        }
+    public void sync(GenericObject obj) throws PersistanceException {
+        if ( ! obj.isInitialized() ) PersistanceFactory.getPersistance().synchronize(obj);
     }
 }

@@ -42,6 +42,7 @@
 
 #macro(showClosedPoll $poll $displayCreated)
 ##
+#sync($poll)
 #set ($total = $poll.TotalVotes)
 <table border="0" cellpadding="3">
 <tr><td colspan=3 class="hlavicka_ankety">$!poll.Text</td></tr>
@@ -81,6 +82,7 @@
 #####
 
 #macro (showOpenPoll $poll $url)
+#sync($poll)
 #set ($total = $poll.TotalVotes)
 <form action="$!URL.make('/EditPoll')" method="POST">
 <table border="0" cellpadding="3">
