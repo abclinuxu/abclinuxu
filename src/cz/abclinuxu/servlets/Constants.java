@@ -57,6 +57,7 @@ public interface Constants {
     String TYPE_DRIVER = "driver";
     String TYPE_CATEGORY = "category";
     String TYPE_RECORD = "record";
+    String TYPE_USER = "user";
 
     // template variables
 

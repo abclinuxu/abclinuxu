@@ -18,24 +18,25 @@
 
   <table border="0" cellpadding="5">
   <tr>
-   <td colspan="3">
+   <td colspan="5">
     <input type="radio" name="currentId" value="${CURRENT.id}" checked>
     <b>${TOOL.childName(CURRENT)}</b> (${CURRENT.id})
    </td>
   </tr>
 
-  <#if CURRENT.child.content?size==0>
-   <input type="hidden" name="currentId" value="$CURRENT.Id">
-  <#else>
-   <#list CURRENT.child.content as i>
-    <#if i_index%3==0><tr></#if>
+  <#global map=TOOL.groupByType(CURRENT.child.content)>
+
+  <#list map.keySet() as key>
+   <tr><td coslpan="5"><b>${key}</b></td></tr>
+   <#list map(key) as i>
+    <#if i_index%5==0><tr></#if>
     <td>
-     <input type="radio" name="currentId" value="${i.id}">
-     ${TOOL.childName(i)}
+     <input type="radio" name="currentId" value="${i.id}">${TOOL.childName(i)}
     </td>
-    <#if i_index%3==2></tr></#if>
+    <#if i_index%5==4></tr></#if>
    </#list>
-  </#if>
+  </#list>
+
 
  <#else>
 
@@ -47,32 +48,32 @@
   </p>
 
   <table border="0" cellpadding="5">
-   <tr><th colspan="3">Hardware / 386</th></tr>
+   <tr><th colspan="5">Hardware / 386</th></tr>
    <#list SORT.byName(H386) as i>
-    <#if i_index%3==0><tr></#if>
+    <#if i_index%5==0><tr></#if>
     <td>
      <input type="radio" name="currentId" value="${i.id}" <#if i_index==0>checked</#if> >
      ${TOOL.childName(i)}
     </td>
-    <#if i_index%3==2></tr></#if>
+    <#if i_index%5==4></tr></#if>
    </#list>
 
-   <tr><th colspan="3">Software</th></tr>
+   <tr><th colspan="5">Software</th></tr>
    <#list SORT.byName(SOFTWARE) as i>
-    <#if i_index%3==0><tr></#if>
+    <#if i_index%5==0><tr></#if>
     <td>
      <input type="radio" name="currentId" value="${i.id}">${TOOL.childName(i)}
     </td>
-    <#if i_index%3==2></tr></#if>
+    <#if i_index%5==4></tr></#if>
    </#list>
 
-   <tr><th colspan="3">Èlánky</th></tr>
+   <tr><th colspan="5">Èlánky</th></tr>
    <#list SORT.byName(CLANKY) as i>
-    <#if i_index%3==0><tr></#if>
+    <#if i_index%5==0><tr></#if>
     <td>
      <input type="radio" name="currentId" value="${i.id}">${TOOL.childName(i)}
     </td>
-    <#if i_index%3==2></tr></#if>
+    <#if i_index%5==4></tr></#if>
    </#list>
 
  </#if>
