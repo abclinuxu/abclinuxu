@@ -18,6 +18,15 @@
            </layout>
 	</appender>
 
+	<appender name="REDIRECT" class="org.apache.log4j.FileAppender">
+           <param name="File" value="/home/literakl/tomcat/webapps/ROOT/logs/redirect.log" />
+           <param name="DatePattern" value="yyyy-MM-dd" />
+           <param name="Append" value="true" />
+	       <layout class="org.apache.log4j.PatternLayout">
+             <param name="ConversionPattern" value="%d | %m%n"/>
+           </layout>
+	</appender>
+
 	<category name="cz">
 	  <priority value="info" />
 	</category>
@@ -28,6 +37,11 @@
 
 	<category name="cz.abclinuxu.scheduler">
 	  <priority value="info" />
+	</category>
+
+	<category name="redirect" additivity="false">
+	  <priority value="info" />
+ 	  <appender-ref ref="REDIRECT" />
 	</category>
 
 	<root>

@@ -31,6 +31,7 @@ public interface Constants {
 
     /** actual ids of selected relations in database */
     public static final int REL_POLLS = 250;
+    public static final int REL_REKLAMA = 308;
     public static final int REL_AUTHORS = 314;
     public static final int REL_ARTICLES = 315;
     public static final int REL_HARDWARE = 316;
@@ -40,6 +41,7 @@ public interface Constants {
     public static final int REL_ACTUAL_ARTICLES = 5;
     public static final int REL_REQUESTS =  3500;
     public static final int REL_FORUM = 3739;
+    public static final int REL_ABC = 5187;
 
     /** types for VelocityHelper.groupByType() */
     public static final String TYPE_MAKE = "make";

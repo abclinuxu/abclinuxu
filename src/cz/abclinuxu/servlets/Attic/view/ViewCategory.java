@@ -78,6 +78,7 @@ public class ViewCategory extends AbcServlet {
                 case Constants.REL_LINKS: return getTemplate("view/links.vm");
                 case Constants.REL_DRIVERS: return getTemplate("view/drivers.vm");
                 case Constants.REL_REQUESTS: return getTemplate("view/requests.vm");
+                case Constants.REL_REKLAMA: return getTemplate("view/reklama.vm");
             }
         } else {
             switch ( category.getId() ) {

@@ -157,6 +157,12 @@
         <load-on-startup>4</load-on-startup>
     </servlet>
 
+    <servlet>
+        <servlet-name>Redirect</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.view.Redirect</servlet-class>
+        <load-on-startup>4</load-on-startup>
+    </servlet>
+
 
     <servlet-mapping>
         <servlet-name>ViewCategory</servlet-name><url-pattern>/hardware/ViewCategory</url-pattern>
@@ -292,6 +298,10 @@
 
     <servlet-mapping>
         <servlet-name>ForgottenPassword</servlet-name><url-pattern>/ForgottenPassword</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Redirect</servlet-name><url-pattern>/Redirect</url-pattern>
     </servlet-mapping>
 
 

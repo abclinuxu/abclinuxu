@@ -31,6 +31,7 @@ public class ViewUser extends AbcServlet {
     public static final String VAR_ARTICLES = "ARTICLE";
 
     public static final String ACTION_LOGIN = "login";
+    public static final String ACTION_LOGIN2 = "login2";
 
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
@@ -38,8 +39,14 @@ public class ViewUser extends AbcServlet {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         String action = (String) params.get(AbcServlet.PARAM_ACTION);
 
-        if ( action!=null && action.equals(ACTION_LOGIN) ) {
+        if ( action==null ) {
+            return handleProfile(request,ctx);
+        }
+
+        if ( action.equals(ACTION_LOGIN) ) {
             return handleLogin(request,ctx);
+        } else if ( action.equals(ACTION_LOGIN2) ) {
+            return handleLogin2(request,response,ctx);
         }
 
         return handleProfile(request,ctx);
@@ -92,6 +99,15 @@ public class ViewUser extends AbcServlet {
      * shows login screen
      */
     protected Template handleLogin(HttpServletRequest request, Context ctx) throws Exception {
+        return getTemplate("view/prihlaseni.vm");
+    }
+
+    /**
+     * handle login submit
+     * @todo finish it. if successfull, show profile, else show form again
+     */
+    protected Template handleLogin2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         return getTemplate("view/prihlaseni.vm");
     }
 }
