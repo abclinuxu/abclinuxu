@@ -158,7 +158,7 @@ public class Nursery implements Configurable {
         int size = prefs.getInt(PREF_CACHE_SIZE, 100);
         log.info("Initializing with cache size "+size);
 //        cache = Collections.synchronizedMap(new LinkedHashMap(size, 1.0f, true));
-        cache = new LinkedHashMap(size, 1.0f, true);
+        cache = new ChildrenCache(size, 1.0f, true);
 
         persistance = PersistanceFactory.getPersistance();
 
@@ -183,8 +183,15 @@ public class Nursery implements Configurable {
      * LRU Cache. Removes oldest entries.
      */
     class ChildrenCache extends LinkedHashMap {
+        int MAX_SIZE;
+
+        public ChildrenCache(int initialCapacity, float loadFactor, boolean accessOrder) {
+            super(initialCapacity, loadFactor, accessOrder);
+            MAX_SIZE = initialCapacity;
+        }
+
         protected boolean removeEldestEntry(Map.Entry eldest) {
-            return true;
+            return size()>MAX_SIZE;
         }
     }
 }
