@@ -276,6 +276,13 @@ public class Tools {
     }
 
     /**
+     * Increments usage counter of GenericObject.
+     */
+    public void incrementCounter(GenericObject obj) {
+        persistance.incrementCounter(obj);
+    }
+
+    /**
      * @return counter value for selected GenericObject
      */
     public int getCounterValue(GenericObject obj) {
@@ -326,10 +333,10 @@ public class Tools {
     public String render(String str) {
         if ( Misc.empty(str) ) return "";
 
-        String tmp = smich.subst(str,"<img src=\"/images/smile/smich.gif\" width=12 height=12 alt=\":-D\">");
-        tmp = usmev.subst(tmp,"<img src=\"/images/smile/usmev.gif\" width=12 height=12 alt=\":-)\">");
-        tmp = mrk.subst(tmp,"<img src=\"/images/smile/mrk.gif\" width=12 height=12 alt=\";-)\">");
-        tmp = smutek.subst(tmp,"<img src=\"/images/smile/smutek.gif\" width=12 height=12 alt=\":-(\">");
+        String tmp = smich.subst(str,"<img src=\"/images/smile/smich.gif\" width=14 height=14 alt=\":-D\">");
+        tmp = usmev.subst(tmp,"<img src=\"/images/smile/usmev.gif\" width=14 height=14 alt=\":-)\">");
+        tmp = mrk.subst(tmp,"<img src=\"/images/smile/mrk.gif\" width=14 height=14 alt=\";-)\">");
+        tmp = smutek.subst(tmp,"<img src=\"/images/smile/smutek.gif\" width=14 height=14 alt=\":-(\">");
 
         if ( lineBreaks.match(tmp) ) return tmp;
         return emptyLine.subst(tmp,"<p>\n");
@@ -407,13 +414,6 @@ public class Tools {
     }
 
     /**
-     * Increments usage counter of GenericObject.
-     */
-    public void incrementCounter(GenericObject obj) {
-        persistance.incrementCounter(obj);
-    }
-
-    /**
      * @return integer value of <code>str</code> or 0
      */
     public int parseInt(String str) {
@@ -470,7 +470,8 @@ public class Tools {
     }
 
     /**
-     * Does standard HTML conversions like & to &amp;amp; or &lt; to &amp;lt;.
+     * Does standard HTML conversions like & to &amp;amp; or &lt; to &amp;lt;. Use ?html
+     * in freemarker templates!
      * @return Modified String, which may be inserted into html page without affecting its structure.
      */
     public static String encodeSpecial(String in) {
