@@ -196,9 +196,6 @@
     <action name="editSettings" content="/edit/user_settings.ftl">
       <var name="TITLE" value="Zmìna nastavení" />
     </action>
-    <action name="addBlog" content="/add/user_blog.ftl">
-      <var name="TITLE" value="Nastavení osobního blogu" />
-    </action>
     <action name="grantSelect" content="/edit/grant_select.ftl" template="print">
       <var name="TITLE" value="Zmìna rolí u¾ivatele - výbìr"/>
     </action>
@@ -208,6 +205,24 @@
     <action name="invalidateEmail" content="/edit/invalidate_emails.ftl" template="print">
       <var name="TITLE" value="Zneplatnìní emailu u¾ivatelùm"/>
     </action>
+  </servlet>
+
+  <servlet name="EditBlog">
+      <action name="addBlog" content="/add/user_blog.ftl">
+        <var name="TITLE" value="Nastavení osobního blogu" />
+      </action>
+      <action name="custom" content="/edit/blog_custom.ftl">
+        <var name="TITLE" value="Nastavení vzhledu blogu" />
+      </action>
+      <action name="add" content="/add/blog_story.ftl">
+        <var name="TITLE" value="Vlo¾ení zápisu" />
+      </action>
+      <action name="edit" content="/edit/blog_story.ftl">
+        <var name="TITLE" value="Úprava zápisu" />
+      </action>
+      <action name="rename" content="/edit/blog_name.ftl">
+        <var name="TITLE" value="Zmìna jména blogu" />
+      </action>
   </servlet>
 
   <servlet name="EditGroup">
@@ -342,6 +357,9 @@
 
   <servlet name="ViewBlog">
     <action name="blog" content="/show/blog.ftl">
+      <var name="TITLE" value='${TOOL.childName(STORY)}' type="Lazy"/>
+    </action>
+    <action name="blogs" content="/show/blogs.ftl">
       <var name="TITLE" value='${TOOL.xpath(BLOG,"/data/custom/page_title")}' type="Lazy"/>
     </action>
     <action name="blogspace" content="/show/blogs_all.ftl">

@@ -7,4 +7,3 @@ commons-fileupload	1.0		http://jakarta.apache.org
 dom4j			1.4		http://dom4j.org/
 lucene			1.4.2		http://jakarta.apache.org
 htmlparser		1.4		http://htmlparser.sourceforge.net
-quartz			1.4.2		http://www.quartzscheduler.org/quartz

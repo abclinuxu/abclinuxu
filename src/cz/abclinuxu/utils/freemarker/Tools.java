@@ -920,4 +920,27 @@ public class Tools implements Configurable {
         String modified = reVlnka.subst(s,vlnkaReplacement,RE.REPLACE_ALL+RE.REPLACE_BACKREFERENCES);
         return modified;
     }
+
+    /**
+     * Gets absolute url for story.
+     * @param blogName Name of blog.
+     * @param date date when story was published
+     * @param relation id of relation of story
+     * @return formated unique URL. E.g. /blog/leos/archive/2004/12/12/12345
+     */
+    public static String getUrlForBlogStory(String blogName, Date date, int relation) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        StringBuffer sb = new StringBuffer("/blog/");
+        sb.append(blogName);
+        sb.append("/archive/");
+        sb.append(calendar.get(Calendar.YEAR));
+        sb.append('/');
+        sb.append(calendar.get(Calendar.MONTH));
+        sb.append('/');
+        sb.append(calendar.get(Calendar.DAY_OF_MONTH));
+        sb.append('/');
+        sb.append(relation);
+        return sb.toString();
+    }
 }

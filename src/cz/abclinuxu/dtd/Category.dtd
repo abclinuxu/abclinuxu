@@ -3,3 +3,14 @@
 <!ELEMENT icon (#PCDATA)> <!-- absolute path including protocol, or relative path to icon directory -->
 <!ELEMENT note (#PCDATA)> <!-- longer description of this category, to be displayed at the top of category view -->
 <!ATTLIST note format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
+
+<!-- DTD for blog -->
+<!ELEMENT data (categories?, custom)>
+<!ELEMENT categories (category*)>
+<!ELEMENT category #EMPTY>
+<!ATTLIST category id (#NMTOKEN) #REQUIRED> <!-- integer, id of category, used in blog story subtype -->
+<!ATTLIST category name (#NMTOKEN) #REQUIRED> <!-- name of category -->
+<!ELEMENT custom (page_title, title?, intro?)> <!-- container for customization -->
+<!ELEMENT page_title (#PCDATA)> <!-- title for the page -->
+<!ELEMENT title (#PCDATA)> <!-- title for the blog -->
+<!ELEMENT intro (#PCDATA)> <!-- HTML text -->

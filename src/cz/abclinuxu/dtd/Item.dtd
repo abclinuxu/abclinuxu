@@ -84,3 +84,10 @@
 <!ELEMENT content (#PCDATA)> <!-- content to be served -->
 <!ATTLIST content execute (yes|no) #REQUIRED> <!-- boolean, whether to execute content through template engine -->
 <!ELEMENT java_class (#PCDATA)> <!-- java class to feed data to content -->
+
+<!-- Item.BLOG -->
+<!ELEMENT data (name, content, category?)>
+<!ELEMENT name (#PCDATA)> <!-- blog story's title -->
+<!ELEMENT content (#PCDATA)> <!-- content of the story -->
+<!ATTLIST content format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
+<!ELEMENT category (#NMTOKEN)> <!-- integer, if od the category. See blog/categories -->

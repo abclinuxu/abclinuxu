@@ -1,0 +1,72 @@
+<#assign intro=TOOL.xpath(BLOG,"//custom/intro")?default("UNDEF")>
+<#assign title=TOOL.xpath(BLOG,"//custom/title")?default("UNDEF")>
+<#assign owner=TOOL.createUser(BLOG.owner)>
+
+<#assign plovouci_sloupec>
+    <#if title!="UNDEF"><h3 style="text-align: center">${title}</h3></#if>
+    <#if intro!="UNDEF">${intro}</#if>
+    <br>Autorem blogu je <a href="/Profile/${owner.id}">${owner.name}</a>
+
+    <#if (USER?exists && USER.id==BLOG.owner) || (! USER?exists)>
+        <div class="s_nad_h1"><div class="s_nad_pod_h1">
+            <a class="info" href="#">?<span class="tooltip">Tato sekce sdru¾uje akce pro majitele blogu.</span></a>
+            <h1>Nastavení</h1>
+        </div></div>
+    </#if>
+    <#if USER?exists>
+        <#if USER.id==BLOG.owner>
+            <ul>
+                <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=add")}">Vlo¾ nový zápis</a></li>
+                <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=edit")}">Uprav zápis</a></li>
+                <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=custom")}">Uprav vzhled</a></li>
+                <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}">Pøejmenovat blog</a></li>
+            </ul>
+        </#if>
+    <#else>
+        Pro práci s blogem se musíte <a href="${URL.noPrefix("/Profile?action=login&amp;url="+REQUEST_URI)}">pøihlásit</a>.
+    </#if>
+</#assign>
+
+<#include "../header.ftl">
+
+<#assign CHILDREN=TOOL.groupByType(STORY.child.children),
+  url = TOOL.getUrlForBlogStory(BLOG.subType, STORY.child.created, STORY.id),
+  category = TOOL.xpath(STORY.child,"/data/category")?default("UNDEF")>
+
+<h2>${TOOL.xpath(STORY.child, "/data/name")}</h2>
+<p class="cl_inforadek">${DATE.show(STORY.child.created, "CZ_SHORT")} |
+    Pøeèteno: ${TOOL.getCounterValue(STORY.child)}x |
+    <#if category!="UNDEF">${CATEGORIES[category]} |</#if>
+    <a href="${url}">Link</a>
+</p>
+${TOOL.xpath(STORY.child, "/data/content")}
+<p><b>Nástroje</b>: <a href="${url}?varianta=print">Tisk</a></p>
+
+<h2>Komentáøe</h2>
+<#if CHILDREN.discussion?exists>
+    <#assign DISCUSSION=CHILDREN.discussion[0].child>
+
+    <p class="monitor"><b>AbcMonitor</b> vám emailem za¹le upozornìní pøi zmìnì.
+        <#if USER?exists && TOOL.xpath(DISCUSSION,"//monitor/id[text()='"+USER.id+"'")?exists>
+            <#assign monitorState="Vypni">
+        <#else>
+            <#assign monitorState="Zapni">
+        </#if>
+        <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+CHILDREN.discussion[0].id+"&amp;url="+url)}">${monitorState}</a>
+        (${TOOL.getMonitorCount(DISCUSSION.data)})
+    </p>
+
+    <p>
+        <a href="${URL.make("/EditDiscussion?action=add&amp;dizId="+DISCUSSION.id+"&amp;threadId=0&amp;rid="+CHILDREN.discussion[0].id+"&amp;url="+url)}">
+        Vlo¾it dal¹í komentáø</a>
+    </p>
+
+    <#if USER?exists><#assign MAX_COMMENT=TOOL.getLastSeenComment(DISCUSSION,USER,true) in lib></#if>
+    <#list TOOL.createDiscussionTree(DISCUSSION) as thread>
+        <@lib.showThread thread, 0, DISCUSSION.id, CHILDREN.discussion[0].id, true, "&amp;url="+url/>
+    </#list>
+<#else>
+    <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+STORY.id+"&amp;url="+url)}">Vlo¾it první komentáø</a>
+</#if>
+
+<#include "../footer.ftl">
