@@ -1,7 +1,7 @@
 <project name="AbcLinuxu" basedir="." default="build">
 
   <property name="src" value="src" />
-  <property name="tomcat" value="../tomcat" />
+  <property name="tomcat" value="/home/literakl/tomcat" />
   <property name="build" value="${tomcat}/webapps/ROOT" />
   <property name="backup" value="/home/literakl/tmp/ven" />
 
@@ -60,7 +60,10 @@
     </copy>
 
     <copy todir="${build}/WEB-INF/lib">
-      <fileset dir="libs" includes="*.jar" excludes="servlet.jar" />
+      <fileset dir="libs" includes="*.jar">
+        <exclude name="servlet.jar" />
+        <exclude name="crimson.jar" />
+      </fileset>
     </copy>
   </target>
 
@@ -72,7 +75,6 @@
 
     <copy todir="${backup}/abc">
       <fileset dir=".">
-        <include name="src/**" />
         <include name="web/**" />
         <include name="test/**" />
         <include name="conf/**" />

@@ -7,11 +7,11 @@
 package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcServlet;
-import cz.abclinuxu.servlets.utils.VelocityHelper;
-import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.utils.InstanceUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.dom4j.*;
@@ -59,7 +59,7 @@ public class EditDiscussion extends AbcServlet {
 
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
-        Relation relation = (Relation) instantiateParam(PARAM_RELATION,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
         String action = (String) params.get(AbcServlet.PARAM_ACTION);
 
         if ( relation!=null ) {
@@ -136,7 +136,7 @@ public class EditDiscussion extends AbcServlet {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        Item discussion = (Item) instantiateParam(PARAM_DISCUSSION,Item.class,params);
+        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION,Item.class,params);
         if ( discussion==null ) throw new Exception("Chybí parametr dizId!");
         persistance.synchronize(discussion);
         ctx.put(VAR_DISCUSSION,discussion);
@@ -166,7 +166,7 @@ public class EditDiscussion extends AbcServlet {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        Item discussion = (Item) instantiateParam(PARAM_DISCUSSION,Item.class,params);
+        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION,Item.class,params);
         if ( discussion==null ) throw new Exception("Chybí parametr dizId!");
         persistance.synchronize(discussion);
 
@@ -187,7 +187,7 @@ public class EditDiscussion extends AbcServlet {
             if ( tmp!=null && tmp.length()>0 ) {
                 root.addElement("author").setText(tmp);
             } else {
-                addError(PARAM_AUTHOR,"Slu¹ností je se pøedstavit!",ctx,null);
+                ServletUtils.addError(PARAM_AUTHOR,"Slu¹ností je se pøedstavit!",ctx,null);
                 error = true;
             }
         }
@@ -196,7 +196,7 @@ public class EditDiscussion extends AbcServlet {
         if ( tmp!=null && tmp.length()>0 ) {
             root.addElement("title").setText(tmp);
         } else {
-            addError(PARAM_TITLE,"Zadejte titulek va¹eho pøíspìvku!",ctx,null);
+            ServletUtils.addError(PARAM_TITLE,"Zadejte titulek va¹eho pøíspìvku!",ctx,null);
             error = true;
         }
 
@@ -205,7 +205,7 @@ public class EditDiscussion extends AbcServlet {
             tmp = VelocityHelper.fixLines(tmp);
             root.addElement("text").setText(tmp);
         } else {
-            addError(PARAM_TEXT,"Zadejte text va¹eho pøíspìvku!",ctx,null);
+            ServletUtils.addError(PARAM_TEXT,"Zadejte text va¹eho pøíspìvku!",ctx,null);
             error = true;
         }
 
@@ -271,7 +271,7 @@ public class EditDiscussion extends AbcServlet {
             if ( tmp!=null && tmp.length()>0 ) {
                 root.addElement("author").setText(tmp);
             } else {
-                addError(PARAM_AUTHOR,"Slu¹ností je se pøedstavit!",ctx,null);
+                ServletUtils.addError(PARAM_AUTHOR,"Slu¹ností je se pøedstavit!",ctx,null);
                 error = true;
             }
         }
@@ -280,7 +280,7 @@ public class EditDiscussion extends AbcServlet {
         if ( tmp!=null && tmp.length()>0 ) {
             root.addElement("title").setText(tmp);
         } else {
-            addError(PARAM_TITLE,"Zadejte titulek va¹eho dotazu!",ctx,null);
+            ServletUtils.addError(PARAM_TITLE,"Zadejte titulek va¹eho dotazu!",ctx,null);
             error = true;
         }
 
@@ -289,7 +289,7 @@ public class EditDiscussion extends AbcServlet {
             tmp = VelocityHelper.fixLines(tmp);
             root.addElement("text").setText(tmp);
         } else {
-            addError(PARAM_TEXT,"Zadejte text va¹eho dotazu!",ctx,null);
+            ServletUtils.addError(PARAM_TEXT,"Zadejte text va¹eho dotazu!",ctx,null);
             error = true;
         }
 
