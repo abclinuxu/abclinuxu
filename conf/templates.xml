@@ -160,6 +160,12 @@
     </action>
   </servlet>
 
+  <servlet name="Admin">
+    <action name="show" template="print" content="/misc/admin.ftl">
+      <var name="TITLE" value="Administrace portálu" />
+    </action>
+  </servlet>
+
   <servlet name="SelectIcon">
     <action name="show" content="/misc/selectIcon.ftl">
       <var name="TITLE" value="Vybìr ikony" />

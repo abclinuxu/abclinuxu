@@ -82,13 +82,22 @@ public class TemplateSelector {
      * Here we store mappings. key is concatenation of servlet name and action, value is map
      * where key is variant and value is templet name.
      */
-    static HashMap mappings = new HashMap(75,0.95f);
+    static HashMap mappings;
+
+    static String configFile;
 
     /**
      * Loads configuration and initializes TemplateSelector.
      * @param filename name of configuration file
      */
     public static void initialize(String filename) throws Exception {
+        if (filename==null)
+            filename = configFile;
+        else
+            configFile = filename;
+
+        HashMap newMappings = new HashMap(75, 0.95f);
+
         Document document = new SAXReader().read(filename);
         List tagServlets = document.getRootElement().elements("servlet");
 
@@ -117,9 +126,11 @@ public class TemplateSelector {
                 }
 
                 String name = servlet + action;
-                mappings.put(name,servletAction);
+                newMappings.put(name,servletAction);
             }
         }
+
+        mappings = newMappings;
     }
 
     /**

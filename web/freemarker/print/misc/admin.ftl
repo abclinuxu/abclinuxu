@@ -1,0 +1,36 @@
+<#include "/include/macros.ftl">
+<#include "../header.ftl">
+
+<#call showMessages>
+
+<p>Tato stránka slou¾í jako rozcestník pro
+administrátory. K ní samotné není øízen
+pøístup, zda u¾ivatel má dostateèná práva
+èi nikoliv. K nìkterým akcím v¹ak ji¾
+potøebujete správná práva.
+</p>
+
+<h1>Vyprázdnìní cache</h1>
+
+<p>Tato akce slou¾í pro vyprázdnìní transparentní
+cache. Následkem toho budou v¹echny objekty znovu
+naèteny z databáze. Typické pou¾ití je, pokud ruènì
+provedete zmìny v databázi a nechcete èekat, kdy se
+projeví.
+</p>
+
+<p><a href="${URL.noPrefix("/Admin?action=clearCache")}">Clear cache</a></p>
+
+<h1>Správa práv u¾ivatelù</h1>
+
+<p>Pøiøazování rolí jednotlivým u¾ivatelùm.</p>
+
+<p><a href="${URL.noPrefix("/EditUser?action=grant")}">Grant roles</a></p>
+
+<h1>Statistika JDBC poolu</h1>
+
+<p>Statistické informace o JDBC poolu.</p>
+
+<p><a href="/ProxoolAdmin">Proxool info</p>
+
+<#include "../footer.ftl">

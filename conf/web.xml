@@ -167,8 +167,8 @@
     </servlet>
 
     <servlet>
-        <servlet-name>ClearCacheServlet</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.admin.ClearCacheServlet</servlet-class>
+        <servlet-name>AdminServlet</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.admin.AdminServlet</servlet-class>
     </servlet>
 
 
@@ -324,7 +324,7 @@
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>ClearCacheServlet</servlet-name><url-pattern>/ClearCache</url-pattern>
+        <servlet-name>AdminServlet</servlet-name><url-pattern>/Admin</url-pattern>
     </servlet-mapping>
 
     <welcome-file-list>
