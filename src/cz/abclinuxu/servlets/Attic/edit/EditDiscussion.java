@@ -336,8 +336,10 @@ public class EditDiscussion extends AbcFMServlet {
             String author = (String) params.get(PARAM_AUTHOR);
             action = new MonitorAction(author, UserAction.ADD, ObjectType.DISCUSSION, discussion, url);
         }
-        String title = comment.selectSingleNode("title").getText();
+        String title = comment.elementText("title");
         action.setProperty(DiscussionDecorator.PROPERTY_NAME, title);
+        String content = comment.elementText("text");
+        action.setProperty(DiscussionDecorator.PROPERTY_CONTENT, content);
         MonitorPool.scheduleMonitorAction(action);
 
         urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());

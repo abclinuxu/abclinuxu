@@ -22,6 +22,7 @@ public class DiscussionDecorator implements Decorator, Configurable {
     public static final String PREF_ACTION_REMOVE = "action.remove";
     public static final String PREF_ACTION_CENSORE = "action.censore";
 
+    public static final String PROPERTY_CONTENT = "CONTENT";
 
     String subject, actionAdd, actionRemove, actionCensore;
 
@@ -45,9 +46,10 @@ public class DiscussionDecorator implements Decorator, Configurable {
         env.put(VAR_NAME, action.getProperty(PROPERTY_NAME));
 
         String changeMessage = "";
-        if (UserAction.ADD.equals(action.action))
+        if (UserAction.ADD.equals(action.action)) {
             changeMessage = actionAdd;
-        else if (UserAction.REMOVE.equals(action.action))
+            env.put(PROPERTY_CONTENT, action.getProperty(PROPERTY_CONTENT));
+        } else if (UserAction.REMOVE.equals(action.action))
             changeMessage = actionRemove;
         else if (UserAction.CENSORE.equals(action.action))
             changeMessage = actionCensore;
