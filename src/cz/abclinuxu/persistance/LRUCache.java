@@ -67,7 +67,9 @@ public class LRUCache implements Cache,Configurable {
                 // if parent has been already cached, add relation to it
                 GenericObject cached = (GenericObject) data.getElementNoLRU(parent);
                 if ( cached!=null ) {
-                    cached.addContent(clone);
+                    synchronized (cached) {
+                        cached.addContent(clone);
+                    }
                 }
 
                 data.addElement(clone,clone);
@@ -135,7 +137,9 @@ public class LRUCache implements Cache,Configurable {
             GenericObject parent = ((Relation) obj).getParent();
             GenericObject cached = (GenericObject) data.getElementNoLRU(parent);
             if ( cached!=null ) {
-                cached.getContent().remove(obj);
+                synchronized (cached) {
+                    cached.getContent().remove(obj);
+                }
             }
         }
     }
