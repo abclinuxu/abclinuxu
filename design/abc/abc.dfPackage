@@ -97,10 +97,15 @@ class reference34 {
 */
 class reference36 {
 }/**
-@__ref <oiref:java#Class#abc.Redirect:oiref><oihard>
+@__ref <oiref:java#Class#abc.Link:oiref><oihard>
 @__modelType reference 
 */
 class reference3 {
+}/**
+@__ref <oiref:java#Class#abc.Server:oiref><oihard>
+@__modelType reference 
+*/
+class reference5 {
 }}/**
 @__tags
 @shapeType ClassDiagram 
