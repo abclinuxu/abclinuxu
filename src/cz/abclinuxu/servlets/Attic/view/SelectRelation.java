@@ -167,7 +167,7 @@ public class SelectRelation extends AbcVelocityServlet {
         session.setAttribute(AbcVelocityServlet.ATTRIB_PARAMS,map);
 
         String url = request.getParameter(SelectRelation.PARAM_URL);
-        UrlUtils.redirect(url,response,ctx);
+        UrlUtils.redirect(response, url);
         return null;
     }
 }

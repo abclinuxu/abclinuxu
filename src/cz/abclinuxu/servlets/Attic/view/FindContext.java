@@ -41,7 +41,7 @@ public class FindContext extends AbcVelocityServlet {
         persistance.synchronize(relation.getChild());
         String context = chooseContext(relation);
 
-        UrlUtils.redirect(context+request.getRequestURL(),response,ctx);// wrong!
+        UrlUtils.redirect(response, context+request.getRequestURL());// wrong!
         return null;
     }
 

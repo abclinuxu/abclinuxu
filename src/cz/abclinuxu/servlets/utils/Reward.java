@@ -111,7 +111,7 @@ public class Reward extends AbcVelocityServlet {
     protected String actionThanks(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
         ServletUtils.addMessage("Va¹e platba probìhla v poøádku. Dìkujeme.",ctx,request.getSession());
-        UrlUtils.redirect("/Index",response,ctx);
+        UrlUtils.redirect(response, "/Index");
         return null;
     }
 }

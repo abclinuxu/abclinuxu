@@ -237,7 +237,7 @@ public class EditUser extends AbcVelocityServlet {
         }
 
         ServletUtils.addMessage("Zmìny byly ulo¾eny.",ctx, request.getSession());
-        UrlUtils.redirect("/Index",response,ctx);
+        UrlUtils.redirect(response, "/Index");
         return null;
     }
 
@@ -341,7 +341,7 @@ public class EditUser extends AbcVelocityServlet {
             }
         }
 
-        UrlUtils.redirect("/Index",response,ctx);
+        UrlUtils.redirect(response, "/Index");
         return null;
     }
 }

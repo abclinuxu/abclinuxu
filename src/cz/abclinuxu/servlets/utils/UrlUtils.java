@@ -22,6 +22,7 @@ import cz.abclinuxu.servlets.AbcVelocityServlet;
 /**
  * Simple class used for generating URLs, which remembers
  * their prefix and session id.
+ * @todo dont share response!
  */
 public class UrlUtils {
 
@@ -131,18 +132,18 @@ public class UrlUtils {
     /**
      * Redirects to desired URL, keeping session and prefix.
      */
-    public static void redirect(String url, HttpServletResponse response, Context context) throws IOException {
-        UrlUtils urlUtils = (UrlUtils) context.get(AbcVelocityServlet.VAR_URL_UTILS);
-        String url2 = urlUtils.constructRedirectURL(url);
-        response.sendRedirect(url2);
+    public static void redirect(HttpServletResponse response, String url) throws IOException {
+//        UrlUtils urlUtils = new UrlUtils(url,response);
+//        String url2 = urlUtils.constructRedirectURL(url);
+        response.sendRedirect(url);
     }
 
     /**
      * Dispatches to desired URL, keeping prefix.
      */
-    public static void dispatch(String url, HttpServletRequest request, HttpServletResponse response, Context context) throws ServletException, IOException {
-        UrlUtils urlUtils = (UrlUtils) context.get(AbcVelocityServlet.VAR_URL_UTILS);
-        url = urlUtils.constructDispatchURL(url);
+    public static void dispatch(HttpServletRequest request, HttpServletResponse response, String url) throws ServletException, IOException {
+//        UrlUtils urlUtils = (UrlUtils) context.get(AbcVelocityServlet.VAR_URL_UTILS);
+//        url = urlUtils.constructDispatchURL(url);
         RequestDispatcher dispatcher = request.getRequestDispatcher(url);
         dispatcher.forward(request,response);
     }

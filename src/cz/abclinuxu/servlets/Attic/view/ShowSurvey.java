@@ -60,7 +60,7 @@ public class ShowSurvey extends AbcVelocityServlet {
         persistance.synchronize(survey);
         if ( survey.getType()!=Item.SURVEY ) {
             ServletUtils.addError(null,"Tento objekt není anketa!",ctx,request.getSession());
-            UrlUtils.redirect("/Index",response,ctx);
+            UrlUtils.redirect(response, "/Index");
             return null;
         }
 
@@ -79,7 +79,7 @@ public class ShowSurvey extends AbcVelocityServlet {
             log.error("Survey "+survey.getId()+" does not define screen "+nextScreen+
                       " (called from "+currentScreen+")!");
             ServletUtils.addError(null,"Omlouváme se, ale v anketì nastala chyba.",ctx,request.getSession());
-            UrlUtils.redirect("/Index",response,ctx);
+            UrlUtils.redirect(response, "/Index");
             return null;
         }
 
@@ -91,7 +91,7 @@ public class ShowSurvey extends AbcVelocityServlet {
             } catch (Exception e) {
                 log.error("Error in survey "+survey.getId(),e);
                 ServletUtils.addError(null,"Omlouváme se, ale v anketì nastala chyba.",ctx,request.getSession());
-                UrlUtils.redirect("/Index",response,ctx);
+                UrlUtils.redirect(response, "/Index");
                 return null;
             }
             request.getSession().removeAttribute(ATTRIB_DATA);
@@ -101,7 +101,7 @@ public class ShowSurvey extends AbcVelocityServlet {
         if ( template==null || template.getTextTrim().length()==0 ) {
             log.error("Survey "+survey.getId()+" does not define template in screen "+nextScreen+"!");
             ServletUtils.addError(null,"Omlouváme se, ale v anketì nastala chyba.",ctx,request.getSession());
-            UrlUtils.redirect("/Index",response,ctx);
+            UrlUtils.redirect(response, "/Index");
             return null;
         }
 

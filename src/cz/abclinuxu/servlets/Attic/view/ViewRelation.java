@@ -65,16 +65,16 @@ public class ViewRelation extends AbcVelocityServlet {
         ctx.put(VAR_PARENTS,parents);
 
         if ( relation.getParent() instanceof Item ) {
-            UrlUtils.dispatch("/ViewItem",request,response,ctx);
+            UrlUtils.dispatch(request, response, "/ViewItem");
             return null;
         }
         if ( relation.getParent() instanceof Category ) {
             if ( relation.getChild() instanceof Item ) {
-                UrlUtils.dispatch("/ViewItem",request,response,ctx);
+                UrlUtils.dispatch(request, response, "/ViewItem");
                 return null;
             }
             // redirect to category otherwise
-            UrlUtils.dispatch("/ViewCategory",request,response,ctx);
+            UrlUtils.dispatch(request, response, "/ViewCategory");
         }
         return null;
     }
