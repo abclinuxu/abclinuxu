@@ -274,6 +274,23 @@ public class TestMySqlPersistance extends TestCase {
         org.apache.log4j.Category.getDefaultHierarchy().enableAll();
     }
 
+    public void testIncrement() throws Exception {
+        SoftwareRecord a = new SoftwareRecord(0);
+        a.setData("<name>Disky</name>");
+        persistance.create(a,null);
+
+        persistance.incrementCounter(a);
+        assertEquals(1,persistance.getCounterValue(a));
+
+        persistance.incrementCounter(a);
+        persistance.incrementCounter(a);
+        persistance.incrementCounter(a);
+        assertEquals(4,persistance.getCounterValue(a));
+
+        persistance.removeCounter(a);
+        persistance.remove(a,null);
+    }
+
     /**
      * Searches list of GenericObjects for object with id equal to id.
      */

@@ -86,4 +86,9 @@ public interface Persistance {
      * @return Actual value of counter for specified object.
      */
     public int getCounterValue(GenericObject obj) throws PersistanceException;
+
+    /**
+     * Removes counter for specified object. To be used to clean up database after unit test.
+     */
+    public void removeCounter(GenericObject obj) throws PersistanceException;
 }

@@ -9,14 +9,14 @@ package cz.abclinuxu.data;
  */
 public class PollChoice {
 
-    /**
-     * text of the poll choice
-     */
+    /** text of the poll choice */
     protected String text;
-    /**
-     * number of votes for this choice
-     */
+
+    /** number of votes for this choice */
     protected int count;
+
+    /** associated poll's id */
+    protected int poll;
 
 
     public PollChoice(String text) {
@@ -49,5 +49,21 @@ public class PollChoice {
      */
     public void setCount(int count) {
         this.count = count;
+    }
+
+    /**
+     * This method may be called only by incrementCounter() in Persistance!
+     * @return associated poll's id
+     */
+    public int getPoll() {
+        return poll;
+    }
+
+    /**
+     * Sets poll's is.<br>
+     * This method may be called only from Persistance!
+     */
+    public void setPoll(int poll) {
+        this.poll = poll;
     }
 }
