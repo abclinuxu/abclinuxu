@@ -122,6 +122,7 @@ public class EditUser extends AbcServlet {
         } else if ( action.equals(EditUser.ACTION_PASSWORD) ) {
             if ( managed!=null ) PersistanceFactory.getPersistance().synchronize(managed);
             int rights = Guard.check(user,managed,Guard.OPERATION_EDIT,params.get(PARAM_PASSCHECK));
+            if ( user!=null && managed.equals(user) ) rights = Guard.ACCESS_OK;
 
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
@@ -223,7 +224,7 @@ public class EditUser extends AbcServlet {
         }
 
         addMessage("Zmìny byly ulo¾eny.",ctx, request.getSession());
-        redirect("/",response,ctx);
+        redirect("/Index",response,ctx);
         return null;
     }
 
@@ -313,7 +314,7 @@ public class EditUser extends AbcServlet {
         PersistanceFactory.getPersistance().update(user);
 
         addMessage("Heslo bylo zmìnìno.",ctx, request.getSession());
-        redirect("/",response,ctx);
+        redirect("/Index",response,ctx);
         return null;
     }
 }
