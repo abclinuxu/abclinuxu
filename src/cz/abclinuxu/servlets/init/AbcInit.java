@@ -53,7 +53,7 @@ public class AbcInit extends HttpServlet {
         }
 
         String kernel = getInitParameter("KERNEL");
-        if ( kernel!=null ) UpdateKernel.setFile(path+kernel);
+        if ( kernel!=null ) UpdateKernel.setFileName(path+kernel);
 
         String links = getInitParameter("LINKS");
         if ( links!=null ) GenerateLinks.setFileName(path+links);
