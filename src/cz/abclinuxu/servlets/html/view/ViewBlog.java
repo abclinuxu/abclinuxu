@@ -125,6 +125,9 @@ public class ViewBlog implements AbcAction, Configurable {
         if (user==null || user.getId()!=story.getOwner())
             persistance.incrementCounter(story);
 
+        List parents = persistance.findParents(relation);
+        env.put(ShowObject.VAR_PARENTS, parents);
+
         return FMTemplateSelector.select("ViewBlog", "blog", env, request);
     }
 
@@ -166,6 +169,9 @@ public class ViewBlog implements AbcAction, Configurable {
                 persistance.incrementCounter(relation.getChild());
             }
         }
+
+        List parents = persistance.findParents(blogRelation);
+        env.put(ShowObject.VAR_PARENTS, parents);
 
         return FMTemplateSelector.select("ViewBlog", "blogs", env, request);
     }
@@ -210,6 +216,10 @@ public class ViewBlog implements AbcAction, Configurable {
             if (user==null || user.getId()!=story.getOwner())
                 persistance.incrementCounter(story);
         }
+
+        Relation relation = (Relation) persistance.findById(new Relation(Constants.REL_BLOGS));
+        List parents = persistance.findParents(relation);
+        env.put(ShowObject.VAR_PARENTS, parents);
 
         return FMTemplateSelector.select("ViewBlog", "blogspace", env, request);
     }

@@ -187,6 +187,9 @@ public class Tools implements Configurable {
                 node = data.selectSingleNode("data/title");
                 if ( node!=null )
                     return node.getText();
+                node = data.selectSingleNode("data/custom/title");
+                if ( node!=null )
+                    return node.getText();
             }
             if ( (child instanceof Item) && ((Item)child).getType()==Item.DISCUSSION )
                 return "Diskuse";
@@ -242,11 +245,24 @@ public class Tools implements Configurable {
             link.setText(childName(relation));
             if (relation.getId()==Constants.REL_FORUM)
                 link.setUrl(urlUtils.noPrefix("/diskuse.jsp"));
+            else if (relation.getId()==Constants.REL_BLOGS)
+                link.setUrl(urlUtils.noPrefix("/blog"));
             else if (child instanceof Category) {
-                if (((Category)child).getType()==Category.SECTION_FORUM)
+                Category category = (Category)child;
+                if (category.getType()==Category.SECTION_FORUM)
                     link.setUrl(urlUtils.make("/forum/dir/"+relation.getId()));
+                else if (category.getType()==Category.SECTION_BLOG)
+                    link.setUrl(urlUtils.make("/blog/"+category.getSubType()));
                 else
                     link.setUrl(urlUtils.make("/dir/"+relation.getId()));
+            } else if (child instanceof Item) {
+                Item item = (Item) child;
+                if (item.getType()==Item.BLOG) {
+                    Category blog = (Category) relation.getParent();
+                    sync(blog);
+                    link.setUrl(urlUtils.make(getUrlForBlogStory(blog.getSubType(), item.getCreated(), relation.getId())));
+                } else
+                    link.setUrl(urlUtils.make("/show/"+relation.getId()));
             } else
                 link.setUrl(urlUtils.make("/show/"+relation.getId()));
             result.add(link);
