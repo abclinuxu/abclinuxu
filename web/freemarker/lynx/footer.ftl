@@ -41,7 +41,7 @@
 <h1>O serveru</h1>
 <p>
  <a href="/clanky/show/44043">Pøehled zmìn</a>,
- <a href="/clanky/show/44046">Export èlánkù a RSS</a>,
+ <a href="/doc/portal/jine_pristupy">Titulky, PDA a RSS</a>,
  <a href="/clanky/show/44049">Tým AbcLinuxu</a>,
  <a href="/clanky/show/42393">Staòte se autorem</a>,
  ISSN 1214-1267

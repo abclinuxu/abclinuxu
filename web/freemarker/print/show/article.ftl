@@ -1,6 +1,7 @@
 <#include "../header.ftl">
 
 <#assign autor=TOOL.createUser(TOOL.xpath(ITEM,"/data/author"))>
+<#assign forbidDiscussion=TOOL.xpath(ITEM, "//forbid_discussions")?default("UNDEF")>
 
 <h1>${TOOL.xpath(ITEM,"/data/name")}</h1>
 
@@ -69,7 +70,7 @@ ${TOOL.render(TOOL.getCompleteArticleText(ITEM),USER?if_exists)}
   <#list TOOL.createDiscussionTree(DISCUSSION) as thread>
    <@lib.showThread thread, 0, DISCUSSION.id, CHILDREN.discussion[0].id, !frozen />
   </#list>
- <#elseif ALLOW_DISCUSSIONS>
+ <#elseif forbidDiscussion!="yes">
   <h1>Diskuse k tomuto èlánku</h1>
   <a href="${URL.make("/EditDiscussion?action=addDiz&rid="+RELATION.id)}">Vlo¾it první komentáø</a>
  </#if>
