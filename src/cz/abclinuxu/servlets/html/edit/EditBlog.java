@@ -171,6 +171,21 @@ public class EditBlog implements AbcAction, Configurable {
         if ( ACTION_RENAME_BLOG_STEP2.equals(action) )
             return actionRenameBlogStep2(request, response, blog, env);
 
+        if (ACTION_EDIT_CATEGORIES.equals(action))
+            return actionShowCategories(request, blog, env);
+
+        if (ACTION_ADD_CATEGORY.equals(action))
+            return actionAddCategory(request, blog, env);
+
+        if (ACTION_ADD_CATEGORY_STEP2.equals(action))
+            return actionAddCategoryStep2(request, response, blog, env);
+
+        if (ACTION_EDIT_CATEGORY.equals(action))
+            return actionEditCategory(request, response, blog, env);
+
+        if (ACTION_EDIT_CATEGORY_STEP2.equals(action))
+            return actionEditCategoryStep2(request, response, blog, env);
+
         throw new MissingArgumentException("Chybí parametr action!");
     }
 
@@ -433,6 +448,95 @@ public class EditBlog implements AbcAction, Configurable {
         env.put(VAR_CATEGORIES, new SimpleHash(categories));
     }
 
+    /**
+     * Shows all blog's categories so user can edit them.
+     */
+    protected String actionShowCategories(HttpServletRequest request, Category blog, Map env) throws Exception {
+        storeCategories(blog, env);
+        return FMTemplateSelector.select("EditBlog", "categories", env, request);
+    }
+
+    /**
+     * Confirmation dialog for submitting new category.
+     */
+    protected String actionAddCategory(HttpServletRequest request, Category blog, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        String name = (String) params.get(PARAM_CATEGORY_NAME);
+        if (Misc.empty(name))
+            ServletUtils.addError(PARAM_CATEGORY_NAME, "Prosím zadejte hodnotu.", env, null);
+
+        return FMTemplateSelector.select("EditBlog", "add_category", env, request);
+    }
+
+    /**
+     * Saving new category.
+     */
+    protected String actionAddCategoryStep2(HttpServletRequest request, HttpServletResponse response, Category blog, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Relation relation = (Relation) env.get(VAR_BLOG_RELATION);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        Element root = blog.getData().getRootElement();
+        boolean canContinue = addCategory(params, root, env);
+        if (!canContinue)
+            return actionAddCategory(request, blog, env);
+
+        persistance.update(blog);
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/blog/edit/"+relation.getId()+"?action=categories");
+        return null;
+    }
+
+    /**
+     * Dialog to rename category.
+     */
+    protected String actionEditCategory(HttpServletRequest request, HttpServletResponse response, Category blog, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Relation relation = (Relation) env.get(VAR_BLOG_RELATION);
+
+        int id = Misc.parseInt((String) params.get(PARAM_CATEGORY_ID), -1);
+        if (id==-1) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Chybí parametr s èíslem kategorie!", env, request.getSession());
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, "/blog/edit/" + relation.getId() + "?action=categories");
+            return null;
+        }
+
+        Document document = blog.getData();
+        Element category = (Element) document.selectSingleNode("//categories/category[@id="+id+"]");
+        if (category==null) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Kategorie s èíslem "+id+" nebyla nalezena!", env, request.getSession());
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, "/blog/edit/" + relation.getId() + "?action=categories");
+            return null;
+        }
+
+        params.put(PARAM_CATEGORY_NAME, category.attributeValue("name"));
+
+        return FMTemplateSelector.select("EditBlog", "edit_category", env, request);
+    }
+
+    /**
+     * Saving new name of the category.
+     */
+    protected String actionEditCategoryStep2(HttpServletRequest request, HttpServletResponse response, Category blog, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Relation relation = (Relation) env.get(VAR_BLOG_RELATION);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        Element root = blog.getData().getRootElement();
+        boolean canContinue = setCategory(params, root, env);
+        if (!canContinue)
+            return actionEditCategory(request, response, blog, env);
+
+        persistance.update(blog);
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/blog/edit/" + relation.getId() + "?action=categories");
+        return null;
+    }
+
     // setters
 
     /**
@@ -504,6 +608,66 @@ public class EditBlog implements AbcAction, Configurable {
             category.addAttribute("name",name);
         }
 
+        return true;
+    }
+
+    /**
+     * Inserts new category to the list of categories. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param root XML document
+     * @return false, if there is a major error.
+     */
+    boolean addCategory(Map params, Element root, Map env) {
+        String name = (String) params.get(PARAM_CATEGORY_NAME);
+        if (Misc.empty(name)) {
+            ServletUtils.addError(PARAM_CATEGORY_NAME, "Prosím zadejte hodnotu.", env, null);
+            return false;
+        }
+
+        Element categories = root.element("categories");
+        if (categories == null)
+            categories = root.addElement("categories");
+
+        int id = 0;
+        List list = categories.elements();
+        if (list!=null && list.size()>0) {
+            Element category = (Element) list.get(list.size()-1);
+            id = Misc.parseInt(category.attributeValue("id"), 0);
+        }
+
+        Element category = categories.addElement("category");
+        category.addAttribute("id", Integer.toString(id+1));
+        category.addAttribute("name", name);
+
+        return true;
+    }
+
+    /**
+     * Sets new name for existing category. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param root XML document
+     * @return false, if there is a major error.
+     */
+    boolean setCategory(Map params, Element root, Map env) {
+        String name = (String) params.get(PARAM_CATEGORY_NAME);
+        if (Misc.empty(name)) {
+            ServletUtils.addError(PARAM_CATEGORY_NAME, "Prosím zadejte hodnotu.", env, null);
+            return false;
+        }
+
+        int id = Misc.parseInt((String) params.get(PARAM_CATEGORY_ID), -1);
+        if (id == -1) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Chybí parametr s èíslem kategorie!", env, null);
+            return false;
+        }
+
+        Element category = (Element) root.selectSingleNode("//categories/category[@id=" + id + "]");
+        if (category == null) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Kategorie s èíslem " + id + " nebyla nalezena!", env, null);
+            return false;
+        }
+
+        category.attribute("name").setText(name);
         return true;
     }
 

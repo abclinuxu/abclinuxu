@@ -24,7 +24,7 @@ tak¾e zprávièky ze svìta Microsoftu nás opravdu nezajímají.
 
 <h2>A co dále?</h2>
 
-<p>Va¹e zpávièka bude ulo¾ena do systému do neveøejné kategorie
+<p>Va¹e zprávièka bude ulo¾ena do systému do neveøejné kategorie
 a tam bude èekat, ne¾ ji nìkterý ná¹ správce schválí èi zamítne.
 Správce mù¾e upravit vá¹ text (napøíklad jej zpøesnit èi doplnit,
 opravit pøeklep èi pravopisnou chybu apod.) nebo zmìnit kategorii.

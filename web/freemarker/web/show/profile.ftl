@@ -77,6 +77,8 @@
   </ul>
 </#if>
 
+<br>
+
 <#if TOOL.xpath(PROFILE,"/data/communication/email[@valid='yes']")?exists>
  <form action="${URL.noPrefix("/Profile")}">
   <input type="hidden" name="action" value="sendEmail">
