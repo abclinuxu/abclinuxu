@@ -46,6 +46,11 @@
         <servlet-class>cz.abclinuxu.servlets.edit.EditUser</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>ViewIndex</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.view.ViewIndex</servlet-class>
+    </servlet>
+
 
     <servlet-mapping>
         <servlet-name>ViewCategory</servlet-name>
@@ -96,8 +101,13 @@
         <url-pattern>/EditUser</url-pattern>
     </servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>ViewIndex</servlet-name>
+        <url-pattern>/index.html</url-pattern>
+    </servlet-mapping>
+
 
     <welcome-file-list>
-        <welcome-file>index.vm</welcome-file>
+        <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 </web-app>

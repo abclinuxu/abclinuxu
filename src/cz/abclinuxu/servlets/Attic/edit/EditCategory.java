@@ -63,20 +63,22 @@ public class EditCategory extends AbcServlet {
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
-        String tmp = (String) ((Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS)).get(EditCategory.PARAM_CATEGORY_ID);
-        int categoryId = Integer.parseInt(tmp);
-
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         String action = (String) params.get(AbcServlet.PARAM_ACTION);
+        String tmp = (String) params.get(EditCategory.PARAM_CATEGORY_ID);
+        int categoryId = Integer.parseInt(tmp);
 
         if ( action==null || action.equals(EditCategory.ACTION_ADD) ) {
+
             int rights = checkAccess(new Category(categoryId),AbcServlet.METHOD_ADD,ctx);
             switch (rights) {
                 case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
-                case AbcServlet.USER_INSUFFICIENT_RIGHTS: addErrorMessage(null,"Vase prava nejsou dostatecna pro tuto operaci!",ctx);
+                case AbcServlet.USER_INSUFFICIENT_RIGHTS: addErrorMessage(AbcServlet.GENERIC_ERROR,"Vase prava nejsou dostatecna pro tuto operaci!",ctx);
                 default: return getTemplate("add/category.vm");
             }
+
         } else if ( action.equals(EditCategory.ACTION_ADD_STEP2) ) {
+
             int rights = checkAccess(new Category(categoryId),AbcServlet.METHOD_ADD,ctx);
             switch (rights) {
                 case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
@@ -86,6 +88,7 @@ public class EditCategory extends AbcServlet {
                 }
                 default: return actionAddStep2(request,response,ctx);
             }
+
         } else if ( action.equals(EditCategory.ACTION_EDIT) ) {
         } else if ( action.equals(EditCategory.ACTION_LINK) ) {
         } else if ( action.equals(EditCategory.ACTION_REMOVE) ) {

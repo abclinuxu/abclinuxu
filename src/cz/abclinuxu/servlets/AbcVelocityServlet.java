@@ -300,18 +300,13 @@ public class AbcServlet extends VelocityServlet {
      * Adds message to <code>VAR_ERRORS</code> map.
      */
     protected void addErrorMessage(String key, String errorMessage, Context context) {
-        boolean created = false;
         Map errors = (Map) context.get(VAR_ERRORS);
 
         if ( errors==null ) {
             errors = new HashMap(5);
-            created = true;
-        }
-
-        errors.put(key,errorMessage);
-        if ( created ) {
             context.put(AbcServlet.VAR_ERRORS,errors);
         }
+        errors.put(key,errorMessage);
     }
 
     /**
@@ -323,13 +318,9 @@ public class AbcServlet extends VelocityServlet {
 
         if ( messages==null ) {
             messages = new ArrayList(5);
-            created = true;
-        }
-
-        messages.add(message);
-        if ( created ) {
             context.put(AbcServlet.VAR_MESSAGES,messages);
         }
+        messages.add(message);
     }
 
     /**
