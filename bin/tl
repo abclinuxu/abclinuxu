@@ -1,0 +1,65 @@
+#!/usr/bin/perl
+# TreeLink v0.1 (Traverser)
+# 
+#    create mirror of <directory> in current 
+#    directory with all files as symlinks.
+#
+# Written by Michal 'Misu' Uradnik
+#
+# For anything, please conntact me at misu@abclinuxu.sk 
+# TreeLink was primarily created for Linux Portal http://www.abclinuxu.cz
+# 
+# Copyright 2003 Dreamland
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+# 02111-1307, USA.
+
+use File::Find;
+$pwd = `pwd`;
+chomp $pwd;
+
+sub wanted {
+	next if (/^\.$/);
+	$new = $File::Find::dir;
+	$new =~ s/^$ARGV[0](.*)$/\1/;
+	if (!( -e "$pwd$new/$_")) {
+		if ( -d "$File::Find::dir/$_") {
+			print "Creating directory \"$pwd$new/$_\" ...\n";
+			mkdir "$pwd$new/$_";
+		}  else {
+			print "Linking file \"$File::Find::dir/$_\" -> \"$pwd$new/$_\" ...\n";
+			symlink "$File::Find::dir/$_", "$pwd$new/$_";
+		}
+	}
+}
+
+print "TreeLink v0.1 (Traverser)\n";
+
+if (! -e $ARGV[0]) {
+	print "Written by Michal 'Misu' Uradnik\n\n";
+	print "For anything, please conntact me at misu\@abclinuxu.sk\n";
+	print "TreeLink was primarily created for Linux Portal http://www.abclinuxu.cz\n";
+	print "Copyright 2003 Dreamland\n\n";
+	print "Usage: tl <directory>\n";
+	print "Create mirror of <directory> in current directory with all files as symlinks.\n";
+	print "Don't delete or overwrite anything!\n";
+	exit;
+}
+
+find(\&wanted, "$ARGV[0]");
+
+print "All Done!\n"
+
+# That's all folks

@@ -189,12 +189,12 @@ public class Dump {
         String name = null;
 
         if ( item.getType()==Item.DISCUSSION ) {
-            name = FMTemplateSelector.select("ViewRelation","discussion","offline",env);
+            name = FMTemplateSelector.select("ViewRelation","discussion", env, "offline");
             processTemplate(name,env,file);
             return;
         }
         if ( item.getType()==Item.DRIVER ) {
-            name = FMTemplateSelector.select("ViewRelation","driver","offline",env);
+            name = FMTemplateSelector.select("ViewRelation","driver", env, "offline");
             processTemplate(name,env,file);
             return;
         }
@@ -203,7 +203,7 @@ public class Dump {
         env.put(ViewRelation.VAR_CHILDREN_MAP,children);
 
         if ( item.getType()==Item.ARTICLE ) {
-            name = FMTemplateSelector.select("ViewRelation","article","offline",env);
+            name = FMTemplateSelector.select("ViewRelation","article", env, "offline");
             processTemplate(name,env,file);
             return;
         }
@@ -219,9 +219,9 @@ public class Dump {
                 persistance.synchronize(record);
 
             if ( record.getType()== Record.HARDWARE )
-                name = FMTemplateSelector.select("ViewRelation","hardware","offline",env);
+                name = FMTemplateSelector.select("ViewRelation","hardware", env, "offline");
             else if ( record.getType()== Record.SOFTWARE )
-                name = FMTemplateSelector.select("ViewRelation","software","offline",env);
+                name = FMTemplateSelector.select("ViewRelation","software", env, "offline");
 
             processTemplate(name,env,file);
         }
@@ -242,7 +242,7 @@ public class Dump {
         Tools.sync(category);
         Tools.sync(category.getContent());
 
-        String name = FMTemplateSelector.select("ViewCategory","sekce","offline",env);
+        String name = FMTemplateSelector.select("ViewCategory","sekce", env, "offline");
         processTemplate(name,env,file);
     }
 

@@ -8,6 +8,7 @@ package cz.abclinuxu.servlets.utils.template;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.AbcException;
+import cz.abclinuxu.exceptions.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -41,54 +42,57 @@ public class FMTemplateSelector extends TemplateSelector {
     }
 
     /**
-     * This method selects template to be processed. If content is not set, it is searched
-     * in global configuration file.
+     * Selects page to be processed and template to decorate it. The page is defined as combination
+     * of servlet and action in the configuration file. The template, which decorates page, is
+     * chosen by browser or taken from users profile.
      * @param servlet name of servlet
      * @param action name of action
-     * @param data map, where some variables like browser may be stored
-     * @param request used for browser identification
+     * @param data map, where method can store variables like browser
      * @param content page to be processed or null
+     * @param request used for browser identification
      * @return page to be processed
+     * @throws NotFoundException when such combination of servlet and action doesn't exist
      */
-    public static String select(String servlet, String action, Map data, HttpServletRequest request, String content) {
-        String browser = findBrowser(request);
-        String os = findOS(request);
+    public static String select(String servlet, String action, Map data, HttpServletRequest request) {
+        String browser = findBrowser(request), os = findOS(request);
         if ( Misc.same(browser,BROWSER_MIRROR) )
-            return "lynx/other/nomirror.vm";
+            return "/lynx/other/nomirror.vm";
 
         ServletAction servletAction = (ServletAction) mappings.get(servlet + action);
         if ( servletAction==null )
-            throw new AbcException("Neexistuje ¹ablona pro kombinaci "+servlet +","+ action);
+            throw new NotFoundException("Neexistuje ¹ablona pro kombinaci "+servlet +","+ action);
 
         String template = selectTemplate(servletAction,browser,request);
-        if ( Misc.empty(content) ) {
-            Mapping mapping = servletAction.getMapping(template);
-            content = mapping.getContent();
-            storeVariables(data,mapping.getVariables());
-        }
+        Mapping mapping = servletAction.getMapping(template);
+        String page = mapping.getContent();
+        storeVariables(data,mapping.getVariables());
 
-        data.put(VAR_CONTENT,content);
         data.put(VAR_BROWSER,browser);
         data.put(VAR_OS,os);
 
-        return template+"/template.ftl";
+        return page;
     }
 
     /**
-     * Selects content to be parsed. The content is identified by combination of servlet
-     * and action. Given template is used.
+     * Selects page to be processed. The page is defined as combination
+     * of servlet and action in the configuration file. The decorator - template, is
+     * given as parameter.
+     * @param servlet name of servlet
+     * @param action name of action
+     * @param data map, where method can store variables like browser
+     * @return page to be processed
+     * @throws NotFoundException when such combination of servlet and action doesn't exist
      */
-    public static String select(String servlet, String action, String template, Map data) {
+    public static String select(String servlet, String action, Map data, String template) {
         ServletAction servletAction = (ServletAction) mappings.get(servlet + action);
         if ( servletAction==null )
-            throw new AbcException("Neexistuje ¹ablona pro kombinaci "+servlet +","+ action);
+            throw new NotFoundException("Neexistuje ¹ablona pro kombinaci "+servlet +","+ action);
 
         Mapping mapping = servletAction.getMapping(template);
-        String content = mapping.getContent();
+        String page = mapping.getContent();
         storeVariables(data,mapping.getVariables());
 
-        data.put(VAR_CONTENT,content);
-        return template+"/template.ftl";
+        return page;
     }
 
     /**

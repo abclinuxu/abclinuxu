@@ -51,6 +51,7 @@ public class ConfigurationManager {
         Configurator aConfigurator = new SimpleConfigurator(file);
         setConfigurator(aConfigurator);
     }
+
     public static void main(String[] args) throws Exception {
         SimpleConfigurator cfg = (SimpleConfigurator) getConfigurator();
     }

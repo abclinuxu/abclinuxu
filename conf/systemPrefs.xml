@@ -46,6 +46,7 @@
           <node name="PersistanceFactory">
             <map>
               <entry key="url" value="proxool.abc"/>
+              <entry key="proxool" value="WEB-INF/conf/proxool.xml"/>
             </map>
 	  </node>
           <node name="LRUCache">

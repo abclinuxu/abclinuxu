@@ -50,6 +50,6 @@ public class ViewIndex extends AbcFMServlet {
         tools.sync(forum.getContent());
         env.put(ViewIndex.VAR_FORUM,forum);
 
-        return FMTemplateSelector.select("ViewIndex","show",env,request,null);
+        return FMTemplateSelector.select("ViewIndex","show",env, request);
     }
 }

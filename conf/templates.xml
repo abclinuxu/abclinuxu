@@ -292,7 +292,7 @@
       <mapping template="lynx" content="/lynx/show/index.ftl">
         <var name="TITLE" value="AbcLinuxu.cz - tady je tuèòákùm hej!" />
       </mapping>
-      <mapping template="lynx" content="/plucker/show/index.ftl">
+      <mapping template="plucker" content="/plucker/show/index.ftl">
         <var name="TITLE" value="AbcLinuxu.cz - tady je tuèòákùm hej!" />
       </mapping>
       <mapping template="sidebar" content="sidebar/show/index.ftl" />

@@ -89,21 +89,21 @@ public class ViewCategory extends AbcFMServlet {
         if ( Misc.same(tmp,"yes") ) {
             switch ( category.getId() ) {
                 case Constants.CAT_ARTICLES:
-                case Constants.CAT_ABC: return FMTemplateSelector.select("ViewCategory","rubriky",env,request,null);
+                case Constants.CAT_ABC: return FMTemplateSelector.select("ViewCategory","rubriky",env, request);
             }
         } else {
             switch (relation.getId()) {
-                case Constants.REL_POLLS: return FMTemplateSelector.select("ViewCategory","ankety",env,request,null);
-                case Constants.REL_DRIVERS: return FMTemplateSelector.select("ViewCategory","drivers",env,request,null);
-                case Constants.REL_REQUESTS: return FMTemplateSelector.select("EditRequest","view",env,request,null);
+                case Constants.REL_POLLS: return FMTemplateSelector.select("ViewCategory","ankety",env, request);
+                case Constants.REL_DRIVERS: return FMTemplateSelector.select("ViewCategory","drivers",env, request);
+                case Constants.REL_REQUESTS: return FMTemplateSelector.select("EditRequest","view",env, request);
             }
         }
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         tmp = urlUtils.getPrefix();
         if ( Misc.same(tmp,UrlUtils.PREFIX_CLANKY) )
-            return FMTemplateSelector.select("ViewCategory","rubrika",env,request,null);
+            return FMTemplateSelector.select("ViewCategory","rubrika",env, request);
         else
-            return FMTemplateSelector.select("ViewCategory","sekce",env,request,null);
+            return FMTemplateSelector.select("ViewCategory","sekce",env, request);
     }
 }

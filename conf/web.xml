@@ -11,10 +11,6 @@
           <param-value>WEB-INF/conf/log4j.xml</param-value>
         </init-param>
         <init-param>
-          <param-name>PROXOOL_CONF</param-name>
-          <param-value>WEB-INF/conf/proxool.xml</param-value>
-        </init-param>
-        <init-param>
           <param-name>VELOCITY</param-name>
           <param-value>WEB-INF/conf/velocity.properties</param-value>
         </init-param>

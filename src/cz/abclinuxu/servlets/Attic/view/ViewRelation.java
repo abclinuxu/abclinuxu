@@ -107,16 +107,16 @@ public class ViewRelation extends AbcFMServlet {
         Tools.sync(upper); env.put(VAR_UPPER,upper);
 
         if ( item.getType()==Item.DISCUSSION ) {
-            return FMTemplateSelector.select("ViewRelation","discussion",env,request,null);
+            return FMTemplateSelector.select("ViewRelation","discussion",env, request);
         }
         if ( item.getType()==Item.DRIVER )
-            return FMTemplateSelector.select("ViewRelation","driver",env,request,null);
+            return FMTemplateSelector.select("ViewRelation","driver",env, request);
 
         Map children = Tools.groupByType(item.getContent());
         env.put(VAR_CHILDREN_MAP,children);
 
         if ( item.getType()==Item.ARTICLE )
-            return FMTemplateSelector.select("ViewRelation","article",env,request,null);
+            return FMTemplateSelector.select("ViewRelation","article",env, request);
 
         if ( record==null ) {
             List records = (List) children.get(Constants.TYPE_RECORD);
@@ -128,8 +128,8 @@ public class ViewRelation extends AbcFMServlet {
             if ( ! record.isInitialized() )
                 persistance.synchronize(record);
             switch ( record.getType() ) {
-                case Record.HARDWARE: return FMTemplateSelector.select("ViewRelation","hardware",env,request,null);
-                case Record.SOFTWARE: return FMTemplateSelector.select("ViewRelation","software",env,request,null);
+                case Record.HARDWARE: return FMTemplateSelector.select("ViewRelation","hardware",env, request);
+                case Record.SOFTWARE: return FMTemplateSelector.select("ViewRelation","software",env, request);
             }
         }
         return null;
