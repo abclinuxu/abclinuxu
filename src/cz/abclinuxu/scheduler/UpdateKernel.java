@@ -30,6 +30,8 @@ public class UpdateKernel extends TimerTask implements Configurable {
     public static final String PREF_REGEXP_STABLE = "regexp.stable";
     public static final String PREF_URL_STABLE = "url.stable";
     public static final String PREF_REGEXP_STABLE_PRE = "regexp.stable.pre";
+    public static final String PREF_REGEXP_STABLE_MM = "regexp.stable.mm";
+    public static final String PREF_URL_STABLE_MM = "url.stable.mm";
     public static final String PREF_REGEXP_DEVEL = "regexp.devel";
     public static final String PREF_URL_DEVEL = "url.devel";
     public static final String PREF_REGEXP_DEVEL_PRE = "regexp.devel.pre";
@@ -46,10 +48,10 @@ public class UpdateKernel extends TimerTask implements Configurable {
     public static final String PREF_URL_AC = "url.ac";
 
     String fileName, uri;
-    String stable, stablePre, devel, develPre, old24, old24Pre, old22, old22Pre, old20, old20Pre, ac;
-    String urlStable, urlDevel, url24, url22, url20, urlAC;
+    String stable, stablePre, stableMM, devel, develPre, old24, old24Pre, old22, old22Pre, old20, old20Pre, ac;
+    String urlStable, urlDevel, url24, url22, url20, urlAC, urlStableMM;
 
-    RE reStable,reStablepre,reDevel,reDevelpre;
+    RE reStable,reStablepre,reDevel,reDevelpre,reStableMM;
     RE reOld24,reOld24pre,reOld22,reOld22pre,reOld20,reOld20pre,reAc;
 
     public UpdateKernel() {
@@ -58,6 +60,7 @@ public class UpdateKernel extends TimerTask implements Configurable {
         try {
             reStable = new RE(stable);
             reStablepre = new RE(stablePre);
+            reStableMM = new RE(stableMM);
             reDevel = new RE(devel);
             reDevelpre = new RE(develPre);
             reOld24 = new RE(old24);
@@ -81,6 +84,7 @@ public class UpdateKernel extends TimerTask implements Configurable {
         stable = prefs.get(PREF_REGEXP_STABLE, null);
         urlStable = prefs.get(PREF_URL_STABLE,null);
         stablePre = prefs.get(PREF_REGEXP_STABLE_PRE, null);
+        stableMM = prefs.get(PREF_REGEXP_STABLE_MM, null);
         devel = prefs.get(PREF_REGEXP_DEVEL, null);
         urlDevel = prefs.get(PREF_URL_DEVEL,null);
         develPre = prefs.get(PREF_REGEXP_DEVEL_PRE, null);
@@ -153,6 +157,10 @@ public class UpdateKernel extends TimerTask implements Configurable {
                     ac = reAc.getParen(3);
                     continue;
                 }
+                if ( reStableMM.match(line) ) {
+                    stableMM = reStableMM.getParen(3);
+                    continue;
+                }
             }
 
             if ( stable==null ) // sometimes finger returns an empty file
@@ -163,7 +171,8 @@ public class UpdateKernel extends TimerTask implements Configurable {
             writer.write("<table border=0>\n");
 
             writeTableRow(writer,"Stabilní:",urlStable,stable,stablePre);
-            writeTableRow(writer,"Vývojové:",urlDevel,devel,null);
+            writeTableRow(writer,"Vývojová:",urlDevel,devel,null);
+            writeTableRow(writer,"MM øada:", urlStableMM, stableMM, null);
             writeTableRow(writer,"Øada 2.4:",url24,old24,old24Pre);
             writeTableRow(writer,"Øada 2.2:",url22,old22,old22Pre);
             writeTableRow(writer,"Øada 2.0:",url20,old20,old20Pre);
