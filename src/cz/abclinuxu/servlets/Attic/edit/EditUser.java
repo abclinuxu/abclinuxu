@@ -833,8 +833,8 @@ public class EditUser extends AbcFMServlet {
      */
     private boolean setDiscussionsSizeLimit(Map params, User user) {
         String limit = (String) params.get(PARAM_DISCUSSIONS_COUNT);
-        int tmp = Misc.parseInt(limit,0);
-        if ( tmp==0 ) {
+        int tmp = Misc.parseInt(limit, -2);
+        if ( tmp==-2 ) {
             Node node = user.getData().selectSingleNode("/data/settings/index_discussions");
             if ( node!=null )
                 node.getParent().remove(node);

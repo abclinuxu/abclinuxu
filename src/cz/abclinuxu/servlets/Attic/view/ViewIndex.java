@@ -52,13 +52,16 @@ public class ViewIndex extends AbcFMServlet {
         Category sw = (Category) persistance.findById(new Category(Constants.CAT_SOFTWARE));
         env.put(ViewIndex.VAR_SOFTWARE,sw.getContent());
 
-        Category forum = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
-        tools.sync(forum.getContent());
-        List discussions = tools.analyzeDiscussions(forum.getContent());
-        Sorters2.byDate(discussions, Sorters2.DESCENDING);
-        int limit = Math.min(getUserLimit(user),discussions.size());
-        Paging paging = new Paging(discussions.subList(0,limit),0,limit,discussions.size());
-        env.put(ViewIndex.VAR_FORUM,paging);
+        int userLimit = getUserLimit(user);
+        if ( userLimit!=0 ) {
+            Category forum = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
+            tools.sync(forum.getContent());
+            List discussions = tools.analyzeDiscussions(forum.getContent());
+            Sorters2.byDate(discussions, Sorters2.DESCENDING);
+            int limit = Math.min(userLimit, discussions.size());
+            Paging paging = new Paging(discussions.subList(0, limit), 0, limit, discussions.size());
+            env.put(ViewIndex.VAR_FORUM, paging);            
+        }
 
         return FMTemplateSelector.select("ViewIndex","show",env, request);
     }

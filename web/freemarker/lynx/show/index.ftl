@@ -66,20 +66,22 @@
 
 <#flush>
 
+<#if FORUM?exists>
 <p>
- <#global diskuse=TOOL.sublist(SORT.byDate(TOOL.analyzeDiscussions(FORUM.content),"DESCENDING"),0,15)>
- <b>Diskusní fórum:</b> výbìr ${diskuse?size} aktivních diskusí ze ${FORUM.content?size}<br>
- <#list diskuse as diz>
+ <b>Diskusní fórum:</b> výbìr ${FORUM.currentPage.size} aktivních diskusí ze ${FORUM.total}<br>
+ <#list FORUM.data as diz>
   ${DATE.show(diz.lastUpdate,"CZ_SHORT")}, ${diz.responseCount} odp. :
    <a href="/hardware/ViewRelation?relationId=${diz.relationId}">
    ${TOOL.limit(TOOL.xpath(diz.discussion,"data/title"),60," ..")}</a><br>
  </#list>
 </p>
 
-<ul>
- <li><a href="${URL.make("/hardware/EditDiscussion?action=addQuez&relationId=3739")}">Polo¾it nový dotaz</a>
- <li><a href="/History?type=discussions&from=0}&count=20">Listovat dotazy podle èasu vytvoøení</a>
- <li><a href="/hardware/ViewRelation?relationId=3739">Celé diskusní fórum</a>
-</ul>
+ <ul>
+  <li><a href="${URL.make("/hardware/EditDiscussion?action=addQuez&relationId=3739")}">Polo¾it nový dotaz</a>
+  <li><a href="/diskuse.jsp">Zobrazit celé diskusní fórum</a> (${FORUM.total} dotazù)
+  <li><a href="/History?type=discussions&from=${FORUM.nextPage?if_exists.row?if_exists}&count=20">
+   Listovat dotazy podle èasu vytvoøení</a>
+ </ul>
+</#if>
 
 <#include "../footer.ftl">

@@ -44,10 +44,10 @@
  <a href="${URL.make("/clanky/ViewCategory?relationId=3500")}">Po¾adavky
  (${VARS.counter.REQUESTS})</a>
 </p>
- 
+
 <p>
  <b>O serveru</b>
- <#list SORT.byName(ABCLINUXU) as rel>
+ <#list SORT.byName(ABCLINUXU.content) as rel>
   <a href="${URL.make("/clanky/ViewCategory?relationId="+rel.id)}">
   ${TOOL.childName(rel)}</a>,
  </#list>

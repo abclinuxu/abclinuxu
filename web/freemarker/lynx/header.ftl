@@ -33,7 +33,7 @@ ${DATE.show("CZ_FULL")}
 
 <p>
  <b>Rubriky</b>
- <#list SORT.byName(RUBRIKY) as rel>
+ <#list SORT.byName(RUBRIKY.content) as rel>
   <a href="${URL.make("/clanky/ViewCategory?relationId="+rel.id)}">
   ${TOOL.childName(rel)}</a><#if rel_has_next>,</#if>
  </#list>
