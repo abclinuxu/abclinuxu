@@ -72,6 +72,18 @@ public abstract class Persistance {
     public abstract List findByExample(List objects) throws PersistanceException;
 
     /**
+     * Searches persistant storage according to rules specified by <code>command</code>.
+     * Command syntax is Persistance's subclass specific (usually SQL). Each record
+     * will be stored as <code>returnType</code>, which may be any GenericObject's
+     * subclass or List.
+     * <p>
+     * <b>Warning!</b> Usage of this method requires deep knowledge of persistance
+     * (like database structure) and makes system less portable! You shall
+     * not use it, if it is possible.
+     */
+    public abstract List findByCommand(String command, Class returnType);
+
+    /**
      * Adds <code>obj</code> under <code>parent</code> in the object tree.
      */
     public abstract void addObjectToTree(GenericObject obj, GenericObject parent) throws PersistanceException;

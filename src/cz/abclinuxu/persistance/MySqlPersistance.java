@@ -253,6 +253,19 @@ public class MySqlPersistance extends Persistance {
     }
 
     /**
+     * Searches persistant storage according to rules specified by <code>command</code>.
+     * Command syntax is SQL. Each record will be stored as <code>returnType</code>,
+     * which may be any GenericObject's subclass or List.
+     * <p>
+     * <b>Warning!</b> Usage of this method requires deep knowledge of MySqlPersistance
+     * (like database structure) and makes system less portable! You shall
+     * not use it, if it is possible.
+     */
+    public List findByCommand(String command, Class returnType) {
+        return null;
+    }
+
+    /**
      * Adds <code>obj</code> under <code>parent</code> in the object tree.
      */
     public void addObjectToTree(GenericObject obj, GenericObject parent) throws PersistanceException {
@@ -1288,22 +1301,261 @@ public class MySqlPersistance extends Persistance {
         }
     }
 
+    /**
+     * Searches Item table for all rows, which match <code>item</code> and adds their references
+     * to <code>list</code>.
+     */
     protected void findItemByExample(Item item, List list) throws PersistanceException,SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+
+            StringBuffer sb = new StringBuffer("select cislo from polozka where ");
+            List conditions = new ArrayList();
+
+            if ( item.getOwner()!=0 ) {
+                sb.append("pridal=?");
+                conditions.add(new Integer(item.getOwner()));
+            }
+            if ( item.getData()!=null ) {
+                if ( conditions.size()>0 ) sb.append(" and ");
+                sb.append("data like ?");
+                conditions.add(item.getData());
+            }
+            int i=0;
+            if ( item instanceof Make ) i = 1;
+            else if ( item instanceof Article ) i = 2;
+            else if ( item instanceof Question ) i = 3;
+            else if ( item instanceof Request ) i = 4;
+            if ( i!=0 ) {
+                if ( conditions.size()>0 ) sb.append(" and ");
+                sb.append("typ=?");
+                conditions.add(new Integer(i));
+            }
+
+            PreparedStatement statement = con.prepareStatement(sb.toString());
+            for ( i=0; i<conditions.size(); i++ ) {
+                Object o = conditions.get(i);
+                statement.setObject(i+1,o);
+            }
+
+            ResultSet result = statement.executeQuery();
+            while ( result.next() ) {
+                list.add(new Item(result.getInt(1)));
+            }
+        } finally {
+            releaseSQLConnection(con);
+        }
     }
 
+    /**
+     * Searches Category table for all rows, which match <code>category</code> and adds their references
+     * to <code>list</code>.
+     */
     protected void findCategoryByExample(Category category, List list) throws PersistanceException,SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+
+            StringBuffer sb = new StringBuffer("select cislo from kategorie where ");
+            List conditions = new ArrayList();
+
+            if ( category.getOwner()!=0 ) {
+                sb.append("pridal=?");
+                conditions.add(new Integer(category.getOwner()));
+            }
+            if ( category.getData()!=null ) {
+                if ( conditions.size()>0 ) sb.append(" and ");
+                sb.append("data like ?");
+                conditions.add(category.getData());
+            }
+            if ( conditions.size()>0 ) sb.append(" and ");
+            sb.append("verejny like ?");
+            conditions.add(new Boolean(category.isOpen()));
+
+            PreparedStatement statement = con.prepareStatement(sb.toString());
+            for ( int i=0; i<conditions.size(); i++ ) {
+                Object o = conditions.get(i);
+                statement.setObject(i+1,o);
+            }
+
+            ResultSet result = statement.executeQuery();
+            while ( result.next() ) {
+                list.add(new Category(result.getInt(1)));
+            }
+        } finally {
+            releaseSQLConnection(con);
+        }
     }
 
+    /**
+     * Searches Data table for all rows, which match <code>data</code> and adds their references
+     * to <code>list</code>.
+     */
     protected void findDataByExample(Data data, List list) throws PersistanceException,SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+
+            StringBuffer sb = new StringBuffer("select cislo from objekty where ");
+            List conditions = new ArrayList();
+
+            if ( data.getOwner()!=0 ) {
+                sb.append("pridal=?");
+                conditions.add(new Integer(data.getOwner()));
+            }
+            if ( data.getFormat()!=null ) {
+                if ( conditions.size()>0 ) sb.append(" and ");
+                sb.append("format like ?");
+                conditions.add(data.getFormat());
+            }
+
+            PreparedStatement statement = con.prepareStatement(sb.toString());
+            for ( int i=0; i<conditions.size(); i++ ) {
+                Object o = conditions.get(i);
+                statement.setObject(i+1,o);
+            }
+
+            ResultSet result = statement.executeQuery();
+            while ( result.next() ) {
+                list.add(new Data(result.getInt(1)));
+            }
+        } finally {
+            releaseSQLConnection(con);
+        }
     }
 
+    /**
+     * Searches Link table for all rows, which match <code>link</code> and adds their references
+     * to <code>list</code>.
+     */
     protected void findLinkByExample(Link link, List list) throws PersistanceException,SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+
+            StringBuffer sb = new StringBuffer("select cislo from odkazy where ");
+            List conditions = new ArrayList();
+
+            if ( link.getServer()!=0 ) {
+                sb.append("server=?");
+                conditions.add(new Integer(link.getServer()));
+            }
+            if ( link.getText()!=null ) {
+                if ( conditions.size()>0 ) sb.append(" and ");
+                sb.append("nazev like ?");
+                conditions.add(link.getText());
+            }
+            if ( link.getUrl()!=null ) {
+                if ( conditions.size()>0 ) sb.append(" and ");
+                sb.append("url like ?");
+                conditions.add(link.getUrl());
+            }
+            if ( conditions.size()>0 ) sb.append(" and ");
+            sb.append("trvaly like ?");
+            conditions.add(new Boolean(link.isFixed()));
+
+            PreparedStatement statement = con.prepareStatement(sb.toString());
+            for ( int i=0; i<conditions.size(); i++ ) {
+                Object o = conditions.get(i);
+                statement.setObject(i+1,o);
+            }
+
+            ResultSet result = statement.executeQuery();
+            while ( result.next() ) {
+                list.add(new Data(result.getInt(1)));
+            }
+        } finally {
+            releaseSQLConnection(con);
+        }
     }
 
+    /**
+     * Searches Poll table for all rows, which match <code>poll</code> and adds their references
+     * to <code>list</code>.
+     */
     protected void findPollByExample(Poll poll, List list) throws PersistanceException,SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+
+            StringBuffer sb = new StringBuffer("select cislo from anketa where ");
+            List conditions = new ArrayList();
+
+            if ( poll.getText()!=null ) {
+                sb.append("otazka like ?");
+                conditions.add(poll.getText());
+            }
+            int i=0;
+            if ( poll instanceof Survey ) i = 1;
+            else if ( poll instanceof Rating ) i = 2;
+            if ( i!=0 ) {
+                if ( conditions.size()>0 ) sb.append(" and ");
+                sb.append("typ=?");
+                conditions.add(new Integer(i));
+            }
+
+            PreparedStatement statement = con.prepareStatement(sb.toString());
+            for ( i=0; i<conditions.size(); i++ ) {
+                Object o = conditions.get(i);
+                statement.setObject(i+1,o);
+            }
+
+            ResultSet result = statement.executeQuery();
+            while ( result.next() ) {
+                list.add(new Poll(result.getInt(1)));
+            }
+        } finally {
+            releaseSQLConnection(con);
+        }
     }
 
+    /**
+     * Searches User table for all rows, which match <code>user</code> and adds their references
+     * to <code>list</code>.
+     */
     protected void findUserByExample(User user, List list) throws PersistanceException,SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+
+            StringBuffer sb = new StringBuffer("select cislo from uzivatel where ");
+            List conditions = new ArrayList();
+
+            if ( user.getLogin()!=null ) {
+                sb.append("login like ?");
+                conditions.add(user.getLogin());
+            }
+            if ( user.getName()!=null ) {
+                if ( conditions.size()>0 ) sb.append(" and ");
+                sb.append("jmeno like ?");
+                conditions.add(user.getName());
+            }
+            if ( user.getEmail()!=null ) {
+                if ( conditions.size()>0 ) sb.append(" and ");
+                sb.append("email like ?");
+                conditions.add(user.getEmail());
+            }
+
+            PreparedStatement statement = con.prepareStatement(sb.toString());
+            for ( int i=0; i<conditions.size(); i++ ) {
+                Object o = conditions.get(i);
+                statement.setObject(i+1,o);
+            }
+
+            ResultSet result = statement.executeQuery();
+            while ( result.next() ) {
+                list.add(new User(result.getInt(1)));
+            }
+        } finally {
+            releaseSQLConnection(con);
+        }
     }
 
     public static void main(String[] args) throws Exception {
@@ -1313,31 +1565,6 @@ public class MySqlPersistance extends Persistance {
         long start = System.currentTimeMillis();
 
         for (j=0; j<100 ;j++) {
-            Record a = new HardwareRecord(0);
-            a.setOwner(1);
-            a.setData("hw a");
-            persistance.storeObject(a);
-
-            Record b = new SoftwareRecord(0);
-            b.setOwner(2);
-            b.setData("sw b");
-            persistance.storeObject(b);
-
-            Record c = new ArticleRecord(0);
-            c.setOwner(1);
-            c.setData("article c");
-            persistance.storeObject(c);
-
-            Record d = new SoftwareRecord(0);
-            d.setOwner(2);
-            d.setData("sw d");
-            persistance.storeObject(d);
-
-            persistance.addObjectToTree(b,a);
-            persistance.addObjectToTree(c,a);
-            persistance.addObjectToTree(c,d);
-
-            persistance.removeObject(a);
         }
         long end = System.currentTimeMillis();
         float avg = (end-start)/(float)j;
