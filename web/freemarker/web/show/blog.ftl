@@ -1,13 +1,26 @@
+<#import "../macros.ftl" as lib>
 <#assign intro=TOOL.xpath(BLOG,"//custom/intro")?default("UNDEF")>
 <#assign title=TOOL.xpath(BLOG,"//custom/title")?default("UNDEF")>
 <#assign owner=TOOL.createUser(BLOG.owner)>
 
 <#assign plovouci_sloupec>
     <#if title!="UNDEF">
-        <h1 class="st_nadpis" style="text-align: center"><a href="/blog/${BLOG.subType}">${title}</a></h1>
+        <h1 class="st_nadpis" style="text-align: center; margin: 0px; font-size: 120%;"><a href="/blog/${BLOG.subType}">${title}</a></h1>
     </#if>
     <#if intro!="UNDEF">${intro}</#if>
     <br>Autorem blogu je <a href="/Profile/${owner.id}">${owner.name}</a>
+
+    <hr>
+    <h2 style="text-align: center; margin: 0px; font-size: 110%;">Archiv</h2>
+    <#list BLOG_XML.data.archive.year as year>
+        <ul>
+        <#list year.month as month>
+            <li>
+                <a href="/blog/${BLOG.subType}/${year.@value}"><@lib.month month=month.@value/>${year.@value} (${month})</a>
+            </li>
+        </#list>
+        </ul>
+    </#list>
 
     <#if (USER?exists && USER.id==BLOG.owner) || (! USER?exists)>
         <div class="s_nad_h1"><div class="s_nad_pod_h1">
@@ -71,5 +84,6 @@ ${TOOL.xpath(STORY.child, "/data/content")}
 <#else>
     <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+STORY.id+"&amp;url="+url)}">Vlo¾it první komentáø</a>
 </#if>
+
 
 <#include "../footer.ftl">

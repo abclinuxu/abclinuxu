@@ -114,3 +114,19 @@
 </#macro>
 
 <#macro star value><#if (value>0.60)><img src="/images/site/star1.gif" alt="*"><#elseif (value<0.2)><img src="/images/site/star0.gif" alt="-"><#else><img src="/images/site/star5.gif" alt="+"></#if></#macro>
+
+<#macro month (month)>
+    <#if month=="1">leden
+    <#elseif month=="2">únor
+    <#elseif month=="3">bøezen
+    <#elseif month=="4">duben
+    <#elseif month=="5">kvìten
+    <#elseif month=="6">èerven
+    <#elseif month=="7">èervenec
+    <#elseif month=="8">srpen
+    <#elseif month=="9">záøí
+    <#elseif month=="10">øíjen
+    <#elseif month=="11">listopad
+    <#elseif month=="12">prosinec
+    </#if>
+</#macro>

@@ -29,6 +29,8 @@ import java.util.prefs.Preferences;
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
 import org.dom4j.Element;
+import org.dom4j.io.DOMWriter;
+import freemarker.ext.dom.NodeModel;
 
 /**
  * Display blogs.
@@ -38,6 +40,7 @@ public class ViewBlog implements AbcAction, Configurable {
 
     public static final String VAR_BLOG_RELATION = "REL_BLOG";
     public static final String VAR_BLOG = "BLOG";
+    public static final String VAR_BLOG_XML = "BLOG_XML";
     public static final String VAR_STORIES = "STORIES";
     public static final String VAR_STORY = "STORY";
     public static final String VAR_YEAR = "YEAR";
@@ -98,6 +101,7 @@ public class ViewBlog implements AbcAction, Configurable {
             Tools.sync(blog);
             env.put(VAR_BLOG_RELATION, blogRelation);
             env.put(VAR_BLOG, blog);
+            env.put(VAR_BLOG_XML, NodeModel.wrap((new DOMWriter().write(blog.getData()))));
 
             if (rid!=0)
                 return processStory(blogRelation, rid, request, response, env);
