@@ -24,8 +24,8 @@
    <td width="120" class="required">Kdo smí pøidávat polo¾ky</td>
    <td>
     <select name="open" tabindex="2">
-     <option value="yes"<#if PARAMS.open?if_exists=="yes"> SELECTED</#if>>Kdokoliv</option>
-     <option value="no"<#if PARAMS.open?if_exists!="yes"> SELECTED</#if>>Jen administrátor</option>
+     <option value="yes"<#if PARAMS.open?default("yes")=="yes"> SELECTED</#if>>Kdokoliv</option>
+     <option value="no"<#if PARAMS.open?default("yes")!="yes"> SELECTED</#if>>Jen administrátor</option>
     </select>
    </td>
   </tr>
