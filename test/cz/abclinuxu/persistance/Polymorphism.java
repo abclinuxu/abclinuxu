@@ -9,6 +9,7 @@
 package cz.abclinuxu.persistance;
 
 import cz.abclinuxu.data.*;
+import cz.abclinuxu.AbcException;
 
 public class Polymorphism {
     boolean rekurze;
@@ -38,17 +39,30 @@ public class Polymorphism {
 
     public void test(GenericObject object) {
         System.out.println("generic object");
-        if ( rekurze ) {
-            System.out.println("REKURZE!");
-            return;
-        }
-        rekurze = true;
-        test(object);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Polymorphism test = new Polymorphism();
         User user = new User();
         test.test(user);
+        System.out.println(test.getTable(user));
+        System.out.println(test.trest(user));
     }
+
+    public String trest(GenericObject obj) throws Exception{
+        return getTable(obj);
+    }
+
+
+    public String getTable(GenericObject obj) throws PersistanceException { return "generic";}
+    public String getTable(Record obj) throws PersistanceException   { return "zaznam";}
+    public String getTable(Item obj) throws PersistanceException     { return "polozka";}
+    public String getTable(Category obj) throws PersistanceException { return "kategorie";}
+    public String getTable(Relation obj) throws PersistanceException { return "strom";}
+    public String getTable(Data obj) throws PersistanceException     { return "objekt";}
+    public String getTable(Link obj) throws PersistanceException     { return "odkaz";}
+    public String getTable(Poll obj) throws PersistanceException     { return "anketa";}
+    public String getTable(User obj) throws PersistanceException     { return "uzivatel";}
+    public String getTable(Server obj) throws PersistanceException   { return "server";}
+    public String getTable(AccessRights obj) throws PersistanceException { return "pravo";}
 }
