@@ -223,6 +223,11 @@ public class EditUser extends AbcServlet {
             return getTemplate("edit/user.vm");
         }
 
+        User sessionUser = (User) ctx.get(VAR_USER);
+        if ( user.getId()==sessionUser.getId() ) {
+            sessionUser.synchronizeWith(user);
+        }
+
         addMessage("Zmìny byly ulo¾eny.",ctx, request.getSession());
         redirect("/Index",response,ctx);
         return null;
