@@ -58,5 +58,8 @@
     <copy todir="${deploy}">
       <fileset dir="${build}"/>
     </copy>
+    <copy todir="${deploy}/ikony">
+      <fileset dir="ikony"/>
+    </copy>
   </target>
 </project>
