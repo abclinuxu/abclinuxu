@@ -29,7 +29,7 @@
 
   <target name="clean">
 
-    <delete dir="${deploy}/WEB-INF/classes" />
+    <delete dir="${DEPLOY_ABCLINUXU}/WEB-INF/classes" />
 
   </target>
 
