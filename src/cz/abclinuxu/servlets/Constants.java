@@ -26,6 +26,7 @@ public interface Constants {
     public static final int CAT_DRIVERS = 13;
     public static final int CAT_AUTHORS = 247;
     public static final int CAT_REQUESTS = 256;
+    public static final int CAT_FORUM = 265;
 
     /** actual ids of selected relations in database */
     public static final int REL_POLLS = 250;
@@ -34,6 +35,7 @@ public interface Constants {
     public static final int REL_LINKS =  319;
     public static final int REL_ACTUAL_ARTICLES = 8;
     public static final int REL_REQUESTS =  3500;
+    public static final int REL_FORUM = 3739;
 
     SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     DateFormat defaultFormat = new SimpleDateFormat("d. M. yyyy HH:mm");

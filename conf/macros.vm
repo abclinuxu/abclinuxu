@@ -3,7 +3,9 @@
 #####
 
 #macro(sync $object)
-#if(!$object.isInitialized()) $PERSISTANCE.synchronize($object)#end
+#if($object)
+#if(!$object.isInitialized())$PERSISTANCE.synchronize($object)#end
+#end
 #end
 
 
@@ -129,15 +131,72 @@ $!UTIL.saveParams($PARAMS, [])
 
 #macro (showArticle $relation $last)
 #set($clanek=$relation.Child)
+#set($dizs=$UTIL.filterDiscussions($clanek.Content))
+#if($dizs.size()>0)#set($diz=$dizs.get(0).Child)#undef('dizs')#end
 #set($author=$UTIL.instantiate('User',$!UTIL.getXPath($clanek,'/data/author')))
 #sync($author)
+##
 <A CLASS="nadpis_out" HREF="$!URL.make("/clanky/ViewRelation?relationId=$relation.Id")">$!UTIL.getXPath($clanek,'/data/name')</A><BR>
 <SPAN CLASS="barva">$!UTIL.showDate($!UTIL.getXPath($clanek,'/data/published')) |
-<A HREF="mailto:$!author.Email">$!author.Name</A></SPAN>
+<A HREF="/Profile?userId=$!author.Id">$!author.Name</A></SPAN>
 <P class="perex_out">$!UTIL.getXPath($clanek,'/data/perex')</P>
-<SPAN CLASS="barva">Pøeèteno: $!PERSISTANCE.getCounterValue($clanek)x </SPAN>
+<SPAN CLASS="barva">Pøeèteno: $!PERSISTANCE.getCounterValue($clanek)x
+| Komentáøù:
+#if($diz)$diz.Content.size()#undef('diz')#else 0#end
+</SPAN>
 <P>
 <IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="---">
 #if($last)<BR><IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="---">#end
 <P>
+#end
+
+
+
+#####
+## Macro, that recursivly displays one thread
+#####
+
+#macro(thread $one $level $diz $relation)
+#set($space=$level*15)
+<div style="padding-left: $!{space}pt">
+#comment($one.Record $diz $relation)
+</div>
+#foreach($child in $one.List)
+#set($level2=$level+1)
+#thread($child $level2 $diz $relation)
+#end
+
+#end
+
+
+
+#####
+## Macros, that shows one reaction in discussion
+#####
+
+#macro(comment $reaction $diz $relation)
+<div class="diz_header">
+<span class="diz_header_prefix">Datum:</span> $!UTIL.showDate($reaction.Updated)<br/>
+#if($reaction.Owner!=0)
+#set($author=$UTIL.instantiate('User',$reaction.Owner))#sync($author)
+<span class="diz_header_prefix">Od:</span> <A HREF="/Profile?userId=$!author.Id">$!author.Name</A><br/>
+#else
+<span class="diz_header_prefix">Od:</span> $!UTIL.getXPath($reaction,'data/author')<br/>
+#end
+<span class="diz_header_prefix">Titulek:</span> $!UTIL.getXPath($reaction,'data/title')<p/>
+</div>
+$!UTIL.getXPath($reaction,'data/text')<p/>
+<a href="$!URL.make("/EditDiscussion?action=add&dizId=$!diz.Id&threadId=$!reaction.Id&relationId=$!relation.Id")">Odpovìdìt</a>
+<p/>
+#end
+
+
+
+#####
+## Macros, that deletes variable from context
+#####
+
+#macro(undef $name)
+#set($ctx=$req.getAttribute('CONTEXT'))
+#set($rqwty=$ctx.remove($name))
 #end

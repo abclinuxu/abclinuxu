@@ -75,8 +75,7 @@ public class Record extends GenericDataObject {
             case 1: sb.append("HardwareRecord");break;
             case 2: sb.append("SoftwareRecord");break;
             case 3: sb.append("ArticleRecord");break;
-            case 4: sb.append("DiscussionQuestion");break;
-            case 5: sb.append("DiscussionItem");break;
+            case 4: sb.append("DiscussionRecord");break;
             default: sb.append("Unknown Record");
         }
         sb.append(": id="+id);

@@ -66,6 +66,12 @@
     </servlet>
 
     <servlet>
+        <servlet-name>EditDiscussion</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.edit.EditDiscussion</servlet-class>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+
+    <servlet>
         <servlet-name>EditUser</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.edit.EditUser</servlet-class>
         <load-on-startup>3</load-on-startup>
@@ -182,6 +188,19 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EditCategory</servlet-name><url-pattern>/drivers/EditCategory</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>EditDiscussion</servlet-name><url-pattern>/hardware/EditDiscussion</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditDiscussion</servlet-name><url-pattern>/software/EditDiscussion</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditDiscussion</servlet-name><url-pattern>/clanky/EditDiscussion</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditDiscussion</servlet-name><url-pattern>/drivers/EditDiscussion</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

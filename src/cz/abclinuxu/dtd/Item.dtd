@@ -16,7 +16,7 @@
 <!ELEMENT editor (#PCDATA)> <!-- who approved this article -->
 
 <!-- Item.Discussion -->
-<!ELEMENT data (author?,text,url?,version?)>
+<!ELEMENT data (author?,text,title?)>
 <!ELEMENT author (#PCDATA)> <!-- unknow user's name -->
 <!ELEMENT title (#PCDATA)> <!-- title of this reaction, usually question -->
 <!ELEMENT text (#PCDATA)> <!-- its text -->

@@ -282,6 +282,26 @@ public class VelocityHelper {
     }
 
     /**
+     * Filters out every relation, which's child is not Discussion.
+     * @param relations List of relations, they shall be initialized.
+     * @return New list of relations, where each child is Discussion.
+     */
+    public List filterDiscussions(List relations) throws PersistanceException {
+        List list = new ArrayList(5);
+
+        for (Iterator iter = relations.iterator(); iter.hasNext();) {
+            Relation rel = (Relation) iter.next();
+            GenericObject child = rel.getChild();
+            if ( child instanceof Item ) {
+                sync(child);
+                if ( ((Item)child).getType()==Item.DISCUSSION ) list.add(rel);
+            }
+        }
+
+        return list;
+    }
+
+    /**
      * @return sublist of list, starting at <code>start</code> position and
      * having maximum <code>count</code> items. List can be shortened, if
      * IndexOutOfBounds would be thrown. It may even return null, if result
@@ -393,7 +413,7 @@ public class VelocityHelper {
     /**
      * Synchronizes objects in list.
      */
-    public void sync(List list) throws PersistanceException {
+    public void sync(Collection list) throws PersistanceException {
         Persistance persistance = PersistanceFactory.getPersistance();
 
         for (Iterator iter = list.iterator(); iter.hasNext();) {
@@ -432,5 +452,64 @@ public class VelocityHelper {
         } catch (NumberFormatException e) {
             return null;
         }
+    }
+
+    /**
+     * Converts Item with type==Discussion to tree structure. Tree is consisted from
+     * list of Discussion objects.
+     */
+    public List createDiscussionTree(GenericObject obj) throws PersistanceException {
+        if ( ! (obj instanceof Item) ) throw new IllegalArgumentException("Not an discussion: "+obj);
+        Item item = (Item) obj;
+        if ( item.getType()!=Item.DISCUSSION ) throw new IllegalArgumentException("Not an discussion: "+obj);
+
+        List top = new ArrayList(5);
+        Map map = new HashMap();
+
+        sync(obj.getContent());
+        List records = sortByIdAscending(obj.getContent());
+
+        for (Iterator iter = records.iterator(); iter.hasNext();) {
+            Record record = (Record) ((Relation)iter.next()).getChild();
+            Node node = record.getData().selectSingleNode("data/thread");
+            int upperId = (node==null)? 0:Integer.parseInt(node.getText());
+
+            Discussion upper = null;
+            if ( upperId!=0 ) upper = (Discussion) map.get(new Discussion(new Record(upperId,Record.DISCUSSION)));
+            Discussion created = null;
+
+            if ( upper!=null ) {
+                created = upper.add(record);
+            } else {
+                created = new Discussion(record);
+                top.add(created);
+            }
+
+            map.put(created,created);
+        }
+
+        return top;
+    }
+
+    /**
+     * Tests, whether specified object <code>obj</code> is instance of selected
+     * class <code>clazz</code> and if even if it belongs to certain <code>type</code>
+     * (for GenericDataObject subclasses). GenericObject <code>obj</code> shall be
+     * initialized.
+     */
+    public boolean is(GenericObject obj, String clazz, String type) {
+        if ( "Item".equalsIgnoreCase(clazz) ) {
+            if ( ! (obj instanceof Item) ) return false;
+            if ( type==null ) return true;
+            switch (((Item)obj).getType()) {
+                case 1: return "Make".equalsIgnoreCase(type);
+                case 2: return "Article".equalsIgnoreCase(type);
+                case 3: return "Discussion".equalsIgnoreCase(type);
+                case 4: return "Request".equalsIgnoreCase(type);
+                case 5: return "Driver".equalsIgnoreCase(type);
+                default: return false;
+            }
+        }
+        return false;
     }
 }

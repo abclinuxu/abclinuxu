@@ -195,7 +195,7 @@ public class AbcServlet extends VelocityServlet {
         }
 
         String login = (String) request.getParameter(AbcServlet.PARAM_LOG_USER);
-        if ( login!=null ) {
+        if ( login!=null && login.length()>0 ) {
             User tmpUser = new User(); tmpUser.setLogin(login);
             List searched = new ArrayList(); searched.add(tmpUser);
 

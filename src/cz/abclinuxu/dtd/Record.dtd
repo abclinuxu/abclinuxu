@@ -27,4 +27,4 @@
 <!ELEMENT author (#PCDATA)> <!-- unknow user's name -->
 <!ELEMENT title (#PCDATA)> <!-- title of this reaction -->
 <!ELEMENT text (#PCDATA)> <!-- its text -->
-<!ELEMENT upper (#PCDATA)> <!-- int, id of previous Record.Discussion -->
+<!ELEMENT thread (#PCDATA)> <!-- int, id of parental Record.Discussion -->

@@ -29,7 +29,10 @@ public class FixRecords {
         }
     }
 
-    public static String fixLines(String str) {
+    /**
+     * @deprecated Don't use it outside of this class!
+     */
+    static String fixLines(String str) {
         if ( str==null ) return null;
         if ( (str.indexOf("<")!=-1)&&(str.indexOf(">")!=-1) ) return str;
 
