@@ -71,9 +71,18 @@ public class ViewCategory extends AbcServlet {
         UrlUtils urlUtils = (UrlUtils) ctx.get(AbcServlet.VAR_URL_UTILS);
         tmp = urlUtils.getPrefix();
 
-        if ( relation!=null && relation.getId()==Constants.REL_POLLS ) return getTemplate("view/ankety.vm");
-        if ( relation!=null && relation.getId()==Constants.REL_REQUESTS ) return getTemplate("view/requests.vm");
+        if ( relation!=null ) {
+            switch (relation.getId()) {
+                case Constants.REL_POLLS: return getTemplate("view/ankety.vm");
+                case Constants.REL_REQUESTS: return getTemplate("view/requests.vm");
+            }
+        } else {
+            switch ( category.getId() ) {
+                case Constants.CAT_ARTICLES: return getTemplate("view/rubriky.vm");
+                case Constants.CAT_ABC: return getTemplate("view/rubriky.vm");
+            }
+        }
         if ( UrlUtils.PREFIX_CLANKY.equals(tmp) ) return getTemplate("view/clanky.vm");
-        else return getTemplate("view/category.vm");
+        return getTemplate("view/category.vm");
     }
 }
