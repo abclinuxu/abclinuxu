@@ -59,7 +59,7 @@ public final class Guard {
             Class clazz = (Class) param;
             Category category = (Category) subject;
 
-            // owner may add anything with category
+            // owner may add anything to category
             if ( category.getOwner()==actor.getId() ) return ACCESS_OK;
             // subcategory may add only admin or owner
             if ( clazz==Category.class ) return ACCESS_DENIED;

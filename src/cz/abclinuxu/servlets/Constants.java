@@ -30,6 +30,7 @@ public interface Constants {
     /** actual ids of selected relations in database */
     public static final int REL_POLLS = 250;
     public static final int REL_AUTHORS = 314;
+    public static final int REL_DRIVERS = 318;
     public static final int REL_LINKS =  319;
     public static final int REL_ACTUAL_ARTICLES = 8;
     public static final int REL_REQUESTS =  3500;

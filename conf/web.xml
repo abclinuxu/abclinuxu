@@ -100,6 +100,12 @@
     </servlet>
 
     <servlet>
+        <servlet-name>EditDriver</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.edit.EditDriver</servlet-class>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+
+    <servlet>
         <servlet-name>SelectIcon</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.view.SelectIcon</servlet-class>
         <load-on-startup>4</load-on-startup>
@@ -127,6 +133,9 @@
     <servlet-mapping>
         <servlet-name>ViewCategory</servlet-name><url-pattern>/clanky/ViewCategory</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewCategory</servlet-name><url-pattern>/drivers/ViewCategory</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>ViewItem</servlet-name><url-pattern>/hardware/ViewItem</url-pattern>
@@ -136,6 +145,9 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ViewItem</servlet-name><url-pattern>/clanky/ViewItem</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewItem</servlet-name><url-pattern>/drivers/ViewItem</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -147,6 +159,9 @@
     <servlet-mapping>
         <servlet-name>ViewRelation</servlet-name><url-pattern>/clanky/ViewRelation</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewRelation</servlet-name><url-pattern>/drivers/ViewRelation</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>EditCategory</servlet-name><url-pattern>/hardware/EditCategory</url-pattern>
@@ -156,6 +171,9 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EditCategory</servlet-name><url-pattern>/clanky/EditCategory</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditCategory</servlet-name><url-pattern>/drivers/EditCategory</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -171,6 +189,10 @@
     </servlet-mapping>
 
     <servlet-mapping>
+        <servlet-name>EditDriver</servlet-name><url-pattern>/drivers/EditItem</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>EditPoll</servlet-name><url-pattern>/hardware/EditPoll</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
@@ -178,6 +200,9 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EditPoll</servlet-name><url-pattern>/clanky/EditPoll</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EditPoll</servlet-name><url-pattern>/drivers/EditPoll</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EditPoll</servlet-name><url-pattern>/EditPoll</url-pattern>

@@ -15,14 +15,21 @@
 <!ELEMENT revisor (#PCDATA)> <!-- who checked grammar and spelling -->
 <!ELEMENT editor (#PCDATA)> <!-- who approved this article -->
 
-<!-- Record.Discussion -->
+<!-- Item.Discussion -->
 <!ELEMENT data (author?,text,url?,version?)>
 <!ELEMENT author (#PCDATA)> <!-- unknow user's name -->
 <!ELEMENT title (#PCDATA)> <!-- title of this reaction, usually question -->
 <!ELEMENT text (#PCDATA)> <!-- its text -->
 
-<!-- Record.Request -->
+<!-- Item.Request -->
 <!ELEMENT data (author?,text,email?)>
 <!ELEMENT author (#PCDATA)> <!-- unknow user's name -->
 <!ELEMENT email (#PCDATA)> <!-- title of this reaction, usually question -->
 <!ELEMENT text (#PCDATA)> <!-- its text -->
+
+<!-- Item.Driver -->
+<!ELEMENT data (name,version,url,note?)>
+<!ELEMENT name (#PCDATA)> <!-- unknow user's name -->
+<!ELEMENT version (#PCDATA)> <!-- title of this reaction, usually question -->
+<!ELEMENT url (#PCDATA)> <!-- its text -->
+<!ELEMENT note (#PCDATA)> <!-- its text -->

@@ -56,7 +56,7 @@ public class ViewItem extends AbcServlet {
         VelocityHelper helper = new VelocityHelper();
         helper.sortByDateDescending(item.getContent());
 
-        if ( record==null ) {
+        if ( record==null && item.getType()!=Item.DRIVER ) {
             for (Iterator iter = item.getContent().iterator(); iter.hasNext();) {
                 Relation rel = (Relation) iter.next();
                 if ( rel.getChild() instanceof Record ) {
@@ -67,7 +67,7 @@ public class ViewItem extends AbcServlet {
         }
 
         ctx.put(VAR_ITEM,item);
-        ctx.put(VAR_RECORD,record);
+        if ( record!=null ) ctx.put(VAR_RECORD,record);
         ctx.put(VAR_UPPER,upper);
 
         if ( item.getType()==Item.MAKE ) {
@@ -77,6 +77,7 @@ public class ViewItem extends AbcServlet {
             }
         }
         if ( item.getType()==Item.ARTICLE ) return getTemplate("view/article.vm");
+        if ( item.getType()==Item.DRIVER ) return getTemplate("view/drvitem.vm");
         return null;
     }
 }

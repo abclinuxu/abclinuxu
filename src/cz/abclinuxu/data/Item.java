@@ -17,6 +17,8 @@ public class Item extends GenericDataObject {
     public static final int DISCUSSION = 3;
     /** User's request to administrators. */
     public static final int REQUEST = 4;
+    /** driver information */
+    public static final int DRIVER = 5;
 
     /** Specifies type of Item. You must set it, before you stores it with Persistance! */
     int type = 0;
@@ -66,6 +68,7 @@ public class Item extends GenericDataObject {
             case 2: sb.append("Article");break;
             case 3: sb.append("Discussion");break;
             case 4: sb.append("Request");break;
+            case 5: sb.append("Driver");break;
             default: sb.append("Unknown Item");
         }
         sb.append(": id="+id);
