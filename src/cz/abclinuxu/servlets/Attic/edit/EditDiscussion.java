@@ -202,7 +202,7 @@ public class EditDiscussion extends AbcServlet {
 
         tmp = (String) params.get(PARAM_TEXT);
         if ( tmp!=null && tmp.length()>0 ) {
-            tmp = TextUtils.fixLines(tmp);
+            tmp = VelocityHelper.fixLines(tmp);
             root.addElement("text").setText(tmp);
         } else {
             addError(PARAM_TEXT,"Zadejte text va¹eho pøíspìvku!",ctx,null);
@@ -286,7 +286,7 @@ public class EditDiscussion extends AbcServlet {
 
         tmp = (String) params.get(PARAM_TEXT);
         if ( tmp!=null && tmp.length()>0 ) {
-            tmp = TextUtils.fixLines(tmp);
+            tmp = VelocityHelper.fixLines(tmp);
             root.addElement("text").setText(tmp);
         } else {
             addError(PARAM_TEXT,"Zadejte text va¹eho dotazu!",ctx,null);
