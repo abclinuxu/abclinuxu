@@ -44,6 +44,7 @@ public class ViewUser extends AbcFMServlet {
     public static final String ACTION_SEND_EMAIL = "sendEmail";
     public static final String ACTION_FINISH_SEND_EMAIL = "sendEmail2";
     public static final String ACTION_SHOW_CONTENT = "showContent";
+    public static final String ACTION_SHOW_MY_PROFILE = "showMyPage";
 
     public static final String CONTENT_HARDWARE = "hardware";
     public static final String CONTENT_SOFTWARE = "software";
@@ -68,12 +69,19 @@ public class ViewUser extends AbcFMServlet {
             return handleLogin(request,env);
         } else if ( action.equals(ACTION_LOGIN2) ) {
             return handleLogin2(request,response,env);
-        } else if ( action.equals(ACTION_SEND_EMAIL) ) {
-            return handleSendEmail(request,env);
-        } else if ( action.equals(ACTION_FINISH_SEND_EMAIL) ) {
-            return handleSendEmail2(request,response,env);
         } else if ( action.equals(ACTION_SHOW_CONTENT) ) {
             return handleShowContent(request,env);
+        } else if ( action.equals(ACTION_SHOW_MY_PROFILE) ) {
+            User user = (User) env.get(Constants.VAR_USER);
+            User managed = (User) InstanceUtils.instantiateParam(PARAM_USER, User.class, params);
+            if ( user.getId()!=managed.getId() && !user.isAdmin() )
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+            else
+                return handleMyProfile(request,env);
+        } else if (action.equals(ACTION_SEND_EMAIL)) {
+            return handleSendEmail(request, env);
+        } else if (action.equals(ACTION_FINISH_SEND_EMAIL)) {
+            return handleSendEmail2(request, response, env);
         }
 
         return handleProfile(request,env);
@@ -90,9 +98,19 @@ public class ViewUser extends AbcFMServlet {
         persistance.synchronize(user);
         env.put(VAR_PROFILE,user);
 
-        User loggedIn = (User) env.get(Constants.VAR_USER);
-        if ( ! user.equals(loggedIn) ) // other user is lookig at profile
-            return FMTemplateSelector.select("ViewUser","profile",env,request);
+        return FMTemplateSelector.select("ViewUser","profile",env,request);
+    }
+
+    /**
+     * shows profile of logged in user
+     */
+    protected String handleMyProfile(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        User user = (User) InstanceUtils.instantiateParam(PARAM_USER,User.class,params);
+        persistance.synchronize(user);
+        env.put(VAR_PROFILE,user);
 
         return FMTemplateSelector.select("ViewUser","myProfile",env,request);
     }
@@ -106,7 +124,7 @@ public class ViewUser extends AbcFMServlet {
 
     /**
      * handle login submit
-     * @todo investigate, why after log in there is a login dialog
+     * todo investigate, why after log in there is a login dialog
      */
     protected String handleLogin2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         if ( env.get(Constants.VAR_USER)!=null ) {

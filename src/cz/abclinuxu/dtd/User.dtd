@@ -14,10 +14,11 @@ verze 2.0
 <!ELEMENT newsletter (#PCDATA)> <!-- yes or no, pravidelny mesicnik -->
 <!ELEMENT weekly_summary (#PCDATA)> <!-- yes or no, tydenni sumar clanku a zajimavosti -->
 
-<!ELEMENT profile (my_page?,about_myself?,home_page?,distributions?,linux_user_from_year?)>
+<!ELEMENT profile (my_page?,about_myself?,home_page?,photo?,distributions?,linux_user_from_year?)>
 <!ELEMENT my_page (#PCDATA)> <!-- kompletni obsah osobni stranky -->
 <!ELEMENT about_myself (#PCDATA)> <!-- popis uzivatele -->
 <!ELEMENT home_page (#PCDATA)> <!-- URL domovske stranky -->
+<!ELEMENT photo (#PCDATA)> <!-- URL fotky uzivatele -->
 <!ELEMENT linux_user_from_year (#PCDATA)> <!-- YYYY, od kdy pouziva linux -->
 <!ELEMENT distributions (distribution)> <!-- ktere distribuce pouziva(l) -->
 <!ELEMENT distribution (#PCDATA)> <!-- jmeno distribuce -->
@@ -27,8 +28,9 @@ verze 2.0
 <!ELEMENT login_cookie_validity (#PCDATA)> <!-- integer, doba platnosti prihlasovaci cookie -->
 
 
-<!ELEMENT system (registration_date?)>
+<!ELEMENT system (registration_date?,last_login_date?)>
 <!ELEMENT registration_date (#PCDATA)> <!-- ISO format, kdy se zaregistroval -->
+<!ELEMENT last_login_date (#PCDATA)> <!-- ISO format, kdy se naposledy prihlasil -->
 
 
 
