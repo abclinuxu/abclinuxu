@@ -19,9 +19,10 @@ import java.util.Map;
 import org.dom4j.Element;
 import org.dom4j.DocumentHelper;
 import org.dom4j.io.XMLWriter;
+import org.apache.regexp.RE;
 
 /**
- * Miscalenous tests.
+ * Miscallenous tests.
  */
 public class VariousTest extends TestCase {
     static {
@@ -38,8 +39,23 @@ public class VariousTest extends TestCase {
         return suite;
     }
 
-    public static void main(String[] args) {
-        TestRunner.run(suite());
+    public static void main(String[] args) throws Exception {
+//        TestRunner.run(suite());
+        VariousTest variousTest = new VariousTest(null);
+        variousTest.testRegexpSubst();
+    }
+
+    public void testRegexpSubst() throws Exception {
+//        String s = "http://localhost:8080/clanky/ViewRelation?relationId=53458";
+//        String s = "http://localhost:8080/clanky/ViewRelation?rid=53458";
+        String s = "http://localhost:8080/";
+//        String pattern = "(ViewRelation?relationId=)([\\d]+)";
+//        String pattern = "ViewRelation\\?(relationId|rid)=";
+        String pattern = "/$";
+        String replace = "show/";
+        RE re = new RE(pattern);
+        String result = re.subst(s, replace, RE.REPLACE_FIRSTONLY);
+        System.out.println("result = "+result);
     }
 
     /**

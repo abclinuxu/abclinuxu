@@ -99,7 +99,7 @@ public abstract class AbcFMServlet extends HttpServlet implements AbcAction {
      * If URL is deprecated, redirect browser to correct location.
      * @return true, if browser has been redirected.
      */
-    private boolean fixDeprecatedURL(HttpServletRequest request, HttpServletResponse response) {
+    private boolean fixDeprecatedURL(HttpServletRequest request, HttpServletResponse response) throws IOException {
         return urlMapper.redirectDeprecated(request, response);
     }
 
