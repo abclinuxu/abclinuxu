@@ -171,14 +171,18 @@ public class TemplateSelector {
         String browser = request.getHeader("user-agent");
         if ( browser==null )
             return BROWSER_UNKNOWN;
-        if ( reExplorer.match(browser) )
-            return BROWSER_EXPLORER;
-        if ( reLynx.match(browser) )
-            return BROWSER_LYNX;
-        if ( rePlucker.match(browser) )
-            return BROWSER_PLUCKER;
-        if ( reWget.match(browser) )
-            return BROWSER_MIRROR;
+        try {
+            if ( reExplorer.match(browser) )
+                return BROWSER_EXPLORER;
+            if ( reLynx.match(browser) )
+                return BROWSER_LYNX;
+            if ( rePlucker.match(browser) )
+                return BROWSER_PLUCKER;
+            if ( reWget.match(browser) )
+                return BROWSER_MIRROR;
+        } catch (Exception e) {
+            log.warn("Error on parsing User Agent '"+browser+"' ! "+e.getMessage());
+        }
         return BROWSER_UNKNOWN;
     }
 
