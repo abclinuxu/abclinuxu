@@ -6,24 +6,26 @@
  */
 package cz.abclinuxu.servlets.utils;
 
-import org.apache.velocity.context.Context;
-import org.apache.log4j.Logger;
-import org.dom4j.DocumentHelper;
-
-import javax.servlet.http.*;
-import java.util.*;
-import java.io.UnsupportedEncodingException;
-
-import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.Tools;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.data.AccessRights;
+import cz.abclinuxu.data.GenericObject;
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.User;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceException;
-import cz.abclinuxu.data.User;
-import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.GenericObject;
-import cz.abclinuxu.data.AccessRights;
+import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.utils.Misc;
+import org.apache.log4j.Logger;
+import org.apache.velocity.context.Context;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Node;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
 
 /**
  * Class to hold useful methods related to servlets
@@ -66,9 +68,13 @@ public class ServletUtils {
             } else {
                 List list = new ArrayList(values.length);
                 for (int i = 0; i < values.length; i++) {
-                    String value = values[i];
-                    try { value = new String(value.getBytes("ISO-8859-1")); } catch (UnsupportedEncodingException e) {}
-                    list.add(value.trim());
+                    String value = values[i].trim();
+                    if (value.length()==0)
+                        continue;
+                    try {
+                        value = new String(value.getBytes("ISO-8859-1"));
+                    } catch (UnsupportedEncodingException e) {}
+                    list.add(value);
                 }
                 map.put(name,list);
             }
@@ -168,9 +174,6 @@ public class ServletUtils {
             return;
         }
 
-        session.setAttribute(Constants.VAR_USER,user);
-        env.put(Constants.VAR_USER,user);
-
         // todo: remove it, when new security model is finished
         for ( Iterator iter = user.getContent().iterator(); iter.hasNext(); ) {
             GenericObject obj = ((Relation) iter.next()).getChild();
@@ -179,6 +182,9 @@ public class ServletUtils {
                 user.setAdmin(((AccessRights)obj).isAdmin());
             }
         }
+
+        session.setAttribute(Constants.VAR_USER, user);
+        env.put(Constants.VAR_USER, user);
     }
 
     /**
@@ -289,8 +295,10 @@ public class ServletUtils {
         PersistanceFactory.getPersistance().update(user);
 
         if ( !cookieExists ) {
-            String tmp = Tools.xpath(user,"/data/settings/login_cookie_validity");
-            int valid = Misc.parseInt(tmp, 6 * 30 * 24 * 3600); // six months
+            int valid = 6*30*24*3600; // six months
+            Node node = user.getData().selectSingleNode("/data/settings/cookie_valid");
+            if ( node!=null )
+                valid = Misc.parseInt(node.getText(), valid);
             if ( valid!=0 ) {
                 Cookie cookie = new LoginCookie(user).getCookie();
                 cookie.setMaxAge(valid);
