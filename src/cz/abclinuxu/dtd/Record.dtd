@@ -1,11 +1,13 @@
 
 <!-- Record.ARTICLE -->
-<!ELEMENT data (name?,icon?,content,part?)>
+<!ELEMENT data (name?,content+,related?,resources?)>
 <!ELEMENT name (#PCDATA)> <!-- if Article is divided into several ArticleRecords, use it to give name to each one -->
-<!ELEMENT icon (#PCDATA)> <!-- absolute path including protocol, or relative path to icon directory -->
 <!ELEMENT content (#PCDATA)> <!-- content of the article (or its part) -->
-<!ELEMENT part (#PCDATA)> <!-- part of the article (for multiple records per one article), starting at 0 -->
-
+<!ATTLIST content title (#PCDATA) #OPTIONAL> <!-- if there are multiple pages, you must name them -->
+<!ELEMENT related (link+)> <!-- related articles on portal -->
+<!ELEMENT resources (link+)> <!-- related resources outside of portal -->
+<!ELEMENT link (#PCDATA)> <!-- contains text of link -->
+<!ATTLIST link url (#PCDATA) #REQUIRED> <!-- URL of resource or article -->
 
 <!-- Record.HARDWARE -->
 <!ELEMENT data (os,price?,driver?,settings?,params?,identification?,note?)>

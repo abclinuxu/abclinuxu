@@ -6,7 +6,7 @@
 
 
 <!-- Item.ARTICLE -->
-<!ELEMENT data (name,icon?,perex,author,published,revisor?,editor?)>
+<!ELEMENT data (name,icon?,perex,author,published,revisor?,editor?,forbid_discussions?)>
 <!ELEMENT name (#PCDATA)> <!-- title of the Article -->
 <!ELEMENT icon (#PCDATA)> <!-- absolute path including protocol, or relative path to icon directory -->
 <!ELEMENT perex (#PCDATA)> <!-- description of the article -->
@@ -14,6 +14,7 @@
 <!ELEMENT published (#PCDATA)> <!-- ISO representation of day and time, when this article has been published -->
 <!ELEMENT revisor (#PCDATA)> <!-- who checked grammar and spelling -->
 <!ELEMENT editor (#PCDATA)> <!-- who approved this article -->
+<!ELEMENT forbid_discussions (#PCDATA)> <!-- yes will prohibit discussions to this article -->
 
 <!-- Item.Discussion -->
 <!ELEMENT data (author?,text,title?)>

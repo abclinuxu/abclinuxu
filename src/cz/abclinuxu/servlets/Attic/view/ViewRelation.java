@@ -97,7 +97,11 @@ public class ViewRelation extends AbcFMServlet {
             record = (Record) relation.getChild();
         }
 
-        Tools.sync(item); env.put(VAR_ITEM,item);
+        Tools.sync(item);
+        env.put(VAR_ITEM, item);
+        if ( item.getType()==Item.ARTICLE )
+            return ShowArticle.show(request, env, item);
+
         Tools.sync(upper); env.put(VAR_UPPER,upper);
 
         if ( item.getType()==Item.DISCUSSION ) {
@@ -108,9 +112,6 @@ public class ViewRelation extends AbcFMServlet {
 
         Map children = Tools.groupByType(item.getContent());
         env.put(VAR_CHILDREN_MAP,children);
-
-        if ( item.getType()==Item.ARTICLE )
-            return FMTemplateSelector.select("ViewRelation","article",env, request);
 
         if ( record==null ) {
             List records = (List) children.get(Constants.TYPE_RECORD);

@@ -18,6 +18,10 @@ import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.PersistanceException;
 
 import org.dom4j.*;
+import org.apache.regexp.RE;
+import org.apache.regexp.RESyntaxException;
+import org.apache.regexp.StringCharacterIterator;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -36,6 +40,9 @@ public class EditArticle extends AbcFMServlet {
     public static final String PARAM_CONTENT = "content";
     public static final String PARAM_PUBLISHED = "published";
     public static final String PARAM_AUTHOR = "authorId";
+    public static final String PARAM_FORBID_DISCUSSIONS = "forbid_discussions";
+    public static final String PARAM_RELATED_ARTICLES = "related";
+    public static final String PARAM_RESOURCES = "resources";
 
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_AUTHORS = "AUTHORS";
@@ -45,6 +52,14 @@ public class EditArticle extends AbcFMServlet {
     public static final String ACTION_EDIT_ITEM = "edit";
     public static final String ACTION_EDIT_ITEM_STEP2 = "edit2";
 
+    private static RE reBreak;
+    static {
+        try {
+            reBreak = new RE("<page title=\"([^\"]+)\">", RE.MATCH_SINGLELINE);
+        } catch (RESyntaxException e) {
+            log.fatal("Cannot compile regular expression!",e);
+        }
+    }
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -109,65 +124,29 @@ public class EditArticle extends AbcFMServlet {
         Relation upper = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
 
-        boolean error = false;
-        Date publish = null;
-
-        String name = (String) params.get(PARAM_TITLE);
-        if ( name==null || name.length()==0 ) {
-            ServletUtils.addError(PARAM_TITLE,"Vyplòte titulek èlánku!",env,null); error = true;
-        }
-
-        /** todo: support for author not listed in section Authors */
-        User author = (User) InstanceUtils.instantiateParam(PARAM_AUTHOR,User.class,params);
-        if ( author==null ) {
-            ServletUtils.addError(PARAM_AUTHOR,"Vyberte autora!",env,null); error = true;
-        } else {
-            persistance.synchronize(author);
-        }
-
-        String perex = (String) params.get(PARAM_PEREX);
-        if ( perex==null || perex.length()==0 ) {
-            ServletUtils.addError(PARAM_PEREX,"Vyplòte popis èlánku!",env,null); error = true;
-        }
-
-        String content = (String) params.get(PARAM_CONTENT);
-        if ( content==null || content.length()==0 ) {
-            ServletUtils.addError(PARAM_CONTENT,"Vyplòte obsah èlánku!",env,null); error = true;
-        }
-
-        try {
-            publish = Constants.isoFormat.parse((String) params.get(PARAM_PUBLISHED));
-        } catch (ParseException e) {
-            ServletUtils.addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",env,null); error = true;
-        }
-
-        if ( error ) {
-            addAuthors(env);
-            return actionAddStep1(request,env);
-        }
-
-        Document document = DocumentHelper.createDocument();
-        Element root = document.addElement("data");
-        root.addElement("name").addText(name);
-        root.addElement("author").addText(""+author.getId());
-        root.addElement("editor").addText(""+user.getId());
-        root.addElement("revisor").addText(""+user.getId());
-        root.addElement("perex").addText(perex);
-
-
         Item item = new Item(0,Item.ARTICLE);
-        item.setData(document);
+        item.setData(DocumentHelper.createDocument());
         item.setOwner(user.getId());
-        item.setCreated(publish);
-
-        document = DocumentHelper.createDocument();
-        root = document.addElement("data");
-        root.addElement("content").addText(content);
-        root.addElement("part").addText("1");
 
         Record record = new Record(0,Record.ARTICLE);
-        record.setData(document);
+        record.setData(DocumentHelper.createDocument());
         record.setOwner(user.getId());
+
+        boolean canContinue = true;
+        canContinue &= setTitle(params, item, env);
+        canContinue &= setAuthor(params, item, env);
+        canContinue &= setEditor(item, env);
+        canContinue &= setPerex(params, item, env);
+        canContinue &= setPublishDate(params, item, env);
+        canContinue &= setForbidDiscussions(params, item);
+        canContinue &= setArticleContent(params, record, env);
+        canContinue &= setRelatedArticles(params, record, env);
+        canContinue &= setResources(params, record, env);
+
+        if ( !canContinue ) {
+            addAuthors(env);
+            return FMTemplateSelector.select("EditArticle", "edit", env, request);
+        }
 
         try {
             persistance.create(item);
@@ -181,7 +160,8 @@ public class EditArticle extends AbcFMServlet {
             return null;
         } catch (PersistanceException e) {
             ServletUtils.addError(Constants.ERROR_GENERIC,e.getMessage(),env, null);
-            return actionAddStep1(request,env);
+            addAuthors(env);
+            return FMTemplateSelector.select("EditArticle", "edit", env, request);
         }
     }
 
@@ -192,20 +172,28 @@ public class EditArticle extends AbcFMServlet {
         Item item = (Item) relation.getChild();
         Document document = item.getData();
 
-        Node node = document.selectSingleNode("data/name");
-        params.put(PARAM_TITLE,node.getText());
-        node = document.selectSingleNode("data/perex");
-        if ( node!=null ) params.put(PARAM_PEREX,node.getText());
-        params.put(PARAM_PUBLISHED,item.getCreated());
-        node = document.selectSingleNode("data/author");
+        Node node = document.selectSingleNode("/data/name");
+        if ( node!=null )
+            params.put(PARAM_TITLE,node.getText());
+        node = document.selectSingleNode("/data/perex");
+        if ( node!=null )
+            params.put(PARAM_PEREX,node.getText());
+        params.put(PARAM_PUBLISHED, Constants.isoFormat.format(item.getCreated()));
+        node = document.selectSingleNode("/data/author");
         params.put(PARAM_AUTHOR,node.getText());
+        node = document.selectSingleNode("/data/forbid_discussions");
+        if ( node!=null && "yes".equals(node.getText()) )
+            params.put(PARAM_FORBID_DISCUSSIONS, node.getText());
 
         Relation child = InstanceUtils.findFirstChildRecordOfType(item,Record.ARTICLE);
         Record record = (Record) child.getChild();
-        node = record.getData().selectSingleNode("data/content");
-        params.put(PARAM_CONTENT,node.getText());
+        document = record.getData();
 
         addAuthors(env);
+        addArticleContent(document, params);
+        addLinks(document, "/data/related/link", params, PARAM_RELATED_ARTICLES);
+        addLinks(document, "/data/resources/link", params, PARAM_RESOURCES);
+
         return FMTemplateSelector.select("EditArticle","edit",env,request);
     }
 
@@ -214,55 +202,27 @@ public class EditArticle extends AbcFMServlet {
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation upper = (Relation) env.get(VAR_RELATION);
 
-        boolean error = false;
-        Date publish = null;
+        Item item = (Item) upper.getChild();
+        Relation child = InstanceUtils.findFirstChildRecordOfType(item, Record.ARTICLE);
+        Record record = (Record) child.getChild();
 
-        String name = (String) params.get(PARAM_TITLE);
-        if ( name==null || name.length()==0 ) {
-            ServletUtils.addError(PARAM_TITLE,"Vyplòte titulek èlánku!",env,null); error = true;
-        }
+        boolean canContinue = true;
+        canContinue &= setTitle(params, item, env);
+        canContinue &= setAuthor(params, item, env);
+        canContinue &= setEditor(item, env);
+        canContinue &= setPerex(params, item, env);
+        canContinue &= setPublishDate(params, item, env);
+        canContinue &= setForbidDiscussions(params, item);
+        canContinue &= setArticleContent(params, record, env);
+        canContinue &= setRelatedArticles(params, record, env);
+        canContinue &= setResources(params, record, env);
 
-        /** todo: support for author not listed in section Authors */
-        User author = (User) InstanceUtils.instantiateParam(PARAM_AUTHOR,User.class,params);
-        if ( author==null ) {
-            ServletUtils.addError(PARAM_AUTHOR,"Vyberte autora!",env,null); error = true;
-        } else {
-            persistance.synchronize(author);
-        }
-
-        String perex = (String) params.get(PARAM_PEREX);
-        if ( perex==null || perex.length()==0 ) {
-            ServletUtils.addError(PARAM_PEREX,"Vyplòte popis èlánku!",env,null); error = true;
-        }
-
-        String content = (String) params.get(PARAM_CONTENT);
-        if ( content==null || content.length()==0 ) {
-            ServletUtils.addError(PARAM_CONTENT,"Vyplòte obsah èlánku!",env,null); error = true;
-        }
-
-        try {
-            publish = Constants.isoFormat.parse((String) params.get(PARAM_PUBLISHED));
-        } catch (ParseException e) {
-            ServletUtils.addError(PARAM_PUBLISHED,"Správný formát je 2002-02-10 06:22",env,null); error = true;
-        }
-
-        if ( error ) {
+        if ( !canContinue ) {
             addAuthors(env);
             return FMTemplateSelector.select("EditArticle","edit",env,request);
         }
 
-        Item item = (Item) upper.getChild();
-        item.setCreated(publish);
-
-        Document document = item.getData();
-        DocumentHelper.makeElement(document,"data/name").setText(name);
-        DocumentHelper.makeElement(document,"data/author").setText(Integer.toString(author.getId()));
-        DocumentHelper.makeElement(document,"data/perex").setText(perex);
         persistance.update(item);
-
-        Relation child = InstanceUtils.findFirstChildRecordOfType(item,Record.ARTICLE);
-        Record record = (Record) child.getChild();
-        DocumentHelper.makeElement(record.getData(),"data/content").setText(content);
         persistance.update(record);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -271,8 +231,229 @@ public class EditArticle extends AbcFMServlet {
     }
 
     /**
+     * Updates title from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param item article to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setTitle(Map params, Item item, Map env) {
+        String name = (String) params.get(PARAM_TITLE);
+        if ( name==null || name.length()==0 ) {
+            ServletUtils.addError(PARAM_TITLE, "Vyplòte titulek èlánku!", env, null);
+            return false;
+        }
+        Element element = DocumentHelper.makeElement(item.getData(), "/data/name");
+        element.setText(name);
+        return true;
+    }
+
+    /**
+     * Updates perex from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param item article to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setPerex(Map params, Item item, Map env) {
+        String perex = (String) params.get(PARAM_PEREX);
+        if ( perex==null || perex.length()==0 ) {
+            ServletUtils.addError(PARAM_PEREX, "Vyplòte popis èlánku!", env, null);
+            return false;
+        }
+        Element element = DocumentHelper.makeElement(item.getData(), "/data/perex");
+        element.setText(perex);
+        return true;
+    }
+
+    /**
+     * Updates author from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param item article to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setAuthor(Map params, Item item, Map env) {
+        /** todo: support for author not listed in section Authors */
+        User author = (User) InstanceUtils.instantiateParam(PARAM_AUTHOR, User.class, params);
+        if ( author==null ) {
+            ServletUtils.addError(PARAM_AUTHOR, "Vyberte autora!", env, null);
+            return false;
+        }
+        Element element = DocumentHelper.makeElement(item.getData(), "/data/author");
+        element.setText(String.valueOf(author.getId()));
+        return true;
+    }
+
+    /**
+     * Updates editor . Changes are not synchronized with persistance.
+     * @param item article to be updated.
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setEditor(Item item, Map env) {
+        User user = (User) env.get(Constants.VAR_USER);
+        Element element = DocumentHelper.makeElement(item.getData(), "/data/editor");
+        element.setText(String.valueOf(user.getId()));
+        return true;
+    }
+
+    /**
+     * Updates date of publishing from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param item article to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setPublishDate(Map params, Item item, Map env) {
+        try {
+            Date publish = Constants.isoFormat.parse((String) params.get(PARAM_PUBLISHED));
+            item.setCreated(publish);
+        } catch (ParseException e) {
+            ServletUtils.addError(PARAM_PUBLISHED, "Správný formát je 2002-02-10 06:22", env, null);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Updates content of the article from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param record article record to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    public static boolean setArticleContent(Map params, Record record, Map env) {
+        String content = (String) params.get(PARAM_CONTENT);
+        if ( content==null || content.length()==0 ) {
+            ServletUtils.addError(PARAM_CONTENT, "Vyplòte obsah èlánku!", env, null);
+            return false;
+        }
+
+        // cleanup - remove all pages, if there were some
+        List nodes = record.getData().selectNodes("/data/content");
+        for ( Iterator iter = nodes.iterator(); iter.hasNext(); )
+            ((Node) iter.next()).detach();
+
+        if ( reBreak.match(content) ) {
+            StringCharacterIterator stringIter = new StringCharacterIterator(content);
+            String title, page; int start, end; boolean canContinue;
+            DocumentHelper.makeElement(record.getData(), "data");
+            Element data = record.getData().getRootElement();
+            do {
+                title = reBreak.getParen(1);
+                start = reBreak.getParenEnd(0);
+                canContinue = reBreak.match(stringIter, start);
+                end = (canContinue) ? reBreak.getParenStart(0) : content.length();
+                page = stringIter.substring(start, end);
+                start = end;
+
+                Element element = data.addElement("content");
+                element.addAttribute("title", title);
+                element.setText(page);
+            } while (canContinue);
+        } else {
+            Element element = DocumentHelper.makeElement(record.getData(), "data/content");
+            element.setText(content);
+        }
+
+        return true;
+    }
+
+    /**
+     * Updates forbid_discussions from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param item article  to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setForbidDiscussions(Map params, Item item) {
+        String content = (String) params.get(PARAM_FORBID_DISCUSSIONS);
+        Element element = (Element) item.getData().selectSingleNode("/data/forbid_discussions");
+        if ( element!=null )
+            element.detach();
+
+        if ( content==null || content.length()==0 )
+            return true;
+
+        element = DocumentHelper.makeElement(item.getData(), "/data/forbid_discussions");
+        element.setText(content);
+        return true;
+    }
+
+    /**
+     * Updates related articles from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param record article's record to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setRelatedArticles(Map params, Record record, Map env) {
+        String links = (String) params.get(PARAM_RELATED_ARTICLES);
+        Element related = (Element) record.getData().selectSingleNode("/data/related");
+        if ( related!=null )
+            related.detach();
+
+        if (links==null || links.length()==0)
+            return true;
+
+        related = DocumentHelper.makeElement(record.getData(), "data/related");
+        StringTokenizer stk = new StringTokenizer(links,"\n");
+        String url, title;
+        while ( stk.hasMoreTokens() ) {
+            url = stk.nextToken();
+            if ( url.trim().length()==0 )
+                break; // whitespaces on empty line
+            if ( ! stk.hasMoreTokens() ) {
+                ServletUtils.addError(PARAM_RELATED_ARTICLES, "Chybí titulek pro URL "+url+"!", env, null);
+                return false;
+            }
+            title = stk.nextToken();
+
+            Element link = related.addElement("link");
+            link.addAttribute("url",url);
+            link.setText(title);
+        }
+        return true;
+    }
+
+    /**
+     * Updates resources from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param record article's record to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setResources(Map params, Record record, Map env) {
+        String links = (String) params.get(PARAM_RESOURCES);
+        Element resources = (Element) record.getData().selectSingleNode("/data/resources");
+        if ( resources!=null )
+            resources.detach();
+
+        if (links==null || links.length()==0)
+            return true;
+
+        resources = DocumentHelper.makeElement(record.getData(), "data/resources");
+        StringTokenizer stk = new StringTokenizer(links,"\n");
+        String url, title;
+        while ( stk.hasMoreTokens() ) {
+            url = stk.nextToken();
+            if ( url.trim().length()==0 )
+                break; // whitespaces on empty line
+            if ( ! stk.hasMoreTokens() ) {
+                ServletUtils.addError(PARAM_RESOURCES, "Chybí titulek pro URL "+url+"!", env, null);
+                return false;
+            }
+            title = stk.nextToken();
+
+            Element link = resources.addElement("link");
+            link.addAttribute("url",url);
+            link.setText(title);
+        }
+        return true;
+    }
+
+    /**
      * Adds list of authors (User) to env in VAR_AUTHORS.
-     * todo Robert kratky says, that some authors are missing, for example default author
      */
     private void addAuthors(Map env) {
         Persistance persistance = PersistanceFactory.getPersistance();
@@ -292,6 +473,45 @@ public class EditArticle extends AbcFMServlet {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         if ( params.get(PARAM_AUTHOR)==null ) {
             params.put(PARAM_AUTHOR,Integer.toString(user.getId()));
+        }
+    }
+
+    /**
+     * Adds related articles or resources to map params under given name.
+     */
+    private void addLinks(Document document, String xpath, Map params, String var) {
+        List nodes = document.selectNodes(xpath);
+        if ( nodes!=null && nodes.size()>0 ) {
+            StringBuffer sb = new StringBuffer();
+            for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
+                Element element = (Element) iter.next();
+                sb.append(element.attributeValue("url"));
+                sb.append("\n");
+                sb.append(element.getText());
+            }
+            params.put(var, sb.toString());
+        }
+    }
+
+    /**
+     * Adds content of the article to params.
+     */
+    private void addArticleContent(Document document, Map params) {
+        List nodes = document.selectNodes("/data/content");
+        if ( nodes.size()==0 ) {
+            return;
+        } else if ( nodes.size()==1 ) {
+            params.put(PARAM_CONTENT, ((Node) nodes.get(0)).getText());
+        } else {
+            StringBuffer sb = new StringBuffer();
+            for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
+                Element element = (Element) iter.next();
+                sb.append("<page title=\"");
+                sb.append(element.attributeValue("title"));
+                sb.append("\">");
+                sb.append(element.getText());
+            }
+            params.put(PARAM_CONTENT, sb.toString());
         }
     }
 }

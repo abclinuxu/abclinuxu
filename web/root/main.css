@@ -61,7 +61,7 @@ TD.jadro_p { font-family: Lucida, Verdana, Helvetica, sans-serif; font-size: 10p
 H1.nadpis { color:BLACK; font-family:Helvetica, Arial, sans-serif; font-size:18pt; font-weight:bold }
 H1,DIV.sub1 { color: BLACK; font-family: Lucida, Helvetica, sans-serif; font-size:14pt; font-weight: BOLD; padding: 0ex 0em }
 H2,DIV.sub2 { color: BLACK; font-family: Lucida, Helvetica, sans-serif; font-size:13pt; font-weight: BOLD; padding: 0ex 0em }
-Div.perex, P.perex { border-width: 1 0; border-color: black; border-style: solid; background-color: #EEEEEE; padding: 1ex; }
+Div.perex, P.perex { border-width: 1 0; border-color: black; border-style: solid; background-color: #EEEEEE; padding: 1ex; margin-top: 1em }
 DIV.linky { padding: 0 1ex; }
 table.source { background-color: #e6e6e6; border-width: 1; border-style: solid;  border-color: #838383;}
 td.pad { padding-left: 1ex; padding-right: 1ex;}
