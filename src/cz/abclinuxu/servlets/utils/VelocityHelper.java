@@ -192,6 +192,33 @@ public class VelocityHelper {
 
     /**
      * Takes list of relations in argument and sorts them by
+     * relations.get(0).getChild()'s name in ascendant order.
+     * If generic object doesn't contain property name,
+     * it will be appended to the end of list.
+     * @return new list, where relations are sorted by date
+     */
+    public List sortByName(List relations) throws PersistanceException {
+        List sorted = new ArrayList(relations.size());
+        int size = 0, i = 0;
+
+        for (Iterator iter = relations.iterator(); iter.hasNext();) {
+            Relation relation = (Relation) iter.next();
+
+            for (i=size;i>0;) {
+                String current = getChildName((Relation) sorted.get(i-1));
+                String used = getChildName(relation);
+                if ( current.compareTo(used)<0 ) break;
+                i--;
+            }
+            sorted.add(i,relation);
+            size++;
+        }
+
+        return sorted;
+    }
+
+    /**
+     * Takes list of relations in argument and sorts them by
      * relations.get(0).getChild().getUpdated() in descendant order
      * (freshest objects first). If generic object doesn't contain
      * such field, it will be appended to the end of list.
@@ -217,30 +244,30 @@ public class VelocityHelper {
     }
 
     /**
-     * Takes list of relations in argument and sorts them by
-     * relations.get(0).getChild()'s name in ascendant order.
-     * If generic object doesn't contain property name,
-     * it will be appended to the end of list.
-     * @return new list, where relations are sorted by date
+     * Calculates percentage with correct rounding. 0<=count<=base.
+     * @return Number between 0 and 100
      */
-    public List sortByName(List relations) throws PersistanceException {
-        List sorted = new ArrayList(relations.size());
-        int size = 0, i = 0;
+    public int percent(int count, int base) {
+        if ( base<=0 ) return 0;
+        double percent = 100*count/(double)base;
+        return (int)(percent+0.5);
+    }
 
-        for (Iterator iter = relations.iterator(); iter.hasNext();) {
-            Relation relation = (Relation) iter.next();
-
-            for (i=size;i>0;) {
-                String current = getChildName((Relation) sorted.get(i-1));
-                String used = getChildName(relation);
-                if ( current.compareTo(used)<0 ) break;
-                i--;
-            }
-            sorted.add(i,relation);
-            size++;
-        }
-
-        return sorted;
+    /**
+     * @return String containing one asterisk for each ten percents.
+     */
+    public String percentBar(int percent) {
+        if ( percent<5 )       return "";
+        else if ( percent<15 ) return "*";
+        else if ( percent<25 ) return "**";
+        else if ( percent<35 ) return "***";
+        else if ( percent<45 ) return "****";
+        else if ( percent<55 ) return "*****";
+        else if ( percent<65 ) return "******";
+        else if ( percent<75 ) return "*******";
+        else if ( percent<85 ) return "********";
+        else if ( percent<95 ) return "*********";
+        else                   return "**********";
     }
 
     /**

@@ -9,6 +9,7 @@
 package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Category;
@@ -34,11 +35,14 @@ import java.util.List;
  * <dl>
  * <dt>PARAM_CATEGORY_ID</dt>
  * <dd>PK of asked Category, number.</dd>
+ * <dt>PARAM_FROM</dt>
+ * <dd>used by clanky.vm. Defines range of shown objects.</dd>
  * </dl>
  */
 public class ViewCategory extends AbcServlet {
     public static final String VAR_CATEGORY = "CATEGORY";
     public static final String PARAM_CATEGORY_ID = "categoryId";
+    public static final String PARAM_FROM = "from";
 
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
@@ -67,10 +71,8 @@ public class ViewCategory extends AbcServlet {
         UrlUtils urlUtils = (UrlUtils) ctx.get(AbcServlet.VAR_URL_UTILS);
         tmp = urlUtils.getPrefix();
 
-        if ( UrlUtils.PREFIX_CLANKY.equals(tmp) ) {
-            return getTemplate("view/clanky.vm");
-        } else {
-            return getTemplate("view/category.vm");
-        }
+        if ( relation!=null && relation.getId()==Constants.REL_POLLS ) return getTemplate("view/ankety.vm");
+        if ( UrlUtils.PREFIX_CLANKY.equals(tmp) ) return getTemplate("view/clanky.vm");
+        else return getTemplate("view/category.vm");
     }
 }

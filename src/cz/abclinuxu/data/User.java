@@ -6,6 +6,8 @@ package cz.abclinuxu.data;
 import org.dom4j.Document;
 import cz.abclinuxu.AbcException;
 
+import java.util.Iterator;
+
 /**
  * Class containing basic user data
  */
@@ -125,6 +127,19 @@ public class User extends GenericObject {
     public void setData(String data) throws AbcException {
         documentHandler = new XMLHandler();
         documentHandler.setData(data);
+    }
+
+    /**
+     * @return True, if user is an administrator
+     */
+    public boolean isAdmin() {
+        for (Iterator iter = getContent().iterator(); iter.hasNext();) {
+            GenericObject obj = (GenericObject) ((Relation) iter.next()).getChild();
+            if ( obj instanceof AccessRights ) {
+                return ((AccessRights)obj).isAdmin();
+            }
+        }
+        return false;
     }
 
     /**

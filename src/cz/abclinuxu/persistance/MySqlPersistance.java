@@ -843,7 +843,7 @@ public class MySqlPersistance implements Persistance {
             }
 
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("insert into anketa values(0,?,?,?,?,?)");
+            PreparedStatement statement = con.prepareStatement("insert into anketa values(0,?,?,?,now(),?)");
 
             statement.setInt(1,poll.getType() );
             if ( poll.getType()==0 ) {
@@ -852,8 +852,7 @@ public class MySqlPersistance implements Persistance {
 
             statement.setString(2,poll.getText());
             statement.setBoolean(3,poll.isMultiChoice());
-            statement.setDate(4,new java.sql.Date(System.currentTimeMillis()));
-            statement.setBoolean(5,poll.isClosed());
+            statement.setBoolean(4,poll.isClosed());
 
             int result = statement.executeUpdate();
             if ( result==0 ) {
@@ -1077,7 +1076,7 @@ public class MySqlPersistance implements Persistance {
             Poll poll = new Poll(obj.getId(),resultSet.getInt(2));
             poll.setText(new String(resultSet.getString(3)));
             poll.setMultiChoice(resultSet.getBoolean(4));
-            poll.setCreated(resultSet.getDate(5));
+            poll.setCreated(resultSet.getTimestamp(5));
             poll.setClosed(resultSet.getBoolean(6));
 
             statement = con.prepareStatement("select volba,pocet from data_ankety where anketa=? order by cislo asc");

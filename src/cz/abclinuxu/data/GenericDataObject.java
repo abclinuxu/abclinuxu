@@ -129,18 +129,7 @@ public abstract class GenericDataObject extends GenericObject {
         if ( this instanceof Category ) {
             if ( ((Category)this).isOpen() ) return true;
         }
-
-        // search user for admin flag
-        if ( user.isInitialized() ) {
-            for (Iterator iter = user.getContent().iterator(); iter.hasNext();) {
-                GenericObject obj = (GenericObject) ((Relation) iter.next()).getChild();
-                if ( obj instanceof AccessRights ) {
-                    return ((AccessRights)obj).isAdmin();
-                }
-            }
-        }
-
-        return false;
+        return user.isAdmin();
     }
 
     /**

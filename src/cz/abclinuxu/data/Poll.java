@@ -173,7 +173,7 @@ public class Poll extends GenericObject {
         switch ( type ) {
             case 1: sb.append("Survey");break;
             case 2: sb.append("Rating");break;
-            default: sb.append("Unknown Poll");
+            default: sb.append("Poll");
         }
         sb.append(": id="+id);
         if ( text!=null ) sb.append(",text="+text);

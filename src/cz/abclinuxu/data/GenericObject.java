@@ -117,18 +117,7 @@ public class GenericObject {
      */
     public boolean isManagedBy(User user) {
         if ( user==null || user.getId()==0 ) return false;
-
-        // search user for admin flag
-        if ( user.isInitialized() ) {
-            for (Iterator iter = user.getContent().iterator(); iter.hasNext();) {
-                GenericObject obj = (GenericObject) ((Relation) iter.next()).getChild();
-                if ( obj instanceof AccessRights ) {
-                    return ((AccessRights)obj).isAdmin();
-                }
-            }
-        }
-
-        return false;
+        return user.isAdmin();
     }
 
     /**
