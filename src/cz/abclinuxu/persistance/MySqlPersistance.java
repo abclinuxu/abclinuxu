@@ -87,6 +87,7 @@ public class MySqlPersistance implements Persistance {
                 obj.setId((int)mm.getLastInsertID());
             }
             obj.setInitialized(true);
+            // todo get updated field
             cache.store(obj);
             log.info("Objekt ["+obj+"] ulozen");
         } catch ( SQLException e ) {
@@ -102,25 +103,20 @@ public class MySqlPersistance implements Persistance {
     }
 
     public void update(GenericObject obj) throws PersistanceException {
-        if ( obj==null ) throw new PersistanceException("Neni mozne ulozit prazdny objekt!",AbcException.DB_INCOMPLETE,obj,null);
-        try {
-            if (obj instanceof GenericDataObject) {
-                updateDataObject((GenericDataObject)obj);
-            } else if (obj instanceof Relation) {
-                updateRelation((Relation)obj);
-            } else if (obj instanceof Data) {
-                updateData((Data)obj);
-            } else if (obj instanceof Link) {
-                updateLink((Link)obj);
-            } else if (obj instanceof Poll) {
-                updatePoll((Poll)obj);
-            } else if (obj instanceof User) {
-                updateUser((User)obj);
-            }
-            cache.store(obj);
-        } catch (SQLException e) {
-            log.error("Nemohu ulozit zmeny v "+obj);
-            throw new PersistanceException("Nemohu ulozit zmeny v "+obj.toString()+" do databaze!",AbcException.DB_UPDATE,obj,e);
+        log.debug("Nepolymorfni pristup k update()");
+
+        if (obj instanceof GenericDataObject) {
+            update((GenericDataObject)obj);
+        } else if (obj instanceof Relation) {
+            update((Relation)obj);
+        } else if (obj instanceof Data) {
+            update((Data)obj);
+        } else if (obj instanceof Link) {
+            update((Link)obj);
+        } else if (obj instanceof Poll) {
+            update((Poll)obj);
+        } else if (obj instanceof User) {
+            update((User)obj);
         }
     }
 
@@ -136,7 +132,7 @@ public class MySqlPersistance implements Persistance {
     public void synchronizeCached(CachedObject cached) {
         try {
             GenericObject obj = cached.object;
-            obj.synchronizeWith(loadObject(obj,true));
+            obj.synchronizeWith(loadObject(obj));
             obj.setInitialized(true);
             cached.nextSync = System.currentTimeMillis()+Cache.SYNC_INTERVAL;
         } catch (Exception e) {
@@ -145,24 +141,13 @@ public class MySqlPersistance implements Persistance {
     }
 
     public GenericObject findById(GenericObject obj) throws PersistanceException {
-        return findById(obj,true);
-    }
-
-    /**
-     * Same as findById(GenericObject obj), but you can specify, whether it is recursive.
-     * E.g. if <code>recursive</code> is false, than
-     * ((Relation)getContent.get(0)).getChild().getContent is always empty. Otherwise
-     * it may recursively fill it. Without this, root Category may hold references to
-     * thousands objects!
-     */
-    private GenericObject findById(GenericObject obj, boolean recursive) throws PersistanceException {
         if ( obj==null ) throw new PersistanceException("Objekt nebyl nalezen!",AbcException.DB_NOT_FOUND,obj,null);
         GenericObject result = cache.load(obj);
         if ( result!=null ) return result;
 
         if ( log.isDebugEnabled() ) log.debug("Hledam podle PK objekt "+obj);
         try {
-            result = loadObject(obj,recursive);
+            result = loadObject(obj);
             if ( result!=null ) result.setInitialized(true);
             cache.store(result);
             return result;
@@ -262,7 +247,7 @@ public class MySqlPersistance implements Persistance {
 
                 char type = resultSet.getString(2).charAt(0);
                 int id = resultSet.getInt(3);
-                parent = findById(instantiateFromTree(type,id),false);
+                parent = findById(instantiateFromTree(type,id));
                 relation.setParent(parent);
                 result.add(0,relation);
             }
@@ -511,10 +496,10 @@ public class MySqlPersistance implements Persistance {
     /**
      * Loads object by PK from database.
      */
-    private GenericObject loadObject(GenericObject obj, boolean recursive) throws PersistanceException, SQLException {
+    private GenericObject loadObject(GenericObject obj) throws PersistanceException, SQLException {
         GenericObject result = null;
         if (obj instanceof GenericDataObject) {
-            result = loadDataObject((GenericDataObject)obj,recursive);
+            result = loadDataObject((GenericDataObject)obj);
         } else if (obj instanceof Relation) {
             result = loadRelation((Relation)obj);
         } else if (obj instanceof Data) {
@@ -522,9 +507,9 @@ public class MySqlPersistance implements Persistance {
         } else if (obj instanceof Link) {
             result = loadLink((Link)obj);
         } else if (obj instanceof Poll) {
-            result = loadPoll((Poll)obj,recursive);
+            result = loadPoll((Poll)obj);
         } else if (obj instanceof User) {
-            result = loadUser((User)obj,recursive);
+            result = loadUser((User)obj);
         } else if (obj instanceof Server) {
             result = loadServer((Server)obj);
         } else if (obj instanceof AccessRights) {
@@ -552,7 +537,7 @@ public class MySqlPersistance implements Persistance {
             char type = resultSet.getString(3).charAt(0);
             int id = resultSet.getInt(4);
             GenericObject child = instantiateFromTree(type,id);
-            child = findById(child,false);
+            synchronize(child);
             relation.setChild(child);
 
             relation.setName(resultSet.getString(5));
@@ -815,7 +800,7 @@ public class MySqlPersistance implements Persistance {
 
             statement.setString(2,poll.getText());
             statement.setBoolean(3,poll.isMultiChoice());
-            statement.setDate(4,new java.sql.Date(System.currentTimeMillis()));
+	    statement.setDate(4,new java.sql.Date(System.currentTimeMillis()));
             statement.setBoolean(5,poll.isClosed());
 
             int result = statement.executeUpdate();
@@ -841,20 +826,9 @@ public class MySqlPersistance implements Persistance {
     }
 
     /**
-     * This method is to be used to find actual value of <code>updated</code> property, which
-     * is affected by <code>create</code> method.
-     * @todo Finish this method, if you want to enhance cache to hold GenericDataObject,
-     * otherwise cache will not hold actual data!
-     */
-    protected void updateUpdated(GenericObject obj, Connection con) throws SQLException {
-        if ( !(obj instanceof GenericDataObject) && !(obj instanceof Link) ) return;
-        PreparedStatement statement = con.prepareStatement("insert into anketa values(0,?,?,?,?,?)");
-    }
-
-    /**
      * @return user from mysql db
      */
-    protected GenericObject loadUser(User obj, boolean recursive) throws PersistanceException, SQLException {
+    protected GenericObject loadUser(User obj) throws PersistanceException, SQLException {
         Connection con = null;
         try {
             con = getSQLConnection();
@@ -877,7 +851,7 @@ public class MySqlPersistance implements Persistance {
                 throw new PersistanceException(e.getMessage(),e.getStatus(),e.getSinner(),e.getNestedException());
             }
 
-            if ( recursive) findChildren(obj,con);
+            findChildren(obj,con);
             return user;
         } finally {
             releaseSQLConnection(con);
@@ -887,7 +861,7 @@ public class MySqlPersistance implements Persistance {
     /**
      * @return item descendant from mysql db
      */
-    protected GenericDataObject loadDataObject(GenericDataObject obj, boolean recursive) throws PersistanceException, SQLException {
+    protected GenericDataObject loadDataObject(GenericDataObject obj) throws PersistanceException, SQLException {
         Connection con = null;
 
         try {
@@ -919,7 +893,7 @@ public class MySqlPersistance implements Persistance {
             item.setOwner(resultSet.getInt(4));
             item.setUpdated(resultSet.getTimestamp(5));
 
-            if ( recursive) findChildren(item,con);
+            findChildren(item,con);
             return item;
         } finally {
             releaseSQLConnection(con);
@@ -1024,7 +998,7 @@ public class MySqlPersistance implements Persistance {
     /**
      * @return poll from mysql db
      */
-    protected GenericObject loadPoll(Poll obj, boolean recursive) throws PersistanceException, SQLException {
+    protected GenericObject loadPoll(Poll obj) throws PersistanceException, SQLException {
         Connection con = null;
 
         try {
@@ -1059,7 +1033,7 @@ public class MySqlPersistance implements Persistance {
             }
             poll.setChoices(choices);
 
-            if ( recursive) findChildren(poll,con);
+            findChildren(poll,con);
             return poll;
         } finally {
             releaseSQLConnection(con);
@@ -1120,7 +1094,8 @@ public class MySqlPersistance implements Persistance {
     /**
      * updates record in database
      */
-    private void updateDataObject(GenericDataObject obj) throws PersistanceException, SQLException {
+    public void update(GenericDataObject obj) throws PersistanceException {
+        if ( obj==null ) throw new PersistanceException("Neni mozne ulozit prazdny objekt!",AbcException.DB_INCOMPLETE,null,null);
         Connection con = null;
 
         try {
@@ -1143,6 +1118,11 @@ public class MySqlPersistance implements Persistance {
             if ( result!=1 ) {
                 throw new PersistanceException("Nepodarilo se ulozit zmeny v "+obj.toString()+" do databaze!", AbcException.DB_UPDATE, obj, null);
             }
+            // todo get updated field
+            cache.store(obj);
+        } catch (SQLException e) {
+            log.error("Nemohu ulozit zmeny v "+obj);
+            throw new PersistanceException("Nemohu ulozit zmeny v "+obj.toString()+" do databaze!",AbcException.DB_UPDATE,null,e);
         } finally {
             releaseSQLConnection(con);
         }
@@ -1151,7 +1131,8 @@ public class MySqlPersistance implements Persistance {
     /**
      * updates data in database
      */
-    private void updateRelation(Relation relation) throws PersistanceException, SQLException {
+    public void update(Relation relation) throws PersistanceException {
+        if ( relation==null ) throw new PersistanceException("Neni mozne ulozit prazdny objekt!",AbcException.DB_INCOMPLETE,null,null);
         Connection con = null;
 
         try {
@@ -1164,6 +1145,11 @@ public class MySqlPersistance implements Persistance {
             if ( result!=1 ) {
                 throw new PersistanceException("Nepodarilo se ulozit zmeny v "+relation.toString()+" do databaze!", AbcException.DB_UPDATE, relation, null);
             }
+            // todo get updated field
+            cache.store(relation);
+        } catch (SQLException e) {
+            log.error("Nemohu ulozit zmeny v "+relation);
+            throw new PersistanceException("Nemohu ulozit zmeny v "+relation.toString()+" do databaze!",AbcException.DB_UPDATE,relation,e);
         } finally {
             releaseSQLConnection(con);
         }
@@ -1172,7 +1158,8 @@ public class MySqlPersistance implements Persistance {
     /**
      * updates data in database
      */
-    private void updateData(Data data) throws PersistanceException, SQLException {
+    public void update(Data data) throws PersistanceException {
+        if ( data==null ) throw new PersistanceException("Neni mozne ulozit prazdny objekt!",AbcException.DB_INCOMPLETE,null,null);
         Connection con = null;
 
         try {
@@ -1186,6 +1173,10 @@ public class MySqlPersistance implements Persistance {
             if ( result!=1 ) {
                 throw new PersistanceException("Nepodarilo se ulozit zmeny v "+data.toString()+" do databaze!", AbcException.DB_UPDATE, data, null);
             }
+            cache.store(data);
+        } catch (SQLException e) {
+            log.error("Nemohu ulozit zmeny v "+data);
+            throw new PersistanceException("Nemohu ulozit zmeny v "+data.toString()+" do databaze!",AbcException.DB_UPDATE,data,e);
         } finally {
             releaseSQLConnection(con);
         }
@@ -1194,7 +1185,8 @@ public class MySqlPersistance implements Persistance {
     /**
      * updates link in database
      */
-    private void updateLink(Link link) throws PersistanceException, SQLException {
+    public void update(Link link) throws PersistanceException {
+        if ( link==null ) throw new PersistanceException("Neni mozne ulozit prazdny objekt!",AbcException.DB_INCOMPLETE,null,null);
         Connection con = null;
 
         try {
@@ -1211,6 +1203,10 @@ public class MySqlPersistance implements Persistance {
             if ( result!=1 ) {
                 throw new PersistanceException("Nepodarilo se ulozit zmeny v "+link.toString()+" do databaze!", AbcException.DB_UPDATE, link, null);
             }
+            cache.store(link);
+        } catch (SQLException e) {
+            log.error("Nemohu ulozit zmeny v "+link);
+            throw new PersistanceException("Nemohu ulozit zmeny v "+link.toString()+" do databaze!",AbcException.DB_UPDATE,link,e);
         } finally {
             releaseSQLConnection(con);
         }
@@ -1219,7 +1215,8 @@ public class MySqlPersistance implements Persistance {
     /**
      * updates poll in database
      */
-    private void updatePoll(Poll poll) throws PersistanceException, SQLException {
+    public void update(Poll poll) throws PersistanceException {
+        if ( poll==null ) throw new PersistanceException("Neni mozne ulozit prazdny objekt!",AbcException.DB_INCOMPLETE,null,null);
         Connection con = null;
 
         try {
@@ -1249,6 +1246,10 @@ public class MySqlPersistance implements Persistance {
                 statement.setInt(3,poll.getId());
                 result = statement.executeUpdate();
             }
+            cache.store(poll);
+        } catch (SQLException e) {
+            log.error("Nemohu ulozit zmeny v "+poll);
+            throw new PersistanceException("Nemohu ulozit zmeny v "+poll.toString()+" do databaze!",AbcException.DB_UPDATE,poll,e);
         } finally {
             releaseSQLConnection(con);
         }
@@ -1257,7 +1258,8 @@ public class MySqlPersistance implements Persistance {
     /**
      * updates user in database
      */
-    private void updateUser(User user) throws PersistanceException, SQLException {
+    public void update(User user) throws PersistanceException {
+        if ( user==null ) throw new PersistanceException("Neni mozne ulozit prazdny objekt!",AbcException.DB_INCOMPLETE,null,null);
         Connection con = null;
 
         try {
@@ -1274,10 +1276,14 @@ public class MySqlPersistance implements Persistance {
             if ( result!=1 ) {
                 throw new PersistanceException("Nepodarilo se ulozit zmeny v "+user.toString()+" do databaze!", AbcException.DB_UPDATE, user, null);
             }
-        } catch ( SQLException e ) {
+            cache.store(user);
+        } catch (SQLException e) {
+            log.error("Nemohu ulozit zmeny v "+user);
             if ( e.getErrorCode()==1062 ) {
                 throw new PersistanceException("Prihlasovaci jmeno "+user.getLogin()+" je uz registrovano!", AbcException.DB_DUPLICATE, user, e);
-            } else throw e;
+            } else {
+                throw new PersistanceException("Nemohu ulozit zmeny v "+user.toString()+" do databaze!",AbcException.DB_UPDATE,user,e);
+            }
         } finally {
             releaseSQLConnection(con);
         }
