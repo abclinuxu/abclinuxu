@@ -1056,32 +1056,13 @@ public class MySqlPersistance extends Persistance {
 
         try {
             con = getSQLConnection();
-            // kill all siblings
-            PreparedStatement statement = con.prepareStatement("select obsah from strom where id=?");
-            statement.setString(1,"Z"+record.getId());
-
-            ResultSet result = statement.executeQuery();
-            LinkedList children = new LinkedList();
-            while ( result.next() ) {
-                children.add(result.getString(1));
-            }
-
-            for (Iterator iter = children.iterator(); iter.hasNext();) {
-                String child = (String) iter.next();
-                statement = con.prepareStatement("select id from strom where id!=? and obsah=?");
-                statement.setString(1,"Z"+record.getId());
-                statement.setString(2,child);
-
-                ResultSet sibling = statement.executeQuery();
-                if ( !sibling.next() ) {
-                    removeObject(getObjectFromTreeId(child));
-                }
-            }
+            String treeId = "Z"+record.getId();
+            removeSiblings(treeId,con);
 
             // remove all references from tree
-            statement = con.prepareStatement("delete from strom where id=? or obsah=?");
-            statement.setString(1,"Z"+record.getId());
-            statement.setString(2,"Z"+record.getId());
+            PreparedStatement statement = con.prepareStatement("delete from strom where id=? or obsah=?");
+            statement.setString(1,treeId);
+            statement.setString(2,treeId);
             statement.executeUpdate();
 
             // kill record itself
@@ -1101,32 +1082,13 @@ public class MySqlPersistance extends Persistance {
 
         try {
             con = getSQLConnection();
-            // kill all siblings
-            PreparedStatement statement = con.prepareStatement("select obsah from strom where id=?");
-            statement.setString(1,"P"+item.getId());
-
-            ResultSet result = statement.executeQuery();
-            LinkedList children = new LinkedList();
-            while ( result.next() ) {
-                children.add(result.getString(1));
-            }
-
-            for (Iterator iter = children.iterator(); iter.hasNext();) {
-                String child = (String) iter.next();
-                statement = con.prepareStatement("select id from strom where id!=? and obsah=?");
-                statement.setString(1,"P"+item.getId());
-                statement.setString(2,child);
-
-                ResultSet sibling = statement.executeQuery();
-                if ( !sibling.next() ) {
-                    removeObject(getObjectFromTreeId(child));
-                }
-            }
+            String treeId = "P"+item.getId();
+            removeSiblings(treeId,con);
 
             // remove all references from tree
-            statement = con.prepareStatement("delete from strom where id=? or obsah=?");
-            statement.setString(1,"P"+item.getId());
-            statement.setString(2,"P"+item.getId());
+            PreparedStatement statement = con.prepareStatement("delete from strom where id=? or obsah=?");
+            statement.setString(1,treeId);
+            statement.setString(2,treeId);
             statement.executeUpdate();
 
             // kill item itself
@@ -1146,32 +1108,13 @@ public class MySqlPersistance extends Persistance {
 
         try {
             con = getSQLConnection();
-            // kill all siblings
-            PreparedStatement statement = con.prepareStatement("select obsah from strom where id=?");
-            statement.setString(1,"K"+category.getId());
-
-            ResultSet result = statement.executeQuery();
-            LinkedList children = new LinkedList();
-            while ( result.next() ) {
-                children.add(result.getString(1));
-            }
-
-            for (Iterator iter = children.iterator(); iter.hasNext();) {
-                String child = (String) iter.next();
-                statement = con.prepareStatement("select id from strom where id!=? and obsah=?");
-                statement.setString(1,"K"+category.getId());
-                statement.setString(2,child);
-
-                ResultSet sibling = statement.executeQuery();
-                if ( !sibling.next() ) {
-                    removeObject(getObjectFromTreeId(child));
-                }
-            }
+            String treeId = "K"+category.getId();
+            removeSiblings(treeId,con);
 
             // remove all references from tree
-            statement = con.prepareStatement("delete from strom where id=? or obsah=?");
-            statement.setString(1,"K"+category.getId());
-            statement.setString(2,"K"+category.getId());
+            PreparedStatement statement = con.prepareStatement("delete from strom where id=? or obsah=?");
+            statement.setString(1,treeId);
+            statement.setString(2,treeId);
             statement.executeUpdate();
 
             // kill category itself
@@ -1219,6 +1162,31 @@ public class MySqlPersistance extends Persistance {
      * removes poll from database
      */
     protected void removePoll(Poll poll) throws PersistanceException, SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+            String treeId = "A"+poll.getId();
+            removeSiblings(treeId,con);
+
+            // remove all references from tree
+            PreparedStatement statement = con.prepareStatement("delete from anketa_data where anketa=?");
+            statement.setString(1,"A"+poll.getId());
+            statement.executeUpdate();
+
+            // remove all references from tree
+            statement = con.prepareStatement("delete from strom where id=? or obsah=?");
+            statement.setString(1,treeId);
+            statement.setString(2,treeId);
+            statement.executeUpdate();
+
+            // kill poll itself
+            statement = con.prepareStatement("delete from anketa where cislo=?");
+            statement.setInt(1,poll.getId());
+            statement.executeUpdate();
+        } finally {
+            releaseSQLConnection(con);
+        }
     }
 
     /**
@@ -1229,32 +1197,13 @@ public class MySqlPersistance extends Persistance {
 
         try {
             con = getSQLConnection();
-            // kill all siblings
-            PreparedStatement statement = con.prepareStatement("select obsah from strom where id=?");
-            statement.setString(1,"U"+user.getId());
-
-            ResultSet result = statement.executeQuery();
-            LinkedList children = new LinkedList();
-            while ( result.next() ) {
-                children.add(result.getString(1));
-            }
-
-            for (Iterator iter = children.iterator(); iter.hasNext();) {
-                String child = (String) iter.next();
-                statement = con.prepareStatement("select id from strom where id!=? and obsah=?");
-                statement.setString(1,"U"+user.getId());
-                statement.setString(2,child);
-
-                ResultSet sibling = statement.executeQuery();
-                if ( !sibling.next() ) {
-                    removeObject(getObjectFromTreeId(child));
-                }
-            }
+            String treeId = "U"+user.getId();
+            removeSiblings(treeId,con);
 
             // remove all references from tree
-            statement = con.prepareStatement("delete from strom where id=? or obsah=?");
-            statement.setString(1,"U"+user.getId());
-            statement.setString(2,"U"+user.getId());
+            PreparedStatement statement = con.prepareStatement("delete from strom where id=? or obsah=?");
+            statement.setString(1,treeId);
+            statement.setString(2,treeId);
             statement.executeUpdate();
 
             // kill user itself
@@ -1266,13 +1215,83 @@ public class MySqlPersistance extends Persistance {
         }
     }
 
-    public void findRecordByExample(Record record,List result) throws PersistanceException,SQLException {}
-    public void findItemByExample(Item item,List result) throws PersistanceException,SQLException {}
-    public void findCategoryByExample(Category category,List result) throws PersistanceException,SQLException {}
-    public void findDataByExample(Data data,List result) throws PersistanceException,SQLException {}
-    public void findLinkByExample(Link link,List result) throws PersistanceException,SQLException {}
-    public void findPollByExample(Poll poll,List result) throws PersistanceException,SQLException {}
-    public void findUserByExample(User user,List result) throws PersistanceException,SQLException {}
+    /**
+     * removes all children of <code>treeId</code>, for which <code>treeId</code> is the only parent.
+     */
+    protected void removeSiblings(String treeId, Connection con) throws PersistanceException,SQLException {
+        PreparedStatement statement = con.prepareStatement("select obsah from strom where id=?");
+        statement.setString(1,treeId);
+
+        ResultSet result = statement.executeQuery();
+        LinkedList children = new LinkedList();
+        while ( result.next() ) {
+            children.add(result.getString(1));
+        }
+
+        for (Iterator iter = children.iterator(); iter.hasNext();) {
+            String child = (String) iter.next();
+            statement = con.prepareStatement("select id from strom where id!=? and obsah=?");
+            statement.setString(1,treeId);
+            statement.setString(2,child);
+
+            ResultSet sibling = statement.executeQuery();
+            if ( !sibling.next() ) {
+                removeObject(getObjectFromTreeId(child));
+            }
+        }
+    }
+
+    /**
+     * Searches Record table for all rows, which match <code>record</code> and adds their references
+     * to <code>list</code>.
+     */
+    protected void findRecordByExample(Record record, List list) throws PersistanceException,SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+
+            StringBuffer sb = new StringBuffer("select cislo from zaznam where ");
+            boolean addAnd = false;
+            if ( record.getOwner()!=0 ) {
+                sb.append("owner=?");
+                addAnd = true;
+            }
+            if ( record.getData()!=null ) {
+                if ( addAnd ) sb.append(" and ");
+                sb.append("data like ?");
+            }
+
+            PreparedStatement statement = con.prepareStatement(sb.toString());
+            if ( record.getOwner()!=0 ) statement.setInt(1,record.getOwner());
+            if ( record.getData()!=null ) statement.setString(2,record.getData());
+
+            ResultSet result = statement.executeQuery();
+            while ( !result.next() ) {
+                list.add(new Record(result.getInt(1)));
+            }
+        } finally {
+            releaseSQLConnection(con);
+        }
+    }
+
+    protected void findItemByExample(Item item, List list) throws PersistanceException,SQLException {
+    }
+
+    protected void findCategoryByExample(Category category, List list) throws PersistanceException,SQLException {
+    }
+
+    protected void findDataByExample(Data data, List list) throws PersistanceException,SQLException {
+    }
+
+    protected void findLinkByExample(Link link, List list) throws PersistanceException,SQLException {
+    }
+
+    protected void findPollByExample(Poll poll, List list) throws PersistanceException,SQLException {
+    }
+
+    protected void findUserByExample(User user, List list) throws PersistanceException,SQLException {
+    }
 
     public static void main(String[] args) throws Exception {
         DOMConfigurator.configure("WEB-INF/log4j.xml");
