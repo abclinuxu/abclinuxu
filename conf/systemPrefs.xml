@@ -405,8 +405,8 @@
                     <map/>
                     <node name="AccessKeeper">
                         <map>
-                            <entry key="block.same.ua.for" value="1900" />
-                            <entry key="block.same.ip.for" value="600" />
+                            <entry key="block.same.ua.for" value="600" />
+                            <entry key="block.same.ip.for" value="0" />
                         </map>
                     </node>
                 </node>
