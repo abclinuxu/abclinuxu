@@ -1,7 +1,6 @@
 function prepni_sloupec() {
     if (document.getElementById('ls').style.display == 'none') {
         document.getElementById('ls').style.display = 'block'
-        /* document.getElementById('ls_prepinas_help').style.display = 'inline' */
         document.getElementById('ls_prepinac').style.width = '268px'
         document.getElementById('ls_prepinac_img').src = '/images/site2/sipkaon-text.gif'
         document.getElementById('st').style.marginLeft = '270px';
@@ -9,7 +8,6 @@ function prepni_sloupec() {
     else {
         document.getElementById('ls').style.display = 'none'
         document.getElementById('ls_prepinac').style.width = '45px'
-        /* document.getElementById('ls_prepinas_help').style.display = 'none' */
         document.getElementById('ls_prepinac_img').src = '/images/site2/sipkaoff-text.gif'
         document.getElementById('st').style.marginLeft = '0px';
     }
