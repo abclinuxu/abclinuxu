@@ -13,9 +13,13 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistance.extra.Qualifier;
 import cz.abclinuxu.utils.freemarker.Tools;
 
 import java.util.List;
+import java.util.Iterator;
+import java.util.ArrayList;
 
 /**
  * This class works as template for speed measurement.
@@ -30,16 +34,22 @@ public class Measure {
 
         // place initilizaton here
         Persistance persistance = PersistanceFactory.getPersistance();
-        Relation dizRel = (Relation) persistance.findById(new Relation(62819));
-        Item diz = (Item) dizRel.getChild();
-        Tools tools = new Tools();
-        tools.sync(diz);
-        tools.createDiscussionTree(diz);
+        SQLTool sqlTool = SQLTool.getInstance();
+        Qualifier[] qualifiers = new Qualifier[]{};
+        List data = sqlTool.findItemRelationsWithType(Item.DICTIONARY, qualifiers);
+        for (Iterator iter = data.iterator(); iter.hasNext();) {
+            Relation relation = (Relation) iter.next();
+            Tools.sync(relation);
+        }
+        List origData = new ArrayList(data);
+        Sorters2.byName(data);
 
         long start = System.currentTimeMillis();
-        for (i=0; i<4000; i++) {
+        for (i=0; i<145; i++) {
             //place your code to measure here
-            tools.createDiscussionTree(diz);
+            data.clear();
+            data.addAll(origData);
+            Sorters2.byName(data);
         }
         long end = System.currentTimeMillis();
 
