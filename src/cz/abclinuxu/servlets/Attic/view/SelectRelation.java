@@ -6,11 +6,9 @@
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.utils.*;
-import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
@@ -19,8 +17,6 @@ import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.utils.Misc;
-import org.apache.velocity.Template;
-import org.apache.velocity.context.Context;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,28 +29,6 @@ import java.util.Map;
  * Servlet for interactive selection of relation. When user chooses the relation, flow is forwarded
  * to <code>PARAM_URL</code> with all parameters propagated to new location plus
  * <code>SelectRelation.PARAM_SELECTED</code> set.<p>
- * <u>Parameters used by SelectIcon</u>
- * <dl>
- * <dt><code>PARAM_URL</code></dt>
- * <dd>Where to redirect browser.</dd>
- * <dt><code>PARAM_SELECTED</code></dt>
- * <dd>Result of the search.</dd>
- * <dt><code>PARAM_CURRENT</code></dt>
- * <dd>Current relation, where user is selecting relation.</dd>
- * <dt><code>PARAM_ENTERED</code></dt>
- * <dd>Hand written relation id.</dd>
- * </dl>
- * <u>Context variables introduced by AbcVelocityServlet</u>
- * <dl>
- * <dt><code>VAR_SOFTWARE</code></dt>
- * <dd>List of Relations, where parent() is /Software category.</dd>
- * <dt><code>VAR_RUBRIKY</code></dt>
- * <dd>List of Relations, where parent() is /Clanky category.</dd>
- * <dt><code>VAR_H386</code></dt>
- * <dd>List of Relations, where parent() is /Hardware/386 category.</dd>
- * <dt><code>VAR_CURRENT</code></dt>
- * <dd>Actual Relation, equivalent of PARAM_CURRENT.</dd>
- * </dl>
  */
 public class SelectRelation extends AbcFMServlet {
     public static final String PARAM_SELECTED = "selectedId";

@@ -6,12 +6,9 @@
  */
 package cz.abclinuxu.servlets.edit;
 
-import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.UrlUtils;
-import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.view.SelectRelation;
 import cz.abclinuxu.data.Relation;
@@ -20,8 +17,7 @@ import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.utils.InstanceUtils;
-import org.apache.velocity.Template;
-import org.apache.velocity.context.Context;
+
 import org.dom4j.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,16 +26,7 @@ import java.util.Map;
 import java.util.List;
 
 /**
- * Class for removing relations or creating links.<p>
- * <u>Parameters used by EditRelation</u>
- * <dl>
- * <dt><code>PARAM_RELATION</code></dt>
- * <dd>Id of base relation for this operation.</dd>
- * <dt><code>PARAM_NAME</code></dt>
- * <dd>Name used in new relation, overrides default.</dd>
- * <dt><code>PARAM_PREFIX</code></dt>
- * <dd>Prefix of URL.</dd>
- * </dl>
+ * Class for removing relations or creating links.
  */
 public class EditRelation extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditRelation.class);
@@ -47,8 +34,10 @@ public class EditRelation extends AbcFMServlet {
     public static final String PARAM_RELATION = "relationId";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_PREFIX = "prefix";
+    public static final String PARAM_SELECTED = SelectRelation.PARAM_SELECTED;
 
     public static final String VAR_CURRENT = "CURRENT";
+    public static final String VAR_SELECTED = "SELECTED";
     public static final String VAR_PARENTS = "PARENTS";
 
     public static final String ACTION_LINK = "add";
@@ -57,15 +46,17 @@ public class EditRelation extends AbcFMServlet {
     public static final String ACTION_REMOVE_STEP2 = "remove2";
     public static final String ACTION_MOVE = "move";
 
+
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
+        Persistance persistance = PersistanceFactory.getPersistance();
+        String action = (String) params.get(PARAM_ACTION);
         User user = (User) env.get(Constants.VAR_USER);
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(EditRelation.PARAM_RELATION,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
         if ( relation!=null ) {
-            relation = (Relation) PersistanceFactory.getPersistance().findById(relation);
-            env.put(EditRelation.VAR_CURRENT,relation);
+            relation = (Relation) persistance.findById(relation);
+            env.put(VAR_CURRENT,relation);
         }
 
         if ( action==null || action.equals(ACTION_LINK) ) {
@@ -73,7 +64,7 @@ public class EditRelation extends AbcFMServlet {
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return FMTemplateSelector.select("ViewUser","login",env,request);
                 case Guard.ACCESS_DENIED: return FMTemplateSelector.select("ViewUser","forbidden",env,request);
-                default: return FMTemplateSelector.select("EditRelation","add",env,request);
+                default: return actionLinkStep1(request,env);
             }
 
         } else if ( action.equals(ACTION_LINK_STEP2) ) {
@@ -115,12 +106,24 @@ public class EditRelation extends AbcFMServlet {
         return null;
     }
 
+    protected String actionLinkStep1(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_SELECTED,Relation.class,params);
+        if ( relation!=null ) {
+            relation = (Relation) persistance.findById(relation);
+            env.put(VAR_SELECTED,relation);
+        }
+        return FMTemplateSelector.select("EditRelation","add",env,request);
+    }
+
     protected String actionLinkStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        Relation parent = (Relation) env.get(EditRelation.VAR_CURRENT);
-        Relation child = (Relation) InstanceUtils.instantiateParam(SelectRelation.PARAM_SELECTED,Relation.class,params);
+        Relation parent = (Relation) env.get(VAR_CURRENT);
+        Relation child = (Relation) InstanceUtils.instantiateParam(PARAM_SELECTED,Relation.class,params);
         persistance.synchronize(child);
 
         Relation relation = new Relation();
@@ -128,7 +131,7 @@ public class EditRelation extends AbcFMServlet {
         relation.setChild(child.getChild());
         relation.setUpper(parent.getId());
 
-        String tmp = (String) params.get(EditRelation.PARAM_NAME);
+        String tmp = (String) params.get(PARAM_NAME);
         if ( tmp!=null && tmp.length()>0 ) {
             Document document = DocumentHelper.createDocument();
             Element root = document.addElement("data");
@@ -138,9 +141,8 @@ public class EditRelation extends AbcFMServlet {
 
         persistance.create(relation);
 
-        String prefix = (String)params.get(EditRelation.PARAM_PREFIX);
-        env.put(AbcVelocityServlet.VAR_URL_UTILS,new UrlUtils(prefix, response));
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        String prefix = (String)params.get(PARAM_PREFIX);
+        UrlUtils urlUtils = new UrlUtils(prefix, response);
         urlUtils.redirect(response, "/ViewRelation?relationId="+parent.getId());
         return null;
     }
@@ -167,7 +169,7 @@ public class EditRelation extends AbcFMServlet {
             url = prefix.concat("/ViewRelation?relationId="+relation.getUpper());
         } else url = "/Index";
 
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        UrlUtils urlUtils = new UrlUtils(prefix, response);
         urlUtils.redirect(response, url);
         return null;
     }
@@ -180,9 +182,10 @@ public class EditRelation extends AbcFMServlet {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_CURRENT);
-        Relation destination = (Relation) InstanceUtils.instantiateParam(SelectRelation.PARAM_SELECTED,Relation.class,params);
 
+        Relation destination = (Relation) InstanceUtils.instantiateParam(PARAM_SELECTED,Relation.class,params);
         persistance.synchronize(destination);
+
         relation.setParent(destination.getChild());
         relation.setUpper(destination.getId());
         persistance.update(relation);
@@ -193,7 +196,7 @@ public class EditRelation extends AbcFMServlet {
             url = prefix.concat("/ViewRelation?relationId="+relation.getUpper());
         } else url = "/Index";
 
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        UrlUtils urlUtils = new UrlUtils(prefix, response);
         urlUtils.redirect(response, url);
         return null;
     }

@@ -90,13 +90,13 @@
   </servlet>
 
   <servlet name="EditRelation">
-    <action name="add">
-      <mapping template="web" content="web/add/relation.vm">
+    <action name="add" template="print">
+      <mapping template="web" content="/print/add/relation.ftl">
         <var name="TITLE" value="Vytvoø link" />
       </mapping>
     </action>
-    <action name="remove">
-      <mapping template="web" content="web/remove/relation.vm">
+    <action name="remove" template="print">
+      <mapping template="web" content="/print/remove/relation.ftl">
         <var name="TITLE" value="Smazání relace" />
       </mapping>
     </action>
