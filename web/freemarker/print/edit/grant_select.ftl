@@ -14,7 +14,7 @@
   </tr>
   <tr>
    <td width="100">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi" tabindex="2"></td>
+   <td><input type="submit" value="Zobraz" tabindex="2"></td>
   </tr>
  </table>
  <input type="hidden" name="action" value="grant2">
