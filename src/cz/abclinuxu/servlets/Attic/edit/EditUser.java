@@ -314,6 +314,16 @@ public class EditUser extends AbcServlet {
         PersistanceFactory.getPersistance().update(user);
 
         addMessage("Heslo bylo zmìnìno.",ctx, request.getSession());
+
+        Cookie[] cookies = request.getCookies();
+        for (int i = 0; user==null && cookies!=null && i<cookies.length; i++) {
+            Cookie cookie = cookies[i];
+            if ( cookie.getName().equals(AbcServlet.VAR_USER) ) {
+                deleteCookie(cookie,response);
+                break;
+            }
+        }
+
         redirect("/Index",response,ctx);
         return null;
     }

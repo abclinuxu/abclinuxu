@@ -60,15 +60,6 @@ public class UpdateLinks implements Task {
         mapLinks.put(new Server(WS),"http://www.awdesign.cz/ws/ws.dat");
         mapLinks.put(new Server(KECZY),"http://www.keczy.cz/latin2/headline.php3");
         mapLinks.put(new Server(REBOOT),"http://www.reboot.cz/reboot_lh.phtml");
-
-//        mapLinks.put(new Server(ROOT),"file:///home/literakl/obsahy/ttitles.txt");
-//        mapLinks.put(new Server(LW),"file:///home/literakl/obsahy/lw.dat");
-//        mapLinks.put(new Server(SW),"file:///home/literakl/obsahy/sw.dat");
-//        mapLinks.put(new Server(UG),"file:///home/literakl/obsahy/czech.txt");
-//        mapLinks.put(new Server(PENGUIN),"file:///home/literakl/obsahy/trafika.php3");
-//        mapLinks.put(new Server(WS),"file:///home/literakl/obsahy/ws.dat");
-//        mapLinks.put(new Server(KECZY),"file:///home/literakl/obsahy/headline.php3");
-//        mapLinks.put(new Server(REBOOT),"file:///home/literakl/obsahy/reboot_lh.phtml");
     }
 
     /**
@@ -76,6 +67,7 @@ public class UpdateLinks implements Task {
      * @todo time out for opening connection!!!!!!!!!!!!
      */
     public void runJob() {
+        if ( log.isDebugEnabled() ) log.debug("Starting task "+getJobName());
         InputStream is = null;
         BufferedReader in = null;
 
@@ -105,6 +97,7 @@ public class UpdateLinks implements Task {
         } catch (Exception e) {
             log.error("Cannot update links!",e);
         }
+        if ( log.isDebugEnabled() ) log.debug("Finishing task "+getJobName());
     }
 
     public String getJobName() {
@@ -141,7 +134,7 @@ public class UpdateLinks implements Task {
     private void updateLinks(BufferedReader in, List links, Server server, Category category) throws PersistanceException {
         List urls = new ArrayList(COUNT);
         List titles = new ArrayList(COUNT);
-        int count = 0;
+        int count = 0, updated = 0;
 
         try {
             String line = in.readLine();
@@ -173,6 +166,7 @@ public class UpdateLinks implements Task {
                 link.setText(title);
                 link.setUrl(url);
                 persistance.update(link);
+                updated++;
             } else {
                 Link link = new Link();
                 link.setOwner(1);
@@ -184,8 +178,10 @@ public class UpdateLinks implements Task {
                 persistance.create(link);
                 Relation relation = new Relation(category,link,0);
                 persistance.create(relation);
+                updated++;
             }
         }
+        if ( log.isDebugEnabled() ) log.debug(mapLinks.get(server)+": updated "+updated+" links.");
     }
 
     /**

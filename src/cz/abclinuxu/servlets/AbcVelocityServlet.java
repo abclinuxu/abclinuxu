@@ -397,7 +397,7 @@ public class AbcServlet extends VelocityServlet {
     /**
      * Removes cookie
      */
-    private void deleteCookie(Cookie cookie, HttpServletResponse response) {
+    public void deleteCookie(Cookie cookie, HttpServletResponse response) {
         cookie.setMaxAge(0);
         cookie.setPath("/");
         response.addCookie(cookie);
