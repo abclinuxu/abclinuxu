@@ -7,9 +7,16 @@
     <property name="user" value="literakl"/>
     <property name="password" value="lkaretil"/>
   </driver-properties>
+  
   <minimum-connection-count>1</minimum-connection-count>
-  <maximum-connection-count>15</maximum-connection-count>
+  <maximum-connection-count>30</maximum-connection-count>
+  <maximum-active-time>30000</maximum-active-time>
   <maximum-connection-lifetime>1800000</maximum-connection-lifetime>
+  <house-keeping-sleep-time>20000</house-keeping-sleep-time>
   <house-keeping-test-sql>select CURRENT_DATE</house-keeping-test-sql>
+
+  <verbose>false</verbose>
+  <trace>false</trace>
   <statistics>1m,1h,1d</statistics>
+  <statistics-log-level>INFO</statistics-log-level>
 </proxool>

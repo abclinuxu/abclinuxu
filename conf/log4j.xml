@@ -17,8 +17,8 @@
            </layout>
 	</appender>
 
-	<appender name="REDIRECT" class="org.apache.log4j.FileAppender">
-           <param name="File" value="/home/literakl/abc/deploy/WEB-INF/logs/redirect.log" />
+	<appender name="PROXOOL" class="org.apache.log4j.FileAppender">
+           <param name="File" value="/home/literakl/abc/deploy/WEB-INF/logs/proxool.log" />
            <param name="Append" value="true" />
 	   <layout class="org.apache.log4j.PatternLayout">
              <param name="ConversionPattern" value="%d | %m%n"/>
@@ -41,9 +41,9 @@
 	  <priority value="fatal" />
 	</category>
 
-	<category name="redirect" additivity="false">
+	<category name="org.logicalcobwebs.proxool" additivity="false">
 	  <priority value="info" />
- 	  <appender-ref ref="REDIRECT" />
+ 	  <appender-ref ref="PROXOOL" />
 	</category>
 
 	<category name="RequestLog" additivity="false">
