@@ -166,6 +166,9 @@ public class TemplateSelector {
         if ( ! Misc.empty(request.getParameter(PARAM_VARIANTA)) )
             return request.getParameter(PARAM_VARIANTA);
 
+        if ( ! Misc.empty((String) request.getAttribute(PARAM_VARIANTA)) )
+            return (String) request.getAttribute(PARAM_VARIANTA);
+
         if ( Misc.same(browser,BROWSER_LYNX) )
             return "lynx";
         if ( Misc.same(browser,BROWSER_PLUCKER) )

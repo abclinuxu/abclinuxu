@@ -8,6 +8,7 @@ package cz.abclinuxu.servlets.html;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.URLMapper;
 import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.servlets.utils.template.TemplateSelector;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -39,6 +40,10 @@ public class HTMLVersion {
                 return;
 
             AbcAction action = urlMapper.findAction(request);
+            String server = request.getServerName();
+            if ( server.startsWith("print") )
+                request.setAttribute(TemplateSelector.PARAM_VARIANTA, "print");
+
             String templateName = action.process(request, response, env);
             if ( Misc.empty(templateName) )
                 return;
