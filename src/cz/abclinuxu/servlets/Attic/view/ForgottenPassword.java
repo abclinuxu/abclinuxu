@@ -26,6 +26,7 @@ public class ForgottenPassword extends AbcFMServlet {
     public static final String PARAM_LOGIN = "login";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_USER_ID = "userId";
+    public static final String PARAM_USER_ID_SHORT = "uid";
 
     public static final String VAR_USERS = "USERS";
 
@@ -84,7 +85,7 @@ public class ForgottenPassword extends AbcFMServlet {
 
     protected String actionSend(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        User user = (User) InstanceUtils.instantiateParam(PARAM_USER_ID,User.class,params);
+        User user = (User) InstanceUtils.instantiateParam(PARAM_USER_ID_SHORT,PARAM_USER_ID,User.class,params);
         PersistanceFactory.getPersistance().synchronize(user);
 
         Map data = new HashMap();
