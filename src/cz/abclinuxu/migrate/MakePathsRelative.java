@@ -26,7 +26,7 @@ public class MakePathsRelative {
 
     static {
         try {
-            reAbsoluteURL = new RE("(HREF|SRC)(=\")(http://(www.)?abclinuxu.cz)", RE.MATCH_CASEINDEPENDENT);
+            reAbsoluteURL = new RE("(HREF|SRC)(=\")(http://(www.)?abclinuxu.cz)(/[^\"]+)", RE.MATCH_CASEINDEPENDENT);
 //            reAbsoluteURL = new RE("(HREF|SRC)(=\"http://(www.)?abclinuxu.cz)([^\"]+)(\")", RE.MATCH_CASEINDEPENDENT+RE.MATCH_SINGLELINE);
         } catch (RESyntaxException e) {
             log.error("regexp syntax troubles", e);
@@ -122,7 +122,7 @@ public class MakePathsRelative {
                             do {
                                 start = reAbsoluteURL.getParenStart(3);
                                 sb.append(stringIter.substring(position, start));
-                                position = reAbsoluteURL.getParenEnd(0);
+                                position = reAbsoluteURL.getParenEnd(3);
                             } while ( reAbsoluteURL.match(stringIter, position) );
                             sb.append(stringIter.substring(position));
                             total++;
