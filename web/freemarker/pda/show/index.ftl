@@ -4,7 +4,7 @@
 <#call showMessages>
 
 <#list ARTICLES as rel>
- <#call showArticle(rel)>
+ <#call showArticle(rel "CZ_SHORT")>
  <#if rel_has_next><#call separator><#else><#call doubleSeparator></#if>
 </#list>
 

@@ -7,7 +7,7 @@
 Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum</a>
 
 <#list ARTICLES as rel>
- <#call showArticle(rel)>
+ <#call showArticle(rel "CZ_SHORT")>
  <#if rel_has_next><#call separator><#else><#call doubleSeparator></#if>
 </#list>
 

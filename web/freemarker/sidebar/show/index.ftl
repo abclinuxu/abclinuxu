@@ -6,7 +6,7 @@
   <a href="/clanky/ViewRelation?relationId=${relation.id}" target="_content">
    ${TOOL.xpath(clanek,"data/name")}
   </a><br>
-  ${DATE.show(clanek.created, "CZ_FULL")}
+  ${DATE.show(clanek.created, "CZ_SHORT")}
  </p>
 </#macro>
 
