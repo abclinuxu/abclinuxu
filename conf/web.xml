@@ -26,6 +26,10 @@
           <param-name>LINKS</param-name>
           <param-value>auto/abc.dat</param-value>
         </init-param>
+        <init-param>
+          <param-name>LINKS_ANNECA</param-name>
+          <param-value>auto/abc2.dat</param-value>
+        </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
 

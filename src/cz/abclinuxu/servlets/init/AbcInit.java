@@ -58,6 +58,9 @@ public class AbcInit extends HttpServlet {
         String links = getInitParameter("LINKS");
         if ( links!=null ) GenerateLinks.setFileName(path+links);
 
+        links = getInitParameter("LINKS_ANNECA");
+        if ( links!=null ) GenerateLinks.setFileNameAnneca(path+links);
+
         // start scheduler tasks
         startKernelUpdate();
         startLinksUpdate();

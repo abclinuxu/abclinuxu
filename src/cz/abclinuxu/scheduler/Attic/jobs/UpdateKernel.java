@@ -119,12 +119,12 @@ public class UpdateKernel implements Task {
      * get stream with kernel headers
      */
     private BufferedReader getStream() throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader("/home/literakl/penguin/obsahy/kernel.txt"));
-//
-//        Socket socket = new Socket(server,79);
-//        socket.setSoTimeout(500);
-//        socket.getOutputStream().write("\015\012".getBytes());
-//        BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+//        BufferedReader reader = new BufferedReader(new FileReader("/home/literakl/penguin/obsahy/kernel.txt"));
+
+        Socket socket = new Socket(server,79);
+        socket.setSoTimeout(500);
+        socket.getOutputStream().write("\015\012".getBytes());
+        BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         return reader;
     }
 }

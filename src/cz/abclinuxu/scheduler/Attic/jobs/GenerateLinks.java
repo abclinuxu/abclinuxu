@@ -119,10 +119,10 @@ public class GenerateLinks implements Task {
     }
 
     /**
-     * @return File, where links are stored.
+     * Sets default file name.
      */
-    public static String getFileName() {
-        return fileName;
+    public static void setFileNameAnneca(String name) {
+        fileName_anneca = name;
     }
 
     /**
