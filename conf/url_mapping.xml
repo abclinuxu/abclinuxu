@@ -33,7 +33,7 @@
             <action>cz.abclinuxu.servlets.html.edit.EditDictionary</action>
         </mapping>
         <mapping>
-            <pattern>^/slovnik/</pattern>
+            <pattern>^/slovnik</pattern>
             <action>cz.abclinuxu.servlets.html.view.ShowDictionary</action>
         </mapping>
         <mapping>

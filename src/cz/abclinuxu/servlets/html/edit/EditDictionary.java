@@ -153,7 +153,6 @@ public class EditDictionary implements AbcAction, Configurable {
         recordRelation.getParent().addChildRelation(recordRelation);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-//        urlUtils.redirect(response, "/slovnik/"+relation.getId());
         urlUtils.redirect(response, "/slovnik/"+item.getSubType());
         return null;
     }
@@ -189,7 +188,6 @@ public class EditDictionary implements AbcAction, Configurable {
         MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.DICTIONARY, item, url);
         MonitorPool.scheduleMonitorAction(action);
 
-//        urlUtils.redirect(response, "/slovnik/"+upper.getId());
         urlUtils.redirect(response, "/slovnik/"+item.getSubType());
         return null;
     }
@@ -245,7 +243,6 @@ public class EditDictionary implements AbcAction, Configurable {
         MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.DICTIONARY, item, url);
         MonitorPool.scheduleMonitorAction(action);
 
-//        urlUtils.redirect(response, "/slovnik/"+relation.getId());
         urlUtils.redirect(response, "/slovnik/"+item.getSubType());
         return null;
     }
@@ -265,7 +262,6 @@ public class EditDictionary implements AbcAction, Configurable {
         SQLTool.getInstance().setUpdatedTimestamp(item, originalUpdated);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-//        urlUtils.redirect(response, "/slovnik/"+relation.getId());
         urlUtils.redirect(response, "/slovnik/"+item.getSubType());
         return null;
     }

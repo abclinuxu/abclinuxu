@@ -54,7 +54,7 @@ public interface Constants {
     int REL_NEWS_POOL = 37672;
     int REL_NEWS = 42932;
     int REL_DIZ_TODO = 50795;
-    int REL_DICTIONARY = 59736;//60058
+    int REL_DICTIONARY = 60058;
 
     int GROUP_ADMINI = 11246;
     int GROUP_AUTORI = 11247;
