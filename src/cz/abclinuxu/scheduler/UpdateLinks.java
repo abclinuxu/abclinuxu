@@ -70,6 +70,10 @@ public class UpdateLinks extends TimerTask {
             this.encoding = encoding;
             this.format = format;
         }
+
+        public String toString() {
+            return url;
+        }
     }
 
     /**
