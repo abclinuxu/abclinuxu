@@ -32,4 +32,8 @@ public class Roles {
     public static final String USER_ADMIN = "user admin";
     /** user can invalidate emails of other users */
     public static final String CAN_INVALIDATE_EMAILS = "email invalidator";
+    /** user can edit dictionary items */
+    public static final String DICTIONARY_ADMIN = "dictionary admin";
+    /** user can edit tips */
+    public static final String TIPS_ADMIN = "tip admin";
 }
