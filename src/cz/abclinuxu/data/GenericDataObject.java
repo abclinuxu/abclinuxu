@@ -16,7 +16,7 @@ import org.dom4j.Document;
  * This class serves as base class for Item, Category and Record,
  * which have very similar functionality and usage.
  */
-public abstract class GenericDataObject extends GenericObject {
+public abstract class GenericDataObject extends GenericObject implements XMLContainer {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(GenericDataObject.class);
 
     /** identifier of owner of this object */
@@ -139,7 +139,8 @@ public abstract class GenericDataObject extends GenericObject {
         GenericDataObject b = (GenericDataObject) obj;
         owner = b.owner;
         type = b.type;
-        documentHandler = new XMLHandler(b.getData());
+//        documentHandler = (XMLHandler) b.documentHandler.clone();
+        documentHandler = b.documentHandler;
         created = b.created;
         updated = b.updated;
     }

@@ -46,13 +46,22 @@ public class AbcException extends RuntimeException {
      */
     int code;
 
+
     /**
-     * constructs new exception and logs relevant information
+     * constructs new exception
      * @param desc description of exception
      * @param code error code of exception
      */
     public AbcException(String desc, int code) {
         super(desc);
+        this.code = code;
+    }
+
+    /**
+     * Constructs new chained exception
+     */
+    public AbcException(String desc, int code, Exception e) {
+        super(desc,e);
         this.code = code;
     }
 

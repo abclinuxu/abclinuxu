@@ -18,15 +18,26 @@ import cz.abclinuxu.AbcException;
  * This class defines methods to work with DOM4J - conversions to/from String.
  * Other classes may use object adapter pattern with this class.
  */
-public class XMLHandler {
+public class XMLHandler implements Cloneable {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(XMLHandler.class);
 
+    /** XML parsed into DOM4J tree */
     protected Document data;
+    /** original XML, it is here to allow lazy instantiation */
+    protected String string;
+
 
     /**
      * Creates empty XMLHandler. You must set <code>data</code> afterwards!
      */
     public XMLHandler() {
+    }
+
+    /**
+     * Creates XMLHandler, which is not initialized.
+     */
+    public XMLHandler(String s) {
+        string = s;
     }
 
     /**
@@ -40,6 +51,7 @@ public class XMLHandler {
      * @return XML data of this object
      */
     public Document getData() {
+        if ( data==null && string!=null ) lazyInit();
         return data;
     }
 
@@ -48,7 +60,9 @@ public class XMLHandler {
      */
     public String getDataAsString() {
         try {
-            if ( data==null ) return "";
+            if ( data==null ) {
+                return (string==null)? "":string;
+            }
 
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             OutputFormat format = new OutputFormat(null,false,"ISO-8859-2");
@@ -75,12 +89,24 @@ public class XMLHandler {
      * sets XML data of this object in String format
      */
     public void setData(String data) {
+        string = data;
+    }
+
+    /**
+     * Provides lazy initialization
+     */
+    protected void lazyInit() {
         try {
-            this.data = DocumentHelper.parseText(data);
+            this.data = DocumentHelper.parseText(string);
         } catch (DocumentException e) {
-            log.error("Nemuzu konvertovat data do XML! ("+data+")",e);
-            throw new AbcException("Nemuzu konvertovat data do XML!",AbcException.WRONG_DATA);
+            throw new AbcException("Chyba v XML:"+string,AbcException.WRONG_DATA,e);
         }
     }
 
+    public Object clone() {
+        if ( data!=null )
+            return new XMLHandler(data);
+        else
+            return new XMLHandler(string);
+    }
 }

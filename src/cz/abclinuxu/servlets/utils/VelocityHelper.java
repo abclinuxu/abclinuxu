@@ -119,12 +119,8 @@ public class VelocityHelper {
         Document doc = null;
         String value = null;
 
-        if ( obj instanceof GenericDataObject ) {
-            doc = ((GenericDataObject)obj).getData();
-        } else if ( obj instanceof Relation ) {
-            doc = ((Relation)obj).getData();
-        } else if ( obj instanceof User ) {
-            doc = ((User)obj).getData();
+        if ( obj instanceof XMLContainer ) {
+            doc = ((XMLContainer)obj).getData();
         }
         if ( doc==null ) return null;
 

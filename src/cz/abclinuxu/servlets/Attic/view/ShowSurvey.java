@@ -129,7 +129,9 @@ public class ShowSurvey extends AbcServlet {
                 List list = (List) value;
                 for (Iterator iter = list.iterator(); iter.hasNext();) {
                     String s = (String) iter.next();
-                    screen.addElement(var,s);
+                    Element element = screen.addElement("var");
+                    element.addAttribute("name",var);
+                    element.addAttribute("value",s);
                 }
             }
         }

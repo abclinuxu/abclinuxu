@@ -11,7 +11,7 @@ import java.util.Iterator;
 /**
  * Class containing basic user data
  */
-public class User extends GenericObject {
+public class User extends GenericObject implements XMLContainer {
 
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(User.class);
 
@@ -151,7 +151,7 @@ public class User extends GenericObject {
         if ( obj==this ) return;
         super.synchronizeWith(obj);
         User b = (User) obj;
-        documentHandler = new XMLHandler(b.getData());
+        documentHandler = b.documentHandler;
         name = b.getName();
         login = b.getLogin();
         email = b.getEmail();

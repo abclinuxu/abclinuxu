@@ -13,7 +13,7 @@ import cz.abclinuxu.AbcException;
  * @todo change String name to Document data. XML may contain
  * not only name, but icon too. Or anything else.
  */
-public final class Relation extends GenericObject {
+public final class Relation extends GenericObject implements XMLContainer {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(Relation.class);
 
     /** Upper relation. Similar to .. in filesystem. */
@@ -108,7 +108,7 @@ public final class Relation extends GenericObject {
         id = r.getId();
         initialized = r.isInitialized();
         upper = r.getUpper();
-        documentHandler = new XMLHandler(r.getData());
+        documentHandler = r.documentHandler;
         parent = r.getParent();
         child = r.getChild();
     }
