@@ -36,13 +36,14 @@ public class Tools {
     static RE lineBreaks, reRemoveTags, emptyLine, usmev, smich, mrk, smutek;
     static {
         try {
+            // todo move it to systemPrefs.xml
             lineBreaks = new RE("(<br>)|(<p>)|(<div>)",RE.MATCH_CASEINDEPENDENT);
             emptyLine = new RE("(\r\n){2}|(\n){2}", RE.MATCH_MULTILINE);
             reRemoveTags = new RE("<[\\w\\s\\d/=:.~?\"]+>", RE.MATCH_SINGLELINE);
-            usmev = new RE("([\\:][-][)]+)");
-            smich = new RE("([\\:][-][D]([^a-zA-Z]|$))");
-            mrk = new RE("([;][-][)])");
-            smutek = new RE("([\\:][-][(])");
+            usmev = new RE("(\\:-\\)+)");
+            smich = new RE("(\\:-D([^a-zA-Z]|$))");
+            mrk = new RE("(;-\\))");
+            smutek = new RE("(\\:-\\()");
         } catch (RESyntaxException e) {
             log.error("Cannot create regexp to find line breaks!", e);
         }
