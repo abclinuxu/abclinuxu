@@ -47,12 +47,12 @@
   <tr>
    <td width="90" class="required">Obsah èlánku</td>
    <td>
-    <p>Rozdìlit èlánek na více stránek mù¾ete pomocí následující direktivy: <br>
-    <i>&lt;page title="Nastavení programu LILO"/&gt;</i> <br>
-    Pokud budete pou¾ívat tuto znaèku, je nutné pojmenovat i první stránku, tak¾e text musí zaèínat
-    touto znaèkou. Text pøed první znaèkou bude ignorován! Zeptejte se radìji Leo¹e na vysvìtlení.</p>
+    <p>Rozdìlit èlánek na více podstránek mù¾ete pomocí následující direktivy: <br>
+    <i>&lt;page title="Nastavení programu LILO"&gt;</i> <br>
+    Pokud pou¾ijete tuto funkci, pojmenujte i první stránku, text pøed první znaèkou bude ignorován!</p>
+
     <p>V¹echna URL na èlánky, obrázky a soubory z na¹eho serveru musí být relativní!</p>
-    <p>Dodr¾ujte dohodnuté formátování.</p>
+
     <textarea name="content" cols="80" rows="30" tabindex="5">${PARAMS.content?if_exists?html}</textarea>
     <div class="error">${ERRORS.content?if_exists}</div>
    </td>
