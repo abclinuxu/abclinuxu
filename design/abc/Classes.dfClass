@@ -119,6 +119,24 @@ class reference2 {
 @__imported 
 */
 class reference4 {
+}/**
+@__ref <oiref:java#Class#abc.GenericDataObject:oiref><oihard>
+@__modelType reference
+@__imported 
+*/
+class reference6 {
+}/**
+@__ref <oiref:java#Class#abc.AccessRights:oiref><oihard>
+@__modelType reference
+@__imported 
+*/
+class reference8 {
+}/**
+@__ref <oiref:java#Class#abc.Relation:oiref><oihard>
+@__modelType reference
+@__imported 
+*/
+class reference10 {
 }}/**
 
 @__tags
@@ -128,72 +146,79 @@ class __tags {
 }/**
 @__options option.papersize = A4
 option.orientation = Landscape
-option.fittopage = true
+option.fittopage = false
 option.boundingbox = false
 option.printheader = false
 option.printfooter = false
 option.top = 1
 option.bottom = 1
+
+option.left = 0.5
+option.right = 0.5
+
+option.printzoom = 0.8
 */
 class __options {
 }/**
 @__positions 
 <oigroup:<oiref:java#Extends#abc.Request#abc.Item:oiref>=210,450,250,358:oigroup>
+<oigroup:<oiref:java#Class#abc.Relation:oiref>=10,310,143,121,1:oigroup>
+<oigroup:<oiref:java#Class#abc.GenericDataObject:oiref>=470,230,156,137,1:oigroup>
 <oigroup:<oiref:java#Class#abc.ArticleRecord:oiref>=470,450,104,76,1:oigroup>
-<oigroup:<oiref:java#Extends#abc.Server#abc.GenericObject:oiref>=276,108,276,140:oigroup>
-<oigroup:Composite#clientCardinality#MemberLink#<oiref:java#Member#abc.ArticleRecord#lnkArticle:oiref>=436,471,30,13,0:oigroup>
-<oigroup:<oiref:java#Extends#abc.User#abc.GenericObject:oiref>=104,121,230,156:oigroup>
-<oigroup:Composite#clientCardinality#MemberLink#<oiref:java#Member#abc.Item#lnkCategory:oiref>=196,253,30,13,0:oigroup>
-<oigroup:<oiref:java#Class#abc.Link:oiref>=400,0,85,95,1:oigroup>
+<oigroup:<oiref:java#Extends#abc.Server#abc.GenericObject:oiref>=293,108,293,160:oigroup>
+<oigroup:MemberLink#<oiref:java#Member#abc.Relation#parent:oiref>=153,364,230,364:oigroup>
+<oigroup:<oiref:java#Extends#abc.User#abc.GenericObject:oiref>=200,130,230,200:oigroup>
+<oigroup:<oiref:java#Extends#abc.Record#abc.GenericDataObject:oiref>=660,298,626,298:oigroup>
+<oigroup:MemberLink#<oiref:java#Member#abc.AccessRights#lnkUser:oiref>=86,200,86,163:oigroup>
+<oigroup:<oiref:java#Class#abc.Link:oiref>=390,0,105,147,1:oigroup>
 <oigroup:MemberLink#<oiref:java#Member#abc.ArticleRecord#lnkArticle:oiref>=470,488,390,488:oigroup>
-<oigroup:Composite#clientCardinality#MemberLink#<oiref:java#Member#abc.PollChoice#lnkSurvey:oiref>=646,24,30,13,0:oigroup>
 <oigroup:<oiref:java#Extends#abc.Rating#abc.Poll:oiref>=577,120,577,82:oigroup>
 <oigroup:<oiref:java#Class#abc.Make:oiref>=130,360,80,76,1:oigroup>
+<oigroup:<oiref:java#Extends#abc.GenericDataObject#abc.GenericObject:oiref>=470,298,430,298:oigroup>
 <oigroup:<oiref:java#Extends#abc.Category#abc.GenericObject:oiref>=114,196,230,196:oigroup>
-<oigroup:<oiref:java#Class#abc.Record:oiref>=440,210,102,108,1:oigroup>
-<oigroup:Composite#supplierCardinality#MemberLink#<oiref:java#Member#abc.ArticleRecord#lnkArticle:oiref>=394,471,16,13,0:oigroup>
-<oigroup:Composite#supplierCardinality#MemberLink#<oiref:java#Member#abc.Item#lnkCategory:oiref>=118,253,16,13,0:oigroup>
+<oigroup:<oiref:java#Class#abc.Record:oiref>=660,230,200,147,1:oigroup>
+<oigroup:<oiref:java#Extends#abc.Item#abc.GenericDataObject:oiref>=547,400,547,367:oigroup>
 <oigroup:<oiref:java#Extends#abc.Survey#abc.Poll:oiref>=684,120,595,82:oigroup>
 <oigroup:<oiref:java#Extends#abc.Question#abc.Item:oiref>=270,450,270,358:oigroup>
 <oigroup:<oiref:java#Extends#abc.Record#abc.GenericObject:oiref>=440,210,338,196:oigroup>
 <oigroup:MemberLink#<oiref:java#Member#abc.SoftwareRecord#lnkMake:oiref>=580,415,210,415:oigroup>
-<oigroup:<oiref:java#Class#abc.GenericObject:oiref>=230,140,108,82,1:oigroup>
-<oigroup:<oiref:java#Class#abc.PollChoice:oiref>=680,0,85,108,1:oigroup>
+<oigroup:<oiref:java#Class#abc.GenericObject:oiref>=230,160,200,222,1:oigroup>
+<oigroup:<oiref:java#Class#abc.PollChoice:oiref>=760,30,85,108,0:oigroup>
+<oigroup:Composite#supplierCardinality#MemberLink#<oiref:java#Member#abc.Poll#choices:oiref>=726,67,30,13,0:oigroup>
 <oigroup:MemberLink#<oiref:java#Member#abc.Link#lnkServer:oiref>=400,47,357,47:oigroup>
-<oigroup:<oiref:java#Class#abc.Poll:oiref>=530,0,85,82,1:oigroup>
+<oigroup:<oiref:java#Class#abc.Poll:oiref>=530,0,170,202,1:oigroup>
 <oigroup:<oiref:java#Class#abc.Request:oiref>=130,450,80,76,1:oigroup>
-<oigroup:<oiref:java#Class#abc.Category:oiref>=10,170,104,121,1:oigroup>
-<oigroup:<oiref:java#Class#abc.Item:oiref>=230,250,102,108,1:oigroup>
+<oigroup:Composite#clientCardinality#MemberLink#<oiref:java#Member#abc.Poll#choices:oiref>=704,67,16,13,0:oigroup>
+<oigroup:<oiref:java#Class#abc.Category:oiref>=640,400,104,82,1:oigroup>
+<oigroup:<oiref:java#Class#abc.Item:oiref>=480,400,135,134,1:oigroup>
 <oigroup:<oiref:java#Class#abc.SoftwareRecord:oiref>=580,380,119,76,1:oigroup>
-<oigroup:<oiref:java#Class#abc.Server:oiref>=250,0,107,108,1:oigroup>
+<oigroup:<oiref:java#Class#abc.Server:oiref>=240,0,107,108,1:oigroup>
+<oigroup:MemberLink#<oiref:java#Member#abc.Relation#child:oiref>=153,346,230,346:oigroup>
 <oigroup:MemberLink#<oiref:java#Member#abc.GenericObject#lnkGenericObject:oiref>=322,222,322,237,364,237,364,217,338,217:oigroup>
 <oigroup:MemberLink#<oiref:java#Member#abc.HardwareRecord#lnkMake:oiref>=580,351,210,395:oigroup>
-<oigroup:Composite#supplierCardinality#MemberLink#<oiref:java#Member#abc.Link#lnkServer:oiref>=361,30,16,13,0:oigroup>
-<oigroup:Composite#supplierCardinality#MemberLink#<oiref:java#Member#abc.GenericObject#lnkGenericObject:oiref>=342,200,30,13,0:oigroup>
-<oigroup:<oiref:java#Extends#abc.Poll#abc.GenericObject:oiref>=560,82,360,170,338,170:oigroup>
+<oigroup:<oiref:java#Extends#abc.Poll#abc.GenericObject:oiref>=530,181,430,181:oigroup>
+<oigroup:MemberLink#<oiref:java#Member#abc.Server#lnkLink:oiref>=347,54,390,54:oigroup>
 <oigroup:<oiref:java#Extends#abc.Article#abc.Item:oiref>=321,450,321,358:oigroup>
 <oigroup:<oiref:java#Class#abc.Survey:oiref>=610,120,149,82,0:oigroup>
-<oigroup:Composite#clientCardinality#MemberLink#<oiref:java#Member#abc.SoftwareRecord#lnkMake:oiref>=546,398,30,13,0:oigroup>
-<oigroup:<oiref:java#Extends#abc.Link#abc.GenericObject:oiref>=442,95,338,150:oigroup>
-<oigroup:Composite#supplierCardinality#MemberLink#<oiref:java#Member#abc.SoftwareRecord#lnkMake:oiref>=214,398,16,13,0:oigroup>
+<oigroup:<oiref:java#Class#abc.AccessRights:oiref>=10,200,152,82,1:oigroup>
+<oigroup:<oiref:java#Extends#abc.Link#abc.GenericObject:oiref>=390,126,350,160:oigroup>
+<oigroup:<oiref:java#Extends#abc.Relation#abc.GenericObject:oiref>=153,328,230,328:oigroup>
 <oigroup:<oiref:java#Extends#abc.Item#abc.GenericObject:oiref>=276,250,276,222:oigroup>
 <oigroup:<oiref:java#Extends#abc.ArticleRecord#abc.Record:oiref>=491,450,491,318:oigroup>
 <oigroup:MemberLink#<oiref:java#Member#abc.Item#lnkCategory:oiref>=230,270,114,270:oigroup>
 <oigroup:<oiref:java#Class#abc.Rating:oiref>=520,120,80,76,1:oigroup>
 <oigroup:<oiref:java#Extends#abc.HardwareRecord#abc.Record:oiref>=580,304,542,304:oigroup>
-<oigroup:<oiref:java#Class#abc.Data:oiref>=10,320,102,108,1:oigroup>
+<oigroup:<oiref:java#Class#abc.Data:oiref>=280,420,102,110,0:oigroup>
 <oigroup:<oiref:java#Extends#abc.SoftwareRecord#abc.Record:oiref>=580,400,513,318:oigroup>
-<oigroup:Composite#supplierCardinality#MemberLink#<oiref:java#Member#abc.PollChoice#lnkSurvey:oiref>=619,24,16,13,0:oigroup>
-<oigroup:MemberLink#<oiref:java#Member#abc.PollChoice#lnkSurvey:oiref>=680,41,615,41:oigroup>
+<oigroup:<oiref:java#Extends#abc.Category#abc.GenericDataObject:oiref>=640,400,586,367:oigroup>
+<oigroup:MemberLink#<oiref:java#Member#abc.Poll#choices:oiref>=700,84,760,84:oigroup>
 <oigroup:<oiref:java#Class#abc.Question:oiref>=220,450,80,76,1:oigroup>
-<oigroup:<oiref:java#Class#abc.User:oiref>=0,0,200,121,1:oigroup>
+<oigroup:<oiref:java#Class#abc.User:oiref>=0,0,200,163,1:oigroup>
 <oigroup:<oiref:java#Class#abc.Article:oiref>=310,450,80,76,1:oigroup>
-<oigroup:<oiref:java#Extends#abc.Data#abc.GenericObject:oiref>=61,320,230,220:oigroup>
-<oigroup:Composite#clientCardinality#MemberLink#<oiref:java#Member#abc.HardwareRecord#lnkMake:oiref>=546,334,30,13,0:oigroup>
+<oigroup:<oiref:java#Extends#abc.Data#abc.GenericObject:oiref>=331,420,331,382:oigroup>
 <oigroup:<oiref:java#Extends#abc.Make#abc.Item:oiref>=170,360,230,338:oigroup>
 <oigroup:<oiref:java#Class#abc.HardwareRecord:oiref>=580,290,123,76,1:oigroup>
-<oigroup:Composite#supplierCardinality#MemberLink#<oiref:java#Member#abc.HardwareRecord#lnkMake:oiref>=214,376,16,13,0:oigroup>
-<oigroup:Composite#clientCardinality#MemberLink#<oiref:java#Member#abc.Link#lnkServer:oiref>=380,30,16,13,0:oigroup>
+<oigroup:<oiref:java#Extends#abc.AccessRights#abc.GenericObject:oiref>=162,216,230,216:oigroup>
 */
 class __positions {
 }

@@ -3,13 +3,7 @@
 package abc;
 
 public class PollChoice {
-    protected int id;
+    protected int poll;
     protected String text;
     protected int count;
-
-    /**
-     * @clientCardinality 1..*
-     * @supplierCardinality 1
-     */
-    private Poll lnkSurvey;
 }

@@ -2,9 +2,6 @@
 
 package abc;
 
-public class Category extends GenericObject {
+public class Category extends GenericDataObject {
     protected boolean open;
-    protected int owner;
-    protected Date updated;
-    protected String data;
 }

@@ -24,6 +24,6 @@ openInNewTab=true
 [print]
 diagram=current
 preview.autoupdate=true
-preview.scale=1
+preview.scale=2
 [newDiagramExpert]
 includeInCurrentDiagram=false
