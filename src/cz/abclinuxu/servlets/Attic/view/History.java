@@ -125,7 +125,7 @@ public class History extends AbcFMServlet {
         } else if ( VALUE_TYPE_SOFTWARE.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
             if ( uid>0 ) {
-                data = sqlTool.findRecordRelationsWithType(Record.SOFTWARE, qualifiers);
+                data = sqlTool.findRecordRelationsWithUserAndType(uid, Record.SOFTWARE, qualifiers);
                 total = sqlTool.countRecordRelationsWithUserAndType(uid, Record.SOFTWARE);
             } else {
                 data = sqlTool.findRecordRelationsWithType(Record.SOFTWARE, qualifiers);
