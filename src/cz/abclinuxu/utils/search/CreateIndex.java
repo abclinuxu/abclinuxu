@@ -460,7 +460,7 @@ public class CreateIndex implements Configurable {
      */
     static MyDocument indexNews(Item news) {
         StringBuffer sb = new StringBuffer();
-        String title, category = null;
+        String title;
 
         Element data = (Element) news.getData().selectSingleNode("data");
         Node node = data.selectSingleNode("content");
@@ -468,10 +468,6 @@ public class CreateIndex implements Configurable {
         sb.append(content);
         sb.append(" ");
         title = Tools.limit(Tools.removeTags(content),40," ..");
-
-        node = data.selectSingleNode("category");
-        if ( node!=null )
-            category = node.getText();
 
         for ( Iterator iter = news.getContent().iterator(); iter.hasNext(); ) {
             Relation child = (Relation) iter.next();
@@ -491,10 +487,6 @@ public class CreateIndex implements Configurable {
         MyDocument doc = new MyDocument(Tools.removeTags(sb.toString()));
         doc.setTitle(title);
         doc.setType(MyDocument.TYPE_NEWS);
-        if (category!=null)
-            doc.setNewsCategory(category);
-        else
-            log.warn("News "+news.getId()+" doesn't define category!");
         return doc;
     }
 
