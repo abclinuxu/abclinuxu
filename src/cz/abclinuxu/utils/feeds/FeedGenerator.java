@@ -8,6 +8,7 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Sorters2;
+import cz.abclinuxu.utils.news.NewsCategories;
 import cz.abclinuxu.persistance.extra.*;
 import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.persistance.Persistance;
@@ -41,9 +42,11 @@ public class FeedGenerator implements Configurable {
     static final String PREF_BLOG = "blog";
     static final String PREF_BLOGS = "blogs";
     static final String PREF_TRAFIKA = "trafika";
+    static final String PREF_NEWS = "zpravicky";
+    static final String PREF_NEWS_WORD_LIMIT = "news.word.limit";
 
-    static String fileDiscussions, fileArticles, fileDrivers, fileHardware, fileBlog, dirBlogs, fileTrafika;
-    static int feedLength = 10;
+    static String fileDiscussions, fileArticles, fileDrivers, fileHardware, fileBlog, dirBlogs, fileTrafika, fileNews;
+    static int feedLength = 10, newsWordLimit;
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new FeedGenerator());
     }
@@ -315,6 +318,56 @@ public class FeedGenerator implements Configurable {
     }
 
     /**
+     * Generates RSS for news.
+     */
+    public static void updateNews() {
+        try {
+            Persistance persistance = PersistanceFactory.getPersistance();
+
+            SyndFeed feed = new SyndFeedImpl();
+            feed.setFeedType(TYPE_RSS_1_0);
+            feed.setEncoding("UTF-8");
+            feed.setTitle("abclinuxu - èerstvé zprávièky");
+            feed.setLink("http://www.abclinuxu.cz");
+            feed.setDescription("Seznam èerstvých zprávièek na portálu www.abclinuxu.cz");
+            List entries = new ArrayList();
+            feed.setEntries(entries);
+            SyndEntry entry;
+            SyndContent description;
+
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
+            List list = SQLTool.getInstance().findNewsRelations(qualifiers);
+            for (Iterator iter = list.iterator(); iter.hasNext();) {
+                Relation found = (Relation) iter.next();
+                Item item = (Item) persistance.findById(found.getChild());
+                User author = (User) persistance.findById(new User(item.getOwner()));
+
+                String content = Tools.xpath(item, "data/content");
+                String withoutTags = Tools.removeTags(content);
+
+                entry = new SyndEntryImpl();
+                entry.setLink("http://www.abclinuxu.cz/news/show/" + found.getId());
+                entry.setTitle(NewsCategories.get(item.getSubType()).getName());
+                description = new SyndContentImpl();
+                description.setType("text/plain");
+                description.setValue(Tools.limitWords(withoutTags, newsWordLimit, " ..."));
+                entry.setDescription(description);
+                entry.setPublishedDate(item.getUpdated());
+                entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
+                entries.add(entry);
+            }
+
+            String path = AbcConfig.calculateDeployedPath(fileNews);
+            Writer writer = getWriter(path);
+            SyndFeedOutput output = new SyndFeedOutput();
+            output.output(feed, writer);
+            writer.close();
+        } catch (Exception e) {
+            log.error("Chyba pri generovani RSS pro zpravicky", e);
+        }
+    }
+
+    /**
      * Create SyndEntry from blog story.
      * @return SyndEntry with link to selected story.
      */
@@ -360,11 +413,13 @@ public class FeedGenerator implements Configurable {
         fileBlog = prefs.get(PREF_BLOG, null);
         dirBlogs = prefs.get(PREF_BLOGS, null);
         fileTrafika = prefs.get(PREF_TRAFIKA, null);
+        fileNews = prefs.get(PREF_NEWS, null);
+        newsWordLimit = prefs.getInt(PREF_NEWS_WORD_LIMIT, 10);
     }
 
     public static void main(String[] args) {
         if (args==null || args.length==0) {
-            System.out.println("Enter one of hardware, articles, blog, blogs, drivers or forum as an argument!");
+            System.out.println("Enter one of hardware, articles, blog, blogs, drivers, news or forum as an argument!");
             System.exit(1);
         }
         Arrays.sort(args);
@@ -378,6 +433,8 @@ public class FeedGenerator implements Configurable {
             updateForum();
         if (Arrays.binarySearch(args, "blog")>=0)
             updateBlog(null);
+        if (Arrays.binarySearch(args, "news")>=0)
+            updateNews();
         if (Arrays.binarySearch(args, "blogs")>=0) {
             Persistance persistance = PersistanceFactory.getPersistance();
             Relation top = (Relation) persistance.findById(new Relation(Constants.REL_BLOGS));

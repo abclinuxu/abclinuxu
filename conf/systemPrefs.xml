@@ -132,11 +132,13 @@
                       <entry key="diskuse" value="auto/diskuse.rss"/>
                       <entry key="ovladace" value="auto/ovladace.rss"/>
                       <entry key="hardware" value="auto/hardware.rss"/>
+                      <entry key="zpravicky" value="auto/zpravicky.rss"/>
                       <entry key="blog" value="auto/blog.rss"/>
                       <entry key="blogs" value="auto/blog/"/>
                       <entry key="trafika" value="auto/abc.dat"/>
                       <entry key="anneca" value="auto/abc2.dat"/>
                       <entry key="szm" value="auto/abc_szm.xml"/>
+                      <entry key="news.word.limit" value="10"/>
                   </map>
               </node>
           </node>

@@ -358,6 +358,28 @@ public class Tools implements Configurable {
     }
 
     /**
+     * If <code>str</code> is longer than <code>max</code> words, it
+     * is shortened to contain only first max words and <code>suffix</code>.
+     */
+    public static String limitWords(String str, int max, String suffix) {
+        if ( str==null || str.length()==0 ) return "";
+        StringTokenizer stk = new StringTokenizer(str, " \t\n\r\f", true);
+        if (stk.countTokens()<=max)
+            return str;
+
+        if ( suffix==null ) suffix = "";
+        int i = 0;
+        max = 2*max;
+        StringBuffer sb = new StringBuffer();
+        while (stk.hasMoreTokens() && i<max) {
+            sb.append(stk.nextToken());
+            i++;
+        }
+        sb.append(suffix);
+        return sb.toString();
+    }
+
+    /**
      * Extracts selected part of given list. Implementation
      * is aware of list's limits, so IndexOutOfBounds is never
      * thrown.
