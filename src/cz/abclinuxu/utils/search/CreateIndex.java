@@ -20,6 +20,8 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
+import org.logicalcobwebs.proxool.configuration.JAXPConfigurator;
+import org.logicalcobwebs.proxool.ProxoolException;
 
 import java.util.*;
 
@@ -36,13 +38,20 @@ public class CreateIndex {
     static RE tagRE;
 
     static {
-        DOMConfigurator.configure(DEPLOY+"/WEB-INF/log4j.xml");
-        persistance = PersistanceFactory.getPersistance(PersistanceFactory.defaultUrl,EmptyCache.class);
-
         try {
-            tagRE = new RE("<[^<^>]+>");
+            DOMConfigurator.configure(DEPLOY+"/WEB-INF/conf/log4j.xml");
+            JAXPConfigurator.configure(DEPLOY+"/WEB-INF/conf/proxool.xml",false);
+            Class.forName("org.logicalcobwebs.proxool.ProxoolDriver");
+//            persistance = PersistanceFactory.getPersistance(PersistanceFactory.defaultUrl,EmptyCache.class);
+            persistance = PersistanceFactory.getPersistance("proxool.abc",EmptyCache.class);
+//            tagRE = new RE("<[^<>]+>");
+            tagRE = new RE("<[\\w\\s\\d/=:.~?\"]+>");
         } catch (RESyntaxException e) {
             log.error("Cannot compile regexp!",e);
+        } catch  (ProxoolException e) {
+            log.error("Cannot initialize proxool!", e);
+        } catch (ClassNotFoundException e) {
+            log.error("Cannot initialize proxool!", e);
         }
     }
 
@@ -77,7 +86,7 @@ public class CreateIndex {
 
             log.info("Indexing of "+indexWriter.docCount()+" documents took "+(end-start)/1000+" seconds.");
             System.out.println("Indexing of "+indexWriter.docCount()+" documents took "+(end-start)/1000+" seconds.");
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.error("Indexing failed!",e);
         }
     }
@@ -134,7 +143,12 @@ public class CreateIndex {
      * This method removes all tags from text.
      */
     static String removeTags(String text) {
-        return tagRE.subst(text,"");
+        try {
+            return tagRE.subst(text,"");
+        } catch (Throwable e) {
+            log.error("Oops, regexp failed on '"+text+"'!", e);
+            return text;
+        }
     }
 
     /**

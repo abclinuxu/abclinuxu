@@ -32,7 +32,7 @@ public class TestMySqlPersistance extends TestCase {
         LogManager.getRootLogger().setLevel(Level.OFF);
         super.setUp();
         persistance = new MySqlPersistance(PersistanceFactory.defaultTestUrl);
-        persistance.setCache(new DefaultCache());
+        persistance.setCache(new LRUCache());
     }
 
     protected void tearDown() throws Exception {
