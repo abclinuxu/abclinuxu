@@ -5,8 +5,9 @@
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcVelocityServlet;
-import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
+import cz.abclinuxu.servlets.AbcFMServlet;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.persistance.Persistance;
@@ -16,7 +17,6 @@ import cz.abclinuxu.data.Relation;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.velocity.context.Context;
 
 import java.util.Map;
 import java.util.List;
@@ -28,7 +28,7 @@ import java.util.Iterator;
  * the range of objects in specified time interval.
  * @todo odstranit duplicitu u linkovanych objektu u SQL_ARTICLES
  */
-public class ShowOlder extends AbcVelocityServlet {
+public class ShowOlder extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ShowOlder.class);
 
     /** type of object to display */
@@ -52,12 +52,8 @@ public class ShowOlder extends AbcVelocityServlet {
     public static final String SQL_DRIVERS = "select R.cislo from polozka P, relace R where typ=5 and P.cislo=R.potomek and typ_potomka='P' order by zmeneno desc";
     public static final String SQL_ARTICLES = "select R.cislo from polozka P, relace R where R.predchozi in (2,3,4,5,6,251,5324,8546,12448) and R.typ_potomka='P' and P.typ=2 and P.cislo=R.potomek and P.vytvoreno<now() order by vytvoreno desc";
 
-    /**
-     * Put your processing here. Return null, if you redirected browser to another URL.
-     */
-    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        init(request,response,ctx);
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
         String type = (String) params.get(PARAM_TYPE);
@@ -70,16 +66,16 @@ public class ShowOlder extends AbcVelocityServlet {
 
         if ( "hardware".equalsIgnoreCase(type) ) {
             sql = SQL_HARDWARE;
-            ctx.put(VAR_TYPE,"hardware");
+            env.put(VAR_TYPE,"hardware");
         } else if ( "software".equalsIgnoreCase(type) ) {
             sql = SQL_SOFTWARE;
-            ctx.put(VAR_TYPE,"software");
+            env.put(VAR_TYPE,"software");
         } else if ( "articles".equalsIgnoreCase(type) ) {
             sql = SQL_ARTICLES;
-            ctx.put(VAR_TYPE,"articles");
+            env.put(VAR_TYPE,"articles");
         } else {
-            ServletUtils.addError(PARAM_TYPE,"Chybí parametr typ!",ctx,null);
-            return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewIndex","show");
+            ServletUtils.addError(PARAM_TYPE,"Chybí parametr typ!",env,null);
+            return FMTemplateSelector.select("ViewIndex","show",env,request);
         }
 
         found = persistance.findByCommand(sql+" limit "+from+","+count);
@@ -90,10 +86,10 @@ public class ShowOlder extends AbcVelocityServlet {
             result.add(relation);
         }
 
-        ctx.put(VAR_FOUND,result);
-        ctx.put(VAR_FROM,new Integer(from));
-        ctx.put(VAR_COUNT,new Integer(count));
+        env.put(VAR_FOUND,result);
+        env.put(VAR_FROM,new Integer(from));
+        env.put(VAR_COUNT,new Integer(count));
 
-        return VelocityTemplateSelector.selectTemplate(request,ctx,"ShowOlder","show");
+        return FMTemplateSelector.select("ShowOlder","show",env,request);
     }
 }

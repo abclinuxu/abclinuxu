@@ -337,7 +337,7 @@
 
   <servlet name="ShowOlder">
     <action name="show">
-      <mapping template="web" content="web/show/history.vm">
+      <mapping template="web" content="/web/show/history.ftl">
         <var name="TITLE" value="Star¹í pøíspìvky" />
       </mapping>
     </action>
