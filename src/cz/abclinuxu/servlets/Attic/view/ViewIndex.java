@@ -10,9 +10,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.utils.Tools;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.Misc;
@@ -55,7 +53,8 @@ public class ViewIndex extends AbcFMServlet {
 
         int userLimit = getNumberOfDiscussions(user);
         if ( userLimit>0 ) {
-            List found = SQLTool.getInstance().findDiscussionRelationsByCreated(0, userLimit);
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, userLimit)};
+            List found = SQLTool.getInstance().findDiscussionRelations(qualifiers);
             Tools.sync(found);
             List discussions = tools.analyzeDiscussions(found);
             Paging paging = new Paging(discussions, 0, userLimit);

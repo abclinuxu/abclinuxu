@@ -7,9 +7,7 @@ package cz.abclinuxu.scheduler;
 
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.Misc;
 
@@ -89,7 +87,8 @@ public class VariableFetcher extends TimerTask {
     public List getFreshNews(Object user) {
         int userLimit = getNumberOfNews(user);
         if ( userLimit>0 ) {
-            List news = SQLTool.getInstance().findNewsRelationsByCreated(0, userLimit);
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, userLimit)};
+            List news = SQLTool.getInstance().findNewsRelations(qualifiers);
             return news;
         }
         return Collections.EMPTY_LIST;
@@ -110,14 +109,14 @@ public class VariableFetcher extends TimerTask {
         Persistance persistance = PersistanceFactory.getPersistance();
         try {
             // put counts into map
-            Integer i = new Integer(sqlTool.getRecordCount(Record.HARDWARE));
+            Integer i = new Integer(sqlTool.countRecordRelationsWithType(Record.HARDWARE));
             counter.put("HARDWARE",i);
-            i = new Integer(sqlTool.getRecordCount(Record.SOFTWARE));
+            i = new Integer(sqlTool.countRecordRelationsWithType(Record.SOFTWARE));
             counter.put("SOFTWARE",i);
-            i = new Integer(sqlTool.getItemCount(Item.DRIVER));
+            i = new Integer(sqlTool.countItemRelationsWithType(Item.DRIVER));
             counter.put("DRIVERS",i);
-            Category forum = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
-            counter.put("FORUM",new Integer(forum.getContent().size()));
+            i = new Integer(sqlTool.countDiscussionRelations());
+            counter.put("FORUM",i);
             Category requests = (Category) persistance.findById(new Category(Constants.CAT_REQUESTS));
             counter.put("REQUESTS",new Integer(requests.getContent().size()));
             Category news = (Category) persistance.findById(new Category(Constants.CAT_NEWS_POOL));
@@ -126,9 +125,11 @@ public class VariableFetcher extends TimerTask {
             counter.put("POLLS",new Integer(polls.getContent().size()));
 
             currentPoll = sqlTool.findActivePoll();
-            newHardware = sqlTool.findRecordRelationsByUpdated(Record.HARDWARE, 0,SIZE);
-            newSoftware = sqlTool.findRecordRelationsByUpdated(Record.SOFTWARE, 0,SIZE);
-            newDrivers = sqlTool.findItemRelationsByUpdated(Item.DRIVER, 0,SIZE);
+
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, SIZE)};
+            newHardware = sqlTool.findRecordRelationsWithType(Record.HARDWARE, qualifiers);
+            newSoftware = sqlTool.findRecordRelationsWithType(Record.SOFTWARE, qualifiers);
+            newDrivers = sqlTool.findItemRelationsWithType(Item.DRIVER, qualifiers);
 
             log.debug("finished fetching variables");
         } catch (Exception e) {

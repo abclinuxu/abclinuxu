@@ -15,9 +15,7 @@ import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.paging.Paging;
@@ -178,7 +176,7 @@ public class EditGroup extends AbcFMServlet {
      * Shows existing groups.
      */
     protected String actionShow(HttpServletRequest request, Map env) throws Exception {
-        List items = SQLTool.getInstance().findItemsByTypeById(Item.GROUP, 0, DEFAULT_MAX_NUMBER_OF_GROUPS);
+        List items = SQLTool.getInstance().findItemsWithType(Item.GROUP, 0, DEFAULT_MAX_NUMBER_OF_GROUPS);
         env.put(VAR_GROUPS, items);
         return FMTemplateSelector.select("EditGroup", "showGroups", env, request);
     }
@@ -199,8 +197,8 @@ public class EditGroup extends AbcFMServlet {
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
         int pageSize = AbcConfig.getViewUserPageSize();
         SQLTool sqlTool = SQLTool.getInstance();
-        List list = sqlTool.findUsersByGroup(group.getId(), from, pageSize);
-        int total = sqlTool.getUsersCountByGroup(group.getId());
+        List list = sqlTool.findUsersInGroup(group.getId(), new Qualifier[] {Qualifier.SORT_BY_ID,new LimitQualifier(from, pageSize)});
+        int total = sqlTool.countUsersInGroup(group.getId());
         Paging paging = new Paging(list, from, pageSize, total);
         env.put(VAR_MEMBERS,paging);
 

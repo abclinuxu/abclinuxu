@@ -105,7 +105,8 @@ public class GenerateLinks extends TimerTask implements Configurable {
                 }
             }
 
-            list = SQLTool.getInstance().findRecordRelationsByUpdated(Record.HARDWARE, 0,3);
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED,Qualifier.ORDER_DESCENDING, new LimitQualifier(0,3)};
+            list = SQLTool.getInstance().findRecordRelationsWithType(Record.HARDWARE, qualifiers);
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
                 Item item = (Item) found.getParent();
@@ -119,7 +120,8 @@ public class GenerateLinks extends TimerTask implements Configurable {
                 }
             }
 
-            list = SQLTool.getInstance().findItemRelationsByUpdated(Item.DRIVER, 0,1);
+            qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, 1)};
+            list = SQLTool.getInstance().findItemRelationsWithType(Item.DRIVER, qualifiers);
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
                 Item item = (Item) found.getChild();
@@ -140,13 +142,14 @@ public class GenerateLinks extends TimerTask implements Configurable {
 
             forumGenerator.generateHeader();
 
-            Category forum = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
-            tools.sync(forum.getContent());
-            List discussions = tools.analyzeDiscussions(forum.getContent());
-            Sorters2.byDate(discussions, Sorters2.DESCENDING);
+            qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, 20)};
+            list = SQLTool.getInstance().findDiscussionRelations(qualifiers);
+            Tools.sync(list);
+            List discussions = tools.analyzeDiscussions(list);
+//            Sorters2.byDate(discussions, Sorters2.DESCENDING);
             for ( Iterator iter = discussions.iterator(); iter.hasNext(); ) {
                 DiscussionHeader discussion = (DiscussionHeader) iter.next();
-                url = "http://www.abclinuxu.cz/software/ViewRelation?rid="+discussion.getRelationId();
+                url = "http://www.abclinuxu.cz/forum/ViewRelation?rid="+discussion.getRelationId();
                 title = tools.xpath(discussion.getDiscussion(), "data/title");
                 title = title.concat(", odpovìdí: "+discussion.getResponseCount());
                 title = tools.encodeSpecial(title);

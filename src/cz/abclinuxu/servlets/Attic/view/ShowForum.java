@@ -8,9 +8,7 @@ package cz.abclinuxu.servlets.view;
 import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Tools;
@@ -61,8 +59,9 @@ public class ShowForum extends AbcFMServlet {
         count = Misc.limit(count, 1, 50);
 
         SQLTool sqlTool = SQLTool.getInstance();
-        List discussions = sqlTool.findDiscussionRelationsByCreatedIn(relation.getId(),from,count);
-        int total = sqlTool.getDiscussionCountIn(relation.getId());
+        Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
+        List discussions = sqlTool.findDiscussionRelationsWithParent(relation.getId(),qualifiers);
+        int total = sqlTool.countDiscussionRelationsWithParent(relation.getId());
         Tools.sync(discussions);
 
         Paging paging = new Paging(discussions, from, count, total);

@@ -563,7 +563,7 @@ public class EditUser extends AbcFMServlet {
      * Shows form for granting roles to the user.
      */
     protected String actionGrant(HttpServletRequest request, Map env) throws Exception {
-        env.put(VAR_USERS,SQLTool.getInstance().findUsersWithRoles());
+        env.put(VAR_USERS,SQLTool.getInstance().findUsersWithRoles(null));
         return FMTemplateSelector.select("EditUser", "grantSelect", env, request);
     }
 

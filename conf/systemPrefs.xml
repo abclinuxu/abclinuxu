@@ -141,33 +141,24 @@
           </node>
           <node name="SQLTool">
             <map>
-              <entry key="record.relations.by.type.by.updated" value="select R.cislo from zaznam Z, relace R where typ=? and Z.cislo=R.potomek and typ_potomka='Z' order by zmeneno desc limit ?,?"/>
-              <entry key="item.relations.by.type.by.updated" value="select R.cislo from polozka P, relace R where typ=? and P.cislo=R.potomek and typ_potomka='P' order by zmeneno desc limit ?,?"/>
-              <entry key="article.relations.by.created" value="select R.cislo from polozka P, relace R where R.predchozi in (2,3,4,5,6,251,5324,8546,12448) and R.typ_potomka='P' and P.typ=2 and P.cislo=R.potomek and P.vytvoreno&lt;now() order by vytvoreno desc limit ?,?"/>
-              <entry key="article.relations.within.period" value="select R.cislo from relace R left join polozka P on R.potomek=P.cislo where R.typ_potomka='P' and R.predchozi in (2,3,4,5,6,251,5324,8546,12448) and P.typ=2 and P.vytvoreno&gt;? and P.vytvoreno&lt;? order by vytvoreno asc"/>
-              <entry key="news.relations.by.created" value="select R.cislo from polozka P, relace R where R.predchozi=42932 and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek order by vytvoreno desc limit ?,?"/>
-              <entry key="news.relations.within.period" value="select R.cislo from polozka P, relace R where R.predchozi=42932 and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek and vytvoreno&gt;? and vytvoreno&lt;?"/>
-              <entry key="section.relations.by.type" value="select R.cislo from relace R left join kategorie K on (K.cislo=R.potomek) where typ_potomka='K' and K.typ=?"/>
-              <entry key="discussion.relations.by.created" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek where R.typ_potomka='P' and R.typ_predka='K' and P.typ=3 order by P.vytvoreno desc limit ?,?"/>
-              <entry key="discussion.relations.by.created.in" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek where R.predchozi=? and P.typ=3 order by P.vytvoreno desc limit ?,?"/>
-              <entry key="count.discussion.relations.in" value="select count(*) from relace R left join polozka P on P.cislo=R.potomek where R.predchozi=? and P.typ=3"/>
-              <entry key="record.relations.by.type.by.user" value="select R.cislo from relace R left join zaznam Z on R.potomek=Z.cislo where R.typ_potomka='Z' and Z.typ=? and Z.pridal=? order by R.cislo limit ?,?"/>
-              <entry key="article.relations.by.user" value="select R.cislo from relace R left join polozka P on (P.cislo=R.potomek) where typ_potomka='P' and P.typ=2 and P.data like concat('%&lt;author&gt;',?,'&lt;/author%') and P.vytvoreno&lt;now() group by potomek order by vytvoreno asc limit ?,?"/>
-              <entry key="question.relations.by.user" value="select R.cislo from relace R, polozka P where R.typ_potomka='P' and R.potomek=P.cislo and R.typ_predka='K' and R.predek!=-1 and P.typ=3 and P.pridal=? order by vytvoreno asc limit ?,?"/>
-              <entry key="news.relations.by.user" value="select R.cislo from polozka P, relace R where P.pridal=? and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek order by vytvoreno desc limit ?,?"/>
-              <entry key="count.questions.by.user" value="select count(*) from relace R, polozka P where R.typ_potomka='P' and R.potomek=P.cislo and R.typ_predka='K' and R.predek!=-1 and P.typ=3 and P.pridal=?"/>
-              <entry key="count.articles.by.user" value="select count(*) from polozka where typ=2 and data like concat('%&lt;author&gt;',?,'&lt;/author%') and vytvoreno&lt;now()"/>
-              <entry key="count.records.by.user.by.type" value="select count(*) from zaznam where typ=? and pridal=?"/>
-              <entry key="count.items.by.user.by.type" value="select count(*) from polozka where typ=? and pridal=?"/>
-              <entry key="count.records.by.type" value="select count(*) from zaznam where typ=?"/>
-              <entry key="count.items.by.type" value="select count(*) from polozka where typ=?"/>
+              <entry key="relations.record.by.type" value="select R.cislo from zaznam Z, relace R where typ=? and Z.cislo=R.potomek and typ_potomka='Z'"/>
+              <entry key="relations.item.by.type" value="select R.cislo from polozka P, relace R where typ=? and P.cislo=R.potomek and typ_potomka='P'"/>
+              <entry key="relations.discussion" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek where R.typ_potomka='P' and R.typ_predka='K' and P.typ=3"/>
+              <entry key="relations.discussion.in.section" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek where R.predchozi=? and P.typ=3"/>
+              <entry key="relations.article" value="select R.cislo from polozka P, relace R where R.predchozi in (2,3,4,5,6,251,5324,8546,12448) and R.typ_potomka='P' and P.typ=2 and P.cislo=R.potomek and P.vytvoreno&lt;now()"/>
+              <entry key="relations.article.within.period" value="select R.cislo from relace R left join polozka P on R.potomek=P.cislo where R.typ_potomka='P' and R.predchozi in (2,3,4,5,6,251,5324,8546,12448) and P.typ=2 and P.vytvoreno&gt;? and P.vytvoreno&lt;?"/>
+              <entry key="relations.news" value="select R.cislo from polozka P, relace R where R.predchozi=42932 and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek"/>
+              <entry key="relations.news.within.period" value="select R.cislo from polozka P, relace R where R.predchozi=42932 and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek and vytvoreno&gt;? and vytvoreno&lt;?"/>
+              <entry key="relations.news.by.user" value="select R.cislo from polozka P, relace R where P.pridal=? and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek"/>
+              <entry key="relations.record.by.user.and.type" value="select R.cislo from relace R left join zaznam Z on R.potomek=Z.cislo where R.typ_potomka='Z' and Z.pridal=? and Z.typ=?"/>
+              <entry key="relations.article.by.user" value="select R.cislo from relace R left join polozka P on (P.cislo=R.potomek) where typ_potomka='P' and P.typ=2 and P.data like concat('%&lt;author&gt;',?,'&lt;/author%') and P.vytvoreno&lt;now() group by potomek"/>
+              <entry key="relations.question.by.user" value="select R.cislo from relace R, polozka P where R.typ_potomka='P' and R.potomek=P.cislo and R.typ_predka='K' and R.predek!=-1 and P.typ=3 and P.pridal=?"/>
+              <entry key="users.with.weekly.email" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;>&lt;weekly_summary>yes%'"/>
+              <entry key="users.with.roles" value="select cislo from uzivatel where data like '%&lt;roles>%'"/>
+              <entry key="users.in.group" value="select cislo from uzivatel where data like concat('%&lt;group&gt;',?,'&lt;/group%')"/>
               <entry key="max.poll" value="select max(cislo) from anketa"/>
               <entry key="max.user" value="select max(cislo) from uzivatel"/>
-              <entry key="users.email.weekly" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;>&lt;weekly_summary>yes%'"/>
-              <entry key="users.with.roles" value="select cislo from uzivatel where data like '%&lt;roles>%'" />
-              <entry key="users.by.group" value="select cislo from uzivatel where data like concat('%&lt;group&gt;',?,'&lt;/group%') order by cislo limit ?,?" />
-              <entry key="count.users.by.group" value="select count(*) from uzivatel where data like concat('%&lt;group&gt;',?,'&lt;/group%')" />
-              <entry key="items.by.type.by.id" value="select cislo from polozka where typ=? order by cislo asc limit ?,?"/>
+              <entry key="items.with.type" value="select cislo from polozka where typ=? order by cislo asc limit ?,?"/>
             </map>
           </node>
         </node>

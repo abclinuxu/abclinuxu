@@ -378,7 +378,7 @@ public class EditRelation extends AbcFMServlet {
         if ( !user.hasRole(Roles.ROOT) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-        List items = SQLTool.getInstance().findItemsByTypeById(Item.GROUP, 0, EditGroup.DEFAULT_MAX_NUMBER_OF_GROUPS);
+        List items = SQLTool.getInstance().findItemsWithType(Item.GROUP, 0, EditGroup.DEFAULT_MAX_NUMBER_OF_GROUPS);
         env.put(VAR_GROUPS, items);
 
         return FMTemplateSelector.select("EditRelation", "addACL", env, request);

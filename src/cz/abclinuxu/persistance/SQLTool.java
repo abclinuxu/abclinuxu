@@ -15,49 +15,35 @@ import java.util.prefs.Preferences;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.sql.*;
 
 /**
  * Thread-safe singleton, that encapsulates SQL commands
  * used outside of Persistance implementations.
- * todo refactor this. e.g. use templates, which taks as argument String sql and Map of parameters
  */
 public final class SQLTool implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(SQLTool.class);
 
+    public static final String PREF_RECORD_RELATIONS_BY_TYPE = "relations.record.by.type";
+    public static final String PREF_ITEM_RELATIONS_BY_TYPE = "relations.item.by.type";
+    public static final String PREF_SECTION_RELATIONS_BY_TYPE = "relations.section.by.type";
+    public static final String PREF_DISCUSSION_RELATIONS = "relations.discussion";
+    public static final String PREF_DISCUSSION_RELATIONS_IN_SECTION = "relations.discussion.in.section";
+    public static final String PREF_ARTICLE_RELATIONS = "relations.article";
+    public static final String PREF_ARTICLE_RELATIONS_WITHIN_PERIOD = "relations.article.within.period";
+    public static final String PREF_NEWS_RELATIONS = "relations.news";
+    public static final String PREF_NEWS_RELATIONS_WITHIN_PERIOD = "relations.news.within.period";
+    public static final String PREF_RECORD_RELATIONS_BY_USER_AND_TYPE = "relations.record.by.user.and.type";
+    public static final String PREF_ARTICLE_RELATIONS_BY_USER = "relations.article.by.user";
+    public static final String PREF_NEWS_RELATIONS_BY_USER = "relations.news.by.user";
+    public static final String PREF_QUESTION_RELATIONS_BY_USER = "relations.question.by.user";
+    public static final String PREF_USERS_WITH_WEEKLY_EMAIL = "users.with.weekly.email";
+    public static final String PREF_USERS_WITH_ROLES = "users.with.roles";
+    public static final String PREF_USERS_IN_GROUP = "users.in.group";
+    public static final String PREF_ITEMS_WITH_TYPE = "items.with.type";
     public static final String PREF_MAX_POLL = "max.poll";
     public static final String PREF_MAX_USER = "max.user";
-
-    public static final String PREF_RECORD_RELATIONS_BY_TYPE_BY_UPDATED = "record.relations.by.type.by.updated";
-    public static final String PREF_ITEM_RELATIONS_BY_TYPE_BY_UPDATED = "item.relations.by.type.by.updated";
-    public static final String PREF_ARTICLE_RELATIONS_BY_CREATED = "article.relations.by.created";
-    public static final String PREF_NEWS_RELATIONS_BY_CREATED = "news.relations.by.created";
-    public static final String PREF_NEWS_RELATIONS_WITHIN_PERIOD = "news.relations.within.period";
-    public static final String PREF_ARTICLE_RELATIONS_WITHIN_PERIOD = "article.relations.within.period";
-    public static final String PREF_DISCUSSION_RELATIONS_BY_CREATED = "discussion.relations.by.created";
-    public static final String PREF_DISCUSSION_RELATIONS_BY_CREATED_IN = "discussion.relations.by.created.in";
-    public static final String PREF_COUNT_DISCUSSION_RELATIONS_IN = "count.discussion.relations.in";
-    public static final String PREF_SECTION_RELATIONS_BY_TYPE = "section.relations.by.type";
-
-    public static final String PREF_ITEMS_BY_TYPE_BY_ID = "items.by.type.by.id";
-
-    public static final String PREF_RECORD_RELATIONS_BY_TYPE_BY_USER = "record.relations.by.type.by.user";
-    public static final String PREF_ARTICLE_RELATIONS_BY_USER = "article.relations.by.user";
-    public static final String PREF_QUESTION_RELATIONS_BY_USER = "question.relations.by.user";
-    public static final String PREF_NEWS_RELATIONS_BY_USER = "news.relations.by.user";
-
-    public static final String PREF_COUNT_ARTICLES_BY_USER = "count.articles.by.user";
-    public static final String PREF_COUNT_QUESTIONS_BY_USER = "count.questions.by.user";
-    public static final String PREF_COUNT_RECORDS_BY_USER_BY_TYPE = "count.records.by.user.by.type";
-    public static final String PREF_COUNT_ITEMS_BY_USER_BY_TYPE = "count.items.by.user.by.type";
-
-    public static final String PREF_COUNT_RECORDS_BY_TYPE = "count.records.by.type";
-    public static final String PREF_COUNT_ITEMS_BY_TYPE = "count.items.by.type";
-    public static final String PREF_USERS_WITH_WEEKLY_MAIL = "users.email.weekly";
-    public static final String PREF_USERS_WITH_ROLES = "users.with.roles";
-    public static final String PREF_USERS_BY_GROUP = "users.by.group";
-    public static final String PREF_COUNT_USERS_BY_GROUP = "count.users.by.group";
-
 
     private static SQLTool singleton;
 
@@ -66,16 +52,15 @@ public final class SQLTool implements Configurable {
         ConfigurationManager.getConfigurator().configureMe(singleton);
     }
 
+    private String relationsRecordByType, relationsItemsByType, relationsSectionByType;
+    private String relationsDiscussion, relationsDiscussionInSection;
+    private String relationsArticle, relationsArticleWithinPeriod;
+    private String relationsNews, relationsNewsWithinPeriod;
+    private String relationsNewsByUser, relationsRecordByUserAndType, relationsArticleByUser;
+    private String relationsQuestionsByUser;
+    private String usersWithWeeklyEmail, usersWithRoles, usersInGroup;
     private String maxPoll, maxUser;
-    private String recordRelationsByUpdated, itemRelationsByUpdated;
-    private String articleRelationsByCreated, articleRelationsWithinPeriod;
-    private String discussionRelationsByCreated, discussionRelationsByCreatedIn, countDiscussionRelationsIn;
-    private String newsRelationsByCreated, newsRelationsByUser, newsRelationsWithinPeriod;
-    private String recordRelationsByUser, articleRelationsByUser, questionRelationsByUser;
-    private String countArticlesByUser, countRecordsByUser, countItemsByUser;
-    private String countItemsByType, countRecordsByType, countQuestionsByUser, countUsersByGroup;
-    private String usersWithWeeklyMail, usersWithRoles, usersByGroup;
-    private String itemsByTypeById, sectionRelationsByType;
+    private String itemsByType;
 
 
     /**
@@ -86,81 +71,24 @@ public final class SQLTool implements Configurable {
     }
 
     /**
-     * Finds relations, where child is type record ordered by updated property.
-     * The order is descendant - the freshest records first. Use offset to skip
-     * some record and count to manage count of returned relations.
-     * @return List of initialized relations
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     * Loads relations from database using given SQL command. If list params is not
+     * empty, PreparedStatement is created and fed up from params.
+     * @param sql Command to execute.
+     * @param params List of parameters. It must not be null.
+     * @return List of initialized relations.
+     * @throws PersistanceException if something goes wrong.
      */
-    public List findRecordRelationsByUpdated(int type, int offset, int count) {
+    private List loadRelations(String sql, List params) throws PersistanceException {
         MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
         try {
             con = persistance.getSQLConnection();
-            statement = con.prepareStatement(recordRelationsByUpdated);
-            statement.setInt(1, type);
-            statement.setInt(2, offset);
-            statement.setInt(3, count);
-
-            resultSet = statement.executeQuery();
-            List result = new ArrayList(count);
-            while ( resultSet.next() ) {
-                int id = resultSet.getInt(1);
-                Relation relation = (Relation) persistance.findById(new Relation(id));
-                result.add(relation);
-            }
-            return result;
-        } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
-        } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
-        }
-    }
-
-    /**
-     * Finds relations, where child is type item ordered by created property.
-     * The order is descendant - the freshest items first. Use offset to skip
-     * some items and count to manage count of returned relations.
-     * @return List of initialized relations
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
-     */
-    public List findItemRelationsByUpdated(int type, int offset, int count) {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-        try {
-            con = persistance.getSQLConnection();
-            statement = con.prepareStatement(itemRelationsByUpdated);
-            statement.setInt(1, type);
-            statement.setInt(2, offset);
-            statement.setInt(3, count);
-
-            resultSet = statement.executeQuery();
-            List result = new ArrayList(count);
-            while ( resultSet.next() ) {
-                int id = resultSet.getInt(1);
-                Relation relation = (Relation) persistance.findById(new Relation(id));
-                result.add(relation);
-            }
-            return result;
-        } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
-        } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
-        }
-    }
-
-    /**
-     * Finds relations, where child is a category of specified type.
-     * @return List of initialized relations
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
-     */
-    public List findSectionRelationsByType(int type) {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-        try {
-            con = persistance.getSQLConnection();
-            statement = con.prepareStatement(sectionRelationsByType);
-            statement.setInt(1, type);
+            statement = con.prepareStatement(sql);
+            int i = 1;
+            for ( Iterator iter = params.iterator(); iter.hasNext(); )
+                statement.setObject(i++, iter.next());
 
             resultSet = statement.executeQuery();
             List result = new ArrayList();
@@ -171,546 +99,530 @@ public final class SQLTool implements Configurable {
             }
             return result;
         } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
+            throw new PersistanceException("Nemohu vykonat SQL pøíkaz "+sql, e);
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
     }
 
     /**
-     * Finds relations, where child is discussion item ordered by created property.
-     * The order is descendant - the freshest items first. Use offset to skip
-     * some items and count to manage count of returned relations.
-     * @return List of initialized relations
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     * Loads users from database using given SQL command. If list params is not
+     * empty, PreparedStatement is created and fed up from params.
+     * @param sql Command to execute.
+     * @param params List of parameters. It must not be null.
+     * @return List of initialized users.
+     * @throws PersistanceException if something goes wrong.
      */
-    public List findDiscussionRelationsByCreated(int offset, int count) {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-        try {
-            con = persistance.getSQLConnection();
-            statement = con.prepareStatement(discussionRelationsByCreated);
-            statement.setInt(1, offset);
-            statement.setInt(2, count);
-
-            resultSet = statement.executeQuery();
-            List result = new ArrayList(count);
-            while ( resultSet.next() ) {
-                int id = resultSet.getInt(1);
-                Relation relation = (Relation) persistance.findById(new Relation(id));
-                result.add(relation);
-            }
-            return result;
-        } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
-        } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
-        }
-    }
-
-    /**
-     * Finds relations, where child is discussion item with given parent ordered by created property.
-     * The order is descendant - the freshest items first. Use offset to skip
-     * some items and count to manage count of returned relations.
-     * @return List of initialized relations
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
-     */
-    public List findDiscussionRelationsByCreatedIn(int parent, int offset, int count) {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-        try {
-            con = persistance.getSQLConnection();
-            statement = con.prepareStatement(discussionRelationsByCreatedIn);
-            statement.setInt(1, parent);
-            statement.setInt(2, offset);
-            statement.setInt(3, count);
-
-            resultSet = statement.executeQuery();
-            List result = new ArrayList(count);
-            while ( resultSet.next() ) {
-                int id = resultSet.getInt(1);
-                Relation relation = (Relation) persistance.findById(new Relation(id));
-                result.add(relation);
-            }
-            return result;
-        } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
-        } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
-        }
-    }
-
-    /**
-     * Finds relations, where child is article item ordered by created property.
-     * The order is descendant - the freshest items first. Use offset to skip
-     * some items and count to manage count of returned relations. Items with
-     * created property in future and outside of typical columns are skipped.
-     * @return List of initialized relations
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
-     */
-    public List findArticleRelationsByCreated(int offset, int count) {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-        try {
-            con = persistance.getSQLConnection();
-            statement = con.prepareStatement(articleRelationsByCreated);
-            statement.setInt(1, offset);
-            statement.setInt(2, count);
-
-            resultSet = statement.executeQuery();
-            List result = new ArrayList(count);
-            while ( resultSet.next() ) {
-                int id = resultSet.getInt(1);
-                Relation relation = (Relation) persistance.findById(new Relation(id));
-                result.add(relation);
-            }
-            return result;
-        } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
-        } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
-        }
-    }
-
-    /**
-     * Finds relations, where child is an article item with created property, that is inside
-     * given time period. Items are sorted by created property in ascendant order.
-     * @param from starting point (exclusive) of time period
-     * @param until end point (exclusive) of time period
-     * @return List of initialized relations
-     */
-    public List findArticleRelationsWithinPeriod(Date from, Date until) throws PersistanceException {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-        List result;
-        try {
-            con = persistance.getSQLConnection();
-            statement = con.prepareStatement(articleRelationsWithinPeriod);
-            statement.setDate(1,new java.sql.Date(from.getTime()));
-            statement.setDate(2,new java.sql.Date(until.getTime()));
-
-            resultSet = statement.executeQuery();
-            result = new ArrayList();
-            while ( resultSet.next() ) {
-                Relation relation = new Relation(resultSet.getInt(1));
-                result.add(persistance.findById(relation));
-            }
-        } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!",e);
-        } finally {
-            persistance.releaseSQLResources(con,statement,resultSet);
-        }
-        return result;
-    }
-
-    /**
-     * Finds relations, where child is news item ordered by created property.
-     * The order is descendant - the freshest items first. Use offset to skip
-     * some items and count to manage count of returned relations. Items with
-     * created property in future and in newspool are skipped.
-     * @return List of initialized relations
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
-     */
-    public List findNewsRelationsByCreated(int offset, int count) {
+    private List loadUsers(String sql, List params) throws PersistanceException {
         MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         try {
             con = persistance.getSQLConnection();
-            statement = con.prepareStatement(newsRelationsByCreated);
-            statement.setInt(1, offset);
-            statement.setInt(2, count);
+            statement = con.prepareStatement(sql);
+            int i = 1;
+            for ( Iterator iter = params.iterator(); iter.hasNext(); )
+                statement.setObject(i++, iter.next());
 
             resultSet = statement.executeQuery();
-            List result = new ArrayList(count);
+            List result = new ArrayList();
             while ( resultSet.next() ) {
                 int id = resultSet.getInt(1);
-                Relation relation = (Relation) persistance.findById(new Relation(id));
-                result.add(relation);
+                User user = (User) persistance.findById(new User(id));
+                result.add(user);
             }
             return result;
         } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
+            throw new PersistanceException("Nemohu vykonat SQL pøíkaz "+sql, e);
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
     }
 
     /**
-     * Finds relations, where child is an article item with created property, that is inside
-     * given time period. Items are sorted by created property in ascendant order.
-     * @param from starting point (exclusive) of time period
-     * @param until end point (exclusive) of time period
-     * @return List of initialized relations
+     * Gets number from database using given SQL command. If list params is not
+     * empty, PreparedStatement is created and fed up from params.
+     * @param sql Command to execute.
+     * @param params List of parameters. It must not be null.
+     * @return integer.
+     * @throws PersistanceException if something goes wrong.
      */
-    public List findNewsRelationsWithinPeriod(Date from, Date until) throws PersistanceException {
+    private int loadNumber(String sql, List params) throws PersistanceException {
         MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
-        List result;
         try {
             con = persistance.getSQLConnection();
-            statement = con.prepareStatement(newsRelationsWithinPeriod);
-            statement.setDate(1, new java.sql.Date(from.getTime()));
-            statement.setDate(2, new java.sql.Date(until.getTime()));
+            statement = con.prepareStatement(sql);
+            int i = 1;
+            for ( Iterator iter = params.iterator(); iter.hasNext(); )
+                statement.setObject(i++, iter.next());
 
             resultSet = statement.executeQuery();
-            result = new ArrayList();
-            while ( resultSet.next() ) {
-                Relation relation = new Relation(resultSet.getInt(1));
-                result.add(persistance.findById(relation));
-            }
+            if (!resultSet.next())
+                throw new PersistanceException("SQL pøíkaz nevrátil ¾ádná data!");
+
+            return resultSet.getInt(1);
         } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
+            throw new PersistanceException("Nemohu vykonat SQL pøíkaz "+sql, e);
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
-        return result;
+    }
+
+    /**
+     * Appends qualifiers to StringBufefr holding SQL command.
+     */
+    private void appendQualifiers(StringBuffer sb, Qualifier[] qualifiers, List params) {
+        boolean sort = false;
+        for ( int i = 0; i<qualifiers.length; i++ ) {
+            Qualifier qualifier = qualifiers[i];
+            if ( qualifier.equals(Qualifier.SORT_BY_CREATED) ) {
+                sb.append(" sort by vytvoreno");
+                sort = true;
+            } else if ( qualifier.equals(Qualifier.SORT_BY_UPDATED) ) {
+                sb.append(" order by zmeneno");
+                sort = true;
+            } else if ( qualifier.equals(Qualifier.SORT_BY_ID) ) {
+                // todo sometimes it is neccessary to sort by R.cislo
+                sb.append(" order by cislo");
+                sort = true;
+            } else if ( sort && qualifier.equals(Qualifier.ORDER_ASCENDING) ) {
+                sb.append(" asc");
+            } else if ( sort && qualifier.equals(Qualifier.ORDER_DESCENDING) ) {
+                sb.append(" desc");
+            } else if ( qualifier instanceof LimitQualifier ) {
+                sb.append(" limit ?,?");
+                LimitQualifier limitQualifier = (LimitQualifier) qualifier;
+                params.add(new Integer(limitQualifier.getOffset()));
+                params.add(new Integer(limitQualifier.getCount()));
+            }
+        }
+    }
+
+    /**
+     * Changes first select clause to count. E.g. from id to count(id).
+     */
+    private void changeToCountStatement(StringBuffer sb) {
+        int space = sb.indexOf(" ");
+        sb.insert(space+1, "count(");
+        space = sb.indexOf(" ", space+6);
+        sb.insert(space, ')');
+    }
+
+    /**
+     * Finds relations, where child is record of specified type. Use Qualifiers
+     * to set additional parameters.
+     * @return List of initialized relations
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findRecordRelationsWithType(int type, Qualifier[] qualifiers) {
+        if (qualifiers==null) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(relationsRecordByType);
+        List params = new ArrayList();
+        params.add(new Integer(type));
+        appendQualifiers(sb,qualifiers,params);
+        return loadRelations(sb.toString(),params);
+    }
+
+    /**
+     * Counts relations, where child is record of specified type.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public int countRecordRelationsWithType(int type) {
+        StringBuffer sb = new StringBuffer(relationsRecordByType);
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        params.add(new Integer(type));
+        return loadNumber(sb.toString(),params);
+    }
+
+    /**
+     * Finds relations, where child is item of specified type.
+     * Use Qualifiers to set additional parameters.
+     * @return List of initialized relations
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findItemRelationsWithType(int type, Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(relationsItemsByType);
+        List params = new ArrayList();
+        params.add(new Integer(type));
+        appendQualifiers(sb, qualifiers, params);
+        return loadRelations(sb.toString(), params);
+    }
+
+    /**
+     * Counts relations, where child is item of specified type.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public int countItemRelationsWithType(int type) {
+        StringBuffer sb = new StringBuffer(relationsItemsByType);
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        params.add(new Integer(type));
+        return loadNumber(sb.toString(), params);
+    }
+
+    /**
+     * Finds relations, where child is a category of specified type.
+     * Use Qualifiers to set additional parameters.
+     * @return List of initialized relations
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findSectionRelationsWithType(int type, Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(relationsSectionByType);
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        params.add(new Integer(type));
+        appendQualifiers(sb, qualifiers, params);
+        return loadRelations(sb.toString(), params);
+    }
+
+    /**
+     * Counts relations, where child is a category of specified type.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public int countSectionRelationsWithType(int type) {
+        StringBuffer sb = new StringBuffer(relationsSectionByType);
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        params.add(new Integer(type));
+        return loadNumber(sb.toString(), params);
+    }
+
+    /**
+     * Finds relations, where child is discussion item.
+     * Use Qualifiers to set additional parameters.
+     * @return List of initialized relations
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findDiscussionRelations(Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(relationsDiscussion);
+        List params = new ArrayList();
+        appendQualifiers(sb, qualifiers, params);
+        return loadRelations(sb.toString(), params);
+    }
+
+    /**
+     * Counts relations, where child is discussion item.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public int countDiscussionRelations() {
+        StringBuffer sb = new StringBuffer(relationsDiscussion);
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        return loadNumber(sb.toString(), params);
+    }
+
+    /**
+     * Finds relations, where child is discussion item with specified parent.
+     * Use Qualifiers to set additional parameters.
+     * @return List of initialized relations
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findDiscussionRelationsWithParent(int parent, Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(relationsDiscussionInSection);
+        List params = new ArrayList();
+        params.add(new Integer(parent));
+        appendQualifiers(sb, qualifiers, params);
+        return loadRelations(sb.toString(), params);
+    }
+
+    /**
+     * Counts relations, where child is discussion item with specified parent.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public int countDiscussionRelationsWithParent(int parent) {
+        StringBuffer sb = new StringBuffer(relationsDiscussionInSection);
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        params.add(new Integer(parent));
+        return loadNumber(sb.toString(), params);
+    }
+
+    /**
+     * Finds relations, where child is article item.
+     * Items with property created set to future and outside of typical columns are skipped.
+     * Use Qualifiers to set additional parameters.
+     * @return List of initialized relations
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findArticleRelations(Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(relationsArticle);
+        List params = new ArrayList();
+        appendQualifiers(sb, qualifiers, params);
+        return loadRelations(sb.toString(), params);
+    }
+
+    /**
+     * Counts relations, where child is article item.
+     * Items with property created set to future and outside of typical columns are skipped.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public int countArticleRelations() {
+        StringBuffer sb = new StringBuffer(relationsArticle);
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        return loadNumber(sb.toString(), params);
+    }
+
+    /**
+     * Finds relations, where child is an article item with created property,
+     * that is inside given time period.
+     * Use Qualifiers to set additional parameters.
+     * @return List of initialized relations
+     */
+    public List findArticleRelationsWithinPeriod(Date from, Date until, Qualifier[] qualifiers) throws PersistanceException {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(relationsArticleWithinPeriod);
+        List params = new ArrayList();
+        params.add(from);
+        params.add(until);
+        appendQualifiers(sb, qualifiers, params);
+        return loadRelations(sb.toString(), params);
+    }
+
+    /**
+     * Finds relations, where child is an article item with created property,
+     * that is inside given time period.
+     */
+    public int countArticleRelationsWithinPeriod(Date from, Date until) throws PersistanceException {
+        StringBuffer sb = new StringBuffer(relationsArticleWithinPeriod);
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        params.add(from);
+        params.add(until);
+        return loadNumber(sb.toString(), params);
+    }
+
+    /**
+     * Finds relations, where child is news item .
+     * Items with created property in future and in newspool are skipped.
+     * Use Qualifiers to set additional parameters.
+     * @return List of initialized relations
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findNewsRelations(Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(relationsNews);
+        List params = new ArrayList();
+        appendQualifiers(sb, qualifiers, params);
+        return loadRelations(sb.toString(), params);
+    }
+
+    /**
+     * Counts relations, where child is news item .
+     * Items with created property in future and in newspool are skipped.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public int countNewsRelations() {
+        StringBuffer sb = new StringBuffer(relationsNews);
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        return loadNumber(sb.toString(), params);
+    }
+
+    /**
+     * Finds relations, where child is an article item with created property, that is inside
+     * given time period.
+     * Use Qualifiers to set additional parameters.
+     * @return List of initialized relations
+     */
+    public List findNewsRelationsWithinPeriod(Date from, Date until, Qualifier[] qualifiers) throws PersistanceException {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(relationsNewsWithinPeriod);
+        List params = new ArrayList();
+        params.add(from);
+        params.add(until);
+        appendQualifiers(sb, qualifiers, params);
+        return loadRelations(sb.toString(), params);
+    }
+
+    /**
+     * Counts relations, where child is an article item with created property, that is inside
+     * given time period.
+     */
+    public int countNewsRelationsWithinPeriod(Date from, Date until) throws PersistanceException {
+        StringBuffer sb = new StringBuffer(relationsNewsWithinPeriod);
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        params.add(from);
+        params.add(until);
+        return loadNumber(sb.toString(), params);
+    }
+
+    /**
+     * Finds user's relations, where child is with given type.
+     * Use Qualifiers to set additional parameters.
+     * @return List of initialized relations
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findRecordRelationsWithUserAndType(int userId, int type, Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(relationsRecordByUserAndType);
+        List params = new ArrayList();
+        params.add(new Integer(userId));
+        params.add(new Integer(type));
+        appendQualifiers(sb, qualifiers, params);
+        return loadRelations(sb.toString(), params);
+    }
+
+    /**
+     * Counts user's relations, where child is with given type.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public int countRecordRelationsWithUserAndType(int userId, int type) {
+        StringBuffer sb = new StringBuffer(relationsRecordByUserAndType);
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        params.add(new Integer(userId));
+        params.add(new Integer(type));
+        return loadNumber(sb.toString(), params);
+    }
+
+    /**
+     * Finds relations, where child is article submitted by user.
+     * Items with property created set to future and outside of typical columns are skipped.
+     * Use Qualifiers to set additional parameters.
+     * @return List of initialized relations
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findArticleRelationsByUser(int userId, Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(relationsArticleByUser);
+        List params = new ArrayList();
+        params.add(new Integer(userId));
+        appendQualifiers(sb, qualifiers, params);
+        return loadRelations(sb.toString(), params);
+    }
+
+    /**
+     * Counts relations, where child is article submitted by user.
+     * Items with property created set to future and outside of typical columns are skipped.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public int countArticleRelationsByUser(int userId) {
+        StringBuffer sb = new StringBuffer(relationsArticleByUser);
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        params.add(new Integer(userId));
+        return loadNumber(sb.toString(), params);
+    }
+
+    /**
+     * Finds relations, where child is news item submitted by user.
+     * Use Qualifiers to set additional parameters.
+     * @return List of initialized relations
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findNewsRelationsByUser(int userId, Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(relationsNewsByUser);
+        List params = new ArrayList();
+        params.add(new Integer(userId));
+        appendQualifiers(sb, qualifiers, params);
+        return loadRelations(sb.toString(), params);
+    }
+
+    /**
+     * Counts relations, where child is news item submitted by user.
+     * Use Qualifiers to set additional parameters.
+     * @return List of initialized relations
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public int countNewsRelationsByUser(int userId) {
+        StringBuffer sb = new StringBuffer(relationsNewsByUser);
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        params.add(new Integer(userId));
+        return loadNumber(sb.toString(), params);
+    }
+
+    /**
+     * Finds relations, where child is question item submiited by user.
+     * Use Qualifiers to set additional parameters.
+     * @return List of initialized relations
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findQuestionRelationsByUser(int userId, Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(relationsQuestionsByUser);
+        List params = new ArrayList();
+        params.add(new Integer(userId));
+        appendQualifiers(sb, qualifiers, params);
+        return loadRelations(sb.toString(), params);
+    }
+
+    /**
+     * Counts relations, where child is question item submiited by user.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public int countQuestionRelationsByUser(int userId) {
+        StringBuffer sb = new StringBuffer(relationsQuestionsByUser);
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        params.add(new Integer(userId));
+        return loadNumber(sb.toString(), params);
     }
 
     /**
      * Finds users, that have active email and have subscribed weekly email.
+     * Use Qualifiers to set additional parameters.
      * @return list of Integers of user ids.
      */
-    public List findUsersWithWeeklyMail() {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null; Statement statement = null; ResultSet resultSet = null;
-        List result;
-        try {
-            con = persistance.getSQLConnection();
-            statement = con.createStatement();
-            resultSet = statement.executeQuery(usersWithWeeklyMail);
-            result = new ArrayList();
-            while ( resultSet.next() ) {
-                Integer id = new Integer(resultSet.getInt(1));
-                result.add(id);
-            }
-        } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!",e);
-        } finally {
-            persistance.releaseSQLResources(con,statement,resultSet);
-        }
-        return result;
+    public List findUsersWithWeeklyEmail(Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(usersWithWeeklyEmail);
+        List params = new ArrayList();
+        appendQualifiers(sb, qualifiers, params);
+        return loadUsers(sb.toString(), params);
     }
 
     /**
-     * Finds users, that have active email and have subscribed weekly email.
+     * Finds users, that have at least one role.
+     * Use Qualifiers to set additional parameters.
      * @return list of Integers of user ids.
      */
-    public List findUsersWithRoles() {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null; Statement statement = null; ResultSet resultSet = null;
-        List result;
-        try {
-            con = persistance.getSQLConnection();
-            statement = con.createStatement();
-            resultSet = statement.executeQuery(usersWithRoles);
-            result = new ArrayList();
-            while ( resultSet.next() ) {
-                Integer id = new Integer(resultSet.getInt(1));
-                result.add(id);
-            }
-        } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!",e);
-        } finally {
-            persistance.releaseSQLResources(con,statement,resultSet);
-        }
-        return result;
+    public List findUsersWithRoles(Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(usersWithRoles);
+        List params = new ArrayList();
+        appendQualifiers(sb, qualifiers, params);
+        return loadUsers(sb.toString(), params);
     }
 
     /**
-     * Finds count of records by type.
-     * @return number of records in persistant storage
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
-     */
-    public int getRecordCount(int type) {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-        try {
-            con = persistance.getSQLConnection();
-            statement = con.prepareStatement(countRecordsByType);
-            statement.setInt(1, type);
-
-            resultSet = statement.executeQuery();
-            resultSet.next();
-            return resultSet.getInt(1);
-        } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
-        } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
-        }
-    }
-
-    /**
-     * Finds count of discussions, that have given parent.
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
-     */
-    public int getDiscussionCountIn(int parent) {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-        try {
-            con = persistance.getSQLConnection();
-            statement = con.prepareStatement(countDiscussionRelationsIn);
-            statement.setInt(1, parent);
-
-            resultSet = statement.executeQuery();
-            resultSet.next();
-            return resultSet.getInt(1);
-        } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
-        } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
-        }
-    }
-
-    /**
-     * Finds count of items by type.
-     * @return number of items in persistant storage
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
-     */
-    public int getItemCount(int type) {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-        try {
-            con = persistance.getSQLConnection();
-            statement = con.prepareStatement(countItemsByType);
-            statement.setInt(1, type);
-
-            resultSet = statement.executeQuery();
-            resultSet.next();
-            return resultSet.getInt(1);
-        } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
-        } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
-        }
-    }
-
-    /**
-     * Finds count of items of given type sumbitted by certain user.
-     * @return number of items in persistant storage
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
-     */
-    public int getItemCountbyUser(int userId, int type) {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-        try {
-            con = persistance.getSQLConnection();
-            statement = con.prepareStatement(countItemsByUser);
-            statement.setInt(1, type);
-            statement.setInt(2, userId);
-
-            resultSet = statement.executeQuery();
-            resultSet.next();
-            return resultSet.getInt(1);
-        } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
-        } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
-        }
-    }
-
-    /**
-     * Finds count of records of given type sumbitted by certain user.
-     * @return number of records in persistant storage
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
-     */
-    public int getRecordCountbyUser(int userId, int type) {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-        try {
-            con = persistance.getSQLConnection();
-            statement = con.prepareStatement(countRecordsByUser);
-            statement.setInt(1, type);
-            statement.setInt(2, userId);
-
-            resultSet = statement.executeQuery();
-            resultSet.next();
-            return resultSet.getInt(1);
-        } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
-        } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
-        }
-    }
-
-    /**
-     * Finds count of articles sumbitted by certain user.
-     * @return number of articles in persistant storage
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
-     */
-    public int getArticleCountbyUser(int userId) {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-        try {
-            con = persistance.getSQLConnection();
-            statement = con.prepareStatement(countArticlesByUser);
-            statement.setInt(1, userId);
-
-            resultSet = statement.executeQuery();
-            resultSet.next();
-            return resultSet.getInt(1);
-        } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
-        } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
-        }
-    }
-
-    /**
-     * Finds count of questions sumbitted by certain user.
-     * @return number of questions in persistant storage
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
-     */
-    public int getQuestionCountbyUser(int userId) {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-        try {
-            con = persistance.getSQLConnection();
-            statement = con.prepareStatement(countQuestionsByUser);
-            statement.setInt(1, userId);
-
-            resultSet = statement.executeQuery();
-            resultSet.next();
-            return resultSet.getInt(1);
-        } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
-        } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
-        }
-    }
-
-    /**
-     * Finds user's relations, where child is type record ordered by updated property.
-     * The order is descendant - the freshest records first. Use offset to skip
-     * some record and count to manage count of returned relations.
-     * @return List of initialized relations
+     * Finds users, that are members of given group.
+     * Use Qualifiers to set additional parameters.
+     * @return List of itialized users.
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
      */
-    public List findRecordRelationsByUser(int userId, int type, int offset, int count) {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-        try {
-            con = persistance.getSQLConnection();
-            statement = con.prepareStatement(recordRelationsByUser);
-            statement.setInt(1, type);
-            statement.setInt(2, userId);
-            statement.setInt(3, offset);
-            statement.setInt(4, count);
-
-            resultSet = statement.executeQuery();
-            List result = new ArrayList(count);
-            while ( resultSet.next() ) {
-                int id = resultSet.getInt(1);
-                Relation relation = (Relation) persistance.findById(new Relation(id));
-                result.add(relation);
-            }
-            return result;
-        } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
-        } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
-        }
+    public List findUsersInGroup(int group, Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(usersInGroup);
+        List params = new ArrayList();
+        params.add(new Integer(group));
+        appendQualifiers(sb, qualifiers, params);
+        return loadUsers(sb.toString(), params);
     }
 
     /**
-     * Finds user's relations, where child is type record ordered by updated property.
-     * The order is descendant - the freshest records first. Use offset to skip
-     * some record and count to manage count of returned relations.
-     * @return List of initialized relations
+     * Finds users, that are members of given group.
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
      */
-    public List findArticleRelationsByUser(int userId, int offset, int count) {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-
-        try {
-            con = persistance.getSQLConnection();
-            statement = con.prepareStatement(articleRelationsByUser);
-            statement.setString(1, String.valueOf(userId));
-            statement.setInt(2, offset);
-            statement.setInt(3, count);
-
-            resultSet = statement.executeQuery();
-            List result = new ArrayList(count);
-            while ( resultSet.next() ) {
-                int id = resultSet.getInt(1);
-                Relation relation = (Relation) persistance.findById(new Relation(id));
-                result.add(relation);
-            }
-            return result;
-        } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
-        } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
-        }
-    }
-
-    /**
-     * Finds user's relations, where child is news ordered by updated property.
-     * The order is descendant - the freshest records first. Use offset to skip
-     * some items and count to manage count of returned relations.
-     * @return List of initialized relations
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
-     */
-    public List findNewsRelationsByUser(int userId, int offset, int count) {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-
-        try {
-            con = persistance.getSQLConnection();
-            statement = con.prepareStatement(newsRelationsByUser);
-            statement.setString(1, String.valueOf(userId));
-            statement.setInt(2, offset);
-            statement.setInt(3, count);
-
-            resultSet = statement.executeQuery();
-            List result = new ArrayList(count);
-            while ( resultSet.next() ) {
-                int id = resultSet.getInt(1);
-                Relation relation = (Relation) persistance.findById(new Relation(id));
-                result.add(relation);
-            }
-            return result;
-        } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
-        } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
-        }
-    }
-
-    /**
-     * Finds user's relations, where child is question ordered by updated property.
-     * The order is descendant - the freshest questions first. Use offset to skip
-     * some record and count to manage count of returned relations.
-     * @return List of initialized relations
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
-     */
-    public List findQuestionRelationsByUser(int userId, int offset, int count) {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-        try {
-            con = persistance.getSQLConnection();
-            statement = con.prepareStatement(questionRelationsByUser);
-            statement.setInt(1, userId);
-            statement.setInt(2, offset);
-            statement.setInt(3, count);
-
-            resultSet = statement.executeQuery();
-            List result = new ArrayList(count);
-            while ( resultSet.next() ) {
-                int id = resultSet.getInt(1);
-                Relation relation = (Relation) persistance.findById(new Relation(id));
-                result.add(relation);
-            }
-            return result;
-        } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
-        } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
-        }
+    public int countUsersInGroup(int group) {
+        StringBuffer sb = new StringBuffer(usersInGroup);
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        params.add(new Integer(group));
+        return loadNumber(sb.toString(), params);
     }
 
     /**
@@ -720,7 +632,9 @@ public final class SQLTool implements Configurable {
      */
     public Poll findActivePoll() {
         MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null; Statement statement = null; ResultSet resultSet = null;
+        Connection con = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
         try {
             con = persistance.getSQLConnection();
             statement = con.createStatement();
@@ -729,7 +643,7 @@ public final class SQLTool implements Configurable {
 
             int id = resultSet.getInt(1);
             Poll poll = (Poll) persistance.findById(new Poll(id));
-            return (poll.isClosed()) ?  null : poll;
+            return (poll.isClosed()) ? null : poll;
         } catch (SQLException e) {
             throw new PersistanceException("Chyba pri hledani!", e);
         } finally {
@@ -742,19 +656,21 @@ public final class SQLTool implements Configurable {
      */
     public int getMaximumUserId() {
         MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null; Statement statement = null; ResultSet resultSet = null;
+        Connection con = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
         try {
             con = persistance.getSQLConnection();
             statement = con.createStatement();
             resultSet = statement.executeQuery(maxUser);
-            if ( ! resultSet.next() )
+            if ( !resultSet.next() )
                 return 0;
             Integer id = new Integer(resultSet.getInt(1));
             return id.intValue();
         } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!",e);
+            throw new PersistanceException("Chyba pri hledani!", e);
         } finally {
-            persistance.releaseSQLResources(con,statement,resultSet);
+            persistance.releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -769,13 +685,14 @@ public final class SQLTool implements Configurable {
         obj.setUpdated(date);
         persistance.storeInCache(obj);
 
-        Connection con = null; PreparedStatement statement = null;
+        Connection con = null;
+        PreparedStatement statement = null;
         try {
             con = persistance.getSQLConnection();
             String sql = "update "+persistance.getTable(obj)+" set zmeneno=? where cislo=?";
             statement = con.prepareStatement(sql);
-            statement.setTimestamp(1,new Timestamp(date.getTime()));
-            statement.setInt(2,obj.getId());
+            statement.setTimestamp(1, new Timestamp(date.getTime()));
+            statement.setInt(2, obj.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new PersistanceException("Chyba pri hledani!", e);
@@ -790,14 +707,14 @@ public final class SQLTool implements Configurable {
      * @return List of itialized Items
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
      */
-    public List findItemsByTypeById(int type, int offset, int count) {
+    public List findItemsWithType(int type, int offset, int count) {
         MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         try {
             con = persistance.getSQLConnection();
-            statement = con.prepareStatement(itemsByTypeById);
+            statement = con.prepareStatement(itemsByType);
             statement.setInt(1, type);
             statement.setInt(2, offset);
             statement.setInt(3, count);
@@ -818,64 +735,6 @@ public final class SQLTool implements Configurable {
     }
 
     /**
-     * Finds users, that are members of given group ordered by id property in ascending order.
-     * Use offset to skip some record .
-     * @return List of itialized users.
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
-     */
-    public List findUsersByGroup(int group, int offset, int count) {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null;
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
-        try {
-            con = persistance.getSQLConnection();
-            statement = con.prepareStatement(usersByGroup);
-            statement.setInt(1, group);
-            statement.setInt(2, offset);
-            statement.setInt(3, count);
-
-            resultSet = statement.executeQuery();
-            List result = new ArrayList(count);
-            while ( resultSet.next() ) {
-                int id = resultSet.getInt(1);
-                User user = (User) persistance.findById(new User(id));
-                result.add(user);
-            }
-            return result;
-        } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
-        } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
-        }
-    }
-
-    /**
-     * Finds count of members of given group.
-     * @return number of members.
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
-     */
-    public int getUsersCountByGroup(int groupId) {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null;
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
-        try {
-            con = persistance.getSQLConnection();
-            statement = con.prepareStatement(countUsersByGroup);
-            statement.setInt(1, groupId);
-
-            resultSet = statement.executeQuery();
-            resultSet.next();
-            return resultSet.getInt(1);
-        } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
-        } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
-        }
-    }
-
-    /**
      * Private constructor
      */
     private SQLTool() {
@@ -885,32 +744,24 @@ public final class SQLTool implements Configurable {
      * Callback used to configure your class from preferences.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
+        relationsRecordByType = prefs.get(PREF_RECORD_RELATIONS_BY_TYPE, null);
+        relationsItemsByType = prefs.get(PREF_ITEM_RELATIONS_BY_TYPE, null);
+        relationsSectionByType = prefs.get(PREF_SECTION_RELATIONS_BY_TYPE, null);
+        relationsDiscussion = prefs.get(PREF_DISCUSSION_RELATIONS, null);
+        relationsDiscussionInSection = prefs.get(PREF_DISCUSSION_RELATIONS_IN_SECTION, null);
+        relationsArticle = prefs.get(PREF_ARTICLE_RELATIONS, null);
+        relationsArticleWithinPeriod = prefs.get(PREF_ARTICLE_RELATIONS_WITHIN_PERIOD, null);
+        relationsNews = prefs.get(PREF_NEWS_RELATIONS, null);
+        relationsNewsWithinPeriod = prefs.get(PREF_NEWS_RELATIONS_WITHIN_PERIOD, null);
+        relationsNewsByUser = prefs.get(PREF_NEWS_RELATIONS_BY_USER, null);
+        relationsRecordByUserAndType = prefs.get(PREF_RECORD_RELATIONS_BY_USER_AND_TYPE, null);
+        relationsArticleByUser = prefs.get(PREF_ARTICLE_RELATIONS_BY_USER, null);
+        relationsQuestionsByUser = prefs.get(PREF_QUESTION_RELATIONS_BY_USER, null);
+        usersWithWeeklyEmail = prefs.get(PREF_USERS_WITH_WEEKLY_EMAIL, null);
+        usersWithRoles = prefs.get(PREF_USERS_WITH_ROLES, null);
+        usersInGroup = prefs.get(PREF_USERS_IN_GROUP, null);
         maxPoll = prefs.get(PREF_MAX_POLL,null);
         maxUser = prefs.get(PREF_MAX_USER, null);
-        recordRelationsByUpdated = prefs.get(PREF_RECORD_RELATIONS_BY_TYPE_BY_UPDATED, null);
-        itemRelationsByUpdated = prefs.get(PREF_ITEM_RELATIONS_BY_TYPE_BY_UPDATED, null);
-        articleRelationsByCreated = prefs.get(PREF_ARTICLE_RELATIONS_BY_CREATED, null);
-        articleRelationsWithinPeriod = prefs.get(PREF_ARTICLE_RELATIONS_WITHIN_PERIOD, null);
-        newsRelationsByCreated = prefs.get(PREF_NEWS_RELATIONS_BY_CREATED, null);
-        newsRelationsWithinPeriod = prefs.get(PREF_NEWS_RELATIONS_WITHIN_PERIOD, null);
-        newsRelationsByUser = prefs.get(PREF_NEWS_RELATIONS_BY_USER, null);
-        discussionRelationsByCreated = prefs.get(PREF_DISCUSSION_RELATIONS_BY_CREATED, null);
-        discussionRelationsByCreatedIn = prefs.get(PREF_DISCUSSION_RELATIONS_BY_CREATED_IN, null);
-        countDiscussionRelationsIn = prefs.get(PREF_COUNT_DISCUSSION_RELATIONS_IN, null);
-        recordRelationsByUser = prefs.get(PREF_RECORD_RELATIONS_BY_TYPE_BY_USER, null);
-        articleRelationsByUser = prefs.get(PREF_ARTICLE_RELATIONS_BY_USER, null);
-        questionRelationsByUser = prefs.get(PREF_QUESTION_RELATIONS_BY_USER, null);
-        countArticlesByUser = prefs.get(PREF_COUNT_ARTICLES_BY_USER, null);
-        countQuestionsByUser = prefs.get(PREF_COUNT_QUESTIONS_BY_USER, null);
-        countRecordsByUser = prefs.get(PREF_COUNT_RECORDS_BY_USER_BY_TYPE, null);
-        countItemsByUser = prefs.get(PREF_COUNT_ITEMS_BY_USER_BY_TYPE, null);
-        countRecordsByType = prefs.get(PREF_COUNT_RECORDS_BY_TYPE, null);
-        countItemsByType = prefs.get(PREF_COUNT_ITEMS_BY_TYPE, null);
-        usersWithWeeklyMail = prefs.get(PREF_USERS_WITH_WEEKLY_MAIL, null);
-        usersWithRoles = prefs.get(PREF_USERS_WITH_ROLES, null);
-        itemsByTypeById = prefs.get(PREF_ITEMS_BY_TYPE_BY_ID, null);
-        usersByGroup = prefs.get(PREF_USERS_BY_GROUP, null);
-        countUsersByGroup = prefs.get(PREF_COUNT_USERS_BY_GROUP, null);
-        sectionRelationsByType = prefs.get(PREF_SECTION_RELATIONS_BY_TYPE, null);
+        itemsByType = prefs.get(PREF_ITEMS_WITH_TYPE, null);
     }
 }

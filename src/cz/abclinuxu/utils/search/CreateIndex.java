@@ -68,7 +68,7 @@ public class CreateIndex implements Configurable {
             Relation software = (Relation) persistance.findById(new Relation(Constants.REL_SOFTWARE));
             Relation drivers = (Relation) persistance.findById(new Relation(Constants.REL_DRIVERS));
             Relation abc = (Relation) persistance.findById(new Relation(Constants.REL_ABC));
-            List forums = sqlTool.findSectionRelationsByType(Category.SECTION_FORUM);
+            List forums = sqlTool.findSectionRelationsWithType(Category.SECTION_FORUM,null);
 
             long start = System.currentTimeMillis();
 
@@ -81,7 +81,7 @@ public class CreateIndex implements Configurable {
 
             indexWriter.optimize();
             indexWriter.close();
-            
+
             long end = System.currentTimeMillis();
 
             FileWriter fos = new FileWriter(getLastRunFile());
@@ -110,10 +110,11 @@ public class CreateIndex implements Configurable {
         int total, i;
         for ( Iterator iter = forums.iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
-            total = sqlTool.getDiscussionCountIn(relation.getId());
+            total = sqlTool.countDiscussionRelationsWithParent(relation.getId());
 
             for (i=0;i<total;) {
-                List discussions = sqlTool.findDiscussionRelationsByCreatedIn(relation.getId(), i, 50);
+                Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED,Qualifier.ORDER_ASCENDING,new LimitQualifier(i, 100)};
+                List discussions = sqlTool.findDiscussionRelationsWithParent(relation.getId(), qualifiers);
                 i += discussions.size();
                 for ( Iterator iter2 = discussions.iterator(); iter2.hasNext(); )
                     makeIndexOn((Relation) iter2.next(),UrlUtils.PREFIX_FORUM);

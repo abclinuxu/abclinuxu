@@ -11,6 +11,8 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistance.Qualifier;
+import cz.abclinuxu.persistance.LimitQualifier;
 import cz.abclinuxu.data.Record;
 
 import javax.servlet.http.HttpServletRequest;
@@ -56,19 +58,24 @@ public class ShowOlder extends AbcFMServlet {
         List found = new ArrayList(count);
 
         if ( "articles".equalsIgnoreCase(type) ) {
-            found = SQLTool.getInstance().findArticleRelationsByCreated(from,count);
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
+            found = SQLTool.getInstance().findArticleRelations(qualifiers);
             env.put(VAR_TYPE,"articles");
         } else if ( "news".equalsIgnoreCase(type) ) {
-            found = SQLTool.getInstance().findNewsRelationsByCreated(from,count);
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
+            found = SQLTool.getInstance().findNewsRelations(qualifiers);
             env.put(VAR_TYPE,"news");
         } else if ( "hardware".equalsIgnoreCase(type) ) {
-            found = SQLTool.getInstance().findRecordRelationsByUpdated(Record.HARDWARE, from,count);
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
+            found = SQLTool.getInstance().findRecordRelationsWithType(Record.HARDWARE, qualifiers);
             env.put(VAR_TYPE,"hardware");
         } else if ( "software".equalsIgnoreCase(type) ) {
-            found = SQLTool.getInstance().findRecordRelationsByUpdated(Record.SOFTWARE, from,count);
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
+            found = SQLTool.getInstance().findRecordRelationsWithType(Record.SOFTWARE, qualifiers);
             env.put(VAR_TYPE,"software");
         } else if ( "discussions".equalsIgnoreCase(type) ) {
-            found = SQLTool.getInstance().findDiscussionRelationsByCreated(from,count);
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
+            found = SQLTool.getInstance().findDiscussionRelations(qualifiers);
             env.put(VAR_TYPE,"discussions");
         } else {
             ServletUtils.addError(PARAM_TYPE,"Chybí parametr type!",env,null);

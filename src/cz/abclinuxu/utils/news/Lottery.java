@@ -71,7 +71,7 @@ public class Lottery implements Configurable {
      * @return list of initialized relations
      */
     private List findNews(Date start, Date end) {
-        return SQLTool.getInstance().findNewsRelationsWithinPeriod(start,end);
+        return SQLTool.getInstance().findNewsRelationsWithinPeriod(start,end,null);
     }
 
     /**

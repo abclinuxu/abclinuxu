@@ -11,9 +11,7 @@ import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.Tools;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.servlets.Constants;
@@ -59,7 +57,7 @@ public class WeeklyEmail extends TimerTask implements Configurable {
             params.put(VAR_YEAR,new Integer(year));
 
             log.info("Time to send weekly emails. Let's find subscribed users first.");
-            List users = SQLTool.getInstance().findUsersWithWeeklyMail();
+            List users = SQLTool.getInstance().findUsersWithWeeklyEmail(null);
             log.info("Weekly emails have subscribed "+users.size()+" users.");
 
             setArticles(params);
@@ -84,7 +82,8 @@ public class WeeklyEmail extends TimerTask implements Configurable {
         calendar.set(Calendar.HOUR_OF_DAY,0);
         calendar.set(Calendar.MINUTE,0);
 
-        List relations = SQLTool.getInstance().findArticleRelationsWithinPeriod(calendar.getTime(), new Date());
+        Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING};
+        List relations = SQLTool.getInstance().findArticleRelationsWithinPeriod(calendar.getTime(), new Date(), qualifiers);
         List authors = new ArrayList(relations.size());
 
         for (Iterator iter = relations.iterator(); iter.hasNext();) {

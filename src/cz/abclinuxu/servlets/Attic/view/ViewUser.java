@@ -11,9 +11,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.UrlUtils;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
@@ -164,31 +162,37 @@ public class ViewUser extends AbcFMServlet {
         int pageSize = AbcConfig.getViewUserPageSize();
 
         if ( params.containsKey(CONTENT_HARDWARE) ) {
-            List list = sqlTool.findRecordRelationsByUser(user.getId(), Record.HARDWARE, from, pageSize);
-            int total = sqlTool.getRecordCountbyUser(user.getId(), Record.HARDWARE);
+            Qualifier[] qualifiers = new Qualifier[]{new LimitQualifier(from, pageSize)};
+            List list = sqlTool.findRecordRelationsWithUserAndType(user.getId(), Record.HARDWARE, qualifiers);
+            int total = sqlTool.countRecordRelationsWithUserAndType(user.getId(), Record.HARDWARE);
             Paging paging = new Paging(list, from, pageSize, total);
             env.put(VAR_HW_RECORDS, paging);
 
         } else if ( params.containsKey(CONTENT_SOFTWARE) ) {
-            List list = sqlTool.findRecordRelationsByUser(user.getId(), Record.SOFTWARE, from, pageSize);
-            int total = sqlTool.getRecordCountbyUser(user.getId(), Record.SOFTWARE);
+            Qualifier[] qualifiers = new Qualifier[]{new LimitQualifier(from, pageSize)};
+            List list = sqlTool.findRecordRelationsWithUserAndType(user.getId(), Record.SOFTWARE, qualifiers);
+            int total = sqlTool.countRecordRelationsWithUserAndType(user.getId(), Record.SOFTWARE);
             Paging paging = new Paging(list, from, pageSize, total);
             env.put(VAR_SW_RECORDS, paging);
 
         } else if ( params.containsKey(CONTENT_ARTICLES) ) {
-            List list = sqlTool.findArticleRelationsByUser(user.getId(), from, pageSize);
-            int total = sqlTool.getArticleCountbyUser(user.getId());
+            Qualifier[] qualifiers = new Qualifier[]{new LimitQualifier(from, pageSize)};
+            List list = sqlTool.findArticleRelationsByUser(user.getId(), qualifiers);
+            int total = sqlTool.countArticleRelationsByUser(user.getId());
             Paging paging = new Paging(list, from, pageSize, total);
             env.put(VAR_ARTICLES, paging);
 
         } else if ( params.containsKey(CONTENT_DISCUSSIONS) ) {
-            List list = sqlTool.findQuestionRelationsByUser(user.getId(), from, pageSize);
-            int total = sqlTool.getQuestionCountbyUser(user.getId());
+            Qualifier[] qualifiers = new Qualifier[]{new LimitQualifier(from, pageSize)};
+            List list = sqlTool.findQuestionRelationsByUser(user.getId(), qualifiers);
+            int total = sqlTool.countQuestionRelationsByUser(user.getId());
             Paging paging = new Paging(list, from, pageSize, total);
             env.put(VAR_DISCUSSIONS, paging);
+
         } else if ( params.containsKey(CONTENT_NEWS) ) {
-            List list = sqlTool.findNewsRelationsByUser(user.getId(), from, pageSize);
-            int total = sqlTool.getItemCountbyUser(user.getId(), Item.NEWS);
+            Qualifier[] qualifiers = new Qualifier[]{new LimitQualifier(from, pageSize)};
+            List list = sqlTool.findNewsRelationsByUser(user.getId(), qualifiers);
+            int total = sqlTool.countNewsRelationsByUser(user.getId());
             Paging paging = new Paging(list, from, pageSize, total);
             env.put(VAR_NEWS, paging);
         }
