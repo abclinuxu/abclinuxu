@@ -82,6 +82,12 @@
     </servlet>
 
     <servlet>
+        <servlet-name>EditArticle</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.edit.EditArticle</servlet-class>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+
+    <servlet>
         <servlet-name>SelectIcon</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.view.SelectIcon</servlet-class>
         <load-on-startup>4</load-on-startup>
@@ -146,6 +152,10 @@
 
     <servlet-mapping>
         <servlet-name>EditSoftware</servlet-name><url-pattern>/software/EditItem</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>EditArticle</servlet-name><url-pattern>/clanky/EditItem</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

@@ -410,7 +410,6 @@ public class MySqlPersistance implements Persistance {
 
             ResultSet resultSet = statement.executeQuery();
             if ( !resultSet.next() ) {
-                log.error("Nepodarilo se zjistit hodnotu citace pro "+obj);
                 return 0;
             }
             return resultSet.getInt(1);

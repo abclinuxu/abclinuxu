@@ -9,6 +9,7 @@ package cz.abclinuxu.servlets.utils;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.Sorters;
 import org.dom4j.Document;
 import org.dom4j.Node;
@@ -21,6 +22,7 @@ import java.util.*;
 import java.io.UnsupportedEncodingException;
 import java.io.StringWriter;
 import java.text.DateFormat;
+import java.text.ParseException;
 
 /**
  * This class provides several methods, that
@@ -28,7 +30,6 @@ import java.text.DateFormat;
  */
 public class VelocityHelper {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(VelocityHelper.class);
-    static DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.FULL,DateFormat.SHORT);
 
     /**
      * Get name of this child in this relation context. Default name
@@ -177,11 +178,24 @@ public class VelocityHelper {
         for (Iterator iter = entries.iterator(); iter.hasNext();) {
             String key = (String) iter.next();
             if ( prohibited.contains(key) ) continue;
-            sb.append("<input type=\"hidden\" name=\"");
-            sb.append(key);
-            sb.append("\" value=\"");
-            sb.append(encodeSpecial((String) params.get(key)));
-            sb.append("\">\n");
+
+            List values = null;
+            if ( params.get(key) instanceof List ) {
+                values = (List) params.get(key);
+            } else {
+                values = new ArrayList(1);
+                values.add(params.get(key));
+            }
+
+            for (Iterator iter2 = values.iterator(); iter2.hasNext();) {
+                String value = (String) iter2.next();
+                sb.append("<input type=\"hidden\" name=\"");
+                sb.append(key);
+                sb.append("\" value=\"");
+                sb.append(encodeSpecial(value));
+                sb.append("\">\n");
+            }
+
         }
         return sb.toString();
     }
@@ -346,7 +360,20 @@ public class VelocityHelper {
      */
     public String showDate(Date date) {
         if ( date==null ) return null;
-        return dateFormat.format(date);
+        return Constants.defaultFormat.format(date);
+    }
+
+    /**
+     * Returns formatted String according to current locale. isoDate must be in iso format (2002-01-03 12:32)
+     */
+    public String showDate(String isoDate) {
+        if ( isoDate==null ) return null;
+        try {
+            Date date = Constants.isoFormat.parse(isoDate);
+            return Constants.defaultFormat.format(date);
+        } catch (ParseException e) {
+            return null;
+        }
     }
 
     /**
@@ -383,5 +410,19 @@ public class VelocityHelper {
         if ( className.equalsIgnoreCase("User") ) return new User(id);
         if ( className.equalsIgnoreCase("Poll") ) return new Poll(id);
         return null;
+    }
+
+    /**
+     * It is not possible directly instantiate object in Velocity. This method
+     * is a workaround for this. Pass classname and id and it will return you new instance
+     * of selected class or null, if class name was not recognized.
+     */
+    public GenericObject instantiate(String className, String  id) {
+        try {
+            int i = Integer.parseInt(id);
+            return instantiate(className,i);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 }

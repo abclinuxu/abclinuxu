@@ -6,6 +6,9 @@
  */
 package cz.abclinuxu.servlets;
 
+import java.text.SimpleDateFormat;
+import java.text.DateFormat;
+
 /**
  * This interface holds all constants shared across servlets.
  */
@@ -24,4 +27,8 @@ public interface Constants {
 
     /** actual ids of selected relations in database */
     public static final int REL_POLLS = 250;
+    public static final int REL_AUTHORS = 314;
+    public static final int REL_ACTUAL_ARTICLES = 8;
+    SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    DateFormat defaultFormat = DateFormat.getDateTimeInstance(DateFormat.FULL,DateFormat.SHORT);
 }

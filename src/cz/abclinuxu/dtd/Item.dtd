@@ -6,12 +6,12 @@
 
 
 <!-- Item.ARTICLE -->
-<!ELEMENT data (name,icon?,perex,author,email?,published,editor?,revised?)>
-<!ELEMENT name (#PCDATA)> <!-- name of the Article -->
+<!ELEMENT data (name,icon?,perex,author,published,revisor?,editor?)>
+<!ELEMENT name (#PCDATA)> <!-- title of the Article -->
 <!ELEMENT icon (#PCDATA)> <!-- absolute path including protocol, or relative path to icon directory -->
 <!ELEMENT perex (#PCDATA)> <!-- description of the article -->
 <!ELEMENT author (#PCDATA)> <!-- id of the author -->
 <!ELEMENT published (#PCDATA)> <!-- ISO representation of day and time, when this article has been published -->
+<!ELEMENT revisor (#PCDATA)> <!-- who checked grammar and spelling -->
 <!ELEMENT editor (#PCDATA)> <!-- who approved this article -->
-<!ELEMENT revised (#PCDATA)> <!-- who checked grammar and spelling -->
 
