@@ -48,6 +48,7 @@ public final class Guard {
         } else if ( operation==OPERATION_EDIT ) {
             return checkEdit(actor,subject,param);
         } else if ( operation==OPERATION_REMOVE ) {
+            return checkRemove(actor,subject,param);
         }
 
         return ACCESS_DENIED;
@@ -99,6 +100,18 @@ public final class Guard {
         }
         // Link
         // Data
+        return ACCESS_DENIED;
+    }
+
+    /** non administrator is removing relation */
+    private static int checkRemove(User actor, GenericObject subject, Object param) {
+        if ( !(subject instanceof Relation) ) return ACCESS_DENIED;
+        Relation relation = (Relation) subject;
+        if ( relation.getChild() instanceof GenericDataObject ) {
+            GenericDataObject data = (GenericDataObject) relation.getChild();
+            if ( data.getOwner()==actor.getId() ) return ACCESS_OK;
+            return ACCESS_DENIED;
+        }
         return ACCESS_DENIED;
     }
 }

@@ -21,6 +21,7 @@ import org.dom4j.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.List;
 
 /**
  * Class for removing relations or creating links.<p>
@@ -40,11 +41,12 @@ public class EditRelation extends AbcServlet {
     public static final String PARAM_PREFIX = "prefix";
 
     public static final String VAR_CURRENT = "CURRENT";
+    public static final String VAR_PARENTS = "PARENTS";
 
     public static final String ACTION_LINK = "add";
     public static final String ACTION_LINK_STEP2 = "add2";
-    public static final String ACTION_REMOVE = "rm";
-    public static final String ACTION_REMOVE_STEP2 = "rm2";
+    public static final String ACTION_REMOVE = "remove";
+    public static final String ACTION_REMOVE_STEP2 = "remove2";
 
 
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
@@ -59,7 +61,7 @@ public class EditRelation extends AbcServlet {
             ctx.put(EditRelation.VAR_CURRENT,relation);
         }
 
-        if ( action==null || action.equals(EditRelation.ACTION_LINK) ) {
+        if ( action==null || action.equals(ACTION_LINK) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
@@ -67,7 +69,7 @@ public class EditRelation extends AbcServlet {
                 default: return getTemplate("add/relation.vm");
             }
 
-        } else if ( action.equals(EditCategory.ACTION_ADD_STEP2) ) {
+        } else if ( action.equals(ACTION_LINK_STEP2) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,null);
             switch (rights) {
                 case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
@@ -77,6 +79,29 @@ public class EditRelation extends AbcServlet {
                 }
                 default: return actionLinkStep2(request,response,ctx);
             }
+
+        } else if ( action.equals(ACTION_REMOVE) ) {
+            int rights = Guard.check((User)ctx.get(VAR_USER),relation,Guard.OPERATION_REMOVE,null);
+            switch (rights) {
+                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_DENIED: {
+                    addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                    return getTemplate("edit/removeRelation.vm");
+                }
+                default: return actionRemove1(request,ctx);
+            }
+
+        } else if ( action.equals(ACTION_REMOVE_STEP2) ) {
+            int rights = Guard.check((User)ctx.get(VAR_USER),relation,Guard.OPERATION_REMOVE,null);
+            switch (rights) {
+                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_DENIED: {
+                    addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                    return getTemplate("edit/removeRelation.vm");
+                }
+                default: return actionRemove2(request,response,ctx);
+            }
+
         }
         return getTemplate("add/category.vm");
     }
@@ -107,6 +132,32 @@ public class EditRelation extends AbcServlet {
         String prefix = (String)params.get(EditRelation.PARAM_PREFIX);
         ctx.put(AbcServlet.VAR_URL_UTILS,new UrlUtils(prefix, response));
         redirect("/ViewRelation?relationId="+parent.getId(),response,ctx);
+        return null;
+    }
+
+    protected Template actionRemove1(HttpServletRequest request, Context ctx) throws Exception {
+        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Relation relation = (Relation) ctx.get(VAR_CURRENT);
+
+        Relation[] parents = persistance.findByExample(new Relation(null,relation.getChild(),0));
+        ctx.put(VAR_PARENTS,parents);
+        return getTemplate("edit/removeRelation.vm");
+    }
+
+    protected Template actionRemove2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Relation relation = (Relation) ctx.get(VAR_CURRENT);
+
+        persistance.remove(relation);
+        String url = null;
+        String prefix = (String) params.get(PARAM_PREFIX);
+        if ( prefix!=null ) {
+            url = prefix.concat("/ViewRelation?relationId="+relation.getUpper());
+        } else url = "/Index";
+
+        redirect(url,response,ctx);
         return null;
     }
 }

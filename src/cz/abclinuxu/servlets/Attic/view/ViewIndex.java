@@ -67,7 +67,7 @@ public class ViewIndex extends AbcServlet {
         for (Iterator iter = list.iterator(); iter.hasNext();) {
             Object[] objects = (Object[]) iter.next();
             Relation child = new Relation(null,new Record(((Integer)objects[0]).intValue(),Record.HARDWARE),0);
-            Relation found = persistance.findByExample(child);
+            Relation found = persistance.findByExample(child)[0];
             hwNew.add(found);
         }
         ctx.put(VAR_HW_NEW,hwNew);
@@ -77,7 +77,7 @@ public class ViewIndex extends AbcServlet {
         for (Iterator iter = list.iterator(); iter.hasNext();) {
             Object[] objects = (Object[]) iter.next();
             Relation child = new Relation(null,new Record(((Integer)objects[0]).intValue(),Record.SOFTWARE),0);
-            Relation found = persistance.findByExample(child);
+            Relation found = persistance.findByExample(child)[0];
             swNew.add(found);
         }
         ctx.put(VAR_SW_NEW,swNew);

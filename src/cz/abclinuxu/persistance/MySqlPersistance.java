@@ -287,9 +287,10 @@ public class MySqlPersistance implements Persistance {
         }
     }
 
-    public Relation findByExample(Relation example) throws PersistanceException {
+    public Relation[] findByExample(Relation example) throws PersistanceException {
         Connection con = null;
         con = getSQLConnection();
+        List found = new ArrayList(5);
 
         StringBuffer sb = new StringBuffer("select * from relace where ");
         boolean addAnd = false;
@@ -321,32 +322,43 @@ public class MySqlPersistance implements Persistance {
         try {
             Statement statement = con.createStatement();
             ResultSet rs = statement.executeQuery(sb.toString());
-            if ( !rs.next() ) return null;
+            while ( rs.next() ) {
+                Relation relation = new Relation(rs.getInt(1));
+                relation.setUpper(rs.getInt(2));
 
-            Relation relation = new Relation(rs.getInt(1));
-            relation.setUpper(rs.getInt(2));
+                char type = rs.getString(3).charAt(0);
+                int id = rs.getInt(4);
+                parent = instantiateFromTree(type,id);
+                relation.setParent(parent);
 
-            char type = rs.getString(3).charAt(0);
-            int id = rs.getInt(4);
-            parent = instantiateFromTree(type,id);
-            relation.setParent(parent);
+                type = rs.getString(5).charAt(0);
+                id = rs.getInt(6);
+                child = instantiateFromTree(type,id);
+                relation.setChild(child);
 
-            type = rs.getString(5).charAt(0);
-            id = rs.getInt(6);
-            child = instantiateFromTree(type,id);
-            relation.setChild(child);
-
-            try {
-                String tmp = rs.getString(7);
-                if ( tmp!=null ) {
-                    tmp = insertEncoding(tmp);
-                    relation.setData(new String(tmp));
+                try {
+                    String tmp = rs.getString(7);
+                    if ( tmp!=null ) {
+                        tmp = insertEncoding(tmp);
+                        relation.setData(new String(tmp));
+                    }
+                } catch (AbcException e) {
+                    throw new PersistanceException(e.getMessage(),e.getStatus(),e.getSinner(),e.getNestedException());
                 }
-            } catch (AbcException e) {
-                throw new PersistanceException(e.getMessage(),e.getStatus(),e.getSinner(),e.getNestedException());
+
+                found.add(relation);
             }
 
-            return relation;
+            if ( found==null ) return null;
+
+            Relation[] relations = new Relation[found.size()];
+            int i = 0;
+            for (Iterator iter = found.iterator(); iter.hasNext();) {
+                Relation relation = (Relation) iter.next();
+                relations[i++] = relation;
+            }
+
+            return relations;
         } catch (SQLException e) {
             log.error("Cannot find relation "+example,e);
             return null;

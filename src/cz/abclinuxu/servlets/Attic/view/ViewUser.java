@@ -52,7 +52,7 @@ public class ViewUser extends AbcServlet {
         Relation rel = new Relation();
         for (Iterator iter = found.iterator(); iter.hasNext();) {
             rel.setChild((GenericObject) iter.next());
-            hw.add(persistance.findByExample(rel));
+            hw.add(persistance.findByExample(rel)[0]);
         }
         helper.sync(hw);
         ctx.put(VAR_HW_RECORDS,hw);
@@ -63,7 +63,7 @@ public class ViewUser extends AbcServlet {
         List sw = new ArrayList(found.size());
         for (Iterator iter = found.iterator(); iter.hasNext();) {
             rel.setChild((GenericObject) iter.next());
-            sw.add(persistance.findByExample(rel));
+            sw.add(persistance.findByExample(rel)[0]);
         }
         helper.sync(sw);
         ctx.put(VAR_SW_RECORDS,sw);

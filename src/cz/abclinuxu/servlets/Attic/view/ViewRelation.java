@@ -54,8 +54,11 @@ public class ViewRelation extends AbcServlet {
         persistance.synchronize(relation);
         ctx.put(VAR_RELATION,relation);
 
-        List parents = persistance.findParents(relation);
-        ctx.put(VAR_PARENTS,parents);
+        List parents = null;
+        if ( relation!=null ) {
+            parents = persistance.findParents(relation);
+            ctx.put(VAR_PARENTS,parents);
+        }
 
         if ( relation.getParent() instanceof Item ) {
             dispatch("/ViewItem",request,response,ctx);

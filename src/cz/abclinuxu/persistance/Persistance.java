@@ -78,7 +78,7 @@ public interface Persistance {
     /**
      * Finds relation described by <code>example</code>. Just set child or parent.
      */
-    public Relation findByExample(Relation example) throws PersistanceException;
+    public Relation[] findByExample(Relation example) throws PersistanceException;
 
     /**
      * Removes GenericObject from Persistant storage. If <code>obj</code> is Relation,
