@@ -418,6 +418,9 @@ public class AbcServlet extends VelocityServlet {
             objects = (Object[]) list.get(0);
             counts.put("DRIVERS",objects[0]);
 
+            Category forum = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
+            counts.put("FORUM",new Integer(forum.getContent().size()));
+
             ctx.put(VAR_COUNTS,counts);
         } catch (PersistanceException e) {
             log.warn("Cannot get default objects!",e);
