@@ -46,20 +46,8 @@
     </servlet>
 
     <servlet>
-        <servlet-name>FindContext</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.view.FindContext</servlet-class>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
-
-    <servlet>
         <servlet-name>ViewCategory</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.view.ViewCategory</servlet-class>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>ViewItem</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.view.ViewItem</servlet-class>
         <load-on-startup>2</load-on-startup>
     </servlet>
 
@@ -207,19 +195,6 @@
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>ViewItem</servlet-name><url-pattern>/hardware/ViewItem</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewItem</servlet-name><url-pattern>/software/ViewItem</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewItem</servlet-name><url-pattern>/clanky/ViewItem</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewItem</servlet-name><url-pattern>/drivers/ViewItem</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
         <servlet-name>ViewRelation</servlet-name><url-pattern>/hardware/ViewRelation</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
@@ -230,9 +205,6 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ViewRelation</servlet-name><url-pattern>/drivers/ViewRelation</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>FindContext</servlet-name><url-pattern>/ViewRelation</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
