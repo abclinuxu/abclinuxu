@@ -1,7 +1,7 @@
 <project name="AbcLinuxu" basedir="." default="compile">
   <property name="src" value="src"/>
   <property name="build" value="build"/>
-  <property name="deploy" value="../tomcat/webapps"/>
+  <property name="deploy" value="../tomcat/webapps/abc"/>
 
   <path id="project.classpath">
     <fileset dir="libs">
@@ -9,18 +9,23 @@
     </fileset>
   </path>
 
+
   <target name="init">
     <mkdir dir="${build}"/>
     <mkdir dir="${build}/WEB-INF"/>
     <mkdir dir="${build}/WEB-INF/lib"/>
     <mkdir dir="${build}/WEB-INF/classes"/>
     <mkdir dir="${build}/logs"/>
+    <mkdir dir="${deploy}"/>
     <tstamp/>
   </target>
 
+
   <target name="compile" depends="init">
     <javac srcdir="${src}" destdir="${build}/WEB-INF/classes" classpathref="project.classpath"/>
+    <javac srcdir="test" destdir="${build}/WEB-INF/classes" classpathref="project.classpath"/>
   </target>
+
 
   <target name="dist" depends="compile">
     <copy todir="${build}/WEB-INF">
@@ -41,6 +46,16 @@
     <copy todir="${build}/WEB-INF/lib">
       <fileset dir="libs" includes="*.jar"/>
     </copy>
+
+    <copy todir="${build}">
+      <fileset dir="jsp"/>
+    </copy>
   </target>
 
+
+  <target name="deploy" depends="dist">
+    <copy todir="${deploy}">
+      <fileset dir="${build}"/>
+    </copy>
+  </target>
 </project>
