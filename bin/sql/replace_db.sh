@@ -5,6 +5,7 @@ delete from anketa;
 delete from citac;
 delete from data_ankety;
 delete from kategorie;
+delete from komentar;
 delete from objekt;
 delete from odkaz;
 delete from polozka;
