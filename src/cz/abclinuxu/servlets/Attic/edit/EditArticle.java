@@ -40,13 +40,12 @@ public class EditArticle implements AbcAction {
     public static final String PARAM_PEREX = "perex";
     public static final String PARAM_CONTENT = "content";
     public static final String PARAM_PUBLISHED = "published";
-    public static final String PARAM_AUTHOR = "authorId";
+    public static final String PARAM_AUTHOR = "uid";
     public static final String PARAM_FORBID_DISCUSSIONS = "forbid_discussions";
     public static final String PARAM_RELATED_ARTICLES = "related";
     public static final String PARAM_RESOURCES = "resources";
 
     public static final String VAR_RELATION = "RELATION";
-    public static final String VAR_AUTHORS = "AUTHORS";
 
     public static final String ACTION_ADD_ITEM = "add";
     public static final String ACTION_ADD_ITEM_STEP2 = "add2";
@@ -100,7 +99,6 @@ public class EditArticle implements AbcAction {
     private String actionAddStep1(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         params.put(PARAM_PUBLISHED,Constants.isoFormat.format(new Date()));
-        addAuthors(env);
         return FMTemplateSelector.select("EditArticle","add",env,request);
     }
 
@@ -130,7 +128,6 @@ public class EditArticle implements AbcAction {
         canContinue &= setResources(params, record, env);
 
         if ( !canContinue ) {
-            addAuthors(env);
             return FMTemplateSelector.select("EditArticle", "edit", env, request);
         }
 
@@ -150,7 +147,6 @@ public class EditArticle implements AbcAction {
             return null;
         } catch (PersistanceException e) {
             ServletUtils.addError(Constants.ERROR_GENERIC,e.getMessage(),env, null);
-            addAuthors(env);
             return FMTemplateSelector.select("EditArticle", "edit", env, request);
         }
     }
@@ -179,7 +175,6 @@ public class EditArticle implements AbcAction {
         Record record = (Record) child.getChild();
         document = record.getData();
 
-        addAuthors(env);
         addArticleContent(document, params);
         addLinks(document, "/data/related/link", params, PARAM_RELATED_ARTICLES);
         addLinks(document, "/data/resources/link", params, PARAM_RESOURCES);
@@ -208,7 +203,6 @@ public class EditArticle implements AbcAction {
         canContinue &= setResources(params, record, env);
 
         if ( !canContinue ) {
-            addAuthors(env);
             return FMTemplateSelector.select("EditArticle","edit",env,request);
         }
 
@@ -446,32 +440,6 @@ public class EditArticle implements AbcAction {
             link.setText(title);
         }
         return true;
-    }
-
-    /**
-     * Adds list of authors (User) to env in VAR_AUTHORS.
-     * todo sort authors by name
-     */
-    private void addAuthors(Map env) {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        User user = null;
-
-        Category category = (Category) persistance.findById(new Category(Constants.CAT_AUTHORS));
-        List children = category.getChildren();
-        List authors = new ArrayList(children.size());
-        for (Iterator it = children.iterator(); it.hasNext();) {
-            GenericObject child = ((Relation) it.next()).getChild();
-            if ( child instanceof User ) {
-                user = (User) persistance.findById(child);
-                authors.add(user);
-            }
-        }
-        env.put(VAR_AUTHORS,authors);
-
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        if ( params.get(PARAM_AUTHOR)==null ) {
-            params.put(PARAM_AUTHOR,Integer.toString(user.getId()));
-        }
     }
 
     /**

@@ -16,12 +16,8 @@
   <tr>
    <td width="90" class="required">Autor</td>
    <td>
-    <select name="authorId" size="1" tabindex=2>
-     <#list AUTHORS as author>
-      <option value="${author.id}"<#if PARAMS.authorId==author.id > selected</#if>>${author.name}</option>
-     </#list>
-    </select>
-    <div class="error">${ERRORS.authorId?if_exists}</div>
+    <input type="text" name="uid" value="${PARAMS.uid?if_exists}" size=4 tabindex=2>
+    <div class="error">${ERRORS.uid?if_exists}</div>
    </td>
   </tr>
   <tr>
