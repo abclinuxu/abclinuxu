@@ -88,6 +88,8 @@ public final class SQLTool implements Configurable {
      * @throws PersistanceException if something goes wrong.
      */
     private List loadRelations(String sql, List params) throws PersistanceException {
+        if (log.isDebugEnabled())
+            log.debug(sql);
         MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
         Connection con = null;
         PreparedStatement statement = null;
