@@ -228,6 +228,8 @@ public class MySqlPersistance implements Persistance {
                 result = loadPoll((Poll)obj);
             } else if (obj instanceof User) {
                 result = loadUser((User)obj);
+            } else if (obj instanceof Server) {
+                result = loadServer((Server)obj);
             }
             if ( result!=null ) result.setInitialized(true);
             return result;
@@ -484,6 +486,8 @@ public class MySqlPersistance implements Persistance {
             return "anketa";
         } else if (obj instanceof User) {
             return "uzivatel";
+        } else if (obj instanceof Server) {
+            return "server";
         }
         throw new PersistanceException("Nepodporovany typ tridy!",AbcException.DB_UNKNOWN_CLASS,obj,null);
     }
@@ -1096,6 +1100,32 @@ public class MySqlPersistance implements Persistance {
 
             findChildren(poll,con);
             return poll;
+        } finally {
+            releaseSQLConnection(con);
+        }
+    }
+
+    /**
+     * @return Server from mysql db
+     */
+    protected GenericObject loadServer(Server obj) throws PersistanceException, SQLException {
+        Connection con = null;
+
+        try {
+            con = getSQLConnection();
+            PreparedStatement statement = con.prepareStatement("select * from server where cislo=?");
+            statement.setInt(1,obj.getId());
+
+            ResultSet resultSet = statement.executeQuery();
+            if ( !resultSet.next() ) {
+                throw new PersistanceException("Server "+obj.getId()+" nebyl nalezen!",AbcException.DB_NOT_FOUND,obj,null);
+            }
+
+            Server server = new Server(resultSet.getInt(1));
+            server.setName(resultSet.getString(2));
+            server.setUrl(resultSet.getString(3));
+            server.setContact(resultSet.getString(4));
+            return server;
         } finally {
             releaseSQLConnection(con);
         }
