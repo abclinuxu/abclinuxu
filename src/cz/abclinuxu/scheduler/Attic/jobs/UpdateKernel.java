@@ -24,11 +24,20 @@ public class UpdateKernel implements Task {
     static String fileName = "kernel.txt";
     static String server = "finger.kernel.org";
 
-    RE version;
+    RE reStable,reStablepre,reDevel,reDevelpre,reOld22,reOld22pre,reOld20,reOld20pre,reAc,reDj;
 
     public UpdateKernel() {
         try {
-            version = new RE("(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)");
+            reStable = new RE("(The latest stable[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)");
+            reStablepre = new RE("(The latest prepatch for the stable[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)");
+            reDevel = new RE("(The latest beta[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)");
+            reDevelpre = new RE("(The latest prepatch for the beta[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)");
+            reOld22 = new RE("(The latest 2.2[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)");
+            reOld22pre = new RE("(The latest prepatch for the 2.2[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)");
+            reOld20 = new RE("(The latest 2.0[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)");
+            reOld20pre = new RE("(The latest prepatch for the 2.0[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)");
+            reAc = new RE("(The latest -ac[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)");
+            reDj = new RE("(The latest -dj[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)");
         } catch (RESyntaxException e) {
             log.error("Cannot compile regexp!",e);
         }
@@ -40,47 +49,55 @@ public class UpdateKernel implements Task {
      */
     public void runJob() {
         try {
+            String line, stable, stablepre, devel, develpre, old22, old22pre, old20, old20pre, ac, dj;
+            line = stable = stablepre = devel = develpre = old22 = old22pre = old20 = old20pre = ac = dj = null;
+
             BufferedReader reader = getStream();
-            String line = reader.readLine();
+            while ((line = reader.readLine())!=null) {
+                if ( reStable.match(line) ) { stable = reStable.getParen(3); continue; }
+                if ( reStablepre.match(line) ) { stablepre = reStablepre.getParen(3); continue; }
+                if ( reDevel.match(line) ) { devel = reDevel.getParen(3); continue; }
+                if ( reDevelpre.match(line) ) { develpre = reDevelpre.getParen(3); continue; }
+                if ( reOld22.match(line) ) { old22 = reOld22.getParen(3); continue; }
+                if ( reOld22pre.match(line) ) { old22pre = reOld22pre.getParen(3); continue; }
+                if ( reOld20.match(line) ) { old20 = reOld20.getParen(3); continue; }
+                if ( reOld20pre.match(line) ) { old20pre = reOld20pre.getParen(3); continue; }
+                if ( reAc.match(line) ) { ac = reAc.getParen(3); continue; }
+                if ( reDj.match(line) ) { dj = reDj.getParen(3); continue; }
+            }
+
             FileWriter writer = new FileWriter(fileName);
-
             writer.write("<table border=0>\n");
-            if ( version.match(line) ) {
-                String tmp = version.getParen(2);
-                writer.write("<tr><td class=\"jadro_h\">Stabilní:</td>");
-                writer.write("<td><a href=\"ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.4/linux-"+tmp);
-                writer.write(".tar.bz2\" class=\"ikona\">"+tmp+"</a></td>");
-            }
-            if ( version.match(reader.readLine()) ) writer.write("<td class=\"jadro_p\">("+version.getParen(2)+")</td>");
+
+            writer.write("<tr><td class=\"jadro_h\"><a href=\"ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.4\" class=\"ikona\">Stabilní:</a></td>\n");
+            writer.write("<td>"+stable);
+            if ( stablepre!=null ) writer.write(" "+stablepre);
+            writer.write("</td></tr>\n");
+
+            writer.write("<tr><td class=\"jadro_h\"><a href=\"ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.5\" class=\"ikona\">Vývojové:</a></td>\n");
+            writer.write("<td>"+devel);
+            if ( develpre!=null ) writer.write(" "+develpre);
+            writer.write("</td></tr>\n");
+
+            writer.write("<tr><td class=\"jadro_h\"><a href=\"ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.2\" class=\"ikona\">Øada 2.2:</a></td>\n");
+            writer.write("<td>"+old22);
+            if ( old22pre!=null ) writer.write(" "+old22pre);
+            writer.write("</td></tr>\n");
+
+            writer.write("<tr><td class=\"jadro_h\"><a href=\"ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.0\" class=\"ikona\">Øada 2.0:</a></td>\n");
+            writer.write("<td>"+old20);
+            if ( old20pre!=null ) writer.write(" "+old20pre);
+            writer.write("</td></tr>\n");
+
+            writer.write("<tr><td class=\"jadro_h\"><a href=\"ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.4\" class=\"ikona\">AC øada:</a></td>\n");
+            writer.write("<td>"+ac+"</td>");
             writer.write("</tr>\n");
 
-            if ( version.match(reader.readLine()) ) {
-                String tmp = version.getParen(2);
-                writer.write("<tr><td class=\"jadro_h\">Vývojové:</td>");
-                writer.write("<td colspan=\"2\"><a href=\"ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.5/linux-"+tmp);
-                writer.write(".tar.bz2\" class=\"ikona\">"+tmp+"</a></td>");
-            }
-            reader.readLine();
+            writer.write("<tr><td class=\"jadro_h\"><a href=\"ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.5\" class=\"ikona\">DJ øada:</a></td>\n");
+            writer.write("<td>"+dj+"</td>");
             writer.write("</tr>\n");
 
-            if ( version.match(reader.readLine()) ) {
-                String tmp = version.getParen(2);
-                writer.write("<tr><td class=\"jadro_h\">Øada 2.2:</td>");
-                writer.write("<td><a href=\"ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.2/linux-"+tmp);
-                writer.write(".tar.bz2\" class=\"ikona\">"+tmp+"</a></td>");
-            }
-            if ( version.match(reader.readLine()) ) writer.write("<td class=\"jadro_p\">("+version.getParen(2)+")</td>");
-            writer.write("</tr>\n");
-
-            if ( version.match(reader.readLine()) ) {
-                String tmp = version.getParen(2);
-                writer.write("<tr><td class=\"jadro_h\">Øada 2.0:</td>");
-                writer.write("<td><a href=\"ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.0/linux-"+tmp);
-                writer.write(".tar.bz2\" class=\"ikona\">"+tmp+"</a></td>");
-            }
-            if ( version.match(reader.readLine()) ) writer.write("<td class=\"jadro_p\">("+version.getParen(2)+")</td>");
-            writer.write("</tr>\n</table>");
-
+            writer.write("</table>");
             reader.close();
             writer.close();
         } catch (Exception e) {
@@ -120,11 +137,12 @@ public class UpdateKernel implements Task {
      */
     private BufferedReader getStream() throws IOException {
 //        BufferedReader reader = new BufferedReader(new FileReader("/home/literakl/penguin/obsahy/kernel.txt"));
-
-        Socket socket = new Socket(server,79);
-        socket.setSoTimeout(500);
-        socket.getOutputStream().write("\015\012".getBytes());
-        BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        BufferedReader reader = new BufferedReader(new FileReader("/home/literakl/finger.txt"));
+//
+//        Socket socket = new Socket(server,79);
+//        socket.setSoTimeout(500);
+//        socket.getOutputStream().write("\015\012".getBytes());
+//        BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         return reader;
     }
 }
