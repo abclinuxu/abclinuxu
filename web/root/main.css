@@ -55,7 +55,7 @@ IMG.sipka { border: 0; width: 11px; height: 7px; }
 
 /* index */
 P.perex_out { padding: 0ex 0ex;  }
-A.nadpis_out { color:BLACK; font-family: Helvetica, Arial, sans-serif; font-size: 14pt; font-weight:bold }
+A.nadpis_out { color:BLACK; font-family: Arial, Helvetica, sans-serif; font-size: 14pt; font-weight:bold }
 A.nadpis_out:hover { color:#003355 }
 TD.jadro_h { font-weight: bold; font-size: 10pt}
 TD.jadro_p { font-size: 10pt }

@@ -249,6 +249,21 @@
               </map>
             </node>
           </node>
+          <node name="init">
+              <map/>
+              <node name="AbcInit">
+                  <map>
+                      <entry key="start.rss.monitor" value="@START.RSS.MONITOR@"/>
+                      <entry key="start.rss.generator" value="@START.RSS.GENERATOR@"/>
+                      <entry key="start.rss.kernel" value="@START.RSS.KERNEL@"/>
+                      <entry key="start.variable.fetcher" value="@START.VARIABLE.FETCHER@"/>
+                      <entry key="start.article.pool.monitor" value="@START.ARTICLE.POOL.MONITOR@"/>
+                      <entry key="start.abc.monitor" value="@START.ABC.MONITOR@"/>
+                      <entry key="start.forum.mail.gateway" value="@START.FORUM.GATEWAY@"/>
+                      <entry key="start.weekly.emails" value="@START.WEEKLY.EMAILS@"/>
+                  </map>
+              </node>
+          </node>
         </node>
       </node>
       <node name="finesoft">
