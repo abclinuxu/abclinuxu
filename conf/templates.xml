@@ -222,6 +222,9 @@
     <action name="news" content="/show/zpravicka.ftl">
       <var name="TITLE" value="Zprávièka"/>
     </action>
+    <action name="censored" content="/show/cenzura.ftl">
+      <var name="TITLE" value="Nevhodný pøíspìvek"/>
+    </action>
   </servlet>
 
   <servlet name="ViewIndex">

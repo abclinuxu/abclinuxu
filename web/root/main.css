@@ -83,3 +83,4 @@ DIV.note { padding-top: 10pt; padding-bottom: 5pt;}
 DIV.diz_list { background-color: #EEEEEE; }
 P.diz_header { background-color: #EEEEEE; }
 SPAN.diz_header_prefix { font-style: italic; }
+p.cenzura { border-width: 2; border-color: blue; border-style: solid; background-color: #EEEEEE; padding: 1ex; margin-top: 1em}

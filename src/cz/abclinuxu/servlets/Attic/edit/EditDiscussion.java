@@ -18,6 +18,8 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Tools;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.PersistanceException;
+import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.security.AdminLogger;
 
 import org.dom4j.*;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +34,7 @@ public class EditDiscussion extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditDiscussion.class);
 
     public static final String PARAM_RELATION = "relationId";
+    public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_DISCUSSION = "dizId";
     public static final String PARAM_THREAD = "threadId";
     public static final String PARAM_TITLE = "title";
@@ -49,12 +52,13 @@ public class EditDiscussion extends AbcFMServlet {
     public static final String ACTION_ADD_QUESTION_STEP2 = "addQuez2";
     public static final String ACTION_ADD_COMMENT = "add";
     public static final String ACTION_ADD_COMMENT_STEP2 = "add2";
+    public static final String ACTION_CENSORE_COMMENT = "censore";
 
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT,PARAM_RELATION,Relation.class,params);
         String action = (String) params.get(PARAM_ACTION);
 
         if ( relation!=null ) {
@@ -78,6 +82,17 @@ public class EditDiscussion extends AbcFMServlet {
 
         if ( ACTION_ADD_QUESTION_STEP2.equals(action) )
             return actionAddQuestion2(request,response,env);
+
+        // check permissions
+        User user = (User) env.get(Constants.VAR_USER);
+        if ( user==null )
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
+
+        if ( !user.hasRole(Roles.DISCUSSION_ADMIN) )
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+        if ( ACTION_CENSORE_COMMENT.equals(action) )
+            return actionCensore(request, response, env);
 
         throw new MissingArgumentException("Chybí parametr action!");
     }
@@ -243,7 +258,46 @@ public class EditDiscussion extends AbcFMServlet {
 
         Relation relation = (Relation) env.get(VAR_RELATION);
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId());
+        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
+        return null;
+    }
+
+    /**
+     * Changes censore flag on give thread.
+     */
+    protected String actionCensore(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+        User user = (User) env.get(Constants.VAR_USER);
+
+        Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params);
+        if ( discussion==null )
+            throw new MissingArgumentException("Chybí parametr dizId!");
+        persistance.synchronize(discussion);
+
+        String thread = (String) params.get(PARAM_THREAD);
+        Relation relation = (Relation) discussion.getContent().get(0);
+        Record record = (Record) relation.getChild();
+        persistance.synchronize(record);
+        String xpath = "//comment[@id='"+thread+"']";
+
+        relation = (Relation) env.get(VAR_RELATION);
+
+        Element element = (Element) record.getData().selectSingleNode(xpath);
+        if (element!=null) {
+            Node node = element.selectSingleNode("//censored");
+            if (node!=null) {
+                node.detach();
+                AdminLogger.logEvent(user,"odstranena cenzura na vlakno "+thread+" diskuse "+discussion.getId()+", relace "+relation.getId());
+            } else {
+                element.addElement("censored").setText("Admin "+user.getName()+", "+Constants.czFormat.format(new Date()));
+                AdminLogger.logEvent(user, "uvalena cenzura na vlakno "+thread+" diskuse "+discussion.getId()+", relace "+relation.getId());
+            }
+        }
+        persistance.update(record);
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/ViewRelation?rid="+relation.getId());
         return null;
     }
 

@@ -26,7 +26,7 @@
 
 <!-- Record.Discussion -->
 <!ELEMENT data (comment+)> <!-- container for comments -->
-<!ELEMENT comment (created,parent,author|author_id,title,text)> <!-- comment holds one response/reaction -->
+<!ELEMENT comment (created,parent,author|author_id,title,text, censored)> <!-- comment holds one response/reaction -->
 <!ATTLIST comment id (#ID) #REQUIRED> <!-- identifier of comment -->
 <!ELEMENT created (#PCDATA)> <!-- date, when this comment was created in ISO format -->
 <!ELEMENT parent (#PCDATA)> <!-- int, id of parental discussion node, or 0 if this node is top level -->
@@ -34,3 +34,4 @@
 <!ELEMENT author_id (#PCDATA)> <!-- id of known user -->
 <!ELEMENT title (#PCDATA)> <!-- title of this reaction -->
 <!ELEMENT text (#PCDATA)> <!-- text of comment -->
+<!ELEMENT censored (#PCDATA)> <!-- if present, the comment is being censored -->

@@ -16,6 +16,7 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Record;
+import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.utils.InstanceUtils;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.dom4j.Node;
+import org.dom4j.Element;
 
 /**
  * Servlet, which loads Relation specified by parameter <code>relationId</code>
@@ -47,8 +49,13 @@ import org.dom4j.Node;
  * </dl>
  */
 public class ViewRelation extends AbcFMServlet {
-    public static final String PARAM_RELATION_ID = "relationId";
-    public static final String PARAM_RELATION_ID_SHORT = "rid";
+    public static final String PARAM_RELATION = "relationId";
+    public static final String PARAM_RELATION_SHORT = "rid";
+    public static final String PARAM_DISCUSSION = "dizId";
+    public static final String PARAM_THREAD = "threadId";
+
+    public static final String ACTION_SHOW_CENSORED = "censored";
+
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_PARENTS = "PARENTS";
     public static final String VAR_ITEM = "ITEM";
@@ -56,13 +63,18 @@ public class ViewRelation extends AbcFMServlet {
     public static final String VAR_UPPER = "REL_ITEM";
     /** children relation of Item, grouped by their type */
     public static final String VAR_CHILDREN_MAP = "CHILDREN";
+    public static final String VAR_THREAD = "THREAD";
 
     Persistance persistance = PersistanceFactory.getPersistance();
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
+        String action = (String) params.get(PARAM_ACTION);
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID_SHORT,PARAM_RELATION_ID,Relation.class,params);
+        if ( ACTION_SHOW_CENSORED.equals(action))
+            return processCensored(request,env);
+
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT,PARAM_RELATION,Relation.class,params);
         if ( relation==null ) {
             throw new MissingArgumentException("Parametr relationId je prázdný!");
         }
@@ -140,5 +152,26 @@ public class ViewRelation extends AbcFMServlet {
             }
         }
         return null;
+    }
+
+    /**
+     * Displays thread in discussion, that was marked as censored.
+     */
+    String processCensored(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        Item diz = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params);
+        diz = (Item) persistance.findById(diz);
+        List children = diz.getContent();
+        Record record = (Record) ((Relation)children.get(0)).getChild();
+        persistance.synchronize(record);
+
+        String thread = (String) params.get(PARAM_THREAD);
+        String xpath = "//comment[@id='"+thread+"']";
+        Element element = (Element) record.getData().selectSingleNode(xpath);
+        env.put(VAR_THREAD, new Comment(element));
+
+        return FMTemplateSelector.select("ViewRelation", "censored", env, request);
     }
 }
