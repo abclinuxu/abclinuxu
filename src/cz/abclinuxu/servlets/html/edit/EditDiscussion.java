@@ -708,7 +708,8 @@ public class EditDiscussion implements AbcAction {
 
         synchronized (data.getRootElement()) {
             Element thread = (Element) data.selectSingleNode("//comment[@id='"+threadId+"']");
-            boolean result = EditRating.rate(thread, params, env, request.getSession());
+            String key = EditRating.generateKey(relation.getId(), threadId);
+            boolean result = EditRating.rate(thread, key, params, env, request.getSession());
             if (result)
                 persistance.update(record);
         }

@@ -37,6 +37,10 @@
             <action>cz.abclinuxu.servlets.html.view.ShowDictionary</action>
         </mapping>
         <mapping>
+            <pattern>/rating</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditRating</action>
+        </mapping>
+        <mapping>
             <pattern>^/Survey</pattern>
             <action>cz.abclinuxu.servlets.html.view.ShowSurvey</action>
         </mapping>

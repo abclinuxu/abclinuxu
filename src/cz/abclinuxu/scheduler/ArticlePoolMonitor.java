@@ -25,7 +25,7 @@ import java.util.Date;
 public class ArticlePoolMonitor extends TimerTask {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ArticlePoolMonitor.class);
 
-    Category pool = new Category(Constants.CAT_ARTICLEPOOL);
+    Category pool = new Category(Constants.CAT_ARTICLES_POOL);
     Category articles = new Category(Constants.CAT_ACTUAL_ARTICLES);
 
     public ArticlePoolMonitor() {

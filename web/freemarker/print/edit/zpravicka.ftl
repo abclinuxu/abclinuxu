@@ -9,7 +9,7 @@
 na zajímavou informaci, stránky èi událost ve svìtì Linuxu,
 Open Source, hnutí Free Software èi obecnì IT. Zprávièky
 neslou¾í pro soukromou inzerci èi oznámení, firemní oznámení
-schvaluje i ma¾e pouze Leo¹ Literák.
+schvaluje i ma¾e pouze <a href="/Profile/1">Leo¹ Literák</a>.
 </p>
 
 <h2>Jak ji mám napsat?</h2>

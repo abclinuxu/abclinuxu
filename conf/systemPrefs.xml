@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-2"?>
 <!DOCTYPE preferences SYSTEM "http://java.sun.com/dtd/preferences.dtd">
 
 <preferences EXTERNAL_XML_VERSION="1.0">
@@ -293,6 +293,13 @@
                     <node name="EditDictionary">
                         <map>
                             <entry key="regexp.invalid.characters" value="[^a-zA-Z0-9_.]+"/>
+                        </map>
+                    </node>
+                    <node name="EditRating">
+                        <map>
+                            <entry key="msg.ok" value="Va¹e hodnocení bylo pøijato"/>
+                            <entry key="msg.data.missing" value="Chyba v parametrech pro hlasování"/>
+                            <entry key="msg.already.rated" value="Mù¾ete hodnotit jen jednou!"/>
                         </map>
                     </node>
                 </node>
