@@ -83,8 +83,7 @@ public class CommentDecorator {
         env.put(VAR_DISCUSSION_ID, Integer.toString(comment.discussionId));
         env.put(VAR_THREAD_ID, Integer.toString(comment.threadId));
 
-        String subject = title+" ["+comment.relationId+","+comment.discussionId+","+comment.threadId+"]";
-        env.put(EmailSender.KEY_SUBJECT, subject);
+        env.put(EmailSender.KEY_SUBJECT, title);
         authorName = DiacriticRemover.getInstance().removeDiacritics(authorName);
         try {
             Address from = new InternetAddress("diskuse@abclinuxu.cz", authorName);
