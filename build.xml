@@ -65,4 +65,15 @@
       <fileset dir="${build}"/>
     </copy>
   </target>
+
+  <target name="transfer">
+    <zip zipfile="/home/literakl/src_abc.zip">
+      <zipfileset dir="src" prefix="abc/src/" />
+      <zipfileset dir="web" prefix="abc/web/" />
+      <zipfileset dir="test" prefix="abc/test/" />
+      <zipfileset dir="conf" prefix="abc/conf/" />
+      <zipfileset dir="bin" prefix="abc/bin/" />
+      <zipfileset dir="." includes="build.xml" fullpath="abc/build.xml" />
+    </zip>
+  </target>
 </project>
