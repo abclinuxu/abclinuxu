@@ -97,20 +97,6 @@
       <fileset dir="web/firma" />
     </copy>
 
-    <copy todir="${deploy_firma}/WEB-INF/classes">
-      <fileset dir="${deploy}/WEB-INF/classes/">
-       <include name="cz/abclinuxu/servlets/utils/TemplateEngineServlet.class" />
-       <include name="cz/abclinuxu/utils/Misc.class" />
-      </fileset>
-    </copy>
-
-    <copy todir="${deploy_firma}/WEB-INF/lib">
-      <fileset dir="libs">
-        <include name="freemarker.jar" />
-        <include name="log4j.jar" />
-      </fileset>
-    </copy>
-
   </target>
 
   <target name="deploy" depends="deploy-firma,deploy-abc" />

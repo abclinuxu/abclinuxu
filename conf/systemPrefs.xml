@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE preferences SYSTEM "http://java.sun.com/dtd/preferences.dtd">
+
+<preferences EXTERNAL_XML_VERSION="1.0">
+  <root type="system">
+    <map/>
+    <node name="autoConfig">
+      <map>
+        <entry key="nodes" value="cz/abclinuxu/utils/config/impl/LoggingConfig"/>
+      </map>
+    </node>
+    <node name="cz">
+      <map/>
+      <node name="abclinuxu">
+        <map/>
+        <node name="utils">
+          <map/>
+          <node name="config">
+            <map/>
+            <node name="impl">
+              <map/>
+        	<node name="LoggingConfig">
+        	  <map>
+                    <entry key="autoConfig" value="cz.abclinuxu.utils.config.impl.LoggingConfig"/>
+                    <entry key="file" value="/home/literakl/abc/deploy/WEB-INF/conf/log4j.xml"/>
+		  </map>
+        	</node>
+        	<node name="AbcConfig">
+        	  <map>
+                    <entry key="deploy.path" value="/home/literakl/abc/deploy"/>
+		  </map>
+        	</node>
+            </node>
+          </node>
+          <node name="search">
+            <map/>
+            <node name="CreateIndex">
+              <map>
+                <entry key="path" value="/home/literakl/abc/deploy/WEB-INF/index/"/>
+              </map>
+            </node>
+          </node>
+        </node>
+        <node name="persistance">
+          <map/>
+          <node name="PersistanceFactory">
+            <map>
+              <entry key="url" value="proxool.abc"/>
+            </map>
+	  </node>
+          <node name="LRUCache">
+            <map>
+              <entry key="size" value="3000"/>
+            </map>
+	  </node>
+        </node>
+        <node name="scheduler">
+          <map/>
+            <node name="GenerateLinks">
+              <map>
+                <entry key="rss" value="auto/abc.rss"/>
+                <entry key="trafika" value="auto/abc.dat"/>
+                <entry key="anneca" value="auto/abc2.dat"/>
+                <entry key="szm" value="auto/abc_szm.xml"/>
+	      </map>
+            </node>
+            <node name="UpdateKernel">
+              <map>
+                <entry key="file" value="WEB-INF/velocity/auto/kernel.txt"/>
+                <entry key="server" value="finger.kernel.org"/>
+                <entry key="regexp.stable" value="(The latest stable[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+                <entry key="regexp.stable.pre" value="(The latest prepatch for the stable[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+                <entry key="regexp.devel" value="(The latest beta[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+                <entry key="regexp.devel.pre" value="(The latest prepatch for the beta[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+                <entry key="regexp.22" value="(The latest 2.2[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+                <entry key="regexp.22.pre" value="(The latest prepatch for the 2.2[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+                <entry key="regexp.20" value="(The latest 2.0[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+                <entry key="regexp.20.pre" value="(The latest prepatch for the 2.0[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+                <entry key="regexp.ac" value="(The latest -ac[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+                <entry key="regexp.dj" value="(The latest -dj[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
+	      </map>
+            </node>
+        </node>
+      </node>
+    </node>
+  </root>
+</preferences>
+
+
+
