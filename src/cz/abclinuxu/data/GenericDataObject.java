@@ -125,6 +125,7 @@ public abstract class GenericDataObject extends GenericObject {
         try {
             this.data = DocumentHelper.parseText(data);
         } catch (DocumentException e) {
+            log.warn("Nemuzu konvertovat data do XML! Exception: "+e.getMessage()+" ("+data+")");
             throw new AbcException("Nemuzu konvertovat data do XML!",AbcException.WRONG_DATA,data,e);
         }
     }
