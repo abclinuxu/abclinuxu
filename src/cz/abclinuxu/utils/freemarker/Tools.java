@@ -803,6 +803,8 @@ public class Tools implements Configurable {
                     discussion.title = node.getText();
                 } else if ( item.getType()==Item.NEWS )
                     discussion.title = "Zprávièka";
+            } else if ( parent instanceof Poll) {
+                discussion.title = ((Poll)parent).getText();
             }
         } else
             discussion.title = node.getText();
