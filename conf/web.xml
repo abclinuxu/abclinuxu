@@ -37,8 +37,13 @@
     </servlet>
 
     <servlet>
-        <servlet-name>ViewIcons</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.view.ViewIcons</servlet-class>
+        <servlet-name>SelectIcon</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.view.SelectIcon</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>SelectRelation</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.view.SelectRelation</servlet-class>
     </servlet>
 
     <servlet>
@@ -53,57 +58,49 @@
 
 
     <servlet-mapping>
-        <servlet-name>ViewCategory</servlet-name>
-        <url-pattern>/hardware/ViewCategory</url-pattern>
+        <servlet-name>ViewCategory</servlet-name><url-pattern>/hardware/ViewCategory</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ViewCategory</servlet-name>
-        <url-pattern>/software/ViewCategory</url-pattern>
+        <servlet-name>ViewCategory</servlet-name><url-pattern>/software/ViewCategory</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ViewCategory</servlet-name>
-        <url-pattern>/clanky/ViewCategory</url-pattern>
+        <servlet-name>ViewCategory</servlet-name><url-pattern>/clanky/ViewCategory</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>ViewRelation</servlet-name>
-        <url-pattern>/hardware/ViewRelation</url-pattern>
+        <servlet-name>ViewRelation</servlet-name><url-pattern>/hardware/ViewRelation</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ViewRelation</servlet-name>
-        <url-pattern>/software/ViewRelation</url-pattern>
+        <servlet-name>ViewRelation</servlet-name><url-pattern>/software/ViewRelation</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ViewRelation</servlet-name>
-        <url-pattern>/clanky/ViewRelation</url-pattern>
+        <servlet-name>ViewRelation</servlet-name><url-pattern>/clanky/ViewRelation</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>EditCategory</servlet-name>
-        <url-pattern>/hardware/EditCategory</url-pattern>
+        <servlet-name>EditCategory</servlet-name><url-pattern>/hardware/EditCategory</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>EditCategory</servlet-name>
-        <url-pattern>/software/EditCategory</url-pattern>
+        <servlet-name>EditCategory</servlet-name><url-pattern>/software/EditCategory</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>EditCategory</servlet-name>
-        <url-pattern>/clanky/EditCategory</url-pattern>
+        <servlet-name>EditCategory</servlet-name><url-pattern>/clanky/EditCategory</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>ViewIcons</servlet-name>
-        <url-pattern>/SelectIcon</url-pattern>
+        <servlet-name>SelectIcon</servlet-name><url-pattern>/SelectIcon</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>EditUser</servlet-name>
-        <url-pattern>/EditUser</url-pattern>
+        <servlet-name>SelectRelation</servlet-name><url-pattern>/SelectRelation</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>ViewIndex</servlet-name>
-        <url-pattern>/index.html</url-pattern>
+        <servlet-name>EditUser</servlet-name><url-pattern>/EditUser</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ViewIndex</servlet-name><url-pattern>/index.html</url-pattern>
     </servlet-mapping>
 
 

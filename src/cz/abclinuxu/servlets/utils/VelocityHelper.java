@@ -4,9 +4,11 @@
  * Time: 7:39:39 AM
  * (c)2001-2002 Tinnio
  */
-package cz.abclinuxu.utils;
+package cz.abclinuxu.servlets.utils;
 
 import cz.abclinuxu.data.*;
+import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.PersistanceException;
 import org.dom4j.Document;
 import org.dom4j.Node;
 
@@ -21,12 +23,13 @@ public class VelocityHelper {
      * from getChild may be overriden by Name attribute of relation.
      * If child doesn't have any name, it return class name.
      */
-    public String getChildName(Relation relation) {
+    public String getChildName(Relation relation) throws PersistanceException {
         if ( relation==null || relation.getChild()==null ) return null;
         String name = relation.getName();
         if ( name!=null && name.length()>0) return name;
 
         GenericObject child = relation.getChild();
+        if ( !child.isInitialized() ) PersistanceFactory.getPersistance().synchronize(child);
 
         if ( child instanceof GenericDataObject ) {
             Document data = ((GenericDataObject)child).getData();

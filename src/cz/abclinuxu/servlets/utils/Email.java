@@ -4,7 +4,7 @@
  * Time: 8:41:38 PM
  * (c)2001-2002 Tinnio
  */
-package cz.abclinuxu.utils;
+package cz.abclinuxu.servlets.utils;
 
 import javax.mail.*;
 import javax.mail.internet.MimeMessage;

@@ -7,6 +7,8 @@ package cz.abclinuxu.data;
 
 /**
  * This class contains one relation between two GenericObjects.
+ * @todo change String name to Document data. XML may contain
+ * not only name, but icon too. Or anything else.
  */
 public final class Relation extends GenericObject {
 

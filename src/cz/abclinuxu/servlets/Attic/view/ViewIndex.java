@@ -22,7 +22,8 @@ import java.util.Iterator;
 /**
  * This servlet is used to create index page on this
  * site. It puts some variables to context and
- * renders velocity page.
+ * renders velocity page.<p>
+ * <u>Context variables introduced by AbcServlet</u>
  * <dl>
  * <dt><code>VAR_HARDWARE</code></dt>
  * <dd>List of Relations, where parent() is /Hardware/386 category. All children are initialized.</dd>
@@ -48,7 +49,7 @@ public class ViewIndex extends AbcServlet {
 
         Category sw = (Category) persistance.findById(new Category(3));
         List swcontent = sw.getContent();
-        for (Iterator iter = hwcontent.iterator(); iter.hasNext();) {
+        for (Iterator iter = swcontent.iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
             persistance.synchronize(relation.getChild());
         }

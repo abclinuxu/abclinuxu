@@ -31,7 +31,7 @@ import java.util.*;
  * <dt><code>VAR_DIRS</code></dt>
  * <dd>Contains list of directories.</dd>
  * </dl>
- * <u>Parameters used by ViewIcons</u>
+ * <u>Parameters used by SelectIcon</u>
  * <dl>
  * <dt><code>PARAM_URL</code></dt>
  * <dd>Where to redirect browser.</dd>
@@ -42,15 +42,13 @@ import java.util.*;
  * when sent to <code>PARAM_URL</code>, it holds complete path to icon.</dd>
  * <dt><code>PARAM_RELOAD</code></dt>
  * <dd>Indicates, whether user has changed directory.</dd>
- * <dt><code>PARAM_CHECK_SESSION</code></dt>
  * </dl>
  */
-public class ViewIcons extends AbcServlet {
+public class SelectIcon extends AbcServlet {
     public static final String PARAM_URL = "url";
     public static final String PARAM_DIR = "dir";
     public static final String PARAM_ICON = "icon";
     public static final String PARAM_RELOAD = "reload";
-    public static final String PARAM_CHECK_SESSION = "checkSession";
 
     public static final String VAR_DIR = "DIR";
     public static final String VAR_DIRS = "DIRS";
@@ -60,7 +58,7 @@ public class ViewIcons extends AbcServlet {
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
-        String reload = request.getParameter(ViewIcons.PARAM_RELOAD);
+        String reload = request.getParameter(SelectIcon.PARAM_RELOAD);
         if ( "no".equals(reload) ) {
             return actionFinish(request,response,ctx);
         } else {
@@ -83,11 +81,11 @@ public class ViewIcons extends AbcServlet {
                 dirs.add(iconsContent[i].getName());
             }
         }
-        ctx.put(ViewIcons.VAR_DIRS,dirs);
+        ctx.put(SelectIcon.VAR_DIRS,dirs);
 
-        String dir = request.getParameter(ViewIcons.PARAM_DIR);
+        String dir = request.getParameter(SelectIcon.PARAM_DIR);
         if ( dir==null || dir.length()==0 ) dir = (String) dirs.get(0);
-        ctx.put(ViewIcons.VAR_DIR,dir);
+        ctx.put(SelectIcon.VAR_DIR,dir);
 
         iconsContent = new File(ikony,dir).listFiles();
         List icons = new ArrayList(12);
@@ -97,28 +95,28 @@ public class ViewIcons extends AbcServlet {
             }
         }
         java.util.Collections.sort(icons);
-        ctx.put(ViewIcons.VAR_ICONS,icons);
-        return getTemplate("view/icons.vm");
+        ctx.put(SelectIcon.VAR_ICONS,icons);
+        return getTemplate("view/selectIcon.vm");
     }
 
     /**
      * Called, when we shall display list of icons
      */
     protected Template actionFinish(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        String url = request.getParameter(ViewIcons.PARAM_URL);
-        String dir = "/ikony/"+request.getParameter(ViewIcons.PARAM_DIR)+"/";
-        String icon = dir+request.getParameter(ViewIcons.PARAM_ICON);
+        String url = request.getParameter(SelectIcon.PARAM_URL);
+        String dir = "/ikony/"+request.getParameter(SelectIcon.PARAM_DIR)+"/";
+        String icon = dir+request.getParameter(SelectIcon.PARAM_ICON);
 
         Map map = putParamsToMap(request,null);
-        map.remove(ViewIcons.PARAM_DIR);
-        map.remove(ViewIcons.PARAM_ICON);
-        map.remove(ViewIcons.PARAM_URL);
-        map.remove(ViewIcons.PARAM_RELOAD);
+        map.remove(SelectIcon.PARAM_DIR);
+        map.remove(SelectIcon.PARAM_ICON);
+        map.remove(SelectIcon.PARAM_URL);
+        map.remove(SelectIcon.PARAM_RELOAD);
 
         HttpSession session = request.getSession();
         session.setAttribute(AbcServlet.ATTRIB_PARAMS,map);
 
-        String newUrl = url + "?icon="+icon+"&"+ViewIcons.PARAM_CHECK_SESSION+"=yes";
+        String newUrl = url + "?icon="+icon;
         redirect(newUrl,response,ctx);
         return null;
     }

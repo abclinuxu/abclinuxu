@@ -9,7 +9,7 @@
 package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcServlet;
-import cz.abclinuxu.servlets.view.ViewIcons;
+import cz.abclinuxu.servlets.view.SelectIcon;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Relation;
@@ -49,15 +49,13 @@ public class EditCategory extends AbcServlet {
     public static final String PARAM_UPPER_RELATION = "upperRelation";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_OPEN = "open";
-    public static final String PARAM_ICON = ViewIcons.PARAM_ICON;
+    public static final String PARAM_ICON = SelectIcon.PARAM_ICON;
     public static final String PARAM_NOTE = "note";
 
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
     public static final String ACTION_EDIT = "edit";
-    public static final String ACTION_LINK = "link";
-    public static final String ACTION_REMOVE = "remove";
 
 
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
@@ -69,7 +67,6 @@ public class EditCategory extends AbcServlet {
         int categoryId = Integer.parseInt(tmp);
 
         if ( action==null || action.equals(EditCategory.ACTION_ADD) ) {
-
             int rights = checkAccess(new Category(categoryId),AbcServlet.METHOD_ADD,ctx);
             switch (rights) {
                 case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
@@ -78,7 +75,6 @@ public class EditCategory extends AbcServlet {
             }
 
         } else if ( action.equals(EditCategory.ACTION_ADD_STEP2) ) {
-
             int rights = checkAccess(new Category(categoryId),AbcServlet.METHOD_ADD,ctx);
             switch (rights) {
                 case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
@@ -90,8 +86,6 @@ public class EditCategory extends AbcServlet {
             }
 
         } else if ( action.equals(EditCategory.ACTION_EDIT) ) {
-        } else if ( action.equals(EditCategory.ACTION_LINK) ) {
-        } else if ( action.equals(EditCategory.ACTION_REMOVE) ) {
         }
         return getTemplate("add/category.vm");
     }

@@ -28,9 +28,9 @@ import cz.abclinuxu.data.AccessRights;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.AbcException;
-import cz.abclinuxu.utils.VelocityHelper;
+import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.servlets.utils.UrlUtils;
-import cz.abclinuxu.servlets.view.ViewIcons;
+import cz.abclinuxu.servlets.view.SelectIcon;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -156,8 +156,8 @@ public class AbcServlet extends VelocityServlet {
      * If not, it searches for cookie with same name. If the search was sucessful, it verifies password
      * and pushes new user to session and context.<br>
      * Cookie contains user's id, comma and password hash.<p>
-     * Next it checks for parameter ViewIcons.PARAM_CHECK_SESSION. If found, it gets map
-     * ViewIcons.ATTRIB_PARAMS from session and combines it with request's parameters map
+     * Next it checks for parameter SelectIcon.PARAM_CHECK_SESSION. If found, it gets map
+     * SelectIcon.ATTRIB_PARAMS from session and combines it with request's parameters map
      * into <code>AbcServlet.ATTRIB_PARAMS</code>. Thus you have uniform way of dealing
      * with parameters.
      * It is mandatory to use this method at the very beginning of <code>handleRequest()</code>.
@@ -168,20 +168,12 @@ public class AbcServlet extends VelocityServlet {
 
         doLogin(request,response,session,context);
 
-        // refactor it. move this code to separate method and constant from ViewIcons here
-        String checkSession = request.getParameter(ViewIcons.PARAM_CHECK_SESSION);
-        Map params = null;
-        if ( checkSession!=null ) {
-            params = (Map) session.getAttribute(AbcServlet.ATTRIB_PARAMS);
-            if ( params!=null ) {
-                params = putParamsToMap(request,params);
-                session.removeAttribute(AbcServlet.ATTRIB_PARAMS);
-            } else {
-                params = putParamsToMap(request,params);
-            }
-        } else {
-            params = putParamsToMap(request,params);
+        // refactor it. move this code to separate method
+        Map params = (Map) session.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        if ( params!=null ) {
+            session.removeAttribute(AbcServlet.ATTRIB_PARAMS);
         }
+        params = putParamsToMap(request,params);
         request.setAttribute(AbcServlet.ATTRIB_PARAMS,params);
         context.put(AbcServlet.VAR_PARAMS,params);
 

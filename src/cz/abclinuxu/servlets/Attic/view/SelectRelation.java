@@ -1,0 +1,176 @@
+/*
+ * User: literakl
+ * Date: Jan 15, 2002
+ * Time: 9:59:02 AM
+ * (c)2001-2002 Tinnio
+ */
+package cz.abclinuxu.servlets.view;
+
+import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.PersistanceException;
+import cz.abclinuxu.data.Category;
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.GenericObject;
+import org.apache.velocity.Template;
+import org.apache.velocity.context.Context;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.util.List;
+import java.util.Iterator;
+import java.util.Map;
+
+/**
+ * Servlet for interactive selection of relation. When user chooses the relation, flow is redirected
+ * to <code>PARAM_URL</code> with all parameters propagated to new location plus
+ * <code>SelectRelation.PARAM_SELECTED</code> set.<p>
+ * <u>Parameters used by SelectIcon</u>
+ * <dl>
+ * <dt><code>PARAM_URL</code></dt>
+ * <dd>Where to redirect browser.</dd>
+ * <dt><code>PARAM_SELECTED</code></dt>
+ * <dd>Result of the search.</dd>
+ * <dt><code>PARAM_CURRENT</code></dt>
+ * <dd>Current relation, where user is selecting relation.</dd>
+ * <dt><code>PARAM_ENTERED</code></dt>
+ * <dd>Hand written relation id.</dd>
+ * </dl>
+ * <u>Context variables introduced by AbcServlet</u>
+ * <dl>
+ * <dt><code>VAR_HARDWARE</code></dt>
+ * <dd>List of Relations, where parent() is /Hardware category.</dd>
+ * <dt><code>VAR_SOFTWARE</code></dt>
+ * <dd>List of Relations, where parent() is /Software category.</dd>
+ * <dt><code>VAR_CLANKY</code></dt>
+ * <dd>List of Relations, where parent() is /Clanky category.</dd>
+ * <dt><code>VAR_H386</code></dt>
+ * <dd>List of Relations, where parent() is /Hardware/386 category.</dd>
+ * <dt><code>VAR_CURRENT</code></dt>
+ * <dd>Actual Relation, equivalent of PARAM_CURRENT.</dd>
+ * </dl>
+ */
+public class SelectRelation extends AbcServlet {
+    public static final String PARAM_SELECTED = "selectedId";
+    public static final String PARAM_CURRENT = "currentId";
+    public static final String PARAM_ENTERED = "enteredId";
+    public static final String PARAM_URL = "url";
+    public static final String PARAM_FINISH = "finish";
+    public static final String PARAM_CONFIRM = "confirm";
+
+    public static final String VAR_HARDWARE = "HARDWARE";
+    public static final String VAR_SOFTWARE = "SOFTWARE";
+    public static final String VAR_CLANKY = "CLANKY";
+    public static final String VAR_386 = "H386";
+    public static final String VAR_CURRENT = "CURRENT";
+
+
+    protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+        init(request,response,ctx);
+
+        String confirm = request.getParameter(SelectRelation.PARAM_CONFIRM);
+        String finish = request.getParameter(SelectRelation.PARAM_FINISH);
+
+        if ( finish!=null && finish.length()>0 ) {
+            return actionFinish(request,response,ctx);
+        }
+
+        if ( confirm!=null && confirm.length()>0 ) {
+            return actionConfirm(request,ctx);
+        }
+        return actionNext(request,ctx);
+    }
+
+    /**
+     * Called, when we shall descend to another relation
+     */
+    protected Template actionNext(HttpServletRequest request, Context ctx) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        String manual = request.getParameter(SelectRelation.PARAM_ENTERED);
+        String tmp = request.getParameter(SelectRelation.PARAM_CURRENT);
+
+        if ( tmp!=null ) {
+            try {
+                int currentId = Integer.parseInt( (manual!=null && manual.length()>0)? manual:tmp);
+                Relation current = (Relation) persistance.findById(new Relation(currentId));
+                ctx.put(SelectRelation.VAR_CURRENT,current);
+                return getTemplate("view/selectRelation.vm");
+            } catch (NumberFormatException e) {
+                addErrorMessage(SelectRelation.PARAM_ENTERED,"Cislo vetsi nez nula!",ctx);
+            } catch (PersistanceException e) {
+                addErrorMessage(AbcServlet.GENERIC_ERROR,"Nebyla zvolena platna relace!",ctx);
+            }
+        }
+
+        Category clanky = (Category) persistance.findById(new Category(1));
+        List content = clanky.getContent();
+        ctx.put(SelectRelation.VAR_CLANKY,content);
+
+        Category hw = (Category) persistance.findById(new Category(2));
+        content = hw.getContent();
+        ctx.put(SelectRelation.VAR_HARDWARE,content);
+
+        Category sw = (Category) persistance.findById(new Category(3));
+        content = sw.getContent();
+        ctx.put(SelectRelation.VAR_SOFTWARE,content);
+
+        Category hw386 = (Category) persistance.findById(new Category(4));
+        content = hw386.getContent();
+        ctx.put(SelectRelation.VAR_386,content);
+        return getTemplate("view/selectRelation.vm");
+    }
+
+    /**
+     * Called, when user select relation.
+     */
+    protected Template actionConfirm(HttpServletRequest request, Context ctx) throws Exception {
+        int result = 0;
+        String manual = request.getParameter(SelectRelation.PARAM_ENTERED);
+        String tmp = request.getParameter(SelectRelation.PARAM_CURRENT);
+
+        if ( manual!=null ) {
+            try {
+                result = Integer.parseInt(manual);
+            } catch (NumberFormatException e) {
+                addErrorMessage(SelectRelation.PARAM_ENTERED,"Cislo vetsi nez nula!",ctx);
+            }
+        } else {
+            try {
+                result = Integer.parseInt(tmp);
+            } catch (NumberFormatException e) {
+                addErrorMessage(AbcServlet.GENERIC_ERROR,"Nebyla zvolena platna relace!",ctx);
+            }
+        }
+
+        try {
+            Relation current = (Relation) PersistanceFactory.getPersistance().findById(new Relation(result));
+            ctx.put(SelectRelation.VAR_CURRENT,current);
+            return getTemplate("view/selectRelationConfirm.vm");
+        } catch (Exception e) {
+            addErrorMessage(AbcServlet.GENERIC_ERROR,"Relace nebyla nzalezena!",ctx);
+            return getTemplate("view/selectRelation.vm");
+        }
+    }
+
+    /**
+     * Called, when we suser confirms his choice
+     */
+    protected Template actionFinish(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+        String choice = request.getParameter(SelectRelation.PARAM_CURRENT);
+
+        Map map = putParamsToMap(request,null);
+        map.remove(SelectRelation.PARAM_CURRENT);
+        map.remove(SelectRelation.PARAM_URL);
+        map.remove(AbcServlet.PARAM_ACTION);
+
+        HttpSession session = request.getSession();
+        session.setAttribute(AbcServlet.ATTRIB_PARAMS,map);
+
+        String url = request.getParameter(SelectRelation.PARAM_URL);
+        String newUrl = url + "?"+SelectRelation.PARAM_SELECTED+"="+choice;
+        redirect(newUrl,response,ctx);
+        return null;
+    }
+}
