@@ -12,6 +12,7 @@ import cz.abclinuxu.persistance.PersistanceFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
+import org.dom4j.Element;
 
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -85,9 +86,10 @@ public class UpgradeUser {
         DocumentHelper.makeElement(document, "/data/personal/sex").addText(node.getText());
 
         // <data><communication><email>
-        DocumentHelper.makeElement(document, "/data/communication/email");
-        DocumentHelper.makeElement(document, "/data/communication/email/newsletter").addText("no");
-        DocumentHelper.makeElement(document, "/data/communication/email/weekly_summary").addText("no");
+        Element email = DocumentHelper.makeElement(document, "/data/communication/email");
+        email.addAttribute("valid","yes");
+//        DocumentHelper.makeElement(document, "/data/communication/email/newsletter").addText("no");
+//        DocumentHelper.makeElement(document, "/data/communication/email/weekly_summary").addText("no");
 
         // <data><profile>
         DocumentHelper.makeElement(document, "/data/profile");
@@ -100,8 +102,8 @@ public class UpgradeUser {
 
         // <data><settings>
         DocumentHelper.makeElement(document, "/data/settings");
-        DocumentHelper.makeElement(document, "/data/settings/emoticons").addText("yes");
-        DocumentHelper.makeElement(document, "/data/settings/login_cookie_validity").addText("8035200");
+//        DocumentHelper.makeElement(document, "/data/settings/emoticons").addText("yes");
+//        DocumentHelper.makeElement(document, "/data/settings/cookie_valid").addText("8035200");
 
         // <data><system>
         DocumentHelper.makeElement(document, "/data/system");
