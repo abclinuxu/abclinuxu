@@ -35,10 +35,11 @@ public final class URLMapper implements Configurable {
 
     public static final String PREF_FILE = "config";
 
-    private static URLMapper singleton;
+    private static URLMapper htmlVersion, wapVersion;
     static {
-        singleton = new URLMapper();
-        ConfigurationManager.getConfigurator().configureAndRememberMe(singleton);
+        htmlVersion = new URLMapper();
+        wapVersion = new URLMapper();
+        ConfigurationManager.getConfigurator().configureAndRememberMe(htmlVersion);
     }
 
     List actionMapping;
@@ -50,8 +51,11 @@ public final class URLMapper implements Configurable {
     /**
      * @return singleton instance of this class.
      */
-    public static URLMapper getInstance() {
-        return singleton;
+    public static URLMapper getInstance(Version version) {
+        if (version==Version.HTML)
+            return htmlVersion;
+        else
+            return wapVersion;
     }
 
     /**
@@ -122,48 +126,58 @@ public final class URLMapper implements Configurable {
      * Reconfigures mappings.
      * @param filename
      */
-    private void initialize(String filename) {
+    private static void initialize(String filename) {
         log.info("Initializing from file "+filename);
-        List actions = new ArrayList(40);
-        List deprecated = new ArrayList(10);
-
-        String pattern = null, action = null, replacement;
+        String version;
         Element element;
-        RE regexp, regexp2;
-        InputType inputType;
-        Object o;
 
         try {
             Document document = new SAXReader().read(filename);
-            List nodes = document.selectNodes("//format/mapping");
+            List nodes = document.getRootElement().elements("format");
+            for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
+                element = (Element) iter.next();
+                version = element.attributeValue("version");
+                if (Version.HTML.toString().equals(version))
+                    readFormat(element.elements("mapping"), htmlVersion);
+                else if (Version.WAP.toString().equals(version))
+                    readFormat(element.elements("mapping"), wapVersion);
+            }
+
+            nodes = document.getRootElement().elements("deprecated");
+            for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
+                element = (Element) iter.next();
+                version = element.attributeValue("version");
+                if (Version.HTML.toString().equals(version))
+                    readDeprecated(element.elements("mapping"), htmlVersion);
+                else if (Version.WAP.toString().equals(version))
+                    readDeprecated(element.elements("mapping"), wapVersion);
+            }
+        } catch (DocumentException e) {
+            log.error("File "+filename+" is not valid XML!", e);
+        }
+    }
+
+    /**
+     * Reads format mappings.
+     */
+    private static void readFormat(List nodes, URLMapper instance) {
+        List actions = new ArrayList(40);
+        String pattern = null, action = null;
+        Element element;
+        RE regexp;
+        Object o;
+        try {
             for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
                 element = (Element) iter.next();
                 pattern = element.elementText("pattern");
                 action = element.elementText("action");
                 regexp = new RE(pattern);
                 o = Class.forName(action).newInstance();
-                if (AbcAction.class.isInstance(o))
+                if ( AbcAction.class.isInstance(o) )
                     actions.add(new PatternAction(regexp, (AbcAction) o));
                 else
                     log.warn("Action "+action+" does not implement AbcAction interface!");
             }
-            actionMapping = actions;
-
-            nodes = document.selectNodes("//deprecated/mapping");
-            for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
-                element = (Element) iter.next();
-                pattern = element.elementText("regexp");
-                replacement = element.elementText("replacement");
-                regexp2 = new RE(pattern);
-                element = element.element("pattern");
-                pattern = element.getText();
-                regexp = new RE(pattern);
-                inputType = InputType.get(element.attributeValue("input"));
-                deprecated.add(new PatternRegexpReplacement(regexp, inputType, regexp2, replacement));
-            }
-            deprecatedMapping = deprecated;
-        } catch (DocumentException e) {
-            log.error("File "+filename+" is not valid XML!", e);
         } catch (RESyntaxException e) {
             log.error("Pattern '"+pattern+"' cannot be compiled!", e);
         } catch (InstantiationException e) {
@@ -173,9 +187,47 @@ public final class URLMapper implements Configurable {
         } catch (ClassNotFoundException e) {
             log.error("Action '"+action+"' cannot be instantiated!", e);
         }
+        instance.actionMapping = actions;
     }
 
-    class PatternAction {
+    /**
+     * Reads deprecated mappings.
+     */
+    private static void readDeprecated(List nodes, URLMapper instance) {
+        List deprecated = new ArrayList(10);
+        String pattern = null, replacement;
+        Element element;
+        RE regexp, regexp2;
+        InputType inputType;
+        for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
+            element = (Element) iter.next();
+            pattern = element.elementText("regexp");
+            replacement = element.elementText("replacement");
+            regexp2 = new RE(pattern);
+            element = element.element("pattern");
+            pattern = element.getText();
+            regexp = new RE(pattern);
+            inputType = InputType.get(element.attributeValue("input"));
+            deprecated.add(new PatternRegexpReplacement(regexp, inputType, regexp2, replacement));
+        }
+        instance.deprecatedMapping = deprecated;
+    }
+
+    public static class Version {
+        public static final Version HTML = new Version("html");
+        public static final Version WAP = new Version("wap");
+        String value;
+
+        private Version(String value) {
+            this.value = value;
+        }
+
+        public String toString() {
+            return value;
+        }
+    }
+
+    static class PatternAction {
         RE re;
         AbcAction action;
 
@@ -193,7 +245,7 @@ public final class URLMapper implements Configurable {
         }
     }
 
-    class PatternRegexpReplacement {
+    static class PatternRegexpReplacement {
         RE re, regexp;
         String replacement;
         InputType type;

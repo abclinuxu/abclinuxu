@@ -27,14 +27,18 @@ import freemarker.template.TemplateException;
 import org.apache.log4j.Logger;
 
 /**
- * This class manages HTML version of portal.
+ * This class renders HTML version of portal.
  */
 public class HTMLVersion {
     static Logger log = Logger.getLogger(HTMLVersion.class);
 
     public static void process(HttpServletRequest request, HttpServletResponse response, Map env) throws IOException {
         try {
-            AbcAction action = URLMapper.getInstance().findAction(request);
+            URLMapper urlMapper = URLMapper.getInstance(URLMapper.Version.HTML);
+            if ( urlMapper.redirectDeprecated(request, response) )
+                return;
+
+            AbcAction action = urlMapper.findAction(request);
             String templateName = action.process(request, response, env);
             if ( Misc.empty(templateName) )
                 return;

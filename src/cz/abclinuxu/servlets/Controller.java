@@ -7,9 +7,10 @@ package cz.abclinuxu.servlets;
 
 import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.servlets.utils.URLMapper;
 import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.servlets.utils.URLMapper;
 import cz.abclinuxu.servlets.html.HTMLVersion;
+import cz.abclinuxu.servlets.wap.WapVersion;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -30,20 +31,13 @@ public class Controller extends HttpServlet {
      * that fullfills the request.
      */
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if ( fixDeprecatedURL(request, response) )
-            return;
-
         Map env = new HashMap();
         performInit(request, response, env);
-        HTMLVersion.process(request, response, env);
-    }
-
-    /**
-     * If URL is deprecated, redirect browser to correct location.
-     * @return true, if browser has been redirected.
-     */
-    private boolean fixDeprecatedURL(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        return URLMapper.getInstance().redirectDeprecated(request, response);
+        String server = request.getServerName();
+        if (server.startsWith(URLMapper.Version.WAP.toString()))
+            WapVersion.process(request, response, env);
+        else
+            HTMLVersion.process(request, response, env);
     }
 
     /**
