@@ -85,3 +85,4 @@ P.diz_header { background-color: #EEEEEE; }
 SPAN.diz_header_new { font-size: bigger; font-style: italic; color:blue; }
 SPAN.diz_header_prefix { font-style: italic; }.
 p.cenzura { border-width: 2px; border-color: blue; border-style: solid; background-color: #EEEEEE; padding: 1ex; margin-top: 6px}
+.textbanner { background-color: #CCFFFF; border: 1px solid #66CCCC; color: #000000; }
