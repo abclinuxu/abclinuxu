@@ -89,7 +89,27 @@ public class EditHardware extends AbcServlet {
                 }
                 default: return actionAddStep3(request,response,ctx);
             }
+
+        } else if ( action.equals(ACTION_ADD_RECORD) ) {
+            int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Record.class);
+            switch (rights) {
+                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                default: {
+                    params.put(PARAM_ACTION,ACTION_ADD_RECORD_STEP2);
+                    return getTemplate("add/hwrecord.vm");
+                }
+            }
+
+        } else if ( action.equals(ACTION_ADD_RECORD_STEP2) ) {
+            int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Record.class);
+            switch (rights) {
+                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                default: return actionAddRecord(request,response,ctx);
+            }
         }
+
         return getTemplate("add/item.vm");
     }
 
@@ -133,7 +153,7 @@ public class EditHardware extends AbcServlet {
         String note = (String) params.get(PARAM_NOTE);
         String identification = (String) params.get(PARAM_IDENTIFICATION);
 
-        if ( note==null || note.length()==0 || setup==null || setup.length()==0 ) {
+        if ( (note==null || note.length()==0) && (setup==null || setup.length()==0) ) {
             addError(PARAM_SETUP,"Vyplòte postup zprovoznìní nebo poznámku!",ctx,null);
             return getTemplate("add/hwrecord.vm");
         }
@@ -157,6 +177,50 @@ public class EditHardware extends AbcServlet {
             persistance.create(relation);
             persistance.create(record);
             persistance.create(new Relation(item,record,relation.getId()));
+
+            redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
+            return null;
+        } catch (PersistanceException e) {
+            addError(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
+            return getTemplate("add/hwrecord.vm");
+        }
+    }
+
+    protected Template actionAddRecord(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Relation upper = (Relation) ctx.get(VAR_RELATION);
+        User user = (User) ctx.get(AbcServlet.VAR_USER);
+
+        String driver = (String) params.get(PARAM_DRIVER);
+        String price = (String) params.get(PARAM_PRICE);
+        String setup = (String) params.get(PARAM_SETUP);
+        String tech = (String) params.get(PARAM_TECHPARAM);
+        String note = (String) params.get(PARAM_NOTE);
+        String identification = (String) params.get(PARAM_IDENTIFICATION);
+
+        if ( (note==null || note.length()==0) && (setup==null || setup.length()==0) ) {
+            addError(PARAM_SETUP,"Vyplòte postup zprovoznìní nebo poznámku!",ctx,null);
+            return getTemplate("add/hwrecord.vm");
+        }
+
+        Document document = DocumentHelper.createDocument();
+        Element root = document.addElement("data");
+        if ( price!=null && price.length()>0 ) root.addElement("price").addText(price);
+        if ( driver!=null && driver.length()>0 ) root.addElement("driver").addText(driver);
+        if ( setup!=null && setup.length()>0 ) root.addElement("setup").addText(setup);
+        if ( tech!=null && tech.length()>0 ) root.addElement("params").addText(tech);
+        if ( identification!=null && identification.length()>0 ) root.addElement("identification").addText(identification);
+        if ( note!=null && note.length()>0 ) root.addElement("note").addText(note);
+
+        Record record = new Record(0,Record.HARDWARE);
+        record.setData(document);
+        record.setOwner(user.getId());
+
+        try {
+            persistance.create(record);
+            Relation relation = new Relation(upper.getChild(),record,upper.getId());
+            persistance.create(relation);
 
             redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
             return null;

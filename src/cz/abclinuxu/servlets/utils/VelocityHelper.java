@@ -64,7 +64,8 @@ public class VelocityHelper {
         }
 
         if ( name==null || name.length()==0) {
-            name = child.getClass().getName().substring(name.lastIndexOf('.')+1);
+            name = child.getClass().getName();
+            name = name.substring(name.lastIndexOf('.')+1);
             name = name.concat(" "+child.getId());
         }
         return name;
@@ -379,6 +380,7 @@ public class VelocityHelper {
     public GenericObject instantiate(String className, int id) {
         if ( className.equalsIgnoreCase("Category") ) return new Category(id);
         if ( className.equalsIgnoreCase("Server") ) return new Server(id);
+        if ( className.equalsIgnoreCase("User") ) return new User(id);
         if ( className.equalsIgnoreCase("Poll") ) return new Poll(id);
         return null;
     }

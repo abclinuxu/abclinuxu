@@ -57,9 +57,15 @@ public class ViewRelation extends AbcServlet {
         List parents = persistance.findParents(relation);
         ctx.put(VAR_PARENTS,parents);
 
-        if ( relation.getParent() instanceof Item ) return null;// redirect to item
+        if ( relation.getParent() instanceof Item ) {
+            dispatch("/ViewItem",request,response,ctx);
+            return null;
+        }
         if ( relation.getParent() instanceof Category ) {
-            if ( relation.getChild() instanceof Item ) return null;// redirect to item
+            if ( relation.getChild() instanceof Item ) {
+                dispatch("/ViewItem",request,response,ctx);
+                return null;
+            }
             // redirect to category otherwise
             dispatch("/ViewCategory",request,response,ctx);
         }

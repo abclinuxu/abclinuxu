@@ -67,6 +67,19 @@ public final class Guard {
             // non admin, not owner, closed category
             return ACCESS_DENIED;
         }
+        if ( subject instanceof Item ) {
+            Item item = (Item) subject;
+            Class clazz = (Class) param;
+
+            // owner may add anything
+            if ( item.getOwner()==actor.getId() ) return ACCESS_OK;
+            // articles are restricted to owners and adminsitrators
+            if ( item.getType()==Item.ARTICLE ) return ACCESS_DENIED;
+            // anybody may add record to item
+            if ( clazz==Record.class ) return ACCESS_OK;
+            // anything else is restricted
+            return ACCESS_DENIED;
+        }
         return ACCESS_DENIED;
     }
 
