@@ -37,12 +37,6 @@ public interface Persistance {
     public void synchronize(GenericObject obj) throws PersistanceException;
 
     /**
-     * Synchronizes <code>obj</code> with external changes made in persistant storage.
-     * To be used by Cache.
-     */
-    public void synchronizeCached(CachedObject obj);
-
-    /**
      * Finds object, whose <code>id</code> is same as in <code>obj</code>.
      * @return New instance of GenericObject's subclass.
      */

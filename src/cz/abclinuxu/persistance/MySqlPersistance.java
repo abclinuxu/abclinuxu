@@ -131,17 +131,6 @@ public class MySqlPersistance implements Persistance {
         obj.setInitialized(true);
     }
 
-    public void synchronizeCached(CachedObject cached) {
-        try {
-            GenericObject obj = cached.object;
-            obj.synchronizeWith(loadObject(obj));
-            obj.setInitialized(true);
-            cached.lastSync = System.currentTimeMillis();
-        } catch (Exception e) {
-            log.warn("Cannot synchronize cached object.",e);
-        }
-    }
-
     public GenericObject findById(GenericObject obj) throws PersistanceException {
         if ( obj==null ) throw new PersistanceException("Objekt nebyl nalezen!",AbcException.DB_NOT_FOUND,obj,null);
         GenericObject result = cache.load(obj);

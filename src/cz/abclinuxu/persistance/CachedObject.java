@@ -40,4 +40,12 @@ public class CachedObject {
         String tmp = getClass().getName()+object.getId();
         return tmp.hashCode();
     }
+
+    /**
+     * Analogue of unix's command touch. It doesn't affect content of object, just changes
+     * last modification timestamp.
+     */
+    public void touch() {
+        lastAccessed = System.currentTimeMillis();
+    }
 }

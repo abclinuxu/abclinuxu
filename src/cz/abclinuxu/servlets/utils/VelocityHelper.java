@@ -10,6 +10,7 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.utils.Sorters;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.apache.velocity.context.Context;
@@ -220,29 +221,21 @@ public class VelocityHelper {
     }
 
     /**
-     * Takes list of relations in argument and sorts them by
-     * relations.get(0).getChild().getUpdated() in descendant order
-     * (freshest objects first). If generic object doesn't contain
-     * such field, it will be appended to the end of list.
-     * @return new list, where relations are sorted by date
+     * Sorts list of generic objects by updated or created field. More info
+     * in class Sorters. Ascending order.
      */
-    public List sortByDate(List relations) {
-        List sorted = new ArrayList(relations.size());
-        int size = 0, i = 0;
+    public List sortByDateAscending(List list) {
+        Sorters.sortByDate(list,true);
+        return list;
+    }
 
-        for (Iterator iter = relations.iterator(); iter.hasNext();) {
-            Relation relation = (Relation) iter.next();
-
-            for (i=size;i>0;) {
-                Relation current = (Relation) sorted.get(i-1);
-                if ( ! isOlder(current.getChild(),relation.getChild()) ) break;
-                i--;
-            }
-            sorted.add(i,relation);
-            size++;
-        }
-
-        return sorted;
+    /**
+     * Sorts list of generic objects by updated or created field. More info
+     * in class Sorters. Descending order.
+     */
+    public List sortByDateDescending(List list) {
+        Sorters.sortByDate(list,false);
+        return list;
     }
 
     /**

@@ -16,7 +16,7 @@ import org.apache.log4j.xml.DOMConfigurator;
  */
 public class PersistanceFactory {
     static Map instances;
-    static String defaultUrl = "jdbc:mysql://localhost/abc?user=literakl";
+    static String defaultUrl = "jdbc:mysql://localhost/abc?user=literakl&password=lkaretil&useUnicode=true&characterEncoding=ISO-8859-2";
 
     static {
         instances = new HashMap();
@@ -40,7 +40,7 @@ public class PersistanceFactory {
         Persistance persistance = (Persistance) instances.get(url);
         if ( persistance==null ) {
             persistance = new MySqlPersistance(url);
-            persistance.setCache(new Cache(persistance));
+            persistance.setCache(new Cache());
             instances.put(url,persistance);
         }
         return persistance;

@@ -10,26 +10,29 @@ package cz.abclinuxu.persistance;
 import java.util.*;
 
 import cz.abclinuxu.data.*;
+import cz.abclinuxu.scheduler.Task;
 
 /**
  * Cache of GenericObjects. Only selected classes are cached.
  * @todo Complete rewrite needed. Add Date lru to CacheObject.
  * Use it as LRU, delete objects not accessed within 30 minutes.
  */
-public class Cache {
+public class Cache implements Task {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(Cache.class);
 
-    Persistance persistance;
-    CacheSynchronizationDaemon daemon;
     Map data;
     long modCount;
 
-    public static final int SYNC_INTERVAL = 5*60*1000; // 5 minutes
+    /**
+     * Every cached object will be deleted, if it was not synchronized with last hour.
+     * This way we propagate external changes from database to model and
+     * reduce consequences of possible errors of Cache.
+     */
+    public static final int SYNC_INTERVAL = 60*60*1000; // 1 hour
     /** cached objects, which were not accessed within this interval, will be deleted */
     public static final int MAX_LRU = 30*60000; // 30 minutes
 
-    public Cache(Persistance persistance) {
-        this.persistance = persistance;
+    public Cache() {
         data = new HashMap(100);
         modCount = 0;
     }
@@ -83,10 +86,10 @@ public class Cache {
         try {
             CachedObject found = (CachedObject) data.get(obj);
             if ( found==null ) return null;
-            touch(found);
+            found.touch();
 
             if ( obj instanceof Relation ) {
-                Relation relation = (Relation) found.object;
+                Relation relation = (Relation) found.object; // maybe famous bug lies here. return clone here
 
                 GenericObject tmp = load(relation.getChild());
                 if ( tmp!=null ) relation.setChild(tmp);
@@ -108,7 +111,7 @@ public class Cache {
     }
 
     /**
-     * If <code>obj</code> is deleted from from persistant storage,
+     * If <code>obj</code> is deleted from persistant storage,
      * it is wise to delete it from cache too. Otherwise inconsistency occurs.
      */
     public void remove(GenericObject obj) {
@@ -152,70 +155,30 @@ public class Cache {
     }
 
     /**
-     * Analogue of unix's command touch. It doesn't affect content of object, just changes
-     * last modification timestamp.
+     * When it is time to cleanup cache, this method is invoked. It
+     * will scan all CachedObjects, and LRU objects are removed from cache.
      */
-    protected void touch(CachedObject cachedObject) {
-        cachedObject.lastAccessed = System.currentTimeMillis();
-    }
+    public void runJob() {
+        log.info("Cache synchronization starts ...");
+        long expectedModCount = modCount;
 
-    /**
-     * Starts new thread, which periodically checks validity of objects and if needed,
-     * synchronizes them.<p>
-     * Don't start sync daemon, until you start to make modifications in database. Synchronization
-     * implies performance hit! Or make it run time option (like JMX method).
-     */
-    public void startUp() {
-        if ( daemon!=null ) daemon.stop = true;
-        daemon = new CacheSynchronizationDaemon();
-        daemon.start();
-    }
+        try {
+            Iterator iter = data.values().iterator();
 
-    /**
-     * Stops daemon.
-     */
-    public void shutDown() {
-        if ( daemon!=null ) daemon.stop = true;
-        daemon = null;
-    }
-
-    class CacheSynchronizationDaemon extends Thread {
-        boolean stop = false;
-        long expectedModCount;
-        long nextSync = System.currentTimeMillis()+SYNC_INTERVAL;
-
-        public void run() {
-            log.info("CacheSynchronizationDaemon starts ...");
-            setDaemon(true);
-
-            while ( !stop ) {
-                try {
-                    expectedModCount = modCount;
-                    Iterator iterator = data.values().iterator();
-
-                    while ( expectedModCount==modCount && iterator.hasNext() ) {
-                        CachedObject cached = (CachedObject) iterator.next();
-                        if ( cached.lastSync<System.currentTimeMillis() ) {
-                            persistance.synchronizeCached(cached);
-                        }
-                        if ( cached.lastSync<nextSync ) nextSync = cached.lastSync;
-                        yield();
-                    }
-                    if ( expectedModCount!=modCount ) { // concurrent modification of data
-                        nextSync = System.currentTimeMillis();
-                        yield(); // let the second thread finish its work
-                    }
-                } catch (ConcurrentModificationException e) {
-                    log.error("Bad timing in CacheSynchronizationDaemon!");
+            long now = System.currentTimeMillis(); // calculated only once to make it as fast as possible
+            while ( expectedModCount==modCount && iter.hasNext() ) {
+                CachedObject cached = (CachedObject) iter.next();
+                if ( cached.lastSync+SYNC_INTERVAL<now ) {
+                    iter.remove();
                 }
-
-                long dreaming = nextSync - System.currentTimeMillis();
-                if ( dreaming>0 ) {
-                    try { Thread.sleep(dreaming); } catch (InterruptedException e) {}
+                if ( cached.lastAccessed+MAX_LRU<now ) {
+                    iter.remove();
                 }
             }
-
-            log.info("CacheSynchronizationDaemon dies ...");
+            // if expectedModCount!=modCount, we will postpone work for next task
+        } catch (ConcurrentModificationException e) {
+            log.warn("Bad timing in CacheSynchronizationDaemon!");
         }
+        log.info("... cache synchronization is finished.");
     }
 }

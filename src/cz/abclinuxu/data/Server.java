@@ -84,4 +84,13 @@ public class Server extends GenericObject {
         String tmp = "Server"+id;
         return tmp.hashCode();
     }
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer("Server: id=");
+        sb.append(id);
+        if ( name!=null ) sb.append(",name="+name);
+        if ( url!=null ) sb.append(",title="+url);
+        if ( contact!=null ) sb.append(",contact="+contact);
+        return sb.toString();
+    }
 }
