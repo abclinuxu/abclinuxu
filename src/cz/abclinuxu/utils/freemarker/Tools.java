@@ -256,7 +256,7 @@ public class Tools implements Configurable {
                 if (category.getType()==Category.SECTION_FORUM)
                     link.setUrl(urlUtils.make("/forum/dir/"+relation.getId()));
                 else if (category.getType()==Category.SECTION_BLOG)
-                    link.setUrl(urlUtils.make("/blog/"+category.getSubType()));
+                    link.setUrl(urlUtils.noPrefix("/blog/"+category.getSubType()));
                 else
                     link.setUrl(urlUtils.make("/dir/"+relation.getId()));
             } else if (child instanceof Item) {
@@ -264,7 +264,7 @@ public class Tools implements Configurable {
                 if (item.getType()==Item.BLOG) {
                     Category blog = (Category) relation.getParent();
                     sync(blog);
-                    link.setUrl(urlUtils.make(getUrlForBlogStory(blog.getSubType(), item.getCreated(), relation.getId())));
+                    link.setUrl(urlUtils.noPrefix(getUrlForBlogStory(blog.getSubType(), item.getCreated(), relation.getId())));
                 } else
                     link.setUrl(urlUtils.make("/show/"+relation.getId()));
             } else
