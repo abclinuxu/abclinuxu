@@ -169,10 +169,10 @@ public class Cache implements Task {
             long now = System.currentTimeMillis(); // calculated only once to make it as fast as possible
             while ( expectedModCount==modCount && iter.hasNext() ) {
                 CachedObject cached = (CachedObject) iter.next();
+
                 if ( cached.lastSync+SYNC_INTERVAL<now ) {
                     iter.remove();
-                }
-                if ( cached.lastAccessed+MAX_LRU<now ) {
+                } else if ( cached.lastAccessed+MAX_LRU<now ) {
                     iter.remove();
                 }
             }
