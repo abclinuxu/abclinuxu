@@ -35,17 +35,23 @@ public class Cache {
      * PK is already stored in the cache, it is replaced by new version.
      */
     public void store(GenericObject obj) {
-        if ( obj instanceof Category ) {
-            data.put(obj,new CachedObject(obj,System.currentTimeMillis()+SYNC_INTERVAL));
-            modCount++;
-            return;
-        }
-        if ( obj instanceof Relation ) {
-            GenericObject parent = ((Relation) obj).getParent();
-            CachedObject cached = loadCachedObject(parent);
-            if ( cached!=null ) {
-                cached.object.addContent((Relation)obj);
+        try {
+            if ( obj instanceof Category ) {
+                data.put(obj,new CachedObject(obj,System.currentTimeMillis()+SYNC_INTERVAL));
+                modCount++;
+                return;
             }
+            if ( obj instanceof Relation ) {
+                GenericObject parent = ((Relation) obj).getParent();
+                CachedObject cached = loadCachedObject(parent);
+                if ( cached!=null ) {
+                    if ( ! cached.object.getContent().contains(obj) ) {
+                        cached.object.addContent((Relation)obj);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("Problems in cache",e);
         }
     }
 
@@ -55,11 +61,15 @@ public class Cache {
      * @return cached object or null, if it is not found.
      */
     public GenericObject load(GenericObject obj) {
-        if ( obj instanceof Category ) {
-            CachedObject cached = (CachedObject) data.get(obj);
-            if ( cached!=null ) {
-                return cached.object;
+        try {
+            if ( obj instanceof Category ) {
+                CachedObject cached = (CachedObject) data.get(obj);
+                if ( cached!=null ) {
+                    return cached.object;
+                }
             }
+        } catch (Exception e) {
+            log.error("Problems in cache",e);
         }
         return null;
     }
@@ -69,19 +79,37 @@ public class Cache {
      * delete it from Persistant storage too. Otherwise inconsistency occurs.
      */
     public void remove(GenericObject obj) {
-        if ( obj instanceof Category ) {
-            data.remove(obj);
-            modCount++;
-            return;
-        }
-        if ( obj instanceof Relation ) {
-            GenericObject parent = ((Relation) obj).getParent();
-            CachedObject cached = loadCachedObject(parent);
-            if ( cached!=null ) {
-                List content = cached.object.getContent();
-                content.remove(obj);
+        try {
+            if ( obj instanceof Category ) {
+                data.remove(obj);
+                modCount++;
+                return;
             }
+            if ( obj instanceof Relation ) {
+                GenericObject parent = ((Relation) obj).getParent();
+                CachedObject cached = loadCachedObject(parent);
+                if ( cached!=null ) {
+                    cached.object.getContent().remove(obj);
+                }
+            }
+        } catch (Exception e) {
+            log.error("Problems in cache",e);
         }
+    }
+
+    /**
+     * This method searches cache for specified object.
+     * @return CachedObject or null, if it is not found.
+     */
+    private CachedObject loadCachedObject(GenericObject obj) {
+        try {
+            if ( obj instanceof Category ) {
+                return (CachedObject) data.get(obj);
+            }
+        } catch (Exception e) {
+            log.error("Problems in cache",e);
+        }
+        return null;
     }
 
     /**
@@ -102,17 +130,6 @@ public class Cache {
     public void shutDown() {
         if ( daemon!=null ) daemon.stop = true;
         daemon = null;
-    }
-
-    /**
-     * This method searches cache for specified object.
-     * @return CachedObject or null, if it is not found.
-     */
-    private CachedObject loadCachedObject(GenericObject obj) {
-        if ( obj instanceof Category ) {
-            return (CachedObject) data.get(obj);
-        }
-        return null;
     }
 
     class CacheSynchronizationDaemon extends Thread {

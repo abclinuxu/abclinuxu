@@ -169,7 +169,7 @@ public class User extends GenericObject {
         return sb.toString();
     }
 
-    public boolean equals(Object o) {
+    public boolean preciseEquals(Object o) {
         if ( !( o instanceof User) ) return false;
         User p = (User) o;
         if ( id==p.id && login.equals(p.login) && name.equals(p.name) &&

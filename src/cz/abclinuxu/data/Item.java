@@ -79,7 +79,7 @@ public class Item extends GenericDataObject {
         return sb.toString();
     }
 
-    public boolean equals(Object o) {
+    public boolean preciseEquals(Object o) {
         if ( !( o instanceof Item) ) return false;
         if ( id!=((GenericObject)o).getId() ) return false;
         if ( type!=((Item)o).getType() ) return false;

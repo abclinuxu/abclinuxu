@@ -144,7 +144,7 @@ public abstract class GenericDataObject extends GenericObject {
         this.searchString = searchString;
     }
 
-    public boolean equals(Object o) {
+    public boolean preciseEquals(Object o) {
         if ( !( o instanceof GenericDataObject) ) return false;
         GenericDataObject p = (GenericDataObject) o;
         if ( id==p.id && owner==p.owner && getDataAsString().equals(p.getDataAsString()) ) return true;

@@ -35,6 +35,7 @@ public class AbcInit extends HttpServlet {
         file = getInitParameter("VELOCITY");
         if ( file!=null ) {
             try {
+                log.info("Inicializuji Velocity");
                 Velocity.init(path+file);
             } catch (Exception e) {
                 log.error("Nemohu inicializovat Velocity!",e);

@@ -88,7 +88,7 @@ public class Data extends GenericObject {
         return sb.toString();
     }
 
-    public boolean equals(Object o) {
+    public boolean preciseEquals(Object o) {
         if ( !( o instanceof Data) ) return false;
         Data p = (Data)o;
         if ( id==p.id && owner==p.owner && data.equals(p.data) && format.equals(p.format) ) return true;

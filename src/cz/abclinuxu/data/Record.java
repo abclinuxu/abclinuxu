@@ -79,7 +79,7 @@ public class Record extends GenericDataObject {
         return sb.toString();
     }
 
-    public boolean equals(Object o) {
+    public boolean preciseEquals(Object o) {
         if ( !( o instanceof Record) ) return false;
         if ( id!=((GenericObject)o).getId() ) return false;
         if ( type!=((Record)o).getType() ) return false;

@@ -86,7 +86,7 @@ public final class Relation extends GenericObject {
         return "Relation " +id+",upper="+upper;
     }
 
-    public boolean equals(Object obj) {
+    public boolean preciseEquals(Object obj) {
         if ( ! (obj instanceof Relation ) ) return false;
         Relation o = (Relation) obj;
         if ( upper==o.getUpper() && parent==o.getParent() && child==o.getChild() ) return true;

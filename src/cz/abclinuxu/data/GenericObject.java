@@ -137,6 +137,25 @@ public class GenericObject {
         return false;
     }
 
+    /**
+     * This is usual equals() implementation. It shall be used in unit tests, because it is
+     * more complete than equal. For equals, we just need to test class and PK equality, but
+     * that's not enough for unit test.
+     */
+    public boolean preciseEquals(Object obj) {
+        return super.equals(obj);
+    }
+
+    /**
+     * Tests equality of two GenericObjects. Only class and PK comparison is done. Needed
+     * by HashMaps and Lists (especially in cache).
+     */
+    public boolean equals(Object obj) {
+        if ( this.getClass()!=obj.getClass() ) return false;
+        if ( ! (obj instanceof GenericObject ) ) return false;
+        return id==((GenericObject)obj).getId();
+    }
+
     public int hashCode() {
         return id;
     }

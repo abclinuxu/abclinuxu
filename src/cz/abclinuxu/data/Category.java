@@ -61,7 +61,7 @@ public class Category extends GenericDataObject {
         return sb.toString();
     }
 
-    public boolean equals(Object o) {
+    public boolean preciseEquals(Object o) {
         if ( !( o instanceof Category) ) return false;
         if ( id!=((GenericObject)o).getId() ) return false;
         if ( open!=((Category)o).isOpen() ) return false;

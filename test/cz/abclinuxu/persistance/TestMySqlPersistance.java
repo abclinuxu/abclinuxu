@@ -76,10 +76,10 @@ public class TestMySqlPersistance extends TestCase {
 
         // now only c and d shall exist
         GenericObject test = persistance.findById(c);
-        assertEquals(c,test);
+        assertTrue(c.preciseEquals(test));
 
         test = persistance.findById(d);
-        assertEquals(d,test);
+        assertTrue(d.preciseEquals(test));
 
         try {
             test = persistance.findById(a);
@@ -316,7 +316,7 @@ public class TestMySqlPersistance extends TestCase {
 
         Record b = new Record(a.getId(),Record.SOFTWARE);
         Record c = (Record) persistance.findById(b);
-        assertEquals(a,c);
+        assertTrue(a.preciseEquals(c));
 
         persistance.remove(a);
         try {

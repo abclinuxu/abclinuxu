@@ -178,7 +178,7 @@ public class Poll extends GenericObject {
         return sb.toString();
     }
 
-    public boolean equals(Object o) {
+    public boolean preciseEquals(Object o) {
         if ( !( o instanceof Poll) ) return false;
         if ( id!=((GenericObject)o).getId() ) return false;
         if ( type!=((Poll)o).getType() ) return false;

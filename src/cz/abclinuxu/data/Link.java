@@ -145,7 +145,7 @@ public class Link extends GenericObject {
         return sb.toString();
     }
 
-    public boolean equals(Object o) {
+    public boolean preciseEquals(Object o) {
         if ( !( o instanceof Link) ) return false;
         Link p = (Link)o;
         if ( id==p.id && text.equals(p.text) && url.equals(p.url) &&
