@@ -10,6 +10,7 @@ import java.util.Iterator;
 
 /**
  * Class containing basic user data
+ * @todo data/roles -> holds security roles, that user has.
  */
 public class User extends GenericObject implements XMLContainer {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(User.class);

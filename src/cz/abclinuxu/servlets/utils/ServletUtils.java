@@ -7,30 +7,55 @@
 package cz.abclinuxu.servlets.utils;
 
 import org.apache.velocity.context.Context;
+import org.apache.log4j.Logger;
 
 import javax.servlet.http.*;
 import java.util.*;
 import java.io.UnsupportedEncodingException;
 
 import cz.abclinuxu.servlets.AbcVelocityServlet;
+import cz.abclinuxu.servlets.AbcFMServlet;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistance.PersistanceException;
+import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.GenericObject;
+import freemarker.template.SimpleHash;
+import freemarker.template.TemplateModelException;
 
 /**
  * Class to hold useful methods related to servlets
  * environment.
  */
 public class ServletUtils {
+    static Logger log = Logger.getLogger(ServletUtils.class);
+
+    /** holds username when performing login */
+    public static final String PARAM_LOG_USER = "LOGIN";
+    /** holds password when performing login */
+    public static final String PARAM_LOG_PASSWORD = "PASSWORD";
+    /** indicates, that user wishes to logout */
+    public static final String PARAM_LOG_OUT = "logout";
 
     /**
-     * Adds all parameters from request to specified map and returns it back.
-     * If map is null, new HashMap is created. <p>
-     * If there is only one value for a parameter, it will be stored directly
-     * associated with parameter's name. But if there are at least two values,
-     * they will be stored in list associated with parameter's name.
+     * Combines request's parameters with parameters stored in special session
+     * attribute and returns result as map. If parameter holds single value,
+     * simple String->String mapping is created. If parameter holds multiple values,
+     * String->Array of Strings mapping is created. The key is always parameter's name.
      */
-    public static Map putParamsToMap(HttpServletRequest request, Map map) {
-        if ( map==null ) map = new HashMap();
+    public static Map putParamsToMap(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Map map = (Map) session.getAttribute(Constants.VAR_PARAMS);
+        if ( map!=null )
+            session.removeAttribute(Constants.VAR_PARAMS);
+        else
+            map = new HashMap();
+
         Enumeration names = request.getParameterNames();
-        while (names.hasMoreElements()) {
+        while ( names.hasMoreElements() ) {
             String name = (String) names.nextElement();
             String[] values = request.getParameterValues(name);
 
@@ -53,6 +78,107 @@ public class ServletUtils {
     }
 
     /**
+     * Handles messages and errors. If they are in special session attribute,
+     * it moves them into environment.
+     */
+    public static void handleMessages(HttpServletRequest request, Map env) {
+        HttpSession session = request.getSession();
+
+        Map errors = (Map) session.getAttribute(Constants.VAR_ERRORS);
+        if ( errors!=null ) {
+            env.put(Constants.VAR_ERRORS,errors);
+            session.removeAttribute(Constants.VAR_ERRORS);
+        }
+
+        List messages = (List) session.getAttribute(Constants.VAR_MESSAGES);
+        if ( messages!=null ) {
+            env.put(Constants.VAR_MESSAGES,messages);
+            session.removeAttribute(Constants.VAR_MESSAGES);
+        }
+    }
+
+    /**
+     * Performs automatic login. If user wishes to log out, it does so. Otherwise
+     * it searches special session attribute, request parameters or cookie for
+     * login information in this order and tries user to log in. If it suceeds,
+     * instance of User is stored in both session attribute and environment.
+     */
+    public static void handleLogin(HttpServletRequest request, HttpServletResponse response, Map env) {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        HttpSession session = request.getSession();
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Cookie cookie = getCookie(request,Constants.VAR_USER);
+
+        boolean logout = params.get(PARAM_LOG_OUT)!=null;
+        if ( logout ) {
+            params.remove(PARAM_LOG_OUT);
+            session.removeAttribute(Constants.VAR_USER);
+            if ( cookie!=null )
+                deleteCookie(cookie,response);
+            return;
+        }
+
+        User user = (User) session.getAttribute(Constants.VAR_USER);
+        if ( user!=null ) {
+            env.put(AbcVelocityServlet.VAR_USER,user);
+            return;
+        }
+
+        String login = (String) params.get(PARAM_LOG_USER);
+        if ( ! Misc.empty(login) ) {
+            user = new User();
+            user.setLogin(login);
+            List searched = new ArrayList(1);
+            searched.add(user);
+
+            List found = (List) persistance.findByExample(searched,null);
+            if ( found.size()==0 ) {
+                ServletUtils.addError(PARAM_LOG_USER,"Pøihla¹ovací jméno nenalezeno!",env, null);
+                return;
+            }
+            user = (User) found.get(0);
+            persistance.synchronize(user);
+
+            String password = (String) params.get(PARAM_LOG_PASSWORD);
+            if ( !user.validatePassword(password) ) {
+                ServletUtils.addError(PARAM_LOG_PASSWORD,"©patné heslo!",env, null);
+                return;
+            }
+
+            // todo: configurable
+            cookie = new LoginCookie(user).getCookie();
+            cookie.setMaxAge(6*30*24*3600); // six months
+            response.addCookie(cookie);
+        } else if ( cookie!=null ) {
+            LoginCookie loginCookie = new LoginCookie(cookie);
+            try {
+                user = (User) persistance.findById(new User(loginCookie.id));
+            } catch (PersistanceException e) {
+                deleteCookie(cookie,response);
+                addError(AbcVelocityServlet.GENERIC_ERROR,"Nalezena cookie s neznámým u¾ivatelem!",env, null);
+                return;
+            }
+
+            if ( user.getPassword().hashCode()!=loginCookie.hash ) {
+                deleteCookie(cookie,response);
+                addError(AbcVelocityServlet.GENERIC_ERROR,"Nalezena cookie se ¹patným heslem!",env, null);
+                return;
+            }
+        } else {
+            return;
+        }
+
+        session.setAttribute(Constants.VAR_USER,user);
+        env.put(Constants.VAR_USER,user);
+
+        // todo: remove it, when new security model is finished
+        for (Iterator iter = user.getContent().iterator(); iter.hasNext();) {
+            GenericObject obj = (GenericObject) ((Relation) iter.next()).getChild();
+            persistance.synchronize(obj);
+        }
+    }
+
+    /**
      * Removes cookie from browser
      */
     public static void deleteCookie(Cookie cookie, HttpServletResponse response) {
@@ -62,18 +188,36 @@ public class ServletUtils {
     }
 
     /**
+     * Finds cookie with given name in request.
+     * return Cookie, if found, otherwise null.
+     */
+    public static Cookie getCookie(HttpServletRequest request, String name) {
+        Cookie[] cookies = request.getCookies();
+        if ( cookies==null )
+            return null;
+
+        for (int i = 0; i < cookies.length; i++) {
+            Cookie cookie = cookies[i];
+            if ( name.equals(cookie.getName()) )
+                return cookie;
+        }
+        return null;
+    }
+
+    /**
      * Adds message to <code>VAR_ERRORS</code> map.
      * <p>If session is not null, store messages into session. Handy for redirects and dispatches.
      */
     public static void addError(String key, String errorMessage, Context context, HttpSession session) {
-        Map errors = (Map) context.get(AbcVelocityServlet.VAR_ERRORS);
-
+        Map errors = (Map) context.get(Constants.VAR_ERRORS);
         if ( errors==null ) {
             errors = new HashMap(5);
-            context.put(AbcVelocityServlet.VAR_ERRORS,errors);
+            context.put(Constants.VAR_ERRORS,errors);
         }
-        if ( session!=null ) session.setAttribute(AbcVelocityServlet.VAR_ERRORS,errors);
+
         errors.put(key,errorMessage);
+        if ( session!=null )
+            session.setAttribute(Constants.VAR_ERRORS,errors);
     }
 
     /**
@@ -81,14 +225,108 @@ public class ServletUtils {
      * <p>If session is not null, store messages into session. Handy for redirects and dispatches.
      */
     public static void addMessage(String message, Context context, HttpSession session) {
-        boolean created = false;
-        List messages = (List) context.get(AbcVelocityServlet.VAR_MESSAGES);
-
+        List messages = (List) context.get(Constants.VAR_MESSAGES);
         if ( messages==null ) {
-            messages = new ArrayList(5);
-            context.put(AbcVelocityServlet.VAR_MESSAGES,messages);
+            messages = new ArrayList(2);
+            context.put(Constants.VAR_MESSAGES,messages);
         }
-        if ( session!=null ) session.setAttribute(AbcVelocityServlet.VAR_MESSAGES,messages);
+
         messages.add(message);
+        if ( session!=null )
+            session.setAttribute(Constants.VAR_MESSAGES,messages);
+    }
+
+    /**
+     * Adds message to <code>VAR_ERRORS</code> map.
+     * <p>If session is not null, store messages into session. Handy for redirects and dispatches.
+     */
+    public static void addError(String key, String errorMessage, Map env, HttpSession session) {
+        Map errors = (Map) env.get(Constants.VAR_ERRORS);
+        if ( errors==null ) {
+            errors = new HashMap(5);
+            env.put(Constants.VAR_ERRORS,errors);
+        }
+
+        errors.put(key,errorMessage);
+        if ( session!=null )
+            session.setAttribute(Constants.VAR_ERRORS,errors);
+    }
+
+    /**
+     * Adds message to <code>VAR_MESSAGES</code> list.
+     * <p>If session is not null, store messages into session. Handy for redirects and dispatches.
+     */
+    public static void addMessage(String message, Map env, HttpSession session) {
+        List messages = (List) env.get(Constants.VAR_MESSAGES);
+        if ( messages==null ) {
+            messages = new ArrayList(2);
+            env.put(Constants.VAR_MESSAGES,messages);
+        }
+
+        messages.add(message);
+        if ( session!=null )
+            session.setAttribute(Constants.VAR_MESSAGES,messages);
+    }
+
+    /**
+     * Constructs URL, as it was called.
+     */
+    public static String getURL(HttpServletRequest request) {
+        StringBuffer url = request.getRequestURL();
+        String query = request.getQueryString();
+        if ( !Misc.empty(query) ) {
+            url.append('?');
+            url.append(query);
+        }
+        return url.toString();
+    }
+
+    /**
+     * This class holds logic for login cookie.
+     */
+    static class LoginCookie {
+        public int id=-1, hash;
+
+        /**
+         * Initializes cookie from user.
+         */
+        public LoginCookie(User user) {
+            id = user.getId();
+            hash = user.getPassword().hashCode();
+        }
+
+        /**
+         * Initializes cookie from cookie. (used for reverse operation)
+         */
+        public LoginCookie(Cookie cookie) {
+            String sid="",shash="";
+            String value = cookie.getValue();
+            if ( value==null || value.length()<6 ) return;
+
+            int position = value.indexOf(':');
+            if ( position!=-1 ) {
+                sid = value.substring(0,position);
+                shash = value.substring(position+1);
+            } else {
+                position = value.indexOf("%3A");
+                if ( position!=-1 ) {
+                    sid = value.substring(0,position);
+                    shash = value.substring(position+3);
+                } else
+                    return;
+            }
+            id = Integer.parseInt(sid);
+            hash = Integer.parseInt(shash);
+        }
+
+        /**
+         * Creates cookie from already supplied information.
+         */
+        public Cookie getCookie() {
+            String content = id+":"+hash;
+            Cookie cookie = new Cookie(Constants.VAR_USER,content);
+            cookie.setPath("/");
+            return cookie;
+        }
     }
 }

@@ -90,6 +90,8 @@ public class VariableFetcher extends TimerTask {
         try {
             // put counts into map
             List list = persistance.findByCommand("select count(cislo) from zaznam where typ=1");
+            List tmpList = null;
+
             Object[] objects = (Object[]) list.get(0);
             counts.put("HARDWARE",objects[0]);
 
@@ -112,37 +114,43 @@ public class VariableFetcher extends TimerTask {
             objects = (Object[]) list.get(0);
             int id = ((Integer)objects[0]).intValue();
             poll = (Poll) persistance.findById(new Poll(id));
+            if ( poll.isClosed() )
+                poll = null;
 
             // find new hardware records
-            newHW = new ArrayList(SIZE);
+            tmpList = new ArrayList(SIZE);
             list = persistance.findByCommand(ShowOlder.SQL_HARDWARE+" limit "+SIZE);
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 objects = (Object[]) iter.next();
                 id = ((Integer)objects[0]).intValue();
                 Relation found = (Relation) persistance.findById(new Relation(id));
-                newHW.add(found);
+                tmpList.add(found);
             }
+            newHW = tmpList;
 
             // find new software
-            newSW = new ArrayList(SIZE);
+            tmpList = new ArrayList(SIZE);
             list = persistance.findByCommand(ShowOlder.SQL_SOFTWARE+" limit "+SIZE);
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 objects = (Object[]) iter.next();
                 id = ((Integer)objects[0]).intValue();
                 Relation found = (Relation) persistance.findById(new Relation(id));
-                newSW.add(found);
+                tmpList.add(found);
             }
+            newSW = tmpList;
 
             // find new drivers
-            newDrv = new ArrayList(SIZE);
+            tmpList = new ArrayList(SIZE);
             list = persistance.findByCommand(ShowOlder.SQL_DRIVERS+" limit "+SIZE);
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 objects = (Object[]) iter.next();
                 id = ((Integer)objects[0]).intValue();
                 Relation found = (Relation) persistance.findById(new Relation(id));
-                newDrv.add(found);
+                tmpList.add(found);
             }
-            log.debug("stopped fetching variables");
+            newDrv = tmpList;
+
+            log.debug("finished fetching variables");
         } catch (Exception e) {
             log.error("Cannot fetch variables!", e);
         }

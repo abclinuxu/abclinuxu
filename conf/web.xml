@@ -1,48 +1,38 @@
 <!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2.3.dtd">
 
 <web-app>
-	<display-name>portal AbcLinuxu.cz</display-name>
-
-    <filter>
-        <filter-name>EncodingFilter</filter-name>
-        <filter-class>cz.abclinuxu.servlets.filters.EncodingFilter</filter-class>
-        <init-param>
-            <param-name>encoding</param-name>
-            <param-value>ISO-8859-2</param-value>
-        </init-param>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>EncodingFilter</filter-name>
-        <servlet-name>Dumper</servlet-name>
-    </filter-mapping>
+    <display-name>portal AbcLinuxu.cz</display-name>
 
     <servlet>
         <servlet-name>AbcInit</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.init.AbcInit</servlet-class>
         <init-param>
-          <param-name>CONFIG</param-name>
-          <param-value>WEB-INF/log4j.xml</param-value>
+          <param-name>LOG4J</param-name>
+          <param-value>WEB-INF/conf/log4j.xml</param-value>
         </init-param>
         <init-param>
-          <param-name>VELOCITY</param-name>
-          <param-value>WEB-INF/velocity.properties</param-value>
-        </init-param>
-        <init-param>
-          <param-name>URL</param-name>
+          <param-name>JDBC</param-name>
           <param-value>jdbc:mysql://localhost/abc?user=literakl&amp;password=lkaretil&amp;useUnicode=true&amp;characterEncoding=ISO-8859-2</param-value>
         </init-param>
         <init-param>
-          <param-name>TEMPLATES</param-name>
-          <param-value>WEB-INF/templates.xml</param-value>
+          <param-name>VELOCITY</param-name>
+          <param-value>WEB-INF/conf/velocity.properties</param-value>
         </init-param>
         <init-param>
-          <param-name>KERNEL</param-name>
-          <param-value>WEB-INF/templates/auto/kernel.txt</param-value>
+          <param-name>FREEMARKER</param-name>
+          <param-value>WEB-INF/freemarker/</param-value>
+        </init-param>
+        <init-param>
+          <param-name>TEMPLATES</param-name>
+          <param-value>WEB-INF/conf/templates.xml</param-value>
         </init-param>
         <init-param>
           <param-name>INDEX_PATH</param-name>
           <param-value>WEB-INF/index</param-value>
+        </init-param>
+        <init-param>
+          <param-name>KERNEL</param-name>
+          <param-value>WEB-INF/include/kernel.txt</param-value>
         </init-param>
         <init-param>
           <param-name>LINKS_TRAFIKA</param-name>
@@ -368,5 +358,6 @@
 
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
+        <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 </web-app>

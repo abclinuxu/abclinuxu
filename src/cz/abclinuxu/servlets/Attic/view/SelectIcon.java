@@ -114,7 +114,7 @@ public class SelectIcon extends AbcVelocityServlet {
         String dir = "/ikony/"+request.getParameter(SelectIcon.PARAM_DIR)+"/";
         String icon = dir+request.getParameter(SelectIcon.PARAM_ICON);
 
-        Map map = ServletUtils.putParamsToMap(request,null);
+        Map map = ServletUtils.putParamsToMap(request);
         map.remove(SelectIcon.PARAM_DIR);
         map.remove(SelectIcon.PARAM_ICON);
         map.remove(SelectIcon.PARAM_URL);

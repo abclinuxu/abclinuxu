@@ -8,19 +8,24 @@
 package cz.abclinuxu.servlets.init;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.Calendar;
-import java.util.Timer;
-import java.util.GregorianCalendar;
+import java.io.File;
+import java.util.*;
 import javax.servlet.http.*;
 import javax.servlet.ServletException;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.velocity.app.Velocity;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.scheduler.*;
 import cz.abclinuxu.servlets.utils.VelocityTemplateSelector;
+import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.servlets.view.Search;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.data.Category;
+import freemarker.template.*;
+import freemarker.ext.beans.BeansWrapper;
 
 /**
  * This servlet initializes Log4J
@@ -38,46 +43,52 @@ public class AbcInit extends HttpServlet {
     public void init() throws ServletException {
         String path = getServletContext().getRealPath("/")+"/";
 
-        String file = getInitParameter("CONFIG");
-        if ( file!=null ) {
-            DOMConfigurator.configure(path+file);
+        String tmp = getInitParameter("LOG4J");
+        if ( ! Misc.empty(tmp) ) {
+            DOMConfigurator.configure(path+tmp);
         } else {
             BasicConfigurator.configure();
         }
 
-        file = getInitParameter("VELOCITY");
-        if ( file!=null ) {
+        tmp = getInitParameter("JDBC");
+        if ( ! Misc.empty(tmp) ) {
+            log.info("Inicializuji vrstvu persistence pomoci URL "+tmp);
+            PersistanceFactory.setDefaultUrl(tmp);
+        }
+
+        tmp = getInitParameter("VELOCITY");
+        if ( ! Misc.empty(tmp) ) {
             try {
                 log.info("Inicializuji Velocity");
-                Velocity.init(path+file);
+                Velocity.init(path+tmp);
             } catch (Exception e) {
                 log.error("Nemohu inicializovat Velocity!",e);
             }
         }
 
-        String url = getInitParameter("URL");
-        if ( url!=null ) {
-            log.info("Inicializuji vrstvu persistence pomoci URL "+url);
-            PersistanceFactory.setDefaultUrl(url);
-        }
+        configureFreeMarker(path);
 
-        String kernel = getInitParameter("KERNEL");
-        if ( kernel!=null ) UpdateKernel.setFileName(path+kernel);
+        tmp = getInitParameter("KERNEL");
+        if ( ! Misc.empty(tmp) )
+            UpdateKernel.setFileName(path+tmp);
 
-        String links = getInitParameter("LINKS_TRAFIKA");
-        if ( links!=null ) GenerateLinks.setFileNameTrafika(path+links);
+        tmp = getInitParameter("LINKS_TRAFIKA");
+        if ( ! Misc.empty(tmp) )
+            GenerateLinks.setFileNameTrafika(path+tmp);
 
-        links = getInitParameter("LINKS_ANNECA");
-        if ( links!=null ) GenerateLinks.setFileNameAnneca(path+links);
+        tmp = getInitParameter("LINKS_ANNECA");
+        if ( ! Misc.empty(tmp) )
+            GenerateLinks.setFileNameAnneca(path+tmp);
 
-        links = getInitParameter("LINKS_RSS");
-        if ( links!=null ) GenerateLinks.setFileNameRSS(path+links);
+        tmp = getInitParameter("LINKS_RSS");
+        if ( ! Misc.empty(tmp) )
+            GenerateLinks.setFileNameRSS(path+tmp);
 
-        String tmp = getInitParameter("TEMPLATES");
+        tmp = getInitParameter("TEMPLATES");
         try {
             VelocityTemplateSelector.initialize(path+tmp);
         } catch (Exception e) {
-            log.fatal("Cannot initialize template system!", e);
+            log.fatal("Nemohu inicializovat systém ¹ablon!", e);
         }
 
         tmp = getInitParameter("INDEX_PATH");
@@ -151,5 +162,55 @@ public class AbcInit extends HttpServlet {
      */
     protected void startArticlePoolMonitor() {
         scheduler.schedule(new ArticlePoolMonitor(),1*60*1000,3*60*1000);
+    }
+
+    /**
+     * set ups freemarker
+     */
+    void configureFreeMarker(String path) {
+        log.info("Inicializuji FreeMarker");
+
+        Configuration cfg = Configuration.getDefaultConfiguration();
+        cfg.setDefaultEncoding("ISO-8859-2");
+        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.HTML_DEBUG_HANDLER);
+
+        BeansWrapper wrapper = BeansWrapper.getDefaultInstance();
+        cfg.setObjectWrapper(wrapper);
+        TemplateHashModel statics = wrapper.getStaticModels();
+        VelocityHelper helper = new VelocityHelper();
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        try {
+            cfg.setSharedVariable(Constants.VAR_VARIABLES,statics.get("cz.abclinuxu.scheduler.VariableFetcher"));
+
+            Category rubriky = (Category) persistance.findById(new Category(Constants.CAT_ARTICLES));
+            helper.sync(rubriky.getContent());
+            cfg.setSharedVariable(Constants.VAR_RUBRIKY,rubriky.getContent());
+
+            Category abc = (Category) persistance.findById(new Category(Constants.CAT_ABC));
+            helper.sync(abc.getContent());
+            cfg.setSharedVariable(Constants.VAR_ABCLINUXU,abc.getContent());
+
+            Category reklama = (Category) persistance.findById(new Category(Constants.CAT_REKLAMA));
+            helper.sync(reklama.getContent());
+            cfg.setSharedVariable(Constants.VAR_REKLAMA,reklama.getContent());
+
+            Category linksCategory = (Category) persistance.findById(new Category(Constants.CAT_LINKS));
+            Map links = UpdateLinks.groupLinks(linksCategory,persistance);
+            cfg.setSharedVariable(Constants.VAR_LINKS,links);
+
+            log.info("Inicializace FreeMarkeru je hotova");
+        } catch (TemplateModelException e) {
+            log.error("cannot store shared variable!", e);
+        }
+
+        String tmp = getInitParameter("FREEMARKER");
+        if ( ! Misc.empty(tmp) ) {
+            try {
+                cfg.setDirectoryForTemplateLoading(new File(path,tmp));
+            } catch (IOException e) {
+                log.error("Nemohu inicializovat FreeMarker!",e);
+            }
+        }
     }
 }

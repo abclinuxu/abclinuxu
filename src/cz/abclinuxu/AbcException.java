@@ -51,6 +51,7 @@ public class AbcException extends RuntimeException {
      * constructs new exception
      * @param desc description of exception
      * @param code error code of exception
+     * @deprecated
      */
     public AbcException(String desc, int code) {
         super(desc);
@@ -59,11 +60,29 @@ public class AbcException extends RuntimeException {
 
     /**
      * Constructs new chained exception
+     * @deprecated
      */
     public AbcException(String desc, int code, Exception e) {
         super(desc,e);
         this.code = code;
     }
+
+    /**
+     * Superclass for all exceptions from AbcLinuxu.
+     * @param desc description of exception
+     */
+    public AbcException(String desc) {
+        super(desc);
+    }
+
+    /**
+     * Superclass for all exceptions from AbcLinuxu.
+     * @param desc description of exception
+     */
+    public AbcException(String desc, Exception e) {
+        super(desc,e);
+    }
+
 
     /**
      * @return code code of error. These codes may be mapped

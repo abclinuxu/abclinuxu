@@ -78,9 +78,6 @@ public abstract class AbcVelocityServlet extends VelocityServlet {
     public static final String VAR_PERSISTANCE = "PERSISTANCE";
     public static final String VAR_URL_UTILS = "URL";
     public static final String VAR_USER = "USER";
-    public static final String VAR_ERRORS = "ERRORS";
-    public static final String VAR_MESSAGES = "MESSAGES";
-    public static final String VAR_PARAMS = "PARAMS";
     public static final String VAR_HELPER = "UTIL";
     /** used by template */
     public static final String VAR_RUBRIKY = "RUBRIKY";
@@ -162,25 +159,21 @@ public abstract class AbcVelocityServlet extends VelocityServlet {
     protected void init(HttpServletRequest request, HttpServletResponse response, Context context) {
         doLogin(request,response,context);
 
+        Map params = ServletUtils.putParamsToMap(request);
+        request.setAttribute(Constants.VAR_PARAMS,params);
+        context.put(Constants.VAR_PARAMS,params);
+
         HttpSession session = request.getSession();
-        Map params = (Map) session.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
-        if ( params!=null ) {
-            session.removeAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
-        }
-        params = ServletUtils.putParamsToMap(request,params);
-        request.setAttribute(AbcVelocityServlet.ATTRIB_PARAMS,params);
-        context.put(AbcVelocityServlet.VAR_PARAMS,params);
-
-        Map errors = (Map) session.getAttribute(AbcVelocityServlet.VAR_ERRORS);
+        Map errors = (Map) session.getAttribute(Constants.VAR_ERRORS);
         if ( errors!=null ) {
-            context.put(AbcVelocityServlet.VAR_ERRORS,errors);
-            session.removeAttribute(AbcVelocityServlet.VAR_ERRORS);
+            context.put(Constants.VAR_ERRORS,errors);
+            session.removeAttribute(Constants.VAR_ERRORS);
         }
 
-        List messages = (List) session.getAttribute(AbcVelocityServlet.VAR_MESSAGES);
+        List messages = (List) session.getAttribute(Constants.VAR_MESSAGES);
         if ( messages!=null ) {
-            context.put(AbcVelocityServlet.VAR_MESSAGES,messages);
-            session.removeAttribute(AbcVelocityServlet.VAR_MESSAGES);
+            context.put(Constants.VAR_MESSAGES,messages);
+            session.removeAttribute(Constants.VAR_MESSAGES);
         }
 
         return;

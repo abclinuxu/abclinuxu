@@ -7,6 +7,7 @@
 package cz.abclinuxu.servlets.utils;
 
 import cz.abclinuxu.servlets.AbcVelocityServlet;
+import cz.abclinuxu.servlets.Constants;
 
 import javax.servlet.http.*;
 import javax.servlet.ServletException;
@@ -41,7 +42,7 @@ public class DumpRequest extends HttpServlet {
                 HttpSession session = request.getSession();
                 ArrayList messages = new ArrayList(1);
                 messages.add(value);
-                session.setAttribute(AbcVelocityServlet.VAR_MESSAGES,messages);
+                session.setAttribute(Constants.VAR_MESSAGES,messages);
                 continue;
             }
 

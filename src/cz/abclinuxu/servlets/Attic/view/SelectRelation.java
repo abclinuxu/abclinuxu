@@ -158,7 +158,7 @@ public class SelectRelation extends AbcVelocityServlet {
     protected String actionFinish(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         String choice = request.getParameter(SelectRelation.PARAM_CURRENT);
 
-        Map map = ServletUtils.putParamsToMap(request,null);
+        Map map = ServletUtils.putParamsToMap(request);
         map.put(SelectRelation.PARAM_SELECTED,map.get(SelectRelation.PARAM_CURRENT));
         map.remove(SelectRelation.PARAM_CURRENT);
         map.remove(SelectRelation.PARAM_URL);

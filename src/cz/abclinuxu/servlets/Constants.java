@@ -32,7 +32,7 @@ public interface Constants {
     public static final int CAT_SYSTEM = 338;
     public static final int CAT_ARTICLEPOOL = 339;
 
-    /** actual ids of selected relations in database */
+    // actual ids of selected relations in database
     public static final int REL_POLLS = 250;
     public static final int REL_REKLAMA = 308;
     public static final int REL_AUTHORS = 314;
@@ -49,7 +49,7 @@ public interface Constants {
     public static final int REL_SYSTEM = 8000;
     public static final int REL_ARTICLEPOOL = 8082;
 
-    /** types for VelocityHelper.groupByType() */
+    // types for VelocityHelper.groupByType()
     public static final String TYPE_MAKE = "make";
     public static final String TYPE_ARTICLE = "article";
     public static final String TYPE_DISCUSSION = "discussion";
@@ -57,6 +57,26 @@ public interface Constants {
     public static final String TYPE_DRIVER = "driver";
     public static final String TYPE_CATEGORY = "category";
     public static final String TYPE_RECORD = "record";
+
+    // template variables
+
+    /** holds VariableFetcher */
+    public static final String VAR_VARIABLES = "VARS";
+    /** holds category Rubriky */
+    public static final String VAR_RUBRIKY = "RUBRIKY";
+    public static final String VAR_ABCLINUXU = "ABCLINUXU";
+    public static final String VAR_REKLAMA = "REKLAMA";
+    public static final String VAR_LINKS = "ROZCESTNIK";
+    /** holds current user instance */
+    public static final String VAR_USER = "USER";
+    /** holds request's parameters */
+    public static final String VAR_PARAMS = "PARAMS";
+    /** holds url manipulation tool */
+    public static final String VAR_URL_UTILS = "URL";
+    /** holds map of errors for last request */
+    String VAR_ERRORS = "ERRORS";
+    /** holds list of messages for last request */
+    String VAR_MESSAGES = "MESSAGES";
 
     SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     DateFormat defaultFormat = new SimpleDateFormat("d. M. yyyy HH:mm");
