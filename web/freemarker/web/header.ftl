@@ -19,7 +19,6 @@
 	<div class="za">
 		<div class="za_logo">
 			<a href="/" class="bh"><img src="/images/site2/abc-logo.png" width="200" height="80" alt="logo"></a>
-			<#include "/include/pocitani.txt">
 		</div>
 
 		<div class="za_hledat">
@@ -183,7 +182,7 @@
                   <#if USER?exists && USER.isMemberOf(11246)>
                    <li><a href="${URL.make("/hardware/dir/50795")}">TODO (${VARS.counter.TODO?if_exists})</a></li>
                    <li><a href="${URL.make("/hardware/dir/8000")}">Sekce systém</a></li>
-                   <li><a href="/Admin">Administrace portálu</a>
+                   <li><a href="/Admin">Administrace portálu</a></li>
                   </#if>
                  </ul>
 
