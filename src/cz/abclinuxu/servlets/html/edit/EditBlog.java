@@ -644,28 +644,33 @@ public class EditBlog implements AbcAction, Configurable {
             return false;
         }
 
+        String stripped = null, perex = null;
         int position = content.indexOf(BREAK_TAG);
+        if (position==-1)
+            stripped = Tools.removeTags(content);
+        else {
+            perex = content.substring(0, position);
+            content = content.substring(position+BREAK_TAG.length());
+            stripped = Tools.removeTags(perex);
+        }
 
-        if (position==-1) {
-            String stripped = Tools.removeTags(content);
-            StringTokenizer stk = new StringTokenizer(stripped, " \t\n\r\f,.");
-            if (stk.countTokens()>maxStoryWordCount) {
-                ServletUtils.addError(PARAM_CONTENT, "Vá¹ zápis je pøíli¹ dlouhý. Rozdìlte jej pomocí znaèky <break>.", env, null);
-                return false;
-            }
+        StringTokenizer stk = new StringTokenizer(stripped, " \t\n\r\f,.");
+        if (stk.countTokens()>maxStoryWordCount) {
+            ServletUtils.addError(PARAM_CONTENT, "Vá¹ zápis je pøíli¹ dlouhý. Rozdìlte jej pomocí znaèky <break> tak, aby perex mìl ménì ne¾ "+maxStoryWordCount+" slov.", env, null);
+            return false;
         }
 
         // todo zkontroluj validitu HTML, ochrana pred XSS
 
+        Element tagPerex = root.element("perex");
         if (position!=-1) {
-            String perex = content.substring(0, position);
-            content = content.substring(position+BREAK_TAG.length());
-
-            Element tagPerex = root.element("perex");
             if (tagPerex==null)
                 tagPerex = root.addElement("perex");
             tagPerex.setText(perex);
             tagPerex.addAttribute("format", Integer.toString(Format.HTML.getId()));
+        } else {
+            if (tagPerex!=null)
+                tagPerex.detach();
         }
 
         Element tagContent = root.element("content");
