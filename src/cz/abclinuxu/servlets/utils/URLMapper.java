@@ -135,7 +135,7 @@ public final class URLMapper implements Configurable {
 
         try {
             Document document = new SAXReader().read(filename);
-            List nodes = document.selectNodes("//valid/mapping");
+            List nodes = document.selectNodes("//format/mapping");
             for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
                 element = (Element) iter.next();
                 pattern = element.elementText("pattern");

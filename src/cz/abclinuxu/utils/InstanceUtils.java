@@ -10,8 +10,8 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.AbcException;
-import cz.abclinuxu.servlets.view.ViewUser;
-import cz.abclinuxu.servlets.view.ShowObject;
+import cz.abclinuxu.servlets.html.view.ViewUser;
+import cz.abclinuxu.servlets.html.view.ShowObject;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 
 import javax.servlet.http.HttpServletRequest;

@@ -6,7 +6,7 @@
 package cz.abclinuxu.utils;
 
 import cz.abclinuxu.data.Record;
-import cz.abclinuxu.servlets.edit.EditArticle;
+import cz.abclinuxu.servlets.html.edit.EditArticle;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

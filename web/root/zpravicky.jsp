@@ -5,7 +5,7 @@
                  cz.abclinuxu.persistance.extra.LimitQualifier,
                  java.util.List,
                  cz.abclinuxu.persistance.SQLTool,
-                 cz.abclinuxu.servlets.view.Search,
+                 cz.abclinuxu.servlets.html.view.Search,
                  cz.abclinuxu.servlets.Constants"%>
 <%@ page
   extends="cz.abclinuxu.servlets.AbcFMServlet"
