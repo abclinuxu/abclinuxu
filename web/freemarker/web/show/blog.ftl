@@ -3,7 +3,9 @@
 <#assign owner=TOOL.createUser(BLOG.owner)>
 
 <#assign plovouci_sloupec>
-    <#if title!="UNDEF"><h3 style="text-align: center">${title}</h3></#if>
+    <#if title!="UNDEF">
+        <h1 class="st_nadpis" style="text-align: center"><a href="/blog/${BLOG.subType}">${title}</a></h1>
+    </#if>
     <#if intro!="UNDEF">${intro}</#if>
     <br>Autorem blogu je <a href="/Profile/${owner.id}">${owner.name}</a>
 
@@ -23,21 +25,21 @@
             </ul>
         </#if>
     <#else>
-        Pro práci s blogem se musíte <a href="${URL.noPrefix("/Profile?action=login&amp;url="+REQUEST_URI)}">pøihlásit</a>.
+        <a href="${URL.noPrefix("/Profile?action=login&amp;url="+REQUEST_URI)}">Pøihlásit se</a>
     </#if>
 </#assign>
 
 <#include "../header.ftl">
 
-<#assign CHILDREN=TOOL.groupByType(STORY.child.children),
-  url = TOOL.getUrlForBlogStory(BLOG.subType, STORY.child.created, STORY.id),
-  category = TOOL.xpath(STORY.child,"/data/category")?default("UNDEF")>
+<#assign CHILDREN=TOOL.groupByType(STORY.child.children), category = STORY.subType?default("UNDEF")
+  url = TOOL.getUrlForBlogStory(BLOG.subType, STORY.child.created, STORY.id)>
+<#if category!="UNDEF"><#assign category=TOOL.xpath(blog, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
 
 <h2>${TOOL.xpath(STORY.child, "/data/name")}</h2>
-<p class="cl_inforadek">${DATE.show(STORY.child.created, "CZ_SHORT")} |
-    Pøeèteno: ${TOOL.getCounterValue(STORY.child)}x |
-    <#if category!="UNDEF">${CATEGORIES[category]} |</#if>
-    <a href="${url}">Link</a>
+<p class="cl_inforadek">
+    ${DATE.show(STORY.child.created, "CZ_SHORT")} |
+    Pøeèteno: ${TOOL.getCounterValue(STORY.child)}x
+    <#if category!="UNDEF">| ${category}</#if>
 </p>
 ${TOOL.xpath(STORY.child, "/data/content")}
 <p><b>Nástroje</b>: <a href="${url}?varianta=print">Tisk</a></p>
