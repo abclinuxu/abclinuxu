@@ -247,7 +247,7 @@ public class EditDiscussion extends AbcVelocityServlet {
         Relation rel = new Relation(discussion,reaction,0);
         persistance.create(rel);
 
-        UrlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId());
+        UrlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId(), ctx);
         return null;
     }
 
@@ -306,7 +306,7 @@ public class EditDiscussion extends AbcVelocityServlet {
         Relation rel2 = new Relation(relation.getChild(),discussion,relation.getId());
         persistance.create(rel2);
 
-        UrlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId());
+        UrlUtils.redirect(response, "/ViewRelation?relationId="+relation.getId(), ctx);
         return null;
     }
 }

@@ -3,6 +3,7 @@
   <property name="src" value="src" />
   <property name="data" value="../data" />
   <property name="build" value="../deploy" />
+  <property name="build-firma" value="../firma" />
 
   <path id="project.classpath">
     <fileset dir="libs">
@@ -20,6 +21,7 @@
     <mkdir dir="${build}/WEB-INF/velocity" />
     <mkdir dir="${build}/WEB-INF/logs" />
     <mkdir dir="${build}/auto" />
+    <mkdir dir="${build-firma}" />
     <tstamp />
 
   </target>
@@ -40,7 +42,7 @@
   </target>
 
 
-  <target name="deploy" depends="build">
+  <target name="deploy-abc" depends="build">
 
     <copy todir="${build}/WEB-INF">
       <fileset dir="conf">
@@ -73,9 +75,33 @@
       <fileset dir="libs" includes="*.jar">
         <exclude name="servlet.jar" />
         <exclude name="crimson.jar" />
+        <exclude name="velocity-dep-1.3.1-rc2.jar" />
       </fileset>
     </copy>
 
   </target>
+
+  <target name="deploy-firma" depends="build">
+
+    <copy todir="${build-firma}">
+      <fileset dir="web/firma" />
+    </copy>
+
+    <copy todir="${build-firma}/WEB-INF/classes">
+      <fileset dir="${build}/WEB-INF/classes/">
+       <include name="cz/abclinuxu/servlets/utils/DumpVelocityServlet.class" />
+      </fileset>
+    </copy>
+
+    <copy todir="${build-firma}/WEB-INF/lib">
+      <fileset dir="libs">
+        <include name="velocity-dep-1.3.1-rc2.jar" />
+        <include name="log4j.jar" />
+      </fileset>
+    </copy>
+
+  </target>
+
+  <target name="deploy" depends="deploy-firma,deploy-abc" />
 
 </project>
