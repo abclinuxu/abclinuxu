@@ -43,6 +43,8 @@ public class HTMLVersion {
             String server = request.getServerName();
             if ( server.startsWith("print") )
                 request.setAttribute(TemplateSelector.PARAM_VARIANTA, "print");
+            else if ( server.startsWith("new") )
+                request.setAttribute(TemplateSelector.PARAM_VARIANTA, "new");
 
             String templateName = action.process(request, response, env);
             if ( Misc.empty(templateName) )
