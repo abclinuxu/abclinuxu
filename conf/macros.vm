@@ -61,8 +61,7 @@
 <td>
 ##
 #if($USER.Id==1)
-<a href="$!URL.make("/EditPoll?relationId=$RELATION.Id&pollId=$poll.Id&action=edit")">
-<img src="/images/actions/pencil.png" alt="" border=0></a>
+<a href="$!URL.make("/EditPoll?relationId=$RELATION.Id&pollId=$poll.Id&action=edit")"><IMG SRC="/images/actions/pencil.png" BORDER="0" WIDTH="22" HEIGHT="22" ALT="Uprav"></a>
 #end
 ##
 </td></tr>
@@ -108,8 +107,7 @@ $choice.Text</td>
 <td>
 ##
 #if($USER.Id==1)
-<a href="$!URL.make("/EditPoll?relationId=$RELATION.Id&pollId=$poll.Id&action=edit")">
-<img src="/images/actions/pencil.png" alt="" border=0></a>
+<a href="$!URL.make("/EditPoll?relationId=$RELATION.Id&pollId=$poll.Id&action=edit")"><IMG SRC="/images/actions/pencil.png" BORDER="0" WIDTH="22" HEIGHT="22" ALT="Uprav"></a>
 #end
 ##
 </td></tr>
