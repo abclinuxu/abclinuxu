@@ -36,7 +36,7 @@ public class Cache implements Task {
     public Cache() {
         data = new HashMap(100);
         modCount = 0;
-        Scheduler.getScheduler().addTask(this,3*60*1000,System.currentTimeMillis()+3*60*1000);
+//        Scheduler.getScheduler().addTask(this,3*60*1000,System.currentTimeMillis()+3*60*1000);
     }
 
     /**
@@ -176,9 +176,8 @@ public class Cache implements Task {
                     iter.remove();
                 }
             }
-            // if expectedModCount!=modCount, we will postpone work for next task
-        } catch (ConcurrentModificationException e) {
-            log.warn("Bad timing in CacheSynchronizationDaemon!");
+        } catch (Exception e) {
+            log.warn("Cache synchronization threw an exception!",e);
         }
     }
 
