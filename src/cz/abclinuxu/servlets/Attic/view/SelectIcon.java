@@ -87,9 +87,14 @@ public class SelectIcon extends AbcServlet {
 
         String dir = request.getParameter(SelectIcon.PARAM_DIR);
         if ( dir==null || dir.length()==0 ) dir = (String) dirs.get(0);
+        File file = new File(ikony,dir);
+        if ( !file.exists() ) {
+            dir = (String) dirs.get(0);
+            file = new File(ikony,dir);
+        }
         ctx.put(SelectIcon.VAR_DIR,dir);
 
-        iconsContent = new File(ikony,dir).listFiles();
+        iconsContent = file.listFiles();
         List icons = new ArrayList(12);
         for ( int i=0; i<iconsContent.length; i++ ) {
             if ( iconsContent[i].isFile() ) {
