@@ -63,7 +63,7 @@
       <fileset dir="web/freemarker" />
     </copy>
 
-    <copy todir="${deploy}/WEB-INF/include">
+    <copy todir="${deploy}/WEB-INF/freemarker/include">
       <fileset dir="web/include" />
     </copy>
 

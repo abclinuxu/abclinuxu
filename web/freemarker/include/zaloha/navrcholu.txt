@@ -1,0 +1,13 @@
+<!-- NAVRCHOLU.cz -->
+<script language="JavaScript" type="text/javascript">
+<!--
+pxDepth = screen.pixelDepth;
+if (!(pxDepth > 0)) pxDepth = screen.colorDepth;
+if (!(pxDepth > 0)) pxDepth = 0;
+document.write("<img src=\"http://hit.navrcholu.cz/hit?id=5487;n=1;screenx=" + screen.width + ";screeny=" + screen.height + ";cdepth=" + pxDepth + ";ref=" + escape(top.document.referrer) + "\" width=\"1\" height=\"1\" alt=\"\">");
+// -->
+</script>
+<noscript>
+<img src="http://hit.navrcholu.cz/hit?id=5487;n=1" width="1" height="1" alt="" border="0">
+</noscript>
+<!-- NAVRCHOLU.cz - konec -->
