@@ -17,8 +17,8 @@ od Jirky Koska.
  <div style="padding-left: 30pt">
     <h2>${TOOL.xpath(PREVIEW, "/data/name")}</h2>
     <p class="cl_inforadek">${DATE.show(PREVIEW.created, "CZ_SHORT")} |
-        Pøeèteno: ${TOOL.getCounterValue(STORY.child)}x
-        <#if PARAMS.cid?exists>| ${CATEGORIES[PARAMS.cid]?if_exists}</#if>
+        Pøeèteno: ${TOOL.getCounterValue(PREVIEW.child)}x
+        <#if PREVIEW.subType?exists>| ${CATEGORIES[PREVIEW.subType]?if_exists}</#if>
     </p>
     ${TOOL.xpath(PREVIEW, "/data/content")}
  </div>

@@ -20,6 +20,7 @@
             <ul>
                 <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=add")}">Vlo¾ nový zápis</a></li>
                 <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=edit")}">Uprav zápis</a></li>
+                <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=remove")}">Sma¾ zápis</a></li>
                 <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=custom")}">Uprav vzhled</a></li>
                 <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}">Pøejmenovat blog</a></li>
             </ul>
@@ -31,9 +32,9 @@
 
 <#include "../header.ftl">
 
-<#assign CHILDREN=TOOL.groupByType(STORY.child.children), category = STORY.subType?default("UNDEF")
-  url = TOOL.getUrlForBlogStory(BLOG.subType, STORY.child.created, STORY.id)>
-<#if category!="UNDEF"><#assign category=TOOL.xpath(blog, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
+<#assign CHILDREN=TOOL.groupByType(STORY.child.children), category = STORY.child.subType?default("UNDEF")>
+<#assign url = TOOL.getUrlForBlogStory(BLOG.subType, STORY.child.created, STORY.id)>
+<#if category!="UNDEF"><#assign category=TOOL.xpath(BLOG, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
 
 <h2>${TOOL.xpath(STORY.child, "/data/name")}</h2>
 <p class="cl_inforadek">

@@ -8,9 +8,7 @@ package cz.abclinuxu.servlets.html.view;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.data.Category;
-import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.*;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
@@ -102,9 +100,9 @@ public class ViewBlog implements AbcAction, Configurable {
             env.put(VAR_BLOG, blog);
 
             if (rid!=0)
-                return processBlog(blogRelation, rid, request, response, env);
+                return processStory(blogRelation, rid, request, response, env);
             else
-                return processBlogs(blogRelation, year, month, day, request, response, env);
+                return processStories(blogRelation, year, month, day, request, response, env);
         } else
             return processBlogSpace(request, response, year, month, day, env);
     }
@@ -112,12 +110,16 @@ public class ViewBlog implements AbcAction, Configurable {
     /**
      * Displays one blogRelation content. Its stories may be limited to given year, month or day.
      */
-    protected String processBlog(Relation blogRelation, int rid, HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    protected String processStory(Relation blogRelation, int rid, HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) persistance.findById(new Relation(rid));
         Tools.sync(relation);
-        persistance.incrementCounter(relation.getChild());
+        Item story = (Item) relation.getChild();
         env.put(VAR_STORY, relation);
+
+        User user = (User) env.get(Constants.VAR_USER);
+        if (user==null || user.getId()!=story.getOwner())
+            persistance.incrementCounter(story);
 
         return FMTemplateSelector.select("ViewBlog", "blog", env, request);
     }
@@ -125,10 +127,12 @@ public class ViewBlog implements AbcAction, Configurable {
     /**
      * Displays one blogRelation content. Its stories may be limited to given year, month or day.
      */
-    protected String processBlogs(Relation blogRelation, int year, int month, int day, HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    protected String processStories(Relation blogRelation, int year, int month, int day, HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        SQLTool sqlTool = SQLTool.getInstance();
+        Persistance persistance = PersistanceFactory.getPersistance();
+
         Category blog = (Category) blogRelation.getChild();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
         Element element = (Element) blog.getData().selectSingleNode("//settings/page_size");
         int count = Misc.parseInt((element!=null)? element.getText():null, defaultPageSize);
 
@@ -137,18 +141,27 @@ public class ViewBlog implements AbcAction, Configurable {
         addTimeLimitsFQ(year, month, day, qualifiers);
 
         Qualifier[] qa = new Qualifier[qualifiers.size()];
-        int total = SQLTool.getInstance().countItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+        int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
+        int total = sqlTool.countItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
 
         qualifiers.add(Qualifier.SORT_BY_CREATED);
         qualifiers.add(Qualifier.ORDER_DESCENDING);
         qualifiers.add(new LimitQualifier(from, count));
 
         qa = new Qualifier[qualifiers.size()];
-        List stories = SQLTool.getInstance().findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+        List stories = sqlTool.findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
         Tools.syncList(stories);
 
         Paging paging = new Paging(stories, from, count, total);
         env.put(VAR_STORIES, paging);
+
+        User user = (User) env.get(Constants.VAR_USER);
+        if (user==null || user.getId()!=blog.getOwner()) {
+            for (Iterator iter = stories.iterator(); iter.hasNext();) {
+                Relation relation = (Relation) iter.next();
+                persistance.incrementCounter(relation.getChild());
+            }
+        }
 
         return FMTemplateSelector.select("ViewBlog", "blogs", env, request);
     }
@@ -159,21 +172,22 @@ public class ViewBlog implements AbcAction, Configurable {
      */
     protected String processBlogSpace(HttpServletRequest request, HttpServletResponse response, int year, int month, int day, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
+        SQLTool sqlTool = SQLTool.getInstance();
+        Persistance persistance = PersistanceFactory.getPersistance();
 
         List qualifiers = new ArrayList();
         addTimeLimitsFQ(year, month, day, qualifiers);
 
         Qualifier[] qa = new Qualifier[qualifiers.size()];
-        int total = SQLTool.getInstance().countItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+        int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
+        int total = sqlTool.countItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
 
         qualifiers.add(Qualifier.SORT_BY_CREATED);
         qualifiers.add(Qualifier.ORDER_DESCENDING);
         qualifiers.add(new LimitQualifier(from, defaultPageSize));
 
         qa = new Qualifier[qualifiers.size()];
-        List stories = SQLTool.getInstance().findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
-        Persistance persistance = PersistanceFactory.getPersistance();
+        List stories = sqlTool.findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
         for (Iterator iter = stories.iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
             if (!relation.getChild().isInitialized())
@@ -184,6 +198,14 @@ public class ViewBlog implements AbcAction, Configurable {
 
         Paging paging = new Paging(stories, from, defaultPageSize, total);
         env.put(VAR_STORIES, paging);
+
+        User user = (User) env.get(Constants.VAR_USER);
+        for (Iterator iter = stories.iterator(); iter.hasNext();) {
+            Relation relation = (Relation) iter.next();
+            Item story = (Item) relation.getChild();
+            if (user==null || user.getId()!=story.getOwner())
+                persistance.incrementCounter(story);
+        }
 
         return FMTemplateSelector.select("ViewBlog", "blogspace", env, request);
     }

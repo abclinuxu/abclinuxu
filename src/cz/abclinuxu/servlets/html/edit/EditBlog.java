@@ -118,13 +118,15 @@ public class EditBlog implements AbcAction, Configurable {
         Tools.sync(relation);
 
         Category blog = null;
+        Relation blogRelation = null;
         if (relation.getChild() instanceof Category) {
             blog = (Category) relation.getChild();
         } else if (relation.getChild() instanceof Item) {
             blog = (Category) relation.getParent();
             Tools.sync(blog);
-            env.put(VAR_STORY, relation);
-            relation = (Relation) persistance.findById(new Relation(relation.getUpper()));
+            blogRelation = relation;
+            env.put(VAR_STORY, blogRelation);
+            relation = (Relation) persistance.findById(new Relation(blogRelation.getUpper()));
         }
         env.put(VAR_BLOG, blog);
         env.put(VAR_BLOG_RELATION, relation);
@@ -147,6 +149,12 @@ public class EditBlog implements AbcAction, Configurable {
 
         if ( ACTION_EDIT_STORY_STEP2.equals(action) )
             return actionEditStoryStep2(request, response, blog, env);
+
+        if ( ACTION_REMOVE_STORY.equals(action) )
+            return actionRemoveStoryStep1(request, blogRelation, env);
+
+        if ( ACTION_REMOVE_STORY_STEP2.equals(action) )
+            return actionRemoveStoryStep2(request, response, blogRelation, blog, env);
 
         if ( ACTION_CUSTOMIZATION.equals(action) )
             return actionEditCustomStep1(request, blog, env);
@@ -323,6 +331,25 @@ public class EditBlog implements AbcAction, Configurable {
 
         Persistance persistance = PersistanceFactory.getPersistance();
         persistance.update(blog);
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/blog/"+blog.getSubType()+"/");
+        return null;
+    }
+
+    /**
+     * First step of renaming blog.
+     */
+    protected String actionRemoveStoryStep1(HttpServletRequest request, Relation story, Map env) throws Exception {
+        return FMTemplateSelector.select("EditBlog", "remove", env, request);
+    }
+
+    /**
+     * Final step of renaming blog.
+     */
+    protected String actionRemoveStoryStep2(HttpServletRequest request, HttpServletResponse response, Relation story, Category blog, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        persistance.remove(story);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/blog/"+blog.getSubType()+"/");
