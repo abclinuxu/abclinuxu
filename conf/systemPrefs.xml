@@ -65,7 +65,7 @@
               </node>
               <node name="Tools">
                   <map>
-                      <entry key="RE_REMOVE_TAGS" value="&lt;(/)?[a-zA-Z].*&gt;"/>
+                      <entry key="RE_REMOVE_TAGS" value="&lt;(/)?[a-zA-Z][^&gt;]*&gt;"/>
                   </map>
               </node>
           </node>
