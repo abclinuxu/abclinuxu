@@ -23,6 +23,7 @@ import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.GenericObject;
+import cz.abclinuxu.data.AccessRights;
 
 /**
  * Class to hold useful methods related to servlets
@@ -171,9 +172,12 @@ public class ServletUtils {
         env.put(Constants.VAR_USER,user);
 
         // todo: remove it, when new security model is finished
-        for (Iterator iter = user.getContent().iterator(); iter.hasNext();) {
+        for ( Iterator iter = user.getContent().iterator(); iter.hasNext(); ) {
             GenericObject obj = ((Relation) iter.next()).getChild();
-            persistance.synchronize(obj);
+            if ( obj instanceof AccessRights ) {
+                persistance.synchronize(obj);
+                user.setAdmin(((AccessRights)obj).isAdmin());
+            }
         }
     }
 

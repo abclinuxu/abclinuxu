@@ -4,7 +4,6 @@
 package cz.abclinuxu.data;
 
 import org.dom4j.Document;
-import cz.abclinuxu.AbcException;
 
 import java.util.Iterator;
 
@@ -13,8 +12,6 @@ import java.util.Iterator;
  * todo data/roles -> holds security roles, that user has.
  */
 public class User extends GenericObject implements XMLContainer {
-    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(User.class);
-
     /** login name of the user */
     private String login;
     /** real name of the user */
@@ -23,8 +20,10 @@ public class User extends GenericObject implements XMLContainer {
     private String email;
     /** (noncrypted) password */
     private String password;
+    /** whether he is admin or not */
+    private boolean admin = false;
     /** XML with data or this object */
-    protected XMLHandler documentHandler;
+    private XMLHandler documentHandler;
 
 
     public User() {
@@ -133,13 +132,14 @@ public class User extends GenericObject implements XMLContainer {
      * @return True, if user is an administrator
      */
     public boolean isAdmin() {
-        for (Iterator iter = getContent().iterator(); iter.hasNext();) {
-            GenericObject obj = (GenericObject) ((Relation) iter.next()).getChild();
-            if ( obj instanceof AccessRights ) {
-                return ((AccessRights)obj).isAdmin();
-            }
-        }
-        return false;
+        return admin;
+    }
+
+    /**
+     * Sets flag, whether user is admin.
+     */
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 
     /**
