@@ -6,13 +6,13 @@ package cz.abclinuxu.data;
 /**
  * initial question in the discussion
  */
-public class Question extends Item {
+public class DiscussionQuestion extends Record {
 
-    public Question() {
+    public DiscussionQuestion() {
         super();
     }
 
-    public Question(int id) {
+    public DiscussionQuestion(int id) {
         super(id);
     }
 }

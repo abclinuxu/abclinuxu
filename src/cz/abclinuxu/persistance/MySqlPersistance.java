@@ -27,13 +27,15 @@ import org.apache.log4j.xml.DOMConfigurator;
  * <tr><td>HardwareRecord</td><td>1</td></tr>
  * <tr><td>SoftwareRecord</td><td>2</td></tr>
  * <tr><td>ArticleRecord</td><td>3</td></tr>
+ * <tr><td>DiscussionQuestion</td><td>4</td></tr>
+ * <tr><td>DiscussionItem</td><td>5</td></tr>
  * </table>
  * <p>Descendants of Item:<br>
  * <table border="1">
  * <tr><th>class</th><th>typ</th></tr>
  * <tr><td>Make</td><td>1</td></tr>
  * <tr><td>Article</td><td>2</td></tr>
- * <tr><td>Question</td><td>3</td></tr>
+ * <tr><td>Discussion</td><td>3</td></tr>
  * <tr><td>Request</td><td>4</td></tr>
  * </table>
  * <p>Descendants of Poll:<br>
@@ -489,7 +491,7 @@ public class MySqlPersistance implements Persistance {
     /**
      * @return first descendant of GenericObject. E.g. for Category,
      * Data, User, Link, Item, Record and Poll it returns associated class.
-     * But for HardwareRecord, SoftwareRecord, Make, Question, Rating etc.
+     * But for HardwareRecord, SoftwareRecord, Make, DiscussionQuestion, Rating etc.
      * it returns its superclass.
      */
     private Class getClass(GenericObject obj) throws PersistanceException {
@@ -509,6 +511,30 @@ public class MySqlPersistance implements Persistance {
             return User.class;
         }
         throw new PersistanceException("Nepodporovany typ tridy!",AbcException.DB_UNKNOWN_CLASS,obj,null);
+    }
+
+    /**
+     * @return valid typ value for Poll's, Item's or Record's subclass, exception otherwise
+     */
+    private static int getSubType(GenericObject obj) throws PersistanceException {
+        if ( obj instanceof HardwareRecord ) return 1;
+        else if ( obj instanceof SoftwareRecord ) return 2;
+        else if ( obj instanceof ArticleRecord ) return 3;
+        else if ( obj instanceof DiscussionQuestion ) return 4;
+        else if ( obj instanceof DiscussionItem ) return 5;
+        else if ( obj instanceof Record ) return 0;
+
+        if ( obj instanceof Make ) return 1;
+        else if ( obj instanceof Article ) return 2;
+        else if ( obj instanceof Discussion ) return 3;
+        else if ( obj instanceof Request ) return 4;
+        else if ( obj instanceof Item ) return 0;
+
+        if ( obj instanceof Survey ) return 1;
+        else if ( obj instanceof Rating ) return 2;
+        else if ( obj instanceof Poll ) return 0;
+
+        throw new PersistanceException("Nepodporovana trida!",AbcException.DB_UNKNOWN_CLASS,obj,null);
     }
 
     /**
@@ -551,16 +577,12 @@ public class MySqlPersistance implements Persistance {
      * to <code>conditions</code> for each asterisk in perpared statement.
      */
     private void appendCreateParams(GenericObject obj, StringBuffer sb, List conditions ) throws PersistanceException {
+        int type = 0;
         if (obj instanceof Item) {
             sb.append("insert into polozka values(0,?,?,?,NULL)");
-            if ( obj instanceof Make ) {
-                conditions.add(new Integer(1));
-            } else if ( obj instanceof Article ) {
-                conditions.add(new Integer(2));
-            } else if ( obj instanceof Question ) {
-                conditions.add(new Integer(3));
-            } else if ( obj instanceof Request ) {
-                conditions.add(new Integer(4));
+            type = getSubType(obj);
+            if ( type!=0 ) {
+                conditions.add(new Integer(type));
             } else {
                 throw new PersistanceException("Neznamy typ polozky "+ obj.toString()+"!",AbcException.DB_UNKNOWN_CLASS,obj,null);
             }
@@ -569,12 +591,9 @@ public class MySqlPersistance implements Persistance {
 
         } else if (obj instanceof Record) {
             sb.append("insert into zaznam values(0,?,?,?,NULL)");
-            if ( obj instanceof HardwareRecord ) {
-                conditions.add(new Integer(1));
-            } else if ( obj instanceof SoftwareRecord ) {
-                conditions.add(new Integer(2));
-            } else if ( obj instanceof ArticleRecord ) {
-                conditions.add(new Integer(3));
+            type = getSubType(obj);
+            if ( type!=0 ) {
+                conditions.add(new Integer(type));
             } else {
                 throw new PersistanceException("Neznamy typ zaznamu "+ obj.toString()+"!",AbcException.DB_UNKNOWN_CLASS,obj,null);
             }
@@ -614,7 +633,7 @@ public class MySqlPersistance implements Persistance {
      * append SQL statements to <code>sb</code> and objects to <code>conditions</code>
      * as PreparedStatement requires.
      */
-    private void appendFindParams(GenericObject obj, StringBuffer sb, List conditions ) {
+    private void appendFindParams(GenericObject obj, StringBuffer sb, List conditions ) throws PersistanceException {
         boolean addAnd = false;
         int type = 0;
 
@@ -625,9 +644,7 @@ public class MySqlPersistance implements Persistance {
                 conditions.add(new Integer(((Record)obj).getOwner()));
             }
 
-            if ( obj instanceof HardwareRecord ) type = 1;
-            else if ( obj instanceof SoftwareRecord ) type = 2;
-            else if ( obj instanceof ArticleRecord ) type = 3;
+            type = getSubType(obj);
             if ( type!=0 ) {
                 if ( addAnd ) sb.append(" and ");
                 addAnd = true;
@@ -649,10 +666,7 @@ public class MySqlPersistance implements Persistance {
                 conditions.add(new Integer(((Item)obj).getOwner()));
             }
 
-            if ( obj instanceof Make ) type = 1;
-            else if ( obj instanceof Article ) type = 2;
-            else if ( obj instanceof Question ) type = 3;
-            else if ( obj instanceof Request ) type = 4;
+            type = getSubType(obj);
             if ( type!=0 ) {
                 if ( addAnd ) sb.append(" and ");
                 addAnd = true;
@@ -729,8 +743,7 @@ public class MySqlPersistance implements Persistance {
             return;
 
         } else if (obj instanceof Poll) {
-            if ( obj instanceof Survey ) type = 1;
-            else if ( obj instanceof Rating ) type = 2;
+            type = getSubType(obj);
             if ( type!=0 ) {
                 addAnd = true;
                 sb.append("typ=?");
@@ -902,7 +915,7 @@ public class MySqlPersistance implements Persistance {
             switch ( resultSet.getInt(2) ) {
                 case 1: item = new Make(obj.getId());break;
                 case 2: item = new Article(obj.getId());break;
-                case 3: item = new Question(obj.getId());break;
+                case 3: item = new Discussion(obj.getId());break;
                 case 4: item = new Request(obj.getId());break;
                 default: throw new PersistanceException("Nalezena polozka "+obj.getId()+" neznameho typu "+resultSet.getInt(2)+"!",AbcException.DB_UNKNOWN_CLASS,obj,null);
             }
@@ -938,6 +951,8 @@ public class MySqlPersistance implements Persistance {
                 case 1: record = new HardwareRecord(obj.getId());break;
                 case 2: record = new SoftwareRecord(obj.getId());break;
                 case 3: record = new ArticleRecord(obj.getId());break;
+                case 4: record = new DiscussionQuestion(obj.getId());break;
+                case 5: record = new DiscussionItem(obj.getId());break;
                 default: throw new PersistanceException("Nalezen zaznam "+obj.getId()+" neznameho typu "+resultSet.getInt(2)+"!",AbcException.DB_UNKNOWN_CLASS,obj,null);
             }
             record.setData(new String(resultSet.getBytes(3)));
