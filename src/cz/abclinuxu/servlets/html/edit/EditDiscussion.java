@@ -794,36 +794,6 @@ public class EditDiscussion implements AbcAction {
         return null;
     }
 
-    /**
-     * Adds vote to rating of this object.
-     */
-    protected String actionRateComment(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        Relation relation = (Relation) env.get(VAR_RELATION);
-        Item discussion = (Item) persistance.findById(relation.getChild());
-
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        int threadId = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
-        if ( threadId==0 )
-            throw new MissingArgumentException("Chybí parametr threadId!");
-
-        Record record = (Record) ((Relation) discussion.getChildren().get(0)).getChild();
-        Tools.sync(record);
-        Document data = record.getData();
-
-        synchronized (data.getRootElement()) {
-            Element thread = (Element) data.selectSingleNode("//comment[@id='"+threadId+"']");
-            String key = EditRating.generateKey(relation.getId(), threadId);
-            boolean result = EditRating.rate(thread, key, params, env, request.getSession());
-            if (result)
-                persistance.update(record);
-        }
-
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/show/"+relation.getId());
-        return null;
-    }
-
     protected String actionToNewDiscussion1(HttpServletRequest request, Map env) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
