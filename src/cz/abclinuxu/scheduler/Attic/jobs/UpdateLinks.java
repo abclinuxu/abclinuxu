@@ -23,8 +23,7 @@ import org.apache.log4j.xml.DOMConfigurator;
  * freshest links from selected servers and updating
  * local copies.
  */
-//public class UpdateLinks implements Task {
-public class UpdateLinks {
+public class UpdateLinks implements Task {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(UpdateLinks.class);
 
     /** how many links we have per server */

@@ -24,8 +24,8 @@
 	  <priority value="info" />
 	</category>
 
-	<category name="cz.abclinuxu.utils.Email">
-	  <priority value="info" />
+	<category name="cz.abclinuxu.scheduler">
+	  <priority value="debug" />
 	</category>
 
 	<root>

@@ -35,7 +35,7 @@ public class PersistanceFactory {
      * and is described by <code>url</code>. If <code>url</code> is null,
      * <code>defaultUrl</code> is used.
      */
-    public static Persistance getPersistance(String url) {
+    public static synchronized Persistance getPersistance(String url) { // verify load impact
         if ( url==null ) url = defaultUrl;
         Persistance persistance = (Persistance) instances.get(url);
         if ( persistance==null ) {

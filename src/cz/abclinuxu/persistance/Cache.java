@@ -11,6 +11,7 @@ import java.util.*;
 
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.scheduler.Task;
+import cz.abclinuxu.scheduler.Scheduler;
 
 /**
  * Cache of GenericObjects. Only selected classes are cached.
@@ -35,6 +36,7 @@ public class Cache implements Task {
     public Cache() {
         data = new HashMap(100);
         modCount = 0;
+        Scheduler.getScheduler().addTask(this,3*60*1000,System.currentTimeMillis()+3*60*1000);
     }
 
     /**
