@@ -55,7 +55,7 @@ CREATE TABLE zaznam (
  vytvoreno DATETIME,       -- cas vytvoreni
  zmeneno TIMESTAMP NOT NULL             -- cas posledni zmeny
 );
-ALTER TABLE zaznam ADD INDEX in_zmeneno (z);
+ALTER TABLE zaznam ADD INDEX in_zmeneno (zmeneno);
 ALTER TABLE zaznam ADD INDEX in_typ (typ);
 
 
