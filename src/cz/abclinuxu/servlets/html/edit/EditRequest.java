@@ -19,10 +19,12 @@ import cz.abclinuxu.exceptions.MissingArgumentException;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.HashMap;
 
 public class EditRequest implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditRequest.class);
@@ -37,6 +39,7 @@ public class EditRequest implements AbcAction {
     public static final String ACTION_ADD = "add";
     public static final String ACTION_DELETE = "delete";
     public static final String ACTION_DELIVER = "deliver";
+    public static final String ACTION_MOVE_TO_TODO = "todo";
 
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -63,6 +66,9 @@ public class EditRequest implements AbcAction {
         if ( action.equals(ACTION_DELIVER) )
             return actionDeliver(request, response, env);
 
+        if ( action.equals(ACTION_MOVE_TO_TODO) )
+            return actionMoveToTODO(request, response, env);
+
         throw new MissingArgumentException("Chybí parametr action!");
     }
 
@@ -83,13 +89,13 @@ public class EditRequest implements AbcAction {
         if ( email==null || email.length()==0 ) {
             ServletUtils.addError(PARAM_EMAIL,"Nevím, kam poslat vyrozumìní.",env,null);
             error = true;
-        } else if ( email.length()<6 || email.indexOf('@')==-1 ) {
+        } else if ( email.length()<6 || email.indexOf('@')==-1 || email.indexOf('.')==-1 ) {
             ServletUtils.addError(PARAM_EMAIL,"Neplatný email!.",env,null);
             error = true;
         }
 
         if ( text==null || text.length()==0 ) {
-            ServletUtils.addError(PARAM_TEXT,"Co potøebujete?",env,null);
+            ServletUtils.addError(PARAM_TEXT,"Napi¹te, co potøebujete?",env,null);
             error = true;
         }
 
@@ -144,11 +150,15 @@ public class EditRequest implements AbcAction {
         persistance.remove(relation);
         relation.getParent().removeChildRelation(relation);
 
-        String requestor = req.getData().selectSingleNode("data/email").getText();
+        Map emailParams = new HashMap();
+        emailParams.put(EmailSender.KEY_TO,req.getData().selectSingleNode("data/email").getText());
+        emailParams.put(EmailSender.KEY_FROM,user.getEmail());
+        emailParams.put(EmailSender.KEY_CC,user.getEmail());
         String text = "Hotovo.\n"+user.getName()+"\n\n\nVas pozadavek\n\n";
         text = text.concat(req.getData().selectSingleNode("data/text").getText());
-
-        boolean sent = EmailSender.sendEmail(user.getEmail(), requestor, "Vas pozadavek na AbcLinuxu byl vyrizen", text);
+        emailParams.put(EmailSender.KEY_BODY, text);
+        emailParams.put(EmailSender.KEY_SUBJECT, "Pozadavek byl vyrizen");
+        boolean sent = EmailSender.sendEmail(emailParams);
         if ( !sent )
             ServletUtils.addError(Constants.ERROR_GENERIC, "Nemohu odeslat email!", env, request.getSession());
 
@@ -156,6 +166,70 @@ public class EditRequest implements AbcAction {
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/show/"+Constants.REL_REQUESTS);
+        return null;
+    }
+
+    private String actionMoveToTODO(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        User user = (User) env.get(Constants.VAR_USER);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        Relation relation = (Relation) env.get(VAR_REQUEST_RELATION);
+        persistance.synchronize(relation);
+        Item req = (Item) relation.getChild();
+        persistance.synchronize(req);
+        persistance.remove(relation);
+        relation.getParent().removeChildRelation(relation);
+
+        Item diz = (Item) persistance.findById(new Item(Constants.ITEM_DIZ_TODO));
+        Record record = (Record) persistance.findById(new Record(Constants.REC_DIZ_TODO));
+        Map dizParams = new HashMap();
+
+        Element comment = DocumentHelper.createElement("comment");
+        Element root = record.getData().getRootElement();
+        EditDiscussion.setCreated(comment);
+        EditDiscussion.setParent(dizParams, comment);
+        if(req.getOwner()!=0)
+            EditDiscussion.setCommentAuthor(dizParams, new User(req.getOwner()), comment, env);
+        else {
+            dizParams.put(EditDiscussion.PARAM_AUTHOR, req.getData().selectSingleNode("/data/author").getText());
+            EditDiscussion.setCommentAuthor(dizParams, null, comment, env);
+        }
+        dizParams.put(EditDiscussion.PARAM_TITLE, "pozadavek");
+        EditDiscussion.setTitle(dizParams, comment, env);
+        String s = req.getData().selectSingleNode("/data/text").getText();
+        String email = req.getData().selectSingleNode("/data/email").getText();
+        dizParams.put(EditDiscussion.PARAM_TEXT, email+"\n\n"+s);
+        EditDiscussion.setText(dizParams, comment, env);
+
+        // save comment
+        synchronized (root) {
+            EditDiscussion.setId(root, comment);
+            root.add(comment);
+            persistance.update(record);
+        }
+        diz = (Item) persistance.findById(diz);
+        Element itemRoot = diz.getData().getRootElement();
+        synchronized (itemRoot) {
+            EditDiscussion.setCommentsCount(itemRoot, root);
+            persistance.update(diz);
+        }
+
+        Map emailParams = new HashMap();
+        emailParams.put(EmailSender.KEY_TO, req.getData().selectSingleNode("data/email").getText());
+        emailParams.put(EmailSender.KEY_FROM, user.getEmail());
+        emailParams.put(EmailSender.KEY_CC, user.getEmail());
+        String text = "Pozadavek byl presunut do seznamu ukolu.\n"+user.getName()+"\n\n\nVas pozadavek\n\n";
+        text = text.concat(req.getData().selectSingleNode("data/text").getText());
+        emailParams.put(EmailSender.KEY_BODY, text);
+        emailParams.put(EmailSender.KEY_SUBJECT, "Pozadavek byl prijat");
+        boolean sent = EmailSender.sendEmail(emailParams);
+        if ( !sent )
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Nemohu odeslat email!", env, request.getSession());
+
+        ServletUtils.addMessage("Po¾adavek byl pøesunut.", env, request.getSession());
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/show/"+Constants.REL_DIZ_TODO);
         return null;
     }
 }

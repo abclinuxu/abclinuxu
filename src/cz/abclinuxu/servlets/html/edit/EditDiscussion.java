@@ -329,9 +329,11 @@ public class EditDiscussion implements AbcAction {
             } else {
                 persistance.update(record);
             }
-
-            persistance.synchronize(discussion);
-            setCommentsCount(discussion.getData().getRootElement(), root);
+        }
+        persistance.synchronize(discussion);
+        Element itemRoot = discussion.getData().getRootElement();
+        synchronized (itemRoot) {
+            setCommentsCount(itemRoot, root);
             persistance.update(discussion);
         }
 
@@ -671,7 +673,7 @@ public class EditDiscussion implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    boolean setTitle(Map params, Element root, Map env) {
+    static boolean setTitle(Map params, Element root, Map env) {
         String tmp = (String) params.get(PARAM_TITLE);
         if ( tmp!=null && tmp.length()>0 ) {
             DocumentHelper.makeElement(root,"title").setText(tmp);
@@ -689,7 +691,7 @@ public class EditDiscussion implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    boolean setText(Map params, Element root, Map env) {
+    static boolean setText(Map params, Element root, Map env) {
         String tmp = (String) params.get(PARAM_TEXT);
         if ( tmp!=null && tmp.length()>0 ) {
             Element element = DocumentHelper.makeElement(root,"text");
@@ -710,7 +712,7 @@ public class EditDiscussion implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setItemAuthor(Map params, User user, Element root, Item diz, Map env) {
+    static private boolean setItemAuthor(Map params, User user, Element root, Item diz, Map env) {
         if ( user!=null ) {
             diz.setOwner(user.getId());
         } else {
@@ -732,7 +734,7 @@ public class EditDiscussion implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    boolean setCommentAuthor(Map params, User user, Element root, Map env) {
+    static boolean setCommentAuthor(Map params, User user, Element root, Map env) {
         if ( user!=null ) {
             DocumentHelper.makeElement(root, "author_id").setText(Integer.toString(user.getId()));
         } else {
@@ -758,7 +760,7 @@ public class EditDiscussion implements AbcAction {
      * @param root root element of discussion to be updated
      * @return false, if there is a major error.
      */
-    boolean setParent(Map params, Element root) {
+    static boolean setParent(Map params, Element root) {
         String tmp = (String) params.get(PARAM_THREAD);
         if ( tmp==null || tmp.length()==0 )
             tmp = "0";
@@ -771,7 +773,7 @@ public class EditDiscussion implements AbcAction {
      * @param root root element of discussion to be updated
      * @return false, if there is a major error.
      */
-    boolean setCreated(Element root) {
+    static boolean setCreated(Element root) {
         DocumentHelper.makeElement(root, "created").setText(Constants.isoFormat.format(new Date()));
         return true;
     }
@@ -785,7 +787,7 @@ public class EditDiscussion implements AbcAction {
      * @param comment element of comment to be updated
      * @return false, if there is a major error.
      */
-    boolean setId(Element root, Element comment) {
+    static boolean setId(Element root, Element comment) {
         int last = 0;
         List comments = root.elements("comment");
         if ( comments!=null && comments.size()>0) {
@@ -805,7 +807,7 @@ public class EditDiscussion implements AbcAction {
      * @param recordRoot root element of record.
      * @return false, if there is a major error.
      */
-    boolean setCommentsCount(Element itemRoot, Element recordRoot) {
+    static boolean setCommentsCount(Element itemRoot, Element recordRoot) {
         List comments = recordRoot.selectNodes("comment");
         DocumentHelper.makeElement(itemRoot,"comments").setText(""+comments.size());
         return true;
