@@ -55,6 +55,7 @@ public class FeedGenerator implements Configurable {
         try {
             SyndFeed feed = new SyndFeedImpl();
             feed.setFeedType(TYPE_RSS_1_0);
+            feed.setEncoding("UTF-8");
             feed.setTitle("abclinuxu - diskusní fórum");
             feed.setLink("http://www.abclinuxu.cz/diskuse.jsp");
             feed.setDescription("Seznam aktuálních diskusí na fóru portálu www.abclinuxu.cz");
@@ -105,7 +106,7 @@ public class FeedGenerator implements Configurable {
             Persistance persistance = PersistanceFactory.getPersistance();
 
             SyndFeed feed = new SyndFeedImpl();
-            feed.setEncoding("ISO-8859-2");
+            feed.setEncoding("UTF-8");
             feed.setFeedType(TYPE_RSS_1_0);
             feed.setTitle("abclinuxu - databáze ovladaèù");
             feed.setLink("http://www.abclinuxu.cz/drivers/dir/318");
@@ -148,6 +149,7 @@ public class FeedGenerator implements Configurable {
 
             SyndFeed feed = new SyndFeedImpl();
             feed.setFeedType(TYPE_RSS_1_0);
+            feed.setEncoding("UTF-8");
             feed.setTitle("abclinuxu - databáze hardwaru");
             feed.setLink("http://www.abclinuxu.cz");
             feed.setDescription("Seznam èerstvých záznamù do databáze hardwarových poznatkù na portálu www.abclinuxu.cz");
@@ -190,6 +192,7 @@ public class FeedGenerator implements Configurable {
 
             SyndFeed feed = new SyndFeedImpl();
             feed.setFeedType(TYPE_RSS_1_0);
+            feed.setEncoding("UTF-8");
             feed.setTitle("abclinuxu - aktuální èlánky");
             feed.setLink("http://www.abclinuxu.cz");
             feed.setDescription("Seznam èerstvých èlánkù na portálu www.abclinuxu.cz");
@@ -254,6 +257,7 @@ public class FeedGenerator implements Configurable {
                 User author = (User) persistance.findById(new User(blog.getOwner()));
                 SyndFeed feed = new SyndFeedImpl();
                 feed.setFeedType(TYPE_RSS_1_0);
+                feed.setEncoding("UTF-8");
                 feed.setTitle(Tools.limit(Tools.xpath(blog, "//custom/title"), 40, "..."));
                 feed.setLink("http://www.abclinuxu.cz/blog/"+blog.getSubType()+"/");
                 feed.setDescription("Seznam èerstvých zápisù u¾ivatele "+author.getName());
@@ -344,6 +348,7 @@ public class FeedGenerator implements Configurable {
      * @throws IOException
      */
     private static Writer getWriter(String path) throws IOException {
+//        return new FileWriter(path);
         return new OutputStreamWriter(new FileOutputStream(path), "UTF-8");
     }
 
