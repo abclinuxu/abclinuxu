@@ -29,31 +29,31 @@
 <tr>
 
 <td width="15%" align="center" valign="top" bgcolor="#506f87">
-<a href="uvod.html"><img src="../../images/btn-uvod.gif" width="61" height="61" border="0" alt="Úvod"></a><br>
+<a href="../../index.html"><img src="../../images/btn-uvod.gif" width="61" height="61" border="0" alt="Úvod"></a><br>
 </td>
 
 <td width="14%" align="center" valign="top" bgcolor="#506f87">
-<a href="uvod.html"><img src="../../images/btn-hledat.gif" width="61" height="61" border="0" alt="Hledat"></a><br>
+<a href="../../search.html"><img src="../../images/btn-hledat.gif" width="61" height="61" border="0" alt="Hledat"></a><br>
 </td>
 
 <td width="14%" align="center" valign="top" bgcolor="#506f87">
-<a href="uvod.html"><img src="../../images/btn-software.gif" width="61" height="61" border="0" alt="Software"></a><br>
+<a href="../ff/relace00317.html"><img src="../../images/btn-software.gif" width="61" height="61" border="0" alt="Software"></a><br>
 </td>
 
 <td width="14%" align="center" valign="top" bgcolor="#506f87">
-<a href="uvod.html"><img src="../../images/btn-hardware.gif" width="65" height="61" border="0" alt="Hardware"></a><br>
+<a href="../ee/relace00316.html"><img src="../../images/btn-hardware.gif" width="65" height="61" border="0" alt="Hardware"></a><br>
 </td>
 
 <td width="14%" align="center" valign="top" bgcolor="#506f87">
-<a href="uvod.html"><img src="../../images/btn-ovladace.gif" width="62" height="61" border="0" alt="Ovladaèe"></a><br>
+<a href="../ag/relace00318.html"><img src="../../images/btn-ovladace.gif" width="62" height="61" border="0" alt="Ovladaèe"></a><br>
 </td>
 
 <td width="14%" align="center" valign="top" bgcolor="#506f87">
-<a href="uvod.html"><img src="../../images/btn-abicko.gif" width="61" height="61" border="0" alt="Abíèko"></a><br>
+<a href="../../abicko.html"><img src="../../images/btn-abicko.gif" width="61" height="61" border="0" alt="Abíèko"></a><br>
 </td>
 
 <td width="16%" align="center" valign="top" bgcolor="#506f87">
-<a href="uvod.html"><img src="../../images/btn-onas.gif" width="61" height="61" border="0" alt="O nás"></a><br>
+<a href="../../abclinuxu.html"><img src="../../images/btn-onas.gif" width="61" height="61" border="0" alt="O nás"></a><br>
 </td>
 
 </tr>
