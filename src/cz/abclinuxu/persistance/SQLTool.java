@@ -42,6 +42,7 @@ public final class SQLTool implements Configurable {
     public static final String PREF_QUESTION_RELATIONS_BY_USER = "question.relations.by.user";
 
     public static final String PREF_COUNT_ARTICLES_BY_USER = "count.articles.by.user";
+    public static final String PREF_COUNT_QUESTIONS_BY_USER = "count.questions.by.user";
     public static final String PREF_COUNT_RECORDS_BY_USER_BY_TYPE = "count.records.by.user.by.type";
     public static final String PREF_COUNT_ITEMS_BY_USER_BY_TYPE = "count.items.by.user.by.type";
 
@@ -62,7 +63,7 @@ public final class SQLTool implements Configurable {
     private String articleRelationsByCreated, articleRelationsWithinPeriod;
     private String recordRelationsByUser, articleRelationsByUser, questionRelationsByUser;
     private String countArticlesByUser, countRecordsByUser, countItemsByUser;
-    private String countItemsByType, countRecordsByType;
+    private String countItemsByType, countRecordsByType, countQuestionsByUser;
     private String usersWithWeeklyMail;
 
 
@@ -290,7 +291,7 @@ public final class SQLTool implements Configurable {
      * @return number of records in persistant storage
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
      */
-    public Integer getRecordCount(int type) {
+    public int getRecordCount(int type) {
         MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         try {
@@ -300,7 +301,7 @@ public final class SQLTool implements Configurable {
 
             resultSet = statement.executeQuery();
             resultSet.next();
-            return new Integer(resultSet.getInt(1));
+            return resultSet.getInt(1);
         } catch (SQLException e) {
             throw new PersistanceException("Chyba pri hledani!", e);
         } finally {
@@ -313,7 +314,7 @@ public final class SQLTool implements Configurable {
      * @return number of items in persistant storage
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
      */
-    public Integer getItemCount(int type) {
+    public int getItemCount(int type) {
         MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         try {
@@ -323,7 +324,7 @@ public final class SQLTool implements Configurable {
 
             resultSet = statement.executeQuery();
             resultSet.next();
-            return new Integer(resultSet.getInt(1));
+            return resultSet.getInt(1);
         } catch (SQLException e) {
             throw new PersistanceException("Chyba pri hledani!", e);
         } finally {
@@ -336,7 +337,7 @@ public final class SQLTool implements Configurable {
      * @return number of items in persistant storage
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
      */
-    public Integer getItemCountbyUser(int userId, int type) {
+    public int getItemCountbyUser(int userId, int type) {
         MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         try {
@@ -347,7 +348,7 @@ public final class SQLTool implements Configurable {
 
             resultSet = statement.executeQuery();
             resultSet.next();
-            return new Integer(resultSet.getInt(1));
+            return resultSet.getInt(1);
         } catch (SQLException e) {
             throw new PersistanceException("Chyba pri hledani!", e);
         } finally {
@@ -360,7 +361,7 @@ public final class SQLTool implements Configurable {
      * @return number of records in persistant storage
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
      */
-    public Integer getRecordCountbyUser(int userId, int type) {
+    public int getRecordCountbyUser(int userId, int type) {
         MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         try {
@@ -371,7 +372,7 @@ public final class SQLTool implements Configurable {
 
             resultSet = statement.executeQuery();
             resultSet.next();
-            return new Integer(resultSet.getInt(1));
+            return resultSet.getInt(1);
         } catch (SQLException e) {
             throw new PersistanceException("Chyba pri hledani!", e);
         } finally {
@@ -384,7 +385,7 @@ public final class SQLTool implements Configurable {
      * @return number of articles in persistant storage
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
      */
-    public Integer getArticleCountbyUser(int userId) {
+    public int getArticleCountbyUser(int userId) {
         MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         try {
@@ -394,7 +395,30 @@ public final class SQLTool implements Configurable {
 
             resultSet = statement.executeQuery();
             resultSet.next();
-            return new Integer(resultSet.getInt(1));
+            return resultSet.getInt(1);
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri hledani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
+     * Finds count of questions sumbitted by certain user.
+     * @return number of questions in persistant storage
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
+     */
+    public int getQuestionCountbyUser(int userId) {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(countQuestionsByUser);
+            statement.setInt(1, userId);
+
+            resultSet = statement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt(1);
         } catch (SQLException e) {
             throw new PersistanceException("Chyba pri hledani!", e);
         } finally {
@@ -567,6 +591,7 @@ public final class SQLTool implements Configurable {
         articleRelationsByUser = prefs.get(PREF_ARTICLE_RELATIONS_BY_USER, null);
         questionRelationsByUser = prefs.get(PREF_QUESTION_RELATIONS_BY_USER, null);
         countArticlesByUser = prefs.get(PREF_COUNT_ARTICLES_BY_USER, null);
+        countQuestionsByUser = prefs.get(PREF_COUNT_QUESTIONS_BY_USER, null);
         countRecordsByUser = prefs.get(PREF_COUNT_RECORDS_BY_USER_BY_TYPE, null);
         countItemsByUser = prefs.get(PREF_COUNT_ITEMS_BY_USER_BY_TYPE, null);
         countRecordsByType = prefs.get(PREF_COUNT_RECORDS_BY_TYPE, null);

@@ -105,11 +105,11 @@ public class VariableFetcher extends TimerTask {
         log.debug("fetching variables");
         try {
             // put counts into map
-            Integer i = sqlTool.getRecordCount(Record.HARDWARE);
+            Integer i = new Integer(sqlTool.getRecordCount(Record.HARDWARE));
             counter.put("HARDWARE",i);
-            i = sqlTool.getRecordCount(Record.SOFTWARE);
+            i = new Integer(sqlTool.getRecordCount(Record.SOFTWARE));
             counter.put("SOFTWARE",i);
-            i = sqlTool.getItemCount(Item.DRIVER);
+            i = new Integer(sqlTool.getItemCount(Item.DRIVER));
             counter.put("DRIVERS",i);
             Category forum = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
             counter.put("FORUM",new Integer(forum.getContent().size()));

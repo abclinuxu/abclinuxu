@@ -15,7 +15,9 @@ import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.utils.InstanceUtils;
-import cz.abclinuxu.utils.Tools;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.paging.Paging;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.email.EmailSender;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,9 +38,10 @@ public class ViewUser extends AbcFMServlet {
 
     public static final String PARAM_USER = "userId";
     public static final String PARAM_URL = "url";
-    public static final String PARAM_FROM = "from";
+    public static final String PARAM_SENDER = "sender";
     public static final String PARAM_SUBJECT = "subject";
     public static final String PARAM_MESSAGE = "message";
+    public static final String PARAM_FROM = "from";
 
     public static final String ACTION_LOGIN = "login";
     public static final String ACTION_LOGIN2 = "login2";
@@ -142,26 +145,33 @@ public class ViewUser extends AbcFMServlet {
     protected String handleShowContent(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) InstanceUtils.instantiateParam(PARAM_USER,User.class,params);
+        SQLTool sqlTool = SQLTool.getInstance();
+        int from = Misc.parseInt((String)params.get(PARAM_FROM),0);
+        int pageSize = AbcConfig.getViewUserPageSize();
 
         if ( params.containsKey(CONTENT_HARDWARE) ) {
-            List list = SQLTool.getInstance().findRecordRelationsByUser(user.getId(), Record.HARDWARE, 0,100);
-            Tools.sync(list);
-            env.put(VAR_HW_RECORDS,list);
+            List list = sqlTool.findRecordRelationsByUser(user.getId(), Record.HARDWARE, from, pageSize);
+            int total = sqlTool.getRecordCountbyUser(user.getId(), Record.HARDWARE);
+            Paging paging = new Paging(list, from, pageSize, total);
+            env.put(VAR_HW_RECORDS, paging);
 
         } else if ( params.containsKey(CONTENT_SOFTWARE) ) {
-            List list = SQLTool.getInstance().findRecordRelationsByUser(user.getId(), Record.SOFTWARE, 0, 100);
-            Tools.sync(list);
-            env.put(VAR_SW_RECORDS,list);
+            List list = sqlTool.findRecordRelationsByUser(user.getId(), Record.SOFTWARE, from, pageSize);
+            int total = sqlTool.getRecordCountbyUser(user.getId(), Record.SOFTWARE);
+            Paging paging = new Paging(list, from, pageSize, total);
+            env.put(VAR_SW_RECORDS, paging);
 
         } else if ( params.containsKey(CONTENT_ARTICLES) ) {
-            List list = SQLTool.getInstance().findArticleRelationsByUser(user.getId(), 0, 200);
-            Tools.sync(list);
-            env.put(VAR_ARTICLES,list);
+            List list = sqlTool.findArticleRelationsByUser(user.getId(), from, pageSize);
+            int total = sqlTool.getArticleCountbyUser(user.getId());
+            Paging paging = new Paging(list, from, pageSize, total);
+            env.put(VAR_ARTICLES, paging);
 
         } else if ( params.containsKey(CONTENT_DISCUSSIONS) ) {
-            List list = SQLTool.getInstance().findQuestionRelationsByUser(user.getId(), 0, 200);
-            Tools.sync(list);
-            env.put(VAR_DISCUSSIONS,list);
+            List list = sqlTool.findQuestionRelationsByUser(user.getId(), from, pageSize);
+            int total = sqlTool.getQuestionCountbyUser(user.getId());
+            Paging paging = new Paging(list, from, pageSize, total);
+            env.put(VAR_DISCUSSIONS, paging);
         }
 
         return FMTemplateSelector.select("ViewUser","content",env,request);
@@ -174,7 +184,7 @@ public class ViewUser extends AbcFMServlet {
         User user = (User) env.get(Constants.VAR_USER);
         if ( user!=null ) {
             Map params = (Map) env.get(Constants.VAR_PARAMS);
-            params.put(PARAM_FROM,user.getEmail());
+            params.put(PARAM_SENDER,user.getEmail());
         }
 
         Integer kod = new Integer(new Random().nextInt(10000));
@@ -206,9 +216,9 @@ public class ViewUser extends AbcFMServlet {
             ServletUtils.addError(VAR_KOD,"Vyplòte správný kód!",env,null);
             chyba = true;
         }
-        String from = (String) params.get(PARAM_FROM);
+        String from = (String) params.get(PARAM_SENDER);
         if ( from==null || from.length()<6 || from.indexOf('@')==-1 ) {
-            ServletUtils.addError(PARAM_FROM,"Zadejte platnou adresu!",env,null);
+            ServletUtils.addError(PARAM_SENDER,"Zadejte platnou adresu!",env,null);
             chyba = true;
         }
         String subject = (String) params.get(PARAM_SUBJECT);

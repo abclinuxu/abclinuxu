@@ -25,14 +25,17 @@ public class AbcConfig implements Configurable {
     }
 
     public static final String PREF_DEPLOY_PATH = "deploy.path";
+    public static final String PREF_VIEWUSER_PAGINGSIZE = "viewuser.page.size";
 
     static String deployPath;
+    static int viewUserPageSize;
 
     /**
      * Callback used to configure your class from preferences.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
         deployPath = prefs.get(PREF_DEPLOY_PATH, null);
+        viewUserPageSize = prefs.getInt(PREF_VIEWUSER_PAGINGSIZE,20);
     }
 
     /**
@@ -40,14 +43,6 @@ public class AbcConfig implements Configurable {
      */
     public static String getDeployPath() {
         return deployPath;
-    }
-
-
-    /**
-     * sets directory, where application was deployed
-     */
-    public static void setDeployPath(String aDeployPath) {
-        deployPath = aDeployPath;
     }
 
     /**
@@ -63,5 +58,12 @@ public class AbcConfig implements Configurable {
             return deployPath.concat(path);
         else
             return deployPath.concat(File.separator).concat(path);
+    }
+
+    /**
+     * @return ViewUser's pageSize attribute.
+     */
+    public static int getViewUserPageSize() {
+        return viewUserPageSize;
     }
 }

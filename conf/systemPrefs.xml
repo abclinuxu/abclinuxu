@@ -28,6 +28,7 @@
               <node name="AbcConfig">
                 <map>
                   <entry key="deploy.path" value="@DEPLOY_ABCLINUXU@"/>
+                  <entry key="viewuser.page.size" value="20"/>
                 </map>
               </node>
             </node>
@@ -81,6 +82,7 @@
               <entry key="record.relations.by.type.by.user" value="select R.cislo from relace R left join zaznam Z on R.potomek=Z.cislo where R.typ_potomka='Z' and Z.typ=? and Z.pridal=? order by R.cislo limit ?,?"/>
               <entry key="article.relations.by.user" value="select R.cislo from relace R left join polozka P on (P.cislo=R.potomek) where typ_potomka='P' and P.typ=2 and P.data like concat('%&lt;author&gt;',?,'&lt;/author%') and P.vytvoreno&lt;now() group by potomek order by vytvoreno asc limit ?,?"/>
               <entry key="question.relations.by.user" value="select R.cislo from relace R, polozka P where R.typ_potomka='P' and R.potomek=P.cislo and R.typ_predka='K' and R.predek!=-1 and P.typ=3 and P.pridal=? order by vytvoreno asc limit ?,?"/>
+              <entry key="count.questions.by.user" value="select count(*) from relace R, polozka P where R.typ_potomka='P' and R.potomek=P.cislo and R.typ_predka='K' and R.predek!=-1 and P.typ=3 and P.pridal=?"/>
               <entry key="count.articles.by.user" value="select count(*) from polozka where typ=2 and data like concat('%&lt;author&gt;',?,'&lt;/author%') and vytvoreno&lt;now()"/>
               <entry key="count.records.by.user.by.type" value="select count(*) from zaznam where typ=? and pridal=?"/>
               <entry key="count.items.by.user.by.type" value="select count(*) from polozka where typ=? and pridal=?"/>
