@@ -83,6 +83,7 @@ public abstract class GenericDataObject extends GenericObject {
      */
     public String getDataAsString() {
         try {
+            if ( data==null ) return "";
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             OutputFormat format = new OutputFormat(null,false,"ISO-8859-2");
             format.setSuppressDeclaration(true);

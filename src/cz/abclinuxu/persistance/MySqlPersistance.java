@@ -127,7 +127,7 @@ public class MySqlPersistance implements Persistance {
     public void synchronize(GenericObject obj) throws PersistanceException {
         if ( obj==null ) return;
         GenericObject found = cache.load(obj);
-        if ( found!=null ) found = findById(obj);
+        if ( found==null ) found = findById(obj);
 
         obj.synchronizeWith(found);
         obj.setInitialized(true);
