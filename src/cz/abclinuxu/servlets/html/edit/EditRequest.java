@@ -36,6 +36,7 @@ import freemarker.template.SimpleHash;
 
 public class EditRequest implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditRequest.class);
+    static org.apache.log4j.Logger logRequests = org.apache.log4j.Logger.getLogger("requests");
 
     public static final String PARAM_AUTHOR = "author";
     public static final String PARAM_EMAIL = "email";
@@ -152,7 +153,7 @@ public class EditRequest implements AbcAction {
         relation.getParent().addChildRelation(relation);
 
         ServletUtils.addMessage("Vá¹ po¾adavek byl pøijat.",env,request.getSession());
-        log.info("Pozadavek\nAutor: "+author+"("+email+")\nText:"+text);
+        logRequests.info("Autor: "+author+"("+email+")\n"+text);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/hardware/show/"+Constants.REL_REQUESTS);
