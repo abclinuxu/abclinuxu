@@ -55,6 +55,7 @@ public class InstanceUtils {
             String url = ServletUtils.combinePaths(request.getServletPath(), request.getPathInfo());
             if ( impliedParam.match(url) ) {
                 tmp = impliedParam.getParen(1);
+                params.put(name, tmp);
             }
         }
         if ( tmp==null ) {
