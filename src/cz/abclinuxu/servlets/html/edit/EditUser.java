@@ -19,6 +19,7 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.html.view.ViewUser;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -32,6 +33,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
+import org.htmlparser.util.ParserException;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -426,7 +428,7 @@ public class EditUser implements AbcAction {
             canContinue &= checkPassword(params, managed, env);
         canContinue &= setMyPage(params, managed, env);
         canContinue &= setLinuxUserFrom(params, managed);
-        canContinue &= setAbout(params, managed);
+        canContinue &= setAbout(params, managed, env);
         canContinue &= setDistributions(params, managed);
 
         if ( !canContinue )
@@ -963,7 +965,7 @@ public class EditUser implements AbcAction {
      * @param user user to be updated
      * @return false, if there is a major error.
      */
-    private boolean setAbout(Map params, User user) {
+    private boolean setAbout(Map params, User user, Map env) {
         String about = (String) params.get(PARAM_ABOUT_ME);
         Element profile = DocumentHelper.makeElement(user.getData(), "/data/profile");
         if ( about==null || about.length()==0 ) {
@@ -971,6 +973,16 @@ public class EditUser implements AbcAction {
             if (node!=null)
                 profile.remove(node);
             return true;
+        }
+        try {
+            SafeHTMLGuard.check(about);
+        } catch (ParserException e) {
+            log.error("ParseException on '"+about+"'", e);
+            ServletUtils.addError(PARAM_ABOUT_ME, e.getMessage(), env, null);
+            return false;
+        } catch (Exception e) {
+            ServletUtils.addError(PARAM_ABOUT_ME, e.getMessage(), env, null);
+            return false;
         }
         Element element = DocumentHelper.makeElement(profile, "about_myself");
         element.setText(about);

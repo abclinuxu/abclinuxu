@@ -19,6 +19,7 @@ import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.email.monitor.*;
 import cz.abclinuxu.utils.email.forum.ForumPool;
 import cz.abclinuxu.utils.format.Format;
@@ -29,6 +30,8 @@ import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
 
 import org.dom4j.*;
+import org.htmlparser.util.ParserException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
@@ -694,6 +697,16 @@ public class EditDiscussion implements AbcAction {
     static boolean setText(Map params, Element root, Map env) {
         String tmp = (String) params.get(PARAM_TEXT);
         if ( tmp!=null && tmp.length()>0 ) {
+            try {
+                SafeHTMLGuard.check(tmp);
+            } catch (ParserException e) {
+                log.error("ParseException on '"+tmp+"'", e);
+                ServletUtils.addError(PARAM_TEXT, e.getMessage(), env, null);
+                return false;
+            } catch (Exception e) {
+                ServletUtils.addError(PARAM_TEXT, e.getMessage(), env, null);
+                return false;
+            }
             Element element = DocumentHelper.makeElement(root,"text");
             element.setText(tmp);
             Format format = FormatDetector.detect(tmp);

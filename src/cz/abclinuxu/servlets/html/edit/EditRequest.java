@@ -14,12 +14,14 @@ import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.htmlparser.util.ParserException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -96,6 +98,16 @@ public class EditRequest implements AbcAction {
 
         if ( text==null || text.length()==0 ) {
             ServletUtils.addError(PARAM_TEXT,"Napi¹te, co potøebujete?",env,null);
+            error = true;
+        }
+        try {
+            SafeHTMLGuard.check(text);
+        } catch (ParserException e) {
+            log.error("ParseException on '"+text+"'", e);
+            ServletUtils.addError(PARAM_TEXT, e.getMessage(), env, null);
+            error = true;
+        } catch (Exception e) {
+            ServletUtils.addError(PARAM_TEXT, e.getMessage(), env, null);
             error = true;
         }
 

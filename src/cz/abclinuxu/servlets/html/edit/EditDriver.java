@@ -12,12 +12,15 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.email.monitor.*;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 
 import org.dom4j.*;
+import org.htmlparser.util.ParserException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -258,6 +261,16 @@ public class EditDriver implements AbcAction {
     private boolean setNote(Map params, Document document, Map env) {
         String tmp = (String) params.get(PARAM_NOTE);
         if ( tmp!=null && tmp.length()>0 ) {
+            try {
+                SafeHTMLGuard.check(tmp);
+            } catch (ParserException e) {
+                log.error("ParseException on '"+tmp+"'", e);
+                ServletUtils.addError(PARAM_NOTE, e.getMessage(), env, null);
+                return false;
+            } catch (Exception e) {
+                ServletUtils.addError(PARAM_NOTE, e.getMessage(), env, null);
+                return false;
+            }
             Element element = DocumentHelper.makeElement(document, "data/note");
             element.setText(tmp);
             Format format = FormatDetector.detect(tmp);

@@ -14,12 +14,14 @@ import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.email.monitor.*;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 
 import org.dom4j.*;
+import org.htmlparser.util.ParserException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -176,10 +178,10 @@ public class EditHardware implements AbcAction {
         canContinue = true;
         canContinue &= setDriver(params, root, env);
         canContinue &= setPrice(params, root, env);
-        canContinue &= setParameters(params, root);
-        canContinue &= setIdentification(params, root);
-        canContinue &= setSetup(params, root);
-        canContinue &= setNote(params, root);
+        canContinue &= setParameters(params, root, env);
+        canContinue &= setIdentification(params, root, env);
+        canContinue &= setSetup(params, root, env);
+        canContinue &= setNote(params, root, env);
         if ( !canContinue )
             return FMTemplateSelector.select("EditHardware", "add_record", env, request);
 
@@ -220,10 +222,10 @@ public class EditHardware implements AbcAction {
         boolean canContinue = true;
         canContinue &= setDriver(params, root, env);
         canContinue &= setPrice(params, root, env);
-        canContinue &= setParameters(params, root);
-        canContinue &= setIdentification(params, root);
-        canContinue &= setSetup(params, root);
-        canContinue &= setNote(params, root);
+        canContinue &= setParameters(params, root, env);
+        canContinue &= setIdentification(params, root, env);
+        canContinue &= setSetup(params, root, env);
+        canContinue &= setNote(params, root, env);
         if ( !canContinue )
             return FMTemplateSelector.select("EditHardware", "add_record", env, request);
 
@@ -337,10 +339,10 @@ public class EditHardware implements AbcAction {
         boolean canContinue = true;
         canContinue &= setDriver(params, root, env);
         canContinue &= setPrice(params, root, env);
-        canContinue &= setParameters(params, root);
-        canContinue &= setIdentification(params, root);
-        canContinue &= setSetup(params, root);
-        canContinue &= setNote(params, root);
+        canContinue &= setParameters(params, root, env);
+        canContinue &= setIdentification(params, root, env);
+        canContinue &= setSetup(params, root, env);
+        canContinue &= setNote(params, root, env);
         if ( !canContinue )
             return FMTemplateSelector.select("EditHardware", "edit_record", env, request);
 
@@ -455,9 +457,19 @@ public class EditHardware implements AbcAction {
      * @param root root element of record to be updated
      * @return false, if there is a major error.
      */
-    private boolean setSetup(Map params, Element root) {
+    private boolean setSetup(Map params, Element root, Map env) {
         String tmp = (String) params.get(PARAM_SETUP);
         if ( tmp!=null && tmp.length()>0 ) {
+            try {
+                SafeHTMLGuard.check(tmp);
+            } catch (ParserException e) {
+                log.error("ParseException on '"+tmp+"'", e);
+                ServletUtils.addError(PARAM_SETUP, e.getMessage(), env, null);
+                return false;
+            } catch (Exception e) {
+                ServletUtils.addError(PARAM_SETUP, e.getMessage(), env, null);
+                return false;
+            }
             Element element = DocumentHelper.makeElement(root, "setup");
             element.setText(tmp);
             Format format = FormatDetector.detect(tmp);
@@ -472,9 +484,19 @@ public class EditHardware implements AbcAction {
      * @param root root element of record to be updated
      * @return false, if there is a major error.
      */
-    private boolean setParameters(Map params, Element root) {
+    private boolean setParameters(Map params, Element root, Map env) {
         String tmp = (String) params.get(PARAM_TECHPARAM);
         if ( tmp!=null && tmp.length()>0 ) {
+            try {
+                SafeHTMLGuard.check(tmp);
+            } catch (ParserException e) {
+                log.error("ParseException on '"+tmp+"'", e);
+                ServletUtils.addError(PARAM_TECHPARAM, e.getMessage(), env, null);
+                return false;
+            } catch (Exception e) {
+                ServletUtils.addError(PARAM_TECHPARAM, e.getMessage(), env, null);
+                return false;
+            }
             Element element = DocumentHelper.makeElement(root, "params");
             element.setText(tmp);
             Format format = FormatDetector.detect(tmp);
@@ -489,9 +511,19 @@ public class EditHardware implements AbcAction {
      * @param root root element of record to be updated
      * @return false, if there is a major error.
      */
-    private boolean setIdentification(Map params, Element root) {
+    private boolean setIdentification(Map params, Element root, Map env) {
         String tmp = (String) params.get(PARAM_IDENTIFICATION);
         if ( tmp!=null && tmp.length()>0 ) {
+            try {
+                SafeHTMLGuard.check(tmp);
+            } catch (ParserException e) {
+                log.error("ParseException on '"+tmp+"'", e);
+                ServletUtils.addError(PARAM_IDENTIFICATION, e.getMessage(), env, null);
+                return false;
+            } catch (Exception e) {
+                ServletUtils.addError(PARAM_IDENTIFICATION, e.getMessage(), env, null);
+                return false;
+            }
             Element element = DocumentHelper.makeElement(root, "identification");
             element.setText(tmp);
             Format format = FormatDetector.detect(tmp);
@@ -506,9 +538,19 @@ public class EditHardware implements AbcAction {
      * @param root root element of record to be updated
      * @return false, if there is a major error.
      */
-    private boolean setNote(Map params, Element root) {
+    private boolean setNote(Map params, Element root, Map env) {
         String tmp = (String) params.get(PARAM_NOTE);
         if ( tmp!=null && tmp.length()>0 ) {
+            try {
+                SafeHTMLGuard.check(tmp);
+            } catch (ParserException e) {
+                log.error("ParseException on '"+tmp+"'", e);
+                ServletUtils.addError(PARAM_NOTE, e.getMessage(), env, null);
+                return false;
+            } catch (Exception e) {
+                ServletUtils.addError(PARAM_NOTE, e.getMessage(), env, null);
+                return false;
+            }
             Element element = DocumentHelper.makeElement(root, "note");
             element.setText(tmp);
             Format format = FormatDetector.detect(tmp);
