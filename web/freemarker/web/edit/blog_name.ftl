@@ -12,6 +12,13 @@ je vá¹ blog pøístupný. Odkazy, které mají va¹i ètenáøi
 Pokud jste si skuteènì jisti, zmìnit jméno mù¾ete ní¾e.
 </p>
 
+<p>Jméno mù¾e obsahovat jen písmena anglické abecedy, èíslice
+a podtr¾ítko (navíc první písmeno nesmí být èíslice). Na velikosti písmen
+nezále¾í. Napøíklad pojmenujete-li si blog snehulak, jeho
+adresa bude www.abclinuxu.cz/blog/snehulak. Jméno
+blogu mù¾ete pozdìji zmìnit, pøestane-li vám vyhovovat.
+</p>
+
 <form action="${URL.make("/blog/edit/"+REL_BLOG.id)}" method="POST">
     <p>
         <span class="required">Jméno</span>

@@ -14,18 +14,12 @@ nebudete poru¹ovat zákony èi normy slu¹ného chování,
 mù¾ete psát na libovolné téma.
 </p>
 
-<p>Momentálnì blogy nejsou je¹tì zcela hotovy a chybí
-spousta funkènosti, namátkou RSS èi indexování pro fulltextové
-hledání. Narazíte-li na chybu èi budete-li chtít nìco
-doimplementovat, napi¹te nám <a href="/clanky/dir/3500">vzkaz</a>.
-</p>
-
 <p>Prvním krokem je zalo¾ení blogu. Musíte zvolit
 jméno blogu. Toto jméno bude pevnou a nedílnou
 souèástí URL va¹eho blogu, proto mù¾e obsahovat
 jen písmena anglické abecedy, èíslice a podtr¾ítko
-(navíc první písmeno nesmí být èíslice).
-Napøíklad pojmenujete-li si blog snehulak, jeho
+(navíc první písmeno nesmí být èíslice). Na velikosti písmen
+nezále¾í. Napøíklad pojmenujete-li si blog snehulak, jeho
 adresa bude www.abclinuxu.cz/blog/snehulak. Jméno
 blogu mù¾ete pozdìji zmìnit, pøestane-li vám vyhovovat.
 </p>
