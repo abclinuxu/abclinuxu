@@ -49,12 +49,33 @@ public class Tools {
      * @throws PersistanceException if object cannot be synchronized
      */
     public static String xpath(GenericObject obj, String xpath) {
-        if ( obj==null || !(obj instanceof XMLContainer) ) return null;
-        if ( !obj.isInitialized() ) persistance.synchronize(obj);
+        if ( obj==null || !(obj instanceof XMLContainer) )
+            return null;
+        if ( !obj.isInitialized() )
+            persistance.synchronize(obj);
         Document doc = ((XMLContainer)obj).getData();
-        if ( doc==null ) return null;
+        if ( doc==null )
+            return null;
         Node node = doc.selectSingleNode(xpath);
         return (node!=null)? node.getText() : null;
+    }
+
+    /**
+     * Extracts values of given xpath expression evaluated on document.
+     * @param doc XML tree
+     * @param xpath xpath expression
+     * @return list of Strings
+     */
+    public static List xpaths(Document doc, String xpath) {
+        List nodes = doc.selectNodes(xpath);
+        List result = new ArrayList(nodes.size());
+        for (Iterator iter = nodes.iterator(); iter.hasNext();) {
+            Node node = (Node) iter.next();
+            String value = node.getText();
+            if ( !Misc.empty(value) )
+                result.add(value);
+        }
+        return result;
     }
 
     /**
