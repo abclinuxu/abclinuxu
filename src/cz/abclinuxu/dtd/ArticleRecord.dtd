@@ -1,0 +1,4 @@
+<!ELEMENT data (name?,icon?)>
+<!ELEMENT name (#PCDATA)> <!-- if Article is divided into several ArticleRecords, use it to give name to each one -->
+<!ELEMENT icon (#PCDATA)> <!-- absolute path including protocol, or relative path to icon directory -->
+<!ELEMENT  (#PCDATA)> <!--  -->

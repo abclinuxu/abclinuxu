@@ -1,0 +1,8 @@
+<!ELEMENT data (name,icon?,author,email?,published?,editor?,revised?)>
+<!ELEMENT name (#PCDATA)> <!-- name of the Article -->
+<!ELEMENT icon (#PCDATA)> <!-- absolute path including protocol, or relative path to icon directory -->
+<!ELEMENT author (#PCDATA)> <!-- name of the author -->
+<!ELEMENT email (#PCDATA)> <!-- author's email -->
+<!ELEMENT published (#PCDATA)> <!-- ISO representation of day and time, when this article has been published -->
+<!ELEMENT editor (#PCDATA)> <!-- who approved this article -->
+<!ELEMENT revised (#PCDATA)> <!-- who checked grammar and spelling -->

@@ -1,0 +1,8 @@
+<!ELEMENT data (os,price?,driver?,settings?,params?,identification?,note?)>
+<!ELEMENT os (#PCDATA)> <!-- operating system, for which this record is written -->
+<!ELEMENT price (#PCDATA)> <!-- user's evaluation of price -->
+<!ELEMENT driver (#PCDATA)> <!-- kind of driver: kernel, XFree, binary -->
+<!ELEMENT settings (#PCDATA)> <!-- how to set up this hardware -->
+<!ELEMENT params (#PCDATA)> <!-- technical parameters (resolution, max syncs, ..) -->
+<!ELEMENT identification (#PCDATA)> <!-- how Linux identifies this hardware (/proc, lspci) -->
+<!ELEMENT note (#PCDATA)> <!-- other note, user's experience -->

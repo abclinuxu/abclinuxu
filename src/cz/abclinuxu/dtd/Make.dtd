@@ -1,0 +1,3 @@
+<!ELEMENT data (name,icon?)>
+<!ELEMENT name (#PCDATA)> <!-- maximum length is few words -->
+<!ELEMENT icon (#PCDATA)> <!-- absolute path including protocol, or relative path to icon directory -->
