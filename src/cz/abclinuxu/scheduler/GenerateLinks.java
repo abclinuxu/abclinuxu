@@ -300,23 +300,25 @@ public class GenerateLinks extends TimerTask implements Configurable {
             writer = new FileWriter(file);
             writer.write("<?xml version=\"1.0\" encoding=\"iso-8859-2\" ?>\n");
             writer.write("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns=\"http://purl.org/rss/1.0/\">\n");
-            writer.write("\t<channel rdf:about=\"http://www.abclinuxu.cz\">\n");
-            writer.write("\t\t<title>AbcLinuxu.cz - tady je tuèòákùm hej!</title>\n");
-            writer.write("\t\t<link>http://www.abclinuxu.cz</link>\n");
-            writer.write("\t\t<description>Centrála pro výmìnu rad, zku¹eností a návodù pod Linuxem.</description>\n");
-            writer.write("\t\t<image rdf:resource=\"http://www.abclinuxu.cz/images/site/logo2.png\" />\n");
-            writer.write("\t</channel>\n");
+            writer.write("<channel rdf:about=\"http://www.abclinuxu.cz\">\n");
+            writer.write("\t<title>AbcLinuxu.cz - tady je tuèòákùm hej!</title>\n");
+            writer.write("\t<link>http://www.abclinuxu.cz</link>\n");
+            writer.write("\t<description>Centrála pro výmìnu rad, zku¹eností a návodù pod Linuxem.</description>\n");
+            writer.write("\t<image rdf:resource=\"http://www.abclinuxu.cz/images/site/logo2.png\" />\n");
+            writer.write("\t<items>\n");
         }
 
         public void generateLink(String title, String url, String desc, String content) throws IOException {
-            writer.write("\t<item rdf:about=\""+url+"\">\n");
-            writer.write("\t\t<title>"+title+"</title>\n");
-            writer.write("\t\t<link>"+url+"</link>\n");
-            writer.write("\t\t<description>"+desc+"</description>\n");
-            writer.write("\t</item>\n");
+            writer.write("\t\t<item rdf:about=\""+url+"\">\n");
+            writer.write("\t\t\t<title>"+title+"</title>\n");
+            writer.write("\t\t\t<link>"+url+"</link>\n");
+            writer.write("\t\t\t<description>"+desc+"</description>\n");
+            writer.write("\t\t</item>\n");
         }
 
         public void generateBottom() throws IOException {
+            writer.write("\t</items>\n");
+            writer.write("</channel>\n");
             writer.write("</rdf:RDF>\n");
             writer.close();
         }
