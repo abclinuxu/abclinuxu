@@ -128,9 +128,11 @@ public class VariableFetcher extends TimerTask {
             Category polls = (Category) persistance.findById(new Category(Constants.CAT_POLLS));
             counter.put("POLLS",new Integer(polls.getChildren().size()));
             Item todo = (Item) persistance.findById(new Item(Constants.ITEM_DIZ_TODO));
-            Node node = todo.getData().selectSingleNode("//comments");
-            if (node!=null)
-                counter.put("TODO",node.getText());
+            synchronized (todo.getData().getRootElement()) {
+                Node node = todo.getData().selectSingleNode("//comments");
+                if ( node!=null )
+                    counter.put("TODO", node.getText());
+            }
 
             currentPoll = sqlTool.findActivePoll();
 
