@@ -3,6 +3,7 @@
 <div slass="s">
 <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1 class="st_nadpis">Anketa</h1></div></div>
 </div>
+<@lib.showMessages/>
 
 <#if USER?exists && USER.hasRole("poll admin")>
  <p>

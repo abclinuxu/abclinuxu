@@ -38,10 +38,10 @@
 		<div class="za_mn">
 		  	<a href="http://prace.abclinuxu.cz" class="za_mn_odkaz">Práce</a><!--
 			--><a href="/clanky/dir/315" class="za_mn_odkaz">Èlánky</a><!--
-			--><a href="/hardware/dir/1" class="za_mn_odkaz">Hardware</a><!--
+			--><a href="/hardware" class="za_mn_odkaz">Hardware</a><!--
 			--><a href="/diskuse.jsp" class="za_mn_odkaz">Diskuse</a><!--
 			--><a href="/slovnik" class="za_mn_odkaz">Slovník</a><!--
-			--><a href="/drivers/dir/318" class="za_mn_odkaz">Ovladaèe</a><!--
+			--><a href="/drivers" class="za_mn_odkaz">Ovladaèe</a><!--
 			--><a href="/download/abicko.jsp" class="za_mn_odkaz">Abíèko</a><!--
 			--><a href="/clanky/dir/250" class="za_mn_odkaz">Ankety</a>
 		</div>
@@ -89,7 +89,7 @@
                 <#if anketa.multiChoice><#assign type = "checkbox"><#else><#assign type = "radio"></#if>
                 <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Anketa</h1></div></div>
                 <div class="s_sekce">
-                    <form action="${URL.noPrefix("/EditPoll")}" method="POST">
+                    <form action="${URL.noPrefix("/EditPoll/"+relAnketa.id)}" method="POST">
                     <div class="ank-otazka">${anketa.text}</div>
                     <#list anketa.choices as choice>
                         <div class="ank-odpov">
@@ -98,8 +98,7 @@
                         <img src="/images/site2/anketa.gif" width="${procento}" height="10" alt="${TOOL.percentBar(procento)}"></div>
                     </#list>
                     <input name="submit" type="submit" id="submit" value="Hlasuj" src="/images/site2/vote_btn.gif" alt="Hlasuj"> &nbsp;Celkem ${total} hlasù<br>
-                    <input type="hidden" name="pollId" value="${anketa.id}">
-                    <input type="hidden" name="url" value="/clanky/dir/${relAnketa.id}">
+                    <input type="hidden" name="url" value="/clanky/show/${relAnketa.id}">
                     <input type="hidden" name="action" value="vote">
                     </form>
                 </div>

@@ -12,7 +12,7 @@
 
  <p>
   <b>Anketa</b><br>
-  <form action="${URL.noPrefix("/EditPoll")}" method="POST">
+  <form action="${URL.noPrefix("/EditPoll/"+relAnketa.id)}" method="POST">
   <i>${anketa.text}</i><br>
   <#list anketa.choices as choice>
    <#assign procento = TOOL.percent(choice.count,total)>
@@ -23,8 +23,7 @@
   <br>Celkem ${total} hlasù<br>
   <input type="submit" value="Hlasuj">
   </span>
-  <input type="hidden" name="pollId" value="${anketa.id}">
-  <input type="hidden" name="url" value="${URL.noPrefix("/Index")}">
+  <input type="hidden" name="url" value="/clanky/show/${relAnketa.id}">
   <input type="hidden" name="action" value="vote">
  </form>
   <#assign diz=TOOL.findComments(anketa)>
