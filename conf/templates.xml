@@ -287,7 +287,7 @@
 
   <servlet name="ViewUser">
     <action name="profile" content="/show/profile.ftl">
-      <var name="TITLE" value="Profil" />
+      <var name="TITLE" value="Profil - ${PROFILE.name}" type="Lazy" />
     </action>
     <action name="myProfile" content="/show/myprofile.ftl">
       <var name="TITLE" value="Mùj profil" />
