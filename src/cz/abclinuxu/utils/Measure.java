@@ -21,15 +21,16 @@ public class Measure {
         DOMConfigurator.configure("conf/log4j.xml");
         Persistance persistance = PersistanceFactory.getPersistance();
         int  i=0,j=0;
+        String str = "92032";
 
         // place initilizaton here
         User user = new User();
         user.setId(1);
 
         long start = System.currentTimeMillis();
-        for (i=0; i<100000; i++) {
+        for (i=0; i<1600000; i++) {
             //place your code to measure here
-            user.equals(user);
+            j = Integer.parseInt(str);
         }
         long end = System.currentTimeMillis();
 
