@@ -121,7 +121,7 @@
                 <entry key="url.stable" value="ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.4"/>
                 <entry key="regexp.stable.pre" value="(The latest prepatch for the stable[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
                 <entry key="regexp.devel" value="(The latest beta[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                <entry key="url.devel" value="ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.5"/>
+                <entry key="url.devel" value="ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.6"/>
                 <entry key="regexp.devel.pre" value="(The latest prepatch for the beta[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
                 <entry key="regexp.22" value="(The latest 2.2[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
                 <entry key="url.22" value="ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.2"/>
