@@ -136,7 +136,7 @@ public class GenerateLinks implements Task {
     /**
      * Sets default file name.
      */
-    public static void setFileName(String name) {
+    public static void setFileNameTrafika(String name) {
         fileName_trafika = name;
     }
 
@@ -145,6 +145,13 @@ public class GenerateLinks implements Task {
      */
     public static void setFileNameAnneca(String name) {
         fileName_anneca = name;
+    }
+
+    /**
+     * Sets RSS file name.
+     */
+    public static void setFileNameRSS(String name) {
+        fileName_rss = name;
     }
 
     /**

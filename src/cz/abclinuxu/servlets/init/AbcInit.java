@@ -55,11 +55,14 @@ public class AbcInit extends HttpServlet {
         String kernel = getInitParameter("KERNEL");
         if ( kernel!=null ) UpdateKernel.setFileName(path+kernel);
 
-        String links = getInitParameter("LINKS");
-        if ( links!=null ) GenerateLinks.setFileName(path+links);
+        String links = getInitParameter("LINKS_TRAFIKA");
+        if ( links!=null ) GenerateLinks.setFileNameTrafika(path+links);
 
         links = getInitParameter("LINKS_ANNECA");
         if ( links!=null ) GenerateLinks.setFileNameAnneca(path+links);
+
+        links = getInitParameter("LINKS_RSS");
+        if ( links!=null ) GenerateLinks.setFileNameRSS(path+links);
 
         // start scheduler tasks
         startKernelUpdate();
