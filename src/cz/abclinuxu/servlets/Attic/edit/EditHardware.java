@@ -380,11 +380,15 @@ public class EditHardware extends AbcFMServlet {
         if ( !Misc.empty(note) )
             DocumentHelper.makeElement(document,"data/note").setText(note);
 
+        Date updated = record.getUpdated();
         persistance.update(record);
+        if (user.getId()!=record.getOwner())
+            SQLTool.getInstance().setUpdatedTimestamp(record, updated);
 
         // run monitor
         String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/ViewRelation?rid="+relation.getId();
-        Item item = (Item) persistance.findById(relation.getChild());
+        GenericObject obj = (relation.getParent() instanceof Item)? relation.getParent() : relation.getChild();
+        Item item = (Item) persistance.findById(obj);
         MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.ITEM, item, url);
         MonitorPool.scheduleMonitorAction(action);
 
