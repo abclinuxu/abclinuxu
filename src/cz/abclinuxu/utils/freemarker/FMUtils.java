@@ -9,10 +9,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.ext.beans.BeansWrapper;
 
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.IOException;
-import java.io.File;
+import java.io.*;
 import java.util.Map;
 import java.util.prefs.Preferences;
 
@@ -64,6 +61,19 @@ public class FMUtils implements Configurable {
         StringWriter writer = new StringWriter();
         template.process(data,writer);
         return writer.toString();
+    }
+
+    /**
+     * Executes template specified by name using variables from data.
+     * @param template name of template
+     * @param env data model used within execution of code
+     * @param file file, where executed code will be saved
+     */
+    public static void executeTemplate(String template, Map env, File file) throws Exception {
+        Template tpl = config.getTemplate(template);
+        FileWriter writer = new FileWriter(file);
+        tpl.process(env, writer);
+        writer.close();
     }
 
     /**

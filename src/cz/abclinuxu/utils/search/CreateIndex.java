@@ -18,7 +18,6 @@ import cz.abclinuxu.utils.Tools;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
 
@@ -28,7 +27,6 @@ import java.util.prefs.Preferences;
 /**
  * This class is responsible for creating and
  * maintaining Lucene's index.
- * todo remove dependancy on Velocity
  * todo add czech analyzer
  */
 public class CreateIndex implements Configurable {
@@ -64,7 +62,7 @@ public class CreateIndex implements Configurable {
         log.info("Starting to index data, using directory "+PATH);
 
         try {
-            IndexWriter indexWriter = new IndexWriter(PATH,new StandardAnalyzer(),true);
+            IndexWriter indexWriter = new IndexWriter(PATH,new AbcCzechAnalyzer(),true);
             CreateIndex test = new CreateIndex(indexWriter);
             Relation articles = (Relation) persistance.findById(new Relation(Constants.REL_ARTICLES));
             Relation hardware = (Relation) persistance.findById(new Relation(Constants.REL_HARDWARE));

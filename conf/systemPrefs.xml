@@ -36,6 +36,11 @@
           </node>
           <node name="search">
             <map/>
+            <node name="AbcCzechAnalyzer">
+              <map>
+                <entry key="stop.words.file" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/stop_words.txt"/>
+              </map>
+            </node>
             <node name="CreateIndex">
               <map>
                 <entry key="path" value="@DEPLOY_ABCLINUXU@/WEB-INF/index/"/>
@@ -144,6 +149,20 @@
               <map>
                   <entry key="upload.path" value="/tmp/upload"/>
                   <entry key="max.upload.size" value="51200"/>
+              </map>
+            </node>
+          </node>
+        </node>
+      </node>
+      <node name="finesoft">
+        <map/>
+        <node name="socd">
+          <map/>
+          <node name="analyzer">
+            <map/>
+            <node name="DiacriticRemover">
+              <map>
+                <entry key="unicode.data.file" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/UnicodeData.txt"/>
               </map>
             </node>
           </node>

@@ -13,9 +13,9 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.search.MyDocument;
 import cz.abclinuxu.utils.search.CreateIndex;
+import cz.abclinuxu.utils.search.AbcCzechAnalyzer;
 import org.apache.lucene.search.*;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -54,7 +54,7 @@ public class Search extends AbcFMServlet {
 
         try {
             Searcher searcher = new IndexSearcher(CreateIndex.getIndexPath());
-            Query q = QueryParser.parse(query, "contents", new StandardAnalyzer());
+            Query q = QueryParser.parse(query, "contents", new AbcCzechAnalyzer());
 
             Hits hits = searcher.search(q);
 
@@ -82,7 +82,7 @@ public class Search extends AbcFMServlet {
 
     public static void main(String[] args) throws Exception {
         Searcher searcher = new IndexSearcher(CreateIndex.getIndexPath());
-        Analyzer analyzer = new StandardAnalyzer();
+        Analyzer analyzer = new AbcCzechAnalyzer();
 
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         while (true) {

@@ -1386,7 +1386,7 @@ public class MySqlPersistance implements Persistance {
     /**
      * @return connection to database from connection pool.
      */
-    Connection getSQLConnection() {
+    public Connection getSQLConnection() {
         try {
             return DriverManager.getConnection(dbUrl);
         } catch (SQLException e) {
@@ -1397,18 +1397,7 @@ public class MySqlPersistance implements Persistance {
     /**
      * Closes database connection and logs any errors
      */
-    private void releaseSQLConnection(Connection con) {
-        try {
-            if ( con!=null ) con.close();
-        } catch (Exception e) {
-            log.error("Problems while closing connection to database!",e);
-        }
-    }
-
-    /**
-     * Closes database connection and logs any errors
-     */
-    void releaseSQLResources(Connection con, Statement statement, ResultSet rs) {
+    public void releaseSQLResources(Connection con, Statement statement, ResultSet rs) {
         try {
             if ( rs!=null )
                 rs.close();
