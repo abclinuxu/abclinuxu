@@ -21,11 +21,20 @@ projeví.
 
 <p><a href="${URL.noPrefix("/Admin?action=clearCache")}">Clear cache</a></p>
 
+
 <h1>Správa práv u¾ivatelù</h1>
 
 <p>Pøiøazování rolí jednotlivým u¾ivatelùm.</p>
 
 <p><a href="${URL.noPrefix("/EditUser?action=grant")}">Grant roles</a></p>
+
+
+<h1>Vytvoøení ankety</h1>
+
+<p>Zde je mo¾né vytvoøit anketu.</p>
+
+<p><a href="${URL.noPrefix("/EditSurvey?action=add")}">Create survey</a></p>
+
 
 <h1>Statistika JDBC poolu</h1>
 
