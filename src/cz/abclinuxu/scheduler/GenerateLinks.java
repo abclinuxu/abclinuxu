@@ -93,7 +93,7 @@ public class GenerateLinks extends TimerTask implements Configurable {
                 Relation relation = (Relation) list.get(i);
                 Item item = (Item) relation.getChild();
 
-                url = "http://www.abclinuxu.cz/clanky/ViewRelation?relationId="+relation.getId();
+                url = "http://www.abclinuxu.cz/clanky/ViewRelation?rid="+relation.getId();
                 title = tools.xpath(item,"data/name");
                 desc = removeNewLines(tools.xpath(item,"data/perex"));
 
@@ -111,7 +111,7 @@ public class GenerateLinks extends TimerTask implements Configurable {
                 Item item = (Item) found.getParent();
                 persistance.synchronize(item);
 
-                url = "http://www.abclinuxu.cz/hardware/ViewRelation?relationId="+found.getId();
+                url = "http://www.abclinuxu.cz/hardware/ViewRelation?rid="+found.getId();
                 title = "H "+tools.xpath(item,"data/name");
 
                 for (int j = 0; j < generators.length; j++) {
@@ -125,7 +125,7 @@ public class GenerateLinks extends TimerTask implements Configurable {
                 Item item = (Item) found.getChild();
                 persistance.synchronize(item);
 
-                url = "http://www.abclinuxu.cz/drivers/ViewRelation?relationId="+found.getId();
+                url = "http://www.abclinuxu.cz/drivers/ViewRelation?rid="+found.getId();
                 title = "O "+tools.xpath(item,"data/name");
 
                 for (int j = 0; j < generators.length; j++) {
@@ -146,7 +146,7 @@ public class GenerateLinks extends TimerTask implements Configurable {
             Sorters2.byDate(discussions, Sorters2.DESCENDING);
             for ( Iterator iter = discussions.iterator(); iter.hasNext(); ) {
                 DiscussionHeader discussion = (DiscussionHeader) iter.next();
-                url = "http://www.abclinuxu.cz/software/ViewRelation?relationId="+discussion.getRelationId();
+                url = "http://www.abclinuxu.cz/software/ViewRelation?rid="+discussion.getRelationId();
                 title = tools.xpath(discussion.getDiscussion(), "data/title");
                 title = title.concat(", odpovìdí: "+discussion.getResponseCount());
                 title = tools.encodeSpecial(title);

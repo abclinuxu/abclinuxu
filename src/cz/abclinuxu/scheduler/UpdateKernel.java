@@ -33,6 +33,9 @@ public class UpdateKernel extends TimerTask implements Configurable {
     public static final String PREF_REGEXP_DEVEL = "regexp.devel";
     public static final String PREF_URL_DEVEL = "url.devel";
     public static final String PREF_REGEXP_DEVEL_PRE = "regexp.devel.pre";
+    public static final String PREF_REGEXP_24 = "regexp.24";
+    public static final String PREF_URL_24 = "url.24";
+    public static final String PREF_REGEXP_24_PRE = "regexp.24.pre";
     public static final String PREF_REGEXP_22 = "regexp.22";
     public static final String PREF_URL_22 = "url.22";
     public static final String PREF_REGEXP_22_PRE = "regexp.22.pre";
@@ -43,10 +46,11 @@ public class UpdateKernel extends TimerTask implements Configurable {
     public static final String PREF_URL_AC = "url.ac";
 
     String fileName, uri;
-    String stable, stablePre, devel, develPre, old22, old22Pre, old20, old20Pre, ac;
-    String urlStable, urlDevel, url22, url20, urlAC;
+    String stable, stablePre, devel, develPre, old24, old24Pre, old22, old22Pre, old20, old20Pre, ac;
+    String urlStable, urlDevel, url24, url22, url20, urlAC;
 
-    RE reStable,reStablepre,reDevel,reDevelpre,reOld22,reOld22pre,reOld20,reOld20pre,reAc;
+    RE reStable,reStablepre,reDevel,reDevelpre;
+    RE reOld24,reOld24pre,reOld22,reOld22pre,reOld20,reOld20pre,reAc;
 
     public UpdateKernel() {
         Configurator configurator = ConfigurationManager.getConfigurator();
@@ -56,6 +60,8 @@ public class UpdateKernel extends TimerTask implements Configurable {
             reStablepre = new RE(stablePre);
             reDevel = new RE(devel);
             reDevelpre = new RE(develPre);
+            reOld24 = new RE(old24);
+            reOld24pre = new RE(old24Pre);
             reOld22 = new RE(old22);
             reOld22pre = new RE(old22Pre);
             reOld20 = new RE(old20);
@@ -78,6 +84,9 @@ public class UpdateKernel extends TimerTask implements Configurable {
         devel = prefs.get(PREF_REGEXP_DEVEL, null);
         urlDevel = prefs.get(PREF_URL_DEVEL,null);
         develPre = prefs.get(PREF_REGEXP_DEVEL_PRE, null);
+        old24 = prefs.get(PREF_REGEXP_24, null);
+        url24 = prefs.get(PREF_URL_24,null);
+        old24Pre = prefs.get(PREF_REGEXP_24_PRE, null);
         old22 = prefs.get(PREF_REGEXP_22, null);
         url22 = prefs.get(PREF_URL_22,null);
         old22Pre = prefs.get(PREF_REGEXP_22_PRE, null);
@@ -95,7 +104,8 @@ public class UpdateKernel extends TimerTask implements Configurable {
     public void run() {
         try {
             String line;
-            line = stable = stablePre = devel = develPre = old22 = old22Pre = old20 = old20Pre = ac = null;
+            line = stable = stablePre = devel = develPre = null;
+            old24 = old24Pre = old22 = old22Pre = old20 = old20Pre = ac = null;
 
             BufferedReader reader = getStream();
             while ((line = reader.readLine())!=null) {
@@ -113,6 +123,14 @@ public class UpdateKernel extends TimerTask implements Configurable {
                 }
                 if ( reDevelpre.match(line) ) {
                     develPre = reDevelpre.getParen(3);
+                    continue;
+                }
+                if ( reOld24.match(line) ) {
+                    old24 = reOld24.getParen(3);
+                    continue;
+                }
+                if ( reOld24pre.match(line) ) {
+                    old24Pre = reOld24pre.getParen(3);
                     continue;
                 }
                 if ( reOld22.match(line) ) {
@@ -146,6 +164,7 @@ public class UpdateKernel extends TimerTask implements Configurable {
 
             writeTableRow(writer,"Stabilní:",urlStable,stable,stablePre);
             writeTableRow(writer,"Vývojové:",urlDevel,devel,null);
+            writeTableRow(writer,"Øada 2.4:",url24,old24,old24Pre);
             writeTableRow(writer,"Øada 2.2:",url22,old22,old22Pre);
             writeTableRow(writer,"Øada 2.0:",url20,old20,old20Pre);
             writeTableRow(writer,"AC øada:",urlAC,ac,null);
@@ -161,6 +180,7 @@ public class UpdateKernel extends TimerTask implements Configurable {
     }
 
     private void writeTableRow(Writer writer, String desc, String url, String version, String preVersion) throws IOException {
+        if (version==null && preVersion==null) return;
         writer.write("<tr>\n<td class=\"jadro_h\">");
         if ( url!=null )
             writer.write("<a href=\""+url+"\" class=\"ikona\">"+desc+"</a>");
