@@ -49,6 +49,13 @@ public class Cache implements Task {
         try {
             if ( obj instanceof Relation ) {
                 Relation relation = (Relation) obj;
+
+                // if parent has been changed on already stored relation, we must dismiss this link
+                Relation original = (Relation) ((CachedObject)data.get(relation)).object; // chyba!
+                if ( original!=null && !original.getParent().equals(relation.getParent()) ) {
+                    remove(original);
+                }
+
                 Relation key = cloneRelation(relation);
                 data.put(key,new CachedObject(key));
                 modCount++;
@@ -91,7 +98,8 @@ public class Cache implements Task {
             found.touch();
 
             if ( obj instanceof Relation ) {
-                Relation relation = (Relation) found.object; // maybe famous bug lies here. return clone here
+                Relation relation = new Relation();
+                relation.synchronizeWith(found.object);
 
                 GenericObject tmp = load(relation.getChild());
                 if ( tmp!=null ) relation.setChild(tmp);

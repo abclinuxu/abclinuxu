@@ -145,10 +145,9 @@ $!UTIL.saveParams($PARAMS, [])
 #if($diz.ResponseCount>0), poslední $UTIL.showDizDate($diz.LastUpdate)#end
 #undef('diz')
 #end
-</SPAN>
-<P/>
-<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="---">
-#if($last)<BR><IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" VSPACE="1" BORDER="0" ALT="---">#end
+</SPAN><BR><BR>
+<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="---"><BR>
+#if($last)<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" VSPACE="1" BORDER="0"><BR>#end
 <P/>
 #end
 

@@ -47,6 +47,7 @@ public class EditRelation extends AbcServlet {
     public static final String ACTION_LINK_STEP2 = "add2";
     public static final String ACTION_REMOVE = "remove";
     public static final String ACTION_REMOVE_STEP2 = "remove2";
+    public static final String ACTION_MOVE = "move";
 
 
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
@@ -102,6 +103,17 @@ public class EditRelation extends AbcServlet {
                 default: return actionRemove2(request,response,ctx);
             }
 
+        } else if ( action.equals(ACTION_MOVE) ) {
+            int rights = Guard.check((User)ctx.get(VAR_USER),relation,Guard.OPERATION_EDIT,null);
+            switch (rights) {
+                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_DENIED: {
+                    addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
+                    return getTemplate("edit/removeRelation.vm"); // that is not correct, but it shall work
+                }
+                default: return actionMove(request,response,ctx);
+            }
+
         }
         return getTemplate("add/category.vm");
     }
@@ -151,6 +163,30 @@ public class EditRelation extends AbcServlet {
         Relation relation = (Relation) ctx.get(VAR_CURRENT);
 
         persistance.remove(relation);
+        String url = null;
+        String prefix = (String) params.get(PARAM_PREFIX);
+        if ( prefix!=null ) {
+            url = prefix.concat("/ViewRelation?relationId="+relation.getUpper());
+        } else url = "/Index";
+
+        redirect(url,response,ctx);
+        return null;
+    }
+
+    /**
+     * Called, when user selects destination in SelectRelation. It replaces parent in relation with child
+     * in destination.
+     */
+    protected Template actionMove(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Relation relation = (Relation) ctx.get(VAR_CURRENT);
+        Relation destination = (Relation) instantiateParam(SelectRelation.PARAM_SELECTED,Relation.class,params);
+
+        persistance.synchronize(destination);
+        relation.setParent(destination.getChild());
+        persistance.update(relation);
+
         String url = null;
         String prefix = (String) params.get(PARAM_PREFIX);
         if ( prefix!=null ) {

@@ -1317,9 +1317,21 @@ public class MySqlPersistance implements Persistance {
 
         try {
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("update relace set data=? where cislo=?");
-            statement.setBytes(1,relation.getDataAsString().getBytes());
-            statement.setInt(2,relation.getId());
+            PreparedStatement statement = con.prepareStatement("update relace set typ_predka=?,predek=?,typ_potomka=?,potomek=?,data=? where cislo=?");
+
+            statement.setString(1,getTableId(relation.getParent()));
+            statement.setInt(2,relation.getParent().getId());
+            statement.setString(3,getTableId(relation.getChild()));
+            statement.setInt(4,relation.getChild().getId());
+
+            String tmp = relation.getDataAsString();
+            if ( tmp==null || tmp.length()==0 ) {
+                statement.setBytes(5,null);
+//                statement.setNull(5,);
+            } else {
+                statement.setBytes(5,tmp.getBytes());
+            }
+            statement.setInt(6,relation.getId());
 
             int result = statement.executeUpdate();
             if ( result!=1 ) {
