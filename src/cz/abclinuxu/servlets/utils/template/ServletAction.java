@@ -12,15 +12,13 @@ import java.util.List;
  * Holder of Servlet and Action pair.
  */
 public class ServletAction {
-    HashMap mappings;
     String template;
+    String content;
+    String name;
+    List variables;
 
-    public ServletAction() {
-        this(3);
-    }
-
-    public ServletAction(int size) {
-        mappings = new HashMap(size);
+    public ServletAction(String name) {
+        this.name = name;
     }
 
     /**
@@ -39,27 +37,29 @@ public class ServletAction {
         this.template = template;
     }
 
-    /**
-     * Add mapping.
-     * @param template name of template
-     * @param content name of content
-     * @param variables optional list of Variables
-     */
-    public void addMapping(String template, String content, List variables) {
-        Mapping mapping = new Mapping(content);
-        mapping.setVariables(variables);
-        mappings.put(template, mapping);
+    public void setVariables(List variables) {
+        this.variables = variables;
+    }
+
+    public List getVariables() {
+        return variables;
     }
 
     /**
-     * Finds mapping for selected template. If mapping is not found for given
-     * template, default template's mapping is used.
-     * @return found mapping
+     * Gets content. Content is page to be rendered.
      */
-    public Mapping getMapping(String template) {
-        Mapping mapping = (Mapping) mappings.get(template);
-        if ( mapping==null )
-            mapping = (Mapping) mappings.get(TemplateSelector.DEFAULT_TEMPLATE);
-        return mapping;
+    public String getContent() {
+        return content;
+    }
+
+    /**
+     * Sets content. Content is page to be rendered.
+     */
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String toString() {
+        return name + " -> " + content;
     }
 }

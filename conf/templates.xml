@@ -2,351 +2,220 @@
 <config>
 
   <servlet name="EditArticle">
-    <action name="add" template="print">
-      <mapping template="print" content="/print/add/article.ftl">
-        <var name="TITLE" value="Vlo¾ení èlánku" />
-      </mapping>
+    <action name="add" template="print" content="/add/article.ftl">
+      <var name="TITLE" value="Vlo¾ení èlánku" />
     </action>
-    <action name="edit" template="print">
-      <mapping template="print" content="/print/add/article.ftl">
-        <var name="TITLE" value="Úprava èlánku" />
-      </mapping>
+    <action name="edit" template="print" content="/add/article.ftl">
+    <var name="TITLE" value="Úprava èlánku" />
     </action>
   </servlet>
 
   <servlet name="EditCategory">
-    <action name="add" template="print">
-      <mapping template="print" content="/print/add/category.ftl">
-        <var name="TITLE" value="Vlo¾ení kategorie" />
-      </mapping>
+    <action name="add" template="print" content="/add/category.ftl">
+    <var name="TITLE" value="Vlo¾ení kategorie" />
     </action>
-    <action name="edit" template="print">
-      <mapping template="print" content="/print/edit/category.ftl">
-        <var name="TITLE" value="Úprava kategorie" />
-      </mapping>
+    <action name="edit" template="print" content="/edit/category.ftl">
+      <var name="TITLE" value="Úprava kategorie" />
     </action>
   </servlet>
 
   <servlet name="EditDiscussion">
-    <action name="reply">
-      <mapping template="web" content="/web/add/reply.ftl">
-        <var name="TITLE" value="Vlo¾ reakci do diskuse" />
-      </mapping>
+    <action name="reply" content="/add/reply.ftl">
+      <var name="TITLE" value="Vlo¾ reakci do diskuse" />
     </action>
-    <action name="ask">
-      <mapping template="web" content="/web/add/question.ftl">
-        <var name="TITLE" value="Polo¾it nový dotaz" />
-      </mapping>
+    <action name="ask" content="/add/question.ftl">
+      <var name="TITLE" value="Polo¾it nový dotaz" />
     </action>
-    <action name="ask_confirm">
-      <mapping template="web" content="/web/add/question2.ftl">
-        <var name="TITLE" value="Náhled va¹eho pøíspìvku" />
-      </mapping>
+    <action name="ask_confirm" content="/add/question2.ftl">
+      <var name="TITLE" value="Náhled va¹eho pøíspìvku" />
     </action>
   </servlet>
 
   <servlet name="EditDriver">
-    <action name="add">
-      <mapping template="web" content="/web/add/driver.ftl">
-        <var name="TITLE" value="Vlo¾ ovladaè" />
-      </mapping>
+    <action name="add" content="/add/driver.ftl">
+      <var name="TITLE" value="Vlo¾ ovladaè" />
     </action>
   </servlet>
 
   <servlet name="EditHardware">
-    <action name="add_record">
-      <mapping template="web" content="/web/add/hwrecord.ftl">
-        <var name="TITLE" value="Vlo¾ záznam" />
-      </mapping>
+    <action name="add_record" content="/add/hwrecord.ftl">
+      <var name="TITLE" value="Vlo¾ záznam" />
     </action>
-    <action name="edit_record">
-      <mapping template="web" content="/web/add/hwrecord.ftl">
-        <var name="TITLE" value="Uprav záznam" />
-      </mapping>
+    <action name="edit_record" content="/add/hwrecord.ftl">
+      <var name="TITLE" value="Uprav záznam" />
     </action>
-    <action name="add_item">
-      <mapping template="web" content="/web/add/item.ftl">
-        <var name="TITLE" value="Pøidání nové polo¾ky" />
-      </mapping>
+    <action name="add_item" content="/add/item.ftl">
+      <var name="TITLE" value="Pøidání nové polo¾ky" />
     </action>
-    <action name="edit_item">
-      <mapping template="web" content="/web/edit/item.ftl">
-        <var name="TITLE" value="Uprav polo¾ku" />
-      </mapping>
+    <action name="edit_item" content="/edit/item.ftl">
+      <var name="TITLE" value="Uprav polo¾ku" />
     </action>
   </servlet>
 
   <servlet name="EditPoll">
-    <action name="add" template="print">
-      <mapping template="web" content="/print/add/anketa.ftl">
-        <var name="TITLE" value="Vytvoø anketu" />
-      </mapping>
+    <action name="add" template="print" content="/add/anketa.ftl">
+      <var name="TITLE" value="Vytvoø anketu" />
     </action>
-    <action name="edit" template="print">
-      <mapping template="web" content="/print/edit/anketa.ftl">
-        <var name="TITLE" value="Uprav anketu" />
-      </mapping>
+    <action name="edit" template="print" content="/edit/anketa.ftl">
+      <var name="TITLE" value="Uprav anketu" />
     </action>
   </servlet>
 
   <servlet name="EditRelation">
-    <action name="add" template="print">
-      <mapping template="web" content="/print/add/relation.ftl">
-        <var name="TITLE" value="Vytvoø link" />
-      </mapping>
+    <action name="add" template="print" content="/add/relation.ftl">
+      <var name="TITLE" value="Vytvoø link" />
     </action>
-    <action name="remove" template="print">
-      <mapping template="web" content="/print/remove/relation.ftl">
-        <var name="TITLE" value="Smazání relace" />
-      </mapping>
+    <action name="remove" template="print" content="/remove/relation.ftl">
+      <var name="TITLE" value="Smazání relace" />
     </action>
   </servlet>
 
   <servlet name="EditRequest">
-    <action name="view">
-      <mapping template="web" content="/web/show/requests.ftl">
-        <var name="TITLE" value="Administrativní po¾adavky" />
-      </mapping>
+    <action name="view" content="/show/requests.ftl">
+      <var name="TITLE" value="Administrativní po¾adavky" />
     </action>
   </servlet>
 
   <servlet name="EditSoftware">
-    <action name="add_record">
-      <mapping template="web" content="/web/add/swrecord.ftl">
-        <var name="TITLE" value="Vlo¾ záznam" />
-      </mapping>
+    <action name="add_record" content="/add/swrecord.ftl">
+      <var name="TITLE" value="Vlo¾ záznam" />
     </action>
-    <action name="edit_record">
-      <mapping template="web" content="/web/add/swrecord.ftl">
-        <var name="TITLE" value="Uprav záznam" />
-      </mapping>
+    <action name="edit_record" content="/add/swrecord.ftl">
+      <var name="TITLE" value="Uprav záznam" />
     </action>
-    <action name="add_item">
-      <mapping template="web" content="/web/add/item.ftl">
-        <var name="TITLE" value="Pøidání nové polo¾ky" />
-      </mapping>
+    <action name="add_item" content="/add/item.ftl">
+      <var name="TITLE" value="Pøidání nové polo¾ky" />
     </action>
-    <action name="edit_item">
-      <mapping template="web" content="/web/edit/item.ftl">
-        <var name="TITLE" value="Uprav polo¾ku" />
-      </mapping>
+    <action name="edit_item" content="/edit/item.ftl">
+      <var name="TITLE" value="Uprav polo¾ku" />
     </action>
   </servlet>
 
   <servlet name="EditUser">
-    <action name="register">
-      <mapping template="web" content="/web/add/user.ftl">
-        <var name="TITLE" value="Registrace" />
-      </mapping>
+    <action name="register" content="/add/user.ftl">
+      <var name="TITLE" value="Registrace" />
     </action>
-    <action name="editBasic">
-      <mapping template="web" content="/web/edit/user_basic.ftl">
-        <var name="TITLE" value="Úprava úètu" />
-      </mapping>
+    <action name="editBasic" content="/edit/user_basic.ftl">
+      <var name="TITLE" value="Úprava úètu" />
     </action>
-    <action name="changePassword">
-      <mapping template="web" content="/web/edit/user_password.ftl">
-        <var name="TITLE" value="Zmìna hesla" />
-      </mapping>
+    <action name="changePassword" content="/edit/user_password.ftl">
+      <var name="TITLE" value="Zmìna hesla" />
     </action>
-    <action name="editPersonal">
-      <mapping template="web" content="/web/edit/user_personal.ftl">
-        <var name="TITLE" value="Úprava osobních dat" />
-      </mapping>
+    <action name="editPersonal" content="/edit/user_personal.ftl">
+      <var name="TITLE" value="Úprava osobních dat" />
     </action>
-    <action name="editProfile">
-      <mapping template="web" content="/web/edit/user_profile.ftl">
-        <var name="TITLE" value="Úprava profilu" />
-      </mapping>
+    <action name="editProfile" content="/edit/user_profile.ftl">
+      <var name="TITLE" value="Úprava profilu" />
     </action>
-    <action name="uploadPhoto">
-      <mapping template="web" content="/web/edit/user_photo.ftl">
-        <var name="TITLE" value="Nahrání fotografie" />
-      </mapping>
+    <action name="uploadPhoto" content="/edit/user_photo.ftl">
+      <var name="TITLE" value="Nahrání fotografie" />
     </action>
-    <action name="editSubscription">
-      <mapping template="web" content="/web/edit/user_subscribe.ftl">
-        <var name="TITLE" value="Objednávka zasílání informací" />
-      </mapping>
+    <action name="editSubscription" content="/edit/user_subscribe.ftl">
+      <var name="TITLE" value="Objednávka zasílání informací" />
     </action>
-    <action name="editSettings">
-      <mapping template="web" content="/web/edit/user_settings.ftl">
-        <var name="TITLE" value="Zmìna nastavení" />
-      </mapping>
+    <action name="editSettings" content="/edit/user_settings.ftl">
+      <var name="TITLE" value="Zmìna nastavení" />
     </action>
   </servlet>
 
   <servlet name="ForgottenPassword">
-    <action name="step1">
-      <mapping template="web" content="/web/misc/forgotten.ftl">
-        <var name="TITLE" value="Zaslání zapomenutého hesla" />
-      </mapping>
+    <action name="step1" content="/misc/forgotten.ftl">
+      <var name="TITLE" value="Zaslání zapomenutého hesla" />
     </action>
-    <action name="step2">
-      <mapping template="web" content="/web/misc/forgotten2.ftl">
-        <var name="TITLE" value="Zaslání zapomenutého hesla" />
-      </mapping>
+    <action name="step2" content="/misc/forgotten2.ftl">
+      <var name="TITLE" value="Zaslání zapomenutého hesla" />
     </action>
   </servlet>
 
   <servlet name="Search">
-    <action name="show">
-      <mapping template="web" content="/web/misc/search.ftl">
-        <var name="TITLE" value="Hledání" />
-      </mapping>
+    <action name="show" content="/misc/search.ftl">
+      <var name="TITLE" value="Hledání" />
     </action>
   </servlet>
 
   <servlet name="SelectIcon">
-    <action name="show">
-      <mapping template="web" content="/web/misc/selectIcon.ftl">
-        <var name="TITLE" value="Vybìr ikony" />
-      </mapping>
+    <action name="show" content="/misc/selectIcon.ftl">
+      <var name="TITLE" value="Vybìr ikony" />
     </action>
   </servlet>
 
   <servlet name="SelectRelation">
-    <action name="step1" template="print">
-      <mapping template="print" content="/print/misc/selectRelation.ftl">
-        <var name="TITLE" value="Výbìr relace" />
-      </mapping>
+    <action name="step1" template="print" content="/misc/selectRelation.ftl">
+      <var name="TITLE" value="Výbìr relace" />
     </action>
-    <action name="step2" template="print">
-      <mapping template="print" content="/print/misc/selectRelation2.ftl">
-        <var name="TITLE" value="Potvrzení výbìru" />
-      </mapping>
+    <action name="step2" template="print" content="/misc/selectRelation2.ftl">
+      <var name="TITLE" value="Potvrzení výbìru" />
     </action>
   </servlet>
 
   <servlet name="ViewCategory">
-    <action name="sekce">
-      <mapping template="web" content="/web/show/sekce.ftl">
-        <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
-      </mapping>
-      <mapping template="offline" content="/offline/show/sekce.ftl">
-        <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
-      </mapping>
+    <action name="sekce" content="/show/sekce.ftl">
+      <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
     </action>
-    <action name="rubrika">
-      <mapping template="web" content="/web/show/rubrika.ftl">
-        <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
-      </mapping>
+    <action name="rubrika" content="/show/rubrika.ftl">
+      <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
     </action>
-    <action name="ankety">
-      <mapping template="web" content="/web/show/ankety.ftl">
-        <var name="TITLE" value="Archiv anket" />
-      </mapping>
+    <action name="ankety" content="/show/ankety.ftl">
+      <var name="TITLE" value="Archiv anket" />
     </action>
-    <action name="drivers">
-      <mapping template="web" content="/web/show/drivers.ftl">
-        <var name="TITLE" value="Seznam ovladaèù" />
-      </mapping>
+    <action name="drivers" content="/show/drivers.ftl">
+      <var name="TITLE" value="Seznam ovladaèù" />
     </action>
-    <action name="rubriky">
-      <mapping template="web" content="/web/show/rubriky.ftl">
-        <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
-      </mapping>
+    <action name="rubriky" content="/show/rubriky.ftl">
+      <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
     </action>
   </servlet>
 
 
   <servlet name="ViewRelation">
-    <action name="hardware">
-      <mapping template="web" content="/web/show/hwitem.ftl">
-        <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
-      </mapping>
-      <mapping template="offline" content="/offline/show/hwitem.ftl">
-        <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
-      </mapping>
+    <action name="hardware" content="/show/hwitem.ftl">
+      <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
     </action>
-    <action name="software">
-      <mapping template="web" content="/web/show/switem.ftl">
-        <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
-      </mapping>
-      <mapping template="offline" content="/offline/show/switem.ftl">
-        <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
-      </mapping>
+    <action name="software" content="/show/switem.ftl">
+      <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
     </action>
-    <action name="discussion">
-      <mapping template="web" content="/web/show/discussion.ftl">
-        <var name="TITLE" value='&lt;#if TOOL.xpath(ITEM,"data/title")?exists&gt;${TOOL.xpath(ITEM,"data/title")}&lt;#else&gt;Diskuse&lt;/#if&gt;' type="Lazy" />
-      </mapping>
-      <mapping template="offline" content="/offline/show/discussion.ftl">
-        <var name="TITLE" value='&lt;#if TOOL.xpath(ITEM,"data/title")?exists&gt;${TOOL.xpath(ITEM,"data/title")}&lt;#else&gt;Diskuse&lt;/#if&gt;' type="Lazy" />
-      </mapping>
+    <action name="discussion" content="/show/discussion.ftl">
+      <var name="TITLE" value='${TOOL.xpath(ITEM,"data/title")?default("Diskuse")}' type="Lazy" />
     </action>
-    <action name="article">
-      <mapping template="web" content="/web/show/article.ftl">
-        <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
-      </mapping>
-      <mapping template="offline" content="/offline/show/article.ftl">
-        <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
-      </mapping>
+    <action name="article" content="/show/article.ftl">
+      <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
     </action>
-    <action name="driver">
-      <mapping template="web" content="/web/show/driver.ftl">
-        <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")} - ${TOOL.xpath(ITEM,"data/version")}' type="Lazy" />
-      </mapping>
-      <mapping template="offline" content="/offline/show/driver.ftl">
-        <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")} - ${TOOL.xpath(ITEM,"data/version")}' type="Lazy" />
-      </mapping>
+    <action name="driver" content="/show/driver.ftl">
+      <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")} - ${TOOL.xpath(ITEM,"data/version")}' type="Lazy" />
     </action>
   </servlet>
 
   <servlet name="ViewIndex">
-    <action name="show">
-      <mapping template="web" content="/web/show/index.ftl">
-        <var name="TITLE" value="AbcLinuxu.cz - tady je tuèòákùm hej!" />
-        <var name="IS_INDEX" value="true" type="boolean" />
-      </mapping>
-      <mapping template="lynx" content="/lynx/show/index.ftl">
-        <var name="TITLE" value="AbcLinuxu.cz - tady je tuèòákùm hej!" />
-      </mapping>
-      <mapping template="plucker" content="/plucker/show/index.ftl">
-        <var name="TITLE" value="AbcLinuxu.cz - tady je tuèòákùm hej!" />
-      </mapping>
-      <mapping template="sidebar" content="/sidebar/show/index.ftl" />
+    <action name="show" content="/show/index.ftl">
+      <var name="TITLE" value="AbcLinuxu.cz - tady je tuèòákùm hej!" />
+      <var name="IS_INDEX" value="true" type="boolean" />
     </action>
   </servlet>
 
   <servlet name="ViewUser">
-    <action name="profile">
-      <mapping template="web" content="/web/show/profile.ftl">
-        <var name="TITLE" value="Profil" />
-      </mapping>
+    <action name="profile" content="/show/profile.ftl">
+      <var name="TITLE" value="Profil" />
     </action>
-    <action name="myProfile">
-      <mapping template="web" content="/web/show/myprofile.ftl">
-        <var name="TITLE" value="Mùj profil" />
-      </mapping>
+    <action name="myProfile" content="/show/myprofile.ftl">
+      <var name="TITLE" value="Mùj profil" />
     </action>
-    <action name="content">
-      <mapping template="web" content="/web/show/mycontent.ftl">
-        <var name="TITLE" value="Mùj profil" />
-      </mapping>
+    <action name="content" content="/show/mycontent.ftl">
+      <var name="TITLE" value="Mùj profil" />
     </action>
-    <action name="sendEmail">
-      <mapping template="web" content="/web/misc/sendEmail.ftl">
-        <var name="TITLE" value="Mùj profil" />
-      </mapping>
+    <action name="sendEmail" content="/misc/sendEmail.ftl">
+      <var name="TITLE" value="Mùj profil" />
     </action>
-    <action name="login">
-      <mapping template="web" content="/web/show/login.ftl">
-        <var name="TITLE" value="Pøihlá¹ení do systému" />
-      </mapping>
+    <action name="login" content="/show/login.ftl">
+      <var name="TITLE" value="Pøihlá¹ení do systému" />
     </action>
-    <action name="forbidden">
-      <mapping template="web" content="/web/misc/forbidden.ftl">
-        <var name="TITLE" value="Pøístup odepøen" />
-      </mapping>
+    <action name="forbidden" content="/misc/forbidden.ftl">
+      <var name="TITLE" value="Pøístup odepøen" />
     </action>
   </servlet>
 
   <servlet name="ShowOlder">
-    <action name="show">
-      <mapping template="web" content="/web/show/history.ftl">
-        <var name="TITLE" value="Star¹í pøíspìvky" />
-      </mapping>
+    <action name="show" content="/show/history.ftl">
+      <var name="TITLE" value="Star¹í pøíspìvky" />
     </action>
   </servlet>
 

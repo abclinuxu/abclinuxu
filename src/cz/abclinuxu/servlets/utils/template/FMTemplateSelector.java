@@ -16,30 +16,11 @@ import java.util.List;
 import java.util.Iterator;
 import java.io.StringWriter;
 
-import org.apache.regexp.RE;
-import org.apache.regexp.RESyntaxException;
-
 /**
  * This template selector is for FreeMarker template engine.
  */
 public class FMTemplateSelector extends TemplateSelector {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(FMTemplateSelector.class);
-
-    /** regular expressions to match UA */
-    static RE reLynx, reWget, rePlucker, reMozilla, reExplorer, reLinux, reWindows;
-
-    static {
-        try {
-            reLynx = new RE("(Lynx)",RE.MATCH_CASEINDEPENDENT);
-            rePlucker = new RE("(Plucker)",RE.MATCH_CASEINDEPENDENT);
-            reWget = new RE("(wget)|(custo([^m]|($)))",RE.MATCH_CASEINDEPENDENT); // dont catch "custom"
-            reExplorer = new RE("(MSIE)");
-            reLinux = new RE("Linux");
-            reWindows = new RE("Windows");
-        } catch (RESyntaxException e) {
-            log.error("Wrong regexp!", e);
-        }
-    }
 
     /**
      * Selects page to be processed and template to decorate it. The page is defined as combination
@@ -56,23 +37,20 @@ public class FMTemplateSelector extends TemplateSelector {
     public static String select(String servlet, String action, Map data, HttpServletRequest request) {
         String browser = findBrowser(request);
         if ( Misc.same(browser,BROWSER_MIRROR) )
-            return "/lynx/other/nomirror.vm";
+            return "/lynx/show/nomirror.ftl";
 
         ServletAction servletAction = (ServletAction) mappings.get(servlet + action);
         if ( servletAction==null )
             throw new NotFoundException("Neexistuje ¹ablona pro kombinaci "+servlet +","+ action);
 
         String template = selectTemplate(servletAction,browser,request);
-        Mapping mapping = servletAction.getMapping(template);
-        if ( mapping==null ) {
-            throw new NotFoundException("Neexistuje ¹ablona pro kombinaci ["+servlet+","+action+","+template+"]!");
-        }
+        String page = servletAction.getContent();
+        storeVariables(data,servletAction.getVariables());
 
-        String page = mapping.getContent();
-        storeVariables(data,mapping.getVariables());
-        data.put(VAR_BROWSER,browser);
-
-        return page;
+        StringBuffer sb = new StringBuffer("/");
+        sb.append(template);
+        sb.append(page);
+        return sb.toString();
     }
 
     /**
@@ -90,11 +68,13 @@ public class FMTemplateSelector extends TemplateSelector {
         if ( servletAction==null )
             throw new NotFoundException("Neexistuje ¹ablona pro kombinaci "+servlet +","+ action);
 
-        Mapping mapping = servletAction.getMapping(template);
-        String page = mapping.getContent();
-        storeVariables(data,mapping.getVariables());
+        String page = servletAction.getContent();
+        storeVariables(data,servletAction.getVariables());
 
-        return page;
+        StringBuffer sb = new StringBuffer("/");
+        sb.append(template);
+        sb.append(page);
+        return sb.toString();
     }
 
     /**

@@ -26,8 +26,8 @@ import cz.abclinuxu.utils.Misc;
 
 /**
  * This class is responsible for selecting presentation variant
- * and template mapping.<p>
- *
+ * and template mapping.
+ * @deprecated use FMTemplateSelector
  */
 public class VelocityTemplateSelector extends TemplateSelector {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(VelocityTemplateSelector.class);
@@ -60,22 +60,6 @@ public class VelocityTemplateSelector extends TemplateSelector {
             return "lynx/other/nomirror.vm";
         }
 
-        String name = servlet + action;
-        ServletAction servletAction = (ServletAction) mappings.get(servlet + action);
-        if ( servletAction==null )
-            throw new AbcException("Neexistuje sablona pro kombinaci "+servlet +","+ action);
-
-        Mapping mapping = servletAction.getMapping(variant);
-        if ( mapping==null && ! DEFAULT_TEMPLATE.equals(variant) ) {
-            mapping = servletAction.getMapping(DEFAULT_TEMPLATE); // use default variant
-        }
-
-        if ( mapping==null ) {
-            throw new AbcException("Cannot find template for ["+servlet+","+action+","+variant+"]!",AbcException.RUNTIME);
-        }
-
-        storeVariablesIntoContext(ctx,mapping.getVariables());
-        ctx.put(VAR_CONTENT,mapping.getContent());
         return variant+"/template.vm";
     }
 

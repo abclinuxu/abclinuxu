@@ -8,7 +8,6 @@
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.utils.UrlUtils;
@@ -23,8 +22,6 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Tools;
 import cz.abclinuxu.AbcException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
-import org.apache.velocity.Template;
-import org.apache.velocity.context.Context;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

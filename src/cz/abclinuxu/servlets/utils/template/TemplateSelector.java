@@ -8,6 +8,8 @@ package cz.abclinuxu.servlets.utils.template;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.apache.regexp.RESyntaxException;
+import org.apache.regexp.RE;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
  * template engine.
  */
 public class TemplateSelector {
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(TemplateSelector.class);
 
     /** if not overriden, this template will be used */
     static String DEFAULT_TEMPLATE = "web";
@@ -59,11 +62,27 @@ public class TemplateSelector {
     /** OS Unknown */
     public static final String OS_UNKNOWN = "UNKNOWN";
 
+    /** regular expressions to match UA */
+    static RE reLynx, reWget, rePlucker, reExplorer, reLinux, reWindows;
+
+    static {
+        try {
+            reLynx = new RE("(Lynx)",RE.MATCH_CASEINDEPENDENT);
+            rePlucker = new RE("(Plucker)",RE.MATCH_CASEINDEPENDENT);
+            reWget = new RE("(wget)|(custo([^m]|($)))",RE.MATCH_CASEINDEPENDENT); // dont catch "custom"
+            reExplorer = new RE("(MSIE)");
+            reLinux = new RE("Linux");
+            reWindows = new RE("Windows");
+        } catch (RESyntaxException e) {
+            log.error("Wrong regexp!", e);
+        }
+    }
+
     /**
      * Here we store mappings. key is concatenation of servlet name and action, value is map
      * where key is variant and value is templet name.
      */
-    static HashMap mappings = new HashMap(75,0.8f);
+    static HashMap mappings = new HashMap(75,0.95f);
 
     /**
      * Loads configuration and initializes TemplateSelector.
@@ -81,24 +100,20 @@ public class TemplateSelector {
             for (Iterator actionIter = tagActions.iterator(); actionIter.hasNext();) { // for each action
                 Element tagAction = (Element) actionIter.next();
                 String action = tagAction.attributeValue("name");
-                List tagMappings = tagAction.elements("mapping");
-                ServletAction servletAction = new ServletAction(tagMappings.size());
-                servletAction.setForcedTemplate(tagAction.attributeValue("template"));
+                String content = tagAction.attributeValue("content");
+                String forcedTemplate = tagAction.attributeValue("template");
 
-                for (Iterator mappingIter = tagMappings.iterator(); mappingIter.hasNext();) { // for each mapping
-                    Element tagMapping = (Element) mappingIter.next();
-                    String template = tagMapping.attributeValue("template");
-                    String content = tagMapping.attributeValue("content");
-                    List variables = null;
+                ServletAction servletAction = new ServletAction(action);
+                servletAction.setForcedTemplate(forcedTemplate);
+                servletAction.setContent(content);
 
-                    List tagVariables = tagMapping.elements("var");
-                    if ( !Misc.empty(tagVariables) ) {
-                        variables = new ArrayList(tagVariables.size());
-                        for (Iterator varIter = tagVariables.iterator(); varIter.hasNext();) { // for each var
-                            variables.add(createVar((Element) varIter.next()));
-                        }
+                List tagVariables = tagAction.elements("var");
+                if ( !Misc.empty(tagVariables) ) {
+                    List variables = new ArrayList(tagVariables.size());
+                    for (Iterator varIter = tagVariables.iterator(); varIter.hasNext();) { // for each var
+                        variables.add(createVar((Element) varIter.next()));
                     }
-                    servletAction.addMapping(template,content,variables);
+                    servletAction.setVariables(variables);
                 }
 
                 String name = servlet + action;
@@ -149,19 +164,20 @@ public class TemplateSelector {
 
     /**
      * @return browser, that requests this page.
+     * todo regexp for mozilla - performance gain
      */
     static String findBrowser(HttpServletRequest request) {
         if ( request==null ) return BROWSER_UNKNOWN;
         String browser = request.getHeader("user-agent");
         if ( browser==null )
             return BROWSER_UNKNOWN;
-        if ( FMTemplateSelector.reExplorer.match(browser) )
+        if ( reExplorer.match(browser) )
             return BROWSER_EXPLORER;
-        if ( FMTemplateSelector.reLynx.match(browser) )
+        if ( reLynx.match(browser) )
             return BROWSER_LYNX;
-        if ( FMTemplateSelector.rePlucker.match(browser) )
+        if ( rePlucker.match(browser) )
             return BROWSER_PLUCKER;
-        if ( FMTemplateSelector.reWget.match(browser) )
+        if ( reWget.match(browser) )
             return BROWSER_MIRROR;
         return BROWSER_UNKNOWN;
     }
@@ -174,9 +190,9 @@ public class TemplateSelector {
         String os = request.getHeader("user-agent");
         if ( os==null )
             return OS_UNKNOWN;
-        if ( FMTemplateSelector.reWindows.match(os) )
+        if ( reWindows.match(os) )
             return OS_WINDOWS;
-        if ( FMTemplateSelector.reLinux.match(os) )
+        if ( reLinux.match(os) )
             return OS_LINUX;
         return OS_UNKNOWN;
     }

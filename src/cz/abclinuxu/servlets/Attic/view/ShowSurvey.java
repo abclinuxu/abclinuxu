@@ -33,6 +33,7 @@ import java.io.FileOutputStream;
 
 /**
  * Survey implementation
+ * todo update to use FMServlet and FMTemplate Selector
  */
 public class ShowSurvey extends AbcVelocityServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ShowSurvey.class);
