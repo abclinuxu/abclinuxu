@@ -13,10 +13,20 @@ public class GenericObject {
     protected int id;
     /** dependant GenericObjects, just empty instances with filled <code>id</code> */
     protected List content;
+    /** tells, whether this object was already intitilized by Persistance */
+    protected boolean initialized = false;
+
+
+    public GenericObject() {
+        id = 0;
+        content = new ArrayList(3);
+        initialized = false;
+    }
 
     public GenericObject(int id) {
         this.id = id;
         content = new ArrayList(3);
+        initialized = false;
     }
 
     /**
@@ -66,5 +76,19 @@ public class GenericObject {
         StringBuffer sb = new StringBuffer(this.getClass().getName());
         sb.append(": id="+id);
         return sb.toString();
+    }
+
+    /**
+     * @return True, if object was initialized by Persistance. E.g., create, find or synchronize() method was called.
+     */
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    /**
+     * Sets initialization flad. To be used by Persistance.
+     */
+    public void setInitialized(boolean initialized) {
+        this.initialized = initialized;
     }
 }

@@ -8,6 +8,10 @@ package cz.abclinuxu.data;
  */
 public class Rating extends Poll {
 
+    public Rating() {
+        super();
+    }
+
     public Rating(int id) {
         super(id);
     }

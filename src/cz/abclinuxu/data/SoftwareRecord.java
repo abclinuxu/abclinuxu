@@ -8,6 +8,10 @@ package cz.abclinuxu.data;
  */
 public class SoftwareRecord extends Record {
 
+    public SoftwareRecord() {
+        super();
+    }
+
     public SoftwareRecord(int id) {
         super(id);
     }

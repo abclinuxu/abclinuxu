@@ -18,6 +18,10 @@ public class User extends GenericObject {
     private String password;
 
 
+    public User() {
+        super();
+    }
+
     public User(int id) {
         super(id);
     }

@@ -16,6 +16,10 @@ public class Server extends GenericObject {
     protected String contact;
 
 
+    public Server() {
+        super();
+    }
+
     public Server(int id) {
         super(id);
     }

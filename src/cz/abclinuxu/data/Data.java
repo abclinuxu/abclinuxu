@@ -16,6 +16,10 @@ public class Data extends GenericObject {
     protected String format;
 
 
+    public Data() {
+        super();
+    }
+
     public Data(int id) {
         super(id);
     }

@@ -13,6 +13,9 @@ public class Item extends GenericObject {
     /** XML with data or this object */
     protected String data;
 
+    public Item() {
+        super();
+    }
 
     public Item(int id) {
         super(id);

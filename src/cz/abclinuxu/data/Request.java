@@ -8,6 +8,10 @@ package cz.abclinuxu.data;
  */
 public class Request extends Item {
 
+    public Request() {
+        super();
+    }
+
     public Request(int id) {
         super(id);
     }

@@ -9,6 +9,10 @@ package cz.abclinuxu.data;
  */
 public class Make extends Item {
 
+    public Make() {
+        super();
+    }
+
     public Make(int id) {
         super(id);
     }

@@ -19,6 +19,10 @@ public class Poll extends GenericObject {
     protected boolean multiChoice;
 
 
+    public Poll() {
+        super();
+    }
+
     public Poll(int id) {
         super(id);
     }

@@ -19,6 +19,10 @@ public class Category extends GenericObject {
     protected boolean open;
 
 
+    public Category() {
+        super();
+    }
+
     public Category(int id) {
         super(id);
     }

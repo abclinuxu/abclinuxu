@@ -10,6 +10,10 @@ import cz.abclinuxu.data.Item;
  */
 public class Article extends Item {
 
+    public Article() {
+        super();
+    }
+
     public Article(int id) {
         super(id);
     }

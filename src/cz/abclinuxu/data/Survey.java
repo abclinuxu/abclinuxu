@@ -8,6 +8,9 @@ package cz.abclinuxu.data;
  */
 public class Survey extends Poll {
 
+    public Survey() {
+        super();
+    }
 
     public Survey(int id) {
         super(id);

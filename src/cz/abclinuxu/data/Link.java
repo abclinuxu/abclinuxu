@@ -20,6 +20,10 @@ public class Link extends GenericObject {
     protected boolean fixed;
 
 
+    public Link() {
+        super();
+    }
+
     public Link(int id) {
         super(id);
     }

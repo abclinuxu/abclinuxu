@@ -8,6 +8,10 @@ package cz.abclinuxu.data;
  */
 public class Question extends Item {
 
+    public Question() {
+        super();
+    }
+
     public Question(int id) {
         super(id);
     }

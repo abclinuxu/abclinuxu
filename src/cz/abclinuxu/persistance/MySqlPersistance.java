@@ -106,6 +106,7 @@ public class MySqlPersistance implements Persistance {
                     org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)statement;
                     obj.setId((int)mm.getLastInsertID());
                 }
+                obj.setInitialized(true);
             }
 
             if ( parent!=null ) {
@@ -203,29 +204,32 @@ public class MySqlPersistance implements Persistance {
             a.setEmail(b.getEmail());
             a.setPassword(b.getPassword());
         }
+        obj.setInitialized(true);
     }
 
     public GenericObject findById(GenericObject obj) throws PersistanceException {
+        GenericObject result = null;
         try {
             if (obj instanceof Record) {
-                return loadRecord((Record)obj);
+                result = loadRecord((Record)obj);
             } else if (obj instanceof Item) {
-                return loadItem((Item)obj);
+                result = loadItem((Item)obj);
             } else if (obj instanceof Category) {
-                return loadCategory((Category)obj);
+                result = loadCategory((Category)obj);
             } else if (obj instanceof Data) {
-                return loadData((Data)obj);
+                result = loadData((Data)obj);
             } else if (obj instanceof Link) {
-                return loadLink((Link)obj);
+                result = loadLink((Link)obj);
             } else if (obj instanceof Poll) {
-                return loadPoll((Poll)obj);
+                result = loadPoll((Poll)obj);
             } else if (obj instanceof User) {
-                return loadUser((User)obj);
+                result = loadUser((User)obj);
             }
+            if ( result!=null ) result.setInitialized(true);
+            return result;
         } catch (SQLException e) {
             throw new PersistanceException("Nemohu nahrat "+obj.toString()+" z databaze!",AbcException.DB_FIND,obj,e);
         }
-        return null;
     }
 
     public List findByExample(List objects, String relations) throws PersistanceException {
@@ -268,9 +272,11 @@ public class MySqlPersistance implements Persistance {
 
             ResultSet resultSet = statement.executeQuery();
             while ( resultSet.next() ) {
-                Object[] objs = new Object[]{new Integer(resultSet.getInt(1))};
                 try {
-                    result.add(kind.getConstructor(new Class[]{int.class}).newInstance(objs));
+                    GenericObject o = (GenericObject) kind.newInstance();
+                    o.setId(resultSet.getInt(1));
+                    synchronize(o);
+                    result.add(o);
                 } catch (Exception e) {
                     log.error("Cannot instantiate "+kind);
                 }

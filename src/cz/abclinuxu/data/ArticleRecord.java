@@ -8,6 +8,10 @@ package cz.abclinuxu.data;
  */
 public class ArticleRecord extends Record {
 
+    public ArticleRecord() {
+        super();
+    }
+
     public ArticleRecord(int id) {
         super(id);
     }

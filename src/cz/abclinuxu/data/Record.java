@@ -14,6 +14,10 @@ public class Record extends GenericObject {
     protected String data;
 
 
+    public Record() {
+        super();
+    }
+
     public Record(int id) {
         super(id);
     }

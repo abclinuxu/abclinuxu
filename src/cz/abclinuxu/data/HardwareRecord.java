@@ -8,6 +8,10 @@ package cz.abclinuxu.data;
  */
 public class HardwareRecord extends Record {
 
+    public HardwareRecord() {
+        super();
+    }
+
     public HardwareRecord(int id) {
         super(id);
     }
