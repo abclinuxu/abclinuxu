@@ -249,8 +249,8 @@ public class ViewBlog implements AbcAction, Configurable {
         if (month==0) {
             end.add(Calendar.YEAR, 1);
         } else {
-            start.set(Calendar.MONTH, month);
-            end.set(Calendar.MONTH, month);
+            start.set(Calendar.MONTH, month-1);
+            end.set(Calendar.MONTH, month-1);
 
             if (day==0) {
                 end.add(Calendar.MONTH, 1);
