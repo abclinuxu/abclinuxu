@@ -1,0 +1,30 @@
+Komentare ke styles.css:
+
+ZKRATKY:
+za	- zahlavi
+mn	- menu
+pol	- polozka
+s	- sloupec
+ls	- levy sloupec
+ps	- pravy sloupec
+st	- st
+hl	- hornilista
+dl	- dolnilista
+zpr	- zpr
+rozc	- rozc
+
+cl	- clanek
+ds	- diskuse
+
+bh	- bez zmeny pozadi pri hoveru
+
+
+
+POZNAMKY:
+a.bh:hover, .ad a:hover		- odkaz bez hoverove zmeny pozadi
+.table_siroka			- tabulka ktera ma byt pres celou sirku, nesmi mit width="100%", ale tuhle tridu, kvuli IE
+.cerny				- cerny text
+.st a:hover img			- hover odkazu obsahujici obrazek zpusobi ve strednim sloupci zmenu pozadi obrazku na bilou (misto zlute)
+
+.oc				- uzavira "obashovou cast" - text clanku, bylo to kvuli tomu aby .oc p melo text-indent, coz nakonec nema
+				- uz by to nemelo byt ani v zadnem kodu
