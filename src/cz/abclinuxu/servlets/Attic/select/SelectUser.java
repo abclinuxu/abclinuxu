@@ -5,8 +5,8 @@
  */
 package cz.abclinuxu.servlets.select;
 
-import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
@@ -28,7 +28,7 @@ import java.util.Iterator;
 /**
  * Used to find the user.
  */
-public class SelectUser extends AbcFMServlet {
+public class SelectUser implements AbcAction {
     public static final String PARAM_ACTION = "sAction";
     public static final String PARAM_URL = "url";
     public static final String PARAM_USER = "uid";
@@ -47,7 +47,7 @@ public class SelectUser extends AbcFMServlet {
     public static final String SUBMIT_PREVIOUS_PAGE = "previous";
     public static final String SUBMIT_NEXT_PAGE = "next";
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String action = (String) params.remove(PARAM_ACTION);
 

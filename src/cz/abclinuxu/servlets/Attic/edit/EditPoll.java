@@ -8,8 +8,8 @@ package cz.abclinuxu.servlets.edit;
 
 import javax.servlet.http.*;
 
-import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
@@ -26,7 +26,7 @@ import java.util.*;
  * Servlet for manipulation with Polls.
  * todo create rating of articles, records and replies
  */
-public class EditPoll extends AbcFMServlet {
+public class EditPoll implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditPoll.class);
 
     public static final String PARAM_RELATION = "relationId";
@@ -54,7 +54,7 @@ public class EditPoll extends AbcFMServlet {
     static final String COOKIE_PREFIX = "P_";
 
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);

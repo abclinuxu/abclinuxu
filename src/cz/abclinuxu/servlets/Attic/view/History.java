@@ -5,8 +5,8 @@
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.utils.Misc;
@@ -29,7 +29,7 @@ import java.util.ArrayList;
  * the range of objects in specified time interval.
  * todo odstranit duplicitu u linkovanych objektu u SQL_ARTICLES
  */
-public class History extends AbcFMServlet {
+public class History implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(History.class);
 
     /** type of object to display */
@@ -71,7 +71,7 @@ public class History extends AbcFMServlet {
     /** Final part of URL, after value of from parameter */
     public static final String VAR_URL_AFTER_FROM = "URL_AFTER_FROM";
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
 

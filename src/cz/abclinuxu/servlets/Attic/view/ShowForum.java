@@ -5,8 +5,8 @@
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.Relation;
@@ -30,7 +30,7 @@ import org.dom4j.Node;
  * to load children and its type must be set to SECTION_FORUM!
  * select potomek from relace where predchozi in (49655,49490,49488,49489);
  */
-public class ShowForum extends AbcFMServlet {
+public class ShowForum implements AbcAction {
     public static final String PARAM_RELATION_ID_SHORT = "rid";
     /** n-th oldest object, where display from */
     public static final String PARAM_FROM = "from";
@@ -44,7 +44,7 @@ public class ShowForum extends AbcFMServlet {
 
     static Persistance persistance = PersistanceFactory.getPersistance();
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID_SHORT, Relation.class, params);
         if ( relation==null ) {

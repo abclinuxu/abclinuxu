@@ -1,14 +1,10 @@
 /*
- * Created by IntelliJ IDEA.
  * User: literakl
  * Date: Jan 3, 2002
  * Time: 8:42:06 AM
- * To change template for new class use
- * Code Style | Class Templates options (Tools | IDE Options).
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.GenericObject;
@@ -20,6 +16,7 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.edit.EditRelation;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.UrlUtils;
@@ -53,7 +50,7 @@ import org.dom4j.Element;
  * <dd>used by clanky.vm. Defines range of shown objects.</dd>
  * </dl>
  */
-public class ViewCategory extends AbcFMServlet {
+public class ViewCategory implements AbcAction {
     /** if set, it indicates to display parent in the relation of two categories */
     public static final String PARAM_PARENT = "parent";
     public static final String PARAM_RELATION_ID = "relationId";
@@ -63,7 +60,7 @@ public class ViewCategory extends AbcFMServlet {
 
     static Persistance persistance = PersistanceFactory.getPersistance();
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID_SHORT,PARAM_RELATION_ID,Relation.class,params);

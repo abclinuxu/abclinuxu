@@ -2,12 +2,11 @@
  * User: literakl
  * Date: Jan 14, 2002
  * Time: 9:20:03 PM
- * (c)2001-2002 Tinnio
  */
 package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.AbcFMServlet;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
@@ -26,7 +25,7 @@ import org.dom4j.Node;
 /**
  * This servlet renders index page of AbcLinuxu.
  */
-public class ViewIndex extends AbcFMServlet {
+public class ViewIndex implements AbcAction {
     public static final String VAR_HARDWARE = "HARDWARE";
     public static final String VAR_SOFTWARE = "SOFTWARE";
     public static final String VAR_FORUM = "FORUM";
@@ -35,7 +34,7 @@ public class ViewIndex extends AbcFMServlet {
     /**
      * Evaluate the request.
      */
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
         Tools tools = new Tools();

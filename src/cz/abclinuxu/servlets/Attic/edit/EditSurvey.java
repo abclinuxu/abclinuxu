@@ -5,8 +5,8 @@
  */
 package cz.abclinuxu.servlets.edit;
 
-import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.UrlUtils;
@@ -31,7 +31,7 @@ import org.dom4j.*;
 /**
  * Serves for manipulating of surveys.
  */
-public class EditSurvey extends AbcFMServlet {
+public class EditSurvey implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditSurvey.class);
 
     public static final String ACTION_ADD = "add";
@@ -45,7 +45,7 @@ public class EditSurvey extends AbcFMServlet {
     public static final String PARAM_CHOICES = "choices";
 
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);

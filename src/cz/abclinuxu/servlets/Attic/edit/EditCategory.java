@@ -3,13 +3,11 @@
  * User: literakl
  * Date: Jan 5, 2002
  * Time: 9:31:40 AM
- * To change template for new class use
- * Code Style | Class Templates options (Tools | IDE Options).
  */
 package cz.abclinuxu.servlets.edit;
 
-import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.Category;
@@ -37,7 +35,7 @@ import java.util.Map;
 /**
  * Class for manipulation with Category.
  */
-public class EditCategory extends AbcFMServlet {
+public class EditCategory implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditCategory.class);
 
     public static final String PARAM_RELATION = "relationId";
@@ -58,7 +56,7 @@ public class EditCategory extends AbcFMServlet {
     public static final String ACTION_EDIT2 = "edit2";
 
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);

@@ -1,0 +1,36 @@
+147,162c147
+< 
+<     /**
+<      * Concatenates servletPath and pathInfo. Needed, if Default servlet
+<      * mapping is different than standard /*.
+<      * @param servletPath
+<      * @param pathInfo
+<      * @return combination of these two strings.
+<      */
+<     protected String combinePaths(String servletPath, String pathInfo) {
+<         if (servletPath==null)
+<             return pathInfo;
+<         if (pathInfo==null)
+<             return servletPath;
+<         return servletPath.concat(pathInfo);
+<     }
+< 
+---
+>     
+167,168c152
+<         String pathInContext=combinePaths((String) request.getAttribute(Dispatcher.__SERVLET_PATH),
+<                                           (String)request.getAttribute(Dispatcher.__PATH_INFO));
+---
+>         String pathInContext=(String)request.getAttribute(Dispatcher.__PATH_INFO);
+170c154,162
+<             pathInContext=combinePaths(request.getServletPath(), request.getPathInfo());
+---
+>         {
+>             pathInContext=(String)request.getAttribute(Dispatcher.__SERVLET_PATH);
+>             if (pathInContext==null)
+>             {
+>                 pathInContext=request.getPathInfo();
+>                 if (pathInContext==null)
+>                     pathInContext=request.getServletPath();
+>             }
+>         }

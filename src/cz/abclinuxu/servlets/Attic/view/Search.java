@@ -5,8 +5,8 @@
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.Misc;
@@ -32,7 +32,7 @@ import java.text.NumberFormat;
 /**
  * Performs search across the data.
  */
-public class Search extends AbcFMServlet {
+public class Search implements AbcAction {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(Search.class);
     static org.apache.log4j.Category seachLog = org.apache.log4j.Category.getInstance("search");
 
@@ -60,7 +60,7 @@ public class Search extends AbcFMServlet {
     public static final String PARAM_CATEGORY = "category";
 
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         return performSearch(request, env);
     }
 

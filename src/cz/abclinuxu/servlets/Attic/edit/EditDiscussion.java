@@ -6,8 +6,8 @@
  */
 package cz.abclinuxu.servlets.edit;
 
-import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.view.Search;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
@@ -37,7 +37,7 @@ import java.util.*;
  * This class is responsible for adding new
  * new discussion.<p>
  */
-public class EditDiscussion extends AbcFMServlet {
+public class EditDiscussion implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditDiscussion.class);
 
     public static final String PARAM_RELATION = "relationId";
@@ -73,7 +73,7 @@ public class EditDiscussion extends AbcFMServlet {
     public static final String ACTION_FREEZE_DISCUSSION = "freeze";
 
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT,PARAM_RELATION,Relation.class,params);

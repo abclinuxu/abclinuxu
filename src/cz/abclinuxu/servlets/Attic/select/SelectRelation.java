@@ -2,12 +2,11 @@
  * User: literakl
  * Date: Jan 15, 2002
  * Time: 9:59:02 AM
- * (c)2001-2002 Tinnio
  */
 package cz.abclinuxu.servlets.select;
 
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.AbcFMServlet;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.persistance.Persistance;
@@ -27,20 +26,20 @@ import java.util.Map;
  * to <code>PARAM_URL</code> with all parameters propagated to new location plus
  * <code>SelectRelation.PARAM_SELECTED</code> set.<p>
  */
-public class SelectRelation extends AbcFMServlet {
+public class SelectRelation implements AbcAction {
     public static final String PARAM_SELECTED = "selectedId";
     public static final String PARAM_CURRENT = "currentId";
     public static final String PARAM_ENTERED = "enteredId";
     public static final String PARAM_URL = "url";
     public static final String PARAM_FINISH = "finish";
     public static final String PARAM_CONFIRM = "confirm";
-    
+
     public static final String VAR_SOFTWARE = "SOFTWARE";
     public static final String VAR_CLANKY = "CLANKY";
     public static final String VAR_386 = "H386";
     public static final String VAR_CURRENT = "CURRENT";
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         String confirm = request.getParameter(PARAM_CONFIRM);
         String finish = request.getParameter(PARAM_FINISH);
 

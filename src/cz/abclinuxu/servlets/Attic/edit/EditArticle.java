@@ -2,12 +2,11 @@
  * User: literakl
  * Date: Feb 1, 2002
  * Time: 4:48:29 PM
- * (c)2001-2002 Tinnio
  */
 package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.AbcFMServlet;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
@@ -34,7 +33,7 @@ import java.text.ParseException;
 /**
  * Class for manipulation of articles.
  */
-public class EditArticle extends AbcFMServlet {
+public class EditArticle implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditArticle.class);
 
     public static final String PARAM_RELATION = "relationId";
@@ -72,7 +71,7 @@ public class EditArticle extends AbcFMServlet {
         }
     }
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);

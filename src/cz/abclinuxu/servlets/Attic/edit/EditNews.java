@@ -5,8 +5,8 @@
  */
 package cz.abclinuxu.servlets.edit;
 
-import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -38,7 +38,7 @@ import org.dom4j.Node;
 /**
  * This servlet manipulates with News.
  */
-public class EditNews extends AbcFMServlet {
+public class EditNews implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditNews.class);
 
     public static final String ACTION_ADD = "add";
@@ -64,7 +64,7 @@ public class EditNews extends AbcFMServlet {
     public static final String PARAM_PREVIEW = "preview";
 
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);

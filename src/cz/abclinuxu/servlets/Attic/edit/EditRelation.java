@@ -2,12 +2,11 @@
  * User: literakl
  * Date: Jan 15, 2002
  * Time: 9:24:05 AM
- * (c)2001-2002 Tinnio
  */
 package cz.abclinuxu.servlets.edit;
 
-import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.view.ViewUser;
 import cz.abclinuxu.servlets.select.SelectRelation;
 import cz.abclinuxu.servlets.select.SelectUser;
@@ -39,7 +38,7 @@ import java.util.ArrayList;
 /**
  * Class for removing relations or creating links.
  */
-public class EditRelation extends AbcFMServlet {
+public class EditRelation implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditRelation.class);
 
     public static final String PARAM_RELATION = "relationId";
@@ -81,7 +80,7 @@ public class EditRelation extends AbcFMServlet {
 
 
     // todo move permission checks to called methods from here.
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         String action = (String) params.get(PARAM_ACTION);

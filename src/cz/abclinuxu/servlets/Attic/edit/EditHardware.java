@@ -2,12 +2,11 @@
  * User: literakl
  * Date: Jan 30, 2002
  * Time: 8:24:00 AM
- * (c)2001-2002 Tinnio
  */
 package cz.abclinuxu.servlets.edit;
 
-import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
@@ -32,7 +31,7 @@ import java.util.Date;
  * This class is responsible for adding and
  * editing of hardware items and records.
  */
-public class EditHardware extends AbcFMServlet {
+public class EditHardware implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditHardware.class);
 
     public static final String PARAM_RELATION = "relationId";
@@ -63,7 +62,7 @@ public class EditHardware extends AbcFMServlet {
     public static final String ACTION_ALTER_MONITOR = "monitor";
 
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);

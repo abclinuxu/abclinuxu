@@ -6,7 +6,7 @@
 package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.AbcFMServlet;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
@@ -26,7 +26,7 @@ import java.util.Date;
 /**
  * todo archive last three versions of driver
  */
-public class EditDriver extends AbcFMServlet {
+public class EditDriver implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditDriver.class);
 
     public static final String PARAM_RELATION = "relationId";
@@ -46,7 +46,7 @@ public class EditDriver extends AbcFMServlet {
     public static final String ACTION_ALTER_MONITOR = "monitor";
 
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);

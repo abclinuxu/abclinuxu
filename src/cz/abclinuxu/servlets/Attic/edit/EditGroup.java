@@ -5,8 +5,8 @@
  */
 package cz.abclinuxu.servlets.edit;
 
-import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.view.ViewUser;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.UrlUtils;
@@ -30,9 +30,9 @@ import org.dom4j.Node;
 import org.dom4j.Element;
 
 /**
- *
+ * Code for manipulation of user groups.
  */
-public class EditGroup extends AbcFMServlet {
+public class EditGroup implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditGroup.class);
 
     public static final String PARAM_NAME = "name";
@@ -55,7 +55,7 @@ public class EditGroup extends AbcFMServlet {
     /** number of groups in system shall be smaller than this value */
     public static final int DEFAULT_MAX_NUMBER_OF_GROUPS = 20;
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String action = (String) params.get(PARAM_ACTION);
         User user = (User) env.get(Constants.VAR_USER);

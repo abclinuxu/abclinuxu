@@ -233,7 +233,7 @@
               </map>
             </node>
         </node>
-        <node name="servlet">
+        <node name="servlets">
           <map/>
           <node name="utils">
             <map/>
@@ -241,6 +241,11 @@
               <map>
                   <entry key="upload.path" value="/tmp/upload"/>
                   <entry key="max.upload.size" value="51200"/>
+              </map>
+            </node>
+            <node name="URLMapper">
+              <map>
+                  <entry key="config" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/url_mapping.xml"/>
               </map>
             </node>
           </node>

@@ -2,7 +2,6 @@
  * User: literakl
  * Date: May 26, 2002
  * Time: 7:09:08 PM
- * (c)2001-2002 Tinnio
  */
 package cz.abclinuxu.servlets.view;
 

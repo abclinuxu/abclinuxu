@@ -2,12 +2,11 @@
  * User: literakl
  * Date: Feb 3, 2002
  * Time: 8:22:28 AM
- * (c)2001-2002 Tinnio
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.UrlUtils;
@@ -24,7 +23,7 @@ import java.util.*;
 /**
  * Profile of the user
  */
-public class ViewUser extends AbcFMServlet {
+public class ViewUser implements AbcAction {
 
     public static final String VAR_PROFILE = "PROFILE";
     public static final String VAR_KOD = "KOD";
@@ -50,7 +49,7 @@ public class ViewUser extends AbcFMServlet {
      * It may also contain VAR_USER and VAR_PARAMS objects.
      * @return name of template to be executed or null
      */
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String action = (String) params.get(PARAM_ACTION);
 

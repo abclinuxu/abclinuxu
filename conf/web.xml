@@ -18,342 +18,71 @@
     </servlet>
 
     <servlet>
-        <servlet-name>ViewIndex</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.view.ViewIndex</servlet-class>
+        <servlet-name>Controller</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.Controller</servlet-class>
         <load-on-startup>2</load-on-startup>
     </servlet>
 
     <servlet>
-        <servlet-name>ViewRelation</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.view.ViewRelation</servlet-class>
+        <servlet-name>dump</servlet-name>
+        <servlet-class>org.mortbay.servlet.Dump</servlet-class>
         <load-on-startup>2</load-on-startup>
     </servlet>
 
     <servlet>
-        <servlet-name>ViewCategory</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.view.ViewCategory</servlet-class>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>ViewUser</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.view.ViewUser</servlet-class>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>Forum</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.view.ShowForum</servlet-class>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>Search</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.view.Search</servlet-class>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>History</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.view.History</servlet-class>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>Redirect</servlet-name>
+        <servlet-name>redirect</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.view.Redirect</servlet-class>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>Survey</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.view.ShowSurvey</servlet-class>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>EditCategory</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.edit.EditCategory</servlet-class>
         <load-on-startup>3</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>EditDiscussion</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.edit.EditDiscussion</servlet-class>
-        <load-on-startup>3</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>EditUser</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.edit.EditUser</servlet-class>
-        <load-on-startup>3</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>EditGroup</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.edit.EditGroup</servlet-class>
-        <load-on-startup>3</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>EditRelation</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.edit.EditRelation</servlet-class>
-        <load-on-startup>3</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>EditPoll</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.edit.EditPoll</servlet-class>
-        <load-on-startup>3</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>EditHardware</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.edit.EditHardware</servlet-class>
-        <load-on-startup>3</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>EditSoftware</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.edit.EditSoftware</servlet-class>
-        <load-on-startup>3</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>EditArticle</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.edit.EditArticle</servlet-class>
-        <load-on-startup>3</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>EditRequest</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.edit.EditRequest</servlet-class>
-        <load-on-startup>3</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>EditDriver</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.edit.EditDriver</servlet-class>
-        <load-on-startup>3</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>EditNews</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.edit.EditNews</servlet-class>
-        <load-on-startup>3</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>EditSurvey</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.edit.EditSurvey</servlet-class>
-        <load-on-startup>3</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>SelectIcon</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.select.SelectIcon</servlet-class>
-        <load-on-startup>4</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>SelectRelation</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.select.SelectRelation</servlet-class>
-        <load-on-startup>4</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>SelectUser</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.select.SelectUser</servlet-class>
-        <load-on-startup>4</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>Dumper</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.utils.DumpRequest</servlet-class>
-        <load-on-startup>4</load-on-startup>
     </servlet>
 
     <servlet>
         <servlet-name>ProxoolAdmin</servlet-name>
         <servlet-class>org.logicalcobwebs.proxool.admin.servlet.AdminServlet</servlet-class>
+        <load-on-startup>3</load-on-startup>
     </servlet>
 
-    <servlet>
-        <servlet-name>AdminServlet</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.admin.AdminServlet</servlet-class>
-    </servlet>
+    <servlet-mapping>
+        <servlet-name>Controller</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>redirect</servlet-name>
+        <url-pattern>/Redirect</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>ProxoolAdmin</servlet-name>
         <url-pattern>/ProxoolAdmin</url-pattern>
     </servlet-mapping>
 
+    <!-- static resources -->
     <servlet-mapping>
-        <servlet-name>ViewCategory</servlet-name><url-pattern>/hardware/ViewCategory</url-pattern>
+        <servlet-name>default</servlet-name><url-pattern>/data/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ViewCategory</servlet-name><url-pattern>/software/ViewCategory</url-pattern>
+        <servlet-name>default</servlet-name><url-pattern>/download/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ViewCategory</servlet-name><url-pattern>/clanky/ViewCategory</url-pattern>
+        <servlet-name>default</servlet-name><url-pattern>/images/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ViewCategory</servlet-name><url-pattern>/drivers/ViewCategory</url-pattern>
+        <servlet-name>default</servlet-name><url-pattern>/ikony/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ViewCategory</servlet-name><url-pattern>/news/ViewCategory</url-pattern>
+        <servlet-name>default</servlet-name><url-pattern>/auto/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ViewCategory</servlet-name><url-pattern>/forum/ViewCategory</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>ViewRelation</servlet-name><url-pattern>/hardware/ViewRelation</url-pattern>
+        <servlet-name>default</servlet-name><url-pattern>/palirna/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ViewRelation</servlet-name><url-pattern>/software/ViewRelation</url-pattern>
+        <servlet-name>default</servlet-name><url-pattern>/tmp/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ViewRelation</servlet-name><url-pattern>/clanky/ViewRelation</url-pattern>
+        <servlet-name>default</servlet-name><url-pattern>*.css</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ViewRelation</servlet-name><url-pattern>/drivers/ViewRelation</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewRelation</servlet-name><url-pattern>/news/ViewRelation</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewRelation</servlet-name><url-pattern>/forum/ViewRelation</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>Search</servlet-name><url-pattern>/Search</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>EditCategory</servlet-name><url-pattern>/hardware/EditCategory</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>EditCategory</servlet-name><url-pattern>/software/EditCategory</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>EditCategory</servlet-name><url-pattern>/clanky/EditCategory</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>EditCategory</servlet-name><url-pattern>/drivers/EditCategory</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>EditDiscussion</servlet-name><url-pattern>/hardware/EditDiscussion</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>EditDiscussion</servlet-name><url-pattern>/software/EditDiscussion</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>EditDiscussion</servlet-name><url-pattern>/clanky/EditDiscussion</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>EditDiscussion</servlet-name><url-pattern>/news/EditDiscussion</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>EditDiscussion</servlet-name><url-pattern>/forum/EditDiscussion</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>EditHardware</servlet-name><url-pattern>/hardware/EditItem</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>EditSoftware</servlet-name><url-pattern>/software/EditItem</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>EditArticle</servlet-name><url-pattern>/clanky/EditItem</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>EditDriver</servlet-name><url-pattern>/drivers/EditItem</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>EditNews</servlet-name><url-pattern>/news/EditItem</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>EditSurvey</servlet-name><url-pattern>/EditSurvey</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>EditPoll</servlet-name><url-pattern>/hardware/EditPoll</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>EditPoll</servlet-name><url-pattern>/software/EditPoll</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>EditPoll</servlet-name><url-pattern>/clanky/EditPoll</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>EditPoll</servlet-name><url-pattern>/drivers/EditPoll</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>EditPoll</servlet-name><url-pattern>/EditPoll</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>SelectIcon</servlet-name><url-pattern>/SelectIcon</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>SelectRelation</servlet-name><url-pattern>/SelectRelation</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>SelectUser</servlet-name><url-pattern>/SelectUser</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>EditRelation</servlet-name><url-pattern>/EditRelation</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>EditRequest</servlet-name><url-pattern>/clanky/EditRequest</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>EditUser</servlet-name><url-pattern>/EditUser</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>EditGroup</servlet-name><url-pattern>/Group</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>ViewIndex</servlet-name><url-pattern>/Index</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>Forum</servlet-name><url-pattern>/forum/Show</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>ViewUser</servlet-name><url-pattern>/Profile</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>Redirect</servlet-name><url-pattern>/Redirect</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>Dumper</servlet-name><url-pattern>/DumpRequest</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>History</servlet-name><url-pattern>/History</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>Survey</servlet-name><url-pattern>/Survey</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>AdminServlet</servlet-name><url-pattern>/Admin</url-pattern>
+        <servlet-name>default</servlet-name><url-pattern>*.txt</url-pattern>
     </servlet-mapping>
 
     <welcome-file-list>

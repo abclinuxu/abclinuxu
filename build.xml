@@ -60,6 +60,7 @@
         <include name="UnicodeData.txt" />
         <include name="stop_words.txt" />
         <include name="news_categories.xml" />
+        <include name="url_mapping.xml" />
       </fileset>
     </copy>
 

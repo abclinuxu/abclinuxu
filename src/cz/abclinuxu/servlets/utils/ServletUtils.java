@@ -310,6 +310,21 @@ public class ServletUtils implements Configurable {
     }
 
     /**
+     * Concatenates servletPath and pathInfo.
+     * @param servletPath
+     * @param pathInfo
+     * @return combination of these two strings.
+     */
+    public static String combinePaths(String servletPath, String pathInfo) {
+        if ( servletPath==null )
+            return pathInfo;
+        if ( pathInfo==null )
+            return servletPath;
+        return servletPath.concat(pathInfo);
+
+    }
+
+    /**
      * Handles situation, when user logs in. It checks his
      * setting, whether it shall create new cookie to simplify
      * next login (and how long cookie shall be valid) and

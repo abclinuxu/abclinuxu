@@ -1,15 +1,12 @@
 /*
- * Created by IntelliJ IDEA.
  * User: literakl
  * Date: Jan 6, 2002
  * Time: 9:53:11 PM
- * To change template for new class use
- * Code Style | Class Templates options (Tools | IDE Options).
  */
 package cz.abclinuxu.servlets.select;
 
-import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.edit.EditCategory;
@@ -55,7 +52,7 @@ public class SelectIcon extends AbcFMServlet {
     public static final String VAR_DIRS = "DIRS";
     public static final String VAR_ICONS = "ICONS";
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         String reload = request.getParameter(SelectIcon.PARAM_RELOAD);
         if ( "no".equals(reload) ) {
             return actionFinish(request,response,env);

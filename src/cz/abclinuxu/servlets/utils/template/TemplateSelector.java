@@ -96,7 +96,7 @@ public class TemplateSelector {
         else
             configFile = filename;
 
-        HashMap newMappings = new HashMap(75, 0.95f);
+        HashMap newMappings = new HashMap(100, 0.95f);
 
         Document document = new SAXReader().read(filename);
         List tagServlets = document.getRootElement().elements("servlet");

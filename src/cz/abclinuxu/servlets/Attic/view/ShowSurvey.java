@@ -2,7 +2,6 @@
  * User: literakl
  * Date: Oct 26, 2002
  * Time: 9:17:19 PM
- * (c)2001-2002 Tinnio
  */
 package cz.abclinuxu.servlets.view;
 
@@ -10,8 +9,8 @@ import cz.abclinuxu.data.Item;
 import cz.abclinuxu.exceptions.InvalidDataException;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
@@ -37,7 +36,7 @@ import java.util.StringTokenizer;
 /**
  * Survey implementation
  */
-public class ShowSurvey extends AbcFMServlet {
+public class ShowSurvey implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ShowSurvey.class);
 
     public static final String PARAM_SCREEN_CURRENT = "SCREEN_CURRENT";
@@ -50,7 +49,7 @@ public class ShowSurvey extends AbcFMServlet {
     /** screen with this id starts survey */
     public static final String START_ID = "START";
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 

@@ -2,7 +2,6 @@
  * User: literakl
  * Date: Jan 10, 2002
  * Time: 5:07:04 PM
- * (c)2001-2002 Tinnio
  */
 package cz.abclinuxu.servlets.edit;
 
@@ -12,8 +11,8 @@ import cz.abclinuxu.exceptions.DuplicateKeyException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
@@ -44,7 +43,7 @@ import java.util.*;
 /**
  * Class for manipulation with User.
  */
-public class EditUser extends AbcFMServlet {
+public class EditUser implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditUser.class);
 
     public static final String PARAM_USER = ViewUser.PARAM_USER;
@@ -107,7 +106,7 @@ public class EditUser extends AbcFMServlet {
     public static final String ACTION_ADD_GROUP_MEMBER = "addToGroup";
 
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String action = (String) params.get(PARAM_ACTION);
 

@@ -1,15 +1,12 @@
 /*
- * Created by IntelliJ IDEA.
  * User: literakl
  * Date: Jan 3, 2002
  * Time: 8:14:00 AM
- * To change template for new class use
- * Code Style | Class Templates options (Tools | IDE Options).
  */
 package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.AbcFMServlet;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.edit.EditNews;
 import cz.abclinuxu.servlets.edit.EditRelation;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
@@ -51,7 +48,7 @@ import org.dom4j.Document;
  * <dd>PK of asked relation, number.</dd>
  * </dl>
  */
-public class ViewRelation extends AbcFMServlet {
+public class ViewRelation implements AbcAction {
     public static final String PARAM_RELATION = "relationId";
     public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_DISCUSSION = "dizId";
@@ -70,7 +67,7 @@ public class ViewRelation extends AbcFMServlet {
 
     Persistance persistance = PersistanceFactory.getPersistance();
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String action = (String) params.get(PARAM_ACTION);
 

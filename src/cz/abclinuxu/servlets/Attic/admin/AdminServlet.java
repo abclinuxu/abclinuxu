@@ -8,8 +8,8 @@ package cz.abclinuxu.servlets.admin;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.servlets.init.AbcInit;
-import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.template.TemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -27,7 +27,7 @@ import java.io.File;
 /**
  * Various administrative tasks.
  */
-public class AdminServlet extends AbcFMServlet {
+public class AdminServlet implements AbcAction {
     public static final String PARAM_RELATION_SHORT = "rid";
 
     public static final String ACTION_CLEAR_CACHE = "clearCache";
@@ -36,7 +36,7 @@ public class AdminServlet extends AbcFMServlet {
     public static final String VAR_DATABASE_STATE = "DATABASE_VALID";
     public static final String VAR_FULLTEXT_STATE = "FULLTEXT_VALID";
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String action = (String) params.get(PARAM_ACTION);
 

@@ -5,8 +5,8 @@
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
@@ -34,7 +34,7 @@ import org.dom4j.Document;
 /**
  * Serves to display an article to the user.
  */
-public class ShowArticle extends AbcFMServlet {
+public class ShowArticle implements AbcAction {
     public static final String PARAM_RELATION_ID = "relationId";
     public static final String PARAM_RELATION_ID_SHORT = "rid";
     public static final String PARAM_PAGE = "page";
@@ -49,7 +49,7 @@ public class ShowArticle extends AbcFMServlet {
     public static final String VAR_RELATED_ARTICLES = "RELATED";
     public static final String VAR_RELATED_RESOURCES = "RESOURCES";
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 

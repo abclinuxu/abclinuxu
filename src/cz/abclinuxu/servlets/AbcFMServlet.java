@@ -11,6 +11,7 @@ import cz.abclinuxu.exceptions.NotAuthorizedException;
 import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.servlets.utils.URLMapper;
 import cz.abclinuxu.utils.Misc;
 import freemarker.template.Configuration;
 import freemarker.template.SimpleHash;
@@ -28,31 +29,29 @@ import java.util.Map;
 import java.util.Date;
 
 /**
- * Superclass for all servlets. It does some initialization
+ * Superclass for all servlets. It does initialization
  * and defines common contract for its children.
  */
-public abstract class AbcFMServlet extends HttpServlet {
+public abstract class AbcFMServlet extends HttpServlet implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(AbcFMServlet.class);
 
-    /** holds action to be invoked */
-    public static final String PARAM_ACTION = "action";
+    static URLMapper urlMapper;
+    static {
+        urlMapper = URLMapper.getInstance();
+    }
+
     /** freemarker's main class */
     private Configuration config;
 
-
-    /**
-     * Put your processing here. Return null, if you have redirected browser to another URL.
-     * @param env holds all variables, that shall be available in template, when it is being processed.
-     * It may also contain VAR_USER and VAR_PARAMS objects.
-     * @return name of template to be executed or null
-     */
-    protected abstract String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception;
 
     /**
      * Entry point of request's handling.
      */
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
+            if (fixDeprecatedURL(request,response))
+                return;
+
             Map data = new HashMap();
             performInit(request,response,data);
 
@@ -63,6 +62,7 @@ public abstract class AbcFMServlet extends HttpServlet {
                 return;
 
             Template template = config.getTemplate(templateName);
+            // todo add WML support
             response.setContentType("text/html; charset=ISO-8859-2");
             Writer writer = response.getWriter();
 
@@ -93,6 +93,14 @@ public abstract class AbcFMServlet extends HttpServlet {
         env.put(Constants.VAR_REQUEST_URI,request.getRequestURI());
         ServletUtils.handleMessages(request,env);
         ServletUtils.handleLogin(request,response,env);
+    }
+
+    /**
+     * If URL is deprecated, redirect browser to correct location.
+     * @return true, if browser has been redirected.
+     */
+    private boolean fixDeprecatedURL(HttpServletRequest request, HttpServletResponse response) {
+        return urlMapper.redirectDeprecated(request, response);
     }
 
     /**
