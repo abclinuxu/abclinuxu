@@ -322,7 +322,7 @@ public final class SQLTool implements Configurable {
      * Finds relations, where child is item of specified type.
      * Use Qualifiers to set additional parameters.
      * @return List of initialized relations
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     * @throws PersistanceException if there is an error with the underlying persistent storage.
      */
     public List findItemRelationsWithType(int type, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
@@ -335,13 +335,15 @@ public final class SQLTool implements Configurable {
 
     /**
      * Counts relations, where child is item of specified type.
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     * Use Qualifiers to set additional parameters.
+     * @throws PersistanceException if there is an error with the underlying persistent storage.
      */
-    public int countItemRelationsWithType(int type) {
+    public int countItemRelationsWithType(int type, Qualifier[] qualifiers) {
         StringBuffer sb = new StringBuffer(relationsItemsByType);
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(new Integer(type));
+        appendQualifiers(sb, qualifiers, params);
         return loadNumber(sb.toString(), params).intValue();
     }
 

@@ -59,6 +59,7 @@ public class EditBlog implements AbcAction, Configurable {
     public static final String PARAM_CONTENT = "content";
     public static final String PARAM_RELATION = "rid";
     public static final String PARAM_PREVIEW = "preview";
+    public static final String PARAM_PAGE_SIZE = "pageSize";
 
     public static final String ACTION_ADD_BLOG = "addBlog";
     public static final String ACTION_ADD_BLOG_STEP2 = "addBlog2";
@@ -77,6 +78,8 @@ public class EditBlog implements AbcAction, Configurable {
     public static final String ACTION_ADD_STORY_STEP2 = "add2";
     public static final String ACTION_EDIT_STORY = "edit";
     public static final String ACTION_EDIT_STORY_STEP2 = "edit2";
+    public static final String ACTION_REMOVE_STORY = "remove";
+    public static final String ACTION_REMOVE_STORY_STEP2 = "remove2";
 
     public static final String VAR_BLOG = "BLOG";
     public static final String VAR_BLOG_RELATION = "REL_BLOG";
@@ -230,7 +233,7 @@ public class EditBlog implements AbcAction, Configurable {
 
         boolean canContinue = setStoryTitle(params, root, env);
         canContinue &= setStoryContent(params, root, env);
-        canContinue &= setStoryCategory(params, root);
+        canContinue &= setStoryCategory(params, story);
 
         if ( !canContinue || params.get(PARAM_PREVIEW)!=null ) {
             if ( canContinue ) {
@@ -244,6 +247,8 @@ public class EditBlog implements AbcAction, Configurable {
         persistance.create(story);
         Relation relation = new Relation(blog, story, blogRelation.getId());
         persistance.create(relation);
+        incrementArchiveRecord(blog.getData().getRootElement(), new Date());
+        persistance.update(blog);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(),story.getCreated(),relation.getId()));
@@ -262,9 +267,7 @@ public class EditBlog implements AbcAction, Configurable {
         params.put(PARAM_TITLE, node.getText());
         node = document.selectSingleNode("/data/content");
         params.put(PARAM_CONTENT, node.getText());
-        node = document.selectSingleNode("/data/category");
-        if ( node!=null )
-            params.put(PARAM_CATEGORY_ID, node.getText());
+        params.put(PARAM_CATEGORY_ID, story.getSubType());
 
         storeCategories(blog, env);
         return FMTemplateSelector.select("EditBlog", "edit", env, request);
@@ -285,7 +288,7 @@ public class EditBlog implements AbcAction, Configurable {
 
         boolean canContinue = setStoryTitle(params, root, env);
         canContinue &= setStoryContent(params, root, env);
-        canContinue &= setStoryCategory(params, root);
+        canContinue &= setStoryCategory(params, story);
 
         if ( !canContinue || params.get(PARAM_PREVIEW)!=null ) {
             if ( canContinue )
@@ -340,6 +343,9 @@ public class EditBlog implements AbcAction, Configurable {
         node = document.selectSingleNode("//custom/intro");
         if ( node!=null )
             params.put(PARAM_INTRO, node.getText());
+        node = document.selectSingleNode("//settings/page_size");
+        if ( node!=null )
+            params.put(PARAM_PAGE_SIZE, node.getText());
         return FMTemplateSelector.select("EditBlog", "custom", env, request);
     }
 
@@ -355,6 +361,7 @@ public class EditBlog implements AbcAction, Configurable {
         boolean canContinue = setPageTitle(params, root, env);
         canContinue &= setBlogTitle(params, root);
         canContinue &= setBlogIntro(params, root);
+        canContinue &= setPageSize(params, root, env);
 
         if ( !canContinue )
             return actionEditCustomStep1(request, blog, env);
@@ -522,6 +529,30 @@ public class EditBlog implements AbcAction, Configurable {
     }
 
     /**
+     * Sets page size for blog archive. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param root XML document
+     * @return false, if there is a major error.
+     */
+    boolean setPageSize(Map params, Element root, Map env) {
+        Element pageSize = DocumentHelper.makeElement(root, "/settings/page_size");
+        String s = (String) params.get(PARAM_PAGE_SIZE);
+        if (Misc.empty(s)) {
+            if (pageSize!=null)
+                pageSize.detach();
+        } else {
+            try {
+                Integer.parseInt(s);
+            } catch (NumberFormatException e) {
+                ServletUtils.addError(PARAM_PAGE_SIZE, "Prosím zadejte celé èíslo.", env, null);
+                return false;
+            }
+            pageSize.setText(s);
+        }
+        return true;
+    }
+
+    /**
      * Sets title for story. Changes are not synchronized with persistance.
      * @param params map holding request's parameters
      * @param root XML document
@@ -570,21 +601,41 @@ public class EditBlog implements AbcAction, Configurable {
     /**
      * Sets category for story. Changes are not synchronized with persistance.
      * @param params map holding request's parameters
-     * @param root XML document
+     * @param story story to be updated
      * @return false, if there is a major error.
      */
-    boolean setStoryCategory(Map params, Element root) {
-        Element category = root.element("category");
-        String s = (String) params.get(PARAM_CATEGORY_ID);
-        if (Misc.empty(s)) {
-            if (category!=null)
-                category.detach();
-        } else {
-            if (category==null)
-                category = root.addElement("category");
-            category.setText(s);
-        }
+    boolean setStoryCategory(Map params, Item story) {
+        String category = (String) params.get(PARAM_CATEGORY_ID);
+        story.setSubType(category);
         return true;
+    }
+
+    /**
+     * Inserts (or increments) archive record for this month.
+     * @param root
+     * @param date
+     */
+    void incrementArchiveRecord(Element root, Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        Element archive = root.element("archive");
+        if (archive==null)
+            archive = root.addElement("archive");
+        Element year = (Element) archive.selectSingleNode("year[@value="+calendar.get(Calendar.YEAR)+"]");
+        if (year==null) {
+            year = archive.addElement("year");
+            year.addAttribute("value", Integer.toString(calendar.get(Calendar.YEAR)));
+        }
+        Element month = (Element) year.selectSingleNode("month[@value="+(calendar.get(Calendar.MONTH)+1)+"]");
+        if (month==null) {
+            month = year.addElement("month");
+            month.addAttribute("value", Integer.toString(calendar.get(Calendar.MONTH)+1));
+            month.setText("1");
+        } else {
+            int count = Misc.parseInt(month.getText(), 1);
+            month.setText(Integer.toString(count+1));
+        }
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {

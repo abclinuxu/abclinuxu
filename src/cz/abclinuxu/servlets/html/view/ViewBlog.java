@@ -7,20 +7,17 @@ package cz.abclinuxu.servlets.html.view;
 
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.html.edit.EditBlog;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
-import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.persistance.extra.CompareCondition;
-import cz.abclinuxu.persistance.extra.Field;
-import cz.abclinuxu.persistance.extra.Operation;
-import cz.abclinuxu.persistance.extra.Qualifier;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.paging.Paging;
+import cz.abclinuxu.persistance.extra.*;
 import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
@@ -28,13 +25,12 @@ import cz.abclinuxu.exceptions.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.prefs.Preferences;
 
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
+import org.dom4j.Element;
 
 /**
  * Display blogs.
@@ -46,9 +42,16 @@ public class ViewBlog implements AbcAction, Configurable {
     public static final String VAR_BLOG = "BLOG";
     public static final String VAR_STORIES = "STORIES";
     public static final String VAR_STORY = "STORY";
+    public static final String VAR_YEAR = "YEAR";
+    public static final String VAR_MONTH = "MONTH";
+    public static final String VAR_DAY = "DAY";
 
-    public static final String PREF_BLOG_URL = "regexp.blog.url";
+    static final String PREF_BLOG_URL = "regexp.blog.url";
+    static final String PREF_PAGE_SIZE = "page.size";
+
     static RE reUrl;
+    /** default number of stories per single page */
+    static int defaultPageSize;
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new ViewBlog());
     }
@@ -60,20 +63,26 @@ public class ViewBlog implements AbcAction, Configurable {
         String name = null;
 
         String uri = (String) env.get(Constants.VAR_REQUEST_URI);
-//        uri = "/blog/Yeti/archive/2004/12/12/124545";
+//        uri = "/blog/Yeti/2004/12/12/124545";
         synchronized(reUrl) {
             reUrl.match(uri);
             int matched = reUrl.getParenCount();
-            if (matched>=1)
+            if (matched>1)
                 name = reUrl.getParen(1);
-            if (matched>=3)
-                year = Integer.parseInt(reUrl.getParen(3));
-            if (matched>=4)
-                month = Integer.parseInt(reUrl.getParen(4));
-            if (matched>=5)
-                day = Integer.parseInt(reUrl.getParen(5));
-            if (matched>=6)
-                rid = Integer.parseInt(reUrl.getParen(6));
+            if (matched>2) {
+                year = Integer.parseInt(reUrl.getParen(2));
+                env.put(VAR_YEAR, new Integer(year));
+            }
+            if (matched>3) {
+                month = Integer.parseInt(reUrl.getParen(3));
+                env.put(VAR_MONTH, new Integer(month));
+            }
+            if (matched>4) {
+                day = Integer.parseInt(reUrl.getParen(4));
+                env.put(VAR_DAY, new Integer(day));
+            }
+            if (matched>5)
+                rid = Integer.parseInt(reUrl.getParen(5));
         }
 
         if (name!=null) {
@@ -91,14 +100,13 @@ public class ViewBlog implements AbcAction, Configurable {
             Tools.sync(blog);
             env.put(VAR_BLOG_RELATION, blogRelation);
             env.put(VAR_BLOG, blog);
-            EditBlog.storeCategories(blog, env);
 
             if (rid!=0)
                 return processBlog(blogRelation, rid, request, response, env);
             else
                 return processBlogs(blogRelation, year, month, day, request, response, env);
         } else
-            return processBlogSpace(request, response, env);
+            return processBlogSpace(request, response, year, month, day, env);
     }
 
     /**
@@ -118,10 +126,29 @@ public class ViewBlog implements AbcAction, Configurable {
      * Displays one blogRelation content. Its stories may be limited to given year, month or day.
      */
     protected String processBlogs(Relation blogRelation, int year, int month, int day, HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Category blog = (Category) blogRelation.getChild();
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
+        Element element = (Element) blog.getData().selectSingleNode("//settings/page_size");
+        int count = Misc.parseInt((element!=null)? element.getText():null, defaultPageSize);
 
-        List stories = new ArrayList();
-        env.put(VAR_STORIES, stories);
+        List qualifiers = new ArrayList();
+        qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL,new Integer(blog.getOwner())));
+        addTimeLimitsFQ(year, month, day, qualifiers);
+
+        Qualifier[] qa = new Qualifier[qualifiers.size()];
+        int total = SQLTool.getInstance().countItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+
+        qualifiers.add(Qualifier.SORT_BY_CREATED);
+        qualifiers.add(Qualifier.ORDER_DESCENDING);
+        qualifiers.add(new LimitQualifier(from, count));
+
+        qa = new Qualifier[qualifiers.size()];
+        List stories = SQLTool.getInstance().findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+        Tools.syncList(stories);
+
+        Paging paging = new Paging(stories, from, count, total);
+        env.put(VAR_STORIES, paging);
 
         return FMTemplateSelector.select("ViewBlog", "blogs", env, request);
     }
@@ -130,11 +157,84 @@ public class ViewBlog implements AbcAction, Configurable {
      * Entry page for blogs. Displays all available blogs
      * plus most fresh entries.
      */
-    protected String processBlogSpace(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    protected String processBlogSpace(HttpServletRequest request, HttpServletResponse response, int year, int month, int day, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
+
+        List qualifiers = new ArrayList();
+        addTimeLimitsFQ(year, month, day, qualifiers);
+
+        Qualifier[] qa = new Qualifier[qualifiers.size()];
+        int total = SQLTool.getInstance().countItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+
+        qualifiers.add(Qualifier.SORT_BY_CREATED);
+        qualifiers.add(Qualifier.ORDER_DESCENDING);
+        qualifiers.add(new LimitQualifier(from, defaultPageSize));
+
+        qa = new Qualifier[qualifiers.size()];
+        List stories = SQLTool.getInstance().findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+        Persistance persistance = PersistanceFactory.getPersistance();
+        for (Iterator iter = stories.iterator(); iter.hasNext();) {
+            Relation relation = (Relation) iter.next();
+            if (!relation.getChild().isInitialized())
+                persistance.synchronize(relation.getChild());
+            if (!relation.getParent().isInitialized())
+                persistance.synchronize(relation.getParent());
+        }
+
+        Paging paging = new Paging(stories, from, defaultPageSize, total);
+        env.put(VAR_STORIES, paging);
+
         return FMTemplateSelector.select("ViewBlog", "blogspace", env, request);
     }
 
+    /**
+     * Appends findQualifiers restricting blogs to selected time range.
+     * @param year 0 if not set
+     * @param month 0 if not set
+     * @param day 0 if not set
+     * @param findQualifiers
+     */
+    protected void addTimeLimitsFQ(int year, int month, int day, List findQualifiers) {
+        if (year==0)
+            return;
+        Calendar start = Calendar.getInstance(), end = Calendar.getInstance();
+        start.clear();end.clear();
+
+        // 2004,0,0 => 1.1.2004 - 1.1.2005
+        // 2004,12,0 => 1.12.2004 - 1.1.2005
+        // 2004,12,31 => 31.12.2004 - 1.1.2005
+        start.set(Calendar.YEAR, year);
+        end.set(Calendar.YEAR, year);
+        if (month==0) {
+            end.add(Calendar.YEAR, 1);
+        } else {
+            start.set(Calendar.MONTH, month);
+            end.set(Calendar.MONTH, month);
+
+            if (day==0) {
+                end.add(Calendar.MONTH, 1);
+            } else {
+                start.set(Calendar.DAY_OF_MONTH, day);
+                end.set(Calendar.DAY_OF_MONTH, day);
+            }
+        }
+
+        Date startDate = start.getTime();
+        Date endDate = end.getTime();
+        findQualifiers.add(new CompareCondition(Field.CREATED, Operation.GREATER_OR_EQUAL, startDate));
+        findQualifiers.add(new CompareCondition(Field.CREATED, Operation.SMALLER, endDate));
+    }
+
+    /**
+     * default number of stories per single page
+     */
+    public static int getDefaultPageSize() {
+        return defaultPageSize;
+    }
+
     public void configure(Preferences prefs) throws ConfigurationException {
+        defaultPageSize = prefs.getInt(PREF_PAGE_SIZE, 10);
         String re = prefs.get(PREF_BLOG_URL, null);
         try {
             reUrl = new RE(re);

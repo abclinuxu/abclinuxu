@@ -332,7 +332,7 @@
                     </node>
                     <node name="EditBlog">
                         <map>
-                            <entry key="regexp.invalid.blogname" value="[^a-zA-Z0-9_]"/>
+                            <entry key="regexp.invalid.blogname" value="[^a-zA-Z0-9_]|(^[0-9_])"/>
                             <entry key="max.story.title.length" value="60"/>
                         </map>
                     </node>
@@ -359,7 +359,8 @@
                     </node>
                     <node name="ViewBlog">
                         <map>
-                            <entry key="regexp.blog.url" value="^/blog/?([a-zA-Z0-9_]+)?(/?archive?/?)?([0-9]{4})?/?([0-9]{2})?/?([0-9]{2})?/?([0-9]+)?"/>
+                            <entry key="regexp.blog.url" value="^/blog/?([a-zA-Z][a-zA-Z0-9_]+)?/?([0-9]{4})?/?([0-9]{1,2})?/?([0-9]{1,2})?/?([0-9]+)?"/>
+                            <entry key="page.size" value="10"/>
                         </map>
                     </node>
                 </node>

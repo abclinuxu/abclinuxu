@@ -750,13 +750,24 @@ public class Tools implements Configurable {
     }
 
     /**
+     * @return uninitialized DiscussionHeader.
+     */
+    public static DiscussionHeader analyzeDiscussion(String s) {
+        return new DiscussionHeader(null);
+    }
+
+    /**
      * Gathers statistics on given discussion.
      */
     public static DiscussionHeader analyzeDiscussion(Relation relation) {
+        if (relation==null)
+            return new DiscussionHeader(null);
+
         if ( !InstanceUtils.checkType(relation.getChild(), Item.class, Item.DISCUSSION) ) {
             log.error("Relation "+relation.getId()+" doesn't contain item!");
             return null;
         }
+
         Item item = (Item) relation.getChild();
         DiscussionHeader discussion = new DiscussionHeader(item);
         discussion.relationId = relation.getId();
@@ -933,10 +944,10 @@ public class Tools implements Configurable {
         calendar.setTime(date);
         StringBuffer sb = new StringBuffer("/blog/");
         sb.append(blogName);
-        sb.append("/archive/");
+        sb.append('/');
         sb.append(calendar.get(Calendar.YEAR));
         sb.append('/');
-        sb.append(calendar.get(Calendar.MONTH));
+        sb.append(calendar.get(Calendar.MONTH+1));
         sb.append('/');
         sb.append(calendar.get(Calendar.DAY_OF_MONTH));
         sb.append('/');

@@ -5,7 +5,7 @@
 <!ATTLIST note format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 
 <!-- DTD for blog -->
-<!ELEMENT data (categories?, custom)>
+<!ELEMENT data (categories?, custom, settings?, archive?)>
 <!ELEMENT categories (category*)>
 <!ELEMENT category #EMPTY>
 <!ATTLIST category id (#NMTOKEN) #REQUIRED> <!-- integer, id of category, used in blog story subtype -->
@@ -14,3 +14,10 @@
 <!ELEMENT page_title (#PCDATA)> <!-- title for the page -->
 <!ELEMENT title (#PCDATA)> <!-- title for the blog -->
 <!ELEMENT intro (#PCDATA)> <!-- HTML text -->
+<!ELEMENT settings (page_size?)> <!-- various settings -->
+<!ELEMENT page_size (#PCDATA)> <!-- integer, number of stories per page -->
+<!ELEMENT archive (year*)> <!-- container for number of blog's stories divided per year and month -->
+<!ELEMENT year (month*)> <!-- container for number of stories during this year -->
+<!ATTLIST year value (#NMTOKEN) #REQUIRED> <!-- integer, year -->
+<!ELEMENT month (#PCDATA)> <!-- number of stories published during this month -->
+<!ATTLIST month value (#NMTOKEN) #REQUIRED> <!-- integer, value of the month -->
