@@ -23,13 +23,11 @@ public class GenericObject {
     public GenericObject() {
         id = 0;
         content = new ArrayList(5);
-        initialized = false;
     }
 
     public GenericObject(int id) {
         this.id = id;
         content = new ArrayList(5);
-        initialized = false;
     }
 
     /**
@@ -84,7 +82,7 @@ public class GenericObject {
     public void synchronizeWith(GenericObject obj) {
         if ( obj==this ) return;
         id = obj.getId();
-        content = new ArrayList(obj.getContent().size()+2);
+        content = new ArrayList(obj.getContent().size());
         for (Iterator iter = obj.getContent().iterator(); iter.hasNext();) {
             content.add(iter.next());
         }

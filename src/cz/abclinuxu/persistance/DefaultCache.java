@@ -10,15 +10,14 @@ package cz.abclinuxu.persistance;
 import java.util.*;
 
 import cz.abclinuxu.data.*;
-import cz.abclinuxu.scheduler.Task;
-import cz.abclinuxu.scheduler.Scheduler;
+import cz.abclinuxu.servlets.init.AbcInit;
 
 /**
  * Cache of GenericObjects. Only selected classes are cached.
  * @todo Complete rewrite needed. Add Date lru to CacheObject.
  * Use it as LRU, delete objects not accessed within 30 minutes.
  */
-public class DefaultCache implements Cache,Task {
+public class DefaultCache extends TimerTask implements Cache {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(DefaultCache.class);
 
     Map data;
@@ -29,14 +28,14 @@ public class DefaultCache implements Cache,Task {
      * This way we propagate external changes from database to model and
      * reduce consequences of possible errors of Cache.
      */
-    public static final int SYNC_INTERVAL = 60*60*1000; // 1 hour
+    public static final int SYNC_INTERVAL = 15*60*1000; // 15 minutes
     /** cached objects, which were not accessed within this interval, will be deleted */
-    public static final int MAX_LRU = 30*60000; // 30 minutes
+    public static final int MAX_LRU = 15*60*1000; // 15 minutes
 
     public DefaultCache() {
         data = new HashMap(100);
         modCount = 0;
-        Scheduler.getScheduler().addTask(this,3*60*1000,System.currentTimeMillis()+3*60*1000);
+        AbcInit.getScheduler().schedule(this,SYNC_INTERVAL,3*60*1000);
     }
 
     /**
@@ -59,14 +58,13 @@ public class DefaultCache implements Cache,Task {
                     }
                 }
 
-                Relation key = cloneRelation(relation);
-                data.put(key,new CachedObject(key));
+                data.put(relation,new CachedObject(relation));
                 modCount++;
 
                 // add this relation to affected object.
                 cached = (CachedObject) data.get(relation.getParent());
                 if ( cached!=null ) {
-                    cached.object.addContent((Relation)key);
+                    cached.object.addContent(relation);
                 }
             } else {
                 GenericObject key = (GenericObject) obj.getClass().newInstance();
@@ -74,7 +72,7 @@ public class DefaultCache implements Cache,Task {
                 key.clearContent();
 
                 for (Iterator iter = obj.getContent().iterator(); iter.hasNext();) {
-                    Relation relation = cloneRelation((Relation)iter.next());
+                    Relation relation = (Relation)iter.next();
                     key.addContent(relation);
                     data.put(relation,new CachedObject(relation));
                     modCount++;
@@ -115,6 +113,13 @@ public class DefaultCache implements Cache,Task {
                 GenericObject stored = found.object;
                 GenericObject clone = (GenericObject) stored.getClass().newInstance();
                 clone.synchronizeWith(stored);
+                clone.clearContent();
+
+                for (Iterator iter = stored.getContent().iterator(); iter.hasNext();) {
+                    Relation relation = ((Relation)iter.next()).cloneRelation();
+                    clone.addContent(relation);
+                }
+
                 return clone;
             }
         } catch (Exception e) {
@@ -145,33 +150,10 @@ public class DefaultCache implements Cache,Task {
     }
 
     /**
-     * Creates lightweight clone of selected relation. Such clone is almost same as original,
-     * but child and parent objects are not initialized (just PK is set).
-     */
-    protected Relation cloneRelation(Relation relation) {
-        Relation clone = new Relation();
-        clone.synchronizeWith(relation);
-
-        try {
-            GenericObject tmp = (GenericObject)relation.getParent().getClass().newInstance();
-            tmp.setId(relation.getParent().getId());
-            clone.setParent(tmp);
-
-            tmp = (GenericObject)relation.getChild().getClass().newInstance();
-            tmp.setId(relation.getChild().getId());
-            clone.setChild(tmp);
-        } catch (Exception e) {
-            log.error("Exception while cloning relation!",e);
-        }
-
-        return clone;
-    }
-
-    /**
      * When it is time to cleanup cache, this method is invoked. It
      * will scan all CachedObjects, and LRU objects are removed from cache.
      */
-    public void runJob() {
+    public void run() {
         long expectedModCount = modCount;
 
         try {

@@ -136,7 +136,7 @@ public class TransferItem {
         statement.setTimestamp(5,new Timestamp(item.getUpdated().getTime()));
 
         statement.executeUpdate();
-        org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)statement;
+        com.mysql.jdbc.PreparedStatement mm = (com.mysql.jdbc.PreparedStatement)statement;
         item.setId((int)mm.getLastInsertID());
     }
 
@@ -149,7 +149,7 @@ public class TransferItem {
         statement.setTimestamp(5,new Timestamp(record.getUpdated().getTime()));
 
         statement.executeUpdate();
-        org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)statement;
+        com.mysql.jdbc.PreparedStatement mm = (com.mysql.jdbc.PreparedStatement)statement;
         record.setId((int)mm.getLastInsertID());
     }
 

@@ -8,6 +8,7 @@ package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
+import cz.abclinuxu.servlets.utils.VariantTool;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
@@ -29,7 +30,7 @@ public class ViewItem extends AbcServlet {
     /** Relation upper to selected relation Item-Record */
     public static final String VAR_UPPER = "UPPER";
 
-    protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
         Persistance persistance = PersistanceFactory.getPersistance();
@@ -71,13 +72,13 @@ public class ViewItem extends AbcServlet {
 
         if ( item.getType()==Item.MAKE ) {
             switch ( record.getType() ) {
-                case Record.HARDWARE: return getTemplate("view/hwitem.vm");
-                case Record.SOFTWARE: return getTemplate("view/switem.vm");
+                case Record.HARDWARE: return VariantTool.selectTemplate(request,ctx,"ViewItem","hardware");
+                case Record.SOFTWARE: return VariantTool.selectTemplate(request,ctx,"ViewItem","software");
             }
         }
-        if ( item.getType()==Item.DISCUSSION ) return getTemplate("view/discussion.vm");
-        if ( item.getType()==Item.ARTICLE ) return getTemplate("view/article.vm");
-        if ( item.getType()==Item.DRIVER ) return getTemplate("view/drvitem.vm");
+        if ( item.getType()==Item.DISCUSSION ) return VariantTool.selectTemplate(request,ctx,"ViewItem","discussion");
+        if ( item.getType()==Item.ARTICLE ) return VariantTool.selectTemplate(request,ctx,"ViewItem","article");
+        if ( item.getType()==Item.DRIVER ) return VariantTool.selectTemplate(request,ctx,"ViewItem","driver");
         return null;
     }
 }

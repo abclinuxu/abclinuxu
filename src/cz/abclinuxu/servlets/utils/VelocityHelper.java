@@ -11,6 +11,7 @@ import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.Sorters;
+import cz.abclinuxu.utils.InstanceUtils;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.apache.velocity.context.Context;
@@ -568,8 +569,11 @@ public class VelocityHelper {
      * @param item discussion, which must be initialized.
      */
     public PreparedDiscussion prepareDiscussion(Relation relation) throws PersistanceException {
+        if ( !InstanceUtils.checkType(relation.getChild(),Item.class,Item.DISCUSSION) ) {
+            log.error("Relation doesn't contain item! "+relation);
+            return null;
+        }
         Item item = (Item) relation.getChild();
-        if ( item.getType()!=Item.DISCUSSION ) return null;
         PreparedDiscussion discussion = new PreparedDiscussion(item);
         sync(item.getContent());
 
@@ -578,11 +582,13 @@ public class VelocityHelper {
 
         for (Iterator iter = item.getContent().iterator(); iter.hasNext(); ) {
             Relation rel = (Relation) iter.next();
-            Record record = (Record) rel.getChild();
-            if ( record.getType()==Record.DISCUSSION ) {
-                count++;
-                if ( lastUpdate.before(record.getUpdated()) ) lastUpdate = record.getUpdated();
+            if ( !InstanceUtils.checkType(rel.getChild(),Record.class,Record.DISCUSSION) ) {
+                log.error("Relation doesn't contain discussion record! "+rel);
+                continue;
             }
+            Record record = (Record) rel.getChild();
+            count++;
+            if ( lastUpdate.before(record.getUpdated()) ) lastUpdate = record.getUpdated();
         }
 
         discussion.lastUpdate = lastUpdate;

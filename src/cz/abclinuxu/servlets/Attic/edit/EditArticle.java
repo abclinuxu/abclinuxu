@@ -45,7 +45,7 @@ public class EditArticle extends AbcServlet {
     public static final String ACTION_EDIT_ITEM_STEP2 = "edit2";
 
 
-    protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
         Relation relation = null;
@@ -63,21 +63,21 @@ public class EditArticle extends AbcServlet {
         if ( action==null || action.equals(ACTION_ADD_ITEM) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: {
                     params.put(PARAM_PUBLISHED,Constants.isoFormat.format(new Date()));
-                    return getTemplate("add/article.vm");
+                    return VariantTool.selectTemplate(request,ctx,"EditArticle","add");
                 }
             }
 
         } else if ( action.equals(ACTION_ADD_ITEM_STEP2) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: {
                     ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
-                    return getTemplate("add/article.vm");
+                    return VariantTool.selectTemplate(request,ctx,"EditArticle","add");
                 }
                 default: return actionAddStep2(request,response,ctx);
             }
@@ -85,7 +85,7 @@ public class EditArticle extends AbcServlet {
         } else if ( action.equals(ACTION_EDIT_ITEM) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return actionEditItem(request,ctx);
             }
@@ -93,16 +93,16 @@ public class EditArticle extends AbcServlet {
         } else if ( action.equals(ACTION_EDIT_ITEM_STEP2) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return actionEditItem2(request,response,ctx);
             }
 
         }
-        return getTemplate("add/article.vm");
+        return VariantTool.selectTemplate(request,ctx,"EditArticle","add");
     }
 
-    protected Template actionAddStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String  actionAddStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation upper = (Relation) ctx.get(VAR_RELATION);
@@ -136,7 +136,7 @@ public class EditArticle extends AbcServlet {
         }
 
         if ( error ) {
-            return getTemplate("add/article.vm");
+            return VariantTool.selectTemplate(request,ctx,"EditArticle","add");
         }
 
         Relation tmp = (Relation) InstanceUtils.instantiateParam(PARAM_AUTHOR_ID,Relation.class,params);
@@ -177,11 +177,11 @@ public class EditArticle extends AbcServlet {
             return null;
         } catch (PersistanceException e) {
             ServletUtils.addError(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
-            return getTemplate("add/article.vm");
+            return VariantTool.selectTemplate(request,ctx,"EditArticle","add");
         }
     }
 
-    protected Template actionEditItem(HttpServletRequest request, Context ctx) throws Exception {
+    protected String  actionEditItem(HttpServletRequest request, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         VelocityHelper helper = (VelocityHelper) ctx.get(AbcServlet.VAR_HELPER);
 
@@ -211,10 +211,10 @@ public class EditArticle extends AbcServlet {
             }
         }
 
-        return getTemplate("edit/article.vm");
+        return VariantTool.selectTemplate(request,ctx,"EditArticle","edit");
     }
 
-    protected Template actionEditItem2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionEditItem2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation upper = (Relation) ctx.get(VAR_RELATION);
@@ -247,7 +247,7 @@ public class EditArticle extends AbcServlet {
         }
 
         if ( error ) {
-            return getTemplate("edit/article.vm");
+            return VariantTool.selectTemplate(request,ctx,"EditArticle","edit");
         }
 
         Item item = (Item) upper.getChild();

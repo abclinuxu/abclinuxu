@@ -33,8 +33,12 @@
           <param-value>jdbc:mysql://localhost/abc?user=literakl&amp;password=lkaretil&amp;useUnicode=true&amp;characterEncoding=ISO-8859-2</param-value>
         </init-param>
         <init-param>
+          <param-name>TEMPLATES</param-name>
+          <param-value>WEB-INF/templates.xml</param-value>
+        </init-param>
+        <init-param>
           <param-name>KERNEL</param-name>
-          <param-value>auto/kernel.txt</param-value>
+          <param-value>WEB-INF/templates/auto/kernel.txt</param-value>
         </init-param>
         <init-param>
           <param-name>LINKS_TRAFIKA</param-name>
@@ -90,6 +94,24 @@
     <servlet>
         <servlet-name>Search</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.view.Search</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>History</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.view.ShowOlder</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>ForgottenPassword</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.view.ForgottenPassword</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>Redirect</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.view.Redirect</servlet-class>
         <load-on-startup>2</load-on-startup>
     </servlet>
 
@@ -162,18 +184,6 @@
     <servlet>
         <servlet-name>SelectRelation</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.view.SelectRelation</servlet-class>
-        <load-on-startup>4</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>ForgottenPassword</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.view.ForgottenPassword</servlet-class>
-        <load-on-startup>4</load-on-startup>
-    </servlet>
-
-    <servlet>
-        <servlet-name>Redirect</servlet-name>
-        <servlet-class>cz.abclinuxu.servlets.view.Redirect</servlet-class>
         <load-on-startup>4</load-on-startup>
     </servlet>
 
@@ -336,6 +346,10 @@
 
     <servlet-mapping>
         <servlet-name>Reward</servlet-name><url-pattern>/Reward</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>History</servlet-name><url-pattern>/History</url-pattern>
     </servlet-mapping>
 
     <welcome-file-list>

@@ -12,6 +12,7 @@ import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.servlets.utils.VariantTool;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.persistance.Persistance;
@@ -45,7 +46,7 @@ public class ViewCategory extends AbcServlet {
     public static final String PARAM_CATEGORY_ID = "categoryId";
     public static final String PARAM_FROM = "from";
 
-    protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
         // find category and store it into Context
@@ -61,7 +62,7 @@ public class ViewCategory extends AbcServlet {
         } else {
             if ( relation==null ) {
                 ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Nebyla vybrána ¾ádná kategorie!",ctx, request.getSession());
-                response.sendRedirect("/");
+                response.sendRedirect("/Index");
                 return null;
             }
             category = (Category) relation.getChild();
@@ -74,20 +75,20 @@ public class ViewCategory extends AbcServlet {
 
         if ( relation!=null ) {
             switch (relation.getId()) {
-                case Constants.REL_FORUM: return getTemplate("view/discussions.vm");
-                case Constants.REL_POLLS: return getTemplate("view/ankety.vm");
-                case Constants.REL_LINKS: return getTemplate("view/links.vm");
-                case Constants.REL_DRIVERS: return getTemplate("view/drivers.vm");
-                case Constants.REL_REQUESTS: return getTemplate("view/requests.vm");
-                case Constants.REL_REKLAMA: return getTemplate("view/reklama.vm");
+                case Constants.REL_FORUM: return VariantTool.selectTemplate(request,ctx,"ViewCategory","discussions");
+                case Constants.REL_POLLS: return VariantTool.selectTemplate(request,ctx,"ViewCategory","polls");
+                case Constants.REL_LINKS: return VariantTool.selectTemplate(request,ctx,"ViewCategory","links");
+                case Constants.REL_DRIVERS: return VariantTool.selectTemplate(request,ctx,"ViewCategory","drivers");
+                case Constants.REL_REQUESTS: return VariantTool.selectTemplate(request,ctx,"EditRequest","view");
+//                case Constants.REL_REKLAMA: return VariantTool.selectTemplate(request,ctx,"ViewCategory","reklama");
             }
         } else {
             switch ( category.getId() ) {
-                case Constants.CAT_ARTICLES: return getTemplate("view/rubriky.vm");
-                case Constants.CAT_ABC: return getTemplate("view/rubriky.vm");
+                case Constants.CAT_ARTICLES: return VariantTool.selectTemplate(request,ctx,"ViewCategory","rubriky");
+                case Constants.CAT_ABC: return VariantTool.selectTemplate(request,ctx,"ViewCategory","rubriky");
             }
         }
-        if ( UrlUtils.PREFIX_CLANKY.equals(tmp) ) return getTemplate("view/clanky.vm");
-        return getTemplate("view/category.vm");
+        if ( UrlUtils.PREFIX_CLANKY.equals(tmp) ) return VariantTool.selectTemplate(request,ctx,"ViewCategory","clanky");
+        return VariantTool.selectTemplate(request,ctx,"ViewCategory","category");
     }
 }

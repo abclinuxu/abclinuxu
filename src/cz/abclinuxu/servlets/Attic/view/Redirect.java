@@ -50,7 +50,7 @@ public class Redirect extends HttpServlet {
         }
 
         link = new Link();
-        link.setUrl("/");
+        link.setUrl("/Index");
         return link;
     }
 }

@@ -29,7 +29,7 @@ public class FindContext extends AbcServlet {
 
     public static final String PARAM_RELATION = "relationId";
 
-    protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);

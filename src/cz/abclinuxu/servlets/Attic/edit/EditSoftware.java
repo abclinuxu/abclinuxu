@@ -44,7 +44,7 @@ public class EditSoftware extends AbcServlet {
     public static final String ACTION_EDIT_RECORD_STEP2 = "editRecord2";
 
 
-    protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
         Relation relation = null;
@@ -62,18 +62,18 @@ public class EditSoftware extends AbcServlet {
         if ( action==null || action.equals(ACTION_ADD_ITEM) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
-                default: return getTemplate("add/item.vm");
+                default: return VariantTool.selectTemplate(request,ctx,"EditSoftware","add_item");
             }
 
         } else if ( action.equals(ACTION_ADD_ITEM_STEP2) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: {
                     ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
-                    return getTemplate("add/item.vm");
+                    return VariantTool.selectTemplate(request,ctx,"EditSoftware","add_item");
                 }
                 default: return actionAddStep2(request,ctx);
             }
@@ -81,10 +81,10 @@ public class EditSoftware extends AbcServlet {
         } else if ( action.equals(ACTION_ADD_ITEM_STEP3) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: {
                     ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
-                    return getTemplate("add/item.vm");
+                    return VariantTool.selectTemplate(request,ctx,"EditSoftware","add_item");
                 }
                 default: return actionAddStep3(request,response,ctx);
             }
@@ -92,18 +92,18 @@ public class EditSoftware extends AbcServlet {
         } else if ( action.equals(ACTION_ADD_RECORD) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Record.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: {
                     params.put(PARAM_ACTION,ACTION_ADD_RECORD_STEP2);
-                    return getTemplate("add/swrecord.vm");
+                    return VariantTool.selectTemplate(request,ctx,"EditSoftware","add_record");
                 }
             }
 
         } else if ( action.equals(ACTION_ADD_RECORD_STEP2) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Record.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return actionAddRecord(request,response,ctx);
             }
@@ -115,7 +115,7 @@ public class EditSoftware extends AbcServlet {
 
             int rights = Guard.check((User)ctx.get(VAR_USER),record,Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return actionEditRecord(request,ctx);
             }
@@ -127,7 +127,7 @@ public class EditSoftware extends AbcServlet {
 
             int rights = Guard.check((User)ctx.get(VAR_USER),record,Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_OK: return actionEditRecord2(request,response,ctx);
                 case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return actionEditRecord(request,ctx);
@@ -136,7 +136,7 @@ public class EditSoftware extends AbcServlet {
         } else if ( action.equals(ACTION_EDIT_ITEM) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return actionEditItem(request,ctx);
             }
@@ -144,7 +144,7 @@ public class EditSoftware extends AbcServlet {
         } else if ( action.equals(ACTION_EDIT_ITEM_STEP2) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_OK: return actionEditItem2(request,response,ctx);
                 case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return actionEditItem(request,ctx);
@@ -152,21 +152,21 @@ public class EditSoftware extends AbcServlet {
 
         }
 
-        return getTemplate("add/item.vm");
+        return VariantTool.selectTemplate(request,ctx,"EditSoftware","add_item");
     }
 
-    protected Template actionAddStep2(HttpServletRequest request, Context ctx) throws Exception {
+    protected String actionAddStep2(HttpServletRequest request, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
 
         String name = (String) params.get(PARAM_NAME);
         if ( name==null || name.length()==0 ) {
             ServletUtils.addError(PARAM_NAME,"Nevyplnil jste název druhu!",ctx,null);
-            return getTemplate("add/item.vm");
+            return VariantTool.selectTemplate(request,ctx,"EditSoftware","add_item");
         }
-        return getTemplate("add/swrecord.vm");
+        return VariantTool.selectTemplate(request,ctx,"EditSoftware","add_record");
     }
 
-    protected Template actionAddStep3(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionAddStep3(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation upper = (Relation) ctx.get(VAR_RELATION);
@@ -175,7 +175,7 @@ public class EditSoftware extends AbcServlet {
         String name = (String) params.get(PARAM_NAME);
         if ( name==null || name.length()==0 ) {
             ServletUtils.addError(PARAM_NAME,"Nevyplnil jste název druhu!",ctx,null);
-            return getTemplate("add/item.vm");
+            return VariantTool.selectTemplate(request,ctx,"EditSoftware","add_item");
         }
         String icon = (String) params.get(PARAM_ICON);
 
@@ -194,7 +194,7 @@ public class EditSoftware extends AbcServlet {
 
         if ( text==null || text.length()==0 ) {
             ServletUtils.addError(PARAM_TEXT,"Vyplòte návod!",ctx,null);
-            return getTemplate("add/swrecord.vm");
+            return VariantTool.selectTemplate(request,ctx,"EditSoftware","add_record");
         }
 
         document = DocumentHelper.createDocument();
@@ -218,11 +218,11 @@ public class EditSoftware extends AbcServlet {
             return null;
         } catch (PersistanceException e) {
             ServletUtils.addError(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
-            return getTemplate("add/swrecord.vm");
+            return VariantTool.selectTemplate(request,ctx,"EditSoftware","add_record");
         }
     }
 
-    protected Template actionAddRecord(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionAddRecord(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation upper = (Relation) ctx.get(VAR_RELATION);
@@ -234,7 +234,7 @@ public class EditSoftware extends AbcServlet {
 
         if ( text==null || text.length()==0 ) {
             ServletUtils.addError(PARAM_TEXT,"Vyplòte návod!",ctx,null);
-            return getTemplate("add/swrecord.vm");
+            return VariantTool.selectTemplate(request,ctx,"EditSoftware","add_record");
         }
 
         Document document = DocumentHelper.createDocument();
@@ -256,11 +256,11 @@ public class EditSoftware extends AbcServlet {
             return null;
         } catch (PersistanceException e) {
             ServletUtils.addError(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
-            return getTemplate("add/swrecord.vm");
+            return VariantTool.selectTemplate(request,ctx,"EditSoftware","add_record");
         }
     }
 
-    protected Template actionEditRecord(HttpServletRequest request, Context ctx) throws Exception {
+    protected String actionEditRecord(HttpServletRequest request, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         VelocityHelper helper = (VelocityHelper) ctx.get(AbcServlet.VAR_HELPER);
         Persistance persistance = PersistanceFactory.getPersistance();
@@ -277,10 +277,10 @@ public class EditSoftware extends AbcServlet {
         if ( node!=null ) params.put(PARAM_TEXT,helper.encodeSpecial(node.getText()));
 
         params.put(PARAM_ACTION,ACTION_EDIT_RECORD_STEP2);
-        return getTemplate("add/swrecord.vm");
+        return VariantTool.selectTemplate(request,ctx,"EditSoftware","edit_record");
     }
 
-    protected Template actionEditRecord2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionEditRecord2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
@@ -294,7 +294,7 @@ public class EditSoftware extends AbcServlet {
 
         if ( text==null || text.length()==0 ) {
             ServletUtils.addError(PARAM_TEXT,"Vyplòte návod!",ctx,null);
-            return getTemplate("add/swrecord.vm");
+            return VariantTool.selectTemplate(request,ctx,"EditSoftware","edit_record");
         }
 
         DocumentHelper.makeElement(document,"data/text").setText(text);
@@ -307,7 +307,7 @@ public class EditSoftware extends AbcServlet {
         return null;
     }
 
-    protected Template actionEditItem(HttpServletRequest request, Context ctx) throws Exception {
+    protected String actionEditItem(HttpServletRequest request, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
 
         Relation relation = (Relation) ctx.get(VAR_RELATION);
@@ -319,10 +319,10 @@ public class EditSoftware extends AbcServlet {
         node = document.selectSingleNode("data/icon");
         if ( node!=null ) params.put(PARAM_ICON,node.getText());
 
-        return getTemplate("edit/item.vm");
+        return VariantTool.selectTemplate(request,ctx,"EditSoftware","edit_item");
     }
 
-    protected Template actionEditItem2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionEditItem2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) ctx.get(VAR_RELATION);
@@ -334,7 +334,7 @@ public class EditSoftware extends AbcServlet {
         String tmp = (String) params.get(PARAM_NAME);
         if ( tmp==null || tmp.length()==0 ) {
             ServletUtils.addError(PARAM_NAME,"Nevyplnil jste název druhu!",ctx,null);
-            return getTemplate("edit/item.vm");
+            return VariantTool.selectTemplate(request,ctx,"EditSoftware","edit_item");
         }
 
         node.setText(tmp);

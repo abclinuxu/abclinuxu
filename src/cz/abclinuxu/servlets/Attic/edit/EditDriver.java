@@ -41,7 +41,7 @@ public class EditDriver extends AbcServlet {
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
 
-    protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
@@ -58,7 +58,7 @@ public class EditDriver extends AbcServlet {
         if ( action==null || action.equals(ACTION_ADD) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: {
                     ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, request.getSession());
                     UrlUtils.redirect("/drivers/ViewRelation?relationId="+Constants.REL_DRIVERS,response,ctx);
@@ -70,19 +70,19 @@ public class EditDriver extends AbcServlet {
         } else if ( action.equals(ACTION_ADD_STEP2) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Item.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: {
                     ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
-                    return getTemplate("add/driver.vm");
+                    return VariantTool.selectTemplate(request,ctx,"EditDriver","add");
                 }
                 default: return actionAddStep2(request,response,ctx);
             }
         }
 
-        return getTemplate("add/driver.vm");
+        return VariantTool.selectTemplate(request,ctx,"EditDriver","add");
     }
 
-    protected Template actionAddStep(HttpServletRequest request, Context ctx) throws Exception {
+    protected String actionAddStep(HttpServletRequest request, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         VelocityHelper helper = (VelocityHelper) ctx.get(AbcServlet.VAR_HELPER);
         Persistance persistance = PersistanceFactory.getPersistance();
@@ -111,13 +111,13 @@ public class EditDriver extends AbcServlet {
             if ( node!=null ) params.put(PARAM_NOTE,helper.encodeSpecial(node.getText()));
         }
 
-        return getTemplate("add/driver.vm");
+        return VariantTool.selectTemplate(request,ctx,"EditDriver","add");
     }
 
     /**
      * add: if driver exists, its content is replaced by newer version. otherwise it is created.
      */
-    protected Template actionAddStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
@@ -146,7 +146,7 @@ public class EditDriver extends AbcServlet {
         String note = (String) params.get(PARAM_NOTE);
 
         if ( error ) {
-            return getTemplate("add/driver.vm");
+            return VariantTool.selectTemplate(request,ctx,"EditDriver","add");
         }
 
         boolean created = true;
@@ -189,7 +189,7 @@ public class EditDriver extends AbcServlet {
             }
         } catch (PersistanceException e) {
             ServletUtils.addError(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
-            return getTemplate("add/driver.vm");
+            return VariantTool.selectTemplate(request,ctx,"EditDriver","add");
         }
 
         UrlUtils.redirect("/ViewRelation?relationId="+Constants.REL_DRIVERS,response,ctx);

@@ -4,6 +4,8 @@
 package cz.abclinuxu.utils;
 
 import cz.abclinuxu.data.GenericObject;
+import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.Record;
 
 import java.util.Map;
 
@@ -43,5 +45,25 @@ public class InstanceUtils {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    /**
+     * Verifies, that given object is derived of specific class and optionally
+     * is specific type.
+     */
+    public static boolean checkType(GenericObject obj, Class aClass, int type) {
+        if ( ! obj.getClass().isAssignableFrom(aClass) )
+            return false;
+        if ( obj instanceof Item ) {
+            if ( ((Item)obj).getType()!=type )
+               return false;
+            return true;
+        }
+        if ( obj instanceof Record ) {
+            if ( ((Record)obj).getType()!=type )
+               return false;
+            return true;
+        }
+        return true;
     }
 }

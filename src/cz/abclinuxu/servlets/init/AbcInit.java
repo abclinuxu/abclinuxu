@@ -10,6 +10,8 @@ package cz.abclinuxu.servlets.init;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Calendar;
+import java.util.Timer;
+import java.util.GregorianCalendar;
 import javax.servlet.http.*;
 import javax.servlet.ServletException;
 import org.apache.log4j.xml.DOMConfigurator;
@@ -17,14 +19,21 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Category;
 import org.apache.velocity.app.Velocity;
 import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.scheduler.jobs.*;
-import cz.abclinuxu.scheduler.Scheduler;
+import cz.abclinuxu.scheduler.*;
+import cz.abclinuxu.servlets.utils.VariantTool;
 
 /**
  * This servlet initializes Log4J
  */
 public class AbcInit extends HttpServlet {
     static Category log = Category.getInstance(AbcInit.class);
+
+    /** scheduler used by all objects in project */
+    static Timer scheduler;
+
+    static {
+        scheduler = new Timer(true);
+    }
 
     public void init() throws ServletException {
         String path = getServletContext().getRealPath("/");
@@ -64,10 +73,19 @@ public class AbcInit extends HttpServlet {
         links = getInitParameter("LINKS_RSS");
         if ( links!=null ) GenerateLinks.setFileNameRSS(path+links);
 
+        String tmp = getInitParameter("TEMPLATES");
+        try {
+            VariantTool.initialize(path+tmp);
+        } catch (Exception e) {
+            log.fatal("Cannot initialize template system!", e);
+        }
+
         // start scheduler tasks
+        startFetchingVariables();
         startKernelUpdate();
         startLinksUpdate();
         startGenerateLinks();
+        startArticlePoolMonitor();
 
         log.info("Inicializace je hotova.");
     }
@@ -77,29 +95,57 @@ public class AbcInit extends HttpServlet {
     }
 
     /**
-     * Update links each six hours, starting at 7:30 AM
+     * @return instance of scheduler
+     */
+    public static Timer getScheduler() {
+        return scheduler;
+    }
+
+    /**
+     * Update links, each six hours, starting at 6:30+k*6, where k is minimal non-negativ integer
      */
     protected void startLinksUpdate() {
-        Date now = new Date();
-        Calendar next = Calendar.getInstance();
-        next.setTime(now);
-        next.set(Calendar.HOUR,7);
-        next.set(Calendar.MINUTE,30);
+        Calendar cal = new GregorianCalendar();
+        cal.set(Calendar.HOUR, 7);
+        cal.set(Calendar.MINUTE, 30);
 
-        Scheduler.getScheduler().addTask(new UpdateLinks2(),6*60*60*1000,next.getTime().getTime());
+        Date next = cal.getTime();
+        Date now = new Date();
+
+        while ( next.before(now) ) {
+            cal.add(Calendar.HOUR_OF_DAY,6);
+            next = cal.getTime();
+        }
+
+        AbcInit.getScheduler().scheduleAtFixedRate(new UpdateLinks(),next,6*60*60*1000);
     }
 
     /**
-     * Update kernel versions each hour, starting now
+     * Update kernel versions each hour, starting after one minute
      */
     protected void startKernelUpdate() {
-        Scheduler.getScheduler().addTask(new UpdateKernel(),1*60*60*1000,0);
+        scheduler.schedule(new UpdateKernel(),60*1000,1*60*60*1000);
     }
 
     /**
-     * Generate file with newest links each hour, starting now
+     * Generate file with newest links each hour, starting 30 seconds later
      */
     protected void startGenerateLinks() {
-        Scheduler.getScheduler().addTask(new GenerateLinks(),1*60*60*1000,0);
+        scheduler.schedule(new GenerateLinks(),30*1000,1*60*60*1000);
+    }
+
+    /**
+     * Fetches some context variables each 60 seconds, starting now
+     */
+    protected void startFetchingVariables() {
+        scheduler.schedule(new VariableFetcher(),0,60*1000);
+    }
+
+    /**
+     * Monitors article pool and moves articles to new articles, when they are ready.
+     * Start two minutes later with 3 minute period.
+     */
+    protected void startArticlePoolMonitor() {
+        scheduler.schedule(new ArticlePoolMonitor(),1*60*1000,3*60*1000);
     }
 }

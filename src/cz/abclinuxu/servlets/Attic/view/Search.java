@@ -9,6 +9,7 @@ package cz.abclinuxu.servlets.view;
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.servlets.utils.VariantTool;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import org.apache.velocity.Template;
@@ -38,14 +39,14 @@ public class Search extends AbcServlet {
     public static final String PARAM_QUERY = "query";
 
 
-    protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         String query = (String) params.get(PARAM_QUERY);
         if ( query == null || query.length()==0 ) {
             ServletUtils.addError(PARAM_QUERY,"Prosím zadejte hledaný øetìzec!",ctx,null);
-            return getTemplate("view/search.vm");
+            return VariantTool.selectTemplate(request,ctx,"Search","show");
         }
 
         try {
@@ -56,10 +57,10 @@ public class Search extends AbcServlet {
             ctx.put(VAR_RESULT,hits);
         } catch (Exception e) {
             ServletUtils.addError(PARAM_QUERY,"Nemohu provést dané hledání. Zadejte jiný øetìzec!",ctx,null);
-            return getTemplate("view/search.vm");
+            return VariantTool.selectTemplate(request,ctx,"Search","show");
         }
 
-        return getTemplate("view/search.vm");
+        return VariantTool.selectTemplate(request,ctx,"Search","show");
     }
 
     public static void main(String[] args) throws Exception {

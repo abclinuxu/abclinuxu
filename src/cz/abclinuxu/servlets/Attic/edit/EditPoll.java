@@ -14,6 +14,7 @@ import javax.servlet.http.*;
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.servlets.utils.VariantTool;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.security.Guard;
@@ -67,7 +68,7 @@ public class EditPoll extends AbcServlet {
     static final String COOKIE_PREFIX = "P_";
 
 
-    protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Relation relation = null;
@@ -91,9 +92,9 @@ public class EditPoll extends AbcServlet {
             if ( relation==null ) throw new Exception("Chybí parametr relationId!");
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Poll.class);
              switch (rights) {
-                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                 case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                  case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
-                 default: return getTemplate("add/poll.vm");
+                 default: return VariantTool.selectTemplate(request,ctx,"EditPoll","add");
              }
 
         } else if ( action.equals(EditPoll.ACTION_VOTE) ) {
@@ -104,10 +105,10 @@ public class EditPoll extends AbcServlet {
             if ( relation==null ) throw new Exception("Chybí parametr relationId!");
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,Poll.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: {
                     ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
-                    return getTemplate("add/poll.vm");
+                    return VariantTool.selectTemplate(request,ctx,"EditPoll","add");
                 }
                 default: return actionAddStep2(request,response,ctx);
             }
@@ -117,9 +118,9 @@ public class EditPoll extends AbcServlet {
             if ( poll==null ) throw new Exception("Chybí parametr pollId!");
             int rights = Guard.check((User)ctx.get(VAR_USER),poll,Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx,null);
-                default: return getTemplate("edit/poll.vm");
+                default: return VariantTool.selectTemplate(request,ctx,"EditPoll","edit");
             }
 
         } else if ( action.equals(EditPoll.ACTION_EDIT2) ) {
@@ -127,19 +128,19 @@ public class EditPoll extends AbcServlet {
             if ( poll==null ) throw new Exception("Chybí parametr pollId!");
             int rights = Guard.check((User)ctx.get(VAR_USER),poll,Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx,null);
                 default: return actionEditStep2(request,response,ctx);
             }
 
         }
-        return getTemplate("add/poll.vm");
+        return VariantTool.selectTemplate(request,ctx,"EditPoll","add");
     }
 
     /**
      * Creates new poll
      */
-    protected Template actionAddStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         boolean error = false;
 
@@ -169,7 +170,7 @@ public class EditPoll extends AbcServlet {
             error = true;
         }
 
-        if ( error ) return getTemplate("add/poll.vm");
+        if ( error ) return VariantTool.selectTemplate(request,ctx,"EditPoll","add");
 
         Poll poll = new Poll(0,type);
         poll.setText(text);
@@ -201,7 +202,7 @@ public class EditPoll extends AbcServlet {
     /**
      * Final step for editing of poll
      */
-    protected Template actionEditStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
 
         int type = Poll.SURVEY;
@@ -248,7 +249,7 @@ public class EditPoll extends AbcServlet {
     /**
      * Voting
      */
-    protected Template actionVote(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionVote(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Poll poll = (Poll) ctx.get(EditPoll.VAR_POLL);
         String url = (String) params.get(EditPoll.PARAM_URL);

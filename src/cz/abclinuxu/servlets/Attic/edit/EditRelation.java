@@ -9,6 +9,7 @@ package cz.abclinuxu.servlets.edit;
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.servlets.utils.VariantTool;
 import cz.abclinuxu.servlets.view.SelectRelation;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
@@ -52,7 +53,7 @@ public class EditRelation extends AbcServlet {
     public static final String ACTION_MOVE = "move";
 
 
-    protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
@@ -67,18 +68,18 @@ public class EditRelation extends AbcServlet {
         if ( action==null || action.equals(ACTION_LINK) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
-                default: return getTemplate("add/relation.vm");
+                default: return VariantTool.selectTemplate(request,ctx,"EditRelation","add");
             }
 
         } else if ( action.equals(ACTION_LINK_STEP2) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation.getChild(),Guard.OPERATION_ADD,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: {
                     ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
-                    return getTemplate("add/relation.vm");
+                    return VariantTool.selectTemplate(request,ctx,"EditRelation","add");
                 }
                 default: return actionLinkStep2(request,response,ctx);
             }
@@ -86,10 +87,10 @@ public class EditRelation extends AbcServlet {
         } else if ( action.equals(ACTION_REMOVE) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation,Guard.OPERATION_REMOVE,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: {
                     ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
-                    return getTemplate("edit/removeRelation.vm");
+                    return VariantTool.selectTemplate(request,ctx,"EditRelation","remove");
                 }
                 default: return actionRemove1(request,ctx);
             }
@@ -97,10 +98,10 @@ public class EditRelation extends AbcServlet {
         } else if ( action.equals(ACTION_REMOVE_STEP2) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation,Guard.OPERATION_REMOVE,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: {
                     ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
-                    return getTemplate("edit/removeRelation.vm");
+                    return VariantTool.selectTemplate(request,ctx,"EditRelation","remove");
                 }
                 default: return actionRemove2(request,response,ctx);
             }
@@ -108,19 +109,22 @@ public class EditRelation extends AbcServlet {
         } else if ( action.equals(ACTION_MOVE) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation,Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: {
                     ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
-                    return getTemplate("edit/removeRelation.vm"); // that is not correct, but it shall work
+                    UrlUtils.redirect("/Index",response,ctx);
+                    return null;
                 }
                 default: return actionMove(request,response,ctx);
             }
 
         }
-        return getTemplate("add/category.vm");
+
+        UrlUtils.redirect("/Index",response,ctx);
+        return null;
     }
 
-    protected Template actionLinkStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionLinkStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
@@ -149,17 +153,17 @@ public class EditRelation extends AbcServlet {
         return null;
     }
 
-    protected Template actionRemove1(HttpServletRequest request, Context ctx) throws Exception {
+    protected String actionRemove1(HttpServletRequest request, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) ctx.get(VAR_CURRENT);
 
         Relation[] parents = persistance.findByExample(new Relation(null,relation.getChild(),0));
         ctx.put(VAR_PARENTS,parents);
-        return getTemplate("edit/removeRelation.vm");
+        return VariantTool.selectTemplate(request,ctx,"EditRelation","remove");
     }
 
-    protected Template actionRemove2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionRemove2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) ctx.get(VAR_CURRENT);
@@ -179,7 +183,7 @@ public class EditRelation extends AbcServlet {
      * Called, when user selects destination in SelectRelation. It replaces parent in relation with child
      * in destination.
      */
-    protected Template actionMove(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionMove(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) ctx.get(VAR_CURRENT);

@@ -8,6 +8,7 @@ package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
+import cz.abclinuxu.servlets.utils.VariantTool;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.data.*;
@@ -33,8 +34,9 @@ public class ViewUser extends AbcServlet {
 
     public static final String ACTION_LOGIN = "login";
     public static final String ACTION_LOGIN2 = "login2";
+    public static final String ACTION_SEND_EMAIL = "sendEmail";
 
-    protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
@@ -48,6 +50,8 @@ public class ViewUser extends AbcServlet {
             return handleLogin(request,ctx);
         } else if ( action.equals(ACTION_LOGIN2) ) {
             return handleLogin2(request,response,ctx);
+        } else if ( action.equals(ACTION_SEND_EMAIL) ) {
+            return handleEmail(request,response,ctx);
         }
 
         return handleProfile(request,ctx);
@@ -56,7 +60,7 @@ public class ViewUser extends AbcServlet {
     /**
      * shows profile for selected user
      */
-    protected Template handleProfile(HttpServletRequest request, Context ctx) throws Exception {
+    protected String handleProfile(HttpServletRequest request, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         VelocityHelper helper = new VelocityHelper();
@@ -93,22 +97,36 @@ public class ViewUser extends AbcServlet {
         helper.sync(sw);
         ctx.put(VAR_SW_RECORDS,sw);
 
-        return getTemplate("view/profile.vm");
+        return VariantTool.selectTemplate(request,ctx,"ViewUser","profile");
     }
 
     /**
      * shows login screen
      */
-    protected Template handleLogin(HttpServletRequest request, Context ctx) throws Exception {
-        return getTemplate("view/prihlaseni.vm");
+    protected String handleLogin(HttpServletRequest request, Context ctx) throws Exception {
+        return VariantTool.selectTemplate(request,ctx,"EditUser","login");
     }
 
     /**
      * handle login submit
-     * @todo finish it. if successfull, show profile, else show form again
      */
-    protected Template handleLogin2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String handleLogin2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+        if ( ctx.get(VAR_USER)!=null )
+            return VariantTool.selectTemplate(request,ctx,"ViewIndex","show");
+        else
+            return VariantTool.selectTemplate(request,ctx,"EditUser","login");
+    }
+
+    /**
+     * sending email address
+     */
+    protected String handleEmail(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
-        return getTemplate("view/prihlaseni.vm");
+        Persistance persistance = PersistanceFactory.getPersistance();
+        User user = (User) InstanceUtils.instantiateParam(PARAM_USER,User.class,params);
+        persistance.synchronize(user);
+        String url = "mailto:"+user.getEmail();
+        response.sendRedirect(url);
+        return null;
     }
 }

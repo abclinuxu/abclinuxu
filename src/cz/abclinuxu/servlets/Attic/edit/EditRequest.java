@@ -37,7 +37,7 @@ public class EditRequest extends AbcServlet {
     public static final String ACTION_DELETE = "delete";
     public static final String ACTION_DELIVER = "deliver";
 
-    protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
@@ -51,7 +51,7 @@ public class EditRequest extends AbcServlet {
         } else if ( action.equals(ACTION_DELETE) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation,Guard.OPERATION_REMOVE,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: {
                     ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, request.getSession());
                     UrlUtils.redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);
@@ -63,7 +63,7 @@ public class EditRequest extends AbcServlet {
         } else if ( action.equals(ACTION_DELIVER) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),relation,Guard.OPERATION_REMOVE,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: {
                     ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, request.getSession());
                     UrlUtils.redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);
@@ -75,7 +75,7 @@ public class EditRequest extends AbcServlet {
         return actionAdd(request,response,ctx);
     }
 
-    protected Template actionAdd(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionAdd(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         User user = (User) ctx.get(VAR_USER);
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
 
@@ -102,7 +102,7 @@ public class EditRequest extends AbcServlet {
             error = true;
         }
 
-        if ( error ) return getTemplate("view/requests.vm");
+        if ( error ) return VariantTool.selectTemplate(request,ctx,"EditRequest","view");
 
         Item req = new Item(0,Item.REQUEST);
         if ( user!=null ) req.setOwner(user.getId());
@@ -125,7 +125,7 @@ public class EditRequest extends AbcServlet {
         return null;
     }
 
-    protected Template actionDelete(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionDelete(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
 
         Relation relation = (Relation) ctx.get(VAR_REQUEST_RELATION);
@@ -137,7 +137,7 @@ public class EditRequest extends AbcServlet {
         return null;
     }
 
-    protected Template actionDeliver(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionDeliver(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         User user = (User) ctx.get(VAR_USER);
         Persistance persistance = PersistanceFactory.getPersistance();
 

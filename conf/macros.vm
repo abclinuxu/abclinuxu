@@ -134,11 +134,13 @@ $!UTIL.saveParams($PARAMS, [])
 #set($dizs=$UTIL.filterDiscussions($clanek.Content))
 #if($dizs.size()>0)#set($diz=$!UTIL.prepareDiscussion($dizs.get(0)))#undef('dizs')#end
 #set($author=$UTIL.instantiate('User',$!UTIL.getXPath($clanek,'/data/author')))#sync($author)
-##
+<p>
 <A CLASS="nadpis_out" HREF="/clanky/ViewRelation?relationId=$relation.Id">$!UTIL.getXPath($clanek,'/data/name')</A><BR>
 <SPAN CLASS="barva">$!UTIL.showDate($!UTIL.getXPath($clanek,'/data/published')) |
 <A HREF="/Profile?userId=$!author.Id">$!author.Name</A></SPAN>
+</p>
 <DIV class="perex_out">$!UTIL.getXPath($clanek,'/data/perex')</DIV>
+<p>
 <SPAN CLASS="barva">Pøeèteno: $!PERSISTANCE.getCounterValue($clanek)x
 #if($diz)
 | <a href="/clanky/ViewRelation?relationId=$!diz.RelationId">Komentáøù: $!diz.ResponseCount</a>
@@ -147,11 +149,12 @@ $!UTIL.saveParams($PARAMS, [])
 #end
 </SPAN><BR>
 #if($last)
-<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="=========="><BR>
+<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT=""><BR>
 <IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" VSPACE="1" BORDER="0" ALT=""><BR>
 #else
-<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="---">
+<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="----------------------------------------">
 #end
+</p>
 #end
 
 
@@ -223,7 +226,7 @@ $!UTIL.saveParams($PARAMS, [])
 <TABLE WIDTH="100%" CELLSPACING="0" CELLPADDING="1" BORDER="0">
 
 <TR><TD COLSPAN="3" CLASS="cerna2">
-<STRONG>Diskuse</STRONG><A HREF="/hardware/ViewRelation?relationId=3739" TITLE="Diskusní fórum"><IMG SRC="/images/site/sipka.gif" WIDTH="11" HEIGHT="7" BORDER="0" ALT="Diskusní fórum"></a><br>
+<STRONG>Diskuse</STRONG><A HREF="/hardware/ViewRelation?relationId=3739" TITLE="Diskusní fórum"><IMG SRC="/images/site/sipka.gif" WIDTH="11" HEIGHT="7" BORDER="0" ALT=" "></a><br>
 </TD></TR>
 
 <TR><TD COLSPAN="3"><A HREF="/hardware/EditDiscussion?action=addQuez&relationId=$WHERE_ADD">Polo¾it dotaz</A><BR></TD></TR>
@@ -250,7 +253,7 @@ $!UTIL.saveParams($PARAMS, [])
 #end
 
 <TR><TD COLSPAN="3" CLASS="bezmezer">
-<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="============"><BR>
+<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT=""><BR>
 <IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" VSPACE="1" ALT=""><BR>
 </TD></TR>
 
@@ -274,5 +277,6 @@ $!UTIL.saveParams($PARAMS, [])
 <input type="hidden" name="curl" value="http://AbcLinuxu.cz/Reward?action=log&who=$!odmenen.Id">
 <input type="submit" value="Zaslat odmìnu pøes I LIKE Q">
 </form>
+#undef('penezenka')
 #end
 #end

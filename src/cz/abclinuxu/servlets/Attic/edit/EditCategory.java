@@ -73,7 +73,7 @@ public class EditCategory extends AbcServlet {
     public static final String ACTION_EDIT2 = "edit2";
 
 
-    protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
         Relation relation = null;
@@ -99,18 +99,18 @@ public class EditCategory extends AbcServlet {
         if ( action==null || action.equals(EditCategory.ACTION_ADD) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),category,Guard.OPERATION_ADD,Category.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
-                default: return getTemplate("add/category.vm");
+                default: return VariantTool.selectTemplate(request,ctx,"EditCategory","add");
             }
 
         } else if ( action.equals(EditCategory.ACTION_ADD_STEP2) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),category,Guard.OPERATION_ADD,Category.class);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: {
                     ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
-                    return getTemplate("add/category.vm");
+                    return VariantTool.selectTemplate(request,ctx,"EditCategory","add");
                 }
                 default: return actionAddStep2(request,response,ctx);
             }
@@ -118,7 +118,7 @@ public class EditCategory extends AbcServlet {
         } else if ( action.equals(EditCategory.ACTION_EDIT) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),category,Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return actionEditStep1(request,ctx);
             }
@@ -126,19 +126,19 @@ public class EditCategory extends AbcServlet {
         } else if ( action.equals(EditCategory.ACTION_EDIT2) ) {
             int rights = Guard.check((User)ctx.get(VAR_USER),category,Guard.OPERATION_EDIT,null);
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, null);
                 default: return actionEditStep2(request,response,ctx);
             }
 
         }
-        return getTemplate("add/category.vm");
+        return VariantTool.selectTemplate(request,ctx,"EditCategory","add");
     }
 
     /**
      * Creates new category
      */
-    protected Template actionAddStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
 
         String name = (String) params.get(EditCategory.PARAM_NAME);
@@ -148,7 +148,7 @@ public class EditCategory extends AbcServlet {
 
         if ( name==null || name.length()==0 ) {
             ServletUtils.addError(EditCategory.PARAM_NAME,"Nezadal jste jméno kategorie!",ctx, null);
-            return getTemplate("add/category.vm");
+            return VariantTool.selectTemplate(request,ctx,"EditCategory","add");
         }
 
         Document document = DocumentHelper.createDocument();
@@ -175,7 +175,7 @@ public class EditCategory extends AbcServlet {
             PersistanceFactory.getPersistance().create(relation);
         } catch (PersistanceException e) {
             ServletUtils.addError(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
-            return getTemplate("add/category.vm");
+            return VariantTool.selectTemplate(request,ctx,"EditCategory","add");
         }
 
         UrlUtils.redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
@@ -186,7 +186,7 @@ public class EditCategory extends AbcServlet {
      * First step for editing of category
      * @todo verify logic of ACTION check
      */
-    protected Template actionEditStep1(HttpServletRequest request, Context ctx) throws Exception {
+    protected String actionEditStep1(HttpServletRequest request, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         VelocityHelper helper = (VelocityHelper) ctx.get(AbcServlet.VAR_HELPER);
 
@@ -194,27 +194,21 @@ public class EditCategory extends AbcServlet {
         PersistanceFactory.getPersistance().synchronize(category);
         Document document = category.getData();
 
-        String tmp = (String) params.get(AbcServlet.PARAM_ACTION);
-        if ( EditCategory.ACTION_EDIT.equals(tmp) ) { // IS NOT THIS CHECK DUPLICATE ?!!?!
-            Node node = document.selectSingleNode("data/name");
-            if (node!=null) params.put(EditCategory.PARAM_NAME,node.getText());
+        Node node = document.selectSingleNode("data/name");
+        if (node!=null) params.put(EditCategory.PARAM_NAME,node.getText());
+        node = document.selectSingleNode("data/icon");
+        if (node!=null) params.put(EditCategory.PARAM_ICON,node.getText());
+        node = document.selectSingleNode("data/note");
+        if (node!=null) params.put(EditCategory.PARAM_NOTE,helper.encodeSpecial(node.getText()));
+        params.put(EditCategory.PARAM_OPEN, (category.isOpen())? "yes":"no");
 
-            node = document.selectSingleNode("data/icon");
-            if (node!=null) params.put(EditCategory.PARAM_ICON,node.getText());
-
-            node = document.selectSingleNode("data/note");
-            if (node!=null) params.put(EditCategory.PARAM_NOTE,helper.encodeSpecial(node.getText()));
-
-            params.put(EditCategory.PARAM_OPEN, (category.isOpen())? "yes":"no");
-        }
-
-        return getTemplate("edit/category.vm");
+        return VariantTool.selectTemplate(request,ctx,"EditCategory","edit");
     }
 
     /**
      * Final step for editing of category
      */
-    protected Template actionEditStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 

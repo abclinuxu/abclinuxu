@@ -31,7 +31,7 @@ public class ForgottenPassword extends AbcServlet {
     public static final String ACTION_CHOOSE = "choose";
     public static final String ACTION_SEND = "send";
 
-    protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
@@ -42,10 +42,10 @@ public class ForgottenPassword extends AbcServlet {
         } else if ( ACTION_SEND.equals(action) ) {
             return actionSend(request,response,ctx);
         }
-        return getTemplate("view/forgotten.vm");
+        return VariantTool.selectTemplate(request,ctx,"ForgottenPassword","step1");
     }
 
-    protected Template actionChoose(HttpServletRequest request, Context ctx) throws Exception {
+    protected String actionChoose(HttpServletRequest request, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
@@ -62,7 +62,7 @@ public class ForgottenPassword extends AbcServlet {
         if ( name.length()<3 && login.length()<3 ) {
             if ( name.length()<3 ) ServletUtils.addError(PARAM_NAME,"Zadejte nejménì tøi písmena!",ctx,null);
             if ( login.length()<3 ) ServletUtils.addError(PARAM_LOGIN,"Zadejte nejménì tøi písmena!",ctx,null);
-            return getTemplate("view/forgotten.vm");
+            return VariantTool.selectTemplate(request,ctx,"ForgottenPassword","step1");
         }
 
         if ( name.length()>2 ) user.setName("%"+name+"%");
@@ -71,14 +71,14 @@ public class ForgottenPassword extends AbcServlet {
         List found = persistance.findByExample(list,null);
         if ( found.size()==0 ) {
             ServletUtils.addMessage("Nenalezen ¾ádný u¾ivatel!",ctx,null);
-            return getTemplate("view/forgotten.vm");
+            return VariantTool.selectTemplate(request,ctx,"ForgottenPassword","step1");
         }
 
         ctx.put(VAR_USERS,found);
-        return getTemplate("view/forgotten2.vm");
+        return VariantTool.selectTemplate(request,ctx,"ForgottenPassword","step2");
     }
 
-    protected Template actionSend(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionSend(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         User user = (User) InstanceUtils.instantiateParam(PARAM_USER_ID,User.class,params);
         PersistanceFactory.getPersistance().synchronize(user);

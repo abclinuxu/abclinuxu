@@ -20,12 +20,14 @@ import javax.servlet.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.AbcException;
-import cz.abclinuxu.scheduler.jobs.UpdateLinks;
+import cz.abclinuxu.scheduler.UpdateLinks;
+import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.view.*;
 
 import java.io.*;
 import java.util.*;
+import java.net.SocketException;
 
 /**
  * Base class for all servlets. It provides several useful
@@ -65,7 +67,7 @@ import java.util.*;
  * <dd>Map, where key is Server and value is list of Links, where link.server==server.id && link.fixed==false.</dd>
  * </dl>
  */
-public class AbcServlet extends VelocityServlet {
+public abstract class AbcServlet extends VelocityServlet {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(AbcServlet.class);
 
     /** Name of key in HttpServletsRequest, used for context chaining. */
@@ -96,6 +98,19 @@ public class AbcServlet extends VelocityServlet {
     /** use this value for addError, when message is not tight to form field */
     public static final String GENERIC_ERROR = "generic";
 
+    /**
+     * Handles request.
+     */
+    final protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+        String template = process(request,response,ctx);
+        if ( template==null ) return null;
+        return getTemplate(template);
+    }
+
+    /**
+     * Put your processing here. Return null, if you redirected browser to another URL.
+     */
+    protected abstract String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception;
 
     /**
      *  Returns a context suitable to pass to the handleRequest() method
@@ -299,8 +314,11 @@ public class AbcServlet extends VelocityServlet {
         }
 
         if ( cause instanceof AbcException ) url.append("\n Status was: "+((AbcException)cause).getStatus());
-        if ( !(cause instanceof IOException) )
+        if ( cause instanceof IOException || cause instanceof SocketException ) {
+            // do not log
+        } else {
             log.error(url.toString(),cause);
+        }
 
         ServletOutputStream os = response.getOutputStream();
         OutputStreamWriter writer = new OutputStreamWriter(os,"ISO-8859-2");
@@ -332,36 +350,12 @@ public class AbcServlet extends VelocityServlet {
             helper.sync(reklama.getContent());
             ctx.put(VAR_REKLAMA,reklama.getContent());
 
-            List list = persistance.findByCommand("select max(cislo) from anketa");
-            Object[] objects = (Object[]) list.get(0);
-            Poll poll = new Poll(((Integer)objects[0]).intValue());
-            poll = (Poll) persistance.findById(poll);
-            ctx.put(VAR_ANKETA,poll);
-
             Category linksCategory = (Category) persistance.findById(new Category(Constants.CAT_LINKS));
             Map links = UpdateLinks.groupLinks(linksCategory,persistance);
             ctx.put(VAR_LINKS,links);
 
-            Map counts = new HashMap(4);
-            list = persistance.findByCommand("select count(cislo) from zaznam where typ=1");
-            objects = (Object[]) list.get(0);
-            counts.put("HARDWARE",objects[0]);
-
-            list = persistance.findByCommand("select count(cislo) from zaznam where typ=2");
-            objects = (Object[]) list.get(0);
-            counts.put("SOFTWARE",objects[0]);
-
-            list = persistance.findByCommand("select count(cislo) from polozka where typ=5");
-            objects = (Object[]) list.get(0);
-            counts.put("DRIVERS",objects[0]);
-
-            Category forum = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
-            counts.put("FORUM",new Integer(forum.getContent().size()));
-
-            Category requests = (Category) persistance.findById(new Category(Constants.CAT_REQUESTS));
-            counts.put("REQUESTS",new Integer(requests.getContent().size()));
-
-            ctx.put(VAR_COUNTS,counts);
+            ctx.put(VAR_ANKETA,VariableFetcher.getCurrentPoll());
+            ctx.put(VAR_COUNTS,VariableFetcher.getItemCounts());
         } catch (PersistanceException e) {
             log.warn("Cannot get default objects!",e);
         }

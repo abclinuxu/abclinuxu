@@ -14,6 +14,7 @@ import cz.abclinuxu.AbcException;
  * not only name, but icon too. Or anything else.
  */
 public final class Relation extends GenericObject {
+    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(Relation.class);
 
     /** Upper relation. Similar to .. in filesystem. */
     int upper = 0;
@@ -27,7 +28,7 @@ public final class Relation extends GenericObject {
     }
 
     public Relation(int id) {
-        super(id);
+        this.id = id;
     }
 
     /**
@@ -101,14 +102,40 @@ public final class Relation extends GenericObject {
     }
 
     public void synchronizeWith(GenericObject obj) {
-        if ( !(obj instanceof Relation) ) return;
-        if ( obj==this ) return;
-        super.synchronizeWith(obj);
+        if ( !(obj instanceof Relation) || obj==this ) return;
+
         Relation r = (Relation) obj;
+        id = r.getId();
+        initialized = r.isInitialized();
         upper = r.getUpper();
         documentHandler = new XMLHandler(r.getData());
         parent = r.getParent();
         child = r.getChild();
+    }
+
+    /**
+     * Creates lightweight clone of this relation. Such clone is almost same as original,
+     * but child and parent objects are not initialized (just PK is set).
+     */
+    public Relation cloneRelation() {
+        Relation clone = new Relation();
+        clone.id = this.id;
+        clone.initialized = this.initialized;
+        clone.documentHandler = new XMLHandler(this.getData());
+
+        try {
+            GenericObject tmp = (GenericObject)this.getParent().getClass().newInstance();
+            tmp.setId(this.getParent().getId());
+            clone.setParent(tmp);
+
+            tmp = (GenericObject)this.getChild().getClass().newInstance();
+            tmp.setId(this.getChild().getId());
+            clone.setChild(tmp);
+        } catch (Exception e) {
+            log.error("Exception while cloning relation!"+this,e);
+        }
+
+        return clone;
     }
 
     public String toString() {

@@ -69,7 +69,7 @@ public class SelectRelation extends AbcServlet {
     public static final String VAR_CURRENT = "CURRENT";
 
 
-    protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
         String confirm = request.getParameter(SelectRelation.PARAM_CONFIRM);
@@ -88,7 +88,7 @@ public class SelectRelation extends AbcServlet {
     /**
      * Called, when we shall descend to another relation
      */
-    protected Template actionNext(HttpServletRequest request, Context ctx) throws Exception {
+    protected String actionNext(HttpServletRequest request, Context ctx) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
         String manual = request.getParameter(SelectRelation.PARAM_ENTERED);
         String tmp = request.getParameter(SelectRelation.PARAM_CURRENT);
@@ -98,7 +98,7 @@ public class SelectRelation extends AbcServlet {
                 int currentId = Integer.parseInt( (manual!=null && manual.length()>0)? manual:tmp);
                 Relation current = (Relation) persistance.findById(new Relation(currentId));
                 ctx.put(SelectRelation.VAR_CURRENT,current);
-                return getTemplate("view/selectRelation.vm");
+                return VariantTool.selectTemplate(request,ctx,"SelectRelation","step1");
             } catch (NumberFormatException e) {
                 ServletUtils.addError(SelectRelation.PARAM_ENTERED,"Èíslo vìt¹í ne¾ nula!",ctx, null);
             } catch (PersistanceException e) {
@@ -121,13 +121,13 @@ public class SelectRelation extends AbcServlet {
         Category hw386 = (Category) persistance.findById(new Category(Constants.CAT_386));
         content = hw386.getContent();
         ctx.put(SelectRelation.VAR_386,content);
-        return getTemplate("view/selectRelation.vm");
+        return VariantTool.selectTemplate(request,ctx,"SelectRelation","step1");
     }
 
     /**
      * Called, when user select relation.
      */
-    protected Template actionConfirm(HttpServletRequest request, Context ctx) throws Exception {
+    protected String actionConfirm(HttpServletRequest request, Context ctx) throws Exception {
         int result = 0;
         String manual = request.getParameter(SelectRelation.PARAM_ENTERED);
         String tmp = request.getParameter(SelectRelation.PARAM_CURRENT);
@@ -148,14 +148,14 @@ public class SelectRelation extends AbcServlet {
 
         Relation current = (Relation) PersistanceFactory.getPersistance().findById(new Relation(result));
         ctx.put(SelectRelation.VAR_CURRENT,current);
-        return getTemplate("view/selectRelationConfirm.vm");
+        return VariantTool.selectTemplate(request,ctx,"SelectRelation","step2");
     }
 
     /**
      * Called, when user confirms his choice. It redirects flow to PARAM_URL and puts all parameters
      * to session map AbcServlet.ATTRIB_PARAMS. There will be also result under name PARAM_SELECTED.
      */
-    protected Template actionFinish(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionFinish(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         String choice = request.getParameter(SelectRelation.PARAM_CURRENT);
 
         Map map = ServletUtils.putParamsToMap(request,null);

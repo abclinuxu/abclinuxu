@@ -79,7 +79,7 @@ public class EditUser extends AbcServlet {
     public static final String ACTION_PASSWORD = "password";
     public static final String ACTION_PASSWORD2 = "password2";
 
-    protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
@@ -91,7 +91,7 @@ public class EditUser extends AbcServlet {
         ctx.put(VAR_MANAGED,managed);
 
         if (  action==null || action.equals(EditUser.ACTION_ADD) ) {
-            return getTemplate("add/user.vm");
+            return VariantTool.selectTemplate(request,ctx,"EditUser","register");
 
         } else if ( action.equals(EditUser.ACTION_ADD_STEP2) ) {
             return actionAddStep2(request,response,ctx);
@@ -101,7 +101,7 @@ public class EditUser extends AbcServlet {
             int rights = Guard.check(user,managed,Guard.OPERATION_EDIT,params.get(PARAM_PASSWORD));
 
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 //case Guard.ACCESS_DENIED: addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
                 default: return actionEditStep1(request,ctx);
             }
@@ -111,7 +111,7 @@ public class EditUser extends AbcServlet {
             int rights = Guard.check(user,managed,Guard.OPERATION_EDIT,params.get(PARAM_PASSCHECK));
 
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: {
                     ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
                     return actionEditStep1(request,ctx);
@@ -125,9 +125,9 @@ public class EditUser extends AbcServlet {
             if ( user!=null && managed.equals(user) ) rights = Guard.ACCESS_OK;
 
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
-                default: return getTemplate("edit/password.vm");
+                default: return VariantTool.selectTemplate(request,ctx,"EditUser","passwd");
             }
 
         } else if ( action.equals(EditUser.ACTION_PASSWORD2) ) {
@@ -135,23 +135,24 @@ public class EditUser extends AbcServlet {
             int rights = Guard.check(user,managed,Guard.OPERATION_EDIT,params.get(PARAM_PASSCHECK));
 
             switch (rights) {
-                case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
+                case Guard.ACCESS_LOGIN: return VariantTool.selectTemplate(request,ctx,"EditUser","login");
                 case Guard.ACCESS_DENIED: {
                     ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
-                    return getTemplate("edit/password.vm");
+                    return VariantTool.selectTemplate(request,ctx,"EditUser","passwd");
                 }
                 default: return actionPassword(request,response,ctx);
             }
         }
-        return getTemplate("add/user.vm");
+        return VariantTool.selectTemplate(request,ctx,"EditUser","register");
     }
 
     /**
      * Creates new user
      */
-    protected Template actionAddStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         User user = new User();
-        if ( !fillUser(request,user,ctx,true) ) return getTemplate("add/user.vm");
+        if ( !fillUser(request,user,ctx,true) )
+            return VariantTool.selectTemplate(request,ctx,"EditUser","register");
 
         try {
             PersistanceFactory.getPersistance().create(user);
@@ -159,23 +160,23 @@ public class EditUser extends AbcServlet {
             if ( e.getStatus()==AbcException.DB_DUPLICATE ) {
                 ServletUtils.addError(PARAM_LOGIN,"Toto jméno je ji¾ pou¾íváno!",ctx, null);
             }
-            return getTemplate("add/user.vm");
+            return VariantTool.selectTemplate(request,ctx,"EditUser","register");
         }
 
         VelocityContext tmpContext = new VelocityContext();
         tmpContext.put(AbcServlet.VAR_USER,user);
-        String message = VelocityHelper.mergeTemplate("mail/welcome_user.vm",tmpContext);
+        String message = VelocityHelper.mergeTemplate("mail/welcome.vm",tmpContext);
         Email.sendEmail("admin@AbcLinuxu.cz",user.getEmail(),"Privitani",message);
 
         HttpSession session = request.getSession();
         session.setAttribute(VAR_USER,user);
-        return getTemplate("messages/welcome_user.vm");
+        return VariantTool.selectTemplate(request,ctx,"EditUser","welcome");
     }
 
     /**
      * Prepares for an update of user
      */
-    protected Template actionEditStep1(HttpServletRequest request, Context ctx) throws Exception {
+    protected String actionEditStep1(HttpServletRequest request, Context ctx) throws Exception {
         User user = (User) ctx.get(VAR_MANAGED);
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         VelocityHelper helper = (VelocityHelper) ctx.get(AbcServlet.VAR_HELPER);
@@ -204,24 +205,26 @@ public class EditUser extends AbcServlet {
         node = document.selectSingleNode("data/personal");
         if (node!=null) params.put(EditUser.PARAM_PERSONAL,helper.encodeSpecial(node.getText()));
 
-        return getTemplate("edit/user.vm");
+        return VariantTool.selectTemplate(request,ctx,"EditUser","edit");
     }
 
     /**
      * Updates existing user
      */
-    protected Template actionEditStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         User user = (User) ctx.get(VAR_MANAGED);
         PersistanceFactory.getPersistance().synchronize(user);
 
-        if ( !fillUser(request,user,ctx,false) ) return getTemplate("edit/user.vm");
+        if ( !fillUser(request,user,ctx,false) )
+            return VariantTool.selectTemplate(request,ctx,"EditUser","edit");
+
         try {
             PersistanceFactory.getPersistance().update(user);
         } catch ( PersistanceException e ) {
             if ( e.getStatus()==AbcException.DB_DUPLICATE ) {
                 ServletUtils.addError(PARAM_LOGIN,"Toto jméno je ji¾ pou¾íváno!",ctx, null);
             }
-            return getTemplate("edit/user.vm");
+            return VariantTool.selectTemplate(request,ctx,"EditUser","edit");
         }
 
         User sessionUser = (User) ctx.get(VAR_USER);
@@ -299,7 +302,7 @@ public class EditUser extends AbcServlet {
     /**
      * Prepares for an update of user
      */
-    protected Template actionPassword(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionPassword(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         User user = (User) ctx.get(VAR_MANAGED);
         String pass = (String) params.get(PARAM_PASSWORD);
@@ -315,7 +318,9 @@ public class EditUser extends AbcServlet {
             error = true;
         }
 
-        if ( error ) return getTemplate("edit/password.vm");
+        if ( error )
+            return VariantTool.selectTemplate(request,ctx,"EditUser","passwd");
+
         user.setPassword(pass);
         PersistanceFactory.getPersistance().update(user);
 

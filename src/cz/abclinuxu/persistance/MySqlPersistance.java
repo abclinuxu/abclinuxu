@@ -85,7 +85,7 @@ public class MySqlPersistance implements Persistance {
                     log.error("Nepodarilo se vlozit "+obj+" do databaze!");
                     throw new PersistanceException("Nepodarilo se vlozit "+obj+" do databaze!", AbcException.DB_INSERT);
                 }
-                org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)statement;
+                com.mysql.jdbc.PreparedStatement mm = (com.mysql.jdbc.PreparedStatement)statement;
                 obj.setId((int)mm.getLastInsertID());
             }
             obj.setInitialized(true);
@@ -968,7 +968,7 @@ public class MySqlPersistance implements Persistance {
                 throw new PersistanceException("Nepodarilo se vlozit anketu do databaze!", AbcException.DB_INSERT);
             }
 
-            org.gjt.mm.mysql.PreparedStatement mm = (org.gjt.mm.mysql.PreparedStatement)statement;
+            com.mysql.jdbc.PreparedStatement mm = (com.mysql.jdbc.PreparedStatement)statement;
             poll.setId((int)mm.getLastInsertID());
 
             statement = con.prepareStatement("insert into data_ankety values(?,?,?,?)");

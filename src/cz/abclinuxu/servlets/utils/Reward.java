@@ -44,7 +44,7 @@ public class Reward extends AbcServlet {
     public static final String PARAM_MESSAGE = "detail2";
 
 
-    protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         String action = (String) request.getParameter(AbcServlet.PARAM_ACTION);
 
         if ( action==null || action.length()==0 ) {
@@ -60,7 +60,7 @@ public class Reward extends AbcServlet {
     /**
      * Called by ILikeQ engine to log event
      */
-    protected Template actionLog(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionLog(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
         User user = null;
 
@@ -101,16 +101,17 @@ public class Reward extends AbcServlet {
                 log.warn("Cannot parse attribute amount "+attribute.getValue(),e);
             }
         }
-        logReward.info(user.getId()+" | "+amount);
+        logReward.info(user.getId()+" | "+user.getName()+"|"+amount);
         return null;
     }
 
     /**
      * Called by ILikeQ engine to log event
      */
-    protected Template actionThanks(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionThanks(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
-        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
-        return getTemplate("view/reward_ok.vm");
+        ServletUtils.addMessage("Va¹e platba probìhla v poøádku. Dìkujeme.",ctx,request.getSession());
+        UrlUtils.redirect("/Index",response,ctx);
+        return null;
     }
 }

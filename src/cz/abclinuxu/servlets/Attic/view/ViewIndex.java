@@ -9,10 +9,11 @@ package cz.abclinuxu.servlets.view;
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
+import cz.abclinuxu.servlets.utils.VariantTool;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.scheduler.jobs.UpdateLinks;
+import cz.abclinuxu.scheduler.VariableFetcher;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 
@@ -41,7 +42,7 @@ public class ViewIndex extends AbcServlet {
     public static final String VAR_ACTUAL = "NEW";
     public static final String VAR_FORUM = "FORUM";
 
-    protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
         Persistance persistance = PersistanceFactory.getPersistance();
@@ -59,34 +60,14 @@ public class ViewIndex extends AbcServlet {
         helper.sync(actual.getContent());
         ctx.put(VAR_ACTUAL,actual);
 
-        Category drivers = (Category) persistance.findById(new Category(Constants.CAT_DRIVERS));
-        helper.sync(drivers.getContent());
-        ctx.put(VAR_DRIVERS,drivers);
-
-        List hwNew = new ArrayList(3);
-        List list = persistance.findByCommand("select cislo from zaznam where typ=1 order by kdy desc limit 3");
-        for (Iterator iter = list.iterator(); iter.hasNext();) {
-            Object[] objects = (Object[]) iter.next();
-            Relation child = new Relation(null,new Record(((Integer)objects[0]).intValue(),Record.HARDWARE),0);
-            Relation found = persistance.findByExample(child)[0];
-            hwNew.add(found);
-        }
-        ctx.put(VAR_HW_NEW,hwNew);
-
-        List swNew = new ArrayList(3);
-        list = persistance.findByCommand("select cislo from zaznam where typ=2 order by kdy desc limit 3");
-        for (Iterator iter = list.iterator(); iter.hasNext();) {
-            Object[] objects = (Object[]) iter.next();
-            Relation child = new Relation(null,new Record(((Integer)objects[0]).intValue(),Record.SOFTWARE),0);
-            Relation found = persistance.findByExample(child)[0];
-            swNew.add(found);
-        }
-        ctx.put(VAR_SW_NEW,swNew);
+        ctx.put(VAR_HW_NEW,VariableFetcher.getNewHardwareList());
+        ctx.put(VAR_SW_NEW,VariableFetcher.getNewSoftwareList());
+        ctx.put(VAR_DRIVERS,VariableFetcher.getNewDriversList());
 
         Category forum = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
         helper.sync(forum.getContent());
         ctx.put(VAR_FORUM,forum);
 
-        return getTemplate("index.vm");
+        return VariantTool.selectTemplate(request,ctx,"ViewIndex","show");
     }
 }

@@ -57,7 +57,7 @@ public class SelectIcon extends AbcServlet {
     public static final String VAR_ICONS = "ICONS";
 
 
-    protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
         String reload = request.getParameter(SelectIcon.PARAM_RELOAD);
@@ -71,7 +71,7 @@ public class SelectIcon extends AbcServlet {
     /**
      * Called, when we shall display list of icons
      */
-    protected Template actionReload(HttpServletRequest request, Context ctx) throws Exception {
+    protected String actionReload(HttpServletRequest request, Context ctx) throws Exception {
         String path = getServletContext().getRealPath("/ikony");
         File ikony = new File(path);
         if ( path==null || !ikony.exists() ) throw new Exception("Nemohu nalezti adresar /ikony!");
@@ -103,13 +103,13 @@ public class SelectIcon extends AbcServlet {
         }
         java.util.Collections.sort(icons);
         ctx.put(SelectIcon.VAR_ICONS,icons);
-        return getTemplate("view/selectIcon.vm");
+        return VariantTool.selectTemplate(request,ctx,"SelectIcon","show");
     }
 
     /**
      * Called, when we shall display list of icons
      */
-    protected Template actionFinish(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+    protected String actionFinish(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         String url = request.getParameter(SelectIcon.PARAM_URL);
         String dir = "/ikony/"+request.getParameter(SelectIcon.PARAM_DIR)+"/";
         String icon = dir+request.getParameter(SelectIcon.PARAM_ICON);
