@@ -147,7 +147,7 @@
               <entry key="relations.record.by.user.and.type" value="select R.cislo from relace R left join zaznam Z on R.potomek=Z.cislo where R.typ_potomka='Z' and Z.pridal=? and Z.typ=?"/>
               <entry key="relations.article.by.user" value="select R.cislo from relace R left join polozka P on (P.cislo=R.potomek) where R.predchozi in (2,3,4,5,6,251,5324,8546,12448) and typ_potomka='P' and P.typ=2 and P.data like concat('%&lt;author&gt;',?,'&lt;/author%') and P.vytvoreno&lt;now() group by potomek"/>
               <entry key="relations.question.by.user" value="select R.cislo from relace R, polozka P where R.typ_potomka='P' and R.potomek=P.cislo and R.typ_predka='K' and R.predek!=-1 and P.typ=3 and P.pridal=?"/>
-              <entry key="relations.comment.by.user" value="select R.cislo from relace R, relace P, zaznam Z where R.potomek=P.predek and R.typ_potomka='P' and P.potomek=Z.cislo and P.typ_potomka='Z' and Z.typ=4 and Z.data like concat('%&lt;author_id&gt;',?,'&lt;/%')"/>
+              <entry key="relations.comment.by.user" value="select R.cislo from relace R, relace P, zaznam Z where R.potomek=P.predek and R.typ_potomka='P' and R.predek!=-1 and P.potomek=Z.cislo and P.typ_potomka='Z' and Z.typ=4 and Z.data like concat('%&lt;author_id&gt;',?,'&lt;/%')"/>
               <entry key="relations.section.by.type" value="select R.cislo from relace R left join kategorie K on (K.cislo=R.potomek) where typ_potomka='K' and K.typ=?"/>
               <entry key="users.with.weekly.email" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;>&lt;weekly_summary>yes%'"/>
               <entry key="users.with.roles" value="select cislo from uzivatel where data like '%&lt;roles>%'"/>
