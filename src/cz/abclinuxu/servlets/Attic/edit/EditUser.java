@@ -114,7 +114,7 @@ public class EditUser extends AbcServlet {
                 case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
                 case Guard.ACCESS_DENIED: {
                     addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná nebo jste zadal ¹patné heslo!",ctx, null);
-                    actionEditStep1(request,ctx);
+                    return actionEditStep1(request,ctx);
                 }
                 default: return actionEditStep2(request,response,ctx);
             }
