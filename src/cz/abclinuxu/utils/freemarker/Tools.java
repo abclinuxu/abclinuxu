@@ -147,6 +147,25 @@ public class Tools implements Configurable {
     }
 
     /**
+     * @param relationId object holding integer value of relation id
+     * @return name of child
+     */
+    public static String childName(Number relationId) {
+        Relation relation = (Relation) PersistanceFactory.getPersistance().findById(new Relation(relationId.intValue()));
+        return childName(relation);
+    }
+
+    /**
+     * @param relationId object holding integer value of relation id
+     * @return name of child
+     */
+    public static String childName(String relationId) {
+        int id = Integer.parseInt(relationId);
+        Relation relation = (Relation) PersistanceFactory.getPersistance().findById(new Relation(id));
+        return childName(relation);
+    }
+
+    /**
      * @return name of child in this relation.
      */
     public static String childName(Relation relation) {
@@ -172,7 +191,7 @@ public class Tools implements Configurable {
                 if ( node!=null )
                     return node.getText();
             }
-            if ( (child instanceof Item) && child.getId()==Item.DISCUSSION )
+            if ( (child instanceof Item) && ((Item)child).getType()==Item.DISCUSSION )
                 return "Diskuse";
         }
 
