@@ -17,6 +17,9 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Record;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.exceptions.NotFoundException;
@@ -27,13 +30,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.List;
 import java.util.Iterator;
+import java.util.prefs.Preferences;
 
 import org.apache.regexp.RE;
 
 /**
  * Displays dictionary
  */
-public class ShowDictionary implements AbcAction {
+public class ShowDictionary implements AbcAction, Configurable {
     public static final String PARAM_RELATION_ID_SHORT = "rid";
 
     public static final String VAR_RELATION = "RELATION";
@@ -41,10 +45,13 @@ public class ShowDictionary implements AbcAction {
     public static final String VAR_CHILDREN_MAP = "CHILDREN";
     public static final String VAR_FOUND = "FOUND";
 
-    RE reName;
+    public static final String PREF_REGEXP_NAME = "regexp.name";
+    public static final String PREF_MAX_ITEMS = "max.items";
 
-    public ShowDictionary() {
-        reName = new RE("(^/slovnik/)([^?;]+)");
+    static RE reName;
+    static int maxItems = 20;
+    static {
+        ConfigurationManager.getConfigurator().configureAndRememberMe(new ShowDictionary());
     }
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -95,16 +102,23 @@ public class ShowDictionary implements AbcAction {
      */
     static String showMany(Map env, HttpServletRequest request) throws Exception {
         SQLTool sqlTool = SQLTool.getInstance();
-        int from = 0, count = 25;
+        int from = 0, count = maxItems;
         Qualifier[] qualifiers = {Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from,count)};
-        List data = sqlTool.findRecordRelationsWithType(Record.DICTIONARY, qualifiers);
+        List data = sqlTool.findRecordParentRelationsWithType(Record.DICTIONARY, qualifiers);
         for ( Iterator iter = data.iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
-            Tools.sync(relation.getParent());
+            Tools.sync(relation);
         }
+        int total = sqlTool.countRecordParentRelationsWithType(Record.DICTIONARY);
 
-        Paging found = new Paging(data, from, count, count, qualifiers);
+        Paging found = new Paging(data, from, count, total, qualifiers);
         env.put(VAR_FOUND, found);
         return FMTemplateSelector.select("Dictionary", "showList", env, request);
+    }
+
+    public void configure(Preferences prefs) throws ConfigurationException {
+        String regexp = prefs.get(PREF_REGEXP_NAME, null);
+        reName = new RE(regexp);
+        maxItems = prefs.getInt(PREF_MAX_ITEMS, 30);
     }
 }

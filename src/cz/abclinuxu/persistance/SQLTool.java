@@ -214,10 +214,10 @@ public final class SQLTool implements Configurable {
      * Changes first select clause to count. E.g. from id to count(id).
      */
     private void changeToCountStatement(StringBuffer sb) {
-        int space = sb.indexOf(" ");
-        sb.insert(space+1, "count(");
-        space = sb.indexOf(" ", space+6);
-        sb.insert(space, ')');
+        int position = sb.indexOf(" ");
+        sb.insert(position+1, "count(");
+        position = sb.indexOf("from", position+6);
+        sb.insert(position-1, ')');
     }
 
     /**
@@ -256,6 +256,18 @@ public final class SQLTool implements Configurable {
      */
     public int countRecordRelationsWithType(int type) {
         StringBuffer sb = new StringBuffer(relationsRecordByType);
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        params.add(new Integer(type));
+        return loadNumber(sb.toString(),params);
+    }
+
+    /**
+     * Counts relations, where child is record of specified type. Operates on distinct set of parent.
+     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public int countRecordParentRelationsWithType(int type) {
+        StringBuffer sb = new StringBuffer(relationsParentRecordByType);
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(new Integer(type));

@@ -119,8 +119,8 @@ public class History implements AbcAction {
                 data = sqlTool.findRecordRelationsWithUserAndType(uid, Record.HARDWARE, qualifiers);
                 total = sqlTool.countRecordRelationsWithUserAndType(uid, Record.HARDWARE);
             } else {
-                data = sqlTool.findRecordRelationsWithType(Record.HARDWARE, qualifiers);
-                total = sqlTool.countRecordRelationsWithType(Record.HARDWARE);
+                data = sqlTool.findRecordParentRelationsWithType(Record.HARDWARE, qualifiers);
+                total = sqlTool.countRecordParentRelationsWithType(Record.HARDWARE);
             }
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_HARDWARE;
@@ -131,8 +131,8 @@ public class History implements AbcAction {
                 data = sqlTool.findRecordRelationsWithUserAndType(uid, Record.SOFTWARE, qualifiers);
                 total = sqlTool.countRecordRelationsWithUserAndType(uid, Record.SOFTWARE);
             } else {
-                data = sqlTool.findRecordRelationsWithType(Record.SOFTWARE, qualifiers);
-                total = sqlTool.countRecordRelationsWithType(Record.SOFTWARE);
+                data = sqlTool.findRecordParentRelationsWithType(Record.SOFTWARE, qualifiers);
+                total = sqlTool.countRecordParentRelationsWithType(Record.SOFTWARE);
             }
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_SOFTWARE;
@@ -168,12 +168,12 @@ public class History implements AbcAction {
 
         } else if ( VALUE_TYPE_DICTIONARY.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
-            data = sqlTool.findRecordRelationsWithType(Record.DICTIONARY, qualifiers);
+            data = sqlTool.findRecordParentRelationsWithType(Record.DICTIONARY, qualifiers);
             for ( Iterator iter = data.iterator(); iter.hasNext(); ) {
                 Relation relation = (Relation) iter.next();
-                Tools.sync(relation.getParent());
+                Tools.sync(relation);
             }
-            total = sqlTool.countRecordRelationsWithType(Record.DICTIONARY);
+            total = sqlTool.countRecordParentRelationsWithType(Record.DICTIONARY);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_DICTIONARY;
 

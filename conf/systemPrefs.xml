@@ -304,6 +304,15 @@
                         </map>
                     </node>
                 </node>
+                <node name="view">
+                    <map/>
+                    <node name="ShowDictionary">
+                        <map>
+                            <entry key="regexp.name" value="(^/slovnik/)([^?;]+)"/>
+                            <entry key="max.items" value="90"/>
+                        </map>
+                    </node>
+                </node>
             </node>
         </node>
         <node name="security">
