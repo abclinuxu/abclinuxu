@@ -16,6 +16,7 @@ import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.persistance.extra.Qualifier;
 import cz.abclinuxu.persistance.extra.LimitQualifier;
 import cz.abclinuxu.data.Record;
+import cz.abclinuxu.data.Relation;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * This servlet is responsible for displaying
@@ -167,6 +169,10 @@ public class History implements AbcAction {
         } else if ( VALUE_TYPE_DICTIONARY.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
             data = sqlTool.findRecordRelationsWithType(Record.DICTIONARY, qualifiers);
+            for ( Iterator iter = data.iterator(); iter.hasNext(); ) {
+                Relation relation = (Relation) iter.next();
+                Tools.sync(relation.getParent());
+            }
             total = sqlTool.countRecordRelationsWithType(Record.DICTIONARY);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_DICTIONARY;
