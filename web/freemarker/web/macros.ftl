@@ -17,7 +17,7 @@
     <#if tmp.discussion?exists><#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
 
         <#if thumbnail!="UNDEF">
-            <div style="float:right;margin:0.5em 0.4em 0 0">${thumbnail}</div>
+            <div style="float:right;margin:0.8em 0.4em 0 0">${thumbnail}</div>
         </#if>
         <h1 class="st_nadpis"><a href="/clanky/show/${relation.id}">${TOOL.xpath(clanek,"data/name")}</a></h1>
         <p>${TOOL.xpath(clanek,"/data/perex")}</p>

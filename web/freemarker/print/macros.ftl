@@ -82,7 +82,7 @@
  <#if double><div class="delimiterEnd"></div></#if>
 </#macro>
 
-<#macro showComment(comment dizId relId showControls) >
+<#macro showComment(comment dizId relId showControls extra...) >
  <p class="diz_header">
   <a name="${comment.id}"></a>
   <#if (MAX_COMMENT?default(99999) < comment.id) ><span class="diz_header_new">${DATE.show(comment.created,"CZ_FULL")}</span><#else>${DATE.show(comment.created,"CZ_FULL")}</#if>
@@ -114,7 +114,7 @@
   <#if TOOL.xpath(comment.data,"censored/@admin")?exists><#local message="Cenzura: "+TOOL.xpath(comment.data,"censored")></#if>
   <p class="cenzura">
    ${message?default("Na¹i administrátoøi shledali tento pøíspìvek závadným.")}
-   <br>Pøíspìvek si mù¾ete prohlédnout <a href="${URL.make("/show?action=censored&dizId="+dizId+"&threadId="+comment.id)}">zde</a>.
+   <br>Pøíspìvek si mù¾ete prohlédnout <a href="${URL.make("/show?action=censored&dizId="+dizId+"&threadId="+comment.id+extra[0]?default(""))}">zde</a>.
   </p>
   <#if USER?exists && USER.hasRole("discussion admin")>
    <a href="${URL.make("/EditDiscussion?action=censore&rid="+relId+"&dizId="+dizId+"&threadId="+comment.id)}">Odvolat cenzuru</a>
@@ -127,17 +127,33 @@
  </#if>
 </#macro>
 
-<#macro showThread(diz level dizId relId showControls)>
+<#macro showThread(diz level dizId relId showControls extra...)>
  <#local space=level*15>
  <div style="padding-left: ${space}pt">
-  <@showComment diz, dizId, relId, showControls />
+  <@showComment diz, dizId, relId, showControls, extra[0]?if_exists />
  </div>
  <#if diz.children?exists>
   <#local level2=level+1>
   <#list diz.children as child>
-   <@showThread child, level2, dizId, relId, showControls />
+   <@showThread child, level2, dizId, relId, showControls, extra[0]?if_exists />
   </#list>
  </#if>
 </#macro>
 
 <#macro star value><#if (value>0.60)><img src="/images/site2/rating/star1.gif" alt="*" class="star" align="absmiddle"><#elseif (value<0.2)><img src="/images/site2/rating/star0.gif" alt="-" class="star" align="absmiddle"><#else><img src="/images/site2/rating/star5.gif" alt="+" class="star" align="absmiddle"></#if></#macro>
+
+<#macro month (month)>
+    <#if month=="1">leden
+    <#elseif month=="2">únor
+    <#elseif month=="3">bøezen
+    <#elseif month=="4">duben
+    <#elseif month=="5">kvìten
+    <#elseif month=="6">èerven
+    <#elseif month=="7">èervenec
+    <#elseif month=="8">srpen
+    <#elseif month=="9">záøí
+    <#elseif month=="10">øíjen
+    <#elseif month=="11">listopad
+    <#elseif month=="12">prosinec
+    </#if>
+</#macro>

@@ -65,6 +65,8 @@ public class EditRating implements AbcAction, Configurable {
         } else
             throw new MissingArgumentException("Chybí parametr relationId!");
 
+        // todo jen prihlaseni uzivatele. otevrit v novem okne
+
         GenericDataObject object = ((GenericDataObject)relation.getChild());
         Document data = object.getData();
         synchronized (data.getRootElement()) {

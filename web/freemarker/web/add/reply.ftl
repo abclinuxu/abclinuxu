@@ -1,35 +1,3 @@
-<#assign ps_sirka=150>
-<#assign plovouci_sloupec>
-    <div class="s_nad_h1"><div class="s_nad_pod_h1">
-        <h1>Nápovìda k formátování</h1>
-    </div></div>
-
-    <p>
-        Nejrychlej¹í zpùsob formátování je rozdìlovat
-        text do odstavcù. Systém detekuje prázdné øádky
-        (dvakrát enter) a nahradí je HTML znaèkou odstavce.
-        Pokud ale v textu pou¾ijete znaèku P èi BR,
-        pak pøedpokládáme, ¾e o formátování se budete starat
-        sami a tato konverze nebude aktivována.
-    </p>
-
-    <p>
-        Pokud neovládáte HTML, doporuèuji si pøeèíst jeho
-        <a href="http://www.kosek.cz/clanky/html/01.html">rychlokurz</a>.
-        Z rùzných dùvodù jsou povoleny jen tyto
-        <a href="http://www.w3.org/TR/html4/index/elements.html">znaèky</a>:
-        P, BR, B, I, A, PRE, UL, OL, LI, CODE, DIV, H1, H2, H3, EM, STRONG, CITE, BLOCKQUOTE,
-        VAR, HR a IT.
-    </p>
-
-    <p>
-        Text musí být HTML validní, proto znak men¹ítka èi vìt¹ítka zapisujte takto:
-        &lt; jako &amp;lt; a &gt; jako &amp;gt;. Dal¹ím èastým problémem
-        je, jak vlo¾it výpis logu èi konfiguraèní soubor. V tomto
-        pøípadì vá¹ text vlo¾te mezi znaèky PRE, pøíli¹ dlouhé øádky rozdìlte klávesou enter.
-    </p>
-</#assign>
-
 <#include "../header.ftl">
 
 <@lib.showMessages/>
@@ -71,18 +39,18 @@
 
 <form action="${URL.make("/EditDiscussion")}" method="POST" name="replyForm">
   <#if ! USER?exists>
-   <div>
+   <p>
     <span class="required">Login a heslo</span>
-     <input type="text" name="LOGIN" size="8">
-     <input type="password" name="PASSWORD" size="8">
-   </div>
-   <div>
+     <input tabindex="1" type="text" name="LOGIN" size="8">
+     <input tabindex="2" type="password" name="PASSWORD" size="8">
+   </p>
+   <p>
     <span class="required">nebo va¹e jméno</span>
-     <input type="text" size="30" name="author" value="${PARAMS.author?if_exists?html}">
+     <input tabindex="3" type="text" size="30" name="author" value="${PARAMS.author?if_exists?html}">
      <div class="error">${ERRORS.author?if_exists}</div>
-   </div>
+   </p>
   </#if>
-  <div>
+  <p>
    <span class="required">Titulek</span><br>
    <#if PARAMS.title?exists>
     <#assign title=PARAMS.title>
@@ -90,10 +58,10 @@
     <#assign title=TOOL.xpath(THREAD.data,"title")>
     <#if !title.startsWith("Re: ")><#assign title="Re: "+title></#if>
    </#if>
-   <input type="text" name="title" size="60" maxlength="70" value="${title?if_exists?html}">
+   <input tabindex="4" type="text" name="title" size="60" maxlength="70" value="${title?if_exists?html}">
    <div class="error">${ERRORS.title?if_exists}</div>
-  </div>
-  <div>
+  </p>
+  <p>
     <span class="required">Vá¹ komentáø</span>
     <div class="form-edit">
         <a href="javascript:insertAtCursor(document.replyForm.text, '<b></b>');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
@@ -106,15 +74,16 @@
         </#if>
     </div>
    <div class="error">${ERRORS.text?if_exists}</div>
-   <textarea name="text" cols="70" rows="20">${PARAMS.text?if_exists?html}</textarea>
-  </div>
-
-  <#if PREVIEW?exists>
-   <input type="submit" name="preview" value="Zopakuj náhled">
-   <input type="submit" name="finish" value="Dokonèi">
-  <#else>
-   <input type="submit" name="preview" value="Náhled">
-  </#if>
+   <textarea tabindex="5" name="text" cols="70" rows="20">${PARAMS.text?if_exists?html}</textarea>
+  </p>
+  <p>
+    <#if PREVIEW?exists>
+     <input tabindex="6" type="submit" name="preview" value="Zopakuj náhled">
+     <input tabindex="7" type="submit" name="finish" value="Dokonèi">
+    <#else>
+     <input tabindex="6" type="submit" name="preview" value="Náhled">
+    </#if>
+  </p>
 
  <input type="hidden" name="action" value="add2">
  <input type="hidden" name="rid" value="${RELATION.id}">
@@ -126,6 +95,27 @@
   <input type="hidden" name="url" value="${PARAMS.url}">
  </#if>
 </form>
+
+<h1>Nápovìda k formátování</h1>
+
+<p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html">znaèky</a>:
+P, BR, B, I, A, PRE, UL, OL, LI, CODE, DIV, H1, H2, H3, EM, STRONG, CITE, BLOCKQUOTE,
+VAR, HR a IT.</p>
+
+<p>Nejrychlej¹í zpùsob formátování je rozdìlovat
+text do odstavcù. Systém detekuje prázdné øádky
+(dvakrát enter) a nahradí je HTML znaèkou odstavce.
+Pokud ale v textu pou¾ijete znaèku P èi BR,
+pak pøedpokládáme, ¾e o formátování se budete starat
+sami a tato konverze nebude aktivována.</p>
+
+<p>Pokud neovládáte HTML, doporuèuji si pøeèíst jeho
+<a href="http://www.kosek.cz/clanky/html/01.html">rychlokurz</a>.</p>
+
+<p>Text musí být HTML validní, proto znak men¹ítka èi vìt¹ítka zapisujte takto:
+&lt; jako &amp;lt; a &gt; jako &amp;gt;. Dal¹ím èastým problémem
+je, jak vlo¾it výpis logu èi konfiguraèní soubor. V tomto
+pøípadì vá¹ text vlo¾te mezi znaèky PRE, pøíli¹ dlouhé øádky rozdìlte klávesou enter.</p>
 
 
 <#include "../footer.ftl">

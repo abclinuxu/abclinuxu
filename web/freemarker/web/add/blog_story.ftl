@@ -42,7 +42,7 @@ text lámat. Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
     <tr>
         <td>
             <span class="required">Titulek zápisu</span>
-            <input type="text" name="title" size="60" value="${PARAMS.title?if_exists?html}">&nbsp;
+            <input tabindex="1" type="text" name="title" size="60" value="${PARAMS.title?if_exists?html}">&nbsp;
 	    <a class="info" href="#">?<span class="tooltip">Zde nastavíte titulek va¹eho zápisu. Je dùle¾itý pro RSS.</span></a>
             <div class="error">${ERRORS.title?if_exists}</div>
         </td>
@@ -69,7 +69,7 @@ text lámat. Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
                 <a href="javascript:insertAtCursor(document.form.content, '<pre></pre>');" id="mono" title="Vlo¾it formátovaný text. Vhodné pro konfiguraèní soubory èi výpisy.">&lt;pre&gt;</a>
                 <a href="javascript:insertAtCursor(document.form.content, '<break>');" id="mono" title="Vlo¾it znaèku zlomu">&lt;break&gt;</a>
             </div>
-            <textarea name="content" cols="80" rows="30">${PARAMS.content?default("<p></p>")?html}</textarea>
+            <textarea tabindex="2" name="content" cols="80" rows="30">${PARAMS.content?default("<p></p>")?html}</textarea>
             <div class="error">${ERRORS.content?if_exists}</div>
         </td>
     </tr>
@@ -77,9 +77,9 @@ text lámat. Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
         <td>
             <#if PREVIEW?exists>
                 <input type="submit" name="preview" value="Zopakuj náhled">
-                <input type="submit" name="finish" value="Dokonèi">
+                <input tabindex="3" type="submit" name="finish" value="Dokonèi">
             <#else>
-                <input type="submit" name="preview" value="Náhled">
+                <input tabindex="3" type="submit" name="preview" value="Náhled">
             </#if>
         </td>
     </tr>

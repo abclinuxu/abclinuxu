@@ -1,4 +1,4 @@
 <!-- konec obsahu -->
-<p>ISSN 1214-1267, (c) 1998-2003 <a  href="http://firma.abclinuxu.cz">AbcLinuxu s.r.o.</a></p>
+<p>ISSN 1214-1267, (c) 1999-2005 <a  href="http://www.stickfish.cz">Stickfish s.r.o.</a></p>
 </body>
 </html>

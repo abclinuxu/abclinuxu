@@ -10,9 +10,10 @@
         <p>Chcete-li také psát svùj blog, pøihla¹te se a v nastavení
         si jej mù¾ete zalo¾it.</p>
 
-        <a href="/auto/blog.rss">RSS kanál</a>
-
-	    Více o této nové funkci se dozvíte z <a href="/blog/leos/2005/1/2/72133">oznámení</a>.
+	<p>Více o této nové funkci se dozvíte z <a href="/blog/leos/2005/1/2/72133">oznámení</a>.</p>
+	<ul>
+	  <li><a href="/auto/blog.rss">RSS kanál</a></li>
+	</ul>
     </div>
 </#assign>
 

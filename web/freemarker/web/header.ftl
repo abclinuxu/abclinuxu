@@ -158,7 +158,7 @@
                 <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Rozcestník</h1></div></div>
                 <div class="s_sekce">
                     <div class="rozc">
-                        <#list TOOL.createServers([7,1,13,12,3,2,5,4]) as server>
+                        <#list TOOL.createServers([7,1,13,12,14,15,3,2,5,4]) as server>
                             <a class="server" href="${server.url}">${server.name}</a><br>
                             <ul>
                             <#assign linky = TOOL.sublist(SORT.byDate(LINKS[server.name],"DESCENDING"),0,2)>
