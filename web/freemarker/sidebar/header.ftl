@@ -7,6 +7,6 @@
   <link rel="StyleSheet" href="/sidebar.css" type="text/css">
  </head>
 <body>
-<base href="http://AbcLinuxu.cz/" target="_content">
+<base href="http://www.abclinuxu.cz/" target="_content">
 <#include "/include/pocitani.txt">
 
