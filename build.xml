@@ -25,6 +25,10 @@
     <tstamp />
   </target>
 
+  <target name="clean">
+    <delete dir="${build}" />
+  </target>
+
 
   <target name="compile" depends="init">
     <javac srcdir="${src}" destdir="${build}/WEB-INF/classes" classpathref="project.classpath" />
@@ -97,7 +101,7 @@
       </fileset>
     </copy>
 
-    <tar tarfile="${backup}/source.tar" basedir="${backup}/abc" />
+    <tar tarfile="${backup}/source.tar" basedir="${backup}" includes="abc/**" />
     <exec executable="bzip2">
       <arg value="${backup}/source.tar" />
     </exec>
