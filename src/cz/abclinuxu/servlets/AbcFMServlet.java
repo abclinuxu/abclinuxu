@@ -35,11 +35,6 @@ import java.util.Date;
 public abstract class AbcFMServlet extends HttpServlet implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(AbcFMServlet.class);
 
-    static URLMapper urlMapper;
-    static {
-        urlMapper = URLMapper.getInstance();
-    }
-
     /** freemarker's main class */
     private Configuration config;
 
@@ -100,7 +95,7 @@ public abstract class AbcFMServlet extends HttpServlet implements AbcAction {
      * @return true, if browser has been redirected.
      */
     private boolean fixDeprecatedURL(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        return urlMapper.redirectDeprecated(request, response);
+        return URLMapper.getInstance().redirectDeprecated(request, response);
     }
 
     /**

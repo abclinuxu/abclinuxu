@@ -16,17 +16,13 @@ import java.util.Map;
  * based on URL mapping.
  */
 public class Controller extends AbcFMServlet {
-    static URLMapper urlMapper;
-    static {
-        urlMapper = URLMapper.getInstance();
-    }
 
     /**
      * Based on URL of the request it chooses AbcAction implementation,
      * that fullfills the request.
      */
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        AbcAction action = urlMapper.findAction(request);
+        AbcAction action = URLMapper.getInstance().findAction(request);
         return action.process(request, response, env);
     }
 }

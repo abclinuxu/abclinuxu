@@ -2,7 +2,6 @@
  * User: literakl
  * Date: Aug 11, 2002
  * Time: 7:47:54 AM
- * (c)2001-2002 Tinnio
  */
 package cz.abclinuxu.servlets.utils;
 
@@ -336,7 +335,7 @@ public class ServletUtils implements Configurable {
     private static void handleLoggedIn(User user, boolean cookieExists, HttpServletResponse response) {
         String now = Constants.isoFormat.format(new Date());
         DocumentHelper.makeElement(user.getData(), "data/system/last_login_date").setText(now);
-        PersistanceFactory.getPersistance().update(user);
+        PersistanceFactory.getPersistance().update(user); // session bug here
 
         if ( !cookieExists ) {
             int valid = 6*30*24*3600; // six months
