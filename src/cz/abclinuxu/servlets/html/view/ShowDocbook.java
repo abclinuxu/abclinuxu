@@ -26,6 +26,8 @@ import org.htmlparser.tags.Tag;
 import org.htmlparser.tags.LinkTag;
 import org.htmlparser.tags.ImageTag;
 import org.htmlparser.visitors.NodeVisitor;
+import org.apache.regexp.RE;
+import org.apache.regexp.StringCharacterIterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,6 +42,8 @@ import java.util.Map;
 public class ShowDocbook implements AbcAction {
     public static final String PARAM_RELATION_ID = "relationId";
     public static final String PARAM_RELATION_ID_SHORT = "rid";
+
+    private RE reAmp = new RE("(&)([^aglq])", RE.MATCH_CASEINDEPENDENT);
 
     Writer writer;
 
@@ -224,10 +228,23 @@ public class ShowDocbook implements AbcAction {
             String content = stringNode.getText().trim();
             if (content.length()==0)
                 return;
+
+            StringBuffer sb = new StringBuffer();
+            StringCharacterIterator stringIter = new StringCharacterIterator(content);
+            int position = 0, start;
+            if ( reAmp.match(stringIter, position) ) {
+                start = reAmp.getParenStart(2);
+                sb.append(stringIter.substring(position, start));
+                sb.append("amp;");
+                sb.append(reAmp.getParen(2));
+                position = reAmp.getParenEnd(0);
+            }
+            sb.append(stringIter.substring(position));
+
             if (inline)
                 print(content, 0, false);
             else
-                print(stringNode.getText(), 0, false);
+                print(content, 0, false);
         }
 
         private void visitH1Start() {
@@ -334,7 +351,19 @@ public class ShowDocbook implements AbcAction {
         }
 
         private void visitAStart(LinkTag tag) {
-            print("<ulink url=\""+tag.getLink()+"\">", 0, false);
+            StringBuffer sb = new StringBuffer();
+            StringCharacterIterator stringIter = new StringCharacterIterator(tag.getLink());
+            int position = 0, start;
+            if (reAmp.match(stringIter, position)) {
+                start = reAmp.getParenStart(2);
+                sb.append(stringIter.substring(position, start));
+                sb.append("amp;");
+                sb.append(reAmp.getParen(2));
+                position = reAmp.getParenEnd(0);
+            }
+            sb.append(stringIter.substring(position));
+
+            print("<ulink url=\""+sb.toString()+"\">", 0, false);
             inline = true;
         }
 
