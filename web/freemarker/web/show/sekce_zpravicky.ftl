@@ -28,7 +28,8 @@
    <a href="${URL.make("/edit?action=unlock&amp;rid="+relation.id)}">odemknout</a>
  <#else>
    <a href="${URL.make("/show/"+relation.id)}">Zobrazit</a>
-   <a href="${URL.make("/edit?action=edit&amp;rid="+relation.id)}">Schválit</a>
+   <a href="${URL.make("/edit?action=edit&amp;rid="+relation.id)}">Upravit</a>
+   <a href="${URL.make("/edit?action=approve&amp;rid="+relation.id)}">Schválit</a>
    <a href="${URL.make("/edit?action=remove&amp;rid="+relation.id)}">Smazat</a>
    <a href="${URL.make("/edit?action=lock&amp;rid="+relation.id)}">Zamknout</a>
  </#if>

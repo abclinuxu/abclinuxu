@@ -49,6 +49,7 @@ public class EditNews implements AbcAction {
     public static final String ACTION_ADD_STEP2 = "add2";
     public static final String ACTION_EDIT = "edit";
     public static final String ACTION_EDIT_STEP2 = "edit2";
+    public static final String ACTION_APPROVE = "approve";
     public static final String ACTION_REMOVE = "remove";
     public static final String ACTION_REMOVE_STEP2 = "remove2";
     public static final String ACTION_SEND_EMAIL = "mail";
@@ -106,6 +107,9 @@ public class EditNews implements AbcAction {
         if ( !user.hasRole(Roles.NEWS_ADMIN) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
+        if ( ACTION_APPROVE.equals(action) )
+            return actionApprove(request, response, env);
+
         if ( ACTION_REMOVE.equals(action) )
             return FMTemplateSelector.select("EditNews", "remove", env, request);
 
@@ -150,17 +154,8 @@ public class EditNews implements AbcAction {
             return actionAddStep1(request,env);
         }
 
-        if ( user.hasRole(Roles.NEWS_ADMIN) ) {
-            Element element = DocumentHelper.makeElement(item.getData(), "/data/approved_by");
-            element.setText(new Integer(user.getId()).toString());
-        }
         persistance.create(item);
-
-        Relation relation;
-        if ( user.hasRole(Roles.NEWS_ADMIN) )
-            relation = new Relation(new Category(Constants.CAT_NEWS),item,Constants.REL_NEWS);
-        else
-            relation = new Relation(new Category(Constants.CAT_NEWS_POOL),item,Constants.REL_NEWS_POOL);
+        Relation relation = new Relation(new Category(Constants.CAT_NEWS_POOL),item,Constants.REL_NEWS_POOL);
         persistance.create(relation);
         relation.getParent().addChildRelation(relation);
 
@@ -217,24 +212,39 @@ public class EditNews implements AbcAction {
             return FMTemplateSelector.select("EditNews", "edit", env, request);
         }
 
-        Element element = DocumentHelper.makeElement(item.getData(), "/data/approved_by");
-        User user = (User) env.get(Constants.VAR_USER);
-        element.setText(new Integer(user.getId()).toString());
-
         persistance.update(item);
+        User user = (User) env.get(Constants.VAR_USER);
         AdminLogger.logEvent(user, "  edit | news "+relation.getId());
-
-        if ( relation.getParent().getId()==Constants.CAT_NEWS_POOL && user.hasRole(Roles.NEWS_ADMIN)) {
-            relation.getParent().removeChildRelation(relation);
-            relation.getParent().setId(Constants.CAT_NEWS);
-            relation.setUpper(Constants.REL_NEWS);
-            persistance.update(relation);
-            relation.getParent().addChildRelation(relation);
-            AdminLogger.logEvent(user, "  approve | news "+relation.getId());
-        }
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/news/show/"+relation.getId());
+        return null;
+    }
+
+    protected String actionApprove(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        if (relation.getParent().getId() != Constants.CAT_NEWS_POOL) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Zprávièka ji¾ byla schválena!", env, request.getSession());
+            urlUtils.redirect(response, "/news/show/" + relation.getId());
+            return null;
+        }
+
+        Item item = (Item) relation.getChild();
+        Element element = DocumentHelper.makeElement(item.getData(), "/data/approved_by");
+        User user = (User) env.get(Constants.VAR_USER);
+        element.setText(new Integer(user.getId()).toString());
+        persistance.update(item);
+
+        relation.getParent().removeChildRelation(relation);
+        relation.getParent().setId(Constants.CAT_NEWS);
+        relation.setUpper(Constants.REL_NEWS);
+        persistance.update(relation);
+        relation.getParent().addChildRelation(relation);
+        AdminLogger.logEvent(user, "  approve | news " + relation.getId());
+
+        urlUtils.redirect(response, "/news/show/" + relation.getId());
         return null;
     }
 

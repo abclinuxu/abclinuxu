@@ -22,7 +22,8 @@
    Uzamknul <a href="/Profile/${admin.id}">${admin.name}</a> -
    <a href="${URL.make("/edit?action=unlock&amp;rid="+RELATION.id)}">odemknout</a>
   <#else>
-   <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}"><#if RELATION.upper=37672>Schválit<#else>Upravit</#if></a>
+   <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">Upravit</a>
+   <#if RELATION.upper=37672><a href="${URL.make("/edit?action=approve&amp;rid="+RELATION.id)}">Schválit</a></#if>
    <a href="${URL.make("/edit?action=remove&amp;rid="+RELATION.id)}">Smazat</a>
    <a href="${URL.make("/edit?action=mail&amp;rid="+RELATION.id)}">Poslat email autorovi</a>
    <a href="${URL.make("/edit?action=lock&amp;rid="+RELATION.id)}">Zamknout</a>
