@@ -84,7 +84,7 @@ public class UrlUtils {
      */
     public String constructRedirectURL(String url) {
         String out = url;
-        if ( getPrefix(url)!=PREFIX_NONE ) out = prefix+url;
+        if ( getPrefix(url)==PREFIX_NONE ) out = prefix+url;
         return response.encodeRedirectURL(out);
     }
 
@@ -94,7 +94,9 @@ public class UrlUtils {
      * @param url URL to be encoded
      */
     public String constructDispatchURL(String url) {
-        return ( prefix!=null )? prefix+url : url;
+        String out = url;
+        if ( getPrefix(url)==PREFIX_NONE ) out = prefix+url;
+        return out;
     }
 
     /**
