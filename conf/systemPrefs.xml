@@ -182,8 +182,8 @@
             </node>
             <node name="UpdateKernel">
               <map>
+                <entry key="file" value="WEB-INF/freemarker/include/kernel.txt"/>
                 <entry key="uri" value="http://www.kernel.org/kdist/finger_banner"/>
-                <entry key="uri" value="file:///home/literakl/tmp/new/titulky/finger_banner"/>
                 <entry key="regexp.stable" value="(The latest stable[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
                 <entry key="url.stable" value="ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.6"/>
                 <entry key="regexp.stable.pre" value="(The latest prepatch for the stable[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
