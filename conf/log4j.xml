@@ -26,7 +26,7 @@
 	  <priority value="info" />
 	</category>
 
-	<category name="cz.abclinuxu.scheduler.jobs.UpdateLinks">
+	<category name="cz.abclinuxu.scheduler">
 	  <priority value="info" />
 	</category>
 

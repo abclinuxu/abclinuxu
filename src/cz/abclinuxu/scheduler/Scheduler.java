@@ -7,6 +7,7 @@
 package cz.abclinuxu.scheduler;
 
 import cz.abclinuxu.scheduler.jobs.UpdateLinks;
+import cz.abclinuxu.scheduler.jobs.UpdateKernel;
 
 import java.util.*;
 
@@ -25,7 +26,6 @@ public class Scheduler extends Thread {
     public void run() {
         log.info("Scheduler starts ...");
         long next, now;
-        addLinksUpdate();
 
         while ( true ) {
             next = now = System.currentTimeMillis();
@@ -79,16 +79,6 @@ public class Scheduler extends Thread {
 
         jobs.add(job);
         // wake up thread
-    }
-
-    protected void addLinksUpdate() {
-        Date now = new Date();
-        Calendar next = Calendar.getInstance();
-        next.setTime(now);
-        next.set(Calendar.HOUR,7);
-        next.set(Calendar.MINUTE,30);
-
-        addTask(new UpdateLinks(),6*60*60*1000,next.getTime().getTime()); // each 6 hours, starting at 7:30 AM
     }
 
     class JobItem {

@@ -36,7 +36,7 @@ public class Cache implements Task {
     public Cache() {
         data = new HashMap(100);
         modCount = 0;
-//        Scheduler.getScheduler().addTask(this,3*60*1000,System.currentTimeMillis()+3*60*1000);
+        Scheduler.getScheduler().addTask(this,3*60*1000,System.currentTimeMillis()+3*60*1000);
     }
 
     /**

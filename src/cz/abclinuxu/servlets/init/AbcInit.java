@@ -8,6 +8,8 @@
 package cz.abclinuxu.servlets.init;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.Calendar;
 import javax.servlet.http.*;
 import javax.servlet.ServletException;
 import org.apache.log4j.xml.DOMConfigurator;
@@ -15,6 +17,9 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Category;
 import org.apache.velocity.app.Velocity;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.scheduler.jobs.UpdateKernel;
+import cz.abclinuxu.scheduler.jobs.UpdateLinks;
+import cz.abclinuxu.scheduler.Scheduler;
 
 /**
  * This servlet initializes Log4J
@@ -47,10 +52,38 @@ public class AbcInit extends HttpServlet {
             log.info("Inicializuji vrstvu persistence pomoci URL "+url);
             PersistanceFactory.setDefaultUrl(url);
         }
+
+        String kernel = getInitParameter("KERNEL");
+        if ( kernel!=null ) UpdateKernel.setFile(path+kernel);
+
+        // start scheduler tasks
+        startKernelUpdate();
+        startLinksUpdate();
+
         log.info("Inicializace je hotova.");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // this servlet shall be never called directly
+    }
+
+    /**
+     * Update links each six hours, starting at 7:30 AM
+     */
+    protected void startLinksUpdate() {
+        Date now = new Date();
+        Calendar next = Calendar.getInstance();
+        next.setTime(now);
+        next.set(Calendar.HOUR,7);
+        next.set(Calendar.MINUTE,30);
+
+        Scheduler.getScheduler().addTask(new UpdateLinks(),6*60*60*1000,next.getTime().getTime());
+    }
+
+    /**
+     * Update kernel versions each 5 minutes, starting now
+     */
+    protected void startKernelUpdate() {
+        Scheduler.getScheduler().addTask(new UpdateKernel(),5*60*1000,0);
     }
 }
