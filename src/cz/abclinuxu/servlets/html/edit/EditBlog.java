@@ -64,6 +64,7 @@ public class EditBlog implements AbcAction, Configurable {
     public static final String PARAM_RELATION = "rid";
     public static final String PARAM_PREVIEW = "preview";
     public static final String PARAM_PAGE_SIZE = "pageSize";
+    public static final String PARAM_WATCH_DISCUSSION = "watchDiz";
 
     public static final String ACTION_ADD_BLOG = "addBlog";
     public static final String ACTION_ADD_BLOG_STEP2 = "addBlog2";
@@ -283,6 +284,12 @@ public class EditBlog implements AbcAction, Configurable {
         persistance.create(relation);
         incrementArchiveRecord(blog.getData().getRootElement(), new Date());
         persistance.update(blog);
+
+        String watchDiscussion = (String) params.get(PARAM_WATCH_DISCUSSION);
+        if ("yes".equals(watchDiscussion)) {
+            Relation dizRelation = EditDiscussion.createEmptyDiscussion(relation, user, persistance);
+            EditDiscussion.alterDiscussionMonitor((Item) dizRelation.getChild(), user, persistance);
+        }
 
         FeedGenerator.updateBlog(blog);
 

@@ -43,7 +43,7 @@ text lámat. Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
         <td>
             <span class="required">Titulek zápisu</span>
             <input tabindex="1" type="text" name="title" size="60" value="${PARAMS.title?if_exists?html}">&nbsp;
-	    <a class="info" href="#">?<span class="tooltip">Zde nastavíte titulek va¹eho zápisu. Je dùle¾itý pro RSS.</span></a>
+	        <a class="info" href="#">?<span class="tooltip">Zde nastavíte titulek va¹eho zápisu. Je dùle¾itý pro RSS.</span></a>
             <div class="error">${ERRORS.title?if_exists}</div>
         </td>
     </tr>
@@ -55,7 +55,14 @@ text lámat. Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
                     <option value="${category}"<#if category==PARAMS.cid?default("UNDEF")> selected</#if>>${CATEGORIES[category]}</option>
                 </#list>
             </select>&nbsp;
-	    <a class="info" href="#">?<span class="tooltip">Zde nastavíte kategorii va¹eho zápisu. Mù¾ete tak èlenit zápisy do rùzných kategorií.</span></a>
+    	    <a class="info" href="#">?<span class="tooltip">Zde nastavíte kategorii va¹eho zápisu. Mù¾ete tak èlenit zápisy do rùzných kategorií.</span></a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Aktivovat sledování diskuse
+            <input type="checkbox" name="watchDiz" value="yes"<#if PARAMS.watchDiz?exists> checked</#if>>
+	        <a class="info" href="#">?<span class="tooltip">Zde mù¾ete aktivovat sledování diskuse k tomuto zápisu. Cizí komentáøe vám budou chodit emailem.</span></a>
         </td>
     </tr>
     <tr>
@@ -76,8 +83,8 @@ text lámat. Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
     <tr>
         <td>
             <#if PREVIEW?exists>
-                <input type="submit" name="preview" value="Zopakuj náhled">
-                <input tabindex="3" type="submit" name="finish" value="Dokonèi">
+                <input tabindex="3" type="submit" name="preview" value="Zopakuj náhled">
+                <input tabindex="4" type="submit" name="finish" value="Dokonèi">
             <#else>
                 <input tabindex="3" type="submit" name="preview" value="Náhled">
             </#if>
