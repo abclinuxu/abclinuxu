@@ -95,9 +95,9 @@
 ##
 <tr><td class="volby_ankety">
 #if ( $poll.isMultiChoice() )
-<input type="checkbox" name="voteId" value="$!choice.Id" #if($velocityCount==1) checked #end>
+<input type="checkbox" name="voteId" value="$!choice.Id">
 #else
-<input type="radio" name="voteId" value="$!choice.Id" #if($velocityCount==1) checked #end>
+<input type="radio" name="voteId" value="$!choice.Id">
 #end
 $choice.Text</td>
 <td><img src="/images/site/poll.gif" height=11 width=$procento alt="$!UTIL.percentBar($procento)"></td>
