@@ -103,7 +103,7 @@ public class MySqlPersistance implements Persistance {
     }
 
     public void update(GenericObject obj) throws PersistanceException {
-        log.debug("Nepolymorfni pristup k update()");
+        log.debug("Updated "+obj);
 
         if (obj instanceof GenericDataObject) {
             update((GenericDataObject)obj);
@@ -496,6 +496,14 @@ public class MySqlPersistance implements Persistance {
     }
 
     /**
+     * Safely adds encoding to string with xml
+     */
+    private String insertEncoding(String xml) {
+        if ( xml==null || xml.startsWith("<?xml") ) return xml;
+        return "<?xml version=\"1.0\" encoding=\"ISO-8859-2\" ?>\n"+xml;
+    }
+
+    /**
      * Loads object by PK from database.
      */
     private GenericObject loadObject(GenericObject obj) throws PersistanceException, SQLException {
@@ -847,7 +855,9 @@ public class MySqlPersistance implements Persistance {
             user.setEmail(resultSet.getString(4));
             user.setPassword(resultSet.getString(5));
             try {
-                user.setData(resultSet.getString(6));
+                String tmp = resultSet.getString(6);
+                tmp = insertEncoding(tmp);
+                user.setData(tmp);
             } catch (AbcException e) {
                 throw new PersistanceException(e.getMessage(),e.getStatus(),e.getSinner(),e.getNestedException());
             }
@@ -887,7 +897,9 @@ public class MySqlPersistance implements Persistance {
                 }
             }
             try {
-                item.setData(new String(resultSet.getBytes(3)));
+                String tmp = resultSet.getString(3);
+                tmp = insertEncoding(tmp);
+                item.setData(new String(tmp));
             } catch (AbcException e) {
                 throw new PersistanceException(e.getMessage(),e.getStatus(),e.getSinner(),e.getNestedException());
             }

@@ -105,15 +105,15 @@ public class EditUser extends AbcServlet {
      */
     protected Template actionAddStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         User user = new User();
-        if ( !fillUser(request,user,ctx,false) ) return getTemplate("add/user.vm");
+        if ( !fillUser(request,user,ctx,true) ) return getTemplate("add/user.vm");
 
         try {
             PersistanceFactory.getPersistance().create(user);
         } catch ( PersistanceException e ) {
             if ( e.getStatus()==AbcException.DB_DUPLICATE ) {
                 addErrorMessage(PARAM_LOGIN,"Toto jmeno je jiz pouzivano!",ctx);
-                return getTemplate("add/user.vm");
             }
+            return getTemplate("add/user.vm");
         }
 
         VelocityContext tmpContext = new VelocityContext();

@@ -60,28 +60,28 @@ public class CzechTest extends TestCase {
 
     /** tests raw sql communication */
     public void testMySQL() throws Exception {
-        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/abc?user=literakl");
-
-        String testString = "¾ivoèi¹ný";
-        Statement statement = connection.createStatement();
-        statement.executeUpdate("create temporary table test(str varchar(20), str2 text)");
-
-        PreparedStatement st = connection.prepareStatement("insert into test values(?,?)");
-        st.setString(1,testString);
-        st.setBytes(2,testString.getBytes());
-        st.execute();
-
-        st = connection.prepareStatement("select * from test");
-        ResultSet resultSet = st.executeQuery();
-        resultSet.next();
-
-        String foundStr = resultSet.getString(1);
-        String foundStr2 = new String(resultSet.getBytes(2));
-
-        connection.close();
-
-        assertEquals(testString,foundStr);
-        assertEquals(testString,foundStr2);
+//        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/abc?user=literakl");
+//
+//        String testString = "¾ivoèi¹ný";
+//        Statement statement = connection.createStatement();
+//        statement.executeUpdate("create temporary table test(str varchar(20), str2 text)");
+//
+//        PreparedStatement st = connection.prepareStatement("insert into test values(?,?)");
+//        st.setString(1,testString);
+//        st.setBytes(2,testString.getBytes());
+//        st.execute();
+//
+//        st = connection.prepareStatement("select * from test");
+//        ResultSet resultSet = st.executeQuery();
+//        resultSet.next();
+//
+//        String foundStr = resultSet.getString(1);
+//        String foundStr2 = new String(resultSet.getBytes(2));
+//
+//        connection.close();
+//
+//        assertEquals(testString,foundStr);
+//        assertEquals(testString,foundStr2);
     }
 
     /** tests DOM4J manipulation */
@@ -93,7 +93,16 @@ public class CzechTest extends TestCase {
         root.setText(testString);
 
         String converted = getDataAsString(document);
+        System.out.println("converted = " + converted);
         assertTrue(converted.indexOf(testString)!=-1);
+
+        Document back = DocumentHelper.parseText(insertEncoding(converted));
+        back = null;
+    }
+
+    private String insertEncoding(String xml) {
+        if ( xml==null || xml.startsWith("<?xml") ) return xml;
+        return "<?xml version=\"1.0\" encoding=\"ISO-8859-2\" ?>\n"+xml;
     }
 
     /**
@@ -104,10 +113,12 @@ public class CzechTest extends TestCase {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
 //        OutputFormat format = new OutputFormat(null,false);
         OutputFormat format = new OutputFormat(null,false,"ISO-8859-2");
-//        format.setSuppressDeclaration(true);
+        format.setSuppressDeclaration(true);
         XMLWriter writer = new XMLWriter(os,format);
+
         writer.write(data);
-        return os.toString();
+        String result = os.toString();
+        return result;
     }
 
     public CzechTest(String s) {

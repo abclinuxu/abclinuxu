@@ -85,12 +85,15 @@ public abstract class GenericDataObject extends GenericObject {
     public String getDataAsString() {
         try {
             if ( data==null ) return "";
+
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             OutputFormat format = new OutputFormat(null,false,"ISO-8859-2");
             format.setSuppressDeclaration(true);
             XMLWriter writer = new XMLWriter(os,format);
+
             writer.write(data);
-            return os.toString();
+            String result = os.toString();
+            return result;
         } catch (Exception e) {
             log.error("Nemohu prevest XML data na string! "+data.toString(),e);
             return "";

@@ -15,11 +15,31 @@ import javax.servlet.http.HttpServletResponse;
  * their prefix and session id.
  */
 public class UrlUtils {
+
+    public static final String PREFIX_HARDWARE = "/hardware";
+    public static final String PREFIX_SOFTWARE = "/software";
+    public static final String PREFIX_CLANKY = "/clanky";
+    public static final String PREFIX_NONE = "";
+
     /** default prefix to URL */
     String prefix;
+    HttpServletResponse response;
 
-    public UrlUtils(String prefix) {
-        this.prefix = prefix;
+    /**
+     * Creates new UrlUtils instance.
+     * @param url Request URI
+     */
+    public UrlUtils(String url, HttpServletResponse response) {
+        if ( url.startsWith(PREFIX_HARDWARE) ) {
+            prefix = PREFIX_HARDWARE;
+        } else if ( url.startsWith(PREFIX_SOFTWARE) ) {
+            prefix = PREFIX_SOFTWARE;
+        } else if ( url.startsWith(PREFIX_CLANKY) ) {
+            prefix = PREFIX_CLANKY;
+        } else {
+            prefix = PREFIX_NONE;
+        }
+        this.response = response;
     }
 
     /**
@@ -28,13 +48,13 @@ public class UrlUtils {
      * @param prefix Prefix overiding default value or null
      * @param response Valid HttpServletResponse object
      */
-    public String constructURL(String url, String prefix, HttpServletResponse response) {
+    public String make(String url, String prefix) {
         String out = null;
         if ( prefix!=null ) {
             out = prefix+url;
-        } else if ( this.prefix!=null ) {
+        } else {
             out = this.prefix+url;
-        } else out = url;
+        }
         return response.encodeURL(out);
     }
 
@@ -43,8 +63,15 @@ public class UrlUtils {
      * @param url URL to be encoded
      * @param response Valid HttpServletResponse object
      */
-    public String constructURL(String url, HttpServletResponse response) {
-        return constructURL(url,null,response);
+    public String make(String url) {
+        return make(url,null);
+    }
+
+    /**
+     * Constructs new URL, which doesn't contains prexif and doesn't loose session id.
+     */
+    public String makePrefixless(String url) {
+        return response.encodeURL(url);
     }
 
     /**
@@ -53,7 +80,7 @@ public class UrlUtils {
      * @param url URL to be encoded
      * @param response Valid HttpServletResponse object
      */
-    public String constructRedirectURL(String url, HttpServletResponse response) {
+    public String constructRedirectURL(String url) {
         String out = ( prefix!=null )? prefix+url : url;
         return response.encodeRedirectURL(out);
     }

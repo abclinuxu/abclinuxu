@@ -24,41 +24,49 @@
     <servlet>
         <servlet-name>ViewCategory</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.view.ViewCategory</servlet-class>
+        <load-on-startup>2</load-on-startup>
     </servlet>
 
     <servlet>
         <servlet-name>ViewRelation</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.view.ViewRelation</servlet-class>
+        <load-on-startup>2</load-on-startup>
     </servlet>
 
     <servlet>
         <servlet-name>EditCategory</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.edit.EditCategory</servlet-class>
+        <load-on-startup>3</load-on-startup>
     </servlet>
 
     <servlet>
         <servlet-name>SelectIcon</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.view.SelectIcon</servlet-class>
+        <load-on-startup>4</load-on-startup>
     </servlet>
 
     <servlet>
         <servlet-name>SelectRelation</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.view.SelectRelation</servlet-class>
+        <load-on-startup>4</load-on-startup>
     </servlet>
 
     <servlet>
         <servlet-name>EditRelation</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.edit.EditRelation</servlet-class>
+        <load-on-startup>3</load-on-startup>
     </servlet>
 
     <servlet>
         <servlet-name>EditUser</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.edit.EditUser</servlet-class>
+        <load-on-startup>3</load-on-startup>
     </servlet>
 
     <servlet>
         <servlet-name>ViewIndex</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.view.ViewIndex</servlet-class>
+        <load-on-startup>2</load-on-startup>
     </servlet>
 
 

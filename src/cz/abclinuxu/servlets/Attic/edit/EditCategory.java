@@ -34,6 +34,8 @@ import java.util.Map;
  * <dl>
  * <dt><code>PARAM_RELATION</code></dt>
  * <dd>Relation, where current category is child.</dd>
+ * <dt><code>PARAM_CATEGORY</code></dt>
+ * <dd>Current category.</dd>
  * <dt><code>PARAM_NAME</code></dt>
  * <dd>Specifies name of this category.</dd>
  * <dt><code>PARAM_OPEN</code></dt>
@@ -52,6 +54,7 @@ import java.util.Map;
  */
 public class EditCategory extends AbcServlet {
     public static final String PARAM_RELATION = "relationId";
+    public static final String PARAM_CATEGORY = "categoryId";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_OPEN = "open";
     public static final String PARAM_ICON = SelectIcon.PARAM_ICON;
@@ -59,6 +62,7 @@ public class EditCategory extends AbcServlet {
     public static final String PARAM_CHOOSE_ICON = "iconChooser";
 
     public static final String VAR_RELATION = "RELATION";
+    public static final String VAR_CATEGORY = "CATEGORY";
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
@@ -69,16 +73,30 @@ public class EditCategory extends AbcServlet {
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
 
+        Relation relation = null;
+        Category category = null;
+
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         String action = (String) params.get(AbcServlet.PARAM_ACTION);
 
-        String tmp = (String) params.get(EditCategory.PARAM_RELATION);
-        int relationId = Integer.parseInt(tmp);
-        Relation relation = (Relation) PersistanceFactory.getPersistance().findById(new Relation(relationId));
-        ctx.put(EditCategory.VAR_RELATION,relation);
+        String tmp = (String) params.get(EditCategory.PARAM_CATEGORY);
+        if ( tmp!=null && tmp.length()>0 ) {
+            int categoryId = Integer.parseInt(tmp);
+            category = (Category) PersistanceFactory.getPersistance().findById(new Category(categoryId));
+            ctx.put(EditCategory.VAR_CATEGORY,category);
+        }
+
+        tmp = (String) params.get(EditCategory.PARAM_RELATION);
+        if ( tmp!=null && tmp.length()>0 ) {
+            int relationId = Integer.parseInt(tmp);
+            relation = (Relation) PersistanceFactory.getPersistance().findById(new Relation(relationId));
+            ctx.put(EditCategory.VAR_RELATION,relation);
+            category = (Category) relation.getChild();
+            ctx.put(EditCategory.VAR_CATEGORY,category);
+        }
 
         if ( action==null || action.equals(EditCategory.ACTION_ADD) ) {
-            int rights = checkAccess(relation.getChild(),AbcServlet.METHOD_ADD,ctx);
+            int rights = checkAccess(category,AbcServlet.METHOD_ADD,ctx);
             switch (rights) {
                 case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
                 case AbcServlet.USER_INSUFFICIENT_RIGHTS: addErrorMessage(AbcServlet.GENERIC_ERROR,"Vase prava nejsou dostatecna pro tuto operaci!",ctx);
@@ -86,7 +104,7 @@ public class EditCategory extends AbcServlet {
             }
 
         } else if ( action.equals(EditCategory.ACTION_ADD_STEP2) ) {
-            int rights = checkAccess(relation.getChild(),AbcServlet.METHOD_ADD,ctx);
+            int rights = checkAccess(category,AbcServlet.METHOD_ADD,ctx);
             switch (rights) {
                 case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
                 case AbcServlet.USER_INSUFFICIENT_RIGHTS: {
@@ -97,7 +115,7 @@ public class EditCategory extends AbcServlet {
             }
 
         } else if ( action.equals(EditCategory.ACTION_EDIT) ) {
-            int rights = checkAccess(relation.getChild(),AbcServlet.METHOD_EDIT,ctx);
+            int rights = checkAccess(category,AbcServlet.METHOD_EDIT,ctx);
             switch (rights) {
                 case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
                 case AbcServlet.USER_INSUFFICIENT_RIGHTS: addErrorMessage(AbcServlet.GENERIC_ERROR,"Vase prava nejsou dostatecna pro tuto operaci!",ctx);
@@ -105,7 +123,7 @@ public class EditCategory extends AbcServlet {
             }
 
         } else if ( action.equals(EditCategory.ACTION_EDIT2) ) {
-            int rights = checkAccess(relation.getChild(),AbcServlet.METHOD_EDIT,ctx);
+            int rights = checkAccess(category,AbcServlet.METHOD_EDIT,ctx);
             switch (rights) {
                 case AbcServlet.LOGIN_REQUIRED: return getTemplate("login.vm");
                 case AbcServlet.USER_INSUFFICIENT_RIGHTS: addErrorMessage(AbcServlet.GENERIC_ERROR,"Vase prava nejsou dostatecna pro tuto operaci!",ctx);
@@ -142,6 +160,7 @@ public class EditCategory extends AbcServlet {
         document.setRootElement(root);
 
         Relation upperRelation = (Relation) ctx.get(EditCategory.VAR_RELATION);
+        Category upperCategory = (Category) ctx.get(EditCategory.VAR_CATEGORY);
         User user = (User) ctx.get(AbcServlet.VAR_USER);
         Category category = new Category();
 
@@ -152,7 +171,8 @@ public class EditCategory extends AbcServlet {
 
         try {
             PersistanceFactory.getPersistance().create(category);
-            relation = new Relation(upperRelation.getChild(),category,upperRelation.getId());
+            int upper = (upperRelation!=null)? upperRelation.getId():0;
+            relation = new Relation(upperCategory,category,upper);
             PersistanceFactory.getPersistance().create(relation);
         } catch (PersistanceException e) {
             addErrorMessage(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx);
@@ -169,8 +189,7 @@ public class EditCategory extends AbcServlet {
     protected Template actionEditStep1(HttpServletRequest request, Context ctx) throws Exception {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
 
-        Relation upperRelation = (Relation) ctx.get(EditCategory.VAR_RELATION);
-        Category category = (Category) upperRelation.getChild();
+        Category category = (Category) ctx.get(EditCategory.VAR_CATEGORY);
         PersistanceFactory.getPersistance().synchronize(category);
         Document document = category.getData();
 
@@ -207,28 +226,32 @@ public class EditCategory extends AbcServlet {
         }
 
         Relation upperRelation = (Relation) ctx.get(EditCategory.VAR_RELATION);
-        Category category = (Category) upperRelation.getChild();
+        Category category = (Category) ctx.get(EditCategory.VAR_CATEGORY);
         persistance.synchronize(category);
         Document document = category.getData();
 
-        Node node = document.selectSingleNode("data/name");
+        Node node = DocumentHelper.makeElement(document,"data/name");
         tmp = (String) params.get(EditCategory.PARAM_NAME);
-        if (node!=null && tmp!=null) node.setText(tmp);
+        node.setText(tmp);
 
-        node = document.selectSingleNode("data/icon");
+        node = DocumentHelper.makeElement(document,"data/icon");
         tmp = (String) params.get(EditCategory.PARAM_ICON);
-        if (node!=null && tmp!=null) node.setText(tmp);
+        node.setText(tmp);
 
-        node = document.selectSingleNode("data/note");
+        node = DocumentHelper.makeElement(document,"data/note");
         tmp = (String) params.get(EditCategory.PARAM_NOTE);
-        if (node!=null && tmp!=null) node.setText(tmp);
+        node.setText(tmp);
 
         tmp = (String) params.get(EditCategory.PARAM_OPEN);
         category.setOpen( "yes".equals(tmp) );
 
         persistance.update(category);
 
-        redirect("/ViewRelation?relationId="+upperRelation.getId(),response,ctx);
+        if ( upperRelation!=null ) {
+            redirect("/ViewRelation?relationId="+upperRelation.getId(),response,ctx);
+        } else {
+            redirect("/ViewCategory?categoryId="+category.getId(),response,ctx);
+        }
         return null;
     }
 }

@@ -7,7 +7,7 @@
 <div class="parents">
 #foreach($parent in $PARENTS)
 #if($velocityCount==1) #sync($parent.Parent)
-<a href="$!PREFIX.constructURL("/ViewCategory?categoryId=${parent.Parent.Id}",$res)">$parent.Parent.Data.selectSingleNode('data/name').Text</a>
+<a href="$!URL.constructURL("/ViewCategory?categoryId=$parent.Parent.Id")">$!UTIL.getXPath($parent.Parent,'data/name')</a>
 #end
-- <a href="$!PREFIX.constructURL("/ViewRelation?relationId=${parent.Id}",$res)">$HELPER.getChildName($parent)</a>
+- <a href="$!URL.constructURL("/ViewRelation?relationId=$parent.Id")">$UTIL.getChildName($parent)</a>
 #end</div>#end#end

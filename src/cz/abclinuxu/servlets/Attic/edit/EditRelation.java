@@ -27,11 +27,14 @@ import java.util.Map;
  * <dd>Id of base relation for this operation.</dd>
  * <dt><code>PARAM_NAME</code></dt>
  * <dd>Name used in new relation, overrides default.</dd>
+ * <dt><code>PARAM_PREFIX</code></dt>
+ * <dd>Prefix of URL.</dd>
  * </dl>
  */
 public class EditRelation extends AbcServlet {
     public static final String PARAM_RELATION = "relationId";
     public static final String PARAM_NAME = "name";
+    public static final String PARAM_PREFIX = "prefix";
 
     public static final String VAR_CURRENT = "CURRENT";
 
@@ -95,7 +98,8 @@ public class EditRelation extends AbcServlet {
         if ( tmp!=null && tmp.length()>0 ) relation.setName(tmp);
         persistance.create(relation);
 
-        ctx.put(AbcServlet.VAR_PREFIX,new UrlUtils((String)params.get(AbcServlet.VAR_PREFIX)));
+        String prefix = (String)params.get(EditRelation.PARAM_PREFIX);
+        ctx.put(AbcServlet.VAR_URL_UTILS,new UrlUtils(prefix, response));
         redirect("/ViewRelation?relationId="+parent.getId(),response,ctx);
         return null;
     }

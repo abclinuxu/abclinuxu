@@ -35,6 +35,7 @@ import cz.abclinuxu.servlets.view.SelectIcon;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 /**
@@ -45,8 +46,8 @@ import java.util.*;
  * <dl>
  * <dl><code>VAR_PERSISTANCE</code></dl>
  * <dd>Instance of actual persistance. To be used for synchronization purposes.</dd>
- * <dt><code>VAR_PREFIX</code></dt>
- * <dd>Specifies prefix of URL (/hardware,/software,/clanky). It distinguishes context.</dd>
+ * <dt><code>VAR_URL_UTILS</code></dt>
+ * <dd>Helper class for manipulating URLs. It remembers current context and session id.</dd>
  * <dt><code>VAR_USER</code></dt>
  * <dd>instance of User, if any. It is stored in both Session and Context.</dd>
  * <dt><code>VAR_ERRORS</code></dt>
@@ -78,20 +79,16 @@ public class AbcServlet extends VelocityServlet {
     public static final String ATTRIB_PARAMS = "PARAMS";
 
     public static final String VAR_PERSISTANCE = "PERSISTANCE";
-    public static final String VAR_PREFIX = "PREFIX";
+    public static final String VAR_URL_UTILS = "URL";
     public static final String VAR_USER = "USER";
     public static final String VAR_ERRORS = "ERRORS";
     public static final String VAR_MESSAGES = "MESSAGES";
     public static final String VAR_PARAMS = "PARAMS";
-    public static final String VAR_HELPER = "HELPER";
+    public static final String VAR_HELPER = "UTIL";
 
     public static final String PARAM_ACTION = "action";
     public static final String PARAM_LOG_USER = "LOGIN";
     public static final String PARAM_LOG_PASSWORD = "PASSWORD";
-
-    public static final String PREFIX_HARDWARE = "/hardware";
-    public static final String PREFIX_SOFTWARE = "/software";
-    public static final String PREFIX_CLANKY = "/clanky";
 
     /** use this value for addErrorMessage, when message is not tight to form field */
     public static final String GENERIC_ERROR = "generic";
@@ -135,17 +132,7 @@ public class AbcServlet extends VelocityServlet {
             context = super.createContext(request, response);
             context.put(AbcServlet.VAR_PERSISTANCE,PersistanceFactory.getPersistance());
             context.put(AbcServlet.VAR_HELPER,new VelocityHelper());
-
-            String url = request.getRequestURI();
-            if ( url.startsWith(AbcServlet.PREFIX_HARDWARE) ) {
-                context.put(AbcServlet.VAR_PREFIX,new UrlUtils(AbcServlet.PREFIX_HARDWARE));
-            } else if ( url.startsWith(AbcServlet.PREFIX_SOFTWARE) ) {
-                context.put(AbcServlet.VAR_PREFIX,new UrlUtils(AbcServlet.PREFIX_SOFTWARE));
-            } else if ( url.startsWith(AbcServlet.PREFIX_CLANKY) ) {
-                context.put(AbcServlet.VAR_PREFIX,new UrlUtils(AbcServlet.PREFIX_CLANKY));
-            } else {
-                context.put(AbcServlet.VAR_PREFIX,new UrlUtils(null));
-            }
+            context.put(AbcServlet.VAR_URL_UTILS,new UrlUtils(request.getRequestURI(), response));
         }
         request.setAttribute(AbcServlet.ATTRIB_CONTEXT,context);
         return context;
@@ -165,6 +152,7 @@ public class AbcServlet extends VelocityServlet {
      */
     protected void init(HttpServletRequest request, HttpServletResponse response, Context context) {
         HttpSession session = request.getSession();
+//        response.setContentType("text/html; charset=ISO-8859-2");
 
         doLogin(request,response,session,context);
 
@@ -324,8 +312,8 @@ public class AbcServlet extends VelocityServlet {
      * Redirects to desired URL, keeping session and prefix.
      */
     public void redirect(String url, HttpServletResponse response, Context context) throws IOException {
-        UrlUtils urlUtils = (UrlUtils) context.get(AbcServlet.VAR_PREFIX);
-        String url2 = urlUtils.constructRedirectURL(url,response);
+        UrlUtils urlUtils = (UrlUtils) context.get(AbcServlet.VAR_URL_UTILS);
+        String url2 = urlUtils.constructRedirectURL(url);
         response.sendRedirect(url2);
     }
 
@@ -333,7 +321,7 @@ public class AbcServlet extends VelocityServlet {
      * Dispatches to desired URL, keeping prefix.
      */
     public void dispatch(String url, HttpServletRequest request, HttpServletResponse response, Context context) throws ServletException, IOException {
-        UrlUtils urlUtils = (UrlUtils) context.get(AbcServlet.VAR_PREFIX);
+        UrlUtils urlUtils = (UrlUtils) context.get(AbcServlet.VAR_URL_UTILS);
         url = urlUtils.constructDispatchURL(url);
         RequestDispatcher dispatcher = request.getRequestDispatcher(url);
         dispatcher.forward(request,response);
@@ -370,11 +358,20 @@ public class AbcServlet extends VelocityServlet {
      * If map is null, new HashMap is created.
      */
     protected Map putParamsToMap(HttpServletRequest request, Map map) {
+        Locale locale = Locale.getDefault();
+        System.out.println("default locale = " + locale); // cs_Cz
+        locale = request.getLocale();
+        System.out.println("request locale = " + locale); // cs !!
+
         if ( map==null ) map = new HashMap();
         Enumeration names = request.getParameterNames();
         while (names.hasMoreElements()) {
             String name = (String) names.nextElement();
-            map.put(name,request.getParameter(name));
+            String value = request.getParameter(name);
+            try {
+                value = new String(value.getBytes("ISO-8859-1"));
+            } catch (UnsupportedEncodingException e) {}
+            map.put(name,value);
         }
         return map;
     }

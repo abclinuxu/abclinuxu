@@ -36,27 +36,55 @@ public class VelocityHelper {
             if ( data!=null ) {
                 Node node = data.selectSingleNode("data/name");
                 if ( node!=null ) name = node.getText();
-                if ( name!=null && name.length()>0) return name;
             }
 
         } else if ( child instanceof Link ) {
             name = ((Link)child).getText();
-            if ( name!=null && name.length()>0) return name;
 
         } else if ( child instanceof Poll ) {
             name = ((Poll)child).getText();
-            if ( name!=null && name.length()>0) return name;
 
         } else if ( child instanceof User ) {
             name = ((User)child).getName();
-            if ( name!=null && name.length()>0) return name;
 
         } else if ( child instanceof Server ) {
             name = ((Server)child).getName();
-            if ( name!=null && name.length()>0) return name;
         }
 
-        name = child.getClass().getName();
-        return name.substring(name.lastIndexOf('.')+1);
+        if ( name==null || name.length()==0) {
+            name = child.getClass().getName().substring(name.lastIndexOf('.')+1);
+        }
+        return normalizeEncoding(name);
+    }
+
+    /**
+     * Gets text value of node selected by xpath expression for GenericObject.
+     * If <code>obj</code> doesn't contain <code>Document data</code> field
+     * or xpath element doesn't exist, null is returned.
+     */
+    public String getXPath(GenericObject obj, String xpath) throws PersistanceException {
+        if ( obj==null ) return null;
+        if ( !obj.isInitialized() ) PersistanceFactory.getPersistance().synchronize(obj);
+        Document doc = null;
+        String value = null;
+
+        if ( obj instanceof GenericDataObject ) {
+            doc = ((GenericDataObject)obj).getData();
+        } else if ( obj instanceof User ) {
+            doc = ((User)obj).getData();
+        }
+        if ( doc==null ) return null;
+
+        Node node = doc.selectSingleNode(xpath);
+        if ( node!=null ) value = node.getText();
+
+        return normalizeEncoding(value);
+    }
+
+    /**
+     * Converts string to encoding, which is best for servlets
+     */
+    private String normalizeEncoding(String in) {
+        return in;
     }
 }
