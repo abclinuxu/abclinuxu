@@ -281,7 +281,7 @@ public class EditDiscussion implements AbcAction {
         if ( children.size()>0 ) {
             record = (Record) ((Relation)children.get(0)).getChild();
             persistance.synchronize(record);
-            root = (Element) record.getData().selectSingleNode("/data");
+            root = record.getData().getRootElement();
         } else {
             record = new Record(0,Record.DISCUSSION);
             Document document = DocumentHelper.createDocument();
@@ -671,7 +671,7 @@ public class EditDiscussion implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setTitle(Map params, Element root, Map env) {
+    boolean setTitle(Map params, Element root, Map env) {
         String tmp = (String) params.get(PARAM_TITLE);
         if ( tmp!=null && tmp.length()>0 ) {
             DocumentHelper.makeElement(root,"title").setText(tmp);
@@ -689,7 +689,7 @@ public class EditDiscussion implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setText(Map params, Element root, Map env) {
+    boolean setText(Map params, Element root, Map env) {
         String tmp = (String) params.get(PARAM_TEXT);
         if ( tmp!=null && tmp.length()>0 ) {
             Element element = DocumentHelper.makeElement(root,"text");
@@ -732,7 +732,7 @@ public class EditDiscussion implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setCommentAuthor(Map params, User user, Element root, Map env) {
+    boolean setCommentAuthor(Map params, User user, Element root, Map env) {
         if ( user!=null ) {
             DocumentHelper.makeElement(root, "author_id").setText(Integer.toString(user.getId()));
         } else {
@@ -758,7 +758,7 @@ public class EditDiscussion implements AbcAction {
      * @param root root element of discussion to be updated
      * @return false, if there is a major error.
      */
-    private boolean setParent(Map params, Element root) {
+    boolean setParent(Map params, Element root) {
         String tmp = (String) params.get(PARAM_THREAD);
         if ( tmp==null || tmp.length()==0 )
             tmp = "0";
@@ -771,7 +771,7 @@ public class EditDiscussion implements AbcAction {
      * @param root root element of discussion to be updated
      * @return false, if there is a major error.
      */
-    private boolean setCreated(Element root) {
+    boolean setCreated(Element root) {
         DocumentHelper.makeElement(root, "created").setText(Constants.isoFormat.format(new Date()));
         return true;
     }
@@ -785,7 +785,7 @@ public class EditDiscussion implements AbcAction {
      * @param comment element of comment to be updated
      * @return false, if there is a major error.
      */
-    private boolean setId(Element root, Element comment) {
+    boolean setId(Element root, Element comment) {
         int last = 0;
         List comments = root.elements("comment");
         if ( comments!=null && comments.size()>0) {
@@ -805,7 +805,7 @@ public class EditDiscussion implements AbcAction {
      * @param recordRoot root element of record.
      * @return false, if there is a major error.
      */
-    private boolean setCommentsCount(Element itemRoot, Element recordRoot) {
+    boolean setCommentsCount(Element itemRoot, Element recordRoot) {
         List comments = recordRoot.selectNodes("comment");
         DocumentHelper.makeElement(itemRoot,"comments").setText(""+comments.size());
         return true;
