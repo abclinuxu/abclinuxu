@@ -69,13 +69,13 @@ public class DateTool implements Configurable {
             if (dayNotText)
                 return Constants.czShortFormat.format(date);
             else
-                return getCzDay(ms) + Constants.czTimeOnly.format(date);
+                return getCzDay(ms) + " " + Constants.czTimeOnly.format(date);
         }
         if ( CZ_FULL.equalsIgnoreCase(format) ) {
             if (dayNotText)
                 return Constants.czFormat.format(date);
             else
-                return getCzDay(ms) + Constants.czTimeOnly.format(date);
+                return getCzDay(ms) + " " + Constants.czTimeOnly.format(date);
         }
         if ( CZ_ONLY_DATE.equalsIgnoreCase(format) ) {
             if (dayNotText)
