@@ -77,13 +77,13 @@
   </servlet>
 
   <servlet name="EditPoll">
-    <action name="add">
-      <mapping template="web" content="web/add/poll.vm">
+    <action name="add" template="print">
+      <mapping template="web" content="/print/add/anketa.ftl">
         <var name="TITLE" value="Vytvoø anketu" />
       </mapping>
     </action>
-    <action name="edit">
-      <mapping template="web" content="web/edit/poll.vm">
+    <action name="edit" template="print">
+      <mapping template="web" content="/print/edit/anketa.ftl">
         <var name="TITLE" value="Uprav anketu" />
       </mapping>
     </action>

@@ -20,6 +20,7 @@ import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.utils.InstanceUtils;
 
@@ -27,28 +28,14 @@ import java.util.*;
 
 /**
  * Servlet for manipulation with Polls.
- * <p><u>Parameters used by EditCategory</u>
- * <dl>
- * <dt><code>PARAM_RELATION</code></dt>
- * <dd>Relation, where child is/will be parent for this Poll.</dd>
- * <dt><code>PARAM_POLL</code></dt>
- * <dd>Poll to be edited.</dd>
- * <dt><code>PARAM_TEXT</code></dt>
- * <dd>Question of the poll</dd>
- * <dt><code>PARAM_TYPE</code></dt>
- * <dd>Constant defining type of the poll.</dd>
- * <dt><code>PARAM_URL</code></dt>
- * <dd>When user votes, redirect page to this URL.</dd>
- * <dt><code>PARAM_VOTE_ID</code></dt>
- * <dd>User's choice(s), when he votes.</dd>
- * </dl>
+ * @todo create rating of articles, records and replies
  */
 public class EditPoll extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditPoll.class);
 
     public static final String PARAM_RELATION = "relationId";
     public static final String PARAM_POLL = "pollId";
-    public static final String PARAM_TEXT = "text";
+    public static final String PARAM_QUESTION = "question";
     public static final String PARAM_TYPE = "type";
     public static final String PARAM_MULTICHOICE = "multichoice";
     public static final String PARAM_CLOSED = "closed";
@@ -56,7 +43,6 @@ public class EditPoll extends AbcFMServlet {
     public static final String PARAM_COUNTS = "counts";
     public static final String PARAM_URL = "url";
     public static final String PARAM_VOTE_ID = "voteId";
-    public static final String PARAM_FROM = "from";
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
@@ -64,31 +50,32 @@ public class EditPoll extends AbcFMServlet {
     public static final String ACTION_EDIT2 = "edit2";
     public static final String ACTION_VOTE = "vote";
 
-    public static final String VAR_RELATION = "relation";
+    public static final String VAR_RELATION = "RELATION";
     public static final String VAR_POLL = "POLL";
 
-    /** this prefix will be used for marking user, that has already voted */
+    /** this prefix will be used for marking user, which has already voted */
     static final String COOKIE_PREFIX = "P_";
+
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
+        String action = (String) params.get(PARAM_ACTION);
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(EditPoll.PARAM_RELATION,Relation.class,params);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION,Relation.class,params);
         if ( relation!=null ) {
-            relation = (Relation) PersistanceFactory.getPersistance().findById(relation);
-            env.put(EditPoll.VAR_RELATION,relation);
+            relation = (Relation) persistance.findById(relation);
+            env.put(VAR_RELATION,relation);
         }
 
-        Poll poll = (Poll) InstanceUtils.instantiateParam(EditPoll.PARAM_POLL,Poll.class,params);
+        Poll poll = (Poll) InstanceUtils.instantiateParam(PARAM_POLL,Poll.class,params);
         if ( poll!=null ) {
-            poll = (Poll) PersistanceFactory.getPersistance().findById(poll);
+            poll = (Poll) persistance.findById(poll);
             env.put(EditPoll.VAR_POLL,poll);
         }
 
-        String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
-
-        if ( action==null || action.equals(EditPoll.ACTION_ADD) ) {
+        if ( action==null || action.equals(ACTION_ADD) ) {
             if ( relation==null ) throw new Exception("Chybí parametr relationId!");
             int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_ADD,Poll.class);
              switch (rights) {
@@ -97,11 +84,11 @@ public class EditPoll extends AbcFMServlet {
                  default: return FMTemplateSelector.select("EditPoll","add",env,request);
              }
 
-        } else if ( action.equals(EditPoll.ACTION_VOTE) ) {
+        } else if ( action.equals(ACTION_VOTE) ) {
             if ( poll==null ) throw new Exception("Chybí parametr pollId!");
             return actionVote(request,response,env);
 
-        } else if ( action.equals(EditPoll.ACTION_ADD_STEP2) ) {
+        } else if ( action.equals(ACTION_ADD_STEP2) ) {
             if ( relation==null ) throw new Exception("Chybí parametr relationId!");
             int rights = Guard.check(user,relation.getChild(),Guard.OPERATION_ADD,Poll.class);
             switch (rights) {
@@ -110,7 +97,7 @@ public class EditPoll extends AbcFMServlet {
                 default: return actionAddStep2(request,response,env);
             }
 
-        } else if ( action.equals(EditPoll.ACTION_EDIT) ) {
+        } else if ( action.equals(ACTION_EDIT) ) {
             if ( relation==null ) throw new Exception("Chybí parametr relationId!");
             if ( poll==null ) throw new Exception("Chybí parametr pollId!");
             int rights = Guard.check(user,poll,Guard.OPERATION_EDIT,null);
@@ -120,7 +107,7 @@ public class EditPoll extends AbcFMServlet {
                 default: return FMTemplateSelector.select("EditPoll","edit",env,request);
             }
 
-        } else if ( action.equals(EditPoll.ACTION_EDIT2) ) {
+        } else if ( action.equals(ACTION_EDIT2) ) {
             if ( relation==null ) throw new Exception("Chybí parametr relationId!");
             if ( poll==null ) throw new Exception("Chybí parametr pollId!");
             int rights = Guard.check(user,poll,Guard.OPERATION_EDIT,null);
@@ -139,21 +126,22 @@ public class EditPoll extends AbcFMServlet {
      */
     protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
         boolean error = false;
 
         int type = Poll.SURVEY;
         boolean multiChoice = false;
-        String text = (String) params.get(EditPoll.PARAM_TEXT);
-        List choices = (List) params.get(EditPoll.PARAM_CHOICES);
-        Relation upperRelation = (Relation) env.get(EditPoll.VAR_RELATION);
+        String text = (String) params.get(PARAM_QUESTION);
+        List choices = (List) params.get(PARAM_CHOICES);
+        Relation upperRelation = (Relation) env.get(VAR_RELATION);
 
-        String tmp = (String) params.get(EditPoll.PARAM_TYPE);
+        String tmp = (String) params.get(PARAM_TYPE);
         if ( "rating".equals(tmp) ) type = Poll.RATING;
-        tmp = (String) params.get(EditPoll.PARAM_MULTICHOICE);
+        tmp = (String) params.get(PARAM_MULTICHOICE);
         if ( "yes".equals(tmp) ) multiChoice = true;
 
         if ( text==null || text.length()==0 ) {
-            ServletUtils.addError(EditPoll.PARAM_TEXT,"Nezadal jste otázku!",env, null);
+            ServletUtils.addError(PARAM_QUESTION,"Nezadal jste otázku!",env, null);
             error = true;
         }
 
@@ -163,15 +151,17 @@ public class EditPoll extends AbcFMServlet {
         }
 
         if ( choices.size()<2 ) {
-            ServletUtils.addError(EditPoll.PARAM_CHOICES,"Vyplòte minimálnì dvì volby!",env, null);
+            ServletUtils.addError(PARAM_CHOICES,"Vyplòte minimálnì dvì volby!",env, null);
             error = true;
         }
 
-        if ( error ) return FMTemplateSelector.select("EditPoll","add",env,request);
+        if ( error )
+            return FMTemplateSelector.select("EditPoll","add",env,request);
 
         Poll poll = new Poll(0,type);
         poll.setText(text);
         poll.setMultiChoice(multiChoice);
+        poll.setClosed(false);
 
         List pollChoices = new ArrayList(choices.size());
         for (Iterator iter = choices.iterator(); iter.hasNext();) {
@@ -180,20 +170,12 @@ public class EditPoll extends AbcFMServlet {
         }
         poll.setChoices(pollChoices);
 
-        PersistanceFactory.getPersistance().create(poll);
+        persistance.create(poll);
         Relation relation = new Relation(upperRelation.getChild(),poll,upperRelation.getId());
-        PersistanceFactory.getPersistance().create(relation);
-
-        StringBuffer sb = new StringBuffer("/ViewRelation?relationId=");
-        sb.append(upperRelation.getId());
-        tmp = request.getParameter(EditPoll.PARAM_FROM);
-        if ( tmp!=null ) {
-            sb.append("&from=");
-            sb.append(tmp);
-        }
+        persistance.create(relation);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, sb.toString());
+        urlUtils.redirect(response, "/ViewRelation?relationId="+upperRelation.getId());
         return null;
     }
 
@@ -204,29 +186,29 @@ public class EditPoll extends AbcFMServlet {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
         int type = Poll.SURVEY;
-        Relation upperRelation = (Relation) env.get(EditPoll.VAR_RELATION);
-        Poll poll = (Poll) env.get(EditPoll.VAR_POLL);
+        Relation upperRelation = (Relation) env.get(VAR_RELATION);
+        Poll poll = (Poll) env.get(VAR_POLL);
 
-        String tmp = (String) params.get(EditPoll.PARAM_TYPE);
+        String tmp = (String) params.get(PARAM_TYPE);
         if ( "rating".equals(tmp) ) {
             poll.setType(Poll.RATING);
         } else {
             poll.setType(Poll.SURVEY);
         }
 
-        tmp = (String) params.get(EditPoll.PARAM_MULTICHOICE);
+        tmp = (String) params.get(PARAM_MULTICHOICE);
         poll.setMultiChoice( "yes".equals(tmp) );
 
-        tmp = (String) params.get(EditPoll.PARAM_CLOSED);
+        tmp = (String) params.get(PARAM_CLOSED);
         poll.setClosed( ("yes".equals(tmp)) );
 
-        tmp = (String) params.get(EditPoll.PARAM_TEXT);
+        tmp = (String) params.get(PARAM_QUESTION);
         if ( tmp!=null && tmp.length()>0 ) {
             poll.setText(tmp);
         }
 
-        List choices = (List) params.get(EditPoll.PARAM_CHOICES);
-        List counts = (List) params.get(EditPoll.PARAM_COUNTS);
+        List choices = (List) params.get(PARAM_CHOICES);
+        List counts = (List) params.get(PARAM_COUNTS);
         PollChoice[] pollChoices = poll.getChoices();
 
         int max = choices.size();
@@ -251,8 +233,9 @@ public class EditPoll extends AbcFMServlet {
     protected String actionVote(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        Poll poll = (Poll) env.get(EditPoll.VAR_POLL);
-        String url = (String) params.get(EditPoll.PARAM_URL);
+
+        Poll poll = (Poll) env.get(VAR_POLL);
+        String url = (String) params.get(PARAM_URL);
         int max = 0;
 
         if ( poll.isClosed() ) {
@@ -266,7 +249,7 @@ public class EditPoll extends AbcFMServlet {
             url = "/Index";
         }
 
-        String[] values = request.getParameterValues(EditPoll.PARAM_VOTE_ID);
+        String[] values = request.getParameterValues(PARAM_VOTE_ID);
         if ( values==null ) {
             ServletUtils.addError(Constants.ERROR_GENERIC,"Nevybral jste ¾ádnou volbu!",env,request.getSession());
         } else {
