@@ -19,7 +19,9 @@ public abstract class GenericDataObject extends GenericObject implements XMLCont
     /** identifier of owner of this object */
     protected int owner;
     /** Type of the object. You must set it before storing with Persistance! */
-    int type = 0;
+    protected int type = 0;
+    /** subtype of this object. String, max. length is 30 */
+    protected String subType;
     /** when this object was created */
     protected Date created;
     /** last update of this object */
@@ -65,6 +67,23 @@ public abstract class GenericDataObject extends GenericObject implements XMLCont
      */
     public void setType(int type) {
         this.type = type;
+    }
+
+    /**
+     * @return Subtype of this object
+     */
+    public String getSubType() {
+        return subType;
+    }
+
+    /**
+     * Sets subtype of this object.
+     * @param subType max size is 30
+     */
+    public void setSubType(String subType) {
+        if (subType!=null && subType.length()>30)
+            throw new java.lang.IllegalArgumentException("Subtype is too long: "+subType);
+        this.subType = subType;
     }
 
     /**

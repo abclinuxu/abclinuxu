@@ -569,11 +569,12 @@ public class MySqlPersistance implements Persistance {
     private void appendCreateParams(GenericObject obj, StringBuffer sb, List conditions ) {
         if (obj instanceof GenericDataObject) {
             GenericDataObject gdo = (GenericDataObject) obj;
-            sb.append("insert into "+getTable(obj)+" values(0,?,?,?,?,now())");
+            sb.append("insert into "+getTable(obj)+" values(0,?,?,?,?,?,now())");
             if ( !(obj instanceof Category) && gdo.getType()==0 ) {
                 log.warn("Type not set! "+obj.toString());
             }
             conditions.add(new Integer(gdo.getType()));
+            conditions.add(gdo.getSubType());
             conditions.add(gdo.getDataAsString().getBytes());
             conditions.add(new Integer(gdo.getOwner()));
 
@@ -867,14 +868,15 @@ public class MySqlPersistance implements Persistance {
                 item = new Record(obj.getId());
 
             item.setType(resultSet.getInt(2));
+            item.setSubType(resultSet.getString(3));
 
-            String tmp = resultSet.getString(3);
+            String tmp = resultSet.getString(4);
             tmp = insertEncoding(tmp);
             item.setData(new String(tmp));
 
-            item.setOwner(resultSet.getInt(4));
-            item.setCreated(resultSet.getTimestamp(5));
-            item.setUpdated(resultSet.getTimestamp(6));
+            item.setOwner(resultSet.getInt(5));
+            item.setCreated(resultSet.getTimestamp(6));
+            item.setUpdated(resultSet.getTimestamp(7));
 
             return item;
         } finally {
@@ -1061,12 +1063,13 @@ public class MySqlPersistance implements Persistance {
             con = getSQLConnection();
             statement = null;
 
-            statement = con.prepareStatement("update "+getTable(obj)+" set typ=?,data=?,pridal=?,vytvoreno=? where cislo=?");
+            statement = con.prepareStatement("update "+getTable(obj)+" set typ=?,podtyp=?,data=?,pridal=?,vytvoreno=? where cislo=?");
             statement.setInt(1,obj.getType());
-            statement.setBytes(2,obj.getDataAsString().getBytes());
-            statement.setInt(3,obj.getOwner());
-            statement.setTimestamp(4,new Timestamp(obj.getCreated().getTime()));
-            statement.setInt(5,obj.getId());
+            statement.setString(2,obj.getSubType());
+            statement.setBytes(3,obj.getDataAsString().getBytes());
+            statement.setInt(4,obj.getOwner());
+            statement.setTimestamp(5,new Timestamp(obj.getCreated().getTime()));
+            statement.setInt(6,obj.getId());
 
             int result = statement.executeUpdate();
             if ( result!=1 ) {
