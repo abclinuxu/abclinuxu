@@ -10,6 +10,7 @@ import org.dom4j.Element;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Date;
+import java.util.Collections;
 
 import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.utils.email.monitor.MonitorAction;
@@ -31,7 +32,7 @@ public class MonitorPool {
      * Default constructor.
      */
     private MonitorPool() {
-        pool = new LinkedList();
+        pool = Collections.synchronizedList(new LinkedList());
     }
 
     /**
@@ -45,7 +46,7 @@ public class MonitorPool {
      * Finds out, whether the pool is empty.
      * @return true, if the pool doesn't contain any unprocessed MonitorAction.
      */
-    public synchronized boolean isEmpty() {
+    public boolean isEmpty() {
         return pool.size()==0;
     }
 
@@ -54,7 +55,7 @@ public class MonitorPool {
      * @return first MonitorAction
      * @throws java.lang.IndexOutOfBoundsException If there is no element in the pool.
      */
-    public synchronized MonitorAction getFirst() {
+    public MonitorAction getFirst() {
         return (MonitorAction) pool.remove(0);
     }
 
@@ -83,8 +84,6 @@ public class MonitorPool {
             log.error("Cannot create copy of "+action.object, e);
         }
 
-        synchronized (singleton) {
-            singleton.pool.add(action);
-        }
+        singleton.pool.add(action);
     }
 }
