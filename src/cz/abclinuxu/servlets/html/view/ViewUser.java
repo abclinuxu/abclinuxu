@@ -27,6 +27,7 @@ public class ViewUser implements AbcAction {
 
     public static final String VAR_PROFILE = "PROFILE";
     public static final String VAR_KOD = "KOD";
+    public static final String VAR_COUNTS = "COUNTS";
 
     public static final String PARAM_USER = "userId";
     public static final String PARAM_USER_SHORT = "uid";
@@ -72,7 +73,7 @@ public class ViewUser implements AbcAction {
                     managed = user;
             } else
                 managed = (User) PersistanceFactory.getPersistance().findById(managed);
-            
+
             env.put(VAR_PROFILE, managed);
             if (user==null || (user.getId()!=managed.getId() && !user.hasRole(Roles.USER_ADMIN)))
                 return handleProfile(request, env);
@@ -105,6 +106,16 @@ public class ViewUser implements AbcAction {
                 return ServletUtils.showErrorPage("Chybí parametr uid!", env, request);
             user = (User) persistance.findById(user);
             env.put(VAR_PROFILE, user);
+
+            SQLTool sqlTool = SQLTool.getInstance();
+            Map counts = new HashMap();
+            counts.put("article", new Integer(sqlTool.countArticleRelationsByUser(user.getId())));
+            counts.put("news", new Integer(sqlTool.countNewsRelationsByUser(user.getId())));
+            counts.put("question", new Integer(sqlTool.countQuestionRelationsByUser(user.getId())));
+            counts.put("comment", new Integer(sqlTool.countCommentRelationsByUser(user.getId())));
+            counts.put("hardware", new Integer(sqlTool.countRecordRelationsWithUserAndType(user.getId(), Record.HARDWARE)));
+            counts.put("software", new Integer(sqlTool.countRecordRelationsWithUserAndType(user.getId(), Record.SOFTWARE)));
+            env.put(VAR_COUNTS, counts);
         }
 
         return FMTemplateSelector.select("ViewUser","profile",env,request);
