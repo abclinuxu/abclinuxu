@@ -9,6 +9,7 @@
 package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.view.ViewIcons;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Relation;
@@ -23,6 +24,7 @@ import org.dom4j.Element;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.RequestDispatcher;
+import java.util.Map;
 
 /**
  * Class for manipulation with Category.<p>
@@ -47,8 +49,9 @@ public class EditCategory extends AbcServlet {
     public static final String PARAM_UPPER_RELATION = "upperRelation";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_OPEN = "open";
-    public static final String PARAM_ICON = "icon";
+    public static final String PARAM_ICON = ViewIcons.PARAM_ICON;
     public static final String PARAM_NOTE = "note";
+
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
@@ -58,9 +61,10 @@ public class EditCategory extends AbcServlet {
 
 
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        validateUserSession(request,response,ctx);
+        init(request,response,ctx);
 
-        String action = request.getParameter(AbcServlet.PARAM_ACTION);
+        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        String action = (String) params.get(AbcServlet.PARAM_ACTION);
         if ( action==null || action.equals(EditCategory.ACTION_ADD) ) {
             // check rights
             return getTemplate("add/category.vm");
@@ -79,19 +83,21 @@ public class EditCategory extends AbcServlet {
      */
     protected Template actionAddStep2(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         int upperCategory = 0, upperRelation = 0;
-        String tmp = request.getParameter(EditCategory.PARAM_CATEGORY_ID);
+        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+
+        String tmp = (String) params.get(EditCategory.PARAM_CATEGORY_ID);
         if ( tmp!=null ) { try { upperCategory = Integer.parseInt(tmp); } catch (NumberFormatException e) {} }
         if ( upperCategory==0 ) {
             throw new Exception("Chybí parametry!");
         }
-        tmp = request.getParameter(EditCategory.PARAM_UPPER_RELATION);
+        tmp = (String) params.get(EditCategory.PARAM_UPPER_RELATION);
         if ( tmp!=null ) { try { upperRelation = Integer.parseInt(tmp); } catch (NumberFormatException e) {} }
 
         User user = (User) ctx.get(AbcServlet.VAR_USER);
-        String name = request.getParameter(EditCategory.PARAM_NAME);
-        String icon = request.getParameter(EditCategory.PARAM_ICON);
-        String open = request.getParameter(EditCategory.PARAM_OPEN);
-        String note = request.getParameter(EditCategory.PARAM_NOTE);
+        String name = (String) params.get(EditCategory.PARAM_NAME);
+        String icon = (String) params.get(EditCategory.PARAM_ICON);
+        String open = (String) params.get(EditCategory.PARAM_OPEN);
+        String note = (String) params.get(EditCategory.PARAM_NOTE);
         if ( name!=null) name = name.trim();
         if ( note!=null) note = note.trim();
 

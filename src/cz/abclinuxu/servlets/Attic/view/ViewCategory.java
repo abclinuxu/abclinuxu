@@ -40,7 +40,7 @@ public class ViewCategory extends AbcServlet {
     public static final String PARAM_CATEGORY_ID = "categoryId";
 
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        validateUserSession(request,response,ctx);
+        init(request,response,ctx);
 
         // find category and store it into Context
         Category category = null;

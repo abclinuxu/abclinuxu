@@ -14,9 +14,9 @@ import org.apache.velocity.context.Context;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.File;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * Servlet for interactive selection of icon. When user chooses the icon, flow is redirected
@@ -42,6 +42,7 @@ import java.util.ArrayList;
  * when sent to <code>PARAM_URL</code>, it holds complete path to icon.</dd>
  * <dt><code>PARAM_RELOAD</code></dt>
  * <dd>Indicates, whether user has changed directory.</dd>
+ * <dt><code>PARAM_CHECK_SESSION</code></dt>
  * </dl>
  */
 public class ViewIcons extends AbcServlet {
@@ -49,21 +50,22 @@ public class ViewIcons extends AbcServlet {
     public static final String PARAM_DIR = "dir";
     public static final String PARAM_ICON = "icon";
     public static final String PARAM_RELOAD = "reload";
+    public static final String PARAM_CHECK_SESSION = "checkSession";
+
     public static final String VAR_DIR = "DIR";
     public static final String VAR_DIRS = "DIRS";
     public static final String VAR_ICONS = "ICONS";
 
 
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        validateUserSession(request,response,ctx);
+        init(request,response,ctx);
 
         String reload = request.getParameter(ViewIcons.PARAM_RELOAD);
         if ( "no".equals(reload) ) {
-            // finish has been submitted
+            return actionFinish(request,response,ctx);
         } else {
             return actionReload(request,ctx);
         }
-        return null;
     }
 
     /**
@@ -97,5 +99,27 @@ public class ViewIcons extends AbcServlet {
         java.util.Collections.sort(icons);
         ctx.put(ViewIcons.VAR_ICONS,icons);
         return getTemplate("view/icons.vm");
+    }
+
+    /**
+     * Called, when we shall display list of icons
+     */
+    protected Template actionFinish(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+        String url = request.getParameter(ViewIcons.PARAM_URL);
+        String dir = "/ikony/"+request.getParameter(ViewIcons.PARAM_DIR)+"/";
+        String icon = dir+request.getParameter(ViewIcons.PARAM_ICON);
+
+        Map map = putParamsToMap(request,null);
+        map.remove(ViewIcons.PARAM_DIR);
+        map.remove(ViewIcons.PARAM_ICON);
+        map.remove(ViewIcons.PARAM_URL);
+        map.remove(ViewIcons.PARAM_RELOAD);
+
+        HttpSession session = request.getSession();
+        session.setAttribute(AbcServlet.ATTRIB_PARAMS,map);
+
+        String newUrl = url + "?icon="+icon+"&"+ViewIcons.PARAM_CHECK_SESSION+"=yes";
+        redirect(newUrl,response,ctx);
+        return null;
     }
 }

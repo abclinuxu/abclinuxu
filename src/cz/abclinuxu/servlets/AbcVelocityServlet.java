@@ -26,14 +26,12 @@ import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.AbcException;
 import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.servlets.view.ViewIcons;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.PrintWriter;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * Base class for all servlets. It provides several useful
@@ -44,11 +42,14 @@ import java.util.HashMap;
  * <dt><code>VAR_PREFIX</code></dt>
  * <dd>Specifies prefix of URL (/hardware,/software,/clanky). It distinguishes context.</dd>
  * <dt><code>VAR_USER</code></dt>
- * <dd>instance of User, if any.</dd>
+ * <dd>instance of User, if any. It is stored in both Session and Context.</dd>
  * <dt><code>VAR_ERRORS</code></dt>
  * <dd>Map of error messages. For form validation, use field name as key.</dd>
  * <dt><code>VAR_MESSAGES</code></dt>
  * <dd>List of informational messages.</dd>
+ * <dt><code>VAR_PARAMS</code></dt>
+ * <dd>Combined version of request's params and session's params. Use it only, if
+ * view can be merged after SelectIcon.</dd>
  * </dl>
  * <u>Parameters used by AbcServlet's descendants</u>
  * <dl>
@@ -61,10 +62,15 @@ public class AbcServlet extends VelocityServlet {
 
     /** Name of key in HttpServletsRequest, used for context chaining. */
     public static final String ATTRIB_CONTEXT = "CONTEXT";
+    /** Name of key in HttpServletsRequest, used to combine request's params and session's params. */
+    public static final String ATTRIB_PARAMS = "PARAMS";
+
     public static final String VAR_PREFIX = "PREFIX";
     public static final String VAR_USER = "USER";
     public static final String VAR_ERRORS = "ERRORS";
     public static final String VAR_MESSAGES = "MESSAGES";
+    public static final String VAR_PARAMS = "PARAMS";
+
     public static final String PARAM_ACTION = "action";
 
     public static final String PREFIX_HARDWARE = "/hardware";
@@ -129,17 +135,18 @@ public class AbcServlet extends VelocityServlet {
     }
 
     /**
-     * Checks, whether there is a session. If it is not, the method creates new session, it searches
-     * for cookie with user id and password hash and creates new User. This instance is then stored
-     * in both session and context. <p>
-     * Cookie is name <code>AbcServlet.USER</code> and contains user's id, comma and password hash.<p>
-     * It is mandatory to use this method at beginning of <code>handleRequest()</code>,
-     * before <code>checkAccess()</code> is called.
-     * @return one of constants <code>ACCESS_GRANTED</code>, <code>USER_UNKNOWN</code> and
-     * <code>USER_BAD_PASSWORD</code>.
+     * Performs initialization tasks. First, it checks, whether session contains <code>AbcServlet.VAR_USER</code>.
+     * If not, it searches for cookie with same name. If the search was sucessful, it verifies password
+     * and pushes new user to session and context.<br>
+     * Cookie contains user's id, comma and password hash.<p>
+     * Next it checks for parameter ViewIcons.PARAM_CHECK_SESSION. If found, it gets map
+     * ViewIcons.ATTRIB_PARAMS from session and combines it with request's parameters map
+     * into <code>AbcServlet.ATTRIB_PARAMS</code>. Thus you have uniform way of dealing
+     * with parameters.
+     * It is mandatory to use this method at the very beginning of <code>handleRequest()</code>.
      * @todo delete bad cookie
      */
-    protected int validateUserSession(HttpServletRequest request, HttpServletResponse response, Context context) {
+    protected void init(HttpServletRequest request, HttpServletResponse response, Context context) {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(AbcServlet.VAR_USER);
         if ( user==null ) {
@@ -156,11 +163,13 @@ public class AbcServlet extends VelocityServlet {
                         try {
                             user = (User) PersistanceFactory.getPersistance().findById(new User(id));
                         } catch (PersistanceException e) {
-                            return AbcServlet.USER_UNKNOWN;
+                            addErrorMessage(null,"Nalezena cookie s neznamym uzivatelem!",context);
+                            break;
                         }
 
                         if ( user.getPassword().hashCode() != hash ) {
-                            return AbcServlet.USER_BAD_PASSWORD;
+                            addErrorMessage(null,"Nalezena cookie se spatnym heslem!",context);
+                            break;
                         }
                         session.setAttribute(AbcServlet.VAR_USER,user);
                         break;
@@ -170,8 +179,25 @@ public class AbcServlet extends VelocityServlet {
                 }
             }
         }
-        context.put(AbcServlet.VAR_USER,user);//todo: do not put nulls!
-        return AbcServlet.ACCESS_GRANTED;
+        if ( user!=null ) context.put(AbcServlet.VAR_USER,user);
+
+        String checkSession = request.getParameter(ViewIcons.PARAM_CHECK_SESSION);
+        Map params = null;
+        if ( checkSession!=null ) {
+            params = (Map) session.getAttribute(AbcServlet.ATTRIB_PARAMS);
+            if ( params!=null ) {
+                params = putParamsToMap(request,params);
+                session.removeAttribute(AbcServlet.ATTRIB_PARAMS);
+            } else {
+                params = putParamsToMap(request,params);
+            }
+        } else {
+            params = putParamsToMap(request,params);
+        }
+        request.setAttribute(AbcServlet.ATTRIB_PARAMS,params);
+        context.put(AbcServlet.VAR_PARAMS,params);
+
+        return;
     }
 
     /**
@@ -198,18 +224,36 @@ public class AbcServlet extends VelocityServlet {
      * Adds message to <code>VAR_ERRORS</code> map.
      */
     protected void addErrorMessage(String key, String errorMessage, Context context) {
+        boolean created = false;
         Map errors = (Map) context.get(VAR_ERRORS);
-        if ( errors==null ) errors = new HashMap(5);
+
+        if ( errors==null ) {
+            errors = new HashMap(5);
+            created = true;
+        }
+
         errors.put(key,errorMessage);
+        if ( created ) {
+            context.put(AbcServlet.VAR_ERRORS,errors);
+        }
     }
 
     /**
      * Adds message to <code>VAR_MESSAGES</code> list.
      */
     protected void addMessage(String message, Context context) {
-        List errors = (List) context.get(VAR_MESSAGES);
-        if ( errors==null ) errors = new ArrayList(5);
-        errors.add(message);
+        boolean created = false;
+        List messages = (List) context.get(VAR_MESSAGES);
+
+        if ( messages==null ) {
+            messages = new ArrayList(5);
+            created = true;
+        }
+
+        messages.add(message);
+        if ( created ) {
+            context.put(AbcServlet.VAR_MESSAGES,messages);
+        }
     }
 
     /**
@@ -255,5 +299,19 @@ public class AbcServlet extends VelocityServlet {
         html.append("</body>");
         html.append("</html>");
         response.getOutputStream().print( html.toString() );
+    }
+
+    /**
+     * Adds all parameters from request to specified map and returns it back.
+     * If map is null, new HashMap is created.
+     */
+    protected Map putParamsToMap(HttpServletRequest request, Map map) {
+        if ( map==null ) map = new HashMap();
+        Enumeration names = request.getParameterNames();
+        while (names.hasMoreElements()) {
+            String name = (String) names.nextElement();
+            map.put(name,request.getParameter(name));
+        }
+        return map;
     }
 }

@@ -45,7 +45,7 @@ public class ViewRelation extends AbcServlet {
     public static final String VAR_PARENTS = "PARENTS";
 
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        validateUserSession(request,response,ctx);
+        init(request,response,ctx);
 
         int pk = Integer.parseInt(request.getParameter(PARAM_RELATION_ID));
         Relation relation = new Relation(pk);
