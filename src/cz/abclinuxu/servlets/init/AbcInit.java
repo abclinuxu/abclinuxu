@@ -85,6 +85,10 @@ public class AbcInit extends HttpServlet {
         if ( ! Misc.empty(tmp) )
             GenerateLinks.setFileNameAnneca(path+tmp);
 
+        tmp = getInitParameter("LINKS_SZM");
+        if ( ! Misc.empty(tmp) )
+            GenerateLinks.setFileNameSzm(path+tmp);
+
         tmp = getInitParameter("LINKS_RSS");
         if ( ! Misc.empty(tmp) )
             GenerateLinks.setFileNameRSS(path+tmp);

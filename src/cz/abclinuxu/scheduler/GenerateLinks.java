@@ -26,6 +26,7 @@ public class GenerateLinks extends TimerTask {
     static String fileName_trafika = "abc.dat";
     static String fileName_anneca = "abc2.dat";
     static String fileName_rss = "abc.rss";
+    static String fileName_szm = "abc_szm_sk.dat";
 
     static RE lineBreak;
 
@@ -41,10 +42,11 @@ public class GenerateLinks extends TimerTask {
 
 
     public GenerateLinks() {
-        generators = new LinksGenerator[3];
+        generators = new LinksGenerator[4];
         generators[0] = new Trafika();
         generators[1] = new Anneca();
         generators[2] = new RSS();
+        generators[3] = new Szm();
     }
 
     public void run() {
@@ -59,21 +61,36 @@ public class GenerateLinks extends TimerTask {
                 generators[j].generateHeader();
             }
 
-            String url,title,desc;
-            for(int i=0; i<4 && i<list.size(); i++ ) {
+            String url,title,desc,content;
+            Record record = null;
+            for(int i=0; i<6 && i<list.size(); i++ ) {
                 Relation relation = (Relation) list.get(i);
                 Item item = (Item) relation.getChild();
 
-                url = "http://AbcLinuxu.cz/clanky/ViewRelation?relationId="+relation.getId();
+                url = "http://www.abclinuxu.cz/clanky/ViewRelation?relationId="+relation.getId();
                 title = helper.getXPath(item,"data/name");
                 desc = removeNewLines(helper.getXPath(item,"data/perex"));
 
+                content = null; record = null;
+                for (Iterator iter = item.getContent().iterator(); iter.hasNext();) {
+                    Relation child = (Relation) iter.next();
+                    if ( child.getChild() instanceof Record ) {
+                        record = (Record) child.getChild();
+                        helper.sync(record);
+                        if ( record.getType()==Record.ARTICLE )
+                            break;
+                        record = null;
+                    }
+                }
+                if ( record!=null )
+                    content = removeNewLines(helper.getXPath(record,"data/content"));
+
                 for (int j = 0; j < generators.length; j++) {
-                    generators[j].generateLink(title,desc,url);
+                    generators[j].generateLink(title, url, desc, content);
                 }
             }
 
-            list = persistance.findByCommand(ShowOlder.SQL_HARDWARE+" limit "+2);
+            list = persistance.findByCommand(ShowOlder.SQL_HARDWARE+" limit "+3);
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 Object[] objects = (Object[]) iter.next();
                 int id = ((Integer)objects[0]).intValue();
@@ -81,31 +98,31 @@ public class GenerateLinks extends TimerTask {
                 Item item = (Item) found.getParent();
                 persistance.synchronize(item);
 
-                url = "http://AbcLinuxu.cz/hardware/ViewRelation?relationId="+found.getId();
+                url = "http://www.abclinuxu.cz/hardware/ViewRelation?relationId="+found.getId();
                 title = "H "+helper.getXPath(item,"data/name");
 
                 for (int j = 0; j < generators.length; j++) {
-                    generators[j].generateLink(title,"",url);
+                    generators[j].generateLink(title, url, "", null);
                 }
             }
 
-            list = persistance.findByCommand(ShowOlder.SQL_SOFTWARE+" limit "+2);
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                Object[] objects = (Object[]) iter.next();
-                int id = ((Integer)objects[0]).intValue();
-                Relation found = (Relation) persistance.findById(new Relation(id));
-                Item item = (Item) found.getParent();
-                persistance.synchronize(item);
+//            list = persistance.findByCommand(ShowOlder.SQL_SOFTWARE+" limit "+2);
+//            for (Iterator iter = list.iterator(); iter.hasNext();) {
+//                Object[] objects = (Object[]) iter.next();
+//                int id = ((Integer)objects[0]).intValue();
+//                Relation found = (Relation) persistance.findById(new Relation(id));
+//                Item item = (Item) found.getParent();
+//                persistance.synchronize(item);
+//
+//                url = "http://AbcLinuxu.cz/software/ViewRelation?relationId="+found.getId();
+//                title = "S "+helper.getXPath(item,"data/name");
+//
+//                for (int j = 0; j < generators.length; j++) {
+//                    generators[j].generateLink(title,"",url);
+//                }
+//            }
 
-                url = "http://AbcLinuxu.cz/software/ViewRelation?relationId="+found.getId();
-                title = "S "+helper.getXPath(item,"data/name");
-
-                for (int j = 0; j < generators.length; j++) {
-                    generators[j].generateLink(title,"",url);
-                }
-            }
-
-            list = persistance.findByCommand(ShowOlder.SQL_DRIVERS+" limit "+2);
+            list = persistance.findByCommand(ShowOlder.SQL_DRIVERS+" limit "+1);
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 Object[] objects = (Object[]) iter.next();
                 int id = ((Integer)objects[0]).intValue();
@@ -113,11 +130,11 @@ public class GenerateLinks extends TimerTask {
                 Item item = (Item) found.getChild();
                 persistance.synchronize(item);
 
-                url = "http://AbcLinuxu.cz/drivers/ViewRelation?relationId="+found.getId();
+                url = "http://www.abclinuxu.cz/drivers/ViewRelation?relationId="+found.getId();
                 title = "O "+helper.getXPath(item,"data/name");
 
                 for (int j = 0; j < generators.length; j++) {
-                    generators[j].generateLink(title,"",url);
+                    generators[j].generateLink(title, url, "", null);
                 }
             }
 
@@ -141,10 +158,17 @@ public class GenerateLinks extends TimerTask {
     }
 
     /**
-     * Sets default file name.
+     * Sets file name of Anneca feed.
      */
     public static void setFileNameAnneca(String name) {
         fileName_anneca = name;
+    }
+
+    /**
+     * Sets file name of szm feed.
+     */
+    public static void setFileNameSzm(String name) {
+        fileName_szm = name;
     }
 
     /**
@@ -176,7 +200,7 @@ public class GenerateLinks extends TimerTask {
         /** called at end */
         public void generateBottom() throws IOException;
         /** called for each article */
-        public void generateLink(String title, String desc, String url) throws IOException;
+        public void generateLink(String title, String url, String desc, String content) throws IOException;
     }
 
     /**
@@ -195,7 +219,7 @@ public class GenerateLinks extends TimerTask {
             writer.close();
         }
 
-        public void generateLink(String title, String desc, String url) throws IOException {
+        public void generateLink(String title, String url, String desc, String content) throws IOException {
             writer.write(url+"|\\"+title+"\n");
         }
     }
@@ -210,8 +234,31 @@ public class GenerateLinks extends TimerTask {
             writer = new FileWriter(fileName_anneca);
         }
 
-        public void generateLink(String title, String desc, String url) throws IOException {
+        public void generateLink(String title, String url, String desc, String content) throws IOException {
             writer.write(url+"|"+title+"|"+desc+"\n");
+        }
+
+        public void generateBottom() throws IOException {
+            writer.close();
+        }
+    }
+
+    /**
+     * Full version used by szm.sk.
+     */
+    class Szm implements LinksGenerator {
+        FileWriter writer = null;
+
+        public void generateHeader() throws IOException {
+            writer = new FileWriter(fileName_szm);
+            writer.write("// Tento soubor je urcen pro szm.sk.\n");
+            writer.write("// Obsah clanku smi byt indexovan, ale nesmi byt zverejnen.\n");
+            writer.write(Constants.isoFormat.format(new Date()));
+            writer.write('\n');
+        }
+
+        public void generateLink(String title, String url, String desc, String content) throws IOException {
+            writer.write(url+"|"+title+"|"+desc+"|"+content+"\n");
         }
 
         public void generateBottom() throws IOException {
@@ -228,30 +275,32 @@ public class GenerateLinks extends TimerTask {
         public void generateHeader() throws IOException {
             writer = new FileWriter(fileName_rss);
             writer.write("<?xml version=\"1.0\" encoding=\"iso-8859-2\" ?>\n");
-            writer.write("<!DOCTYPE rss PUBLIC \"-//Netscape Communications//DTD RSS 0.91//EN\" \"http://my.netscape.com/publish/formats/rss-0.91.dtd\">\n");
-            writer.write("<rss version=\"0.91\">\n");
-            writer.write("<channel>\n");
-            writer.write("<title>AbcLinuxu.cz - tady je tuèòákùm hej!</title>\n");
-            writer.write("<link>http://AbcLinuxu.cz</link>\n");
-            writer.write("<description>Centrála pro výmìnu rad, zku¹eností a návodù pod Linuxem.</description>\n");
+            writer.write("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns=\"http://purl.org/rss/1.0/\">\n");
+//            writer.write("<!DOCTYPE rss PUBLIC \"-//Netscape Communications//DTD RSS 0.91//EN\" \"http://my.netscape.com/publish/formats/rss-0.91.dtd\">\n");
+            writer.write("\t<channel rdf:about=\"http://www.abclinuxu.cz\">\n");
+            writer.write("\t\t<title>AbcLinuxu.cz - tady je tuèòákùm hej!</title>\n");
+            writer.write("\t\t<link>http://www.abclinuxu.cz</link>\n");
+            writer.write("\t\t<description>Centrála pro výmìnu rad, zku¹eností a návodù pod Linuxem.</description>\n");
+            writer.write("\t\t<image rdf:resource=\"http://www.abclinuxu.cz/images/site/logo2.png\" />\n");
+            writer.write("\t</channel>\n");
         }
 
-        public void generateLink(String title, String desc, String url) throws IOException {
-            writer.write("<item>\n");
-            writer.write("<title>"+title+"</title>\n");
-            writer.write("<link>"+url+"</link>\n");
-            writer.write("</item>\n");
+        public void generateLink(String title, String url, String desc, String content) throws IOException {
+            writer.write("\t<item rdf:about=\""+url+"\">\n");
+            writer.write("\t\t<title>"+title+"</title>\n");
+            writer.write("\t\t<link>"+url+"</link>\n");
+            writer.write("\t\t<description>"+desc+"</description>\n");
+            writer.write("\t</item>\n");
         }
 
         public void generateBottom() throws IOException {
-            writer.write("<textinput>\n");
-            writer.write("<title>Prohledej AbcLinuxu.cz</title>\n");
-            writer.write("<description>Hledej výraz v návodech, èláncích èi diskusích.</description>\n");
-            writer.write("<name>query</name>\n");
-            writer.write("<link>http://AbcLinuxu.cz/Search</link>\n");
-            writer.write("</textinput>\n");
-            writer.write("</channel>\n");
-            writer.write("</rss>\n");
+            writer.write("\t<textinput>\n");
+            writer.write("\t\t<title>Prohledej AbcLinuxu.cz</title>\n");
+            writer.write("\t\t<description>Hledej výraz v návodech, èláncích èi diskusích.</description>\n");
+            writer.write("\t\t<name>query</name>\n");
+            writer.write("\t\t<link>http://AbcLinuxu.cz/Search</link>\n");
+            writer.write("\t</textinput>\n");
+            writer.write("</rdf:RDF>\n");
             writer.close();
         }
     }
