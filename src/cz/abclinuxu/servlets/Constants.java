@@ -28,10 +28,12 @@ public interface Constants {
     int CAT_FORUM = 265;
     int CAT_ROOT = 248;
     int CAT_SYSTEM = 338;
-    int CAT_ARTICLEPOOL = 339;
+    int CAT_ARTICLES_POOL = 339;
     int CAT_NEWS_POOL = 445;
     int CAT_NEWS = 452;
     int CAT_DICTIONARY = 569;
+    int CAT_TIPS_POOL = 571;
+    int CAT_TIPS = 572;
 
     int ITEM_DIZ_TODO = 11606;
     int REC_DIZ_TODO = 38280;
@@ -55,6 +57,8 @@ public interface Constants {
     int REL_NEWS = 42932;
     int REL_DIZ_TODO = 50795;
     int REL_DICTIONARY = 60058;
+    int REL_TIPS_POOL = 61138;
+    int REL_TIPS = 61139;
 
     int GROUP_ADMINI = 11246;
     int GROUP_AUTORI = 11247;
