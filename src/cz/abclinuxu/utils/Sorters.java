@@ -25,6 +25,7 @@ public class Sorters {
      * sorted in ascending order.
      */
     public static void sortByDate(List objects, boolean ascendingOrder) {
+        if ( objects==null || objects.size()==0 ) return;
         Collections.sort(objects, new DateComparator(ascendingOrder));
     }
 
@@ -36,6 +37,7 @@ public class Sorters {
      * sorted in ascending order.
      */
     public static void sortById(List objects, boolean ascendingOrder) {
+        if ( objects==null || objects.size()==0 ) return;
         Collections.sort(objects, new IdComparator(ascendingOrder));
     }
 

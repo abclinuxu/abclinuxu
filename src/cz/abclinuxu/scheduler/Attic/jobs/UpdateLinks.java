@@ -38,8 +38,9 @@ public class UpdateLinks implements Task {
     public static final int WS = 6;
     public static final int KECZY = 7;
     public static final int REBOOT = 8;
+    public static final int LINUXZONE = 9;
     /** id of last server, maximum id */
-    public static final int MAX = REBOOT;
+    public static final int MAX = LINUXZONE;
 
     Persistance persistance;
     Category category = new Category(Constants.CAT_LINKS);
@@ -60,6 +61,7 @@ public class UpdateLinks implements Task {
         mapLinks.put(new Server(WS),"http://www.awdesign.cz/ws/ws.dat");
         mapLinks.put(new Server(KECZY),"http://www.keczy.cz/latin2/headline.php3");
         mapLinks.put(new Server(REBOOT),"http://www.reboot.cz/reboot_lh.phtml");
+        mapLinks.put(new Server(LINUXZONE),"http://www.linuxzone.cz/export/last10.phtml");
     }
 
     /**
@@ -110,7 +112,7 @@ public class UpdateLinks implements Task {
      */
     public static Map groupLinks(Category category, Persistance persistance) {
         List[] links = new List[MAX+1];
-        for ( int i=0; i<9; i++ ) links[i] = new ArrayList();
+        for ( int i=0; i<=MAX; i++ ) links[i] = new ArrayList();
 
         for (Iterator iter = category.getContent().iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
@@ -123,7 +125,7 @@ public class UpdateLinks implements Task {
         }
 
         Map result = new HashMap();
-        for ( int i=1; i<9; i++ ) result.put(new Server(i),links[i]);
+        for ( int i=1; i<=MAX; i++ ) result.put(new Server(i),links[i]);
         return result;
     }
 
@@ -156,12 +158,13 @@ public class UpdateLinks implements Task {
             return;
         }
 
-        int replacable = links.size(), i=0;
+        int replacable = 0, i=0;
+        if ( links!=null ) replacable = links.size();
         for (Iterator iter = titles.iterator(); iter.hasNext();count++) {
             String title = (String) iter.next();
             String url = (String) urls.get(i++);
 
-            if ( links.size()>0 ) {
+            if ( links!=null && links.size()>0 ) {
                 Link link = (Link) links.remove(0);
                 link.setText(title);
                 link.setUrl(url);
@@ -190,6 +193,7 @@ public class UpdateLinks implements Task {
      */
     private boolean removeTitle(List list, String title) {
         String tmp;
+        if ( list==null ) return false;
         for (Iterator iter = list.iterator(); iter.hasNext();) {
             tmp = ((Link) iter.next()).getText();
             if ( title.equals(tmp) ) {

@@ -208,6 +208,7 @@ public class VelocityHelper {
      * @return new list, where relations are sorted by date
      */
     public List sortByName(List relations) throws PersistanceException {
+        if ( relations==null ) return null;
         List sorted = new ArrayList(relations.size());
         int size = 0, i = 0;
 
@@ -232,6 +233,7 @@ public class VelocityHelper {
      * in class Sorters. Ascending order.
      */
     public List sortByDateAscending(List list) throws PersistanceException {
+        if ( list==null ) return null;
         sync(list);
         Sorters.sortByDate(list,true);
         return list;
@@ -242,6 +244,7 @@ public class VelocityHelper {
      * in class Sorters. Descending order.
      */
     public List sortByDateDescending(List list) throws PersistanceException {
+        if ( list==null ) return null;
         sync(list);
         Sorters.sortByDate(list,false);
         return list;
@@ -251,6 +254,7 @@ public class VelocityHelper {
      * Sorts list of generic objects by id in ascending order. Details in class Sorters.
      */
     public List sortByIdAscending(List list) {
+        if ( list==null ) return null;
         Sorters.sortById(list,true);
         return list;
     }
@@ -259,6 +263,7 @@ public class VelocityHelper {
      * Sorts list of generic objects by id in descending order. Details in class Sorters.
      */
     public List sortByIdDescending(List list) {
+        if ( list==null ) return null;
         Sorters.sortById(list,false);
         return list;
     }
@@ -267,6 +272,7 @@ public class VelocityHelper {
      * Sorts list of generic objects by id in ascending order. Details in class Sorters.
      */
     public List sortByIdAscending(Set set) {
+        if ( set==null ) return null;
         List list = new ArrayList(set);
         Sorters.sortById(list,true);
         return list;
@@ -276,6 +282,7 @@ public class VelocityHelper {
      * Sorts list of generic objects by id in descending order. Details in class Sorters.
      */
     public List sortByIdDescending(Set set) {
+        if ( set==null ) return null;
         List list = new ArrayList(set);
         Sorters.sortById(list,false);
         return list;
