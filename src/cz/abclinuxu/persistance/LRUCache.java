@@ -109,9 +109,11 @@ public class LRUCache implements Cache,Configurable {
                 GenericObject clone = (GenericObject) found.getClass().newInstance();
                 clone.synchronizeWith(found);
                 clone.clearContent();
-                for (Iterator iter = found.getContent().iterator(); iter.hasNext();) {
-                    Relation relation = ((Relation)iter.next()).cloneRelation();
-                    clone.addContent(relation);
+                synchronized (found) {
+                    for ( Iterator iter = found.getContent().iterator(); iter.hasNext(); ) {
+                        Relation relation = ((Relation) iter.next()).cloneRelation();
+                        clone.addContent(relation);
+                    }
                 }
                 return clone;
             } catch (Exception e) {
