@@ -83,12 +83,14 @@ ${TOOL.render(TEXT,USER?if_exists)}
      <div class="text">Stav: <#if rating!=0>${rating?string["#0.00"]} <#else>bez hodnocení</#if></div>
      <div class="tpm">
         <img src="/images/site2/teplomerrtut.gif" height="5" width="<#if rating!=0>${3+(rating/3)*191} <#else>3</#if>" title="${rating?string["#0.00"]}">
-        <div class="stup">
-            <a class="s0" href="${URL.make("/rating/"+RELATION.id+"?action=rate&amp;rtype=article&amp;rvalue=0")}" target="rating" title="Va¹e hodnocení: 0">0</a>
-            <a class="s1" href="${URL.make("/rating/"+RELATION.id+"?action=rate&amp;rtype=article&amp;rvalue=1")}" target="rating" title="Va¹e hodnocení: 1">1</a>
-            <a class="s2" href="${URL.make("/rating/"+RELATION.id+"?action=rate&amp;rtype=article&amp;rvalue=2")}" target="rating" title="Va¹e hodnocení: 2">2</a>
-            <a class="s3" href="${URL.make("/rating/"+RELATION.id+"?action=rate&amp;rtype=article&amp;rvalue=3")}" target="rating" title="Va¹e hodnocení: 3">3</a>
-        </div>
+        <#if USER?exists>
+            <div class="stup">
+                <a class="s0" href="${URL.make("/rating/"+RELATION.id+"?action=rate&amp;rtype=article&amp;rvalue=0")}" target="rating" title="Va¹e hodnocení: 0">0</a>
+                <a class="s1" href="${URL.make("/rating/"+RELATION.id+"?action=rate&amp;rtype=article&amp;rvalue=1")}" target="rating" title="Va¹e hodnocení: 1">1</a>
+                <a class="s2" href="${URL.make("/rating/"+RELATION.id+"?action=rate&amp;rtype=article&amp;rvalue=2")}" target="rating" title="Va¹e hodnocení: 2">2</a>
+                <a class="s3" href="${URL.make("/rating/"+RELATION.id+"?action=rate&amp;rtype=article&amp;rvalue=3")}" target="rating" title="Va¹e hodnocení: 3">3</a>
+            </div>
+        </#if>
      </div>
      <#if rating!=0>
         <div class="text">Poèet hlasù: ${TOOL.xpath(ITEM,"//rating[type/text()='article']/count")}</div>
