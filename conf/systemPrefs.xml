@@ -58,7 +58,7 @@
             </node>
             <node name="Lottery">
               <map>
-                <entry key="admins" value="2687,2121,1083,1768,403,1742,682,1"/>
+                <entry key="admins" value="2121,1083,1768,403,1742,682,1,2105,1561"/>
               </map>
             </node>
           </node>
