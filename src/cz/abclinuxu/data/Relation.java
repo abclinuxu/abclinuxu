@@ -123,7 +123,7 @@ public final class Relation extends GenericObject implements XMLContainer {
         clone.id = this.id;
         clone.initialized = this.initialized;
         clone.upper = this.upper;
-        clone.documentHandler = new XMLHandler(this.getData());
+        clone.documentHandler = this.documentHandler;
 
         try {
             GenericObject tmp = (GenericObject)this.getParent().getClass().newInstance();

@@ -96,7 +96,29 @@ public class LRUCache implements Cache,Configurable {
      */
     public GenericObject load(GenericObject obj) {
         GenericObject found = (GenericObject) data.getElement(obj);
-        return found;
+        if ( found==null )
+            return null;
+
+        // we cannot return immutable object, so we return clone at least.
+        // for example if found is Relation, caller could synchronize its child or parent,
+        // which could result in data inconsistency and unneccessary memory consumption.
+        if ( found instanceof Relation ) {
+            return ((Relation)found).cloneRelation();
+        }  else {
+            try {
+                GenericObject clone = (GenericObject) found.getClass().newInstance();
+                clone.synchronizeWith(found);
+                clone.clearContent();
+                for (Iterator iter = found.getContent().iterator(); iter.hasNext();) {
+                    Relation relation = ((Relation)iter.next()).cloneRelation();
+                    clone.addContent(relation);
+                }
+                return clone;
+            } catch (Exception e) {
+                log.error("Nemohu naklonovat nalezený object "+found, e);
+                return null;
+            }
+        }
     }
 
     /**
