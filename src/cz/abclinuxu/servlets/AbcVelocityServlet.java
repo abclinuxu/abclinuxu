@@ -28,6 +28,7 @@ import cz.abclinuxu.data.AccessRights;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.AbcException;
+import cz.abclinuxu.utils.VelocityHelper;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.view.ViewIcons;
 
@@ -55,6 +56,8 @@ import java.util.*;
  * <dt><code>VAR_PARAMS</code></dt>
  * <dd>Combined version of request's params and session's params. Use it only, if
  * view can be merged after SelectIcon.</dd>
+ * <dt><code>VAR_HELPER</code></dt>
+ * <dd>Instance of VelocityHelper.</dd>
  * </dl>
  * <u>Parameters used by AbcServlet's descendants</u>
  * <dl>
@@ -80,6 +83,7 @@ public class AbcServlet extends VelocityServlet {
     public static final String VAR_ERRORS = "ERRORS";
     public static final String VAR_MESSAGES = "MESSAGES";
     public static final String VAR_PARAMS = "PARAMS";
+    public static final String VAR_HELPER = "HELPER";
 
     public static final String PARAM_ACTION = "action";
     public static final String PARAM_LOG_USER = "LOGIN";
@@ -130,6 +134,7 @@ public class AbcServlet extends VelocityServlet {
         } else {
             context = super.createContext(request, response);
             context.put(AbcServlet.VAR_PERSISTANCE,PersistanceFactory.getPersistance());
+            context.put(AbcServlet.VAR_HELPER,new VelocityHelper());
 
             String url = request.getRequestURI();
             if ( url.startsWith(AbcServlet.PREFIX_HARDWARE) ) {

@@ -1,19 +1,13 @@
 #macro(sync $object)
-#if($object.isInitialized()) #else $PERSISTANCE.synchronize($object)#end
+#if(!$object.isInitialized()) $PERSISTANCE.synchronize($object)#end
 #end
 
 #macro(parents)
 #if($RELATION)
 <div class="parents">
-#foreach($parent in $PARENTS)
-#sync($parent.Parent)#sync($parent.Child)
-#if($parent.Name)
-#set($name=$parent.Name)
-#else
-#set($name=$parent.Child.Data.selectSingleNode('data/name').Text)
-#end
+#foreach($parent in $PARENTS) #sync($parent.Parent)#sync($parent.Child)
 #if($velocityCount==1)
 <a href="$!PREFIX.constructURL("/ViewCategory?categoryId=${parent.Parent.Id}",$res)">$parent.Parent.Data.selectSingleNode('data/name').Text</a>
 #end
-- <a href="$!PREFIX.constructURL("/ViewRelation?relationId=${parent.Id}",$res)">$name</a>
+- <a href="$!PREFIX.constructURL("/ViewRelation?relationId=${parent.Id}",$res)">$HELPER.getChildName($parent)</a>
 #end</div>#end#end
