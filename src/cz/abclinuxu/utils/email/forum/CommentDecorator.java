@@ -44,13 +44,17 @@ public class CommentDecorator {
         Persistance persistance = PersistanceFactory.getPersistance();
         GenericDataObject gdo = null;
         Element root;
+        String authorName = null;
 
         if (comment.recordId==0) {
             gdo = (GenericDataObject) persistance.findById(new Item(comment.discussionId));
             root = gdo.getData().getRootElement();
             env.put(VAR_PUBLISHED, gdo.getCreated());
-            User author = (User) persistance.findById(new User(gdo.getOwner()));
-            env.put(VAR_AUTHOR, author.getName());
+            if ( gdo.getOwner()!=0 ) {
+                User author = (User) persistance.findById(new User(gdo.getOwner()));
+                authorName = author.getName();
+            } else
+                authorName = root.elementText("author");
         } else {
             gdo = (GenericDataObject) persistance.findById(new Record(comment.recordId));
             String xpath = "//comment[@id='"+comment.threadId+"']";
@@ -58,15 +62,14 @@ public class CommentDecorator {
             Date created = Misc.parseDate(root.elementText("created"), Constants.isoFormat);
             env.put(VAR_PUBLISHED, created);
 
-            String authorName = null;
             String tmp = root.elementText("author_id");
             if (tmp!=null) {
                 int id = Misc.parseInt(tmp, 0);
                 authorName = ((User) persistance.findById(new User(id))).getName();
             } else
                 authorName = root.elementText("author");
-            env.put(VAR_AUTHOR, authorName);
         }
+        env.put(VAR_AUTHOR, authorName);
 
         String title = root.elementText("title");
         env.put(VAR_TITLE, title);
