@@ -39,8 +39,9 @@ public class UpdateLinks2 implements Task {
     public static final int REBOOT = 8;
     public static final int LINUXZONE = 9;
     public static final int LINUXSK = 10;
+    public static final int LDAP = 11;
     /** id of last server, maximum id */
-    public static final int LAST_SERVER = LINUXSK;
+    public static final int LAST_SERVER = LDAP;
 
     Persistance persistance;
     Category category = new Category(Constants.CAT_LINKS);
@@ -87,6 +88,27 @@ public class UpdateLinks2 implements Task {
         definitions.put(new Server(REBOOT),new ServerInfo("http://www.reboot.cz/reboot_lh.phtml"));
         definitions.put(new Server(LINUXZONE),new ServerInfo("http://www.linuxzone.cz/export/last10.phtml"));
         definitions.put(new Server(LINUXSK),new ServerInfo("http://www.linux.sk/backend.php",null,ServerInfo.RSS));
+        definitions.put(new Server(LDAP),new ServerInfo("http://www.ldap-obsession.sk/backend.php",null,ServerInfo.RSS));
+    }
+
+    /**
+     * Constructor for test
+     */
+    public UpdateLinks2(boolean nic) {
+        persistance = PersistanceFactory.getPersistance();
+        definitions = new HashMap();
+
+        definitions.put(new Server(ROOT),new ServerInfo("file:///home/literakl/java/abc/bussiness/obsahy/ttitles.txt"));
+        definitions.put(new Server(LW),new ServerInfo("file:///home/literakl/java/abc/bussiness/obsahy/lw.dat","Windows-1250",ServerInfo.TRAFIKA));
+        definitions.put(new Server(SW),new ServerInfo("file:///home/literakl/java/abc/bussiness/obsahy/sw.dat","Windows-1250",ServerInfo.TRAFIKA));
+        definitions.put(new Server(UG),new ServerInfo("file:///home/literakl/java/abc/bussiness/obsahy/czech.txt"));
+        definitions.put(new Server(PENGUIN),new ServerInfo("file:///home/literakl/java/abc/bussiness/obsahy/trafika.php3"));
+        definitions.put(new Server(WS),new ServerInfo("file:///home/literakl/java/abc/bussiness/obsahy/ws.dat"));
+        definitions.put(new Server(KECZY),new ServerInfo("file:///home/literakl/java/abc/bussiness/obsahy/headline.php3"));
+        definitions.put(new Server(REBOOT),new ServerInfo("file:///home/literakl/java/abc/bussiness/obsahy/reboot_lh.phtml"));
+        definitions.put(new Server(LINUXZONE),new ServerInfo("file:///home/literakl/java/abc/bussiness/obsahy/last10.phtml"));
+        definitions.put(new Server(LINUXSK),new ServerInfo("file:///home/literakl/java/abc/bussiness/obsahy/backend.php",null,ServerInfo.RSS));
+        definitions.put(new Server(LDAP),new ServerInfo("file:///home/literakl/java/abc/bussiness/obsahy/backend-ldap.php",null,ServerInfo.RSS));
     }
 
     /**
@@ -264,6 +286,7 @@ public class UpdateLinks2 implements Task {
 
     public static void main(String[] args) {
         org.apache.log4j.BasicConfigurator.configure();
-        new UpdateLinks2().runJob();
+        UpdateLinks2 updater = new UpdateLinks2();
+        updater.runJob();
     }
 }
