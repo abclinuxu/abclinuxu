@@ -168,12 +168,12 @@
 
   <servlet name="ForgottenPassword">
     <action name="step1">
-      <mapping template="web" content="web/misc/forgotten.vm">
+      <mapping template="web" content="/web/misc/forgotten.ftl">
         <var name="TITLE" value="Zaslání zapomenutého hesla" />
       </mapping>
     </action>
     <action name="step2">
-      <mapping template="web" content="web/misc/forgotten2.vm">
+      <mapping template="web" content="/web/misc/forgotten2.ftl">
         <var name="TITLE" value="Zaslání zapomenutého hesla" />
       </mapping>
     </action>

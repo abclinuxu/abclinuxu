@@ -6,10 +6,12 @@
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcVelocityServlet;
+import cz.abclinuxu.servlets.AbcFMServlet;
+import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.*;
-import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.utils.InstanceUtils;
@@ -21,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
-public class ForgottenPassword extends AbcVelocityServlet {
+public class ForgottenPassword extends AbcFMServlet {
 
     public static final String PARAM_LOGIN = "login";
     public static final String PARAM_NAME = "name";
@@ -32,22 +34,20 @@ public class ForgottenPassword extends AbcVelocityServlet {
     public static final String ACTION_CHOOSE = "choose";
     public static final String ACTION_SEND = "send";
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        init(request,response,ctx);
-
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
-        String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
+    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        String action = (String) params.get(PARAM_ACTION);
 
         if ( ACTION_CHOOSE.equals(action) ) {
-            return actionChoose(request,ctx);
+            return actionChoose(request,env);
         } else if ( ACTION_SEND.equals(action) ) {
-            return actionSend(request,response,ctx);
+            return actionSend(request,response,env);
         }
-        return VelocityTemplateSelector.selectTemplate(request,ctx,"ForgottenPassword","step1");
+        return FMTemplateSelector.select("ForgottenPassword","step1",env,request);
     }
 
-    protected String actionChoose(HttpServletRequest request, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+    protected String actionChoose(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
         User user = new User();
@@ -61,9 +61,9 @@ public class ForgottenPassword extends AbcVelocityServlet {
         if ( login!=null ) login = login.trim(); else login = "";
 
         if ( name.length()<3 && login.length()<3 ) {
-            if ( name.length()<3 ) ServletUtils.addError(PARAM_NAME,"Zadejte nejménì tøi písmena!",ctx,null);
-            if ( login.length()<3 ) ServletUtils.addError(PARAM_LOGIN,"Zadejte nejménì tøi písmena!",ctx,null);
-            return VelocityTemplateSelector.selectTemplate(request,ctx,"ForgottenPassword","step1");
+            if ( name.length()<3 ) ServletUtils.addError(PARAM_NAME,"Zadejte nejménì tøi písmena!",env,null);
+            if ( login.length()<3 ) ServletUtils.addError(PARAM_LOGIN,"Zadejte nejménì tøi písmena!",env,null);
+            return FMTemplateSelector.select("ForgottenPassword","step1",env,request);
         }
 
         if ( name.length()>2 ) user.setName("%"+name+"%");
@@ -71,26 +71,32 @@ public class ForgottenPassword extends AbcVelocityServlet {
 
         List found = persistance.findByExample(list,null);
         if ( found.size()==0 ) {
-            ServletUtils.addMessage("Nenalezen ¾ádný u¾ivatel!",ctx,null);
-            return VelocityTemplateSelector.selectTemplate(request,ctx,"ForgottenPassword","step1");
+            ServletUtils.addMessage("Nenalezen ¾ádný u¾ivatel!",env,null);
+            return FMTemplateSelector.select("ForgottenPassword","step1",env,request);
+        } else {
+            List result = new ArrayList(found.size());
+            for (Iterator iter = found.iterator(); iter.hasNext();) {
+                result.add(persistance.findById((GenericObject) iter.next()));
+            }
+            env.put(VAR_USERS,result);
         }
 
-        ctx.put(VAR_USERS,found);
-        return VelocityTemplateSelector.selectTemplate(request,ctx,"ForgottenPassword","step2");
+        return FMTemplateSelector.select("ForgottenPassword","step2",env,request);
     }
 
-    protected String actionSend(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
+    protected String actionSend(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) InstanceUtils.instantiateParam(PARAM_USER_ID,User.class,params);
         PersistanceFactory.getPersistance().synchronize(user);
 
         VelocityContext tmpContext = new VelocityContext();
-        tmpContext.put(AbcVelocityServlet.VAR_USER,user);
+        tmpContext.put(Constants.VAR_USER,user);
         String message = VelocityHelper.mergeTemplate("mail/password.vm",tmpContext);
-        Email.sendEmail("admin@AbcLinuxu.cz",user.getEmail(),"Zapomenute heslo",message);
+        Email.sendEmail("admin@abclinuxu.cz",user.getEmail(),"Zapomenute heslo",message);
 
-        ServletUtils.addMessage("Heslo odeslano na adresu "+user.getEmail(),ctx,request.getSession());
-        UrlUtils.redirect(response, "/Index", ctx);
+        ServletUtils.addMessage("Heslo odeslano na adresu "+user.getEmail(),env,request.getSession());
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/Index");
         return null;
     }
 }
