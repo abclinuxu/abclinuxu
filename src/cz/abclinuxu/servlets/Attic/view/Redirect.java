@@ -15,8 +15,8 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 
 public class Redirect extends HttpServlet {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(Redirect.class);
-    static org.apache.log4j.Category logRedirect = org.apache.log4j.Category.getInstance("redirect");
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Redirect.class);
+    static org.apache.log4j.Logger logRedirect = org.apache.log4j.Logger.getLogger("redirect");
 
     /** contains id of link */
     public static final String PARAM_LINK = "linkId";

@@ -28,7 +28,7 @@ import java.util.Iterator;
  * the range of objects in specified time interval.
  */
 public class ShowOlder extends AbcVelocityServlet {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(ShowOlder.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ShowOlder.class);
 
     /** type of object to display */
     public static final String PARAM_TYPE = "type";

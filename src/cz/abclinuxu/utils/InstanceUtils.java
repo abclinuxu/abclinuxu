@@ -15,18 +15,6 @@ import java.util.Map;
 public class InstanceUtils {
 
     /**
-     * Compares two objects.
-     * @return true, if both parameters are null or are equal.
-     */
-    public static boolean same(Object first, Object second) {
-        if ( first!=null ) {
-            if ( second==null ) return false;
-            return first.equals(second);
-        }
-        return second==null;
-    }
-
-    /**
      * Retrieves parameter <code>name</code> from <code>params</code>. If it is not
      * defined, it returns null. Then it tries convert it to integer. If it is not
      * successful, it returns null again. Then it tries to create new instance

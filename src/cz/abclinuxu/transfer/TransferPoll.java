@@ -25,8 +25,6 @@ public class TransferPoll {
     }
 
     public static void main(String[] args) throws Exception {
-        org.apache.log4j.Category.getDefaultHierarchy().disableAll();
-
         Connection conHw = DriverManager.getConnection("jdbc:mysql://localhost/hardware?user=literakl&password=lkaretil");
         String url = "jdbc:mysql://localhost/abc?user=literakl&password=lkaretil&useUnicode=true&characterEncoding=ISO-8859-2";
         Persistance persistance = PersistanceFactory.getPersistance(url);

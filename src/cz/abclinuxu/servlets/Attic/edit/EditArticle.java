@@ -30,6 +30,8 @@ import java.text.ParseException;
  * @todo implement flow of checks: Author enters article, revisor corrects grammar, editor approves article and selects publish date.
  */
 public class EditArticle extends AbcVelocityServlet {
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditArticle.class);
+
     public static final String PARAM_RELATION = "relationId";
     public static final String PARAM_TITLE = "title";
     public static final String PARAM_PEREX = "perex";

@@ -25,7 +25,7 @@ import org.dom4j.Document;
  * Sends sms to all users, that allowed sending adds emails.
  */
 public class Spammer {
-    static Category log = Category.getInstance(Spammer.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Spammer.class);
 
     Persistance persistance = PersistanceFactory.getPersistance();
 
@@ -71,9 +71,9 @@ public class Spammer {
 
     private void addUsersEmail(int id, Map map) {
         try {
-            Category.getDefaultHierarchy().disableAll();
+//            Category.getDefaultHierarchy().disableAll();
             User user = (User) persistance.findById(new User(id));
-            Category.getDefaultHierarchy().enableAll();
+//            Category.getDefaultHierarchy().enableAll();
 
             Document document = user.getData();
             String str = document.selectSingleNode("data/ads").getText();
@@ -87,7 +87,7 @@ public class Spammer {
             String email = user.getEmail();
             map.put(email,message);
         } catch (PersistanceException e) {
-            Category.getDefaultHierarchy().enableAll();
+//            Category.getDefaultHierarchy().enableAll();
         }
     }
 

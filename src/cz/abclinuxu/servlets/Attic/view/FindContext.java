@@ -25,7 +25,7 @@ import java.util.List;
  * contains correct prefix.
  */
 public class FindContext extends AbcVelocityServlet {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(FindContext.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(FindContext.class);
 
     public static final String PARAM_RELATION = "relationId";
 

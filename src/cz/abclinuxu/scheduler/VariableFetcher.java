@@ -19,7 +19,7 @@ import java.util.*;
  * of template and index variables from database.
  */
 public class VariableFetcher extends TimerTask {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(VariableFetcher.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(VariableFetcher.class);
 
     final static int SIZE = 3;
 

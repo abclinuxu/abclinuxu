@@ -15,7 +15,7 @@ import org.apache.log4j.xml.DOMConfigurator;
  * Factory, which select Persistance class
  */
 public class PersistanceFactory {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(PersistanceFactory.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(PersistanceFactory.class);
 
     public static String defaultUrl = "jdbc:mysql://localhost/abc?user=literakl&password=lkaretil&useUnicode=true&characterEncoding=ISO-8859-2";
     public static String defaultTestUrl = "jdbc:mysql://localhost/unit?user=literakl&password=lkaretil&useUnicode=true&characterEncoding=ISO-8859-2";

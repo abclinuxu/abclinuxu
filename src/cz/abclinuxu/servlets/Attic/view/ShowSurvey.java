@@ -35,7 +35,7 @@ import java.io.FileOutputStream;
  * Survey implementation
  */
 public class ShowSurvey extends AbcVelocityServlet {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(ShowSurvey.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ShowSurvey.class);
 
     public static final String PARAM_SCREEN_CURRENT = "SCREEN_CURRENT";
     public static final String PARAM_SCREEN_NEXT = "SCREEN_NEXT";

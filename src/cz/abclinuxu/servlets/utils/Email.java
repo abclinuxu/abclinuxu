@@ -15,7 +15,7 @@ import java.util.*;
  * Helper class for sending emails.
  */
 public class Email {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(Email.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Email.class);
 
     /**
      * Sends email to user.

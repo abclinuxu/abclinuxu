@@ -30,7 +30,7 @@ import cz.abclinuxu.utils.Misc;
  *
  */
 public class VelocityTemplateSelector extends TemplateSelector {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(VelocityTemplateSelector.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(VelocityTemplateSelector.class);
 
     /** regular expressions to match UA */
     static RE reLynx, reWget, rePlucker;

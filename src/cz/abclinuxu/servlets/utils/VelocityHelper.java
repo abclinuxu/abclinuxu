@@ -31,7 +31,7 @@ import java.text.ParseException;
  * make velocity developer's life easier.
  */
 public class VelocityHelper {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(VelocityHelper.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(VelocityHelper.class);
 
     static RE lineBreaks,emptyLine,usmev,smich,mrk,smutek;
     static {

@@ -21,7 +21,7 @@ import org.apache.regexp.RESyntaxException;
 import org.apache.log4j.BasicConfigurator;
 
 public class GenerateLinks extends TimerTask {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(GenerateLinks.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(GenerateLinks.class);
 
     static String fileName_trafika = "abc.dat";
     static String fileName_anneca = "abc2.dat";

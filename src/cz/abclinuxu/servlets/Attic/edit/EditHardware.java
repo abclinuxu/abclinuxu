@@ -26,6 +26,8 @@ import java.util.Map;
  * editing of hardware items and records.
  */
 public class EditHardware extends AbcVelocityServlet {
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditHardware.class);
+
     public static final String PARAM_RELATION = "relationId";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_ICON = SelectIcon.PARAM_ICON;

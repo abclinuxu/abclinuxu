@@ -28,7 +28,8 @@ import java.util.*;
  * maintaining Lucene's index.
  */
 public class CreateIndex {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(CreateIndex.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(CreateIndex.class);
+
     static String DEPLOY = "/home/literakl/abc/deploy";
     static String PATH = Search.getIndexPath();
 

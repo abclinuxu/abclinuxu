@@ -18,7 +18,7 @@ import org.apache.log4j.BasicConfigurator;
  * kernel versions from finger.kernel.org.
  */
 public class UpdateKernel extends TimerTask {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(UpdateKernel.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(UpdateKernel.class);
 
     static String fileName = "kernel.txt";
     static String server = "finger.kernel.org";

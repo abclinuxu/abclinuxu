@@ -39,6 +39,8 @@ import java.util.List;
  * </dl>
  */
 public class EditRelation extends AbcVelocityServlet {
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditRelation.class);
+
     public static final String PARAM_RELATION = "relationId";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_PREFIX = "prefix";

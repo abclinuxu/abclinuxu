@@ -23,7 +23,7 @@ import java.util.Date;
  * waits for publication.
  */
 public class ArticlePoolMonitor extends TimerTask {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(ArticlePoolMonitor.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ArticlePoolMonitor.class);
 
     Persistance persistance;
     Category pool = new Category(Constants.CAT_ARTICLEPOOL);

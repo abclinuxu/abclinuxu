@@ -4,6 +4,7 @@
 package cz.abclinuxu.data;
 
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Misc;
 
 import java.util.*;
 
@@ -196,7 +197,7 @@ public class Poll extends GenericObject {
         if ( !( o instanceof Poll) ) return false;
         if ( id!=((GenericObject)o).getId() ) return false;
         if ( type!=((Poll)o).getType() ) return false;
-        if ( ! InstanceUtils.same(this.text,((Poll)o).getText()) ) return false;
+        if ( ! Misc.same(this.text,((Poll)o).getText()) ) return false;
         return true;
     }
 

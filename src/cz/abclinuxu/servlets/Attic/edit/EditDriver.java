@@ -26,7 +26,7 @@ import java.io.IOException;
  * @todo archive drivers replaced by newer version
  */
 public class EditDriver extends AbcVelocityServlet {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(EditDriver.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditDriver.class);
 
     public static final String PARAM_NAME = "name";
     public static final String PARAM_VERSION = "version";

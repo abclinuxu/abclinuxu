@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 public class EditRequest extends AbcVelocityServlet {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(EditRequest.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditRequest.class);
 
     public static final String PARAM_AUTHOR = "author";
     public static final String PARAM_EMAIL = "email";

@@ -24,7 +24,7 @@ import org.apache.velocity.app.Velocity;
  * template for sending bulk sms
  */
 public class Mailer {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(Mailer.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Mailer.class);
 
     Persistance persistance = PersistanceFactory.getPersistance();
 
@@ -33,7 +33,7 @@ public class Mailer {
         if ( args!=null && args.length==1 && args[0].equals("send") ) test = false;
 
         setupLog();
-        Velocity.init("/home/literakl/tomcat/webapps/ROOT/WEB-INF/velocity.properties");
+        Velocity.init("/home/literakl/abc/deploy/WEB-INF/velocity.properties");
 
         Mailer mailer = new Mailer();
         mailer.doWork(test);
@@ -63,9 +63,9 @@ public class Mailer {
 
     private void addUsersEmail(int id, Map map) {
         try {
-            Category.getDefaultHierarchy().disableAll();
+            //Category.getDefaultHierarchy().disableAll();
             User user = (User) persistance.findById(new User(id));
-            Category.getDefaultHierarchy().enableAll();
+            //Category.getDefaultHierarchy().enableAll();
 
             VelocityContext tmpContext = new VelocityContext();
             tmpContext.put("USER",user);
@@ -74,7 +74,7 @@ public class Mailer {
             String email = user.getEmail();
             map.put(email,message);
         } catch (PersistanceException e) {
-            Category.getDefaultHierarchy().enableAll();
+            //Category.getDefaultHierarchy().enableAll();
         }
     }
 

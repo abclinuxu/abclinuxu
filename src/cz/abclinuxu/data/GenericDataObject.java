@@ -11,13 +11,14 @@ import java.util.Date;
 import java.util.Iterator;
 import cz.abclinuxu.AbcException;
 import org.dom4j.Document;
+import org.apache.log4j.Logger;
 
 /**
  * This class serves as base class for Item, Category and Record,
  * which have very similar functionality and usage.
  */
 public abstract class GenericDataObject extends GenericObject implements XMLContainer {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(GenericDataObject.class);
+    static Logger log = Logger.getLogger(GenericDataObject.class);
 
     /** identifier of owner of this object */
     protected int owner;

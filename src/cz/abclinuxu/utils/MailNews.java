@@ -25,7 +25,7 @@ import org.dom4j.Document;
  * Sends sms to all users, that allowed sending news emails.
  */
 public class MailNews {
-    static Category log = Category.getInstance(MailNews.class);
+    static Logger log = Logger.getLogger(MailNews.class);
 
     Persistance persistance = PersistanceFactory.getPersistance();
 
@@ -34,7 +34,7 @@ public class MailNews {
         if ( args!=null && args.length==1 && args[0].equals("send") ) test = false;
 
         setupLog();
-        Velocity.init("/home/literakl/tomcat/webapps/ROOT/WEB-INF/velocity.properties");
+        Velocity.init("/home/literakl/abc/deploy/WEB-INF/velocity.properties");
 
         MailNews mailer = new MailNews();
         mailer.doWork(test);
@@ -64,9 +64,9 @@ public class MailNews {
 
     private void addUsersEmail(int id, Map map) {
         try {
-            Category.getDefaultHierarchy().disableAll();
+//            Category.getDefaultHierarchy().disableAll();
             User user = (User) persistance.findById(new User(id));
-            Category.getDefaultHierarchy().enableAll();
+//            Category.getDefaultHierarchy().enableAll();
 
             Document document = user.getData();
             String str = document.selectSingleNode("data/news").getText();
@@ -80,7 +80,7 @@ public class MailNews {
             String email = user.getEmail();
             map.put(email,message);
         } catch (PersistanceException e) {
-            Category.getDefaultHierarchy().enableAll();
+//            Category.getDefaultHierarchy().enableAll();
         }
     }
 

@@ -56,6 +56,8 @@ import java.util.Map;
  * </dl>
  */
 public class EditCategory extends AbcVelocityServlet {
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditCategory.class);
+
     public static final String PARAM_RELATION = "relationId";
     public static final String PARAM_CATEGORY = "categoryId";
     public static final String PARAM_NAME = "name";

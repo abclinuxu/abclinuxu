@@ -27,7 +27,7 @@ public class TestMySqlPersistance extends TestCase {
     }
 
     protected void setUp() throws Exception {
-        org.apache.log4j.Category.getDefaultHierarchy().disableAll();
+//        org.apache.log4j.Category.getDefaultHierarchy().disableAll();
         super.setUp();
         persistance = new MySqlPersistance(PersistanceFactory.defaultTestUrl);
         persistance.setCache(new DefaultCache());
@@ -35,7 +35,7 @@ public class TestMySqlPersistance extends TestCase {
 
     protected void tearDown() throws Exception {
         super.tearDown();
-        org.apache.log4j.Category.getDefaultHierarchy().enableAll();
+//        org.apache.log4j.Category.getDefaultHierarchy().enableAll();
     }
 
     public static Test suite() {

@@ -4,6 +4,7 @@
 package cz.abclinuxu.data;
 
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Misc;
 
 import java.util.Date;
 
@@ -64,7 +65,7 @@ public class Record extends GenericDataObject {
         if ( id!=((GenericObject)o).getId() ) return false;
         if ( type!=((GenericDataObject)o).type ) return false;
         if ( owner!=((GenericDataObject)o).owner ) return false;
-        if ( ! InstanceUtils.same(getDataAsString(),((GenericDataObject)o).getDataAsString()) ) return false;
+        if ( ! Misc.same(getDataAsString(),((GenericDataObject)o).getDataAsString()) ) return false;
         return true;
     }
 

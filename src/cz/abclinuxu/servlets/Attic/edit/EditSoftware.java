@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 public class EditSoftware extends AbcVelocityServlet {
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditSoftware.class);
+
     public static final String PARAM_RELATION = "relationId";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_ICON = SelectIcon.PARAM_ICON;

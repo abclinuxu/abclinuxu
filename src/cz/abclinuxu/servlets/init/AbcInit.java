@@ -16,7 +16,6 @@ import javax.servlet.http.*;
 import javax.servlet.ServletException;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Category;
 import org.apache.velocity.app.Velocity;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.scheduler.*;
@@ -27,7 +26,7 @@ import cz.abclinuxu.servlets.view.Search;
  * This servlet initializes Log4J
  */
 public class AbcInit extends HttpServlet {
-    static Category log = Category.getInstance(AbcInit.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(AbcInit.class);
 
     /** scheduler used by all objects in project */
     static Timer scheduler;

@@ -23,7 +23,7 @@ public class Measure {
 
     public static void main(String[] args) throws Exception {
         DOMConfigurator.configure("conf/log4j.xml");
-        org.apache.log4j.Category.getDefaultHierarchy().disableAll();
+//        org.apache.log4j.Category.getDefaultHierarchy().disableAll();
         Persistance persistance = PersistanceFactory.getPersistance();
         int i=0,j=0;
         long l = 0;
@@ -45,6 +45,6 @@ public class Measure {
 
         float avg = (end-start)/(float)i;
         System.out.println("celkem = "+(end-start)+" ms ,prumer = "+avg+ " ms.");
-        org.apache.log4j.Category.getDefaultHierarchy().enableAll();
+//        org.apache.log4j.Category.getDefaultHierarchy().enableAll();
     }
 }

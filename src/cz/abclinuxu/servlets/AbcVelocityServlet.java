@@ -68,7 +68,7 @@ import java.net.SocketException;
  * </dl>
  */
 public abstract class AbcVelocityServlet extends VelocityServlet {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(AbcVelocityServlet.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(AbcVelocityServlet.class);
 
     /** Name of key in HttpServletsRequest, used for context chaining. */
     public static final String ATTRIB_CONTEXT = "CONTEXT";

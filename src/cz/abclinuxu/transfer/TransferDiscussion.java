@@ -25,8 +25,6 @@ public class TransferDiscussion {
     }
 
     public static void main(String[] args) throws Exception {
-        org.apache.log4j.Category.getDefaultHierarchy().disableAll();
-
         TransferDiscussion transfer = new TransferDiscussion();
         transfer.conHw = DriverManager.getConnection("jdbc:mysql://localhost/hardware?user=literakl&password=lkaretil&useUnicode=true&characterEncoding=ISO-8859-2");
         transfer.persistance = PersistanceFactory.getPersistance();

@@ -21,7 +21,7 @@ import org.dom4j.io.SAXReader;
 import org.dom4j.*;
 
 public class UpdateLinks extends TimerTask {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(UpdateLinks.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(UpdateLinks.class);
 
     /** how many links we have per server */
     static final int LINKS_PER_SERVER = 5;

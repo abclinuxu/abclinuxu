@@ -6,6 +6,7 @@
 package cz.abclinuxu.data;
 
 import org.dom4j.Document;
+import org.apache.log4j.Logger;
 import cz.abclinuxu.AbcException;
 
 /**
@@ -14,7 +15,7 @@ import cz.abclinuxu.AbcException;
  * not only name, but icon too. Or anything else.
  */
 public final class Relation extends GenericObject implements XMLContainer {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(Relation.class);
+    static Logger log = Logger.getLogger(Relation.class);
 
     /** Upper relation. Similar to .. in filesystem. */
     int upper = 0;

@@ -17,8 +17,8 @@ import java.util.*;
  * This class dumps all request's parameters (except PARAM_URL) to log file.
  */
 public class DumpRequest extends HttpServlet {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(DumpRequest.class);
-    static org.apache.log4j.Category dumpLog = org.apache.log4j.Category.getInstance("RequestLog");
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(DumpRequest.class);
+    static org.apache.log4j.Logger dumpLog = org.apache.log4j.Logger.getLogger("RequestLog");
 
     /** url, where flow shall be redirected */
     public static final String PARAM_URL = "url";

@@ -12,8 +12,7 @@ import java.util.Iterator;
  * Class containing basic user data
  */
 public class User extends GenericObject implements XMLContainer {
-
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(User.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(User.class);
 
     /** login name of the user */
     private String login;

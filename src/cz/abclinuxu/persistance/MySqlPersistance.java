@@ -37,8 +37,7 @@ import org.apache.log4j.xml.DOMConfigurator;
  * </table>
  */
 public class MySqlPersistance implements Persistance {
-
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(MySqlPersistance.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(MySqlPersistance.class);
 
     /** contains URL to database connection */
     String dbUrl = null;

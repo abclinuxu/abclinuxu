@@ -19,7 +19,7 @@ import cz.abclinuxu.AbcException;
  * Other classes may use object adapter pattern with this class.
  */
 public class XMLHandler implements Cloneable {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(XMLHandler.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(XMLHandler.class);
 
     /** XML parsed into DOM4J tree */
     protected Document data;

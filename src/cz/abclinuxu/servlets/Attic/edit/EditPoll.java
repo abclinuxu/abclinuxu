@@ -41,7 +41,7 @@ import java.util.*;
  * </dl>
  */
 public class EditPoll extends AbcVelocityServlet {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(EditPoll.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditPoll.class);
 
     public static final String PARAM_RELATION = "relationId";
     public static final String PARAM_POLL = "pollId";

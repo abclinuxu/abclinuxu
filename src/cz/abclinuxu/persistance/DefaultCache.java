@@ -18,7 +18,7 @@ import cz.abclinuxu.servlets.init.AbcInit;
  * Use it as LRU, delete objects not accessed within 30 minutes.
  */
 public class DefaultCache extends TimerTask implements Cache {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(DefaultCache.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(DefaultCache.class);
 
     Map data;
     long modCount;

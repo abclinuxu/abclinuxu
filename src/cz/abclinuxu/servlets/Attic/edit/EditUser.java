@@ -57,6 +57,8 @@ import java.util.ArrayList;
  * </dl>
  */
 public class EditUser extends AbcVelocityServlet {
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditUser.class);
+
     public static final String PARAM_LOGIN = "login";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_EMAIL = "email";

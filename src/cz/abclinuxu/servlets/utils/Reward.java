@@ -25,8 +25,8 @@ import java.util.Map;
  * This class works as interface to ILikeQ payments.
  */
 public class Reward extends AbcVelocityServlet {
-    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(Reward.class);
-    static org.apache.log4j.Category logReward = org.apache.log4j.Category.getInstance("rewards");
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Reward.class);
+    static org.apache.log4j.Logger logReward = org.apache.log4j.Logger.getLogger("rewards");
 
 
     /** called by ILikeQ engine to log payment */
