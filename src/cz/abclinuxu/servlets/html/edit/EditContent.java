@@ -57,7 +57,7 @@ public class EditContent implements AbcAction {
         // check permissions
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
-        if ( !user.hasRole(Roles.ARTICLE_ADMIN) )
+        if ( !user.hasRole(Roles.CONTENT_ADMIN) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if ( ACTION_ADD_ITEM.equals(action) )
