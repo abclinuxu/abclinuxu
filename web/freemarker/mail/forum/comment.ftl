@@ -1,7 +1,7 @@
 ${CONTENT}
 
 Zobrazit diskusi: http://www.abclinuxu.cz/forum/show/${RELATION_ID}
-Odpovedet: http://www.abclinuxu.cz/forum/EditDiscussion/${RELATION_ID}?action=add&dizId=${DISCUSSION_ID}&threadId=${THREAD_ID}
+Zobrazit komentar: http://www.abclinuxu.cz/forum/show/${RELATION_ID}#${THREAD_ID}
 
 <#if USER.id!=4043>Odhlaseni
 =========
