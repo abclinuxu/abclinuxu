@@ -74,6 +74,7 @@ public class EditDiscussion implements AbcAction {
     public static final String ACTION_REMOVE_COMMENT = "rm";
     public static final String ACTION_REMOVE_COMMENT_STEP2 = "rm2";
     public static final String ACTION_FREEZE_DISCUSSION = "freeze";
+    public static final String ACTION_DECREASE_LEVEL = "moveUp";
 
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -142,6 +143,9 @@ public class EditDiscussion implements AbcAction {
 
         if ( ACTION_FREEZE_DISCUSSION.equals(action) )
             return actionAlterFreeze(request, response, env);
+
+        if ( ACTION_DECREASE_LEVEL.equals(action) )
+            return actionDecreaseThreadLevel(request, response, env);
 
         throw new MissingArgumentException("Chybí parametr action!");
     }
@@ -642,6 +646,39 @@ public class EditDiscussion implements AbcAction {
 
         User user = (User) env.get(Constants.VAR_USER);
         AdminLogger.logEvent(user, "zmrazil diskusi "+discussion.getId()+", relace "+relation.getId());
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/show/"+relation.getId());
+        return null;
+    }
+
+    /**
+     * Moves selected thread one level up. Top level threads are not changed.
+     */
+    protected String actionDecreaseThreadLevel(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        User user = (User) env.get(Constants.VAR_USER);
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item discussion = (Item) persistance.findById(relation.getChild());
+
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        int threadId = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
+        if ( threadId==0 )
+            throw new MissingArgumentException("Chybí parametr threadId!");
+
+        Record record = (Record) ((Relation)discussion.getChildren().get(0)).getChild();
+        persistance.synchronize(record);
+        Document data = record.getData();
+
+        Element thread = (Element) data.selectSingleNode("//comment[@id='"+threadId+"']");
+        Element threadParent = thread.element("parent");
+        int parentId = Misc.parseInt(threadParent.getText(), 0);
+        if (parentId!=0) {
+            Element newParent = (Element) data.selectSingleNode("//comment[@id='"+parentId+"']/parent");
+            threadParent.setText(newParent.getText());
+            persistance.update(record);
+            AdminLogger.logEvent(user, "presunul vlakno "+threadId+" o uroven vys, relace "+relation.getId());
+        }
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/show/"+relation.getId());
