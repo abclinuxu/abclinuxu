@@ -63,6 +63,8 @@ import java.util.*;
  * <dd>Contains login of user wishing to log in.</dd>
  * <dt><code>PARAM_LOG_PASSWORD</code></dt>
  * <dd>Contains password of user wishing to log in.</dd>
+ * <dt><code>PARAM_LOG_OUT</code></dt>
+ * <dd>Exists, if user wishes to log out.</dd>
  * </dl>
  */
 public class AbcServlet extends VelocityServlet {
@@ -84,6 +86,7 @@ public class AbcServlet extends VelocityServlet {
     public static final String PARAM_ACTION = "action";
     public static final String PARAM_LOG_USER = "LOGIN";
     public static final String PARAM_LOG_PASSWORD = "PASSWORD";
+    public static final String PARAM_LOG_OUT = "logout";
 
     /** use this value for addError, when message is not tight to form field */
     public static final String GENERIC_ERROR = "generic";
@@ -164,7 +167,12 @@ public class AbcServlet extends VelocityServlet {
     protected void doLogin(HttpServletRequest request, HttpServletResponse response, Context context) {
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute(AbcServlet.VAR_USER);
+        boolean logout = (request.getParameter(PARAM_LOG_OUT)!=null);
 
+        if ( logout ) {
+            user = null;
+            session.removeAttribute(VAR_USER);
+        }
         if ( user!=null ) {
             context.put(AbcServlet.VAR_USER,user);
             return;
@@ -204,7 +212,16 @@ public class AbcServlet extends VelocityServlet {
             Cookie cookie = cookies[i];
             if ( cookie.getName().equals(AbcServlet.VAR_USER) ) {
                 try {
+                    if ( logout ) {
+                        cookie.setMaxAge(0);
+                        cookie.setPath("/");
+                        response.addCookie(cookie);
+                        break;
+                    }
+
                     String value = cookie.getValue();
+                    if ( value==null || value.length()<6 ) break;
+
                     int position = value.indexOf(':');
                     int id = Integer.parseInt(value.substring(0,position));
                     int hash = Integer.parseInt(value.substring(position+1));

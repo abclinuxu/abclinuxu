@@ -16,7 +16,8 @@ public final class Guard {
     public static final int OPERATION_ADD = 1;
     public static final int OPERATION_EDIT = 2;
     public static final int OPERATION_REMOVE = 3;
-    public static final int OPERATION_VIEW = 4;
+    public static final int OPERATION_MOVE = 4;
+    public static final int OPERATION_VIEW = 5;
 
     /** action was confirmed */
     public static final int ACCESS_OK = 10;

@@ -34,7 +34,7 @@ public class Email {
 
             Properties props = new Properties();
             Session session = Session.getDefaultInstance(props,null);
-            session.setDebug(false);
+            session.setDebug(true);
 
             MimeMessage message = new MimeMessage(session);
             message.setSubject(subject);

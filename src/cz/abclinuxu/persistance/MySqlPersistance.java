@@ -191,7 +191,6 @@ public class MySqlPersistance implements Persistance {
                 try {
                     GenericObject o = (GenericObject) kind.newInstance();
                     o.setId(resultSet.getInt(1));
-                    o = findById(o);
                     result.add(o);
                 } catch (Exception e) {
                     log.error("Cannot instantiate "+kind);
@@ -683,16 +682,18 @@ public class MySqlPersistance implements Persistance {
         int type = 0;
 
         if (obj instanceof GenericDataObject) {
-            if ( ((GenericDataObject)obj).getOwner()!=0 ) {
+            GenericDataObject dataObject = (GenericDataObject) obj;
+            if ( dataObject.getOwner()!=0 ) {
                 addAnd = true;
                 sb.append("pridal=?");
-                conditions.add(new Integer(((GenericDataObject)obj).getOwner()));
+                conditions.add(new Integer(dataObject.getOwner()));
             }
 
-            if ( ((GenericDataObject)obj).getSearchString()!=null ) {
+            String search = dataObject.getSearchString();
+            if ( (search!=null && search.length()>0 )) {
                 if ( addAnd ) sb.append(" and ");
                 sb.append("data like ?");
-                conditions.add(((GenericDataObject)obj).getSearchString());
+                conditions.add(search);
             }
 
             if ( obj instanceof Category ) {
@@ -711,48 +712,50 @@ public class MySqlPersistance implements Persistance {
             return;
 
         } else if (obj instanceof Data) {
-            if ( ((Data)obj).getOwner()!=0 ) {
+            Data data = (Data) obj;
+            if ( data.getOwner()!=0 ) {
                 addAnd = true;
                 sb.append("pridal=?");
-                conditions.add(new Integer(((Data)obj).getOwner()));
+                conditions.add(new Integer(data.getOwner()));
             }
 
-            if ( ((Data)obj).getData()!=null ) {
+            if (data.getData()!=null ) {
                 if ( addAnd ) sb.append(" and ");
                 addAnd = true;
                 sb.append("data like ?");
-                conditions.add(((Data)obj).getData());
+                conditions.add(data.getData());
             }
 
-            if ( ((Data)obj).getFormat()!=null ) {
+            if ( data.getFormat()!=null && data.getFormat().length()>0 ) {
                 if ( addAnd ) sb.append(" and ");
                 sb.append("format like ?");
-                conditions.add(((Data)obj).getFormat());
+                conditions.add(data.getFormat());
             }
             return;
 
         } else if (obj instanceof Link) {
+            Link link = (Link) obj;
             sb.append("trvaly=?");
-            conditions.add(new Boolean(((Link)obj).isFixed()));
+            conditions.add(new Boolean(link.isFixed()));
 
-            if ( ((Link)obj).getServer()!=0 ) {
+            if ( link.getServer()!=0 ) {
                 sb.append("and server=?");
-                conditions.add(new Integer(((Link)obj).getServer()));
+                conditions.add(new Integer(link.getServer()));
             }
 
-            if ( ((Link)obj).getOwner()!=0 ) {
+            if ( link.getOwner()!=0 ) {
                 sb.append("and pridal=?");
-                conditions.add(new Integer(((Link)obj).getOwner()));
+                conditions.add(new Integer(link.getOwner()));
             }
 
-            if ( ((Link)obj).getText()!=null ) {
+            if ( link.getText()!=null ) {
                 sb.append("and nazev like ?");
-                conditions.add(((Link)obj).getText());
+                conditions.add(link.getText());
             }
 
             if ( ((Link)obj).getUrl()!=null ) {
                 sb.append("and url like ?");
-                conditions.add(((Link)obj).getUrl());
+                conditions.add(link.getUrl());
             }
             return;
 
@@ -772,23 +775,28 @@ public class MySqlPersistance implements Persistance {
             return;
 
         } else if ( obj instanceof User ) {
-            if ( ((User)obj).getLogin()!=null ) {
+            User user = (User) obj;
+
+            String tmp = user.getLogin();
+            if ( tmp!=null && tmp.length()>0 ) {
                 addAnd = true;
                 sb.append("login like ?");
-                conditions.add(((User)obj).getLogin());
+                conditions.add(tmp);
             }
 
-            if ( ((User)obj).getName()!=null ) {
+            tmp = user.getName();
+            if ( tmp!=null && tmp.length()>0 ) {
                 if ( addAnd ) sb.append(" and ");
                 addAnd = true;
                 sb.append("jmeno like ?");
-                conditions.add(((User)obj).getName());
+                conditions.add(tmp);
             }
 
-            if ( ((User)obj).getEmail()!=null ) {
+            tmp = user.getEmail();
+            if ( tmp!=null && tmp.length()>0 ) {
                 if ( addAnd ) sb.append(" and ");
                 sb.append("email like ?");
-                conditions.add(((User)obj).getEmail());
+                conditions.add(tmp);
             }
         }
     }

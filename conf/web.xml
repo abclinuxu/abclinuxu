@@ -87,6 +87,12 @@
         <load-on-startup>4</load-on-startup>
     </servlet>
 
+    <servlet>
+        <servlet-name>ForgottenPassword</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.view.ForgottenPassword</servlet-class>
+        <load-on-startup>4</load-on-startup>
+    </servlet>
+
 
     <servlet-mapping>
         <servlet-name>ViewCategory</servlet-name><url-pattern>/hardware/ViewCategory</url-pattern>
@@ -163,6 +169,10 @@
 
     <servlet-mapping>
         <servlet-name>ViewIndex</servlet-name><url-pattern>/index.html</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ForgottenPassword</servlet-name><url-pattern>/ForgottenPassword</url-pattern>
     </servlet-mapping>
 
 

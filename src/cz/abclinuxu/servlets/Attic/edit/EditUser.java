@@ -22,8 +22,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
@@ -125,7 +124,8 @@ public class EditUser extends AbcServlet {
         String message = VelocityHelper.mergeTemplate("mail/welcome_user.vm",tmpContext);
         Email.sendEmail("admin@AbcLinuxu.cz",user.getEmail(),"Privitani",message);
 
-        // log in user
+        HttpSession session = request.getSession();
+        session.setAttribute(VAR_USER,user);
         return getTemplate("messages/welcome_user.vm");
     }
 
