@@ -136,7 +136,7 @@ public class MySqlPersistance implements Persistance {
     public void synchronizeCached(CachedObject cached) {
         try {
             GenericObject obj = cached.object;
-            obj.synchronizeWith(loadObject(obj));
+            obj.synchronizeWith(loadObject(obj,true));
             obj.setInitialized(true);
             cached.nextSync = System.currentTimeMillis()+Cache.SYNC_INTERVAL;
         } catch (Exception e) {
@@ -145,13 +145,24 @@ public class MySqlPersistance implements Persistance {
     }
 
     public GenericObject findById(GenericObject obj) throws PersistanceException {
+        return findById(obj,true);
+    }
+
+    /**
+     * Same as findById(GenericObject obj), but you can specify, whether it is recursive.
+     * E.g. if <code>recursive</code> is false, than
+     * ((Relation)getContent.get(0)).getChild().getContent is always empty. Otherwise
+     * it may recursively fill it. Without this, root Category may hold references to
+     * thousands objects!
+     */
+    private GenericObject findById(GenericObject obj, boolean recursive) throws PersistanceException {
         if ( obj==null ) throw new PersistanceException("Objekt nebyl nalezen!",AbcException.DB_NOT_FOUND,obj,null);
         GenericObject result = cache.load(obj);
         if ( result!=null ) return result;
 
         if ( log.isDebugEnabled() ) log.debug("Hledam podle PK objekt "+obj);
         try {
-            result = loadObject(obj);
+            result = loadObject(obj,recursive);
             if ( result!=null ) result.setInitialized(true);
             cache.store(result);
             return result;
@@ -251,7 +262,7 @@ public class MySqlPersistance implements Persistance {
 
                 char type = resultSet.getString(2).charAt(0);
                 int id = resultSet.getInt(3);
-                parent = findById(instantiateFromTree(type,id));
+                parent = findById(instantiateFromTree(type,id),false);
                 relation.setParent(parent);
                 result.add(0,relation);
             }
@@ -500,10 +511,10 @@ public class MySqlPersistance implements Persistance {
     /**
      * Loads object by PK from database.
      */
-    private GenericObject loadObject(GenericObject obj) throws PersistanceException, SQLException {
+    private GenericObject loadObject(GenericObject obj, boolean recursive) throws PersistanceException, SQLException {
         GenericObject result = null;
         if (obj instanceof GenericDataObject) {
-            result = loadDataObject((GenericDataObject)obj);
+            result = loadDataObject((GenericDataObject)obj,recursive);
         } else if (obj instanceof Relation) {
             result = loadRelation((Relation)obj);
         } else if (obj instanceof Data) {
@@ -511,9 +522,9 @@ public class MySqlPersistance implements Persistance {
         } else if (obj instanceof Link) {
             result = loadLink((Link)obj);
         } else if (obj instanceof Poll) {
-            result = loadPoll((Poll)obj);
+            result = loadPoll((Poll)obj,recursive);
         } else if (obj instanceof User) {
-            result = loadUser((User)obj);
+            result = loadUser((User)obj,recursive);
         } else if (obj instanceof Server) {
             result = loadServer((Server)obj);
         } else if (obj instanceof AccessRights) {
@@ -541,7 +552,7 @@ public class MySqlPersistance implements Persistance {
             char type = resultSet.getString(3).charAt(0);
             int id = resultSet.getInt(4);
             GenericObject child = instantiateFromTree(type,id);
-            synchronize(child);
+            child = findById(child,false);
             relation.setChild(child);
 
             relation.setName(resultSet.getString(5));
@@ -831,7 +842,7 @@ public class MySqlPersistance implements Persistance {
     /**
      * @return user from mysql db
      */
-    protected GenericObject loadUser(User obj) throws PersistanceException, SQLException {
+    protected GenericObject loadUser(User obj, boolean recursive) throws PersistanceException, SQLException {
         Connection con = null;
         try {
             con = getSQLConnection();
@@ -854,7 +865,7 @@ public class MySqlPersistance implements Persistance {
                 throw new PersistanceException(e.getMessage(),e.getStatus(),e.getSinner(),e.getNestedException());
             }
 
-            findChildren(obj,con);
+            if ( recursive) findChildren(obj,con);
             return user;
         } finally {
             releaseSQLConnection(con);
@@ -864,7 +875,7 @@ public class MySqlPersistance implements Persistance {
     /**
      * @return item descendant from mysql db
      */
-    protected GenericDataObject loadDataObject(GenericDataObject obj) throws PersistanceException, SQLException {
+    protected GenericDataObject loadDataObject(GenericDataObject obj, boolean recursive) throws PersistanceException, SQLException {
         Connection con = null;
 
         try {
@@ -896,7 +907,7 @@ public class MySqlPersistance implements Persistance {
             item.setOwner(resultSet.getInt(4));
             item.setUpdated(resultSet.getTimestamp(5));
 
-            findChildren(item,con);
+            if ( recursive) findChildren(item,con);
             return item;
         } finally {
             releaseSQLConnection(con);
@@ -1001,7 +1012,7 @@ public class MySqlPersistance implements Persistance {
     /**
      * @return poll from mysql db
      */
-    protected GenericObject loadPoll(Poll obj) throws PersistanceException, SQLException {
+    protected GenericObject loadPoll(Poll obj, boolean recursive) throws PersistanceException, SQLException {
         Connection con = null;
 
         try {
@@ -1036,7 +1047,7 @@ public class MySqlPersistance implements Persistance {
             }
             poll.setChoices(choices);
 
-            findChildren(poll,con);
+            if ( recursive) findChildren(poll,con);
             return poll;
         } finally {
             releaseSQLConnection(con);
