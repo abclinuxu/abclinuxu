@@ -32,12 +32,14 @@ public class ViewIndex implements AbcAction {
     public static final String VAR_SOFTWARE = "SOFTWARE";
     public static final String VAR_FORUM = "FORUM";
     public static final String VAR_ARTICLES = "ARTICLES";
+    public static final String VAR_DICTIONARY = "DICTIONARY";
 
     /**
      * Evaluate the request.
      */
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
+        SQLTool sqlTool = SQLTool.getInstance();
         User user = (User) env.get(Constants.VAR_USER);
         Tools tools = new Tools();
 
@@ -62,6 +64,14 @@ public class ViewIndex implements AbcAction {
             Paging paging = new Paging(discussions, 0, userLimit);
             env.put(ViewIndex.VAR_FORUM, paging);
         }
+
+        Qualifier[] qualifiers = { Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, 3) };
+        List data = sqlTool.findRecordRelationsWithType(Record.DICTIONARY, qualifiers);
+        for ( Iterator iter = data.iterator(); iter.hasNext(); ) {
+            Relation relation = (Relation) iter.next();
+            Tools.sync(relation.getParent());
+        }
+        env.put(VAR_DICTIONARY, data);
 
         return FMTemplateSelector.select("ViewIndex","show",env, request);
     }

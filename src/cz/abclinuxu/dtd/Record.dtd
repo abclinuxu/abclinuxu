@@ -41,3 +41,6 @@
 <!ELEMENT text (#PCDATA)> <!-- text of comment -->
 <!ATTLIST text format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT censored (#PCDATA)> <!-- if present, the comment is being censored -->
+
+<!-- Record.DICTIONARY -->
+<!ELEMENT description (#PCDATA)> <!-- explaination ->

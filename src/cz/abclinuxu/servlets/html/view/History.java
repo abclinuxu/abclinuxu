@@ -59,6 +59,7 @@ public class History implements AbcAction {
     public static final String VALUE_TYPE_DISCUSSION = "discussions";
     public static final String VALUE_TYPE_QUESTIONS = "questions";
     public static final String VALUE_TYPE_COMMENTS = "comments";
+    public static final String VALUE_TYPE_DICTIONARY = "dictionary";
 
     static final Qualifier[] QUALIFIERS_ARRAY = new Qualifier[]{};
 
@@ -154,6 +155,21 @@ public class History implements AbcAction {
             total = sqlTool.countCommentRelationsByUser(uid);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_COMMENTS;
+
+        } else if ( VALUE_TYPE_COMMENTS.equalsIgnoreCase(type) ) {
+            qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
+            data = sqlTool.findCommentRelationsByUser(uid, qualifiers);
+            total = sqlTool.countCommentRelationsByUser(uid);
+            found = new Paging(data, from, count, total, qualifiers);
+            type = VALUE_TYPE_COMMENTS;
+
+
+        } else if ( VALUE_TYPE_DICTIONARY.equalsIgnoreCase(type) ) {
+            qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
+            data = sqlTool.findRecordRelationsWithType(Record.DICTIONARY, qualifiers);
+            total = sqlTool.countRecordRelationsWithType(Record.DICTIONARY);
+            found = new Paging(data, from, count, total, qualifiers);
+            type = VALUE_TYPE_DICTIONARY;
 
         } else
             return ServletUtils.showErrorPage("Chybí parametr type!",env,request);

@@ -3,7 +3,7 @@
 <head>
   <title>${TITLE}</title>
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2">
-  <meta name="author" content="Leos Literak, AbcLinuxu s.r.o.">
+  <meta name="author" content="Leos Literak, Stickfish s.r.o.">
   <link href="../../main.css" rel="stylesheet" type="text/css">
 </head>
 <body>

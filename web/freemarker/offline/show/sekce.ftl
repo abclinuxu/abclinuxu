@@ -7,20 +7,18 @@
  <p class="note">${TOOL.render(TOOL.xpath(CATEGORY,"data/note"),USER?if_exists)}</p>
 </#if>
 
-<#global map=TOOL.groupByType(CATEGORY.content)>
-
-<#if map.article?exists>
- <#list SORT.byDate(map.article, "DESCENDING") as clanek>
+<#if CHILDREN.article?exists>
+ <#list SORT.byDate(CHILDREN.article, "DESCENDING") as clanek>
   <#call showArticle(clanek)>
   <#if clanek_has_next><#call separator><#else><#call doubleSeparator></#if>
  </#list>
  <br>
 </#if>
 
-<#if map.category?exists>
+<#if CHILDREN.category?exists>
  <table width="100%" border="0" cellpadding="2">
  <tr><td colspan="3" class="cerna3"><strong>Sekce</strong></td></tr>
- <#list SORT.byName(map.category) as sekce>
+ <#list SORT.byName(CHILDREN.category) as sekce>
   <#if sekce_index%3==0><tr></#if>
   <td width="33%">
   <a href="../${DUMP.getFile(sekce.id)}">${TOOL.childName(sekce)}</a>
@@ -31,10 +29,10 @@
  <br>
 </#if>
 
-<#if map.make?exists>
+<#if CHILDREN.make?exists>
  <table width="100%" border="0" cellpadding="2">
  <tr><td colspan="3" class="cerna3"><strong>Polo¾ky</strong></td></tr>
- <#list SORT.byName(map.make) as polozka>
+ <#list SORT.byName(CHILDREN.make) as polozka>
   <#if polozka_index%3==0><tr></#if>
   <td width="33%">
   <a href="../${DUMP.getFile(polozka.id)}">${TOOL.childName(polozka)}</a>
@@ -45,9 +43,9 @@
  <br>
 </#if>
 
-<#if map.driver?exists>
+<#if CHILDREN.driver?exists>
  <ul>
- <#list SORT.byDate(map.driver,"DESCENDING") as driver>
+ <#list SORT.byDate(CHILDREN.driver,"DESCENDING") as driver>
   <li><a href="../${DUMP.getFile(driver.id)}">
    ${TOOL.childName(driver)}, verze ${TOOL.xpath(driver.child,"data/version")}
   </a></li>
@@ -56,8 +54,8 @@
 </#if>
 
 
-<#if map.discussion?exists>
- <#call showDiscussions(map.discussion)>
+<#if CHILDREN.discussion?exists>
+ <#call showDiscussions(CHILDREN.discussion)>
 </#if>
 
 <#include "../footer.ftl">

@@ -349,6 +349,9 @@
     <action name="software" content="/show/history_records.ftl">
       <var name="TITLE" value="Historie softwaru" />
     </action>
+    <action name="dictionary" content="/show/history_dictionary.ftl">
+      <var name="TITLE" value="Historie pojmù" />
+    </action>
   </servlet>
 
   <servlet name="ServletUtils">
@@ -363,6 +366,21 @@
     </action>
     <action name="show" content="/show/forum.ftl">
       <var name="TITLE" value='Diskusní fórum: ${TOOL.xpath(ITEM,"data/name")}' type="Lazy"/>
+    </action>
+  </servlet>
+
+  <servlet name="Dictionary">
+    <action name="show" content="/show/dictionary.ftl">
+      <var name="TITLE" value='Pojem ${TOOL.xpath(ITEM,"data/name")}' type="Lazy"/>
+    </action>
+    <action name="add_item" content="/add/dictionary.ftl">
+      <var name="TITLE" value="Vlo¾it nový pojem"/>
+    </action>
+    <action name="add_record" content="/add/dictionary_record.ftl">
+      <var name="TITLE" value="Doplnit pojem"/>
+    </action>
+    <action name="edit" content="/edit/dictionary.ftl">
+      <var name="TITLE" value="Upravit pojem"/>
     </action>
   </servlet>
 

@@ -104,7 +104,6 @@ public class Dump implements Configurable {
 
         Tools.sync(relation);
         GenericObject obj = relation.getChild();
-        Tools.sync(obj);
 
         File file = getFileName(relation,currentDir);
         if ( obj instanceof Item ) {
@@ -172,7 +171,7 @@ public class Dump implements Configurable {
         Map env = new HashMap();
 
         env.put(ShowObject.VAR_RELATION,relation);
-        env.put(VAR_ONLINE_URL, PORTAL_URL+prefix+"/ViewRelation?relationId="+relation.getId());
+        env.put(VAR_ONLINE_URL, PORTAL_URL+prefix+"/show/"+relation.getId());
         List parents = persistance.findParents(relation);
         parents.add(relation);
         env.put(ShowObject.VAR_PARENTS,parents);
@@ -181,12 +180,12 @@ public class Dump implements Configurable {
         String name = null;
 
         if ( item.getType()==Item.DISCUSSION ) {
-            name = FMTemplateSelector.select("ViewRelation","discussion", env, "offline");
+            name = FMTemplateSelector.select("ShowObject","discussion", env, "offline");
             FMUtils.executeTemplate(name,env,file);
             return;
         }
         if ( item.getType()==Item.DRIVER ) {
-            name = FMTemplateSelector.select("ViewRelation","driver", env, "offline");
+            name = FMTemplateSelector.select("ShowObject","driver", env, "offline");
             FMUtils.executeTemplate(name,env,file);
             return;
         }
@@ -195,7 +194,7 @@ public class Dump implements Configurable {
         env.put(ShowObject.VAR_CHILDREN_MAP,children);
 
         if ( item.getType()==Item.ARTICLE ) {
-            name = FMTemplateSelector.select("ViewRelation","article", env, "offline");
+            name = FMTemplateSelector.select("ShowObject","article", env, "offline");
             FMUtils.executeTemplate(name,env,file);
             return;
         }
@@ -211,9 +210,9 @@ public class Dump implements Configurable {
                 persistance.synchronize(record);
 
             if ( record.getType()== Record.HARDWARE )
-                name = FMTemplateSelector.select("ViewRelation","hardware", env, "offline");
+                name = FMTemplateSelector.select("ShowObject","hardware", env, "offline");
             else if ( record.getType()== Record.SOFTWARE )
-                name = FMTemplateSelector.select("ViewRelation","software", env, "offline");
+                name = FMTemplateSelector.select("ShowObject","software", env, "offline");
 
             FMUtils.executeTemplate(name,env,file);
         }
@@ -226,14 +225,14 @@ public class Dump implements Configurable {
         Map env = new HashMap();
 
         env.put(ShowObject.VAR_RELATION,relation);
-        env.put(VAR_ONLINE_URL, PORTAL_URL+prefix+"/ViewCategory?relationId="+relation.getId());
+        env.put(VAR_ONLINE_URL, PORTAL_URL+prefix+"/dir/"+relation.getId());
         List parents = persistance.findParents(relation);
         parents.add(relation);
         env.put(ShowObject.VAR_PARENTS,parents);
-        env.put(ViewCategory.VAR_CATEGORY,category);
-
         Tools.sync(category);
-        Tools.syncList(category.getChildren());
+        env.put(ViewCategory.VAR_CATEGORY,category);
+        Map children = Tools.groupByType(category.getChildren());
+        env.put(ShowObject.VAR_CHILDREN_MAP, children);
 
         String name = FMTemplateSelector.select("ViewCategory","sekce", env, "offline");
         FMUtils.executeTemplate(name,env,file);

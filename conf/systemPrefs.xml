@@ -161,7 +161,7 @@
               <map>
                   <entry key="cache.size" value="750"/>
 
-                  <entry key="no.children.for.section" value="A,B,C,D,E"/>
+                  <entry key="no.children.for.section" value="A,B,C,D,E,F"/>
                   <!-- zpravicky -->
                   <entry key="no.children.for.section.A" value="452"/>
                   <!-- forum.distribuce -->
@@ -174,6 +174,8 @@
                   <entry key="no.children.for.section.E" value="514,515,516,517,518,524,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545,553,554,555"/>
                   <!-- forum.ruzne -->
                   <entry key="no.children.for.section.D" value="483,547,548,549"/>
+                  <!-- vykladovy slovnik -->
+                  <entry key="no.children.for.section.A" value="569"/>
               </map>
           </node>
           <node name="SQLTool">
@@ -192,6 +194,7 @@
               <entry key="relations.question.by.user" value="select R.cislo from relace R, polozka P where R.typ_potomka='P' and R.potomek=P.cislo and R.typ_predka='K' and R.predek!=-1 and P.typ=3 and P.pridal=?"/>
               <entry key="relations.comment.by.user" value="select R.cislo from relace R, relace P, zaznam Z where R.potomek=P.predek and R.typ_potomka='P' and R.predek!=-1 and P.potomek=Z.cislo and P.typ_potomka='Z' and Z.typ=4 and Z.data like concat('%&lt;author_id&gt;',?,'&lt;/%')"/>
               <entry key="relations.section.by.type" value="select R.cislo from relace R left join kategorie K on (K.cislo=R.potomek) where typ_potomka='K' and K.typ=?"/>
+              <entry key="relation.dictionary.by.urlname" value="select R.cislo from relace R, polozka P where R.typ_potomka='P' and R.potomek=P.cislo and P.typ=10 and P.podtyp=?"/>
               <entry key="users.with.weekly.email" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;>&lt;weekly_summary>yes%'"/>
               <entry key="users.with.forum.by.email" value="select cislo from uzivatel where data like '%&lt;email valid=&quot;yes&quot;%&lt;forum&gt;yes%&lt;/email%'"/>
               <entry key="users.with.roles" value="select cislo from uzivatel where data like '%&lt;roles>%'"/>
@@ -285,6 +288,11 @@
                     <node name="EditUser">
                         <map>
                             <entry key="regexp.invalid.login" value="[^a-zA-Z0-9_.\\-]"/>
+                        </map>
+                    </node>
+                    <node name="EditDictionary">
+                        <map>
+                            <entry key="regexp.invalid.characters" value="[^a-zA-Z0-9_.]+"/>
                         </map>
                     </node>
                 </node>

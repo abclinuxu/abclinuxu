@@ -68,3 +68,6 @@
 <!ELEMENT paid (#PCDATA)> <!-- ISO representation of day, when royalties were paid -->
 <!ELEMENT amount (#PCDATA)> <!-- integer, money value of royalties -->
 <!ELEMENT note (#PCDATA)> <!-- additional information -->
+
+<!-- Item.DICTIONARY -->
+<!ELEMENT name (#PCDATA)> <!-- word to be explained ->

@@ -5,13 +5,13 @@
 
 <#global who=TOOL.createUser(ITEM.owner)>
 <p>
- Tuto polo¾ku vytvoøil <a href="http://www.abclinuxu.cz/Profile?uid=${who.id}">${who.name}</a>
+ Tuto polo¾ku vytvoøil <a href="http://www.abclinuxu.cz/Profile/${who.id}">${who.name}</a>
  dne ${DATE.show(ITEM.created,"CZ_FULL")}.
 </p>
 
 <p>
  Máte-li doplòující informace, mù¾ete
- <a href="http://www.abclinuxu.cz/hardware/EditItem?action=addRecord&rid=${REL_ITEM.id}">pøidat</a>
+ <a href="http://www.abclinuxu.cz/hardware/edit/${REL_ITEM.id}?action=addRecord}">pøidat</a>
  dal¹í záznam.
 </p>
 
@@ -22,7 +22,7 @@
  <table cellspacing="0" border="1" cellpadding="5" width="100%">
   <caption>Záznam èíslo ${REL_RECORD_index+1}</caption>
   <tr>
-    <td colspan="2">Tento záznam pøidal <a href="http://www.abclinuxu.cz/Profile?uid=${who.id}">${who.name}</a>
+    <td colspan="2">Tento záznam pøidal <a href="http://www.abclinuxu.cz/Profile/${who.id}">${who.name}</a>
      dne ${DATE.show(RECORD.created,"CZ_FULL")}.
      <#if RECORD.updated.after(RECORD.created)>
       Poslední úprava probìhla dne ${DATE.show(RECORD.updated,"CZ_FULL")}.

@@ -1,7 +1,7 @@
 <#macro showArticle(relation)>
  <#local clanek=relation.child>
  <#local autor=TOOL.createUser(TOOL.xpath(clanek,"/data/author"))>
- <#local tmp=TOOL.groupByType(clanek.content)>
+ <#local tmp=TOOL.groupByType(clanek.children)>
  <#if tmp.discussion?exists>
   <#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])>
  </#if>
@@ -11,7 +11,7 @@
   </a><br>
   <span class="barva">
    ${DATE.show(clanek.created, "CZ_FULL")} |
-   <a href="http://www.abclinuxu.cz/Profile?uid=${autor.id}">${autor.name}</a>
+   <a href="http://www.abclinuxu.cz/Profile/${autor.id}">${autor.name}</a>
   </span>
  </p>
  <p class="perex_out">
@@ -61,29 +61,33 @@
  </table>
 </#macro>
 
-<#macro showComment(reaction dizId relId showControls) >
+<#macro showComment(comment dizId relId showControls) >
  <p class="diz_header">
-  <span class="diz_header_prefix">Datum:</span> ${DATE.show(reaction.updated,"CZ_FULL")}<br>
+  <span class="diz_header_prefix">Datum:</span> ${DATE.show(comment.created,"CZ_FULL")}<br>
   <span class="diz_header_prefix">Od:</span>
-  <#if reaction.owner!=0>
-   <#local who=TOOL.createUser(reaction.owner)>
-   <a href="http://www.abclinuxu.cz/Profile?uid=${who.id}">${who.name}</a><br>
+  <#if comment.author?exists>
+   <#local who=TOOL.sync(comment.author)>
+   <a href="http://www.abclinuxu.cz/Profile/${who.id}">${who.name}</a><br>
   <#else>
-   ${TOOL.xpath(reaction,"data/author")}<br>
+   ${TOOL.xpath(comment.data,"author")}<br>
   </#if>
-  <span class="diz_header_prefix">Titulek:</span> ${TOOL.xpath(reaction,"data/title")}<br>
+  <span class="diz_header_prefix">Titulek:</span> ${TOOL.xpath(comment.data,"title")}<br>
  </p>
- <p>${TOOL.render(TOOL.xpath(reaction,"data/text"),USER?if_exists)}</p>
+  <#if TOOL.xpath(comment.data,"censored")?exists>
+   <p>Na¹i administrátoøi shledali tento pøíspìvek závadným.</p>
+  <#else>
+   <p>${TOOL.render(TOOL.xpath(comment.data,"text"),USER?if_exists)}</p>
+  </#if>
 </#macro>
 
 <#macro showThread(diz level dizId relId)>
  <#local space=level*15>
  <div style="padding-left: ${space}pt">
-  <#call showComment(diz.record dizId relId true)>
+  <#call showComment(diz dizId relId true)>
  </div>
- <#if diz.list?exists>
-  <#list diz.list as child>
-   <#local level2=level+1>
+ <#if diz.children?exists>
+  <#local level2=level+1>
+  <#list diz.children as child>
    <#call showThread(child level2 dizId relId)>
   </#list>
  </#if>

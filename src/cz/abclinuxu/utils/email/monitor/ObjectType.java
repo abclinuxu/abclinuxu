@@ -14,6 +14,7 @@ public class ObjectType {
     public static final ObjectType DISCUSSION = new ObjectType("discussion");
     public static final ObjectType DRIVER = new ObjectType("driver");
     public static final ObjectType ITEM = new ObjectType("item");
+    public static final ObjectType DICTIONARY = new ObjectType("dictionary");
 
     private ObjectType(String name) {
         this.name = name;

@@ -5,7 +5,7 @@
             <action>cz.abclinuxu.servlets.html.view.ViewIndex</action>
         </mapping>
         <mapping>
-            <pattern>show</pattern>
+            <pattern>/show/</pattern>
             <action>cz.abclinuxu.servlets.html.view.ShowObject</action>
         </mapping>
         <mapping>
@@ -13,7 +13,7 @@
             <action>cz.abclinuxu.servlets.html.view.ShowForum</action>
         </mapping>
         <mapping>
-            <pattern>dir</pattern>
+            <pattern>/dir/</pattern>
             <action>cz.abclinuxu.servlets.html.view.ViewCategory</action>
         </mapping>
         <mapping>
@@ -27,6 +27,14 @@
         <mapping>
             <pattern>^/History</pattern>
             <action>cz.abclinuxu.servlets.html.view.History</action>
+        </mapping>
+        <mapping>
+            <pattern>^/slovnik/edit</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditDictionary</action>
+        </mapping>
+        <mapping>
+            <pattern>^/slovnik/</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ShowDictionary</action>
         </mapping>
         <mapping>
             <pattern>^/Survey</pattern>

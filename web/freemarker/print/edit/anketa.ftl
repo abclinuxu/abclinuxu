@@ -35,7 +35,7 @@
    <tr>
     <td class="required">Volba ${choice_index+1}</td>
     <td>
-     <input type="text" name="choices" size="60" maxlength="255" value="${choice.text}">
+     <input type="text" name="choices" size="60" maxlength="255" value="${choice.text?html}">
      <input type="text" name="counts" size="4" value="${choice.count}">
     </td>
    </tr>

@@ -13,6 +13,8 @@ public class Record extends GenericDataObject {
     public static final int ARTICLE = 3;
     /** one reaction in Discussion */
     public static final int DISCUSSION = 4;
+    /** one dictionary record */
+    public static final int DICTIONARY = 5;
 
     /** constants to be used in Data for HARDWARE record */
     public static final String VAL_HW_DRIVER_KERNEL = "kernel";

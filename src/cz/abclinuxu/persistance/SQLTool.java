@@ -49,6 +49,7 @@ public final class SQLTool implements Configurable {
     public static final String PREF_MAX_POLL = "max.poll";
     public static final String PREF_MAX_USER = "max.user";
     public static final String PREF_COUNT_ARTICLES_BY_USER = "count.articles.by.user";
+    public static final String PREF_DICTIONARY_RELATION_BY_URL_NAME = "relation.dictionary.by.urlname";
 
     private static SQLTool singleton;
 
@@ -63,6 +64,7 @@ public final class SQLTool implements Configurable {
     private String relationsNews, relationsNewsWithinPeriod;
     private String relationsNewsByUser, relationsRecordByUserAndType, relationsArticleByUser;
     private String relationsQuestionsByUser, relationsCommentsByUser;
+    private String relationDictionaryByUrlName;
     private String usersWithWeeklyEmail, usersWithForumByEmail, usersWithRoles, usersInGroup;
     private String maxPoll, maxUser;
     private String itemsByType;
@@ -604,6 +606,20 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Finds dictionary item identifies by urlName.
+     * @param urlName name to be used in URI
+     * @return relation of dictionary item or null
+     */
+    public Relation findDictionaryByURLName(String urlName) {
+        List params = new ArrayList();
+        params.add(urlName);
+        List result = loadRelations(relationDictionaryByUrlName, params);
+        if (result.size()==0)
+            return null;
+        return (Relation) result.get(0);
+    }
+
+    /**
      * Finds users, that have active email and have subscribed weekly email.
      * Use Qualifiers to set additional parameters.
      * @return list of Integers of user ids.
@@ -815,6 +831,7 @@ public final class SQLTool implements Configurable {
         relationsArticleByUser = getValue(PREF_ARTICLE_RELATIONS_BY_USER, prefs);
         relationsQuestionsByUser = getValue(PREF_QUESTION_RELATIONS_BY_USER, prefs);
         relationsCommentsByUser = getValue(PREF_COMMENT_RELATIONS_BY_USER, prefs);
+        relationDictionaryByUrlName = getValue(PREF_DICTIONARY_RELATION_BY_URL_NAME, prefs);
         usersWithWeeklyEmail = getValue(PREF_USERS_WITH_WEEKLY_EMAIL, prefs);
         usersWithForumByEmail = getValue(PREF_USERS_WITH_FORUM_BY_EMAIL, prefs);
         usersWithRoles = getValue(PREF_USERS_WITH_ROLES, prefs);
