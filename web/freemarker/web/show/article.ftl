@@ -22,6 +22,7 @@ ${DATE.show(ITEM.created,"CZ_FULL")} | <a href="/Profile/${autor.id}">${autor.na
    </#list>
   </#if>
   <a href="${URL.make("/"+RELATION.id+".docb")}">Docbook</a>
+  <a href="${URL.make("/edit/"+RELATION.id+"?action=showTalk")}">Rozhovor</a>
  </p>
 </#if>
 
