@@ -42,8 +42,6 @@ public class GenerateLinks implements Task {
 
             writer.write(Constants.isoFormat.format(new Date()));
             writer.write('\n');
-            writer2.write(Constants.isoFormat.format(new Date()));
-            writer2.write('\n');
 
             Category actual = (Category) persistance.findById(new Category(Constants.CAT_ACTUAL_ARTICLES));
             helper.sync(actual.getContent());
@@ -69,7 +67,7 @@ public class GenerateLinks implements Task {
                 writer.write("http://AbcLinuxu.cz/hardware/ViewRelation?relationId="+found.getId());
                 writer2.write("http://AbcLinuxu.cz/hardware/ViewRelation?relationId="+found.getId());
                 writer.write("|\\H "+helper.getXPath(item,"data/name")+"\n");
-                writer2.write("|H "+helper.getXPath(item,"data/name")+"\n");
+                writer2.write("|H "+helper.getXPath(item,"data/name")+"|\n");
             }
 
             list = persistance.findByCommand("select cislo from zaznam where typ=2 order by kdy desc limit 2");
@@ -83,7 +81,7 @@ public class GenerateLinks implements Task {
                 writer.write("http://AbcLinuxu.cz/software/ViewRelation?relationId="+found.getId());
                 writer2.write("http://AbcLinuxu.cz/software/ViewRelation?relationId="+found.getId());
                 writer.write("|\\S "+helper.getXPath(item,"data/name")+"\n");
-                writer2.write("|S "+helper.getXPath(item,"data/name")+"\n");
+                writer2.write("|S "+helper.getXPath(item,"data/name")+"|\n");
             }
 
             list = persistance.findByCommand("select cislo from polozka where typ=5 order by kdy desc limit 2");
@@ -97,7 +95,7 @@ public class GenerateLinks implements Task {
                 writer.write("http://AbcLinuxu.cz/drivers/ViewRelation?relationId="+found.getId());
                 writer2.write("http://AbcLinuxu.cz/drivers/ViewRelation?relationId="+found.getId());
                 writer.write("|\\O "+helper.getXPath(item,"data/name")+"\n");
-                writer2.write("|O "+helper.getXPath(item,"data/name")+"\n");
+                writer2.write("|O "+helper.getXPath(item,"data/name")+"|\n");
             }
 
             writer.close();
