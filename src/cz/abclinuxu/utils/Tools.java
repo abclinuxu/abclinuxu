@@ -22,6 +22,8 @@ import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
 
 import java.util.*;
+import java.io.StringReader;
+import java.io.IOException;
 
 import freemarker.template.*;
 
@@ -32,17 +34,13 @@ public class Tools {
     static Logger log = Logger.getLogger(Tools.class);
 
     static Persistance persistance = PersistanceFactory.getPersistance();
-    static RE lineBreaks, reRemoveTags, emptyLine, usmev, smich, mrk, smutek;
+    static RE lineBreaks, reRemoveTags, emptyLine;
     static {
         try {
             // todo move it to systemPrefs.xml
             lineBreaks = new RE("(<br>)|(<p>)|(<div>)",RE.MATCH_CASEINDEPENDENT);
             emptyLine = new RE("(\r\n){2}|(\n){2}", RE.MATCH_MULTILINE);
             reRemoveTags = new RE("<[\\w\\s\\d/=:.~?\"]+>", RE.MATCH_SINGLELINE);
-            usmev = new RE("(\\:-\\))");
-            smich = new RE("(\\:-D)([^a-zA-Z]|$)");
-            mrk = new RE("(;-\\))");
-            smutek = new RE("(\\:-\\()");
         } catch (RESyntaxException e) {
             log.error("Cannot create regexp to find line breaks!", e);
         }
@@ -357,17 +355,81 @@ public class Tools {
     }
 
     /**
-     * This method performs visualization enhancements. If string
-     * doesn't contain already HTML breaks (<p>, <br>), it inserts them.
-     * It also replaces smilies with appropriate images.
+     * @deprecated use method below
+     * @param str
+     * @return
      */
     public String render(String str) {
+        log.warn("render with one argument called!");
+        return render(str,null);
+    }
+
+    /**
+     * This method performs visualization enhancements. If string
+     * doesn't contain already HTML breaks (&lt;p>, &lt;br>), it inserts them.
+     * It also replaces smilies with appropriate images.
+     */
+    public String render(String str, Object o) {
         if ( Misc.empty(str) ) return "";
 
-        String tmp = smich.subst(str,"<img src=\"/images/smile/smich.gif\" alt=\":-D\" class=\"emo\">");
-        tmp = usmev.subst(tmp,"<img src=\"/images/smile/usmev.gif\" alt=\":-)\" class=\"emo\">");
-        tmp = mrk.subst(tmp,"<img src=\"/images/smile/mrk.gif\" alt=\";-)\" class=\"emo\">");
-        tmp = smutek.subst(tmp,"<img src=\"/images/smile/smutek.gif\" alt=\":-(\" class=\"emo\">");
+        boolean renderEmoticons = true;
+        if ( o!=null && (o instanceof User) ) {
+            Node node = ((User)o).getData().selectSingleNode("/data/settings/emoticons");
+            if ( "no".equals(node.getText()) )
+                renderEmoticons = false;
+        }
+
+        String tmp = str;
+
+        if (renderEmoticons) {
+            StringReader reader = new StringReader(str);
+            StringBuffer sb = new StringBuffer((int)(1.1*str.length()));
+
+            try {
+                int c = reader.read(), d, e;
+                while (c!=-1) {
+                    if (c==':' || c==';') {
+                        d = reader.read();
+                        if ( d=='-' ) {
+                            e = reader.read();
+                            switch (e) {
+                                case -1 :
+                                    sb.append((char) c);
+                                    sb.append((char) d);
+                                    break;
+                                case ')':
+                                    if (c==':')
+                                        sb.append("<img src=\"/images/smile/usmev.gif\" alt=\":-)\" class=\"emo\">");
+                                    else
+                                        sb.append("<img src=\"/images/smile/mrk.gif\" alt=\";-)\" class=\"emo\">");
+                                    break;
+                                case '(':
+                                    sb.append("<img src=\"/images/smile/smutek.gif\" alt=\":-(\" class=\"emo\">");
+                                    break;
+                                case 'D':
+                                    sb.append("<img src=\"/images/smile/smich.gif\" alt=\":-D\" class=\"emo\">");
+                                    break;
+                                default:
+                                    sb.append((char) c);
+                                    sb.append((char) d);
+                                    sb.append((char) e);
+                            }
+                        } else {
+                            sb.append((char) c);
+                            if (d!=-1)
+                                sb.append((char) d);
+                        }
+                    } else {
+                        sb.append((char)c);
+                    }
+                    c = reader.read();
+                }
+            } catch (IOException e) {
+                log.error("Error while rendering emoticons!", e);
+            }
+
+            tmp = sb.toString();
+        }
 
         if ( lineBreaks.match(tmp) ) return tmp;
         return emptyLine.subst(tmp,"<p>\n");
