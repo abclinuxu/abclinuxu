@@ -103,6 +103,18 @@ public abstract class GenericDataObject extends GenericObject {
     }
 
     /**
+     * sets XML data of this object in String format
+     */
+    public void setData(String data) throws AbcException {
+        try {
+            this.data = DocumentHelper.parseText(data);
+        } catch (DocumentException e) {
+            log.warn("Nemuzu konvertovat data do XML! Exception: "+e.getMessage()+" ("+data+")");
+            throw new AbcException("Nemuzu konvertovat data do XML!",AbcException.WRONG_DATA,data,e);
+        }
+    }
+
+    /**
      * @return Helper (non-persistant) String for findByExample(), which
      * works as argument to search in <code>data</code>.
      **/
@@ -116,18 +128,6 @@ public abstract class GenericDataObject extends GenericObject {
      **/
     public void setSearchString(String searchString) {
         this.searchString = searchString;
-    }
-
-    /**
-     * sets XML data of this object in String format
-     */
-    public void setData(String data) throws AbcException {
-        try {
-            this.data = DocumentHelper.parseText(data);
-        } catch (DocumentException e) {
-            log.warn("Nemuzu konvertovat data do XML! Exception: "+e.getMessage()+" ("+data+")");
-            throw new AbcException("Nemuzu konvertovat data do XML!",AbcException.WRONG_DATA,data,e);
-        }
     }
 
     public boolean equals(Object o) {

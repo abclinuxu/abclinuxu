@@ -27,6 +27,7 @@ public class TestMySqlPersistance extends TestCase {
     }
 
     protected void setUp() throws Exception {
+        org.apache.log4j.Category.getDefaultHierarchy().disableAll();
         super.setUp();
         persistance = new MySqlPersistance("jdbc:mysql://localhost/unit?user=literakl");
     }
@@ -44,8 +45,6 @@ public class TestMySqlPersistance extends TestCase {
      * test correctness of <code>remove</code>
      */
     public void testRemove() throws Exception {
-        org.apache.log4j.Category.getDefaultHierarchy().disableAll();
-
         Record a = new HardwareRecord(0);
         a.setOwner(1);
         a.setData("<name>hw a</name>");
@@ -184,8 +183,6 @@ public class TestMySqlPersistance extends TestCase {
      * tests functionality of tree
      */
     public void testTree() throws Exception {
-        org.apache.log4j.Category.getDefaultHierarchy().disableAll();
-
         Category processors = new Category(0);
         processors.setData("<name>Processors</name>");
         persistance.create(processors,null);

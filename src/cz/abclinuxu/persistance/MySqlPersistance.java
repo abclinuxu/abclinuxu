@@ -623,11 +623,12 @@ public class MySqlPersistance implements Persistance {
             conditions.add(new Integer(((Data)obj).getOwner()));
 
         } else if (obj instanceof User) {
-            sb.append("insert into uzivatel values(0,?,?,?,?)");
+            sb.append("insert into uzivatel values(0,?,?,?,?,?)");
             conditions.add(((User)obj).getLogin());
             conditions.add(((User)obj).getName());
             conditions.add(((User)obj).getEmail());
             conditions.add(((User)obj).getPassword());
+            conditions.add(((User)obj).getDataAsString().getBytes());
 
         } else if (obj instanceof Link) {
             sb.append("insert into odkaz values(0,?,?,?,?,?,NULL)");
@@ -735,6 +736,26 @@ public class MySqlPersistance implements Persistance {
                 conditions.add(((Poll)obj).getText());
             }
             return;
+
+        } else if ( obj instanceof User ) {
+            if ( ((User)obj).getLogin()!=null ) {
+                addAnd = true;
+                sb.append("login like ?");
+                conditions.add(((User)obj).getLogin());
+            }
+
+            if ( ((User)obj).getName()!=null ) {
+                if ( addAnd ) sb.append(" and ");
+                addAnd = true;
+                sb.append("jmeno like ?");
+                conditions.add(((User)obj).getName());
+            }
+
+            if ( ((User)obj).getEmail()!=null ) {
+                if ( addAnd ) sb.append(" and ");
+                sb.append("email like ?");
+                conditions.add(((User)obj).getEmail());
+            }
         }
     }
 
@@ -866,6 +887,11 @@ public class MySqlPersistance implements Persistance {
             user.setName(resultSet.getString(3));
             user.setEmail(resultSet.getString(4));
             user.setPassword(resultSet.getString(5));
+            try {
+                user.setData(resultSet.getString(6));
+            } catch (AbcException e) {
+                throw new PersistanceException(e.getMessage(),e.getStatus(),e.getSinner(),e.getNestedException());
+            }
 
             findChildren(obj,con);
             return user;
@@ -1209,12 +1235,13 @@ public class MySqlPersistance implements Persistance {
 
         try {
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("update uzivatel set login=?,jmeno=?,email=?,heslo=? where cislo=?");
+            PreparedStatement statement = con.prepareStatement("update uzivatel set login=?,jmeno=?,email=?,heslo=?,data=? where cislo=?");
             statement.setString(1,user.getLogin());
             statement.setString(2,user.getName());
             statement.setString(3,user.getEmail());
             statement.setString(4,user.getPassword());
-            statement.setInt(5,user.getId());
+            statement.setBytes(5,user.getDataAsString().getBytes());
+            statement.setInt(6,user.getId());
 
             int result = statement.executeUpdate();
             if ( result!=1 ) {
