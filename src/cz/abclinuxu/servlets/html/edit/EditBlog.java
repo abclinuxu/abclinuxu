@@ -280,9 +280,9 @@ public class EditBlog implements AbcAction, Configurable {
         if (node!=null)
             text = node.getText();
         node = document.selectSingleNode("/data/content");
-        if (text!=null)
-            text += node.getText();
-        else
+        if (text!=null) {
+            text = text + "<break>" + node.getText();
+        } else
             text = node.getText();
         params.put(PARAM_CONTENT, text);
         params.put(PARAM_CATEGORY_ID, story.getSubType());
