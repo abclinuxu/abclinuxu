@@ -204,13 +204,7 @@ public class MySqlPersistance implements Persistance {
                 try {
                     GenericObject o = (GenericObject) kind.newInstance();
                     o.setId(resultSet.getInt(1));
-                    GenericObject tmp = cache.load(obj);
-                    if ( tmp!=null ) {
-                        o = tmp;
-                    } else {
-                        o = findById(o);
-                        cache.store(o);
-                    }
+                    o = findById(o);
                     result.add(o);
                 } catch (Exception e) {
                     log.error("Cannot instantiate "+kind);
@@ -542,11 +536,16 @@ public class MySqlPersistance implements Persistance {
         while ( resultSet.next() ) {
             Relation relation = new Relation(resultSet.getInt(1));
             relation.setUpper(resultSet.getInt(2));
+            relation.setParent(obj);
+
             char type = resultSet.getString(3).charAt(0);
             int id = resultSet.getInt(4);
-            relation.setParent(obj);
-            relation.setChild(instantiateFromTree(type,id));
+            GenericObject child = instantiateFromTree(type,id);
+            synchronize(child);
+            relation.setChild(child);
+
             relation.setName(resultSet.getString(5));
+            relation.setInitialized(true);
             obj.addContent(relation);
         }
     }
@@ -924,11 +923,15 @@ public class MySqlPersistance implements Persistance {
 
             char type = resultSet.getString(3).charAt(0);
             int id = resultSet.getInt(4);
-            relation.setParent(instantiateFromTree(type,id));
+            GenericObject parent = instantiateFromTree(type,id);
+            synchronize(parent);
+            relation.setParent(parent);
 
             type = resultSet.getString(5).charAt(0);
             id = resultSet.getInt(6);
-            relation.setChild(instantiateFromTree(type,id));
+            GenericObject child = instantiateFromTree(type,id);
+            synchronize(child);
+            relation.setChild(child);
 
             relation.setName(resultSet.getString(7));
 

@@ -306,6 +306,28 @@ public class TestMySqlPersistance extends TestCase {
     }
 
     /**
+     * Cache is transparent, so we can't test it directly. We can just test
+     * possible places of problems.
+     */
+    public void testCache() throws Exception {
+        Record a = new Record(0,Record.SOFTWARE);
+        a.setData("<name>Disky</name>");
+        persistance.create(a);
+
+        Record b = new Record(a.getId(),Record.SOFTWARE);
+        Record c = (Record) persistance.findById(b);
+        assertEquals(a,c);
+
+        persistance.remove(a);
+        try {
+            c = (Record) persistance.findById(b);
+            fail("found deleted object " + c);
+        } catch (PersistanceException e) {
+            assertTrue( e.getStatus()==AbcException.DB_NOT_FOUND );
+        }
+    }
+
+    /**
      * Searches list of GenericObjects for object with id equal to id.
      */
     protected boolean containsId(List list, int id) {

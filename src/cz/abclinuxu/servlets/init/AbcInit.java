@@ -13,6 +13,7 @@ import javax.servlet.ServletException;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Category;
+import org.apache.velocity.app.Velocity;
 import cz.abclinuxu.persistance.PersistanceFactory;
 
 /**
@@ -31,6 +32,15 @@ public class AbcInit extends HttpServlet {
             BasicConfigurator.configure();
         }
 
+        file = getInitParameter("VELOCITY");
+        if ( file!=null ) {
+            try {
+                Velocity.init(path+file);
+            } catch (Exception e) {
+                log.error("Nemohu inicializovat Velocity!",e);
+            }
+        }
+
         String url = getInitParameter("URL");
         if ( url!=null ) {
             log.info("Inicializuji vrstvu persistence pomoci URL "+url);
@@ -39,6 +49,6 @@ public class AbcInit extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // this servlet shall be never called
+        // this servlet shall be never called directly
     }
 }
