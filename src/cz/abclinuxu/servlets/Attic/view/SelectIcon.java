@@ -10,6 +10,7 @@ package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
+import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.edit.EditCategory;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
@@ -125,7 +126,7 @@ public class SelectIcon extends AbcServlet {
         session.setAttribute(AbcServlet.ATTRIB_PARAMS,map);
 
         String newUrl = url + "?icon="+icon;
-        redirect(newUrl,response,ctx);
+        UrlUtils.redirect(newUrl,response,ctx);
         return null;
     }
 }

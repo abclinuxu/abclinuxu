@@ -10,6 +10,7 @@ package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
+import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.view.SelectIcon;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.User;
@@ -177,7 +178,7 @@ public class EditCategory extends AbcServlet {
             return getTemplate("add/category.vm");
         }
 
-        redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
+        UrlUtils.redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
         return null;
     }
 
@@ -248,9 +249,9 @@ public class EditCategory extends AbcServlet {
         persistance.update(category);
 
         if ( upperRelation!=null ) {
-            redirect("/ViewRelation?relationId="+upperRelation.getId(),response,ctx);
+            UrlUtils.redirect("/ViewRelation?relationId="+upperRelation.getId(),response,ctx);
         } else {
-            redirect("/ViewCategory?categoryId="+category.getId(),response,ctx);
+            UrlUtils.redirect("/ViewCategory?categoryId="+category.getId(),response,ctx);
         }
         return null;
     }

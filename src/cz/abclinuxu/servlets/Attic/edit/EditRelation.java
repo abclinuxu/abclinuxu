@@ -143,7 +143,7 @@ public class EditRelation extends AbcServlet {
 
         String prefix = (String)params.get(EditRelation.PARAM_PREFIX);
         ctx.put(AbcServlet.VAR_URL_UTILS,new UrlUtils(prefix, response));
-        redirect("/ViewRelation?relationId="+parent.getId(),response,ctx);
+        UrlUtils.redirect("/ViewRelation?relationId="+parent.getId(),response,ctx);
         return null;
     }
 
@@ -169,7 +169,7 @@ public class EditRelation extends AbcServlet {
             url = prefix.concat("/ViewRelation?relationId="+relation.getUpper());
         } else url = "/Index";
 
-        redirect(url,response,ctx);
+        UrlUtils.redirect(url,response,ctx);
         return null;
     }
 
@@ -194,7 +194,7 @@ public class EditRelation extends AbcServlet {
             url = prefix.concat("/ViewRelation?relationId="+relation.getUpper());
         } else url = "/Index";
 
-        redirect(url,response,ctx);
+        UrlUtils.redirect(url,response,ctx);
         return null;
     }
 }

@@ -15,8 +15,7 @@ import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.AbcException;
 import cz.abclinuxu.security.Guard;
-import cz.abclinuxu.servlets.utils.Email;
-import cz.abclinuxu.servlets.utils.VelocityHelper;
+import cz.abclinuxu.servlets.utils.*;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.context.Context;
@@ -229,7 +228,7 @@ public class EditUser extends AbcServlet {
         }
 
         addMessage("Zmìny byly ulo¾eny.",ctx, request.getSession());
-        redirect("/Index",response,ctx);
+        UrlUtils.redirect("/Index",response,ctx);
         return null;
     }
 
@@ -329,7 +328,7 @@ public class EditUser extends AbcServlet {
             }
         }
 
-        redirect("/Index",response,ctx);
+        UrlUtils.redirect("/Index",response,ctx);
         return null;
     }
 }

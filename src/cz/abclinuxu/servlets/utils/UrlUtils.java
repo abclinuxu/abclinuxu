@@ -8,8 +8,16 @@
  */
 package cz.abclinuxu.servlets.utils;
 
+import org.apache.velocity.context.Context;
+
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.ServletException;
+import javax.servlet.RequestDispatcher;
 import java.util.*;
+import java.io.IOException;
+
+import cz.abclinuxu.servlets.AbcServlet;
 
 /**
  * Simple class used for generating URLs, which remembers
@@ -118,5 +126,24 @@ public class UrlUtils {
             if ( url.startsWith(prefix) ) return prefix;
         }
         return PREFIX_NONE;
+    }
+
+    /**
+     * Redirects to desired URL, keeping session and prefix.
+     */
+    public static void redirect(String url, HttpServletResponse response, Context context) throws IOException {
+        UrlUtils urlUtils = (UrlUtils) context.get(AbcServlet.VAR_URL_UTILS);
+        String url2 = urlUtils.constructRedirectURL(url);
+        response.sendRedirect(url2);
+    }
+
+    /**
+     * Dispatches to desired URL, keeping prefix.
+     */
+    public static void dispatch(String url, HttpServletRequest request, HttpServletResponse response, Context context) throws ServletException, IOException {
+        UrlUtils urlUtils = (UrlUtils) context.get(AbcServlet.VAR_URL_UTILS);
+        url = urlUtils.constructDispatchURL(url);
+        RequestDispatcher dispatcher = request.getRequestDispatcher(url);
+        dispatcher.forward(request,response);
     }
 }

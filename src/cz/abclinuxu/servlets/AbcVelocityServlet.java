@@ -326,25 +326,6 @@ public class AbcServlet extends VelocityServlet {
     }
 
     /**
-     * Redirects to desired URL, keeping session and prefix.
-     */
-    public void redirect(String url, HttpServletResponse response, Context context) throws IOException {
-        UrlUtils urlUtils = (UrlUtils) context.get(AbcServlet.VAR_URL_UTILS);
-        String url2 = urlUtils.constructRedirectURL(url);
-        response.sendRedirect(url2);
-    }
-
-    /**
-     * Dispatches to desired URL, keeping prefix.
-     */
-    public void dispatch(String url, HttpServletRequest request, HttpServletResponse response, Context context) throws ServletException, IOException {
-        UrlUtils urlUtils = (UrlUtils) context.get(AbcServlet.VAR_URL_UTILS);
-        url = urlUtils.constructDispatchURL(url);
-        RequestDispatcher dispatcher = request.getRequestDispatcher(url);
-        dispatcher.forward(request,response);
-    }
-
-    /**
      * Invoked when there is an error thrown in any part of doRequest() processing.
      * @todo Find, what to use instead of deprecated HttpUtils.getRequestURL
      */

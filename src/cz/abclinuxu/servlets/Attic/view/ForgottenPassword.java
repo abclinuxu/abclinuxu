@@ -7,8 +7,7 @@
 package cz.abclinuxu.servlets.view;
 
 import cz.abclinuxu.servlets.AbcServlet;
-import cz.abclinuxu.servlets.utils.VelocityHelper;
-import cz.abclinuxu.servlets.utils.Email;
+import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
@@ -89,7 +88,7 @@ public class ForgottenPassword extends AbcServlet {
         Email.sendEmail("admin@AbcLinuxu.cz",user.getEmail(),"Zapomenute heslo",message);
 
         addMessage("Heslo odeslano na adresu "+user.getEmail(),ctx,request.getSession());
-        redirect("/index.html",response,ctx);
+        UrlUtils.redirect("/index.html",response,ctx);
         return null;
     }
 }

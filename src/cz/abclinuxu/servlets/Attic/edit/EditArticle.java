@@ -9,6 +9,7 @@ package cz.abclinuxu.servlets.edit;
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
+import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.view.SelectRelation;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
@@ -172,7 +173,7 @@ public class EditArticle extends AbcServlet {
             persistance.create(record);
             persistance.create(new Relation(item,record,relation.getId()));
 
-            redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
+            UrlUtils.redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
             return null;
         } catch (PersistanceException e) {
             addError(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
@@ -270,7 +271,7 @@ public class EditArticle extends AbcServlet {
             }
         }
 
-        redirect("/ViewRelation?relationId="+upper.getId(),response,ctx);
+        UrlUtils.redirect("/ViewRelation?relationId="+upper.getId(),response,ctx);
         return null;
     }
 }

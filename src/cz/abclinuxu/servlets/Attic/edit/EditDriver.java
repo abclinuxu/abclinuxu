@@ -9,6 +9,7 @@ package cz.abclinuxu.servlets.edit;
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
+import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.persistance.*;
@@ -60,7 +61,7 @@ public class EditDriver extends AbcServlet {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: {
                     addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, request.getSession());
-                    redirect("/drivers/ViewRelation?relationId="+Constants.REL_DRIVERS,response,ctx);
+                    UrlUtils.redirect("/drivers/ViewRelation?relationId="+Constants.REL_DRIVERS,response,ctx);
                     return null;
                 }
                 default: return actionAddStep(request,ctx);
@@ -191,7 +192,7 @@ public class EditDriver extends AbcServlet {
             return getTemplate("add/driver.vm");
         }
 
-        redirect("/ViewRelation?relationId="+Constants.REL_DRIVERS,response,ctx);
+        UrlUtils.redirect("/ViewRelation?relationId="+Constants.REL_DRIVERS,response,ctx);
         return null;
     }
 }

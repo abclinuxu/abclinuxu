@@ -9,6 +9,7 @@ package cz.abclinuxu.servlets.view;
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
+import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.PersistanceException;
@@ -167,7 +168,7 @@ public class SelectRelation extends AbcServlet {
         session.setAttribute(AbcServlet.ATTRIB_PARAMS,map);
 
         String url = request.getParameter(SelectRelation.PARAM_URL);
-        redirect(url,response,ctx);
+        UrlUtils.redirect(url,response,ctx);
         return null;
     }
 }

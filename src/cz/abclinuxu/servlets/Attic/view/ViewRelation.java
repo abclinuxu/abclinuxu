@@ -63,16 +63,16 @@ public class ViewRelation extends AbcServlet {
         ctx.put(VAR_PARENTS,parents);
 
         if ( relation.getParent() instanceof Item ) {
-            dispatch("/ViewItem",request,response,ctx);
+            UrlUtils.dispatch("/ViewItem",request,response,ctx);
             return null;
         }
         if ( relation.getParent() instanceof Category ) {
             if ( relation.getChild() instanceof Item ) {
-                dispatch("/ViewItem",request,response,ctx);
+                UrlUtils.dispatch("/ViewItem",request,response,ctx);
                 return null;
             }
             // redirect to category otherwise
-            dispatch("/ViewCategory",request,response,ctx);
+            UrlUtils.dispatch("/ViewCategory",request,response,ctx);
         }
         return null;
     }

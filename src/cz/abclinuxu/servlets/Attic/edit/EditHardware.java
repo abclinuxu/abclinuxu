@@ -8,6 +8,7 @@ package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
+import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.view.SelectIcon;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
@@ -226,7 +227,7 @@ public class EditHardware extends AbcServlet {
             persistance.create(record);
             persistance.create(new Relation(item,record,relation.getId()));
 
-            redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
+            UrlUtils.redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
             return null;
         } catch (PersistanceException e) {
             addError(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
@@ -270,7 +271,7 @@ public class EditHardware extends AbcServlet {
             Relation relation = new Relation(upper.getChild(),record,upper.getId());
             persistance.create(relation);
 
-            redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
+            UrlUtils.redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
             return null;
         } catch (PersistanceException e) {
             addError(AbcServlet.GENERIC_ERROR,e.getMessage(),ctx, null);
@@ -311,7 +312,7 @@ public class EditHardware extends AbcServlet {
         node.setText(tmp);
         persistance.update(item);
 
-        redirect("/ViewRelation?relationId="+relation.getUpper(),response,ctx);
+        UrlUtils.redirect("/ViewRelation?relationId="+relation.getUpper(),response,ctx);
         return null;
     }
 
@@ -369,7 +370,7 @@ public class EditHardware extends AbcServlet {
 
         persistance.update(record);
 
-        redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
+        UrlUtils.redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
         return null;
     }
 }

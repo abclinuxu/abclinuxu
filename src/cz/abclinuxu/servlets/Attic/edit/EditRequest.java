@@ -53,7 +53,7 @@ public class EditRequest extends AbcServlet {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: {
                     addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, request.getSession());
-                    redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);
+                    UrlUtils.redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);
                     return null;
                 }
                 default: return actionDelete(request,response,ctx);
@@ -65,7 +65,7 @@ public class EditRequest extends AbcServlet {
                 case Guard.ACCESS_LOGIN: return getTemplate("view/login.vm");
                 case Guard.ACCESS_DENIED: {
                     addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, request.getSession());
-                    redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);
+                    UrlUtils.redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);
                     return null;
                 }
                 default: return actionDeliver(request,response,ctx);
@@ -120,7 +120,7 @@ public class EditRequest extends AbcServlet {
 
         addMessage("Vá¹ po¾adavek byl pøijat.",ctx,request.getSession());
 
-        redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);
+        UrlUtils.redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);
         return null;
     }
 
@@ -132,7 +132,7 @@ public class EditRequest extends AbcServlet {
         persistance.remove(relation);
         addMessage("Po¾adavek byl smazán.",ctx,request.getSession());
 
-        redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);
+        UrlUtils.redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);
         return null;
     }
 
@@ -153,7 +153,7 @@ public class EditRequest extends AbcServlet {
         persistance.remove(relation);
         addMessage("Po¾adavek byl vyøízen.",ctx,request.getSession());
 
-        redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);
+        UrlUtils.redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);
         return null;
     }
 }

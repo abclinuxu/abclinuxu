@@ -12,6 +12,7 @@ import org.apache.velocity.context.Context;
 import javax.servlet.http.*;
 
 import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.security.Guard;
@@ -191,7 +192,7 @@ public class EditPoll extends AbcServlet {
             sb.append(tmp);
         }
 
-        redirect(sb.toString(),response,ctx);
+        UrlUtils.redirect(sb.toString(),response,ctx);
         return null;
     }
 
@@ -238,7 +239,7 @@ public class EditPoll extends AbcServlet {
         }
         PersistanceFactory.getPersistance().update(poll);
 
-        redirect("/ViewRelation?relationId="+upperRelation.getId(),response,ctx);
+        UrlUtils.redirect("/ViewRelation?relationId="+upperRelation.getId(),response,ctx);
         return null;
     }
 
@@ -280,7 +281,7 @@ public class EditPoll extends AbcServlet {
             }
         }
 
-        redirect(url,response,ctx);
+        UrlUtils.redirect(url,response,ctx);
         return null;
     }
 
@@ -295,7 +296,7 @@ public class EditPoll extends AbcServlet {
         if ( session.getAttribute(searched)!=null ) return true;
 
         Cookie[] cookies = request.getCookies();
-        for (int i = 0; i < cookies.length; i++) {
+        for (int i = 0; cookies!=null && i<cookies.length; i++) {
             Cookie cookie = cookies[i];
             if ( cookie.getName().equals(searched) ) return true;
         }

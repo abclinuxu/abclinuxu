@@ -40,7 +40,7 @@ public class FindContext extends AbcServlet {
         persistance.synchronize(relation.getChild());
         String context = chooseContext(relation);
 
-        redirect(context+request.getRequestURL(),response,ctx);// wrong!
+        UrlUtils.redirect(context+request.getRequestURL(),response,ctx);// wrong!
         return null;
     }
 
