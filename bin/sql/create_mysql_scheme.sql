@@ -182,3 +182,14 @@ CREATE TABLE akce (
 );
 
 ALTER TABLE akce ADD INDEX akce_index (kdo,relace);
+
+-- mala implementace RCS
+CREATE TABLE verze (
+ cesta VARCHAR(255) NOT NULL,                    -- identifikator dokumentu
+ verze VARCHAR(25) NOT NULL,                     -- verze dokumentu
+ kdo VARCHAR(50) NOT NULL,                       -- identifikator uzivatele
+ kdy DATETIME NOT NULL,                          -- cas pridani
+ obsah TEXT NOT NULL                             -- obsah dokumentu
+);
+
+ALTER TABLE verze ADD UNIQUE INDEX verze_cesta_verze (cesta,verze);

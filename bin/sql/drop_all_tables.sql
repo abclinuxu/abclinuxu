@@ -10,4 +10,5 @@ drop table presmerovani;
 drop table relace;
 drop table server;
 drop table uzivatel;
+drop table verze;
 drop table zaznam;
