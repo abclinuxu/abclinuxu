@@ -14,6 +14,7 @@ import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.PreparedDiscussion;
 import cz.abclinuxu.servlets.utils.Discussion;
+import cz.abclinuxu.utils.search.CreateIndex;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.dom4j.Element;
@@ -32,11 +33,12 @@ public class Tools {
     static Logger log = Logger.getLogger(Tools.class);
 
     static Persistance persistance = PersistanceFactory.getPersistance();
-    static RE lineBreaks,emptyLine,usmev,smich,mrk,smutek;
+    static RE lineBreaks, reRemoveTags, emptyLine, usmev, smich, mrk, smutek;
     static {
         try {
             lineBreaks = new RE("(<br>)|(<p>)|(<div>)",RE.MATCH_CASEINDEPENDENT);
             emptyLine = new RE("(\r\n){2}|(\n){2}", RE.MATCH_MULTILINE);
+            reRemoveTags = new RE("<[\\w\\s\\d/=:.~?\"]+>", RE.MATCH_SINGLELINE);
             usmev = new RE("([\\:][-][)]+)");
             smich = new RE("([\\:][-][D]([^a-zA-Z]|$))");
             mrk = new RE("([;][-][)])");
@@ -538,5 +540,17 @@ public class Tools {
                 sb.append(((Element) iter.next()).getText());
         }
         return sb.toString();
+    }
+
+    /**
+     * This method removes all tags from text.
+     */
+    public static String removeTags(String text) {
+        try {
+            return reRemoveTags.subst(text,"");
+        } catch (Throwable e) {
+            log.warn("Oops, remove tags regexp failed on '"+text+"'!", e);
+            return text;
+        }
     }
 }
