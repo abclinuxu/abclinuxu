@@ -5,23 +5,31 @@
  */
 package cz.abclinuxu.scheduler;
 
-import cz.abclinuxu.persistance.*;
-import cz.abclinuxu.data.*;
+import com.sun.syndication.feed.synd.SyndEntry;
+import com.sun.syndication.feed.synd.SyndFeed;
+import com.sun.syndication.io.SyndFeedInput;
+import com.sun.syndication.io.XmlReader;
+import cz.abclinuxu.data.Category;
+import cz.abclinuxu.data.Link;
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.Server;
+import cz.abclinuxu.exceptions.PersistanceException;
+import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.init.AbcInit;
 import cz.abclinuxu.utils.Sorters2;
-import cz.abclinuxu.exceptions.PersistanceException;
-
-import java.util.*;
-import java.net.URL;
-import java.io.*;
-
 import org.apache.regexp.RE;
+import org.apache.regexp.RECompiler;
+import org.apache.regexp.REProgram;
 import org.apache.regexp.RESyntaxException;
-import com.sun.syndication.io.SyndFeedInput;
-import com.sun.syndication.io.XmlReader;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.feed.synd.SyndEntry;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.*;
 
 /**
  * Updates Links from other servers.
@@ -53,11 +61,11 @@ public class UpdateLinks extends TimerTask {
     /** id of last server, maximum id */
     public static final int LAST_SERVER = SLASHDOT;
 
-    static RE ampersand;
+    static REProgram ampersand;
 
     static {
 	try {
-	    ampersand = new RE("&");
+        ampersand = new RECompiler().compile("&");
 	} catch (RESyntaxException e) {
 	        log.error("Regexp cannot be compiled!", e);
 	}
@@ -330,7 +338,7 @@ public class UpdateLinks extends TimerTask {
     public static String fixAmpersand(String url) {
         if (url==null || url.length()==0)
 	        return url;
-	    return ampersand.subst(url,"&amp;",RE.REPLACE_ALL);
+	    return new RE(ampersand).subst(url,"&amp;",RE.REPLACE_ALL);
     }
 
     static class ServerInfo {

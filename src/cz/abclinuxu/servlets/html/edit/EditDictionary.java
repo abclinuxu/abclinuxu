@@ -26,6 +26,8 @@ import cz.finesoft.socd.analyzer.DiacriticRemover;
 import org.dom4j.*;
 import org.htmlparser.util.ParserException;
 import org.apache.regexp.RE;
+import org.apache.regexp.REProgram;
+import org.apache.regexp.RECompiler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -58,7 +60,7 @@ public class EditDictionary implements AbcAction, Configurable {
     public static final String ACTION_ALTER_MONITOR = "monitor";
 
     public static final String PREF_INVALID_CHARACTERS = "regexp.invalid.characters";
-    private static RE reInvalidCharacters;
+    private static REProgram reInvalidCharacters;
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new EditDictionary());
     }
@@ -268,7 +270,7 @@ public class EditDictionary implements AbcAction, Configurable {
 
     public void configure(Preferences prefs) throws ConfigurationException {
         String tmp = prefs.get(PREF_INVALID_CHARACTERS, null);
-        reInvalidCharacters = new RE(tmp, RE.REPLACE_ALL);
+        reInvalidCharacters = new RECompiler().compile(tmp);
     }
 
     /* ******** setters ********* */
@@ -302,7 +304,7 @@ public class EditDictionary implements AbcAction, Configurable {
         String name = root.elementText("name");
         if (name==null) return false;
         String tmp = DiacriticRemover.getInstance().removeDiacritics(name);
-        tmp = reInvalidCharacters.subst(tmp, "_");
+        tmp = new RE(reInvalidCharacters, RE.REPLACE_ALL).subst(tmp, "_");
         item.setSubType(tmp.toLowerCase());
         return true;
     }

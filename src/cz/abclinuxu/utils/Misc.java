@@ -54,6 +54,7 @@ public class Misc {
 
     /**
      * Parses date using given format. If it fails, it returns current date.
+     * todo - use this method at all possible places.
      */
     public static Date parseDate(String date, SimpleDateFormat format) {
         try {

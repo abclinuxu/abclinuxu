@@ -28,6 +28,8 @@ import java.util.prefs.Preferences;
 
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
+import org.apache.regexp.REProgram;
+import org.apache.regexp.RECompiler;
 import org.dom4j.Element;
 import org.dom4j.io.DOMWriter;
 import freemarker.ext.dom.NodeModel;
@@ -50,7 +52,7 @@ public class ViewBlog implements AbcAction, Configurable {
     static final String PREF_BLOG_URL = "regexp.blog.url";
     static final String PREF_PAGE_SIZE = "page.size";
 
-    static RE reUrl;
+    static REProgram reUrl;
     /** default number of stories per single page */
     static int defaultPageSize;
     static {
@@ -65,26 +67,25 @@ public class ViewBlog implements AbcAction, Configurable {
 
         String uri = (String) env.get(Constants.VAR_REQUEST_URI);
 //        uri = "/blog/Yeti/2004/12/12/124545";
-        synchronized(reUrl) {
-            reUrl.match(uri);
-            int matched = reUrl.getParenCount();
-            if (matched>1)
-                name = reUrl.getParen(1);
-            if (matched>2) {
-                year = Integer.parseInt(reUrl.getParen(2));
-                env.put(VAR_YEAR, new Integer(year));
-            }
-            if (matched>3) {
-                month = Integer.parseInt(reUrl.getParen(3));
-                env.put(VAR_MONTH, new Integer(month));
-            }
-            if (matched>4) {
-                day = Integer.parseInt(reUrl.getParen(4));
-                env.put(VAR_DAY, new Integer(day));
-            }
-            if (matched>5)
-                rid = Integer.parseInt(reUrl.getParen(5));
+        RE regexp = new RE(reUrl);
+        regexp.match(uri);
+        int matched = regexp.getParenCount();
+        if (matched > 1)
+            name = regexp.getParen(1);
+        if (matched > 2) {
+            year = Integer.parseInt(regexp.getParen(2));
+            env.put(VAR_YEAR, new Integer(year));
         }
+        if (matched > 3) {
+            month = Integer.parseInt(regexp.getParen(3));
+            env.put(VAR_MONTH, new Integer(month));
+        }
+        if (matched > 4) {
+            day = Integer.parseInt(regexp.getParen(4));
+            env.put(VAR_DAY, new Integer(day));
+        }
+        if (matched > 5)
+            rid = Integer.parseInt(regexp.getParen(5));
 
         if (name!=null) {
             CompareCondition condition = new CompareCondition(Field.SUBTYPE, Operation.EQUAL, name);
@@ -277,7 +278,7 @@ public class ViewBlog implements AbcAction, Configurable {
         defaultPageSize = prefs.getInt(PREF_PAGE_SIZE, 10);
         String re = prefs.get(PREF_BLOG_URL, null);
         try {
-            reUrl = new RE(re);
+            reUrl = new RECompiler().compile(re);
         } catch (RESyntaxException e) {
             throw new ConfigurationException("Invalid regexp: '"+re+"'!");
         }

@@ -8,6 +8,8 @@ package cz.abclinuxu.servlets.utils;
 import org.apache.log4j.Logger;
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
+import org.apache.regexp.REProgram;
+import org.apache.regexp.RECompiler;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.DocumentException;
@@ -186,14 +188,14 @@ public final class URLMapper implements Configurable {
         List actions = new ArrayList(40);
         String pattern = null, action = null;
         Element element;
-        RE regexp;
+        REProgram regexp;
         Object o;
         try {
             for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
                 element = (Element) iter.next();
                 pattern = element.elementText("pattern");
                 action = element.elementText("action");
-                regexp = new RE(pattern);
+                regexp = new RECompiler().compile(pattern);
                 o = Class.forName(action).newInstance();
                 if ( AbcAction.class.isInstance(o) )
                     actions.add(new PatternAction(regexp, (AbcAction) o));
@@ -252,16 +254,16 @@ public final class URLMapper implements Configurable {
     }
 
     static class PatternAction {
-        RE re;
+        REProgram re;
         AbcAction action;
 
-        public PatternAction(RE re, AbcAction action) {
+        public PatternAction(REProgram re, AbcAction action) {
             this.re = re;
             this.action = action;
         }
 
         public RE getRe() {
-            return re;
+            return new RE(re);
         }
 
         public AbcAction getAction() {

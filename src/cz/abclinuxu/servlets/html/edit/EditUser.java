@@ -34,6 +34,8 @@ import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.regexp.RE;
+import org.apache.regexp.REProgram;
+import org.apache.regexp.RECompiler;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -117,14 +119,14 @@ public class EditUser implements AbcAction, Configurable {
     public static final String ACTION_ADD_GROUP_MEMBER = "addToGroup";
 
     public static final String PREF_INVALID_NICK_REGEXP = "regexp.invalid.login";
-    private static RE reLoginInvalid;
+    private static REProgram reLoginInvalid;
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new EditUser());
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {
         String tmp = prefs.get(PREF_INVALID_NICK_REGEXP, null);
-        reLoginInvalid = new RE(tmp);
+        reLoginInvalid = new RECompiler().compile(tmp);
     }
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -812,7 +814,7 @@ public class EditUser implements AbcAction, Configurable {
             ServletUtils.addError(PARAM_LOGIN, "Pøihla¹ovací jméno nesmí mít více ne¾ 16 znakù!", env, null);
             return false;
         }
-        if ( reLoginInvalid.match(login) ) {
+        if ( new RE(reLoginInvalid).match(login) ) {
             ServletUtils.addError(PARAM_LOGIN, "Pøihla¹ovací jméno smí obsahovat pouze písmena A a¾ Z, èíslice, pomlèku, teèku a podtr¾ítko!", env, null);
             return false;
         }

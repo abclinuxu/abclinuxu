@@ -31,6 +31,8 @@ import org.dom4j.Branch;
 import org.apache.log4j.Logger;
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
+import org.apache.regexp.REProgram;
+import org.apache.regexp.RECompiler;
 
 import java.util.*;
 import java.util.prefs.Preferences;
@@ -48,7 +50,7 @@ public class Tools implements Configurable {
     public static final String PREF_REPLACEMENT_VLNKA = "REPLACEMENT_VLNKA";
 
     static Persistance persistance = PersistanceFactory.getPersistance();
-    static RE reRemoveTags, reVlnka, lineBreak;
+    static REProgram reRemoveTags, reVlnka, lineBreak;
     static String vlnkaReplacement;
 
     static {
@@ -62,11 +64,12 @@ public class Tools implements Configurable {
     public void configure(Preferences prefs) throws ConfigurationException {
         try {
             String pref = prefs.get(PREF_REGEXP_REMOVE_TAGS, null);
-            reRemoveTags = new RE(pref, RE.MATCH_MULTILINE);
+            RECompiler reCompiler = new RECompiler();
+            reRemoveTags = reCompiler.compile(pref);
             pref = prefs.get(PREF_REGEXP_VLNKA, null);
-            reVlnka = new RE(pref, RE.MATCH_MULTILINE);
+            reVlnka = reCompiler.compile(pref);
             vlnkaReplacement = prefs.get(PREF_REPLACEMENT_VLNKA, null);
-            lineBreak = new RE("[\r\n$]+", RE.MATCH_MULTILINE);
+            lineBreak = reCompiler.compile("[\r\n$]+");
         } catch (RESyntaxException e) {
             log.error("Cannot create regexp to find line breaks!", e);
         }
@@ -738,7 +741,7 @@ public class Tools implements Configurable {
         if (text==null || text.length()==0) return "";
         try {
 //            return StripTags.process(text);
-            return reRemoveTags.subst(text,"");
+            return new RE(reRemoveTags, RE.MATCH_MULTILINE).subst(text,"");
         } catch (Throwable e) {
             log.warn("Oops, remove tags regexp failed on '"+text+"'!", e);
             return text;
@@ -984,7 +987,7 @@ public class Tools implements Configurable {
      * are replaced by non breaking spaces.
      */
     public String vlnka(String s) {
-        String modified = reVlnka.subst(s,vlnkaReplacement,RE.REPLACE_ALL+RE.REPLACE_BACKREFERENCES);
+        String modified = new RE(reVlnka, RE.MATCH_MULTILINE).subst(s,vlnkaReplacement,RE.REPLACE_ALL+RE.REPLACE_BACKREFERENCES);
         return modified;
     }
 
@@ -1015,6 +1018,6 @@ public class Tools implements Configurable {
      * Replaces new line characters with space.
      */
     public static String removeNewLines(String text) {
-        return lineBreak.subst(text, " ");
+        return new RE(lineBreak, RE.MATCH_MULTILINE).subst(text, " ");
     }
 }

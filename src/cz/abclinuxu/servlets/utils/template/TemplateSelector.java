@@ -10,6 +10,8 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.apache.regexp.RESyntaxException;
 import org.apache.regexp.RE;
+import org.apache.regexp.REProgram;
+import org.apache.regexp.RECompiler;
 
 import java.util.HashMap;
 import java.util.List;
@@ -46,12 +48,12 @@ public class TemplateSelector {
     public static final String BROWSER_UNKNOWN = "OTHER";
 
     /** regular expressions to match UA */
-    static RE reLynx, rePlucker;
+    static REProgram reLynx, rePlucker;
 
     static {
         try {
-            reLynx = new RE("(Lynx|Links)",RE.MATCH_CASEINDEPENDENT);
-            rePlucker = new RE("(Plucker)|(Windows.?CE)",RE.MATCH_CASEINDEPENDENT);
+            reLynx = new RECompiler().compile("(Lynx|Links)");
+            rePlucker = new RECompiler().compile("(Plucker)|(Windows.?CE)");
         } catch (RESyntaxException e) {
             log.error("Wrong regexp!", e);
         }
@@ -166,9 +168,9 @@ public class TemplateSelector {
         if ( browser==null )
             return BROWSER_UNKNOWN;
         try {
-            if ( reLynx.match(browser) )
+            if ( new RE(reLynx, RE.MATCH_CASEINDEPENDENT).match(browser) )
                 return BROWSER_LYNX;
-            if ( rePlucker.match(browser) )
+            if ( new RE(rePlucker, RE.MATCH_CASEINDEPENDENT).match(browser) )
                 return BROWSER_PLUCKER;
         } catch (Exception e) {
             log.warn("Error on parsing User Agent '"+browser+"' ! "+e.getMessage());

@@ -13,6 +13,8 @@ import java.util.prefs.Preferences;
 
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
+import org.apache.regexp.REProgram;
+import org.apache.regexp.RECompiler;
 import org.apache.log4j.Logger;
 
 /**
@@ -22,7 +24,7 @@ public class FormatDetector implements Configurable {
     static Logger log = Logger.getLogger(FormatDetector.class);
 
     public static final String PREF_REGEXP_LINE_BREAK = "RE_BREAK";
-    protected static RE lineBreaks;
+    protected static REProgram lineBreaks;
 
     static {
         FormatDetector detector = new FormatDetector();
@@ -33,7 +35,7 @@ public class FormatDetector implements Configurable {
      * Guesses, in which format the input string is.
      */
     public static Format detect(String input) {
-        if ( lineBreaks.match(input) )
+        if ( new RE(lineBreaks, RE.MATCH_CASEINDEPENDENT).match(input) )
             return Format.HTML;
         else
             return Format.SIMPLE;
@@ -42,7 +44,7 @@ public class FormatDetector implements Configurable {
     public void configure(Preferences prefs) throws ConfigurationException {
         try {
             String pref = prefs.get(PREF_REGEXP_LINE_BREAK, null);
-            lineBreaks = new RE(pref, RE.MATCH_CASEINDEPENDENT);
+            lineBreaks = new RECompiler().compile(pref);
         } catch (RESyntaxException e) {
             log.error("", e);
         }

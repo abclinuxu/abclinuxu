@@ -5,35 +5,35 @@
  */
 package cz.abclinuxu.servlets.html.view;
 
+import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.Record;
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.exceptions.InvalidDataException;
+import cz.abclinuxu.exceptions.NotFoundException;
+import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistance.extra.Qualifier;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.edit.EditDictionary;
-import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.extra.Qualifier;
-import cz.abclinuxu.persistance.extra.LimitQualifier;
-import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.Item;
-import cz.abclinuxu.data.Record;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.config.Configurable;
-import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.ConfigurationException;
-import cz.abclinuxu.utils.paging.Paging;
+import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.exceptions.NotFoundException;
-import cz.abclinuxu.exceptions.InvalidDataException;
+import cz.abclinuxu.utils.paging.Paging;
+import org.apache.regexp.RE;
+import org.apache.regexp.RECompiler;
+import org.apache.regexp.REProgram;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.prefs.Preferences;
-
-import org.apache.regexp.RE;
 
 /**
  * Displays dictionary
@@ -51,7 +51,7 @@ public class ShowDictionary implements AbcAction, Configurable {
     public static final String PREF_REGEXP_NAME = "regexp.name";
     public static final String PREF_MAX_ITEMS = "max.items";
 
-    static RE reName;
+    static REProgram reName;
     static int maxItems = 20;
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new ShowDictionary());
@@ -62,8 +62,9 @@ public class ShowDictionary implements AbcAction, Configurable {
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID_SHORT, Relation.class, params, request);
         if ( relation==null ) {
             String url = ServletUtils.combinePaths(request.getServletPath(), request.getPathInfo());
-            if ( reName.match(url) ) {
-                String urlName = reName.getParen(2);
+            RE regexp = new RE(reName);
+            if ( regexp.match(url) ) {
+                String urlName = regexp.getParen(2);
                 relation = SQLTool.getInstance().findDictionaryByURLName(urlName);
                 if ( relation==null ) {
                     params.put(EditDictionary.PARAM_NAME, urlName);
@@ -125,7 +126,7 @@ public class ShowDictionary implements AbcAction, Configurable {
 
     public void configure(Preferences prefs) throws ConfigurationException {
         String regexp = prefs.get(PREF_REGEXP_NAME, null);
-        reName = new RE(regexp);
+        reName = new RECompiler().compile(regexp);
         maxItems = prefs.getInt(PREF_MAX_ITEMS, 30);
     }
 }

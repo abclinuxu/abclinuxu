@@ -5,28 +5,33 @@
  */
 package cz.abclinuxu.servlets.html.edit;
 
-import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.AbcAction;
-import cz.abclinuxu.servlets.utils.*;
-import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.data.*;
-import cz.abclinuxu.persistance.*;
+import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.Record;
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.User;
+import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.exceptions.PersistanceException;
+import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.servlets.AbcAction;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
-import cz.abclinuxu.exceptions.MissingArgumentException;
-import cz.abclinuxu.exceptions.PersistanceException;
-
-import org.dom4j.*;
-import org.apache.regexp.RE;
-import org.apache.regexp.RESyntaxException;
-import org.apache.regexp.StringCharacterIterator;
+import org.apache.regexp.*;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.Node;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
 import java.text.ParseException;
+import java.util.*;
 
 /**
  * Class for manipulation of articles.
@@ -55,10 +60,10 @@ public class EditArticle implements AbcAction {
     public static final String ACTION_EDIT_ITEM_STEP2 = "edit2";
     public static final String ACTION_DOCBOOK = "docbook";
 
-    private static RE reBreak;
+    private static REProgram reBreak;
     static {
         try {
-            reBreak = new RE("<page title=\"([^\"]+)\">", RE.MATCH_SINGLELINE);
+            reBreak = new RECompiler().compile("<page title=\"([^\"]+)\">");
         } catch (RESyntaxException e) {
             log.fatal("Cannot compile regular expression!",e);
         }
@@ -346,16 +351,17 @@ public class EditArticle implements AbcAction {
             ((Node) iter.next()).detach();
 
         Format format = FormatDetector.detect(content);
-        if ( reBreak.match(content) ) {
+        RE regexp = new RE(reBreak, RE.MATCH_SINGLELINE);
+        if ( regexp.match(content) ) {
             StringCharacterIterator stringIter = new StringCharacterIterator(content);
             String title, page; int start, end; boolean canContinue;
             DocumentHelper.makeElement(record.getData(), "data");
             Element data = record.getData().getRootElement();
             do {
-                title = reBreak.getParen(1);
-                start = reBreak.getParenEnd(0);
-                canContinue = reBreak.match(stringIter, start);
-                end = (canContinue) ? reBreak.getParenStart(0) : content.length();
+                title = regexp.getParen(1);
+                start = regexp.getParenEnd(0);
+                canContinue = regexp.match(stringIter, start);
+                end = (canContinue) ? regexp.getParenStart(0) : content.length();
                 page = stringIter.substring(start, end);
                 start = end;
 

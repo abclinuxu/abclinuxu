@@ -5,18 +5,11 @@
  */
 package cz.abclinuxu.servlets.html.view;
 
-import cz.abclinuxu.servlets.AbcAction;
-import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.data.Item;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
-import java.util.List;
-
-import org.apache.regexp.RE;
 
 /**
  * Displays content (Item.type==11)

@@ -21,6 +21,8 @@ import java.util.HashMap;
 
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
+import org.apache.regexp.REProgram;
+import org.apache.regexp.RECompiler;
 
 /**
  * Utilities related to classes and objects.
@@ -28,14 +30,14 @@ import org.apache.regexp.RESyntaxException;
 public class InstanceUtils {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(InstanceUtils.class);
     static Map deprecatedParams;
-    static RE impliedParam;
+    static REProgram impliedParam;
 
     static {
         deprecatedParams = new HashMap();
         deprecatedParams.put(ViewUser.PARAM_USER_SHORT, ViewUser.PARAM_USER);
         deprecatedParams.put(ShowObject.PARAM_RELATION_SHORT, ShowObject.PARAM_RELATION);
         try {
-            impliedParam = new RE("/([0-9]+)$");
+            impliedParam = new RECompiler().compile("/([0-9]+)$");
         } catch (RESyntaxException e) {
             log.error("Regexp cannot be compiled!", e);
         }
@@ -53,8 +55,9 @@ public class InstanceUtils {
         String tmp = (String) params.get(name);
         if ( tmp==null && request!=null) {
             String url = ServletUtils.combinePaths(request.getServletPath(), request.getPathInfo());
-            if ( impliedParam.match(url) ) {
-                tmp = impliedParam.getParen(1);
+            RE regexp = new RE(impliedParam);
+            if ( regexp.match(url) ) {
+                tmp = regexp.getParen(1);
                 params.put(name, tmp);
             }
         }

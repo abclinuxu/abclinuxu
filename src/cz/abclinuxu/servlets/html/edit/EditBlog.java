@@ -41,6 +41,8 @@ import java.util.prefs.Preferences;
 
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
+import org.apache.regexp.REProgram;
+import org.apache.regexp.RECompiler;
 import org.dom4j.Element;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -95,7 +97,7 @@ public class EditBlog implements AbcAction, Configurable {
     public static final String PREF_MAX_STORY_TITLE_LENGTH = "max.story.title.length";
     public static final String PREF_MAX_STORY_WORD_COUNT = "max.story.word.count";
 
-    static RE reBlogName;
+    static REProgram reBlogName;
     static int maxStoryTitleLength, maxStoryWordCount;
 
     static {
@@ -556,7 +558,7 @@ public class EditBlog implements AbcAction, Configurable {
             return false;
         }
         name = name.trim();
-        if (reBlogName.match(name)) {
+        if (new RE(reBlogName).match(name)) {
             ServletUtils.addError(PARAM_BLOG_NAME, "Jméno blogu smí obsahovat jen znaky a-z, 0-9 a _!", env, null);
             return false;
         }
@@ -922,7 +924,7 @@ public class EditBlog implements AbcAction, Configurable {
         maxStoryWordCount = prefs.getInt(PREF_MAX_STORY_WORD_COUNT, maxStoryWordCount);
         String re = prefs.get(PREF_RE_INVALID_BLOG_NAME, null);
         try {
-            reBlogName = new RE(re);
+            reBlogName = new RECompiler().compile(re);
         } catch (RESyntaxException e) {
             throw new ConfigurationException("Cannot compile regular expression '"+re+"' given by "+PREF_RE_INVALID_BLOG_NAME);
         }
