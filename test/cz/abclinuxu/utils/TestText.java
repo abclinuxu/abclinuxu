@@ -8,7 +8,6 @@ package cz.abclinuxu.utils;
 
 import junit.framework.*;
 import junit.textui.TestRunner;
-import cz.abclinuxu.servlets.utils.VelocityHelper;
 import org.apache.log4j.BasicConfigurator;
 
 public class TestText extends TestCase {
@@ -17,7 +16,7 @@ public class TestText extends TestCase {
      * tests method fixLines
      */
     public void testFixLines() {
-        VelocityHelper helper = new VelocityHelper();
+        Tools tools = new Tools();
 
         String str1 = "Hello<br>My name is Bond.James Bond.";
         String exp1 = "Hello<br>My name is Bond.James Bond.";
@@ -30,11 +29,11 @@ public class TestText extends TestCase {
         String str5 = "Hello\r\n\r\nMy name is Bond.\r\n\r\nJames Bond.";
         String exp5 = "Hello<P>\nMy name is Bond.<P>\nJames Bond.";
 
-        assertEquals(exp1,helper.render(str1));
-        assertEquals(exp2,helper.render(str2));
-        assertEquals(exp3,helper.render(str3));
-        assertEquals(exp4,helper.render(str4));
-        assertEquals(exp5,helper.render(str5));
+        assertEquals(exp1,tools.render(str1));
+        assertEquals(exp2,tools.render(str2));
+        assertEquals(exp3,tools.render(str3));
+        assertEquals(exp4,tools.render(str4));
+        assertEquals(exp5,tools.render(str5));
     }
 
     public TestText(String s) {

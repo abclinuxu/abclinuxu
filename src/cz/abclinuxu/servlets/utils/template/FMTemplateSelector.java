@@ -73,6 +73,25 @@ public class FMTemplateSelector extends TemplateSelector {
         sb.append(page);
         return sb.toString();
     }
+    /**
+     * Selects template to decorate given page. The template, which decorates page, is
+     * chosen by browser or taken from users profile.
+     * @param data map, where method can store variables like browser
+     * @param request used for browser identification
+     * @return page to be processed
+     */
+    public static String select(String page, Map data, HttpServletRequest request) {
+        String browser = findBrowser(request);
+        if ( Misc.same(browser, BROWSER_MIRROR) )
+            return "/lynx/show/nomirror.ftl";
+
+        String template = selectTemplate(null, browser, request);
+
+        StringBuffer sb = new StringBuffer("/");
+        sb.append(template);
+        sb.append(page);
+        return sb.toString();
+    }
 
     /**
      * Stores list of Variable into map. It also evaluates LazyVar before storing it as String.

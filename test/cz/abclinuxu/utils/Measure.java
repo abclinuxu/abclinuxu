@@ -7,18 +7,12 @@
  */
 package cz.abclinuxu.utils;
 
-import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.data.*;
-import cz.abclinuxu.servlets.utils.VelocityHelper;
-import org.apache.log4j.xml.DOMConfigurator;
-import org.apache.log4j.LogManager;
+import cz.abclinuxu.persistance.PersistanceFactory;
 import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 
-import java.util.List;
 import java.util.Calendar;
-import java.util.Random;
-import java.io.*;
 
 /**
  * This class works as template for speed measurement.

@@ -10,11 +10,11 @@ import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.UrlUtils;
-import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.Tools;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.apache.lucene.index.IndexWriter;
@@ -29,7 +29,7 @@ import java.util.prefs.Preferences;
  * This class is responsible for creating and
  * maintaining Lucene's index.
  * todo remove dependancy on Velocity
- * todo add czech analyzer 
+ * todo add czech analyzer
  */
 public class CreateIndex implements Configurable {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(CreateIndex.class);
@@ -294,7 +294,7 @@ public class CreateIndex implements Configurable {
         StringBuffer sb = new StringBuffer(title);
 
         List content = make.getContent();
-        Map children = new VelocityHelper().groupByType(content);
+        Map children = Tools.groupByType(content);
         List records = (List) children.get(Constants.TYPE_RECORD);
 
         for (Iterator iter = records.iterator(); iter.hasNext();) {

@@ -94,8 +94,7 @@ public class AbcInit extends HttpServlet {
             next = cal.getTime();
         }
 
-        AbcInit.getScheduler().schedule(new UpdateLinks(),0,6*60*60*1000);
-//        AbcInit.getScheduler().scheduleAtFixedRate(new UpdateLinks(),next,6*60*60*1000);
+        AbcInit.getScheduler().scheduleAtFixedRate(new UpdateLinks(),next,6*60*60*1000);
     }
 
     /**

@@ -149,7 +149,7 @@ public class TemplateSelector {
      * @return template
      */
     static String selectTemplate(ServletAction servletAction, String browser, HttpServletRequest request) {
-        if ( ! Misc.empty(servletAction.getForcedTemplate()) )
+        if ( servletAction!=null && ! Misc.empty(servletAction.getForcedTemplate()) )
             return servletAction.getForcedTemplate();
 
         if ( ! Misc.empty(request.getParameter(PARAM_VARIANTA)) )

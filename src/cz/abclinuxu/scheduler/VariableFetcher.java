@@ -163,8 +163,11 @@ public class VariableFetcher extends TimerTask {
      * Workaround for outdated links on website. Even cache contains correct data!
      */
     private void updateLinks(Persistance persistance) {
-        if ( System.currentTimeMillis()-linksLastRun<15*360000)
+        long diff = System.currentTimeMillis()-linksLastRun;
+        if ( diff<5*60*1000)
             return;
+        linksLastRun = System.currentTimeMillis();
+
         try {
             Category linksCategory = (Category) persistance.findById(new Category(Constants.CAT_LINKS));
             Map links = UpdateLinks.groupLinks(linksCategory, persistance);

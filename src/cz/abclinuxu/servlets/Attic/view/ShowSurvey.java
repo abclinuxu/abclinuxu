@@ -6,37 +6,38 @@
  */
 package cz.abclinuxu.servlets.view;
 
-import cz.abclinuxu.servlets.AbcVelocityServlet;
-import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
-import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.data.Item;
+import cz.abclinuxu.exceptions.InvalidDataException;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.servlets.AbcFMServlet;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.data.Item;
-import cz.abclinuxu.AbcException;
-import cz.abclinuxu.exceptions.InvalidDataException;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.XMLWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.apache.velocity.context.Context;
-import org.dom4j.*;
-import org.dom4j.io.XMLWriter;
-import org.dom4j.io.OutputFormat;
-
-import java.util.*;
-import java.io.File;
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * Survey implementation
- * todo update to use FMServlet and FMTemplate Selector
  */
-public class ShowSurvey extends AbcVelocityServlet {
+public class ShowSurvey extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ShowSurvey.class);
 
     public static final String PARAM_SCREEN_CURRENT = "SCREEN_CURRENT";
@@ -49,28 +50,30 @@ public class ShowSurvey extends AbcVelocityServlet {
     /** screen with this id starts survey */
     public static final String START_ID = "START";
 
-    protected String process(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
-        init(request,response,ctx);
-
+    protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
-        Map params = (Map) request.getAttribute(AbcVelocityServlet.ATTRIB_PARAMS);
-        Item survey = (Item) InstanceUtils.instantiateParam(PARAM_SURVEY_ID,Item.class,params);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+
+        Item survey = (Item) InstanceUtils.instantiateParam(PARAM_SURVEY_ID, Item.class, params);
         if ( survey==null ) {
-            ServletUtils.addError(null,"Anketa nebyla nalezena!",ctx,request.getSession());
-            return VelocityTemplateSelector.selectTemplate(request,ctx,"ViewIndex","show");
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Anketa nebyla nalezena!", env, request.getSession());
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, "/Index");
+            return null;
         }
+
         persistance.synchronize(survey);
         if ( survey.getType()!=Item.SURVEY ) {
-            ServletUtils.addError(null,"Tento objekt není anketa!",ctx,request.getSession());
-            UrlUtils.redirect(response, "/Index", ctx);
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Tento objekt není anketa!", env, request.getSession());
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, "/Index");
             return null;
         }
 
         String currentScreen = (String) params.get(PARAM_SCREEN_CURRENT);
-        if ( ! Misc.empty(currentScreen) ) {
-            saveParameters(request.getSession(),params,currentScreen);
+        if ( !Misc.empty(currentScreen) ) {
+            saveParameters(request.getSession(), params, currentScreen);
         }
-
         String nextScreen = (String) params.get(PARAM_SCREEN_NEXT);
         if ( Misc.empty(nextScreen) ) nextScreen = START_ID;
 
@@ -78,10 +81,10 @@ public class ShowSurvey extends AbcVelocityServlet {
         Element screen = (Element) survey.getData().selectSingleNode(xpath);
 
         if ( screen==null ) {
-            log.error("Survey "+survey.getId()+" does not define screen "+nextScreen+
-                      " (called from "+currentScreen+")!");
-            ServletUtils.addError(null,"Omlouváme se, ale v anketì nastala chyba.",ctx,request.getSession());
-            UrlUtils.redirect(response, "/Index", ctx);
+            log.error("Survey "+survey.getId()+" does not define screen "+nextScreen+" (called from "+currentScreen+")!");
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Omlouváme se, ale v anketì nastala chyba.", env, request.getSession());
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, "/Index");
             return null;
         }
 
@@ -89,11 +92,12 @@ public class ShowSurvey extends AbcVelocityServlet {
         if ( dump!=null ) {
             Document data = (Document) request.getSession().getAttribute(ATTRIB_DATA);
             try {
-                dump(data,dump);
+                dump(data, dump);
             } catch (Exception e) {
-                log.error("Error in survey "+survey.getId(),e);
-                ServletUtils.addError(null,"Omlouváme se, ale v anketì nastala chyba.",ctx,request.getSession());
-                UrlUtils.redirect(response, "/Index", ctx);
+                log.error("Error in survey "+survey.getId(), e);
+                ServletUtils.addError(Constants.ERROR_GENERIC, "Omlouváme se, ale v anketì nastala chyba.", env, request.getSession());
+                UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+                urlUtils.redirect(response, "/Index");
                 return null;
             }
             request.getSession().removeAttribute(ATTRIB_DATA);
@@ -102,13 +106,13 @@ public class ShowSurvey extends AbcVelocityServlet {
         Element template = screen.element("template");
         if ( template==null || template.getTextTrim().length()==0 ) {
             log.error("Survey "+survey.getId()+" does not define template in screen "+nextScreen+"!");
-            ServletUtils.addError(null,"Omlouváme se, ale v anketì nastala chyba.",ctx,request.getSession());
-            UrlUtils.redirect(response, "/Index", ctx);
-            return null;
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Omlouváme se, ale v anketì nastala chyba.", env, request.getSession());
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, "/Index");
         }
 
-        ctx.put("TITLE","Anketa");
-        return VelocityTemplateSelector.selectTemplate(request,ctx,template.getTextTrim());
+        env.put("TITLE", "Anketa");
+        return FMTemplateSelector.select(template.getTextTrim(), env, request);
     }
 
     /**

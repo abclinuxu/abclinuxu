@@ -21,7 +21,6 @@ import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.exceptions.InvalidInputException;
 import org.apache.log4j.Logger;
-import org.apache.velocity.context.Context;
 import org.apache.commons.fileupload.DiskFileUpload;
 import org.apache.commons.fileupload.DefaultFileItemFactory;
 import org.apache.commons.fileupload.FileItem;
@@ -261,38 +260,6 @@ public class ServletUtils implements Configurable {
                 return cookie;
         }
         return null;
-    }
-
-    /**
-     * Adds message to <code>VAR_ERRORS</code> map.
-     * <p>If session is not null, store messages into session. Handy for redirects and dispatches.
-     */
-    public static void addError(String key, String errorMessage, Context context, HttpSession session) {
-        Map errors = (Map) context.get(Constants.VAR_ERRORS);
-        if ( errors==null ) {
-            errors = new HashMap(5);
-            context.put(Constants.VAR_ERRORS,errors);
-        }
-
-        errors.put(key,errorMessage);
-        if ( session!=null )
-            session.setAttribute(Constants.VAR_ERRORS,errors);
-    }
-
-    /**
-     * Adds message to <code>VAR_MESSAGES</code> list.
-     * <p>If session is not null, store messages into session. Handy for redirects and dispatches.
-     */
-    public static void addMessage(String message, Context context, HttpSession session) {
-        List messages = (List) context.get(Constants.VAR_MESSAGES);
-        if ( messages==null ) {
-            messages = new ArrayList(2);
-            context.put(Constants.VAR_MESSAGES,messages);
-        }
-
-        messages.add(message);
-        if ( session!=null )
-            session.setAttribute(Constants.VAR_MESSAGES,messages);
     }
 
     /**

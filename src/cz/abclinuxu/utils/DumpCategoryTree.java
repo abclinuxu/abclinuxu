@@ -10,7 +10,6 @@ import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.utils.VelocityHelper;
 
 import java.io.*;
 import java.util.*;
@@ -19,7 +18,6 @@ import java.util.*;
  * Thjis class creates directory tree, which looks
  * similar to tree of Abc objects. Useful for
  * discussion administrators.
- * todo remove dependancy on velocity
  */
 public class DumpCategoryTree {
     Persistance persistance = PersistanceFactory.getPersistance(PersistanceFactory.defaultUrl,EmptyCache.class);
@@ -33,7 +31,7 @@ public class DumpCategoryTree {
             return;
 
         Category category = (Category) relation.getChild();
-        String name = VelocityHelper.getXPath(category,"data/name")+" ("+relation.getId()+")";
+        String name = Tools.xpath(category,"data/name")+" ("+relation.getId()+")";
         File current = new File(parent,name);
         current.mkdir();
 
@@ -48,11 +46,15 @@ public class DumpCategoryTree {
 
     public static void main(String[] args) throws Exception {
         DumpCategoryTree dumper = new DumpCategoryTree();
-        File current = new File("abc_tree");
+        String home = System.getProperty("user.home");
+        File current = new File(home,"abc_tree");
+        current.mkdirs();
 
         dumper.dumpTree(current, new Relation(Constants.REL_ARTICLES));
         dumper.dumpTree(current, new Relation(Constants.REL_ABC));
         dumper.dumpTree(current, new Relation(Constants.REL_HARDWARE));
         dumper.dumpTree(current, new Relation(Constants.REL_SOFTWARE));
+
+        System.out.println("Strom ulo¾en do adresáøe "+current.getAbsolutePath()+".");
     }
 }
