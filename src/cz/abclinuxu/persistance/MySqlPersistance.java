@@ -143,7 +143,7 @@ public class MySqlPersistance implements Persistance {
     public GenericObject findById(GenericObject obj) throws PersistanceException {
         if ( obj==null ) throw new PersistanceException("Objekt nebyl nalezen!",AbcException.DB_NOT_FOUND,obj,null);
         GenericObject result = cache.load(obj);
-        if ( result!=null ) return result;
+        if ( result!=null && result.isInitialized() ) return result;
 
         if ( log.isDebugEnabled() ) log.debug("Hledam podle PK objekt "+obj);
         try {
@@ -235,7 +235,7 @@ public class MySqlPersistance implements Persistance {
             GenericObject parent = relation.getParent();
 
             while ( upper!=0 ) {
-                PreparedStatement statement = con.prepareStatement("select predchozi,typ_predka,predek from strom where cislo=?");
+                PreparedStatement statement = con.prepareStatement("select predchozi,typ_predka,predek,jmeno from strom where cislo=?");
                 statement.setInt(1,upper);
                 ResultSet resultSet = statement.executeQuery();
                 if ( !resultSet.next() ) break;
@@ -247,8 +247,10 @@ public class MySqlPersistance implements Persistance {
 
                 char type = resultSet.getString(2).charAt(0);
                 int id = resultSet.getInt(3);
-                parent = findById(instantiateFromTree(type,id));
+                parent = instantiateFromTree(type,id);
                 relation.setParent(parent);
+
+                relation.setName(resultSet.getString(4));
                 result.add(0,relation);
             }
             return result;
