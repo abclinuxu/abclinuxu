@@ -310,21 +310,36 @@ public class TestMySqlPersistance extends TestCase {
      * possible places of problems.
      */
     public void testCache() throws Exception {
-        Record a = new Record(0,Record.SOFTWARE);
-        a.setData("<name>Disky</name>");
-        persistance.create(a);
+        Category processors = new Category(0);
+        processors.setData("<name>Processors</name>");
+        persistance.create(processors);
 
-        Record b = new Record(a.getId(),Record.SOFTWARE);
-        Record c = (Record) persistance.findById(b);
-        assertTrue(a.preciseEquals(c));
+        Category intel = new Category(0);
+        intel.setData("<name>Intel</name>");
+        persistance.create(intel);
+        Relation relProcPent = new Relation(processors,intel,0);
+        persistance.create(relProcPent);
 
-        persistance.remove(a);
-        try {
-            c = (Record) persistance.findById(b);
-            fail("found deleted object " + c);
-        } catch (PersistanceException e) {
-            assertTrue( e.getStatus()==AbcException.DB_NOT_FOUND );
-        }
+        Item duron = new Item(0,Item.MAKE);
+        duron.setData("<name>Duron</name>");
+        persistance.create(duron);
+        Relation relProcDur = new Relation(processors,duron,0);
+        persistance.create(relProcDur);
+
+        processors = (Category) persistance.findById(processors);
+        List content = processors.getContent();
+        assertEquals(2,content.size());
+
+        Category tmp = new Category(processors.getId());
+        persistance.synchronize(tmp);
+        content = processors.getContent();
+        assertEquals(2,content.size());
+
+        tmp = (Category) persistance.findById(processors);
+        content = processors.getContent();
+        assertEquals(2,content.size());
+
+        persistance.remove(processors);
     }
 
     /**

@@ -69,9 +69,9 @@ public class Record extends GenericDataObject {
             default: sb.append("Unknown Record");
         }
         sb.append(": id="+id);
+        sb.append(", "+content.size()+" children");
         if ( owner!=0 ) sb.append(",owner="+owner);
         if ( data!=null ) sb.append(",data="+getDataAsString());
-        if ( updated!=null ) sb.append(",updated="+updated);
         return sb.toString();
     }
 

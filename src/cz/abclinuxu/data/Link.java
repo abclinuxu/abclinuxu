@@ -126,6 +126,7 @@ public class Link extends GenericObject {
      */
     public void synchronizeWith(GenericObject obj) {
         if ( ! (obj instanceof Link) ) return;
+        if ( obj==this ) return;
         super.synchronizeWith(obj);
         Link b = (Link) obj;
         text = b.getText();

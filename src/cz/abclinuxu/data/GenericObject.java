@@ -82,8 +82,8 @@ public class GenericObject {
      * this.getClass.equals(obj.getClass()).
      */
     public void synchronizeWith(GenericObject obj) {
+        if ( obj==this ) return;
         id = obj.getId();
-        content = obj.getContent();
         content = new ArrayList(obj.getContent().size()+2);
         for (Iterator iter = obj.getContent().iterator(); iter.hasNext();) {
             content.add(iter.next());

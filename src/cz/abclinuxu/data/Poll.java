@@ -156,6 +156,7 @@ public class Poll extends GenericObject {
      */
     public void synchronizeWith(GenericObject obj) {
         if ( ! (obj instanceof Poll) ) return;
+        if ( obj==this ) return;
         super.synchronizeWith(obj);
         Poll b = (Poll) obj;
         text = b.getText();

@@ -122,6 +122,7 @@ public abstract class GenericDataObject extends GenericObject {
      */
     public void synchronizeWith(GenericObject obj) {
         if ( ! (obj instanceof GenericDataObject) ) return;
+        if ( obj==this ) return;
         super.synchronizeWith(obj);
         GenericDataObject b = (GenericDataObject) obj;
         data = b.getData();

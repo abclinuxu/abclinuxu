@@ -155,7 +155,7 @@ public class SelectRelation extends AbcServlet {
     }
 
     /**
-     * Called, when we suser confirms his choice
+     * Called, when user confirms his choice
      */
     protected Template actionFinish(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         String choice = request.getParameter(SelectRelation.PARAM_CURRENT);

@@ -5,8 +5,8 @@
 #macro(parents)
 #if($RELATION)
 <div class="parents">
-#foreach($parent in $PARENTS) #sync($parent.Parent)#sync($parent.Child)
-#if($velocityCount==1)
+#foreach($parent in $PARENTS)
+#if($velocityCount==1) #sync($parent.Parent)
 <a href="$!PREFIX.constructURL("/ViewCategory?categoryId=${parent.Parent.Id}",$res)">$parent.Parent.Data.selectSingleNode('data/name').Text</a>
 #end
 - <a href="$!PREFIX.constructURL("/ViewRelation?relationId=${parent.Id}",$res)">$HELPER.getChildName($parent)</a>

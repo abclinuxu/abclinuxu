@@ -150,6 +150,7 @@ public class User extends GenericObject {
      */
     public void synchronizeWith(GenericObject obj) {
         if ( ! (obj instanceof User) ) return;
+        if ( obj==this ) return;
         super.synchronizeWith(obj);
         User b = (User) obj;
         data = b.getData();

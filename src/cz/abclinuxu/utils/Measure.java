@@ -20,7 +20,8 @@ public class Measure {
     public static void main(String[] args) throws Exception {
         DOMConfigurator.configure("conf/log4j.xml");
         Persistance persistance = PersistanceFactory.getPersistance();
-        int  i=0,j=0;
+        int i=0,j=0;
+        long l = 0;
         String str = "92032";
 
         // place initilizaton here
@@ -28,14 +29,14 @@ public class Measure {
         user.setId(1);
 
         long start = System.currentTimeMillis();
-        for (i=0; i<1600000; i++) {
+        for (i=0; i<1000000; i++) {
             //place your code to measure here
-            j = Integer.parseInt(str);
+            l = System.currentTimeMillis();
         }
         long end = System.currentTimeMillis();
 
         // place clean up here
-        System.out.println("j = " + j);
+        System.out.println("l = " + l);
 
         float avg = (end-start)/(float)i;
         System.out.println("celkem = "+(end-start)+" ,prumer = "+avg);

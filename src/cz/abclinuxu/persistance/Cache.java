@@ -40,6 +40,7 @@ public class Cache {
      * PK is already stored in the cache, it is replaced by new version.
      */
     public void store(GenericObject obj) {
+        if ( log.isDebugEnabled() ) { log.debug("Storing "+obj);}
         try {
             if ( obj instanceof Relation ) {
                 Relation relation = (Relation) obj;
@@ -74,10 +75,11 @@ public class Cache {
 
     /**
      * This method searches cache for specified object. If it is found, returns
-     * cached object, otherwise it returns null.
+     * clone of cached object, otherwise it returns null.
      * @return cached object
      */
     public GenericObject load(GenericObject obj) {
+        if ( log.isDebugEnabled() ) { log.debug("Loading "+obj); }
         try {
             CachedObject found = (CachedObject) data.get(obj);
             if ( found==null ) return null;
@@ -94,7 +96,9 @@ public class Cache {
 
                 return relation;
             } else {
-                return found.object;
+                GenericObject result = found.object;
+//                if ( log.isDebugEnabled() ) { log.debug("Loaded "+result); }
+                return result;
             }
         } catch (Exception e) {
             log.error("Cannot get "+obj+" from cache!",e);
@@ -127,7 +131,7 @@ public class Cache {
      * Creates lightweight clone of selected relation. Such clone is almost same as original,
      * but child and parent objects are not initialized (just PK is set).
      */
-    public Relation cloneRelation(Relation relation) {
+    protected Relation cloneRelation(Relation relation) {
         Relation clone = new Relation();
         clone.synchronizeWith(relation);
 
@@ -150,7 +154,7 @@ public class Cache {
      * Analogue of unix's command touch. It doesn't affect content of object, just changes
      * last modification timestamp.
      */
-    public void touch(CachedObject cachedObject) {
+    protected void touch(CachedObject cachedObject) {
         cachedObject.lastAccessed = System.currentTimeMillis();
     }
 

@@ -86,6 +86,7 @@ public final class Relation extends GenericObject {
 
     public void synchronizeWith(GenericObject obj) {
         if ( !(obj instanceof Relation) ) return;
+        if ( obj==this ) return;
         super.synchronizeWith(obj);
         Relation r = (Relation) obj;
         upper = r.getUpper();

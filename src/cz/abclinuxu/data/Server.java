@@ -72,6 +72,7 @@ public class Server extends GenericObject {
      */
     public void synchronizeWith(GenericObject obj) {
         if ( ! (obj instanceof Server) ) return;
+        if ( obj==this ) return;
         super.synchronizeWith(obj);
         Server b = (Server) obj;
         name = b.getName();

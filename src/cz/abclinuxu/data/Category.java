@@ -43,16 +43,17 @@ public class Category extends GenericDataObject {
      */
     public void synchronizeWith(GenericObject obj) {
         if ( ! (obj instanceof Category) ) return;
+        if ( obj==this ) return;
         super.synchronizeWith(obj);
         open = ((Category)obj).isOpen();
     }
 
     public String toString() {
-        StringBuffer sb = new StringBuffer("Category: id=");
-        sb.append(id);
+        StringBuffer sb = new StringBuffer("Category: id="+id);
+        sb.append(", "+content.size()+" children");
         if ( owner!=0 ) sb.append(",owner="+owner);
         if ( data!=null ) sb.append(",data="+getDataAsString());
-        if ( updated!=null ) sb.append(",updated="+updated);
+//        if ( updated!=null ) sb.append(",updated="+updated);
         if ( open ) sb.append(", otevrena"); else sb.append(", uzavrena");
         return sb.toString();
     }

@@ -72,6 +72,7 @@ public class Data extends GenericObject {
      */
     public void synchronizeWith(GenericObject obj) {
         if ( ! (obj instanceof Data) ) return;
+        if ( obj==this ) return;
         super.synchronizeWith(obj);
         Data b = (Data) obj;
         data = b.getData();
