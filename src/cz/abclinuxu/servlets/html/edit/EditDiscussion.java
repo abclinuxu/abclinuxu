@@ -53,6 +53,7 @@ public class EditDiscussion implements AbcAction {
     public static final String PARAM_AUTHOR = "author";
     public static final String PARAM_AUTHOR_ID = "author_id";
     public static final String PARAM_PREVIEW = "preview";
+    public static final String PARAM_URL = "url";
 
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_DISCUSSION = "DISCUSSION";
@@ -385,7 +386,10 @@ public class EditDiscussion implements AbcAction {
         int commentId = Misc.parseInt(comment.attributeValue("id"),0);
         ForumPool.submitComment(relation, discussion.getId(), record.getId(), commentId);
 
-        urlUtils.redirect(response, "/show/"+relation.getId());
+        url = (String) params.get(PARAM_URL);
+        if (url==null)
+            url = "/show/"+relation.getId();
+        urlUtils.redirect(response, url);
         return null;
     }
 

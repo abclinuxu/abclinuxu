@@ -92,6 +92,9 @@ pøíspìvek bude vypadat.</p-->
  <#if THREAD?exists>
   <input type="hidden" name="threadId" value="${THREAD.id}">
  </#if>
+ <#if PARAMS.url?exists>
+  <input type="hidden" name="url" value="${PARAMS.url}">
+ </#if>
 </form>
 
 
