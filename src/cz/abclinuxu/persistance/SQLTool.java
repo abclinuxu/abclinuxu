@@ -60,6 +60,7 @@ public final class SQLTool implements Configurable {
     public static final String PREF_DELETE_OLD_COMMENTS = "delete.old.comments";
     public static final String PREF_INSERT_USER_ACTION = "insert.user.action";
     public static final String PREF_GET_USER_ACTION = "get.user.action";
+    public static final String PREF_REMOVE_USER_ACTION = "remove.user.action";
 
     private static SQLTool singleton;
 
@@ -81,7 +82,7 @@ public final class SQLTool implements Configurable {
     private String itemsByType;
     private String countArticlesByUser;
     private String insertLastComment, getLastComment, getXthComment, deleteOldComments;
-    private String insertUserAction, getUserAction;
+    private String insertUserAction, getUserAction, removeUserAction;
 
 
     /**
@@ -1118,6 +1119,30 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Removes information when user performed specified action on selected relation.
+     * @param userId id of the user
+     * @param rid    id of the relation where the user performed the action
+     * @param type   optional type of the user action on given relation
+     */
+    public void removeUserAction(int userId, int rid, String type) {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null;
+        PreparedStatement statement = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(removeUserAction);
+            statement.setInt(1, userId);
+            statement.setInt(2, rid);
+            statement.setString(3, type);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pri mazani!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, null);
+        }
+    }
+
+    /**
      * Private constructor
      */
     private SQLTool() {
@@ -1158,6 +1183,7 @@ public final class SQLTool implements Configurable {
         deleteOldComments = getValue(PREF_DELETE_OLD_COMMENTS, prefs);
         insertUserAction = getValue(PREF_INSERT_USER_ACTION, prefs);
         getUserAction = getValue(PREF_GET_USER_ACTION, prefs);
+        removeUserAction = getValue(PREF_REMOVE_USER_ACTION, prefs);
     }
 
     /**
