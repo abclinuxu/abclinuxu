@@ -51,8 +51,7 @@ public class ViewCategory extends AbcServlet {
         Persistance persistance = PersistanceFactory.getPersistance();
         String tmp = request.getParameter(ViewCategory.PARAM_CATEGORY_ID);
         if ( tmp!=null ) {
-            int pk = Integer.parseInt(tmp);
-            category = new Category(pk);
+            category = new Category(Integer.parseInt(tmp));
         } else {
             if ( relation==null ) {
                 addErrorMessage(null,"Neni vybrana zadna kategorie!",ctx);

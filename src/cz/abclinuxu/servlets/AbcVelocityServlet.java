@@ -39,6 +39,8 @@ import java.util.*;
  * and check of access rights.<p>
  * <u>Context variables introduced by AbcServlet</u>
  * <dl>
+ * <dl><code>VAR_PERSISTANCE</code></dl>
+ * <dd>Instance of actual persistance. To be used for synchronization purposes.</dd>
  * <dt><code>VAR_PREFIX</code></dt>
  * <dd>Specifies prefix of URL (/hardware,/software,/clanky). It distinguishes context.</dd>
  * <dt><code>VAR_USER</code></dt>
@@ -65,6 +67,7 @@ public class AbcServlet extends VelocityServlet {
     /** Name of key in HttpServletsRequest, used to combine request's params and session's params. */
     public static final String ATTRIB_PARAMS = "PARAMS";
 
+    public static final String VAR_PERSISTANCE = "PERSISTANCE";
     public static final String VAR_PREFIX = "PREFIX";
     public static final String VAR_USER = "USER";
     public static final String VAR_ERRORS = "ERRORS";
@@ -118,6 +121,7 @@ public class AbcServlet extends VelocityServlet {
             context.put(RESPONSE, response);
         } else {
             context = super.createContext(request, response);
+            context.put(AbcServlet.VAR_PERSISTANCE,PersistanceFactory.getPersistance());
 
             String url = request.getRequestURI();
             if ( url.startsWith(AbcServlet.PREFIX_HARDWARE) ) {
