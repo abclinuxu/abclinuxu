@@ -47,7 +47,7 @@
 	</category>
 
 	<category name="cz.abclinuxu.utils.email">
-	  <priority value="debug" />
+	  <priority value="info" />
 	</category>
 
 	<category name="cz.abclinuxu.security" additivity="false">

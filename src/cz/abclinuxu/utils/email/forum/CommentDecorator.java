@@ -15,20 +15,22 @@ import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.servlets.Constants;
+import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Date;
+import java.io.UnsupportedEncodingException;
 
 import org.dom4j.Element;
+
+import javax.mail.Address;
+import javax.mail.internet.InternetAddress;
 
 /**
  * Loads a comment and creates environment from it.
  */
 public class CommentDecorator {
-    public static final String VAR_TITLE = "TITLE";
-    public static final String VAR_PUBLISHED = "PUBLISHED";
-    public static final String VAR_AUTHOR = "AUTHOR";
     public static final String VAR_CONTENT = "CONTENT";
     public static final String VAR_RELATION_ID = "RELATION_ID";
     public static final String VAR_DISCUSSION_ID = "DISCUSSION_ID";
@@ -46,11 +48,12 @@ public class CommentDecorator {
         GenericDataObject gdo = null;
         Element root;
         String authorName = null;
+        Date published = null;
 
         if (comment.recordId==0) {
             gdo = (GenericDataObject) persistance.findById(new Item(comment.discussionId));
             root = gdo.getData().getRootElement();
-            env.put(VAR_PUBLISHED, gdo.getCreated());
+            published = gdo.getCreated();
             if ( gdo.getOwner()!=0 ) {
                 User author = (User) persistance.findById(new User(gdo.getOwner()));
                 authorName = author.getName();
@@ -60,8 +63,7 @@ public class CommentDecorator {
             gdo = (GenericDataObject) persistance.findById(new Record(comment.recordId));
             String xpath = "//comment[@id='"+comment.threadId+"']";
             root = (Element) gdo.getData().selectSingleNode(xpath);
-            Date created = Misc.parseDate(root.elementText("created"), Constants.isoFormat);
-            env.put(VAR_PUBLISHED, created);
+            published = Misc.parseDate(root.elementText("created"), Constants.isoFormat);
 
             String tmp = root.elementText("author_id");
             if (tmp!=null) {
@@ -70,10 +72,8 @@ public class CommentDecorator {
             } else
                 authorName = root.elementText("author");
         }
-        env.put(VAR_AUTHOR, authorName);
 
         String title = root.elementText("title");
-        env.put(VAR_TITLE, title);
         String text = root.elementText("text");
         text = Tools.removeTags(text);
         env.put(VAR_CONTENT, text);
@@ -83,9 +83,16 @@ public class CommentDecorator {
 
         String subject = title+" ["+comment.relationId+","+comment.discussionId+","+comment.threadId+"]";
         env.put(EmailSender.KEY_SUBJECT, subject);
-        env.put(EmailSender.KEY_FROM, "diskuse@abclinuxu.cz");
+        authorName = DiacriticRemover.getInstance().removeDiacritics(authorName);
+        try {
+            Address from = new InternetAddress("diskuse@abclinuxu.cz", authorName);
+            env.put(EmailSender.KEY_FROM, from);
+        } catch (UnsupportedEncodingException e) {
+            env.put(EmailSender.KEY_FROM, "diskuse@abclinuxu.cz");            
+        }
         env.put(EmailSender.KEY_REPLYTO, "bounce@abclinuxu.cz");
         env.put(EmailSender.KEY_TEMPLATE, "/mail/forum/comment.ftl");
+        env.put(EmailSender.KEY_SENT_DATE, published);
 
         return env;
     }

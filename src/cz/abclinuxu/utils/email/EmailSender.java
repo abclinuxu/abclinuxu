@@ -134,8 +134,10 @@ public class EmailSender implements Configurable {
             return 0;
 
         Persistance persistance = PersistanceFactory.getPersistance();
-        String from = (String) params.get(KEY_FROM), subject = (String) params.get(KEY_SUBJECT);
-        if ( from==null || from.length()==0 )
+        String subject = (String) params.get(KEY_SUBJECT);
+        Address sender = null;
+        Object from = params.get(KEY_FROM);
+        if (from==null )
             from = defaultFrom;
 
         Session session = Session.getDefaultInstance(new Properties(), null);
@@ -153,7 +155,12 @@ public class EmailSender implements Configurable {
 
             MimeMessage message = new MimeMessage(session);
             message.setSubject(subject);
-            message.setFrom(new InternetAddress(from));
+
+            if (from instanceof Address)
+                sender = (Address) from;
+            else
+                sender = new InternetAddress((String) from);
+            message.setFrom(sender);
 
             for ( Iterator iter = users.iterator(); iter.hasNext(); ) {
                 try {
