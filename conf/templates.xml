@@ -213,6 +213,9 @@
       <mapping template="web" content="/web/show/sekce.ftl">
         <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
       </mapping>
+      <mapping template="offline" content="/offline/show/sekce.ftl">
+        <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
+      </mapping>
     </action>
     <action name="rubrika">
       <mapping template="web" content="/web/show/rubrika.ftl">
@@ -242,9 +245,15 @@
       <mapping template="web" content="/web/show/hwitem.ftl">
         <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
       </mapping>
+      <mapping template="offline" content="/offline/show/hwitem.ftl">
+        <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
+      </mapping>
     </action>
     <action name="software">
       <mapping template="web" content="/web/show/switem.ftl">
+        <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
+      </mapping>
+      <mapping template="offline" content="/offline/show/switem.ftl">
         <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
       </mapping>
     </action>
@@ -252,14 +261,23 @@
       <mapping template="web" content="/web/show/discussion.ftl">
         <var name="TITLE" value='&lt;#if TOOL.xpath(ITEM,"data/title")?exists&gt;${TOOL.xpath(ITEM,"data/title")}&lt;#else&gt;Diskuse&lt;/#if&gt;' type="Lazy" />
       </mapping>
+      <mapping template="offline" content="/offline/show/discussion.ftl">
+        <var name="TITLE" value='&lt;#if TOOL.xpath(ITEM,"data/title")?exists&gt;${TOOL.xpath(ITEM,"data/title")}&lt;#else&gt;Diskuse&lt;/#if&gt;' type="Lazy" />
+      </mapping>
     </action>
     <action name="article">
       <mapping template="web" content="/web/show/article.ftl">
         <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
       </mapping>
+      <mapping template="offline" content="/offline/show/article.ftl">
+        <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
+      </mapping>
     </action>
     <action name="driver">
       <mapping template="web" content="/web/show/driver.ftl">
+        <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")} - ${TOOL.xpath(ITEM,"data/version")}' type="Lazy" />
+      </mapping>
+      <mapping template="offline" content="/offline/show/driver.ftl">
         <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")} - ${TOOL.xpath(ITEM,"data/version")}' type="Lazy" />
       </mapping>
     </action>

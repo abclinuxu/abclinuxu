@@ -66,9 +66,8 @@ public class TemplateSelector {
     static HashMap mappings = new HashMap(75,0.8f);
 
     /**
-     * Loads configuration and instantiates singleton of VelocityTemplateSelector.
+     * Loads configuration and initializes TemplateSelector.
      * @param filename name of configuration file
-     * @return initialized instance of VelocityTemplateSelector
      */
     public static void initialize(String filename) throws Exception {
         Document document = new SAXReader().read(filename);
@@ -152,6 +151,7 @@ public class TemplateSelector {
      * @return browser, that requests this page.
      */
     static String findBrowser(HttpServletRequest request) {
+        if ( request==null ) return BROWSER_UNKNOWN;
         String browser = request.getHeader("user-agent");
         if ( browser==null )
             return BROWSER_UNKNOWN;
@@ -170,6 +170,7 @@ public class TemplateSelector {
      * @return browser, that requests this page.
      */
     static String findOS(HttpServletRequest request) {
+        if ( request==null ) return OS_UNKNOWN;
         String os = request.getHeader("user-agent");
         if ( os==null )
             return OS_UNKNOWN;

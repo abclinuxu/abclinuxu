@@ -75,6 +75,23 @@ public class FMTemplateSelector extends TemplateSelector {
     }
 
     /**
+     * Selects content to be parsed. The content is identified by combination of servlet
+     * and action. Given template is used.
+     */
+    public static String select(String servlet, String action, String template, Map data) {
+        ServletAction servletAction = (ServletAction) mappings.get(servlet + action);
+        if ( servletAction==null )
+            throw new AbcException("Neexistuje sablona pro kombinaci "+servlet +","+ action);
+
+        Mapping mapping = servletAction.getMapping(template);
+        String content = mapping.getContent();
+        storeVariables(data,mapping.getVariables());
+
+        data.put(VAR_CONTENT,content);
+        return template+"/template.ftl";
+    }
+
+    /**
      * Stores list of Variable into map. It also evaluates LazyVar before storing it as String.
      */
     static void storeVariables(Map data, List variables) {

@@ -627,10 +627,10 @@ public class MySqlPersistance implements Persistance {
      * Loads object by PK from database.
      */
     private GenericObject loadObject(GenericObject obj) throws SQLException {
-        if (obj instanceof GenericDataObject) {
-            return loadDataObject((GenericDataObject)obj);
-        } else if (obj instanceof Relation) {
+        if (obj instanceof Relation) {
             return loadRelation((Relation)obj);
+        } else if (obj instanceof GenericDataObject) {
+            return loadDataObject((GenericDataObject)obj);
         } else if (obj instanceof User) {
             return loadUser((User)obj);
         } else if (obj instanceof Server) {
