@@ -37,6 +37,7 @@
        <option value="poll admin" <#call isDefined("poll admin")>>Administrátor malých anket</option>
        <option value="move relation" <#call isDefined("move relation")>>Smí pøesunout relaci</option>
        <option value="remove relation" <#call isDefined("remove relation")>>Smí smazat relaci a objekt</option>
+       <option value="email invalidator" <#call isDefined("email invalidator")>>Smí invalidovat emaily</option>
      </select>
    </td>
   </tr>
