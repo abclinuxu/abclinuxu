@@ -6,11 +6,9 @@
  */
 package cz.abclinuxu.servlets.edit;
 
-import cz.abclinuxu.servlets.AbcVelocityServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.utils.*;
-import cz.abclinuxu.servlets.utils.template.VelocityTemplateSelector;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
@@ -18,8 +16,7 @@ import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.security.Guard;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.email.EmailSender;
-import org.apache.velocity.Template;
-import org.apache.velocity.context.Context;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 
@@ -44,11 +41,12 @@ public class EditRequest extends AbcFMServlet {
 
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        String action = (String) params.get(AbcVelocityServlet.PARAM_ACTION);
+        String action = (String) params.get(PARAM_ACTION);
         User user = (User) env.get(Constants.VAR_USER);
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_REQUEST,Relation.class,params);
-        if ( relation!=null ) env.put(VAR_REQUEST_RELATION,relation);
+        if ( relation!=null )
+            env.put(VAR_REQUEST_RELATION,relation);
 
         if ( action==null || action.equals(ACTION_ADD) ) {
             return actionAdd(request,response,env);
@@ -90,7 +88,7 @@ public class EditRequest extends AbcFMServlet {
             ServletUtils.addError(PARAM_EMAIL,"Nevím, kam poslat vyrozumìní.",env,null);
             error = true;
         } else if ( email.length()<6 || email.indexOf('@')==-1 ) {
-            ServletUtils.addError(PARAM_EMAIL,"Nelatný email!.",env,null);
+            ServletUtils.addError(PARAM_EMAIL,"Neplatný email!.",env,null);
             error = true;
         }
 
@@ -99,7 +97,8 @@ public class EditRequest extends AbcFMServlet {
             error = true;
         }
 
-        if ( error ) return FMTemplateSelector.select("EditRequest","view",env,request);
+        if ( error )
+            return FMTemplateSelector.select("EditRequest","view",env,request);
 
         Item req = new Item(0,Item.REQUEST);
         if ( user!=null ) req.setOwner(user.getId());
@@ -119,7 +118,7 @@ public class EditRequest extends AbcFMServlet {
         ServletUtils.addMessage("Vá¹ po¾adavek byl pøijat.",env,request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS);
+        urlUtils.redirect(response, "/ViewRelation?relationId="+Constants.REL_REQUESTS);
         return null;
     }
 
@@ -132,7 +131,7 @@ public class EditRequest extends AbcFMServlet {
         ServletUtils.addMessage("Po¾adavek byl smazán.",env,request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS);
+        urlUtils.redirect(response, "/ViewRelation?relationId="+Constants.REL_REQUESTS);
         return null;
     }
 
@@ -144,17 +143,20 @@ public class EditRequest extends AbcFMServlet {
         persistance.synchronize(relation);
         Item req = (Item) relation.getChild();
         persistance.synchronize(req);
+        persistance.remove(relation);
 
         String requestor = req.getData().selectSingleNode("data/email").getText();
         String text = "Hotovo.\n"+user.getName()+"\n\n\nVas pozadavek\n\n";
         text = text.concat(req.getData().selectSingleNode("data/text").getText());
-        EmailSender.sendEmail(user.getEmail(),requestor,"Vas pozadavek na AbcLinuxu byl vyrizen",text);
 
-        persistance.remove(relation);
+        boolean sent = EmailSender.sendEmail(user.getEmail(), requestor, "Vas pozadavek na AbcLinuxu byl vyrizen", text);
+        if ( !sent )
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Nemohu odeslat email!", env, request.getSession());
+
         ServletUtils.addMessage("Po¾adavek byl vyøízen.",env,request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS);
+        urlUtils.redirect(response, "/ViewRelation?relationId="+Constants.REL_REQUESTS);
         return null;
     }
 }

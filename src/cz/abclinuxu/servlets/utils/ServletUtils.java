@@ -13,8 +13,6 @@ import javax.servlet.http.*;
 import java.util.*;
 import java.io.UnsupportedEncodingException;
 
-import cz.abclinuxu.servlets.AbcVelocityServlet;
-import cz.abclinuxu.servlets.AbcFMServlet;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.persistance.PersistanceFactory;
@@ -23,8 +21,6 @@ import cz.abclinuxu.persistance.PersistanceException;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.GenericObject;
-import freemarker.template.SimpleHash;
-import freemarker.template.TemplateModelException;
 
 /**
  * Class to hold useful methods related to servlets
@@ -134,7 +130,7 @@ public class ServletUtils {
             List searched = new ArrayList(1);
             searched.add(user);
 
-            List found = (List) persistance.findByExample(searched,null);
+            List found = persistance.findByExample(searched,null);
             if ( found.size()==0 ) {
                 ServletUtils.addError(PARAM_LOG_USER,"Pøihla¹ovací jméno nenalezeno!",env, null);
                 return;
@@ -158,13 +154,13 @@ public class ServletUtils {
                 user = (User) persistance.findById(new User(loginCookie.id));
             } catch (PersistanceException e) {
                 deleteCookie(cookie,response);
-                addError(AbcVelocityServlet.GENERIC_ERROR,"Nalezena cookie s neznámým u¾ivatelem!",env, null);
+                addError(Constants.ERROR_GENERIC,"Nalezena cookie s neznámým u¾ivatelem!",env, null);
                 return;
             }
 
             if ( user.getPassword().hashCode()!=loginCookie.hash ) {
                 deleteCookie(cookie,response);
-                addError(AbcVelocityServlet.GENERIC_ERROR,"Nalezena cookie se ¹patným heslem!",env, null);
+                addError(Constants.ERROR_GENERIC,"Nalezena cookie se ¹patným heslem!",env, null);
                 return;
             }
         } else {
@@ -176,7 +172,7 @@ public class ServletUtils {
 
         // todo: remove it, when new security model is finished
         for (Iterator iter = user.getContent().iterator(); iter.hasNext();) {
-            GenericObject obj = (GenericObject) ((Relation) iter.next()).getChild();
+            GenericObject obj = ((Relation) iter.next()).getChild();
             persistance.synchronize(obj);
         }
     }
