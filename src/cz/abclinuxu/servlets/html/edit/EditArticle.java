@@ -441,39 +441,7 @@ public class EditArticle implements AbcAction {
      * @return false, if there is a major error.
      */
     private boolean setRelatedArticles(Map params, Record record, Map env) {
-        String links = (String) params.get(PARAM_RELATED_ARTICLES);
-        Element related = (Element) record.getData().selectSingleNode("/data/related");
-        if ( related!=null )
-            related.detach();
-
-        if (links==null || links.length()==0)
-            return true;
-
-        related = DocumentHelper.makeElement(record.getData(), "data/related");
-        StringTokenizer stk = new StringTokenizer(links,"\n");
-        String url, title, desc;
-        int position;
-        while ( stk.hasMoreTokens() ) {
-            url = stk.nextToken();
-            if ( url.trim().length()==0 )
-                break; // whitespaces on empty line
-            if ( ! stk.hasMoreTokens() ) {
-                ServletUtils.addError(PARAM_RELATED_ARTICLES, "Chybí titulek pro URL "+url+"!", env, null);
-                return false;
-            }
-            title = stk.nextToken();
-            position = title.indexOf('|');
-            if (position!=-1) {
-                desc = title.substring(position+1);
-                title = title.substring(0, position);
-            } else desc = null;
-
-            Element link = related.addElement("link");
-            link.addAttribute("url",url);
-            link.addAttribute("description",desc);
-            link.setText(title);
-        }
-        return true;
+        return setLinks(params, record, PARAM_RELATED_ARTICLES, "/data/related", env);
     }
 
     /**
@@ -484,27 +452,42 @@ public class EditArticle implements AbcAction {
      * @return false, if there is a major error.
      */
     private boolean setResources(Map params, Record record, Map env) {
-        String links = (String) params.get(PARAM_RESOURCES);
-        Element resources = (Element) record.getData().selectSingleNode("/data/resources");
+        return setLinks(params, record, PARAM_RESOURCES, "/data/resources", env);
+    }
+
+    /**
+     * Updates resources from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param record article's record to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setLinks(Map params, Record record, String param, String xpath, Map env) {
+        String links = (String) params.get(param);
+        Element resources = (Element) record.getData().selectSingleNode(xpath);
         if ( resources!=null )
             resources.detach();
 
         if (links==null || links.length()==0)
             return true;
 
-        resources = DocumentHelper.makeElement(record.getData(), "data/resources");
+        resources = DocumentHelper.makeElement(record.getData(), xpath);
         StringTokenizer stk = new StringTokenizer(links,"\n");
         String url, title, desc;
         int position;
         while ( stk.hasMoreTokens() ) {
             url = stk.nextToken();
-            if ( url.trim().length()==0 )
+            url = url.trim();
+            if ( url.length()==0 )
                 break; // whitespaces on empty line
             if ( ! stk.hasMoreTokens() ) {
-                ServletUtils.addError(PARAM_RESOURCES, "Chybí titulek pro URL "+url+"!", env, null);
+                ServletUtils.addError(param, "Chybí titulek pro URL "+url+"!", env, null);
                 return false;
             }
+
             title = stk.nextToken();
+            title = title.trim();
+
             position = title.indexOf('|');
             if ( position!=-1 ) {
                 desc = title.substring(position+1);
@@ -513,9 +496,10 @@ public class EditArticle implements AbcAction {
                 desc = null;
 
             Element link = resources.addElement("link");
-            link.addAttribute("url",url);
-            link.addAttribute("description", desc);
             link.setText(title);
+            link.addAttribute("url",url);
+            if (desc!=null)
+                link.addAttribute("description", desc);
         }
         return true;
     }
@@ -527,11 +511,18 @@ public class EditArticle implements AbcAction {
         List nodes = document.selectNodes(xpath);
         if ( nodes!=null && nodes.size()>0 ) {
             StringBuffer sb = new StringBuffer();
+            String  desc;
             for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
                 Element element = (Element) iter.next();
                 sb.append(element.attributeValue("url"));
                 sb.append("\n");
                 sb.append(element.getText());
+                desc = element.attributeValue("description");
+                if (desc!=null) {
+                    sb.append('|');
+                    sb.append(desc);
+                }
+                sb.append('\n');
             }
             params.put(var, sb.toString());
         }
