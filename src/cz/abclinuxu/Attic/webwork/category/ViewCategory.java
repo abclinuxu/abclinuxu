@@ -25,19 +25,14 @@ public class ViewCategory implements Action {
         return category;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
     public void setCategoryId(int id) {
         category = new Category(id);
     }
 
     public String execute() throws Exception {
-        String url = System.getProperty("PERSISTANCE_URL");
-        Persistance persistance = PersistanceFactory.getPersistance(url);
-
+        Persistance persistance = PersistanceFactory.getPersistance();
         category = (Category) persistance.findById(category);
+
         for (Iterator iter = category.getContent().iterator(); iter.hasNext();) {
             GenericObject object = (GenericObject) iter.next();
             persistance.synchronize(object);
