@@ -25,7 +25,7 @@ public class MailTest {
             message.setText("wow, it really works! Yabadabadoo");
 
             Address to = new InternetAddress("literakl@centrum.cz");
-            Address from = new InternetAddress("literakl@raketa");
+            Address from = new InternetAddress("literakl@abclinuxu.cz");
 
             message.setFrom(from);
             message.setRecipient(Message.RecipientType.TO,to);
