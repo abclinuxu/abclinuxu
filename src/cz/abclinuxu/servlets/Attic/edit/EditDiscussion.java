@@ -26,15 +26,6 @@ import java.util.*;
 /**
  * This class is responsible for adding new
  * new discussion.<p>
- * <u>ACTIONS</u>
- * <dl>
- * <dt><code>ACTION_ADD_DISCUSSION</code></dt>
- * <dd>Adds new discussion to any GenericObject.</dd>
- * <dt><code>ACTION_ADD_QUESTION</code></dt>
- * <dd>Adds new discussion with initial question to support forum.</dd>
- * <dt><code>ACTION_ADD_REACTION</code></dt>
- * <dd>Adds one response or answear to selected discussion.</dd>
- * </dl>
  */
 public class EditDiscussion extends AbcFMServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditDiscussion.class);
@@ -58,6 +49,7 @@ public class EditDiscussion extends AbcFMServlet {
     public static final String ACTION_ADD_COMMENT = "add";
     public static final String ACTION_ADD_COMMENT_STEP2 = "add2";
 
+
     protected String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
@@ -71,23 +63,22 @@ public class EditDiscussion extends AbcFMServlet {
         } else if ( !action.equals(ACTION_ADD_QUESTION) )
             throw new MissingArgumentException("Chybí parametr relationId!");
 
-        if ( ACTION_ADD_DISCUSSION.equals(action) ) {
+        if ( ACTION_ADD_DISCUSSION.equals(action) )
             return actionAddDiscussion(request,env);
 
-        } else if ( ACTION_ADD_COMMENT.equals(action) ) {
+        if ( ACTION_ADD_COMMENT.equals(action) )
             return actionAddComment(request,env);
 
-        } else if ( ACTION_ADD_COMMENT_STEP2.equals(action) ) {
+        if ( ACTION_ADD_COMMENT_STEP2.equals(action) )
             return  actionAddComment2(request,response,env);
 
-        } else if ( ACTION_ADD_QUESTION.equals(action) ) {
+        if ( ACTION_ADD_QUESTION.equals(action) )
             return FMTemplateSelector.select("EditDiscussion","ask",env,request);
 
-        } else if ( ACTION_ADD_QUESTION_STEP2.equals(action) ) {
+        if ( ACTION_ADD_QUESTION_STEP2.equals(action) )
             return actionAddQuestion2(request,response,env);
-        }
 
-        return actionAddComment(request,env);
+        throw new MissingArgumentException("Chybí parametr action!");
     }
 
     /**
