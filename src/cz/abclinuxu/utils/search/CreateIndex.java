@@ -28,8 +28,7 @@ import java.util.*;
  * maintaining Lucene's index.
  */
 public class CreateIndex {
-    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(CreateIndex.class);
-
+    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(CreateIndex.class);
     static String DEPLOY = "/home/literakl/abc/deploy";
     static String PATH = Search.getIndexPath();
 
@@ -41,7 +40,7 @@ public class CreateIndex {
         persistance = PersistanceFactory.getPersistance(PersistanceFactory.defaultUrl,EmptyCache.class);
 
         try {
-            tagRE = new RE("<[^>]+>");
+            tagRE = new RE("<[^<^>]+>");
         } catch (RESyntaxException e) {
             log.error("Cannot compile regexp!",e);
         }
@@ -95,10 +94,13 @@ public class CreateIndex {
      * children. There must be no loops in tree!
      * @param relation relation, where to start. It must be already synchronized.
      * @param urlPrefix prefix for URL for this subtree
+     *
+     * @todo why articles are stored under both article and make?
      */
     void makeIndexOn(Relation relation, String urlPrefix) throws Exception {
-        if ( indexed.containsKey(relation) ) return;
-        indexed.put(new Relation(relation.getId()),new Relation(relation.getId()));
+        Integer id = new Integer(relation.getId());
+        if ( indexed.containsKey(id) ) return;
+        indexed.put(id,id);
 
         GenericObject obj = relation.getChild();
         persistance.synchronize(obj);

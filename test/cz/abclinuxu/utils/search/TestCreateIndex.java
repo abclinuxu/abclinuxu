@@ -19,6 +19,9 @@ public class TestCreateIndex extends TestCase {
         String input = "toto <b>je <a href=\"http://localhost/\">maly</a> test</b>";
         String output = "toto je maly test";
         assertEquals(output,CreateIndex.removeTags(input));
+        input = "toto 3<x je <b>spatne</a> html";
+        output = "toto 3<x je spatne html";
+        assertEquals(output,CreateIndex.removeTags(input));
     }
 
     public static Test suite() {
