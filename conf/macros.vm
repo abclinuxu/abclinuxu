@@ -129,7 +129,7 @@ $!UTIL.saveParams($PARAMS, [])
 ## Macro, that shows article header
 #####
 
-#macro (showArticle $relation $separator)
+#macro (showArticle $relation $last)
 #set($clanek=$relation.Child)
 #set($author=$UTIL.instantiate('User',$!UTIL.getXPath($clanek,'/data/author')))
 #sync($author)
@@ -138,6 +138,8 @@ $!UTIL.saveParams($PARAMS, [])
 <A HREF="mailto:$!author.Email">$!author.Name</A></SPAN>
 <P class="perex_out">$!UTIL.getXPath($clanek,'/data/perex')</P>
 <SPAN CLASS="barva">Pøeèteno: $!PERSISTANCE.getCounterValue($clanek)x </SPAN>
-<BR><BR>
-#if($separator)<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="---"><BR><BR>#end
+<P>
+<IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="---">
+#if($last)<BR><IMG SRC="/images/site/sedybod.gif" WIDTH="100%" HEIGHT="1" BORDER="0" ALT="---">#end
+<P>
 #end
