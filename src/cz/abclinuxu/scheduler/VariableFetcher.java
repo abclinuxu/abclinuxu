@@ -11,6 +11,7 @@ import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.exceptions.PersistanceException;
+import cz.abclinuxu.exceptions.NotFoundException;
 
 import java.util.*;
 
@@ -153,8 +154,10 @@ public class VariableFetcher extends TimerTask {
             try {
                 User user = (User) persistance.findById(new User(id));
                 selectedProfiles.add(user);
-            } catch (PersistanceException e) {
+            } catch (NotFoundException e) {
                 // user doesn't exist, lets skip it.
+            } catch (PersistanceException e) {
+                log.warn(e);
             }
         }
     }
