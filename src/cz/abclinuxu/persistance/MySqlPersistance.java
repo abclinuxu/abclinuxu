@@ -44,14 +44,13 @@ public class MySqlPersistance implements Persistance {
     String dbUrl = null;
     Cache cache = null;
 
-    static {
-        try {
-//            Class.forName("org.gjt.mm.mysql.Driver");
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (Exception e) {
-            log.fatal("Nemohu vytvorit instanci JDBC driveru, zkontroluj CLASSPATH!",e);
-        }
-    }
+//    static {
+//        try {
+//            Class.forName("com.mysql.jdbc.Driver");
+//        } catch (Exception e) {
+//            log.fatal("Nemohu vytvorit instanci JDBC driveru, zkontroluj CLASSPATH!",e);
+//        }
+//    }
 
     public MySqlPersistance(String dbUrl) {
         if ( dbUrl==null ) log.fatal("Neni mozne inicializovat MySqlPersistenci prazdnym URL!");
@@ -63,7 +62,7 @@ public class MySqlPersistance implements Persistance {
     }
 
     public void create(GenericObject obj) {
-        Connection con = null;
+        Connection con = null; PreparedStatement statement = null;
         if ( obj==null ) throw new PersistanceException("Pokus ulozit prazdny objekt!",AbcException.DB_INCOMPLETE);
 
         try {
@@ -75,7 +74,7 @@ public class MySqlPersistance implements Persistance {
                 List conditions = new ArrayList();
                 StringBuffer sb = new StringBuffer();
                 appendCreateParams(obj,sb,conditions);
-                PreparedStatement statement = con.prepareStatement(sb.toString());
+                statement = con.prepareStatement(sb.toString());
                 for ( int i=0; i<conditions.size(); i++ ) {
                     Object o = conditions.get(i);
                     statement.setObject(i+1,o);
@@ -90,7 +89,7 @@ public class MySqlPersistance implements Persistance {
             }
             obj.setInitialized(true);
             cache.store(obj);
-            log.info("Objekt ["+obj+"] ulozen");
+            log.debug("Objekt ["+obj+"] ulozen");
         } catch ( SQLException e ) {
             log.error("Nemohu ulozit "+obj+"!",e);
             if ( e.getErrorCode()==1062 ) {
@@ -99,7 +98,7 @@ public class MySqlPersistance implements Persistance {
                 throw new PersistanceException("Nemohu ulozit "+obj,AbcException.DB_INSERT);
             }
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,null);
         }
     }
 
@@ -150,7 +149,7 @@ public class MySqlPersistance implements Persistance {
      * to recover! That's terribly slow and ugly!
      */
     public List findByExample(List objects, String relations) {
-        Connection con = null;
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         if ( objects.size()==0 ) return new ArrayList();
         if ( relations==null ) relations = makeOrRelation(objects);
 
@@ -182,13 +181,13 @@ public class MySqlPersistance implements Persistance {
                 }
             }
 
-            PreparedStatement statement = con.prepareStatement(sb.toString());
+            statement = con.prepareStatement(sb.toString());
             for ( int i=0; i<conditions.size(); i++ ) {
                 Object o = conditions.get(i);
                 statement.setObject(i+1,o);
             }
 
-            ResultSet resultSet = statement.executeQuery();
+            resultSet = statement.executeQuery();
             while ( resultSet.next() ) {
                 try {
                     GenericObject o = (GenericObject) kind.newInstance();
@@ -207,12 +206,12 @@ public class MySqlPersistance implements Persistance {
             log.error("Chyba pri hledani podle prikladu. Relations: "+relations+sb.toString(),e);
             throw new PersistanceException("Nemohu provest zadane vyhledavani!",AbcException.DB_WRONG_COMMAND);
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,resultSet);
         }
     }
 
     public List findByCommand(String command) {
-        Connection con = null;
+        Connection con = null; Statement statement = null; ResultSet resultSet = null;
         if ( command==null || command.length()==0 ) throw new PersistanceException("Nemohu hledat prazdny objekt!",AbcException.DB_INCOMPLETE);
         List result = new ArrayList(5);
 
@@ -220,8 +219,8 @@ public class MySqlPersistance implements Persistance {
             con = getSQLConnection();
             if (log.isDebugEnabled()) log.debug("Chystam se hledat podle "+command);
 
-            Statement statement = con.createStatement();
-            ResultSet resultSet = statement.executeQuery(command);
+            statement = con.createStatement();
+            resultSet = statement.executeQuery(command);
             ResultSetMetaData metaData = resultSet.getMetaData();
             int columns = metaData.getColumnCount();
 
@@ -236,7 +235,7 @@ public class MySqlPersistance implements Persistance {
             log.error("Chyba pri hledani podle "+command,e);
             throw new PersistanceException("Chyba pri hledani!",AbcException.DB_FIND);
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,resultSet);
         }
         return result;
     }
@@ -245,7 +244,7 @@ public class MySqlPersistance implements Persistance {
      * @todo unit test
      */
     public List findParents(Relation relation) {
-        Connection con = null;
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         try {
             con = getSQLConnection();
             List result = new ArrayList(3);
@@ -253,9 +252,9 @@ public class MySqlPersistance implements Persistance {
             GenericObject parent = relation.getParent();
 
             while ( upper!=0 ) {
-                PreparedStatement statement = con.prepareStatement("select predchozi,typ_predka,predek,data from relace where cislo=?");
+                statement = con.prepareStatement("select predchozi,typ_predka,predek,data from relace where cislo=?");
                 statement.setInt(1,upper);
-                ResultSet resultSet = statement.executeQuery();
+                resultSet = statement.executeQuery();
                 if ( !resultSet.next() ) break;
 
                 relation = new Relation(upper);
@@ -281,12 +280,12 @@ public class MySqlPersistance implements Persistance {
             log.error("Nepodarilo se zjistit predky pro "+relation,e);
             throw new PersistanceException("Nepodarilo se zjistit predky!",AbcException.DB_FIND);
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,resultSet);
         }
     }
 
     public Relation[] findByExample(Relation example) {
-        Connection con = null;
+        Connection con = null; Statement statement = null; ResultSet resultSet = null;
         con = getSQLConnection();
         List found = new ArrayList(5);
 
@@ -318,23 +317,23 @@ public class MySqlPersistance implements Persistance {
         }
 
         try {
-            Statement statement = con.createStatement();
-            ResultSet rs = statement.executeQuery(sb.toString());
-            while ( rs.next() ) {
-                Relation relation = new Relation(rs.getInt(1));
-                relation.setUpper(rs.getInt(2));
+            statement = con.createStatement();
+            resultSet = statement.executeQuery(sb.toString());
+            while ( resultSet.next() ) {
+                Relation relation = new Relation(resultSet.getInt(1));
+                relation.setUpper(resultSet.getInt(2));
 
-                char type = rs.getString(3).charAt(0);
-                int id = rs.getInt(4);
+                char type = resultSet.getString(3).charAt(0);
+                int id = resultSet.getInt(4);
                 parent = instantiateFromTree(type,id);
                 relation.setParent(parent);
 
-                type = rs.getString(5).charAt(0);
-                id = rs.getInt(6);
+                type = resultSet.getString(5).charAt(0);
+                id = resultSet.getInt(6);
                 child = instantiateFromTree(type,id);
                 relation.setChild(child);
 
-                String tmp = rs.getString(7);
+                String tmp = resultSet.getString(7);
                 if ( tmp!=null ) {
                     tmp = insertEncoding(tmp);
                     relation.setData(new String(tmp));
@@ -357,12 +356,14 @@ public class MySqlPersistance implements Persistance {
             log.error("Cannot find relation "+example,e);
             //@todo wouldn't it be better to throw exception?
             return null;
+        } finally {
+            releaseSQLResources(con,statement,resultSet);
         }
     }
 
     public void remove(GenericObject obj) {
-        Connection con = null;
-        PreparedStatement statement = null;
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
+        statement = null;
         if ( log.isDebugEnabled() ) log.debug("Chystam se smazat "+obj);
 
         try {
@@ -389,9 +390,9 @@ public class MySqlPersistance implements Persistance {
                     GenericObject child = ((Relation)obj).getChild();
                     statement.setString(1,getTableId(child));
                     statement.setInt(2,child.getId());
-                    ResultSet resultSet = statement.executeQuery();
+                    resultSet = statement.executeQuery();
                     if ( !resultSet.next() ) queue.add(child);
-                    log.info("Smazan objekt "+obj);
+                    log.debug("Smazan objekt "+obj);
                     continue; // relation doesn't have content
                 }
 
@@ -401,25 +402,25 @@ public class MySqlPersistance implements Persistance {
                     queue.add(child);
                 }
 
-                log.info("Smazan objekt "+obj);
+                log.debug("Smazan objekt "+obj);
             } while ( queue.size()!=0 );
         } catch ( SQLException e ) {
             log.error("Nemohu smazat objekt "+obj,e);
             throw new PersistanceException("Nemohu smazat objekt!",AbcException.DB_REMOVE);
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,resultSet);
         }
     }
 
     public void incrementCounter(GenericObject obj) {
-        Connection con = null;
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         try {
             con = getSQLConnection();
             List conditions = new ArrayList();
             StringBuffer sb = new StringBuffer();
 
             appendIncrementUpdateParams(obj,sb,conditions);
-            PreparedStatement statement = con.prepareStatement(sb.toString());
+            statement = con.prepareStatement(sb.toString());
             for ( int i=0; i<conditions.size(); i++ ) {
                 Object o = conditions.get(i);
                 statement.setObject(i+1,o);
@@ -439,16 +440,16 @@ public class MySqlPersistance implements Persistance {
         } catch ( SQLException e ) {
             log.error("Nepodarilo se zvysit citac pro "+obj,e);
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,null);
         }
     }
 
     public void incrementCounter(PollChoice choice) {
-        Connection con = null;
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         try {
             con = getSQLConnection();
 
-            PreparedStatement statement = con.prepareStatement("update data_ankety set pocet=pocet+1 where cislo=? and anketa=?");
+            statement = con.prepareStatement("update data_ankety set pocet=pocet+1 where cislo=? and anketa=?");
             statement.setInt(1,choice.getId());
             statement.setInt(2,choice.getPoll());
             statement.executeUpdate();
@@ -457,31 +458,31 @@ public class MySqlPersistance implements Persistance {
             statement.setInt(1,choice.getId());
             statement.setInt(2,choice.getPoll());
 
-            ResultSet resultSet = statement.executeQuery();
+            resultSet = statement.executeQuery();
             resultSet.next();
             choice.setCount(resultSet.getInt(1));
         } catch ( SQLException e ) {
             log.error("Nepodarilo se zvysit citac pro "+choice,e);
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,resultSet);
         }
     }
 
     public int getCounterValue(GenericObject obj) {
-        Connection con = null;
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         try {
             con = getSQLConnection();
             List conditions = new ArrayList();
             StringBuffer sb = new StringBuffer();
 
             appendCounterSelectParams(obj,sb,conditions);
-            PreparedStatement statement = con.prepareStatement(sb.toString());
+            statement = con.prepareStatement(sb.toString());
             for ( int i=0; i<conditions.size(); i++ ) {
                 Object o = conditions.get(i);
                 statement.setObject(i+1,o);
             }
 
-            ResultSet resultSet = statement.executeQuery();
+            resultSet = statement.executeQuery();
             if ( !resultSet.next() ) {
                 return 0;
             }
@@ -490,19 +491,19 @@ public class MySqlPersistance implements Persistance {
             log.error("Nepodarilo se zjistit hodnotu citace pro "+obj,e);
             return 0;
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,resultSet);
         }
     }
 
     public void removeCounter(GenericObject obj) {
-        Connection con = null;
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         try {
             con = getSQLConnection();
             List conditions = new ArrayList();
             StringBuffer sb = new StringBuffer();
 
             appendCounterDeleteParams(obj,sb,conditions);
-            PreparedStatement statement = con.prepareStatement(sb.toString());
+            statement = con.prepareStatement(sb.toString());
             for ( int i=0; i<conditions.size(); i++ ) {
                 Object o = conditions.get(i);
                 statement.setObject(i+1,o);
@@ -511,117 +512,8 @@ public class MySqlPersistance implements Persistance {
         } catch ( SQLException e ) {
             log.error("Nepodarilo se smazat citac pro "+obj,e);
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,null);
         }
-    }
-
-    /**
-     * @return connection to database from connection pool.
-     */
-    private Connection getSQLConnection() {
-        try {
-            return DriverManager.getConnection(dbUrl);
-        } catch (SQLException e) {
-            log.fatal("Nemohu se spojit s databazi!",e);
-            throw new PersistanceException("Nemohu se spojit s databazi!",AbcException.DB_REFUSED);
-        }
-    }
-
-    /**
-     * Closes database connection and logs any errors
-     */
-    private void releaseSQLConnection(Connection con) {
-        try {
-            if ( con!=null ) con.close();
-        } catch (Exception e) {
-            log.error("Problems while closing connection to database!",e);
-        }
-    }
-
-    /**
-     * @return Identification of table in the tree
-     */
-    private String getTableId(GenericObject obj) {
-        if (obj instanceof Record) {
-            return "Z";
-        } else if (obj instanceof Item) {
-            return "P";
-        } else if (obj instanceof Category) {
-            return "K";
-        } else if (obj instanceof Data) {
-            return "O";
-        } else if (obj instanceof Link) {
-            return "L";
-        } else if (obj instanceof Poll) {
-            return "A";
-        } else if (obj instanceof User) {
-            return "U";
-        } else if (obj instanceof AccessRights) {
-            return "X";
-        }
-        log.error("getTableId called with object, which can't be stored in tree! "+obj);
-        return "E";
-    }
-
-    /**
-     * @return SQL table name for this GenericObject
-     */
-    private String getTable(GenericObject obj) {
-        if (obj instanceof Relation) {
-            return "relace";
-        } else if (obj instanceof Record) {
-            return "zaznam";
-        } else if (obj instanceof Item) {
-            return "polozka";
-        } else if (obj instanceof Category) {
-            return "kategorie";
-        } else if (obj instanceof Link) {
-            return "odkaz";
-        } else if (obj instanceof User) {
-            return "uzivatel";
-        } else if (obj instanceof Poll) {
-            return "anketa";
-        } else if (obj instanceof Server) {
-            return "server";
-        } else if (obj instanceof Data) {
-            return "objekt";
-        } else if (obj instanceof AccessRights) {
-            return "pravo";
-        }
-        throw new PersistanceException("Nepodporovany typ tridy!",AbcException.DB_UNKNOWN_CLASS);
-    }
-
-    /**
-     * instantiates new GenericObject, which class is specified by <code>type</code> and
-     * with desired <code>id</code>.
-     */
-    private GenericObject instantiateFromTree(char type, int id) {
-        if ( type=='K' ) {
-            return new Category(id);
-        } else if ( type=='P' ) {
-            return new Item(id);
-        } else if ( type=='Z' ) {
-            return new Record(id);
-        } else if ( type=='A' ) {
-            return new Poll(id);
-        } else if ( type=='O' ) {
-            return new Data(id);
-        } else if ( type=='L' ) {
-            return new Link(id);
-        } else if ( type=='U' ) {
-            return new User(id);
-        } else if ( type=='X' ) {
-            return new AccessRights(id);
-        }
-        return null;
-    }
-
-    /**
-     * Safely adds encoding to string with xml
-     */
-    private String insertEncoding(String xml) {
-        if ( xml==null || xml.startsWith("<?xml") ) return xml;
-        return "<?xml version=\"1.0\" encoding=\"ISO-8859-2\" ?>\n"+xml;
     }
 
     /**
@@ -653,30 +545,36 @@ public class MySqlPersistance implements Persistance {
      * with <code>obj.setContent()</code> call. Children are not initialized.
      */
     private void findChildren(GenericObject obj, Connection con) throws SQLException {
-        PreparedStatement statement = con.prepareStatement("select cislo,predchozi,typ_potomka,potomek,data from relace where typ_predka=? and predek=?");
-        statement.setString(1,getTableId(obj));
-        statement.setInt(2,obj.getId());
-        ResultSet resultSet = statement.executeQuery();
+        PreparedStatement statement = null; ResultSet resultSet = null;
 
-        obj.clearContent();
-        while ( resultSet.next() ) {
-            Relation relation = new Relation(resultSet.getInt(1));
-            relation.setUpper(resultSet.getInt(2));
-            relation.setParent(obj);
+        try {
+            statement = con.prepareStatement("select cislo,predchozi,typ_potomka,potomek,data from relace where typ_predka=? and predek=?");
+            statement.setString(1,getTableId(obj));
+            statement.setInt(2,obj.getId());
+            resultSet = statement.executeQuery();
 
-            char type = resultSet.getString(3).charAt(0);
-            int id = resultSet.getInt(4);
-            GenericObject child = instantiateFromTree(type,id);
-            relation.setChild(child);
+            obj.clearContent();
+            while ( resultSet.next() ) {
+                Relation relation = new Relation(resultSet.getInt(1));
+                relation.setUpper(resultSet.getInt(2));
+                relation.setParent(obj);
 
-            String tmp = resultSet.getString(5);
-            if ( tmp!=null) {
-                tmp = insertEncoding(tmp);
-                relation.setData(new String(tmp));
+                char type = resultSet.getString(3).charAt(0);
+                int id = resultSet.getInt(4);
+                GenericObject child = instantiateFromTree(type,id);
+                relation.setChild(child);
+
+                String tmp = resultSet.getString(5);
+                if ( tmp!=null) {
+                    tmp = insertEncoding(tmp);
+                    relation.setData(new String(tmp));
+                }
+
+                relation.setInitialized(true);
+                obj.addContent(relation);
             }
-
-            relation.setInitialized(true);
-            obj.addContent(relation);
+        } finally {
+            releaseSQLResources(null,statement,resultSet);
         }
     }
 
@@ -922,7 +820,7 @@ public class MySqlPersistance implements Persistance {
      * stores poll to database and updates <code>id</code>
      */
     protected void storePoll(Poll poll) throws SQLException {
-        Connection con = null;
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
 
         try {
             PollChoice[] choices = poll.getChoices();
@@ -932,7 +830,7 @@ public class MySqlPersistance implements Persistance {
             }
 
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("insert into anketa values(0,?,?,?,?,?)");
+            statement = con.prepareStatement("insert into anketa values(0,?,?,?,?,?)");
 
             statement.setInt(1,poll.getType() );
             if ( poll.getType()==0 ) {
@@ -957,8 +855,7 @@ public class MySqlPersistance implements Persistance {
                 throw new PersistanceException("Nepodarilo se vlozit anketu do databaze!", AbcException.DB_INSERT);
             }
 
-            com.mysql.jdbc.PreparedStatement mm = (com.mysql.jdbc.PreparedStatement)statement;
-            poll.setId((int)mm.getLastInsertID());
+            setAutoId(poll,statement);
 
             statement = con.prepareStatement("insert into data_ankety values(?,?,?,?)");
             for ( int i=0; i<choices.length; i++ ) {
@@ -972,7 +869,7 @@ public class MySqlPersistance implements Persistance {
                 choices[i].setPoll(poll.getId());
             }
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,null);
         }
     }
 
@@ -980,13 +877,13 @@ public class MySqlPersistance implements Persistance {
      * @return user from mysql db
      */
     protected GenericObject loadUser(User obj) throws SQLException {
-        Connection con = null;
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         try {
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("select * from uzivatel where cislo=?");
+            statement = con.prepareStatement("select * from uzivatel where cislo=?");
             statement.setInt(1,obj.getId());
 
-            ResultSet resultSet = statement.executeQuery();
+            resultSet = statement.executeQuery();
             if ( !resultSet.next() ) {
                 throw new PersistanceException("Uzivatel "+obj.getId()+" nebyl nalezen!",AbcException.DB_NOT_FOUND);
             }
@@ -1001,7 +898,7 @@ public class MySqlPersistance implements Persistance {
             findChildren(user,con);
             return user;
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1009,14 +906,14 @@ public class MySqlPersistance implements Persistance {
      * @return item descendant from mysql db
      */
     protected GenericDataObject loadDataObject(GenericDataObject obj) throws SQLException {
-        Connection con = null;
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
 
         try {
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("select * from "+getTable(obj)+" where cislo=?");
+            statement = con.prepareStatement("select * from "+getTable(obj)+" where cislo=?");
             statement.setInt(1,obj.getId());
 
-            ResultSet resultSet = statement.executeQuery();
+            resultSet = statement.executeQuery();
             if ( !resultSet.next() ) {
                 throw new PersistanceException("Polozka "+obj.getId()+" nebyla nalezena!",AbcException.DB_NOT_FOUND);
             }
@@ -1042,7 +939,7 @@ public class MySqlPersistance implements Persistance {
             findChildren(item,con);
             return item;
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1050,13 +947,13 @@ public class MySqlPersistance implements Persistance {
      * @return user from mysql db
      */
     protected GenericObject loadRelation(Relation obj) throws SQLException {
-        Connection con = null;
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         try {
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("select * from relace where cislo=?");
+            statement = con.prepareStatement("select * from relace where cislo=?");
             statement.setInt(1,obj.getId());
 
-            ResultSet resultSet = statement.executeQuery();
+            resultSet = statement.executeQuery();
             if ( !resultSet.next() ) {
                 throw new PersistanceException("Relace "+obj.getId()+" nebyla nalezena!",AbcException.DB_NOT_FOUND);
             }
@@ -1082,7 +979,7 @@ public class MySqlPersistance implements Persistance {
 
             return relation;
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1090,14 +987,14 @@ public class MySqlPersistance implements Persistance {
      * @return data from mysql db
      */
     protected GenericObject loadData(Data obj) throws SQLException {
-        Connection con = null;
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
 
         try {
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("select * from objekt where cislo=?");
+            statement = con.prepareStatement("select * from objekt where cislo=?");
             statement.setInt(1,obj.getId());
 
-            ResultSet resultSet = statement.executeQuery();
+            resultSet = statement.executeQuery();
             if ( !resultSet.next() ) {
                 throw new PersistanceException("Datovy objekt "+obj.getId()+" nebyl nalezen!",AbcException.DB_NOT_FOUND);
             }
@@ -1109,7 +1006,7 @@ public class MySqlPersistance implements Persistance {
 
             return data;
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1117,14 +1014,14 @@ public class MySqlPersistance implements Persistance {
      * @return link from mysql db
      */
     protected GenericObject loadLink(Link obj) throws SQLException {
-        Connection con = null;
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
 
         try {
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("select * from odkaz where cislo=?");
+            statement = con.prepareStatement("select * from odkaz where cislo=?");
             statement.setInt(1,obj.getId());
 
-            ResultSet resultSet = statement.executeQuery();
+            resultSet = statement.executeQuery();
             if ( !resultSet.next() ) {
                 throw new PersistanceException("Odkaz "+obj.getId()+" nebyl nalezen!",AbcException.DB_NOT_FOUND);
             }
@@ -1139,7 +1036,7 @@ public class MySqlPersistance implements Persistance {
 
             return link;
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1147,14 +1044,14 @@ public class MySqlPersistance implements Persistance {
      * @return poll from mysql db
      */
     protected GenericObject loadPoll(Poll obj) throws SQLException {
-        Connection con = null;
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
 
         try {
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("select * from anketa where cislo=?");
+            statement = con.prepareStatement("select * from anketa where cislo=?");
             statement.setInt(1,obj.getId());
 
-            ResultSet resultSet = statement.executeQuery();
+            resultSet = statement.executeQuery();
             if ( !resultSet.next() ) {
                 throw new PersistanceException("Anketa "+obj.getId()+" nebyla nalezena!",AbcException.DB_NOT_FOUND);
             }
@@ -1185,7 +1082,7 @@ public class MySqlPersistance implements Persistance {
             findChildren(poll,con);
             return poll;
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1193,14 +1090,14 @@ public class MySqlPersistance implements Persistance {
      * @return Server from mysql db
      */
     protected GenericObject loadServer(Server obj) throws SQLException {
-        Connection con = null;
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
 
         try {
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("select * from server where cislo=?");
+            statement = con.prepareStatement("select * from server where cislo=?");
             statement.setInt(1,obj.getId());
 
-            ResultSet resultSet = statement.executeQuery();
+            resultSet = statement.executeQuery();
             if ( !resultSet.next() ) {
                 throw new PersistanceException("Server "+obj.getId()+" nebyl nalezen!",AbcException.DB_NOT_FOUND);
             }
@@ -1211,7 +1108,7 @@ public class MySqlPersistance implements Persistance {
             server.setContact(resultSet.getString(4));
             return server;
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1219,14 +1116,14 @@ public class MySqlPersistance implements Persistance {
      * @return link from mysql db
      */
     protected GenericObject loadRights(AccessRights obj) throws SQLException {
-        Connection con = null;
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
 
         try {
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("select * from pravo where cislo=?");
+            statement = con.prepareStatement("select * from pravo where cislo=?");
             statement.setInt(1,obj.getId());
 
-            ResultSet resultSet = statement.executeQuery();
+            resultSet = statement.executeQuery();
             if ( !resultSet.next() ) {
                 throw new PersistanceException("Pravo "+obj.getId()+" nebylo nalezen!",AbcException.DB_NOT_FOUND);
             }
@@ -1236,7 +1133,7 @@ public class MySqlPersistance implements Persistance {
 
             return rights;
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1244,12 +1141,12 @@ public class MySqlPersistance implements Persistance {
      * updates record in database
      */
     public void update(GenericDataObject obj) {
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         if ( obj==null ) throw new PersistanceException("Neni mozne ulozit prazdny objekt!",AbcException.DB_INCOMPLETE);
-        Connection con = null;
 
         try {
             con = getSQLConnection();
-            PreparedStatement statement = null;
+            statement = null;
 
             statement = con.prepareStatement("update "+getTable(obj)+" set typ=?,data=?,pridal=?,vytvoreno=? where cislo=?");
             statement.setInt(1,obj.getType());
@@ -1269,7 +1166,7 @@ public class MySqlPersistance implements Persistance {
             log.error("Nemohu ulozit zmeny v "+obj,e);
             throw new PersistanceException("Nemohu ulozit zmeny do databaze!",AbcException.DB_UPDATE);
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1277,12 +1174,12 @@ public class MySqlPersistance implements Persistance {
      * updates data in database
      */
     public void update(Relation relation) {
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         if ( relation==null ) throw new PersistanceException("Neni mozne ulozit prazdny objekt!",AbcException.DB_INCOMPLETE);
-        Connection con = null;
 
         try {
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("update relace set typ_predka=?,predek=?,typ_potomka=?,potomek=?,data=?,predchozi=? where cislo=?");
+            statement = con.prepareStatement("update relace set typ_predka=?,predek=?,typ_potomka=?,potomek=?,data=?,predchozi=? where cislo=?");
 
             statement.setString(1,getTableId(relation.getParent()));
             statement.setInt(2,relation.getParent().getId());
@@ -1308,7 +1205,7 @@ public class MySqlPersistance implements Persistance {
             log.error("Nemohu ulozit zmeny v "+relation,e);
             throw new PersistanceException("Nemohu ulozit zmeny do databaze!",AbcException.DB_UPDATE);
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1316,12 +1213,12 @@ public class MySqlPersistance implements Persistance {
      * updates data in database
      */
     public void update(Data data) {
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         if ( data==null ) throw new PersistanceException("Neni mozne ulozit prazdny objekt!",AbcException.DB_INCOMPLETE);
-        Connection con = null;
 
         try {
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("update objekt set data=?,format=? where cislo=?");
+            statement = con.prepareStatement("update objekt set data=?,format=? where cislo=?");
             statement.setBytes(1,data.getData());
             statement.setString(2,data.getFormat());
             statement.setInt(3,data.getId());
@@ -1336,7 +1233,7 @@ public class MySqlPersistance implements Persistance {
             log.error("Nemohu ulozit zmeny v "+data,e);
             throw new PersistanceException("Nemohu ulozit zmeny do databaze!",AbcException.DB_UPDATE);
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1344,12 +1241,12 @@ public class MySqlPersistance implements Persistance {
      * updates link in database
      */
     public void update(Link link) {
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         if ( link==null ) throw new PersistanceException("Neni mozne ulozit prazdny objekt!",AbcException.DB_INCOMPLETE);
-        Connection con = null;
 
         try {
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("update odkaz set server=?,nazev=?,url=?,trvaly=?,pridal=? where cislo=?");
+            statement = con.prepareStatement("update odkaz set server=?,nazev=?,url=?,trvaly=?,pridal=? where cislo=?");
             statement.setInt(1,link.getServer());
             statement.setString(2,link.getText());
             statement.setString(3,link.getUrl());
@@ -1368,7 +1265,7 @@ public class MySqlPersistance implements Persistance {
             log.error("Nemohu ulozit zmeny v "+link,e);
             throw new PersistanceException("Nemohu ulozit zmeny v "+link.toString()+" do databaze!",AbcException.DB_UPDATE);
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1376,12 +1273,12 @@ public class MySqlPersistance implements Persistance {
      * updates poll in database
      */
     public void update(Poll poll) {
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         if ( poll==null ) throw new PersistanceException("Neni mozne ulozit prazdny objekt!",AbcException.DB_INCOMPLETE);
-        Connection con = null;
 
         try {
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("update anketa set otazka=?,vice=?,uzavrena=? where cislo=?");
+            statement = con.prepareStatement("update anketa set otazka=?,vice=?,uzavrena=? where cislo=?");
             statement.setString(1,poll.getText());
             statement.setBoolean(2,poll.isMultiChoice());
             statement.setBoolean(3,poll.isClosed());
@@ -1414,7 +1311,7 @@ public class MySqlPersistance implements Persistance {
             log.error("Nemohu ulozit zmeny v "+poll,e);
             throw new PersistanceException("Nemohu ulozit zmeny v "+poll.toString()+" do databaze!",AbcException.DB_UPDATE);
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1422,12 +1319,12 @@ public class MySqlPersistance implements Persistance {
      * updates user in database
      */
     public void update(User user) {
+        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         if ( user==null ) throw new PersistanceException("Neni mozne ulozit prazdny objekt!",AbcException.DB_INCOMPLETE);
-        Connection con = null;
 
         try {
             con = getSQLConnection();
-            PreparedStatement statement = con.prepareStatement("update uzivatel set login=?,jmeno=?,email=?,heslo=?,data=? where cislo=?");
+            statement = con.prepareStatement("update uzivatel set login=?,jmeno=?,email=?,heslo=?,data=? where cislo=?");
             statement.setString(1,user.getLogin());
             statement.setString(2,user.getName());
             statement.setString(3,user.getEmail());
@@ -1449,7 +1346,7 @@ public class MySqlPersistance implements Persistance {
                 throw new PersistanceException("Nemohu ulozit zmeny do databaze!",AbcException.DB_UPDATE);
             }
         } finally {
-            releaseSQLConnection(con);
+            releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -1487,5 +1384,138 @@ public class MySqlPersistance implements Persistance {
         } catch (ProxoolException e) {
             log.error("Proxool cannot get delegated statement from "+statement, e);
         }
+    }
+
+    /**
+     * @return connection to database from connection pool.
+     */
+    private Connection getSQLConnection() {
+        try {
+            return DriverManager.getConnection(dbUrl);
+        } catch (SQLException e) {
+            log.fatal("Nemohu se spojit s databazi!",e);
+            throw new PersistanceException("Nemohu se spojit s databazi!",AbcException.DB_REFUSED);
+        }
+    }
+
+    /**
+     * Closes database connection and logs any errors
+     */
+    private void releaseSQLConnection(Connection con) {
+        try {
+            if ( con!=null ) con.close();
+        } catch (Exception e) {
+            log.error("Problems while closing connection to database!",e);
+        }
+    }
+
+    /**
+     * Closes database connection and logs any errors
+     */
+    private void releaseSQLResources(Connection con, Statement statement, ResultSet rs) {
+        try {
+            if ( rs!=null )
+                rs.close();
+        } catch (Exception e) {
+            log.debug("Problems while closing ResultSet!",e);
+        }
+        try {
+            if ( statement!=null )
+                statement.close();
+        } catch (Exception e) {
+            log.debug("Problems while closing statement!",e);
+        }
+        try {
+            if ( con!=null )
+                con.close();
+        } catch (Exception e) {
+            log.debug("Problems while closing connection to database!",e);
+        }
+    }
+
+    /**
+     * @return Identification of table in the tree
+     */
+    private String getTableId(GenericObject obj) {
+        if (obj instanceof Record) {
+            return "Z";
+        } else if (obj instanceof Item) {
+            return "P";
+        } else if (obj instanceof Category) {
+            return "K";
+        } else if (obj instanceof Data) {
+            return "O";
+        } else if (obj instanceof Link) {
+            return "L";
+        } else if (obj instanceof Poll) {
+            return "A";
+        } else if (obj instanceof User) {
+            return "U";
+        } else if (obj instanceof AccessRights) {
+            return "X";
+        }
+        log.error("getTableId called with object, which can't be stored in tree! "+obj);
+        return "E";
+    }
+
+    /**
+     * @return SQL table name for this GenericObject
+     */
+    private String getTable(GenericObject obj) {
+        if (obj instanceof Relation) {
+            return "relace";
+        } else if (obj instanceof Record) {
+            return "zaznam";
+        } else if (obj instanceof Item) {
+            return "polozka";
+        } else if (obj instanceof Category) {
+            return "kategorie";
+        } else if (obj instanceof Link) {
+            return "odkaz";
+        } else if (obj instanceof User) {
+            return "uzivatel";
+        } else if (obj instanceof Poll) {
+            return "anketa";
+        } else if (obj instanceof Server) {
+            return "server";
+        } else if (obj instanceof Data) {
+            return "objekt";
+        } else if (obj instanceof AccessRights) {
+            return "pravo";
+        }
+        throw new PersistanceException("Nepodporovany typ tridy!",AbcException.DB_UNKNOWN_CLASS);
+    }
+
+    /**
+     * instantiates new GenericObject, which class is specified by <code>type</code> and
+     * with desired <code>id</code>.
+     */
+    private GenericObject instantiateFromTree(char type, int id) {
+        if ( type=='K' ) {
+            return new Category(id);
+        } else if ( type=='P' ) {
+            return new Item(id);
+        } else if ( type=='Z' ) {
+            return new Record(id);
+        } else if ( type=='A' ) {
+            return new Poll(id);
+        } else if ( type=='O' ) {
+            return new Data(id);
+        } else if ( type=='L' ) {
+            return new Link(id);
+        } else if ( type=='U' ) {
+            return new User(id);
+        } else if ( type=='X' ) {
+            return new AccessRights(id);
+        }
+        return null;
+    }
+
+    /**
+     * Safely adds encoding to string with xml
+     */
+    private String insertEncoding(String xml) {
+        if ( xml==null || xml.startsWith("<?xml") ) return xml;
+        return "<?xml version=\"1.0\" encoding=\"ISO-8859-2\" ?>\n"+xml;
     }
 }
