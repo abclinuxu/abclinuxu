@@ -37,7 +37,7 @@ public class InstanceUtils {
         deprecatedParams.put(ViewUser.PARAM_USER_SHORT, ViewUser.PARAM_USER);
         deprecatedParams.put(ShowObject.PARAM_RELATION_SHORT, ShowObject.PARAM_RELATION);
         try {
-            impliedParam = new RECompiler().compile("/([0-9]+)$");
+            impliedParam = new RECompiler().compile("/([0-9]+)($|#)");
         } catch (RESyntaxException e) {
             log.error("Regexp cannot be compiled!", e);
         }
