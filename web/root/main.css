@@ -6,10 +6,10 @@ A:hover { color:#002244; text-decoration: none }
 P, DIV, SPAN { color: #444444; font-size: 11pt }
 LI { color: #444444; font-size: 11pt }
 TD.bezmezer { padding: 0 0 0 0 }
-TD.systinet div { 
+TD.systinet div {
     text-align: center;
-    margin-top: 5px; 
-    border: 3px solid #aa0000; 
+    margin-top: 5px;
+    border: 3px solid #aa0000;
     background-color: white;
     padding: 5px }
 TD.systinet div p { text-align: left; margin: 2 0 0 0 }
@@ -94,3 +94,4 @@ SPAN.diz_header_new { font-size: bigger; font-style: italic; color:blue; }
 SPAN.diz_header_prefix { font-style: italic; }.
 p.cenzura { border-width: 2px; border-color: blue; border-style: solid; background-color: #EEEEEE; padding: 1ex; margin-top: 6px}
 .textbanner { background-color: #CCFFFF; border: 1px solid #66CCCC; color: #000000; }
+DIV.signature { margin-top: 8px; }
