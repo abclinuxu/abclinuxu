@@ -28,8 +28,7 @@
 
 <a href="/clanky/ViewRelation?relationId=5&src=sidebar" class="nadpis">Èlánky</a>
 
-<#global articleCount=8>
-<#list TOOL.sublist(VARS.newArticles,0,articleCount) as rel>
+<#list ARTICLES as rel>
  <#call showArticle(rel)>
 </#list>
 
