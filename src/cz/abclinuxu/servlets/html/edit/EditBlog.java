@@ -8,6 +8,7 @@ package cz.abclinuxu.servlets.html.edit;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.view.ViewUser;
+import cz.abclinuxu.servlets.html.view.ShowObject;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
@@ -133,6 +134,9 @@ public class EditBlog implements AbcAction, Configurable {
         }
         env.put(VAR_BLOG, blog);
         env.put(VAR_BLOG_RELATION, relation);
+
+        List parents = persistance.findParents(relation);
+        env.put(ShowObject.VAR_PARENTS, parents);
 
         // check permissions
         User user = (User) env.get(Constants.VAR_USER);
