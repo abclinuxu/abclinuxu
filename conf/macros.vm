@@ -133,7 +133,7 @@ $!UTIL.saveParams($PARAMS, [])
 #set($clanek=$relation.Child)
 #set($author=$UTIL.instantiate('User',$!UTIL.getXPath($clanek,'/data/author')))
 #sync($author)
-<A CLASS="nadpis" HREF="$!URL.make("/ViewRelation?relationId=$relation.Id")">$!UTIL.getXPath($clanek,'/data/name')</A><BR>
+<A CLASS="nadpis" HREF="$!URL.make("/clanky/ViewRelation?relationId=$relation.Id")">$!UTIL.getXPath($clanek,'/data/name')</A><BR>
 <SPAN CLASS="barva">$!UTIL.showDate($!UTIL.getXPath($clanek,'/data/published')) |
 <A HREF="mailto:$!author.Email">$!author.Name</A></SPAN>
 <P class="perex">$!UTIL.getXPath($clanek,'/data/perex')</P>
