@@ -9,7 +9,7 @@ zvoleného typu bude pøesunut, napøíklad v¹echny diskuse.
 </p>
 
 <form action="${URL.noPrefix("/SelectRelation")}" method="POST">
- <input type="radio" name="type" value="discussions" tabindex="1"> Diskuse <br>
+ <input type="radio" name="type" value="discussions" checked tabindex="1"> Diskuse <br>
  <input type="radio" name="type" value="makes" tabindex="2"> Polo¾ky<br>
  <input type="radio" name="type" value="articles" tabindex="3"> Èlánky<br>
  <input type="radio" name="type" value="categories" tabindex="4"> Sekce<br>

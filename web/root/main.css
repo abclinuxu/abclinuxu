@@ -5,7 +5,6 @@ A { color:#447799; font-size: 11pt; text-decoration: underline }
 A:hover { color:#002244; text-decoration: none }
 P, DIV, SPAN { color: #444444; font-size: 11pt }
 LI { color: #444444; font-size: 11pt }
-TD.obsah { padding: 2em 2em; }
 TD.bezmezer { padding: 0 0 0 0 }
 .error { color: RED; font-size: bigger }
 .message { font-size: bigger; color:blue; padding: 1ex 0ex }
@@ -63,18 +62,19 @@ TD.jadro_p { font-size: 10pt }
 
 /* clanek */
 H1.nadpis { color:BLACK; font-size:18pt; font-weight:bold }
-H1,DIV.sub1 { color: BLACK; font-size:14pt; font-weight: BOLD; padding: 0ex 0em }
-H2,DIV.sub2 { color: BLACK; font-size:13pt; font-weight: BOLD; padding: 0ex 0em }
-Div.perex, P.perex { border-width: thin 0; border-color: black; border-style: solid; background-color: #EEEEEE; padding: 1ex; margin-top: 1em }
-DIV.linky { padding: 0 1ex; }
+H1,DIV.sub1 { color: BLACK; font-size:14pt; font-weight: BOLD; padding: 0px 0px }
+H2,DIV.sub2 { color: BLACK; font-size:13pt; font-weight: BOLD; padding: 0px 0px }
+Div.perex, P.perex { border-width: thin 0; border-color: black; border-style: solid; background-color: #EEEEEE; padding: 3px; margin-top: 5px }
+DIV.linky { padding: 0 3px; }
 table.source { background-color: #e6e6e6; border-width: thin; border-style: solid;  border-color: #838383;}
-td.pad { padding-left: 1ex; padding-right: 1ex;}
+td.pad { padding-left: 1ex; padding-right: 3px;}
 SPAN.odsazeni { padding-left: 2ex; }
 DIV.kt_citace { color:#880000; }
 DIV.kt_citace OL LI { color:#880000; }
 DIV.kt_citace P { color:#880000; }
 DIV.kt_citace UL LI { color:#880000; }
-DIV.paticka,DIV.kt_paticka { font-style: italic; padding-top: 1ex; }
+SPAN.kt_citace { color:#880000 }
+DIV.paticka,DIV.kt_paticka { font-style: italic; padding-top: 5px; }
 
 /* kategorie */
 DIV.note { padding-top: 10pt; padding-bottom: 5pt;}
@@ -83,4 +83,4 @@ DIV.note { padding-top: 10pt; padding-bottom: 5pt;}
 DIV.diz_list { background-color: #EEEEEE; }
 P.diz_header { background-color: #EEEEEE; }
 SPAN.diz_header_prefix { font-style: italic; }
-p.cenzura { border-width: 2; border-color: blue; border-style: solid; background-color: #EEEEEE; padding: 1ex; margin-top: 1em}
+p.cenzura { border-width: 2px; border-color: blue; border-style: solid; background-color: #EEEEEE; padding: 1ex; margin-top: 6px}

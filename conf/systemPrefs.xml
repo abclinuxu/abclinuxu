@@ -123,13 +123,15 @@
               <!-- zpravicky -->
               <entry key="no.children.for.section.A" value="452"/>
               <!-- forum.distribuce -->
-              <entry key="no.children.for.section.B" value="475,476,477,478,479,480,482,483,484,520,521,523"/>
+              <entry key="no.children.for.section.B" value="475,476,477,478,479,480,482,484,520,521,523"/>
               <!-- forum.hardware -->
               <entry key="no.children.for.section.C" value="486,487,488,489,490,504,492,493,494,495,496,497,498,499,503,501,502,525,526"/>
               <!-- forum.nastaveni -->
-              <entry key="no.children.for.section.D" value="519,508,509,510,511,512,513,527,528,529"/>
+              <entry key="no.children.for.section.D" value="508,509,510,511,512,513,519,527,528,529"/>
               <!-- forum.aplikace -->
               <entry key="no.children.for.section.E" value="514,515,516,517,518,524,530,531,532,533,534,535,536,537,538,539,540,541,542,543,544,545"/>
+              <!-- forum.ruzne -->
+              <entry key="no.children.for.section.D" value="483,547,548,549"/>
             </map>
           </node>
           <node name="LRUCache">
@@ -189,8 +191,7 @@
             </node>
             <node name="UpdateKernel">
               <map>
-                <entry key="file" value="WEB-INF/freemarker/include/kernel.txt"/>
-                <!--<entry key="uri" value="http://www.kernel.org/kdist/finger_banner"/>-->
+                <entry key="uri" value="http://www.kernel.org/kdist/finger_banner"/>
                 <entry key="uri" value="file:///home/literakl/tmp/new/titulky/finger_banner"/>
                 <entry key="regexp.stable" value="(The latest stable[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
                 <entry key="url.stable" value="ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.6"/>

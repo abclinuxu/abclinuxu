@@ -54,6 +54,7 @@ public class DumpCategoryTree {
         dumper.dumpTree(current, new Relation(Constants.REL_ABC));
         dumper.dumpTree(current, new Relation(Constants.REL_HARDWARE));
         dumper.dumpTree(current, new Relation(Constants.REL_SOFTWARE));
+        dumper.dumpTree(current, new Relation(Constants.REL_FORUM));
 
         System.out.println("Strom ulo¾en do adresáøe "+current.getAbsolutePath()+".");
     }
