@@ -7,9 +7,7 @@
  */
 package cz.abclinuxu.persistance;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import cz.abclinuxu.data.*;
 
@@ -17,14 +15,18 @@ import cz.abclinuxu.data.*;
  * Cache of GenericObjects. Only selected classes are cached.
  */
 public class Cache {
+    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(Cache.class);
+
     Persistance persistance;
-    Map categories;
+    CacheSynchronizationDaemon daemon;
+    Map data;
+    int modCount;
 
     public static final int SYNC_INTERVAL = 5*60*1000; // 5 minutes
 
     public Cache(Persistance persistance) {
         this.persistance = persistance;
-        categories = new HashMap();
+        data = new HashMap();
     }
 
     /**
@@ -34,7 +36,8 @@ public class Cache {
      */
     public void store(GenericObject obj) {
         if ( obj instanceof Category ) {
-            categories.put(obj,new CachedObject(obj,System.currentTimeMillis()+SYNC_INTERVAL));
+            data.put(obj,new CachedObject(obj,System.currentTimeMillis()+SYNC_INTERVAL));
+            modCount++;
             return;
         }
         if ( obj instanceof Relation ) {
@@ -53,7 +56,7 @@ public class Cache {
      */
     public GenericObject load(GenericObject obj) {
         if ( obj instanceof Category ) {
-            CachedObject cached = (CachedObject) categories.get(obj);
+            CachedObject cached = (CachedObject) data.get(obj);
             if ( cached!=null ) {
                 return cached.object;
             }
@@ -67,7 +70,8 @@ public class Cache {
      */
     public void remove(GenericObject obj) {
         if ( obj instanceof Category ) {
-            categories.remove(obj);
+            data.remove(obj);
+            modCount++;
             return;
         }
         if ( obj instanceof Relation ) {
@@ -81,13 +85,73 @@ public class Cache {
     }
 
     /**
+     * Starts new thread, which periodically checks validity of objects and if needed,
+     * synchronizes them.<p>
+     * Don't start sync daemon, until you start to make modifications in database. Synchronization
+     * implies performance hit! Or make it run time option (like JMX method).
+     */
+    public void startUp() {
+        if ( daemon!=null ) daemon.stop = true;
+        daemon = new CacheSynchronizationDaemon();
+        daemon.start();
+    }
+
+    /**
+     * Stops daemon.
+     */
+    public void shutDown() {
+        if ( daemon!=null ) daemon.stop = true;
+        daemon = null;
+    }
+
+    /**
      * This method searches cache for specified object.
      * @return CachedObject or null, if it is not found.
      */
-    public CachedObject loadCachedObject(GenericObject obj) {
+    private CachedObject loadCachedObject(GenericObject obj) {
         if ( obj instanceof Category ) {
-            return (CachedObject) categories.get(obj);
+            return (CachedObject) data.get(obj);
         }
         return null;
+    }
+
+    class CacheSynchronizationDaemon extends Thread {
+        boolean stop = false;
+        int expectedModCount;
+        long nextSync = System.currentTimeMillis()+SYNC_INTERVAL;
+
+        public void run() {
+            log.info("CacheSynchronizationDaemon starts ...");
+            setDaemon(true);
+
+            while ( !stop ) {
+                try {
+                    expectedModCount = modCount;
+                    Iterator iterator = data.values().iterator();
+
+                    while ( expectedModCount==modCount && iterator.hasNext() ) {
+                        CachedObject cached = (CachedObject) iterator.next();
+                        if ( cached.nextSync<System.currentTimeMillis() ) {
+                            persistance.synchronizeCached(cached);
+                        }
+                        if ( cached.nextSync<nextSync ) nextSync = cached.nextSync;
+                        yield();
+                    }
+                    if ( expectedModCount!=modCount ) { // concurrent modification of data
+                        nextSync = System.currentTimeMillis();
+                        yield(); // let the second thread finish its work
+                    }
+                } catch (ConcurrentModificationException e) {
+                    log.error("Bad timing in CacheSynchronizationDaemon!");
+                }
+
+                long dreaming = nextSync - System.currentTimeMillis();
+                if ( dreaming>0 ) {
+                    try { Thread.sleep(dreaming); } catch (InterruptedException e) {}
+                }
+            }
+
+            log.info("CacheSynchronizationDaemon dies ...");
+        }
     }
 }
