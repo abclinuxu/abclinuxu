@@ -8,6 +8,7 @@ package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.utils.TextUtils;
+import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
@@ -140,14 +141,20 @@ public class EditDiscussion extends AbcServlet {
         persistance.synchronize(discussion);
         ctx.put(VAR_DISCUSSION,discussion);
 
+        Record record = new Record();
+        record.setData(discussion.getData());
+        record.setUpdated(discussion.getUpdated());
+        record.setOwner(discussion.getOwner());
+        record.setInitialized(true);
+
         String tmp = (String) params.get(PARAM_THREAD);
         if ( tmp!=null && tmp.length()>0 ) {
             int upper = Integer.parseInt(tmp);
             if ( upper!=0 ) {
-                Record record = (Record) persistance.findById(new Record(upper));
-                ctx.put(VAR_THREAD,record);
+                record = (Record) persistance.findById(new Record(upper));
             }
         }
+        if ( VelocityHelper.getXPath(record,"data/title")!=null ) ctx.put(VAR_THREAD,record);
 
         return getTemplate("add/response.vm");
     }
