@@ -3,7 +3,7 @@
   <property file="conf_deploy.properties" />
 
   <property name="src" location="src" />
-  <property name="javac.debug" value="off" />
+  <property name="javac.debug" value="on" />
   <property name="javac.optimize" value="on" />
 
   <path id="project.classpath">
