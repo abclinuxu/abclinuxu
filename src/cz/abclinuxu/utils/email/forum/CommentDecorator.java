@@ -13,6 +13,7 @@ import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.servlets.Constants;
 
 import java.util.Map;
@@ -74,6 +75,7 @@ public class CommentDecorator {
         String title = root.elementText("title");
         env.put(VAR_TITLE, title);
         String text = root.elementText("text");
+        text = Tools.removeTags(text);
         env.put(VAR_CONTENT, text);
         env.put(VAR_RELATION_ID, Integer.toString(comment.relationId));
         env.put(VAR_DISCUSSION_ID, Integer.toString(comment.relationId));
