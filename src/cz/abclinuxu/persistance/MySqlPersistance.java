@@ -1382,17 +1382,16 @@ public class MySqlPersistance implements Persistance {
     /**
      * Sets id to object, which has been autoincremented.
      */
-    private void setAutoId(GenericObject obj, Statement statement) {
-        try {
-//            if ( statement instanceof org.logicalcobwebs.proxool )
-            if ( statement.getClass().getPackage().getName().startsWith("org.logicalcobwebs.proxool") )
+    private void setAutoId(GenericObject obj, Statement statement) throws AbcException {
+        if ( ! (statement instanceof com.mysql.jdbc.Statement) )
+            try {
                 statement = ProxoolFacade.getDelegateStatement(statement);
-            if ( statement instanceof com.mysql.jdbc.PreparedStatement ) {
-                com.mysql.jdbc.PreparedStatement mm = (com.mysql.jdbc.PreparedStatement) statement;
-                obj.setId((int)mm.getLastInsertID());
+            } catch (ProxoolException e) {
+                throw new AbcException("Cannot obtain delegated statement from "+statement, e);
             }
-        } catch (ProxoolException e) {
-            log.error("Proxool cannot get delegated statement from "+statement, e);
+        if ( statement instanceof com.mysql.jdbc.PreparedStatement ) {
+            com.mysql.jdbc.PreparedStatement mm = (com.mysql.jdbc.PreparedStatement) statement;
+            obj.setId((int)mm.getLastInsertID());
         }
     }
 

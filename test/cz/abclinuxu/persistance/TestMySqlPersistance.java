@@ -360,6 +360,41 @@ public class TestMySqlPersistance extends TestCase {
     }
 
     /**
+     * Bug - when relation changes parent and is updated, the content
+     * of previous and new parent in cache is not updated!
+     */
+    public void testRelationCache() throws Exception {
+        Category first = new Category(); first.setData("<data/>");
+        Category second = new Category(); second.setData("<data/>");
+        Item item = new Item(); item.setData("<data/>");
+
+        persistance.create(first);
+        persistance.create(second);
+        persistance.create(item);
+
+        Relation relation = new Relation(first,item,0);
+        persistance.create(relation);
+
+        Category cacheFirst = (Category) persistance.findById(first);
+        assertEquals(1,cacheFirst.getContent().size());
+
+        relation.setParent(second);
+        persistance.update(relation);
+        cacheFirst = (Category) persistance.findById(first);
+        assertEquals(0,cacheFirst.getContent().size());
+        Category cacheSecond = (Category) persistance.findById(second);
+        assertEquals(1,cacheSecond.getContent().size());
+
+        persistance.remove(relation);
+        persistance.remove(item);
+        cacheSecond = (Category) persistance.findById(second);
+        assertEquals(0,cacheSecond.getContent().size());
+
+        persistance.remove(first);
+        persistance.remove(second);
+    }
+
+    /**
      * Searches list of GenericObjects for object with id equal to id.
      */
     protected boolean containsId(List list, int id) {
