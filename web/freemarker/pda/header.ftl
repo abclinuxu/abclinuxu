@@ -7,3 +7,4 @@
 <body>
 
 <#include "/include/pocitani.txt">
+<#import "macros.ftl" as lib>

@@ -55,7 +55,7 @@ ${TOOL.render(TEXT,USER?if_exists)}
  <h1>Diskuse k tomuto èlánku</h1>
  <#assign DISCUSSION=CHILDREN.discussion[0].child, frozen=true>
  <#list TOOL.createDiscussionTree(DISCUSSION) as thread>
-  <@lib.showThread thread, 0, DISCUSSION.id, CHILDREN.discussion[0].id, !frozen />
+  <@lib.showThread thread, 0 />
  </#list>
 </#if>
 
