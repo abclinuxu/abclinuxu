@@ -79,7 +79,7 @@
       </fileset>
     </copy>
 
-    <tar tarfile="${backup}/source.tar" basedir="${backup}/abc" />
+    <tar tarfile="${backup}/source.tar" basedir="${backup}" includes="abc/**" />
     <gzip zipfile="/home/literakl/source.tgz" src="${backup}/source.tar" />
     <delete file="${backup}/source.tar" />
   </target>
