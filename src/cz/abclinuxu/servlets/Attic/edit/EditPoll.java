@@ -9,8 +9,7 @@ package cz.abclinuxu.servlets.edit;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
 
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.data.*;
@@ -60,6 +59,10 @@ public class EditPoll extends AbcServlet {
 
     public static final String VAR_RELATION = "relation";
     public static final String VAR_POLL = "POLL";
+
+    /** this prefix will be used for marking user, that has already voted */
+    static final String COOKIE_PREFIX = "P_";
+
 
     protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
         init(request,response,ctx);
@@ -246,28 +249,73 @@ public class EditPoll extends AbcServlet {
         Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
         Poll poll = (Poll) ctx.get(EditPoll.VAR_POLL);
         String url = (String) params.get(EditPoll.PARAM_URL);
+        int max = 0;
 
         if ( url==null || url.length()==0 ) {
             addError(AbcServlet.GENERIC_ERROR,"Chybí parametr url!",ctx,request.getSession());
         }
 
-        try {
-            String[] values = request.getParameterValues(EditPoll.PARAM_VOTE_ID);
-            int max = 1;
-            if ( poll.isMultiChoice() ) max = values.length;
-            for (int i = 0; i < values.length; i++) {
-                String tmp = values[i];
-                int voteId = Integer.parseInt(tmp);
-                PersistanceFactory.getPersistance().incrementCounter(poll.getChoices()[voteId]);
-            }
-        } catch (Exception e) {
-            log.error("Vote bug: ",e);
+        String[] values = request.getParameterValues(EditPoll.PARAM_VOTE_ID);
+        if ( values==null ) {
             addError(AbcServlet.GENERIC_ERROR,"Nevybral jste ¾ádnou volbu!",ctx,request.getSession());
-            redirect(url,response,ctx);
-            return null;
+        } else {
+            max = values.length;
+            if ( ! poll.isMultiChoice() ) max = 1;
+        }
+
+        if ( hasAlreadyVoted(request,poll,ctx) ) {
+            addError(AbcServlet.GENERIC_ERROR,"U¾ jste jednou volil!",ctx,request.getSession());
+        } else if ( max>0 ) {
+            try {
+                for (int i = 0; i<max; i++) {
+                    String tmp = values[i];
+                    int voteId = Integer.parseInt(tmp);
+                    PersistanceFactory.getPersistance().incrementCounter(poll.getChoices()[voteId]);
+                }
+                addMessage("Vá¹ hlas do ankety byl pøijat.",ctx,request.getSession());
+                markAlreadyVoted(request,response,poll,ctx);
+            } catch (Exception e) {
+                log.error("Vote bug: ",e);
+                addError(AbcServlet.GENERIC_ERROR,"Omlouváme se, ale nastala chyba.",ctx,request.getSession());
+            }
         }
 
         redirect(url,response,ctx);
         return null;
+    }
+
+    /**
+     * Checks, whether this user has already voted for this poll.
+     * @return true, if user is trying to vote again
+     */
+    boolean hasAlreadyVoted(HttpServletRequest request, Poll poll, Context context) {
+        String searched = COOKIE_PREFIX+poll.getId();
+
+        HttpSession session = request.getSession();
+        if ( session.getAttribute(searched)!=null ) return true;
+
+        Cookie[] cookies = request.getCookies();
+        for (int i = 0; i < cookies.length; i++) {
+            Cookie cookie = cookies[i];
+            if ( cookie.getName().equals(searched) ) return true;
+        }
+
+        // check IP address in future
+        return false;
+    }
+
+    /**
+     * Marks user, that he has already voted for this poll.
+     */
+    void markAlreadyVoted(HttpServletRequest request, HttpServletResponse response, Poll poll, Context context) {
+        String searched = COOKIE_PREFIX+poll.getId();
+
+        HttpSession session = request.getSession();
+        session.setAttribute(searched,new Boolean(true));
+
+        Cookie cookie = new Cookie(searched,""+poll.getId());
+        cookie.setPath("/");
+        cookie.setMaxAge(1*30*24*3600); // one month
+        response.addCookie(cookie);
     }
 }
