@@ -22,6 +22,27 @@
     </div>
 
     <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <a class="info" href="#">?<span class="tooltip">Obrovská databáze znalostí o hardwaru</span></a>
+        <h1><a href="/hardware/dir/1">Hardware</a></h1>
+    </div></div>
+    <div class="s_sekce">
+        <ul>
+        <#list VARS.newHardware as rel>
+             <li><a href="/hardware/show/${rel.id}">${TOOL.xpath(rel.child,"data/name")}</a></li>
+        </#list>
+        </ul>
+    </div>
+
+    <!-- prace.abclinuxu.cz -->
+    <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <a class="info" href="#">?<span class="tooltip">První server s nabídkami práce (nejen) pro tuèòáky. Spojujeme lidi s prací v IT.</span></a>
+        <h1><a href="http://prace.abclinuxu.cz">Prace.abclinuxu.cz</a></h1>
+    </div></div>
+    <div class="s_sekce">
+        <#include "/include/prace_main.txt">
+    </div>
+
+    <div class="s_nad_h1"><div class="s_nad_pod_h1">
         <a class="info" href="#">?<span class="tooltip">Databáze ovladaèù pro vá¹ hardware</span></a>
         <h1><a href="/drivers/dir/318">Ovladaèe</a></h1>
     </div></div>
@@ -42,27 +63,6 @@
         <ul>
         <#list DICTIONARY as rel>
             <li><a href="/slovnik/${rel.child.subType}">${TOOL.xpath(rel.child,"data/name")}</a></li>
-        </#list>
-        </ul>
-    </div>
-
-    <!-- prace.abclinuxu.cz -->
-    <div class="s_nad_h1"><div class="s_nad_pod_h1">
-        <a class="info" href="#">?<span class="tooltip">První server s nabídkami práce (nejen) pro tuèòáky. Spojujeme lidi s prací v IT.</span></a>
-        <h1><a href="http://prace.abclinuxu.cz">Prace.abclinuxu.cz</a></h1>
-    </div></div>
-    <div class="s_sekce">
-        <#include "/include/prace_main.txt">
-    </div>
-
-    <div class="s_nad_h1"><div class="s_nad_pod_h1">
-        <a class="info" href="#">?<span class="tooltip">Obrovská databáze znalostí o hardwaru</span></a>
-        <h1><a href="/hardware/dir/1">Hardware</a></h1>
-    </div></div>
-    <div class="s_sekce">
-        <ul>
-        <#list VARS.newHardware as rel>
-             <li><a href="/hardware/show/${rel.id}">${TOOL.xpath(rel.child,"data/name")}</a></li>
         </#list>
         </ul>
     </div>
@@ -92,6 +92,35 @@
 <#list ARTICLES as rel>
     <@lib.showArticle rel, "CZ_DM", "CZ_SHORT"/>
     <hr>
+    <#if rel_index==2>
+        <div class="ramec-st">
+            <div class="s_nad_h1"><div class="s_nad_pod_h1">
+                <a class="info" href="#">?<span class="tooltip">Vlastní blog si po pøihlá¹ení
+                mù¾ete zalo¾it v nastavení svého profilu</span></a>
+                <h1><a href="/blog">Blogy na AbcLinuxu</a></h1>
+            </div></div>
+            <div class="s_sekce">
+                <ul>
+                    <#list VARS.newStories as relation>
+                        <li>
+                            <#assign story=relation.child, blog=relation.parent>
+                            <#assign url=TOOL.getUrlForBlogStory(blog.subType, story.created, relation.id)>
+                            <#assign title=TOOL.xpath(blog,"//custom/title")?default("UNDEF")>
+                            <#assign CHILDREN=TOOL.groupByType(story.children)>
+                            <#if CHILDREN.discussion?exists>
+                                <#assign diz=TOOL.analyzeDiscussion(CHILDREN.discussion[0])>
+                            <#else>
+                                <#assign diz=TOOL.analyzeDiscussion("UNDEF")>
+                            </#if>
+                            <a href="${url}" title="Komentáøù: ${diz.responseCount}<#if diz.responseCount gt 0>, poslední ${DATE.show(diz.updated, "CZ_SHORT")}</#if>">${TOOL.xpath(story, "/data/name")}</a>
+                            | ${DATE.show(story.created, "CZ_DM")}
+                            <#if title!="UNDEF"> | <a href="/blog/${blog.subType}">${title}</a></#if>
+                        </li>
+                    </#list>
+                </ul>
+            </div>
+        </div>
+    </#if>
 </#list>
 
 <div class="st_uprostred">
