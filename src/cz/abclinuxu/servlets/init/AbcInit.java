@@ -37,7 +37,7 @@ public class AbcInit extends HttpServlet {
     }
 
     public void init() throws ServletException {
-        String path = getServletContext().getRealPath("/");
+        String path = getServletContext().getRealPath("/")+"/";
 
         String file = getInitParameter("CONFIG");
         if ( file!=null ) {
@@ -140,10 +140,10 @@ public class AbcInit extends HttpServlet {
     }
 
     /**
-     * Fetches some context variables each 60 seconds, starting now
+     * Fetches some context variables each 30 seconds, starting now
      */
     protected void startFetchingVariables() {
-        scheduler.schedule(new VariableFetcher(),0,60*1000);
+        scheduler.schedule(new VariableFetcher(),0,30*1000);
     }
 
     /**

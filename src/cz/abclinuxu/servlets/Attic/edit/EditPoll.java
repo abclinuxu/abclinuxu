@@ -252,8 +252,15 @@ public class EditPoll extends AbcServlet {
         String url = (String) params.get(EditPoll.PARAM_URL);
         int max = 0;
 
+        if ( poll.isClosed() ) {
+            ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Litujeme, ale tato anketa je ji¾ uzavøena!",ctx,request.getSession());
+            UrlUtils.redirect(url,response,ctx);
+            return null;
+        }
+
         if ( url==null || url.length()==0 ) {
-            ServletUtils.addError(AbcServlet.GENERIC_ERROR,"Chybí parametr url!",ctx,request.getSession());
+            log.error("U ankety "+poll.getId()+" chybí parametr url!");
+            url = "/Index";
         }
 
         String[] values = request.getParameterValues(EditPoll.PARAM_VOTE_ID);
