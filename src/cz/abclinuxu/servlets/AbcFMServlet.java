@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Date;
 
 /**
  * Superclass for all servlets. It does some initialization
@@ -35,7 +36,6 @@ public abstract class AbcFMServlet extends HttpServlet {
 
     /** holds action to be invoked */
     public static final String PARAM_ACTION = "action";
-
     /** freemarker's main class */
     private Configuration config;
 
@@ -65,6 +65,11 @@ public abstract class AbcFMServlet extends HttpServlet {
             Template template = config.getTemplate(templateName);
             response.setContentType("text/html; charset=ISO-8859-2");
             Writer writer = response.getWriter();
+
+            response.setDateHeader("Last-Modified", new Date().getTime());
+            response.setHeader("Expires", "Fri, 22 Dec 2000 05:00:00 GMT");
+            response.setHeader("Cache-Control","no-cache, must-revalidate");
+            response.setHeader("Pragma","no-cache");
 
             long startRender = System.currentTimeMillis();
             template.process(data,writer);
