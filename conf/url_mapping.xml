@@ -127,5 +127,10 @@
             <regexp>Show\?(relationId|rid)=</regexp>
             <replacement>dir/</replacement>
         </mapping>
+        <mapping>
+            <pattern input="path">/EditItem</pattern>
+            <regexp>/EditItem</regexp>
+            <replacement>edit</replacement>
+        </mapping>
     </deprecated>
 </mappings>

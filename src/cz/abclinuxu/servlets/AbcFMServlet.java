@@ -120,7 +120,7 @@ public abstract class AbcFMServlet extends HttpServlet implements AbcAction {
         Template template = null;
 
         if ( e instanceof NotFoundException ) {
-            log.error("Not found: "+url);
+//            log.error("Not found: "+url);
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             template = config.getTemplate("/errors/notfound.ftl");
         } else if ( e instanceof MissingArgumentException ) {
