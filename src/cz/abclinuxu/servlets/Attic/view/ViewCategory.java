@@ -72,6 +72,7 @@ public class ViewCategory extends AbcServlet {
         tmp = urlUtils.getPrefix();
 
         if ( relation!=null && relation.getId()==Constants.REL_POLLS ) return getTemplate("view/ankety.vm");
+        if ( relation!=null && relation.getId()==Constants.REL_REQUESTS ) return getTemplate("view/requests.vm");
         if ( UrlUtils.PREFIX_CLANKY.equals(tmp) ) return getTemplate("view/clanky.vm");
         else return getTemplate("view/category.vm");
     }

@@ -1,0 +1,160 @@
+/*
+ * User: literakl
+ * Date: Feb 4, 2002
+ * Time: 2:06:36 PM
+ * (c)2001-2002 Tinnio
+ */
+package cz.abclinuxu.servlets.edit;
+
+import cz.abclinuxu.servlets.AbcServlet;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.Email;
+import cz.abclinuxu.data.*;
+import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.transfer.FixRecords;
+import cz.abclinuxu.security.Guard;
+import org.apache.velocity.Template;
+import org.apache.velocity.context.Context;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
+
+public class EditRequest extends AbcServlet {
+    static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(EditRequest.class);
+
+    public static final String PARAM_AUTHOR = "author";
+    public static final String PARAM_EMAIL = "email";
+    public static final String PARAM_TEXT = "text";
+    public static final String PARAM_REQUEST = "requestId";
+
+    public static final String VAR_REQUEST_RELATION = "REQUEST";
+
+    public static final String ACTION_ADD = "add";
+    public static final String ACTION_DELETE = "delete";
+    public static final String ACTION_DELIVER = "deliver";
+
+    protected Template handleRequest(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+        init(request,response,ctx);
+
+        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+        String action = (String) params.get(AbcServlet.PARAM_ACTION);
+        Relation relation = (Relation) instantiateParam(PARAM_REQUEST,Relation.class,params);
+        if ( relation!=null ) ctx.put(VAR_REQUEST_RELATION,relation);
+
+        if ( action==null || action.equals(ACTION_ADD) ) {
+            return actionAdd(request,response,ctx);
+
+        } else if ( action.equals(ACTION_DELETE) ) {
+            int rights = Guard.check((User)ctx.get(VAR_USER),relation,Guard.OPERATION_REMOVE,null);
+            switch (rights) {
+                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_DENIED: {
+                    addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, request.getSession());
+                    redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);
+                    return null;
+                }
+                default: return actionDelete(request,response,ctx);
+            }
+
+        } else if ( action.equals(ACTION_DELIVER) ) {
+            int rights = Guard.check((User)ctx.get(VAR_USER),relation,Guard.OPERATION_REMOVE,null);
+            switch (rights) {
+                case Guard.ACCESS_LOGIN: return getTemplate("login.vm");
+                case Guard.ACCESS_DENIED: {
+                    addError(AbcServlet.GENERIC_ERROR,"Va¹e práva nejsou dostateèná pro tuto operaci!",ctx, request.getSession());
+                    redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);
+                    return null;
+                }
+                default: return actionDeliver(request,response,ctx);
+            }
+        }
+        return actionAdd(request,response,ctx);
+    }
+
+    protected Template actionAdd(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+        User user = (User) ctx.get(VAR_USER);
+        Map params = (Map) request.getAttribute(AbcServlet.ATTRIB_PARAMS);
+
+        String author = (String) params.get(PARAM_AUTHOR);
+        String email = (String) params.get(PARAM_EMAIL);
+        String text = (String) params.get(PARAM_TEXT);
+        boolean error = false;
+
+        if ( author==null || author.length()==0 ) {
+            addError(PARAM_AUTHOR,"Slu¹ností je pøedstavit se.",ctx,null);
+            error = true;
+        }
+
+        if ( email==null || email.length()==0 ) {
+            addError(PARAM_EMAIL,"Nevím, kam poslat vyrozumìní.",ctx,null);
+            error = true;
+        } else if ( email.length()<6 || email.indexOf('@')==-1 ) {
+            addError(PARAM_EMAIL,"Nelatný email!.",ctx,null);
+            error = true;
+        }
+
+        if ( text==null || text.length()==0 ) {
+            addError(PARAM_TEXT,"Co potøebujete?",ctx,null);
+            error = true;
+        }
+
+        if ( error ) return getTemplate("view/requests.vm");
+
+        Item req = new Item(0,Item.REQUEST);
+        if ( user!=null ) req.setOwner(user.getId());
+
+        Document document = DocumentHelper.createDocument();
+        DocumentHelper.makeElement(document,"/data/author").addText(author);
+        DocumentHelper.makeElement(document,"/data/email").addText(email);
+        DocumentHelper.makeElement(document,"/data/text").addText(FixRecords.fixLines(text));
+
+        req.setData(document);
+
+        Persistance persistance = PersistanceFactory.getPersistance();
+        persistance.create(req);
+        Relation relation = new Relation(new Category(Constants.CAT_REQUESTS),req,Constants.REL_REQUESTS);
+        persistance.create(relation);
+
+        addMessage("Vá¹ po¾adavek byl pøijat.",ctx,request.getSession());
+
+        redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);
+        return null;
+    }
+
+    protected Template actionDelete(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        Relation relation = (Relation) ctx.get(VAR_REQUEST_RELATION);
+        persistance.synchronize(relation);
+        persistance.remove(relation);
+        addMessage("Po¾adavek byl smazán.",ctx,request.getSession());
+
+        redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);
+        return null;
+    }
+
+    protected Template actionDeliver(HttpServletRequest request, HttpServletResponse response, Context ctx) throws Exception {
+        User user = (User) ctx.get(VAR_USER);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        Relation relation = (Relation) ctx.get(VAR_REQUEST_RELATION);
+        persistance.synchronize(relation);
+        Item req = (Item) relation.getChild();
+        persistance.synchronize(req);
+
+        String requestor = req.getData().selectSingleNode("data/email").getText();
+        String text = "Hotovo.\n"+user.getName()+"\n\n\nVas pozadavek\n\n";
+        text = text.concat(req.getData().selectSingleNode("data/text").getText());
+        Email.sendEmail(user.getEmail(),requestor,"Vas pozadavek na AbcLinuxu byl vyrizen",text);
+
+        persistance.remove(relation);
+        addMessage("Po¾adavek byl vyøízen.",ctx,request.getSession());
+
+        redirect("/clanky/ViewRelation?relationId="+Constants.REL_REQUESTS,response,ctx);
+        return null;
+    }
+}

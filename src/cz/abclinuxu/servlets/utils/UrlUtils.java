@@ -50,11 +50,8 @@ public class UrlUtils {
      */
     public String make(String url, String prefix) {
         String out = null;
-        if ( prefix!=null ) {
-            out = prefix+url;
-        } else {
-            out = this.prefix+url;
-        }
+        if ( prefix==null ) prefix = this.prefix;
+        out = (prefix!=null && !url.startsWith(prefix))? prefix+url : url;
         return response.encodeURL(out);
     }
 

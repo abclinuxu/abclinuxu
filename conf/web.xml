@@ -94,6 +94,12 @@
     </servlet>
 
     <servlet>
+        <servlet-name>EditRequest</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.edit.EditRequest</servlet-class>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+
+    <servlet>
         <servlet-name>SelectIcon</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.view.SelectIcon</servlet-class>
         <load-on-startup>4</load-on-startup>
@@ -187,6 +193,10 @@
 
     <servlet-mapping>
         <servlet-name>EditRelation</servlet-name><url-pattern>/EditRelation</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>EditRequest</servlet-name><url-pattern>/clanky/EditRequest</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

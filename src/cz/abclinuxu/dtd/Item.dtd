@@ -20,3 +20,9 @@
 <!ELEMENT author (#PCDATA)> <!-- unknow user's name -->
 <!ELEMENT title (#PCDATA)> <!-- title of this reaction, usually question -->
 <!ELEMENT text (#PCDATA)> <!-- its text -->
+
+<!-- Record.Request -->
+<!ELEMENT data (author?,text,email?)>
+<!ELEMENT author (#PCDATA)> <!-- unknow user's name -->
+<!ELEMENT email (#PCDATA)> <!-- title of this reaction, usually question -->
+<!ELEMENT text (#PCDATA)> <!-- its text -->
