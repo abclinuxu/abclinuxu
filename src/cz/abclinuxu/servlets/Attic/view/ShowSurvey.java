@@ -136,6 +136,8 @@ public class ShowSurvey extends AbcVelocityServlet {
                     screen.addElement(var).addText(s);
             } else {
                 List list = (List) value;
+                if ( Misc.empty(list) )
+                    continue;
                 for (Iterator iter = list.iterator(); iter.hasNext();) {
                     String s = (String) iter.next();
                     if ( !Misc.empty(s) )

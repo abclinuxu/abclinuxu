@@ -34,7 +34,7 @@ import java.io.*;
  * Performs search across the data.
  */
 public class Search extends AbcVelocityServlet {
-    static String INDEX_PATH = "/home/literakl/ROOT/WEB-INF/index";
+    static String INDEX_PATH = "/home/literakl/abc/deploy/WEB-INF/index";
 
     /** contains relation, that match the expression */
     public static final String VAR_RESULT = "RESULT";
