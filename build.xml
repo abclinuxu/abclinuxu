@@ -1,0 +1,19 @@
+<project name="AbcLinuxu" basedir="." default="compile">
+  <property name="src" value="src"/>
+  <property name="build" value="build"/>
+  <property name="deploy" value="src"/>
+
+  <path id="project.classpath">
+    <fileset dir="${build}/WEB-INF/lib">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <target name="init">
+    <tstamp/>
+  </target>
+
+  <target name="compile" depends="init">
+    <javac srcdir="${src}" destdir="${build}/WEB-INF/classes" classpathref="project.classpath"/>
+  </target>
+</project>
