@@ -6,30 +6,25 @@
 
 <p>Zprávièka je krátký text, který upozoròuje na¹e ètenáøe
 na zajímavou informaci, stránky èi událost ve svìtì Linuxu,
-Open Source èi obecnì IT. Zprávièky neslou¾í pro soukromou
-inzerci èi oznámení, firemní oznámení musí být pøedem schváleny
-provozovatelem portálu.
+Open Source èi IT. Zprávièky neslou¾í pro dotazy, reklamní
+sdìlení musí být pøedem konzultovány s provozovatelem.
 </p>
 
 <h2>Jak ji mám napsat?</h2>
 
 <p>Do textového pole napi¹te text va¹í zprávièky. Zprávièka smí
-obsahovat pouze text, z HTML znaèek je povolen pouze odkaz a
-pøípadnì nový odstavec. Doporuèujeme, aby zprávièka mìla aspoò dvì vìty,
-jinak bude pøíli¹ krátká. Pokud bude zprávièka pøíli¹ chudá na
-informace nebo nebude obsahovat diakritiku (háèky a èárky),
-administrátoøi vás po¾ádají o doplnìní. Jsme portál o Linuxu,
-tak¾e zprávièky ze svìta Microsoftu nás opravdu nezajímají.
+obsahovat pouze text, z HTML znaèek je povolen pouze odkaz.
+V¾dy pi¹te s háèky a èárkami. Zprávièka by mìla mít aspoò dvì vìty
+a obsahovat podrobnosti, aby dávala smysl i po vyti¹tìní.
+Nejsme portál o Windows, tak¾e Microsoft do zprávièek nepatøí.
 </p>
 
 <h2>A co dále?</h2>
 
-<p>Va¹e zprávièka bude ulo¾ena do systému do neveøejné kategorie
-a tam bude èekat, ne¾ ji nìkterý ná¹ správce schválí èi zamítne.
-Správce mù¾e upravit vá¹ text (napøíklad jej zpøesnit èi doplnit,
-opravit pøeklep èi pravopisnou chybu apod.) nebo zmìnit kategorii.
-V pøípadì zamítnutí vám bude poslán email s vysvìtlením. Teprve
-po schválení bude zprávièka zveøejnìna.
+<p>Va¹e zprávièka bude èekat, ne¾ ji nìkterý správce schválí.
+Správce mù¾e upravit vá¹ text (napøíklad jej doplnit, opravit pøeklep ..)
+nebo zmìnit kategorii. V pøípadì zamítnutí vám bude poslán email
+s vysvìtlením. Teprve po schválení bude zprávièka zveøejnìna.
 </p>
 
 <#if PARAMS.preview?exists>
