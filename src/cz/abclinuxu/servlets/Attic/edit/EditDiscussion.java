@@ -8,6 +8,7 @@ package cz.abclinuxu.servlets.edit;
 
 import cz.abclinuxu.servlets.AbcServlet;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
+import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
@@ -243,7 +244,7 @@ public class EditDiscussion extends AbcServlet {
         Relation rel = new Relation(discussion,reaction,0);
         persistance.create(rel);
 
-        redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
+        UrlUtils.redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
         return null;
     }
 
@@ -303,7 +304,7 @@ public class EditDiscussion extends AbcServlet {
         Relation rel2 = new Relation(relation.getChild(),discussion,relation.getId());
         persistance.create(rel2);
 
-        redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
+        UrlUtils.redirect("/ViewRelation?relationId="+relation.getId(),response,ctx);
         return null;
     }
 }
