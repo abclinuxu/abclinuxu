@@ -15,8 +15,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.app.Velocity;
 
 import javax.servlet.http.*;
-import javax.servlet.ServletException;
-import javax.servlet.RequestDispatcher;
+import javax.servlet.*;
 
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
@@ -26,9 +25,7 @@ import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.view.*;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -349,28 +346,24 @@ public class AbcServlet extends VelocityServlet {
 
     /**
      * Invoked when there is an error thrown in any part of doRequest() processing.
+     * @todo Find, what to use instead of deprecated HttpUtils.getRequestURL
      */
     protected void error(HttpServletRequest request, HttpServletResponse response, Exception cause) throws ServletException, IOException {
-        String message = "Stránku nelze zobrazit!";
-        if ( cause!=null && cause instanceof AbcException ) message = cause.getMessage();
-        log.error("Exception caught in view!",cause);
+        StringBuffer url = HttpUtils.getRequestURL(request);
+        url.insert(0,"Cannot display page ");
+        if ( cause instanceof AbcException ) url.append("Status was: "+((AbcException)cause).getStatus());
+        log.error(url.toString(),cause);
 
-        StringBuffer html = new StringBuffer();
-        html.append("<html>");
-        html.append("<body bgcolor=\"#ffffff\"><h2>");
-        html.append( message );
-        html.append("</h2>");
-        html.append("<br>");
-        html.append( cause );
-        html.append("<br>");
-
-        StringWriter sw = new StringWriter();
-        cause.printStackTrace( new PrintWriter( sw ) );
-
-        html.append( sw.toString()  );
-        html.append("</body>");
-        html.append("</html>");
-        response.getOutputStream().print( html.toString() );
+        ServletOutputStream os = response.getOutputStream();
+        os.println("<html><body bgcolor=\"#ffffff\">");
+        os.println("<h2>Stránka nebyla nalezena</h2>");
+        os.println("Omlouváme se, ale systém nebyl schopen zobrazit zvolenou stránku. ");
+        os.println("Mozná byla zmenena její adresa.<p>");
+        os.println("Dekujeme za pochopeni.");
+        os.println("<p>Událost byla zalogována.");
+        os.println("</body></html>");
+        os.flush();
+        os.close();
     }
 
     /**

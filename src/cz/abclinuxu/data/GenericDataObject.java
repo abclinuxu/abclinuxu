@@ -91,7 +91,7 @@ public abstract class GenericDataObject extends GenericObject {
     /**
      * sets XML data of this object in String format
      */
-    public void setData(String data) throws AbcException {
+    public void setData(String data) {
         documentHandler = new XMLHandler();
         documentHandler.setData(data);
     }

@@ -74,12 +74,12 @@ public class XMLHandler {
     /**
      * sets XML data of this object in String format
      */
-    public void setData(String data) throws AbcException {
+    public void setData(String data) {
         try {
             this.data = DocumentHelper.parseText(data);
         } catch (DocumentException e) {
-            log.warn("Nemuzu konvertovat data do XML! Exception: "+e.getMessage()+" ("+data+")");
-            throw new AbcException("Nemuzu konvertovat data do XML!",AbcException.WRONG_DATA,data,e);
+            log.error("Nemuzu konvertovat data do XML! ("+data+")",e);
+            throw new AbcException("Nemuzu konvertovat data do XML!",AbcException.WRONG_DATA);
         }
     }
 

@@ -7,7 +7,7 @@
  */
 package cz.abclinuxu;
 
-public class AbcException extends Exception {
+public class AbcException extends RuntimeException {
 
     /** indicates unknown error */
     public static final int UNKNOWN = 0;
@@ -43,24 +43,15 @@ public class AbcException extends Exception {
      * by user interfaces to custom error explanations.
      */
     int code;
-    /** object, which caused this exception (if known) */
-    Object sinner;
-    /** nested exception */
-    Exception nestedException;
-
 
     /**
      * constructs new exception and logs relevant information
      * @param desc description of exception
      * @param code error code of exception
-     * @param sinner if known or relevant, object, which caused this exception (or null, if unknown)
-     * @param e caught exception or null
      */
-    public AbcException(String desc, int code, Object sinner, Exception e) {
+    public AbcException(String desc, int code) {
         super(desc);
         this.code = code;
-        this.sinner = sinner;
-        nestedException = e;
     }
 
     /**
@@ -69,19 +60,5 @@ public class AbcException extends Exception {
      */
     public int getStatus() {
         return code;
-    }
-
-    /**
-     * @return object, which caused this exception (if known)
-     */
-    public Object getSinner() {
-        return sinner;
-    }
-
-    /**
-     * @return Nested exception
-     */
-    public Exception getNestedException() {
-        return nestedException;
     }
 }
