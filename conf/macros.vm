@@ -19,8 +19,7 @@
 <div class="parents">
 #foreach($parent in $PARENTS)
 #if($velocityCount==1) #sync($parent.Parent)
-<a href="$!URL.make("/ViewCategory?categoryId=$parent.Parent.Id")">
-$!UTIL.getXPath($parent.Parent,'data/name')</a>
+<a href="$!URL.make("/ViewCategory?categoryId=$parent.Parent.Id")">$!UTIL.getXPath($parent.Parent,'data/name')</a>
 #end
 - <a href="$!URL.make("/ViewRelation?relationId=$parent.Id")">$!UTIL.getChildName($parent)</a>
 #end</div>#end#end
@@ -201,7 +200,6 @@ $!UTIL.saveParams($PARAMS, [])
 <input type="hidden" name="threadId" value=#if($UTIL.is($reaction,'Item','Discussion')) "0" #else "$!reaction.Id" #end>
 <input type="submit" value="Odpovìdìt">
 </form>
-#if($reaction.Owner!=0) #showReward($autor) #end
 #undef('autor')
 </p>
 #end
@@ -235,14 +233,14 @@ $!UTIL.saveParams($PARAMS, [])
 <TR>
 <TD CLASS="seda1"><SPAN CLASS="piditucna">Dotaz</SPAN></TD>
 <TD CLASS="seda1" ALIGN="CENTER"><SPAN CLASS="piditucna">Odp.</SPAN></TD>
-<TD CLASS="seda1" ALIGN="CENTER"><SPAN CLASS="piditucna">Poslední&nbsp;</SPAN></TD>
+<TD CLASS="seda1" ALIGN="CENTER"><SPAN CLASS="piditucna">Poslední</SPAN></TD>
 </TR>
 
 #set($DIZS=$UTIL.sortByDateDescending($UTIL.getDiscussions($DISCUSSIONS)))
 
 #foreach($diz in $DIZS)
 <TR>
-<TD><A HREF="/hardware/ViewRelation?relationId=$diz.RelationId">$UTIL.limit($UTIL.getXPath($diz.Discussion,'data/title'),38," ..")</A></TD>
+<TD><A HREF="/hardware/ViewRelation?relationId=$diz.RelationId">$UTIL.limit($UTIL.getXPath($diz.Discussion,'data/title'),40," ..")</A></TD>
 <TD ALIGN="CENTER" VALIGN="MIDDLE"><SPAN CLASS="pidi">$diz.ResponseCount</SPAN></TD>
 <TD ALIGN="CENTER" VALIGN="MIDDLE"><SPAN CLASS="pidi">$UTIL.showDizDate($diz.LastUpdate)</SPAN></TD>
 </TR>

@@ -12,6 +12,10 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.view.Search;
 import cz.abclinuxu.servlets.utils.UrlUtils;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.Configurator;
+import cz.abclinuxu.utils.config.ConfigurationException;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.apache.lucene.index.IndexWriter;
@@ -24,34 +28,33 @@ import org.logicalcobwebs.proxool.configuration.JAXPConfigurator;
 import org.logicalcobwebs.proxool.ProxoolException;
 
 import java.util.*;
+import java.util.prefs.Preferences;
 
 /**
  * This class is responsible for creating and
  * maintaining Lucene's index.
  */
-public class CreateIndex {
+public class CreateIndex implements Configurable {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(CreateIndex.class);
-    static String DEPLOY = "/home/literakl/abc/deploy";
-    static String PATH = Search.getIndexPath();
+
+    public static final String PREF_PATH = "path";
+    public static final String DEFAULT_PATH = "/home/literakl/abc/deploy/WEB-INF/index";
+
+    static String indexPath;
 
     static Persistance persistance;
     static RE tagRE;
 
     static {
+        Configurator configurator = ConfigurationManager.getConfigurator();
+        configurator.configureMe(new CreateIndex(null));
+
         try {
-            DOMConfigurator.configure(DEPLOY+"/WEB-INF/conf/log4j.xml");
-            JAXPConfigurator.configure(DEPLOY+"/WEB-INF/conf/proxool.xml",false);
-            Class.forName("org.logicalcobwebs.proxool.ProxoolDriver");
-//            persistance = PersistanceFactory.getPersistance(PersistanceFactory.defaultUrl,EmptyCache.class);
-            persistance = PersistanceFactory.getPersistance("proxool.abc",EmptyCache.class);
+            persistance = PersistanceFactory.getPersistance(EmptyCache.class);
 //            tagRE = new RE("<[^<>]+>");
             tagRE = new RE("<[\\w\\s\\d/=:.~?\"]+>");
         } catch (RESyntaxException e) {
             log.error("Cannot compile regexp!",e);
-        } catch  (ProxoolException e) {
-            log.error("Cannot initialize proxool!", e);
-        } catch (ClassNotFoundException e) {
-            log.error("Cannot initialize proxool!", e);
         }
     }
 
@@ -60,6 +63,7 @@ public class CreateIndex {
 
 
     public static void main(String[] args) throws Exception {
+        String PATH = indexPath;
         if ( args.length>0 ) PATH = args[0];
         log.info("Starting to index data, using directory "+PATH);
 
@@ -382,5 +386,19 @@ public class CreateIndex {
         if ( node!=null ) str = node.getText();
 
         return str;
+    }
+
+    /**
+     * Callback used to configure your class from preferences.
+     */
+    public void configure(Preferences prefs) throws ConfigurationException {
+        indexPath = prefs.get(PREF_PATH,DEFAULT_PATH);
+    }
+
+    /**
+     * @return directory, where index has been generated.
+     */
+    public static String getIndexPath() {
+        return indexPath;
     }
 }

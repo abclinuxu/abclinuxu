@@ -14,6 +14,7 @@ import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.search.MyDocument;
+import cz.abclinuxu.utils.search.CreateIndex;
 import org.apache.velocity.Template;
 import org.apache.velocity.context.Context;
 import org.apache.lucene.search.*;
@@ -37,8 +38,6 @@ import java.io.*;
 public class Search extends AbcVelocityServlet {
     org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(Search.class);
 
-    static String INDEX_PATH = "/home/literakl/abc/deploy/WEB-INF/index";
-
     /** contains relation, that match the expression */
     public static final String VAR_RESULT = "RESULT";
     /** query to be searched */
@@ -61,7 +60,7 @@ public class Search extends AbcVelocityServlet {
         }
 
         try {
-            Searcher searcher = new IndexSearcher(INDEX_PATH);
+            Searcher searcher = new IndexSearcher(CreateIndex.getIndexPath());
             Query q = QueryParser.parse(query, "contents", new StandardAnalyzer());
             ctx.put(VAR_QUERY,q.toString("contents"));
 
@@ -85,22 +84,8 @@ public class Search extends AbcVelocityServlet {
         return VelocityTemplateSelector.selectTemplate(request,ctx,"Search","show");
     }
 
-    /**
-     * Sets path to directory with index files.
-     */
-    public static void setIndexPath(String path) {
-        Search.INDEX_PATH = path;
-    }
-
-    /**
-     * @return path, where index files are stored.
-     */
-    public static String getIndexPath() {
-        return INDEX_PATH;
-    }
-
     public static void main(String[] args) throws Exception {
-        Searcher searcher = new IndexSearcher(INDEX_PATH);
+        Searcher searcher = new IndexSearcher(CreateIndex.getIndexPath());
         Analyzer analyzer = new StandardAnalyzer();
 
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));

@@ -15,8 +15,6 @@ import javax.servlet.ServletException;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.velocity.app.Velocity;
-import org.logicalcobwebs.proxool.configuration.JAXPConfigurator;
-import org.logicalcobwebs.proxool.ProxoolException;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.scheduler.*;
@@ -28,6 +26,8 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.DateTool;
+import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.data.Category;
 import freemarker.template.*;
 import freemarker.ext.beans.BeansWrapper;
@@ -44,37 +44,13 @@ public class AbcInit extends HttpServlet {
 
     static {
         scheduler = new Timer(true);
+        Configurator configurator = ConfigurationManager.getConfigurator();
     }
 
     public void init() throws ServletException {
         String path = getServletContext().getRealPath("/")+"/";
 
-        String tmp = getInitParameter("LOG4J");
-        if ( ! Misc.empty(tmp) ) {
-            DOMConfigurator.configure(path+tmp);
-        } else {
-            BasicConfigurator.configure();
-        }
-
-        tmp = getInitParameter("JDBC");
-        if ( ! Misc.empty(tmp) ) {
-            log.info("Inicializuji vrstvu persistence pomoci URL "+tmp);
-            PersistanceFactory.setDefaultUrl(tmp);
-        }
-
-        tmp = getInitParameter("PROXOOL_CONF");
-        if ( ! Misc.empty(tmp) ) {
-            try {
-                JAXPConfigurator.configure(path+tmp,false);
-                Class.forName("org.logicalcobwebs.proxool.ProxoolDriver");
-            } catch (ProxoolException e) {
-                log.error("Cannot configure proxool with "+(path+tmp), e);
-            } catch (ClassNotFoundException e) {
-                log.error("Add proxool to your classpath.", e);
-            }
-        }
-
-        tmp = getInitParameter("VELOCITY");
+        String tmp = getInitParameter("VELOCITY");
         if ( ! Misc.empty(tmp) ) {
             try {
                 log.info("Inicializuji Velocity");
@@ -87,36 +63,12 @@ public class AbcInit extends HttpServlet {
         fetcher = new VariableFetcher();
         configureFreeMarker(path);
 
-        tmp = getInitParameter("KERNEL");
-        if ( ! Misc.empty(tmp) )
-            UpdateKernel.setFileName(path+tmp);
-
-        tmp = getInitParameter("LINKS_TRAFIKA");
-        if ( ! Misc.empty(tmp) )
-            GenerateLinks.setFileNameTrafika(path+tmp);
-
-        tmp = getInitParameter("LINKS_ANNECA");
-        if ( ! Misc.empty(tmp) )
-            GenerateLinks.setFileNameAnneca(path+tmp);
-
-        tmp = getInitParameter("LINKS_SZM");
-        if ( ! Misc.empty(tmp) )
-            GenerateLinks.setFileNameSzm(path+tmp);
-
-        tmp = getInitParameter("LINKS_RSS");
-        if ( ! Misc.empty(tmp) )
-            GenerateLinks.setFileNameRSS(path+tmp);
-
         tmp = getInitParameter("TEMPLATES");
         try {
             VelocityTemplateSelector.initialize(path+tmp);
         } catch (Exception e) {
             log.fatal("Nemohu inicializovat systém ¹ablon!", e);
         }
-
-        tmp = getInitParameter("INDEX_PATH");
-        if ( tmp!=null )
-            Search.setIndexPath(path+tmp);
 
         // start scheduler tasks
         startFetchingVariables();
@@ -182,7 +134,7 @@ public class AbcInit extends HttpServlet {
 
     /**
      * Monitors article pool and moves articles to new articles, when they are ready.
-     * Start two minutes later with 3 minute period.
+     * Start one minute later with period of 3 minutes.
      */
     protected void startArticlePoolMonitor() {
         scheduler.schedule(new ArticlePoolMonitor(),1*60*1000,3*60*1000);

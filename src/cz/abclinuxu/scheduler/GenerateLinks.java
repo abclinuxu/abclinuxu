@@ -11,22 +11,35 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.utils.VelocityHelper;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.view.ShowOlder;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.Configurator;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.File;
 import java.util.*;
+import java.util.prefs.Preferences;
 
 import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
 import org.apache.log4j.BasicConfigurator;
 
-public class GenerateLinks extends TimerTask {
+public class GenerateLinks extends TimerTask implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(GenerateLinks.class);
 
-    static String fileName_trafika = "abc.dat";
-    static String fileName_anneca = "abc2.dat";
-    static String fileName_rss = "abc.rss";
-    static String fileName_szm = "abc_szm_sk.dat";
+    public static final String PREF_TRAFIKA = "trafika";
+    public static final String DEFAULT_TRAFIKA = "abc.dat";
+    public static final String PREF_RSS = "rss";
+    public static final String DEFAULT_RSS = "abc.rss";
+    public static final String PREF_ANNECA = "anneca";
+    public static final String DEFAULT_ANNECA = "abc2.dat";
+    public static final String PREF_SZM = "szm";
+    public static final String DEFAULT_SZM = "abc_szm_sk.xml";
+
+    String trafika, anneca, rss, szm;
 
     static RE lineBreak;
 
@@ -47,6 +60,19 @@ public class GenerateLinks extends TimerTask {
         generators[1] = new Anneca();
         generators[2] = new RSS();
         generators[3] = new Szm();
+
+        Configurator configurator = ConfigurationManager.getConfigurator();
+        configurator.configureMe(this);
+    }
+
+    /**
+     * Callback used to configure your class from preferences.
+     */
+    public void configure(Preferences prefs) throws ConfigurationException {
+        trafika = prefs.get(PREF_TRAFIKA,DEFAULT_TRAFIKA);
+        trafika = prefs.get(PREF_ANNECA,DEFAULT_ANNECA);
+        trafika = prefs.get(PREF_RSS,DEFAULT_RSS);
+        trafika = prefs.get(PREF_SZM,DEFAULT_SZM);
     }
 
     public void run() {
@@ -83,7 +109,7 @@ public class GenerateLinks extends TimerTask {
                     }
                 }
                 if ( record!=null )
-                    content = removeNewLines(helper.getXPath(record,"data/content"));
+                    content = helper.encodeSpecial(helper.getXPath(record,"data/content"));
 
                 for (int j = 0; j < generators.length; j++) {
                     generators[j].generateLink(title, url, desc, content);
@@ -151,34 +177,6 @@ public class GenerateLinks extends TimerTask {
     }
 
     /**
-     * Sets default file name.
-     */
-    public static void setFileNameTrafika(String name) {
-        fileName_trafika = name;
-    }
-
-    /**
-     * Sets file name of Anneca feed.
-     */
-    public static void setFileNameAnneca(String name) {
-        fileName_anneca = name;
-    }
-
-    /**
-     * Sets file name of szm feed.
-     */
-    public static void setFileNameSzm(String name) {
-        fileName_szm = name;
-    }
-
-    /**
-     * Sets RSS file name.
-     */
-    public static void setFileNameRSS(String name) {
-        fileName_rss = name;
-    }
-
-    /**
      * Converts new line characters to spaces.
      */
     String removeNewLines(String text) {
@@ -210,7 +208,8 @@ public class GenerateLinks extends TimerTask {
         FileWriter writer = null;
 
         public void generateHeader() throws IOException {
-            writer = new FileWriter(fileName_trafika);
+            String file = AbcConfig.calculateDeployedPath(trafika);
+            writer = new FileWriter(file);
             writer.write(Constants.isoFormat.format(new Date()));
             writer.write('\n');
         }
@@ -231,7 +230,8 @@ public class GenerateLinks extends TimerTask {
         FileWriter writer = null;
 
         public void generateHeader() throws IOException {
-            writer = new FileWriter(fileName_anneca);
+            String file = AbcConfig.calculateDeployedPath(anneca);
+            writer = new FileWriter(file);
         }
 
         public void generateLink(String title, String url, String desc, String content) throws IOException {
@@ -250,18 +250,26 @@ public class GenerateLinks extends TimerTask {
         FileWriter writer = null;
 
         public void generateHeader() throws IOException {
-            writer = new FileWriter(fileName_szm);
-            writer.write("// Tento soubor je urcen pro szm.sk.\n");
-            writer.write("// Obsah clanku smi byt indexovan, ale nesmi byt zverejnen.\n");
-            writer.write(Constants.isoFormat.format(new Date()));
-            writer.write('\n');
+            String file = AbcConfig.calculateDeployedPath(szm);
+            writer = new FileWriter(file);
+            writer.write("<?xml version=\"1.0\" encoding=\"iso-8859-2\" ?>\n");
+            writer.write("<root generated=\""+Constants.isoFormat.format(new Date())+"\">\n");
+            writer.write("<copyright>AbcLinuxu s.r.o.</copyright>\n");
+            writer.write("<note>Tento soubor je urcen pro szm.sk.");
+            writer.write(" Obsah clanku smi byt indexovan, ale nesmi byt zverejnen.</note>\n");
         }
 
         public void generateLink(String title, String url, String desc, String content) throws IOException {
-            writer.write(url+"|"+title+"|"+desc+"|"+content+"\n");
+            writer.write("<item>\n");
+            writer.write("\t<title>"+title+"</title>\n");
+            writer.write("\t<link>"+url+"</link>\n");
+            writer.write("\t<description>"+desc+"</description>\n");
+            writer.write("\t<content>"+content+"</content>\n");
+            writer.write("</item>\n\n");
         }
 
         public void generateBottom() throws IOException {
+            writer.write("</root>\n");
             writer.close();
         }
     }
@@ -273,10 +281,10 @@ public class GenerateLinks extends TimerTask {
         FileWriter writer = null;
 
         public void generateHeader() throws IOException {
-            writer = new FileWriter(fileName_rss);
+            String file = AbcConfig.calculateDeployedPath(rss);
+            writer = new FileWriter(file);
             writer.write("<?xml version=\"1.0\" encoding=\"iso-8859-2\" ?>\n");
             writer.write("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns=\"http://purl.org/rss/1.0/\">\n");
-//            writer.write("<!DOCTYPE rss PUBLIC \"-//Netscape Communications//DTD RSS 0.91//EN\" \"http://my.netscape.com/publish/formats/rss-0.91.dtd\">\n");
             writer.write("\t<channel rdf:about=\"http://www.abclinuxu.cz\">\n");
             writer.write("\t\t<title>AbcLinuxu.cz - tady je tuèòákùm hej!</title>\n");
             writer.write("\t\t<link>http://www.abclinuxu.cz</link>\n");

@@ -9,37 +9,86 @@ package cz.abclinuxu.scheduler;
 import java.io.*;
 import java.net.Socket;
 import java.util.TimerTask;
+import java.util.prefs.Preferences;
 
 import org.apache.regexp.*;
 import org.apache.log4j.BasicConfigurator;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.Configurator;
+import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 
 /**
  * This task is responsible for downloading
  * kernel versions from finger.kernel.org.
  */
-public class UpdateKernel extends TimerTask {
+public class UpdateKernel extends TimerTask implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(UpdateKernel.class);
 
-    static String fileName = "kernel.txt";
-    static String server = "finger.kernel.org";
+    public static final String PREF_FILE = "file";
+    public static final String DEFAULT_FILE = "kernel.txt";
+    public static final String PREF_SERVER = "server";
+    public static final String DEFAULT_SERVER = "finger.kernel.org";
+    public static final String PREF_REGEXP_STABLE = "regexp.stable";
+    public static final String DEFAULT_REGEXP_STABLE = "(The latest stable[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
+    public static final String PREF_REGEXP_STABLE_PRE = "regexp.stable.pre";
+    public static final String DEFAULT_REGEXP_STABLE_PRE = "(The latest prepatch for the stable[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
+    public static final String PREF_REGEXP_DEVEL = "regexp.devel";
+    public static final String DEFAULT_REGEXP_DEVEL = "(The latest beta[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
+    public static final String PREF_REGEXP_DEVEL_PRE = "regexp.devel.pre";
+    public static final String DEFAULT_REGEXP_DEVEL_PRE = "(The latest prepatch for the beta[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
+    public static final String PREF_REGEXP_22 = "regexp.22";
+    public static final String DEFAULT_REGEXP_22 = "(The latest 2.2[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
+    public static final String PREF_REGEXP_22_PRE = "regexp.22.pre";
+    public static final String DEFAULT_REGEXP_22_PRE = "(The latest prepatch for the 2.2[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
+    public static final String PREF_REGEXP_20 = "regexp.20";
+    public static final String DEFAULT_REGEXP_20 = "(The latest 2.0[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
+    public static final String PREF_REGEXP_20_PRE = "regexp.20.pre";
+    public static final String DEFAULT_REGEXP_20_PRE = "(The latest prepatch for the 2.0[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
+    public static final String PREF_REGEXP_AC = "regexp.ac";
+    public static final String DEFAULT_REGEXP_AC = "(The latest -ac[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
+    public static final String PREF_REGEXP_DJ = "regexp.dj";
+    public static final String DEFAULT_REGEXP_DJ = "(The latest -dj[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)";
+
+    String fileName, server;
+    String stable, stablePre, devel, develPre, old22, old22Pre, old20, old20Pre, ac, dj;
 
     RE reStable,reStablepre,reDevel,reDevelpre,reOld22,reOld22pre,reOld20,reOld20pre,reAc,reDj;
 
     public UpdateKernel() {
+        Configurator configurator = ConfigurationManager.getConfigurator();
+        configurator.configureMe(this);
         try {
-            reStable = new RE("(The latest stable[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)");
-            reStablepre = new RE("(The latest prepatch for the stable[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)");
-            reDevel = new RE("(The latest beta[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)");
-            reDevelpre = new RE("(The latest prepatch for the beta[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)");
-            reOld22 = new RE("(The latest 2.2[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)");
-            reOld22pre = new RE("(The latest prepatch for the 2.2[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)");
-            reOld20 = new RE("(The latest 2.0[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)");
-            reOld20pre = new RE("(The latest prepatch for the 2.0[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)");
-            reAc = new RE("(The latest -ac[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)");
-            reDj = new RE("(The latest -dj[^:]*)(:[ ]+)([:digit:].[:digit:].[a-z0-9-]+)");
+            reStable = new RE(stable);
+            reStablepre = new RE(stablePre);
+            reDevel = new RE(devel);
+            reDevelpre = new RE(develPre);
+            reOld22 = new RE(old22);
+            reOld22pre = new RE(old22Pre);
+            reOld20 = new RE(old20);
+            reOld20pre = new RE(old20Pre);
+            reAc = new RE(ac);
+            reDj = new RE(dj);
         } catch (RESyntaxException e) {
             log.error("Cannot compile regexp!",e);
         }
+    }
+
+    /**
+     * Callback used to configure your class from preferences.
+     */
+    public void configure(Preferences prefs) throws ConfigurationException {
+        stable = prefs.get(PREF_REGEXP_STABLE,DEFAULT_REGEXP_STABLE);
+        stablePre = prefs.get(PREF_REGEXP_STABLE_PRE,DEFAULT_REGEXP_STABLE_PRE);
+        devel = prefs.get(PREF_REGEXP_DEVEL,DEFAULT_REGEXP_DEVEL);
+        develPre = prefs.get(PREF_REGEXP_DEVEL_PRE,DEFAULT_REGEXP_DEVEL_PRE);
+        old22 = prefs.get(PREF_REGEXP_22,DEFAULT_REGEXP_22);
+        old22Pre = prefs.get(PREF_REGEXP_22_PRE,DEFAULT_REGEXP_22_PRE);
+        old20 = prefs.get(PREF_REGEXP_20,DEFAULT_REGEXP_20);
+        old20Pre = prefs.get(PREF_REGEXP_20_PRE,DEFAULT_REGEXP_20_PRE);
+        ac = prefs.get(PREF_REGEXP_AC,DEFAULT_REGEXP_AC);
+        dj = prefs.get(PREF_REGEXP_DJ,DEFAULT_REGEXP_DJ);
     }
 
     /**
@@ -65,7 +114,8 @@ public class UpdateKernel extends TimerTask {
                 if ( reDj.match(line) ) { dj = reDj.getParen(3); continue; }
             }
 
-            FileWriter writer = new FileWriter(fileName);
+            String file = AbcConfig.calculateDeployedPath(fileName);
+            FileWriter writer = new FileWriter(file);
             writer.write("<table border=0>\n");
 
             writer.write("<tr><td class=\"jadro_h\"><a href=\"ftp://ftp.fi.muni.cz/pub/linux/kernel/v2.4\" class=\"ikona\">Stabilní:</a></td>\n");
@@ -109,20 +159,6 @@ public class UpdateKernel extends TimerTask {
      */
     public String getJobName() {
         return "UpdateKernel";
-    }
-
-    /**
-     * Sets default file name, where new kernel versions will be stored.
-     */
-    public static void setFileName(String name) {
-        fileName = name;
-    }
-
-    /**
-     * @return File, where new kernel versions are stored.
-     */
-    public static String getFileName() {
-        return fileName;
     }
 
     public static void main(String[] args) {

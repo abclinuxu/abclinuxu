@@ -11,13 +11,6 @@
           <param-value>WEB-INF/conf/log4j.xml</param-value>
         </init-param>
         <init-param>
-          <param-name>JDBC</param-name>
-          <param-value>proxool.abc</param-value>
-<!--
-          <param-value>jdbc:mysql://localhost/abc?user=literakl&amp;password=lkaretil&amp;useUnicode=true&amp;characterEncoding=ISO-8859-2</param-value>
--->
-        </init-param>
-        <init-param>
           <param-name>PROXOOL_CONF</param-name>
           <param-value>WEB-INF/conf/proxool.xml</param-value>
         </init-param>
@@ -40,18 +33,6 @@
         <init-param>
           <param-name>KERNEL</param-name>
           <param-value>WEB-INF/include/kernel.txt</param-value>
-        </init-param>
-        <init-param>
-          <param-name>LINKS_TRAFIKA</param-name>
-          <param-value>auto/abc.dat</param-value>
-        </init-param>
-        <init-param>
-          <param-name>LINKS_ANNECA</param-name>
-          <param-value>auto/abc2.dat</param-value>
-        </init-param>
-        <init-param>
-          <param-name>LINKS_RSS</param-name>
-          <param-value>auto/abc.rss</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
