@@ -179,9 +179,10 @@ public class EditRelation extends AbcFMServlet {
     protected String actionMove(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
+        User user = (User) env.get(Constants.VAR_USER);
+
         Relation relation = (Relation) env.get(VAR_CURRENT);
         int originalUpper = relation.getUpper();
-
         Relation destination = (Relation) InstanceUtils.instantiateParam(PARAM_SELECTED,Relation.class,params);
         persistance.synchronize(destination);
 
@@ -192,7 +193,7 @@ public class EditRelation extends AbcFMServlet {
         String url = null;
         String prefix = (String) params.get(PARAM_PREFIX);
         if ( prefix!=null ) {
-            if ( originalUpper==Constants.REL_FORUM )
+            if ( originalUpper==Constants.REL_FORUM && returnBackToForum(user) )
                 url = "/diskuse.jsp";
             else
                 url = prefix.concat("/ViewRelation?relationId="+relation.getUpper());
@@ -201,5 +202,18 @@ public class EditRelation extends AbcFMServlet {
         UrlUtils urlUtils = new UrlUtils("", response);
         urlUtils.redirect(response, url);
         return null;
+    }
+
+    /**
+     * Whether user wishes to be redirected after move of discussions
+     * from discussion forum back to the forum. 
+     * @param user
+     * @return
+     */
+    private static boolean returnBackToForum(User user) {
+        Node node = user.getData().selectSingleNode("/data/settings/return_to_forum");
+        if ( node!=null )
+            return "yes".equals(node.getText());
+        return false;
     }
 }

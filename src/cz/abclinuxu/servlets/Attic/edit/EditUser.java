@@ -64,6 +64,7 @@ public class EditUser extends AbcFMServlet {
     public static final String PARAM_SUBSCRIBE_MONTHLY = "monthly";
     public static final String PARAM_SUBSCRIBE_WEEKLY = "weekly";
     public static final String PARAM_PHOTO = "photo";
+    public static final String PARAM_RETURN_TO_FORUM = "moveback";
 
     public static final String VAR_MANAGED = "MANAGED";
     public static final String VAR_DEFAULT_DISCUSSION_COUNT = "DEFAULT_DISCUSSIONS";
@@ -417,6 +418,9 @@ public class EditUser extends AbcFMServlet {
         node = document.selectSingleNode("/data/settings/index_discussions");
         if ( node!=null )
             params.put(PARAM_DISCUSSIONS_COUNT, node.getText());
+        node = document.selectSingleNode("/data/settings/return_to_forum");
+        if ( node!=null )
+            params.put(PARAM_RETURN_TO_FORUM, node.getText());
 
         return FMTemplateSelector.select("EditUser", "editSettings", env, request);
     }
@@ -436,6 +440,7 @@ public class EditUser extends AbcFMServlet {
         canContinue &= setCookieValidity(params, managed);
         canContinue &= setEmoticons(params, managed);
         canContinue &= setDiscussionsSizeLimit(params, managed);
+        canContinue &= setReturnBackToForum(params, managed);
 
         if ( !canContinue )
             return FMTemplateSelector.select("EditUser", "Settings", env, request);
@@ -869,6 +874,22 @@ public class EditUser extends AbcFMServlet {
         String subscription = (String) params.get(PARAM_SUBSCRIBE_MONTHLY);
         Element element = DocumentHelper.makeElement(user.getData(), "/data/communication/email/newsletter");
         String value = ("yes".equals(subscription))? "yes":"no";
+        element.setText(value);
+        return true;
+    }
+
+    /**
+     * Sets page flow for admin, when he move discussion from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setReturnBackToForum(Map params, User user) {
+        String tmp = (String) params.get(PARAM_RETURN_TO_FORUM);
+        if ( tmp==null || tmp.length()==0 )
+            return true;
+        Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/return_to_forum");
+        String value = ("yes".equals(tmp))? "yes":"no";
         element.setText(value);
         return true;
     }
