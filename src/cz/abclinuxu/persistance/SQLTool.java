@@ -383,8 +383,8 @@ public final class SQLTool implements Configurable {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer(relationsArticleWithinPeriod);
         List params = new ArrayList();
-        params.add(from);
-        params.add(until);
+        params.add(new java.sql.Date(from.getTime()));
+        params.add(new java.sql.Date(until.getTime()));
         appendQualifiers(sb, qualifiers, params);
         return loadRelations(sb.toString(), params);
     }
@@ -397,8 +397,8 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer(relationsArticleWithinPeriod);
         changeToCountStatement(sb);
         List params = new ArrayList();
-        params.add(from);
-        params.add(until);
+        params.add(new java.sql.Date(from.getTime()));
+        params.add(new java.sql.Date(until.getTime()));
         return loadNumber(sb.toString(), params);
     }
 
@@ -439,8 +439,8 @@ public final class SQLTool implements Configurable {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer(relationsNewsWithinPeriod);
         List params = new ArrayList();
-        params.add(from);
-        params.add(until);
+        params.add(new java.sql.Date(from.getTime()));
+        params.add(new java.sql.Date(until.getTime()));
         appendQualifiers(sb, qualifiers, params);
         return loadRelations(sb.toString(), params);
     }
@@ -453,8 +453,8 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer(relationsNewsWithinPeriod);
         changeToCountStatement(sb);
         List params = new ArrayList();
-        params.add(from);
-        params.add(until);
+        params.add(new java.sql.Date(from.getTime()));
+        params.add(new java.sql.Date(until.getTime()));
         return loadNumber(sb.toString(), params);
     }
 
