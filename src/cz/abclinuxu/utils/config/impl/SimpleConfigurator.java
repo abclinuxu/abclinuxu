@@ -8,6 +8,7 @@ package cz.abclinuxu.utils.config.impl;
 import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.Misc;
 
 import java.util.prefs.Preferences;
@@ -34,6 +35,11 @@ public class SimpleConfigurator implements Configurator {
      */
     public SimpleConfigurator(String file) {
         this.configurationFile = file;
+        if ( file==null || file.length()==0 ) {
+            log.fatal("You must set property "+ConfigurationManager.PROPERTY_CONFIG_FILE+"!");
+            System.exit(1);
+        }
+
         log.info("Loading preferences from file '"+file+"'");
         FileInputStream fis = null;
         try {
