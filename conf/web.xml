@@ -1,0 +1,35 @@
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN" "http://java.sun.com/j2ee/dtds/web-app_2.2.dtd">
+
+<web-app>
+	<display-name>Leo demo</display-name>
+
+    <servlet>
+        <servlet-name>action</servlet-name>
+        <servlet-class>webwork.dispatcher.ServletDispatcher</servlet-class>
+        <load-on-startup/>
+    </servlet>
+    <servlet>
+        <servlet-name>xslt</servlet-name>
+        <servlet-class>webwork.xslt.XSLTServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>action</servlet-name>
+        <url-pattern>*.action</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>xslt</servlet-name>
+        <url-pattern>*.xslt</url-pattern>
+    </servlet-mapping>
+
+
+    <welcome-file-list>
+	<welcome-file>helloworld.action</welcome-file>
+    </welcome-file-list>
+
+    <taglib>
+        <taglib-uri>webwork</taglib-uri>
+        <taglib-location>/WEB-INF/lib/webwork.jar</taglib-location>
+    </taglib>
+</web-app>

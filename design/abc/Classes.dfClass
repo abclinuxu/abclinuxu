@@ -1,0 +1,175 @@
+package id1th4ccu1bt1ricu1c60x5;
+
+/**
+@version 2.0
+@__modelType diagram 
+*/
+class diagram {
+/**
+@__ref <oiref:java#Class#abc.User:oiref><oihard>
+@__modelType reference
+@__imported 
+*/
+class reference {
+}/**
+@__ref <oiref:java#Class#abc.GenericObject:oiref><oihard>
+@__modelType reference
+@__imported 
+*/
+class reference1 {
+}/**
+@__ref <oiref:java#Class#abc.Category:oiref><oihard>
+@__modelType reference
+@__imported 
+*/
+class reference3 {
+}/**
+@__ref <oiref:java#Class#abc.Item:oiref><oihard>
+@__modelType reference
+@__imported 
+*/
+class reference5 {
+}/**
+@__ref <oiref:java#Class#abc.Record:oiref><oihard>
+@__modelType reference
+@__imported 
+*/
+class reference7 {
+}/**
+@__ref <oiref:java#Class#abc.Request:oiref><oihard>
+@__modelType reference
+@__imported 
+*/
+class reference9 {
+}/**
+@__ref <oiref:java#Class#abc.Question:oiref><oihard>
+@__modelType reference
+@__imported 
+*/
+class reference11 {
+}/**
+@__ref <oiref:java#Class#abc.Article:oiref><oihard>
+@__modelType reference
+@__imported 
+*/
+class reference15 {
+}/**
+@__ref <oiref:java#Class#abc.Make:oiref><oihard>
+@__modelType reference
+@__imported 
+*/
+class reference17 {
+}/**
+@__ref <oiref:java#Class#abc.HardwareRecord:oiref><oihard>
+@__modelType reference
+@__imported 
+*/
+class reference19 {
+}/**
+@__ref <oiref:java#Class#abc.SoftwareRecord:oiref><oihard>
+@__modelType reference
+@__imported 
+*/
+class reference21 {
+}/**
+@__ref <oiref:java#Class#abc.ArticleRecord:oiref><oihard>
+@__modelType reference
+@__imported 
+*/
+class reference23 {
+}/**
+@__ref <oiref:java#Class#abc.Data:oiref><oihard>
+@__modelType reference
+@__imported 
+*/
+class reference25 {
+}/**
+@__ref <oiref:java#Class#abc.PollChoice:oiref><oihard>
+@__modelType reference
+@__imported 
+*/
+class reference27 {
+}/**
+@__ref <oiref:java#Class#abc.Poll:oiref><oihard>
+@__modelType reference
+@__imported 
+*/
+class reference29 {
+}/**
+@__ref <oiref:java#Class#abc.Survey:oiref><oihard>
+@__modelType reference
+@__imported 
+*/
+class reference33 {
+}/**
+@__ref <oiref:java#Class#abc.Rating:oiref><oihard>
+@__modelType reference
+@__imported 
+*/
+class reference35 {
+}}/**
+
+@__tags
+@shapeType ClassDiagram 
+*/
+class __tags {
+}/**
+@__options option.papersize = A4
+option.orientation = Landscape
+option.fittopage = true
+option.boundingbox = false
+option.printheader = false
+option.printfooter = false 
+*/
+class __options {
+}/**
+@__positions <oigroup:Composite#clientCardinality#MemberLink#<oiref:java#Member#abc.Record#lnkItem:oiref>=376,192,30,13,0:oigroup>
+<oigroup:<oiref:java#Extends#abc.Request#abc.Item:oiref>=181,270,271,249:oigroup>
+<oigroup:<oiref:java#Class#abc.ArticleRecord:oiref>=540,430,107,79,1:oigroup>
+<oigroup:Composite#clientCardinality#MemberLink#<oiref:java#Member#abc.ArticleRecord#lnkArticle:oiref>=506,457,30,13,0:oigroup>
+<oigroup:Composite#clientCardinality#MemberLink#<oiref:java#Member#abc.Item#lnkCategory:oiref>=206,192,30,13,0:oigroup>
+<oigroup:MemberLink#<oiref:java#Member#abc.ArticleRecord#lnkArticle:oiref>=540,474,473,474:oigroup>
+<oigroup:Composite#clientCardinality#MemberLink#<oiref:java#Member#abc.PollChoice#lnkSurvey:oiref>=592,48,16,13,0:oigroup>
+<oigroup:<oiref:java#Extends#abc.Rating#abc.Poll:oiref>=771,150,771,121:oigroup>
+<oigroup:<oiref:java#Class#abc.Make:oiref>=190,360,83,79,1:oigroup>
+<oigroup:<oiref:java#Extends#abc.Category#abc.GenericObject:oiref>=167,180,249,134:oigroup>
+<oigroup:<oiref:java#Class#abc.Record:oiref>=410,170,83,79,1:oigroup>
+<oigroup:Composite#supplierCardinality#MemberLink#<oiref:java#Member#abc.ArticleRecord#lnkArticle:oiref>=477,457,16,13,0:oigroup>
+<oigroup:Composite#supplierCardinality#MemberLink#<oiref:java#Member#abc.Item#lnkCategory:oiref>=171,192,16,13,0:oigroup>
+<oigroup:<oiref:java#Extends#abc.Survey#abc.Poll:oiref>=681,150,681,121:oigroup>
+<oigroup:<oiref:java#Extends#abc.Question#abc.Item:oiref>=306,410,306,249:oigroup>
+<oigroup:<oiref:java#Extends#abc.Record#abc.GenericObject:oiref>=441,170,305,134:oigroup>
+<oigroup:MemberLink#<oiref:java#Member#abc.SoftwareRecord#lnkMake:oiref>=570,384,273,384:oigroup>
+<oigroup:<oiref:java#Class#abc.GenericObject:oiref>=220,10,111,124,1:oigroup>
+<oigroup:<oiref:java#Class#abc.PollChoice:oiref>=500,10,88,111,1:oigroup>
+<oigroup:<oiref:java#Class#abc.Poll:oiref>=650,10,152,111,1:oigroup>
+<oigroup:<oiref:java#Class#abc.Request:oiref>=140,270,83,79,1:oigroup>
+<oigroup:<oiref:java#Class#abc.Category:oiref>=60,170,107,85,1:oigroup>
+<oigroup:MemberLink#<oiref:java#Member#abc.Record#lnkItem:oiref>=410,209,323,209:oigroup>
+<oigroup:<oiref:java#Class#abc.Item:oiref>=240,170,83,79,1:oigroup>
+<oigroup:<oiref:java#Class#abc.SoftwareRecord:oiref>=570,330,122,79,1:oigroup>
+<oigroup:MemberLink#<oiref:java#Member#abc.HardwareRecord#lnkMake:oiref>=590,300,263,360:oigroup>
+<oigroup:Composite#supplierCardinality#MemberLink#<oiref:java#Member#abc.Record#lnkItem:oiref>=327,192,16,13,0:oigroup>
+<oigroup:<oiref:java#Extends#abc.Article#abc.Item:oiref>=431,440,314,249:oigroup>
+<oigroup:<oiref:java#Class#abc.Survey:oiref>=630,150,83,79,1:oigroup>
+<oigroup:Composite#clientCardinality#MemberLink#<oiref:java#Member#abc.SoftwareRecord#lnkMake:oiref>=536,367,30,13,0:oigroup>
+<oigroup:Composite#supplierCardinality#MemberLink#<oiref:java#Member#abc.SoftwareRecord#lnkMake:oiref>=277,367,32,13,0:oigroup>
+<oigroup:<oiref:java#Extends#abc.Item#abc.GenericObject:oiref>=279,170,279,134:oigroup>
+<oigroup:<oiref:java#Extends#abc.ArticleRecord#abc.Record:oiref>=583,430,430,249:oigroup>
+<oigroup:MemberLink#<oiref:java#Member#abc.Item#lnkCategory:oiref>=240,209,167,209:oigroup>
+<oigroup:<oiref:java#Class#abc.Rating:oiref>=740,150,83,79,1:oigroup>
+<oigroup:<oiref:java#Extends#abc.HardwareRecord#abc.Record:oiref>=590,255,493,234:oigroup>
+<oigroup:<oiref:java#Class#abc.Data:oiref>=370,10,105,124,1:oigroup>
+<oigroup:<oiref:java#Extends#abc.SoftwareRecord#abc.Record:oiref>=570,360,461,249:oigroup>
+<oigroup:Composite#supplierCardinality#MemberLink#<oiref:java#Member#abc.PollChoice#lnkSurvey:oiref>=616,48,30,13,0:oigroup>
+<oigroup:MemberLink#<oiref:java#Member#abc.PollChoice#lnkSurvey:oiref>=588,65,650,65:oigroup>
+<oigroup:<oiref:java#Class#abc.Question:oiref>=290,410,83,79,1:oigroup>
+<oigroup:<oiref:java#Class#abc.User:oiref>=10,10,179,137,1:oigroup>
+<oigroup:<oiref:java#Class#abc.Article:oiref>=390,440,83,79,1:oigroup>
+<oigroup:Composite#clientCardinality#MemberLink#<oiref:java#Member#abc.HardwareRecord#lnkMake:oiref>=556,283,30,13,0:oigroup>
+<oigroup:<oiref:java#Extends#abc.Make#abc.Item:oiref>=231,360,288,249:oigroup>
+<oigroup:<oiref:java#Class#abc.HardwareRecord:oiref>=590,240,126,79,1:oigroup>
+<oigroup:Composite#supplierCardinality#MemberLink#<oiref:java#Member#abc.HardwareRecord#lnkMake:oiref>=227,343,32,13,0:oigroup>
+*/
+class __positions {
+}
