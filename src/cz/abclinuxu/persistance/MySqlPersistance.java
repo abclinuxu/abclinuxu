@@ -226,7 +226,7 @@ public class MySqlPersistance extends Persistance {
      */
     public List findByExample(List objects) throws PersistanceException {
         List result = new LinkedList();
-        for (Iterator iter = result.iterator(); iter.hasNext();) {
+        for (Iterator iter = objects.iterator(); iter.hasNext();) {
             GenericObject obj = null;
             try {
                 obj = (GenericObject) iter.next();
@@ -1252,22 +1252,35 @@ public class MySqlPersistance extends Persistance {
             con = getSQLConnection();
 
             StringBuffer sb = new StringBuffer("select cislo from zaznam where ");
-            boolean addAnd = false;
+            List conditions = new ArrayList();
+
             if ( record.getOwner()!=0 ) {
-                sb.append("owner=?");
-                addAnd = true;
+                sb.append("pridal=?");
+                conditions.add(new Integer(record.getOwner()));
             }
             if ( record.getData()!=null ) {
-                if ( addAnd ) sb.append(" and ");
+                if ( conditions.size()>0 ) sb.append(" and ");
                 sb.append("data like ?");
+                conditions.add(record.getData());
+            }
+            int i=0;
+            if ( record instanceof HardwareRecord ) i = 1;
+            else if ( record instanceof SoftwareRecord ) i = 2;
+            else if ( record instanceof ArticleRecord ) i = 3;
+            if ( i!=0 ) {
+                if ( conditions.size()>0 ) sb.append(" and ");
+                sb.append("typ=?");
+                conditions.add(new Integer(i));
             }
 
             PreparedStatement statement = con.prepareStatement(sb.toString());
-            if ( record.getOwner()!=0 ) statement.setInt(1,record.getOwner());
-            if ( record.getData()!=null ) statement.setString(2,record.getData());
+            for ( i=0; i<conditions.size(); i++ ) {
+                Object o = conditions.get(i);
+                statement.setObject(i+1,o);
+            }
 
             ResultSet result = statement.executeQuery();
-            while ( !result.next() ) {
+            while ( result.next() ) {
                 list.add(new Record(result.getInt(1)));
             }
         } finally {

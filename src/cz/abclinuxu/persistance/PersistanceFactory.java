@@ -18,4 +18,12 @@ public class PersistanceFactory {
     public static Persistance getPersistance() {
         return MySqlPersistance.getInstance();
     }
+
+    /**
+     * @return instance of object, which implements <code>Persistance</code>
+     * and is described by <code>url</code>
+     */
+    public static Persistance getPersistance(String url) {
+        return MySqlPersistance.getInstance(url);
+    }
 }
