@@ -263,7 +263,7 @@
   </servlet>
 
 
-  <servlet name="ViewRelation">
+  <servlet name="ShowObject">
     <action name="hardware" content="/show/hwitem.ftl">
       <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
     </action>
@@ -281,6 +281,9 @@
     </action>
     <action name="news" content="/show/zpravicka.ftl">
       <var name="TITLE" value="Zprávièka"/>
+    </action>
+    <action name="poll" content="/show/anketa.ftl">
+      <var name="TITLE" value="Anketa"/>
     </action>
     <action name="censored" content="/show/cenzura.ftl">
       <var name="TITLE" value="Nevhodný pøíspìvek"/>

@@ -142,7 +142,7 @@ public class ShowArticle implements AbcAction {
         }
 
         persistance.incrementCounter(item);
-        return FMTemplateSelector.select("ViewRelation", "article", env, request);
+        return FMTemplateSelector.select("ShowObject", "article", env, request);
     }
     /**
      * Holder of one link from related articles or resources.

@@ -52,10 +52,10 @@ public class ShowForum implements AbcAction {
         }
 
         Tools.sync(relation);
-        env.put(ViewRelation.VAR_RELATION, relation);
+        env.put(ShowObject.VAR_RELATION, relation);
         env.put(VAR_CATEGORY, relation.getChild());
         List parents = persistance.findParents(relation);
-        env.put(ViewRelation.VAR_PARENTS, parents);
+        env.put(ShowObject.VAR_PARENTS, parents);
 
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
         int count = getPageSize(params, env);

@@ -15,12 +15,14 @@ import java.text.ParseException;
  * in template.
  */
 public class DateTool {
-    /** 2003-01-12 16:00 */
+    /** 2003-01-01 16:00 */
     public static final String ISO_FORMAT = "ISO";
     /** 1.1. 16:00 */
     public static final String CZ_SHORT = "CZ_SHORT";
     /** 1.1.2003 16:00 */
     public static final String CZ_FULL = "CZ_FULL";
+    /** 1.1.2003 */
+    public static final String CZ_ONLY_DATE = "CZ_DATE";
 
     /**
      * Formats given date according to selected format.
@@ -33,6 +35,8 @@ public class DateTool {
             return Constants.czShortFormat.format(date);
         if ( CZ_FULL.equalsIgnoreCase(format) )
             return Constants.czFormat.format(date);
+        if ( CZ_ONLY_DATE.equalsIgnoreCase(format) )
+            return Constants.czDateOnly.format(date);
         return null;
     }
 

@@ -6,7 +6,7 @@
         </mapping>
         <mapping>
             <pattern>show</pattern>
-            <action>cz.abclinuxu.servlets.view.ViewRelation</action>
+            <action>cz.abclinuxu.servlets.view.ShowObject</action>
         </mapping>
         <mapping>
             <pattern>^/forum/dir</pattern>

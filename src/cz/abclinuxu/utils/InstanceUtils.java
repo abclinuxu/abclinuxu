@@ -11,7 +11,7 @@ import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.AbcException;
 import cz.abclinuxu.servlets.view.ViewUser;
-import cz.abclinuxu.servlets.view.ViewRelation;
+import cz.abclinuxu.servlets.view.ShowObject;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +33,7 @@ public class InstanceUtils {
     static {
         deprecatedParams = new HashMap();
         deprecatedParams.put(ViewUser.PARAM_USER_SHORT, ViewUser.PARAM_USER);
-        deprecatedParams.put(ViewRelation.PARAM_RELATION_SHORT, ViewRelation.PARAM_RELATION);
+        deprecatedParams.put(ShowObject.PARAM_RELATION_SHORT, ShowObject.PARAM_RELATION);
         try {
             impliedParam = new RE("/([0-9]+)$");
         } catch (RESyntaxException e) {

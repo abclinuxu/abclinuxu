@@ -42,7 +42,7 @@ import org.dom4j.Element;
  * <dt><code>VAR_CATEGORY</code></dt>
  * <dd>instance of Category.</dd>
  * </dl>
- * <u>Parameters used by ViewRelation</u>
+ * <u>Parameters used by ShowObject</u>
  * <dl>
  * <dt>PARAM_CATEGORY_ID</dt>
  * <dd>PK of asked Category, number.</dd>
@@ -69,9 +69,9 @@ public class ViewCategory implements AbcAction {
         }
 
         Tools.sync(relation);
-        env.put(ViewRelation.VAR_RELATION,relation);
+        env.put(ShowObject.VAR_RELATION,relation);
         List parents = persistance.findParents(relation);
-        env.put(ViewRelation.VAR_PARENTS,parents);
+        env.put(ShowObject.VAR_PARENTS,parents);
 
         // check ACL
         Document document = relation.getData();

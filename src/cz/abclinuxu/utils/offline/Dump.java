@@ -12,7 +12,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.template.TemplateSelector;
 import cz.abclinuxu.servlets.view.ViewCategory;
-import cz.abclinuxu.servlets.view.ViewRelation;
+import cz.abclinuxu.servlets.view.ShowObject;
 import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -171,13 +171,13 @@ public class Dump implements Configurable {
     void dumpItem(Relation relation, Item item, File file, String prefix) throws Exception {
         Map env = new HashMap();
 
-        env.put(ViewRelation.VAR_RELATION,relation);
+        env.put(ShowObject.VAR_RELATION,relation);
         env.put(VAR_ONLINE_URL, PORTAL_URL+prefix+"/ViewRelation?relationId="+relation.getId());
         List parents = persistance.findParents(relation);
         parents.add(relation);
-        env.put(ViewRelation.VAR_PARENTS,parents);
-        Tools.sync(item); env.put(ViewRelation.VAR_ITEM,item);
-        env.put(ViewRelation.VAR_UPPER,relation);
+        env.put(ShowObject.VAR_PARENTS,parents);
+        Tools.sync(item); env.put(ShowObject.VAR_ITEM,item);
+        env.put(ShowObject.VAR_UPPER,relation);
         String name = null;
 
         if ( item.getType()==Item.DISCUSSION ) {
@@ -192,7 +192,7 @@ public class Dump implements Configurable {
         }
 
         Map children = Tools.groupByType(item.getContent());
-        env.put(ViewRelation.VAR_CHILDREN_MAP,children);
+        env.put(ShowObject.VAR_CHILDREN_MAP,children);
 
         if ( item.getType()==Item.ARTICLE ) {
             name = FMTemplateSelector.select("ViewRelation","article", env, "offline");
@@ -225,11 +225,11 @@ public class Dump implements Configurable {
     void dumpCategory(Relation relation, Category category, File file, String prefix) throws Exception {
         Map env = new HashMap();
 
-        env.put(ViewRelation.VAR_RELATION,relation);
+        env.put(ShowObject.VAR_RELATION,relation);
         env.put(VAR_ONLINE_URL, PORTAL_URL+prefix+"/ViewCategory?relationId="+relation.getId());
         List parents = persistance.findParents(relation);
         parents.add(relation);
-        env.put(ViewRelation.VAR_PARENTS,parents);
+        env.put(ShowObject.VAR_PARENTS,parents);
         env.put(ViewCategory.VAR_CATEGORY,category);
 
         Tools.sync(category);

@@ -42,13 +42,13 @@ import org.dom4j.Document;
  * <dt><code>VAR_PARENTS</code></dt>
  * <dd>List of parental relations. Last element is current relation.</dd>
  * </dl>
- * <u>Parameters used by ViewRelation</u>
+ * <u>Parameters used by ShowObject</u>
  * <dl>
  * <dt>relationId</dt>
  * <dd>PK of asked relation, number.</dd>
  * </dl>
  */
-public class ViewRelation implements AbcAction {
+public class ShowObject implements AbcAction {
     public static final String PARAM_RELATION = "relationId";
     public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_DISCUSSION = "dizId";
@@ -59,6 +59,7 @@ public class ViewRelation implements AbcAction {
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_PARENTS = "PARENTS";
     public static final String VAR_ITEM = "ITEM";
+    public static final String VAR_POLL = "POLL";
     /** Relation upper to selected relation Item-Record */
     public static final String VAR_UPPER = "REL_ITEM";
     /** children relation of Item, grouped by their type */
@@ -105,6 +106,8 @@ public class ViewRelation implements AbcAction {
 
         if ( relation.getParent() instanceof Item )
             return processItem(env, relation, request, response);
+        else if ( relation.getChild() instanceof Poll )
+            return processPoll(env, relation, request);
         else if ( relation.getParent() instanceof Category ) {
             if ( relation.getChild() instanceof Item )
                 return processItem(env, relation, request, response);
@@ -153,7 +156,7 @@ public class ViewRelation implements AbcAction {
                 Tools.handleNewComments(discussion, env, request, response);
             }
 
-            return FMTemplateSelector.select("ViewRelation", "news", env, request);
+            return FMTemplateSelector.select("ShowObject", "news", env, request);
         }
 
         Tools.sync(upper); env.put(VAR_UPPER,upper);
@@ -161,11 +164,11 @@ public class ViewRelation implements AbcAction {
         if ( item.getType()==Item.DISCUSSION ) {
             Tools.sync(item.getContent());
             Tools.handleNewComments(item,env,request,response);
-            return FMTemplateSelector.select("ViewRelation","discussion",env, request);
+            return FMTemplateSelector.select("ShowObject","discussion",env, request);
         }
 
         if ( item.getType()==Item.DRIVER )
-            return FMTemplateSelector.select("ViewRelation","driver",env, request);
+            return FMTemplateSelector.select("ShowObject","driver",env, request);
 
         Map children = Tools.groupByType(item.getContent());
         env.put(VAR_CHILDREN_MAP,children);
@@ -180,8 +183,8 @@ public class ViewRelation implements AbcAction {
             if ( ! record.isInitialized() )
                 persistance.synchronize(record);
             switch ( record.getType() ) {
-                case Record.HARDWARE: return FMTemplateSelector.select("ViewRelation","hardware",env, request);
-                case Record.SOFTWARE: return FMTemplateSelector.select("ViewRelation","software",env, request);
+                case Record.HARDWARE: return FMTemplateSelector.select("ShowObject","hardware",env, request);
+                case Record.SOFTWARE: return FMTemplateSelector.select("ShowObject","software",env, request);
             }
         }
         return null;
@@ -205,6 +208,16 @@ public class ViewRelation implements AbcAction {
         Element element = (Element) record.getData().selectSingleNode(xpath);
         env.put(VAR_THREAD, new Comment(element));
 
-        return FMTemplateSelector.select("ViewRelation", "censored", env, request);
+        return FMTemplateSelector.select("ShowObject", "censored", env, request);
+    }
+
+    /**
+     * Displays selected poll.
+     */
+    String processPoll(Map env, Relation relation, HttpServletRequest request) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Poll poll = (Poll) persistance.findById(relation.getChild());
+        env.put(VAR_POLL, poll);
+        return FMTemplateSelector.select("ShowObject", "poll", env, request);
     }
 }
