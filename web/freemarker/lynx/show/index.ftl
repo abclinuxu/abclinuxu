@@ -15,6 +15,25 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
 </p>
 
 <#flush>
+<p>
+  <b><a href="/blog">Blogy na AbcLinuxu</a></b>
+  <ul>
+  <#list VARS.newStories as relation>
+     <li>
+     <#assign story=relation.child, blog=relation.parent>
+     <#assign url=TOOL.getUrlForBlogStory(blog.subType, story.created, relation.id)>
+     <#assign title=TOOL.xpath(blog,"//custom/title")?default("UNDEF")>
+     <#assign CHILDREN=TOOL.groupByType(story.children)>
+     <#if CHILDREN.discussion?exists>
+       <#assign diz=TOOL.analyzeDiscussion(CHILDREN.discussion[0])>
+     <#else>
+       <#assign diz=TOOL.analyzeDiscussion("UNDEF")>
+     </#if>
+     <a href="${url}">${TOOL.xpath(story, "/data/name")}<#if title!="UNDEF"> | ${title}</#if> | ${DATE.show(story.created, "CZ_DM")} | Komentáøù:&nbsp;${diz.responseCount}<#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if></a>
+     </li>
+  </#list>
+  </ul>
+</p>
 
 <p>
  <b>Základy Linuxu</b><br>
@@ -26,7 +45,7 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
 </p>
 
 <p>
- <b>Ovladaèe</b><br>
+ <b><a href="/drivers">Ovladaèe</a></b><br>
  <#list VARS.newDrivers as rel>
   <a href="/drivers/show/${rel.id}">
   ${TOOL.xpath(rel.child,"data/name")}</a><#if rel_has_next>,</#if>
@@ -35,7 +54,7 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
 </p>
 
 <p>
- <b>Hardware</b><br>
+ <b><a href="/hardware">Hardware</a></b><br>
  <#list VARS.newHardware as rel>
   <a href="/hardware/show/${rel.id}">
   ${TOOL.xpath(rel.parent,"data/name")}</a><#if rel_has_next>,</#if>
@@ -43,19 +62,6 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
  <a href="/History?type=hardware&from=0&count=25">&gt;&gt;</a><br>
  <#list SORT.byName(HARDWARE) as rel>
   <a href="/hardware/dir/${rel.id}">
-  ${TOOL.childName(rel)}</a><#if rel_has_next>,</#if>
- </#list>
-</p>
-
-<p>
- <b>Software</b><br>
- <#list VARS.newSoftware as rel>
-  <a href="/software/show/${rel.id}">
-  ${TOOL.xpath(rel.parent,"data/name")}</a><#if rel_has_next>,</#if>
- </#list>
- <a href="/History?type=software&from=0&count=25">&gt;&gt;</a><br>
- <#list SORT.byName(SOFTWARE) as rel>
-  <a href="/software/dir/${rel.id}">
   ${TOOL.childName(rel)}</a><#if rel_has_next>,</#if>
  </#list>
 </p>
