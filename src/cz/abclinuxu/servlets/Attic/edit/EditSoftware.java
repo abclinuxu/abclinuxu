@@ -168,7 +168,7 @@ public class EditSoftware extends AbcFMServlet {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation upper = (Relation) env.get(VAR_RELATION);
-        User user = (User) env.get(AbcVelocityServlet.VAR_USER);
+        User user = (User) env.get(Constants.VAR_USER);
 
         String name = (String) params.get(PARAM_NAME);
         if ( name==null || name.length()==0 ) {
@@ -225,7 +225,7 @@ public class EditSoftware extends AbcFMServlet {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation upper = (Relation) env.get(VAR_RELATION);
-        User user = (User) env.get(AbcVelocityServlet.VAR_USER);
+        User user = (User) env.get(Constants.VAR_USER);
 
         String url = (String) params.get(PARAM_URL);
         String text = (String) params.get(PARAM_TEXT);

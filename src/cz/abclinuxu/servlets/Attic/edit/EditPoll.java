@@ -256,7 +256,7 @@ public class EditPoll extends AbcFMServlet {
         int max = 0;
 
         if ( poll.isClosed() ) {
-            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,"Litujeme, ale tato anketa je ji¾ uzavøena!",env,request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC,"Litujeme, ale tato anketa je ji¾ uzavøena!",env,request.getSession());
             urlUtils.redirect(response, url);
             return null;
         }
@@ -268,14 +268,14 @@ public class EditPoll extends AbcFMServlet {
 
         String[] values = request.getParameterValues(EditPoll.PARAM_VOTE_ID);
         if ( values==null ) {
-            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,"Nevybral jste ¾ádnou volbu!",env,request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC,"Nevybral jste ¾ádnou volbu!",env,request.getSession());
         } else {
             max = values.length;
             if ( ! poll.isMultiChoice() ) max = 1;
         }
 
         if ( hasAlreadyVoted(request,poll,env) ) {
-            ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,"U¾ jste jednou volil!",env,request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC,"U¾ jste jednou volil!",env,request.getSession());
         } else if ( max>0 ) {
             try {
                 for (int i = 0; i<max; i++) {
@@ -287,7 +287,7 @@ public class EditPoll extends AbcFMServlet {
                 markAlreadyVoted(request,response,poll,env);
             } catch (Exception e) {
                 log.error("Vote bug: ",e);
-                ServletUtils.addError(AbcVelocityServlet.GENERIC_ERROR,"Omlouváme se, ale nastala chyba.",env,request.getSession());
+                ServletUtils.addError(Constants.ERROR_GENERIC,"Omlouváme se, ale nastala chyba.",env,request.getSession());
             }
         }
 
