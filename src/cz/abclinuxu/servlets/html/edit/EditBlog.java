@@ -214,7 +214,7 @@ public class EditBlog implements AbcAction, Configurable {
 
         Category blog = new Category();
         blog.setOwner(user.getId());
-        blog.setType(Category.SECTION_BLOG);
+        blog.setType(Category.BLOG);
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
 
@@ -579,7 +579,7 @@ public class EditBlog implements AbcAction, Configurable {
 
         CompareCondition condition = new CompareCondition(Field.SUBTYPE, Operation.EQUAL, name);
         SQLTool sqlTool = SQLTool.getInstance();
-        List list = sqlTool.findSectionRelationsWithType(Category.SECTION_BLOG, new Qualifier[]{condition});
+        List list = sqlTool.findSectionRelationsWithType(Category.BLOG, new Qualifier[]{condition});
         if (list.size()>0) {
             Relation relation = (Relation) list.get(0);
             Category existing = (Category) relation.getChild();

@@ -95,8 +95,8 @@ public class History implements AbcAction {
                 data = sqlTool.findArticleRelationsByUser(uid, qualifiers);
                 total = sqlTool.countArticleRelationsByUser(uid);
             } else {
-                data = sqlTool.findArticleRelations(qualifiers);
-                total = sqlTool.countArticleRelations();
+                data = sqlTool.findArticleRelations(qualifiers, 0);
+                total = sqlTool.countArticleRelations(0);
             }
             found = new Paging(data,from,count,total,qualifiers);
             type = VALUE_TYPE_ARTICLES;

@@ -15,9 +15,11 @@ public class Category extends GenericDataObject {
     /** normal category, every logged user can insert content */
     public static final int OPEN_CATEGORY = 1;
     /** mark for forum */
-    public static final int SECTION_FORUM = 2;
+    public static final int FORUM = 2;
     /** marks section containing blogs of the user */
-    public static final int SECTION_BLOG = 3;
+    public static final int BLOG = 3;
+    /** section holds articles */
+    public static final int SECTION = 4;
 
 
     public Category() {

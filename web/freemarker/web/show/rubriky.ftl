@@ -22,8 +22,8 @@
 <ul>
  <#list SORT.byName(CHILDREN) as relation>
   <li>
-   <a href="${URL.make("/dir/"+relation.id)}">${TOOL.childName(relation)}</A>,
-   ${relation.child.children?size} èlánkù</li>
+   <a href="${URL.make("/dir/"+relation.id)}">${TOOL.childName(relation)}</a>
+  </li>
  </#list>
 </ul>
 

@@ -253,9 +253,9 @@ public class Tools implements Configurable {
                 link.setUrl(urlUtils.noPrefix("/blog"));
             else if (child instanceof Category) {
                 Category category = (Category)child;
-                if (category.getType()==Category.SECTION_FORUM)
+                if (category.getType()==Category.FORUM)
                     link.setUrl(urlUtils.make("/forum/dir/"+relation.getId()));
-                else if (category.getType()==Category.SECTION_BLOG)
+                else if (category.getType()==Category.BLOG)
                     link.setUrl(urlUtils.noPrefix("/blog/"+category.getSubType()));
                 else
                     link.setUrl(urlUtils.make("/dir/"+relation.getId()));

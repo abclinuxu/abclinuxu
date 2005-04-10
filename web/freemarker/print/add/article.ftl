@@ -26,6 +26,18 @@
     <div class="error">${ERRORS.published?if_exists}</div>
    </td>
   </tr>
+  <#if SECTIONS?exists>
+      <tr>
+       <td width="90" class="required">Rubrika</td>
+       <td>
+        <select name="section">
+            <#list SECTIONS as section>
+                <option value="${section.id}"<#if PARAMS.section?default(0)==section.id> selected</#if>>${TOOL.childName(section)}</option>
+            </#list>
+        </select>
+       </td>
+      </tr>
+  </#if>
   <tr>
    <td width="90" class="required">Perex</td>
    <td>
@@ -67,15 +79,14 @@
    </td>
   </tr>
   <tr>
-   <td width="90" class="required">Zakázat diskuse</td>
+   <td width="90">Volby</td>
    <td>
     <input type="checkbox" name="forbid_discussions" <#if PARAMS.forbid_discussions?exists>checked</#if> value="yes">
-   </td>
-  </tr>
-  <tr>
-   <td width="90" class="required">Zakázat hodnocení</td>
-   <td>
+    Zakázat diskuse
     <input type="checkbox" name="forbid_rating" <#if PARAMS.forbid_rating?exists>checked</#if> value="yes">
+    Zakázat hodnocení
+    <input type="checkbox" name="notOnIndex" <#if PARAMS.notOnIndex?exists>checked</#if> value="yes">
+    Nezobrazovat na hlavní stránce
    </td>
   </tr>
   <tr>

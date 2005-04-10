@@ -119,8 +119,9 @@ public class Nursery implements Configurable {
         if (object instanceof Category) {
             Category category = (Category) object;
             switch (category.getType()) {
-                case Category.SECTION_FORUM:
-                case Category.SECTION_BLOG:
+                case Category.FORUM:
+                case Category.BLOG:
+                case Category.SECTION:
                     return Collections.EMPTY_LIST;
             }
         }

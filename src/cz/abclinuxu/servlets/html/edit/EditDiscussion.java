@@ -378,7 +378,7 @@ public class EditDiscussion implements AbcAction {
         // run email forum and update RSS
         if (relation.getParent() instanceof Category) {
             Category parent = (Category) persistance.findById(relation.getParent());
-            if (parent.getType() == Category.SECTION_FORUM) {
+            if (parent.getType() == Category.FORUM) {
                 ForumPool.submitComment(relation, discussion.getId(), record.getId(), commentId);
                 FeedGenerator.updateForum();
             }
@@ -686,7 +686,7 @@ public class EditDiscussion implements AbcAction {
 
     /**
      * Reverts the current state of monitor on specified discussion.
-     */ 
+     */
     public static void alterDiscussionMonitor(Item discussion, User user, Persistance persistance) {
         Date originalUpdated = discussion.getUpdated();
         MonitorTools.alterMonitor(discussion.getData().getRootElement(), user);

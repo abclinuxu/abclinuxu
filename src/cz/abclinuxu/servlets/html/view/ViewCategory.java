@@ -12,8 +12,13 @@ import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.view.ACL;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistance.extra.Qualifier;
+import cz.abclinuxu.persistance.extra.LimitQualifier;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.paging.Paging;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
@@ -56,9 +61,15 @@ public class ViewCategory implements AbcAction {
     public static final String PARAM_PARENT = "parent";
     public static final String PARAM_RELATION_ID = "relationId";
     public static final String PARAM_RELATION_ID_SHORT = "rid";
+    /** n-th oldest object, where to display from */
+    public static final String PARAM_FROM = "from";
+    /** how many object to display */
+    public static final String PARAM_COUNT = "count";
     /** holds category to be displayed */
     public static final String VAR_CATEGORY = "CATEGORY";
     public static final String VAR_CHILDREN = "CHILDREN";
+    /** holds list of articles */
+    public static final String VAR_ARTICLES = "ARTICLES";
 
     static Persistance persistance = PersistanceFactory.getPersistance();
 
@@ -119,6 +130,10 @@ public class ViewCategory implements AbcAction {
 
         Tools.sync(category);
         env.put(VAR_CATEGORY, category);
+
+        if (category.getType()==Category.SECTION)
+            return processSection(request, env, relation);
+
         List children = Tools.syncList(category.getChildren());
         env.put(VAR_CHILDREN, children);
 
@@ -145,5 +160,23 @@ public class ViewCategory implements AbcAction {
             return FMTemplateSelector.select("ViewCategory","rubrika",env, request);
         else
             return FMTemplateSelector.select("ViewCategory","sekce",env, request);
+    }
+
+    public static String processSection(HttpServletRequest request, Map env, Relation relation) throws Exception {
+        Category section = (Category) relation.getChild();
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
+        int count = AbcConfig.getSectionArticleCount();
+
+        SQLTool sqlTool = SQLTool.getInstance();
+        Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
+        List articles = sqlTool.findArticleRelations(qualifiers, section.getId());
+        int total = sqlTool.countArticleRelations(section.getId());
+        Tools.syncList(articles);
+
+        Paging paging = new Paging(articles, from, count, total);
+        env.put(VAR_ARTICLES, paging);
+
+        return FMTemplateSelector.select("ViewCategory", "rubrika", env, request);
     }
 }

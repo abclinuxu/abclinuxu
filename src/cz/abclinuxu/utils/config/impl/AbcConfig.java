@@ -26,11 +26,13 @@ public class AbcConfig implements Configurable {
 
     public static final String PREF_DEPLOY_PATH = "deploy.path";
     public static final String PREF_VIEWUSER_PAGINGSIZE = "viewuser.page.size";
-    public static final String PREF_VIEWINDEX_DISCUSSIONS_COUNT = "viewindex.discussions.count";
+    public static final String PREF_INDEX_DISCUSSIONS_COUNT = "index.discussions.count";
     public static final String PREF_TEMPLATE_NEWS_COUNT = "template.news.count";
+    public static final String PREF_INDEX_ARTICLES_COUNT = "index.article.count";
+    public static final String PREF_SECTION_ARTICLES_COUNT = "section.article.count";
 
     static String deployPath;
-    static int viewUserPageSize, viewIndexDiscussions, newsCount;
+    static int viewUserPageSize, indexDiscussionCount, newsCount, indexArticleCount, sectionArticleCount;
 
     /**
      * Callback used to configure your class from preferences.
@@ -38,8 +40,10 @@ public class AbcConfig implements Configurable {
     public void configure(Preferences prefs) throws ConfigurationException {
         deployPath = prefs.get(PREF_DEPLOY_PATH, null);
         viewUserPageSize = prefs.getInt(PREF_VIEWUSER_PAGINGSIZE,20);
-        viewIndexDiscussions = prefs.getInt(PREF_VIEWINDEX_DISCUSSIONS_COUNT,20);
+        indexDiscussionCount = prefs.getInt(PREF_INDEX_DISCUSSIONS_COUNT,20);
         newsCount = prefs.getInt(PREF_TEMPLATE_NEWS_COUNT,5);
+        indexArticleCount = prefs.getInt(PREF_INDEX_ARTICLES_COUNT, 9);
+        sectionArticleCount = prefs.getInt(PREF_SECTION_ARTICLES_COUNT, 25);
     }
 
     /**
@@ -65,7 +69,7 @@ public class AbcConfig implements Configurable {
     }
 
     /**
-     * @return ViewUser's pageSize attribute.
+     * @return size of page with user listing.
      * todo use map to configure page size by type. add String parameter to method signature to choose type
      */
     public static int getViewUserPageSize() {
@@ -75,8 +79,8 @@ public class AbcConfig implements Configurable {
     /**
      * @return default maximum for discussions count on Index page
      */
-    public static int getViewIndexDiscussionsCount() {
-        return viewIndexDiscussions;
+    public static int getIndexDiscussionCount() {
+        return indexDiscussionCount;
     }
 
     /**
@@ -84,5 +88,19 @@ public class AbcConfig implements Configurable {
      */
     public static int getNewsCount() {
         return newsCount;
+    }
+
+    /**
+     * @return number of articles to be displayed on the start page.
+     */
+    public static int getIndexArticleCount() {
+        return indexArticleCount;
+    }
+
+    /**
+     * @return number of articles to be displayed in the section.
+     */
+    public static int getSectionArticleCount() {
+        return sectionArticleCount;
     }
 }

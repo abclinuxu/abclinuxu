@@ -14,6 +14,7 @@
 <!ELEMENT editor (#PCDATA)> <!-- who approved this article -->
 <!ELEMENT forbid_discussions (#PCDATA)> <!-- yes will prohibit discussions to this article -->
 <!ELEMENT forbid_rating (#PCDATA)> <!-- yes will prohibit rating of this article -->
+<!ELEMENT section_rid (#PCDATA)> <!-- ArticlePoolMonitor will move article to this section -->
 <!ELEMENT thumbnail (#PCDATA)> <!-- element with HTML definition for an icon in article listing -->
 <!ELEMENT talk (addresses?, question*)> <!-- container for talk -->
 <!ATTLIST talk lastid (#NMTOKEN) #REQUIRED> <!-- id of last added question -->

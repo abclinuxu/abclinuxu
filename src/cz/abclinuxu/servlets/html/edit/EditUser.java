@@ -480,7 +480,7 @@ public class EditUser implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
 
-        env.put(VAR_DEFAULT_DISCUSSION_COUNT,new Integer(AbcConfig.getViewIndexDiscussionsCount()));
+        env.put(VAR_DEFAULT_DISCUSSION_COUNT,new Integer(AbcConfig.getIndexDiscussionCount()));
         env.put(VAR_DEFAULT_NEWS_COUNT,new Integer(AbcConfig.getNewsCount()));
 
         Document document = managed.getData();

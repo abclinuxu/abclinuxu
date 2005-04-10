@@ -34,6 +34,7 @@ public final class SQLTool implements Configurable {
     public static final String PREF_DISCUSSION_RELATIONS = "relations.discussion";
     public static final String PREF_DISCUSSION_RELATIONS_IN_SECTION = "relations.discussion.in.section";
     public static final String PREF_ARTICLE_RELATIONS = "relations.article";
+    public static final String PREF_ARTICLES_ON_INDEX_RELATIONS = "relations.article.on.index";
     // todo calculate it dynamically with findqualifier
     public static final String PREF_ARTICLE_RELATIONS_WITHIN_PERIOD = "relations.article.within.period";
     public static final String PREF_NEWS_RELATIONS = "relations.news";
@@ -72,7 +73,7 @@ public final class SQLTool implements Configurable {
     // todo presun vsechny stringy do Mapy
     private String relationsRecordByType, relationsParentRecordByType, relationsItemsByType, relationsSectionByType;
     private String relationsDiscussion, relationsDiscussionInSection;
-    private String relationsArticle, relationsArticleWithinPeriod;
+    private String relationsArticle, relationsArticleWithinPeriod, relationsArticlesOnIndex;
     private String relationsNews, relationsNewsWithinPeriod;
     private String relationsNewsByUser, relationsRecordByUserAndType, relationsArticleByUser;
     private String relationsQuestionsByUser, relationsCommentsByUser;
@@ -230,20 +231,36 @@ public final class SQLTool implements Configurable {
 
     /**
      * Appends qualifiers to StringBufefr holding SQL command.
+     * @param tableNick nick of table to distinguish columns. Default is null.
      */
-    private void appendQualifiers(StringBuffer sb, Qualifier[] qualifiers, List params) {
+    private void appendQualifiers(StringBuffer sb, Qualifier[] qualifiers, List params, String tableNick) {
         Qualifier qualifier;
         boolean sort = false;
         for ( int i = 0; i<qualifiers.length; i++ ) {
             qualifier = qualifiers[i];
             if ( qualifier.equals(Qualifier.SORT_BY_CREATED) ) {
-                sb.append(" order by vytvoreno");
+                sb.append(" order by ");
+                if (tableNick != null) {
+                    sb.append(tableNick);
+                    sb.append(".");
+                }
+                sb.append("vytvoreno");
                 sort = true;
             } else if ( qualifier.equals(Qualifier.SORT_BY_UPDATED) ) {
-                sb.append(" order by zmeneno");
+                sb.append(" order by ");
+                if (tableNick != null) {
+                    sb.append(tableNick);
+                    sb.append(".");
+                }
+                sb.append("zmeneno");
                 sort = true;
             } else if ( qualifier.equals(Qualifier.SORT_BY_ID) ) {
-                sb.append(" order by cislo");
+                sb.append(" order by ");
+                if (tableNick != null) {
+                    sb.append(tableNick);
+                    sb.append(".");
+                }
+                sb.append("cislo");
                 sort = true;
             } else if ( sort && qualifier.equals(Qualifier.ORDER_ASCENDING) ) {
                 sb.append(" asc");
@@ -280,7 +297,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer(relationsRecordByType);
         List params = new ArrayList();
         params.add(new Integer(type));
-        appendQualifiers(sb,qualifiers,params);
+        appendQualifiers(sb,qualifiers,params, null);
         return loadRelations(sb.toString(),params);
     }
 
@@ -295,7 +312,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer(relationsParentRecordByType);
         List params = new ArrayList();
         params.add(new Integer(type));
-        appendQualifiers(sb,qualifiers,params);
+        appendQualifiers(sb,qualifiers,params, null);
         return loadRelations(sb.toString(),params);
     }
 
@@ -313,7 +330,7 @@ public final class SQLTool implements Configurable {
         List params = new ArrayList();
         params.add(new Integer(type));
         params.add(new Integer(user));
-        appendQualifiers(sb,qualifiers,params);
+        appendQualifiers(sb,qualifiers,params, null);
         return loadRelations(sb.toString(),params);
     }
 
@@ -366,7 +383,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer(relationsItemsByType);
         List params = new ArrayList();
         params.add(new Integer(type));
-        appendQualifiers(sb, qualifiers, params);
+        appendQualifiers(sb, qualifiers, params, null);
         return loadRelations(sb.toString(), params);
     }
 
@@ -380,7 +397,7 @@ public final class SQLTool implements Configurable {
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(new Integer(type));
-        appendQualifiers(sb, qualifiers, params);
+        appendQualifiers(sb, qualifiers, params, null);
         return loadNumber(sb.toString(), params).intValue();
     }
 
@@ -395,7 +412,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer(relationsSectionByType);
         List params = new ArrayList();
         params.add(new Integer(type));
-        appendQualifiers(sb, qualifiers, params);
+        appendQualifiers(sb, qualifiers, params, null);
         return loadRelations(sb.toString(), params);
     }
 
@@ -403,7 +420,7 @@ public final class SQLTool implements Configurable {
      * Counts relations, where child is a category of specified type.
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
      */
-    public int countSectionRelationsWithType(int type) {
+    public int countFolderRelationsWithType(int type) {
         StringBuffer sb = new StringBuffer(relationsSectionByType);
         changeToCountStatement(sb);
         List params = new ArrayList();
@@ -421,7 +438,7 @@ public final class SQLTool implements Configurable {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer(relationsDiscussion);
         List params = new ArrayList();
-        appendQualifiers(sb, qualifiers, params);
+        appendQualifiers(sb, qualifiers, params, null);
         return loadRelations(sb.toString(), params);
     }
 
@@ -447,7 +464,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer(relationsDiscussionInSection);
         List params = new ArrayList();
         params.add(new Integer(parent));
-        appendQualifiers(sb, qualifiers, params);
+        appendQualifiers(sb, qualifiers, params, null);
         return loadRelations(sb.toString(), params);
     }
 
@@ -464,29 +481,54 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Finds relations, where child is article item in the section folder.
+     * Items with property created set to future and subtype equal to NOINDEX are skipped.
+     * Use Qualifiers to set additional parameters.
+     * @return List of initialized relations
+     * @throws PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findIndexArticlesRelations(Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(relationsArticlesOnIndex);
+        List params = new ArrayList();
+        appendQualifiers(sb, qualifiers, params, "P");
+        return loadRelations(sb.toString(), params);
+    }
+
+    /**
      * Finds relations, where child is article item.
      * Items with property created set to future and outside of typical columns are skipped.
      * Use Qualifiers to set additional parameters.
+     * @param section id of section to be searched. If equal to 0, than all sections will be searched
      * @return List of initialized relations
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     * @throws PersistanceException if there is an error with the underlying persistent storage.
      */
-    public List findArticleRelations(Qualifier[] qualifiers) {
+    public List findArticleRelations(Qualifier[] qualifiers, int section) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer(relationsArticle);
         List params = new ArrayList();
-        appendQualifiers(sb, qualifiers, params);
+        if (section>0) {
+            params.add(new Integer(section));
+            sb.append(" and K.cislo=?");
+        }
+        appendQualifiers(sb, qualifiers, params, "P");
         return loadRelations(sb.toString(), params);
     }
 
     /**
      * Counts relations, where child is article item.
      * Items with property created set to future and outside of typical columns are skipped.
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
+     * @param section id of section to be searched. If equal to 0, than all sections will be searched
+     * @throws PersistanceException if there is an error with the underlying persistent storage.
      */
-    public int countArticleRelations() {
+    public int countArticleRelations(int section) {
         StringBuffer sb = new StringBuffer(relationsArticle);
         changeToCountStatement(sb);
         List params = new ArrayList();
+        if (section > 0) {
+            params.add(new Integer(section));
+            sb.append(" and K.cislo=?");
+        }
         return loadNumber(sb.toString(), params).intValue();
     }
 
@@ -502,7 +544,7 @@ public final class SQLTool implements Configurable {
         List params = new ArrayList();
         params.add(new java.sql.Date(from.getTime()));
         params.add(new java.sql.Date(until.getTime()));
-        appendQualifiers(sb, qualifiers, params);
+        appendQualifiers(sb, qualifiers, params, "P");
         return loadRelations(sb.toString(), params);
     }
 
@@ -530,7 +572,7 @@ public final class SQLTool implements Configurable {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer(relationsNews);
         List params = new ArrayList();
-        appendQualifiers(sb, qualifiers, params);
+        appendQualifiers(sb, qualifiers, params, null);
         return loadRelations(sb.toString(), params);
     }
 
@@ -558,7 +600,7 @@ public final class SQLTool implements Configurable {
         List params = new ArrayList();
         params.add(new java.sql.Date(from.getTime()));
         params.add(new java.sql.Date(until.getTime()));
-        appendQualifiers(sb, qualifiers, params);
+        appendQualifiers(sb, qualifiers, params, null);
         return loadRelations(sb.toString(), params);
     }
 
@@ -587,7 +629,7 @@ public final class SQLTool implements Configurable {
         List params = new ArrayList();
         params.add(new Integer(userId));
         params.add(new Integer(type));
-        appendQualifiers(sb, qualifiers, params);
+        appendQualifiers(sb, qualifiers, params, null);
         return loadRelations(sb.toString(), params);
     }
 
@@ -616,7 +658,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer(relationsArticleByUser);
         List params = new ArrayList();
         params.add(new Integer(userId));
-        appendQualifiers(sb, qualifiers, params);
+        appendQualifiers(sb, qualifiers, params, null);
         return loadRelations(sb.toString(), params);
     }
 
@@ -643,7 +685,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer(relationsNewsByUser);
         List params = new ArrayList();
         params.add(new Integer(userId));
-        appendQualifiers(sb, qualifiers, params);
+        appendQualifiers(sb, qualifiers, params, null);
         return loadRelations(sb.toString(), params);
     }
 
@@ -672,7 +714,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer(relationsQuestionsByUser);
         List params = new ArrayList();
         params.add(new Integer(userId));
-        appendQualifiers(sb, qualifiers, params);
+        appendQualifiers(sb, qualifiers, params, null);
         return loadRelations(sb.toString(), params);
     }
 
@@ -700,7 +742,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer(relationsCommentsByUser);
         List params = new ArrayList();
         params.add(new Integer(userId));
-        appendQualifiers(sb, qualifiers, params);
+        appendQualifiers(sb, qualifiers, params, null);
         return loadRelations(sb.toString(), params);
     }
 
@@ -755,7 +797,7 @@ public final class SQLTool implements Configurable {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer(usersWithWeeklyEmail);
         List params = new ArrayList();
-        appendQualifiers(sb, qualifiers, params);
+        appendQualifiers(sb, qualifiers, params, null);
         return loadUsers(sb.toString(), params);
     }
 
@@ -768,7 +810,7 @@ public final class SQLTool implements Configurable {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer(usersWithForumByEmail);
         List params = new ArrayList();
-        appendQualifiers(sb, qualifiers, params);
+        appendQualifiers(sb, qualifiers, params, null);
         return loadUsers(sb.toString(), params);
     }
 
@@ -781,7 +823,7 @@ public final class SQLTool implements Configurable {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer(usersWithRoles);
         List params = new ArrayList();
-        appendQualifiers(sb, qualifiers, params);
+        appendQualifiers(sb, qualifiers, params, null);
         return loadUsers(sb.toString(), params);
     }
 
@@ -796,7 +838,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer(usersInGroup);
         List params = new ArrayList();
         params.add(new Integer(group));
-        appendQualifiers(sb, qualifiers, params);
+        appendQualifiers(sb, qualifiers, params, null);
         return loadUsers(sb.toString(), params);
     }
 
@@ -1160,6 +1202,7 @@ public final class SQLTool implements Configurable {
         relationsDiscussionInSection = getValue(PREF_DISCUSSION_RELATIONS_IN_SECTION, prefs);
         relationsArticle = getValue(PREF_ARTICLE_RELATIONS, prefs);
         relationsArticleWithinPeriod = getValue(PREF_ARTICLE_RELATIONS_WITHIN_PERIOD, prefs);
+        relationsArticlesOnIndex = getValue(PREF_ARTICLES_ON_INDEX_RELATIONS, prefs);
         relationsNews = getValue(PREF_NEWS_RELATIONS, prefs);
         relationsNewsWithinPeriod = getValue(PREF_NEWS_RELATIONS_WITHIN_PERIOD, prefs);
         relationsNewsByUser = getValue(PREF_NEWS_RELATIONS_BY_USER, prefs);

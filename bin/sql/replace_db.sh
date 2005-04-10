@@ -1,20 +1,5 @@
 #!/bin/sh
 
-mysql abc <<EOF
-delete from anketa;
-delete from citac;
-delete from data_ankety;
-delete from kategorie;
-delete from komentar;
-delete from objekt;
-delete from odkaz;
-delete from polozka;
-delete from pravo;
-delete from presmerovani;
-delete from relace;
-delete from server;
-delete from uzivatel;
-delete from zaznam;
-EOF
+mysql abc < empty_all_tables.sql
 
 bzcat $1 | mysql abc 

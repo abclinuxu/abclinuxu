@@ -33,7 +33,7 @@ public class ForumPool {
             return;
         Persistance persistance = PersistanceFactory.getPersistance();
         Category parent = (Category) persistance.findById(relation.getParent());
-        if (parent.getType()!=Category.SECTION_FORUM)
+        if (parent.getType()!=Category.FORUM)
             return;
         Comment comment = new Comment(relation.getId(), discussionId, recordId, threadId);
         pool.add(comment);

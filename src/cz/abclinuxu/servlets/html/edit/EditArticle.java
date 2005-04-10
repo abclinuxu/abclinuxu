@@ -5,10 +5,7 @@
  */
 package cz.abclinuxu.servlets.html.edit;
 
-import cz.abclinuxu.data.Item;
-import cz.abclinuxu.data.Record;
-import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.*;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.PersistanceException;
 import cz.abclinuxu.persistance.Persistance;
@@ -58,9 +55,12 @@ public class EditArticle implements AbcAction {
     public static final String PARAM_MODERATOR = "moderator";
     public static final String PARAM_ADDRESSES = "addresses";
     public static final String PARAM_QUESTION_ID = "id";
+    public static final String PARAM_NOT_ON_INDEX = "notOnIndex";
+    public static final String PARAM_DESIGNATED_SECTION = "section";
 
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_TALK_XML = "XML";
+    public static final String VAR_SECTIONS = "SECTIONS";
 
     public static final String ACTION_ADD_ITEM = "add";
     public static final String ACTION_ADD_ITEM_STEP2 = "add2";
@@ -149,6 +149,9 @@ public class EditArticle implements AbcAction {
         synchronized (Constants.isoFormat) {
             params.put(PARAM_PUBLISHED,Constants.isoFormat.format(new Date()));
         }
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Category sections = (Category) persistance.findById(new Category(Constants.CAT_ARTICLES));
+        env.put(VAR_SECTIONS, sections.getChildren());
         return FMTemplateSelector.select("EditArticle","add",env,request);
     }
 
@@ -178,6 +181,8 @@ public class EditArticle implements AbcAction {
         canContinue &= setArticleContent(params, record, env);
         canContinue &= setRelatedArticles(params, record, env);
         canContinue &= setResources(params, record, env);
+        canContinue &= setNotOnIndex(params, item);
+        canContinue &= setDesignatedSection(params, item);
 
         if ( !canContinue ) {
             return FMTemplateSelector.select("EditArticle", "edit", env, request);
@@ -234,6 +239,12 @@ public class EditArticle implements AbcAction {
         node = document.selectSingleNode("/data/thumbnail");
         if ( node!=null )
             params.put(PARAM_THUMBNAIL, node.getText());
+        params.put(PARAM_NOT_ON_INDEX, item.getSubType());
+        if (relation.getUpper()==Constants.REL_ARTICLEPOOL) {
+            Persistance persistance = PersistanceFactory.getPersistance();
+            Category sections = (Category) persistance.findById(new Category(Constants.CAT_ARTICLES));
+            env.put(VAR_SECTIONS, sections.getChildren());
+        }
 
         Relation child = InstanceUtils.findFirstChildRecordOfType(item,Record.ARTICLE);
         Record record = (Record) child.getChild();
@@ -249,9 +260,9 @@ public class EditArticle implements AbcAction {
     protected String actionEditItem2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
-        Relation upper = (Relation) env.get(VAR_RELATION);
+        Relation relation = (Relation) env.get(VAR_RELATION);
 
-        Item item = (Item) upper.getChild();
+        Item item = (Item) relation.getChild();
         Relation child = InstanceUtils.findFirstChildRecordOfType(item, Record.ARTICLE);
         Record record = (Record) child.getChild();
 
@@ -267,6 +278,9 @@ public class EditArticle implements AbcAction {
         canContinue &= setArticleContent(params, record, env);
         canContinue &= setRelatedArticles(params, record, env);
         canContinue &= setResources(params, record, env);
+        canContinue &= setNotOnIndex(params, item);
+        if (relation.getUpper()==Constants.REL_ARTICLEPOOL)
+            canContinue &= setDesignatedSection(params, item);
 
         if ( !canContinue ) {
             return FMTemplateSelector.select("EditArticle","edit",env,request);
@@ -276,7 +290,7 @@ public class EditArticle implements AbcAction {
         persistance.update(record);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/show/"+upper.getId());
+        urlUtils.redirect(response, "/show/"+relation.getId());
         return null;
     }
 
@@ -707,6 +721,35 @@ public class EditArticle implements AbcAction {
             return true;
 
         element = DocumentHelper.makeElement(item.getData(), "/data/thumbnail");
+        element.setText(content);
+        return true;
+    }
+
+    /**
+     * Updates not on index attribute from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param item article  to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setNotOnIndex(Map params, Item item) {
+        String content = (String) params.get(PARAM_NOT_ON_INDEX);
+        if (content!=null)
+            item.setSubType("NOTONINDEX");
+        else
+            item.setSubType(null);
+        return true;
+    }
+
+    /**
+     * Updates designated section from parameters.
+     * Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param item   article  to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setDesignatedSection(Map params, Item item) {
+        String content = (String) params.get(PARAM_DESIGNATED_SECTION);
+        Element element = DocumentHelper.makeElement(item.getData(), "/data/section_rid");
         element.setText(content);
         return true;
     }

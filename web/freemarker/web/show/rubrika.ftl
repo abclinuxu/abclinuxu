@@ -14,26 +14,20 @@
  <p class="note">${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}</p>
 </#if>
 
-<#assign map=TOOL.groupByType(CHILDREN)>
-
-<#if map.article?exists>
- <#assign clanky=SORT.byDate(map.article, "DESCENDING"), from=TOOL.parseInt(PARAMS.from?default("0")), count=15, until=from+count>
- <#if (until>=clanky?size)><#assign until=clanky?size></#if>
-
- <#list clanky[from..(until-1)] as clanek>
-  <@lib.showArticle clanek, "CZ_FULL" />
+ <#list ARTICLES.data as relation>
+  <@lib.showArticle relation, "CZ_FULL" />
   <hr>
  </#list>
 
  <p>
- <#if (from>0)>
-  <#assign from2=from-count><#if (from2<0)><#assign from2=0></#if>
-  <a href="${URL.make("/dir/"+RELATION.id+"?from="+from2)}">Pøedchozí stránka</a>
- </#if>
- <#if (until < clanky?size)>
-  <a href="${URL.make("/dir/"+RELATION.id+"?from="+until)}">Dal¹í stránka</a>
- </#if>
+  <#if (ARTICLES.currentPage.row > 0) >
+   <#assign start=ARTICLES.currentPage.row-ARTICLES.pageSize><#if (start<0)><#assign start=0></#if>
+   <a href="/clanky/dir/${RELATION.id}?from=${start}">Novìj¹í èlánky</a>
+  </#if>
+  <#assign start=ARTICLES.currentPage.row + ARTICLES.pageSize>
+  <#if (start < ARTICLES.total) >
+   <a href="/clanky/dir/${RELATION.id}?from=${start}">Star¹í èlánky</a>
+  </#if>
  </p>
-</#if>
 
 <#include "../footer.ftl">

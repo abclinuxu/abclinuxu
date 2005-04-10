@@ -11,11 +11,14 @@ import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.utils.Misc;
 
 import java.util.List;
 import java.util.Iterator;
 import java.util.Date;
 import java.util.TimerTask;
+
+import org.dom4j.Element;
 
 /**
  * This class is responsible for monitoring of
@@ -26,7 +29,6 @@ public class ArticlePoolMonitor extends TimerTask {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(ArticlePoolMonitor.class);
 
     Category pool = new Category(Constants.CAT_ARTICLES_POOL);
-    Category articles = new Category(Constants.CAT_ACTUAL_ARTICLES);
 
     public ArticlePoolMonitor() {
     }
@@ -47,9 +49,20 @@ public class ArticlePoolMonitor extends TimerTask {
                     Item item = (Item) relation.getChild();
                     persistance.synchronize(item);
                     if ( item.getType()==Item.ARTICLE && now.after(item.getCreated()) ) {
+                        Element element = (Element) item.getData().selectSingleNode("/data/section_rid");
+                        if (element==null)
+                            continue;
+                        int section_rid = Misc.parseInt(element.getText(), 0);
+                        if (section_rid==0)
+                            continue;
+                        Relation section = (Relation) persistance.findById(new Relation(section_rid));
+
+                        element.detach();
+                        persistance.update(item);
+
                         relation.getParent().removeChildRelation(relation);
-                        relation.setParent(articles);
-                        relation.setUpper(Constants.REL_ACTUAL_ARTICLES);
+                        relation.setParent(section.getChild());
+                        relation.setUpper(section.getId());
                         persistance.update(relation);
                         relation.getParent().addChildRelation(relation);
                     }
