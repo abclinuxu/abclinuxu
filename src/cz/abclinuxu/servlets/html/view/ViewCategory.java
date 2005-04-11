@@ -156,9 +156,12 @@ public class ViewCategory implements AbcAction {
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         tmp = urlUtils.getPrefix();
-        if ( Misc.same(tmp,UrlUtils.PREFIX_CLANKY) )
+        if ( Misc.same(tmp,UrlUtils.PREFIX_CLANKY) ) {
+            Tools.syncList(children);
+            Paging paging = new Paging(children, 0, children.size(), children.size());
+            env.put(VAR_ARTICLES, paging);
             return FMTemplateSelector.select("ViewCategory","rubrika",env, request);
-        else
+        } else
             return FMTemplateSelector.select("ViewCategory","sekce",env, request);
     }
 
