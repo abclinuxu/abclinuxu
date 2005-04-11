@@ -7,7 +7,6 @@ import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.news.NewsCategories;
 import cz.abclinuxu.persistance.extra.*;
 import cz.abclinuxu.persistance.SQLTool;
@@ -191,7 +190,7 @@ public class FeedGenerator implements Configurable {
      */
     public static void updateArticles() {
         try {
-            Persistance persistance = PersistanceFactory.getPersistance();
+            SQLTool sqlTool = SQLTool.getInstance();
 
             SyndFeed feed = new SyndFeedImpl();
             feed.setFeedType(TYPE_RSS_1_0);
@@ -204,11 +203,11 @@ public class FeedGenerator implements Configurable {
             SyndEntry entry;
             SyndContent description;
 
-            Category actual = (Category) persistance.findById(new Category(Constants.CAT_ACTUAL_ARTICLES));
-            List children = actual.getChildren();
-            Tools.syncList(children);
-            List list = Sorters2.byDate(children, Sorters2.DESCENDING);
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
+            int countArticles = AbcConfig.getIndexArticleCount();
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, countArticles)};
+            List articles = sqlTool.findIndexArticlesRelations(qualifiers);
+            Tools.syncList(articles);
+            for (Iterator iter = articles.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
                 Item item = (Item) found.getChild();
                 Document document = item.getData();
@@ -431,7 +430,7 @@ public class FeedGenerator implements Configurable {
             updateHardware();
         if (Arrays.binarySearch(args, "articles")>=0)
             updateArticles();
-        if (Arrays.binarySearch(args, "drivers")>=0) 
+        if (Arrays.binarySearch(args, "drivers")>=0)
             updateDrivers();
         if (Arrays.binarySearch(args, "forum")>=0)
             updateForum();
