@@ -658,7 +658,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer(relationsArticleByUser);
         List params = new ArrayList();
         params.add(new Integer(userId));
-        appendQualifiers(sb, qualifiers, params, null);
+        appendQualifiers(sb, qualifiers, params, "P");
         return loadRelations(sb.toString(), params);
     }
 
