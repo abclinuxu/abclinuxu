@@ -111,7 +111,7 @@ public class ViewBlog implements AbcAction, Configurable {
             env.put(VAR_BLOG_XML, NodeModel.wrap((new DOMWriter().write(blog.getData()))));
 
             if (rid!=0)
-                return processStory(blogRelation, rid, request, env);
+                return processStory(rid, request, env);
             else
                 return processStories(blogRelation, year, month, day, request, env);
         } else
@@ -121,7 +121,7 @@ public class ViewBlog implements AbcAction, Configurable {
     /**
      * Displays one blogRelation content. Its stories may be limited to given year, month or day.
      */
-    protected String processStory(Relation blogRelation, int rid, HttpServletRequest request, Map env) throws Exception {
+    protected String processStory(int rid, HttpServletRequest request, Map env) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
         SQLTool sqlTool = SQLTool.getInstance();
 
@@ -129,6 +129,12 @@ public class ViewBlog implements AbcAction, Configurable {
         Tools.sync(relation);
         Item story = (Item) relation.getChild();
         env.put(VAR_STORY, relation);
+
+        Category blog = (Category) Tools.sync(relation.getParent());
+        Relation blogRelation = (Relation) persistance.findById(new Relation(relation.getUpper()));
+        env.put(VAR_BLOG_RELATION, blogRelation);
+        env.put(VAR_BLOG, blog);
+        env.put(VAR_BLOG_XML, NodeModel.wrap((new DOMWriter().write(blog.getData()))));
 
         User user = (User) env.get(Constants.VAR_USER);
         if (user==null || user.getId()!=story.getOwner())
@@ -138,7 +144,7 @@ public class ViewBlog implements AbcAction, Configurable {
         env.put(ShowObject.VAR_PARENTS, parents);
 
         List qualifiers = new ArrayList();
-        qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, new Integer(user.getId())));
+        qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, new Integer(story.getOwner())));
         qualifiers.add(Qualifier.SORT_BY_CREATED);
         qualifiers.add(Qualifier.ORDER_DESCENDING);
         qualifiers.add(new LimitQualifier(0, currentListSize));
@@ -196,7 +202,7 @@ public class ViewBlog implements AbcAction, Configurable {
         env.put(ShowObject.VAR_PARENTS, parents);
 
         qualifiers = new ArrayList();
-        qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, new Integer(user.getId())));
+        qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, new Integer(blog.getOwner())));
         qualifiers.add(Qualifier.SORT_BY_CREATED);
         qualifiers.add(Qualifier.ORDER_DESCENDING);
         qualifiers.add(new LimitQualifier(0, currentListSize));
