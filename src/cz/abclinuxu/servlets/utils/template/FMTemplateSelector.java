@@ -117,6 +117,16 @@ public class FMTemplateSelector extends TemplateSelector {
      * @return whether it exists
      */
     public static boolean layoutExists(String layout) {
-        return FMUtils.fileExists(layout);
+        if ("lynx".equalsIgnoreCase(layout))
+            return true;
+        if ("pda".equalsIgnoreCase(layout))
+            return true;
+        if ("print".equalsIgnoreCase(layout))
+            return true;
+        if ("wap".equalsIgnoreCase(layout))
+            return true;
+        if ("web".equalsIgnoreCase(layout))
+            return true;
+        return false;
     }
 }
