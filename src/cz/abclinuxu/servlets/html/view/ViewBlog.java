@@ -298,7 +298,7 @@ public class ViewBlog implements AbcAction, Configurable {
                 end.add(Calendar.MONTH, 1);
             } else {
                 start.set(Calendar.DAY_OF_MONTH, day);
-                end.set(Calendar.DAY_OF_MONTH, day);
+                end.set(Calendar.DAY_OF_MONTH, day+1);
             }
         }
 
