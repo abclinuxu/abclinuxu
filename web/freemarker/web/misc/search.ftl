@@ -40,7 +40,7 @@
     <td><label><input type="checkbox" name="type" value="diskuse" <#if TYPES.discussion>checked</#if>>Diskuse</label></td>
     <td><label><input type="checkbox" name="type" value="zpravicka" <#if TYPES.news>checked</#if>>Zprávièky</label></td>
     <td><label><input type="checkbox" name="type" value="sekce" <#if TYPES.section>checked</#if>>Sekce</label></td>
-    <td rowspan="2"><button type="button" onclick="toggle(this)">V¹e/nic</button></td>
+    <td><button type="button" onclick="toggle(this)">V¹e/nic</button></td>
    </tr>
    <tr>
     <td><label><input type="checkbox" name="type" value="hardware" <#if TYPES.hardware>checked</#if>>Hardware</label></td>
