@@ -11,42 +11,57 @@
 	    </div></div>
     </#if>
 
-  <div class="s_sekce">
-    <#if intro!="UNDEF">${intro}</#if>
-  </div>
+    <div class="s_sekce">
+        <#if intro!="UNDEF">${intro}</#if>
+    </div>
+
+    <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <h1>Aktuální zápisy</h1>
+    </div></div>
+
+    <div class="s_sekce">
+        <ul>
+        <#list CURRENT_STORIES as relation>
+            <#assign story=relation.child, url=TOOL.getUrlForBlogStory(BLOG.subType, story.created, relation.id)>
+            <li>
+                <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
+            </li>
+        </#list>
+        </ul>
+    </div>
 
     <div class="s_nad_h1"><div class="s_nad_pod_h1">
             <a class="info" href="#">?<span class="tooltip">Pøístup k archivovaným zápisùm za jednotlivé mìsíce.</span></a>
             <h1>Archív</h1>
     </div></div>
 
-  <div class="s_sekce">
-    <#list BLOG_XML.data.archive.year as year>
-        <ul>
-        <#list year.month as month>
-            <li>
-                <a href="/blog/${BLOG.subType}/${year.@value}/${month.@value}/"><@lib.month month=month.@value/>${year.@value} (${month})</a>
-            </li>
+    <div class="s_sekce">
+        <#list BLOG_XML.data.archive.year as year>
+            <ul>
+            <#list year.month as month>
+                <li>
+                    <a href="/blog/${BLOG.subType}/${year.@value}/${month.@value}/"><@lib.month month=month.@value/>${year.@value} (${month})</a>
+                </li>
+            </#list>
+            </ul>
         </#list>
-        </ul>
-    </#list>
-  </div>
+    </div>
 
-  <div class="s_nad_h1"><div class="s_nad_pod_h1">
+    <div class="s_nad_h1"><div class="s_nad_pod_h1">
         <a class="info" href="#">?<span class="tooltip">Pøístup na osobní hlavní stranu a na hlavní stranu v¹ech blogù.</span></a>
         <h1>Navigace</h1>
-  </div></div>
+    </div></div>
 
-  <div class="s_sekce">
-    <ul>
-        <#if title!="UNDEF">
-    	    <li><a href="/blog/${BLOG.subType}">${title}, hlavní strana</a></li>
-        </#if>
-        <li><a href="/Profile/${owner.id}">${owner.name}</a></li>
-        <li><a href="/auto/blog/${BLOG.subType}.rss">RSS kanál</a></li>
-        <li><a href="/blog">V¹echny blogy</a></li>
-    </ul>
-  </div>
+    <div class="s_sekce">
+        <ul>
+            <#if title!="UNDEF">
+                <li><a href="/blog/${BLOG.subType}">${title}, hlavní strana</a></li>
+            </#if>
+            <li><a href="/Profile/${owner.id}">${owner.name}</a></li>
+            <li><a href="/auto/blog/${BLOG.subType}.rss">RSS kanál</a></li>
+            <li><a href="/blog">V¹echny blogy</a></li>
+        </ul>
+    </div>
 
     <#if (USER?exists && USER.id==BLOG.owner) || (! USER?exists)>
         <div class="s_nad_h1"><div class="s_nad_pod_h1">

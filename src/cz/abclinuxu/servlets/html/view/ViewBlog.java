@@ -49,13 +49,15 @@ public class ViewBlog implements AbcAction, Configurable {
     public static final String VAR_YEAR = "YEAR";
     public static final String VAR_MONTH = "MONTH";
     public static final String VAR_DAY = "DAY";
+    public static final String VAR_CURRENT_STORIES = "CURRENT_STORIES";
 
     static final String PREF_BLOG_URL = "regexp.blog.url";
     static final String PREF_PAGE_SIZE = "page.size";
+    static final String PREF_CURRENT_LIST_SIZE = "current.list.size";
 
     static REProgram reUrl;
     /** default number of stories per single page */
-    static int defaultPageSize;
+    static int defaultPageSize, currentListSize;
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new ViewBlog());
     }
@@ -121,6 +123,8 @@ public class ViewBlog implements AbcAction, Configurable {
      */
     protected String processStory(Relation blogRelation, int rid, HttpServletRequest request, Map env) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
+        SQLTool sqlTool = SQLTool.getInstance();
+
         Relation relation = (Relation) persistance.findById(new Relation(rid));
         Tools.sync(relation);
         Item story = (Item) relation.getChild();
@@ -132,6 +136,17 @@ public class ViewBlog implements AbcAction, Configurable {
 
         List parents = persistance.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
+
+        List qualifiers = new ArrayList();
+        qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, new Integer(user.getId())));
+        qualifiers.add(Qualifier.SORT_BY_CREATED);
+        qualifiers.add(Qualifier.ORDER_DESCENDING);
+        qualifiers.add(new LimitQualifier(0, currentListSize));
+        Qualifier[] qa = new Qualifier[qualifiers.size()];
+
+        List currentStories = sqlTool.findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+        Tools.syncList(currentStories);
+        env.put(VAR_CURRENT_STORIES, currentStories);
 
         return FMTemplateSelector.select("ViewBlog", "story", env, request);
     }
@@ -151,16 +166,16 @@ public class ViewBlog implements AbcAction, Configurable {
         List qualifiers = new ArrayList();
         qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL,new Integer(blog.getOwner())));
         addTimeLimitsFQ(year, month, day, qualifiers);
-
         Qualifier[] qa = new Qualifier[qualifiers.size()];
+
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
         int total = sqlTool.countItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
 
         qualifiers.add(Qualifier.SORT_BY_CREATED);
         qualifiers.add(Qualifier.ORDER_DESCENDING);
         qualifiers.add(new LimitQualifier(from, count));
-
         qa = new Qualifier[qualifiers.size()];
+
         List stories = sqlTool.findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
         Tools.syncList(stories);
 
@@ -179,6 +194,17 @@ public class ViewBlog implements AbcAction, Configurable {
 
         List parents = persistance.findParents(blogRelation);
         env.put(ShowObject.VAR_PARENTS, parents);
+
+        qualifiers = new ArrayList();
+        qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, new Integer(user.getId())));
+        qualifiers.add(Qualifier.SORT_BY_CREATED);
+        qualifiers.add(Qualifier.ORDER_DESCENDING);
+        qualifiers.add(new LimitQualifier(0, currentListSize));
+        qa = new Qualifier[qualifiers.size()];
+
+        List currentStories = sqlTool.findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+        Tools.syncList(currentStories);
+        env.put(VAR_CURRENT_STORIES, currentStories);
 
         return FMTemplateSelector.select("ViewBlog", "blog", env, request);
     }
@@ -317,6 +343,7 @@ public class ViewBlog implements AbcAction, Configurable {
 
     public void configure(Preferences prefs) throws ConfigurationException {
         defaultPageSize = prefs.getInt(PREF_PAGE_SIZE, 10);
+        currentListSize = prefs.getInt(PREF_CURRENT_LIST_SIZE, 5);
         String re = prefs.get(PREF_BLOG_URL, null);
         try {
             reUrl = new RECompiler().compile(re);

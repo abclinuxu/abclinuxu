@@ -400,6 +400,7 @@
                                 <map>
                                     <entry key="regexp.blog.url" value="^/blog/?([a-zA-Z][a-zA-Z0-9_]*)?/?([0-9]{4})?/?([0-9]{1,2})?/?([0-9]{1,2})?/?([0-9]+)?"/>
                                     <entry key="page.size" value="10"/>
+                                    <entry key="current.list.size" value="5"/>
                                 </map>
                             </node>
                         </node>
