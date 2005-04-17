@@ -14,7 +14,6 @@ import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.edit.EditRating;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.data.view.DiscussionHeader;
 import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.data.view.Discussion;
@@ -253,7 +252,9 @@ public class Tools implements Configurable {
                 continue;
 
             link.setText(childName(relation));
-            if (relation.getId()==Constants.REL_FORUM)
+            if (relation.getUrl()!=null)
+                link.setUrl(relation.getUrl());
+            else if (relation.getId()==Constants.REL_FORUM)
                 link.setUrl(urlUtils.noPrefix("/diskuse.jsp"));
             else if (relation.getId()==Constants.REL_BLOGS)
                 link.setUrl(urlUtils.noPrefix("/blog"));
