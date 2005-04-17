@@ -1,6 +1,7 @@
 <#include "../header.ftl">
 
-<h1 class="st_nadpis">Zprávièka</h1>
+<#assign title=TOOL.xpath(ITEM, "/data/title")?default("Zprávièka")>
+<h1 class="st_nadpis">${title}</h1>
 
 <p>
  <#assign autor=TOOL.createUser(ITEM.owner)>
@@ -34,7 +35,7 @@
 
 <p class="zpravicka">${TOOL.xpath(ITEM,"data/content")}</p>
 
-<p><b>Nástroje</b>: <a href="/forum/show/${RELATION.id}?varianta=print">Tisk</a></p>
+<p><b>Nástroje</b>: <a href="${RELATION.url?default("/zpravicky/show/"+RELATION.id)}?varianta=print">Tisk</a></p>
 
 <h2>Komentáøe</h2>
 <#if CHILDREN.discussion?exists>

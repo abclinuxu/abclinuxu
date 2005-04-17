@@ -25,7 +25,8 @@ import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.html.edit.EditRelation;
 import cz.abclinuxu.servlets.html.edit.EditRequest;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.security.Roles;
 

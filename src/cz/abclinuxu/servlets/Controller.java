@@ -7,8 +7,8 @@ package cz.abclinuxu.servlets;
 
 import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.servlets.utils.UrlUtils;
-import cz.abclinuxu.servlets.utils.URLMapper;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.servlets.utils.url.URLMapper;
 import cz.abclinuxu.servlets.html.HTMLVersion;
 import cz.abclinuxu.servlets.wap.WapVersion;
 

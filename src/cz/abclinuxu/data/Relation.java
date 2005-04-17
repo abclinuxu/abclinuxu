@@ -98,6 +98,7 @@ public final class Relation extends GenericObject implements XMLContainer {
      * Sets url for this relation. It must start with slash.
      * It must contain only characters [a-zA-Z0-9_/-] Last character
      * cannot be slash (it is removed).
+     * todo once URLManager is commonly used, remove the check
      */
     public void setUrl(String url) {
         if (url!=null && url.endsWith("/"))

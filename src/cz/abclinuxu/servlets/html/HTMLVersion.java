@@ -6,7 +6,7 @@
 package cz.abclinuxu.servlets.html;
 
 import cz.abclinuxu.servlets.AbcAction;
-import cz.abclinuxu.servlets.utils.URLMapper;
+import cz.abclinuxu.servlets.utils.url.URLMapper;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.TemplateSelector;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;

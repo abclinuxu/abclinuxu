@@ -23,6 +23,7 @@ import com.sun.syndication.io.SyndFeedOutput;
 import org.apache.log4j.Logger;
 import org.dom4j.Node;
 import org.dom4j.Document;
+import org.dom4j.Element;
 
 /**
  * This class generates various feeds for objects in the portal.
@@ -326,12 +327,13 @@ public class FeedGenerator implements Configurable {
     public static void updateNews() {
         try {
             Persistance persistance = PersistanceFactory.getPersistance();
+            String url, title;
 
             SyndFeed feed = new SyndFeedImpl();
             feed.setFeedType(TYPE_RSS_1_0);
             feed.setEncoding("UTF-8");
             feed.setTitle("abclinuxu - èerstvé zprávièky");
-            feed.setLink("http://www.abclinuxu.cz");
+            feed.setLink("http://www.abclinuxu.cz/zpravicky");
             feed.setDescription("Seznam èerstvých zprávièek na portálu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
@@ -348,9 +350,19 @@ public class FeedGenerator implements Configurable {
                 String content = Tools.xpath(item, "data/content");
                 String withoutTags = Tools.removeTags(content);
 
+                if (found.getUrl()!=null)
+                    url = "http://www.abclinuxu.cz" + found.getUrl();
+                else
+                    url = "http://www.abclinuxu.cz/zpravicky/show/" + found.getId();
+                Element element = (Element) item.getData().selectSingleNode("/data/title");
+                if (element!=null)
+                    title = element.getText();
+                else
+                    title = NewsCategories.get(item.getSubType()).getName();
+                
                 entry = new SyndEntryImpl();
-                entry.setLink("http://www.abclinuxu.cz/news/show/" + found.getId());
-                entry.setTitle(NewsCategories.get(item.getSubType()).getName());
+                entry.setLink(url);
+                entry.setTitle(title);
                 description = new SyndContentImpl();
                 description.setType("text/plain");
                 description.setValue(Tools.limitWords(withoutTags, newsWordLimit, " ..."));

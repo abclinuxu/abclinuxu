@@ -3,7 +3,7 @@
  * Date: 21.2.2004
  * Time: 22:01:30
  */
-package cz.abclinuxu.servlets.utils;
+package cz.abclinuxu.servlets.utils.url;
 
 import org.apache.log4j.Logger;
 import org.apache.regexp.RE;
@@ -23,6 +23,7 @@ import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.html.view.ShowObject;
 import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.persistance.SQLTool;
@@ -112,6 +113,9 @@ public final class URLMapper implements Configurable {
         PatternAction patternAction;
 
         String url = ServletUtils.combinePaths(request.getServletPath(), request.getPathInfo());
+
+        // todo known URLs must be cached in LRU cache. If URL ends with /[0-9]+ then it is not custom URL
+        // todo central class for custom URL is needed (to avoid duplicates, to use same syntax etc)
         Relation relation = SQLTool.getInstance().findRelationByURL(url);
         if (relation!=null) {
             Map params = (Map) env.get(Constants.VAR_PARAMS);

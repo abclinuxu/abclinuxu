@@ -5,7 +5,8 @@
  */
 package cz.abclinuxu.servlets.wap;
 
-import cz.abclinuxu.servlets.utils.URLMapper;
+import cz.abclinuxu.servlets.utils.url.URLMapper;
+import cz.abclinuxu.servlets.utils.url.URLMapper;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.utils.Misc;
 

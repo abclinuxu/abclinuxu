@@ -6,7 +6,7 @@
  * To change template for new class use
  * Code Style | Class Templates options (Tools | IDE Options).
  */
-package cz.abclinuxu.servlets.utils;
+package cz.abclinuxu.servlets.utils.url;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +25,7 @@ public class UrlUtils {
     public static final String PREFIX_SOFTWARE = "/software";
     public static final String PREFIX_CLANKY = "/clanky";
     public static final String PREFIX_DRIVERS = "/drivers";
-    public static final String PREFIX_NEWS = "/news";
+    public static final String PREFIX_NEWS = "/zpravicky";
     public static final String PREFIX_FORUM = "/forum";
     public static final String PREFIX_DICTIONARY = "/slovnik";
     public static final String PREFIX_NONE = "";

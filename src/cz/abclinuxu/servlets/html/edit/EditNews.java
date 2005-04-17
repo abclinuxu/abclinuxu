@@ -9,8 +9,9 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.html.view.SendEmail;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.data.User;
@@ -73,6 +74,7 @@ public class EditNews implements AbcAction {
     public static final String PARAM_MESSAGE = "message";
     public static final String PARAM_PREVIEW = "preview";
     public static final String PARAM_PUBLISH_DATE = "publish";
+    public static final String PARAM_TITLE = "title";
 
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -146,6 +148,7 @@ public class EditNews implements AbcAction {
         item.setOwner(user.getId());
 
         boolean canContinue = true;
+        canContinue &= setTitle(params, item, env);
         canContinue &= setContent(params, item, env);
         canContinue &= setCategory(params, item);
         canContinue &= setPublishDate(params, item, env);
@@ -159,12 +162,18 @@ public class EditNews implements AbcAction {
         }
 
         persistance.create(item);
+
+        Element element = (Element) item.getData().selectSingleNode("/data/title");
+        String url = UrlUtils.PREFIX_NEWS + "/" + URLManager.enforceLastURLPart(element.getTextTrim());
+        url = URLManager.protectFromDuplicates(url);
+
         Relation relation = new Relation(new Category(Constants.CAT_NEWS_POOL),item,Constants.REL_NEWS_POOL);
+        relation.setUrl(url);
         persistance.create(relation);
         relation.getParent().addChildRelation(relation);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/news/show/"+relation.getId());
+        urlUtils.redirect(response, url);
         return null;
     }
 
@@ -181,7 +190,7 @@ public class EditNews implements AbcAction {
         session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_TO, user.getEmail());
         session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_BCC, "admini@abclinuxu.cz"); // inform group of admins too
 
-        String url = response.encodeRedirectURL("/Mail?url=/news/dir/37672");
+        String url = response.encodeRedirectURL("/Mail?url=/zpravicky/dir/37672");
         response.sendRedirect(url);
         return null;
     }
@@ -191,7 +200,10 @@ public class EditNews implements AbcAction {
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
 
-        Element element = (Element) item.getData().selectSingleNode("/data/content");
+        Element element = (Element) item.getData().selectSingleNode("/data/title");
+        if (element!=null)
+            params.put(PARAM_TITLE, element.getText());
+        element = (Element) item.getData().selectSingleNode("/data/content");
         params.put(PARAM_CONTENT,element.getText());
         params.put(PARAM_CATEGORY,item.getSubType());
 
@@ -207,6 +219,7 @@ public class EditNews implements AbcAction {
         Item item = (Item) relation.getChild();
 
         boolean canContinue = true;
+        canContinue &= setTitle(params, item, env);
         canContinue &= setContent(params, item, env);
         canContinue &= setCategory(params, item);
         canContinue &= setPublishDate(params, item, env);
@@ -223,7 +236,8 @@ public class EditNews implements AbcAction {
         FeedGenerator.updateNews();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/news/show/"+relation.getId());
+        String url = (relation.getUrl()!=null)? relation.getUrl() : "/zpravicky/show/"+relation.getId();
+        urlUtils.redirect(response, url);
         return null;
     }
 
@@ -251,7 +265,8 @@ public class EditNews implements AbcAction {
         AdminLogger.logEvent(user, "  approve | news " + relation.getId());
         FeedGenerator.updateNews();
 
-        urlUtils.redirect(response, "/news/show/" + relation.getId());
+        String url = (relation.getUrl() != null) ? relation.getUrl() : "/zpravicky/show/" + relation.getId();
+        urlUtils.redirect(response, url);
         return null;
     }
 
@@ -301,7 +316,8 @@ public class EditNews implements AbcAction {
         AdminLogger.logEvent(user, "  lock | news "+relation.getId());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/news/show/"+relation.getId());
+        String url = (relation.getUrl() != null) ? relation.getUrl() : "/zpravicky/show/" + relation.getId();
+        urlUtils.redirect(response, url);
         return null;
     }
 
@@ -318,7 +334,8 @@ public class EditNews implements AbcAction {
         AdminLogger.logEvent(user, "  unlock | news "+relation.getId());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/news/show/"+relation.getId());
+        String url = (relation.getUrl() != null) ? relation.getUrl() : "/zpravicky/show/" + relation.getId();
+        urlUtils.redirect(response, url);
         return null;
     }
 
@@ -372,6 +389,24 @@ public class EditNews implements AbcAction {
             log.warn("Nalezena neznama kategorie zpravicek '"+text+"'!");
         }
 
+        return true;
+    }
+
+    /**
+     * Updates news' title from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param item news to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setTitle(Map params, Item item, Map env) {
+        String text = (String) params.get(PARAM_TITLE);
+        if (text==null || text.length()==0) {
+            ServletUtils.addError(PARAM_PUBLISH_DATE, "Zadejte titulek zprávièky", env, null);
+            return false;
+        }
+
+        Element element = DocumentHelper.makeElement(item.getData(), "/data/title");
+        element.setText(text);
         return true;
     }
 

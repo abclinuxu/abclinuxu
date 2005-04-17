@@ -1,0 +1,28 @@
+souhrn informaci o hierarchickych URL
+
+pravidla:
+    * URL musi byt absolutni, tedy zacinat /
+    * URL smi obsahovat jen vybrane znaky a-Z,0-9, /, podtrzitko a tecku.
+      U znaku s diakritikou se odstrani hacky a carky, ostatni znaky
+      se prevedou na podtrzitko
+    * URL nesmi koncit znakem /, v pripade zadani se odstranuje
+      jak pri hledani, tak ukladani
+    * system nesmi umoznit ulozeni duplicitniho URL
+        * Pokud se URL generuje (napriklad ze jmena) a URL jiz existuje,
+          vlozi se na konec URL podtrzitko a cislovka, ktera se inkrementuje
+          (napriklad titulek, titulek_2, titulek_3 atd)
+        * pokud URL zadava clovek, system zobrazi opet formular
+          a informuje uzivatele o chybe
+    * system nesmi vytvorit URL pro objekt, jehoz nadrazena relace nema
+      nastaveno URL (s vyjimkou contentu). URL musi zacinat nadrazenym
+      URL plus /. Nova cast URL nesmi obsahovat /.
+    * Pokud system zmeni existujici URL, musi jej ulozit do tabulky
+      presmerovani spolu s novym URL
+
+
+mista vyskytu:
+    * Relation.setURL()
+    * EditContent
+    * mozna TODO EditDictionary a ShowDictionary
+    * URLMapper.findAction()
+    * EditNews

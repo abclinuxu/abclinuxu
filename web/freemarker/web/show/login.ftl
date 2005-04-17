@@ -37,7 +37,7 @@ ${TOOL.saveParams(PARAMS, ["LOGIN","PASSWORD","action"])}
 </form>
 
 <form action="${URL.noPrefix("/SelectUser")}" method="POST">
- <input type="submit" value="Zapomenul jsem heslo/login">
+ <input type="submit" value="Zapomnìl jsem heslo/login">
  <input type="hidden" name="sAction" value="form">
  <input type="hidden" name="action" value="forgottenPassword">
  <input type="hidden" name="url" value="${URL.noPrefix("/Profile")}">

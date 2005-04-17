@@ -7,7 +7,8 @@ package cz.abclinuxu.servlets.html;
 
 import cz.abclinuxu.servlets.Controller;
 import cz.abclinuxu.servlets.utils.template.TemplateSelector;
-import cz.abclinuxu.servlets.utils.URLMapper;
+import cz.abclinuxu.servlets.utils.url.URLMapper;
+import cz.abclinuxu.servlets.utils.url.URLMapper;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.apache.log4j.Logger;

@@ -21,6 +21,10 @@
             <action>cz.abclinuxu.servlets.html.view.ViewCategory</action>
         </mapping>
         <mapping>
+            <pattern>^/zpravicky[/]?$</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ShowNewsPage</action>
+        </mapping>
+        <mapping>
             <pattern>^/Profile</pattern>
             <action>cz.abclinuxu.servlets.html.view.ViewUser</action>
         </mapping>
@@ -93,7 +97,7 @@
             <action>cz.abclinuxu.servlets.html.edit.EditDriver</action>
         </mapping>
         <mapping>
-            <pattern>^/news/edit</pattern>
+            <pattern>^/zpravicky/edit</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditNews</action>
         </mapping>
         <mapping>
@@ -175,6 +179,11 @@
             <pattern input="host">palirna</pattern>
             <regexp>.*</regexp>
             <replacement>http://www.abclinuxu.cz/</replacement>
+        </mapping>
+        <mapping>
+            <pattern input="path">^/news/</pattern>
+            <regexp>/news/</regexp>
+            <replacement>/zpravicky/</replacement>
         </mapping>
         <mapping>
             <pattern input="path">ViewRelation</pattern>

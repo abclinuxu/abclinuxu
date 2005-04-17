@@ -9,7 +9,7 @@ import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.servlets.utils.UrlUtils;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.SQLTool;
@@ -20,6 +20,7 @@ import cz.abclinuxu.data.Category;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.finesoft.socd.analyzer.DiacriticRemover;
 import org.apache.log4j.Logger;
 import org.dom4j.Element;
 import org.dom4j.DocumentHelper;
@@ -222,6 +223,7 @@ public class EditContent implements AbcAction {
             ServletUtils.addError(PARAM_URL, "Adresa stránky nesmí být absolutní!", env, null);
             return false;
         }
+        url = DiacriticRemover.getInstance().removeDiacritics(url);
         relation.setUrl(url);
 
         Relation existingRelation = SQLTool.getInstance().findRelationByURL(relation.getUrl());

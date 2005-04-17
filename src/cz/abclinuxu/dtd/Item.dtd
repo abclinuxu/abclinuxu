@@ -72,7 +72,8 @@
 <!ELEMENT suffix (#PCDATA)> <!-- file will end with this suffix -->
 
 <!-- Item.NEWS -->
-<!ELEMENT data (category?, content, approved_by?)>
+<!ELEMENT data (title?, category?, content, approved_by?)>
+<!ELEMENT title (#PCDATA)> <!-- title of the news  -->
 <!ELEMENT content (#PCDATA)> <!-- text of the news -->
 <!ATTLIST content format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT approved_by (#PCDATA)> <!-- id of admin, who approved the news -->

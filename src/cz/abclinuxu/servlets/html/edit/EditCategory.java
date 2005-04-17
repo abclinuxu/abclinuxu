@@ -9,6 +9,7 @@ package cz.abclinuxu.servlets.html.edit;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.*;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.User;

@@ -5,41 +5,39 @@
  */
 package cz.abclinuxu.servlets.html.edit;
 
-import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.AbcAction;
-import cz.abclinuxu.servlets.utils.*;
-import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
-import cz.abclinuxu.persistance.*;
+import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.servlets.AbcAction;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.servlets.utils.url.URLManager;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
-import cz.abclinuxu.utils.config.Configurable;
-import cz.abclinuxu.utils.config.ConfigurationManager;
-import cz.abclinuxu.utils.config.ConfigurationException;
-import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.email.monitor.*;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
-import cz.abclinuxu.exceptions.MissingArgumentException;
-import cz.finesoft.socd.analyzer.DiacriticRemover;
-
-import org.dom4j.*;
+import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.Node;
 import org.htmlparser.util.ParserException;
-import org.apache.regexp.RE;
-import org.apache.regexp.REProgram;
-import org.apache.regexp.RECompiler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 import java.util.Date;
-import java.util.prefs.Preferences;
+import java.util.Map;
 
 /**
  * This class is responsible for adding and
  * editing of dictionary items and records.
  */
-public class EditDictionary implements AbcAction, Configurable {
+public class EditDictionary implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditDictionary.class);
 
     public static final String PARAM_RELATION_SHORT = "rid";
@@ -58,13 +56,6 @@ public class EditDictionary implements AbcAction, Configurable {
     public static final String ACTION_EDIT = "edit";
     public static final String ACTION_EDIT_STEP2 = "edit2";
     public static final String ACTION_ALTER_MONITOR = "monitor";
-
-    public static final String PREF_INVALID_CHARACTERS = "regexp.invalid.characters";
-    private static REProgram reInvalidCharacters;
-    static {
-        ConfigurationManager.getConfigurator().configureAndRememberMe(new EditDictionary());
-    }
-
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -268,11 +259,6 @@ public class EditDictionary implements AbcAction, Configurable {
         return null;
     }
 
-    public void configure(Preferences prefs) throws ConfigurationException {
-        String tmp = prefs.get(PREF_INVALID_CHARACTERS, null);
-        reInvalidCharacters = new RECompiler().compile(tmp);
-    }
-
     /* ******** setters ********* */
 
     /**
@@ -302,16 +288,17 @@ public class EditDictionary implements AbcAction, Configurable {
     private boolean setURLName(Item item, Element root, Map env) {
         String name = root.elementText("name");
         if (name==null) return false;
-        String urlName = DiacriticRemover.getInstance().removeDiacritics(name);
-        urlName = new RE(reInvalidCharacters, RE.REPLACE_ALL).subst(urlName, "_");
 
-        Relation relation = SQLTool.getInstance().findDictionaryByURLName(urlName);
+        String url = URLManager.enforceLastURLPart(name);
+        url = url.toLowerCase();
+
+        Relation relation = SQLTool.getInstance().findDictionaryByURLName(url);
         if (relation!=null) {
-            ServletUtils.addError(PARAM_NAME, "Tento pojem ji¾ byl <a href=\"/slovnik/"+urlName+"\">vysvìtlen</a>.", env, null);
+            ServletUtils.addError(PARAM_NAME, "Tento pojem ji¾ byl <a href=\"/slovnik/"+url+"\">vysvìtlen</a>.", env, null);
             return false;
         }
 
-        item.setSubType(urlName.toLowerCase());
+        item.setSubType(url);
         return true;
     }
 

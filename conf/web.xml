@@ -100,9 +100,6 @@
         <servlet-name>default</servlet-name><url-pattern>/auto/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>default</servlet-name><url-pattern>/soutezici/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>default</servlet-name><url-pattern>/tmp/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>

@@ -18,7 +18,7 @@
 
 <p>Zprávièky mù¾ete èíst i pøes mobil: wap.abclinuxu.cz</p>
 
-<p><a href="${URL.make("/news/edit?action=add")}">Pøidat zprávièku</a></p>
+<p><a href="${URL.make("/zpravicky/edit?action=add")}">Pøidat zprávièku</a></p>
 
 <#list NEWS as rel>
  <@lib.showNews rel /><hr>
