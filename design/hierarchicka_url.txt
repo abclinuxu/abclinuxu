@@ -4,7 +4,7 @@ pravidla:
     * URL musi byt absolutni, tedy zacinat /
     * URL smi obsahovat jen vybrane znaky a-Z,0-9, /, podtrzitko a tecku.
       U znaku s diakritikou se odstrani hacky a carky, ostatni znaky
-      se prevedou na podtrzitko
+      se prevedou na pomlcku, jelikoz google ji preferuje pred podtrzitkem
     * URL nesmi koncit znakem /, v pripade zadani se odstranuje
       jak pri hledani, tak ukladani
     * system nesmi umoznit ulozeni duplicitniho URL

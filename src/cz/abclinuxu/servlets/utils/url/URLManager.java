@@ -47,7 +47,7 @@ public class URLManager implements Configurable {
             throw new AbcException("prazdne url!");
 
         String fixedURL = DiacriticRemover.getInstance().removeDiacritics(url);
-        fixedURL = new RE(reInvalidCharacters, RE.REPLACE_ALL).subst(fixedURL, "_");
+        fixedURL = new RE(reInvalidCharacters, RE.REPLACE_ALL).subst(fixedURL, "-");
         return fixedURL;
     }
 
