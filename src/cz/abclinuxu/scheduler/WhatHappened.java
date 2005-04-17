@@ -47,9 +47,10 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
     public static final String PREF_TITLE = "title";
     public static final String PREF_PEREX = "perex";
     public static final String PREF_AUTHOR = "author";
+    public static final String PREF_SECTION = "section";
 
     static String title, perex;
-    static int author;
+    static int author, sectionRid;
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new WhatHappened());
     }
@@ -84,6 +85,7 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
             params.put(EditArticle.PARAM_TITLE, map.get(VAR_TITLE));
             params.put(EditArticle.PARAM_AUTHOR, Integer.toString(author));
             params.put(EditArticle.PARAM_PEREX, map.get(PREF_PEREX));
+            params.put(EditArticle.PARAM_DESIGNATED_SECTION, Integer.toString(sectionRid));
             synchronized (Constants.isoFormat) {
                 params.put(EditArticle.PARAM_PUBLISHED, Constants.isoFormat.format(new Date()));
             }
@@ -122,39 +124,39 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
      */
     private void setData(Map params, Date from, Date to) {
         Persistance persistance = PersistanceFactory.getPersistance();
-        Tools tools = new Tools();
+        SQLTool sqlTool = SQLTool.getInstance();
         Item item;
 
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING};
-        List relations = SQLTool.getInstance().findArticleRelationsWithinPeriod(from, to, qualifiers);
+        List relations = sqlTool.findArticleRelationsWithinPeriod(from, to, qualifiers);
         List articles = new ArrayList(relations.size());
 
         for ( Iterator iter = relations.iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
             item = (Item) persistance.findById(relation.getChild());
-            String tmp = tools.xpath(item, "/data/author");
-            Article article = new Article(tools.xpath(item, "data/name"), item.getCreated(), relation.getId());
-            User author = tools.createUser(tmp);
+            String tmp = Tools.xpath(item, "/data/author");
+            Article article = new Article(Tools.xpath(item, "data/name"), item.getCreated(), relation.getId());
+            User author = Tools.createUser(tmp);
             article.setAuthor(author.getName());
             article.setAuthorId(author.getId());
-            article.setPerex(tools.xpath(item, "data/perex"));
-            article.setComments(tools.findComments(item).getResponseCount());
-            article.setReads(tools.getCounterValue(item));
+            article.setPerex(Tools.xpath(item, "data/perex"));
+            article.setComments(Tools.findComments(item).getResponseCount());
+            article.setReads(Tools.getCounterValue(item));
             articles.add(article);
         }
         params.put(VAR_ARTICLES, articles);
 
-        relations = SQLTool.getInstance().findNewsRelationsWithinPeriod(from, to, qualifiers);
+        relations = sqlTool.findNewsRelationsWithinPeriod(from, to, qualifiers);
         List news = new ArrayList(relations.size());
 
         for ( Iterator iter = relations.iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
             item = (Item) persistance.findById(relation.getChild());
-            News newz = new News(tools.xpath(item, "data/content"), item.getCreated(), relation.getId());
-            User author = tools.createUser(item.getOwner());
+            News newz = new News(Tools.xpath(item, "data/content"), item.getCreated(), relation.getId());
+            User author = Tools.createUser(item.getOwner());
             newz.setAuthor(author.getName());
             newz.setAuthorId(author.getId());
-            newz.setComments(tools.findComments(item).getResponseCount());
+            newz.setComments(Tools.findComments(item).getResponseCount());
             news.add(newz);
         }
         params.put(VAR_NEWS, news);
@@ -162,13 +164,13 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
         Qualifier fromCondition = new CompareCondition(Field.CREATED, Operation.GREATER_OR_EQUAL, from);
         Qualifier toCondition = new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, to);
         qualifiers = new Qualifier[]{fromCondition, toCondition, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING};
-        relations = SQLTool.getInstance().findDiscussionRelations(qualifiers);
+        relations = sqlTool.findDiscussionRelations(qualifiers);
         List dizs = new ArrayList(relations.size());
 
         for ( Iterator iter = relations.iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
-            tools.sync(relation);
-            DiscussionHeader diz = tools.analyzeDiscussion(relation);
+            Tools.sync(relation);
+            DiscussionHeader diz = Tools.analyzeDiscussion(relation);
             dizs.add(diz);
         }
         params.put(VAR_QUESTIONS, dizs);
@@ -178,5 +180,6 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
         title = prefs.get(PREF_TITLE, null);
         perex = prefs.get(PREF_PEREX, null);
         author = prefs.getInt(PREF_AUTHOR, 1);
+        sectionRid = prefs.getInt(PREF_AUTHOR, 251);
     }
 }
