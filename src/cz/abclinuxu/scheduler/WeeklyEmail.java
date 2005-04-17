@@ -64,12 +64,6 @@ public class WeeklyEmail extends TimerTask implements Configurable {
             log.info("Time to send weekly emails. Let's find subscribed users first.");
             List users = SQLTool.getInstance().findUsersWithWeeklyEmail(null);
             log.info("Weekly emails have subscribed "+users.size()+" users.");
-
-            if (!setArticles(params)) {
-                log.warn("No articles were found!");
-                return;
-            }
-
             int count = EmailSender.sendEmailToUsers(params,users);
             log.info("Weekly email sucessfully sent to "+count+" addressses.");
         } catch (Exception e) {
@@ -78,13 +72,11 @@ public class WeeklyEmail extends TimerTask implements Configurable {
     }
 
     /**
-     * Finds articles, that shall be sent and initializes them.
-     * Then it puts them into params with other information.
-     * @return true, if there was at least one article
+     * Stores articles and news in params.
      */
-    private boolean setArticles(Map params) {
+    private void pushData(Map params) {
         Persistance persistance = PersistanceFactory.getPersistance();
-        Tools tools = new Tools();
+        SQLTool sqlTool = SQLTool.getInstance();
         Item item;
 
         Calendar calendar = Calendar.getInstance();
@@ -93,34 +85,33 @@ public class WeeklyEmail extends TimerTask implements Configurable {
         calendar.set(Calendar.MINUTE,0);
 
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING};
-        List relations = SQLTool.getInstance().findArticleRelationsWithinPeriod(calendar.getTime(), new Date(), qualifiers);
+        List relations = sqlTool.findArticleRelationsWithinPeriod(calendar.getTime(), new Date(), qualifiers);
         List articles = new ArrayList(relations.size());
 
         for (Iterator iter = relations.iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
             item = (Item) persistance.findById(relation.getChild());
-            String tmp = tools.xpath(item,"/data/author");
-            Article article = new Article(tools.xpath(item, "data/name"),item.getCreated(),relation.getId());
-            article.setAuthor(tools.createUser(tmp).getName());
-            article.setPerex(tools.xpath(item, "data/perex"));
+            String tmp = Tools.xpath(item,"/data/author");
+            Article article = new Article(Tools.xpath(item, "data/name"),item.getCreated(),relation.getId());
+            article.setAuthor(Tools.createUser(tmp).getName());
+            article.setPerex(Tools.xpath(item, "data/perex"));
             articles.add(article);
         }
 
-        relations = SQLTool.getInstance().findNewsRelationsWithinPeriod(calendar.getTime(), new Date(), qualifiers);
+        relations = sqlTool.findNewsRelationsWithinPeriod(calendar.getTime(), new Date(), qualifiers);
         List news = new ArrayList(relations.size());
 
         for ( Iterator iter = relations.iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
             item = (Item) persistance.findById(relation.getChild());
-            News newz = new News(tools.xpath(item, "data/content"), item.getCreated(), relation.getId());
-            newz.setAuthor(tools.createUser(item.getOwner()).getName());
-            newz.setComments(tools.findComments(item).getResponseCount());
+            News newz = new News(Tools.xpath(item, "data/content"), item.getCreated(), relation.getId());
+            newz.setAuthor(Tools.createUser(item.getOwner()).getName());
+            newz.setComments(Tools.findComments(item).getResponseCount());
             news.add(newz);
         }
 
         params.put(VAR_ARTICLES, articles);
         params.put(VAR_NEWS, news);
-        return articles.size()>0;
     }
 
     /**
