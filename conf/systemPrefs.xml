@@ -268,6 +268,7 @@
                             <entry key="title" value="Událo se v týdnu {0}/{1,number,#}"/>
                             <entry key="perex" value="Ucelený pøehled èlánkù, zprávièek a diskusí za minulých 7 dní."/>
                             <entry key="author" value="5473"/>
+                            <entry key="section" value="251"/>
                         </map>
                     </node>
                     <node name="UpdateKernel">
