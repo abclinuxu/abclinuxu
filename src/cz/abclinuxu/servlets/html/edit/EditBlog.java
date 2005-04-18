@@ -11,7 +11,6 @@ import cz.abclinuxu.servlets.html.view.ViewUser;
 import cz.abclinuxu.servlets.html.view.ShowObject;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.User;
@@ -348,6 +347,8 @@ public class EditBlog implements AbcAction, Configurable {
             return actionEditStoryStep1(request, blog, env);
         }
         persistance.update(story);
+
+        FeedGenerator.updateBlog(blog);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(),story.getCreated(),relation.getId()));
