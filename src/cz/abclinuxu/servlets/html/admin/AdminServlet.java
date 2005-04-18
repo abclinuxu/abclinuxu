@@ -48,8 +48,6 @@ public class AdminServlet implements AbcAction {
 
         if ( ACTION_PERFORM_CHECK.equals(action) )
             return performCheck(request, env);
-        if ( ACTION_RECREATE_RSS.equals(action) )
-            return refreshRss(request, env);
 
         User user = (User) env.get(Constants.VAR_USER);
         if ( user==null )
@@ -57,11 +55,14 @@ public class AdminServlet implements AbcAction {
         if ( !(user.isMemberOf(Constants.GROUP_ADMINI)) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-        if (action==null)
-            return FMTemplateSelector.select("Admin", "show", env, request);
+        if (ACTION_RECREATE_RSS.equals(action))
+            return refreshRss(request, env);
 
         if (ACTION_CLEAR_CACHE.equals(action) )
             return clearCache(request,env);
+
+        if (action == null)
+            return FMTemplateSelector.select("Admin", "show", env, request);
 
         return null;
     }
