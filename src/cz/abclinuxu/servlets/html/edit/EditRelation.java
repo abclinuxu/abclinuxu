@@ -11,8 +11,8 @@ import cz.abclinuxu.servlets.html.view.ViewUser;
 import cz.abclinuxu.servlets.html.select.SelectRelation;
 import cz.abclinuxu.servlets.html.select.SelectUser;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.ACL;
@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
+import java.io.IOException;
 
 /**
  * Class for removing relations or creating links.
@@ -54,10 +55,12 @@ public class EditRelation implements AbcAction {
     public static final String PARAM_ACL_WHO = "who";
     public static final String PARAM_USER = ViewUser.PARAM_USER_SHORT;
     public static final String PARAM_GROUP = EditGroup.PARAM_GROUP;
+    public static final String PARAM_URL = "url";
 
     public static final String VAR_CURRENT = "CURRENT";
     public static final String VAR_SELECTED = "SELECTED";
     public static final String VAR_PARENTS = "PARENTS";
+    public static final String VAR_PARENT = "PARENT";
     public static final String VAR_ACL = "ACL";
     public static final String VAR_GROUPS = EditGroup.VAR_GROUPS;
 
@@ -78,14 +81,20 @@ public class EditRelation implements AbcAction {
     public static final String ACTION_ADD_ACL_STEP2 = "addACL2";
     public static final String ACTION_ADD_ACL_STEP3 = "addACL3";
     public static final String ACTION_REMOVE_ACL = "removeACL";
+    public static final String ACTION_SET_URL = "setURL";
+    public static final String ACTION_SET_URL_STEP2 = "setURL2";
+    public static final String ACTION_SET_URL_STEP3 = "setURL3";
 
 
-    // todo move permission checks to called methods from here.
+    // todo tohle je hruza, vubec se v tom neda vyznat.
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         String action = (String) params.get(PARAM_ACTION);
         User user = (User) env.get(Constants.VAR_USER);
+
+        if (ACTION_SET_URL.equals(action))
+            return actionSetUrlStep1(request, env);
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         relation = (Relation) persistance.findById(relation);
@@ -133,6 +142,12 @@ public class EditRelation implements AbcAction {
 
         if ( action.equals(ACTION_REMOVE_ACL) )
             return actionRemoveACL(request, env);
+
+        if ( action.equals(ACTION_SET_URL_STEP2) )
+            return actionSetUrlStep2(request, env);
+
+        if ( action.equals(ACTION_SET_URL_STEP3) )
+            return actionSetUrlStep3(request, response, env);
 
         GenericObject child = relation.getChild();
         persistance.synchronize(child);
@@ -228,6 +243,100 @@ public class EditRelation implements AbcAction {
         String prefix = (String)params.get(PARAM_PREFIX);
         UrlUtils urlUtils = new UrlUtils(prefix, response);
         urlUtils.redirect(response, "/show/"+parent.getId());
+        return null;
+    }
+
+    /**
+     * Displays form to set new URL.
+     */
+    protected String actionSetUrlStep1(HttpServletRequest request, Map env) {
+        User user = (User) env.get(Constants.VAR_USER);
+        if (!user.hasRole(Roles.ROOT))
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+        return FMTemplateSelector.select("EditRelation", "setUrl", env, request);
+    }
+
+    /**
+     * Shows the relation for which the user wishes to set new URL.
+     */
+    protected String actionSetUrlStep2(HttpServletRequest request, Map env) {
+        User user = (User) env.get(Constants.VAR_USER);
+        if (!user.hasRole(Roles.ROOT))
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Relation relation = (Relation) env.get(VAR_CURRENT);
+        if (relation.getUrl()!=null) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "V tuto chvíli není mo¾né mìnit URL.", env, null);
+            return FMTemplateSelector.select("EditRelation", "setUrl", env, request);
+        }
+
+        Relation upper = null;
+        if (relation.getUpper()!=0)
+            upper = (Relation) persistance.findById(new Relation(relation.getUpper()));
+        else {
+            upper = new Relation();
+            upper.setUrl("");
+        }
+        if (upper.getUrl() == null) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Nadøazená relace ("+relation.getUpper()+") nemá definované URL!", env, null);
+            return FMTemplateSelector.select("EditRelation", "setUrl", env, request);
+        }
+        env.put(VAR_PARENT, upper);
+
+        return FMTemplateSelector.select("EditRelation", "setUrl2", env, request);
+    }
+
+    /**
+     * Sets new URL.
+     */
+    protected String actionSetUrlStep3(HttpServletRequest request, HttpServletResponse response, Map env) throws IOException {
+        User user = (User) env.get(Constants.VAR_USER);
+        if (!user.hasRole(Roles.ROOT))
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Relation relation = (Relation) env.get(VAR_CURRENT);
+        if (relation.getUrl()!=null) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "V tuto chvíli není mo¾né mìnit URL.", env, null);
+            return actionSetUrlStep2(request, env);
+        }
+
+        Relation upper = null;
+        if (relation.getUpper() != 0)
+            upper = (Relation) persistance.findById(new Relation(relation.getUpper()));
+        else {
+            upper = new Relation();
+            upper.setUrl("");
+        }
+
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        String url = (String) params.get(PARAM_URL);
+        if (url==null || url.length()==0) {
+            ServletUtils.addError(PARAM_URL, "Zadejte URL!", env, null);
+            return actionSetUrlStep2(request, env);
+        }
+
+        if (url.charAt(url.length()-1)=='/')
+            url = url.substring(0, url.length()-1);
+
+        if (url.indexOf('/')!=-1) {
+            ServletUtils.addError(PARAM_URL, "Zadáváte jen poslední èást URL, lomítko je zakázáno!", env, null);
+            return actionSetUrlStep2(request, env);
+        }
+
+        url = URLManager.enforceLastURLPart(url);
+        url = upper.getUrl() + '/' + url;
+        if (URLManager.exists(url)) {
+            ServletUtils.addError(PARAM_URL, "Toto URL ji¾ existuje!", env, null);
+            return actionSetUrlStep2(request, env);
+        }
+
+        relation.setUrl(url);
+        persistance.update(relation);
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, url);
         return null;
     }
 

@@ -73,6 +73,17 @@ public class URLManager implements Configurable {
     }
 
     /**
+     * Tests, whether URL exists in database. URL format is not checked or modified.
+     * @param url
+     * @return
+     */
+    public static boolean exists(String url) {
+        SQLTool sqlTool = SQLTool.getInstance();
+        Relation relation = sqlTool.findRelationByURL(url);
+        return relation!=null;
+    }
+
+    /**
      * Callback used to configure your class from preferences.
      */
     public void configure(Preferences prefs) throws ConfigurationException {

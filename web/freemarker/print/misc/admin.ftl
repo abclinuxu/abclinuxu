@@ -2,54 +2,43 @@
 
 <@lib.showMessages/>
 
-<h1>Vyprázdnìní cache</h1>
+<h3>Reinicializace</h3>
 
 <p>Tato akce slou¾í pro vyprázdnìní transparentní
 cache. Následkem toho budou v¹echny objekty znovu
-naèteny z databáze. Typické pou¾ití je, pokud ruènì
-provedete zmìny v databázi a nechcete èekat, kdy se
-projeví.
+naèteny z databáze. Také se znovu naètou v¹echny
+konfiguraèní soubory.
 </p>
 
-<p><a href="${URL.noPrefix("/Admin?action=clearCache")}">Clear cache</a></p>
+<ul>
+    <li><a href="${URL.noPrefix("/Admin?action=clearCache")}">nová inicializace</a></li>
+    <li><a href="${URL.noPrefix("/Admin?action=refreshRss")}">pøegeneruj RSS soubory</a></li>
+</ul>
 
 
-<h1>Správa práv u¾ivatelù</h1>
+<h3>Správa u¾ivatelù</h3>
 
-<dl>
+<ul>
+    <li><a href="${URL.noPrefix("/EditUser?action=grant")}">pøiøaï roli</a></li>
+    <li><a href="${URL.noPrefix("/EditUser?action=invalidateEmail")}">invaliduj emaily u¾ivatelùm</a></li>
+    <li><a href="${URL.noPrefix("/Group?action=show")}">seznam skupin</a></li>
+</ul>
 
-<dt>Pøiøazování rolí jednotlivým u¾ivatelùm.</dt>
-<dd><a href="${URL.noPrefix("/EditUser?action=grant")}">pøiøaï roli</a></dd>
+<h3>Správa obsahu</h3>
 
-<dt>Zneplatnìní emailu u¾ivatelùm</dt>
-<dd><a href="${URL.noPrefix("/EditUser?action=invalidateEmail")}">invaliduj emaily</a></dd>
-
-<dt>Seznam skupin</dt>
-<dd><a href="${URL.noPrefix("/Group?action=show")}">uka¾ skupiny</a></dd>
-
-</dl>
-
-<h1>Dokument identifikovaný adresou</h1>
-
-<p><a href="${URL.noPrefix("/editContent?action=add")}">Vytvoø dokument</a></p>
-<p><a href="${URL.noPrefix("/clanky/dir/66948")}">Listuj dokumenty</a></p>
+<ul>
+    <li><a href="${URL.noPrefix("/editRelation?action=setURL")}">Nastav URL relaci</a></li>
+    <li><a href="${URL.noPrefix("/editContent?action=add")}">Vytvoø dokument</a></li>
+    <li><a href="${URL.noPrefix("/clanky/dir/66948")}">Listuj dokumenty</a></li>
+    <li><a href="${URL.noPrefix("/EditSurvey?action=add")}">Vytvoø anketu</a></li>
+</ul>
 
 
-<h1>Vytvoøení ankety</h1>
+<h3>Kontrola stavu a statistika</h3>
 
-<p><a href="${URL.noPrefix("/EditSurvey?action=add")}">Vytvoø anketu</a></p>
-
-<h1>Nové vygenerování RSS</h1>
-
-<p><a href="${URL.noPrefix("/Admin?action=refreshRss")}">Obnov RSS</a></p>
-
-
-<h1>Kontrola stavu a statistika</h1>
-
-<p><a href="${URL.noPrefix("/Admin?action=performCheck")}">Kontrola stavu portálu</a></p>
-
-<p>Statistické informace o JDBC poolu.</p>
-
-<p><a href="/ProxoolAdmin">Proxool info</p>
+<ul>
+    <li><a href="${URL.noPrefix("/Admin?action=performCheck")}">Kontrola stavu portálu</a></li>
+    <li><a href="/ProxoolAdmin">Statistika JDBC</a></li>
+</ul>
 
 <#include "../footer.ftl">

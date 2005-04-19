@@ -151,6 +151,12 @@
     <action name="addACL" template="print" content="/add/acl.ftl">
       <var name="TITLE" value="Vytvoø pøístupová práva" />
     </action>
+    <action name="setUrl" template="print" content="/misc/set_url.ftl">
+      <var name="TITLE" value="Nastav URL" />
+    </action>
+    <action name="setUrl2" template="print" content="/misc/set_url2.ftl">
+      <var name="TITLE" value="Nastav URL" />
+    </action>
   </servlet>
 
   <servlet name="EditRequest">
