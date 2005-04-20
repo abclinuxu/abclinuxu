@@ -301,7 +301,7 @@ public class FeedGenerator implements Configurable {
             feed.setEntries(entries);
             SyndEntry entry;
 
-            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
             List stories = sqlTool.findItemRelationsWithType(Item.BLOG, qualifiers);
             for (Iterator iter = stories.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
@@ -359,7 +359,7 @@ public class FeedGenerator implements Configurable {
                     title = element.getText();
                 else
                     title = NewsCategories.get(item.getSubType()).getName();
-                
+
                 entry = new SyndEntryImpl();
                 entry.setLink(url);
                 entry.setTitle(title);
