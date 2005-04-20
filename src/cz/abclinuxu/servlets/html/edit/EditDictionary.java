@@ -130,7 +130,7 @@ public class EditDictionary implements AbcAction {
 
         boolean canContinue = true;
         canContinue &= setName(params, rootItem, env);
-        canContinue &= setURLName(item, rootItem, env);
+        canContinue &= setURLName(item, 0, rootItem, env);
         canContinue &= setDescription(params, rootRecord, env);
         if (!canContinue || params.get(PARAM_PREVIEW)!=null)
             return FMTemplateSelector.select("Dictionary", "add_item", env, request);
@@ -216,9 +216,9 @@ public class EditDictionary implements AbcAction {
 
         boolean canContinue = true;
         canContinue &= setName(params, rootItem, env);
-        canContinue &= setURLName(item, rootItem, env);
+        canContinue &= setURLName(item, relation.getId(), rootItem, env);
         canContinue &= setDescription(params, rootRecord, env);
-        if ( !canContinue )
+        if ( !canContinue || params.get(PARAM_PREVIEW) != null)
             return FMTemplateSelector.select("Dictionary", "edit", env, request);
 
         Date updated = item.getUpdated();
@@ -283,9 +283,10 @@ public class EditDictionary implements AbcAction {
      * Updates name, which is used to identify this object in URL requests.
      * Changes are not synchronized with persistance.
      * @param root root element of item to be updated
+     * @param rid id of existing relation
      * @return false, if there is a major error.
      */
-    private boolean setURLName(Item item, Element root, Map env) {
+    private boolean setURLName(Item item, int rid,  Element root, Map env) {
         String name = root.elementText("name");
         if (name==null) return false;
 
@@ -293,7 +294,7 @@ public class EditDictionary implements AbcAction {
         url = url.toLowerCase();
 
         Relation relation = SQLTool.getInstance().findDictionaryByURLName(url);
-        if (relation!=null) {
+        if (relation!=null && rid!=relation.getId()) {
             ServletUtils.addError(PARAM_NAME, "Tento pojem ji¾ byl <a href=\"/slovnik/"+url+"\">vysvìtlen</a>.", env, null);
             return false;
         }
