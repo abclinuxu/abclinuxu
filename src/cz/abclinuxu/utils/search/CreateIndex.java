@@ -11,7 +11,6 @@ import cz.abclinuxu.persistance.extra.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.Configurator;
@@ -69,7 +68,7 @@ public class CreateIndex implements Configurable {
 
             IndexWriter indexWriter = new IndexWriter(PATH, new AbcCzechAnalyzer(), true);
 
-            makeIndexOn(indexWriter, articles, UrlUtils.PREFIX_CLANKY);
+            makeIndexOnArticles(indexWriter, articles.getChild().getChildren(), UrlUtils.PREFIX_CLANKY);
             makeIndexOnNews(indexWriter, UrlUtils.PREFIX_NEWS);
             makeIndexOnDictionary(indexWriter);
             makeIndexOnBlogs(indexWriter, blogs.getChild().getChildren());
@@ -112,6 +111,7 @@ public class CreateIndex implements Configurable {
         Item item;
         MyDocument doc;
         boolean indexChildren;
+        String url;
 
         while(stack.size()>0) {
             relation = (Relation) stack.remove(0);
@@ -119,10 +119,11 @@ public class CreateIndex implements Configurable {
             if (hasBeenIndexed(child)) continue;
             child = persistance.findById(child);
 
-            doc = null; indexChildren = true;
+            doc = null; indexChildren = true; url = relation.getUrl();
             if (child instanceof Category) {
                 doc = indexCategory((Category) child);
-                doc.setURL(urlPrefix+"/dir/"+relation.getId());
+                if (url==null)
+                    url = urlPrefix+"/dir/"+relation.getId();
             } else if (child instanceof Item) {
                 item = (Item) child;
                 switch ( item.getType() ) {
@@ -136,12 +137,14 @@ public class CreateIndex implements Configurable {
                         doc = indexDriver(item); break;
                 }
                 indexChildren = false;
-                if (doc!=null) doc.setURL(urlPrefix+"/show/"+relation.getId());
+                if (url==null)
+                    url = urlPrefix+"/show/"+relation.getId();
             }
 
             if ( doc!=null ) {
-                indexWriter.addDocument(doc.getDocument());
+                doc.setURL(url);
                 doc.setParent(relation.getUpper());
+                indexWriter.addDocument(doc.getDocument());
             }
 
             if (indexChildren)
@@ -224,6 +227,7 @@ public class CreateIndex implements Configurable {
         Relation relation;
         GenericObject child;
         MyDocument doc;
+        String url;
 
         for ( i = 0; i<total; ) {
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING, new LimitQualifier(i, 100)};
@@ -238,9 +242,51 @@ public class CreateIndex implements Configurable {
 
                 child = persistance.findById(child);
                 doc = indexNews((Item) child);
-                doc.setURL(urlPrefix+"/show/"+relation.getId());
+                url = relation.getUrl();
+                if (url==null)
+                    url = urlPrefix + "/show/" + relation.getId();
+                doc.setURL(url);
                 doc.setParent(relation.getUpper());
                 indexWriter.addDocument(doc.getDocument());
+            }
+        }
+    }
+
+    /**
+     * Indexes article.
+     */
+    static void makeIndexOnArticles(IndexWriter indexWriter, List sections, String urlPrefix) throws Exception {
+        int total, i;
+        Relation relation;
+        GenericObject child;
+        MyDocument doc;
+        String url;
+
+        for (Iterator iter = sections.iterator(); iter.hasNext();) {
+            Relation section =  (Relation) iter.next();
+            int sectionId = section.getId();
+            total = sqlTool.countArticleRelations(sectionId);
+
+            for (i = 0; i < total;) {
+                Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING, new LimitQualifier(i, 100)};
+                List data = sqlTool.findArticleRelations(qualifiers, sectionId);
+                i += data.size();
+
+                for (Iterator iter2 = data.iterator(); iter2.hasNext();) {
+                    relation = (Relation) iter2.next();
+                    child = relation.getChild();
+                    if (hasBeenIndexed(child))
+                        continue;
+
+                    child = persistance.findById(child);
+                    doc = indexArticle((Item) child);
+                    url = relation.getUrl();
+                    if (url == null)
+                        url = urlPrefix + "/show/" + relation.getId();
+                    doc.setURL(url);
+                    doc.setParent(relation.getUpper());
+                    indexWriter.addDocument(doc.getDocument());
+                }
             }
         }
     }
