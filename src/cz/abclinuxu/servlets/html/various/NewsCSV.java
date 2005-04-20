@@ -21,6 +21,7 @@ import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.news.NewsCategories;
+import cz.abclinuxu.scheduler.UpdateLinks;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -78,9 +79,11 @@ public class NewsCSV implements AbcAction, Configurable {
             writer.write("<a href=\"http://www.abclinuxu.cz/Profile/"+author.getId()+"\">"+author.getName()+"</a>");
             writer.write("|");
             String text = Tools.xpath(item, "data/content");
-            writer.write(Tools.removeNewLines(text));
+            text = Tools.removeNewLines(text);
+            text = UpdateLinks.fixAmpersand(text);
+            writer.write(text);
             writer.write("|");
-            writer.write("http://www.abclinuxu.cz/news/show/"+relation.getId());
+            writer.write("http://www.abclinuxu.cz"+relation.getUrl());
             writer.write("\n");
         }
         writer.flush();
