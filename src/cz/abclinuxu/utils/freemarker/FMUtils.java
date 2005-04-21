@@ -34,6 +34,7 @@ public class FMUtils implements Configurable {
     public static final String ERROR_HANDLER_RETHROW = "RETHROW";
     public static final String ERROR_HANDLER_HTML_DEBUG = "HTML_DEBUG";
     public static final String ERROR_HANDLER_DEBUG = "DEBUG";
+    public static final String ERROR_HANDLER_LOGURL = "LOG_URL";
 
     static Configuration config;
 
@@ -117,6 +118,8 @@ public class FMUtils implements Configurable {
             exceptionHandler = TemplateExceptionHandler.DEBUG_HANDLER;
         else if (ERROR_HANDLER_RETHROW.equalsIgnoreCase(tmp))
             exceptionHandler = TemplateExceptionHandler.RETHROW_HANDLER;
+        else if (ERROR_HANDLER_LOGURL.equalsIgnoreCase(tmp))
+            exceptionHandler = new LogUrlExceptionHandler();
 
         config = freemarker.template.Configuration.getDefaultConfiguration();
         config.setTemplateExceptionHandler(exceptionHandler);
