@@ -46,8 +46,10 @@ public class Controller extends HttpServlet {
     protected void performInit(HttpServletRequest request, HttpServletResponse response, Map env) throws InvalidInputException {
         Map params = ServletUtils.putParamsToMap(request);
         env.put(Constants.VAR_PARAMS, params);
-        env.put(Constants.VAR_URL_UTILS, new UrlUtils(request.getRequestURI(), response));
-        env.put(Constants.VAR_REQUEST_URI, request.getRequestURI());
+        String requestURI = request.getRequestURI();
+        env.put(Constants.VAR_URL_UTILS, new UrlUtils(requestURI, response));
+        env.put(Constants.VAR_REQUEST_URI, requestURI);
+        ServletUtils.setCurrentURL(requestURI);
         ServletUtils.handleMessages(request, env);
         ServletUtils.handleLogin(request, response, env);
     }

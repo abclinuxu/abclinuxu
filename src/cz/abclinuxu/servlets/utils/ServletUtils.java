@@ -40,6 +40,7 @@ import java.util.prefs.Preferences;
  */
 public class ServletUtils implements Configurable {
     static Logger log = Logger.getLogger(ServletUtils.class);
+    private static ThreadLocal currentURL = new ThreadLocal();
 
     static {
         Configurator configurator = ConfigurationManager.getConfigurator();
@@ -294,6 +295,21 @@ public class ServletUtils implements Configurable {
         messages.add(message);
         if ( session!=null )
             session.setAttribute(Constants.VAR_MESSAGES,messages);
+    }
+
+    /**
+     * Stores current URL, so every invocation in this thread can get it.
+     * @param url
+     */
+    public static void setCurrentURL(String url) {
+        currentURL.set(url);
+    }
+
+    /**
+     * @return retreives currently processed URL from ThreadLocal variable.
+     */
+    public static String getCurrentURL() {
+        return (String) currentURL.get();
     }
 
     /**
