@@ -98,7 +98,7 @@
 	</category>
 
 	<category name="freemarker" additivity="false">
-	  <priority value="warn" />
+	  <priority value="fatal" />
  	  <appender-ref ref="FILE" />
 	</category>
 
