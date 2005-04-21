@@ -9,7 +9,7 @@
 
 <#macro showArticle(relation dateFormat...)>
     <#local clanek=relation.child,
-        autor=TOOL.createUser(TOOL.xpath(clanek,"/data/author")),
+        autor=TOOL.createUser(TOOL.xpath(clanek,"/data/author")?default("5473")),
         thumbnail=TOOL.xpath(clanek,"/data/thumbnail")?default("UNDEF"),
         tmp=TOOL.groupByType(clanek.children),
         rating=TOOL.ratingFor(clanek.data,"article")?default("UNDEF")
@@ -26,10 +26,10 @@
             Pøeèteno: ${TOOL.getCounterValue(clanek)}x
             <#if diz?exists>
                 | <a href="/clanky/show/${diz.relationId}">
-                Komentáøù: ${diz.responseCount}</a
-                ><#if diz.responseCount gt 0>, poslední ${DATE.show(diz.updated, dateFormat[1]?default(dateFormat[0]))}</#if>
+                Komentáøù:&nbsp;${diz.responseCount}</a
+                ><#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, dateFormat[1]?default(dateFormat[0]))}</#if>
             </#if>
-            <#if rating!="UNDEF">| Hodnocení: <span title="Hlasù: ${rating.count}">${rating.result?string["#0.00"]}</span></#if>
+            <#if rating!="UNDEF">| Hodnocení:&nbsp;<span title="Hlasù: ${rating.count}">${rating.result?string["#0.00"]}</span></#if>
         </p>
 
 </#macro>
@@ -38,13 +38,14 @@
  <#local
    ITEM=TOOL.sync(relation.child),
    autor=TOOL.createUser(ITEM.owner),
-   diz=TOOL.findComments(ITEM)
+   diz=TOOL.findComments(ITEM),
+   url=relation.url?default("/zpravicky/show/"+relation.id)
  >
  <p>${DATE.show(ITEM.created,"CZ_FULL")}
  <a href="/Profile/${autor.id}">${autor.name}</a><br>
  ${TOOL.xpath(ITEM,"data/content")}<br>
  <span style="font-size: smaller">
-  <a href="/news/show/${relation.id}">Zobraz</a>
+  <a href="${url}">Link</a>
   Komentáøe: ${diz.responseCount}<#if diz.responseCount gt 0>, poslední ${DATE.show(diz.updated, "CZ_FULL")}</#if>
  </span>
  </p>
