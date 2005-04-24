@@ -30,6 +30,7 @@ import org.apache.regexp.RE;
 import org.apache.regexp.RESyntaxException;
 import org.apache.regexp.REProgram;
 import org.apache.regexp.RECompiler;
+import org.apache.log4j.Logger;
 import org.dom4j.Element;
 import org.dom4j.io.DOMWriter;
 import freemarker.ext.dom.NodeModel;
@@ -38,6 +39,8 @@ import freemarker.ext.dom.NodeModel;
  * Display blogs.
  */
 public class ViewBlog implements AbcAction, Configurable {
+    private static Logger log = Logger.getLogger(ViewBlog.class);
+
     public static final String PARAM_FROM = "from";
 
     public static final String VAR_BLOG_RELATION = "REL_BLOG";
@@ -76,22 +79,26 @@ public class ViewBlog implements AbcAction, Configurable {
         RE regexp = new RE(reUrl);
         regexp.match(uri);
         int matched = regexp.getParenCount();
-        if (matched > 1)
-            name = regexp.getParen(1);
-        if (matched > 2) {
-            year = Integer.parseInt(regexp.getParen(2));
-            env.put(VAR_YEAR, new Integer(year));
+        try {
+            if (matched > 1)
+                name = regexp.getParen(1);
+            if (matched > 2) {
+                year = Integer.parseInt(regexp.getParen(2));
+                env.put(VAR_YEAR, new Integer(year));
+            }
+            if (matched > 3) {
+                month = Integer.parseInt(regexp.getParen(3));
+                env.put(VAR_MONTH, new Integer(month));
+            }
+            if (matched > 4) {
+                day = Integer.parseInt(regexp.getParen(4));
+                env.put(VAR_DAY, new Integer(day));
+            }
+            if (matched > 5)
+                rid = Integer.parseInt(regexp.getParen(5));
+        } catch (NumberFormatException e) {
+            log.warn(uri,e);
         }
-        if (matched > 3) {
-            month = Integer.parseInt(regexp.getParen(3));
-            env.put(VAR_MONTH, new Integer(month));
-        }
-        if (matched > 4) {
-            day = Integer.parseInt(regexp.getParen(4));
-            env.put(VAR_DAY, new Integer(day));
-        }
-        if (matched > 5)
-            rid = Integer.parseInt(regexp.getParen(5));
 
         if (name!=null) {
             CompareCondition condition = new CompareCondition(Field.SUBTYPE, Operation.EQUAL, name);
