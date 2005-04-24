@@ -26,6 +26,6 @@ public class LogUrlExceptionHandler implements TemplateExceptionHandler {
      */
     public void handleTemplateException(TemplateException e, Environment environment, Writer writer) throws TemplateException {
         String url = ServletUtils.getCurrentURL();
-        log.error("Chyba v sablone na adrese "+url+"\n"+e.getMessage());
+        log.error("Chyba v sablone na adrese "+url+"\n"+e.getMessage()+"\n"+e.getFTLInstructionStack());
     }
 }
