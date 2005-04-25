@@ -4,9 +4,14 @@
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2">
     <title>${PARAMS.TITLE?default(TITLE?default('www.abclinuxu.cz'))}</title>
     <meta name="design" content="Petr Soběslavský">
-    <link rel="stylesheet" type="text/css" href="/styles.css">
+    <#if USER?exists><#assign css=TOOL.xpath(USER.data, "/data/settings/css")?default("UNDEF")></#if>
+    <#if ! css?exists || css=="UNDEF"><#assign css="/styles.css"></#if>
+    <link rel="stylesheet" type="text/css" href="${css}">
     <link rel="icon" href="/images/site2/favicon.png" type="image/png">
-    <link rel="alternate" title="ABC Linuxu RSS" href="http://www.abclinuxu.cz/auto/abc.rss" type="application/rss+xml">
+    <link rel="alternate" title="AbcLinuxu: články" href="http://www.abclinuxu.cz/auto/abc.rss" type="application/rss+xml">
+    <link rel="alternate" title="AbcLinuxu: blogy" href="http://www.abclinuxu.cz/auto/blog.rss" type="application/rss+xml">
+    <link rel="alternate" title="AbcLinuxu: zprávičky" href="http://www.abclinuxu.cz/auto/zpravicky.rss" type="application/rss+xml">
+    <link rel="alternate" title="AbcLinuxu: diskuse" href="http://www.abclinuxu.cz/auto/diskuse.rss" type="application/rss+xml">
     <link rel="bookmark" href="#obsah" title="Obsah stránky" type="text/html">
     <meta name="keywords" content="linux,abclinuxu,hardware,diskuse,nápověda,rada,pomoc">
     <script type="text/javascript" src="/data/site/scripts.js"></script>
@@ -24,7 +29,7 @@
 		<div class="za_hledat">
 			<form action="/Search" method="get">
 				<input type="text" class="text" name="query">&nbsp;<input alt="Hledej" src="/images/site2/lupa.gif" type="image"><br>
-				<a href="/Search">Rozšířené hledání</a>
+				<a href="/Search?advancedMode=true">Rozšířené hledání</a>
 			</form>
 		</div>
 
@@ -105,42 +110,48 @@
                     </form>
                 </div>
                 <#assign diz=TOOL.findComments(anketa)>
-                <div class="ls_zpr">&nbsp;<a href="/news/show/${relAnketa.id}">Komentářů:</a>
+                <div class="ls_zpr">&nbsp;<a href="/clanky/show/${relAnketa.id}">Komentářů:</a>
 		        ${diz.responseCount}<#if diz.responseCount gt 0>, poslední
 		        ${DATE.show(diz.updated,"CZ_SHORT")}</#if>
 		        <br>&nbsp;<a href="/clanky/dir/3500">Navrhněte novou anketu</a>
 		        </div>
             </#if>
 
+<iframe id='ac2298e7' name='ac2298e7' src='http://banner.stickfish.cz/adframe.php?n=ac2298e7&amp;what=zone:34&amp;target=_self' framespacing='0' frameborder='no' scrolling='no' width='270' height='50'><a href='http://banner.stickfish.cz/adclick.php?n=ac2298e7' target='_self'><img src='http://banner.stickfish.cz/adview.php?what=zone:34&amp;n=ac2298e7' border='0' alt=''></a></iframe>
+
+
             <!-- ZPRÁVIČKY -->
             <#assign news=VARS.getFreshNews(user?if_exists)>
             <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Zprávičky</h1></div></div>
             <div class="s_sekce">
+
                 <#if USER?exists && USER.hasRole("news admin")>
                    <ul>
-                        <li><a href="${URL.make("/news/dir/37672")}">Čekající zprávičky</a> (${VARS.counter.WAITING_NEWS})</li>
+                        <li><a href="${URL.make("/zpravicky/dir/37672")}">Čekající zprávičky</a> (${VARS.counter.WAITING_NEWS})</li>
                    </ul>
                 </#if>
 
 	            <div class="s_odkaz">
                     <a href="/zpravicky.jsp">Centrum</a> |
-                    <a href="${URL.make("/news/edit?action=add")}">Napsat zprávičku</a>
+                    <a href="${URL.make("/zpravicky/edit?action=add")}">Napsat zprávičku</a>
                 </div>
         		<hr>
                 <div class="ls_zpr">
                 <#list news as relation>
-                    <#assign item=TOOL.sync(relation.child), autor=TOOL.createUser(item.owner), diz=TOOL.findComments(item)>
+                    <#assign item=TOOL.sync(relation.child), autor=TOOL.createUser(item.owner),
+                      diz=TOOL.findComments(item), url=relation.url?default("/zpravicky/show/"+relation.id)>
                     ${DATE.show(item.created,"CZ_SHORT")} |
                     ${NEWS_CATEGORIES[item.subType].name}
                     <p>${TOOL.xpath(item,"data/content")}</p>
                     <a href="/Profile/${autor.id}">${TOOL.nonBreakingSpaces(autor.name)}</a>
-                    | (<a href="/news/show/${relation.id}">Komentářů:</a> ${diz.responseCount})
+                    | <a href="${url}" title="<#if diz.responseCount gt 0>poslední ${DATE.show(diz.updated, "CZ_FULL")}</#if>"
+                    >(Komentářů: ${diz.responseCount})</a>
                     <hr>
                 </#list>
                 </div>
                 <div class="s_odkaz">
-                    <a href="/zpravicky.jsp">Centrum</a> |
-                    <a href="${URL.make("/news/edit?action=add")}">Napsat</a> |
+                    <a href="/zpravicky">Centrum</a> |
+                    <a href="${URL.make("/zpravicky/edit?action=add")}">Napsat</a> |
                     <a href="/History?type=news&amp;from=${news?size}&amp;count=15">Starší</a>
                 </div>
             </div>
@@ -159,7 +170,7 @@
                 <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Rozcestník</h1></div></div>
                 <div class="s_sekce">
                     <div class="rozc">
-                        <#list TOOL.createServers([7,1,13,12,14,15,3,2,5,4]) as server>
+                        <#list TOOL.createServers([7,16,1,12,13,14,15,3,2,5]) as server>
                             <a class="server" href="${server.url}">${server.name}</a><br>
                             <ul>
                             <#assign linky = TOOL.sublist(SORT.byDate(LINKS[server.name],"DESCENDING"),0,2)>
@@ -180,8 +191,8 @@
                   <li><a href="/doc/portal/jine_pristupy">Titulky, PDA a RSS</a></li>
                   <li><a href="/clanky/show/64410">Staňte se autorem</a></li>
                   <li><a href="/clanky/show/44043">Přehled změn na portálu</a></li>
-                  <li><a href="${URL.make("/clanky/dir/3500")}">Vzkazy správcům</a> (${VARS.counter.REQUESTS})</li>
-                  <li><a href="mailto:filip.korbel@stickfish.cz">Inzerce</a></li>
+                  <li><a href="/hardware/dir/3500">Vzkazy správcům</a> (${VARS.counter.REQUESTS})</li>
+                  <li><a href="mailto:klara.sedlackova@stickfish.cz">Inzerce</a></li>
                   <#if USER?exists && USER.isMemberOf(11246)>
                    <li><a href="${URL.make("/hardware/dir/50795")}">TODO (${VARS.counter.TODO?if_exists})</a></li>
                    <li><a href="${URL.make("/hardware/dir/8000")}">Sekce systém</a></li>
