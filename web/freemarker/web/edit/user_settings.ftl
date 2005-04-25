@@ -48,9 +48,22 @@
   </tr>
 
   <tr>
+   <td class="required">Vlastní CSS</td>
+   <td>
+    <input type="text" name="css" size="40" value="${PARAMS.css?if_exists}" tabindex="3">
+    <div class="error">${ERRORS.url?if_exists}</div>
+   </td>
+  </tr>
+  <tr>
+   <td colspan="2">Zadejte URL souboru obsahující CSS definici vzhledu portálu. Bude pou¾ita místo
+   standardního vzhledu. Nemáte-li rádi experimenty, ponechte prázdné.
+   </td>
+  </tr>
+
+  <tr>
    <td class="required">Nahrazovat emotikony</td>
    <td>
-    <select name="emoticons" tabindex="3">
+    <select name="emoticons" tabindex="4">
      <#assign emoticons=PARAMS.emoticons?default("yes")>
      <option value="yes" <#if emoticons=="yes">SELECTED</#if>>ano</option>
      <option value="no"<#if emoticons=="no">SELECTED</#if>>ne</option>
@@ -66,7 +79,7 @@
   <tr>
    <td class="required">Zobrazovat signatury</td>
    <td>
-    <select name="signatures" tabindex="4">
+    <select name="signatures" tabindex="5">
      <#assign emoticons=PARAMS.signatures?default("yes")>
      <option value="yes" <#if emoticons=="yes">SELECTED</#if>>ano</option>
      <option value="no"<#if emoticons=="no">SELECTED</#if>>ne</option>
@@ -76,23 +89,6 @@
   <tr>
    <td colspan="2">Urèuje, zda má systém pøi zobrazování diskusních pøíspìvkù
    zobrazovat signatury autorù pøíspìvkù.
-   </td>
-  </tr>
-
-  <tr>
-   <td class="required">Povolit cookie pro nové komentáøe</td>
-   <td>
-    <select name="comments" tabindex="5">
-     <#assign comments=PARAMS.comments?default("yes")>
-     <option value="yes" <#if comments=="yes">SELECTED</#if>>ano</option>
-     <option value="no"<#if comments=="no">SELECTED</#if>>ne</option>
-    </select>
-   </td>
-  </tr>
-  <tr>
-   <td colspan="2">Urèuje, zda má systém pøi zobrazení diskuse ulo¾it
-   èíslo posledního komentáøe v diskusi do cookie. Pøi pøí¹tím zobrazení
-   diskuse systém zvýrazní nové komentáøe.
    </td>
   </tr>
 

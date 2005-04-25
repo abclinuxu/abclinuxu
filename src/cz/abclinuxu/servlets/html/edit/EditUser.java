@@ -15,7 +15,6 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.html.view.ViewUser;
 import cz.abclinuxu.utils.InstanceUtils;
@@ -77,7 +76,6 @@ public class EditUser implements AbcAction, Configurable {
     public static final String PARAM_EMOTICONS = "emoticons";
     public static final String PARAM_SIGNATURES = "signatures";
     public static final String PARAM_SIGNATURE = "signature";
-    public static final String PARAM_ENABLE_COMMENTS = "comments";
     public static final String PARAM_COOKIE_VALIDITY = "cookieValid";
     public static final String PARAM_DISCUSSIONS_COUNT = "discussions";
     public static final String PARAM_NEWS_COUNT = "news";
@@ -90,6 +88,7 @@ public class EditUser implements AbcAction, Configurable {
     public static final String PARAM_RETURN_TO_FORUM = "moveback";
     public static final String PARAM_USER_ROLES = "roles";
     public static final String PARAM_USERS = "users";
+    public static final String PARAM_URL_CSS = "css";
 
     public static final String VAR_MANAGED = "MANAGED";
     public static final String VAR_DEFAULT_DISCUSSION_COUNT = "DEFAULT_DISCUSSIONS";
@@ -493,9 +492,9 @@ public class EditUser implements AbcAction, Configurable {
         if ( node!=null )
             params.put(PARAM_SIGNATURES, node.getText());
 
-        node = document.selectSingleNode("/data/settings/new_comments");
+        node = document.selectSingleNode("/data/settings/css");
         if ( node!=null )
-            params.put(PARAM_ENABLE_COMMENTS, node.getText());
+            params.put(PARAM_URL_CSS, node.getText());
 
         node = document.selectSingleNode("/data/settings/cookie_valid");
         if ( node!=null )
@@ -536,10 +535,10 @@ public class EditUser implements AbcAction, Configurable {
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
             canContinue &= checkPassword(params, managed, env);
+        canContinue &= setCssUrl(params, managed);
         canContinue &= setCookieValidity(params, managed);
         canContinue &= setEmoticons(params, managed);
         canContinue &= setSignatures(params, managed);
-        canContinue &= setNewComments(params, managed);
         canContinue &= setDiscussionsSizeLimit(params, managed);
         canContinue &= setNewsSizeLimit(params, managed, env);
         canContinue &= setFoundPageSize(params, managed, env);
@@ -1114,6 +1113,25 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
+     * Updates URL with custom CSS from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param user   user to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setCssUrl(Map params, User user) {
+        String url = (String) params.get(PARAM_URL_CSS);
+        if (url == null || url.length() == 0) {
+            Node node = user.getData().selectSingleNode("/data/settings/css");
+            if (node != null)
+                node.detach();
+        } else {
+            Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/css");
+            element.setText(url);
+        }
+        return true;
+    }
+
+    /**
      * Updates emoticons from parameters. Changes are not synchronized with persistance.
      * @param params map holding request's parameters
      * @param user user to be updated
@@ -1306,23 +1324,6 @@ public class EditUser implements AbcAction, Configurable {
         if ( tmp==null || tmp.length()==0 )
             return true;
         Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/return_to_forum");
-        String value = ("yes".equals(tmp))? "yes":"no";
-        element.setText(value);
-        return true;
-    }
-
-    /**
-     * Sets flag, whether to track new comments in discussion from parameters.
-     * Changes are not synchronized with persistance.
-     * @param params map holding request's parameters
-     * @param user user to be updated
-     * @return false, if there is a major error.
-     */
-    private boolean setNewComments(Map params, User user) {
-        String tmp = (String) params.get(PARAM_ENABLE_COMMENTS);
-        if ( tmp==null || tmp.length()==0 )
-            return true;
-        Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/new_comments");
         String value = ("yes".equals(tmp))? "yes":"no";
         element.setText(value);
         return true;

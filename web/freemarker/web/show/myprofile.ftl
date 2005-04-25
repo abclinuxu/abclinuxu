@@ -26,9 +26,9 @@ na <a href="/Profile/${PROFILE.id}">této</a> stránce.
 
 <h2>Základní údaje</h2>
 
-<p>Mezi základní údaje patøí va¹e jméno (${PROFILE.name}),
+<p>Na této stránce nastavíte va¹e jméno (${PROFILE.name}),
 pøihla¹ovací jméno (${PROFILE.login}),
-pøezdívka (${PROFILE.nick?default("není nastavena")}),
+pøezdívku (${PROFILE.nick?default("není nastavena")}),
 email (${PROFILE.email}) a heslo.
 </p>
 
