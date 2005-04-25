@@ -45,6 +45,15 @@
         </ul>
     </div>
 
+    <!-- prace.abclinuxu.cz -->
+    <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <a class="info" href="#">?<span class="tooltip">První server s nabídkami práce (nejen) pro tuèòáky. Spojujeme lidi s prací v IT.</span></a>
+        <h1><a href="http://prace.abclinuxu.cz">Prace.abclinuxu.cz</a></h1>
+    </div></div>
+    <div class="s_sekce">
+        <#include "/include/prace_main.txt">
+    </div>
+
     <div class="s_nad_h1"><div class="s_nad_pod_h1">
         <a class="info" href="#">?<span class="tooltip">Databáze ovladaèù pro vá¹ hardware</span></a>
         <h1><a href="/drivers/dir/318">Ovladaèe</a></h1>
@@ -56,16 +65,6 @@
         </#list>
         </ul>
     </div>
-    
-    <!-- prace.abclinuxu.cz -->
-    <div class="s_nad_h1"><div class="s_nad_pod_h1">
-        <a class="info" href="#">?<span class="tooltip">První server s nabídkami práce (nejen) pro tuèòáky. Spojujeme lidi s prací v IT.</span></a>
-        <h1><a href="http://prace.abclinuxu.cz">Prace.abclinuxu.cz</a></h1>
-    </div></div>
-    <div class="s_sekce">
-        <#include "/include/prace_main.txt">
-    </div>
-
 
     <div class="s_nad_h1"><div class="s_nad_pod_h1">
         <h1>Aktuální jádra</h1>
@@ -155,7 +154,7 @@
                     <#if TOOL.isQuestionSolved(diz.discussion.data)>
                         <img src="/images/site2/vyreseno.gif" alt="V" title="Diskuse byla podle ètenáøù vyøe¹ena">
                     </#if>
-                    <#if USER?exists && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"'")?exists>
+                    <#if USER?exists && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"']")?exists>
                         <img src="/images/site2/sledovano.gif" alt="S" title="Tuto diskusi sledujete monitorem">
                     </#if>
                 </td>
@@ -178,7 +177,7 @@
     <h1 class="st_nadpis">Rozcestník</h1>
 	<div class="s"><div class="s_sekce"><div class="rozc">
     <table>
-    <#list TOOL.createServers([1,13,12,14,2,15]) as server>
+    <#list TOOL.createServers([1,16,12,13,14,15]) as server>
         <#if server_index % 3 = 0><tr><#assign open=true></#if>
         <td>
         <a class="server" href="${server.url}">${server.name}</a>

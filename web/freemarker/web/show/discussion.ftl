@@ -1,6 +1,6 @@
 <#assign frozen=TOOL.xpath(ITEM,"/data/frozen")?exists>
 <#assign is_question=TOOL.xpath(ITEM,"data/title")?exists>
-<#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"'")?exists>
+<#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")?exists>
     <#assign monitorState="Pøestaò sledovat">
 <#else>
     <#assign monitorState="Sleduj diskusi">
