@@ -56,6 +56,9 @@
     <action name="edit" template="print" content="/add/survey.ftl">
       <var name="TITLE" value="Úprava ankety" />
     </action>
+    <action name="list" template="print" content="/show/surveys.ftl">
+      <var name="TITLE" value="Seznam anket" />
+    </action>
   </servlet>
 
   <servlet name="EditDiscussion">

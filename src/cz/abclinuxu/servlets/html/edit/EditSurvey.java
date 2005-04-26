@@ -10,9 +10,9 @@ import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.XMLHandler;
@@ -39,11 +39,14 @@ public class EditSurvey implements AbcAction {
     public static final String ACTION_ADD_STEP2 = "add2";
     public static final String ACTION_EDIT = "edit";
     public static final String ACTION_EDIT2 = "edit2";
+    public static final String ACTION_LIST = "list";
 
     public static final String PARAM_SURVEY = "surveyId";
     public static final String PARAM_TITLE = "title";
     public static final String PARAM_DEFINITION = "definition";
     public static final String PARAM_CHOICES = "choices";
+
+    public static final String VAR_SURVEYS = "SURVEYS";
 
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -56,9 +59,11 @@ public class EditSurvey implements AbcAction {
         if ( !user.hasRole(Roles.SURVEY_ADMIN) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
+        if ( ACTION_LIST.equals(action) )
+            return actionList(request, env);
         if ( ACTION_ADD.equals(action) )
             return FMTemplateSelector.select("EditSurvey", "add", env, request);
-        else if ( ACTION_ADD_STEP2.equals(action) )
+        if ( ACTION_ADD_STEP2.equals(action) )
             return actionAddStep2(request, response, env);
 
         Persistance persistance = PersistanceFactory.getPersistance();
@@ -79,7 +84,18 @@ public class EditSurvey implements AbcAction {
     }
 
     /**
-     * Creates new surevy
+     * Lists existing surveys
+     */
+    protected String actionList(HttpServletRequest request, Map env) throws Exception {
+        SQLTool sqlTool = SQLTool.getInstance();
+        List items = sqlTool.findItemsWithType(Item.SURVEY, 0, 10000);
+        env.put(VAR_SURVEYS, items);
+
+        return FMTemplateSelector.select("EditSurvey", "list", env, request);
+    }
+
+    /**
+     * Creates new survey
      */
     protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
