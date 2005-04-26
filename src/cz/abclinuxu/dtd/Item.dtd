@@ -61,6 +61,7 @@
 <!ELEMENT screen (#PCDATA)> <!-- definition of one screen -->
 <!ATTLIST screen id (#ID) #REQUIRED> <!-- identifier of the screen, first screen must have id "START" -->
 <!ATTLIST screen check (TRUE) #OPTIONAL> <!-- if set, perform check, that the user has not voted yet -->
+<!ATTLIST screen onlyUsers (FALSE) #OPTIONAL> <!-- if set, then users must login first -->
 <!ELEMENT template (#PCDATA)> <!-- name of template, that shall be displayed to the user -->
 <!ELEMENT dump (dir,prefix,suffix)> <!-- instructs to dump all parameters to xml file -->
 <!ELEMENT email (to+,cc*)> <!-- send results via email -->

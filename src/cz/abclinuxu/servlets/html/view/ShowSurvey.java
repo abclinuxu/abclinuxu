@@ -16,7 +16,6 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
@@ -77,9 +76,6 @@ public class ShowSurvey implements AbcAction {
         }
 
         String currentScreen = (String) params.get(PARAM_SCREEN_CURRENT);
-        if ( !Misc.empty(currentScreen) ) {
-            saveParameters(request.getSession(), params, currentScreen);
-        }
         String nextScreen = (String) params.get(PARAM_SCREEN_NEXT);
         if ( Misc.empty(nextScreen) ) nextScreen = START_ID;
 
@@ -93,6 +89,14 @@ public class ShowSurvey implements AbcAction {
             urlUtils.redirect(response, "/");
             return null;
         }
+
+        if (screen.attributeValue("onlyUsers") != null) {
+            if (user == null)
+                return FMTemplateSelector.select("ViewUser", "login", env, request);
+        }
+
+        if (!Misc.empty(currentScreen))
+            saveParameters(request.getSession(), params, currentScreen);
 
         if (screen.attributeValue("check")!=null)
             try {

@@ -36,8 +36,8 @@ nìkteré opomenete, anketa nebude fungovat správnì. Základní informací
 je nastavit správnì URL, kam bude formuláø zasílat údaje. Toto URL
 je /Survey. Kvùli lidem majícím zakázané cookies u anket s více screeny
 je vhodné pou¾ít URL rewriting. To získáte takto: ${URL.noPrefix("/Survey")},
-nicménì nebude fungovat, pokdu první screen zaèleníte do èlánku. Tento
-fígl funguje, pouze pokud jej pou¾ijete v samostatném HTML souboru definovaném
+nicménì nebude fungovat, pokud první screen zaèleníte do èlánku. Tento
+fígl funguje pouze, pokud jej pou¾ijete v samostatném HTML souboru definovaném
 v znaèce template.
 </p>
 
@@ -50,36 +50,6 @@ SAVE_PARAMS musí obsahovat èárkou oddìlená jména v¹ech formuláøových
 políèek, které chcete ulo¾it. Pokud nìkteré políèko zde vynecháte,
 nebude ulo¾eno a jeho hodnota bude ztracena.
 </p>
-
-<h1>Pøíklad</h1>
-
-<h2>XML definice</h2>
-
-<pre>${"<anketa>
-  <screen id=\"START\">
-    <template>/ankety/abc1/q1.ftl</template>
-  </screen>
-  <screen id=\"demografie\">
-    <template>/ankety/abc1/q2.ftl</template>
-  </screen>
-  <screen id=\"last\">
-    <template>/ankety/abc1/thanks.ftl</template>
-    <dump>
-      <dir>/home/www-data/deploy/abclinuxu/WEB-INF/freemarker/web/ankety/abc1/data</dir>
-      <prefix>answear_</prefix>
-      <suffix>.xml</suffix>
-    </dump>
-  </screen>
-</anketa>"?html}</pre>
-
-<h2>HTML soubor /home/www-data/deploy/abclinuxu/WEB-INF/freemarker/web/ankety/abc1/q2.ftl</h2>
-
-<pre>${"<form action=\"${URL.noPrefix(\"/Survey\")}\" method=\"POST\">
-   <input type=\"hidden\" name=\"SCREEN_CURRENT\" value=\"demografie\">
-   <input type=\"hidden\" name=\"SCREEN_NEXT\" value=\"last\">
-   <input type=\"hidden\" name=\"SAVE_PARAMS\" value=\"speed,sluzby_chybi,kvalita_clanku,frekvence_clanku,vzkaz\">
-   <input type=\"hidden\" name=\"surveyId\" value=\"3285\">
-</form>"?html}</pre>
 
 <h1>Anketa</h1>
 
@@ -104,14 +74,6 @@ nebude ulo¾eno a jeho hodnota bude ztracena.
   <tr>
    <td width="120" class="required" align="middle">XML definice</td>
    <td>
-    <pre>${"<!ELEMENT anketa (screen+)>
-<!ELEMENT screen (#PCDATA)>
-<!ATTLIST screen id (ID) #REQUIRED>
-<!ELEMENT template (#PCDATA)>
-<!ELEMENT dump (dir,prefix,suffix)>
-<!ELEMENT dir (#PCDATA)>
-<!ELEMENT prefix (#PCDATA)>
-<!ELEMENT suffix (#PCDATA)>"?html}</pre>
     <textarea name="definition" cols="80" rows="20" tabindex="3">${PARAMS.definition?if_exists?html}</textarea>
     <div class="error">${ERRORS.definition?if_exists}</div>
    </td>
