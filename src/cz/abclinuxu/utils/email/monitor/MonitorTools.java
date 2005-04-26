@@ -23,7 +23,7 @@ public class MonitorTools {
         Element monitor = root.element("monitor");
         if ( monitor==null )
             monitor = root.addElement("monitor");
-        Element id = (Element) monitor.selectSingleNode("//id[text()='"+user.getId()+"'");
+        Element id = (Element) monitor.selectSingleNode("//id[text()='"+user.getId()+"']");
         if ( id!=null )
             id.detach();
         else
