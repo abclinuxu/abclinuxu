@@ -15,7 +15,6 @@ import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
@@ -163,11 +162,15 @@ public class EditArticle implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
 
         Item item = new Item(0,Item.ARTICLE);
-        item.setData(DocumentHelper.createDocument());
+        Document document = DocumentHelper.createDocument();
+        document.addElement("data");
+        item.setData(document);
         item.setOwner(user.getId());
 
         Record record = new Record(0,Record.ARTICLE);
-        record.setData(DocumentHelper.createDocument());
+        document = DocumentHelper.createDocument();
+        document.addElement("data");
+        record.setData(document);
         record.setOwner(user.getId());
 
         boolean canContinue = true;
