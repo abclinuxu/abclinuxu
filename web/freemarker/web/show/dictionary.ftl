@@ -33,7 +33,7 @@ ${TOOL.xpath(ITEM,"/data/name")} <#if (NEXT?size>0)>-</#if>
 </#list>
 
 <p class="monitor"><b>AbcMonitor</b> vám emailem za¹le upozornìní pøi zmìnì.
- <#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"'")?exists>
+ <#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")?exists>
   <#assign monitorState="Vypni">
  <#else>
   <#assign monitorState="Zapni">

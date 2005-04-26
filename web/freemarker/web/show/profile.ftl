@@ -53,7 +53,7 @@
 </#if>
 
 <#if TOOL.xpath(PROFILE,"/data/personal/city")?exists>
- <p>Mìsto: ${TOOL.xpath(PROFILE,"/data/personal/city")}</p>
+ <p>Bydli¹tì: ${TOOL.xpath(PROFILE,"/data/personal/city")}</p>
 </#if>
 
 <#if TOOL.xpath(PROFILE,"/data/personal/area")?exists>

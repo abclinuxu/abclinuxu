@@ -8,8 +8,9 @@
      <thead>
            <tr>
                 <td class="td01">Titulek</td>
-                <td class="td02">Reakcí</td>
-                <td class="td03"><#if byCreated>Vytvoøeno<#else>Poslední</#if></td>
+                <td class="td02">Stav</td>
+                <td class="td03">Reakcí</td>
+                <td class="td04"><#if byCreated>Vytvoøeno<#else>Poslední</#if></td>
             </tr>
         </thead>
         <tbody>
@@ -17,18 +18,20 @@
    <tr>
     <td class="td01">
      <a href="/forum/show/${diz.relationId}">${TOOL.limit(diz.title,100," ..")}</a>
-     <#if TOOL.xpath(diz.discussion,"/data/frozen")?exists>
-         <img src="/images/site2/zamceno.gif" alt="Z" title="Diskuse byla administrátory uzamèena">
-     </#if>
-     <#if TOOL.isQuestionSolved(diz.discussion.data)>
-         <img src="/images/site2/vyreseno.gif" alt="V" title="Diskuse byla podle ètenáøù vyøe¹ena">
-     </#if>
-     <#if USER?exists && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"'")?exists>
-         <img src="/images/site2/sledovano.gif" alt="S" title="Tuto diskusi sledujete monitorem">
-     </#if>
     </td>
-    <td class="td02"><span class="pidi">${diz.responseCount}</span></td>
-    <td class="td03"><span class="pidi">
+    <td class="td02">
+       <#if TOOL.xpath(diz.discussion,"/data/frozen")?exists>
+         <img src="/images/site2/zamceno.gif" alt="Z" title="Diskuse byla administrátory uzamèena">
+       </#if>
+       <#if TOOL.isQuestionSolved(diz.discussion.data)>
+         <img src="/images/site2/vyreseno.gif" alt="V" title="Diskuse byla podle ètenáøù vyøe¹ena">
+       </#if>
+       <#if USER?exists && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"']")?exists>
+         <img src="/images/site2/sledovano.gif" alt="S" title="Tuto diskusi sledujete monitorem">
+       </#if>
+    </td>
+    <td class="td03">${diz.responseCount}</td>
+    <td class="td04">
       <#if byCreated>${DATE.show(diz.created,"CZ_FULL")}<#else>${DATE.show(diz.updated,"CZ_FULL")}</#if>
     </td>
    </tr>

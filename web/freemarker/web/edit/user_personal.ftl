@@ -42,7 +42,7 @@ Pro va¹i ochranu nejdøíve zadejte souèasné heslo.
    </td>
   </tr>
   <tr>
-   <td width="60">Mìsto</td>
+   <td width="60">Bydli¹tì</td>
    <td>
     <input type="text" name="city" value="${PARAMS.city?if_exists}" size="24" tabindex="4">
    </td>

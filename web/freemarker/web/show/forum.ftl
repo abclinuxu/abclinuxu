@@ -17,8 +17,9 @@
      <thead>
            <tr>
                 <td class="td01">Dotaz</td>
-                <td class="td02">Reakcí</td>
-                <td class="td03">Poslední</td>
+                <td class="td02">Stav</td>
+                <td class="td03">Reakcí</td>
+                <td class="td04">Poslední</td>
             </tr>
         </thead>
         <tbody>
@@ -27,8 +28,19 @@
     <td class="td01">
      <a href="/forum/show/${diz.relationId}">${TOOL.limit(diz.title,60," ..")}</a>
     </td>
-    <td class="td02">${diz.responseCount}</td>
-    <td class="td03">${DATE.show(diz.updated,"CZ_FULL")}</td>
+    <td class="td02">
+       <#if TOOL.xpath(diz.discussion,"/data/frozen")?exists>
+         <img src="/images/site2/zamceno.gif" alt="Z" title="Diskuse byla administrátory uzamèena">
+       </#if>
+       <#if TOOL.isQuestionSolved(diz.discussion.data)>
+         <img src="/images/site2/vyreseno.gif" alt="V" title="Diskuse byla podle ètenáøù vyøe¹ena">
+       </#if>
+       <#if USER?exists && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"']")?exists>
+         <img src="/images/site2/sledovano.gif" alt="S" title="Tuto diskusi sledujete monitorem">
+       </#if>
+    </td>
+    <td class="td03">${diz.responseCount}</td>
+    <td class="td04">${DATE.show(diz.updated,"CZ_FULL")}</td>
    </tr>
         </#list>
         </tbody>

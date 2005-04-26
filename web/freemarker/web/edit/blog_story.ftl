@@ -28,8 +28,8 @@ text lámat. Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
         Pøeèteno: ${TOOL.getCounterValue(PREVIEW)}x
         <#if PREVIEW.subType?exists>| ${CATEGORIES[PREVIEW.subType]?if_exists}</#if>
     </p>
-    ${TOOL.xpath(PREVIEW, "/data/perex")}
-    ${TOOL.xpath(PREVIEW, "/data/content")}
+    ${TOOL.xpath(PREVIEW, "/data/perex")?if_exists}
+    ${TOOL.xpath(PREVIEW, "/data/content")?if_exists}
  </div>
 </#if>
 

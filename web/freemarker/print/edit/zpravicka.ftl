@@ -30,7 +30,7 @@ a vygeneruje se z nìj URL.</p>
   <tr>
    <td class="required">Titulek</td>
    <td>
-       <input type="text" name="title" size="30" maxlength="30" value="${PARAMS.title?if_exists}">
+       <input type="text" name="title" size="40" maxlength="40" value="${PARAMS.title?if_exists}">
        <div class="error">${ERRORS.title?if_exists}</div>
    </td>
   </tr>

@@ -51,7 +51,7 @@
    <td class="required">Vlastní CSS</td>
    <td>
     <input type="text" name="css" size="40" value="${PARAMS.css?if_exists}" tabindex="3">
-    <div class="error">${ERRORS.url?if_exists}</div>
+    <div class="error">${ERRORS.css?if_exists}</div>
    </td>
   </tr>
   <tr>

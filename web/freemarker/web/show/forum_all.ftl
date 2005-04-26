@@ -21,6 +21,12 @@ neptal. Prvním krokem polo¾ení dotazu je hledání v na¹í obrovské databázi.
 <li>zasílání pøíspìvkù emailem si mù¾ete zapnout ve svém profilu
 </ul>
 
+<h2>Reorganizace</h2>
+
+<p>
+<a href="/blog/leos/2005/4/21/84459">Diskuse k reorganizaci fóra</a>
+</p>
+
 <h1 class="st_nadpis">Hardware</h1>
 
 <p>Sekce sdru¾ující diskusní fóra týkající se instalace, nastavení
@@ -157,7 +163,7 @@ dotaz, projdìte si fóra v pøede¹lých sekcích.
 <td><a href="/forum/dir/49651">SUSE</a></td>
 <td><a href="/forum/dir/49645">Mandrake</a></td>
 <td><a href="/forum/dir/49644">RedHat, Fedora</a></td>
-<td><a href="/forum/dir/50239">ABC Linux, Knoppix</a></td>
+<td><a href="/forum/dir/50239">®ivé distribuce, Knoppix, SLAX</a></td>
 </tr>
 <tr>
 <td><a href="/forum/dir/49646">Debian</a></td>

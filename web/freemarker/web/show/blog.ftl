@@ -88,6 +88,7 @@
 </#assign>
 
 <#include "../header.ftl">
+<@lib.showMessages/>
 
 <#if STORIES.total==0>
     <p>Va¹emu výbìru neodpovídá ¾ádný zápis.</p>
@@ -117,7 +118,7 @@
 </#list>
 
 <p>
-    <#assign url="/blog/"+BLOG.subType><#if YEAR?exists><#assign url=url+YEAR+"/"></#if>
+    <#assign url="/blog/"+BLOG.subType+"/"><#if YEAR?exists><#assign url=url+YEAR+"/"></#if>
     <#if MONTH?exists><#assign url=url+MONTH+"/"></#if><#if DAY?exists><#assign url=url+DAY+"/"></#if>
     <#if (STORIES.currentPage.row > 0) >
         <#assign start=STORIES.currentPage.row-STORIES.pageSize><#if (start<0)><#assign start=0></#if>
