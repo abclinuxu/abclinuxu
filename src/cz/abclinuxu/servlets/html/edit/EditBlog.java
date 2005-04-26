@@ -403,6 +403,8 @@ public class EditBlog implements AbcAction, Configurable {
         decrementArchiveRecord(blog.getData().getRootElement(), ((Item)story.getChild()).getCreated());
         persistance.update(blog);
 
+        FeedGenerator.updateBlog(blog);
+
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/blog/"+blog.getSubType()+"/");
         return null;
