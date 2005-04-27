@@ -108,37 +108,37 @@ public class EditArticle implements AbcAction {
         if ( ACTION_ADD_ITEM.equals(action) )
             return actionAddStep1(request, env);
 
-        if ( action.equals(ACTION_ADD_ITEM_STEP2) )
+        if ( ACTION_ADD_ITEM_STEP2.equals(action) )
             return actionAddStep2(request, response, env, true);
 
-        if ( action.equals(ACTION_EDIT_ITEM) )
+        if ( ACTION_EDIT_ITEM.equals(action) )
             return actionEditItem(request, env);
 
-        if ( action.equals(ACTION_EDIT_ITEM_STEP2) )
+        if ( ACTION_EDIT_ITEM_STEP2.equals(action) )
             return actionEditItem2(request, response, env);
 
-        if (action.equals(ACTION_SHOW_TALK))
+        if (ACTION_SHOW_TALK.equals(action))
             return actionShowTalk(request, env);
 
-        if (action.equals(ACTION_ADD_QUESTION))
+        if (ACTION_ADD_QUESTION.equals(action))
             return actionAddQuestion(request, response, env);
 
-        if (action.equals(ACTION_SEND_QUESTION))
+        if (ACTION_SEND_QUESTION.equals(action))
             return actionSendQuestion(request, response, env);
 
-        if (action.equals(ACTION_ADD_REPLY))
+        if (ACTION_ADD_REPLY.equals(action))
             return actionAddReply(request, response, env);
 
-        if (action.equals(ACTION_SUBMIT_REPLY))
+        if (ACTION_SUBMIT_REPLY.equals(action))
             return actionSubmitReply(request, response, env);
 
-        if (action.equals(ACTION_REMOVE_QUESTION))
+        if (ACTION_REMOVE_QUESTION.equals(action))
             return actionRemoveQuestion(request, response, env);
 
-        if (action.equals(ACTION_TALK_EMAILS))
+        if (ACTION_TALK_EMAILS.equals(action))
             return actionSetTalkAddresses(request, env);
 
-        if (action.equals(ACTION_TALK_EMAILS_STEP2))
+        if (ACTION_TALK_EMAILS_STEP2.equals(action))
             return actionSetTalkAddressesStep2(request, response, env);
 
         throw new MissingArgumentException("Chybí parametr action!");
