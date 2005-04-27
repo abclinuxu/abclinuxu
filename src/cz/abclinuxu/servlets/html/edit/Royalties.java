@@ -10,7 +10,6 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.SQLTool;
@@ -38,6 +37,7 @@ import java.text.ParseException;
 
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.Document;
 
 /**
  * Adds, edits royalties and performs queries over them.
@@ -162,7 +162,9 @@ public class Royalties implements AbcAction {
         Relation upper = (Relation) env.get(VAR_RELATION);
 
         Item item = new Item(0, Item.ROYALTIES);
-        item.setData(DocumentHelper.createDocument());
+        Document document = DocumentHelper.createDocument();
+        document.addElement("data");
+        item.setData(document);
 
         boolean canContinue = true;
         canContinue &= setAuthor(params, item, env, request);
