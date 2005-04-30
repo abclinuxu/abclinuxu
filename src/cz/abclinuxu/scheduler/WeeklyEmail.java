@@ -61,6 +61,8 @@ public class WeeklyEmail extends TimerTask implements Configurable {
             params.put(VAR_WEEK,new Integer(week));
             params.put(VAR_YEAR,new Integer(year));
 
+            pushData(params);
+
             log.info("Time to send weekly emails. Let's find subscribed users first.");
             List users = SQLTool.getInstance().findUsersWithWeeklyEmail(null);
             log.info("Weekly emails have subscribed "+users.size()+" users.");
