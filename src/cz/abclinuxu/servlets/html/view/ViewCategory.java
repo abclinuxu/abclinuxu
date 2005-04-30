@@ -5,10 +5,7 @@
  */
 package cz.abclinuxu.servlets.html.view;
 
-import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.Category;
-import cz.abclinuxu.data.GenericObject;
-import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.ACL;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
@@ -25,7 +22,6 @@ import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.html.edit.EditRelation;
 import cz.abclinuxu.servlets.html.edit.EditRequest;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.security.Roles;
@@ -158,7 +154,16 @@ public class ViewCategory implements AbcAction {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         tmp = urlUtils.getPrefix();
         if ( Misc.same(tmp,UrlUtils.PREFIX_CLANKY) ) {
-            Tools.syncList(children);
+            for (Iterator iter = children.iterator(); iter.hasNext();) {
+                Relation relation1 = (Relation) iter.next();
+                Tools.sync(relation1);
+                if (!(relation1.getChild() instanceof Item)) {
+                    iter.remove();
+                    continue;
+                }
+                if (((Item)relation1.getChild()).getType()!=Item.ARTICLE)
+                    iter.remove();
+            }
             Paging paging = new Paging(children, 0, children.size(), children.size());
             env.put(VAR_ARTICLES, paging);
             return FMTemplateSelector.select("ViewCategory","rubrika",env, request);
