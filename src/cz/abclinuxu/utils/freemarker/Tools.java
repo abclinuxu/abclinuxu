@@ -390,6 +390,21 @@ public class Tools implements Configurable {
     }
 
     /**
+     * Returns string containing count times what.
+     * @param what
+     * @param count
+     * @return multiple concatenation of argument what.
+     */
+    public static String repeatString(String what, int count) {
+        if (count<=0)
+            return "";
+        StringBuffer sb = new StringBuffer();
+        for (int i=0; i<count; i++)
+            sb.append(what);
+        return sb.toString();
+    }
+
+    /**
      * Extracts selected part of given list. Implementation
      * is aware of list's limits, so IndexOutOfBounds is never
      * thrown.
