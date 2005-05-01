@@ -129,7 +129,7 @@ public class ViewCategory implements AbcAction {
         env.put(VAR_CATEGORY, category);
 
         if (category.getType()==Category.SECTION)
-            return processSection(request, env, relation);
+            return processArticleSection(request, env, relation);
 
         List children = Tools.syncList(category.getChildren());
         env.put(VAR_CHILDREN, children);
@@ -171,7 +171,7 @@ public class ViewCategory implements AbcAction {
             return FMTemplateSelector.select("ViewCategory","sekce",env, request);
     }
 
-    public static String processSection(HttpServletRequest request, Map env, Relation relation) throws Exception {
+    public static String processArticleSection(HttpServletRequest request, Map env, Relation relation) throws Exception {
         Category section = (Category) relation.getChild();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
