@@ -62,16 +62,8 @@
   ${DATE.show(comment.created,"CZ_FULL")}
   <#if comment.author?exists>
    <#local who=TOOL.sync(comment.author)><a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
-   <#local blog=TOOL.xpath(who, "//settings/blog")?default("UNDEF")>
-   <#if blog!="UNDEF">
-      <#local blog=TOOL.createCategory(blog)>
-      <#local title=TOOL.xpath(blog,"//custom/title")?default("UNDEF")>
-      <#if title!="UNDEF">
-        &nbsp;| blog: <a href="/blog/${blog.subType}">${title}</a>
-      <#else>
-        &nbsp;| <a href="/blog/${blog.subType}">blog</a>
-      </#if>
-   </#if>
+   <#local blog=TOOL.getUserBlogAnchor(who, "blog")?default("UNDEF")>
+   <#if blog!="UNDEF">&nbsp;| blog: ${blog}</#if>
    <#local city=TOOL.xpath(who,"//personal/city")?default("UNDEF")><#if city!="UNDEF"> | ${city}</#if>
   <#else>
    ${TOOL.xpath(comment.data,"author")?if_exists}
@@ -81,7 +73,7 @@
    <a href="${URL.make("/EditDiscussion/"+relId+"?action=add&amp;dizId="+dizId+"&amp;threadId="+comment.id+extra[0]?default(""))}">Odpovìdìt</a> |
    <a href="#${comment.id}">Link</a>
    <#if (comment.parent>0)>
-    | <a href="#${comment.parent}">Nahoru</a>
+    | <a href="#${comment.parent}">Vý¹e</a>
    </#if>
    <#if USER?exists && USER.hasRole("discussion admin")>
     || <a href="${URL.make("/EditDiscussion/"+relId+"?action=edit&dizId="+dizId+"&threadId="+comment.id)}">Upravit</a>
@@ -98,21 +90,22 @@
   </#if>
  </div>
  <#if TOOL.xpath(comment.data,"censored")?exists>
-  <#if TOOL.xpath(comment.data,"censored/@admin")?exists><#local message="Cenzura: "+TOOL.xpath(comment.data,"censored")></#if>
-  <p class="cenzura">
-   ${message?default("Na¹i administrátoøi shledali tento pøíspìvek závadným.")}
-   <br>Pøíspìvek si mù¾ete prohlédnout <a href="${URL.make("/show?action=censored&amp;dizId="+dizId+"&amp;threadId="+comment.id)}">zde</a>.
-  </p>
-  <#if USER?exists && USER.hasRole("discussion admin")>
-   <a href="${URL.make("/EditDiscussion?action=censore&amp;rid="+relId+"&amp;dizId="+dizId+"&amp;threadId="+comment.id)}">Odvolat cenzuru</a>
-  </#if>
+     <p class="cenzura">
+         Na¹i administrátoøi shledali tento pøíspìvek závadným nebo nevyhovujícím zamìøení portálu.
+         <#assign message = TOOL.xpath(comment.data,"censored/@admin")?default("UNDEFINED")>
+         <#if message!="UNDEFINED"><br>${message}</#if>
+         <br>Pøíspìvek si mù¾ete prohlédnout
+         <a href="${URL.make("/show?action=censored&amp;dizId="+dizId+"&amp;threadId="+comment.id)}">zde</a>.
+     </p>
+     <#if USER?exists && USER.hasRole("discussion admin")>
+         <a href="${URL.make("/EditDiscussion?action=censore&amp;rid="+relId+"&amp;dizId="+dizId+"&amp;threadId="+comment.id)}">Odvolat cenzuru</a>
+     </#if>
  <#else>
   <div class="ds_text">
     ${TOOL.render(TOOL.element(comment.data,"text"),USER?if_exists)}
   </div>
-  <#if who?exists && TOOL.xpath(who,"/data/personal/signature")?exists
-    && (! USER?exists || TOOL.xpath(USER,"//settings/signatures")?default("yes")=="yes")
-  ><div class="signature">${TOOL.xpath(who,"/data/personal/signature")}</div></#if>
+  <#assign signature = TOOL.getUserSignature(who?if_exists, USER?if_exists)?default("UNDEFINED")>
+  <#if signature!="UNDEFINED"><div class="signature">${signature}</div></#if>
  </#if>
 </#macro>
 
@@ -120,13 +113,13 @@
  <#local space=level*15>
  <div style="padding-left: ${space}pt">
   <@showComment diz, dizId, relId, showControls, extra[0]?if_exists />
- </div>
- <#if diz.children?exists>
-  <#local level2=level+1>
-  <#list diz.children as child>
+  <#if diz.children?exists>
+   <#local level2=level+1>
+   <#list diz.children as child>
     <@showThread child, level2, dizId, relId, showControls, extra[0]?if_exists />
-  </#list>
- </#if>
+   </#list>
+  </#if>
+ </div>
 </#macro>
 
 <#macro star value><#if (value>0.60)><img src="/images/site/star1.gif" alt="*"><#elseif (value<0.2)><img src="/images/site/star0.gif" alt="-"><#else><img src="/images/site/star5.gif" alt="+"></#if></#macro>

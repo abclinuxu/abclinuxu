@@ -315,6 +315,55 @@ public class Tools implements Configurable {
     }
 
     /**
+     * Finds user's signature and display it, unless visitor forbids it.
+     * If user or visitor is registered, these objects will be instance of User
+     * class. If signature is for any reason not available, null will be returned.
+     * @param user user, whose signature shall be displayed.
+     * @param visitor visitor, that is viewing this comment.
+     * @return user's signature or null.
+     */
+    public String getUserSignature(Object user, Object visitor) {
+        if (user==null || !(user instanceof User))
+            return null;
+        User userA = (User) user;
+        if (!userA.isInitialized())
+            sync(userA);
+        Element element = (Element) userA.getData().selectSingleNode("/data/personal/signature");
+        if (element==null)
+            return null;
+        if (visitor != null && (visitor instanceof User)) {
+            User userVisitor = (User) visitor;
+            if (!userVisitor.isInitialized())
+                sync(userVisitor);
+            Element element2 = (Element) userVisitor.getData().selectSingleNode("//settings/signatures");
+            if (element2!=null && !element2.getTextTrim().equalsIgnoreCase("yes"))
+                return null;
+        }
+        return element.getText();
+    }
+
+    /**
+     * Creates anchor for the blog of specified user.
+     * @param user existing user
+     * @param defaultTitle if blog doesn't have set its name, this will be used as anchor text
+     * @return anchor to the user's blog
+     */
+    public String getUserBlogAnchor(User user, String defaultTitle) {
+        if (!user.isInitialized())
+            sync(user);
+        Element element = (Element) user.getData().selectSingleNode("//settings/blog");
+        if (element==null)
+            return null;
+        Category blog = createCategory(element.getTextTrim());
+        String title = defaultTitle;
+        element = (Element) blog.getData().selectSingleNode("//custom/title");
+        if (element!=null)
+            title = element.getText();
+        String anchor = "<a href=\"/blog/"+blog.getSubType()+"\">"+title+"</a>";
+        return anchor;
+    }
+
+    /**
      * @return String containing one asterisk for each ten percents.
      */
     public String percentBar(int percent) {
