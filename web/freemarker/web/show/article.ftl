@@ -47,8 +47,7 @@ ${TOOL.render(TEXT,USER?if_exists)}
  </div>
 </#if>
 
-<#if RELATED?exists || RESOURCES?exists>
- <div class="cl_perex">
+<div class="cl_perex">
   <#if RELATED?exists>
    <h1 class="st_nadpis">Související èlánky</h1>
    <div class="st_linky">
@@ -65,8 +64,13 @@ ${TOOL.render(TEXT,USER?if_exists)}
     </#list>
    </div>
   </#if>
- </div>
-</#if>
+  <h1 class="st_nadpis">Dal¹í èlánky z této rubriky</h1>
+   <div class="st_linky">
+    <#list SAME_SECTION_ARTICLES as relation>
+      <a href="${relation.url?default("/clanky/show/"+relation.id)}">${TOOL.xpath(relation.child,"data/name")}</a><br>
+    </#list>
+   </div>
+</div>
 
 <p><b>Nástroje</b>: <a href="/clanky/show/${RELATION.id}?varianta=print">Tisk</a>,
 <a href="/clanky/show/${RELATION.id}?varianta=print&amp;noDiz">Tisk bez diskuse</a>

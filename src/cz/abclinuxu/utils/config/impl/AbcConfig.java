@@ -30,9 +30,11 @@ public class AbcConfig implements Configurable {
     public static final String PREF_TEMPLATE_NEWS_COUNT = "template.news.count";
     public static final String PREF_INDEX_ARTICLES_COUNT = "index.article.count";
     public static final String PREF_SECTION_ARTICLES_COUNT = "section.article.count";
+    public static final String PREF_ARTICLE_SECTION_ARTICLES_COUNT = "article.section.articles.count";
 
     static String deployPath;
     static int viewUserPageSize, indexDiscussionCount, newsCount, indexArticleCount, sectionArticleCount;
+    static int articleSectionArticlesCount;
 
     /**
      * Callback used to configure your class from preferences.
@@ -44,6 +46,7 @@ public class AbcConfig implements Configurable {
         newsCount = prefs.getInt(PREF_TEMPLATE_NEWS_COUNT,5);
         indexArticleCount = prefs.getInt(PREF_INDEX_ARTICLES_COUNT, 9);
         sectionArticleCount = prefs.getInt(PREF_SECTION_ARTICLES_COUNT, 25);
+        articleSectionArticlesCount = prefs.getInt(PREF_ARTICLE_SECTION_ARTICLES_COUNT, 5);
     }
 
     /**
@@ -102,5 +105,12 @@ public class AbcConfig implements Configurable {
      */
     public static int getSectionArticleCount() {
         return sectionArticleCount;
+    }
+
+    /**
+     * @return number of articles from same section to be displayed in the article.
+     */
+    public static int getArticleSectionArticlesCount() {
+        return articleSectionArticlesCount;
     }
 }

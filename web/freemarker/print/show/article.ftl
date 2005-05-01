@@ -30,8 +30,7 @@ ${DATE.show(ITEM.created,"CZ_FULL")} | <a href="/Profile/${autor.id}">${autor.na
 
 ${TOOL.render(TOOL.getCompleteArticleText(ITEM),USER?if_exists)}
 
-<#if RELATED?exists || RESOURCES?exists>
- <div class="perex">
+<div class="perex">
   <#if RELATED?exists>
    <h1>Související èlánky</h1>
    <div class="linky">
@@ -41,15 +40,20 @@ ${TOOL.render(TOOL.getCompleteArticleText(ITEM),USER?if_exists)}
    </div>
   </#if>
   <#if RESOURCES?exists>
-  <h1>Odkazy a zdroje</h1>
+   <h1>Odkazy a zdroje</h1>
    <div class="linky">
     <#list RESOURCES as link>
      <a href="${link.url}">${link.title}</a><br>
     </#list>
    </div>
   </#if>
- </div>
-</#if>
+  <h1 class="st_nadpis">Dal¹í èlánky z této rubriky</h1>
+  <div class="st_linky">
+    <#list SAME_SECTION_ARTICLES as relation>
+      <a href="${relation.url?default("/clanky/show/"+relation.id)}">${TOOL.xpath(relation.child,"data/name")}</a><br>
+    </#list>
+  </div>
+</div>
 
 <#flush>
 

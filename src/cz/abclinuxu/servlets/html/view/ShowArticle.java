@@ -8,18 +8,19 @@ package cz.abclinuxu.servlets.html.view;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.Item;
-import cz.abclinuxu.data.Record;
-import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.*;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.InvalidDataException;
 import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistance.extra.Qualifier;
+import cz.abclinuxu.persistance.extra.LimitQualifier;
 import cz.abclinuxu.security.Roles;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,6 +50,7 @@ public class ShowArticle implements AbcAction {
     public static final String VAR_ARTICLE_TEXT = "TEXT";
     public static final String VAR_RELATED_ARTICLES = "RELATED";
     public static final String VAR_RELATED_RESOURCES = "RESOURCES";
+    public static final String VAR_ARTICLES_IN_SAME_SECTION = "SAME_SECTION_ARTICLES";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -130,9 +132,22 @@ public class ShowArticle implements AbcAction {
             env.put(VAR_RELATED_RESOURCES,resources);
         }
 
+        List parents = (List) env.get(VAR_PARENTS);
+        Relation relation = (Relation) parents.get(parents.size()-2);
+        if (relation.getChild() instanceof Category) {
+            Category section = (Category) relation.getChild();
+            int max = AbcConfig.getArticleSectionArticlesCount();
+            SQLTool sqlTool = SQLTool.getInstance();
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0,max)};
+            List articles = sqlTool.findArticleRelations(qualifiers, section.getId());
+            Tools.syncList(articles);
+            env.put(VAR_ARTICLES_IN_SAME_SECTION, articles);
+        }
+
         User user = (User) env.get(Constants.VAR_USER);
         if ( user==null || !user.hasRole(Roles.ARTICLE_ADMIN) )
             persistance.incrementCounter(item);
+
         return FMTemplateSelector.select("ShowObject", "article", env, request);
     }
 

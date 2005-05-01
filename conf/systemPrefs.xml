@@ -29,6 +29,7 @@
                                     <entry key="template.news.count" value="10"/>
                                     <entry key="index.article.count" value="9"/>
                                     <entry key="section.article.count" value="25"/>
+                                    <entry key="article.section.articles.count" value="5"/>
                                 </map>
                             </node>
                         </node>
@@ -408,8 +409,8 @@
                             <map/>
                             <node name="NewsCSV">
                                 <map>
-                                    <entry key="allowed.ip.addresses" value="127.0.0.1,212.67.79.50,195.70.144.6"/>
-                                    <entry key="count" value="5"/>
+                                    <entry key="allowed.ip.addresses" value="127.0.0.1,195.70.144.6,212.67.91.4,212.67.91.5,212.67.79.50"/>
+                                    <entry key="count" value="7"/>
                                 </map>
                             </node>
                         </node>
