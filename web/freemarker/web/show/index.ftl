@@ -177,7 +177,7 @@
     <h1 class="st_nadpis">Rozcestník</h1>
 	<div class="s"><div class="s_sekce"><div class="rozc">
     <table>
-    <#list TOOL.createServers([1,16,12,13,14,15]) as server>
+    <#list TOOL.createServers([16,1,13,12,17,14]) as server>
         <#if server_index % 3 = 0><tr><#assign open=true></#if>
         <td>
         <a class="server" href="${server.url}">${server.name}</a>

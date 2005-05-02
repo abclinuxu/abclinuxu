@@ -117,9 +117,6 @@
 		        </div>
             </#if>
 
-<iframe id='ac2298e7' name='ac2298e7' src='http://banner.stickfish.cz/adframe.php?n=ac2298e7&amp;what=zone:34&amp;target=_self' framespacing='0' frameborder='no' scrolling='no' width='270' height='50'><a href='http://banner.stickfish.cz/adclick.php?n=ac2298e7' target='_self'><img src='http://banner.stickfish.cz/adview.php?what=zone:34&amp;n=ac2298e7' border='0' alt=''></a></iframe>
-
-
             <!-- ZPRÁVIÈKY -->
             <#assign news=VARS.getFreshNews(user?if_exists)>
             <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Zprávièky</h1></div></div>
@@ -170,7 +167,7 @@
                 <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Rozcestník</h1></div></div>
                 <div class="s_sekce">
                     <div class="rozc">
-                        <#list TOOL.createServers([7,16,1,12,13,14,15,3,2,5]) as server>
+                        <#list TOOL.createServers([7,16,1,13,14,12,17,15,3,2,5]) as server>
                             <a class="server" href="${server.url}">${server.name}</a><br>
                             <ul>
                             <#assign linky = TOOL.sublist(SORT.byDate(LINKS[server.name],"DESCENDING"),0,2)>
