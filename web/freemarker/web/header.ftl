@@ -153,7 +153,7 @@
                 </div>
             </div>
 
-            <#if ! IS_INDEX?exists>
+            <#if ! IS_INDEX?exists && TOOL.isGuidePostEnabled(USER?if_exists)>
                 <!-- prace.abclinuxu.cz -->
                 <div class="s_nad_h1"><div class="s_nad_pod_h1">
                     <h1><a href="http://prace.abclinuxu.cz">Prace.abclinuxu.cz</a></h1>
@@ -207,6 +207,7 @@
                     <li><a href="javascript:setHomepage();">Nastav jako domácí stránku</a></li>
                     <li><a href="http://www.linux.cz">linux.cz</a></li>
                     <li><a href="http://www.broadnet.cz">broadnet.cz</a></li>
+                    <li><a href="http://www.pravednes.cz">pravednes.cz</a></li>
                 </ul>
             </div>
 

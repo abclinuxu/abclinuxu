@@ -25,9 +25,10 @@ verze 2.0
 <!ELEMENT distributions (distribution)> <!-- ktere distribuce pouziva(l) -->
 <!ELEMENT distribution (#PCDATA)> <!-- jmeno distribuce -->
 
-<!ELEMENT settings (emoticons?,cookie_valid?,index_discussions?, return_to_forum?, blog?, css?)>
+<!ELEMENT settings (emoticons?,cookie_valid?,index_discussions?, return_to_forum?, blog?, css?, guidepost?)>
 <!ELEMENT emoticons (#PCDATA)> <!-- yes or no, zda nahrazovat emotikony obrazkem -->
 <!ELEMENT signatures (#PCDATA)> <!-- yes or no, zda zobrazovat signatury -->
+<!ELEMENT guidepost (#PCDATA)> <!-- yes or no, zda zobrazovat rozcestnik -->
 <!ELEMENT new_comments (#PCDATA)> <!-- yes or no, zda povolit cookie pro nové komentáøe -->
 <!ELEMENT cookie_valid (#PCDATA)> <!-- integer, doba platnosti prihlasovaci cookie -->
 <!ELEMENT index_discussions (#PCDATA)> <!-- integer, pocet diskusi na hlavni strance. -1 : vsechny -->

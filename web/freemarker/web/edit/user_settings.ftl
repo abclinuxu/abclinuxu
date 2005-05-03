@@ -138,7 +138,7 @@
    </td>
   </tr>
   <tr>
-   <td colspan="2">Mù¾ete si také zvolit vlastní velikost stránky s nalezenými dokumenty.</td>
+   <td colspan="2">Poèet nalezených dokumentù na jedné stránce.</td>
   </tr>
 
   <tr>
@@ -149,7 +149,21 @@
    </td>
   </tr>
   <tr>
-   <td colspan="2">A poèet diskusí na stránce jednotlivých diskusních fór.</td>
+   <td colspan="2">Poèet diskusí na stránce diskusního fóra.</td>
+  </tr>
+
+  <tr>
+   <td class="required">Zobrazovat rozcestník</td>
+   <td>
+    <select name="guidepost" tabindex="4">
+     <#assign guidepost=PARAMS.guidepost?default("yes")>
+     <option value="yes" <#if guidepost=="yes">SELECTED</#if>>ano</option>
+     <option value="no"<#if guidepost=="no">SELECTED</#if>>ne</option>
+    </select>
+   </td>
+  </tr>
+  <tr>
+   <td colspan="2">Urèuje, zda se má zobrazovat rozcestník v ¹ablonì.</td>
   </tr>
 
   <tr>

@@ -315,6 +315,21 @@ public class Tools implements Configurable {
     }
 
     /**
+     * Finds out, whether the guidepost shall be displayed or not.
+     */
+    public boolean isGuidePostEnabled(Object user) {
+        if (!(user instanceof User))
+            return true;
+        User userA = (User) user;
+        if (!userA.isInitialized())
+            sync(userA);
+        Element element = (Element) userA.getData().selectSingleNode("/data/settings/guidepost");
+        if (element == null)
+            return true;
+        return "yes".equals(element.getText());
+    }
+
+    /**
      * Finds user's signature and display it, unless visitor forbids it.
      * If user or visitor is registered, these objects will be instance of User
      * class. If signature is for any reason not available, null will be returned.

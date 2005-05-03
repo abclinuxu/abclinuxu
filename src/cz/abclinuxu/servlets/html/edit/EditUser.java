@@ -89,6 +89,7 @@ public class EditUser implements AbcAction, Configurable {
     public static final String PARAM_USER_ROLES = "roles";
     public static final String PARAM_USERS = "users";
     public static final String PARAM_URL_CSS = "css";
+    public static final String PARAM_GUIDEPOST = "guidepost";
 
     public static final String VAR_MANAGED = "MANAGED";
     public static final String VAR_DEFAULT_DISCUSSION_COUNT = "DEFAULT_DISCUSSIONS";
@@ -492,6 +493,10 @@ public class EditUser implements AbcAction, Configurable {
         if ( node!=null )
             params.put(PARAM_SIGNATURES, node.getText());
 
+        node = document.selectSingleNode("/data/settings/guidepost");
+        if ( node!=null )
+            params.put(PARAM_GUIDEPOST, node.getText());
+
         node = document.selectSingleNode("/data/settings/css");
         if ( node!=null )
             params.put(PARAM_URL_CSS, node.getText());
@@ -539,6 +544,7 @@ public class EditUser implements AbcAction, Configurable {
         canContinue &= setCookieValidity(params, managed);
         canContinue &= setEmoticons(params, managed);
         canContinue &= setSignatures(params, managed);
+        canContinue &= setGuidepost(params, managed);
         canContinue &= setDiscussionsSizeLimit(params, managed);
         canContinue &= setNewsSizeLimit(params, managed, env);
         canContinue &= setFoundPageSize(params, managed, env);
@@ -1155,6 +1161,20 @@ public class EditUser implements AbcAction, Configurable {
         String emoticons = (String) params.get(PARAM_SIGNATURES);
         Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/signatures");
         String value = ("yes".equals(emoticons))? "yes":"no";
+        element.setText(value);
+        return true;
+    }
+
+    /**
+     * Updates guidepost from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setGuidepost(Map params, User user) {
+        String guidepost = (String) params.get(PARAM_GUIDEPOST);
+        Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/guidepost");
+        String value = ("yes".equals(guidepost))? "yes":"no";
         element.setText(value);
         return true;
     }
