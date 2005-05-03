@@ -64,12 +64,14 @@ ${TOOL.render(TEXT,USER?if_exists)}
     </#list>
    </div>
   </#if>
-  <h1 class="st_nadpis">Dal¹í èlánky z této rubriky</h1>
-   <div class="st_linky">
-    <#list SAME_SECTION_ARTICLES as relation>
-      <a href="${relation.url?default("/clanky/show/"+relation.id)}">${TOOL.xpath(relation.child,"data/name")}</a><br>
-    </#list>
-   </div>
+  <#if SAME_SECTION_ARTICLES?exists>
+   <h1 class="st_nadpis">Dal¹í èlánky z této rubriky</h1>
+    <div class="st_linky">
+     <#list SAME_SECTION_ARTICLES as relation>
+       <a href="${relation.url?default("/clanky/show/"+relation.id)}">${TOOL.xpath(relation.child,"data/name")}</a><br>
+     </#list>
+    </div>
+  </#if>
 </div>
 
 <p><b>Nástroje</b>: <a href="/clanky/show/${RELATION.id}?varianta=print">Tisk</a>,
