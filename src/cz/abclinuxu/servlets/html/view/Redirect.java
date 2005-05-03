@@ -41,7 +41,7 @@ public class Redirect extends HttpServlet {
                 link = (Link) persistance.findById(new Link(id));
                 return link;
             } catch (Exception e) {
-                log.warn("Cannot redirect to link "+linkId,e);
+                log.debug("Cannot redirect to link "+linkId,e);
             }
         }
 
