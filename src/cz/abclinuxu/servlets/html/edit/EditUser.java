@@ -307,6 +307,10 @@ public class EditUser implements AbcAction, Configurable {
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
             canContinue &= checkPassword(params, managed, env);
+
+        if (!canContinue)
+            return FMTemplateSelector.select("EditUser", "editBasic", env, request);
+
         canContinue &= setLogin(params, managed, env);
         canContinue &= setName(params, managed, env);
         canContinue &= setNick(params, managed, env);
@@ -345,6 +349,10 @@ public class EditUser implements AbcAction, Configurable {
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
             canContinue &= checkPassword(params, managed, env);
+
+        if (!canContinue)
+            return FMTemplateSelector.select("EditUser", "editBasic", env, request);
+
         canContinue &= setPassword(params,managed,env);
 
         if ( ! canContinue )
@@ -404,6 +412,10 @@ public class EditUser implements AbcAction, Configurable {
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
             canContinue &= checkPassword(params, managed, env);
+
+        if (!canContinue)
+            return FMTemplateSelector.select("EditUser", "editBasic", env, request);
+
         canContinue &= setSignature(params, managed, env);
         canContinue &= setSex(params, managed, env);
         canContinue &= setBirthYear(params, managed, env);
@@ -458,6 +470,10 @@ public class EditUser implements AbcAction, Configurable {
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
             canContinue &= checkPassword(params, managed, env);
+
+        if (!canContinue)
+            return FMTemplateSelector.select("EditUser", "editBasic", env, request);
+
         canContinue &= setMyPage(params, managed, env);
         canContinue &= setLinuxUserFrom(params, managed);
         canContinue &= setAbout(params, managed, env);
@@ -540,6 +556,10 @@ public class EditUser implements AbcAction, Configurable {
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
             canContinue &= checkPassword(params, managed, env);
+
+        if (!canContinue)
+            return FMTemplateSelector.select("EditUser", "editBasic", env, request);
+
         canContinue &= setCssUrl(params, managed);
         canContinue &= setCookieValidity(params, managed);
         canContinue &= setEmoticons(params, managed);
@@ -595,6 +615,10 @@ public class EditUser implements AbcAction, Configurable {
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
             canContinue &= checkPassword(params, managed, env);
+
+        if (!canContinue)
+            return FMTemplateSelector.select("EditUser", "editBasic", env, request);
+
         if (canContinue) {
             canContinue &= setWeeklySummary(params, managed);
             canContinue &= setMonthlySummary(params, managed);
@@ -624,6 +648,10 @@ public class EditUser implements AbcAction, Configurable {
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
             canContinue &= checkPassword(params, managed, env);
+
+        if (!canContinue)
+            return FMTemplateSelector.select("EditUser", "editBasic", env, request);
+
         canContinue &= setPhoto(params, managed, env);
 
         if ( !canContinue )
