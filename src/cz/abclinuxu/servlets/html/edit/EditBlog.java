@@ -9,6 +9,7 @@ import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.view.ViewUser;
 import cz.abclinuxu.servlets.html.view.ShowObject;
+import cz.abclinuxu.servlets.html.view.ViewBlog;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
@@ -47,7 +48,9 @@ import org.dom4j.Element;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
+import org.dom4j.io.DOMWriter;
 import freemarker.template.SimpleHash;
+import freemarker.ext.dom.NodeModel;
 
 /**
  * Servlet used to manipulate with user blogs.
@@ -65,6 +68,8 @@ public class EditBlog implements AbcAction, Configurable {
     public static final String PARAM_PREVIEW = "preview";
     public static final String PARAM_PAGE_SIZE = "pageSize";
     public static final String PARAM_WATCH_DISCUSSION = "watchDiz";
+    public static final String PARAM_URL = "url";
+    public static final String PARAM_POSITION = "position";
 
     public static final String ACTION_ADD_BLOG = "addBlog";
     public static final String ACTION_ADD_BLOG_STEP2 = "addBlog2";
@@ -85,6 +90,14 @@ public class EditBlog implements AbcAction, Configurable {
     public static final String ACTION_EDIT_STORY_STEP2 = "edit2";
     public static final String ACTION_REMOVE_STORY = "remove";
     public static final String ACTION_REMOVE_STORY_STEP2 = "remove2";
+    public static final String ACTION_EDIT_LINKS = "links";
+    public static final String ACTION_ADD_LINK = "addLink";
+    public static final String ACTION_EDIT_LINK = "editLink";
+    public static final String ACTION_EDIT_LINK_STEP2 = "editLink2";
+    public static final String ACTION_REMOVE_LINK = "rmLink";
+    public static final String ACTION_REMOVE_LINK_STEP2 = "rmLink2";
+    public static final String ACTION_MOVE_LINK_UP = "mvLinkUp";
+    public static final String ACTION_MOVE_LINK_DOWN = "mvLinkDown";
 
     public static final String VAR_BLOG = "BLOG";
     public static final String VAR_BLOG_RELATION = "REL_BLOG";
@@ -192,6 +205,30 @@ public class EditBlog implements AbcAction, Configurable {
 
         if (ACTION_EDIT_CATEGORY_STEP2.equals(action))
             return actionEditCategoryStep2(request, response, blog, env);
+
+        if (ACTION_EDIT_LINKS.equals(action))
+            return actionShowLinks(request, blog, env);
+
+        if (ACTION_ADD_LINK.equals(action))
+            return actionAddLink(request, response, blog, env);
+
+        if (ACTION_EDIT_LINK.equals(action))
+            return actionEditLink(request, blog, env);
+
+        if (ACTION_EDIT_LINK_STEP2.equals(action))
+            return actionEditLinkStep2(request, response, blog, env);
+
+        if (ACTION_REMOVE_LINK.equals(action))
+            return actionRemoveLink(request, blog, env);
+
+        if (ACTION_REMOVE_LINK_STEP2.equals(action))
+            return actionRemoveLinkStep2(request, response, blog, env);
+
+        if (ACTION_MOVE_LINK_UP.equals(action))
+            return actionMoveLink(request, response, blog, true, env);
+
+        if (ACTION_MOVE_LINK_DOWN.equals(action))
+            return actionMoveLink(request, response, blog, false, env);
 
         throw new MissingArgumentException("Chybí parametr action!");
     }
@@ -561,6 +598,147 @@ public class EditBlog implements AbcAction, Configurable {
         return null;
     }
 
+    /**
+     * Shows all blog's links so user can edit them.
+     */
+    protected String actionShowLinks(HttpServletRequest request, Category blog, Map env) throws Exception {
+        env.put(ViewBlog.VAR_BLOG_XML, NodeModel.wrap((new DOMWriter().write(blog.getData()))));
+        return FMTemplateSelector.select("EditBlog", "links", env, request);
+    }
+
+    /**
+     * Adds new link.
+     */
+    protected String actionAddLink(HttpServletRequest request, HttpServletResponse response, Category blog, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Relation relation = (Relation) env.get(VAR_BLOG_RELATION);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        Element root = blog.getData().getRootElement();
+        boolean canContinue = addRecommendedLink(params, root, env);
+        if (!canContinue)
+            return actionShowLinks(request, blog, env);
+
+        persistance.update(blog);
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/blog/edit/" + relation.getId() + "?action=links");
+        return null;
+    }
+
+    /**
+     * Dialog to edit existing link
+     */
+    protected String actionEditLink(HttpServletRequest request, Category blog, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Element root = blog.getData().getRootElement();
+
+        Element link = getLinkAtPosition(root, params, env);
+        if (link!=null) {
+            params.put(PARAM_URL, link.getText());
+            params.put(PARAM_TITLE, link.attributeValue("caption"));
+        }
+
+        return FMTemplateSelector.select("EditBlog", "edit_link", env, request);
+    }
+
+    /**
+     * Edits existing link.
+     */
+    protected String actionEditLinkStep2(HttpServletRequest request, HttpServletResponse response, Category blog, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Relation relation = (Relation) env.get(VAR_BLOG_RELATION);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        Element root = blog.getData().getRootElement();
+        boolean canContinue = setRecommendedLink(params, root, env);
+        if (!canContinue)
+            return actionEditLink(request, blog, env);
+
+        persistance.update(blog);
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/blog/edit/" + relation.getId() + "?action=links");
+        return null;
+    }
+
+    /**
+     * Confirmation dialog to remove existing link
+     */
+    protected String actionRemoveLink(HttpServletRequest request, Category blog, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Element root = blog.getData().getRootElement();
+
+        Element link = getLinkAtPosition(root, params, env);
+        if (link!=null) {
+            params.put(PARAM_URL, link.getText());
+            params.put(PARAM_TITLE, link.attributeValue("caption"));
+        }
+
+        return FMTemplateSelector.select("EditBlog", "remove_link", env, request);
+    }
+
+    /**
+     * Removes existing link.
+     */
+    protected String actionRemoveLinkStep2(HttpServletRequest request, HttpServletResponse response, Category blog, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Relation relation = (Relation) env.get(VAR_BLOG_RELATION);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        Element root = blog.getData().getRootElement();
+        boolean canContinue = removeRecommendedLink(params, root, env);
+        if (!canContinue)
+            return actionRemoveLink(request, blog, env);
+
+        persistance.update(blog);
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/blog/edit/" + relation.getId() + "?action=links");
+        return null;
+    }
+
+    /**
+     * Moves existing link.
+     */
+    protected String actionMoveLink(HttpServletRequest request, HttpServletResponse response, Category blog, boolean up, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Relation relation = (Relation) env.get(VAR_BLOG_RELATION);
+        Persistance persistance = PersistanceFactory.getPersistance();
+
+        Element root = blog.getData().getRootElement();
+        int position = Misc.parseInt((String) params.get(PARAM_POSITION), -1);
+        if (position == -1) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Chybí parametr position!", env, null);
+            return null;
+        }
+
+        Element linksElement = (Element) root.selectSingleNode("/data/custom/links");
+        List links = linksElement.elements("link");
+        if (links == null || links.size() == 0) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Oops, nemáte definovány ¾ádné linky!", env, null);
+            return null;
+        }
+
+        if (up) {
+            if (position > 0) {
+                Element link = (Element) links.remove(position);
+                links.add(position-1, link);
+            }
+        } else {
+            if ((position+1) < links.size()) {
+                Element link = (Element) links.remove(position);
+                links.add(position + 1, link);
+            }
+        }
+
+        persistance.update(blog);
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/blog/edit/" + relation.getId() + "?action=links");
+        return null;
+    }
+
     // setters
 
     /**
@@ -766,6 +944,106 @@ public class EditBlog implements AbcAction, Configurable {
             intro.setText(s);
         }
         return true;
+    }
+
+    /**
+     * Adds another recommended link to blog. Changes are not synchronized with persistance.
+     *
+     * @param params map holding request's parameters
+     * @param root   XML document
+     * @return false, if there is a major error.
+     */
+    boolean addRecommendedLink(Map params, Element root, Map env) {
+        String title = (String) params.get(PARAM_TITLE);
+        if (title==null || title.length()==0) {
+            ServletUtils.addError(PARAM_TITLE, "Zadejte titulek odkazu.", env, null);
+            return false;
+        }
+
+        String url = (String) params.get(PARAM_URL);
+        if (url==null || url.length()==0 || url.indexOf("://")==-1) {
+            ServletUtils.addError(PARAM_URL, "Zadejte platnou adresu odkazu.", env, null);
+            return false;
+        }
+
+        Element custom = root.element("custom");
+        Element links = custom.element("links");
+        if (links==null)
+            links = custom.addElement("links");
+
+        Element link = links.addElement("link");
+        link.setText(url);
+        link.addAttribute("caption", title);
+        return true;
+    }
+
+    /**
+     * Changes properties of existing recommended link. Changes are not synchronized with persistance.
+     *
+     * @param params map holding request's parameters
+     * @param root   XML document
+     * @return false, if there is a major error.
+     */
+    boolean setRecommendedLink(Map params, Element root, Map env) {
+        String title = (String) params.get(PARAM_TITLE);
+        if (title == null || title.length() == 0) {
+            ServletUtils.addError(PARAM_TITLE, "Zadejte titulek odkazu.", env, null);
+            return false;
+        }
+
+        String url = (String) params.get(PARAM_URL);
+        if (url == null || url.length() == 0 || url.indexOf("://") == -1) {
+            ServletUtils.addError(PARAM_URL, "Zadejte platnou adresu odkazu.", env, null);
+            return false;
+        }
+
+        Element link = getLinkAtPosition(root, params, env);
+        if (link==null)
+            return false;
+
+        link.setText(url);
+        link.attribute("caption").setText(title);
+        return true;
+    }
+
+    /**
+     * Removes existing recommended link from blog. Changes are not synchronized with persistance.
+     *
+     * @param params map holding request's parameters
+     * @param root   XML document
+     * @return false, if there is a major error.
+     */
+    boolean removeRecommendedLink(Map params, Element root, Map env) {
+        Element link = getLinkAtPosition(root, params, env);
+        if (link==null)
+            return false;
+        link.detach();
+        return true;
+    }
+
+    /**
+     * Finds value of position parameter and looks up link in list of links.
+     * @return either link or null.
+     */
+    Element getLinkAtPosition(Element root, Map params, Map env) {
+        int position = Misc.parseInt((String) params.get(PARAM_POSITION), -1);
+        if (position == -1) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Chybí parametr position!", env, null);
+            return null;
+        }
+
+        List links = root.selectNodes("/data/custom/links/link");
+        if (links == null || links.size() == 0) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Oops, nemáte definovány ¾ádné linky!", env, null);
+            return null;
+        }
+
+        if (position >= links.size()) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Oops, takový link neexistuje!", env, null);
+            return null;
+        }
+
+        return (Element) links.get(position);
     }
 
     /**

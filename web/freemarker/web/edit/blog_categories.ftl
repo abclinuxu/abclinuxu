@@ -5,7 +5,7 @@
 <p>Na této stánce si mù¾ete upravovat seznam va¹ich
 kategorií zápisù. Mù¾ete zde pøidat novou kategorii
 nebo pøejmenovat existující kategorii. Mazání prozatím
-není dostupné.</p>
+není dostupné. <a href="/blog/${BLOG.subType}">Zpìt na vá¹ blog</a>.</p>
 
 <h2>Kategorie</h2>
 

@@ -47,6 +47,22 @@
         </#list>
     </div>
 
+    <#assign LINKS = BLOG_XML.data.custom.links.link>
+    <#if LINKS?size!=0>
+        <div class="s_nad_h1"><div class="s_nad_pod_h1">
+            <a class="info" href="#">?<span class="tooltip">Seznam mých oblíbených stránek, které pravidelnì nav¹tìvuji.</span></a>
+            <h1>Oblíbené stránky</h1>
+        </div></div>
+
+        <div class="s_sekce">
+            <ul>
+            <#list LINKS as link>
+                <li><a href="${link}">${link.@caption}</a></li>
+            </#list>
+            </ul>
+        </div>
+    </#if>
+
     <div class="s_nad_h1"><div class="s_nad_pod_h1">
         <a class="info" href="#">?<span class="tooltip">Pøístup na osobní hlavní stranu a na hlavní stranu v¹ech blogù.</span></a>
         <h1>Navigace</h1>
@@ -80,6 +96,7 @@
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=custom")}">Uprav vzhled</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}">Pøejmenovat blog</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=categories")}">Upravit kategorie</a></li>
+            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=links")}">Upravit odkazy</a></li>
         </#if>
     <#else>
         <li><a href="${URL.noPrefix("/Profile?action=login&amp;url="+REQUEST_URI)}">Pøihlásit se</a></li>
