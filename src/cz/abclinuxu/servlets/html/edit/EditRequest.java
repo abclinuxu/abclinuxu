@@ -343,7 +343,7 @@ public class EditRequest implements AbcAction, Configurable {
         String dizName = Tools.childName(new Integer(relationId));
         String forumName = Tools.childName(new Integer(forumId));
         String action = "Pøesunout diskusi <a href=\"/forum/show/"+relationId+"\">"+dizName+
-                        "</a> do fora <a href=\""+forumId+"\">"+forumName+"</a> "+forumId;
+                        "</a> do fora <a href=\"/forum/dir/"+forumId+"\">"+forumName+"</a> "+forumId;
         if (!Misc.empty(text)) action = action+"<br>\n"+text;
         params.put(PARAM_TEXT, action);
 
