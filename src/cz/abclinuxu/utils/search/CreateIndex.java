@@ -6,7 +6,7 @@
 package cz.abclinuxu.utils.search;
 
 import cz.abclinuxu.persistance.*;
-import cz.abclinuxu.persistance.cache.EmptyCache;
+import cz.abclinuxu.persistance.cache.OnlyUserCache;
 import cz.abclinuxu.persistance.extra.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.Constants;
@@ -16,6 +16,8 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.exceptions.PersistanceException;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.apache.lucene.index.IndexWriter;
@@ -28,7 +30,7 @@ import java.io.FileWriter;
 /**
  * This class is responsible for creating and
  * maintaining Lucene's index.
- * todo give score boost to titles and names of objects
+ * todo indexovat diskuse u clanku, zpravicek a blogu samostatne
  */
 public class CreateIndex implements Configurable {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(CreateIndex.class);
@@ -46,7 +48,7 @@ public class CreateIndex implements Configurable {
     static {
         Configurator configurator = ConfigurationManager.getConfigurator();
         configurator.configureMe(new CreateIndex());
-        persistance = PersistanceFactory.getPersistance(EmptyCache.class);
+        persistance = PersistanceFactory.getPersistance(OnlyUserCache.class);
         sqlTool = SQLTool.getInstance();
     }
 
@@ -263,8 +265,8 @@ public class CreateIndex implements Configurable {
         String url;
 
         for (Iterator iter = sections.iterator(); iter.hasNext();) {
-            Relation section =  (Relation) iter.next();
-            int sectionId = section.getId();
+            Relation sectionRelation = (Relation) iter.next();
+            int sectionId = sectionRelation.getChild().getId();
             total = sqlTool.countArticleRelations(sectionId);
 
             for (i = 0; i < total;) {
@@ -491,6 +493,21 @@ public class CreateIndex implements Configurable {
                 if ( node!=null ) {
                     sb.append(" ");
                     sb.append(node.getText());
+                } else {
+                    node = data.selectSingleNode("author_id");
+                    if (node!=null) {
+                        int id = Misc.parseInt(node.getText(), -1);
+                        try {
+                            User author = (User) persistance.findById(new User(id));
+                            String name = author.getNick();
+                            if (name==null)
+                                name = author.getName();
+                            sb.append(" ");
+                            sb.append(name);
+                        } catch (PersistanceException e) {
+                            // user coudl be deleted
+                        }
+                    }
                 }
             }
         }
