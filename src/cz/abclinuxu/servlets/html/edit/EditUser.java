@@ -351,7 +351,7 @@ public class EditUser implements AbcAction, Configurable {
             canContinue &= checkPassword(params, managed, env);
 
         if (!canContinue)
-            return FMTemplateSelector.select("EditUser", "editBasic", env, request);
+            return FMTemplateSelector.select("EditUser", "changePassword", env, request);
 
         canContinue &= setPassword(params,managed,env);
 
@@ -414,7 +414,7 @@ public class EditUser implements AbcAction, Configurable {
             canContinue &= checkPassword(params, managed, env);
 
         if (!canContinue)
-            return FMTemplateSelector.select("EditUser", "editBasic", env, request);
+            return FMTemplateSelector.select("EditUser", "editPersonal", env, request);
 
         canContinue &= setSignature(params, managed, env);
         canContinue &= setSex(params, managed, env);
@@ -472,7 +472,7 @@ public class EditUser implements AbcAction, Configurable {
             canContinue &= checkPassword(params, managed, env);
 
         if (!canContinue)
-            return FMTemplateSelector.select("EditUser", "editBasic", env, request);
+            return FMTemplateSelector.select("EditUser", "editProfile", env, request);
 
         canContinue &= setMyPage(params, managed, env);
         canContinue &= setLinuxUserFrom(params, managed);
@@ -558,7 +558,7 @@ public class EditUser implements AbcAction, Configurable {
             canContinue &= checkPassword(params, managed, env);
 
         if (!canContinue)
-            return FMTemplateSelector.select("EditUser", "editBasic", env, request);
+            return FMTemplateSelector.select("EditUser", "editSettings", env, request);
 
         canContinue &= setCssUrl(params, managed);
         canContinue &= setCookieValidity(params, managed);
@@ -572,7 +572,7 @@ public class EditUser implements AbcAction, Configurable {
         canContinue &= setReturnBackToForum(params, managed);
 
         if ( !canContinue )
-            return actionEditSettings(request, env);
+            return FMTemplateSelector.select("EditUser", "editSettings", env, request);
 
         persistance.update(managed);
 
@@ -617,7 +617,7 @@ public class EditUser implements AbcAction, Configurable {
             canContinue &= checkPassword(params, managed, env);
 
         if (!canContinue)
-            return FMTemplateSelector.select("EditUser", "editBasic", env, request);
+            return FMTemplateSelector.select("EditUser", "editSubscription", env, request);
 
         if (canContinue) {
             canContinue &= setWeeklySummary(params, managed);
@@ -650,7 +650,7 @@ public class EditUser implements AbcAction, Configurable {
             canContinue &= checkPassword(params, managed, env);
 
         if (!canContinue)
-            return FMTemplateSelector.select("EditUser", "editBasic", env, request);
+            return FMTemplateSelector.select("EditUser", "uploadPhoto", env, request);
 
         canContinue &= setPhoto(params, managed, env);
 
