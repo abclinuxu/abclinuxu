@@ -38,7 +38,7 @@ public class MonitorAction {
      * @param object Affected GenericObject.
      */
     public MonitorAction(User user, UserAction action, ObjectType type, GenericDataObject object, String url) {
-        this.actor = user.getName();
+        this.actor = user.getNick()!=null ? user.getNick():user.getName();
         this.actorId = new Integer(user.getId());
         this.action = action;
         this.type = type;
