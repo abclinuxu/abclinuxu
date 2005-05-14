@@ -16,11 +16,13 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import java.util.*;
 import java.util.prefs.Preferences;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.log4j.Logger;
 import org.dom4j.Element;
@@ -47,6 +49,8 @@ public class EmailSender implements Configurable {
 
     /** FROM attribute of Email */
     public static final String KEY_FROM = "FROM";
+    /** Name of sender */
+    public static final String KEY_SENDER_NAME = "SENDER";
     /** TO attribute of Email */
     public static final String KEY_TO = "TO";
     /** SUBJECT attribute of Email */
@@ -78,7 +82,9 @@ public class EmailSender implements Configurable {
      */
     public static boolean sendEmail(Map params) {
         Properties props = new Properties();
-        String from = (String) params.get(KEY_FROM), to = (String) params.get(KEY_TO);
+        String from = (String) params.get(KEY_FROM);
+        String senderName = (String) params.get(KEY_SENDER_NAME);
+        String to = (String) params.get(KEY_TO);
         String cc = (String) params.get(KEY_CC);
         String bcc = (String) params.get(KEY_BCC);
         if ( from==null || from.length()==0 )
@@ -90,7 +96,11 @@ public class EmailSender implements Configurable {
         try {
             AbcEmail message = new AbcEmail(session);
             message.setSubject((String) params.get(KEY_SUBJECT));
-            message.setFrom(new InternetAddress(from));
+            if (senderName!=null) {
+                senderName = DiacriticRemover.getInstance().removeDiacritics(senderName);
+                message.setFrom(new InternetAddress(from, senderName));
+            } else
+                message.setFrom(new InternetAddress(from));
             message.setRecipient(Message.RecipientType.TO,new InternetAddress(to));
             if (cc!=null)
                 message.setRecipient(Message.RecipientType.CC,new InternetAddress(cc));
@@ -113,6 +123,9 @@ public class EmailSender implements Configurable {
             return true;
         } catch (MessagingException e) {
             log.error("Cannot send email sent from "+from+" to "+to+".",e);
+            return false;
+        } catch (UnsupportedEncodingException e) {
+            log.debug("Setting sender name failed on '"+senderName+"'", e);
             return false;
         }
     }
@@ -148,6 +161,7 @@ public class EmailSender implements Configurable {
         Persistance persistance = PersistanceFactory.getPersistance();
         String subject = (String) params.get(KEY_SUBJECT);
         Address sender = null;
+        String senderName = (String) params.get(KEY_SENDER_NAME);
         Object from = params.get(KEY_FROM);
         if (from==null )
             from = defaultFrom;
@@ -170,9 +184,13 @@ public class EmailSender implements Configurable {
 
             if (from instanceof Address)
                 sender = (Address) from;
-            else
+            else if(senderName != null) {
+                senderName = DiacriticRemover.getInstance().removeDiacritics(senderName);
+                message.setFrom(new InternetAddress((String)from, senderName));
+            } else
                 sender = new InternetAddress((String) from);
             message.setFrom(sender);
+
             message.setMessageId((String) params.get(KEY_MESSAGE_ID));
             message.setReferences((String) params.get(KEY_REFERENCES));
 
@@ -208,6 +226,8 @@ public class EmailSender implements Configurable {
             transport.close();
         } catch (MessagingException e) {
             log.error("Error - is JavaMail set up correctly?", e);
+        } catch (UnsupportedEncodingException e) {
+            log.debug("Setting sender name failed on '" + senderName + "'", e);
         }
         log.info("Sent "+count+" emails.");
 
