@@ -608,6 +608,7 @@ public class EditDiscussion implements AbcAction {
     protected String actionRemoveComment2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         User user = (User) env.get(Constants.VAR_USER);
         Relation mainRelation = (Relation) env.get(VAR_RELATION);
 
@@ -632,11 +633,15 @@ public class EditDiscussion implements AbcAction {
         String xpath;
         Element element;
         List children;
+        String title = null, content = null;
 
         while(stack.size()>0) {
             threadId = ((Integer)stack.remove(0)).intValue();
             xpath = "//comment[@id='"+threadId+"']";
-            recordData.selectSingleNode(xpath).detach();
+            element = (Element) recordData.selectSingleNode(xpath);
+            element.detach();
+            title = element.elementText("title");
+            content = element.elementText("text");
             AdminLogger.logEvent(user, "smazal vlakno "+threadId+", relace "+mainRelation.getId());
 
             xpath = "//comment[parent/text()='"+threadId+"']";
@@ -664,7 +669,15 @@ public class EditDiscussion implements AbcAction {
         persistance.update(discussion);
         SQLTool.getInstance().setUpdatedTimestamp(discussion, lastUpdate);
 
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        // run monitor
+        String url = mainRelation.getUrl();
+        if (url == null)
+            url = "http://www.abclinuxu.cz" + urlUtils.getPrefix() + "/show/" + mainRelation.getId();
+        MonitorAction action = new MonitorAction(user, UserAction.REMOVE, ObjectType.DISCUSSION, discussion, url);
+        action.setProperty(DiscussionDecorator.PROPERTY_NAME, title);
+        action.setProperty(DiscussionDecorator.PROPERTY_CONTENT, content);
+        MonitorPool.scheduleMonitorAction(action);
+
         urlUtils.redirect(response, "/show/"+mainRelation.getId());
         return null;
     }
