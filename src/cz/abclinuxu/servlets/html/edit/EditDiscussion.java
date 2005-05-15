@@ -391,7 +391,10 @@ public class EditDiscussion implements AbcAction {
 
         url = (String) params.get(PARAM_URL);
         if (url==null)
-            url = "/show/"+relation.getId()+"#"+commentId;
+            url = relation.getUrl();
+        if (url==null)
+            url = "/show/"+relation.getId();
+        url += "#"+commentId;
         urlUtils.redirect(response, url);
         return null;
     }
@@ -413,7 +416,10 @@ public class EditDiscussion implements AbcAction {
         } else
             ServletUtils.addError(Constants.ERROR_GENERIC, "Tuto akci smíte provést jen jednou.", env, request.getSession());
 
-        urlUtils.redirect(response, "/show/" + relation.getId());
+        String url = relation.getUrl();
+        if (url == null)
+            url = "/show/" + relation.getId();
+        urlUtils.redirect(response, url);
         return null;
     }
 
@@ -476,7 +482,10 @@ public class EditDiscussion implements AbcAction {
         }
         persistance.update(record);
 
-        urlUtils.redirect(response, "/show/"+relation.getId());
+        String url = relation.getUrl();
+        if (url == null)
+            url = "/show/" + relation.getId();
+        urlUtils.redirect(response, url);
         return null;
     }
 
@@ -571,7 +580,10 @@ public class EditDiscussion implements AbcAction {
         AdminLogger.logEvent(user, "upravil vlakno "+threadId+" diskuse "+discussion.getId()+", relace "+relation.getId());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/show/"+relation.getId());
+        String url = relation.getUrl();
+        if (url == null)
+            url = "/show/" + relation.getId();
+        urlUtils.redirect(response, url);
         return null;
     }
 
@@ -678,7 +690,10 @@ public class EditDiscussion implements AbcAction {
         action.setProperty(DiscussionDecorator.PROPERTY_CONTENT, content);
         MonitorPool.scheduleMonitorAction(action);
 
-        urlUtils.redirect(response, "/show/"+mainRelation.getId());
+        url = relation.getUrl();
+        if (url == null)
+            url = "/show/" + relation.getId();
+        urlUtils.redirect(response, url);
         return null;
     }
 
@@ -696,6 +711,8 @@ public class EditDiscussion implements AbcAction {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String url = (String) params.get(PARAM_URL);
+        if (url == null)
+            url = relation.getUrl();
         if (url==null)
             url = "/show/"+relation.getId();
         urlUtils.redirect(response, url);
@@ -735,8 +752,11 @@ public class EditDiscussion implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         AdminLogger.logEvent(user, "zmrazil diskusi "+discussion.getId()+", relace "+relation.getId());
 
+        String url = relation.getUrl();
+        if (url == null)
+            url = "/show/" + relation.getId();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/show/"+relation.getId());
+        urlUtils.redirect(response, url);
         return null;
     }
 
