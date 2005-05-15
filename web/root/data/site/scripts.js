@@ -13,6 +13,17 @@ function prepni_sloupec() {
     }
 }
 
+function schovej_vlakno(id) {
+    if (document.getElementById('div#'+id).style.display == 'none') {
+        document.getElementById('div#'+id).style.display = 'block'
+        document.getElementById('a#'+id).innerHTML = 'Sbalit'
+    }
+    else {
+        document.getElementById('div#'+id).style.display = 'none'
+        document.getElementById('a#'+id).innerHTML = 'Rozbalit'
+    }
+}
+
 function addSidebar() {
     if ((typeof window.sidebar == "object") && (typeof window.sidebar.addPanel == "function")) {
         window.sidebar.addPanel("www.abclinuxu.cz",'http://www.abclinuxu.cz/?varianta=sidebar',"");
@@ -41,21 +52,58 @@ function addBookmark() {
 }
 
 // http://www.alexking.org - LGPL
-function insertAtCursor(myField, myValue) {
+function insertAtCursor(myField, prefix, postfix) {
+	var re = new RegExp("^(.*\\S)(\\s*)$");
+  myField.focus();
   //IE support
   if (document.selection) {
-    myField.focus();
     sel = document.selection.createRange();
-    sel.text = myValue;
+		var selection = sel.text;
+		var wasEmpty = (selection == "");
+		var space = "";
+		if (!wasEmpty) {
+			var matches = selection.match(re);
+			if (matches) {
+				selection = RegExp.$1;
+				space = RegExp.$2;
+			}
+		}
+    sel.text = prefix+selection+postfix+space;
+		sel.collapse(false);
+		if (wasEmpty) {
+			sel.moveEnd('character',-(prefix.length+1))
+		}
+		sel.select();
   }
   //MOZILLA/NETSCAPE support
-  else if (myField.selectionStart || myField.selectionStart == '0') {
-    var startPos = myField.selectionStart;
-    var endPos = myField.selectionEnd;
-    myField.value = myField.value.substring(0, startPos)
-                  + myValue
-                  + myField.value.substring(endPos, myField.value.length);
-  } else {
-    myField.value += myValue;
-  }
+  else {
+		if (myField.selectionStart || myField.selectionStart == '0') {
+			var startPos = myField.selectionStart;
+			var endPos = myField.selectionEnd;
+			var selection = myField.value.substring(startPos, endPos);
+			var wasEmpty = (startPos == endPos);
+			var space = "";
+			if (!wasEmpty) {
+				var matches = selection.match(re);
+				if (matches) {
+					selection = RegExp.$1;
+					space = RegExp.$2;
+				}
+			}
+			myField.value = myField.value.substring(0, startPos)
+										+ prefix+selection+postfix+space
+										+ myField.value.substring(endPos, myField.value.length);
+
+			var newPosition;
+			if (wasEmpty) {
+				newPosition = startPos+prefix.length;
+			} else {
+				newPosition = startPos+prefix.length+selection.length+postfix.length+space.length;
+			}
+			myField.setSelectionRange(newPosition, newPosition);
+		} else {
+			myField.value += prefix+postfix;
+			myField.setSelectionRange(startPos+prefix.length, startPos+prefix.length);
+		}
+	}
 }
