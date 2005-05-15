@@ -51,7 +51,7 @@
 
 <#if is_question>
  <h1 class="st_nadpis">Otázka</h1>
- <@lib.showComment TOOL.createComment(ITEM), ITEM.id, RELATION.id, !frozen />
+ <@lib.showThread TOOL.createComment(ITEM), ITEM.id, RELATION.id, 0, !frozen />
 
  <p class="wrongForum">
  Tato otázka je v diskusním fóru <a href="/forum/dir/${RELATION.upper}">${TOOL.childName(RELATION.upper)}</a>.

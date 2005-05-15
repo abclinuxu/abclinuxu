@@ -171,30 +171,28 @@
     </ul>
 </#if>
 
-<#if IS_INDEX?exists>
-
-<div class="st_nad_rozc"><div class="st_rozc">
-    <h1 class="st_nadpis">Rozcestník</h1>
-	<div class="s"><div class="s_sekce"><div class="rozc">
-    <table>
-    <#list TOOL.createServers([16,1,13,12,17,14]) as server>
-        <#if server_index % 3 = 0><tr><#assign open=true></#if>
-        <td>
-        <a class="server" href="${server.url}">${server.name}</a>
-            <ul>
-            <#assign linky = TOOL.sublist(SORT.byDate(LINKS[server.name],"DESCENDING"),0,3)>
-            <#list linky as link>
-                <li><a href="${link.url}">${link.text}</a></li>
-            </#list>
-            </ul>
-        </td>
-        <#if server_index % 3 = 2></tr><#assign open=false></#if>
-    </#list>
-    <#if open></tr></#if>
-    </table>
-	</div></div></div>
-</div></div>
-
+<#if TOOL.isGuidePostEnabled(USER?if_exists)>
+    <div class="st_nad_rozc"><div class="st_rozc">
+        <h1 class="st_nadpis">Rozcestník</h1>
+        <div class="s"><div class="s_sekce"><div class="rozc">
+        <table>
+        <#list TOOL.createServers([16,1,13,12,17,14]) as server>
+            <#if server_index % 3 = 0><tr><#assign open=true></#if>
+            <td>
+            <a class="server" href="${server.url}">${server.name}</a>
+                <ul>
+                <#assign linky = TOOL.sublist(SORT.byDate(LINKS[server.name],"DESCENDING"),0,3)>
+                <#list linky as link>
+                    <li><a href="${link.url}">${link.text}</a></li>
+                </#list>
+                </ul>
+            </td>
+            <#if server_index % 3 = 2></tr><#assign open=false></#if>
+        </#list>
+        <#if open></tr></#if>
+        </table>
+        </div></div></div>
+    </div></div>
 </#if>
 
 <#include "../footer.ftl">

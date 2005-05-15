@@ -6,35 +6,41 @@
 
 <p>Zprávièka je krátký text, který upozoròuje na¹e ètenáøe
 na zajímavou informaci, stránky èi událost ve svìtì Linuxu,
-Open Source èi IT. Zprávièky neslou¾í pro dotazy, reklamní
-sdìlení musí být pøedem konzultovány s provozovatelem.
+Open Source èi IT. Zprávièky o Microsoftu ma¾eme, stejnì
+jako dotazy, ¾ádosti o pomoc èi pøedem nedomluvené reklamy.
 </p>
 
 <h2>Jak ji mám napsat?</h2>
 
-<p>Do textového pole napi¹te text va¹í zprávièky. Zprávièka smí
-obsahovat pouze text, z HTML znaèek je povolen pouze odkaz.
-V¾dy pi¹te s háèky a èárkami. Zprávièka by mìla mít aspoò dvì vìty
-a obsahovat podrobnosti, aby dávala smysl i po vyti¹tìní.
-Nejsme portál o Windows, tak¾e Microsoft do zprávièek nepatøí.
-</p>
+<p>Jedinou povolenou HTML znaèkou je odkaz, URL musí být absolutní
+(zaèínat http://). V¾dy pi¹te s háèky a èárkami. Zprávièka by mìla
+mít alespoò dvì vìty a obsahovat podrobnosti, aby dávala smysl,
+ani¾ by èlovìk musel nav¹tívit zmínìná URL. Titulek by mìl krátce
+popsat hlavní téma zprávièky, bude pou¾it v RSS a vygeneruje se
+z nìj URL (ve výpisu zprávièek v¹ak zobrazen nebude).</p>
 
 <h2>A co dále?</h2>
 
 <p>Va¹e zprávièka bude èekat, ne¾ ji nìkterý správce schválí.
-Správce mù¾e upravit vá¹ text (napøíklad jej doplnit, opravit pøeklep ..)
+Správce mù¾e upravit vá¹ text (napøíklad jej doplnit, opravit pøeklep, ...)
 nebo zmìnit kategorii. V pøípadì zamítnutí vám bude poslán email
-s vysvìtlením. Teprve po schválení bude zprávièka zveøejnìna.
-</p>
+s vysvìtlením. Teprve po schválení bude zprávièka zveøejnìna.</p>
 
 <#if PARAMS.preview?exists>
  <h1 class="st_nadpis">Náhled</h1>
+ <h2>${TOOL.xpath(RELATION.child,"/data/title")?if_exists}</h2>
  <@lib.showNews RELATION />
 </#if>
 
-<form action="${URL.make("/edit")}" method="POST">
+<form action="${URL.make("/edit")}" method="POST" name="newsForm">
   <p>
-   <span class="required">Obsah zprávièky</span><br>
+   <span class="required">Titulek</span><br>
+   <input type="text" name="title" size="40" maxlength="40" value="${PARAMS.title?if_exists}">
+   <div class="error">${ERRORS.title?if_exists}</div>
+   <span class="required">Obsah</span>
+   <div class="form-edit">
+     <a href="javascript:insertAtCursor(document.newsForm.content, '<a href=&quot;&quot;>', '</a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
+   </div>
    <textarea name="content" cols="60" rows="10" tabindex="1">${PARAMS.content?if_exists?html}</textarea>
    <div class="error">${ERRORS.content?if_exists}</div>
   </p>

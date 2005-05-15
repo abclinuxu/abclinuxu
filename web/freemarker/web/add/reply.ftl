@@ -17,7 +17,7 @@
 
 <#if THREAD?exists>
  <h1>Pøíspìvek na který reagujete</h1>
- <@lib.showComment THREAD, 0, 0, false />
+ <@lib.showThread THREAD, 0, 0, 0, false />
 
  <script language="javascript1.2" type="text/javascript">
     original = "${TOOL.xpath(THREAD.data,"text")?js_string}";
@@ -31,7 +31,7 @@
 <#if PREVIEW?exists>
  <h1>Náhled va¹eho pøíspìvku</h1>
  <div style="padding-left: 30pt">
-  <@lib.showComment PREVIEW, 0, 0, false />
+  <@lib.showThread PREVIEW, 0, 0, 0, false />
  </div>
 </#if>
 
@@ -69,6 +69,9 @@
         <a href="javascript:insertAtCursor(document.replyForm.text, '<a href=&quot;&quot;>', '</a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
         <a href="javascript:insertAtCursor(document.replyForm.text, '<p>', '</p>');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
         <a href="javascript:insertAtCursor(document.replyForm.text, '<pre>', '</pre>');" id="mono" title="Vlo¾it znaèku formátovaného textu. Vhodné pro konfiguraèní soubory èi výpisy.">&lt;pre&gt;</a>
+	    <a href="javascript:insertAtCursor(document.replyForm.text, '<code>', '</code>');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
+	    <a href="javascript:insertAtCursor(document.replyForm.text, '&amp;lt;', '');" id="mono" title="Vlo¾it písmeno &lt;">&lt;</a>
+	    <a href="javascript:insertAtCursor(document.replyForm.text, '&amp;gt;', '');" id="mono" title="Vlo¾it písmeno &gt;">&gt;</a>
         <#if THREAD?exists>
             <a href="javascript:cituj(document.replyForm.text);" id="mono" title="Vlo¾í komentovaný pøíspìvek jako citaci">Citace</a>
         </#if>

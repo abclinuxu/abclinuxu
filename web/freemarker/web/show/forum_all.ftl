@@ -161,7 +161,7 @@ dotaz, projdìte si fóra v pøede¹lých sekcích.
 <table border="0" cellspacing="6" class="siroka">
 <tr>
 <td><a href="/forum/dir/49651">SUSE</a></td>
-<td><a href="/forum/dir/49645">Mandrake</a></td>
+<td><a href="/forum/dir/49645">Mandrake, Mandriva</a></td>
 <td><a href="/forum/dir/49644">RedHat, Fedora</a></td>
 <td><a href="/forum/dir/50239">®ivé distribuce, Knoppix, SLAX</a></td>
 </tr>

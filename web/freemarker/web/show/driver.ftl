@@ -3,14 +3,14 @@
 <#assign who=TOOL.createUser(ITEM.owner)>
 <p>
  Tuto polo¾ku naposledy upravil <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
- dne ${DATE.show(ITEM.created,"CZ_FULL")}.
+ dne ${DATE.show(ITEM.updated,"CZ_FULL")}.
 </p>
 <p>
  <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">Vlo¾ novou verzi</a>
 </p>
 
 <p class="monitor"><b>AbcMonitor</b> vám emailem za¹le upozornìní pøi zmìnì.
- <#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"'")?exists>
+ <#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")?exists>
   <#assign monitorState="Vypni">
  <#else>
   <#assign monitorState="Zapni">

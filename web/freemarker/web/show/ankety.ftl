@@ -6,6 +6,13 @@
 <#assign count=15, until=from+count>
 <#if (until>=ankety?size)><#assign until=ankety?size-1></#if>
 
+<!--<h1 class="st_nadpis"><a href="/clanky/show/78675">Anketa o nejpopulárnìj¹í distribuci</a></h1>
+
+<p>Pøipojte se k hlasování v na¹í ka¾doroèní <a href="/clanky/show/78675">anketì 
+o nejpopulárnìj¹í distribuci</a>. Kromì zvolení distribuce mù¾ete vyplnit i dotazník,
+jeho¾ výsledky nám v¹em pomohou udìlat si obrázek o tom, kdo jsou u¾ivatelé GNU/Linuxu, 
+proè jim vyhovuje, a jaký hardware k jeho provozování pou¾ívají.</p>-->
+
 <h1 class="st_nadpis">Archiv anket</h1>
 <#if from==0 && USER?exists && USER.hasRole("poll admin")>
  <p>
@@ -37,3 +44,5 @@
 </p>
 
 <#include "../footer.ftl">
+
+

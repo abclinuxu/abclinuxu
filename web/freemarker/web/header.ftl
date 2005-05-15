@@ -44,9 +44,9 @@
 			--><a href="/hardware" class="za_mn_odkaz">Hardware</a><!--
 			--><a href="/clanky" class="za_mn_odkaz">Èlánky</a><!--
 			--><a href="/blog" class="za_mn_odkaz">Blogy</a><!--
-		  	--><a href="http://prace.abclinuxu.cz" class="za_mn_odkaz">Práce</a><!--
-			--><a href="/slovnik" class="za_mn_odkaz">Slovník</a><!--
+			--><a href="http://prace.abclinuxu.cz" class="za_mn_odkaz">Práce</a><!--
 			--><a href="/download/abicko.jsp" class="za_mn_odkaz">Abíèko</a><!--
+			--><a href="/slovnik" class="za_mn_odkaz">Slovník</a><!--
 			--><a href="/clanky/dir/250" class="za_mn_odkaz">Ankety</a><!--
 			--><a href="/drivers" class="za_mn_odkaz">Ovladaèe</a>
 		</div>
@@ -118,7 +118,7 @@
             </#if>
 
             <!-- ZPRÁVIÈKY -->
-            <#assign news=VARS.getFreshNews(user?if_exists)>
+            <#assign news=VARS.getFreshNews(USER?if_exists)>
             <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Zprávièky</h1></div></div>
             <div class="s_sekce">
 
@@ -153,7 +153,7 @@
                 </div>
             </div>
 
-            <#if ! IS_INDEX?exists && TOOL.isGuidePostEnabled(USER?if_exists)>
+            <#if ! IS_INDEX?exists>
                 <!-- prace.abclinuxu.cz -->
                 <div class="s_nad_h1"><div class="s_nad_pod_h1">
                     <h1><a href="http://prace.abclinuxu.cz">Prace.abclinuxu.cz</a></h1>
@@ -162,22 +162,23 @@
                 <div class="s_sekce">
                     <#include "/include/prace.txt">
                 </div>
-
-                <!-- ROZCESTNÍK -->
-                <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Rozcestník</h1></div></div>
-                <div class="s_sekce">
-                    <div class="rozc">
-                        <#list TOOL.createServers([7,16,1,13,14,12,17,15,3,2,5]) as server>
-                            <a class="server" href="${server.url}">${server.name}</a><br>
-                            <ul>
-                            <#assign linky = TOOL.sublist(SORT.byDate(LINKS[server.name],"DESCENDING"),0,2)>
-                            <#list linky as link>
-                                <li><a href="${link.url}">${link.text}</a></li>
+                <#if TOOL.isGuidePostEnabled(USER?if_exists)>
+                    <!-- ROZCESTNÍK -->
+                    <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Rozcestník</h1></div></div>
+                    <div class="s_sekce">
+                        <div class="rozc">
+                            <#list TOOL.createServers([7,16,1,13,14,12,17,15,3,2,5]) as server>
+                                <a class="server" href="${server.url}">${server.name}</a><br>
+                                <ul>
+                                <#assign linky = TOOL.sublist(SORT.byDate(LINKS[server.name],"DESCENDING"),0,2)>
+                                <#list linky as link>
+                                    <li><a href="${link.url}">${link.text}</a></li>
+                                </#list>
+                                </ul>
                             </#list>
-                            </ul>
-                        </#list>
+                        </div>
                     </div>
-                </div>
+                </#if>
             </#if>
 
             <!-- REDAKCE -->
@@ -191,8 +192,8 @@
                   <li><a href="/hardware/dir/3500">Vzkazy správcùm</a> (${VARS.counter.REQUESTS})</li>
                   <li><a href="mailto:klara.sedlackova@stickfish.cz">Inzerce</a></li>
                   <#if USER?exists && USER.isMemberOf(11246)>
-                   <li><a href="${URL.make("/hardware/dir/50795")}">TODO (${VARS.counter.TODO?if_exists})</a></li>
-                   <li><a href="${URL.make("/hardware/dir/8000")}">Sekce systém</a></li>
+                   <li><a href="/system/todo">TODO (${VARS.counter.TODO?if_exists})</a></li>
+                   <li><a href="/system">Sekce systém</a></li>
                    <li><a href="/Admin">Administrace portálu</a></li>
                   </#if>
                  </ul>

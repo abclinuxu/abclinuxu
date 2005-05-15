@@ -47,8 +47,8 @@
         </#list>
     </div>
 
-    <#assign LINKS = BLOG_XML.data.custom.links.link>
-    <#if LINKS?size!=0>
+    <#assign links = BLOG_XML.data.custom.links.link>
+    <#if links?size!=0>
         <div class="s_nad_h1"><div class="s_nad_pod_h1">
             <a class="info" href="#">?<span class="tooltip">Seznam mých oblíbených stránek, které pravidelnì nav¹tìvuji.</span></a>
             <h1>Oblíbené stránky</h1>
@@ -56,7 +56,7 @@
 
         <div class="s_sekce">
             <ul>
-            <#list LINKS as link>
+            <#list links as link>
                 <li><a href="${link}">${link.@caption}</a></li>
             </#list>
             </ul>
