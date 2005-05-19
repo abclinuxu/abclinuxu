@@ -97,7 +97,7 @@ public class UpdateLinks extends TimerTask {
 //            definitions.put(new Server(UG), new ServerInfo("http://underground.cz/backend.php", null, ServerInfo.RSS));
             definitions.put(new Server(PENGUIN), new ServerInfo("http://www.penguin.cz/rss.php3", null, ServerInfo.RSS));
             definitions.put(new Server(ABCLINUXU), new ServerInfo("http://localhost:8080/auto/abc.rss", null, ServerInfo.RSS));
-            definitions.put(new Server(MANDRAKE), new ServerInfo("http://www.mandrake.cz/titles_abc.php"));
+            definitions.put(new Server(MANDRAKE), new ServerInfo("http://www.mandrake.cz/titles_abc.php", "Windows-1250", ServerInfo.TRAFIKA));
             definitions.put(new Server(CZILLA), new ServerInfo("http://www.czilla.cz/rss/rss.html", null, ServerInfo.RSS));
             definitions.put(new Server(OPENOFFICE), new ServerInfo("http://klub.openoffice.cz/rss", null, ServerInfo.RSS));
             definitions.put(new Server(SLASHDOT), new ServerInfo("http://slashdot.org/index.rss", null, ServerInfo.RSS));
