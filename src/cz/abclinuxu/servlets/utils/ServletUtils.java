@@ -9,6 +9,7 @@ import cz.abclinuxu.data.User;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.exceptions.PersistanceException;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.Misc;
@@ -179,17 +180,12 @@ public class ServletUtils implements Configurable {
         Persistance persistance = PersistanceFactory.getPersistance();
         String login = (String) params.get(PARAM_LOG_USER);
         if ( ! Misc.empty(login) ) {
-            user = new User();
-            user.setLogin(login);
-            List searched = new ArrayList(1);
-            searched.add(user);
-
-            List found = persistance.findByExample(searched,null);
-            if ( found.size()==0 ) {
+            Integer id = SQLTool.getInstance().getUserByLogin(login);
+            if ( id==null ) {
                 ServletUtils.addError(PARAM_LOG_USER,"Pøihla¹ovací jméno nenalezeno!",env, null);
                 return;
             }
-            user = (User) found.get(0);
+            user = new User(id.intValue());
             user = (User) persistance.findById(user);
 
             String password = (String) params.get(PARAM_LOG_PASSWORD);

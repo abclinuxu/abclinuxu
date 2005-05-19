@@ -52,6 +52,7 @@ public final class SQLTool implements Configurable {
     public static final String PREF_ITEMS_WITH_TYPE = "items.with.type";
     public static final String PREF_MAX_POLL = "max.poll";
     public static final String PREF_MAX_USER = "max.user";
+    public static final String PREF_USER_BY_LOGIN = "user.by.login";
     public static final String PREF_COUNT_ARTICLES_BY_USER = "count.articles.by.user";
     public static final String PREF_DICTIONARY_RELATION_BY_URL_NAME = "relation.dictionary.by.urlname";
     public static final String PREF_RELATION_BY_URL = "relation.by.url";
@@ -79,7 +80,7 @@ public final class SQLTool implements Configurable {
     private String relationsQuestionsByUser, relationsCommentsByUser;
     private String relationDictionaryByUrlName, relationByURL;
     private String usersWithWeeklyEmail, usersWithForumByEmail, usersWithRoles, usersInGroup;
-    private String maxPoll, maxUser;
+    private String maxPoll, maxUser, userByLogin;
     private String itemsByType;
     private String countArticlesByUser;
     private String insertLastComment, getLastComment, getXthComment, deleteOldComments;
@@ -855,6 +856,19 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Finds user with specified login.
+     * @return id of found user or null, if there is no such user
+     * @throws cz.abclinuxu.exceptions.PersistanceException
+     *          if there is an error with the underlying persistent storage.
+     */
+    public Integer getUserByLogin(String login) {
+        StringBuffer sb = new StringBuffer(userByLogin);
+        List params = new ArrayList();
+        params.add(login);
+        return loadNumber(sb.toString(), params);
+    }
+
+    /**
      * Finds the last poll. If it is not active, null is returned.
      * @return last initialized poll, if it is active, null otherwise.
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
@@ -1218,6 +1232,7 @@ public final class SQLTool implements Configurable {
         usersInGroup = getValue(PREF_USERS_IN_GROUP, prefs);
         maxPoll = getValue(PREF_MAX_POLL, prefs);
         maxUser = getValue(PREF_MAX_USER, prefs);
+        userByLogin = getValue(PREF_USER_BY_LOGIN, prefs);
         itemsByType = getValue(PREF_ITEMS_WITH_TYPE, prefs);
         countArticlesByUser = getValue(PREF_COUNT_ARTICLES_BY_USER, prefs);
         insertLastComment = getValue(PREF_INSERT_LAST_COMMENT, prefs);
