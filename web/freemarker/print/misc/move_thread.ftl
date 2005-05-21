@@ -31,7 +31,8 @@ do nìkterého jeho potomka, vznikne velký problém!</p>
  <input type="hidden" name="threadId" value="${PARAMS.threadId}">
 </form>
 
-<#list TOOL.createDiscussionTree(DISCUSSION) as thread>
+<#assign diz = TOOL.createDiscussionTree(DISCUSSION,"no",false)>
+<#list diz.threads as thread>
  <@showThread thread, 0 />
 </#list>
 
