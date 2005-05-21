@@ -51,7 +51,7 @@ public class DiscussionDecorator implements Decorator, Configurable {
             changeMessage = actionCensore;
 
         env.put(VAR_ACTION,changeMessage);
-        env.put(EmailSender.KEY_SENDER_NAME, action.actor);
+//        env.put(EmailSender.KEY_SENDER_NAME, action.actor);
         env.put(EmailSender.KEY_SENT_DATE, action.performed);
         env.put(EmailSender.KEY_SUBJECT, (String) action.getProperty(PROPERTY_NAME));
         env.put(EmailSender.KEY_TEMPLATE, "/mail/monitor/notif_discussion.ftl");

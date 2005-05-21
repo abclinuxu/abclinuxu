@@ -54,18 +54,5 @@
  <a href="http://www.broadnet.cz">Broadnet - hosting</a>
 </p>
 
-<p>
- <b>Rozcestník</b>
-</p>
-
-<#list TOOL.createServers([7,1,13,12,3,2,5,4]) as server>
-<p>
- <b><a href="${server.url}">${server.name}</a></b><br>
- <#assign linky = TOOL.sublist(SORT.byDate(LINKS[server.name],"DESCENDING"),0,4)>
- <#list linky as link>
-  <a href="${link.url}">${link.text}</a><#if link_has_next>,</#if>
- </#list>
-</#list>
-
 </body>
 </html>

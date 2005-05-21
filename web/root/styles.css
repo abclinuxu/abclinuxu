@@ -61,14 +61,9 @@ td {
 	color:blue;
 }
 
-.required {
-	font-weight: bolder
-}
+.required { font-weight: bolder }
 
-.cistic {
-	clear:		both;
-}
-
+.cistic { clear: both; }
 
 .za {
 	width:		100%;
@@ -76,21 +71,13 @@ td {
 }
 
 .obal {
-	margin:		5px;
-	margin-top:	0px;
+	margin:		0 5px 5px 5px;
 	border:		1px solid gray;
 	background-color: white;
 }
 
-.obal_ls {
-	float:		left;
-}
-
-.obal_ps {
-	float:		right;
-}
-
-
+.obal_ls, .le { float: left; }
+.obal_ps, .ri { float: right; }
 
 .za {
 	margin:		0px;
@@ -122,6 +109,7 @@ td {
 .za_hledat input.text {
 	border:		1px solid gray;
 	background-color: #EEEEEE;
+	color:		black;
 	width:		120px;
 	font-size:	inherit;
 }
@@ -157,10 +145,7 @@ td {
 }
 
 a.za_mn_odkaz {
-	padding-left:	10px;
-	padding-right:	10px;
-	padding-top:	2px;
-	padding-bottom:	1px;
+	padding:	2px 10px 1px 10px;
 	background-color: #E6E6E6;
 	border-top:	1px solid #FFFFFF;
 	border-left:	1px solid #FFFFFF;
@@ -178,7 +163,6 @@ a.za_mn_odkaz:hover {
 	border-top:	1px solid #E0E0E0;
 	border-left:	1px solid #E0E0E0;
 	border-right:	1px solid #FFFFFF;
-
 	color:		gray;
 	font-weight:	bold;
 	text-decoration: none;
@@ -194,11 +178,12 @@ a.za_mn_odkaz:hover {
 	border-bottom:	1px solid gray;
 }
 
-.hl a {
+.hl a, .s_nad_h1 a {
 	color:		white;
 	text-decoration: none;
 }
-.hl a:hover {
+
+.hl a:hover, .s_nad_h1 a:hover {
 	background-color: transparent;
 	color:		#FFF8C3;
 	text-decoration: none;
@@ -245,18 +230,13 @@ h1.st_nadpis a:hover {
 
 .st hr { margin: 5px 0 0 -5px }
 
-.st p { margin:		0.7em 0 0 0; }
+.st p { margin: 0.7em 0 0 0; }
 
-.st a:hover img {
-	background-color: white;
-}
+.st a:hover img { background-color: white; }
 
 td.pad, code.kod, pre.kod {
 	margin:		10px;
-	padding-top:	5px;
-	padding-bottom:	5px;
-	padding-left:	10px;
-	padding-right:	10px;
+	padding:	5px 10px 5px 10px;
 	border:		1px solid silver;
 	display:	block;
 	background-color: #F0F0F0;
@@ -273,27 +253,21 @@ td.pad, code.kod, pre.kod {
 	color:		gray;
 }
 
-.cl_perex {
+.cl_perex, .perex {
 	margin-top:	15px;
 	margin-bottom:	15px;
-	padding-top:	5px;
-	padding-bottom:	5px;
-	padding-left:	20px;
-	padding-right:	20px;
+	padding:	5px 20px 5px 20px;
 	border-top:	2px solid #27648D;
 	border-bottom:	1px solid #27648D;
 	background-color: #F0F0F0;
 }
 
-.cl_perex h1 {
+.cl_perex h1, .perex h1 {
 	margin-bottom:	5px;
 }
 
 .cl_rating {
-	margin-top:	15px;
-	margin-left:	5px;
-	margin-right:	5px;
-	margin-bottom:	40px;
+	margin:		15px 5px 40px 5px;
 	border-top:	1px solid #27648D;
 	border-bottom:	1px solid silver;
 	background-color: #F0F0F0;
@@ -312,8 +286,7 @@ td.pad, code.kod, pre.kod {
 
 .tpm {
 	width:		205px;
-	background:	url('/images/site2/teplomerstupnice.gif') left top
-no-repeat;
+	background:	url('/images/site2/teplomerstupnice.gif') left top no-repeat;
 	float:		left;
 	padding: 0px;
 }
@@ -321,10 +294,7 @@ no-repeat;
 .tpm img {
 	position:	relative;
 	border:		0px;
-	margin-left:	4px;
-	margin-top:	5px;
-	margin-bottom:	5px;
-	_top: -1px;
+	margin:	5px 0 5px 4px;
 }
 
 .tpm .stup {
@@ -339,10 +309,13 @@ no-repeat;
 	padding: 	2px;
 }
 
+.stup #spatny, .stup #dobry { width:15px; height:18px }
+.stup #spatny { left: -25px }
 .s0 { left: 0px; }
 .s1 { left: 64px; }
 .s2 { left: 128px; }
 .s3 { left: 191px; }
+.stup #dobry { left: 181px }
 
 .ds {
 	margin-top:	10px;
@@ -364,15 +337,21 @@ no-repeat;
 }
 
 .ds td.td01 {
-	width:		600px;
+	width:		650px;
 }
 
 .ds td.td02 {
-	width:		100px;
+	width:		60px;
 	text-align:	center;
 }
+
 .ds td.td03 {
-	width:		300px;
+	width:		60px;
+	text-align:	center;
+}
+
+.ds td.td04 {
+	width:		230px;
 	text-align:	right;
 }
 
@@ -406,9 +385,8 @@ p.wrongForum {
 
 .signature {
 	font-size:	80%;
-	margin-top:	1ex;
+	margin:		1ex 0 0 5px;
 	font-style:	italic;
-	margin-left:	5px;
 }
 
 
@@ -454,7 +432,7 @@ p.wrongForum {
 .s_nad_pod_h1 {
 	margin:		0px;
 	padding-left:	5px;
-	padding-bottom:	2px;
+	padding-bottom:	1px;
 	display:	block;
 	background-color: #27648D;
 	font-size:	100%;
@@ -467,18 +445,7 @@ p.wrongForum {
 	font-size:	100%;
 	font-weight:	bold;
 	margin:		0px;
-	padding:	0px;
-	padding-top:	1px;
-}
-
-.s_nad_h1 a {
-	color:		white;
-}
-
-.s_nad_h1 a:hover {
-	color:		#FFF8C3;
-	background-color: transparent;
-	text-decoration: none;
+	padding:	1px 0 0 0;
 }
 
 a.info { 
@@ -493,7 +460,6 @@ a.info {
 
 .s_nad_h1 a.info {
 	float: 		right;
-	margin-right:	0.1em;
 }
 
 a.info:hover {
@@ -526,11 +492,20 @@ a.info:hover span.tooltip {
 	padding:	0 3px 0 3px;
 }
 
-.s ul {
+.s ul, .ramec-st ul {
 	margin:		0px;
 	padding-left:	15px;
 	color:		#27648D;
 	list-style-type: circle;
+}
+
+.ramec-st span { color: black }
+.ramec-st .s_nad_h1 { border-top: none; margin-top: 0 }
+.ramec-st {
+	border: 1px solid silver;
+	margin: 5px 302px 0 0;
+	padding-bottom: 5px;
+	background: #f6f6f6;
 }
 
 .s li {
@@ -553,8 +528,7 @@ a.info:hover span.tooltip {
 	border-bottom:	1px solid #C0C0C0;
 	padding-bottom:	2px;
 	font-family:	sans-serif;
-	margin-top:	5px;
-	margin-bottom:	5px;
+	margin: 5px 0 5px 0;
 }
 
 .ls {
@@ -563,9 +537,9 @@ a.info:hover span.tooltip {
 }
 
 .ls li a, .ps li a, .st_rozc li a, .ds td a, .s_nad_h1 a, .ps_reklama a,
- .textad a, a.info {text-decoration:none}
+ .textad a, a.info, .ramec-st li a, .sflista a, .cl_square a {text-decoration:none}
 .ls li a:hover, .ps li a:hover, .st_rozc li a:hover, .ds td a:hover,
-.ps_reklama a:hover, .textad a:hover {text-decoration:underline}
+.ps_reklama a:hover, .textad a:hover, .ramec-st li a:hover {text-decoration:underline}
 
 .ls_prepinac {
 	background-color: #27648D;
@@ -579,11 +553,10 @@ a.info:hover span.tooltip {
 }
 
 .ls_reklama {
-	text-align:	center;
-}
-
-.ls_reklama img {
-	margin:		5px;
+	width:		250px;
+	height:		125px;
+	margin:		5px 10px 5px 9px;
+	background:	url('/images/site2/vippozadi.png') no-repeat;
 }
 
 .ank-odpov { 
@@ -603,24 +576,17 @@ a.info:hover span.tooltip {
 	font-size:	110%;
 	padding-top:	1px;
 	padding-bottom:	1px;
-	margin-top:	5px;
-	margin-bottom:	5px;
-	margin-right:	2px;
-	margin-left:	2px;
+	margin:		5px 2px 5px 2px;
 }
 
 .ls_zpr hr {
-	margin-left:	5px;
-	margin-right:	5px;
-	margin-top:	2px;
-	margin-bottom:	4px;
+	margin:		2px 5px 4px 5px;
 }
 
 .rozc a.server {
 	margin-left:	16px;
 	padding-left:	8px;
 	padding-right:	8px;
-
 	font-weight:	bold;
 	text-decoration: none;
 	color:		black;
@@ -640,16 +606,14 @@ a.info:hover span.tooltip {
 	padding-bottom:	2px;
 }
 
-.obal_ps{
+.obal_ps {
 	background:	#ECECEC;
 	border-left:	1px solid #C0C0C0;
 	border-bottom:	1px solid #C0C0C0;
 	padding-bottom:	2px;
-	margin-top:	5px;
-	margin-bottom:	5px;
 	font-family:	sans-serif;
 	text-align: 	right;
-	margin-left:	5px;
+	margin: 5px 0 5px 5px;
 }
 
 .ps {
@@ -774,6 +738,19 @@ a.info:hover span.tooltip {
 	background:#f6f6f6;
 	width:160px }
 
+.cl_square {
+	width: 300px;
+	height: 315px;
+	float:right;
+	margin: 0 0 0.5em 0.8em;
+	background:url('/images/site2/podbanner.png') center no-repeat;
+}
+
+.cl_square a {
+	font-size: 8px;
+	color: gray;
+}
+
 .button {
 	border: 1px solid black;
 	padding: 0.1em;
@@ -801,3 +778,36 @@ a.info:hover span.tooltip {
 	margin:		0.5em 0.5em 0 0;
 	padding:	0.5em;
 }
+
+/*************** SF lista *****************/
+.sflista {
+  font-size: 11px;
+  vertical-align: middle;
+  text-align: center;
+  padding: 0px;
+  border: 1px solid;
+  border-color: #E2E2E2 #909090 #909090 #E2E2E2;
+  background-color: #ECECEC;
+}
+.sflista a {
+  display: table-cell;
+  float: left;  
+  border: 1px solid;
+  margin: 2px;
+  padding: 3px 2px 0px 2px;
+  _padding: 0px 2px 2px 2px;
+  color: #000;
+  border-color: #ECECEC;
+}
+.sflista img {
+  vertical-align: middle;
+  position: relative;
+  top: -2px;
+  _top: 0px;
+}
+.sflista a:hover {
+  color: #000;
+  border-color: #909090 #FFFFFF #FFFFFF #909090; 
+  background-color: #F0F0F0;
+}
+/*****************************************/

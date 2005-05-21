@@ -30,6 +30,11 @@ ${DATE.show(ITEM.created,"CZ_FULL")} | <a href="/Profile/${autor.id}">${autor.na
  <div class="cl_perex">${TOOL.xpath(ITEM,"/data/perex")}</div>
 </#if>
 
+<div class="cl_square">
+<a href="mailto:reklama@stickfish.cz">reklama</a><br>
+<iframe id='a104d350' name='a104d350' src='http://banner.stickfish.cz/adframe.php?n=a104d350&amp;what=zone:37' frameborder='0' scrolling='no' width='300' height='300'><a href='http://banner.stickfish.cz/adclick.php?n=a104d350'><img src='http://banner.stickfish.cz/adview.php?what=zone:37&amp;n=a104d350' border='0' alt=''></a></iframe>
+</div>
+
 ${TOOL.render(TEXT,USER?if_exists)}
 
 <#if PAGES?exists>
@@ -138,8 +143,9 @@ ${TOOL.render(TEXT,USER?if_exists)}
   <#if frozen>Rozmrazit<#else>Zmrazit</#if> diskusi</a>
  </#if>
 
- <#if USER?exists><#assign MAX_COMMENT=TOOL.getLastSeenComment(DISCUSSION,USER,true) in lib></#if>
- <#list TOOL.createDiscussionTree(DISCUSSION) as thread>
+ <#assign diz = TOOL.createDiscussionTree(DISCUSSION,USER?if_exists,true)>
+ <#if diz.hasUnreadComments><a href="#${diz.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a></#if>
+ <#list diz.threads as thread>
   <@lib.showThread thread, 0, DISCUSSION.id, CHILDREN.discussion[0].id, !frozen />
  </#list>
 <#elseif forbidDiscussion!="yes">

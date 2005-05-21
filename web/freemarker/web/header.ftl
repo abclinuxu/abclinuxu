@@ -33,10 +33,6 @@
 			</form>
 		</div>
 
-		<div class="za_banner">
-			<#if IS_INDEX?exists><#include "/include/banner_index.txt"><#else><#include "/include/banner.txt"></#if>
-		</div>
-
 		<div class="cistic">&nbsp;</div>
 
 		<div class="za_mn">
@@ -44,7 +40,7 @@
 			--><a href="/hardware" class="za_mn_odkaz">Hardware</a><!--
 			--><a href="/clanky" class="za_mn_odkaz">Èlánky</a><!--
 			--><a href="/blog" class="za_mn_odkaz">Blogy</a><!--
-			--><a href="http://prace.abclinuxu.cz" class="za_mn_odkaz">Práce</a><!--
+			--><a href="http://www.praceabc.cz" class="za_mn_odkaz">Práce</a><!--
 			--><a href="/download/abicko.jsp" class="za_mn_odkaz">Abíèko</a><!--
 			--><a href="/slovnik" class="za_mn_odkaz">Slovník</a><!--
 			--><a href="/clanky/dir/250" class="za_mn_odkaz">Ankety</a><!--

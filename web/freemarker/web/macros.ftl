@@ -15,22 +15,17 @@
         rating=TOOL.ratingFor(clanek.data,"article")?default("UNDEF")
     >
     <#if tmp.discussion?exists><#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
-
-        <#if thumbnail!="UNDEF">
-            <div style="float:right;margin:0.8em 0.4em 0 0">${thumbnail}</div>
+    <#if thumbnail!="UNDEF"><div style="float:right;margin:0.8em 0.4em 0 0">${thumbnail}</div></#if>
+    <h1 class="st_nadpis"><a href="/clanky/show/${relation.id}">${TOOL.xpath(clanek,"data/name")}</a></h1>
+    <p>${TOOL.xpath(clanek,"/data/perex")}</p>
+    <p class="cl_inforadek">${DATE.show(clanek.created, dateFormat[0])} |
+        <a href="/Profile/${autor.id}">${autor.name}</a> | Pøeèteno: ${TOOL.getCounterValue(clanek)}x
+        <#if diz?exists>
+            | <a href="/clanky/show/${diz.relationId}">Komentáøù:&nbsp;${diz.responseCount}</a
+            ><#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, dateFormat[1]?default(dateFormat[0]))}</#if>
         </#if>
-        <h1 class="st_nadpis"><a href="/clanky/show/${relation.id}">${TOOL.xpath(clanek,"data/name")}</a></h1>
-        <p>${TOOL.xpath(clanek,"/data/perex")}</p>
-        <p class="cl_inforadek">${DATE.show(clanek.created, dateFormat[0])} |
-            <a href="/Profile/${autor.id}">${autor.name}</a> |
-            Pøeèteno: ${TOOL.getCounterValue(clanek)}x
-            <#if diz?exists>
-                | <a href="/clanky/show/${diz.relationId}">
-                Komentáøù:&nbsp;${diz.responseCount}</a
-                ><#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, dateFormat[1]?default(dateFormat[0]))}</#if>
-            </#if>
-            <#if rating!="UNDEF">| Hodnocení:&nbsp;<span title="Hlasù: ${rating.count}">${rating.result?string["#0.00"]}</span></#if>
-        </p>
+        <#if rating!="UNDEF">| Hodnocení:&nbsp;<span title="Hlasù: ${rating.count}">${rating.result?string["#0.00"]}</span></#if>
+    </p>
 
 </#macro>
 
@@ -61,7 +56,7 @@ prosim poslete mi URL a popis, jak jste na tuto stranku narazili
 </#macro>
 
 <#macro showThread(comment level dizId relId showControls extra...)>
- <div class="ds_hlavicka<#if (MAX_COMMENT?default(99999) < comment.id) >_novy</#if>">
+ <div class="ds_hlavicka<#if comment.unread>_novy</#if>">
   <a name="${comment.id}"></a>
   ${DATE.show(comment.created,"CZ_FULL")}
   <#if comment.author?exists>
@@ -74,16 +69,17 @@ prosim poslete mi URL a popis, jak jste na tuto stranku narazili
   </#if><br>
   ${TOOL.xpath(comment.data,"title")?if_exists}<br>
   <#if showControls>
+   <#if comment.nextUnread?exists><a href="#${comment.nextUnread}" title="Skoèit na dal¹í nepøeètený komentáø">Dal¹í</a> |</#if>
    <a href="${URL.make("/EditDiscussion/"+relId+"?action=add&amp;dizId="+dizId+"&amp;threadId="+comment.id+extra[0]?default(""))}">Odpovìdìt</a> |
    <a href="#${comment.id}" title="Pøímá adresa na tento komentáø">Link</a> |
    <#if (comment.parent>0)><a href="#${comment.parent}" title="Odkaz na komentáø o jednu úroveò vý¹e">Vý¹e</a> |</#if>
-   <a onClick="schovej_vlakno(${comment.id})" id="a#${comment.id}" title="Schová nebo rozbalí celé vlákno">Sbalit</a>
+   <a onClick="schovej_vlakno(${comment.id})" id="a${comment.id}" title="Schová nebo rozbalí celé vlákno">Sbalit</a>
    <#if USER?exists && USER.hasRole("discussion admin")>
     || <@showAdminCommentTools comment, dizId, relId/>
    </#if>
   </#if>
  </div>
- <div id="div#${comment.id}">
+ <div id="div${comment.id}">
   <#if TOOL.xpath(comment.data,"censored")?exists>
      <@showCensored comment, dizId, relId/>
   <#else>

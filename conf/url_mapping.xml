@@ -21,6 +21,10 @@
             <action>cz.abclinuxu.servlets.html.view.ViewCategory</action>
         </mapping>
         <mapping>
+            <pattern>^/zpravicky/csv</pattern>
+            <action>cz.abclinuxu.servlets.html.various.NewsCSV</action>
+        </mapping>
+        <mapping>
             <pattern>^/zpravicky[/]?$</pattern>
             <action>cz.abclinuxu.servlets.html.view.ShowNewsPage</action>
         </mapping>
@@ -101,10 +105,6 @@
             <action>cz.abclinuxu.servlets.html.edit.EditNews</action>
         </mapping>
         <mapping>
-            <pattern>^/news/csv</pattern>
-            <action>cz.abclinuxu.servlets.html.various.NewsCSV</action>
-        </mapping>
-        <mapping>
             <pattern>^/EditSurvey</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditSurvey</action>
         </mapping>
@@ -173,7 +173,7 @@
         <mapping>
             <pattern input="host">abclinux.cz</pattern>
             <regexp>.*</regexp>
-            <replacement>http://www.abclinuxu.cz/forum/dir/50239</replacement>
+            <replacement>http://www.abclinuxu.cz/</replacement>
         </mapping>
         <mapping>
             <pattern input="host">palirna</pattern>

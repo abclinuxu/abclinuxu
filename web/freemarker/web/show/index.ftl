@@ -48,7 +48,7 @@
     <!-- prace.abclinuxu.cz -->
     <div class="s_nad_h1"><div class="s_nad_pod_h1">
         <a class="info" href="#">?<span class="tooltip">První server s nabídkami práce (nejen) pro tuèòáky. Spojujeme lidi s prací v IT.</span></a>
-        <h1><a href="http://prace.abclinuxu.cz">Prace.abclinuxu.cz</a></h1>
+        <h1><a href="http://www.praceabc.cz">Pracovní nabídky</a></h1>
     </div></div>
     <div class="s_sekce">
         <#include "/include/prace_main.txt">

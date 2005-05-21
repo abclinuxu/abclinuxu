@@ -81,7 +81,7 @@ public class Search implements AbcAction {
         try {
             query = AbcQueryParser.parse(queryString, new AbcCzechAnalyzer(), types, newsCategoriesSet);
             query = AbcQueryParser.addParentToQuery((String)params.get(PARAM_PARENT), query);
-            seachLog.info(query.toString());
+            seachLog.info(queryString);
         } catch (ParseException e) {
             ServletUtils.addError(PARAM_QUERY, "Hledaný øetìzec obsahuje chybu!", env, null);
             return choosePage(onlyNews, request, env, newsCategoriesSet);

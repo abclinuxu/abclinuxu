@@ -24,7 +24,7 @@ public class AddBlogName {
         SQLTool sqlTool = SQLTool.getInstance();
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        List blogs = sqlTool.findSectionRelationsWithType(Category.SECTION_BLOG, null);
+        List blogs = sqlTool.findSectionRelationsWithType(Category.BLOG, null);
         for (Iterator iter = blogs.iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
             Category blog = (Category) persistance.findById(relation.getChild());

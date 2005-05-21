@@ -1,33 +1,34 @@
+<#assign DIZ = TOOL.createDiscussionTree(ITEM,USER?if_exists,true)>
 <#assign frozen=TOOL.xpath(ITEM,"/data/frozen")?exists>
 <#assign is_question=TOOL.xpath(ITEM,"data/title")?exists>
 <#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")?exists>
-    <#assign monitorState="Pøestaò sledovat">
-<#else>
-    <#assign monitorState="Sleduj diskusi">
+    <#assign monitorState="Pøestaò sledovat"><#else><#assign monitorState="Sleduj diskusi">
 </#if>
 
 <#assign plovouci_sloupec>
-
     <div class="s_nad_h1"><div class="s_nad_pod_h1">
         <h1>Funkce</h1>
     </div></div>
 
    <div class="s_sekce">
      <ul>
+       <#if DIZ.hasUnreadComments>
+           <li><a href="#${DIZ.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a></li>
+       </#if>
        <li><a href="/forum/show/${RELATION.id}?varianta=print">Tisk diskuse</a></li>
        <li><a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+RELATION.id)}">${monitorState}</a>
-       (${TOOL.getMonitorCount(ITEM.data)})
+       <span title="Poèet lidí, kteøí sledují tuto diskusi">(${TOOL.getMonitorCount(ITEM.data)})</span>
        <a class="info" href="#">?<span class="tooltip">Za¹le ka¾dý nový komentáø emailem na va¹i adresu</span></a></li>
        <#if is_question>
            <li>
               <a href="${URL.make("/EditDiscussion?action=solved&amp;rid="+RELATION.id+"&amp;solved=true")}">Otázka byla vyøe¹ena</a>
               (${TOOL.xpath(ITEM,"//solved/@yes")?default("0")})
-              <a class="info" href="#">?<span class="tooltip">Pou¾ijte, pokud problém polo¾ený v otázce byl vyøe¹en. Smíte hlasovat jen jednou.</span></a></li>
+              <a class="info" href="#">?<span class="tooltip">Pou¾ijte, pokud problém polo¾ený v otázce byl vyøe¹en.</span></a></li>
            </li>
            <li>
               <a href="${URL.make("/EditDiscussion?action=solved&amp;rid="+RELATION.id+"&amp;solved=false")}">Otázka nebyla vyøe¹ena</a>
               (${TOOL.xpath(ITEM,"//solved/@no")?default("0")})
-              <a class="info" href="#">?<span class="tooltip">Pou¾ijte, pokud problém polo¾ený v otázce nebyl vyøe¹en. Smíte hlasovat jen jednou.</span></a></li>
+              <a class="info" href="#">?<span class="tooltip">Pou¾ijte, pokud problém polo¾ený v otázce nebyl vyøe¹en.</span></a></li>
            </li>
        </#if>
        <li><a href="/slovnik">Slovník pojmù</a></li>
@@ -47,11 +48,9 @@
 
 <@lib.showMessages/>
 
-<#assign diz = TOOL.createDiscussionTree(ITEM)>
-
 <#if is_question>
  <h1 class="st_nadpis">Otázka</h1>
- <@lib.showThread TOOL.createComment(ITEM), ITEM.id, RELATION.id, 0, !frozen />
+ <@lib.showThread TOOL.createComment(ITEM), 0, ITEM.id, RELATION.id, !frozen />
 
  <p class="wrongForum">
  Tato otázka je v diskusním fóru <a href="/forum/dir/${RELATION.upper}">${TOOL.childName(RELATION.upper)}</a>.
@@ -60,7 +59,7 @@
  prosím administrátory. Dìkujeme.
  </p>
 
- <#if diz?size==0>
+ <#if DIZ?size==0>
     <p>Na otázku zatím nikdo bohu¾el neodpovìdìl.</p>
  <#else>
      <h1 class="st_nadpis">Odpovìdi</h1>
@@ -72,8 +71,7 @@
 
 <#if frozen><p class="error">Diskuse byla administrátory uzamèena</p></#if>
 
-<#if USER?exists><#assign MAX_COMMENT=TOOL.getLastSeenComment(ITEM,USER,true) in lib></#if>
-<#list diz as thread>
+<#list DIZ.threads as thread>
  <@lib.showThread thread, 0, ITEM.id, RELATION.id, !frozen />
 </#list>
 

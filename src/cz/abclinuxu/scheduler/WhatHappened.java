@@ -78,7 +78,7 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
             Map params = new HashMap();
             map.put(Constants.VAR_PARAMS, params);
             Persistance persistance = PersistanceFactory.getPersistance();
-            Relation articles = (Relation) persistance.findById(new Relation(Constants.REL_ACTUAL_ARTICLES));
+            Relation articles = (Relation) persistance.findById(new Relation(Constants.REL_ARTICLEPOOL));
             map.put(EditArticle.VAR_RELATION, articles);
             User articleAuthor = (User) persistance.findById(new User(author));
             map.put(Constants.VAR_USER, articleAuthor);

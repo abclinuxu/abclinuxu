@@ -5,53 +5,116 @@
  */
 package cz.abclinuxu.data.view;
 
-import java.util.AbstractList;
-import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
- * Discussion is an container for comments. Though it is
- * derived from Container, it has special behaviour.
- * It can store only Comments in append-only fashion.
+ * Discussion is a container for comments.
  */
-public class Discussion extends  AbstractList {
-    private Comment[] comments;
+public class Discussion {
+    private List threads;
     private int size = 0;
+    private int greatestId;
+    private Integer lastRead;
+    private Integer firstUnread;
+    private boolean hasUnreadComments;
+    // mozna List prectenych a neprectenych, pak by JavaScript mohl schovavat prectene komentare
 
     public Discussion() {
-        comments = new Comment[5];
+        threads = new ArrayList(3);
     }
 
     public Discussion(int size) {
-        comments = new Comment[size];
+        threads = new ArrayList(size);
     }
 
-    public Object get(int index) {
-        return comments[index];
+    /**
+     * Appends comment to the list of threads as new toplevel thread.
+     * @param comment
+     */
+    public void addThread(Comment comment) {
+        threads.add(comment);
     }
 
-    public int size() {
+    /**
+     * @return list of toplevel threads for this discussion
+     */
+    public List getThreads() {
+        return threads;
+    }
+
+    /**
+     * @return number of all comments (not threads)
+     */
+    public int getSize() {
         return size;
     }
 
-    public Object set(int index, Object element) {
-        Object previous = comments[index];
-        comments[index] = (Comment) element;
-        return previous;
+    /**
+     * Sets number of all comments
+     * @param size
+     */
+    public void setSize(int size) {
+        this.size = size;
     }
 
-    public void add(int index, Object element) {
-        int length = comments.length;
-        if ( index>length || index<0 )
-            throw new ArrayIndexOutOfBoundsException("Index is "+index+", size is "+length);
-        else if (index==length) {
-            Comment[] copy = new Comment[2*index];
-            System.arraycopy(comments,0,copy,0,index);
-            Arrays.fill(comments,null);
-            comments = copy;
-        }
+    /**
+     * @return id of last comment
+     */
+    public int getGreatestId() {
+        return greatestId;
+    }
 
-        System.arraycopy(comments,index,comments,index+1,size-index);
-        comments[index] = (Comment) element;
-        size++;
+    /**
+     * Sets id of last comment
+     * @param greatestId
+     */
+    public void setGreatestId(int greatestId) {
+        this.greatestId = greatestId;
+    }
+
+    /**
+     * @return id of first (having smallest id) unread comment
+     */
+    public Integer getFirstUnread() {
+        return firstUnread;
+    }
+
+    /**
+     * Sets id of first unread comment
+     * @param firstUnread
+     */
+    public void setFirstUnread(Integer firstUnread) {
+        this.firstUnread = firstUnread;
+    }
+
+    /**
+     * @return id of last comment that user has read
+     */
+    public Integer getLastRead() {
+        return lastRead;
+    }
+
+    /**
+     * Sets id of last comment that user has read
+     * @param lastRead
+     */
+    public void setLastRead(Integer lastRead) {
+        this.lastRead = lastRead;
+    }
+
+    /**
+     * @return true if user has seen this discussion and there are unread comments
+     */
+    public boolean getHasUnreadComments() {
+        return hasUnreadComments;
+    }
+
+    /**
+     * Sets whether there are unread comments
+     * @param hasUnreadComments
+     */
+    public void setHasUnreadComments(boolean hasUnreadComments) {
+        this.hasUnreadComments = hasUnreadComments;
     }
 }

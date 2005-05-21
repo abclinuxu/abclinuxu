@@ -29,7 +29,7 @@ verze 2.0
 <!ELEMENT emoticons (#PCDATA)> <!-- yes or no, zda nahrazovat emotikony obrazkem -->
 <!ELEMENT signatures (#PCDATA)> <!-- yes or no, zda zobrazovat signatury -->
 <!ELEMENT guidepost (#PCDATA)> <!-- yes or no, zda zobrazovat rozcestnik -->
-<!ELEMENT new_comments (#PCDATA)> <!-- yes or no, zda povolit cookie pro nové komentáøe -->
+<!ELEMENT new_comments (#PCDATA)> <!-- yes or no, DEPRECATED zda povolit cookie pro nové komentáøe -->
 <!ELEMENT cookie_valid (#PCDATA)> <!-- integer, doba platnosti prihlasovaci cookie -->
 <!ELEMENT index_discussions (#PCDATA)> <!-- integer, pocet diskusi na hlavni strance. -1 : vsechny -->
 <!ELEMENT index_news (#PCDATA)> <!-- integer, pocet zpravicek na hlavni strance -->

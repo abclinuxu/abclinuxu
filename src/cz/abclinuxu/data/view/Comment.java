@@ -27,6 +27,8 @@ public class Comment {
     Integer id, parent;
     User author;
     Date created;
+    boolean unread;
+    Integer nextUnread;
 
     /**
      * Creates new instance of Discussion.
@@ -140,6 +142,36 @@ public class Comment {
      */
     public List getChildren() {
         return children;
+    }
+
+    /**
+     * @return true, if this comment has not been displayed to the user
+     */
+    public boolean isUnread() {
+        return unread;
+    }
+
+    /**
+     * Sets whether this comment has been displayed to the user
+     * @param unread
+     */
+    public void setUnread(boolean unread) {
+        this.unread = unread;
+    }
+
+    /**
+     * @return id of next unread comment
+     */
+    public Integer getNextUnread() {
+        return nextUnread;
+    }
+
+    /**
+     * Sets id of next unread comment
+     * @param nextUnread
+     */
+    public void setNextUnread(Integer nextUnread) {
+        this.nextUnread = nextUnread;
     }
 
     public int hashCode() {

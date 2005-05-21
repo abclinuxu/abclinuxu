@@ -18,7 +18,6 @@ public interface Constants {
     int CAT_HARDWARE = 2;
     int CAT_SOFTWARE = 3;
     int CAT_ABC = 4;
-    int CAT_ACTUAL_ARTICLES = 8;
     int CAT_386 = 10;
     int CAT_POLLS = 240;
     int CAT_LINKS = 14;
@@ -48,7 +47,6 @@ public interface Constants {
     int REL_SOFTWARE = 317;
     int REL_DRIVERS = 318;
     int REL_LINKS =  319;
-    int REL_ACTUAL_ARTICLES = 5;
     int REL_REQUESTS =  3500;
     int REL_FORUM = 3739;
     int REL_ABC = 5187;

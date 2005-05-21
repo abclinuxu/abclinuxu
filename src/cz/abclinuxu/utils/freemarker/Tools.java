@@ -835,33 +835,61 @@ public class Tools implements Configurable {
     }
 
     /**
-     * Converts Item with type==Discussion to tree structure. Tree is consisted from
-     * list of Discussion objects.
+     * Converts Item with type Discussion to object Discussion.
+     * @param obj Item
+     * @param maybeUser this may be instance of User that is viewing this discussion
+     * @param saveLast if true and maybeUser is instance of User, then latest comment id will be saved
      */
-    public Discussion createDiscussionTree(GenericObject obj) throws PersistanceException {
+    public Discussion createDiscussionTree(GenericObject obj, Object maybeUser, boolean saveLast) throws PersistanceException {
         if (!obj.isInitialized())
-            sync(obj);
+            obj = persistance.findById(obj);
         if ( !InstanceUtils.checkType(obj, Item.class, Item.DISCUSSION) )
-            throw new IllegalArgumentException("Not an discussion: "+obj);
+            throw new IllegalArgumentException("Not a discussion: "+obj);
 
         if (obj.getChildren().size()==0)
             return new Discussion();
 
         Relation child = (Relation) obj.getChildren().get(0);
         Record record = (Record) child.getChild();
-        sync(record);
+        if (!record.isInitialized())
+            record = (Record) persistance.findById(record);
 
         List nodes = record.getData().getRootElement().elements("comment");
-        Discussion diz = new Discussion(nodes.size());
-        Map map = new HashMap(nodes.size()+1, 1.0f);
-        Comment current, upper = null;
+        if (nodes.size()==0)
+            return new Discussion();
+
+        Map map = new HashMap(nodes.size() + 1, 1.0f);
+        Comment current, upper, last;
         List alone = new ArrayList();
         int upperId;
         Element element;
 
+        Discussion diz = new Discussion(nodes.size());
+        diz.setSize(nodes.size());
+        element = (Element) nodes.get(nodes.size() - 1);
+        diz.setGreatestId(Integer.parseInt(element.attributeValue("id")));
+
+        User user = null;
+        if (maybeUser instanceof User) {
+            user = (User) maybeUser;
+            SQLTool sqlTool = SQLTool.getInstance();
+            Integer lastSeen = sqlTool.getLastSeenComment(user.getId(), obj.getId());
+            if (lastSeen!=null) {
+                diz.setLastRead(lastSeen);
+                if (diz.getGreatestId()>lastSeen.intValue())
+                    diz.setHasUnreadComments(true);
+            }
+            sqlTool.insertLastSeenComment(user.getId(), obj.getId(), diz.getGreatestId());
+            EnsureWatchedDiscussionsLimit.checkLimits(user.getId());
+        }
+
         for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
+            upper = null; upperId = 0;
             element = (Element) iter.next();
-            current = new Comment(element); upper = null; upperId = 0;
+            current = new Comment(element);
+            if (diz.getHasUnreadComments())
+                current.setUnread(current.getId().intValue()>diz.getLastRead().intValue());
+
             if (current.getParent()!=null)
                 upperId = current.getParent().intValue();
 
@@ -872,18 +900,55 @@ public class Tools implements Configurable {
                 else
                     alone.add(current);
             } else
-                diz.add(current);
+                diz.addThread(current);
 
             map.put(current.getId(), current);
         }
-        if (alone.size()>0)
+        if (alone.size()>0) {
             for ( Iterator iter = alone.iterator(); iter.hasNext(); ) {
                 current = (Comment) iter.next();
                 upper = (Comment) map.get(current.getParent());
                 upper.addChild(current);
             }
+        }
+
+        if (diz.getHasUnreadComments()) {
+            current = null; last = null;
+            List stack = new LinkedList(diz.getThreads());
+            while (stack.size()>0) {
+                current = (Comment) stack.remove(0);
+                if (current.getChildren()!=null)
+                    stack.addAll(0, current.getChildren());
+
+                if (current.isUnread()) {
+                    if (diz.getFirstUnread() == null)
+                        diz.setFirstUnread(current.getId());
+                    if (last!=null)
+                        last.setNextUnread(current.getId());
+                    last = current;
+                }
+            }
+        }
 
         return diz;
+    }
+
+    /**
+     * This method is responsible for finding greatest id of comment, that user has read already.
+     *
+     * @param discussion It may be unitialized
+     */
+    public static Integer getLastSeenComment(Item discussion, User user) {
+        if (user == null)
+            return MAX_SEEN_COMMENT_ID;
+
+        List children = discussion.getChildren();
+        if (children.size() == 0)
+            return MAX_SEEN_COMMENT_ID;
+
+        SQLTool sqlTool = SQLTool.getInstance();
+        Integer lastSeen = sqlTool.getLastSeenComment(user.getId(), discussion.getId());
+        return (lastSeen == null) ? MAX_SEEN_COMMENT_ID : lastSeen;
     }
 
     /**
@@ -979,49 +1044,6 @@ public class Tools implements Configurable {
      */
     public Comment createComment(Item item) {
         return new Comment(item);
-    }
-
-    /**
-     * This method is responsible for finding greatest id of comment, that user has read already.
-     * @param discussion It may be unitialized
-     */
-    public static Integer getLastSeenComment(Item discussion, User user, boolean saveInfo) {
-        if (user==null)
-            return MAX_SEEN_COMMENT_ID;
-
-        Node node = user.getData().selectSingleNode("//new_comments");
-        if (node!=null && node.getText().equals("no"))
-            return MAX_SEEN_COMMENT_ID;
-
-        List children = discussion.getChildren();
-        if (children.size()==0)
-            return MAX_SEEN_COMMENT_ID;
-
-        SQLTool sqlTool = SQLTool.getInstance();
-        Integer lastSeen = sqlTool.getLastSeenComment(user.getId(), discussion.getId());
-
-        if (saveInfo) {
-            Relation childRelation = (Relation) children.get(0);
-            GenericObject child = persistance.findById(childRelation.getChild());
-            if ( !(child instanceof Record) || ((Record) child).getType()!=Record.DISCUSSION ) {
-                log.warn(childRelation+" shall be Record holding discussion!");
-                return MAX_SEEN_COMMENT_ID;
-            }
-
-            Document data = ((Record) child).getData();
-            List comments = data.getRootElement().elements("comment");
-            if ( comments!=null && comments.size()>0 ) {
-                Element lastComment = (Element) comments.get(comments.size()-1);
-                String tmp = lastComment.attributeValue("id");
-                int total = Misc.parseInt(tmp, 0);
-                if (lastSeen==null || total>lastSeen.intValue()) {
-                    sqlTool.insertLastSeenComment(user.getId(), discussion.getId(), total);
-                    EnsureWatchedDiscussionsLimit.checkLimits(user.getId());
-                }
-            }
-        }
-
-        return (lastSeen==null) ? MAX_SEEN_COMMENT_ID : lastSeen;
     }
 
     /**

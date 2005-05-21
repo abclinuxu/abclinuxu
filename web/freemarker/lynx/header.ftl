@@ -25,9 +25,6 @@ ${DATE.show("CZ_FULL")}
 
 <p>
  <b>Rubriky</b>
-  <#if USER?exists && USER.hasRole("article admin")>
-   <a href="/clanky/dir/5">Aktuální</a>,
-  </#if>
   <a href="/clanky/dir/4731">Abíèko</a>,
   <a href="/clanky/dir/4">Jaderné noviny</a>,
   <a href="/clanky/dir/3">Návody</a>,

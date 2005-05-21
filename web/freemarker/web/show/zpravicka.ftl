@@ -39,37 +39,37 @@
 
 <h2>Komentáøe</h2>
 <#if CHILDREN.discussion?exists>
- <#assign DISCUSSION=CHILDREN.discussion[0].child>
+    <#assign DISCUSSION=CHILDREN.discussion[0].child>
+    <#assign diz = TOOL.createDiscussionTree(DISCUSSION,USER?if_exists,true)>
 
-<p class="monitor"><b>AbcMonitor</b> vám emailem za¹le upozornìní pøi zmìnì.
- <#if USER?exists && TOOL.xpath(DISCUSSION,"//monitor/id[text()='"+USER.id+"']")?exists>
-  <#assign monitorState="Vypni">
- <#else>
-  <#assign monitorState="Zapni">
- </#if>
- <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+CHILDREN.discussion[0].id)}">${monitorState}</a>
- (${TOOL.getMonitorCount(DISCUSSION.data)})
-</p>
+    <#assign frozen=TOOL.xpath(DISCUSSION,"/data/frozen")?exists>
+    <#if frozen>Diskuse byla administrátory uzamèena</#if>
+    <#if USER?exists && USER.hasRole("discussion admin")>
+        <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+CHILDREN.discussion[0].id+"&amp;dizId="+DISCUSSION.id)}">
+        <#if frozen>Rozmrazit<#else>Zmrazit</#if> diskusi</a>
+    </#if>
 
- <p>
-  <a href="${URL.make("/EditDiscussion?action=add&amp;dizId="+DISCUSSION.id+"&amp;threadId=0&amp;rid="+CHILDREN.discussion[0].id)}">
-  Vlo¾it dal¹í komentáø</a>
- </p>
+    <p>
+    <#if diz.hasUnreadComments>
+        <a href="#${diz.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a>
+    </#if>
 
- <#assign frozen=TOOL.xpath(DISCUSSION,"/data/frozen")?exists>
- <#if frozen>Diskuse byla administrátory uzamèena</#if>
+    <a href="${URL.make("/EditDiscussion?action=add&amp;dizId="+DISCUSSION.id+"&amp;threadId=0&amp;rid="+CHILDREN.discussion[0].id)}">
+    Vlo¾it dal¹í komentáø</a>
 
- <#if USER?exists && USER.hasRole("discussion admin")>
-  <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+CHILDREN.discussion[0].id+"&amp;dizId="+DISCUSSION.id)}">
-  <#if frozen>Rozmrazit<#else>Zmrazit</#if> diskusi</a>
- </#if>
+    <#if USER?exists && TOOL.xpath(DISCUSSION,"//monitor/id[text()='"+USER.id+"']")?exists>
+        <#assign monitorState="Pøestaò sledovat"><#else><#assign monitorState="Sleduj">
+    </#if>
+    <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+CHILDREN.discussion[0].id)}"
+    title="AbcMonitor za¹le emailem zprávu, dojde-li v diskusi ke zmìnì">${monitorState}</a>
+    <span title="Poèet lidí, kteøí sledují tuto diskusi">(${TOOL.getMonitorCount(DISCUSSION.data)})</span>
+    </p>
 
- <#if USER?exists><#assign MAX_COMMENT=TOOL.getLastSeenComment(DISCUSSION,USER,true) in lib></#if>
- <#list TOOL.createDiscussionTree(DISCUSSION) as thread>
-  <@lib.showThread thread, 0, DISCUSSION.id, CHILDREN.discussion[0].id, !frozen />
- </#list>
+    <#list diz.threads as thread>
+        <@lib.showThread thread, 0, DISCUSSION.id, CHILDREN.discussion[0].id, !frozen />
+    </#list>
 <#else>
- <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vlo¾it první komentáø</a>
+    <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vlo¾it první komentáø</a>
 </#if>
 
 <#include "../footer.ftl">

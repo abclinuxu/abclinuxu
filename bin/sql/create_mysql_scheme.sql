@@ -23,11 +23,13 @@ ALTER TABLE uzivatel ADD INDEX in_nick (prezdivka);
 CREATE TABLE kategorie (
  cislo INT AUTO_INCREMENT PRIMARY KEY,  -- jednoznacny identifikator
  typ SMALLINT,                          -- typ kategorie
+ podtyp VARCHAR(30) NULL,               -- podtyp 
  data TEXT NOT NULL,                    -- XML s nazvem, ikonou, poznamkou ...
  pridal INT(6) NOT NULL,                -- odkaz na uzivatele
  vytvoreno DATETIME,       -- cas vytvoreni
  zmeneno TIMESTAMP NOT NULL             -- cas posledni zmeny
 );
+ALTER TABLE kategorie ADD INDEX in_podtyp (podtyp);
 
 
 -- obecna struktura pro ukladani polozek
@@ -36,6 +38,7 @@ CREATE TABLE kategorie (
 CREATE TABLE polozka (
  cislo INT AUTO_INCREMENT PRIMARY KEY,  -- jednoznacny identifikator
  typ SMALLINT,                          -- typ polozky (druh, novinka, ..)
+ podtyp VARCHAR(30) NULL,               -- podtyp 
  data TEXT NOT NULL,                    -- XML s nazvem, ikonou, poznamkou ...
  pridal INT(6) NOT NULL,                -- odkaz na uzivatele
  vytvoreno DATETIME,       -- cas vytvoreni
@@ -43,6 +46,7 @@ CREATE TABLE polozka (
 );
 ALTER TABLE polozka ADD INDEX in_vytvoreno (vytvoreno);
 ALTER TABLE polozka ADD INDEX in_typ (typ);
+ALTER TABLE polozka ADD INDEX in_podtyp (podtyp);
 
 -- kazdy uzivatel muze pridat k polozce svuj zaznam, kazda polozka
 -- ma nejmene jeden zaznam od autora polozky
@@ -52,6 +56,7 @@ ALTER TABLE polozka ADD INDEX in_typ (typ);
 CREATE TABLE zaznam (
  cislo INT AUTO_INCREMENT PRIMARY KEY,  -- jednoznacny identifikator
  typ SMALLINT,                          -- typ zaznamu (HW, SW, clanek ..)
+ podtyp VARCHAR(30) NULL,               -- podtyp 
  data LONGTEXT NOT NULL,                    -- XML s nazvem, poznamkou ...
  pridal INT(6) NOT NULL,                -- odkaz na uzivatele
  vytvoreno DATETIME,       -- cas vytvoreni
@@ -59,6 +64,7 @@ CREATE TABLE zaznam (
 );
 ALTER TABLE zaznam ADD INDEX in_zmeneno (zmeneno);
 ALTER TABLE zaznam ADD INDEX in_typ (typ);
+ALTER TABLE zaznam ADD INDEX in_podtyp (podtyp);
 
 
 -- tabulka s definicemi serveru, kterym zobrazujeme odkazy

@@ -230,6 +230,8 @@ public class EditNews implements AbcAction {
             return FMTemplateSelector.select("EditNews", "edit", env, request);
         }
 
+        // todo pokud amina zmeni titulek u cekajici zpravicky, asi dava smysl zmenit url
+
         persistance.update(item);
         User user = (User) env.get(Constants.VAR_USER);
         AdminLogger.logEvent(user, "  edit | news "+relation.getId());
@@ -247,7 +249,7 @@ public class EditNews implements AbcAction {
         Relation relation = (Relation) env.get(VAR_RELATION);
         if (relation.getParent().getId() != Constants.CAT_NEWS_POOL) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Zprávièka ji¾ byla schválena!", env, request.getSession());
-            urlUtils.redirect(response, "/news/show/" + relation.getId());
+            urlUtils.redirect(response, "/zpravicky/show/" + relation.getId());
             return null;
         }
 
