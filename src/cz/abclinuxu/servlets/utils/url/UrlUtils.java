@@ -136,6 +136,18 @@ public class UrlUtils {
     }
 
     /**
+     * Redirects to desired URL, keeping session and optionally prefix.
+     */
+    public void redirect(HttpServletResponse response, String url, boolean keepPrefix) throws IOException {
+        if (keepPrefix) {
+            redirect(response, url);
+            return;
+        }
+        String url2 = response.encodeRedirectURL(url);
+        response.sendRedirect(url2);
+    }
+
+    /**
      * Dispatches to desired URL, keeping prefix.
      */
     public void dispatch(HttpServletRequest request, HttpServletResponse response, String url) throws ServletException, IOException {

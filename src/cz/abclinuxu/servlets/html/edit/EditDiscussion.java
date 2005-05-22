@@ -393,9 +393,9 @@ public class EditDiscussion implements AbcAction {
         if (url==null)
             url = relation.getUrl();
         if (url==null)
-            url = "/show/"+relation.getId();
+            url = urlUtils.getPrefix()+"/show/"+relation.getId();
         url += "#"+commentId;
-        urlUtils.redirect(response, url);
+        urlUtils.redirect(response, url, false);
         return null;
     }
 
@@ -418,8 +418,8 @@ public class EditDiscussion implements AbcAction {
 
         String url = relation.getUrl();
         if (url == null)
-            url = "/show/" + relation.getId();
-        urlUtils.redirect(response, url);
+            url = urlUtils.getPrefix() + "/show/" + relation.getId();
+        urlUtils.redirect(response, url, false);
         return null;
     }
 
@@ -484,8 +484,8 @@ public class EditDiscussion implements AbcAction {
 
         String url = relation.getUrl();
         if (url == null)
-            url = "/show/" + relation.getId();
-        urlUtils.redirect(response, url);
+            url = urlUtils.getPrefix() + "/show/" + relation.getId();
+        urlUtils.redirect(response, url, false);
         return null;
     }
 
@@ -582,8 +582,8 @@ public class EditDiscussion implements AbcAction {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         String url = relation.getUrl();
         if (url == null)
-            url = "/show/" + relation.getId();
-        urlUtils.redirect(response, url);
+            url = urlUtils.getPrefix() + "/show/" + relation.getId();
+        urlUtils.redirect(response, url, false);
         return null;
     }
 
@@ -692,8 +692,8 @@ public class EditDiscussion implements AbcAction {
 
         url = relation.getUrl();
         if (url == null)
-            url = "/show/" + relation.getId();
-        urlUtils.redirect(response, url);
+            url = urlUtils.getPrefix() + "/show/" + relation.getId();
+        urlUtils.redirect(response, url, false);
         return null;
     }
 
@@ -714,8 +714,8 @@ public class EditDiscussion implements AbcAction {
         if (url == null)
             url = relation.getUrl();
         if (url==null)
-            url = "/show/"+relation.getId();
-        urlUtils.redirect(response, url);
+            url = urlUtils.getPrefix() + "/show/"+relation.getId();
+        urlUtils.redirect(response, url, false);
         return null;
     }
 
