@@ -116,11 +116,27 @@ public final class URLMapper implements Configurable {
 
         // todo known URLs must be cached in LRU cache. If URL ends with /[0-9]+ then it is not custom URL
         // todo central class for custom URL is needed (to avoid duplicates, to use same syntax etc)
-        Relation relation = SQLTool.getInstance().findRelationByURL(url);
-        if (relation!=null) {
-            Map params = (Map) env.get(Constants.VAR_PARAMS);
-            params.put(ShowObject.PARAM_RELATION_SHORT, Integer.toString(relation.getId()));
-            return showObject;
+        boolean custom = false;
+        int position = url.lastIndexOf('/');
+        if (position>0 && position<url.length()) {
+            String lastPart = url.substring(position+1);
+            int length = lastPart.length();
+            char c;
+            for (int i=0; i<length; i++) {
+                c = lastPart.charAt(i);
+                if (c<'0' || c>'9') {
+                    custom = true;
+                    break;
+                }
+            }
+        }
+        if (custom) {
+            Relation relation = SQLTool.getInstance().findRelationByURL(url);
+            if (relation != null) {
+                Map params = (Map) env.get(Constants.VAR_PARAMS);
+                params.put(ShowObject.PARAM_RELATION_SHORT, Integer.toString(relation.getId()));
+                return showObject;
+            }
         }
 
         for ( Iterator iter = actionMapping.iterator(); iter.hasNext(); ) {
