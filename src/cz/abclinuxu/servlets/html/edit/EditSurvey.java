@@ -106,6 +106,7 @@ public class EditSurvey implements AbcAction {
         survey.setOwner(user.getId());
 
         Document document = DocumentHelper.createDocument();
+        document.addElement("anketa");
         survey.setData(document);
 
         boolean canContinue = true;
