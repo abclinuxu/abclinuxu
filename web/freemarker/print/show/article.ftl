@@ -6,7 +6,7 @@
 <h1>${TOOL.xpath(ITEM,"/data/name")}</h1>
 
 <div class="barva">
-${DATE.show(ITEM.created,"CZ_FULL")} | <a href="/Profile/${autor.id}">${autor.name}</a>
+ ${DATE.show(ITEM.created,"CZ_FULL")} | <a href="/Profile/${autor.id}">${autor.name}</a>
 </div>
 
 <@lib.showParents PARENTS />
@@ -60,41 +60,14 @@ ${TOOL.render(TOOL.getCompleteArticleText(ITEM),USER?if_exists)}
 <#flush>
 
 <#if ! PARAMS.noDiz?exists>
- <h1 class="st_nadpis">Diskuse k tomuto èlánku</h1>
- <#assign DISCUSSION=CHILDREN.discussion[0].child>
-
- <p class="monitor"><b>AbcMonitor</b> vám emailem za¹le upozornìní pøi zmìnì.
-  <#if USER?exists && TOOL.xpath(DISCUSSION,"//monitor/id[text()='"+USER.id+"']")?exists>
-   <#assign monitorState="Vypni">
-  <#else>
-   <#assign monitorState="Zapni">
-  </#if>
-  <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+CHILDREN.discussion[0].id)}">${monitorState}</a>
-  (${TOOL.getMonitorCount(DISCUSSION.data)})
- </p>
-
- <p>
-  <a href="${URL.make("/EditDiscussion?action=add&amp;dizId="+DISCUSSION.id+"&amp;threadId=0&amp;rid="+CHILDREN.discussion[0].id)}">
-  Vlo¾it dal¹í komentáø</a>
- </p>
-
- <#assign frozen=TOOL.xpath(DISCUSSION,"/data/frozen")?exists>
- <#if frozen>Diskuse byla administrátory uzamèena</#if>
-
- <#if USER?exists && USER.hasRole("discussion admin")>
-  <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+CHILDREN.discussion[0].id+"&amp;dizId="+DISCUSSION.id)}">
-  <#if frozen>Rozmrazit<#else>Zmrazit</#if> diskusi</a>
+ <#if CHILDREN.discussion?exists>
+  <h1 class="st_nadpis">Diskuse k tomuto èlánku</h1>
+  <#assign DISCUSSION=CHILDREN.discussion[0].child>
+  <#assign diz = TOOL.createDiscussionTree(DISCUSSION,USER?if_exists,true)>
+  <#list diz.threads as thread>
+     <@lib.showThread thread, 0, DISCUSSION.id, CHILDREN.discussion[0].id, false />
+  </#list>
  </#if>
-
- <#assign diz = TOOL.createDiscussionTree(DISCUSSION,USER?if_exists,true)>
- <#if diz.hasUnreadComments><a href="#${diz.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a></#if>
- <#list diz.threads as thread>
-  <@lib.showThread thread, 0, DISCUSSION.id, CHILDREN.discussion[0].id, !frozen />
- </#list>
-<#elseif forbidDiscussion!="yes">
- <h1 class="st_nadpis">Diskuse k tomuto èlánku</h1>
- <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vlo¾it první komentáø</a>
-</#if>
 </#if>
 
 <#include "../footer.ftl">
