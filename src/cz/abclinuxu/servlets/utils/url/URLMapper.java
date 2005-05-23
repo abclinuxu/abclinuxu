@@ -118,7 +118,7 @@ public final class URLMapper implements Configurable {
         // todo central class for custom URL is needed (to avoid duplicates, to use same syntax etc)
         boolean custom = false;
         int position = url.lastIndexOf('/');
-        if (position>0 && position<url.length()) {
+        if (position>=0 && (position+1)<url.length()) {
             String lastPart = url.substring(position+1);
             int length = lastPart.length();
             char c;
