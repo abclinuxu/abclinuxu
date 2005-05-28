@@ -110,7 +110,7 @@ public class UpgradeDiscusssions {
         int comments = 0;
 
         Tools.syncList(item.getChildren());
-        Sorters2.byId(item.getChildren());
+        Sorters2.byId(item.getChildren()); // fucntionality has been changed slightly
 
         for ( Iterator iter = item.getChildren().iterator(); iter.hasNext(); ) {
             Relation child = (Relation) iter.next();

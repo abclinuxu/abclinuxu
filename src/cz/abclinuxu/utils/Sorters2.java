@@ -149,17 +149,9 @@ public class Sorters2 {
      */
     static class IdComparator implements Comparator {
         public int compare(Object o1, Object o2) {
-            int i = getValue((GenericObject) o1);
-            int j = getValue((GenericObject) o2);
+            int i = ((GenericObject) o1).getId();
+            int j = ((GenericObject) o2).getId();
             return i-j;
-        }
-        /**
-         * Extracts value of GenericObjects.
-         */
-        private int getValue(GenericObject obj) {
-            if ( obj instanceof Relation )
-                obj = ((Relation)obj).getChild();
-            return obj.getId();
         }
     }
 
