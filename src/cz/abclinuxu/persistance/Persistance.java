@@ -88,6 +88,12 @@ public interface Persistance {
     public List findParents(Relation relation);
 
     /**
+     * Synchronizes list of GenericObjects. The list may hold different objects.
+     * @param list
+     */
+    public void synchronizeList(List list);
+
+    /**
      * Finds all relations where obj is children.
      * @param child
      * @return list of initialized relations

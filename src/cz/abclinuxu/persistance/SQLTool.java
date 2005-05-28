@@ -120,9 +120,10 @@ public final class SQLTool implements Configurable {
             List result = new ArrayList();
             while ( resultSet.next() ) {
                 int id = resultSet.getInt(1);
-                Relation relation = (Relation) persistance.findById(new Relation(id));
-                result.add(relation);
+                result.add(new Relation(id));
             }
+
+            persistance.synchronizeList(result);
             return result;
         } catch (SQLException e) {
             throw new PersistanceException("Nemohu vykonat SQL pøíkaz "+sql, e);

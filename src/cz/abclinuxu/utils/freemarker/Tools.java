@@ -510,13 +510,28 @@ public class Tools implements Configurable {
      * Synchronizes list of GenericObjects.
      */
     public static List syncList(Collection collection) throws PersistanceException {
+        if (collection.size() == 0)
+            return Collections.EMPTY_LIST;
+
         List list = null;
         if (! (collection instanceof List) )
             list = new ArrayList(collection);
         else
             list = (List) collection;
-        for (Iterator iter = list.iterator(); iter.hasNext();) {
-            sync((GenericObject) iter.next());
+
+//        for (Iterator iter = list.iterator(); iter.hasNext();) {
+//            sync((GenericObject) iter.next());
+//        }
+
+        persistance.synchronizeList(list);
+        if (list.get(0) instanceof Relation) {
+            List children = new ArrayList(list.size());
+            for (Iterator iter = list.iterator(); iter.hasNext();) {
+                GenericObject obj = (GenericObject) iter.next();
+                if (obj instanceof Relation)
+                    children.add(((Relation)obj).getChild());
+            }
+            persistance.synchronizeList(children);
         }
         return list;
     }

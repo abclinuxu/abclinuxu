@@ -13,6 +13,7 @@ import java.sql.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.exceptions.*;
 import cz.abclinuxu.AbcException;
+import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.Cache;
 import cz.abclinuxu.persistance.Nursery;
@@ -152,7 +153,6 @@ public class MySqlPersistance implements Persistance {
         if ( log.isDebugEnabled() ) log.debug("Hledam podle PK "+obj);
         try {
             result = loadObject(obj);
-            if ( result!=null ) result.setInitialized(true);
             cache.store(result);
             return result;
         } catch (SQLException e) {
@@ -181,7 +181,8 @@ public class MySqlPersistance implements Persistance {
             statement = con.createStatement();
             resultSet = statement.executeQuery(sb.toString());
             while ( resultSet.next() ) {
-                Relation relation = loadRelationFromResultSet(resultSet);
+                Relation relation = new Relation(resultSet.getInt(1));
+                syncRelationFromRS(relation, resultSet);
                 found.add(relation);
             }
             return found;
@@ -338,7 +339,8 @@ public class MySqlPersistance implements Persistance {
             statement = con.createStatement();
             resultSet = statement.executeQuery(sb.toString());
             while ( resultSet.next() ) {
-                Relation relation = loadRelationFromResultSet(resultSet);
+                Relation relation = new Relation(resultSet.getInt(1));
+                syncRelationFromRS(relation, resultSet);
                 found.add(relation);
             }
 
@@ -406,6 +408,122 @@ public class MySqlPersistance implements Persistance {
         }
     }
 
+    /**
+     * Synchronizes list of GenericObjects. The list may hold different objects.
+     * It tries to work in batches for optimal access.
+     * @param list
+     */
+    public void synchronizeList(List list) {
+        if (list.size()==0)
+            return;
+
+        long start = System.currentTimeMillis();
+        String type = null;
+
+        List relations = null;
+        List users = null;
+        List items = null;
+        List records = null;
+        List categories = null;
+        List links = null;
+        List servers = null;
+
+        for (Iterator iter = list.iterator(); iter.hasNext();) {
+            GenericObject obj = (GenericObject) iter.next();
+            if (obj.isInitialized())
+                continue;
+
+            GenericObject cached = cache.load(obj);
+            if (cached != null && cached.isInitialized()) {
+                obj.synchronizeWith(cached);
+                continue;
+            }
+
+            if (obj instanceof Relation) {
+                if (relations==null) relations = new ArrayList(list.size());
+                relations.add(obj);
+                type = "relation";
+            } else if (obj instanceof Item) {
+                if (items == null) items = new ArrayList(list.size());
+                items.add(obj);
+                type = "item";
+            } else if (obj instanceof Category) {
+                if (categories == null) categories = new ArrayList(list.size());
+                categories.add(obj);
+                type = "category";
+            } else if (obj instanceof Record) {
+                if (records == null) records = new ArrayList(list.size());
+                records.add(obj);
+                type = "record";
+            } else if (obj instanceof Link) {
+                if (links == null) links = new ArrayList(list.size());
+                links.add(obj);
+                type = "link";
+            } else if (obj instanceof Server) {
+                if (servers == null) servers = new ArrayList(list.size());
+                servers.add(obj);
+                type = "server";
+            } else if (obj instanceof User) {
+                if (users == null) users = new ArrayList(list.size());
+                users.add(obj);
+                type = "user";
+            } else if (obj instanceof Poll) {
+                synchronize(obj);
+                type = "poll";
+            } else if (obj instanceof Data) {
+                synchronize(obj);
+                type = "data";
+            }
+        }
+
+        try {
+            // loads them and merge fresh objects with objects from list, store them in cache
+            if (relations != null) {
+                Sorters2.byId(relations);
+                syncRelations(relations);
+            }
+            if (items != null) {
+                Sorters2.byId(items);
+                syncDataObjects(items);
+            }
+            if (categories != null) {
+                Sorters2.byId(categories);
+                syncDataObjects(categories);
+            }
+            if (records != null) {
+                Sorters2.byId(records);
+                syncDataObjects(records);
+            }
+            if (links != null) {
+                Sorters2.byId(links);
+                syncLinks(links);
+            }
+            if (servers != null) {
+                Sorters2.byId(servers);
+                syncServers(servers);
+            }
+            if (users != null) {
+                Sorters2.byId(users);
+                syncUsers(users);
+            }
+            long end = System.currentTimeMillis();
+            log.info("syncList for " + list.size() + " " + type + "s took " + (end - start) + " ms");
+        } catch (SQLException e) {
+            throw new PersistanceException("Nemohu synchronizovat objekty!", e);
+        } finally {
+            if (relations!=null) relations.clear();
+            if (items!=null) items.clear();
+            if (categories!=null) categories.clear();
+            if (records!=null) records.clear();
+            if (links!=null) links.clear();
+            if (servers!=null) servers.clear();
+            if (users!=null) users.clear();
+        }
+    }
+
+    /**
+     * todo move counter to SQLTools ?
+     */
     public void incrementCounter(GenericObject obj) {
         Connection con = null; PreparedStatement statement = null;
         try {
@@ -549,7 +667,8 @@ public class MySqlPersistance implements Persistance {
             resultSet = statement.executeQuery();
 
             while ( resultSet.next() ) {
-                relation = loadRelationFromResultSet(resultSet);
+                relation = new Relation(resultSet.getInt(1));
+                syncRelationFromRS(relation, resultSet);
                 relation.setParent(obj);
                 children.add(relation);
             }
@@ -832,17 +951,53 @@ public class MySqlPersistance implements Persistance {
             }
 
             User user = new User(obj.getId());
-            user.setLogin(resultSet.getString(2));
-            user.setName(resultSet.getString(3));
-            user.setEmail(resultSet.getString(4));
-            user.setPassword(resultSet.getString(5));
-            user.setNick(resultSet.getString(6));
-            user.setData(insertEncoding(resultSet.getString(7)));
-
+            syncUserFromRS(user, resultSet);
             return user;
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }
+    }
+
+    /**
+     * Synchronizes specified users from database.
+     * @param users
+     */
+    protected void syncUsers(List users) throws SQLException {
+        Connection con = null; PreparedStatement statement = null; ResultSet rs = null;
+        try {
+            con = getSQLConnection();
+            statement = con.prepareStatement("select * from uzivatel where cislo in "+getInCondition(users.size()) + " order by cislo");
+            int i = 1;
+            for (Iterator iter = users.iterator(); iter.hasNext();) {
+                User user = (User) iter.next();
+                statement.setInt(i++, user.getId());
+            }
+            rs = statement.executeQuery();
+
+            for (Iterator iter = users.iterator(); iter.hasNext();) {
+                User user = (User) iter.next();
+                if (!rs.next() || rs.getInt(1)!=user.getId())
+                    throw new NotFoundException("Uzivatel " + user.getId() + " nebyl nalezen!");
+                syncUserFromRS(user, rs);
+                cache.store(user);
+            }
+        } finally {
+            releaseSQLResources(con,statement,rs);
+        }
+    }
+
+    /**
+     * Synchronizes user from result set.
+     * @throws SQLException
+     */
+    private void syncUserFromRS(User user, ResultSet resultSet) throws SQLException {
+        user.setLogin(resultSet.getString(2));
+        user.setName(resultSet.getString(3));
+        user.setEmail(resultSet.getString(4));
+        user.setPassword(resultSet.getString(5));
+        user.setNick(resultSet.getString(6));
+        user.setData(insertEncoding(resultSet.getString(7)));
+        user.setInitialized(true);
     }
 
     /**
@@ -862,28 +1017,70 @@ public class MySqlPersistance implements Persistance {
             }
 
             GenericDataObject item = null;
-            if ( obj instanceof Category )
+            if (obj instanceof Category)
                 item = new Category(obj.getId());
-            else if ( obj instanceof Item )
+            else if (obj instanceof Item)
                 item = new Item(obj.getId());
             else
                 item = new Record(obj.getId());
-
-            item.setType(resultSet.getInt(2));
-            item.setSubType(resultSet.getString(3));
-
-            String tmp = resultSet.getString(4);
-            tmp = insertEncoding(tmp);
-            item.setData(new String(tmp));
-
-            item.setOwner(resultSet.getInt(5));
-            item.setCreated(new java.util.Date(resultSet.getTimestamp(6).getTime()));
-            item.setUpdated(new java.util.Date(resultSet.getTimestamp(7).getTime()));
-
+            syncGenericDataObjectFromRS(item, resultSet);
             return item;
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }
+    }
+
+    /**
+     * Synchronizes specified GenericDataObjects from database.
+     * It is assumed, that all objects are same. If not, wrong objects
+     * will be fetched. You've been warned.
+     * @param objs
+     */
+    protected void syncDataObjects(List objs) throws SQLException {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        try {
+            GenericDataObject representant = (GenericDataObject) objs.get(0);
+            con = getSQLConnection();
+            statement = con.prepareStatement("select * from " + getTable(representant) + " where cislo in " + getInCondition(objs.size()) + " order by cislo");
+            int i = 1;
+            for (Iterator iter = objs.iterator(); iter.hasNext();) {
+                GenericDataObject obj = (GenericDataObject) iter.next();
+                if (!(obj.getClass().isInstance(representant)))
+                    throw new PersistanceException("Objects in List cannot be mixed!");
+                statement.setInt(i++, obj.getId());
+            }
+            rs = statement.executeQuery();
+
+            for (Iterator iter = objs.iterator(); iter.hasNext();) {
+                GenericDataObject obj = (GenericDataObject) iter.next();
+                if (!rs.next() || rs.getInt(1) != obj.getId())
+                    throw new NotFoundException("Datova polozka " + obj.getId() + " nebyla nalezena!");
+                syncGenericDataObjectFromRS(obj, rs);
+                cache.store(obj);
+            }
+        } finally {
+            releaseSQLResources(con, statement, rs);
+        }
+    }
+
+    /**
+     * Synchronizes GenericDataObject from result set.
+     * @throws SQLException
+     */
+    private void syncGenericDataObjectFromRS(GenericDataObject item, ResultSet resultSet) throws SQLException {
+        item.setType(resultSet.getInt(2));
+        item.setSubType(resultSet.getString(3));
+
+        String tmp = resultSet.getString(4);
+        tmp = insertEncoding(tmp);
+        item.setData(new String(tmp));
+
+        item.setOwner(resultSet.getInt(5));
+        item.setCreated(new java.util.Date(resultSet.getTimestamp(6).getTime()));
+        item.setUpdated(new java.util.Date(resultSet.getTimestamp(7).getTime()));
+        item.setInitialized(true);
     }
 
     /**
@@ -901,15 +1098,49 @@ public class MySqlPersistance implements Persistance {
                 throw new NotFoundException("Relace "+obj.getId()+" nebyla nalezena!");
             }
 
-            Relation relation = loadRelationFromResultSet(resultSet);
+            Relation relation = new Relation(obj.getId());
+            syncRelationFromRS(relation, resultSet);
             return relation;
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }
     }
 
-    private Relation loadRelationFromResultSet(ResultSet resultSet) throws SQLException {
-        Relation relation = new Relation(resultSet.getInt(1));
+    /**
+     * Synchronizes specified relations from database.
+     * @param relations
+     */
+    protected void syncRelations(List relations) throws SQLException {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        try {
+            con = getSQLConnection();
+            statement = con.prepareStatement("select * from relace where cislo in " + getInCondition(relations.size())+" order by cislo");
+            int i = 1;
+            for (Iterator iter = relations.iterator(); iter.hasNext();) {
+                Relation relation = (Relation) iter.next();
+                statement.setInt(i++, relation.getId());
+            }
+            rs = statement.executeQuery();
+
+            for (Iterator iter = relations.iterator(); iter.hasNext();) {
+                Relation relation = (Relation) iter.next();
+                if (!rs.next() || rs.getInt(1) != relation.getId())
+                    throw new NotFoundException("Relace " + relation.getId() + " nebyla nalezen!");
+                syncRelationFromRS(relation, rs);
+                cache.store(relation);
+            }
+        } finally {
+            releaseSQLResources(con, statement, rs);
+        }
+    }
+
+    /**
+     * Synchronizes relation from result set.
+     * @throws SQLException
+     */
+    private void syncRelationFromRS(Relation relation, ResultSet resultSet) throws SQLException {
         relation.setUpper(resultSet.getInt(2));
 
         char type = resultSet.getString(3).charAt(0);
@@ -929,12 +1160,11 @@ public class MySqlPersistance implements Persistance {
             tmp = insertEncoding(tmp);
             relation.setData(new String(tmp));
         }
-
         relation.setInitialized(true);
-        return relation;
     }
 
     /**
+     * todo - probably remove this Object
      * @return data from mysql db
      */
     protected GenericObject loadData(Data obj) throws SQLException {
@@ -954,6 +1184,7 @@ public class MySqlPersistance implements Persistance {
             data.setFormat(resultSet.getString(2));
             data.setData(resultSet.getBytes(3));
             data.setOwner(resultSet.getInt(4));
+            data.setInitialized(true);
 
             return data;
         } finally {
@@ -978,17 +1209,55 @@ public class MySqlPersistance implements Persistance {
             }
 
             Link link = new Link(obj.getId());
-            link.setServer(resultSet.getInt(2));
-            link.setText(resultSet.getString(3));
-            link.setUrl(resultSet.getString(4));
-            link.setFixed(resultSet.getBoolean(5));
-            link.setOwner(resultSet.getInt(6));
-            link.setUpdated(new java.util.Date(resultSet.getTimestamp(7).getTime()));
-
+            syncLinkFromRS(link, resultSet);
             return link;
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }
+    }
+
+    /**
+     * Synchronizes specified Links from database.
+     * @param links
+     */
+    protected void syncLinks(List links) throws SQLException {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        try {
+            con = getSQLConnection();
+            statement = con.prepareStatement("select * from odkaz where cislo in " + getInCondition(links.size()) + " order by cislo");
+            int i = 1;
+            for (Iterator iter = links.iterator(); iter.hasNext();) {
+                Link link = (Link) iter.next();
+                statement.setInt(i++, link.getId());
+            }
+            rs = statement.executeQuery();
+
+            for (Iterator iter = links.iterator(); iter.hasNext();) {
+                Link link = (Link) iter.next();
+                if (!rs.next() || rs.getInt(1) != link.getId())
+                    throw new NotFoundException("Odkaz " + link.getId() + " nebyl nalezen!");
+                syncLinkFromRS(link, rs);
+                cache.store(link);
+            }
+        } finally {
+            releaseSQLResources(con, statement, rs);
+        }
+    }
+
+    /**
+     * Synchronizes Link from result set.
+     * @throws SQLException
+     */
+    private void syncLinkFromRS(Link link, ResultSet resultSet) throws SQLException {
+        link.setServer(resultSet.getInt(2));
+        link.setText(resultSet.getString(3));
+        link.setUrl(resultSet.getString(4));
+        link.setFixed(resultSet.getBoolean(5));
+        link.setOwner(resultSet.getInt(6));
+        link.setUpdated(new java.util.Date(resultSet.getTimestamp(7).getTime()));
+        link.setInitialized(true);
     }
 
     /**
@@ -1028,6 +1297,7 @@ public class MySqlPersistance implements Persistance {
                 throw new InvalidDataException("Anketa "+obj.getId()+" nema zadne volby!");
             }
             poll.setChoices(choices);
+            poll.setInitialized(true);
 
             return poll;
         } finally {
@@ -1051,14 +1321,53 @@ public class MySqlPersistance implements Persistance {
                 throw new NotFoundException("Server "+obj.getId()+" nebyl nalezen!");
             }
 
-            Server server = new Server(resultSet.getInt(1));
-            server.setName(resultSet.getString(2));
-            server.setUrl(resultSet.getString(3));
-            server.setContact(resultSet.getString(4));
+            Server server = new Server(obj.getId());
+            syncServerFromRS(server, resultSet);
             return server;
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }
+    }
+
+    /**
+     * Synchronizes specified Servers from database.
+     * @param servers
+     */
+    protected void syncServers(List servers) throws SQLException {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        try {
+            con = getSQLConnection();
+            statement = con.prepareStatement("select * from server where cislo in " + getInCondition(servers.size()) + " order by cislo");
+            int i = 1;
+            for (Iterator iter = servers.iterator(); iter.hasNext();) {
+                Server server = (Server) iter.next();
+                statement.setInt(i++, server.getId());
+            }
+            rs = statement.executeQuery();
+
+            for (Iterator iter = servers.iterator(); iter.hasNext();) {
+                Server server = (Server) iter.next();
+                if (!rs.next() || rs.getInt(1) != server.getId())
+                    throw new NotFoundException("Odkaz " + server.getId() + " nebyl nalezen!");
+                syncServerFromRS(server, rs);
+                cache.store(server);
+            }
+        } finally {
+            releaseSQLResources(con, statement, rs);
+        }
+    }
+
+    /**
+     * Synchronizes server from result set.
+     * @throws SQLException
+     */
+    private void syncServerFromRS(Server server, ResultSet resultSet) throws SQLException {
+        server.setName(resultSet.getString(2));
+        server.setUrl(resultSet.getString(3));
+        server.setContact(resultSet.getString(4));
+        server.setInitialized(true);
     }
 
     /**
@@ -1294,6 +1603,22 @@ public class MySqlPersistance implements Persistance {
         }
 
         sb.append(size);
+        return sb.toString();
+    }
+
+    /**
+     * Creates string in format "(?,?,?)"
+     *
+     * @param size number of question marks
+     * @return
+     */
+    protected String getInCondition(int size) {
+        StringBuffer sb = new StringBuffer();
+        sb.append('(');
+        for (int i = 0; i < size; i++) {
+            sb.append("?,");
+        }
+        sb.setCharAt(sb.length() - 1, ')');
         return sb.toString();
     }
 
