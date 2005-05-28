@@ -284,7 +284,7 @@ public class FeedGenerator implements Configurable {
                 Tools.syncList(stories);
                 for (Iterator iter = stories.iterator(); iter.hasNext();) {
                     Relation found = (Relation) iter.next();
-                    entry = getStorySyndicate(persistance, blog, found, author);
+                    entry = getStorySyndicate(blog, found, author);
                     entries.add(entry);
                 }
 
@@ -306,12 +306,13 @@ public class FeedGenerator implements Configurable {
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
             List stories = sqlTool.findItemRelationsWithType(Item.BLOG, qualifiers);
+            Tools.syncList(stories);
             // todo use Tools.syncList
             for (Iterator iter = stories.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
                 blog = (Category) persistance.findById(found.getParent());
                 User author = (User) persistance.findById(new User(blog.getOwner()));
-                entry = getStorySyndicate(persistance, blog, found, author);
+                entry = getStorySyndicate(blog, found, author);
                 entries.add(entry);
             }
 
@@ -391,7 +392,7 @@ public class FeedGenerator implements Configurable {
      * Create SyndEntry from blog story.
      * @return SyndEntry with link to selected story.
      */
-    private static SyndEntry getStorySyndicate(Persistance persistance, Category blog, Relation found, User author) {
+    private static SyndEntry getStorySyndicate(Category blog, Relation found, User author) {
         SyndEntry entry;
         SyndContent description;
         Item item = (Item) found.getChild();
