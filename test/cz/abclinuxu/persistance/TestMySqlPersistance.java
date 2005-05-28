@@ -125,6 +125,93 @@ public class TestMySqlPersistance extends TestCase {
         }
     }
 
+    /**
+     * test correctness of <code>synchronize</code>
+     */
+    public void testSynchronize() throws Exception {
+        Item a = new Item(0,Item.MAKE);
+        a.setOwner(1);
+        a.setData("<name>make</name>");
+        persistance.create(a);
+
+        Record b = new Record(0,Record.SOFTWARE);
+        b.setOwner(2);
+        b.setData("<name>sw b</name>");
+        persistance.create(b);
+
+        Relation relationAB = new Relation(a,b,0);
+        persistance.create(relationAB);
+        a.addChildRelation(relationAB);
+
+        Record c = new Record(0,Record.ARTICLE);
+        c.setOwner(1);
+        c.setData("<name>article c</name>");
+        persistance.create(c);
+
+        Relation relationAC = new Relation(a,c,0);
+        persistance.create(relationAC);
+        a.addChildRelation(relationAC);
+
+        Category d = new Category(0);
+        d.setOwner(2);
+        d.setData("<name>section</name>");
+        persistance.create(d);
+
+        Item e = new Item(0, Item.BLOG);
+        e.setOwner(3);
+        e.setData("<name>section</name>");
+        persistance.create(e);
+
+        Relation relationDE = new Relation(d,e,0);
+        persistance.create(relationDE);
+        d.addChildRelation(relationDE);
+
+        List relationList = new ArrayList();
+        relationList.add(new Relation(relationAB.getId()));
+        relationList.add(relationAC);
+        relationList.add(new Relation(relationDE.getId()));
+
+        a.setSubType("changed");
+        b.setSubType("changed");
+        c.setSubType("changed"); // only this change shall survive synchronizeList
+        d.setSubType("changed");
+        e.setSubType("changed");
+
+        persistance.synchronizeList(relationList);
+        List childrenList = new ArrayList();
+
+        GenericObject fetched = ((Relation)relationList.get(0)).getChild();
+        childrenList.add(fetched);
+        assertEquals(b.getId(), fetched.getId());
+        assertTrue(((GenericDataObject)fetched).getOwner()==0);
+        assertNull(((GenericDataObject)fetched).getData());
+        fetched = ((Relation)relationList.get(1)).getChild();
+        childrenList.add(fetched);
+        assertEquals(c.getId(), fetched.getId());
+        assertTrue(((GenericDataObject)fetched).getOwner()==c.getOwner());
+        assertNotNull(((GenericDataObject)fetched).getData());
+        fetched = ((Relation)relationList.get(2)).getChild();
+        childrenList.add(fetched);
+        assertEquals(e.getId(), fetched.getId());
+        assertTrue(((GenericDataObject)fetched).getOwner()==0);
+        assertNull(((GenericDataObject)fetched).getData());
+
+        persistance.synchronizeList(childrenList);
+
+        fetched = ((Relation) relationList.get(0)).getChild();
+        assertTrue(! b.getSubType().equals(((GenericDataObject)fetched).getSubType()));
+        assertEquals(b.getOwner(), ((GenericDataObject) fetched).getOwner());
+        assertNotNull(((GenericDataObject) fetched).getData());
+        fetched = ((Relation) relationList.get(1)).getChild();
+        assertEquals(c.getSubType(), ((GenericDataObject) fetched).getSubType());
+        assertEquals(c.getOwner(), ((GenericDataObject) fetched).getOwner());
+        assertNotNull(((GenericDataObject) fetched).getData());
+        fetched = ((Relation) relationList.get(2)).getChild();
+        assertTrue(!e.getSubType().equals(((GenericDataObject) fetched).getSubType()));
+        assertEquals(e.getOwner(), ((GenericDataObject) fetched).getOwner());
+        assertNotNull(((GenericDataObject) fetched).getData());
+    }
+
     public void testFindByExample() throws Exception {
         Record a = new Record(0,Record.HARDWARE);
         a.setData("<name>HP DeskJet 840C</name>");
