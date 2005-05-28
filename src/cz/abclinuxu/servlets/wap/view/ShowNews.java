@@ -12,6 +12,7 @@ import cz.abclinuxu.persistance.extra.LimitQualifier;
 import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.freemarker.Tools;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,6 +39,7 @@ public class ShowNews implements AbcAction {
         int count = 5;
         Qualifier[] qualifiers = getQualifiers(Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
         List data = sqlTool.findNewsRelations(qualifiers);
+        Tools.syncList(data);
         int total = sqlTool.countNewsRelations();
 
         Paging found = new Paging(data, from, count, total, qualifiers);

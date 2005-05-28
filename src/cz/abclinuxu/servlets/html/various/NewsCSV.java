@@ -62,12 +62,13 @@ public class NewsCSV implements AbcAction, Configurable {
         DateTool dateTool = new DateTool();
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, count)};
         List news = SQLTool.getInstance().findNewsRelations(qualifiers);
+        Tools.syncList(news);
 
         response.setContentType("text/plain; charset=UTF8");
         Writer writer = response.getWriter();
         for ( Iterator iterator = news.iterator(); iterator.hasNext(); ) {
             Relation relation = (Relation) iterator.next();
-            Item item = (Item) Tools.sync(relation.getChild());
+            Item item = (Item) relation.getChild();
             DiscussionHeader dizHeader = Tools.findComments(item);
             writer.write(dateTool.show(item.getCreated(), "CZ_SHORT"));
             writer.write("|");

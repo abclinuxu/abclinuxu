@@ -30,7 +30,6 @@ import org.apache.regexp.REProgram;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.prefs.Preferences;
@@ -113,10 +112,7 @@ public class ShowDictionary implements AbcAction, Configurable {
         SQLTool sqlTool = SQLTool.getInstance();
         Qualifier[] qualifiers = new Qualifier[]{};
         List data = sqlTool.findItemRelationsWithType(Item.DICTIONARY, qualifiers);
-        for ( Iterator iter = data.iterator(); iter.hasNext(); ) {
-            Relation relation = (Relation) iter.next();
-            Tools.sync(relation);
-        }
+        Tools.syncList(data);
         Sorters2.byName(data);
 
         Paging found = new Paging(data, 0, data.size(), data.size(), qualifiers);

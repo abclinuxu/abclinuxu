@@ -120,6 +120,7 @@ public class FeedGenerator implements Configurable {
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
             List list = SQLTool.getInstance().findItemRelationsWithType(Item.DRIVER, qualifiers);
+            // todo use Tools.syncList
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
                 Item item = (Item) persistance.findById(found.getChild());
@@ -162,6 +163,7 @@ public class FeedGenerator implements Configurable {
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0,feedLength)};
             List list = SQLTool.getInstance().findRecordRelationsWithType(Record.HARDWARE, qualifiers);
+            // todo use optimal Tools.syncList
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
                 Item item = (Item) persistance.findById(found.getParent());
@@ -279,6 +281,7 @@ public class FeedGenerator implements Configurable {
                 qualifiers.add(new LimitQualifier(0, feedLength));
                 Qualifier[] qa = new Qualifier[qualifiers.size()];
                 List stories = sqlTool.findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+                Tools.syncList(stories);
                 for (Iterator iter = stories.iterator(); iter.hasNext();) {
                     Relation found = (Relation) iter.next();
                     entry = getStorySyndicate(persistance, blog, found, author);
@@ -303,6 +306,7 @@ public class FeedGenerator implements Configurable {
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
             List stories = sqlTool.findItemRelationsWithType(Item.BLOG, qualifiers);
+            // todo use Tools.syncList
             for (Iterator iter = stories.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
                 blog = (Category) persistance.findById(found.getParent());
@@ -342,9 +346,10 @@ public class FeedGenerator implements Configurable {
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
             List list = SQLTool.getInstance().findNewsRelations(qualifiers);
+            Tools.syncList(list);
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
-                Item item = (Item) persistance.findById(found.getChild());
+                Item item = (Item) found.getChild();
                 User author = (User) persistance.findById(new User(item.getOwner()));
 
                 String content = Tools.xpath(item, "data/content");
@@ -389,7 +394,7 @@ public class FeedGenerator implements Configurable {
     private static SyndEntry getStorySyndicate(Persistance persistance, Category blog, Relation found, User author) {
         SyndEntry entry;
         SyndContent description;
-        Item item = (Item) persistance.findById(found.getChild());
+        Item item = (Item) found.getChild();
         Document document = item.getData();
 
         entry = new SyndEntryImpl();

@@ -596,11 +596,12 @@ public class Tools implements Configurable {
     public static Map groupByType(List relations) throws PersistanceException {
         if (relations==null)
             return Collections.EMPTY_MAP;
+
+        syncList(relations);
         Map map = new HashMap();
 
         for (Iterator iter = relations.iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
-            sync(relation);
 
             GenericObject child = relation.getChild();
             if ( child instanceof Category )

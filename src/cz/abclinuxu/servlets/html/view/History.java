@@ -178,7 +178,6 @@ public class History implements AbcAction {
         } else
             return ServletUtils.showErrorPage("Chybí parametr type!",env,request);
 
-        //todo this is depecated
         Tools.syncList(found.getData());
 
         StringBuffer sb = new StringBuffer("&amp;count=");

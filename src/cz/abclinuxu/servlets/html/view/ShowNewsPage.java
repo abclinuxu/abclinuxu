@@ -6,6 +6,7 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.persistance.extra.Qualifier;
 import cz.abclinuxu.persistance.extra.LimitQualifier;
 import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.utils.freemarker.Tools;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,6 +24,7 @@ public class ShowNewsPage implements AbcAction {
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, 10)};
         List news = SQLTool.getInstance().findNewsRelations(qualifiers);
+        Tools.syncList(news);
         env.put("NEWS", news);
 
         Map params = (Map) env.get(Constants.VAR_PARAMS);

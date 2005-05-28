@@ -88,11 +88,12 @@ public class WeeklyEmail extends TimerTask implements Configurable {
 
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING};
         List relations = sqlTool.findArticleRelationsWithinPeriod(calendar.getTime(), new Date(), qualifiers);
+        Tools.syncList(relations);
         List articles = new ArrayList(relations.size());
 
         for (Iterator iter = relations.iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
-            item = (Item) persistance.findById(relation.getChild());
+            item = (Item) relation.getChild();
             String tmp = Tools.xpath(item,"/data/author");
             Article article = new Article(Tools.xpath(item, "data/name"),item.getCreated(),relation.getId());
             article.setAuthor(Tools.createUser(tmp).getName());
@@ -101,11 +102,12 @@ public class WeeklyEmail extends TimerTask implements Configurable {
         }
 
         relations = sqlTool.findNewsRelationsWithinPeriod(calendar.getTime(), new Date(), qualifiers);
+        Tools.syncList(relations);
         List news = new ArrayList(relations.size());
 
         for ( Iterator iter = relations.iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
-            item = (Item) persistance.findById(relation.getChild());
+            item = (Item) relation.getChild();
             News newz = new News(Tools.xpath(item, "data/content"), item.getCreated(), relation.getId());
             newz.setAuthor(Tools.createUser(item.getOwner()).getName());
             newz.setComments(Tools.findComments(item).getResponseCount());

@@ -970,9 +970,9 @@ public final class SQLTool implements Configurable {
             List result = new ArrayList(count);
             while ( resultSet.next() ) {
                 int id = resultSet.getInt(1);
-                Item item = (Item) persistance.findById(new Item(id));
-                result.add(item);
+                result.add(new Item(id));
             }
+            persistance.synchronizeList(result);
             return result;
         } catch (SQLException e) {
             throw new PersistanceException("Chyba pri hledani!", e);
@@ -1001,9 +1001,9 @@ public final class SQLTool implements Configurable {
             List result = new ArrayList();
             while ( resultSet.next() ) {
                 int id = resultSet.getInt(1);
-                Item item = (Item) persistance.findById(new Item(id));
-                result.add(item);
+                result.add(new Item(id));
             }
+            persistance.synchronizeList(result);
             return result;
         } catch (SQLException e) {
             throw new PersistanceException("Chyba pri hledani!", e);
@@ -1037,9 +1037,9 @@ public final class SQLTool implements Configurable {
             List result = new ArrayList(count);
             while ( resultSet.next() ) {
                 int id = resultSet.getInt(1);
-                Item item = (Item) persistance.findById(new Item(id));
-                result.add(item);
+                result.add(new Item(id));
             }
+            persistance.synchronizeList(result);
             return result;
         } catch (SQLException e) {
             throw new PersistanceException("Chyba pri hledani!", e);

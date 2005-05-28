@@ -49,9 +49,11 @@ public class ViewIndex implements AbcAction {
         env.put(ViewIndex.VAR_ARTICLES,articles);
 
         Category hw = (Category) persistance.findById(new Category(Constants.CAT_386));
+        Tools.syncList(hw.getChildren());
         env.put(ViewIndex.VAR_HARDWARE,hw.getChildren());
 
         Category sw = (Category) persistance.findById(new Category(Constants.CAT_SOFTWARE));
+        Tools.syncList(sw.getChildren());
         env.put(ViewIndex.VAR_SOFTWARE,sw.getChildren());
 
         int userLimit = getNumberOfDiscussions(user);
@@ -66,10 +68,7 @@ public class ViewIndex implements AbcAction {
 
         qualifiers = new Qualifier[]{ Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, 3) };
         List data = sqlTool.findRecordParentRelationsWithType(Record.DICTIONARY, qualifiers);
-        for ( Iterator iter = data.iterator(); iter.hasNext(); ) {
-            Relation relation = (Relation) iter.next();
-            Tools.sync(relation.getChild());
-        }
+        Tools.syncList(data);
         env.put(VAR_DICTIONARY, data);
 
         return FMTemplateSelector.select("ViewIndex","show",env, request);

@@ -243,13 +243,15 @@ public class ViewBlog implements AbcAction, Configurable {
 
         qa = new Qualifier[qualifiers.size()];
         List stories = sqlTool.findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+        Tools.syncList(stories);
+        List parentBlogs = new ArrayList(stories.size());
         for (Iterator iter = stories.iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
-            if (!relation.getChild().isInitialized())
-                persistance.synchronize(relation.getChild());
             if (!relation.getParent().isInitialized())
-                persistance.synchronize(relation.getParent());
+                parentBlogs.add(relation.getParent());
         }
+        if (parentBlogs.size()>0)
+            Tools.syncList(parentBlogs);
 
         Paging paging = new Paging(stories, from, defaultPageSize, total);
         env.put(VAR_STORIES, paging);
@@ -285,10 +287,12 @@ public class ViewBlog implements AbcAction, Configurable {
         List months;
 
         List blogs = sqlTool.findSectionRelationsWithType(Category.BLOG, null);
+        Tools.syncList(blogs);
         List result = new ArrayList(blogs.size());
         for (Iterator iter = blogs.iterator(); iter.hasNext();) {
             relation = (Relation) iter.next();
-            blog = (Category) persistance.findById(relation.getChild());
+            blog = (Category) relation.getChild();
+            // todo use Tools.syncList
             author = (User) persistance.findById(new User(blog.getOwner()));
 
             int count = 0;

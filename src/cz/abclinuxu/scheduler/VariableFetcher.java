@@ -115,6 +115,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         if ( userLimit>0 ) {
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, userLimit)};
             List news = SQLTool.getInstance().findNewsRelations(qualifiers);
+            Tools.syncList(news);
             return news;
         }
         return Collections.EMPTY_LIST;
@@ -151,27 +152,23 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, hwSize)};
             List list = sqlTool.findRecordParentRelationsWithType(Record.HARDWARE, qualifiers);
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                Relation relation = (Relation) iter.next();
-                Tools.sync(relation.getChild());
-            }
+            Tools.syncList(list);
             newHardware = list;
 
             qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, driversSize)};
             list = sqlTool.findItemRelationsWithType(Item.DRIVER, qualifiers);
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                Relation relation = (Relation) iter.next();
-                Tools.sync(relation.getChild());
-            }
+            Tools.syncList(list);
             newDrivers = list;
 
             qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, storiesSize)};
             list = sqlTool.findItemRelationsWithType(Item.BLOG, qualifiers);
+            List blogs = new ArrayList(list.size());
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 Relation relation = (Relation) iter.next();
-                Tools.sync(relation.getParent());
-                Tools.sync(relation.getChild());
+                blogs.add(relation.getParent());
             }
+            Tools.syncList(list);
+            Tools.syncList(blogs);
             newStories = list;
 
             log.debug("finished fetching variables");

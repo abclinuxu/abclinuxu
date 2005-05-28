@@ -123,17 +123,17 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
      * Finds articles, news and other data and puts them into params.
      */
     private void setData(Map params, Date from, Date to) {
-        Persistance persistance = PersistanceFactory.getPersistance();
         SQLTool sqlTool = SQLTool.getInstance();
         Item item;
 
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING};
         List relations = sqlTool.findArticleRelationsWithinPeriod(from, to, qualifiers);
+        Tools.syncList(relations);
         List articles = new ArrayList(relations.size());
 
         for ( Iterator iter = relations.iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
-            item = (Item) persistance.findById(relation.getChild());
+            item = (Item) relation.getChild();
             String tmp = Tools.xpath(item, "/data/author");
             Article article = new Article(Tools.xpath(item, "data/name"), item.getCreated(), relation.getId());
             User author = Tools.createUser(tmp);
@@ -147,11 +147,12 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
         params.put(VAR_ARTICLES, articles);
 
         relations = sqlTool.findNewsRelationsWithinPeriod(from, to, qualifiers);
+        Tools.syncList(relations);
         List news = new ArrayList(relations.size());
 
         for ( Iterator iter = relations.iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
-            item = (Item) persistance.findById(relation.getChild());
+            item = (Item) relation.getChild();
             News newz = new News(Tools.xpath(item, "data/content"), item.getCreated(), relation.getId());
             User author = Tools.createUser(item.getOwner());
             newz.setAuthor(author.getName());
@@ -165,11 +166,11 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
         Qualifier toCondition = new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, to);
         qualifiers = new Qualifier[]{fromCondition, toCondition, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING};
         relations = sqlTool.findDiscussionRelations(qualifiers);
+        Tools.syncList(relations);
         List dizs = new ArrayList(relations.size());
 
         for ( Iterator iter = relations.iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
-            Tools.sync(relation);
             DiscussionHeader diz = Tools.analyzeDiscussion(relation);
             dizs.add(diz);
         }
