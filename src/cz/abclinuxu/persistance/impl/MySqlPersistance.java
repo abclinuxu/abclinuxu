@@ -506,8 +506,10 @@ public class MySqlPersistance implements Persistance {
                 Sorters2.byId(users);
                 syncUsers(users);
             }
-            long end = System.currentTimeMillis();
-            log.info("syncList for " + list.size() + " " + type + "s took " + (end - start) + " ms");
+            if (log.isDebugEnabled()) {
+                long end = System.currentTimeMillis();
+                log.debug("syncList for " + list.size() + " " + type + "s took " + (end - start) + " ms");
+            }
         } catch (SQLException e) {
             throw new PersistanceException("Nemohu synchronizovat objekty!", e);
         } finally {
