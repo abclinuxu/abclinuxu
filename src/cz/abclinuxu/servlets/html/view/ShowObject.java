@@ -181,12 +181,18 @@ public class ShowObject implements AbcAction {
         Persistance persistance = PersistanceFactory.getPersistance();
 
         Item diz = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
+        if (diz==null)
+            throw new MissingArgumentException("Chybí parametr "+PARAM_DISCUSSION+"!");
         diz = (Item) persistance.findById(diz);
+
         List children = diz.getChildren();
         Record record = (Record) ((Relation)children.get(0)).getChild();
         persistance.synchronize(record);
 
         String thread = (String) params.get(PARAM_THREAD);
+        if (thread==null)
+            throw new MissingArgumentException("Chybí parametr "+PARAM_THREAD+"!");
+
         String xpath = "//comment[@id='"+thread+"']";
         Element element = (Element) record.getData().selectSingleNode(xpath);
         env.put(VAR_THREAD, new Comment(element));
