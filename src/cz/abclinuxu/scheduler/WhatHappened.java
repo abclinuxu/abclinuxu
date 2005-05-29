@@ -181,6 +181,6 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
         title = prefs.get(PREF_TITLE, null);
         perex = prefs.get(PREF_PEREX, null);
         author = prefs.getInt(PREF_AUTHOR, 1);
-        sectionRid = prefs.getInt(PREF_AUTHOR, 251);
+        sectionRid = prefs.getInt(PREF_SECTION, 251);
     }
 }
