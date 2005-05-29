@@ -80,9 +80,10 @@ public class Nursery implements Configurable {
         List list = (List) cache.get(relation.getParent());
         if (list==null)
             return;
-        boolean removed = list.remove(relation);
-        if (!removed)
-            log.warn("Failed to delete child relation "+relation);
+        list.remove(relation);
+//        boolean removed = list.remove(relation);
+//        if (!removed) // stane se pri asynchronnim pristupu. Proc to neni cele synchronizovane?
+//            log.warn("Failed to delete child relation "+relation);
     }
 
     /**
