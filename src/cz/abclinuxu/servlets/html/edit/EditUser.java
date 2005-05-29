@@ -557,8 +557,11 @@ public class EditUser implements AbcAction, Configurable {
         if ( !user.hasRole(Roles.USER_ADMIN) )
             canContinue &= checkPassword(params, managed, env);
 
-        if (!canContinue)
+        if (!canContinue) {
+            env.put(VAR_DEFAULT_DISCUSSION_COUNT, new Integer(AbcConfig.getIndexDiscussionCount()));
+            env.put(VAR_DEFAULT_NEWS_COUNT, new Integer(AbcConfig.getNewsCount()));
             return FMTemplateSelector.select("EditUser", "editSettings", env, request);
+        }
 
         canContinue &= setCssUrl(params, managed);
         canContinue &= setCookieValidity(params, managed);
@@ -571,8 +574,11 @@ public class EditUser implements AbcAction, Configurable {
         canContinue &= setForumPageSize(params, managed, env);
         canContinue &= setReturnBackToForum(params, managed);
 
-        if ( !canContinue )
+        if ( !canContinue ) {
+            env.put(VAR_DEFAULT_DISCUSSION_COUNT, new Integer(AbcConfig.getIndexDiscussionCount()));
+            env.put(VAR_DEFAULT_NEWS_COUNT, new Integer(AbcConfig.getNewsCount()));
             return FMTemplateSelector.select("EditUser", "editSettings", env, request);
+        }
 
         persistance.update(managed);
 
