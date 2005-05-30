@@ -690,7 +690,7 @@ public class EditDiscussion implements AbcAction {
         action.setProperty(DiscussionDecorator.PROPERTY_CONTENT, content);
         MonitorPool.scheduleMonitorAction(action);
 
-        url = relation.getUrl();
+        url = mainRelation.getUrl();
         if (url == null)
             url = urlUtils.getPrefix() + "/show/" + relation.getId();
         urlUtils.redirect(response, url, false);
