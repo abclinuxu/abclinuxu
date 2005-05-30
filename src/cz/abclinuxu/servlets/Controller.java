@@ -49,7 +49,7 @@ public class Controller extends HttpServlet {
         String requestURI = request.getRequestURI();
         env.put(Constants.VAR_URL_UTILS, new UrlUtils(requestURI, response));
         env.put(Constants.VAR_REQUEST_URI, requestURI);
-        ServletUtils.setCurrentURL(requestURI);
+        ServletUtils.setCurrentURL(ServletUtils.getURL(request));
         ServletUtils.handleMessages(request, env);
         ServletUtils.handleLogin(request, response, env);
     }
