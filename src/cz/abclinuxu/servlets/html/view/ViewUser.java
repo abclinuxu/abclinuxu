@@ -161,6 +161,9 @@ public class ViewUser implements AbcAction {
      * shows login screen
      */
     protected String handleLogin(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        String url = request.getHeader("Referer");
+        params.put(PARAM_URL, url);
         return FMTemplateSelector.select("ViewUser","login",env,request);
     }
 
