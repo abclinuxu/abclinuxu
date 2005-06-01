@@ -1031,6 +1031,9 @@ public class EditDiscussion implements AbcAction {
                 ServletUtils.addError(PARAM_TITLE, "Pou¾ití HTML znaèek je zakázáno!", env, null);
                 return false;
             }
+            if (tmp.indexOf('\n')!=-1) {
+                tmp = tmp.replace('\n', ' ');
+            }
             DocumentHelper.makeElement(root,"title").setText(tmp);
         } else {
             ServletUtils.addError(PARAM_TITLE, "Zadejte titulek va¹eho dotazu!", env, null);
