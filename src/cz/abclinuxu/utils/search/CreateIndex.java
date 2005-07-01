@@ -18,6 +18,7 @@ import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.exceptions.PersistanceException;
+import cz.abclinuxu.exceptions.InvalidDataException;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.apache.lucene.index.IndexWriter;
@@ -70,20 +71,21 @@ public class CreateIndex implements Configurable {
 
             IndexWriter indexWriter = new IndexWriter(PATH, new AbcCzechAnalyzer(), true);
 
-            makeIndexOnArticles(indexWriter, articles.getChild().getChildren(), UrlUtils.PREFIX_CLANKY);
-            makeIndexOnNews(indexWriter, UrlUtils.PREFIX_NEWS);
-            makeIndexOnDictionary(indexWriter);
-            makeIndexOnBlogs(indexWriter, blogs.getChild().getChildren());
-            makeIndexOnForums(indexWriter, forums, UrlUtils.PREFIX_FORUM);
-            makeIndexOn(indexWriter, hardware, UrlUtils.PREFIX_HARDWARE);
-            makeIndexOn(indexWriter, software, UrlUtils.PREFIX_SOFTWARE);
-            makeIndexOn(indexWriter, drivers, UrlUtils.PREFIX_DRIVERS);
-            makeIndexOn(indexWriter, abc, UrlUtils.PREFIX_CLANKY);
-            makeIndexOnBlogs(indexWriter, blogs.getChild().getChildren());
-
-            indexWriter.optimize();
-            indexWriter.close();
-
+            try {
+                makeIndexOnArticles(indexWriter, articles.getChild().getChildren(), UrlUtils.PREFIX_CLANKY);
+                makeIndexOnNews(indexWriter, UrlUtils.PREFIX_NEWS);
+                makeIndexOnDictionary(indexWriter);
+                makeIndexOnBlogs(indexWriter, blogs.getChild().getChildren());
+                makeIndexOnForums(indexWriter, forums, UrlUtils.PREFIX_FORUM);
+                makeIndexOn(indexWriter, hardware, UrlUtils.PREFIX_HARDWARE);
+                makeIndexOn(indexWriter, software, UrlUtils.PREFIX_SOFTWARE);
+                makeIndexOn(indexWriter, drivers, UrlUtils.PREFIX_DRIVERS);
+                makeIndexOn(indexWriter, abc, UrlUtils.PREFIX_CLANKY);
+                makeIndexOnBlogs(indexWriter, blogs.getChild().getChildren());
+            } finally {
+                indexWriter.optimize();
+                indexWriter.close();
+            }
             long end = System.currentTimeMillis();
 
             FileWriter fos = new FileWriter(new File(PATH, lastRunFilename));
@@ -192,11 +194,15 @@ public class CreateIndex implements Configurable {
                     relation2 = (Relation) iter2.next();
                     child = relation2.getChild();
                     if ( hasBeenIndexed(child) ) continue;
-                    child = persistance.findById(child);
-                    doc = indexDiscussion((Item)child);
-                    doc.setURL(urlPrefix+"/show/"+relation2.getId());
-                    doc.setParent(relation2.getUpper());
-                    indexWriter.addDocument(doc.getDocument());
+                    try {
+                        child = persistance.findById(child);
+                        doc = indexDiscussion((Item)child);
+                        doc.setURL(urlPrefix+"/show/"+relation2.getId());
+                        doc.setParent(relation2.getUpper());
+                        indexWriter.addDocument(doc.getDocument());
+                    } catch (InvalidDataException e) {
+                        log.error("Cannot index relation "+child.getId(), e);
+                    }
                 }
             }
         }
@@ -321,14 +327,13 @@ public class CreateIndex implements Configurable {
         MyDocument doc;
 
         List qualifiers = new ArrayList();
-        qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL,new Integer(blog.getOwner())));
+        CompareCondition ownerCondition = new CompareCondition(Field.OWNER, Operation.EQUAL,new Integer(blog.getOwner()));
+        qualifiers.add(ownerCondition);
         Qualifier[] qa = new Qualifier[qualifiers.size()];
         int total = sqlTool.countItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
         for ( int i = 0; i<total; ) {
-            qualifiers.add(Qualifier.SORT_BY_CREATED);
-            qualifiers.add(Qualifier.ORDER_ASCENDING);
-            qualifiers.add(new LimitQualifier(i, 100));
-            List data = sqlTool.findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+            qa = new Qualifier[]{ownerCondition, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING, new LimitQualifier(i, 100)};
+            List data = sqlTool.findItemRelationsWithType(Item.BLOG, qa);
             i += data.size();
 
             for ( Iterator iter2 = data.iterator(); iter2.hasNext(); ) {
