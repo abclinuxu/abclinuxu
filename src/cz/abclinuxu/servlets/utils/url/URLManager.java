@@ -35,7 +35,8 @@ public class URLManager implements Configurable {
      * This method shall be used on last part of URL (e.g. after last slash).
      * It converts it to obey common rules.
      * @param url must not be null
-     * @return
+     * @return normalized URL that obeys all rules
+     * @throws AbcException if URL is after conversions empty
      */
     public static String enforceLastURLPart(String url) {
         if (url.charAt(0)=='/')
@@ -44,10 +45,15 @@ public class URLManager implements Configurable {
         if (url.charAt(length-1)=='/')
             url = url.substring(0, length-1);
         if (url.length()==0)
-            throw new AbcException("prazdne url!");
+            throw new AbcException("Zvolte jiné URL, zadané URL nevyhovuje pravidlùm!");
 
         String fixedURL = DiacriticRemover.getInstance().removeDiacritics(url);
         fixedURL = new RE(reInvalidCharacters, RE.REPLACE_ALL).subst(fixedURL, "-");
+        while(fixedURL.endsWith("-"))
+            fixedURL = fixedURL.substring(0, fixedURL.length()-1);
+
+        if (fixedURL.length() == 0)
+            throw new AbcException("Zvolte jiné URL, zadané URL nevyhovuje pravidlùm!");
         return fixedURL;
     }
 
