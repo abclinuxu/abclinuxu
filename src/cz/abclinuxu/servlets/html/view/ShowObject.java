@@ -58,7 +58,6 @@ public class ShowObject implements AbcAction {
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_PARENTS = "PARENTS";
     public static final String VAR_ITEM = "ITEM";
-    public static final String VAR_POLL = "POLL";
     /** Relation upper to selected relation Item-Record */
     public static final String VAR_UPPER = "REL_ITEM";
     /** children relation of Item, grouped by their type */
@@ -107,7 +106,7 @@ public class ShowObject implements AbcAction {
         if ( (relation.getParent() instanceof Item) || ( relation.getChild() instanceof Item ) )
             return processItem(env, relation, request, response);
         else if ( relation.getChild() instanceof Poll )
-            return processPoll(env, relation, request, response);
+            return ViewPolls.processPoll(env, relation, request, response);
         else if ( relation.getParent() instanceof Category ) {
             return ViewCategory.processCategory(request,response,env,relation);
         }
@@ -198,18 +197,5 @@ public class ShowObject implements AbcAction {
         env.put(VAR_THREAD, new Comment(element));
 
         return FMTemplateSelector.select("ShowObject", "censored", env, request);
-    }
-
-    /**
-     * Displays selected poll.
-     */
-    String processPoll(Map env, Relation relation, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        Poll poll = (Poll) persistance.findById(relation.getChild());
-        env.put(VAR_POLL, poll);
-
-        Map children = Tools.groupByType(poll.getChildren());
-        env.put(VAR_CHILDREN_MAP, children);
-        return FMTemplateSelector.select("ShowObject", "poll", env, request);
     }
 }

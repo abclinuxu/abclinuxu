@@ -210,11 +210,10 @@
                         <map>
                             <entry key="cache.size" value="750"/>
 
-                            <entry key="no.children.for.section" value="A,B"/>
-                            <!-- zpravicky -->
-                            <entry key="no.children.for.section.A" value="452"/>
-                            <!-- vykladovy slovnik -->
-                            <entry key="no.children.for.section.B" value="569"/>
+                            <entry key="no.children.for.section" value="A,B,C"/>
+                            <entry key="no.children.for.section.A" value="452"/><!-- zpravicky -->
+                            <entry key="no.children.for.section.B" value="569"/><!-- vykladovy slovnik -->
+                            <entry key="no.children.for.section.C" value="250"/><!-- ankety -->
                         </map>
                     </node>
                     <node name="SQLTool">
@@ -243,7 +242,7 @@
                             <entry key="users.in.group" value="select cislo from uzivatel where data like concat('%&lt;group&gt;',?,'&lt;/group%')"/>
                             <entry key="max.poll" value="select max(cislo) from anketa"/>
                             <entry key="max.user" value="select max(cislo) from uzivatel"/>
-                            <entry key="user.by.login" value="select cislo from uzivatel where login=?" />  
+                            <entry key="user.by.login" value="select cislo from uzivatel where login=?" />
                             <entry key="insert.last.comment" value="replace into komentar values(?,?,?,NULL);"/>
                             <entry key="get.last.comment" value="select posledni from komentar where kdo=? and diskuse=?" />
                             <entry key="get.xth.comment.date" value="select kdy from komentar where kdo=? order by kdy desc limit ?,1" />
