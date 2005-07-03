@@ -18,18 +18,40 @@
 </head>
 
 <body>
+
+<div style="height:0;">
+<#include "/include/pocitani2.txt">
+<#include "/include/pocitani1.txt"></div>
+
+<#if IS_INDEX?exists>
+    <#include "/include/impact-hp.txt">
+<#elseif URL.prefix=='/clanky'>
+    <#include "/include/impact-cl.txt">
+<#else>
+    <#include "/include/impact-oth.txt">
+</#if>
+
 <#import "macros.ftl" as lib>
 <#include "/include/lista.txt">
-<#include "/include/pocitani.txt">
+
+<#if IS_INDEX?exists>
+    <#include "/include/impact-hp-lb.txt">
+<#elseif URL.prefix=='/clanky'>
+    <#include "/include/impact-cl-lb.txt">
+<#else>
+    <#include "/include/impact-oth-lb.txt">
+</#if>
+
 	<div class="za">
-		<div class="za_logo">
-			<a href="/" class="bh"><img src="/images/site2/abc-logo.png" width="200" height="80" alt="logo"></a>
-		</div>
+		<a href="/" class="bh">
+		    <div class="za_logo">
+		    </div>
+		</a>
 
 		<div class="za_hledat">
 			<form action="/Search" method="get">
-				<input type="text" class="text" name="query">&nbsp;<input alt="Hledej" src="/images/site2/lupa.gif" type="image"><br>
-				<a href="/Search?advancedMode=true">Roz¹íøené hledání</a>
+				<a href="/Search?advancedMode=true">Roz¹íøené hledání</a> &nbsp;<input type="text"
+				class="text" name="query">&nbsp;<input class="button" type="submit" value="Hledej">
 			</form>
 		</div>
 
@@ -41,9 +63,9 @@
 			--><a href="/clanky" class="za_mn_odkaz">Èlánky</a><!--
 			--><a href="/blog" class="za_mn_odkaz">Blogy</a><!--
 			--><a href="http://www.praceabc.cz" class="za_mn_odkaz">Práce</a><!--
-			--><a href="/download/abicko.jsp" class="za_mn_odkaz">Abíèko</a><!--
+			--><a href="/download/abicko.jsp" class="za_mn_odkaz">PDF</a><!--
 			--><a href="/slovnik" class="za_mn_odkaz">Slovník</a><!--
-			--><a href="/clanky/dir/250" class="za_mn_odkaz">Ankety</a><!--
+			--><a href="/ankety" class="za_mn_odkaz">Ankety</a><!--
 			--><a href="/drivers" class="za_mn_odkaz">Ovladaèe</a>
 		</div>
 
@@ -83,14 +105,22 @@
 
         <div class="ls" id="ls"><div class="s">
             <div class="ls_reklama"><div class="ad">
-                <#include "/include/box_index.txt">
+
+		<#if IS_INDEX?exists>
+		    <#include "/include/impact-hp-vip.txt">
+		<#elseif URL.prefix=='/clanky'>
+		    <#include "/include/impact-cl-vip.txt">
+		<#else>
+		    <#include "/include/impact-oth-vip.txt">
+		</#if>
+
             </div></div>
 
             <!-- ANKETA -->
             <#if VARS.currentPoll?exists>
                 <#assign relAnketa = VARS.currentPoll, anketa = relAnketa.child, total = anketa.totalVotes>
                 <#if anketa.multiChoice><#assign type = "checkbox"><#else><#assign type = "radio"></#if>
-                <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Anketa</h1></div></div>
+                <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1><a href="/ankety">Anketa</a></h1></div></div>
                 <div class="s_sekce">
                     <form action="${URL.noPrefix("/EditPoll/"+relAnketa.id)}" method="POST">
                     <div class="ank-otazka">${anketa.text}</div>
@@ -100,13 +130,13 @@
                         <label><input type=${type} name="voteId" value="${choice.id}">${choice.text}</label>&nbsp;(${procento}%)<br>
                         <img src="/images/site2/anketa.gif" width="${procento}" height="10" alt="${TOOL.percentBar(procento)}"></div>
                     </#list>
-                    <input name="submit" type="submit" id="submit" value="Hlasuj" src="/images/site2/vote_btn.gif" alt="Hlasuj"> &nbsp;Celkem ${total} hlasù<br>
+                    <input name="submit" type="submit" class="button" value="Hlasuj" src="/images/site2/vote_btn.gif" alt="Hlasuj"> &nbsp;Celkem ${total} hlasù<br>
                     <input type="hidden" name="url" value="/clanky/show/${relAnketa.id}">
                     <input type="hidden" name="action" value="vote">
                     </form>
                 </div>
-                <#assign diz=TOOL.findComments(anketa)>
-                <div class="ls_zpr">&nbsp;<a href="/clanky/show/${relAnketa.id}">Komentáøù:</a>
+                <#assign diz=TOOL.findComments(anketa), url=relAnketa.url?default("/ankety/show/"+relAnketa.id)>
+                <div class="ls_zpr">&nbsp;<a href="${url}">Komentáøù:</a>
 		        ${diz.responseCount}<#if diz.responseCount gt 0>, poslední
 		        ${DATE.show(diz.updated,"CZ_SHORT")}</#if>
 		        <br>&nbsp;<a href="/clanky/dir/3500">Navrhnìte novou anketu</a>
@@ -115,7 +145,7 @@
 
             <!-- ZPRÁVIÈKY -->
             <#assign news=VARS.getFreshNews(USER?if_exists)>
-            <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Zprávièky</h1></div></div>
+            <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1><a href="/zpravicky">Zprávièky</a></h1></div></div>
             <div class="s_sekce">
 
                 <#if USER?exists && USER.hasRole("news admin")>
@@ -152,7 +182,8 @@
             <#if ! IS_INDEX?exists>
                 <!-- prace.abclinuxu.cz -->
                 <div class="s_nad_h1"><div class="s_nad_pod_h1">
-                    <h1><a href="http://prace.abclinuxu.cz">Prace.abclinuxu.cz</a></h1>
+                    <h1><a href="http://www.praceabc.cz"
+		           title="Spojujeme lidi s prací v IT.">Pracovní nabídky</a></h1>
                 </div></div>
 
                 <div class="s_sekce">
@@ -186,7 +217,7 @@
                   <li><a href="/clanky/show/64410">Staòte se autorem</a></li>
                   <li><a href="/clanky/show/44043">Pøehled zmìn na portálu</a></li>
                   <li><a href="/hardware/dir/3500">Vzkazy správcùm</a> (${VARS.counter.REQUESTS})</li>
-                  <li><a href="mailto:klara.sedlackova@stickfish.cz">Inzerce</a></li>
+                  <li><a href="mailto:filip.korbel@stickfish.cz">Inzerce</a></li>
                   <#if USER?exists && USER.isMemberOf(11246)>
                    <li><a href="/system/todo">TODO (${VARS.counter.TODO?if_exists})</a></li>
                    <li><a href="/system">Sekce systém</a></li>

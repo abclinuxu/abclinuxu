@@ -7,7 +7,7 @@
 
 <#if USER?exists && USER.hasRole("poll admin")>
  <p>
-  <a href="${URL.make("/EditPoll/"+RELATION.id+"?action=edit&amp;pollId="+POLL.id)}">Upravit</a>
+  <a href="${URL.noPrefix("/EditPoll/"+RELATION.id+"?action=edit&amp;pollId="+POLL.id)}">Upravit</a>
  </p>
 </#if>
 
@@ -63,7 +63,7 @@
     title="AbcMonitor za¹le emailem zprávu, dojde-li v diskusi ke zmìnì">${monitorState}</a>
     <span title="Poèet lidí, kteøí sledují tuto diskusi">(${TOOL.getMonitorCount(DISCUSSION.data)})</span>
     </p>
-    
+
     <#list diz.threads as thread>
        <@lib.showThread thread, 0, DISCUSSION.id, CHILDREN.discussion[0].id, !frozen />
     </#list>
