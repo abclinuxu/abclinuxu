@@ -5,7 +5,7 @@
 <h1 class="st_nadpis">Archiv anket</h1>
 <#if POLLS.currentPage.row==0 && USER?exists && USER.hasRole("poll admin")>
  <p>
-  <a href="${URL.make("/EditPoll?action=add&amp;rid=250")}">Vytvoø anketu</a>
+  <a href="${URL.noPrefix("/EditPoll?action=add&amp;rid=250")}">Vytvoø anketu</a>
  </p>
 </#if>
 
