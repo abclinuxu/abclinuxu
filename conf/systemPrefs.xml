@@ -235,6 +235,7 @@
                             <entry key="relations.comment.by.user" value="select R.cislo from relace R, relace P, zaznam Z where R.potomek=P.predek and R.typ_potomka='P' and R.predek!=-1 and P.potomek=Z.cislo and P.typ_potomka='Z' and Z.typ=4 and Z.data like concat('%&lt;author_id&gt;',?,'&lt;/%')"/>
                             <entry key="relations.section.by.type" value="select R.cislo from relace R left join kategorie K on (K.cislo=R.potomek) where typ_potomka='K' and K.typ=?"/>
                             <entry key="relation.dictionary.by.urlname" value="select R.cislo from relace R, polozka P where R.typ_potomka='P' and R.potomek=P.cislo and P.typ=10 and P.podtyp=?"/>
+                            <entry key="relations.standalone.polls" value="select R.cislo from relace R, anketa A where typ_potomka='A' and potomek=A.cislo and predchozi=250 order by kdy"/>
                             <entry key="relation.by.url" value="select cislo from relace where url=?"/>
                             <entry key="users.with.weekly.email" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;>&lt;weekly_summary>yes%'"/>
                             <entry key="users.with.forum.by.email" value="select cislo from uzivatel where data like '%&lt;email valid=&quot;yes&quot;%&lt;forum&gt;yes%&lt;/email%'"/>

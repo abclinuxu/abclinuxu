@@ -29,6 +29,10 @@
             <action>cz.abclinuxu.servlets.html.view.ShowNewsPage</action>
         </mapping>
         <mapping>
+            <pattern>/ankety</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ViewPolls</action>
+        </mapping>
+        <mapping>
             <pattern>^/Profile</pattern>
             <action>cz.abclinuxu.servlets.html.view.ViewUser</action>
         </mapping>
@@ -117,7 +121,7 @@
             <action>cz.abclinuxu.servlets.html.edit.EditRelation</action>
         </mapping>
         <mapping>
-            <pattern>EditPoll</pattern>
+            <pattern>^/EditPoll</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditPoll</action>
         </mapping>
         <mapping>

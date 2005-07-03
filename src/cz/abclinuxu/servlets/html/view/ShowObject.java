@@ -106,9 +106,12 @@ public class ShowObject implements AbcAction {
         if ( (relation.getParent() instanceof Item) || ( relation.getChild() instanceof Item ) )
             return processItem(env, relation, request, response);
         else if ( relation.getChild() instanceof Poll )
-            return ViewPolls.processPoll(env, relation, request, response);
+            return ViewPolls.processPoll(env, relation, request);
         else if ( relation.getParent() instanceof Category ) {
-            return ViewCategory.processCategory(request,response,env,relation);
+            if (relation.getId()==Constants.REL_POLLS)
+                return ViewPolls.processPolls(env, request);
+            else
+                return ViewCategory.processCategory(request,response,env,relation);
         }
         return null; // todo log object
     }

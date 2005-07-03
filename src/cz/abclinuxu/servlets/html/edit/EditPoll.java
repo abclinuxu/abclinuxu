@@ -11,8 +11,8 @@ import javax.servlet.http.*;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.PersistanceFactory;
@@ -22,6 +22,7 @@ import cz.abclinuxu.security.AccessKeeper;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.AccessDeniedException;
+import cz.abclinuxu.AbcException;
 
 import java.util.*;
 
@@ -52,9 +53,6 @@ public class EditPoll implements AbcAction {
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_POLL = "POLL";
 
-    /** this prefix will be used for marking user, which has already voted */
-    static final String COOKIE_PREFIX = "P_";
-
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -74,6 +72,7 @@ public class EditPoll implements AbcAction {
         // check permissions
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
+        // todo povolit, pokud uzivatel vlastni nadrazeny objekt
         if ( !user.hasRole(Roles.POLL_ADMIN) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
@@ -129,6 +128,17 @@ public class EditPoll implements AbcAction {
             error = true;
         }
 
+        String url = (String) params.get(PARAM_URL);
+        if (url!=null) {
+            try {
+                url = UrlUtils.PREFIX_POLLS + "/" + URLManager.enforceLastURLPart(url);
+                url = URLManager.protectFromDuplicates(url);
+            } catch (AbcException e) {
+                ServletUtils.addError(PARAM_URL, e.getMessage(), env, null);
+                error = true;
+            }
+        }
+
         if ( error )
             return FMTemplateSelector.select("EditPoll","add",env,request);
 
@@ -143,14 +153,17 @@ public class EditPoll implements AbcAction {
             pollChoices.add(choice);
         }
         poll.setChoices(pollChoices);
-
         persistance.create(poll);
+
         Relation relation = new Relation(upperRelation.getChild(),poll,upperRelation.getId());
+        relation.setUrl(url);
         persistance.create(relation);
         relation.getParent().addChildRelation(relation);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/show/"+relation.getId());
+        if (url==null)
+            url = UrlUtils.PREFIX_POLLS + "/show/" + relation.getId();
+        urlUtils.redirect(response, url);
         return null;
     }
 
