@@ -61,8 +61,9 @@ public class UpdateLinks extends TimerTask {
     public static final int SLASHDOT = 15;
     public static final int LINUXBIZ = 16;
     public static final int SUSEPORTAL = 17;
+    public static final int CHIP = 18;
     /** id of last server, maximum id */
-    public static final int LAST_SERVER = SUSEPORTAL;
+    public static final int LAST_SERVER = CHIP;
 
     static REProgram ampersand;
 
@@ -103,6 +104,7 @@ public class UpdateLinks extends TimerTask {
             definitions.put(new Server(SLASHDOT), new ServerInfo("http://slashdot.org/index.rss", null, ServerInfo.RSS));
             definitions.put(new Server(LINUXBIZ), new ServerInfo("http://www.linuxbiz.cz/www/rss/linuxbiz.xml", null, ServerInfo.RSS));
             definitions.put(new Server(SUSEPORTAL), new ServerInfo("http://portal.suse.cz/node/feed", null, ServerInfo.RSS));
+            definitions.put(new Server(CHIP), new ServerInfo("http://www.chip.cz/texty/feed.rss", null, ServerInfo.RSS));
         } else {
 //        definitions.put(new Server(ROOT),new ServerInfo("file:///home/literakl/abc/data/titulky/ttitles.txt"));
 //        definitions.put(new Server(LW),new ServerInfo("file:///home/literakl/abc/data/titulky/lw.dat","Windows-1250",ServerInfo.TRAFIKA));
