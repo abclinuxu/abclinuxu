@@ -45,6 +45,7 @@ public final class SQLTool implements Configurable {
     public static final String PREF_NEWS_RELATIONS_BY_USER = "relations.news.by.user";
     public static final String PREF_QUESTION_RELATIONS_BY_USER = "relations.question.by.user";
     public static final String PREF_COMMENT_RELATIONS_BY_USER = "relations.comment.by.user";
+    public static final String PREF_STANDALONE_POLL_RELATIONS = "relations.standalone.polls";
     public static final String PREF_USERS_WITH_WEEKLY_EMAIL = "users.with.weekly.email";
     public static final String PREF_USERS_WITH_FORUM_BY_EMAIL = "users.with.forum.by.email";
     public static final String PREF_USERS_WITH_ROLES = "users.with.roles";
@@ -78,6 +79,7 @@ public final class SQLTool implements Configurable {
     private String relationsNews, relationsNewsWithinPeriod;
     private String relationsNewsByUser, relationsRecordByUserAndType, relationsArticleByUser;
     private String relationsQuestionsByUser, relationsCommentsByUser;
+    private String relationsStandalonePolls;
     private String relationDictionaryByUrlName, relationByURL;
     private String usersWithWeeklyEmail, usersWithForumByEmail, usersWithRoles, usersInGroup;
     private String maxPoll, maxUser, userByLogin;
@@ -237,7 +239,6 @@ public final class SQLTool implements Configurable {
      */
     private void appendQualifiers(StringBuffer sb, Qualifier[] qualifiers, List params, String tableNick) {
         Qualifier qualifier;
-        boolean sort = false;
         for ( int i = 0; i<qualifiers.length; i++ ) {
             qualifier = qualifiers[i];
             if ( qualifier.equals(Qualifier.SORT_BY_CREATED) ) {
@@ -247,7 +248,6 @@ public final class SQLTool implements Configurable {
                     sb.append(".");
                 }
                 sb.append("vytvoreno");
-                sort = true;
             } else if ( qualifier.equals(Qualifier.SORT_BY_UPDATED) ) {
                 sb.append(" order by ");
                 if (tableNick != null) {
@@ -255,7 +255,6 @@ public final class SQLTool implements Configurable {
                     sb.append(".");
                 }
                 sb.append("zmeneno");
-                sort = true;
             } else if ( qualifier.equals(Qualifier.SORT_BY_ID) ) {
                 sb.append(" order by ");
                 if (tableNick != null) {
@@ -263,10 +262,9 @@ public final class SQLTool implements Configurable {
                     sb.append(".");
                 }
                 sb.append("cislo");
-                sort = true;
-            } else if ( sort && qualifier.equals(Qualifier.ORDER_ASCENDING) ) {
+            } else if ( qualifier.equals(Qualifier.ORDER_ASCENDING) ) {
                 sb.append(" asc");
-            } else if ( sort && qualifier.equals(Qualifier.ORDER_DESCENDING) ) {
+            } else if ( qualifier.equals(Qualifier.ORDER_DESCENDING) ) {
                 sb.append(" desc");
             } else if ( qualifier instanceof LimitQualifier ) {
                 sb.append(" limit ?,?");
@@ -791,6 +789,33 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Finds relations, where child is poll and upper relation is 250.
+     * Use Qualifiers to set additional parameters, do not use SORT_BY findQualifier.
+     * @return List of initialized relations
+     * @throws cz.abclinuxu.exceptions.PersistanceException
+     *          if there is an error with the underlying persistent storage.
+     */
+    public List findStandalonePollRelations(Qualifier[] qualifiers) {
+        if (qualifiers == null) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(relationsStandalonePolls);
+        List params = new ArrayList();
+        appendQualifiers(sb, qualifiers, params, null);
+        return loadRelations(sb.toString(), params);
+    }
+
+    /**
+     * Counts relations, where child is poll and upper relation is 250.
+     * @throws cz.abclinuxu.exceptions.PersistanceException
+     *          if there is an error with the underlying persistent storage.
+     */
+    public int countStandalonePollRelations() {
+        StringBuffer sb = new StringBuffer(relationsStandalonePolls);
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        return loadNumber(sb.toString(), params).intValue();
+    }
+
+    /**
      * Finds users, that have active email and have subscribed weekly email.
      * Use Qualifiers to set additional parameters.
      * @return list of Integers of user ids.
@@ -1226,6 +1251,7 @@ public final class SQLTool implements Configurable {
         relationsQuestionsByUser = getValue(PREF_QUESTION_RELATIONS_BY_USER, prefs);
         relationsCommentsByUser = getValue(PREF_COMMENT_RELATIONS_BY_USER, prefs);
         relationDictionaryByUrlName = getValue(PREF_DICTIONARY_RELATION_BY_URL_NAME, prefs);
+        relationsStandalonePolls = getValue(PREF_STANDALONE_POLL_RELATIONS, prefs);
         relationByURL = getValue(PREF_RELATION_BY_URL, prefs);
         usersWithWeeklyEmail = getValue(PREF_USERS_WITH_WEEKLY_EMAIL, prefs);
         usersWithForumByEmail = getValue(PREF_USERS_WITH_FORUM_BY_EMAIL, prefs);
