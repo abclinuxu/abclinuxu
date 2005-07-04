@@ -139,7 +139,7 @@
                 <div class="ls_zpr">&nbsp;<a href="${url}">Komentáøù:</a>
 		        ${diz.responseCount}<#if diz.responseCount gt 0>, poslední
 		        ${DATE.show(diz.updated,"CZ_SHORT")}</#if>
-		        <br>&nbsp;<a href="/clanky/dir/3500">Navrhnìte novou anketu</a>
+		        <br>&nbsp;<a href="/clanky/dir/3500?categoryPosition=0">Navrhnìte novou anketu</a>
 		        </div>
             </#if>
 
