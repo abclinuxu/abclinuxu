@@ -25,7 +25,7 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í a proto bez odpovìdi
     <td>
     <b>
         ${DATE.show(relation.child.created,"CZ_FULL")}
-        <#if TOOL.xpath(relation.child,"/data/category")?exists>${TOOL.xpath(relation.child,"/data/category")}, </#if>
+        ${TOOL.xpath(relation.child,"/data/category")},
         ${TOOL.xpath(relation.child,"data/author")}
         <#if USER?exists && USER.hasRole("root")>${TOOL.xpath(relation.child,"data/email")}</#if>
     </b>
@@ -42,6 +42,18 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í a proto bez odpovìdi
    </tr>
   </#list>
  </table>
+</#if>
+
+<#if PARAMS.preview?exists>
+    <fieldset>
+        <legend>Náhled</legend>
+        <b>
+            ${PARAMS.category}
+            ${PARAMS.author}
+        </b>
+        <br>
+        ${TOOL.render(PARAMS.text,USER?if_exists)}
+    </fieldset>
 </#if>
 
 <form action="${URL.make("/EditRequest")}" method="POST">
@@ -94,7 +106,10 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í a proto bez odpovìdi
   </tr>
   <tr>
    <td></td>
-   <td><input type="submit" value="OK" tabindex="4"></td>
+   <td>
+       <input type="submit" value="OK" tabindex="4">
+       <input tabindex="5" type="submit" name="preview" value="Náhled">
+   </td>
   </tr>
  </table>
  <input type="hidden" name="action" value="add">
