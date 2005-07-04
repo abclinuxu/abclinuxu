@@ -50,6 +50,7 @@ public class EditRequest implements AbcAction, Configurable {
     public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_FORUM_ID = "forumId";
     public static final String PARAM_CATEGORY = "category";
+    public static final String PARAM_PREVIEW = "preview";
 
     public static final String VAR_REQUEST_RELATION = "REQUEST";
     public static final String VAR_FORUM_LIST = "FORUMS";
@@ -134,9 +135,15 @@ public class EditRequest implements AbcAction, Configurable {
         }
 
         if ( text==null || text.length()==0 ) {
-            ServletUtils.addError(PARAM_TEXT,"Napi¹te, co potøebujete?",env,null);
+            ServletUtils.addError(PARAM_TEXT,"Napi¹te text va¹eho vzkazu.",env,null);
             error = true;
         }
+
+        if (Misc.empty(category)) {
+            ServletUtils.addError(PARAM_CATEGORY, "Zvolte si kategorii va¹eho po¾adavku.", env, null);
+            error = true;
+        }
+
         try {
             SafeHTMLGuard.check(text);
         } catch (ParserException e) {
@@ -149,8 +156,15 @@ public class EditRequest implements AbcAction, Configurable {
         }
 
         if ( error ) {
+            params.remove(PARAM_PREVIEW);
             env.put(EditRequest.VAR_CATEGORIES, EditRequest.categories);
             return FMTemplateSelector.select("EditRequest","view",env,request);
+        }
+
+        boolean preview = params.get(PARAM_PREVIEW) != null;
+        if (preview) {
+            env.put(EditRequest.VAR_CATEGORIES, EditRequest.categories);
+            return FMTemplateSelector.select("EditRequest", "view", env, request);
         }
 
         Item req = new Item(0,Item.REQUEST);
@@ -160,8 +174,7 @@ public class EditRequest implements AbcAction, Configurable {
         DocumentHelper.makeElement(document,"/data/author").addText(author);
         DocumentHelper.makeElement(document,"/data/email").addText(email);
         DocumentHelper.makeElement(document,"/data/text").addText(text);
-        if(!Misc.empty(category))
-            DocumentHelper.makeElement(document,"/data/category").addText(category);
+        DocumentHelper.makeElement(document,"/data/category").addText(category);
 
         req.setData(document);
 
