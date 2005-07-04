@@ -15,6 +15,35 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í a proto bez odpovìdi
 <u>sma¾eme</u> jakékoliv po¾adavky, které nesouvisí s chodem portálu.
 </p>
 
+<#if CHILDREN?exists && CHILDREN?size gt 0>
+ <table border=0 cellpadding=5>
+  <tr>
+   <th>Nevyøízené po¾adavky</th>
+  </tr>
+  <#list CHILDREN as relation>
+   <tr>
+    <td>
+    <b>
+        ${DATE.show(relation.child.created,"CZ_FULL")}
+        <#if TOOL.xpath(relation.child,"/data/category")?exists>${TOOL.xpath(relation.child,"/data/category")}, </#if>
+        ${TOOL.xpath(relation.child,"data/author")}
+        <#if USER?exists && USER.hasRole("root")>${TOOL.xpath(relation.child,"data/email")}</#if>
+    </b>
+    <br>
+    ${TOOL.render(TOOL.element(relation.child.data,"data/text"),USER?if_exists)}
+    <#if USER?exists && USER.hasRole("requests admin")>
+        <br>
+        <a href="${URL.make("/EditRequest?action=email&requestId="+relation.id)}">Poslat email</a>,
+        <a href="${URL.make("/EditRequest?action=deliver&requestId="+relation.id)}">Vyøízeno</a>,
+        <a href="${URL.make("/EditRequest?action=delete&requestId="+relation.id)}">Smazat</a>,
+        <a href="${URL.make("/EditRequest?action=todo&requestId="+relation.id)}">Pøesunout do TODO</a>
+    </#if>
+    </td>
+   </tr>
+  </#list>
+ </table>
+</#if>
+
 <form action="${URL.make("/EditRequest")}" method="POST">
  <table border=0 cellpadding=5 style="padding-top: 10px">
   <tr>
@@ -44,9 +73,14 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í a proto bez odpovìdi
   <tr>
     <td>Typ po¾adavku</td>
     <td>
+        <#if PARAMS.categoryPosition?exists>
+            <#assign defaultCategory=CATEGORIES[PARAMS.categoryPosition?eval]>
+        <#else>
+            <#assign defaultCategory="Hlá¹ení chyby">
+        </#if>
         <select name="category">
             <#list CATEGORIES as category>
-                <option<#if PARAMS.category?default("Hlá¹ení chyby")==category> selected</#if>>${category}</option>
+                <option<#if PARAMS.category?default(defaultCategory)==category> selected</#if>>${category}</option>
             </#list>
         </select>
     </td>
@@ -65,34 +99,5 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í a proto bez odpovìdi
  </table>
  <input type="hidden" name="action" value="add">
 </form>
-
-<#if CHILDREN?exists && CHILDREN?size gt 0>
- <table border=0 cellpadding=5>
-  <tr>
-   <th>Nevyøízené po¾adavky</th>
-  </tr>
-  <#list CHILDREN as relation>
-   <tr>
-    <td>
-    <b>
-        ${DATE.show(relation.child.created,"CZ_FULL")}
-        <#if TOOL.xpath(relation.child,"/data/category")?exists>${TOOL.xpath(relation.child,"/data/category")}, </#if>
-        ${TOOL.xpath(relation.child,"data/author")}
-        <#if USER?exists && USER.hasRole("root")>${TOOL.xpath(relation.child,"data/email")}</#if>
-    </b>
-    <br>
-    ${TOOL.render(TOOL.element(relation.child.data,"data/text"),USER?if_exists)}
-    <#if USER?exists && USER.hasRole("requests admin")>
-        <br>
-        <a href="${URL.make("/EditRequest?action=email&requestId="+relation.id)}">Poslat email</a>,
-        <a href="${URL.make("/EditRequest?action=deliver&requestId="+relation.id)}">Vyøízeno</a>,
-        <a href="${URL.make("/EditRequest?action=delete&requestId="+relation.id)}">Smazat</a>,
-        <a href="${URL.make("/EditRequest?action=todo&requestId="+relation.id)}">Pøesunout do TODO</a>
-    </#if>
-    </td>
-   </tr>
-  </#list>
- </table>
-</#if>
 
 <#include "../footer.ftl">
