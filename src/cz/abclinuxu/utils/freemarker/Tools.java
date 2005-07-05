@@ -208,7 +208,7 @@ public class Tools implements Configurable {
             return ((Link)child).getText();
 
         if ( child instanceof Poll )
-            return ((Poll)child).getText();
+            return removeTags(((Poll)child).getText());
 
         if ( child instanceof User )
             return ((User)child).getName();
