@@ -11,6 +11,7 @@ import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.TemplateSelector;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.NotAuthorizedException;
@@ -47,7 +48,7 @@ public class HTMLVersion {
             if ( Misc.empty(templateName) )
                 return;
 
-            Template template = Configuration.getDefaultConfiguration().getTemplate(templateName);
+            Template template = FMUtils.getConfiguration().getTemplate(templateName);
             response.setContentType("text/html; charset=ISO-8859-2");
             Writer writer = response.getWriter();
 
@@ -83,7 +84,7 @@ public class HTMLVersion {
         String url = ServletUtils.getURL(request);
         Template template = null;
 
-        Configuration config = Configuration.getDefaultConfiguration();
+        Configuration config = FMUtils.getConfiguration();
         if ( e instanceof NotFoundException ) {
 //            log.error("Not found: "+url);
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);

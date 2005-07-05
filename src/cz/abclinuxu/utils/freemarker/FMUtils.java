@@ -53,7 +53,7 @@ public class FMUtils implements Configurable {
      */
     public static String executeCode(String code, Map data) throws IOException, TemplateException {
         StringReader reader = new StringReader(code);
-        Template template = new Template("tmp",reader);
+        Template template = new Template("tmp", reader, config);
         StringWriter writer = new StringWriter();
         template.process(data,writer);
         return writer.toString();
@@ -121,10 +121,11 @@ public class FMUtils implements Configurable {
         else if (ERROR_HANDLER_LOGURL.equalsIgnoreCase(tmp))
             exceptionHandler = new LogUrlExceptionHandler();
 
-        config = freemarker.template.Configuration.getDefaultConfiguration();
+        config = new Configuration();
         config.setTemplateExceptionHandler(exceptionHandler);
         config.setTemplateUpdateDelay(prefs.getInt(PREF_TEMPLATE_UPDATE_INTERVAL, 5));
         config.setDefaultEncoding("ISO-8859-2");
+        config.setOutputEncoding("ISO-8859-2");
         config.setObjectWrapper(ObjectWrapper.BEANS_WRAPPER);
         config.setStrictSyntaxMode(true);
         config.setWhitespaceStripping(true);

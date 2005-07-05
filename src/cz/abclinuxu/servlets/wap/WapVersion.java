@@ -6,9 +6,9 @@
 package cz.abclinuxu.servlets.wap;
 
 import cz.abclinuxu.servlets.utils.url.URLMapper;
-import cz.abclinuxu.servlets.utils.url.URLMapper;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.freemarker.FMUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,7 +21,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import freemarker.template.Template;
-import freemarker.template.Configuration;
 import org.apache.log4j.Logger;
 
 /**
@@ -40,7 +39,7 @@ public class WapVersion {
             if ( Misc.empty(templateName) )
                 return;
 
-            Template template = Configuration.getDefaultConfiguration().getTemplate(templateName);
+            Template template = FMUtils.getConfiguration().getTemplate(templateName);
             StringWriter tmpWriter = new StringWriter();
             template.process(env, tmpWriter);
 
