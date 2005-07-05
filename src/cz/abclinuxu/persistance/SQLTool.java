@@ -238,6 +238,8 @@ public final class SQLTool implements Configurable {
      * @param tableNick nick of table to distinguish columns. Default is null.
      */
     private void appendQualifiers(StringBuffer sb, Qualifier[] qualifiers, List params, String tableNick) {
+        if (qualifiers==null || qualifiers.length==0)
+            return;
         Qualifier qualifier;
         for ( int i = 0; i<qualifiers.length; i++ ) {
             qualifier = qualifiers[i];
