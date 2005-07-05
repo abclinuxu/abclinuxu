@@ -840,7 +840,10 @@ public class Tools implements Configurable {
      * This method removes all tags from text.
      */
     public static String removeTags(String text) {
-        if (text==null || text.length()==0) return "";
+        if (text==null || text.length()==0)
+            return "";
+        if (text.indexOf('<')==-1)
+            return text;
         try {
 //            return StripTags.process(text);
             return new RE(reRemoveTags, RE.MATCH_MULTILINE).subst(text,"");
