@@ -18,7 +18,7 @@
  <a href="${URL.noPrefix("/EditRelation?action=remove&rid="+RELATION.id+"&prefix="+URL.prefix)}">rmdir</a>
  <a href="${URL.noPrefix("/SelectRelation?url=/EditRelation&action=add&prefix="+URL.prefix+"&rid="+RELATION.id)}">ln -s</a>
 </#if>
-<#if USER?exists && (USER.hasRole("move relation") || USER.hasRole("email invalidator"))>
+<#if USER?exists && (USER.hasRole("move relation"))>
  <#assign toolbar=true>
  <a href="/SelectRelation?url=/EditRelation&action=move&rid=${RELATION.id}&prefix=${URL.prefix}">mv</a>
  <a href="/EditRelation?action=moveAll&rid=${RELATION.id}&prefix=${URL.prefix}">Pøesuò obsah</a>
@@ -51,7 +51,7 @@
   <#if sekce_index%3==0><tr></#if>
   <td width="33%">
   <#if TOOL.childIcon(sekce)?exists><img src="${TOOL.childIcon(sekce)}" class="ikona" alt=""></#if>
-  <a href="${URL.make("/dir/"+sekce.id)}">${TOOL.childName(sekce)}</a>
+  <a href="${URL.make(sekce.url?default("/dir/"+sekce.id))}">${TOOL.childName(sekce)}</a>
   </td>
   <#if sekce_index%3==2></tr></#if>
  </#list>
@@ -66,7 +66,7 @@
   <#if polozka_index%3==0><tr></#if>
   <td width="33%">
   <#if TOOL.childIcon(polozka)?exists><img src="${TOOL.childIcon(polozka)}" class="ikona" alt=""></#if>
-  <a href="${URL.make("/show/"+polozka.id)}">${TOOL.childName(polozka)}</a>
+  <a href="${URL.make(polozka.url?default("/show/"+polozka.id))}">${TOOL.childName(polozka)}</a>
   </td>
   <#if polozka_index%3==2></tr></#if>
  </#list>
