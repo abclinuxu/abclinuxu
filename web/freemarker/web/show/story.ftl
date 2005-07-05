@@ -5,11 +5,11 @@
 
 <#assign plovouci_sloupec>
 
-    <#if title!="UNDEF">
-        <div class="s_nad_h1"><div class="s_nad_pod_h1">
-            <h1><a href="/blog/${BLOG.subType}">${title}</a></h1>
-	    </div></div>
-    </#if>
+    <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <h1><a href="/Profile/${owner.id}">${owner.nick?default(owner.name)}</a>
+        <#if title!="UNDEF"> - <a href="/blog/${BLOG.subType}">${title}</a></#if>
+        </h1>
+    </div></div>
 
     <div class="s_sekce">
         <#if intro!="UNDEF">${intro}</#if>
@@ -73,7 +73,6 @@
             <#if title!="UNDEF">
                 <li><a href="/blog/${BLOG.subType}">${title}, hlavní strana</a></li>
             </#if>
-            <li><a href="/Profile/${owner.id}">${owner.name}</a></li>
             <li><a href="/auto/blog/${BLOG.subType}.rss">RSS kanál</a></li>
             <li><a href="/blog">V¹echny blogy</a></li>
         </ul>
@@ -93,7 +92,7 @@
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=add")}">Vlo¾ nový zápis</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=edit")}">Uprav zápis</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=remove")}">Sma¾ zápis</a></li>
-            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=custom")}">Uprav vzhled</a></li>
+            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=custom")}">Nastavení blogu</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}">Pøejmenovat blog</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=categories")}">Upravit kategorie</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=links")}">Upravit odkazy</a></li>

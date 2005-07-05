@@ -34,6 +34,8 @@ public class Item extends GenericDataObject {
     public static final int CONTENT = 11;
     /** one story of the blog */
     public static final int BLOG = 12;
+    /** one entry in guestbook */
+    public static final int GUESTBOOK = 13;
 
     public Item() {
         super();

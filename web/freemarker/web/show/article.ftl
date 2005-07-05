@@ -31,8 +31,8 @@ ${DATE.show(ITEM.created,"CZ_FULL")} | <a href="/Profile/${autor.id}">${autor.na
 </#if>
 
 <div class="cl_square">
-<a href="mailto:reklama@stickfish.cz">reklama</a><br>
-<iframe id='a104d350' name='a104d350' src='http://banner.stickfish.cz/adframe.php?n=a104d350&amp;what=zone:37' frameborder='0' scrolling='no' width='300' height='300'><a href='http://banner.stickfish.cz/adclick.php?n=a104d350'><img src='http://banner.stickfish.cz/adview.php?what=zone:37&amp;n=a104d350' border='0' alt=''></a></iframe>
+ <a href="mailto:reklama@stickfish.cz">reklama</a><br>
+ <#include "/include/impact-cl-sq.txt">
 </div>
 
 ${TOOL.render(TEXT,USER?if_exists)}
@@ -154,3 +154,4 @@ ${TOOL.render(TEXT,USER?if_exists)}
 </#if>
 
 <#include "../footer.ftl">
+

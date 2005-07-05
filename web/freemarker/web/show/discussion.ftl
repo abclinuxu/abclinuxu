@@ -52,17 +52,10 @@
  <h1 class="st_nadpis">Otázka</h1>
  <@lib.showThread TOOL.createComment(ITEM), 0, ITEM.id, RELATION.id, !frozen />
 
- <p class="wrongForum">
- Tato otázka je v diskusním fóru <a href="/forum/dir/${RELATION.upper}">${TOOL.childName(RELATION.upper)}</a>.
- Pokud ji tazatel zaøadil ¹patnì,
- <a href="${URL.noPrefix("/clanky/EditRequest?action=chooseRightForum&amp;rid="+RELATION.id)}">informujte</a>
- prosím administrátory. Dìkujeme.
- </p>
-
  <#if DIZ?size==0>
     <p>Na otázku zatím nikdo bohu¾el neodpovìdìl.</p>
  <#else>
-     <h1 class="st_nadpis">Odpovìdi</h1>
+     <p><b>Odpovìdi</b></p>
  </#if>
 <#elseif !frozen>
  <a href="${URL.make("/EditDiscussion?action=add&amp;threadId=0&amp;dizId="+ITEM.id+"&amp;rid="+RELATION.id)}">

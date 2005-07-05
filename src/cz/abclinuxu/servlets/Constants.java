@@ -35,6 +35,7 @@ public interface Constants {
     int CAT_TIPS = 572;
     int CAT_DOCUMENTS = 587;
     int CAT_BLOGS = 589;
+    int CAT_GUESTBOOK = 885;
 
     int ITEM_DIZ_TODO = 11606;
     int REC_DIZ_TODO = 38280;
@@ -61,6 +62,7 @@ public interface Constants {
     int REL_TIPS = 61139;
     int REL_DOCUMENTS = 66948;
     int REL_BLOGS = 69275;
+    int REL_GUESTBOOK = 93214;
 
     int GROUP_ADMINI = 11246;
     int GROUP_AUTORI = 11247;

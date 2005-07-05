@@ -74,7 +74,7 @@ text lámat. Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
     </tr>
     <tr>
         <td>
-            <input type="submit" name="preview" value="Náhled">
+            <input type="submit" name="preview" value="Ulo¾it">
             <input type="submit" name="finish" value="Dokonèi">
         </td>
     </tr>

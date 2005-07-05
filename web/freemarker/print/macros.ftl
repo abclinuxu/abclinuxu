@@ -11,7 +11,7 @@
  <p>
  <#list TOOL.getParents(parents,USER?if_exists,URL) as link>
   <a href="${link.url}">${link.text}</a>
-  <#if link_has_next> <img src="/images/site2/zarovnani.gif" align="absmiddle" alt="-"> </#if>
+  <#if link_has_next> - </#if>
  </#list>
  </p>
 </#macro>
@@ -36,8 +36,8 @@
 
   | Hodnocení:
 
-  <#assign rating=TOOL.ratingFor(clanek.data,"article")?default("UNDEF")>
-  <#if rating!="UNDEF">${rating.result?string["#0.00"]}</#if>
+  <#assign rating=TOOL.ratingFor(clanek.data,"article")?default(0)>
+  <#if rating!=0>${rating?string["#0.00"]}</#if>
 
   </span>
  <p class="vytah">

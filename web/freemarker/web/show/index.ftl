@@ -15,7 +15,7 @@
         <ul>
             <li><a href="/clanky/show/26394">Co je to Linux?</a></li>
             <li><a href="/clanky/show/12707">Je opravdu zdarma?</a></li>
-            <li><a href="/clanky/show/9503">Co jsou to distribuce?</a></li>
+            <li><a href="/clanky/show/9503">Jakou zvolit distribuci?</a></li>
             <li><a href="/clanky/show/14665">Náhrady Windows aplikací</a></li>
             <li><a href="/clanky/show/20310">Rozcestník na¹ich seriálù</a>
         </ul>
@@ -48,7 +48,8 @@
     <!-- prace.abclinuxu.cz -->
     <div class="s_nad_h1"><div class="s_nad_pod_h1">
         <a class="info" href="#">?<span class="tooltip">První server s nabídkami práce (nejen) pro tuèòáky. Spojujeme lidi s prací v IT.</span></a>
-        <h1><a href="http://www.praceabc.cz">Pracovní nabídky</a></h1>
+        <h1><a href="http://www.praceabc.cz" 
+	       title="Spojujeme lidi s prací v IT.">Pracovní nabídky</a></h1>
     </div></div>
     <div class="s_sekce">
         <#include "/include/prace_main.txt">

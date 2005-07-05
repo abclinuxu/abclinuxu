@@ -110,3 +110,8 @@
 <!ELEMENT content (#PCDATA)> <!-- content of the story -->
 <!ATTLIST content format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT category (#NMTOKEN)> <!-- integer, if od the category. See blog/categories -->
+
+<!-- Item.GUEST_ENTRY -->
+<!ELEMENT data (author?, message)>
+<!ELEMENT author (#PCDATA)> <!-- user's name -->
+<!ELEMENT message (#PCDATA)> <!-- message -->

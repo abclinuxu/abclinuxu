@@ -194,7 +194,7 @@
                     <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Rozcestník</h1></div></div>
                     <div class="s_sekce">
                         <div class="rozc">
-                            <#list TOOL.createServers([7,16,1,13,14,12,17,15,3,2,5]) as server>
+                            <#list TOOL.createServers([7,16,18,1,13,14,12,17,15,3,2,5]) as server>
                                 <a class="server" href="${server.url}">${server.name}</a><br>
                                 <ul>
                                 <#assign linky = TOOL.sublist(SORT.byDate(LINKS[server.name],"DESCENDING"),0,2)>
@@ -216,6 +216,7 @@
                   <li><a href="/doc/portal/jine_pristupy">Titulky, PDA a RSS</a></li>
                   <li><a href="/clanky/show/64410">Staòte se autorem</a></li>
                   <li><a href="/clanky/show/44043">Pøehled zmìn na portálu</a></li>
+                  <li><a href="/kniha_navstev">Kniha náv¹tìv</a></li>
                   <li><a href="/hardware/dir/3500">Vzkazy správcùm</a> (${VARS.counter.REQUESTS})</li>
                   <li><a href="mailto:filip.korbel@stickfish.cz">Inzerce</a></li>
                   <#if USER?exists && USER.isMemberOf(11246)>

@@ -35,13 +35,13 @@ s vysvìtlením. Teprve po schválení bude zprávièka zveøejnìna.</p>
 <form action="${URL.make("/edit")}" method="POST" name="newsForm">
   <p>
    <span class="required">Titulek</span><br>
-   <input type="text" name="title" size="40" maxlength="40" value="${PARAMS.title?if_exists}">
+   <input tabindex="1" type="text" name="title" size="40" maxlength="40" value="${PARAMS.title?if_exists}">
    <div class="error">${ERRORS.title?if_exists}</div>
    <span class="required">Obsah</span>
    <div class="form-edit">
-     <a href="javascript:insertAtCursor(document.newsForm.content, '<a href=&quot;&quot;>', '</a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
+     <a href="javascript:insertAtCursor(document.newsForm.content, '&lt;a href=&quot;&quot;&gt;', '</a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
    </div>
-   <textarea name="content" cols="60" rows="10" tabindex="1">${PARAMS.content?if_exists?html}</textarea>
+   <textarea tabindex="2" name="content" cols="60" rows="10" tabindex="1">${PARAMS.content?if_exists?html}</textarea>
    <div class="error">${ERRORS.content?if_exists}</div>
   </p>
   <#if USER?exists && USER.hasRole("news admin")>
@@ -62,8 +62,8 @@ s vysvìtlením. Teprve po schválení bude zprávièka zveøejnìna.</p>
    </#list>
    </dl>
    <p>
-       <input name="preview" type="submit" value="Náhled">
-       <input type="submit" value="Dokonèi">
+       <input tabindex="3" name="preview" type="submit" value="Náhled">
+       <input tabindex="4" type="submit" value="Dokonèi">
        <input type="hidden" name="action" value="add2">
    </p>
 </form>

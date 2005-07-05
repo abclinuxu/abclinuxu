@@ -56,7 +56,8 @@
   </tr>
   <tr>
    <td colspan="2">Zadejte URL souboru obsahující CSS definici vzhledu portálu. Bude pou¾ita místo
-   standardního vzhledu. Nemáte-li rádi experimenty, ponechte prázdné.
+   standardního vzhledu. Chcete-li pou¾ít <a href="/blog/Robert/2005/6/13/90551">tmavý styl</a>
+   (bílý text na èerném pozadí), zadejte do kolonky <code>/styles-dark.css</code>.
    </td>
   </tr>
 

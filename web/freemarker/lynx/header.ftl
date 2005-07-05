@@ -9,7 +9,8 @@
 <body>
 
 <#import "macros.ftl" as lib>
-<#include "/include/pocitani.txt">
+<#include "/include/pocitani2.txt">
+<#include "/include/pocitani1.txt">
 
 <p>
 ${DATE.show("CZ_FULL")}
@@ -21,20 +22,6 @@ ${DATE.show("CZ_FULL")}
   <a href="${URL.noPrefix("/Profile?action=login")}">Pøihlá¹ení</a>,
   <a href="${URL.noPrefix("/EditUser?action=register")}">Registrace</a>
  </#if>
-</p>
-
-<p>
- <b>Rubriky</b>
-  <a href="/clanky/dir/4731">Abíèko</a>,
-  <a href="/clanky/dir/4">Jaderné noviny</a>,
-  <a href="/clanky/dir/3">Návody</a>,
-  <a href="/clanky/dir/251">Novinky</a>,
-  <a href="/clanky/dir/14358">Programování</a>,
-  <a href="/clanky/dir/2">Recenze</a>,
-  <a href="/clanky/dir/5324">Rùzné</a>,
-  <a href="/clanky/dir/8546">Téma</a>,
-  <a href="/clanky/dir/12448">Tutoriály</a>,
-  <a href="/clanky/dir/6">PR èlánky</a>
 </p>
 
 <p>
