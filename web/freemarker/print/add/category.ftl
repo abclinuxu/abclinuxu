@@ -7,7 +7,14 @@
  <input type="hidden" name="icon" value="${PARAMS.icon}">
 <#else>
  <form action="${URL.noPrefix("/SelectIcon")}" method="POST">
- <input type="hidden" name="dir" value="${TOOL.substring(URL.prefix,1)}">
+ <#if URL.prefix=='/hardware'>
+    <#assign iconDir="hardware">
+ <#elseif URL.prefix=='/software'>
+    <#assign iconDir="hardware">
+ <#else>
+    <#assign iconDir="software">
+ </#if>
+ <input type="hidden" name="dir" value="${iconDir}">
  <input type="hidden" name="url" value="${URL.make("/EditCategory")}">
 </#if>
 
