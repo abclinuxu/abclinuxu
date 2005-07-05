@@ -47,7 +47,7 @@
       </table>
       <input type="hidden" name="advancedMode" value="true">
   <#else>
-      <a href="/Search?advancedMode=true&amp;query=${QUERY?url}">Roz¹íøené hledání</a>
+      <a href="/Search?advancedMode=true&amp;query=${PARAMS.query?url}">Roz¹íøené hledání</a>
   </#if>
 
   <#if PARAMS.parent?exists><input type="hidden" name="parent" value="${PARAMS.parent}"></#if>
@@ -59,7 +59,7 @@
  <h2>Stránkování výsledkù</h2>
 
  <p>Nalezeno ${RESULT.total} objektù.
- <a href="/Search?query=${PARAMS.query?html}">Odkaz</a>
+ <a href="/Search?query=${PARAMS.query?url}">Odkaz</a>
  </p>
 
  <#if RESULT.prevPage?exists>
@@ -88,7 +88,7 @@
     <td width="20px">${RESULT.currentPage.row + doc_index + 1}.</td>
     <td width="60px">${doc.typ}</td>
     <td>
-     <!--m--><a href="${doc.url}">${doc.title?default(doc.url)?html}</a><!--n-->
+     <!--m--><a href="${doc.url}">${doc.title?default(doc.url)}</a><!--n-->
     </td>
     <td align="right">${doc.score}</td>
    </tr>
