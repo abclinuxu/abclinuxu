@@ -166,8 +166,11 @@
     <action name="view" content="/show/requests.ftl">
       <var name="TITLE" value="Administrativní po¾adavky" />
     </action>
-    <action name="chooseRightForum" content="/add/requestForum.ftl">
+    <action name="chooseRightForum" content="/misc/requestForum.ftl" template="print">
       <var name="TITLE" value="Volba správného fóra" />
+    </action>
+    <action name="comment" content="/misc/comment_tools.ftl" template="print">
+      <var name="TITLE" value="Nástroje pro správu komentáøe" />
     </action>
   </servlet>
 

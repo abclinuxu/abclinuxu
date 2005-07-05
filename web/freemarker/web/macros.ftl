@@ -15,7 +15,7 @@
         rating=TOOL.ratingFor(clanek.data,"article")?default("UNDEF")
     >
     <#if tmp.discussion?exists><#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
-    <#if thumbnail!="UNDEF"><div style="float:right;margin:0.8em 0.4em 0 0">${thumbnail}</div></#if>
+    <#if thumbnail!="UNDEF"><div style="float:right;margin:0.8em 0.4em 0 0.4em">${thumbnail}</div></#if>
     <h1 class="st_nadpis"><a href="/clanky/show/${relation.id}">${TOOL.xpath(clanek,"data/name")}</a></h1>
     <p>${TOOL.xpath(clanek,"/data/perex")}</p>
     <p class="cl_inforadek">${DATE.show(clanek.created, dateFormat[0])} |
@@ -71,12 +71,10 @@ prosim poslete mi URL a popis, jak jste na tuto stranku narazili
   <#if showControls>
    <#if comment.nextUnread?exists><a href="#${comment.nextUnread}" title="Skoèit na dal¹í nepøeètený komentáø">Dal¹í</a> |</#if>
    <a href="${URL.make("/EditDiscussion/"+relId+"?action=add&amp;dizId="+dizId+"&amp;threadId="+comment.id+extra[0]?default(""))}">Odpovìdìt</a> |
+   <a href="${URL.make("/EditRequest/"+relId+"?action=comment&amp;threadId="+comment.id)}" title="®ádost o pøesun diskuse, stí¾nost na komentáø">Admin</a> |
    <a href="#${comment.id}" title="Pøímá adresa na tento komentáø">Link</a> |
    <#if (comment.parent>0)><a href="#${comment.parent}" title="Odkaz na komentáø o jednu úroveò vý¹e">Vý¹e</a> |</#if>
    <a onClick="schovej_vlakno(${comment.id})" id="a${comment.id}" title="Schová nebo rozbalí celé vlákno">Sbalit</a>
-   <#if USER?exists && USER.hasRole("discussion admin")>
-    || <@showAdminCommentTools comment, dizId, relId/>
-   </#if>
   </#if>
  </div>
  <div id="div${comment.id}">
@@ -96,19 +94,6 @@ prosim poslete mi URL a popis, jak jste na tuto stranku narazili
    </#list>
   </div>
  </div>
-</#macro>
-
-<#macro showAdminCommentTools(comment dizId relId)>
-    <a href="${URL.make("/EditDiscussion/"+relId+"?action=edit&dizId="+dizId+"&threadId="+comment.id)}">Upravit</a>
-    <#if (comment.id>0)>
-        <a href="${URL.make("/EditDiscussion/"+relId+"?action=rm&amp;dizId="+dizId+"&amp;threadId="+comment.id)}">Smazat</a>
-        <a href="${URL.make("/EditDiscussion/"+relId+"?action=censore&amp;dizId="+dizId+"&amp;threadId="+comment.id)}">Cenzura</a>
-        <a href="${URL.make("/EditDiscussion/"+relId+"?action=move&amp;dizId="+dizId+"&amp;threadId="+comment.id)}">Pøesunout</a>
-        <#if (comment.parent>0)>
-            <a href="${URL.make("/EditDiscussion/"+relId+"?action=moveUp&amp;dizId="+dizId+"&amp;threadId="+comment.id)}">Pøesunout vý¹e</a>
-        </#if>
-        <a href="${URL.make("/EditDiscussion/"+relId+"?action=toQuestion&amp;dizId="+dizId+"&amp;threadId="+comment.id)}">Osamostatnit</a>
-    </#if>
 </#macro>
 
 <#macro showCensored(comment dizId relId)>

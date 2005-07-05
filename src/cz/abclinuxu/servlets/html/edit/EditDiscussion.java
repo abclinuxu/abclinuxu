@@ -1002,7 +1002,7 @@ public class EditDiscussion implements AbcAction {
      * @return Comment to be displayed
      * @throws PersistanceException if PARAM_THREAD points to nonexisting record
      */
-    private Comment getDiscussedComment(Map params, Item discussion, Persistance persistance) {
+    public static Comment getDiscussedComment(Map params, Item discussion, Persistance persistance) {
         String thread = (String) params.get(PARAM_THREAD);
         if ( thread!=null && thread.length()>0 && ! "0".equals(thread) ) {
             Relation relation = (Relation) discussion.getChildren().get(0);
@@ -1121,7 +1121,7 @@ public class EditDiscussion implements AbcAction {
             if ( tmp!=null && tmp.length()>0 ) {
                 DocumentHelper.makeElement(root, "author").setText(tmp);
             } else {
-                ServletUtils.addError(PARAM_AUTHOR, "Slu¹ností je se pøedstavit!", env, null);
+                ServletUtils.addError(PARAM_AUTHOR, "Zadejte prosím své jméno.", env, null);
                 return false;
             }
         }
@@ -1162,7 +1162,7 @@ public class EditDiscussion implements AbcAction {
                 }
                 DocumentHelper.makeElement(root, "author").setText(tmp);
             } else {
-                ServletUtils.addError(PARAM_AUTHOR, "Slu¹ností je se pøedstavit!", env, null);
+                ServletUtils.addError(PARAM_AUTHOR, "Zadejte prosím své jméno.", env, null);
                 return false;
             }
         }

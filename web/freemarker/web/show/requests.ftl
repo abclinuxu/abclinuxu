@@ -105,10 +105,9 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í a proto bez odpovìdi
   </td>
   </tr>
   <tr>
-   <td></td>
-   <td>
+   <td colspan="2" align="center">
        <input type="submit" value="OK" tabindex="4">
-       <input tabindex="5" type="submit" name="preview" value="Náhled">
+       <input type="submit" name="preview" value="Náhled" tabindex="5">
    </td>
   </tr>
  </table>

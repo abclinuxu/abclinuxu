@@ -12,6 +12,7 @@ import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
+import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.security.Roles;
@@ -55,12 +56,16 @@ public class EditRequest implements AbcAction, Configurable {
     public static final String VAR_REQUEST_RELATION = "REQUEST";
     public static final String VAR_FORUM_LIST = "FORUMS";
     public static final String VAR_CATEGORIES = "CATEGORIES";
+    public static final String VAR_RELATION = "RELATION";
+    public static final String VAR_COMMENT = "COMMENT";
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_DELETE = "delete";
     public static final String ACTION_DELIVER = "deliver";
     public static final String ACTION_MOVE_TO_TODO = "todo";
     public static final String ACTION_MAIL = "email";
+    public static final String ACTION_COMMENT = "comment";
+    public static final String ACTION_COMPLAINT = "complaint";
     public static final String ACTION_CHOOSE_RIGHT_FORUM = "chooseRightForum";
     public static final String ACTION_RIGHT_FORUM = "rightForum";
 
@@ -83,6 +88,12 @@ public class EditRequest implements AbcAction, Configurable {
 
         if ( action==null || action.equals(ACTION_ADD) )
             return actionAdd(request,response,env);
+
+        if ( action.equals(ACTION_COMMENT) )
+            return actionCommentTools(request, env);
+
+        if ( action.equals(ACTION_COMPLAINT) )
+            return actionSubmitComplaint(request,response,env);
 
         if ( action.equals(ACTION_CHOOSE_RIGHT_FORUM) )
             return actionChooseForum(request,env);
@@ -112,6 +123,24 @@ public class EditRequest implements AbcAction, Configurable {
     }
 
     protected String actionAdd(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        boolean saved = addRequest(request, null, true, env);
+        if (!saved) {
+            env.put(EditRequest.VAR_CATEGORIES, EditRequest.categories);
+            return FMTemplateSelector.select("EditRequest", "view", env, request);
+        }
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/hardware/show/" + Constants.REL_REQUESTS);
+        return null;
+    }
+
+    /**
+     * Saves new request. The optional prefix will be prepended to the message.
+     * @param prefix optional text to be put before the message
+     * @param messageRequired when true, message must be specified. If false, prefix must be set.
+     * @return true, when request was successfully saved
+     */
+    protected boolean addRequest(HttpServletRequest request, String prefix, boolean messageRequired, Map env) throws Exception {
         User user = (User) env.get(Constants.VAR_USER);
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
@@ -122,25 +151,31 @@ public class EditRequest implements AbcAction, Configurable {
         boolean error = false;
 
         if ( author==null || author.length()==0 ) {
-            ServletUtils.addError(PARAM_AUTHOR,"Slu¹ností je pøedstavit se.",env,null);
+            ServletUtils.addError(PARAM_AUTHOR,"Zadejte prosím své jméno.",env,null);
             error = true;
         }
 
         if ( email==null || email.length()==0 ) {
-            ServletUtils.addError(PARAM_EMAIL,"Nevím, kam poslat vyrozumìní.",env,null);
+            ServletUtils.addError(PARAM_EMAIL,"Zadejte, kam poslat vyrozumìní.",env,null);
             error = true;
         } else if ( email.length()<6 || email.indexOf('@')==-1 || email.indexOf('.')==-1 ) {
             ServletUtils.addError(PARAM_EMAIL,"Neplatný email!.",env,null);
             error = true;
         }
 
-        if ( text==null || text.length()==0 ) {
-            ServletUtils.addError(PARAM_TEXT,"Napi¹te text va¹eho vzkazu.",env,null);
+        if (messageRequired) {
+            if (text == null || text.length() == 0) {
+                ServletUtils.addError(PARAM_TEXT, "Napi¹te text va¹eho vzkazu.", env, null);
+                error = true;
+            }
+        } else if (prefix==null || prefix.length()==0) {
+            log.error("messageRequired == false && prefix == null");
+            ServletUtils.addError(PARAM_TEXT, "Interní chyba. Po¹lete prosím email na admin@abclinuxu.cz.", env, null);
             error = true;
         }
 
         if (Misc.empty(category)) {
-            ServletUtils.addError(PARAM_CATEGORY, "Zvolte si kategorii va¹eho po¾adavku.", env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Zvolte si kategorii va¹eho po¾adavku.", env, null);
             error = true;
         }
 
@@ -157,14 +192,17 @@ public class EditRequest implements AbcAction, Configurable {
 
         if ( error ) {
             params.remove(PARAM_PREVIEW);
-            env.put(EditRequest.VAR_CATEGORIES, EditRequest.categories);
-            return FMTemplateSelector.select("EditRequest","view",env,request);
+            return false;
         }
 
-        boolean preview = params.get(PARAM_PREVIEW) != null;
-        if (preview) {
-            env.put(EditRequest.VAR_CATEGORIES, EditRequest.categories);
-            return FMTemplateSelector.select("EditRequest", "view", env, request);
+        if (params.get(PARAM_PREVIEW) != null)
+            return false;
+
+        if (prefix!=null) {
+            if (text==null)
+                text = prefix;
+            else
+                text = prefix + "\n<br>\n" + text;
         }
 
         Item req = new Item(0,Item.REQUEST);
@@ -186,10 +224,7 @@ public class EditRequest implements AbcAction, Configurable {
 
         ServletUtils.addMessage("Vá¹ po¾adavek byl pøijat.",env,request.getSession());
         logRequests.info("Autor: "+author+"("+email+")\n"+text);
-
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/hardware/show/"+Constants.REL_REQUESTS);
-        return null;
+        return true;
     }
 
     protected String actionDelete(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -316,6 +351,47 @@ public class EditRequest implements AbcAction, Configurable {
         return null;
     }
 
+    /**
+     * Displays several options that user or admin can do with comment or question.
+     * Relation id parameter must be set, comment id is optional.
+     */
+    private String actionCommentTools(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
+
+        relation = (Relation) persistance.findById(relation);
+        Item discussion = (Item) persistance.findById(relation.getChild());
+        Comment comment = EditDiscussion.getDiscussedComment(params, discussion, persistance);
+
+        env.put(VAR_RELATION, relation);
+        env.put(VAR_COMMENT, comment);
+        return FMTemplateSelector.select("EditRequest", "comment", env, request);
+    }
+
+    /**
+     * Adds user complaint into Requests to admins.
+     */
+    private String actionSubmitComplaint(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
+
+        relation = (Relation) persistance.findById(relation);
+        Item discussion = (Item) persistance.findById(relation.getChild());
+        Comment comment = EditDiscussion.getDiscussedComment(params, discussion, persistance);
+        String title = comment.getData().selectSingleNode("title").getText();
+        String action = "<a href=\"/forum/show/" + relation.getId() + "#"+comment.getId()+"\">" + title + "</a>";
+
+        boolean saved = addRequest(request, action, true, env);
+        if (!saved)
+            return actionCommentTools(request, env);
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/hardware/show/" + Constants.REL_REQUESTS);
+        return null;
+    }
+
     private String actionChooseForum(HttpServletRequest request, Map env) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
         Category forum = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
@@ -339,10 +415,9 @@ public class EditRequest implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         int forumId = Misc.parseInt((String) params.get(PARAM_FORUM_ID),0);
         int relationId = Misc.parseInt((String) params.get(PARAM_RELATION_SHORT),0);
-        String text = (String) params.get(PARAM_TEXT);
 
         if (forumId==0) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Zvolte prosím lep¹í diskusní fórum pro tuto diskusi.", env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Vyberte prosím diskusní fórum.", env, null);
             return actionChooseForum(request, env);
         }
 
@@ -355,12 +430,17 @@ public class EditRequest implements AbcAction, Configurable {
 
         String dizName = Tools.childName(new Integer(relationId));
         String forumName = Tools.childName(new Integer(forumId));
+        params.put(PARAM_CATEGORY, "Pøesun diskuse");
         String action = "Pøesunout diskusi <a href=\"/forum/show/"+relationId+"\">"+dizName+
                         "</a> do fora <a href=\"/forum/dir/"+forumId+"\">"+forumName+"</a> "+forumId;
-        if (!Misc.empty(text)) action = action+"<br>\n"+text;
-        params.put(PARAM_TEXT, action);
 
-        return actionAdd(request, response, env);
+        boolean saved = addRequest(request, action, false, env);
+        if (!saved)
+            return actionChooseForum(request, env);
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/hardware/show/" + Constants.REL_REQUESTS);
+        return null;
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {
