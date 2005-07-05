@@ -47,7 +47,7 @@
       </table>
       <input type="hidden" name="advancedMode" value="true">
   <#else>
-      <a href="/Search?advancedMode=true">Roz¹íøené hledání</a>
+      <a href="/Search?advancedMode=true&amp;query=${QUERY?url}">Roz¹íøené hledání</a>
   </#if>
 
   <#if PARAMS.parent?exists><input type="hidden" name="parent" value="${PARAMS.parent}"></#if>
