@@ -7,6 +7,7 @@ package cz.abclinuxu.utils.search;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import cz.abclinuxu.utils.freemarker.Tools;
 
 /**
  * Easy to use and standardized generator of Document.
@@ -60,6 +61,7 @@ public class MyDocument {
      * Sets title for the Document.
      */
     public Field setTitle(String title) {
+        title = Tools.removeTags(title);
         Field field = Field.Text(TITLE,title);
         document.add(field);
         return field;
