@@ -29,7 +29,7 @@
             <action>cz.abclinuxu.servlets.html.view.ShowNewsPage</action>
         </mapping>
         <mapping>
-            <pattern>/ankety</pattern>
+            <pattern>/ankety$</pattern>
             <action>cz.abclinuxu.servlets.html.view.ViewPolls</action>
         </mapping>
         <mapping>
