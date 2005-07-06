@@ -6,10 +6,8 @@
 package cz.abclinuxu.servlets.html;
 
 import cz.abclinuxu.servlets.Controller;
-import cz.abclinuxu.servlets.utils.template.TemplateSelector;
 import cz.abclinuxu.servlets.utils.url.URLMapper;
-import cz.abclinuxu.servlets.utils.url.URLMapper;
-import freemarker.template.Configuration;
+import cz.abclinuxu.utils.freemarker.FMUtils;
 import freemarker.template.Template;
 import org.apache.log4j.Logger;
 
@@ -47,7 +45,7 @@ public class HTMLServlet extends Controller {
             HTMLVersion.setLayout(request, urlMapper);
 
             String templateName = process(request, response, env);
-            Template template = Configuration.getDefaultConfiguration().getTemplate(templateName);
+            Template template = FMUtils.getConfiguration().getTemplate(templateName);
             response.setContentType("text/html; charset=ISO-8859-2");
             writer = response.getWriter();
 

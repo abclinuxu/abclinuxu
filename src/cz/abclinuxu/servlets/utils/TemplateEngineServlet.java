@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.freemarker.FMUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,7 +54,7 @@ public class TemplateEngineServlet extends HttpServlet {
      * Servlet initialization
      */
     public void init() throws ServletException {
-        config = Configuration.getDefaultConfiguration();
+        config = FMUtils.getConfiguration();
         config.setDefaultEncoding("iso-8859-2");
 
         String path = getServletContext().getRealPath("/")+"/";

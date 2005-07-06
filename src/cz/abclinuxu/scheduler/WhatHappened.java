@@ -5,38 +5,36 @@
  */
 package cz.abclinuxu.scheduler;
 
+import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.view.Article;
+import cz.abclinuxu.data.view.DiscussionHeader;
+import cz.abclinuxu.data.view.News;
+import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistance.extra.CompareCondition;
+import cz.abclinuxu.persistance.extra.Field;
+import cz.abclinuxu.persistance.extra.Operation;
+import cz.abclinuxu.persistance.extra.Qualifier;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.edit.EditArticle;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
-import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.freemarker.FMUtils;
-import cz.abclinuxu.utils.DateTool;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.extra.Qualifier;
-import cz.abclinuxu.persistance.extra.CompareCondition;
-import cz.abclinuxu.persistance.extra.Field;
-import cz.abclinuxu.persistance.extra.Operation;
-import cz.abclinuxu.data.Item;
-import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.User;
-import cz.abclinuxu.data.view.News;
-import cz.abclinuxu.data.view.Article;
-import cz.abclinuxu.data.view.DiscussionHeader;
+import cz.abclinuxu.utils.freemarker.Tools;
+import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.prefs.Preferences;
-import java.util.*;
 import java.text.MessageFormat;
-
-import freemarker.template.Configuration;
-import org.apache.log4j.Logger;
+import java.util.*;
+import java.util.prefs.Preferences;
 
 /**
  * Generates weekly summary article.
@@ -104,7 +102,7 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
 
     public static void main(String[] args) throws Exception {
         FMTemplateSelector.initialize("/home/literakl/abc/deploy/WEB-INF/conf/templates.xml");
-        Configuration.getDefaultConfiguration().setSharedVariable(Constants.VAR_DATE_TOOL, new DateTool());
+        FMUtils.getConfiguration().setSharedVariable(Constants.VAR_DATE_TOOL, new DateTool());
         new WhatHappened().run();
     }
 

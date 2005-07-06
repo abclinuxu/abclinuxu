@@ -5,29 +5,28 @@
  */
 package cz.abclinuxu.servlets.html.admin;
 
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.servlets.init.AbcInit;
-import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.AbcAction;
-import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.servlets.utils.template.TemplateSelector;
-import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.User;
-import cz.abclinuxu.utils.search.CreateIndex;
-import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.servlets.AbcAction;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.init.AbcInit;
+import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.servlets.utils.template.TemplateSelector;
 import cz.abclinuxu.utils.DateTool;
+import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
+import cz.abclinuxu.utils.freemarker.FMUtils;
+import cz.abclinuxu.utils.search.CreateIndex;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
+import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
-import java.io.File;
-
-import freemarker.template.Configuration;
+import java.util.Map;
 
 /**
  * Various administrative tasks.
@@ -75,7 +74,7 @@ public class AdminServlet implements AbcAction {
         AbcInit.setServerLinksAstSharedVariables();
         TemplateSelector.initialize(null);
         ConfigurationManager.reconfigureAll();
-        Configuration.getDefaultConfiguration().clearTemplateCache();
+        FMUtils.getConfiguration().clearTemplateCache();
 	    DateTool.calculateTodayTimes();
 
         ServletUtils.addMessage("Cache byla promazána.",env,null);
