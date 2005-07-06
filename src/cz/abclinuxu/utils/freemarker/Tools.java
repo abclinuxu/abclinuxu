@@ -305,7 +305,7 @@ public class Tools implements Configurable {
      * this question is considered to be solved.
      * @return whether the question is solved
      */
-    public boolean isQuestionSolved(Document document) {
+    public static boolean isQuestionSolved(Document document) {
         Element solved = (Element) document.selectSingleNode("/data/solved");
         if (solved==null)
             return false;

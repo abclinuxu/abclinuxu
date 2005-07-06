@@ -1,4 +1,4 @@
-log4j			1.2.7		http://jakarta.apache.org
+Log4j			1.2.7		http://jakarta.apache.org
 freemarker		2.3.3		http://freemarker.org/
 proxool			0.7.2		http://proxool.sf.net
 mysql-connector		3.0.16-ga	http://www.mysql.com
@@ -10,3 +10,4 @@ lucene			1.4.2		http://jakarta.apache.org
 htmlparser		1.4		http://htmlparser.sourceforge.net
 rome			0.5+patch	http://rome.dev.java.net (RSS) (vyzaduje jdom)
 jdom			1.0		http://www.jdom.org
+lucene-highlighter	2004-08		http://www.lucenebook.com

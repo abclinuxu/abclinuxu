@@ -9,6 +9,8 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import cz.abclinuxu.utils.freemarker.Tools;
 
+import java.util.Date;
+
 /**
  * Easy to use and standardized generator of Document.
  * You must set URL before you get Document.
@@ -37,6 +39,14 @@ public class MyDocument {
     public static final String PARENT = "parent";
     /** News category */
     public static final String NEWS_CATEGORY = "kategorie";
+    /** State of question, possible values are ano/ne */
+    public static final String QUESTION_SOLVED = "vyreseno";
+    /** number of responses in discussion */
+    public static final String NUMBER_OF_REPLIES = "odpovedi";
+    /** time when object was created */
+    public static final String CREATED = "vytvoreno";
+    /** time of last update of object */
+    public static final String UPDATED = "zmeneno";
 
     Document document;
 
@@ -45,7 +55,7 @@ public class MyDocument {
      */
     public MyDocument(String content) {
         document = new Document();
-        document.add(Field.UnStored(CONTENT,content));
+        document.add(Field.Text(CONTENT, content));
     }
 
     /**
@@ -90,6 +100,51 @@ public class MyDocument {
      */
     public Field setNewsCategory(String category) {
         Field field = Field.Keyword(NEWS_CATEGORY, category);
+        document.add(field);
+        return field;
+    }
+
+    /**
+     * Sets whether the question was solved.
+     */
+    public Field setQuestionSolved(boolean solved) {
+        Field field = Field.Keyword(QUESTION_SOLVED, solved? "ano":"ne");
+        document.add(field);
+        return field;
+    }
+
+    /**
+     * Sets numkber of replies in discussion.
+     */
+    public Field setNumberOfReplies(int replies) {
+        Field field = Field.Keyword(NUMBER_OF_REPLIES, Integer.toString(replies));
+        document.add(field);
+        return field;
+    }
+
+    /**
+     * Sets numkber of replies in discussion.
+     */
+    public Field setNumberOfReplies(String replies) {
+        Field field = Field.Keyword(NUMBER_OF_REPLIES, replies);
+        document.add(field);
+        return field;
+    }
+
+    /**
+     * Sets time when object was created.
+     */
+    public Field setCreated(Date date) {
+        Field field = Field.Keyword(CREATED, date);
+        document.add(field);
+        return field;
+    }
+
+    /**
+     * Sets last time when object was updated.
+     */
+    public Field setUpdated(Date date) {
+        Field field = Field.Keyword(UPDATED, date);
         document.add(field);
         return field;
     }

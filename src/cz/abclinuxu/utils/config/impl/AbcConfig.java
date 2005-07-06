@@ -31,10 +31,11 @@ public class AbcConfig implements Configurable {
     public static final String PREF_INDEX_ARTICLES_COUNT = "index.article.count";
     public static final String PREF_SECTION_ARTICLES_COUNT = "section.article.count";
     public static final String PREF_ARTICLE_SECTION_ARTICLES_COUNT = "article.section.articles.count";
+    public static final String PREF_SEARCH_RESULTS_COUNT = "search.results.count";
 
     static String deployPath;
     static int viewUserPageSize, indexDiscussionCount, newsCount, indexArticleCount, sectionArticleCount;
-    static int articleSectionArticlesCount;
+    static int articleSectionArticlesCount, searchResultsCount;
 
     /**
      * Callback used to configure your class from preferences.
@@ -47,6 +48,7 @@ public class AbcConfig implements Configurable {
         indexArticleCount = prefs.getInt(PREF_INDEX_ARTICLES_COUNT, 9);
         sectionArticleCount = prefs.getInt(PREF_SECTION_ARTICLES_COUNT, 25);
         articleSectionArticlesCount = prefs.getInt(PREF_ARTICLE_SECTION_ARTICLES_COUNT, 5);
+        searchResultsCount = prefs.getInt(PREF_SEARCH_RESULTS_COUNT, 10);
     }
 
     /**
@@ -112,5 +114,12 @@ public class AbcConfig implements Configurable {
      */
     public static int getArticleSectionArticlesCount() {
         return articleSectionArticlesCount;
+    }
+
+    /**
+     * @return default number of found objects in search page.
+     */
+    public static int getSearchResultsCount() {
+        return searchResultsCount;
     }
 }

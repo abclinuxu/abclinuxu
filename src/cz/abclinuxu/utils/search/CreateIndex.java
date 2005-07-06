@@ -427,6 +427,8 @@ public class CreateIndex implements Configurable {
         doc.setTitle(title);
         doc.setURL(Tools.getUrlForBlogStory(category.getSubType(), story.getCreated(), relation.getId()));
         doc.setType(MyDocument.TYPE_BLOG);
+        doc.setCreated(story.getCreated());
+        doc.setUpdated(story.getUpdated());
         return doc;
     }
 
@@ -451,6 +453,8 @@ public class CreateIndex implements Configurable {
         MyDocument doc = new MyDocument(Tools.removeTags(sb.toString()));
         doc.setTitle(title);
         doc.setType(MyDocument.TYPE_CATEGORY);
+        doc.setCreated(category.getCreated());
+        doc.setUpdated(category.getUpdated());
         return doc;
     }
 
@@ -520,6 +524,10 @@ public class CreateIndex implements Configurable {
         MyDocument doc = new MyDocument(Tools.removeTags(sb.toString()));
         doc.setTitle(title);
         doc.setType(MyDocument.TYPE_DISCUSSION);
+        doc.setCreated(discussion.getCreated());
+        doc.setUpdated(discussion.getUpdated());
+        doc.setQuestionSolved(Tools.isQuestionSolved(discussion.getData()));
+        doc.setNumberOfReplies(Tools.xpath(discussion, "/data/comments"));
         return doc;
     }
 
@@ -553,6 +561,8 @@ public class CreateIndex implements Configurable {
         tmp = Tools.removeTags(sb.toString());
         MyDocument doc = new MyDocument(tmp);
         doc.setTitle(title);
+        doc.setCreated(make.getCreated());
+        doc.setUpdated(make.getUpdated());
         if (type.length()==0)
             log.warn("Unknown type for "+make);
         doc.setType(type);
@@ -622,6 +632,8 @@ public class CreateIndex implements Configurable {
         MyDocument doc = new MyDocument(Tools.removeTags(sb.toString()));
         doc.setTitle(title);
         doc.setType(MyDocument.TYPE_DRIVER);
+        doc.setCreated(driver.getCreated());
+        doc.setUpdated(driver.getUpdated());
         return doc;
     }
 
@@ -664,6 +676,7 @@ public class CreateIndex implements Configurable {
                         }
                 }
             } else if ( child.getChild() instanceof Item ) {
+                // todo indexuj diskuse vzdy samostatne a do titulku pridej jmeno clanku
                 Item item = (Item) persistance.findById(child.getChild());
                 if (item.getType()!=Item.DISCUSSION) continue;
                 MyDocument doc = indexDiscussion(item);
@@ -678,6 +691,8 @@ public class CreateIndex implements Configurable {
         MyDocument doc = new MyDocument(Tools.removeTags(sb.toString()));
         doc.setTitle(title);
         doc.setType(MyDocument.TYPE_ARTICLE);
+        doc.setCreated(article.getCreated());
+        doc.setUpdated(article.getUpdated());
         return doc;
     }
 
@@ -719,6 +734,8 @@ public class CreateIndex implements Configurable {
         MyDocument doc = new MyDocument(Tools.removeTags(sb.toString()));
         doc.setTitle(title);
         doc.setType(MyDocument.TYPE_NEWS);
+        doc.setCreated(news.getCreated());
+        doc.setUpdated(news.getUpdated());
         if (category!=null)
             doc.setNewsCategory(category);
         return doc;
@@ -745,6 +762,8 @@ public class CreateIndex implements Configurable {
         MyDocument doc = new MyDocument(sb.toString());
         doc.setTitle(title);
         doc.setType(MyDocument.TYPE_DICTIONARY);
+        doc.setCreated(dictionary.getCreated());
+        doc.setUpdated(dictionary.getUpdated());
         doc.setURL("/slovnik/"+dictionary.getSubType());
 
         return doc;

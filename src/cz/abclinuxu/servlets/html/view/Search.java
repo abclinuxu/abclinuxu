@@ -10,6 +10,7 @@ import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.news.NewsCategories;
 import cz.abclinuxu.utils.news.NewsCategory;
 import cz.abclinuxu.utils.paging.Paging;
@@ -19,22 +20,28 @@ import cz.abclinuxu.utils.search.AbcQueryParser;
 import cz.abclinuxu.utils.search.MyDocument;
 import cz.abclinuxu.data.User;
 import org.apache.lucene.search.*;
+import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.QueryScorer;
+import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.analysis.TokenStream;
 import org.dom4j.Node;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.text.NumberFormat;
+import java.io.StringReader;
 
 /**
  * Performs search across the data.
  */
 public class Search implements AbcAction {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(Search.class);
-    static org.apache.log4j.Category seachLog = org.apache.log4j.Category.getInstance("search");
+    static org.apache.log4j.Category searchLog = org.apache.log4j.Category.getInstance("search");
 
     /** contains relation, that match the expression */
     public static final String VAR_RESULT = "RESULT";
@@ -74,14 +81,14 @@ public class Search implements AbcAction {
         String queryString = (String) params.get(PARAM_QUERY);
         if ( queryString == null || queryString.length()==0 )
             return choosePage(onlyNews, request, env, newsCategoriesSet);
-
         env.put(VAR_QUERY,queryString);
 
+        AbcCzechAnalyzer analyzer = new AbcCzechAnalyzer();
         Query query = null;
         try {
-            query = AbcQueryParser.parse(queryString, new AbcCzechAnalyzer(), types, newsCategoriesSet);
+            query = AbcQueryParser.parse(queryString, analyzer, types, newsCategoriesSet);
             query = AbcQueryParser.addParentToQuery((String)params.get(PARAM_PARENT), query);
-            seachLog.info(queryString);
+            searchLog.info(queryString);
         } catch (ParseException e) {
             ServletUtils.addError(PARAM_QUERY, "Hledaný øetìzec obsahuje chybu!", env, null);
             return choosePage(onlyNews, request, env, newsCategoriesSet);
@@ -93,13 +100,24 @@ public class Search implements AbcAction {
             List list = new ArrayList(count);
             NumberFormat percentFormat = NumberFormat.getPercentInstance();
 
-            Searcher searcher = new IndexSearcher(CreateIndex.getIndexPath());
+            IndexReader indexReader = IndexReader.open(CreateIndex.getIndexPath());
+            query = query.rewrite(indexReader);
+            Searcher searcher = new IndexSearcher(indexReader);
             Hits hits = searcher.search(query);
             int total = hits.length();
+
+            SimpleHTMLFormatter formatter = new SimpleHTMLFormatter("<span class=\"highlight\">", "</span>");
+            Highlighter highlighter = new Highlighter(formatter, new QueryScorer(query));
             for ( int i=from,j=0; i<total && j<count; i++, j++ ) {
                 Document doc = hits.doc(i);
                 float score = (hits.score(i)>0.01) ? hits.score(i) : 0.01f;
                 doc.add(Field.UnIndexed("score", percentFormat.format(score)));
+
+                String text = hits.doc(i).get(MyDocument.CONTENT);
+                TokenStream tokenStream = analyzer.tokenStream(MyDocument.CONTENT, new StringReader(text));
+                String result = highlighter.getBestFragments(tokenStream, text, 3, "...");
+                doc.add(Field.UnIndexed("fragments", result));
+
                 list.add(doc);
             }
 
@@ -107,7 +125,7 @@ public class Search implements AbcAction {
             env.put(VAR_RESULT,paging);
             env.put(VAR_TOTAL,new Integer(total));
         } catch (Exception e) {
-            log.error("Cannot search "+query,e);
+            log.error("Cannot search '"+query+"'",e);
             ServletUtils.addError(PARAM_QUERY,"Nemohu provést dané hledání. Zadejte jiný øetìzec!",env,null);
             return choosePage(onlyNews, request, env, newsCategoriesSet);
         }
@@ -174,9 +192,9 @@ public class Search implements AbcAction {
         }
 
         if (count==-1)
-            return 50;
+            return AbcConfig.getSearchResultsCount();
         else
-            return Misc.limit(count, 10, 100);
+            return Misc.limit(count, 5, 100);
     }
 
     public static class NewsCategoriesSet extends AbstractCollection {
