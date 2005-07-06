@@ -11,7 +11,7 @@ o obyèejný text, který má pevné, hezké URL. Napøíklad nápovìda,
 podmínky u¾ití èi reklama. Obsah ale mù¾e být i dynamický,
 pak v¹ak potøebuje podporu programátora, který naplní data.</p>
 
- <table width=100 border=0 cellpadding=5>
+ <table width=100 border=0 cellpadding=5 name="form">
   <tr>
    <td width="90" class="required">Titulek stránky</td>
    <td>
@@ -47,6 +47,14 @@ pak v¹ak potøebuje podporu programátora, který naplní data.</p>
    <td width="90" class="required">Obsah stránky</td>
    <td>
     <p>V¹echna URL na èlánky, obrázky a soubory z na¹eho serveru musí být relativní!</p>
+    <div class="form-edit">
+        <a href="javascript:insertAtCursor(document.form.content, '&lt;p&gt;', '&lt;/p&gt;');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.content, '&lt;b&gt;', '&lt;/b&gt;');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
+        <a href="javascript:insertAtCursor(document.form.content, '&lt;i&gt;', '&lt;/i&gt;');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
+        <a href="javascript:insertAtCursor(document.form.content, '&lt;a href=&quot;&quot;&gt;', '&lt;/a&gt;');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.content, '&lt;pre&gt;', '&lt;/pre&gt;');" id="mono" title="Vlo¾it formátovaný text. Vhodné pouze pro konfiguraèní soubory èi výpisy.">&lt;pre&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.content, '&lt;code&gt;', '&lt;/code&gt;');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
+    </div>
     <textarea name="content" cols="100" rows="30" tabindex="5">${PARAMS.content?if_exists?html}</textarea>
     <div class="error">${ERRORS.content?if_exists}</div>
    </td>
