@@ -3,6 +3,7 @@
 <title>${TITLE}</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2">
 <link rel="StyleSheet" href="/styles.css" type="text/css">
+<script type="text/javascript" src="/data/site/scripts.js"></script>
 </head>
 <body bgcolor="white" style="margin: 5px">
 <#import "macros.ftl" as lib>
