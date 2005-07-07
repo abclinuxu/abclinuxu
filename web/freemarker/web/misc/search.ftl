@@ -32,7 +32,7 @@
                    </tr>
                   </table>
               <#else>
-                  <a href="/Search?advancedMode=true<#if PARAMS.query?exists>&amp;query=${PARAMS.query?url</#if>}">Roz¹íøené hledání</a>
+                  <br><a href="/Search?advancedMode=true<#if PARAMS.query?exists>&amp;query=${PARAMS.query?url}</#if>">Roz¹íøené hledání</a>
               </#if>
             </td>
             <td align="right" valign="middle">
@@ -53,10 +53,23 @@
 
     <#list RESULT.data as doc>
         <p>
-            <!--m--><a href="${doc.url}">${doc.title?default(doc.url)}</a><!--n--> (${doc.typ})
+            <!--m--><a href="${doc.url}">${doc.title?default(doc.url)}</a><!--n-->
             <#if doc.fragments?exists>
                 <br>${doc.fragments}
             </#if>
+            <br>
+            <#if doc.typ='sekce'>Sekce
+            <#elseif doc.typ='hardware'>Hardware
+            <#elseif doc.typ='software'>Software
+            <#elseif doc.typ='diskuse'>Diskuse, poèet odpovìdí: ${doc.odpovedi}
+            <#elseif doc.typ='ovladac'>Ovladaè
+            <#elseif doc.typ='clanek'>Èlánek
+            <#elseif doc.typ='zpravicka'>Zprávièka
+            <#elseif doc.typ='pojem'>Pojem
+            <#elseif doc.typ='blog'>Zápis v blogu
+            </#if>
+
+
         </p>
     </#list>
 
