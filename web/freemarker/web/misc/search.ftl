@@ -32,7 +32,7 @@
                    </tr>
                   </table>
               <#else>
-                  <a href="/Search?advancedMode=true&amp;query=${PARAMS.query?url}">Roz¹íøené hledání</a>
+                  <a href="/Search?advancedMode=true<#if PARAMS.query?exists>&amp;query=${PARAMS.query?url</#if>}">Roz¹íøené hledání</a>
               </#if>
             </td>
             <td align="right" valign="middle">
