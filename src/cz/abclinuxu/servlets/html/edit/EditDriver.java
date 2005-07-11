@@ -179,7 +179,11 @@ public class EditDriver implements AbcAction {
         // commit new version
         String path = Integer.toString(relation.getId());
         String userId = Integer.toString(user.getId());
-        VersioningFactory.getVersioning().commit(document.asXML(), path, userId);
+        Element copy = document.getRootElement().createCopy();
+        Element monitor = copy.element("monitor");
+        if (monitor!=null)
+            monitor.detach();
+        VersioningFactory.getVersioning().commit(copy.asXML(), path, userId);
 
         // run monitor
         String url = "http://www.abclinuxu.cz/drivers/show/"+relation.getId();
