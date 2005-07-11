@@ -37,7 +37,6 @@ public class ViewIndex implements AbcAction {
      * Evaluate the request.
      */
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
         SQLTool sqlTool = SQLTool.getInstance();
         User user = (User) env.get(Constants.VAR_USER);
         Tools tools = new Tools();
@@ -47,14 +46,6 @@ public class ViewIndex implements AbcAction {
         List articles = sqlTool.findIndexArticlesRelations(qualifiers);
         Tools.syncList(articles);
         env.put(ViewIndex.VAR_ARTICLES,articles);
-
-        Category hw = (Category) persistance.findById(new Category(Constants.CAT_386));
-        Tools.syncList(hw.getChildren());
-        env.put(ViewIndex.VAR_HARDWARE,hw.getChildren());
-
-        Category sw = (Category) persistance.findById(new Category(Constants.CAT_SOFTWARE));
-        Tools.syncList(sw.getChildren());
-        env.put(ViewIndex.VAR_SOFTWARE,sw.getChildren());
 
         int userLimit = getNumberOfDiscussions(user);
         if ( userLimit>0 ) {
