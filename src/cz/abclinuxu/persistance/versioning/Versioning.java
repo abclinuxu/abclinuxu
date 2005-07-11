@@ -32,10 +32,10 @@ public interface Versioning {
     public VersionedDocument load(String path, String version) throws VersionNotFoundException;
 
     /**
-     * Loads versioning history for selected document.
+     * Loads versioning history for selected document in descending order.
      * @param path unique identifier of the document
-     * @return list of VersionInfo. The list doesn't contain any VersionInfo when there is no
-     * version of specified document. 
+     * @return list of VersionInfo objects. When the list is empty, then there is no
+     * version of specified document.
      */
     public List getHistory(String path);
 }
