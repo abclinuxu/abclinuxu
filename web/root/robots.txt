@@ -22,6 +22,5 @@ Disallow: /software/EditDiscussion
 Disallow: /forum/EditDiscussion
 Disallow: /SelectUser
 Disallow: /SelectRelation
-Disallow: /Search
-Disallow: /History
+Disallow: /revize
 
