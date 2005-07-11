@@ -73,6 +73,10 @@
             <action>cz.abclinuxu.servlets.html.view.SendEmail</action>
         </mapping>
         <mapping>
+            <pattern>^/revize</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ShowRevisions</action>
+        </mapping>
+        <mapping>
             <pattern>EditCategory</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditCategory</action>
         </mapping>

@@ -360,6 +360,12 @@
     </action>
   </servlet>
 
+  <servlet name="ShowRevisions">
+    <action name="view" content="/show/revisions.ftl">
+      <var name="TITLE" value='${TOOL.childName(RELATION)} - historie' type="Lazy" />
+    </action>
+  </servlet>
+
   <servlet name="ShowObject">
     <action name="hardware" content="/show/hwitem.ftl">
       <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
