@@ -114,22 +114,26 @@ public final class URLMapper implements Configurable {
 
         String url = ServletUtils.combinePaths(request.getServletPath(), request.getPathInfo());
 
-        // todo known URLs must be cached in LRU cache. If URL ends with /[0-9]+ then it is not custom URL
-        // todo central class for custom URL is needed (to avoid duplicates, to use same syntax etc)
-        boolean custom = false;
+        boolean custom = true;
         int position = url.lastIndexOf('/');
+        // If URL ends with /[0-9]+ then it is not custom URL
         if (position>=0 && (position+1)<url.length()) {
             String lastPart = url.substring(position+1);
             int length = lastPart.length();
             char c;
+            boolean found = false;
             for (int i=0; i<length; i++) {
                 c = lastPart.charAt(i);
                 if (c<'0' || c>'9') {
-                    custom = true;
+                    found = true;
                     break;
                 }
             }
+            if (!found)
+                custom = false;
         }
+
+        // todo known custom URLs must be cached.
         if (custom) {
             Relation relation = SQLTool.getInstance().findRelationByURL(url);
             if (relation != null) {
