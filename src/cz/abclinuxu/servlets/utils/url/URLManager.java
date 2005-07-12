@@ -39,6 +39,8 @@ public class URLManager implements Configurable {
      * @throws AbcException if URL is after conversions empty
      */
     public static String enforceLastURLPart(String url) {
+        if (url ==null || url.length() == 0)
+            throw new AbcException("Zvolte jiné URL, zadané URL nevyhovuje pravidlùm!");
         if (url.charAt(0)=='/')
             url = url.substring(1);
         int length = url.length();

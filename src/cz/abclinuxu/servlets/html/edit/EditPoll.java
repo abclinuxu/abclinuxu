@@ -129,7 +129,7 @@ public class EditPoll implements AbcAction {
         }
 
         String url = (String) params.get(PARAM_URL);
-        if (url!=null) {
+        if (url!=null && url.length()>0) {
             try {
                 url = UrlUtils.PREFIX_POLLS + "/" + URLManager.enforceLastURLPart(url);
                 url = URLManager.protectFromDuplicates(url);
@@ -156,7 +156,8 @@ public class EditPoll implements AbcAction {
         persistance.create(poll);
 
         Relation relation = new Relation(upperRelation.getChild(),poll,upperRelation.getId());
-        relation.setUrl(url);
+        if (url != null && url.length() > 0)
+            relation.setUrl(url);
         persistance.create(relation);
         relation.getParent().addChildRelation(relation);
 
