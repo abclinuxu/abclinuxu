@@ -2,11 +2,19 @@
 
 <#assign who=TOOL.createUser(ITEM.owner)>
 <p>
- Tuto polo¾ku naposledy upravil <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
- dne ${DATE.show(ITEM.updated,"CZ_FULL")}.
-</p>
-<p>
- <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">Vlo¾ novou verzi</a>
+    <#if PARAMS.revize?exists>
+        Právì si prohlí¾íte revizi èíslo ${PARAMS.revize}, kterou vytvoøil
+        <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
+        (${DATE.show(ITEM.updated,"CZ_FULL")}).
+        <a href="/drivers/show/${RELATION.id}">Návrat na aktuální verzi</a>.
+    <#else>
+        Tuto polo¾ku naposledy upravil <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
+        (${DATE.show(ITEM.updated,"CZ_FULL")}).
+        Pokud chcete doplnit, opravit nebo aktualizovat ovladaè,
+        <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">vlo¾te novou verzi</a>.
+        K dispozici je i <a href="/revize?rid=${RELATION.id}&amp;prefix=/drivers">archiv zmìn</a>
+        tohoto ovladaèe, tak¾e si mù¾ete prohlédnout, jakými zmìnami ovladaè pro¹el postupem èasu.
+    </#if>
 </p>
 
 <p class="monitor"><b>AbcMonitor</b> vám emailem za¹le upozornìní pøi zmìnì.
@@ -37,6 +45,6 @@
   </tr>
 </table>
 
-<p><b>Nástroje</b>: <a href="/forum/show/${RELATION.id}?varianta=print">Tisk</a></p>
+<p><b>Nástroje</b>: <a href="/drivers/show/${RELATION.id}?varianta=print<#if PARAMS.revize?exists>&amp;revize=${PARAMS.revize}</#if>">Tisk</a></p>
 
 <#include "../footer.ftl">
