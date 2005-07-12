@@ -49,23 +49,23 @@ verzi.
 <h1 class="st_nadpis">Nový ovladaè</h1>
 
 <form action="${URL.make("/edit")}" method="POST">
- <table cellpadding="0" border="0" width="100%">
+ <table cellpadding="0" border="0" style="margin-top: 1em;">
   <tr>
-   <td class="required">Jméno ovladaèe</td>
+   <td class="required">Jméno</td>
    <td>
     <input type="text" name="name" value="${PARAMS.name?if_exists}" size="30" maxlength="30" tabindex="1">
     <div class="error">${ERRORS.name?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td class="required">Verze ovladaèe</td>
+   <td class="required">Verze</td>
    <td>
     <input type="text" name="version" value="${PARAMS.version?if_exists}" size="30" tabindex="2">
     <div class="error">${ERRORS.version?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td class="required">URL ovladaèe</td>
+   <td class="required">URL</td>
    <td>
     <input type="text" name="url" value="${PARAMS.url?default("http://")}" size="50" tabindex="3">
     <div class="error">${ERRORS.url?if_exists}</div>
@@ -81,8 +81,7 @@ verzi.
    </td>
   </tr>
   <tr>
-   <td>&nbsp;</td>
-   <td>
+   <td colspan="2" align="center">
     <input type="submit" name="preview" value="Náhled">
     <input type="submit" name="submit" value="Dokonèi">
    </td>
