@@ -5,26 +5,23 @@
 <h1 class="st_nadpis">Úvod</h1>
 
 <p>Právì se chystáte vlo¾it do databáze nový ovladaè. Pokud jste si
-jisti, ¾e v databázi není ulo¾ena jeho star¹í verze, pokraèujte
+jisti, ¾e tento ovladaè v databázi chybí, pokraèujte
 a vyplòte tento formuláø. Pokud jste se ale nedívali, prosím
-vra»te se zpìt a zkontrolujte, zda ji¾ v databázi není pøítomen.
-Pokud jej najdete, otevøete jej a zvolte odkaz <i>Vlo¾ novou verzi</i>.
+vra»te se zpìt a zkontrolujte, zda jej nepøidal nìkdo pøed vámi.
+V tom pøípadì jej otevøete a pro aktualizaci zvolte odkaz <i>Vlo¾ novou verzi</i>.
 </p>
 
-<p>Polo¾ka ovladaèe slou¾í pro shroma¾ïování informací ohlednì ovladaèù,
-které nejsou standardní souèástí jádra. Typicky jde buï o Open Source
-projekty, kdy se nad¹enci sna¾í vytvoøit podporu pro daný hardware
-(typicky ovladaèe scannerù) nebo výrobce odmítá uvolnit specifikaci
-svých produktù komunitì a místo toho vyrábí vlastní ovladaèe (napøíklad
-nVidia).
+<p>Sekce Ovladaèù slou¾í pro shroma¾ïování informací ohlednì ovladaèù,
+které nejsou standardní souèástí jádra. Jedná se buï o Open Source
+projekty vytváøené a udr¾ované komunitou, nebo o proprietární ovladaèe
+s uzavøeným kódem, vyvíjené obvykle výrobcem.
 </p>
 
 <p>Vytvoøení polo¾ky ovladaèe je snadné. Nejdøíve vyplòte jméno
 ovladaèe, pøípadnì hardwaru. Pak vlo¾te verzi ovladaèe a adresu,
-kde je mo¾né stáhnout ovladaè. Nedávejte zde základní adresu produktu,
-nýbr¾ adresu, kde je mo¾né stáhnout jeho ovladaè. Poslední
-polo¾kou je poznámka, kam patøí informace o tom, co ovladaè umí,
-respektive jaké zmìny tato verze pøinesla.
+odkud je mo¾né jej stáhnout. Poslední polo¾kou je poznámka,
+kam patøí informace o schopnostech ovladaèe, èi zmìnách oproti minulé
+verzi.
 </p>
 
 <#if PARAMS.preview?exists>

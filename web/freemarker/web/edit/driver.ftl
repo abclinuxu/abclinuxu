@@ -4,20 +4,18 @@
 
 <h1 class="st_nadpis">Úvod</h1>
 
-<p>Polo¾ka ovladaèe slou¾í pro shroma¾ïování informací ohlednì ovladaèù,
-které nejsou standardní souèástí jádra. Typicky jde buï o Open Source
-projekty, kdy se nad¹enci sna¾í vytvoøit podporu pro daný hardware
-(typicky ovladaèe scannerù) nebo výrobce odmítá uvolnit specifikaci
-svých produktù komunitì a místo toho vyrábí vlastní ovladaèe (napøíklad
-nVidia).
+<p>Sekce Ovladaèù slou¾í pro shroma¾ïování informací ohlednì ovladaèù,
+které nejsou standardní souèástí jádra. Jedná se buï o Open Source
+projekty vytváøené a udr¾ované komunitou, nebo o proprietární ovladaèe
+s uzavøeným kódem, vyvíjené obvykle výrobcem.
 </p>
 
-<p>Úprava polo¾ky ovladaèe je snadná. Pokud nìkdo pøed vámi zvolil
-nevhodný název, zmeòte jej. Pak opravte verzi ovladaèe a pøípadnì adresu,
-kde je mo¾né stáhnout tento ovladaè. Nedávejte zde základní adresu produktu,
-nýbr¾ adresu, kde je mo¾né stáhnout jeho ovladaè. Poslední
-polo¾kou je poznámka, kam patøí informace o tom, co ovladaè umí,
-respektive jaké zmìny tato verze pøinesla.
+<p>Úprava polo¾ky ovladaèe je snadná a díky historii verzí i bezpeèná.
+Nejdøíve mù¾ete zmìnit název ovladaèe, je-li nevhodný. Pak zadejte aktuální
+verzi ovladaèe a pøípadnì upravte adresu, odkud je mo¾né stáhnout tento ovladaè.
+Do poznámky vlo¾te informace o novinkách této verze a jiných zmìnách.
+Nebojte se celou poznámku aktualizovat, pøedchozí text bude dostupný v historii
+ovladaèe.
 </p>
 
 <#if PARAMS.preview?exists>
