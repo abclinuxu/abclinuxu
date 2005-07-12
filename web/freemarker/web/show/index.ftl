@@ -48,7 +48,7 @@
     <!-- prace.abclinuxu.cz -->
     <div class="s_nad_h1"><div class="s_nad_pod_h1">
         <a class="info" href="#">?<span class="tooltip">První server s nabídkami práce (nejen) pro tuèòáky. Spojujeme lidi s prací v IT.</span></a>
-        <h1><a href="http://www.praceabc.cz" 
+        <h1><a href="http://www.praceabc.cz"
 	       title="Spojujeme lidi s prací v IT.">Pracovní nabídky</a></h1>
     </div></div>
     <div class="s_sekce">
@@ -57,12 +57,12 @@
 
     <div class="s_nad_h1"><div class="s_nad_pod_h1">
         <a class="info" href="#">?<span class="tooltip">Databáze ovladaèù pro vá¹ hardware</span></a>
-        <h1><a href="/drivers/dir/318">Ovladaèe</a></h1>
+        <h1><a href="/ovladace">Ovladaèe</a></h1>
     </div></div>
     <div class="s_sekce">
         <ul>
         <#list VARS.newDrivers as rel>
-            <li><a href="/drivers/show/${rel.id}">${TOOL.xpath(rel.child,"data/name")}</a></li>
+            <li><a href="${rel.url?default("/ovladace/show/"+rel.id)}">${TOOL.xpath(rel.child,"data/name")}</a></li>
         </#list>
         </ul>
     </div>

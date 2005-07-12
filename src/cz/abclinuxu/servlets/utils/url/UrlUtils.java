@@ -24,7 +24,7 @@ public class UrlUtils {
     public static final String PREFIX_HARDWARE = "/hardware";
     public static final String PREFIX_SOFTWARE = "/software";
     public static final String PREFIX_CLANKY = "/clanky";
-    public static final String PREFIX_DRIVERS = "/drivers";
+    public static final String PREFIX_DRIVERS = "/ovladace";
     public static final String PREFIX_NEWS = "/zpravicky";
     public static final String PREFIX_FORUM = "/forum";
     public static final String PREFIX_DICTIONARY = "/slovnik";

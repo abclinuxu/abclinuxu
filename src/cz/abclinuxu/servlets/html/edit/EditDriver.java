@@ -9,6 +9,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
@@ -111,8 +112,13 @@ public class EditDriver implements AbcAction {
         driver.setOwner(user.getId());
         driver.setCreated(new Date());
 
+        Element element = (Element) driver.getData().selectSingleNode("/data/name");
+        String url = UrlUtils.PREFIX_DRIVERS + "/" + URLManager.enforceLastURLPart(element.getTextTrim());
+        url = URLManager.protectFromDuplicates(url);
+
         persistance.create(driver);
         Relation relation = new Relation(new Category(Constants.CAT_DRIVERS), driver, Constants.REL_DRIVERS);
+        relation.setUrl(url);
         persistance.create(relation);
         relation.getParent().addChildRelation(relation);
 
@@ -124,7 +130,7 @@ public class EditDriver implements AbcAction {
         FeedGenerator.updateDrivers();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/show/"+relation.getId());
+        urlUtils.redirect(response, url);
         return null;
     }
 
@@ -185,15 +191,19 @@ public class EditDriver implements AbcAction {
             monitor.detach();
         VersioningFactory.getVersioning().commit(copy.asXML(), path, userId);
 
+        String url = relation.getUrl();
+        if (url==null)
+            url = UrlUtils.PREFIX_DRIVERS + "/show/" + relation.getId();
+
         // run monitor
-        String url = "http://www.abclinuxu.cz/drivers/show/"+relation.getId();
-        MonitorAction action = new MonitorAction(user,UserAction.EDIT,ObjectType.DRIVER,driver,url);
+        String absoluteUrl = "http://www.abclinuxu.cz"+url;
+        MonitorAction action = new MonitorAction(user,UserAction.EDIT,ObjectType.DRIVER,driver,absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
 
         FeedGenerator.updateDrivers();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/show/"+relation.getId());
+        urlUtils.redirect(response, url);
         return null;
     }
 
@@ -209,8 +219,12 @@ public class EditDriver implements AbcAction {
         MonitorTools.alterMonitor(driver.getData().getRootElement(),user);
         persistance.update(driver);
 
+        String url = relation.getUrl();
+        if (url == null)
+            url = UrlUtils.PREFIX_DRIVERS + "/show/" + relation.getId();
+
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/show/"+relation.getId());
+        urlUtils.redirect(response, url);
         return null;
     }
 

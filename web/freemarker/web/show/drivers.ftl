@@ -21,15 +21,10 @@ v této èásti. Pokud budete úspì¹ní, otevøete jej a zvolte odkaz
 <a href="${URL.make("/edit?action=add")}">zde
 jej mù¾ete vytvoøit</a>.<p>
 
-<#if USER?exists && USER.hasRole("category admin")>
- <a href="${URL.make("/EditCategory?action=edit&amp;rid="+RELATION.id+"&amp;categoryId="+CATEGORY.id)}">
- <img src="/images/actions/pencil.png" class="ikona22" ALT="Uprav sekci"></a>
-</#if>
-
 <ol>
 <#list SORT.byDate(CHILDREN,"DESCENDING") as relation>
  <li>
-  <a href="${URL.make("/show/"+relation.id)}">
+  <a href="${relation.url?default("/ovladace/show/"+relation.id)}">
   ${TOOL.xpath(relation.child,"data/name")}, verze ${TOOL.xpath(relation.child,"data/version")}</a>
  </li>
 </#list>

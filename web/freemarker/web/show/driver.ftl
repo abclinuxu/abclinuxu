@@ -6,13 +6,13 @@
         Právì si prohlí¾íte revizi èíslo ${PARAMS.revize}, kterou vytvoøil
         <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
         (${DATE.show(ITEM.updated,"CZ_FULL")}).
-        <a href="/drivers/show/${RELATION.id}">Návrat na aktuální verzi</a>.
+        <a href="${RELATION.url?default("/ovladace/show/"+RELATION.id)}">Návrat na aktuální verzi</a>.
     <#else>
         Tuto polo¾ku naposledy upravil <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
         (${DATE.show(ITEM.updated,"CZ_FULL")}).
         Pokud chcete doplnit, opravit nebo aktualizovat ovladaè,
         <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">vlo¾te novou verzi</a>.
-        K dispozici je i <a href="/revize?rid=${RELATION.id}&amp;prefix=/drivers">archiv zmìn</a>
+        K dispozici je i <a href="/revize?rid=${RELATION.id}&amp;prefix=/ovladace">archiv zmìn</a>
         tohoto ovladaèe, tak¾e si mù¾ete prohlédnout, jakými zmìnami ovladaè pro¹el postupem èasu.
     </#if>
 </p>
@@ -27,15 +27,15 @@
  (${TOOL.getMonitorCount(ITEM.data)})
 </p>
 
-<table cellspacing=0 border=1 cellpadding=5 align="center">
+<table cellspacing=0 border=1 cellpadding=5 align="center" style="margin-top: 1em;">
   <tr>
-    <td>Jméno ovladaèe</td><td>${TOOL.xpath(ITEM,"data/name")}</td>
+    <td>Jméno</td><td>${TOOL.xpath(ITEM,"data/name")}</td>
   </tr>
   <tr>
-    <td>Verze ovladaèe</td><td>${TOOL.xpath(ITEM,"data/version")}</td>
+    <td>Verze</td><td>${TOOL.xpath(ITEM,"data/version")}</td>
   </tr>
   <tr>
-    <td>URL ovladaèe</td>
+    <td>Adresa</td>
     <td>
       <a href="${TOOL.xpath(ITEM,"data/url")}">${TOOL.limit(TOOL.xpath(ITEM,"data/url"),50," ..")}</a>
     </td>
@@ -45,6 +45,6 @@
   </tr>
 </table>
 
-<p><b>Nástroje</b>: <a href="/drivers/show/${RELATION.id}?varianta=print<#if PARAMS.revize?exists>&amp;revize=${PARAMS.revize}</#if>">Tisk</a></p>
+<p><b>Nástroje</b>: <a href="${RELATION.url?default("/ovladace/show/"+RELATION.id)}?varianta=print<#if PARAMS.revize?exists>&amp;revize=${PARAMS.revize}</#if>">Tisk</a></p>
 
 <#include "../footer.ftl">

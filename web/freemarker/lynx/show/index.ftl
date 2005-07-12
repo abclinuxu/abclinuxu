@@ -45,12 +45,12 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
 </p>
 
 <p>
- <b><a href="/drivers">Ovladaèe</a></b><br>
+ <b><a href="/ovladace">Ovladaèe</a></b><br>
  <#list VARS.newDrivers as rel>
-  <a href="/drivers/show/${rel.id}">
+  <a href="${rel.url?default("/ovladace/show/"+rel.id)}">
   ${TOOL.xpath(rel.child,"data/name")}</a><#if rel_has_next>,</#if>
  </#list>
- <a href="/drivers/dir/318">&gt;&gt;</a>
+ <a href="/ovladace">&gt;&gt;</a>
 </p>
 
 <p>

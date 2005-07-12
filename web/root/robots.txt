@@ -12,7 +12,7 @@ Disallow: /software/edit
 Disallow: /hardware/edit
 Disallow: /clanky/edit
 Disallow: /clanky/rating
-Disallow: /drivers/edit
+Disallow: /ovladace/edit
 Disallow: /EditUser
 Disallow: /EditRelation
 Disallow: /clanky/EditDiscussion
