@@ -15,6 +15,9 @@ import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.data.view.ACL;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistance.versioning.VersioningFactory;
+import cz.abclinuxu.persistance.versioning.Versioning;
+import cz.abclinuxu.persistance.versioning.VersionedDocument;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.news.NewsCategories;
@@ -121,6 +124,7 @@ public class ShowObject implements AbcAction {
      * @return template to be rendered
      */
     String processItem(Map env, Relation relation, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Item item = null;
         Record record = null;
         Relation upper = null;
@@ -140,6 +144,23 @@ public class ShowObject implements AbcAction {
         env.put(VAR_CHILDREN_MAP, children);
         Tools.sync(upper);
         env.put(VAR_UPPER, upper);
+
+        String revision = (String) params.get(ShowRevisions.PARAM_REVISION);
+        if (revision!=null) {
+            Versioning versioning = VersioningFactory.getVersioning();
+            VersionedDocument version = versioning.load(Integer.toString(relation.getId()), revision);
+            Element monitor = (Element) item.getData().selectSingleNode("/data/monitor");
+            item.setData(version.getDocument());
+            item.setUpdated(version.getCommited());
+            item.setOwner(Integer.parseInt(version.getUser()));
+            if (monitor!=null) {
+                monitor = monitor.createCopy();
+                Element element = (Element) item.getData().selectSingleNode("/data/monitor");
+                if (element!=null)
+                    element.detach();
+                item.getData().getRootElement().add(monitor);
+            }
+        }
 
         if ( item.getType()==Item.ARTICLE )
             return ShowArticle.show(env, item, request);
