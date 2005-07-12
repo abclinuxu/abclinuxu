@@ -105,7 +105,7 @@
             <action>cz.abclinuxu.servlets.html.edit.Royalties</action>
         </mapping>
         <mapping>
-            <pattern>^/drivers/edit</pattern>
+            <pattern>^/ovladace/edit</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditDriver</action>
         </mapping>
         <mapping>
@@ -200,6 +200,11 @@
             <pattern input="path">^/news/</pattern>
             <regexp>/news/</regexp>
             <replacement>/zpravicky/</replacement>
+        </mapping>
+        <mapping>
+            <pattern input="path">^/drivers</pattern>
+            <regexp>/drivers</regexp>
+            <replacement>/ovladace</replacement>
         </mapping>
         <mapping>
             <pattern input="path">ViewRelation</pattern>
