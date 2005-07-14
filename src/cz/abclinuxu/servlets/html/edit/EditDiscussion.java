@@ -972,7 +972,7 @@ public class EditDiscussion implements AbcAction {
             SQLTool.getInstance().setUpdatedTimestamp(currentDiz, lastUpdate);
 
             // check whether new relation has correct parent. where to put article discussions?
-            newDizRelation = new Relation(currentDizRelation.getChild(), newDiz, currentDizRelation.getUpper());
+            newDizRelation = new Relation(currentDizRelation.getParent(), newDiz, currentDizRelation.getUpper());
             persistance.create(newDizRelation);
             newDizRelation.getParent().addChildRelation(newDizRelation);
 
