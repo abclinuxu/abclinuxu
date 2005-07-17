@@ -40,14 +40,14 @@ public class URLManager implements Configurable {
      */
     public static String enforceLastURLPart(String url) {
         if (url ==null || url.length() == 0)
-            throw new AbcException("Zvolte jiné URL, zadané URL nevyhovuje pravidlùm!");
+            throw new AbcException("URL nesmí být prázdné!");
         if (url.charAt(0)=='/')
             url = url.substring(1);
         int length = url.length();
         if (url.charAt(length-1)=='/')
             url = url.substring(0, length-1);
         if (url.length()==0)
-            throw new AbcException("Zvolte jiné URL, zadané URL nevyhovuje pravidlùm!");
+            throw new AbcException("Zvolte jiné URL, po odstranìní lomítek nic nezbylo!");
 
         String fixedURL = DiacriticRemover.getInstance().removeDiacritics(url);
         fixedURL = new RE(reInvalidCharacters, RE.REPLACE_ALL).subst(fixedURL, "-");
@@ -55,7 +55,7 @@ public class URLManager implements Configurable {
             fixedURL = fixedURL.substring(0, fixedURL.length()-1);
 
         if (fixedURL.length() == 0)
-            throw new AbcException("Zvolte jiné URL, zadané URL nevyhovuje pravidlùm!");
+            throw new AbcException("Zvolte jiné URL bez speciálních znakù!");
         return fixedURL;
     }
 
