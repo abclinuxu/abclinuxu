@@ -1,4 +1,4 @@
-AbcMonitor zaznamenal zmenu ovladace:
+AbcMonitor zaznamenal zmenu casto kladene otazky:
 
 Kdo:   ${ACTOR}
 Akce:  ${ACTION}

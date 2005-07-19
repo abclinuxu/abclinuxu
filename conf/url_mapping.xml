@@ -52,6 +52,14 @@
             <pattern>^/blogy</pattern>
             <action>cz.abclinuxu.servlets.html.view.ViewBlog</action>
         </mapping>
+        <mapping priority="true">
+            <pattern>^/faq/edit</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditFaq</action>
+        </mapping>
+        <mapping priority="true">
+            <pattern>^/faq</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ViewFaq</action>
+        </mapping>
         <mapping>
             <pattern>^/slovnik/edit</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditDictionary</action>

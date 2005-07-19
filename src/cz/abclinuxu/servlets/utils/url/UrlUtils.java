@@ -29,19 +29,21 @@ public class UrlUtils {
     public static final String PREFIX_FORUM = "/forum";
     public static final String PREFIX_DICTIONARY = "/slovnik";
     public static final String PREFIX_POLLS = "/ankety";
+    public static final String PREFIX_FAQ = "/faq";
     public static final String PREFIX_NONE = "";
 
     static List prefixes = null;
     static {
-        prefixes = new ArrayList(8);
-        prefixes.add(PREFIX_HARDWARE);
-        prefixes.add(PREFIX_SOFTWARE);
-        prefixes.add(PREFIX_CLANKY);
-        prefixes.add(PREFIX_DRIVERS);
+        prefixes = new ArrayList(9);
         prefixes.add(PREFIX_NEWS);
         prefixes.add(PREFIX_FORUM);
+        prefixes.add(PREFIX_HARDWARE);
+        prefixes.add(PREFIX_CLANKY);
+        prefixes.add(PREFIX_DRIVERS);
+        prefixes.add(PREFIX_FAQ);
         prefixes.add(PREFIX_DICTIONARY);
         prefixes.add(PREFIX_POLLS);
+        prefixes.add(PREFIX_SOFTWARE);
     }
 
     /** default prefix to URL */

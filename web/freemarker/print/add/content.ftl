@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<form action="${URL.make("/editContent")}" method="POST">
+<form action="${URL.make("/editContent")}" method="POST" name="form">
 
 <h1>Vkládání contentu</h1>
 
@@ -11,7 +11,7 @@ o obyèejný text, který má pevné, hezké URL. Napøíklad nápovìda,
 podmínky u¾ití èi reklama. Obsah ale mù¾e být i dynamický,
 pak v¹ak potøebuje podporu programátora, který naplní data.</p>
 
- <table width=100 border=0 cellpadding=5 name="form">
+ <table width=100 border=0 cellpadding=5>
   <tr>
    <td width="90" class="required">Titulek stránky</td>
    <td>
@@ -49,6 +49,9 @@ pak v¹ak potøebuje podporu programátora, který naplní data.</p>
     <p>V¹echna URL na èlánky, obrázky a soubory z na¹eho serveru musí být relativní!</p>
     <div class="form-edit">
         <a href="javascript:insertAtCursor(document.form.content, '&lt;p&gt;', '&lt;/p&gt;');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.content, '&lt;h1&gt;', '&lt;/h1&gt;');" id="mono" title="Vlo¾it znaèku nadpisu">&lt;h1&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.content, '&lt;h2&gt;', '&lt;/h2&gt;');" id="mono" title="Vlo¾it znaèku nadpisu">&lt;h2&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.content, '&lt;h3&gt;', '&lt;/h3&gt;');" id="mono" title="Vlo¾it znaèku nadpisu">&lt;h3&gt;</a>
         <a href="javascript:insertAtCursor(document.form.content, '&lt;b&gt;', '&lt;/b&gt;');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
         <a href="javascript:insertAtCursor(document.form.content, '&lt;i&gt;', '&lt;/i&gt;');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
         <a href="javascript:insertAtCursor(document.form.content, '&lt;a href=&quot;&quot;&gt;', '&lt;/a&gt;');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>

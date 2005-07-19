@@ -16,6 +16,7 @@ public class Field {
     public static final Field TYPE = new Field("TYPE");
     public static final Field SUBTYPE = new Field("SUBTYPE");
     public static final Field OWNER = new Field("OWNER");
+    public static final Field UPPER = new Field("UPPER");
 
     private final String myName; // for debug only
 

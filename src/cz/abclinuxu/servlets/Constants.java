@@ -63,6 +63,7 @@ public interface Constants {
     int REL_DOCUMENTS = 66948;
     int REL_BLOGS = 69275;
     int REL_GUESTBOOK = 93214;
+    int REL_FAQ = 81515;
 
     int GROUP_ADMINI = 11246;
     int GROUP_AUTORI = 11247;

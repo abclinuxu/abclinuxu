@@ -1,0 +1,162 @@
+<#include "../header.ftl">
+
+<@lib.showMessages/>
+
+<p>
+    Chystáte se vlo¾it polo¾ku do databáze zodpovìzených otázek.
+    Pokud øe¹íte nìjaký problém a potøebujete poradit, jste na
+    ¹patné stránce a mìli byste nejdøíve <a href="/Search">prohledat
+    na¹i rozsáhlou databázi</a> a pokud byste odpovìï nena¹li, polo¾te
+    svùj dotaz do <a href="/diskuse.jsp">diskusního fóra</a>.
+    Tento formuláø je urèen zku¹enìj¹ím u¾ivatelùm, kteøí se chtìjí
+    podìlit o øe¹ení otázky, která bývá èasto kladena v diskusním
+    fóru.
+</p>
+
+<p>
+    Vyplòte jednotlivé polo¾ky formuláøe. U URL otázky zadejte jen poslední
+    èást adresy za posledním lomítkem, nepou¾ívejte tedy ¾ádná lomítka.
+    V URL struènì shròte název otázky, pøièem¾ slova oddìlujte pomlèkou.
+    Dosáhnete tím lep¹ích výsledkù ve vyhledávaèích, tak¾e tuto otázka
+    si pøeète více ètenáøù hledajících odpovìï na svùj problém. Do textu
+    odpovìdi zadejte co nejpodrobnìj¹í a nejpøesnìj¹í odpovìï. Do souvisejících
+    odkazù umístìte link na dokument s dal¹ími informacemi, napøíklad na èlánek
+    zabývající se touto tématikou nebo diskusi ve fóru, kde byl problem
+    (vy)øe¹en.
+</p>
+
+<#if PARAMS.preview?exists>
+    <h1 class="st_nadpis">Náhled</h1>
+    <h2>${TOOL.xpath(PREVIEW, "/data/title")}</h2>
+    <div>
+        ${TOOL.render(TOOL.xpath(PREVIEW.data,"data/text"), USER?if_exists)}
+    </div>
+</#if>
+
+
+<form action="${URL.make("/faq/edit")}" method="POST" name="form">
+    <table cellpadding="5" style="margin-top:1em">
+        <tr>
+            <td class="required">Otázka</td>
+            <td>
+                <input tabindex="1" type="text" name="title" size="80" value="${PARAMS.title?if_exists}">
+                <div class="error">${ERRORS.title?if_exists}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="required">URL otázky</td>
+            <td>
+                ${RELATION.url}/<input tabindex="2" type="text" name="url" size="60" value="${PARAMS.url?if_exists}">
+                <div class="error">${ERRORS.url?if_exists}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="required">Odpovìï</td>
+            <td>
+                <div class="form-edit">
+                    <a href="javascript:insertAtCursor(document.form.text, '<b>', '</b>');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<i>', '</i>');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<a href=&quot;&quot;>', '</a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<p>', '</p>');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="Vlo¾it znaèku formátovaného textu. Vhodné pro konfiguraèní soubory èi výpisy.">&lt;pre&gt;</a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
+                </div>
+                <textarea tabindex="3" name="text" cols="80" rows="20">${PARAMS.text?if_exists}</textarea><br>
+                <div class="error">${ERRORS.text?if_exists}</div>
+            </td>
+        </tr>
+        <tr>
+            <td>Související odkazy</td>
+            <td>
+                <table border="0">
+                    <tr>
+                        <td>Titulek</td>
+                        <td>Odkaz</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input tabindex="4" type="text" name="caption1" size="40" value="${PARAMS.caption1?if_exists}">
+                            <div class="error">${ERRORS.caption1?if_exists}</div>
+                        </td>
+                        <td>
+                            <input tabindex="5" type="text" name="link1" size="40" value="${PARAMS.link1?if_exists}">
+                            <div class="error">${ERRORS.link1?if_exists}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input tabindex="6" type="text" name="caption2" size="40" value="${PARAMS.caption2?if_exists}">
+                            <div class="error">${ERRORS.caption2?if_exists}</div>
+                        </td>
+                        <td>
+                            <input tabindex="7" type="text" name="link2" size="40" value="${PARAMS.link2?if_exists}">
+                            <div class="error">${ERRORS.link2?if_exists}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input tabindex="8" type="text" name="caption3" size="40" value="${PARAMS.caption3?if_exists}">
+                            <div class="error">${ERRORS.caption3?if_exists}</div>
+                        </td>
+                        <td>
+                            <input tabindex="9" type="text" name="link3" size="40" value="${PARAMS.link3?if_exists}">
+                            <div class="error">${ERRORS.link3?if_exists}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input tabindex="10" type="text" name="caption4" size="40" value="${PARAMS.caption4?if_exists}">
+                            <div class="error">${ERRORS.caption4?if_exists}</div>
+                        </td>
+                        <td>
+                            <input tabindex="11" type="text" name="link4" size="40" value="${PARAMS.link4?if_exists}">
+                            <div class="error">${ERRORS.link4?if_exists}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input tabindex="12" type="text" name="caption5" size="40" value="${PARAMS.caption5?if_exists}">
+                            <div class="error">${ERRORS.caption5?if_exists}</div>
+                        </td>
+                        <td>
+                            <input tabindex="13" type="text" name="link5" size="40" value="${PARAMS.link5?if_exists}">
+                            <div class="error">${ERRORS.link5?if_exists}</div>
+                        </td>
+                    </tr>
+                </table>
+
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center">
+                <input tabindex="14" type="submit" name="preview" value="Náhled">
+                <input tabindex="15" type="submit" name="submit" value="Dokonèi">
+            </td>
+        </tr>
+    </table>
+    <input type="hidden" name="action" value="add2">
+    <input type="hidden" name="rid" value="${RELATION.id}">
+</form>
+
+<h1 style="margin-top: 1ex;">Nápovìda k formátování</h1>
+
+<p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html">znaèky</a>:
+P, BR, B, I, A, PRE, UL, OL, LI, CODE, DIV, H1, H2, H3, EM, STRONG, CITE, BLOCKQUOTE,
+VAR, HR a IT.</p>
+
+<p>Nejrychlej¹í zpùsob formátování je rozdìlovat
+text do odstavcù. Systém detekuje prázdné øádky
+(dvakrát enter) a nahradí je HTML znaèkou odstavce.
+Pokud ale v textu pou¾ijete znaèku P èi BR,
+pak pøedpokládáme, ¾e o formátování se budete starat
+sami a tato konverze nebude aktivována.</p>
+
+<p>Pokud neovládáte HTML, doporuèuji si pøeèíst jeho
+<a href="http://www.kosek.cz/clanky/html/01.html">rychlokurz</a>.</p>
+
+<p>Text musí být HTML validní, proto znak men¹ítka èi vìt¹ítka zapisujte takto:
+&lt; jako &amp;lt; a &gt; jako &amp;gt;. Dal¹ím èastým problémem
+je, jak vlo¾it výpis logu èi konfiguraèní soubor. V tomto
+pøípadì vá¹ text vlo¾te mezi znaèky PRE, pøíli¹ dlouhé øádky rozdìlte klávesou enter.</p>
+
+<#include "../footer.ftl">

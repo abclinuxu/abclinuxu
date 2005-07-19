@@ -115,3 +115,12 @@
 <!ELEMENT data (author?, message)>
 <!ELEMENT author (#PCDATA)> <!-- user's name -->
 <!ELEMENT message (#PCDATA)> <!-- message -->
+
+<!-- Item.FAQ -->
+<!ELEMENT data (title,text,links?)>
+<!ELEMENT title (#PCDATA)> <!-- title of this reaction, usually question -->
+<!ELEMENT text (#PCDATA)> <!-- its text -->
+<!ATTLIST text format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
+<!ELEMENT links (link+)> <!-- contains links -->
+<!ELEMENT link (#PCDATA)> <!-- contains text of link -->
+<!ATTLIST link url (#PCDATA) #REQUIRED> <!-- URL of resource or article -->

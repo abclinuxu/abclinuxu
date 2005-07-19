@@ -1305,6 +1305,8 @@ public final class SQLTool implements Configurable {
             sb.append("podtyp");
         else if (field==Field.OWNER)
             sb.append("pridal");
+        else if (field==Field.UPPER)
+            sb.append("predchozi");
         else if (field==Field.DATA)
             sb.append("data");
 

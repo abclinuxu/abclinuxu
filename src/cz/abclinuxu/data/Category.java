@@ -20,6 +20,8 @@ public class Category extends GenericDataObject {
     public static final int BLOG = 3;
     /** section holds articles */
     public static final int SECTION = 4;
+    /** section that holds FAQ entries */
+    public static final int FAQ = 5;
 
 
     public Category() {

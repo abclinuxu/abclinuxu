@@ -30,6 +30,7 @@ public class InstantSender extends Thread implements Configurable {
 
     static InstantSender singleton = new InstantSender();
     static Decorator discussionDecorator = new DiscussionDecorator();
+    static Decorator faqDecorator = new FaqDecorator();
     static Decorator driverDecorator = new DriverDecorator();
     static Decorator itemDecorator = new ItemDecorator();
 
@@ -84,6 +85,8 @@ public class InstantSender extends Thread implements Configurable {
             return discussionDecorator;
         if (ObjectType.ITEM.equals(action.type) )
             return itemDecorator;
+        if (ObjectType.FAQ.equals(action.type) )
+            return faqDecorator;
         return null;
     }
 

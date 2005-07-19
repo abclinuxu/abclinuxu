@@ -131,4 +131,20 @@ public class Misc {
         }
         return second==null;
     }
+
+    /**
+     * Removes trailing spaces from the argument. If s has length 0,
+     * null is returned otherwise trimmed version is returned.
+     * @param s text to be trimmed
+     * @return trimmed s or null, if s has no non-whitespace character
+     */
+    public static String trimUndefined(String s) {
+        if (s==null)
+            return s;
+        if (s!=null)
+            s = s.trim();
+        if (s.length()==0)
+            return null;
+        return s;
+    }
 }

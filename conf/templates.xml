@@ -112,6 +112,15 @@
     </action>
   </servlet>
 
+  <servlet name="EditFaq">
+    <action name="add" content="/add/faq.ftl">
+      <var name="TITLE" value="Vlo¾ èasto kladenou otázku s odpovìdí" />
+    </action>
+    <action name="edit" content="/edit/faq.ftl">
+      <var name="TITLE" value="Uprav èasto kladenou otázku" />
+    </action>
+  </servlet>
+
   <servlet name="WhatHappened">
     <action name="content" template="print" content="/misc/what_happened.ftl">
     </action>
@@ -357,6 +366,18 @@
   <servlet name="ViewContent">
     <action name="view" content="/show/content.ftl">
       <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
+    </action>
+  </servlet>
+
+  <servlet name="ViewFaq">
+    <action name="view" content="/show/faq.ftl">
+      <var name="TITLE" value='${TOOL.xpath(ITEM,"data/title")}' type="Lazy" />
+    </action>
+    <action name="list" content="/show/faq_section.ftl">
+      <var name="TITLE" value='${TOOL.xpath(RELATION.child,"data/name")}' type="Lazy" />
+    </action>
+    <action name="start" content="/show/faq_all.ftl">
+      <var name="TITLE" value="Èasto kladené otázky" />
     </action>
   </servlet>
 

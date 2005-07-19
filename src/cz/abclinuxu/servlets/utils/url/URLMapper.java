@@ -51,6 +51,7 @@ public final class URLMapper implements Configurable {
     }
 
     List actionMapping;
+    List priorityMapping;
     List deprecatedMapping;
     String domain;
     static AbcAction showObject;
@@ -139,9 +140,18 @@ public final class URLMapper implements Configurable {
             if (relation != null) {
                 Map params = (Map) env.get(Constants.VAR_PARAMS);
                 params.put(ShowObject.PARAM_RELATION_SHORT, Integer.toString(relation.getId()));
-                return showObject;
-            }
+            } else
+                custom = false;
         }
+
+        for (Iterator iter = priorityMapping.iterator(); iter.hasNext();) {
+            patternAction = (PatternAction) iter.next();
+            if (patternAction.getRe().match(url))
+                return patternAction.getAction();
+        }
+
+        if (custom)
+            return showObject;
 
         for ( Iterator iter = actionMapping.iterator(); iter.hasNext(); ) {
             patternAction = (PatternAction) iter.next();
@@ -209,35 +219,40 @@ public final class URLMapper implements Configurable {
      * Reads format mappings.
      */
     private static void readFormat(List nodes, URLMapper instance) {
-        List actions = new ArrayList(40);
+        List actions = new ArrayList(60), priorActions = new ArrayList(10);
         String pattern = null, action = null;
         Element element;
         REProgram regexp;
         Object o;
-        try {
-            for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
+        for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
+            try {
                 element = (Element) iter.next();
                 pattern = element.elementText("pattern");
                 action = element.elementText("action");
                 regexp = new RECompiler().compile(pattern);
                 o = Class.forName(action).newInstance();
-                if ( AbcAction.class.isInstance(o) )
-                    actions.add(new PatternAction(regexp, (AbcAction) o));
-                else
+                if ( ! AbcAction.class.isInstance(o) ) {
                     log.warn("Action "+action+" does not implement AbcAction interface!");
+                    continue;
+                }
+                if ("true".equals(element.attributeValue("priority")))
+                    priorActions.add(new PatternAction(regexp, (AbcAction) o));
+                else
+                    actions.add(new PatternAction(regexp, (AbcAction) o));
                 if ( ShowObject.class.isInstance(o) )
                     showObject = (AbcAction) o;
+            } catch (RESyntaxException e) {
+                log.error("Pattern '" + pattern + "' cannot be compiled!", e);
+            } catch (InstantiationException e) {
+                log.error("Action '" + action + "' cannot be instantiated!", e);
+            } catch (IllegalAccessException e) {
+                log.error("Action '" + action + "' cannot be instantiated!", e);
+            } catch (ClassNotFoundException e) {
+                log.error("Action '" + action + "' cannot be instantiated!", e);
             }
-        } catch (RESyntaxException e) {
-            log.error("Pattern '"+pattern+"' cannot be compiled!", e);
-        } catch (InstantiationException e) {
-            log.error("Action '"+action+"' cannot be instantiated!", e);
-        } catch (IllegalAccessException e) {
-            log.error("Action '"+action+"' cannot be instantiated!", e);
-        } catch (ClassNotFoundException e) {
-            log.error("Action '"+action+"' cannot be instantiated!", e);
         }
         instance.actionMapping = actions;
+        instance.priorityMapping = priorActions;
     }
 
     /**

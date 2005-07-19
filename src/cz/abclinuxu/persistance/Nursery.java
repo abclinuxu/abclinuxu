@@ -53,17 +53,20 @@ public class Nursery implements Configurable {
     }
 
     /**
-     * If relation.getParent() is stored in cache, the relation.getChild()
+     * If relation.getParent() is stored in cache, then relation.getChild()
      * is inserted in its list of children.
      * @param relation relation to store.
      */
     public synchronized void addChild(Relation relation) {
-        List list = (List) cache.get(relation.getParent());
+        GenericObject parent = relation.getParent();
+        if (isNotCached(parent))
+            return;
+        List list = (List) cache.get(parent);
         if ( list==null )
-            list = getChildrenInternal(relation.getParent());
+            list = getChildrenInternal(parent);
         if (list.size()==0) { // Collections.EMPTY_LIST is read-only
             list = new ArrayList(2);
-            cache.put(relation.getParent(), list);
+            cache.put(parent, list);
         }
         if (list.contains(relation))
             return;
@@ -117,17 +120,8 @@ public class Nursery implements Configurable {
     }
 
     protected List getChildrenInternal(GenericObject object) {
-        if (object instanceof Category) {
-            Category category = (Category) object;
-            switch (category.getType()) {
-                case Category.FORUM:
-                case Category.BLOG:
-                case Category.SECTION:
-                    return Collections.EMPTY_LIST;
-            }
-        }
-        if ( noChildren.get(object)!=null )
-            return Collections.EMPTY_LIST; // content of this object might be too big
+        if (isNotCached(object))
+            return Collections.EMPTY_LIST;
 
         List list = (List) cache.get(object);
         if (list==null) {
@@ -143,6 +137,22 @@ public class Nursery implements Configurable {
             copy.add(cloneRelation((Relation) iter.next()));
 
         return copy;
+    }
+
+    protected boolean isNotCached(GenericObject object) {
+        if (object instanceof Category) {
+            Category category = (Category) object;
+            switch (category.getType()) {
+                case Category.FORUM:
+                case Category.BLOG:
+                case Category.SECTION:
+                case Category.FAQ:
+                    return true;
+            }
+        }
+        if (noChildren.get(object) != null)
+            return true;
+        return false;
     }
 
     /**

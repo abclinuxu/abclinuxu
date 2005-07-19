@@ -31,6 +31,7 @@
                                     <entry key="section.article.count" value="25"/>
                                     <entry key="article.section.articles.count" value="5"/>
                                     <entry key="search.results.count" value="10"/>
+                                    <entry key="section.faq.count" value="20"/>
                                 </map>
                             </node>
                         </node>
@@ -100,6 +101,13 @@
                                     <entry key="subject" value="AbcMonitor: uprava ovladace"/>
                                     <entry key="action.edit" value="upravil ovladac"/>
                                     <entry key="action.remove" value="smazal ovladac"/>
+                                </map>
+                            </node>
+                            <node name="FaqDecorator">
+                                <map>
+                                    <entry key="subject" value="AbcMonitor: uprava casto kladene otazky"/>
+                                    <entry key="action.edit" value="upravil casto kladenou otazku"/>
+                                    <entry key="action.remove" value="smazal casto kladenou otazku"/>
                                 </map>
                             </node>
                             <node name="ItemDecorator">
