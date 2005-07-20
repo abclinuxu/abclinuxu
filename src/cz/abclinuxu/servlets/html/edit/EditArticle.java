@@ -248,6 +248,9 @@ public class EditArticle implements AbcAction {
             Persistance persistance = PersistanceFactory.getPersistance();
             Category sections = (Category) persistance.findById(new Category(Constants.CAT_ARTICLES));
             env.put(VAR_SECTIONS, sections.getChildren());
+            node = document.selectSingleNode("/data/section_rid");
+            if (node != null)
+                params.put(PARAM_DESIGNATED_SECTION, Integer.valueOf(node.getText()));
         }
 
         Relation child = InstanceUtils.findFirstChildRecordOfType(item,Record.ARTICLE);
