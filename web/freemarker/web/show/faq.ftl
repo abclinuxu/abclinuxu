@@ -40,4 +40,15 @@
     ${TOOL.render(TOOL.xpath(ITEM.data,"data/text"), USER?if_exists)}
 </div>
 
+<#if XML.data.links[0]?exists>
+    <h3>Související odkazy</h3>
+    <ul>
+        <#list XML.data.links.link as link>
+            <li>
+                <a href="${link.@url}">${link}</a>
+            </li>
+        </#list>
+    </ul>
+</#if>
+
 <#include "../footer.ftl">
