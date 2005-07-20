@@ -24,18 +24,18 @@ public class SafeHTMLGuard {
     static {
         TAGS.put("B", new CheckedTag("B", true, null));
         TAGS.put("I", new CheckedTag("I", true, null));
-        TAGS.put("P", new CheckedTag("P", false, new String[]{"ID"}));
+        TAGS.put("P", new CheckedTag("P", false, new String[]{"ID", "CLASS"}));
         TAGS.put("BR", new CheckedTag("BR", false, null));
-        TAGS.put("A", new CheckedTag("A", true, new String[]{"HREF", "TITLE"}));
+        TAGS.put("A", new CheckedTag("A", true, new String[]{"HREF", "TITLE", "CLASS"}));
         TAGS.put("PRE", new CheckedTag("PRE", true, new String[]{"WIDTH", "ID"}));
         TAGS.put("LI", new CheckedTag("LI", false, null));
         TAGS.put("UL", new CheckedTag("UL", true,  new String[]{"ID"}));
         TAGS.put("OL", new CheckedTag("OL", true, new String[]{"ID"}));
         TAGS.put("CODE", new CheckedTag("CODE", true, null));
-        TAGS.put("DIV", new CheckedTag("DIV", true, new String[]{"ID"}));
-        TAGS.put("H1", new CheckedTag("H1", true, new String[]{"ID"}));
-        TAGS.put("H2", new CheckedTag("H2", true, new String[]{"ID"}));
-        TAGS.put("H3", new CheckedTag("H3", true, new String[]{"ID"}));
+        TAGS.put("DIV", new CheckedTag("DIV", true, new String[]{"ID", "CLASS"}));
+        TAGS.put("H1", new CheckedTag("H1", true, new String[]{"ID", "CLASS"}));
+        TAGS.put("H2", new CheckedTag("H2", true, new String[]{"ID", "CLASS"}));
+        TAGS.put("H3", new CheckedTag("H3", true, new String[]{"ID", "CLASS"}));
         TAGS.put("EM", new CheckedTag("EM", true, null));
         TAGS.put("STRONG", new CheckedTag("STRONG", true, null));
         TAGS.put("CITE", new CheckedTag("CITE", true, null));
