@@ -353,7 +353,7 @@ public class EditFaq implements AbcAction {
 
         String url, title;
         boolean appendLinks = false;
-        for (int i=1; i<=5; i++) {
+        for (int i=1; i<=10; i++) {
             title = Misc.trimUndefined((String) params.get(PARAM_LINK_CAPTION+i));
             url = Misc.trimUndefined((String) params.get(PARAM_LINK_URL+i));
             if (title==null && url==null)
