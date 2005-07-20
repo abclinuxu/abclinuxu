@@ -263,6 +263,7 @@
                             <entry key="insert.user.action" value="insert into akce values(?,?,?,NULL)" />
                             <entry key="get.user.action" value="select kdy from akce where kdo=? and relace=? and typ=?" />
                             <entry key="remove.user.action" value="delete from akce where kdo=? and relace=? and typ=?" />
+                            <entry key="faq.section.size" value="select R1.cislo, count(R2.cislo) from relace R1, relace R2 where R1.predchozi=81515 and R1.cislo=R2.predchozi group by R1.cislo" />  
                         </map>
                     </node>
                 </node>

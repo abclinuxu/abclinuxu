@@ -18,6 +18,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.HashMap;
 import java.sql.*;
 
 /**
@@ -51,6 +53,7 @@ public final class SQLTool implements Configurable {
     public static final String PREF_USERS_WITH_ROLES = "users.with.roles";
     public static final String PREF_USERS_IN_GROUP = "users.in.group";
     public static final String PREF_ITEMS_WITH_TYPE = "items.with.type";
+    public static final String PREF_FAQ_SECTION_SIZE = "faq.section.size";
     public static final String PREF_MAX_POLL = "max.poll";
     public static final String PREF_MAX_USER = "max.user";
     public static final String PREF_USER_BY_LOGIN = "user.by.login";
@@ -82,7 +85,7 @@ public final class SQLTool implements Configurable {
     private String relationsStandalonePolls;
     private String relationDictionaryByUrlName, relationByURL;
     private String usersWithWeeklyEmail, usersWithForumByEmail, usersWithRoles, usersInGroup;
-    private String maxPoll, maxUser, userByLogin;
+    private String maxPoll, maxUser, userByLogin, faqSectionSize;
     private String itemsByType;
     private String countArticlesByUser;
     private String insertLastComment, getLastComment, getXthComment, deleteOldComments;
@@ -1227,6 +1230,37 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Finds all nonempty FAQ sections and returns number of their children.
+     *
+     * @return map where section relation id is key (string) and number of
+     *         children as value (integer).
+     */
+    public Map getFaqSectionsSize() {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null;
+        Statement statement = null;
+        try {
+            int rid, size;
+            Map result = new HashMap(30);
+
+            con = persistance.getSQLConnection();
+            statement = con.createStatement();
+            ResultSet rs = statement.executeQuery(faqSectionSize);
+            while (rs.next()) {
+                rid = rs.getInt(1);
+                size = rs.getInt(2);
+                result.put(Integer.toString(rid), new Integer(size));
+            }
+
+            return result;
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba v SQL!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, null);
+        }
+    }
+
+    /**
      * Private constructor
      */
     private SQLTool() {
@@ -1259,6 +1293,7 @@ public final class SQLTool implements Configurable {
         usersWithForumByEmail = getValue(PREF_USERS_WITH_FORUM_BY_EMAIL, prefs);
         usersWithRoles = getValue(PREF_USERS_WITH_ROLES, prefs);
         usersInGroup = getValue(PREF_USERS_IN_GROUP, prefs);
+        faqSectionSize = getValue(PREF_FAQ_SECTION_SIZE, prefs);
         maxPoll = getValue(PREF_MAX_POLL, prefs);
         maxUser = getValue(PREF_MAX_USER, prefs);
         userByLogin = getValue(PREF_USER_BY_LOGIN, prefs);

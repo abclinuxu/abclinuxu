@@ -6,13 +6,11 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Item;
-import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistance.extra.*;
 import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.persistance.Persistance;
@@ -43,6 +41,7 @@ public class ViewFaq implements AbcAction {
 
     public static final String VAR_QUESTIONS = "QUESTIONS";
     public static final String VAR_ITEM = "ITEM";
+    public static final String VAR_SECTION_SIZES = "SIZES";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -65,7 +64,9 @@ public class ViewFaq implements AbcAction {
      * Processes start page with list of all FAQ sections.
      */
     private String processStart(HttpServletRequest request, Map env) throws Exception {
-        // todo soucet otazek dle for v mape, klicem je cislo relace jako string
+        SQLTool sqlTool = SQLTool.getInstance();
+        Map sizes = sqlTool.getFaqSectionsSize();
+        env.put(VAR_SECTION_SIZES, sizes);
         return FMTemplateSelector.select("ViewFaq", "start", env, request);
     }
 
