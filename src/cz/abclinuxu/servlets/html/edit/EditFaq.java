@@ -25,12 +25,15 @@ import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.io.DOMWriter;
 import org.htmlparser.util.ParserException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Iterator;
+
+import freemarker.ext.dom.NodeModel;
 
 /**
  * User: literakl
@@ -49,6 +52,7 @@ public class EditFaq implements AbcAction {
 
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_PREVIEW = "PREVIEW";
+    public static final String VAR_FAQ_XML = "XML";
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
@@ -137,6 +141,7 @@ public class EditFaq implements AbcAction {
                 if (position > -1 && position+1 < url.length())
                     params.put(PARAM_URL, url.substring(position+1));
             }
+            env.put(VAR_FAQ_XML, NodeModel.wrap((new DOMWriter().write(faq.getData()))));
             return FMTemplateSelector.select("EditFaq", "add", env, request);
         }
 
@@ -206,7 +211,8 @@ public class EditFaq implements AbcAction {
                 params.remove(PARAM_PREVIEW);
             else
                 env.put(VAR_PREVIEW, faq);
-            return FMTemplateSelector.select("EditFaq", "add", env, request);
+            env.put(VAR_FAQ_XML, NodeModel.wrap((new DOMWriter().write(faq.getData()))));
+            return FMTemplateSelector.select("EditFaq", "edit", env, request);
         }
 
         persistance.update(faq);
@@ -348,9 +354,8 @@ public class EditFaq implements AbcAction {
         Element links = (Element) root.element("links");
         if (links != null)
             links.detach();
-        else
-            links = DocumentHelper.createElement("links");
 
+        links = DocumentHelper.createElement("links");
         String url, title;
         boolean appendLinks = false;
         for (int i=1; i<=10; i++) {

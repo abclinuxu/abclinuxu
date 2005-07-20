@@ -26,11 +26,23 @@
 </p>
 
 <#if PARAMS.preview?exists>
-    <h1 class="st_nadpis">Náhled</h1>
-    <h2>${TOOL.xpath(PREVIEW, "/data/title")}</h2>
-    <div>
-        ${TOOL.render(TOOL.xpath(PREVIEW.data,"data/text"), USER?if_exists)}
-    </div>
+    <fieldset style="margin-top: 1em;">
+        <legend>Náhled</legend>
+        <h1 style="margin-bottom: 1em;">${TOOL.xpath(PREVIEW, "/data/title")}</h1>
+        <div>
+            ${TOOL.render(TOOL.xpath(PREVIEW.data,"data/text"), USER?if_exists)}
+        </div>
+        <#if XML.data.links[0]?exists>
+            <h3>Související odkazy</h3>
+            <ul>
+                <#list XML.data.links.link as link>
+                    <li>
+                        <a href="${link.@url}">${link}</a>
+                    </li>
+                </#list>
+            </ul>
+        </#if>
+    </fieldset>
 </#if>
 
 
