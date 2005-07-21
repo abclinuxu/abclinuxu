@@ -17,6 +17,7 @@ import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.email.monitor.*;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
@@ -154,7 +155,7 @@ public class EditFaq implements AbcAction {
         VersioningFactory.getVersioning().commit(document.asXML(), path, userId);
 
         // refresh RSS
-//        FeedGenerator.updateFAQ();
+        FeedGenerator.updateFAQ();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, url);
@@ -232,7 +233,7 @@ public class EditFaq implements AbcAction {
         MonitorPool.scheduleMonitorAction(action);
 
         // refresh RSS
-//        FeedGenerator.updateFAQ();
+        FeedGenerator.updateFAQ();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());

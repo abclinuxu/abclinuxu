@@ -119,6 +119,7 @@ public class AdminServlet implements AbcAction {
         FeedGenerator.updateForum();
         FeedGenerator.updateHardware();
         FeedGenerator.updateNews();
+        FeedGenerator.updateFAQ();
         return FMTemplateSelector.select("Admin", "show", env, request);
     }
 }
