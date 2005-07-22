@@ -467,6 +467,7 @@
     <action name="articles" content="/show/history_articles.ftl">
       <var name="TITLE" value="Historie èlánkù" />
     </action>
+<!-- TODO tohle je nejake divne -->
     <action name="news" content="/show/history_articles.ftl">
       <var name="TITLE" value="Historie zprávièek" />
     </action>
@@ -487,6 +488,9 @@
     </action>
     <action name="dictionary" content="/show/history_dictionary.ftl">
       <var name="TITLE" value="Historie pojmù" />
+    </action>
+    <action name="faq" content="/show/history_faq.ftl">
+      <var name="TITLE" value="Historie èasto kladených otázek" />
     </action>
   </servlet>
 

@@ -16,7 +16,7 @@ import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.persistance.extra.Qualifier;
 import cz.abclinuxu.persistance.extra.LimitQualifier;
 import cz.abclinuxu.data.Record;
-import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.Item;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * This servlet is responsible for displaying
@@ -62,6 +61,7 @@ public class History implements AbcAction {
     public static final String VALUE_TYPE_QUESTIONS = "questions";
     public static final String VALUE_TYPE_COMMENTS = "comments";
     public static final String VALUE_TYPE_DICTIONARY = "dictionary";
+    public static final String VALUE_TYPE_FAQ = "faq";
 
     static final Qualifier[] QUALIFIERS_ARRAY = new Qualifier[]{};
 
@@ -112,6 +112,13 @@ public class History implements AbcAction {
             }
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_NEWS;
+
+        } else if ( VALUE_TYPE_FAQ.equalsIgnoreCase(type) ) {
+            qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
+            data = sqlTool.findItemRelationsWithType(Item.FAQ, qualifiers);
+            total = sqlTool.countItemRelationsWithType(Item.FAQ, null);
+            found = new Paging(data, from, count, total, qualifiers);
+            type = VALUE_TYPE_FAQ;
 
         } else if ( VALUE_TYPE_HARDWARE.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
@@ -166,11 +173,6 @@ public class History implements AbcAction {
             } else {
                 data = sqlTool.findRecordParentRelationsWithType(Record.DICTIONARY, qualifiers);
                 total = sqlTool.countRecordParentRelationsWithType(Record.DICTIONARY);
-            }
-            // todo neni to zbytecne, viz Tools.syncList ?
-            for ( Iterator iter = data.iterator(); iter.hasNext(); ) {
-                Relation relation = (Relation) iter.next();
-                Tools.sync(relation);
             }
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_DICTIONARY;

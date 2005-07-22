@@ -17,7 +17,10 @@ díky èemu¾ narùstá kvalita zodpovìzených otázek.
 <p>Pro usnadnìní orientace jsou zodpovìzené otázky øazeny
 do sekcí, které pokrývají jedno téma. Chcete-li pøidat novou
 zodpovìzenou otázku a cítíte-li, ¾e se nehodí do ¾ádné sekce,
-po¾ádejte administrátory o vytvoøení nové sekce.
+po¾ádejte administrátory o vytvoøení nové sekce. Netu¹íte-li,
+ve které sekci hledat, projdìte si <a href="/History?type=faq">historii</a>,
+kde jsou v¹echny otázky øazeny nezávisle na sekci podle datumu
+poslední zmìny.
 </p>
 
 <table border="0" width="100%">
