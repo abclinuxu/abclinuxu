@@ -30,19 +30,23 @@ public class Measure {
     public static void main(String[] args) throws Exception {
 //        DOMConfigurator.configure("conf/log4j.xml");
         LogManager.getRootLogger().setLevel(Level.OFF);
-        int i=0,j=0;
+        int i=0,j=0,k=0;
         long l = 0;
 
         // place initilizaton here
         Persistance persistance = PersistanceFactory.getPersistance();
-        DateTool dateTool = new DateTool();
-        String parse = "2001-12-22 07:35";
-        String d = dateTool.show(parse, "CZ_FULL_TXT");
+        List list = new ArrayList(20);
+        for(i=0; i<20; i++)
+            list.add(new Relation(i));
+        List subList;
+        j = 5;
 
         long start = System.currentTimeMillis();
-        for (i=0; i<35000; i++) {
+        for (i=0; i<1700000; i++) {
             //place your code to measure here
-            d = dateTool.show(parse, "CZ_FULL_TXT");
+            subList = new ArrayList(j);
+            for (k = 0; k<j; k++)
+                subList.add(list.get(k));
         }
         long end = System.currentTimeMillis();
 
