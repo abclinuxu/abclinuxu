@@ -73,25 +73,28 @@ poslední zmìny.
             <a href="/faq/site">Sítì</a> (${SIZES("94479")?default(0)})
         </td>
         <td>
-            <a href="/faq/souborove-systemy">Souborové systémy</a> (${SIZES("94481")?default(0)})
+            <a href="/faq/skripty">Skripty</a> (${SIZES("95259")?default(0)})
         </td>
         <td>
-            <a href="/faq/tisk">Tisk</a> (${SIZES("94488")?default(0)})
+            <a href="/faq/souborove-systemy">Souborové systémy</a> (${SIZES("94481")?default(0)})
         </td>
     </tr>
     <tr>
+        <td>
+            <a href="/faq/tisk">Tisk</a> (${SIZES("94488")?default(0)})
+        </td>
         <td>
             <a href="/faq/vypalovani">Vypalování</a> (${SIZES("94491")?default(0)})
         </td>
         <td>
             <a href="/faq/web">Web</a> (${SIZES("94495")?default(0)})
         </td>
+    </tr>
+    <tr>
         <td>
             <a href="/faq/zalohovani">Zálohování</a> (${SIZES("94482")?default(0)})
         </td>
-    </tr>
-    <tr>
-        <td colspan="3">
+        <td colspan="2">
             <a href="/faq/zvuk">Zvuk</a> (${SIZES("94489")?default(0)})
         </td>
     </tr>
