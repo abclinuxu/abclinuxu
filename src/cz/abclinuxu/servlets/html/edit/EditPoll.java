@@ -254,6 +254,8 @@ public class EditPoll implements AbcAction {
                 AccessKeeper.checkAccess(relation, user, "vote", request, response);
                 for ( int i = 0; i<max; i++ ) {
                     String tmp = values[i];
+                    if (tmp==null || tmp.length()==0)
+                        continue;
                     int voteId = Integer.parseInt(tmp);
                     PersistanceFactory.getPersistance().incrementCounter(poll.getChoices()[voteId]);
                 }
