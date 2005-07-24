@@ -1057,10 +1057,12 @@ public class MySqlPersistance implements Persistance {
 
             for (Iterator iter = objs.iterator(); iter.hasNext();) {
                 GenericDataObject obj = (GenericDataObject) iter.next();
-                if (!rs.next() || rs.getInt(1) != obj.getId())
-                    throw new NotFoundException("Datova polozka " + obj.getId() + " nebyla nalezena!");
-                syncGenericDataObjectFromRS(obj, rs);
-                cache.store(obj);
+                if (!rs.next() || rs.getInt(1) != obj.getId()) {
+                    log.warn("Synchronizace: datova polozka nebyla nalezena: "+obj+"\nRepresentant is: "+representant);
+                } else {
+                    syncGenericDataObjectFromRS(obj, rs);
+                    cache.store(obj);
+                }
             }
         } finally {
             releaseSQLResources(con, statement, rs);
