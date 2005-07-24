@@ -18,6 +18,7 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.format.Format;
@@ -150,9 +151,8 @@ public class EditArticle implements AbcAction {
         synchronized (Constants.isoFormat) {
             params.put(PARAM_PUBLISHED,Constants.isoFormat.format(new Date()));
         }
-        Persistance persistance = PersistanceFactory.getPersistance();
-        Category sections = (Category) persistance.findById(new Category(Constants.CAT_ARTICLES));
-        env.put(VAR_SECTIONS, sections.getChildren());
+        List sections = getSections();
+        env.put(VAR_SECTIONS, sections);
         return FMTemplateSelector.select("EditArticle","add",env,request);
     }
 
@@ -190,6 +190,8 @@ public class EditArticle implements AbcAction {
         canContinue &= setDesignatedSection(params, item);
 
         if ( !canContinue ) {
+            List sections = getSections();
+            env.put(VAR_SECTIONS, sections);
             return FMTemplateSelector.select("EditArticle", "edit", env, request);
         }
 
@@ -248,9 +250,8 @@ public class EditArticle implements AbcAction {
             params.put(PARAM_THUMBNAIL, node.getText());
         params.put(PARAM_NOT_ON_INDEX, item.getSubType());
         if (relation.getUpper()==Constants.REL_ARTICLEPOOL) {
-            Persistance persistance = PersistanceFactory.getPersistance();
-            Category sections = (Category) persistance.findById(new Category(Constants.CAT_ARTICLES));
-            env.put(VAR_SECTIONS, sections.getChildren());
+            List sections = getSections();
+            env.put(VAR_SECTIONS, sections);
             node = document.selectSingleNode("/data/section_rid");
             if (node != null)
                 params.put(PARAM_DESIGNATED_SECTION, Integer.valueOf(node.getText()));
@@ -293,6 +294,8 @@ public class EditArticle implements AbcAction {
             canContinue &= setDesignatedSection(params, item);
 
         if ( !canContinue ) {
+            List sections = getSections();
+            env.put(VAR_SECTIONS, sections);
             return FMTemplateSelector.select("EditArticle","edit",env,request);
         }
 
@@ -956,5 +959,16 @@ public class EditArticle implements AbcAction {
         question.addAttribute("id", Integer.toString(lastId));
 
         return true;
+    }
+
+    /**
+     * @return list of all section relations sorted by name.
+     */
+    private List getSections() {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Category dir = (Category) persistance.findById(new Category(Constants.CAT_ARTICLES));
+        List sections = Sorters2.byName(dir.getChildren());
+        sections.remove(new Relation(4731));
+        return sections;
     }
 }
