@@ -282,6 +282,12 @@ public class VariableFetcher extends TimerTask implements Configurable {
             int maximum = ((Integer) maxSizes.get(KEY_STORY)).intValue();
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
             List list = sqlTool.findItemRelationsWithType(Item.BLOG, qualifiers);
+            List blogs = new ArrayList(list.size());
+            for (Iterator iter = list.iterator(); iter.hasNext();) {
+                Relation relation = (Relation) iter.next();
+                blogs.add(relation.getParent());
+            }
+            Tools.syncList(blogs); // parent on relation must be synchronized
             Tools.syncList(list);
             freshStories = list;
         } catch (Exception e) {
