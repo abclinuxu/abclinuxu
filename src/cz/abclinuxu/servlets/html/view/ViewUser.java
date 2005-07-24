@@ -175,6 +175,8 @@ public class ViewUser implements AbcAction {
             Map params = (Map) env.get(Constants.VAR_PARAMS);
             String url = (String) params.get(PARAM_URL);
             if (url!=null) {
+                if (url.indexOf("logout=true")!=-1)
+                    url = "/";
                 UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
                 urlUtils.redirect(response, url);
                 return null;
