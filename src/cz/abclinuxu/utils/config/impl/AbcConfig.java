@@ -26,16 +26,13 @@ public class AbcConfig implements Configurable {
 
     public static final String PREF_DEPLOY_PATH = "deploy.path";
     public static final String PREF_VIEWUSER_PAGINGSIZE = "viewuser.page.size";
-    public static final String PREF_INDEX_DISCUSSIONS_COUNT = "index.discussions.count";
-    public static final String PREF_TEMPLATE_NEWS_COUNT = "template.news.count";
-    public static final String PREF_INDEX_ARTICLES_COUNT = "index.article.count";
     public static final String PREF_SECTION_ARTICLES_COUNT = "section.article.count";
     public static final String PREF_ARTICLE_SECTION_ARTICLES_COUNT = "article.section.articles.count";
     public static final String PREF_SEARCH_RESULTS_COUNT = "search.results.count";
     public static final String PREF_FAQ_COUNT = "section.faq.count";
 
     static String deployPath;
-    static int viewUserPageSize, indexDiscussionCount, newsCount, indexArticleCount, sectionArticleCount;
+    static int viewUserPageSize, sectionArticleCount;
     static int articleSectionArticlesCount, searchResultsCount, faqSectionCount;
 
     /**
@@ -44,9 +41,6 @@ public class AbcConfig implements Configurable {
     public void configure(Preferences prefs) throws ConfigurationException {
         deployPath = prefs.get(PREF_DEPLOY_PATH, null);
         viewUserPageSize = prefs.getInt(PREF_VIEWUSER_PAGINGSIZE,20);
-        indexDiscussionCount = prefs.getInt(PREF_INDEX_DISCUSSIONS_COUNT,20);
-        newsCount = prefs.getInt(PREF_TEMPLATE_NEWS_COUNT,5);
-        indexArticleCount = prefs.getInt(PREF_INDEX_ARTICLES_COUNT, 9);
         sectionArticleCount = prefs.getInt(PREF_SECTION_ARTICLES_COUNT, 25);
         articleSectionArticlesCount = prefs.getInt(PREF_ARTICLE_SECTION_ARTICLES_COUNT, 5);
         searchResultsCount = prefs.getInt(PREF_SEARCH_RESULTS_COUNT, 10);
@@ -84,31 +78,10 @@ public class AbcConfig implements Configurable {
     }
 
     /**
-     * @return default maximum for discussions count on Index page
-     */
-    public static int getIndexDiscussionCount() {
-        return indexDiscussionCount;
-    }
-
-    /**
      * @return default maximum for questions count on FAQ section page
      */
     public static int getFaqSectionCount() {
         return faqSectionCount;
-    }
-
-    /**
-     * @return default limit for displayed news
-     */
-    public static int getNewsCount() {
-        return newsCount;
-    }
-
-    /**
-     * @return number of articles to be displayed on the start page.
-     */
-    public static int getIndexArticleCount() {
-        return indexArticleCount;
     }
 
     /**

@@ -6,5 +6,6 @@
  </head>
 <body>
 
-<#include "/include/pocitani.txt">
+<#include "/include/pocitani2.txt">
+<#include "/include/pocitani1.txt">
 <#import "macros.ftl" as lib>

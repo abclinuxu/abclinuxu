@@ -15,7 +15,7 @@
  <p>${DATE.show(ITEM.created,"CZ_SHORT")}
  ${TOOL.xpath(ITEM,"data/content")}<br>
  <span style="font-size: 7pt">
-  <a href="/news/show/${relation.id}" target="_content" style="font-size: 7pt">Zobrazit</a>
+  <a href="${relation.url?default("/zpravicky/show/"+relation.id)}" target="_content" style="font-size: 7pt">Zobrazit</a>
   <#if diz.responseCount gt 0>
    Komentáøe: ${diz.responseCount}, poslední ${DATE.show(diz.updated, "CZ_FULL")}
   </#if>
@@ -40,13 +40,14 @@
 
 <a href="/clanky/show/5&src=sidebar" class="nadpis" target="_content">Èlánky</a>
 
+<#assign ARTICLES=VARS.getFreshArticles("NONE")>
 <#list ARTICLES as rel>
  <@showArticle rel />
 </#list>
 
 <h3 class="nadpis">Zprávièky</h3>
 
-<#assign NEWS=VARS.getFreshNews(user?if_exists)>
+<#assign NEWS=VARS.getFreshNews("NONE")>
 <#list NEWS as rel>
  <@showNews rel />
 </#list>

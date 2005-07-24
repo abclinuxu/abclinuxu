@@ -32,6 +32,7 @@ import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.email.forum.SubscribedUsers;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
+import cz.abclinuxu.scheduler.VariableFetcher;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.regexp.RE;
 import org.apache.regexp.REProgram;
@@ -497,8 +498,9 @@ public class EditUser implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
 
-        env.put(VAR_DEFAULT_DISCUSSION_COUNT,new Integer(AbcConfig.getIndexDiscussionCount()));
-        env.put(VAR_DEFAULT_NEWS_COUNT,new Integer(AbcConfig.getNewsCount()));
+        Map defaultSizes = VariableFetcher.getInstance().getDefaultSizes();
+        env.put(VAR_DEFAULT_DISCUSSION_COUNT, defaultSizes.get(VariableFetcher.KEY_QUESTION));
+        env.put(VAR_DEFAULT_NEWS_COUNT, defaultSizes.get(VariableFetcher.KEY_NEWS));
 
         Document document = managed.getData();
         Node node = document.selectSingleNode("/data/settings/emoticons");
@@ -558,8 +560,9 @@ public class EditUser implements AbcAction, Configurable {
             canContinue &= checkPassword(params, managed, env);
 
         if (!canContinue) {
-            env.put(VAR_DEFAULT_DISCUSSION_COUNT, new Integer(AbcConfig.getIndexDiscussionCount()));
-            env.put(VAR_DEFAULT_NEWS_COUNT, new Integer(AbcConfig.getNewsCount()));
+            Map defaultSizes = VariableFetcher.getInstance().getDefaultSizes();
+            env.put(VAR_DEFAULT_DISCUSSION_COUNT, defaultSizes.get(VariableFetcher.KEY_QUESTION));
+            env.put(VAR_DEFAULT_NEWS_COUNT, defaultSizes.get(VariableFetcher.KEY_NEWS));
             return FMTemplateSelector.select("EditUser", "editSettings", env, request);
         }
 
@@ -575,8 +578,9 @@ public class EditUser implements AbcAction, Configurable {
         canContinue &= setReturnBackToForum(params, managed);
 
         if ( !canContinue ) {
-            env.put(VAR_DEFAULT_DISCUSSION_COUNT, new Integer(AbcConfig.getIndexDiscussionCount()));
-            env.put(VAR_DEFAULT_NEWS_COUNT, new Integer(AbcConfig.getNewsCount()));
+            Map defaultSizes = VariableFetcher.getInstance().getDefaultSizes();
+            env.put(VAR_DEFAULT_DISCUSSION_COUNT, defaultSizes.get(VariableFetcher.KEY_QUESTION));
+            env.put(VAR_DEFAULT_NEWS_COUNT, defaultSizes.get(VariableFetcher.KEY_NEWS));
             return FMTemplateSelector.select("EditUser", "editSettings", env, request);
         }
 

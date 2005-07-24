@@ -22,6 +22,7 @@ import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
+import cz.abclinuxu.scheduler.VariableFetcher;
 import org.apache.regexp.*;
 import org.dom4j.*;
 import org.dom4j.io.DOMWriter;
@@ -203,6 +204,8 @@ public class EditArticle implements AbcAction {
             persistance.create(recordRelation);
             recordRelation.getParent().addChildRelation(recordRelation);
 
+            VariableFetcher.getInstance().refreshArticles();
+
             if (redirect) {
                 UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
                 urlUtils.redirect(response, "/show/"+relation.getId());
@@ -295,6 +298,8 @@ public class EditArticle implements AbcAction {
 
         persistance.update(item);
         persistance.update(record);
+
+        VariableFetcher.getInstance().refreshArticles();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/show/"+relation.getId());

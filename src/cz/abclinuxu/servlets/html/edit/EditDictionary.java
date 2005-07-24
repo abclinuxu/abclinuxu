@@ -22,6 +22,7 @@ import cz.abclinuxu.utils.email.monitor.*;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
+import cz.abclinuxu.scheduler.VariableFetcher;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -145,6 +146,8 @@ public class EditDictionary implements AbcAction {
         persistance.create(recordRelation);
         recordRelation.getParent().addChildRelation(recordRelation);
 
+        VariableFetcher.getInstance().refreshDictionary();
+
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/slovnik/"+item.getSubType());
         return null;
@@ -180,6 +183,8 @@ public class EditDictionary implements AbcAction {
         String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/slovnik/"+item.getSubType();
         MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.DICTIONARY, item, url);
         MonitorPool.scheduleMonitorAction(action);
+
+        VariableFetcher.getInstance().refreshDictionary();
 
         urlUtils.redirect(response, "/slovnik/"+item.getSubType());
         return null;
@@ -235,6 +240,8 @@ public class EditDictionary implements AbcAction {
         String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/slovnik/"+item.getSubType();
         MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.DICTIONARY, item, url);
         MonitorPool.scheduleMonitorAction(action);
+
+        VariableFetcher.getInstance().refreshDictionary();
 
         urlUtils.redirect(response, "/slovnik/"+item.getSubType());
         return null;

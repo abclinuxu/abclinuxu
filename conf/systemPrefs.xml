@@ -25,9 +25,6 @@
                                 <map>
                                     <entry key="deploy.path" value="@DEPLOY_ABCLINUXU@"/>
                                     <entry key="viewuser.page.size" value="20"/>
-                                    <entry key="index.discussions.count" value="25"/>
-                                    <entry key="template.news.count" value="10"/>
-                                    <entry key="index.article.count" value="9"/>
                                     <entry key="section.article.count" value="25"/>
                                     <entry key="article.section.articles.count" value="5"/>
                                     <entry key="search.results.count" value="10"/>
@@ -323,9 +320,22 @@
                     </node>
                     <node name="VariableFetcher">
                         <map>
-                            <entry key="hardware" value="3"/>
-                            <entry key="drivers" value="3"/>
-                            <entry key="stories" value="6"/>
+                            <entry key="default.hardware" value="3"/>
+                            <entry key="max.hardware" value="10"/>
+                            <entry key="default.driver" value="3"/>
+                            <entry key="max.driver" value="10"/>
+                            <entry key="default.story" value="6"/>
+                            <entry key="max.story" value="10"/>
+                            <entry key="default.news" value="10"/>
+                            <entry key="max.news" value="25"/>
+                            <entry key="default.article" value="9"/>
+                            <entry key="max.article" value="20"/>
+                            <entry key="default.question" value="25"/>
+                            <entry key="max.question" value="50"/>
+                            <entry key="default.faq" value="3"/>
+                            <entry key="max.faq" value="10"/>
+                            <entry key="default.dictionary" value="3"/>
+                            <entry key="max.dictionary" value="10"/>
                         </map>
                     </node>
                 </node>

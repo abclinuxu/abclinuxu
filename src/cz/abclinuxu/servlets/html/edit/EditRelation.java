@@ -340,6 +340,9 @@ public class EditRelation implements AbcAction {
         return null;
     }
 
+    /**
+     * todo call refreshXY on VariableFetcher
+     */
     protected String actionRemove1(HttpServletRequest request, Map env) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_CURRENT);

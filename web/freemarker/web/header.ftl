@@ -66,7 +66,7 @@
 			--><a href="/download/abicko.jsp" class="za_mn_odkaz">PDF</a><!--
 			--><a href="/slovnik" class="za_mn_odkaz">Slovník</a><!--
 			--><a href="/ankety" class="za_mn_odkaz">Ankety</a><!--
-			--><a href="/drivers" class="za_mn_odkaz">Ovladaèe</a>
+			--><a href="/ovladace" class="za_mn_odkaz">Ovladaèe</a>
 		</div>
 
 	</div>

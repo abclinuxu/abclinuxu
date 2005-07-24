@@ -65,6 +65,8 @@ public class ArticlePoolMonitor extends TimerTask {
                         relation.setUpper(section.getId());
                         persistance.update(relation);
                         relation.getParent().addChildRelation(relation);
+
+                        VariableFetcher.getInstance().refreshArticles();
                     }
                 }
             }

@@ -21,6 +21,7 @@ import cz.abclinuxu.utils.email.monitor.*;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.scheduler.VariableFetcher;
 
 import org.dom4j.*;
 import org.htmlparser.util.ParserException;
@@ -128,6 +129,7 @@ public class EditDriver implements AbcAction {
         VersioningFactory.getVersioning().commit(document.asXML(), path, userId);
 
         FeedGenerator.updateDrivers();
+        VariableFetcher.getInstance().refreshDrivers();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, url);
@@ -201,6 +203,7 @@ public class EditDriver implements AbcAction {
         MonitorPool.scheduleMonitorAction(action);
 
         FeedGenerator.updateDrivers();
+        VariableFetcher.getInstance().refreshDrivers();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, url);

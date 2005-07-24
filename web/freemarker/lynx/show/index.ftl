@@ -5,6 +5,7 @@
 
 Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum</a>
 
+<#assign ARTICLES=VARS.getFreshArticles(USER?if_exists)>
 <#list ARTICLES as rel>
  <@lib.showArticle rel, "CZ_SHORT" />
  <@lib.separator double=!rel_has_next />
@@ -18,7 +19,8 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
 <p>
   <b><a href="/blog">Blogy na AbcLinuxu</a></b>
   <ul>
-  <#list VARS.newStories as relation>
+  <#assign STORIES=VARS.getFreshStories(USER?if_exists)>
+  <#list STORIES as relation>
      <li>
      <#assign story=relation.child, blog=relation.parent>
      <#assign url=TOOL.getUrlForBlogStory(blog.subType, story.created, relation.id)>
@@ -46,7 +48,8 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
 
 <p>
  <b><a href="/ovladace">Ovladaèe</a></b><br>
- <#list VARS.newDrivers as rel>
+ <#assign DRIVERS = VARS.getFreshDrivers(USER?if_exists)>
+ <#list DRIVERS as rel>
   <a href="${rel.url?default("/ovladace/show/"+rel.id)}">
   ${TOOL.xpath(rel.child,"data/name")}</a><#if rel_has_next>,</#if>
  </#list>
@@ -55,7 +58,8 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
 
 <p>
  <b><a href="/hardware">Hardware</a></b><br>
- <#list VARS.newHardware as rel>
+ <#assign HARDWARE = VARS.getFreshHardware(USER?if_exists)>
+ <#list HARDWARE as rel>
   <a href="/hardware/show/${rel.id}">
   ${TOOL.xpath(rel.parent,"data/name")}</a><#if rel_has_next>,</#if>
  </#list>
@@ -71,7 +75,7 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
  <#include "/include/kernel.txt">
 </p>
 
-<#assign NEWS=VARS.getFreshNews(user?if_exists)>
+<#assign NEWS=VARS.getFreshNews(USER?if_exists)>
 <a name="zpravicky"><h1>Zprávièky</h1></a>
 <#list NEWS as rel>
  <@lib.showNews rel/>
@@ -84,20 +88,39 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
 
 <#flush>
 
-<#if FORUM?exists>
- <a name="diskuse"><h1>Diskusní fórum</h1></a>
- <p>
- <#list FORUM.data as diz>
-  ${DATE.show(diz.updated,"CZ_SHORT")}, ${diz.responseCount} odp. :
-   <a href="/hardware/show/${diz.relationId}">
-   ${TOOL.limit(TOOL.xpath(diz.discussion,"data/title"),60," ..")}</a><br>
- </#list>
- </p>
+<#assign FORUM = VARS.getFreshQuestions(USER?if_exists)>
+<#if (FORUM?size > 0)>
+    <#assign FORUM=TOOL.analyzeDiscussions(FORUM)>
+    <a name="diskuse"><h1>Diskusní fórum</h1></a>
+    <p>
+        <#list FORUM as diz>
+            ${DATE.show(diz.updated,"CZ_SHORT")}, ${diz.responseCount} odp.,
+            <#if TOOL.xpath(diz.discussion,"/data/frozen")?exists>
+                <b>Z</b>,
+            </#if>
+            <#if TOOL.isQuestionSolved(diz.discussion.data)>
+                <b>V</b>,
+            </#if>
+            <#if USER?exists && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"']")?exists>
+                <b>S</b>,
+            </#if>
+            <a href="/forum/show/${diz.relationId}">
+                ${TOOL.limit(TOOL.xpath(diz.discussion,"data/title"),50," ..")}
+            </a>
+            <br>
+        </#list>
+    </p>
 
- <ul>
-  <li><a href="/diskuse.jsp">Zobrazit diskusní fórum (polo¾it dotaz)</a>
-  <li><a href="/History?type=discussions&from=${FORUM.nextPage.row}&count=20">Zobrazit star¹í dotazy</a>
- </ul>
+    <ul>
+        <li><a href="/diskuse.jsp">Zobrazit diskusní fórum (polo¾it dotaz)</a>
+        <li><a href="/History?type=discussions&from=${FORUM?size}&count=20">Zobrazit star¹í dotazy</a>
+    </ul>
 </#if>
+
+<p>
+<b>Z</b> - diskuse byla zmra¾ena,
+<b>V</b> - diskuse byla vyøe¹ena,
+<b>S</b> - diskuse sledujete monitorem.
+</p>
 
 <#include "../footer.ftl">

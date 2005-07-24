@@ -28,6 +28,7 @@ import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.parser.safehtml.NewsGuard;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.email.EmailSender;
+import cz.abclinuxu.scheduler.VariableFetcher;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -235,7 +236,9 @@ public class EditNews implements AbcAction {
         persistance.update(item);
         User user = (User) env.get(Constants.VAR_USER);
         AdminLogger.logEvent(user, "  edit | news "+relation.getId());
+
         FeedGenerator.updateNews();
+        VariableFetcher.getInstance().refreshNews();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         String url = (relation.getUrl()!=null)? relation.getUrl() : "/zpravicky/show/"+relation.getId();
@@ -265,7 +268,9 @@ public class EditNews implements AbcAction {
         persistance.update(relation);
         relation.getParent().addChildRelation(relation);
         AdminLogger.logEvent(user, "  approve | news " + relation.getId());
+
         FeedGenerator.updateNews();
+        VariableFetcher.getInstance().refreshNews();
 
         String url = (relation.getUrl() != null) ? relation.getUrl() : "/zpravicky/show/" + relation.getId();
         urlUtils.redirect(response, url);
@@ -299,7 +304,9 @@ public class EditNews implements AbcAction {
         persistance.remove(relation);
         relation.getParent().removeChildRelation(relation);
         AdminLogger.logEvent(user, "  remove | news " + relation.getId());
+
         FeedGenerator.updateNews();
+        VariableFetcher.getInstance().refreshNews();
 
         response.sendRedirect(response.encodeRedirectURL("/"));
         return null;

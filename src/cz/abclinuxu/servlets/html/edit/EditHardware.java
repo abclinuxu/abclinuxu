@@ -21,6 +21,7 @@ import cz.abclinuxu.utils.email.monitor.*;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.scheduler.VariableFetcher;
 
 import org.dom4j.*;
 import org.htmlparser.util.ParserException;
@@ -198,6 +199,7 @@ public class EditHardware implements AbcAction {
         recordRelation.getParent().addChildRelation(recordRelation);
 
         FeedGenerator.updateHardware();
+        VariableFetcher.getInstance().refreshHardware();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/show/"+relation.getId());
@@ -245,6 +247,8 @@ public class EditHardware implements AbcAction {
         Item item = (Item) persistance.findById(upper.getChild());
         MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.ITEM, item, url);
         MonitorPool.scheduleMonitorAction(action);
+
+        VariableFetcher.getInstance().refreshHardware();
 
         urlUtils.redirect(response, "/show/"+relation.getId());
         return null;
@@ -361,6 +365,8 @@ public class EditHardware implements AbcAction {
         Item item = (Item) persistance.findById(obj);
         MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.ITEM, item, url);
         MonitorPool.scheduleMonitorAction(action);
+
+        VariableFetcher.getInstance().refreshHardware();
 
         urlUtils.redirect(response, "/show/"+relation.getId());
         return null;

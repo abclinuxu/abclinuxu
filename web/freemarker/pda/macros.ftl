@@ -2,7 +2,7 @@
  <#local clanek=relation.child>
  <p>
   ${DATE.show(clanek.created, "CZ_SHORT")}
-  <a href="/clanky/show/${relation.id}">${TOOL.xpath(clanek,"data/name")}</a><br>
+  <a href="${relation.url?default("/clanky/show/"+relation.id)}">${TOOL.xpath(clanek,"data/name")}</a><br>
   ${TOOL.xpath(clanek,"/data/perex")}
  </p>
 </#macro>
@@ -12,7 +12,7 @@
  <p>${DATE.show(ITEM.created,"CZ_SHORT")}
  ${TOOL.xpath(ITEM,"data/content")}<br>
  <span style="font-size: 7pt">
-  <a href="/news/show/${relation.id}" target="_content" style="font-size: 7pt">Zobrazit</a>
+  <a href="${relation.url?default("/zpravicky/show/"+relation.id)}" target="_content" style="font-size: 7pt">Zobrazit</a>
   <#if diz.responseCount gt 0>
    Komentáøe: ${diz.responseCount}, poslední ${DATE.show(diz.updated, "CZ_FULL")}
   </#if>

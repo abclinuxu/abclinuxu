@@ -2,6 +2,7 @@
 <#include "/include/zprava.txt">
 
 <h1>Aktuální èlánky</h1>
+<#assign ARTICLES=VARS.getFreshArticles(USER?if_exists)>
 <#list ARTICLES as rel>
  <@lib.showArticle rel />
  <@lib.separator double=!rel_has_next />

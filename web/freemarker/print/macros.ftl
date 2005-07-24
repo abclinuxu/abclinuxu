@@ -35,9 +35,8 @@
   </#if>
 
   | Hodnocení:
-
-  <#assign rating=TOOL.ratingFor(clanek.data,"article")?default(0)>
-  <#if rating!=0>${rating?string["#0.00"]}</#if>
+  <#assign rating=TOOL.ratingFor(clanek.data,"article")?default("UNDEF")>
+  <#if rating!="UNDEF">${rating.result?string["#0.00"]}</#if>
 
   </span>
  <p class="vytah">

@@ -34,6 +34,7 @@ import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.scheduler.VariableFetcher;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -329,6 +330,7 @@ public class EditBlog implements AbcAction, Configurable {
         }
 
         FeedGenerator.updateBlog(blog);
+        VariableFetcher.getInstance().refreshStories();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(),story.getCreated(),relation.getId()));
@@ -386,6 +388,7 @@ public class EditBlog implements AbcAction, Configurable {
         persistance.update(story);
 
         FeedGenerator.updateBlog(blog);
+        VariableFetcher.getInstance().refreshStories();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(),story.getCreated(),relation.getId()));
@@ -441,6 +444,7 @@ public class EditBlog implements AbcAction, Configurable {
         persistance.update(blog);
 
         FeedGenerator.updateBlog(blog);
+        VariableFetcher.getInstance().refreshStories();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/blog/"+blog.getSubType()+"/");

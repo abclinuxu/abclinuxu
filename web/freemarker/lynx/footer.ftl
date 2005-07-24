@@ -39,8 +39,7 @@
 
 <h1>O serveru</h1>
 <p>
- <a href="/clanky/show/44043">Pøehled zmìn</a>,
- <a href="/doc/portal/jine_pristupy">Titulky, PDA a RSS</a>,
+ <a href="/doc/portal/jine_pristupy">RSS a PDA</a>,
  <a href="/clanky/show/44049">Tým AbcLinuxu</a>,
  <a href="/clanky/show/42393">Staòte se autorem</a>,
  ISSN 1214-1267
@@ -49,9 +48,8 @@
 <p>
  <b>Doporuèujeme</b>
  <a href="http://www.linux.cz">Linux.cz</a>,
- <a href="http://www.root.cz">Root</a>,
- <a href="http://www.mandrake.cz">Mandrake</a>,
- <a href="http://www.broadnet.cz">Broadnet - hosting</a>
+ <a href="http://www.broadnet.cz">Broadnet,</a>
+ <a href="http://www.pravednes.cz">pravednes.cz</a>
 </p>
 
 </body>

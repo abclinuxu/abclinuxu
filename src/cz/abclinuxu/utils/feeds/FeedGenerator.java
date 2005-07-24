@@ -13,6 +13,7 @@ import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.scheduler.VariableFetcher;
 
 import java.util.prefs.Preferences;
 import java.util.*;
@@ -208,7 +209,8 @@ public class FeedGenerator implements Configurable {
             SyndEntry entry;
             SyndContent description;
 
-            int countArticles = AbcConfig.getIndexArticleCount();
+            Map defaultSizes = VariableFetcher.getInstance().getDefaultSizes();
+            int countArticles = ((Integer)defaultSizes.get(VariableFetcher.KEY_ARTICLE)).intValue();
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, countArticles)};
             List articles = sqlTool.findIndexArticlesRelations(qualifiers);
             Tools.syncList(articles);

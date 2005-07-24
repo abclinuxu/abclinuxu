@@ -23,6 +23,7 @@ import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
+import cz.abclinuxu.scheduler.VariableFetcher;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -156,6 +157,7 @@ public class EditFaq implements AbcAction {
 
         // refresh RSS
         FeedGenerator.updateFAQ();
+        VariableFetcher.getInstance().refreshFaq();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, url);
@@ -234,6 +236,7 @@ public class EditFaq implements AbcAction {
 
         // refresh RSS
         FeedGenerator.updateFAQ();
+        VariableFetcher.getInstance().refreshFaq();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());

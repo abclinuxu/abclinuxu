@@ -28,6 +28,7 @@ import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.PersistanceException;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
+import cz.abclinuxu.scheduler.VariableFetcher;
 
 import org.dom4j.*;
 import org.htmlparser.util.ParserException;
@@ -247,6 +248,7 @@ public class EditDiscussion implements AbcAction {
         // run email forum and refresh RSS
         ForumPool.submitComment(rel2, discussion.getId(), 0, 0);
         FeedGenerator.updateForum();
+        VariableFetcher.getInstance().refreshQuestions();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/show/"+rel2.getId());
@@ -386,6 +388,7 @@ public class EditDiscussion implements AbcAction {
             if (parent.getType() == Category.FORUM) {
                 ForumPool.submitComment(relation, discussion.getId(), record.getId(), commentId);
                 FeedGenerator.updateForum();
+                VariableFetcher.getInstance().refreshQuestions();
             }
         }
 
