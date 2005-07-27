@@ -73,7 +73,7 @@ public class URLManager implements Configurable {
         Relation relation = sqlTool.findRelationByURL(testedURL);
 
         while (relation!=null) {
-            testedURL = url + "_" + counter;
+            testedURL = url + "-" + counter;
             counter++;
             relation = sqlTool.findRelationByURL(testedURL);
         }
