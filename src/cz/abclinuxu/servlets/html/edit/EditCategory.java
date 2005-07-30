@@ -20,6 +20,7 @@ import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 
@@ -169,7 +170,9 @@ public class EditCategory implements AbcAction {
         if (node!=null) params.put(PARAM_ICON,node.getText());
         node = document.selectSingleNode("data/note");
         if (node!=null) params.put(PARAM_NOTE,node.getText());
-        params.put(PARAM_OPEN, (category.isOpen())? "yes":"no");
+        int type = category.getType();
+        if (type==Category.OPEN_CATEGORY || type==Category.CLOSED_CATEGORY)
+            params.put(PARAM_OPEN, (category.isOpen())? "yes":"no");
 
         return FMTemplateSelector.select("EditCategory","edit",env,request);
     }
@@ -189,7 +192,7 @@ public class EditCategory implements AbcAction {
             return null;
         }
 
-        Relation upperRelation = (Relation) env.get(VAR_RELATION);
+        Relation relation = (Relation) env.get(VAR_RELATION);
         Category category = (Category) env.get(VAR_CATEGORY);
         persistance.synchronize(category);
         Document document = category.getData();
@@ -208,13 +211,17 @@ public class EditCategory implements AbcAction {
         node.addAttribute("format", Integer.toString(format.getId()));
 
         tmp = (String) params.get(PARAM_OPEN);
-        category.setOpen( "yes".equals(tmp) );
+        if (!Misc.empty(tmp))
+            category.setOpen( "yes".equals(tmp) );
 
         persistance.update(category);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        if ( upperRelation!=null ) {
-            urlUtils.redirect(response, "/dir/"+upperRelation.getId());
+        if ( relation!=null ) {
+            if (relation.getUrl()!=null)
+                urlUtils.redirect(response, relation.getUrl());
+            else
+                urlUtils.redirect(response, "/dir/"+relation.getId());
         } else {
             urlUtils.redirect(response, "/dir?categoryId="+category.getId());
         }

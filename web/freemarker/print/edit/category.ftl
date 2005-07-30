@@ -12,15 +12,17 @@
     <div class="error">${ERRORS.name?if_exists}</div>
    </td>
   </tr>
-  <tr>
-   <td width="120" class="required">Kdo smí pøidávat polo¾ky</td>
-   <td>
-    <select name="open" tabindex="2">
-     <option value="yes"<#if PARAMS.open?if_exists=="yes"> SELECTED</#if>>Kdokoliv</option>
-     <option value="no"<#if PARAMS.open?if_exists!="yes"> SELECTED</#if>>Jen administrátor</option>
-    </select>
-   </td>
-  </tr>
+  <#if PARAMS.open?exists>
+    <tr>
+        <td width="120" class="required">Kdo smí pøidávat polo¾ky</td>
+        <td>
+            <select name="open" tabindex="2">
+                <option value="yes"<#if PARAMS.open=="yes"> SELECTED</#if>>Kdokoliv</option>
+                <option value="no"<#if PARAMS.open!="yes"> SELECTED</#if>>Jen administrátor</option>
+            </select>
+        </td>
+    </tr>
+  </#if>
   <tr>
    <td width="120">Poznámka</td>
    <td>
