@@ -20,6 +20,7 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.utils.search.CreateIndex;
+import cz.abclinuxu.scheduler.VariableFetcher;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -76,6 +77,7 @@ public class AdminServlet implements AbcAction {
         ConfigurationManager.reconfigureAll();
         FMUtils.getConfiguration().clearTemplateCache();
 	    DateTool.calculateTodayTimes();
+        VariableFetcher.getInstance().run(); // refresh
 
         ServletUtils.addMessage("Cache byla promazána.",env,null);
         return FMTemplateSelector.select("Admin", "show", env, request);
