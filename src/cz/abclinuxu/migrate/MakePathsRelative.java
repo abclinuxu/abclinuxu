@@ -7,6 +7,7 @@ package cz.abclinuxu.migrate;
 
 import cz.abclinuxu.persistance.impl.MySqlPersistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.cache.EmptyCache;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -23,11 +24,13 @@ import org.apache.regexp.StringCharacterIterator;
 public class MakePathsRelative {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(MakePathsRelative.class);
     static RE reAbsoluteURL;
+    static MySqlPersistance persistance;
 
     static {
         try {
             reAbsoluteURL = new RE("(HREF|SRC)(=\")(http://(www.)?abclinuxu.cz)(/[^\"]+)", RE.MATCH_CASEINDEPENDENT);
 //            reAbsoluteURL = new RE("(HREF|SRC)(=\"http://(www.)?abclinuxu.cz)([^\"]+)(\")", RE.MATCH_CASEINDEPENDENT+RE.MATCH_SINGLELINE);
+            persistance = (MySqlPersistance) PersistanceFactory.getPersistance("jdbc:mysql://localhost/abc?user=literakl&password=lkaretil&useUnicode=true&characterEncoding=ISO-8859-2", EmptyCache.class);
         } catch (RESyntaxException e) {
             log.error("regexp syntax troubles", e);
         }
@@ -39,13 +42,16 @@ public class MakePathsRelative {
             System.exit(1);
         }
 
-        List keys = findAllRecords();
+        long start = System.currentTimeMillis();
+        List keys = findMatchingRows("zaznam");
         if ( "--find".equalsIgnoreCase(args[0]) )
             findAndPrintAbsoluteURLs(keys);
         else if ( "--fix".equalsIgnoreCase(args[0]) )
             fixAbsoluteURLs(keys);
         else
             showHelp();
+        long end = System.currentTimeMillis();
+        System.out.println("Total time: "+(end-start)/1000+" seconds");
     }
 
     private static final void showHelp() {
@@ -57,7 +63,6 @@ public class MakePathsRelative {
      * Finds all records, that contain absolute URL and prints them to screen.
      */
     private static final void findAndPrintAbsoluteURLs(List keys) throws Exception {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
         Connection con = null; Statement statement = null; ResultSet resultSet = null;
         int total = 0;
         try {
@@ -92,7 +97,6 @@ public class MakePathsRelative {
      * Finds all records, that contain absolute URL and makes them relative.
      */
     private static final void fixAbsoluteURLs(List keys) throws Exception {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
         Connection con = null; Statement statement = null; PreparedStatement prepared = null; ResultSet resultSet = null;
         int total = 0, skipped = 0;
 
@@ -156,14 +160,13 @@ public class MakePathsRelative {
      * Finds all records.
      * @return list of Integers
      */
-    private static final List findAllRecords() throws Exception {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+    private static final List findMatchingRows(String table) throws Exception {
         Connection con = null; Statement statement = null; ResultSet resultSet = null;
         List result = new ArrayList();
         try {
             con = persistance.getSQLConnection();
             statement = con.createStatement();
-            resultSet = statement.executeQuery("select * from zaznam");
+            resultSet = statement.executeQuery("select cislo from "+table+" where data like '%=\"http://www.abclinuxu.cz%' or data like '%=\"http://abclinuxu.cz%'");
             while ( resultSet.next() ) {
                 Integer id = new Integer(resultSet.getInt(1));
                 result.add(id);
