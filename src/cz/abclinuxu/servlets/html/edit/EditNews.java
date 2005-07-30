@@ -164,17 +164,12 @@ public class EditNews implements AbcAction {
 
         persistance.create(item);
 
-        Element element = (Element) item.getData().selectSingleNode("/data/title");
-        String url = UrlUtils.PREFIX_NEWS + "/" + URLManager.enforceLastURLPart(element.getTextTrim());
-        url = URLManager.protectFromDuplicates(url);
-
         Relation relation = new Relation(new Category(Constants.CAT_NEWS_POOL),item,Constants.REL_NEWS_POOL);
-        relation.setUrl(url);
         persistance.create(relation);
         relation.getParent().addChildRelation(relation);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, url);
+        urlUtils.redirect(response, UrlUtils.PREFIX_NEWS+"/show/"+relation.getId());
         return null;
     }
 
@@ -231,8 +226,6 @@ public class EditNews implements AbcAction {
             return FMTemplateSelector.select("EditNews", "edit", env, request);
         }
 
-        // todo pokud amina zmeni titulek u cekajici zpravicky, asi dava smysl zmenit url
-
         persistance.update(item);
         User user = (User) env.get(Constants.VAR_USER);
         AdminLogger.logEvent(user, "  edit | news "+relation.getId());
@@ -262,6 +255,11 @@ public class EditNews implements AbcAction {
         element.setText(new Integer(user.getId()).toString());
         persistance.update(item);
 
+        element = (Element) item.getData().selectSingleNode("/data/title");
+        String url = UrlUtils.PREFIX_NEWS + "/" + URLManager.enforceLastURLPart(element.getTextTrim());
+        url = URLManager.protectFromDuplicates(url);
+        relation.setUrl(url);
+
         relation.getParent().removeChildRelation(relation);
         relation.getParent().setId(Constants.CAT_NEWS);
         relation.setUpper(Constants.REL_NEWS);
@@ -272,7 +270,6 @@ public class EditNews implements AbcAction {
         FeedGenerator.updateNews();
         VariableFetcher.getInstance().refreshNews();
 
-        String url = (relation.getUrl() != null) ? relation.getUrl() : "/zpravicky/show/" + relation.getId();
         urlUtils.redirect(response, url);
         return null;
     }
