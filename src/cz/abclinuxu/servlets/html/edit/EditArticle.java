@@ -15,11 +15,13 @@ import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.freemarker.FMUtils;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
@@ -198,6 +200,11 @@ public class EditArticle implements AbcAction {
         try {
             persistance.create(item);
             Relation relation = new Relation(upper.getChild(),item,upper.getId());
+            if (upper.getId() != Constants.REL_ARTICLEPOOL) {
+                String url = getUrl(item, upper.getId(), persistance);
+                if (url != null)
+                    relation.setUrl(url);
+            }
             persistance.create(relation);
             relation.getParent().addChildRelation(relation);
 
@@ -596,6 +603,25 @@ public class EditArticle implements AbcAction {
         Element element = DocumentHelper.makeElement(item.getData(), "/data/author");
         element.setText(String.valueOf(author.getId()));
         return true;
+    }
+
+    /**
+     * Gets URL for specified article.
+     * @param item article
+     * @param upper id of upper relation (section)
+     * @param persistance
+     */
+    public static String getUrl(Item item, int upper, Persistance persistance) {
+        if (upper == 0)
+            return null;
+        Relation parentRelation = (Relation) persistance.findById(new Relation(upper));
+        if (parentRelation.getUrl() == null)
+            return null;
+
+        String title = Tools.xpath(item, "data/name");
+        String url = parentRelation.getUrl() + "/" + URLManager.enforceLastURLPart(title);
+        url = URLManager.protectFromDuplicates(url);
+        return url;
     }
 
     /**

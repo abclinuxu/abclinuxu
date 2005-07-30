@@ -12,8 +12,7 @@ import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.persistance.extra.LimitQualifier;
 import cz.abclinuxu.persistance.extra.Qualifier;
-import cz.abclinuxu.servlets.utils.url.URLManager;
-import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.servlets.html.edit.EditArticle;
 
 import java.util.Iterator;
 import java.util.List;
@@ -41,31 +40,18 @@ public class GenerateUrlForArticles {
     }
 
     private static int setUrl(List items) {
-        Relation relation, parentRelation;
-        Item item;
-        String title;
-        int count = 0, upper;
+        Relation relation;
+        String url;
+        int count = 0;
         for ( Iterator iter = items.iterator(); iter.hasNext(); ) {
             relation = (Relation) iter.next();
             if (relation.getUrl()!=null)
                 continue;
 
-            upper = relation.getUpper();
-            if (upper==0) {
-//                System.out.println("clanek "+relation.getId()+" nema definovaneho predka");
+            url = EditArticle.getUrl((Item) relation.getChild(), relation.getUpper(), persistance);
+            if (url==null)
                 continue;
-            }
-            parentRelation = (Relation) persistance.findById(new Relation(upper));
-            if (parentRelation.getUrl()==null) {
-//                System.out.println("clanek " + relation.getId() + " ma predka "+upper+" bez relace s url");
-                continue;
-            }
-
-            item = (Item) persistance.findById(relation.getChild());
-            title = Tools.xpath(item, "data/name");
-            String url = parentRelation.getUrl() + "/" + URLManager.enforceLastURLPart(title);
-            url = URLManager.protectFromDuplicates(url);
-
+            
             relation.setUrl(url);
             persistance.update(relation);
             count++;

@@ -11,6 +11,7 @@ import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.html.edit.EditArticle;
 import cz.abclinuxu.utils.Misc;
 
 import java.util.List;
@@ -59,6 +60,14 @@ public class ArticlePoolMonitor extends TimerTask {
 
                         element.detach();
                         persistance.update(item);
+
+                        if (relation.getUrl() == null) {
+                            String url = EditArticle.getUrl(item, section.getId(), persistance);
+                            if (url != null) {
+                                relation.setUrl(url);
+                                persistance.update(relation);
+                            }
+                        }
 
                         relation.getParent().removeChildRelation(relation);
                         relation.setParent(section.getChild());
