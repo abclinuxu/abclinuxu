@@ -43,12 +43,27 @@ public class MakePathsRelative {
         }
 
         long start = System.currentTimeMillis();
-        List keys = findMatchingRows("zaznam");
-        if ( "--find".equalsIgnoreCase(args[0]) )
-            findAndPrintAbsoluteURLs(keys);
-        else if ( "--fix".equalsIgnoreCase(args[0]) )
-            fixAbsoluteURLs(keys);
-        else
+        if ( "--find".equalsIgnoreCase(args[0]) ) {
+            List keys = findMatchingRows("zaznam");
+            int totalRecords = findAndPrintAbsoluteURLs("zaznam", keys);
+            keys = findMatchingRows("polozka");
+            int totalItems = findAndPrintAbsoluteURLs("polozka", keys);
+            keys = findMatchingRows("kategorie");
+            int totalCategories = findAndPrintAbsoluteURLs("kategorie", keys);
+            System.out.println("Total number of matching records: " + totalRecords);
+            System.out.println("Total number of matching items: " + totalItems);
+            System.out.println("Total number of matching categories: " + totalCategories);
+        } else if ( "--fix".equalsIgnoreCase(args[0]) ) {
+            List keys = findMatchingRows("zaznam");
+            int totalRecords = fixAbsoluteURLs("zaznam", keys);
+            keys = findMatchingRows("polozka");
+            int totalItems = fixAbsoluteURLs("polozka", keys);
+            keys = findMatchingRows("kategorie");
+            int totalCategories = fixAbsoluteURLs("kategorie", keys);
+            System.out.println("Total number of converted URLs in records: " + totalRecords);
+            System.out.println("Total number of converted URLs in items: " + totalItems);
+            System.out.println("Total number of converted URLs in categories: " + totalCategories);
+        } else
             showHelp();
         long end = System.currentTimeMillis();
         System.out.println("Total time: "+(end-start)/1000+" seconds");
@@ -60,9 +75,10 @@ public class MakePathsRelative {
     }
 
     /**
-     * Finds all records, that contain absolute URL and prints them to screen.
+     * Finds all rows, that contain absolute URL and prints them to screen.
+     * @return number of matching rows
      */
-    private static final void findAndPrintAbsoluteURLs(List keys) throws Exception {
+    private static final int findAndPrintAbsoluteURLs(String table, List keys) throws Exception {
         Connection con = null; Statement statement = null; ResultSet resultSet = null;
         int total = 0;
         try {
@@ -72,7 +88,7 @@ public class MakePathsRelative {
 
             for ( Iterator iter = keys.iterator(); iter.hasNext(); ) {
                 int key = ((Integer) iter.next()).intValue();
-                resultSet = statement.executeQuery("select data from zaznam where cislo="+key);
+                resultSet = statement.executeQuery("select data from "+table+" where cislo="+key);
                 if (! resultSet.next() )
                     continue;
                 value = resultSet.getString(1);
@@ -81,38 +97,38 @@ public class MakePathsRelative {
                 int position = 0;
                 while (reAbsoluteURL.match(stringIter,position)) {
                     position = reAbsoluteURL.getParenEnd(0);
-                    System.out.println("Record "+key+" contains absolute URL: "+reAbsoluteURL.getParen(0));
+                    System.out.println(table+" "+key+": "+reAbsoluteURL.getParen(0));
                     total++;
                 }
 
                 resultSet.close(); resultSet = null;
             }
+            return total;
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
-        System.out.println("Total number of absolute URLS: "+total);
     }
 
     /**
-     * Finds all records, that contain absolute URL and makes them relative.
+     * Finds all rows, that contain absolute URL and makes them relative.
+     * @return number of fixed rows
      */
-    private static final void fixAbsoluteURLs(List keys) throws Exception {
+    private static final int fixAbsoluteURLs(String table, List keys) throws Exception {
         Connection con = null; Statement statement = null; PreparedStatement prepared = null; ResultSet resultSet = null;
-        int total = 0, skipped = 0;
+        int total = 0, position = 0, start = 0, key = 0;
 
         log.info("Fix absolute paths invoked by user "+System.getProperty("user.name"));
 
         try {
             con = persistance.getSQLConnection();
             statement = con.createStatement();
-            prepared = con.prepareStatement("update zaznam set data=?, zmeneno=zmeneno where cislo=?");
-            int position = 0, start = 0, key = 0;
+            prepared = con.prepareStatement("update "+table+" set data=?, zmeneno=zmeneno where cislo=?");
             String value = null;
 
             for ( Iterator iter = keys.iterator(); iter.hasNext(); ) {
                 try {
                     key = ((Integer) iter.next()).intValue();
-                    resultSet = statement.executeQuery("select data from zaznam where cislo="+key);
+                    resultSet = statement.executeQuery("select data from " + table + " where cislo=" + key);
                     if (! resultSet.next() )
                         continue;
                     value = resultSet.getString(1);
@@ -131,29 +147,28 @@ public class MakePathsRelative {
                             sb.append(stringIter.substring(position));
                             total++;
                         } catch (Exception e) {
-                            log.error("position="+position+", start="+start, e);
+                            log.error(table + " " + key + ", position="+position+", start="+start, e);
                             System.exit(1);
                         }
 
                         prepared.setString(1,sb.toString());
                         prepared.setInt(2,key);
                         if ( prepared.executeUpdate()!=1 )
-                            System.out.println("Failed to update Record "+key);
+                            System.out.println("Failed to update "+table + " " + key);
                         else
-                            log.info("Converted absolute URLs to relative in Record "+key);
-                    } else skipped++;
+                            log.info(table+" "+key+" fixed absolute url");
+                    }
 
                     resultSet.close(); resultSet = null;
                 } catch (Exception e) {
-                    log.error("Error on convertion of Record "+key, e);
+                    log.error("Error on convertion of " + table + " " + key, e);
                 }
             }
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
-        log.info("Total number of converted Records: "+total);
-        System.out.println("Total number of converted Records: "+total);
-        System.out.println("Total number of skipped Records: "+skipped);
+        log.info("Total number of converted "+table+"s: "+total);
+        return total;
     }
 
     /**
