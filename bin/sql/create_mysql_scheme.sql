@@ -23,7 +23,7 @@ ALTER TABLE uzivatel ADD INDEX in_nick (prezdivka);
 CREATE TABLE kategorie (
  cislo INT AUTO_INCREMENT PRIMARY KEY,  -- jednoznacny identifikator
  typ SMALLINT,                          -- typ kategorie
- podtyp VARCHAR(30) NULL,               -- podtyp 
+ podtyp VARCHAR(30) NULL,               -- podtyp
  data TEXT NOT NULL,                    -- XML s nazvem, ikonou, poznamkou ...
  pridal INT(6) NOT NULL,                -- odkaz na uzivatele
  vytvoreno DATETIME,       -- cas vytvoreni
@@ -38,7 +38,7 @@ ALTER TABLE kategorie ADD INDEX in_podtyp (podtyp);
 CREATE TABLE polozka (
  cislo INT AUTO_INCREMENT PRIMARY KEY,  -- jednoznacny identifikator
  typ SMALLINT,                          -- typ polozky (druh, novinka, ..)
- podtyp VARCHAR(30) NULL,               -- podtyp 
+ podtyp VARCHAR(30) NULL,               -- podtyp
  data TEXT NOT NULL,                    -- XML s nazvem, ikonou, poznamkou ...
  pridal INT(6) NOT NULL,                -- odkaz na uzivatele
  vytvoreno DATETIME,       -- cas vytvoreni
@@ -56,7 +56,7 @@ ALTER TABLE polozka ADD INDEX in_podtyp (podtyp);
 CREATE TABLE zaznam (
  cislo INT AUTO_INCREMENT PRIMARY KEY,  -- jednoznacny identifikator
  typ SMALLINT,                          -- typ zaznamu (HW, SW, clanek ..)
- podtyp VARCHAR(30) NULL,               -- podtyp 
+ podtyp VARCHAR(30) NULL,               -- podtyp
  data LONGTEXT NOT NULL,                    -- XML s nazvem, poznamkou ...
  pridal INT(6) NOT NULL,                -- odkaz na uzivatele
  vytvoreno DATETIME,       -- cas vytvoreni
@@ -153,7 +153,7 @@ CREATE TABLE citac (
  cislo MEDIUMINT NOT NULL,             -- id predka
  soucet MEDIUMINT                      -- kolikrat byl precten
 );
-
+ALTER TABLE citac ADD INDEX in_citac (typ,cislo);
 
 -- statistiky pouzivani odkazu
 CREATE TABLE presmerovani (
