@@ -1,7 +1,7 @@
-<#include "../macros.ftl">
+<#import "../macros.ftl" as lib>
 <#include "../header.ftl">
 
-<@showParents>
+<@lib.showParents/>
 
 <#if TOOL.xpath(CATEGORY,"data/note")?exists>
  <p class="note">${TOOL.render(TOOL.xpath(CATEGORY,"data/note"),USER?if_exists)}</p>
@@ -9,8 +9,8 @@
 
 <#if CHILDREN.article?exists>
  <#list SORT.byDate(CHILDREN.article, "DESCENDING") as clanek>
-  <@showArticle(clanek)>
-  <#if clanek_has_next><@separator><#else><@doubleSeparator></#if>
+  <@lib.showArticle clanek/>
+  <#if clanek_has_next><@lib.separator/><#else><@lib.doubleSeparator/></#if>
  </#list>
  <br>
 </#if>
@@ -51,11 +51,6 @@
   </a></li>
  </#list>
  </ul>
-</#if>
-
-
-<#if CHILDREN.discussion?exists>
- <@showDiscussions(CHILDREN.discussion)>
 </#if>
 
 <#include "../footer.ftl">

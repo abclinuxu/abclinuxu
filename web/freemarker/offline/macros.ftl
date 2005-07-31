@@ -1,14 +1,12 @@
 <#macro showArticle(relation)>
- <#local clanek=relation.child>
- <#local autor=TOOL.createUser(TOOL.xpath(clanek,"/data/author"))>
- <#local tmp=TOOL.groupByType(clanek.children)>
+ <#local clanek=relation.child,
+        autor=TOOL.createUser(TOOL.xpath(clanek,"/data/author")),
+        tmp=TOOL.groupByType(clanek.children)>
  <#if tmp.discussion?exists>
   <#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])>
  </#if>
+ <h1 class="st_nadpis"><a href="../../${DUMP.getFile(relation.id)}">${TOOL.xpath(clanek,"data/name")}</a></h1>
  <p>
-  <a class="nadpis_out" href="../${DUMP.getFile(relation.id)}">
-   ${TOOL.xpath(clanek,"data/name")}
-  </a><br>
   <span class="barva">
    ${DATE.show(clanek.created, "CZ_FULL")} |
    <a href="http://www.abclinuxu.cz/Profile/${autor.id}">${autor.name}</a>
@@ -20,77 +18,18 @@
  <p class="barva">
   Pøeèteno: ${TOOL.getCounterValue(clanek)}x
   <#if diz?exists>
-   | <a href="../${DUMP.getFile(diz.relationId)}">Komentáøù: ${diz.responseCount}</a>
-   <#if diz.responseCount gt 0>, poslední ${DATE.show(diz.updated, "CZ_FULL")}</#if>
+   | <a href="../../${DUMP.getFile(diz.relationId)}">Komentáøù: ${diz.responseCount}</a>
   </#if>
  </p>
 </#macro>
 
-<#macro separator>
- <img src="/images/site/sedybod.gif" width="100%" height="1" border="0" alt="---------------------------">
+<#macro separator double=false>
+ <img src="/images/site/sedybod.gif" width="100%" height="1" border="0" alt="--------------------"><br>
+ <#if double><img src="/images/site/sedybod.gif" width="100%" height="1" border="0" alt="" vspace="1"><br></#if>
 </#macro>
 
 <#macro doubleSeparator>
- <img src="/images/site/sedybod.gif" width="100%" height="1" border="0" alt=""><br>
- <img src="/images/site/sedybod.gif" width="100%" height="1" border="0" alt="" vspace="1"><br>
-</#macro>
-
-<#macro showDiscussions(dizs)>
- <table width="100%" cellspacing="0" cellpadding="1" border="0">
-  <tr>
-   <td colspan="3" class="cerna2">
-    <strong>Diskuse</strong>
-   </td>
-  </tr>
-  <tr>
-   <td class="seda1"><span class="piditucna">Dotaz</span></td>
-   <td class="seda1" align="center"><span class="piditucna">Odpovìdí</span></td>
-   <td class="seda1" align="center"><span class="piditucna">Poslední</span></td>
-  </tr>
-  <#list SORT.byDate(TOOL.analyzeDiscussions(dizs),"DESCENDING") as diz>
-   <tr>
-    <td>
-     <a href="../${DUMP.getFile(diz.relationId)}">${TOOL.limit(TOOL.xpath(diz.discussion,"data/title"),60," ..")}</a>
-    </td>
-    <td align="center"><span class="pidi">${diz.responseCount}</span></td>
-    <td align="center"><span class="pidi">${DATE.show(diz.updated,"CZ_FULL")}</span></td>
-   </tr>
-   <tr><td colspan="3"><#if diz_has_next><@separator><#else><@doubleSeparator></#if></td></tr>
-  </#list>
-
- </table>
-</#macro>
-
-<#macro showComment(comment dizId relId showControls) >
- <p class="diz_header">
-  <span class="diz_header_prefix">Datum:</span> ${DATE.show(comment.created,"CZ_FULL")}<br>
-  <span class="diz_header_prefix">Od:</span>
-  <#if comment.author?exists>
-   <#local who=TOOL.sync(comment.author)>
-   <a href="http://www.abclinuxu.cz/Profile/${who.id}">${who.name}</a><br>
-  <#else>
-   ${TOOL.xpath(comment.data,"author")}<br>
-  </#if>
-  <span class="diz_header_prefix">Titulek:</span> ${TOOL.xpath(comment.data,"title")}<br>
- </p>
-  <#if TOOL.xpath(comment.data,"censored")?exists>
-   <p>Na¹i administrátoøi shledali tento pøíspìvek závadným.</p>
-  <#else>
-   <p>${TOOL.render(TOOL.xpath(comment.data,"text"),USER?if_exists)}</p>
-  </#if>
-</#macro>
-
-<#macro showThread(diz level dizId relId)>
- <#local space=level*15>
- <div style="padding-left: ${space}pt">
-  <@showComment(diz dizId relId true)>
- </div>
- <#if diz.children?exists>
-  <#local level2=level+1>
-  <#list diz.children as child>
-   <@showThread(child level2 dizId relId)>
-  </#list>
- </#if>
+ <@separator double=true/>
 </#macro>
 
 <#macro showParents>
@@ -110,5 +49,58 @@
  </table>
 </#macro>
 
-<#macro showPoll(poll url)>
+<#macro showThread(comment level dizId relId showControls extra...)>
+ <div class="ds_hlavicka">
+  <a name="${comment.id}"></a>
+  ${DATE.show(comment.created,"CZ_FULL")}
+  <#if comment.author?exists>
+   <#local who=TOOL.sync(comment.author)>
+   <a href="http://www.abclinuxu.cz/Profile//Profile/${who.id}">${who.nick?default(who.name)}</a>
+   <#local city=TOOL.xpath(who,"//personal/city")?default("UNDEF")><#if city!="UNDEF"> | ${city}</#if>
+  <#else>
+   ${TOOL.xpath(comment.data,"author")?if_exists}
+  </#if><br>
+  ${TOOL.xpath(comment.data,"title")?if_exists}<br>
+  <#if (comment.parent>0)><a href="#${comment.parent}" title="Skoèit na komentáø o jednu úroveò vý¹e">Vý¹e</a> |</#if>
+  <a onClick="schovej_vlakno(${comment.id})" id="a${comment.id}" title="Schová nebo rozbalí celé vlákno">Sbalit</a>
+ </div>
+ <div id="div${comment.id}">
+  <#if TOOL.xpath(comment.data,"censored")?exists>
+     <@showCensored comment, dizId, relId/>
+  <#else>
+   <div class="ds_text">
+     ${TOOL.render(TOOL.element(comment.data,"text"),USER?if_exists)}
+   </div>
+  </#if>
+  <#local level2=level+1>
+  <div style="padding-left: 15pt">
+   <#list comment.children?if_exists as child>
+    <@showThread child, level2, dizId, relId, showControls, extra[0]?if_exists />
+   </#list>
+  </div>
+ </div>
+</#macro>
+
+<#macro showCensored(comment dizId relId)>
+    <p class="cenzura">
+        Ná¹ administrátor shledal tento pøíspìvek závadným nebo nevyhovujícím zamìøení portálu.
+        <#assign message = TOOL.xpath(comment.data,"censored")?if_exists>
+        <#if message?has_content><br>${message}</#if>
+    </p>
+</#macro>
+
+<#macro month (month)>
+    <#if month=="1">leden
+    <#elseif month=="2">únor
+    <#elseif month=="3">bøezen
+    <#elseif month=="4">duben
+    <#elseif month=="5">kvìten
+    <#elseif month=="6">èerven
+    <#elseif month=="7">èervenec
+    <#elseif month=="8">srpen
+    <#elseif month=="9">záøí
+    <#elseif month=="10">øíjen
+    <#elseif month=="11">listopad
+    <#elseif month=="12">prosinec
+    </#if>
 </#macro>

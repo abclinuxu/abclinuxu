@@ -1,7 +1,7 @@
-<#include "../macros.ftl">
+<#import "../macros.ftl" as lib>
 <#include "../header.ftl">
 
-<@showParents>
+<@lib.showParents />
 
 <#assign who=TOOL.createUser(ITEM.owner)>
 <p>
@@ -9,16 +9,9 @@
  dne ${DATE.show(ITEM.created,"CZ_FULL")}.
 </p>
 
-<p>
- Máte-li doplòující informace, mù¾ete
- <a href="http://www.abclinuxu.cz/hardware/edit/${REL_ITEM.id}?action=addRecord}">pøidat</a>
- dal¹í záznam.
-</p>
-
 <#assign RECORDS = CHILDREN.record>
 <#list RECORDS as REL_RECORD>
- <#assign RECORD = REL_RECORD.child>
- <#assign who=TOOL.createUser(RECORD.owner)>
+ <#assign RECORD = REL_RECORD.child, who=TOOL.createUser(RECORD.owner)>
  <table cellspacing="0" border="1" cellpadding="5" width="100%">
   <caption>Záznam èíslo ${REL_RECORD_index+1}</caption>
   <tr>

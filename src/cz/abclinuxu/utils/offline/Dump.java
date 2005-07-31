@@ -59,18 +59,17 @@ public class Dump implements Configurable {
     public Dump() throws Exception {
         ConfigurationManager.getConfigurator().configureMe(this);
         persistance = PersistanceFactory.getPersistance();
-        FMUtils fmUtils = new FMUtils();
         String templateURI = AbcConfig.calculateDeployedPath("WEB-INF/conf/templates.xml");
         TemplateSelector.initialize(templateURI);
 
         df = new DecimalFormat("#####");
         df.setDecimalSeparatorAlwaysShown(false);
-        df.setMinimumIntegerDigits(5);
-        df.setMaximumIntegerDigits(5);
+        df.setMinimumIntegerDigits(6);
+        df.setMaximumIntegerDigits(6);
 
-        config = fmUtils.getConfiguration();
+        config = FMUtils.getConfiguration();
         config.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-        config.setTemplateUpdateDelay(100);
+        config.setTemplateUpdateDelay(10000);
         config.setSharedVariable(Constants.VAR_TOOL,new Tools());
         config.setSharedVariable(Constants.VAR_DATE_TOOL,new DateTool());
         config.setSharedVariable(Constants.VAR_SORTER,new Sorters2());
@@ -118,23 +117,19 @@ public class Dump implements Configurable {
     }
 
     /**
-     * Calculates filename and directory for relation.
-     * Algorithm is: directory is computed as
-     * relationId modulo 26 represented as ascii
-     * character (27%26=1 => 'a') a filename
-     * consists of string "relace" and relationId
-     * padded to 5 digits.
+     * Calculates file name including directories for relation.
+     * File name is equal to current directory plus computed file name.
      */
     File getFileName(Relation relation, File currentDir) {
         int id = relation.getId();
         StringBuffer sb = new StringBuffer();
-        sb.append((char)('a'+id%6));
+        sb.append((char)('a'+id%13));
+        sb.append('/');
         sb.append((char)('a'+id%26));
         File dir = new File(currentDir,sb.toString());
         dir.mkdirs();
 
         sb = new StringBuffer();
-        sb.append("relace");
         df.format(id,sb,new FieldPosition(0));
         sb.append(".html");
 
@@ -144,19 +139,14 @@ public class Dump implements Configurable {
     }
 
     /**
-     * Calculates filename and directory for relation.
-     * Algorithm is: directory is computed as
-     * relationId modulo 26 represented as ascii
-     * character (27%26=1 => 'a') a filename
-     * consists of string "relace" and relationId
-     * padded to 5 digits.
+     * Calculates file name including directories for relation.
      */
     public String getFile(int relationId) {
         StringBuffer sb = new StringBuffer();
-        sb.append((char)('a'+relationId%6));
+        sb.append((char) ('a' + relationId % 13));
+        sb.append('/');
         sb.append((char)('a'+relationId%26));
         sb.append(File.separatorChar);
-        sb.append("relace");
         df.format(relationId,sb,new FieldPosition(0));
         sb.append(".html");
 
@@ -175,7 +165,8 @@ public class Dump implements Configurable {
         List parents = persistance.findParents(relation);
         parents.add(relation);
         env.put(ShowObject.VAR_PARENTS,parents);
-        Tools.sync(item); env.put(ShowObject.VAR_ITEM,item);
+        Tools.sync(item);
+        env.put(ShowObject.VAR_ITEM,item);
         env.put(ShowObject.VAR_UPPER,relation);
         String name = null;
 
@@ -211,8 +202,8 @@ public class Dump implements Configurable {
 
             if ( record.getType()== Record.HARDWARE )
                 name = FMTemplateSelector.select("ShowObject","hardware", env, "offline");
-            else if ( record.getType()== Record.SOFTWARE )
-                name = FMTemplateSelector.select("ShowObject","software", env, "offline");
+            else
+                return;
 
             FMUtils.executeTemplate(name,env,file);
         }

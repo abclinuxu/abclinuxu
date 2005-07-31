@@ -1,7 +1,7 @@
-<#include "../macros.ftl">
+<#import "../macros.ftl" as lib>
 <#include "../header.ftl">
 
-<@showParents>
+<@lib.showParents />
 
 <#assign autor=TOOL.createUser(TOOL.xpath(ITEM,"/data/author"))>
 
@@ -18,11 +18,13 @@ ${DATE.show(ITEM.created,"CZ_FULL")} |
 
 ${TOOL.render(TOOL.xpath(CHILDREN.record[0].child,"/data/content"),USER?if_exists)}
 
-<#if CHILDREN.discussion?exists && CHILDREN.discussion[0].child.children?size gt 0>
-<h1>Diskuse k tomuto èlánku</h1>
+
+<#if CHILDREN.discussion?exists>
+ <h1>Diskuse k tomuto èlánku</h1>
  <#assign DISCUSSION=CHILDREN.discussion[0].child>
- <#list TOOL.createDiscussionTree(DISCUSSION) as thread>
-  <@showThread(thread 0 DISCUSSION.id RELATION.id)>
+ <#assign diz = TOOL.createDiscussionTree(DISCUSSION,"no",true)>
+ <#list diz.threads as thread>
+  <@lib.showThread thread, 0, DISCUSSION.id, CHILDREN.discussion[0].id, false />
  </#list>
 </#if>
 

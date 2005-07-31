@@ -1,17 +1,23 @@
-<#include "../macros.ftl">
+<#import "../macros.ftl" as lib>
 <#include "../header.ftl">
 
-<@showParents>
+<@lib.showParents />
 
-<#if TOOL.xpath(ITEM,"data/title")?exists>
- <h1>Otázka</h1>
- <@showComment(ITEM ITEM.id RELATION.id true)>
- <@doubleSeparator()>
- <h1>Odpovìdi</h1>
+<#assign DIZ = TOOL.createDiscussionTree(ITEM,USER?if_exists,true)>
+<#assign is_question=TOOL.xpath(ITEM,"data/title")?exists>
+
+<#if is_question>
+ <h1 class="st_nadpis">Otázka</h1>
+ <@lib.showThread TOOL.createComment(ITEM), 0, ITEM.id, RELATION.id, false />
+ <#if DIZ?size==0>
+    <p>Na otázku zatím nikdo bohu¾el neodpovìdìl.</p>
+ <#else>
+     <p><b>Odpovìdi</b></p>
+ </#if>
 </#if>
 
-<#list TOOL.createDiscussionTree(ITEM) as thread>
- <@showThread(thread 0 ITEM.id RELATION.id)>
+<#list DIZ.threads as thread>
+ <@lib.showThread thread, 0, ITEM.id, RELATION.id, false />
 </#list>
 
 <#include "../footer.ftl">
