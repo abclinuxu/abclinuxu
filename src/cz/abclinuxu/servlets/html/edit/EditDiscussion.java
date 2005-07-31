@@ -9,6 +9,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.Comment;
@@ -208,6 +209,15 @@ public class EditDiscussion implements AbcAction {
 
         persistance.create(discussion);
         Relation relChild = new Relation(relation.getChild(), discussion, relation.getId());
+        String url = relation.getUrl();
+        if (url!=null) {
+            if (url.charAt(url.length()-1)!='/') // zadne url by nemelo koncit na /
+                url = url+'/';
+            url += "diskuse";
+            url = URLManager.protectFromDuplicates(url);
+            relChild.setUrl(url);
+        }
+
         persistance.create(relChild);
         relChild.getParent().addChildRelation(relChild);
         return relChild;
