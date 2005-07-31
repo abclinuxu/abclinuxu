@@ -51,6 +51,7 @@ public class URLManager implements Configurable {
 
         String fixedURL = DiacriticRemover.getInstance().removeDiacritics(url);
         fixedURL = new RE(reInvalidCharacters, RE.REPLACE_ALL).subst(fixedURL, "-");
+        fixedURL = fixedURL.toLowerCase();
         while(fixedURL.endsWith("-"))
             fixedURL = fixedURL.substring(0, fixedURL.length()-1);
 
