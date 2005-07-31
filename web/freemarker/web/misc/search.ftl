@@ -4,6 +4,16 @@
 
 <script language="javascript1.2" type="text/javascript">
     stav = true;
+    function toggle(sender) {
+        stav = !stav;
+        if (sender.form.elements.length) {
+            for (var i = 0; i < sender.form.elements.length; i++) {
+                if (sender.form.elements[i].type == 'checkbox') {
+                    sender.form.elements[i].checked = stav;
+                }
+            }
+        }
+    }
 </script>
 
 <form action="/Search" method="GET">
@@ -28,7 +38,7 @@
                     <td><label><input type="checkbox" name="type" value="software" <#if TYPES.software>checked</#if>>Software</label></td>
                     <td><label><input type="checkbox" name="type" value="ovladac" <#if TYPES.driver>checked</#if>>Ovladaèe</label></td>
                     <td><label><input type="checkbox" name="type" value="pojem" <#if TYPES.dictionary>checked</#if>>Pojmy</label></td>
-                    <td><button type="button" onclick="toggle(this, stav)">V¹e/nic</button></td>
+                    <td><button type="button" onclick="toggle(this)">V¹e/nic</button></td>
                    </tr>
                   </table>
               <#else>
@@ -38,7 +48,15 @@
             <td align="right" valign="middle">
                 <a href="http://lucene.apache.org/java/docs/" title="Knihovna pro fulltextové hledání"><img
                 src="/images/site2/lucene.gif" width="150" height="23" alt="Lucene" border="0"></a>
-                <script src="/data/site/search.js" type="text/javascript"></script>
+                <script language="javascript1.2" type="text/javascript">
+                    if ((typeof window.sidebar == "object") && (typeof window.sidebar.addPanel == "function")) {
+                        moz_src = "http://www.abclinuxu.cz/data/site/abclinuxu.src";
+                        moz_ico = "http://www.abclinuxu.cz/images/site/abclinuxu.png";
+                        moz_tit = "Portal ABC Linuxu";
+                        moz_cat = "Web";
+                        document.write("<br><img src=\"/images/site/mozilla.gif\" width=\"16\" height=\"16\"> <a href=\"javascript:window.sidebar.addSearchEngine(moz_src, moz_ico, moz_tit, moz_cat);\" title=\"Pøidat vyhledávací modul pro Mozillu\">Mozilla/Firefox</a>&nbsp;(<a href=\"http://www.czilla.cz/sidebars/search.html\" title=\"Více o vyhledávacích modulech pro Mozillu\">?</a>)");
+                    }
+                </script>
                 <br><a href="/doc/napoveda/hledani">Nápovìda k hledání</a>
             </td>
         </tr>
@@ -55,7 +73,7 @@
         <p>
             <!--m--><a href="${doc.url}">${doc.title?default(doc.url)}</a><!--n-->
             <#if doc.fragments?exists>
-                <br>${doc.fragments}
+                <br><span class="cl_inforadek">${doc.fragments}</span>
             </#if>
             <br>
             <#if doc.typ='sekce'>Sekce
