@@ -25,12 +25,27 @@
     <#if (HARDWARE?size>0) >
         <div class="s_nad_h1"><div class="s_nad_pod_h1">
             <a class="info" href="#">?<span class="tooltip">Obrovská databáze znalostí o hardwaru</span></a>
-            <h1><a href="/hardware/dir/1">Hardware</a></h1>
+            <h1><a href="/hardware">Hardware</a></h1>
         </div></div>
         <div class="s_sekce">
             <ul>
             <#list HARDWARE as rel>
                  <li><a href="/hardware/show/${rel.id}">${TOOL.xpath(rel.child,"data/name")}</a></li>
+            </#list>
+            </ul>
+        </div>
+    </#if>
+
+    <#assign FAQ = VARS.getFreshFaqs(USER?if_exists)>
+    <#if (FAQ?size>0) >
+        <div class="s_nad_h1"><div class="s_nad_pod_h1">
+            <a class="info" href="#">?<span class="tooltip">Odpovìdi na èasto kladené otázky</span></a>
+            <h1><a href="/faq">FAQ</a></h1>
+        </div></div>
+        <div class="s_sekce">
+            <ul>
+            <#list FAQ as rel>
+                 <li><a href="${rel.url}">${TOOL.xpath(rel.child,"data/title")}</a></li>
             </#list>
             </ul>
         </div>

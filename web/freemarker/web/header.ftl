@@ -63,6 +63,7 @@
 
 		<div class="za_mn">
 			<a href="/diskuse.jsp" class="za_mn_odkaz">Diskuse</a><!--
+			--><a href="/faq" class="za_mn_odkaz">FAQ</a><!--
 			--><a href="/hardware" class="za_mn_odkaz">Hardware</a><!--
 			--><a href="/clanky" class="za_mn_odkaz">Èlánky</a><!--
 			--><a href="/blog" class="za_mn_odkaz">Blogy</a><!--
@@ -220,9 +221,9 @@
                   <li><a href="/doc/portal/jine_pristupy">Titulky, PDA a RSS</a></li>
                   <li><a href="/clanky/show/64410">Staòte se autorem</a></li>
                   <li><a href="/kniha_navstev">Kniha náv¹tìv</a></li>
-                  <li><a href="http://abicko.stickfish.cz/bugzilla/">Bugzilla</a></li>
+                  <li><a href="http://bugzilla.stickfish.cz">Bugzilla</a></li>
                   <li><a href="/hardware/dir/3500">Vzkazy správcùm</a> (${VARS.counter.REQUESTS})</li>
-                  <li><a href="mailto:filip.korbel@stickfish.cz">Inzerce</a></li>
+                  <li><a href="mailto:reklama@stickfish.cz">Inzerce</a></li>
                   <#if USER?exists && USER.isMemberOf(11246)>
                    <li><a href="/system/todo">TODO (${VARS.counter.TODO?if_exists})</a></li>
                    <li><a href="/system">Sekce systém</a></li>
