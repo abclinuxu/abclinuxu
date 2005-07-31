@@ -41,6 +41,7 @@ public class EditRating implements AbcAction, Configurable {
 
     public static final int VALUE_MIN = 0;
     public static final int VALUE_MAX = 5;
+    public static final String USER_ACTION_RATING = "rating";
 
     public static final String PREF_MESSAGE_OK = "msg.ok";
     public static final String PREF_MESSAGE_NOT_LOGGED = "msg.not.logged";
@@ -103,10 +104,11 @@ public class EditRating implements AbcAction, Configurable {
         }
 
         SQLTool sqlTool = SQLTool.getInstance();
-        if (sqlTool.getUserAction(user.getId(), relationId, "rating")!=null) {
+        if (sqlTool.getUserAction(user.getId(), relationId, USER_ACTION_RATING)!=null) {
             ServletUtils.addError(Constants.ERROR_GENERIC, msgAlreadyRated, env, session);
             return false;
         }
+        sqlTool.insertUserAction(user.getId(), relationId, USER_ACTION_RATING);
 
         int sum = 0, count = 0;
         Element rating = (Element) object.selectSingleNode("rating[type/text()=\""+type+"\"]");
