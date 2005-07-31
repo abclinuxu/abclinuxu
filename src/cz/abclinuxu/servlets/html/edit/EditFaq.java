@@ -342,7 +342,7 @@ public class EditFaq implements AbcAction {
             url = URLManager.protectFromDuplicates(url);
             relation.setUrl(url);
         } catch (Exception e) {
-            ServletUtils.addError(PARAM_TEXT, e.getMessage(), env, null);
+            ServletUtils.addError(PARAM_URL, e.getMessage(), env, null);
             return false;
         }
         return true;
