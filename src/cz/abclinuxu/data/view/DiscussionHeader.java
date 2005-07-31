@@ -25,6 +25,7 @@ public class DiscussionHeader {
     public Date updated;
     public Date created;
     public String title;
+    public String url;
 
     public DiscussionHeader(Item discussion) {
         this.discussion = discussion;
@@ -52,5 +53,9 @@ public class DiscussionHeader {
 
     public String getTitle() {
         return title;
+    }
+
+    public String getUrl() {
+        return url;
     }
 }

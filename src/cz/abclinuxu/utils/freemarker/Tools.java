@@ -994,6 +994,7 @@ public class Tools implements Configurable {
         discussion.relationId = relation.getId();
         discussion.updated = item.getUpdated();
         discussion.created = item.getCreated();
+        discussion.url = relation.getUrl();
 
         Document data = item.getData();
         discussion.responseCount = Misc.parseInt(data.selectSingleNode("/data/comments").getText(),0);
