@@ -23,7 +23,7 @@ kde jsou v¹echny otázky øazeny nezávisle na sekci podle datumu
 poslední zmìny.
 </p>
 
-<table border="0" width="100%">
+<table border="0" class="siroka">
     <tr>
         <td>
             <a href="/faq/boot">Boot</a> (${SIZES("94492")?default(0)})

@@ -12,11 +12,12 @@
         autor=TOOL.createUser(TOOL.xpath(clanek,"/data/author")?default("5473")),
         thumbnail=TOOL.xpath(clanek,"/data/thumbnail")?default("UNDEF"),
         tmp=TOOL.groupByType(clanek.children),
-        rating=TOOL.ratingFor(clanek.data,"article")?default("UNDEF")
+        rating=TOOL.ratingFor(clanek.data,"article")?default("UNDEF"),
+	url=relation.url?default("/clanky/show/"+relation.id)
     >
     <#if tmp.discussion?exists><#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
     <#if thumbnail!="UNDEF"><div style="float:right;margin:0.8em 0.4em 0 0.4em">${thumbnail}</div></#if>
-    <h1 class="st_nadpis"><a href="/clanky/show/${relation.id}">${TOOL.xpath(clanek,"data/name")}</a></h1>
+    <h1 class="st_nadpis"><a href="${url}">${TOOL.xpath(clanek,"data/name")}</a></h1>
     <p>${TOOL.xpath(clanek,"/data/perex")}</p>
     <p class="cl_inforadek">${DATE.show(clanek.created, dateFormat[0])} |
         <a href="/Profile/${autor.id}">${autor.name}</a> | Pøeèteno: ${TOOL.getCounterValue(clanek)}x

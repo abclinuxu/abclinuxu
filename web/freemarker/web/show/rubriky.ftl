@@ -22,7 +22,7 @@
 <ul>
  <#list SORT.byName(CHILDREN) as relation>
   <li>
-   <a href="${URL.make("/dir/"+relation.id)}">${TOOL.childName(relation)}</a>
+   <a href="${relation.url?default("/clanky/dir/"+relation.id)}">${TOOL.childName(relation)}</a>
   </li>
  </#list>
 </ul>

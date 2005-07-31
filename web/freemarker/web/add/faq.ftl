@@ -16,7 +16,8 @@
 <p>
     Vyplòte jednotlivé polo¾ky formuláøe. U URL otázky zadejte jen poslední
     èást adresy za posledním lomítkem, nepou¾ívejte tedy ¾ádná lomítka.
-    V URL struènì shròte název otázky, pøièem¾ slova oddìlujte pomlèkou.
+    V URL struènì shròte název otázky, pøièem¾ slova oddìlujte pomlèkou,
+    nikoliv podtr¾ítkem.
     Dosáhnete tím lep¹ích výsledkù ve vyhledávaèích, tak¾e tuto otázka
     si pøeète více ètenáøù hledajících odpovìï na svùj problém. Do textu
     odpovìdi zadejte co nejpodrobnìj¹í a nejpøesnìj¹í odpovìï. Do souvisejících

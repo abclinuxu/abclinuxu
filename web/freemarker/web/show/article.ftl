@@ -54,24 +54,24 @@ ${TOOL.render(TEXT,USER?if_exists)}
 
 <div class="cl_perex">
   <#if RELATED?exists>
-   <h1 class="st_nadpis">Související èlánky</h1>
-   <div class="st_linky">
+   <h3>Související èlánky</h3>
+   <div class="s_sekce">
     <#list RELATED as link>
      <a href="${link.url}">${link.title}</a> ${link.description?if_exists}<br>
     </#list>
    </div>
   </#if>
   <#if RESOURCES?exists>
-  <h1 class="st_nadpis">Odkazy a zdroje</h1>
-   <div class="st_linky">
+   <h3>Odkazy a zdroje</h3>
+   <div class="s_sekce">
     <#list RESOURCES as link>
      <a href="${link.url}">${link.title}</a> ${link.description?if_exists}<br>
     </#list>
    </div>
   </#if>
   <#if SAME_SECTION_ARTICLES?exists>
-   <h1 class="st_nadpis">Dal¹í èlánky z této rubriky</h1>
-    <div class="st_linky">
+   <h3>Dal¹í èlánky z této rubriky</h3>
+    <div class="s_sekce">
      <#list SAME_SECTION_ARTICLES as relation>
        <a href="${relation.url?default("/clanky/show/"+relation.id)}">${TOOL.xpath(relation.child,"data/name")}</a><br>
      </#list>
@@ -90,7 +90,7 @@ ${TOOL.render(TEXT,USER?if_exists)}
     <#assign rating=TOOL.ratingFor(ITEM.data,"article")?default("UNDEF")>
 
     <div class="cl_rating">
-     <h1 class="st_nadpis">Hodnocení&nbsp;&nbsp;<iframe name="rating" width="300" frameborder="0" height="20" scrolling="no" class="rating"></iframe></h1>
+     <h3>Hodnocení&nbsp;&nbsp;<iframe name="rating" width="300" frameborder="0" height="20" scrolling="no" class="rating"></iframe></h3>
      <div class="hdn">
      <div class="text">Stav: <#if rating!="UNDEF">${rating.result?string["#0.00"]} <#else>bez hodnocení</#if></div>
      <div class="tpm">
@@ -117,7 +117,7 @@ ${TOOL.render(TEXT,USER?if_exists)}
 <#flush>
 
 <#if CHILDREN.discussion?exists>
- <h1 class="st_nadpis">Diskuse k tomuto èlánku</h1>
+ <h1>Diskuse k tomuto èlánku</h1>
  <#assign DISCUSSION=CHILDREN.discussion[0].child>
 
  <p class="monitor"><b>AbcMonitor</b> vám emailem za¹le upozornìní pøi zmìnì.

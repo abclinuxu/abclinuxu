@@ -12,27 +12,21 @@
         V této sekci nejsou zatím ¾ádné otázky.
     </p>
 <#else>
+    <ul>
     <#list QUESTIONS.data as relation>
-        <p>
-            <a href="${relation.url}">${TOOL.childName(relation)}</a>
-        </p>
+        <li><a href="${relation.url}">${TOOL.childName(relation)}</a></li>
     </#list>
+    </ul>
 </#if>
 
-<ul>
-    <li>
-        <a href="${URL.make("/faq/edit?action=add&amp;rid="+RELATION.id)}">Vlo¾it novou zodpovìzenou otázku</a>
-    </li>
-    <#if QUESTIONS.prevPage?exists >
-        <li>
-            <a href="${RELATION.url}?from=${QUESTIONS.prevPage.row}">Novìj¹í otázky</a>
-        </li>
-    </#if>
-    <#if nextPage?exists >
-        <li>
-            <a href="${RELATION.url}?from=${QUESTIONS.nextPage.row}">Star¹í otázky</a>
-        </li>
-    </#if>
-</ul>
+<p>
+<a href="${URL.make("/faq/edit?action=add&amp;rid="+RELATION.id)}">Vlo¾it novou zodpovìzenou otázku</a>
+<#if QUESTIONS.prevPage?exists >
+    <br /><a href="${RELATION.url}?from=${QUESTIONS.prevPage.row}">Novìj¹í otázky</a>
+</#if>
+<#if nextPage?exists >
+    &nbsp;--&nbsp;<a href="${RELATION.url}?from=${QUESTIONS.nextPage.row}">Star¹í otázky</a>
+</#if>
+</p>
 
 <#include "../footer.ftl">

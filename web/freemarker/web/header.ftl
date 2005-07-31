@@ -21,14 +21,18 @@
 
 <div style="height:0;">
 <#include "/include/pocitani2.txt">
-<#include "/include/pocitani1.txt"></div>
+<#include "/include/pocitani1.txt">
+</div>
 
 <#if IS_INDEX?exists>
-    <#include "/include/impact-hp.txt">
+<#include "/include/netmonitor_hp.txt">
+<#include "/include/impact-hp.txt">
 <#elseif URL.prefix=='/clanky'>
-    <#include "/include/impact-cl.txt">
+<#include "/include/netmonitor_ostatni.txt">
+<#include "/include/impact-cl.txt">
 <#else>
-    <#include "/include/impact-oth.txt">
+<#include "/include/netmonitor_ostatni.txt">
+<#include "/include/impact-oth.txt">
 </#if>
 
 <#import "macros.ftl" as lib>
@@ -215,8 +219,8 @@
                   <li><a href="/clanky/show/44049">Tým AbcLinuxu</a></li>
                   <li><a href="/doc/portal/jine_pristupy">Titulky, PDA a RSS</a></li>
                   <li><a href="/clanky/show/64410">Staòte se autorem</a></li>
-                  <li><a href="/clanky/show/44043">Pøehled zmìn na portálu</a></li>
                   <li><a href="/kniha_navstev">Kniha náv¹tìv</a></li>
+                  <li><a href="http://abicko.stickfish.cz/bugzilla/">Bugzilla</a></li>
                   <li><a href="/hardware/dir/3500">Vzkazy správcùm</a> (${VARS.counter.REQUESTS})</li>
                   <li><a href="mailto:filip.korbel@stickfish.cz">Inzerce</a></li>
                   <#if USER?exists && USER.isMemberOf(11246)>

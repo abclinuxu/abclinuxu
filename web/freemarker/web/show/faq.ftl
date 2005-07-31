@@ -41,14 +41,18 @@
 </div>
 
 <#if XML.data.links[0]?exists>
-    <h3>Související odkazy</h3>
-    <ul>
-        <#list XML.data.links.link as link>
-            <li>
-                <a href="${link.@url}">${link}</a>
-            </li>
-        </#list>
-    </ul>
+<div class="cl_perex">
+  <h3>Související odkazy</h3>
+    <div class="s_sekce">
+        <ul>
+	    <#list XML.data.links.link as link>
+    	        <li>
+        	    <a href="${link.@url}">${link}</a>
+        	</li>
+    	    </#list>
+	</ul>
+    </div>
+</div>
 </#if>
 
 <#include "../footer.ftl">
