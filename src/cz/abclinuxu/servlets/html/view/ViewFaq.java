@@ -18,13 +18,13 @@ import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.versioning.Versioning;
 import cz.abclinuxu.persistance.versioning.VersioningFactory;
 import cz.abclinuxu.persistance.versioning.VersionedDocument;
+import cz.abclinuxu.exceptions.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import org.dom4j.Element;
 import org.dom4j.io.DOMWriter;
@@ -49,11 +49,11 @@ public class ViewFaq implements AbcAction {
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID, Relation.class, params, request);
-        if (relation == null)
-            relation = new Relation(Constants.REL_FAQ);
-
+        if (relation==null)
+            throw new NotFoundException("Stránka nebyla nalezena.");
         Tools.sync(relation);
         env.put(ShowObject.VAR_RELATION, relation);
+
         if (relation.getChild() instanceof Category) {
             if (relation.getId()==Constants.REL_FAQ)
                 return processStart(request, env);
@@ -77,6 +77,7 @@ public class ViewFaq implements AbcAction {
      * Processes section with FAQ.
      */
     private String processSection(HttpServletRequest request, Relation relation, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
 
@@ -99,7 +100,7 @@ public class ViewFaq implements AbcAction {
         Paging paging = new Paging(questions, from, count, total);
         env.put(VAR_QUESTIONS, paging);
 
-        List parents = Collections.singletonList(relation);
+        List parents = persistance.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
         return FMTemplateSelector.select("ViewFaq", "list", env, request);
