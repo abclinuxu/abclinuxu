@@ -16,7 +16,6 @@ import java.util.Iterator;
  * including its data and information about data as whole.
  */
 public final class Paging {
-
     private Integer total;
     private Page currentPage;
     private int pageSize;
@@ -140,6 +139,27 @@ public final class Paging {
      */
     public int getPageSize() {
         return pageSize;
+    }
+
+    /**
+     * @return number of pages within this result set. If total is not set, null is returned.
+     */
+    public Integer getPageCount() {
+        if (total==null)
+            return null;
+        int count = total.intValue() / pageSize;
+        if (total.intValue() % pageSize != 0)
+            count++;
+        return new Integer(count);
+    }
+
+    /**
+     * @return index of page within the result set.
+     */
+    public Integer getPageIndex() {
+        int row = currentPage.getRow();
+        int index = row / pageSize;
+        return new Integer(index);
     }
 
     /**
