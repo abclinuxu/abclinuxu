@@ -21,7 +21,7 @@
  <#list SORT.byName(CHILDREN.category) as sekce>
   <#if sekce_index%3==0><tr></#if>
   <td width="33%">
-  <a href="../${DUMP.getFile(sekce.id)}">${TOOL.childName(sekce)}</a>
+  <a href="../../${DUMP.getFile(sekce.id)}">${TOOL.childName(sekce)}</a>
   </td>
   <#if sekce_index%3==2></tr></#if>
  </#list>
@@ -35,7 +35,7 @@
  <#list SORT.byName(CHILDREN.make) as polozka>
   <#if polozka_index%3==0><tr></#if>
   <td width="33%">
-  <a href="../${DUMP.getFile(polozka.id)}">${TOOL.childName(polozka)}</a>
+  <a href="../../${DUMP.getFile(polozka.id)}">${TOOL.childName(polozka)}</a>
   </td>
   <#if polozka_index%3==2></tr></#if>
  </#list>
@@ -46,7 +46,7 @@
 <#if CHILDREN.driver?exists>
  <ul>
  <#list SORT.byDate(CHILDREN.driver,"DESCENDING") as driver>
-  <li><a href="../${DUMP.getFile(driver.id)}">
+  <li><a href="../../${DUMP.getFile(driver.id)}">
    ${TOOL.childName(driver)}, verze ${TOOL.xpath(driver.child,"data/version")}
   </a></li>
  </#list>
