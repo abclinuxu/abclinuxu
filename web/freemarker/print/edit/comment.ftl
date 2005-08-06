@@ -17,7 +17,7 @@ zásady (psán velkými písmeny apod.), nevhodné HTML znaèky ..</p>
 
 <h1>Zde mù¾ete provést své úpravy</h1>
 
-<form action="${URL.make("/EditDiscussion")}" method="POST">
+<form action="${URL.make("/EditDiscussion")}" method="POST" name="form">
  <table cellpadding="5">
   <tr>
    <td class="required">Titulek</td>
@@ -45,6 +45,14 @@ zásady (psán velkými písmeny apod.), nevhodné HTML znaèky ..</p>
   <tr>
    <td class="required">Komentáø</td>
    <td>
+    <div class="form-edit">
+        <a href="javascript:insertAtCursor(document.form.text, '<p>', '</p>');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="Vlo¾it formátovaný text. Vhodné pouze pro konfiguraèní soubory èi výpisy.">&lt;pre&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.text, '<b>', '</b>');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
+        <a href="javascript:insertAtCursor(document.form.text, '<i>', '</i>');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
+        <a href="javascript:insertAtCursor(document.form.text, '<a href=&quot;&quot;>', '</a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
+    </div>
     <textarea name="text" cols="60" rows="20">${PARAMS.text?if_exists?html}</textarea>
     <div>Smíte pou¾ívat základní HTML znaèky. Pokud je nepou¾ijete,
     prázdné øádky budou nahrazeny novým odstavcem.</div>
