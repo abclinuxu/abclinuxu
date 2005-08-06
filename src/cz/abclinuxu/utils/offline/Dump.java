@@ -9,7 +9,7 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.cache.EmptyCache;
+import cz.abclinuxu.persistance.cache.LRUCache;
 import cz.abclinuxu.persistance.extra.LimitQualifier;
 import cz.abclinuxu.persistance.extra.Qualifier;
 import cz.abclinuxu.servlets.Constants;
@@ -64,7 +64,8 @@ public class Dump implements Configurable {
 
     public Dump() throws Exception {
         ConfigurationManager.getConfigurator().configureMe(this);
-        persistance = PersistanceFactory.getPersistance(EmptyCache.class);
+        persistance = PersistanceFactory.getPersistance();
+        persistance.setCache(new LRUCache(1000));
         sqlTool = SQLTool.getInstance();
         String templateURI = AbcConfig.calculateDeployedPath("WEB-INF/conf/templates.xml");
         TemplateSelector.initialize(templateURI);
@@ -76,7 +77,7 @@ public class Dump implements Configurable {
 
         config = FMUtils.getConfiguration();
         config.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-        config.setTemplateUpdateDelay(10000);
+        config.setTemplateUpdateDelay(1000);
         config.setSharedVariable(Constants.VAR_TOOL,new Tools());
         config.setSharedVariable(Constants.VAR_DATE_TOOL,new DateTool());
         config.setSharedVariable(Constants.VAR_SORTER,new Sorters2());
@@ -92,7 +93,7 @@ public class Dump implements Configurable {
         long start = System.currentTimeMillis();
         dumpTree(drivers, dirRoot, UrlUtils.PREFIX_DRIVERS);
         dumpTree(hardware, dirRoot, UrlUtils.PREFIX_HARDWARE);
-//        dumpArticles(dirRoot);
+        dumpArticles(dirRoot);
         long end = System.currentTimeMillis();
         System.out.println("Dumping of "+indexed.size()+" documents took "+(end-start)/1000+" seconds.");
     }
@@ -101,6 +102,9 @@ public class Dump implements Configurable {
      * Recursively dumps relation and all its objects.
      */
     void dumpTree(Relation relation, File currentDir, String prefix) throws Exception {
+        if (hasBeenIndexed(relation))
+            return;
+
         Tools.sync(relation);
         GenericObject obj = relation.getChild();
 
@@ -210,8 +214,7 @@ public class Dump implements Configurable {
     void dumpArticles(File currentDir) throws Exception {
         Relation articles = (Relation) persistance.findById(new Relation(Constants.REL_ARTICLES));
         List sections = articles.getChild().getChildren();
-        int total, i, position = 0;
-        Runtime runtime = Runtime.getRuntime();
+        int total, i;
 
         for (Iterator iter = sections.iterator(); iter.hasNext();) {
             Relation sectionRelation = (Relation) iter.next();
@@ -247,7 +250,6 @@ public class Dump implements Configurable {
                     Relation article = (Relation) iter2.next();
                     file = getFileName(article, currentDir);
                     dumpItem(article, (Item) article.getChild(), file, parents, UrlUtils.PREFIX_CLANKY);
-                    System.out.println(position++ + ". " + runtime.freeMemory());
                 }
             }
         }
