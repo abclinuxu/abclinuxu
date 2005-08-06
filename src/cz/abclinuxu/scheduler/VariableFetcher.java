@@ -193,6 +193,9 @@ public class VariableFetcher extends TimerTask implements Configurable {
             return defaultNumber.intValue();
 
         int count = Misc.parseInt(node.getText(), defaultNumber.intValue());
+        if (count<0)
+            return defaultNumber.intValue();
+        
         Integer maximum = (Integer) maxSizes.get(key);
         count = Misc.limit(count, 0, maximum.intValue());
         return count;
