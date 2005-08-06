@@ -794,21 +794,21 @@ public class EditBlog implements AbcAction, Configurable {
 
         int id = 0;
         String name = (String) params.get(PARAM_CATEGORY_NAME+"1");
-        if (name!=null) {
+        if (name!=null && name.trim().length()>0) {
             Element category = categories.addElement("category");
             category.addAttribute("id",Integer.toString(id++));
             category.addAttribute("name",name);
         }
 
         name = (String) params.get(PARAM_CATEGORY_NAME+"2");
-        if (name!=null) {
+        if (name!=null && name.trim().length() > 0) {
             Element category = categories.addElement("category");
             category.addAttribute("id",Integer.toString(id++));
             category.addAttribute("name",name);
         }
 
         name = (String) params.get(PARAM_CATEGORY_NAME+"3");
-        if (name!=null) {
+        if (name!=null && name.trim().length() > 0) {
             Element category = categories.addElement("category");
             category.addAttribute("id",Integer.toString(id++));
             category.addAttribute("name",name);
