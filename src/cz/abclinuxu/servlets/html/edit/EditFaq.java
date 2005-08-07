@@ -47,7 +47,6 @@ public class EditFaq implements AbcAction {
     public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_TITLE = "title";
     public static final String PARAM_TEXT = "text";
-    public static final String PARAM_URL = "url";
     public static final String PARAM_LINK_CAPTION = "caption";
     public static final String PARAM_LINK_URL = "link";
     public static final String PARAM_PREVIEW = "preview";
@@ -130,24 +129,22 @@ public class EditFaq implements AbcAction {
         canContinue &= setQuestion(params, faq, root, env);
         canContinue &= setText(params, root, env);
         canContinue &= setLinks(params, root, env);
-        canContinue &= setURL(params, parentRelation, relation, env);
 
-        String url = relation.getUrl();
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)
                 params.remove(PARAM_PREVIEW);
-            else
-                env.put(VAR_PREVIEW, faq);
-            if (url!=null) {
-                int position = url.lastIndexOf('/');
-                if (position > -1 && position+1 < url.length())
-                    params.put(PARAM_URL, url.substring(position+1));
-            }
+            faq.setInitialized(true);
+            env.put(VAR_PREVIEW, faq);
             env.put(VAR_FAQ_XML, NodeModel.wrap((new DOMWriter().write(faq.getData()))));
             return FMTemplateSelector.select("EditFaq", "add", env, request);
         }
 
         persistance.create(faq);
+
+        String title = root.elementText("title");
+        String url = parentRelation.getUrl() + "/" + URLManager.enforceLastURLPart(title);
+        url = URLManager.protectFromDuplicates(url);
+        relation.setUrl(url);
         persistance.create(relation);
 
         // commit new version
@@ -318,31 +315,6 @@ public class EditFaq implements AbcAction {
             element.addAttribute("format", Integer.toString(format.getId()));
         } else {
             ServletUtils.addError(PARAM_TEXT, "Zadejte text odpovìdi!", env, null);
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Updates URL from parameters. Changes are not synchronized with persistance.
-     * @param params map holding request's parameters
-     * @param relation new relation
-     * @param env environment
-     * @return false, if there is a major error
-     */
-    private boolean setURL(Map params, Relation parentRelation, Relation relation, Map env) {
-        String tmp = (String) params.get(PARAM_URL);
-        if (tmp==null || tmp.length()==0) {
-            ServletUtils.addError(PARAM_URL, "Zadejte URL dokumentu!", env, null);
-            return false;
-        }
-
-        try {
-            String url = parentRelation.getUrl() + "/" + URLManager.enforceLastURLPart(tmp);
-            url = URLManager.protectFromDuplicates(url);
-            relation.setUrl(url);
-        } catch (Exception e) {
-            ServletUtils.addError(PARAM_URL, e.getMessage(), env, null);
             return false;
         }
         return true;
