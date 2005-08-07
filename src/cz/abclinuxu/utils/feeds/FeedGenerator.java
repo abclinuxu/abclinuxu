@@ -130,7 +130,7 @@ public class FeedGenerator implements Configurable {
                 User author = (User) persistance.findById(new User(item.getOwner()));
 
                 entry = new SyndEntryImpl();
-                entry.setLink("http://www.abclinuxu.cz/drivers/show/" + found.getId());
+                entry.setLink("http://www.abclinuxu.cz" + found.getUrl());
                 entry.setTitle(Tools.xpath(item, "data/name"));
                 entry.setPublishedDate(item.getUpdated());
                 entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
@@ -174,7 +174,8 @@ public class FeedGenerator implements Configurable {
                 User author = (User) persistance.findById(new User(record.getOwner()));
 
                 entry = new SyndEntryImpl();
-                entry.setLink("http://www.abclinuxu.cz/hardware/show/"+found.getId());
+                String url = "http://www.abclinuxu.cz/hardware/show/" + found.getId();
+                entry.setLink(url);
                 entry.setTitle(Tools.xpath(item,"data/name"));
                 entry.setPublishedDate(record.getUpdated());
                 entry.setAuthor((author.getNick()!=null) ? author.getNick() : author.getName());
@@ -222,7 +223,7 @@ public class FeedGenerator implements Configurable {
                 User author = Tools.createUser(node.getText());
 
                 entry = new SyndEntryImpl();
-                entry.setLink("http://www.abclinuxu.cz/clanky/show/" + found.getId());
+                entry.setLink("http://www.abclinuxu.cz" + found.getUrl());
                 entry.setTitle(Tools.xpath(item, "data/name"));
                 entry.setPublishedDate(item.getCreated());
                 entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
@@ -336,7 +337,7 @@ public class FeedGenerator implements Configurable {
     public static void updateNews() {
         try {
             Persistance persistance = PersistanceFactory.getPersistance();
-            String url, title;
+            String title;
 
             SyndFeed feed = new SyndFeedImpl();
             feed.setFeedType(TYPE_RSS_1_0);
@@ -360,10 +361,6 @@ public class FeedGenerator implements Configurable {
                 String content = Tools.xpath(item, "data/content");
                 String withoutTags = Tools.removeTags(content);
 
-                if (found.getUrl()!=null)
-                    url = "http://www.abclinuxu.cz" + found.getUrl();
-                else
-                    url = "http://www.abclinuxu.cz/zpravicky/show/" + found.getId();
                 Element element = (Element) item.getData().selectSingleNode("/data/title");
                 if (element!=null)
                     title = element.getText();
@@ -371,7 +368,7 @@ public class FeedGenerator implements Configurable {
                     title = NewsCategories.get(item.getSubType()).getName();
 
                 entry = new SyndEntryImpl();
-                entry.setLink(url);
+                entry.setLink("http://www.abclinuxu.cz" + found.getUrl());
                 entry.setTitle(title);
                 description = new SyndContentImpl();
                 description.setType("text/plain");
@@ -425,7 +422,7 @@ public class FeedGenerator implements Configurable {
                 title = element.getText();
 
                 entry = new SyndEntryImpl();
-                entry.setLink(found.getUrl());
+                entry.setLink("http://www.abclinuxu.cz" + found.getUrl());
                 entry.setTitle(title);
                 description = new SyndContentImpl();
                 description.setType("text/plain");
@@ -457,7 +454,10 @@ public class FeedGenerator implements Configurable {
         Document document = item.getData();
 
         entry = new SyndEntryImpl();
-        entry.setLink("http://www.abclinuxu.cz"+Tools.getUrlForBlogStory(blog.getSubType(), item.getUpdated(), found.getId()));
+        String url = found.getUrl();
+        if (url == null)
+            url = "http://www.abclinuxu.cz" + Tools.getUrlForBlogStory(blog.getSubType(), item.getUpdated(), found.getId());
+        entry.setLink(url);
         entry.setTitle(Tools.xpath(item, "data/name"));
         entry.setPublishedDate(item.getCreated());
         entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
