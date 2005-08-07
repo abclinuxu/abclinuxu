@@ -3,35 +3,29 @@
 <@lib.showMessages/>
 
 <p>
-    Chystáte se vlo¾it polo¾ku do databáze zodpovìzených otázek.
-    Pokud øe¹íte nìjaký problém a potøebujete poradit, jste na
-    ¹patné stránce a mìli byste nejdøíve <a href="/Search">prohledat
-    na¹i rozsáhlou databázi</a> a pokud byste odpovìï nena¹li, polo¾te
-    svùj dotaz do <a href="/diskuse.jsp">diskusního fóra</a>.
+    Chystáte se vlo¾it polo¾ku do databáze <b>zodpovìzených</b> otázek.
+    Pokud potøebujete poradit, jste na ¹patné stránce.
+    <a href="/Search">Prohledejte</a> nejdøíve na¹i rozsáhlou databázi,
+    a pokud odpovìï nenajdete, polo¾te svùj dotaz do <a href="/diskuse.jsp">diskusního fóra</a>.
     Tento formuláø je urèen zku¹enìj¹ím u¾ivatelùm, kteøí se chtìjí
     podìlit o øe¹ení otázky, která bývá èasto kladena v diskusním
     fóru.
 </p>
 
 <p>
-    Vyplòte jednotlivé polo¾ky formuláøe. U URL otázky zadejte jen poslední
-    èást adresy za posledním lomítkem, nepou¾ívejte tedy ¾ádná lomítka.
-    V URL struènì shròte název otázky, pøièem¾ slova oddìlujte pomlèkou,
-    nikoliv podtr¾ítkem.
-    Dosáhnete tím lep¹ích výsledkù ve vyhledávaèích, tak¾e tuto otázka
-    si pøeète více ètenáøù hledajících odpovìï na svùj problém. Do textu
+    Vyplòte jednotlivé polo¾ky formuláøe. Do textu
     odpovìdi zadejte co nejpodrobnìj¹í a nejpøesnìj¹í odpovìï. Do souvisejících
     odkazù umístìte link na dokument s dal¹ími informacemi, napøíklad na èlánek
-    zabývající se touto tématikou nebo diskusi ve fóru, kde byl problem
+    zabývající se touto tématikou nebo na diskusi ve fóru, kde byl problem
     (vy)øe¹en.
 </p>
 
 <#if PARAMS.preview?exists>
     <fieldset style="margin-top: 1em;">
         <legend>Náhled</legend>
-        <h1 style="margin-bottom: 1em;">${TOOL.xpath(PREVIEW, "/data/title")}</h1>
+        <h1 style="margin-bottom: 1em;">${TOOL.xpath(PREVIEW, "/data/title")?if_exists}</h1>
         <div>
-            ${TOOL.render(TOOL.xpath(PREVIEW.data,"data/text"), USER?if_exists)}
+            ${TOOL.render(TOOL.xpath(PREVIEW.data,"data/text")?if_exists, USER?if_exists)}
         </div>
         <#if XML.data.links[0]?exists>
             <h3>Související odkazy</h3>
@@ -57,13 +51,6 @@
             </td>
         </tr>
         <tr>
-            <td class="required">URL otázky</td>
-            <td>
-                ${RELATION.url}/<input tabindex="2" type="text" name="url" size="60" value="${PARAMS.url?if_exists}">
-                <div class="error">${ERRORS.url?if_exists}</div>
-            </td>
-        </tr>
-        <tr>
             <td class="required">Odpovìï</td>
             <td>
                 <div class="form-edit">
@@ -74,7 +61,7 @@
                     <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="Vlo¾it znaèku formátovaného textu. Vhodné pro konfiguraèní soubory èi výpisy.">&lt;pre&gt;</a>
                     <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
                 </div>
-                <textarea tabindex="3" name="text" cols="80" rows="20">${PARAMS.text?if_exists}</textarea><br>
+                <textarea tabindex="2" name="text" cols="80" rows="20">${PARAMS.text?if_exists}</textarea><br>
                 <div class="error">${ERRORS.text?if_exists}</div>
             </td>
         </tr>
@@ -88,101 +75,101 @@
                     </tr>
                     <tr>
                         <td>
-                            <input tabindex="4" type="text" name="caption1" size="40" value="${PARAMS.caption1?if_exists}">
+                            <input tabindex="3" type="text" name="caption1" size="40" value="${PARAMS.caption1?if_exists}">
                             <div class="error">${ERRORS.caption1?if_exists}</div>
                         </td>
                         <td>
-                            <input tabindex="5" type="text" name="link1" size="40" value="${PARAMS.link1?if_exists}">
+                            <input tabindex="4" type="text" name="link1" size="40" value="${PARAMS.link1?if_exists}">
                             <div class="error">${ERRORS.link1?if_exists}</div>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input tabindex="6" type="text" name="caption2" size="40" value="${PARAMS.caption2?if_exists}">
+                            <input tabindex="5" type="text" name="caption2" size="40" value="${PARAMS.caption2?if_exists}">
                             <div class="error">${ERRORS.caption2?if_exists}</div>
                         </td>
                         <td>
-                            <input tabindex="7" type="text" name="link2" size="40" value="${PARAMS.link2?if_exists}">
+                            <input tabindex="6" type="text" name="link2" size="40" value="${PARAMS.link2?if_exists}">
                             <div class="error">${ERRORS.link2?if_exists}</div>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input tabindex="8" type="text" name="caption3" size="40" value="${PARAMS.caption3?if_exists}">
+                            <input tabindex="7" type="text" name="caption3" size="40" value="${PARAMS.caption3?if_exists}">
                             <div class="error">${ERRORS.caption3?if_exists}</div>
                         </td>
                         <td>
-                            <input tabindex="9" type="text" name="link3" size="40" value="${PARAMS.link3?if_exists}">
+                            <input tabindex="8" type="text" name="link3" size="40" value="${PARAMS.link3?if_exists}">
                             <div class="error">${ERRORS.link3?if_exists}</div>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input tabindex="10" type="text" name="caption4" size="40" value="${PARAMS.caption4?if_exists}">
+                            <input tabindex="9" type="text" name="caption4" size="40" value="${PARAMS.caption4?if_exists}">
                             <div class="error">${ERRORS.caption4?if_exists}</div>
                         </td>
                         <td>
-                            <input tabindex="11" type="text" name="link4" size="40" value="${PARAMS.link4?if_exists}">
+                            <input tabindex="10" type="text" name="link4" size="40" value="${PARAMS.link4?if_exists}">
                             <div class="error">${ERRORS.link4?if_exists}</div>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input tabindex="12" type="text" name="caption5" size="40" value="${PARAMS.caption5?if_exists}">
+                            <input tabindex="11" type="text" name="caption5" size="40" value="${PARAMS.caption5?if_exists}">
                             <div class="error">${ERRORS.caption5?if_exists}</div>
                         </td>
                         <td>
-                            <input tabindex="13" type="text" name="link5" size="40" value="${PARAMS.link5?if_exists}">
+                            <input tabindex="12" type="text" name="link5" size="40" value="${PARAMS.link5?if_exists}">
                             <div class="error">${ERRORS.link5?if_exists}</div>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input tabindex="14" type="text" name="caption6" size="40" value="${PARAMS.caption6?if_exists}">
+                            <input tabindex="13" type="text" name="caption6" size="40" value="${PARAMS.caption6?if_exists}">
                             <div class="error">${ERRORS.caption6?if_exists}</div>
                         </td>
                         <td>
-                            <input tabindex="15" type="text" name="link6" size="40" value="${PARAMS.link6?if_exists}">
+                            <input tabindex="14" type="text" name="link6" size="40" value="${PARAMS.link6?if_exists}">
                             <div class="error">${ERRORS.link6?if_exists}</div>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input tabindex="16" type="text" name="caption7" size="40" value="${PARAMS.caption7?if_exists}">
+                            <input tabindex="15" type="text" name="caption7" size="40" value="${PARAMS.caption7?if_exists}">
                             <div class="error">${ERRORS.caption7?if_exists}</div>
                         </td>
                         <td>
-                            <input tabindex="17" type="text" name="link7" size="40" value="${PARAMS.link7?if_exists}">
+                            <input tabindex="16" type="text" name="link7" size="40" value="${PARAMS.link7?if_exists}">
                             <div class="error">${ERRORS.link7?if_exists}</div>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input tabindex="18" type="text" name="caption8" size="40" value="${PARAMS.caption8?if_exists}">
+                            <input tabindex="17" type="text" name="caption8" size="40" value="${PARAMS.caption8?if_exists}">
                             <div class="error">${ERRORS.caption8?if_exists}</div>
                         </td>
                         <td>
-                            <input tabindex="19" type="text" name="link8" size="40" value="${PARAMS.link8?if_exists}">
+                            <input tabindex="18" type="text" name="link8" size="40" value="${PARAMS.link8?if_exists}">
                             <div class="error">${ERRORS.link8?if_exists}</div>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input tabindex="20" type="text" name="caption9" size="40" value="${PARAMS.caption9?if_exists}">
+                            <input tabindex="19" type="text" name="caption9" size="40" value="${PARAMS.caption9?if_exists}">
                             <div class="error">${ERRORS.caption9?if_exists}</div>
                         </td>
                         <td>
-                            <input tabindex="21" type="text" name="link9" size="40" value="${PARAMS.link9?if_exists}">
+                            <input tabindex="20" type="text" name="link9" size="40" value="${PARAMS.link9?if_exists}">
                             <div class="error">${ERRORS.link9?if_exists}</div>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <input tabindex="22" type="text" name="caption10" size="40" value="${PARAMS.caption10?if_exists}">
+                            <input tabindex="21" type="text" name="caption10" size="40" value="${PARAMS.caption10?if_exists}">
                             <div class="error">${ERRORS.caption10?if_exists}</div>
                         </td>
                         <td>
-                            <input tabindex="23" type="text" name="link10" size="40" value="${PARAMS.link10?if_exists}">
+                            <input tabindex="22" type="text" name="link10" size="40" value="${PARAMS.link10?if_exists}">
                             <div class="error">${ERRORS.link10?if_exists}</div>
                         </td>
                     </tr>
@@ -192,8 +179,8 @@
         </tr>
         <tr>
             <td colspan="2" align="center">
-                <input tabindex="24" type="submit" name="preview" value="Náhled">
-                <input tabindex="25" type="submit" name="submit" value="Dokonèi">
+                <input tabindex="23" type="submit" name="preview" value="Náhled">
+                <input tabindex="24" type="submit" name="submit" value="Dokonèi">
             </td>
         </tr>
     </table>
