@@ -4,20 +4,24 @@
 
 <h1 class="st_nadpis">Úvod</h1>
 
-<p>Tento formuláø slou¾í pro úpravu existujících zápisù ve va¹em blogu.
-Titulek by mìl struènì a jasnì popisovat, o èem vá¹ zápis bude pojednávat.
-Obsah va¹eho zápisu pi¹te ve validním HTML. Pokud tento jednoduchý jazyk neovládáte,
-pøeètìte si <a href="http://www.kosek.cz/clanky/html/01.html">rychlokurz</a>
-od Jirky Koska.
+<p>Tento formuláø slou¾í pro vkládání nových zápisù do va¹eho blogu.
+Ka¾dý zápis musí mít titulek, který by mìl struènì a jasnì popisovat,
+o èem vá¹ zápis bude pojednávat. Titulek bude zobrazen i ve va¹em RSS.
+Text zápisu pi¹te ve validním HTML (<a href="http://www.kosek.cz/clanky/html/01.html">rychlokurz</a>).
 </p>
 
-<p>Pokud pí¹ete del¹í pøíspìvek, mìli byste jej rozdìlit na úvod
-a zbytek textu. Uèiníte tak vlo¾ením speciální znaèky <code>&lt;break&gt;</code>
-kdekoliv do textu zápisu. Text pøed znaèkou se bude zobrazovat
-jako upoutávka na vá¹ pøíspìvek, dohromady se pak zobrazí na stránce
-tohoto zápisu. Nicménì pokud pí¹ete jen pár odstavcù, není tøeba
-text lámat. Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
+<p>Del¹í pøíspìvky lze rozdìlit na úvodní èást, která se zobrazí
+ve výpisu a zbytek textu. Pøi zobrazení zápisu budou obì èásti automaticky
+spojeny do jednoho celku. Pro dìlení pou¾ijte speciální znaèku <code>&lt;break&gt;</code>.
+Dávejte si pozor na to, aby tato znaèka nebyla mezi párovými HTML znaèkami.
+Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
 </p>
+
+<#if DELAYED>
+    <p>Pokud nechcete pøíspìvek ihned publikovat, pou¾ijte tlaèítko
+    Ulo¾. Tlaèítko Publikuj okam¾itì pøíspìvek zveøejní.
+    </p>
+</#if>
 
 <#if PREVIEW?exists>
  <h1 class="st_nadpis">Náhled va¹eho zápisu</h1>
@@ -69,13 +73,18 @@ text lámat. Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
                 <a href="javascript:insertAtCursor(document.form.content, '<break>', '');" id="mono" title="Vlo¾it znaèku zlomu">&lt;break&gt;</a>
             </div>
             <div class="error">${ERRORS.content?if_exists}</div>
-            <textarea name="content" cols="80" rows="30">${PARAMS.content?if_exists?html}</textarea>
+            <textarea tabindex="2" name="content" cols="80" rows="30">${PARAMS.content?if_exists?html}</textarea>
         </td>
     </tr>
     <tr>
         <td>
-            <input type="submit" name="preview" value="Ulo¾it">
-            <input type="submit" name="finish" value="Dokonèi">
+            <input type="submit" name="preview" value="Náhled">
+            <#if DELAYED>
+                <input tabindex="3" type="submit" name="delay" value="Ulo¾">
+                <input tabindex="4" type="submit" name="finish" value="Publikuj">
+            <#else>
+                <input tabindex="3" type="submit" name="finish" value="Dokonèi">
+            </#if>
         </td>
     </tr>
 </table>

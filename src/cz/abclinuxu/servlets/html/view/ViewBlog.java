@@ -53,6 +53,7 @@ public class ViewBlog implements AbcAction, Configurable {
     public static final String VAR_MONTH = "MONTH";
     public static final String VAR_DAY = "DAY";
     public static final String VAR_CURRENT_STORIES = "CURRENT_STORIES";
+    public static final String VAR_UNPUBLISHED_STORIES = "UNPUBLISHED_STORIES";
 
     static final String PREF_BLOG_URL = "regexp.blog.url";
     static final String PREF_PAGE_SIZE = "page.size";
@@ -116,6 +117,10 @@ public class ViewBlog implements AbcAction, Configurable {
             env.put(VAR_BLOG_RELATION, blogRelation);
             env.put(VAR_BLOG, blog);
             env.put(VAR_BLOG_XML, NodeModel.wrap((new DOMWriter().write(blog.getData()))));
+
+            User user = (User) env.get(Constants.VAR_USER);
+            if (user != null && user.getId() == blog.getOwner())
+                fillUnpublishedStories(blog, env);
 
             if (rid!=0)
                 return processStory(rid, request, env);
@@ -349,6 +354,26 @@ public class ViewBlog implements AbcAction, Configurable {
         Date endDate = end.getTime();
         findQualifiers.add(new CompareCondition(Field.CREATED, Operation.GREATER_OR_EQUAL, startDate));
         findQualifiers.add(new CompareCondition(Field.CREATED, Operation.SMALLER, endDate));
+    }
+
+    /**
+     * Puts into env list of unpublished stories, if there are any.
+     * The list will contain initialized story relations.
+     * @param blog
+     */
+    private void fillUnpublishedStories(Category blog, Map env) {
+        List elements = blog.getData().selectNodes("/data/unpublished/rid");
+        if (elements==null || elements.size()==0)
+            return;
+
+        List stories = new ArrayList(elements.size());
+        for (Iterator iter = elements.iterator(); iter.hasNext();) {
+            Element element = (Element) iter.next();
+            int rid = Integer.parseInt(element.getTextTrim());
+            stories.add(new Relation(rid));
+        }
+        Tools.syncList(stories);
+        env.put(VAR_UNPUBLISHED_STORIES, stories);
     }
 
     /**

@@ -67,6 +67,7 @@ public class EditBlog implements AbcAction, Configurable {
     public static final String PARAM_CONTENT = "content";
     public static final String PARAM_RELATION = "rid";
     public static final String PARAM_PREVIEW = "preview";
+    public static final String PARAM_DELAY = "delay";
     public static final String PARAM_PAGE_SIZE = "pageSize";
     public static final String PARAM_WATCH_DISCUSSION = "watchDiz";
     public static final String PARAM_URL = "url";
@@ -106,6 +107,7 @@ public class EditBlog implements AbcAction, Configurable {
     /** map, key is id (string), value is human readable name of category */
     public static final String VAR_CATEGORIES = "CATEGORIES";
     public static final String VAR_PREVIEW = "PREVIEW";
+    public static final String VAR_IS_DELAYED = "DELAYED";
 
     public static final String BREAK_TAG = "<break>";
     public static final String PREF_RE_INVALID_BLOG_NAME = "regexp.invalid.blogname";
@@ -317,11 +319,13 @@ public class EditBlog implements AbcAction, Configurable {
             return actionAddStoryStep1(request, blog, env);
         }
 
+        boolean delayed = params.get(PARAM_DELAY)!=null;
+        if (delayed)
+            story.setType(Item.UNPUBLISHED_BLOG);
+
         persistance.create(story);
         Relation relation = new Relation(blog, story, blogRelation.getId());
         persistance.create(relation);
-        incrementArchiveRecord(blog.getData().getRootElement(), new Date());
-        persistance.update(blog);
 
         String watchDiscussion = (String) params.get(PARAM_WATCH_DISCUSSION);
         if ("yes".equals(watchDiscussion)) {
@@ -329,8 +333,16 @@ public class EditBlog implements AbcAction, Configurable {
             EditDiscussion.alterDiscussionMonitor((Item) dizRelation.getChild(), user, persistance);
         }
 
-        FeedGenerator.updateBlog(blog);
-        VariableFetcher.getInstance().refreshStories();
+        if (!delayed) {
+            incrementArchiveRecord(blog.getData().getRootElement(), new Date());
+            persistance.update(blog);
+            FeedGenerator.updateBlog(blog);
+            VariableFetcher.getInstance().refreshStories();
+        } else {
+            Element unpublished = DocumentHelper.makeElement(blog.getData(), "/data/unpublished");
+            unpublished.addElement("rid").setText(Integer.toString(relation.getId()));
+            persistance.update(blog);
+        }
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(),story.getCreated(),relation.getId()));
@@ -358,6 +370,7 @@ public class EditBlog implements AbcAction, Configurable {
             text = node.getText();
         params.put(PARAM_CONTENT, text);
         params.put(PARAM_CATEGORY_ID, story.getSubType());
+        env.put(VAR_IS_DELAYED, Boolean.valueOf(story.getType() == Item.UNPUBLISHED_BLOG));
 
         storeCategories(blog, env);
         return FMTemplateSelector.select("EditBlog", "edit", env, request);
@@ -385,7 +398,22 @@ public class EditBlog implements AbcAction, Configurable {
                 env.put(VAR_PREVIEW, story);
             return actionEditStoryStep1(request, blog, env);
         }
+
+        boolean delayed = params.get(PARAM_DELAY) != null, published = false;
+        if (story.getType()==Item.UNPUBLISHED_BLOG && !delayed) {
+            story.setType(Item.BLOG);
+            story.setCreated(new Date());
+            published = true;
+        }
         persistance.update(story);
+
+        if (published) {
+            incrementArchiveRecord(blog.getData().getRootElement(), new Date());
+            Element unpublishedStory = (Element) blog.getData().selectSingleNode("/data/unpublished/rid[text()=\""+relation.getId()+"\"]");
+            if (unpublishedStory!=null)
+                unpublishedStory.detach();
+            persistance.update(blog);
+        }
 
         FeedGenerator.updateBlog(blog);
         VariableFetcher.getInstance().refreshStories();

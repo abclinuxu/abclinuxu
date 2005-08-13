@@ -5,20 +5,21 @@
 <h1 class="st_nadpis">Úvod</h1>
 
 <p>Tento formuláø slou¾í pro vkládání nových zápisù do va¹eho blogu.
-Ka¾dý zápis musí mít titulek. Ten by mìl struènì a jasnì popisovat,
-o èem vá¹ zápis bude pojednávat. Volba titulku ovlivòuje ètennost
-va¹eho blogu, nebo» titulek bude zobrazen ve va¹em RSS. Obsah va¹eho
-zápisu pi¹te ve validním HTML. Pokud tento jednoduchý jazyk neovládáte,
-pøeètìte si <a href="http://www.kosek.cz/clanky/html/01.html">rychlokurz</a>
-od Jirky Koska.
+Ka¾dý zápis musí mít titulek, který by mìl struènì a jasnì popisovat,
+o èem vá¹ zápis bude pojednávat. Titulek bude zobrazen i ve va¹em RSS.
+Text zápisu pi¹te ve validním HTML (<a href="http://www.kosek.cz/clanky/html/01.html">rychlokurz</a>).
 </p>
 
-<p>Pokud pí¹ete del¹í pøíspìvek, mìli byste jej rozdìlit na úvod
-a zbytek textu. Uèiníte tak vlo¾ením speciální znaèky <code>&lt;break&gt;</code>
-kdekoliv do textu zápisu. Text pøed znaèkou se bude zobrazovat
-jako upoutávka na vá¹ pøíspìvek, dohromady se pak zobrazí na stránce
-tohoto zápisu. Nicménì pokud pí¹ete jen pár odstavcù, není tøeba
-text lámat. Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
+<p>Del¹í pøíspìvky lze rozdìlit na úvodní èást, která se zobrazí
+ve výpisu a zbytek textu. Pøi zobrazení zápisu budou obì èásti automaticky
+spojeny do jednoho celku. Pro dìlení pou¾ijte speciální znaèku <code>&lt;break&gt;</code>.
+Dávejte si pozor na to, aby tato znaèka nebyla mezi párovými HTML znaèkami.
+Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
+</p>
+
+<p>Pokud nechcete pøíspìvek ihned publikovat, pou¾ijte tlaèítko
+Odlo¾. Mù¾ete se k pøíspìvku kdykoliv vrátit a vydat jej, a¾ budete
+spokojeni. Najdete jej v pravém menu.
 </p>
 
 <#if PREVIEW?exists>
@@ -49,12 +50,16 @@ text lámat. Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
     </tr>
     <tr>
         <td>
-            Kategorie zápisu
-            <select name="cid">
-                <#list CATEGORIES?keys as category>
-                    <option value="${category}"<#if category==PARAMS.cid?default("UNDEF")> selected</#if>>${CATEGORIES[category]}</option>
-                </#list>
-            </select>&nbsp;
+            Kategorie zápisu:
+            <#if (CATEGORIES?size>0)>
+                <select name="cid">
+                    <#list CATEGORIES?keys as category>
+                        <option value="${category}"<#if category==PARAMS.cid?default("UNDEF")> selected</#if>>${CATEGORIES[category]}</option>
+                    </#list>
+                </select>&nbsp;
+            <#else>
+                nemáte nastaveny ¾ádné kategorie
+            </#if>
     	    <a class="info" href="#">?<span class="tooltip">Zde nastavíte kategorii va¹eho zápisu. Mù¾ete tak èlenit zápisy do rùzných kategorií.</span></a>
         </td>
     </tr>
@@ -63,7 +68,7 @@ text lámat. Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
             <label>Aktivovat sledování diskuse
             <input type="checkbox" name="watchDiz" value="yes"<#if PARAMS.watchDiz?exists> checked</#if>></label>
 	        <a class="info" href="#">?<span class="tooltip">Zde mù¾ete aktivovat sledování diskuse
-		k tomuto zápisu. Cizí komentáøe vám budou chodit emailem.</span></a>
+		k tomuto zápisu. Komentáøe ètenáøù vám budou chodit emailem.</span></a>
         </td>
     </tr>
     <tr>
@@ -87,6 +92,7 @@ text lámat. Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
             <#if PREVIEW?exists>
                 <input tabindex="3" type="submit" name="preview" value="Zopakuj náhled">
                 <input tabindex="4" type="submit" name="finish" value="Dokonèi">
+                <input tabindex="5" type="submit" name="delay" value="Odlo¾">
             <#else>
                 <input tabindex="3" type="submit" name="preview" value="Náhled">
             </#if>

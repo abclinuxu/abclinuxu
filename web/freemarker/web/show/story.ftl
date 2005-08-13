@@ -15,6 +15,23 @@
         <#if intro!="UNDEF">${intro}</#if>
     </div>
 
+    <#if UNPUBLISHED_STORIES?exists>
+        <div class="s_nad_h1"><div class="s_nad_pod_h1">
+            <h1>Rozepsané zápisy</h1>
+        </div></div>
+
+        <div class="s_sekce">
+            <ul>
+            <#list UNPUBLISHED_STORIES as relation>
+                <#assign story=relation.child, url=TOOL.getUrlForBlogStory(BLOG.subType, story.created, relation.id)>
+                <li>
+                    <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
+                </li>
+            </#list>
+            </ul>
+        </div>
+    </#if>
+
     <div class="s_nad_h1"><div class="s_nad_pod_h1">
         <h1>Aktuální zápisy</h1>
     </div></div>
@@ -78,7 +95,7 @@
         </ul>
     </div>
 
-    <#if (USER?exists && USER.id==BLOG.owner) || (! USER?exists)>
+    <#if (USER?exists && USER.id==BLOG.owner || USER.hasRole("root")) || (! USER?exists)>
         <div class="s_nad_h1"><div class="s_nad_pod_h1">
             <a class="info" href="#">?<span class="tooltip">Tato sekce sdru¾uje akce pro majitele blogu.</span></a>
             <h1>Nastavení</h1>
@@ -90,8 +107,12 @@
     <#if USER?exists>
         <#if USER.id==BLOG.owner>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=add")}">Vlo¾ nový zápis</a></li>
+        </#if>
+        <#if USER.id==BLOG.owner || USER.hasRole("root")>
             <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=edit")}">Uprav zápis</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=remove")}">Sma¾ zápis</a></li>
+        </#if>
+        <#if USER.id==BLOG.owner>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=custom")}">Nastavení blogu</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}">Pøejmenovat blog</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=categories")}">Upravit kategorie</a></li>
@@ -112,9 +133,12 @@
 
 <h2>${TOOL.xpath(STORY.child, "/data/name")}</h2>
 <p class="cl_inforadek">
-    ${DATE.show(STORY.child.created, "CZ_SHORT")} |
+    <#if STORY.child.type==15>Odlo¾eno<#else>${DATE.show(STORY.child.created, "CZ_SHORT")}</#if> |
     Pøeèteno: ${TOOL.getCounterValue(STORY.child)}x
     <#if category!="UNDEF">| ${category}</#if>
+    <#if (STORY.child.type==12 && STORY.child.created.time!=STORY.child.updated.time)>
+        | poslední úprava: ${DATE.show(STORY.child.updated, "CZ_SHORT")}
+    </#if>
 </p>
 
 <#assign text = TOOL.xpath(STORY.child, "/data/perex")?default("UNDEF")>
@@ -123,39 +147,41 @@ ${TOOL.xpath(STORY.child, "/data/content")}
 
 <p><b>Nástroje</b>: <a href="${url}?varianta=print">Tisk</a></p>
 
-<h2>Komentáøe</h2>
-<#if CHILDREN.discussion?exists>
-    <#assign DISCUSSION=CHILDREN.discussion[0].child>
-    <#assign diz = TOOL.createDiscussionTree(DISCUSSION,USER?if_exists,true)>
+<#if (STORY.child.type==12)>
+    <h2>Komentáøe</h2>
+    <#if CHILDREN.discussion?exists>
+        <#assign DISCUSSION=CHILDREN.discussion[0].child>
+        <#assign diz = TOOL.createDiscussionTree(DISCUSSION,USER?if_exists,true)>
 
-    <#assign frozen=TOOL.xpath(DISCUSSION,"/data/frozen")?exists>
-    <#if frozen>Diskuse byla administrátory uzamèena</#if>
-    <#if USER?exists && USER.hasRole("discussion admin")>
-        <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+CHILDREN.discussion[0].id+"&amp;dizId="+DISCUSSION.id)}">
-        <#if frozen>Rozmrazit<#else>Zmrazit</#if> diskusi</a>
+        <#assign frozen=TOOL.xpath(DISCUSSION,"/data/frozen")?exists>
+        <#if frozen>Diskuse byla administrátory uzamèena</#if>
+        <#if USER?exists && USER.hasRole("discussion admin")>
+            <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+CHILDREN.discussion[0].id+"&amp;dizId="+DISCUSSION.id)}">
+            <#if frozen>Rozmrazit<#else>Zmrazit</#if> diskusi</a>
+        </#if>
+
+        <p>
+        <#if diz.hasUnreadComments>
+            <a href="#${diz.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a>
+        </#if>
+
+        <a href="${URL.make("/EditDiscussion?action=add&amp;dizId="+DISCUSSION.id+"&amp;threadId=0&amp;rid="+CHILDREN.discussion[0].id+"&amp;url="+url)}">
+        Vlo¾it dal¹í komentáø</a>
+
+        <#if USER?exists && TOOL.xpath(DISCUSSION,"//monitor/id[text()='"+USER.id+"']")?exists>
+            <#assign monitorState="Pøestaò sledovat"><#else><#assign monitorState="Sleduj">
+        </#if>
+        <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+CHILDREN.discussion[0].id+"&amp;url="+url)}"
+        title="AbcMonitor za¹le emailem zprávu, dojde-li v diskusi ke zmìnì">${monitorState}</a>
+        <span title="Poèet lidí, kteøí sledují tuto diskusi">(${TOOL.getMonitorCount(DISCUSSION.data)})</span>
+        </p>
+
+        <#list diz.threads as thread>
+            <@lib.showThread thread, 0, DISCUSSION.id, CHILDREN.discussion[0].id, !frozen />
+        </#list>
+    <#else>
+        <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+STORY.id+"&amp;url="+url)}">Vlo¾it první komentáø</a>
     </#if>
-
-    <p>
-    <#if diz.hasUnreadComments>
-        <a href="#${diz.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a>
-    </#if>
-
-    <a href="${URL.make("/EditDiscussion?action=add&amp;dizId="+DISCUSSION.id+"&amp;threadId=0&amp;rid="+CHILDREN.discussion[0].id+"&amp;url="+url)}">
-    Vlo¾it dal¹í komentáø</a>
-
-    <#if USER?exists && TOOL.xpath(DISCUSSION,"//monitor/id[text()='"+USER.id+"']")?exists>
-        <#assign monitorState="Pøestaò sledovat"><#else><#assign monitorState="Sleduj">
-    </#if>
-    <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+CHILDREN.discussion[0].id+"&amp;url="+url)}"
-    title="AbcMonitor za¹le emailem zprávu, dojde-li v diskusi ke zmìnì">${monitorState}</a>
-    <span title="Poèet lidí, kteøí sledují tuto diskusi">(${TOOL.getMonitorCount(DISCUSSION.data)})</span>
-    </p>
-
-    <#list diz.threads as thread>
-        <@lib.showThread thread, 0, DISCUSSION.id, CHILDREN.discussion[0].id, !frozen />
-    </#list>
-<#else>
-    <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+STORY.id+"&amp;url="+url)}">Vlo¾it první komentáø</a>
 </#if>
 
 

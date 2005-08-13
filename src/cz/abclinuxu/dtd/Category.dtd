@@ -5,7 +5,7 @@
 <!ATTLIST note format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 
 <!-- DTD for blog -->
-<!ELEMENT data (categories?, custom, settings?, archive?)>
+<!ELEMENT data (categories?, custom, settings?, archive?, unpublished?)>
 <!ELEMENT categories (category*)>
 <!ELEMENT category #EMPTY>
 <!ATTLIST category id (#NMTOKEN) #REQUIRED> <!-- integer, id of category, used in blog story subtype -->
@@ -24,3 +24,5 @@
 <!ATTLIST year value (#NMTOKEN) #REQUIRED> <!-- integer, year -->
 <!ELEMENT month (#PCDATA)> <!-- number of stories published during this month -->
 <!ATTLIST month value (#NMTOKEN) #REQUIRED> <!-- integer, value of the month -->
+<!ELEMENT unpublished (rid)*> <!-- container for relation id of unpublished blog stories -->
+<!ELEMENT rid #NMTOKEN> <!-- integer, id of unpublished story relation -->

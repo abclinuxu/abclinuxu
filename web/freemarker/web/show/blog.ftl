@@ -10,10 +10,27 @@
 	<#if title!="UNDEF"> - <a href="/blog/${BLOG.subType}">${title}</a></#if>
 	</h1>
     </div></div>
-    
+
     <div class="s_sekce">
         <#if intro!="UNDEF">${intro}</#if>
     </div>
+
+    <#if UNPUBLISHED_STORIES?exists>
+        <div class="s_nad_h1"><div class="s_nad_pod_h1">
+            <h1>Rozepsané zápisy</h1>
+        </div></div>
+
+        <div class="s_sekce">
+            <ul>
+            <#list UNPUBLISHED_STORIES as relation>
+                <#assign story=relation.child, url=TOOL.getUrlForBlogStory(BLOG.subType, story.created, relation.id)>
+                <li>
+                    <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
+                </li>
+            </#list>
+            </ul>
+        </div>
+    </#if>
 
     <div class="s_nad_h1"><div class="s_nad_pod_h1">
         <h1>Aktuální zápisy</h1>
