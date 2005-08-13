@@ -44,7 +44,7 @@ public class BlogHTMLGuard {
         TAGS.put("STRONG", new CheckedTag("STRONG", true, null));
         TAGS.put("CITE", new CheckedTag("CITE", true, null));
         TAGS.put("BLOCKQUOTE", new CheckedTag("BLOCKQUOTE", true, new String[]{"ID"}));
-        TAGS.put("QUOTE", new CheckedTag("QUOTE", true, new String[]{"ID"}));
+        TAGS.put("Q", new CheckedTag("Q", true, new String[]{"ID"}));
         TAGS.put("VAR", new CheckedTag("VAR", true, null));
         TAGS.put("HR", new CheckedTag("HR", false, null));
         TAGS.put("TT", new CheckedTag("TT", true, null));
