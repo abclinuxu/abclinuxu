@@ -91,5 +91,8 @@ Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
 <input type="hidden" name="action" value="edit2">
 </form>
 
+<p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html">znaèky</a>:
+P, BR, B, I, U, A, PRE, UL, OL, LI, DL, DT, DD, TABLE, TR, TD, TH, CODE, DIV, H1, H2, H3, H4, EM,
+STRONG, CITE, BLOCKQUOTE, Q, VAR, HR a TT.</p>
 
 <#include "../footer.ftl">

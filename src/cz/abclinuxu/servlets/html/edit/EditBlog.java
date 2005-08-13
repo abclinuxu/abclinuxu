@@ -22,6 +22,7 @@ import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.parser.safehtml.BlogHTMLGuard;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.format.Format;
@@ -50,6 +51,7 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
 import org.dom4j.io.DOMWriter;
+import org.htmlparser.util.ParserException;
 import freemarker.template.SimpleHash;
 import freemarker.ext.dom.NodeModel;
 
@@ -57,6 +59,8 @@ import freemarker.ext.dom.NodeModel;
  * Servlet used to manipulate with user blogs.
  */
 public class EditBlog implements AbcAction, Configurable {
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditBlog.class);
+
     public static final String PARAM_BLOG_NAME = "blogName";
     public static final String PARAM_BLOG_ID = "blogId";
     public static final String PARAM_TITLE = "title";
@@ -396,7 +400,10 @@ public class EditBlog implements AbcAction, Configurable {
         if ( !canContinue || params.get(PARAM_PREVIEW)!=null ) {
             if ( canContinue )
                 env.put(VAR_PREVIEW, story);
-            return actionEditStoryStep1(request, blog, env);
+
+            env.put(VAR_IS_DELAYED, Boolean.valueOf(story.getType() == Item.UNPUBLISHED_BLOG));
+            storeCategories(blog, env);
+            return FMTemplateSelector.select("EditBlog", "edit", env, request);
         }
 
         boolean delayed = params.get(PARAM_DELAY) != null, published = false;
@@ -1165,7 +1172,18 @@ public class EditBlog implements AbcAction, Configurable {
             return false;
         }
 
-        // todo zkontroluj validitu HTML, ochrana pred XSS
+        try {
+            if (perex!=null)
+                BlogHTMLGuard.check(perex);
+            BlogHTMLGuard.check(content);
+        } catch (ParserException e) {
+            log.error("ParseException on '" + content + "'", e);
+            ServletUtils.addError(PARAM_CONTENT, e.getMessage(), env, null);
+            return false;
+        } catch (Exception e) {
+            ServletUtils.addError(PARAM_CONTENT, e.getMessage(), env, null);
+            return false;
+        }
 
         Element tagPerex = root.element("perex");
         if (position!=-1) {
