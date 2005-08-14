@@ -132,8 +132,6 @@ public class CreateIndex implements Configurable {
             } else if (child instanceof Item) {
                 item = (Item) child;
                 switch ( item.getType() ) {
-                    case Item.ARTICLE:
-                        doc = indexArticle(item); break;
                     case Item.DISCUSSION:
                         doc = indexDiscussion(item); break;
                     case Item.MAKE:
@@ -307,6 +305,9 @@ public class CreateIndex implements Configurable {
 
                     child = persistance.findById(child);
                     doc = indexArticle((Item) child);
+                    if (doc==null)
+                        continue;
+
                     url = relation.getUrl();
                     if (url == null)
                         url = urlPrefix + "/show/" + relation.getId();
@@ -663,7 +664,10 @@ public class CreateIndex implements Configurable {
         StringBuffer sb = new StringBuffer();
         String title = null;
 
-        Element data = (Element) article.getData().selectSingleNode("data");
+        Element data = (Element) article.getData().getRootElement();
+        if (data.attribute("do_not_index")!=null)
+            return null;
+
         Node node = data.selectSingleNode("name");
         title = node.getText();
         sb.append(title);
