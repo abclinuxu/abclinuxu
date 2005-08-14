@@ -13,7 +13,7 @@
         thumbnail=TOOL.xpath(clanek,"/data/thumbnail")?default("UNDEF"),
         tmp=TOOL.groupByType(clanek.children),
         rating=TOOL.ratingFor(clanek.data,"article")?default("UNDEF"),
-	url=relation.url?default("/clanky/show/"+relation.id)
+	    url=relation.url?default("/clanky/show/"+relation.id)
     >
     <#if tmp.discussion?exists><#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
     <#if thumbnail!="UNDEF"><div style="float:right;margin:0.8em 0.4em 0 0.4em">${thumbnail}</div></#if>
@@ -22,7 +22,7 @@
     <p class="cl_inforadek">${DATE.show(clanek.created, dateFormat[0])} |
         <a href="/Profile/${autor.id}">${autor.name}</a> | Pøeèteno: ${TOOL.getCounterValue(clanek)}x
         <#if diz?exists>
-            | <a href="/clanky/show/${diz.relationId}">Komentáøù:&nbsp;${diz.responseCount}</a
+            | <a href="${diz.url?default("/clanky/show/"+diz.relationId)}">Komentáøù:&nbsp;${diz.responseCount}</a
             ><#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, dateFormat[1]?default(dateFormat[0]))}</#if>
         </#if>
         <#if rating!="UNDEF">| Hodnocení:&nbsp;<span title="Hlasù: ${rating.count}">${rating.result?string["#0.00"]}</span></#if>
