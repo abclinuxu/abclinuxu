@@ -140,6 +140,7 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
             article.setPerex(Tools.xpath(item, "data/perex"));
             article.setComments(Tools.findComments(item).getResponseCount());
             article.setReads(Tools.getCounterValue(item));
+            article.setUrl(relation.getUrl());
             articles.add(article);
         }
         params.put(VAR_ARTICLES, articles);
@@ -156,6 +157,7 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
             newz.setAuthor(author.getName());
             newz.setAuthorId(author.getId());
             newz.setComments(Tools.findComments(item).getResponseCount());
+            newz.setUrl(relation.getUrl());
             news.add(newz);
         }
         params.put(VAR_NEWS, news);

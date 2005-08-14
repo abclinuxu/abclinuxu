@@ -11,7 +11,7 @@ import java.util.Date;
  * Warpper arround news.
  */
 public class News {
-    String content, author;
+    String content, author, url;
     Date published;
     int relationId, comments, authorId;
 
@@ -37,6 +37,10 @@ public class News {
         this.comments = comments;
     }
 
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     public String getContent() {
         return content;
     }
@@ -55,5 +59,9 @@ public class News {
 
     public int getComments() {
         return comments;
+    }
+
+    public String getUrl() {
+        return url;
     }
 }

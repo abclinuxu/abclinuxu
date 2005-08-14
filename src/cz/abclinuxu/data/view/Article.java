@@ -11,7 +11,7 @@ import java.util.Date;
  * Wrapper arround article.
  */
 public class Article {
-    private String title, perex, author;
+    private String title, perex, author, url;
     private Date published;
     private int relationId, comments, reads, authorId;
 
@@ -53,6 +53,10 @@ public class Article {
         this.reads = reads;
     }
 
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -71,5 +75,9 @@ public class Article {
 
     public int getRelationId() {
         return relationId;
+    }
+
+    public String getUrl() {
+        return url;
     }
 }
