@@ -17,7 +17,7 @@
 </script>
 
 <form action="/Search" method="GET">
-    <table border="0" width="100%">
+    <table border="0" class="siroka">
         <tr>
             <td>
               <input type="text" name="query" value="${QUERY?if_exists?html}" size="50" tabindex="1">
@@ -28,17 +28,18 @@
                   <table border="0">
                    <tr>
                     <td><label><input type="checkbox" name="type" value="clanek" <#if TYPES.article>checked</#if>>Èlánky</label></td>
-                    <td><label><input type="checkbox" name="type" value="diskuse" <#if TYPES.discussion>checked</#if>>Diskuse</label></td>
                     <td><label><input type="checkbox" name="type" value="zpravicka" <#if TYPES.news>checked</#if>>Zprávièky</label></td>
-                    <td><label><input type="checkbox" name="type" value="sekce" <#if TYPES.section>checked</#if>>Sekce</label></td>
+                    <td><label><input type="checkbox" name="type" value="diskuse" <#if TYPES.discussion>checked</#if>>Diskuse</label></td>
+                    <td><label><input type="checkbox" name="type" value="faq" <#if TYPES.faq>checked</#if>>FAQ</label></td>
                     <td><label><input type="checkbox" name="type" value="blog" <#if TYPES.blog>checked</#if>>Blogy</label></td>
+                    <td><label><input type="checkbox" name="type" value="sekce" <#if TYPES.section>checked</#if>>Sekce</label></td>
                    </tr>
                    <tr>
                     <td><label><input type="checkbox" name="type" value="hardware" <#if TYPES.hardware>checked</#if>>Hardware</label></td>
                     <td><label><input type="checkbox" name="type" value="software" <#if TYPES.software>checked</#if>>Software</label></td>
                     <td><label><input type="checkbox" name="type" value="ovladac" <#if TYPES.driver>checked</#if>>Ovladaèe</label></td>
                     <td><label><input type="checkbox" name="type" value="pojem" <#if TYPES.dictionary>checked</#if>>Pojmy</label></td>
-                    <td><button type="button" onclick="toggle(this)">V¹e/nic</button></td>
+                    <td colspan="2"><button type="button" onclick="toggle(this)">V¹e/nic</button></td>
                    </tr>
                   </table>
               <#else>
@@ -81,6 +82,7 @@
             <#elseif doc.typ='software'>Software
             <#elseif doc.typ='diskuse'>Diskuse, poèet odpovìdí: ${doc.odpovedi}
             <#elseif doc.typ='ovladac'>Ovladaè
+            <#elseif doc.typ='faq'>FAQ
             <#elseif doc.typ='clanek'>Èlánek
             <#elseif doc.typ='zpravicka'>Zprávièka
             <#elseif doc.typ='pojem'>Pojem

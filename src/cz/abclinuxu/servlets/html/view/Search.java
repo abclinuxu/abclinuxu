@@ -337,6 +337,12 @@ public class Search implements AbcAction {
             return map.containsKey(MyDocument.TYPE_BLOG);
         }
 
+        public boolean isFaq() {
+            if ( map.size()==0 )
+                return true;
+            return map.containsKey(MyDocument.TYPE_FAQ);
+        }
+
         // todo verifikovat zda to skutecne vyhledava jen v pojmech
         public boolean isDictionary() {
             if ( map.size()==0 )

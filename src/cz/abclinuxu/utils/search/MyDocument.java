@@ -24,6 +24,7 @@ public class MyDocument {
     public static final String TYPE_ARTICLE = "clanek";
     public static final String TYPE_NEWS = "zpravicka";
     public static final String TYPE_DICTIONARY = "pojem";
+    public static final String TYPE_FAQ = "faq";
     public static final String TYPE_BLOG = "blog";
     public static final int ALL_TYPES_COUNT = 9;
 
@@ -147,6 +148,14 @@ public class MyDocument {
         Field field = Field.Keyword(UPDATED, date);
         document.add(field);
         return field;
+    }
+
+    /**
+     * Sets boost factor for this document.
+     * @param boost boost factor
+     */
+    public void setBoost(float boost) {
+        document.setBoost(boost);
     }
 
     /**

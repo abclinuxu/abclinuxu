@@ -75,6 +75,7 @@ public class CreateIndex implements Configurable {
                 makeIndexOnArticles(indexWriter, articles.getChild().getChildren(), UrlUtils.PREFIX_CLANKY);
                 makeIndexOnNews(indexWriter, UrlUtils.PREFIX_NEWS);
                 makeIndexOnDictionary(indexWriter);
+                makeIndexOnFaq(indexWriter);
                 makeIndexOnBlogs(indexWriter, blogs.getChild().getChildren());
                 makeIndexOnForums(indexWriter, forums, UrlUtils.PREFIX_FORUM);
                 makeIndexOn(indexWriter, hardware, UrlUtils.PREFIX_HARDWARE);
@@ -223,6 +224,24 @@ public class CreateIndex implements Configurable {
             if ( hasBeenIndexed(child) ) continue;
             child = (Item) persistance.findById(child);
             doc = indexDictionary(child);
+            indexWriter.addDocument(doc.getDocument());
+        }
+    }
+
+    /**
+     * Indexes frequently asked questions.
+     */
+    static void makeIndexOnFaq(IndexWriter indexWriter) throws Exception {
+        Item child;
+        MyDocument doc;
+        List relations = sqlTool.findItemRelationsWithType(Item.FAQ, new Qualifier[0]);
+        Relation relation;
+
+        for (Iterator iter = relations.iterator(); iter.hasNext();) {
+            relation = (Relation) iter.next();
+            child = (Item) relation.getChild();
+            if ( hasBeenIndexed(child) ) continue;
+            doc = indexFaq(relation);
             indexWriter.addDocument(doc.getDocument());
         }
     }
@@ -765,6 +784,28 @@ public class CreateIndex implements Configurable {
         doc.setCreated(dictionary.getCreated());
         doc.setUpdated(dictionary.getUpdated());
         doc.setURL("/slovnik/"+dictionary.getSubType());
+
+        return doc;
+    }
+
+    /**
+     * Extracts text from faq item for indexing.
+     * @param relation initialized relation
+     */
+    static MyDocument indexFaq(Relation relation) {
+        Item faq = (Item) persistance.findById(relation.getChild());
+        String title = Tools.xpath(faq, "/data/title");
+        StringBuffer sb = new StringBuffer(title);
+        String content = Tools.xpath(faq, "/data/text");
+        sb.append(content);
+
+        MyDocument doc = new MyDocument(Tools.removeTags(sb.toString()));
+        doc.setTitle(title);
+        doc.setType(MyDocument.TYPE_FAQ);
+        doc.setCreated(faq.getCreated());
+        doc.setUpdated(faq.getUpdated());
+        doc.setURL(relation.getUrl());
+        doc.setBoost(1.2f);
 
         return doc;
     }
