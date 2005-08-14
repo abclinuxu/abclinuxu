@@ -324,8 +324,8 @@
                             <entry key="max.hardware" value="10"/>
                             <entry key="default.driver" value="3"/>
                             <entry key="max.driver" value="10"/>
-                            <entry key="default.story" value="6"/>
-                            <entry key="max.story" value="10"/>
+                            <entry key="default.story" value="14"/>
+                            <entry key="max.story" value="20"/>
                             <entry key="default.news" value="10"/>
                             <entry key="max.news" value="25"/>
                             <entry key="default.article" value="9"/>

@@ -13,11 +13,11 @@
     </div></div>
     <div class="s_sekce">
         <ul>
-            <li><a href="/clanky/show/26394">Co je to Linux?</a></li>
-            <li><a href="/clanky/show/12707">Je opravdu zdarma?</a></li>
-            <li><a href="/clanky/show/9503">Jakou zvolit distribuci?</a></li>
-            <li><a href="/clanky/show/14665">Náhrady Windows aplikací</a></li>
-            <li><a href="/clanky/show/20310">Rozcestník na¹ich seriálù</a>
+            <li><a href="/clanky/recenze/co-je-to-linux">Co je to Linux?</a></li>
+            <li><a href="/clanky/ruzne/je-linux-opravdu-zdarma">Je opravdu zdarma?</a></li>
+            <li><a href="/clanky/navody/tema-vyber-distribuce">Jakou zvolit distribuci?</a></li>
+            <li><a href="/clanky/ruzne/cim-v-linuxu-nahradit-aplikace-windows">Náhrady Windows aplikací</a></li>
+            <li><a href="/clanky/ruzne/abcserialy">Rozcestník na¹ich seriálù</a>
         </ul>
     </div>
 
@@ -118,44 +118,53 @@
     <#list ARTICLES as rel>
         <@lib.showArticle rel, "CZ_DM", "CZ_SHORT"/>
         <hr>
-        <#if rel_index==2>
-            <#assign STORIES=VARS.getFreshStories(USER?if_exists)>
-            <#if (STORIES?size>0) >
-                <div class="ramec-st">
-                    <div class="s_nad_h1"><div class="s_nad_pod_h1">
-                        <a class="info" href="#">?<span class="tooltip">Vlastní blog si po pøihlá¹ení
-                        mù¾ete zalo¾it v nastavení svého profilu</span></a>
-                        <h1><a href="/blog">Blogy na AbcLinuxu</a></h1>
-                    </div></div>
-                    <div class="s_sekce">
-                        <ul>
-                            <#list STORIES as relation>
-                                <li>
-                                    <#assign story=relation.child, blog=relation.parent>
-                                    <#assign url=TOOL.getUrlForBlogStory(blog.subType, story.created, relation.id)>
-                                    <#assign title=TOOL.xpath(blog,"//custom/title")?default("UNDEF")>
-                                    <#assign CHILDREN=TOOL.groupByType(story.children)>
-                                    <#if CHILDREN.discussion?exists>
-                                        <#assign diz=TOOL.analyzeDiscussion(CHILDREN.discussion[0])>
-                                    <#else>
-                                        <#assign diz=TOOL.analyzeDiscussion("UNDEF")>
-                                    </#if>
-                                    <a href="${url}" title="Komentáøù:&nbsp;${diz.responseCount}<#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if>">${TOOL.xpath(story, "/data/name")}</a>
-                                    <span>| ${DATE.show(story.created, "CZ_DM")}
-                                    <#if title!="UNDEF"> | <a href="/blog/${blog.subType}">${title}</a></#if></span>
-                                </li>
-                            </#list>
-                        </ul>
-                    </div>
-                </div>
-            </#if>
-        </#if>
     </#list>
 
     <div class="st_uprostred">
         <a href="/History?type=articles&amp;from=${ARTICLES?size}&amp;count=10">Star¹í èlánky</a>
     </div>
+
+    <#assign STORIES=VARS.getFreshStories(USER?if_exists), half=STORIES?size/2>
+    <#if STORIES?size%2==1><#assign half=half+1></#if>
+    <#if (STORIES?size>0) >
+        <div class="ramec-st">
+            <div class="s_nad_h1"><div class="s_nad_pod_h1">
+                <a class="info" href="#">?<span class="tooltip">Vlastní blog si po pøihlá¹ení
+                mù¾ete zalo¾it v nastavení svého profilu</span></a>
+                <h1><a href="/blog">Blogy na AbcLinuxu</a></h1>
+            </div></div>
+            <div class="s_sekce">
+                <table width="99%">
+                    <tr>
+                        <td valign="top">
+                            <#list STORIES[0..half-1] as relation>
+                                <@printStory relation /><br>
+                            </#list>
+                        </td>
+                        <td valign="top">
+                            <#list STORIES[half..] as relation>
+                                <@printStory relation /><br>
+                            </#list>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </#if>
 </#if>
+
+<#macro printStory relation>
+    <#assign story=relation.child, blog=relation.parent, title=TOOL.xpath(blog,"//custom/title")?default("UNDEF"),
+             url=TOOL.getUrlForBlogStory(blog.subType, story.created, relation.id), CHILDREN=TOOL.groupByType(story.children),
+             author=TOOL.createUser(blog.owner)>
+    <#if CHILDREN.discussion?exists>
+        <#assign diz=TOOL.analyzeDiscussion(CHILDREN.discussion[0])>
+    <#else>
+        <#assign diz=TOOL.analyzeDiscussion("UNDEF")>
+    </#if>
+    <a href="${url}" title="${author.nick?default(author.name)}<#if title!="UNDEF">, ${title}</#if>">${TOOL.xpath(story, "/data/name")}</a>
+    <span title="Poèet&nbsp;komentáøù<#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if>">(${diz.responseCount})</span>
+</#macro>
 
 <#flush>
 
@@ -209,7 +218,7 @@
         <h1 class="st_nadpis">Rozcestník</h1>
         <div class="s"><div class="s_sekce"><div class="rozc">
         <table>
-        <#list TOOL.createServers([16,1,13,12,17,14]) as server>
+        <#list TOOL.createServers([16,13,14,1,17,15]) as server>
             <#if server_index % 3 = 0><tr><#assign open=true></#if>
             <td>
             <a class="server" href="${server.url}">${server.name}</a>

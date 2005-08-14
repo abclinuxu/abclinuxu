@@ -35,7 +35,7 @@ blockquote {
 	margin-left: 2em;
 }
 
-a.bh:hover, .ad a:hover {
+a.za_logo:hover, .ad a:hover {
 	background-color: transparent;
 }
 
@@ -181,16 +181,17 @@ a.za_mn_odkaz:hover {
 	border-left: 1px solid #F5F5F5;
 }
 
-.st h2 {
-	font-size:	110%;
-	margin-bottom:	-3px;
+h2 {
+	font-size:	115%;
+	margin:		0.4em 0 0 0;
 }
 
-.st h1 {
+h3 { font-size: 	103%;
+	 margin:	0.3em 0 0.1em 0; }
+
+h1 {
 	font-size:	130%;
-	font-weight:	bold;
-	margin:		0 0 -5px 0;
-	padding-top:	10px;
+	margin:		0.5em 0 0 0;
 }
 
 h1.st_nadpis a {
@@ -205,7 +206,7 @@ h1.st_nadpis a:hover {
 
 .st hr { margin: 5px 0 0 -5px }
 
-.st p { margin: 0.7em 0 0 0; }
+.st p { margin: 0.4em 0 0.2em 0; }
 
 .st a:hover img { background-color: white; }
 
@@ -235,10 +236,6 @@ td.pad, code.kod, pre.kod {
 	border-top:	2px solid #27648D;
 	border-bottom:	1px solid #27648D;
 	background-color: #F0F0F0;
-}
-
-.cl_perex h1, .perex h1 {
-	margin-bottom:	5px;
 }
 
 .cl_rating {
@@ -472,7 +469,7 @@ a.info:hover span.tooltip {
 .ramec-st .s_nad_h1 { border-top: none; margin-top: 0 }
 .ramec-st {
 	border: 1px solid silver;
-	margin: 5px 302px 0 0;
+	margin: 5px 5px 0 0;
 	padding-bottom: 5px;
 	background: #f6f6f6;
 }
@@ -480,10 +477,6 @@ a.info:hover span.tooltip {
 .s li {
 	padding:	0px;
 	margin:		0px;
-}
-
-.s img {
-	border:		1px solid #C0C0C0;
 }
 
 .s form {
@@ -528,9 +521,19 @@ a.info:hover span.tooltip {
 	background:	url('/images/site2/adback.png') no-repeat;
 }
 
-.ank-odpov {
+.ank-sloup {
+	border-top:	2px solid #81aecd;
+	border-bottom:	2px solid #1b275e;
+	background:	#0f598c;
+	width:		100%;
+	height:		6px;
+	font-size:	0; /* IE */
+}
+
+.ank-sloup-okraj { border: 1px solid #c0c0c0; }
+
+.ank td, .ank-odpov {
 	margin: 0 3px 0.3em 0;
-	display:block;
 	border-top:1px solid lightgray; }
 
 .ank-otazka { margin-bottom:0.5em }
@@ -735,6 +738,10 @@ a.info:hover span.tooltip {
 	background:	#ececec;
 	margin:		0.5em 0.5em 0 0;
 	padding:	0.5em;
+}
+
+span.highlight {
+	font-weight: bold;
 }
 
 /*************** SF lista *****************/
