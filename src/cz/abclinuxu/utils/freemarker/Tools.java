@@ -483,6 +483,33 @@ public class Tools implements Configurable {
     }
 
     /**
+     * Creates list in order split to columns. For example if original list contained
+     * elements 1,2,3,4,5,6 and number of columns is 2, output will hold 1,4,2,5,3,6.
+     * You can the sequentially iterate the list and easily create two columns (1,2,3)
+     * and (4,5,6).
+     * @param list original list
+     * @param columns number of columns
+     * @return new list ordered by columns
+     */
+    public List columnize(List list, int columns) {
+        int size = list.size();
+        int rows = size/columns;
+        if (size%columns!=0)
+            rows ++;
+
+        List result = new ArrayList(size);
+        for (int i=0; i<rows; i++) {
+            for (int j = 0; j<columns; j++) {
+                int index = i + j * rows;
+                if (index<size)
+                    result.add(list.get(index));
+            }
+        }
+
+        return result;
+    }
+
+    /**
      * Extracts new string from str. Workaround for freemarker,
      * which uses BigDecimal as integer holder, so String.substring(int)
      * is not recognized by beans introspection.
