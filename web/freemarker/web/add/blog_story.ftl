@@ -7,7 +7,9 @@
 <p>Tento formuláø slou¾í pro vkládání nových zápisù do va¹eho blogu.
 Ka¾dý zápis musí mít titulek, který by mìl struènì a jasnì popisovat,
 o èem vá¹ zápis bude pojednávat. Titulek bude zobrazen i ve va¹em RSS.
-Text zápisu pi¹te ve validním HTML (<a href="http://www.kosek.cz/clanky/html/01.html">rychlokurz</a>).
+Text zápisu pi¹te ve validním HTML
+(<a href="http://www.kosek.cz/clanky/html/01.html">rychlokurz</a>,
+<a href="http://www.jakpsatweb.cz/html/">pøíruèka</a>).
 </p>
 
 <p>Del¹í pøíspìvky lze rozdìlit na úvodní èást, která se zobrazí
@@ -95,6 +97,7 @@ spokojeni. Najdete jej v pravém menu.
                 <input tabindex="5" type="submit" name="delay" value="Odlo¾">
             <#else>
                 <input tabindex="3" type="submit" name="preview" value="Náhled">
+                <input tabindex="4" type="submit" name="delay" value="Odlo¾">
             </#if>
         </td>
     </tr>
@@ -103,7 +106,9 @@ spokojeni. Najdete jej v pravém menu.
 </form>
 
 <p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html">znaèky</a>:
-P, BR, B, I, U, A, PRE, UL, OL, LI, DL, DT, DD, TABLE, TR, TD, TH, CODE, DIV, H1, H2, H3, H4, EM,
-STRONG, CITE, BLOCKQUOTE, Q, VAR, HR a TT.</p>
+ A,  B, BLOCKQUOTE, BR, CENTER, CITE, CODE, DD, DEL, DIV, DL, DT, EM, IMG, H1, H2, H3, H4, HR, I,
+ INS, KBD, LI, OL, P, PRE, Q, SPAN, STRONG, TABLE, TBODY, TD, TFOOT, TH, THEAD, TR, TT, U, UL, VAR.
+ Znaèky P, PRE, DIV, SPAN, H1-H4 a A povolují atrubity ID a CLASS.
+</p>
 
 <#include "../footer.ftl">
