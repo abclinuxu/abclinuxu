@@ -12,10 +12,7 @@ import org.htmlparser.lexer.nodes.Attribute;
 import org.htmlparser.lexer.nodes.PageAttribute;
 import org.htmlparser.Node;
 
-import java.util.Vector;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Class, that can check validity and conformance to policy of HTML text.
@@ -30,31 +27,36 @@ public class TagValidator {
      * @throws cz.abclinuxu.utils.parser.safehtml.TagNotClosedException If tag is not closed.
      * @throws cz.abclinuxu.utils.parser.safehtml.AttributeNotAllowedException If attribute is not allowed.
      */
-    static void check(String s, Map allowedTags) throws TagNotAllowedException, TagNotClosedException, AttributeNotAllowedException, ParserException {
+    static void check(String s, Map allowedTags) throws HtmlCheckException, ParserException {
         Lexer lexer = new Lexer(s);
         Node node = null;
         TagNode tag = null;
-        CheckedTag checkedTag = null;
+        CheckedTag checkedTag = null, lastTag = null;
+        String currentTagName = null;
         Vector attributes = null;
-        HashMap openTags = new HashMap();
+        List tagStack = new ArrayList();
 
         while ((node=lexer.nextNode())!=null) {
             if (!(node instanceof TagNode))
                 continue;
-            tag = (TagNode) node;
-            checkedTag = (CheckedTag) allowedTags.get(tag.getTagName());
-            if (checkedTag==null)
-                throw new TagNotAllowedException("Znaèka "+tag.getTagName()+" není povolena!");
 
-            if (checkedTag.mustBeClosed) {
-                if (tag.isEndTag()) {
-                    openTags.remove(tag.getTagName());
-                } else {
-                    if ( openTags.get(tag.getTagName())!=null )
-                        throw new TagNotClosedException("Znaèka "+tag.getTagName()+" musí být uzavøena!");
-                    openTags.put(tag.getTagName(), Boolean.TRUE);
-                }
-            }
+            tag = (TagNode) node;
+            currentTagName = tag.getTagName();
+            checkedTag = (CheckedTag) allowedTags.get(currentTagName);
+            if (checkedTag==null)
+                throw new TagNotAllowedException("Znaèka "+currentTagName+" není povolena!");
+
+            if (tag.isEndTag()) {
+                do {
+                    if (tagStack.size() == 0)
+                        throw new TagNotClosedException("Nenaletena otevírací znaèka " + currentTagName + "! Nejsou znaèky pøekøí¾eny?");
+                    lastTag = (CheckedTag) tagStack.remove(tagStack.size() - 1);
+                } while(!lastTag.mustBeClosed && !lastTag.name.equals(currentTagName));
+
+                if (checkedTag.mustBeClosed && !lastTag.name.equals(currentTagName))
+                    throw new CrossedTagException("Znaèky " + lastTag.name + " a " + currentTagName + " jsou pøekøí¾eny!");
+            } else
+                tagStack.add(checkedTag);
 
             attributes = tag.getAttributesEx();
             removeTagAttribute(attributes);
@@ -79,8 +81,12 @@ public class TagValidator {
                     throw new AttributeNotAllowedException("Znaèka "+checkedTag.name+" nesmí obsahovat atribut "+name+"!");
             }
         }
-        if (openTags.size()>0)
-            throw new TagNotClosedException("Znaèka "+openTags.keySet().iterator().next()+" musí být uzavøena!");
+
+        for (Iterator iter = tagStack.iterator(); iter.hasNext();) {
+            checkedTag = (CheckedTag) iter.next();
+            if (checkedTag.mustBeClosed)
+                throw new TagNotClosedException("Znaèka " + checkedTag.name + " musí být uzavøena!");
+        }
     }
 
     /**

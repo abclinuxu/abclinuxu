@@ -53,7 +53,7 @@ public class SafeHTMLGuard {
      * @throws cz.abclinuxu.utils.parser.safehtml.TagNotClosedException If tag is not closed.
      * @throws cz.abclinuxu.utils.parser.safehtml.AttributeNotAllowedException If attribute is not allowed.
      */
-    public static void check(String s) throws TagNotAllowedException, TagNotClosedException, AttributeNotAllowedException, ParserException {
+    public static void check(String s) throws HtmlCheckException, ParserException {
         TagValidator.check(s, TAGS);
     }
 }

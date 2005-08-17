@@ -8,8 +8,8 @@ package cz.abclinuxu.utils.parser.safehtml;
 /**
  * The tag is not closed.
  */
-public class TagNotClosedException extends HtmlCheckException {
-    public TagNotClosedException(String message) {
+public class CrossedTagException extends HtmlCheckException {
+    public CrossedTagException(String message) {
         super(message);
     }
 }

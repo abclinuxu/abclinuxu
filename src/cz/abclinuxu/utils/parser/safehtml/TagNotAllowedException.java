@@ -6,9 +6,9 @@
 package cz.abclinuxu.utils.parser.safehtml;
 
 /**
- * The tag is not allowed by portal policy. 
+ * The tag is not allowed by portal policy.
  */
-public class TagNotAllowedException extends Exception {
+public class TagNotAllowedException extends HtmlCheckException {
     public TagNotAllowedException(String message) {
         super(message);
     }

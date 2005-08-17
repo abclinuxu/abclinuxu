@@ -67,7 +67,7 @@ public class BlogHTMLGuard {
      * @throws TagNotClosedException If tag is not closed.
      * @throws AttributeNotAllowedException If attribute is not allowed.
      */
-    public static void check(String s) throws TagNotAllowedException, TagNotClosedException, AttributeNotAllowedException, ParserException {
+    public static void check(String s) throws HtmlCheckException, ParserException {
         TagValidator.check(s, TAGS);
     }
 }

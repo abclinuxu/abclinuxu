@@ -49,7 +49,7 @@ public class ProfileGuard {
      * @throws TagNotClosedException If tag is not closed.
      * @throws AttributeNotAllowedException If attribute is not allowed.
      */
-    public static void check(String s) throws TagNotAllowedException, TagNotClosedException, AttributeNotAllowedException, ParserException {
+    public static void check(String s) throws ParserException, HtmlCheckException {
         TagValidator.check(s, TAGS);
     }
 }

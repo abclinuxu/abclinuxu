@@ -8,7 +8,7 @@ package cz.abclinuxu.utils.parser.safehtml;
 /**
  * The portal policy forbids given (any) attribute.
  */
-public class AttributeNotAllowedException extends Exception {
+public class AttributeNotAllowedException extends HtmlCheckException {
     public AttributeNotAllowedException(String message) {
         super(message);
     }

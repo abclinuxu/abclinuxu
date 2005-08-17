@@ -9,10 +9,7 @@ import junit.framework.TestCase;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
-import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
-import cz.abclinuxu.utils.parser.safehtml.TagNotAllowedException;
-import cz.abclinuxu.utils.parser.safehtml.TagNotClosedException;
-import cz.abclinuxu.utils.parser.safehtml.AttributeNotAllowedException;
+import cz.abclinuxu.utils.parser.safehtml.*;
 
 /**
  * Verifies SafeHTMLGuard functionality.
@@ -392,6 +389,36 @@ public class TestSafeHTML extends TestCase {
         } catch (TagNotClosedException e) {
             //ok
         }
+    }
+
+    public void testCrossedTag() throws Exception {
+        try {
+            String s = "zde <b>zacina<i>problematicky</b>kod</i>";
+            SafeHTMLGuard.check(s);
+            fail("Shall have failed: " + s);
+        } catch (CrossedTagException e) {
+            //ok
+        }
+    }
+
+    public void testCrossedOptionallyClosedTag() throws Exception {
+        try {
+            String s = "zde <a>zacina<p>problematicky</a>kod</p>";
+            SafeHTMLGuard.check(s);
+            fail("Shall have failed: " + s);
+        } catch (TagNotClosedException e) {
+            //ok
+        } catch (CrossedTagException e) {
+            //ok
+        }
+    }
+
+    public void testNestedTag() throws Exception {
+        String nested = "<ol><li><ol><li>1.1</li></ol></li></ol>";
+        SafeHTMLGuard.check(nested);
+
+        nested = "<ol><li><ol><li>1.1</ol></ol>";
+        SafeHTMLGuard.check(nested);
     }
 
     public TestSafeHTML(String s) {

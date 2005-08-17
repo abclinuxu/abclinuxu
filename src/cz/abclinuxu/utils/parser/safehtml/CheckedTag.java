@@ -21,4 +21,8 @@ class CheckedTag {
         this.mustBeClosed = mustBeClosed;
         this.attributes = attributes;
     }
+
+    public String toString() {
+        return name;
+    }
 }
