@@ -85,21 +85,20 @@ public class ViewCategory implements AbcAction {
 
         // check ACL
         Document document = relation.getData();
-        if ( document!=null && document.selectSingleNode("/data/acl")!=null ) {
+        if (document != null && document.getRootElement().elements("acl") != null) {
+            List elements = document.getRootElement().elements("/data/acl");
+            List acls = new ArrayList(elements.size());
+            for (Iterator iter = elements.iterator(); iter.hasNext();) {
+                ACL acl = EditRelation.getACL((Element) iter.next());
+                acls.add(acl);
+            }
+
             User user = (User) env.get(Constants.VAR_USER);
-            if ( user==null )
+            if (user == null && !ACL.isGranted(ACL.RIGHT_READ, acls))
                 return FMTemplateSelector.select("ViewUser", "login", env, request);
 
-            if ( !user.hasRole(Roles.ROOT) ) {
-                List elements = document.selectNodes("/data/acl");
-                List acls = new ArrayList(elements.size());
-                for ( Iterator iter = elements.iterator(); iter.hasNext(); ) {
-                    ACL acl = EditRelation.getACL((Element) iter.next());
-                    acls.add(acl);
-                }
-                if ( !ACL.isGranted(user, ACL.RIGHT_READ, acls) )
-                    return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-            }
+            if (!user.hasRole(Roles.ROOT) && !ACL.isGranted(user, ACL.RIGHT_READ, acls))
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
         }
 
         return processCategory(request,response,env,relation);
