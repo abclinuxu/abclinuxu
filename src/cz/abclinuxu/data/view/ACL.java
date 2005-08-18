@@ -16,6 +16,8 @@ import java.util.Iterator;
  */
 public class ACL {
     public static final String RIGHT_READ = "read";
+    public static final String RIGHT_SAVE = "save";
+    public static final String RIGHT_DELETE = "delete";
 
     private int id;
     private User user;

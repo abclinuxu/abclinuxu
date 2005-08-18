@@ -17,6 +17,8 @@ budete pøeneseni na stránku, kde mù¾ete vyhledat u¾ivatele.
    <td>
     <select name="right" tabindex="1">
      <option value="read" selected>ke ètení</option>
+     <option value="save" selected>k zápisu</option>
+     <option value="delete" selected>k mazání</option>
     </select>
     <select name="value" tabindex="2">
      <option value="yes" selected>ano</option>

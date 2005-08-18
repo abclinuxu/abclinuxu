@@ -612,8 +612,8 @@ public class EditRelation implements AbcAction {
 
         Element data = document.getRootElement();
         if (data==null) {
-            document.setRootElement(DocumentHelper.createElement("data"));
-            data = document.getRootElement();
+            data = DocumentHelper.createElement("data");
+            document.setRootElement(data);
         }
 
         Element acl = data.addElement("acl");
