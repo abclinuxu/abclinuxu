@@ -108,6 +108,25 @@ public class ACL {
         return !rightFound;
     }
 
+    /**
+     * Finds out, whether anonymous user has specified right. User has the right,
+     * if right is not specified in acls or if he is member of group, that is
+     * allowed for this right. If neither is true, access is not granted.
+     * @param right name of right.
+     * @param acls list of ACL instances
+     * @return true, if access is granted
+     */
+    public static boolean isGranted(String right, List acls) {
+        boolean rightFound = false;
+        for ( Iterator iter = acls.iterator(); iter.hasNext(); ) {
+            ACL acl = (ACL) iter.next();
+            if (!right.equals(acl.right))
+                continue;
+            rightFound = true;
+        }
+        return !rightFound;
+    }
+
     public String toString() {
         return "ACL ("+id+") "+right+": "+value;
     }
