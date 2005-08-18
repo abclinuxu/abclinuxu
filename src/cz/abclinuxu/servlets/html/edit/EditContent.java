@@ -13,6 +13,7 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistance.versioning.VersioningFactory;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
@@ -20,6 +21,7 @@ import cz.abclinuxu.data.Category;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.email.monitor.*;
 import cz.finesoft.socd.analyzer.DiacriticRemover;
 import org.apache.log4j.Logger;
 import org.dom4j.Element;
@@ -49,6 +51,7 @@ public class EditContent implements AbcAction {
     public static final String ACTION_ADD_ITEM_STEP2 = "add2";
     public static final String ACTION_EDIT_ITEM = "edit";
     public static final String ACTION_EDIT_ITEM_STEP2 = "edit2";
+    public static final String ACTION_ALTER_MONITOR = "monitor";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -58,6 +61,10 @@ public class EditContent implements AbcAction {
         // check permissions
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
+
+        if (ACTION_ALTER_MONITOR.equals(action))
+            return actionAlterMonitor(request, response, env);
+
         if ( !user.hasRole(Roles.CONTENT_ADMIN) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
@@ -91,7 +98,8 @@ public class EditContent implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
 
         Item item = new Item(0, Item.CONTENT);
-        item.setData(DocumentHelper.createDocument());
+        Document document = DocumentHelper.createDocument();
+        item.setData(document);
         item.setOwner(user.getId());
         Relation relation = new Relation();
 
@@ -111,6 +119,11 @@ public class EditContent implements AbcAction {
         relation.setChild(item);
         relation.setUpper(Constants.REL_DOCUMENTS);
         persistance.create(relation);
+
+        // commit new version
+        String path = Integer.toString(relation.getId());
+        String userId = Integer.toString(user.getId());
+        VersioningFactory.getVersioning().commit(document.asXML(), path, userId);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());
@@ -140,6 +153,7 @@ public class EditContent implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_RELATION);
+        User user = (User) env.get(Constants.VAR_USER);
         Item item = (Item) relation.getChild();
 
         boolean canContinue = true;
@@ -155,6 +169,38 @@ public class EditContent implements AbcAction {
 
         persistance.update(item);
         persistance.update(relation);
+
+        // commit new version
+        String path = Integer.toString(relation.getId());
+        String userId = Integer.toString(user.getId());
+        Element copy = item.getData().getRootElement().createCopy();
+        Element monitor = copy.element("monitor");
+        if (monitor != null)
+            monitor.detach();
+        VersioningFactory.getVersioning().commit(copy.asXML(), path, userId);
+
+        // run monitor
+        String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
+        MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.DRIVER, item, absoluteUrl);
+        MonitorPool.scheduleMonitorAction(action);
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, relation.getUrl());
+        return null;
+    }
+
+    /**
+     * Reverts current monitor state for the user on this document.
+     */
+    protected String actionAlterMonitor(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item content = (Item) persistance.findById(relation.getChild());
+        User user = (User) env.get(Constants.VAR_USER);
+
+        MonitorTools.alterMonitor(content.getData().getRootElement(), user);
+        persistance.update(content);
+
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());
         return null;
