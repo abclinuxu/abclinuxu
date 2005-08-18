@@ -58,6 +58,9 @@ public class BlogHTMLGuard {
         TAGS.put("VAR", new CheckedTag("VAR", true, null));
         TAGS.put("HR", new CheckedTag("HR", false, null));
         TAGS.put("TT", new CheckedTag("TT", true, null));
+        TAGS.put("SUB", new CheckedTag("SUB", true, null));
+        TAGS.put("SUP", new CheckedTag("SUP", true, null));
+        TAGS.put("SMALL", new CheckedTag("SMALL", true, null));
     }
 
     /**
