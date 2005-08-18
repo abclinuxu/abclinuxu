@@ -475,7 +475,12 @@ public class EditBlog implements AbcAction, Configurable {
     protected String actionRemoveStoryStep2(HttpServletRequest request, HttpServletResponse response, Relation story, Category blog, Map env) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
         persistance.remove(story);
-        decrementArchiveRecord(blog.getData().getRootElement(), ((Item)story.getChild()).getCreated());
+
+        Document document = blog.getData();
+        decrementArchiveRecord(document.getRootElement(), ((Item)story.getChild()).getCreated());
+        Element unpublishedStory = (Element) document.selectSingleNode("/data/unpublished/rid[text()=\"" + story.getId() + "\"]");
+        if (unpublishedStory != null)
+            unpublishedStory.detach();
         persistance.update(blog);
 
         FeedGenerator.updateBlog(blog);
