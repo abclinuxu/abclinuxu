@@ -38,6 +38,8 @@ public class Roles {
     public static final String TIPS_ADMIN = "tip admin";
     /** user can edit requests */
     public static final String REQUESTS_ADMIN = "requests admin";
-    /** user can edit requests */
+    /** user can manage content */
     public static final String CONTENT_ADMIN = "content admin";
+    /** user can create content with URL derived under public content */
+    public static final String CAN_DERIVE_CONTENT = "derive content";
 }
