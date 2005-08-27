@@ -49,7 +49,7 @@ public class TagValidator {
             if (tag.isEndTag()) {
                 do {
                     if (tagStack.size() == 0)
-                        throw new TagNotClosedException("Nenaletena otevírací znaèka " + currentTagName + "! Nejsou znaèky pøekøí¾eny?");
+                        throw new TagNotClosedException("Nenalezena otevírací znaèka " + currentTagName + "! Nejsou znaèky pøekøí¾eny?");
                     lastTag = (CheckedTag) tagStack.remove(tagStack.size() - 1);
                 } while(!lastTag.mustBeClosed && !lastTag.name.equals(currentTagName));
 

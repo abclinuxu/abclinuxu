@@ -16,6 +16,7 @@ public class ObjectType {
     public static final ObjectType ITEM = new ObjectType("item");
     public static final ObjectType DICTIONARY = new ObjectType("dictionary");
     public static final ObjectType FAQ = new ObjectType("faq");
+    public static final ObjectType CONTENT = new ObjectType("content");
 
     private ObjectType(String name) {
         this.name = name;

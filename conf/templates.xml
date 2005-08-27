@@ -24,7 +24,13 @@
           <var name="TITLE" value="Vlo¾ení stránky"/>
       </action>
       <action name="edit" template="print" content="/add/content.ftl">
-          <var name="TITLE" value="Úprava stránky"/>
+          <var name="TITLE" value='Úprava stránky - ${TOOL.xpath(RELATION.child,"data/name")}' type="Lazy"/>
+      </action>
+      <action name="addDerived" content="/add/derivedContent.ftl">
+          <var name="TITLE" value="Vlo¾ení stránky"/>
+      </action>
+      <action name="editPublic" content="/edit/publicContent.ftl">
+          <var name="TITLE" value='Úprava stránky - ${TOOL.xpath(RELATION.child,"data/name")}' type="Lazy"/>
       </action>
   </servlet>
 

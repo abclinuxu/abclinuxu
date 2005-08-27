@@ -83,7 +83,7 @@ public class InstantSender extends Thread implements Configurable {
             return driverDecorator;
         if (ObjectType.DISCUSSION.equals(action.type) )
             return discussionDecorator;
-        if (ObjectType.ITEM.equals(action.type) )
+        if (ObjectType.ITEM.equals(action.type) || ObjectType.CONTENT.equals(action.type))
             return itemDecorator;
         if (ObjectType.FAQ.equals(action.type) )
             return faqDecorator;

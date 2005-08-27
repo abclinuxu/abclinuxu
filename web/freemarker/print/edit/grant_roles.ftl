@@ -36,10 +36,10 @@
      <input type="checkbox" name="roles" value="tip admin" <@isDefined "tip admin"/>> Administrátor tipù<br>
      <input type="checkbox" name="roles" value="user admin" <@isDefined "user admin"/>> Administrátor u¾ivatelù<br>
      <input type="checkbox" name="roles" value="news admin" <@isDefined "news admin"/>> Administrátor zprávièek<br>
-     <input type="checkbox" name="roles" value="email invalidator" <@isDefined "email invalidator"/>> Smí invalidovat emaily
+     <input type="checkbox" name="roles" value="email invalidator" <@isDefined "email invalidator"/>> Smí invalidovat emaily<br>
      <input type="checkbox" name="roles" value="move relation" <@isDefined "move relation"/>> Smí pøesunout relaci<br>
-     <input type="checkbox" name="roles" value="move relation" <@isDefined "derive content"/>> Smí vytvoøit podstránku dokumentu<br>
-     <input type="checkbox" name="roles" value="remove relation" <@isDefined "remove relation"/>> Smí smazat relaci a objekt<br>
+     <input type="checkbox" name="roles" value="derive content" <@isDefined "derive content"/>> Smí vytvoøit podstránku dokumentu<br>
+     <input type="checkbox" name="roles" value="remove relation" <@isDefined "remove relation"/>> Smí smazat relaci a objekt
    </td>
   </tr>
   <tr>
