@@ -133,22 +133,28 @@
                 mù¾ete zalo¾it v nastavení svého profilu</span></a>
                 <h1><a href="/blog">Blogy na AbcLinuxu</a></h1>
             </div></div>
-            <div class="s_sekce">
-                <table width="99%">
-                    <tr>
-                        <td valign="top">
-                            <#list STORIES[0..half-1] as relation>
-                                <@printStory relation /><br>
-                            </#list>
-                        </td>
-                        <td valign="top">
-                            <#list STORIES[half..] as relation>
-                                <@printStory relation /><br>
-                            </#list>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+            <table width="99%">
+                <tr>
+                    <td valign="top">
+		     <div class="s_sekce">
+   		      <ul>
+                        <#list STORIES[0..half-1] as relation>
+                            <li><@printStory relation /></li>
+                        </#list>
+		      </ul>
+		     </div>
+                    </td>
+                    <td valign="top">
+		     <div class="s_sekce">
+		      <ul>
+                	<#list STORIES[half..] as relation>
+                    	    <li><@printStory relation /></li>
+                    	</#list>
+		      </ul>
+		     </div>
+                    </td>
+                </tr>
+            </table>
         </div>
     </#if>
 </#if>
@@ -162,7 +168,7 @@
     <#else>
         <#assign diz=TOOL.analyzeDiscussion("UNDEF")>
     </#if>
-    <a href="${url}" title="${author.nick?default(author.name)}<#if title!="UNDEF">, ${title}</#if>">${TOOL.xpath(story, "/data/name")}</a>
+    <a href="${url}" title="${author.nick?default(author.name)?html}<#if title!="UNDEF">, ${title}</#if>">${TOOL.xpath(story, "/data/name")}</a>
     <span title="Poèet&nbsp;komentáøù<#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if>">(${diz.responseCount})</span>
 </#macro>
 
