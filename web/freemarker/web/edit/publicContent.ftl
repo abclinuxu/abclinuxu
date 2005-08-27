@@ -4,12 +4,12 @@
 
 <form action="${URL.make("/editContent")}" method="POST" name="form">
 
-<h1>Vkládání dokumentu</h1>
+<h1>Úprava dokumentu</h1>
 
-<p>Tento formuláø slou¾í pro vkládání obsahu. Obvykle jde jen
-o obyèejný text, který má pevné, hezké URL. Napøíklad nápovìda,
-podmínky u¾ití èi reklama. Obsah ale mù¾e být i dynamický,
-pak v¹ak potøebuje podporu programátora, který pøipraví data.</p>
+<p>Pokud chcete vylep¹it obsah dokumentu nebo opravit chybu, jste na
+správné adrese. V¹echny zmìny se automaticky ukládají do databáze, tak¾e
+je mo¾né prohlí¾et obsah tohoto dokumentu v prùbìhu èasu nebo vrátit
+zmìny zpìt.</p>
 
  <table width=100 border=0 cellpadding=5>
   <tr>
@@ -17,30 +17,6 @@ pak v¹ak potøebuje podporu programátora, který pøipraví data.</p>
    <td>
     <input type="text" name="title" value="${PARAMS.title?if_exists}" size=60 tabindex=1>
     <div class="error">${ERRORS.title?if_exists}</div>
-   </td>
-  </tr>
-  <tr>
-   <td width="90" class="required">Adresa stránky</td>
-   <td>
-    <input type="text" name="url" value="${PARAMS.url?if_exists}" size=60 tabindex=2>
-    <p>Zadejte absolutní, ale lokální URL. Vìt¹ina obsahu by mìla
-    být dostupná pod adresáøem /doc/*</p>
-    <div class="error">${ERRORS.url?if_exists}</div>
-   </td>
-  </tr>
-  <tr>
-   <td width="90" class="required">Java FQCN</td>
-   <td>
-    <input type="text" name="java_class" value="${PARAMS.java_class?if_exists}" size=60 tabindex=3>
-    <div class="error">${ERRORS.java_class?if_exists}</div>
-   </td>
-  </tr>
-  <tr>
-   <td width="90" class="required">Zpracovat freemarkerem</td>
-   <td>
-    <input type="checkbox" name="forbid_discussions" <#if PARAMS.forbid_discussions?exists>checked</#if> value="yes">
-    <p>Pokud za¹krtnete tuto volbu, systém obsah èlánku zpracuje skrze
-    <a href="http://freemarker.sourceforge.net/">Freemarker</a>. U¾iteèné pro dynamický obsah.</p>
    </td>
   </tr>
   <tr>
@@ -68,11 +44,7 @@ pak v¹ak potøebuje podporu programátora, který pøipraví data.</p>
   </tr>
  </table>
 
- <#if PARAMS.action=="add" || PARAMS.action="add2" >
-  <input type="hidden" name="action" value="add2">
-  <#else>
-  <input type="hidden" name="action" value="edit2">
- </#if>
+ <input type="hidden" name="action" value="editPublicContent2">
  <input type="hidden" name="rid" value="${PARAMS.rid?if_exists}">
 </form>
 
