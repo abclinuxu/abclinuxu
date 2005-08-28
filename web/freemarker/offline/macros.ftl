@@ -110,7 +110,7 @@
         Stránky:
         <#list 0..(result.pageCount-1) as page>
             <#if page!=result.pageIndex>
-                <a href="../../${DUMP.getFile(rid, page)}">${page}</a>
+                <a href="../../${DUMP.getFile(rid, page)}">${page+1}</a>
             <#else>
                 ${page+1}
             </#if>

@@ -9,6 +9,7 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistance.Nursery;
 import cz.abclinuxu.persistance.cache.LRUCache;
 import cz.abclinuxu.persistance.extra.LimitQualifier;
 import cz.abclinuxu.persistance.extra.Qualifier;
@@ -20,13 +21,13 @@ import cz.abclinuxu.servlets.utils.template.TemplateSelector;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.Sorters2;
-import cz.abclinuxu.utils.news.NewsCategories;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.utils.news.NewsCategories;
 import cz.abclinuxu.utils.paging.Paging;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateExceptionHandler;
@@ -101,6 +102,7 @@ public class Dump implements Configurable {
         dumpAllNews(dirRoot, news);
         dumpTree(drivers, dirRoot, UrlUtils.PREFIX_DRIVERS);
         dumpTree(hardware, dirRoot, UrlUtils.PREFIX_HARDWARE);
+        dumpForums(dirRoot);
         long end = System.currentTimeMillis();
         System.out.println("Dumping of "+indexed.size()+" documents took "+(end-start)/1000+" seconds.");
     }
@@ -111,6 +113,7 @@ public class Dump implements Configurable {
         env.put("DRIVERS", new Integer(Constants.REL_DRIVERS));
         env.put("ARTICLES", new Integer(Constants.REL_ARTICLES));
         env.put("NEWS", new Integer(Constants.REL_NEWS));
+        env.put("FORUM", new Integer(Constants.REL_FORUM));
 
         String name = FMTemplateSelector.select("ViewIndex", "show", env, "offline");
         File file = new File(dirRoot, "index.html");
@@ -153,10 +156,9 @@ public class Dump implements Configurable {
 
         if (parents==null) {
             parents = persistance.findParents(relation);
-//            parents.add(relation);
         } else {
-//            parents = new ArrayList(parents);
-//            parents.add(relation);
+            parents = new ArrayList(parents);
+            parents.add(relation);
         }
         env.put(ShowObject.VAR_PARENTS,parents);
 
@@ -250,7 +252,6 @@ public class Dump implements Configurable {
             env.put(ViewCategory.VAR_CATEGORY, sectionRelation.getChild());
 
             List parents = persistance.findParents(sectionRelation);
-            parents.add(sectionRelation);
             env.put(ShowObject.VAR_PARENTS, parents);
 
             int sectionId = sectionRelation.getChild().getId();
@@ -332,6 +333,76 @@ public class Dump implements Configurable {
     }
 
     /**
+     * Dumps all discussions.
+     * @param currentDir
+     * @throws Exception
+     */
+    void dumpForums(File currentDir) throws Exception {
+        List forums = sqlTool.findSectionRelationsWithType(Category.FORUM, null);
+        Tools.syncList(forums);
+
+        Relation forum = (Relation) Tools.sync(new Relation(Constants.REL_FORUM));
+        replaceChildren(forum.getChild(), forums);
+        File file = getFileName(forum, currentDir, 0);
+        dumpCategory(forum, (Category) forum.getChild(), file, UrlUtils.PREFIX_FORUM);
+
+        int total, i, count = 30;
+        Relation relation, relation2;
+        for (Iterator iter = forums.iterator(); iter.hasNext();) {
+            relation = (Relation) iter.next();
+            if (hasBeenIndexed(relation))
+                continue;
+            setIndexed(relation);
+
+            Map env = new HashMap();
+            env.put(ShowObject.VAR_RELATION, relation);
+            env.put(VAR_ONLINE_URL, PORTAL_URL + "/forum/dir/" + relation.getId());
+            env.put(ViewCategory.VAR_CATEGORY, relation.getChild());
+
+            List parents = persistance.findParents(relation);
+            env.put(ShowObject.VAR_PARENTS, parents);
+
+            total = sqlTool.countDiscussionRelationsWithParent(relation.getId());
+            for (i = 0; i < total;) {
+                Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(i, count)};
+                List data = sqlTool.findDiscussionRelationsWithParent(relation.getId(), qualifiers);
+                Tools.syncList(data);
+                Paging paging = new Paging(data, i, count, total);
+                env.put(VAR_DATA, paging);
+                i += data.size();
+
+                String template = FMTemplateSelector.select("ShowForum", "show", env, "offline");
+                file = getFileName(relation, currentDir, paging.getPageIndex().intValue());
+                FMUtils.executeTemplate(template, env, file);
+
+                for (Iterator iter2 = data.iterator(); iter2.hasNext();) {
+                    relation2 = (Relation) iter2.next();
+                    file = getFileName(relation2, currentDir);
+                    dumpItem(relation2, (Item) relation2.getChild(), file, parents, UrlUtils.PREFIX_FORUM);
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets new children for object.
+     * @param obj
+     * @param children
+     */
+    private void replaceChildren(GenericObject obj, List children) {
+        List currentChildren = obj.getChildren();
+        for (Iterator iterator = currentChildren.iterator(); iterator.hasNext();) {
+            Relation relation = (Relation) iterator.next();
+            Nursery.getInstance().removeChild(relation);
+        }
+        for (Iterator iterator = children.iterator(); iterator.hasNext();) {
+            Relation relation = (Relation) iterator.next();
+            relation.setParent(obj);
+            Nursery.getInstance().addChild(relation);
+        }
+    }
+
+    /**
      * Calculates file name including directories for relation.
      * File name is equal to current directory plus computed file name.
      */
@@ -393,7 +464,7 @@ public class Dump implements Configurable {
     boolean hasBeenIndexed(Relation relation) {
         Integer id = new Integer(relation.getId());
         if (indexed.containsKey(id)) {
-            System.out.println(id);
+//            System.out.println(id);
             return true;
         }
         return false;
