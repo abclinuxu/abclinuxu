@@ -5,10 +5,10 @@
  <#if tmp.discussion?exists>
   <#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])>
  </#if>
- <h1 class="st_nadpis"><a href="../../${DUMP.getFile(relation.id)}">${TOOL.xpath(clanek,"data/name")}</a></h1>
+ <h2 class="st_nadpis"><a href="../../${DUMP.getFile(relation.id)}">${TOOL.xpath(clanek,"data/name")}</a></h2>
  <p>
   <span class="barva">
-   ${DATE.show(clanek.created, "CZ_FULL")} |
+   ${DATE.show(clanek.created, "CZ_DMY")} |
    <a href="http://www.abclinuxu.cz/Profile/${autor.id}">${autor.name}</a>
   </span>
  </p>
@@ -103,4 +103,17 @@
     <#elseif month=="11">listopad
     <#elseif month=="12">prosinec
     </#if>
+</#macro>
+
+<#macro listPages (result, rid)>
+    <p>
+        Stránky:
+        <#list 0..(result.pageCount-1) as page>
+            <#if page!=result.pageIndex>
+                <a href="../../${DUMP.getFile(rid, page)}">${page}</a>
+            <#else>
+                ${page+1}
+            </#if>
+        </#list>
+    </p>
 </#macro>

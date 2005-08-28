@@ -3,21 +3,17 @@
 
 <@lib.showParents />
 
-<#assign autor=TOOL.createUser(TOOL.xpath(ITEM,"/data/author"))>
+<#assign title=TOOL.xpath(ITEM, "/data/title")?default("Zprávièka")>
+<h1 class="st_nadpis">${title}</h1>
 
-<h1>${TOOL.xpath(ITEM,"/data/name")}</h1>
+<p>
+    <#assign autor=TOOL.createUser(ITEM.owner)>
+    ${DATE.show(ITEM.created,"CZ_FULL")}
+    | ${NEWS_CATEGORIES[ITEM.subType].name}
+    | <a href="http://www.abclinuxu.cz/Profile/${autor.id}">${autor.name}</a>
+</p>
 
-<div class="barva">
-${DATE.show(ITEM.created,"CZ_FULL")} |
-<a href="http://www.abclinuxu.cz/Profile/${autor.id}">${autor.name}</a>
-</div>
-
-<br clear="all">
-
-<p class="perex">${TOOL.xpath(ITEM,"/data/perex")}</p>
-
-${TOOL.render(TOOL.xpath(CHILDREN.record[0].child,"/data/content"),USER?if_exists)}
-
+<p class="zpravicka">${TOOL.xpath(ITEM,"data/content")}</p>
 
 <#if CHILDREN.discussion?exists>
     <#assign DISCUSSION=CHILDREN.discussion[0].child>
