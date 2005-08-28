@@ -624,7 +624,21 @@ public class Tools implements Configurable {
         if (relations==null)
             return Collections.EMPTY_MAP;
 
-        syncList(relations);
+        boolean needsSync = false;
+        for (Iterator iterator = relations.iterator(); iterator.hasNext();) {
+            Relation relation = (Relation) iterator.next();
+            if (!relation.isInitialized()) {
+                needsSync = true;
+                break;
+            }
+            if (!relation.getChild().isInitialized()) {
+                needsSync = true;
+                break;
+            }
+        }
+        if (needsSync)
+            syncList(relations);
+
         Map map = new HashMap();
 
         for (Iterator iter = relations.iterator(); iter.hasNext();) {
