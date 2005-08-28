@@ -1,11 +1,11 @@
 <#include "../header.ftl">
 
-<h1 align="center">Fórum ${TOOL.xpath(ITEM,"/data/name")}</h1>
+<h1 align="center">Fórum ${TOOL.xpath(CATEGORY,"/data/name")}</h1>
 
 <p>Toto diskusní fórum obsahuje celkem ${DIZS.total} diskusí.</p>
 
 <#if TOOL.xpath(ITEM,"data/note")?exists>
- ${TOOL.render(TOOL.element(ITEM.data,"data/note"),USER?if_exists)}
+ ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}
 </#if>
 
 <@lib.showMessages/>

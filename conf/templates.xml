@@ -511,7 +511,7 @@
       <var name="TITLE" value="Diskusní fóra" />
     </action>
     <action name="show" content="/show/forum.ftl">
-      <var name="TITLE" value='Diskusní fórum: ${TOOL.xpath(ITEM,"data/name")}' type="Lazy"/>
+      <var name="TITLE" value='Diskusní fórum: ${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy"/>
     </action>
   </servlet>
 

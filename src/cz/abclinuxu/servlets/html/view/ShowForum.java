@@ -40,7 +40,7 @@ public class ShowForum implements AbcAction {
     public static final String PARAM_COUNT = "count";
 
     /** holds forum to be displayed */
-    public static final String VAR_CATEGORY = "ITEM";
+    public static final String VAR_CATEGORY = "CATEGORY";
     /** holds list of discussions */
     public static final String VAR_DISCUSSIONS = "DIZS";
 
