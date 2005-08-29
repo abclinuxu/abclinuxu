@@ -97,12 +97,12 @@ public class Dump implements Configurable {
         Relation news = new Relation(Constants.REL_NEWS);
 
         long start = System.currentTimeMillis();
-        dumpIndex(dirRoot);
-        dumpArticles(dirRoot, articles);
+//        dumpIndex(dirRoot);
+//        dumpArticles(dirRoot, articles);
         dumpAllNews(dirRoot, news);
-        dumpTree(drivers, dirRoot, UrlUtils.PREFIX_DRIVERS);
-        dumpTree(hardware, dirRoot, UrlUtils.PREFIX_HARDWARE);
-        dumpForums(dirRoot);
+//        dumpTree(drivers, dirRoot, UrlUtils.PREFIX_DRIVERS);
+//        dumpTree(hardware, dirRoot, UrlUtils.PREFIX_HARDWARE);
+//        dumpForums(dirRoot);
         long end = System.currentTimeMillis();
         System.out.println("Dumping of "+indexed.size()+" documents took "+(end-start)/1000+" seconds.");
     }
@@ -283,7 +283,7 @@ public class Dump implements Configurable {
      */
     void dumpAllNews(File currentDir, Relation news_section) throws Exception {
         int total = sqlTool.countNewsRelations(), i, count = 30;
-        Relation relation;
+        Relation relation, sectionNews = (Relation) persistance.findById(new Relation(Constants.REL_NEWS));
 
         for (i = 0; i < total;) {
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(i, count)};
@@ -305,12 +305,12 @@ public class Dump implements Configurable {
             for (Iterator iter2 = data.iterator(); iter2.hasNext();) {
                 relation = (Relation) iter2.next();
                 file = getFileName(relation, currentDir);
-                dumpNewsItem(relation, (Item) relation.getChild(), file);
+                dumpNewsItem(relation, (Item) relation.getChild(), sectionNews, file);
             }
         }
     }
 
-    void dumpNewsItem(Relation relation, Item item, File file) throws Exception {
+    void dumpNewsItem(Relation relation, Item item, Relation sectionNews, File file) throws Exception {
         if (hasBeenIndexed(relation))
             return;
         setIndexed(relation);
@@ -320,7 +320,7 @@ public class Dump implements Configurable {
         env.put(VAR_ONLINE_URL, PORTAL_URL + relation.getUrl());
 
         List parents = new ArrayList(2);
-        parents.add(new Relation(Constants.REL_NEWS));
+        parents.add(sectionNews);
         parents.add(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
