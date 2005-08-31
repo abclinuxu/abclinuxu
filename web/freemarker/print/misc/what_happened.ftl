@@ -26,7 +26,7 @@
 </tr>
 <#list QUESTIONS?if_exists as question>
  <tr>
-  <td><a href="/forum/show/${question.url}">${question.title}</a></td>
+  <td><a href="${question.url?default("/forum/show/"+question.relationId)}">${question.title}</a></td>
   <td>${question.responseCount}</td>
   <td>${DATE.show(question.created, "CZ_FULL")}</td>
  </tr>
