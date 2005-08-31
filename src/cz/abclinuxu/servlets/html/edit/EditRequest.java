@@ -26,6 +26,7 @@ import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.AbcException;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -359,6 +360,8 @@ public class EditRequest implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
+        if (relation==null)
+            throw new AbcException("Chybí èíslo relace! Prosím kontaktujte nás, a» mù¾eme problém vyøe¹it.");
 
         relation = (Relation) persistance.findById(relation);
         Item discussion = (Item) persistance.findById(relation.getChild());
