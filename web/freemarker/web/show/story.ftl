@@ -95,7 +95,7 @@
         </ul>
     </div>
 
-    <#if (USER?exists && USER.id==BLOG.owner || USER.hasRole("root")) || (! USER?exists)>
+    <#if (USER?exists && (USER.id==BLOG.owner || USER.hasRole("root"))) || (! USER?exists)>
         <div class="s_nad_h1"><div class="s_nad_pod_h1">
             <a class="info" href="#">?<span class="tooltip">Tato sekce sdru¾uje akce pro majitele blogu.</span></a>
             <h1>Nastavení</h1>
