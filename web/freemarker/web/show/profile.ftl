@@ -98,7 +98,7 @@
     </ul>
 </#if>
 
-<p><a href="/Profile/${PROFILE.id}?action=objekty">Seznam pøíspìvkù na abclinuxu.cz</a><br>
+<p><a href="/muj_obsah/${PROFILE.id}">Seznam pøíspìvkù na abclinuxu.cz</a><br>
 (èlánky, komentáøe, dotazy, zprávièky, hardwarové a softwarové záznamy, pojmy ve slovníku).</p>
 <br>
 

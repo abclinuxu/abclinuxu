@@ -23,4 +23,5 @@ Disallow: /forum/EditDiscussion
 Disallow: /SelectUser
 Disallow: /SelectRelation
 Disallow: /revize
+Disallow: /muj_obsah
 

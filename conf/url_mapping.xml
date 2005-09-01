@@ -33,6 +33,11 @@
             <action>cz.abclinuxu.servlets.html.view.ViewPolls</action>
         </mapping>
         <mapping>
+            <pattern>^/muj_obsah</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ViewUser</action>
+            <param name="action" value="objekty"/>
+        </mapping>
+        <mapping>
             <pattern>^/Profile</pattern>
             <action>cz.abclinuxu.servlets.html.view.ViewUser</action>
         </mapping>
