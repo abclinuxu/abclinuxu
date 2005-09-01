@@ -705,7 +705,7 @@ public class EditDiscussion implements AbcAction {
 
         url = mainRelation.getUrl();
         if (url == null)
-            url = urlUtils.getPrefix() + "/show/" + relation.getId();
+            url = urlUtils.getPrefix() + "/show/" + mainRelation.getId();
         urlUtils.redirect(response, url, false);
         return null;
     }
