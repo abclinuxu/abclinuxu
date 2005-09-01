@@ -45,9 +45,11 @@ public class EditContent implements AbcAction {
     public static final String PARAM_EXECUTE_AS_TEMPLATE = "execute";
     public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_PREVIEW = "preview";
+    public static final String PARAM_START_TIME = "startTime";
 
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_PREVIEW = "PREVIEW";
+    public static final String VAR_START_TIME = "START_TIME";
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
@@ -241,6 +243,7 @@ public class EditContent implements AbcAction {
         element = (Element) document.selectSingleNode("/data/content");
         params.put(PARAM_CONTENT, element.getText());
 
+        env.put(VAR_START_TIME, new Long(System.currentTimeMillis()));
         return FMTemplateSelector.select("EditContent", "editPublic", env, request);
     }
 
@@ -254,6 +257,7 @@ public class EditContent implements AbcAction {
         boolean canContinue = true;
         canContinue &= setTitle(params, item, env);
         canContinue &= setContent(params, item, env);
+        canContinue &= checkStartTime(params, item, env);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)
@@ -301,6 +305,7 @@ public class EditContent implements AbcAction {
             params.put(PARAM_CLASS, element.getText());
         params.put(PARAM_URL, relation.getUrl());
 
+        env.put(VAR_START_TIME, new Long(System.currentTimeMillis()));
         return FMTemplateSelector.select("EditContent", "edit", env, request);
     }
 
@@ -316,6 +321,7 @@ public class EditContent implements AbcAction {
         canContinue &= setContent(params, item, env);
         canContinue &= setURL(params, relation, env);
         canContinue &= setClass(params, item);
+        canContinue &= checkStartTime(params, item, env);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)
@@ -474,6 +480,24 @@ public class EditContent implements AbcAction {
         Relation existingRelation = SQLTool.getInstance().findRelationByURL(relation.getUrl());
         if (existingRelation!=null && (relation==null || relation.getId()!=existingRelation.getId())) {
             ServletUtils.addError(PARAM_URL, "Tato adresa je ji¾ pou¾ita!", env, null);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Verifies that none has modified document since start of editing.
+     * @return true if document was not modified
+     */
+    private boolean checkStartTime(Map params, Item item, Map env) {
+        String s = (String) params.get(PARAM_START_TIME);
+        long startTime = Long.parseLong(s);
+        long lastModified = item.getUpdated().getTime();
+        if (lastModified>startTime) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Systém detekoval soubì¾nou editaci tohoto dokumentu. " +
+                    "Nìkdo upravil dokument poté, co jste jej zaèal(a) editovat. Není mo¾né pokraèovat. " +
+                    "Prosím vra»te se zpìt na dokument, znovu jej naètìte a pak teprve pokraèujte ve va¹ich úpravách.", env, null);
             return false;
         }
 

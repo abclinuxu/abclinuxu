@@ -84,6 +84,10 @@ pak v¹ak potøebuje podporu programátora, který pøipraví data.</p>
   <input type="hidden" name="action" value="edit2">
  </#if>
  <input type="hidden" name="rid" value="${PARAMS.rid?if_exists}">
+ <#if PARAMS.action=="edit" || PARAMS.action="edit2" >
+  <#if PARAMS.startTime?exists><#assign value=PARAMS.startTime><#else><#assign value=START_TIME?c></#if>
+  <input type="hidden" name="startTime" value="${value}">
+ </#if>
 </form>
 
 <p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html">znaèky</a>:

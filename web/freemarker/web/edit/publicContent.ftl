@@ -56,6 +56,8 @@ zmìny zpìt.</p>
 
  <input type="hidden" name="action" value="editPublicContent2">
  <input type="hidden" name="rid" value="${PARAMS.rid?if_exists}">
+  <#if PARAMS.startTime?exists><#assign value=PARAMS.startTime><#else><#assign value=START_TIME?c></#if>
+  <input type="hidden" name="startTime" value="${value}">
 </form>
 
 <p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html">znaèky</a>:
