@@ -16,8 +16,9 @@ import java.util.*;
 public class NewsGuard {
     static final Map TAGS = new HashMap();
     static {
-        TAGS.put("A", new CheckedTag("A", true, new String[]{"HREF"}));
+        TAGS.put("A", new CheckedTag("A", true, new String[]{"HREF", "TITLE"}));
         TAGS.put("CODE", new CheckedTag("CODE", true, null));
+        TAGS.put("ACRONYM", new CheckedTag("ACRONYM", true, null));
     }
 
     /**

@@ -103,7 +103,7 @@
 
 <p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html">znaèky</a>:
 P, BR, B, I, A, PRE, UL, OL, LI, CODE, DIV, H1, H2, H3, EM, STRONG, CITE, BLOCKQUOTE,
-VAR, HR a TT.</p>
+VAR, HR, ACRONYM a TT.</p>
 
 <p>Nejrychlej¹í zpùsob formátování je rozdìlovat
 text do odstavcù. Systém detekuje prázdné øádky

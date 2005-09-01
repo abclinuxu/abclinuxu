@@ -12,12 +12,12 @@ jako dotazy, ¾ádosti o pomoc èi pøedem nedomluvené reklamy.
 
 <h2>Jak ji mám napsat?</h2>
 
-<p>Jedinou povolenou HTML znaèkou je odkaz, URL musí být absolutní
-(zaèínat http://). V¾dy pi¹te s háèky a èárkami. Zprávièka by mìla
-mít alespoò dvì vìty a obsahovat podrobnosti, aby dávala smysl,
-ani¾ by èlovìk musel nav¹tívit zmínìná URL. Titulek by mìl krátce
-popsat hlavní téma zprávièky, bude pou¾it v RSS a vygeneruje se
-z nìj URL (ve výpisu zprávièek v¹ak zobrazen nebude).</p>
+<p>Povolenými HTML znaèkami jsou odkaz (A), URL musí být absolutní
+(zaèínat http://) a ACRONYM. Obsah v¾dy pi¹te s háèky a èárkami.
+Zprávièka by mìla mít alespoò dvì vìty a obsahovat takové podrobnosti,
+aby dávala smysl, ani¾ by èlovìk musel nav¹tívit zmínìná URL.
+Titulek by mìl krátce popsat hlavní téma zprávièky, bude pou¾it v RSS
+a vygeneruje se z nìj URL (ve výpisu zprávièek v¹ak zobrazen nebude).</p>
 
 <h2>A co dále?</h2>
 

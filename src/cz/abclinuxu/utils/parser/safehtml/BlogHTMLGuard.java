@@ -61,6 +61,7 @@ public class BlogHTMLGuard {
         TAGS.put("SUB", new CheckedTag("SUB", true, null));
         TAGS.put("SUP", new CheckedTag("SUP", true, null));
         TAGS.put("SMALL", new CheckedTag("SMALL", true, null));
+        TAGS.put("ACRONYM", new CheckedTag("ACRONYM", true, null));
     }
 
     /**
