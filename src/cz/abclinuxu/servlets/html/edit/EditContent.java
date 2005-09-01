@@ -44,8 +44,10 @@ public class EditContent implements AbcAction {
     public static final String PARAM_CLASS = "java_class";
     public static final String PARAM_EXECUTE_AS_TEMPLATE = "execute";
     public static final String PARAM_RELATION_SHORT = "rid";
+    public static final String PARAM_PREVIEW = "preview";
 
     public static final String VAR_RELATION = "RELATION";
+    public static final String VAR_PREVIEW = "PREVIEW";
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
@@ -157,8 +159,13 @@ public class EditContent implements AbcAction {
         canContinue &= setURL(params, relation, env);
         canContinue &= setClass(params, item);
 
-        if ( !canContinue )
+        if ( !canContinue  || params.get(PARAM_PREVIEW) != null) {
+            if (!canContinue)
+                params.remove(PARAM_PREVIEW);
+            item.setInitialized(true);
+            env.put(VAR_PREVIEW, item);
             return FMTemplateSelector.select("EditContent", "add", env, request);
+        }
 
         persistance.create(item);
         relation.setChild(item);
@@ -201,8 +208,13 @@ public class EditContent implements AbcAction {
         canContinue &= setContent(params, item, env);
         canContinue &= setDerivedURL(item, relation, parentRelation);
 
-        if (!canContinue)
+        if (!canContinue || params.get(PARAM_PREVIEW) != null) {
+            if (!canContinue)
+                params.remove(PARAM_PREVIEW);
+            item.setInitialized(true);
+            env.put(VAR_PREVIEW, item);
             return FMTemplateSelector.select("EditContent", "addDerived", env, request);
+        }
 
         persistance.create(item);
         relation.setChild(item);
@@ -243,8 +255,13 @@ public class EditContent implements AbcAction {
         canContinue &= setTitle(params, item, env);
         canContinue &= setContent(params, item, env);
 
-        if (!canContinue)
+        if (!canContinue || params.get(PARAM_PREVIEW) != null) {
+            if (!canContinue)
+                params.remove(PARAM_PREVIEW);
+            item.setInitialized(true);
+            env.put(VAR_PREVIEW, item);
             return FMTemplateSelector.select("EditContent", "editPublic", env, request);
+        }
 
         persistance.update(item);
         persistance.update(relation);
@@ -300,8 +317,13 @@ public class EditContent implements AbcAction {
         canContinue &= setURL(params, relation, env);
         canContinue &= setClass(params, item);
 
-        if ( !canContinue )
+        if (!canContinue || params.get(PARAM_PREVIEW) != null) {
+            if (!canContinue)
+                params.remove(PARAM_PREVIEW);
+            item.setInitialized(true);
+            env.put(VAR_PREVIEW, item);
             return FMTemplateSelector.select("EditContent", "edit", env, request);
+        }
 
         persistance.update(item);
         persistance.update(relation);

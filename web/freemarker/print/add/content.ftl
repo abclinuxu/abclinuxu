@@ -11,6 +11,13 @@ o obyèejný text, který má pevné, hezké URL. Napøíklad nápovìda,
 podmínky u¾ití èi reklama. Obsah ale mù¾e být i dynamický,
 pak v¹ak potøebuje podporu programátora, který pøipraví data.</p>
 
+<#if PREVIEW?exists>
+    <fieldset>
+        <legend>Náhled</legend>
+        ${TOOL.xpath(PREVIEW,"/data/content")}
+    </fieldset>
+</#if>
+
  <table width=100 border=0 cellpadding=5>
   <tr>
    <td width="90" class="required">Titulek stránky</td>
@@ -64,7 +71,10 @@ pak v¹ak potøebuje podporu programátora, který pøipraví data.</p>
   </tr>
   <tr>
    <td width="90">&nbsp;</td>
-   <td><input type="submit" value="Pokraèuj" tabindex="8"></td>
+   <td>
+     <input tabindex="8" type="submit" name="preview" value="<#if PREVIEW?exists>Zopakuj náhled<#else>Náhled</#if>">
+     <input tabindex="9" type="submit" name="finish" value="Dokonèi">
+   </td>
   </tr>
  </table>
 

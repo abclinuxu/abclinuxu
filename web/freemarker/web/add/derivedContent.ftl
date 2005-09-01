@@ -14,6 +14,13 @@ zbaveného diakritiky a speciálních znakù. Toto URL u¾ bì¾nými prostøedky
 nebudete moci zmìnit.
 </p>
 
+<#if PREVIEW?exists>
+    <fieldset>
+        <legend>Náhled</legend>
+        ${TOOL.xpath(PREVIEW,"/data/content")}
+    </fieldset>
+</#if>
+
  <table width=100 border=0 cellpadding=5>
   <tr>
    <td width="90" class="required">Titulek stránky</td>
@@ -43,7 +50,10 @@ nebudete moci zmìnit.
   </tr>
   <tr>
    <td width="90">&nbsp;</td>
-   <td><input type="submit" value="Pokraèuj" tabindex="8"></td>
+   <td>
+     <input tabindex="8" type="submit" name="preview" value="<#if PREVIEW?exists>Zopakuj náhled<#else>Náhled</#if>">
+     <input tabindex="9" type="submit" name="finish" value="Dokonèi">
+   </td>
   </tr>
  </table>
  <input type="hidden" name="action" value="addDerivedPage2">

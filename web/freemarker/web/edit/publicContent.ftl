@@ -11,6 +11,13 @@ správné adrese. V¹echny zmìny se automaticky ukládají do databáze, tak¾e
 je mo¾né prohlí¾et obsah tohoto dokumentu v prùbìhu èasu nebo vrátit
 zmìny zpìt.</p>
 
+<#if PREVIEW?exists>
+    <fieldset>
+        <legend>Náhled</legend>
+        ${TOOL.xpath(PREVIEW,"/data/content")}
+    </fieldset>
+</#if>
+
  <table width=100 border=0 cellpadding=5>
   <tr>
    <td width="90" class="required">Titulek stránky</td>
@@ -40,7 +47,10 @@ zmìny zpìt.</p>
   </tr>
   <tr>
    <td width="90">&nbsp;</td>
-   <td><input type="submit" value="Pokraèuj" tabindex="8"></td>
+   <td>
+     <input tabindex="8" type="submit" name="preview" value="<#if PREVIEW?exists>Zopakuj náhled<#else>Náhled</#if>">
+     <input tabindex="9" type="submit" name="finish" value="Dokonèi">
+   </td>
   </tr>
  </table>
 
