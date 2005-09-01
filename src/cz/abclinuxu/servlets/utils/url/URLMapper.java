@@ -135,10 +135,10 @@ public final class URLMapper implements Configurable {
         }
 
         // todo known custom URLs must be cached.
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         if (custom) {
             Relation relation = SQLTool.getInstance().findRelationByURL(url);
             if (relation != null) {
-                Map params = (Map) env.get(Constants.VAR_PARAMS);
                 params.put(ShowObject.PARAM_RELATION_SHORT, Integer.toString(relation.getId()));
             } else
                 custom = false;
@@ -146,8 +146,10 @@ public final class URLMapper implements Configurable {
 
         for (Iterator iter = priorityMapping.iterator(); iter.hasNext();) {
             patternAction = (PatternAction) iter.next();
-            if (patternAction.getRe().match(url))
+            if (patternAction.getRe().match(url)) {
+                setActionParams(patternAction, params);
                 return patternAction.getAction();
+            }
         }
 
         if (custom)
@@ -155,10 +157,28 @@ public final class URLMapper implements Configurable {
 
         for ( Iterator iter = actionMapping.iterator(); iter.hasNext(); ) {
             patternAction = (PatternAction) iter.next();
-            if (patternAction.getRe().match(url))
+            if (patternAction.getRe().match(url)) {
+                setActionParams(patternAction, params);
                 return patternAction.getAction();
+            }
         }
         throw new NotFoundException("Nezname URL: "+url+" !");
+    }
+
+    /**
+     * If patternAction defines some params, add them to params.
+     * @param patternAction
+     * @param params map of HTTP params
+     */
+    private void setActionParams(PatternAction patternAction, Map params) {
+        Map actionParams = patternAction.getParams();
+        if (actionParams==null)
+            return;
+        String name;
+        for (Iterator iter = actionParams.keySet().iterator(); iter.hasNext();) {
+            name = (String) iter.next();
+            params.put(name, actionParams.get(name));
+        }
     }
 
     /**
@@ -224,6 +244,7 @@ public final class URLMapper implements Configurable {
         Element element;
         REProgram regexp;
         Object o;
+        PatternAction mapping;
         for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
             try {
                 element = (Element) iter.next();
@@ -235,10 +256,20 @@ public final class URLMapper implements Configurable {
                     log.warn("Action "+action+" does not implement AbcAction interface!");
                     continue;
                 }
+
+                mapping = new PatternAction(regexp, (AbcAction) o);
                 if ("true".equals(element.attributeValue("priority")))
-                    priorActions.add(new PatternAction(regexp, (AbcAction) o));
+                    priorActions.add(mapping);
                 else
-                    actions.add(new PatternAction(regexp, (AbcAction) o));
+                    actions.add(mapping);
+
+                List paramList = element.elements("param");
+                if (paramList!=null && paramList.size()>0)
+                    for (Iterator iterParams = paramList.iterator(); iterParams.hasNext();) {
+                        Element param = (Element) iterParams.next();
+                        mapping.addParam(param.attributeValue("name"), param.attributeValue("value"));
+                    }
+
                 if ( ShowObject.class.isInstance(o) )
                     showObject = (AbcAction) o;
             } catch (RESyntaxException e) {
@@ -295,6 +326,7 @@ public final class URLMapper implements Configurable {
     static class PatternAction {
         REProgram re;
         AbcAction action;
+        Map params;
 
         public PatternAction(REProgram re, AbcAction action) {
             this.re = re;
@@ -307,6 +339,16 @@ public final class URLMapper implements Configurable {
 
         public AbcAction getAction() {
             return action;
+        }
+
+        public Map getParams() {
+            return params;
+        }
+
+        public void addParam(String name, String value) {
+            if (params==null)
+                params = new HashMap(3, 1.0f);
+            params.put(name, value);
         }
     }
 
