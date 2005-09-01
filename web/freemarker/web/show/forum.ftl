@@ -4,7 +4,7 @@
 
 <p>Toto diskusní fórum obsahuje celkem ${DIZS.total} diskusí.</p>
 
-<#if TOOL.xpath(ITEM,"data/note")?exists>
+<#if TOOL.xpath(CATEGORY,"data/note")?exists>
  ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}
 </#if>
 
