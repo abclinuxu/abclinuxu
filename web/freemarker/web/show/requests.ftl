@@ -4,44 +4,41 @@
 <h1 class="st_nadpis">Administrativní po¾adavky</h1>
 
 <p>Tato stránka slou¾í pro zadávání <b>administrativních</b> po¾adavkù
-na správce portálu www.abclinuxu.cz. Pokud jste na¹li chybu,
-potøebujete zalo¾it novou sekci, zapomnìli jste pøihla¹ovací údaje
-nebo máte námìt na zlep¹ení portálu, pou¾ijte tento formuláø.</p>
+na správce portálu www.abclinuxu.cz. Pokud potøebujete zalo¾it novou sekci,
+zapomnìli jste pøihla¹ovací údaje a podobnì, pou¾ijte tento formuláø.
+Pokud máte námìt na vylep¹ení, nebo jste na¹li chybu, pi¹te do
+<a href="http://bugzilla.abclinuxu.cz">bugzilly</a>,
+u¹etøíte nám tak práci a budete mít pøehled o vyøízení va¹i ¾ádosti.</p>
 
-</p>Potøebujete-li poradit s Linuxem, zkuste si nejdøíve
+<p>Potøebujete-li poradit s Linuxem, zkuste si nejdøíve
 <a href="/Search">najít</a> odpovìï sami a nenajdete-li øe¹ení,
 po¾ádejte o pomoc v <a href="/diskuse.jsp">diskusním fóru</a>.
 Tento formuláø v¹ak pro tyto úèely neslou¾í a proto bez odpovìdi
-<u>sma¾eme</u> jakékoliv po¾adavky, které nesouvisí s chodem portálu.
-</p>
+<u>sma¾eme</u> jakékoliv po¾adavky, které nesouvisí s chodem portálu.</p>
 
 <#if CHILDREN?exists && CHILDREN?size gt 0>
- <table border=0 cellpadding=5>
-  <tr>
-   <th>Nevyøízené po¾adavky</th>
-  </tr>
-  <#list CHILDREN as relation>
-   <tr>
-    <td>
-    <b>
-        ${DATE.show(relation.child.created,"CZ_FULL")}
-        ${TOOL.xpath(relation.child,"/data/category")},
-        ${TOOL.xpath(relation.child,"data/author")}
-        <#if USER?exists && USER.hasRole("root")>${TOOL.xpath(relation.child,"data/email")}</#if>
-    </b>
-    <br>
+
+<h2>Nevyøízené po¾adavky</h2>
+
+<#list CHILDREN as relation>
+
+  <p><b>
+    ${DATE.show(relation.child.created,"CZ_FULL")}
+    ${TOOL.xpath(relation.child,"/data/category")},
+    ${TOOL.xpath(relation.child,"data/author")}
+    <#if USER?exists && USER.hasRole("root")>${TOOL.xpath(relation.child,"data/email")}</#if>
+   </b><br />
     ${TOOL.render(TOOL.element(relation.child.data,"data/text"),USER?if_exists)}
     <#if USER?exists && USER.hasRole("requests admin")>
-        <br>
+        <br />
         <a href="${URL.make("/EditRequest?action=email&requestId="+relation.id)}">Poslat email</a>,
         <a href="${URL.make("/EditRequest?action=deliver&requestId="+relation.id)}">Vyøízeno</a>,
         <a href="${URL.make("/EditRequest?action=delete&requestId="+relation.id)}">Smazat</a>,
         <a href="${URL.make("/EditRequest?action=todo&requestId="+relation.id)}">Pøesunout do TODO</a>
     </#if>
-    </td>
-   </tr>
-  </#list>
- </table>
+  </p><hr />
+</#list>
+
 </#if>
 
 <#if PARAMS.preview?exists>
@@ -99,15 +96,15 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í a proto bez odpovìdi
   </tr>
   <tr>
    <td colspan="2">
-    <span class="required">Po¾adavek</span><br>
+    <span class="required">Po¾adavek</span>
+    <div class="error">${ERRORS.text?if_exists}</div>
     <textarea name="text" cols="60" rows="15" tabindex="3">${PARAMS.text?if_exists?html}</textarea>
-    <span class="error">${ERRORS.text?if_exists}</span>
   </td>
   </tr>
   <tr>
-   <td colspan="2" align="center">
-       <input type="submit" value="OK" tabindex="4">
-       <input type="submit" name="preview" value="Náhled" tabindex="5">
+   <td colspan="2">
+       <input type="submit" value="Odeslat" tabindex="5">
+       <input type="submit" name="preview" value="Náhled" tabindex="4">
    </td>
   </tr>
  </table>
