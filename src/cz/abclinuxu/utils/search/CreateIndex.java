@@ -22,6 +22,7 @@ import cz.abclinuxu.exceptions.InvalidDataException;
 import cz.abclinuxu.scheduler.WhatHappened;
 import org.dom4j.Element;
 import org.dom4j.Node;
+import org.dom4j.Document;
 import org.apache.lucene.index.IndexWriter;
 
 import java.util.*;
@@ -61,10 +62,10 @@ public class CreateIndex implements Configurable {
 
         try {
             Relation articles = (Relation) persistance.findById(new Relation(Constants.REL_ARTICLES));
-            Relation hardware = (Relation) persistance.findById(new Relation(Constants.REL_HARDWARE));
-            Relation software = (Relation) persistance.findById(new Relation(Constants.REL_SOFTWARE));
-            Relation drivers = (Relation) persistance.findById(new Relation(Constants.REL_DRIVERS));
-            Relation abc = (Relation) persistance.findById(new Relation(Constants.REL_ABC));
+            Relation hardware = (Relation) Tools.sync(new Relation(Constants.REL_HARDWARE));
+            Relation software = (Relation) Tools.sync(new Relation(Constants.REL_SOFTWARE));
+            Relation drivers = (Relation) Tools.sync(new Relation(Constants.REL_DRIVERS));
+            Relation abc = (Relation) Tools.sync(new Relation(Constants.REL_ABC)); // neni cas to smazat?
             Relation blogs = (Relation) persistance.findById(new Relation(Constants.REL_BLOGS));
             List forums = sqlTool.findSectionRelationsWithType(Category.FORUM,null);
 
@@ -83,7 +84,6 @@ public class CreateIndex implements Configurable {
                 makeIndexOn(indexWriter, software, UrlUtils.PREFIX_SOFTWARE);
                 makeIndexOn(indexWriter, drivers, UrlUtils.PREFIX_DRIVERS);
                 makeIndexOn(indexWriter, abc, UrlUtils.PREFIX_CLANKY);
-                makeIndexOnBlogs(indexWriter, blogs.getChild().getChildren());
             } finally {
                 indexWriter.optimize();
                 indexWriter.close();
@@ -123,7 +123,7 @@ public class CreateIndex implements Configurable {
             relation = (Relation) stack.remove(0);
             child = relation.getChild();
             if (hasBeenIndexed(child)) continue;
-            child = persistance.findById(child);
+//            child = persistance.findById(child);
 
             doc = null; indexChildren = true; url = relation.getUrl();
             if (child instanceof Category) {
@@ -151,9 +151,13 @@ public class CreateIndex implements Configurable {
                 indexWriter.addDocument(doc.getDocument());
             }
 
-            if (indexChildren)
-                for ( Iterator iter = child.getChildren().iterator(); iter.hasNext(); )
-                    stack.add(iter.next());
+            if (indexChildren) {
+                List children = child.getChildren();
+                Tools.syncList(children);
+                stack.addAll(children);
+//                for ( Iterator iter = children.iterator(); iter.hasNext(); )
+//                    stack.add(iter.next());
+            }
         }
     }
 
@@ -188,6 +192,7 @@ public class CreateIndex implements Configurable {
             for ( i = 0; i<total; ) {
                 Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING, new LimitQualifier(i, 100)};
                 List discussions = sqlTool.findDiscussionRelationsWithParent(relation.getId(), qualifiers);
+                Tools.syncList(discussions);
                 i += discussions.size();
 
                 for ( Iterator iter2 = discussions.iterator(); iter2.hasNext(); ) {
@@ -195,7 +200,6 @@ public class CreateIndex implements Configurable {
                     child = relation2.getChild();
                     if ( hasBeenIndexed(child) ) continue;
                     try {
-                        child = persistance.findById(child);
                         doc = indexDiscussion((Item)child);
                         doc.setURL(urlPrefix+"/show/"+relation2.getId());
                         doc.setParent(relation2.getUpper());
@@ -215,13 +219,13 @@ public class CreateIndex implements Configurable {
         Item child;
         MyDocument doc;
         List relations = sqlTool.findItemRelationsWithType(Item.DICTIONARY, new Qualifier[0]);
+        Tools.syncList(relations);
         Relation relation;
 
         for (Iterator iter = relations.iterator(); iter.hasNext();) {
             relation = (Relation) iter.next();
             child = (Item) relation.getChild();
             if ( hasBeenIndexed(child) ) continue;
-            child = (Item) persistance.findById(child);
             doc = indexDictionary(child);
             indexWriter.addDocument(doc.getDocument());
         }
@@ -234,6 +238,7 @@ public class CreateIndex implements Configurable {
         Item child;
         MyDocument doc;
         List relations = sqlTool.findItemRelationsWithType(Item.FAQ, new Qualifier[0]);
+        Tools.syncList(relations);
         Relation relation;
 
         for (Iterator iter = relations.iterator(); iter.hasNext();) {
@@ -258,6 +263,7 @@ public class CreateIndex implements Configurable {
         for ( i = 0; i<total; ) {
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING, new LimitQualifier(i, 100)};
             List data = sqlTool.findNewsRelations(qualifiers);
+            Tools.syncList(data);
             i += data.size();
 
             for ( Iterator iter2 = data.iterator(); iter2.hasNext(); ) {
@@ -266,7 +272,6 @@ public class CreateIndex implements Configurable {
                 if ( hasBeenIndexed(child) )
                     continue;
 
-                child = persistance.findById(child);
                 doc = indexNews((Item) child);
                 url = relation.getUrl();
                 if (url==null)
@@ -286,7 +291,6 @@ public class CreateIndex implements Configurable {
         Relation relation;
         GenericObject child;
         MyDocument doc;
-        String url;
 
         for (Iterator iter = sections.iterator(); iter.hasNext();) {
             Relation sectionRelation = (Relation) iter.next();
@@ -296,6 +300,7 @@ public class CreateIndex implements Configurable {
             for (i = 0; i < total;) {
                 Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING, new LimitQualifier(i, 100)};
                 List data = sqlTool.findArticleRelations(qualifiers, sectionId);
+                Tools.syncList(data);
                 i += data.size();
 
                 for (Iterator iter2 = data.iterator(); iter2.hasNext();) {
@@ -304,15 +309,11 @@ public class CreateIndex implements Configurable {
                     if (hasBeenIndexed(child))
                         continue;
 
-                    child = persistance.findById(child);
                     doc = indexArticle((Item) child);
                     if (doc==null)
                         continue;
 
-                    url = relation.getUrl();
-                    if (url == null)
-                        url = urlPrefix + "/show/" + relation.getId();
-                    doc.setURL(url);
+                    doc.setURL(relation.getUrl());
                     doc.setParent(relation.getUpper());
                     indexWriter.addDocument(doc.getDocument());
                 }
@@ -328,9 +329,9 @@ public class CreateIndex implements Configurable {
         GenericObject child;
         MyDocument doc;
 
+        Tools.syncList(blogs);
         for (Iterator iter = blogs.iterator(); iter.hasNext();) {
             relation = (Relation) iter.next();
-            Tools.sync(relation);
             child = relation.getChild();
 
             doc = indexBlog((Category) child);
@@ -355,6 +356,7 @@ public class CreateIndex implements Configurable {
         for ( int i = 0; i<total; ) {
             qa = new Qualifier[]{ownerCondition, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING, new LimitQualifier(i, 100)};
             List data = sqlTool.findItemRelationsWithType(Item.BLOG, qa);
+            Tools.syncList(data);
             i += data.size();
 
             for ( Iterator iter2 = data.iterator(); iter2.hasNext(); ) {
@@ -363,7 +365,6 @@ public class CreateIndex implements Configurable {
                 if ( hasBeenIndexed(child) )
                     continue;
 
-                Tools.sync(relation);
                 doc = indexStory(relation, blog);
                 doc.setParent(relation.getUpper());
                 indexWriter.addDocument(doc.getDocument());
@@ -379,17 +380,17 @@ public class CreateIndex implements Configurable {
         String title = null;
 
         Element data = (Element) category.getData().selectSingleNode("//custom");
-        Node node = data.selectSingleNode("page_title");
+        Node node = data.element("page_title");
         title = node.getText();
         sb.append(title);
 
-        node = data.selectSingleNode("title");
+        node = data.element("title");
         if ( node!=null ) {
             sb.append(" ");
             sb.append(node.getText());
         }
 
-        node = data.selectSingleNode("intro");
+        node = data.element("intro");
         if ( node!=null ) {
             sb.append(" ");
             sb.append(node.getText());
@@ -412,18 +413,18 @@ public class CreateIndex implements Configurable {
         Item story = (Item) relation.getChild();
 
         Element data = story.getData().getRootElement();
-        Node node = data.selectSingleNode("name");
+        Node node = data.element("name");
         title = node.getText();
         sb.append(title);
 
-        node = data.selectSingleNode("perex");
+        node = data.element("perex");
         if (node!=null) {
             sb.append(" ");
             s = node.getText();
             sb.append(s);
         }
 
-        node = data.selectSingleNode("content");
+        node = data.element("content");
         sb.append(" ");
         s = node.getText();
         sb.append(s);
@@ -460,12 +461,12 @@ public class CreateIndex implements Configurable {
         StringBuffer sb = new StringBuffer();
         String title = null;
 
-        Element data = (Element) category.getData().selectSingleNode("data");
-        Node node = data.selectSingleNode("name");
+        Element data = (Element) category.getData().getRootElement();
+        Node node = data.element("name");
         title = node.getText();
         sb.append(title);
 
-        node = data.selectSingleNode("note");
+        node = data.element("note");
         if ( node!=null ) {
             sb.append(" ");
             sb.append(node.getText());
@@ -486,15 +487,16 @@ public class CreateIndex implements Configurable {
         StringBuffer sb = new StringBuffer();
         String title = null;
 
-        Element data = (Element) discussion.getData().selectSingleNode("data");
-        Node node = data.selectSingleNode("title");
+        Document document = discussion.getData();
+        Element data = (Element) document.getRootElement();
+        Node node = data.element("title");
         if ( node!=null ) {
             title = node.getText();
             sb.append(title);
         } else
             title = "Diskuse";
 
-        node = data.selectSingleNode("text");
+        node = data.element("text");
         if ( node!=null ) {
             sb.append(" ");
             sb.append(node.getText());
@@ -507,24 +509,24 @@ public class CreateIndex implements Configurable {
             Iterator nodes = record.getData().getRootElement().elementIterator("comment");
             while (nodes.hasNext()) {
                 data = (Element) nodes.next();
-                node = data.selectSingleNode("title");
+                node = data.element("title");
                 if ( node!=null ) {
                     sb.append(" ");
                     sb.append(node.getText());
                 }
 
-                node = data.selectSingleNode("text");
+                node = data.element("text");
                 if ( node!=null ) {
                     sb.append(" ");
                     sb.append(node.getText());
                 }
 
-                node = data.selectSingleNode("author");
+                node = data.element("author");
                 if ( node!=null ) {
                     sb.append(" ");
                     sb.append(node.getText());
                 } else {
-                    node = data.selectSingleNode("author_id");
+                    node = data.element("author_id");
                     if (node!=null) {
                         int id = Misc.parseInt(node.getText(), -1);
                         try {
@@ -535,7 +537,7 @@ public class CreateIndex implements Configurable {
                             sb.append(" ");
                             sb.append(name);
                         } catch (PersistanceException e) {
-                            // user coudl be deleted
+                            // user could be deleted
                         }
                     }
                 }
@@ -547,7 +549,7 @@ public class CreateIndex implements Configurable {
         doc.setType(MyDocument.TYPE_DISCUSSION);
         doc.setCreated(discussion.getCreated());
         doc.setUpdated(discussion.getUpdated());
-        doc.setQuestionSolved(Tools.isQuestionSolved(discussion.getData()));
+        doc.setQuestionSolved(Tools.isQuestionSolved(document));
         doc.setNumberOfReplies(Tools.xpath(discussion, "/data/comments"));
         return doc;
     }
@@ -556,10 +558,10 @@ public class CreateIndex implements Configurable {
      * Extracts data for indexing from make. Item must be synchronized.
      */
     static MyDocument indexMake(Item make) {
-        Element data = (Element) make.getData().selectSingleNode("data");
+        Element data = (Element) make.getData().getRootElement();
         String title = "", type = "", tmp;
 
-        Node node = data.selectSingleNode("name");
+        Node node = data.element("name");
         title = node.getText();
 
         StringBuffer sb = new StringBuffer(title);
@@ -594,26 +596,26 @@ public class CreateIndex implements Configurable {
      * Extracts data for indexing from hardware. Record must be synchronized.
      */
     static void indexHardware(Record record, StringBuffer sb) {
-        Element data = (Element) record.getData().selectSingleNode("data");
-        Node node = data.selectSingleNode("setup");
+        Element data = (Element) record.getData().getRootElement();
+        Node node = data.element("setup");
         if ( node!=null ) {
             sb.append(" ");
             sb.append(node.getText());
         }
 
-        node = data.selectSingleNode("params");
+        node = data.element("params");
         if ( node!=null ) {
             sb.append(" ");
             sb.append(node.getText());
         }
 
-        node = data.selectSingleNode("identification");
+        node = data.element("identification");
         if ( node!=null ) {
             sb.append(" ");
             sb.append(node.getText());
         }
 
-        node = data.selectSingleNode("note");
+        node = data.element("note");
         if ( node!=null ) {
             sb.append(" ");
             sb.append(node.getText());
@@ -624,8 +626,8 @@ public class CreateIndex implements Configurable {
      * Extracts data for indexing from software. Record must be synchronized.
      */
     static void indexSoftware(Record record, StringBuffer sb) {
-        Element data = (Element) record.getData().selectSingleNode("data");
-        Node node = data.selectSingleNode("text");
+        Element data = (Element) record.getData().getRootElement();
+        Node node = data.element("text");
         if ( node!=null ) {
             sb.append(" ");
             sb.append(node.getText());
@@ -639,12 +641,12 @@ public class CreateIndex implements Configurable {
         StringBuffer sb = new StringBuffer();
         String title = null;
 
-        Element data = (Element) driver.getData().selectSingleNode("data");
-        Node node = data.selectSingleNode("name");
+        Element data = (Element) driver.getData().getRootElement();
+        Node node = data.element("name");
         title = node.getText();
         sb.append(title);
 
-        node = data.selectSingleNode("note");
+        node = data.element("note");
         if ( node!=null ) {
             sb.append(" ");
             sb.append(node.getText());
@@ -669,12 +671,12 @@ public class CreateIndex implements Configurable {
         if (data.attribute(WhatHappened.INDEXING_FORBIDDEN)!=null)
             return null;
 
-        Node node = data.selectSingleNode("name");
+        Node node = data.element("name");
         title = node.getText();
         sb.append(title);
         sb.append(" ");
 
-        node = data.selectSingleNode("perex");
+        node = data.element("perex");
         if ( node!=null ) {
             sb.append(node.getText());
             sb.append(" ");
@@ -727,15 +729,15 @@ public class CreateIndex implements Configurable {
         StringBuffer sb = new StringBuffer();
         String title;
 
-        Element data = (Element) news.getData().selectSingleNode("data");
-        String content = data.selectSingleNode("content").getText();
+        Element data = (Element) news.getData().getRootElement();
+        String content = data.element("content").getText();
         sb.append(content);
         sb.append(" ");
 
         String tmp = Tools.removeTags(content);
         title = Tools.limit(tmp,50," ..");
 
-        Node node = data.selectSingleNode("category");
+        Node node = data.element("category");
         String category = null;
         if (node!=null)
             category = node.getText();
@@ -798,7 +800,7 @@ public class CreateIndex implements Configurable {
      * @param relation initialized relation
      */
     static MyDocument indexFaq(Relation relation) {
-        Item faq = (Item) persistance.findById(relation.getChild());
+        Item faq = (Item) relation.getChild();
         String title = Tools.xpath(faq, "/data/title");
         StringBuffer sb = new StringBuffer(title);
         String content = Tools.xpath(faq, "/data/text");
