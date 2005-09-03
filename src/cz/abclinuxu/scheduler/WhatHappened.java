@@ -41,6 +41,8 @@ import java.util.prefs.Preferences;
  */
 public class WhatHappened extends TimerTask implements AbcAction, Configurable {
     static Logger log = Logger.getLogger(WhatHappened.class);
+    /** article ahving this article must not be indexed for fulltext search */
+    public static final String INDEXING_FORBIDDEN = "do_not_index";
 
     public static final String PREF_TITLE = "title";
     public static final String PREF_PEREX = "perex";
@@ -93,7 +95,7 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
             editArticle.actionAddStep2(null, null, map, false);
             Relation relation = (Relation) map.get(EditArticle.VAR_RELATION);
             Item article = (Item) relation.getChild();
-            article.getData().getRootElement().addAttribute("do_not_index", "true");
+            article.getData().getRootElement().addAttribute(INDEXING_FORBIDDEN, "true");
             persistance.update(article);
         } catch (Exception e) {
             log.error("WhatHappened generation failed!", e);

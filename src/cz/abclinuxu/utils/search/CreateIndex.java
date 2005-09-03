@@ -19,6 +19,7 @@ import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.exceptions.PersistanceException;
 import cz.abclinuxu.exceptions.InvalidDataException;
+import cz.abclinuxu.scheduler.WhatHappened;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.apache.lucene.index.IndexWriter;
@@ -665,7 +666,7 @@ public class CreateIndex implements Configurable {
         String title = null;
 
         Element data = (Element) article.getData().getRootElement();
-        if (data.attribute("do_not_index")!=null)
+        if (data.attribute(WhatHappened.INDEXING_FORBIDDEN)!=null)
             return null;
 
         Node node = data.selectSingleNode("name");
