@@ -1042,13 +1042,14 @@ public class MySqlPersistance implements Persistance {
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
+        GenericDataObject obj, previous = null;
         try {
             GenericDataObject representant = (GenericDataObject) objs.get(0);
             con = getSQLConnection();
             statement = con.prepareStatement("select * from " + getTable(representant) + " where cislo in " + getInCondition(objs.size()) + " order by cislo");
             int i = 1;
             for (Iterator iter = objs.iterator(); iter.hasNext();) {
-                GenericDataObject obj = (GenericDataObject) iter.next();
+                obj = (GenericDataObject) iter.next();
                 if (!(obj.getClass().isInstance(representant)))
                     throw new PersistanceException("Objects in List cannot be mixed!");
                 statement.setInt(i++, obj.getId());
@@ -1056,13 +1057,27 @@ public class MySqlPersistance implements Persistance {
             rs = statement.executeQuery();
 
             for (Iterator iter = objs.iterator(); iter.hasNext();) {
-                GenericDataObject obj = (GenericDataObject) iter.next();
-                if (!rs.next() || rs.getInt(1) != obj.getId()) {
-                    log.warn("Synchronizace: datova polozka nebyla nalezena: "+obj+"\nRepresentant is: "+representant);
-                } else {
-                    syncGenericDataObjectFromRS(obj, rs);
-                    cache.store(obj);
+                obj = (GenericDataObject) iter.next();
+                if (!rs.next()) {
+                    log.warn("Synchronizace: datova polozka nebyla nalezena: "+obj);
+                    break;
                 }
+
+                if (rs.getInt(1) != obj.getId()) {
+                    while (previous.getId()==obj.getId()) {
+                        obj.synchronizeWith(previous);
+                        if (iter.hasNext())
+                            obj = (GenericDataObject) iter.next();
+                    }
+                }
+                if (rs.getInt(1) != obj.getId()) {
+                    log.warn("Synchronizace: datova polozka nebyla nalezena: " + obj);
+                    continue;
+                }
+
+                syncGenericDataObjectFromRS(obj, rs);
+                cache.store(obj);
+                previous = obj;
             }
         } finally {
             releaseSQLResources(con, statement, rs);
