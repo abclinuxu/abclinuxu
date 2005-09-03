@@ -4,11 +4,23 @@
 <#assign forbidRating=TOOL.xpath(ITEM, "//forbid_rating")?default("UNDEF")>
 <#assign forbidDiscussion=TOOL.xpath(ITEM, "//forbid_discussions")?default("UNDEF")>
 
-<h1 class="st_nadpis">${TOOL.xpath(ITEM,"/data/name")}</h1>
+<h1>${TOOL.xpath(ITEM,"/data/name")}</h1>
 
 <p class="cl_inforadek">
 ${DATE.show(ITEM.created,"CZ_FULL")} | <a href="/Profile/${autor.id}">${autor.name}</a>
 </p>
+
+<#if RELATION.upper==8082>
+    <h2>Rubrika:
+        <#assign section=TOOL.xpath(ITEM, "/data/section_rid")?default("UNDEFINED")>
+        <#if section=="UNDEFINED">
+            nezadána
+        <#else>
+            ${TOOL.childName(section)}
+        </#if>
+        </b>
+    </h2>
+</#if>
 
 <#if USER?exists && USER.hasRole("article admin")>
  <p>
@@ -39,7 +51,7 @@ ${TOOL.render(TEXT,USER?if_exists)}
 
 <#if PAGES?exists>
  <div class="cl_perex">
-  <h1 class="st_nadpis">Jednotlivé podstránky èlánku</h1>
+  <h2>Jednotlivé podstránky èlánku</h2>
   <ol>
   <#list PAGES as page><li>
    <#if page_index==PAGE>
@@ -120,7 +132,7 @@ ${TOOL.render(TEXT,USER?if_exists)}
  <h1>Diskuse k tomuto èlánku</h1>
  <#assign DISCUSSION=CHILDREN.discussion[0].child>
 
- <p class="monitor"><b>AbcMonitor</b> vám emailem za¹le upozornìní pøi zmìnì.
+ <p><b>AbcMonitor</b> vám emailem za¹le upozornìní pøi zmìnì.
   <#if USER?exists && TOOL.xpath(DISCUSSION,"//monitor/id[text()='"+USER.id+"']")?exists>
    <#assign monitorState="Vypni">
   <#else>
@@ -149,9 +161,8 @@ ${TOOL.render(TEXT,USER?if_exists)}
   <@lib.showThread thread, 0, DISCUSSION.id, CHILDREN.discussion[0].id, !frozen />
  </#list>
 <#elseif forbidDiscussion!="yes">
- <h1 class="st_nadpis">Diskuse k tomuto èlánku</h1>
+ <h1>Diskuse k tomuto èlánku</h1>
  <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vlo¾it první komentáø</a>
 </#if>
 
 <#include "../footer.ftl">
-
