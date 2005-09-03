@@ -77,16 +77,46 @@
                 <br><span class="cl_inforadek">${doc.fragments}</span>
             </#if>
             <br>
-            <#if doc.typ='sekce'>Sekce
-            <#elseif doc.typ='hardware'>Hardware
-            <#elseif doc.typ='software'>Software
-            <#elseif doc.typ='diskuse'>Diskuse, poèet odpovìdí: ${doc.odpovedi}
-            <#elseif doc.typ='ovladac'>Ovladaè
-            <#elseif doc.typ='faq'>FAQ
-            <#elseif doc.typ='clanek'>Èlánek
-            <#elseif doc.typ='zpravicka'>Zprávièka
-            <#elseif doc.typ='pojem'>Pojem
-            <#elseif doc.typ='blog'>Zápis v blogu
+            <#if doc.typ='sekce'>
+                Sekce
+            <#elseif doc.typ='hardware'>
+                Hardware,
+                velikost: ${doc.velikost_obsahu} znakù,
+                poslední zmìna: ${DATE.show(doc.datum_zmeny,"CZ_DMY")}
+            <#elseif doc.typ='software'>
+                Software,
+                velikost: ${doc.velikost_obsahu} znakù,
+                poslední zmìna: ${DATE.show(doc.datum_zmeny,"CZ_DMY")}
+            <#elseif doc.typ='diskuse'>
+                Diskuse<#if doc.vyreseno=="ano"> (vyøe¹ena)</#if>,
+                poèet reakcí: ${doc.odpovedi},
+                velikost: ${doc.velikost_obsahu} znakù,
+                vytvoøena: ${DATE.show(doc.datum_vytvoreni,"CZ_DMY")},
+                poslední reakce: ${DATE.show(doc.datum_zmeny,"CZ_DMY")}
+            <#elseif doc.typ='ovladac'>
+                Ovladaè,
+                velikost: ${doc.velikost_obsahu} znakù,
+                poslední zmìna: ${DATE.show(doc.datum_zmeny,"CZ_DMY")}
+            <#elseif doc.typ='faq'>
+                FAQ,
+                velikost: ${doc.velikost_obsahu} znakù,
+                poslední zmìna: ${DATE.show(doc.datum_zmeny,"CZ_DMY")}
+            <#elseif doc.typ='clanek'>
+                Èlánek,
+                velikost: ${doc.velikost_obsahu} znakù,
+                vytvoøen: ${DATE.show(doc.datum_vytvoreni,"CZ_DMY")}
+            <#elseif doc.typ='zpravicka'>
+                Zprávièka,
+                velikost: ${doc.velikost_obsahu} znakù,
+                vytvoøena: ${DATE.show(doc.datum_vytvoreni,"CZ_DMY")},
+            <#elseif doc.typ='pojem'>
+                Pojem,
+                velikost: ${doc.velikost_obsahu} znakù,
+                poslední zmìna: ${DATE.show(doc.datum_zmeny,"CZ_DMY")}
+            <#elseif doc.typ='blog'>
+                Zápis v blogu,
+                velikost: ${doc.velikost_obsahu} znakù,
+                vytvoøen: ${DATE.show(doc.datum_vytvoreni,"CZ_DMY")},
             </#if>
 
 

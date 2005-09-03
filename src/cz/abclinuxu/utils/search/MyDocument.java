@@ -8,6 +8,7 @@ package cz.abclinuxu.utils.search;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.servlets.Constants;
 
 import java.util.Date;
 
@@ -33,7 +34,7 @@ public class MyDocument {
     /** Type of the object. */
     public static final String TYPE = "typ";
     /** URL, where to display the object. */
-    public static final String URL = "url";
+    public static final String VALUE_URL = "url";
     /** User friendly title. */
     public static final String TITLE = "title";
     /** Id of parent object. */
@@ -48,6 +49,12 @@ public class MyDocument {
     public static final String CREATED = "vytvoreno";
     /** time of last update of object */
     public static final String UPDATED = "zmeneno";
+    /** stored value in ISO format of time when object was created */
+    public static final String VALUE_CREATED = "datum_vytvoreni";
+    /** stored value in ISO format of time when object was modified last time */
+    public static final String VALUE_UPDATED = "datum_zmeny";
+    /** stored value - number of characters of indexed content */
+    public static final String VALUE_SIZE = "velikost_obsahu";
 
     Document document;
 
@@ -57,13 +64,14 @@ public class MyDocument {
     public MyDocument(String content) {
         document = new Document();
         document.add(Field.Text(CONTENT, content));
+        document.add(Field.UnIndexed(VALUE_SIZE, Integer.toString(content.length())));
     }
 
     /**
      * Associates URL with Document.
      */
     public Field setURL(String url) {
-        Field field = Field.UnIndexed(URL,url);
+        Field field = Field.UnIndexed(VALUE_URL,url);
         document.add(field);
         return field;
     }
@@ -136,6 +144,7 @@ public class MyDocument {
      * Sets time when object was created.
      */
     public Field setCreated(Date date) {
+        document.add(Field.UnIndexed(VALUE_CREATED, Constants.isoFormat.format(date)));
         Field field = Field.Keyword(CREATED, date);
         document.add(field);
         return field;
@@ -145,6 +154,7 @@ public class MyDocument {
      * Sets last time when object was updated.
      */
     public Field setUpdated(Date date) {
+        document.add(Field.UnIndexed(VALUE_UPDATED, Constants.isoFormat.format(date)));
         Field field = Field.Keyword(UPDATED, date);
         document.add(field);
         return field;
