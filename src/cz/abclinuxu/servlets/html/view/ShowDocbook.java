@@ -198,7 +198,7 @@ public class ShowDocbook implements AbcAction {
             else if ( "DD".equals(tagName) )
                 visitDdStart();
             else
-                print("&gt;"+tag.getTagName()+"&lt;", 2, true);
+                print("&lt;"+tag.getTagName()+"&gt;", 2, true);
         }
 
         public void visitEndTag(Tag tag) {
@@ -260,7 +260,7 @@ public class ShowDocbook implements AbcAction {
             else if ( "DD".equals(tagName) )
                 visitDdEnd();
             else
-                print("&gt;/" + tag.getTagName() + "&lt;", 2, true);
+                print("&lt;/" + tag.getTagName() + "&gt;", 2, true);
         }
 
         public void finishedParsing() {
