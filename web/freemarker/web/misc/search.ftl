@@ -66,61 +66,62 @@
 
 
 <#if RESULT?exists>
-    <p align="right">
+    <p class="search_results">
         Nalezeno ${RESULT.total} objektù, zobrazuji ${RESULT.thisPage.row}-${RESULT.thisPage.row+RESULT.thisPage.size}.
     </p>
 
     <#list RESULT.data as doc>
-        <p>
-            <!--m--><a href="${doc.url}">${doc.title?default(doc.url)}</a><!--n-->
+        <div class="search_result">
+            <!--m--><a href="${doc.url}" class="search_title">${doc.title?default(doc.url)}</a>
+            <#if (doc.typ='diskuse' && doc.vyreseno=="ano")> <span class="search_solved">(vyøe¹eno)</span></#if>
+            <!--n-->
             <#if doc.fragments?exists>
-                <br><span class="cl_inforadek">${doc.fragments}</span>
+                <p class="search_fragments">${doc.fragments}</p>
             </#if>
-            <br>
+            <p class="search_details">
             <#if doc.typ='sekce'>
                 Sekce
             <#elseif doc.typ='hardware'>
                 Hardware,
-                velikost: ${doc.velikost_obsahu} znakù,
-                poslední zmìna: ${DATE.show(doc.datum_zmeny,"CZ_DMY")}
+                poslední zmìna: ${DATE.show(doc.datum_zmeny,"CZ_DMY")},
+                ${doc.velikost_obsahu} znakù
             <#elseif doc.typ='software'>
                 Software,
-                velikost: ${doc.velikost_obsahu} znakù,
-                poslední zmìna: ${DATE.show(doc.datum_zmeny,"CZ_DMY")}
+                poslední zmìna: ${DATE.show(doc.datum_zmeny,"CZ_DMY")},
+                ${doc.velikost_obsahu} znakù
             <#elseif doc.typ='diskuse'>
-                Diskuse<#if doc.vyreseno=="ano"> (vyøe¹ena)</#if>,
+                Diskuse,
                 poèet reakcí: ${doc.odpovedi},
-                velikost: ${doc.velikost_obsahu} znakù,
                 vytvoøena: ${DATE.show(doc.datum_vytvoreni,"CZ_DMY")},
-                poslední reakce: ${DATE.show(doc.datum_zmeny,"CZ_DMY")}
+                poslední reakce: ${DATE.show(doc.datum_zmeny,"CZ_DMY")},
+                ${doc.velikost_obsahu} znakù
             <#elseif doc.typ='ovladac'>
                 Ovladaè,
-                velikost: ${doc.velikost_obsahu} znakù,
-                poslední zmìna: ${DATE.show(doc.datum_zmeny,"CZ_DMY")}
+                poslední zmìna: ${DATE.show(doc.datum_zmeny,"CZ_DMY")},
+                ${doc.velikost_obsahu} znakù
             <#elseif doc.typ='faq'>
                 FAQ,
-                velikost: ${doc.velikost_obsahu} znakù,
-                poslední zmìna: ${DATE.show(doc.datum_zmeny,"CZ_DMY")}
+                poslední zmìna: ${DATE.show(doc.datum_zmeny,"CZ_DMY")},
+                ${doc.velikost_obsahu} znakù
             <#elseif doc.typ='clanek'>
                 Èlánek,
-                velikost: ${doc.velikost_obsahu} znakù,
-                vytvoøen: ${DATE.show(doc.datum_vytvoreni,"CZ_DMY")}
+                vytvoøen: ${DATE.show(doc.datum_vytvoreni,"CZ_DMY")},
+                ${doc.velikost_obsahu} znakù
             <#elseif doc.typ='zpravicka'>
                 Zprávièka,
-                velikost: ${doc.velikost_obsahu} znakù,
                 vytvoøena: ${DATE.show(doc.datum_vytvoreni,"CZ_DMY")},
+                ${doc.velikost_obsahu} znakù
             <#elseif doc.typ='pojem'>
                 Pojem,
-                velikost: ${doc.velikost_obsahu} znakù,
-                poslední zmìna: ${DATE.show(doc.datum_zmeny,"CZ_DMY")}
+                poslední zmìna: ${DATE.show(doc.datum_zmeny,"CZ_DMY")},
+                ${doc.velikost_obsahu} znakù
             <#elseif doc.typ='blog'>
-                Zápis v blogu,
-                velikost: ${doc.velikost_obsahu} znakù,
+                Blog,
                 vytvoøen: ${DATE.show(doc.datum_vytvoreni,"CZ_DMY")},
+                ${doc.velikost_obsahu} znakù
             </#if>
-
-
-        </p>
+            </p>
+        </div>
     </#list>
 
     <#if RESULT.prevPage?exists>

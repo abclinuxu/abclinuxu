@@ -460,19 +460,20 @@ a.info:hover span.tooltip {
 
 .s ul, .ramec-st ul {
 	margin:		0px;
-	padding-left:	15px;
+	padding-left:	1.3em;
 	color:		#27648D;
 	list-style-type: circle;
 }
 
 .ramec-st span { color: black }
-.ramec-st .s_nad_h1 { border-top: none; margin-top: 0 }
+.ramec-st .s_nad_h1 { border-top: none; margin: 0 }
 .ramec-st {
 	border: 1px solid silver;
 	margin: 5px 5px 0 0;
-	padding-bottom: 5px;
 	background: #f6f6f6;
 }
+
+.ramec-st td { padding-left: 0 }
 
 .s li {
 	padding:	0px;
@@ -740,8 +741,23 @@ a.info:hover span.tooltip {
 	padding:	0.5em;
 }
 
+p.search_results {
+    text-align: right;
+}
+div.search_result {
+    margin-top: 1em;
+}
+a.search_title {}
+span.search_solved {}
+p.search_fragments {
+	font-size:	80%;
+	color:		gray;
+}
 span.highlight {
 	font-weight: bold;
+}
+p.search_details {
+	font-size:	90%;
 }
 
 /*************** SF lista *****************/
