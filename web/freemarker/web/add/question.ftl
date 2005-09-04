@@ -4,57 +4,44 @@
 
 <h1 class="st_nadpis">Ne¾ polo¾íte dotaz</h1>
 
-<p>Pøeètìte si èlánek na téma, <a href="/clanky/show/4006">jak øe¹it
-problémy</a>.</p>
+<ul>
+    <li>Pøeètìte si èlánek na téma, <a href="/clanky/show/4006">jak øe¹it problémy</a>.</li>
+    <li>Zkusili jste hledání a pro¹li jste si <a href="/faq">Èasto kladené otázky</a> (FAQ)?</li>
+    <li>Pokud máte problém s MS&nbsp;Windows a není zde pøíèinná souvislost
+        s Linuxem, obra»te se na Microsoft, tady jste na ¹patné adrese.</li>
+    <li>Dotazy na warez budou smazány.</li>
+</ul>
 
 <h1 class="st_nadpis">Jak psát titulek</h1>
 
-<ol>
-<li>Nìkolika slovy popi¹te svùj problém.
-<li>Nepou¾ívejte slova jako help, pomoc èi zaèáteèník.
-<li>NEPI©TE VELKÝMI PÍSMENY, nepou¾ívejte vykøièníky.
-<li>Nepokládejte více nesouvisejících dotazù.
-</ol>
+<p>Dobøe zvolený titulek pøiláká pozornost ètenáøù, ¹patný zaruèenì odradí zku¹ené u¾ivatele, kteøí
+by vám mohli pomoci. Admini mohou ¹patnì formulovaný titulek upravit.</p>
 
-<p>Administrátoøi mohou ¹patnì formulovaný titulek
-opravit.</p>
-
-<p>Pro u¾ivatele windows: jsme portál o Linuxu, tak¾e
-dotazy na nefunkènost Windows sem opravdu nepatøí,
-leda by zde byla jasná souvislost problému s Linuxem (napøíklad
-samba).</p>
+<ul>
+<li>Popi¹te vìtou, v èem pøesnì spoèívá vá¹ problém.
+<li>Nepou¾ívejte slova jako help, pomoc, prosím, zaèáteèník èi lama.
+<li>NEPI©TE VELKÝMI PÍSMENY, nepou¾ívejte vykøièníky, je to nezdvoøilé.
+</ul>
 
 <h1 class="st_nadpis">Jak popsat problém</h1>
 
 <p>Sna¾te se uvést co nejvíce relevantních informací,
-jako je verze distribuce, druh hardwaru èi verze
-knihoven. Napi¹te také vá¹ postup, který nevede k cíli.
-</p>
-
-<p>Èasto je dobré vlo¾it ukázku konfiguraèního souboru, výpis
-dmesg èi lspci. Nicménì vkládejte jen skuteènì
+jako je druh hardwaru èi verze aplikace. Ostatní ètenáøi nemají køi¹»álovou kouli,
+aby to sami uhádli. Popi¹te postup, který nevede k cíli.
+Èasto je dobré vlo¾it ukázku konfiguraèního souboru, výpis
+dmesg èi lspci (HTML znaèka PRE). Nicménì vkládejte jen skuteènì
 zajímavé èásti související s problémem, maximálnì deset a¾
-patnáct øádek. Vìt¹í soubory umístìte nìkam na internet
-a do diskuse vlo¾te jen URL. Pokud toto pravidlo nebudete
-respektovat, administrátoøi mohou vá¹ pøíspìvek upravit èi
-dokonce smazat.
-</p>
-
-<p>Ve chvíli, kdy pøijdete na øe¹ení, vlo¾te jej do diskuse
-jako odpovìï. Pomù¾ete tak dal¹ím náv¹tìvníkùm, kteøí budou
-v budoucnu èíst vá¹ dotaz.
+patnáct øádek. Pokud pøijdete na øe¹ení sami, vlo¾te jej do diskuse.
+Pomù¾ete tak ostatním ètenáøùm.
 </p>
 
 <#if ! USER?exists>
  <h1 class="st_nadpis">Proè se pøihlásit</h1>
 
- <p>Pokud jste na abclinuxu registrováni, je výhodné
- se nyní pøihlásit. Vá¹ dotaz mù¾ete nechat sledovat
- Monitorem, který vám za¹le emailem upozornìní, kdy¾
- nìkdo na vá¹ dotaz bude reagovat. A¾ jednou budete
- diskusi znovu potøebovat, ve svém profilu ji velice
- snadno najdete. Nový úèet mù¾ete zalo¾it
- <a href="${URL.noPrefix("/EditUser?action=add")}">zde</a>.
+ <p>Registrovaní ètenáøi si mohou nechat sledovat diskusi, který za¹le emailem
+ reakce ostatních ètenáøù. Zároveò si budete moci ve svém profilu snadno vyhledat
+ tuto diskusi. Proto je výhodné se pøihlásit. Nemáte-li u nás je¹tì úèet,
+ <a href="${URL.noPrefix("/EditUser?action=add")}">zaregistrujte se</a>.
  </p>
 </#if>
 
