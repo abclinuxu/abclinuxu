@@ -86,20 +86,22 @@ public class ShowObject implements AbcAction {
 
         // check ACL
         Document document = relation.getData();
-        if ( document!=null && document.getRootElement().elements("acl")!=null ) {
+        if (document != null) {
             List elements = document.getRootElement().elements("/data/acl");
-            List acls = new ArrayList(elements.size());
-            for (Iterator iter = elements.iterator(); iter.hasNext();) {
-                ACL acl = EditRelation.getACL((Element) iter.next());
-                acls.add(acl);
+            if (elements != null && elements.size() > 0) {
+                List acls = new ArrayList(elements.size());
+                for (Iterator iter = elements.iterator(); iter.hasNext();) {
+                    ACL acl = EditRelation.getACL((Element) iter.next());
+                    acls.add(acl);
+                }
+
+                User user = (User) env.get(Constants.VAR_USER);
+                if (user == null && !ACL.isGranted(ACL.RIGHT_READ, acls))
+                    return FMTemplateSelector.select("ViewUser", "login", env, request);
+
+                if (user != null && !user.hasRole(Roles.ROOT) && !ACL.isGranted(user, ACL.RIGHT_READ, acls))
+                    return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             }
-
-            User user = (User) env.get(Constants.VAR_USER);
-            if ( user==null && !ACL.isGranted(ACL.RIGHT_READ, acls))
-                return FMTemplateSelector.select("ViewUser", "login", env, request);
-
-            if ( !user.hasRole(Roles.ROOT) && !ACL.isGranted(user, ACL.RIGHT_READ, acls) )
-                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);            
         }
 
         List parents = persistance.findParents(relation);
