@@ -70,6 +70,7 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
 
     public void run() {
         try {
+            log.info("Generating Weekly summary article");
             Map map = new HashMap();
             feedDataToMap(map);
             String template = FMTemplateSelector.select("WhatHappened", "content", map, "print");
@@ -97,6 +98,7 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
             Item article = (Item) relation.getChild();
             article.getData().getRootElement().addAttribute(INDEXING_FORBIDDEN, "true");
             persistance.update(article);
+            log.info("Weekly summary article finished");
         } catch (Exception e) {
             log.error("WhatHappened generation failed!", e);
         }
