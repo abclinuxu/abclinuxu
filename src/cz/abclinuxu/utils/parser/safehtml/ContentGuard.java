@@ -27,7 +27,7 @@ public class ContentGuard {
         TAGS.put("H3", new CheckedTag("H3", true, new String[]{"ID", "CLASS"}));
         TAGS.put("H4", new CheckedTag("H4", true, new String[]{"ID", "CLASS"}));
         TAGS.put("A", new CheckedTag("A", true, new String[]{"HREF", "TITLE", "ID", "CLASS"}));
-        TAGS.put("IMG", new CheckedTag("IMG", false, new String[]{"SRC", "WIDTH", "HEIGHT", "BORDER"}));
+        TAGS.put("IMG", new CheckedTag("IMG", false, new String[]{"SRC", "WIDTH", "HEIGHT", "BORDER", "ALT"}));
         TAGS.put("B", new CheckedTag("B", true, null));
         TAGS.put("I", new CheckedTag("I", true, null));
         TAGS.put("U", new CheckedTag("U", true, null));
