@@ -719,6 +719,7 @@ public class CreateIndex implements Configurable {
         doc.setType(MyDocument.TYPE_ARTICLE);
         doc.setCreated(article.getCreated());
         doc.setUpdated(article.getUpdated());
+        doc.setBoost(1.5f);
         return doc;
     }
 
@@ -764,6 +765,7 @@ public class CreateIndex implements Configurable {
         doc.setUpdated(news.getUpdated());
         if (category!=null)
             doc.setNewsCategory(category);
+        doc.setBoost(0.5f);
         return doc;
     }
 
@@ -812,7 +814,7 @@ public class CreateIndex implements Configurable {
         doc.setCreated(faq.getCreated());
         doc.setUpdated(faq.getUpdated());
         doc.setURL(relation.getUrl());
-        doc.setBoost(1.2f);
+        doc.setBoost(2.0f);
 
         return doc;
     }
