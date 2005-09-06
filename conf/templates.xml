@@ -375,6 +375,12 @@
     </action>
   </servlet>
 
+  <servlet name="ContentChanges">
+    <action name="show" content="/show/content_changes.ftl">
+      <var name="TITLE" value='Pøehled stránek a zmìn' />
+    </action>
+  </servlet>
+
   <servlet name="ViewFaq">
     <action name="view" content="/show/faq.ftl">
       <var name="TITLE" value='${TOOL.xpath(ITEM,"data/title")}' type="Lazy" />

@@ -258,6 +258,7 @@ public class EditContent implements AbcAction {
         canContinue &= setTitle(params, item, env);
         canContinue &= setContent(params, item, env);
         canContinue &= checkStartTime(params, item, env);
+        item.setOwner(user.getId());
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)
@@ -322,6 +323,7 @@ public class EditContent implements AbcAction {
         canContinue &= setURL(params, relation, env);
         canContinue &= setClass(params, item);
         canContinue &= checkStartTime(params, item, env);
+        item.setOwner(user.getId());
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)

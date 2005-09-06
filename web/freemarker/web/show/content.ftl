@@ -17,6 +17,7 @@
                 <a class="info" href="#">?<span class="tooltip">Za¹le upozornìní na vá¹ email pøi úpravì dokumentu</span></a>
             </li>
             <li><a href="${URL.make("/editContent/"+RELATION.id+"?action=editPublicContent")}">Uprav dokument</a></li>
+            <li><a href="${URL.make("/zmeny/"+RELATION.id)}">Hierarchie</a></li>
         </#if>
        </ul>
       </div>

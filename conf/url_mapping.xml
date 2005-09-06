@@ -126,6 +126,10 @@
             <action>cz.abclinuxu.servlets.html.edit.EditNews</action>
         </mapping>
         <mapping>
+            <pattern>^/zmeny</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ContentChanges</action>
+        </mapping>
+        <mapping>
             <pattern>^/kniha_navstev/edit</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditGuestBook</action>
         </mapping>

@@ -432,6 +432,23 @@ public class Tools implements Configurable {
     }
 
     /**
+     * If <code>str</code> is longer than <code>max</code>, it
+     * is shortened to length of <code>max-prefix.length()</code>
+     * and <code>prefix</code> is added to start.
+     */
+    public static String reverseLimit(String str, int max, String prefix) {
+        if (str == null || str.length() == 0) return "";
+        if (str.length() <= max) return str;
+
+        if (prefix == null) prefix = "";
+        StringBuffer sb = new StringBuffer(max);
+        sb.append(prefix);
+        int index = str.length() - prefix.length() - max;
+        sb.append(str.substring(index));
+        return sb.toString();
+    }
+
+    /**
      * If <code>str</code> is longer than <code>max</code> words, it
      * is shortened to contain only first max words and <code>suffix</code>.
      */
