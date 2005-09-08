@@ -9,7 +9,6 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.Nursery;
 import cz.abclinuxu.persistance.cache.LRUCache;
 import cz.abclinuxu.persistance.extra.LimitQualifier;
 import cz.abclinuxu.persistance.extra.Qualifier;
@@ -97,12 +96,12 @@ public class Dump implements Configurable {
         Relation news = new Relation(Constants.REL_NEWS);
 
         long start = System.currentTimeMillis();
-//        dumpIndex(dirRoot);
-//        dumpArticles(dirRoot, articles);
+        dumpIndex(dirRoot);
+        dumpArticles(dirRoot, articles);
         dumpAllNews(dirRoot, news);
-//        dumpTree(drivers, dirRoot, UrlUtils.PREFIX_DRIVERS);
-//        dumpTree(hardware, dirRoot, UrlUtils.PREFIX_HARDWARE);
-//        dumpForums(dirRoot);
+        dumpTree(drivers, dirRoot, UrlUtils.PREFIX_DRIVERS);
+        dumpTree(hardware, dirRoot, UrlUtils.PREFIX_HARDWARE);
+        dumpForums(dirRoot);
         long end = System.currentTimeMillis();
         System.out.println("Dumping of "+indexed.size()+" documents took "+(end-start)/1000+" seconds.");
     }
@@ -342,9 +341,8 @@ public class Dump implements Configurable {
         Tools.syncList(forums);
 
         Relation forum = (Relation) Tools.sync(new Relation(Constants.REL_FORUM));
-        replaceChildren(forum.getChild(), forums);
         File file = getFileName(forum, currentDir, 0);
-        dumpCategory(forum, (Category) forum.getChild(), file, UrlUtils.PREFIX_FORUM);
+        dumpForum(forum, (Category) forum.getChild(), file);
 
         int total, i, count = 30;
         Relation relation, relation2;
@@ -385,21 +383,25 @@ public class Dump implements Configurable {
     }
 
     /**
-     * Sets new children for object.
-     * @param obj
-     * @param children
+     * dumps all forums page into html file.
      */
-    private void replaceChildren(GenericObject obj, List children) {
-        List currentChildren = obj.getChildren();
-        for (Iterator iterator = currentChildren.iterator(); iterator.hasNext();) {
-            Relation relation = (Relation) iterator.next();
-            Nursery.getInstance().removeChild(relation);
-        }
-        for (Iterator iterator = children.iterator(); iterator.hasNext();) {
-            Relation relation = (Relation) iterator.next();
-            relation.setParent(obj);
-            Nursery.getInstance().addChild(relation);
-        }
+    void dumpForum(Relation relation, Category category, File file) throws Exception {
+        if (hasBeenIndexed(relation))
+            return;
+        setIndexed(relation);
+
+        Map env = new HashMap();
+        env.put(ShowObject.VAR_RELATION, relation);
+        env.put(VAR_ONLINE_URL, PORTAL_URL + "/diskuse.jsp");
+
+        List parents = persistance.findParents(relation);
+        env.put(ShowObject.VAR_PARENTS, parents);
+
+        Tools.sync(category);
+        env.put(ViewCategory.VAR_CATEGORY, category);
+
+        String name = FMTemplateSelector.select("ShowForum", "main", env, "offline");
+        FMUtils.executeTemplate(name, env, file);
     }
 
     /**

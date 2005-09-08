@@ -3,6 +3,8 @@
 
 <h1 align="center">Fórum ${TOOL.xpath(CATEGORY,"/data/name")}</h1>
 
+<@lib.showParents/>
+
 <div class="ds">
     <table>
         <thead>
