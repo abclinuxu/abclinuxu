@@ -8,6 +8,7 @@
     <li><a href="${DUMP.getFile(NEWS)}">zprávièky</a></li>
     <li><a href="${DUMP.getFile(FORUM)}">forum</a></li>
     <li><a href="${DUMP.getFile(FAQ)}">faq</a></li>
+    <li><a href="${DUMP.getFile(DICTIONARY)}">slovnik</a></li>
 </ul>
 
 <#include "../footer.ftl">

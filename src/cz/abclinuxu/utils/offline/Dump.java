@@ -97,16 +97,17 @@ public class Dump implements Configurable {
         Relation hardware = (Relation) persistance.findById(new Relation(Constants.REL_HARDWARE));
         Relation drivers = (Relation) persistance.findById(new Relation(Constants.REL_DRIVERS));
         Relation articles = (Relation) persistance.findById(new Relation(Constants.REL_ARTICLES));
-        Relation news = new Relation(Constants.REL_NEWS);
+//        Relation news = new Relation(Constants.REL_NEWS);
 
         long start = System.currentTimeMillis();
         dumpIndex(dirRoot);
-//        dumpArticles(dirRoot, articles);
+        dumpArticles(dirRoot, articles);
 //        dumpAllNews(dirRoot, news);
-//        dumpTree(drivers, dirRoot, UrlUtils.PREFIX_DRIVERS);
-//        dumpTree(hardware, dirRoot, UrlUtils.PREFIX_HARDWARE);
-//        dumpForums(dirRoot);
+        dumpTree(drivers, dirRoot, UrlUtils.PREFIX_DRIVERS);
+        dumpTree(hardware, dirRoot, UrlUtils.PREFIX_HARDWARE);
+        dumpForums(dirRoot);
         dumpFaqs(dirRoot);
+        dumpDictionary(dirRoot);
         long end = System.currentTimeMillis();
         System.out.println("Dumping of "+indexed.size()+" documents took "+(end-start)/1000+" seconds.");
     }
@@ -116,9 +117,10 @@ public class Dump implements Configurable {
         env.put("HARDWARE", new Integer(Constants.REL_HARDWARE));
         env.put("DRIVERS", new Integer(Constants.REL_DRIVERS));
         env.put("ARTICLES", new Integer(Constants.REL_ARTICLES));
-        env.put("NEWS", new Integer(Constants.REL_NEWS));
+//        env.put("NEWS", new Integer(Constants.REL_NEWS));
         env.put("FORUM", new Integer(Constants.REL_FORUM));
         env.put("FAQ", new Integer(Constants.REL_FAQ));
+        env.put("DICTIONARY", new Integer(Constants.REL_DICTIONARY));
 
         String name = FMTemplateSelector.select("ViewIndex", "show", env, "offline");
         File file = new File(dirRoot, "index.html");
@@ -181,12 +183,12 @@ public class Dump implements Configurable {
             env.put(VAR_ONLINE_URL, PORTAL_URL + relation.getUrl());
             env.put(ViewFaq.VAR_FAQ_XML, NodeModel.wrap((new DOMWriter().write(item.getData()))));
             name = FMTemplateSelector.select("ViewFaq", "view", env, "offline");
-            FMUtils.executeTemplate(name,env,file);
+            FMUtils.executeTemplate(name, env, file);
             return;
         }
         if ( item.getType()==Item.DRIVER ) {
             name = FMTemplateSelector.select("ShowObject", "driver", env, "offline");
-            FMUtils.executeTemplate(name,env,file);
+            FMUtils.executeTemplate(name, env, file);
             return;
         }
 
@@ -194,8 +196,14 @@ public class Dump implements Configurable {
         env.put(ShowObject.VAR_CHILDREN_MAP,children);
 
         if ( item.getType()==Item.ARTICLE ) {
-            name = FMTemplateSelector.select("ShowObject","article", env, "offline");
-            FMUtils.executeTemplate(name,env,file);
+            name = FMTemplateSelector.select("ShowObject", "article", env, "offline");
+            FMUtils.executeTemplate(name, env, file);
+            return;
+        }
+
+        if ( item.getType()==Item.DICTIONARY ) {
+            name = FMTemplateSelector.select("Dictionary", "show", env, "offline");
+            FMUtils.executeTemplate(name, env, file);
             return;
         }
 
@@ -210,7 +218,7 @@ public class Dump implements Configurable {
                 persistance.synchronize(record);
 
             if ( record.getType()== Record.HARDWARE )
-                name = FMTemplateSelector.select("ShowObject","hardware", env, "offline");
+                name = FMTemplateSelector.select("ShowObject", "hardware", env, "offline");
             else
                 return;
 
@@ -495,6 +503,43 @@ public class Dump implements Configurable {
 
         String name = FMTemplateSelector.select("ViewFaq", "start", env, "offline");
         FMUtils.executeTemplate(name, env, file);
+    }
+
+    /**
+     * Dumps all dictionary items.
+     * @param currentDir
+     * @throws Exception
+     */
+    void dumpDictionary(File currentDir) throws Exception {
+        Relation relation = (Relation) Tools.sync(new Relation(Constants.REL_DICTIONARY));
+        if (hasBeenIndexed(relation))
+            return;
+        setIndexed(relation);
+
+        Map env = new HashMap();
+        env.put(ShowObject.VAR_RELATION, relation);
+        env.put(VAR_ONLINE_URL, PORTAL_URL + "/slovnik");
+        env.put(ViewCategory.VAR_CATEGORY, relation.getChild());
+
+        List parents = persistance.findParents(relation);
+        env.put(ShowObject.VAR_PARENTS, parents);
+
+        int total = sqlTool.countItemRelationsWithType(Item.FAQ, null);
+        List data = sqlTool.findItemRelationsWithType(Item.DICTIONARY, null);
+        Tools.syncList(data);
+
+        Paging paging = new Paging(data, 0, total, total);
+        env.put(VAR_DATA, paging);
+
+        String template = FMTemplateSelector.select("Dictionary", "showList", env, "offline");
+        File file = getFileName(relation, currentDir, paging.getPageIndex().intValue());
+        FMUtils.executeTemplate(template, env, file);
+
+        for (Iterator iter2 = data.iterator(); iter2.hasNext();) {
+            Relation relation2 = (Relation) iter2.next();
+            file = getFileName(relation2, currentDir);
+            dumpItem(relation2, (Item) relation2.getChild(), file, parents, UrlUtils.PREFIX_DICTIONARY);
+        }
     }
 
     /**
