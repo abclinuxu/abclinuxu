@@ -38,7 +38,7 @@
    <td>
     <#if PARENTS?exists>
      <#list PARENTS as relation>
-      <a href="../${DUMP.getFile(relation.id)}">${TOOL.childName(relation)}</a><#if relation_has_next> - </#if>
+      <a href="../../${DUMP.getFile(relation.id)}">${TOOL.childName(relation)}</a><#if relation_has_next> - </#if>
      </#list>
     </#if>
    </td>

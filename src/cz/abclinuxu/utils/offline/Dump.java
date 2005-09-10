@@ -10,11 +10,11 @@ import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.persistance.cache.LRUCache;
-import cz.abclinuxu.persistance.extra.LimitQualifier;
-import cz.abclinuxu.persistance.extra.Qualifier;
+import cz.abclinuxu.persistance.extra.*;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.view.ShowObject;
 import cz.abclinuxu.servlets.html.view.ViewCategory;
+import cz.abclinuxu.servlets.html.view.ViewFaq;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.template.TemplateSelector;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
@@ -30,12 +30,15 @@ import cz.abclinuxu.utils.news.NewsCategories;
 import cz.abclinuxu.utils.paging.Paging;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateExceptionHandler;
+import freemarker.ext.dom.NodeModel;
 
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.FieldPosition;
 import java.util.*;
 import java.util.prefs.Preferences;
+
+import org.dom4j.io.DOMWriter;
 
 /**
  * This class is responsible for dumping all
@@ -56,7 +59,8 @@ public class Dump implements Configurable {
     SQLTool sqlTool;
     DecimalFormat df;
     Configuration config;
-    Map indexed = new HashMap(100000);
+    Map indexed = new HashMap(120000);
+    private final int PAGE_SIZE = 30;
 
     public static void main(String[] args) throws Exception {
         Dump dumper = new Dump();
@@ -66,7 +70,7 @@ public class Dump implements Configurable {
     public Dump() throws Exception {
         ConfigurationManager.getConfigurator().configureMe(this);
         persistance = PersistanceFactory.getPersistance();
-        persistance.setCache(new LRUCache(1000));
+        persistance.setCache(new LRUCache(5000));
         sqlTool = SQLTool.getInstance();
         String templateURI = AbcConfig.calculateDeployedPath("WEB-INF/conf/templates.xml");
         TemplateSelector.initialize(templateURI);
@@ -97,11 +101,12 @@ public class Dump implements Configurable {
 
         long start = System.currentTimeMillis();
         dumpIndex(dirRoot);
-        dumpArticles(dirRoot, articles);
-        dumpAllNews(dirRoot, news);
-        dumpTree(drivers, dirRoot, UrlUtils.PREFIX_DRIVERS);
-        dumpTree(hardware, dirRoot, UrlUtils.PREFIX_HARDWARE);
-        dumpForums(dirRoot);
+//        dumpArticles(dirRoot, articles);
+//        dumpAllNews(dirRoot, news);
+//        dumpTree(drivers, dirRoot, UrlUtils.PREFIX_DRIVERS);
+//        dumpTree(hardware, dirRoot, UrlUtils.PREFIX_HARDWARE);
+//        dumpForums(dirRoot);
+        dumpFaqs(dirRoot);
         long end = System.currentTimeMillis();
         System.out.println("Dumping of "+indexed.size()+" documents took "+(end-start)/1000+" seconds.");
     }
@@ -113,6 +118,7 @@ public class Dump implements Configurable {
         env.put("ARTICLES", new Integer(Constants.REL_ARTICLES));
         env.put("NEWS", new Integer(Constants.REL_NEWS));
         env.put("FORUM", new Integer(Constants.REL_FORUM));
+        env.put("FAQ", new Integer(Constants.REL_FAQ));
 
         String name = FMTemplateSelector.select("ViewIndex", "show", env, "offline");
         File file = new File(dirRoot, "index.html");
@@ -150,7 +156,7 @@ public class Dump implements Configurable {
         setIndexed(relation);
 
         Map env = new HashMap();
-        env.put(ShowObject.VAR_RELATION,relation);
+        env.put(ShowObject.VAR_RELATION, relation);
         env.put(VAR_ONLINE_URL, PORTAL_URL+prefix+"/show/"+relation.getId());
 
         if (parents==null) {
@@ -167,12 +173,19 @@ public class Dump implements Configurable {
         String name = null;
 
         if ( item.getType()==Item.DISCUSSION ) {
-            name = FMTemplateSelector.select("ShowObject","discussion", env, "offline");
+            name = FMTemplateSelector.select("ShowObject", "discussion", env, "offline");
+            FMUtils.executeTemplate(name,env,file);
+            return;
+        }
+        if ( item.getType()==Item.FAQ ) {
+            env.put(VAR_ONLINE_URL, PORTAL_URL + relation.getUrl());
+            env.put(ViewFaq.VAR_FAQ_XML, NodeModel.wrap((new DOMWriter().write(item.getData()))));
+            name = FMTemplateSelector.select("ViewFaq", "view", env, "offline");
             FMUtils.executeTemplate(name,env,file);
             return;
         }
         if ( item.getType()==Item.DRIVER ) {
-            name = FMTemplateSelector.select("ShowObject","driver", env, "offline");
+            name = FMTemplateSelector.select("ShowObject", "driver", env, "offline");
             FMUtils.executeTemplate(name,env,file);
             return;
         }
@@ -237,7 +250,7 @@ public class Dump implements Configurable {
         dumpCategory(articles, (Category) articles.getChild(), file, UrlUtils.PREFIX_CLANKY);
 
         List sections = articles.getChild().getChildren();
-        int total, i, count = 30;
+        int total, i, count = PAGE_SIZE;
 
         for (Iterator iter = sections.iterator(); iter.hasNext();) {
             Relation sectionRelation = (Relation) iter.next();
@@ -281,7 +294,7 @@ public class Dump implements Configurable {
      * Dumps all news.
      */
     void dumpAllNews(File currentDir, Relation news_section) throws Exception {
-        int total = sqlTool.countNewsRelations(), i, count = 30;
+        int total = sqlTool.countNewsRelations(), i, count = PAGE_SIZE;
         Relation relation, sectionNews = (Relation) persistance.findById(new Relation(Constants.REL_NEWS));
 
         for (i = 0; i < total;) {
@@ -344,7 +357,7 @@ public class Dump implements Configurable {
         File file = getFileName(forum, currentDir, 0);
         dumpForum(forum, (Category) forum.getChild(), file);
 
-        int total, i, count = 30;
+        int total, i, count = PAGE_SIZE;
         Relation relation, relation2;
         for (Iterator iter = forums.iterator(); iter.hasNext();) {
             relation = (Relation) iter.next();
@@ -401,6 +414,86 @@ public class Dump implements Configurable {
         env.put(ViewCategory.VAR_CATEGORY, category);
 
         String name = FMTemplateSelector.select("ShowForum", "main", env, "offline");
+        FMUtils.executeTemplate(name, env, file);
+    }
+
+    /**
+     * Dumps all FAQ.
+     * @param currentDir
+     * @throws Exception
+     */
+    void dumpFaqs(File currentDir) throws Exception {
+        Relation mainSection = (Relation) Tools.sync(new Relation(Constants.REL_FAQ));
+        File file = getFileName(mainSection, currentDir, 0);
+        Category category = (Category) mainSection.getChild();
+        List sections = category.getChildren();
+        Tools.syncList(sections);
+        dumpFaqIntro(mainSection, category, file);
+
+        int total, i, count = PAGE_SIZE;
+        Relation relation, relation2;
+        for (Iterator iter = sections.iterator(); iter.hasNext();) {
+            relation = (Relation) iter.next();
+            if (hasBeenIndexed(relation))
+                continue;
+            setIndexed(relation);
+
+            Map env = new HashMap();
+            env.put(ShowObject.VAR_RELATION, relation);
+            env.put(VAR_ONLINE_URL, PORTAL_URL + relation.getUrl());
+            env.put(ViewCategory.VAR_CATEGORY, relation.getChild());
+
+            List parents = persistance.findParents(relation);
+            env.put(ShowObject.VAR_PARENTS, parents);
+
+            List qualifiers = new ArrayList();
+            qualifiers.add(new CompareCondition(Field.UPPER, Operation.EQUAL, new Integer(relation.getId())));
+            Qualifier[] qa = new Qualifier[qualifiers.size()];
+            total = sqlTool.countItemRelationsWithType(Item.FAQ, (Qualifier[]) qualifiers.toArray(qa));
+            qualifiers.add(Qualifier.SORT_BY_CREATED);
+            qualifiers.add(Qualifier.ORDER_DESCENDING);
+
+            for (i = 0; i < total;) {
+                List tmpQualifiers = new ArrayList(qualifiers);
+                tmpQualifiers.add(new LimitQualifier(i, count));
+                qa = new Qualifier[tmpQualifiers.size()];
+
+                List data = sqlTool.findItemRelationsWithType(Item.FAQ, (Qualifier[]) tmpQualifiers.toArray(qa));
+                Tools.syncList(data);
+
+                Paging paging = new Paging(data, i, count, total);
+                env.put(VAR_DATA, paging);
+                i += data.size();
+
+                String template = FMTemplateSelector.select("ViewFaq", "list", env, "offline");
+                file = getFileName(relation, currentDir, paging.getPageIndex().intValue());
+                FMUtils.executeTemplate(template, env, file);
+
+                for (Iterator iter2 = data.iterator(); iter2.hasNext();) {
+                    relation2 = (Relation) iter2.next();
+                    file = getFileName(relation2, currentDir);
+                    dumpItem(relation2, (Item) relation2.getChild(), file, parents, UrlUtils.PREFIX_FAQ);
+                }
+            }
+        }
+    }
+
+    /**
+     * dumps all faqs page into html file.
+     */
+    void dumpFaqIntro(Relation relation, Category category, File file) throws Exception {
+        if (hasBeenIndexed(relation))
+            return;
+        setIndexed(relation);
+
+        Map env = new HashMap();
+        env.put(ShowObject.VAR_RELATION, relation);
+        env.put(VAR_ONLINE_URL, PORTAL_URL + "/faq");
+
+        Tools.sync(category);
+        env.put(ViewCategory.VAR_CATEGORY, category);
+
+        String name = FMTemplateSelector.select("ViewFaq", "start", env, "offline");
         FMUtils.executeTemplate(name, env, file);
     }
 
@@ -485,4 +578,15 @@ public class Dump implements Configurable {
      */
     public void configure(Preferences prefs) throws ConfigurationException {
     }
+
+    /*
+       uprava dat:
+       smazat relaci http://www.abclinuxu.cz/clanky/dir/4731
+       smazat clanky Udalo se ..
+       smazat prazdne FAQ sekce
+       select R.cislo from relace R,polozka P where R.typ_potomka='P' and P.cislo=R.potomek and typ=2 and P.data like '%<name>Událo%';
+       prevest URL na lokalni
+       prevest textova URL na ciselna
+       prevest ciselna URL na offline (ideal - jen kdyz se indexuji, jinak smerovat na internet)
+    */
 }
