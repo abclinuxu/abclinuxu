@@ -53,7 +53,8 @@ public class Dump implements Configurable {
     static final String VAR_ONLINE_URL = "ONLINE";
     static final String VAR_DATA = "RESULT";
 
-    static final String PORTAL_URL = "http://www.abclinuxu.cz";
+    public static final String PORTAL_URL = "http://www.abclinuxu.cz";
+    public static final String LOCAL_PATH = "../..";
 
     Persistance persistance;
     SQLTool sqlTool;
@@ -627,8 +628,8 @@ public class Dump implements Configurable {
     /*
        uprava dat:
        smazat relaci http://www.abclinuxu.cz/clanky/dir/4731
-       smazat clanky Udalo se ..
        smazat prazdne FAQ sekce
+       smazat clanky Udalo se ..
        select R.cislo from relace R,polozka P where R.typ_potomka='P' and P.cislo=R.potomek and typ=2 and P.data like '%<name>Událo%';
        prevest URL na lokalni
        prevest textova URL na ciselna
