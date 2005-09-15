@@ -106,12 +106,12 @@ public class Dump implements Configurable {
 
         long start = System.currentTimeMillis();
 //        dumpIndex(dirRoot);
-//        dumpArticles(dirRoot, articles);
+        dumpArticles(dirRoot, articles);
 //        dumpAllNews(dirRoot, news);
 //        dumpTree(drivers, dirRoot, UrlUtils.PREFIX_DRIVERS);
 //        dumpTree(hardware, dirRoot, UrlUtils.PREFIX_HARDWARE);
 //        dumpForums(dirRoot);
-        dumpFaqs(dirRoot);
+//        dumpFaqs(dirRoot);
 //        dumpDictionary(dirRoot);
         long end = System.currentTimeMillis();
         System.out.println("Dumping of "+indexed.size()+" documents took "+(end-start)/1000+" seconds.");
@@ -201,7 +201,7 @@ public class Dump implements Configurable {
         env.put(ShowObject.VAR_CHILDREN_MAP,children);
 
         if ( item.getType()==Item.ARTICLE ) {
-            setArticleRelatedResources(item.getData(), env);
+            setArticleRelatedResources(env);
             name = FMTemplateSelector.select("ShowObject", "article", env, "offline");
             FMUtils.executeTemplate(name, env, file);
             return;
@@ -232,7 +232,12 @@ public class Dump implements Configurable {
         }
     }
 
-    private void setArticleRelatedResources(Document document, Map env) {
+    private void setArticleRelatedResources(Map env) {
+        Map children = (Map) env.get(ShowObject.VAR_CHILDREN_MAP);
+        List list = (List) children.get(Constants.TYPE_RECORD);
+        Record record = (Record) ((Relation) list.get(0)).getChild();
+        Document document = record.getData();
+        
         List nodes = document.selectNodes("/data/related/link");
         if (nodes != null && nodes.size() > 0) {
             List articles = new ArrayList(nodes.size());
