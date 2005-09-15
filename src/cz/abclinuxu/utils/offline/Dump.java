@@ -15,6 +15,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.view.ShowObject;
 import cz.abclinuxu.servlets.html.view.ViewCategory;
 import cz.abclinuxu.servlets.html.view.ViewFaq;
+import cz.abclinuxu.servlets.html.view.ShowArticle;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.template.TemplateSelector;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
@@ -39,6 +40,8 @@ import java.util.*;
 import java.util.prefs.Preferences;
 
 import org.dom4j.io.DOMWriter;
+import org.dom4j.Element;
+import org.dom4j.Document;
 
 /**
  * This class is responsible for dumping all
@@ -55,6 +58,7 @@ public class Dump implements Configurable {
 
     public static final String PORTAL_URL = "http://www.abclinuxu.cz";
     public static final String LOCAL_PATH = "../..";
+    public static final String IMAGES_LOCAL_PATH = "../../..";
 
     Persistance persistance;
     SQLTool sqlTool;
@@ -101,14 +105,14 @@ public class Dump implements Configurable {
 //        Relation news = new Relation(Constants.REL_NEWS);
 
         long start = System.currentTimeMillis();
-        dumpIndex(dirRoot);
-        dumpArticles(dirRoot, articles);
+//        dumpIndex(dirRoot);
+//        dumpArticles(dirRoot, articles);
 //        dumpAllNews(dirRoot, news);
-        dumpTree(drivers, dirRoot, UrlUtils.PREFIX_DRIVERS);
-        dumpTree(hardware, dirRoot, UrlUtils.PREFIX_HARDWARE);
-        dumpForums(dirRoot);
+//        dumpTree(drivers, dirRoot, UrlUtils.PREFIX_DRIVERS);
+//        dumpTree(hardware, dirRoot, UrlUtils.PREFIX_HARDWARE);
+//        dumpForums(dirRoot);
         dumpFaqs(dirRoot);
-        dumpDictionary(dirRoot);
+//        dumpDictionary(dirRoot);
         long end = System.currentTimeMillis();
         System.out.println("Dumping of "+indexed.size()+" documents took "+(end-start)/1000+" seconds.");
     }
@@ -197,6 +201,7 @@ public class Dump implements Configurable {
         env.put(ShowObject.VAR_CHILDREN_MAP,children);
 
         if ( item.getType()==Item.ARTICLE ) {
+            setArticleRelatedResources(item.getData(), env);
             name = FMTemplateSelector.select("ShowObject", "article", env, "offline");
             FMUtils.executeTemplate(name, env, file);
             return;
@@ -224,6 +229,30 @@ public class Dump implements Configurable {
                 return;
 
             FMUtils.executeTemplate(name,env,file);
+        }
+    }
+
+    private void setArticleRelatedResources(Document document, Map env) {
+        List nodes = document.selectNodes("/data/related/link");
+        if (nodes != null && nodes.size() > 0) {
+            List articles = new ArrayList(nodes.size());
+            for (Iterator iter = nodes.iterator(); iter.hasNext();) {
+                Element element = (Element) iter.next();
+                ShowArticle.Link link = new ShowArticle.Link(element.getText(), element.attributeValue("url"), element.attributeValue("description"));
+                articles.add(link);
+            }
+            env.put(ShowArticle.VAR_RELATED_ARTICLES, articles);
+        }
+
+        nodes = document.selectNodes("/data/resources/link");
+        if (nodes != null && nodes.size() > 0) {
+            List resources = new ArrayList(nodes.size());
+            for (Iterator iter = nodes.iterator(); iter.hasNext();) {
+                Element element = (Element) iter.next();
+                ShowArticle.Link link = new ShowArticle.Link(element.getText(), element.attributeValue("url"), element.attributeValue("description"));
+                resources.add(link);
+            }
+            env.put(ShowArticle.VAR_RELATED_RESOURCES, resources);
         }
     }
 
@@ -452,7 +481,9 @@ public class Dump implements Configurable {
             env.put(VAR_ONLINE_URL, PORTAL_URL + relation.getUrl());
             env.put(ViewCategory.VAR_CATEGORY, relation.getChild());
 
-            List parents = persistance.findParents(relation);
+            List parents = new ArrayList();
+            parents.add(mainSection);
+            parents.add(relation);
             env.put(ShowObject.VAR_PARENTS, parents);
 
             List qualifiers = new ArrayList();
@@ -498,6 +529,9 @@ public class Dump implements Configurable {
         Map env = new HashMap();
         env.put(ShowObject.VAR_RELATION, relation);
         env.put(VAR_ONLINE_URL, PORTAL_URL + "/faq");
+        List parents = new ArrayList();
+        parents.add(relation);
+        env.put(ShowObject.VAR_PARENTS, parents);
 
         Tools.sync(category);
         env.put(ViewCategory.VAR_CATEGORY, category);
