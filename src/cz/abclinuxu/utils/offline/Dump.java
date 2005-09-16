@@ -105,14 +105,14 @@ public class Dump implements Configurable {
 //        Relation news = new Relation(Constants.REL_NEWS);
 
         long start = System.currentTimeMillis();
-//        dumpIndex(dirRoot);
+        dumpIndex(dirRoot);
         dumpArticles(dirRoot, articles);
 //        dumpAllNews(dirRoot, news);
-//        dumpTree(drivers, dirRoot, UrlUtils.PREFIX_DRIVERS);
-//        dumpTree(hardware, dirRoot, UrlUtils.PREFIX_HARDWARE);
-//        dumpForums(dirRoot);
-//        dumpFaqs(dirRoot);
-//        dumpDictionary(dirRoot);
+        dumpTree(drivers, dirRoot, UrlUtils.PREFIX_DRIVERS);
+        dumpTree(hardware, dirRoot, UrlUtils.PREFIX_HARDWARE);
+        dumpForums(dirRoot);
+        dumpFaqs(dirRoot);
+        dumpDictionary(dirRoot);
         long end = System.currentTimeMillis();
         System.out.println("Dumping of "+indexed.size()+" documents took "+(end-start)/1000+" seconds.");
     }
@@ -208,6 +208,7 @@ public class Dump implements Configurable {
         }
 
         if ( item.getType()==Item.DICTIONARY ) {
+            env.put(VAR_ONLINE_URL, PORTAL_URL + prefix + "/" + item.getSubType());
             name = FMTemplateSelector.select("Dictionary", "show", env, "offline");
             FMUtils.executeTemplate(name, env, file);
             return;
@@ -237,7 +238,7 @@ public class Dump implements Configurable {
         List list = (List) children.get(Constants.TYPE_RECORD);
         Record record = (Record) ((Relation) list.get(0)).getChild();
         Document document = record.getData();
-        
+
         List nodes = document.selectNodes("/data/related/link");
         if (nodes != null && nodes.size() > 0) {
             List articles = new ArrayList(nodes.size());
