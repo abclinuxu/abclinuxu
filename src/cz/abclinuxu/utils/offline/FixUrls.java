@@ -10,6 +10,8 @@ import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.servlets.Constants;
 
 import java.util.*;
 import java.io.*;
@@ -62,6 +64,7 @@ public class FixUrls {
     Map knownObjects = new HashMap(50000); // Integer (relationId) -> String
     Persistance persistance;
     Dump dump;
+    final int DICTIONARY_PREFIX_LENGTH = UrlUtils.PREFIX_DICTIONARY.length()+1;
 
     public static void main(String[] args) throws Exception {
         if ( args.length==0 ) {
@@ -98,7 +101,7 @@ public class FixUrls {
         if (!currentURL.startsWith("/"))
             return currentURL;
         if (currentURL.startsWith("/images"))
-            return Dump.LOCAL_PATH + currentURL;
+            return Dump.IMAGES_LOCAL_PATH + currentURL;
         if (currentURL.startsWith("/download"))
             return Dump.PORTAL_URL + currentURL;
 
@@ -200,13 +203,28 @@ public class FixUrls {
     }
 
     /**
-     * Finds relation id for text url or return null;
-     * @return
+     * Finds relation id for text url or return null.
+     * @return relation id or null
      */
     Integer getTextUrlRelationId(String url) {
         Integer id = (Integer) textUrls.get(url);
         if (id!=null)
             return id;
+        if (url.startsWith(UrlUtils.PREFIX_DICTIONARY)) {
+            if (url.length()<=DICTIONARY_PREFIX_LENGTH) {
+                id = new Integer(Constants.REL_DICTIONARY);
+                textUrls.put(url, id);
+                return id;
+            }
+
+            String name = url.substring(DICTIONARY_PREFIX_LENGTH);
+            Relation relation = SQLTool.getInstance().findDictionaryByURLName(name);
+            if (relation != null) {
+                id = new Integer(relation.getId());
+                textUrls.put(url, id);
+                return id;
+            }
+        }
         Relation relation = SQLTool.getInstance().findRelationByURL(url);
         if (relation!=null) {
             id = new Integer(relation.getId());
