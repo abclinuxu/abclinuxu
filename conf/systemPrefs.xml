@@ -313,6 +313,13 @@
                             <entry key="uri" value="http://www.unixshop.cz/top_export.php"/>
                         </map>
                     </node>
+                    <node name="OKSystemFetcher">
+                        <map>
+                            <entry key="file" value="WEB-INF/freemarker/include/oksystem.txt"/>
+                            <entry key="uri" value="http://portal.oksystem.cz/okskoleni/linuxRss"/>
+                            <entry key="max" value="3" />
+                        </map>
+                    </node>
                     <node name="EnsureWatchedDiscussionsLimit">
                         <map>
                             <entry key="watched.discussions.limit" value="75"/>
@@ -372,6 +379,7 @@
                                 <entry key="start.rss.generator" value="@START.RSS.GENERATOR@"/>
                                 <entry key="start.rss.kernel" value="@START.RSS.KERNEL@"/>
                                 <entry key="start.rss.unixshop" value="@START.RSS.UNIXSHOP@"/>
+                                <entry key="start.rss.oksystem" value="@START.RSS.OKSYSTEM@"/>
                                 <entry key="start.variable.fetcher" value="@START.VARIABLE.FETCHER@"/>
                                 <entry key="start.article.pool.monitor" value="@START.ARTICLE.POOL.MONITOR@"/>
                                 <entry key="start.abc.monitor" value="@START.ABC.MONITOR@"/>

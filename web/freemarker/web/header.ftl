@@ -47,9 +47,7 @@
 </#if>
 
 	<div class="za">
-		<a href="/" class="bh">
-		    <div class="za_logo">
-		    </div>
+		<a href="/" class="za_logo">
 		</a>
 
 		<div class="za_hledat">
@@ -83,7 +81,7 @@
             <#if USER?exists>
                 <a href="${URL.noPrefix("/Profile/"+USER.id)}">${USER.name}</a> |
                 <#assign blogName = TOOL.xpath(USER,"/data/settings/blog/@name")?default("UNDEF")>
-                <#if blogName!="UNDEF"><a href="/blog/${blogName}">Blog</a> |</#if>
+                <#if blogName!="UNDEF"><a href="/blog/${blogName}">Mùj blog</a> |</#if>
                 <a href="${URL.noPrefix("/Profile/"+USER.id+"?action=myPage")}">Nastavení</a> |
                 <a href="${URL.noPrefix("/Index?logout=true")}">Odhlá¹ení</a> |
             <#else>
@@ -110,16 +108,21 @@
 
         <div class="ls" id="ls"><div class="s">
             <div class="ls_reklama"><div class="ad">
-
-		<#if IS_INDEX?exists>
-		    <#include "/include/impact-hp-vip.txt">
-		<#elseif URL.prefix=='/clanky'>
-		    <#include "/include/impact-cl-vip.txt">
-		<#else>
-		    <#include "/include/impact-oth-vip.txt">
-		</#if>
-
+                <#if IS_INDEX?exists>
+                    <#include "/include/impact-hp-vip.txt">
+                <#elseif URL.prefix=='/clanky'>
+                    <#include "/include/impact-cl-vip.txt">
+                <#else>
+                    <#include "/include/impact-oth-vip.txt">
+                </#if>
             </div></div>
+
+            <div class="s_sekce" style="padding: 0 0px 0 8px;">
+                <#include "/include/sunbox_2005_09.txt">
+            </div>
+            <#if REQUEST_URI=="/zpravicky/recenze-gnome-2.12">
+                <#include "/include/oksystem.txt">
+            </#if>
 
             <!-- ANKETA -->
             <#if VARS.currentPoll?exists>
@@ -131,9 +134,12 @@
                     <div class="ank-otazka">${anketa.text}</div>
                     <#list anketa.choices as choice>
                         <div class="ank-odpov">
-                        <#assign procento = TOOL.percent(choice.count,total)>
-                        <label><input type=${type} name="voteId" value="${choice.id}">${choice.text}</label>&nbsp;(${procento}%)<br>
-                        <img src="/images/site2/anketa.gif" width="${procento}" height="10" alt="${TOOL.percentBar(procento)}"></div>
+                          <#assign procento = TOOL.percent(choice.count,total)>
+                          <label><input type=${type} name="voteId" value="${choice.id}">${choice.text}</label>&nbsp;(${procento}%)<br>
+                          <div class="ank-sloup-okraj" style="width: ${procento}px">
+                            <div class="ank-sloup"></div>
+                          </div>
+                        </div>
                     </#list>
                     <input name="submit" type="submit" class="button" value="Hlasuj" src="/images/site2/vote_btn.gif" alt="Hlasuj"> &nbsp;Celkem ${total} hlasù<br>
                     <input type="hidden" name="url" value="/clanky/show/${relAnketa.id}">
@@ -148,20 +154,25 @@
 		        </div>
             </#if>
 
+            <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Projekty</h1></div></div>
+            <div class="s_sekce">
+                <ul>
+                    <li><a href="/doc/projekty/abclinux/verze_2005">ABC Linux 2005</a></li>
+                    <li><a href="/doc/projekty/ucebnice">Uèebnice Linuxu</a></li>
+                </ul>
+            </div>
+
             <!-- ZPRÁVIÈKY -->
             <#assign news=VARS.getFreshNews(USER?if_exists)>
             <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1><a href="/zpravicky">Zprávièky</a></h1></div></div>
             <div class="s_sekce">
 
-                <#if USER?exists && USER.hasRole("news admin")>
-                   <ul>
-                        <li><a href="${URL.make("/zpravicky/dir/37672")}">Èekající zprávièky</a> (${VARS.counter.WAITING_NEWS})</li>
-                   </ul>
-                </#if>
-
-	            <div class="s_odkaz">
+	        <div class="s_odkaz">
                     <a href="/zpravicky.jsp">Centrum</a> |
                     <a href="${URL.make("/zpravicky/edit?action=add")}">Napsat zprávièku</a>
+            	    <#if USER?exists && USER.hasRole("news admin")>
+                        | <a href="${URL.make("/zpravicky/dir/37672")}" title="Poèet èekajících zprávièek">(${VARS.counter.WAITING_NEWS})</a>
+                    </#if>
                 </div>
         		<hr>
                 <div class="ls_zpr">
@@ -199,7 +210,7 @@
                     <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Rozcestník</h1></div></div>
                     <div class="s_sekce">
                         <div class="rozc">
-                            <#list TOOL.createServers([7,16,18,1,13,14,12,17,15,3,2,5]) as server>
+                            <#list TOOL.createServers([7,16,18,1,13,14,17,15,3,2,5]) as server>
                                 <a class="server" href="${server.url}">${server.name}</a><br>
                                 <ul>
                                 <#assign linky = TOOL.sublist(SORT.byDate(LINKS[server.name],"DESCENDING"),0,2)>
@@ -221,7 +232,7 @@
                   <li><a href="/doc/portal/jine_pristupy">Titulky, PDA a RSS</a></li>
                   <li><a href="/clanky/show/64410">Staòte se autorem</a></li>
                   <li><a href="/kniha_navstev">Kniha náv¹tìv</a></li>
-                  <li><a href="http://bugzilla.stickfish.cz">Bugzilla</a></li>
+                  <li><a href="http://bugzilla.abclinuxu.cz">Bugzilla</a></li>
                   <li><a href="/hardware/dir/3500">Vzkazy správcùm</a> (${VARS.counter.REQUESTS})</li>
                   <li><a href="mailto:reklama@stickfish.cz">Inzerce</a></li>
                   <#if USER?exists && USER.isMemberOf(11246)>
@@ -242,6 +253,7 @@
                     <li><a href="http://www.linux.cz">linux.cz</a></li>
                     <li><a href="http://www.broadnet.cz">broadnet.cz</a></li>
                     <li><a href="http://www.pravednes.cz">pravednes.cz</a></li>
+		    <li><a href="http://www.autoweb.cz">autoweb.cz</a></li>
                 </ul>
             </div>
 
