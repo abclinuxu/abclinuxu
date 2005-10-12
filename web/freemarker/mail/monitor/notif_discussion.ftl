@@ -3,7 +3,7 @@ AbcMonitor zaznamenal zmenu:
 Kdo:   ${ACTOR}
 Akce:  ${ACTION}
 Titulek: ${NAME}
-Datum: ${DATE.show(PERFORMED,"CZ_FULL")}
+Datum: ${DATE.show(PERFORMED,"CZ_FULL",false)}
 URL:   ${URL?default("neni dostupne")}
 
 <#if CONTENT?exists>Obsah:
