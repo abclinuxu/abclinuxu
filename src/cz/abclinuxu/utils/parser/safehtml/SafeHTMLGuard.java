@@ -26,7 +26,7 @@ public class SafeHTMLGuard {
         TAGS.put("I", new CheckedTag("I", true, null));
         TAGS.put("P", new CheckedTag("P", false, new String[]{"ID", "CLASS"}));
         TAGS.put("BR", new CheckedTag("BR", false, null));
-        TAGS.put("A", new CheckedTag("A", true, new String[]{"HREF", "TITLE", "CLASS"}));
+        TAGS.put("A", new CheckedTag("A", true, new String[]{"HREF", "TITLE", "CLASS", "NAME", "TARGET"}));
         TAGS.put("PRE", new CheckedTag("PRE", true, new String[]{"WIDTH", "ID", "CLASS"}));
         TAGS.put("LI", new CheckedTag("LI", false, null));
         TAGS.put("UL", new CheckedTag("UL", true,  new String[]{"ID"}));

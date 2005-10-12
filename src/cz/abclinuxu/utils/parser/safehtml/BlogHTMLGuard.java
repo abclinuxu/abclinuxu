@@ -26,7 +26,7 @@ public class BlogHTMLGuard {
         TAGS.put("H2", new CheckedTag("H2", true, new String[]{"ID", "CLASS"}));
         TAGS.put("H3", new CheckedTag("H3", true, new String[]{"ID", "CLASS"}));
         TAGS.put("H4", new CheckedTag("H4", true, new String[]{"ID", "CLASS"}));
-        TAGS.put("A", new CheckedTag("A", true, new String[]{"HREF", "TITLE", "ID", "CLASS"}));
+        TAGS.put("A", new CheckedTag("A", true, new String[]{"HREF", "TITLE", "ID", "CLASS", "NAME", "TARGET"}));
         // todo probably make it optional. available only in full blog display, not in perex
         TAGS.put("IMG", new CheckedTag("IMG", false, new String[]{"SRC", "WIDTH", "HEIGHT", "BORDER", "ALT"}));
         TAGS.put("B", new CheckedTag("B", true, null));
