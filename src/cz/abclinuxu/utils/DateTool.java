@@ -55,8 +55,18 @@ public class DateTool implements Configurable {
 
     /**
      * Formats given date according to selected format.
+     * Current day and yesterday will be displayed as text.
      */
     public String show(Date date, String format) {
+        return show(date, format, true);
+    }
+
+    /**
+     * Formats given date according to selected format.
+     * If specialCurrentDayHandling is set, then text
+     * representation will be rendered instead of datum.
+     */
+    public String show(Date date, String format, boolean specialCurrentDayHandling) {
         if ( date==null ) return null;
 
         if ( ISO_FORMAT.equalsIgnoreCase(format) ) {
@@ -72,7 +82,10 @@ public class DateTool implements Configurable {
         }
 
         long ms = date.getTime();
-        boolean dayNotText = ms<yesterday || ms>tommorow;
+        boolean dayNotText = true;
+        if (specialCurrentDayHandling) {
+            dayNotText = ms<yesterday || ms > tommorow;
+        }
 
         if ( CZ_SHORT.equalsIgnoreCase(format) ) {
             if (dayNotText) {
