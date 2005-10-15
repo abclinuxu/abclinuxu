@@ -74,7 +74,7 @@ public class CreateIndex implements Configurable {
             IndexWriter indexWriter = new IndexWriter(PATH, new AbcCzechAnalyzer(), true);
 
             try {
-                makeIndexOnArticles(indexWriter, articles.getChild().getChildren(), UrlUtils.PREFIX_CLANKY);
+                makeIndexOnArticles(indexWriter, articles.getChild().getChildren());
                 makeIndexOnNews(indexWriter, UrlUtils.PREFIX_NEWS);
                 makeIndexOnDictionary(indexWriter);
                 makeIndexOnFaq(indexWriter);
@@ -286,7 +286,7 @@ public class CreateIndex implements Configurable {
     /**
      * Indexes article.
      */
-    static void makeIndexOnArticles(IndexWriter indexWriter, List sections, String urlPrefix) throws Exception {
+    static void makeIndexOnArticles(IndexWriter indexWriter, List sections) throws Exception {
         int total, i;
         Relation relation;
         GenericObject child;
@@ -412,6 +412,7 @@ public class CreateIndex implements Configurable {
         String title = null, s;
         Item story = (Item) relation.getChild();
 
+        storeUser(story.getOwner(), sb);
         Element data = story.getData().getRootElement();
         Node node = data.element("name");
         title = node.getText();
@@ -529,16 +530,7 @@ public class CreateIndex implements Configurable {
                     node = data.element("author_id");
                     if (node!=null) {
                         int id = Misc.parseInt(node.getText(), -1);
-                        try {
-                            User author = (User) persistance.findById(new User(id));
-                            String name = author.getNick();
-                            if (name==null)
-                                name = author.getName();
-                            sb.append(" ");
-                            sb.append(name);
-                        } catch (PersistanceException e) {
-                            // user could be deleted
-                        }
+                        storeUser(id, sb);
                     }
                 }
             }
@@ -552,6 +544,26 @@ public class CreateIndex implements Configurable {
         doc.setQuestionSolved(Tools.isQuestionSolved(document));
         doc.setNumberOfReplies(Tools.xpath(discussion, "/data/comments"));
         return doc;
+    }
+
+    /**
+     * Appends user information into stringbuffer. If there is no such user,
+     * error is ignored and this method does nothing.
+     * @param id user id
+     * @param sb
+     */
+    private static void storeUser(int id, StringBuffer sb) {
+        try {
+            User user = (User) persistance.findById(new User(id));
+            String nick = user.getNick();
+            if (nick!=null) {
+                sb.append(nick);
+                sb.append(" ");
+            }
+            sb.append(user.getName());
+        } catch (PersistanceException e) {
+            // user could be deleted
+        }
     }
 
     /**
@@ -596,6 +608,7 @@ public class CreateIndex implements Configurable {
      * Extracts data for indexing from hardware. Record must be synchronized.
      */
     static void indexHardware(Record record, StringBuffer sb) {
+        storeUser(record.getOwner(), sb);
         Element data = (Element) record.getData().getRootElement();
         Node node = data.element("setup");
         if ( node!=null ) {
@@ -626,6 +639,7 @@ public class CreateIndex implements Configurable {
      * Extracts data for indexing from software. Record must be synchronized.
      */
     static void indexSoftware(Record record, StringBuffer sb) {
+        storeUser(record.getOwner(), sb);
         Element data = (Element) record.getData().getRootElement();
         Node node = data.element("text");
         if ( node!=null ) {
@@ -666,6 +680,7 @@ public class CreateIndex implements Configurable {
     static MyDocument indexArticle(Item article) {
         StringBuffer sb = new StringBuffer();
         String title = null;
+        storeUser(article.getOwner(), sb);
 
         Element data = (Element) article.getData().getRootElement();
         if (data.attribute(WhatHappened.INDEXING_FORBIDDEN)!=null)
@@ -729,6 +744,8 @@ public class CreateIndex implements Configurable {
     static MyDocument indexNews(Item news) {
         StringBuffer sb = new StringBuffer();
         String title;
+
+        storeUser(news.getOwner(), sb);
 
         Element data = (Element) news.getData().getRootElement();
         String content = data.element("content").getText();
