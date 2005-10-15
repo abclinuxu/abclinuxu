@@ -4,7 +4,7 @@
 
 <@lib.showMessages/>
 
-<p><a href="${URL.noPrefix("/editContent?action=add")}">Vytvoø dokument</a></p>
+<p><a href="${URL.noPrefix("/editContent/66948?action=add")}">Vytvoø dokument</a></p>
 
 <#if TOOL.xpath(CATEGORY,"data/note")?exists>
  ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}
@@ -12,13 +12,14 @@
 
 <#assign map=TOOL.groupByType(CHILDREN)>
 
-<div class="hw">
 <#if map.documents?exists>
- <ul>
- <#list map.documents as relation>
-  <li><a href="${relation.url}">${TOOL.childName(relation)}</a></li>
- </#list>
- </ul>
+    <table border="0">
+        <#list map.documents as relation>
+            <tr>
+                <td>${relation.url}</td>
+                <td><a href="${relation.url}">${TOOL.childName(relation)}</a></td>
+            </tr>
+        </#list>
+    </table>
 </#if>
-</div>
 <#include "../footer.ftl">
