@@ -376,6 +376,8 @@ public class EditDiscussion implements AbcAction {
         String url = relation.getUrl();
         if (url==null)
             url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/show/"+relation.getId();
+        else
+            url = "http://www.abclinuxu.cz" + url;
         url += "#" + comment.attributeValue("id");
 
         MonitorAction action = null;
