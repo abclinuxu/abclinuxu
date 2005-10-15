@@ -35,14 +35,15 @@
  <b>Slu¾by</b>
  <a href="${URL.make("/clanky/dir/3500")}">Po¾adavky
  (${VARS.counter.REQUESTS})</a>,
- <a href="http://abicko.stickfish.cz/bugzilla/">Bugzilla</a> 
+ <a href="http://abicko.stickfish.cz/bugzilla/">Bugzilla</a>
 </p>
 
 <h1>O serveru</h1>
 <p>
- <a href="/doc/portal/jine_pristupy">RSS a PDA</a>,
+ <a href="/doc/portal/rss-a-jine-pristupy">RSS a PDA</a>,
+ <a href="/doc/propagace">Propagace</a>,
  <a href="/clanky/show/44049">Tým AbcLinuxu</a>,
- <a href="/clanky/show/42393">Staòte se autorem</a>,
+ <a href="/clanky/novinky/pojdte-psat-pro-abclinuxu.cz">Pi¹te pro abclinuxu</a>,
  ISSN 1214-1267
 </p>
 

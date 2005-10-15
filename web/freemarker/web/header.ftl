@@ -38,6 +38,7 @@
 <#import "macros.ftl" as lib>
 <#include "/include/lista.txt">
 
+<center>
 <#if IS_INDEX?exists>
     <#include "/include/impact-hp-lb.txt">
 <#elseif URL.prefix=='/clanky'>
@@ -45,6 +46,7 @@
 <#else>
     <#include "/include/impact-oth-lb.txt">
 </#if>
+</center>
 
 	<div class="za">
 		<a href="/" class="za_logo">
@@ -117,12 +119,9 @@
                 </#if>
             </div></div>
 
-            <div class="s_sekce" style="padding: 0 0px 0 8px;">
-                <#include "/include/sunbox_2005_09.txt">
-            </div>
-            <#if REQUEST_URI=="/zpravicky/recenze-gnome-2.12">
-                <#include "/include/oksystem.txt">
-            </#if>
+	    <!-- Skoleni OKsystem -->
+
+            <#include "/include/oksystem.txt">
 
             <!-- ANKETA -->
             <#if VARS.currentPoll?exists>
@@ -157,8 +156,9 @@
             <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Projekty</h1></div></div>
             <div class="s_sekce">
                 <ul>
-                    <li><a href="/doc/projekty/abclinux/verze_2005">ABC Linux 2005</a></li>
+                    <li><a href="/projekty/abclinux/verze-2005">ABC Linux 2005</a></li>
                     <li><a href="/doc/projekty/ucebnice">Uèebnice Linuxu</a></li>
+		    <li><a href="/clanky/novinky/tricka-abclinuxu.cz">Trièka</a></li>
                 </ul>
             </div>
 
@@ -228,17 +228,17 @@
             <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Redakce</h1></div></div>
             <div class="s_sekce">
                 <ul>
+                  <li><a href="/doc/portal/rss-a-jine-pristupy">Titulky, PDA a RSS</a></li>
+                  <li><a href="/doc/propagace">Propagace</a></li>
                   <li><a href="/clanky/show/44049">Tým AbcLinuxu</a></li>
-                  <li><a href="/doc/portal/jine_pristupy">Titulky, PDA a RSS</a></li>
-                  <li><a href="/clanky/show/64410">Staòte se autorem</a></li>
-                  <li><a href="/kniha_navstev">Kniha náv¹tìv</a></li>
+                  <li><a href="/clanky/novinky/pojdte-psat-pro-abclinuxu.cz">Pi¹te pro abclinuxu</a></li>
                   <li><a href="http://bugzilla.abclinuxu.cz">Bugzilla</a></li>
                   <li><a href="/hardware/dir/3500">Vzkazy správcùm</a> (${VARS.counter.REQUESTS})</li>
                   <li><a href="mailto:reklama@stickfish.cz">Inzerce</a></li>
                   <#if USER?exists && USER.isMemberOf(11246)>
-                   <li><a href="/system/todo">TODO (${VARS.counter.TODO?if_exists})</a></li>
-                   <li><a href="/system">Sekce systém</a></li>
                    <li><a href="/Admin">Administrace portálu</a></li>
+                   <li><a href="/system">Sekce systém</a></li>
+                   <li><a href="/system/todo">TODO (${VARS.counter.TODO?if_exists})</a></li>
                   </#if>
                  </ul>
 
