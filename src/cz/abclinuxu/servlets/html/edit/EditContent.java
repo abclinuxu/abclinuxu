@@ -13,6 +13,7 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.persistance.versioning.VersioningFactory;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.security.Roles;
@@ -29,6 +30,7 @@ import org.htmlparser.util.ParserException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.Date;
 
 /**
  * Used to add/edit static content
@@ -362,8 +364,10 @@ public class EditContent implements AbcAction {
         Item content = (Item) persistance.findById(relation.getChild());
         User user = (User) env.get(Constants.VAR_USER);
 
+        Date originalUpdated = content.getUpdated();
         MonitorTools.alterMonitor(content.getData().getRootElement(), user);
         persistance.update(content);
+        SQLTool.getInstance().setUpdatedTimestamp(content, originalUpdated);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());

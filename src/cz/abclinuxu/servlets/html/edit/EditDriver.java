@@ -219,8 +219,10 @@ public class EditDriver implements AbcAction {
         Item driver = (Item) persistance.findById(relation.getChild());
         User user = (User) env.get(Constants.VAR_USER);
 
+        Date originalUpdated = driver.getUpdated();
         MonitorTools.alterMonitor(driver.getData().getRootElement(),user);
         persistance.update(driver);
+        SQLTool.getInstance().setUpdatedTimestamp(driver, originalUpdated);
 
         String url = relation.getUrl();
         if (url == null)
