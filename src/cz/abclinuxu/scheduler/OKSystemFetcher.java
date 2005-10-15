@@ -38,42 +38,40 @@ public class OKSystemFetcher extends TimerTask implements Configurable {
     int max;
 
     public void run() {
+        log.debug("Fetching OKSystem RSS starts ..");
         try {
             ArrayList result = new ArrayList();
             SyndFeedInput input = new SyndFeedInput();
             String title;
             RssItem rssItem;
 
-            try {
-                SyndFeed feed = input.build(new XmlReader(new URL(uri)));
-                List items = feed.getEntries();
-                if (items != null) {
-                    int i = 0;
-                    for (Iterator iter = items.iterator(); iter.hasNext() && i<max; i++) {
-                        SyndEntry entry = (SyndEntry) iter.next();
-                        title = entry.getTitle();
-                        title = Tools.encodeSpecial(title);
+            SyndFeed feed = input.build(new XmlReader(new URL(uri)));
+            List items = feed.getEntries();
+            if (items != null) {
+                int i = 0;
+                for (Iterator iter = items.iterator(); iter.hasNext() && i < max; i++) {
+                    SyndEntry entry = (SyndEntry) iter.next();
+                    title = entry.getTitle();
+                    title = Tools.encodeSpecial(title);
 
-                        rssItem = new RssItem();
-                        rssItem.setUrl(entry.getLink());
-                        rssItem.setTitle(title);
-                        rssItem.setDescription(entry.getDescription().getValue());
+                    rssItem = new RssItem();
+                    rssItem.setUrl(entry.getLink());
+                    rssItem.setTitle(title);
+                    rssItem.setDescription(entry.getDescription().getValue());
 
-                        result.add(rssItem);
-                    }
+                    result.add(rssItem);
                 }
-            } catch (IOException e) {
-                log.error("IO problems for " + uri + ": " + e.getMessage());
-            } catch (Exception e) {
-                log.error("Cannot parse links from " + uri, e);
             }
 
             Map env = new HashMap();
             env.put("ITEMS", result);
             String file = AbcConfig.calculateDeployedPath(fileName);
             FMUtils.executeTemplate("/include/misc/generate_oksystem.ftl", env, new File(file));
+            log.debug("OKSystem include file generated");
+        } catch (IOException e) {
+            log.error("IO problems for " + uri + ": " + e.getMessage());
         } catch (Exception e) {
-            log.error("Job failed", e);
+            log.error("Cannot parse links from " + uri, e);
         }
     }
 
