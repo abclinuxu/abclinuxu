@@ -317,7 +317,7 @@
                         <map>
                             <entry key="file" value="WEB-INF/freemarker/include/oksystem.txt"/>
                             <entry key="uri" value="http://portal.oksystem.cz/okskoleni/linuxRss"/>
-                            <entry key="max" value="3" />
+                            <entry key="max" value="5" />
                         </map>
                     </node>
                     <node name="EnsureWatchedDiscussionsLimit">
@@ -387,6 +387,15 @@
                                 <entry key="start.weekly.emails" value="@START.WEEKLY.EMAILS@"/>
                                 <entry key="start.weekly.summary" value="@START.WEEKLY.SUMMARY@"/>
                                 <entry key="start.datetool.service" value="@START_UPDATE_DATETOOL@"/>
+                            </map>
+                        </node>
+                    </node>
+                    <node name="misc">
+                        <map/>
+                        <node name="Robots">
+                            <map>
+                                <entry key="content.for.www" value="/data/site/robots.txt"/>
+                                <entry key="content.for.other" value="/data/site/norobots.txt"/>
                             </map>
                         </node>
                     </node>
