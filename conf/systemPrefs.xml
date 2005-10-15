@@ -209,8 +209,10 @@
                     <node name="PersistanceFactory">
                         <map>
                             <entry key="url.live" value="proxool.abc"/>
-                            <entry key="url.test" value="jdbc:mysql://localhost/unit?user=literakl&amp;password=lkaretil&amp;useUnicode=true&amp;characterEncoding=ISO-8859-2"/>
+                            <entry key="url.direct" value="jdbc:mysql://localhost/@DB_SCHEMA@?user=@DB_USER@&amp;password=@DB_PASSWORD@&amp;useUnicode=true"/>
+                            <entry key="url.test" value="jdbc:mysql://localhost/unit?user=@DB_USER@&amp;password=@DB_PASSWORD@&amp;useUnicode=true&amp;characterEncoding=ISO-8859-2"/>
                             <entry key="proxool" value="WEB-INF/conf/proxool.xml"/>
+                            <entry key="cache.class" value="cz.abclinuxu.persistance.cache.SynchronizedCache" />  
                         </map>
                     </node>
                     <node name="Nursery">

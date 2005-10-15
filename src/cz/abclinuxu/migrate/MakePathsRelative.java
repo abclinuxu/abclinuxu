@@ -7,7 +7,6 @@ package cz.abclinuxu.migrate;
 
 import cz.abclinuxu.persistance.impl.MySqlPersistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.cache.EmptyCache;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ public class MakePathsRelative {
         try {
             reAbsoluteURL = new RE("(HREF|SRC)(=\")(http://(www.)?abclinuxu.cz)(/[^\"]+)", RE.MATCH_CASEINDEPENDENT);
 //            reAbsoluteURL = new RE("(HREF|SRC)(=\"http://(www.)?abclinuxu.cz)([^\"]+)(\")", RE.MATCH_CASEINDEPENDENT+RE.MATCH_SINGLELINE);
-            persistance = (MySqlPersistance) PersistanceFactory.getPersistance("jdbc:mysql://localhost/abc?user=literakl&password=lkaretil&useUnicode=true&characterEncoding=ISO-8859-2", EmptyCache.class);
+            persistance = (MySqlPersistance) PersistanceFactory.getUncachedPersistance();
         } catch (RESyntaxException e) {
             log.error("regexp syntax troubles", e);
         }
