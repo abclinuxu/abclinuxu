@@ -49,13 +49,18 @@
 <@lib.showMessages/>
 
 <#if is_question>
- <h1 class="st_nadpis">Otázka</h1>
+ <h1>Otázka</h1>
  <@lib.showThread TOOL.createComment(ITEM), 0, ITEM.id, RELATION.id, !frozen />
+
+    <p class="questionToFaq">
+        U¾ jste tuto otázku vidìli? Ptají se na ni ètenáøi èasto? Pak by asi bylo vhodné
+        ulo¾it vzorovou odpovìï do <a href="/faq">èasto kladených otázek (FAQ)</a>.
+    </p>
 
  <#if DIZ?size==0>
     <p>Na otázku zatím nikdo bohu¾el neodpovìdìl.</p>
  <#else>
-     <p><b>Odpovìdi</b></p>
+     <h2>Odpovìdi</h2>
  </#if>
 <#elseif !frozen>
  <a href="${URL.make("/EditDiscussion?action=add&amp;threadId=0&amp;dizId="+ITEM.id+"&amp;rid="+RELATION.id)}">
@@ -67,5 +72,10 @@
 <#list DIZ.threads as thread>
  <@lib.showThread thread, 0, ITEM.id, RELATION.id, !frozen />
 </#list>
+
+<#if (!frozen && DIZ.size>3)>
+ <p><a href="${URL.make("/EditDiscussion?action=add&amp;threadId=0&amp;dizId="+ITEM.id+"&amp;rid="+RELATION.id)}">
+ Vlo¾it dal¹í komentáø</a></p>
+</#if>
 
 <#include "../footer.ftl">
