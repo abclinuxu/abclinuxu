@@ -13,7 +13,6 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.persistance.versioning.VersioningFactory;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.security.Roles;
@@ -21,7 +20,6 @@ import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.parser.safehtml.ContentGuard;
 import cz.abclinuxu.utils.email.monitor.*;
-import cz.finesoft.socd.analyzer.DiacriticRemover;
 import org.apache.log4j.Logger;
 import org.dom4j.Element;
 import org.dom4j.DocumentHelper;
@@ -468,19 +466,15 @@ public class EditContent implements AbcAction {
      */
     private boolean setURL(Map params, Relation relation, Map env) {
         String url = (String) params.get(PARAM_URL);
-        if ( url==null || url.length()==0 ) {
-            ServletUtils.addError(PARAM_URL, "Vyplòte adresu stránky!", env, null);
+        try {
+            url = URLManager.enforceAbsoluteURL(url);
+        } catch (Exception e) {
+            ServletUtils.addError(PARAM_URL, e.getMessage(), env, null);
             return false;
         }
-        if (!url.startsWith("/")) {
-            ServletUtils.addError(PARAM_URL, "Adresa stránky nesmí být absolutní!", env, null);
-            return false;
-        }
-        url = DiacriticRemover.getInstance().removeDiacritics(url);
         relation.setUrl(url);
 
-        Relation existingRelation = SQLTool.getInstance().findRelationByURL(relation.getUrl());
-        if (existingRelation!=null && (relation==null || relation.getId()!=existingRelation.getId())) {
+        if (URLManager.isURLUnique(relation.getUrl(), relation.getId())) {
             ServletUtils.addError(PARAM_URL, "Tato adresa je ji¾ pou¾ita!", env, null);
             return false;
         }
