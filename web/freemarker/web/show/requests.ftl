@@ -53,6 +53,8 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í a proto bez odpovìdi
     </fieldset>
 </#if>
 
+<p>Chyby prosím hla¹te do <a href="http://bugzilla.abclinuxu.cz">bugzilly</a>.</p>
+
 <form action="${URL.make("/EditRequest")}" method="POST">
  <table border=0 cellpadding=5 style="padding-top: 10px">
   <tr>
