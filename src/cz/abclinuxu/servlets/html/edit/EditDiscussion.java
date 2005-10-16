@@ -62,8 +62,7 @@ public class EditDiscussion implements AbcAction {
     public static final String VAR_DISCUSSION = "DISCUSSION";
     public static final String VAR_THREAD = "THREAD";
     public static final String VAR_PREVIEW = "PREVIEW";
-    public static final String VAR_SEARCH_PERFORMED = "QUESTION_OK";
-    public static final String VAR_SEARCH_INVALID = "QUESTION_KO";
+    public static final String VAR_PARENT_TITLE = "PARENT_TITLE";
 
     public static final String ACTION_ADD_DISCUSSION = "addDiz";
     public static final String ACTION_ADD_QUESTION = "addQuez";
@@ -178,15 +177,11 @@ public class EditDiscussion implements AbcAction {
 
         Relation relation = (Relation) env.get(VAR_RELATION);
         Relation relChild = InstanceUtils.findFirstChildItemOfType(relation.getChild(),Item.DISCUSSION);
-        Item discussion = null;
-
-        if ( relChild==null ) {
+        if ( relChild==null )
             relChild = createEmptyDiscussion(relation, user, persistance);
-            discussion = (Item) relChild.getChild();
-        } else {
-            discussion = (Item) relChild.getChild();
-        }
+        Item discussion = (Item) relChild.getChild();
 
+        env.put(VAR_PARENT_TITLE, getTitleFromParent(relation));
         env.put(VAR_RELATION,relChild);
         env.put(VAR_DISCUSSION,discussion);
         return FMTemplateSelector.select("EditDiscussion","reply",env,request);
@@ -284,9 +279,19 @@ public class EditDiscussion implements AbcAction {
             return ServletUtils.showErrorPage("Diskuse byla zmrazena - není mo¾né pøidat dal¹í komentáø!", env, request);
 
         // display discussed comment, only if it has title
-        Comment thread = getDiscussedComment(params, discussion, persistance);
-        if ( Tools.xpath(thread.getData(),"title")!=null )
-            env.put(VAR_THREAD,thread);
+        Comment parentThread = getDiscussedComment(params, discussion, persistance);
+        if ( Tools.xpath(parentThread.getData(),"title")!=null )
+            env.put(VAR_THREAD, parentThread);
+        else {
+            Relation relation = (Relation) env.get(VAR_RELATION);
+            if (relation.getParent() instanceof Category) {
+                Category category = (Category) relation.getParent();
+                if (category.getType()!=Category.FORUM)
+                    relation = new Relation(relation.getUpper());
+            } else
+                relation = new Relation(relation.getUpper());
+            env.put(VAR_PARENT_TITLE, getTitleFromParent(relation));
+        }
 
         return FMTemplateSelector.select("EditDiscussion","reply",env,request);
     }
@@ -1029,6 +1034,17 @@ public class EditDiscussion implements AbcAction {
                 return new Comment(element);
         }
         return new Comment(discussion);
+    }
+
+    /**
+     * Finds title in specified relation.
+     * @param relation relation. It may be not initialized.
+     * @return title of this relation
+     */
+    private String getTitleFromParent(Relation relation) {
+        Tools.sync(relation);
+        String title = Tools.childName(relation);
+        return title;
     }
 
     /**

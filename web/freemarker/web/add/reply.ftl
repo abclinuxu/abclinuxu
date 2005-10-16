@@ -52,12 +52,15 @@
   </#if>
   <p>
    <span class="required">Titulek</span><br>
-   <#if PARAMS.title?exists>
-    <#assign title=PARAMS.title>
-   <#elseif THREAD?exists>
-    <#assign title=TOOL.xpath(THREAD.data,"title")>
-    <#if !title.startsWith("Re: ")><#assign title="Re: "+title></#if>
-   </#if>
+    <#if PARAMS.title?exists>
+        <#assign title=PARAMS.title>
+    <#elseif PARENT_TITLE?exists>
+        <#assign title=PARENT_TITLE>
+        <#assign title="Re: "+title>
+    <#elseif THREAD?exists>
+        <#assign title=TOOL.xpath(THREAD.data,"title")>
+        <#if !title.startsWith("Re: ")><#assign title="Re: "+title></#if>
+    </#if>
    <input tabindex="4" type="text" name="title" size="60" maxlength="70" value="${title?if_exists?html}">
    <div class="error">${ERRORS.title?if_exists}</div>
   </p>
