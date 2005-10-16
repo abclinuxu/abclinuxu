@@ -1173,7 +1173,7 @@ public class EditBlog implements AbcAction, Configurable {
 
         StringTokenizer stk = new StringTokenizer(stripped, " \t\n\r\f,.");
         if (stk.countTokens()>maxStoryWordCount) {
-            ServletUtils.addError(PARAM_CONTENT, "Vá¹ zápis je pøíli¹ dlouhý. Rozdìlte jej pomocí znaèky <break> tak, aby perex mìl ménì ne¾ "+maxStoryWordCount+" slov.", env, null);
+            ServletUtils.addError(PARAM_CONTENT, "Vá¹ zápis je pøíli¹ dlouhý. Rozdìlte jej pomocí znaèky &lt;break&gt; tak, aby perex mìl ménì ne¾ "+maxStoryWordCount+" slov.", env, null);
             return false;
         }
 
