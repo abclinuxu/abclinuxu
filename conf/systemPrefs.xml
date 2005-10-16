@@ -212,7 +212,7 @@
                             <entry key="url.direct" value="jdbc:mysql://localhost/@DB_SCHEMA@?user=@DB_USER@&amp;password=@DB_PASSWORD@&amp;useUnicode=true"/>
                             <entry key="url.test" value="jdbc:mysql://localhost/unit?user=@DB_USER@&amp;password=@DB_PASSWORD@&amp;useUnicode=true&amp;characterEncoding=ISO-8859-2"/>
                             <entry key="proxool" value="WEB-INF/conf/proxool.xml"/>
-                            <entry key="cache.class" value="cz.abclinuxu.persistance.cache.SynchronizedCache" />  
+                            <entry key="cache.class" value="cz.abclinuxu.persistance.cache.SynchronizedCache" />
                         </map>
                     </node>
                     <node name="Nursery">
@@ -362,7 +362,7 @@
                             </node>
                             <node name="URLManager">
                                 <map>
-                                    <entry key="regexp.invalid.characters" value="[^a-zA-Z0-9.]+"/>
+                                    <entry key="regexp.invalid.characters" value="[^a-zA-Z0-9]+"/>
                                 </map>
                             </node>
                         </node>
