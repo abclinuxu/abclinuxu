@@ -63,7 +63,6 @@ public class CreateIndex implements Configurable {
         try {
             Relation articles = (Relation) persistance.findById(new Relation(Constants.REL_ARTICLES));
             Relation hardware = (Relation) Tools.sync(new Relation(Constants.REL_HARDWARE));
-            Relation software = (Relation) Tools.sync(new Relation(Constants.REL_SOFTWARE));
             Relation drivers = (Relation) Tools.sync(new Relation(Constants.REL_DRIVERS));
             Relation abc = (Relation) Tools.sync(new Relation(Constants.REL_ABC)); // neni cas to smazat?
             Relation blogs = (Relation) persistance.findById(new Relation(Constants.REL_BLOGS));
@@ -81,7 +80,6 @@ public class CreateIndex implements Configurable {
                 makeIndexOnBlogs(indexWriter, blogs.getChild().getChildren());
                 makeIndexOnForums(indexWriter, forums, UrlUtils.PREFIX_FORUM);
                 makeIndexOn(indexWriter, hardware, UrlUtils.PREFIX_HARDWARE);
-                makeIndexOn(indexWriter, software, UrlUtils.PREFIX_SOFTWARE);
                 makeIndexOn(indexWriter, drivers, UrlUtils.PREFIX_DRIVERS);
                 makeIndexOn(indexWriter, abc, UrlUtils.PREFIX_CLANKY);
             } finally {
@@ -586,10 +584,6 @@ public class CreateIndex implements Configurable {
                 indexHardware(record, sb);
                 type = MyDocument.TYPE_HARDWARE;
             }
-            if ( record.getType()==Record.SOFTWARE ) {
-                indexSoftware(record, sb);
-                type = MyDocument.TYPE_SOFTWARE;
-            }
             sb.append(" ");
         }
 
@@ -629,19 +623,6 @@ public class CreateIndex implements Configurable {
         }
 
         node = data.element("note");
-        if ( node!=null ) {
-            sb.append(" ");
-            sb.append(node.getText());
-        }
-    }
-
-    /**
-     * Extracts data for indexing from software. Record must be synchronized.
-     */
-    static void indexSoftware(Record record, StringBuffer sb) {
-        storeUser(record.getOwner(), sb);
-        Element data = (Element) record.getData().getRootElement();
-        Node node = data.element("text");
         if ( node!=null ) {
             sb.append(" ");
             sb.append(node.getText());
