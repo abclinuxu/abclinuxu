@@ -365,6 +365,11 @@ public class EditUser implements AbcAction, Configurable {
         if ( cookie!=null )
             ServletUtils.deleteCookie(cookie, response);
 
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId()) {
+            sessionUser.synchronizeWith(managed);
+        }
+
         ServletUtils.addMessage("Heslo bylo zmìnìno.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
@@ -429,6 +434,11 @@ public class EditUser implements AbcAction, Configurable {
 
         persistance.update(managed);
 
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId()) {
+            sessionUser.synchronizeWith(managed);
+        }
+
         ServletUtils.addMessage("Zmìny byly ulo¾eny.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
@@ -484,6 +494,11 @@ public class EditUser implements AbcAction, Configurable {
             return FMTemplateSelector.select("EditUser", "editProfile", env, request);
 
         persistance.update(managed);
+
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId()) {
+            sessionUser.synchronizeWith(managed);
+        }
 
         ServletUtils.addMessage("Zmìny byly ulo¾eny.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -586,6 +601,11 @@ public class EditUser implements AbcAction, Configurable {
 
         persistance.update(managed);
 
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId()) {
+            sessionUser.synchronizeWith(managed);
+        }
+
         ServletUtils.addMessage("Zmìny byly ulo¾eny.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&userId="+managed.getId());
@@ -640,6 +660,11 @@ public class EditUser implements AbcAction, Configurable {
 
         persistance.update(managed);
 
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId()) {
+            sessionUser.synchronizeWith(managed);
+        }
+
         ServletUtils.addMessage("Zmìny byly ulo¾eny.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&userId="+managed.getId());
@@ -668,6 +693,11 @@ public class EditUser implements AbcAction, Configurable {
             return FMTemplateSelector.select("EditUser", "uploadPhoto", env, request);
 
         persistance.update(managed);
+
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId()) {
+            sessionUser.synchronizeWith(managed);
+        }
 
         ServletUtils.addMessage("Zmìny byly ulo¾eny.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -721,6 +751,11 @@ public class EditUser implements AbcAction, Configurable {
             return FMTemplateSelector.select("EditUser", "grantRoles", env, request);
 
         persistance.update(managed);
+
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId()) {
+            sessionUser.synchronizeWith(managed);
+        }
 
         ServletUtils.addMessage("Zmìny rolí u¾ivatele "+managed.getName()+" byly ulo¾eny.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
