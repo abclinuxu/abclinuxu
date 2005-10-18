@@ -830,7 +830,7 @@ public class MySqlPersistance implements Persistance {
             sb.append("update presmerovani set soucet=soucet+1 where server=? and den=curdate()");
             conditions.add(new Integer(((Link)obj).getServer()));
         } else {
-            sb.append("update citac set soucet=soucet+1 where typ like ? and cislo=?");
+            sb.append("update citac set soucet=soucet+1 where typ=? and cislo=?");
             conditions.add(getTableId(obj));
             conditions.add(new Integer(obj.getId()));
         }
@@ -860,7 +860,7 @@ public class MySqlPersistance implements Persistance {
             sb.append("select soucet from presmerovani where server=? and den=curdate()");
             conditions.add(new Integer(((Link)obj).getServer()));
         } else {
-            sb.append("select soucet from citac where typ like ? and cislo=?");
+            sb.append("select soucet from citac where typ=? and cislo=?");
             conditions.add(getTableId(obj));
             conditions.add(new Integer(obj.getId()));
         }
@@ -875,7 +875,7 @@ public class MySqlPersistance implements Persistance {
             sb.append("delete from presmerovani where server=? and den=curdate()");
             conditions.add(new Integer(((Link)obj).getServer()));
         } else {
-            sb.append("delete from citac where typ like ? and cislo=?");
+            sb.append("delete from citac where typ=? and cislo=?");
             conditions.add(getTableId(obj));
             conditions.add(new Integer(obj.getId()));
         }
@@ -1145,7 +1145,8 @@ public class MySqlPersistance implements Persistance {
 
             for (Iterator iter = relations.iterator(); iter.hasNext();) {
                 Relation relation = (Relation) iter.next();
-                if (!rs.next() || rs.getInt(1) != relation.getId())
+                boolean hasNext = rs.next();
+                if (!hasNext || rs.getInt(1) != relation.getId())
                     throw new NotFoundException("Relace " + relation.getId() + " nebyla nalezen!");
                 syncRelationFromRS(relation, rs);
                 cache.store(relation);
