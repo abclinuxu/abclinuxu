@@ -93,16 +93,16 @@ public class UpdateLinks extends TimerTask {
 
         if (!debug) {
             definitions.put(new Server(ROOT), new ServerInfo("http://www.root.cz/rss/", null, ServerInfo.RSS));
-            definitions.put(new Server(LW), new ServerInfo("http://www.linuxworld.cz/lw.rss", "Windows-1250", ServerInfo.RSS));
+//            definitions.put(new Server(LW), new ServerInfo("http://www.linuxworld.cz/lw.rss", "Windows-1250", ServerInfo.RSS));
             definitions.put(new Server(SW), new ServerInfo("http://www.scienceworld.cz/sw.rss", "Windows-1250", ServerInfo.RSS));
 //            definitions.put(new Server(UG), new ServerInfo("http://underground.cz/backend.php", null, ServerInfo.RSS));
             definitions.put(new Server(PENGUIN), new ServerInfo("http://www.penguin.cz/rss.php3", null, ServerInfo.RSS));
             definitions.put(new Server(ABCLINUXU), new ServerInfo("http://localhost:8080/auto/abc.rss", null, ServerInfo.RSS));
             definitions.put(new Server(MANDRAKE), new ServerInfo("http://www.mandrake.cz/titles_abc.php", "Windows-1250", ServerInfo.TRAFIKA));
             definitions.put(new Server(CZILLA), new ServerInfo("http://www.czilla.cz/rss/rss.html", null, ServerInfo.RSS));
-            definitions.put(new Server(OPENOFFICE), new ServerInfo("http://klub.openoffice.cz/rss", null, ServerInfo.RSS));
+            definitions.put(new Server(OPENOFFICE), new ServerInfo("http://www.openoffice.cz/rss.xml", null, ServerInfo.RSS));
             definitions.put(new Server(SLASHDOT), new ServerInfo("http://slashdot.org/index.rss", null, ServerInfo.RSS));
-            definitions.put(new Server(LINUXBIZ), new ServerInfo("http://www.linuxbiz.cz/www/rss/linuxbiz.xml", null, ServerInfo.RSS));
+            definitions.put(new Server(LINUXBIZ), new ServerInfo("http://www.lbw.cz/rss/lbw.xml", null, ServerInfo.RSS));
             definitions.put(new Server(SUSEPORTAL), new ServerInfo("http://portal.suse.cz/node/feed", null, ServerInfo.RSS));
             definitions.put(new Server(CHIP), new ServerInfo("http://www.chip.cz/texty/feed.rss", null, ServerInfo.RSS));
         } else {
