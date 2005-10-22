@@ -11,7 +11,7 @@
     <#local clanek=relation.child,
         autor=TOOL.createUser(TOOL.xpath(clanek,"/data/author")?default("5473")),
         thumbnail=TOOL.xpath(clanek,"/data/thumbnail")?default("UNDEF"),
-        tmp=TOOL.groupByType(clanek.children),
+        tmp=TOOL.groupByType(clanek.children, "Item"),
         rating=TOOL.ratingFor(clanek.data,"article")?default("UNDEF"),
 	    url=relation.url?default("/clanky/show/"+relation.id)
     >

@@ -638,20 +638,70 @@ public class Tools implements Configurable {
      * children are same type.
      */
     public static Map groupByType(List relations) throws PersistanceException {
+        return groupByType(relations, null);
+    }
+
+    /**
+     * This method groups relations by their children's type. Each type represents
+     * one of Constants.TYPE_* strings. The key represents list of relations, where
+     * all children have same type. The classFilter gives possibility to include
+     * only children of certain type. If it is empty or null, all classes are considered,
+     * otherwise only specified classes will be included in result. Possible value is
+     * class name (not FQCN).
+     * @param classFilter comma separated list of classes, that may be included in the list
+     */
+    public static Map groupByType(List relations, String classFilter) throws PersistanceException {
         if (relations==null)
             return Collections.EMPTY_MAP;
+        else
+            if (!Misc.empty(classFilter))
+                relations = new ArrayList(relations);
+
+        boolean itemYes, recordYes, categoryYes, userYes;
+        itemYes = recordYes = categoryYes = userYes = false;
+        if (Misc.empty(classFilter))
+            itemYes = recordYes = categoryYes = userYes = true;
+        else {
+            StringTokenizer stk = new StringTokenizer(classFilter);
+            while (stk.hasMoreTokens()) {
+                String className = stk.nextToken();
+                if ("Item".equalsIgnoreCase(className))
+                    itemYes = true;
+                else if ("Record".equalsIgnoreCase(className))
+                    recordYes = true;
+                else if ("Category".equalsIgnoreCase(className))
+                    categoryYes = true;
+                else if ("User".equalsIgnoreCase(className))
+                    userYes = true;
+            }
+        }
 
         boolean needsSync = false;
+        GenericObject child;
         for (Iterator iterator = relations.iterator(); iterator.hasNext();) {
             Relation relation = (Relation) iterator.next();
             if (!relation.isInitialized()) {
                 needsSync = true;
-                break;
+                continue;
             }
-            if (!relation.getChild().isInitialized()) {
+
+            child = relation.getChild();
+            if (child instanceof Item && !itemYes) {
+                iterator.remove();
+                continue;
+            } else if (child instanceof Record && !recordYes) {
+                iterator.remove();
+                continue;
+            } else if (child instanceof Category && !categoryYes) {
+                iterator.remove();
+                continue;
+            } else if (child instanceof User && !userYes) {
+                iterator.remove();
+                continue;
+            }
+
+            if (!child.isInitialized())
                 needsSync = true;
-                break;
-            }
         }
         if (needsSync)
             syncList(relations);
@@ -661,7 +711,7 @@ public class Tools implements Configurable {
         for (Iterator iter = relations.iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
 
-            GenericObject child = relation.getChild();
+            child = relation.getChild();
             if ( child instanceof Category )
                 Misc.storeToMap(map,Constants.TYPE_CATEGORY,relation);
             else if ( child instanceof Item ) {
