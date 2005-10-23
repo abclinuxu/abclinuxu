@@ -8,6 +8,8 @@
 package cz.abclinuxu.persistance;
 
 import java.util.List;
+import java.util.Map;
+
 import cz.abclinuxu.data.*;
 
 /**
@@ -78,6 +80,16 @@ public interface Persistance {
      * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
      */
     public List findChildren(GenericObject obj);
+
+    /**
+     * Finds children for list of GenericObjects. Children are not initialized.
+     * If there is no child for the obj, empty list is used.
+     * @param objects list of GenericObject
+     * @return Map where GenericObject is key and List with uninitialized Relations is value.
+     * @throws cz.abclinuxu.exceptions.PersistanceException
+     *          When something goes wrong.
+     */
+    public Map findChildren(List objects);
 
     /**
      * Finds all parents of this Relation. First element is top level relation, the second is its child and the

@@ -684,6 +684,92 @@ public class MySqlPersistance implements Persistance {
     }
 
     /**
+     * Finds children for list of GenericObjects. Children are not initialized.
+     * If there is no child for the obj, empty list is used.
+     * @param objects list of GenericObject
+     * @return Map where GenericObject is key and List with uninitialized Relations is value.
+     * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
+     */
+    public Map findChildren(List objects) {
+        Connection con = null; Statement statement = null; ResultSet resultSet = null;
+        if (objects==null || objects.size()==0)
+            return Collections.EMPTY_MAP;
+
+        Map map = new HashMap(objects.size()+1, 1.0f);
+        String sql = prepareMassChildrenFetch(objects, map);
+        Relation relation;
+        List list;
+        try {
+            con = getSQLConnection();
+            statement = con.createStatement();
+            resultSet = statement.executeQuery(sql);
+
+            while ( resultSet.next() ) {
+                relation = new Relation(resultSet.getInt(1));
+                syncRelationFromRS(relation, resultSet);
+                list = (List) map.get(relation.getParent());
+                list.add(relation);
+            }
+
+            return map;
+        } catch (SQLException e) {
+            log.error("Selhalo hledání potomkù pro "+objects, e);
+            throw new PersistanceException("Selhalo hledání potomkù!");
+        } finally {
+            releaseSQLResources(con,statement,resultSet);
+        }
+    }
+
+    /**
+     * Creates SQL command to fetch children of all objects in single query
+     * and initializes map, so it contains objects as keys as empty list as values.
+     * @return SQL query
+     */
+    private String prepareMassChildrenFetch(List objects, Map map) {
+        Map byTable = new HashMap(objects.size()+1, 1.0f);
+        String tableId;
+        List list;
+        for (Iterator iter = objects.iterator(); iter.hasNext();) {
+            GenericObject object = (GenericObject) iter.next();
+            map.put(object, new ArrayList());
+
+            tableId = getTableId(object);
+            list = (List) byTable.get(tableId);
+            if (list==null) {
+                list = new ArrayList();
+                byTable.put(tableId, list);
+            }
+            list.add(new Integer(object.getId()));
+        }
+
+        StringBuffer sb = new StringBuffer("select * from relace where ");
+        int i = 0;
+        for (Iterator iter = byTable.keySet().iterator(); iter.hasNext();) {
+            if (i++ > 0)
+                sb.append("or ");
+            String table = (String) iter.next();
+            List ids = (List) byTable.get(table);
+            sb.append("(typ_predka='");
+            sb.append(table);
+            sb.append("' and predek");
+            if (ids.size()==1) {
+                sb.append('=');
+                sb.append(ids.get(1));
+            } else {
+                sb.append(" in (");
+                for (Iterator iterIds = ids.iterator(); iterIds.hasNext();) {
+                    sb.append(iterIds.next());
+                    if (iterIds.hasNext())
+                        sb.append(',');
+                }
+                sb.append(')');
+            }
+            sb.append(')');
+        }
+        return sb.toString();
+    }
+
+    /**
      * Appends INSERT prepared statement for this object to <code>sb</code> and parameter
      * to <code>conditions</code> for each asterisk in prepared statement.
      */
