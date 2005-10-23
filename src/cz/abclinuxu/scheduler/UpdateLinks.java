@@ -312,25 +312,28 @@ public class UpdateLinks extends TimerTask {
     /**
      * Groups links by server. The server name will be key in map and value will be
      * list of its links. Fixed links will be discarded.
+     * @throws PersistanceException if something goes wrong
      */
     public static Map groupLinks(Category category, Persistance persistance) {
+        List servers = new ArrayList(LAST_SERVER);
+        for (int i = 1; i <= LAST_SERVER; i++)
+            servers.add(new Server(i));
+        Tools.syncList(servers);
+        Tools.syncList(category.getChildren());
+
         List[] links = new List[LAST_SERVER+1];
         for ( int i=0; i<=LAST_SERVER; i++ )
             links[i] = new ArrayList();
 
         for (Iterator iter = category.getChildren().iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
-            try {
-                Link link = (Link) persistance.findById(relation.getChild());
+                Link link = (Link) relation.getChild();
                 if ( !link.isFixed() )
                     links[link.getServer()].add(link);
-            } catch (PersistanceException e) {
-                log.error("Cannot find child Link in "+relation,e);
-            }
         }
 
         Map result = new HashMap();
-        for ( int i=1; i<=LAST_SERVER; i++ ) {
+        for (int i = 1; i <= LAST_SERVER; i++) {
             Server server = (Server) persistance.findById(new Server(i));
             result.put(server.getName(), links[i]);
         }
