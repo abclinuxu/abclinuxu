@@ -6,6 +6,7 @@
 package cz.abclinuxu.servlets.html;
 
 import cz.abclinuxu.servlets.AbcAction;
+import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.url.URLMapper;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.TemplateSelector;
@@ -43,6 +44,8 @@ public class HTMLVersion {
                 return;
             setLayout(request, urlMapper);
 
+            long start = System.currentTimeMillis();
+
             AbcAction action = urlMapper.findAction(request, env);
             String templateName = action.process(request, response, env);
             if ( Misc.empty(templateName) )
@@ -58,6 +61,11 @@ public class HTMLVersion {
             response.setHeader("Pragma", "no-cache");
 
             template.process(env, writer);
+
+            long end = System.currentTimeMillis();
+            if (log.isDebugEnabled())
+                log.debug("Processing of "+ env.get(Constants.VAR_REQUEST_URI) +" took "+(end-start)+" ms.");
+
             writer.flush();
         } catch (Exception e) {
             error(request, response, e);
