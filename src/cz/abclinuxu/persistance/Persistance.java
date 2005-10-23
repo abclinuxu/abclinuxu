@@ -147,6 +147,14 @@ public interface Persistance {
     public int getCounterValue(GenericObject obj);
 
     /**
+     * Fetches counters for specified objects.
+     * @param objects list of GenericObjects
+     * @return map where key is GenericObject and value is Number with its counter.
+     * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
+     */
+    public Map getCountersValue(List objects);
+
+    /**
      * Removes counter for specified object. To be used to clean up database after unit test.
      * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
      */

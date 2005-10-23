@@ -11,9 +11,10 @@
 </#if>
 
 <#if TOOL.xpath(CATEGORY,"data/note")?exists>
- <p class="note">${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}</p>
+ <p>${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}</p>
 </#if>
 
+<#global CITACE = TOOL.getRelationCountersValue(ARTICLES.data)/>
  <#list ARTICLES.data as relation>
   <@lib.showArticle relation, "CZ_FULL" />
   <hr>

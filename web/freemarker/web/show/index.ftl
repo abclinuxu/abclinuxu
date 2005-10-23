@@ -36,21 +36,6 @@
         </div>
     </#if>
 
-    <#assign FAQ = VARS.getFreshFaqs(USER?if_exists)>
-    <#if (FAQ?size>0) >
-        <div class="s_nad_h1"><div class="s_nad_pod_h1">
-            <a class="info" href="#">?<span class="tooltip">Odpovìdi na èasto kladené otázky</span></a>
-            <h1><a href="/faq">FAQ</a></h1>
-        </div></div>
-        <div class="s_sekce">
-            <ul>
-            <#list FAQ as rel>
-                 <li><a href="${rel.url}">${TOOL.xpath(rel.child,"data/title")}</a></li>
-            </#list>
-            </ul>
-        </div>
-    </#if>
-
     <#assign DICTIONARY=VARS.getFreshDictionary(USER?if_exists)>
     <#if (DICTIONARY?size>0) >
         <div class="s_nad_h1"><div class="s_nad_pod_h1">
@@ -61,6 +46,21 @@
             <ul>
             <#list DICTIONARY as rel>
                 <li><a href="/slovnik/${rel.child.subType}">${TOOL.xpath(rel.child,"data/name")}</a></li>
+            </#list>
+            </ul>
+        </div>
+    </#if>
+
+    <#assign FAQ = VARS.getFreshFaqs(USER?if_exists)>
+    <#if (FAQ?size>0) >
+        <div class="s_nad_h1"><div class="s_nad_pod_h1">
+            <a class="info" href="#">?<span class="tooltip">Odpovìdi na èasto kladené otázky</span></a>
+            <h1><a href="/faq">FAQ</a></h1>
+        </div></div>
+        <div class="s_sekce">
+            <ul>
+            <#list FAQ as rel>
+                 <li><a href="${rel.url}">${TOOL.xpath(rel.child,"data/title")}</a></li>
             </#list>
             </ul>
         </div>
@@ -114,13 +114,14 @@
 <@lib.showMessages/>
 
 <#assign ARTICLES=VARS.getFreshArticles(USER?if_exists)>
+<#global CITACE = TOOL.getRelationCountersValue(ARTICLES)/>
 <#if (ARTICLES?size>0) >
     <#list ARTICLES as rel>
         <@lib.showArticle rel, "CZ_DM", "CZ_SHORT"/>
         <hr>
     </#list>
 
-    <div class="st_uprostred">
+    <div class="st_vpravo">
         <a href="/History?type=articles&amp;from=${ARTICLES?size}&amp;count=10">Star¹í èlánky</a>
     </div>
 

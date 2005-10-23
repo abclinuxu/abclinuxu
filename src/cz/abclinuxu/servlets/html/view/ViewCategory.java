@@ -100,7 +100,7 @@ public class ViewCategory implements AbcAction {
 
                 if (user != null && !user.hasRole(Roles.ROOT) && !ACL.isGranted(user, ACL.RIGHT_READ, acls))
                     return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-            }            
+            }
         }
 
         return processCategory(request,response,env,relation);
@@ -181,6 +181,19 @@ public class ViewCategory implements AbcAction {
         List articles = sqlTool.findArticleRelations(qualifiers, section.getId());
         int total = sqlTool.countArticleRelations(section.getId());
         Tools.syncList(articles);
+        Tools.initializeChildren(articles);
+
+        List items = new ArrayList();
+        for (Iterator iter = articles.iterator(); iter.hasNext();) {
+            Relation relation1 = (Relation) iter.next();
+            List children = relation1.getChild().getChildren();
+            for (Iterator iterIn = children.iterator(); iterIn.hasNext();) {
+                Relation relation2 = (Relation) iterIn.next();
+                if (relation2.getChild() instanceof Item)
+                    items.add(relation2.getChild());
+            }
+        }
+        Tools.syncList(items);
 
         Paging paging = new Paging(articles, from, count, total);
         env.put(VAR_ARTICLES, paging);

@@ -11,6 +11,7 @@ import cz.abclinuxu.exceptions.InvalidDataException;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistance.Nursery;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.edit.EditRating;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
@@ -563,10 +564,6 @@ public class Tools implements Configurable {
         else
             list = (List) collection;
 
-//        for (Iterator iter = list.iterator(); iter.hasNext();) {
-//            sync((GenericObject) iter.next());
-//        }
-
         persistance.synchronizeList(list);
         if (list.get(0) instanceof Relation) {
             List children = new ArrayList(list.size());
@@ -578,6 +575,20 @@ public class Tools implements Configurable {
             persistance.synchronizeList(children);
         }
         return list;
+    }
+
+    /**
+     * Initialize children of relations children.
+     * Consequent genericObject.getChildren() runs much faster.
+     * @param relations list of initialized relations
+     */
+    public static void initializeChildren(List relations) {
+        List children = new ArrayList(relations.size());
+        for (Iterator iter = relations.iterator(); iter.hasNext();) {
+            Relation relation = (Relation) iter.next();
+            children.add(relation.getChild());
+        }
+        Nursery.getInstance().initChildren(children);
     }
 
     /**
@@ -630,6 +641,22 @@ public class Tools implements Configurable {
      */
     public static int getCounterValue(GenericObject obj) {
         return persistance.getCounterValue(obj);
+    }
+
+    /**
+     * Fetches values of counter for children in list of relations.
+     * @param relations initialized list of relations
+     * @return map where key is GenericObject and value is Number with its counter.
+     */
+    public static Map getRelationCountersValue(List relations) {
+        if (relations==null || relations.size()==0)
+            return Collections.EMPTY_MAP;
+        List list = new ArrayList(relations.size());
+        for (Iterator iter = relations.iterator(); iter.hasNext();) {
+            Relation relation = (Relation) iter.next();
+            list.add(relation.getChild());
+        }
+        return persistance.getCountersValue(list);
     }
 
     /**

@@ -586,26 +586,64 @@ public class MySqlPersistance implements Persistance {
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         try {
             con = getSQLConnection();
-            List conditions = new ArrayList();
-            StringBuffer sb = new StringBuffer();
-
-            appendCounterSelectParams(obj,sb,conditions);
-            statement = con.prepareStatement(sb.toString());
-            for ( int i=0; i<conditions.size(); i++ ) {
-                Object o = conditions.get(i);
-                statement.setObject(i+1,o);
+            if (obj instanceof Link) {
+                statement = con.prepareStatement("select soucet from presmerovani where server=? and den=curdate()");
+                statement.setInt(1, ((Link) obj).getServer());
+            } else {
+                statement = con.prepareStatement("select soucet from citac where typ=? and cislo=?");
+                statement.setString(1, getTableId(obj));
+                statement.setInt(2, obj.getId());
             }
 
             resultSet = statement.executeQuery();
-            if ( !resultSet.next() ) {
+            if ( !resultSet.next() )
                 return 0;
-            }
             return resultSet.getInt(1);
         } catch ( SQLException e ) {
             log.error("Nepodarilo se zjistit hodnotu citace pro "+obj,e);
             return 0;
         } finally {
             releaseSQLResources(con,statement,resultSet);
+        }
+    }
+
+    /**
+     * Fetches counters for specified objects.
+     * @param objects list of GenericObjects
+     * @return map where key is GenericObject and value is Number with its counter.
+     * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
+     */
+    public Map getCountersValue(List objects) {
+        Connection con = null; Statement statement = null; ResultSet resultSet = null;
+        if (objects == null || objects.size() == 0)
+            return Collections.EMPTY_MAP;
+
+        Map map = new HashMap(objects.size() + 1, 1.0f);
+        StringBuffer sql = new StringBuffer("select soucet, typ, cislo from citac where ");
+        appendMatchAllObjectsCondition(sql, objects, "typ", "cislo");
+        try {
+            con = getSQLConnection();
+            statement = con.createStatement();
+            resultSet = statement.executeQuery(sql.toString());
+            GenericObject obj;
+            int value;
+            char type;
+            int id;
+
+            while (resultSet.next()) {
+                value = resultSet.getInt(1);
+                type = resultSet.getString(2).charAt(0);
+                id = resultSet.getInt(3);
+                obj = instantiateFromTree(type, id);
+                map.put(obj, new Integer(value));
+            }
+
+            return map;
+        } catch (SQLException e) {
+            log.error("Selhalo hledání èítaèù pro " + objects, e);
+            throw new PersistanceException("Selhalo hledání èítaèù!");
+        } finally {
+            releaseSQLResources(con, statement, resultSet);
         }
     }
 
@@ -696,18 +734,23 @@ public class MySqlPersistance implements Persistance {
             return Collections.EMPTY_MAP;
 
         Map map = new HashMap(objects.size()+1, 1.0f);
-        String sql = prepareMassChildrenFetch(objects, map);
+        StringBuffer sql = new StringBuffer("select * from relace where ");
+        appendMatchAllObjectsCondition(sql, objects, "typ_predka", "predek");
         Relation relation;
         List list;
         try {
             con = getSQLConnection();
             statement = con.createStatement();
-            resultSet = statement.executeQuery(sql);
+            resultSet = statement.executeQuery(sql.toString());
 
             while ( resultSet.next() ) {
                 relation = new Relation(resultSet.getInt(1));
                 syncRelationFromRS(relation, resultSet);
                 list = (List) map.get(relation.getParent());
+                if (list==null) {
+                    list = new ArrayList();
+                    map.put(relation.getParent(), list);
+                }
                 list.add(relation);
             }
 
@@ -721,18 +764,14 @@ public class MySqlPersistance implements Persistance {
     }
 
     /**
-     * Creates SQL command to fetch children of all objects in single query
-     * and initializes map, so it contains objects as keys as empty list as values.
-     * @return SQL query
+     * Appends conditions to match all children.
      */
-    private String prepareMassChildrenFetch(List objects, Map map) {
+    private void appendMatchAllObjectsCondition(StringBuffer sb, List objects, String typeColumn, String idColumn) {
         Map byTable = new HashMap(objects.size()+1, 1.0f);
         String tableId;
         List list;
         for (Iterator iter = objects.iterator(); iter.hasNext();) {
             GenericObject object = (GenericObject) iter.next();
-            map.put(object, new ArrayList());
-
             tableId = getTableId(object);
             list = (List) byTable.get(tableId);
             if (list==null) {
@@ -742,16 +781,18 @@ public class MySqlPersistance implements Persistance {
             list.add(new Integer(object.getId()));
         }
 
-        StringBuffer sb = new StringBuffer("select * from relace where ");
         int i = 0;
         for (Iterator iter = byTable.keySet().iterator(); iter.hasNext();) {
             if (i++ > 0)
                 sb.append("or ");
             String table = (String) iter.next();
             List ids = (List) byTable.get(table);
-            sb.append("(typ_predka='");
+            sb.append("(");
+            sb.append(typeColumn);
+            sb.append("='");
             sb.append(table);
-            sb.append("' and predek");
+            sb.append("' and ");
+            sb.append(idColumn);
             if (ids.size()==1) {
                 sb.append('=');
                 sb.append(ids.get(1));
@@ -766,7 +807,6 @@ public class MySqlPersistance implements Persistance {
             }
             sb.append(')');
         }
-        return sb.toString();
     }
 
     /**
@@ -932,21 +972,6 @@ public class MySqlPersistance implements Persistance {
             conditions.add(new Integer(((Link)obj).getServer()));
         } else {
             sb.append("insert into citac values(?,?,1)");
-            conditions.add(getTableId(obj));
-            conditions.add(new Integer(obj.getId()));
-        }
-    }
-
-    /**
-     * Appends SELECT prepared statement to get counter of this object to <code>sb</code> and parameter
-     * to <code>conditions</code> for each asterisk in perpared statement.
-     */
-    private void appendCounterSelectParams(GenericObject obj, StringBuffer sb, List conditions ) {
-        if (obj instanceof Link) {
-            sb.append("select soucet from presmerovani where server=? and den=curdate()");
-            conditions.add(new Integer(((Link)obj).getServer()));
-        } else {
-            sb.append("select soucet from citac where typ=? and cislo=?");
             conditions.add(getTableId(obj));
             conditions.add(new Integer(obj.getId()));
         }

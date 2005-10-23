@@ -13,14 +13,16 @@
         thumbnail=TOOL.xpath(clanek,"/data/thumbnail")?default("UNDEF"),
         tmp=TOOL.groupByType(clanek.children, "Item"),
         rating=TOOL.ratingFor(clanek.data,"article")?default("UNDEF"),
-	    url=relation.url?default("/clanky/show/"+relation.id)
+	    url=relation.url?default("/clanky/show/"+relation.id),
+	    ctennost=.globals["CITACE"]?if_exists(clanek)?default("UNDEF")
     >
     <#if tmp.discussion?exists><#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
     <#if thumbnail!="UNDEF"><div style="float:right;margin:0.8em 0.4em 0 0.4em">${thumbnail}</div></#if>
     <h1 class="st_nadpis"><a href="${url}">${TOOL.xpath(clanek,"data/name")}</a></h1>
     <p>${TOOL.xpath(clanek,"/data/perex")}</p>
     <p class="cl_inforadek">${DATE.show(clanek.created, dateFormat[0])} |
-        <a href="/Profile/${autor.id}">${autor.name}</a> | Pøeèteno: ${TOOL.getCounterValue(clanek)}x
+        <a href="/Profile/${autor.id}">${autor.name}</a> |
+        Pøeèteno: <#if ctennost?string!="UNDEF">${ctennost}<#else>${TOOL.getCounterValue(clanek)}</#if>x
         <#if diz?exists>
             | <a href="${diz.url?default("/clanky/show/"+diz.relationId)}">Komentáøù:&nbsp;${diz.responseCount}</a
             ><#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, dateFormat[1]?default(dateFormat[0]))}</#if>
