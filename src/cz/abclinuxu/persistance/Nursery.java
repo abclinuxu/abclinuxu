@@ -119,6 +119,31 @@ public class Nursery implements Configurable {
         return getChildrenInternal(object);
     }
 
+    /**
+     * Loads children of specified objects into cache. Calling getChildren()
+     * for each object will be then much faster.
+     * @param objects list of GenericObjects
+     */
+    public synchronized void initChildren(List objects) {
+        objects = new ArrayList(objects);
+        GenericObject object;
+        List list;
+        for (Iterator iter = objects.iterator(); iter.hasNext();) {
+            object = (GenericObject) iter.next();
+            if (isNotCached(object))  // shall not be cached
+                iter.remove();
+            list = (List) cache.get(object); // is already cached
+            if (list!=null)
+                iter.remove();
+        }
+
+        Map fetchedChildren = persistance.findChildren(objects);
+        for (Iterator iter = fetchedChildren.keySet().iterator(); iter.hasNext();) {
+            GenericObject obj = (GenericObject) iter.next();
+            cache.put(obj.makeLightClone(), fetchedChildren.get(obj));
+        }
+    }
+
     protected List getChildrenInternal(GenericObject object) {
         if (isNotCached(object))
             return Collections.EMPTY_LIST;
@@ -126,7 +151,7 @@ public class Nursery implements Configurable {
         List list = (List) cache.get(object);
         if (list==null) {
             list = persistance.findChildren(object);
-            cache.put(object, list);
+            cache.put(object.makeLightClone(), list);
         }
 
         if (list.size()==0)
