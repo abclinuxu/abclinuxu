@@ -327,7 +327,7 @@ public class UpdateLinks extends TimerTask {
 
         for (Iterator iter = category.getChildren().iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
-                Link link = (Link) relation.getChild();
+                Link link = (Link) persistance.findById(relation.getChild());
                 if ( !link.isFixed() )
                     links[link.getServer()].add(link);
         }
