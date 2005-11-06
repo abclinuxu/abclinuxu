@@ -9,6 +9,10 @@ import cz.abclinuxu.data.Relation;
 import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 import java.util.prefs.Preferences;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+import java.util.Iterator;
 
 import org.apache.regexp.RE;
 import org.apache.regexp.REProgram;
@@ -21,8 +25,12 @@ import org.apache.regexp.RECompiler;
  * Date: 17.4.2005
  */
 public class URLManager implements Configurable {
-    public static final String PREF_INVALID_CHARACTERS = "regexp.invalid.characters";
-    private static REProgram reInvalidCharacters;
+    public static final String PREF_INVALID_CHARACTERS_RELATIVE = "regexp.invalid.characters.relative.url";
+    public static final String PREF_INVALID_CHARACTERS_ABSOLUTE = "regexp.invalid.characters.absolute.url";
+    public static final String PREF_FORBIDDEN_EXTENSIONS = "forbidden.extensions";
+
+    private static REProgram reInvalidCharactersRelative, reInvalidCharactersAbsolute, rePlus;
+    private static List forbiddenExtensions;
 
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new URLManager());
@@ -52,14 +60,11 @@ public class URLManager implements Configurable {
         if (Character.isDigit(url.charAt(0)))
             url = "-" + url;
 
-        String fixedURL = DiacriticRemover.getInstance().removeDiacritics(url);
-        fixedURL = new RE(reInvalidCharacters, RE.REPLACE_ALL).subst(fixedURL, "-");
-        fixedURL = fixedURL.toLowerCase();
-        while(fixedURL.endsWith("-"))
-            fixedURL = fixedURL.substring(0, fixedURL.length()-1);
-
+        String fixedURL = normalizeCharacters(url, false);
         if (fixedURL.length() == 0)
             throw new AbcException("Zvolte jiné URL bez speciálních znakù!");
+
+        fixedURL = enforceValidExtension(fixedURL);
         return fixedURL;
     }
 
@@ -84,14 +89,49 @@ public class URLManager implements Configurable {
         if (Character.isDigit(url.charAt(0)))
             url = "-" + url;
 
+        String fixedURL = normalizeCharacters(url, true);
+        if (fixedURL.length() == 0)
+            throw new AbcException("Zvolte jiné URL bez speciálních znakù!");
+
+        fixedURL = enforceValidExtension(fixedURL);
+        return fixedURL;
+    }
+
+    /**
+     * URL may end with extension that collidates with servlet mappings.
+     * If it happens, we must alter it.
+     * @param url
+     * @return URL that does not end with forbidden extension
+     */
+    private static String enforceValidExtension(String url) {
+        for (Iterator iter = forbiddenExtensions.iterator(); iter.hasNext();) {
+            String ext = (String) iter.next();
+            if (url.endsWith(ext)) {
+                int position = url.lastIndexOf('.');
+                url = url.substring(0, position) + '-' + url.substring(position+1);
+                return url;
+            }
+        }
+        return url;
+    }
+
+    /**
+     * Normalizes content of URL. For example it removes
+     * diacritics, replaces invalid characters with dashes,
+     * removes traling dashes and converts to lowercase.
+     * @param url non-null string
+     * @return normalized URL, it may have zero length.
+     */
+    private static String normalizeCharacters(String url, boolean absoluteURL) {
         String fixedURL = DiacriticRemover.getInstance().removeDiacritics(url);
-        fixedURL = new RE(reInvalidCharacters, RE.REPLACE_ALL).subst(fixedURL, "-");
+        fixedURL = new RE(rePlus, RE.REPLACE_ALL).subst(fixedURL, "p"); // convert c++ to cpp
+        if (absoluteURL)
+            fixedURL = new RE(reInvalidCharactersAbsolute, RE.REPLACE_ALL).subst(fixedURL, "-");
+        else
+            fixedURL = new RE(reInvalidCharactersRelative, RE.REPLACE_ALL).subst(fixedURL, "-");
         fixedURL = fixedURL.toLowerCase();
         while (fixedURL.endsWith("-"))
             fixedURL = fixedURL.substring(0, fixedURL.length() - 1);
-
-        if (fixedURL.length() == 0)
-            throw new AbcException("Zvolte jiné URL bez speciálních znakù!");
         return fixedURL;
     }
 
@@ -150,7 +190,21 @@ public class URLManager implements Configurable {
      * Callback used to configure your class from preferences.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
-        String tmp = prefs.get(PREF_INVALID_CHARACTERS, null);
-        reInvalidCharacters = new RECompiler().compile(tmp);
+        rePlus = new RECompiler().compile("\\+");
+
+        String tmp = prefs.get(PREF_INVALID_CHARACTERS_RELATIVE, null);
+        reInvalidCharactersRelative = new RECompiler().compile(tmp);
+
+        tmp = prefs.get(PREF_INVALID_CHARACTERS_ABSOLUTE, null);
+        reInvalidCharactersAbsolute = new RECompiler().compile(tmp);
+
+        List tmpList = new ArrayList();
+        tmp = prefs.get(PREF_FORBIDDEN_EXTENSIONS, null);
+        if (tmp!=null && tmp.length()!=0) {
+            StringTokenizer stk = new StringTokenizer(tmp,",");
+            while (stk.hasMoreTokens())
+                tmpList.add(stk.nextToken());
+        }
+        forbiddenExtensions = tmpList;
     }
 }

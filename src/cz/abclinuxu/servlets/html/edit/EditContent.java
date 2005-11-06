@@ -478,7 +478,7 @@ public class EditContent implements AbcAction {
         }
         relation.setUrl(url);
 
-        if (URLManager.isURLUnique(relation.getUrl(), relation.getId())) {
+        if (!URLManager.isURLUnique(relation.getUrl(), relation.getId())) {
             ServletUtils.addError(PARAM_URL, "Tato adresa je ji¾ pou¾ita!", env, null);
             return false;
         }
