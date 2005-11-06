@@ -8,6 +8,7 @@ import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.persistance.versioning.VersioningFactory;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
@@ -34,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Iterator;
+import java.util.Date;
 
 import freemarker.ext.dom.NodeModel;
 
@@ -249,8 +251,10 @@ public class EditFaq implements AbcAction {
         Item faq = (Item) persistance.findById(relation.getChild());
         User user = (User) env.get(Constants.VAR_USER);
 
+        Date originalUpdated = faq.getUpdated();
         MonitorTools.alterMonitor(faq.getData().getRootElement(), user);
         persistance.update(faq);
+        SQLTool.getInstance().setUpdatedTimestamp(faq, originalUpdated);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());
