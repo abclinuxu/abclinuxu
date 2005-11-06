@@ -27,6 +27,7 @@ public class ContentChanges implements AbcAction {
 
     /** list of initialized relations with child that is Content */
     public static final String VAR_DATA = "DATA";
+    public static final String VAR_NOW = "NOW";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -37,6 +38,7 @@ public class ContentChanges implements AbcAction {
 
         Tools.sync(relation);
         env.put(ShowObject.VAR_RELATION, relation);
+        env.put(VAR_NOW, new Date());
 
         String s = (String) params.get(PARAM_SINCE);
         if (s==null || s.trim().length()==0)

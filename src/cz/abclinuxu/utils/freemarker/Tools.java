@@ -444,7 +444,7 @@ public class Tools implements Configurable {
         if (prefix == null) prefix = "";
         StringBuffer sb = new StringBuffer(max);
         sb.append(prefix);
-        int index = str.length() - prefix.length() - max;
+        int index = str.length() + prefix.length() - max;
         sb.append(str.substring(index));
         return sb.toString();
     }
