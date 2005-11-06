@@ -362,7 +362,9 @@
                             </node>
                             <node name="URLManager">
                                 <map>
-                                    <entry key="regexp.invalid.characters" value="[^a-zA-Z0-9]+"/>
+                                    <entry key="regexp.invalid.characters.relative.url" value="[^a-zA-Z0-9.]+"/>
+                                    <entry key="regexp.invalid.characters.absolute.url" value="[^a-zA-Z0-9/.]+"/>
+                                    <entry key="forbidden.extensions" value=".tgz,.tar.gz,.tar.bz2" /> 
                                 </map>
                             </node>
                         </node>
