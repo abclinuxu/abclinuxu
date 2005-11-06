@@ -168,7 +168,7 @@
             <div class="s_sekce">
 
 	        <div class="s_odkaz">
-                    <a href="/zpravicky.jsp">Centrum</a> |
+                    <a href="/zpravicky">Centrum</a> |
                     <a href="${URL.make("/zpravicky/edit?action=add")}">Napsat zprávièku</a>
             	    <#if USER?exists && USER.hasRole("news admin")>
                         | <a href="${URL.make("/zpravicky/dir/37672")}" title="Poèet èekajících zprávièek">(${VARS.counter.WAITING_NEWS})</a>
@@ -210,12 +210,12 @@
                     <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Rozcestník</h1></div></div>
                     <div class="s_sekce">
                         <div class="rozc">
-                            <#list TOOL.createServers([7,16,18,1,13,14,17,15,3,2,5]) as server>
+                            <#list TOOL.createServers([7,16,18,19,1,13,14,17,15,3,5]) as server>
                                 <a class="server" href="${server.url}">${server.name}</a><br>
                                 <ul>
                                 <#assign linky = TOOL.sublist(SORT.byDate(LINKS[server.name],"DESCENDING"),0,2)>
                                 <#list linky as link>
-                                    <li><a href="${link.url}">${link.text}</a></li>
+                                    <li><a href="${link.url}" rel="nofollow">${link.text}</a></li>
                                 </#list>
                                 </ul>
                             </#list>
@@ -250,10 +250,10 @@
                     <li><a href="javascript:addSidebar();">Pøidej sidebar</a></li>
                     <li><a href="javascript:addBookmark();">Pøidej mezi oblíbené</a></li>
                     <li><a href="javascript:setHomepage();">Nastav jako domácí stránku</a></li>
-                    <li><a href="http://www.linux.cz">linux.cz</a></li>
-                    <li><a href="http://www.broadnet.cz">broadnet.cz</a></li>
-                    <li><a href="http://www.pravednes.cz">pravednes.cz</a></li>
-		    <li><a href="http://www.autoweb.cz">autoweb.cz</a></li>
+                    <li><a href="http://www.linux.cz" rel="nofollow">linux.cz</a></li>
+                    <li><a href="http://www.broadnet.cz" rel="nofollow">broadnet.cz</a></li>
+                    <li><a href="http://www.pravednes.cz" rel="nofollow">pravednes.cz</a></li>
+		    <li><a href="http://www.autoweb.cz" rel="nofollow">autoweb.cz</a></li>
                 </ul>
             </div>
 
