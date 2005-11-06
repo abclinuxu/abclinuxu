@@ -559,6 +559,7 @@ public class CreateIndex implements Configurable {
                 sb.append(" ");
             }
             sb.append(user.getName());
+            sb.append(" ");
         } catch (PersistanceException e) {
             // user could be deleted
         }
