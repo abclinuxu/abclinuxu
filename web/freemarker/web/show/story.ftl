@@ -74,7 +74,7 @@
         <div class="s_sekce">
             <ul>
             <#list links as link>
-                <li><a href="${link}">${link.@caption}</a></li>
+                <li><a href="${link}" rel="nofollow">${link.@caption}</a></li>
             </#list>
             </ul>
         </div>
@@ -131,6 +131,8 @@
 <#assign url = TOOL.getUrlForBlogStory(BLOG.subType, STORY.child.created, STORY.id)>
 <#if category!="UNDEF"><#assign category=TOOL.xpath(BLOG, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
 
+<@lib.showMessages/>
+
 <h2>${TOOL.xpath(STORY.child, "/data/name")}</h2>
 <p class="cl_inforadek">
     <#if STORY.child.type==15>Odlo¾eno<#else>${DATE.show(STORY.child.created, "CZ_SHORT")}</#if> |
@@ -162,11 +164,11 @@ ${TOOL.xpath(STORY.child, "/data/content")}
 
         <p>
         <#if diz.hasUnreadComments>
-            <a href="#${diz.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a>
+            <a href="#${diz.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a>,
         </#if>
 
         <a href="${URL.make("/EditDiscussion?action=add&amp;dizId="+DISCUSSION.id+"&amp;threadId=0&amp;rid="+CHILDREN.discussion[0].id+"&amp;url="+url)}">
-        Vlo¾it dal¹í komentáø</a>
+        Vlo¾it dal¹í komentáø</a>,
 
         <#if USER?exists && TOOL.xpath(DISCUSSION,"//monitor/id[text()='"+USER.id+"']")?exists>
             <#assign monitorState="Pøestaò sledovat"><#else><#assign monitorState="Sleduj">

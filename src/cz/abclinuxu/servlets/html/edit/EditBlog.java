@@ -26,10 +26,9 @@ import cz.abclinuxu.servlets.html.view.ViewBlog;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.data.Category;
-import cz.abclinuxu.data.User;
-import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.*;
+import cz.abclinuxu.data.view.Discussion;
+import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
@@ -195,7 +194,7 @@ public class EditBlog implements AbcAction, Configurable {
             return actionEditStoryStep2(request, response, blog, env);
 
         if ( ACTION_REMOVE_STORY.equals(action) )
-            return actionRemoveStoryStep1(request, blogRelation, env);
+            return actionRemoveStoryStep1(request, response, blogRelation, blog, env);
 
         if ( ACTION_REMOVE_STORY_STEP2.equals(action) )
             return actionRemoveStoryStep2(request, response, blogRelation, blog, env);
@@ -483,7 +482,15 @@ public class EditBlog implements AbcAction, Configurable {
     /**
      * First step of renaming blog.
      */
-    protected String actionRemoveStoryStep1(HttpServletRequest request, Relation story, Map env) throws Exception {
+    protected String actionRemoveStoryStep1(HttpServletRequest request, HttpServletResponse response, Relation story, Category blog, Map env) throws Exception {
+        if (containsForeignComments((Item) story.getChild())) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Tento zápis není mo¾né smazat, nebo» obsahuje cizí komentáøe.", env, request.getSession());
+            Item item = (Item) story.getChild();
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(), item.getCreated(), story.getId()));
+            return null;
+        }
+
         return FMTemplateSelector.select("EditBlog", "remove", env, request);
     }
 
@@ -491,6 +498,14 @@ public class EditBlog implements AbcAction, Configurable {
      * Final step of renaming blog.
      */
     protected String actionRemoveStoryStep2(HttpServletRequest request, HttpServletResponse response, Relation story, Category blog, Map env) throws Exception {
+        if (containsForeignComments((Item) story.getChild())) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Tento zápis není mo¾né smazat, nebo» obsahuje cizí komentáøe.", env, request.getSession());
+            Item item = (Item) story.getChild();
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(), item.getCreated(), story.getId()));
+            return null;
+        }
+
         Persistance persistance = PersistanceFactory.getPersistance();
         persistance.remove(story);
 
@@ -1290,6 +1305,45 @@ public class EditBlog implements AbcAction, Configurable {
             if (year.elements().size()==0)
                 year.detach();
         }
+    }
+
+    /**
+     * Tests if story contains discussion with at least one comment now owned by story author.
+     * @param story initialized story
+     * @return false if there is discussion with foreign comments.
+     */
+    boolean containsForeignComments(Item story) {
+        List children = story.getChildren();
+        if (children == null)
+            return false;
+
+        Persistance persistance = PersistanceFactory.getPersistance();
+        for (Iterator iter = children.iterator(); iter.hasNext();) {
+            Relation relation = (Relation) iter.next();
+            GenericObject child = (relation).getChild();
+            if (!(child instanceof Item))
+                continue;
+            Item item = (Item) child;
+            if (!item.isInitialized())
+                persistance.synchronize(item);
+            if (item.getType() != Item.DISCUSSION)
+                continue;
+
+            Discussion diz = new Tools().createDiscussionTree(item, null, false);
+            if (diz.getSize()==0)
+                return false;
+
+            List stack = new ArrayList();
+            stack.addAll(diz.getThreads());
+            User owner = new User(story.getOwner());
+            while (stack.size() > 0) {
+                Comment thread = (Comment) stack.remove(0);
+                if (!owner.equals(thread.getAuthor()))
+                    return true;
+                stack.addAll(thread.getChildren());
+            }
+        }
+        return false;
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {
