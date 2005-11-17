@@ -7,7 +7,8 @@ SET CHARACTER SET latin2;
 
 3\
 insert into uzivatel values(1,'admin','Superu¾ivatel','root@localhost','changeit',NULL,
-'<data><role>root</role></roles></data>');
+'<data><system><group>11246</group></system><settings><emoticons>yes</emoticons>
+<blog name="leos">591</blog></settings><roles><role>root</role></roles></data>');
 
 insert into uzivatel values(2,'user','U¾ivatel','root@localhost','changeit','Minime',
 '<data><personal><sex>man</sex><birth_year>1975</birth_year><city>Mìsto</city><country>Stát</country>
@@ -16,11 +17,12 @@ insert into uzivatel values(2,'user','U¾ivatel','root@localhost','changeit','Min
 <profile><home_page>http://www.abclinuxu.cz</home_page><about_myself format="1">Já jsem já</about_myself>
 <linux_user_from_year>1995</linux_user_from_year><distributions><distribution>Redhat</distribution>
 <distribution>Mandrake</distribution><distribution>Debian</distribution></distributions></profile>
-<settings><emoticons>yes</emoticons><blog name="leos">591</blog></settings></data>');
+<settings><emoticons>no</emoticons></settings></data>');
 
 4\
 insert into devel.kategorie select * from abc.kategorie;
 insert into devel.relace select * from abc.relace where typ_potomka='K';
 insert into devel.server (cislo,jmeno,url) select cislo,jmeno,url from abc.server;
 insert into devel.odkaz select * from abc.odkaz;
+insert into devel.relace select * from abc.relace where predek='14' and typ_predka='K';
 

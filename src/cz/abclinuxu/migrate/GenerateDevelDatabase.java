@@ -81,7 +81,6 @@ public class GenerateDevelDatabase {
         Map map = new HashMap();
         Map params = new HashMap();
         map.put(Constants.VAR_PARAMS, params);
-        map.put(Constants.VAR_USER, user);
         map.put(Constants.VAR_URL_UTILS, new UrlUtils(UrlUtils.PREFIX_CLANKY, null));
 
         params.put(EditDiscussion.PARAM_TITLE, "Jak nainstalovat balíèek do Mandrivy");
@@ -133,6 +132,10 @@ public class GenerateDevelDatabase {
         params.put(EditBlog.PARAM_CONTENT, "Blogy jsou dobrý sluha, ale ¹patný pán.");
 
         EditBlog servlet = new EditBlog();
+        servlet.actionAddStoryStep2(null, null, blogRelation, map, false);
+
+        params.put(EditBlog.PARAM_TITLE, "Øe¹ení základní otázky");
+        params.put(EditBlog.PARAM_CONTENT, "Odpovìï zní<break>Blue screen of death. Reboot your computer please.");
         servlet.actionAddStoryStep2(null, null, blogRelation, map, false);
     }
 
@@ -214,7 +217,7 @@ public class GenerateDevelDatabase {
         map.put(Constants.VAR_PARAMS, params);
         map.put(Constants.VAR_USER, admin);
 
-        Relation articles = (Relation) persistance.findById(new Relation(Constants.REL_ARTICLES));
+        Relation articles = (Relation) persistance.findById(new Relation(4));
         map.put(EditArticle.VAR_RELATION, articles);
         map.put(Constants.VAR_USER, admin);
         params.put(EditArticle.PARAM_TITLE, "Jaderné noviny 000");
@@ -227,6 +230,8 @@ public class GenerateDevelDatabase {
         EditArticle editArticle = new EditArticle();
         editArticle.actionAddStep2(null, null, map, false);
 
+        articles = (Relation) persistance.findById(new Relation(14358));
+        map.put(EditArticle.VAR_RELATION, articles);
         params.put(EditArticle.PARAM_TITLE, "Developerská databáze abclinuxu");
         params.put(EditArticle.PARAM_PEREX, "Krátké info ohlednì databáze pro vývoj abíèka.");
         params.put(EditArticle.PARAM_CONTENT, "Databáze obsahuje dva u¾ivatele - admin a user, oba mají heslo changeit. " +
@@ -240,6 +245,7 @@ public class GenerateDevelDatabase {
         Relation dizRelation = EditDiscussion.createEmptyDiscussion(article, user, persistance);
 
         params.clear();
+        map.remove(Constants.VAR_USER);
         params.put(EditDiscussion.PARAM_DISCUSSION, Integer.toString(dizRelation.getChild().getId()));
         params.put(EditDiscussion.PARAM_TITLE, "WTF?");
         params.put(EditDiscussion.PARAM_TEXT, "I never expected this to happen ..");
