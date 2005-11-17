@@ -1,3 +1,4 @@
+--CREATE DATABASE abc default character set latin2 collate latin2_bin; -- tenhle fungoval pro devel databazi
 --CREATE DATABASE abc default character set utf8 collate utf8_bin;
 -- collate utf8_czech_ci nefunguje, nerozlisuje se mezi normalnimi a akcentovanymi znaky
 
