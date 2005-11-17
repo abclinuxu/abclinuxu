@@ -1,7 +1,20 @@
 /*
- * User: literakl
- * Date: 29.8.2002
- * Time: 11:21:29
+ *  Copyright (C) 2005 Leos Literak
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2 of the License, or (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; see the file COPYING.  If not, write to
+ *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ *  Boston, MA 02111-1307, USA.
  */
 package cz.abclinuxu.scheduler;
 
@@ -195,7 +208,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         int count = Misc.parseInt(node.getText(), defaultNumber.intValue());
         if (count<0)
             return defaultNumber.intValue();
-        
+
         Integer maximum = (Integer) maxSizes.get(key);
         count = Misc.limit(count, 0, maximum.intValue());
         return count;
@@ -239,7 +252,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             refreshSizes();
             refreshStories();
             log.debug("Cahovani hotovo.");
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.error("Selhalo cachovani!", e);
         }
     }
@@ -362,12 +375,6 @@ public class VariableFetcher extends TimerTask implements Configurable {
             counter.put("REQUESTS", new Integer(requests.getChildren().size()));
             Category news = (Category) persistance.findById(new Category(Constants.CAT_NEWS_POOL));
             counter.put("WAITING_NEWS", new Integer(news.getChildren().size()));
-            Item todo = (Item) persistance.findById(new Item(Constants.ITEM_DIZ_TODO));
-            synchronized (todo.getData().getRootElement()) {
-                Node node = todo.getData().selectSingleNode("//comments");
-                if (node != null)
-                    counter.put("TODO", node.getText());
-            }
         } catch (Exception e) {
             log.error("Selhalo nacitani velikosti");
         }
