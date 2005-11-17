@@ -67,6 +67,7 @@ public class ConfigurationManager {
         if ( configurator!=null ) return;
         String file = System.getProperty(PROPERTY_CONFIG_FILE, null);
         if ( file==null || file.length()==0 ) {
+            System.err.println("You must set property " + ConfigurationManager.PROPERTY_CONFIG_FILE + "!");
             log.fatal("You must set property "+ConfigurationManager.PROPERTY_CONFIG_FILE+"!");
             System.exit(1);
         }
