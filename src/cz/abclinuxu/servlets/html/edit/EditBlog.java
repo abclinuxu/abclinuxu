@@ -125,6 +125,7 @@ public class EditBlog implements AbcAction, Configurable {
     public static final String VAR_CATEGORIES = "CATEGORIES";
     public static final String VAR_PREVIEW = "PREVIEW";
     public static final String VAR_IS_DELAYED = "DELAYED";
+    public static final String VAR_RELATION = "RELATION";
 
     public static final String BREAK_TAG = "<break>";
     public static final String PREF_RE_INVALID_BLOG_NAME = "regexp.invalid.blogname";
@@ -185,7 +186,7 @@ public class EditBlog implements AbcAction, Configurable {
             return actionAddStoryStep1(request, blog, env);
 
         if ( ACTION_ADD_STORY_STEP2.equals(action) )
-            return actionAddStoryStep2(request, response, relation, env);
+            return actionAddStoryStep2(request, response, relation, env, true);
 
         if ( ACTION_EDIT_STORY.equals(action) )
             return actionEditStoryStep1(request, blog, env);
@@ -310,7 +311,7 @@ public class EditBlog implements AbcAction, Configurable {
     /**
      * Final step of submitting single story to the user's blog.
      */
-    protected String actionAddStoryStep2(HttpServletRequest request, HttpServletResponse response, Relation blogRelation, Map env) throws Exception {
+    public String actionAddStoryStep2(HttpServletRequest request, HttpServletResponse response, Relation blogRelation, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
         Persistance persistance = PersistanceFactory.getPersistance();
@@ -361,8 +362,12 @@ public class EditBlog implements AbcAction, Configurable {
             persistance.update(blog);
         }
 
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(),story.getCreated(),relation.getId()));
+        if (redirect) {
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            String storyUrl = Tools.getUrlForBlogStory(blog.getSubType(), story.getCreated(), relation.getId());
+            urlUtils.redirect(response, storyUrl);
+        } else
+            env.put(VAR_RELATION, relation);
         return null;
     }
 

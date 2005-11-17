@@ -90,7 +90,7 @@ public class EditDriver implements AbcAction {
             return FMTemplateSelector.select("EditDriver", "add", env, request);
 
         if ( ACTION_ADD_STEP2.equals(action) )
-            return actionAddStep2(request, response, env);
+            return actionAddStep2(request, response, env, true);
 
         if ( ACTION_EDIT.equals(action) )
             return actionEdit(request, env);
@@ -105,7 +105,7 @@ public class EditDriver implements AbcAction {
      * Adds new driver to the database.
      * @return page to be rendered
      */
-    protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
 
@@ -144,8 +144,12 @@ public class EditDriver implements AbcAction {
         FeedGenerator.updateDrivers();
         VariableFetcher.getInstance().refreshDrivers();
 
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, url);
+        if (redirect) {
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, url);
+        } else
+            env.put(VAR_RELATION, relation);
+
         return null;
     }
 

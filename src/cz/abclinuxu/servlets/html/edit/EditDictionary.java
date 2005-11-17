@@ -95,7 +95,7 @@ public class EditDictionary implements AbcAction {
             return FMTemplateSelector.select("Dictionary", "add_item", env, request);
 
         if ( action.equals(ACTION_ADD_STEP2) )
-            return actionAddStep2(request, response, env);
+            return actionAddStep2(request, response, env, true);
 
         if ( action.equals(ACTION_ADD_RECORD) ) {
             params.put(PARAM_ACTION, ACTION_ADD_RECORD_STEP2);
@@ -125,7 +125,7 @@ public class EditDictionary implements AbcAction {
         throw new MissingArgumentException("Chybí parametr action!");
     }
 
-    protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
@@ -161,8 +161,11 @@ public class EditDictionary implements AbcAction {
 
         VariableFetcher.getInstance().refreshDictionary();
 
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/slovnik/"+item.getSubType());
+        if (redirect) {
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, "/slovnik/"+item.getSubType());
+        } else
+            env.put(VAR_RELATION, relation);
         return null;
     }
 

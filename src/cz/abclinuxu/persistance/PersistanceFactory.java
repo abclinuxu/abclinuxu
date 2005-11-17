@@ -40,12 +40,14 @@ public class PersistanceFactory implements Configurable {
     public static final String PREF_DEFAULT_URL = "url.live";
     public static final String PREF_DIRECT_URL = "url.direct";
     public static final String PREF_DEFAULT_TEST_URL = "url.test";
+    public static final String PREF_DEFAULT_DEVEL_URL = "url.devel";
     public static final String PREF_PROXOOL = "proxool";
     public static final String PREF_DEFAULT_CACHE = "cache.class";
 
     public static String defaultUrl = null;
     public static String directUrl = null;
     public static String defaultTestUrl = null;
+    public static String defaultDevelUrl = null;
     static Class defaultCache = null;
 
     static Persistance persistance;
@@ -131,6 +133,7 @@ public class PersistanceFactory implements Configurable {
         defaultUrl = prefs.get(PREF_DEFAULT_URL,null);
         directUrl = prefs.get(PREF_DIRECT_URL, null);
         defaultTestUrl = prefs.get(PREF_DEFAULT_TEST_URL,null);
+        defaultDevelUrl = prefs.get(PREF_DEFAULT_DEVEL_URL, null);
         String defaultCacheClassName = prefs.get(PREF_DEFAULT_CACHE, null);
 
         if ( defaultUrl==null )

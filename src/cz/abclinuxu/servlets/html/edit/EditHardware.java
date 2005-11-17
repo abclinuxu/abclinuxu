@@ -108,7 +108,7 @@ public class EditHardware implements AbcAction {
             return actionAddStep2(request, env);
 
         if ( action.equals(ACTION_ADD_ITEM_STEP3) )
-            return actionAddStep3(request, response, env);
+            return actionAddStep3(request, response, env, true);
 
         if ( action.equals(ACTION_ADD_RECORD) ) {
             params.put(PARAM_ACTION, ACTION_ADD_RECORD_STEP2);
@@ -160,7 +160,7 @@ public class EditHardware implements AbcAction {
         return FMTemplateSelector.select("EditHardware","add_record",env,request);
     }
 
-    protected String actionAddStep3(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String actionAddStep3(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation upper = (Relation) env.get(VAR_RELATION);
@@ -214,8 +214,11 @@ public class EditHardware implements AbcAction {
         FeedGenerator.updateHardware();
         VariableFetcher.getInstance().refreshHardware();
 
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/show/"+relation.getId());
+        if (redirect) {
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, "/show/"+relation.getId());
+        } else
+            env.put(VAR_RELATION, relation);
         return null;
     }
 

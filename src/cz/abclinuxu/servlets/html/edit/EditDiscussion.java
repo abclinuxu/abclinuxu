@@ -119,13 +119,13 @@ public class EditDiscussion implements AbcAction {
             return actionAddComment(request,env);
 
         if ( ACTION_ADD_COMMENT_STEP2.equals(action) )
-            return  actionAddComment2(request,response,env);
+            return  actionAddComment2(request,response,env, true);
 
         if ( ACTION_ADD_QUESTION.equals(action) )
             return FMTemplateSelector.select("EditDiscussion","ask",env,request);
 
         if ( ACTION_ADD_QUESTION_STEP2.equals(action) )
-            return actionAddQuestion2(request, response, env);
+            return actionAddQuestion2(request, response, env, true);
 
         // check permissions
         User user = (User) env.get(Constants.VAR_USER);
@@ -234,7 +234,7 @@ public class EditDiscussion implements AbcAction {
     /**
      * last step - either shows preview of question or saves new discussion
      */
-    protected String actionAddQuestion2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String actionAddQuestion2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
@@ -268,8 +268,12 @@ public class EditDiscussion implements AbcAction {
         FeedGenerator.updateForum();
         VariableFetcher.getInstance().refreshQuestions();
 
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/show/"+rel2.getId());
+        if (redirect) {
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, "/show/"+rel2.getId());
+        } else
+            env.put(VAR_RELATION, rel2);
+
         return null;
     }
 
@@ -312,7 +316,7 @@ public class EditDiscussion implements AbcAction {
     /**
      * Adds new comment to selected discussion.
      */
-    protected String actionAddComment2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String actionAddComment2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -422,13 +426,15 @@ public class EditDiscussion implements AbcAction {
             }
         }
 
-        url = (String) params.get(PARAM_URL);
-        if (url==null)
-            url = relation.getUrl();
-        if (url==null)
-            url = urlUtils.getPrefix()+"/show/"+relation.getId();
-        url += "#"+commentId;
-        urlUtils.redirect(response, url, false);
+        if (redirect) {
+            url = (String) params.get(PARAM_URL);
+            if (url==null)
+                url = relation.getUrl();
+            if (url==null)
+                url = urlUtils.getPrefix()+"/show/"+relation.getId();
+            url += "#"+commentId;
+            urlUtils.redirect(response, url, false);
+        }
         return null;
     }
 

@@ -102,7 +102,7 @@ public class EditFaq implements AbcAction {
             return actionAddStep1(request, env);
 
         if (ACTION_ADD_STEP2.equals(action))
-            return actionAddStep2(request, response, env);
+            return actionAddStep2(request, response, env, true);
 
         if (ACTION_EDIT.equals(action))
             return actionEditStep1(request, env);
@@ -126,7 +126,7 @@ public class EditFaq implements AbcAction {
     /**
      * Adds new FAQ entry to selected FAQ section.
      */
-    protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
@@ -176,8 +176,12 @@ public class EditFaq implements AbcAction {
         FeedGenerator.updateFAQ();
         VariableFetcher.getInstance().refreshFaq();
 
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, url);
+        if (redirect) {
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, url);
+        } else
+            env.put(VAR_RELATION, relation);
+
         return null;
     }
 

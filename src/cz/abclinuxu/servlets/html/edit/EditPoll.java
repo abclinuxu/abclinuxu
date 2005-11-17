@@ -92,7 +92,7 @@ public class EditPoll implements AbcAction {
             return FMTemplateSelector.select("EditPoll", "add", env, request);
 
         if ( ACTION_ADD_STEP2.equals(action) )
-            return actionAddStep2(request, response, env);
+            return actionAddStep2(request, response, env, true);
 
         Poll poll = (Poll) persistance.findById(relation.getChild());
         env.put(EditPoll.VAR_POLL, poll);
@@ -109,7 +109,7 @@ public class EditPoll implements AbcAction {
     /**
      * Creates new poll
      */
-    protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         boolean error = false;
@@ -173,10 +173,13 @@ public class EditPoll implements AbcAction {
         persistance.create(relation);
         relation.getParent().addChildRelation(relation);
 
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        if (url==null)
-            url = UrlUtils.PREFIX_POLLS + "/show/" + relation.getId();
-        urlUtils.redirect(response, url);
+        if (redirect) {
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            if (url==null)
+                url = UrlUtils.PREFIX_POLLS + "/show/" + relation.getId();
+            urlUtils.redirect(response, url);
+        } else
+            env.put(VAR_RELATION, relation);
         return null;
     }
 

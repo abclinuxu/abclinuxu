@@ -211,6 +211,7 @@
                             <entry key="url.live" value="proxool.abc"/>
                             <entry key="url.direct" value="jdbc:mysql://localhost/@DB_SCHEMA@?user=@DB_USER@&amp;password=@DB_PASSWORD@&amp;useUnicode=true"/>
                             <entry key="url.test" value="jdbc:mysql://localhost/unit?user=@DB_USER@&amp;password=@DB_PASSWORD@&amp;useUnicode=true&amp;characterEncoding=ISO-8859-2"/>
+                            <entry key="url.devel" value="jdbc:mysql://localhost/devel?user=@DB_USER@&amp;password=@DB_PASSWORD@&amp;useUnicode=true"/>
                             <entry key="proxool" value="WEB-INF/conf/proxool.xml"/>
                             <entry key="cache.class" value="cz.abclinuxu.persistance.cache.SynchronizedCache" />
                         </map>
@@ -364,7 +365,7 @@
                                 <map>
                                     <entry key="regexp.invalid.characters.relative.url" value="[^a-zA-Z0-9.]+"/>
                                     <entry key="regexp.invalid.characters.absolute.url" value="[^a-zA-Z0-9/.]+"/>
-                                    <entry key="forbidden.extensions" value=".tgz,.tar.gz,.tar.bz2" /> 
+                                    <entry key="forbidden.extensions" value=".tgz,.tar.gz,.tar.bz2" />
                                 </map>
                             </node>
                         </node>

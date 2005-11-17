@@ -104,7 +104,7 @@ public class EditNews implements AbcAction {
             return actionAddStep1(request, env);
 
         if ( ACTION_ADD_STEP2.equals(action) )
-            return actionAddStep2(request, response, env);
+            return actionAddStep2(request, response, env, true);
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation==null )
@@ -152,7 +152,7 @@ public class EditNews implements AbcAction {
         return FMTemplateSelector.select("EditNews", "add", env, request);
     }
 
-    protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
@@ -181,8 +181,12 @@ public class EditNews implements AbcAction {
         persistance.create(relation);
         relation.getParent().addChildRelation(relation);
 
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, UrlUtils.PREFIX_NEWS+"/show/"+relation.getId());
+        if (redirect) {
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, UrlUtils.PREFIX_NEWS + "/show/"+relation.getId());
+        } else
+            env.put(VAR_RELATION, relation);
+
         return null;
     }
 
@@ -252,7 +256,7 @@ public class EditNews implements AbcAction {
         return null;
     }
 
-    protected String actionApprove(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+    public String actionApprove(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         Relation relation = (Relation) env.get(VAR_RELATION);
@@ -265,7 +269,7 @@ public class EditNews implements AbcAction {
         Item item = (Item) relation.getChild();
         Element element = DocumentHelper.makeElement(item.getData(), "/data/approved_by");
         User user = (User) env.get(Constants.VAR_USER);
-        element.setText(new Integer(user.getId()).toString());
+        element.setText(Integer.toString(user.getId()));
         persistance.update(item);
 
         element = (Element) item.getData().selectSingleNode("/data/title");

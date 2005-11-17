@@ -803,8 +803,10 @@ public class EditArticle implements AbcAction {
      */
     private boolean setDesignatedSection(Map params, Item item) {
         String content = (String) params.get(PARAM_DESIGNATED_SECTION);
-        Element element = DocumentHelper.makeElement(item.getData(), "/data/section_rid");
-        element.setText(content);
+        if (content!=null) {
+            Element element = DocumentHelper.makeElement(item.getData(), "/data/section_rid");
+            element.setText(content);
+        }
         return true;
     }
 
