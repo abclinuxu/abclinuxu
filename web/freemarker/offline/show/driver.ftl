@@ -1,15 +1,10 @@
-<#include "../macros.ftl">
+<#import "../macros.ftl" as lib>
 <#include "../header.ftl">
 
 <#assign who=TOOL.createUser(ITEM.owner)>
-<p>
- Tuto polo¾ku vytvoøil <a href="http://www.abclinuxu.cz/Profile/${who.id}">${who.name}</a>
- dne ${DATE.show(ITEM.created,"CZ_FULL")}.
-</p>
+<p>Tuto polo¾ku vytvoøil <a href="http://www.abclinuxu.cz/Profile/${who.id}">${who.name}</a> dne ${DATE.show(ITEM.created,"CZ_FULL")}.</p>
 
-<div align="right"><a href="${ONLINE}"><img src="../../images/tl-online.gif" width="59" height="23" border="0" alt="online"></a></div>
-
-<table cellspacing=0 border=1 cellpadding=5 align="center">
+<table cellspacing="0" border="1" cellpadding="5" align="center">
   <tr>
     <td>Jméno</td><td>${TOOL.xpath(ITEM,"data/name")}</td>
   </tr>

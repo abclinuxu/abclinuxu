@@ -5,27 +5,23 @@
  <#if tmp.discussion?exists>
   <#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])>
  </#if>
- <h2 class="st_nadpis"><a href="../../${DUMP.getFile(relation.id)}">${TOOL.xpath(clanek,"data/name")}</a></h2>
- <p>
-  <span class="barva">
+ <h1 class="st_nadpis"><a href="../../${DUMP.getFile(relation.id)}">${TOOL.xpath(clanek,"data/name")}</a></h1>
+ <p>${TOOL.xpath(clanek,"/data/perex")}</p>
+ <p class="cl_inforadek">
    ${DATE.show(clanek.created, "CZ_DMY")} |
-   <a href="http://www.abclinuxu.cz/Profile/${autor.id}">${autor.name}</a>
-  </span>
- </p>
- <p class="perex_out">
-  ${TOOL.xpath(clanek,"/data/perex")}
- </p>
- <p class="barva">
-  Pøeèteno: ${TOOL.getCounterValue(clanek)}x
+   <a href="http://www.abclinuxu.cz/Profile/${autor.id}">${autor.name}</a> |
+   Pøeèteno: ${TOOL.getCounterValue(clanek)}x
   <#if diz?exists>
-   | <a href="../../${DUMP.getFile(diz.relationId)}">Komentáøù: ${diz.responseCount}</a>
+   | <a href="../../${DUMP.getFile(diz.relationId)}">Komentáøù:&nbsp;${diz.responseCount}</a>
   </#if>
  </p>
 </#macro>
 
 <#macro separator double=false>
- <img src="/images/site/sedybod.gif" width="100%" height="1" border="0" alt="--------------------"><br>
- <#if double><img src="/images/site/sedybod.gif" width="100%" height="1" border="0" alt="" vspace="1"><br></#if>
+ <p>------------------</p>
+ <#if double>
+   <p>==================</p>
+ </#if>
 </#macro>
 
 <#macro doubleSeparator>
@@ -33,20 +29,16 @@
 </#macro>
 
 <#macro showParents>
- <table border="0" width="100%">
-  <tr>
-   <td>
+  <div class="hl_vpravo">
+    <a href="${ONLINE?default("http://www.abclinuxu.cz")}">online</a>
+  </div>
+  <div class="hl_vlevo">
     <#if PARENTS?exists>
      <#list PARENTS as relation>
       <a href="../../${DUMP.getFile(relation.id)}">${TOOL.childName(relation)}</a><#if relation_has_next> - </#if>
      </#list>
     </#if>
-   </td>
-   <td align="right">
-    <a href="${ONLINE}"><img src="../../images/tl-online.gif" width="59" height="23" border="0" alt="online"></a>
-   </td>
-  </tr>
- </table>
+  &nbsp;</div>
 </#macro>
 
 <#macro showThread(comment level dizId relId showControls extra...)>
@@ -82,7 +74,7 @@
 </#macro>
 
 <#macro showCensored(comment dizId relId)>
-    <p class="cenzura">
+    <p>
         Ná¹ administrátor shledal tento pøíspìvek závadným nebo nevyhovujícím zamìøení portálu.
         <#assign message = TOOL.xpath(comment.data,"censored")?if_exists>
         <#if message?has_content><br>${message}</#if>

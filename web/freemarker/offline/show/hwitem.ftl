@@ -1,18 +1,13 @@
 <#import "../macros.ftl" as lib>
 <#include "../header.ftl">
 
-<@lib.showParents />
-
 <#assign who=TOOL.createUser(ITEM.owner)>
-<p>
- Tuto polo¾ku vytvoøil <a href="http://www.abclinuxu.cz/Profile/${who.id}">${who.name}</a>
- dne ${DATE.show(ITEM.created,"CZ_FULL")}.
-</p>
+<p>Tuto polo¾ku vytvoøil <a href="http://www.abclinuxu.cz/Profile/${who.id}">${who.name}</a> dne ${DATE.show(ITEM.created,"CZ_FULL")}.</p>
 
 <#assign RECORDS = CHILDREN.record>
 <#list RECORDS as REL_RECORD>
  <#assign RECORD = REL_RECORD.child, who=TOOL.createUser(RECORD.owner)>
- <table cellspacing="0" border="1" cellpadding="5" width="100%">
+ <table cellspacing="0" border="1" cellpadding="5" class="siroka">
   <caption>Záznam èíslo ${REL_RECORD_index+1}</caption>
   <tr>
     <td colspan="2">Tento záznam pøidal <a href="http://www.abclinuxu.cz/Profile/${who.id}">${who.name}</a>
