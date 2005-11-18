@@ -144,6 +144,7 @@
                                 <entry key="zpravicky" value="auto/zpravicky.rss"/>
                                 <entry key="faq" value="auto/faq.rss"/>
                                 <entry key="blog" value="auto/blog.rss"/>
+                                <entry key="ankety" value="auto/ankety.rss"/>
                                 <entry key="blogs" value="auto/blog/"/>
                                 <entry key="trafika" value="auto/abc.dat"/>
                                 <entry key="anneca" value="auto/abc2.dat"/>

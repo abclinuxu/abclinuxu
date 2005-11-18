@@ -31,6 +31,7 @@ import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.scheduler.VariableFetcher;
 
 import java.util.prefs.Preferences;
@@ -62,11 +63,12 @@ public class FeedGenerator implements Configurable {
     static final String PREF_BLOGS = "blogs";
     static final String PREF_TRAFIKA = "trafika";
     static final String PREF_NEWS = "zpravicky";
+    static final String PREF_POLLS = "ankety";
     static final String PREF_FAQ = "faq";
     static final String PREF_NEWS_WORD_LIMIT = "news.word.limit";
 
     static String fileDiscussions, fileArticles, fileDrivers, fileHardware, fileBlog, dirBlogs, fileTrafika;
-    static String fileNews, fileFaq;
+    static String fileNews, fileFaq, filePolls;
     static int feedLength = 10, newsWordLimit;
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new FeedGenerator());
@@ -462,6 +464,51 @@ public class FeedGenerator implements Configurable {
     }
 
     /**
+     * Generates RSS feed for discussion forum
+     */
+    public static void updatePolls() {
+        try {
+            SyndFeed feed = new SyndFeedImpl();
+            feed.setFeedType(TYPE_RSS_1_0);
+            feed.setEncoding("UTF-8");
+            feed.setTitle("abclinuxu - ankety");
+            feed.setLink("http://www.abclinuxu.cz/ankety");
+            feed.setDescription("Seznam anket na portálu www.abclinuxu.cz");
+            List entries = new ArrayList();
+            feed.setEntries(entries);
+
+            SyndEntry entry;
+            String title;
+
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
+            List list = SQLTool.getInstance().findStandalonePollRelations(qualifiers);
+            Tools.syncList(list);
+            for (Iterator iter = list.iterator(); iter.hasNext();) {
+                Relation relation = (Relation) iter.next();
+                entry = new SyndEntryImpl();
+                String url = relation.getUrl();
+                if (url==null)
+                    url = UrlUtils.PREFIX_POLLS+"/show/"+relation.getId();
+                entry.setLink("http://www.abclinuxu.cz" + url);
+
+                Poll poll = (Poll) relation.getChild();
+                title = Tools.removeTags(poll.getText());
+                entry.setTitle(title);
+                entry.setPublishedDate(poll.getCreated());
+                entries.add(entry);
+            }
+
+            String path = AbcConfig.calculateDeployedPath(filePolls);
+            Writer writer = getWriter(path);
+            SyndFeedOutput output = new SyndFeedOutput();
+            output.output(feed, writer);
+            writer.close();
+        } catch (Exception e) {
+            log.error("Chyba pri generovani RSS pro ankety", e);
+        }
+    }
+
+    /**
      * Create SyndEntry from blog story.
      * @return SyndEntry with link to selected story.
      */
@@ -512,12 +559,13 @@ public class FeedGenerator implements Configurable {
         fileTrafika = prefs.get(PREF_TRAFIKA, null);
         fileNews = prefs.get(PREF_NEWS, null);
         fileFaq = prefs.get(PREF_FAQ, null);
+        filePolls = prefs.get(PREF_POLLS, null);
         newsWordLimit = prefs.getInt(PREF_NEWS_WORD_LIMIT, 10);
     }
 
     public static void main(String[] args) {
         if (args==null || args.length==0) {
-            System.out.println("Enter one of hardware, articles, blog, blogs, drivers, news, faq or forum as an argument!");
+            System.out.println("Enter one of hardware, articles, blog, blogs, drivers, news, faq, polls or forum as an argument!");
             System.exit(1);
         }
         Arrays.sort(args);
@@ -535,6 +583,8 @@ public class FeedGenerator implements Configurable {
             updateNews();
         if (Arrays.binarySearch(args, "faq")>=0)
             updateFAQ();
+        if (Arrays.binarySearch(args, "polls")>=0)
+            updatePolls();
         if (Arrays.binarySearch(args, "blogs")>=0) {
             Persistance persistance = PersistanceFactory.getPersistance();
             Relation top = (Relation) persistance.findById(new Relation(Constants.REL_BLOGS));
