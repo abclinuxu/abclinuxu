@@ -480,7 +480,7 @@ public class FeedGenerator implements Configurable {
             SyndEntry entry;
             String title;
 
-            Qualifier[] qualifiers = new Qualifier[]{Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
             List list = SQLTool.getInstance().findStandalonePollRelations(qualifiers);
             Tools.syncList(list);
             for (Iterator iter = list.iterator(); iter.hasNext();) {

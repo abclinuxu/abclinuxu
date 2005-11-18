@@ -42,6 +42,7 @@ import java.util.List;
 /**
  * User: literakl
  * Date: 3.7.2005
+ * TODO: mozna to presunout do History
  */
 public class ViewPolls implements AbcAction {
     public static final String PARAM_RELATION_ID_SHORT = "rid";
@@ -88,10 +89,11 @@ public class ViewPolls implements AbcAction {
         count = Misc.limit(count, 1, 50);
 
         SQLTool sqlTool = SQLTool.getInstance();
-        Qualifier[] qualifiers = new Qualifier[]{Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
+        Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
         List polls = sqlTool.findStandalonePollRelations(qualifiers);
         int total = sqlTool.countStandalonePollRelations();
         Tools.syncList(polls);
+        Tools.initializeChildren(polls);
 
         Paging paging = new Paging(polls, from, count, total);
         env.put(VAR_POLLS, paging);

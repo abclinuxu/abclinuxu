@@ -146,10 +146,11 @@ public interface Persistance {
     public void incrementCounter(GenericObject obj);
 
     /**
-     * Increments counter for specified choice od the poll.
+     * Increment counter for one or more PollChoices of the same Poll.
+     * @param choices list of PollChoices. They must have valid poll and id properties.
      * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
      */
-    public void incrementCounter(PollChoice choice);
+    public void incrementPollChoicesCounter(List choices);
 
     /**
      * @return Actual value of counter for specified object.

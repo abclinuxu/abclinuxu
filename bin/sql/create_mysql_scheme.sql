@@ -101,6 +101,26 @@ CREATE TABLE objekt (
  vlastnik INT NOT NULL                  -- majitel objektu
 );
 
+-- tabulka obsahujici anketu
+CREATE TABLE anketa2 (
+ cislo INT AUTO_INCREMENT PRIMARY KEY,   -- identifikator ankety
+ vice CHAR(1),                           -- logicka, NULL pro FALSE, povoluje vice hlasu
+ uzavrena CHAR(1),                       -- logicka, NULL pro FALSE
+ pridal INT(6) NOT NULL,                 -- odkaz na vlastnika
+ vytvoreno DATETIME NOT NULL,            -- datum vytvoreni ankety
+ hlasu SMALLINT DEFAULT 0,               -- celkovy pocet hlasujicich
+ volba1 SMALLINT DEFAULT 0,              -- pocet hlasu pro volbu
+ volba2 SMALLINT DEFAULT 0,              -- pocet hlasu pro volbu
+ volba3 SMALLINT DEFAULT 0,              -- pocet hlasu pro volbu
+ volba4 SMALLINT DEFAULT 0,              -- pocet hlasu pro volbu
+ volba5 SMALLINT DEFAULT 0,              -- pocet hlasu pro volbu
+ volba6 SMALLINT DEFAULT 0,              -- pocet hlasu pro volbu
+ volba7 SMALLINT DEFAULT 0,              -- pocet hlasu pro volbu
+ volba8 SMALLINT DEFAULT 0,              -- pocet hlasu pro volbu
+ volba9 SMALLINT DEFAULT 0,              -- pocet hlasu pro volbu
+ volba10 SMALLINT DEFAULT 0,             -- pocet hlasu pro volbu
+ data LONGTEXT NOT NULL                  -- XML s otazkou a odpovedmi
+);
 
 -- definice ankety
 CREATE TABLE anketa (

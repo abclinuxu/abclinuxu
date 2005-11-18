@@ -697,10 +697,10 @@ public class Tools implements Configurable {
             if (!Misc.empty(classFilter))
                 relations = new ArrayList(relations);
 
-        boolean itemYes, recordYes, categoryYes, userYes;
-        itemYes = recordYes = categoryYes = userYes = false;
+        boolean itemYes, recordYes, categoryYes, userYes, pollsYes;
+        itemYes = recordYes = categoryYes = userYes = pollsYes = false;
         if (Misc.empty(classFilter))
-            itemYes = recordYes = categoryYes = userYes = true;
+            itemYes = recordYes = categoryYes = userYes = pollsYes = true;
         else {
             StringTokenizer stk = new StringTokenizer(classFilter);
             while (stk.hasMoreTokens()) {
@@ -713,6 +713,8 @@ public class Tools implements Configurable {
                     categoryYes = true;
                 else if ("User".equalsIgnoreCase(className))
                     userYes = true;
+                else if ("Poll".equalsIgnoreCase(className))
+                    pollsYes = true;
             }
         }
 
@@ -733,6 +735,9 @@ public class Tools implements Configurable {
                 iterator.remove();
                 continue;
             } else if (child instanceof Category && !categoryYes) {
+                iterator.remove();
+                continue;
+            } else if (child instanceof Poll && !pollsYes) {
                 iterator.remove();
                 continue;
             } else if (child instanceof User && !userYes) {
@@ -774,6 +779,8 @@ public class Tools implements Configurable {
                     Misc.storeToMap(map,Constants.TYPE_DOCUMENTS,relation);
             } else if ( child instanceof Record )
                 Misc.storeToMap(map,Constants.TYPE_RECORD,relation);
+            else if ( child instanceof Poll )
+                Misc.storeToMap(map,Constants.TYPE_POLL, relation);
             else if ( child instanceof User )
                 Misc.storeToMap(map,Constants.TYPE_USER,relation);
         }

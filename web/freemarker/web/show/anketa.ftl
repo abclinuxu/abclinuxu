@@ -15,7 +15,7 @@
 
 <table class="ank" border="0" cellpadding="3">
  <#list POLL.choices as choice>
-  <#assign procento=TOOL.percent(choice.count,POLL.totalVotes)>
+  <#assign procento=TOOL.percent(choice.count,POLL.totalVoters)>
   <tr>
    <td>${choice.text}</td>
    <td>
@@ -28,7 +28,7 @@
  </#list>
 </table>
 
-<p>Celkem ${POLL.totalVotes} hlasù<br />
+<p>Celkem ${POLL.totalVoters} hlasù<br />
 Vytvoøeno: ${DATE.show(POLL.created, "CZ_FULL")}</p>
 
 <#if CHILDREN.discussion?exists>

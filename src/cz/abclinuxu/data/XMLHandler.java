@@ -71,24 +71,35 @@ public class XMLHandler implements Cloneable {
     }
 
     /**
+     * @return XML document converted to String
+     */
+    public static String getDocumentAsString(Document document) {
+        if (document==null)
+            return "";
+        return formatDocumentToString(document);
+    }
+
+    /**
      * @return XML data in String format
      */
     public String getDataAsString() {
-        try {
-            if ( data==null ) {
-                return (stringData==null)? "":stringData;
-            }
+        if ( data==null )
+            return (stringData==null)? "" : stringData;
+        return formatDocumentToString(data);
+    }
 
+    private static String formatDocumentToString(Document document) {
+        try {
             ByteArrayOutputStream os = new ByteArrayOutputStream();
-            OutputFormat format = new OutputFormat(null,false,"ISO-8859-2");
+            OutputFormat format = new OutputFormat(null, false, "ISO-8859-2");
             format.setSuppressDeclaration(true);
             XMLWriter writer = new XMLWriter(os,format);
 
-            writer.write(data);
+            writer.write(document);
             String result = os.toString();
             return result;
         } catch (Exception e) {
-            log.error("Nemohu prevest XML data na string! "+data.toString(),e);
+            log.error("Nemohu prevest XML data na string! "+document.toString(),e);
             return "";
         }
     }

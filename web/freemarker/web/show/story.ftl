@@ -1,7 +1,11 @@
 <#import "../macros.ftl" as lib>
-<#assign intro=TOOL.xpath(BLOG,"//custom/intro")?default("UNDEF")>
-<#assign title=TOOL.xpath(BLOG,"//custom/title")?default("UNDEF")>
-<#assign owner=TOOL.createUser(BLOG.owner)>
+<#assign intro=TOOL.xpath(BLOG,"//custom/intro")?default("UNDEF"),
+        title=TOOL.xpath(BLOG,"//custom/title")?default("UNDEF"),
+        owner=TOOL.createUser(BLOG.owner),
+        CHILDREN=TOOL.groupByType(STORY.child.children),
+        category = STORY.child.subType?default("UNDEF"),
+        story_url = TOOL.getUrlForBlogStory(BLOG.subType, STORY.child.created, STORY.id)>
+<#if category!="UNDEF"><#assign category=TOOL.xpath(BLOG, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
 
 <#assign plovouci_sloupec>
 
@@ -107,6 +111,9 @@
     <#if USER?exists>
         <#if USER.id==BLOG.owner>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=add")}">Vlo¾ nový zápis</a></li>
+            <#if !CHILDREN.poll?exists>
+                <li><a href="${URL.noPrefix("/EditPoll?action=add&amp;rid="+STORY.id)}">Vytvoø anketu</a></li>
+            </#if>
         </#if>
         <#if USER.id==BLOG.owner || USER.hasRole("root")>
             <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=edit")}">Uprav zápis</a></li>
@@ -127,10 +134,6 @@
 
 <#include "../header.ftl">
 
-<#assign CHILDREN=TOOL.groupByType(STORY.child.children), category = STORY.child.subType?default("UNDEF")>
-<#assign url = TOOL.getUrlForBlogStory(BLOG.subType, STORY.child.created, STORY.id)>
-<#if category!="UNDEF"><#assign category=TOOL.xpath(BLOG, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
-
 <@lib.showMessages/>
 
 <h2>${TOOL.xpath(STORY.child, "/data/name")}</h2>
@@ -147,7 +150,12 @@
 <#if text!="UNDEF">${text}</#if>
 ${TOOL.xpath(STORY.child, "/data/content")}
 
-<p><b>Nástroje</b>: <a href="${url}?varianta=print">Tisk</a></p>
+<#if CHILDREN.poll?exists>
+    <h3>Anketa</h3>
+    <@lib.showPoll CHILDREN.poll[0], story_url />
+</#if>
+
+<p><b>Nástroje</b>: <a href="${story_url}?varianta=print">Tisk</a></p>
 
 <#if (STORY.child.type==12)>
     <h2>Komentáøe</h2>
@@ -167,13 +175,13 @@ ${TOOL.xpath(STORY.child, "/data/content")}
             <a href="#${diz.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a>,
         </#if>
 
-        <a href="${URL.make("/EditDiscussion?action=add&amp;dizId="+DISCUSSION.id+"&amp;threadId=0&amp;rid="+CHILDREN.discussion[0].id+"&amp;url="+url)}">
+        <a href="${URL.make("/EditDiscussion?action=add&amp;dizId="+DISCUSSION.id+"&amp;threadId=0&amp;rid="+CHILDREN.discussion[0].id+"&amp;url="+story_url)}">
         Vlo¾it dal¹í komentáø</a>,
 
         <#if USER?exists && TOOL.xpath(DISCUSSION,"//monitor/id[text()='"+USER.id+"']")?exists>
             <#assign monitorState="Pøestaò sledovat"><#else><#assign monitorState="Sleduj">
         </#if>
-        <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+CHILDREN.discussion[0].id+"&amp;url="+url)}"
+        <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+CHILDREN.discussion[0].id+"&amp;url="+story_url)}"
         title="AbcMonitor za¹le emailem zprávu, dojde-li v diskusi ke zmìnì">${monitorState}</a>
         <span title="Poèet lidí, kteøí sledují tuto diskusi">(${TOOL.getMonitorCount(DISCUSSION.data)})</span>
         </p>
@@ -182,7 +190,7 @@ ${TOOL.xpath(STORY.child, "/data/content")}
             <@lib.showThread thread, 0, DISCUSSION.id, CHILDREN.discussion[0].id, !frozen />
         </#list>
     <#else>
-        <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+STORY.id+"&amp;url="+url)}">Vlo¾it první komentáø</a>
+        <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+STORY.id+"&amp;url="+story_url)}">Vlo¾it první komentáø</a>
     </#if>
 </#if>
 

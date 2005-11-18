@@ -125,7 +125,8 @@
 
             <!-- ANKETA -->
             <#if VARS.currentPoll?exists>
-                <#assign relAnketa = VARS.currentPoll, anketa = relAnketa.child, total = anketa.totalVotes>
+                <#assign relAnketa = VARS.currentPoll, anketa = relAnketa.child, total = anketa.totalVoters,
+                         url=relAnketa.url?default("/ankety/show/"+relAnketa.id)>
                 <#if anketa.multiChoice><#assign type = "checkbox"><#else><#assign type = "radio"></#if>
                 <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1><a href="/ankety">Anketa</a></h1></div></div>
                 <div class="s_sekce">
@@ -134,18 +135,19 @@
                     <#list anketa.choices as choice>
                         <div class="ank-odpov">
                           <#assign procento = TOOL.percent(choice.count,total)>
-                          <label><input type=${type} name="voteId" value="${choice.id}">${choice.text}</label>&nbsp;(${procento}%)<br>
+                          <label><input type="${type}" name="voteId" value="${choice.id}">${choice.text}</label>&nbsp;(${procento}%)<br>
                           <div class="ank-sloup-okraj" style="width: ${procento}px">
                             <div class="ank-sloup"></div>
                           </div>
                         </div>
                     </#list>
-                    <input name="submit" type="submit" class="button" value="Hlasuj" src="/images/site2/vote_btn.gif" alt="Hlasuj"> &nbsp;Celkem ${total} hlasù<br>
-                    <input type="hidden" name="url" value="/clanky/show/${relAnketa.id}">
+                    <input name="submit" type="submit" class="button" value="Hlasuj" src="/images/site2/vote_btn.gif" alt="Hlasuj">
+                    &nbsp;Celkem ${total} hlasù<br>
+                    <input type="hidden" name="url" value="${url}">
                     <input type="hidden" name="action" value="vote">
                     </form>
                 </div>
-                <#assign diz=TOOL.findComments(anketa), url=relAnketa.url?default("/ankety/show/"+relAnketa.id)>
+                <#assign diz=TOOL.findComments(anketa)>
                 <div class="ls_zpr">&nbsp;<a href="${url}">Komentáøù:</a>
 		        ${diz.responseCount}<#if diz.responseCount gt 0>, poslední
 		        ${DATE.show(diz.updated,"CZ_SHORT")}</#if>

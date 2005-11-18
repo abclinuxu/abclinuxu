@@ -1,0 +1,3 @@
+<!ELEMENT data (name, choice+)>
+<!ELEMENT name (#PCDATA)> <!-- text of the question for poll -->
+<!ELEMENT choice (#PCDATA)> <!-- text of single choice -->

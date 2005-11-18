@@ -67,7 +67,6 @@ public final class SQLTool implements Configurable {
     public static final String PREF_USERS_IN_GROUP = "users.in.group";
     public static final String PREF_ITEMS_WITH_TYPE = "items.with.type";
     public static final String PREF_FAQ_SECTION_SIZE = "faq.section.size";
-    public static final String PREF_MAX_POLL = "max.poll";
     public static final String PREF_MAX_USER = "max.user";
     public static final String PREF_USER_BY_LOGIN = "user.by.login";
     public static final String PREF_COUNT_ARTICLES_BY_USER = "count.articles.by.user";
@@ -98,7 +97,7 @@ public final class SQLTool implements Configurable {
     private String relationsStandalonePolls;
     private String relationDictionaryByUrlName, relationByURL;
     private String usersWithWeeklyEmail, usersWithForumByEmail, usersWithRoles, usersInGroup;
-    private String maxPoll, maxUser, userByLogin, faqSectionSize;
+    private String maxUser, userByLogin, faqSectionSize;
     private String itemsByType;
     private String countArticlesByUser;
     private String insertLastComment, getLastComment, getXthComment, deleteOldComments;
@@ -915,30 +914,19 @@ public final class SQLTool implements Configurable {
     /**
      * Finds the last poll. If it is not active, null is returned.
      * @return last initialized poll, if it is active, null otherwise.
-     * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistant storage.
+     * @throws PersistanceException if there is an error with the underlying persistant storage.
      */
     public Relation findActivePoll() {
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
-        Connection con = null;
-        Statement statement = null;
-        ResultSet resultSet = null;
-        try {
-            con = persistance.getSQLConnection();
-            statement = con.createStatement();
-            resultSet = statement.executeQuery(maxPoll);
-            resultSet.next();
+        Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, 1)};
+        List relations = findStandalonePollRelations(qualifiers);
+        Relation relation = (Relation) relations.get(0);
 
-            int id = resultSet.getInt(1);
-            Poll poll = (Poll) persistance.findById(new Poll(id));
-            if (poll.isClosed())
-                return null;
-            List relations = persistance.findRelations(poll);
-            return (Relation) relations.get(0);
-        } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
-        } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
-        }
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Poll poll = (Poll) persistance.findById(relation.getChild());
+        if (poll.isClosed())
+            return null;
+        else
+            return relation;
     }
 
     /**
@@ -1307,7 +1295,6 @@ public final class SQLTool implements Configurable {
         usersWithRoles = getValue(PREF_USERS_WITH_ROLES, prefs);
         usersInGroup = getValue(PREF_USERS_IN_GROUP, prefs);
         faqSectionSize = getValue(PREF_FAQ_SECTION_SIZE, prefs);
-        maxPoll = getValue(PREF_MAX_POLL, prefs);
         maxUser = getValue(PREF_MAX_USER, prefs);
         userByLogin = getValue(PREF_USER_BY_LOGIN, prefs);
         itemsByType = getValue(PREF_ITEMS_WITH_TYPE, prefs);

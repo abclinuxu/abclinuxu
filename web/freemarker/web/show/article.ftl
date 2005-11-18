@@ -25,14 +25,17 @@ ${DATE.show(ITEM.created,"CZ_FULL")} | <a href="/Profile/${autor.id}">${autor.na
 <#if USER?exists && USER.hasRole("article admin")>
  <p>
   <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">Upravit</a>
-  <a href="${URL.noPrefix("/SelectRelation?prefix=/clanky&amp;url=/EditRelation&action=move&amp;rid="+RELATION.id)}">Pøesunout</a>
-  <a href="${URL.noPrefix("/EditRelation?action=remove&amp;prefix=/clanky&amp;rid="+RELATION.id)}">Smazat</a>
   <a href="${URL.make("/honorare/"+RELATION.id+"?action=add")}">Vlo¾it honoráø</a>
   <#if CHILDREN.royalties?exists>
    <#list CHILDREN.royalties as honorar>
     <a href="${URL.make("/honorare/"+honorar.id+"?action=edit")}">Upravit honoráø</a>
    </#list>
   </#if>
+  <#if !CHILDREN.poll?exists>
+      <a href="${URL.noPrefix("/EditPoll?action=add&amp;rid="+RELATION.id)}">Vytvoø anketu</a>
+  </#if>
+  <a href="${URL.noPrefix("/SelectRelation?prefix=/clanky&amp;url=/EditRelation&action=move&amp;rid="+RELATION.id)}">Pøesunout</a>
+  <a href="${URL.noPrefix("/EditRelation?action=remove&amp;prefix=/clanky&amp;rid="+RELATION.id)}">Smazat</a>
   <a href="${URL.make("/"+RELATION.id+".docb")}">Docbook</a>
   <a href="${URL.make("/edit/"+RELATION.id+"?action=showTalk")}">Rozhovor</a>
  </p>
@@ -48,6 +51,11 @@ ${DATE.show(ITEM.created,"CZ_FULL")} | <a href="/Profile/${autor.id}">${autor.na
 </div>
 
 ${TOOL.render(TEXT,USER?if_exists)}
+
+<#if CHILDREN.poll?exists>
+    <h3>Anketa</h3>
+    <@lib.showPoll CHILDREN.poll[0], RELATION.url?default("/clanky/show/"+RELATION.id) />
+</#if>
 
 <#if PAGES?exists>
  <div class="cl_perex">

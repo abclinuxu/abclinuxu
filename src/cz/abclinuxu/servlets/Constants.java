@@ -92,6 +92,7 @@ public interface Constants {
     String TYPE_CATEGORY = "category";
     String TYPE_RECORD = "record";
     String TYPE_USER = "user";
+    String TYPE_POLL = "poll";
 
     // template variables
 

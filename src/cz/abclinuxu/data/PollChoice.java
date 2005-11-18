@@ -30,10 +30,14 @@ public class PollChoice {
     /** number of votes for this choice */
     protected int count;
 
-    /** associated poll's id */
+    /**
+     * associated poll's id
+     */
     protected int poll;
 
-    /** order of choice in the poll, used by incrementCounter */
+    /**
+     * Position of choice in the poll, used by incrementCounter.
+     **/
     protected int id;
 
 

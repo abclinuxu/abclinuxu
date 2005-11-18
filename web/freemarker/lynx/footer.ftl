@@ -3,7 +3,7 @@
 <hr width="100%">
 
 <#if VARS.currentPoll?exists>
- <#assign relAnketa = VARS.currentPoll, anketa = relAnketa.child, total = anketa.totalVotes>
+ <#assign relAnketa = VARS.currentPoll, anketa = relAnketa.child, total = anketa.totalVoters>
  <#if anketa.multiChoice>
   <#assign type = "CHECKBOX">
   <#else>

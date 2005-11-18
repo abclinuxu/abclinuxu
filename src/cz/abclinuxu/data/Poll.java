@@ -32,8 +32,14 @@ public class Poll extends GenericObject {
     public static final int SURVEY = 1;
     public static final int RATING = 2;
 
-    /** Specifies type of Item. You must set it, before you stores it with Persistance! */
-    int type = 0;
+    /**
+     * total number of voting user
+     */
+    int totalVoters = 0;
+    /**
+     * Id of owner of this object
+     */
+    int owner = 0;
     /** question of the poll */
     protected String text;
     /** Indicates, that poll is closed and no further voting is possible */
@@ -52,11 +58,6 @@ public class Poll extends GenericObject {
 
     public Poll(int id) {
         super(id);
-    }
-
-    public Poll(int id, int type) {
-        super(id);
-        this.type = type;
     }
 
     /**
@@ -130,29 +131,17 @@ public class Poll extends GenericObject {
     }
 
     /**
-     * @return sum of votes of all poll choices
+     * @return number of users who voted in this poll
      */
-    public int getTotalVotes() {
-        int sum = 0;
-
-        for (int i = 0; i<choices.length; i++) {
-            sum += choices[i].count;
-        }
-        return sum;
+    public int getTotalVoters() {
+        return totalVoters;
     }
 
     /**
-     * @return Type of Record
+     * Set number of users who voted in this poll
      */
-    public int getType() {
-        return type;
-    }
-
-    /**
-     * Sets type of Record
-     */
-    public void setType(int type) {
-        this.type = type;
+    public void setTotalVoters(int totalVoters) {
+        this.totalVoters = totalVoters;
     }
 
     /**
@@ -170,6 +159,22 @@ public class Poll extends GenericObject {
     }
 
     /**
+     * Gets owner of this poll.
+     * @return id of owner of this poll
+     */
+    public int getOwner() {
+        return owner;
+    }
+
+    /**
+     * Sets owner of this poll.
+     * @param owner if of owner of this poll
+     */
+    public void setOwner(int owner) {
+        this.owner = owner;
+    }
+
+    /**
      * Initialize this object with values from <code>obj</code>, if
      * this.getClass.equals(obj.getClass()).
      */
@@ -182,26 +187,23 @@ public class Poll extends GenericObject {
         closed = b.isClosed();
         multiChoice = b.isMultiChoice();
         created = b.getCreated();
-        type = b.getType();
+        totalVoters = b.getTotalVoters();
         choices = b.getChoices();
     }
 
     public String toString() {
-        StringBuffer sb = new StringBuffer();
-        switch ( type ) {
-            case 1: sb.append("Survey");break;
-            case 2: sb.append("Rating");break;
-            default: sb.append("Poll");
-        }
-        sb.append(": id="+id);
-        if ( text!=null ) sb.append(",text="+text);
-        sb.append(",closed="+closed);
-        sb.append(",multichoice="+multiChoice);
+        StringBuffer sb = new StringBuffer("Poll");
+        sb.append(": id=").append(id);
+        if ( text!=null ) sb.append(",text=").append(text);
+        if (closed)
+            sb.append(",closed");
+        if (multiChoice)
+            sb.append(",multiple choices allowed");
         if ( choices!=null ) {
             sb.append(" [");
             for (int i = 0; i < choices.length; i++) {
                 PollChoice choice = choices[i];
-                sb.append(choice.text+":"+choice.count);
+                sb.append(choice.text).append(":").append(choice.count);
                 if ( i<choices.length-1 ) sb.append("|");
             }
             sb.append("]");
@@ -212,9 +214,8 @@ public class Poll extends GenericObject {
     public boolean preciseEquals(Object o) {
         if ( !( o instanceof Poll) ) return false;
         if ( id!=((GenericObject)o).getId() ) return false;
-        if ( type!=((Poll)o).getType() ) return false;
-        if ( ! Misc.same(this.text,((Poll)o).getText()) ) return false;
-        return true;
+        if ( totalVoters!=((Poll)o).getTotalVoters() ) return false;
+        return Misc.same(this.text, ((Poll) o).getText());
     }
 
     public int hashCode() {

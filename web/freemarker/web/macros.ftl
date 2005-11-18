@@ -130,3 +130,26 @@ prosim poslete mi URL a popis, jak jste na tuto stranku narazili
     <#elseif month=="12">prosinec
     </#if>
 </#macro>
+
+<#macro showPoll (relation url=relation.url?default("/ankety/show/"+relation.id))>
+    <#assign anketa = relation.child, total = anketa.totalVoters>
+    <#if anketa.multiChoice><#assign type = "checkbox"><#else><#assign type = "radio"></#if>
+    <div>
+        <form action="${URL.noPrefix("/EditPoll/"+relation.id)}" method="POST">
+        <div class="ank-otazka">${anketa.text}</div>
+        <#list anketa.choices as choice>
+            <div class="ank-odpov">
+              <#assign procento = TOOL.percent(choice.count,total)>
+              <label><input type="${type}" name="voteId" value="${choice.id}">${choice.text}</label>&nbsp;(${procento}%)<br>
+              <div class="ank-sloup-okraj" style="width: ${procento}px">
+                <div class="ank-sloup"></div>
+              </div>
+            </div>
+        </#list>
+        <input name="submit" type="submit" class="button" value="Hlasuj" src="/images/site2/vote_btn.gif" alt="Hlasuj">
+        Celkem ${total} hlasù<br>
+        <input type="hidden" name="url" value="${url}">
+        <input type="hidden" name="action" value="vote">
+        </form>
+    </div>
+</#macro>

@@ -120,10 +120,10 @@ public class ShowObject implements AbcAction {
         List parents = persistance.findParents(relation);
         env.put(VAR_PARENTS, parents);
 
-        if ( (relation.getParent() instanceof Item) || ( relation.getChild() instanceof Item ) )
-            return processItem(env, relation, request, response);
-        else if ( relation.getChild() instanceof Poll )
+        if (relation.getChild() instanceof Poll)
             return ViewPolls.processPoll(env, relation, request);
+        else if ( (relation.getParent() instanceof Item) || ( relation.getChild() instanceof Item ) )
+            return processItem(env, relation, request, response);
         else if ( relation.getParent() instanceof Category ) {
             if (relation.getId()==Constants.REL_POLLS)
                 return ViewPolls.processPolls(env, request);
@@ -149,7 +149,8 @@ public class ShowObject implements AbcAction {
         } else if ( relation.getParent() instanceof Item ) {
             item = (Item) relation.getParent();
             upper = new Relation(relation.getUpper());
-            record = (Record) relation.getChild();
+            if (relation.getChild() instanceof Record)
+                record = (Record) relation.getChild();
         }
 
         Tools.sync(item);

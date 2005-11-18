@@ -30,6 +30,10 @@ import cz.abclinuxu.persistance.Cache;
 import cz.abclinuxu.persistance.Nursery;
 import org.logicalcobwebs.proxool.ProxoolException;
 import org.logicalcobwebs.proxool.ProxoolFacade;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
 
 /**
  * This class provides persistance backed up by MySQl database. You should consult
@@ -178,7 +182,7 @@ public class MySqlPersistance implements Persistance {
      * @throws PersistanceException
      */
     public List findRelations(GenericObject child) throws PersistanceException {
-        Connection con = null;Statement statement = null;ResultSet resultSet = null;
+        Connection con; Statement statement = null;ResultSet resultSet = null;
         con = getSQLConnection();
         List found = new ArrayList(5);
 
@@ -315,8 +319,8 @@ public class MySqlPersistance implements Persistance {
     }
 
     public Relation[] findByExample(Relation example) {
-        Connection con = null; Statement statement = null; ResultSet resultSet = null;
-        con = getSQLConnection();
+        Statement statement = null; ResultSet resultSet = null;
+        Connection con = getSQLConnection();
         List found = new ArrayList(5);
 
         StringBuffer sb = new StringBuffer("select * from relace where ");
@@ -358,8 +362,7 @@ public class MySqlPersistance implements Persistance {
             Relation[] relations = new Relation[found.size()];
             int i = 0;
             for (Iterator iter = found.iterator(); iter.hasNext();) {
-                Relation relation = (Relation) iter.next();
-                relations[i++] = relation;
+                relations[i++] = (Relation) iter.next();
             }
 
             return relations;
@@ -384,12 +387,6 @@ public class MySqlPersistance implements Persistance {
                 statement = con.prepareStatement("delete from "+getTable(obj)+" where cislo=?");
                 statement.setInt(1,obj.getId());
                 statement.executeUpdate();
-
-                if ( obj instanceof Poll ) {
-                    statement = con.prepareStatement("delete from data_ankety where anketa=?");
-                    statement.setInt(1,obj.getId());
-                    statement.executeUpdate();
-                }
 
                 // if relation.getChild() became unreferenced, delete that child
                 if ( obj instanceof Relation ) {
@@ -438,6 +435,7 @@ public class MySqlPersistance implements Persistance {
         List categories = null;
         List links = null;
         List servers = null;
+        List polls = null;
 
         for (Iterator iter = list.iterator(); iter.hasNext();) {
             GenericObject obj = (GenericObject) iter.next();
@@ -479,7 +477,8 @@ public class MySqlPersistance implements Persistance {
                 users.add(obj);
                 type = "user";
             } else if (obj instanceof Poll) {
-                synchronize(obj);
+                if (polls == null) polls = new ArrayList(list.size());
+                polls.add(obj);
                 type = "poll";
             } else if (obj instanceof Data) {
                 synchronize(obj);
@@ -516,6 +515,10 @@ public class MySqlPersistance implements Persistance {
             if (users != null) {
                 Sorters2.byId(users);
                 syncUsers(users);
+            }
+            if (polls != null) {
+                Sorters2.byId(polls);
+                syncPolls(polls);
             }
             if (log.isDebugEnabled()) {
                 long end = System.currentTimeMillis();
@@ -560,36 +563,12 @@ public class MySqlPersistance implements Persistance {
                     Object o = conditions.get(i);
                     statement.setObject(i+1,o);
                 }
-                result = statement.executeUpdate();
+                statement.executeUpdate();
             }
         } catch ( SQLException e ) {
             log.error("Nepodarilo se zvysit citac pro "+obj,e);
         } finally {
             releaseSQLResources(con,statement,null);
-        }
-    }
-
-    public void incrementCounter(PollChoice choice) {
-        Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-        try {
-            con = getSQLConnection();
-
-            statement = con.prepareStatement("update data_ankety set pocet=pocet+1 where cislo=? and anketa=?");
-            statement.setInt(1,choice.getId());
-            statement.setInt(2,choice.getPoll());
-            statement.executeUpdate();
-
-            statement = con.prepareStatement("select pocet from data_ankety where cislo=? and anketa=?");
-            statement.setInt(1,choice.getId());
-            statement.setInt(2,choice.getPoll());
-
-            resultSet = statement.executeQuery();
-            resultSet.next();
-            choice.setCount(resultSet.getInt(1));
-        } catch ( SQLException e ) {
-            log.error("Nepodarilo se zvysit citac pro "+choice,e);
-        } finally {
-            releaseSQLResources(con,statement,resultSet);
         }
     }
 
@@ -806,7 +785,7 @@ public class MySqlPersistance implements Persistance {
             sb.append(idColumn);
             if (ids.size()==1) {
                 sb.append('=');
-                sb.append(ids.get(0));
+                sb.append(ids.get(1));
             } else {
                 sb.append(" in (");
                 for (Iterator iterIds = ids.iterator(); iterIds.hasNext();) {
@@ -827,7 +806,7 @@ public class MySqlPersistance implements Persistance {
     private void appendCreateParams(GenericObject obj, StringBuffer sb, List conditions ) {
         if (obj instanceof GenericDataObject) {
             GenericDataObject gdo = (GenericDataObject) obj;
-            sb.append("insert into "+getTable(obj)+" values(0,?,?,?,?,?,now())");
+            sb.append("insert into ").append(getTable(obj)).append(" values(0,?,?,?,?,?,now())");
             if ( !(obj instanceof Category) && gdo.getType()==0 ) {
                 log.warn("Type not set! "+obj.toString());
             }
@@ -874,7 +853,7 @@ public class MySqlPersistance implements Persistance {
             conditions.add(new Integer(((Link)obj).getServer()));
             conditions.add(((Link)obj).getText());
             conditions.add(((Link)obj).getUrl());
-            conditions.add(new Boolean(((Link)obj).isFixed()));
+            conditions.add(Boolean.valueOf(((Link) obj).isFixed()));
             conditions.add(new Integer(((Link)obj).getOwner()));
             long now = System.currentTimeMillis();
             conditions.add(new Timestamp(now));
@@ -916,8 +895,6 @@ public class MySqlPersistance implements Persistance {
                 sb.append("typ=?");
                 conditions.add(new Integer(gdo.getType()));
             }
-
-            return;
 
         } else if ( obj instanceof User ) {
             User user = (User) obj;
@@ -1010,49 +987,55 @@ public class MySqlPersistance implements Persistance {
         Connection con = null; PreparedStatement statement = null;
 
         try {
-            PollChoice[] choices = poll.getChoices();
-            if ( choices==null || choices.length<2 ) {
-                log.error("Anketa musi mit nejmene dve volby!"+poll);
-                throw new InvalidDataException("Anketa musi mit nejmene dve volby!");
-            }
-
             con = getSQLConnection();
-            statement = con.prepareStatement("insert into anketa values(0,?,?,?,?,?)");
+            statement = con.prepareStatement("insert into anketa2 values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
-            statement.setInt(1,poll.getType() );
-            if ( poll.getType()==0 ) {
-                log.warn("Type is not set! "+poll.toString());
-            }
-
-            statement.setString(2,poll.getText());
-            statement.setBoolean(3,poll.isMultiChoice());
-            long when = 0;
+            statement.setInt(1, poll.getId());
+            statement.setBoolean(2, poll.isMultiChoice());
+            statement.setBoolean(3, poll.isClosed());
+            statement.setInt(4, poll.getOwner());
+            long when;
             if (poll.getCreated()!=null) {
                 when = poll.getCreated().getTime();
             } else {
                 when = System.currentTimeMillis();
                 poll.setCreated(new java.util.Date(when));
             }
-            statement.setTimestamp(4,new Timestamp(when));
-            statement.setBoolean(5,poll.isClosed());
+            statement.setTimestamp(5, new Timestamp(when));
+            statement.setInt(6, poll.getTotalVoters());
+
+            PollChoice[] choices = poll.getChoices();
+            if ( choices==null || choices.length<1 )
+                throw new InvalidDataException("Anketa musi mit nejmene jednu volbu!");
+
+            Document document = DocumentHelper.createDocument();
+            Element root = document.addElement("data");
+            root.addElement("name").setText(poll.getText());
+
+            int i = 0;
+            for (; i < choices.length; i++) {
+                PollChoice choice = choices[i];
+                statement.setInt(7+i, choice.getCount());
+                root.addElement("choice").setText(choice.getText());
+            }
+            for (; i<10; i++)
+                statement.setInt(7+i, 0);
+
+            String formatted = XMLHandler.getDocumentAsString(document);
+            statement.setString(17, formatted);
 
             int result = statement.executeUpdate();
             if ( result==0 ) {
                 throw new PersistanceException("Nepodarilo se vlozit anketu do databaze!");
             }
 
-            setAutoId(poll,statement);
+            if (poll.getId()==0)
+                setAutoId(poll, statement);
 
-            statement = con.prepareStatement("insert into data_ankety values(?,?,?,?)");
-            for ( int i=0; i<choices.length; i++ ) {
-                statement.clearParameters();
-                statement.setInt(1,i);
-                statement.setInt(2,poll.getId());
-                statement.setString(3,choices[i].getText());
-                statement.setInt(4,choices[i].getCount());
-
-                result = statement.executeUpdate();
-                choices[i].setPoll(poll.getId());
+            for (i = 0; i < choices.length; i++) {
+                PollChoice choice = choices[i];
+                choice.setPoll(poll.getId());
+                choice.setId(i);
             }
         } finally {
             releaseSQLResources(con,statement,null);
@@ -1140,7 +1123,7 @@ public class MySqlPersistance implements Persistance {
                 throw new NotFoundException("Polozka "+obj.getId()+" nebyla nalezena!");
             }
 
-            GenericDataObject item = null;
+            GenericDataObject item;
             if (obj instanceof Category)
                 item = new Category(obj.getId());
             else if (obj instanceof Item)
@@ -1216,7 +1199,7 @@ public class MySqlPersistance implements Persistance {
 
         String tmp = resultSet.getString(4);
         tmp = insertEncoding(tmp);
-        item.setData(new String(tmp));
+        item.setData(tmp);
 
         item.setOwner(resultSet.getInt(5));
         item.setCreated(new java.util.Date(resultSet.getTimestamp(6).getTime()));
@@ -1300,7 +1283,7 @@ public class MySqlPersistance implements Persistance {
         String tmp = resultSet.getString(8);
         if ( tmp!=null ) {
             tmp = insertEncoding(tmp);
-            relation.setData(new String(tmp));
+            relation.setData(tmp);
         }
         relation.setInitialized(true);
     }
@@ -1410,7 +1393,7 @@ public class MySqlPersistance implements Persistance {
 
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from anketa where cislo=?");
+            statement = con.prepareStatement("select * from anketa2 where cislo=?");
             statement.setInt(1,obj.getId());
 
             resultSet = statement.executeQuery();
@@ -1418,32 +1401,121 @@ public class MySqlPersistance implements Persistance {
                 throw new NotFoundException("Anketa "+obj.getId()+" nebyla nalezena!");
             }
 
-            Poll poll = new Poll(obj.getId(),resultSet.getInt(2));
-            poll.setText(new String(resultSet.getString(3)));
-            poll.setMultiChoice(resultSet.getBoolean(4));
-            poll.setCreated(new java.util.Date(resultSet.getTimestamp(5).getTime()));
-            poll.setClosed(resultSet.getBoolean(6));
-
-            statement = con.prepareStatement("select volba,pocet from data_ankety where anketa=? order by cislo asc");
-            statement.setInt(1,obj.getId());
-
-            resultSet = statement.executeQuery();
-            List choices = new ArrayList();
-            while ( resultSet.next() ) {
-                PollChoice choice = new PollChoice(resultSet.getString(1));
-                choice.setCount(resultSet.getInt(2));
-                choice.setPoll(obj.getId());
-                choices.add(choice);
-            }
-            if ( choices.size()==0 ) {
-                throw new InvalidDataException("Anketa "+obj.getId()+" nema zadne volby!");
-            }
-            poll.setChoices(choices);
+            Poll poll = new Poll(obj.getId());
+            syncPollFromRS(poll, resultSet);
             poll.setInitialized(true);
-
             return poll;
         } finally {
             releaseSQLResources(con,statement,resultSet);
+        }
+    }
+
+    /**
+     * Synchronizes specified Polls from database.
+     * @param polls
+     */
+    protected void syncPolls(List polls) throws SQLException {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet rs = null;
+        try {
+            con = getSQLConnection();
+            statement = con.prepareStatement("select * from anketa2 where cislo in " + getInCondition(polls.size()) + " order by cislo");
+            int i = 1;
+            for (Iterator iter = polls.iterator(); iter.hasNext();) {
+                Poll poll = (Poll) iter.next();
+                statement.setInt(i++, poll.getId());
+            }
+            rs = statement.executeQuery();
+
+            for (Iterator iter = polls.iterator(); iter.hasNext();) {
+                Poll poll = (Poll) iter.next();
+                if (!rs.next() || rs.getInt(1) != poll.getId())
+                    throw new NotFoundException("Anketa " + poll.getId() + " nebyla nalezena!");
+                syncPollFromRS(poll, rs);
+                cache.store(poll);
+            }
+        } finally {
+            releaseSQLResources(con, statement, rs);
+        }
+    }
+
+    protected void syncPollFromRS(Poll poll, ResultSet resultSet) throws SQLException {
+        String tmp = resultSet.getString(17);
+        try {
+            tmp = insertEncoding(tmp);
+            Document data = DocumentHelper.parseText(tmp);
+            Element root = data.getRootElement();
+            Element element = root.element("name");
+            poll.setText(element.getText());
+
+            int i = 0;
+            List choices = new ArrayList();
+            List elements = root.elements("choice");
+            for (Iterator iter = elements.iterator(); iter.hasNext();) {
+                element = (Element) iter.next();
+                PollChoice choice = new PollChoice(element.getText());
+                choice.setCount(resultSet.getInt(7 + i));
+                choice.setPoll(poll.getId());
+                choice.setId(i);
+                choices.add(choice);
+                i++;
+            }
+            poll.setChoices(choices);
+        } catch (DocumentException e) {
+            log.error(e.getMessage(), e);
+            throw new SQLException("Chyba pøi ètení ankety!");
+        }
+
+        poll.setMultiChoice(resultSet.getBoolean(2));
+        poll.setClosed(resultSet.getBoolean(3));
+        poll.setOwner(resultSet.getInt(4));
+        poll.setCreated(new java.util.Date(resultSet.getTimestamp(5).getTime()));
+        poll.setTotalVoters(resultSet.getInt(6));
+    }
+
+    /**
+     * Increment counter for one or more PollChoices of the same Poll.
+     * @param choices list of PollChoices. They must have valid poll and id properties.
+     */
+    public void incrementPollChoicesCounter(List choices) {
+        if (choices == null || choices.size() == 0)
+            return;
+        PollChoice firstChoice = (PollChoice) choices.get(0);
+
+        Connection con = null;
+        Statement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = getSQLConnection();
+            statement = con.createStatement();
+
+            StringBuffer sql = new StringBuffer("update anketa2 set hlasu=hlasu+1, ");
+            for (Iterator iter = choices.iterator(); iter.hasNext();) {
+                PollChoice choice = (PollChoice) iter.next();
+                String column = "volba" + (choice.getId() + 1);
+                sql.append(column).append("=").append(column).append("+1");
+                if (iter.hasNext())
+                    sql.append(',');
+            }
+            sql.append(" where cislo=");
+            sql.append(firstChoice.getPoll());
+            statement.executeUpdate(sql.toString());
+
+            resultSet = statement.executeQuery("select * from anketa2 where cislo=" + firstChoice.getPoll());
+            resultSet.next();
+            Poll poll = (Poll) findById(new Poll(firstChoice.getPoll()));
+            poll.setTotalVoters(resultSet.getInt(6));
+            for (int i = 0; i < poll.getChoices().length; i++) {
+                PollChoice choice = poll.getChoices()[i];
+                choice.setCount(resultSet.getInt(7 + choice.getId()));
+            }
+
+            cache.store(poll);
+        } catch (SQLException e) {
+            log.error("Nepodarilo se zvysit citac pro " + firstChoice, e);
+        } finally {
+            releaseSQLResources(con, statement, null);
         }
     }
 
@@ -1656,32 +1728,26 @@ public class MySqlPersistance implements Persistance {
 
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("update anketa set otazka=?,vice=?,uzavrena=? where cislo=?");
-            statement.setString(1,poll.getText());
+            statement = con.prepareStatement("update anketa2 set data=?,vice=?,uzavrena=? where cislo=?");
+
+            Document document = DocumentHelper.createDocument();
+            Element root = document.addElement("data");
+            root.addElement("name").setText(poll.getText());
+            PollChoice[] choices = poll.getChoices();
+            for (int i=0; i < choices.length; i++) {
+                PollChoice choice = choices[i];
+                root.addElement("choice").setText(choice.getText());
+            }
+            String formatted = XMLHandler.getDocumentAsString(document);
+
+            statement.setString(1, formatted);
             statement.setBoolean(2,poll.isMultiChoice());
             statement.setBoolean(3,poll.isClosed());
             statement.setInt(4,poll.getId());
 
             int result = statement.executeUpdate();
-            if ( result!=1 ) {
+            if ( result!=1 )
                 throw new PersistanceException("Nepodarilo se ulozit zmeny v "+poll.toString()+" do databaze!");
-            }
-
-            PollChoice[] choices = poll.getChoices();
-            if ( choices==null || choices.length<2 ) {
-                throw new InvalidDataException("Anketa musi mit nejmene dve volby!");
-            }
-
-            statement = con.prepareStatement("update data_ankety set volba=?,pocet=? where cislo=? and anketa=?");
-            for (int i = 0; i<choices.length; i++) {
-                PollChoice choice = choices[i];
-                statement.clearParameters();
-                statement.setString(1,choice.getText());
-                statement.setInt(2,choice.getCount());
-                statement.setInt(3,i);
-                statement.setInt(4,poll.getId());
-                result = statement.executeUpdate();
-            }
 
             cache.store(poll);
         } catch (SQLException e) {
@@ -1752,7 +1818,7 @@ public class MySqlPersistance implements Persistance {
      * Creates string in format "(?,?,?)"
      *
      * @param size number of question marks
-     * @return
+     * @return string for ids in IN condition
      */
     protected String getInCondition(int size) {
         StringBuffer sb = new StringBuffer();
@@ -1798,21 +1864,18 @@ public class MySqlPersistance implements Persistance {
         try {
             if ( rs!=null )
                 rs.close();
-            rs = null;
         } catch (Exception e) {
             log.warn("Problems while closing ResultSet!",e);
         }
         try {
             if ( statement!=null )
                 statement.close();
-            statement = null;
         } catch (Exception e) {
             log.warn("Problems while closing statement!",e);
         }
         try {
             if ( con!=null )
                 con.close();
-            con = null;
         } catch (Exception e) {
             log.warn("Problems while closing connection to database!",e);
         }
@@ -1857,7 +1920,7 @@ public class MySqlPersistance implements Persistance {
         } else if (obj instanceof User) {
             return "uzivatel";
         } else if (obj instanceof Poll) {
-            return "anketa";
+            return "anketa2";
         } else if (obj instanceof Server) {
             return "server";
         } else if (obj instanceof Data) {

@@ -32,6 +32,7 @@ import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AccessKeeper;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.AccessDeniedException;
 import cz.abclinuxu.AbcException;
@@ -48,11 +49,9 @@ public class EditPoll implements AbcAction {
     public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_POLL = "pollId";
     public static final String PARAM_QUESTION = "question";
-    public static final String PARAM_TYPE = "type";
     public static final String PARAM_MULTICHOICE = "multichoice";
     public static final String PARAM_CLOSED = "closed";
     public static final String PARAM_CHOICES = "choices";
-    public static final String PARAM_COUNTS = "counts";
     public static final String PARAM_URL = "url";
     public static final String PARAM_VOTE_ID = "voteId";
 
@@ -73,10 +72,10 @@ public class EditPoll implements AbcAction {
         String action = (String) params.get(PARAM_ACTION);
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
-        if (relation != null) {
-            relation = (Relation) persistance.findById(relation);
-            env.put(VAR_RELATION, relation);
-        }
+        if (relation == null)
+            throw new MissingArgumentException("Chybí parametr rid!");
+        relation = (Relation) persistance.findById(relation);
+        env.put(VAR_RELATION, relation);
 
         if ( ACTION_VOTE.equals(action) )
             return actionVote(request, response, env);
@@ -84,8 +83,15 @@ public class EditPoll implements AbcAction {
         // check permissions
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
-        // todo povolit, pokud uzivatel vlastni nadrazeny objekt
-        if ( !user.hasRole(Roles.POLL_ADMIN) )
+        boolean allowed = user.hasRole(Roles.POLL_ADMIN);
+        if (!allowed) {
+            GenericObject obj = relation.getChild();
+            if (obj instanceof GenericDataObject)
+                allowed = ((GenericDataObject)obj).getOwner() == user.getId();
+            else if (obj instanceof Poll)
+                allowed = ((Poll)obj).getOwner() == user.getId();
+        }
+        if ( !allowed )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if ( ACTION_ADD.equals(action) )
@@ -106,6 +112,8 @@ public class EditPoll implements AbcAction {
         throw new MissingArgumentException("Chybí parametr action!");
     }
 
+    // todo - kontrolovat validitu HTML
+
     /**
      * Creates new poll
      */
@@ -114,16 +122,15 @@ public class EditPoll implements AbcAction {
         Persistance persistance = PersistanceFactory.getPersistance();
         boolean error = false;
 
-        int type = Poll.SURVEY;
         boolean multiChoice = false;
+        User user = (User) env.get(Constants.VAR_USER);
         String text = (String) params.get(PARAM_QUESTION);
         List choices = (List) params.get(PARAM_CHOICES);
         Relation upperRelation = (Relation) env.get(VAR_RELATION);
 
-        String tmp = (String) params.get(PARAM_TYPE);
-        if ( "rating".equals(tmp) ) type = Poll.RATING;
-        tmp = (String) params.get(PARAM_MULTICHOICE);
-        if ( "yes".equals(tmp) ) multiChoice = true;
+        String tmp = (String) params.get(PARAM_MULTICHOICE);
+        if ( "yes".equals(tmp) )
+            multiChoice = true;
 
         if ( text==null || text.length()==0 ) {
             ServletUtils.addError(PARAM_QUESTION,"Nezadal jste otázku!",env, null);
@@ -132,16 +139,17 @@ public class EditPoll implements AbcAction {
 
         for (Iterator iter = choices.iterator(); iter.hasNext();) {
             String choice = (String) iter.next();
-            if ( choice==null || choice.length()==0 ) iter.remove();
+            if ( choice==null || choice.length()==0 )
+                iter.remove();
         }
 
-        if ( choices.size()<2 ) {
-            ServletUtils.addError(PARAM_CHOICES,"Vyplòte minimálnì dvì volby!",env, null);
+        if ( choices.size()<1 ) {
+            ServletUtils.addError(PARAM_CHOICES, "Vyplòte minimálnì jednu volbu!", env, null);
             error = true;
         }
 
         String url = (String) params.get(PARAM_URL);
-        if (url!=null && url.length()>0) {
+        if (upperRelation.getId()==Constants.REL_POLLS && url!=null && url.length()>0) {
             try {
                 url = UrlUtils.PREFIX_POLLS + "/" + URLManager.enforceLastURLPart(url);
                 url = URLManager.protectFromDuplicates(url);
@@ -149,19 +157,25 @@ public class EditPoll implements AbcAction {
                 ServletUtils.addError(PARAM_URL, e.getMessage(), env, null);
                 error = true;
             }
+        } else if (upperRelation.getUrl()!=null) {
+            url = upperRelation.getUrl() + "/anketa";
+            url = URLManager.protectFromDuplicates(url);
         }
 
         if ( error )
             return FMTemplateSelector.select("EditPoll","add",env,request);
 
-        Poll poll = new Poll(0,type);
+        Poll poll = new Poll(0);
         poll.setText(text);
         poll.setMultiChoice(multiChoice);
         poll.setClosed(false);
+        poll.setOwner(user.getId());
 
+        int i = 0;
         List pollChoices = new ArrayList(choices.size());
         for (Iterator iter = choices.iterator(); iter.hasNext();) {
             PollChoice choice = new PollChoice((String) iter.next());
+            choice.setId(i++);
             pollChoices.add(choice);
         }
         poll.setChoices(pollChoices);
@@ -173,13 +187,13 @@ public class EditPoll implements AbcAction {
         persistance.create(relation);
         relation.getParent().addChildRelation(relation);
 
-        if (redirect) {
-            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            if (url==null)
-                url = UrlUtils.PREFIX_POLLS + "/show/" + relation.getId();
-            urlUtils.redirect(response, url);
-        } else
-            env.put(VAR_RELATION, relation);
+        if (relation.getUpper()==Constants.REL_POLLS)
+            FeedGenerator.updatePolls();
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        if (url==null)
+            url = UrlUtils.PREFIX_POLLS + "/show/" + relation.getId();
+        urlUtils.redirect(response, url);
         return null;
     }
 
@@ -189,17 +203,10 @@ public class EditPoll implements AbcAction {
     protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
-        Relation upperRelation = (Relation) env.get(VAR_RELATION);
+        Relation relation = (Relation) env.get(VAR_RELATION);
         Poll poll = (Poll) env.get(VAR_POLL);
 
-        String tmp = (String) params.get(PARAM_TYPE);
-        if ( "rating".equals(tmp) ) {
-            poll.setType(Poll.RATING);
-        } else {
-            poll.setType(Poll.SURVEY);
-        }
-
-        tmp = (String) params.get(PARAM_MULTICHOICE);
+        String tmp = (String) params.get(PARAM_MULTICHOICE);
         poll.setMultiChoice( "yes".equals(tmp) );
 
         tmp = (String) params.get(PARAM_CLOSED);
@@ -211,22 +218,32 @@ public class EditPoll implements AbcAction {
         }
 
         List choices = (List) params.get(PARAM_CHOICES);
-        List counts = (List) params.get(PARAM_COUNTS);
-        PollChoice[] pollChoices = poll.getChoices();
+        List choicesList = Arrays.asList(poll.getChoices());
 
-        int max = choices.size();
-        for ( int i=0; i<max; i++ ) {
+        for ( int i=0; i<10; i++ ) {
             tmp = (String) choices.get(i);
-            if ( tmp!=null && tmp.length()>0 ) pollChoices[i].setText(tmp);
-            tmp = (String) counts.get(i);
-            if ( tmp!=null && tmp.length()>0 ) {
-                try { pollChoices[i].setCount(Integer.parseInt(tmp)); } catch (NumberFormatException e) {}
+            if ( tmp==null || tmp.length()==0 )
+                continue;
+            PollChoice choice = (PollChoice) choicesList.get(i);
+            if (choice==null) {
+                choice = new PollChoice(tmp);
+                choice.setPoll(poll.getId());
+                choice.setId(i);
+                choicesList.add(choice);
             }
+            else
+                choice.setText(tmp);
         }
-        PersistanceFactory.getPersistance().update(poll);
+
+        poll.setChoices(choicesList);
+        Persistance persistance = PersistanceFactory.getPersistance();
+        persistance.update(poll);
+
+        if (relation.getUpper() == Constants.REL_POLLS)
+            FeedGenerator.updatePolls();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/show/"+upperRelation.getId());
+        urlUtils.redirect(response, "/show/"+relation.getId());
         return null;
     }
 
@@ -261,19 +278,26 @@ public class EditPoll implements AbcAction {
             ServletUtils.addError(Constants.ERROR_GENERIC,"Nevybral jste ¾ádnou volbu!",env,request.getSession());
         } else {
             max = values.length;
-            if ( ! poll.isMultiChoice() ) max = 1;
+            if ( ! poll.isMultiChoice() )
+                max = 1;
         }
 
         if ( max>0 ) {
             try {
                 AccessKeeper.checkAccess(relation, user, "vote", request, response);
+                PollChoice[] choices = poll.getChoices();
+                List votesFor = new ArrayList();
                 for ( int i = 0; i<max; i++ ) {
                     String tmp = values[i];
                     if (tmp==null || tmp.length()==0)
                         continue;
                     int voteId = Integer.parseInt(tmp);
-                    PersistanceFactory.getPersistance().incrementCounter(poll.getChoices()[voteId]);
+                    if (voteId<choices.length)
+                        votesFor.add(choices[voteId]);
                 }
+
+                persistance.incrementPollChoicesCounter(votesFor);
+
                 ServletUtils.addMessage("Vá¹ hlas do ankety byl pøijat.", env, request.getSession());
             } catch (AccessDeniedException e) {
                 if (e.isIpAddressBlocked())

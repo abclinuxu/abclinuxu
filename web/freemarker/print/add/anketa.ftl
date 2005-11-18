@@ -17,13 +17,15 @@ Mù¾ete také povolit souèasné vybrání více mo¾ností.</p>
     <div class="error">${ERRORS.question?if_exists}</div>
    </td>
   </tr>
-  <tr>
-   <td width="90">URL</td>
-   <td>
-    /ankety/<input type="text" name="url" size="20" value="${PARAMS.url?if_exists}" tabindex="2">
-    <div class="error">${ERRORS.url?if_exists}</div>
-   </td>
-  </tr>
+  <#if RELATION.id==250>
+      <tr>
+       <td width="90">URL</td>
+       <td>
+        /ankety/<input type="text" name="url" size="20" value="${PARAMS.url?if_exists}" tabindex="2">
+        <div class="error">${ERRORS.url?if_exists}</div>
+       </td>
+      </tr>
+  </#if>
   <tr>
    <td class="required">Více mo¾ností</td>
    <td>
@@ -43,7 +45,7 @@ Mù¾ete také povolit souèasné vybrání více mo¾ností.</p>
    </td>
   </tr>
   <tr>
-   <td class="required">Volba 2</td>
+   <td>Volba 2</td>
    <td>
     <input type="text" name="choices" size="60" maxlength="255" tabindex="5"
     value="<#if choices?size gt 1>${choices[1]}</#if>">
