@@ -1,6 +1,6 @@
 <#include "../header.ftl">
 
-<h1 class="st_nadpis">Sekce ${TOOL.xpath(CATEGORY,"/data/name")}</h1>
+<h1>Sekce ${TOOL.xpath(CATEGORY,"/data/name")}</h1>
 
 <@lib.showMessages/>
 

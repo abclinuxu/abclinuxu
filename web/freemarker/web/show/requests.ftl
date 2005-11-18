@@ -10,10 +10,15 @@ Pokud máte námìt na vylep¹ení, nebo jste na¹li chybu, pi¹te do
 <a href="http://bugzilla.abclinuxu.cz">bugzilly</a>,
 u¹etøíte nám tak práci a budete mít pøehled o vyøízení va¹i ¾ádosti.</p>
 
+<p>Jedná-li se o námìt na novou anketu, pova¾ujte jeho smazání za jeho vyøízení.
+Neznamená to, ¾e bychom ho ignorovali, ale ¾e jsme ho zaøadili do seznamu
+dal¹ích námìtù. Ne v¹echny námìty se stanou anketami, proto¾e námìtù je prostì
+moc. Z va¹ich návrhù vybíráme ty nejzajímavìj¹í.</p>
+
 <p>Potøebujete-li poradit s Linuxem, zkuste si nejdøíve
 <a href="/Search">najít</a> odpovìï sami a nenajdete-li øe¹ení,
 po¾ádejte o pomoc v <a href="/diskuse.jsp">diskusním fóru</a>.
-Tento formuláø v¹ak pro tyto úèely neslou¾í a proto bez odpovìdi
+Tento formuláø v¹ak pro tyto úèely neslou¾í, a proto bez odpovìdi
 <u>sma¾eme</u> jakékoliv po¾adavky, které nesouvisí s chodem portálu.</p>
 
 <#if CHILDREN?exists && CHILDREN?size gt 0>
@@ -53,7 +58,7 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í a proto bez odpovìdi
     </fieldset>
 </#if>
 
-<p>Chyby prosím hla¹te do <a href="http://bugzilla.abclinuxu.cz">bugzilly</a>.</p>
+<p>Chyby prosím hlaste do <a href="http://bugzilla.abclinuxu.cz">bugzilly</a>.</p>
 
 <form action="${URL.make("/EditRequest")}" method="POST">
  <table border=0 cellpadding=5 style="padding-top: 10px">

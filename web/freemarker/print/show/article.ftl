@@ -30,26 +30,26 @@
 
 ${TOOL.render(TOOL.getCompleteArticleText(ITEM),USER?if_exists)}
 
-<div class="perex">
+<div class="cl_perex">
   <#if RELATED?exists>
-   <h1>Související èlánky</h1>
-   <div class="linky">
+   <h3>Související èlánky</h3>
+   <div class="s_sekce">
     <#list RELATED as link>
      <a href="${link.url}">${link.title}</a><br>
     </#list>
    </div>
   </#if>
   <#if RESOURCES?exists>
-   <h1>Odkazy a zdroje</h1>
-   <div class="linky">
+   <h3>Odkazy a zdroje</h3>
+   <div class="s_sekce">
     <#list RESOURCES as link>
      <a href="${link.url}">${link.title}</a><br>
     </#list>
    </div>
   </#if>
   <#if SAME_SECTION_ARTICLES?exists>
-   <h1 class="st_nadpis">Dal¹í èlánky z této rubriky</h1>
-    <div class="st_linky">
+   <h3>Dal¹í èlánky z této rubriky</h3>
+    <div class="s_sekce">
      <#list SAME_SECTION_ARTICLES as relation>
        <a href="${relation.url?default("/clanky/show/"+relation.id)}">${TOOL.xpath(relation.child,"data/name")}</a><br>
      </#list>
@@ -61,7 +61,7 @@ ${TOOL.render(TOOL.getCompleteArticleText(ITEM),USER?if_exists)}
 
 <#if ! PARAMS.noDiz?exists>
  <#if CHILDREN.discussion?exists>
-  <h1 class="st_nadpis">Diskuse k tomuto èlánku</h1>
+  <h1>Diskuse k tomuto èlánku</h1>
   <#assign DISCUSSION=CHILDREN.discussion[0].child>
   <#assign diz = TOOL.createDiscussionTree(DISCUSSION,USER?if_exists,true)>
   <#list diz.threads as thread>

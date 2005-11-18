@@ -211,7 +211,7 @@
                     <div class="s_sekce">
                         <div class="rozc">
                             <#list TOOL.createServers([7,16,18,19,1,13,14,17,15,3,5]) as server>
-                                <a class="server" href="${server.url}">${server.name}</a><br>
+                                <a class="server" href="${server.url}" rel="nofollow">${server.name}</a><br>
                                 <ul>
                                 <#assign linky = TOOL.sublist(SORT.byDate(LINKS[server.name],"DESCENDING"),0,2)>
                                 <#list linky as link>
@@ -238,7 +238,7 @@
                   <#if USER?exists && USER.isMemberOf(11246)>
                    <li><a href="/Admin">Administrace portálu</a></li>
                    <li><a href="/system">Sekce systém</a></li>
-                   <li><a href="/system/todo">TODO (${VARS.counter.TODO?if_exists})</a></li>
+                   <li><a href="/system/todo">TODO</a></li>
                   </#if>
                  </ul>
 

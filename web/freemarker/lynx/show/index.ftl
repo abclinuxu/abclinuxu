@@ -16,8 +16,8 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
 </p>
 
 <#flush>
-<p>
-  <b><a href="/blog">Blogy na AbcLinuxu</a></b>
+
+<h2><a href="/blog">Blogy na AbcLinuxu</a></h2>
   <ul>
   <#assign STORIES=VARS.getFreshStories(USER?if_exists)>
   <#list STORIES as relation>
@@ -35,54 +35,51 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
      </li>
   </#list>
   </ul>
-</p>
 
-<p>
- <b>Základy Linuxu</b><br>
- <a href="/clanky/show/26394">Co je to Linux?</a>,
- <a href="/clanky/show/12707">Je opravdu zdarma?</a>,
- <a href="/clanky/show/9503">Co jsou to distribuce?</a>,
- <a href="/clanky/show/14665">Èím nahradím aplikaci X?</a>,
- <a href="/clanky/show/20310">Rozcestník na¹ich seriálù</a>
-</p>
+<h2>Základy Linuxu</h2>
+<ul>
+ <li><a href="/clanky/show/26394">Co je to Linux?</a></li>
+ <li><a href="/clanky/show/12707">Je opravdu zdarma?</a></li>
+ <li><a href="/clanky/show/9503">Co jsou to distribuce?</a></li>
+ <li><a href="/clanky/show/14665">Èím nahradím aplikaci X?</a></li>
+ <li><a href="/clanky/show/20310">Rozcestník na¹ich seriálù</a></li>
+</ul>
 
-<p>
- <b><a href="/ovladace">Ovladaèe</a></b><br>
+<h2><a href="/ovladace">Ovladaèe</a></h2>
  <#assign DRIVERS = VARS.getFreshDrivers(USER?if_exists)>
+<ul>
  <#list DRIVERS as rel>
-  <a href="${rel.url?default("/ovladace/show/"+rel.id)}">
-  ${TOOL.xpath(rel.child,"data/name")}</a><#if rel_has_next>,</#if>
+  <li><a href="${rel.url?default("/ovladace/show/"+rel.id)}">
+  ${TOOL.xpath(rel.child,"data/name")}</a></li>
  </#list>
- <a href="/ovladace">&gt;&gt;</a>
-</p>
+ <li><a href="/ovladace">&gt;&gt;</a></li>
+</ul>
 
-<p>
- <b><a href="/hardware">Hardware</a></b><br>
+<h2><a href="/hardware">Hardware</a></h2>
  <#assign HARDWARE = VARS.getFreshHardware(USER?if_exists)>
+<ul>
  <#list HARDWARE as rel>
-  <a href="/hardware/show/${rel.id}">
-  ${TOOL.xpath(rel.parent,"data/name")}</a><#if rel_has_next>,</#if>
+  <li><a href="/hardware/show/${rel.id}">
+  ${TOOL.xpath(rel.parent,"data/name")}</a></li>
  </#list>
- <a href="/History?type=hardware&from=0&count=25">&gt;&gt;</a><br>
+ <li><a href="/History?type=hardware&from=0&count=25">&gt;&gt;</a></li>
  <#list SORT.byName(HARDWARE) as rel>
-  <a href="/hardware/dir/${rel.id}">
-  ${TOOL.childName(rel)}</a><#if rel_has_next>,</#if>
+  <li><a href="/hardware/dir/${rel.id}">
+  ${TOOL.childName(rel)}</a></li>
  </#list>
-</p>
+</ul>
 
-<p>
- <b>Aktuální jádra</b><br>
+<h2>Aktuální jádra</h2>
  <#include "/include/kernel.txt">
-</p>
 
 <#assign NEWS=VARS.getFreshNews(USER?if_exists)>
-<a name="zpravicky"><h1>Zprávièky</h1></a>
+<a name="zpravicky"><h2>Zprávièky</h2></a>
 <#list NEWS as rel>
  <@lib.showNews rel/>
  <#if rel_has_next><@lib.separator /></#if>
 </#list>
 <p>
- <a href="/History?type=news&from=${NEWS?size}&count=15" title="Dal¹í">Star¹í zprávièky</a>
+ <a href="/History?type=news&from=${NEWS?size}&count=15" title="Dal¹í">Star¹í zprávièky</a>, 
  <a href="${URL.make("/news/EditItem?action=add")}">Vytvoøit zprávièku</a>
 </p>
 
@@ -112,8 +109,8 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
     </p>
 
     <ul>
-        <li><a href="/diskuse.jsp">Zobrazit diskusní fórum (polo¾it dotaz)</a>
-        <li><a href="/History?type=discussions&from=${FORUM?size}&count=20">Zobrazit star¹í dotazy</a>
+        <li><a href="/diskuse.jsp">Zobrazit diskusní fórum (polo¾it dotaz)</a></li>
+        <li><a href="/History?type=discussions&from=${FORUM?size}&count=20">Zobrazit star¹í dotazy</a></li>
     </ul>
 </#if>
 

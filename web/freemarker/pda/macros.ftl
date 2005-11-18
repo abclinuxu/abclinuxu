@@ -1,7 +1,7 @@
 <#macro showArticle(relation)>
  <#local clanek=relation.child>
  <p>
-  ${DATE.show(clanek.created, "CZ_SHORT")}
+  ${DATE.show(clanek.created, "CZ_DM")}
   <a href="${relation.url?default("/clanky/show/"+relation.id)}">${TOOL.xpath(clanek,"data/name")}</a><br>
   ${TOOL.xpath(clanek,"/data/perex")}
  </p>

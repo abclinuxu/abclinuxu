@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<h1 class="st_nadpis">Archiv anket</h1>
+<h1>Archiv anket</h1>
 <#if POLLS.currentPage.row==0 && USER?exists && USER.hasRole("poll admin")>
  <p>
   <a href="${URL.noPrefix("/EditPoll?action=add&amp;rid=250")}">Vytvoø anketu</a>

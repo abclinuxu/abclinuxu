@@ -8,6 +8,6 @@ dom4j			1.6		http://dom4j.org/ (vyzaduje jaxen)
 jaxen                   1.1-beta-4
 lucene			1.4.2		http://jakarta.apache.org
 htmlparser		1.4		http://htmlparser.sourceforge.net
-rome			0.5+patch	http://rome.dev.java.net (RSS) (vyzaduje jdom)
+rome			0.7		http://rome.dev.java.net (RSS) (vyzaduje jdom)
 jdom			1.0		http://www.jdom.org
 lucene-highlighter	2004-08		http://www.lucenebook.com

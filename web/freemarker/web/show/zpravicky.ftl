@@ -14,7 +14,7 @@
     }
 </script>
 
-<h1 class="st_nadpis">Zprávièky</h1>
+<h1>Zprávièky</h1>
 
 <p>Zprávièky mù¾ete èíst i pøes mobil: wap.abclinuxu.cz</p>
 

@@ -3,24 +3,23 @@
 <@lib.showMessages/>
 
 <#if ! USER?exists>
- <p>Pokud jste ${PROFILE.name}, <a href="${URL.noPrefix("/Profile?action=login")}">pøihla¹te se</a>
+ <p>Pokud jste ${PROFILE.name}, <a href="${URL.noPrefix("/Profile?action=login")}">pøihlaste se</a>
  a bude vám zobrazena va¹e domovská stránka.
  </p>
 <#elseif USER.id==PROFILE.id>
  <#if PARAMS.LOGIN?exists>
   <h1>Vítejte</h1>
-  <p>Dìkujeme vám za dal¹í náv¹tìvu portálu AbcLinuxu. Doufáme, ¾e vám
+  <p>Dìkujeme vám za dal¹í náv¹tìvu portálu abclinuxu.cz. Doufáme, ¾e vám
   pøinese cenné informace. Pokud budete spokojeni, doporuète nás svým pøátelùm
-  a známým.
-  </p>
+  a známým.</p>
  </#if>
 
  <h1>Moje domovská stránka</h1>
 
- <p>Nacházíte se ve své veøejné domovské stránce, která slou¾í pro va¹i prezentaci.
+ <p>Nacházíte se na své veøejné domovské stránce, která slou¾í pro va¹i prezentaci.
  Pokud ji chcete doplnit èi nìjak upravit, pøejdìte na
  <a href="${URL.noPrefix("/Profile/"+PROFILE.id+"?action=myPage")}">tuto stránku</a>.
- Tam také mù¾ete zmìnit nastavení svého u¾ivatele, jako napøíklad pøihlásit se k odbìru zpravodaje.
+ Tam také mù¾ete zmìnit nastavení svého u¾ivatele (napøíklad se pøihlásit k odbìru zpravodaje).
  Text nad èarou vidíte pouze vy, ostatním náv¹tìvníkùm není zobrazen.
  </p>
  <hr>
@@ -33,14 +32,14 @@
 <#else>
  <#assign photo="/images/faces/default_"+TOOL.xpath(PROFILE,"/data/personal/sex")+".gif">
 </#if>
-<img src="${photo}" style="float: right; padding: 3px">
+<img src="${photo}" style="float: right; margin: 0.5em">
 
 <h1>${PROFILE.name}</h1>
 
 <#if PROFILE.nick?exists><p>Pøezdívka: ${PROFILE.nick}</p></#if>
 
 <#if TOOL.xpath(PROFILE,"/data/profile/home_page")?exists>
-  <p>Moje domovská stránka: <a href="${TOOL.xpath(PROFILE,"/data/profile/home_page")}">
+  <p>Moje domovská stránka: <a href="${TOOL.xpath(PROFILE,"/data/profile/home_page")}" rel="nofollow">
   ${TOOL.xpath(PROFILE,"/data/profile/home_page")}</a></p>
 </#if>
 
@@ -72,7 +71,7 @@
  <p>Pou¾ívám tyto distribuce:</p>
   <ul>
    <#list TOOL.xpaths(PROFILE.data,"/data/profile/distributions/distribution") as dist>
-    <li>${dist}
+    <li>${dist}</li>
    </#list>
   </ul>
 </#if>

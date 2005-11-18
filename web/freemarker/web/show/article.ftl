@@ -51,16 +51,18 @@ ${TOOL.render(TEXT,USER?if_exists)}
 
 <#if PAGES?exists>
  <div class="cl_perex">
-  <h2>Jednotlivé podstránky èlánku</h2>
-  <ol>
-  <#list PAGES as page><li>
-   <#if page_index==PAGE>
-    ${page}
-   <#else>
-    <a href="/clanky/show/${RELATION.id}?page=${page_index}">${page}</a>
-   </#if>
-  </#list>
-  </ol>
+  <h3>Jednotlivé podstránky èlánku</h3>
+  <div class="s_sekce">
+   <ol>
+   <#list PAGES as page><li>
+    <#if page_index==PAGE>
+     ${page}
+    <#else>
+     <a href="/clanky/show/${RELATION.id}?page=${page_index}">${page}</a>
+    </#if>
+   </#list>
+   </ol>
+  </div>
  </div>
 </#if>
 
@@ -77,7 +79,7 @@ ${TOOL.render(TEXT,USER?if_exists)}
    <h3>Odkazy a zdroje</h3>
    <div class="s_sekce">
     <#list RESOURCES as link>
-     <a href="${link.url}">${link.title}</a> ${link.description?if_exists}<br>
+     <a href="${link.url}" rel="nofollow">${link.title}</a> ${link.description?if_exists}<br>
     </#list>
    </div>
   </#if>

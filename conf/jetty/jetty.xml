@@ -8,42 +8,20 @@
 <!-- =============================================================== -->
 <Configure class="org.mortbay.jetty.Server">
 
-
-
   <!-- =============================================================== -->
   <!-- Configure the Request Listeners                                 -->
   <!-- =============================================================== -->
-
-  <!-- =============================================================== -->
-  <!-- Add and configure a NIO listener to port 8080                   -->
-  <!-- The default port can be changed using: java -Djetty.port=80     -->
-  <!-- _______________________________________________________________ -->
-<!--
-  <Call name="addListener">
-    <Arg>
-      <New class="org.mortbay.http.SocketChannelListener">
-        <Set name="Port"><SystemProperty name="jetty.port" default="8080"/></Set>
-        <Set name="MinThreads">3</Set>
-        <Set name="MaxThreads">150</Set>
-        <Set name="MaxIdleTimeMs">15000</Set>
-      </New>
-    </Arg>
-  </Call>
--->
   <Call name="addListener">
     <Arg>
       <New class="org.mortbay.http.SocketListener">
         <Set name="Port"><SystemProperty name="jetty.port" default="8080"/></Set>
-        <Set name="MinThreads">5</Set>
-        <Set name="MaxThreads">100</Set>
+        <Set name="MinThreads">15</Set>
+        <Set name="MaxThreads">200</Set>
         <Set name="MaxIdleTimeMs">15000</Set>
         <Set name="LowResourcePersistTimeMs">5000</Set>
       </New>
     </Arg>
   </Call>
-
-
-
 
   <!-- =============================================================== -->
   <!-- Configure the Contexts                                          -->
@@ -51,78 +29,29 @@
 
   <Call name="addWebApplication">
     <Arg>/</Arg>
-    <Arg>/home/www-data/deploy/abclinuxu</Arg>
+    <Arg>/var/www/deploy/abclinuxu</Arg>
 
     <Set name="defaultsDescriptor">org/mortbay/jetty/servlet/webdefault.xml</Set>
   </Call>
-
-  <Call name="addWebApplication">
-    <Arg>/</Arg>
-    <Arg>/home/www-data/deploy/firma</Arg>
-
-    <Set name="virtualHosts">
-      <Array type="java.lang.String">
-        <Item>www.firma.abclinuxu.cz</Item>
-        <Item>firma.abclinuxu.cz</Item>
-      </Array>
-    </Set>
-  </Call>
-
-  <Call name="addWebApplication">
-    <Arg>/</Arg>
-    <Arg>/home/www-data/deploy/palirna</Arg>
-
-    <Set name="virtualHosts">
-      <Array type="java.lang.String">
-        <Item>www.palirna.abclinuxu.cz</Item>
-        <Item>palirna.abclinuxu.cz</Item>
-      </Array>
-    </Set>
-  </Call>
-
-  <Call name="addWebApplication">
-    <Arg>/</Arg>
-    <Arg>/home/www-data/deploy/abclinux</Arg>
-
-    <Set name="virtualHosts">
-      <Array type="java.lang.String">
-        <Item>www.abclinux.cz</Item>
-        <Item>palirna.abclinux.cz</Item>
-        <Item>abclinux.cz</Item>
-      </Array>
-    </Set>
-  </Call>
-
-<!--
-  <Call name="addWebApplication">
-    <Arg>/tinnio</Arg>
-    <Arg>/home/www-data/deploy/tinnio</Arg>
-  </Call>
--->
-
-  <Call name="addContext">
-    <Arg>/mailman/*</Arg>
-    <Set name="ResourceBase">/home/mailman/cgi-bin</Set>
-    <Call name="addServlet">
-      <Arg>Common Gateway Interface</Arg>
-      <Arg>/</Arg>
-      <Arg>org.mortbay.servlet.CGI</Arg>
-      <Put name="Path">/bin:/usr/bin:/usr/local/bin</Put>
-    </Call>
-  </Call>
-  
 
   <!-- =============================================================== -->
   <!-- Configure the Request Log                                       -->
   <!-- =============================================================== -->
   <Set name="RequestLog">
     <New class="org.mortbay.http.NCSARequestLog">
-      <Arg>/home/www-data/deploy/logs/yyyy_mm_dd.request.log</Arg>
+      <Arg>/var/www/deploy/logs/yyyy_mm_dd.request.log</Arg>
       <Set name="retainDays">90</Set>
       <Set name="append">true</Set>
       <Set name="extended">true</Set>
-      <Set name="buffered">true</Set>
+      <Set name="buffered">false</Set> <!-- jetty perf. tuning: server with buffering turned on has around 5% maximum throughput -->
       <Set name="LogTimeZone">GMT</Set>
+      <Set name="ignorePaths">
+        <Array type="String">
+          <Item>/images/*</Item>
+          <Item>*.css</Item>
+          <Item>*.js</Item>
+        </Array>
+      </Set>
     </New>
   </Set>
 

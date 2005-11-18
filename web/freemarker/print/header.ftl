@@ -5,7 +5,7 @@
 <link rel="StyleSheet" href="/styles.css" type="text/css">
 <script type="text/javascript" src="/data/site/scripts.js"></script>
 </head>
-<body bgcolor="white" style="margin: 5px">
+<body style="background:#fff; margin:5px">
 <#import "macros.ftl" as lib>
 <p>Portál <a href="http://www.abclinuxu.cz">AbcLinuxu</a><#if USER?exists>,
 pøihlá¹en ${USER.name}</#if>, ${DATE.show("CZ_FULL_TXT")}

@@ -46,9 +46,9 @@
 
     <#list RESULT.data as doc>
         <p>
-            <!--m--><a href="${doc.url}">${doc.title?default(doc.url)}</a><!--n--> (${doc.typ})
+            <!--m--><a href="${doc.url}">${doc.title?default(doc.url)}</a><!--n--><!-- (${doc.typ})-->
             <#if doc.fragments?exists>
-                <br>${doc.fragments}
+                <br><span class="cl_inforadek">${doc.fragments}</span>
             </#if>
         </p>
     </#list>

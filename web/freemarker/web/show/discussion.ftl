@@ -23,12 +23,12 @@
            <li>
               <a href="${URL.make("/EditDiscussion?action=solved&amp;rid="+RELATION.id+"&amp;solved=true")}">Otázka byla vyøe¹ena</a>
               (${TOOL.xpath(ITEM,"//solved/@yes")?default("0")})
-              <a class="info" href="#">?<span class="tooltip">Pou¾ijte, pokud problém polo¾ený v otázce byl vyøe¹en.</span></a></li>
+              <a class="info" href="#">?<span class="tooltip">Pou¾ijte, pokud problém polo¾ený v otázce byl vyøe¹en.</span></a>
            </li>
            <li>
               <a href="${URL.make("/EditDiscussion?action=solved&amp;rid="+RELATION.id+"&amp;solved=false")}">Otázka nebyla vyøe¹ena</a>
               (${TOOL.xpath(ITEM,"//solved/@no")?default("0")})
-              <a class="info" href="#">?<span class="tooltip">Pou¾ijte, pokud problém polo¾ený v otázce nebyl vyøe¹en.</span></a></li>
+              <a class="info" href="#">?<span class="tooltip">Pou¾ijte, pokud problém polo¾ený v otázce nebyl vyøe¹en.</span></a>
            </li>
        </#if>
        <li><a href="/slovnik">Slovník pojmù</a></li>

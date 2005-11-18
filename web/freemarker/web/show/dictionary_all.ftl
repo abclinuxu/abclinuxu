@@ -1,6 +1,6 @@
 <#include "../header.ftl">
 
-<h1 class="st_nadpis">Výkladový slovník portálu www.abclinuxu.cz</h1>
+<h1>Výkladový slovník portálu www.abclinuxu.cz</h1>
 
 <p>Výkladový slovník na¹eho portálu je projekt, jen¾ se sna¾í èeským
 a slovenským u¾ivatelùm pøiblí¾it Linux. Málokterý nováèek se zaène
@@ -12,7 +12,8 @@ proto¾e se v¹ude pou¾ívají pojmy a slova, která nechápe.</p>
 <p>Výkladový slovník je pokus jak tento problém zmen¹it. Jak je na¹im dobrým zvykem,
 jedná se o otevøený komunitní projekt, do nìho¾ mù¾e pøispìt ka¾dý. Jeho cílem je popsat
 v¹echny základní pojmy, které se v Linuxu bì¾nì objevují. Pokud se chcete zapojit
-do tvorby této databáze, mù¾ete <a href="${URL.make("/slovnik/edit?action=add")}">vysvìtlit</a>
+do tvorby této databáze, mù¾ete 
+<a class="bez-slovniku" href="${URL.make("/slovnik/edit?action=add")}">vysvìtlit</a>
 nový pojem.</p>
 
 <p>Pokud nenajdete nìkterý pojem v na¹em slovníku a rozumíte anglicky, urèitì
@@ -23,7 +24,7 @@ existuje i <a href="http://www.ucc.ie/cgi-bin/acronym">hledání</a> akronymù.
 
 <br>
 
-<table border="0" class="siroka">
+<table class="bez-slovniku" border="0" class="siroka">
  <#list FOUND.data as rel>
   <#if rel_index % 3 == 0><tr></#if>
    <td><a href="/slovnik/${rel.child.subType}">${TOOL.xpath(rel.child,"data/name")}</a></td>

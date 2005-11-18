@@ -8,7 +8,7 @@
  <@lib.separator double=!rel_has_next />
 </#list>
 
-<#assign NEWS=VARS.getFreshNews(user?if_exists)>
+<#assign NEWS=VARS.getFreshNews(USER?if_exists)>
 <h1>Zprávièky</h1>
 <#list NEWS as rel>
  <@lib.showNews rel/>

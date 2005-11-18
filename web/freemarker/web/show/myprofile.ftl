@@ -75,7 +75,7 @@ patièku zobrazovanou v diskusích u va¹ich pøíspìvkù, nahrát svou fotku
 
 <h2>Blog</h2>
 
-<p>®havou novinkou Abíèka jsou blogy. Pro ty z vás, kteøí tento termín vidíte poprvé:
+<p>Pro ty z vás, kteøí tento termín vidíte poprvé:
 jedná se o moderní formu vedení deníèku na internetu. Pokud zaèínáte s Linuxem, mù¾ete
 zde postupnì psát své zku¹enosti a pokroky, v kombinaci s diskusním fórem pak snáze
 dosáhnete svého cíle. Pokud jste pokroèilý u¾ivatel, máte mo¾nost pou¾ít blogy pro

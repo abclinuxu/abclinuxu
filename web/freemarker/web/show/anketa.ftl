@@ -11,31 +11,25 @@
  </p>
 </#if>
 
-<table border="0" cellpadding="3">
-<thead>
- <tr>
-  <td colspan=3 class="hlavicka_ankety">${POLL.text}</td>
- </tr>
-</thead>
-<tbody>
+<p><b>${POLL.text}</b></p>
+
+<table class="ank" border="0" cellpadding="3">
  <#list POLL.choices as choice>
   <#assign procento=TOOL.percent(choice.count,POLL.totalVotes)>
   <tr>
-   <td class="volby_ankety">${choice.text}</td>
-   <td><img src="/images/site2/anketa.gif" height=11 width=${procento} alt="${TOOL.percentBar(procento)}"></td>
-   <td class="volby_ankety">${procento}% (${choice.count})</td>
+   <td>${choice.text}</td>
+   <td>
+     <div style="width: ${procento}px" class="ank-sloup-okraj">
+       <div class="ank-sloup"></div>
+     </div>
+   </td>
+   <td>${procento}% (${choice.count})</td>
   </tr>
  </#list>
- <tr>
-  <td colspan=3 class="vysledek_ankety">Celkem ${POLL.totalVotes} hlasù</td>
- </tr>
-</tbody>
-<tfoot>
- <tr>
-  <td colspan="3">Vytvoøeno: ${DATE.show(POLL.created, "CZ_FULL")}</td>
- </tr>
-</tfoot>
 </table>
+
+<p>Celkem ${POLL.totalVotes} hlasù<br />
+Vytvoøeno: ${DATE.show(POLL.created, "CZ_FULL")}</p>
 
 <#if CHILDREN.discussion?exists>
     <#assign DISCUSSION=CHILDREN.discussion[0].child>

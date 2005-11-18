@@ -54,7 +54,7 @@ Pro va¹i ochranu nejdøíve zadejte souèasné heslo.
    </td>
   </tr>
   <tr>
-   <td width="60">Stát</td>
+   <td width="60">Zemì</td>
    <td>
     <input type="text" name="country" value="${PARAMS.country?if_exists}" size="24" tabindex="6">
    </td>

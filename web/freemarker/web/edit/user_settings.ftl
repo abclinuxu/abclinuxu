@@ -56,7 +56,8 @@
   </tr>
   <tr>
    <td colspan="2">Zadejte URL souboru obsahující CSS definici vzhledu portálu. Bude pou¾ita místo
-   standardního vzhledu. <a href="/doc/napoveda/alternativni-design">Nápovìda</a>
+   standardního vzhledu. Pro bílé písmo na èerném podkladu vlo¾te 
+   <code>/styles-dark.css</code>. <a href="/doc/napoveda/alternativni-design">Nápovìda</a>.
    </td>
   </tr>
 

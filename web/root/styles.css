@@ -29,6 +29,16 @@ a:hover {
 	text-decoration:none
 }
 
+.st a[href^="/slovnik/"]:after {
+	content:	url('/images/site2/slovnik.png');
+	margin:		0 0.1em 0 0.2em;
+}
+
+.st .bez-slovniku a:after, .st a.bez-slovniku:after {
+	content:	"";
+	margin:		0;
+}
+
 blockquote {
 	font-style:  italic;
 	font-size: 90%;
@@ -98,10 +108,15 @@ td {
 	margin:		0px; /* Opera */
 }
 
-.za_hledat input.text {
+.za_hledat input.text, .s_sekce input.text {
 	border:		1px solid gray;
 	background-color: #EEEEEE;
 	width:		120px;
+}
+
+.s_sekce input.text {
+	background:	white;
+	margin-left:	0.5em;
 }
 
 .button { height: 1.8em }
@@ -218,10 +233,9 @@ td.pad, code.kod, pre.kod {
 	background-color: #F0F0F0;
 }
 
-.st_uprostred {
-	margin-top:	10px;
-	text-align:	center;
-	font-size:	100%;
+.st_vpravo {
+	margin:		0.4em 1em 0 0;
+	text-align:	right;
 }
 
 .cl_inforadek {
@@ -327,7 +341,8 @@ td.pad, code.kod, pre.kod {
 	text-align:	right;
 }
 
-.ds tbody tr:hover { background: #f7f7f7 }
+.ds tbody tr:hover { background: #f3f3f3 }
+.ds tr:nth-child(even) { background: #f9f9f9 }
 
 .ds_hlavicka, .ds_hlavicka_novy {
 	margin-top:	10px;
@@ -407,11 +422,9 @@ td.pad, code.kod, pre.kod {
 }
 
 .s_nad_h1 h1 {
-	top:		1px;
 	font-size:	100%;
-	font-weight:	bold;
 	margin:		0px;
-	padding:	1px 0 0 0;
+	padding-top:	1px;
 }
 
 a.info {
@@ -424,13 +437,25 @@ a.info {
 	font-weight:	bold;
 }
 
-.s_nad_h1 a.info {
+.s_nad_h1 a.info, .s_nad_h1 .oksystem {
 	float: 		right;
 }
 
 a.info:hover {
 	background: 	#FFF8C3;
 	color: 		black;
+}
+
+a.oksystem {
+	position:	relative;
+	margin:		1px 0.3em 0 0;
+	font-weight:	normal;
+	color:		white;
+}
+
+.oksystem:before {
+	vertical-align:	middle;
+	content:	url('/images/bannery/oksystem-14-ok.gif');
 }
 
 .s_sekce a.info:hover { text-decoration: none; }
@@ -735,30 +760,32 @@ a.info:hover span.tooltip {
 .form-edit a#serif { font-family:serif }
 .form-edit a#mono { font-family:monospace }
 
-.dict-item {
+.dict-item, .questionToFaq {
 	background:	#ececec;
 	margin:		0.5em 0.5em 0 0;
 	padding:	0.5em;
 }
 
-p.search_results {
-    text-align: right;
+.search_results {
+	text-align:	right;
 }
-div.search_result {
-    margin-top: 1em;
+.search_result {
+	margin-top:	1em;
 }
-a.search_title {}
-span.search_solved {}
-p.search_fragments {
+.search_title {}
+.search_solved {}
+.search_fragments {
 	font-size:	80%;
 	color:		gray;
 }
-span.highlight {
-	font-weight: bold;
+.highlight {
+	font-weight:	bold;
 }
-p.search_details {
+.search_details {
 	font-size:	90%;
 }
+
+
 
 /*************** SF lista *****************/
 .sflista {
@@ -792,3 +819,29 @@ p.search_details {
   background-color: #F0F0F0;
 }
 /*****************************************/
+  .abc-sun-box {
+    width: 241px;
+    height: 72px;
+    border-top: 7px #5282A5 solid;
+    background-color: #7CA6C3;
+    color: #fff;
+    padding: 3px 5px 5px 5px;
+    overflow: hidden;
+    font-family: sans-serif;
+    font-size: 11px;
+    line-height: 12px;
+  }
+  .abc-sun-box A {
+    color: #fff;
+    text-decoration: none;
+  }
+  .abc-sun-box A:hover {
+    color: #fff;
+    text-decoration: none;
+	background-color: transparent;
+  }
+  .abc-sun-box IMG {
+    margin: 0 0 2px 2px;
+    float: right;
+    border: 0;
+  }

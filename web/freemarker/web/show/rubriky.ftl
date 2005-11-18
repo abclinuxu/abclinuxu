@@ -17,7 +17,7 @@
  <p class="note">${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}</p>
 </#if>
 
-<h1 class="st_nadpis">Seznam rubrik</h1>
+<h1>Seznam rubrik</h1>
 
 <ul>
  <#list SORT.byName(CHILDREN) as relation>

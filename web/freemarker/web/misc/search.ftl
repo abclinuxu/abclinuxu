@@ -48,7 +48,7 @@
             </td>
             <td align="right" valign="middle">
                 <a href="http://lucene.apache.org/java/docs/" title="Knihovna pro fulltextové hledání"><img
-                src="/images/site2/lucene.gif" width="150" height="23" alt="Lucene" border="0"></a>
+                src="/images/site2/lucene.png" width="150" height="23" alt="Lucene" border="0"></a>
                 <script language="javascript1.2" type="text/javascript">
                     if ((typeof window.sidebar == "object") && (typeof window.sidebar.addPanel == "function")) {
                         moz_src = "http://www.abclinuxu.cz/data/site/abclinuxu.src";

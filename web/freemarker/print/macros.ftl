@@ -21,9 +21,9 @@
          autor=TOOL.createUser(TOOL.xpath(clanek,"/data/author")),
          tmp=TOOL.groupByType(clanek.children) >
  <#if tmp.discussion?exists><#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
-  <h1 class="uvod"><a href="/clanky/show/${relation.id}">
+  <h1 class="st_nadpis"><a href="/clanky/show/${relation.id}">
   ${TOOL.xpath(clanek,"data/name")}</a></h1>
-  <span class="uvod">
+  <span class="cl_inforadek">
    ${DATE.show(clanek.created, dateFormat[0])}
    | <a href="/Profile/${autor.id}">${autor.name}</a>
    | Pøeèteno: ${TOOL.getCounterValue(clanek)}x
@@ -39,7 +39,7 @@
   <#if rating!="UNDEF">${rating.result?string["#0.00"]}</#if>
 
   </span>
- <p class="vytah">
+ <p>
   ${TOOL.xpath(clanek,"/data/perex")}
  </p>
 </#macro>
@@ -77,14 +77,13 @@
 </#macro>
 
 <#macro separator double=false>
- <#if !double><div class="delimiter"></div></#if>
- <#if double><div class="delimiterEnd"></div></#if>
+ <hr />
 </#macro>
 
 <#macro showComment(comment dizId relId showControls extra...) >
- <p class="diz_header">
+ <div class="ds_hlavicka">
   <a name="${comment.id}"></a>
-  <#if (MAX_COMMENT?default(99999) < comment.id) ><span class="diz_header_new">${DATE.show(comment.created,"CZ_FULL")}</span><#else>${DATE.show(comment.created,"CZ_FULL")}</#if>
+  <#if (MAX_COMMENT?default(99999) < comment.id) >${DATE.show(comment.created,"CZ_FULL")}<#else>${DATE.show(comment.created,"CZ_FULL")}</#if>
   <#if comment.author?exists>
    <#local who=TOOL.sync(comment.author)>
    <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a><br>
@@ -108,10 +107,10 @@
     </#if>
    </#if>
   </#if>
- </p>
+ </div>
  <#if TOOL.xpath(comment.data,"censored")?exists>
   <#if TOOL.xpath(comment.data,"censored/@admin")?exists><#local message="Cenzura: "+TOOL.xpath(comment.data,"censored")></#if>
-  <p class="cenzura">
+  <p>
    ${message?default("Na¹i administrátoøi shledali tento pøíspìvek závadným.")}
    <br>Pøíspìvek si mù¾ete prohlédnout <a href="${URL.make("/show?action=censored&dizId="+dizId+"&threadId="+comment.id+extra[0]?default(""))}">zde</a>.
   </p>
@@ -119,7 +118,7 @@
    <a href="${URL.make("/EditDiscussion?action=censore&rid="+relId+"&dizId="+dizId+"&threadId="+comment.id)}">Odvolat cenzuru</a>
   </#if>
  <#else>
-  <div class="diz_text">${TOOL.render(TOOL.element(comment.data,"text"),USER?if_exists)}</div>
+  <div class="ds_text">${TOOL.render(TOOL.element(comment.data,"text"),USER?if_exists)}</div>
   <#if who?exists && TOOL.xpath(who,"/data/personal/signature")?exists
     && (! USER?exists || TOOL.xpath(USER,"//settings/signatures")?default("yes")=="yes")
   ><div class="signature">${TOOL.xpath(who,"/data/personal/signature")}</div></#if>

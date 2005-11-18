@@ -10,7 +10,6 @@
 
 <!-- impact: reklamy -->
 <#include "/include/impact-konec.txt">
-
 </body>
 
 </html>

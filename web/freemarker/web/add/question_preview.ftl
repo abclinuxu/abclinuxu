@@ -54,8 +54,8 @@ zvolte OK.</p>
         <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="Vlo¾it znaèku formátovaného textu. Vhodné pro konfiguraèní soubory èi výpisy.">&lt;pre&gt;</a>
 	<a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
     </div>
-    <textarea tabindex="5" name="text" cols="60" rows="20">${PARAMS.text?if_exists?html}</textarea>
     <div class="error">${ERRORS.text?if_exists}</div>
+    <textarea tabindex="5" name="text" cols="60" rows="20">${PARAMS.text?if_exists?html}</textarea>
    </td>
   </tr>
   <tr>

@@ -17,7 +17,7 @@
     </#if>
 </p>
 
-<p class="monitor"><b>AbcMonitor</b> vám emailem za¹le upozornìní pøi zmìnì.
+<p><b>AbcMonitor</b> vám emailem za¹le upozornìní pøi zmìnì.
  <#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")?exists>
   <#assign monitorState="Vypni">
  <#else>
