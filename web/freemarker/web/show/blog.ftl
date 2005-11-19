@@ -90,6 +90,7 @@
             <#if title!="UNDEF">
                 <li><a href="/blog/${BLOG.subType}">${title}, hlavní strana</a></li>
             </#if>
+            <li><a href="/blog/${BLOG.subType}/souhrn">struènìj¹í souhrn</a></li>
             <li><a href="/auto/blog/${BLOG.subType}.rss">RSS kanál</a></li>
             <li><a href="/blog">V¹echny blogy</a></li>
         </ul>
@@ -135,24 +136,32 @@
 	<h1 class="st_nadpis"><a href="${url}">${TOOL.xpath(story, "/data/name")}</a></h1>
         <p class="cl_inforadek">
     	    ${DATE.show(story.created, "CZ_SHORT")} |
-	    Pøeèteno: ${TOOL.getCounterValue(story)}x |
             <#if category!="UNDEF">${category} |</#if>
+	        Pøeèteno: ${TOOL.getCounterValue(story)}x |
     	    <@showDiscussions story, url/>
-	</p>
-        <#assign text = TOOL.xpath(story, "/data/perex")?default("UNDEF")>
-        <#if text!="UNDEF">
-            ${text}
-            <div class="signature"><a href="${url}">více...</a></div>
-        <#else>
-            ${TOOL.xpath(story, "/data/content")}
-        </#if>
+	    </p>
+	    <#if ! SUMMARY?exists>
+            <#assign text = TOOL.xpath(story, "/data/perex")?default("UNDEF")>
+            <#if text!="UNDEF">
+                ${text}
+                <div class="signature"><a href="${url}">více...</a></div>
+            <#else>
+                ${TOOL.xpath(story, "/data/content")}
+            </#if>
+	    </#if>
     </div>
     <hr>
 </#list>
 
 <p>
-    <#assign url="/blog/"+BLOG.subType+"/"><#if YEAR?exists><#assign url=url+YEAR+"/"></#if>
-    <#if MONTH?exists><#assign url=url+MONTH+"/"></#if><#if DAY?exists><#assign url=url+DAY+"/"></#if>
+    <#if SUMMARY?exists>
+        <#assign url="/blog/"+BLOG.subType+"/souhrn">
+    <#else>
+        <#assign url="/blog/"+BLOG.subType+"/">
+        <#if YEAR?exists><#assign url=url+YEAR+"/"></#if>
+        <#if MONTH?exists><#assign url=url+MONTH+"/"></#if>
+        <#if DAY?exists><#assign url=url+DAY+"/"></#if>
+    </#if>
     <#if (STORIES.currentPage.row > 0) >
         <#assign start=STORIES.currentPage.row-STORIES.pageSize><#if (start<0)><#assign start=0></#if>
         <a href="${url}?from=${start}">Novìj¹í zápisy</a>
@@ -170,7 +179,7 @@
     <#else>
         <#local diz=TOOL.analyzeDiscussion("UNDEF")>
     </#if>
-    <a href="${url}">Komentáøù:</a> ${diz.responseCount}<#if diz.responseCount gt 0>, poslední ${DATE.show(diz.updated, "CZ_SHORT")}</#if>
+    | <a href="${url}">Komentáøù:</a> ${diz.responseCount}<#if diz.responseCount gt 0>, poslední ${DATE.show(diz.updated, "CZ_SHORT")}</#if>
 </#macro>
 
 <#include "../footer.ftl">

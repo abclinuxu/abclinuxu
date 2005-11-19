@@ -60,6 +60,7 @@ public class ViewBlog implements AbcAction, Configurable {
     public static final String VAR_BLOG = "BLOG";
     public static final String VAR_BLOGS = "BLOGS";
     public static final String VAR_BLOG_XML = "BLOG_XML";
+    public static final String VAR_SUMMARY = "SUMMARY";
     public static final String VAR_STORIES = "STORIES";
     public static final String VAR_STORY = "STORY";
     public static final String VAR_YEAR = "YEAR";
@@ -69,12 +70,15 @@ public class ViewBlog implements AbcAction, Configurable {
     public static final String VAR_UNPUBLISHED_STORIES = "UNPUBLISHED_STORIES";
 
     static final String PREF_BLOG_URL = "regexp.blog.url";
+    static final String PREF_SUMMARY_URL = "regexp.blog.summary.url";
     static final String PREF_PAGE_SIZE = "page.size";
-    static final String PREF_CURRENT_LIST_SIZE = "current.list.size";
+    static final String PREF_SUMMARY_SIZE = "summary.size";
+    static final String PREF_FRESH_STORIES_SIZE = "fresh.stories.size";
+    static final String PREF_URL_SUMMARY = "url.summary";
 
-    static REProgram reUrl;
-    /** default number of stories per single page */
-    static int defaultPageSize, currentListSize;
+    static REProgram reUrl, reSummaryUrl;
+    static int defaultPageSize, freshStoriesSize, summarySize;
+    static String urlSummary;
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new ViewBlog());
     }
@@ -84,34 +88,45 @@ public class ViewBlog implements AbcAction, Configurable {
         int year, month, day, rid;
         year = month = day = rid = 0;
         String name = null;
+        boolean summary = false;
 
         String uri = (String) env.get(Constants.VAR_REQUEST_URI);
         if (uri.startsWith("/blogy"))
             return processBlogs(request, env);
 
-//        uri = "/blog/Yeti/2004/12/12/124545";
-        RE regexp = new RE(reUrl);
-        regexp.match(uri);
-        int matched = regexp.getParenCount();
-        try {
-            if (matched > 1)
-                name = regexp.getParen(1);
-            if (matched > 2) {
-                year = Integer.parseInt(regexp.getParen(2));
-                env.put(VAR_YEAR, new Integer(year));
+        RE regexp = new RE(reSummaryUrl);
+        if (regexp.match(uri)) {
+//          uri = "/blog/jmeno/souhrn";
+            summary = true;
+            env.put(VAR_SUMMARY, Boolean.TRUE);
+            int matched = regexp.getParenCount();
+            if (matched>4)
+                name = regexp.getParen(4);
+        } else {
+//          uri = "/blog/jmeno/2004/12/12/124545";
+            regexp = new RE(reUrl);
+            regexp.match(uri);
+            int matched = regexp.getParenCount();
+            try {
+                if (matched > 1)
+                    name = regexp.getParen(1);
+                if (matched > 2) {
+                    year = Integer.parseInt(regexp.getParen(2));
+                    env.put(VAR_YEAR, new Integer(year));
+                }
+                if (matched > 3) {
+                    month = Integer.parseInt(regexp.getParen(3));
+                    env.put(VAR_MONTH, new Integer(month));
+                }
+                if (matched > 4) {
+                    day = Integer.parseInt(regexp.getParen(4));
+                    env.put(VAR_DAY, new Integer(day));
+                }
+                if (matched > 5)
+                    rid = Integer.parseInt(regexp.getParen(5));
+            } catch (NumberFormatException e) {
+                log.warn(uri, e);
             }
-            if (matched > 3) {
-                month = Integer.parseInt(regexp.getParen(3));
-                env.put(VAR_MONTH, new Integer(month));
-            }
-            if (matched > 4) {
-                day = Integer.parseInt(regexp.getParen(4));
-                env.put(VAR_DAY, new Integer(day));
-            }
-            if (matched > 5)
-                rid = Integer.parseInt(regexp.getParen(5));
-        } catch (NumberFormatException e) {
-            log.warn(uri,e);
         }
 
         if (name!=null) {
@@ -138,9 +153,9 @@ public class ViewBlog implements AbcAction, Configurable {
             if (rid!=0)
                 return processStory(rid, request, env);
             else
-                return processStories(blogRelation, year, month, day, request, env);
+                return processStories(blogRelation, summary, year, month, day, request, env);
         } else
-            return processBlogSpace(request, year, month, day, env);
+            return processBlogSpace(request, summary, year, month, day, env);
     }
 
     /**
@@ -148,8 +163,6 @@ public class ViewBlog implements AbcAction, Configurable {
      */
     protected String processStory(int rid, HttpServletRequest request, Map env) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
-        SQLTool sqlTool = SQLTool.getInstance();
-
         Relation relation = (Relation) persistance.findById(new Relation(rid));
         Tools.sync(relation);
         Item story = (Item) relation.getChild();
@@ -167,17 +180,7 @@ public class ViewBlog implements AbcAction, Configurable {
 
         List parents = persistance.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
-
-        List qualifiers = new ArrayList();
-        qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, new Integer(story.getOwner())));
-        qualifiers.add(Qualifier.SORT_BY_CREATED);
-        qualifiers.add(Qualifier.ORDER_DESCENDING);
-        qualifiers.add(new LimitQualifier(0, currentListSize));
-        Qualifier[] qa = new Qualifier[qualifiers.size()];
-
-        List currentStories = sqlTool.findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
-        Tools.syncList(currentStories);
-        env.put(VAR_CURRENT_STORIES, currentStories);
+        storeFreshStories(blog, env);
 
         return FMTemplateSelector.select("ViewBlog", "story", env, request);
     }
@@ -185,20 +188,26 @@ public class ViewBlog implements AbcAction, Configurable {
     /**
      * Displays one blogRelation content. Its stories may be limited to given year, month or day.
      */
-    protected String processStories(Relation blogRelation, int year, int month, int day, HttpServletRequest request, Map env) throws Exception {
+    protected String processStories(Relation blogRelation, boolean summary, int year, int month, int day, HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
         Persistance persistance = PersistanceFactory.getPersistance();
 
         Category blog = (Category) blogRelation.getChild();
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Element element = (Element) blog.getData().selectSingleNode("//settings/page_size");
-        int count = Misc.parseInt((element!=null)? element.getText():null, defaultPageSize);
+        int count = 0;
+        if (summary)
+            count = summarySize;
+        else {
+            Element element = (Element) blog.getData().selectSingleNode("//settings/page_size");
+            count = Misc.parseInt((element != null) ? element.getText() : null, defaultPageSize);
+        }
 
         List qualifiers = new ArrayList();
         qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL,new Integer(blog.getOwner())));
-        addTimeLimitsFQ(year, month, day, qualifiers);
-        Qualifier[] qa = new Qualifier[qualifiers.size()];
+        if (!summary)
+            addTimeLimitsFQ(year, month, day, qualifiers);
 
+        Qualifier[] qa = new Qualifier[qualifiers.size()];
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
         int total = sqlTool.countItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
 
@@ -225,17 +234,7 @@ public class ViewBlog implements AbcAction, Configurable {
 
         List parents = persistance.findParents(blogRelation);
         env.put(ShowObject.VAR_PARENTS, parents);
-
-        qualifiers = new ArrayList();
-        qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, new Integer(blog.getOwner())));
-        qualifiers.add(Qualifier.SORT_BY_CREATED);
-        qualifiers.add(Qualifier.ORDER_DESCENDING);
-        qualifiers.add(new LimitQualifier(0, currentListSize));
-        qa = new Qualifier[qualifiers.size()];
-
-        List currentStories = sqlTool.findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
-        Tools.syncList(currentStories);
-        env.put(VAR_CURRENT_STORIES, currentStories);
+        storeFreshStories(blog, env);
 
         return FMTemplateSelector.select("ViewBlog", "blog", env, request);
     }
@@ -243,21 +242,23 @@ public class ViewBlog implements AbcAction, Configurable {
     /**
      * Entry page for blogs. Displays most fresh stories across all blogs.
      */
-    protected String processBlogSpace(HttpServletRequest request, int year, int month, int day, Map env) throws Exception {
+    protected String processBlogSpace(HttpServletRequest request, boolean summary, int year, int month, int day, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
         Persistance persistance = PersistanceFactory.getPersistance();
 
         List qualifiers = new ArrayList();
-        addTimeLimitsFQ(year, month, day, qualifiers);
+        if (!summary)
+            addTimeLimitsFQ(year, month, day, qualifiers);
 
         Qualifier[] qa = new Qualifier[qualifiers.size()];
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
         int total = sqlTool.countItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+        int count = (summary) ? summarySize : defaultPageSize;
 
         qualifiers.add(Qualifier.SORT_BY_CREATED);
         qualifiers.add(Qualifier.ORDER_DESCENDING);
-        qualifiers.add(new LimitQualifier(from, defaultPageSize));
+        qualifiers.add(new LimitQualifier(from, count));
 
         qa = new Qualifier[qualifiers.size()];
         List stories = sqlTool.findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
@@ -271,7 +272,7 @@ public class ViewBlog implements AbcAction, Configurable {
         if (parentBlogs.size()>0)
             Tools.syncList(parentBlogs);
 
-        Paging paging = new Paging(stories, from, defaultPageSize, total);
+        Paging paging = new Paging(stories, from, count, total);
         env.put(VAR_STORIES, paging);
 
         User user = (User) env.get(Constants.VAR_USER);
@@ -306,12 +307,28 @@ public class ViewBlog implements AbcAction, Configurable {
 
         List blogs = sqlTool.findSectionRelationsWithType(Category.BLOG, null);
         Tools.syncList(blogs);
-        List result = new ArrayList(blogs.size());
+        List users = new ArrayList(blogs.size());
         for (Iterator iter = blogs.iterator(); iter.hasNext();) {
             relation = (Relation) iter.next();
             blog = (Category) relation.getChild();
-            // todo use Tools.syncList
-            author = (User) persistance.findById(new User(blog.getOwner()));
+            users.add(new User(blog.getOwner()));
+        }
+        Tools.syncList(users);
+
+        List result = new ArrayList(blogs.size());
+        int i = 0;
+        for (Iterator iter = blogs.iterator(); iter.hasNext();) {
+            relation = (Relation) iter.next();
+            blog = (Category) relation.getChild();
+            author = (User) users.get(i++);
+            if (author.getId()!=blog.getOwner()) {
+                User owner = new User(blog.getOwner());
+                int j = users.indexOf(owner);
+                if (j != -1)
+                    author = (User) users.get(j);
+                else
+                    author = (User) persistance.findById(owner);
+            }
 
             int count = 0;
             months = blog.getData().selectNodes("//archive/year/month");
@@ -370,6 +387,25 @@ public class ViewBlog implements AbcAction, Configurable {
     }
 
     /**
+     * Stores into env list of fresh stories from selected blog.
+     * @param blog
+     * @param env
+     */
+    private void storeFreshStories(Category blog, Map env) {
+        List qualifiers = new ArrayList();
+        qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, new Integer(blog.getOwner())));
+        qualifiers.add(Qualifier.SORT_BY_CREATED);
+        qualifiers.add(Qualifier.ORDER_DESCENDING);
+        qualifiers.add(new LimitQualifier(0, freshStoriesSize));
+        Qualifier[] qa = new Qualifier[qualifiers.size()];
+
+        SQLTool sqlTool = SQLTool.getInstance();
+        List currentStories = sqlTool.findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+        Tools.syncList(currentStories);
+        env.put(VAR_CURRENT_STORIES, currentStories);
+    }
+
+    /**
      * Puts into env list of unpublished stories, if there are any.
      * The list will contain initialized story relations.
      * @param blog
@@ -397,11 +433,23 @@ public class ViewBlog implements AbcAction, Configurable {
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {
+        urlSummary = prefs.get(PREF_URL_SUMMARY, null);
+        if (urlSummary==null)
+            throw new ConfigurationException("Chybí nastavení "+PREF_URL_SUMMARY);
+
         defaultPageSize = prefs.getInt(PREF_PAGE_SIZE, 10);
-        currentListSize = prefs.getInt(PREF_CURRENT_LIST_SIZE, 5);
+        summarySize = prefs.getInt(PREF_SUMMARY_SIZE, 20);
+        freshStoriesSize = prefs.getInt(PREF_FRESH_STORIES_SIZE, 5);
+
         String re = prefs.get(PREF_BLOG_URL, null);
         try {
             reUrl = new RECompiler().compile(re);
+        } catch (RESyntaxException e) {
+            throw new ConfigurationException("Invalid regexp: '"+re+"'!");
+        }
+        re = prefs.get(PREF_SUMMARY_URL, null);
+        try {
+            reSummaryUrl = new RECompiler().compile(re);
         } catch (RESyntaxException e) {
             throw new ConfigurationException("Invalid regexp: '"+re+"'!");
         }

@@ -5,14 +5,10 @@
   </div></div>
 
     <div class="s_sekce">
-        Pøehled zápisù ze v¹ech blogù.
-
-        <p>Chcete-li také psát svùj blog, pøihla¹te se a v nastavení
-        si jej mù¾ete zalo¾it.</p>
-
-        <p>Více o této nové funkci se dozvíte z <a href="/blog/leos/2005/1/2/72133">oznámení</a>.</p>
-
+        Pøehled zápisù ze v¹ech blogù na¹ich u¾ivatelù. Blog si mù¾e zalo¾it registrovaný u¾ivatel
+        ve svém profilu.
         <ul>
+          <li><a href="/blog/souhrn">struènìj¹í souhrn</a></li>
           <li><a href="/blogy">seznam blogù</a></li>
           <li><a href="/auto/blog.rss">RSS kanál</a></li>
         </ul>
@@ -33,28 +29,37 @@
     <#if category!="UNDEF"><#assign category=TOOL.xpath(blog, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
     <div class="cl">
         <h1 class="st_nadpis"><a href="${url}">${TOOL.xpath(story, "/data/name")}</a></h1>
-	<p class="cl_inforadek">
+	    <p class="cl_inforadek">
             ${DATE.show(story.created, "CZ_SHORT")} |
     	    <a href="/blog/${blog.subType}">${title}</a> |
     	    <a href="/Profile/${author.id}">${author.name}</a> |
+            <#if category!="UNDEF">${category}</#if>
+            <#if SUMMARY?exists><br><#else> | </#if>
 	        Pøeèteno: ${TOOL.getCounterValue(story)}x |
-            <#if category!="UNDEF">${category} |</#if>
     	    <@showDiscussions story, url/>
-	</p>
-        <#assign text = TOOL.xpath(story, "/data/perex")?default("UNDEF")>
-        <#if text!="UNDEF">
-            ${text}
-            <div class="signature"><a href="${url}">více...</a></div>
-        <#else>
-            ${TOOL.xpath(story, "/data/content")}
+    	</p>
+	    <#if ! SUMMARY?exists>
+            <#assign text = TOOL.xpath(story, "/data/perex")?default("UNDEF")>
+            <#if text!="UNDEF">
+                ${text}
+                <div class="signature"><a href="${url}">více...</a></div>
+            <#else>
+                ${TOOL.xpath(story, "/data/content")}
+            </#if>
         </#if>
     </div>
     <hr>
 </#list>
 
 <p>
-    <#assign url="/blog/"><#if YEAR?exists><#assign url=url+YEAR+"/"></#if>
-    <#if MONTH?exists><#assign url=url+MONTH+"/"></#if><#if DAY?exists><#assign url=url+DAY+"/"></#if>
+    <#if SUMMARY?exists>
+        <#assign url="/blog/souhrn">
+    <#else>
+        <#assign url="/blog/">
+        <#if YEAR?exists><#assign url=url+YEAR+"/"></#if>
+        <#if MONTH?exists><#assign url=url+MONTH+"/"></#if>
+        <#if DAY?exists><#assign url=url+DAY+"/"></#if>
+    </#if>
     <#if (STORIES.currentPage.row > 0) >
         <#assign start=STORIES.currentPage.row-STORIES.pageSize><#if (start<0)><#assign start=0></#if>
         <a href="${url}?from=${start}">Novìj¹í zápisy</a>
