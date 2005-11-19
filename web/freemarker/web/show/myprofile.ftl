@@ -75,11 +75,10 @@ patièku zobrazovanou v diskusích u va¹ich pøíspìvkù, nahrát svou fotku
 
 <h2>Blog</h2>
 
-<p>Pro ty z vás, kteøí tento termín vidíte poprvé:
-jedná se o moderní formu vedení deníèku na internetu. Pokud zaèínáte s Linuxem, mù¾ete
-zde postupnì psát své zku¹enosti a pokroky, v kombinaci s diskusním fórem pak snáze
-dosáhnete svého cíle. Pokud jste pokroèilý u¾ivatel, máte mo¾nost pou¾ít blogy pro
-zveøejòování rad a návodù. A nebo si pi¹te blog jen tak, pro radost.
+<p>Blog je moderní formu vedení deníèku na internetu. Je urèen u¾ivatelùm Linuxu,
+kteøí zde mohou psát napøíklad návody, zamy¹lení, fejetony i jiné texty. Pokud nemáte
+s Linuxem nic spoleèného a jen hledáte blogovací systém, radìji si zalo¾te deníèek
+nìkde jinde.
 </p>
 
 <ul>
