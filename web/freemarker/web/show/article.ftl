@@ -119,12 +119,12 @@ ${TOOL.render(TEXT,USER?if_exists)}
         <img src="/images/site2/teplomerrtut.gif" alt="hodnoceni" height="5" width="<#if rating!="UNDEF">${3+(rating.result/3)*191} <#else>3</#if>" title="<#if rating!="UNDEF">${rating.result?string["#0.00"]}</#if>">
         <#if USER?exists>
             <div class="stup">
-		<img id="spatny" src="/images/site2/palec_spatny.gif" alt="¹patné">
+		        <img id="spatny" src="/images/site2/palec_spatny.gif" alt="¹patné">
                 <a class="s0" href="${URL.make("/rating/"+RELATION.id+"?action=rate&amp;rtype=article&amp;rvalue=0")}" target="rating" title="Va¹e hodnocení: 0">0</a>
                 <a class="s1" href="${URL.make("/rating/"+RELATION.id+"?action=rate&amp;rtype=article&amp;rvalue=1")}" target="rating" title="Va¹e hodnocení: 1">1</a>
                 <a class="s2" href="${URL.make("/rating/"+RELATION.id+"?action=rate&amp;rtype=article&amp;rvalue=2")}" target="rating" title="Va¹e hodnocení: 2">2</a>
                 <a class="s3" href="${URL.make("/rating/"+RELATION.id+"?action=rate&amp;rtype=article&amp;rvalue=3")}" target="rating" title="Va¹e hodnocení: 3">3</a>
-		<img id="dobry" src="/images/site2/palec_dobry.gif" alt="dobré">
+		        <img id="dobry" src="/images/site2/palec_dobry.gif" alt="dobré">
             </div>
         </#if>
      </div>
@@ -139,40 +139,40 @@ ${TOOL.render(TEXT,USER?if_exists)}
 <#flush>
 
 <#if CHILDREN.discussion?exists>
- <h1>Diskuse k tomuto èlánku</h1>
- <#assign DISCUSSION=CHILDREN.discussion[0].child>
+    <h1>Diskuse k tomuto èlánku</h1>
+    <#assign DISCUSSION=CHILDREN.discussion[0].child>
+    <#assign diz = TOOL.createDiscussionTree(DISCUSSION,USER?if_exists,true)>
 
- <p><b>AbcMonitor</b> vám emailem za¹le upozornìní pøi zmìnì.
-  <#if USER?exists && TOOL.xpath(DISCUSSION,"//monitor/id[text()='"+USER.id+"']")?exists>
-   <#assign monitorState="Vypni">
-  <#else>
-   <#assign monitorState="Zapni">
-  </#if>
-  <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+CHILDREN.discussion[0].id)}">${monitorState}</a>
-  (${TOOL.getMonitorCount(DISCUSSION.data)})
- </p>
+     <p>
+        <#if diz.hasUnreadComments>
+            <a href="#${diz.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a>
+        </#if>
 
- <p>
-  <a href="${URL.make("/EditDiscussion?action=add&amp;dizId="+DISCUSSION.id+"&amp;threadId=0&amp;rid="+CHILDREN.discussion[0].id)}">
-  Vlo¾it dal¹í komentáø</a>
- </p>
+        <a href="${URL.make("/EditDiscussion?action=add&amp;dizId="+DISCUSSION.id+"&amp;threadId=0&amp;rid="+CHILDREN.discussion[0].id)}">
+        Vlo¾it dal¹í komentáø</a>
 
- <#assign frozen=TOOL.xpath(DISCUSSION,"/data/frozen")?exists>
- <#if frozen>Diskuse byla administrátory uzamèena</#if>
+        <#if USER?exists && TOOL.xpath(DISCUSSION,"//monitor/id[text()='"+USER.id+"']")?exists>
+            <#assign monitorState="Pøestaò sledovat"><#else><#assign monitorState="Sleduj">
+        </#if>
+        <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+CHILDREN.discussion[0].id)}"
+        title="AbcMonitor za¹le emailem zprávu, dojde-li v diskusi ke zmìnì">${monitorState}</a>
+        <span title="Poèet lidí, kteøí sledují tuto diskusi">(${TOOL.getMonitorCount(DISCUSSION.data)})</span>
 
- <#if USER?exists && USER.hasRole("discussion admin")>
-  <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+CHILDREN.discussion[0].id+"&amp;dizId="+DISCUSSION.id)}">
-  <#if frozen>Rozmrazit<#else>Zmrazit</#if> diskusi</a>
- </#if>
+        <#assign frozen=TOOL.xpath(DISCUSSION,"/data/frozen")?exists>
+        <#if frozen>Diskuse byla administrátory uzamèena</#if>
 
- <#assign diz = TOOL.createDiscussionTree(DISCUSSION,USER?if_exists,true)>
- <#if diz.hasUnreadComments><a href="#${diz.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a></#if>
- <#list diz.threads as thread>
-  <@lib.showThread thread, 0, DISCUSSION.id, CHILDREN.discussion[0].id, !frozen />
- </#list>
+        <#if USER?exists && USER.hasRole("discussion admin")>
+            <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+CHILDREN.discussion[0].id+"&amp;dizId="+DISCUSSION.id)}">
+            <#if frozen>Rozmrazit<#else>Zmrazit</#if> diskusi</a>
+        </#if>
+     </p>
+
+    <#list diz.threads as thread>
+        <@lib.showThread thread, 0, DISCUSSION.id, CHILDREN.discussion[0].id, !frozen />
+    </#list>
 <#elseif forbidDiscussion!="yes">
- <h1>Diskuse k tomuto èlánku</h1>
- <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vlo¾it první komentáø</a>
+    <h1>Diskuse k tomuto èlánku</h1>
+    <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vlo¾it první komentáø</a>
 </#if>
 
 <#include "../footer.ftl">
