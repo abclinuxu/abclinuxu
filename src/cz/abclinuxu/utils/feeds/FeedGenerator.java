@@ -143,10 +143,10 @@ public class FeedGenerator implements Configurable {
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
             List list = SQLTool.getInstance().findItemRelationsWithType(Item.DRIVER, qualifiers);
-            // todo use Tools.syncList
+            Tools.syncList(list);
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
-                Item item = (Item) persistance.findById(found.getChild());
+                Item item = (Item) found.getChild();
                 User author = (User) persistance.findById(new User(item.getOwner()));
 
                 entry = new SyndEntryImpl();
@@ -186,10 +186,10 @@ public class FeedGenerator implements Configurable {
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0,feedLength)};
             List list = SQLTool.getInstance().findRecordRelationsWithType(Record.HARDWARE, qualifiers);
-            // todo use optimal Tools.syncList
+            Tools.syncList(list);
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
-                Item item = (Item) persistance.findById(found.getParent());
+                Item item = (Item) found.getParent();
                 Record record = (Record) persistance.findById(found.getChild());
                 User author = (User) persistance.findById(new User(record.getOwner()));
 
@@ -332,7 +332,12 @@ public class FeedGenerator implements Configurable {
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
             List stories = sqlTool.findItemRelationsWithType(Item.BLOG, qualifiers);
             Tools.syncList(stories);
-            // todo use Tools.syncList
+            List blogs = new ArrayList();
+            for (Iterator iter = stories.iterator(); iter.hasNext();) {
+                Relation found = (Relation) iter.next();
+                blogs.add(found.getParent());
+            }
+            Tools.syncList(blogs);
             for (Iterator iter = stories.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
                 blog = (Category) persistance.findById(found.getParent());
