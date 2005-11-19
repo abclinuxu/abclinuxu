@@ -8,8 +8,8 @@
         Pøehled zápisù ze v¹ech blogù na¹ich u¾ivatelù. Blog si mù¾e zalo¾it registrovaný u¾ivatel
         ve svém profilu.
         <ul>
-          <li><a href="/blog/souhrn">struènìj¹í souhrn</a></li>
-          <li><a href="/blogy">seznam blogù</a></li>
+          <li><a href="/blog/souhrn">Struènìj¹í souhrn</a></li>
+          <li><a href="/blogy">Seznam blogù</a></li>
           <li><a href="/auto/blog.rss">RSS kanál</a></li>
         </ul>
     </div>
@@ -25,18 +25,19 @@
     <#assign story=relation.child, blog=relation.parent, author=TOOL.createUser(blog.owner)>
     <#assign url=TOOL.getUrlForBlogStory(blog.subType, story.created, relation.id)>
     <#assign title=TOOL.xpath(blog,"//custom/title")?default("blog")>
-    <#assign category = story.subType?default("UNDEF")>
+    <#assign category = story.subType?default("UNDEF"), rating=TOOL.ratingFor(story.data,"story")?default("UNDEF")>
     <#if category!="UNDEF"><#assign category=TOOL.xpath(blog, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
     <div class="cl">
         <h1 class="st_nadpis"><a href="${url}">${TOOL.xpath(story, "/data/name")}</a></h1>
 	    <p class="cl_inforadek">
             ${DATE.show(story.created, "CZ_SHORT")} |
     	    <a href="/blog/${blog.subType}">${title}</a> |
-    	    <a href="/Profile/${author.id}">${author.name}</a> |
-            <#if category!="UNDEF">${category}</#if>
+    	    <a href="/Profile/${author.id}">${author.name}</a>
+            <#if (category!="UNDEF" && category?length > 1)>| ${category}</#if>
             <#if SUMMARY?exists><br><#else> | </#if>
 	        Pøeèteno: ${TOOL.getCounterValue(story)}x |
     	    <@showDiscussions story, url/>
+            <#if rating!="UNDEF">| Hodnocení:&nbsp;<span title="Hlasù: ${rating.count}">${rating.result?string["#0.00"]}</span></#if>
     	</p>
 	    <#if ! SUMMARY?exists>
             <#assign text = TOOL.xpath(story, "/data/perex")?default("UNDEF")>

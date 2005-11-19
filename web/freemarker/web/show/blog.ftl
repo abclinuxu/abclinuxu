@@ -90,7 +90,7 @@
             <#if title!="UNDEF">
                 <li><a href="/blog/${BLOG.subType}">${title}, hlavní strana</a></li>
             </#if>
-            <li><a href="/blog/${BLOG.subType}/souhrn">struènìj¹í souhrn</a></li>
+            <li><a href="/blog/${BLOG.subType}/souhrn">Struènìj¹í souhrn</a></li>
             <li><a href="/auto/blog/${BLOG.subType}.rss">RSS kanál</a></li>
             <li><a href="/blog">V¹echny blogy</a></li>
         </ul>
@@ -130,7 +130,7 @@
 
 <#list STORIES.data as relation>
     <#assign story=relation.child, url=TOOL.getUrlForBlogStory(BLOG.subType, story.created, relation.id)>
-    <#assign category = story.subType?default("UNDEF")>
+    <#assign category = story.subType?default("UNDEF"), rating=TOOL.ratingFor(story.data,"story")?default("UNDEF")>
     <#if category!="UNDEF"><#assign category=TOOL.xpath(BLOG, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
     <div class="cl">
 	<h1 class="st_nadpis"><a href="${url}">${TOOL.xpath(story, "/data/name")}</a></h1>
@@ -139,6 +139,7 @@
             <#if category!="UNDEF">${category} |</#if>
 	        Pøeèteno: ${TOOL.getCounterValue(story)}x |
     	    <@showDiscussions story, url/>
+            <#if rating!="UNDEF">| Hodnocení:&nbsp;<span title="Hlasù: ${rating.count}">${rating.result?string["#0.00"]}</span></#if>
 	    </p>
 	    <#if ! SUMMARY?exists>
             <#assign text = TOOL.xpath(story, "/data/perex")?default("UNDEF")>
@@ -179,7 +180,7 @@
     <#else>
         <#local diz=TOOL.analyzeDiscussion("UNDEF")>
     </#if>
-    | <a href="${url}">Komentáøù:</a> ${diz.responseCount}<#if diz.responseCount gt 0>, poslední ${DATE.show(diz.updated, "CZ_SHORT")}</#if>
+    <a href="${url}">Komentáøù:</a> ${diz.responseCount}<#if diz.responseCount gt 0>, poslední ${DATE.show(diz.updated, "CZ_SHORT")}</#if>
 </#macro>
 
 <#include "../footer.ftl">

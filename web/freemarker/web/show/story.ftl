@@ -2,9 +2,10 @@
 <#assign intro=TOOL.xpath(BLOG,"//custom/intro")?default("UNDEF"),
         title=TOOL.xpath(BLOG,"//custom/title")?default("UNDEF"),
         owner=TOOL.createUser(BLOG.owner),
-        CHILDREN=TOOL.groupByType(STORY.child.children),
-        category = STORY.child.subType?default("UNDEF"),
-        story_url = TOOL.getUrlForBlogStory(BLOG.subType, STORY.child.created, STORY.id)>
+        ITEM=STORY.child,
+        CHILDREN=TOOL.groupByType(ITEM.children),
+        category = ITEM.subType?default("UNDEF"),
+        story_url = TOOL.getUrlForBlogStory(BLOG.subType, ITEM.created, STORY.id)>
 <#if category!="UNDEF"><#assign category=TOOL.xpath(BLOG, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
 
 <#assign plovouci_sloupec>
@@ -94,7 +95,7 @@
             <#if title!="UNDEF">
                 <li><a href="/blog/${BLOG.subType}">${title}, hlavní strana</a></li>
             </#if>
-            <li><a href="/blog/${BLOG.subType}/souhrn">struènìj¹í souhrn</a></li>
+            <li><a href="/blog/${BLOG.subType}/souhrn">Struènìj¹í souhrn</a></li>
             <li><a href="/auto/blog/${BLOG.subType}.rss">RSS kanál</a></li>
             <li><a href="/blog">V¹echny blogy</a></li>
         </ul>
@@ -137,28 +138,53 @@
 
 <@lib.showMessages/>
 
-<h2>${TOOL.xpath(STORY.child, "/data/name")}</h2>
+<h2>${TOOL.xpath(ITEM, "/data/name")}</h2>
 <p class="cl_inforadek">
-    <#if STORY.child.type==15>Odlo¾eno<#else>${DATE.show(STORY.child.created, "CZ_SHORT")}</#if> |
-    Pøeèteno: ${TOOL.getCounterValue(STORY.child)}x
+    <#if ITEM.type==15>Odlo¾eno<#else>${DATE.show(ITEM.created, "CZ_SHORT")}</#if> |
+    Pøeèteno: ${TOOL.getCounterValue(ITEM)}x
     <#if category!="UNDEF">| ${category}</#if>
-    <#if (STORY.child.type==12 && STORY.child.created.time!=STORY.child.updated.time)>
-        | poslední úprava: ${DATE.show(STORY.child.updated, "CZ_SHORT")}
+    <#if (ITEM.type==12 && ITEM.created.time!=ITEM.updated.time)>
+        | poslední úprava: ${DATE.show(ITEM.updated, "CZ_SHORT")}
     </#if>
 </p>
 
-<#assign text = TOOL.xpath(STORY.child, "/data/perex")?default("UNDEF")>
+<#assign text = TOOL.xpath(ITEM, "/data/perex")?default("UNDEF")>
 <#if text!="UNDEF">${text}</#if>
-${TOOL.xpath(STORY.child, "/data/content")}
+${TOOL.xpath(ITEM, "/data/content")}
 
 <#if CHILDREN.poll?exists>
     <h3>Anketa</h3>
     <@lib.showPoll CHILDREN.poll[0], story_url />
 </#if>
 
+<#assign rating=TOOL.ratingFor(ITEM.data,"story")?default("UNDEF")>
+ <div class="cl_rating">
+     <h3>Hodnocení&nbsp;&nbsp;<iframe name="rating" width="300" frameborder="0" height="20" scrolling="no" class="rating"></iframe></h3>
+     <div class="hdn">
+     <div class="text">Stav: <#if rating!="UNDEF">${rating.result?string["#0.00"]} <#else>bez hodnocení</#if></div>
+     <div class="tpm">
+        <img src="/images/site2/teplomerrtut.gif" alt="hodnoceni" height="5" width="<#if rating!="UNDEF">${3+(rating.result/3)*191} <#else>3</#if>" title="<#if rating!="UNDEF">${rating.result?string["#0.00"]}</#if>">
+        <#if USER?exists>
+            <div class="stup">
+                <img id="spatny" src="/images/site2/palec_spatny.gif" alt="¹patné">
+                <a class="s0" href="${URL.make("/rating/"+STORY.id+"?action=rate&amp;rtype=story&amp;rvalue=0")}" target="rating" title="Va¹e hodnocení: 0">0</a>
+                <a class="s1" href="${URL.make("/rating/"+STORY.id+"?action=rate&amp;rtype=story&amp;rvalue=1")}" target="rating" title="Va¹e hodnocení: 1">1</a>
+                <a class="s2" href="${URL.make("/rating/"+STORY.id+"?action=rate&amp;rtype=story&amp;rvalue=2")}" target="rating" title="Va¹e hodnocení: 2">2</a>
+                <a class="s3" href="${URL.make("/rating/"+STORY.id+"?action=rate&amp;rtype=story&amp;rvalue=3")}" target="rating" title="Va¹e hodnocení: 3">3</a>
+                <img id="dobry" src="/images/site2/palec_dobry.gif" alt="dobré">
+            </div>
+        </#if>
+     </div>
+     <#if rating!="UNDEF">
+        <div class="text">Poèet hlasù: ${rating.count}</div>
+     </#if>
+     <br><br><div>&nbsp;</div>
+     </div>
+ </div>
+
 <p><b>Nástroje</b>: <a href="${story_url}?varianta=print">Tisk</a></p>
 
-<#if (STORY.child.type==12)>
+<#if (ITEM.type==12)>
     <h2>Komentáøe</h2>
     <#if CHILDREN.discussion?exists>
         <#assign DISCUSSION=CHILDREN.discussion[0].child>
