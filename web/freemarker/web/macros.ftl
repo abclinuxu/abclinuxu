@@ -140,7 +140,7 @@ prosim poslete mi URL a popis, jak jste na tuto stranku narazili
         <#list anketa.choices as choice>
             <div class="ank-odpov">
               <#assign procento = TOOL.percent(choice.count,total)>
-              <label><input type="${type}" name="voteId" value="${choice.id}">${choice.text}</label>&nbsp;(${procento}%)<br>
+              <label><input type="${type}" name="voteId" value="${choice.id}">${choice.text}</label>&nbsp;(<span title="${choice.count} hlasù">${procento}%</span>)<br>
               <div class="ank-sloup-okraj" style="width: ${procento}px">
                 <div class="ank-sloup"></div>
               </div>

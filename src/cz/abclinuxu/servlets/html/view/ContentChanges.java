@@ -24,9 +24,14 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.GenericObject;
+import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.view.ChangedContent;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.OpaqueComparator;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistance.PersistanceFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,27 +46,31 @@ import java.util.*;
  */
 public class ContentChanges implements AbcAction {
     public static final String PARAM_RELATION_SHORT = "rid";
-    public static final String PARAM_SINCE = "since";
+    public static final String PARAM_SORT_BY = "sortBy";
+    public static final String PARAM_ORDER = "order";
 
-    /** list of initialized relations with child that is Content */
+    public static final String COLUMN_URL = "url";
+    public static final String COLUMN_USERNAME = "user";
+    public static final String COLUMN_DATE = "date";
+    public static final String COLUMN_SIZE = "size";
+    public static final String ORDER_ASCENDING = "asc";
+    public static final String ORDER_DESCENDING = "desc";
+
+    /** list of ChangedContent instances */
     public static final String VAR_DATA = "DATA";
-    public static final String VAR_NOW = "NOW";
+    public static final String VAR_SORT_COLUMN = "COLUMN";
+    public static final String VAR_ORDER_DESCENDING = "ORDER_DESC";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if (relation == null) {
-            throw new MissingArgumentException("Parametr relationId je prázdný!");
+            throw new MissingArgumentException("Parametr rid je prázdný!");
         }
 
         Tools.sync(relation);
         env.put(ShowObject.VAR_RELATION, relation);
-        env.put(VAR_NOW, new Date());
-
-        String s = (String) params.get(PARAM_SINCE);
-        if (s==null || s.trim().length()==0)
-            s = "2000-01-01 01:01";
-        Date modifiedSince = Constants.isoFormat.parse(s);
         List result = new ArrayList();
 
         List stack = new ArrayList();
@@ -82,12 +91,73 @@ public class ContentChanges implements AbcAction {
             Tools.syncList(children);
             stack.addAll(0, children);
 
-            if (content.getUpdated().before(modifiedSince))
-                continue;
-            result.add(childRelation);
+            result.add(createChangedContent(childRelation, persistance));
         }
 
+        String column = (String) params.get(PARAM_SORT_BY);
+        if (column==null)
+            column = COLUMN_DATE;
+
+        boolean orderDesc = true;
+        String order = (String) params.get(PARAM_ORDER);
+        if (ORDER_ASCENDING.equalsIgnoreCase(order))
+            orderDesc = false;
+
+        Comparator comparator = new ChangesComparator(column);
+        if (orderDesc)
+            comparator = new OpaqueComparator(comparator);
+        Collections.sort(result, comparator);
+
         env.put(VAR_DATA, result);
+        env.put(VAR_SORT_COLUMN, column);
+        env.put(VAR_ORDER_DESCENDING, Boolean.valueOf(orderDesc));
         return FMTemplateSelector.select("ContentChanges", "show", env, request);
+    }
+
+    /**
+     * Creates new instance of ChangedContent.
+     * @param relation initialized relation
+     * @return ChangedContent
+     */
+    private ChangedContent createChangedContent(Relation relation, Persistance persistance) {
+        Item item = (Item) relation.getChild();
+        User user = (User) persistance.findById(new User(item.getOwner()));
+        String userName = user.getNick();
+        if (userName==null)
+            userName = user.getName();
+        String content = Tools.xpath(item, "/data/content");
+        content = Tools.removeTags(content);
+
+        ChangedContent changedContent = new ChangedContent(relation);
+        changedContent.setUpdated(item.getUpdated());
+        changedContent.setUrl(relation.getUrl());
+        changedContent.setSize(content.length());
+        changedContent.setUserName(userName);
+        changedContent.setUser(user);
+        return changedContent;
+    }
+
+    /**
+     * Compares two valid instances of ChangedContent by selected column, default is COLUMN_DATE.
+     */
+    static class ChangesComparator implements Comparator {
+        String column;
+
+        public ChangesComparator(String column) {
+            this.column = column;
+        }
+
+        public int compare(Object o1, Object o2) {
+            ChangedContent c1 = (ChangedContent) o1, c2 = (ChangedContent) o2;
+            if (COLUMN_USERNAME.equals(column)) {
+                return c1.getUserName().compareTo(c2.getUserName());
+            } else if (COLUMN_URL.equals(column)) {
+                return c1.getUrl().compareTo(c2.getUrl());
+            } else if (COLUMN_SIZE.equals(column)) {
+                return c1.getSize()-c2.getSize();
+            } else { // Date column is default
+                return c1.getUpdated().compareTo(c2.getUpdated());
+            }
+        }
     }
 }

@@ -168,19 +168,4 @@ public class Sorters2 {
         }
     }
 
-    /**
-     * This comparator reverses order of supplied comparator.
-     */
-    static class OpaqueComparator implements Comparator {
-        Comparator comparator;
-
-        public OpaqueComparator(Comparator comparator) {
-            this.comparator = comparator;
-        }
-
-        public int compare(Object o1, Object o2) {
-            int result = comparator.compare(o2,o1);
-            return result;
-        }
-    }
 }

@@ -3,50 +3,47 @@
 <h1>Pøehled stránek</h1>
 
 <p>Na této stránce najdete pøehledný seznam dokumentù,
-jejich adres a datumu poslední úpravy. Pokud si chcete nechat
-zobrazit jen dokumenty, které byly zmìnìny od urèitého data,
-vyplòte toto datum do formuláøe a ode¹lete jej. Formát data
-je <code>${DATE.show(NOW, "ISO")}</code>.</p>
-
-<form action="${URL.make("/zmeny/"+RELATION.id)}" method="POST">
-    <input type="text" name="since" value="${PARAMS.since?default("")}" size="16" maxlength="16" taborder="1">
-    <input type="submit" value="Zobraz">
-</form>
+jejich adres a datumu poslední úpravy. </p>
 
 <#if ! DATA?has_content>
     <p>
-        <#if (PARAMS.since?if_exists?size>0)>
-            Danému filtru nevyhovuje ¾ádná stránka.
-        <#else>
-            Pod touto stránkou nejsou ¾ádné podstránky.
-        </#if>
+        Pod touto stránkou nejsou ¾ádné podstránky.
     </p>
 <#else>
-    <table>
+    <table width="100%">
         <tr>
-            <th>URL</th>
-            <th>Poslední zmìna</th>
-            <th>Znakù</th>
-            <th align="left">Autor</th>
+            <th align="center"><a href="<@sortUrl column="url"/>">URL</a></th>
+            <th align="right"><a href="<@sortUrl column="date"/>">Poslední zmìna</a></th>
+            <th align="right"><a href="<@sortUrl column="size"/>">Znakù</a></th>
+            <th align="left"><a href="<@sortUrl column="user"/>">Autor</th>
         </tr>
-        <#list DATA as relation>
-            <#assign item=relation.child, autor=TOOL.createUser(item.owner)>
+        <#list DATA as content>
             <tr>
                 <td>
-                    <a href="${relation.url}">${TOOL.reverseLimit(relation.url,50,"..")}</a>
+                    <a href="${content.url}" title="${content.url}">${TOOL.reverseLimit(content.url,50,"..")}</a>
                 </td>
                 <td align="right">
-                    ${DATE.show(item.updated, "CZ_FULL")}
+                    ${DATE.show(content.updated, "CZ_FULL")}
                 </td>
                 <td align="right">
-                    ${(TOOL.removeTags(TOOL.xpath(item,"/data/content")))?length}
+                    ${content.size}
                 </td>
                 <td>
-                    <a href="/Profile/${autor.id}">${autor.nick?default(autor.name)}</a>
+                    <a href="/Profile/${content.user.id}">${content.userName}</a>
                 </td>
             </tr>
         </#list>
     </table>
 </#if>
+
+<#macro sortUrl column>
+    <#assign url = "/zmeny/"+RELATION.id+"?sortBy="+column+"&amp;order=">
+    <#if column==COLUMN>
+        <#if ORDER_DESC><#assign url = url + "asc"><#else><#assign url = url + "desc"></#if>
+    <#else>
+        <#assign url = url + "asc">
+    </#if>
+    ${URL.make(url)}
+</#macro>
 
 <#include "../footer.ftl">
