@@ -32,6 +32,7 @@ import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AccessKeeper;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.AccessDeniedException;
@@ -67,14 +68,13 @@ public class EditPoll implements AbcAction {
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if (relation == null)
             throw new MissingArgumentException("Chybí parametr rid!");
-        relation = (Relation) persistance.findById(relation);
+        Tools.sync(relation);
         env.put(VAR_RELATION, relation);
 
         if ( ACTION_VOTE.equals(action) )
@@ -100,7 +100,7 @@ public class EditPoll implements AbcAction {
         if ( ACTION_ADD_STEP2.equals(action) )
             return actionAddStep2(request, response, env, true);
 
-        Poll poll = (Poll) persistance.findById(relation.getChild());
+        Poll poll = (Poll) relation.getChild();
         env.put(EditPoll.VAR_POLL, poll);
 
         if ( ACTION_EDIT.equals(action) )
