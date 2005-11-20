@@ -1,7 +1,6 @@
 delete from akce;
 delete from anketa2;
 delete from citac;
-delete from data_ankety;
 delete from kategorie;
 delete from komentar;
 delete from objekt;
