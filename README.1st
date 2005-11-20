@@ -1,0 +1,54 @@
+Strucne
+=======
+
+1\ potrebujete spravne nainstalovat 
+Sun JDK 1.4
+Jakarta ant 1.6
+Mysql 4.1
+Jetty 4.1.20
+
+Ant a jetty najdete v orezane verzi 
+mezi ostatnimi soubory ke stazeni.
+
+2\ nastavte si databazi
+bin/sql/create_db_schema.sql
+devel_databaze.sql.bz2
+
+3\ upravte si conf/conf_devel.properties
+Dulezite je mit spravne vsechny cesty,
+adresare by mely existovat. Take nastavte
+jmeno databaze, uzivatele a jeho heslo.
+
+4\ zkompilujte projekt
+spustte ant ve zdrojacich
+
+5\ spustte jetty
+cd jetty-4.1/bin
+./jetty run
+
+6\ otevrete prohlizec
+http://localhost:8080
+
+Slozitejsi veci
+===============
+
+V konfiguraku musite nastavit lokalni domenu,
+pokud chcete, aby se pouzivala detekce sablon
+podle jmena serveru. Napriklad pda.abclinuxu.cz
+znamena, ze se ma pouzit sablona pda. 
+
+Je treba nastavit v DNS jmeno stroje dle sablon
+a v konfiguraku pak domenu, kde abicko zrovna bezi.
+Napriklad doma, pak system rozpozna server pda.doma.
+
+Info
+====
+
+Vice informaci najdete na adrese 
+http://www.abclinuxu.cz/projekty/zdrojaky
+Uvitam vase pripominky k tomuto navodu,
+co vam delalo potize, co je treba lepe popsat.
+
+Leos Literak
+http://www.abclinuxu.cz/Profile/1
+
