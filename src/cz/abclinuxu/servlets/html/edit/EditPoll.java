@@ -190,10 +190,14 @@ public class EditPoll implements AbcAction {
         if (relation.getUpper()==Constants.REL_POLLS)
             FeedGenerator.updatePolls();
 
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        if (url==null)
-            url = UrlUtils.PREFIX_POLLS + "/show/" + relation.getId();
-        urlUtils.redirect(response, url);
+        if (redirect) {
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            if (url==null)
+                url = UrlUtils.PREFIX_POLLS + "/show/" + relation.getId();
+            urlUtils.redirect(response, url);
+        } else {
+            env.put(VAR_RELATION, relation);
+        }
         return null;
     }
 
