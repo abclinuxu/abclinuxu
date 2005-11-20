@@ -133,15 +133,17 @@
     <#assign category = story.subType?default("UNDEF"), rating=TOOL.ratingFor(story.data,"story")?default("UNDEF")>
     <#if category!="UNDEF"><#assign category=TOOL.xpath(BLOG, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
     <div class="cl">
-	<h1 class="st_nadpis"><a href="${url}">${TOOL.xpath(story, "/data/name")}</a></h1>
+	<#if SUMMARY?exists><h3 class="st_nadpis"><#else><h1 class="st_nadpis"></#if>
+	    <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
+	<#if SUMMARY?exists></h3><#else></h1></#if>
         <p class="cl_inforadek">
     	    ${DATE.show(story.created, "CZ_SHORT")} |
             <#if category!="UNDEF">${category} |</#if>
 	        Pøeèteno: ${TOOL.getCounterValue(story)}x |
     	    <@showDiscussions story, url/>
             <#if rating!="UNDEF">| Hodnocení:&nbsp;<span title="Hlasù: ${rating.count}">${rating.result?string["#0.00"]}</span></#if>
-	    </p>
-	    <#if ! SUMMARY?exists>
+	</p>
+	<#if ! SUMMARY?exists>
             <#assign text = TOOL.xpath(story, "/data/perex")?default("UNDEF")>
             <#if text!="UNDEF">
                 ${text}
@@ -149,7 +151,7 @@
             <#else>
                 ${TOOL.xpath(story, "/data/content")}
             </#if>
-	    </#if>
+	</#if>
     </div>
     <hr>
 </#list>

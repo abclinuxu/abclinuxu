@@ -209,12 +209,12 @@ h1 {
 	margin:		0.5em 0 0 0;
 }
 
-h1.st_nadpis a {
+.st_nadpis a {
 	color:		black;
 	text-decoration: none;
 }
 
-h1.st_nadpis a:hover {
+.st_nadpis a:hover {
 	text-decoration: underline;
 	background-color: transparent;
 }
@@ -238,7 +238,7 @@ td.pad, code.kod, pre.kod {
 	text-align:	right;
 }
 
-.cl_inforadek {
+.cl_inforadek, .ank-vypis {
 	font-size:	80%;
 	color:		gray;
 }
@@ -253,12 +253,14 @@ td.pad, code.kod, pre.kod {
 }
 
 .cl_rating {
-	margin:		15px 5px 40px 5px;
+	margin:		1em 5px 2em 5px;
 	border-top:	1px solid #27648D;
 	border-bottom:	1px solid silver;
 	background-color: #F0F0F0;
 	padding-left:	10px;
 }
+
+.rating { background-color: #F0F0F0; }
 
 .hdn {
 	margin-top:	10px;
@@ -563,6 +565,8 @@ a.info:hover span.tooltip {
 	border-top:1px solid lightgray; }
 
 .ank-otazka { margin-bottom:0.5em }
+
+.ank-vypis { margin: 0 0 0.5em 3em; } /* + .cl_inforadek */
 
 .ls_zpr {
 	font-size:	90%;

@@ -4,15 +4,19 @@
 
 <h1>Archiv anket</h1>
 
+<ul>
 <#list POLLS.data as relation>
-    <p>
+    <li>
         <#assign poll=relation.child, diz=TOOL.findComments(poll)?default("UNDEF")>
-        ${relation.child.text}<br>
-        <a href="${relation.url?default("/ankety/show/"+relation.id)}">${DATE.show(poll.created, "CZ_DMY")}</a>
-        ${poll.totalVoters} hlasù, komentáøù: ${diz.responseCount}<#if (diz.responseCount > 0)>, poslední
-        ${DATE.show(diz.updated, "CZ_FULL")}</#if>
-    </p>
+        ${relation.child.text}<br />
+        <div class="ank-vypis">
+	    <a href="${relation.url?default("/ankety/show/"+relation.id)}">${DATE.show(poll.created, "CZ_DMY")}</a>
+            ${poll.totalVoters} hlasù, komentáøù: ${diz.responseCount}<#if (diz.responseCount > 0)>, poslední
+	    ${DATE.show(diz.updated, "CZ_FULL")}</#if>
+	</div>
+    </li>
 </#list>
+</ul>
 
 <p>
     <#if POLLS.prevPage?exists>

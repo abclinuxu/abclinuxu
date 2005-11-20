@@ -127,7 +127,7 @@ ${TOOL.render(TEXT,USER?if_exists)}
          <#if rating!="UNDEF">
             <div class="text">Poèet hlasù: ${rating.count}</div>
          </#if>
-         <br><br><div>&nbsp;</div>
+	 <br /><br /><br />
          </div>
      </div>
 </#if>

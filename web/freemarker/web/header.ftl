@@ -8,10 +8,11 @@
     <#if ! css?exists || css=="UNDEF"><#assign css="/styles.css"></#if>
     <link rel="stylesheet" type="text/css" href="${css}">
     <link rel="icon" href="/images/site2/favicon.png" type="image/png">
-    <link rel="alternate" title="AbcLinuxu: èlánky" href="http://www.abclinuxu.cz/auto/abc.rss" type="application/rss+xml">
-    <link rel="alternate" title="AbcLinuxu: blogy" href="http://www.abclinuxu.cz/auto/blog.rss" type="application/rss+xml">
-    <link rel="alternate" title="AbcLinuxu: zprávièky" href="http://www.abclinuxu.cz/auto/zpravicky.rss" type="application/rss+xml">
-    <link rel="alternate" title="AbcLinuxu: diskuse" href="http://www.abclinuxu.cz/auto/diskuse.rss" type="application/rss+xml">
+    <link rel="alternate" title="abclinuxu.cz: èlánky" href="http://www.abclinuxu.cz/auto/abc.rss" type="application/rss+xml">
+    <link rel="alternate" title="abclinuxu.cz: blogy" href="http://www.abclinuxu.cz/auto/blog.rss" type="application/rss+xml">
+    <link rel="alternate" title="abclinuxu.cz: zprávièky" href="http://www.abclinuxu.cz/auto/zpravicky.rss" type="application/rss+xml">
+    <link rel="alternate" title="abclinuxu.cz: diskuse" href="http://www.abclinuxu.cz/auto/diskuse.rss" type="application/rss+xml">
+    <link rel="alternate" title="abclinuxu.cz: ankety" href="http://www.abclinuxu.cz/auto/ankety.rss" type="application/rss+xml">
     <link rel="bookmark" href="#obsah" title="Obsah stránky" type="text/html">
     <meta name="keywords" content="linux,abclinuxu,hardware,diskuse,nápovìda,rada,pomoc">
     <script type="text/javascript" src="/data/site/scripts.js"></script>
@@ -160,6 +161,7 @@
                 <ul>
                     <li><a href="/projekty/abclinux/verze-2005">ABC Linux 2005</a></li>
                     <li><a href="/doc/projekty/ucebnice">Uèebnice Linuxu</a></li>
+                    <li><a href="/projekty/zdrojaky">Zdrojáky Abíèka</a></li>
 		    <li><a href="/clanky/novinky/tricka-abclinuxu.cz">Trièka</a></li>
                 </ul>
             </div>

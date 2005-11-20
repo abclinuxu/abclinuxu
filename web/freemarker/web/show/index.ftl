@@ -24,7 +24,7 @@
     <#assign HARDWARE = VARS.getFreshHardware(USER?if_exists)>
     <#if (HARDWARE?size>0) >
         <div class="s_nad_h1"><div class="s_nad_pod_h1">
-            <a class="info" href="#">?<span class="tooltip">Obrovská databáze znalostí o hardwaru</span></a>
+            <a class="info" href="#">?<span class="tooltip">Obrovská databáze znalostí o hardwaru, postupy zprovoznìní v GNU/Linuxu.</span></a>
             <h1><a href="/hardware">Hardware</a></h1>
         </div></div>
         <div class="s_sekce">
@@ -39,7 +39,7 @@
     <#assign DICTIONARY=VARS.getFreshDictionary(USER?if_exists)>
     <#if (DICTIONARY?size>0) >
         <div class="s_nad_h1"><div class="s_nad_pod_h1">
-            <a class="info" href="#">?<span class="tooltip">Jestli nevíte, co znamená nìkteré slovo, podívejte se do na¹eho slovníku</span></a>
+            <a class="info" href="#">?<span class="tooltip">Jestli nevíte, co znamená nìkteré slovo, podívejte se do na¹eho slovníku.</span></a>
             <h1><a href="/slovnik">Slovník</a></h1>
         </div></div>
         <div class="s_sekce">
@@ -54,7 +54,7 @@
     <#assign FAQ = VARS.getFreshFaqs(USER?if_exists)>
     <#if (FAQ?size>0) >
         <div class="s_nad_h1"><div class="s_nad_pod_h1">
-            <a class="info" href="#">?<span class="tooltip">Odpovìdi na èasto kladené otázky</span></a>
+            <a class="info" href="#">?<span class="tooltip">Odpovìdi na èasto kladené otázky.</span></a>
             <h1><a href="/faq">FAQ</a></h1>
         </div></div>
         <div class="s_sekce">
@@ -79,7 +79,7 @@
     <#assign DRIVERS = VARS.getFreshDrivers(USER?if_exists)>
     <#if (DRIVERS?size>0) >
         <div class="s_nad_h1"><div class="s_nad_pod_h1">
-            <a class="info" href="#">?<span class="tooltip">Databáze ovladaèù pro vá¹ hardware</span></a>
+            <a class="info" href="#">?<span class="tooltip">Databáze ovladaèù pro vá¹ hardware.</span></a>
             <h1><a href="/ovladace">Ovladaèe</a></h1>
         </div></div>
         <div class="s_sekce">
@@ -92,6 +92,7 @@
     </#if>
 
     <div class="s_nad_h1"><div class="s_nad_pod_h1">
+	<a class="info" href="#">?<span class="tooltip">Odkazy na nejnovìj¹í linuxová jádra øad 2.0, 2.2, 2.4 a 2.6.</span></a>
         <h1>Aktuální jádra</h1>
     </div></div>
     <div class="s_sekce">
@@ -100,7 +101,7 @@
 
     <!-- unixshop -->
     <div class="s_nad_h1"><div class="s_nad_pod_h1">
-        <a class="info" href="#">?<span class="tooltip">Kvalitní ¾elezo pro va¹e serverovny za dostupné ceny</span></a>
+        <a class="info" href="#">?<span class="tooltip">Kvalitní ¾elezo pro va¹e serverovny za dostupné ceny.</span></a>
         <h1><a href="http://www.unixshop.cz">unixshop.cz</a></h1>
     </div></div>
     <div class="s_sekce">
@@ -118,7 +119,7 @@
 <#if (ARTICLES?size>0) >
     <#list ARTICLES as rel>
         <@lib.showArticle rel, "CZ_DM", "CZ_SHORT"/>
-        <hr>
+        <hr />
     </#list>
 
     <div class="st_vpravo">
@@ -132,7 +133,7 @@
             <div class="s_nad_h1"><div class="s_nad_pod_h1">
                 <a class="info" href="#">?<span class="tooltip">Vlastní blog si po pøihlá¹ení
                 mù¾ete zalo¾it v nastavení svého profilu</span></a>
-                <h1><a href="/blog">Blogy na AbcLinuxu</a></h1>
+                <h1><a href="/blog">Blogy na AbcLinuxu</a>, <a href="/blog/souhrn">struènìj¹í souhrn</a></h1>
             </div></div>
             <table width="99%">
                 <tr>

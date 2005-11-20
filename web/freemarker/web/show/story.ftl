@@ -153,8 +153,11 @@
 ${TOOL.xpath(ITEM, "/data/content")}
 
 <#if CHILDREN.poll?exists>
+<br />
     <h3>Anketa</h3>
-    <@lib.showPoll CHILDREN.poll[0], story_url />
+    <div class="s_sekce">
+        <@lib.showPoll CHILDREN.poll[0], story_url />
+    </div>
 </#if>
 
 <#assign rating=TOOL.ratingFor(ITEM.data,"story")?default("UNDEF")>
@@ -178,7 +181,7 @@ ${TOOL.xpath(ITEM, "/data/content")}
      <#if rating!="UNDEF">
         <div class="text">Poèet hlasù: ${rating.count}</div>
      </#if>
-     <br><br><div>&nbsp;</div>
+     <br /><br /><br />
      </div>
  </div>
 

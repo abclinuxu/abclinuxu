@@ -13,7 +13,7 @@
 	<INPUT TYPE="hidden" NAME="_dad" VALUE="portal">
 	<INPUT TYPE="hidden" NAME="_schema" VALUE="PORTAL">
 	<INPUT TYPE="text" NAME="p_mainsearch" VALUE="" class="text">
-	<INPUT TYPE="submit" VALUE="Hledej" class="button">
+	<INPUT TYPE="submit" VALUE="Najdi ¹kolení" class="button">
     </FORM>
 </div>
 
