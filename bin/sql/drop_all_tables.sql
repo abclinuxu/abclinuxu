@@ -1,4 +1,4 @@
-drop table anketa;
+drop table anketa2;
 drop table citac;
 drop table data_ankety;
 drop table kategorie;

@@ -122,28 +122,6 @@ CREATE TABLE anketa2 (
  data LONGTEXT NOT NULL                  -- XML s otazkou a odpovedmi
 );
 
--- definice ankety
-CREATE TABLE anketa (
- cislo INT AUTO_INCREMENT PRIMARY KEY,  -- identifikator ankety
- typ SMALLINT,                          -- typ ankety (hodnoceni)
- otazka VARCHAR(255) NOT NULL,             -- otazka ankety
- vice CHAR(1),                          -- logicka, NULL pro FALSE,
-                                        -- povoluje vice voleb
-                                        -- (checkbox misto radio button)
- kdy DATETIME NOT NULL,                 -- datum vytvoreni ankety
- uzavrena CHAR(1)                       -- logicka, NULL pro FALSE
-);
-
-
--- data pro anketu
-CREATE TABLE data_ankety (
-   cislo INT DEFAULT '0' NOT NULL,     -- index volby dane ankety
-   anketa INT NOT NULL,                -- identifikator ankety
-   volba VARCHAR(255) NOT NULL,        -- text volby
-   pocet INT DEFAULT '0' NOT NULL      -- kolikrat bylo zvoleno
-);
-
-
 -- hlavni tabulka celeho serveru, popisuje vztahy mezi objekty
 --   tabulka | id tabulky
 -- ----------+--------
