@@ -222,13 +222,15 @@ public class ViewBlog implements AbcAction, Configurable {
         Paging paging = new Paging(stories, from, count, total);
         env.put(VAR_STORIES, paging);
 
-        User user = (User) env.get(Constants.VAR_USER);
-        if (user==null || user.getId()!=blog.getOwner()) {
-            for (Iterator iter = stories.iterator(); iter.hasNext();) {
-                Relation relation = (Relation) iter.next();
-                Item story = (Item) relation.getChild();
-                if (Tools.xpath(story,"/data/perex")==null)
-                    persistance.incrementCounter(story);
+        if (!summary) {
+            User user = (User) env.get(Constants.VAR_USER);
+            if (user==null || user.getId()!=blog.getOwner()) {
+                for (Iterator iter = stories.iterator(); iter.hasNext();) {
+                    Relation relation = (Relation) iter.next();
+                    Item story = (Item) relation.getChild();
+                    if (Tools.xpath(story,"/data/perex")==null)
+                        persistance.incrementCounter(story);
+                }
             }
         }
 
@@ -275,13 +277,15 @@ public class ViewBlog implements AbcAction, Configurable {
         Paging paging = new Paging(stories, from, count, total);
         env.put(VAR_STORIES, paging);
 
-        User user = (User) env.get(Constants.VAR_USER);
-        for (Iterator iter = stories.iterator(); iter.hasNext();) {
-            Relation relation = (Relation) iter.next();
-            Item story = (Item) relation.getChild();
-            if (user==null || user.getId()!=story.getOwner()) {
-                if (Tools.xpath(story,"/data/perex")==null)
-                    persistance.incrementCounter(story);
+        if (!summary) {
+            User user = (User) env.get(Constants.VAR_USER);
+            for (Iterator iter = stories.iterator(); iter.hasNext();) {
+                Relation relation = (Relation) iter.next();
+                Item story = (Item) relation.getChild();
+                if (user == null || user.getId() != story.getOwner()) {
+                    if (Tools.xpath(story, "/data/perex") == null)
+                        persistance.incrementCounter(story);
+                }
             }
         }
 
