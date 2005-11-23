@@ -136,7 +136,7 @@
                     <#list anketa.choices as choice>
                         <div class="ank-odpov">
                           <#assign procento = TOOL.percent(choice.count,total)>
-                          <label><input type="${type}" name="voteId" value="${choice.id}">${choice.text}</label>&nbsp;(${procento}%)<br>
+                          <label><input type="${type}" name="voteId" value="${choice.id}">${choice.text}</label>&nbsp;(<span title="${choice.count}">${procento}%</span>)<br>
                           <div class="ank-sloup-okraj" style="width: ${procento}px">
                             <div class="ank-sloup"></div>
                           </div>
@@ -162,6 +162,7 @@
                     <li><a href="/projekty/abclinux/verze-2005">ABC Linux 2005</a></li>
                     <li><a href="/doc/projekty/ucebnice">Uèebnice Linuxu</a></li>
                     <li><a href="/projekty/zdrojaky">Zdrojáky Abíèka</a></li>
+		    <li><a href="/clanky/ruzne/nakrmte-tucnaka">Nakrmte tuèòáka</a></li>
 		    <li><a href="/clanky/novinky/tricka-abclinuxu.cz">Trièka</a></li>
                 </ul>
             </div>

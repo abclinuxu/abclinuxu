@@ -16,7 +16,7 @@
 </#if>
 
 <#if THREAD?exists>
- <h1>Pøíspìvek na kterı reagujete</h1>
+ <h1>Pøíspìvek, na kterı reagujete</h1>
  <@lib.showThread THREAD, 0, 0, 0, false />
 
  <script language="javascript1.2" type="text/javascript">

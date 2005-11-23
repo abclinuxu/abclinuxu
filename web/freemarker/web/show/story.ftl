@@ -95,9 +95,10 @@
             <#if title!="UNDEF">
                 <li><a href="/blog/${BLOG.subType}">${title}, hlavní strana</a></li>
             </#if>
-            <li><a href="/blog/${BLOG.subType}/souhrn">Struènìj¹í souhrn</a></li>
+            <li><a href="/blog/${BLOG.subType}/souhrn"><#if title!="UNDEF">${title}, </#if>struèný souhrn</a></li>
             <li><a href="/auto/blog/${BLOG.subType}.rss">RSS kanál</a></li>
             <li><a href="/blog">V¹echny blogy</a></li>
+	    <li><a href="/blog/souhrn">V¹echny blogy, struèný souhrn</a></li>
         </ul>
     </div>
 

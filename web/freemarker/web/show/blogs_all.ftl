@@ -8,8 +8,14 @@
         Pøehled zápisù ze v¹ech blogù na¹ich u¾ivatelù. Blog si mù¾e zalo¾it registrovaný u¾ivatel
         ve svém profilu.
         <ul>
-          <li><a href="/blog/souhrn">Struènìj¹í souhrn</a></li>
-          <li><a href="/blogy">Seznam blogù</a></li>
+          <li>
+	    <#if SUMMARY?exists>
+	      <a href="/blog">Výpis s perexy</a>
+	    <#else>
+	      <a href="/blog/souhrn">Struènìj¹í souhrn</a>
+	    </#if>
+	  </li>
+	  <li><a href="/blogy">Seznam blogù</a></li>
           <li><a href="/auto/blog.rss">RSS kanál</a></li>
         </ul>
     </div>
