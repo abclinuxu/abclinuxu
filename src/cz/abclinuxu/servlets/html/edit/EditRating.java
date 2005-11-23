@@ -22,6 +22,7 @@ import org.dom4j.Element;
 import org.dom4j.Document;
 
 import java.util.Map;
+import java.util.Date;
 import java.util.prefs.Preferences;
 
 import cz.abclinuxu.utils.Misc;
@@ -87,6 +88,7 @@ public class EditRating implements AbcAction, Configurable {
         }
 
         GenericDataObject object = ((GenericDataObject)relation.getChild());
+        Date originalUpdated = object.getUpdated();
         Document data = object.getData();
         synchronized (data.getRootElement()) {
             boolean result = rate(user, relation.getId(), data.getRootElement(), params, env, request.getSession());
@@ -95,7 +97,7 @@ public class EditRating implements AbcAction, Configurable {
                 persistance.update(object);
             }
         }
-        SQLTool.getInstance().getUserAction(user.getId(), relation.getId(), "rating");
+        SQLTool.getInstance().setUpdatedTimestamp(object, originalUpdated);
 
         return "/print/misc/rating_result.ftl";
     }
