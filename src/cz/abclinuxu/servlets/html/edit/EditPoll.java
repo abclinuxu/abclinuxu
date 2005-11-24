@@ -194,6 +194,8 @@ public class EditPoll implements AbcAction {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             if (url==null)
                 url = UrlUtils.PREFIX_POLLS + "/show/" + relation.getId();
+            if (upperRelation.getId()!=Constants.REL_POLLS)
+                url = Tools.childUrl(upperRelation, (UrlUtils) env.get(Constants.VAR_URL_UTILS));
             urlUtils.redirect(response, url);
         } else {
             env.put(VAR_RELATION, relation);

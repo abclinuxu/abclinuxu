@@ -249,6 +249,47 @@ public class Tools implements Configurable {
     }
 
     /**
+     * Returns URL for selected relation.
+     * @param relation initialized relation
+     * @param urlUtils initialized UrlUtils instance
+     * @return URL for this relation
+     */
+    public static String childUrl(Relation relation, UrlUtils urlUtils) {
+        if (relation.getUrl() != null)
+            return urlUtils.noPrefix(relation.getUrl());
+
+        if (relation.getId() == Constants.REL_FORUM)
+            return urlUtils.noPrefix("/diskuse.jsp");
+
+        if (relation.getId() == Constants.REL_BLOGS)
+            return urlUtils.noPrefix("/blog");
+
+        GenericObject child = relation.getChild();
+        if (child instanceof Category) {
+            Category category = (Category) child;
+            if (category.getType() == Category.FORUM)
+                return urlUtils.make("/forum/dir/" + relation.getId());
+
+            if (category.getType() == Category.BLOG)
+                return urlUtils.noPrefix("/blog/" + category.getSubType());
+
+            return urlUtils.make("/dir/" + relation.getId());
+        }
+
+        if (child instanceof Item) {
+            Item item = (Item) child;
+            if (item.getType() == Item.BLOG) {
+                Category blog = (Category) relation.getParent();
+                sync(blog);
+                return urlUtils.noPrefix(getUrlForBlogStory(blog.getSubType(), item.getCreated(), relation.getId()));
+            } else
+                return urlUtils.make("/show/" + relation.getId());
+        }
+
+        return urlUtils.make("/show/" + relation.getId());
+    }
+
+    /**
      * Generates list of Links to parents of this object.
      * @param parents list of relations.
      * @param o it shall be User or undefined value
@@ -266,30 +307,7 @@ public class Tools implements Configurable {
                 continue;
 
             link.setText(childName(relation));
-            if (relation.getUrl()!=null)
-                link.setUrl(relation.getUrl());
-            else if (relation.getId()==Constants.REL_FORUM)
-                link.setUrl(urlUtils.noPrefix("/diskuse.jsp"));
-            else if (relation.getId()==Constants.REL_BLOGS)
-                link.setUrl(urlUtils.noPrefix("/blog"));
-            else if (child instanceof Category) {
-                Category category = (Category)child;
-                if (category.getType()==Category.FORUM)
-                    link.setUrl(urlUtils.make("/forum/dir/"+relation.getId()));
-                else if (category.getType()==Category.BLOG)
-                    link.setUrl(urlUtils.noPrefix("/blog/"+category.getSubType()));
-                else
-                    link.setUrl(urlUtils.make("/dir/"+relation.getId()));
-            } else if (child instanceof Item) {
-                Item item = (Item) child;
-                if (item.getType()==Item.BLOG) {
-                    Category blog = (Category) relation.getParent();
-                    sync(blog);
-                    link.setUrl(urlUtils.noPrefix(getUrlForBlogStory(blog.getSubType(), item.getCreated(), relation.getId())));
-                } else
-                    link.setUrl(urlUtils.make("/show/"+relation.getId()));
-            } else
-                link.setUrl(urlUtils.make("/show/"+relation.getId()));
+            link.setUrl(childUrl(relation, urlUtils));
             result.add(link);
         }
         return result;
