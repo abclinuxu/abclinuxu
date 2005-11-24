@@ -33,8 +33,7 @@
 
 <p>
  <b>Slu¾by</b>
- <a href="${URL.make("/clanky/dir/3500")}">Po¾adavky
- (${VARS.counter.REQUESTS})</a>,
+ <a href="${URL.make("/clanky/dir/3500")}">Po¾adavky</a>,
  <a href="http://abicko.stickfish.cz/bugzilla/">Bugzilla</a>
 </p>
 
