@@ -785,7 +785,7 @@ public class MySqlPersistance implements Persistance {
             sb.append(idColumn);
             if (ids.size()==1) {
                 sb.append('=');
-                sb.append(ids.get(1));
+                sb.append(ids.get(0));
             } else {
                 sb.append(" in (");
                 for (Iterator iterIds = ids.iterator(); iterIds.hasNext();) {
