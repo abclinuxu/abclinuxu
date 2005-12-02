@@ -61,7 +61,7 @@ public class TestMySqlPersistance extends TestCase {
      * test correctness of <code>remove</code>
      */
     public void testRemove() throws Exception {
-        Item a = new Item(0,Item.MAKE);
+        Item a = new Item(0,Item.HARDWARE);
         a.setOwner(1);
         a.setData("<name>make</name>");
         persistance.create(a);
@@ -140,7 +140,7 @@ public class TestMySqlPersistance extends TestCase {
      * test correctness of <code>synchronize</code>
      */
     public void testSynchronize() throws Exception {
-        Item a = new Item(0,Item.MAKE);
+        Item a = new Item(0,Item.HARDWARE);
         a.setOwner(1);
         a.setData("<name>make</name>");
         persistance.create(a);
@@ -318,7 +318,7 @@ public class TestMySqlPersistance extends TestCase {
         intel.setData("<name>Intel</name>");
         persistance.create(intel);
 
-        Item duron = new Item(0,Item.MAKE);
+        Item duron = new Item(0,Item.HARDWARE);
         duron.setData("<name>Duron</name>");
         persistance.create(duron);
 
@@ -334,7 +334,7 @@ public class TestMySqlPersistance extends TestCase {
         persistance.create(relDurDur1);
         duron.addChildRelation(relDurDur1);
 
-        Item pentium = new Item(0,Item.MAKE);
+        Item pentium = new Item(0,Item.HARDWARE);
         pentium.setData("<name>Pentium 4</name>");
         persistance.create(pentium);
 
@@ -456,7 +456,7 @@ public class TestMySqlPersistance extends TestCase {
         persistance.create(relProcPent);
         processors.addChildRelation(relProcPent);
 
-        Item duron = new Item(0,Item.MAKE);
+        Item duron = new Item(0,Item.HARDWARE);
         duron.setData("<name>Duron</name>");
         persistance.create(duron);
 

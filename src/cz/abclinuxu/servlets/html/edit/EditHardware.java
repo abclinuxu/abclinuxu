@@ -68,6 +68,18 @@ public class EditHardware implements AbcAction {
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_RECORD = "RECORD";
 
+    public static final String VAL_HW_DRIVER_KERNEL = "kernel";
+    public static final String VAL_HW_DRIVER_XFREE = "xfree";
+    public static final String VAL_HW_DRIVER_MAKER = "maker";
+    public static final String VAL_HW_DRIVER_OTHER = "other";
+    public static final String VAL_HW_DRIVER_NONE = "none";
+
+    public static final String VAL_HW_PRICE_VERYLOW = "verylow";
+    public static final String VAL_HW_PRICE_LOW = "low";
+    public static final String VAL_HW_PRICE_GOOD = "good";
+    public static final String VAL_HW_PRICE_HIGH = "high";
+    public static final String VAL_HW_PRICE_TOOHIGH = "toohigh";
+
     public static final String ACTION_ADD_ITEM = "addItem";
     public static final String ACTION_ADD_ITEM_STEP2 = "addItem2";
     public static final String ACTION_ADD_ITEM_STEP3 = "addItem3";
@@ -168,7 +180,7 @@ public class EditHardware implements AbcAction {
 
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
-        Item item = new Item(0, Item.MAKE);
+        Item item = new Item(0, Item.HARDWARE);
         item.setData(document);
         item.setOwner(user.getId());
 

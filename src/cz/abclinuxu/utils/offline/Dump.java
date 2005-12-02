@@ -227,7 +227,7 @@ public class Dump implements Configurable {
             return;
         }
 
-        if ( item.getType()==Item.MAKE ) {
+        if ( item.getType()==Item.HARDWARE ) {
             List records = (List) children.get(Constants.TYPE_RECORD);
             Record record = null;
             if ( records!=null && records.size()>0 )

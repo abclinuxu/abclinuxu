@@ -21,7 +21,7 @@ package cz.abclinuxu.data;
 import cz.abclinuxu.utils.Misc;
 
 public class Record extends GenericDataObject {
-
+    /** deprecated */
     public static final int HARDWARE = 1;
     public static final int SOFTWARE = 2;
     /** part of the article, each article is consisted from article header and at least one record */
@@ -30,20 +30,6 @@ public class Record extends GenericDataObject {
     public static final int DISCUSSION = 4;
     /** one dictionary record */
     public static final int DICTIONARY = 5;
-
-    /** constants to be used in Data for HARDWARE record */
-    public static final String VAL_HW_DRIVER_KERNEL = "kernel";
-    public static final String VAL_HW_DRIVER_XFREE = "xfree";
-    public static final String VAL_HW_DRIVER_MAKER = "maker";
-    public static final String VAL_HW_DRIVER_OTHER = "other";
-    public static final String VAL_HW_DRIVER_NONE = "none";
-
-    public static final String VAL_HW_PRICE_VERYLOW = "verylow";
-    public static final String VAL_HW_PRICE_LOW = "low";
-    public static final String VAL_HW_PRICE_GOOD = "good";
-    public static final String VAL_HW_PRICE_HIGH = "high";
-    public static final String VAL_HW_PRICE_TOOHIGH = "toohigh";
-
 
     public Record() {
         super();

@@ -1,8 +1,18 @@
 
-<!-- Item.MAKE -->
-<!ELEMENT data (name,icon?)>
+<!-- Item.HARDWARE -->
+<!ELEMENT data (name,icon?,price?,driver?,setup?,params?,identification?,note?)>
 <!ELEMENT name (#PCDATA)> <!-- maximum length is few words -->
 <!ELEMENT icon (#PCDATA)> <!-- absolute path including protocol, or relative path to icon directory -->
+<!ELEMENT price (#PCDATA)> <!-- user's evaluation of price -->
+<!ELEMENT driver (#PCDATA)> <!-- kind of driver: kernel, XFree, binary -->
+<!ELEMENT setup (#PCDATA)> <!-- how to set up this hardware -->
+<!ATTLIST setup format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
+<!ELEMENT params (#PCDATA)> <!-- technical parameters (resolution, max syncs, ..) -->
+<!ATTLIST params format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
+<!ELEMENT identification (#PCDATA)> <!-- how Linux identifies this hardware (/proc, lspci) -->
+<!ATTLIST identification format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
+<!ELEMENT note (#PCDATA)> <!-- other note, user's experience -->
+<!ATTLIST note format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 
 
 <!-- Item.ARTICLE -->

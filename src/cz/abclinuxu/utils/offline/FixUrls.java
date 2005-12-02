@@ -335,7 +335,7 @@ public class FixUrls {
                     knownObjects.put(rid, TYPE_SURVEY);
                     return TYPE_SURVEY;
                 }
-                case Item.MAKE: {
+                case Item.HARDWARE: {
                     String type = (url.startsWith("/hardware"))? TYPE_HARDWARE : TYPE_SOFTWARE;
                     knownObjects.put(rid, type);
                     return type;

@@ -452,7 +452,7 @@ public class EditRelation implements AbcAction {
                     move = true;
                 if (VALUE_DISCUSSIONS.equals(type) && ((Item)child).getType()==Item.DISCUSSION)
                     move = true;
-                if (VALUE_MAKES.equals(type) && ((Item)child).getType()==Item.MAKE)
+                if (VALUE_MAKES.equals(type) && ((Item)child).getType()==Item.HARDWARE)
                     move = true;
             } else if ( VALUE_CATEGORIES.equals(type) && child instanceof Category)
                 move = true;
@@ -695,7 +695,7 @@ public class EditRelation implements AbcAction {
             action = new MonitorAction(user, UserAction.REMOVE, ObjectType.DRIVER, item, null);
             String name = item.getData().selectSingleNode("/data/name").getText();
             action.setProperty(Decorator.PROPERTY_NAME, name);
-        } else if (item.getType()==Item.MAKE) {
+        } else if (item.getType()==Item.HARDWARE) {
             action = new MonitorAction(user, UserAction.REMOVE, ObjectType.ITEM, item, null);
             String name = item.getData().selectSingleNode("/data/name").getText();
             action.setProperty(Decorator.PROPERTY_NAME, name);

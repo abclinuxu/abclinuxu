@@ -146,7 +146,7 @@ public class CreateIndex implements Configurable {
                 switch ( item.getType() ) {
                     case Item.DISCUSSION:
                         doc = indexDiscussion(item); break;
-                    case Item.MAKE:
+                    case Item.HARDWARE:
                         doc = indexMake(item); break;
                     case Item.DRIVER:
                         doc = indexDriver(item); break;

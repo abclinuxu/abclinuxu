@@ -22,8 +22,8 @@ import cz.abclinuxu.utils.Misc;
 
 public class Item extends GenericDataObject {
 
-    /** Leaf of the category. It contains at least one hardware or software record. */
-    public static final int MAKE = 1;
+    /** Hardware */
+    public static final int HARDWARE = 1;
     /**
      * Article header. The article is consisted from this header and at least
      * one Article record. Created field has meaning of Published dated.

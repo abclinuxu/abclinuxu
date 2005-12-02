@@ -10,19 +10,6 @@
 <!ATTLIST link url (#PCDATA) #REQUIRED> <!-- URL of resource or article -->
 <!ATTLIST link description (#PCDATA) #OPTIONAL> <!-- contains description of resource or article, that shall not be linked -->
 
-<!-- Record.HARDWARE -->
-<!ELEMENT data (price?,driver?,setup?,params?,identification?,note?)>
-<!ELEMENT price (#PCDATA)> <!-- user's evaluation of price -->
-<!ELEMENT driver (#PCDATA)> <!-- kind of driver: kernel, XFree, binary -->
-<!ELEMENT setup (#PCDATA)> <!-- how to set up this hardware -->
-<!ATTLIST setup format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
-<!ELEMENT params (#PCDATA)> <!-- technical parameters (resolution, max syncs, ..) -->
-<!ATTLIST params format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
-<!ELEMENT identification (#PCDATA)> <!-- how Linux identifies this hardware (/proc, lspci) -->
-<!ATTLIST identification format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
-<!ELEMENT note (#PCDATA)> <!-- other note, user's experience -->
-<!ATTLIST note format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
-
 <!-- Record.SOFTWARE -->
 <!ELEMENT data (text,url?,version?)>
 <!ELEMENT text (#PCDATA)> <!-- instructions -->
