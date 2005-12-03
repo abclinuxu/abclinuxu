@@ -102,10 +102,6 @@
             <action>cz.abclinuxu.servlets.html.edit.EditHardware</action>
         </mapping>
         <mapping>
-            <pattern>^/software/edit</pattern>
-            <action>cz.abclinuxu.servlets.html.edit.EditSoftware</action>
-        </mapping>
-        <mapping>
             <pattern>^/clanky/edit</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditArticle</action>
         </mapping>
