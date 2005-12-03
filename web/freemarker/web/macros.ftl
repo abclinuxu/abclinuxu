@@ -77,10 +77,16 @@ prosim poslete mi URL a popis, jak jste na tuto stranku narazili
    <a href="${URL.make("/EditRequest/"+relId+"?action=comment&amp;threadId="+comment.id)}" title="®ádost o pøesun diskuse, stí¾nost na komentáø">Admin</a> |
    <a href="#${comment.id}" title="Pøímá adresa na tento komentáø">Link</a> |
    <#if (comment.parent>0)><a href="#${comment.parent}" title="Odkaz na komentáø o jednu úroveò vý¹e">Vý¹e</a> |</#if>
-   <a onClick="schovej_vlakno(${comment.id})" id="a${comment.id}" title="Schová nebo rozbalí celé vlákno">Sbalit</a>
+   <#if comment.author?exists>
+       <#if comment.inBlacklist><#local action="fromBlacklist", title="Neblokovat", hint="Odstraní autora ze seznamu blokovaných u¾ivatelù">
+       <#else><#local action="toBlacklist", title="Blokovat", hint="Pøidá autora na seznam blokovaných u¾ivatelù"></#if>
+       <#if USER?exists><#local myId=USER.id></#if>
+       <a href="${URL.noPrefix("/EditUser/"+myId?if_exists+"?action="+action+"&amp;bUid="+who.id+"&amp;url="+URL.prefix+"/show/"+relId+"#"+comment.id)}" title="${hint}">${title}</a> |
+   </#if>
+   <a onClick="schovej_vlakno(${comment.id})" id="a${comment.id}" title="Schová nebo rozbalí celé vlákno"><#if ! comment.inBlacklist>Sbalit<#else>Rozbalit</#if></a>
   </#if>
  </div>
- <div id="div${comment.id}">
+ <div id="div${comment.id}" <#if comment.inBlacklist>style="display: none;"</#if>>
   <#if TOOL.xpath(comment.data,"censored")?exists>
      <@showCensored comment, dizId, relId/>
   <#else>

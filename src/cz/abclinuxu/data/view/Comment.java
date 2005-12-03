@@ -41,6 +41,7 @@ public class Comment {
     Date created;
     boolean unread;
     Integer nextUnread;
+    boolean inBlacklist;
 
     /**
      * Creates new instance of Discussion.
@@ -185,7 +186,22 @@ public class Comment {
     public void setNextUnread(Integer nextUnread) {
         this.nextUnread = nextUnread;
     }
+    
+    /**
+     * @return true, if the author of this comment is in users blacklist 
+     */
+    public boolean isInBlacklist() {
+        return inBlacklist;
+    }
 
+    /**
+     * Sets whether the author of this comment is in users blacklist
+     * @param inBlacklist
+     */
+    public void setInBlacklist(boolean inBlacklist) {
+        this.inBlacklist = inBlacklist;
+    }
+    
     public int hashCode() {
         return getId().intValue();
     }

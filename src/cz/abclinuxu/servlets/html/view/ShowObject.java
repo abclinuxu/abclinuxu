@@ -200,7 +200,7 @@ public class ShowObject implements AbcAction {
                 record = (Record) ((Relation)records.get(0)).getChild();
         }
 
-        if ( item.getType()==Item.MAKE && record!=null ) {
+        if ( item.getType()==Item.HARDWARE && record!=null ) {
             if ( ! record.isInitialized() )
                 persistance.synchronize(record);
             switch ( record.getType() ) {

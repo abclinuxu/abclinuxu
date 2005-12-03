@@ -411,6 +411,21 @@ public class Tools implements Configurable {
     }
 
     /**
+     * Creates a List of users, which are in user's blacklist
+     * @param user
+     * @return list of Users
+     */
+    public List getUsersBlacklist(User user) {
+        List nodes = xpaths(user.getData(), "/data/settings/blacklist/uid");
+        List blacklist = new ArrayList(nodes.size());
+        for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
+            String value = (String) iter.next();
+            blacklist.add(new User(new Integer(value).intValue()));
+        }
+        return blacklist;
+    }
+
+    /**
      * @return String containing one asterisk for each ten percents.
      */
     public String percentBar(int percent) {
@@ -779,7 +794,7 @@ public class Tools implements Configurable {
                 Misc.storeToMap(map,Constants.TYPE_CATEGORY,relation);
             else if ( child instanceof Item ) {
                 Item item = (Item) child;
-                if ( item.getType()==Item.MAKE )
+                if ( item.getType()==Item.HARDWARE )
                     Misc.storeToMap(map,Constants.TYPE_MAKE,relation);
                 else if ( item.getType()==Item.DISCUSSION )
                     Misc.storeToMap(map,Constants.TYPE_DISCUSSION,relation);
@@ -876,11 +891,11 @@ public class Tools implements Configurable {
             if ( ! (obj instanceof Item) ) return false;
             if ( type==null ) return true;
             switch (((Item)obj).getType()) {
-                case Item.MAKE: return "Make".equalsIgnoreCase(type);
-                case Item.ARTICLE: return "Article".equalsIgnoreCase(type);
-                case Item.DISCUSSION: return "Discussion".equalsIgnoreCase(type);
-                case Item.REQUEST: return "Request".equalsIgnoreCase(type);
-                case Item.DRIVER: return "Driver".equalsIgnoreCase(type);
+                case Item.HARDWARE: return Constants.TYPE_MAKE.equalsIgnoreCase(type);
+                case Item.ARTICLE: return Constants.TYPE_ARTICLE.equalsIgnoreCase(type);
+                case Item.DISCUSSION: return Constants.TYPE_DISCUSSION.equalsIgnoreCase(type);
+                case Item.REQUEST: return Constants.TYPE_REQUEST.equalsIgnoreCase(type);
+                case Item.DRIVER: return Constants.TYPE_DRIVER.equalsIgnoreCase(type);
                 default: return false;
             }
         }
@@ -1062,6 +1077,7 @@ public class Tools implements Configurable {
         diz.setGreatestId(Integer.parseInt(element.attributeValue("id")));
 
         User user = null;
+	    List blacklist = null;
         if (maybeUser instanceof User) {
             user = (User) maybeUser;
             SQLTool sqlTool = SQLTool.getInstance();
@@ -1073,6 +1089,7 @@ public class Tools implements Configurable {
             }
             sqlTool.insertLastSeenComment(user.getId(), obj.getId(), diz.getGreatestId());
             EnsureWatchedDiscussionsLimit.checkLimits(user.getId());
+	        blacklist = getUsersBlacklist(user);
         }
 
         for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
@@ -1094,8 +1111,13 @@ public class Tools implements Configurable {
             } else
                 diz.addThread(current);
 
+            if (blacklist != null && current.getAuthor() != null)
+                if (blacklist.indexOf(current.getAuthor()) > -1)
+                    current.setInBlacklist(true);
+
             map.put(current.getId(), current);
         }
+
         if (alone.size()>0) {
             for ( Iterator iter = alone.iterator(); iter.hasNext(); ) {
                 current = (Comment) iter.next();

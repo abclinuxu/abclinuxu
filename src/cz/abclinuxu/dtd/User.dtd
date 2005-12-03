@@ -25,7 +25,7 @@ verze 2.0
 <!ELEMENT distributions (distribution)> <!-- ktere distribuce pouziva(l) -->
 <!ELEMENT distribution (#PCDATA)> <!-- jmeno distribuce -->
 
-<!ELEMENT settings (emoticons?,cookie_valid?,index_discussions?, return_to_forum?, blog?, css?, guidepost?)>
+<!ELEMENT settings (emoticons?,cookie_valid?,index_discussions?, return_to_forum?, blog?, css?, guidepost?, blacklist?)>
 <!ELEMENT emoticons (#PCDATA)> <!-- yes or no, zda nahrazovat emotikony obrazkem -->
 <!ELEMENT signatures (#PCDATA)> <!-- yes or no, zda zobrazovat signatury -->
 <!ELEMENT guidepost (#PCDATA)> <!-- yes or no, zda zobrazovat rozcestnik -->
@@ -39,6 +39,8 @@ verze 2.0
 <!ELEMENT blog (#PCDATA)> <!-- integer, cislo blogu -->
 <!ATTLIST blog name (#PCDATA) #REQUIRED> <!-- name of blog, part of URL -->
 <!ELEMENT css (#PCDATA)> <!-- URL of CSS to be used instead of default one -->
+<!ELEMENT blacklist (uid*)> <!-- Container of users in blacklist -->
+<!ELEMENT uid (#PCDATA)> <!-- ID of a user in blacklist -->
 
 <!ELEMENT system (registration_date?,last_login_date?,group?)>
 <!ELEMENT registration_date (#PCDATA)> <!-- ISO format, kdy se zaregistroval -->

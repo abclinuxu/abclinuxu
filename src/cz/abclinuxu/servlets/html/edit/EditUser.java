@@ -95,6 +95,7 @@ public class EditUser implements AbcAction, Configurable {
     public static final String PARAM_NEWS_COUNT = "news";
     public static final String PARAM_FOUND_PAGE_SIZE = "search";
     public static final String PARAM_FORUM_PAGE_SIZE = "forum";
+    public static final String PARAM_BLACKLIST_USER = "bUid";
     public static final String PARAM_SUBSCRIBE_MONTHLY = "monthly";
     public static final String PARAM_SUBSCRIBE_WEEKLY = "weekly";
     public static final String PARAM_SUBSCRIBE_FORUM = "forum";
@@ -104,6 +105,7 @@ public class EditUser implements AbcAction, Configurable {
     public static final String PARAM_USERS = "users";
     public static final String PARAM_URL_CSS = "css";
     public static final String PARAM_GUIDEPOST = "guidepost";
+    public static final String PARAM_URL = "url";
 
     public static final String VAR_MANAGED = "MANAGED";
     public static final String VAR_DEFAULT_DISCUSSION_COUNT = "DEFAULT_DISCUSSIONS";
@@ -124,6 +126,9 @@ public class EditUser implements AbcAction, Configurable {
     public static final String ACTION_UPLOAD_PHOTO_STEP2 = "uploadPhoto2";
     public static final String ACTION_EDIT_SETTINGS = "editSettings";
     public static final String ACTION_EDIT_SETTINGS_STEP2 = "editSettings2";
+    public static final String ACTION_EDIT_BLACKLIST = "editBlacklist";
+    public static final String ACTION_REMOVE_FROM_BLACKLIST = "fromBlacklist";
+    public static final String ACTION_ADD_TO_BLACKLIST = "toBlacklist";
     public static final String ACTION_EDIT_SUBSCRIPTION = "subscribe";
     public static final String ACTION_EDIT_SUBSCRIPTION_STEP2 = "subscribe2";
     public static final String ACTION_GRANT_ROLES = "grant";
@@ -197,6 +202,15 @@ public class EditUser implements AbcAction, Configurable {
 
         if ( action.equals(ACTION_EDIT_SETTINGS_STEP2) )
             return actionEditSettings2(request, response, env);
+
+        if ( action.equals(ACTION_EDIT_BLACKLIST) )
+            return actionEditBlacklist(request, env);
+
+        if ( action.equals(ACTION_ADD_TO_BLACKLIST) )
+            return actionAddToBlacklist(request, response, env);
+
+        if ( action.equals(ACTION_REMOVE_FROM_BLACKLIST) )
+            return actionRemoveFromBlacklist(request, response, env);
 
         if ( action.equals(ACTION_EDIT_SUBSCRIPTION) )
             return actionEditSubscription(request, env);
@@ -622,6 +636,70 @@ public class EditUser implements AbcAction, Configurable {
         ServletUtils.addMessage("Zmìny byly ulo¾eny.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&userId="+managed.getId());
+        return null;
+    }
+
+    protected String actionEditBlacklist(HttpServletRequest request, Map env) throws Exception {
+        return FMTemplateSelector.select("EditUser", "editBlacklist", env, request);
+    }
+
+    /**
+     * Adds selected user to the blacklist.
+     */
+    protected String actionAddToBlacklist(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User managed = (User) env.get(VAR_MANAGED);
+
+	    String url = (String) params.get(PARAM_URL);
+        if ( url==null || url.length()==0)
+            url = "/EditUser/"+managed.getId()+"?action="+ACTION_EDIT_BLACKLIST;
+
+    	boolean canContinue = addToBlacklist(params, managed, env);
+        if ( !canContinue ) {
+            urlUtils.redirect(response, url);
+            return null;
+        }
+
+        Persistance persistance = PersistanceFactory.getPersistance();
+        persistance.update(managed);
+
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId())
+            sessionUser.synchronizeWith(managed);
+
+    	ServletUtils.addMessage("Autor byl pøidán na seznam blokovaných u¾ivatelù.", env, request.getSession());
+        urlUtils.redirect(response, url);
+        return null;
+    }
+
+    /**
+     * Removes selected user from the blacklist.
+     */
+    protected String actionRemoveFromBlacklist(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User managed = (User) env.get(VAR_MANAGED);
+
+    	String url = (String) params.get(PARAM_URL);
+        if (url == null || url.length() == 0)
+            url = "/EditUser/" + managed.getId() + "?action=" + ACTION_EDIT_BLACKLIST;
+
+        boolean canContinue = removeFromBlacklist(params, managed, env);
+        if ( !canContinue ) {
+            urlUtils.redirect(response, url);
+            return null;
+        }
+
+        Persistance persistance = PersistanceFactory.getPersistance();
+        persistance.update(managed);
+
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId())
+            sessionUser.synchronizeWith(managed);
+
+        ServletUtils.addMessage("Autor byl odstranìn ze seznamu blokovaných u¾ivatelù.", env, request.getSession());
+        urlUtils.redirect(response, url);
         return null;
     }
 
@@ -1374,10 +1452,58 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Subscribes user to weekly summary from parameters. Changes are not synchronized with persistance.
+     * Adds a uid to users blacklist. Changes are not synchronized with persistance.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @return false, if there is a major error.
+     */
+    private boolean addToBlacklist(Map params, User user, Map env) {
+        String uid = (String) params.get(PARAM_BLACKLIST_USER);
+        if ( uid==null ) {
+            ServletUtils.addError(PARAM_BLACKLIST_USER, "Chybí parametr "+PARAM_BLACKLIST_USER+"!", env, null);
+            return false;
+        }
+
+        Element blacklist = DocumentHelper.makeElement(user.getData(), "/data/settings/blacklist");
+        Node node = blacklist.selectSingleNode("uid[text()=\"" + uid + "\"]");
+        if (node != null)
+            return true;
+
+        blacklist.addElement("uid").setText(uid);
+        return true;
+    }
+
+    /**
+     * Removes a uid from users blacklist. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean removeFromBlacklist(Map params, User user, Map env) {
+        List ids = null;
+        Object o = params.get(PARAM_BLACKLIST_USER);
+        if (o instanceof String) {
+            ids = Collections.singletonList(o);
+        } else if (o instanceof List)
+            ids = (List) o;
+
+        if ( ids==null || ids.size()==0 ) {
+            ServletUtils.addError(PARAM_BLACKLIST_USER, "Nevybral jste ¾ádného u¾ivatele!", env, null);
+            return false;
+        }
+
+        Element blacklist = (Element) user.getData().selectSingleNode("/data/settings/blacklist");
+        for (Iterator iter = ids.iterator(); iter.hasNext();) {
+            String s = (String) iter.next();
+            Node node = blacklist.selectSingleNode("uid[text()=\"" + s + "\"]");
+            if (node != null)
+                node.detach();
+        }
+        return true;
+    }
+
+    /**
+     * Subscribes user to weekly summary from parameters. Changes are not synchronized with persistance.
      */
     private boolean setWeeklySummary(Map params, User user) {
         String subscription = (String) params.get(PARAM_SUBSCRIBE_WEEKLY);

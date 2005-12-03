@@ -229,6 +229,9 @@
     <action name="editSettings" content="/edit/user_settings.ftl">
       <var name="TITLE" value="Zmìna nastavení" />
     </action>
+    <action name="editBlacklist" content="/edit/user_blacklist.ftl">
+      <var name="TITLE" value="Seznam blokovaných u¾ivatelù" />
+    </action>
     <action name="grantSelect" content="/edit/grant_select.ftl" template="print">
       <var name="TITLE" value="Zmìna rolí u¾ivatele - výbìr"/>
     </action>

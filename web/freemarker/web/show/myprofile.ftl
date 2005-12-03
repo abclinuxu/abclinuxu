@@ -43,12 +43,15 @@ email (${PROFILE.email}) a heslo.
     <li>
         <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editBasic")}">
         zmìnit základní údaje</a>
+    </li>
     <li>
         <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=changePassword")}">
         zmìnit heslo</a>
+    </li>
     <li>
         <a href="${URL.noPrefix("/Profile/"+PROFILE.id+"?action=forgottenPassword")}">
         poslat heslo emailem</a>
+    </li>
 </ul>
 
 <h2>Profil</h2>
@@ -65,12 +68,15 @@ patièku zobrazovanou v diskusích u va¹ich pøíspìvkù, nahrát svou fotku
     <li>
         <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editPersonal")}">
         zmìnit osobní údaje</a>
+    </li>
     <li>
         <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editProfile")}">
         upravit profil</a>
+    </li>
     <li>
         <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=uploadPhoto")}">
         zmìnit fotku</a>
+    </li>
 </ul>
 
 <h2>Blog</h2>
@@ -89,6 +95,7 @@ nìkde jinde.
         <#else>
             <a href="${URL.noPrefix("/blog/edit/"+PROFILE.id+"?action=addBlog")}">vytvoøit blog</a>
         </#if>
+    </li>
 </ul>
 
 <h2>Zasílání informací</h2>
@@ -114,6 +121,11 @@ dle svých pøedstav.</p>
     <li>
         <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editSettings")}">
         zmìnit nastavení</a>
+    </li>
+    <li>
+        <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editBlacklist")}">
+        upravit seznam blokovaných u¾ivatelù</a>
+    </li>
 </ul>
 
 <h2>Va¹e veøejná stránka</h2>
