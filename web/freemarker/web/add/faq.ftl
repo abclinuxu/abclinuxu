@@ -46,7 +46,7 @@
         <tr>
             <td class="required">Otázka</td>
             <td>
-                <input tabindex="1" type="text" name="title" size="80" value="${PARAMS.title?if_exists}">
+                <input tabindex="1" type="text" name="title" size="80" value="${PARAMS.title?if_exists?html}">
                 <div class="error">${ERRORS.title?if_exists}</div>
             </td>
         </tr>

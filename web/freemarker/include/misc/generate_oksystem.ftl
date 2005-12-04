@@ -1,6 +1,6 @@
 <div class="s_nad_h1"><div class="s_nad_pod_h1" style="background-color: #00A247">
 <a class="oksystem" href="http://portal.oksystem.cz/" rel="nofollow">OKsystem</a>
-<h1><a href="http://portal.oksystem.cz/">©kolení</a></h1>
+<h1><a href="http://portal.oksystem.cz/" rel="nofollow">©kolení</a></h1>
 </div></div>
 <div class="s_sekce">
     <ul>

@@ -9,8 +9,6 @@
 <body>
 
 <#import "macros.ftl" as lib>
-<#include "/include/pocitani2.txt">
-<#include "/include/pocitani1.txt">
 
 <p>
 ${DATE.show("CZ_FULL")}

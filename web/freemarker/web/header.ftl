@@ -20,11 +20,6 @@
 
 <body>
 
-<div style="height:0;">
-<#include "/include/pocitani2.txt">
-<#include "/include/pocitani1.txt">
-</div>
-
 <#if IS_INDEX?exists>
 <#include "/include/netmonitor_hp.txt">
 <#include "/include/impact-hp.txt">

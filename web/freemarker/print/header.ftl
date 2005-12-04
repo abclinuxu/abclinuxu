@@ -9,7 +9,5 @@
 <#import "macros.ftl" as lib>
 <p>Portál <a href="http://www.abclinuxu.cz">AbcLinuxu</a><#if USER?exists>,
 pøihlá¹en ${USER.name}</#if>, ${DATE.show("CZ_FULL_TXT")}
-<#include "/include/pocitani2.txt">
-<#include "/include/pocitani1.txt">
 </p>
 <!-- obsah -->
