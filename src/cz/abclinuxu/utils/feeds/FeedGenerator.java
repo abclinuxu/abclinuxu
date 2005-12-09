@@ -84,6 +84,7 @@ public class FeedGenerator implements Configurable {
             feed.setEncoding("UTF-8");
             feed.setTitle("abclinuxu - diskusní fórum");
             feed.setLink("http://www.abclinuxu.cz/diskuse.jsp");
+            feed.setUri("http://www.abclinuxu.cz/diskuse.jsp");
             feed.setDescription("Seznam aktuálních diskusí na fóru portálu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
@@ -135,7 +136,8 @@ public class FeedGenerator implements Configurable {
             feed.setEncoding("UTF-8");
             feed.setFeedType(TYPE_RSS_1_0);
             feed.setTitle("abclinuxu - databáze ovladaèù");
-            feed.setLink("http://www.abclinuxu.cz/drivers/dir/318");
+            feed.setLink("http://www.abclinuxu.cz/ovladace");
+            feed.setUri("http://www.abclinuxu.cz/ovladace");
             feed.setDescription("Seznam èerstvých záznamù do databáze linuxových ovladaèù na portálu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
@@ -178,14 +180,15 @@ public class FeedGenerator implements Configurable {
             feed.setFeedType(TYPE_RSS_1_0);
             feed.setEncoding("UTF-8");
             feed.setTitle("abclinuxu - databáze hardwaru");
-            feed.setLink("http://www.abclinuxu.cz");
+            feed.setLink("http://www.abclinuxu.cz/hardware");
+            feed.setUri("http://www.abclinuxu.cz/hardware");
             feed.setDescription("Seznam èerstvých záznamù do databáze hardwarových poznatkù na portálu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
             SyndEntry entry;
 
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0,feedLength)};
-            List list = SQLTool.getInstance().findRecordRelationsWithType(Record.HARDWARE, qualifiers);
+            List list = SQLTool.getInstance().findItemRelationsWithType(Item.HARDWARE, qualifiers);
             Tools.syncList(list);
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
@@ -223,7 +226,8 @@ public class FeedGenerator implements Configurable {
             feed.setFeedType(TYPE_RSS_1_0);
             feed.setEncoding("UTF-8");
             feed.setTitle("abclinuxu - aktuální èlánky");
-            feed.setLink("http://www.abclinuxu.cz");
+            feed.setLink("http://www.abclinuxu.cz/clanky");
+            feed.setUri("http://www.abclinuxu.cz/clanky");
             feed.setDescription("Seznam èerstvých èlánkù na portálu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
@@ -294,6 +298,7 @@ public class FeedGenerator implements Configurable {
                 feed.setEncoding("UTF-8");
                 feed.setTitle(Tools.limit(Tools.xpath(blog, "//custom/title"), 40, "..."));
                 feed.setLink("http://www.abclinuxu.cz/blog/"+blog.getSubType()+"/");
+                feed.setUri("http://www.abclinuxu.cz/blog/"+blog.getSubType()+"/");
                 feed.setDescription("Seznam èerstvých zápisù u¾ivatele "+author.getName());
                 List entries = new ArrayList();
                 feed.setEntries(entries);
@@ -324,6 +329,7 @@ public class FeedGenerator implements Configurable {
             feed.setFeedType(TYPE_RSS_1_0);
             feed.setTitle("abclinuxu - blogy");
             feed.setLink("http://www.abclinuxu.cz/blog/");
+            feed.setUri("http://www.abclinuxu.cz/blog/");
             feed.setDescription("Seznam èerstvých zápisù u¾ivatelù www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
@@ -369,6 +375,7 @@ public class FeedGenerator implements Configurable {
             feed.setEncoding("UTF-8");
             feed.setTitle("abclinuxu - èerstvé zprávièky");
             feed.setLink("http://www.abclinuxu.cz/zpravicky");
+            feed.setUri("http://www.abclinuxu.cz/zpravicky");
             feed.setDescription("Seznam èerstvých zprávièek na portálu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
@@ -427,6 +434,7 @@ public class FeedGenerator implements Configurable {
             feed.setEncoding("UTF-8");
             feed.setTitle("abclinuxu - èasto kladené otázky");
             feed.setLink("http://www.abclinuxu.cz/faq");
+            feed.setUri("http://www.abclinuxu.cz/faq");
             feed.setDescription("Seznam aktualizovaných otázek s odpovìïmi na portálu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
@@ -478,6 +486,7 @@ public class FeedGenerator implements Configurable {
             feed.setEncoding("UTF-8");
             feed.setTitle("abclinuxu - ankety");
             feed.setLink("http://www.abclinuxu.cz/ankety");
+            feed.setUri("http://www.abclinuxu.cz/ankety");
             feed.setDescription("Seznam anket na portálu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
