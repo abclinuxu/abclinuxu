@@ -46,6 +46,7 @@ import java.util.Iterator;
 
 import org.dom4j.Element;
 import org.dom4j.Document;
+import org.apache.log4j.Logger;
 
 /**
  * Servlet, which loads Relation specified by parameter <code>relationId</code>
@@ -64,6 +65,8 @@ import org.dom4j.Document;
  * </dl>
  */
 public class ShowObject implements AbcAction {
+    public static final Logger log = Logger.getLogger(ShowObject.class);
+
     public static final String PARAM_RELATION = "relationId";
     public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_DISCUSSION = "dizId";
@@ -74,8 +77,6 @@ public class ShowObject implements AbcAction {
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_PARENTS = "PARENTS";
     public static final String VAR_ITEM = "ITEM";
-    /** Relation upper to selected relation Item-Record */
-    public static final String VAR_UPPER = "REL_ITEM";
     /** children relation of Item, grouped by their type */
     public static final String VAR_CHILDREN_MAP = "CHILDREN";
     public static final String VAR_THREAD = "THREAD";
@@ -140,17 +141,15 @@ public class ShowObject implements AbcAction {
     String processItem(Map env, Relation relation, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Item item = null;
-        Record record = null;
         Relation upper = null;
 
         if ( relation.getChild() instanceof Item ) {
             item = (Item) relation.getChild();
             upper = relation;
         } else if ( relation.getParent() instanceof Item ) {
+            log.info("after hardware upgrade: "+relation); // todo dava to jeste vubec smysl po refactoringu hardwaru?
             item = (Item) relation.getParent();
             upper = new Relation(relation.getUpper());
-            if (relation.getChild() instanceof Record)
-                record = (Record) relation.getChild();
         }
 
         Tools.sync(item);
@@ -158,7 +157,6 @@ public class ShowObject implements AbcAction {
         Map children = Tools.groupByType(item.getChildren());
         env.put(VAR_CHILDREN_MAP, children);
         Tools.sync(upper);
-        env.put(VAR_UPPER, upper);
 
         String revision = (String) params.get(ShowRevisions.PARAM_REVISION);
         if (revision!=null) {
@@ -177,37 +175,23 @@ public class ShowObject implements AbcAction {
             }
         }
 
-        if ( item.getType()==Item.ARTICLE )
-            return ShowArticle.show(env, item, request);
-
-        if ( item.getType()==Item.NEWS ) {
-            env.put(EditNews.VAR_CATEGORY, NewsCategories.get(item.getSubType()));
-            return FMTemplateSelector.select("ShowObject", "news", env, request);
-        }
-
-        if ( item.getType()==Item.DISCUSSION )
-            return FMTemplateSelector.select("ShowObject","discussion",env, request);
-
-        if ( item.getType()==Item.CONTENT )
-            return ViewContent.show(request, response, env);
-
-        if ( item.getType()==Item.DRIVER )
-            return FMTemplateSelector.select("ShowObject","driver",env, request);
-
-        if ( record==null ) {
-            List records = (List) children.get(Constants.TYPE_RECORD);
-            if ( records!=null && records.size()>0 )
-                record = (Record) ((Relation)records.get(0)).getChild();
-        }
-
-        if ( item.getType()==Item.HARDWARE && record!=null ) {
-            if ( ! record.isInitialized() )
-                persistance.synchronize(record);
-            switch ( record.getType() ) {
-                case Record.HARDWARE: return FMTemplateSelector.select("ShowObject","hardware",env, request);
-                case Record.SOFTWARE: return FMTemplateSelector.select("ShowObject","software",env, request);
+        switch (item.getType()) {
+            case Item.ARTICLE:
+                return ShowArticle.show(env, item, request);
+            case Item.NEWS: {
+                env.put(EditNews.VAR_CATEGORY, NewsCategories.get(item.getSubType()));
+                return FMTemplateSelector.select("ShowObject", "news", env, request);
             }
+            case Item.DISCUSSION:
+                return FMTemplateSelector.select("ShowObject", "discussion", env, request);
+            case Item.HARDWARE:
+                return FMTemplateSelector.select("ShowObject", "hardware", env, request);
+            case Item.DRIVER:
+                return FMTemplateSelector.select("ShowObject", "driver", env, request);
+            case Item.CONTENT:
+                return ViewContent.show(request, response, env);
         }
+
         return null;
     }
 

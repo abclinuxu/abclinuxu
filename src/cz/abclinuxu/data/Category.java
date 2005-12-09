@@ -26,9 +26,9 @@ import cz.abclinuxu.utils.Misc;
 public class Category extends GenericDataObject {
 
     /** normal category, only admin can insert content */
-    public static final int CLOSED_CATEGORY = 0;
+    public static final int CLOSED_HARDWARE_SECTION = 0;
     /** normal category, every logged user can insert content */
-    public static final int OPEN_CATEGORY = 1;
+    public static final int OPEN_HARDWARE_SECTION = 1;
     /** mark for forum */
     public static final int FORUM = 2;
     /** marks section containing blogs of the user */
@@ -51,14 +51,14 @@ public class Category extends GenericDataObject {
      * @return whether normal users may add content to this category
      */
     public boolean isOpen() {
-        return type==OPEN_CATEGORY;
+        return type==OPEN_HARDWARE_SECTION;
     }
 
     /**
      * sets whether normal users may add content to this category
      */
     public void setOpen(boolean open) {
-        type = (open)? OPEN_CATEGORY:CLOSED_CATEGORY;
+        type = (open)? OPEN_HARDWARE_SECTION:CLOSED_HARDWARE_SECTION;
     }
 
     public String toString() {

@@ -64,7 +64,6 @@ public class GenerateDevelDatabase {
         map.put(Constants.VAR_USER, user);
 
         params.put(EditHardware.PARAM_NAME, "Askey");
-        params.put(EditHardware.PARAM_ICON, "/ikony/hardware/modem.gif");
         params.put(EditHardware.PARAM_SETUP, "Plug n' pray");
         params.put(EditHardware.PARAM_NOTE, "Poznámka");
         params.put(EditHardware.PARAM_IDENTIFICATION, "Tí tá tá tá tí");
@@ -74,7 +73,7 @@ public class GenerateDevelDatabase {
         map.put(EditHardware.VAR_RELATION, persistance.findById(new Relation(148)));
 
         EditHardware servlet = new EditHardware();
-        servlet.actionAddStep3(null, null, map, false);
+        servlet.actionAddStep2(null, null, map, false);
     }
 
     private static void generateDiscussions(Persistance persistance) throws Exception {

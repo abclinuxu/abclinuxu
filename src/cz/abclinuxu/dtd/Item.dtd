@@ -1,10 +1,12 @@
 
 <!-- Item.HARDWARE -->
-<!ELEMENT data (name,icon?,price?,driver?,setup?,params?,identification?,note?)>
+<!ELEMENT data (name,support?,price?,driver?,driver_url?,outdated?,setup?,params?,identification?,note?)>
 <!ELEMENT name (#PCDATA)> <!-- maximum length is few words -->
-<!ELEMENT icon (#PCDATA)> <!-- absolute path including protocol, or relative path to icon directory -->
+<!ELEMENT support (#PCDATA)> <!-- if and how the piece of hardware is supported (complete, partial, none) -->
 <!ELEMENT price (#PCDATA)> <!-- user's evaluation of price -->
 <!ELEMENT driver (#PCDATA)> <!-- kind of driver: kernel, XFree, binary -->
+<!ELEMENT driver_url (#PCDATA)> <!-- URL where driver can be downloaded -->
+<!ELEMENT outdated (#PCDATA)> <!-- yes will mean that this piece of hardware is really old -->
 <!ELEMENT setup (#PCDATA)> <!-- how to set up this hardware -->
 <!ATTLIST setup format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT params (#PCDATA)> <!-- technical parameters (resolution, max syncs, ..) -->

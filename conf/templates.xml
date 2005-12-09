@@ -104,17 +104,11 @@
   </servlet>
 
   <servlet name="EditHardware">
-    <action name="add_record" content="/add/hwrecord.ftl">
+    <action name="add" content="/add/hwitem.ftl">
       <var name="TITLE" value="Vlo¾ záznam" />
     </action>
-    <action name="edit_record" content="/add/hwrecord.ftl">
+    <action name="edit" content="/edit/hwitem.ftl">
       <var name="TITLE" value="Uprav záznam" />
-    </action>
-    <action name="add_item" content="/add/item.ftl">
-      <var name="TITLE" value="Pøidání nové polo¾ky" />
-    </action>
-    <action name="edit_item" content="/edit/item.ftl">
-      <var name="TITLE" value="Uprav polo¾ku" />
     </action>
   </servlet>
 
@@ -186,21 +180,6 @@
     </action>
     <action name="comment" content="/misc/comment_tools.ftl" template="print">
       <var name="TITLE" value="Nástroje pro správu komentáøe" />
-    </action>
-  </servlet>
-
-  <servlet name="EditSoftware">
-    <action name="add_record" content="/add/swrecord.ftl">
-      <var name="TITLE" value="Vlo¾ záznam" />
-    </action>
-    <action name="edit_record" content="/add/swrecord.ftl">
-      <var name="TITLE" value="Uprav záznam" />
-    </action>
-    <action name="add_item" content="/add/item.ftl">
-      <var name="TITLE" value="Pøidání nové polo¾ky" />
-    </action>
-    <action name="edit_item" content="/edit/item.ftl">
-      <var name="TITLE" value="Uprav polo¾ku" />
     </action>
   </servlet>
 
@@ -404,9 +383,6 @@
 
   <servlet name="ShowObject">
     <action name="hardware" content="/show/hwitem.ftl">
-      <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
-    </action>
-    <action name="software" content="/show/switem.ftl">
       <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
     </action>
     <action name="discussion" content="/show/discussion.ftl">

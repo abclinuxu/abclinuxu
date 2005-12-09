@@ -306,6 +306,7 @@ public final class SQLTool implements Configurable {
     /**
      * Finds relations, where child is record of specified type. Use Qualifiers
      * to set additional parameters.
+     * @deprecated after removal of software and upgrade of hardware section nobody uses this method
      * @return List of initialized relations
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
      */

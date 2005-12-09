@@ -315,7 +315,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         try {
             int maximum = ((Integer) maxSizes.get(KEY_HARDWARE)).intValue();
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
-            List list = sqlTool.findRecordParentRelationsWithType(Record.HARDWARE, qualifiers);
+            List list = sqlTool.findItemRelationsWithType(Item.HARDWARE, qualifiers);
             Tools.syncList(list);
             freshHardware = list;
         } catch (Exception e) {

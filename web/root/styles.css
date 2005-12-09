@@ -372,27 +372,6 @@ td.pad, code.kod, pre.kod {
 	font-style:	italic;
 }
 
-
-.hw_item table {
-	border-collapse: collapse;
-	table-layout:	auto;
-	margin-top:	10px;
-	margin-bottom:	10px;
-}
-
-.hw_item td {
-	border:		1px solid silver;
-	padding:	2px;
-}
-
-.hw_item td.td01 {
-	width:		300px;
-}
-
-.hw_item td.td02 {
-	width:		1200px;
-}
-
 .kt_citace {
 	color:#880000
 }
@@ -770,6 +749,10 @@ a.info:hover span.tooltip {
 	padding:	0.5em;
 }
 
+.wide {
+    width: 50em;
+}
+
 .search_results {
 	text-align:	right;
 }
@@ -788,8 +771,17 @@ a.info:hover span.tooltip {
 .search_details {
 	font-size:	90%;
 }
-
-
+span.caption {
+	font-size:	100%;
+	font-weight:	bold;
+}
+h3.caption {
+	font-size:	100%;
+	font-weight:	bold;
+}
+.hardware {
+	text-decoration: underline;
+}
 
 /*************** SF lista *****************/
 .sflista {

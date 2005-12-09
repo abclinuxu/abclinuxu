@@ -147,7 +147,7 @@ public class CreateIndex implements Configurable {
                     case Item.DISCUSSION:
                         doc = indexDiscussion(item); break;
                     case Item.HARDWARE:
-                        doc = indexMake(item); break;
+                        doc = indexHardware(item); break;
                     case Item.DRIVER:
                         doc = indexDriver(item); break;
                 }
@@ -565,6 +565,7 @@ public class CreateIndex implements Configurable {
      */
     private static void storeUser(int id, StringBuffer sb) {
         try {
+            sb.append(" ");
             User user = (User) persistance.findById(new User(id));
             String nick = user.getNick();
             if (nick!=null) {
@@ -579,68 +580,49 @@ public class CreateIndex implements Configurable {
     }
 
     /**
-     * Extracts data for indexing from make. Item must be synchronized.
+     * Extracts data for indexing from hardware. Item must be synchronized.
      */
-    static MyDocument indexMake(Item make) {
+    static MyDocument indexHardware(Item make) {
         Element data = (Element) make.getData().getRootElement();
-        String title = "", type = "", tmp;
+        String title = "";
 
         Node node = data.element("name");
         title = node.getText();
-
         StringBuffer sb = new StringBuffer(title);
-        for ( Iterator iter = make.getChildren().iterator(); iter.hasNext(); ) {
-            Relation relation = (Relation) iter.next();
-            if (!(relation.getChild() instanceof Record)) continue;
-            Record record = (Record) persistance.findById(relation.getChild());
+        storeUser(make.getOwner(), sb);
 
-            if ( record.getType()==Record.HARDWARE ) {
-                indexHardware(record, sb);
-                type = MyDocument.TYPE_HARDWARE;
-            }
-            sb.append(" ");
-        }
-
-        tmp = Tools.removeTags(sb.toString());
-        MyDocument doc = new MyDocument(tmp);
-        doc.setTitle(title);
-        doc.setCreated(make.getCreated());
-        doc.setUpdated(make.getUpdated());
-        if (type.length()==0)
-            log.warn("Unknown type for "+make);
-        doc.setType(type);
-        return doc;
-    }
-
-    /**
-     * Extracts data for indexing from hardware. Record must be synchronized.
-     */
-    static void indexHardware(Record record, StringBuffer sb) {
-        storeUser(record.getOwner(), sb);
-        Element data = (Element) record.getData().getRootElement();
-        Node node = data.element("setup");
-        if ( node!=null ) {
+        node = data.element("setup");
+        if (node != null) {
             sb.append(" ");
             sb.append(node.getText());
         }
 
         node = data.element("params");
-        if ( node!=null ) {
+        if (node != null) {
             sb.append(" ");
             sb.append(node.getText());
         }
 
         node = data.element("identification");
-        if ( node!=null ) {
+        if (node != null) {
             sb.append(" ");
             sb.append(node.getText());
         }
 
         node = data.element("note");
-        if ( node!=null ) {
+        if (node != null) {
             sb.append(" ");
             sb.append(node.getText());
         }
+        sb.append(" ");
+
+        String tmp = Tools.removeTags(sb.toString());
+        MyDocument doc = new MyDocument(tmp);
+        doc.setTitle(title);
+        doc.setCreated(make.getCreated());
+        doc.setUpdated(make.getUpdated());
+        doc.setType(MyDocument.TYPE_HARDWARE);
+        return doc;
     }
 
     /**

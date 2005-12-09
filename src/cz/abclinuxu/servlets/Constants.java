@@ -130,6 +130,8 @@ public interface Constants {
     /** error, that is not related to specific form field */
     String ERROR_GENERIC = "generic";
 
+    int USER_REDAKCE = 5473;
+
     SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     DateFormat isoFormatShort = new SimpleDateFormat("yyyy-MM-dd");
     DateFormat czFormat = new SimpleDateFormat("d.M.yyyy HH:mm");

@@ -192,15 +192,17 @@ public class FeedGenerator implements Configurable {
             Tools.syncList(list);
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
-                Item item = (Item) found.getParent();
-                Record record = (Record) persistance.findById(found.getChild());
-                User author = (User) persistance.findById(new User(record.getOwner()));
+                Item item = (Item) found.getChild();
+                User author = (User) persistance.findById(new User(item.getOwner()));
 
                 entry = new SyndEntryImpl();
-                String url = "http://www.abclinuxu.cz/hardware/show/" + found.getId();
+                String url = found.getUrl();
+                if (url==null)
+                    url = "/hardware/show/" + found.getId();
+                url = "http://www.abclinuxu.cz" + url;
                 entry.setLink(url);
                 entry.setTitle(Tools.xpath(item,"data/name"));
-                entry.setPublishedDate(record.getUpdated());
+                entry.setPublishedDate(item.getUpdated());
                 entry.setAuthor((author.getNick()!=null) ? author.getNick() : author.getName());
                 entries.add(entry);
             }

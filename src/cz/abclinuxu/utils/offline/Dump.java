@@ -189,7 +189,6 @@ public class Dump implements Configurable {
 
         Tools.sync(item);
         env.put(ShowObject.VAR_ITEM,item);
-        env.put(ShowObject.VAR_UPPER,relation);
         String name = null;
 
         if ( item.getType()==Item.DISCUSSION ) {
@@ -395,7 +394,6 @@ public class Dump implements Configurable {
         env.put(ShowObject.VAR_PARENTS, parents);
 
         env.put(ShowObject.VAR_ITEM, item);
-        env.put(ShowObject.VAR_UPPER, relation);
         env.put(ShowObject.VAR_CHILDREN_MAP, Tools.groupByType(item.getChildren()));
 
         String name = FMTemplateSelector.select("ShowObject", "news", env, "offline");

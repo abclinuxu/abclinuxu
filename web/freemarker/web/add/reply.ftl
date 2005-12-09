@@ -3,10 +3,12 @@
 <@lib.showMessages/>
 
 <#if PREVIEW?exists>
- <p>Prohlédnìte si vzhled va¹eho komentáøe. Zkontrolujte
- pravopis, obsah i tón va¹eho textu. Nìkdy to vá¾nì
- chce chladnou hlavu. Opravte chyby a zvolte náhled.
- Pokud jste s pøíspìvkem spokojeni, zvolte OK.</p>
+ <p>
+    Prohlédnìte si vzhled va¹eho komentáøe. Zkontrolujte
+    pravopis, obsah i tón va¹eho textu. Nìkdy to vá¾nì
+    chce chladnou hlavu. Opravte chyby a zvolte tlaèítko <code>Náhled</code>.
+    Pokud jste s pøíspìvkem spokojeni, stisknìte tlaèítko <code>Dokonèi</code>.
+ </p>
 </#if>
 
 <#if ! USER?exists>
@@ -105,8 +107,8 @@
 <h1>Nápovìda k formátování</h1>
 
 <p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html">znaèky</a>:
-P, BR, B, I, A, PRE, UL, OL, LI, CODE, DIV, H1, H2, H3, EM, STRONG, CITE, BLOCKQUOTE,
-VAR, HR, ACRONYM a TT.</p>
+A, ACRONYM, B, BR, BLOCKQUOTE, CITE, CODE, DIV, EM, I, HR, H1, H2, H3, LI,
+OL, P, PRE, STRONG, TT, UL, VAR. </p>
 
 <p>Nejrychlej¹í zpùsob formátování je rozdìlovat
 text do odstavcù. Systém detekuje prázdné øádky

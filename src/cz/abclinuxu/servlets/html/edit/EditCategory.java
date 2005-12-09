@@ -183,7 +183,7 @@ public class EditCategory implements AbcAction {
         node = document.selectSingleNode("data/note");
         if (node!=null) params.put(PARAM_NOTE,node.getText());
         int type = category.getType();
-        if (type==Category.OPEN_CATEGORY || type==Category.CLOSED_CATEGORY)
+        if (type==Category.OPEN_HARDWARE_SECTION || type==Category.CLOSED_HARDWARE_SECTION)
             params.put(PARAM_OPEN, (category.isOpen())? "yes":"no");
 
         return FMTemplateSelector.select("EditCategory","edit",env,request);
