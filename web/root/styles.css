@@ -233,6 +233,8 @@ td.pad, code.kod, pre.kod {
 	background-color: #F0F0F0;
 }
 
+.kod.rmargin { margin-right: 305px }
+
 .st_vpravo {
 	margin:		0.4em 1em 0 0;
 	text-align:	right;
