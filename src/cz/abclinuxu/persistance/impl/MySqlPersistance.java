@@ -1955,7 +1955,7 @@ public class MySqlPersistance implements Persistance {
     /**
      * Safely adds encoding to string with xml
      */
-    private String insertEncoding(String xml) {
+    public static String insertEncoding(String xml) {
         if ( xml==null || xml.startsWith("<?xml") ) return xml;
         return "<?xml version=\"1.0\" encoding=\"ISO-8859-2\" ?>\n"+xml;
     }
