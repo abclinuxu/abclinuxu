@@ -26,8 +26,7 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.extra.Qualifier;
-import cz.abclinuxu.persistance.extra.LimitQualifier;
+import cz.abclinuxu.persistance.extra.*;
 import cz.abclinuxu.data.Record;
 import cz.abclinuxu.data.Item;
 
@@ -135,13 +134,8 @@ public class History implements AbcAction {
 
         } else if ( VALUE_TYPE_HARDWARE.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
-            if ( uid>0 ) {
-                data = sqlTool.findRecordParentRelationsByUserAndType(uid, Record.HARDWARE, qualifiers);
-                total = sqlTool.countRecordParentRelationsByUserAndType(uid, Record.HARDWARE);
-            } else {
-                data = sqlTool.findRecordParentRelationsWithType(Record.HARDWARE, qualifiers);
-                total = sqlTool.countRecordParentRelationsWithType(Record.HARDWARE);
-            }
+            data = sqlTool.findItemRelationsWithType(Item.HARDWARE, qualifiers);
+            total = sqlTool.countItemRelationsWithType(Item.HARDWARE, new Qualifier[]{});
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_HARDWARE;
 
