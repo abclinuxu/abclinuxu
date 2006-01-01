@@ -251,6 +251,7 @@ public class EditDiscussion implements AbcAction {
         canContinue &= setTitle(params, root, env);
         canContinue &= setText(params, root, env);
         canContinue &= setItemAuthor(params, user, root, discussion, env);
+        canContinue &= setUserIPAddress(root, request);
 
         if ( !canContinue || params.get(PARAM_PREVIEW)!=null ) {
             Comment comment = new Comment(root,new Date(),new Integer(0),null,user);
@@ -360,6 +361,7 @@ public class EditDiscussion implements AbcAction {
             canContinue &= setCommentAuthor(params, user, comment, env);
             canContinue &= setTitle(params, comment, env);
             canContinue &= setText(params, comment, env);
+            canContinue &= setUserIPAddress(comment, request);
 
             if ( !canContinue || params.get(PARAM_PREVIEW)!=null ) {
                 env.put(VAR_DISCUSSION, discussion);
@@ -1216,6 +1218,18 @@ public class EditDiscussion implements AbcAction {
                 return false;
             }
         }
+        return true;
+    }
+
+    /**
+     * Sets client's IP address. Changes are not synchronized with persistance.
+     * @param root   root element of comment to be updated
+     * @param request HTTP request
+     * @return true
+     */
+    static boolean setUserIPAddress(Element root, HttpServletRequest request) {
+        String ip = ServletUtils.getClientIPAddress(request);
+        DocumentHelper.makeElement(root, "author_ip").setText(ip);
         return true;
     }
 

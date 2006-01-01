@@ -24,6 +24,7 @@ import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.servlets.utils.ServletUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -113,7 +114,7 @@ public class AccessKeeper implements Configurable {
                 throw new AccessDeniedException("Object has been already used!", false);
         }
 
-        String remoteAddress = getClientIPAddress(request);
+        String remoteAddress = ServletUtils.getClientIPAddress(request);
         String browser = request.getHeader("user-agent");
         long now = System.currentTimeMillis();
 
@@ -146,31 +147,6 @@ public class AccessKeeper implements Configurable {
 
         Session savedSession = new Session(remoteAddress, now, browser);
         storedSessions.put(remoteAddress, savedSession);
-    }
-
-    /**
-     * Proxy aware code, that extracts IP address of the client.
-     */
-    private String getClientIPAddress(HttpServletRequest request) {
-        String remoteAddress = request.getRemoteAddr();
-
-        String header = request.getHeader("CLIENT-IP");
-        if (header!=null)
-            return remoteAddress+"#"+header;
-
-        header = request.getHeader("X_FORWARDED_FOR");
-        if (header!=null)
-            return remoteAddress + "#" + header;
-
-        header = request.getHeader("FORWARDED_FOR");
-        if (header!=null)
-            return remoteAddress + "#" + header;
-
-        header = request.getHeader("FORWARDED");
-        if (header!=null)
-            return remoteAddress + "#" + header;
-
-        return remoteAddress;
     }
 
     /**

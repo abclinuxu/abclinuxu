@@ -39,9 +39,10 @@
 
 
 <!-- Item.Discussion -->
-<!ELEMENT data (comments,author?,text,title?,frozen?, solved?)>
+<!ELEMENT data (comments,author?,author_ip?,text,title?,frozen?, solved?)>
 <!ELEMENT comments (#PCDATA)> <!-- integer, number of comments or replies -->
 <!ELEMENT author (#PCDATA)> <!-- unknow user's name -->
+<!ELEMENT author_ip (#PCDATA)> <!-- IP address of the user -->
 <!ELEMENT title (#PCDATA)> <!-- title of this reaction, usually question -->
 <!ELEMENT text (#PCDATA)> <!-- its text -->
 <!ATTLIST text format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->

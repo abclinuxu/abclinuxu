@@ -380,6 +380,31 @@ public class ServletUtils implements Configurable {
     }
 
     /**
+     * Proxy aware code, that extracts IP address of the client.
+     */
+    public static String getClientIPAddress(HttpServletRequest request) {
+        String remoteAddress = request.getRemoteAddr();
+
+        String header = request.getHeader("CLIENT-IP");
+        if (header != null)
+            return remoteAddress + "#" + header;
+
+        header = request.getHeader("X_FORWARDED_FOR");
+        if (header != null)
+            return remoteAddress + "#" + header;
+
+        header = request.getHeader("FORWARDED_FOR");
+        if (header != null)
+            return remoteAddress + "#" + header;
+
+        header = request.getHeader("FORWARDED");
+        if (header != null)
+            return remoteAddress + "#" + header;
+
+        return remoteAddress;
+    }
+
+    /**
      * Callback to configure this class.
      * @param prefs
      * @throws ConfigurationException
