@@ -183,7 +183,9 @@ public class VariableFetcher extends TimerTask implements Configurable {
      * Current open poll relation.
      */
     public Relation getCurrentPoll() {
-        return currentPoll;
+        Relation relation = (Relation) PersistanceFactory.getPersistance().findById(currentPoll);
+        Tools.sync(relation);
+        return relation;
     }
 
     /**
@@ -362,7 +364,6 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public void refreshCurrentPoll() {
         try {
             currentPoll = sqlTool.findActivePoll();
-            Tools.sync(currentPoll);
         } catch (Exception e) {
             log.error("Selhalo nacitani aktualni ankety");
         }

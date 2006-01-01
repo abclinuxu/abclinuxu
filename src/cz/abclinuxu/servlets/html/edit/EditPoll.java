@@ -302,7 +302,9 @@ public class EditPoll implements AbcAction {
                         votesFor.add(choices[voteId]);
                 }
 
-                persistance.incrementPollChoicesCounter(votesFor);
+                synchronized (relation) {
+                    persistance.incrementPollChoicesCounter(votesFor);
+                }
 
                 ServletUtils.addMessage("Vá¹ hlas do ankety byl pøijat.", env, request.getSession());
             } catch (AccessDeniedException e) {
