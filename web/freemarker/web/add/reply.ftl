@@ -106,8 +106,8 @@
 
 <h1>Nápovìda k formátování</h1>
 
-<p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html">znaèky</a>:
-A, ACRONYM, B, BR, BLOCKQUOTE, CITE, CODE, DIV, EM, I, HR, H1, H2, H3, LI,
+<p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html" rel="nofollow">znaèky</a>:
+A, B, BR, BLOCKQUOTE, CITE, CODE, DEL, DIV, EM, I, INS, HR, H1, H2, H3, LI,
 OL, P, PRE, STRONG, TT, UL, VAR. </p>
 
 <p>Nejrychlej¹í zpùsob formátování je rozdìlovat
