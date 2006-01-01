@@ -59,7 +59,7 @@ poslední zmìny.
     </tr>
     <tr>
         <td>
-            <a href="/faq/multimedia">Multimédia</a> (${SIZES("944")?default(0)})
+            <a href="/faq/multimedia">Multimédia</a> (${SIZES("94494")?default(0)})
         </td>
         <td>
             <a href="/faq/mysi">My¹i</a> (${SIZES("94484")?default(0)})
