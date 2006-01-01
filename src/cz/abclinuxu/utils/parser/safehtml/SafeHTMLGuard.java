@@ -26,11 +26,6 @@ import java.util.*;
  * This class is responsible for keeping HTML content
  * to be safe. E.g. it will blocks malicious (or stupid) user's
  * input, that can harm portal's UI or XSS.
- * <p>
- * These tags are allowed:
- * p, br, li (no attributes)
- * ul, ol, b, i, code, pre, div, h1, h2, h3 (no attributes, must be closed)
- * a (attribute href, must be closed)
  */
 public class SafeHTMLGuard {
     static final Map TAGS = new HashMap();
@@ -57,6 +52,8 @@ public class SafeHTMLGuard {
         TAGS.put("HR", new CheckedTag("HR", false, null));
         TAGS.put("TT", new CheckedTag("TT", true, null));
         TAGS.put("U", new CheckedTag("U", true, null));
+        TAGS.put("DEL", new CheckedTag("DEL", true, null));
+        TAGS.put("INS", new CheckedTag("INS", true, null));
     }
 
     /**
