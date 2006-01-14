@@ -27,7 +27,6 @@ import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.versioning.VersioningFactory;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -168,9 +167,7 @@ public class EditFaq implements AbcAction {
         persistance.create(relation);
 
         // commit new version
-        String path = Integer.toString(relation.getId());
-        String userId = Integer.toString(user.getId());
-        VersioningFactory.getVersioning().commit(document.asXML(), path, userId);
+        Misc.commitRelation(document.getRootElement(), relation, user);
 
         // refresh RSS
         FeedGenerator.updateFAQ();
@@ -242,13 +239,7 @@ public class EditFaq implements AbcAction {
         persistance.update(faq);
 
         // commit new version
-        String path = Integer.toString(relation.getId());
-        String userId = Integer.toString(user.getId());
-        Element copy = root.createCopy();
-        Element monitor = copy.element("monitor");
-        if (monitor != null)
-            monitor.detach();
-        VersioningFactory.getVersioning().commit(copy.asXML(), path, userId);
+        Misc.commitRelation(root, relation, user);
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();

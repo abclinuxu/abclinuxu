@@ -27,11 +27,11 @@ import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.versioning.VersioningFactory;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.parser.safehtml.ContentGuard;
 import cz.abclinuxu.utils.email.monitor.*;
 import org.apache.log4j.Logger;
@@ -187,9 +187,7 @@ public class EditContent implements AbcAction {
         persistance.create(relation);
 
         // commit new version
-        String path = Integer.toString(relation.getId());
-        String userId = Integer.toString(user.getId());
-        VersioningFactory.getVersioning().commit(document.asXML(), path, userId);
+        Misc.commitRelation(document.getRootElement(), relation, user);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());
@@ -236,9 +234,7 @@ public class EditContent implements AbcAction {
         persistance.create(relation);
 
         // commit new version
-        String path = Integer.toString(relation.getId());
-        String userId = Integer.toString(user.getId());
-        VersioningFactory.getVersioning().commit(document.asXML(), path, userId);
+        Misc.commitRelation(document.getRootElement(), relation, user);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());
@@ -285,13 +281,7 @@ public class EditContent implements AbcAction {
         persistance.update(relation);
 
         // commit new version
-        String path = Integer.toString(relation.getId());
-        String userId = Integer.toString(user.getId());
-        Element copy = item.getData().getRootElement().createCopy();
-        Element monitor = copy.element("monitor");
-        if (monitor != null)
-            monitor.detach();
-        VersioningFactory.getVersioning().commit(copy.asXML(), path, userId);
+        Misc.commitRelation(item.getData().getRootElement(), relation, user);
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
@@ -350,13 +340,7 @@ public class EditContent implements AbcAction {
         persistance.update(relation);
 
         // commit new version
-        String path = Integer.toString(relation.getId());
-        String userId = Integer.toString(user.getId());
-        Element copy = item.getData().getRootElement().createCopy();
-        Element monitor = copy.element("monitor");
-        if (monitor != null)
-            monitor.detach();
-        VersioningFactory.getVersioning().commit(copy.asXML(), path, userId);
+        Misc.commitRelation(item.getData().getRootElement(), relation, user);
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();

@@ -26,8 +26,8 @@ import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
-import cz.abclinuxu.persistance.versioning.VersioningFactory;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.email.monitor.*;
@@ -137,9 +137,7 @@ public class EditDriver implements AbcAction {
         relation.getParent().addChildRelation(relation);
 
         // commit new version
-        String path = Integer.toString(relation.getId());
-        String userId = Integer.toString(user.getId());
-        VersioningFactory.getVersioning().commit(document.asXML(), path, userId);
+        Misc.commitRelation(document.getRootElement(), relation, user);
 
         FeedGenerator.updateDrivers();
         VariableFetcher.getInstance().refreshDrivers();
@@ -202,13 +200,7 @@ public class EditDriver implements AbcAction {
         persistance.update(driver);
 
         // commit new version
-        String path = Integer.toString(relation.getId());
-        String userId = Integer.toString(user.getId());
-        Element copy = document.getRootElement().createCopy();
-        Element monitor = copy.element("monitor");
-        if (monitor!=null)
-            monitor.detach();
-        VersioningFactory.getVersioning().commit(copy.asXML(), path, userId);
+        Misc.commitRelation(document.getRootElement(), relation, user);
 
         String url = relation.getUrl();
         if (url==null)

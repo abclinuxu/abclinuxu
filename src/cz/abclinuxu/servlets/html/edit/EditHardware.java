@@ -25,8 +25,8 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistance.*;
-import cz.abclinuxu.persistance.versioning.VersioningFactory;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
@@ -165,9 +165,7 @@ public class EditHardware implements AbcAction {
         relation.getParent().addChildRelation(relation);
 
         // commit new version
-        String path = Integer.toString(relation.getId());
-        String userId = Integer.toString(user.getId());
-        VersioningFactory.getVersioning().commit(document.asXML(), path, userId);
+        Misc.commitRelation(document.getRootElement(), relation, user);
 
         // refresh RSS
         FeedGenerator.updateHardware();
@@ -255,13 +253,7 @@ public class EditHardware implements AbcAction {
         FeedGenerator.updateHardware();
 
         // commit new version
-        String path = Integer.toString(relation.getId());
-        String userId = Integer.toString(user.getId());
-        Element copy = root.createCopy();
-        Element monitor = copy.element("monitor");
-        if (monitor != null)
-            monitor.detach();
-        VersioningFactory.getVersioning().commit(copy.asXML(), path, userId);
+        Misc.commitRelation(root, relation, user);
 
         // run monitor
         String url = relation.getUrl();

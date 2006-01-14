@@ -19,15 +19,40 @@
 package cz.abclinuxu.utils;
 
 import cz.abclinuxu.exceptions.InvalidInputException;
+import cz.abclinuxu.persistance.versioning.VersionInfo;
+import cz.abclinuxu.persistance.versioning.VersioningFactory;
+import cz.abclinuxu.persistance.versioning.Versioning;
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.User;
 
 import java.util.*;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
+import org.dom4j.Element;
+
 /**
  * Miscallenous utilities.
  */
 public class Misc {
+
+    /**
+     * Commits specified relation into version repository.
+     * @param element XML to be stored
+     * @param relation identifies data
+     * @param user user who created this version
+     * @return VersionInfo
+     */
+    public static VersionInfo commitRelation(Element element, Relation relation, User user) {
+        String path = Integer.toString(relation.getId());
+        String userId = Integer.toString(user.getId());
+        Element copy = element.createCopy();
+        Element monitor = copy.element("monitor");
+        if (monitor != null)
+            monitor.detach();
+        Versioning versioning = VersioningFactory.getVersioning();
+        return versioning.commit(copy.asXML(), path, userId);
+    }
 
     /**
      * Parses string into int. If str cannot be parsed
