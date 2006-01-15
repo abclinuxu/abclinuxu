@@ -37,6 +37,8 @@ public class Category extends GenericDataObject {
     public static final int SECTION = 4;
     /** section that holds FAQ entries */
     public static final int FAQ = 5;
+    /** section that holds software entries */
+    public static final int SOFTWARE_SECTION = 6;
 
 
     public Category() {

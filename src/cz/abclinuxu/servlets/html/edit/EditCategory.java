@@ -22,6 +22,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.User;
@@ -32,7 +33,6 @@ import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.utils.InstanceUtils;
-import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 
@@ -57,6 +57,7 @@ public class EditCategory implements AbcAction {
     public static final String PARAM_CATEGORY = "categoryId";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_OPEN = "open";
+    public static final String PARAM_TYPE = "type";
     public static final String PARAM_ICON = cz.abclinuxu.servlets.html.select.SelectIcon.PARAM_ICON;
     public static final String PARAM_NOTE = "note";
     public static final String PARAM_CHOOSE_ICON = "iconChooser";
@@ -111,6 +112,8 @@ public class EditCategory implements AbcAction {
         throw new MissingArgumentException("Chybí parametr action!");
     }
 
+    // TODO prevest na settery, jako je to v ostatnich akcich
+
     /**
      * Creates new category
      */
@@ -120,11 +123,10 @@ public class EditCategory implements AbcAction {
 
         String name = (String) params.get(PARAM_NAME);
         String icon = (String) params.get(PARAM_ICON);
-        String open = (String) params.get(PARAM_OPEN);
         String note = (String) params.get(PARAM_NOTE);
 
         if ( name==null || name.length()==0 ) {
-            ServletUtils.addError(PARAM_NAME,"Zadejte jméno kategorie!",env, null);
+            ServletUtils.addError(PARAM_NAME,"Zadejte jméno sekce!",env, null);
             return FMTemplateSelector.select("EditCategory","add",env,request);
         }
 
@@ -145,7 +147,11 @@ public class EditCategory implements AbcAction {
         document.setRootElement(root);
 
         Category category = new Category();
-        category.setOpen("yes".equals(open));
+
+        boolean canContinue = setType(params, category, env);
+        if (!canContinue)
+            return FMTemplateSelector.select("EditCategory", "add", env, request);
+
         category.setData(document);
         category.setOwner(user.getId());
         Relation relation = null;
@@ -154,6 +160,17 @@ public class EditCategory implements AbcAction {
             persistance.create(category);
             int upper = (upperRelation!=null)? upperRelation.getId():0;
             relation = new Relation(upperCategory,category,upper);
+
+            if ( upperRelation!=null ) {
+                String upperUrl = upperRelation.getUrl();
+                if ( upperUrl!=null ) {
+                    String url = upperUrl + "/" + URLManager.enforceLastURLPart(name);
+                    url = URLManager.protectFromDuplicates(url);
+                    if (url!=null)
+                        relation.setUrl(url);
+                }
+            }
+
             persistance.create(relation);
             relation.getParent().addChildRelation(relation);
         } catch (PersistanceException e) {
@@ -182,9 +199,30 @@ public class EditCategory implements AbcAction {
         if (node!=null) params.put(PARAM_ICON,node.getText());
         node = document.selectSingleNode("data/note");
         if (node!=null) params.put(PARAM_NOTE,node.getText());
-        int type = category.getType();
-        if (type==Category.OPEN_HARDWARE_SECTION || type==Category.CLOSED_HARDWARE_SECTION)
-            params.put(PARAM_OPEN, (category.isOpen())? "yes":"no");
+
+        switch (category.getType()) {
+            case Category.SOFTWARE_SECTION:
+                params.put(PARAM_TYPE, "software");
+                break;
+            case Category.CLOSED_HARDWARE_SECTION:
+                params.put(PARAM_TYPE, "hw_closed");
+                break;
+            case Category.OPEN_HARDWARE_SECTION:
+                params.put(PARAM_TYPE, "hw_open");
+                break;
+            case Category.FORUM:
+                params.put(PARAM_TYPE, "forum");
+                break;
+            case Category.BLOG:
+                params.put(PARAM_TYPE, "blog");
+                break;
+            case Category.SECTION:
+                params.put(PARAM_TYPE, "section");
+                break;
+            case Category.FAQ:
+                params.put(PARAM_TYPE, "faq");
+                break;
+        }
 
         return FMTemplateSelector.select("EditCategory","edit",env,request);
     }
@@ -222,9 +260,9 @@ public class EditCategory implements AbcAction {
         Format format = FormatDetector.detect(tmp);
         node.addAttribute("format", Integer.toString(format.getId()));
 
-        tmp = (String) params.get(PARAM_OPEN);
-        if (!Misc.empty(tmp))
-            category.setOpen( "yes".equals(tmp) );
+        boolean canContinue = setType(params, category, env);
+        if (!canContinue)
+            return FMTemplateSelector.select("EditCategory", "edit", env, request);
 
         persistance.update(category);
 
@@ -238,5 +276,48 @@ public class EditCategory implements AbcAction {
             urlUtils.redirect(response, "/dir?categoryId="+category.getId());
         }
         return null;
+    }
+
+    // setters
+
+
+    /**
+     * Updates type from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param category   article to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setType(Map params, Category category, Map env) {
+        String type = (String) params.get(PARAM_TYPE);
+        if (type == null || type.length() == 0) {
+            ServletUtils.addError(PARAM_TYPE, "Vyberte typ sekce!", env, null);
+            return false;
+        }
+
+        int oldValue = category.getType();
+        category.setType(-1);
+
+        if ("software".equals(type))
+            category.setType(Category.SOFTWARE_SECTION);
+        if ("hw_closed".equals(type))
+            category.setType(Category.CLOSED_HARDWARE_SECTION);
+        if ("hw_open".equals(type))
+            category.setType(Category.OPEN_HARDWARE_SECTION);
+        if ("forum".equals(type))
+            category.setType(Category.FORUM);
+        if ("blog".equals(type))
+            category.setType(Category.BLOG);
+        if ("section".equals(type))
+            category.setType(Category.SECTION);
+        if ("faq".equals(type))
+            category.setType(Category.FAQ);
+
+        if (category.getType()==-1) {
+            category.setType(oldValue);
+            ServletUtils.addError(PARAM_TYPE, "Vybrali jste neznámý typ sekce!", env, null);
+            return false;
+        }
+
+        return true;
     }
 }

@@ -20,18 +20,23 @@
 
  <table width="100%" border=0 cellpadding=5>
   <tr>
-   <td width="120" class="required">Jméno kategorie</td>
+   <td width="120" class="required">Jméno sekce</td>
    <td>
     <input type="text" name="name" value="${PARAMS.name?if_exists}" size="40" tabindex="1">
     <div class="error">${ERRORS.name?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td width="120" class="required">Kdo smí pøidávat polo¾ky</td>
+   <td width="120" class="required">Typ</td>
    <td>
-    <select name="open" tabindex="2">
-     <option value="yes"<#if PARAMS.open?default("yes")=="yes"> SELECTED</#if>>Kdokoliv</option>
-     <option value="no"<#if PARAMS.open?default("yes")!="yes"> SELECTED</#if>>Jen administrátor</option>
+    <select name="type" tabindex="2">
+        <option value="faq"<#if PARAMS.type?default("software")=="software"> SELECTED</#if>>Sekce Software</option>
+        <option value="hw_closed"<#if PARAMS.type?if_exists=="hw_closed"> SELECTED</#if>>Otevøená hardwarová sekce</option>
+        <option value="hw_open"<#if PARAMS.type?if_exists=="open"> SELECTED</#if>>Uzavøená hardwarová sekce</option>
+        <option value="faq"<#if PARAMS.type?if_exists=="faq"> SELECTED</#if>>Sekce FAQ</option>
+        <option value="forum"<#if PARAMS.type?if_exists=="forum"> SELECTED</#if>>Diskusní fórum</option>
+        <option value="section"<#if PARAMS.type?if_exists=="section"> SELECTED</#if>>Rubrika pro èlánky</option>
+        <option value="blog"<#if PARAMS.type?if_exists=="blog"> SELECTED</#if>>Blog</option>
     </select>
    </td>
   </tr>
