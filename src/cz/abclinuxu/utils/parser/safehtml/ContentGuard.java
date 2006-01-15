@@ -30,11 +30,11 @@ import java.util.*;
 public class ContentGuard {
     static final Map TAGS = new HashMap();
     static {
-        TAGS.put("P", new CheckedTag("P", false, new String[]{"ID", "CLASS"}));
+        TAGS.put("P", new CheckedTag("P", false, new String[]{"ID", "CLASS", "STYLE"}));
         TAGS.put("BR", new CheckedTag("BR", false, null));
         TAGS.put("PRE", new CheckedTag("PRE", true, new String[]{"WIDTH", "ID", "CLASS"}));
         TAGS.put("DIV", new CheckedTag("DIV", true, new String[]{"ID", "CLASS"}));
-        TAGS.put("SPAN", new CheckedTag("SPAN", true, new String[]{"ID", "CLASS"}));
+        TAGS.put("SPAN", new CheckedTag("SPAN", true, new String[]{"ID", "CLASS", "STYLE"}));
         TAGS.put("H1", new CheckedTag("H1", true, new String[]{"ID", "CLASS"}));
         TAGS.put("H2", new CheckedTag("H2", true, new String[]{"ID", "CLASS"}));
         TAGS.put("H3", new CheckedTag("H3", true, new String[]{"ID", "CLASS"}));
