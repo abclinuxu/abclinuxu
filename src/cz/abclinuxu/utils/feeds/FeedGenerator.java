@@ -69,7 +69,7 @@ public class FeedGenerator implements Configurable {
 
     static String fileDiscussions, fileArticles, fileDrivers, fileHardware, fileBlog, dirBlogs, fileTrafika;
     static String fileNews, fileFaq, filePolls;
-    static int feedLength = 10, newsWordLimit;
+    static int feedLength = 10, highFrequencyFeedLength = 25, newsWordLimit;
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new FeedGenerator());
     }
@@ -93,7 +93,7 @@ public class FeedGenerator implements Configurable {
             SyndContent description;
             String question, title;
 
-            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, highFrequencyFeedLength)};
             List list = SQLTool.getInstance().findDiscussionRelations(qualifiers);
             Tools.syncList(list);
             List discussions = new Tools().analyzeDiscussions(list);
@@ -337,7 +337,7 @@ public class FeedGenerator implements Configurable {
             feed.setEntries(entries);
             SyndEntry entry;
 
-            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, highFrequencyFeedLength)};
             List stories = sqlTool.findItemRelationsWithType(Item.BLOG, qualifiers);
             Tools.syncList(stories);
             List blogs = new ArrayList();
