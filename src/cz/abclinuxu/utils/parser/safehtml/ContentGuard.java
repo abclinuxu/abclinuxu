@@ -39,6 +39,7 @@ public class ContentGuard {
         TAGS.put("H2", new CheckedTag("H2", true, new String[]{"ID", "CLASS"}));
         TAGS.put("H3", new CheckedTag("H3", true, new String[]{"ID", "CLASS"}));
         TAGS.put("H4", new CheckedTag("H4", true, new String[]{"ID", "CLASS"}));
+        TAGS.put("H5", new CheckedTag("H5", true, new String[]{"ID", "CLASS"}));
         TAGS.put("A", new CheckedTag("A", true, new String[]{"HREF", "TITLE", "ID", "CLASS", "NAME", "TARGET"}));
         TAGS.put("IMG", new CheckedTag("IMG", false, new String[]{"SRC", "WIDTH", "HEIGHT", "BORDER", "ALT", "STYLE"}));
         TAGS.put("B", new CheckedTag("B", true, null));
@@ -56,7 +57,7 @@ public class ContentGuard {
         TAGS.put("THEAD", new CheckedTag("THEAD", true, null));
         TAGS.put("TFOOT", new CheckedTag("TFOOT", true, null));
         TAGS.put("TR", new CheckedTag("TR", true, null));
-        TAGS.put("TD", new CheckedTag("TD", true, null));
+        TAGS.put("TD", new CheckedTag("TD", true, new String[] {"COLSPAN"}));
         TAGS.put("TH", new CheckedTag("TH", true, null));
         TAGS.put("CODE", new CheckedTag("CODE", true, null));
         TAGS.put("STRONG", new CheckedTag("STRONG", true, null));
@@ -74,6 +75,11 @@ public class ContentGuard {
         TAGS.put("SUP", new CheckedTag("SUP", true, null));
         TAGS.put("SMALL", new CheckedTag("SMALL", true, null));
         TAGS.put("ACRONYM", new CheckedTag("ACRONYM", true, null));
+        TAGS.put("FORM", new CheckedTag("FORM", true, new String[]{"ACTION","METHOD"}));
+        TAGS.put("LABEL", new CheckedTag("LABEL", true, new String[]{"FOR"}));
+        TAGS.put("INPUT", new CheckedTag("INPUT", false, new String[]{"TYPE","NAME","VALUE","ID","SIZE","TABINDEX"}));
+        TAGS.put("SELECT", new CheckedTag("SELECT", true, new String[]{"NAME","ID"}));
+        TAGS.put("OPTION", new CheckedTag("OPTION", true, new String[]{"VALUE"}));
     }
 
     /**

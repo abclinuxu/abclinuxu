@@ -109,11 +109,17 @@
 <!ELEMENT name (#PCDATA)> <!-- word to be explained -->
 
 <!-- Item.CONTENT -->
-<!ELEMENT data (name, content, class?)>
+<!ELEMENT data (name, content, class?, toc?)>
 <!ELEMENT name (#PCDATA)> <!-- HTML page's title -->
 <!ELEMENT content (#PCDATA)> <!-- content to be served -->
 <!ATTLIST content execute (yes|no) #REQUIRED> <!-- boolean, whether to execute content through template engine -->
 <!ELEMENT java_class (#PCDATA)> <!-- java class to feed data to content -->
+<!ELEMENT toc (#PCDATA)> <!-- integer, id of item holding TOC for this content -->
+
+<!-- Item.TOC -->
+<!ELEMENT data (node)>
+<!ELEMENT node (node*)> <!-- document -->
+<!ATTLIST node rid (#NMTOKEN) #REQUIRED> <!-- integer, id of the content relation -->
 
 <!-- Item.BLOG -->
 <!ELEMENT data (name, perex?,content, category?)>

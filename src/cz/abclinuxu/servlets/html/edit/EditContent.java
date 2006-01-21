@@ -213,8 +213,22 @@ public class EditContent implements AbcAction {
         Relation relation = new Relation();
         relation.setParent(parent);
         relation.setUpper(parentRelation.getId());
-        if (parent instanceof Item && TYPE_PUBLIC_CONTENT.equals(((Item)parent).getSubType()))
-            item.setSubType(TYPE_PUBLIC_CONTENT);
+        Item toc = null;
+
+        if (parent instanceof Item) {
+            Item parentItem = ((Item)parent);
+            if (parentItem.getType()==Item.CONTENT) {
+                if (TYPE_PUBLIC_CONTENT.equals(parentItem.getSubType()))
+                    item.setSubType(TYPE_PUBLIC_CONTENT);
+
+                Element element = (Element) parentItem.getData().selectSingleNode("/data/toc");
+                if (element!=null) {
+                    int id = Misc.parseInt(element.getText(), -1);
+                    toc = (Item) persistance.findById(new Item(id));
+                    DocumentHelper.makeElement(item.getData(), "/data/toc").setText(element.getText());
+                }
+            }
+        }
 
         boolean canContinue = true;
         canContinue &= setTitle(params, item, env);
@@ -235,6 +249,14 @@ public class EditContent implements AbcAction {
 
         // commit new version
         Misc.commitRelation(document.getRootElement(), relation, user);
+
+        if (toc!=null) {
+            Element element = (Element) toc.getData().selectSingleNode("//node[@rid="+parentRelation.getId()+"]");
+            if (element!=null) {
+                element.addElement("node").addAttribute("rid", Integer.toString(relation.getId()));
+                persistance.update(toc);
+            }
+        }
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());
