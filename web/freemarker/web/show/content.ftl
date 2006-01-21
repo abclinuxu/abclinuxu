@@ -28,6 +28,7 @@
     <p>
         <#if USER.hasRole("content admin")>
             <a href="${URL.make("/editContent/"+RELATION.id+"?action=edit")}">Uprav v¹e</a> &#8226;
+            <a href="${URL.make("/editContent/"+RELATION.id+"?action=addDerivedPage")}">Vytvoø podstránku</a> &#8226;
             <a href="${URL.make("/editContent/"+RELATION.id+"?action=alterPublic")}">
                 <#if public>Zru¹ veøejnou editovalnost<#else>Nastav veøejnou editovatelnost</#if></a> &#8226;
             <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix=/doc")}">Sma¾</a>
@@ -39,5 +40,27 @@
 </#if>
 
 ${TOOL.xpath(ITEM,"/data/content")}
+
+<#if TOC?exists>
+    <table border="0" class="siroka">
+        <tr>
+            <td width="33%">
+                <#if TOC.left?exists>
+                    <a href="${TOC.left.url}" title="${TOOL.childName(TOC.left)}">Pøedchozí kapitola</a>
+                </#if>
+            </td>
+            <td width="33%" align="center">
+                <#if TOC.up?exists>
+                    <a href="${TOC.up.url}" title="${TOOL.childName(TOC.up)}">Nahoru</a>
+                </#if>
+            </td>
+            <td width="33%" align="right">
+                <#if TOC.right?exists>
+                    <a href="${TOC.right.url}" title="${TOOL.childName(TOC.right)}">Následující kapitola</a>
+                </#if>
+            </td>
+        </tr>
+    </table>
+</#if>
 
 <#include "../footer.ftl">

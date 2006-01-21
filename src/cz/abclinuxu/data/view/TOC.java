@@ -57,7 +57,7 @@ public class TOC {
                 chapter = new Chapter(parent, rid);
 
                 parent.addChapter(chapter);
-                allChapters.put(new Integer(rid), parent);
+                allChapters.put(new Integer(rid), chapter);
                 queue.add(new QueueItem(chapter, element));
             }
         }
