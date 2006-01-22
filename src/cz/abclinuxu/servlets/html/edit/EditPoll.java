@@ -226,7 +226,7 @@ public class EditPoll implements AbcAction {
         List choices = (List) params.get(PARAM_CHOICES);
         List choicesList = Arrays.asList(poll.getChoices());
 
-        for ( int i=0; i<10; i++ ) {
+        for ( int i=0; i<10 && i<choices.size(); i++ ) {
             tmp = (String) choices.get(i);
             if ( tmp==null || tmp.length()==0 )
                 continue;
