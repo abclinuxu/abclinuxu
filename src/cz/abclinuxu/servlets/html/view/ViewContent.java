@@ -18,21 +18,18 @@
  */
 package cz.abclinuxu.servlets.html.view;
 
-import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.view.Chapter;
 import cz.abclinuxu.data.view.TOC;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import org.dom4j.Element;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 import java.util.HashMap;
-
-import org.dom4j.Element;
+import java.util.Map;
 
 /**
  * Displays content (Item.type==11)
@@ -44,20 +41,21 @@ public class ViewContent {
     /**
      * Env must contain VAR_CONTENT already.
      */
-    public static String show(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+    public static String show(HttpServletRequest request, Map env) throws Exception {
         Relation relation = (Relation) env.get(ShowObject.VAR_RELATION);
         Item item = (Item) relation.getChild();
 
         Element element = (Element) item.getData().selectSingleNode("/data/toc");
         if (element != null) {
             int id = Misc.parseInt(element.getText(), -1);
-            Item tocItem = (Item) persistance.findById(new Item(id));
+            Relation tocRelation = new Relation(id);
+            Tools.sync(tocRelation);
+            Item tocItem = (Item) tocRelation.getChild();
 
             Relation up = null, left = null, right = null;
             TOC toc = new TOC(tocItem.getData().getRootElement());
-            TOC.Chapter thisChapter = toc.getChapter(relation.getId());
-            TOC.Chapter chapter = thisChapter.getParent();
+            Chapter thisChapter = toc.getChapter(relation.getId());
+            Chapter chapter = thisChapter.getParent();
             if (chapter!=null)
                 up = (Relation) Tools.sync(new Relation(chapter.getRid()));
             chapter = thisChapter.getLeftChapter();
@@ -72,6 +70,7 @@ public class ViewContent {
             map.put("left", left);
             map.put("right", right);
             map.put("up", up);
+            map.put("relation", tocRelation);
             env.put(VAR_TOC, map);
         }
         return FMTemplateSelector.select("ViewContent", "view", env, request);

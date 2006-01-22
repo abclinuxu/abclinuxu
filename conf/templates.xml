@@ -355,6 +355,9 @@
     <action name="view" content="/show/content.ftl">
       <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
     </action>
+    <action name="toc" content="/show/content_toc.ftl">
+      <var name="TITLE" value="Obsah" />
+    </action>
   </servlet>
 
   <servlet name="ContentChanges">
@@ -517,20 +520,4 @@
       <var name="TITLE" value="Upravit pojem"/>
     </action>
   </servlet>
-
-    <servlet name="EditGuestBook">
-        <action name="add" content="/add/guestbook.ftl">
-            <var name="TITLE" value="Zanechání vzkazu v knize náv¹tìv"/>
-        </action>
-        <action name="edit" template="print" content="/edit/guestbook.ftl">
-            <var name="TITLE" value="Úprava vzkazu"/>
-        </action>
-    </servlet>
-
-    <servlet name="ViewGuestBook">
-        <action name="show" content="/show/guestbook.ftl">
-            <var name="TITLE" value="Kniha náv¹tìv"/>
-        </action>
-    </servlet>
-
 </config>

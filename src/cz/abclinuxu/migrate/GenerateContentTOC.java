@@ -67,12 +67,12 @@ public class GenerateContentTOC {
         if (!"yes".equals(response))
             exitWithHelp("Expected yes but got "+response);
 
-        Item tocItem = new Item(0);
-        tocItem.setType(Item.TOC);
-        tocItem.setData("<data></data>");
+        Item tocItem = new Item(0, Item.TOC);
+        tocItem.setData("<data><name>Obsah</name></data>");
         persistance.create(tocItem);
-        persistance.create(new Relation(top.getChild(), tocItem, top.getId()));
-        String tocId = Integer.toString(tocItem.getId());
+        Relation tocRelation = new Relation(top.getChild(), tocItem, top.getId());
+        persistance.create(tocRelation);
+        String tocId = Integer.toString(tocRelation.getId());
 
         Element parentElement, element;
         Relation current;

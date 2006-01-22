@@ -42,21 +42,30 @@
 ${TOOL.xpath(ITEM,"/data/content")}
 
 <#if TOC?exists>
-    <table border="0" class="siroka">
+    <table align="center" style="border: thin solid black; background: lightgrey; text-align: center; margin-top: 1em;">
         <tr>
-            <td width="33%">
+            <td>
                 <#if TOC.left?exists>
-                    <a href="${TOC.left.url}" title="${TOOL.childName(TOC.left)}">Pøedchozí kapitola</a>
+                    <a href="${TOC.left.url}" title="${TOOL.childName(TOC.left)}">Pøedchozí</a>
+                <#else>
+                    Pøedchozí
                 </#if>
             </td>
-            <td width="33%" align="center">
+            <td>
                 <#if TOC.up?exists>
                     <a href="${TOC.up.url}" title="${TOOL.childName(TOC.up)}">Nahoru</a>
+                <#else>
+                    Nahoru
                 </#if>
             </td>
-            <td width="33%" align="right">
+            <td>
+                <a href="${TOC.relation.url}" title="Zobraz obsah">Obsah</a>
+            </td>
+            <td>
                 <#if TOC.right?exists>
-                    <a href="${TOC.right.url}" title="${TOOL.childName(TOC.right)}">Následující kapitola</a>
+                    <a href="${TOC.right.url}" title="${TOOL.childName(TOC.right)}">Dal¹í</a>
+                <#else>
+                    Dal¹í
                 </#if>
             </td>
         </tr>

@@ -189,7 +189,9 @@ public class ShowObject implements AbcAction {
             case Item.DRIVER:
                 return FMTemplateSelector.select("ShowObject", "driver", env, request);
             case Item.CONTENT:
-                return ViewContent.show(request, response, env);
+                return ViewContent.show(request, env);
+            case Item.TOC:
+                return ViewTOC.show(request, env);
         }
 
         return null;
