@@ -13,9 +13,7 @@
     </div></div>
     <div class="s_sekce">
         <ul>
-            <li><a href="/clanky/recenze/co-je-to-linux">Co je to Linux?</a></li>
-            <li><a href="/clanky/ruzne/je-linux-opravdu-zdarma">Je opravdu zdarma?</a></li>
-            <li><a href="/clanky/navody/tema-vyber-distribuce">Jakou zvolit distribuci?</a></li>
+            <li><a href="/ucebnice">Uèebnice Linuxu</a></li>
             <li><a href="/clanky/ruzne/cim-v-linuxu-nahradit-aplikace-windows">Náhrady Windows aplikací</a></li>
             <li><a href="/clanky/ruzne/abcserialy">Rozcestník na¹ich seriálù</a>
         </ul>
@@ -65,6 +63,18 @@
             </ul>
         </div>
     </#if>
+
+    <!-- skoleni softtronik -->
+    <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <h1><a href="http://www.soft-tronik.cz" title="©kolení SOFT-TRONIK, a.s." rel="nofollow">©kolení SOFT-TRONIK</a></h1>
+    </div></div>
+    <div class="s_sekce">
+      <ul>
+        <li><a href="http://www.soft-tronik.cz/web/katalog.nsf/0/ED37BEDF8B927FEBC1256E90002E6FDB?Open&amp;webid=&amp;grp=Produkty&amp;sgrp=Informace" rel="nofollow" title="6. - 8. 2. 2006, LNX01, cena 5890,- bez DPH">Linux: úvod do administrace</a></li>
+        <li><a href="http://www.soft-tronik.cz/web/katalog.nsf/0/086D4AB045CC6C9DC1256E90002F4AF3?Open&amp;webid=&amp;grp=Produkty&amp;sgrp=Informace" rel="nofollow" title="13. - 14. 2. 2006, LNX02, cena 3890,- bez DPH">Linux: administrace sí»ového serveru</a></li>
+	    <li><a href="http://www.soft-tronik.cz/web/katalog.nsf/0/F3951078A9393744C1256E9000300815?Open&amp;webid=&amp;grp=Produkty&amp;sgrp=Informace" rel="nofollow" title="20. - 21. 2. 2006, LNX03, cena 4890,- bez DPH">Linux: bezpeènost systému</a></li>
+      </ul>
+    </div>
 
     <!-- prace.abclinuxu.cz -->
     <div class="s_nad_h1"><div class="s_nad_pod_h1">
@@ -125,40 +135,41 @@
     <div class="st_vpravo">
         <a href="/History?type=articles&amp;from=${ARTICLES?size}&amp;count=10">Star¹í èlánky</a>
     </div>
+</#if>
 
-    <#assign STORIES=VARS.getFreshStories(USER?if_exists), half=STORIES?size/2>
+<#assign STORIES=VARS.getFreshStories(USER?if_exists)>
+<#if (STORIES?size>0) >
+    <#assign half = STORIES?size/2 >
     <#if STORIES?size%2==1><#assign half=half+1></#if>
-    <#if (STORIES?size>0) >
-        <div class="ramec-st">
-            <div class="s_nad_h1"><div class="s_nad_pod_h1">
-                <a class="info" href="#">?<span class="tooltip">Vlastní blog si po pøihlá¹ení
-                mù¾ete zalo¾it v nastavení svého profilu</span></a>
-                <h1><a href="/blog">Blogy na AbcLinuxu</a>, <a href="/blog/souhrn">struènìj¹í souhrn</a></h1>
-            </div></div>
-            <table width="99%">
-                <tr>
-                    <td valign="top">
-		     <div class="s_sekce">
-   		      <ul>
-                        <#list STORIES[0..half-1] as relation>
-                            <li><@printStory relation /></li>
-                        </#list>
-		      </ul>
-		     </div>
-                    </td>
-                    <td valign="top">
-		     <div class="s_sekce">
-		      <ul>
-                	<#list STORIES[half..] as relation>
-                    	    <li><@printStory relation /></li>
-                    	</#list>
-		      </ul>
-		     </div>
-                    </td>
-                </tr>
-            </table>
-        </div>
-    </#if>
+    <div class="ramec-st">
+        <div class="s_nad_h1"><div class="s_nad_pod_h1">
+            <a class="info" href="#">?<span class="tooltip">Vlastní blog si po pøihlá¹ení
+            mù¾ete zalo¾it v nastavení svého profilu</span></a>
+            <h1><a href="/blog">Blogy na AbcLinuxu</a>, <a href="/blog/souhrn">struènìj¹í souhrn</a></h1>
+        </div></div>
+        <table width="99%">
+            <tr>
+                <td valign="top">
+         <div class="s_sekce">
+          <ul>
+                    <#list STORIES[0..half-1] as relation>
+                        <li><@printStory relation /></li>
+                    </#list>
+          </ul>
+         </div>
+                </td>
+                <td valign="top">
+         <div class="s_sekce">
+          <ul>
+                <#list STORIES[half..] as relation>
+                        <li><@printStory relation /></li>
+                    </#list>
+          </ul>
+         </div>
+                </td>
+            </tr>
+        </table>
+    </div>
 </#if>
 
 <#macro printStory relation>
@@ -226,7 +237,7 @@
         <h1 class="st_nadpis">Rozcestník</h1>
         <div class="s"><div class="s_sekce"><div class="rozc">
         <table>
-        <#list TOOL.createServers([16,13,14,1,17,19]) as server>
+        <#list TOOL.createServers([16,13,14,1,17,15]) as server>
             <#if server_index % 3 = 0><tr><#assign open=true></#if>
             <td>
             <a class="server" href="${server.url}" rel="nofollow">${server.name}</a>
@@ -246,3 +257,4 @@
 </#if>
 
 <#include "../footer.ftl">
+
