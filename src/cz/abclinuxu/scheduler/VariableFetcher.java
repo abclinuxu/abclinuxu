@@ -129,7 +129,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
      * List of the most fresh blog story relations according to user preference or system setting.
      */
     public List getFreshStories(Object user) {
-        int userLimit = getObjectCountForUser(user, KEY_STORY, null);
+        int userLimit = getObjectCountForUser(user, KEY_STORY, "/data/settings/index_stories");
         List list = getSubList(freshStories, userLimit);
         return list;
     }
@@ -183,6 +183,9 @@ public class VariableFetcher extends TimerTask implements Configurable {
      * Current open poll relation.
      */
     public Relation getCurrentPoll() {
+        if (currentPoll == null)
+            return null;
+
         Relation relation = (Relation) PersistanceFactory.getPersistance().findById(currentPoll);
         Tools.sync(relation);
         return relation;

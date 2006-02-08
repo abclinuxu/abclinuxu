@@ -56,7 +56,7 @@
   </tr>
   <tr>
    <td colspan="2">Zadejte URL souboru obsahující CSS definici vzhledu portálu. Bude pou¾ita místo
-   standardního vzhledu. Pro bílé písmo na èerném podkladu vlo¾te 
+   standardního vzhledu. Pro bílé písmo na èerném podkladu vlo¾te
    <code>/styles-dark.css</code>. <a href="/doc/napoveda/alternativni-design">Nápovìda</a>.
    </td>
   </tr>
@@ -132,9 +132,23 @@
   </tr>
 
   <tr>
+   <td class="required">Poèet zápiskù</td>
+   <td>
+    <input type="text" name="stories" value="${PARAMS.stories?if_exists}" size="3" tabindex="8">
+    <div class="error">${ERRORS.stories?if_exists}</div>
+   </td>
+  </tr>
+  <tr>
+   <td colspan="2">Zde mù¾ete specifikovat poèet zápiskù z blogù, které se zobrazují na úvodní stránce.
+   Standardní poèet je nastaven na ${DEFAULT_STORIES} a mù¾ete jej zde pøedefinovat. Nastavením na nulu
+   zru¹íte jejich zobrazování.
+   </td>
+  </tr>
+
+  <tr>
    <td class="required">Velikost stránky pøi hledání</td>
    <td>
-    <input type="text" name="search" value="${PARAMS.search?if_exists}" size="3" tabindex="8">
+    <input type="text" name="search" value="${PARAMS.search?if_exists}" size="3" tabindex="9">
     <div class="error">${ERRORS.search?if_exists}</div>
    </td>
   </tr>
@@ -145,7 +159,7 @@
   <tr>
    <td class="required">Velikost stránky diskusního fóra</td>
    <td>
-    <input type="text" name="forum" value="${PARAMS.forum?if_exists}" size="3" tabindex="9">
+    <input type="text" name="forum" value="${PARAMS.forum?if_exists}" size="3" tabindex="10">
     <div class="error">${ERRORS.forum?if_exists}</div>
    </td>
   </tr>
@@ -156,7 +170,7 @@
   <tr>
    <td class="required">Zobrazovat rozcestník</td>
    <td>
-    <select name="guidepost" tabindex="4">
+    <select name="guidepost" tabindex="11">
      <#assign guidepost=PARAMS.guidepost?default("yes")>
      <option value="yes" <#if guidepost=="yes">SELECTED</#if>>ano</option>
      <option value="no"<#if guidepost=="no">SELECTED</#if>>ne</option>
@@ -164,12 +178,12 @@
    </td>
   </tr>
   <tr>
-   <td colspan="2">Urèuje, zda se má zobrazovat rozcestník v ¹ablonì.</td>
+   <td colspan="2">Urèuje, zda se má zobrazovat rozcestník.</td>
   </tr>
 
   <tr>
    <td width="200">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi" tabindex="10"></td>
+   <td><input type="submit" value="Dokonèi" tabindex="12"></td>
   </tr>
  </table>
  <input type="hidden" name="action" value="editSettings2">

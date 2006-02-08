@@ -335,7 +335,7 @@
                             <entry key="default.driver" value="3"/>
                             <entry key="max.driver" value="10"/>
                             <entry key="default.story" value="14"/>
-                            <entry key="max.story" value="20"/>
+                            <entry key="max.story" value="30"/>
                             <entry key="default.news" value="10"/>
                             <entry key="max.news" value="25"/>
                             <entry key="default.article" value="9"/>
@@ -457,7 +457,7 @@
                             <map/>
                             <node name="NewsCSV">
                                 <map>
-                                    <entry key="allowed.ip.addresses" value="127.0.0.1,195.70.144.6,212.67.91.4,212.67.91.5,212.67.79.50"/>
+                                    <entry key="allowed.ip.addresses" value="127.0.0.1,195.70.150.1,195.70.150.4,195.70.150.5,195.70.144.6,212.67.91.4,212.67.91.5,212.67.79.50"/>
                                     <entry key="count" value="7"/>
                                 </map>
                             </node>
