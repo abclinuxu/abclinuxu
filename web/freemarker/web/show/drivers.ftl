@@ -1,7 +1,7 @@
 <#include "../header.ftl">
 <@lib.showMessages/>
 
-<h1 class="st_nadpis">Ovladaèe</h1>
+<h1>Ovladaèe</h1>
 
 <p>V této èásti si mù¾ete prohlí¾et nejaktuálnìj¹í verze rùzných ovladaèù.
 Ovladaèe jsou setøízeny podle èasu vytvoøení èi poslední úpravy, nejnovìj¹ími
@@ -9,8 +9,8 @@ zaèínaje.</p>
 
 <p>Polo¾ka ovladaèe slou¾í pro shroma¾ïování informací ohlednì ovladaèù,
 které nejsou standardní souèástí jádra. Typicky jde buï o Open Source
-projekty, kdy se nad¹enci sna¾í vytvoøit podporu pro daný hardware
-(typicky ovladaèe scannerù) nebo výrobce odmítá uvolnit specifikaci
+projekty, v rámci kterých se nad¹enci sna¾í vytvoøit podporu pro daný hardware
+(typicky ovladaèe scannerù), nebo výrobce odmítá uvolnit specifikace
 svých produktù komunitì a místo toho vyrábí vlastní ovladaèe (napøíklad
 nVidia).
 </p>

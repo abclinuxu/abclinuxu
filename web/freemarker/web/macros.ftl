@@ -54,44 +54,41 @@
  <#if double><img src="/images/site/sedybod.gif" width="100%" height="1" border="0" alt="" vspace="1"><br></#if>
 </#macro>
 
-<#macro showComment(comment dizId relId showControls extra...) >
-prosim poslete mi URL a popis, jak jste na tuto stranku narazili
-</#macro>
-
-<#macro showThread(comment level dizId relId showControls extra...)>
- <div class="ds_hlavicka<#if comment.unread>_novy</#if>">
+<#macro showThread(comment level diz showControls extra...)>
+ <div class="ds_hlavicka<#if diz.isUnread(comment)>_novy</#if>">
   <a name="${comment.id}"></a>
   ${DATE.show(comment.created,"CZ_FULL")}
   <#if comment.author?exists>
-   <#local who=TOOL.sync(comment.author)><a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
+   <#local who=TOOL.createUser(comment.author)><a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
    <#local blog=TOOL.getUserBlogAnchor(who, "blog")?default("UNDEF")>
    <#if blog!="UNDEF">&nbsp;| blog: ${blog}</#if>
    <#local city=TOOL.xpath(who,"//personal/city")?default("UNDEF")><#if city!="UNDEF"> | ${city}</#if>
   <#else>
-   ${TOOL.xpath(comment.data,"author")?if_exists}
+   ${comment.anonymName?if_exists}
   </#if><br>
-  ${TOOL.xpath(comment.data,"title")?if_exists}<br>
+  ${comment.title?if_exists}<br>
   <#if showControls>
-   <#if comment.nextUnread?exists><a href="#${comment.nextUnread}" title="Skoèit na dal¹í nepøeètený komentáø">Dal¹í</a> |</#if>
-   <a href="${URL.make("/EditDiscussion/"+relId+"?action=add&amp;dizId="+dizId+"&amp;threadId="+comment.id+extra[0]?default(""))}">Odpovìdìt</a> |
-   <a href="${URL.make("/EditRequest/"+relId+"?action=comment&amp;threadId="+comment.id)}" title="®ádost o pøesun diskuse, stí¾nost na komentáø">Admin</a> |
+   <#assign nextUnread = diz.getNextUnread(comment)?default("UNDEF"), blacklisted = diz.isBlacklisted(comment)>
+   <#if ! nextUnread?is_string><a href="#${nextUnread}" title="Skoèit na dal¹í nepøeètený komentáø">Dal¹í</a> |</#if>
+   <a href="${URL.make("/EditDiscussion/"+diz.relationId+"?action=add&amp;dizId="+diz.id+"&amp;threadId="+comment.id+extra[0]?default(""))}">Odpovìdìt</a> |
+   <a href="${URL.make("/EditRequest/"+diz.relationId+"?action=comment&amp;threadId="+comment.id)}" title="®ádost o pøesun diskuse, stí¾nost na komentáø">Admin</a> |
    <a href="#${comment.id}" title="Pøímá adresa na tento komentáø">Link</a> |
-   <#if (comment.parent>0)><a href="#${comment.parent}" title="Odkaz na komentáø o jednu úroveò vý¹e">Vý¹e</a> |</#if>
+   <#if (comment.parent?exists)><a href="#${comment.parent}" title="Odkaz na komentáø o jednu úroveò vý¹e">Vý¹e</a> |</#if>
    <#if comment.author?exists>
-       <#if comment.inBlacklist><#local action="fromBlacklist", title="Neblokovat", hint="Odstraní autora ze seznamu blokovaných u¾ivatelù">
+       <#if blacklisted><#local action="fromBlacklist", title="Neblokovat", hint="Odstraní autora ze seznamu blokovaných u¾ivatelù">
        <#else><#local action="toBlacklist", title="Blokovat", hint="Pøidá autora na seznam blokovaných u¾ivatelù"></#if>
        <#if USER?exists><#local myId=USER.id></#if>
-       <a href="${URL.noPrefix("/EditUser/"+myId?if_exists+"?action="+action+"&amp;bUid="+who.id+"&amp;url="+URL.prefix+"/show/"+relId+"#"+comment.id)}" title="${hint}">${title}</a> |
+       <a href="${URL.noPrefix("/EditUser/"+myId?if_exists+"?action="+action+"&amp;bUid="+who.id+"&amp;url="+URL.prefix+"/show/"+diz.relationId+"#"+comment.id)}" title="${hint}">${title}</a> |
    </#if>
-   <a onClick="schovej_vlakno(${comment.id})" id="a${comment.id}" title="Schová nebo rozbalí celé vlákno"><#if ! comment.inBlacklist>Sbalit<#else>Rozbalit</#if></a>
+   <a onClick="schovej_vlakno(${comment.id})" id="a${comment.id}" title="Schová nebo rozbalí celé vlákno"><#if ! blacklisted>Sbalit<#else>Rozbalit</#if></a>
   </#if>
  </div>
- <div id="div${comment.id}" <#if comment.inBlacklist>style="display: none;"</#if>>
-  <#if TOOL.xpath(comment.data,"censored")?exists>
-     <@showCensored comment, dizId, relId/>
+ <div id="div${comment.id}" <#if blacklisted?if_exists>style="display: none;"</#if>>
+  <#if TOOL.xpath(comment.data,"//censored")?exists>
+     <@showCensored comment, diz.id, diz.relationId/>
   <#else>
    <div class="ds_text">
-     ${TOOL.render(TOOL.element(comment.data,"text"),USER?if_exists)}
+     ${TOOL.render(TOOL.element(comment.data,"//text"),USER?if_exists)}
    </div>
    <#assign signature = TOOL.getUserSignature(who?if_exists, USER?if_exists)?default("UNDEFINED")>
    <#if signature!="UNDEFINED"><div class="signature">${signature}</div></#if>
@@ -99,7 +96,7 @@ prosim poslete mi URL a popis, jak jste na tuto stranku narazili
   <#local level2=level+1>
   <div style="padding-left: 15pt">
    <#list comment.children?if_exists as child>
-    <@showThread child, level2, dizId, relId, showControls, extra[0]?if_exists />
+    <@showThread child, level2, diz, showControls, extra[0]?if_exists />
    </#list>
   </div>
  </div>
@@ -107,10 +104,10 @@ prosim poslete mi URL a popis, jak jste na tuto stranku narazili
 
 <#macro showCensored(comment dizId relId)>
     <p class="cenzura">
-        <#assign admin = TOOL.xpath(comment.data,"censored/@admin")?default("UNDEFINED")>
+        <#assign admin = TOOL.xpath(comment.data,"//censored/@admin")?default("UNDEFINED")>
         Ná¹ <#if admin!="UNDEFINED"><a href="/Profile/${admin}"></#if>administrátor<#if admin!="UNDEFINED"></a></#if>
         shledal tento pøíspìvek závadným nebo nevyhovujícím zamìøení portálu.
-        <#assign message = TOOL.xpath(comment.data,"censored")?if_exists>
+        <#assign message = TOOL.xpath(comment.data,"//censored")?if_exists>
         <#if message?has_content><br>${message}</#if>
         <br><a href="${URL.make("/show?action=censored&amp;dizId="+dizId+"&amp;threadId="+comment.id)}">Zobrazit</a> pøíspìvek
     </p>

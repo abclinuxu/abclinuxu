@@ -31,7 +31,7 @@ do nìkterého jeho potomka, vznikne velký problém!</p>
  <input type="hidden" name="threadId" value="${PARAMS.threadId}">
 </form>
 
-<#assign diz = TOOL.createDiscussionTree(DISCUSSION,"no",false)>
+<#assign diz = TOOL.createDiscussionTree(DISCUSSION,"no",RELATION.id,false)>
 <#list diz.threads as thread>
  <@showThread thread, 0 />
 </#list>
@@ -41,12 +41,12 @@ do nìkterého jeho potomka, vznikne velký problém!</p>
   Èíslo komentáøe: ${comment.id}<br>
   ${DATE.show(comment.created,"CZ_FULL")}
   <#if comment.author?exists>
-   <#local who=TOOL.sync(comment.author)>
+   <#local who=TOOL.createUser(comment.author)>
    <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a><br>
   <#else>
-   ${TOOL.xpath(comment.data,"author")?if_exists}<br>
+   ${comment.anonymName?if_exists}<br>
   </#if>
-  ${TOOL.xpath(comment.data,"title")?if_exists}<br>
+  ${comment.title?if_exists}<br>
  </p>
   <div>${TOOL.render(TOOL.element(comment.data,"text"),USER?if_exists)}</div>
 </#macro>

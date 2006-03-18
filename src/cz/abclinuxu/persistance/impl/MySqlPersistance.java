@@ -22,6 +22,8 @@ import java.util.*;
 import java.sql.*;
 
 import cz.abclinuxu.data.*;
+import cz.abclinuxu.data.view.RowComment;
+import cz.abclinuxu.data.view.DiscussionRecord;
 import cz.abclinuxu.exceptions.*;
 import cz.abclinuxu.AbcException;
 import cz.abclinuxu.utils.Sorters2;
@@ -66,13 +68,13 @@ public class MySqlPersistance implements Persistance {
         try {
             Class.forName("com.mysql.jdbc.Driver");
         } catch (Exception e) {
-            log.fatal("Nemohu vytvorit instanci JDBC driveru, zkontroluj CLASSPATH!",e);
+            log.fatal("Nemohu vytvoøit instanci JDBC driveru, zkontroluj CLASSPATH!",e);
         }
     }
 
     public MySqlPersistance(String dbUrl) {
         if ( dbUrl==null )
-            throw new MissingArgumentException("Neni mozne inicializovat MySqlPersistenci prazdnym URL!");
+            throw new MissingArgumentException("Není mo¾né inicializovat MySqlPersistenci prázdným URL!");
         this.dbUrl = dbUrl;
     }
 
@@ -116,20 +118,70 @@ public class MySqlPersistance implements Persistance {
 
                 int result = statement.executeUpdate();
                 if ( result==0 )
-                    throw new PersistanceException("Nepodarilo se vlozit "+obj+" do databaze!");
-                setAutoId(obj,statement);
+                    throw new PersistanceException("Nepodaøilo se vlo¾it "+obj+" do databáze!");
+                obj.setId(getAutoId(statement));
             }
             obj.setInitialized(true);
             cache.store(obj);
-            if ( log.isDebugEnabled() ) log.debug("Objekt ["+obj+"] ulozen");
+
+            if (obj instanceof Record && ((Record) obj).getType() == Record.DISCUSSION) {
+                statement.close();
+                statement = con.prepareStatement("insert into komentar values (NULL,?,?,?,?,?,?)");
+
+                DiscussionRecord diz = (DiscussionRecord) ((Record)obj).getCustom();
+                for (Iterator iter = diz.getThreads().iterator(); iter.hasNext();) {
+                    RowComment comment = (RowComment) iter.next();
+                    comment.setRecord(obj.getId());
+                    storeComment(comment, statement);
+                }
+            }
+
+            if ( log.isDebugEnabled() ) log.debug("Objekt ["+obj+"] ulo¾en");
         } catch ( SQLException e ) {
             if ( e.getErrorCode()==1062 ) {
                 throw new DuplicateKeyException("Duplikátní údaj!");
             } else {
-                throw new PersistanceException("Nemohu ulozit "+obj,e);
+                throw new PersistanceException("Nemohu ulo¾it "+obj,e);
             }
         } finally {
             releaseSQLResources(con,statement,null);
+        }
+    }
+
+    /**
+     * Recursively walks through the thread and persists any comment
+     * that has row id equal to zero (otherwise skips this comment).
+     */
+    private void storeComment(RowComment comment, PreparedStatement statement) throws SQLException {
+        if (comment.getRowId()==0) {
+            statement.setInt(1, comment.getRecord());
+            statement.setInt(2, comment.getId());
+            if (comment.getParent() != null)
+                statement.setInt(3, comment.getParent().intValue());
+            else
+                statement.setNull(3, Types.INTEGER);
+
+            java.util.Date d = (comment.getCreated() != null) ? comment.getCreated() : new java.util.Date();
+            statement.setTimestamp(4, new Timestamp(d.getTime()));
+            comment.setCreated(d);
+
+            if (comment.getAuthor() != null)
+                statement.setInt(5, comment.getAuthor().intValue());
+            else
+                statement.setNull(5, Types.INTEGER);
+            statement.setObject(6, comment.getDataAsString().getBytes());
+
+            int result = statement.executeUpdate();
+            if (result == 0)
+                throw new PersistanceException("Nepodaøilo se vlo¾it " + comment + " do databáze!");
+            int autoId = getAutoId(statement);
+            comment.setRowId(autoId);
+        }
+
+        for (Iterator iter = comment.getChildren().iterator(); iter.hasNext();) {
+            RowComment child = (RowComment) iter.next();
+            child.setRecord(comment.getRecord());
+            storeComment(child, statement);
         }
     }
 
@@ -160,12 +212,12 @@ public class MySqlPersistance implements Persistance {
 
     public GenericObject findById(GenericObject obj) {
         if ( obj==null )
-            throw new NullPointerException("Nemohu  ulo¾it prázdný objekt!");
+            throw new NullPointerException("Nemohu hledat prázdný objekt!");
 
         GenericObject result = cache.load(obj);
         if ( result!=null && result.isInitialized() ) return result;
 
-        if ( log.isDebugEnabled() ) log.debug("Hledam podle PK "+obj);
+        if ( log.isDebugEnabled() ) log.debug("Hledám podle PK "+obj);
         try {
             result = loadObject(obj);
             cache.store(result);
@@ -202,7 +254,7 @@ public class MySqlPersistance implements Persistance {
             }
             return found;
         } catch (SQLException e) {
-            throw new PersistanceException("Nemohu smazat objekt!", e);
+            throw new PersistanceException("Databázová chyba!", e);
         } finally {
             releaseSQLResources(con, statement, resultSet);
         }
@@ -255,7 +307,7 @@ public class MySqlPersistance implements Persistance {
                     o.setId(resultSet.getInt(1));
                     result.add(o);
                 } catch (Exception e) {
-                    log.error("Nemuzu vytvorit instanci "+kind,e);
+                    log.error("Nemohu vytvoøit instanci "+kind,e);
                 }
             }
             return result;
@@ -264,7 +316,7 @@ public class MySqlPersistance implements Persistance {
             for (Iterator iter = objects.iterator(); iter.hasNext();) {
                 sb.append(iter.next().toString());
             }
-            throw new PersistanceException("Nemohu provest zadane vyhledavani!"+sb,e);
+            throw new PersistanceException("Nemohu provést zadané vyhledávání!"+sb,e);
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }
@@ -272,13 +324,13 @@ public class MySqlPersistance implements Persistance {
 
     public List findByCommand(String command) {
         if ( command==null || command.length()==0 )
-            throw new InvalidDataException("Nemohu hledat prazdny objekt!");
+            throw new InvalidDataException("Nemohu hledat prázdný objekt!");
 
         Connection con = null; Statement statement = null; ResultSet resultSet = null;
         List result = new ArrayList(5);
         try {
             con = getSQLConnection();
-            if (log.isDebugEnabled()) log.debug("Chystam se hledat podle "+command);
+            if (log.isDebugEnabled()) log.debug("Chystám se hledat podle "+command);
 
             statement = con.createStatement();
             resultSet = statement.executeQuery(command);
@@ -293,7 +345,7 @@ public class MySqlPersistance implements Persistance {
                 result.add(objects);
             }
         } catch ( SQLException e ) {
-            throw new PersistanceException("Chyba pri hledani podle "+command+"!",e);
+            throw new PersistanceException("Chyba pøi hledání podle "+command+"!",e);
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }
@@ -375,7 +427,7 @@ public class MySqlPersistance implements Persistance {
 
     public void remove(GenericObject obj) {
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-        if ( log.isDebugEnabled() ) log.debug("Chystam se smazat "+obj);
+        if ( log.isDebugEnabled() ) log.debug("Chystám se smazat "+obj);
 
         try {
             con = getSQLConnection();
@@ -388,6 +440,16 @@ public class MySqlPersistance implements Persistance {
                 statement.setInt(1,obj.getId());
                 statement.executeUpdate();
 
+                // remove comments, they are not referenced via relation table
+                if (obj instanceof Record) {
+                    Record record = (Record) findById(obj);
+                    if (record.getType() == Record.DISCUSSION) {
+                        statement = con.prepareStatement("delete from komentar where zaznam=?");
+                        statement.setInt(1, obj.getId());
+                        statement.executeUpdate();
+                    }
+                }
+
                 // if relation.getChild() became unreferenced, delete that child
                 if ( obj instanceof Relation ) {
                     statement = con.prepareStatement("select predek from relace where typ_potomka=? and potomek=?");
@@ -395,7 +457,8 @@ public class MySqlPersistance implements Persistance {
                     statement.setString(1,getTableId(child));
                     statement.setInt(2,child.getId());
                     resultSet = statement.executeQuery();
-                    if ( !resultSet.next() ) queue.add(child);
+                    if ( !resultSet.next() )
+                        queue.add(child);
                     if ( log.isDebugEnabled() ) log.debug("Smazan objekt "+obj);
                     continue; // relation doesn't have content
                 }
@@ -566,7 +629,7 @@ public class MySqlPersistance implements Persistance {
                 statement.executeUpdate();
             }
         } catch ( SQLException e ) {
-            log.error("Nepodarilo se zvysit citac pro "+obj,e);
+            log.error("Nepodaøilo se zvý¹it èítaè pro "+obj,e);
         } finally {
             releaseSQLResources(con,statement,null);
         }
@@ -590,7 +653,7 @@ public class MySqlPersistance implements Persistance {
                 return 0;
             return resultSet.getInt(1);
         } catch ( SQLException e ) {
-            log.error("Nepodarilo se zjistit hodnotu citace pro "+obj,e);
+            log.error("Nepodaøilo se zjistit hodnotu èítaèe pro "+obj,e);
             return 0;
         } finally {
             releaseSQLResources(con,statement,resultSet);
@@ -652,7 +715,7 @@ public class MySqlPersistance implements Persistance {
             }
             statement.executeUpdate();
         } catch ( SQLException e ) {
-            log.error("Nepodarilo se smazat citac pro "+obj,e);
+            log.error("Nepodaøilo se smazat èítaè pro "+obj,e);
         } finally {
             releaseSQLResources(con,statement,null);
         }
@@ -1006,7 +1069,7 @@ public class MySqlPersistance implements Persistance {
 
             PollChoice[] choices = poll.getChoices();
             if ( choices==null || choices.length<1 )
-                throw new InvalidDataException("Anketa musi mit nejmene jednu volbu!");
+                throw new InvalidDataException("Anketa musí mít nejménì jednu volbu!");
 
             Document document = DocumentHelper.createDocument();
             Element root = document.addElement("data");
@@ -1026,11 +1089,11 @@ public class MySqlPersistance implements Persistance {
 
             int result = statement.executeUpdate();
             if ( result==0 ) {
-                throw new PersistanceException("Nepodarilo se vlozit anketu do databaze!");
+                throw new PersistanceException("Nepodaøilo se vlo¾it anketu do databáze!");
             }
 
             if (poll.getId()==0)
-                setAutoId(poll, statement);
+                poll.setId(getAutoId(statement));
 
             for (i = 0; i < choices.length; i++) {
                 PollChoice choice = choices[i];
@@ -1054,7 +1117,7 @@ public class MySqlPersistance implements Persistance {
 
             resultSet = statement.executeQuery();
             if ( !resultSet.next() ) {
-                throw new NotFoundException("Uzivatel "+obj.getId()+" nebyl nalezen!");
+                throw new NotFoundException("U¾ivatel "+obj.getId()+" nebyl nalezen!");
             }
 
             User user = new User(obj.getId());
@@ -1084,7 +1147,7 @@ public class MySqlPersistance implements Persistance {
             for (Iterator iter = users.iterator(); iter.hasNext();) {
                 User user = (User) iter.next();
                 if (!rs.next() || rs.getInt(1)!=user.getId())
-                    throw new NotFoundException("Uzivatel " + user.getId() + " nebyl nalezen!");
+                    throw new NotFoundException("U¾ivatel " + user.getId() + " nebyl nalezen!");
                 syncUserFromRS(user, rs);
                 cache.store(user);
             }
@@ -1119,19 +1182,22 @@ public class MySqlPersistance implements Persistance {
             statement.setInt(1,obj.getId());
 
             resultSet = statement.executeQuery();
-            if ( !resultSet.next() ) {
-                throw new NotFoundException("Polozka "+obj.getId()+" nebyla nalezena!");
-            }
+            if ( !resultSet.next() )
+                throw new NotFoundException("Polo¾ka "+obj.getId()+" nebyla nalezena!");
 
-            GenericDataObject item;
+            GenericDataObject data;
             if (obj instanceof Category)
-                item = new Category(obj.getId());
+                data = new Category(obj.getId());
             else if (obj instanceof Item)
-                item = new Item(obj.getId());
+                data = new Item(obj.getId());
             else
-                item = new Record(obj.getId());
-            syncGenericDataObjectFromRS(item, resultSet);
-            return item;
+                data = new Record(obj.getId());
+            syncGenericDataObjectFromRS(data, resultSet);
+
+            if (data instanceof Record && ((Record) data).getType() == Record.DISCUSSION)
+                loadComments((Record)data);
+
+            return data;
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }
@@ -1164,7 +1230,7 @@ public class MySqlPersistance implements Persistance {
             for (Iterator iter = objs.iterator(); iter.hasNext();) {
                 obj = (GenericDataObject) iter.next();
                 if (!rs.next()) {
-                    log.warn("Synchronizace: datova polozka nebyla nalezena: "+obj);
+                    log.warn("Synchronizace: datova polo¾ka nebyla nalezena: "+obj);
                     break;
                 }
 
@@ -1176,11 +1242,14 @@ public class MySqlPersistance implements Persistance {
                     }
                 }
                 if (rs.getInt(1) != obj.getId()) {
-                    log.warn("Synchronizace: datova polozka nebyla nalezena: " + obj);
+                    log.warn("Synchronizace: datova polo¾ka nebyla nalezena: " + obj);
                     continue;
                 }
 
                 syncGenericDataObjectFromRS(obj, rs);
+                if (obj instanceof Record && ((Record) obj).getType() == Record.DISCUSSION)
+                    loadComments((Record) obj);
+
                 cache.store(obj);
                 previous = obj;
             }
@@ -1205,6 +1274,87 @@ public class MySqlPersistance implements Persistance {
         item.setCreated(new java.util.Date(resultSet.getTimestamp(6).getTime()));
         item.setUpdated(new java.util.Date(resultSet.getTimestamp(7).getTime()));
         item.setInitialized(true);
+    }
+
+    /**
+     * Loads comments for given Record and sets them as custom object.
+     * @param record record that has type Discussion
+     * @throws SQLException
+     */
+    private void loadComments(Record record) throws SQLException {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            con = getSQLConnection();
+            statement = con.prepareStatement("select * from komentar where zaznam=? order by cislo asc");
+            statement.setInt(1, record.getId());
+            resultSet = statement.executeQuery();
+
+            DiscussionRecord diz = new DiscussionRecord();
+            Map map = new HashMap();
+            RowComment current, upper;
+            List alone = new ArrayList();
+            int max = 0, count = 0;
+            while (resultSet.next()) {
+                current = new RowComment();
+                syncCommentFromRS(current, resultSet);
+                map.put(new Integer(current.getId()), current);
+                count++;
+                if (current.getId() > max)
+                    max = current.getId();
+
+                if (current.getParent() != null) {
+                    upper = (RowComment) map.get(current.getParent());
+                    if (upper != null)
+                        upper.addChild(current);
+                    else
+                        alone.add(current);
+                } else
+                    diz.addThread(current);
+            }
+
+            if (alone.size() > 0) {
+                for (Iterator iter = alone.iterator(); iter.hasNext();) {
+                    current = (RowComment) iter.next();
+                    upper = (RowComment) map.get(current.getParent());
+                    if (upper != null)
+                        upper.addChild(current);
+                    else {
+                        diz.addThread(current);
+                        log.warn("Nenalezen pøedek pro komentáø "+current.getRowId()+"!");
+                    }
+                }
+            }
+
+            map.clear();
+            alone.clear();
+            diz.setTotalComments(count);
+            diz.setMaxCommentId(max);
+            record.setCustom(diz);
+        } finally {
+            releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
+     * Initializes RowComment with values from result set's current row.
+     */
+    private void syncCommentFromRS(RowComment current, ResultSet resultSet) throws SQLException {
+        current.setRowId(resultSet.getInt(1));
+        current.setRecord(resultSet.getInt(2));
+        current.setId(resultSet.getInt(3));
+        current.setParent(resultSet.getInt(4));
+        if (resultSet.wasNull())
+            current.setParent(null);
+        current.setAuthor(resultSet.getInt(6));
+        if (resultSet.wasNull())
+            current.setAuthor(null);
+        current.setCreated(new java.util.Date(resultSet.getTimestamp(5).getTime()));
+        String tmp = resultSet.getString(7);
+        tmp = insertEncoding(tmp);
+        current.setData(tmp);
     }
 
     /**
@@ -1513,7 +1663,7 @@ public class MySqlPersistance implements Persistance {
 
             cache.store(poll);
         } catch (SQLException e) {
-            log.error("Nepodarilo se zvysit citac pro " + firstChoice, e);
+            log.error("Nepodaøilo se zvý¹it èítaè pro " + firstChoice, e);
         } finally {
             releaseSQLResources(con, statement, null);
         }
@@ -1605,16 +1755,75 @@ public class MySqlPersistance implements Persistance {
             statement.setInt(6,obj.getId());
 
             int result = statement.executeUpdate();
-            if ( result!=1 ) {
-                throw new PersistanceException("Nepodarilo se ulozit zmeny v "+obj.toString()+" do databaze!");
-            }
+            if ( result!=1 )
+                throw new PersistanceException("Nepodaøilo se ulo¾it zmìny v "+obj.toString()+" do databáze!");
+
+            if (obj instanceof Record && obj.getType() == Record.DISCUSSION)
+                updateComments((DiscussionRecord) obj.getCustom(), obj.getId(), con);
 
             obj.setUpdated(new java.util.Date());
             cache.store(obj);
         } catch (SQLException e) {
-            throw new PersistanceException("Nemohu ulozit zmeny do databaze!",e);
+            throw new PersistanceException("Nemohu ulo¾it zmìny do databáze!",e);
         } finally {
             releaseSQLResources(con,statement,resultSet);
+        }
+    }
+
+    /**
+     * Deletes removed comments, adds new comments, updates modified comments.
+     * @param discussion
+     */
+    private void updateComments(DiscussionRecord discussion, int recordId, Connection con) throws SQLException {
+        PreparedStatement statement1 = null, statement2 = null, statement3 = null;
+        try {
+            List deleted = discussion.getDeletedComments();
+            if (deleted.size() > 0) {
+                String sql = "delete from komentar where cislo in " + getInCondition(deleted.size());
+                statement1 = con.prepareStatement(sql);
+                int i = 1;
+                for (Iterator iter = deleted.iterator(); iter.hasNext();) {
+                    Integer id = (Integer) iter.next();
+                    statement1.setInt(i++, id.intValue());
+                }
+                statement1.executeUpdate();
+                deleted.clear();
+            }
+
+            List comments = new ArrayList();
+            comments.addAll(discussion.getThreads());
+            RowComment comment;
+            while (comments.size() > 0) {
+                comment = (RowComment) comments.remove(0);
+                comment.setRecord(recordId);
+                comments.addAll(comment.getChildren());
+
+                if (comment.getRowId() == 0) {
+                    if (statement2 == null)
+                        statement2 = con.prepareStatement("insert into komentar values (NULL,?,?,?,?,?,?)");
+                    storeComment(comment, statement2);
+                } else if (comment.is_dirty()) {
+                    if (statement3 == null)
+                        statement3 = con.prepareStatement("update komentar set zaznam=?,nadrazeny=?,autor=?,kdy=?,data=? where cislo=?");
+
+                    statement3.setInt(1, comment.getRecord());
+                    if (comment.getParent() != null)
+                        statement3.setInt(2, comment.getParent().intValue());
+                    else
+                        statement3.setNull(2, Types.INTEGER);
+                    if (comment.getAuthor() != null)
+                        statement3.setInt(3, comment.getAuthor().intValue());
+                    else
+                        statement3.setNull(3, Types.INTEGER);
+                    statement3.setTimestamp(4, new Timestamp(comment.getCreated().getTime()));
+                    statement3.setObject(5, comment.getDataAsString().getBytes());
+                    statement3.setInt(6, comment.getRowId());
+
+                    statement3.executeUpdate();
+                }
+            }
+        } finally {
+            releaseSQLResources(null, new Statement[] {statement1, statement2, statement3}, null);
         }
     }
 
@@ -1647,12 +1856,12 @@ public class MySqlPersistance implements Persistance {
 
             int result = statement.executeUpdate();
             if ( result!=1 ) {
-                throw new PersistanceException("Nepodarilo se ulozit zmeny v "+relation.toString()+" do databaze!");
+                throw new PersistanceException("Nepodaøilo se ulo¾it zmìny v "+relation.toString()+" do databáze!");
             }
 
             cache.store(relation);
         } catch (SQLException e) {
-            throw new PersistanceException("Nemohu ulozit zmeny do databaze!",e);
+            throw new PersistanceException("Nemohu ulo¾it zmìny do databáze!",e);
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }
@@ -1675,12 +1884,12 @@ public class MySqlPersistance implements Persistance {
 
             int result = statement.executeUpdate();
             if ( result!=1 ) {
-                throw new PersistanceException("Nepodarilo se ulozit zmeny v "+data.toString()+" do databaze!");
+                throw new PersistanceException("Nepodarilo se ulozit zmeny v "+data.toString()+" do databáze!");
             }
 
             cache.store(data);
         } catch (SQLException e) {
-            throw new PersistanceException("Nemohu ulozit zmeny do databaze!",e);
+            throw new PersistanceException("Nemohu ulo¾it zmìny do databáze!", e);
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }
@@ -1706,13 +1915,13 @@ public class MySqlPersistance implements Persistance {
 
             int result = statement.executeUpdate();
             if ( result!=1 ) {
-                throw new PersistanceException("Nepodarilo se ulozit zmeny v "+link.toString()+" do databaze!");
+                throw new PersistanceException("Nepodarilo se ulo¾it zmìny v "+link.toString()+" do databáze!");
             }
 
             link.setUpdated(new java.util.Date());
             cache.store(link);
         } catch (SQLException e) {
-            throw new PersistanceException("Nemohu ulozit zmeny v "+link.toString()+" do databaze!",e);
+            throw new PersistanceException("Nemohu ulo¾it zmìny v "+link.toString()+" do databáze!",e);
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }
@@ -1747,11 +1956,11 @@ public class MySqlPersistance implements Persistance {
 
             int result = statement.executeUpdate();
             if ( result!=1 )
-                throw new PersistanceException("Nepodarilo se ulozit zmeny v "+poll.toString()+" do databaze!");
+                throw new PersistanceException("Nepodarilo se ulo¾it zmìny v "+poll.toString()+" do databáze!");
 
             cache.store(poll);
         } catch (SQLException e) {
-            throw new PersistanceException("Nemohu ulozit zmeny v "+poll.toString()+" do databaze!",e);
+            throw new PersistanceException("Nemohu ulo¾it zmìny v "+poll.toString()+" do databáze!",e);
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }
@@ -1778,7 +1987,7 @@ public class MySqlPersistance implements Persistance {
 
             int result = statement.executeUpdate();
             if ( result!=1 ) {
-                throw new PersistanceException("Nepodarilo se ulozit zmeny v "+user.toString()+" do databaze!");
+                throw new PersistanceException("Nepodarilo se ulo¾it zmìny v "+user.toString()+" do databáze!");
             }
 
             cache.store(user);
@@ -1786,7 +1995,7 @@ public class MySqlPersistance implements Persistance {
             if ( e.getErrorCode()==1062 ) {
                 throw new DuplicateKeyException("Pøihla¹ovací jméno (login) nebo pøezdívka jsou ji¾ pou¾ívány!");
             } else {
-                throw new PersistanceException("Nemohu ulozit zmeny do databaze!",e);
+                throw new PersistanceException("Nemohu ulo¾it zmìny do databáze!",e);
             }
         } finally {
             releaseSQLResources(con,statement,resultSet);
@@ -1816,7 +2025,6 @@ public class MySqlPersistance implements Persistance {
 
     /**
      * Creates string in format "(?,?,?)"
-     *
      * @param size number of question marks
      * @return string for ids in IN condition
      */
@@ -1831,9 +2039,9 @@ public class MySqlPersistance implements Persistance {
     }
 
     /**
-     * Sets id to object, which has been autoincremented.
+     * @return id of last inserted row
      */
-    private void setAutoId(GenericObject obj, Statement statement) throws AbcException {
+    private int getAutoId(Statement statement) throws AbcException {
         if ( ! (statement instanceof com.mysql.jdbc.Statement) )
             try {
                 statement = ProxoolFacade.getDelegateStatement(statement);
@@ -1842,8 +2050,9 @@ public class MySqlPersistance implements Persistance {
             }
         if ( statement instanceof com.mysql.jdbc.PreparedStatement ) {
             com.mysql.jdbc.PreparedStatement mm = (com.mysql.jdbc.PreparedStatement) statement;
-            obj.setId((int)mm.getLastInsertID());
+            return (int)mm.getLastInsertID();
         }
+        return -1;
     }
 
     /**
@@ -1878,6 +2087,38 @@ public class MySqlPersistance implements Persistance {
                 con.close();
         } catch (Exception e) {
             log.warn("Problems while closing connection to database!",e);
+        }
+    }
+
+    /**
+     * Closes database connection and logs any errors
+     */
+    public void releaseSQLResources(Connection con, Statement[] statements, ResultSet[] rs) {
+        if (rs != null)
+            for (int i = 0; i < rs.length; i++) {
+                ResultSet resultSet = rs[i];
+                try {
+                    if (resultSet != null)
+                        resultSet.close();
+                } catch (Exception e) {
+                    log.warn("Problems while closing ResultSet!", e);
+                }
+            }
+        if (statements != null)
+            for (int i = 0; i < statements.length; i++) {
+                Statement statement = statements[i];
+                try {
+                    if (statement != null)
+                        statement.close();
+                } catch (Exception e) {
+                    log.warn("Problems while closing statement!", e);
+                }
+            }
+        try {
+            if (con != null)
+                con.close();
+        } catch (Exception e) {
+            log.warn("Problems while closing connection to database!", e);
         }
     }
 

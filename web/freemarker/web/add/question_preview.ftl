@@ -13,7 +13,7 @@ zvolte OK.</p>
 
 <#if PREVIEW?exists>
  <h1 class="st_nadpis">Náhled va¹eho dotazu</h1>
- <@lib.showThread PREVIEW, 0, 0, 0, false />
+ <@lib.showThread PREVIEW, 0, TOOL.createEmptyDiscussion(), false />
 </#if>
 
 <h1 class="st_nadpis">Zde mù¾ete provést své úpravy</h1>
@@ -72,9 +72,9 @@ zvolte OK.</p>
 
 <h1>Nápovìda k formátování</h1>
 
-<p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html">znaèky</a>:
-P, BR, B, I, A, PRE, UL, OL, LI, CODE, DIV, H1, H2, H3, EM, STRONG, CITE, BLOCKQUOTE,
-VAR, HR a IT.</p>
+<p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html" rel="nofollow">znaèky</a>:
+A, B, BR, BLOCKQUOTE, CITE, CODE, DIV, EM, I, HR, H1, H2, H3, LI,
+OL, P, PRE, STRONG, TT, UL, VAR. </p>
 
 <p>Nejrychlej¹í zpùsob formátování je rozdìlovat
 text do odstavcù. Systém detekuje prázdné øádky

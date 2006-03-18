@@ -161,6 +161,17 @@ public final class Relation extends GenericObject implements XMLContainer {
         url = r.url;
     }
 
+    public Object clone() {
+        Relation clone = (Relation) super.clone();
+        if (child != null)
+            clone.child = (GenericObject) child.clone();
+        if (parent != null)
+            clone.parent = (GenericObject) parent.clone();
+        if (documentHandler != null)
+            clone.documentHandler = (XMLHandler) documentHandler.clone();
+        return clone;
+    }
+
     public String toString() {
         StringBuffer sb = new StringBuffer("Relation "+id+",upper="+upper);
         if ( parent!=null ) sb.append(",parent="+parent.getId());

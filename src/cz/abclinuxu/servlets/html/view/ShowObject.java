@@ -26,12 +26,14 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.data.view.ACL;
+import cz.abclinuxu.data.view.DiscussionRecord;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.versioning.VersioningFactory;
 import cz.abclinuxu.persistance.versioning.Versioning;
 import cz.abclinuxu.persistance.versioning.VersionedDocument;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.news.NewsCategories;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -39,10 +41,7 @@ import cz.abclinuxu.security.Roles;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 
 import org.dom4j.Element;
 import org.dom4j.Document;
@@ -213,13 +212,13 @@ public class ShowObject implements AbcAction {
         Record record = (Record) ((Relation)children.get(0)).getChild();
         persistance.synchronize(record);
 
-        String thread = (String) params.get(PARAM_THREAD);
-        if (thread==null)
-            throw new MissingArgumentException("Chybí parametr "+PARAM_THREAD+"!");
+        int id = Misc.parseInt((String) params.get(PARAM_THREAD), -1);
+        if (id == -1)
+            throw new MissingArgumentException("Chybí parametr " + PARAM_THREAD + "!");
 
-        String xpath = "//comment[@id='"+thread+"']";
-        Element element = (Element) record.getData().selectSingleNode(xpath);
-        env.put(VAR_THREAD, new Comment(element));
+        DiscussionRecord dizRecord = (DiscussionRecord) record.getCustom();
+        Comment comment = (Comment) dizRecord.getComment(id);
+        env.put(VAR_THREAD, comment);
 
         return FMTemplateSelector.select("ShowObject", "censored", env, request);
     }

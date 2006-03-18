@@ -18,18 +18,7 @@
 <!ELEMENT version (#PCDATA)> <!-- version of the software -->
 
 <!-- Record.Discussion -->
-<!ELEMENT data (comment+)> <!-- container for comments -->
-<!ELEMENT comment (created,parent,author|author_id,author_ip?,title,text, censored?)> <!-- comment holds one response/reaction -->
-<!ATTLIST comment id (#ID) #REQUIRED> <!-- identifier of comment -->
-<!ELEMENT created (#PCDATA)> <!-- date, when this comment was created in ISO format -->
-<!ELEMENT parent (#PCDATA)> <!-- int, id of parental discussion node, or 0 if this node is top level -->
-<!ELEMENT author (#PCDATA)> <!-- name of unknow user -->
-<!ELEMENT author_id (#PCDATA)> <!-- id of known user -->
-<!ELEMENT author_ip (#PCDATA)> <!-- IP address of the user -->
-<!ELEMENT title (#PCDATA)> <!-- title of this reaction -->
-<!ELEMENT text (#PCDATA)> <!-- text of comment -->
-<!ATTLIST text format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
-<!ELEMENT censored (#PCDATA)> <!-- if present, the comment is being censored -->
+<!ELEMENT data EMPTY> <!-- container for comments -->
 
 <!-- Record.DICTIONARY -->
 <!ELEMENT description (#PCDATA)> <!-- explaination ->

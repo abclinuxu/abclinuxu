@@ -196,18 +196,11 @@ a.za_mn_odkaz:hover {
 	border-left: 1px solid #F5F5F5;
 }
 
-h2 {
-	font-size:	115%;
-	margin:		0.4em 0 0 0;
-}
-
-h3 { font-size: 	103%;
-	 margin:	0.3em 0 0.1em 0; }
-
-h1 {
-	font-size:	130%;
-	margin:		0.5em 0 0 0;
-}
+h1 { font-size: 130%; }
+h2 { font-size: 120%; }
+h3 { font-size: 110%; }
+h4 { font-size: 105%; }
+h1, h2, h3, h4 { margin: 0.5em 0 0 0; }
 
 .st_nadpis a {
 	color:		black;
@@ -245,7 +238,7 @@ td.pad, code.kod, pre.kod {
 	color:		gray;
 }
 
-.cl_perex, .perex {
+.cl_perex, .perex, .host .spec {
 	margin-top:	15px;
 	margin-bottom:	15px;
 	padding:	5px 20px 5px 20px;
@@ -307,46 +300,69 @@ td.pad, code.kod, pre.kod {
 .s3 { left: 191px; }
 .stup #dobry { left: 181px }
 
-.ds {
-	margin-top:	10px;
+.uceb-nav {
+	text-align:	center;
+	margin:		1.5em;
+}
+
+.uceb-nav span {
+	background:	#ececec;
+	padding:	0.5em;
+	border:		1px solid silver;
+}
+
+.ds, .hw {
 	border-bottom:	1px solid #27648D;
 }
 
-.ds table {
+.ds table, .hw table {
 	margin-top:	5px;
 	border-width:	0px;
 	table-layout:	auto;
 	/*width:		100%*/
 }
 
-.ds thead td {
+.ds thead td, .hw thead td {
 	font-weight:	bold;
 	border-bottom:	solid 1px silver;
 	font-size:	85%;
 	background-color: transparent;
 }
 
-.ds td.td01 {
+.hw thead td.hw-sekce {
+	font-size:	medium;
+}
+
+.ds td.td01, .hw td.td01 {
 	width:		650px;
 }
 
-.ds td.td02 {
+.ds td.td02, .hw td.td02 {
 	width:		60px;
 	text-align:	center;
 }
 
-.ds td.td03 {
+.ds td.td03, .hw td.td03 {
 	width:		60px;
 	text-align:	center;
 }
 
-.ds td.td04 {
+.ds td.td04, .hw td.td04 {
 	width:		230px;
 	text-align:	right;
 }
 
-.ds tbody tr:hover { background: #f3f3f3 }
+.hw table.hw-sekce tbody td { width: 33%; padding: 0.1em; }
+.hw table.hw-sekce tbody td a,
+    .hw table.hw-polozky tr a,
+    .ds tbody tr a { display: block; _width: 100%; }
+.ds tbody tr:hover,
+    .hw table.hw-polozky tbody tr:hover,
+    .hw table.hw-sekce tbody td:hover { background: #f3f3f3 }
 .ds tr:nth-child(even) { background: #f9f9f9 }
+.hw table.hw-polozky tr:nth-child(even) { background: #f9f9f9 }
+
+.hw img.ikona { margin-right: 0.3em; }
 
 .ds_hlavicka, .ds_hlavicka_novy {
 	margin-top:	10px;
@@ -507,9 +523,9 @@ a.info:hover span.tooltip {
 	text-align:	left;
 }
 
-.ls li a, .ps li a, .st_rozc li a, .ds td a, .s_nad_h1 a, .ps_reklama a,
+.ls li a, .ps li a, .st_rozc li a, .ds td a, .hw td a, .s_nad_h1 a, .ps_reklama a,
  .textad a, a.info, .ramec-st li a, .sflista a, .cl_square a {text-decoration:none}
-.ls li a:hover, .ps li a:hover, .st_rozc li a:hover, .ds td a:hover,
+.ls li a:hover, .ps li a:hover, .st_rozc li a:hover, .ds td a:hover, .hw td a:hover,
 .ps_reklama a:hover, .textad a:hover, .ramec-st li a:hover {text-decoration:underline}
 
 .ls_prepinac {
@@ -594,24 +610,17 @@ a.info:hover span.tooltip {
 	border-left:	1px solid #C0C0C0;
 	border-bottom:	1px solid #C0C0C0;
 	padding-bottom:	2px;
-	font-family:	sans-serif;
-	text-align: 	right;
 	margin: 5px 0 5px 5px;
+	width:		300px;	
 }
 
-.ps {
-	text-align:	left;
-}
-
-#udiskuze { width:200px; }
+.hw .obal_ps { width: 200px; }
 
 .ps_prepinac {
 	height:		15px;
 	background-color: #27648D;
 	border-bottom:	1px solid white;
-	width:		300px;
 }
-
 
 .ps_nad_reklama {
 	background-color: #F0F0F0;
@@ -619,17 +628,13 @@ a.info:hover span.tooltip {
 	color:		black;
 	text-align:	center;
 	font-size:	60%;
-	border: 	1px solid gray;
+	border: 	1px solid silver;
 	padding:	2px;
-	background-color: #ECECEC;
+	width:		104px;
 }
 
 .ps_reklama {
-	background-color:red; /*#ECECEC;*/
-	width:		100px;
 	height:		300px;
-	margin:		1px;
-	background:	#24465B;
 	border:		1px solid silver;
 	text-align:	left;
 	overflow:	hidden;
@@ -654,11 +659,11 @@ a.info:hover span.tooltip {
 	margin-bottom:	0px;
 }
 
-.st_rozc td {
-	background-color: #FDFDFD;
+.st_rozc td, .host .prehled td {
+	background-color: #f9f9f9;
 	vertical-align: top;
 	padding:	2px;
-	border:		1px solid #F5F5F5;
+	border:		1px solid #ececec;
 	margin:		0px;
 	width:		33%;
 }
@@ -773,16 +778,10 @@ a.info:hover span.tooltip {
 .search_details {
 	font-size:	90%;
 }
-span.caption {
-	font-size:	100%;
-	font-weight:	bold;
-}
-h3.caption {
-	font-size:	100%;
-	font-weight:	bold;
-}
-.hardware {
-	text-decoration: underline;
+
+table.hwdetail, table.swdetail {
+	border: none;
+	margin-top: 1em;
 }
 
 /*************** SF lista *****************/
@@ -816,30 +815,3 @@ h3.caption {
   border-color: #909090 #FFFFFF #FFFFFF #909090;
   background-color: #F0F0F0;
 }
-/*****************************************/
-  .abc-sun-box {
-    width: 241px;
-    height: 72px;
-    border-top: 7px #5282A5 solid;
-    background-color: #7CA6C3;
-    color: #fff;
-    padding: 3px 5px 5px 5px;
-    overflow: hidden;
-    font-family: sans-serif;
-    font-size: 11px;
-    line-height: 12px;
-  }
-  .abc-sun-box A {
-    color: #fff;
-    text-decoration: none;
-  }
-  .abc-sun-box A:hover {
-    color: #fff;
-    text-decoration: none;
-	background-color: transparent;
-  }
-  .abc-sun-box IMG {
-    margin: 0 0 2px 2px;
-    float: right;
-    border: 0;
-  }

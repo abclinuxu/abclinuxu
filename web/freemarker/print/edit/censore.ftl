@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<@lib.showComment THREAD, 0, 0, false />
+ <@lib.showThread THREAD, 0, TOOL.createEmptyDiscussion(), false />
 
 <p>Napi¹te zde dùvod, proè cenzurujete tento pøíspìvek.</p>
 

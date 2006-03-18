@@ -112,8 +112,8 @@ tazatel bude po¾ádán, aby jednotlivé problémy popsal v samostatných diskusích.</
 <h1>Nápovìda k formátování</h1>
 
 <p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html" rel="nofollow">znaèky</a>:
-P, BR, B, I, A, PRE, UL, OL, LI, CODE, DIV, H1, H2, H3, EM, STRONG, CITE, BLOCKQUOTE,
-VAR, HR a IT.</p>
+A, B, BR, BLOCKQUOTE, CITE, CODE, DIV, EM, I, HR, H1, H2, H3, LI,
+OL, P, PRE, STRONG, TT, UL, VAR. </p>
 
 <p>Nejrychlej¹í zpùsob formátování je rozdìlovat
 text do odstavcù. Systém detekuje prázdné øádky

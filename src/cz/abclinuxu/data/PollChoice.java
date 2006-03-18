@@ -22,7 +22,7 @@ package cz.abclinuxu.data;
  * one choice of the poll. Its order in the poll is identified
  * by order in <code>choices</code> array of Poll.
  */
-public class PollChoice {
+public class PollChoice implements Cloneable {
 
     /** text of the poll choice */
     protected String text;
@@ -101,5 +101,13 @@ public class PollChoice {
      */
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

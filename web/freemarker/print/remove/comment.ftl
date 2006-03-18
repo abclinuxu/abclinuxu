@@ -14,7 +14,7 @@ vèetnì v¹ech potomkù!</p>
 
 <#if THREAD?exists>
  <h1>Náhled pøíspìvku</h1>
- <@lib.showComment THREAD, 0, 0, false />
+ <@lib.showThread THREAD, 0, TOOL.createEmptyDiscussion(), false />
 </#if>
 
 <form action="${URL.make("/EditDiscussion")}" method="POST">

@@ -15,7 +15,7 @@
 
 <fieldset>
     <legend>Pøíspìvek</legend>
-    <@lib.showThread COMMENT, 0, 0, 0, false />
+    <@lib.showThread COMMENT, 0, TOOL.createEmptyDiscussion(), false />
 </fieldset>
 
 <#if USER?exists && USER.hasRole("discussion admin")>
@@ -26,7 +26,7 @@
             <a href="${URL.make("/EditDiscussion/"+relId+"?action=rm&amp;dizId="+dizId+"&amp;threadId="+COMMENT.id)}">Smazat</a>
             <a href="${URL.make("/EditDiscussion/"+relId+"?action=censore&amp;dizId="+dizId+"&amp;threadId="+COMMENT.id)}">Cenzura</a>
             <a href="${URL.make("/EditDiscussion/"+relId+"?action=move&amp;dizId="+dizId+"&amp;threadId="+COMMENT.id)}">Pøesunout</a>
-            <#if (COMMENT.parent>0)>
+            <#if (COMMENT.parent?exists)>
                 <a href="${URL.make("/EditDiscussion/"+relId+"?action=moveUp&amp;dizId="+dizId+"&amp;threadId="+COMMENT.id)}">Pøesunout vý¹e</a>
             </#if>
             <a href="${URL.make("/EditDiscussion/"+relId+"?action=toQuestion&amp;dizId="+dizId+"&amp;threadId="+COMMENT.id)}">Osamostatnit</a>

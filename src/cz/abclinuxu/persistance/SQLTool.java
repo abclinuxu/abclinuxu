@@ -66,6 +66,7 @@ public final class SQLTool implements Configurable {
     public static final String PREF_USERS_WITH_ROLES = "users.with.roles";
     public static final String PREF_USERS_IN_GROUP = "users.in.group";
     public static final String PREF_ITEMS_WITH_TYPE = "items.with.type";
+    public static final String PREF_RECORDS_WITH_TYPE = "records.with.type";
     public static final String PREF_FAQ_SECTION_SIZE = "faq.section.size";
     public static final String PREF_MAX_USER = "max.user";
     public static final String PREF_USER_BY_LOGIN = "user.by.login";
@@ -98,7 +99,7 @@ public final class SQLTool implements Configurable {
     private String relationDictionaryByUrlName, relationByURL;
     private String usersWithWeeklyEmail, usersWithForumByEmail, usersWithRoles, usersInGroup;
     private String maxUser, userByLogin, faqSectionSize;
-    private String itemsByType;
+    private String itemsByType, recordsByType;
     private String countArticlesByUser;
     private String insertLastComment, getLastComment, getXthComment, deleteOldComments;
     private String insertUserAction, getUserAction, removeUserAction;
@@ -947,7 +948,7 @@ public final class SQLTool implements Configurable {
             Integer id = new Integer(resultSet.getInt(1));
             return id.intValue();
         } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
+            throw new PersistanceException("Chyba pøi hledání!", e);
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
@@ -974,7 +975,7 @@ public final class SQLTool implements Configurable {
             statement.setInt(2, obj.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
+            throw new PersistanceException("Chyba pøi hledání!", e);
         } finally {
             persistance.releaseSQLResources(con, statement, null);
         }
@@ -983,7 +984,7 @@ public final class SQLTool implements Configurable {
     /**
      * Finds items of given type ordered by id property in ascending order.
      * Use offset to skip some record .
-     * @return List of itialized Items
+     * @return List of initialized Items
      * @throws PersistanceException if there is an error with the underlying persistent storage.
      */
     public List findItemsWithType(int type, int offset, int count) {
@@ -1007,7 +1008,40 @@ public final class SQLTool implements Configurable {
             persistance.synchronizeList(result);
             return result;
         } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
+            throw new PersistanceException("Chyba pøi hledání!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
+     * Finds items of given type ordered by id property in ascending order.
+     * Use offset to skip some record.
+     * @return List of initialized Records
+     * @throws PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findRecordsWithType(int type, int offset, int count) {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(recordsByType.concat(" order by cislo asc limit ?,?"));
+            statement.setInt(1, type);
+            statement.setInt(2, offset);
+            statement.setInt(3, count);
+
+            resultSet = statement.executeQuery();
+            List result = new ArrayList(count);
+            while ( resultSet.next() ) {
+                int id = resultSet.getInt(1);
+                result.add(new Record(id));
+            }
+            persistance.synchronizeList(result);
+            return result;
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pøi hledání!", e);
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
@@ -1038,7 +1072,7 @@ public final class SQLTool implements Configurable {
             persistance.synchronizeList(result);
             return result;
         } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
+            throw new PersistanceException("Chyba pøi hledání!", e);
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
@@ -1074,7 +1108,7 @@ public final class SQLTool implements Configurable {
             persistance.synchronizeList(result);
             return result;
         } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri hledani!", e);
+            throw new PersistanceException("Chyba pøi hledání!", e);
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
@@ -1087,6 +1121,19 @@ public final class SQLTool implements Configurable {
      */
     public int countItemsWithType(int type) {
         StringBuffer sb = new StringBuffer(itemsByType);
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        params.add(new Integer(type));
+        return loadNumber(sb.toString(), params).intValue();
+    }
+
+    /**
+     * Finds records of given type.
+     * @return Number of matched records
+     * @throws PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public int countRecordsWithType(int type) {
+        StringBuffer sb = new StringBuffer(recordsByType);
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(new Integer(type));
@@ -1299,6 +1346,7 @@ public final class SQLTool implements Configurable {
         maxUser = getValue(PREF_MAX_USER, prefs);
         userByLogin = getValue(PREF_USER_BY_LOGIN, prefs);
         itemsByType = getValue(PREF_ITEMS_WITH_TYPE, prefs);
+        recordsByType = getValue(PREF_RECORDS_WITH_TYPE, prefs);
         countArticlesByUser = getValue(PREF_COUNT_ARTICLES_BY_USER, prefs);
         insertLastComment = getValue(PREF_INSERT_LAST_COMMENT, prefs);
         getLastComment = getValue(PREF_GET_LAST_COMMENT, prefs);

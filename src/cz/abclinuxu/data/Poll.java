@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * generic class for various polls
  */
-public class Poll extends GenericObject {
+public class Poll extends GenericObject implements Cloneable {
 
     public static final int SURVEY = 1;
     public static final int RATING = 2;

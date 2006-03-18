@@ -18,8 +18,9 @@
  */
 package cz.abclinuxu.data.view;
 
-import java.util.List;
-import java.util.ArrayList;
+import cz.abclinuxu.data.User;
+
+import java.util.*;
 
 /**
  * Discussion is a container for comments.
@@ -28,32 +29,74 @@ public class Discussion {
     private List threads;
     private int size = 0;
     private int greatestId;
+    private int id;
+    private int relationId;
     private Integer lastRead;
-    private Integer firstUnread;
-    private boolean hasUnreadComments;
-    // mozna List prectenych a neprectenych, pak by JavaScript mohl schovavat prectene komentare
+    private List unreadComments;
+    private Set blacklist;
+    private boolean frozen;
+    private boolean monitored;
+    private int monitorSize;
 
     public Discussion() {
-        threads = new ArrayList(3);
     }
 
-    public Discussion(int size) {
-        threads = new ArrayList(size);
-    }
-
-    /**
-     * Appends comment to the list of threads as new toplevel thread.
-     * @param comment
-     */
-    public void addThread(Comment comment) {
-        threads.add(comment);
+    public void init(DiscussionRecord record) {
+        size = record.getTotalComments();
+        threads = record.getThreads();
+        greatestId = record.getMaxCommentId();
     }
 
     /**
      * @return list of toplevel threads for this discussion
      */
     public List getThreads() {
-        return threads;
+        return (threads == null) ? Collections.EMPTY_LIST : threads;
+    }
+
+    /**
+     * @return id of discussion item for this discussion
+     */
+    public int getId() {
+        return id;
+    }
+
+    /**
+     * Sets id of discussion item for this discussion
+     * @param id id
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    /**
+     * @return relation od of this discussion
+     */
+    public int getRelationId() {
+        return relationId;
+    }
+
+    /**
+     * Sets relation id of this discussion
+     * @param relationId relation id
+     */
+    public void setRelationId(int relationId) {
+        this.relationId = relationId;
+    }
+
+    /**
+     * @return tru if discussion is frozen and new comments are not allowed
+     */
+    public boolean isFrozen() {
+        return frozen;
+    }
+
+    /**
+     * Mark discussion as frozen
+     * @param frozen true if new comments are not allowed
+     */
+    public void setFrozen(boolean frozen) {
+        this.frozen = frozen;
     }
 
     /**
@@ -64,41 +107,10 @@ public class Discussion {
     }
 
     /**
-     * Sets number of all comments
-     * @param size
-     */
-    public void setSize(int size) {
-        this.size = size;
-    }
-
-    /**
      * @return id of last comment
      */
     public int getGreatestId() {
         return greatestId;
-    }
-
-    /**
-     * Sets id of last comment
-     * @param greatestId
-     */
-    public void setGreatestId(int greatestId) {
-        this.greatestId = greatestId;
-    }
-
-    /**
-     * @return id of first (having smallest id) unread comment
-     */
-    public Integer getFirstUnread() {
-        return firstUnread;
-    }
-
-    /**
-     * Sets id of first unread comment
-     * @param firstUnread
-     */
-    public void setFirstUnread(Integer firstUnread) {
-        this.firstUnread = firstUnread;
     }
 
     /**
@@ -112,22 +124,128 @@ public class Discussion {
      * Sets id of last comment that user has read
      * @param lastRead
      */
-    public void setLastRead(Integer lastRead) {
+    public void setUnreadComments(Integer lastRead) {
         this.lastRead = lastRead;
+        if (! getHasUnreadComments())
+            return;
+
+        int lastId = lastRead.intValue();
+        int unreadSize = size - lastId;
+        if (unreadSize <= 0)
+            unreadSize = 10;
+        unreadComments = new ArrayList(unreadSize);
+        Comment current = null;
+        LinkedList stack = new LinkedList(threads);
+        while (stack.size() > 0) {
+            current = (Comment) stack.removeFirst();
+            if (current.getChildren() != null)
+                stack.addAll(0, current.getChildren());
+            if (current.getId() > lastId)
+                unreadComments.add(new Integer(current.getId()));
+        }
     }
 
     /**
      * @return true if user has seen this discussion and there are unread comments
      */
     public boolean getHasUnreadComments() {
-        return hasUnreadComments;
+        return lastRead != null && greatestId > lastRead.intValue();
     }
 
     /**
-     * Sets whether there are unread comments
-     * @param hasUnreadComments
+     * @return true if user has seen this discussion and this comment is new for him
      */
-    public void setHasUnreadComments(boolean hasUnreadComments) {
-        this.hasUnreadComments = hasUnreadComments;
+    public boolean isUnread(Comment comment) {
+        return lastRead != null && comment.getId() > lastRead.intValue();
+    }
+
+    /**
+     * @return id of first (having smallest id) unread comment
+     */
+    public Integer getFirstUnread() {
+        if (lastRead == null)
+            return null;
+        return (Integer) unreadComments.get(0);
+    }
+
+    /**
+     * @return id of next unread comment or null
+     */
+    public Integer getNextUnread(Comment comment) {
+        if (unreadComments == null || lastRead == null)
+            return null;
+        int position = unreadComments.indexOf(new Integer(comment.getId()));
+        if (position < 0 || (position + 1 == unreadComments.size()))
+            return null;
+        return (Integer) unreadComments.get(position+1);
+    }
+
+    /**
+     * @return list of ids (Integer) of unread comments
+     */
+    public List getUnreadComments() {
+        return unreadComments;
+    }
+
+    /**
+     * @return list of users (Integer) that are in blacklist for current user
+     */
+    public List getBlacklist() {
+        return new ArrayList(blacklist);
+    }
+
+    /**
+     * Sets list of blacklisted users (id - Integer) for current user.
+     * @param blacklist not null
+     */
+    public void setBlacklist(List blacklist) {
+        this.blacklist = new HashSet(blacklist.size());
+        for (Iterator iter = blacklist.iterator(); iter.hasNext();) {
+            User user = (User) iter.next();
+            this.blacklist.add(new Integer(user.getId()));
+        }
+    }
+
+    /**
+     * Tests if author of this comment is in current user's blacklist.
+     * @param comment
+     * @return true if user does not wish to see it
+     */
+    public boolean isBlacklisted(Comment comment) {
+        if (comment.getAuthor() == null)
+            return false;
+        if (blacklist == null)
+            return false;
+        return blacklist.contains(comment.getAuthor());
+    }
+
+    /**
+     * @return true, if current user has set up watch for this discussion
+     */
+    public boolean isMonitored() {
+        return monitored;
+    }
+
+    /**
+     * Marks discussion as monitored by current user.
+     * @param monitored true if user is interested in notifications for this discussion
+     */
+    public void setMonitored(boolean monitored) {
+        this.monitored = monitored;
+    }
+
+    /**
+     * @return number of users monitoring this discussion
+     */
+    public int getMonitorSize() {
+        return monitorSize;
+    }
+
+    /**
+     * Sets number of users monitoring this discussion
+     * @param monitorSize count of monitors
+     */
+    public void setMonitorSize(int monitorSize) {
+        this.monitorSize = monitorSize;
     }
 }

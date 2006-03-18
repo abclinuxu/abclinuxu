@@ -19,14 +19,18 @@
 package cz.abclinuxu.data;
 
 import org.dom4j.Document;
+import org.apache.log4j.Logger;
 
 import java.util.Date;
+import java.lang.reflect.Method;
 
 /**
  * This class serves as base class for Item, Category and Record,
  * which have very similar functionality and usage.
  */
 public abstract class GenericDataObject extends GenericObject implements XMLContainer {
+    static Logger log = Logger.getLogger(GenericDataObject.class);
+
     /** identifier of owner of this object */
     protected int owner;
     /** Type of the object. You must set it before storing with Persistance! */
@@ -44,6 +48,8 @@ public abstract class GenericDataObject extends GenericObject implements XMLCont
      * which works as argument to search in <code>data</code>.
      **/
     protected String searchString;
+    /** some object related to this instance, for any use */
+    protected Object custom;
 
 
     public GenericDataObject() {
@@ -155,6 +161,22 @@ public abstract class GenericDataObject extends GenericObject implements XMLCont
     }
 
     /**
+     * @return some object associated with this instance
+     */
+    public Object getCustom() {
+        return custom;
+    }
+
+    /**
+     * Associate custom object with this instance.
+     *
+     * @param custom some object, its type typically depends of type
+     */
+    public void setCustom(Object custom) {
+        this.custom = custom;
+    }
+
+    /**
      * Initialize this object with values from <code>obj</code>, if
      * this.getClass().equals(obj.getClass()).
      */
@@ -171,6 +193,24 @@ public abstract class GenericDataObject extends GenericObject implements XMLCont
         documentHandler = b.documentHandler;
         created = b.created;
         updated = b.updated;
+        custom = b.custom;
+    }
+
+    public Object clone() {
+        GenericDataObject clone = (GenericDataObject) super.clone();
+        if (documentHandler != null)
+            clone.documentHandler = (XMLHandler) documentHandler.clone();
+        if (custom != null) {
+            try {
+                Method m = custom.getClass().getDeclaredMethod("clone", null);
+                m.setAccessible(true);
+                clone.custom = m.invoke(custom, null);
+            } catch (Exception e) {
+                clone.custom = custom;
+                log.error("Cannot clone "+custom+" in "+this, e);
+            }
+        }
+        return clone;
     }
 
     /**

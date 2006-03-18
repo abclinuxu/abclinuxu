@@ -28,9 +28,7 @@ import cz.abclinuxu.persistance.Nursery;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.edit.EditRating;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.data.view.DiscussionHeader;
-import cz.abclinuxu.data.view.Comment;
-import cz.abclinuxu.data.view.Discussion;
+import cz.abclinuxu.data.view.*;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
@@ -321,15 +319,6 @@ public class Tools implements Configurable {
         if ( base<=0 ) return 0;
         double percent = 100*count/(double)base;
         return (int)(percent+0.5);
-    }
-
-    /**
-     * Gets number of activated monitors in given document.
-     * @return integer
-     */
-    public Integer getMonitorCount(Document document) {
-        Object value = document.selectObject("count(//monitor/id)");
-        return new Integer(((Double) value).intValue());
     }
 
     /**
@@ -1045,106 +1034,64 @@ public class Tools implements Configurable {
      * Converts Item with type Discussion to object Discussion.
      * @param obj Item
      * @param maybeUser this may be instance of User that is viewing this discussion
+     * @param rid relation id of this discussion
      * @param saveLast if true and maybeUser is instance of User, then latest comment id will be saved
      */
-    public Discussion createDiscussionTree(GenericObject obj, Object maybeUser, boolean saveLast) throws PersistanceException {
+    public Discussion createDiscussionTree(GenericObject obj, Object maybeUser, int rid, boolean saveLast) throws PersistanceException {
         if (!obj.isInitialized())
             obj = persistance.findById(obj);
         if ( !InstanceUtils.checkType(obj, Item.class, Item.DISCUSSION) )
             throw new IllegalArgumentException("Not a discussion: "+obj);
 
-        if (obj.getChildren().size()==0)
-            return new Discussion();
+        Item item = (Item) obj;
+        Document document = item.getData();
+        User user = null;
+        if (maybeUser instanceof User)
+            user = (User) maybeUser;
 
-        Relation child = (Relation) obj.getChildren().get(0);
+        Discussion discussion = new Discussion();
+        discussion.setId(obj.getId());
+        discussion.setRelationId(rid);
+        discussion.setFrozen(document.selectSingleNode("/data/frozen") != null);
+        Object value = document.selectObject("count(//monitor/id)");
+        discussion.setMonitorSize(((Double) value).intValue());
+        if (user != null) {
+            String xpath = "//monitor/id[text()='"+user.getId()+"']";
+            discussion.setMonitored(document.selectSingleNode(xpath) != null);
+        }
+
+        if (item.getChildren().size()==0)
+            return discussion;
+
+        Relation child = (Relation) item.getChildren().get(0);
         Record record = (Record) child.getChild();
         if (!record.isInitialized())
             record = (Record) persistance.findById(record);
 
-        List nodes = record.getData().getRootElement().elements("comment");
-        if (nodes.size()==0)
-            return new Discussion();
+        DiscussionRecord dizRecord = (DiscussionRecord) record.getCustom();
+        if (dizRecord.getThreads().size() == 0)
+            return discussion;
 
-        Map map = new HashMap(nodes.size() + 1, 1.0f);
-        Comment current, upper, last;
-        List alone = new ArrayList();
-        int upperId;
-        Element element;
-
-        Discussion diz = new Discussion(nodes.size());
-        diz.setSize(nodes.size());
-        element = (Element) nodes.get(nodes.size() - 1);
-        diz.setGreatestId(Integer.parseInt(element.attributeValue("id")));
-
-        User user = null;
-	    List blacklist = null;
-        if (maybeUser instanceof User) {
-            user = (User) maybeUser;
+        discussion.init(dizRecord);
+        if (user != null) {
             SQLTool sqlTool = SQLTool.getInstance();
+            discussion.setBlacklist(getUsersBlacklist(user));
+
             Integer lastSeen = sqlTool.getLastSeenComment(user.getId(), obj.getId());
-            if (lastSeen!=null) {
-                diz.setLastRead(lastSeen);
-                if (diz.getGreatestId()>lastSeen.intValue())
-                    diz.setHasUnreadComments(true);
-            }
-            sqlTool.insertLastSeenComment(user.getId(), obj.getId(), diz.getGreatestId());
+            if (lastSeen != null)
+                discussion.setUnreadComments(lastSeen);
+            sqlTool.insertLastSeenComment(user.getId(), obj.getId(), discussion.getGreatestId());
             EnsureWatchedDiscussionsLimit.checkLimits(user.getId());
-	        blacklist = getUsersBlacklist(user);
         }
 
-        for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
-            upper = null; upperId = 0;
-            element = (Element) iter.next();
-            current = new Comment(element);
-            if (diz.getHasUnreadComments())
-                current.setUnread(current.getId().intValue()>diz.getLastRead().intValue());
+        return discussion;
+    }
 
-            if (current.getParent()!=null)
-                upperId = current.getParent().intValue();
-
-            if ( upperId!=0 ) {
-                upper = (Comment) map.get(current.getParent());
-                if (upper!=null)
-                    upper.addChild(current);
-                else
-                    alone.add(current);
-            } else
-                diz.addThread(current);
-
-            if (blacklist != null && current.getAuthor() != null)
-                if (blacklist.indexOf(current.getAuthor()) > -1)
-                    current.setInBlacklist(true);
-
-            map.put(current.getId(), current);
-        }
-
-        if (alone.size()>0) {
-            for ( Iterator iter = alone.iterator(); iter.hasNext(); ) {
-                current = (Comment) iter.next();
-                upper = (Comment) map.get(current.getParent());
-                upper.addChild(current);
-            }
-        }
-
-        if (diz.getHasUnreadComments()) {
-            current = null; last = null;
-            List stack = new LinkedList(diz.getThreads());
-            while (stack.size()>0) {
-                current = (Comment) stack.remove(0);
-                if (current.getChildren()!=null)
-                    stack.addAll(0, current.getChildren());
-
-                if (current.isUnread()) {
-                    if (diz.getFirstUnread() == null)
-                        diz.setFirstUnread(current.getId());
-                    if (last!=null)
-                        last.setNextUnread(current.getId());
-                    last = current;
-                }
-            }
-        }
-
-        return diz;
+    /**
+     * @return empty discussion
+     */
+    public Discussion createEmptyDiscussion() {
+        return new Discussion();
     }
 
     /**
@@ -1258,7 +1205,7 @@ public class Tools implements Configurable {
      * @return Comment instance
      */
     public Comment createComment(Item item) {
-        return new Comment(item);
+        return new ItemComment(item);
     }
 
     /**

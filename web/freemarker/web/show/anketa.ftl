@@ -32,14 +32,11 @@
 Vytvoøeno: ${DATE.show(POLL.created, "CZ_FULL")}</p>
 
 <#if CHILDREN.discussion?exists>
-    <#assign DISCUSSION=CHILDREN.discussion[0].child>
-    <#assign diz = TOOL.createDiscussionTree(DISCUSSION,USER?if_exists,true)>
-
-    <#assign frozen=TOOL.xpath(DISCUSSION,"/data/frozen")?exists>
-    <#if frozen>Diskuse byla administrátory uzamèena</#if>
+    <#assign diz = TOOL.createDiscussionTree(CHILDREN.discussion[0].child,USER?if_exists,CHILDREN.discussion[0].id,true)>
+    <#if diz.frozen>Diskuse byla administrátory uzamèena</#if>
     <#if USER?exists && USER.hasRole("discussion admin")>
-        <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+CHILDREN.discussion[0].id+"&amp;dizId="+DISCUSSION.id)}">
-        <#if frozen>Rozmrazit<#else>Zmrazit</#if> diskusi</a>
+        <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+diz.relationId+"&amp;dizId="+diz.id)}">
+        <#if diz.frozen>Rozmrazit<#else>Zmrazit</#if> diskusi</a>
     </#if>
 
     <p>
@@ -47,19 +44,19 @@ Vytvoøeno: ${DATE.show(POLL.created, "CZ_FULL")}</p>
         <a href="#${diz.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a>
     </#if>
 
-    <a href="${URL.make("/EditDiscussion?action=add&amp;dizId="+DISCUSSION.id+"&amp;threadId=0&amp;rid="+CHILDREN.discussion[0].id)}">
+    <a href="${URL.make("/EditDiscussion?action=add&amp;dizId="+diz.id+"&amp;threadId=0&amp;rid="+diz.relationId)}">
     Vlo¾it dal¹í komentáø</a>
 
-    <#if USER?exists && TOOL.xpath(DISCUSSION,"//monitor/id[text()='"+USER.id+"']")?exists>
+    <#if diz.monitored>
         <#assign monitorState="Pøestaò sledovat"><#else><#assign monitorState="Sleduj">
     </#if>
     <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+CHILDREN.discussion[0].id)}"
     title="AbcMonitor za¹le emailem zprávu, dojde-li v diskusi ke zmìnì">${monitorState}</a>
-    <span title="Poèet lidí, kteøí sledují tuto diskusi">(${TOOL.getMonitorCount(DISCUSSION.data)})</span>
+    <span title="Poèet lidí, kteøí sledují tuto diskusi">(${diz.monitorSize})</span>
     </p>
 
     <#list diz.threads as thread>
-       <@lib.showThread thread, 0, DISCUSSION.id, CHILDREN.discussion[0].id, !frozen />
+       <@lib.showThread thread, 0, diz, !diz.frozen />
     </#list>
 <#else>
    <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vlo¾it první komentáø</a>

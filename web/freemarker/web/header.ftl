@@ -7,6 +7,9 @@
     <#if USER?exists><#assign css=TOOL.xpath(USER.data, "/data/settings/css")?default("UNDEF")></#if>
     <#if ! css?exists || css=="UNDEF"><#assign css="/styles.css"></#if>
     <link rel="stylesheet" type="text/css" href="${css}">
+    <#if REQUEST_URI?starts_with("/hosting")>
+       <link rel="stylesheet" type="text/css" href="/images/hosting/hosting.css">
+    </#if>
     <link rel="icon" href="/images/site2/favicon.png" type="image/png">
     <link rel="alternate" title="abclinuxu.cz: èlánky" href="http://www.abclinuxu.cz/auto/abc.rss" type="application/rss+xml">
     <link rel="alternate" title="abclinuxu.cz: blogy" href="http://www.abclinuxu.cz/auto/blog.rss" type="application/rss+xml">
@@ -62,12 +65,14 @@
 			--><a href="/faq" class="za_mn_odkaz">FAQ</a><!--
 			--><a href="/hardware" class="za_mn_odkaz">Hardware</a><!--
 			--><a href="/clanky" class="za_mn_odkaz">Èlánky</a><!--
+			--><a href="/ucebnice" class="za_mn_odkaz">Uèebnice</a><!--
 			--><a href="/blog" class="za_mn_odkaz">Blogy</a><!--
-			--><a href="http://www.praceabc.cz" class="za_mn_odkaz">Práce</a><!--
 			--><a href="/download/abicko.jsp" class="za_mn_odkaz">PDF</a><!--
 			--><a href="/slovnik" class="za_mn_odkaz">Slovník</a><!--
 			--><a href="/ankety" class="za_mn_odkaz">Ankety</a><!--
-			--><a href="/ovladace" class="za_mn_odkaz">Ovladaèe</a>
+			--><a href="/ovladace" class="za_mn_odkaz">Ovladaèe</a><!--
+			--><a href="/hosting" class="za_mn_odkaz">Hosting</a><!--
+			--><a href="http://www.praceabc.cz" class="za_mn_odkaz">Práce</a>
 		</div>
 
 	</div>
@@ -154,10 +159,10 @@
             <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Projekty</h1></div></div>
             <div class="s_sekce">
                 <ul>
-                    <li><a href="/projekty/abclinux/verze-2005">ABC Linux 2005</a></li>
                     <li><a href="/doc/projekty/ucebnice">Uèebnice Linuxu</a></li>
+                    <li><a href="/projekty/abclinux/verze-2005">ABC Linux 2005</a></li>
                     <li><a href="/projekty/zdrojaky">Zdrojáky Abíèka</a></li>
-		    <li><a href="/clanky/ruzne/nakrmte-tucnaka">Nakrmte tuèòáka</a></li>
+		    <!--li><a href="/clanky/ruzne/nakrmte-tucnaka">Nakrmte tuèòáka</a></li-->
 		    <li><a href="/clanky/novinky/tricka-abclinuxu.cz">Trièka</a></li>
                 </ul>
             </div>
@@ -196,6 +201,10 @@
             </div>
 
             <#if ! IS_INDEX?exists>
+                <p align="center">
+                    <a href="/hosting"><img src="/images/bannery/abchosting.gif" alt="AbcHosting je tu pro vás" 
+                    border="0" width="251" height="60"></a>
+                </p>
                 <!-- prace.abclinuxu.cz -->
                 <div class="s_nad_h1"><div class="s_nad_pod_h1">
                     <h1><a href="http://www.praceabc.cz"
@@ -209,8 +218,8 @@
                     <!-- ROZCESTNÍK -->
                     <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Rozcestník</h1></div></div>
                     <div class="s_sekce">
-                        <div class="rozc">
-                            <#list TOOL.createServers([7,16,18,19,1,13,14,17,15,3,5]) as server>
+                        <div class="rozc"><!-- odebran svethardware: 19 -->
+                            <#list TOOL.createServers([7,16,18,1,13,14,17,15,3,5]) as server>
                                 <a class="server" href="${server.url}" rel="nofollow">${server.name}</a><br>
                                 <ul>
                                 <#assign linky = TOOL.sublist(SORT.byDate(LINKS[server.name],"DESCENDING"),0,2)>
@@ -232,7 +241,7 @@
                   <li><a href="/doc/propagace">Propagace</a></li>
                   <li><a href="/clanky/show/44049">Tým AbcLinuxu</a></li>
                   <li><a href="/clanky/novinky/pojdte-psat-pro-abclinuxu.cz">Pi¹te pro abclinuxu</a></li>
-                  <li><a href="http://bugzilla.abclinuxu.cz">Bugzilla</a></li>
+                  <li><a href="http://bugzilla.abclinuxu.cz" rel="nofollow">Bugzilla</a></li>
                   <li><a href="/hardware/dir/3500">Vzkazy správcùm</a> (${VARS.counter.REQUESTS})</li>
                   <li><a href="mailto:reklama@stickfish.cz">Inzerce</a></li>
                   <#if USER?exists && USER.isMemberOf(11246)>
@@ -261,12 +270,12 @@
 	</div> <!-- obal_ls -->
 
     <#if plovouci_sloupec?exists>
-        <div class="obal_ps" style="width: ${ps_sirka?default(300)}px">
-            <div class="ps_prepinac" id="ps_prepinac">
+        <div class="obal_ps">
+            <div class="ps_prepinac">
             <!-- i kdyz to bude prazdne, tak to tu musi byt -->
             </div>
 
-            <div class="ps" id="ps"><div class="s">
+            <div class="ps"><div class="s">
             ${plovouci_sloupec}
             </div></div> <!-- ps, s -->
         </div> <!-- obal_ps -->

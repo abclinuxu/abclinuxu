@@ -10,7 +10,7 @@
 
   <minimum-connection-count>1</minimum-connection-count>
   <maximum-connection-count>30</maximum-connection-count>
-  <maximum-active-time>30000</maximum-active-time>
+  <maximum-active-time>60000</maximum-active-time>
 <!--  <maximum-active-time>30000000</maximum-active-time> -->
   <maximum-connection-lifetime>1800000</maximum-connection-lifetime>
   <house-keeping-sleep-time>20000</house-keeping-sleep-time>

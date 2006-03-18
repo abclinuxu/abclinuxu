@@ -39,7 +39,7 @@
 
 
 <!-- Item.Discussion -->
-<!ELEMENT data (comments,author?,author_ip?,text,title?,frozen?, solved?)>
+<!ELEMENT data (comments, author?, author_ip?, text, title?, frozen?, solved?)>
 <!ELEMENT comments (#PCDATA)> <!-- integer, number of comments or replies -->
 <!ELEMENT author (#PCDATA)> <!-- unknow user's name -->
 <!ELEMENT author_ip (#PCDATA)> <!-- IP address of the user -->

@@ -23,19 +23,15 @@
                     <a class="info" href="#">?<span class="tooltip">Za¹le upozornìní na vá¹ email pøi úpravì záznamu</span></a>
                 </li>
                 <li>
-                    <form action="/Search"><input type="text" name="query" value="${TOOL.xpath(ITEM,"/data/name")}" size="30">
-                        <input type="submit" value="Hledej">
+                    <form action="/Search"><input type="text" class="text" name="query" value="${TOOL.xpath(ITEM,"/data/name")}" size="30">
+                        <input type="submit" class="button" value="Hledej">
                     </form>
                 </li>
                 <#if USER?exists && USER.hasRole("move relation")>
-                    <li>
-                        <a href="/SelectRelation/${RELATION.id}?prefix=/hardware&amp;url=/EditRelation&amp;action=move">Pøesunout</a>
-                    </li>
+                    <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Pøesunout</a></li>
                 </#if>
                 <#if USER?exists && USER.hasRole("remove relation")>
-                    <li>
-                        <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/hardware")}">Smazat</a>
-                    </li>
+                    <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/hardware")}">Smazat</a></li>
                 </#if>
             </#if>
         </ul>
@@ -48,3 +44,4 @@
 <@hwlib.showHardware ITEM />
 
 <#include "../footer.ftl">
+

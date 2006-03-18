@@ -1,0 +1,7 @@
+<!ELEMENT data (title?, author?, text, author_ip?, censored?)>
+<!ELEMENT title (#PCDATA)> <!-- title of this comment -->
+<!ELEMENT author (#PCDATA)> <!-- unknow user's name -->
+<!ELEMENT text (#PCDATA)> <!-- text of comment -->
+<!ATTLIST text format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
+<!ELEMENT author_ip (#PCDATA)> <!-- IP address of the user -->
+<!ELEMENT censored (#PCDATA)> <!-- if present, the comment is being censored -->

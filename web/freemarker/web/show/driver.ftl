@@ -26,25 +26,25 @@
  <a href="${URL.make("/edit?action=monitor&amp;rid="+RELATION.id+"&amp;driverId="+ITEM.id)}">${monitorState}</a>
  (${TOOL.getMonitorCount(ITEM.data)})
 </p>
+<hr />
 
-<table cellspacing=0 border=1 cellpadding=5 align="center" style="margin-top: 1em;">
+<h1>${TOOL.xpath(ITEM,"data/name")}</h1>
+
+<table class="swdetail">
   <tr>
-    <td>Jméno</td><td>${TOOL.xpath(ITEM,"data/name")}</td>
+    <td><b>Verze:</b></td>
+    <td>${TOOL.xpath(ITEM,"data/version")}</td>
   </tr>
   <tr>
-    <td>Verze</td><td>${TOOL.xpath(ITEM,"data/version")}</td>
-  </tr>
-  <tr>
-    <td>Adresa</td>
-    <td>
-      <a href="${TOOL.xpath(ITEM,"data/url")}">${TOOL.limit(TOOL.xpath(ITEM,"data/url"),50," ..")}</a>
-    </td>
-  </tr>
-  <tr>
-    <td valign="top">Poznámka</td><td>${TOOL.render(TOOL.element(ITEM.data,"data/note"),USER?if_exists)}</td>
+    <td><b>Adresa:</b></td>
+    <td><a href="${TOOL.xpath(ITEM,"data/url")}" rel="nofollow">${TOOL.limit(TOOL.xpath(ITEM,"data/url"),50," ..")}</a></td>
   </tr>
 </table>
 
-<p><b>Nástroje</b>: <a href="${RELATION.url?default("/ovladace/show/"+RELATION.id)}?varianta=print<#if PARAMS.revize?exists>&amp;revize=${PARAMS.revize}</#if>">Tisk</a></p>
+<h3>Poznámka:</h3>
+
+<div>${TOOL.render(TOOL.element(ITEM.data,"data/note"),USER?if_exists)}</div>
+
+<p><b>Nástroje:</b> <a href="${RELATION.url?default("/ovladace/show/"+RELATION.id)}?varianta=print<#if PARAMS.revize?exists>&amp;revize=${PARAMS.revize}</#if>">Tisk</a></p>
 
 <#include "../footer.ftl">

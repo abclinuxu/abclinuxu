@@ -1,10 +1,10 @@
 <#macro showHardware(hardware)>
-    <h1 style="margin-bottom: 10px;">${TOOL.xpath(hardware,"/data/name")?if_exists}</h1>
+    <h1>${TOOL.xpath(hardware,"/data/name")?if_exists}</h1>
 
-    <table border="0" class="hwdetail">
+    <table class="hwdetail">
         <#if TOOL.xpath(hardware,"/data/support")?exists>
             <tr>
-                <td><span class="hardware caption">Podpora:</span></td>
+                <td><b>Podpora:</b></td>
                 <td>
                     <#switch TOOL.xpath(hardware,"data/support")>
                         <#case "complete">kompletní<#break>
@@ -17,7 +17,7 @@
 
         <#if TOOL.xpath(hardware,"/data/driver")?exists>
             <tr>
-                <td><span class="hardware caption">Ovladaè:</span></td>
+                <td><b>Ovladaè:</b></td>
                 <td>
                     <#switch TOOL.xpath(hardware,"data/driver")>
                         <#case "kernel">v jádøe<#break>
@@ -33,23 +33,23 @@
         <#assign hwurl = TOOL.xpath(hardware,"data/driver_url")?default("UNDEFINED")>
         <#if (hwurl!="UNDEFINED")>
             <tr>
-                <td><span class="hardware caption">Adresa ovladaèe:</span></td>
+                <td><b>Adresa ovladaèe:</b></td>
                 <td>
-                    <a href="${hwurl}">${TOOL.limit(hwurl,50,"..")}</a>
+                    <a href="${hwurl}" rel="nofollow">${TOOL.limit(hwurl,50,"..")}</a>
                 </td>
             <tr>
         </#if>
 
         <#if TOOL.xpath(hardware,"data/outdated")?exists>
             <tr>
-                <td><span class="hardware caption">Zastaralý:</span></td>
+                <td><b>Zastaralý:</b></td>
                 <td>ano</td>
             </tr>
         </#if>
 
         <#if TOOL.xpath(hardware,"data/price")?exists>
             <tr>
-                <td><span class="hardware caption">Cena:</span></td>
+                <td><b>Cena:</b></td>
                 <td>
                     <#switch TOOL.xpath(hardware,"data/price")>
                         <#case "verylow">velmi nízká<#break>
@@ -64,28 +64,28 @@
     </table>
 
     <#if TOOL.xpath(hardware,"data/params")?exists>
-        <h3 class="hardware caption">Technické parametry</h3>
+        <h2>Technické parametry</h2>
         <div>
             ${TOOL.render(TOOL.element(hardware.data,"data/params"),USER?if_exists)}
         </div>
     </#if>
 
     <#if TOOL.xpath(hardware,"data/identification")?exists>
-        <h3 class="hardware caption">Identifikace pod Linuxem</h3>
+        <h2>Identifikace pod Linuxem</h2>
         <div>
             ${TOOL.render(TOOL.element(hardware.data,"data/identification"),USER?if_exists)}
         </div>
     </#if>
 
     <#if TOOL.xpath(hardware,"data/setup")?exists>
-        <h3 class="hardware caption">Postup zprovoznìní pod Linuxem</h3>
+        <h2>Postup zprovoznìní pod Linuxem</h2>
         <div>
             ${TOOL.render(TOOL.element(hardware.data,"data/setup"),USER?if_exists)}
         </div>
     </#if>
 
     <#if TOOL.xpath(hardware,"data/note")?exists>
-        <h3 class="hardware caption">Poznámka</h3>
+        <h2>Poznámka</h2>
         <div>
             ${TOOL.render(TOOL.element(hardware.data,"data/note"),USER?if_exists)}
         </div>

@@ -1308,7 +1308,7 @@ public class EditBlog implements AbcAction, Configurable {
     }
 
     /**
-     * Tests if story contains discussion with at least one comment now owned by story author.
+     * Tests if story contains discussion with at least one comment not owned by story author.
      * @param story initialized story
      * @return false if there is discussion with foreign comments.
      */
@@ -1329,16 +1329,16 @@ public class EditBlog implements AbcAction, Configurable {
             if (item.getType() != Item.DISCUSSION)
                 continue;
 
-            Discussion diz = new Tools().createDiscussionTree(item, null, false);
+            Discussion diz = new Tools().createDiscussionTree(item, null, 0, false);
             if (diz.getSize()==0)
                 return false;
 
-            List stack = new ArrayList();
+            LinkedList stack = new LinkedList();
             stack.addAll(diz.getThreads());
             User owner = new User(story.getOwner());
             while (stack.size() > 0) {
-                Comment thread = (Comment) stack.remove(0);
-                if (!owner.equals(thread.getAuthor()))
+                Comment thread = (Comment) stack.removeFirst();
+                if (! owner.equals(thread.getAuthor()))
                     return true;
                 stack.addAll(thread.getChildren());
             }

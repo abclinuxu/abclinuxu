@@ -19,10 +19,10 @@
 
 <#if THREAD?exists>
  <h1>Pøíspìvek, na který reagujete</h1>
- <@lib.showThread THREAD, 0, 0, 0, false />
+ <@lib.showThread THREAD, 0, TOOL.createEmptyDiscussion(), false />
 
  <script language="javascript1.2" type="text/javascript">
-    original = "${TOOL.xpath(THREAD.data,"text")?js_string}";
+    original = "${TOOL.xpath(THREAD.data,"//text")?js_string}";
     original = "<blockquote>"+original+"</blockquote>";
     function cituj(input) {
       input.value += original;
@@ -33,7 +33,7 @@
 <#if PREVIEW?exists>
  <h1>Náhled va¹eho pøíspìvku</h1>
  <div style="padding-left: 30pt">
-  <@lib.showThread PREVIEW, 0, 0, 0, false />
+  <@lib.showThread PREVIEW, 0, TOOL.createEmptyDiscussion(), false />
  </div>
 </#if>
 
@@ -60,7 +60,7 @@
         <#assign title=PARENT_TITLE>
         <#assign title="Re: "+title>
     <#elseif THREAD?exists>
-        <#assign title=TOOL.xpath(THREAD.data,"title")>
+        <#assign title=THREAD.title?if_exists>
         <#if !title.startsWith("Re: ")><#assign title="Re: "+title></#if>
     </#if>
    <input tabindex="4" type="text" name="title" size="60" maxlength="70" value="${title?if_exists?html}">

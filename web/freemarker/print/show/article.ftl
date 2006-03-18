@@ -9,7 +9,12 @@
  ${DATE.show(ITEM.created,"CZ_FULL")} | <a href="/Profile/${autor.id}">${autor.name}</a>
 </div>
 
-<@lib.showParents PARENTS />
+<#if PARENTS?exists>
+    <#list TOOL.getParents(PARENTS,USER?if_exists,URL) as link>
+        <a href="${link.url}">${link.text}</a>
+        <#if link_has_next> - </#if>
+    </#list>
+</#if>&nbsp;
 
 <#if USER?exists && USER.hasRole("article admin")>
  <p>
@@ -62,11 +67,10 @@ ${TOOL.render(TOOL.getCompleteArticleText(ITEM),USER?if_exists)}
 <#if ! PARAMS.noDiz?exists>
  <#if CHILDREN.discussion?exists>
   <h1>Diskuse k tomuto èlánku</h1>
-  <#assign DISCUSSION=CHILDREN.discussion[0].child>
-  <#assign diz = TOOL.createDiscussionTree(DISCUSSION,USER?if_exists,true)>
-  <#list diz.threads as thread>
-     <@lib.showThread thread, 0, DISCUSSION.id, CHILDREN.discussion[0].id, false />
-  </#list>
+   <#assign diz = TOOL.createDiscussionTree(CHILDREN.discussion[0].child,USER?if_exists,CHILDREN.discussion[0],true)>
+    <#list diz.threads as thread>
+       <@lib.showThread thread, 0, diz, !diz.frozen />
+    </#list>
  </#if>
 </#if>
 

@@ -21,18 +21,18 @@
 <p><a href="${URL.make("/zpravicky/edit?action=add")}">Pøidat zprávièku</a></p>
 
 <#list NEWS as rel>
- <@lib.showNews rel /><hr>
+ <@lib.showNews rel /><hr />
 </#list>
 
 <p>
-<a href="/History?type=news&from=${NEWS?size}&count=15" title="Dal¹í">Star¹í zprávièky</a>
+<a href="/History?type=news&amp;from=${NEWS?size}&amp;count=15" title="Dal¹í">Star¹í zprávièky</a>
 </p>
 
 <div align="center"><img src="/images/site/wap.gif" width="181" height="52" alt="wap.abclinuxu.cz"><br><br></div>
 
 <form action="/Search" method="POST">
  <input type="text" name="query" size="30" tabindex="1">
- <input type="submit" value="Prohledej zprávièky" tabindex="2">
+ <input type="submit" class="button" value="Prohledej zprávièky" tabindex="2">
 
   <table>
    <#list CATEGORIES as category>

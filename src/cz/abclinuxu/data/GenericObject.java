@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Superclass for all classes in this website
  */
-public abstract class GenericObject {
+public abstract class GenericObject implements Cloneable {
     /** unique identifier of this object */
     protected int id;
     /** tells, whether this object was already initialized by Persistance */
@@ -132,6 +132,14 @@ public abstract class GenericObject {
      */
     public boolean preciseEquals(Object obj) {
         return super.equals(obj);
+    }
+
+    public Object clone() {
+        try {
+            return super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

@@ -34,9 +34,15 @@
     <#assign category = story.subType?default("UNDEF"), rating=TOOL.ratingFor(story.data,"story")?default("UNDEF")>
     <#if category!="UNDEF"><#assign category=TOOL.xpath(blog, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
     <div class="cl">
-	<#if SUMMARY?exists><h3 class="st_nadpis"><#else><h1 class="st_nadpis"></#if>
-    	    <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
-	<#if SUMMARY?exists></h3><#else></h1></#if>
+	<#if SUMMARY?exists>
+	    <h3 class="st_nadpis">
+		<a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
+	    </h3>
+	<#else>
+	    <h1 class="st_nadpis">
+		<a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
+	    </h1>
+	</#if>
 	  <p class="cl_inforadek">
             ${DATE.show(story.created, "CZ_SHORT")} |
     	    <a href="/blog/${blog.subType}">${title}</a> |

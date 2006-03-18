@@ -28,12 +28,11 @@
     <p>
         <#if USER.hasRole("content admin")>
             <a href="${URL.make("/editContent/"+RELATION.id+"?action=edit")}">Uprav v¹e</a> &#8226;
-            <a href="${URL.make("/editContent/"+RELATION.id+"?action=addDerivedPage")}">Vytvoø podstránku</a> &#8226;
             <a href="${URL.make("/editContent/"+RELATION.id+"?action=alterPublic")}">
-                <#if public>Zru¹ veøejnou editovalnost<#else>Nastav veøejnou editovatelnost</#if></a> &#8226;
+                <#if public>Zru¹<#else>Nastav</#if> veøejnou editovatelnost</a> &#8226;
             <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix=/doc")}">Sma¾</a>
         </#if>
-        <#if (public && USER.hasRole("derive content"))>
+        <#if ((public && USER.hasRole("derive content")) || USER.hasRole("content admin"))>
             &#8226; <a href="${URL.make("/editContent/"+RELATION.id+"?action=addDerivedPage")}">Vytvoø podstránku</a>
         </#if>
     </p>
@@ -42,34 +41,26 @@
 ${TOOL.xpath(ITEM,"/data/content")}
 
 <#if TOC?exists>
-    <table align="center" style="border: thin solid black; background: lightgrey; text-align: center; margin-top: 1em;">
-        <tr>
-            <td>
-                <#if TOC.left?exists>
-                    <a href="${TOC.left.url}" title="${TOOL.childName(TOC.left)}">Pøedchozí</a>
-                <#else>
-                    Pøedchozí
-                </#if>
-            </td>
-            <td>
-                <#if TOC.up?exists>
-                    <a href="${TOC.up.url}" title="${TOOL.childName(TOC.up)}">Nahoru</a>
-                <#else>
-                    Nahoru
-                </#if>
-            </td>
-            <td>
-                <a href="${TOC.relation.url}" title="Zobraz obsah">Obsah</a>
-            </td>
-            <td>
-                <#if TOC.right?exists>
-                    <a href="${TOC.right.url}" title="${TOOL.childName(TOC.right)}">Dal¹í</a>
-                <#else>
-                    Dal¹í
-                </#if>
-            </td>
-        </tr>
-    </table>
+    <div class="uceb-nav">
+      <span>
+        <#if TOC.left?exists>
+            <a href="${TOC.left.url}" title="${TOOL.childName(TOC.left)}">&#171; Pøedchozí</a>
+        <#else>
+            &#171; Pøedchozí
+        </#if>
+        <#if TOC.up?exists>
+            | <a href="${TOC.up.url}" title="${TOOL.childName(TOC.up)}">Nahoru</a> | 
+        <#else>
+            | Nahoru |
+        </#if>
+        <a href="${TOC.relation.url}" title="Zobraz obsah">Obsah</a>
+        <#if TOC.right?exists>
+            | <a href="${TOC.right.url}" title="${TOOL.childName(TOC.right)}">Dal¹í &#187;</a>
+        <#else>
+            | Dal¹í &#187;
+        </#if>
+      </span>
+    </div>
 </#if>
 
 <#include "../footer.ftl">

@@ -39,20 +39,20 @@ pravdu, nebo byl pøíli¹ úzkostlivý.
 <h1 class="st_nadpis">Závadný pøíspìvek</h1>
 
  <div class="ds_hlavicka">
-  
+
   Datum:</span> ${DATE.show(THREAD.created,"CZ_FULL")}<br>
   Od:
   <#if THREAD.author?exists>
-   <#assign who=TOOL.sync(THREAD.author)>
+   <#assign who=TOOL.createUser(THREAD.author)>
    <a href="/Profile/${who.id}">${who.name}</a><br>
   <#else>
-   ${TOOL.xpath(THREAD.data,"author")?if_exists}<br>
+   ${THREAD.anonymName?if_exists}<br>
   </#if>
-  Titulek: ${TOOL.xpath(THREAD.data,"title")?if_exists}<br>
+  Titulek: ${THREAD.title?if_exists}
  </div>
 
   <div class="ds_text">
-${TOOL.render(TOOL.element(THREAD.data,"text"),USER?if_exists)}
+${TOOL.render(TOOL.element(THREAD.data,"//text"),USER?if_exists)}
   </div>
 
 <#include "../footer.ftl">

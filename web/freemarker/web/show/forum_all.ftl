@@ -189,9 +189,15 @@ otázky ohlednì tohoto portálu a jeho slu¾eb.
 <table border="0" cellspacing="6" class="siroka">
 <tr>
 <td><a href="/forum/dir/49653">Portál AbcLinuxu</a></td>
+<td><a href="/forum/dir/110114">Zdrojáky AbcLinuxu</a></td>
+<td><a href="/forum/dir/116345">Online uèebnice Linuxu</a></td>
 <td><a href="/forum/dir/51458">Hnutí FSF, Open Source</a></td>
+</tr>
+<tr>
 <td><a href="/forum/dir/51459">Komunita</a></td>
 <td><a href="/forum/dir/51460">Nezaøaditelné</a></td>
+<td></td>
+<td></td>
 </tr>
 </table>
 

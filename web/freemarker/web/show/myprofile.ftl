@@ -5,13 +5,11 @@
 <#if PARAMS.registrace?exists>
  <h1>Pøivítání</h1>
 
- <p>
- Dìkujeme vám za projevenou dùvìru. Vìøíme, ¾e budete spokojeni
- se v¹emi slu¾bami na¹eho portálu. Doporuèujeme vám projít si toto
+ <p> Dìkujeme vám za projevenou dùvìru. Vìøíme, ¾e budete spokojeni
+ se v¹emi slu¾bami na¹eho portálu. Doporuèujeme vám projít si tuto
  stránku a nastavit si osobní údaje, pøizpùsobit si va¹i veøejnou
- osobní stránku ke svému obrazu a nakonfigurovat tento úèet.
- Pøihla¹ovacích údajù jsme vám zaslali na va¹i emailovou adresu ${PROFILE.email}.
- </p>
+ osobní stránku podle svých pøedstav a nakonfigurovat tento úèet.
+ Pøihla¹ovací údaje jsme vám zaslali na va¹i emailovou adresu ${PROFILE.email}. </p>
 </#if>
 
 <h1>Va¹e soukromá stránka</h1>
@@ -21,8 +19,7 @@ mìnit nastavení svého úètu, upravovat svùj profil
 èi pøihlásit se k zasílání informací. Z dùvodu va¹í
 ochrany budete pøi zmìnì údajù vyzvání k zadání hesla.
 Vá¹ profil, jak jej vidí ostatní náv¹tìvníci, zobrazíte
-na <a href="/Profile/${PROFILE.id}">této</a> stránce.
-</p>
+na <a href="/Profile/${PROFILE.id}">této</a> stránce.</p>
 
 <h2>Základní údaje</h2>
 
@@ -61,8 +58,7 @@ která slou¾í pro va¹i prezentaci. Mù¾ete zadat ¹irokou paletu strukturovaných
 informací, napøíklad bydli¹tì, rok narození, adresu va¹ich webových stránek,
 pou¾ívané distribuce, nebo jak dlouho pou¾íváte Linux. Dále si mù¾ete vytvoøit
 patièku zobrazovanou v diskusích u va¹ich pøíspìvkù, nahrát svou fotku
-èi upravit profil.
-</p>
+èi upravit profil.</p>
 
 <ul>
     <li>
@@ -84,8 +80,7 @@ patièku zobrazovanou v diskusích u va¹ich pøíspìvkù, nahrát svou fotku
 <p>Blog je moderní formu vedení deníèku na internetu. Je urèen u¾ivatelùm Linuxu,
 kteøí zde mohou psát napøíklad návody, zamy¹lení, fejetony i jiné texty. Pokud nemáte
 s Linuxem nic spoleèného a jen hledáte blogovací systém, radìji si zalo¾te deníèek
-nìkde jinde.
-</p>
+nìkde jinde.</p>
 
 <ul>
     <li>
@@ -103,8 +98,7 @@ nìkde jinde.
 <p>Máte rádi ná¹ portál, ale nemáte èas nás nav¹tìvovat dennì? Nastavte
 si zasílání Mìsíèního zpravodaje a Týdenní souhrn èlánkù. Dále zde mù¾ete
 zapnout zasílání dotazù a komentáøù z diskusního fóra, tak¾e vám ¾ádná odpovìï
-neuteèe.
-</p>
+neuteèe.</p>
 
 <ul><li>
 <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=subscribe")}">

@@ -232,6 +232,13 @@ public class User extends GenericObject implements XMLContainer {
         password = b.getPassword();
     }
 
+    public Object clone() {
+        User clone = (User) super.clone();
+        if (documentHandler != null)
+            clone.documentHandler = (XMLHandler) documentHandler.clone();
+        return clone;
+    }
+
     public String toString() {
         StringBuffer sb = new StringBuffer("User: id=");
         sb.append(id);

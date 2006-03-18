@@ -15,9 +15,9 @@ adresu.</p>
 
 <form action="${URL.noPrefix("/Mail")}" method="POST">
 
- <table width="100%" border="0" cellpadding="5">
+ <table class="siroka" border="0" cellpadding="5">
   <tr>
-   <td width="100" class="required">Kontrolní kód</td>
+   <td class="required">Kontrolní kód</td>
    <td><input type="text" name="KOD" size="30">
    <#if ERRORS.KOD?exists><span class="error">${ERRORS.KOD}</span></#if>
    </td>
@@ -48,7 +48,7 @@ adresu.</p>
   </tr>
   <tr>
    <td colspan="2">Text zprávy<br>
-   <textarea name="message" cols="60" rows="20">${PARAMS.message?if_exists}</textarea>
+   <textarea name="message" class="siroka" rows="20">${PARAMS.message?if_exists}</textarea>
    <#if ERRORS.message?exists><br><span class="error">${ERRORS.message}</span></#if>
    </td>
   </tr>

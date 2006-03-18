@@ -22,6 +22,7 @@ import cz.abclinuxu.exceptions.InvalidDataException;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
@@ -59,6 +60,13 @@ public class XMLHandler implements Cloneable {
      */
     public XMLHandler(Document data) {
         this.data = data;
+    }
+
+    /**
+     * Creates XMLHandler initialized with <code>data</code> parameter.
+     */
+    public XMLHandler(Element element) {
+        this.data = DocumentHelper.createDocument(element);
     }
 
     /**
@@ -130,11 +138,25 @@ public class XMLHandler implements Cloneable {
         }
     }
 
+    /**
+     * @return shallow clone
+     */
     public Object clone() {
         if ( data!=null )
             return new XMLHandler(data);
         else
             return new XMLHandler(stringData);
+    }
+
+    /**
+     * If true, creates deep clone.
+     * @param deep
+     * @return
+     */
+    public Object clone(boolean deep) {
+        if (!deep || data==null)
+            return clone();
+        return new XMLHandler(((Document) data.clone()));
     }
 
     public String toString() {

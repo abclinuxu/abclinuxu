@@ -163,7 +163,6 @@ public class ViewUser implements AbcAction {
         counts.put("question", new Integer(sqlTool.countQuestionRelationsByUser(user.getId())));
         counts.put("comment", new Integer(sqlTool.countCommentRelationsByUser(user.getId())));
         counts.put("hardware", new Integer(sqlTool.countRecordRelationsWithUserAndType(user.getId(), Record.HARDWARE)));
-        counts.put("software", new Integer(sqlTool.countRecordRelationsWithUserAndType(user.getId(), Record.SOFTWARE)));
         counts.put("dictionary", new Integer(sqlTool.countRecordRelationsWithUserAndType(user.getId(), Record.DICTIONARY)));
         env.put(VAR_COUNTS, counts);
 

@@ -64,17 +64,9 @@
         </div>
     </#if>
 
-    <!-- skoleni softtronik -->
-    <div class="s_nad_h1"><div class="s_nad_pod_h1">
-        <h1><a href="http://www.soft-tronik.cz" title="©kolení SOFT-TRONIK, a.s." rel="nofollow">©kolení SOFT-TRONIK</a></h1>
-    </div></div>
-    <div class="s_sekce">
-      <ul>
-        <li><a href="http://www.soft-tronik.cz/web/katalog.nsf/0/ED37BEDF8B927FEBC1256E90002E6FDB?Open&amp;webid=&amp;grp=Produkty&amp;sgrp=Informace" rel="nofollow" title="6. - 8. 2. 2006, LNX01, cena 5890,- bez DPH">Linux: úvod do administrace</a></li>
-        <li><a href="http://www.soft-tronik.cz/web/katalog.nsf/0/086D4AB045CC6C9DC1256E90002F4AF3?Open&amp;webid=&amp;grp=Produkty&amp;sgrp=Informace" rel="nofollow" title="13. - 14. 2. 2006, LNX02, cena 3890,- bez DPH">Linux: administrace sí»ového serveru</a></li>
-	    <li><a href="http://www.soft-tronik.cz/web/katalog.nsf/0/F3951078A9393744C1256E9000300815?Open&amp;webid=&amp;grp=Produkty&amp;sgrp=Informace" rel="nofollow" title="20. - 21. 2. 2006, LNX03, cena 4890,- bez DPH">Linux: bezpeènost systému</a></li>
-      </ul>
-    </div>
+    <#include "/include/softronik.txt">
+
+    <#include "/include/redhat.txt">
 
     <!-- prace.abclinuxu.cz -->
     <div class="s_nad_h1"><div class="s_nad_pod_h1">
@@ -137,6 +129,53 @@
     </div>
 </#if>
 
+<#flush>
+
+<#assign FORUM = VARS.getFreshQuestions(USER?if_exists)>
+<#if (FORUM?size > 0)>
+    <#assign FORUM=TOOL.analyzeDiscussions(FORUM)>
+    <div class="ds">
+        <h1 class="st_nadpis"><a href="/diskuse.jsp" title="Celé diskusní fórum">Diskusní fórum</a></h1>
+
+        <table>
+        <thead>
+            <tr>
+                <td class="td01">Dotaz</td>
+                <td class="td02">Stav</td>
+                <td class="td03">Reakcí</td>
+                <td class="td04">Poslední</td>
+            </tr>
+        </thead>
+        <tbody>
+        <#list FORUM as diz>
+            <tr>
+                <td class="td01">
+                    <a href="/forum/show/${diz.relationId}">${TOOL.limit(TOOL.xpath(diz.discussion,"data/title"),60," ..")}</a>
+                </td>
+                <td class="td02">
+                    <#if TOOL.xpath(diz.discussion,"/data/frozen")?exists>
+                        <img src="/images/site2/zamceno.gif" alt="Z" title="Diskuse byla administrátory uzamèena">
+                    </#if>
+                    <#if TOOL.isQuestionSolved(diz.discussion.data)>
+                        <img src="/images/site2/vyreseno.gif" alt="V" title="Diskuse byla podle ètenáøù vyøe¹ena">
+                    </#if>
+                    <#if USER?exists && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"']")?exists>
+                        <img src="/images/site2/sledovano.gif" alt="S" title="Tuto diskusi sledujete monitorem">
+                    </#if>
+                </td>
+                <td class="td03">${diz.responseCount}</td>
+                <td class="td04">${DATE.show(diz.updated,"CZ_SHORT")}</td>
+            </tr>
+        </#list>
+        </tbody>
+        </table>
+    </div>
+    <ul>
+        <li><a href="/diskuse.jsp">Polo¾it dotaz</a>
+        <li><a href="/History?type=discussions&amp;from=${FORUM?size}&amp;count=20">Star¹í dotazy</a>
+    </ul>
+</#if>
+
 <#assign STORIES=VARS.getFreshStories(USER?if_exists)>
 <#if (STORIES?size>0) >
     <#assign half = STORIES?size/2 >
@@ -185,53 +224,6 @@
     <span title="Poèet&nbsp;komentáøù<#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if>">(${diz.responseCount})</span>
 </#macro>
 
-<#flush>
-
-<#assign FORUM = VARS.getFreshQuestions(USER?if_exists)>
-<#if (FORUM?size > 0)>
-    <#assign FORUM=TOOL.analyzeDiscussions(FORUM)>
-    <div class="ds">
-        <h1 class="st_nadpis"><a href="/diskuse.jsp" title="Celé diskusní fórum">Diskusní fórum</a></h1>
-
-        <table>
-        <thead>
-            <tr>
-                <td class="td01">Dotaz</td>
-                <td class="td02">Stav</td>
-                <td class="td03">Reakcí</td>
-                <td class="td04">Poslední</td>
-            </tr>
-        </thead>
-        <tbody>
-        <#list FORUM as diz>
-            <tr>
-                <td class="td01">
-                    <a href="/forum/show/${diz.relationId}">${TOOL.limit(TOOL.xpath(diz.discussion,"data/title"),60," ..")}</a>
-                </td>
-                <td class="td02">
-                    <#if TOOL.xpath(diz.discussion,"/data/frozen")?exists>
-                        <img src="/images/site2/zamceno.gif" alt="Z" title="Diskuse byla administrátory uzamèena">
-                    </#if>
-                    <#if TOOL.isQuestionSolved(diz.discussion.data)>
-                        <img src="/images/site2/vyreseno.gif" alt="V" title="Diskuse byla podle ètenáøù vyøe¹ena">
-                    </#if>
-                    <#if USER?exists && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"']")?exists>
-                        <img src="/images/site2/sledovano.gif" alt="S" title="Tuto diskusi sledujete monitorem">
-                    </#if>
-                </td>
-                <td class="td03">${diz.responseCount}</td>
-                <td class="td04">${DATE.show(diz.updated,"CZ_SHORT")}</td>
-            </tr>
-        </#list>
-        </tbody>
-        </table>
-    </div>
-    <ul>
-        <li><a href="/diskuse.jsp">Polo¾it dotaz</a>
-        <li><a href="/History?type=discussions&amp;from=${FORUM?size}&amp;count=20">Star¹í dotazy</a>
-    </ul>
-</#if>
-
 <#if TOOL.isGuidePostEnabled(USER?if_exists)>
     <div class="st_nad_rozc"><div class="st_rozc">
         <h1 class="st_nadpis">Rozcestník</h1>
@@ -257,4 +249,3 @@
 </#if>
 
 <#include "../footer.ftl">
-
