@@ -1804,7 +1804,7 @@ public class MySqlPersistance implements Persistance {
                     storeComment(comment, statement2);
                 } else if (comment.is_dirty()) {
                     if (statement3 == null)
-                        statement3 = con.prepareStatement("update komentar set zaznam=?,nadrazeny=?,autor=?,kdy=?,data=? where cislo=?");
+                        statement3 = con.prepareStatement("update komentar set zaznam=?,nadrazeny=?,autor=?,vytvoreno=?,data=? where cislo=?");
 
                     statement3.setInt(1, comment.getRecord());
                     if (comment.getParent() != null)

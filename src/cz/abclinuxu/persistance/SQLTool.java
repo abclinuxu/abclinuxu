@@ -60,6 +60,7 @@ public final class SQLTool implements Configurable {
     public static final String PREF_NEWS_RELATIONS_BY_USER = "relations.news.by.user";
     public static final String PREF_QUESTION_RELATIONS_BY_USER = "relations.question.by.user";
     public static final String PREF_COMMENT_RELATIONS_BY_USER = "relations.comment.by.user";
+    public static final String PREF_COUNT_DISCUSSIONS_BY_USER = "count.relations.comment.by.user";
     public static final String PREF_STANDALONE_POLL_RELATIONS = "relations.standalone.polls";
     public static final String PREF_USERS_WITH_WEEKLY_EMAIL = "users.with.weekly.email";
     public static final String PREF_USERS_WITH_FORUM_BY_EMAIL = "users.with.forum.by.email";
@@ -100,7 +101,7 @@ public final class SQLTool implements Configurable {
     private String usersWithWeeklyEmail, usersWithForumByEmail, usersWithRoles, usersInGroup;
     private String maxUser, userByLogin, faqSectionSize;
     private String itemsByType, recordsByType;
-    private String countArticlesByUser;
+    private String countArticlesByUser, countDiscussionsByUser;
     private String insertLastComment, getLastComment, getXthComment, deleteOldComments;
     private String insertUserAction, getUserAction, removeUserAction;
 
@@ -752,7 +753,7 @@ public final class SQLTool implements Configurable {
 
     /**
      * Finds relations, where child is discussion item with comment from user.
-     * Use Qualifiers to set additional parameters.
+     * Use Qualifiers to set additional parameters. Qualifier SORT_BY is prohibited
      * @return List of initialized relations
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
      */
@@ -770,8 +771,7 @@ public final class SQLTool implements Configurable {
      * @throws cz.abclinuxu.exceptions.PersistanceException if there is an error with the underlying persistent storage.
      */
     public int countCommentRelationsByUser(int userId) {
-        StringBuffer sb = new StringBuffer(relationsCommentsByUser);
-        changeToCountStatement(sb);
+        StringBuffer sb = new StringBuffer(countDiscussionsByUser);
         List params = new ArrayList();
         params.add(new Integer(userId));
         return loadNumber(sb.toString(), params).intValue();
@@ -1348,6 +1348,7 @@ public final class SQLTool implements Configurable {
         itemsByType = getValue(PREF_ITEMS_WITH_TYPE, prefs);
         recordsByType = getValue(PREF_RECORDS_WITH_TYPE, prefs);
         countArticlesByUser = getValue(PREF_COUNT_ARTICLES_BY_USER, prefs);
+        countDiscussionsByUser = getValue(PREF_COUNT_DISCUSSIONS_BY_USER, prefs);
         insertLastComment = getValue(PREF_INSERT_LAST_COMMENT, prefs);
         getLastComment = getValue(PREF_GET_LAST_COMMENT, prefs);
         getXthComment = getValue(PREF_GET_OLD_COMMENT, prefs);

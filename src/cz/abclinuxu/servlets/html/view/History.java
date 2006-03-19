@@ -104,11 +104,11 @@ public class History implements AbcAction {
         if ( VALUE_TYPE_ARTICLES.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
             if (uid>0) {
-                data = sqlTool.findArticleRelationsByUser(uid, qualifiers);
                 total = sqlTool.countArticleRelationsByUser(uid);
+                data = sqlTool.findArticleRelationsByUser(uid, qualifiers);
             } else {
-                data = sqlTool.findArticleRelations(qualifiers, 0);
                 total = sqlTool.countArticleRelations(0);
+                data = sqlTool.findArticleRelations(qualifiers, 0);
             }
             found = new Paging(data,from,count,total,qualifiers);
             type = VALUE_TYPE_ARTICLES;
@@ -116,70 +116,58 @@ public class History implements AbcAction {
         } else if ( VALUE_TYPE_NEWS.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
             if ( uid>0 ) {
-                data = sqlTool.findNewsRelationsByUser(uid, qualifiers);
                 total = sqlTool.countNewsRelationsByUser(uid);
+                data = sqlTool.findNewsRelationsByUser(uid, qualifiers);
             } else {
-                data = sqlTool.findNewsRelations(qualifiers);
                 total = sqlTool.countNewsRelations();
+                data = sqlTool.findNewsRelations(qualifiers);
             }
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_NEWS;
 
         } else if ( VALUE_TYPE_FAQ.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
-            data = sqlTool.findItemRelationsWithType(Item.FAQ, qualifiers);
             total = sqlTool.countItemRelationsWithType(Item.FAQ, null);
+            data = sqlTool.findItemRelationsWithType(Item.FAQ, qualifiers);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_FAQ;
 
         } else if ( VALUE_TYPE_HARDWARE.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
-            data = sqlTool.findItemRelationsWithType(Item.HARDWARE, qualifiers);
             total = sqlTool.countItemRelationsWithType(Item.HARDWARE, new Qualifier[]{});
+            data = sqlTool.findItemRelationsWithType(Item.HARDWARE, qualifiers);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_HARDWARE;
 
-        } else if ( VALUE_TYPE_SOFTWARE.equalsIgnoreCase(type) ) {
-            qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
-            if ( uid>0 ) {
-                data = sqlTool.findRecordParentRelationsByUserAndType(uid, Record.SOFTWARE, qualifiers);
-                total = sqlTool.countRecordParentRelationsByUserAndType(uid, Record.SOFTWARE);
-            } else {
-                data = sqlTool.findRecordParentRelationsWithType(Record.SOFTWARE, qualifiers);
-                total = sqlTool.countRecordParentRelationsWithType(Record.SOFTWARE);
-            }
-            found = new Paging(data, from, count, total, qualifiers);
-            type = VALUE_TYPE_SOFTWARE;
-
         } else if ( VALUE_TYPE_DISCUSSION.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
-            data = sqlTool.findDiscussionRelations(qualifiers);
             total = sqlTool.countDiscussionRelations();
+            data = sqlTool.findDiscussionRelations(qualifiers);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_DISCUSSION;
 
         } else if ( VALUE_TYPE_QUESTIONS.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
-            data = sqlTool.findQuestionRelationsByUser(uid, qualifiers);
             total = sqlTool.countQuestionRelationsByUser(uid);
+            data = sqlTool.findQuestionRelationsByUser(uid, qualifiers);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_QUESTIONS;
 
         } else if ( VALUE_TYPE_COMMENTS.equalsIgnoreCase(type) ) {
-            qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
-            data = sqlTool.findCommentRelationsByUser(uid, qualifiers);
+            qualifiers = getQualifiers(params, null, Qualifier.ORDER_DESCENDING, from, count);
             total = sqlTool.countCommentRelationsByUser(uid);
+            data = sqlTool.findCommentRelationsByUser(uid, qualifiers);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_COMMENTS;
 
         } else if ( VALUE_TYPE_DICTIONARY.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
             if ( uid>0 ) {
-                data = sqlTool.findRecordParentRelationsByUserAndType(uid, Record.DICTIONARY, qualifiers);
                 total = sqlTool.countRecordParentRelationsByUserAndType(uid, Record.DICTIONARY);
+                data = sqlTool.findRecordParentRelationsByUserAndType(uid, Record.DICTIONARY, qualifiers);
             } else {
-                data = sqlTool.findRecordParentRelationsWithType(Record.DICTIONARY, qualifiers);
                 total = sqlTool.countRecordParentRelationsWithType(Record.DICTIONARY);
+                data = sqlTool.findRecordParentRelationsWithType(Record.DICTIONARY, qualifiers);
             }
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_DICTIONARY;
@@ -224,7 +212,7 @@ public class History implements AbcAction {
      */
     public static Qualifier[] getQualifiers(Map params, Qualifier sortBy, Qualifier sortDir, int fromRow, int rowCount) {
         String sBy = (String) params.get(PARAM_ORDER_BY);
-        if (sBy!=null) {
+        if (sBy!=null && sortBy != null) {
             if (VALUE_ORDER_BY_CREATED.equals(sBy))
                 sortBy = Qualifier.SORT_BY_CREATED;
             else if (VALUE_ORDER_BY_UPDATED.equals(sBy))

@@ -42,7 +42,7 @@ public class TestTOC extends TestCase {
         d.addElement("node").addAttribute("rid", "10");
         TOC toc = new TOC(root);
 
-        TOC.Chapter current = toc.getChapter(1);
+        Chapter current = toc.getChapter(1);
         current = current.getRightChapter();
         assertEquals(2, current.getRid());
         current = current.getRightChapter();

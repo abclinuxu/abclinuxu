@@ -205,7 +205,7 @@ CREATE TABLE komentar (
  zaznam INT NOT NULL,                      -- id asociovaneho zaznamu
  id INT(5) NOT NULL,                       -- id komentare v ramci diskuse
  nadrazeny INT(5) NULL,                    -- id nadrazeneho komentare, NULL pokud je na nejvyssi urovni
- kdy DATETIME,                             -- cas pridani
+ vytvoreno DATETIME,                       -- cas pridani
  autor INT(5) NULL,                        -- cislo autora prispevku, NULL pokud byl anonymni
  data LONGTEXT NOT NULL                    -- XML s textem komentare atd
 );

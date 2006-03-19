@@ -244,7 +244,8 @@
                             <entry key="relations.news.by.user" value="select R.cislo from polozka P, relace R where P.pridal=? and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek"/>
                             <entry key="relations.record.by.user.and.type" value="select R.cislo from relace R left join zaznam Z on R.potomek=Z.cislo where R.typ_potomka='Z' and Z.pridal=? and Z.typ=?"/>
                             <entry key="relations.question.by.user" value="select R.cislo from relace R, polozka P where R.typ_potomka='P' and R.potomek=P.cislo and R.typ_predka='K' and P.typ=3 and P.pridal=?"/>
-                            <entry key="relations.comment.by.user" value="select distinct R.cislo from relace R, relace P, zaznam Z, komentar K where R.potomek=P.predek and R.typ_potomka='P' and P.potomek=Z.cislo and P.typ_potomka='Z' and Z.typ=4 and K.zaznam=Z.cislo and K.autor=?"/>
+                            <entry key="relations.comment.by.user" value="select R.predchozi,max(vytvoreno) from relace R, komentar K where R.typ_potomka='Z' and R.potomek=K.zaznam and K.autor=? group by K.zaznam order by 2"/>
+                            <entry key="count.relations.comment.by.user" value="select count(distinct R.predchozi) from relace R, komentar K where R.typ_predka='P' and R.typ_potomka='Z' and R.potomek=K.zaznam and K.autor=?"/>
                             <entry key="relations.section.by.type" value="select R.cislo from relace R left join kategorie K on (K.cislo=R.potomek) where typ_potomka='K' and K.typ=?"/>
                             <entry key="relation.dictionary.by.urlname" value="select R.cislo from relace R, polozka P where R.typ_potomka='P' and R.potomek=P.cislo and P.typ=10 and P.podtyp=?"/>
                             <entry key="relations.standalone.polls" value="select R.cislo from relace R, anketa2 A where typ_potomka='A' and potomek=A.cislo and predchozi=250"/>
