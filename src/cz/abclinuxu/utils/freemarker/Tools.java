@@ -322,6 +322,16 @@ public class Tools implements Configurable {
     }
 
     /**
+     * Gets number of activated monitors in given document.
+     *
+     * @return integer
+     */
+    public Integer getMonitorCount(Document document) {
+        Object value = document.selectObject("count(//monitor/id)");
+        return new Integer(((Double) value).intValue());
+    }
+
+    /**
      * If number of votes for yes is higher than for no, than
      * this question is considered to be solved.
      * @return whether the question is solved
@@ -1053,8 +1063,8 @@ public class Tools implements Configurable {
         discussion.setId(obj.getId());
         discussion.setRelationId(rid);
         discussion.setFrozen(document.selectSingleNode("/data/frozen") != null);
-        Object value = document.selectObject("count(//monitor/id)");
-        discussion.setMonitorSize(((Double) value).intValue());
+        Integer monitorCount = getMonitorCount(document);
+        discussion.setMonitorSize(monitorCount.intValue());
         if (user != null) {
             String xpath = "//monitor/id[text()='"+user.getId()+"']";
             discussion.setMonitored(document.selectSingleNode(xpath) != null);
