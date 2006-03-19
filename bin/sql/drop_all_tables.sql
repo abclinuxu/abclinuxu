@@ -1,10 +1,11 @@
 drop table anketa2;
 drop table citac;
-drop table data_ankety;
 drop table kategorie;
+drop table komentar;
 drop table objekt;
 drop table odkaz;
 drop table polozka;
+drop table posledni_komentar;
 drop table pravo;
 drop table presmerovani;
 drop table relace;

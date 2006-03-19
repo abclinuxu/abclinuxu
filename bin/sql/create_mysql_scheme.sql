@@ -172,13 +172,13 @@ CREATE TABLE pravo (
 );
 
 -- seznam poslednich komentaru, ktere si uzivatel precetl
-CREATE TABLE komentar (
+CREATE TABLE posledni_komentar (
  kdo INT(5) NOT NULL,                            -- cislo uzivatele
  diskuse INT(6) NOT NULL,                        -- cislo polozky
  posledni INT(5) NOT NULL,                       -- cislo posledniho komentare
  kdy TIMESTAMP                                   -- cas pridani
 );
-ALTER TABLE komentar ADD PRIMARY KEY komentar_pk (kdo,diskuse);
+ALTER TABLE posledni_komentar ADD PRIMARY KEY posledni_komentar_pk (kdo,diskuse);
 
 CREATE TABLE akce (
  kdo INT(5) NOT NULL,                            -- cislo uzivatele
@@ -199,3 +199,16 @@ CREATE TABLE verze (
 );
 
 ALTER TABLE verze ADD UNIQUE INDEX verze_cesta_verze (cesta,verze);
+
+CREATE TABLE komentar (
+ cislo INT AUTO_INCREMENT PRIMARY KEY,     -- id tohoto radku; v podstate je zbytecny
+ zaznam INT NOT NULL,                      -- id asociovaneho zaznamu
+ id INT(5) NOT NULL,                       -- id komentare v ramci diskuse
+ nadrazeny INT(5) NULL,                    -- id nadrazeneho komentare, NULL pokud je na nejvyssi urovni
+ kdy DATETIME,                             -- cas pridani
+ autor INT(5) NULL,                        -- cislo autora prispevku, NULL pokud byl anonymni
+ data LONGTEXT NOT NULL                    -- XML s textem komentare atd
+);
+
+ALTER TABLE komentar ADD INDEX komentar_zaznam (zaznam);
+ALTER TABLE komentar ADD INDEX komentar_autor (autor);

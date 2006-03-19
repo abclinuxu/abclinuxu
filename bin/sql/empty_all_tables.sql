@@ -6,6 +6,7 @@ delete from komentar;
 delete from objekt;
 delete from odkaz;
 delete from polozka;
+delete from posledni_komentar;
 delete from pravo;
 delete from presmerovani;
 delete from relace;
