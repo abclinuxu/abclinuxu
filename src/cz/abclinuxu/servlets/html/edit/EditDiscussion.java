@@ -259,7 +259,8 @@ public class EditDiscussion implements AbcAction {
 
         if ( !canContinue || params.get(PARAM_PREVIEW)!=null ) {
             comment.setCreated(new Date());
-            comment.setAuthor(new Integer(user.getId()));
+            if (user != null)
+                comment.setAuthor(new Integer(user.getId()));
             env.put(VAR_PREVIEW, comment);
             return FMTemplateSelector.select("EditDiscussion","ask_confirm",env,request);
         }
