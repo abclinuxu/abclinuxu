@@ -10,7 +10,7 @@
                 <td class="td01">Titulek</td>
                 <td class="td02">Stav</td>
                 <td class="td03">Reakcí</td>
-                <td class="td04"><#if byCreated>Vytvoøeno<#else>Poslední</#if></td>
+                <td class="td04">Poslední</td>
             </tr>
         </thead>
         <tbody>
@@ -53,8 +53,7 @@
 <td><input type="text" size="3" value="${FOUND.pageSize}" name="count" tabindex="2"></td>
 <td>
  <select name="orderBy" tabindex="3">
-  <option value="update">data poslední odpovìdi</option>
-  <option value="create">data polo¾ení dotazu</option>
+  <option value="update">data <#if PARAMS.uid?exists>mého </#if>posledního komentáøe</option>
  </select>
 </td>
 <td>
