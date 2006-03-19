@@ -20,18 +20,14 @@ ${DATE.show("CZ_FULL")}
   <a href="${URL.noPrefix("/Profile?action=login")}">Pøihlá¹ení</a>,
   <a href="${URL.noPrefix("/EditUser?action=register")}">Registrace</a>
  </#if>
-</p>
 
-<p>
  <form action="/Search" method="post">
-  <b>Vyhledávání</b>
+  <b>Hledávání</b>
   <input type="text" name="query" size="14">
   <input type="submit" value="Hledej">
-  <a href="${URL.make("/clanky/ViewRelation?rid"+5024)}">Nápovìda</a>
+  <a href="/doc/napoveda/hledani">Nápovìda</a>
  </form>
 </p>
-
-<#flush>
 
 <hr width="100%">
 

@@ -3,7 +3,8 @@
 <hr width="100%">
 
 <#if VARS.currentPoll?exists>
- <#assign relAnketa = VARS.currentPoll, anketa = relAnketa.child, total = anketa.totalVoters>
+ <#assign relAnketa = VARS.currentPoll, anketa = relAnketa.child, total = anketa.totalVoters,
+  url=relAnketa.url?default("/ankety/show/"+relAnketa.id)>
  <#if anketa.multiChoice>
   <#assign type = "CHECKBOX">
   <#else>
@@ -20,37 +21,42 @@
    ${choice.text} (${procento}%) ${TOOL.percentBar(procento)}<br>
   </#list>
 
-  <br>Celkem ${total} hlasù<br>
+  <br>Celkem ${total} hlasù
+  <#assign diz=TOOL.findComments(anketa)>
+  <a href="${url}">Komentáøù: ${diz.responseCount}</a><br>
   <input type="submit" value="Hlasuj">
   </span>
   <input type="hidden" name="url" value="/clanky/show/${relAnketa.id}">
   <input type="hidden" name="action" value="vote">
  </form>
-  <#assign diz=TOOL.findComments(anketa)>
-  <a href="/news/show/${relAnketa.id}">Komentáøù:</a> ${diz.responseCount}
  </p>
 </#if>
 
+<h3>Slu¾by</h3>
 <p>
- <b>Slu¾by</b>
- <a href="${URL.make("/clanky/dir/3500")}">Po¾adavky</a>,
+<a href="/diskuse.jsp" class="za_mn_odkaz">Diskuse</a>
+<a href="/faq" class="za_mn_odkaz">FAQ</a>
+<a href="/hardware" class="za_mn_odkaz">Hardware</a>
+<a href="/clanky" class="za_mn_odkaz">Èlánky</a>
+<a href="/ucebnice" class="za_mn_odkaz">Uèebnice</a>
+<a href="/blog" class="za_mn_odkaz">Blogy</a>
+<a href="/download/abicko.jsp" class="za_mn_odkaz">PDF</a>
+<a href="/slovnik" class="za_mn_odkaz">Slovník</a>
+<a href="/ankety" class="za_mn_odkaz">Ankety</a>
+<a href="/ovladace" class="za_mn_odkaz">Ovladaèe</a>
+<a href="/hosting" class="za_mn_odkaz">Hosting</a>
+<a href="http://www.praceabc.cz" class="za_mn_odkaz">Práce</a>
+</p>
+
+<h3>O serveru</h3>
+<p>
+ <a href="${URL.make("/clanky/dir/3500")}">Po¾adavky</a>
  <a href="http://abicko.stickfish.cz/bugzilla/">Bugzilla</a>
-</p>
-
-<h1>O serveru</h1>
-<p>
- <a href="/doc/portal/rss-a-jine-pristupy">RSS a PDA</a>,
- <a href="/doc/propagace">Propagace</a>,
- <a href="/clanky/show/44049">Tým AbcLinuxu</a>,
- <a href="/clanky/novinky/pojdte-psat-pro-abclinuxu.cz">Pi¹te pro abclinuxu</a>,
+ <a href="/doc/portal/rss-a-jine-pristupy">RSS a PDA</a>
+ <a href="/doc/propagace">Propagace</a>
+ <a href="/clanky/show/44049">Tým AbcLinuxu</a>
+ <a href="/clanky/novinky/pojdte-psat-pro-abclinuxu.cz">Pi¹te pro abclinuxu</a>
  ISSN 1214-1267
-</p>
-
-<p>
- <b>Doporuèujeme</b>
- <a href="http://www.linux.cz">Linux.cz</a>,
- <a href="http://www.broadnet.cz">Broadnet,</a>
- <a href="http://www.pravednes.cz">pravednes.cz</a>
 </p>
 
 </body>
