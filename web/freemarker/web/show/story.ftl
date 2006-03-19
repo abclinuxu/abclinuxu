@@ -218,7 +218,7 @@ ${TOOL.xpath(ITEM, "/data/content")}
            <@lib.showThread thread, 0, diz, !diz.frozen />
         </#list>
     <#else>
-       <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vlo¾it první komentáø</a>
+       <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+STORY.id)}">Vlo¾it první komentáø</a>
     </#if>
 </#if>
 
