@@ -327,7 +327,7 @@ public class EditRequest implements AbcAction, Configurable {
         relation = (Relation) persistance.findById(relation);
         Item discussion = (Item) persistance.findById(relation.getChild());
         Comment comment = EditDiscussion.getDiscussedComment(params, discussion, persistance);
-        String title = comment.getData().selectSingleNode("title").getText();
+        String title = comment.getTitle();
         String action = "<a href=\"/forum/show/" + relation.getId() + "#"+comment.getId()+"\">" + title + "</a>";
 
         boolean saved = addRequest(request, action, true, env);
