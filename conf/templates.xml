@@ -328,6 +328,9 @@
     <action name="sekce" content="/show/sekce.ftl">
       <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
     </action>
+    <action name="hwsekce" content="/show/hwsekce.ftl">
+      <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
+    </action>
     <action name="rubrika" content="/show/rubrika.ftl">
       <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
     </action>

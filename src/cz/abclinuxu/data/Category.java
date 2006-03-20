@@ -19,16 +19,15 @@
 package cz.abclinuxu.data;
 
 import cz.abclinuxu.utils.Misc;
+import org.dom4j.Element;
 
 /**
  * Category is a node of the tree
  */
 public class Category extends GenericDataObject {
 
-    /** normal category, only admin can insert content */
-    public static final int CLOSED_HARDWARE_SECTION = 0;
-    /** normal category, every logged user can insert content */
-    public static final int OPEN_HARDWARE_SECTION = 1;
+    /** section that can hold hardware entries */
+    public static final int HARDWARE_SECTION = 1;
     /** mark for forum */
     public static final int FORUM = 2;
     /** marks section containing blogs of the user */
@@ -53,20 +52,14 @@ public class Category extends GenericDataObject {
      * @return whether normal users may add content to this category
      */
     public boolean isOpen() {
-        return type==OPEN_HARDWARE_SECTION;
-    }
-
-    /**
-     * sets whether normal users may add content to this category
-     */
-    public void setOpen(boolean open) {
-        type = (open)? OPEN_HARDWARE_SECTION:CLOSED_HARDWARE_SECTION;
+        Element element = (Element) getData().selectSingleNode("/data/writeable");
+        return element != null && Boolean.valueOf(element.getText()).booleanValue();
     }
 
     public String toString() {
-        StringBuffer sb = new StringBuffer("Category: id="+id);
-        if ( owner!=0 ) sb.append(",owner="+owner);
-        if ( documentHandler!=null ) sb.append(",data="+getDataAsString());
+        StringBuffer sb = new StringBuffer("Category: id=").append(id);
+        sb.append(", type=").append(type);
+        if ( owner!=0 ) sb.append(", owner=").append(owner);
         if ( isOpen() ) sb.append(", otevrena"); else sb.append(", uzavrena");
         return sb.toString();
     }

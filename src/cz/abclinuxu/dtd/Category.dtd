@@ -1,8 +1,9 @@
-<!ELEMENT data (name,icon?,note?)>
+<!ELEMENT data (name,icon?,note?,writeable?)>
 <!ELEMENT name (#PCDATA)> <!-- maximum length is few words -->
 <!ELEMENT icon (#PCDATA)> <!-- absolute path including protocol, or relative path to icon directory -->
 <!ELEMENT note (#PCDATA)> <!-- longer description of this category, to be displayed at the top of category view -->
 <!ATTLIST note format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
+<!ELEMENT writeable (#PCDATA)> <!-- if 'true' then users can add content in this section -->
 
 <!-- DTD for blog -->
 <!ELEMENT data (categories?, custom, settings?, archive?, unpublished?)>

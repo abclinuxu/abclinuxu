@@ -79,14 +79,14 @@ public class EditCategory implements AbcAction {
 
         Category category = (Category) InstanceUtils.instantiateParam(PARAM_CATEGORY,Category.class,params, request);
         if ( category!=null ) {
-            category = (Category) persistance.findById(category);
+            category = (Category) persistance.findById(category).clone();
             env.put(VAR_CATEGORY,category);
         }
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation!=null ) {
             relation = (Relation) persistance.findById(relation);
-            category = (Category) relation.getChild();
+            category = (Category) persistance.findById(relation.getChild()).clone();
             env.put(VAR_RELATION,relation);
             env.put(VAR_CATEGORY,category);
         }
@@ -149,6 +149,7 @@ public class EditCategory implements AbcAction {
         Category category = new Category();
 
         boolean canContinue = setType(params, category, env);
+        canContinue &= setOpen(params, document);
         if (!canContinue)
             return FMTemplateSelector.select("EditCategory", "add", env, request);
 
@@ -188,10 +189,7 @@ public class EditCategory implements AbcAction {
      */
     protected String actionEditStep1(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
-
         Category category = (Category) env.get(VAR_CATEGORY);
-        persistance.synchronize(category);
         Document document = category.getData();
         Node node = document.selectSingleNode("data/name");
         if (node!=null) params.put(PARAM_NAME,node.getText());
@@ -199,16 +197,15 @@ public class EditCategory implements AbcAction {
         if (node!=null) params.put(PARAM_ICON,node.getText());
         node = document.selectSingleNode("data/note");
         if (node!=null) params.put(PARAM_NOTE,node.getText());
+        node = document.selectSingleNode("data/writeable");
+        if (node!=null) params.put(PARAM_OPEN, node.getText());
 
         switch (category.getType()) {
             case Category.SOFTWARE_SECTION:
                 params.put(PARAM_TYPE, "software");
                 break;
-            case Category.CLOSED_HARDWARE_SECTION:
-                params.put(PARAM_TYPE, "hw_closed");
-                break;
-            case Category.OPEN_HARDWARE_SECTION:
-                params.put(PARAM_TYPE, "hw_open");
+            case Category.HARDWARE_SECTION:
+                params.put(PARAM_TYPE, "hardware");
                 break;
             case Category.FORUM:
                 params.put(PARAM_TYPE, "forum");
@@ -244,7 +241,6 @@ public class EditCategory implements AbcAction {
 
         Relation relation = (Relation) env.get(VAR_RELATION);
         Category category = (Category) env.get(VAR_CATEGORY);
-        persistance.synchronize(category);
         Document document = category.getData();
         Element node = DocumentHelper.makeElement(document,"data/name");
         tmp = (String) params.get(PARAM_NAME);
@@ -261,6 +257,7 @@ public class EditCategory implements AbcAction {
         node.addAttribute("format", Integer.toString(format.getId()));
 
         boolean canContinue = setType(params, category, env);
+        canContinue &= setOpen(params, document);
         if (!canContinue)
             return FMTemplateSelector.select("EditCategory", "edit", env, request);
 
@@ -284,7 +281,7 @@ public class EditCategory implements AbcAction {
     /**
      * Updates type from parameters. Changes are not synchronized with persistance.
      * @param params map holding request's parameters
-     * @param category   article to be updated
+     * @param category category to be updated
      * @return false, if there is a major error.
      */
     private boolean setType(Map params, Category category, Map env) {
@@ -293,16 +290,10 @@ public class EditCategory implements AbcAction {
             ServletUtils.addError(PARAM_TYPE, "Vyberte typ sekce!", env, null);
             return false;
         }
-
-        int oldValue = category.getType();
-        category.setType(-1);
-
         if ("software".equals(type))
             category.setType(Category.SOFTWARE_SECTION);
-        if ("hw_closed".equals(type))
-            category.setType(Category.CLOSED_HARDWARE_SECTION);
-        if ("hw_open".equals(type))
-            category.setType(Category.OPEN_HARDWARE_SECTION);
+        if ("hardware".equals(type))
+            category.setType(Category.HARDWARE_SECTION);
         if ("forum".equals(type))
             category.setType(Category.FORUM);
         if ("blog".equals(type))
@@ -312,12 +303,25 @@ public class EditCategory implements AbcAction {
         if ("faq".equals(type))
             category.setType(Category.FAQ);
 
-        if (category.getType()==-1) {
-            category.setType(oldValue);
-            ServletUtils.addError(PARAM_TYPE, "Vybrali jste neznámý typ sekce!", env, null);
-            return false;
-        }
+        return true;
+    }
 
+    /**
+     * Updates type from parameters. Changes are not synchronized with persistance.
+     *
+     * @param params   map holding request's parameters
+     * @param document document to be update
+     * @return false, if there is a major error.
+     */
+    private boolean setOpen(Map params, Document document) {
+        Boolean open = Boolean.valueOf((String) params.get(PARAM_OPEN));
+        if (open.booleanValue())
+            DocumentHelper.makeElement(document, "/data/writeable").setText("true");
+        else {
+            Element element = document.getRootElement().element("writeable");
+            if (element != null)
+                element.detach();
+        }
         return true;
     }
 }

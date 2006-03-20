@@ -16,9 +16,9 @@
         <td width="120" class="required">Typ</td>
         <td>
             <select name="type" tabindex="2">
-                <option value="faq"<#if PARAMS.type?default("software")=="software"> SELECTED</#if>>Sekce Software</option>
-                <option value="hw_closed"<#if PARAMS.type?if_exists=="hw_closed"> SELECTED</#if>>Otevøená hardwarová sekce</option>
-                <option value="hw_open"<#if PARAMS.type?if_exists=="open"> SELECTED</#if>>Uzavøená hardwarová sekce</option>
+                <option value="nic"<#if ! PARAMS.type?exists> SELECTED</#if>>Sekce</option>
+                <option value="software"<#if PARAMS.type?if_exists=="software"> SELECTED</#if>>Sekce Software</option>
+                <option value="hardware"<#if PARAMS.type?if_exists=="hardware"> SELECTED</#if>>Sekce hardware</option>
                 <option value="faq"<#if PARAMS.type?if_exists=="faq"> SELECTED</#if>>Sekce FAQ</option>
                 <option value="forum"<#if PARAMS.type?if_exists=="forum"> SELECTED</#if>>Diskusní fórum</option>
                 <option value="section"<#if PARAMS.type?if_exists=="section"> SELECTED</#if>>Rubrika pro èlánky</option>
@@ -26,10 +26,16 @@
             </select>
         </td>
     </tr>
+    <tr>
+        <td width="120">Otevøená</td>
+        <td>
+            <input type="checkbox" name="open" value="true"<#if PARAMS.open?default("false")=="true"> checked</#if> tabindex="3">
+        </td>
+    </tr>
   <tr>
    <td width="120">Poznámka</td>
    <td>
-    <textarea name="note" cols="80" rows="15" tabindex="3">${PARAMS.note?if_exists?html}</textarea>
+    <textarea name="note" cols="80" rows="15" tabindex="4">${PARAMS.note?if_exists?html}</textarea>
     <div class="error">${ERRORS.note?if_exists}</div>
    </td>
   </tr>
@@ -42,7 +48,7 @@
   </tr>
   <tr>
    <td width="120">&nbsp;</td>
-   <td><input type="submit" VALUE="Pokraèuj" TABINDEX="4"></td>
+   <td><input type="submit" VALUE="Dokonèi" TABINDEX="6"></td>
   </tr>
  </table>
 

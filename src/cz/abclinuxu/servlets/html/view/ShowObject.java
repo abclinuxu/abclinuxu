@@ -83,6 +83,7 @@ public class ShowObject implements AbcAction {
     Persistance persistance = PersistanceFactory.getPersistance();
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String action = (String) params.get(PARAM_ACTION);
 
@@ -90,11 +91,9 @@ public class ShowObject implements AbcAction {
             return processCensored(request,env);
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
-        if ( relation==null ) {
+        if ( relation==null )
             throw new MissingArgumentException("Parametr relationId je prázdný!");
-        }
-
-        Tools.sync(relation);
+        relation = (Relation) persistance.findById(relation);
         env.put(VAR_RELATION,relation);
 
         // check ACL

@@ -69,12 +69,15 @@ import org.dom4j.Element;
 public class ViewCategory implements AbcAction {
     /** if set, it indicates to display parent in the relation of two categories */
     public static final String PARAM_PARENT = "parent";
-    public static final String PARAM_RELATION_ID = "relationId";
-    public static final String PARAM_RELATION_ID_SHORT = "rid";
+    public static final String PARAM_RELATION = "relationId";
+    public static final String PARAM_RELATION_SHORT = "rid";
     /** n-th oldest object, where to display from */
     public static final String PARAM_FROM = "from";
     /** how many object to display */
     public static final String PARAM_COUNT = "count";
+    /** plain category will be displayed, not high-level representation */
+    public static final String PARAM_RAW = "raw";
+
     /** holds category to be displayed */
     public static final String VAR_CATEGORY = "CATEGORY";
     public static final String VAR_CHILDREN = "CHILDREN";
@@ -84,14 +87,13 @@ public class ViewCategory implements AbcAction {
     static Persistance persistance = PersistanceFactory.getPersistance();
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
-        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID_SHORT, Relation.class, params, request);
-        if ( relation==null ) {
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
+        if (relation == null)
             throw new MissingArgumentException("Parametr relationId je prázdný!");
-        }
-
-        Tools.sync(relation);
+        relation = (Relation) persistance.findById(relation);
         env.put(ShowObject.VAR_RELATION,relation);
         List parents = persistance.findParents(relation);
         env.put(ShowObject.VAR_PARENTS,parents);
@@ -124,6 +126,7 @@ public class ViewCategory implements AbcAction {
      * @return template to be rendered
      */
     public static String processCategory(HttpServletRequest request, HttpServletResponse response, Map env, Relation relation) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         String tmp = (String) ((Map)env.get(Constants.VAR_PARAMS)).get(PARAM_PARENT);
         GenericObject obj;
         if ( Misc.same(tmp,"yes") )
@@ -142,11 +145,15 @@ public class ViewCategory implements AbcAction {
         Tools.sync(category);
         env.put(VAR_CATEGORY, category);
 
-        if (category.getType()==Category.SECTION)
-            return processArticleSection(request, env, relation);
-
         List children = Tools.syncList(category.getChildren());
         env.put(VAR_CHILDREN, children);
+
+        if (params.get(PARAM_RAW) != null)
+            return FMTemplateSelector.select("ViewCategory", "sekce", env, request);
+
+        int type = category.getType();
+        if (type == Category.SECTION)
+            return processArticleSection(request, env, relation);
 
         switch ( relation.getId() ) {
             case Constants.REL_DRIVERS:
@@ -160,8 +167,12 @@ public class ViewCategory implements AbcAction {
             case Constants.REL_DOCUMENTS:
                 return FMTemplateSelector.select("ViewCategory", "documents", env, request);
         }
+
         if ( category.getId()==Constants.CAT_ARTICLES )
                 return FMTemplateSelector.select("ViewCategory","rubriky",env, request);
+
+        if (type == Category.HARDWARE_SECTION)
+            return FMTemplateSelector.select("ViewCategory", "hwsekce", env, request);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         tmp = urlUtils.getPrefix();
@@ -179,8 +190,8 @@ public class ViewCategory implements AbcAction {
             Paging paging = new Paging(children, 0, children.size(), children.size());
             env.put(VAR_ARTICLES, paging);
             return FMTemplateSelector.select("ViewCategory","rubrika",env, request);
-        } else
-            return FMTemplateSelector.select("ViewCategory","sekce",env, request);
+        }
+        return FMTemplateSelector.select("ViewCategory","sekce",env, request);
     }
 
     public static String processArticleSection(HttpServletRequest request, Map env, Relation relation) throws Exception {
