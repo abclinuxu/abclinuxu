@@ -84,8 +84,8 @@
             <#if USER?exists>
                 <a href="${URL.noPrefix("/Profile/"+USER.id)}">${USER.name}</a> |
                 <#assign blogName = TOOL.xpath(USER,"/data/settings/blog/@name")?default("UNDEF")>
-                <#if blogName!="UNDEF"><a href="/blog/${blogName}">Mùj blog</a> |</#if>
-                <a href="${URL.noPrefix("/Profile/"+USER.id+"?action=myPage")}">Nastavení</a> |
+                <#if blogName!="UNDEF"><a href="/blog/${blogName}">Blog</a> |</#if>
+                <a href="/History?type=comments&uid=${USER.id}">Diskuse</a> |
                 <a href="${URL.noPrefix("/Index?logout=true")}">Odhlá¹ení</a> |
             <#else>
                 <a href="${URL.noPrefix("/Profile?action=login")}">Pøihlá¹ení</a> |
@@ -202,7 +202,7 @@
 
             <#if ! IS_INDEX?exists>
                 <p align="center">
-                    <a href="/hosting"><img src="/images/bannery/abchosting.gif" alt="AbcHosting je tu pro vás" 
+                    <a href="/hosting"><img src="/images/bannery/abchosting.gif" alt="AbcHosting je tu pro vás"
                     border="0" width="251" height="60"></a>
                 </p>
                 <!-- prace.abclinuxu.cz -->
