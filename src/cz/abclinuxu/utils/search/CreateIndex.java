@@ -22,6 +22,8 @@ import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.persistance.cache.OnlyUserCache;
 import cz.abclinuxu.persistance.extra.*;
 import cz.abclinuxu.data.*;
+import cz.abclinuxu.data.view.DiscussionRecord;
+import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.config.Configurable;
@@ -29,7 +31,6 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.exceptions.PersistanceException;
 import cz.abclinuxu.exceptions.InvalidDataException;
 import cz.abclinuxu.scheduler.WhatHappened;
@@ -59,7 +60,7 @@ public class CreateIndex implements Configurable {
     static String indexPath,lastRunFilename;
     static Persistance persistance;
     static SQLTool sqlTool;
-    static HashMap indexed = new HashMap(100000, 0.99f);
+    static HashMap indexed = new HashMap(150000, 0.99f);
 
     static {
         Configurator configurator = ConfigurationManager.getConfigurator();
@@ -516,15 +517,17 @@ public class CreateIndex implements Configurable {
 
         if ( discussion.getChildren().size()>0 ) {
             Record record = (Record) ((Relation) discussion.getChildren().get(0)).getChild();
-            persistance.synchronize(record);
+            record = (Record) persistance.findById(record);
+            DiscussionRecord dizRecord = (DiscussionRecord) record.getCustom();
+            LinkedList stack = new LinkedList(dizRecord.getThreads());
 
-            Iterator nodes = record.getData().getRootElement().elementIterator("comment");
-            while (nodes.hasNext()) {
-                data = (Element) nodes.next();
-                node = data.element("title");
-                if ( node!=null ) {
+            while (stack.size() > 0) {
+                Comment comment = (Comment) stack.removeFirst();
+                stack.addAll(comment.getChildren());
+                String s = comment.getTitle();
+                if ( s != null ) {
                     sb.append(" ");
-                    sb.append(node.getText());
+                    sb.append(s);
                 }
 
                 node = data.element("text");
@@ -533,16 +536,14 @@ public class CreateIndex implements Configurable {
                     sb.append(node.getText());
                 }
 
-                node = data.element("author");
-                if ( node!=null ) {
+                s = comment.getAnonymName();
+                if ( s != null ) {
                     sb.append(" ");
-                    sb.append(node.getText());
+                    sb.append(s);
                 } else {
-                    node = data.element("author_id");
-                    if (node!=null) {
-                        int id = Misc.parseInt(node.getText(), -1);
-                        storeUser(id, sb);
-                    }
+                    Integer id = comment.getAuthor();
+                    if (id != null)
+                        storeUser(id.intValue(), sb);
                 }
             }
         }
