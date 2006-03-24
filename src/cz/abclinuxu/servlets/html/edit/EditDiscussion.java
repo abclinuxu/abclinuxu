@@ -1174,6 +1174,8 @@ public class EditDiscussion implements AbcAction {
      * @return true
      */
     static boolean setUserIPAddress(Element root, HttpServletRequest request) {
+        if (request == null)
+            return true;
         String ip = ServletUtils.getClientIPAddress(request);
         DocumentHelper.makeElement(root, "author_ip").setText(ip);
         return true;

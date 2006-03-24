@@ -220,7 +220,7 @@ public class GenerateDevelDatabase {
         map.put(EditArticle.VAR_RELATION, articles);
         map.put(Constants.VAR_USER, admin);
         params.put(EditArticle.PARAM_TITLE, "Jaderné noviny 000");
-        params.put(EditArticle.PARAM_PEREX, "Jádro portována do toastovaèe!");
+        params.put(EditArticle.PARAM_PEREX, "Jádro portováno do toastovaèe!");
         params.put(EditArticle.PARAM_CONTENT, "Slavný kernel hacker a fanou¹ek Linuxu JXP naportoval kernel " +
                 "na toastovaè. A¾ si pøí¹tì budete dìlat toasty, o optimální teplotu se bude starat Linuks.");
         params.put(EditArticle.PARAM_AUTHOR, Integer.toString(user.getId()));
