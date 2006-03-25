@@ -39,8 +39,9 @@
 
 
 <!-- Item.Discussion -->
-<!ELEMENT data (comments, author?, author_ip?, text, title?, frozen?, solved?)>
+<!ELEMENT data (comments, last_id?, author?, author_ip?, text, title?, frozen?, solved?)>
 <!ELEMENT comments (#PCDATA)> <!-- integer, number of comments or replies -->
+<!ELEMENT last_id (#PCDATA)> <!-- integer, id of last comment -->
 <!ELEMENT author (#PCDATA)> <!-- unknow user's name -->
 <!ELEMENT author_ip (#PCDATA)> <!-- IP address of the user -->
 <!ELEMENT title (#PCDATA)> <!-- title of this reaction, usually question -->

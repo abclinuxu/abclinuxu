@@ -139,7 +139,7 @@ public class DiscussionRecord implements Cloneable {
     }
 
     /**
-     * @return maximum id used in comments
+     * @return maximum id used in comments or zero, if there is no comment at all
      */
     public int getMaxCommentId() {
         return maxCommentId;
@@ -151,22 +151,6 @@ public class DiscussionRecord implements Cloneable {
      */
     public void setMaxCommentId(int maxCommentId) {
         this.maxCommentId = maxCommentId;
-    }
-
-    /**
-     * Finds and sets greatest id of all comments.
-     */
-    public void setUpGreatestId() {
-        int max = 0;
-        LinkedList stack = new LinkedList(threads);
-        Comment comment;
-        while (stack.size() > 0) {
-            comment = (Comment) stack.removeFirst();
-            stack.addAll(comment.getChildren());
-            if (max < comment.getId())
-                max = comment.getId();
-        }
-        maxCommentId = max;
     }
 
     /**
@@ -187,15 +171,18 @@ public class DiscussionRecord implements Cloneable {
     /**
      * Ensures correct value of totalComments property.
      */
-    public void setUpTotalComments() {
-        int i = 0;
+    public void calculateCommentStatistics() {
+        int i = 0, max = 0;
         LinkedList stack = new LinkedList(threads);
         Comment comment;
         while (stack.size() > 0) {
             comment = (Comment) stack.removeFirst();
             stack.addAll(comment.getChildren());
+            if (max < comment.getId())
+                max = comment.getId();
             i++;
         }
+        maxCommentId = max;
         totalComments = i;
     }
 

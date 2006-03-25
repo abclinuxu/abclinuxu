@@ -388,7 +388,7 @@ public class EditDiscussion implements AbcAction {
             Comment parent = dizRecord.getComment(comment.getParent().intValue());
             parent.addChild(comment);
         }
-        dizRecord.setUpTotalComments();
+        dizRecord.calculateCommentStatistics();
 
         if (record.getId() == 0) {
             persistance.create(record);
@@ -673,7 +673,7 @@ public class EditDiscussion implements AbcAction {
         if (!removed)
             dizRecord.removeThread(comment, true);
 
-        dizRecord.setUpTotalComments();
+        dizRecord.calculateCommentStatistics();
         persistance.update(record);
         AdminLogger.logEvent(user, "smazal vlakno " + threadId + ", relace " + mainRelation.getId());
 
@@ -952,11 +952,9 @@ public class EditDiscussion implements AbcAction {
         movedComment.setParent(null);
         movedComment.setCreated(new Date());
         newDizRecord.addThread(movedComment);
-        newDizRecord.setUpTotalComments();
-        newDizRecord.setUpGreatestId();
+        newDizRecord.calculateCommentStatistics();
         originalComment.removeAllChildren(currentDizRecord);
-        currentDizRecord.setUpTotalComments();
-        currentDizRecord.setUpGreatestId();
+        currentDizRecord.calculateCommentStatistics();
 
         // nastavit hlavicku nove diskuse
         setCommentsCount(newItemRoot, newDizRecord);
@@ -1221,14 +1219,17 @@ public class EditDiscussion implements AbcAction {
     }
 
     /**
-     * Updates number of comments in discussion. Changes are not synchronized with persistance.
+     * Updates number of comments in discussion. It is assumed that
+     * dizRecord.calculateCommentStatistics() was already called.
+     * Changes are not synchronized with persistance.
      * @param itemRoot root element of item to be updated.
      * @param dizRecord discussion record
      * @return false, if there is a major error.
      */
     static boolean setCommentsCount(Element itemRoot, DiscussionRecord dizRecord) {
-        dizRecord.setUpTotalComments();
+        String max = Integer.toString(dizRecord.getMaxCommentId());
         String total = Integer.toString(dizRecord.getTotalComments());
+        DocumentHelper.makeElement(itemRoot, "last_id").setText(max);
         DocumentHelper.makeElement(itemRoot, "comments").setText(total);
         return true;
     }
