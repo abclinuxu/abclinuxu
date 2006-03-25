@@ -21,18 +21,15 @@ package cz.abclinuxu.utils.email.forum;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.data.Record;
-import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.view.*;
 import cz.abclinuxu.utils.email.EmailSender;
-import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.servlets.Constants;
 import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Date;
 import java.io.UnsupportedEncodingException;
 
 import org.dom4j.Element;
@@ -58,52 +55,39 @@ public class CommentDecorator {
     public static Map getEnvironment(Comment comment) {
         HashMap env = new HashMap();
         Persistance persistance = PersistanceFactory.getPersistance();
-        GenericDataObject gdo = null;
         Element root;
         String authorName = null;
-        Date published = null;
+        cz.abclinuxu.data.view.Comment dizComment;
 
-        if (comment.recordId==0) {
-            gdo = (GenericDataObject) persistance.findById(new Item(comment.discussionId));
-            root = gdo.getData().getRootElement();
-            published = gdo.getCreated();
-            if ( gdo.getOwner()!=0 ) {
-                User author = (User) persistance.findById(new User(gdo.getOwner()));
-                if (author.getNick()!=null)
-                    authorName = author.getNick();
-                else
-                    authorName = author.getName();
-            } else
-                authorName = root.elementText("author");
+        if (comment.recordId == 0) {
+            Item item = (Item) persistance.findById(new Item(comment.discussionId));
+            dizComment = new ItemComment(item);
+            root = item.getData().getRootElement();
         } else {
-            gdo = (GenericDataObject) persistance.findById(new Record(comment.recordId));
-            String xpath = "//comment[@id='"+comment.threadId+"']";
-            root = (Element) gdo.getData().selectSingleNode(xpath);
-            published = Misc.parseDate(root.elementText("created"), Constants.isoFormat);
-
-            String tmp = root.elementText("author_id");
-            if (tmp!=null) {
-                int id = Misc.parseInt(tmp, 0);
-                User user = (User) persistance.findById(new User(id));
-                authorName = user.getNick();
-                if (authorName==null)
-                    authorName = user.getName();
-            } else
-                authorName = root.elementText("author");
+            Record record = (Record) persistance.findById(new Record(comment.recordId));
+            DiscussionRecord dizRecord = (DiscussionRecord) record.getCustom();
+            dizComment = dizRecord.getComment(comment.threadId);
+            root = (Element) dizComment.getData().getRootElement();
         }
 
-        String title = root.elementText("title");
-        String text = root.elementText("text");
+        Integer parent = dizComment.getParent();
+        String text = root.elementText("//text");
         text = Tools.removeTags(text);
-        String parent = root.elementText("parent");
+
+        authorName = dizComment.getAnonymName();
+        if (authorName == null) {
+            User user = (User) persistance.findById(new User(dizComment.getAuthor().intValue()));
+            authorName = user.getNick();
+            if (authorName == null)
+                authorName = user.getName();
+        }
+        authorName = DiacriticRemover.getInstance().removeDiacritics(authorName);
 
         env.put(VAR_CONTENT, text);
         env.put(VAR_RELATION_ID, Integer.toString(comment.relationId));
         env.put(VAR_DISCUSSION_ID, Integer.toString(comment.discussionId));
         env.put(VAR_THREAD_ID, Integer.toString(comment.threadId));
-
-        env.put(EmailSender.KEY_SUBJECT, title);
-        authorName = DiacriticRemover.getInstance().removeDiacritics(authorName);
+        env.put(EmailSender.KEY_SUBJECT, dizComment.getTitle());
         try {
             Address from = new InternetAddress("diskuse@abclinuxu.cz", authorName);
             env.put(EmailSender.KEY_FROM, from);
@@ -112,9 +96,9 @@ public class CommentDecorator {
         }
         env.put(EmailSender.KEY_REPLYTO, "bounce@abclinuxu.cz");
         env.put(EmailSender.KEY_TEMPLATE, "/mail/forum/comment.ftl");
-        env.put(EmailSender.KEY_SENT_DATE, published);
+        env.put(EmailSender.KEY_SENT_DATE, dizComment.getCreated());
         env.put(EmailSender.KEY_MESSAGE_ID, ""+comment.discussionId+"."+comment.threadId+"@abclinuxu.cz");
-        if (parent!=null)
+        if (parent != null)
             env.put(EmailSender.KEY_REFERENCES, ""+comment.discussionId+"."+parent+"@abclinuxu.cz");
 
         return env;
