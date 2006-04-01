@@ -16,6 +16,9 @@
         tohoto ovladaèe, tak¾e si mù¾ete prohlédnout, jakými zmìnami ovladaè pro¹el postupem èasu.
     </#if>
 </p>
+<#if USER?exists && USER.hasRole("remove relation")>
+  <a href="${URL.noPrefix("/EditRelation?action=remove&amp;prefix=/ovladace&amp;rid="+RELATION.id)}">Smazat</a>
+</#if>
 
 <p><b>AbcMonitor</b> vám emailem za¹le upozornìní pøi zmìnì.
  <#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")?exists>
