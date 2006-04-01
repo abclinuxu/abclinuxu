@@ -71,7 +71,7 @@ public class CommentDecorator {
         }
 
         Integer parent = dizComment.getParent();
-        String text = root.elementText("//text");
+        String text = root.elementText("text");
         text = Tools.removeTags(text);
 
         authorName = dizComment.getAnonymName();
