@@ -8,7 +8,7 @@ delete from odkaz;
 delete from polozka;
 delete from posledni_komentar;
 delete from pravo;
-delete from presmerovani;
+delete from statistika;
 delete from relace;
 delete from server;
 delete from uzivatel;

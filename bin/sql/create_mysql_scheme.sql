@@ -155,13 +155,12 @@ CREATE TABLE citac (
 );
 ALTER TABLE citac ADD INDEX in_citac (typ,cislo);
 
--- statistiky pouzivani odkazu
-CREATE TABLE presmerovani (
- den DATE NOT NULL,                     -- den statistiky
- server INT(3) NOT NULL,                -- identifikator serveru
- soucet SMALLINT DEFAULT 0,             -- pocet presmerovani daneho dne pro
-                                        -- urcity server
- PRIMARY KEY a (den,server)
+-- statistiky pouzivani sluzeb
+CREATE TABLE statistika (
+ den DATE NOT NULL,                     -- den
+ typ CHAR(10) NOT NULL,                 -- typ
+ pocet INT DEFAULT 0,                   -- pocet pouziti daneho typu dany den
+ PRIMARY KEY statistika_den_typ (den, typ)
 );
 
 

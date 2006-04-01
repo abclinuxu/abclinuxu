@@ -7,7 +7,7 @@ drop table odkaz;
 drop table polozka;
 drop table posledni_komentar;
 drop table pravo;
-drop table presmerovani;
+drop table statistika;
 drop table relace;
 drop table server;
 drop table uzivatel;

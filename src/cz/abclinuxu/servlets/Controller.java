@@ -24,6 +24,7 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.url.URLMapper;
 import cz.abclinuxu.servlets.html.HTMLVersion;
 import cz.abclinuxu.servlets.wap.WapVersion;
+import cz.abclinuxu.scheduler.UpdateStatistics;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -46,11 +47,49 @@ public class Controller extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Map env = new HashMap();
         performInit(request, response, env);
+        String page = null;
         String server = request.getServerName();
-        if (server.startsWith(URLMapper.Version.WAP.toString()))
+
+        if (server.startsWith(URLMapper.Version.WAP.toString())) {
+            page = Constants.PAGE_WAP;
             WapVersion.process(request, response, env);
-        else
+        } else {
+            page = detectHtmlPage((String)env.get(Constants.VAR_REQUEST_URI));
             HTMLVersion.process(request, response, env);
+        }
+
+        if (page != null)
+            UpdateStatistics.getInstance().recordPageView(page);
+    }
+
+    private String detectHtmlPage(String uri) {
+        if (uri.equals("/"))
+            return Constants.PAGE_INDEX;
+        if (uri.startsWith(UrlUtils.PREFIX_FORUM))
+            return Constants.PAGE_FORUM;
+        if (uri.startsWith(UrlUtils.PREFIX_CLANKY))
+            return Constants.PAGE_ARTICLES;
+        if (uri.startsWith(UrlUtils.PREFIX_NEWS))
+            return Constants.PAGE_NEWS;
+        if (uri.startsWith("/blog"))
+            return Constants.PAGE_BLOGS;
+        if (uri.startsWith(UrlUtils.PREFIX_HARDWARE))
+            return Constants.PAGE_HARDWARE;
+        if (uri.startsWith(UrlUtils.PREFIX_DICTIONARY))
+            return Constants.PAGE_DICTIONARY;
+        if (uri.startsWith(UrlUtils.PREFIX_DRIVERS))
+            return Constants.PAGE_DRIVERS;
+        if (uri.startsWith(UrlUtils.PREFIX_FAQ))
+            return Constants.PAGE_FAQ;
+        if (uri.startsWith(UrlUtils.PREFIX_POLLS))
+            return Constants.PAGE_POLLS;
+        if (uri.startsWith(UrlUtils.PREFIX_SOFTWARE))
+            return Constants.PAGE_SOFTWARE;
+        if (uri.startsWith("/ucebnice"))
+            return Constants.PAGE_SCHOOLBOOK;
+        if (uri.startsWith("/hosting"))
+            return Constants.PAGE_HOSTING;
+        return null;
     }
 
     /**

@@ -639,14 +639,9 @@ public class MySqlPersistance implements Persistance {
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         try {
             con = getSQLConnection();
-            if (obj instanceof Link) {
-                statement = con.prepareStatement("select soucet from presmerovani where server=? and den=curdate()");
-                statement.setInt(1, ((Link) obj).getServer());
-            } else {
-                statement = con.prepareStatement("select soucet from citac where typ=? and cislo=?");
-                statement.setString(1, getTableId(obj));
-                statement.setInt(2, obj.getId());
-            }
+            statement = con.prepareStatement("select soucet from citac where typ=? and cislo=?");
+            statement.setString(1, getTableId(obj));
+            statement.setInt(2, obj.getId());
 
             resultSet = statement.executeQuery();
             if ( !resultSet.next() )
@@ -1003,14 +998,9 @@ public class MySqlPersistance implements Persistance {
      * to <code>conditions</code> for each asterisk in perpared statement.
      */
     private void appendIncrementUpdateParams(GenericObject obj, StringBuffer sb, List conditions ) {
-        if (obj instanceof Link) {
-            sb.append("update presmerovani set soucet=soucet+1 where server=? and den=curdate()");
-            conditions.add(new Integer(((Link)obj).getServer()));
-        } else {
-            sb.append("update citac set soucet=soucet+1 where typ=? and cislo=?");
-            conditions.add(getTableId(obj));
-            conditions.add(new Integer(obj.getId()));
-        }
+        sb.append("update citac set soucet=soucet+1 where typ=? and cislo=?");
+        conditions.add(getTableId(obj));
+        conditions.add(new Integer(obj.getId()));
     }
 
     /**
@@ -1018,14 +1008,9 @@ public class MySqlPersistance implements Persistance {
      * to <code>conditions</code> for each asterisk in perpared statement.
      */
     private void appendCounterInsertParams(GenericObject obj, StringBuffer sb, List conditions ) {
-        if (obj instanceof Link) {
-            sb.append("insert into presmerovani values(curdate(),?,1)");
-            conditions.add(new Integer(((Link)obj).getServer()));
-        } else {
-            sb.append("insert into citac values(?,?,1)");
-            conditions.add(getTableId(obj));
-            conditions.add(new Integer(obj.getId()));
-        }
+        sb.append("insert into citac values(?,?,1)");
+        conditions.add(getTableId(obj));
+        conditions.add(new Integer(obj.getId()));
     }
 
     /**
@@ -1033,14 +1018,9 @@ public class MySqlPersistance implements Persistance {
      * to <code>conditions</code> for each asterisk in perpared statement.
      */
     private void appendCounterDeleteParams(GenericObject obj, StringBuffer sb, List conditions ) {
-        if (obj instanceof Link) {
-            sb.append("delete from presmerovani where server=? and den=curdate()");
-            conditions.add(new Integer(((Link)obj).getServer()));
-        } else {
-            sb.append("delete from citac where typ=? and cislo=?");
-            conditions.add(getTableId(obj));
-            conditions.add(new Integer(obj.getId()));
-        }
+        sb.append("delete from citac where typ=? and cislo=?");
+        conditions.add(getTableId(obj));
+        conditions.add(new Integer(obj.getId()));
     }
 
     /**

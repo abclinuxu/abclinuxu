@@ -267,6 +267,8 @@
                             <entry key="get.user.action" value="select kdy from akce where kdo=? and relace=? and typ=?" />
                             <entry key="remove.user.action" value="delete from akce where kdo=? and relace=? and typ=?" />
                             <entry key="faq.section.size" value="select R1.cislo, count(R2.cislo) from relace R1, relace R2 where R1.predchozi=81515 and R1.cislo=R2.predchozi group by R1.cislo" />
+                            <entry key="insert.statistika" value="insert into statistika values(curdate(),?,?)" />
+                            <entry key="update.statistika" value="update statistika set pocet=pocet+? where typ=? and den=curdate()" />
                         </map>
                     </node>
                 </node>
@@ -394,6 +396,8 @@
                                 <entry key="start.weekly.emails" value="@START.WEEKLY.EMAILS@"/>
                                 <entry key="start.weekly.summary" value="@START.WEEKLY.SUMMARY@"/>
                                 <entry key="start.datetool.service" value="@START_UPDATE_DATETOOL@"/>
+                                <entry key="start.watched.discussions.cleaner" value="@START_DISCUSSION_CLEANER@"/>
+                                <entry key="start.update.statistics" value="@START_UPDATE_STATISTICS@"/>
                             </map>
                         </node>
                     </node>

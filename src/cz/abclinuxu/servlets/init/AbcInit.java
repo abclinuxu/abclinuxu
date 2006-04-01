@@ -64,6 +64,7 @@ public class AbcInit extends HttpServlet implements Configurable {
     public static final String PREF_START_WEEKLY_SUMMARY = "start.weekly.summary";
     public static final String PREF_START_UPDATE_DATETOOL = "start.datetool.service";
     public static final String PREF_START_WATCHED_DISCUSSIONS_CLEANER = "start.watched.discussions.cleaner";
+    public static final String PREF_START_UPDATE_STATISTICS = "start.update.statistics";
 
     /** scheduler used by all objects in project */
     static Timer scheduler;
@@ -92,6 +93,7 @@ public class AbcInit extends HttpServlet implements Configurable {
 
         // start tasks
         startFetchingVariables();
+        startUpdateStatistics();
         startKernelUpdate();
         startLinksUpdate();
         startUnixshopUpdate();
@@ -188,6 +190,20 @@ public class AbcInit extends HttpServlet implements Configurable {
         }
         log.info("Scheduling template variables fetcher");
         scheduler.schedule(fetcher, 0, 30*1000);
+    }
+
+    /**
+     * Fetches some context variables each minute, starting now.
+     */
+    protected void startUpdateStatistics() {
+        if ( !isSet(PREF_START_UPDATE_STATISTICS) ) {
+            log.info("Batch update of statistics configured not to run");
+            return;
+        }
+        log.info("Scheduling batch update of statistics");
+        UpdateStatistics task = UpdateStatistics.getInstance();
+        scheduler.schedule(task, 0, 60*1000);
+        task.setBatchMode(true);
     }
 
     /**
@@ -348,6 +364,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         services.put(PREF_START_UPDATE_DATETOOL, new Boolean(prefs.getBoolean(PREF_START_UPDATE_DATETOOL, true)));
         services.put(PREF_START_WATCHED_DISCUSSIONS_CLEANER, new Boolean(prefs.getBoolean(PREF_START_WATCHED_DISCUSSIONS_CLEANER, true)));
         services.put(PREF_START_RSS_OKSYSTEM, new Boolean(prefs.getBoolean(PREF_START_RSS_OKSYSTEM, true)));
+        services.put(PREF_START_UPDATE_STATISTICS, new Boolean(prefs.getBoolean(PREF_START_UPDATE_STATISTICS, true)));
     }
 
     /**

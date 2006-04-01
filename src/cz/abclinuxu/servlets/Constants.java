@@ -132,6 +132,21 @@ public interface Constants {
 
     int USER_REDAKCE = 5473;
 
+    String PAGE_WAP = "wap";
+    String PAGE_INDEX = "homepage";
+    String PAGE_ARTICLES = "articles";
+    String PAGE_NEWS = "news";
+    String PAGE_FORUM = "forum";
+    String PAGE_BLOGS = "blogy";
+    String PAGE_FAQ = "faq";
+    String PAGE_HARDWARE = "hardware";
+    String PAGE_SOFTWARE = "software";
+    String PAGE_SCHOOLBOOK = "ucebnice";
+    String PAGE_DICTIONARY = "slovnik";
+    String PAGE_POLLS = "ankety";
+    String PAGE_DRIVERS = "ovladace";
+    String PAGE_HOSTING = "hosting";
+
     SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     DateFormat isoFormatShort = new SimpleDateFormat("yyyy-MM-dd");
     DateFormat czFormat = new SimpleDateFormat("d.M.yyyy HH:mm");

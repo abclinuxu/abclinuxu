@@ -81,6 +81,8 @@ public final class SQLTool implements Configurable {
     public static final String PREF_INSERT_USER_ACTION = "insert.user.action";
     public static final String PREF_GET_USER_ACTION = "get.user.action";
     public static final String PREF_REMOVE_USER_ACTION = "remove.user.action";
+    public static final String PREF_INSERT_STATISTICS = "insert.statistika";
+    public static final String PREF_INCREMENT_STATISTICS = "update.statistika";
 
     private static SQLTool singleton;
 
@@ -104,6 +106,7 @@ public final class SQLTool implements Configurable {
     private String countArticlesByUser, countDiscussionsByUser;
     private String insertLastComment, getLastComment, getXthComment, deleteOldComments;
     private String insertUserAction, getUserAction, removeUserAction;
+    private String incrementStatistics, addStatistics;
 
 
     /**
@@ -1310,6 +1313,41 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Records new page view in statistics for selected type of page.
+     */
+    public void recordPageView(String pageType, int count) {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null;
+        PreparedStatement statementUpdate = null, statementInsert = null;
+        try {
+            con = persistance.getSQLConnection();
+            statementUpdate = con.prepareStatement(incrementStatistics);
+            statementUpdate.setInt(1, count);
+            statementUpdate.setString(2, pageType);
+            int updated = statementUpdate.executeUpdate();
+            if (updated != 0)
+                return;
+
+            statementInsert = con.prepareStatement(addStatistics);
+            statementInsert.setString(1, pageType);
+            statementInsert.setInt(2, count);
+            statementInsert.executeUpdate();
+        } catch (SQLException e) {
+            if (e.getErrorCode() == 1062) { // duplicate key error
+                try {
+                    statementUpdate.executeUpdate();
+                    return;
+                } catch (SQLException e1) {
+                    throw new PersistanceException("Chyba v SQL!", e);
+                }
+            }
+            throw new PersistanceException("Chyba v SQL!", e);
+        } finally {
+            persistance.releaseSQLResources(con, new Statement[]{statementInsert, statementUpdate}, null);
+        }
+    }
+
+    /**
      * Private constructor
      */
     private SQLTool() {
@@ -1356,6 +1394,8 @@ public final class SQLTool implements Configurable {
         insertUserAction = getValue(PREF_INSERT_USER_ACTION, prefs);
         getUserAction = getValue(PREF_GET_USER_ACTION, prefs);
         removeUserAction = getValue(PREF_REMOVE_USER_ACTION, prefs);
+        incrementStatistics = getValue(PREF_INCREMENT_STATISTICS, prefs);
+        addStatistics = getValue(PREF_INSERT_STATISTICS, prefs);
     }
 
     /**
