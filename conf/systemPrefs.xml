@@ -355,6 +355,11 @@
                 </node>
                 <node name="servlets">
                     <map/>
+                    <node name="Controller">
+                        <map>
+                            <entry key="regexp.bots" value="bot|spider|crawl|blog|feed|rss|subscriber|liferea|slurp|archive|plucker" />
+                        </map>
+                    </node>
                     <node name="utils">
                         <map/>
                         <node name="url">

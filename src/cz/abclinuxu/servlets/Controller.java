@@ -25,6 +25,9 @@ import cz.abclinuxu.servlets.utils.url.URLMapper;
 import cz.abclinuxu.servlets.html.HTMLVersion;
 import cz.abclinuxu.servlets.wap.WapVersion;
 import cz.abclinuxu.scheduler.UpdateStatistics;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.ConfigurationManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -33,12 +36,24 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.prefs.Preferences;
+
+import org.apache.regexp.REProgram;
+import org.apache.regexp.RE;
+import org.apache.regexp.RECompiler;
+import org.apache.regexp.RESyntaxException;
 
 /**
  * This class is responsible for selection of logic
  * based on URL mapping.
  */
-public class Controller extends HttpServlet {
+public class Controller extends HttpServlet implements Configurable {
+    public static final String PREF_BOTS_REGEXP = "regexp.bots";
+
+    static REProgram reBots;
+    static {
+        ConfigurationManager.getConfigurator().configureAndRememberMe(new Controller());
+    }
 
     /**
      * Based on URL of the request it chooses AbcAction implementation in HTML format,
@@ -54,7 +69,7 @@ public class Controller extends HttpServlet {
             page = Constants.PAGE_WAP;
             WapVersion.process(request, response, env);
         } else {
-            page = detectHtmlPage((String)env.get(Constants.VAR_REQUEST_URI));
+            page = detectHtmlPage((String)env.get(Constants.VAR_REQUEST_URI), (String)request.getHeader("user-agent"));
             HTMLVersion.process(request, response, env);
         }
 
@@ -62,7 +77,13 @@ public class Controller extends HttpServlet {
             UpdateStatistics.getInstance().recordPageView(page);
     }
 
-    private String detectHtmlPage(String uri) {
+    private String detectHtmlPage(String uri, String ua) {
+        if (ua != null && ua.length() > 3) {
+            RE regexp = new RE(reBots);
+            if (regexp.match(ua))
+                return null; // not interested in spiders and various bots
+        }
+
         if (uri.equals("/"))
             return Constants.PAGE_INDEX;
         if (uri.startsWith(UrlUtils.PREFIX_FORUM))
@@ -104,5 +125,14 @@ public class Controller extends HttpServlet {
         ServletUtils.setCurrentURL(ServletUtils.getURL(request));
         ServletUtils.handleMessages(request, env);
         ServletUtils.handleLogin(request, response, env);
+    }
+
+    public void configure(Preferences prefs) throws ConfigurationException {
+        String re = prefs.get(PREF_BOTS_REGEXP, null);
+        try {
+            reBots = new RECompiler().compile(re);
+        } catch (RESyntaxException e) {
+            throw new ConfigurationException("Invalid regexp: '" + re + "'!");
+        }
     }
 }
