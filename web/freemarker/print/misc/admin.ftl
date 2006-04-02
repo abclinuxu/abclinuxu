@@ -39,8 +39,9 @@ konfiguraèní soubory.
 <h3>Kontrola stavu a statistika</h3>
 
 <ul>
-    <li><a href="${URL.noPrefix("/Admin?action=performCheck")}">Kontrola stavu portálu</a></li>
+    <li><a href="${URL.noPrefix("/Admin/statistika")}">Statistika náv¹tìvnosti</a></li>
     <li><a href="/ProxoolAdmin">Statistika JDBC</a></li>
+    <li><a href="${URL.noPrefix("/Admin?action=performCheck")}">Kontrola stavu portálu</a></li>
 </ul>
 
 <#include "../footer.ftl">

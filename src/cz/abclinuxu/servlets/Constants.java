@@ -79,6 +79,8 @@ public interface Constants {
 
     int GROUP_ADMINI = 11246;
     int GROUP_AUTORI = 11247;
+    int GROUP_STICKFISH = 12651;
+    int GROUP_TEAM_ABCLINUXU = 20468;
 
     // types for Tools.groupByType()
     String TYPE_MAKE = "make";
@@ -134,8 +136,8 @@ public interface Constants {
 
     String PAGE_WAP = "wap";
     String PAGE_INDEX = "homepage";
-    String PAGE_ARTICLES = "articles";
-    String PAGE_NEWS = "news";
+    String PAGE_ARTICLES = "clanky";
+    String PAGE_NEWS = "zpravicky";
     String PAGE_FORUM = "forum";
     String PAGE_BLOGS = "blogy";
     String PAGE_FAQ = "faq";

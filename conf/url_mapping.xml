@@ -126,14 +126,6 @@
             <action>cz.abclinuxu.servlets.html.view.ContentChanges</action>
         </mapping>
         <mapping>
-            <pattern>^/kniha_navstev/edit</pattern>
-            <action>cz.abclinuxu.servlets.html.edit.EditGuestBook</action>
-        </mapping>
-        <mapping>
-            <pattern>^/kniha_navstev</pattern>
-            <action>cz.abclinuxu.servlets.html.view.ViewGuestBook</action>
-        </mapping>
-        <mapping>
             <pattern>^/EditSurvey</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditSurvey</action>
         </mapping>
@@ -168,6 +160,10 @@
         <mapping>
             <pattern>^/Group</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditGroup</action>
+        </mapping>
+        <mapping>
+            <pattern>^/Admin/statistika</pattern>
+            <action>cz.abclinuxu.servlets.html.admin.PageStatistics</action>
         </mapping>
         <mapping>
             <pattern>^/Admin</pattern>

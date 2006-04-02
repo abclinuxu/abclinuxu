@@ -30,6 +30,8 @@ public class Field {
     public static final Field SUBTYPE = new Field("SUBTYPE");
     public static final Field OWNER = new Field("OWNER");
     public static final Field UPPER = new Field("UPPER");
+    /** statistika table */
+    public static final Field DAY = new Field("DAY");
 
     private final String myName; // for debug only
 

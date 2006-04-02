@@ -26,14 +26,16 @@ import cz.abclinuxu.exceptions.PersistanceException;
 import cz.abclinuxu.persistance.extra.*;
 import cz.abclinuxu.persistance.impl.MySqlPersistance;
 
+import java.sql.*;
 import java.util.prefs.Preferences;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
-import java.sql.*;
+import java.util.Collections;
 
 /**
  * Thread-safe singleton, that encapsulates SQL commands
@@ -83,6 +85,8 @@ public final class SQLTool implements Configurable {
     public static final String PREF_REMOVE_USER_ACTION = "remove.user.action";
     public static final String PREF_INSERT_STATISTICS = "insert.statistika";
     public static final String PREF_INCREMENT_STATISTICS = "update.statistika";
+    public static final String PREF_GET_STATISTICS = "get.statistika";
+    public static final String PREF_GET_STATISTICS_BY_MONTH = "get.statistika.by.month";
 
     private static SQLTool singleton;
 
@@ -106,7 +110,7 @@ public final class SQLTool implements Configurable {
     private String countArticlesByUser, countDiscussionsByUser;
     private String insertLastComment, getLastComment, getXthComment, deleteOldComments;
     private String insertUserAction, getUserAction, removeUserAction;
-    private String incrementStatistics, addStatistics;
+    private String incrementStatistics, addStatistics, getStatisticsByMonth, getStatistics;
 
 
     /**
@@ -248,6 +252,46 @@ public final class SQLTool implements Configurable {
             return new Date(date.getTime());
         } catch (SQLException e) {
             throw new PersistanceException("Nemohu vykonat SQL pøíkaz "+sql, e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
+     * Generic method to get unspecified data from database using given SQL command. If list params is not
+     * empty, PreparedStatement is created and fed up from params. Returned list contains arrays of objects,
+     * each row is mapped to single array.
+     * @param sql Command to execute.
+     * @param params List of parameters. It must not be null.
+     * @return list of Object[].
+     * @throws PersistanceException if something goes wrong.
+     */
+    private List loadObjects(String sql, List params) {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null;
+        PreparedStatement statement = null;
+        List list = new LinkedList();
+        ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(sql);
+            int i = 1;
+            for (Iterator iter = params.iterator(); iter.hasNext();)
+                statement.setObject(i++, iter.next());
+
+            resultSet = statement.executeQuery();
+            int columns = resultSet.getMetaData().getColumnCount();
+            Object[] row;
+            while (resultSet.next()) {
+                row = new Object[columns];
+                for (i = 0; i < columns; i++)
+                    row[i] = resultSet.getObject(i+1);
+                list.add(row);
+            }
+
+            return list;
+        } catch (SQLException e) {
+            throw new PersistanceException("Nemohu vykonat SQL pøíkaz " + sql, e);
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
@@ -1348,6 +1392,29 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Loads statistics according to qualifiers. To specify date range, use
+     * CompareCondition with Field.DAY.
+     * @param qualifiers
+     * @return list of Object arrays
+     */
+    public List getStatistics(Qualifier[] qualifiers) {
+        if (qualifiers == null) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(getStatistics);
+        List params = new ArrayList();
+        appendQualifiers(sb, qualifiers, params, null);
+        return loadObjects(sb.toString(), params);
+    }
+
+    /**
+     * Loads statistics grouped (and summarized) by month.
+     * @return list of Object arrays
+     */
+    public List getStatisticsByMonth() {
+        StringBuffer sb = new StringBuffer(getStatisticsByMonth);
+        return loadObjects(sb.toString(), Collections.EMPTY_LIST);
+    }
+
+    /**
      * Private constructor
      */
     private SQLTool() {
@@ -1396,6 +1463,8 @@ public final class SQLTool implements Configurable {
         removeUserAction = getValue(PREF_REMOVE_USER_ACTION, prefs);
         incrementStatistics = getValue(PREF_INCREMENT_STATISTICS, prefs);
         addStatistics = getValue(PREF_INSERT_STATISTICS, prefs);
+        getStatistics = getValue(PREF_GET_STATISTICS, prefs);
+        getStatisticsByMonth = getValue(PREF_GET_STATISTICS_BY_MONTH, prefs);
     }
 
     /**
@@ -1415,7 +1484,9 @@ public final class SQLTool implements Configurable {
      * Append comparation condition to stringbuffer.
      */
     private void appendCompareCondition(StringBuffer sb, CompareCondition condition, List params) {
-        sb.append(" and "); // expect, that each sql command starts with at least one condition
+        int where = sb.indexOf("where ") + "where ".length();
+        if (where < sb.length())
+            sb.append(" and "); // probably there was at least one condition after where
 
         Field field = condition.getField();
         if (field==Field.CREATED)
@@ -1432,6 +1503,8 @@ public final class SQLTool implements Configurable {
             sb.append("pridal");
         else if (field==Field.UPPER)
             sb.append("predchozi");
+        else if (field==Field.DAY)
+            sb.append("den");
         else if (field==Field.DATA)
             sb.append("data");
 

@@ -269,6 +269,8 @@
                             <entry key="faq.section.size" value="select R1.cislo, count(R2.cislo) from relace R1, relace R2 where R1.predchozi=81515 and R1.cislo=R2.predchozi group by R1.cislo" />
                             <entry key="insert.statistika" value="insert into statistika values(curdate(),?,?)" />
                             <entry key="update.statistika" value="update statistika set pocet=pocet+? where typ=? and den=curdate()" />
+                            <entry key="get.statistika" value="select * from statistika where "/>
+                            <entry key="get.statistika.by.month" value="select typ,sum(pocet),date_format(den,&quot;%Y-%m&quot;) from statistika group by typ,3 order by 3 asc"/>
                         </map>
                     </node>
                 </node>
