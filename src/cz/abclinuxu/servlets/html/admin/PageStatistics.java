@@ -51,6 +51,12 @@ public class PageStatistics implements AbcAction {
     public static final String TYPE_PERIOD = "period";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        User user = (User) env.get(Constants.VAR_USER);
+        if (user == null)
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
+        if (!(user.isMemberOf(Constants.GROUP_ADMINI) || user.isMemberOf(Constants.GROUP_STICKFISH)))
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         DateTool dateTool = new DateTool();
         Calendar calendar = Calendar.getInstance();
@@ -87,12 +93,6 @@ public class PageStatistics implements AbcAction {
             params.put(PARAM_DAY, dateTool.show(day, DateTool.CZ_DAY_MONTH_YEAR, false));
         } else
             day = Constants.czDayMonthYear.parse(s);
-
-        User user = (User) env.get(Constants.VAR_USER);
-        if (user == null)
-            return FMTemplateSelector.select("ViewUser", "login", env, request);
-        if (!(user.isMemberOf(Constants.GROUP_ADMINI) || user.isMemberOf(Constants.GROUP_STICKFISH)))
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         List found = null;
         SQLTool sqlTool = SQLTool.getInstance();
