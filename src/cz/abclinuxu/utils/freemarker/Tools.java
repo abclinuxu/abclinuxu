@@ -1156,11 +1156,12 @@ public class Tools implements Configurable {
             if (!parent.isInitialized()) persistance.synchronize(parent);
             if (parent instanceof Item) {
                 item = (Item) parent;
-                if (item.getType()==Item.ARTICLE || item.getType()==Item.BLOG) {
-                    node = item.getData().selectSingleNode("data/name");
-                    discussion.title = node.getText();
-                } else if ( item.getType()==Item.NEWS )
-                    discussion.title = "Zprávièka";
+                data = item.getData();
+                if (item.getType()==Item.ARTICLE || item.getType()==Item.BLOG)
+                    node = data.selectSingleNode("data/name");
+                else if ( item.getType()==Item.NEWS )
+                    node = data.selectSingleNode("data/title");
+                discussion.title = node.getText();
             } else if ( parent instanceof Poll) {
                 discussion.title = ((Poll)parent).getText();
             }
