@@ -35,7 +35,7 @@ s vysvìtlením. Teprve po schválení bude zprávièka zveøejnìna.</p>
 <form action="${URL.make("/edit")}" method="POST" name="newsForm">
   <p>
    <span class="required">Titulek</span><br>
-   <input tabindex="1" type="text" name="title" size="40" maxlength="40" value="${PARAMS.title?if_exists}">
+   <input tabindex="1" type="text" name="title" size="40" maxlength="50" value="${PARAMS.title?if_exists}">
    <div class="error">${ERRORS.title?if_exists}</div>
    <span class="required">Obsah</span>
    <div class="form-edit">
