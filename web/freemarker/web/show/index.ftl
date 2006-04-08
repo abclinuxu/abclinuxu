@@ -100,20 +100,12 @@
     <div class="s_sekce">
         <#include "/include/kernel.txt">
     </div>
-
-    <!-- unixshop -->
-    <div class="s_nad_h1"><div class="s_nad_pod_h1">
-        <a class="info" href="#">?<span class="tooltip">Kvalitní ¾elezo pro va¹e serverovny za dostupné ceny.</span></a>
-        <h1><a href="http://www.unixshop.cz">unixshop.cz</a></h1>
-    </div></div>
-    <div class="s_sekce">
-        <#include "/include/unixshop.txt">
-    </div>
 </#assign>
 
 <#include "../header.ftl">
 
 <#include "/include/zprava.txt">
+<#include "/include/anketa-distro-06.txt">
 <@lib.showMessages/>
 
 <#assign ARTICLES=VARS.getFreshArticles(USER?if_exists)>
@@ -177,6 +169,7 @@
 </#if>
 
 <#assign STORIES=VARS.getFreshStories(USER?if_exists)>
+<#assign STORIES=TOOL.filterRelationsOfBlockedUsers(STORIES,USER?if_exists)>
 <#if (STORIES?size>0) >
     <#assign half = STORIES?size/2 >
     <#if STORIES?size%2==1><#assign half=half+1></#if>

@@ -248,6 +248,9 @@ public class ViewBlog implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
         Persistance persistance = PersistanceFactory.getPersistance();
+        User user = (User) env.get(Constants.VAR_USER);
+        Relation relation;
+        Item story;
 
         List qualifiers = new ArrayList();
         if (!summary)
@@ -265,23 +268,27 @@ public class ViewBlog implements AbcAction, Configurable {
         qa = new Qualifier[qualifiers.size()];
         List stories = sqlTool.findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
         Tools.syncList(stories);
+
+        // filter out stories written by users that current user has blocked
+        if (user != null)
+            stories = Tools.filterRelationsOfBlockedUsers(stories, user);
+
         List parentBlogs = new ArrayList(stories.size());
         for (Iterator iter = stories.iterator(); iter.hasNext();) {
-            Relation relation = (Relation) iter.next();
+            relation = (Relation) iter.next();
             if (!relation.getParent().isInitialized())
                 parentBlogs.add(relation.getParent());
         }
         if (parentBlogs.size()>0)
             Tools.syncList(parentBlogs);
 
-        Paging paging = new Paging(stories, from, count, total);
+        Paging paging = new Paging(stories, from, stories.size(), total);
         env.put(VAR_STORIES, paging);
 
         if (!summary) {
-            User user = (User) env.get(Constants.VAR_USER);
             for (Iterator iter = stories.iterator(); iter.hasNext();) {
-                Relation relation = (Relation) iter.next();
-                Item story = (Item) relation.getChild();
+                relation = (Relation) iter.next();
+                story = (Item) relation.getChild();
                 if (user == null || user.getId() != story.getOwner()) {
                     if (Tools.xpath(story, "/data/perex") == null)
                         persistance.incrementCounter(story);
@@ -289,7 +296,7 @@ public class ViewBlog implements AbcAction, Configurable {
             }
         }
 
-        Relation relation = (Relation) persistance.findById(new Relation(Constants.REL_BLOGS));
+        relation = (Relation) persistance.findById(new Relation(Constants.REL_BLOGS));
         List parents = persistance.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 

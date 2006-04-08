@@ -18,8 +18,6 @@
  */
 package cz.abclinuxu.data.view;
 
-import cz.abclinuxu.data.User;
-
 import java.util.*;
 
 /**
@@ -196,14 +194,10 @@ public class Discussion {
 
     /**
      * Sets list of blacklisted users (id - Integer) for current user.
-     * @param blacklist not null
+     * @param blacklist (Users) not null
      */
-    public void setBlacklist(List blacklist) {
-        this.blacklist = new HashSet(blacklist.size());
-        for (Iterator iter = blacklist.iterator(); iter.hasNext();) {
-            User user = (User) iter.next();
-            this.blacklist.add(new Integer(user.getId()));
-        }
+    public void setBlacklist(Set blacklist) {
+        this.blacklist = blacklist;
     }
 
     /**

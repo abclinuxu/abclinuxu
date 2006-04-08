@@ -425,6 +425,44 @@ public class Tools implements Configurable {
     }
 
     /**
+     * Creates a List of ids (integer) of users, that are in user's blacklist
+     * @param user
+     * @return set of integers
+     */
+    public static Set getUsersBlacklistOnlyIds(User user) {
+        List nodes = xpaths(user.getData(), "/data/settings/blacklist/uid");
+        Set blacklist = new HashSet(nodes.size());
+        for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
+            String value = (String) iter.next();
+            blacklist.add(new Integer(value));
+        }
+        return blacklist;
+    }
+
+    /**
+     * Returns all item relations from parameter that were not created by users
+     * blocked by passed user.
+     * @param relations initialized Item relations
+     * @param aUser typically User instance
+     * @return relations not created by blocked users
+     */
+    public static List filterRelationsOfBlockedUsers(List relations, Object aUser) {
+        if (aUser == null || ! (aUser instanceof User))
+            return relations;
+
+        Set blocked = getUsersBlacklistOnlyIds((User)aUser);
+        List result = new ArrayList(relations.size());
+        Relation relation; Item story;
+        for (Iterator iter = relations.iterator(); iter.hasNext();) {
+            relation = (Relation) iter.next();
+            story = (Item) relation.getChild();
+            if (! blocked.contains(new Integer(story.getOwner())))
+                result.add(relation);
+        }
+        return result;
+    }
+
+    /**
      * @return String containing one asterisk for each ten percents.
      */
     public String percentBar(int percent) {
@@ -1085,7 +1123,7 @@ public class Tools implements Configurable {
         discussion.init(dizRecord);
         if (user != null) {
             SQLTool sqlTool = SQLTool.getInstance();
-            discussion.setBlacklist(getUsersBlacklist(user));
+            discussion.setBlacklist(getUsersBlacklistOnlyIds(user));
 
             Integer lastSeen = sqlTool.getLastSeenComment(user.getId(), obj.getId());
             if (lastSeen != null)

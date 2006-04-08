@@ -87,6 +87,7 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
 <h2><a href="/blog">Blogy na AbcLinuxu</a></h2>
   <ul>
   <#assign STORIES=VARS.getFreshStories(USER?if_exists)>
+  <#assign STORIES=TOOL.filterRelationsOfBlockedUsers(STORIES,USER?if_exists)>
   <#list STORIES as relation>
      <li>
      <#assign story=relation.child, blog=relation.parent>

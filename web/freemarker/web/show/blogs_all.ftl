@@ -36,11 +36,11 @@
     <div class="cl">
 	<#if SUMMARY?exists>
 	    <h3 class="st_nadpis">
-		<a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
+		    <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
 	    </h3>
 	<#else>
 	    <h1 class="st_nadpis">
-		<a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
+		    <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
 	    </h1>
 	</#if>
 	  <p class="cl_inforadek">
