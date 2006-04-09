@@ -47,22 +47,6 @@
         </ul>
     </div>
 
-    <div class="s_nad_h1"><div class="s_nad_pod_h1">
-        <a class="info" href="#">?<span class="tooltip">Pøístup k archivovaným zápisùm za jednotlivé mìsíce.</span></a>
-        <h1><a href="/blog/${BLOG.subType}/archiv">Archív</a></h1>
-    </div></div>
-
-    <div class="s_sekce">
-        <ul>
-        <#list ARCHIVE as item>
-            <li>
-                <a href="/blog/${BLOG.subType}/${item.year}/${item.month}/"><@lib.month month=""+item.month/>
-                ${item.year} (${item.size})</a>
-            </li>
-        </#list>
-        </ul>
-    </div>
-
     <#assign links = BLOG_XML.data.custom.links.link>
     <#if links?size!=0>
         <div class="s_nad_h1"><div class="s_nad_pod_h1">
@@ -121,68 +105,21 @@
   </div>
 </#assign>
 
+
 <#include "../header.ftl">
 <@lib.showMessages/>
 
-<#if STORIES.total==0>
-    <p>Va¹emu výbìru neodpovídá ¾ádný zápis.</p>
-</#if>
+<h1>Archiv</h1>
 
-<#list STORIES.data as relation>
-    <#assign story=relation.child, url=TOOL.getUrlForBlogStory(BLOG.subType, story.created, relation.id)>
-    <#assign category = story.subType?default("UNDEF"), rating=TOOL.ratingFor(story.data,"story")?default("UNDEF")>
-    <#if category!="UNDEF"><#assign category=TOOL.xpath(BLOG, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
-    <div class="cl">
-	<#if SUMMARY?exists><h3 class="st_nadpis"><#else><h1 class="st_nadpis"></#if>
-	    <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
-	<#if SUMMARY?exists></h3><#else></h1></#if>
-        <p class="cl_inforadek">
-    	    ${DATE.show(story.created, "CZ_SHORT")} |
-            <#if category!="UNDEF">${category} |</#if>
-	        Pøeèteno: ${TOOL.getCounterValue(story)}x |
-    	    <@showDiscussions story, url/>
-            <#if rating!="UNDEF">| Hodnocení:&nbsp;<span title="Hlasù: ${rating.count}">${rating.result?string["#0.00"]}</span></#if>
-	</p>
-	<#if ! SUMMARY?exists>
-            <#assign text = TOOL.xpath(story, "/data/perex")?default("UNDEF")>
-            <#if text!="UNDEF">
-                ${text}
-                <div class="signature"><a href="${url}">více...</a></div>
-            <#else>
-                ${TOOL.xpath(story, "/data/content")}
-            </#if>
-	</#if>
-    </div>
-    <hr>
+<#list BLOG_XML.data.archive.year?reverse as year>
+    <h2>Rok ${year.@value}</h2>
+    <ul>
+    <#list year.month as month>
+        <li>
+            <a href="/blog/${BLOG.subType}/${year.@value}/${month.@value}/"><@lib.month month=month.@value/> (${month})</a>
+        </li>
+    </#list>
+    </ul>
 </#list>
-
-<p>
-    <#if SUMMARY?exists>
-        <#assign url="/blog/"+BLOG.subType+"/souhrn">
-    <#else>
-        <#assign url="/blog/"+BLOG.subType+"/">
-        <#if YEAR?exists><#assign url=url+YEAR+"/"></#if>
-        <#if MONTH?exists><#assign url=url+MONTH+"/"></#if>
-        <#if DAY?exists><#assign url=url+DAY+"/"></#if>
-    </#if>
-    <#if (STORIES.currentPage.row > 0) >
-        <#assign start=STORIES.currentPage.row-STORIES.pageSize><#if (start<0)><#assign start=0></#if>
-        <a href="${url}?from=${start}">Novìj¹í zápisy</a>
-    </#if>
-    <#assign start=STORIES.currentPage.row + STORIES.pageSize>
-    <#if (start < STORIES.total) >
-        <a href="${url}?from=${start}">Star¹í zápisy</a>
-    </#if>
-</p>
-
-<#macro showDiscussions (story url)>
-    <#local CHILDREN=TOOL.groupByType(story.children)>
-    <#if CHILDREN.discussion?exists>
-        <#local diz=TOOL.analyzeDiscussion(CHILDREN.discussion[0])>
-    <#else>
-        <#local diz=TOOL.analyzeDiscussion("UNDEF")>
-    </#if>
-    <a href="${url}">Komentáøù:</a> ${diz.responseCount}<#if diz.responseCount gt 0>, poslední ${DATE.show(diz.updated, "CZ_SHORT")}</#if>
-</#macro>
 
 <#include "../footer.ftl">

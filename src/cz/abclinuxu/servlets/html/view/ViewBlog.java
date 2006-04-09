@@ -68,15 +68,17 @@ public class ViewBlog implements AbcAction, Configurable {
     public static final String VAR_DAY = "DAY";
     public static final String VAR_CURRENT_STORIES = "CURRENT_STORIES";
     public static final String VAR_UNPUBLISHED_STORIES = "UNPUBLISHED_STORIES";
+    public static final String VAR_ARCHIVE = "ARCHIVE";
 
     static final String PREF_BLOG_URL = "regexp.blog.url";
     static final String PREF_SUMMARY_URL = "regexp.blog.summary.url";
+    static final String PREF_ARCHIVE_URL = "regexp.blog.archive.url";
     static final String PREF_PAGE_SIZE = "page.size";
     static final String PREF_SUMMARY_SIZE = "summary.size";
     static final String PREF_FRESH_STORIES_SIZE = "fresh.stories.size";
     static final String PREF_URL_SUMMARY = "url.summary";
 
-    static REProgram reUrl, reSummaryUrl;
+    static REProgram reUrl, reSummaryUrl, reArchiveUrl;
     static int defaultPageSize, freshStoriesSize, summarySize;
     static String urlSummary;
     static {
@@ -84,74 +86,93 @@ public class ViewBlog implements AbcAction, Configurable {
     }
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        User user = (User) env.get(Constants.VAR_USER);
         Relation blogRelation = null;
         int year, month, day, rid;
         year = month = day = rid = 0;
         String name = null;
-        boolean summary = false;
+        boolean summary = false, archive = false;
 
         String uri = (String) env.get(Constants.VAR_REQUEST_URI);
         if (uri.startsWith("/blogy"))
             return processBlogs(request, env);
 
         RE regexp = new RE(reSummaryUrl);
-        if (regexp.match(uri)) {
-//          uri = "/blog/jmeno/souhrn";
+        if (regexp.match(uri)) { // uri = "/blog/jmeno/souhrn";
             summary = true;
             env.put(VAR_SUMMARY, Boolean.TRUE);
             int matched = regexp.getParenCount();
             if (matched>4)
                 name = regexp.getParen(4);
         } else {
-//          uri = "/blog/jmeno/2004/12/12/124545";
-            regexp = new RE(reUrl);
-            regexp.match(uri);
-            int matched = regexp.getParenCount();
-            try {
-                if (matched > 1)
-                    name = regexp.getParen(1);
-                if (matched > 2) {
-                    year = Integer.parseInt(regexp.getParen(2));
-                    env.put(VAR_YEAR, new Integer(year));
+            regexp = new RE(reArchiveUrl);
+            if (regexp.match(uri)) { // uri = "/blog/jmeno/archiv";
+                archive = true;
+                name = regexp.getParen(1);
+            } else { // uri = "/blog/jmeno/2004/12/12/124545";
+                regexp = new RE(reUrl);
+                regexp.match(uri);
+                int matched = regexp.getParenCount();
+                try {
+                    if (matched > 1)
+                        name = regexp.getParen(1);
+                    if (matched > 2) {
+                        year = Integer.parseInt(regexp.getParen(2));
+                        env.put(VAR_YEAR, new Integer(year));
+                    }
+                    if (matched > 3) {
+                        month = Integer.parseInt(regexp.getParen(3));
+                        env.put(VAR_MONTH, new Integer(month));
+                    }
+                    if (matched > 4) {
+                        day = Integer.parseInt(regexp.getParen(4));
+                        env.put(VAR_DAY, new Integer(day));
+                    }
+                    if (matched > 5)
+                        rid = Integer.parseInt(regexp.getParen(5));
+                } catch (NumberFormatException e) {
+                    log.warn(uri, e);
                 }
-                if (matched > 3) {
-                    month = Integer.parseInt(regexp.getParen(3));
-                    env.put(VAR_MONTH, new Integer(month));
-                }
-                if (matched > 4) {
-                    day = Integer.parseInt(regexp.getParen(4));
-                    env.put(VAR_DAY, new Integer(day));
-                }
-                if (matched > 5)
-                    rid = Integer.parseInt(regexp.getParen(5));
-            } catch (NumberFormatException e) {
-                log.warn(uri, e);
             }
         }
 
-        if (name!=null) {
-            CompareCondition condition = new CompareCondition(Field.SUBTYPE, Operation.EQUAL, name);
-            SQLTool sqlTool = SQLTool.getInstance();
-            List list = sqlTool.findSectionRelationsWithType(Category.BLOG, new Qualifier[]{condition});
-            if (list.size()==0) {
-                throw new NotFoundException("Blog "+name+" nebyl nalezen!");
+        Category blog = null;
+        if (rid != 0) {
+            // ochrana pred hratky s URL
+            Relation relation = (Relation) persistance.findById(new Relation(rid));
+            blogRelation = (Relation) persistance.findById(new Relation(relation.getUpper()));
+            blog = (Category) relation.getParent();
+        } else {
+            if (name != null) {
+                CompareCondition condition = new CompareCondition(Field.SUBTYPE, Operation.EQUAL, name);
+                SQLTool sqlTool = SQLTool.getInstance();
+                List list = sqlTool.findSectionRelationsWithType(Category.BLOG, new Qualifier[]{condition});
+                if (list.size() == 0)
+                    throw new NotFoundException("Blog "+name+" nebyl nalezen!");
+
+                blogRelation = (Relation) list.get(0);
+                blog = (Category) blogRelation.getChild();
             }
-            blogRelation = (Relation) list.get(0);
         }
 
         if (blogRelation!=null) {
-            Category blog = (Category) blogRelation.getChild();
-            Tools.sync(blog);
+            blog = (Category) persistance.findById(blog);
+            blogRelation.setChild(blog);
             env.put(VAR_BLOG_RELATION, blogRelation);
             env.put(VAR_BLOG, blog);
             env.put(VAR_BLOG_XML, NodeModel.wrap((new DOMWriter().write(blog.getData()))));
 
-            User user = (User) env.get(Constants.VAR_USER);
+            fillFreshStories(blog, env);
+            if (! archive)
+                fillMonthStatistics(blog, env);
             if (user != null && user.getId() == blog.getOwner())
                 fillUnpublishedStories(blog, env);
 
             if (rid!=0)
                 return processStory(rid, request, env);
+            else if (archive)
+                return processArchive(blog, request, env);
             else
                 return processStories(blogRelation, summary, year, month, day, request, env);
         } else
@@ -168,21 +189,25 @@ public class ViewBlog implements AbcAction, Configurable {
         Item story = (Item) relation.getChild();
         env.put(VAR_STORY, relation);
 
-        Category blog = (Category) Tools.sync(relation.getParent());
-        Relation blogRelation = (Relation) persistance.findById(new Relation(relation.getUpper()));
-        env.put(VAR_BLOG_RELATION, blogRelation);
-        env.put(VAR_BLOG, blog);
-        env.put(VAR_BLOG_XML, NodeModel.wrap((new DOMWriter().write(blog.getData()))));
-
         User user = (User) env.get(Constants.VAR_USER);
         if (user==null || user.getId()!=story.getOwner())
             persistance.incrementCounter(story);
 
         List parents = persistance.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
-        storeFreshStories(blog, env);
 
         return FMTemplateSelector.select("ViewBlog", "story", env, request);
+    }
+
+    /**
+     * Displays one blogRelation content. Its stories may be limited to given year, month or day.
+     */
+    protected String processArchive(Category blog, HttpServletRequest request, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Relation blogRelation = (Relation) env.get(VAR_BLOG_RELATION);
+        List parents = persistance.findParents(blogRelation);
+        env.put(ShowObject.VAR_PARENTS, parents);
+        return FMTemplateSelector.select("ViewBlog", "archive", env, request);
     }
 
     /**
@@ -193,7 +218,7 @@ public class ViewBlog implements AbcAction, Configurable {
         SQLTool sqlTool = SQLTool.getInstance();
         Persistance persistance = PersistanceFactory.getPersistance();
 
-        Category blog = (Category) blogRelation.getChild();
+        Category blog = (Category) env.get(VAR_BLOG);
         int count = 0;
         if (summary)
             count = summarySize;
@@ -236,7 +261,6 @@ public class ViewBlog implements AbcAction, Configurable {
 
         List parents = persistance.findParents(blogRelation);
         env.put(ShowObject.VAR_PARENTS, parents);
-        storeFreshStories(blog, env);
 
         return FMTemplateSelector.select("ViewBlog", "blog", env, request);
     }
@@ -402,7 +426,7 @@ public class ViewBlog implements AbcAction, Configurable {
      * @param blog
      * @param env
      */
-    private void storeFreshStories(Category blog, Map env) {
+    private void fillFreshStories(Category blog, Map env) {
         List qualifiers = new ArrayList();
         qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, new Integer(blog.getOwner())));
         qualifiers.add(Qualifier.SORT_BY_CREATED);
@@ -437,6 +461,30 @@ public class ViewBlog implements AbcAction, Configurable {
     }
 
     /**
+     * Puts into env information about last six months, when user submitted
+     * some stories.
+     */
+    private void fillMonthStatistics(Category blog, Map env) {
+        List archive = new ArrayList(6);
+        env.put(VAR_ARCHIVE, archive);
+        Element element;
+        int year, month, size;
+        String  tmp;
+
+        List months = blog.getData().selectNodes("/data/archive/year/month");
+        for (int i = months.size(), j = 0; i > 0 && j < 6; i--, j++) {
+            element = (Element) months.get(i - 1);
+            tmp = element.getParent().attributeValue("value");
+            year = Misc.parseInt(tmp, 0);
+            tmp = element.attributeValue("value");
+            month = Misc.parseInt(tmp, 0);
+            tmp = element.getText();
+            size = Misc.parseInt(tmp, 0);
+            archive.add(new ArchiveItem(year, month, size));
+        }
+    }
+
+    /**
      * default number of stories per single page
      */
     public static int getDefaultPageSize() {
@@ -444,6 +492,7 @@ public class ViewBlog implements AbcAction, Configurable {
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {
+        // TODO k cemu tato hodnota je? Nevidim zadne pouziti
         urlSummary = prefs.get(PREF_URL_SUMMARY, null);
         if (urlSummary==null)
             throw new ConfigurationException("Chybí nastavení "+PREF_URL_SUMMARY);
@@ -463,6 +512,37 @@ public class ViewBlog implements AbcAction, Configurable {
             reSummaryUrl = new RECompiler().compile(re);
         } catch (RESyntaxException e) {
             throw new ConfigurationException("Invalid regexp: '"+re+"'!");
+        }
+        re = prefs.get(PREF_ARCHIVE_URL, null);
+        try {
+            reArchiveUrl = new RECompiler().compile(re);
+        } catch (RESyntaxException e) {
+            throw new ConfigurationException("Invalid regexp: '"+re+"'!");
+        }
+    }
+
+    /**
+     * Helper class for view to store info about number of stories in certain month of year.
+     */
+    public static class ArchiveItem {
+        int year, month, size;
+
+        public ArchiveItem(int year, int month, int size) {
+            this.year = year;
+            this.month = month;
+            this.size = size;
+        }
+
+        public int getYear() {
+            return year;
+        }
+
+        public int getMonth() {
+            return month;
+        }
+
+        public int getSize() {
+            return size;
         }
     }
 }

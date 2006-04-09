@@ -54,19 +54,18 @@
 
     <div class="s_nad_h1"><div class="s_nad_pod_h1">
             <a class="info" href="#">?<span class="tooltip">Pøístup k archivovaným zápisùm za jednotlivé mìsíce.</span></a>
-            <h1>Archív</h1>
+            <h1><a href="/blog/${BLOG.subType}/archiv">Archív</a></h1>
     </div></div>
 
     <div class="s_sekce">
-        <#list BLOG_XML.data.archive.year as year>
-            <ul>
-            <#list year.month as month>
-                <li>
-                    <a href="/blog/${BLOG.subType}/${year.@value}/${month.@value}/"><@lib.month month=month.@value/>${year.@value} (${month})</a>
-                </li>
-            </#list>
-            </ul>
+        <ul>
+        <#list ARCHIVE as item>
+            <li>
+                <a href="/blog/${BLOG.subType}/${item.year}/${item.month}/"><@lib.month month=""+item.month/>
+                ${item.year} (${item.size})</a>
+            </li>
         </#list>
+        </ul>
     </div>
 
     <#assign links = BLOG_XML.data.custom.links.link>
@@ -112,18 +111,18 @@
   <div class="s_sekce">
     <ul>
     <#if USER?exists>
-        <#if USER.id==BLOG.owner>
-            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=add")}">Vlo¾ nový zápis</a></li>
-            <#if !CHILDREN.poll?exists>
-                <li><a href="${URL.noPrefix("/EditPoll?action=add&amp;rid="+STORY.id)}">Vytvoø anketu</a></li>
-            </#if>
-        </#if>
         <#if USER.id==BLOG.owner || USER.hasRole("root")>
             <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=edit")}">Uprav zápis</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=remove")}">Sma¾ zápis</a></li>
         </#if>
         <#if USER.id==BLOG.owner>
-            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=custom")}">Nastavení blogu</a></li>
+            <#if !CHILDREN.poll?exists>
+                <li><a href="${URL.noPrefix("/EditPoll?action=add&amp;rid="+STORY.id)}">Vlo¾ anketu</a></li>
+            </#if>
+            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=add")}">Vlo¾ nový zápis</a></li>
+        </#if>
+        <#if USER.id==BLOG.owner>
+            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=custom")}">Nastavit blog</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}">Pøejmenovat blog</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=categories")}">Upravit kategorie</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=links")}">Upravit odkazy</a></li>

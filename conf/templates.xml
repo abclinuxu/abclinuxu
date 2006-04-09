@@ -437,6 +437,9 @@
     <action name="blogs" content="/show/blogs.ftl">
       <var name="TITLE" value="Blogy na abclinuxu" />
     </action>
+    <action name="archive" content="/show/blog_archive.ftl">
+      <var name="TITLE" value="Archiv blogu" />
+    </action>
   </servlet>
 
   <servlet name="ViewUser">
