@@ -71,12 +71,8 @@ public class ContentChanges implements AbcAction {
 
         Tools.sync(relation);
         env.put(ShowObject.VAR_RELATION, relation);
-        List result = new ArrayList();
-
-        List stack = new ArrayList();
-        List children = relation.getChild().getChildren();
-        Tools.syncList(children);
-        stack.addAll(children);
+        List result = new ArrayList(), stack = new ArrayList(), children;
+        stack.add(relation);
 
         while (stack.size()>0) {
             Relation childRelation = (Relation) stack.remove(0);
