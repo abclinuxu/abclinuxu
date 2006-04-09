@@ -17,7 +17,7 @@
 	    ctennost=.globals["CITACE"]?if_exists(clanek)?default("UNDEF")
     >
     <#if tmp.discussion?exists><#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
-    <#if thumbnail!="UNDEF"><div style="float:right;margin:0.8em 0.4em 0 0.4em">${thumbnail}</div></#if>
+    <#if thumbnail!="UNDEF"><div class="cl_thumbnail">${thumbnail}</div></#if>
     <h1 class="st_nadpis"><a href="${url}">${TOOL.xpath(clanek,"data/name")}</a></h1>
     <p>${TOOL.xpath(clanek,"/data/perex")}</p>
     <p class="cl_inforadek">${DATE.show(clanek.created, dateFormat[0])} |
@@ -29,7 +29,6 @@
         </#if>
         <#if rating!="UNDEF">| Hodnocení:&nbsp;<span title="Hlasù: ${rating.count}">${rating.result?string["#0.00"]}</span></#if>
     </p>
-
 </#macro>
 
 <#macro showNews(relation)>
@@ -104,10 +103,10 @@
 
 <#macro showCensored(comment dizId relId)>
     <p class="cenzura">
-        <#assign admin = TOOL.xpath(comment.data,"//censored/@admin")?default("UNDEFINED")>
-        Ná¹ <#if admin!="UNDEFINED"><a href="/Profile/${admin}"></#if>administrátor<#if admin!="UNDEFINED"></a></#if>
+        <#assign admin = TOOL.xpath(comment.data,"//censored/@admin")?default("5473")>
+        Ná¹ <a href="/Profile/${admin}">administrátor</a>
         shledal tento pøíspìvek závadným nebo nevyhovujícím zamìøení portálu.
-        <#assign message = TOOL.xpath(comment.data,"//censored")?if_exists>
+        <#assign message = TOOL.xpath(comment.data,"//censored")?default("")>
         <#if message?has_content><br>${message}</#if>
         <br><a href="${URL.make("/show?action=censored&amp;dizId="+dizId+"&amp;threadId="+comment.id)}">Zobrazit</a> pøíspìvek
     </p>
