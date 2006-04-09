@@ -71,6 +71,8 @@ public class CommentDecorator {
         }
 
         Integer parent = dizComment.getParent();
+        if (parent == null)
+            parent = new Integer(0);
         String text = root.elementText("text");
         text = Tools.removeTags(text);
 
@@ -98,8 +100,7 @@ public class CommentDecorator {
         env.put(EmailSender.KEY_TEMPLATE, "/mail/forum/comment.ftl");
         env.put(EmailSender.KEY_SENT_DATE, dizComment.getCreated());
         env.put(EmailSender.KEY_MESSAGE_ID, ""+comment.discussionId+"."+comment.threadId+"@abclinuxu.cz");
-        if (parent != null)
-            env.put(EmailSender.KEY_REFERENCES, ""+comment.discussionId+"."+parent+"@abclinuxu.cz");
+        env.put(EmailSender.KEY_REFERENCES, ""+comment.discussionId+"."+parent+"@abclinuxu.cz");
 
         return env;
     }
