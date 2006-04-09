@@ -43,10 +43,12 @@ public class AbcConfig implements Configurable {
     public static final String PREF_ARTICLE_SECTION_ARTICLES_COUNT = "article.section.articles.count";
     public static final String PREF_SEARCH_RESULTS_COUNT = "search.results.count";
     public static final String PREF_FAQ_COUNT = "section.faq.count";
+    public static final String PREF_WATCHED_DISCUSSION_LIMIT = "watched.discussions.limit";
 
     static String deployPath;
     static int viewUserPageSize, sectionArticleCount;
     static int articleSectionArticlesCount, searchResultsCount, faqSectionCount;
+    static int maxWatchedDiscussions;
 
     /**
      * Callback used to configure your class from preferences.
@@ -58,6 +60,7 @@ public class AbcConfig implements Configurable {
         articleSectionArticlesCount = prefs.getInt(PREF_ARTICLE_SECTION_ARTICLES_COUNT, 5);
         searchResultsCount = prefs.getInt(PREF_SEARCH_RESULTS_COUNT, 10);
         faqSectionCount = prefs.getInt(PREF_FAQ_COUNT, 20);
+        maxWatchedDiscussions = prefs.getInt(PREF_WATCHED_DISCUSSION_LIMIT, 50);
     }
 
     /**
@@ -116,5 +119,12 @@ public class AbcConfig implements Configurable {
      */
     public static int getSearchResultsCount() {
         return searchResultsCount;
+    }
+
+    /**
+     * @return default number of discussions for which the user can see new comments  
+     */
+    public static int getMaxWatchedDiscussionLimit() {
+        return maxWatchedDiscussions;
     }
 }

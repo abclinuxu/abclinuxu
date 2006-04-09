@@ -77,7 +77,7 @@ patièku zobrazovanou v diskusích u va¹ich pøíspìvkù, nahrát svou fotku
 
 <h2>Blog</h2>
 
-<p>Blog je moderní formu vedení deníèku na internetu. Je urèen u¾ivatelùm Linuxu,
+<p>Blog je moderní formou vedení deníèku na internetu. Je urèen u¾ivatelùm Linuxu,
 kteøí zde mohou psát napøíklad návody, zamy¹lení, fejetony i jiné texty. Pokud nemáte
 s Linuxem nic spoleèného a jen hledáte blogovací systém, radìji si zalo¾te deníèek
 nìkde jinde.</p>

@@ -30,6 +30,7 @@ public class DiscussionHeader {
     public int relationId;
     /** count of responses in this discussion */
     public int responseCount;
+    public int lastCommentId;
     /**
      * When the discussion was modified for the last time.
      * If there were no responses, than creation time of the dicsussion.
@@ -69,5 +70,9 @@ public class DiscussionHeader {
 
     public String getUrl() {
         return url;
+    }
+
+    public int getLastCommentId() {
+        return lastCommentId;
     }
 }

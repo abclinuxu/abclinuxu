@@ -182,7 +182,7 @@
     <#else>
         <#local diz=TOOL.analyzeDiscussion("UNDEF")>
     </#if>
-    <a href="${url}">Komentáøù:</a> ${diz.responseCount}<#if diz.responseCount gt 0>, poslední ${DATE.show(diz.updated, "CZ_SHORT")}</#if>
+    <a href="${url}">Komentáøù:</a> ${diz.responseCount}<#if diz.responseCount gt 0><@lib.markNewComments diz/>, poslední ${DATE.show(diz.updated, "CZ_SHORT")}</#if>
 </#macro>
 
 <#include "../footer.ftl">

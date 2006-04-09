@@ -238,6 +238,18 @@ td.pad, code.kod, pre.kod {
 	color:		gray;
 }
 
+.cl_thumbnail {
+	float:		right;
+	margin:		0.8em 0.4em 0 0.4em;
+}
+
+.cl_highlight {
+	border:		1px solid silver;
+	margin:		0.5em 305px 0.5em 0;
+	background:	#bbcdff;
+	padding:	0.1em 0.5em 0.5em 0.5em;
+}
+
 .cl_perex, .perex, .host .spec {
 	margin-top:	15px;
 	margin-bottom:	15px;
@@ -452,10 +464,10 @@ a.oksystem {
 	color:		white;
 }
 
-.oksystem:before {
+/*.oksystem:before {
 	vertical-align:	middle;
 	content:	url('/images/bannery/oksystem-14-ok.gif');
-}
+}*/
 
 .s_sekce a.info:hover { text-decoration: none; }
 
@@ -719,12 +731,12 @@ a.info:hover span.tooltip {
 }
 
 .textad {
-	border:1px solid lightgray;
-	padding:5px;
-	margin:5px;
-	float:right;
-	background:#f6f6f6;
-	width:160px }
+	border:		1px solid lightgray;
+	padding:	1em;
+	margin:		1em;
+	background:	#f6f6f6;
+	font-size:	small;
+}
 
 .cl_square {
 	width: 300px;
@@ -783,6 +795,8 @@ table.hwdetail, table.swdetail {
 	border: none;
 	margin-top: 1em;
 }
+
+.anketa-tr-dark { background: #e6e6e6; }
 
 /*************** SF lista *****************/
 .sflista {

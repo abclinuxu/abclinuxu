@@ -20,6 +20,7 @@
      <a href="/forum/show/${diz.relationId}">${TOOL.limit(diz.title,100," ..")}</a>
     </td>
     <td class="td02">
+       <@lib.markNewCommentsQuestion diz/>
        <#if TOOL.xpath(diz.discussion,"/data/frozen")?exists>
          <img src="/images/site2/zamceno.gif" alt="Z" title="Diskuse byla administrátory uzamèena">
        </#if>

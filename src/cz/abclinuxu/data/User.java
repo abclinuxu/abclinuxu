@@ -25,6 +25,8 @@ import java.util.*;
 
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.LRUMap;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 
 /**
  * Class containing basic user data
@@ -45,6 +47,8 @@ public class User extends GenericObject implements XMLContainer {
 
     /** cache of granted user roles */
     private Map roles = null;
+    /** map where key is discussion id and value is id of last seen comment */
+    private Map lastSeenDiscussions;
 
 
     public User() {
@@ -213,6 +217,34 @@ public class User extends GenericObject implements XMLContainer {
      */
     public boolean isMemberOf(int group) {
         return getData().selectSingleNode("/data/system/group[text()='"+group+"']")!=null;
+    }
+
+    /**
+     * Fills last seen comments for this user. This is cache to be filled from persistent storage,
+     * changes are not propagated to persistence.
+     * @param map map to be copied, key is discussion id (integer), value is last seen comment id (integer).
+     */
+    public void fillLastSeenComments(Map map) {
+        lastSeenDiscussions = new LRUMap(AbcConfig.getMaxWatchedDiscussionLimit());
+        lastSeenDiscussions.putAll(map);
+    }
+
+    /**
+     * Stores id of last seen comment for given discussion (not persistent).
+     * @param discussion
+     * @param lastComment
+     */
+    public void storeLastSeenComment(int discussion, int lastComment) {
+        lastSeenDiscussions.put(new Integer(discussion), new Integer(lastComment));
+    }
+
+    /**
+     * Finds id of comment that this user has seen as last.
+     * @param discussion id of discussion
+     * @return id of last seen comment or null, if he has not opened that dicussion yet
+     */
+    public Integer getLastSeenComment(int discussion) {
+        return (Integer) lastSeenDiscussions.get(new Integer(discussion));
     }
 
     /**

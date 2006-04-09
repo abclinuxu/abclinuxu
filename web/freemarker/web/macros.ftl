@@ -24,8 +24,8 @@
         <a href="/Profile/${autor.id}">${autor.name}</a> |
         Pøeèteno: <#if ctennost?string!="UNDEF">${ctennost}<#else>${TOOL.getCounterValue(clanek)}</#if>x
         <#if diz?exists>
-            | <a href="${diz.url?default("/clanky/show/"+diz.relationId)}">Komentáøù:&nbsp;${diz.responseCount}</a
-            ><#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, dateFormat[1]?default(dateFormat[0]))}</#if>
+            | <a href="${diz.url?default("/clanky/show/"+diz.relationId)}">Komentáøù:&nbsp;${diz.responseCount}<@markNewComments diz/></a><#rt>
+            <#lt><#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, dateFormat[1]?default(dateFormat[0]))}</#if>
         </#if>
         <#if rating!="UNDEF">| Hodnocení:&nbsp;<span title="Hlasù: ${rating.count}">${rating.result?string["#0.00"]}</span></#if>
     </p>
@@ -43,9 +43,21 @@
  ${TOOL.xpath(ITEM,"data/content")}<br>
  <span style="font-size: smaller">
   <a href="${url}">Link</a>
-  Komentáøe: ${diz.responseCount}<#if diz.responseCount gt 0>, poslední ${DATE.show(diz.updated, "CZ_FULL")}</#if>
+  Komentáøe: ${diz.responseCount}<#if diz.responseCount gt 0><@markNewComments diz/>, poslední ${DATE.show(diz.updated, "CZ_FULL")}</#if>
  </span>
  </p>
+</#macro>
+
+<#macro markNewComments(discussion)><#t>
+<#if TOOL.hasNewComments(USER?if_exists, discussion)><#t>
+    <span title="V diskusi jsou nové komentáøe" class="new_comment_mark">*</span><#t>
+</#if><#t>
+</#macro>
+
+<#macro markNewCommentsQuestion(discussion)><#t>
+<#if TOOL.hasNewComments(USER?if_exists, discussion)><#t>
+    <span title="V diskusi jsou nové komentáøe" class="new_comment_state">*</span><#t>
+</#if><#t>
 </#macro>
 
 <#macro separator double=false>

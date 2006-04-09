@@ -46,7 +46,7 @@ ${DATE.show(ITEM.created,"CZ_FULL")} | <a href="/Profile/${autor.id}">${autor.na
 </#if>
 
 <div class="cl_square">
- <a href="mailto:reklama@stickfish.cz">reklama</a><br>
+ <a href="mailto:info@stickfish.cz">reklama</a><br>
  <#include "/include/impact-cl-sq.txt">
 </div>
 

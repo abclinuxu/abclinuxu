@@ -23,11 +23,11 @@ import cz.abclinuxu.persistance.Nursery;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.LRUMap;
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.Relation;
 import org.apache.log4j.Logger;
 
-import java.util.LinkedHashMap;
 import java.util.Collections;
 import java.util.Map;
 import java.util.prefs.Preferences;
@@ -137,16 +137,4 @@ public class SynchronizedCache implements Cache, Configurable {
         size = prefs.getInt(PREF_SIZE, DEFAULT_SIZE);
     }
 
-    private class LRUMap extends LinkedHashMap {
-        int MAX_SIZE;
-
-        public LRUMap(int size) {
-            super(size, 1.0f, true);
-            MAX_SIZE = size;
-        }
-
-        protected boolean removeEldestEntry(Map.Entry eldest) {
-            return size()>MAX_SIZE;
-        }
-    }
 }

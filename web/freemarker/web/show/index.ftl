@@ -145,6 +145,7 @@
                     <a href="/forum/show/${diz.relationId}">${TOOL.limit(TOOL.xpath(diz.discussion,"data/title"),60," ..")}</a>
                 </td>
                 <td class="td02">
+                    <@lib.markNewCommentsQuestion diz/>
                     <#if TOOL.xpath(diz.discussion,"/data/frozen")?exists>
                         <img src="/images/site2/zamceno.gif" alt="Z" title="Diskuse byla administrátory uzamèena">
                     </#if>
@@ -214,7 +215,9 @@
         <#assign diz=TOOL.analyzeDiscussion("UNDEF")>
     </#if>
     <a href="${url}" title="${author.nick?default(author.name)?html}<#if title!="UNDEF">, ${title}</#if>">${TOOL.xpath(story, "/data/name")}</a>
-    <span title="Poèet&nbsp;komentáøù<#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if>">(${diz.responseCount})</span>
+    <span title="Poèet&nbsp;komentáøù<#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if>">
+        (${diz.responseCount}<@lib.markNewComments diz/>)
+    </span>
 </#macro>
 
 <#if TOOL.isGuidePostEnabled(USER?if_exists)>

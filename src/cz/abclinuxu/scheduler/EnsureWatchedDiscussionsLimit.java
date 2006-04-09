@@ -18,31 +18,28 @@
  */
 package cz.abclinuxu.scheduler;
 
-import cz.abclinuxu.utils.config.Configurable;
-import cz.abclinuxu.utils.config.ConfigurationException;
-import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.persistance.SQLTool;
-
-import java.util.*;
-import java.util.prefs.Preferences;
-
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import org.apache.log4j.Logger;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TimerTask;
 
 /**
  * Removes all rows of last seen comments which are beyond user limits.
  */
-public class EnsureWatchedDiscussionsLimit extends TimerTask implements Configurable {
+public class EnsureWatchedDiscussionsLimit extends TimerTask {
     static Logger log = Logger.getLogger(EnsureWatchedDiscussionsLimit.class);
 
-    public static final String PREF_WATCHED_DISCUSSION_LIMIT = "watched.discussions.limit";
     static EnsureWatchedDiscussionsLimit instance;
     static {
         instance = new EnsureWatchedDiscussionsLimit();
-        ConfigurationManager.getConfigurator().configureAndRememberMe(instance);
     }
 
     Set users;
-    int maxWatchedDiscussions;
 
     public static EnsureWatchedDiscussionsLimit getInstance() {
         return instance;
@@ -67,17 +64,14 @@ public class EnsureWatchedDiscussionsLimit extends TimerTask implements Configur
             users = Collections.synchronizedSet(new HashSet());
         }
 
+        int limit = AbcConfig.getMaxWatchedDiscussionLimit();
         log.info("Cleaning watched discussions for "+usersToClean.size()+" users.");
         for ( Iterator iter = usersToClean.iterator(); iter.hasNext(); ) {
             Integer uid = (Integer) iter.next();
             iter.remove();
-            int deleted = sqlTool.deleteOldComments(uid.intValue(), maxWatchedDiscussions);
+            int deleted = sqlTool.deleteOldComments(uid.intValue(), limit);
             log.debug("User "+uid.intValue()+": deleted "+deleted+" watched discussions");
         }
         log.info("Cleaning watched discussions finished");
-    }
-
-    public void configure(Preferences prefs) throws ConfigurationException {
-        maxWatchedDiscussions = prefs.getInt(PREF_WATCHED_DISCUSSION_LIMIT, 50);
     }
 }

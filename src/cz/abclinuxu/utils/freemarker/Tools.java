@@ -1124,11 +1124,11 @@ public class Tools implements Configurable {
         if (user != null) {
             SQLTool sqlTool = SQLTool.getInstance();
             discussion.setBlacklist(getUsersBlacklistOnlyIds(user));
-
-            Integer lastSeen = sqlTool.getLastSeenComment(user.getId(), obj.getId());
+            Integer lastSeen = user.getLastSeenComment(obj.getId());
             if (lastSeen != null)
                 discussion.setUnreadComments(lastSeen);
             sqlTool.insertLastSeenComment(user.getId(), obj.getId(), discussion.getGreatestId());
+            user.storeLastSeenComment(obj.getId(), discussion.getGreatestId());
             EnsureWatchedDiscussionsLimit.checkLimits(user.getId());
         }
 
@@ -1187,7 +1187,14 @@ public class Tools implements Configurable {
         discussion.url = relation.getUrl();
 
         Document data = item.getData();
-        discussion.responseCount = Misc.parseInt(data.selectSingleNode("/data/comments").getText(),0);
+        Element element = (Element) data.selectSingleNode("/data/comments");
+        discussion.responseCount = Misc.parseInt(element.getText(), 0);
+        element = (Element) data.selectSingleNode("/data/last_id");
+        if (element != null)
+            discussion.lastCommentId = Misc.parseInt(element.getText(), discussion.responseCount);
+        else
+            discussion.lastCommentId = discussion.responseCount;
+
         Node node = data.selectSingleNode("data/title");
         if (node==null) {
             GenericObject parent = relation.getParent();
@@ -1222,6 +1229,24 @@ public class Tools implements Configurable {
                 list.add(preparedDiscussion);
         }
         return list;
+    }
+
+    /**
+     * Tests whether user has seen all comments in given discussion.
+     * @param maybeUser instance of User or some undefined value
+     * @param diz initialized discussion header
+     * @return true if maybeUser is user, which has seen this discussion and there is new comment 
+     */
+    public boolean hasNewComments(Object maybeUser, DiscussionHeader diz) {
+        if (maybeUser == null || ! (maybeUser instanceof User))
+            return false;
+        if (diz.getDiscussion() == null)
+            return false;
+        int dizId = diz.getDiscussion().getId();
+        Integer lastSeen = ((User)maybeUser).getLastSeenComment(dizId);
+        if (lastSeen == null)
+            return false;
+        return lastSeen.intValue() < diz.getLastCommentId();
     }
 
     /**

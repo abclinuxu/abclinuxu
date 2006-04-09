@@ -29,6 +29,7 @@
                                     <entry key="article.section.articles.count" value="5"/>
                                     <entry key="search.results.count" value="10"/>
                                     <entry key="section.faq.count" value="20"/>
+                                    <entry key="watched.discussions.limit" value="75"/>
                                 </map>
                             </node>
                         </node>
@@ -258,7 +259,7 @@
                             <entry key="user.by.login" value="select cislo from uzivatel where login=?" />
                             <entry key="insert.last.comment" value="replace into posledni_komentar values(?,?,?,NULL);"/>
                             <entry key="get.last.comment" value="select posledni from posledni_komentar where kdo=? and diskuse=?" />
-                            <entry key="get.xth.comment.date" value="select kdy from posledni_komentar where kdo=? order by kdy desc limit ?,1" />
+                            <entry key="get.last.comments" value="select diskuse, posledni, kdy from posledni_komentar where kdo=? order by kdy desc limit ?,?" />
                             <entry key="delete.old.comments" value="delete from posledni_komentar where kdo=? and kdy&lt;=?" />
                             <entry key="items.with.type" value="select cislo from polozka where typ=?"/>
                             <entry key="records.with.type" value="select cislo from zaznam where typ=?"/>
@@ -327,11 +328,6 @@
                             <entry key="file" value="WEB-INF/freemarker/include/oksystem.txt"/>
                             <entry key="uri" value="http://portal.oksystem.cz/okskoleni/linuxRss"/>
                             <entry key="max" value="5" />
-                        </map>
-                    </node>
-                    <node name="EnsureWatchedDiscussionsLimit">
-                        <map>
-                            <entry key="watched.discussions.limit" value="75"/>
                         </map>
                     </node>
                     <node name="VariableFetcher">

@@ -78,7 +78,7 @@ public final class SQLTool implements Configurable {
     public static final String PREF_RELATION_BY_URL = "relation.by.url";
     public static final String PREF_INSERT_LAST_COMMENT = "insert.last.comment";
     public static final String PREF_GET_LAST_COMMENT = "get.last.comment";
-    public static final String PREF_GET_OLD_COMMENT = "get.xth.comment.date";
+    public static final String PREF_GET_LAST_COMMENTS = "get.last.comments";
     public static final String PREF_DELETE_OLD_COMMENTS = "delete.old.comments";
     public static final String PREF_INSERT_USER_ACTION = "insert.user.action";
     public static final String PREF_GET_USER_ACTION = "get.user.action";
@@ -108,7 +108,7 @@ public final class SQLTool implements Configurable {
     private String maxUser, userByLogin, faqSectionSize;
     private String itemsByType, recordsByType;
     private String countArticlesByUser, countDiscussionsByUser;
-    private String insertLastComment, getLastComment, getXthComment, deleteOldComments;
+    private String insertLastComment, getLastComment, getLastComments, deleteOldComments;
     private String insertUserAction, getUserAction, removeUserAction;
     private String incrementStatistics, addStatistics, getStatisticsByMonth, getStatistics;
 
@@ -1202,6 +1202,20 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Finds last seen comments for selected user.
+     * @param userId id of the user
+     * @param size number of returned rows
+     * @return id of the comment or null
+     */
+    public List getLastSeenComments(int userId, int size) {
+        List params = new ArrayList();
+        params.add(new Integer(userId));
+        params.add(new Integer(0));
+        params.add(new Integer(size));
+        return loadObjects(getLastComments, params);
+    }
+
+    /**
      * Inserts into comments information about last comment of given discussion seen
      * by selected user. If the discussion has been already displayed to this user,
      * its previous lastComment value is replaced by new value.
@@ -1241,14 +1255,15 @@ public final class SQLTool implements Configurable {
         ResultSet resultSet = null;
         try {
             con = persistance.getSQLConnection();
-            statement = con.prepareStatement(getXthComment);
+            statement = con.prepareStatement(getLastComments);
             statement.setInt(1, userId);
             statement.setInt(2, preserveCount);
+            statement.setInt(3, 1);
             resultSet = statement.executeQuery();
             if ( !resultSet.next() )
                 return 0;
 
-            Timestamp timestamp = resultSet.getTimestamp(1);
+            Timestamp timestamp = resultSet.getTimestamp(3);
             statement = con.prepareStatement(deleteOldComments);
             statement.setInt(1, userId);
             statement.setTimestamp(2, timestamp);
@@ -1456,7 +1471,7 @@ public final class SQLTool implements Configurable {
         countDiscussionsByUser = getValue(PREF_COUNT_DISCUSSIONS_BY_USER, prefs);
         insertLastComment = getValue(PREF_INSERT_LAST_COMMENT, prefs);
         getLastComment = getValue(PREF_GET_LAST_COMMENT, prefs);
-        getXthComment = getValue(PREF_GET_OLD_COMMENT, prefs);
+        getLastComments = getValue(PREF_GET_LAST_COMMENTS, prefs);
         deleteOldComments = getValue(PREF_DELETE_OLD_COMMENTS, prefs);
         insertUserAction = getValue(PREF_INSERT_USER_ACTION, prefs);
         getUserAction = getValue(PREF_GET_USER_ACTION, prefs);

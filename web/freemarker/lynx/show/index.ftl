@@ -55,7 +55,7 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
             <a href="/forum/show/${diz.relationId}">
                 ${TOOL.limit(TOOL.xpath(diz.discussion,"data/title"),50," ..")}
             </a>
-            ${DATE.show(diz.updated,"CZ_SHORT")}, ${diz.responseCount} odp.,
+            ${DATE.show(diz.updated,"CZ_SHORT")}, ${diz.responseCount}<@lib.markNewComments diz/> odp.,
             <#if TOOL.xpath(diz.discussion,"/data/frozen")?exists>
                 <b>Z</b>,
             </#if>
@@ -101,7 +101,7 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
      </#if>
      <a href="${url}">${TOOL.xpath(story, "/data/name")}<#if title!="UNDEF"> | ${title}</#if></a> |
      Komentáøù:&nbsp;${diz.responseCount}
-     <#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if>
+     <#if diz.responseCount gt 0><@lib.markNewComments diz/>, poslední&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if>
      </li>
   </#list>
   </ul>

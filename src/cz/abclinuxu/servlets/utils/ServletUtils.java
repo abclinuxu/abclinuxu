@@ -30,6 +30,7 @@ import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.exceptions.InvalidInputException;
 import org.apache.log4j.Logger;
 import org.apache.commons.fileupload.DiskFileUpload;
@@ -365,6 +366,16 @@ public class ServletUtils implements Configurable {
         }
         DocumentHelper.makeElement(user.getData(), "data/system/last_login_date").setText(now);
         PersistanceFactory.getPersistance().update(user); // session bug here
+
+        int limit = AbcConfig.getMaxWatchedDiscussionLimit();
+        List rows = SQLTool.getInstance().getLastSeenComments(user.getId(), limit);
+        Map comments = new HashMap(limit + 1, 1.0f);
+        Object[] objects;
+        for (Iterator iter = rows.iterator(); iter.hasNext();) {
+            objects = (Object[]) iter.next();
+            comments.put((Integer) objects[0], (Integer) objects[1]);
+        }
+        user.fillLastSeenComments(comments);
 
         if ( !cookieExists ) {
             int valid = 6*30*24*3600; // six months

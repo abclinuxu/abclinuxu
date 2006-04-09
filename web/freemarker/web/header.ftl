@@ -150,7 +150,7 @@
                 </div>
                 <#assign diz=TOOL.findComments(anketa)>
                 <div class="ls_zpr">&nbsp;<a href="${url}">Komentáøù:</a>
-		        ${diz.responseCount}<#if diz.responseCount gt 0>, poslední
+		        ${diz.responseCount}<#if diz.responseCount gt 0><@lib.markNewComments diz/>, poslední
 		        ${DATE.show(diz.updated,"CZ_SHORT")}</#if>
 		        <br>&nbsp;<a href="/clanky/dir/3500?categoryPosition=0">Navrhnìte novou anketu</a>
 		        </div>
@@ -182,6 +182,14 @@
         		<hr>
                 <div class="ls_zpr">
                 <#list news as relation>
+                    <#if relation_index==8>
+                        <p align="center">
+                           <a href="/hosting"><img src="/images/bannery/abchosting.gif" alt="AbcHosting je tu pro vás"
+                           border="0" width="251" height="60"></a>
+                        </p>
+                        <hr>
+                        <#include "/include/redhat_zpravicka.txt">
+                    </#if>
                     <#assign item=TOOL.sync(relation.child), autor=TOOL.createUser(item.owner),
                       diz=TOOL.findComments(item), url=relation.url?default("/zpravicky/show/"+relation.id)>
                     ${DATE.show(item.created,"CZ_SHORT")} |
@@ -189,7 +197,7 @@
                     <p>${TOOL.xpath(item,"data/content")}</p>
                     <a href="/Profile/${autor.id}">${TOOL.nonBreakingSpaces(autor.name)}</a>
                     | <a href="${url}" title="<#if diz.responseCount gt 0>poslední ${DATE.show(diz.updated, "CZ_FULL")}</#if>"
-                    >(Komentáøù: ${diz.responseCount})</a>
+                    >(Komentáøù: ${diz.responseCount}<@lib.markNewComments diz/>)</a>
                     <hr>
                 </#list>
                 </div>
@@ -201,10 +209,6 @@
             </div>
 
             <#if ! IS_INDEX?exists>
-                <p align="center">
-                    <a href="/hosting"><img src="/images/bannery/abchosting.gif" alt="AbcHosting je tu pro vás"
-                    border="0" width="251" height="60"></a>
-                </p>
                 <!-- prace.abclinuxu.cz -->
                 <div class="s_nad_h1"><div class="s_nad_pod_h1">
                     <h1><a href="http://www.praceabc.cz"
@@ -218,8 +222,8 @@
                     <!-- ROZCESTNÍK -->
                     <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Rozcestník</h1></div></div>
                     <div class="s_sekce">
-                        <div class="rozc"><!-- odebran svethardware: 19 -->
-                            <#list TOOL.createServers([7,16,18,1,13,14,17,15,3,5]) as server>
+                        <div class="rozc"><!-- odebran slashdot: 15 -->
+                            <#list TOOL.createServers([7,16,18,1,13,14,17,19,3,5]) as server>
                                 <a class="server" href="${server.url}" rel="nofollow">${server.name}</a><br>
                                 <ul>
                                 <#assign linky = TOOL.sublist(SORT.byDate(LINKS[server.name],"DESCENDING"),0,2)>
@@ -243,7 +247,7 @@
                   <li><a href="/clanky/novinky/pojdte-psat-pro-abclinuxu.cz">Pi¹te pro abclinuxu</a></li>
                   <li><a href="http://bugzilla.abclinuxu.cz" rel="nofollow">Bugzilla</a></li>
                   <li><a href="/hardware/dir/3500">Vzkazy správcùm</a> (${VARS.counter.REQUESTS})</li>
-                  <li><a href="mailto:reklama@stickfish.cz">Inzerce</a></li>
+                  <li><a href="mailto:info@stickfish.cz">Inzerce</a></li>
                   <#if USER?exists && USER.isMemberOf(11246)>
                    <li><a href="/Admin">Administrace portálu</a></li>
                    <li><a href="/system">Sekce systém</a></li>
@@ -260,9 +264,10 @@
                     <li><a href="javascript:addBookmark();">Pøidej mezi oblíbené</a></li>
                     <li><a href="javascript:setHomepage();">Nastav jako domácí stránku</a></li>
                     <li><a href="http://www.linux.cz" rel="nofollow">linux.cz</a></li>
-                    <li><a href="http://www.broadnet.cz" rel="nofollow">broadnet.cz</a></li>
+                    <li><a href="http://www.unixshop.cz">unixshop.cz</a></li>
                     <li><a href="http://www.pravednes.cz" rel="nofollow">pravednes.cz</a></li>
 		    <li><a href="http://www.autoweb.cz" rel="nofollow">autoweb.cz</a></li>
+		    <li><a href="http://shop.tricko-tricka.com">tricko-tricka.com</a></li>
                 </ul>
             </div>
 

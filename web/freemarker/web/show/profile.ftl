@@ -5,7 +5,7 @@
 <#if ! USER?exists>
  <p>Pokud jste ${PROFILE.name}, <a href="${URL.noPrefix("/Profile?action=login")}">pøihlaste se</a>
  a bude vám zobrazena va¹e domovská stránka.</p>
- 
+
 <#elseif USER.id==PROFILE.id>
  <#if PARAMS.LOGIN?exists>
   <h1>Vítejte</h1>
@@ -21,7 +21,7 @@
  <a href="${URL.noPrefix("/Profile/"+PROFILE.id+"?action=myPage")}">tuto stránku</a>.
  Tam také mù¾ete zmìnit nastavení svého u¾ivatele (napøíklad se pøihlásit k odbìru zpravodaje).
  Text nad èarou vidíte pouze vy, ostatním náv¹tìvníkùm není zobrazen.</p>
- 
+
  <hr />
 <#elseif USER.hasRole("user admin")>
  <a href="${URL.noPrefix("/Profile/"+PROFILE.id+"?action=myPage")}">Upravit</a>
@@ -90,7 +90,7 @@
             <li>
                 <a href="${url}">${TOOL.xpath(story, "/data/name")}</a> | ${DATE.show(story.created, "CZ_DMY")}
                 | <span title="<#if diz.responseCount gt 0>poslední ${DATE.show(diz.updated, "CZ_SHORT")}</#if>">
-                    komentáøù: ${diz.responseCount}
+                    komentáøù: ${diz.responseCount}<@lib.markNewComments diz/>
                   </span>
             </li>
         </#list>
