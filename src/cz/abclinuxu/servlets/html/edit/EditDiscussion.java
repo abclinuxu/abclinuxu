@@ -79,6 +79,7 @@ public class EditDiscussion implements AbcAction {
     public static final String VAR_THREAD = "THREAD";
     public static final String VAR_PREVIEW = "PREVIEW";
     public static final String VAR_PARENT_TITLE = "PARENT_TITLE";
+    public static final String VAR_FORUM_QUESTION = "FORUM_QUESTION";
 
     public static final String ACTION_ADD_DISCUSSION = "addDiz";
     public static final String ACTION_ADD_QUESTION = "addQuez";
@@ -290,6 +291,7 @@ public class EditDiscussion implements AbcAction {
     protected String actionAddComment(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
+        Relation relation = (Relation) env.get(VAR_RELATION);
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if ( discussion==null )
@@ -307,7 +309,6 @@ public class EditDiscussion implements AbcAction {
         if ( parentThread.getTitle() != null )
             env.put(VAR_THREAD, parentThread);
         else {
-            Relation relation = (Relation) env.get(VAR_RELATION);
             if (relation.getParent() instanceof Category) {
                 Category category = (Category) relation.getParent();
                 if (category.getType()!=Category.FORUM)
@@ -316,6 +317,7 @@ public class EditDiscussion implements AbcAction {
                 relation = new Relation(relation.getUpper());
             env.put(VAR_PARENT_TITLE, getTitleFromParent(relation));
         }
+        setForumQuestionFlag(relation, env);
 
         return FMTemplateSelector.select("EditDiscussion","reply",env,request);
     }
@@ -359,6 +361,8 @@ public class EditDiscussion implements AbcAction {
             record.setCustom(dizRecord);
         }
 
+        setForumQuestionFlag(relation, env);
+
         boolean canContinue = true;
         canContinue &= setId(dizRecord, comment);
         canContinue &= setCreated(comment);
@@ -367,6 +371,7 @@ public class EditDiscussion implements AbcAction {
         canContinue &= setTitle(params, root, env);
         canContinue &= setText(params, root, env);
         canContinue &= setUserIPAddress(root, request);
+        canContinue &= testAnonymCanPostComments(user, env);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             env.put(VAR_DISCUSSION, discussion);
@@ -1066,7 +1071,7 @@ public class EditDiscussion implements AbcAction {
             }
             DocumentHelper.makeElement(root,"title").setText(tmp);
         } else {
-            ServletUtils.addError(PARAM_TITLE, "Zadejte titulek va¹eho dotazu!", env, null);
+            ServletUtils.addError(PARAM_TITLE, "Zadejte titulek!", env, null);
             return false;
         }
         return true;
@@ -1097,7 +1102,7 @@ public class EditDiscussion implements AbcAction {
             Format format = FormatDetector.detect(tmp);
             element.addAttribute("format", Integer.toString(format.getId()));
         } else {
-            ServletUtils.addError(PARAM_TEXT, "Zadejte text va¹eho dotazu!", env, null);
+            ServletUtils.addError(PARAM_TEXT, "Zadejte text va¹eho dotazu.", env, null);
             return false;
         }
         return true;
@@ -1119,7 +1124,7 @@ public class EditDiscussion implements AbcAction {
             Format format = FormatDetector.detect(tmp);
             element.addAttribute("format", Integer.toString(format.getId()));
         } else {
-            ServletUtils.addError(PARAM_TEXT, "Zadejte text va¹eho dotazu!", env, null);
+            ServletUtils.addError(PARAM_TEXT, "Zadejte text va¹eho dotazu.", env, null);
             return false;
         }
         return true;
@@ -1144,8 +1149,8 @@ public class EditDiscussion implements AbcAction {
         } else {
             String tmp = (String) params.get(PARAM_AUTHOR_ID);
             if ( tmp!=null && tmp.length()>0 ) {
-                int authorId = Integer.parseInt(tmp);
-                comment.setAuthor(new Integer(authorId));
+                Integer authorId = new Integer(tmp);
+                comment.setAuthor(authorId);
                 return true;
             }
 
@@ -1163,6 +1168,24 @@ public class EditDiscussion implements AbcAction {
             }
         }
         return true;
+    }
+
+    /**
+     * Anonymous post allowance test. The method setForumQuestionFlag() must be called prior this method.
+     * @param user current user
+     * @param env  environment
+     * @return false, if user is not logged in and anonymous posts are prohibited
+     */
+    static boolean testAnonymCanPostComments(User user, Map env) {
+        if (user != null)
+            return true;
+
+        Boolean forumQuestion = (Boolean) env.get(VAR_FORUM_QUESTION);
+        if (forumQuestion.booleanValue())
+            return true;
+
+        ServletUtils.addError(ServletUtils.PARAM_LOG_USER, "Zadejte prosím své pøihla¹ovací údaje.", env, null);
+        return false;
     }
 
     /**
@@ -1285,5 +1308,19 @@ public class EditDiscussion implements AbcAction {
             }
         }
         return true;
+    }
+
+    /**
+     * Sets flag whether the discussion is forum or not.
+     * @param relation initialized discussion relation
+     * @param env boolean with key VAR_FORUM_QUESTION
+     */
+    static void setForumQuestionFlag(Relation relation, Map env) {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        GenericObject parent = persistance.findById(relation.getParent());
+        if (parent instanceof Category && ((Category)parent).getType()==Category.FORUM)
+            env.put(VAR_FORUM_QUESTION, Boolean.TRUE);
+        else
+            env.put(VAR_FORUM_QUESTION, Boolean.FALSE);
     }
 }

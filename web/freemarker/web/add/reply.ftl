@@ -11,12 +11,6 @@
  </p>
 </#if>
 
-<#if ! USER?exists>
- <p>Nejste pøihlá¹en. Nový úèet mù¾ete zalo¾it
-  <a HREF="${URL.noPrefix("/EditUser?action=register")}">zde</a>.
- </p>
-</#if>
-
 <#if THREAD?exists>
  <h1>Pøíspìvek, na který reagujete</h1>
  <@lib.showThread THREAD, 0, TOOL.createEmptyDiscussion(), false />
@@ -39,18 +33,30 @@
 
 <h1>Vá¹ komentáø</h1>
 
+<#if ! USER?exists && ! FORUM_QUESTION>
+    <p>
+        Neregistrovaní náv¹tìvníci smí pøispívat jen do otázek v diskusním
+        fóru. Pro pøidání komentáøe do této diskuse je nutné se pøihlásit.
+        Nemáte-li na na¹em portálu úèet, bude nutné jej nejdøíve
+        <a href="${URL.noPrefix("/EditUser?action=register")}">vytvoøit</a>.
+    </p>
+</#if>
+
 <form action="${URL.make("/EditDiscussion")}" method="POST" name="replyForm">
   <#if ! USER?exists>
    <p>
     <span class="required">Login a heslo</span>
      <input tabindex="1" type="text" name="LOGIN" size="8">
      <input tabindex="2" type="password" name="PASSWORD" size="8">
+     <span class="error">${ERRORS.LOGIN?if_exists}</span>
    </p>
-   <p>
-    <span class="required">nebo va¹e jméno</span>
-     <input tabindex="3" type="text" size="30" name="author" value="${PARAMS.author?if_exists?html}">
-     <div class="error">${ERRORS.author?if_exists}</div>
-   </p>
+   <#if FORUM_QUESTION>
+       <p>
+        <span class="required">nebo va¹e jméno</span>
+         <input tabindex="3" type="text" size="30" name="author" value="${PARAMS.author?if_exists?html}">
+         <span class="error">${ERRORS.author?if_exists}</span>
+       </p>
+   </#if>
   </#if>
   <p>
    <span class="required">Titulek</span><br>
