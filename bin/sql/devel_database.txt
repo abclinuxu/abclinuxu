@@ -7,7 +7,7 @@ SET CHARACTER SET latin2;
 
 3\
 insert into uzivatel values(1,'admin','Superu¾ivatel','root@localhost','changeit',NULL,
-'<data><system><group>11246</group></system><settings><emoticons>yes</emoticons>
+'<data><personal><sex>man</sex></personal><system><group>11246</group></system><settings><emoticons>yes</emoticons>
 <blog name="leos">591</blog></settings><roles><role>root</role></roles></data>');
 
 insert into uzivatel values(2,'user','U¾ivatel','root@localhost','changeit','Minime',
