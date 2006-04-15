@@ -424,7 +424,7 @@ public class EditNews implements AbcAction {
     private boolean setTitle(Map params, Item item, Map env) {
         String text = (String) params.get(PARAM_TITLE);
         if (text==null || text.length()==0) {
-            ServletUtils.addError(PARAM_PUBLISH_DATE, "Zadejte titulek zprávièky", env, null);
+            ServletUtils.addError(PARAM_TITLE, "Zadejte titulek zprávièky", env, null);
             return false;
         }
 
