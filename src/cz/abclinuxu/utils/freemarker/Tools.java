@@ -1204,9 +1204,12 @@ public class Tools implements Configurable {
                 data = item.getData();
                 if (item.getType()==Item.ARTICLE || item.getType()==Item.BLOG)
                     node = data.selectSingleNode("data/name");
-                else if ( item.getType()==Item.NEWS )
+                else if ( item.getType()==Item.NEWS ) {
+                    discussion.title = "Zprávièka";
                     node = data.selectSingleNode("data/title");
-                discussion.title = node.getText();
+                }
+                if (node != null)
+                    discussion.title = node.getText();
             } else if ( parent instanceof Poll) {
                 discussion.title = ((Poll)parent).getText();
             }
@@ -1235,7 +1238,7 @@ public class Tools implements Configurable {
      * Tests whether user has seen all comments in given discussion.
      * @param maybeUser instance of User or some undefined value
      * @param diz initialized discussion header
-     * @return true if maybeUser is user, which has seen this discussion and there is new comment 
+     * @return true if maybeUser is user, which has seen this discussion and there is new comment
      */
     public boolean hasNewComments(Object maybeUser, DiscussionHeader diz) {
         if (maybeUser == null || ! (maybeUser instanceof User))
