@@ -412,6 +412,7 @@ public class CreateIndex implements Configurable {
         doc.setTitle(title);
         doc.setURL("/blog/"+category.getSubType());
         doc.setType(MyDocument.TYPE_BLOG);
+        doc.setCreated(category.getCreated());
         return doc;
     }
 
