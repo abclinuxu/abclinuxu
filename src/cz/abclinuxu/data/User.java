@@ -225,8 +225,15 @@ public class User extends GenericObject implements XMLContainer {
      * @param map map to be copied, key is discussion id (integer), value is last seen comment id (integer).
      */
     public void fillLastSeenComments(Map map) {
-        lastSeenDiscussions = new LRUMap(AbcConfig.getMaxWatchedDiscussionLimit());
+        createLastSeenCommentsMap();
         lastSeenDiscussions.putAll(map);
+    }
+
+    /**
+     * Creates map where cache of last seen comments will be stored.
+     */
+    private void createLastSeenCommentsMap() {
+        lastSeenDiscussions = new LRUMap(AbcConfig.getMaxWatchedDiscussionLimit());
     }
 
     /**
@@ -235,6 +242,8 @@ public class User extends GenericObject implements XMLContainer {
      * @param lastComment
      */
     public void storeLastSeenComment(int discussion, int lastComment) {
+        if (lastSeenDiscussions == null)
+            createLastSeenCommentsMap();
         lastSeenDiscussions.put(new Integer(discussion), new Integer(lastComment));
     }
 
@@ -244,6 +253,8 @@ public class User extends GenericObject implements XMLContainer {
      * @return id of last seen comment or null, if he has not opened that dicussion yet
      */
     public Integer getLastSeenComment(int discussion) {
+        if (lastSeenDiscussions == null)
+            return null;
         return (Integer) lastSeenDiscussions.get(new Integer(discussion));
     }
 
