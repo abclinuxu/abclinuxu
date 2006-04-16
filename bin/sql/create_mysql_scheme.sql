@@ -84,9 +84,7 @@ CREATE TABLE odkaz (
  server INT(3),                         -- identifikator serveru
  nazev VARCHAR(80),                     -- nazev odkazu (clanku)
  url VARCHAR(255),                      -- jeho URL, kam pujde redirect
- trvaly CHAR(1),                        -- logicka, NULL pro FALSE,
-                                        -- urcuje, zda muze byt link
-					                    -- nahrazen novejsim ze seznamu clanku
+ trvaly CHAR(1),                        -- logicka, NULL pro FALSE, urcuje, zda muze byt link nahrazen novejsim ze seznamu clanku
  pridal INT(6) NOT NULL,                -- odkaz na uzivatele
  kdy TIMESTAMP                          -- cas pridani
 );
@@ -185,7 +183,6 @@ CREATE TABLE akce (
  typ VARCHAR(20),                                -- identifikator akce
  kdy TIMESTAMP                                   -- cas pridani
 );
-
 ALTER TABLE akce ADD INDEX akce_index (kdo,relace);
 
 -- mala implementace RCS
@@ -196,7 +193,6 @@ CREATE TABLE verze (
  kdy DATETIME NOT NULL,                          -- cas pridani
  obsah TEXT NOT NULL                             -- obsah dokumentu
 );
-
 ALTER TABLE verze ADD UNIQUE INDEX verze_cesta_verze (cesta,verze);
 
 CREATE TABLE komentar (
@@ -208,6 +204,5 @@ CREATE TABLE komentar (
  autor INT(5) NULL,                        -- cislo autora prispevku, NULL pokud byl anonymni
  data LONGTEXT NOT NULL                    -- XML s textem komentare atd
 );
-
 ALTER TABLE komentar ADD INDEX komentar_zaznam (zaznam);
 ALTER TABLE komentar ADD INDEX komentar_autor (autor);

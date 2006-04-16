@@ -67,7 +67,7 @@ ${TOOL.render(TOOL.getCompleteArticleText(ITEM),USER?if_exists)}
 <#if ! PARAMS.noDiz?exists>
  <#if CHILDREN.discussion?exists>
   <h1>Diskuse k tomuto èlánku</h1>
-   <#assign diz = TOOL.createDiscussionTree(CHILDREN.discussion[0].child,USER?if_exists,CHILDREN.discussion[0],true)>
+   <#assign diz = TOOL.createDiscussionTree(CHILDREN.discussion[0].child,USER?if_exists,CHILDREN.discussion[0].id,true)>
     <#list diz.threads as thread>
        <@lib.showThread thread, 0, diz, !diz.frozen />
     </#list>
