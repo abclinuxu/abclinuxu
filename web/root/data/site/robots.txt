@@ -15,11 +15,13 @@ Disallow: /clanky/rating
 Disallow: /ovladace/edit
 Disallow: /EditUser
 Disallow: /EditRelation
+Disallow: /EditDiscussion
 Disallow: /clanky/EditDiscussion
 Disallow: /news/EditDiscussion
 Disallow: /hardware/EditDiscussion
 Disallow: /software/EditDiscussion
 Disallow: /forum/EditDiscussion
+Disallow: /forum/EditRequest
 Disallow: /SelectUser
 Disallow: /SelectRelation
 Disallow: /revize
