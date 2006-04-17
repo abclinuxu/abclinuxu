@@ -66,15 +66,21 @@ public class AbcInit extends HttpServlet implements Configurable {
     public static final String PREF_START_WATCHED_DISCUSSIONS_CLEANER = "start.watched.discussions.cleaner";
     public static final String PREF_START_UPDATE_STATISTICS = "start.update.statistics";
 
-    /** scheduler used by all objects in project */
-    static Timer scheduler;
-    static VariableFetcher fetcher;
+    Timer scheduler;
+    VariableFetcher fetcher;
+    private Map services = new HashMap(16, 1.0f);
+    static AbcInit instance;
 
-    static {
-        scheduler = new Timer(true);
+    public AbcInit() {
+        if (instance != null)
+            log.fatal("AbcInit can have single instance only!");
+        else
+            instance = this;
     }
 
-    private Map services = new HashMap(10, 1.0f);
+    public static AbcInit getInstance() {
+        return instance;
+    }
 
     public void init() throws ServletException {
         String tmp = getInitParameter("PREFERENCES");
@@ -91,7 +97,22 @@ public class AbcInit extends HttpServlet implements Configurable {
             log.fatal("Nemohu inicializovat systém ¹ablon!", e);
         }
 
-        // start tasks
+        startTasks();
+        log.info("Inicializace je hotova");
+    }
+
+    /**
+     * Starts all tasks.
+     * TODO bug 447 - neni to tak snadne, instance Timer musi byt vytvoreny znovu, stejne tak i Thready.
+     */
+    public void startTasks() {
+        if (scheduler != null) {
+            log.info("Vypinam bezici ulohy");
+            scheduler.cancel();
+            scheduler = null;
+        }
+        log.info("Startuji ulohy");
+        scheduler = new Timer(true);
         startFetchingVariables();
         startUpdateStatistics();
         startKernelUpdate();
@@ -106,18 +127,10 @@ public class AbcInit extends HttpServlet implements Configurable {
         startForumSender();
         startDateToolUpdateService();
         startWatchedDiscussionsCleaner();
-
-        log.info("Inicializace je hotova.");
+        log.info("Ulohy jsou nastartovany");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {}
-
-    /**
-     * @return instance of scheduler
-     */
-    public static Timer getScheduler() {
-        return scheduler;
-    }
 
     /**
      * Update links each three hours.
