@@ -222,11 +222,10 @@
                         <map>
                             <entry key="cache.size" value="750"/>
 
-                            <entry key="no.children.for.section" value="A,B,C,D"/>
+                            <entry key="no.children.for.section" value="A,B,C"/>
                             <entry key="no.children.for.section.A" value="452"/><!-- zpravicky -->
                             <entry key="no.children.for.section.B" value="569"/><!-- vykladovy slovnik -->
-                            <entry key="no.children.for.section.C" value="250"/><!-- ankety -->
-                            <entry key="no.children.for.section.C" value="93214"/><!-- navstevni kniha -->
+                            <entry key="no.children.for.section.C" value="240"/><!-- ankety -->
                         </map>
                     </node>
                     <node name="SQLTool">
