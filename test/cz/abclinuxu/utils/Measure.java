@@ -27,12 +27,14 @@ import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.persistance.extra.Qualifier;
 import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.scheduler.UpdateLinks;
 
 import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.StringTokenizer;
+import java.util.Map;
 
 /**
  * This class works as template for speed measurement.
@@ -47,18 +49,12 @@ public class Measure {
 
         // place initilizaton here
         Persistance persistance = PersistanceFactory.getPersistance();
-        String ids = "1,3,6,15,19,24,25";
+        Map serverLinks = UpdateLinks.getMaintainedFeedLinks();
 
         long start = System.currentTimeMillis();
-        for (i=0; i<293000; i++) {
+        for (i=0; i<1200; i++) {
             //place your code to measure here
-            StringTokenizer stk = new StringTokenizer(ids, ",");
-            String  tmp;
-            Integer id;
-            while (stk.hasMoreTokens()) {
-                tmp = stk.nextToken();
-                id = new Integer(tmp);
-            }
+            serverLinks = UpdateLinks.getMaintainedFeedLinks();
         }
         long end = System.currentTimeMillis();
 
