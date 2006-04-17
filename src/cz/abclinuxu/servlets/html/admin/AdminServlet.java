@@ -34,6 +34,7 @@ import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.utils.search.CreateIndex;
 import cz.abclinuxu.scheduler.VariableFetcher;
+import cz.abclinuxu.security.AdminLogger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,6 +52,7 @@ public class AdminServlet implements AbcAction {
     public static final String ACTION_CLEAR_CACHE = "clearCache";
     public static final String ACTION_PERFORM_CHECK = "performCheck";
     public static final String ACTION_RECREATE_RSS = "refreshRss";
+    public static final String ACTION_RESTART_TASKS = "restarTasks";
 
     public static final String VAR_DATABASE_STATE = "DATABASE_VALID";
     public static final String VAR_FULLTEXT_STATE = "FULLTEXT_VALID";
@@ -74,6 +76,9 @@ public class AdminServlet implements AbcAction {
         if (ACTION_CLEAR_CACHE.equals(action) )
             return clearCache(request,env);
 
+        if (ACTION_RESTART_TASKS.equals(action) )
+            return restartTasks(request,env);
+
         if (action == null)
             return FMTemplateSelector.select("Admin", "show", env, request);
 
@@ -90,9 +95,22 @@ public class AdminServlet implements AbcAction {
         ConfigurationManager.reconfigureAll();
         FMUtils.getConfiguration().clearTemplateCache();
 	    DateTool.calculateTodayTimes();
-        VariableFetcher.getInstance().run(); // refresh
+        VariableFetcher.getInstance().run(); // refresh variables
 
+        User user = (User) env.get(Constants.VAR_USER);
+        AdminLogger.logEvent(user, "promazal cache");
         ServletUtils.addMessage("Cache byla promazána.",env,null);
+        return FMTemplateSelector.select("Admin", "show", env, request);
+    }
+
+    /**
+     * Restarts all tasks. USefull when some thread dies for some reason.
+     */
+    private final String restartTasks(HttpServletRequest request, Map env) throws Exception {
+        AbcInit.getInstance().startTasks();
+        ServletUtils.addMessage("Úlohy byly restartovány.",env,null);
+        User user = (User) env.get(Constants.VAR_USER);
+        AdminLogger.logEvent(user, "restartoval ulohy");
         return FMTemplateSelector.select("Admin", "show", env, request);
     }
 
@@ -136,6 +154,9 @@ public class AdminServlet implements AbcAction {
         FeedGenerator.updateNews();
         FeedGenerator.updateFAQ();
         FeedGenerator.updatePolls();
+
+        User user = (User) env.get(Constants.VAR_USER);
+        AdminLogger.logEvent(user, "pregeneroval rss");
         return FMTemplateSelector.select("Admin", "show", env, request);
     }
 }
