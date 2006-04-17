@@ -52,7 +52,7 @@ public class AdminServlet implements AbcAction {
     public static final String ACTION_CLEAR_CACHE = "clearCache";
     public static final String ACTION_PERFORM_CHECK = "performCheck";
     public static final String ACTION_RECREATE_RSS = "refreshRss";
-    public static final String ACTION_RESTART_TASKS = "restarTasks";
+    public static final String ACTION_RESTART_TASKS = "restartTasks";
 
     public static final String VAR_DATABASE_STATE = "DATABASE_VALID";
     public static final String VAR_FULLTEXT_STATE = "FULLTEXT_VALID";

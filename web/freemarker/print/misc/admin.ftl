@@ -12,7 +12,7 @@ konfiguraèní soubory.
 
 <ul>
     <li><a href="${URL.noPrefix("/Admin?action=clearCache")}">nová inicializace</a></li>
-    <li><a href="${URL.noPrefix("/Admin?action=restarTasks")}">restartuj úlohy</a></li>
+    <li><a href="${URL.noPrefix("/Admin?action=restartTasks")}">restartuj úlohy</a></li>
     <li><a href="${URL.noPrefix("/Admin?action=refreshRss")}">pøegeneruj RSS soubory</a></li>
 </ul>
 
