@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.StringTokenizer;
 
 /**
  * This class works as template for speed measurement.
@@ -46,18 +47,18 @@ public class Measure {
 
         // place initilizaton here
         Persistance persistance = PersistanceFactory.getPersistance();
-        List list = new ArrayList(20);
-        for(i=0; i<20; i++)
-            list.add(new Relation(i));
-        List subList;
-        j = 5;
+        String ids = "1,3,6,15,19,24,25";
 
         long start = System.currentTimeMillis();
-        for (i=0; i<1700000; i++) {
+        for (i=0; i<293000; i++) {
             //place your code to measure here
-            subList = new ArrayList(j);
-            for (k = 0; k<j; k++)
-                subList.add(list.get(k));
+            StringTokenizer stk = new StringTokenizer(ids, ",");
+            String  tmp;
+            Integer id;
+            while (stk.hasMoreTokens()) {
+                tmp = stk.nextToken();
+                id = new Integer(tmp);
+            }
         }
         long end = System.currentTimeMillis();
 
