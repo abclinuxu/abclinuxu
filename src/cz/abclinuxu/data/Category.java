@@ -20,6 +20,7 @@ package cz.abclinuxu.data;
 
 import cz.abclinuxu.utils.Misc;
 import org.dom4j.Element;
+import org.dom4j.Document;
 
 /**
  * Category is a node of the tree
@@ -52,7 +53,10 @@ public class Category extends GenericDataObject {
      * @return whether normal users may add content to this category
      */
     public boolean isOpen() {
-        Element element = (Element) getData().selectSingleNode("/data/writeable");
+        Document document = getData();
+        if (document == null)
+            return false;
+        Element element = (Element) document.selectSingleNode("/data/writeable");
         return element != null && Boolean.valueOf(element.getText()).booleanValue();
     }
 
