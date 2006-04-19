@@ -347,6 +347,7 @@ public class Tools implements Configurable {
 
     /**
      * Finds out, whether the guidepost shall be displayed or not.
+     * @deprecated todo remove
      */
     public boolean isGuidePostEnabled(Object user) {
         if (!(user instanceof User))

@@ -19,6 +19,7 @@
 package cz.abclinuxu.utils.freemarker;
 
 import freemarker.template.*;
+import freemarker.ext.beans.BeansWrapper;
 
 import java.io.*;
 import java.util.Map;
@@ -134,12 +135,15 @@ public class FMUtils implements Configurable {
         else if (ERROR_HANDLER_LOGURL.equalsIgnoreCase(tmp))
             exceptionHandler = new LogUrlExceptionHandler();
 
+        BeansWrapper beansWrapper = new BeansWrapper();
+//        beansWrapper.setSimpleMapWrapper(true); // rids off hashCode etc from ?keys
+
         config = new Configuration();
         config.setTemplateExceptionHandler(exceptionHandler);
         config.setTemplateUpdateDelay(prefs.getInt(PREF_TEMPLATE_UPDATE_INTERVAL, 5));
         config.setDefaultEncoding("ISO-8859-2");
         config.setOutputEncoding("ISO-8859-2");
-        config.setObjectWrapper(ObjectWrapper.BEANS_WRAPPER);
+        config.setObjectWrapper(beansWrapper);
         config.setStrictSyntaxMode(true);
         config.setWhitespaceStripping(true);
 

@@ -90,7 +90,6 @@ public class AdminServlet implements AbcAction {
      */
     private final String clearCache(HttpServletRequest request, Map env) throws Exception {
         PersistanceFactory.getPersistance().clearCache();
-        AbcInit.setServerLinksAstSharedVariables();
         TemplateSelector.initialize(null);
         ConfigurationManager.reconfigureAll();
         FMUtils.getConfiguration().clearTemplateCache();

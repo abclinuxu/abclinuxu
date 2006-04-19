@@ -25,16 +25,19 @@ verze 2.0
 <!ELEMENT distributions (distribution)> <!-- ktere distribuce pouziva(l) -->
 <!ELEMENT distribution (#PCDATA)> <!-- jmeno distribuce -->
 
-<!ELEMENT settings (emoticons?,cookie_valid?,index_discussions?, index_stories? return_to_forum?,
-                    blog?, css?, guidepost?, blacklist?)>
+<!ELEMENT settings (emoticons?,cookie_valid?,index_discussions?, index_stories?, index_links?, template_links?, return_to_forum?,
+                    blog?, css?, guidepost?, blacklist?, feeds?)>
 <!ELEMENT emoticons (#PCDATA)> <!-- yes or no, zda nahrazovat emotikony obrazkem -->
 <!ELEMENT signatures (#PCDATA)> <!-- yes or no, zda zobrazovat signatury -->
 <!ELEMENT guidepost (#PCDATA)> <!-- yes or no, zda zobrazovat rozcestnik -->
+<!ELEMENT feeds (#PCDATA)> <!-- comma separated list of server ids to be displayed in guidepost -->
 <!ELEMENT new_comments (#PCDATA)> <!-- yes or no, DEPRECATED zda povolit cookie pro nové komentáøe -->
 <!ELEMENT cookie_valid (#PCDATA)> <!-- integer, doba platnosti prihlasovaci cookie -->
 <!ELEMENT index_discussions (#PCDATA)> <!-- integer, pocet diskusi na hlavni strance. -1 : vsechny -->
 <!ELEMENT index_news (#PCDATA)> <!-- integer, pocet zpravicek na hlavni strance -->
 <!ELEMENT index_stories (#PCDATA)> <!-- integer, pocet zapisu blogu na hlavni strance -->
+<!ELEMENT index_links (#PCDATA)> <!-- integer, pocet odkazu pro jeden server na hlavni strance -->
+<!ELEMENT template_links (#PCDATA)> <!-- integer, pocet odkazu pro jeden server mimo hlavni stranku -->
 <!ELEMENT found_size (#PCDATA)> <!-- integer, pocet nalezenych objektu na strance -->
 <!ELEMENT forum_size (#PCDATA)> <!-- integer, pocet zobrazenych diskusi na strance -->
 <!ELEMENT return_to_forum (#PCDATA)> <!-- yes or no, zda se po presunu diskuse vratit do diskusniho fora -->

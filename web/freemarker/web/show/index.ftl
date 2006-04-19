@@ -220,18 +220,18 @@
     </span>
 </#macro>
 
-<#if TOOL.isGuidePostEnabled(USER?if_exists)>
+<#assign FEEDS = VARS.getFeeds(USER?if_exists,true)>
+<#if (FEEDS?size > 0)>
     <div class="st_nad_rozc"><div class="st_rozc">
         <h1 class="st_nadpis">Rozcestník</h1>
         <div class="s"><div class="s_sekce"><div class="rozc">
         <table>
-        <#list TOOL.createServers([16,13,14,1,17,15]) as server>
+        <#list FEEDS.keySet() as server>
             <#if server_index % 3 = 0><tr><#assign open=true></#if>
             <td>
             <a class="server" href="${server.url}" rel="nofollow">${server.name}</a>
                 <ul>
-                <#assign linky = TOOL.sublist(SORT.byDate(LINKS[server.name],"DESCENDING"),0,3)>
-                <#list linky as link>
+                <#list FEEDS(server) as link>
                     <li><a href="${link.url}" rel="nofollow">${link.text}</a></li>
                 </#list>
                 </ul>

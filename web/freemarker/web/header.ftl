@@ -21,7 +21,7 @@
     <script type="text/javascript" src="/data/site/scripts.js"></script>
 </head>
 
-<body>
+<body id="www-abclinuxu-cz">
 
 <#if IS_INDEX?exists>
 <#include "/include/netmonitor_hp.txt">
@@ -85,7 +85,7 @@
                 <a href="${URL.noPrefix("/Profile/"+USER.id)}">${USER.name}</a> |
                 <#assign blogName = TOOL.xpath(USER,"/data/settings/blog/@name")?default("UNDEF")>
                 <#if blogName!="UNDEF"><a href="/blog/${blogName}">Blog</a> |</#if>
-                <a href="/History?type=comments&uid=${USER.id}">Diskuse</a> |
+                <a href="/History?type=comments&amp;uid=${USER.id}">Diskuse</a> |
                 <a href="${URL.noPrefix("/Index?logout=true")}">Odhlá¹ení</a> |
             <#else>
                 <a href="${URL.noPrefix("/Profile?action=login")}">Pøihlá¹ení</a> |
@@ -218,16 +218,16 @@
                 <div class="s_sekce">
                     <#include "/include/prace.txt">
                 </div>
-                <#if TOOL.isGuidePostEnabled(USER?if_exists)>
+                <#assign FEEDS = VARS.getFeeds(USER?if_exists,false)>
+                <#if (FEEDS?size > 0)>
                     <!-- ROZCESTNÍK -->
                     <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Rozcestník</h1></div></div>
                     <div class="s_sekce">
-                        <div class="rozc"><!-- odebran slashdot: 15 -->
-                            <#list TOOL.createServers([7,16,18,1,13,14,17,19,3,5]) as server>
+                        <div class="rozc">
+                            <#list FEEDS.keySet() as server>
                                 <a class="server" href="${server.url}" rel="nofollow">${server.name}</a><br>
                                 <ul>
-                                <#assign linky = TOOL.sublist(SORT.byDate(LINKS[server.name],"DESCENDING"),0,2)>
-                                <#list linky as link>
+                                <#list FEEDS(server) as link>
                                     <li><a href="${link.url}" rel="nofollow">${link.text}</a></li>
                                 </#list>
                                 </ul>

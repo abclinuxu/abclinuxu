@@ -33,6 +33,8 @@ import java.util.*;
 import java.util.prefs.Preferences;
 
 import org.dom4j.Node;
+import org.dom4j.Element;
+import org.dom4j.Document;
 
 /**
  * This class is responsible for periodic fetching
@@ -57,12 +59,18 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public static final String KEY_QUESTION = "question";
     public static final String KEY_FAQ = "faq";
     public static final String KEY_DICTIONARY = "dictionary";
+    public static final String KEY_INDEX_LINKS = "links.in.index";
+    public static final String KEY_TEMPLATE_LINKS = "links.in.template";
+
     public static final String PREF_DEFAULT = "default.";
     public static final String PREF_MAX = "max.";
+    public static final String PREF_INDEX_FEEDS = "feeds.for.index";
+    public static final String PREF_TEMPLATE_FEEDS = "feeds.for.template";
 
     List freshHardware, freshDrivers, freshStories, freshArticles, freshNews;
     List freshQuestions, freshFaqs, freshDictionary;
-    Map defaultSizes, maxSizes, counter;
+    String indexFeeds, templateFeeds;
+    Map defaultSizes, maxSizes, counter, feedLinks;
     Relation currentPoll;
 
     long linksLastRun;
@@ -180,6 +188,42 @@ public class VariableFetcher extends TimerTask implements Configurable {
     }
 
     /**
+     * Finds list of servers and their links to be displayed for this user. If user does not want
+     * to see any links, empty map is returned.
+     * @param maybeUser either instance of User or other value
+     * @param index true if home page is being displayed
+     * @return Map where key is initialized server and value is list of Links
+     */
+    public Map getFeeds(Object maybeUser, boolean index) {
+        String defaultServers = null;
+        int userLimit = 0;
+        if (index) {
+            userLimit = getObjectCountForUser(maybeUser, KEY_INDEX_LINKS, "/data/settings/index_links");
+            defaultServers = indexFeeds;
+        } else {
+            userLimit = getObjectCountForUser(maybeUser, KEY_TEMPLATE_LINKS, "/data/settings/template_links");
+            defaultServers = templateFeeds;
+        }
+
+        User user = null;
+        if (maybeUser instanceof User)
+            user = (User) maybeUser;
+        if (user == null)
+            return getSelectedFeeds(defaultServers, userLimit);
+
+        Document document = user.getData();
+        Element element = (Element) document.selectSingleNode("/data/settings/guidepost");
+        if (element != null && "no".equals(element.getText()))
+            return Collections.EMPTY_MAP;
+
+        element = (Element) document.selectSingleNode("/data/settings/feeds");
+        if (element == null || element.getText() == null)
+            return getSelectedFeeds(defaultServers, userLimit);
+
+        return getSelectedFeeds(element.getText(), userLimit);
+    }
+
+    /**
      * Current open poll relation.
      */
     public Relation getCurrentPoll() {
@@ -234,7 +278,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             return Collections.EMPTY_LIST;
         if (list.size()<subListSize)
             return list;
-        List subList = new ArrayList(subListSize);
+        List subList = new ArrayList(subListSize); // todo proc nepouzit list.sublist(0,subListSze)?
         for (int i=0; i<subListSize; i++)
             subList.add(list.get(i));
         return subList;
@@ -256,9 +300,18 @@ public class VariableFetcher extends TimerTask implements Configurable {
             refreshQuestions();
             refreshSizes();
             refreshStories();
+            refreshFeedLinks();
             log.debug("Cahovani hotovo.");
         } catch (Throwable e) {
             log.error("Selhalo cachovani!", e);
+        }
+    }
+
+    private void refreshFeedLinks() {
+        try {
+            feedLinks = UpdateLinks.getMaintainedFeedLinks();
+        } catch (Exception e) {
+            log.error("Selhalo nacitani odkazu feedu");
         }
     }
 
@@ -384,6 +437,33 @@ public class VariableFetcher extends TimerTask implements Configurable {
         }
     }
 
+    private Map getSelectedFeeds(String servers, int size) {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        StringTokenizer stk = new StringTokenizer(servers, ",");
+        String tmp;
+        int id;
+        Server server;
+        Map result = new LinkedHashMap(25, 0.99f);
+        List links;
+        while (stk.hasMoreTokens()) {
+            tmp = stk.nextToken();
+            id = Misc.parseInt(tmp, -1);
+            if (id == -1) {
+                log.warn("Damaged list of servers: '"+servers+"'!");
+                continue;
+            }
+
+            server = (Server) persistance.findById(new Server(id));
+            links = (List) feedLinks.get(server);
+            if (links == null) // unmaintained
+                continue;
+
+            links = getSubList(links, size);
+            result.put(server, links);
+        }
+        return result;
+    }
+
     /**
      * Reads maximum sizes and initializes all lists.
      *
@@ -441,5 +521,16 @@ public class VariableFetcher extends TimerTask implements Configurable {
         size = prefs.getInt(PREF_MAX + KEY_STORY, 5);
         maxSizes.put(KEY_STORY, new Integer(size));
         freshStories = Collections.EMPTY_LIST;
+
+        indexFeeds = prefs.get(PREF_INDEX_FEEDS, "");
+        templateFeeds = prefs.get(PREF_TEMPLATE_FEEDS, "");
+        size = prefs.getInt(PREF_DEFAULT + KEY_INDEX_LINKS, 3);
+        defaultSizes.put(KEY_INDEX_LINKS, new Integer(size));
+        size = prefs.getInt(PREF_MAX + KEY_INDEX_LINKS, 5);
+        maxSizes.put(KEY_INDEX_LINKS, new Integer(size));
+        size = prefs.getInt(PREF_DEFAULT + KEY_TEMPLATE_LINKS, 3);
+        defaultSizes.put(KEY_TEMPLATE_LINKS, new Integer(size));
+        size = prefs.getInt(PREF_MAX + KEY_TEMPLATE_LINKS, 5);
+        maxSizes.put(KEY_TEMPLATE_LINKS, new Integer(size));
     }
 }

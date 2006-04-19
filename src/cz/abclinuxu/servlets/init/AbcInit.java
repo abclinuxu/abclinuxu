@@ -18,9 +18,6 @@
  */
 package cz.abclinuxu.servlets.init;
 
-import cz.abclinuxu.data.Category;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.scheduler.*;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
@@ -141,7 +138,7 @@ public class AbcInit extends HttpServlet implements Configurable {
             return;
         }
         log.info("Scheduling RSS monitor");
-        scheduler.schedule(new UpdateLinks(false), 60 * 1000, 3 * 60 * 60 * 1000);
+        scheduler.schedule(UpdateLinks.getInstance(), 60 * 1000, 3 * 60 * 60 * 1000);
     }
 
     /**
@@ -329,17 +326,6 @@ public class AbcInit extends HttpServlet implements Configurable {
     }
 
     /**
-     * Sets some commonly used variables in freemarker templates.
-     */
-    public static void setServerLinksAstSharedVariables() throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        Configuration cfg = FMUtils.getConfiguration();
-        Category linksCategory = (Category) persistance.findById(new Category(Constants.CAT_LINKS));
-        Map links = UpdateLinks.groupLinks(linksCategory, persistance);
-        cfg.setSharedVariable(Constants.VAR_LINKS, links);
-    }
-
-    /**
      * set ups freemarker
      */
     void configureFreeMarker(String path) {
@@ -352,7 +338,6 @@ public class AbcInit extends HttpServlet implements Configurable {
             cfg.setSharedVariable(Constants.VAR_SORTER,new Sorters2());
             cfg.setSharedVariable(Constants.VAR_FETCHER, VariableFetcher.getInstance());
             cfg.setSharedVariable(Constants.VAR_CATEGORIES, NewsCategories.getInstance());
-            setServerLinksAstSharedVariables();
 
             log.info("Inicializace FreeMarkeru je hotova");
         } catch (Exception e) {
