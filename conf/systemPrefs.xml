@@ -333,7 +333,7 @@
                         <map>
                             <entry key="maxLinksPerFeed" value="5"/>
                             <entry key="maxLength" value="80"/>
-                            <entry key="feeds" value="1,3,5,7,9,12,13,14,15,16,17,18,19,20"/> <!-- id of server -->
+                            <entry key="feeds" value="1,3,5,7,9,12,13,14,15,16,17,18,19,20,21"/> <!-- id of server -->
                             <entry key="feedUri1" value="http://www.root.cz/rss/"/>
                             <entry key="feedUri3" value="http://www.scienceworld.cz/sw.rss"/>
                             <entry key="feedUri5" value="http://www.penguin.cz/rss.php"/>
@@ -348,6 +348,7 @@
                             <entry key="feedUri18" value="http://www.chip.cz/texty/feed.rss"/>
                             <entry key="feedUri19" value="http://www.svethardware.cz/export.jsp?format=rss"/>
                             <entry key="feedUri20" value="http://www.linuxexpres.cz/modules/rss/rss.php"/>
+                            <entry key="feedUri21" value="http://linuxsoft.cz/export/linuxsoft_article_cz.rss"/>
                         </map>
                     </node>
                     <node name="VariableFetcher">
@@ -369,7 +370,7 @@
                             <entry key="default.dictionary" value="3"/>
                             <entry key="max.dictionary" value="10"/>
                             <entry key="feeds.for.index" value="16,18,19" />
-                            <entry key="feeds.for.template" value="7,16,18,19" />  
+                            <entry key="feeds.for.template" value="7,16,18,19" />
                         </map>
                     </node>
                 </node>
