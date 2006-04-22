@@ -85,6 +85,8 @@ public class AbcInit extends HttpServlet implements Configurable {
         ConfigurationManager.getConfigurator().configureMe(this);
 
         fetcher = VariableFetcher.getInstance();
+        fetcher.run();
+
         String path = getServletContext().getRealPath("/")+"/";
         configureFreeMarker(path);
         tmp = getInitParameter("TEMPLATES");

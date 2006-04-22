@@ -22,27 +22,35 @@ import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
-import cz.abclinuxu.data.Category;
+import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.Link;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Server;
-import cz.abclinuxu.exceptions.PersistanceException;
+import cz.abclinuxu.data.Item;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.servlets.Constants;
 import org.apache.regexp.RE;
 import org.apache.regexp.RECompiler;
 import org.apache.regexp.REProgram;
 import org.apache.regexp.RESyntaxException;
+import org.dom4j.Document;
+import org.dom4j.Element;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.TimerTask;
 import java.util.prefs.Preferences;
 
 /**
@@ -91,18 +99,57 @@ public class UpdateLinks extends TimerTask implements Configurable {
         if (log.isDebugEnabled()) log.debug("Starting task "+getJobName());
         try {
             Persistance persistance = PersistanceFactory.getPersistance();
-            Category category = new Category(Constants.CAT_LINKS);
-            category = (Category) persistance.findById(category);
-            Map serverLinks = groupLinks(category,persistance);
-
-            for (Iterator iter = serverLinks.keySet().iterator(); iter.hasNext();) {
-                Server server = (Server) iter.next();
+            ServerInfo definition;
+            Server server;
+            List servers = getMaintainedServers();
+            for (Iterator iter = servers.iterator(); iter.hasNext();) {
+                Integer id = (Integer) iter.next();
+                definition = (ServerInfo) definitions.get(id);
+                server = (Server) persistance.findById(new Server(id.intValue()));
                 try {
-                    synchronize(server, (List)serverLinks.get(server), category, persistance);
+                    synchronize(server, 0, definition, persistance);
                 } catch (Exception e) {
                     log.warn("Cannot update links for server "+server+"!", e);
                 }
             }
+
+            List remove = new ArrayList();
+            GenericObject child;
+            Relation relation;
+            Element feed;
+            int rid = 0;
+            Item dynamicRss = (Item) persistance.findById(new Item(Constants.ITEM_DYNAMIC_RSS));
+            Document doc = (Document) dynamicRss.getData().clone();
+            for (Iterator iter = doc.getRootElement().elements("feed").iterator(); iter.hasNext();) {
+                feed = (Element) iter.next();
+                try {
+                    rid = Misc.parseInt(feed.attributeValue("relation"), -1);
+                    relation = (Relation) persistance.findById(new Relation(rid));
+                    child = persistance.findById(relation.getChild());
+                    definition = new ServerInfo(feed.getText());
+                    try {
+                        synchronize(child, relation.getId(), definition, persistance);
+                    } catch (Exception e) {
+                        log.warn("Cannot update links for url " + definition.url + ", parent relation is "+rid+"!", e);
+                    }
+                } catch (Exception e) {
+                    remove.add(new Integer(rid));
+                }
+            }
+
+            if (remove.size() > 0) { // remove feeds for objects purged from persistance
+                dynamicRss = (Item) persistance.findById(new Item(Constants.ITEM_DYNAMIC_RSS));
+                dynamicRss = (Item) dynamicRss.clone();
+                doc = dynamicRss.getData();
+                for (Iterator iter = remove.iterator(); iter.hasNext();) {
+                    Integer id = (Integer) iter.next();
+                    feed = (Element) doc.selectSingleNode("//feed[@relation="+id+"]");
+                    if (feed != null)
+                        feed.detach();
+                }
+                persistance.update(dynamicRss);
+            }
+
             if (log.isDebugEnabled()) log.debug("Finishing task " + getJobName());
         } catch (Exception e) {
             log.error("Task "+getJobName()+" failed!", e);
@@ -114,13 +161,13 @@ public class UpdateLinks extends TimerTask implements Configurable {
     }
 
     /**
-     * Synchronizes links from external server with internal records.
-     * @param server Server to be processed
-     * @param storedLinks list of Links stored in persistance storage
-     * @param category Category, where to put new Links
+     * Synchronizes links from given feed with links under given object.
+     * @param parent initialized parent, where the links are stored.
+     * @param parentRelation if of parent relation or 0.
+     * @param definition definition of the feed
      */
-    protected void synchronize(Server server, List storedLinks, Category category, Persistance persistance) throws PersistanceException {
-        ServerInfo definition = (ServerInfo) definitions.get(new Integer(server.getId()));
+    protected void synchronize(GenericObject parent, int parentRelation, ServerInfo definition, Persistance persistance) {
+        List storedLinks = getLinks(parent, persistance);
         List downloaded = parseRSS(definition);
         int updated = 0;
 
@@ -142,16 +189,43 @@ public class UpdateLinks extends TimerTask implements Configurable {
                 persistance.update(existingLink);
             } else {
                 link.setOwner(1);
-                link.setServer(server.getId());
+                link.setServer(parent.getId());
                 link.setFixed(false);
                 persistance.create(link);
-                Relation relation = new Relation(category,link,0);
+
+                Relation relation = new Relation(parent, link, parentRelation);
                 persistance.create(relation);
-                category.addChildRelation(relation);
+                parent.addChildRelation(relation);
             }
             updated++;
         }
-        if ( log.isDebugEnabled() ) log.debug("Updated "+updated+" links for server "+server);
+        if ( log.isDebugEnabled() ) log.debug("Updated "+updated+" links for "+parent);
+    }
+
+    /**
+     * Returns all links that are children of given object.
+     * @param object initialized GenericObject
+     * @return list of initialized Links
+     */
+    private List getLinks(GenericObject object, Persistance persistance) {
+        List result = new ArrayList(linksPerFeed);
+        Relation relation;
+        GenericObject obj;
+        Link link;
+        for (Iterator iter = object.getChildren().iterator(); iter.hasNext();) {
+            relation =  (Relation) iter.next();
+            relation = (Relation) persistance.findById(relation);
+            obj = persistance.findById(relation.getChild());
+            if (! (obj instanceof Link))
+                continue;
+
+            link = (Link) obj;
+            if (link.isFixed())
+                continue;
+            result.add(link);
+        }
+
+        return result;
     }
 
     /**
@@ -219,56 +293,27 @@ public class UpdateLinks extends TimerTask implements Configurable {
 
     /**
      * Finds fresh list of links of maintained feeds.
-     * @return map where id is server and value is list of Links.
+     * @return list of Servers, their children are Links
      */
-    public static Map getMaintainedFeedLinks() {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        Category category = new Category(Constants.CAT_LINKS);
-        category = (Category) persistance.findById(category);
-        return groupLinks(category, persistance);
-    }
-
-    /**
-     * Groups links by server. Initialized server will be key in map and value will be
-     * list of its links sorted by date in descending order. Fixed links will be discarded.
-     * @throws PersistanceException if something goes wrong
-     */
-    static Map groupLinks(Category category, Persistance persistance) {
-        int size = definitions.size();
-        List servers = new ArrayList(size);
+    public static Map getMaintainedFeeds() {
+        List servers = new ArrayList(definitions.size());
         for (Iterator iter = definitions.keySet().iterator(); iter.hasNext();) {
             Integer id = (Integer) iter.next();
             servers.add(new Server(id.intValue()));
         }
+        servers = Tools.syncList(servers);
 
-        Tools.syncList(servers);
-        Tools.syncList(category.getChildren());
-
-        Map result = new HashMap();
-        Server server;
+        Map result = new HashMap(definitions.size() + 1, 1.0f);
         for (Iterator iter = servers.iterator(); iter.hasNext();) {
-            server = (Server) iter.next();
-            result.put(server, new ArrayList());
-        }
-
-        List links;
-        for (Iterator iter = category.getChildren().iterator(); iter.hasNext();) {
-            Relation relation = (Relation) iter.next();
-            Link link = (Link) persistance.findById(relation.getChild());
-            if ( !link.isFixed() ) {
-                server = new Server(link.getServer());
-                links = (List) result.get(server);
-                if ( links == null)
-                    continue; // unmaintained server
-                links.add(link);
+            Server server = (Server) iter.next();
+            List children = Tools.syncList(server.getChildren());
+            List links = new ArrayList(children.size());
+            for (Iterator iter2 = children.iterator(); iter2.hasNext();) {
+                Relation relation = (Relation) iter2.next();
+                links.add(relation.getChild());
             }
+            result.put(server, links);
         }
-
-        for (Iterator iter = result.values().iterator(); iter.hasNext();) {
-            links = (List) iter.next();
-            Sorters2.byDate(links, Sorters2.DESCENDING);
-        }
-
         return result;
     }
 

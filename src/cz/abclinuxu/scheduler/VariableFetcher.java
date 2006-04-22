@@ -27,6 +27,7 @@ import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.freemarker.Tools;
 
 import java.util.*;
@@ -309,9 +310,15 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     private void refreshFeedLinks() {
         try {
-            feedLinks = UpdateLinks.getMaintainedFeedLinks();
+            Map feeds = UpdateLinks.getMaintainedFeeds();
+            List links;
+            for (Iterator iter = feeds.values().iterator(); iter.hasNext();) {
+                links = (List) iter.next();
+                Sorters2.byDate(links, Sorters2.DESCENDING);
+            }
+            feedLinks = feeds;
         } catch (Exception e) {
-            log.error("Selhalo nacitani odkazu feedu");
+            log.error("Selhalo nacitani odkazu feedu", e);
         }
     }
 
@@ -323,7 +330,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             Tools.syncList(news);
             freshNews = news;
         } catch (Exception e) {
-            log.error("Selhalo nacitani zpravicek");
+            log.error("Selhalo nacitani zpravicek", e);
         }
     }
 
@@ -335,7 +342,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             Tools.syncList(articles);
             freshArticles = articles;
         } catch (Exception e) {
-            log.error("Selhalo nacitani clanku");
+            log.error("Selhalo nacitani clanku", e);
         }
     }
 
@@ -347,7 +354,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             Tools.syncList(found);
             freshQuestions = found;
         } catch (Exception e) {
-            log.error("Selhalo nacitani dotazu ve foru");
+            log.error("Selhalo nacitani dotazu ve foru", e);
         }
     }
 
@@ -365,7 +372,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             Tools.syncList(list);
             freshStories = list;
         } catch (Exception e) {
-            log.error("Selhalo nacitani blogu");
+            log.error("Selhalo nacitani blogu", e);
         }
     }
 
@@ -377,7 +384,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             Tools.syncList(list);
             freshHardware = list;
         } catch (Exception e) {
-            log.error("Selhalo nacitani hardwaru");
+            log.error("Selhalo nacitani hardwaru", e);
         }
     }
 
@@ -389,7 +396,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             Tools.syncList(list);
             freshDrivers = list;
         } catch (Exception e) {
-            log.error("Selhalo nacitani ovladacu");
+            log.error("Selhalo nacitani ovladacu", e);
         }
     }
 
@@ -401,7 +408,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             Tools.syncList(data);
             freshDictionary = data;
         } catch (Exception e) {
-            log.error("Selhalo nacitani pojmu");
+            log.error("Selhalo nacitani pojmu", e);
         }
     }
 
@@ -413,7 +420,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             Tools.syncList(list);
             freshFaqs = list;
         } catch (Exception e) {
-            log.error("Selhalo nacitani casto kladenych otazek");
+            log.error("Selhalo nacitani casto kladenych otazek", e);
         }
     }
 
@@ -421,7 +428,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         try {
             currentPoll = sqlTool.findActivePoll();
         } catch (Exception e) {
-            log.error("Selhalo nacitani aktualni ankety");
+            log.error("Selhalo nacitani aktualni ankety", e);
         }
     }
 
@@ -433,7 +440,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             Category news = (Category) persistance.findById(new Category(Constants.CAT_NEWS_POOL));
             counter.put("WAITING_NEWS", new Integer(news.getChildren().size()));
         } catch (Exception e) {
-            log.error("Selhalo nacitani velikosti");
+            log.error("Selhalo nacitani velikosti", e);
         }
     }
 

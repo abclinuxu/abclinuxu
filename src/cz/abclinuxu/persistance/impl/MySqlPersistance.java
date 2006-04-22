@@ -2112,16 +2112,43 @@ public class MySqlPersistance implements Persistance {
             return "P";
         } else if (obj instanceof Category) {
             return "K";
-        } else if (obj instanceof Data) {
-            return "O";
-        } else if (obj instanceof Link) {
-            return "L";
-        } else if (obj instanceof Poll) {
-            return "A";
         } else if (obj instanceof User) {
             return "U";
+        } else if (obj instanceof Link) {
+            return "L";
+        } else if (obj instanceof Server) {
+            return "S";
+        } else if (obj instanceof Poll) {
+            return "A";
+        } else if (obj instanceof Data) {
+            return "O";
         }
         throw new InvalidDataException("Nepodporovany typ tridy!");
+    }
+
+    /**
+     * instantiates new GenericObject, which class is specified by <code>type</code> and
+     * with desired <code>id</code>.
+     */
+    private GenericObject instantiateFromTree(char type, int id) {
+        if (type == 'K') {
+            return new Category(id);
+        } else if (type == 'P') {
+            return new Item(id);
+        } else if (type == 'Z') {
+            return new Record(id);
+        } else if (type == 'U') {
+            return new User(id);
+        } else if (type == 'A') {
+            return new Poll(id);
+        } else if (type == 'L') {
+            return new Link(id);
+        } else if (type == 'S') {
+            return new Server(id);
+        } else if (type == 'O') {
+            return new Data(id);
+        }
+        return null;
     }
 
     /**
@@ -2148,29 +2175,6 @@ public class MySqlPersistance implements Persistance {
             return "objekt";
         }
         throw new InvalidDataException("Nepodporovany typ tridy!");
-    }
-
-    /**
-     * instantiates new GenericObject, which class is specified by <code>type</code> and
-     * with desired <code>id</code>.
-     */
-    private GenericObject instantiateFromTree(char type, int id) {
-        if ( type=='K' ) {
-            return new Category(id);
-        } else if ( type=='P' ) {
-            return new Item(id);
-        } else if ( type=='Z' ) {
-            return new Record(id);
-        } else if ( type=='A' ) {
-            return new Poll(id);
-        } else if ( type=='O' ) {
-            return new Data(id);
-        } else if ( type=='L' ) {
-            return new Link(id);
-        } else if ( type=='U' ) {
-            return new User(id);
-        }
-        return null;
     }
 
     /**
