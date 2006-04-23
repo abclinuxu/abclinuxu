@@ -122,7 +122,7 @@ public class AbcConfig implements Configurable {
     }
 
     /**
-     * @return default number of discussions for which the user can see new comments  
+     * @return default number of discussions for which the user can see new comments
      */
     public static int getMaxWatchedDiscussionLimit() {
         return maxWatchedDiscussions;

@@ -3,25 +3,18 @@
 <@lib.showMessages/>
 
 <#if ! USER?exists>
- <p>Pokud jste ${PROFILE.name}, <a href="${URL.noPrefix("/Profile?action=login")}">pøihlaste se</a>
+ <p>Pokud jste ${PROFILE.name}, <a href="${URL.noPrefix("/Profile?action=login")}">pøihla¹te se</a>
  a bude vám zobrazena va¹e domovská stránka.</p>
 
 <#elseif USER.id==PROFILE.id>
- <#if PARAMS.LOGIN?exists>
-  <h1>Vítejte</h1>
-  <p>Dìkujeme vám za dal¹í náv¹tìvu portálu abclinuxu.cz. Doufáme, ¾e vám
-  pøinese cenné informace. Pokud budete spokojeni, doporuète nás svým pøátelùm
-  a známým.</p>
- </#if>
-
- <h1>Moje domovská stránka</h1>
-
- <p>Nacházíte se na své veøejné domovské stránce, která slou¾í pro va¹i prezentaci.
- Pokud ji chcete doplnit èi nìjak upravit, pøejdìte na
- <a href="${URL.noPrefix("/Profile/"+PROFILE.id+"?action=myPage")}">tuto stránku</a>.
- Tam také mù¾ete zmìnit nastavení svého u¾ivatele (napøíklad se pøihlásit k odbìru zpravodaje).
- Text nad èarou vidíte pouze vy, ostatním náv¹tìvníkùm není zobrazen.</p>
-
+ <h2>Moje domovská stránka</h2>
+ <p>
+     Nacházíte se na své veøejné domovské stránce, která slou¾í pro va¹i prezentaci.
+     Tento text je zobrazen pouze vám.
+ </p>
+ <p>
+     <a href="${URL.noPrefix("/Profile/"+PROFILE.id+"?action=myPage")}">Nastavení úètu</a>
+ </p>
  <hr />
 <#elseif USER.hasRole("user admin")>
  <a href="${URL.noPrefix("/Profile/"+PROFILE.id+"?action=myPage")}">Upravit</a>

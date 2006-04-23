@@ -182,8 +182,42 @@
   </tr>
 
   <tr>
-   <td width="200">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi" tabindex="12"></td>
+    <td class="required">Zobrazovat servery</td>
+    <td>
+        <#list SERVERS as server>
+            <label>
+                <#assign feedParam = "feed"+server.id>
+                <input type="checkbox" name="${feedParam}"<#if PARAMS[feedParam]?exists> checked</#if>> ${server.name}<br>
+            </label>
+        </#list>
+    </td>
+  </tr>
+  <tr>
+   <td colspan="2">Pokud jste nevypnuli rozcestník úplnì, tak zde si mù¾ete vybrat servery,
+   které se v nìm mají zobrazovat.</td>
+  </tr>
+
+  <tr>
+   <td class="required">Poèet odkazù</td>
+   <td>
+       <input type="text" name="indexFeedSize" value="${PARAMS.indexFeedSize?if_exists}" size="3">
+       <span class="error">${ERRORS.indexFeedSize?if_exists}</span>
+       na hlavní stránce
+       <input type="text" name="feedSize" value="${PARAMS.feedSize?if_exists}" size="3">
+       <span class="error">${ERRORS.feedSize?if_exists}</span>
+       mimo hlavní stránku
+   </td>
+  </tr>
+  <tr>
+   <td colspan="2">
+    Poèet odkazù pro jeden server v rozcestníku na hlavní stránce a mimo ni.
+    Standardní poèet je nastaven na ${DEFAULT_TEMPLATE_LINKS} a ${DEFAULT_LINKS}.
+   </td>
+  </tr>
+
+  <tr>
+   <td>&nbsp;</td>
+   <td><input type="submit" value="Dokonèi"></td>
   </tr>
  </table>
  <input type="hidden" name="action" value="editSettings2">

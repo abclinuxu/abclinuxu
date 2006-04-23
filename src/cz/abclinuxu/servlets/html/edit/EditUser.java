@@ -19,6 +19,7 @@
 package cz.abclinuxu.servlets.html.edit;
 
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.Server;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.exceptions.DuplicateKeyException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -46,6 +47,7 @@ import cz.abclinuxu.utils.email.forum.SubscribedUsers;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.scheduler.VariableFetcher;
+import cz.abclinuxu.scheduler.UpdateLinks;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.regexp.RE;
 import org.apache.regexp.REProgram;
@@ -106,13 +108,19 @@ public class EditUser implements AbcAction, Configurable {
     public static final String PARAM_USERS = "users";
     public static final String PARAM_URL_CSS = "css";
     public static final String PARAM_GUIDEPOST = "guidepost";
+    public static final String PARAM_FEED = "feed";
+    public static final String PARAM_TEMPLATE_FEED_SIZE = "feedSize";
+    public static final String PARAM_INDEX_FEED_SIZE = "indexFeedSize";
     public static final String PARAM_URL = "url";
 
     public static final String VAR_MANAGED = "MANAGED";
     public static final String VAR_DEFAULT_DISCUSSION_COUNT = "DEFAULT_DISCUSSIONS";
     public static final String VAR_DEFAULT_NEWS_COUNT = "DEFAULT_NEWS";
     public static final String VAR_DEFAULT_STORIES_COUNT = "DEFAULT_STORIES";
+    public static final String VAR_DEFAULT_FEED_LINKS_COUNT = "DEFAULT_LINKS";
+    public static final String VAR_DEFAULT_TEMPLATE_FEED_LINKS_COUNT = "DEFAULT_TEMPLATE_LINKS";
     public static final String VAR_USERS = "USERS";
+    public static final String VAR_SERVERS = "SERVERS";
 
     public static final String ACTION_REGISTER = "register";
     public static final String ACTION_REGISTER_STEP2 = "register2";
@@ -585,9 +593,29 @@ public class EditUser implements AbcAction, Configurable {
         if ( node!=null )
             params.put(PARAM_FORUM_PAGE_SIZE, node.getText());
 
+        node = document.selectSingleNode("/data/settings/template_links");
+        if ( node!=null )
+            params.put(PARAM_TEMPLATE_FEED_SIZE, node.getText());
+
+        node = document.selectSingleNode("/data/settings/index_links");
+        if ( node!=null )
+            params.put(PARAM_INDEX_FEED_SIZE, node.getText());
+
         node = document.selectSingleNode("/data/settings/return_to_forum");
         if ( node!=null )
             params.put(PARAM_RETURN_TO_FORUM, node.getText());
+
+        List maintainedServers = UpdateLinks.getMaintainedServers();
+        Element element = (Element) document.selectSingleNode("/data/settings/feeds");
+        if (element != null) {
+            StringTokenizer stk = new StringTokenizer(element.getText(), ",");
+            while (stk.hasMoreTokens()) {
+                String tmp = stk.nextToken();
+                Integer id = new Integer(tmp);
+                if (maintainedServers.indexOf(id) != -1)
+                    params.put(PARAM_FEED + id, Boolean.TRUE);
+            }
+        }
 
         return FMTemplateSelector.select("EditUser", "editSettings", env, request);
     }
@@ -615,12 +643,14 @@ public class EditUser implements AbcAction, Configurable {
         canContinue &= setEmoticons(params, managed);
         canContinue &= setSignatures(params, managed);
         canContinue &= setGuidepost(params, managed);
-        canContinue &= setDiscussionsSizeLimit(params, managed);
+        canContinue &= setDiscussionsSizeLimit(params, managed, env);
         canContinue &= setNewsSizeLimit(params, managed, env);
         canContinue &= setStoriesSizeLimit(params, managed, env);
         canContinue &= setFoundPageSize(params, managed, env);
         canContinue &= setForumPageSize(params, managed, env);
         canContinue &= setReturnBackToForum(params, managed);
+        canContinue &= setFeeds(params, managed);
+        canContinue &= setFeedSize(params, managed, env);
 
         if ( !canContinue ) {
             setDefaultValuesForEditSettings(env);
@@ -641,10 +671,22 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     private void setDefaultValuesForEditSettings(Map env) {
+        List maintainedServers = UpdateLinks.getMaintainedServers();
+        List servers = new ArrayList(maintainedServers.size());
+        Persistance persistance = PersistanceFactory.getPersistance();
+        for (Iterator iter = maintainedServers.iterator(); iter.hasNext();) {
+            Integer id = (Integer) iter.next();
+            Server server = (Server) persistance.findById(new Server(id.intValue()));
+            servers.add(server);
+        }
+        env.put(VAR_SERVERS, servers);
+
         Map defaultSizes = VariableFetcher.getInstance().getDefaultSizes();
         env.put(VAR_DEFAULT_DISCUSSION_COUNT, defaultSizes.get(VariableFetcher.KEY_QUESTION));
         env.put(VAR_DEFAULT_NEWS_COUNT, defaultSizes.get(VariableFetcher.KEY_NEWS));
         env.put(VAR_DEFAULT_STORIES_COUNT, defaultSizes.get(VariableFetcher.KEY_STORY));
+        env.put(VAR_DEFAULT_FEED_LINKS_COUNT, defaultSizes.get(VariableFetcher.KEY_TEMPLATE_LINKS));
+        env.put(VAR_DEFAULT_TEMPLATE_FEED_LINKS_COUNT, defaultSizes.get(VariableFetcher.KEY_INDEX_LINKS));
     }
 
     protected String actionEditBlacklist(HttpServletRequest request, Map env) throws Exception {
@@ -1370,18 +1412,10 @@ public class EditUser implements AbcAction, Configurable {
      * @param user user to be updated
      * @return false, if there is a major error.
      */
-    private boolean setDiscussionsSizeLimit(Map params, User user) {
-        String limit = (String) params.get(PARAM_DISCUSSIONS_COUNT);
-        int tmp = Misc.parseInt(limit, -2);
-        if ( tmp==-2 ) {
-            Node node = user.getData().selectSingleNode("/data/settings/index_discussions");
-            if ( node!=null )
-                node.getParent().remove(node);
-        } else {
-            Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/index_discussions");
-            element.setText(limit);
-        }
-        return true;
+    private boolean setDiscussionsSizeLimit(Map params, User user, Map env) {
+        Map maxSizes = VariableFetcher.getInstance().getMaxSizes();
+        int max = ((Integer) maxSizes.get(VariableFetcher.KEY_QUESTION)).intValue();
+        return setLimitedSize(params, PARAM_DISCUSSIONS_COUNT, user.getData(), "/data/settings/index_discussions", 0, max, env);
     }
 
     /**
@@ -1392,23 +1426,9 @@ public class EditUser implements AbcAction, Configurable {
      * @return false, if there is a major error.
      */
     private boolean setNewsSizeLimit(Map params, User user, Map env) {
-        String limit = (String) params.get(PARAM_NEWS_COUNT);
-        if ( limit==null || limit.length()==0 ) {
-            Node node = user.getData().selectSingleNode("/data/settings/index_news");
-            if ( node!=null )
-                node.detach();
-        } else {
-            int tmp = Misc.parseInt(limit, -2);
-            Map maxSizes = VariableFetcher.getInstance().getMaxSizes();
-            int max = ((Integer) maxSizes.get(VariableFetcher.KEY_STORY)).intValue();
-            if (tmp < 0 || tmp > max) {
-                ServletUtils.addError(PARAM_NEWS_COUNT, "Zadejte èíslo v rozsahu 0-" + max + "!", env, null);
-                return false;
-            }
-            Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/index_news");
-            element.setText(limit);
-        }
-        return true;
+        Map maxSizes = VariableFetcher.getInstance().getMaxSizes();
+        int max = ((Integer) maxSizes.get(VariableFetcher.KEY_NEWS)).intValue();
+        return setLimitedSize(params, PARAM_NEWS_COUNT, user.getData(), "/data/settings/index_news", 0, max, env);
     }
 
     /**
@@ -1419,23 +1439,9 @@ public class EditUser implements AbcAction, Configurable {
      * @return false, if there is a major error.
      */
     private boolean setStoriesSizeLimit(Map params, User user, Map env) {
-        String limit = (String) params.get(PARAM_STORIES_COUNT);
-        if ( limit==null || limit.length()==0 ) {
-            Node node = user.getData().selectSingleNode("/data/settings/index_stories");
-            if ( node!=null )
-                node.detach();
-        } else {
-            int tmp = Misc.parseInt(limit, -2);
-            Map maxSizes = VariableFetcher.getInstance().getMaxSizes();
-            int max = ((Integer) maxSizes.get(VariableFetcher.KEY_STORY)).intValue();
-            if ( tmp < 0 || tmp > max ) {
-                ServletUtils.addError(PARAM_STORIES_COUNT, "Zadejte èíslo v rozsahu 0-"+max+"!", env, null);
-                return false;
-            }
-            Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/index_stories");
-            element.setText(limit);
-        }
-        return true;
+        Map maxSizes = VariableFetcher.getInstance().getMaxSizes();
+        int max = ((Integer) maxSizes.get(VariableFetcher.KEY_STORY)).intValue();
+        return setLimitedSize(params, PARAM_STORIES_COUNT, user.getData(), "/data/settings/index_stories", 0, max, env);
     }
 
     /**
@@ -1446,21 +1452,7 @@ public class EditUser implements AbcAction, Configurable {
      * @return false, if there is a major error.
      */
     private boolean setFoundPageSize(Map params, User user, Map env) {
-        String limit = (String) params.get(PARAM_FOUND_PAGE_SIZE);
-        if ( limit==null || limit.length()==0 ) {
-            Node node = user.getData().selectSingleNode("/data/settings/found_size");
-            if ( node!=null )
-                node.detach();
-        } else {
-            int tmp = Misc.parseInt(limit, -2);
-            if ( tmp<10 || tmp>100 ) {
-                ServletUtils.addError(PARAM_FOUND_PAGE_SIZE, "Zadejte èíslo v rozsahu 10-100!", env, null);
-                return false;
-            }
-            Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/found_size");
-            element.setText(limit);
-        }
-        return true;
+        return setLimitedSize(params, PARAM_FOUND_PAGE_SIZE, user.getData(), "/data/settings/found_size", 10, 100, env);
     }
 
     /**
@@ -1471,21 +1463,7 @@ public class EditUser implements AbcAction, Configurable {
      * @return false, if there is a major error.
      */
     private boolean setForumPageSize(Map params, User user, Map env) {
-        String limit = (String) params.get(PARAM_FORUM_PAGE_SIZE);
-        if ( limit==null || limit.length()==0 ) {
-            Node node = user.getData().selectSingleNode("/data/settings/forum_size");
-            if ( node!=null )
-                node.detach();
-        } else {
-            int tmp = Misc.parseInt(limit, -2);
-            if ( tmp<10 || tmp>100 ) {
-                ServletUtils.addError(PARAM_FORUM_PAGE_SIZE, "Zadejte èíslo v rozsahu 10-100!", env, null);
-                return false;
-            }
-            Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/forum_size");
-            element.setText(limit);
-        }
-        return true;
+        return setLimitedSize(params, PARAM_FORUM_PAGE_SIZE, user.getData(), "/data/settings/forum_size", 10, 100, env);
     }
 
     /**
@@ -1628,6 +1606,45 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
+     * Sets selected feeds from parameters. Changes are not synchronized with persistance.
+     * @return false, if there is a major error.
+     */
+    private boolean setFeeds(Map params, User user) {
+        Element element = (Element) user.getData().selectSingleNode("/data/settings/feeds");
+        if (element != null)
+            element.detach();
+
+        StringBuffer sb = new StringBuffer();
+        List maintainedServers = UpdateLinks.getMaintainedServers();
+        for (Iterator iter = maintainedServers.iterator(); iter.hasNext();) {
+            Integer id = (Integer) iter.next();
+            String param = (String) params.get(PARAM_FEED + id);
+            if (param != null && param.length() > 0)
+                sb.append(id).append(',');
+        }
+
+        if (sb.length() == 0)
+            return true;
+
+        sb.setLength(sb.length() - 1); // remove last comma
+        DocumentHelper.makeElement(user.getData(), "/data/settings/feeds").setText(sb.toString());
+        return true;
+    }
+
+    /**
+     * Overrides number of links per feed.  Changes are not synchronized with persistance.
+     * @return false, if there is a major error.
+     */
+    private boolean setFeedSize(Map params, User user, Map env) {
+        Map maxSizes = VariableFetcher.getInstance().getMaxSizes();
+        int max = ((Integer) maxSizes.get(VariableFetcher.KEY_INDEX_LINKS)).intValue();
+        boolean result = setLimitedSize(params, PARAM_INDEX_FEED_SIZE, user.getData(), "/data/settings/index_links", 1, max, env);
+        max = ((Integer) maxSizes.get(VariableFetcher.KEY_TEMPLATE_LINKS)).intValue();
+        result &= setLimitedSize(params, PARAM_TEMPLATE_FEED_SIZE, user.getData(), "/data/settings/template_links", 1, max, env);
+        return result;
+    }
+
+    /**
      * Uploads photo from parameters. Changes are not synchronized with persistance.
      * @param params map holding request's parameters
      * @param user user to be updated
@@ -1659,6 +1676,35 @@ public class EditUser implements AbcAction, Configurable {
 
         Element photo = DocumentHelper.makeElement(user.getData(), "/data/profile/photo");
         photo.setText("/"+fileName);
+        return true;
+    }
+
+    /**
+     * Sets user setting (number).
+     * @param params map of params
+     * @param paramName param name to be searched
+     * @param document document to be updated
+     * @param xpath xpath to be updated within document
+     * @param min minimum allowed valued
+     * @param max maximum allowed valued
+     * @param env possible error message wil be stored there
+     * @return false in case of major error
+     */
+    private boolean setLimitedSize(Map params, String paramName, Document document, String xpath, int min, int max, Map env) {
+        String limit = (String) params.get(paramName);
+        if (limit == null || limit.length() == 0) {
+            Node node = document.selectSingleNode(xpath);
+            if (node != null)
+                node.detach();
+        } else {
+            int tmp = Misc.parseInt(limit, min - 1);
+            if (tmp < min || tmp > max) {
+                ServletUtils.addError(paramName, "Zadejte èíslo v rozsahu "+min+" - " + max + "!", env, null);
+                return false;
+            }
+            Element element = DocumentHelper.makeElement(document, xpath);
+            element.setText(limit);
+        }
         return true;
     }
 

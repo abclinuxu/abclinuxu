@@ -12,7 +12,7 @@
  Pøihla¹ovací údaje jsme vám zaslali na va¹i emailovou adresu ${PROFILE.email}. </p>
 </#if>
 
-<h1>Va¹e soukromá stránka</h1>
+<h1>Nastavení mého úètu</h1>
 
 <p>Nacházíte se ve své soukromé stránce. Zde mù¾ete
 mìnit nastavení svého úètu, upravovat svùj profil
@@ -75,6 +75,23 @@ patièku zobrazovanou v diskusích u va¹ich pøíspìvkù, nahrát svou fotku
     </li>
 </ul>
 
+<h2>Nastavení úètu</h2>
+
+<p>V této èásti si mù¾ete zmìnit nastavení va¹eho úètu a pøizpùsobit si
+portál dle svých pøedstav. Napøíklad mù¾ete zmìnit servery v rozcestníku,
+vybrat barevný styl èi zakázat automatické pøihla¹ování.</p>
+
+<ul>
+    <li>
+        <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editSettings")}">
+        zmìnit nastavení</a>
+    </li>
+    <li>
+        <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editBlacklist")}">
+        upravit seznam blokovaných u¾ivatelù</a>
+    </li>
+</ul>
+
 <h2>Blog</h2>
 
 <p>Blog je moderní formou vedení deníèku na internetu. Je urèen u¾ivatelùm Linuxu,
@@ -103,23 +120,6 @@ neuteèe.</p>
 <ul><li>
 <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=subscribe")}">
 objednat/odhlásit</a>
-</ul>
-
-<h2>Nastavení úètu</h2>
-
-<p>V této èásti si mù¾ete zmìnit nastavení va¹eho úètu. De facto
-se jedná o personalizaci portálu, kde mù¾ete upravit jeho chování
-dle svých pøedstav.</p>
-
-<ul>
-    <li>
-        <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editSettings")}">
-        zmìnit nastavení</a>
-    </li>
-    <li>
-        <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editBlacklist")}">
-        upravit seznam blokovaných u¾ivatelù</a>
-    </li>
 </ul>
 
 <h2>Va¹e veøejná stránka</h2>
