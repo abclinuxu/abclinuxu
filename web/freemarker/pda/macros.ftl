@@ -1,3 +1,12 @@
+<#macro showMessages>
+ <#list MESSAGES as msg>
+  <p class="message">${msg}</p>
+ </#list>
+ <#if ERRORS.generic?exists>
+  <p class="error">${ERRORS.generic}</p>
+ </#if>
+</#macro>
+
 <#macro showArticle(relation)>
  <#local clanek=relation.child>
  <p>
@@ -25,41 +34,55 @@
  <#if double><img src="/images/site/sedybod.gif" width="100%" height="1" border="0" alt="" vspace="1"><br></#if>
 </#macro>
 
-<#macro showComment(comment) >
- <div class="ds_hlavicka">
-  <a name="${comment.id}"></a>
-  ${DATE.show(comment.created,"CZ_FULL")}
-  <#if comment.author?exists>
-   <#local who=TOOL.sync(comment.author)><a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
-  <#else>
-   ${TOOL.xpath(comment.data,"author")?if_exists}
-  </#if><br>
-  ${TOOL.xpath(comment.data,"title")?if_exists}<br>
- </div>
- <#if TOOL.xpath(comment.data,"censored")?exists>
-  <#if TOOL.xpath(comment.data,"censored/@admin")?exists><#local message="Cenzura: "+TOOL.xpath(comment.data,"censored")></#if>
-  <p class="cenzura">
-   ${message?default("Na¹i administrátoøi shledali tento pøíspìvek závadným.")}
-  </p>
- <#else>
-  <div class="ds_text">
-    ${TOOL.render(TOOL.element(comment.data,"text"),USER?if_exists)}
-  </div>
-  <#if who?exists && TOOL.xpath(who,"/data/personal/signature")?exists
-    && (! USER?exists || TOOL.xpath(USER,"//settings/signatures")?default("yes")=="yes")
-  ><div class="signature">${TOOL.xpath(who,"/data/personal/signature")}</div></#if>
- </#if>
+<#macro markNewComments(discussion)><#t>
+<#if TOOL.hasNewComments(USER?if_exists, discussion)><#t>
+    <span title="V diskusi jsou nové komentáøe" class="new_comment_mark">*</span><#t>
+</#if><#t>
 </#macro>
 
-<#macro showThread(diz level)>
- <#local space=level*15>
- <div style="padding-left: ${space}pt">
-  <@showComment diz />
+<#macro showThread(comment level diz showControls extra...)>
+ <div>
+  <a name="${comment.id}"></a>
+  ${DATE.show(comment.created,"CZ_FULL")} <#if diz.isUnread(comment)>(nový)</#if>
+  <#if comment.author?exists>
+   <#local who=TOOL.createUser(comment.author)><a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
+   <#local city=TOOL.xpath(who,"//personal/city")?default("UNDEF")><#if city!="UNDEF"> | ${city}</#if>
+  <#else>
+   ${comment.anonymName?if_exists}
+  </#if><br>
+  ${comment.title?if_exists}<br>
+  <#if showControls>
+   <#assign nextUnread = diz.getNextUnread(comment)?default("UNDEF")>
+   <#if ! nextUnread?is_string><a href="#${nextUnread}" title="Skoèit na dal¹í nepøeètený komentáø">Dal¹í</a> |</#if>
+   <a href="#${comment.id}" title="Pøímá adresa na tento komentáø">Link</a> |
+   <#if (comment.parent?exists)><a href="#${comment.parent}" title="Odkaz na komentáø o jednu úroveò vý¹e">Vý¹e</a> |</#if>
+  </#if>
  </div>
- <#if diz.children?exists>
+ <div>
+  <#if TOOL.xpath(comment.data,"censored")?exists>
+     <@showCensored comment, dizId, relId/>
+  <#else>
+   <div class="ds_text">
+     ${TOOL.render(TOOL.element(comment.data,"//text"),USER?if_exists)}
+   </div>
+   <#assign signature = TOOL.getUserSignature(who?if_exists, USER?if_exists)?default("UNDEFINED")>
+   <#if signature!="UNDEFINED"><div class="signature">${signature}</div></#if>
+  </#if>
   <#local level2=level+1>
-  <#list diz.children as child>
-    <@showThread child, level2 />
-  </#list>
- </#if>
+  <div style="padding-left: 15pt">
+   <#list comment.children?if_exists as child>
+    <@showThread child, level2, diz, showControls, extra[0]?if_exists />
+   </#list>
+  </div>
+ </div>
+</#macro>
+
+<#macro showCensored(comment dizId relId)>
+    <p class="cenzura">
+        <#assign admin = TOOL.xpath(comment.data,"//censored/@admin")?default("5473")>
+        Ná¹ <a href="/Profile/${admin}">administrátor</a>
+        shledal tento pøíspìvek závadným nebo nevyhovujícím zamìøení portálu.
+        <#assign message = TOOL.xpath(comment.data,"//censored")?default("")>
+        <#if message?has_content><br>${message}</#if>
+    </p>
 </#macro>
