@@ -187,6 +187,9 @@
                            <a href="/hosting"><img src="/images/bannery/abchosting.gif" alt="AbcHosting je tu pro vás"
                            border="0" width="251" height="60"></a>
                         </p>
+                        <#if ! IS_INDEX?exists>
+                            <#include "/include/anketa-distro-06-small.txt">
+                        </#if>
                         <hr>
                         <#include "/include/redhat_zpravicka.txt">
                     </#if>
@@ -219,7 +222,7 @@
                     <#include "/include/prace.txt">
                 </div>
                 <#assign FEEDS = VARS.getFeeds(USER?if_exists,false)>
-                <#if (FEEDS?size > 0)>
+                <#if (FEEDS.size() > 0)>
                     <!-- ROZCESTNÍK -->
                     <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Rozcestník</h1></div></div>
                     <div class="s_sekce">

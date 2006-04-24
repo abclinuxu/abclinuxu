@@ -221,7 +221,7 @@
 </#macro>
 
 <#assign FEEDS = VARS.getFeeds(USER?if_exists,true)>
-<#if (FEEDS?size > 0)>
+<#if (FEEDS.size() > 0)>
     <div class="st_nad_rozc"><div class="st_rozc">
         <h1 class="st_nadpis">Rozcestník</h1>
         <div class="s"><div class="s_sekce"><div class="rozc">
