@@ -53,10 +53,10 @@ ${TOOL.render(TEXT,USER?if_exists)}
 
 <#if CHILDREN.discussion?exists>
  <h1>Diskuse k tomuto èlánku</h1>
- <#assign DISCUSSION=CHILDREN.discussion[0].child, frozen=true>
- <#list TOOL.createDiscussionTree(DISCUSSION) as thread>
-  <@lib.showThread thread, 0 />
- </#list>
+    <#assign diz = TOOL.createDiscussionTree(CHILDREN.discussion[0].child,USER?if_exists,CHILDREN.discussion[0].id,true)>
+    <#list diz.threads as thread>
+      <@lib.showThread thread, 0, diz, !diz.frozen />
+    </#list>
 </#if>
 
 <#include "../footer.ftl">
