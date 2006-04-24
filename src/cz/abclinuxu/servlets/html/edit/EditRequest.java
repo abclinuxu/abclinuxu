@@ -172,6 +172,9 @@ public class EditRequest implements AbcAction, Configurable {
             error = true;
         }
 
+        if ( "Duplicitní diskuse".equals(category) )
+            messageRequired = false;
+
         if (messageRequired) {
             if (text == null || text.length() == 0) {
                 ServletUtils.addError(PARAM_TEXT, "Napi¹te text va¹eho vzkazu.", env, null);
