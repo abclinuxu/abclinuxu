@@ -51,7 +51,7 @@ public interface Constants {
 
     int ITEM_DIZ_TODO = 11606;
     /** item holding info about user feeds to fetch */
-    int ITEM_DYNAMIC_RSS = 129638;
+    int ITEM_DYNAMIC_RSS = 59516;
 
     int REC_DIZ_TODO = 38280;
 
