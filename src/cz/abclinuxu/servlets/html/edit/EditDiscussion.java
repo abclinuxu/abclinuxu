@@ -102,6 +102,10 @@ public class EditDiscussion implements AbcAction {
     public static final String ACTION_THREAD_TO_DIZ_STEP2 = "toQuestion2";
     public static final String ACTION_SOLVED = "solved";
 
+    private static final String LOGIN_REQUIRED = "Litujeme, ale bez registrace je mo¾né komentovat jen otázky v diskusním fóru, " +
+                        "kde se øe¹í problémy. U ostatních diskusí (zprávièky, èlánky, blogy) je nutné se nejdøíve pøihlásit. " +
+                        "Toto opatøení jsme zavedli z dùvodu zvý¹ené aktivity spambotù a trollù.";
+
 // prepsat a overit kazdou jednotlivou funkci
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -292,6 +296,12 @@ public class EditDiscussion implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_RELATION);
+        User user = (User) env.get(Constants.VAR_USER);
+
+        if ( user == null && ! isQuestionInForum(relation)) {
+            ServletUtils.addMessage(LOGIN_REQUIRED, env, null);
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
+        }
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if ( discussion==null )
@@ -317,7 +327,6 @@ public class EditDiscussion implements AbcAction {
                 relation = new Relation(relation.getUpper());
             env.put(VAR_PARENT_TITLE, getTitleFromParent(relation));
         }
-        setForumQuestionFlag(relation, env);
 
         return FMTemplateSelector.select("EditDiscussion","reply",env,request);
     }
@@ -332,6 +341,11 @@ public class EditDiscussion implements AbcAction {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         Relation relation = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
+
+        if (user == null && !isQuestionInForum(relation)) {
+            ServletUtils.addMessage(LOGIN_REQUIRED, env, null);
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
+        }
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if ( discussion==null )
@@ -360,8 +374,6 @@ public class EditDiscussion implements AbcAction {
             dizRecord = new DiscussionRecord();
             record.setCustom(dizRecord);
         }
-
-        setForumQuestionFlag(relation, env);
 
         boolean canContinue = true;
         canContinue &= setId(dizRecord, comment);
@@ -1311,16 +1323,12 @@ public class EditDiscussion implements AbcAction {
     }
 
     /**
-     * Sets flag whether the discussion is forum or not.
      * @param relation initialized discussion relation
-     * @param env boolean with key VAR_FORUM_QUESTION
+     * @return true if discussion is question in forum, false otherwise (discussion for article, news, story etc)
      */
-    static void setForumQuestionFlag(Relation relation, Map env) {
+    static boolean isQuestionInForum(Relation relation) {
         Persistance persistance = PersistanceFactory.getPersistance();
         GenericObject parent = persistance.findById(relation.getParent());
-        if (parent instanceof Category && ((Category)parent).getType()==Category.FORUM)
-            env.put(VAR_FORUM_QUESTION, Boolean.TRUE);
-        else
-            env.put(VAR_FORUM_QUESTION, Boolean.FALSE);
+        return (parent instanceof Category && ((Category)parent).getType()==Category.FORUM);
     }
 }

@@ -2,9 +2,14 @@
 
 <@lib.showMessages/>
 
-<p>Tento krok vy¾aduje, abyste se pøihlásil. Pokud je¹tì
-nejste registrován, mù¾ete tak uèinit
-<a href="${URL.noPrefix("/EditUser?action=register")}">zde</a>.</p>
+<p>Tento krok vy¾aduje, abyste se pøihlásil(a) na svùj u¾ivatelský úèet.
+Pokud je¹tì ¾ádný nemáte, mù¾ete si jej
+<a href="${URL.noPrefix("/EditUser?action=register")}">vytvoøit</a>.
+Zabere vám to jen okam¾ik a pøinese spoustu výhod. Pokud u nás úèet
+ji¾ máte, ale nepamatujete si pøihla¹ovací údaje,
+<a href="${URL.noPrefix("/SelectUser?sAction=form&amp;action=forgottenPassword&amp;TITLE=Zaslání+zapomenutého+hesla&amp;url=/Profile")}">najdìte si jej</a>
+a my vám za¹leme heslo.
+</p>
 
 <form action="${REQUEST_URI}" method="POST">
 
@@ -34,14 +39,6 @@ nejste registrován, mù¾ete tak uèinit
   <input type="hidden" name="action" value="${PARAMS.action?if_exists}">
 </#if>
 ${TOOL.saveParams(PARAMS, ["LOGIN","PASSWORD","action"])}
-</form>
-
-<form action="${URL.noPrefix("/SelectUser")}" method="POST">
- <input type="submit" value="Zapomnìl jsem heslo/login">
- <input type="hidden" name="sAction" value="form">
- <input type="hidden" name="action" value="forgottenPassword">
- <input type="hidden" name="url" value="${URL.noPrefix("/Profile")}">
- <input type="hidden" name="TITLE" value="Zaslání zapomenutého hesla">
 </form>
 
 <#include "../footer.ftl">
