@@ -307,9 +307,6 @@
                             <entry key="regexp.22" value="(The latest 2.2[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
                             <entry key="url.22" value="ftp://ftp.cz.kernel.org/pub/linux/kernel/v2.2"/>
                             <entry key="regexp.22.pre" value="(The latest prepatch for the 2.2[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                            <entry key="regexp.20" value="(The latest 2.0[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
-                            <entry key="url.20" value="ftp://ftp.cz.kernel.org/pub/linux/kernel/v2.0"/>
-                            <entry key="regexp.20.pre" value="(The latest prepatch for the 2.0[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
                             <entry key="regexp.ac" value="(The latest -ac patch to the beta[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
                             <entry key="url.ac" value="http://www.kernel.org/pub/linux/kernel/people/alan/linux-2.6/"/>
                             <entry key="regexp.stable.mm" value="(The latest -mm patch to the stable[^:]*)(:[ ]+)(\d.\d.[a-z0-9-]+)"/>
@@ -326,6 +323,13 @@
                         <map>
                             <entry key="file" value="WEB-INF/freemarker/include/oksystem.txt"/>
                             <entry key="uri" value="http://portal.oksystem.cz/okskoleni/linuxRss"/>
+                            <entry key="max" value="5" />
+                        </map>
+                    </node>
+                    <node name="JobPilotFetcher">
+                        <map>
+                            <entry key="file" value="WEB-INF/freemarker/include/jobpilot.txt"/>
+                            <entry key="uri" value="http://www.jobpilot.cz/job_suche/search.phtml/czabclinuxu?employer=DHL+Information+Services+Europe+s.r.o"/>
                             <entry key="max" value="5" />
                         </map>
                     </node>
