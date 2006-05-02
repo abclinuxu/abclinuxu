@@ -35,6 +35,7 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.parser.safehtml.ProfileGuard;
+import cz.abclinuxu.utils.parser.safehtml.NoHTMLGuard;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -65,6 +66,8 @@ import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.util.*;
 import java.util.prefs.Preferences;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Class for manipulation with User.
@@ -462,9 +465,9 @@ public class EditUser implements AbcAction, Configurable {
         canContinue &= setSignature(params, managed, env);
         canContinue &= setSex(params, managed, env);
         canContinue &= setBirthYear(params, managed, env);
-        canContinue &= setCity(params, managed);
-        canContinue &= setArea(params, managed);
-        canContinue &= setCountry(params, managed);
+        canContinue &= setCity(params, managed, env);
+        canContinue &= setArea(params, managed, env);
+        canContinue &= setCountry(params, managed, env);
 
         if ( !canContinue )
             return FMTemplateSelector.select("EditUser", "editPersonal", env, request);
@@ -525,7 +528,7 @@ public class EditUser implements AbcAction, Configurable {
         canContinue &= setMyPage(params, managed, env);
         canContinue &= setLinuxUserFrom(params, managed);
         canContinue &= setAbout(params, managed, env);
-        canContinue &= setDistributions(params, managed);
+        canContinue &= setDistributions(params, managed, env);
 
         if ( !canContinue )
             return FMTemplateSelector.select("EditUser", "editProfile", env, request);
@@ -974,6 +977,33 @@ public class EditUser implements AbcAction, Configurable {
     ///////////////////////////////////////////////////////////////////////////
 
     /**
+     * Executes given guard.
+     * @param guard class of the guard. It must implement static method check(String)
+     * @param text text to be checked
+     * @param paramName error message will be associated with this parameter
+     * @return true if everything is ok, false if guard throws exception
+     */
+    private boolean verifyGuard(Class guard, String text, String paramName, Map env) {
+        try {
+            Method method = guard.getMethod("check", new Class[] {String.class});
+            method.invoke(null, new Object[] {text});
+        } catch(InvocationTargetException e) {
+            Throwable e1 = e.getCause();
+            if (e1 instanceof ParserException) {
+                log.error("ParseException on '" + text + "'", e);
+                ServletUtils.addError(paramName, e.getMessage(), env, null);
+                return false;
+            } else {
+                ServletUtils.addError(paramName, e.getMessage(), env, null);
+                return false;
+            }
+        } catch (Exception e) {
+            log.error("Failed to run HTML guard "+guard.getName(), e);
+        }
+        return true;
+    }
+
+    /**
      * Checks password from parameters.
      * @param params map holding request's parameters
      * @param user user to be updated
@@ -1055,6 +1085,10 @@ public class EditUser implements AbcAction, Configurable {
             ServletUtils.addError(PARAM_NAME, "Jméno je pøíli¹ krátké!", env, null);
             return false;
         }
+
+        if (! verifyGuard(NoHTMLGuard.class, name, PARAM_NAME, env))
+            return false;
+
         user.setName(name);
         return true;
     }
@@ -1072,11 +1106,16 @@ public class EditUser implements AbcAction, Configurable {
             user.setNick(null);
             return true;
         }
+
         nick = nick.trim();
         if (nick.length()>20 ) {
             ServletUtils.addError(PARAM_NICK, "Pøezdívka je pøíli¹ dlouhá!", env, null);
             return false;
         }
+
+        if (!verifyGuard(NoHTMLGuard.class, nick, PARAM_NICK, env))
+            return false;
+
         user.setNick(nick);
         return true;
     }
@@ -1149,7 +1188,7 @@ public class EditUser implements AbcAction, Configurable {
      * @param user user to be updated
      * @return false, if there is a major error.
      */
-    private boolean setCity(Map params, User user) {
+    private boolean setCity(Map params, User user, Map env) {
         String city = (String) params.get(PARAM_CITY);
         Element personal = DocumentHelper.makeElement(user.getData(), "/data/personal");
         if ( city==null || city.length()==0 ) {
@@ -1158,6 +1197,10 @@ public class EditUser implements AbcAction, Configurable {
                 personal.remove(node);
             return true;
         }
+
+        if (!verifyGuard(NoHTMLGuard.class, city, PARAM_CITY, env))
+            return false;
+
         DocumentHelper.makeElement(personal, "city").setText(city);
         return true;
     }
@@ -1168,7 +1211,7 @@ public class EditUser implements AbcAction, Configurable {
      * @param user user to be updated
      * @return false, if there is a major error.
      */
-    private boolean setArea(Map params, User user) {
+    private boolean setArea(Map params, User user, Map env) {
         String area = (String) params.get(PARAM_AREA);
         Element personal = DocumentHelper.makeElement(user.getData(), "/data/personal");
         if ( area==null || area.length()==0 ) {
@@ -1177,6 +1220,10 @@ public class EditUser implements AbcAction, Configurable {
                 personal.remove(node);
             return true;
         }
+
+        if (!verifyGuard(NoHTMLGuard.class, area, PARAM_AREA, env))
+            return false;
+
         DocumentHelper.makeElement(personal, "area").setText(area);
         return true;
     }
@@ -1187,7 +1234,7 @@ public class EditUser implements AbcAction, Configurable {
      * @param user user to be updated
      * @return false, if there is a major error.
      */
-    private boolean setCountry(Map params, User user) {
+    private boolean setCountry(Map params, User user, Map env) {
         String country = (String) params.get(PARAM_COUNTRY);
         Element personal = DocumentHelper.makeElement(user.getData(), "/data/personal");
         if ( country==null || country.length()==0 ) {
@@ -1196,6 +1243,10 @@ public class EditUser implements AbcAction, Configurable {
                 personal.remove(node);
             return true;
         }
+
+        if (!verifyGuard(NoHTMLGuard.class, country, PARAM_COUNTRY, env))
+            return false;
+
         DocumentHelper.makeElement(personal, "country").setText(country);
         return true;
     }
@@ -1216,10 +1267,15 @@ public class EditUser implements AbcAction, Configurable {
                 profile.remove(node);
             return true;
         }
+
         if ( ! page.startsWith("http://") ) {
             ServletUtils.addError(PARAM_HOME_PAGE, "Neplatné URL!", env, null);
             return false;
         }
+
+        if (!verifyGuard(NoHTMLGuard.class, page, PARAM_HOME_PAGE, env))
+            return false;
+
         DocumentHelper.makeElement(profile, "home_page").setText(page);
         return true;
     }
@@ -1258,16 +1314,10 @@ public class EditUser implements AbcAction, Configurable {
                 profile.remove(node);
             return true;
         }
-        try {
-            ProfileGuard.check(about);
-        } catch (ParserException e) {
-            log.error("ParseException on '"+about+"'", e);
-            ServletUtils.addError(PARAM_ABOUT_ME, e.getMessage(), env, null);
+
+        if (!verifyGuard(ProfileGuard.class, about, PARAM_ABOUT_ME, env))
             return false;
-        } catch (Exception e) {
-            ServletUtils.addError(PARAM_ABOUT_ME, e.getMessage(), env, null);
-            return false;
-        }
+
         Element element = DocumentHelper.makeElement(profile, "about_myself");
         element.setText(about);
         Format format = FormatDetector.detect(about);
@@ -1281,7 +1331,7 @@ public class EditUser implements AbcAction, Configurable {
      * @param user user to be updated
      * @return false, if there is a major error.
      */
-    private boolean setDistributions(Map params, User user) {
+    private boolean setDistributions(Map params, User user, Map env) {
         List distros = (List) params.get(PARAM_DISTRIBUTION);
         Element profile = DocumentHelper.makeElement(user.getData(), "/data/profile");
         Node node = profile.element("distributions");
@@ -1292,6 +1342,9 @@ public class EditUser implements AbcAction, Configurable {
         Element distributions = DocumentHelper.makeElement(profile, "distributions");
         for ( Iterator iter = distros.iterator(); iter.hasNext(); ) {
             String distro = (String) iter.next();
+            if (!verifyGuard(NoHTMLGuard.class, distro, PARAM_DISTRIBUTION, env))
+                return false;
+
             Element element = DocumentHelper.createElement("distribution");
             element.setText(distro);
             distributions.add(element);
@@ -1314,20 +1367,15 @@ public class EditUser implements AbcAction, Configurable {
                 personal.remove(node);
             return true;
         }
-        try {
-            SafeHTMLGuard.check(signature);
-        } catch (ParserException e) {
-            log.error("ParseException on '"+signature+"'", e);
-            ServletUtils.addError(PARAM_SIGNATURE, e.getMessage(), env, null);
-            return false;
-        } catch (Exception e) {
-            ServletUtils.addError(PARAM_SIGNATURE, e.getMessage(), env, null);
-            return false;
-        }
+
         if (contentSize(signature)>100) {
             ServletUtils.addError(PARAM_SIGNATURE, "Maximální délka je 100 znakù!", env, null);
             return false;
         }
+
+        if (!verifyGuard(SafeHTMLGuard.class, signature, PARAM_SIGNATURE, env))
+            return false;
+
         DocumentHelper.makeElement(personal, "signature").setText(signature);
         return true;
     }
