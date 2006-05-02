@@ -383,7 +383,7 @@ public class EditDiscussion implements AbcAction {
         canContinue &= setTitle(params, root, env);
         canContinue &= setText(params, root, env);
         canContinue &= setUserIPAddress(root, request);
-        canContinue &= testAnonymCanPostComments(user, env);
+//        canContinue &= testAnonymCanPostComments(user, env);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             env.put(VAR_DISCUSSION, discussion);
@@ -1186,14 +1186,14 @@ public class EditDiscussion implements AbcAction {
      * Anonymous post allowance test. The method setForumQuestionFlag() must be called prior this method.
      * @param user current user
      * @param env  environment
+     * @param relation initialized discussion relation
      * @return false, if user is not logged in and anonymous posts are prohibited
      */
-    static boolean testAnonymCanPostComments(User user, Map env) {
+    static boolean testAnonymCanPostComments(User user, Relation relation, Map env) {
         if (user != null)
             return true;
 
-        Boolean forumQuestion = (Boolean) env.get(VAR_FORUM_QUESTION);
-        if (forumQuestion.booleanValue())
+        if (isQuestionInForum(relation))
             return true;
 
         ServletUtils.addError(ServletUtils.PARAM_LOG_USER, "Zadejte prosím své pøihla¹ovací údaje.", env, null);
