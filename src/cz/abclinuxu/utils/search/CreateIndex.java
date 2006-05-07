@@ -531,7 +531,7 @@ public class CreateIndex implements Configurable {
                     sb.append(s);
                 }
 
-                node = data.element("text");
+                node = comment.getData().getRootElement().element("text");
                 if ( node!=null ) {
                     sb.append(" ");
                     sb.append(node.getText());
