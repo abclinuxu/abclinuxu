@@ -53,6 +53,7 @@ public class AbcInit extends HttpServlet implements Configurable {
     public static final String PREF_START_RSS_KERNEL = "start.rss.kernel";
     public static final String PREF_START_RSS_UNIXSHOP = "start.rss.unixshop";
     public static final String PREF_START_RSS_OKSYSTEM = "start.rss.oksystem";
+    public static final String PREF_START_RSS_JOBPILOT = "start.rss.jobpilot";
     public static final String PREF_START_VARIABLE_FETCHER = "start.variable.fetcher";
     public static final String PREF_START_ARTICLE_POOL_MONITOR = "start.article.pool.monitor";
     public static final String PREF_START_ABC_MONITOR = "start.abc.monitor";
@@ -118,6 +119,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         startLinksUpdate();
         startUnixshopUpdate();
         startOKSystemUpdate();
+        startJobPilotUpdate();
         startGenerateLinks();
         startArticlePoolMonitor();
         startSendingWeeklyEmails();
@@ -177,6 +179,18 @@ public class AbcInit extends HttpServlet implements Configurable {
         }
         log.info("Scheduling RSS OKSystem monitor");
         scheduler.schedule(new OKSystemFetcher(), 1*60*1000, 2*60*60*1000);
+    }
+
+    /**
+     * Update JobPilot RSS each hour, starting after two minutes
+     */
+    protected void startJobPilotUpdate() {
+        if ( !isSet(PREF_START_RSS_JOBPILOT) ) {
+            log.info("JobPilot RSS monitor configured not to run");
+            return;
+        }
+        log.info("Scheduling JobPilot RSS monitor");
+        scheduler.schedule(new JobPilotFetcher(), 3*60*1000, 2*60*60*1000);
     }
 
     /**

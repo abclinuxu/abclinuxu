@@ -25,6 +25,9 @@ import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.FMUtils;
 import org.apache.log4j.Logger;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +35,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimerTask;
+import java.util.List;
+import java.util.Iterator;
 import java.util.prefs.Preferences;
 
 /**
@@ -51,6 +56,16 @@ public class JobPilotFetcher extends TimerTask implements Configurable {
         log.debug("Fetching JobPilot RSS starts ..");
         try {
             ArrayList result = new ArrayList();
+            uri = "file:///home/literakl/dhl.xml";
+            Document document = new SAXReader().read(uri);
+            List nodes = document.getRootElement().elements("job");
+            for (Iterator iter = nodes.iterator(); iter.hasNext();) {
+                Element element = (Element) iter.next();
+                RssItem item = new RssItem();
+                item.setUrl(element.elementText("url"));
+                item.setTitle(element.elementText("title"));
+                result.add(item);
+            }
 
             if (result.size() == 0) {
                 log.debug("data is missing - bye!");

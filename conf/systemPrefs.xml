@@ -329,7 +329,7 @@
                     <node name="JobPilotFetcher">
                         <map>
                             <entry key="file" value="WEB-INF/freemarker/include/jobpilot.txt"/>
-                            <entry key="uri" value="http://www.jobpilot.cz/job_suche/search.phtml/czabclinuxu?employer=DHL+Information+Services+Europe+s.r.o"/>
+                            <entry key="uri" value="http://www.jobpilot.cz/job_suche/search.phtml/czabclinuxu?employer=DHL+Information+Services+Europe+s.r.o."/>
                             <entry key="max" value="5" />
                         </map>
                     </node>
@@ -341,7 +341,7 @@
                             <entry key="feedUri1" value="http://www.root.cz/rss/"/>
                             <entry key="feedUri3" value="http://www.scienceworld.cz/sw.rss"/>
                             <entry key="feedUri5" value="http://www.penguin.cz/rss.php"/>
-                            <entry key="feedUri7" value="http://localhost:8080/auto/abc.rss"/>
+                            <entry key="feedUri7" value="http://www.abclinuxu.cz/auto/abc.rss"/>
                             <entry key="feedUri9" value="http://www.linuxzone.cz/export/rssexport.phtml"/>
                             <entry key="feedUri12" value="http://www.mandrivalinux.cz/modules/rss/rss.php"/>
                             <entry key="feedUri13" value="http://www.czilla.cz/rss/rss.html"/>
@@ -423,6 +423,7 @@
                                 <entry key="start.rss.kernel" value="@START.RSS.KERNEL@"/>
                                 <entry key="start.rss.unixshop" value="@START.RSS.UNIXSHOP@"/>
                                 <entry key="start.rss.oksystem" value="@START.RSS.OKSYSTEM@"/>
+                                <entry key="start.rss.jobpilot" value="@START.RSS.JOBPILOT@"/>
                                 <entry key="start.variable.fetcher" value="@START.VARIABLE.FETCHER@"/>
                                 <entry key="start.article.pool.monitor" value="@START.ARTICLE.POOL.MONITOR@"/>
                                 <entry key="start.abc.monitor" value="@START.ABC.MONITOR@"/>
