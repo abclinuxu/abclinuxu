@@ -427,9 +427,6 @@ public class EditUser implements AbcAction, Configurable {
         Node node = document.selectSingleNode("/data/personal/sex");
         if ( node!=null )
             params.put(PARAM_SEX, node.getText());
-        node = document.selectSingleNode("/data/personal/signature");
-        if ( node!=null )
-            params.put(PARAM_SIGNATURE, node.getText());
         node = document.selectSingleNode("/data/personal/birth_year");
         if ( node!=null )
             params.put(PARAM_BIRTH_YEAR, node.getText());
@@ -462,7 +459,6 @@ public class EditUser implements AbcAction, Configurable {
         if (!canContinue)
             return FMTemplateSelector.select("EditUser", "editPersonal", env, request);
 
-        canContinue &= setSignature(params, managed, env);
         canContinue &= setSex(params, managed, env);
         canContinue &= setBirthYear(params, managed, env);
         canContinue &= setCity(params, managed, env);
@@ -499,6 +495,9 @@ public class EditUser implements AbcAction, Configurable {
         node = document.selectSingleNode("/data/profile/linux_user_from_year");
         if ( node!=null )
             params.put(PARAM_LINUX_USER_FROM, node.getText());
+        node = document.selectSingleNode("/data/personal/signature");
+        if (node != null)
+            params.put(PARAM_SIGNATURE, node.getText());
         node = document.selectSingleNode("/data/profile/about_myself");
         if ( node!=null )
             params.put(PARAM_ABOUT_ME, node.getText());
@@ -527,6 +526,7 @@ public class EditUser implements AbcAction, Configurable {
 
         canContinue &= setMyPage(params, managed, env);
         canContinue &= setLinuxUserFrom(params, managed);
+        canContinue &= setSignature(params, managed, env);
         canContinue &= setAbout(params, managed, env);
         canContinue &= setDistributions(params, managed, env);
 
