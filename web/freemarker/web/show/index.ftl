@@ -105,7 +105,7 @@
 <#include "../header.ftl">
 
 <#include "/include/zprava.txt">
-<#include "/include/anketa-distro-06.txt">
+
 <@lib.showMessages/>
 
 <#assign ARTICLES=VARS.getFreshArticles(USER?if_exists)>
