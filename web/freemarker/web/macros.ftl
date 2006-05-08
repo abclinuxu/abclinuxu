@@ -20,15 +20,19 @@
     <#if thumbnail!="UNDEF"><div class="cl_thumbnail">${thumbnail}</div></#if>
     <h1 class="st_nadpis"><a href="${url}">${TOOL.xpath(clanek,"data/name")}</a></h1>
     <p>${TOOL.xpath(clanek,"/data/perex")}</p>
-    <p class="cl_inforadek">${DATE.show(clanek.created, dateFormat[0])} |
+    <p class="cl_inforadek">
+        ${DATE.show(clanek.created, dateFormat[0])} |
         <a href="/Profile/${autor.id}">${autor.name}</a> |
         Pøeèteno: <#if ctennost?string!="UNDEF">${ctennost}<#else>${TOOL.getCounterValue(clanek)}</#if>x
-        <#if diz?exists>
-            | <a href="${diz.url?default("/clanky/show/"+diz.relationId)}">Komentáøù:&nbsp;${diz.responseCount}<@markNewComments diz/></a><#rt>
-            <#lt><#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, dateFormat[1]?default(dateFormat[0]))}</#if>
-        </#if>
+        <#if diz?exists>| <@showCommentsInListing diz, dateFormat[1]?default(dateFormat[0]), "/clanky" /></#if>
         <#if rating!="UNDEF">| Hodnocení:&nbsp;<span title="Hlasù: ${rating.count}">${rating.result?string["#0.00"]}</span></#if>
     </p>
+</#macro>
+
+<#macro showCommentsInListing(diz dateFormat urlPrefix)>
+    <a href="${diz.url?default(urlPrefix+"/show/"+diz.relationId)}">Komentáøù:&nbsp;
+    ${diz.responseCount}<@markNewComments diz/></a><#rt>
+    <#lt><#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, dateFormat)}</#if>
 </#macro>
 
 <#macro showNews(relation)>
