@@ -8,12 +8,26 @@
 </#macro>
 
 <#macro showArticle(relation)>
- <#local clanek=relation.child>
- <p>
-  ${DATE.show(clanek.created, "CZ_DM")}
-  <a href="${relation.url?default("/clanky/show/"+relation.id)}">${TOOL.xpath(clanek,"data/name")}</a><br>
+  <#local clanek=relation.child, tmp=TOOL.groupByType(clanek.children),
+          url=relation.url?default("/clanky/show/"+relation.id)>
+  <#if tmp.discussion?exists><#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
+  <h1 class="uvod"><a href="${url}">${TOOL.xpath(clanek,"data/name")}</a></h1>
+  <span class="uvod">
+   ${DATE.show(clanek.created, "CZ_DM")}
+   | <a href="/Profile/${autor.id}">${autor.name}</a>
+   | Pøeèteno: ${TOOL.getCounterValue(clanek)}x
+   <#if diz?exists>| <@showCommentsInListing diz, "CZ_DM", "/clanky" /></#if>
+   <#if rating!="UNDEF">| Hodnocení:&nbsp;${rating.result?string["#0.00"]}</#if>
+  </span>
+ <p class="vytah">
   ${TOOL.xpath(clanek,"/data/perex")}
  </p>
+</#macro>
+
+<#macro showCommentsInListing(diz dateFormat urlPrefix)>
+    <a href="${diz.url?default(urlPrefix+"/show/"+diz.relationId)}">Komentáøù:&nbsp;
+    ${diz.responseCount}<@markNewComments diz/></a><#rt>
+    <#lt><#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, dateFormat)}</#if>
 </#macro>
 
 <#macro showNews(relation)>
