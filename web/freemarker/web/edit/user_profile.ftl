@@ -77,17 +77,24 @@ bude oddìlovat odstavce.
    </td>
   </tr>
   <tr>
+   <td width="60">Patièka</td>
+   <td>
+    <textarea name="signature" rows="4" cols="54" tabindex="8">${PARAMS.signature?if_exists?html}</textarea>
+    <div class="error">${ERRORS.signature?if_exists}</div>
+   </td>
+  </tr>
+  <tr>
    <td colspan="2">O mnì</td>
   </tr>
   <tr>
    <td colspan="2">
-    <textarea name="about" rows="25" cols="70">${PARAMS.about?if_exists?html}</textarea>
+    <textarea name="about" rows="25" cols="70" tabindex="9">${PARAMS.about?if_exists?html}</textarea>
     <div class="error">${ERRORS.about?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td width="120">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi" tabindex="8"></td>
+   <td><input type="submit" value="Dokonèi" tabindex="10"></td>
   </tr>
  </table>
  <input type="hidden" name="action" value="editProfile2">

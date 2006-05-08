@@ -60,15 +60,8 @@ Pro va¹i ochranu nejdøíve zadejte souèasné heslo.
    </td>
   </tr>
   <tr>
-   <td width="60">Patièka</td>
-   <td>
-    <textarea name="signature" rows="4" cols="60" tabindex="7">${PARAMS.signature?if_exists?html}</textarea>
-    <div class="error">${ERRORS.signature?if_exists}</div>
-   </td>
-  </tr>
-  <tr>
    <td width="60">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi" tabindex="8"></td>
+   <td><input type="submit" value="Dokonèi" tabindex="7"></td>
   </tr>
  </table>
  <input type="hidden" name="action" value="editPersonal2">
