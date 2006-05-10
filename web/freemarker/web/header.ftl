@@ -187,9 +187,6 @@
                            <a href="/hosting"><img src="/images/bannery/abchosting.gif" alt="AbcHosting je tu pro vás"
                            border="0" width="251" height="60"></a>
                         </p>
-                        <#if ! IS_INDEX?exists>
-                            <#include "/include/anketa-distro-06-small.txt">
-                        </#if>
                         <hr>
                         <#include "/include/redhat_zpravicka.txt">
                     </#if>
@@ -241,14 +238,14 @@
             </#if>
 
             <!-- REDAKCE -->
-            <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Redakce</h1></div></div>
+            <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Portál AbcLinuxu</h1></div></div>
             <div class="s_sekce">
                 <ul>
-                  <li><a href="/doc/portal/rss-a-jine-pristupy">Titulky, PDA a RSS</a></li>
+                  <li><a href="/doc/portal/rss-a-jine-pristupy">RSS a PDA</a></li>
                   <li><a href="/doc/propagace">Propagace</a></li>
-                  <li><a href="/clanky/show/44049">Tým AbcLinuxu</a></li>
-                  <li><a href="/clanky/novinky/pojdte-psat-pro-abclinuxu.cz">Pi¹te pro abclinuxu</a></li>
-                  <li><a href="http://bugzilla.abclinuxu.cz" rel="nofollow">Bugzilla</a></li>
+                  <li><a href="/clanky/show/44049">Tým</a></li>
+                  <li><a href="/clanky/novinky/pojdte-psat-pro-abclinuxu.cz">Jak se stát autorem</a></li>
+                  <li><a href="http://bugzilla.abclinuxu.cz" rel="nofollow">Chyby a námìty</a></li>
                   <li><a href="/hardware/dir/3500">Vzkazy správcùm</a> (${VARS.counter.REQUESTS})</li>
                   <li><a href="mailto:info@stickfish.cz">Inzerce</a></li>
                   <#if USER?exists && USER.isMemberOf(11246)>
