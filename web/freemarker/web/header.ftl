@@ -156,17 +156,6 @@
 		        </div>
             </#if>
 
-            <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Projekty</h1></div></div>
-            <div class="s_sekce">
-                <ul>
-                    <li><a href="/doc/projekty/ucebnice">Uèebnice Linuxu</a></li>
-                    <li><a href="/projekty/abclinux/verze-2005">ABC Linux 2005</a></li>
-                    <li><a href="/projekty/zdrojaky">Zdrojáky Abíèka</a></li>
-		    <!--li><a href="/clanky/ruzne/nakrmte-tucnaka">Nakrmte tuèòáka</a></li-->
-		    <li><a href="/clanky/novinky/tricka-abclinuxu.cz">Trièka</a></li>
-                </ul>
-            </div>
-
             <!-- ZPRÁVIÈKY -->
             <#assign news=VARS.getFreshNews(USER?if_exists)>
             <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1><a href="/zpravicky">Zprávièky</a></h1></div></div>
@@ -208,16 +197,17 @@
                 </div>
             </div>
 
-            <#if ! IS_INDEX?exists>
-                <!-- prace.abclinuxu.cz -->
-                <div class="s_nad_h1"><div class="s_nad_pod_h1">
-                    <h1><a href="http://www.praceabc.cz"
-		           title="Spojujeme lidi s prací v IT.">Pracovní nabídky</a></h1>
-                </div></div>
+            <!-- prace.abclinuxu.cz -->
+            <div class="s_nad_h1"><div class="s_nad_pod_h1">
+                <h1><a href="http://www.praceabc.cz"
+               title="Spojujeme lidi s prací v IT.">Pracovní nabídky</a></h1>
+            </div></div>
 
-                <div class="s_sekce">
-                    <#include "/include/prace.txt">
-                </div>
+            <div class="s_sekce">
+                <#include "/include/prace.txt">
+            </div>
+
+            <#if ! IS_INDEX?exists>
                 <#assign FEEDS = VARS.getFeeds(USER?if_exists,false)>
                 <#if (FEEDS.size() > 0)>
                     <!-- ROZCESTNÍK -->
@@ -241,19 +231,21 @@
             <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Portál AbcLinuxu</h1></div></div>
             <div class="s_sekce">
                 <ul>
-                  <li><a href="/doc/portal/rss-a-jine-pristupy">RSS a PDA</a></li>
-                  <li><a href="/doc/propagace">Propagace</a></li>
-                  <li><a href="/clanky/show/44049">Tým</a></li>
-                  <li><a href="/clanky/novinky/pojdte-psat-pro-abclinuxu.cz">Jak se stát autorem</a></li>
-                  <li><a href="http://bugzilla.abclinuxu.cz" rel="nofollow">Chyby a námìty</a></li>
-                  <li><a href="/hardware/dir/3500">Vzkazy správcùm</a> (${VARS.counter.REQUESTS})</li>
-                  <li><a href="mailto:info@stickfish.cz">Inzerce</a></li>
-                  <#if USER?exists && USER.isMemberOf(11246)>
-                   <li><a href="/Admin">Administrace portálu</a></li>
-                   <li><a href="/system">Sekce systém</a></li>
-                   <li><a href="/system/todo">TODO</a></li>
-                  </#if>
-                 </ul>
+                    <li><a href="/doc/portal/rss-a-jine-pristupy">RSS a PDA</a></li>
+                    <li><a href="/clanky/show/44049">Tým kolem Abíèka</a></li>
+                    <li><a href="/clanky/novinky/pojdte-psat-pro-abclinuxu.cz">Jak se stát autorem</a></li>
+                    <li><a href="/projekty/zdrojaky">Jak pomoci vylep¹it Abíèko</a></li>
+                    <li><a href="/doc/propagace">Jak pomoci s propagací Abíèka</a></li>
+                    <li><a href="/clanky/novinky/tricka-abclinuxu.cz">Jak si koupit trièko</a></li>
+                    <li><a href="http://bugzilla.abclinuxu.cz" rel="nofollow">Hlá¹ení chyb a námìtù</a></li>
+                    <li><a href="/hardware/dir/3500">Vzkazy správcùm</a> (${VARS.counter.REQUESTS})</li>
+                    <li><a href="mailto:info@stickfish.cz">Inzerce</a></li>
+                    <#if USER?exists && USER.isMemberOf(11246)>
+                        <li><a href="/Admin">Administrace portálu</a></li>
+                        <li><a href="/system">Sekce systém</a></li>
+                        <li><a href="/system/todo">TODO</a></li>
+                    </#if>
+                </ul>
 
 
             </div>

@@ -65,18 +65,8 @@
     </#if>
 
     <#include "/include/softronik.txt">
-
     <#include "/include/redhat.txt">
-
-    <!-- prace.abclinuxu.cz -->
-    <div class="s_nad_h1"><div class="s_nad_pod_h1">
-        <a class="info" href="#">?<span class="tooltip">První server s nabídkami práce (nejen) pro tuèòáky. Spojujeme lidi s prací v IT.</span></a>
-        <h1><a href="http://www.praceabc.cz"
-	       title="Spojujeme lidi s prací v IT.">Pracovní nabídky</a></h1>
-    </div></div>
-    <div class="s_sekce">
-        <#include "/include/prace_main.txt">
-    </div>
+    <#include "/include/jobpilot.txt">
 
     <#assign DRIVERS = VARS.getFreshDrivers(USER?if_exists)>
     <#if (DRIVERS?size>0) >
@@ -94,7 +84,7 @@
     </#if>
 
     <div class="s_nad_h1"><div class="s_nad_pod_h1">
-	<a class="info" href="#">?<span class="tooltip">Odkazy na nejnovìj¹í linuxová jádra øad 2.0, 2.2, 2.4 a 2.6.</span></a>
+	<a class="info" href="#">?<span class="tooltip">Odkazy na nejnovìj¹í linuxová jádra øad 2.2, 2.4 a 2.6.</span></a>
         <h1>Aktuální jádra</h1>
     </div></div>
     <div class="s_sekce">
