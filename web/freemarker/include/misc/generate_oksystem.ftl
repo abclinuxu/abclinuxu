@@ -1,11 +1,17 @@
 <div class="s_nad_h1"><div class="s_nad_pod_h1" style="background-color: #00A247">
-<a class="oksystem" href="http://portal.oksystem.cz/" rel="nofollow">OKsystem</a>
-<h1><a href="http://portal.oksystem.cz/" rel="nofollow">©kolení</a></h1>
+<a class="oksystem" href="http://sf.impact.as/if/imred.php?aid=306&amp;lid=347&amp;redirurl=http://portal.oksystem.cz/" rel="nofollow">OKsystem</a>
+<h1><a href="http://sf.impact.as/if/imred.php?aid=306&amp;lid=347&amp;redirurl=http://portal.oksystem.cz/" rel="nofollow">©kolení</a></h1>
 </div></div>
+<script type="text/javascript">
+//<![CDATA[
+IM_spec_reklama = 306;
+document.write('<img src="http://sf.impact.as/if/imcount.php?ad='+IM_spec_reklama+'&ref='+escape(this.location.href)+'&rnd='+Math.random()+'" width="1" height="1" border="0" alt="" style="display: none;"/>');
+//]]>
+</script>
 <div class="s_sekce">
     <ul>
     <#list ITEMS as item>
-        <li><a href="${item.url}" title="${item.description?html}" rel="nofollow">${item.title}</a></li>
+        <li><a href="http://sf.impact.as/if/imred.php?aid=306&amp;lid=347&amp;redirurl=${item.url?url}" title="${item.description?html}" rel="nofollow">${item.title}</a></li>
     </#list>
     </ul>
     <FORM ACTION="http://portal.oksystem.cz/portal/page" METHOD="POST">
