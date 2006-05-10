@@ -131,6 +131,65 @@
     </#if>
 </#macro>
 
+<#macro showDiscussion(relation)>
+    <#local DIZ = TOOL.createDiscussionTree(relation.child,USER?if_exists,relation.id,true)>
+    <#if DIZ.monitored><#local monitorState="Pøestaò sledovat"><#else><#assign monitorState="Sleduj"></#if>
+    <div class="obal_ps">
+        <div class="ps_prepinac">
+        <!-- i kdyz to bude prazdne, tak to tu musi byt -->
+        </div>
+
+        <div class="ps"><div class="s">
+            <div class="s_nad_h1"><div class="s_nad_pod_h1">
+                <h1>Funkce</h1>
+            </div></div>
+
+           <div class="s_sekce">
+                <ul>
+                    <#if DIZ.hasUnreadComments>
+                        <li>
+                            <a href="#${DIZ.firstUnread}" title="Skoèit na první nepøeètený komentáø">První
+                            nepøeètený komentáø</a>
+                        </li>
+                    </#if>
+                    <li>
+                        <a href="/${URL.prefix}/show/${DIZ.relationId}?varianta=print">Tisk diskuse</a>
+                    </li>
+                    <li>
+                        <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+DIZ.relationId)}"
+                        title="AbcMonitor za¹le emailem zprávu, dojde-li v diskusi ke zmìnì">${monitorState}</a>
+                        <span title="Poèet lidí, kteøí sledují tuto diskusi">(${DIZ.monitorSize})</span>
+                    </li>
+                    <#if USER?exists && USER.hasRole("discussion admin")>
+                        <li>
+                            <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+DIZ.relationId+"&amp;dizId="+DIZ.id)}">
+                            <#if DIZ.frozen>Rozmrazit<#else>Zmrazit</#if> diskusi</a>
+                        </li>
+                    </#if>
+                </ul>
+            </div>
+        </div></div> <!-- ps, s -->
+    </div> <!-- obal_ps -->
+
+    <p>
+        <#if DIZ.frozen>
+            Diskuse byla administrátory uzamèena
+        <#else>
+            <a href="${URL.make("/EditDiscussion?action=add&amp;dizId="+DIZ.id+"&amp;threadId=0&amp;rid="+DIZ.relationId)}">
+            Vlo¾it dal¹í komentáø</a>
+        </#if>
+    </p>
+
+    <#list DIZ.threads as thread>
+       <@lib.showThread thread, 0, DIZ, !DIZ.frozen />
+    </#list>
+
+    <#if (!DIZ.frozen && DIZ.size>3)>
+     <p><a href="${URL.make("/EditDiscussion?action=add&amp;threadId=0&amp;dizId="+DIZ.id+"&amp;rid="+DIZ.relationId)}">
+     Zalo¾it nové vlákno</a></p>
+    </#if>
+</#macro>
+
 <#macro star value><#if (value>0.60)><img src="/images/site/star1.gif" alt="*"><#elseif (value<0.2)><img src="/images/site/star0.gif" alt="-"><#else><img src="/images/site/star5.gif" alt="+"></#if></#macro>
 
 <#macro month (month)>
