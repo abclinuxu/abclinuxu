@@ -179,14 +179,7 @@
                         <hr>
                         <#include "/include/redhat_zpravicka.txt">
                     </#if>
-                    <#assign item=TOOL.sync(relation.child), autor=TOOL.createUser(item.owner),
-                      diz=TOOL.findComments(item), url=relation.url?default("/zpravicky/show/"+relation.id)>
-                    ${DATE.show(item.created,"CZ_SHORT")} |
-                    ${NEWS_CATEGORIES[item.subType].name}
-                    <p>${TOOL.xpath(item,"data/content")}</p>
-                    <a href="/Profile/${autor.id}">${TOOL.nonBreakingSpaces(autor.name)}</a>
-                    | <a href="${url}" title="<#if diz.responseCount gt 0>poslední ${DATE.show(diz.updated, "CZ_FULL")}</#if>"
-                    >(Komentáøù: ${diz.responseCount}<@lib.markNewComments diz/>)</a>
+                    <@lib.showTemplateNews relation/>
                     <hr>
                 </#list>
                 </div>

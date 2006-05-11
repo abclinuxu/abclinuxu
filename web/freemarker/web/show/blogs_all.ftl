@@ -34,7 +34,6 @@
              category = story.subType?default("UNDEF"), rating=TOOL.ratingFor(story.data,"story")?default("UNDEF"),
              tmp=TOOL.groupByType(story.children)>
     <#if category!="UNDEF"><#assign category=TOOL.xpath(blog, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
-    <#if tmp.discussion?exists><#assign diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
     <div class="cl">
         <#if SUMMARY?exists>
             <h3 class="st_nadpis">
@@ -52,7 +51,7 @@
             <#if (category!="UNDEF" && category?length > 1)>| ${category}</#if>
             <#if SUMMARY?exists><br /><#else> | </#if>
 	        Pøeèteno: ${TOOL.getCounterValue(story)}x
-            <#if diz?exists>| <@lib.showCommentsInListing diz, "CZ_SHORT", "/blog" /></#if>
+            <#if tmp.discussion?exists>| <@lib.showCommentsInListing TOOL.analyzeDiscussion(tmp.discussion[0]), "CZ_SHORT", "/blog" /></#if>
             <#if rating!="UNDEF">| Hodnocení:&nbsp;<span title="Hlasù: ${rating.count}">${rating.result?string["#0.00"]}</span></#if>
         </p>
         <#if ! SUMMARY?exists>
