@@ -352,6 +352,8 @@ td.pad, code.kod, pre.kod {
 .ds td.td02, .hw td.td02 {
 	width:		60px;
 	text-align:	center;
+}
+
 .ds_control_sbalit, .ds_control_sbalit2 {
 	float: right;
 }
@@ -362,9 +364,6 @@ td.pad, code.kod, pre.kod {
 
 .ds_control_sbalit, .ds_control_sbalit2, .ds_control_sbalit3 {
 	cursor: pointer;
-}
-
-
 }
 
 .ds td.td03, .hw td.td03 {
