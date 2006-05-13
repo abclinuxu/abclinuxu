@@ -14,13 +14,21 @@ function prepni_sloupec() {
 }
 
 function schovej_vlakno(id) {
-    if (document.getElementById('div'+id).style.display == 'none') {
-        document.getElementById('div'+id).style.display = 'block'
-        document.getElementById('a'+id).innerHTML = 'Sbalit'
+    if (document.getElementById('comment'+id).style.display == 'none') {
+        document.getElementById('comment'+id).style.display = 'block'
+        document.getElementById('comment'+id+'_controls').style.display = 'block'
+        document.getElementById('comment'+id+'_toggle1').innerHTML = 'Sbalit'
+				if (document.getElementById('comment'+id+'_toggle2')) {
+					document.getElementById('comment'+id+'_toggle2').style.display = 'none'
+				}
     }
     else {
-        document.getElementById('div'+id).style.display = 'none'
-        document.getElementById('a'+id).innerHTML = 'Rozbalit'
+        document.getElementById('comment'+id).style.display = 'none'
+        document.getElementById('comment'+id+'_controls').style.display = 'none'
+        document.getElementById('comment'+id+'_toggle1').innerHTML = 'Rozbalit'
+				if (document.getElementById('comment'+id+'_toggle2')) {
+					document.getElementById('comment'+id+'_toggle2').style.display = 'inline'
+				}
     }
 }
 

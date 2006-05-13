@@ -352,6 +352,19 @@ td.pad, code.kod, pre.kod {
 .ds td.td02, .hw td.td02 {
 	width:		60px;
 	text-align:	center;
+.ds_control_sbalit, .ds_control_sbalit2 {
+	float: right;
+}
+
+.ds_control_sbalit2 {
+	display: none;
+}
+
+.ds_control_sbalit, .ds_control_sbalit2, .ds_control_sbalit3 {
+	cursor: pointer;
+}
+
+
 }
 
 .ds td.td03, .hw td.td03 {
@@ -382,6 +395,27 @@ td.pad, code.kod, pre.kod {
 	padding:	5px;
 	border-top:	1px solid #E0E0E0;
 	font-size:	90%;
+}
+
+.ds_hlavicka_blacklisted
+{
+	font-size: 60%;
+	padding: 1px;
+	color: gray;
+}
+
+.ds_controls_blacklisted
+{
+	display: none;
+}
+
+.ds_telo_blacklisted
+{
+	display: none;
+}
+
+.ds_hlavicka_me {
+	background-color: #e6f3ff;
 }
 
 .ds_hlavicka_novy {
