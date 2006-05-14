@@ -287,6 +287,7 @@ public class EditFaq implements AbcAction {
      */
     static boolean setQuestion(Map params, Item faq, Element root, Map env) {
         String tmp = (String) params.get(PARAM_TITLE);
+        tmp = Misc.filterDangerousCharacters(tmp);
         if (tmp != null && tmp.length() > 0) {
             if (tmp.indexOf("<") != -1) {
                 params.put(PARAM_TITLE, "");
@@ -315,6 +316,7 @@ public class EditFaq implements AbcAction {
      */
     static boolean setText(Map params, Element root, Map env) {
         String tmp = (String) params.get(PARAM_TEXT);
+        tmp = Misc.filterDangerousCharacters(tmp);
         if (tmp != null && tmp.length() > 0) {
             try {
                 SafeHTMLGuard.check(tmp);

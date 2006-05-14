@@ -1081,6 +1081,7 @@ public class EditUser implements AbcAction, Configurable {
      */
     private boolean setName(Map params, User user, Map env) {
         String name = (String) params.get(PARAM_NAME);
+        name = Misc.filterDangerousCharacters(name);
         if ( name==null || name.length()<4 ) {
             ServletUtils.addError(PARAM_NAME, "Jméno je pøíli¹ krátké!", env, null);
             return false;
@@ -1102,6 +1103,7 @@ public class EditUser implements AbcAction, Configurable {
      */
     private boolean setNick(Map params, User user, Map env) {
         String nick = (String) params.get(PARAM_NICK);
+        nick = Misc.filterDangerousCharacters(nick);
         if ( nick==null || nick.trim().length()==0) {
             user.setNick(null);
             return true;
@@ -1190,6 +1192,7 @@ public class EditUser implements AbcAction, Configurable {
      */
     private boolean setCity(Map params, User user, Map env) {
         String city = (String) params.get(PARAM_CITY);
+        city = Misc.filterDangerousCharacters(city);
         Element personal = DocumentHelper.makeElement(user.getData(), "/data/personal");
         if ( city==null || city.length()==0 ) {
             Node node = personal.element("city");
@@ -1213,6 +1216,7 @@ public class EditUser implements AbcAction, Configurable {
      */
     private boolean setArea(Map params, User user, Map env) {
         String area = (String) params.get(PARAM_AREA);
+        area = Misc.filterDangerousCharacters(area);
         Element personal = DocumentHelper.makeElement(user.getData(), "/data/personal");
         if ( area==null || area.length()==0 ) {
             Node node = personal.element("area");
@@ -1236,6 +1240,7 @@ public class EditUser implements AbcAction, Configurable {
      */
     private boolean setCountry(Map params, User user, Map env) {
         String country = (String) params.get(PARAM_COUNTRY);
+        country = Misc.filterDangerousCharacters(country);
         Element personal = DocumentHelper.makeElement(user.getData(), "/data/personal");
         if ( country==null || country.length()==0 ) {
             Node node = personal.element("country");
@@ -1307,6 +1312,7 @@ public class EditUser implements AbcAction, Configurable {
      */
     private boolean setAbout(Map params, User user, Map env) {
         String about = (String) params.get(PARAM_ABOUT_ME);
+        about = Misc.filterDangerousCharacters(about);
         Element profile = DocumentHelper.makeElement(user.getData(), "/data/profile");
         if ( about==null || about.length()==0 ) {
             Node node = profile.element("about_myself");
@@ -1360,6 +1366,7 @@ public class EditUser implements AbcAction, Configurable {
      */
     private boolean setSignature(Map params, User user, Map env) {
         String signature = (String) params.get(PARAM_SIGNATURE);
+        signature = Misc.filterDangerousCharacters(signature);
         Element personal = DocumentHelper.makeElement(user.getData(), "/data/personal");
         if ( signature==null || signature.length()==0 ) {
             Node node = personal.element("signature");

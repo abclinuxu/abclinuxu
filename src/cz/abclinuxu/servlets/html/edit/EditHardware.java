@@ -306,6 +306,7 @@ public class EditHardware implements AbcAction {
      */
     private boolean setName(Map params, Element root, Map env) {
         String tmp = (String) params.get(PARAM_NAME);
+        tmp = Misc.filterDangerousCharacters(tmp);
         if ( tmp!=null && tmp.length()>0 ) {
             DocumentHelper.makeElement(root, "name").setText(tmp);
             return true;
@@ -395,6 +396,7 @@ public class EditHardware implements AbcAction {
      */
     private boolean setDriverUrl(Map params, Element root, Map env) {
         String tmp = (String) params.get(PARAM_DRIVER_URL);
+        tmp = Misc.filterDangerousCharacters(tmp);
         if (tmp != null && tmp.length() > 0) {
             if (tmp.indexOf('<')!=-1) {
                 ServletUtils.addError(PARAM_DRIVER_URL, "HTML znaèky nejsou povoleny v URL!" , env, null);
@@ -418,6 +420,7 @@ public class EditHardware implements AbcAction {
      */
     private boolean setSetup(Map params, Element root, Map env) {
         String tmp = (String) params.get(PARAM_SETUP);
+        tmp = Misc.filterDangerousCharacters(tmp);
         if ( tmp!=null && tmp.length()>0 ) {
             try {
                 SafeHTMLGuard.check(tmp);
@@ -445,6 +448,7 @@ public class EditHardware implements AbcAction {
      */
     private boolean setParameters(Map params, Element root, Map env) {
         String tmp = (String) params.get(PARAM_TECHPARAM);
+        tmp = Misc.filterDangerousCharacters(tmp);
         if ( tmp!=null && tmp.length()>0 ) {
             try {
                 SafeHTMLGuard.check(tmp);
@@ -472,6 +476,7 @@ public class EditHardware implements AbcAction {
      */
     private boolean setIdentification(Map params, Element root, Map env) {
         String tmp = (String) params.get(PARAM_IDENTIFICATION);
+        tmp = Misc.filterDangerousCharacters(tmp);
         if ( tmp!=null && tmp.length()>0 ) {
             try {
                 SafeHTMLGuard.check(tmp);
@@ -499,6 +504,7 @@ public class EditHardware implements AbcAction {
      */
     private boolean setNote(Map params, Element root, Map env) {
         String tmp = (String) params.get(PARAM_NOTE);
+        tmp = Misc.filterDangerousCharacters(tmp);
         if ( tmp!=null && tmp.length()>0 ) {
             try {
                 SafeHTMLGuard.check(tmp);

@@ -31,6 +31,7 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.email.monitor.*;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
@@ -293,6 +294,7 @@ public class EditDictionary implements AbcAction {
      */
     private boolean setName(Map params, Element root, Map env) {
         String tmp = (String) params.get(PARAM_NAME);
+        tmp = Misc.filterDangerousCharacters(tmp);
         if ( tmp!=null && tmp.length()>0 ) {
             DocumentHelper.makeElement(root, "name").setText(tmp);
             return true;
@@ -311,6 +313,7 @@ public class EditDictionary implements AbcAction {
      */
     private boolean setURLName(Item item, int rid,  Element root, Map env) {
         String name = root.elementText("name");
+        name = Misc.filterDangerousCharacters(name);
         if (name==null) return false;
 
         String url = URLManager.enforceLastURLPart(name);
@@ -334,6 +337,7 @@ public class EditDictionary implements AbcAction {
      */
     private boolean setDescription(Map params, Element root, Map env) {
         String tmp = (String) params.get(PARAM_DESCRIPTION);
+        tmp = Misc.filterDangerousCharacters(tmp);
         if ( tmp==null || tmp.length()==0 ) {
             ServletUtils.addError(PARAM_DESCRIPTION, "Zadejte popis pojmu!", env, null);
             return false;

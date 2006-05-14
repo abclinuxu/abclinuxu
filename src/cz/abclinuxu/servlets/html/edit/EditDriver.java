@@ -253,6 +253,7 @@ public class EditDriver implements AbcAction {
      */
     private boolean setName(Map params, Document document, Map env) {
         String tmp = (String) params.get(PARAM_NAME);
+        tmp = Misc.filterDangerousCharacters(tmp);
         if ( tmp!=null && tmp.length()>0 ) {
             DocumentHelper.makeElement(document, "data/name").setText(tmp);
         } else {
@@ -271,6 +272,7 @@ public class EditDriver implements AbcAction {
      */
     private boolean setVersion(Map params, Document document, Map env) {
         String tmp = (String) params.get(PARAM_VERSION);
+        tmp = Misc.filterDangerousCharacters(tmp);
         if ( tmp!=null && tmp.length()>0 ) {
             DocumentHelper.makeElement(document, "data/version").setText(tmp);
         } else {
@@ -309,6 +311,7 @@ public class EditDriver implements AbcAction {
      */
     private boolean setNote(Map params, Document document, Map env) {
         String tmp = (String) params.get(PARAM_NOTE);
+        tmp = Misc.filterDangerousCharacters(tmp);
         if ( tmp!=null && tmp.length()>0 ) {
             try {
                 SafeHTMLGuard.check(tmp);

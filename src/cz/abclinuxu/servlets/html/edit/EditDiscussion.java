@@ -1078,9 +1078,9 @@ public class EditDiscussion implements AbcAction {
                 ServletUtils.addError(PARAM_TITLE, "Pou¾ití HTML znaèek je zakázáno!", env, null);
                 return false;
             }
-            if (tmp.indexOf('\n')!=-1) {
+            if (tmp.indexOf('\n')!=-1)
                 tmp = tmp.replace('\n', ' ');
-            }
+            tmp = Misc.filterDangerousCharacters(tmp);            
             DocumentHelper.makeElement(root,"title").setText(tmp);
         } else {
             ServletUtils.addError(PARAM_TITLE, "Zadejte titulek!", env, null);
@@ -1110,6 +1110,7 @@ public class EditDiscussion implements AbcAction {
                 return false;
             }
             Element element = DocumentHelper.makeElement(root,"text");
+            tmp = Misc.filterDangerousCharacters(tmp);
             element.setText(tmp);
             Format format = FormatDetector.detect(tmp);
             element.addAttribute("format", Integer.toString(format.getId()));
@@ -1173,6 +1174,7 @@ public class EditDiscussion implements AbcAction {
                     ServletUtils.addError(PARAM_AUTHOR, "Pou¾ití HTML znaèek je zakázáno!", env, null);
                     return false;
                 }
+                tmp = Misc.filterDangerousCharacters(tmp);
                 DocumentHelper.makeElement(root, "author").setText(tmp);
             } else {
                 ServletUtils.addError(PARAM_AUTHOR, "Zadejte prosím své jméno.", env, null);

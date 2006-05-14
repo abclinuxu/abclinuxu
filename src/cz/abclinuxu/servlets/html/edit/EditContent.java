@@ -426,6 +426,7 @@ public class EditContent implements AbcAction {
      */
     private boolean setTitle(Map params, Item item, Map env) {
         String name = (String) params.get(PARAM_TITLE);
+        name = Misc.filterDangerousCharacters(name);
         if ( name==null || name.length()==0 ) {
             ServletUtils.addError(PARAM_TITLE, "Vyplòte titulek stránky!", env, null);
             return false;
@@ -443,6 +444,7 @@ public class EditContent implements AbcAction {
      */
     private boolean setContent(Map params, Item item, Map env) {
         String content = (String) params.get(PARAM_CONTENT);
+        content = Misc.filterDangerousCharacters(content);
         String exec = (String) params.get(PARAM_EXECUTE_AS_TEMPLATE);
         Element element = (Element) item.getData().selectSingleNode("/data/content");
         if ( element!=null )

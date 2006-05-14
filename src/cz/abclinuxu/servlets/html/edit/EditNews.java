@@ -36,6 +36,7 @@ import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.utils.news.NewsCategories;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.parser.safehtml.NewsGuard;
@@ -373,6 +374,7 @@ public class EditNews implements AbcAction {
      */
     private boolean setContent(Map params, Item item, Map env) {
         String text = (String) params.get(PARAM_CONTENT);
+        text = Misc.filterDangerousCharacters(text);
         if ( text==null || text.trim().length()==0 ) {
             ServletUtils.addError(PARAM_CONTENT, "Vyplòte obsah zprávièky", env, null);
             return false;
@@ -423,6 +425,7 @@ public class EditNews implements AbcAction {
      */
     private boolean setTitle(Map params, Item item, Map env) {
         String text = (String) params.get(PARAM_TITLE);
+        text = Misc.filterDangerousCharacters(text);
         if (text==null || text.length()==0) {
             ServletUtils.addError(PARAM_TITLE, "Zadejte titulek zprávièky", env, null);
             return false;

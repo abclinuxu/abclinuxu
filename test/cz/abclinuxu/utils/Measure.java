@@ -50,13 +50,13 @@ public class Measure {
 
         // place initilizaton here
         Persistance persistance = PersistanceFactory.getPersistance();
-        s = "\u0000qwert\u0010tyuiopa\n\tsdfghjklzxc\u0018vvbnm,./';[\\]=-0987654321"; t = s;
+        s = "\u0000qwert\u001Btyuiopa\n\tsdfghjklzxc\u0018vvbnm,./';[\\]=-0987654321"; t = s;
         System.out.println(s.length()+": "+s);
 
         long start = System.currentTimeMillis();
         for (i=0; i<41000; i++) {
             //place your code to measure here
-            t = s.replaceAll("[\\x00-\\x08\\x0B-\\x0C\\x0E-\\x19]", "");
+            t = s.replaceAll("[\\x00-\\x08\\x0B-\\x0C\\x0E-\\x1f]", "");
         }
         long end = System.currentTimeMillis();
         System.out.println(t.length() + ": " + t);

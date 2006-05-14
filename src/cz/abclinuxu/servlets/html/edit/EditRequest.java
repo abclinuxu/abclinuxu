@@ -156,6 +156,7 @@ public class EditRequest implements AbcAction, Configurable {
         String author = (String) params.get(PARAM_AUTHOR);
         String email = (String) params.get(PARAM_EMAIL);
         String text = (String) params.get(PARAM_TEXT);
+        text = Misc.filterDangerousCharacters(text);
         String category = (String) params.get(PARAM_CATEGORY);
         boolean error = false;
 

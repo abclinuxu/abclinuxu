@@ -826,6 +826,7 @@ public class EditBlog implements AbcAction, Configurable {
      */
     boolean setBlogName(Map params, Category category, Map env) {
         String name = (String) params.get(PARAM_BLOG_NAME);
+        name = Misc.filterDangerousCharacters(name);
         if ( name==null || name.trim().length()<1) {
             ServletUtils.addError(PARAM_BLOG_NAME, "Zadejte jméno blogu!", env, null);
             return false;
@@ -898,6 +899,7 @@ public class EditBlog implements AbcAction, Configurable {
      */
     boolean addCategory(Map params, Element root, Map env) {
         String name = (String) params.get(PARAM_CATEGORY_NAME);
+        name = Misc.filterDangerousCharacters(name);
         if (Misc.empty(name)) {
             ServletUtils.addError(PARAM_CATEGORY_NAME, "Prosím zadejte hodnotu.", env, null);
             return false;
@@ -929,6 +931,7 @@ public class EditBlog implements AbcAction, Configurable {
      */
     boolean setCategory(Map params, Element root, Map env) {
         String name = (String) params.get(PARAM_CATEGORY_NAME);
+        name = Misc.filterDangerousCharacters(name);
         if (Misc.empty(name)) {
             ServletUtils.addError(PARAM_CATEGORY_NAME, "Prosím zadejte hodnotu.", env, null);
             return false;
@@ -963,6 +966,7 @@ public class EditBlog implements AbcAction, Configurable {
             title = custom.addElement("page_title");
 
         String s = (String) params.get(PARAM_PAGE_TITLE);
+        s = Misc.filterDangerousCharacters(s);
         if (Misc.empty(s)) {
             ServletUtils.addError(PARAM_PAGE_TITLE, "Prosím zadejte hodnotu.", env, null);
             return false;
@@ -986,6 +990,7 @@ public class EditBlog implements AbcAction, Configurable {
         Element custom = root.element("custom");
         Element title = custom.element("title");
         String s = (String) params.get(PARAM_TITLE);
+        s = Misc.filterDangerousCharacters(s);
         if (Misc.empty(s)) {
             if (title!=null)
                 title.detach();
@@ -1012,6 +1017,7 @@ public class EditBlog implements AbcAction, Configurable {
         Element custom = root.element("custom");
         Element intro = custom.element("intro");
         String s = (String) params.get(PARAM_INTRO);
+        s = Misc.filterDangerousCharacters(s);
         if (Misc.empty(s)) {
             if (intro!=null)
                 intro.detach();
@@ -1032,6 +1038,7 @@ public class EditBlog implements AbcAction, Configurable {
      */
     boolean addRecommendedLink(Map params, Element root, Map env) {
         String title = (String) params.get(PARAM_TITLE);
+        title = Misc.filterDangerousCharacters(title);
         if (title==null || title.length()==0) {
             ServletUtils.addError(PARAM_TITLE, "Zadejte titulek odkazu.", env, null);
             return false;
@@ -1063,6 +1070,7 @@ public class EditBlog implements AbcAction, Configurable {
      */
     boolean setRecommendedLink(Map params, Element root, Map env) {
         String title = (String) params.get(PARAM_TITLE);
+        title = Misc.filterDangerousCharacters(title);
         if (title == null || title.length() == 0) {
             ServletUtils.addError(PARAM_TITLE, "Zadejte titulek odkazu.", env, null);
             return false;
@@ -1164,6 +1172,7 @@ public class EditBlog implements AbcAction, Configurable {
             return false;
         }
         s = s.trim();
+        s = Misc.filterDangerousCharacters(s);
         if (s.length()>maxStoryTitleLength) {
             ServletUtils.addError(PARAM_TITLE, "Prosím zadejte krat¹í titulek. Maximální povolená délka je "+maxStoryTitleLength+".", env, null);
             return false;
@@ -1189,6 +1198,7 @@ public class EditBlog implements AbcAction, Configurable {
      */
     boolean setStoryContent(Map params, Element root, Map env) {
         String content = (String) params.get(PARAM_CONTENT);
+        content = Misc.filterDangerousCharacters(content);
         if (Misc.empty(content)) {
             ServletUtils.addError(PARAM_CONTENT, "Prosím zadejte hodnotu.", env, null);
             return false;

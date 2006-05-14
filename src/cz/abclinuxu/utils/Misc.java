@@ -185,4 +185,20 @@ public class Misc {
             return null;
         return s;
     }
+
+    /**
+     * Removes all characters smaller then 0x20 - space. They can
+     * be dangerous for XML processing.
+     * @param input
+     * @return filtered input
+     */
+    public static String filterDangerousCharacters(String input) {
+        if (input == null)
+            return null;
+        int length = input.length();
+        if (length == 0)
+            return input;
+
+        return input.replaceAll("[\\x00-\\x08\\x0B-\\x0C\\x0E-\\x1f]", "?");
+    }
 }
