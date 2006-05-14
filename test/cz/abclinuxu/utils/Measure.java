@@ -46,17 +46,20 @@ public class Measure {
         LogManager.getRootLogger().setLevel(Level.OFF);
         int i=0,j=0,k=0;
         long l = 0;
+        String s,t;
 
         // place initilizaton here
         Persistance persistance = PersistanceFactory.getPersistance();
-        Map serverLinks = UpdateLinks.getMaintainedFeedLinks();
+        s = "\u0000qwert\u0010tyuiopa\n\tsdfghjklzxc\u0018vvbnm,./';[\\]=-0987654321"; t = s;
+        System.out.println(s.length()+": "+s);
 
         long start = System.currentTimeMillis();
-        for (i=0; i<1200; i++) {
+        for (i=0; i<41000; i++) {
             //place your code to measure here
-            serverLinks = UpdateLinks.getMaintainedFeedLinks();
+            t = s.replaceAll("[\\x00-\\x08\\x0B-\\x0C\\x0E-\\x19]", "");
         }
         long end = System.currentTimeMillis();
+        System.out.println(t.length() + ": " + t);
 
         // place clean up here
 
