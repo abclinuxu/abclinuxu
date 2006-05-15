@@ -20,9 +20,12 @@ insert into uzivatel values(2,'user','U¾ivatel','root@localhost','changeit','Min
 <settings><emoticons>no</emoticons></settings></data>');
 
 4\
+-- prenest vsechny sekce
 insert into devel.kategorie select * from abc.kategorie;
 insert into devel.relace select * from abc.relace where typ_potomka='K';
+-- prenest servery vcetne jejich odkazu
 insert into devel.server (cislo,jmeno,url) select cislo,jmeno,url from abc.server;
 insert into devel.odkaz select * from abc.odkaz;
-insert into devel.relace select * from abc.relace where predek='14' and typ_predka='K';
-
+insert into devel.relace select * from abc.relace where typ_predka='S';
+-- dynamic RSS polozka
+insert into polozka values(59516,0,NULL,'<data><title>Nesystemove feedy</title></data>',1,now(),NULL);
