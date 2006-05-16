@@ -47,6 +47,9 @@ import org.apache.regexp.REProgram;
 import org.apache.regexp.RECompiler;
 
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import java.util.regex.Matcher;
 import java.util.prefs.Preferences;
 
 import freemarker.template.*;
@@ -60,9 +63,11 @@ public class Tools implements Configurable {
     public static final String PREF_REGEXP_REMOVE_TAGS = "RE_REMOVE_TAGS";
     public static final String PREF_REGEXP_VLNKA = "RE_VLNKA";
     public static final String PREF_REPLACEMENT_VLNKA = "REPLACEMENT_VLNKA";
+    public static final String PREF_REGEXP_AMPERSAND = "RE_AMPERSAND";
 
     static Persistance persistance = PersistanceFactory.getPersistance();
     static REProgram reRemoveTags, reVlnka, lineBreak;
+    static Pattern reAmpersand;
     static String vlnkaReplacement;
 
     static {
@@ -82,8 +87,12 @@ public class Tools implements Configurable {
             reVlnka = reCompiler.compile(pref);
             vlnkaReplacement = prefs.get(PREF_REPLACEMENT_VLNKA, null);
             lineBreak = reCompiler.compile("[\r\n$]+");
+            pref = prefs.get(PREF_REGEXP_AMPERSAND, null);
+            reAmpersand = Pattern.compile(pref);
         } catch (RESyntaxException e) {
-            log.error("Cannot create regexp to find line breaks!", e);
+            log.error("Chyba pri kompilaci regexpu!", e);
+        } catch (PatternSyntaxException e) {
+            log.error("Chyba pri kompilaci regexpu!", e);
         }
     }
 
@@ -1033,11 +1042,13 @@ public class Tools implements Configurable {
                 case '"': sb.append("&quot;");break;
                 case '<': sb.append("&lt;");break;
                 case '>': sb.append("&gt;");break;
-                case '&': sb.append("&amp;");break;
                 default: sb.append((char)c);
             }
         }
-        return sb.toString();
+
+        String out = sb.toString();
+        Matcher matcher = reAmpersand.matcher(out);
+        return matcher.replaceAll("&amp;");  
     }
 
     /**

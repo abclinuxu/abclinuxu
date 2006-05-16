@@ -75,6 +75,7 @@
                                 <entry key="RE_REMOVE_TAGS" value="&lt;(/)?[a-zA-Z][^&gt;]*&gt;"/>
                                 <entry key="RE_VLNKA" value="((^|\s)\w)\s+(\S+)"/>
                                 <entry key="REPLACEMENT_VLNKA" value="$1&amp;nbsp;$3"/>
+                                <entry key="RE_AMPERSAND" value="&amp;(?!#?[a-zA-Z0-9]+;)" />  
                             </map>
                         </node>
                     </node>

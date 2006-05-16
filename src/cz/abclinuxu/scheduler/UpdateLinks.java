@@ -23,22 +23,18 @@ import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 import cz.abclinuxu.data.GenericObject;
+import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Link;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Server;
-import cz.abclinuxu.data.Item;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.servlets.Constants;
-import org.apache.regexp.RE;
-import org.apache.regexp.RECompiler;
-import org.apache.regexp.REProgram;
-import org.apache.regexp.RESyntaxException;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
@@ -52,6 +48,9 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TimerTask;
 import java.util.prefs.Preferences;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * Updates Links from other servers.
@@ -70,13 +69,13 @@ public class UpdateLinks extends TimerTask implements Configurable {
     /** id (integer) of server is key, value is ServerInfo instance */
     static Map definitions;
     static UpdateLinks instance;
-    static REProgram ampersand;
+    static Pattern ampersand;
     static {
         instance = new UpdateLinks();
         ConfigurationManager.getConfigurator().configureAndRememberMe(instance);
         try {
-            ampersand = new RECompiler().compile("&");
-        } catch (RESyntaxException e) {
+            ampersand = Pattern.compile("&");
+        } catch (PatternSyntaxException e) {
                 log.error("Regexp cannot be compiled!", e);
         }
     }
@@ -349,7 +348,8 @@ public class UpdateLinks extends TimerTask implements Configurable {
     public static String fixAmpersand(String url) {
         if (url==null || url.length()==0)
 	        return url;
-	    return new RE(ampersand).subst(url,"&amp;",RE.REPLACE_ALL);
+        Matcher matcher = ampersand.matcher(url);
+	    return matcher.replaceAll("&amp;");
     }
 
     static class ServerInfo {
