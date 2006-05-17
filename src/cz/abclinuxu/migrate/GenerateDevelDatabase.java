@@ -244,11 +244,9 @@ public class GenerateDevelDatabase {
         Relation dizRelation = EditDiscussion.createEmptyDiscussion(article, user, persistance);
 
         params.clear();
-        map.remove(Constants.VAR_USER);
         params.put(EditDiscussion.PARAM_DISCUSSION, Integer.toString(dizRelation.getChild().getId()));
         params.put(EditDiscussion.PARAM_TITLE, "WTF?");
         params.put(EditDiscussion.PARAM_TEXT, "I never expected this to happen ..");
-        params.put(EditDiscussion.PARAM_AUTHOR, "Linus");
         params.put(EditDiscussion.PARAM_RELATION_SHORT, Integer.toString(dizRelation.getId()));
 
         EditDiscussion editDiz = new EditDiscussion();
