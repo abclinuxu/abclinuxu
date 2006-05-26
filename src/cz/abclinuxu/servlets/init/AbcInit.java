@@ -31,6 +31,7 @@ import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.utils.email.monitor.InstantSender;
 import cz.abclinuxu.utils.email.forum.CommentSender;
+import cz.abclinuxu.persistance.extra.JobOfferManager;
 import freemarker.template.Configuration;
 
 import javax.servlet.ServletException;
@@ -63,6 +64,7 @@ public class AbcInit extends HttpServlet implements Configurable {
     public static final String PREF_START_UPDATE_DATETOOL = "start.datetool.service";
     public static final String PREF_START_WATCHED_DISCUSSIONS_CLEANER = "start.watched.discussions.cleaner";
     public static final String PREF_START_UPDATE_STATISTICS = "start.update.statistics";
+    public static final String PREF_START_JOB_OFFER_MANAGER = "start.job.offer.manager";
 
     Timer scheduler;
     VariableFetcher fetcher;
@@ -127,6 +129,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         startObjectMonitor();
         startForumSender();
         startDateToolUpdateService();
+        startJobOfferUpdateService();
         startWatchedDiscussionsCleaner();
         log.info("Ulohy jsou nastartovany");
     }
@@ -342,6 +345,18 @@ public class AbcInit extends HttpServlet implements Configurable {
     }
 
     /**
+     * Fetch job offers from praceabc.cz each hour.
+     */
+    private void startJobOfferUpdateService() {
+        if ( !isSet(PREF_START_JOB_OFFER_MANAGER) ) {
+            log.info("Job offers configured not to be fetched");
+            return;
+        }
+        log.info("Scheduling job offers update service");
+        scheduler.schedule(new JobOfferManager(), 3 * 60 * 1000, 60 * 60 * 1000);
+    }
+
+    /**
      * set ups freemarker
      */
     void configureFreeMarker(String path) {
@@ -379,6 +394,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         services.put(PREF_START_WATCHED_DISCUSSIONS_CLEANER, new Boolean(prefs.getBoolean(PREF_START_WATCHED_DISCUSSIONS_CLEANER, true)));
         services.put(PREF_START_RSS_OKSYSTEM, new Boolean(prefs.getBoolean(PREF_START_RSS_OKSYSTEM, true)));
         services.put(PREF_START_UPDATE_STATISTICS, new Boolean(prefs.getBoolean(PREF_START_UPDATE_STATISTICS, true)));
+        services.put(PREF_START_JOB_OFFER_MANAGER, new Boolean(prefs.getBoolean(PREF_START_JOB_OFFER_MANAGER, false)));
     }
 
     /**

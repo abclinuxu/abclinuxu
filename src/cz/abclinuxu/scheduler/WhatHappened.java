@@ -31,6 +31,7 @@ import cz.abclinuxu.persistance.extra.CompareCondition;
 import cz.abclinuxu.persistance.extra.Field;
 import cz.abclinuxu.persistance.extra.Operation;
 import cz.abclinuxu.persistance.extra.Qualifier;
+import cz.abclinuxu.persistance.extra.JobOfferManager;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.edit.EditArticle;
@@ -75,6 +76,7 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
     static final String VAR_DRIVERS = "DRIVERS";
     static final String VAR_CONCEPTS = "CONCEPTS";
     static final String VAR_HARDWARE = "HARDWARE";
+    static final String VAR_JOBS = "JOBS";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         feedDataToMap(env);
@@ -192,6 +194,9 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
             dizs.add(diz);
         }
         params.put(VAR_QUESTIONS, dizs);
+
+        List offers = JobOfferManager.getOffersAfter(from);
+        params.put(VAR_JOBS, offers);
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {

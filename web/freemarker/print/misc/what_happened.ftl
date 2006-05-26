@@ -1,4 +1,4 @@
-<h1>Èlánky</h1>
+<h2>Èlánky</h2>
 
 <#list ARTICLES?if_exists as clanek>
  <h2><a href="${clanek.url}">${clanek.title}</a></h2>
@@ -8,7 +8,7 @@
  </p>
 </#list>
 
-<h1>Zprávièky</h1>
+<h2>Zprávièky</h2>
 
 <#list NEWS?if_exists as news>
  <p>${DATE.show(news.published, "CZ_FULL", false)} | <a href="/Profile/${news.authorId}">${news.author}</a><br>
@@ -18,7 +18,7 @@
  <#if news_has_next><hr></#if>
 </#list>
 
-<h1>Otázky v diskusi</h1>
+<h2>Otázky v diskusi</h2>
 
 <table>
 <tr>
@@ -33,3 +33,15 @@
 </#list>
 </table>
 
+<h2>Nabídky zamìstnání</h2>
+
+<p>
+    Nové IT a linuxové nabídky zamìstnání ze serveru <a href="http://wwww.praceabc.cz">www.praceabc.cz</a>.
+</p>
+
+<#list JOBS?if_exists as job>
+    <p>
+        <a href="http://www.praceabc.cz/www/detail.php?id=${job.id}">${job.title}</a><br>
+        Region: ${job.region}, Kategorie: ${job.category}<#if job.itJob>, IT</#if><#if job.linuxJob>, Linux</#if>
+    </p>
+</#list>
