@@ -50,8 +50,8 @@ public interface Constants {
     int CAT_GUESTBOOK = 885;
 
     int ITEM_DIZ_TODO = 11606;
-    /** item holding info about user feeds to fetch */
-    int ITEM_DYNAMIC_RSS = 59516;
+    /** item holding dynamic configuration */
+    int ITEM_DYNAMIC_CONFIGURATION = 59516;
 
     int REC_DIZ_TODO = 38280;
 

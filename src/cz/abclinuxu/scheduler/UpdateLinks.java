@@ -117,9 +117,9 @@ public class UpdateLinks extends TimerTask implements Configurable {
             Relation relation;
             Element feed;
             int rid = 0;
-            Item dynamicRss = (Item) persistance.findById(new Item(Constants.ITEM_DYNAMIC_RSS));
+            Item dynamicRss = (Item) persistance.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
             Document doc = (Document) dynamicRss.getData().clone();
-            for (Iterator iter = doc.getRootElement().elements("feed").iterator(); iter.hasNext();) {
+            for (Iterator iter = doc.selectNodes("//feeds/feed").iterator(); iter.hasNext();) {
                 feed = (Element) iter.next();
                 try {
                     rid = Misc.parseInt(feed.attributeValue("relation"), -1);
@@ -137,7 +137,7 @@ public class UpdateLinks extends TimerTask implements Configurable {
             }
 
             if (remove.size() > 0) { // remove feeds for objects purged from persistance
-                dynamicRss = (Item) persistance.findById(new Item(Constants.ITEM_DYNAMIC_RSS));
+                dynamicRss = (Item) persistance.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
                 dynamicRss = (Item) dynamicRss.clone();
                 doc = dynamicRss.getData();
                 for (Iterator iter = remove.iterator(); iter.hasNext();) {

@@ -145,8 +145,11 @@
 <!ELEMENT link (#PCDATA)> <!-- contains text of link -->
 <!ATTLIST link url (#PCDATA) #REQUIRED> <!-- URL of resource or article -->
 
-<!-- Item.id==Constants.ITEM_DYNAMIC_RSS -->
-<!ELEMENT data (feed*)>
+<!-- Item.id==Constants.ITEM_DYNAMIC_CONFIGURATION -->
+<!ELEMENT data (feeds?,blog_digest?)>
+<!ELEMENT feeds (feed+)>
 <!ELEMENT feed (#PCDATA)> <!-- URL of feed. It must be RSS or Atom -->
 <!ATTLIST feed relation (#NMTOKEN) #REQUIRED> <!-- integer, id of parent relation, where to store links -->
 <!ATTLIST feed type (#NMTOKEN) #REQUIRED> <!-- integer, 1 is for feeds from Software -->
+<!ELEMENT blog_digest (story+)> <!-- container for selected blog stories, that form special RSS -->
+<!ELEMENT story (#PCDATA)> <!-- integer, id of relation for selected high-quality story -->

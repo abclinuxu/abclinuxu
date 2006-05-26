@@ -28,4 +28,4 @@ insert into devel.server (cislo,jmeno,url) select cislo,jmeno,url from abc.serve
 insert into devel.odkaz select * from abc.odkaz;
 insert into devel.relace select * from abc.relace where typ_predka='S';
 -- dynamic RSS polozka
-insert into polozka values(59516,0,NULL,'<data><title>Nesystemove feedy</title></data>',1,now(),NULL);
+insert into polozka values(59516,0,NULL,'<data><title>Dynamicka konfigurace</title></data>',1,now(),NULL);
