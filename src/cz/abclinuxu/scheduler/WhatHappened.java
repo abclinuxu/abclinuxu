@@ -142,6 +142,7 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
     private void setData(Map params, Date from, Date to) {
         SQLTool sqlTool = SQLTool.getInstance();
         Item item;
+        String title, content;
 
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING};
         List relations = sqlTool.findArticleRelationsWithinPeriod(from, to, qualifiers);
@@ -152,7 +153,8 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
             Relation relation = (Relation) iter.next();
             item = (Item) relation.getChild();
             String tmp = Tools.xpath(item, "/data/author");
-            Article article = new Article(Tools.xpath(item, "data/name"), item.getCreated(), relation.getId());
+            title = Tools.xpath(item, "data/name");
+            Article article = new Article(title, item.getCreated(), relation.getUrl());
             User author = Tools.createUser(tmp);
             article.setAuthor(author.getName());
             article.setAuthorId(author.getId());
@@ -171,7 +173,9 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
         for ( Iterator iter = relations.iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
             item = (Item) relation.getChild();
-            News newz = new News(Tools.xpath(item, "data/content"), item.getCreated(), relation.getId());
+            title = Tools.xpath(item, "data/title");
+            content = Tools.xpath(item, "data/content");
+            News newz = new News(title, content, item.getCreated(), relation.getUrl());
             User author = Tools.createUser(item.getOwner());
             newz.setAuthor(author.getName());
             newz.setAuthorId(author.getId());

@@ -26,6 +26,7 @@ import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.persistance.extra.Qualifier;
+import cz.abclinuxu.persistance.extra.JobOfferManager;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.view.News;
@@ -47,6 +48,7 @@ public class WeeklyEmail extends TimerTask implements Configurable {
 
     public static final String VAR_ARTICLES = "ARTICLES";
     public static final String VAR_NEWS = "NEWS";
+    public static final String VAR_JOBS = "JOBS";
     public static final String VAR_WEEK = "WEEK";
     public static final String VAR_YEAR = "YEAR";
 
@@ -90,45 +92,54 @@ public class WeeklyEmail extends TimerTask implements Configurable {
      * Stores articles and news in params.
      */
     private void pushData(Map params) {
-        Persistance persistance = PersistanceFactory.getPersistance();
         SQLTool sqlTool = SQLTool.getInstance();
         Item item;
+        String title, content;
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
         calendar.set(Calendar.HOUR_OF_DAY,0);
         calendar.set(Calendar.MINUTE,0);
+        Date from = calendar.getTime();
+        Date until = new Date();
 
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING};
-        List relations = sqlTool.findArticleRelationsWithinPeriod(calendar.getTime(), new Date(), qualifiers);
+        List relations = sqlTool.findArticleRelationsWithinPeriod(from, until, qualifiers);
         Tools.syncList(relations);
         List articles = new ArrayList(relations.size());
 
         for (Iterator iter = relations.iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
             item = (Item) relation.getChild();
-            String tmp = Tools.xpath(item,"/data/author");
-            Article article = new Article(Tools.xpath(item, "data/name"),item.getCreated(),relation.getId());
+            title = Tools.xpath(item, "data/name");
+            Article article = new Article(title, item.getCreated(), relation.getUrl());
+            String tmp = Tools.xpath(item, "/data/author");
             article.setAuthor(Tools.createUser(tmp).getName());
             article.setPerex(Tools.xpath(item, "data/perex"));
+            article.setComments(Tools.findComments(item).getResponseCount());
             articles.add(article);
         }
 
-        relations = sqlTool.findNewsRelationsWithinPeriod(calendar.getTime(), new Date(), qualifiers);
+        relations = sqlTool.findNewsRelationsWithinPeriod(from, until, qualifiers);
         Tools.syncList(relations);
         List news = new ArrayList(relations.size());
 
         for ( Iterator iter = relations.iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
             item = (Item) relation.getChild();
-            News newz = new News(Tools.xpath(item, "data/content"), item.getCreated(), relation.getId());
+            title = Tools.xpath(item, "data/title");
+            content = Tools.xpath(item, "data/content");
+            News newz = new News(title, content, item.getCreated(), relation.getUrl());
             newz.setAuthor(Tools.createUser(item.getOwner()).getName());
             newz.setComments(Tools.findComments(item).getResponseCount());
             news.add(newz);
         }
 
+        List offers = JobOfferManager.getOffersAfter(from);
+
         params.put(VAR_ARTICLES, articles);
         params.put(VAR_NEWS, news);
+        params.put(VAR_JOBS, offers);
     }
 
     /**
@@ -140,7 +151,13 @@ public class WeeklyEmail extends TimerTask implements Configurable {
         template = prefs.get(PREF_TEMPLATE, null);
     }
 
+    /**
+     * mainly for debug purposes
+     * @param args
+     */
     public static void main(String[] args) {
+        JobOfferManager jobs = new JobOfferManager();
+        jobs.run();
         WeeklyEmail weeklyEmail = new WeeklyEmail();
         weeklyEmail.run();
     }

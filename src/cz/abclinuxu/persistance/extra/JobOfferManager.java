@@ -43,6 +43,14 @@ import java.sql.SQLException;
 public class JobOfferManager extends TimerTask implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(JobOfferManager.class);
 
+    static {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (Exception e) {
+            log.fatal("Nemohu vytvoøit instanci JDBC driveru, zkontroluj CLASSPATH!", e);
+        }
+    }
+
     public static final String PREF_JDBC_URL = "jdbc.url";
     public static final String PREF_SQL_QUERY = "sql.offers";
 
@@ -76,6 +84,34 @@ public class JobOfferManager extends TimerTask implements Configurable {
         }
     }
 
+    /**
+     * Returns job offer at selected position. If position is higher
+     * then number of job offers, then remainder after dividing by number
+     * of offers is used as position (position is 6, size is 4, then 3rd
+     * position will be used).
+     * @param position index of offer to be returned starting at zero
+     * @return selected job offer or null, if there are no positions
+     */
+    public static JobOffer getOffer(int position) {
+        synchronized (offers) {
+            int size = offers.size();
+            if (size == 0)
+                return null;
+            if (position >= size)
+                position = position % size;
+            return (JobOffer) offers.get(position);
+        }
+    }
+
+    /**
+     * @return number of job offers
+     */
+    public static int getSize() {
+        synchronized (offers) {
+            return offers.size();
+        }
+    }
+
     public void run() {
         try {
             List newOffers = new ArrayList(100);
@@ -105,7 +141,6 @@ public class JobOfferManager extends TimerTask implements Configurable {
         offer.setRegion(rs.getString(7));
         offer.setCompany(rs.getString(8));
         offer.setJobType(rs.getString(9));
-        offer.setScope(rs.getString(10));
         return offer;
     }
 

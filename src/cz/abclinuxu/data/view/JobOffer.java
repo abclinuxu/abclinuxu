@@ -34,7 +34,6 @@ public class JobOffer {
     private String region;
     private String company;
     private String jobType;
-    private String scope;
 
     public JobOffer(int id, String title) {
         this.id = id;
@@ -107,14 +106,6 @@ public class JobOffer {
 
     public void setJobType(String jobType) {
         this.jobType = jobType;
-    }
-
-    public String getScope() {
-        return scope;
-    }
-
-    public void setScope(String scope) {
-        this.scope = scope;
     }
 
     public boolean equals(Object o) {

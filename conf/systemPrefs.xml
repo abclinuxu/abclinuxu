@@ -214,10 +214,10 @@
                         <node name="JobOfferManager">
                             <map>
                                 <entry key="jdbc.url" value="jdbc:mysql://@PRACE_DB_HOST@/@PRACE_DB_SCHEMA@?user=@PRACE_DB_USER@&amp;password=@PRACE_DB_PASSWORD@&amp;useUnicode=true"/>
-                                <entry key="sql.offers" value="select O.id,O.title,O.last_modify_date,O.it,O.linux,C.name as category,R.name as region,F.name as firma,T.name as typ,O.scope
+                                <entry key="sql.offers" value="select O.id,O.title,O.last_modify_date,O.it,O.linux,C.name as category,R.name as region,F.name as firma,T.name as typ
                                                                from hr_offer as O, hr_category as C, hr_region as R, hr_company as F, hr_relation as T
                                                                where C.id=O.idcategory and R.id=O.idregion and F.id=O.idcompany and T.id=O.idrelation
-                                                               and (it=1 or linux=1) order by last_modify_date desc limit 50"/>
+                                                               and (it=1 or linux=1) order by last_modify_date desc limit 60"/>
                             </map>
                         </node>
                     </node>

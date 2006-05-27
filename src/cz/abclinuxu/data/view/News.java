@@ -24,14 +24,15 @@ import java.util.Date;
  * Warpper arround news.
  */
 public class News {
-    String content, author, url;
+    String title, content, author, url;
     Date published;
     int relationId, comments, authorId;
 
-    public News(String content, Date published, int relationId) {
+    public News(String title, String content, Date published, String url) {
+        this.title = title;
         this.content = content;
         this.published = published;
-        this.relationId = relationId;
+        this.url = url;
     }
 
     public void setAuthor(String author) {
@@ -58,12 +59,20 @@ public class News {
         return content;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
     public String getAuthor() {
         return author;
     }
 
     public Date getPublished() {
         return published;
+    }
+
+    public void setRelationId(int relationId) {
+        this.relationId = relationId;
     }
 
     public int getRelationId() {

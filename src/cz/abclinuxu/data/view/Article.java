@@ -28,9 +28,13 @@ public class Article {
     private Date published;
     private int relationId, comments, reads, authorId;
 
-    public Article(String title, Date published, int relationId) {
+    public Article(String title, Date published, String url) {
         this.title = title;
         this.published = published;
+        this.url = url;
+    }
+
+    public void setRelationId(int relationId) {
         this.relationId = relationId;
     }
 
