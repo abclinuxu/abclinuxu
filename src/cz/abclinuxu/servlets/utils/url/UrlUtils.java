@@ -18,6 +18,9 @@
  */
 package cz.abclinuxu.servlets.utils.url;
 
+import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.AbcException;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.ServletException;
@@ -40,11 +43,12 @@ public class UrlUtils {
     public static final String PREFIX_DICTIONARY = "/slovnik";
     public static final String PREFIX_POLLS = "/ankety";
     public static final String PREFIX_FAQ = "/faq";
+    public static final String PREFIX_BLOG = "/blog";
     public static final String PREFIX_NONE = "";
 
     static List prefixes = null;
     static {
-        prefixes = new ArrayList(9);
+        prefixes = new ArrayList();
         prefixes.add(PREFIX_NEWS);
         prefixes.add(PREFIX_FORUM);
         prefixes.add(PREFIX_HARDWARE);
@@ -54,6 +58,7 @@ public class UrlUtils {
         prefixes.add(PREFIX_DICTIONARY);
         prefixes.add(PREFIX_POLLS);
         prefixes.add(PREFIX_SOFTWARE);
+        prefixes.add(PREFIX_BLOG);
     }
 
     /** default prefix to URL */
@@ -168,5 +173,35 @@ public class UrlUtils {
         String url2 = constructDispatchURL(url);
         RequestDispatcher dispatcher = request.getRequestDispatcher(url2);
         dispatcher.forward(request,response);
+    }
+
+    /**
+     * Creates url for relation. If relation url is set, it will be used, otherwise
+     * it will be constructed from prefix and relation id.
+     * @param relation relation for which we need url
+     * @param prefix url prefix, one of constants from this class
+     * @param section flag indicating whether relation holds section or other object
+     * @return url to display this relation
+     */
+    public static String getRelationUrl(Relation relation, String prefix, boolean section) {
+        if (relation == null)
+            throw new AbcException("©patný vstup: relace nesmí být prázdná!");
+        if (relation.getUrl() != null)
+            return relation.getUrl();
+        if (section)
+            return prefix + "/dir/" + relation.getId();
+        else
+            return prefix + "/show/" + relation.getId();
+    }
+
+    /**
+     * Creates url for relation. If relation url is set, it will be used, otherwise
+     * it will be constructed from prefix and relation id.
+     * @param relation relation for which we need url
+     * @param section flag indicating whether relation holds section or other object
+     * @return url to display this relation
+     */
+    public String getRelationUrl(Relation relation, boolean section) {
+        return getRelationUrl(relation, prefix, section);
     }
 }

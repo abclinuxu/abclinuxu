@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ISO-8859-2" ?>
+<set>
+    <value>
+        <id>xwindows</id>
+        <caption>X Window System</caption>
+    </value>
+    <value>
+        <id>qt</id>
+        <caption>QT</caption>
+    </value>
+    <value>
+        <id>kde</id>
+        <caption>KDE</caption>
+    </value>
+    <value>
+        <id>gtk</id>
+        <caption>GTK</caption>
+    </value>
+    <value>
+        <id>gnome</id>
+        <caption>Gnome</caption>
+    </value>
+    <value>
+        <id>motif</id>
+        <caption>Motif</caption>
+    </value>
+    <value>
+        <id>java</id>
+        <caption>Java</caption>
+    </value>
+    <value>
+        <id>tk</id>
+        <caption>Tcl/Tk</caption>
+    </value>
+    <value>
+        <id>console</id>
+        <caption>Konzole</caption>
+    </value>
+    <value>
+        <id>cli</id>
+        <caption>Příkazové rozhraní</caption>
+    </value>
+    <value>
+        <id>tui</id>
+        <caption>Textové rozhraní</caption>
+    </value>
+    <value>
+        <id>grconsole</id>
+        <caption>Grafické rozhraní</caption>
+    </value>
+</set>

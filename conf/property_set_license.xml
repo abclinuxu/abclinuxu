@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-2" ?>
+<set>
+    <value>
+        <id>gpl</id>
+        <caption>GPL</caption>
+    </value>
+    <value>
+        <id>lgpl</id>
+        <caption>LGPL</caption>
+    </value>
+    <value>
+        <id>bsd</id>
+        <caption>BSD</caption>
+    </value>
+    <value>
+        <id>mpl</id>
+        <caption>MPL</caption>
+    </value>
+    <value>
+        <id>apl</id>
+        <caption>APL</caption>
+    </value>
+    <value>
+        <id>oss</id>
+        <caption>OSS kompatibilní</caption>
+    </value>
+    <value>
+        <id>freeware</id>
+        <caption>Freeware</caption>
+    </value>
+    <value>
+        <id>commercial</id>
+        <caption>Komerční</caption>
+    </value>
+    <value>
+        <id>other</id>
+        <caption>Jiná</caption>
+    </value>
+</set>

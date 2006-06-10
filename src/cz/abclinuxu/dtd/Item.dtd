@@ -16,6 +16,14 @@
 <!ELEMENT note (#PCDATA)> <!-- other note, user's experience -->
 <!ATTLIST note format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 
+<!-- Item.SOFTWARE -->
+<!ELEMENT data (name, description, version, url+)>
+<!ELEMENT name (#PCDATA)> <!-- maximum length is few words -->
+<!ELEMENT description (#PCDATA)> <!-- long description -->
+<!ATTLIST description format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
+<!ELEMENT version (#PCDATA)> <!-- string holding name/id of last version -->
+<!ELEMENT url (#PCDATA)> <!-- an url related to the software -->
+<!ATTLIST url useType (#NMTOKEN)> <!-- type of given url (homepage, download, rss) -->
 
 <!-- Item.ARTICLE -->
 <!ELEMENT data (name,icon?,perex,author,editor?,forbid_discussions?,forbid_rating?,thumbnail?,talk?)>
@@ -150,6 +158,6 @@
 <!ELEMENT feeds (feed+)>
 <!ELEMENT feed (#PCDATA)> <!-- URL of feed. It must be RSS or Atom -->
 <!ATTLIST feed relation (#NMTOKEN) #REQUIRED> <!-- integer, id of parent relation, where to store links -->
-<!ATTLIST feed type (#NMTOKEN) #REQUIRED> <!-- integer, 1 is for feeds from Software -->
+<!ATTLIST feed type (#NMTOKEN) #REQUIRED> <!-- alowed value is software -->
 <!ELEMENT blog_digest (story+)> <!-- container for selected blog stories, that form special RSS -->
 <!ELEMENT story (#PCDATA)> <!-- integer, id of relation for selected high-quality story -->

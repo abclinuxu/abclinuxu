@@ -177,7 +177,7 @@
                         </li>
                     </#if>
                     <li>
-                        <a href="/${URL.prefix}/show/${DIZ.relationId}?varianta=print">Tisk diskuse</a>
+                        <a href="${URL.prefix}/show/${DIZ.relationId}?varianta=print">Tisk diskuse</a>
                     </li>
                     <li>
                         <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+DIZ.relationId)}"
@@ -253,4 +253,11 @@
         <input type="hidden" name="action" value="vote">
         </form>
     </div>
+</#macro>
+
+<#macro showOption (param value caption type extra...)>
+    <label>
+        <input type="${type}" name="${param}" value="${value}"<#if TOOL.isWithin(PARAMS[param], value)> checked</#if>${extra[0]?if_exists}>
+        ${caption}
+    </label>
 </#macro>

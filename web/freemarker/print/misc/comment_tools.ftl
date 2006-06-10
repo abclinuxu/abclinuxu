@@ -31,7 +31,7 @@
             </#if>
             <a href="${URL.make("/EditDiscussion/"+relId+"?action=toQuestion&amp;dizId="+dizId+"&amp;threadId="+COMMENT.id)}">Osamostatnit</a>
         </#if>
-        <#assign author_ip = TOOL.xpath(COMMENT.data, "author_ip")?default("UNDEFINED")>
+        <#assign author_ip = TOOL.xpath(COMMENT.data, "//author_ip")?default("UNDEFINED")>
         <#if author_ip!="UNDEFINED">${author_ip}</#if>
     </fieldset>
 </#if>

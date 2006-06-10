@@ -7,7 +7,7 @@
 </#if>
 
  <#list ARTICLES.data as relation>
-  <@lib.showArticle relation, "CZ_FULL" />
+  <@lib.showArticle relation />
   <hr>
  </#list>
 

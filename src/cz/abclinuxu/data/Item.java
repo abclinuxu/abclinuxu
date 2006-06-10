@@ -57,6 +57,8 @@ public class Item extends GenericDataObject {
     public static final int UNPUBLISHED_BLOG = 15;
     /** table of contents for content hierarchy */
     public static final int TOC = 16;
+    /** software item **/
+    public static final int SOFTWARE = 17;
 
     public Item() {
         super();

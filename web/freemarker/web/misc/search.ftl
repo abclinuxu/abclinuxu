@@ -85,10 +85,6 @@
                 Hardware,
                 poslední zmìna: ${DATE.show(doc.datum_zmeny,"CZ_DMY")},
                 ${doc.velikost_obsahu} znakù
-            <#elseif doc.typ='software'>
-                Software,
-                poslední zmìna: ${DATE.show(doc.datum_zmeny,"CZ_DMY")},
-                ${doc.velikost_obsahu} znakù
             <#elseif doc.typ='diskuse'>
                 Diskuse,
                 poèet reakcí: ${doc.odpovedi},

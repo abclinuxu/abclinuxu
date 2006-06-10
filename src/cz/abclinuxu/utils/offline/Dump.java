@@ -104,7 +104,7 @@ public class Dump implements Configurable {
         config.setSharedVariable(Constants.VAR_TOOL,new Tools());
         config.setSharedVariable(Constants.VAR_DATE_TOOL,new DateTool());
         config.setSharedVariable(Constants.VAR_SORTER,new Sorters2());
-        config.setSharedVariable(Constants.VAR_CATEGORIES, NewsCategories.getInstance());
+        config.setSharedVariable(Constants.VAR_NEWS_CATEGORIES, NewsCategories.getInstance());
         config.setSharedVariable("DUMP",this);
     }
 

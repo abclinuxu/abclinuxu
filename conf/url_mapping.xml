@@ -58,6 +58,14 @@
             <action>cz.abclinuxu.servlets.html.view.ViewBlog</action>
         </mapping>
         <mapping priority="true">
+            <pattern>^/software/edit</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditSoftware</action>
+        </mapping>
+        <mapping priority="true">
+            <pattern>^/software</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ViewSoftware</action>
+        </mapping>
+        <mapping priority="true">
             <pattern>^/faq/edit</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditFaq</action>
         </mapping>

@@ -25,7 +25,6 @@ import java.text.DateFormat;
  * This interface holds all constants shared across servlets.
  */
 public interface Constants {
-
     int CAT_ARTICLES = 1;
     int CAT_HARDWARE = 2;
     int CAT_SOFTWARE = 3;
@@ -98,6 +97,7 @@ public interface Constants {
     String TYPE_RECORD = "record";
     String TYPE_USER = "user";
     String TYPE_POLL = "poll";
+    String TYPE_LINK = "link";
 
     // template variables
 
@@ -130,7 +130,11 @@ public interface Constants {
     /** holds DateTool instance */
     String VAR_DATE_TOOL = "DATE";
     /** holds instance of NewsCategories */
-    String VAR_CATEGORIES = "NEWS_CATEGORIES";
+    String VAR_NEWS_CATEGORIES = "NEWS_CATEGORIES";
+    /** holds Map where key is id of property value and value is its caption */
+    String VAR_UI_PROPERTY_VALUES = "UI_PROPERTY";
+    /** holds Map where key is id of property value and value is its caption */
+    String VAR_LICENSE_PROPERTY_VALUES = "LICENSE_PROPERTY";
 
     /** error, that is not related to specific form field */
     String ERROR_GENERIC = "generic";
@@ -161,4 +165,9 @@ public interface Constants {
     DateFormat czDayMonth = new SimpleDateFormat("d.M.");
     DateFormat czTimeOnly = new SimpleDateFormat("HH:mm");
     DateFormat czDay = new SimpleDateFormat("EEEE");
+
+    // see properties.txt for more information
+    String PROPERTY_USER_INTERFACE = "ui";
+    String PROPERTY_ALTERNATIVE_SOFTWARE = "alternative";
+    String PROPERTY_LICENSE = "license";
 }

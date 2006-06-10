@@ -1,0 +1,17 @@
+Item.SOFTWARE
+=============
+
+name: ui
+value: defined elsewhere
+mapping: 1:n
+purpose: describes user interfaces and environments of software
+
+name: license
+values: defined in ftl templates
+mapping: 1:n
+purpose: describes license of software
+
+name: alternative
+values: entered by users
+mapping: 1:n
+purpose: name of software from Windows having same purpose

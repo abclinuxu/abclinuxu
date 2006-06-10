@@ -120,6 +120,9 @@ public class MySqlPersistance implements Persistance {
                 if ( result==0 )
                     throw new PersistanceException("Nepodaøilo se vlo¾it "+obj+" do databáze!");
                 obj.setId(getAutoId(statement));
+
+                if (obj instanceof GenericDataObject)
+                    saveDataObjectsProperties((GenericDataObject) obj);
             }
             obj.setInitialized(true);
             cache.store(obj);
@@ -439,6 +442,10 @@ public class MySqlPersistance implements Persistance {
                 statement = con.prepareStatement("delete from "+getTable(obj)+" where cislo=?");
                 statement.setInt(1,obj.getId());
                 statement.executeUpdate();
+
+                // remove all properties from table vlastnost
+                if(obj instanceof GenericDataObject)
+                    deleteDataObjectsProperties((GenericDataObject) obj);
 
                 // remove comments, they are not referenced via relation table
                 if (obj instanceof Record) {
@@ -1177,6 +1184,8 @@ public class MySqlPersistance implements Persistance {
             if (data instanceof Record && ((Record) data).getType() == Record.DISCUSSION)
                 loadComments((Record)data);
 
+            loadProperties(data);
+
             return data;
         } finally {
             releaseSQLResources(con,statement,resultSet);
@@ -1227,6 +1236,7 @@ public class MySqlPersistance implements Persistance {
                 }
 
                 syncGenericDataObjectFromRS(obj, rs);
+                loadProperties(obj); // todo presunout mimo smycku, nacitat hromadne v jednom SQL dotazu
                 if (obj instanceof Record && ((Record) obj).getType() == Record.DISCUSSION)
                     loadComments((Record) obj);
 
@@ -1741,6 +1751,8 @@ public class MySqlPersistance implements Persistance {
             if (obj instanceof Record && obj.getType() == Record.DISCUSSION)
                 updateComments((DiscussionRecord) obj.getCustom(), obj.getId(), con);
 
+            saveDataObjectsProperties(obj);
+
             obj.setUpdated(new java.util.Date());
             cache.store(obj);
         } catch (SQLException e) {
@@ -1979,6 +1991,89 @@ public class MySqlPersistance implements Persistance {
             }
         } finally {
             releaseSQLResources(con,statement,resultSet);
+        }
+    }
+
+    /**
+     * Loads properties of <code>obj</code> from database.
+     */
+    protected void loadProperties(GenericDataObject obj) throws SQLException {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = getSQLConnection();
+            statement = con.prepareStatement("select * from vlastnost where typ_predka=? and predek=?");
+            statement.setString(1, getTableId(obj));
+            statement.setInt(2, obj.getId());
+
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String property = resultSet.getString(3);
+                String value = resultSet.getString(4);
+                obj.addProperty(property, value);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
+     * Deletes all properties of <code>obj</code> from database.
+     */
+    protected void deleteDataObjectsProperties(GenericDataObject obj) throws SQLException {
+        Connection con = null;
+        PreparedStatement statement = null;
+        try {
+            con = getSQLConnection();
+            statement = con.prepareStatement("delete from vlastnost where typ_predka=? and predek=?");
+            statement.setString(1, getTableId(obj));
+            statement.setInt(2, obj.getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            releaseSQLResources(con, statement, null);
+        }
+    }
+
+    /**
+     * Updates all properties of <code>obj</code> in database
+     */
+    protected void saveDataObjectsProperties(GenericDataObject obj) throws SQLException {
+        Connection con = null;
+        PreparedStatement statement = null;
+        log.debug("Saving properties for: " + obj.getId());
+        try {
+            deleteDataObjectsProperties(obj);
+
+            con = getSQLConnection();
+            statement = con.prepareStatement("insert into vlastnost values (?, ?, ?, ?)");
+            for (Iterator iter = obj.getProperties().entrySet().iterator(); iter.hasNext();) {
+                Map.Entry entry = (Map.Entry) iter.next();
+                String key = (String) entry.getKey();
+                Set values = (Set) entry.getValue();
+                if (values == null)
+                    continue;
+
+                for (Iterator iterSet = values.iterator(); iterSet.hasNext();) {
+                    String value = (String) iterSet.next();
+                    statement.setString(1, getTableId(obj));
+                    statement.setInt(2, obj.getId());
+                    statement.setString(3, key);
+                    statement.setString(4, value);
+                    statement.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            log.error(e);
+            throw e;
+        } finally {
+            releaseSQLResources(con, statement, null);
         }
     }
 

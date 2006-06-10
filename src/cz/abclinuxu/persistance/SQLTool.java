@@ -36,6 +36,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
+import java.util.Set;
 
 /**
  * Thread-safe singleton, that encapsulates SQL commands
@@ -47,6 +48,8 @@ public final class SQLTool implements Configurable {
     public static final String PREF_RECORD_RELATIONS_BY_TYPE = "relations.record.by.type";
     public static final String PREF_RECORD_PARENT_RELATIONS_BY_TYPE = "relations.parent.record.by.type";
     public static final String PREF_ITEM_RELATIONS_BY_TYPE = "relations.item.by.type";
+    public static final String PREF_ITEM_RELATIONS_BY_TYPE_WITH_FILTERS = "relations.item.by.type.with.filters";
+    public static final String PREF_CATEGORY_RELATIONS_BY_TYPE = "relations.categories.by.type";
     public static final String PREF_SECTION_RELATIONS_BY_TYPE = "relations.section.by.type";
     public static final String PREF_DISCUSSION_RELATIONS = "relations.discussion";
     public static final String PREF_DISCUSSION_RELATIONS_IN_SECTION = "relations.discussion.in.section";
@@ -96,7 +99,8 @@ public final class SQLTool implements Configurable {
     }
 
     // todo presun vsechny stringy do Mapy
-    private String relationsRecordByType, relationsParentRecordByType, relationsItemsByType, relationsSectionByType;
+    private String relationsRecordByType, relationsParentRecordByType, relationsSectionByType;
+    private String relationsItemsByType, relationsItemsByTypeWithFilters, relationsCategoriesByType;
     private String relationsDiscussion, relationsDiscussionInSection;
     private String relationsArticle, relationsArticleWithinPeriod, relationsArticlesOnIndex;
     private String relationsNews, relationsNewsWithinPeriod;
@@ -448,6 +452,62 @@ public final class SQLTool implements Configurable {
     public List findItemRelationsWithType(int type, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer(relationsItemsByType);
+        List params = new ArrayList();
+        params.add(new Integer(type));
+        appendQualifiers(sb, qualifiers, params, null);
+        return loadRelations(sb.toString(), params);
+    }
+
+    /**
+     * Finds relations, where child is item of specified type and pass the given filters.
+     * There is an AND relation between properties and OR between values of each property.
+     * Use Qualifiers to set additional parameters.
+     * @return List of initialized relations
+     * @throws PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findItemRelationsWithTypeWithFilters(int type, Qualifier[] qualifiers, Map filters) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(relationsItemsByTypeWithFilters);
+        List params = new ArrayList();
+        params.add(new Integer(type));
+
+        Iterator i = filters.entrySet().iterator();
+        if (i.hasNext()) {
+            sb.append(" and V.predek=P.cislo and V.typ_predka='P' and (");
+            while (i.hasNext()) {
+                Map.Entry entry = (Map.Entry) i.next();
+                String typ = (String) entry.getKey();
+                Set values = (Set) entry.getValue();
+                sb.append("V.typ=? and (");
+                params.add(typ);
+
+                Iterator i2 = values.iterator();
+                while (i2.hasNext()) {
+                    sb.append("V.hodnota=?");
+                    params.add(i2.next());
+                    if (i2.hasNext())
+                        sb.append(" or ");
+                }
+                sb.append(" )");
+                if(i.hasNext())
+                    sb.append(" or ");
+            }
+            sb.append(")");
+        }
+
+        appendQualifiers(sb, qualifiers, params, null);
+        return loadRelations(sb.toString(), params);
+    }
+
+    /**
+     * Finds relations, where child is category of specified type.
+     * Use Qualifiers to set additional parameters.
+     * @return List of initialized relations
+     * @throws PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public List findCategoriesRelationsWithType(int type, Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(relationsCategoriesByType);
         List params = new ArrayList();
         params.add(new Integer(type));
         appendQualifiers(sb, qualifiers, params, null);
@@ -1442,6 +1502,8 @@ public final class SQLTool implements Configurable {
         relationsRecordByType = getValue(PREF_RECORD_RELATIONS_BY_TYPE, prefs);
         relationsParentRecordByType = getValue(PREF_RECORD_PARENT_RELATIONS_BY_TYPE, prefs);
         relationsItemsByType = getValue(PREF_ITEM_RELATIONS_BY_TYPE, prefs);
+        relationsItemsByTypeWithFilters = getValue(PREF_ITEM_RELATIONS_BY_TYPE_WITH_FILTERS, prefs);
+        relationsCategoriesByType = getValue(PREF_CATEGORY_RELATIONS_BY_TYPE, prefs);
         relationsSectionByType = getValue(PREF_SECTION_RELATIONS_BY_TYPE, prefs);
         relationsDiscussion = getValue(PREF_DISCUSSION_RELATIONS, prefs);
         relationsDiscussionInSection = getValue(PREF_DISCUSSION_RELATIONS_IN_SECTION, prefs);

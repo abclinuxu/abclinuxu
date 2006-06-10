@@ -22,6 +22,8 @@ import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.PathGeneratorImpl;
+import cz.abclinuxu.utils.PathGenerator;
 
 import java.util.prefs.Preferences;
 import java.io.File;
@@ -126,5 +128,12 @@ public class AbcConfig implements Configurable {
      */
     public static int getMaxWatchedDiscussionLimit() {
         return maxWatchedDiscussions;
+    }
+
+    /**
+     * @return instance of PathGenerator
+     */
+    public static PathGenerator getPathGenerator() {
+        return new PathGeneratorImpl();
     }
 }

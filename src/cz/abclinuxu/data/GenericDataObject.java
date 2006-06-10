@@ -18,11 +18,18 @@
  */
 package cz.abclinuxu.data;
 
-import org.dom4j.Document;
 import org.apache.log4j.Logger;
+import org.dom4j.Document;
 
-import java.util.Date;
 import java.lang.reflect.Method;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Collections;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Collection;
 
 /**
  * This class serves as base class for Item, Category and Record,
@@ -43,6 +50,8 @@ public abstract class GenericDataObject extends GenericObject implements XMLCont
     protected Date updated;
     /** XML with data of this object */
     protected XMLHandler documentHandler;
+    /** Properties of this object **/
+    protected Map properties;
     /**
      * Helper (non-persistant) String for findByExample(),
      * which works as argument to search in <code>data</code>.
@@ -51,13 +60,77 @@ public abstract class GenericDataObject extends GenericObject implements XMLCont
     /** some object related to this instance, for any use */
     protected Object custom;
 
-
     public GenericDataObject() {
     }
 
     public GenericDataObject(int id) {
         super(id);
     }
+
+    /**
+     * Returns map where key is string identifier of the property
+     * and value is Set of its values.
+     * @return immutable map of all properties
+     */
+    public Map getProperties() {
+        if (properties == null)
+            return Collections.EMPTY_MAP;
+        return Collections.unmodifiableMap(properties);
+    }
+
+    /**
+     * Finds all string values associated with properties.
+     * The returned set is unmodifiable. This method never returns null.
+     * @return Set of String values associated with given property
+     */
+    public Set getProperty(String type) {
+        if (properties == null)
+            return Collections.EMPTY_SET;
+        Set result = (Set) properties.get(type);
+        if (result == null)
+            return Collections.EMPTY_SET;
+        else
+            return Collections.unmodifiableSet(result);
+    }
+
+    /**
+     * Adds specified binding to map of all properties
+     * @param property name of key
+     * @param value value to be bound to property
+     */
+    public void addProperty(String property, String value) {
+        if (properties == null)
+            properties = new HashMap();
+        Set set = (Set) properties.get(property);
+        if (set == null) {
+            set = new HashSet();
+            properties.put(property, set);
+        }
+        set.add(value);
+    }
+
+    /**
+     * Set specified binding to map of all properties. Previous bindings will be discarded.
+     * @param property name of key
+     * @param values values to be bound to property
+     */
+    public void setProperty(String property, Set values) {
+        if (properties == null)
+            properties = new HashMap();
+        properties.put(property, values);
+    }
+
+    /**
+     * Removes all bindings to specified property.
+     * @param property name of key
+     * @return Set of previous bindings or null, if there were no values associated with given property
+     */
+    public Set removeProperty(String property) {
+        if (properties == null)
+            return null;
+        return (Set) properties.remove(property);
+    }
+
     /**
      * @return owner's id
      */
@@ -193,6 +266,7 @@ public abstract class GenericDataObject extends GenericObject implements XMLCont
         documentHandler = b.documentHandler;
         created = b.created;
         updated = b.updated;
+        properties = b.properties;
         custom = b.custom;
     }
 
@@ -200,6 +274,15 @@ public abstract class GenericDataObject extends GenericObject implements XMLCont
         GenericDataObject clone = (GenericDataObject) super.clone();
         if (documentHandler != null)
             clone.documentHandler = (XMLHandler) documentHandler.clone();
+
+        if (properties != null) {
+            clone.properties = new HashMap();
+            for (Iterator iter = properties.entrySet().iterator(); iter.hasNext();) {
+                Map.Entry entry = (Map.Entry) iter.next();
+                clone.properties.put(entry.getKey(), new HashSet((Collection) entry.getValue()));
+            }
+        }
+
         if (custom != null) {
             try {
                 Method m = custom.getClass().getDeclaredMethod("clone", null);

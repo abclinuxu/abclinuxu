@@ -777,10 +777,10 @@ public class Tools implements Configurable {
             if (!Misc.empty(classFilter))
                 relations = new ArrayList(relations);
 
-        boolean itemYes, recordYes, categoryYes, userYes, pollsYes;
-        itemYes = recordYes = categoryYes = userYes = pollsYes = false;
+        boolean itemYes, recordYes, categoryYes, userYes, pollYes, linkYes;
+        itemYes = recordYes = categoryYes = userYes = pollYes = linkYes = false;
         if (Misc.empty(classFilter))
-            itemYes = recordYes = categoryYes = userYes = pollsYes = true;
+            itemYes = recordYes = categoryYes = userYes = pollYes = linkYes = true;
         else {
             StringTokenizer stk = new StringTokenizer(classFilter);
             while (stk.hasMoreTokens()) {
@@ -794,7 +794,9 @@ public class Tools implements Configurable {
                 else if ("User".equalsIgnoreCase(className))
                     userYes = true;
                 else if ("Poll".equalsIgnoreCase(className))
-                    pollsYes = true;
+                    pollYes = true;
+                else if ("Link".equalsIgnoreCase(className))
+                    linkYes = true;
             }
         }
 
@@ -817,10 +819,13 @@ public class Tools implements Configurable {
             } else if (child instanceof Category && !categoryYes) {
                 iterator.remove();
                 continue;
-            } else if (child instanceof Poll && !pollsYes) {
+            } else if (child instanceof Poll && !pollYes) {
                 iterator.remove();
                 continue;
             } else if (child instanceof User && !userYes) {
+                iterator.remove();
+                continue;
+            } else if (child instanceof Link && !linkYes) {
                 iterator.remove();
                 continue;
             }
@@ -859,6 +864,8 @@ public class Tools implements Configurable {
                     Misc.storeToMap(map,Constants.TYPE_DOCUMENTS,relation);
             } else if ( child instanceof Record )
                 Misc.storeToMap(map,Constants.TYPE_RECORD,relation);
+            else if ( child instanceof Link )
+                Misc.storeToMap(map,Constants.TYPE_LINK, relation);
             else if ( child instanceof Poll )
                 Misc.storeToMap(map,Constants.TYPE_POLL, relation);
             else if ( child instanceof User )
@@ -1048,7 +1055,7 @@ public class Tools implements Configurable {
 
         String out = sb.toString();
         Matcher matcher = reAmpersand.matcher(out);
-        return matcher.replaceAll("&amp;");  
+        return matcher.replaceAll("&amp;");
     }
 
     /**
@@ -1378,5 +1385,68 @@ public class Tools implements Configurable {
      */
     public static String removeNewLines(String text) {
         return new RE(lineBreak, RE.MATCH_MULTILINE).subst(text, " ");
+    }
+
+    /**
+     * Returns true if object <code>o</code> is a List containing, or a String equal to <code>s</code>.
+     */
+    public static boolean isWithin(Object o, String s) {
+        if ( o==null || s==null )
+            return false;
+
+        if ( o instanceof Collection )
+            return ((Collection) o).contains(s);
+
+        if ( o instanceof String )
+            return ((String) o).equals(s);
+
+        return false;
+    }
+
+    /**
+     * Returns obj as list. If obj is List, then it is casted
+     * to List. If it is collection, then new arraylist initialized
+     * with its entries is returned. If obj is null, empty list
+     * is returned. In all other cases list with obj is returned.
+     * Warning - returned list may be read-only.
+     *
+     * @param obj value that can be list
+     * @return obj casted to list or list containing obj
+     */
+    public static List asList(Object obj) {
+        if (obj == null)
+            return Collections.EMPTY_LIST;
+        if (obj instanceof List)
+            return (List) obj;
+        if (obj instanceof Collection)
+            return new ArrayList((Collection) obj);
+        return Collections.singletonList(obj);
+    }
+
+    /**
+     * Puts all informations about GenericDataObjects screenshots into a List of Maps
+     * todo Ma tato funkce smysl?
+     */
+    public List getScreenshots(GenericDataObject obj) {
+        if (obj == null) return Collections.EMPTY_LIST;
+
+        List scrNodes = obj.getData().selectNodes("/data/screenshots/screenshot");
+        List ret = new ArrayList();
+        for (int i = 0; i < scrNodes.size(); i++) {
+            Element scrNode = (Element) scrNodes.get(i);
+            Map scr = new HashMap();
+            scr.put("id", scrNode.attributeValue("id"));
+
+            if (scrNode.element("image") != null) {
+                scr.put("image", scrNode.element("image").getText());
+                if (scrNode.element("thumbnail") != null)
+                    scr.put("thumbnail", scrNode.element("thumbnail").getText());
+                else
+                    scr.put("thumbnail", scrNode.element("image").getText());
+
+                ret.add(scr);
+            }
+        }
+        return ret;
     }
 }

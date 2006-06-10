@@ -32,6 +32,7 @@ import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.utils.email.monitor.InstantSender;
 import cz.abclinuxu.utils.email.forum.CommentSender;
 import cz.abclinuxu.persistance.extra.JobOfferManager;
+import cz.abclinuxu.data.PropertySet;
 import freemarker.template.Configuration;
 
 import javax.servlet.ServletException;
@@ -368,7 +369,9 @@ public class AbcInit extends HttpServlet implements Configurable {
             cfg.setSharedVariable(Constants.VAR_DATE_TOOL,new DateTool());
             cfg.setSharedVariable(Constants.VAR_SORTER,new Sorters2());
             cfg.setSharedVariable(Constants.VAR_FETCHER, VariableFetcher.getInstance());
-            cfg.setSharedVariable(Constants.VAR_CATEGORIES, NewsCategories.getInstance());
+            cfg.setSharedVariable(Constants.VAR_NEWS_CATEGORIES, NewsCategories.getInstance());
+            cfg.setSharedVariable(Constants.VAR_UI_PROPERTY_VALUES, PropertySet.getPropertyValues(Constants.PROPERTY_USER_INTERFACE));
+            cfg.setSharedVariable(Constants.VAR_LICENSE_PROPERTY_VALUES, PropertySet.getPropertyValues(Constants.PROPERTY_LICENSE));
 
             log.info("Inicializace FreeMarkeru je hotova");
         } catch (Exception e) {

@@ -14,7 +14,7 @@
        <#if DIZ.hasUnreadComments>
            <li><a href="#${DIZ.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a></li>
        </#if>
-       <li><a href="/${URL.prefix}/show/${DIZ.relationId}?varianta=print">Tisk diskuse</a></li>
+       <li><a href="${URL.prefix}/show/${DIZ.relationId}?varianta=print">Tisk diskuse</a></li>
        <li><a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+RELATION.id)}">${monitorState}</a>
        <span title="Poèet lidí, kteøí sledují tuto diskusi">(${DIZ.monitorSize})</span>
        <a class="info" href="#">?<span class="tooltip">Za¹le ka¾dý nový komentáø emailem na va¹i adresu</span></a></li>

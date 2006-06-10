@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="ISO-8859-2" ?>
 <config>
 
+  <servlet name="EditSoftware">
+    <action name="add" content="/add/switem.ftl">
+      <var name="TITLE" value="Vložit software" />
+    </action>
+    <action name="edit" content="/add/switem.ftl">
+      <var name="TITLE" value="Upravit software" />
+    </action>
+  </servlet>
+
   <servlet name="EditArticle">
       <action name="add" template="print" content="/add/article.ftl">
           <var name="TITLE" value="Vložení článku"/>
@@ -337,6 +346,9 @@
     <action name="hwsekce" content="/show/hwsekce.ftl">
       <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
     </action>
+    <action name="swsekce" content="/show/swsekce.ftl">
+      <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
+    </action>
     <action name="rubrika" content="/show/rubrika.ftl">
       <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
     </action>
@@ -395,6 +407,9 @@
 
   <servlet name="ShowObject">
     <action name="hardware" content="/show/hwitem.ftl">
+      <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
+    </action>
+    <action name="software" content="/show/switem.ftl">
       <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
     </action>
     <action name="discussion" content="/show/discussion.ftl">

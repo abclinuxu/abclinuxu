@@ -115,3 +115,21 @@ function insertAtCursor(myField, prefix, postfix) {
 		}
 	}
 }
+// start method for checkParent
+function startCheckParent(event) {
+    if (!event) {
+        var event = window.event;
+    }
+    var target = (event.target) ? event.target : event.srcElement;
+    if (target.checked) {
+        checkParent(target.parentNode);
+    }
+}
+// recursively traverses parent checkboxes for this check box and turn them on
+function checkParent(target) {
+    if (target.parentNode.id != "strom") {
+        target.parentNode.getElementsByTagName("input")[0].checked = true;
+        checkParent(target.parentNode);
+    }
+}
+
