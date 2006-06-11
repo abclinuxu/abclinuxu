@@ -33,14 +33,19 @@ public class PathGeneratorImpl implements PathGenerator {
      * Creates complete path for specified attachment of given object.
      * @param obj object which will be associated with the file
      * @param usage usage of the file
-     * @param filename name of uploaded file
+     * @param prefix string to be added to filename, it can be empty
+     * @param suffix extension of the file
      * @return path for the file
      * @throws java.io.IOException if file cannot be saved for any reason
      * (typically incorrect filesystem permissions)
      */
-     public String getPath(GenericObject obj, Type usage, String filename) throws IOException {
+     public File getPath(GenericObject obj, Type usage, String prefix, String suffix) throws IOException {
         if (! Type.SCREENSHOT.equals(usage))
             throw new InternalException("Not implemented");
+        if (prefix == null)
+            prefix = "";
+        if (suffix == null || suffix.length() == 0)
+            throw new IllegalArgumentException("File suffix must be specified!");
 
         StringBuffer sb = new StringBuffer("images/screenshots/");
         String id = String.valueOf(obj.getId());
@@ -53,6 +58,7 @@ public class PathGeneratorImpl implements PathGenerator {
         if (!dir.isDirectory())
             throw new IOException("Supposed path " + dir.getAbsolutePath() + " is not directory!");
 
-        return sb.append(id+"_"+filename).toString();
+        File file = File.createTempFile(id + "_" + prefix, suffix, dir);
+        return file;
      }
 }

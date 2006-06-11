@@ -2,50 +2,46 @@
 
 <#macro showArticle(relation)>
  <#local clanek=relation.child>
- <p>
+ <div class="clanek">
+  ${DATE.show(clanek.created, "CZ_DM")}&nbsp;
   <a href="/clanky/show/${relation.id}" target="_content">
-   ${TOOL.xpath(clanek,"data/name")}
-  </a><br>
-  ${DATE.show(clanek.created, "CZ_SHORT")}
- </p>
+   ${TOOL.xpath(clanek,"data/name")}</a>
+ </div>
 </#macro>
 
 <#macro showNews(relation)>
  <#local ITEM=TOOL.sync(relation.child), diz=TOOL.findComments(ITEM)>
- <p>${DATE.show(ITEM.created,"CZ_SHORT")}
- ${TOOL.xpath(ITEM,"data/content")}<br>
- <span style="font-size: 7pt">
-  <a href="${relation.url?default("/zpravicky/show/"+relation.id)}" target="_content" style="font-size: 7pt">Zobrazit</a>
-  <#if diz.responseCount gt 0>
-   Komentáøe: ${diz.responseCount}, poslední ${DATE.show(diz.updated, "CZ_FULL")}
-  </#if>
- </span>
- </p>
+ <div class="zpravicka">
+  ${DATE.show(ITEM.created,"CZ_SHORT")} | ${NEWS_CATEGORIES[ITEM.subType].name}<br />
+  <div>${TOOL.xpath(ITEM,"data/content")}</div>
+  <a href="${relation.url?default("/zpravicky/show/"+relation.id)}" target="_content"
+   >Komentáøù: ${diz.responseCount}</a>
+ </div>
+<hr />
 </#macro>
 
 
-<div align="center">
-<a href="/Index?src=sidebar" title="AbcLinuxu.cz" target="_content">
-<img src="/images/site/logo_small.gif" width=77 height=97 border=0 alt="AbcLinuxu.cz"></a>
+<div>
+<a href="/" title="AbcLinuxu.cz" target="_content">
+<img src="/images/site2/abc-logo.gif" width="148" height="46" alt="AbcLinuxu.cz" border="0"></a>
 </div>
 
 <br>
 
-<div align="center">
+<div>
 <form action="/Search" method="POST">
-<input type="text" name="query" size="12"><br>
-<input type="submit" value="Hledej">
+<input type="text" name="query" size="12">&nbsp;<input type="submit" value="Hledej">
 </form>
 </div>
 
-<a href="/clanky/show/5&src=sidebar" class="nadpis" target="_content">Èlánky</a>
+<h3><a href="/clanky" target="_content">Èlánky</a></h3>
 
 <#assign ARTICLES=VARS.getFreshArticles("NONE")>
 <#list ARTICLES as rel>
  <@showArticle rel />
 </#list>
 
-<h3 class="nadpis">Zprávièky</h3>
+<h3><a href="/zpravicky">Zprávièky</a></h3>
 
 <#assign NEWS=VARS.getFreshNews("NONE")>
 <#list NEWS as rel>

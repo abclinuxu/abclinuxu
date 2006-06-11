@@ -29,6 +29,10 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.utils.PathGenerator;
+import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.ImageTool;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 
@@ -41,7 +45,6 @@ import java.io.File;
 import org.apache.commons.fileupload.FileItem;
 import org.dom4j.Element;
 import org.dom4j.DocumentHelper;
-import org.dom4j.Node;
 
 /**
  * @author literakl
@@ -51,6 +54,8 @@ public class EditAttachment implements AbcAction {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditAttachment.class);
 
     public static final String VAR_RELATION = "RELATION";
+
+    public static final String PARAM_RELATION = "rid";
     public static final String PARAM_SCREENSHOT = "screenshot";
     public static final String PARAM_IMAGE_ID = "imageId";
 
@@ -63,21 +68,32 @@ public class EditAttachment implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
+        if (relation != null) {
+            Tools.sync(relation);
+            env.put(VAR_RELATION, relation);
+        } else
+            throw new MissingArgumentException("Chybí parametr relationId!");
 
         if (action == null)
             throw new MissingArgumentException("Chybí parametr action!");
 
+        // check permissions
+        if (user == null)
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
+
         if (action.equals(ACTION_ADD_SCREENSHOT))
-            return FMTemplateSelector.select("EditSoftware", "addScreenshot", env, request);
+            return FMTemplateSelector.select("EditAttachment", "addScreenshot", env, request);
 
         if (action.equals(ACTION_ADD_SCREENSHOT_STEP2))
             return actionAddScreenshotStep2(request, response, env);
 
-        if (action.equals(ACTION_REMOVE_SCREENSHOT))
-            return FMTemplateSelector.select("EditSoftware", "removeScreenshot", env, request);
-
-        if (action.equals(ACTION_REMOVE_SCREENSHOT_STEP2))
-            return actionRemoveScreenshotStep2(request, response, env);
+        // jen admin
+//        if (action.equals(ACTION_REMOVE_SCREENSHOT))
+//            return FMTemplateSelector.select("EditAttachment", "removeScreenshot", env, request);
+//
+//        if (action.equals(ACTION_REMOVE_SCREENSHOT_STEP2))
+//            return actionRemoveScreenshotStep2(request, response, env);
 
         return null;
     }
@@ -85,57 +101,29 @@ public class EditAttachment implements AbcAction {
     protected String actionAddScreenshotStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
-
+        User user = (User) env.get(Constants.VAR_USER);
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
 
-        boolean canContinue = true;
-        canContinue &= addScreenshot(params, item, env);
-
-        if (!canContinue) {
-            return FMTemplateSelector.select("EditSoftware", "addScreenshot", env, request);
-        }
+        boolean canContinue = addScreenshot(params, item, env);
+        if (!canContinue)
+            return FMTemplateSelector.select("EditAttachment", "addScreenshot", env, request);
 
         persistance.update(item);
 
-        String url = relation.getUrl();
-        if (url == null)
-            url = "/software/show/" + relation.getId();
+        // commit new version
+        Misc.commitRelation(item.getData().getRootElement(), relation, user);
+
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, url);
-        return null;
-    }
-
-    protected String actionRemoveScreenshotStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
-        Relation relation = (Relation) env.get(VAR_RELATION);
-        Item item = (Item) relation.getChild();
-
-        boolean canContinue = true;
-        canContinue &= removeScreenshot(params, item, env);
-
-        // TODO ak sa nepodari vymazat screenshot, mozno uz neexistuje
-        if (!canContinue) {
-            return FMTemplateSelector.select("EditSoftware", "removeScreenshot", env, request);
-        }
-
-        persistance.update(item);
-
-        String url = relation.getUrl();
-        if (url == null)
-            url = "/software/show/" + relation.getId();
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, url);
+        urlUtils.redirect(response, urlUtils.getRelationUrl(relation, true));
         return null;
     }
 
     /**
-     * Uploads new screenshot and creates a thumbnail (if needed). Changes are not synchronized with persistance.
-     *
+     * Uploads new screenshot and creates a thumbnail (if needed). Changes to Item are not synchronized with persistance.
      * @param params map holding request's parameters
-     * @param root   root element of record to be updated
-     * @param env    environment
+     * @param item item to be updated
+     * @param env environment
      * @return false, if there is a major error.
      */
     private boolean addScreenshot(Map params, Item item, Map env) throws IOException {
@@ -144,99 +132,43 @@ public class EditAttachment implements AbcAction {
         Element root = item.getData().getRootElement();
 
         if (fileItem == null) {
-            ServletUtils.addError(PARAM_SCREENSHOT, "Vyberte soubor s va?ím screenshotem!", env, null);
+            ServletUtils.addError(PARAM_SCREENSHOT, "Zadejte prosím cestu k souboru.", env, null);
             return false;
         }
 
         String suffix = getFileSuffix(fileItem.getName()).toLowerCase();
         if (!(suffix.equals("jpg") || suffix.equals("jpeg") || suffix.equals("png") || suffix.equals("gif"))) {
-            ServletUtils.addError(PARAM_SCREENSHOT, "Soubor musí být typu JPG, GIF nebo JPEG!", env, null);
+            ServletUtils.addError(PARAM_SCREENSHOT, "Soubor musí být typu PNG, GIF nebo JPEG.", env, null);
             return false;
         }
 
-        int nextId = getNextScreenshotId(root);
-
-        String fileName = pathGenerator.getPath(item, PathGenerator.Type.SCREENSHOT, nextId + "." + suffix);
-        File file = new File(AbcConfig.calculateDeployedPath(fileName));
+        File imageFile = pathGenerator.getPath(item, PathGenerator.Type.SCREENSHOT, "", "." + suffix);
         try {
-            fileItem.write(file);
+            fileItem.write(imageFile);
         } catch (Exception e) {
-            ServletUtils.addError(PARAM_SCREENSHOT, "Chyba p?i zápisu na disk!", env, null);
-            log.error("Neni mozne ulozit fotografii " + file.getAbsolutePath() + " na disk!", e);
+            ServletUtils.addError(PARAM_SCREENSHOT, "Chyba pøi zápisu na disk!", env, null);
+            log.error("Není mo¾né ulo¾it obrázek " + imageFile.getAbsolutePath() + " na disk!", e);
             return false;
         }
 
-        String thumbnailName = pathGenerator.getPath(item, PathGenerator.Type.SCREENSHOT, nextId + "_thumb.jpg");
-        boolean thumbnail = cz.abclinuxu.utils.ImageTool.createThumbnail(AbcConfig.calculateDeployedPath(fileName),
-                AbcConfig.calculateDeployedPath(thumbnailName));
+        File thumbnailFile = pathGenerator.getPath(item, PathGenerator.Type.SCREENSHOT, "mini_", ".jpg");
+        boolean thumbnail = ImageTool.createThumbnail(imageFile, thumbnailFile);
 
-        Element screenshots = DocumentHelper.makeElement(root, "screenshots");
-        Element screenshot = screenshots.addElement("screenshot");
-        screenshot.setAttributeValue("id", new Integer(nextId).toString());
-        screenshot.addElement("image").setText(fileName);
-        screenshots.setAttributeValue("nextId", new Integer(nextId + 1).toString());
+        Element screenshots = DocumentHelper.makeElement(root, "inset/images");
+        Element screenshot = screenshots.addElement("image");
+        String path = getWebPath(imageFile.getAbsolutePath());
+        screenshot.setText(path);
 
         if (thumbnail) {
-            screenshot.addElement("thumbnail").setText(thumbnailName);
+            path = getWebPath(thumbnailFile.getAbsolutePath());
+            screenshot.addAttribute("thumbnail", path);
         }
 
         return true;
     }
 
     /**
-     * TODO ak sa mazanie nepodari, musi na to upozornit uzivatela
-     * <p/>
-     * Removes screenshot from software and deletes the image and thumbnail. Changes are not synchronized with persistance.
-     *
-     * @param params map holding request's parameters
-     * @param root   root element of record to be updated
-     * @param env    environment
-     * @return false, if there is a major error.
-     */
-    private boolean removeScreenshot(Map params, Item item, Map env) {
-        String imageId = (String) params.get(PARAM_IMAGE_ID);
-        Element root = item.getData().getRootElement();
-        Node node = root.selectSingleNode("/data/screenshots/screenshot[@id='" + imageId + "']");
-
-        if (node == null || !(node instanceof Element))
-            return false;
-
-        Element element = (Element) node;
-        Element elementImage = element.element("image");
-        Element elementThumbnail = element.element("thumbnail");
-
-        if (elementImage != null)
-            deleteFile(elementImage);
-
-        if (elementThumbnail != null)
-            deleteFile(elementThumbnail);
-
-        node.detach();
-
-        return true;
-    }
-
-    /**
-     * Extracts text after last dot in string.
-     *
-     * @param name
-     * @return
-     */
-    private String getFilePrefix(String name) {
-        if (name == null)
-            return "";
-        int i = name.lastIndexOf('.');
-        if (i == -1)
-            return "";
-        else
-            return name.substring(0, i - 1);
-    }
-
-    /**
-     * Extracts text after last dot in string.
-     *
-     * @param name
-     * @return
+     * @return text after last dot in string.
      */
     private String getFileSuffix(String name) {
         if (name == null)
@@ -248,40 +180,8 @@ public class EditAttachment implements AbcAction {
             return name.substring(i + 1);
     }
 
-    /**
-     * Deletes a file, which filename is the content of <code>element</code>.
-     *
-     * @return true if the file was deleted
-     * @param Element, which contains file name
-     */
-    private boolean deleteFile(Element element) {
-        String fileName = element.getText();
-
-        if (fileName == null)
-            return false;
-
-        File file = new File(AbcConfig.calculateDeployedPath(fileName));
-        if (!file.delete()) {
-            log.warn("File " + fileName + "couldn't be deleted.");
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * @return Id for next screenshot.
-     */
-    private int getNextScreenshotId(Element root) {
-        Element screenshots = (Element) root.selectSingleNode("/data/screenshots");
-        if (screenshots != null) {
-            try {
-                return new Integer(screenshots.attributeValue("nextId")).intValue();
-            } catch (NumberFormatException e) {
-                log.error(e);
-            }
-        }
-
-        return 0;
+    private String getWebPath(String absolutePath) {
+        String deployPath = AbcConfig.getDeployPath();
+        return absolutePath.substring(deployPath.length() - 1);
     }
 }

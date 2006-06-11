@@ -18,6 +18,14 @@ Prehled clanku
 
 </#list>
 
+Reklama
+=======
+
+64bit.cz je internetovy obchod se servery a pracovnimi stanicemi Sun
+Microsystems. Objednavejte pohodlne servery a diskova pole rady 
+Sun Fire, Enterprise, StorEdge, Ultra a dalso s procesory SPARC nebo 
+AMD Opteron.
+
 Prehled zpravicek
 =================
 

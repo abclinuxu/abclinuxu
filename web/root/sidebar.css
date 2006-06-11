@@ -1,14 +1,21 @@
-/* spolecne */
-BODY { font-family: Lucida,Verdana,Helvetica; font-size: 8pt; 
-       background-color: #3a5e75; color: WHITE; 
-       padding: 0 0 0 0}
+body {	font-family: sans-serif;
+	font-size: small; 
+	background: #ececec;
+	color: black; 
+	padding: 0 0 0 0; }
 
-A { color: WHITE;
-    text-decoration: underline }
+a, h3 a:hover {
+	text-decoration: underline;
+	color: black; }
 
-A:hover { text-decoration: none }
+a:hover, h3 a { text-decoration: none; }
+.clanek { margin-bottom: 0.1em; }
+.clanek a { font-weight: bold; }
+.zpravicka a { color: #27648D; }
 
-.nadpis {  font-weight: bold;
-            color:#ffcc33 }
+.zpravicka a:hover {
+	background: #FFF8C3;
+	color: black; }
 
-
+.zpravicka div {
+	padding: 0.2em 0 0 0.2em; }

@@ -1424,29 +1424,25 @@ public class Tools implements Configurable {
     }
 
     /**
-     * Puts all informations about GenericDataObjects screenshots into a List of Maps
-     * todo Ma tato funkce smysl?
+     * Finds all screenshots for given object.
+     * @return list of Maps with two keys: path and optional thumbnailPath.
      */
-    public List getScreenshots(GenericDataObject obj) {
-        if (obj == null) return Collections.EMPTY_LIST;
+    public List screenshotsFor(GenericDataObject obj) {
+        if (obj == null)
+            return Collections.EMPTY_LIST;
 
-        List scrNodes = obj.getData().selectNodes("/data/screenshots/screenshot");
-        List ret = new ArrayList();
-        for (int i = 0; i < scrNodes.size(); i++) {
-            Element scrNode = (Element) scrNodes.get(i);
-            Map scr = new HashMap();
-            scr.put("id", scrNode.attributeValue("id"));
+        Element images = (Element) obj.getData().selectSingleNode("/data/inset/images");
+        if (images == null)
+            return Collections.EMPTY_LIST;
 
-            if (scrNode.element("image") != null) {
-                scr.put("image", scrNode.element("image").getText());
-                if (scrNode.element("thumbnail") != null)
-                    scr.put("thumbnail", scrNode.element("thumbnail").getText());
-                else
-                    scr.put("thumbnail", scrNode.element("image").getText());
-
-                ret.add(scr);
-            }
+        List result = new ArrayList();
+        for (Iterator iter = images.elementIterator("image"); iter.hasNext();) {
+            Element element = (Element) iter.next();
+            Map map = new HashMap(2, 1.0f);
+            map.put("path", element.getText());
+            map.put("thumbnailPath", element.attributeValue("thumbnail"));
+            result.add(map);
         }
-        return ret;
+        return result;
     }
 }

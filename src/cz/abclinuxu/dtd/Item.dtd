@@ -161,3 +161,9 @@
 <!ATTLIST feed type (#NMTOKEN) #REQUIRED> <!-- alowed value is software -->
 <!ELEMENT blog_digest (story+)> <!-- container for selected blog stories, that form special RSS -->
 <!ELEMENT story (#PCDATA)> <!-- integer, id of relation for selected high-quality story -->
+
+<!-- common -->
+<!ELEMENT inset (images*)> <!-- this element is child of data and it serves as container for various attachments -->
+<!ELEMENT images (image+)> <!-- container for screenshots and other images -->
+<!ELEMENT image (#PCDATA)> <!-- full path to the image -->
+<!ATTLIST image thumbnail (#NMTOKEN) #OPTIONAL> <!-- full path to the image's thumbnail -->

@@ -8,6 +8,7 @@
                 </li>
             <#else>
                 <li><a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
+                <li><a href="${URL.noPrefix("/inset/"+RELATION.id+"?action=addScreenshot")}">Pøidat obrázek</a></li>
                 <li><a href="${RELATION.url?default("/software/show/"+RELATION.id)}?varianta=print">Tisk</a></li>
                 <li>
                     <form action="/Search"><input type="text" class="text" name="query" value="${TOOL.xpath(ITEM,"/data/name")}" size="30">

@@ -251,8 +251,15 @@
                     <li><a href="http://www.linux.cz" rel="nofollow">linux.cz</a></li>
                     <li><a href="http://www.unixshop.cz">unixshop.cz</a></li>
                     <li><a href="http://www.pravednes.cz" rel="nofollow">pravednes.cz</a></li>
+                </ul>
+            </div>
+
+	    <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Placené odkazy</h1></div></div>
+            <div class="s_sekce">
+                <ul>
 		    <li><a href="http://www.autoweb.cz" rel="nofollow">autoweb.cz</a></li>
 		    <li><a href="http://shop.tricko-tricka.com">tricko-tricka.com</a></li>
+                    <li><a href="http://www.krasnyusmev.cz">Bìlení zubù White Pearl</a></li>
                 </ul>
             </div>
 

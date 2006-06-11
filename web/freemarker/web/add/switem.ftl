@@ -176,9 +176,9 @@
 
     <input type="hidden" name="rid" value="${RELATION.id}">
     <#if EDIT_MODE?if_exists>
-        <input type="hidden" name="action" value="add2">
-    <#else>
         <input type="hidden" name="action" value="edit2">
+    <#else>
+        <input type="hidden" name="action" value="add2">
     </#if>
 </form>
 

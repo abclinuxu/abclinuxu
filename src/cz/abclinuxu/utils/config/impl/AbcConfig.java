@@ -57,6 +57,8 @@ public class AbcConfig implements Configurable {
      */
     public void configure(Preferences prefs) throws ConfigurationException {
         deployPath = prefs.get(PREF_DEPLOY_PATH, null);
+        if (! deployPath.endsWith(File.separator))
+            deployPath = deployPath.concat(File.separator);
         viewUserPageSize = prefs.getInt(PREF_VIEWUSER_PAGINGSIZE,20);
         sectionArticleCount = prefs.getInt(PREF_SECTION_ARTICLES_COUNT, 25);
         articleSectionArticlesCount = prefs.getInt(PREF_ARTICLE_SECTION_ARTICLES_COUNT, 5);
@@ -66,7 +68,7 @@ public class AbcConfig implements Configurable {
     }
 
     /**
-     * @return directory, where application was deployed
+     * @return directory, where application was deployed. Last character is directory separator.
      */
     public static String getDeployPath() {
         return deployPath;
@@ -81,10 +83,7 @@ public class AbcConfig implements Configurable {
         if ( path==null ) throw new NullPointerException("path cannot be null!");
         if ( path.startsWith(File.separator) )
             return path;
-        if ( deployPath.endsWith(File.separator) )
-            return deployPath.concat(path);
-        else
-            return deployPath.concat(File.separator).concat(path);
+        return deployPath.concat(path);
     }
 
     /**

@@ -42,12 +42,12 @@ public class ImageTool {
      * @param thumbnailPath path where the thumbnail should be saved
      * @return true if thumbnail was created
      */
-    public static boolean createThumbnail(String imagePath, String thumbnailPath) throws IOException, AbcException {
+    public static boolean createThumbnail(File imagePath, File thumbnailPath) throws IOException, AbcException {
         BufferedImage img = null;
         BufferedImage img2 = null;
         boolean save = false;
 
-        img = ImageIO.read(new File(imagePath));
+        img = ImageIO.read(imagePath);
         if (img == null)
             throw new AbcException("Nepodaøilo se naèíst obrázek ze souboru "+imagePath);
 
@@ -62,7 +62,7 @@ public class ImageTool {
         }
 
         if (save)
-            ImageIO.write(img, "png", new File(thumbnailPath));
+            ImageIO.write(img, "png", thumbnailPath);
         return save;
     }
 

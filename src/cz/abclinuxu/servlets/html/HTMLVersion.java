@@ -29,6 +29,7 @@ import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.NotAuthorizedException;
+import cz.abclinuxu.exceptions.InvalidInputException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -110,9 +111,9 @@ public class HTMLVersion {
 //            log.error("Not found: "+url);
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             template = config.getTemplate("/errors/notfound.ftl");
-        } else if ( e instanceof MissingArgumentException ) {
+        } else if ( e instanceof MissingArgumentException || e instanceof InvalidInputException) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            template = config.getTemplate("/errors/generic.ftl");
+            template = config.getTemplate("/errors/badinput.ftl");
         } else if ( e instanceof NotAuthorizedException ) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             template = config.getTemplate("/errors/denied.ftl");
@@ -127,6 +128,7 @@ public class HTMLVersion {
         }
         SimpleHash root = new SimpleHash();
         root.put("EXCEPTION", e.toString());
+        root.put("EXCEPTION_MESSAGE", e.getMessage());
         try {
             template.process(root, writer);
         } catch (TemplateException e1) {

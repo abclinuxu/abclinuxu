@@ -270,6 +270,12 @@
       </action>
   </servlet>
 
+    <servlet name="EditAttachment" >
+        <action name="addScreenshot" content="/add/screenshot.ftl">
+            <var name="TITLE" value="Vlo¾it obrázek"/>
+        </action>
+    </servlet>
+
   <servlet name="EditGroup">
     <action name="create" content="/add/group.ftl" template="print">
       <var name="TITLE" value="Skupina"/>

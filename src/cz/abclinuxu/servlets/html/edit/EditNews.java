@@ -381,7 +381,7 @@ public class EditNews implements AbcAction {
         }
         try {
             NewsGuard.check(text);
-            text = Tools.encodeSpecial(text);
+//            text = Tools.encodeSpecial(text);
         } catch (ParserException e) {
             log.error("ParseException on '"+text+"'", e);
             ServletUtils.addError(PARAM_CONTENT, e.getMessage(), env, null);

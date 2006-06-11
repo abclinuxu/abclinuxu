@@ -30,8 +30,7 @@
 </#macro>
 
 <#macro showCommentsInListing(diz dateFormat urlPrefix)>
-    <a href="${diz.url?default(urlPrefix+"/show/"+diz.relationId)}">Komentáøù:&nbsp;
-    ${diz.responseCount}<@markNewComments diz/></a><#rt>
+    <a href="${diz.url?default(urlPrefix+"/show/"+diz.relationId)}">Komentáøù:&nbsp;${diz.responseCount}<@markNewComments diz/></a><#rt>
     <#lt><#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, dateFormat)}</#if>
 </#macro>
 
@@ -158,42 +157,23 @@
 <#macro showDiscussion(relation)>
     <#local DIZ = TOOL.createDiscussionTree(relation.child,USER?if_exists,relation.id,true)>
     <#if DIZ.monitored><#local monitorState="Pøestaò sledovat"><#else><#assign monitorState="Sleduj"></#if>
-    <div class="obal_ps">
-        <div class="ps_prepinac">
-        <!-- i kdyz to bude prazdne, tak to tu musi byt -->
-        </div>
 
-        <div class="ps"><div class="s">
-            <div class="s_nad_h1"><div class="s_nad_pod_h1">
-                <h1>Funkce</h1>
-            </div></div>
-
-           <div class="s_sekce">
-                <ul>
-                    <#if DIZ.hasUnreadComments>
-                        <li>
-                            <a href="#${DIZ.firstUnread}" title="Skoèit na první nepøeètený komentáø">První
-                            nepøeètený komentáø</a>
-                        </li>
-                    </#if>
-                    <li>
-                        <a href="${URL.prefix}/show/${DIZ.relationId}?varianta=print">Tisk diskuse</a>
-                    </li>
-                    <li>
-                        <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+DIZ.relationId)}"
-                        title="AbcMonitor za¹le emailem zprávu, dojde-li v diskusi ke zmìnì">${monitorState}</a>
-                        <span title="Poèet lidí, kteøí sledují tuto diskusi">(${DIZ.monitorSize})</span>
-                    </li>
-                    <#if USER?exists && USER.hasRole("discussion admin")>
-                        <li>
-                            <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+DIZ.relationId+"&amp;dizId="+DIZ.id)}">
-                            <#if DIZ.frozen>Rozmrazit<#else>Zmrazit</#if> diskusi</a>
-                        </li>
-                    </#if>
-                </ul>
-            </div>
-        </div></div> <!-- ps, s -->
-    </div> <!-- obal_ps -->
+    <div class="ds_toolbox">
+     <b>Nástroje:</b>
+       <#if DIZ.hasUnreadComments>
+         <a href="#${DIZ.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a>,
+       </#if>
+         <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+DIZ.relationId)}">${monitorState}</a>
+           <span title="Poèet lidí, kteøí sledují tuto diskusi">(${DIZ.monitorSize})</span>
+           <a class="info" href="#">?<span class="tooltip">Za¹le ka¾dý nový komentáø emailem na va¹i adresu</span></a>,
+         <a href="${URL.prefix}/show/${DIZ.relationId}?varianta=print">Tisk</a>
+       <#if USER?exists && USER.hasRole("discussion admin")>
+         <br />
+         <b>Admin:</b>
+         <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+DIZ.relationId+"&amp;dizId="+DIZ.id)}">
+            <#if DIZ.frozen>Rozmrazit<#else>Zmrazit</#if></a>
+       </#if>
+    </div>
 
     <p>
         <#if DIZ.frozen>

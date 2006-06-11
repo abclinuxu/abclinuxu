@@ -21,6 +21,7 @@ package cz.abclinuxu.utils;
 import cz.abclinuxu.data.GenericObject;
 
 import java.io.IOException;
+import java.io.File;
 
 /**
  * Interface for generating paths to store file for some object.
@@ -29,14 +30,16 @@ public interface PathGenerator {
 
     /**
      * Creates complete path for specified attachment of given object.
+     *
      * @param obj object which will be associated with the file
-     * @param usage usage of the file
-     * @param filename name of uploaded file
+     * @param usage  usage of the file
+     * @param prefix string to be added to filename, it can be empty
+     * @param suffix extension of the file
      * @return path for the file
      * @throws java.io.IOException if file cannot be saved for any reason
-     * (typically incorrect filesystem permissions)
+     *                             (typically incorrect filesystem permissions)
      */
-    public String getPath(GenericObject obj, Type usage, String filename) throws IOException;
+    public File getPath(GenericObject obj, Type usage, String prefix, String suffix) throws IOException;
 
     public class Type {
         private String value;

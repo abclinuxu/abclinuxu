@@ -388,6 +388,14 @@ td.pad, code.kod, pre.kod {
 
 .hw img.ikona { margin-right: 0.3em; }
 
+.ds_toolbox {
+	background:	#ececec;
+	border:		1px solid silver;
+	padding:	0.5em;
+	font-size:	90%;
+	margin-top:	0.5em;
+}
+
 .ds_hlavicka, .ds_hlavicka_novy {
 	margin-top:	10px;
 	background-color: #F0F0F0;
@@ -403,27 +411,10 @@ td.pad, code.kod, pre.kod {
 	color: gray;
 }
 
-.ds_controls_blacklisted
-{
-	display: none;
-}
-
-.ds_telo_blacklisted
-{
-	display: none;
-}
-
-.ds_hlavicka_me {
-	background-color: #e6f3ff;
-}
-
-.ds_hlavicka_novy {
-  background-color: #FFF8C3;
-}
-
-.ds_hlavicka_odkazy {
-	color:		#27648D;
-}
+.ds_controls_blacklisted, .ds_telo_blacklisted { display: none; }
+.ds_hlavicka_me { background-color: #e6f3ff; }
+.ds_hlavicka_novy { background-color: #FFF8C3; }
+.ds_hlavicka_odkazy { color: #27648D; }
 
 .ds_text {
 	padding:	5px;

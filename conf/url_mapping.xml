@@ -54,6 +54,10 @@
             <action>cz.abclinuxu.servlets.html.edit.EditRating</action>
         </mapping>
         <mapping>
+            <pattern>^/inset</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditAttachment</action>
+        </mapping>
+        <mapping>
             <pattern>^/blog/edit</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditBlog</action>
         </mapping>
