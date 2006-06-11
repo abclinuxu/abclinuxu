@@ -46,6 +46,14 @@
             <action>cz.abclinuxu.servlets.html.view.History</action>
         </mapping>
         <mapping>
+            <pattern>EditDiscussion</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditDiscussion</action>
+        </mapping>
+        <mapping>
+            <pattern>/rating</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditRating</action>
+        </mapping>
+        <mapping>
             <pattern>^/blog/edit</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditBlog</action>
         </mapping>
@@ -82,10 +90,6 @@
             <action>cz.abclinuxu.servlets.html.view.ShowDictionary</action>
         </mapping>
         <mapping>
-            <pattern>/rating</pattern>
-            <action>cz.abclinuxu.servlets.html.edit.EditRating</action>
-        </mapping>
-        <mapping>
             <pattern>^/Survey</pattern>
             <action>cz.abclinuxu.servlets.html.view.ShowSurvey</action>
         </mapping>
@@ -100,10 +104,6 @@
         <mapping>
             <pattern>EditCategory</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditCategory</action>
-        </mapping>
-        <mapping>
-            <pattern>EditDiscussion</pattern>
-            <action>cz.abclinuxu.servlets.html.edit.EditDiscussion</action>
         </mapping>
         <mapping>
             <pattern>^/hardware/edit</pattern>
