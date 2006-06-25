@@ -29,6 +29,8 @@ import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.persistance.extra.*;
 import cz.abclinuxu.data.Record;
 import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.User;
+import cz.abclinuxu.security.Roles;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -103,7 +105,7 @@ public class History implements AbcAction {
 
         if ( VALUE_TYPE_ARTICLES.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
-            if (uid>0) {
+            if (uid > 0) {
                 total = sqlTool.countArticleRelationsByUser(uid);
                 data = sqlTool.findArticleRelationsByUser(uid, qualifiers);
             } else {
@@ -115,7 +117,7 @@ public class History implements AbcAction {
 
         } else if ( VALUE_TYPE_NEWS.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
-            if ( uid>0 ) {
+            if ( uid > 0 ) {
                 total = sqlTool.countNewsRelationsByUser(uid);
                 data = sqlTool.findNewsRelationsByUser(uid, qualifiers);
             } else {
@@ -138,6 +140,28 @@ public class History implements AbcAction {
             data = sqlTool.findItemRelationsWithType(Item.HARDWARE, qualifiers);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_HARDWARE;
+
+        } else if ( VALUE_TYPE_SOFTWARE.equalsIgnoreCase(type) ) {
+            // temporary: check permissions TODO remove when released officially
+    	    User user = (User) env.get(Constants.VAR_USER);
+            if (user == null)
+                return FMTemplateSelector.select("ViewUser", "login", env, request);
+            if (!user.hasRole(Roles.CATEGORY_ADMIN))
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+            qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
+            if (uid > 0) {
+                CompareCondition userEqualsCondition = new CompareCondition(Field.OWNER, Operation.EQUAL, new Integer(uid));
+                total = sqlTool.countItemRelationsWithType(Item.SOFTWARE, new Qualifier[]{userEqualsCondition});
+                Qualifier[] tmp = new Qualifier[qualifiers.length + 1];
+                tmp[0] = userEqualsCondition;
+                System.arraycopy(qualifiers, 0, tmp, 1, qualifiers.length);
+                qualifiers = tmp;
+            } else
+                total = sqlTool.countItemRelationsWithType(Item.SOFTWARE, new Qualifier[]{});
+            data = sqlTool.findItemRelationsWithType(Item.SOFTWARE, qualifiers);
+            found = new Paging(data, from, count, total, qualifiers);
+            type = VALUE_TYPE_SOFTWARE;
 
         } else if ( VALUE_TYPE_DISCUSSION.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
@@ -162,7 +186,7 @@ public class History implements AbcAction {
 
         } else if ( VALUE_TYPE_DICTIONARY.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
-            if ( uid>0 ) {
+            if ( uid > 0 ) {
                 total = sqlTool.countRecordParentRelationsByUserAndType(uid, Record.DICTIONARY);
                 data = sqlTool.findRecordParentRelationsByUserAndType(uid, Record.DICTIONARY, qualifiers);
             } else {
