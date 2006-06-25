@@ -144,7 +144,7 @@ public class EditSoftware implements AbcAction {
         canContinue &= setName(params, root, env);
         canContinue &= setDescription(params, root, env);
         canContinue &= setVersion(params, root, env);
-        canContinue &= setUserInterface(params, item, env);
+        canContinue &= setUserInterface(params, item);
         canContinue &= setApplicationAlternatives(params, item);
         canContinue &= setLicenses(params, item);
         canContinue &= setUrl(params, PARAM_HOME_PAGE, root);
@@ -231,7 +231,7 @@ public class EditSoftware implements AbcAction {
         canContinue &= setName(params, root, env);
         canContinue &= setDescription(params, root, env);
         canContinue &= setVersion(params, root, env);
-        canContinue &= setUserInterface(params, item, env);
+        canContinue &= setUserInterface(params, item);
         canContinue &= setApplicationAlternatives(params, item);
         canContinue &= setLicenses(params, item);
         canContinue &= setUrl(params, PARAM_HOME_PAGE, root);
@@ -331,12 +331,10 @@ public class EditSoftware implements AbcAction {
      * @param item item to be updated
      * @return false, if there is a major error.
      */
-    private boolean setUserInterface(Map params, Item item, Map env) {
+    private boolean setUserInterface(Map params, Item item) {
         List entries = Tools.asList(params.get(PARAM_USER_INTERFACE));
-        if (entries.size() == 0) {
-            ServletUtils.addError(PARAM_USER_INTERFACE, "Vyberte prosím typ u¾ivatelského prostøedí.", env, null);
-            return false;
-        }
+        if (entries.size() == 0)
+            item.removeProperty(Constants.PROPERTY_USER_INTERFACE);
         item.setProperty(Constants.PROPERTY_USER_INTERFACE, new HashSet(entries));
         return true;
     }
