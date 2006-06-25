@@ -5,7 +5,7 @@
         ${TOOL.render(TOOL.element(software.data,"data/description"),USER?if_exists)}
     </div>
 
-    <table class="software">
+    <table class="swdetail">
         <tr>
             <td>Poslední verze:</td>
             <td>
@@ -52,8 +52,7 @@
                 <td>Je alternativou k:</td>
                 <td>
                     <#list alternatives as alternative>
-                        ${alternative}
-                        (<a href="" rel="nofollow">v¹echny alternativy</a>)<#if alternative_has_next>, </#if>
+                        <a href="">${alternative}</a><#if alternative_has_next>, </#if>
                     </#list>
                 </td>
             </tr>
@@ -66,15 +65,15 @@
         <#if (images?size > 0)>
             <h3>Galerie</h3>
 
-            <div>
+            <p class="galerie">
                 <#list images as image>
                     <#if image.thumbnailPath?exists>
-                        <a href="${image.path}"><img src="${image.thumbnailPath}" alt="screenshot" border="0"></a>
+                        <a href="${image.path}"><img src="${image.thumbnailPath}" alt="${TOOL.xpath(software,"/data/name")?if_exists}" border="0"></a>
                     <#else>
-                        <img src="${image.path}" alt="screenshot">
+                        <img src="${image.path}" alt="${TOOL.xpath(software,"/data/name")?if_exists}">
                     </#if>
                 </#list>
-            </div>
+            </p>
         </#if>
     </#if>
 </#macro>
