@@ -4,7 +4,7 @@
 <@lib.showMessages/>
 
 <#if PREVIEW?exists>
- <h2>Náhled</h2>
+ <h2>Náhled softwarového záznamu</h2>
  <p>
     Prohlédnìte si vzhled va¹eho záznamu. Opravte chyby a zvolte tlaèítko <code>Náhled</code>.
     Pokud jste s výsledkem spokojeni, stisknìte tlaèítko <code>Dokonèi</code>.
@@ -16,7 +16,7 @@
  </fieldset>
 </#if>
 
-<h2 class="st_nadpis">Nápovìda</h2>
+<h2>Nápovìda</h2>
 
 <p>
    Zadejte prosím co nejpodrobnìj¹í informace o tomto softwaru. Povinné polo¾ky jsou
@@ -26,7 +26,7 @@
    novinek.
 </p>
 
-<h2 class="st_nadpis">Formátování</h2>
+<h2>Formátování</h2>
 
 <p>
     Smíte pou¾ívat základní HTML znaèky. Pokud je nepou¾ijete,
@@ -89,7 +89,7 @@
                 Je alternativou pro<br> tyto programy z Windows
             </td>
             <td>
-                <#if PARAMS.replacesApps?exists>
+                <#if PARAMS.alternative?exists>
                     <#list TOOL.asList(PARAMS.alternative) as alternative>
                             <input type="text" name="alternative" value="${alternative}" size="40" tabindex="6"><br/>
                     </#list>
@@ -104,42 +104,42 @@
     	<tr>
             <td class="required">U¾ivatelské prostøedí</td>
             <td>
-                <div id="strom">
+                <div class="sw-strom">
                     <div>
-    		            <@lib.showOption "ui", "xwindows", UI_PROPERTY["xwindows"], "checkbox" />
-    		            <div style="margin-left: 1em;">
-                            <@lib.showOption "ui", "qt", UI_PROPERTY["qt"], "checkbox", "onclick=\"startCheckParent(event);\"" />
-                            <div style="margin-left: 1em;">
-            		            <@lib.showOption "ui", "kde", UI_PROPERTY["kde"], "checkbox", "onclick=\"startCheckParent(event);\"" />
-                            </div>
-    		            </div>
-    		            <div style="margin-left: 1em;">
-                            <@lib.showOption "ui", "gtk", UI_PROPERTY["gtk"], "checkbox", "onclick=\"startCheckParent(event);\"" />
-                            <div style="margin-left: 1em;">
-            		            <@lib.showOption "ui", "gnome", UI_PROPERTY["gnome"], "checkbox", "onclick=\"startCheckParent(event);\"" />
-                            </div>
-    		            </div>
-    		            <div style="margin-left: 1em;">
-                            <@lib.showOption "ui", "motif", UI_PROPERTY["motif"], "checkbox", "onclick=\"startCheckParent(event);\"" />
-    		            </div>
-    		            <div style="margin-left: 1em;">
-                            <@lib.showOption "ui", "java", UI_PROPERTY["java"], "checkbox", "onclick=\"startCheckParent(event);\"" />
-    		            </div>
-    		            <div style="margin-left: 1em;">
-                            <@lib.showOption "ui", "tk", UI_PROPERTY["tk"], "checkbox", "onclick=\"startCheckParent(event);\"" />
-    		            </div>
+    	               <@lib.showOption "ui", "xwindows", UI_PROPERTY["xwindows"], "checkbox" />
+    	               <div>
+                          <@lib.showOption "ui", "qt", UI_PROPERTY["qt"], "checkbox", " onclick=\"startCheckParent(event);\"" />
+                          <div>
+                             <@lib.showOption "ui", "kde", UI_PROPERTY["kde"], "checkbox", "onclick=\"startCheckParent(event);\"" />
+                          </div>
+    		       </div>
+    		       <div>
+                          <@lib.showOption "ui", "gtk", UI_PROPERTY["gtk"], "checkbox", " onclick=\"startCheckParent(event);\"" />
+                          <div>
+            	             <@lib.showOption "ui", "gnome", UI_PROPERTY["gnome"], "checkbox", " onclick=\"startCheckParent(event);\"" />
+                          </div>
+    		       </div>
+    		       <div>
+                          <@lib.showOption "ui", "motif", UI_PROPERTY["motif"], "checkbox", " onclick=\"startCheckParent(event);\"" />
+    		       </div>
+    		       <div>
+                          <@lib.showOption "ui", "java", UI_PROPERTY["java"], "checkbox", " onclick=\"startCheckParent(event);\"" />
+    		       </div>
+    		       <div>
+                          <@lib.showOption "ui", "tk", UI_PROPERTY["tk"], "checkbox", " onclick=\"startCheckParent(event);\"" />
+    		       </div>
                     </div>
                     <div>
-    		            <@lib.showOption "ui", "console", UI_PROPERTY["console"], "checkbox", "onclick=\"startCheckParent(event);\"" />
-    		            <div style="margin-left: 1em;">
-		                    <@lib.showOption "ui", "cli", UI_PROPERTY["cli"], "checkbox", "onclick=\"startCheckParent(event);\"" />
-    		            </div>
-    		            <div style="margin-left: 1em;">
-		                    <@lib.showOption "ui", "tui", UI_PROPERTY["tui"], "checkbox", "onclick=\"startCheckParent(event);\"" />
-    		            </div>
-    		            <div style="margin-left: 1em;">
-        		            <@lib.showOption "ui", "grconsole", UI_PROPERTY["grconsole"], "checkbox", "onclick=\"startCheckParent(event);\"" />
-    		            </div>
+    		       <@lib.showOption "ui", "console", UI_PROPERTY["console"], "checkbox" />
+    		       <div>
+                          <@lib.showOption "ui", "cli", UI_PROPERTY["cli"], "checkbox", " onclick=\"startCheckParent(event);\"" />
+    	               </div>
+    		       <div>
+		          <@lib.showOption "ui", "tui", UI_PROPERTY["tui"], "checkbox", " onclick=\"startCheckParent(event);\"" />
+    		       </div>
+    		       <div>
+        	          <@lib.showOption "ui", "grconsole", UI_PROPERTY["grconsole"], "checkbox", "onclick=\"startCheckParent(event);\"" />
+    	               </div>
                     </div>
                 </div>
             </td>
@@ -182,24 +182,6 @@
     </#if>
 </form>
 
-<a name="formatovani"></a>
-<h1>Nápovìda k formátování</h1>
-
-<p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html">znaèky</a>:
-A, ACRONYM, B, BR, BLOCKQUOTE, CITE, CODE, DIV, EM, I, HR, H1, H2, H3, LI,
-OL, P, PRE, STRONG, TT, UL, VAR. </p>
-
-<p>Nejrychlej¹í zpùsob formátování je rozdìlovat
-text do odstavcù. Systém detekuje prázdné øádky
-(dvakrát enter) a nahradí je HTML znaèkou odstavce.
-Pokud ale v textu pou¾ijete znaèku P èi BR,
-pak pøedpokládáme, ¾e o formátování se budete starat
-sami a tato konverze nebude aktivována.</p>
-
-<p>Pokud neovládáte HTML, doporuèuji si pøeèíst jeho
-<a href="http://www.kosek.cz/clanky/html/01.html">rychlokurz</a>.</p>
-
-<p>Text musí být HTML validní, proto znak men¹ítka èi vìt¹ítka zapisujte takto:
-<code>&lt;</code> jako <code>&amp;lt;</code> a <code>&gt;</code> jako <code>&amp;gt;</code>. </p>
+<#include "/include/napoveda-k-auto-formatovani.txt">
 
 <#include "../footer.ftl">
