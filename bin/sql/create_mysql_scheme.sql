@@ -145,6 +145,16 @@ ALTER TABLE relace ADD INDEX in_predek (typ_predka,predek);
 ALTER TABLE relace ADD INDEX in_predchozi (predchozi);
 ALTER TABLE relace ADD INDEX in_url (url);
 
+-- tabulka obsahujici dalsi hodnoty pro zvoleny objekt
+-- oddelene z XML aby se dalo dobre hledat uz v SQL
+CREATE TABLE vlastnost (
+ typ_predka CHAR(1) NOT NULL,
+ predek INT NOT NULL,
+ typ VARCHAR(16) NOT NULL,
+ hodnota VARCHAR(256) NOT NULL
+);
+ALTER TABLE vlastnost ADD INDEX in_predek (typ_predka,predek);
+
 -- tabulka se ctennosti daneho objektu
 CREATE TABLE citac (
  typ CHAR(1) NOT NULL,                 -- id tabulky predka
