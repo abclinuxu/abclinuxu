@@ -185,6 +185,7 @@ public class UpdateLinks extends TimerTask implements Configurable {
                 Link existingLink = (Link) storedLinks.remove(0);
                 existingLink.setText(link.getText());
                 existingLink.setUrl(link.getUrl());
+                existingLink.setUpdated(link.getUpdated());
                 persistance.update(existingLink);
             } else {
                 link.setOwner(1);
@@ -250,6 +251,7 @@ public class UpdateLinks extends TimerTask implements Configurable {
                 Link link = new Link();
                 link.setUrl(url);
                 link.setText(title);
+                link.setUpdated(entry.getPublishedDate());
 
                 result.add(link);
             }

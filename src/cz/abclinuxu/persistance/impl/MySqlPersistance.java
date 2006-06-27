@@ -906,23 +906,25 @@ public class MySqlPersistance implements Persistance {
 
         } else if (obj instanceof User) {
             sb.append("insert into uzivatel values(0,?,?,?,?,?,?)");
-            conditions.add(((User)obj).getLogin());
-            conditions.add(((User)obj).getName());
-            conditions.add(((User)obj).getEmail());
-            conditions.add(((User)obj).getPassword());
-            conditions.add(((User)obj).getNick());
-            conditions.add(((User)obj).getDataAsString().getBytes());
+            User user = (User)obj;
+            conditions.add(user.getLogin());
+            conditions.add(user.getName());
+            conditions.add(user.getEmail());
+            conditions.add(user.getPassword());
+            conditions.add(user.getNick());
+            conditions.add(user.getDataAsString().getBytes());
 
         } else if (obj instanceof Link) {
             sb.append("insert into odkaz values(0,?,?,?,?,?,?)");
-            conditions.add(new Integer(((Link)obj).getServer()));
-            conditions.add(((Link)obj).getText());
-            conditions.add(((Link)obj).getUrl());
-            conditions.add(Boolean.valueOf(((Link) obj).isFixed()));
-            conditions.add(new Integer(((Link)obj).getOwner()));
-            long now = System.currentTimeMillis();
-            conditions.add(new Timestamp(now));
-            ((Link)obj).setUpdated(new java.util.Date(now));
+            Link link = (Link)obj;
+            conditions.add(new Integer(link.getServer()));
+            conditions.add(link.getText());
+            conditions.add(link.getUrl());
+            conditions.add(Boolean.valueOf(link.isFixed()));
+            conditions.add(new Integer(link.getOwner()));
+            if (link.getUpdated() == null)
+                link.setUpdated(new java.util.Date());
+            conditions.add(new Timestamp(link.getUpdated().getTime()));
         }
     }
 
@@ -1897,13 +1899,17 @@ public class MySqlPersistance implements Persistance {
 
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("update odkaz set server=?,nazev=?,url=?,trvaly=?,pridal=? where cislo=?");
+            statement = con.prepareStatement("update odkaz set server=?,nazev=?,url=?,trvaly=?,pridal=?,kdy=? where cislo=?");
             statement.setInt(1,link.getServer());
             statement.setString(2,link.getText());
             statement.setString(3,link.getUrl());
             statement.setBoolean(4,link.isFixed());
             statement.setInt(5,link.getOwner());
-            statement.setInt(6,link.getId());
+            if (link.getUpdated() != null)
+                statement.setTimestamp(6, new Timestamp(link.getUpdated().getTime()));
+            else
+                statement.setNull(6, Types.TIMESTAMP);
+            statement.setInt(7,link.getId());
 
             int result = statement.executeUpdate();
             if ( result!=1 ) {
