@@ -58,6 +58,10 @@
             <action>cz.abclinuxu.servlets.html.edit.EditAttachment</action>
         </mapping>
         <mapping>
+            <pattern>EditRequest</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditRequest</action>
+        </mapping>
+        <mapping>
             <pattern>^/blog/edit</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditBlog</action>
         </mapping>
@@ -116,10 +120,6 @@
         <mapping>
             <pattern>^/clanky/edit</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditArticle</action>
-        </mapping>
-        <mapping>
-            <pattern>EditRequest</pattern>
-            <action>cz.abclinuxu.servlets.html.edit.EditRequest</action>
         </mapping>
         <mapping>
             <pattern>^/clanky/honorare</pattern>
