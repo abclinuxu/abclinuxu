@@ -102,6 +102,14 @@
    </td>
   </tr>
   <tr>
+    <td class="required">Jméno tohoto serveru</td>
+    <td>
+        <input type="text" name="antispam" value="${antispam?if_exists}" size="20" tabindex="3">
+        (antispamová kontrola)
+        <div class="error">${ERRORS.antispam?if_exists}</div>
+    </td>
+  </tr>
+  <tr>
     <td>Typ po¾adavku</td>
     <td>
         <select name="category">
@@ -113,15 +121,15 @@
   </tr>
   <tr>
    <td colspan="2">
-    <span class="required">Slovní popis</span><br>
-    <textarea name="text" cols="60" rows="15" tabindex="3">${PARAMS.text?if_exists?html}</textarea>
+    Slovní popis<br>
+    <textarea name="text" cols="60" rows="15" tabindex="4">${PARAMS.text?if_exists?html}</textarea>
     <span class="error">${ERRORS.text?if_exists}</span>
   </td>
   </tr>
   <tr>
    <td colspan="2" align="center">
-       <input type="submit" value="OK" tabindex="4">
-       <input type="submit" name="preview" value="Náhled" tabindex="5">
+       <input type="submit" value="OK" tabindex="5">
+       <input type="submit" name="preview" value="Náhled" tabindex="6">
    </td>
   </tr>
  </table>

@@ -102,16 +102,24 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í, a proto bez odpovìdi
     </td>
   </tr>
   <tr>
+    <td class="required">Jméno tohoto serveru</td>
+    <td>
+        <input type="text" name="antispam" value="${antispam?if_exists}" size="20" tabindex="3">
+        (antispamová kontrola)
+        <div class="error">${ERRORS.antispam?if_exists}</div>
+    </td>
+  </tr>
+  <tr>
    <td colspan="2">
     <span class="required">Po¾adavek</span>
     <div class="error">${ERRORS.text?if_exists}</div>
-    <textarea name="text" cols="60" rows="15" tabindex="3">${PARAMS.text?if_exists?html}</textarea>
+    <textarea name="text" cols="60" rows="15" tabindex="4">${PARAMS.text?if_exists?html}</textarea>
   </td>
   </tr>
   <tr>
    <td colspan="2">
        <input type="submit" value="Odeslat" tabindex="5">
-       <input type="submit" name="preview" value="Náhled" tabindex="4">
+       <input type="submit" name="preview" value="Náhled" tabindex="6">
    </td>
   </tr>
  </table>
