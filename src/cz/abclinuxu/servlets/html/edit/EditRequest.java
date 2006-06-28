@@ -64,6 +64,7 @@ public class EditRequest implements AbcAction, Configurable {
     public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_FORUM_ID = "forumId";
     public static final String PARAM_CATEGORY = "category";
+    public static final String PARAM_ANTISPAM = "antispam";
     public static final String PARAM_PREVIEW = "preview";
 
     public static final String VAR_REQUEST_RELATION = "REQUEST";
@@ -160,6 +161,9 @@ public class EditRequest implements AbcAction, Configurable {
         String category = (String) params.get(PARAM_CATEGORY);
         boolean error = false;
 
+        if ( ! checkAntispam(params, env))
+            error = true;
+
         if ( author==null || author.length()==0 ) {
             ServletUtils.addError(PARAM_AUTHOR,"Zadejte prosím své jméno.",env,null);
             error = true;
@@ -172,9 +176,6 @@ public class EditRequest implements AbcAction, Configurable {
             ServletUtils.addError(PARAM_EMAIL,"Neplatný email!.",env,null);
             error = true;
         }
-
-        if ( "Duplicitní diskuse".equals(category) )
-            messageRequired = false;
 
         if (messageRequired) {
             if (text == null || text.length() == 0) {
@@ -334,7 +335,7 @@ public class EditRequest implements AbcAction, Configurable {
         String title = comment.getTitle();
         String action = "<a href=\"/forum/show/" + relation.getId() + "#"+comment.getId()+"\">" + title + "</a>";
 
-        boolean saved = addRequest(request, action, true, env);
+        boolean saved = addRequest(request, action, false, env);
         if (!saved)
             return actionCommentTools(request, env);
 
@@ -392,6 +393,20 @@ public class EditRequest implements AbcAction, Configurable {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/hardware/show/" + Constants.REL_REQUESTS);
         return null;
+    }
+
+    /**
+     * Verifies that antispam field contains correct value. First implementation
+     * requires user to enter name of server.
+     * @return true if check was successfull.
+     */
+    private boolean checkAntispam(Map params, Map env) {
+        String value = (String) params.get(PARAM_ANTISPAM);
+        if ( value == null || value.indexOf("abclinuxu") == -1 ) {
+            ServletUtils.addError(PARAM_ANTISPAM, "Zadejte prosím jméno tohoto serveru.", env, null);
+            return false;
+        }
+        return true;
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {
