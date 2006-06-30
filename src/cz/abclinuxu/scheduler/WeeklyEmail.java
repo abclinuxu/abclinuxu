@@ -23,6 +23,7 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.DateTool;
+import cz.abclinuxu.utils.format.HtmlToTextFormatter;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.persistance.*;
 import cz.abclinuxu.persistance.extra.Qualifier;
@@ -93,6 +94,7 @@ public class WeeklyEmail extends TimerTask implements Configurable {
      */
     private void pushData(Map params) {
         SQLTool sqlTool = SQLTool.getInstance();
+        HtmlToTextFormatter formatter = new HtmlToTextFormatter();
         Item item;
         String title, content;
 
@@ -129,6 +131,7 @@ public class WeeklyEmail extends TimerTask implements Configurable {
             item = (Item) relation.getChild();
             title = Tools.xpath(item, "data/title");
             content = Tools.xpath(item, "data/content");
+            content = formatter.format(content);
             News newz = new News(title, content, item.getCreated(), relation.getUrl());
             newz.setAuthor(Tools.createUser(item.getOwner()).getName());
             newz.setComments(Tools.findComments(item).getResponseCount());

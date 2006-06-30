@@ -25,7 +25,7 @@ import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.view.*;
 import cz.abclinuxu.utils.email.EmailSender;
-import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.utils.format.HtmlToTextFormatter;
 import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 import java.util.Map;
@@ -55,6 +55,7 @@ public class CommentDecorator {
     public static Map getEnvironment(Comment comment) {
         HashMap env = new HashMap();
         Persistance persistance = PersistanceFactory.getPersistance();
+        HtmlToTextFormatter formatter = new HtmlToTextFormatter();
         Element root;
         String authorName = null;
         cz.abclinuxu.data.view.Comment dizComment;
@@ -74,7 +75,7 @@ public class CommentDecorator {
         if (parent == null)
             parent = new Integer(0);
         String text = root.elementText("text");
-        text = Tools.removeTags(text);
+        text = formatter.format(text);
 
         authorName = dizComment.getAnonymName();
         if (authorName == null) {

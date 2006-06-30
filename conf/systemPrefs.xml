@@ -170,6 +170,11 @@
                                 <entry key="smutek" value="&lt;img src=&quot;/images/smile/smutek.gif&quot; alt=&quot;:-(&quot; class=&quot;emo&quot;&gt;"/>
                             </map>
                         </node>
+                        <node name="HtmlToTextFormatter">
+                            <map>
+                                <entry key="line.length" value="60"/> 
+                            </map>
+                        </node>
                     </node>
                     <node name="DateTool">
                         <map>

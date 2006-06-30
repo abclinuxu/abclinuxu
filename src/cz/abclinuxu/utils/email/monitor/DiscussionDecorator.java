@@ -22,6 +22,7 @@ import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.format.HtmlToTextFormatter;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -47,13 +48,19 @@ public class DiscussionDecorator implements Decorator, Configurable {
      * @return environment
      */
     public Map getEnvironment(MonitorAction action) {
+        HtmlToTextFormatter formatter = new HtmlToTextFormatter();
         Map env = new HashMap();
         if (action.url!=null)
             env.put(VAR_URL, action.url);
         env.put(VAR_ACTOR, action.actor);
         env.put(VAR_PERFORMED, action.performed);
         env.put(VAR_NAME, action.getProperty(PROPERTY_NAME));
-        env.put(PROPERTY_CONTENT, action.getProperty(PROPERTY_CONTENT));
+
+        String text = (String) action.getProperty(PROPERTY_CONTENT);
+        if (text != null) {
+            text = formatter.format(text);
+            env.put(PROPERTY_CONTENT, text);
+        }
 
         String changeMessage = "";
         if (UserAction.ADD.equals(action.action))

@@ -22,7 +22,6 @@ import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.utils.email.EmailSender;
-import cz.abclinuxu.utils.email.monitor.Decorator;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
