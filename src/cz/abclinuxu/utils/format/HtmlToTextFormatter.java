@@ -21,9 +21,11 @@ package cz.abclinuxu.utils.format;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.AbcException;
 
 import org.htmlparser.Node;
 import org.htmlparser.lexer.Lexer;
+import org.htmlparser.lexer.Page;
 import org.htmlparser.lexer.nodes.TagNode;
 import org.htmlparser.lexer.nodes.StringNode;
 import org.gjt.jedit.TextUtilities;
@@ -32,6 +34,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.prefs.Preferences;
+import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 
 /**
  * This class is able to format HTML code into text by skipping tags
@@ -49,9 +53,15 @@ public class HtmlToTextFormatter implements Configurable {
         ConfigurationManager.getConfigurator().configureMe(this);
     }
 
-    public String format(String input) {
+    public String format(String input) throws AbcException {
         StringBuffer sb = new StringBuffer();
-        Lexer lexer = new Lexer(input);
+        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes());
+        Lexer lexer = null;
+        try {
+            lexer = new Lexer(new Page(bais, "ISO-8859-2"));
+        } catch (UnsupportedEncodingException e) {
+            throw new AbcException(e.getMessage(), e);
+        }
         Node node;
 
         try {
@@ -89,7 +99,9 @@ public class HtmlToTextFormatter implements Configurable {
             links.add(tag.getAttribute("href"));
             sb.append("[" + links.size() + "] ");
         } else if ("BR".equals(tag.getTagName())) {
-            sb.append('\n');
+            sb.append('\n').append('\n');
+        } else if ("P".equals(tag.getTagName())) {
+            sb.append('\n').append('\n');
         }
     }
 
@@ -100,7 +112,10 @@ public class HtmlToTextFormatter implements Configurable {
 
     public static void main(String[] args) {
         HtmlToTextFormatter f = new HtmlToTextFormatter();
-        System.out.println(f.format("<p>Server <a href=\"http://none.net\">None</a> nic neohlasil...<br/>"
-                + "Tym    padom pokracuje vo svojej <i>strategii</i> <a href=\"http://none.net/strategy\">prilakat uzivatelov ich netrpezlivostou</a></p>"));
+        String text1 = "<p>Server <a href=\"http://none.net\">None</a> nic neohlasil...<br/>"
+                        + "Tym    padom pokracuje vo svojej <i>strategii</i> <a href=\"http://none.net/strategy\">prilakat uzivatelov ich netrpezlivostou</a></p>";
+        String text2 = "<i>Støíbrná</i>\n koèka\n <b>skákala</b>\n pøes rù¾ového konì <u>u ¹i¹atého</u> melounu.";
+        System.out.println(f.format(text1));
+        System.out.println(f.format(text2));
     }
 }
