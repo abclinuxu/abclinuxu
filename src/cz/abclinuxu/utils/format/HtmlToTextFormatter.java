@@ -80,7 +80,7 @@ public class HtmlToTextFormatter implements Configurable {
                 sb.append(formatted);
                 sb.append("\n\n");
 
-                int  i = 0;
+                int  i = 1;
                 for (Iterator iter = links.iterator(); iter.hasNext(); i++) {
                     sb.append(i).append(". ").append((String) iter.next()).append('\n');
                 }
