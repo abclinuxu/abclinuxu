@@ -55,4 +55,6 @@ public class Roles {
     public static final String CONTENT_ADMIN = "content admin";
     /** user can create content with URL derived under public content */
     public static final String CAN_DERIVE_CONTENT = "derive content";
+    /** user can manage attachments */
+    public static final String ATTACHMENT_ADMIN = "attachment admin";
 }

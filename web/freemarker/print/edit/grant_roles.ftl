@@ -31,6 +31,7 @@
      <input type="checkbox" name="roles" value="discussion admin" <@isDefined "discussion admin"/>> Administrátor diskusí<br>
      <input type="checkbox" name="roles" value="content admin" <@isDefined "content admin"/>> Administrátor dokumentù<br>
      <input type="checkbox" name="roles" value="requests admin" <@isDefined "requests admin"/>> Administrátor po¾adavkù<br>
+     <input type="checkbox" name="roles" value="attachment admin" <@isDefined "attachment admin"/>> Administrátor pøíloh<br>
      <input type="checkbox" name="roles" value="category admin" <@isDefined "category admin"/>> Administrátor sekcí<br>
      <input type="checkbox" name="roles" value="dictionary admin" <@isDefined "dictionary admin"/>> Administrátor slovníku<br>
      <input type="checkbox" name="roles" value="tip admin" <@isDefined "tip admin"/>> Administrátor tipù<br>
