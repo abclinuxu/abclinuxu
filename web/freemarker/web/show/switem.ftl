@@ -18,9 +18,12 @@
                 <form action="/Search"><input type="text" class="text" name="query" value="${TOOL.xpath(ITEM,"/data/name")}">
                     <input type="submit" class="button" value="Hledej">
                 </form>
+                <#if USER?exists && USER.hasRole("attachment admin")>
+                    <li><a href="${URL.noPrefix("/inset/"+RELATION.id+"?action=manage")}">Správa pøíloh</a></li>
+                </#if>
                 <#if USER?exists && USER.hasRole("move relation")>
                     <hr />
-                    <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Pøesunout polo¾ku</a></li>
+                    <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Pøesunout</a></li>
                 </#if>
                 <#if USER?exists && USER.hasRole("remove relation")>
                     <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/software")}">Smazat</a></li>
@@ -32,6 +35,8 @@
 
 <#include "../header.ftl">
 <#import "../misc/software.ftl" as swlib>
+
+<@lib.showMessages/>
 
 <div class="sw">
     <@swlib.showSoftware ITEM, true />
