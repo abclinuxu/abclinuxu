@@ -274,6 +274,12 @@
         <action name="addScreenshot" content="/add/screenshot.ftl">
             <var name="TITLE" value="Vlo¾it obrázek"/>
         </action>
+        <action name="addScreenshot" content="/misc/manage_attachments.ftl">
+            <var name="TITLE" value="Správa pøíloh"/>
+        </action>
+        <action name="remove" content="/remove/attachment.ftl">
+            <var name="TITLE" value="Smazání pøíloh(y)"/>
+        </action>
     </servlet>
 
   <servlet name="EditGroup">
@@ -494,7 +500,6 @@
     <action name="articles" content="/show/history_articles.ftl">
       <var name="TITLE" value="Historie èlánkù" />
     </action>
-<!-- TODO tohle je nejake divne -->
     <action name="news" content="/show/history_articles.ftl">
       <var name="TITLE" value="Historie zprávièek" />
     </action>
