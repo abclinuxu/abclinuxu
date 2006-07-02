@@ -44,6 +44,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.List;
 import java.util.Iterator;
+import java.util.Collections;
 import java.io.IOException;
 import java.io.File;
 
@@ -155,10 +156,13 @@ public class EditAttachment implements AbcAction {
         Item item = (Item) relation.getChild();
         env.put(VAR_XML, NodeModel.wrap((new DOMWriter().write(item.getData()))));
 
-        if (params.get(PARAM_ATTACHMENT) == null) {
+        Object param = params.get(PARAM_ATTACHMENT);
+        if (param == null) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Nevybrali jste ¾ádnou pøílohu na smazání.", env, null);
             return FMTemplateSelector.select("EditAttachment", "manage", env, request);
         }
+        if (param instanceof String)
+            params.put(PARAM_ATTACHMENT, Collections.singletonList(param));
 
         return FMTemplateSelector.select("EditAttachment", "remove", env, request);
     }
