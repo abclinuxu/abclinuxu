@@ -987,32 +987,34 @@ public class Tools implements Configurable {
      * in <<code>prohibited</code> list as form hidden input.
      */
     public static String saveParams(Map params, SimpleSequence prohibited) throws TemplateModelException {
-        List exceptions;
-        if ( params==null || params.size()==0 )
-            return "";
-        if ( prohibited==null )
-            exceptions = new ArrayList(1);
-        else {
-            exceptions = new ArrayList(prohibited.size());
-            for ( int i = 0, j = prohibited.size(); i<j; i++ ) {
-                exceptions.add(((TemplateScalarModel)prohibited.get(i)).getAsString());
-            }
-        }
+        List exceptions = null;
+        if (prohibited.size() > 0)
+            exceptions = prohibited.toList();
+        return saveParams(params, exceptions);
+    }
 
-        StringBuffer sb = new StringBuffer(params.size()*50);
+    /**
+     * Encodes all mapping from <code>params</code> except those listed
+     * in <<code>prohibited</code> list as form hidden input.
+     */
+    public static String saveParams(Map params, List exceptions) {
+        if (params == null || params.size() == 0)
+            return "";
+        if (exceptions == null)
+            exceptions = Collections.EMPTY_LIST;
+
+        StringBuffer sb = new StringBuffer(params.size() * 50);
         Set entries = params.keySet();
         for (Iterator iter = entries.iterator(); iter.hasNext();) {
             String key = (String) iter.next();
-            if ( exceptions.contains(key) )
+            if (exceptions.contains(key))
                 continue;
 
             List values = null;
-            if ( params.get(key) instanceof List ) {
+            if (params.get(key) instanceof List)
                 values = (List) params.get(key);
-            } else {
-                values = new ArrayList(1);
-                values.add(params.get(key));
-            }
+            else
+                values = Collections.singletonList(params.get(key));
 
             for (Iterator iter2 = values.iterator(); iter2.hasNext();) {
                 String value = (String) iter2.next();
@@ -1024,14 +1026,6 @@ public class Tools implements Configurable {
             }
         }
         return sb.toString();
-    }
-
-    /**
-     * Encodes all mapping from <code>params</code> except those listed
-     * in <<code>prohibited</code> list as form hidden input.
-     */
-    public static String saveParams(Map params, List prohibited) throws TemplateModelException {
-        return saveParams(params, new SimpleSequence(prohibited));
     }
 
     /**
