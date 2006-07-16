@@ -999,6 +999,13 @@ public class MySqlPersistance implements Persistance {
                 sb.append("prezdivka like ?");
                 conditions.add(tmp);
             }
+
+            tmp = user.getDataAsString();            
+            if ((tmp != null && tmp.length() > 0)) {
+                if (addAnd) sb.append(" and "); else addAnd = true;
+                sb.append("data like ?");
+                conditions.add(tmp);
+            }
         }
     }
 

@@ -48,6 +48,7 @@ public class SelectUser implements AbcAction {
     public static final String PARAM_LOGIN = "login";
     public static final String PARAM_NAME = "name";
     public static final String PARAM_EMAIL = "email";
+    public static final String PARAM_CITY = "city";
     public static final String PARAM_FROM = "from";
 
     public static final String VAR_HIDDEN_FIELDS_PARAMS = "SAVED_PARAMS";
@@ -106,6 +107,7 @@ public class SelectUser implements AbcAction {
         canContinue &= setName(params, searched, env);
         canContinue &= setLogin(params, searched, env);
         canContinue &= setEmail(params, searched, env);
+	canContinue &= setCity(params,searched, env);
 
         if ( !canContinue )
             return actionShowForm(request,env,params);
@@ -149,7 +151,8 @@ public class SelectUser implements AbcAction {
         String url = (String) params.remove(PARAM_URL);
         params.remove(PARAM_EMAIL);
         params.remove(PARAM_LOGIN);
-        params.remove(PARAM_NAME);
+        params.remove(PARAM_CITY);
+	params.remove(PARAM_NAME);
         params.remove(PARAM_FROM);
         params.remove(SUBMIT_PREVIOUS_PAGE);
         params.remove(SUBMIT_NEXT_PAGE);
@@ -162,6 +165,25 @@ public class SelectUser implements AbcAction {
     ///////////////////////////////////////////////////////////////////////////
     //                          Setters                                      //
     ///////////////////////////////////////////////////////////////////////////
+
+     /**
+      * Sets city search field from parameters.
+      * @param params map holding request's parameters
+      * @param user user to be updated
+      * @param env environment
+      * @return false, if there is a major error.
+      */
+     private boolean setCity(Map params, User user, Map env) {
+         String city = (String) params.get(PARAM_CITY);
+         if (city==null || city.length()==0)
+             return true;
+         if ( city.length()>0 && city.length()<3 ) {
+             ServletUtils.addError(PARAM_CITY, "Bydli¹tì musí obsahovat nejménì tøi písmena!", env, null);
+             return false;
+         }
+    	 user.setData("%<city>%"+city+"%</city>%");
+	     return true;                                                                                               
+     }
 
     /**
      * Sets name search field from parameters.
@@ -252,7 +274,8 @@ public class SelectUser implements AbcAction {
         prohibited.add(PARAM_ACTION);
         prohibited.add(PARAM_USER);
         prohibited.add(PARAM_NAME);
-        prohibited.add(PARAM_LOGIN);
+        prohibited.add(PARAM_CITY);
+	prohibited.add(PARAM_LOGIN);
         prohibited.add(PARAM_EMAIL);
         prohibited.add(PARAM_FROM);
         prohibited.add(SUBMIT_PREVIOUS_PAGE);

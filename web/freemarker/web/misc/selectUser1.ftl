@@ -11,6 +11,7 @@ najít urèitého u¾ivatele. Mù¾ete zadat jeho</p>
 <li>pøihla¹ovací jméno (tøeba jen èást)
 <li>jméno u¾ivatele (tøeba jen èást)
 <li>email (tøeba jen èást)
+<li>bydli¹tì (tøeba jen èást)
 </ul>
 
 <p>V¾dy vyplòte alespoò jedno vstupní políèko, do nìho¾ napi¹te nejménì
@@ -49,6 +50,13 @@ z nalezených u¾ivatelù, se kterým budete moci pokraèovat v této akci.</p>
      <input type="text" name="email" size="25" value="${PARAMS.email?if_exists}">
      <div class="error">${ERRORS.email?if_exists}</div>
     </td>
+   </tr>
+    <tr>                                                                                                            
+    <td width="100">Bydli¹tì u¾ivatele</td>                                                                        
+    <td>                                                                                                           
+     <input type="text" name="city" size="25" value="${PARAMS.city?if_exists}">                                    
+     <div class="error">${ERRORS.city?if_exists}</div>                                                             
+    </td>                                                                                                          
    </tr>
    <tr>
     <td width="100">&nbsp;</td>
