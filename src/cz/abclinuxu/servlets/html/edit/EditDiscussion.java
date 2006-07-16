@@ -52,6 +52,7 @@ import org.htmlparser.util.ParserException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Cookie;
 import java.util.*;
 
 /**
@@ -73,6 +74,9 @@ public class EditDiscussion implements AbcAction {
     public static final String PARAM_PREVIEW = "preview";
     public static final String PARAM_URL = "url";
     public static final String PARAM_SOLVED = "solved";
+    public static final String PARAM_ANTISPAM = "antispam";
+
+    public static final String COOKIE_USER_VERIFIED = "usrVrfd";
 
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_DISCUSSION = "DISCUSSION";
@@ -80,6 +84,7 @@ public class EditDiscussion implements AbcAction {
     public static final String VAR_PREVIEW = "PREVIEW";
     public static final String VAR_PARENT_TITLE = "PARENT_TITLE";
     public static final String VAR_FORUM_QUESTION = "FORUM_QUESTION";
+    public static final String VAR_USER_VERIFIED = "USER_VERIFIED";
 
     public static final String ACTION_ADD_DISCUSSION = "addDiz";
     public static final String ACTION_ADD_QUESTION = "addQuez";
@@ -328,6 +333,7 @@ public class EditDiscussion implements AbcAction {
             env.put(VAR_PARENT_TITLE, getTitleFromParent(relation));
         }
 
+        detectSpambotCookie(request, params, env, user);
         return FMTemplateSelector.select("EditDiscussion","reply",env,request);
     }
 
@@ -376,6 +382,7 @@ public class EditDiscussion implements AbcAction {
         }
 
         boolean canContinue = true;
+        detectSpambotCookie(request, params, env, user);
         canContinue &= setId(dizRecord, comment);
         canContinue &= setCreated(comment);
         canContinue &= setParent(params, comment);
@@ -383,6 +390,7 @@ public class EditDiscussion implements AbcAction {
         canContinue &= setTitle(params, root, env);
         canContinue &= setText(params, root, env);
         canContinue &= setUserIPAddress(root, request);
+        canContinue &= checkSpambot(request, response, params, env, user);
 //        canContinue &= testAnonymCanPostComments(user, env);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
@@ -1080,7 +1088,7 @@ public class EditDiscussion implements AbcAction {
             }
             if (tmp.indexOf('\n')!=-1)
                 tmp = tmp.replace('\n', ' ');
-            tmp = Misc.filterDangerousCharacters(tmp);            
+            tmp = Misc.filterDangerousCharacters(tmp);
             DocumentHelper.makeElement(root,"title").setText(tmp);
         } else {
             ServletUtils.addError(PARAM_TITLE, "Zadejte titulek!", env, null);
@@ -1329,8 +1337,65 @@ public class EditDiscussion implements AbcAction {
      * @return true if discussion is question in forum, false otherwise (discussion for article, news, story etc)
      */
     static boolean isQuestionInForum(Relation relation) {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        GenericObject parent = persistance.findById(relation.getParent());
-        return (parent instanceof Category && ((Category)parent).getType()==Category.FORUM);
+        return true;
+//        Persistance persistance = PersistanceFactory.getPersistance();
+//        GenericObject parent = persistance.findById(relation.getParent());
+//        return (parent instanceof Category && ((Category)parent).getType()==Category.FORUM);
+    }
+
+    /**
+     * This method detects if there is cookie COOKIE_USER_VERIFIED. In such case
+     * the boolean VAR_USER_VERIFIED is set in environment and cookie value
+     * is set to PARAM_AUTHOR.
+     */
+    static void detectSpambotCookie(HttpServletRequest request, Map params, Map env, User user) {
+        if (request == null)
+            return;
+        if (user != null)
+            return;
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null || cookies.length == 0)
+            return;
+        for (int i = 0; i < cookies.length; i++) {
+            Cookie cookie = cookies[i];
+            if (! COOKIE_USER_VERIFIED.equals(cookie.getName()))
+                continue;
+            env.put(VAR_USER_VERIFIED, Boolean.TRUE);
+            String name = cookie.getValue();
+            if (name != null && name.length() > 0)
+                params.put(PARAM_AUTHOR, name);
+        }
+    }
+
+    /**
+     * Performs anti-spambot detection. Logged in user or already verified user is automatically allowed
+     * to submit comment. Other users must enter current year. In such case new cookie is created, which
+     * will hold their name and its existence will show that anti-spambot detection was already successfully
+     * performed for this user.
+     * @return false if anti-spambot rules were not satisfied
+     */
+    static boolean checkSpambot(HttpServletRequest request, HttpServletResponse response, Map params, Map env, User user) {
+        if (request == null || response == null)
+            return true;
+        if (user != null || env.containsKey(VAR_USER_VERIFIED))
+            return true;
+
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        String s = (String) params.get(PARAM_ANTISPAM);
+        if (! String.valueOf(year).equals(s)) {
+            ServletUtils.addError(PARAM_ANTISPAM, "Zadejte prosím leto¹ní rok.", env, null);
+            return false;
+        }
+
+        env.put(VAR_USER_VERIFIED, Boolean.TRUE);
+        String name = (String) params.get(PARAM_AUTHOR);
+        if (name == null)
+            name = "";
+        Cookie cookie = new Cookie(COOKIE_USER_VERIFIED, name);
+        cookie.setPath("/");
+        cookie.setMaxAge(5 * 365 * 24 * 3600);
+        response.addCookie(cookie);
+
+        return true;
     }
 }

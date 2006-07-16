@@ -12,7 +12,7 @@
 </#if>
 
 <#if THREAD?exists>
- <h1>Pøíspìvek, na který reagujete</h1>
+ <h2>Pøíspìvek, na který reagujete</h2>
  <@lib.showThread THREAD, 0, TOOL.createEmptyDiscussion(), false />
 
  <script language="javascript1.2" type="text/javascript">
@@ -25,13 +25,13 @@
 </#if>
 
 <#if PREVIEW?exists>
- <h1>Náhled va¹eho pøíspìvku</h1>
+ <h2>Náhled va¹eho pøíspìvku</h2>
  <div style="padding-left: 30pt">
   <@lib.showThread PREVIEW, 0, TOOL.createEmptyDiscussion(), false />
  </div>
 </#if>
 
-<h1>Vá¹ komentáø</h1>
+<h2>Vá¹ komentáø</h2>
 
 <form action="${URL.make("/EditDiscussion")}" method="POST" name="replyForm">
   <#if ! USER?exists>
@@ -46,6 +46,15 @@
         <input tabindex="3" type="text" size="30" name="author" value="${PARAMS.author?if_exists?html}">
     <span class="error">${ERRORS.author?if_exists}</span>
    </p>
+   <#if ! USER_VERIFIED?if_exists>
+       <p>
+           <span class="required">Zadejte aktuální rok</span>
+           <input type="text" size="4" name="antispam" value="${PARAMS.antispam?if_exists?html}">
+           <a class="info" href="#">?<span class="tooltip">Vlo¾te aktuální rok. Jedná se o ochranu pøed spamboty.
+           Po úspì¹ném ovìøení se ulo¾í cookie (vèetnì va¹eho jména) a tato kontrola pøestane být provádìna.</span></a>
+           <span class="error">${ERRORS.antispam?if_exists}</span>
+       </p>
+   </#if>
   </#if>
   <p>
    <span class="required">Titulek</span><br>
@@ -99,26 +108,6 @@
  </#if>
 </form>
 
-<h1>Nápovìda k formátování</h1>
-
-<p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html" rel="nofollow">znaèky</a>:
-A, B, BR, BLOCKQUOTE, CITE, CODE, DEL, DIV, EM, I, INS, HR, H1, H2, H3, LI,
-OL, P, PRE, STRONG, TT, UL, VAR. </p>
-
-<p>Nejrychlej¹í zpùsob formátování je rozdìlovat
-text do odstavcù. Systém detekuje prázdné øádky
-(dvakrát enter) a nahradí je HTML znaèkou odstavce.
-Pokud ale v textu pou¾ijete znaèku P èi BR,
-pak pøedpokládáme, ¾e o formátování se budete starat
-sami a tato konverze nebude aktivována.</p>
-
-<p>Pokud neovládáte HTML, doporuèuji si pøeèíst jeho
-<a href="http://www.kosek.cz/clanky/html/01.html">rychlokurz</a>.</p>
-
-<p>Text musí být HTML validní, proto znak men¹ítka èi vìt¹ítka zapisujte takto:
-<code>&lt;</code> jako <code>&amp;lt;</code> a <code>&gt;</code> jako <code>&amp;gt;</code>.
-Dal¹ím èastým problémem je, jak vlo¾it výpis logu èi konfiguraèní soubor. V tomto
-pøípadì vá¹ text vlo¾te mezi znaèky PRE, pøíli¹ dlouhé øádky rozdìlte klávesou enter.</p>
-
+<#include "/include/napoveda-k-auto-formatovani.txt">
 
 <#include "../footer.ftl">
