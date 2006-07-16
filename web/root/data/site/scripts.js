@@ -30,6 +30,7 @@ function schovej_vlakno(id) {
 					document.getElementById('comment'+id+'_toggle2').style.display = 'inline'
 				}
     }
+		prepareCommentNext();
 }
 
 function addSidebar() {
@@ -133,3 +134,104 @@ function checkParent(target) {
     }
 }
 
+function prepareCommentNext() {
+	window.dsUtils.nextComments = new Object();
+	if (window.hiddenNext != null) {
+		window.hiddenNext.style.display = "";
+		window.hiddenNext.nextSibling.nodeValue = " | ";
+	}
+	var children = document.getElementById("st").childNodes;
+	var stack = new Array();
+	for (var i = 0; i < children.length; i++) {
+		if (isExpandedCommentNode(children[i])) {
+			stack.unshift(children[i]);
+		}
+	}
+	searchNextNewComment(stack);
+}
+
+function searchNextNewComment(stack) {
+	var last;
+	var node;
+	while (stack.length > 0) {
+		node = stack.pop();
+		if (node.className.match(dsUtils.re_comment_novy)) {
+			getFirstElementByName(getFirstElementByName(node,"DIV"), "A").onclick = nextCommentClick;
+			var name = getFirstElementByName(node, "A").name;
+			if (last != null) {
+				window.dsUtils.nextComments[getFirstElementByName(last, "A").name] = name;
+			}
+			last = node;
+		}
+		//ds_hlavicka -> následující ds_text_user*
+		node = node.nextSibling;
+		while (node != null && (node.nodeType != Node.ELEMENT_NODE || (node.localName != "DIV" && node.nodeName != "DIV"))) {
+			node = node.nextSibling;
+		}
+		//vnoøené divy - 1. bez tøídy je kontejner vnoøené diskuze
+		node = node.firstChild;
+		while (node != null && (node.nodeType != Node.ELEMENT_NODE || (node.localName != "DIV" && node.nodeName != "DIV") || node.className != "")) {
+				node = node.nextSibling;
+		}
+		//pøidej od zadu komentáøe do zásobníku
+		if (node != null && node.hasChildNodes()) {
+			var child = node.lastChild;
+			while (child != null) {
+				if (isExpandedCommentNode(child)) {
+					stack.push(child);
+				}
+				child = child.previousSibling;
+			}
+		}
+	}
+	if (last != null && getFirstElementByName(last,"DIV") != null) {
+		var a = getFirstElementByName(getFirstElementByName(last,"DIV"), "A");
+		if (a.innerHTML == "Dal¹í") {
+			a.style.display = "none";
+			a.nextSibling.nodeValue = "";
+			window.hiddenNext = a;
+		}
+	}
+}
+
+function isExpandedCommentNode(child) {
+	return child.nodeType == Node.ELEMENT_NODE && child.className.match(window.dsUtils.re_comment) && (child.localName == "DIV" || child.nodeName == "DIV") && getFirstElementByName(child, "DIV").style.display != "none";
+}
+
+function getFirstElementByName(node, name) {
+	var children = node.childNodes;
+	for (var i = 0; i < children.length; i++) {
+		if (children[i].nodeType == Node.ELEMENT_NODE && (children[i].localName == name || children[i].nodeName == name)) {
+			return children[i];
+		}
+	}
+	return null;
+}
+
+function nextCommentClick(event) {
+	if (!event) {
+		var event = window.event;
+	}
+  var target = (event.target) ? event.target : event.srcElement;
+	var nextId = window.dsUtils.nextComments[window.dsUtils.re_comment_id.exec(target.parentNode.id)[1]];
+	if (nextId != null) {
+		window.location = "#"+nextId;
+	}
+	return false;
+}
+
+function init() {
+	if (document.getElementById) {
+		window.dsUtils = new Object();
+		dsUtils.re_comment = /\bds_hlavicka(?:_novy)?\b/;
+		dsUtils.re_comment_novy = /\bds_hlavicka_novy\b/;
+		dsUtils.re_comment_id = /(\d+)/;
+		if (window.Node == null) {
+			window.Node = new Object();
+			window.Node.ELEMENT_NODE = 1;
+		}
+		prepareCommentNext();
+	}
+}
+
+window.onload = init;
