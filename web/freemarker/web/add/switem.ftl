@@ -112,6 +112,7 @@
                           <div>
                              <@lib.showOption "ui", "kde", UI_PROPERTY["kde"], "checkbox", "onclick=\"startCheckParent(event);\"" />
                           </div>
+    	               </div>
     		       </div>
     		       <div>
                           <@lib.showOption "ui", "gtk", UI_PROPERTY["gtk"], "checkbox", " onclick=\"startCheckParent(event);\"" />
