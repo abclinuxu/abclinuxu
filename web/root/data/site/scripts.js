@@ -124,13 +124,32 @@ function startCheckParent(event) {
     var target = (event.target) ? event.target : event.srcElement;
     if (target.checked) {
         checkParent(target.parentNode);
+    } else {
+        uncheckParent(target.parentNode);
     }
 }
-// recursively traverses parent checkboxes for this check box and turn them on
 function checkParent(target) {
     if (target.parentNode.id != "strom") {
         target.parentNode.getElementsByTagName("input")[0].checked = true;
+        target.parentNode.getElementsByTagName("input")[0].disabled = true;
         checkParent(target.parentNode);
+    }
+}
+function uncheckParent(target) {
+    if (target.parentNode.id != "strom") {
+        var divs = target.parentNode.getElementsByTagName("div");
+        var checked = false;
+        for (i = 0; i < divs.length; i++) {
+            var inputs = divs[i].getElementsByTagName("input");
+            if (inputs.length > 0) {
+                if (inputs[0].checked) {
+                    checked = true;
+                    break;
+                }
+            }
+        }
+        target.parentNode.getElementsByTagName("input")[0].disabled = checked;
+        uncheckParent(target.parentNode);
     }
 }
 
