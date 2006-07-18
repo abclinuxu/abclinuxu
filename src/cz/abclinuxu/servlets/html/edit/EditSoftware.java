@@ -194,7 +194,8 @@ public class EditSoftware implements AbcAction {
         Node node = root.element("name");
         params.put(PARAM_NAME, node.getText());
         node = root.element("description");
-        params.put(PARAM_DESCRIPTION, node.getText());
+        if (node != null)
+            params.put(PARAM_DESCRIPTION, node.getText());
         node = root.element("version");
         if (node != null)
             params.put(PARAM_VERSION, node.getText());
@@ -302,6 +303,9 @@ public class EditSoftware implements AbcAction {
             element.setText(tmp);
             Format format = FormatDetector.detect(tmp);
             element.addAttribute("format", Integer.toString(format.getId()));
+        } else {
+            ServletUtils.addError(PARAM_DESCRIPTION, "Zadejte popis programu!", env, null);
+            return false;
         }
         return true;
     }
