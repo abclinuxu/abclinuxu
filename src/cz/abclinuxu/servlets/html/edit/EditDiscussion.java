@@ -54,6 +54,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Cookie;
 import java.util.*;
+import java.net.URLEncoder;
+import java.net.URLDecoder;
+import java.io.UnsupportedEncodingException;
 
 /**
  * This class is responsible for adding new
@@ -1362,8 +1365,14 @@ public class EditDiscussion implements AbcAction {
                 continue;
             env.put(VAR_USER_VERIFIED, Boolean.TRUE);
             String name = cookie.getValue();
-            if (name != null && name.length() > 0)
+            if (name != null && name.length() > 0) {
+                try {
+                    name = URLDecoder.decode(name, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    log.warn(e.getMessage(), e);
+                }
                 params.put(PARAM_AUTHOR, name);
+            }
         }
     }
 
@@ -1391,6 +1400,12 @@ public class EditDiscussion implements AbcAction {
         String name = (String) params.get(PARAM_AUTHOR);
         if (name == null)
             name = "";
+        else
+            try {
+                name = URLEncoder.encode(name, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                log.warn(e.getMessage(), e);
+            }
         Cookie cookie = new Cookie(COOKIE_USER_VERIFIED, name);
         cookie.setPath("/");
         cookie.setMaxAge(5 * 365 * 24 * 3600);
