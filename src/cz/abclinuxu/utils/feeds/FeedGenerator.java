@@ -408,7 +408,7 @@ public class FeedGenerator implements Configurable {
                 description.setType("text/plain");
                 description.setValue(Tools.limitWords(withoutTags, newsWordLimit, " ..."));
                 entry.setDescription(description);
-                entry.setPublishedDate(item.getUpdated());
+                entry.setPublishedDate(item.getCreated());
                 entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
                 entries.add(entry);
             }
