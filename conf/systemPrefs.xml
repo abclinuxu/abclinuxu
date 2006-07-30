@@ -45,6 +45,20 @@
                             <map>
                                 <entry key="path" value="@DEPLOY_ABCLINUXU@/WEB-INF/index/"/>
                                 <entry key="last.run.file" value="last_run.txt"/>
+                                <entry key="merge.factor" value="100" />
+                                <entry key="min.merge.docs" value="10" />
+                                <!--entry key="max.merge.docs" value="10000" /-->
+                                <!--entry key="max.field.length" value="10000" /-->
+                                <entry key="boost.hardware" value="1.5" />
+                                <entry key="boost.article" value="1.5" />
+                                <entry key="boost.news" value="1.0" />
+                                <entry key="boost.question" value="1.3" />
+                                <entry key="boost.discussion" value="0.8" />
+                                <entry key="boost.driver" value="1.0" />
+                                <entry key="boost.blog" value="0.5" />
+                                <entry key="boost.faq" value="1.5" />
+                                <entry key="boost.dictionary" value="1.0" />
+                                <entry key="boost.section" value="1.0" />
                             </map>
                         </node>
                     </node>
@@ -146,6 +160,7 @@
                                 <entry key="zpravicky" value="auto/zpravicky.rss"/>
                                 <entry key="faq" value="auto/faq.rss"/>
                                 <entry key="blog" value="auto/blog.rss"/>
+                                <entry key="blog.digest" value="auto/blogDigest.rss"/>
                                 <entry key="ankety" value="auto/ankety.rss"/>
                                 <entry key="blogs" value="auto/blog/"/>
                                 <entry key="trafika" value="auto/abc.dat"/>
@@ -179,7 +194,7 @@
                     <node name="DateTool">
                         <map>
                             <entry key="today" value="dnes" />
-                            <entry key="yesterday" value="vèera" />
+                            <entry key="yesterday" value="vï¿½era" />
                         </map>
                     </node>
                 </node>
@@ -305,8 +320,8 @@
                     </node>
                     <node name="WhatHappened">
                         <map>
-                            <entry key="title" value="Událo se v týdnu {0}/{1,number,#}"/>
-                            <entry key="perex" value="Ucelený pøehled èlánkù, zprávièek a diskusí za minulých 7 dní."/>
+                            <entry key="title" value="Udï¿½lo se v tï¿½dnu {0}/{1,number,#}"/>
+                            <entry key="perex" value="Ucelenï¿½ pï¿½ehled ï¿½lï¿½nkï¿½, zprï¿½viï¿½ek a diskusï¿½ za minulï¿½ch 7 dnï¿½."/>
                             <entry key="author" value="5473"/>
                             <entry key="section" value="251"/>
                         </map>
@@ -484,15 +499,15 @@
                             </node>
                             <node name="EditRating">
                                 <map>
-                                    <entry key="msg.ok" value="Va¹e hodnocení bylo pøijato"/>
-                                    <entry key="msg.data.missing" value="Chyba v parametrech pro hlasování"/>
-                                    <entry key="msg.already.rated" value="Mù¾ete hodnotit jen jednou!"/>
-                                    <entry key="msg.not.logged" value="Hlasovat smí jen pøihlá¹ení u¾ivatelé!"/>
+                                    <entry key="msg.ok" value="Vaï¿½e hodnocenï¿½ bylo pï¿½ijato"/>
+                                    <entry key="msg.data.missing" value="Chyba v parametrech pro hlasovï¿½nï¿½"/>
+                                    <entry key="msg.already.rated" value="Mï¿½ete hodnotit jen jednou!"/>
+                                    <entry key="msg.not.logged" value="Hlasovat smï¿½ jen pï¿½ihlï¿½enï¿½ uï¿½ivatelï¿½!"/>
                                 </map>
                             </node>
                             <node name="EditRequest">
                                 <map>
-                                    <entry key="categories" value="Návrh na anketu,Hlá¹ení chyby,Námìt na vylep¹ení,Problém s úètem"/>
+                                    <entry key="categories" value="Nï¿½vrh na anketu,Hlï¿½enï¿½ chyby,Nï¿½mï¿½t na vylepï¿½enï¿½,Problï¿½m s ï¿½ï¿½tem"/>
                                 </map>
                             </node>
                         </node>

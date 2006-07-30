@@ -30,6 +30,7 @@ import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.Cache;
 import cz.abclinuxu.persistance.Nursery;
+import cz.abclinuxu.persistance.PersistenceMapping;
 import org.logicalcobwebs.proxool.ProxoolException;
 import org.logicalcobwebs.proxool.ProxoolFacade;
 import org.dom4j.DocumentHelper;
@@ -243,7 +244,7 @@ public class MySqlPersistance implements Persistance {
 
         StringBuffer sb = new StringBuffer("select * from relace where ");
         sb.append("typ_potomka='");
-        sb.append(getTableId(child));
+        sb.append(PersistenceMapping.getGenericObjectType(child));
         sb.append("' and potomek=");
         sb.append(child.getId());
 
@@ -391,7 +392,7 @@ public class MySqlPersistance implements Persistance {
         if ( child!=null ) {
             if ( addAnd ) sb.append(" and "); else addAnd = true;
             sb.append("typ_potomka='");
-            sb.append(getTableId(child));
+            sb.append(PersistenceMapping.getGenericObjectType(child));
             sb.append("' and potomek=");
             sb.append(child.getId());
         }
@@ -400,7 +401,7 @@ public class MySqlPersistance implements Persistance {
         if ( parent!=null ) {
             if ( addAnd ) sb.append(" and ");
             sb.append("typ_predka='");
-            sb.append(getTableId(parent));
+            sb.append(PersistenceMapping.getGenericObjectType(parent));
             sb.append("' and predek=");
             sb.append(parent.getId());
         }
@@ -461,7 +462,7 @@ public class MySqlPersistance implements Persistance {
                 if ( obj instanceof Relation ) {
                     statement = con.prepareStatement("select predek from relace where typ_potomka=? and potomek=?");
                     GenericObject child = ((Relation)obj).getChild();
-                    statement.setString(1,getTableId(child));
+                    statement.setString(1,PersistenceMapping.getGenericObjectType(child));
                     statement.setInt(2,child.getId());
                     resultSet = statement.executeQuery();
                     if ( !resultSet.next() )
@@ -647,7 +648,7 @@ public class MySqlPersistance implements Persistance {
         try {
             con = getSQLConnection();
             statement = con.prepareStatement("select soucet from citac where typ=? and cislo=?");
-            statement.setString(1, getTableId(obj));
+            statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
             statement.setInt(2, obj.getId());
 
             resultSet = statement.executeQuery();
@@ -689,7 +690,7 @@ public class MySqlPersistance implements Persistance {
                 value = resultSet.getInt(1);
                 type = resultSet.getString(2).charAt(0);
                 id = resultSet.getInt(3);
-                obj = instantiateFromTree(type, id);
+                obj = PersistenceMapping.createGenericObject(type, id);
                 map.put(obj, new Integer(value));
             }
 
@@ -757,7 +758,7 @@ public class MySqlPersistance implements Persistance {
         try {
             con = getSQLConnection();
             statement = con.prepareStatement("select * from relace where typ_predka=? and predek=?");
-            statement.setString(1,getTableId(obj));
+            statement.setString(1,PersistenceMapping.getGenericObjectType(obj));
             statement.setInt(2,obj.getId());
             resultSet = statement.executeQuery();
 
@@ -827,7 +828,7 @@ public class MySqlPersistance implements Persistance {
         List list;
         for (Iterator iter = objects.iterator(); iter.hasNext();) {
             GenericObject object = (GenericObject) iter.next();
-            tableId = getTableId(object);
+            tableId = PersistenceMapping.getGenericObjectType(object);
             list = (List) byTable.get(tableId);
             if (list==null) {
                 list = new ArrayList();
@@ -890,9 +891,9 @@ public class MySqlPersistance implements Persistance {
             sb.append("insert into relace values(0,?,?,?,?,?,?,?)");
             Relation relation = (Relation)obj;
             conditions.add(new Integer(relation.getUpper()));
-            conditions.add(getTableId(relation.getParent()));
+            conditions.add(PersistenceMapping.getGenericObjectType(relation.getParent()));
             conditions.add(new Integer(relation.getParent().getId()));
-            conditions.add(getTableId(relation.getChild()));
+            conditions.add(PersistenceMapping.getGenericObjectType(relation.getChild()));
             conditions.add(new Integer(relation.getChild().getId()));
             conditions.add(relation.getUrl());
             String tmp = relation.getDataAsString();
@@ -1015,7 +1016,7 @@ public class MySqlPersistance implements Persistance {
      */
     private void appendIncrementUpdateParams(GenericObject obj, StringBuffer sb, List conditions ) {
         sb.append("update citac set soucet=soucet+1 where typ=? and cislo=?");
-        conditions.add(getTableId(obj));
+        conditions.add(PersistenceMapping.getGenericObjectType(obj));
         conditions.add(new Integer(obj.getId()));
     }
 
@@ -1025,7 +1026,7 @@ public class MySqlPersistance implements Persistance {
      */
     private void appendCounterInsertParams(GenericObject obj, StringBuffer sb, List conditions ) {
         sb.append("insert into citac values(?,?,1)");
-        conditions.add(getTableId(obj));
+        conditions.add(PersistenceMapping.getGenericObjectType(obj));
         conditions.add(new Integer(obj.getId()));
     }
 
@@ -1035,7 +1036,7 @@ public class MySqlPersistance implements Persistance {
      */
     private void appendCounterDeleteParams(GenericObject obj, StringBuffer sb, List conditions ) {
         sb.append("delete from citac where typ=? and cislo=?");
-        conditions.add(getTableId(obj));
+        conditions.add(PersistenceMapping.getGenericObjectType(obj));
         conditions.add(new Integer(obj.getId()));
     }
 
@@ -1419,12 +1420,12 @@ public class MySqlPersistance implements Persistance {
 
         char type = resultSet.getString(3).charAt(0);
         int id = resultSet.getInt(4);
-        GenericObject parent = instantiateFromTree(type,id);
+        GenericObject parent = PersistenceMapping.createGenericObject(type,id);
         relation.setParent(parent);
 
         type = resultSet.getString(5).charAt(0);
         id = resultSet.getInt(6);
-        GenericObject child = instantiateFromTree(type,id);
+        GenericObject child = PersistenceMapping.createGenericObject(type,id);
         relation.setChild(child);
 
         relation.setUrl(resultSet.getString(7));
@@ -1840,9 +1841,9 @@ public class MySqlPersistance implements Persistance {
             con = getSQLConnection();
             statement = con.prepareStatement("update relace set typ_predka=?,predek=?,typ_potomka=?,potomek=?,data=?,predchozi=?,url=? where cislo=?");
 
-            statement.setString(1,getTableId(relation.getParent()));
+            statement.setString(1,PersistenceMapping.getGenericObjectType(relation.getParent()));
             statement.setInt(2,relation.getParent().getId());
-            statement.setString(3,getTableId(relation.getChild()));
+            statement.setString(3,PersistenceMapping.getGenericObjectType(relation.getChild()));
             statement.setInt(4,relation.getChild().getId());
 
             String tmp = relation.getDataAsString();
@@ -2017,7 +2018,7 @@ public class MySqlPersistance implements Persistance {
         try {
             con = getSQLConnection();
             statement = con.prepareStatement("select * from vlastnost where typ_predka=? and predek=?");
-            statement.setString(1, getTableId(obj));
+            statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
             statement.setInt(2, obj.getId());
 
             resultSet = statement.executeQuery();
@@ -2043,7 +2044,7 @@ public class MySqlPersistance implements Persistance {
         try {
             con = getSQLConnection();
             statement = con.prepareStatement("delete from vlastnost where typ_predka=? and predek=?");
-            statement.setString(1, getTableId(obj));
+            statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
             statement.setInt(2, obj.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -2075,7 +2076,7 @@ public class MySqlPersistance implements Persistance {
 
                 for (Iterator iterSet = values.iterator(); iterSet.hasNext();) {
                     String value = (String) iterSet.next();
-                    statement.setString(1, getTableId(obj));
+                    statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
                     statement.setInt(2, obj.getId());
                     statement.setString(3, key);
                     statement.setString(4, value);
@@ -2208,55 +2209,6 @@ public class MySqlPersistance implements Persistance {
         } catch (Exception e) {
             log.warn("Problems while closing connection to database!", e);
         }
-    }
-
-    /**
-     * @return Identification of table in the tree
-     */
-    private String getTableId(GenericObject obj) {
-        if (obj instanceof Record) {
-            return "Z";
-        } else if (obj instanceof Item) {
-            return "P";
-        } else if (obj instanceof Category) {
-            return "K";
-        } else if (obj instanceof User) {
-            return "U";
-        } else if (obj instanceof Link) {
-            return "L";
-        } else if (obj instanceof Server) {
-            return "S";
-        } else if (obj instanceof Poll) {
-            return "A";
-        } else if (obj instanceof Data) {
-            return "O";
-        }
-        throw new InvalidDataException("Nepodporovany typ tridy!");
-    }
-
-    /**
-     * instantiates new GenericObject, which class is specified by <code>type</code> and
-     * with desired <code>id</code>.
-     */
-    private GenericObject instantiateFromTree(char type, int id) {
-        if (type == 'K') {
-            return new Category(id);
-        } else if (type == 'P') {
-            return new Item(id);
-        } else if (type == 'Z') {
-            return new Record(id);
-        } else if (type == 'U') {
-            return new User(id);
-        } else if (type == 'A') {
-            return new Poll(id);
-        } else if (type == 'L') {
-            return new Link(id);
-        } else if (type == 'S') {
-            return new Server(id);
-        } else if (type == 'O') {
-            return new Data(id);
-        }
-        return null;
     }
 
     /**

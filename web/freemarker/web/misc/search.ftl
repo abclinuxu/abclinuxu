@@ -67,12 +67,15 @@
 
 <#if RESULT?exists>
     <p class="search_results">
-        Nalezeno ${RESULT.total} objektù, zobrazuji ${RESULT.thisPage.row}-${RESULT.thisPage.row+RESULT.thisPage.size}.
+        Nalezeno ${RESULT.total} objektù (milisekund: ${SEARCH_TIME})<#t>
+        <#if (RESULT.total > 0)>, zobrazuji${RESULT.thisPage.row}-${RESULT.thisPage.row+RESULT.thisPage.size}</#if>.
+        Poslední aktualizace ${DATE.show(UPDATED,"CZ_FULL")}.
     </p>
 
     <#list RESULT.data as doc>
         <div class="search_result">
-            <!--m--><a href="${doc.url}" class="search_title">${doc.title?default(doc.url)}</a>
+            <!--m-->
+            <a href="${doc.url}" class="search_title">${doc.title?default(doc.url)}</a>
             <#if (doc.typ='diskuse' && doc.vyreseno=="ano")> <span class="search_solved">(vyøe¹eno)</span></#if>
             <!--n-->
             <#if doc.fragments?exists>

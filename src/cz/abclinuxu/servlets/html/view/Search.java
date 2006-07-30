@@ -46,8 +46,8 @@ import org.dom4j.Node;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
-import java.text.NumberFormat;
 import java.io.StringReader;
+import java.io.File;
 
 /**
  * Performs search across the data.
@@ -64,6 +64,10 @@ public class Search implements AbcAction {
     public static final String VAR_TOTAL = "TOTAL";
     /** holds map of chosen types */
     public static final String VAR_TYPES = "TYPES";
+    /** date when index was updated last time */
+    public static final String VAR_UPDATED = "UPDATED";
+    /** number of milliseconds that shows how long search took */
+    public static final String VAR_SEARCH_TIME = "SEARCH_TIME";
     public static final String VAR_NEWS_CATEGORIES = "CATEGORIES";
 
     /** expression to be searched */
@@ -79,12 +83,28 @@ public class Search implements AbcAction {
     /** news category */
     public static final String PARAM_CATEGORY = "category";
 
+    static IndexReader indexReader;
+    static Date lastUpdated;
+
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         return performSearch(request, env);
     }
 
     public static String performSearch(HttpServletRequest request, Map env) throws Exception {
+        boolean initIndexReader = indexReader == null, lastRunFileMissing = false;
+        File file = CreateIndex.getLastRunFile();
+        if (! file.exists()) {
+            lastRunFileMissing = true;
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Index je poru¹en, vyhledávání nemusí fungovat.", env, null);
+        } else {
+            if (lastUpdated == null || lastUpdated.getTime() < file.lastModified()) {
+                lastUpdated = new Date(file.lastModified());
+                initIndexReader = true;
+            }
+            env.put(VAR_UPDATED, lastUpdated);
+        }
+
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Types types = new Types(params.get(PARAM_TYPE));
         env.put(VAR_TYPES, types);
@@ -96,8 +116,9 @@ public class Search implements AbcAction {
             return choosePage(onlyNews, request, env, newsCategoriesSet);
         env.put(VAR_QUERY,queryString);
 
+        long start = System.currentTimeMillis(), end;
         AbcCzechAnalyzer analyzer = new AbcCzechAnalyzer();
-        Query query = null;
+        Query query;
         try {
             query = AbcQueryParser.parse(queryString, analyzer, types, newsCategoriesSet);
             query = AbcQueryParser.addParentToQuery((String)params.get(PARAM_PARENT), query);
@@ -108,38 +129,42 @@ public class Search implements AbcAction {
         }
 
         try {
-            int from = getFrom(params);
-            int count = getPageSize(params, env);
-            List list = new ArrayList(count);
-            NumberFormat percentFormat = NumberFormat.getPercentInstance();
+            if (initIndexReader)
+                indexReader = IndexReader.open(CreateIndex.getIndexPath());
 
-            IndexReader indexReader = IndexReader.open(CreateIndex.getIndexPath());
             query = query.rewrite(indexReader);
             Searcher searcher = new IndexSearcher(indexReader);
             Hits hits = searcher.search(query);
-            int total = hits.length();
+            end = System.currentTimeMillis();
 
+            // vytvoreni query a hledani trva do 10 ms, highlight trva 300 ms
             SimpleHTMLFormatter formatter = new SimpleHTMLFormatter("<span class=\"highlight\">", "</span>");
             Highlighter highlighter = new Highlighter(formatter, new QueryScorer(query));
-            for ( int i=from,j=0; i<total && j<count; i++, j++ ) {
-                Document doc = hits.doc(i);
-                float score = (hits.score(i)>0.01) ? hits.score(i) : 0.01f;
-                doc.add(Field.UnIndexed("score", percentFormat.format(score)));
 
+            int from = getFrom(params);
+            int count = getPageSize(params, env);
+            List list = new ArrayList(count);
+            int total = hits.length();
+            for ( int i = from, j = 0; i < total && j < count; i++, j++ ) {
+                Document doc = hits.doc(i);
                 String text = hits.doc(i).get(MyDocument.CONTENT);
                 TokenStream tokenStream = analyzer.tokenStream(MyDocument.CONTENT, new StringReader(text));
                 String result = highlighter.getBestFragments(tokenStream, text, 3, "...");
                 doc.add(Field.UnIndexed("fragments", result));
-
                 list.add(doc);
             }
+
+            env.put(VAR_SEARCH_TIME, new Long(end - start));
 
             Paging paging = new Paging(list,from,count,total);
             env.put(VAR_RESULT,paging);
             env.put(VAR_TOTAL,new Integer(total));
         } catch (Exception e) {
             log.error("Cannot search '"+query+"'",e);
-            ServletUtils.addError(PARAM_QUERY,"Nemohu provést dané hledání. Zadejte jiný øetìzec!",env,null);
+            if (lastRunFileMissing)
+                ServletUtils.addError(PARAM_QUERY,"Do¹lo k chybì pøi hledání. Kontaktujte prosím správce.",env,null);
+            else
+                ServletUtils.addError(PARAM_QUERY,"Nemohu provést dané hledání. Zkuste zadat jiný øetìzec.",env,null);
             return choosePage(onlyNews, request, env, newsCategoriesSet);
         }
 

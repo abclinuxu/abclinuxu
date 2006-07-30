@@ -31,8 +31,8 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.exceptions.PersistanceException;
 import cz.abclinuxu.exceptions.InvalidDataException;
+import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.scheduler.WhatHappened;
 import org.dom4j.Element;
 import org.dom4j.Node;
@@ -43,24 +43,44 @@ import java.util.*;
 import java.util.prefs.Preferences;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 
 /**
- * This class is responsible for creating and
- * maintaining Lucene's index.
- * todo indexovat diskuse u clanku, zpravicek a blogu samostatne
+ * This class is responsible for creating and maintaining Lucene's index.
+ * TODO vymyslet jak zoptimalizovat nacitani diskusi a jejich zaznamu (pouzivat hromadne ready)
+ * TODO zrusit static veci, at se to da volat z ruznymi parametry, napriklad persistence
+ * TODO ukladat u dokumentu field CID (typ tridy + id, napriklad P1234) - pro incrementalni update
  */
 public class CreateIndex implements Configurable {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(CreateIndex.class);
 
     public static final String PREF_PATH = "path";
     public static final String PREF_LAST_RUN_NAME = "last.run.file";
+    public static final String PREF_MERGE_FACTOR = "merge.factor";
+    public static final String PREF_MIN_MERGE_DOCS = "min.merge.docs";
+    public static final String PREF_MAX_MERGE_DOCS = "max.merge.docs";
+    public static final String PREF_MAX_FIELD_LENGTH = "max.field.length";
+    public static final String PREF_BOOST_HARDWARE = "boost.hardware";
+    public static final String PREF_BOOST_ARTICLE = "boost.article";
+    public static final String PREF_BOOST_NEWS = "boost.news";
+    public static final String PREF_BOOST_QUESTION = "boost.question";
+    public static final String PREF_BOOST_DISCUSSION = "boost.discussion";
+    public static final String PREF_BOOST_DRIVER = "boost.driver";
+    public static final String PREF_BOOST_BLOG = "boost.blog";
+    public static final String PREF_BOOST_FAQ = "boost.faq";
+    public static final String PREF_BOOST_DICTIONARY = "boost.dictionary";
+    public static final String PREF_BOOST_SECTION = "boost.section";
 
     private final String LAST_RUN_FILE = "last_run.txt";
 
+    static IndexWriter indexWriter;
     static String indexPath,lastRunFilename;
+    static int mergeFactor, minMergeDocs, maxMergeDocs, maxFieldLength;
     static Persistance persistance;
     static SQLTool sqlTool;
     static HashMap indexed = new HashMap(150000, 0.99f);
+    static float boostHardware, boostArticle, boostNews, boostQuestion, boostDiscussion;
+    static float boostDriver, boostBlog, boostFaq, boostDictionary, boostSection;
 
     static {
         Configurator configurator = ConfigurationManager.getConfigurator();
@@ -72,7 +92,6 @@ public class CreateIndex implements Configurable {
     public static void main(String[] args) throws Exception {
         String PATH = indexPath;
         if ( args.length>0 ) PATH = args[0];
-        log.info("Starting to index data, using directory "+PATH);
 
         try {
             Relation articles = (Relation) persistance.findById(new Relation(Constants.REL_ARTICLES));
@@ -84,19 +103,31 @@ public class CreateIndex implements Configurable {
 
             long start = System.currentTimeMillis();
 
-            IndexWriter indexWriter = new IndexWriter(PATH, new AbcCzechAnalyzer(), true);
+            indexWriter = new IndexWriter(PATH, new AbcCzechAnalyzer(), true);
+            if (mergeFactor > 0)
+                indexWriter.mergeFactor = mergeFactor;
+            if (minMergeDocs > 0)
+                indexWriter.minMergeDocs = minMergeDocs;
+            if (maxMergeDocs > 0)
+                indexWriter.maxMergeDocs = maxMergeDocs;
+            if (maxFieldLength > 0)
+                indexWriter.maxFieldLength = maxFieldLength;
+            log.info("Starting to index data, directory: "+PATH +", mergeFactor: "+indexWriter.mergeFactor
+                      + ", minMergeDocs: "+indexWriter.minMergeDocs + ", maxMergeDocs: "+indexWriter.maxMergeDocs
+                      + ", maxFieldLength: "+indexWriter.maxFieldLength);
 
             try {
-                makeIndexOnArticles(indexWriter, articles.getChild().getChildren());
-                makeIndexOnNews(indexWriter, UrlUtils.PREFIX_NEWS);
-                makeIndexOnDictionary(indexWriter);
-                makeIndexOnFaq(indexWriter);
-                makeIndexOnBlogs(indexWriter, blogs.getChild().getChildren());
-                makeIndexOnForums(indexWriter, forums, UrlUtils.PREFIX_FORUM);
-                makeIndexOn(indexWriter, hardware, UrlUtils.PREFIX_HARDWARE);
-                makeIndexOn(indexWriter, drivers, UrlUtils.PREFIX_DRIVERS);
-                makeIndexOn(indexWriter, abc, UrlUtils.PREFIX_CLANKY);
+                makeIndexOnArticles(articles.getChild().getChildren());
+                makeIndexOnNews();
+                makeIndexOnDictionary();
+                makeIndexOnFaq();
+                makeIndexOnBlogs(blogs.getChild().getChildren());
+                makeIndexOnForums(forums, UrlUtils.PREFIX_FORUM);
+                makeIndexOn(hardware, UrlUtils.PREFIX_HARDWARE);
+                makeIndexOn(drivers, UrlUtils.PREFIX_DRIVERS);
+                makeIndexOn(abc, UrlUtils.PREFIX_CLANKY);
             } finally {
+                log.info("Starting to optimize the index");
                 indexWriter.optimize();
                 indexWriter.close();
             }
@@ -120,7 +151,7 @@ public class CreateIndex implements Configurable {
      * @param root relation, where to start. It must be already synchronized.
      * @param urlPrefix prefix for URL for this subtree
      */
-    static void makeIndexOn(IndexWriter indexWriter, Relation root, String urlPrefix) throws Exception {
+    static void makeIndexOn(Relation root, String urlPrefix) throws Exception {
         List stack = new ArrayList(100);
         stack.add(root);
 
@@ -134,14 +165,12 @@ public class CreateIndex implements Configurable {
         while(stack.size()>0) {
             relation = (Relation) stack.remove(0);
             child = relation.getChild();
-            if (hasBeenIndexed(child)) continue;
-//            child = persistance.findById(child);
+            if (hasBeenIndexed(child))
+                continue;
 
             doc = null; indexChildren = true; url = relation.getUrl();
             if (child instanceof Category) {
-                doc = indexCategory((Category) child);
-                if (url==null)
-                    url = urlPrefix+"/dir/"+relation.getId();
+                doc = indexCategory(relation);
             } else if (child instanceof Item) {
                 item = (Item) child;
                 switch ( item.getType() ) {
@@ -167,31 +196,14 @@ public class CreateIndex implements Configurable {
                 List children = child.getChildren();
                 Tools.syncList(children);
                 stack.addAll(children);
-//                for ( Iterator iter = children.iterator(); iter.hasNext(); )
-//                    stack.add(iter.next());
             }
-        }
-    }
-
-    /**
-     * Tests, whether child has been already indexed. If it has not been,
-     * its empty clone is stored to mark child as indexed.
-     */
-    static boolean hasBeenIndexed(GenericObject child) throws Exception {
-        if ( indexed.containsKey(child) )
-            return true;
-        else {
-            GenericObject key = (GenericObject) child.getClass().newInstance();
-            key.setId(child.getId());
-            indexed.put(key, Boolean.TRUE);
-            return false;
         }
     }
 
     /**
      * Indexes content of given forums.
      */
-    static void makeIndexOnForums(IndexWriter indexWriter, List forums, String urlPrefix) throws Exception {
+    static void makeIndexOnForums(List forums, String urlPrefix) throws Exception {
         int total, i;
         Relation relation, relation2;
         GenericObject child;
@@ -227,7 +239,7 @@ public class CreateIndex implements Configurable {
     /**
      * Indexes dictionary.
      */
-    static void makeIndexOnDictionary(IndexWriter indexWriter) throws Exception {
+    static void makeIndexOnDictionary() throws Exception {
         Item child;
         MyDocument doc;
         List relations = sqlTool.findItemRelationsWithType(Item.DICTIONARY, new Qualifier[0]);
@@ -237,8 +249,9 @@ public class CreateIndex implements Configurable {
         for (Iterator iter = relations.iterator(); iter.hasNext();) {
             relation = (Relation) iter.next();
             child = (Item) relation.getChild();
-            if ( hasBeenIndexed(child) ) continue;
-            doc = indexDictionary(child);
+            if ( hasBeenIndexed(child) )
+                continue;
+            doc = indexDictionary(relation);
             indexWriter.addDocument(doc.getDocument());
         }
     }
@@ -246,7 +259,7 @@ public class CreateIndex implements Configurable {
     /**
      * Indexes frequently asked questions.
      */
-    static void makeIndexOnFaq(IndexWriter indexWriter) throws Exception {
+    static void makeIndexOnFaq() throws Exception {
         Item child;
         MyDocument doc;
         List relations = sqlTool.findItemRelationsWithType(Item.FAQ, new Qualifier[0]);
@@ -256,7 +269,8 @@ public class CreateIndex implements Configurable {
         for (Iterator iter = relations.iterator(); iter.hasNext();) {
             relation = (Relation) iter.next();
             child = (Item) relation.getChild();
-            if ( hasBeenIndexed(child) ) continue;
+            if ( hasBeenIndexed(child) )
+                continue;
             doc = indexFaq(relation);
             indexWriter.addDocument(doc.getDocument());
         }
@@ -265,12 +279,11 @@ public class CreateIndex implements Configurable {
     /**
      * Indexes news.
      */
-    static void makeIndexOnNews(IndexWriter indexWriter, String urlPrefix) throws Exception {
+    static void makeIndexOnNews() throws Exception {
         int total = sqlTool.countNewsRelations(), i;
         Relation relation;
         GenericObject child;
         MyDocument doc;
-        String url;
 
         for ( i = 0; i<total; ) {
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING, new LimitQualifier(i, 100)};
@@ -284,12 +297,7 @@ public class CreateIndex implements Configurable {
                 if ( hasBeenIndexed(child) )
                     continue;
 
-                doc = indexNews((Item) child);
-                url = relation.getUrl();
-                if (url==null)
-                    url = urlPrefix + "/show/" + relation.getId();
-                doc.setURL(url);
-                doc.setParent(relation.getUpper());
+                doc = indexNews(relation);
                 indexWriter.addDocument(doc.getDocument());
             }
         }
@@ -298,7 +306,7 @@ public class CreateIndex implements Configurable {
     /**
      * Indexes article.
      */
-    static void makeIndexOnArticles(IndexWriter indexWriter, List sections) throws Exception {
+    static void makeIndexOnArticles(List sections) throws Exception {
         int total, i;
         Relation relation;
         GenericObject child;
@@ -321,12 +329,10 @@ public class CreateIndex implements Configurable {
                     if (hasBeenIndexed(child))
                         continue;
 
-                    doc = indexArticle((Item) child);
+                    doc = indexArticle(relation);
                     if (doc==null)
                         continue;
 
-                    doc.setURL(relation.getUrl());
-                    doc.setParent(relation.getUpper());
                     indexWriter.addDocument(doc.getDocument());
                 }
             }
@@ -336,7 +342,7 @@ public class CreateIndex implements Configurable {
     /**
      * Indexes blogs and stories.
      */
-    static void makeIndexOnBlogs(IndexWriter indexWriter, List blogs) throws Exception {
+    static void makeIndexOnBlogs(List blogs) throws Exception {
         Relation relation;
         GenericObject child;
         MyDocument doc;
@@ -348,14 +354,14 @@ public class CreateIndex implements Configurable {
 
             doc = indexBlog((Category) child);
             indexWriter.addDocument(doc.getDocument());
-            makeIndexOnBlog(indexWriter, (Category) child);
+            makeIndexOnBlog((Category) child);
         }
     }
 
     /**
      * Indexes blogs and stories.
      */
-    static void makeIndexOnBlog(IndexWriter indexWriter, Category blog) throws Exception {
+    static void makeIndexOnBlog(Category blog) throws Exception {
         Relation relation;
         GenericObject child;
         MyDocument doc;
@@ -389,7 +395,7 @@ public class CreateIndex implements Configurable {
      */
     static MyDocument indexBlog(Category category) {
         StringBuffer sb = new StringBuffer();
-        String title = null;
+        String title;
 
         Element data = (Element) category.getData().selectSingleNode("//custom");
         Node node = data.element("page_title");
@@ -413,6 +419,8 @@ public class CreateIndex implements Configurable {
         doc.setURL("/blog/"+category.getSubType());
         doc.setType(MyDocument.TYPE_BLOG);
         doc.setCreated(category.getCreated());
+        doc.setCid(category);
+        doc.setBoost(boostBlog);
         return doc;
     }
 
@@ -420,9 +428,9 @@ public class CreateIndex implements Configurable {
      * Extracts data for indexing from blog.
      * @param relation story relation
      */
-    static MyDocument indexStory(Relation relation, Category category) {
+    static MyDocument indexStory(Relation relation, Category category) throws IOException {
         StringBuffer sb = new StringBuffer();
-        String title = null, s;
+        String title, s;
         Item story = (Item) relation.getChild();
 
         storeUser(story.getOwner(), sb);
@@ -443,21 +451,7 @@ public class CreateIndex implements Configurable {
         s = node.getText();
         sb.append(s);
 
-        for (Iterator iter = story.getChildren().iterator(); iter.hasNext();) {
-            Relation child = (Relation) iter.next();
-            if ( child.getChild() instanceof Item ) {
-                Item item = (Item) persistance.findById(child.getChild());
-                if (item.getType()!=Item.DISCUSSION)
-                    continue;
-
-                MyDocument doc = indexDiscussion(item);
-                s = doc.getDocument().get(MyDocument.CONTENT);
-                if (s!=null) {
-                    sb.append(" ");
-                    sb.append(s);
-                }
-            }
-        }
+        indexDiscussionFor(story);
 
         MyDocument doc = new MyDocument(Tools.removeTags(sb.toString()));
         doc.setTitle(title);
@@ -465,17 +459,20 @@ public class CreateIndex implements Configurable {
         doc.setType(MyDocument.TYPE_BLOG);
         doc.setCreated(story.getCreated());
         doc.setUpdated(story.getUpdated());
+        doc.setCid(story);
+        doc.setBoost(boostBlog);
         return doc;
     }
 
     /**
      * Extracts data for indexing from category. Category must be synchronized.
      */
-    static MyDocument indexCategory(Category category) {
+    static MyDocument indexCategory(Relation relation) {
+        Category category = (Category) relation.getChild();
         StringBuffer sb = new StringBuffer();
-        String title = null;
+        String title;
 
-        Element data = (Element) category.getData().getRootElement();
+        Element data = category.getData().getRootElement();
         Node node = data.element("name");
         title = node.getText();
         sb.append(title);
@@ -491,6 +488,12 @@ public class CreateIndex implements Configurable {
         doc.setType(MyDocument.TYPE_CATEGORY);
         doc.setCreated(category.getCreated());
         doc.setUpdated(category.getUpdated());
+        String url = relation.getUrl();
+        if (url == null)
+            url = UrlUtils.PREFIX_HARDWARE+"/dir/"+relation.getId(); // TODO teoreticky by to nekdy mohlo vadit
+        doc.setURL(url);
+        doc.setCid(category);
+        doc.setBoost(boostSection);
         return doc;
     }
 
@@ -499,19 +502,21 @@ public class CreateIndex implements Configurable {
      */
     static MyDocument indexDiscussion(Item discussion) {
         StringBuffer sb = new StringBuffer();
-        String title = null;
+        String title;
+        boolean question = false;
 
         Document document = discussion.getData();
-        Element data = (Element) document.getRootElement();
+        Element data = document.getRootElement();
         Node node = data.element("title");
-        if ( node!=null ) {
+        if ( node != null ) {
             title = node.getText();
             sb.append(title);
+            question = true;
         } else
             title = "Diskuse";
 
         node = data.element("text");
-        if ( node!=null ) {
+        if ( node != null ) {
             sb.append(" ");
             sb.append(node.getText());
         }
@@ -554,39 +559,22 @@ public class CreateIndex implements Configurable {
         doc.setType(MyDocument.TYPE_DISCUSSION);
         doc.setCreated(discussion.getCreated());
         doc.setUpdated(discussion.getUpdated());
-        doc.setQuestionSolved(Tools.isQuestionSolved(document));
+        doc.setCid(discussion);
+        if (question) {
+            doc.setQuestionSolved(Tools.isQuestionSolved(document));
+            doc.setBoost(boostQuestion);
+        } else
+            doc.setBoost(boostDiscussion);
         doc.setNumberOfReplies(Tools.xpath(discussion, "/data/comments"));
         return doc;
-    }
-
-    /**
-     * Appends user information into stringbuffer. If there is no such user,
-     * error is ignored and this method does nothing.
-     * @param id user id
-     * @param sb
-     */
-    private static void storeUser(int id, StringBuffer sb) {
-        try {
-            sb.append(" ");
-            User user = (User) persistance.findById(new User(id));
-            String nick = user.getNick();
-            if (nick!=null) {
-                sb.append(nick);
-                sb.append(" ");
-            }
-            sb.append(user.getName());
-            sb.append(" ");
-        } catch (PersistanceException e) {
-            // user could be deleted
-        }
     }
 
     /**
      * Extracts data for indexing from hardware. Item must be synchronized.
      */
     static MyDocument indexHardware(Item make) {
-        Element data = (Element) make.getData().getRootElement();
-        String title = "";
+        Element data = make.getData().getRootElement();
+        String title;
 
         Node node = data.element("name");
         title = node.getText();
@@ -624,6 +612,8 @@ public class CreateIndex implements Configurable {
         doc.setCreated(make.getCreated());
         doc.setUpdated(make.getUpdated());
         doc.setType(MyDocument.TYPE_HARDWARE);
+        doc.setCid(make);
+        doc.setBoost(boostHardware);
         return doc;
     }
 
@@ -632,9 +622,9 @@ public class CreateIndex implements Configurable {
      */
     static MyDocument indexDriver(Item driver) {
         StringBuffer sb = new StringBuffer();
-        String title = null;
+        String title;
 
-        Element data = (Element) driver.getData().getRootElement();
+        Element data = driver.getData().getRootElement();
         Node node = data.element("name");
         title = node.getText();
         sb.append(title);
@@ -650,18 +640,21 @@ public class CreateIndex implements Configurable {
         doc.setType(MyDocument.TYPE_DRIVER);
         doc.setCreated(driver.getCreated());
         doc.setUpdated(driver.getUpdated());
+        doc.setCid(driver);
+        doc.setBoost(boostDriver);
         return doc;
     }
 
     /**
      * Extracts data for indexing from article. Item must be synchronized.
      */
-    static MyDocument indexArticle(Item article) {
+    static MyDocument indexArticle(Relation relation) throws IOException {
+        Item article = (Item) relation.getChild();
         StringBuffer sb = new StringBuffer();
-        String title = null;
+        String title;
         storeUser(article.getOwner(), sb);
 
-        Element data = (Element) article.getData().getRootElement();
+        Element data = article.getData().getRootElement();
         if (data.attribute(WhatHappened.INDEXING_FORBIDDEN)!=null)
             return null;
 
@@ -695,38 +688,34 @@ public class CreateIndex implements Configurable {
                             sb.append(" ");
                         }
                 }
-            } else if ( child.getChild() instanceof Item ) {
-                // todo indexuj diskuse vzdy samostatne a do titulku pridej jmeno clanku
-                Item item = (Item) persistance.findById(child.getChild());
-                if (item.getType()!=Item.DISCUSSION) continue;
-                MyDocument doc = indexDiscussion(item);
-                String diz = doc.getDocument().get(MyDocument.CONTENT);
-                if (diz!=null) {
-                    sb.append(diz);
-                    sb.append(" ");
-                }
             }
         }
+
+        indexDiscussionFor(article);
 
         MyDocument doc = new MyDocument(Tools.removeTags(sb.toString()));
         doc.setTitle(title);
         doc.setType(MyDocument.TYPE_ARTICLE);
         doc.setCreated(article.getCreated());
         doc.setUpdated(article.getUpdated());
-        doc.setBoost(1.5f);
+        doc.setURL(relation.getUrl());
+        doc.setParent(relation.getUpper());
+        doc.setCid(article);
+        doc.setBoost(boostArticle);
         return doc;
     }
 
     /**
      * Extracts data for indexing from news. Item must be synchronized.
      */
-    static MyDocument indexNews(Item news) {
+    static MyDocument indexNews(Relation relation) throws IOException {
+        Item news = (Item) relation.getChild();
         StringBuffer sb = new StringBuffer();
         String title;
 
         storeUser(news.getOwner(), sb);
 
-        Element data = (Element) news.getData().getRootElement();
+        Element data = news.getData().getRootElement();
         String content = data.element("content").getText();
         sb.append(content);
         sb.append(" ");
@@ -739,20 +728,7 @@ public class CreateIndex implements Configurable {
         if (node!=null)
             category = node.getText();
 
-        for ( Iterator iter = news.getChildren().iterator(); iter.hasNext(); ) {
-            Relation child = (Relation) iter.next();
-
-            if ( child.getChild() instanceof Item ) {
-                Item item = (Item) persistance.findById(child.getChild());
-                if (item.getType()!=Item.DISCUSSION) continue;
-                MyDocument doc = indexDiscussion(item);
-                String diz = doc.getDocument().get(MyDocument.CONTENT);
-                if (diz!=null) {
-                    sb.append(diz);
-                    sb.append(" ");
-                }
-            }
-        }
+        indexDiscussionFor(news);
 
         MyDocument doc = new MyDocument(Tools.removeTags(sb.toString()));
         doc.setTitle(title);
@@ -761,23 +737,57 @@ public class CreateIndex implements Configurable {
         doc.setUpdated(news.getUpdated());
         if (category!=null)
             doc.setNewsCategory(category);
-        doc.setBoost(0.5f);
+        String url = relation.getUrl();
+        if (url==null)
+            url = UrlUtils.PREFIX_NEWS + "/show/" + relation.getId();
+        doc.setURL(url);
+        doc.setParent(relation.getUpper());
+        doc.setCid(news);
+        doc.setBoost(boostNews);
         return doc;
     }
 
     /**
-     * Extracts text from dictionary item (and its records) for indexing.
-     * @param dictionary initialized item
+     * Creates and stores document with discussion to given parent.
+     * @param parent either article, news or blog
      */
-    static MyDocument indexDictionary(Item dictionary) {
+    private static void indexDiscussionFor(Item parent) throws IOException {
+        for ( Iterator iter = parent.getChildren().iterator(); iter.hasNext(); ) {
+            Relation child = (Relation) iter.next();
+
+            if ( child.getChild() instanceof Item ) {
+                Item item = (Item) persistance.findById(child.getChild());
+                if (item.getType() != Item.DISCUSSION)
+                    continue;
+
+                MyDocument doc = indexDiscussion(item);
+                String parentTitle = Tools.childName(parent);
+                if (parent.getType() == Item.ARTICLE)
+                    doc.setTitle("Diskuse k clanku " + parentTitle);
+                else if (parent.getType() == Item.BLOG)
+                    doc.setTitle("Diskuse k blogu " + parentTitle);
+                else if (parent.getType() == Item.NEWS)
+                    doc.setTitle("Diskuse k zpravicce " + parentTitle);
+
+                indexWriter.addDocument(doc.getDocument());
+            }
+        }
+    }
+
+    /**
+     * Extracts text from dictionary item (and its records) for indexing.
+     * @param relation relation with initialized item
+     */
+    static MyDocument indexDictionary(Relation relation) {
+        Item dictionary = (Item) relation.getChild();
         String title = Tools.xpath(dictionary, "/data/name"), s;
         StringBuffer sb = new StringBuffer(title);
-        Relation relation;
+        Relation childRelation;
         Record record;
 
         for (Iterator iter = dictionary.getChildren().iterator(); iter.hasNext();) {
-            relation = (Relation) iter.next();
-            record = (Record) persistance.findById(relation.getChild());
+            childRelation = (Relation) iter.next();
+            record = (Record) persistance.findById(childRelation.getChild());
             s = Tools.xpath(record, "//description");
             sb.append(' ');
             sb.append(Tools.removeTags(s));
@@ -789,6 +799,8 @@ public class CreateIndex implements Configurable {
         doc.setCreated(dictionary.getCreated());
         doc.setUpdated(dictionary.getUpdated());
         doc.setURL("/slovnik/"+dictionary.getSubType());
+        doc.setCid(dictionary);
+        doc.setBoost(boostDictionary);
 
         return doc;
     }
@@ -810,9 +822,47 @@ public class CreateIndex implements Configurable {
         doc.setCreated(faq.getCreated());
         doc.setUpdated(faq.getUpdated());
         doc.setURL(relation.getUrl());
-        doc.setBoost(2.0f);
+        doc.setCid(faq);
+        doc.setBoost(boostFaq);
 
         return doc;
+    }
+
+    /**
+     * Tests, whether child has been already indexed. If it has not been,
+     * its empty clone is stored to mark child as indexed.
+     */
+    static boolean hasBeenIndexed(GenericObject child) throws Exception {
+        if ( indexed.containsKey(child) )
+            return true;
+        else {
+            GenericObject key = (GenericObject) child.getClass().newInstance();
+            key.setId(child.getId());
+            indexed.put(key, Boolean.TRUE);
+            return false;
+        }
+    }
+
+    /**
+     * Appends user information into stringbuffer. If there is no such user,
+     * error is ignored and this method does nothing.
+     * @param id user id
+     * @param sb
+     */
+    private static void storeUser(int id, StringBuffer sb) {
+        try {
+            sb.append(" ");
+            User user = (User) persistance.findById(new User(id));
+            String nick = user.getNick();
+            if (nick!=null) {
+                sb.append(nick);
+                sb.append(" ");
+            }
+            sb.append(user.getName());
+            sb.append(" ");
+        } catch (NotFoundException e) {
+            // user could be deleted
+        }
     }
 
     /**
@@ -827,6 +877,20 @@ public class CreateIndex implements Configurable {
     public void configure(Preferences prefs) throws ConfigurationException {
         indexPath = prefs.get(PREF_PATH, null);
         lastRunFilename = prefs.get(PREF_LAST_RUN_NAME, LAST_RUN_FILE);
+        mergeFactor = prefs.getInt(PREF_MERGE_FACTOR, 0);
+        minMergeDocs = prefs.getInt(PREF_MIN_MERGE_DOCS, 0);
+        maxMergeDocs = prefs.getInt(PREF_MAX_MERGE_DOCS, 0);
+        maxFieldLength = prefs.getInt(PREF_MAX_FIELD_LENGTH, 0);
+        boostArticle = prefs.getFloat(PREF_BOOST_ARTICLE, 1.0f);
+        boostBlog = prefs.getFloat(PREF_BOOST_BLOG, 1.0f);
+        boostDictionary = prefs.getFloat(PREF_BOOST_DICTIONARY, 1.0f);
+        boostDiscussion = prefs.getFloat(PREF_BOOST_DISCUSSION, 1.0f);
+        boostDriver = prefs.getFloat(PREF_BOOST_DRIVER, 1.0f);
+        boostFaq = prefs.getFloat(PREF_BOOST_FAQ, 1.0f);
+        boostHardware = prefs.getFloat(PREF_BOOST_HARDWARE, 1.0f);
+        boostNews = prefs.getFloat(PREF_BOOST_NEWS, 1.0f);
+        boostQuestion = prefs.getFloat(PREF_BOOST_QUESTION, 1.0f);
+        boostSection = prefs.getFloat(PREF_BOOST_SECTION, 1.0f);
     }
 
     /**
