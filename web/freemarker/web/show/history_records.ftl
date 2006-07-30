@@ -10,7 +10,7 @@
 <#elseif TYPE=="software">
  <#list FOUND.data as relation>
   <li>
-   <a href="/software/show/${relation.id}">${TOOL.xpath(relation.child,"data/name")}</a>
+   <a href="${relation.url}">${TOOL.xpath(relation.child,"data/name")}</a>
   </li>
  </#list>
 </#if>

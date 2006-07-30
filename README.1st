@@ -1,32 +1,51 @@
-Strucne
-=======
+Strucny navod
+=============
 
-1\ potrebujete spravne nainstalovat 
+1\ nainstalujte
+
 Sun JDK 1.4
 Jakarta ant 1.6
-Mysql 4.1
+Mysql 4.1 ci novejsi
 Jetty 4.1.20
 
 Ant a jetty najdete v orezane verzi 
 mezi ostatnimi soubory ke stazeni.
 
 2\ nastavte si databazi
-bin/sql/create_db_schema.sql
-devel_databaze.sql.bz2
+
+$ mysql
+CREATE DATABASE devel default character set latin2 collate latin2_bin;
+USE devel;
+GRANT ALL ON *.* TO 'you'@'localhost' IDENTIFIED BY 'password' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
+$ bzcat devel_databaze.sql.bz2 | mysql -u you -p password devel
+
+Ujistete se, ze databaze je pristupna pres TCPIP, v defaultnim
+natsaveni je zakazano (skip networking v konfiguraci ci spoustecim
+skriptu, poidrobnosti v diskusich na abicku).
 
 3\ upravte si conf/conf_devel.properties
+
 Dulezite je mit spravne vsechny cesty,
 adresare by mely existovat. Take nastavte
 jmeno databaze, uzivatele a jeho heslo.
 
 4\ zkompilujte projekt
+
 spustte ant ve zdrojacich
+
+Pokud provedete pote nejake zmeny do conf_devel.properties,
+ant je neprevede do konfiguracnich souboru. Pak je lepsi
+bud smazat adresar $DEPLOY/WEB-INF nebo touchnout vsechny
+soubory v source/conf.
 
 5\ spustte jetty
 cd jetty-4.1/bin
 ./jetty run
 
 6\ otevrete prohlizec
+
 http://localhost:8080
 
 Slozitejsi veci

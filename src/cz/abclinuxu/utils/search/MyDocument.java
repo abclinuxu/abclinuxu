@@ -22,6 +22,8 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.data.GenericObject;
+import cz.abclinuxu.persistance.PersistenceMapping;
 
 import java.util.Date;
 
@@ -34,6 +36,8 @@ public class MyDocument {
     public static final String TYPE_HARDWARE = "hardware";
     public static final String TYPE_SOFTWARE = "software";
     public static final String TYPE_DISCUSSION = "diskuse";
+    // todo pouzit, asi
+    public static final String TYPE_QUESTION = "otazka";
     public static final String TYPE_DRIVER = "ovladac";
     public static final String TYPE_ARTICLE = "clanek";
     public static final String TYPE_NEWS = "zpravicka";
@@ -52,6 +56,8 @@ public class MyDocument {
     public static final String TITLE = "title";
     /** Id of parent object. */
     public static final String PARENT = "parent";
+    /** class type and id of object, e.g. P12345 */
+    public static final String CID = "cid";
     /** News category */
     public static final String NEWS_CATEGORY = "kategorie";
     /** State of question, possible values are ano/ne */
@@ -112,7 +118,27 @@ public class MyDocument {
      * Sets id of parent object.
      */
     public Field setParent(int parent) {
-        Field field = Field.Keyword(PARENT,new Integer(parent).toString());
+        Field field = Field.Keyword(PARENT, Integer.toString(parent));
+        document.add(field);
+        return field;
+    }
+
+    /**
+     * Sets class type and object id for fast retrieval of specific object from index
+     */
+    public Field setCid(String type, int id) {
+        Field field = Field.Keyword(CID, type + id);
+        document.add(field);
+        return field;
+    }
+
+    /**
+     * Sets class type and object id for fast retrieval of specific object from index
+     * @param obj object to be stored, its id must be set
+     */
+    public Field setCid(GenericObject obj) {
+        String type = PersistenceMapping.getGenericObjectType(obj);
+        Field field = Field.Keyword(CID, type + obj.getId());
         document.add(field);
         return field;
     }
@@ -157,8 +183,10 @@ public class MyDocument {
      * Sets time when object was created.
      */
     public Field setCreated(Date date) {
-        document.add(Field.UnIndexed(VALUE_CREATED, Constants.isoFormat.format(date)));
-        Field field = Field.Keyword(CREATED, date);
+        String s = Constants.isoFormat.format(date); // 2006-07-31 12:10
+        String t = Constants.isoSearchFormat.format(date); // 20060731
+        document.add(Field.UnIndexed(VALUE_CREATED, s));
+        Field field = Field.Keyword(CREATED, t);
         document.add(field);
         return field;
     }
@@ -167,8 +195,10 @@ public class MyDocument {
      * Sets last time when object was updated.
      */
     public Field setUpdated(Date date) {
-        document.add(Field.UnIndexed(VALUE_UPDATED, Constants.isoFormat.format(date)));
-        Field field = Field.Keyword(UPDATED, date);
+        String s = Constants.isoFormat.format(date); // 2006-07-31 12:10
+        String t = Constants.isoSearchFormat.format(date); // 20060731
+        document.add(Field.UnIndexed(VALUE_UPDATED, s));
+        Field field = Field.Keyword(UPDATED, t);
         document.add(field);
         return field;
     }

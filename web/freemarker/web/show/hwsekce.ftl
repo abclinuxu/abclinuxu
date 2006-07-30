@@ -1,21 +1,20 @@
-<div class="hw">
-
 <#assign plovouci_sloupec>
     <div class="s_sekce">
         <ul>
-            <li><a href="/clanky/show/3500?text=sekce+${RELATION.id}">Po¾ádejte o vytvoøení podsekce</a></li>
+            <li><a href="/clanky/show/3500?text=sekce+${RELATION.id}">Po¾ádat o vytvoøení podsekce</a></li>
             <#if CATEGORY.isOpen()>
-                <li><a href="${URL.make("/edit/"+RELATION.id+"?action=add")}">Vlo¾ novou polo¾ku</a></li>
+                <li><a href="${URL.make("/edit/"+RELATION.id+"?action=add")}">Vlo¾it novou polo¾ku</a></li>
             </#if>
             <#if USER?exists && USER.hasRole("category admin")>
+                <hr />
                 <li><a href="${URL.make("/EditCategory?action=add&amp;rid="+RELATION.id+"&amp;categoryId="+CATEGORY.id)}">mkdir</a>,
                     <a href="${URL.make("/EditCategory?action=edit&amp;rid="+RELATION.id+"&amp;categoryId="+CATEGORY.id)}">edit</a>,
                     <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix="+URL.prefix)}">rmdir</a>,
                     <a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;url=/EditRelation&amp;action=add&amp;prefix="+URL.prefix)}">link</a></li>
             </#if>
             <#if USER?exists && USER.hasRole("move relation")>
-                <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Pøesunout</a></li>
-                <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=moveAll&amp;prefix="+URL.prefix)}">Pøesuò obsah</a></li>
+                <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Pøesunout sekci</a></li>
+                <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=moveAll&amp;prefix="+URL.prefix)}">Pøesunout obsah</a></li>
             </#if>
             <#if USER?exists && USER.hasRole("root")>
                 <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=showACL")}">ACL</a></li>
@@ -26,7 +25,9 @@
 
 <#include "../header.ftl">
 
-<h1>Sekce ${TOOL.xpath(CATEGORY,"/data/name")}</h1>
+<div class="hw">
+
+<h1>${TOOL.xpath(CATEGORY,"/data/name")}</h1>
 
 <@lib.showMessages/>
 
@@ -52,6 +53,7 @@
 	  <td colspan="3">Sekce</td>
 	</tr>
       </thead>
+      <tbody>
         <#list SORT.byName(map.category) as sekce>
             <#if sekce_index%3==0><tr></#if>
 	    <td>
@@ -60,6 +62,7 @@
 	    </td>
 	    <#if sekce_index%3==2></tr></#if>
 	</#list>
+      </tbody>
     </table>
 </#if>
 

@@ -291,6 +291,9 @@ public class ServletUtils implements Configurable {
      */
     public static void addError(String key, String errorMessage, Map env, HttpSession session) {
         Map errors = (Map) env.get(Constants.VAR_ERRORS);
+        String existingMessage = (String) errors.get(key);
+        if (existingMessage != null)
+            errorMessage = existingMessage + "<br>" + errorMessage;
         errors.put(key,errorMessage);
         if ( session!=null )
             session.setAttribute(Constants.VAR_ERRORS,errors);

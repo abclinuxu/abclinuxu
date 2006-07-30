@@ -13,11 +13,6 @@
     mù¾eme udr¾et vysokou kvalitu abclinuxu.
 </p>
 
-<fieldset>
-    <legend>Pøíspìvek</legend>
-    <@lib.showThread COMMENT, 0, TOOL.createEmptyDiscussion(), false />
-</fieldset>
-
 <#if USER?exists && USER.hasRole("discussion admin")>
     <fieldset>
         <legend>Nástroje pro adminy</legend>
@@ -35,6 +30,11 @@
         <#if author_ip!="UNDEFINED">${author_ip}</#if>
     </fieldset>
 </#if>
+
+<fieldset>
+    <legend>Pøíspìvek</legend>
+    <@lib.showThread COMMENT, 0, TOOL.createEmptyDiscussion(), false />
+</fieldset>
 
 <#if TOOL.xpath(RELATION.child,"data/title")?exists>
     <p>

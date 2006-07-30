@@ -6,8 +6,8 @@
     <div class="s_sekce">
         <ul>
             <li>
-                <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
-                (${DATE.show(ITEM.updated,"CZ_FULL")})
+                <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a><br />
+                <span class="regular-color">(${DATE.show(ITEM.updated,"CZ_FULL")})</span>
             </li>
             <#if PARAMS.revize?exists>
                 <li>
@@ -20,15 +20,14 @@
                 <li>
                     <a href="${URL.make("/hardware/edit/"+RELATION.id+"?action=monitor")}">${monitorState}</a>
                     <span title="Poèet lidí, kteøí sledují tento záznam">(${TOOL.getMonitorCount(ITEM.data)})</span>
-                    <a class="info" href="#">?<span class="tooltip">Za¹le upozornìní na vá¹ email pøi úpravì záznamu</span></a>
+                    <a class="info" href="#">?<span class="tooltip">Za¹le upozornìní na vá¹ email pøi úpravì záznamu.</span></a>
                 </li>
-                <li>
-                    <form action="/Search"><input type="text" class="text" name="query" value="${TOOL.xpath(ITEM,"/data/name")}" size="30">
-                        <input type="submit" class="button" value="Hledej">
-                    </form>
-                </li>
+                <form action="/Search"><input type="text" class="text" name="query" value="${TOOL.xpath(ITEM,"/data/name")}">
+                    <input type="submit" class="button" value="Hledej">
+                </form>
                 <#if USER?exists && USER.hasRole("move relation")>
-                    <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Pøesunout</a></li>
+                    <hr />
+                    <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Pøesunout polo¾ku</a></li>
                 </#if>
                 <#if USER?exists && USER.hasRole("remove relation")>
                     <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/hardware")}">Smazat</a></li>
@@ -41,7 +40,11 @@
 <#include "../header.ftl">
 <#import "../misc/hardware.ftl" as hwlib>
 
+<div class="hw"
+
 <@hwlib.showHardware ITEM />
+
+</div>
 
 <#include "../footer.ftl">
 

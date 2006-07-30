@@ -56,6 +56,8 @@
           <include name="news_categories.xml"/>
           <include name="UnicodeData.txt"/>
           <include name="stop_words.txt"/>
+          <include name="property_set_ui.xml"/>
+          <include name="property_set_license.xml"/>
       </fileset>
     </copy>
 

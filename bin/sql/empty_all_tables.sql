@@ -13,4 +13,5 @@ delete from relace;
 delete from server;
 delete from uzivatel;
 delete from verze;
+delete from vlastnost;
 delete from zaznam;

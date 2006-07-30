@@ -22,7 +22,6 @@
                     <li><a href="${URL.noPrefix("/inset/"+RELATION.id+"?action=manage")}">Správa pøíloh</a></li>
                 </#if>
                 <#if USER?exists && USER.hasRole("move relation")>
-                    <hr />
                     <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Pøesunout</a></li>
                 </#if>
                 <#if USER?exists && USER.hasRole("remove relation")>

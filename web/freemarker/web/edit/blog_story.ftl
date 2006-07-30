@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<h1 class="st_nadpis">Úvod</h1>
+<h2>Úvod</h2>
 
 <p>Tento formuláø slou¾í pro vkládání nových zápisù do va¹eho blogu.
 Ka¾dý zápis musí mít titulek, který by mìl struènì a jasnì popisovat,
@@ -26,10 +26,10 @@ Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
 </#if>
 
 <#if PREVIEW?exists>
- <h1 class="st_nadpis">Náhled va¹eho zápisu</h1>
+ <h2>Náhled va¹eho zápisu</h2>
 
  <div style="padding-left: 30pt">
-    <h2>${TOOL.xpath(PREVIEW, "/data/name")}</h2>
+    <h3>${TOOL.xpath(PREVIEW, "/data/name")}</h3>
     <p class="cl_inforadek">${DATE.show(PREVIEW.created, "CZ_SHORT")} |
         Pøeèteno: ${TOOL.getCounterValue(PREVIEW)}x
         <#if PREVIEW.subType?exists>| ${CATEGORIES[PREVIEW.subType]?if_exists}</#if>
@@ -39,7 +39,7 @@ Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
  </div>
 </#if>
 
-<h1 class="st_nadpis">Zde mù¾ete provést své úpravy</h1>
+<h2>Zde mù¾ete provést své úpravy</h2>
 
 <form action="${URL.make("/blog/edit/"+STORY.id)}" method="POST" name="form">
 <table cellpadding="5">
@@ -93,10 +93,6 @@ Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
 <input type="hidden" name="action" value="edit2">
 </form>
 
-<p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html">znaèky</a>:
- A, ACRONYM, B, BLOCKQUOTE, BR, CENTER, CITE, CODE, DD, DEL, DIV, DL, DT, EM, IMG, H1, H2, H3, H4, HR, I,
- INS, KBD, LI, OL, P, PRE, Q, SMALL, SPAN, STRONG, SUB, SUP, TABLE, TBODY, TD, TFOOT, TH, THEAD,
- TR, TT, U, UL, VAR. Znaèky P, PRE, DIV, SPAN, H1-H4 a A povolují atrubity ID a CLASS.
-</p>
+<#include "/include/napoveda-k-html-formatovani.txt">
 
 <#include "../footer.ftl">

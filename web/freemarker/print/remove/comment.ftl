@@ -11,12 +11,6 @@ zakázanou reklamu a spamy a podobnì.</p>
 <p>Tato funkce je rekurzivní! Sma¾e tedy kompletní vlákno
 vèetnì v¹ech potomkù!</p>
 
-
-<#if THREAD?exists>
- <h1>Náhled pøíspìvku</h1>
- <@lib.showThread THREAD, 0, TOOL.createEmptyDiscussion(), false />
-</#if>
-
 <form action="${URL.make("/EditDiscussion")}" method="POST">
  <input type="submit" value="Smazat">
  <input type="hidden" name="action" value="rm2">
@@ -24,6 +18,11 @@ vèetnì v¹ech potomkù!</p>
  <input type="hidden" name="dizId" value="${PARAMS.dizId}">
  <input type="hidden" name="threadId" value="${PARAMS.threadId}">
 </form>
+
+<#if THREAD?exists>
+ <h1>Náhled pøíspìvku</h1>
+ <@lib.showThread THREAD, 0, TOOL.createEmptyDiscussion(), false />
+</#if>
 
 
 <#include "../footer.ftl">

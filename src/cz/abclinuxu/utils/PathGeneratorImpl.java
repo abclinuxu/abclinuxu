@@ -58,7 +58,7 @@ public class PathGeneratorImpl implements PathGenerator {
         if (!dir.isDirectory())
             throw new IOException("Supposed path " + dir.getAbsolutePath() + " is not directory!");
 
-        File file = File.createTempFile(id + "_" + prefix, suffix, dir);
+        File file = File.createTempFile(id + "-" + prefix + "-", suffix, dir);
         return file;
      }
 }

@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<h1 class="st_nadpis">Úvod</h1>
+<h1>Slovník</h1>
 
 <p>Cílem této slu¾by je vytvoøit rozsáhlý výkladový slovník
 nejrùznìj¹ích pojmù týkajících se Linuxu èi Unixu.  Èím více
@@ -11,7 +11,7 @@ v Linuxu a zvý¹í se ¹ance, ¾e nebudou klást otázky vyplývající
 z nepochopení základních principù tohoto operaèního systému.
 </p>
 
-<h1 class="st_nadpis">Nový pojem</h1>
+<h2>Nový pojem</h2>
 
 <p>Ka¾dý pojem ve slovníku se skládá z názvu a popisu. Název
 odpovídá pojmu v prvním pádì jednotného èísla. Napøíklad
@@ -23,7 +23,7 @@ pro nový odstavec.
 </p>
 
 <#if PARAMS.preview?exists && PARAMS.desc?exists>
- <h1 class="st_nadpis">Náhled</h1>
+ <h2>Náhled</h2>
   <p class="slovnik">
    ${TOOL.render(PARAMS.desc,USER?if_exists)}
   </p>
@@ -37,14 +37,14 @@ pro nový odstavec.
   </tr>
   <tr>
    <td colspan="2">
-    <textarea name="desc" cols="70" rows="20" tabindex="1">${PARAMS.desc?if_exists?html}</textarea>
+    <textarea tabindex="1" name="desc" cols="70" rows="20" tabindex="1">${PARAMS.desc?if_exists?html}</textarea>
     <div class="error">${ERRORS.desc?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td colspan="2">
-    <input type="submit" name="preview" value="Náhled">
-    <#if PARAMS.preview?exists><input type="submit" name="submit" value="Dokonèi"></#if>
+    <input tabindex="2" type="submit" name="preview" value="Náhled">
+    <#if PARAMS.preview?exists><input tabindex="3" type="submit" name="submit" value="Dokonèi"></#if>
    </td>
   </tr>
  </table>

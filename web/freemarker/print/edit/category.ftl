@@ -4,7 +4,7 @@
 
 <form action="${URL.make("/EditCategory")}" method="POST">
 
- <table width=100 border=0 cellpadding=5>
+ <table width="100" border="0" cellpadding="5">
   <tr>
    <td width="120" class="required">Jméno sekce</td>
    <td>
@@ -18,7 +18,7 @@
             <select name="type" tabindex="2">
                 <option value="nic"<#if ! PARAMS.type?exists> SELECTED</#if>>Sekce</option>
                 <option value="software"<#if PARAMS.type?if_exists=="software"> SELECTED</#if>>Sekce Software</option>
-                <option value="hardware"<#if PARAMS.type?if_exists=="hardware"> SELECTED</#if>>Sekce hardware</option>
+                <option value="hardware"<#if PARAMS.type?if_exists=="hardware"> SELECTED</#if>>Sekce Hardware</option>
                 <option value="faq"<#if PARAMS.type?if_exists=="faq"> SELECTED</#if>>Sekce FAQ</option>
                 <option value="forum"<#if PARAMS.type?if_exists=="forum"> SELECTED</#if>>Diskusní fórum</option>
                 <option value="section"<#if PARAMS.type?if_exists=="section"> SELECTED</#if>>Rubrika pro èlánky</option>

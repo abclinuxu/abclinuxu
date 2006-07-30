@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<h1 class="st_nadpis">Úvod</h1>
+<h2>Úvod</h2>
 
 <p>Cílem této slu¾by je vytvoøit rozsáhlý výkladový slovník
 nejrùznìj¹ích pojmù týkajících se Linuxu èi Unixu.  Èím více
@@ -11,7 +11,7 @@ v Linuxu a zvý¹í se ¹ance, ¾e nebudou klást otázky vyplývající
 z nepochopení základních principù tohoto operaèního systému.
 </p>
 
-<h1 class="st_nadpis">Nový pojem</h1>
+<h2>Nový pojem</h2>
 
 <p>Ka¾dý pojem ve slovníku se skládá z názvu a popisu. Název
 odpovídá pojmu v prvním pádì jednotného èísla. Napøíklad

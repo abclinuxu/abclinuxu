@@ -64,11 +64,10 @@ public class AbcCzechAnalyzer extends Analyzer implements Configurable {
         log.info("Loading stop words from file '"+file+"'.");
         try {
 	        stopTable = WordlistLoader.getWordtable(file);
-	} catch (IOException e) {
-	        throw new ConfigurationException(e);
-	}
+        } catch (IOException e) {
+            throw new ConfigurationException(e);
+        }
 
-	log.info(stopTable.size()+" stop words loaded.");
-
+        log.info(stopTable.size()+" stop words loaded.");
     }
 }

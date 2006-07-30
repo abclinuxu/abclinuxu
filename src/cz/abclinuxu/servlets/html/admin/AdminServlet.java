@@ -88,7 +88,7 @@ public class AdminServlet implements AbcAction {
     /**
      * Clears all caches.
      */
-    private final String clearCache(HttpServletRequest request, Map env) throws Exception {
+    private String clearCache(HttpServletRequest request, Map env) throws Exception {
         PersistanceFactory.getPersistance().clearCache();
         TemplateSelector.initialize(null);
         ConfigurationManager.reconfigureAll();
@@ -105,7 +105,7 @@ public class AdminServlet implements AbcAction {
     /**
      * Restarts all tasks. USefull when some thread dies for some reason.
      */
-    private final String restartTasks(HttpServletRequest request, Map env) throws Exception {
+    private String restartTasks(HttpServletRequest request, Map env) throws Exception {
         AbcInit.getInstance().startTasks();
         ServletUtils.addMessage("Úlohy byly restartovány.",env,null);
         User user = (User) env.get(Constants.VAR_USER);
@@ -118,7 +118,7 @@ public class AdminServlet implements AbcAction {
      * Content of page is defined in web/freemarker/print/misc/admin_check.ftl
      * todo add other checks, e.g. jobs and threads
      */
-    private final String performCheck(HttpServletRequest request, Map env) throws Exception {
+    private String performCheck(HttpServletRequest request, Map env) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance();
         try {
             persistance.findById(new Category(Constants.CAT_HARDWARE));
@@ -144,7 +144,7 @@ public class AdminServlet implements AbcAction {
     /**
      * Creates all RSS from scratch again.
      */
-    private final String refreshRss(HttpServletRequest request, Map env) throws Exception {
+    private String refreshRss(HttpServletRequest request, Map env) throws Exception {
         FeedGenerator.updateArticles();
         FeedGenerator.updateBlog(null);
         FeedGenerator.updateDrivers();

@@ -462,6 +462,7 @@ public final class SQLTool implements Configurable {
      * Finds relations, where child is item of specified type and pass the given filters.
      * There is an AND relation between properties and OR between values of each property.
      * Use Qualifiers to set additional parameters.
+     * @param filters map where key is name of property (see properties.txt) and value is Set of property values
      * @return List of initialized relations
      * @throws PersistanceException if there is an error with the underlying persistent storage.
      */

@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<h1>Ne¾ polo¾íte dotaz</h1>
+<h1>Pokládání dotazu</h1>
 
 <ul>
     <li>Pøeètìte si èlánek
@@ -14,7 +14,7 @@
     <li>Dotazy na warez budou smazány.</li>
 </ul>
 
-<h1>Jak psát titulek</h1>
+<h2>Jak psát titulek</h2>
 
 <p>Dobøe zvolený titulek pøiláká pozornost ètenáøù, ¹patný zaruèenì odradí zku¹ené u¾ivatele, kteøí
 by vám mohli pomoci. Admini mohou ¹patnì formulovaný titulek upravit.</p>
@@ -27,7 +27,7 @@ by vám mohli pomoci. Admini mohou ¹patnì formulovaný titulek upravit.</p>
 <li>Jeden otazník úplnì staèí. Opravdu.</li>
 </ul>
 
-<h1>Jak popsat problém</h1>
+<h2>Jak popsat problém</h2>
 
 <ul>
 <li>Sna¾te se uvést co nejvíce relevantních informací. Napøíklad:
@@ -109,26 +109,7 @@ tazatel bude po¾ádán, aby jednotlivé problémy popsal v samostatných diskusích.</
  <input type="hidden" name="rid" value="${PARAMS.rid}">
 </form>
 
-<h1>Nápovìda k formátování</h1>
-
-<p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html" rel="nofollow">znaèky</a>:
-A, B, BR, BLOCKQUOTE, CITE, CODE, DIV, EM, I, HR, H1, H2, H3, LI,
-OL, P, PRE, STRONG, TT, UL, VAR. </p>
-
-<p>Nejrychlej¹í zpùsob formátování je rozdìlovat
-text do odstavcù. Systém detekuje prázdné øádky
-(dvakrát enter) a nahradí je HTML znaèkou odstavce.
-Pokud ale v textu pou¾ijete znaèku P èi BR,
-pak pøedpokládáme, ¾e o formátování se budete starat
-sami a tato konverze nebude aktivována.</p>
-
-<p>Pokud neovládáte HTML, doporuèuji si pøeèíst jeho
-<a href="http://www.kosek.cz/clanky/html/01.html" rel="nofollow">rychlokurz</a>.</p>
-
-<p>Text musí být HTML validní, proto znak men¹ítka èi vìt¹ítka zapisujte takto:
-&lt; jako &amp;lt; a &gt; jako &amp;gt;. Dal¹ím èastým problémem
-je, jak vlo¾it výpis logu èi konfiguraèní soubor. V tomto
-pøípadì vá¹ text vlo¾te mezi znaèky PRE, pøíli¹ dlouhé øádky rozdìlte klávesou Enter.</p>
+<#include "/include/napoveda-k-auto-formatovani.txt">
 
 
 <#include "../footer.ftl">

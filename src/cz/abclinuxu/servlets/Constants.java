@@ -158,6 +158,7 @@ public interface Constants {
 
     SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     DateFormat isoFormatShort = new SimpleDateFormat("yyyy-MM-dd");
+    DateFormat isoSearchFormat = new SimpleDateFormat("yyyyMMdd");
     DateFormat czFormat = new SimpleDateFormat("d.M.yyyy HH:mm");
     DateFormat czFormatTxt = new SimpleDateFormat("d. MMMMM yyyy HH:mm");
     DateFormat czShortFormat = new SimpleDateFormat("d.M. HH:mm");
@@ -170,4 +171,5 @@ public interface Constants {
     String PROPERTY_USER_INTERFACE = "ui";
     String PROPERTY_ALTERNATIVE_SOFTWARE = "alternative";
     String PROPERTY_LICENSE = "license";
+    String PROPERTY_BLOG_DIGEST = "digest";
 }

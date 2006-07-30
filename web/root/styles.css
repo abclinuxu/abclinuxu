@@ -119,6 +119,11 @@ td {
 	margin-left:	0.5em;
 }
 
+.hw-sloupec .s_sekce input.text, .sw-sloupec .s_sekce input.text {
+	width:		100px;
+	margin-left:	-1em;
+}
+
 .button { height: 1.8em }
 
 .za_hledat input.text:hover, .za_hledat input.text:focus {
@@ -323,35 +328,40 @@ td.pad, code.kod, pre.kod {
 	border:		1px solid silver;
 }
 
-.ds, .hw {
+.ds, .hw, .sw {
 	border-bottom:	1px solid #27648D;
 }
 
-.ds table, .hw table {
+.ds table, .hw table, .sw table {
 	margin-top:	5px;
 	border-width:	0px;
 	table-layout:	auto;
-	/*width:		100%*/
 }
 
-.ds thead td, .hw thead td {
+.ds thead td, .hw thead td, .sw thead td {
 	font-weight:	bold;
 	border-bottom:	solid 1px silver;
 	font-size:	85%;
 	background-color: transparent;
 }
 
-.hw thead td.hw-sekce {
-	font-size:	medium;
-}
-
-.ds td.td01, .hw td.td01 {
+.ds td.td01, .hw td.td01, .sw td.td01 {
 	width:		650px;
 }
 
-.ds td.td02, .hw td.td02 {
+.ds td.td02, .hw td.td02, .sw td.td02 {
 	width:		60px;
 	text-align:	center;
+}
+
+.ds td.td03, .hw td.td03, .sw td.td03 {
+	width:		60px;
+	text-align:	center;
+}
+
+.ds td.td04, .hw td.td04, .sw td.td04 {
+	width:		230px;
+	text-align:	right;
 }
 
 .ds_control_sbalit, .ds_control_sbalit2 {
@@ -366,27 +376,25 @@ td.pad, code.kod, pre.kod {
 	cursor: pointer;
 }
 
-.ds td.td03, .hw td.td03 {
-	width:		60px;
-	text-align:	center;
-}
-
-.ds td.td04, .hw td.td04 {
-	width:		230px;
-	text-align:	right;
-}
-
-.hw table.hw-sekce tbody td { width: 33%; padding: 0.1em; }
+.hw table.hw-sekce tbody td, sw table.sw-sekce tbody td { width: 33%; padding: 0.1em; }
 .hw table.hw-sekce tbody td a,
     .hw table.hw-polozky tr a,
+    .sw table.sw-sekce tbody td a,
+    .sw table.sw-polozky tr a,
     .ds tbody tr a { display: block; _width: 100%; }
 .ds tbody tr:hover,
     .hw table.hw-polozky tbody tr:hover,
-    .hw table.hw-sekce tbody td:hover { background: #f3f3f3 }
-.ds tr:nth-child(even) { background: #f9f9f9 }
-.hw table.hw-polozky tr:nth-child(even) { background: #f9f9f9 }
+    .sw table.sw-polozky tbody tr:hover { background: #f3f3f3 }
+.ds tr:nth-child(even),
+    .hw table.hw-polozky tr:nth-child(even),
+    .sw table.sw-polozky tr:nth-child(even) { background: #f9f9f9 }
 
-.hw img.ikona { margin-right: 0.3em; }
+.hw img.ikona, .sw img.ikona { margin-right: 0.3em; }
+
+.sw .galerie a:hover, .sw h3 a:hover { background-color: white; }
+
+.sw-strom div { margin-left:	1em; }
+.sw-strom div.uroven-1 { margin-left:	0 }
 
 .ds_toolbox {
 	background:	#ececec;
@@ -426,9 +434,7 @@ td.pad, code.kod, pre.kod {
 	font-style:	italic;
 }
 
-.kt_citace {
-	color:#880000
-}
+.kt_citace { color:#880000 }
 
 .s_odkaz {
 	text-align:	center;
@@ -525,6 +531,8 @@ a.info:hover span.tooltip {
 	list-style-type: circle;
 }
 
+.s ul span.regular-color { color: black; }
+
 .ramec-st span { color: black }
 .ramec-st .s_nad_h1 { border-top: none; margin: 0 }
 .ramec-st {
@@ -559,15 +567,18 @@ a.info:hover span.tooltip {
 	text-align:	left;
 }
 
-.ls li a, .ps li a, .st_rozc li a, .ds td a, .hw td a, .s_nad_h1 a, .ps_reklama a,
+.ls li a, .ps li a, .st_rozc li a, .ds td a, .hw td a, .sw td a, .s_nad_h1 a, .ps_reklama a,
  .textad a, a.info, .ramec-st li a, .sflista a, .cl_square a {text-decoration:none}
-.ls li a:hover, .ps li a:hover, .st_rozc li a:hover, .ds td a:hover, .hw td a:hover,
+.ls li a:hover, .ps li a:hover, .st_rozc li a:hover, .ds td a:hover, .hw td a:hover, .sw td a:hover,
 .ps_reklama a:hover, .textad a:hover, .ramec-st li a:hover {text-decoration:underline}
 
-.ls_prepinac {
-	background-color: #27648D;
+.ls_prepinac, .ps_prepinac {
+	background:	#27648D;
 	padding-left:	2px;
 	border-bottom:	1px solid white;
+}
+
+.ls_prepinac {
 	width:		268px;
 }
 
@@ -576,9 +587,7 @@ a.info:hover span.tooltip {
 }
 
 .ls_reklama {
-	width:		250px;
-	height:		125px;
-	margin:		3px 0px 5px 5px;
+	margin:		5px 0px 5px 5px;
 	background:	url('/images/site2/adback.png') no-repeat;
 }
 
@@ -647,19 +656,17 @@ a.info:hover span.tooltip {
 	border-bottom:	1px solid #C0C0C0;
 	padding-bottom:	2px;
 	margin: 5px 0 5px 5px;
-	width:		300px;	
+	width:		300px;
 }
 
-.hw .obal_ps { width: 200px; }
+.hw-sloupec .obal_ps, .sw-sloupec .obal_ps { width: 200px; }
 
 .ps_prepinac {
 	height:		15px;
-	background-color: #27648D;
-	border-bottom:	1px solid white;
 }
 
 .ps_nad_reklama {
-	background-color: #F0F0F0;
+	background:	#F0F0F0;
 	float:		right;
 	color:		black;
 	text-align:	center;
@@ -677,7 +684,7 @@ a.info:hover span.tooltip {
 }
 
 .ps_reklama a:hover {
-	background-color: transparent;
+	background:	transparent;
 }
 
 .st_rozc {
@@ -696,7 +703,7 @@ a.info:hover span.tooltip {
 }
 
 .st_rozc td, .host .prehled td {
-	background-color: #f9f9f9;
+	background:	#f9f9f9;
 	vertical-align: top;
 	padding:	2px;
 	border:		1px solid #ececec;
@@ -705,11 +712,11 @@ a.info:hover span.tooltip {
 }
 
 .st_rozc ul {
-	background-color: transparent;
+	background:	transparent;
 }
 
 .st_rozc li {
-	background-color: transparent;
+	background:	transparent;
 	margin-left:	2px;
 	margin-right:	2px;
 }
@@ -720,7 +727,7 @@ a.info:hover span.tooltip {
 	border:		none;
 	margin:		0;
 	padding:	0;
-	background-color: #27648D;
+	background:	#27648D;
 	text-align:	center;
 	font-size:	80%;
 	position:	relative;

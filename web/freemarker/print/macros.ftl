@@ -156,3 +156,50 @@
         </form>
     </div>
 </#macro>
+
+<#macro showDiscussion(relation)>
+    <#local DIZ = TOOL.createDiscussionTree(relation.child,USER?if_exists,relation.id,true)>
+    <#if DIZ.monitored><#local monitorState="Pøestaò sledovat"><#else><#assign monitorState="Sleduj"></#if>
+
+    <div class="ds_toolbox">
+     <b>Nástroje:</b>
+       <#if DIZ.hasUnreadComments>
+         <a href="#${DIZ.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a>,
+       </#if>
+         <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+DIZ.relationId)}">${monitorState}</a>
+           <span title="Poèet lidí, kteøí sledují tuto diskusi">(${DIZ.monitorSize})</span>
+           <a class="info" href="#">?<span class="tooltip">Za¹le ka¾dý nový komentáø emailem na va¹i adresu</span></a>,
+         <a href="${URL.prefix}/show/${DIZ.relationId}?varianta=print">Tisk</a>
+       <#if USER?exists && USER.hasRole("discussion admin")>
+         <br />
+         <b>Admin:</b>
+         <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+DIZ.relationId+"&amp;dizId="+DIZ.id)}">
+            <#if DIZ.frozen>Rozmrazit<#else>Zmrazit</#if></a>
+       </#if>
+    </div>
+
+    <p>
+        <#if DIZ.frozen>
+            Diskuse byla administrátory uzamèena
+        <#else>
+            <a href="${URL.make("/EditDiscussion?action=add&amp;dizId="+DIZ.id+"&amp;threadId=0&amp;rid="+DIZ.relationId)}">
+            Vlo¾it dal¹í komentáø</a>
+        </#if>
+    </p>
+
+    <#list DIZ.threads as thread>
+       <@lib.showThread thread, 0, DIZ, !DIZ.frozen />
+    </#list>
+
+    <#if (!DIZ.frozen && DIZ.size>3)>
+     <p><a href="${URL.make("/EditDiscussion?action=add&amp;threadId=0&amp;dizId="+DIZ.id+"&amp;rid="+DIZ.relationId)}">
+     Zalo¾it nové vlákno</a></p>
+    </#if>
+</#macro>
+
+<#macro showOption (param value caption type extra...)>
+    <label>
+        <input type="${type}" name="${param}" value="${value}"<#if TOOL.isWithin(PARAMS[param], value)> checked</#if>${extra[0]?if_exists}>
+        ${caption}
+    </label>
+</#macro>

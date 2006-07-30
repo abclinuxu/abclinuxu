@@ -15,3 +15,11 @@ name: alternative
 values: entered by users
 mapping: 1:n
 purpose: name of software from Windows having same purpose
+
+ITEM.BLOG
+=========
+
+name: digest
+value: yes
+mapping: 1:1
+purpose: indicates that the story was selected to blog digest RSS

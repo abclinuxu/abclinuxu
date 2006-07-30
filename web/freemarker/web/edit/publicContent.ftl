@@ -60,11 +60,6 @@ zmìny zpìt.</p>
   <input type="hidden" name="startTime" value="${value}">
 </form>
 
-<p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html">znaèky</a>:
- A,  B, BLOCKQUOTE, BR, CENTER, CITE, CODE, DD, DEL, DIV, DL, DT, EM, IMG, H1, H2, H3, H4, HR, I,
- INS, KBD, LI, OL, P, PRE, Q, SMALL, SPAN, STRONG, SUB, SUP, TABLE, TBODY, TD, TFOOT, TH, THEAD,
- TR, TT, U, UL, VAR. Znaèky P, PRE, DIV, SPAN, H1-H4 a A povolují atrubity ID a CLASS.
-</p>
-
+<#include "/include/napoveda-k-html-formatovani.txt">
 
 <#include "../footer.ftl">

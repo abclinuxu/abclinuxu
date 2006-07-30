@@ -396,6 +396,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         services.put(PREF_START_UPDATE_DATETOOL, new Boolean(prefs.getBoolean(PREF_START_UPDATE_DATETOOL, true)));
         services.put(PREF_START_WATCHED_DISCUSSIONS_CLEANER, new Boolean(prefs.getBoolean(PREF_START_WATCHED_DISCUSSIONS_CLEANER, true)));
         services.put(PREF_START_RSS_OKSYSTEM, new Boolean(prefs.getBoolean(PREF_START_RSS_OKSYSTEM, true)));
+        services.put(PREF_START_RSS_JOBPILOT, new Boolean(prefs.getBoolean(PREF_START_RSS_JOBPILOT, true)));
         services.put(PREF_START_UPDATE_STATISTICS, new Boolean(prefs.getBoolean(PREF_START_UPDATE_STATISTICS, true)));
         services.put(PREF_START_JOB_OFFER_MANAGER, new Boolean(prefs.getBoolean(PREF_START_JOB_OFFER_MANAGER, false)));
     }

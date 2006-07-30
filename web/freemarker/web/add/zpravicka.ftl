@@ -27,8 +27,8 @@ nebo zmìnit kategorii. V pøípadì zamítnutí vám bude poslán email
 s vysvìtlením. Teprve po schválení bude zprávièka zveøejnìna.</p>
 
 <#if PARAMS.preview?exists>
- <h1 class="st_nadpis">Náhled</h1>
- <h2>${TOOL.xpath(RELATION.child,"/data/title")?if_exists}</h2>
+ <h2>Náhled</h2>
+ <h3>${TOOL.xpath(RELATION.child,"/data/title")?if_exists}</h3>
  <@lib.showNews RELATION />
 </#if>
 

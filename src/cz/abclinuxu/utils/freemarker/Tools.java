@@ -191,55 +191,64 @@ public class Tools implements Configurable {
      * @return name of child in this relation.
      */
     public static String childName(Relation relation) {
-        if ( relation==null || relation.getChild()==null ) return null;
+        if ( relation == null || relation.getChild() == null )
+            return null;
+
         Document data = relation.getData();
-        if ( data!=null ) {
+        if ( data != null ) {
             Node node = data.selectSingleNode("data/name");
-            if ( node!=null )
+            if ( node != null )
                 return node.getText();
         }
 
-        GenericObject child = relation.getChild();
-        if ( ! child.isInitialized() )
-            persistance.synchronize(child);
+        return childName(relation.getChild());
+    }
 
-        if ( child instanceof GenericDataObject ) {
-            data = ((GenericDataObject)child).getData();
+    /**
+     * @return name of child in this relation.
+     */
+    public static String childName(GenericObject obj) {
+        if ( ! obj.isInitialized() )
+            persistance.synchronize(obj);
+
+        if ( obj instanceof GenericDataObject ) {
+            Document data = ((GenericDataObject)obj).getData();
             if ( data!=null ) {
                 Node node = data.selectSingleNode("data/name");
-                if ( node!=null )
+                if ( node != null )
                     return node.getText();
                 node = data.selectSingleNode("data/title");
-                if ( node!=null )
+                if ( node != null )
                     return node.getText();
                 node = data.selectSingleNode("data/custom/title");
-                if ( node!=null )
+                if ( node != null )
                     return node.getText();
             }
         }
-        if ((child instanceof Item)) {
-            int type = ((Item) child).getType();
+
+        if ((obj instanceof Item)) {
+            int type = ((Item) obj).getType();
             if (type == Item.DISCUSSION)
                 return "Diskuse";
             if (type == Item.NEWS)
                 return "Zprávièka";
         }
 
-        if ( child instanceof Link )
-            return ((Link)child).getText();
+        if ( obj instanceof Link )
+            return ((Link)obj).getText();
 
-        if ( child instanceof Poll )
-            return removeTags(((Poll)child).getText());
+        if ( obj instanceof Poll )
+            return removeTags(((Poll)obj).getText());
 
-        if ( child instanceof User )
-            return ((User)child).getName();
+        if ( obj instanceof User )
+            return ((User)obj).getName();
 
-        if ( child instanceof Server )
-            return ((Server)child).getName();
+        if ( obj instanceof Server )
+            return ((Server)obj).getName();
 
-        String name = child.getClass().getName();
+        String name = obj.getClass().getName();
         name = name.substring(name.lastIndexOf('.')+1);
-        name = name.concat(" "+child.getId());
+        name = name.concat(" "+obj.getId());
         return name;
     }
 

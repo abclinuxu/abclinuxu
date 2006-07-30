@@ -188,25 +188,6 @@
     <input type="hidden" name="rid" value="${RELATION.id}">
 </form>
 
-<h1 style="margin-top: 1ex;">Nápovìda k formátování</h1>
-
-<p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html">znaèky</a>:
-P, BR, B, I, A, PRE, UL, OL, LI, CODE, DIV, H1, H2, H3, EM, STRONG, CITE, BLOCKQUOTE,
-VAR, HR a IT.</p>
-
-<p>Nejrychlej¹í zpùsob formátování je rozdìlovat
-text do odstavcù. Systém detekuje prázdné øádky
-(dvakrát enter) a nahradí je HTML znaèkou odstavce.
-Pokud ale v textu pou¾ijete znaèku P èi BR,
-pak pøedpokládáme, ¾e o formátování se budete starat
-sami a tato konverze nebude aktivována.</p>
-
-<p>Pokud neovládáte HTML, doporuèuji si pøeèíst jeho
-<a href="http://www.kosek.cz/clanky/html/01.html">rychlokurz</a>.</p>
-
-<p>Text musí být HTML validní, proto znak men¹ítka èi vìt¹ítka zapisujte takto:
-&lt; jako &amp;lt; a &gt; jako &amp;gt;. Dal¹ím èastým problémem
-je, jak vlo¾it výpis logu èi konfiguraèní soubor. V tomto
-pøípadì vá¹ text vlo¾te mezi znaèky PRE, pøíli¹ dlouhé øádky rozdìlte klávesou enter.</p>
+<#include "/include/napoveda-k-auto-formatovani.txt">
 
 <#include "../footer.ftl">

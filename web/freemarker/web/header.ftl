@@ -176,8 +176,6 @@
                            <a href="/hosting"><img src="/images/bannery/abchosting.gif" alt="AbcHosting je tu pro vás"
                            border="0" width="251" height="60"></a>
                         </p>
-                        <hr>
-                        <#include "/include/redhat_zpravicka.txt">
                     </#if>
                     <@lib.showTemplateNews relation/>
                     <hr>
@@ -229,7 +227,6 @@
                     <li><a href="/clanky/novinky/pojdte-psat-pro-abclinuxu.cz">Jak se stát autorem</a></li>
                     <li><a href="/projekty/zdrojaky">Jak pomoci vylep¹it Abíèko</a></li>
                     <li><a href="/doc/propagace">Jak pomoci s propagací Abíèka</a></li>
-                    <li><a href="/clanky/novinky/tricka-abclinuxu.cz">Jak si koupit trièko</a></li>
                     <li><a href="http://bugzilla.abclinuxu.cz" rel="nofollow">Hlá¹ení chyb a námìtù</a></li>
                     <li><a href="/hardware/dir/3500">Vzkazy správcùm</a> (${VARS.counter.REQUESTS})</li>
                     <li><a href="mailto:info@stickfish.cz">Inzerce</a></li>
@@ -267,15 +264,22 @@
 	</div> <!-- obal_ls -->
 
     <#if plovouci_sloupec?exists>
+        <#if URL.prefix=='/hardware'>
+             <div class="hw-sloupec">
+        <#elseif URL.prefix=='/software'>
+             <div class="sw-sloupec">
+        </#if>
         <div class="obal_ps">
             <div class="ps_prepinac">
             <!-- i kdyz to bude prazdne, tak to tu musi byt -->
             </div>
-
             <div class="ps"><div class="s">
-            ${plovouci_sloupec}
+               ${plovouci_sloupec}
             </div></div> <!-- ps, s -->
         </div> <!-- obal_ps -->
+        <#if URL.prefix=='/hardware' || URL.prefix=='/software'>
+             </div>
+        </#if>
     </#if>
 
 	<div class="st" id="st"><a name="obsah"></a>

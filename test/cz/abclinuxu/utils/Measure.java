@@ -27,6 +27,7 @@ import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.persistance.extra.Qualifier;
 import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.utils.search.CreateIndex;
 import cz.abclinuxu.scheduler.UpdateLinks;
 
 import java.util.List;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.StringTokenizer;
 import java.util.Map;
+import java.io.File;
 
 /**
  * This class works as template for speed measurement.
@@ -47,19 +49,24 @@ public class Measure {
         int i=0,j=0,k=0;
         long l = 0;
         String s,t;
+        Date d = null;
 
         // place initilizaton here
         Persistance persistance = PersistanceFactory.getPersistance();
-        s = "\u0000qwert\u001Btyuiopa\n\tsdfghjklzxc\u0018vvbnm,./';[\\]=-0987654321"; t = s;
-        System.out.println(s.length()+": "+s);
+        File file = CreateIndex.getLastRunFile();
+        if (file.exists())
+            d = new Date(file.lastModified());
+
 
         long start = System.currentTimeMillis();
-        for (i=0; i<41000; i++) {
+        for (i=0; i<40000; i++) {
             //place your code to measure here
-            t = s.replaceAll("[\\x00-\\x08\\x0B-\\x0C\\x0E-\\x1f]", "");
+            file = CreateIndex.getLastRunFile();
+            if (file.exists())
+                d = new Date(file.lastModified());
         }
         long end = System.currentTimeMillis();
-        System.out.println(t.length() + ": " + t);
+        System.out.println(d);
 
         // place clean up here
 

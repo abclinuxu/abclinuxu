@@ -6,7 +6,7 @@
     </value>
     <value>
         <id>qt</id>
-        <caption>QT</caption>
+        <caption>Qt</caption>
     </value>
     <value>
         <id>kde</id>
@@ -14,7 +14,7 @@
     </value>
     <value>
         <id>gtk</id>
-        <caption>GTK</caption>
+        <caption>GTK+</caption>
     </value>
     <value>
         <id>gnome</id>
@@ -38,11 +38,11 @@
     </value>
     <value>
         <id>cli</id>
-        <caption>Pøíkazové rozhraní</caption>
+        <caption>Pøíkazové rozhraní (CLI)</caption>
     </value>
     <value>
         <id>tui</id>
-        <caption>Textové rozhraní</caption>
+        <caption>Textové rozhraní (TUI)</caption>
     </value>
     <value>
         <id>grconsole</id>

@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<h1 class="st_nadpis">Nastavení va¹eho úètu</h1>
+<h1>Nastavení va¹eho úètu</h1>
 
 <p>Pro va¹i ochranu nejdøíve zadejte va¹e heslo.</p>
 

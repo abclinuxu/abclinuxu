@@ -15,7 +15,7 @@
  </div>
 </#if>
 
-<h2 class="st_nadpis">Nápovìda</h2>
+<h2>Nápovìda</h2>
 
 <p>
    Zadejte prosím podrobné informace o tomto druhu hardwaru, zda je vùbec podporován
@@ -25,7 +25,7 @@
    si zvolili jinou distribuci.
 </p>
 
-<h2 class="st_nadpis">Formátování</h2>
+<h2>Formátování</h2>
 
 <p>
     Smíte pou¾ívat základní HTML znaèky. Pokud je nepou¾ijete,
@@ -156,26 +156,6 @@
     <input type="hidden" name="action" value="add2">
 </form>
 
-<a name="formatovani"></a>
-<h1>Nápovìda k formátování</h1>
-
-<p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html">znaèky</a>:
-A, ACRONYM, B, BR, BLOCKQUOTE, CITE, CODE, DIV, EM, I, HR, H1, H2, H3, LI,
-OL, P, PRE, STRONG, TT, UL, VAR. </p>
-
-<p>Nejrychlej¹í zpùsob formátování je rozdìlovat
-text do odstavcù. Systém detekuje prázdné øádky
-(dvakrát enter) a nahradí je HTML znaèkou odstavce.
-Pokud ale v textu pou¾ijete znaèku P èi BR,
-pak pøedpokládáme, ¾e o formátování se budete starat
-sami a tato konverze nebude aktivována.</p>
-
-<p>Pokud neovládáte HTML, doporuèuji si pøeèíst jeho
-<a href="http://www.kosek.cz/clanky/html/01.html">rychlokurz</a>.</p>
-
-<p>Text musí být HTML validní, proto znak men¹ítka èi vìt¹ítka zapisujte takto:
-<code>&lt;</code> jako <code>&amp;lt;</code> a <code>&gt;</code> jako <code>&amp;gt;</code>.
-Dal¹ím èastým problémem je, jak vlo¾it výpis logu èi konfiguraèní soubor. V tomto
-pøípadì vá¹ text vlo¾te mezi znaèky <code>PRE</code>, které zachovají formátování. </p>
+<#include "/include/napoveda-k-auto-formatovani.txt">
 
 <#include "../footer.ftl">

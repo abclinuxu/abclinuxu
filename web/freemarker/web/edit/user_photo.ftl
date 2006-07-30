@@ -9,7 +9,7 @@ typu PNG, GIF nebo JPEG. Pro fotografie je optimální
 JPEG, velikost souboru sni¾te vhodnou volbou komprese.
 Doporuèené rozmìry obrázku jsou 175 pixelù na ¹íøku
 a 200 pixelù na vý¹ku. Maximální velikost souboru je
-50 KB.
+50&nbsp;kB.
 </p>
 
 <form action="${URL.noPrefix("/EditUser")}" method="POST"

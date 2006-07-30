@@ -15,13 +15,10 @@ Pokud máte na internetu svou domovskou stránku,
 vyplòte její URL. Dal¹í polo¾kou je rok, kdy jste
 zaèal pou¾ívat Linux. Následuje mo¾nost ulo¾it
 a¾ pìt distribucí, které v souèasnosti pou¾íváte.
-Posledním políèkem je text <i>O mnì</i>. Do nìj
+Posledním políèkem je text <i>O&nbsp;mnì</i>. Do nìj
 mù¾ete napsat informace o sobì, které chcete sdìlit
 ètenáøùm. Mù¾e to být jen pár slov, ale i del¹í
-povídání. Smíte pou¾ívat pro formátování základní
-html znaèky, pokud je nevyu¾ijete, prázdný øádek
-bude oddìlovat odstavce.
-</p>
+povídání.</p>
 
 <form action="${URL.noPrefix("/EditUser")}" method="POST">
  <table width="100%" border=0 cellpadding=5>
@@ -101,5 +98,6 @@ bude oddìlovat odstavce.
  <input type="hidden" name="uid" value="${MANAGED.id}">
 </form>
 
+<#include "/include/napoveda-k-auto-formatovani.txt">
 
 <#include "../footer.ftl">
