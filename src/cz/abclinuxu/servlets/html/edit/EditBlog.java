@@ -116,6 +116,7 @@ public class EditBlog implements AbcAction, Configurable {
     public static final String ACTION_REMOVE_LINK_STEP2 = "rmLink2";
     public static final String ACTION_MOVE_LINK_UP = "mvLinkUp";
     public static final String ACTION_MOVE_LINK_DOWN = "mvLinkDown";
+    public static final String ACTION_TOGGLE_DIGEST = "toggleDigest";
 
     public static final String VAR_BLOG = "BLOG";
     public static final String VAR_BLOG_RELATION = "REL_BLOG";
@@ -178,6 +179,13 @@ public class EditBlog implements AbcAction, Configurable {
         User user = (User) env.get(Constants.VAR_USER);
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
+
+        if ( ACTION_TOGGLE_DIGEST.equals(action) ) {
+            if ( ! user.hasRole(Roles.BLOG_DIGEST_ADMIN) )
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+            return actionToggleStoryDigest(response, blog, env);
+        }
+
         if ( user.getId()!=blog.getOwner() && !user.hasRole(Roles.ROOT) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
@@ -441,6 +449,33 @@ public class EditBlog implements AbcAction, Configurable {
 
         FeedGenerator.updateBlog(blog);
         VariableFetcher.getInstance().refreshStories();
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(),story.getCreated(),relation.getId()));
+        return null;
+    }
+
+    /**
+     * Toggles flag whether the story is blog digest or not.
+     * @return null, redirect
+     */
+    private String actionToggleStoryDigest(HttpServletResponse response, Category blog, Map env) throws Exception {
+        User user = (User) env.get(Constants.VAR_USER);
+        Persistance persistance = PersistanceFactory.getPersistance();
+        Relation relation = (Relation) env.get(VAR_STORY);
+        Item story = (Item) relation.getChild();
+
+        Set set = story.getProperty(Constants.PROPERTY_BLOG_DIGEST);
+        if (set.size() == 0)
+            story.addProperty(Constants.PROPERTY_BLOG_DIGEST, "yes");
+        else
+            story.removeProperty(Constants.PROPERTY_BLOG_DIGEST);
+
+        Date originalUpdated = story.getUpdated();
+        persistance.update(story);
+        SQLTool.getInstance().setUpdatedTimestamp(story, originalUpdated);
+
+        FeedGenerator.updateBlogDigest();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(),story.getCreated(),relation.getId()));

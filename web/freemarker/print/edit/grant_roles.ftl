@@ -19,28 +19,28 @@
    </td>
   </tr>
 
-  <#macro isDefined(name)><#if PARAMS.roles?exists && PARAMS.roles.contains(name)>checked</#if></#macro>
-
   <tr>
    <td class="required" width="100">Jeho role</td>
    <td>
-     <input type="checkbox" name="roles" value="root" <@isDefined "root"/>> Root<br>
-     <input type="checkbox" name="roles" value="poll admin" <@isDefined "poll admin"/>> Administrátor anket<br>
-     <input type="checkbox" name="roles" value="survey admin" <@isDefined "survey admin"/>> Administrátor anket/prùzkumù<br>
-     <input type="checkbox" name="roles" value="article admin" <@isDefined "article admin"/>> Administrátor èlánkù<br>
-     <input type="checkbox" name="roles" value="discussion admin" <@isDefined "discussion admin"/>> Administrátor diskusí<br>
-     <input type="checkbox" name="roles" value="content admin" <@isDefined "content admin"/>> Administrátor dokumentù<br>
-     <input type="checkbox" name="roles" value="requests admin" <@isDefined "requests admin"/>> Administrátor po¾adavkù<br>
-     <input type="checkbox" name="roles" value="attachment admin" <@isDefined "attachment admin"/>> Administrátor pøíloh<br>
-     <input type="checkbox" name="roles" value="category admin" <@isDefined "category admin"/>> Administrátor sekcí<br>
-     <input type="checkbox" name="roles" value="dictionary admin" <@isDefined "dictionary admin"/>> Administrátor slovníku<br>
-     <input type="checkbox" name="roles" value="tip admin" <@isDefined "tip admin"/>> Administrátor tipù<br>
-     <input type="checkbox" name="roles" value="user admin" <@isDefined "user admin"/>> Administrátor u¾ivatelù<br>
-     <input type="checkbox" name="roles" value="news admin" <@isDefined "news admin"/>> Administrátor zprávièek<br>
-     <input type="checkbox" name="roles" value="email invalidator" <@isDefined "email invalidator"/>> Smí invalidovat emaily<br>
-     <input type="checkbox" name="roles" value="move relation" <@isDefined "move relation"/>> Smí pøesunout relaci<br>
-     <input type="checkbox" name="roles" value="derive content" <@isDefined "derive content"/>> Smí vytvoøit podstránku dokumentu<br>
-     <input type="checkbox" name="roles" value="remove relation" <@isDefined "remove relation"/>> Smí smazat relaci a objekt
+       <@lib.showOption "roles", "root", "Root", "checkbox" /><br>
+       <@lib.showOption "roles", "poll admin", "Administrátor anket", "checkbox" /><br>
+       <@lib.showOption "roles", "survey admin", "Administrátor anket/prùzkumù", "checkbox" /><br>
+       <@lib.showOption "roles", "article admin", "Administrátor èlánkù", "checkbox" /><br>
+       <@lib.showOption "roles", "discussion admin", "Administrátor diskusí", "checkbox" /><br>
+       <@lib.showOption "roles", "content admin", "Administrátor dokumentù", "checkbox" /><br>
+       <@lib.showOption "roles", "requests admin", "Administrátor po¾adavkù", "checkbox" /><br>
+       <@lib.showOption "roles", "attachment admin", "Administrátor pøíloh", "checkbox" /><br>
+       <@lib.showOption "roles", "category admin", "Administrátor sekcí", "checkbox" /><br>
+       <@lib.showOption "roles", "dictionary admin", "Administrátor slovníku", "checkbox" /><br>
+       <@lib.showOption "roles", "blog digest admin", "Administrátor blog digestu", "checkbox" /><br>
+       <@lib.showOption "roles", "tip admin", "Administrátor tipù", "checkbox" /><br>
+       <@lib.showOption "roles", "user admin", "Administrátor u¾ivatelù", "checkbox" /><br>
+       <@lib.showOption "roles", "news admin", "Administrátor zprávièek", "checkbox" /><br>
+       <@lib.showOption "roles", "email invalidator", "Smí invalidovat emaily", "checkbox" /><br>
+       <@lib.showOption "roles", "move relation", "Smí pøesunout relaci", "checkbox" /><br>
+       <@lib.showOption "roles", "derive content", "Smí vytvoøit podstránku dokumentu", "checkbox" /><br>
+       <@lib.showOption "roles", "remove relation", "Smí smazat relaci a objekt", "checkbox" /><br>
+       <@lib.showOption "roles", "blog digest admin", "Administrátor blog digestu", "checkbox" /><br>
    </td>
   </tr>
   <tr>

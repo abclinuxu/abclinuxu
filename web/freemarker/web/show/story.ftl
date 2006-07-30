@@ -115,13 +115,15 @@
             <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=edit")}">Uprav zápis</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=remove")}">Sma¾ zápis</a></li>
         </#if>
+        <#if USER.hasRole("blog digest admin")>
+            <#if (ITEM.getProperty("digest")?size > 0)><#assign digestMsg='Odstranit z digestu'><#else><#assign digestMsg='Pøidat do digestu'></#if>
+            <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=toggleDigest")}">${digestMsg}</a></li>
+        </#if>
         <#if USER.id==BLOG.owner>
             <#if !CHILDREN.poll?exists>
                 <li><a href="${URL.noPrefix("/EditPoll?action=add&amp;rid="+STORY.id)}">Vlo¾ anketu</a></li>
             </#if>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=add")}">Vlo¾ nový zápis</a></li>
-        </#if>
-        <#if USER.id==BLOG.owner>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=custom")}">Nastavit blog</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}">Pøejmenovat blog</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=categories")}">Upravit kategorie</a></li>

@@ -61,14 +61,15 @@ public class FeedGenerator implements Configurable {
     static final String PREF_HARDWARE = "hardware";
     static final String PREF_BLOG = "blog";
     static final String PREF_BLOGS = "blogs";
+    static final String PREF_BLOG_DIGEST = "blog.digest";
     static final String PREF_TRAFIKA = "trafika";
     static final String PREF_NEWS = "zpravicky";
     static final String PREF_POLLS = "ankety";
     static final String PREF_FAQ = "faq";
     static final String PREF_NEWS_WORD_LIMIT = "news.word.limit";
 
-    static String fileDiscussions, fileArticles, fileDrivers, fileHardware, fileBlog, dirBlogs, fileTrafika;
-    static String fileNews, fileFaq, filePolls;
+    static String fileDiscussions, fileArticles, fileDrivers, fileHardware, fileBlog, dirBlogs, fileBlogDigest;
+    static String fileNews, fileFaq, filePolls, fileTrafika;
     static int feedLength = 10, highFrequencyFeedLength = 25, newsWordLimit;
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new FeedGenerator());
@@ -365,6 +366,55 @@ public class FeedGenerator implements Configurable {
     }
 
     /**
+     * Generates blog digest feed
+     */
+    public static void updateBlogDigest() {
+        try {
+            SQLTool sqlTool = SQLTool.getInstance();
+            Persistance persistance = PersistanceFactory.getPersistance();
+
+            SyndFeed feed = new SyndFeedImpl();
+            feed.setFeedType(TYPE_RSS_1_0);
+            feed.setTitle("abclinuxu - blogy");
+            feed.setLink("http://www.abclinuxu.cz/blog/");
+            feed.setUri("http://www.abclinuxu.cz/blog/");
+            feed.setDescription("Seznam peclive vybraných zápisù u¾ivatelù www.abclinuxu.cz");
+            List entries = new ArrayList();
+            feed.setEntries(entries);
+            SyndEntry entry;
+
+            HashSet values = new HashSet();
+            values.add("yes");
+            Map filters = new HashMap();
+            filters.put(Constants.PROPERTY_BLOG_DIGEST, values);
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, highFrequencyFeedLength)};
+            List stories = sqlTool.findItemRelationsWithTypeWithFilters(Item.BLOG, qualifiers, filters);
+            Tools.syncList(stories);
+            List blogs = new ArrayList();
+            for (Iterator iter = stories.iterator(); iter.hasNext();) {
+                Relation found = (Relation) iter.next();
+                blogs.add(found.getParent());
+            }
+            Tools.syncList(blogs);
+            for (Iterator iter = stories.iterator(); iter.hasNext();) {
+                Relation found = (Relation) iter.next();
+                Category blog = (Category) persistance.findById(found.getParent());
+                User author = (User) persistance.findById(new User(blog.getOwner()));
+                entry = getStorySyndicate(blog, found, author);
+                entries.add(entry);
+            }
+
+            String path = AbcConfig.calculateDeployedPath(fileBlogDigest);
+            Writer writer = getWriter(path);
+            SyndFeedOutput output = new SyndFeedOutput();
+            output.output(feed, writer);
+            writer.close();
+        } catch (Exception e) {
+            log.error("Chyba pøi generování RSS pro digest blogu", e);
+        }
+    }
+
+    /**
      * Generates RSS for news.
      */
     public static void updateNews() {
@@ -408,7 +458,7 @@ public class FeedGenerator implements Configurable {
                 description.setType("text/plain");
                 description.setValue(Tools.limitWords(withoutTags, newsWordLimit, " ..."));
                 entry.setDescription(description);
-                entry.setPublishedDate(item.getCreated());
+                entry.setPublishedDate(item.getUpdated());
                 entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
                 entries.add(entry);
             }
@@ -571,6 +621,7 @@ public class FeedGenerator implements Configurable {
         fileDrivers = prefs.get(PREF_DRIVERS, null);
         fileHardware = prefs.get(PREF_HARDWARE, null);
         fileBlog = prefs.get(PREF_BLOG, null);
+        fileBlogDigest = prefs.get(PREF_BLOG_DIGEST, null);
         dirBlogs = prefs.get(PREF_BLOGS, null);
         fileTrafika = prefs.get(PREF_TRAFIKA, null);
         fileNews = prefs.get(PREF_NEWS, null);
