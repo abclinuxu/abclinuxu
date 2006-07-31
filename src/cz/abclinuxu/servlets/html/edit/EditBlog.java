@@ -47,6 +47,7 @@ import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.scheduler.VariableFetcher;
 
 import javax.servlet.http.HttpServletRequest;
@@ -466,10 +467,13 @@ public class EditBlog implements AbcAction, Configurable {
         Item story = (Item) relation.getChild();
 
         Set set = story.getProperty(Constants.PROPERTY_BLOG_DIGEST);
-        if (set.size() == 0)
+        if (set.size() == 0) {
             story.addProperty(Constants.PROPERTY_BLOG_DIGEST, "yes");
-        else
+            AdminLogger.logEvent(user, "pridal do digestu zapis "+Tools.childName(story));
+        } else {
             story.removeProperty(Constants.PROPERTY_BLOG_DIGEST);
+            AdminLogger.logEvent(user, "odebral z digestu zapis " + Tools.childName(story));
+        }
 
         Date originalUpdated = story.getUpdated();
         persistance.update(story);
