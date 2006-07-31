@@ -102,6 +102,7 @@ public class MyDocument {
     public Field setTitle(String title) {
         title = Tools.removeTags(title);
         Field field = Field.Text(TITLE,title);
+        document.removeField(TITLE);
         document.add(field);
         return field;
     }
