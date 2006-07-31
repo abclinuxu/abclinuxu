@@ -375,10 +375,10 @@ public class FeedGenerator implements Configurable {
 
             SyndFeed feed = new SyndFeedImpl();
             feed.setFeedType(TYPE_RSS_1_0);
-            feed.setTitle("abclinuxu - blogy");
+            feed.setTitle("abclinuxu - výbìr z blogù");
             feed.setLink("http://www.abclinuxu.cz/blog/");
             feed.setUri("http://www.abclinuxu.cz/blog/");
-            feed.setDescription("Seznam peclive vybraných zápisù u¾ivatelù www.abclinuxu.cz");
+            feed.setDescription("Seznam peèlivì vybraných zápisù u¾ivatelù www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
             SyndEntry entry;
