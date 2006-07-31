@@ -31,6 +31,7 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.exceptions.InvalidDataException;
 import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.scheduler.WhatHappened;
@@ -821,6 +822,10 @@ public class CreateIndex implements Configurable {
                 if (item.getType() != Item.DISCUSSION)
                     continue;
 
+                String replies = Tools.xpath(item, "/data/comments");
+                if (Misc.parseInt(replies, 0) == 0)
+                    continue;
+
                 MyDocument doc = indexDiscussion(item);
 
                 String parentTitle = Tools.childName(parent);
@@ -828,23 +833,24 @@ public class CreateIndex implements Configurable {
                 if (parent instanceof Item) {
                     Item parentItem = (Item) parent;
                     if (parentItem.getType() == Item.ARTICLE) {
-                        doc.setTitle("Diskuse k clanku " + parentTitle);
+                        doc.setTitle("Diskuse k èlánku " + parentTitle);
                         urlPrefix = UrlUtils.PREFIX_CLANKY;
                     } else if (parentItem.getType() == Item.BLOG) {
                         doc.setTitle("Diskuse k blogu " + parentTitle);
                         urlPrefix = UrlUtils.PREFIX_BLOG;
                     } else if (parentItem.getType() == Item.NEWS) {
-                        doc.setTitle("Diskuse k zpravicce " + parentTitle);
+                        doc.setTitle("Diskuse k zprávièce " + parentTitle);
                         urlPrefix = UrlUtils.PREFIX_NEWS;
                     }
                 } else if (parent instanceof Poll) {
-                    doc.setTitle("Diskuse k ankete " + parentTitle);
+                    doc.setTitle("Diskuse k anketì " + parentTitle);
                     urlPrefix = UrlUtils.PREFIX_POLLS;
                 }
 
                 String url = child.getUrl();
                 if (url == null)
                     url = urlPrefix + "/show/" + child.getId();
+                doc.setURL(url);
 
                 indexWriter.addDocument(doc.getDocument());
                 return;
