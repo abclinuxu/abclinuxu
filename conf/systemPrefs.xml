@@ -187,14 +187,14 @@
                         </node>
                         <node name="HtmlToTextFormatter">
                             <map>
-                                <entry key="line.length" value="60"/> 
+                                <entry key="line.length" value="60"/>
                             </map>
                         </node>
                     </node>
                     <node name="DateTool">
                         <map>
                             <entry key="today" value="dnes" />
-                            <entry key="yesterday" value="vï¿½era" />
+                            <entry key="yesterday" value="vèera" />
                         </map>
                     </node>
                 </node>
@@ -320,8 +320,8 @@
                     </node>
                     <node name="WhatHappened">
                         <map>
-                            <entry key="title" value="Udï¿½lo se v tï¿½dnu {0}/{1,number,#}"/>
-                            <entry key="perex" value="Ucelenï¿½ pï¿½ehled ï¿½lï¿½nkï¿½, zprï¿½viï¿½ek a diskusï¿½ za minulï¿½ch 7 dnï¿½."/>
+                            <entry key="title" value="Událo se v týdnu {0}/{1,number,#}"/>
+                            <entry key="perex" value="Ucelený pøehled èlánkù, zprávièek a diskusí za minulých 7 dní½."/>
                             <entry key="author" value="5473"/>
                             <entry key="section" value="251"/>
                         </map>
@@ -499,15 +499,15 @@
                             </node>
                             <node name="EditRating">
                                 <map>
-                                    <entry key="msg.ok" value="Vaï¿½e hodnocenï¿½ bylo pï¿½ijato"/>
-                                    <entry key="msg.data.missing" value="Chyba v parametrech pro hlasovï¿½nï¿½"/>
-                                    <entry key="msg.already.rated" value="Mï¿½ete hodnotit jen jednou!"/>
-                                    <entry key="msg.not.logged" value="Hlasovat smï¿½ jen pï¿½ihlï¿½enï¿½ uï¿½ivatelï¿½!"/>
+                                    <entry key="msg.ok" value="Va¹e hodnocení bylo pøijato"/>
+                                    <entry key="msg.data.missing" value="Chyba v parametrech pro hlasování"/>
+                                    <entry key="msg.already.rated" value="Mù¾ete hodnotit jen jednou!"/>
+                                    <entry key="msg.not.logged" value="Hlasovat smí jen pøihlá¹ení u¾ivatelé!"/>
                                 </map>
                             </node>
                             <node name="EditRequest">
                                 <map>
-                                    <entry key="categories" value="Nï¿½vrh na anketu,Hlï¿½enï¿½ chyby,Nï¿½mï¿½t na vylepï¿½enï¿½,Problï¿½m s ï¿½ï¿½tem"/>
+                                    <entry key="categories" value="Návrh na anketu,Hlá¹ení chyby,Námìt na vylep¹ení,Problém s úètem"/>
                                 </map>
                             </node>
                         </node>
