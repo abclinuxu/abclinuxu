@@ -41,6 +41,7 @@ public class MyDocument {
     public static final String TYPE_DRIVER = "ovladac";
     public static final String TYPE_ARTICLE = "clanek";
     public static final String TYPE_NEWS = "zpravicka";
+    public static final String TYPE_POLL = "anketa";
     public static final String TYPE_DICTIONARY = "pojem";
     public static final String TYPE_FAQ = "faq";
     public static final String TYPE_BLOG = "blog";

@@ -59,6 +59,7 @@
                                 <entry key="boost.faq" value="1.5" />
                                 <entry key="boost.dictionary" value="1.0" />
                                 <entry key="boost.section" value="1.0" />
+                                <entry key="boost.poll" value="0.5" />
                             </map>
                         </node>
                     </node>

@@ -49,7 +49,6 @@ import java.io.IOException;
  * This class is responsible for creating and maintaining Lucene's index.
  * TODO vymyslet jak zoptimalizovat nacitani diskusi a jejich zaznamu (pouzivat hromadne ready)
  * TODO zrusit static veci, at se to da volat z ruznymi parametry, napriklad persistence
- * TODO ukladat u dokumentu field CID (typ tridy + id, napriklad P1234) - pro incrementalni update
  */
 public class CreateIndex implements Configurable {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(CreateIndex.class);
@@ -70,6 +69,7 @@ public class CreateIndex implements Configurable {
     public static final String PREF_BOOST_FAQ = "boost.faq";
     public static final String PREF_BOOST_DICTIONARY = "boost.dictionary";
     public static final String PREF_BOOST_SECTION = "boost.section";
+    public static final String PREF_BOOST_POLL = "boost.poll";
 
     private final String LAST_RUN_FILE = "last_run.txt";
 
@@ -80,7 +80,7 @@ public class CreateIndex implements Configurable {
     static SQLTool sqlTool;
     static HashMap indexed = new HashMap(150000, 0.99f);
     static float boostHardware, boostArticle, boostNews, boostQuestion, boostDiscussion;
-    static float boostDriver, boostBlog, boostFaq, boostDictionary, boostSection;
+    static float boostDriver, boostBlog, boostFaq, boostDictionary, boostSection, boostPoll;
 
     static {
         Configurator configurator = ConfigurationManager.getConfigurator();
@@ -121,6 +121,7 @@ public class CreateIndex implements Configurable {
                 makeIndexOnNews();
                 makeIndexOnDictionary();
                 makeIndexOnFaq();
+                makeIndexOnPolls();
                 makeIndexOnBlogs(blogs.getChild().getChildren());
                 makeIndexOnForums(forums, UrlUtils.PREFIX_FORUM);
                 makeIndexOn(hardware, UrlUtils.PREFIX_HARDWARE);
@@ -168,7 +169,10 @@ public class CreateIndex implements Configurable {
             if (hasBeenIndexed(child))
                 continue;
 
-            doc = null; indexChildren = true; url = relation.getUrl();
+            doc = null; indexChildren = true;
+            url = relation.getUrl();
+            if (url == null)
+                url = urlPrefix + "/show/" + relation.getId();
             if (child instanceof Category) {
                 doc = indexCategory(relation);
             } else if (child instanceof Item) {
@@ -182,8 +186,6 @@ public class CreateIndex implements Configurable {
                         doc = indexDriver(item); break;
                 }
                 indexChildren = false;
-                if (url==null)
-                    url = urlPrefix+"/show/"+relation.getId();
             }
 
             if ( doc!=null ) {
@@ -252,6 +254,26 @@ public class CreateIndex implements Configurable {
             if ( hasBeenIndexed(child) )
                 continue;
             doc = indexDictionary(relation);
+            indexWriter.addDocument(doc.getDocument());
+        }
+    }
+
+    /**
+     * Indexes dictionary.
+     */
+    static void makeIndexOnPolls() throws Exception {
+        Poll child;
+        MyDocument doc;
+        List relations = sqlTool.findStandalonePollRelations(new Qualifier[0]);
+        Tools.syncList(relations);
+        Relation relation;
+
+        for (Iterator iter = relations.iterator(); iter.hasNext();) {
+            relation = (Relation) iter.next();
+            child = (Poll) relation.getChild();
+            if ( hasBeenIndexed(child) )
+                continue;
+            doc = indexPoll(relation);
             indexWriter.addDocument(doc.getDocument());
         }
     }
@@ -556,15 +578,17 @@ public class CreateIndex implements Configurable {
 
         MyDocument doc = new MyDocument(Tools.removeTags(sb.toString()));
         doc.setTitle(title);
-        doc.setType(MyDocument.TYPE_DISCUSSION);
         doc.setCreated(discussion.getCreated());
         doc.setUpdated(discussion.getUpdated());
         doc.setCid(discussion);
         if (question) {
             doc.setQuestionSolved(Tools.isQuestionSolved(document));
+            doc.setType(MyDocument.TYPE_QUESTION);
             doc.setBoost(boostQuestion);
-        } else
+        } else {
+            doc.setType(MyDocument.TYPE_DISCUSSION);
             doc.setBoost(boostDiscussion);
+        }
         doc.setNumberOfReplies(Tools.xpath(discussion, "/data/comments"));
         return doc;
     }
@@ -748,10 +772,47 @@ public class CreateIndex implements Configurable {
     }
 
     /**
+     * Extracts data for indexing from poll. Poll must be synchronized.
+     */
+    static MyDocument indexPoll(Relation relation) throws IOException {
+        Poll poll = (Poll) relation.getChild();
+        StringBuffer sb = new StringBuffer();
+
+        String tmp = poll.getText();
+        sb.append(tmp);
+        sb.append(" ");
+        for (int i = 0; i < poll.getChoices().length; i++) {
+            PollChoice choice = poll.getChoices()[i];
+            sb.append(choice.getText());
+            sb.append(" ");
+        }
+
+        tmp = Tools.removeTags(tmp);
+        String title = Tools.limit(tmp, 50, " ..");
+
+        indexDiscussionFor(poll);
+
+        MyDocument doc = new MyDocument(Tools.removeTags(sb.toString()));
+        doc.setTitle(title);
+        doc.setType(MyDocument.TYPE_POLL);
+        doc.setCreated(poll.getCreated());
+        doc.setUpdated(poll.getCreated());
+
+        String url = relation.getUrl();
+        if (url==null)
+            url = UrlUtils.PREFIX_POLLS + "/show/" + relation.getId();
+        doc.setURL(url);
+        doc.setParent(relation.getUpper());
+        doc.setCid(poll);
+        doc.setBoost(boostPoll);
+        return doc;
+    }
+
+    /**
      * Creates and stores document with discussion to given parent.
      * @param parent either article, news or blog
      */
-    private static void indexDiscussionFor(Item parent) throws IOException {
+    private static void indexDiscussionFor(GenericObject parent) throws IOException {
         for ( Iterator iter = parent.getChildren().iterator(); iter.hasNext(); ) {
             Relation child = (Relation) iter.next();
 
@@ -761,15 +822,32 @@ public class CreateIndex implements Configurable {
                     continue;
 
                 MyDocument doc = indexDiscussion(item);
+
                 String parentTitle = Tools.childName(parent);
-                if (parent.getType() == Item.ARTICLE)
-                    doc.setTitle("Diskuse k clanku " + parentTitle);
-                else if (parent.getType() == Item.BLOG)
-                    doc.setTitle("Diskuse k blogu " + parentTitle);
-                else if (parent.getType() == Item.NEWS)
-                    doc.setTitle("Diskuse k zpravicce " + parentTitle);
+                String urlPrefix = UrlUtils.PREFIX_FORUM;
+                if (parent instanceof Item) {
+                    Item parentItem = (Item) parent;
+                    if (parentItem.getType() == Item.ARTICLE) {
+                        doc.setTitle("Diskuse k clanku " + parentTitle);
+                        urlPrefix = UrlUtils.PREFIX_CLANKY;
+                    } else if (parentItem.getType() == Item.BLOG) {
+                        doc.setTitle("Diskuse k blogu " + parentTitle);
+                        urlPrefix = UrlUtils.PREFIX_BLOG;
+                    } else if (parentItem.getType() == Item.NEWS) {
+                        doc.setTitle("Diskuse k zpravicce " + parentTitle);
+                        urlPrefix = UrlUtils.PREFIX_NEWS;
+                    }
+                } else if (parent instanceof Poll) {
+                    doc.setTitle("Diskuse k ankete " + parentTitle);
+                    urlPrefix = UrlUtils.PREFIX_POLLS;
+                }
+
+                String url = child.getUrl();
+                if (url == null)
+                    url = urlPrefix + "/show/" + child.getId();
 
                 indexWriter.addDocument(doc.getDocument());
+                return;
             }
         }
     }
@@ -891,6 +969,7 @@ public class CreateIndex implements Configurable {
         boostNews = prefs.getFloat(PREF_BOOST_NEWS, 1.0f);
         boostQuestion = prefs.getFloat(PREF_BOOST_QUESTION, 1.0f);
         boostSection = prefs.getFloat(PREF_BOOST_SECTION, 1.0f);
+        boostPoll = prefs.getFloat(PREF_BOOST_POLL, 1.0f);
     }
 
     /**

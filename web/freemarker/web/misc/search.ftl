@@ -39,7 +39,8 @@
                     <td><label><input type="checkbox" name="type" value="software" <#if TYPES.software>checked</#if>>Software</label></td>
                     <td><label><input type="checkbox" name="type" value="ovladac" <#if TYPES.driver>checked</#if>>Ovladaèe</label></td>
                     <td><label><input type="checkbox" name="type" value="pojem" <#if TYPES.dictionary>checked</#if>>Pojmy</label></td>
-                    <td colspan="2"><button type="button" onclick="toggle(this)">V¹e/nic</button></td>
+                    <td><label><input type="checkbox" name="type" value="anketa" <#if TYPES.poll>checked</#if>>Ankety</label></td>
+                    <td><button type="button" onclick="toggle(this)">V¹e/nic</button></td>
                    </tr>
                   </table>
               <#else>
@@ -76,7 +77,7 @@
         <div class="search_result">
             <!--m-->
             <a href="${doc.url}" class="search_title">${doc.title?default(doc.url)}</a>
-            <#if (doc.typ='diskuse' && doc.vyreseno=="ano")> <span class="search_solved">(vyøe¹eno)</span></#if>
+            <#if (doc.typ='otazka' && doc.vyreseno=="ano")> <span class="search_solved">(vyøe¹eno)</span></#if>
             <!--n-->
             <#if doc.fragments?exists>
                 <p class="search_fragments">${doc.fragments}</p>
@@ -88,7 +89,7 @@
                 Hardware,
                 poslední zmìna: ${DATE.show(doc.datum_zmeny,"CZ_DMY")},
                 ${doc.velikost_obsahu} znakù
-            <#elseif doc.typ='diskuse'>
+            <#elseif doc.typ='diskuse' ||  doc.typ='otazka'>
                 Diskuse,
                 poèet reakcí: ${doc.odpovedi},
                 vytvoøena: ${DATE.show(doc.datum_vytvoreni,"CZ_DMY")},

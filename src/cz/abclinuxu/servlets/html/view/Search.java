@@ -369,6 +369,12 @@ public class Search implements AbcAction {
             return map.containsKey(MyDocument.TYPE_NEWS);
         }
 
+        public boolean isPoll() {
+            if ( map.size()==0 )
+                return true;
+            return map.containsKey(MyDocument.TYPE_POLL);
+        }
+
         public boolean isBlog() {
             if ( map.size()==0 )
                 return true;
