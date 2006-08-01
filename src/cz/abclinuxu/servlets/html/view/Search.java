@@ -351,6 +351,12 @@ public class Search implements AbcAction {
             return map.containsKey(MyDocument.TYPE_DRIVER);
         }
 
+        public boolean isQuestion() {
+            if ( map.size()==0 )
+                return true;
+            return map.containsKey(MyDocument.TYPE_QUESTION);
+        }
+
         public boolean isDiscussion() {
             if ( map.size()==0 )
                 return true;

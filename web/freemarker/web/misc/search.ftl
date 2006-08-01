@@ -29,6 +29,7 @@
                    <tr>
                     <td><label><input type="checkbox" name="type" value="clanek" <#if TYPES.article>checked</#if>>Èlánky</label></td>
                     <td><label><input type="checkbox" name="type" value="zpravicka" <#if TYPES.news>checked</#if>>Zprávièky</label></td>
+                    <td><label><input type="checkbox" name="type" value="otazka" <#if TYPES.question>checked</#if>>Otázky</label></td>
                     <td><label><input type="checkbox" name="type" value="diskuse" <#if TYPES.discussion>checked</#if>>Diskuse</label></td>
                     <td><label><input type="checkbox" name="type" value="faq" <#if TYPES.faq>checked</#if>>FAQ</label></td>
                     <td><label><input type="checkbox" name="type" value="blog" <#if TYPES.blog>checked</#if>>Blogy</label></td>
@@ -40,7 +41,7 @@
                     <td><label><input type="checkbox" name="type" value="ovladac" <#if TYPES.driver>checked</#if>>Ovladaèe</label></td>
                     <td><label><input type="checkbox" name="type" value="pojem" <#if TYPES.dictionary>checked</#if>>Pojmy</label></td>
                     <td><label><input type="checkbox" name="type" value="anketa" <#if TYPES.poll>checked</#if>>Ankety</label></td>
-                    <td><button type="button" onclick="toggle(this)">V¹e/nic</button></td>
+                    <td colspan="2"><button type="button" onclick="toggle(this)">V¹e/nic</button></td>
                    </tr>
                   </table>
               <#else>
