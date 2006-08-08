@@ -69,16 +69,18 @@ public class ViewBlog implements AbcAction, Configurable {
     public static final String VAR_CURRENT_STORIES = "CURRENT_STORIES";
     public static final String VAR_UNPUBLISHED_STORIES = "UNPUBLISHED_STORIES";
     public static final String VAR_ARCHIVE = "ARCHIVE";
+    public static final String VAR_DIGEST = "DIGEST";
 
     static final String PREF_BLOG_URL = "regexp.blog.url";
     static final String PREF_SUMMARY_URL = "regexp.blog.summary.url";
     static final String PREF_ARCHIVE_URL = "regexp.blog.archive.url";
+    static final String PREF_DIGEST_URL = "regexp.blog.digest.url";
     static final String PREF_PAGE_SIZE = "page.size";
     static final String PREF_SUMMARY_SIZE = "summary.size";
     static final String PREF_FRESH_STORIES_SIZE = "fresh.stories.size";
     static final String PREF_URL_SUMMARY = "url.summary";
 
-    static REProgram reUrl, reSummaryUrl, reArchiveUrl;
+    static REProgram reUrl, reSummaryUrl, reArchiveUrl, reDigestUrl;
     static int defaultPageSize, freshStoriesSize, summarySize;
     static String urlSummary;
     static {
@@ -92,7 +94,7 @@ public class ViewBlog implements AbcAction, Configurable {
         int year, month, day, rid;
         year = month = day = rid = 0;
         String name = null;
-        boolean summary = false, archive = false;
+        boolean summary = false, archive = false, digest = false;
 
         String uri = (String) env.get(Constants.VAR_REQUEST_URI);
         if (uri.startsWith("/blogy"))
@@ -106,33 +108,39 @@ public class ViewBlog implements AbcAction, Configurable {
             if (matched>4)
                 name = regexp.getParen(4);
         } else {
-            regexp = new RE(reArchiveUrl);
-            if (regexp.match(uri)) { // uri = "/blog/jmeno/archiv";
-                archive = true;
-                name = regexp.getParen(1);
-            } else { // uri = "/blog/jmeno/2004/12/12/124545";
-                regexp = new RE(reUrl);
-                regexp.match(uri);
-                int matched = regexp.getParenCount();
-                try {
-                    if (matched > 1)
-                        name = regexp.getParen(1);
-                    if (matched > 2) {
-                        year = Integer.parseInt(regexp.getParen(2));
-                        env.put(VAR_YEAR, new Integer(year));
+            regexp = new RE(reDigestUrl);
+            if (regexp.match(uri)) { // uri = "/blog/vyber";
+                digest = true;
+                env.put(VAR_DIGEST, Boolean.TRUE);
+            } else {
+                regexp = new RE(reArchiveUrl);
+                if (regexp.match(uri)) { // uri = "/blog/jmeno/archiv";
+                    archive = true;
+                    name = regexp.getParen(1);
+                } else { // uri = "/blog/jmeno/2004/12/12/124545";
+                    regexp = new RE(reUrl);
+                    regexp.match(uri);
+                    int matched = regexp.getParenCount();
+                    try {
+                        if (matched > 1)
+                            name = regexp.getParen(1);
+                        if (matched > 2) {
+                            year = Integer.parseInt(regexp.getParen(2));
+                            env.put(VAR_YEAR, new Integer(year));
+                        }
+                        if (matched > 3) {
+                            month = Integer.parseInt(regexp.getParen(3));
+                            env.put(VAR_MONTH, new Integer(month));
+                        }
+                        if (matched > 4) {
+                            day = Integer.parseInt(regexp.getParen(4));
+                            env.put(VAR_DAY, new Integer(day));
+                        }
+                        if (matched > 5)
+                            rid = Integer.parseInt(regexp.getParen(5));
+                    } catch (NumberFormatException e) {
+                        log.warn(uri, e);
                     }
-                    if (matched > 3) {
-                        month = Integer.parseInt(regexp.getParen(3));
-                        env.put(VAR_MONTH, new Integer(month));
-                    }
-                    if (matched > 4) {
-                        day = Integer.parseInt(regexp.getParen(4));
-                        env.put(VAR_DAY, new Integer(day));
-                    }
-                    if (matched > 5)
-                        rid = Integer.parseInt(regexp.getParen(5));
-                } catch (NumberFormatException e) {
-                    log.warn(uri, e);
                 }
             }
         }
@@ -176,7 +184,7 @@ public class ViewBlog implements AbcAction, Configurable {
             else
                 return processStories(blogRelation, summary, year, month, day, request, env);
         } else
-            return processBlogSpace(request, summary, year, month, day, env);
+            return processBlogSpace(request, summary, digest, year, month, day, env);
     }
 
     /**
@@ -268,7 +276,7 @@ public class ViewBlog implements AbcAction, Configurable {
     /**
      * Entry page for blogs. Displays most fresh stories across all blogs.
      */
-    protected String processBlogSpace(HttpServletRequest request, boolean summary, int year, int month, int day, Map env) throws Exception {
+    protected String processBlogSpace(HttpServletRequest request, boolean summary, boolean digest, int year, int month, int day, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
         Persistance persistance = PersistanceFactory.getPersistance();
@@ -280,9 +288,18 @@ public class ViewBlog implements AbcAction, Configurable {
         if (!summary)
             addTimeLimitsFQ(year, month, day, qualifiers);
 
+        HashSet values = new HashSet();
+        values.add("yes");
+        Map filters = new HashMap();
+        filters.put(Constants.PROPERTY_BLOG_DIGEST, values);
+
         Qualifier[] qa = new Qualifier[qualifiers.size()];
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
-        int total = sqlTool.countItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+        int total = -1;
+        if (digest)
+            total = sqlTool.countItemRelationsWithTypeWithFilters(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa), filters);
+        else
+            total = sqlTool.countItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
         int count = (summary) ? summarySize : defaultPageSize;
 
         qualifiers.add(Qualifier.SORT_BY_CREATED);
@@ -290,7 +307,11 @@ public class ViewBlog implements AbcAction, Configurable {
         qualifiers.add(new LimitQualifier(from, count));
 
         qa = new Qualifier[qualifiers.size()];
-        List stories = sqlTool.findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
+        List stories = null;
+        if (digest)
+            stories = sqlTool.findItemRelationsWithTypeWithFilters(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa), filters);
+        else
+            stories = sqlTool.findItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
         Tools.syncList(stories);
 
         // filter out stories written by users that current user has blocked
@@ -516,6 +537,12 @@ public class ViewBlog implements AbcAction, Configurable {
         re = prefs.get(PREF_ARCHIVE_URL, null);
         try {
             reArchiveUrl = new RECompiler().compile(re);
+        } catch (RESyntaxException e) {
+            throw new ConfigurationException("Invalid regexp: '"+re+"'!");
+        }
+        re = prefs.get(PREF_DIGEST_URL, null);
+        try {
+            reDigestUrl = new RECompiler().compile(re);
         } catch (RESyntaxException e) {
             throw new ConfigurationException("Invalid regexp: '"+re+"'!");
         }

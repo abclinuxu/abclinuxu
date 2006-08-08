@@ -459,6 +459,21 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Counts relations, where child is item of specified type.
+     * Use Qualifiers to set additional parameters.
+     *
+     * @throws PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public int countItemRelationsWithType(int type, Qualifier[] qualifiers) {
+        StringBuffer sb = new StringBuffer(relationsItemsByType);
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        params.add(new Integer(type));
+        appendQualifiers(sb, qualifiers, params, null);
+        return loadNumber(sb.toString(), params).intValue();
+    }
+
+    /**
      * Finds relations, where child is item of specified type and pass the given filters.
      * There is an AND relation between properties and OR between values of each property.
      * Use Qualifiers to set additional parameters.
@@ -471,7 +486,31 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer(relationsItemsByTypeWithFilters);
         List params = new ArrayList();
         params.add(new Integer(type));
+        appendFilterConditions(filters, sb, params);
+        appendQualifiers(sb, qualifiers, params, null);
+        return loadRelations(sb.toString(), params);
+    }
 
+    /**
+     * Finds relations, where child is item of specified type and pass the given filters.
+     * There is an AND relation between properties and OR between values of each property.
+     * Use Qualifiers to set additional parameters.
+     * @param filters map where key is name of property (see properties.txt) and value is Set of property values
+     * @return number of matching relations
+     * @throws PersistanceException if there is an error with the underlying persistent storage.
+     */
+    public int countItemRelationsWithTypeWithFilters(int type, Qualifier[] qualifiers, Map filters) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer(relationsItemsByTypeWithFilters);
+        changeToCountStatement(sb);
+        List params = new ArrayList();
+        params.add(new Integer(type));
+        appendFilterConditions(filters, sb, params);
+        appendQualifiers(sb, qualifiers, params, null);
+        return loadNumber(sb.toString(), params).intValue();
+    }
+
+    private void appendFilterConditions(Map filters, StringBuffer sb, List params) {
         Iterator i = filters.entrySet().iterator();
         if (i.hasNext()) {
             sb.append(" and V.predek=P.cislo and V.typ_predka='P' and (");
@@ -495,9 +534,6 @@ public final class SQLTool implements Configurable {
             }
             sb.append(")");
         }
-
-        appendQualifiers(sb, qualifiers, params, null);
-        return loadRelations(sb.toString(), params);
     }
 
     /**
@@ -513,20 +549,6 @@ public final class SQLTool implements Configurable {
         params.add(new Integer(type));
         appendQualifiers(sb, qualifiers, params, null);
         return loadRelations(sb.toString(), params);
-    }
-
-    /**
-     * Counts relations, where child is item of specified type.
-     * Use Qualifiers to set additional parameters.
-     * @throws PersistanceException if there is an error with the underlying persistent storage.
-     */
-    public int countItemRelationsWithType(int type, Qualifier[] qualifiers) {
-        StringBuffer sb = new StringBuffer(relationsItemsByType);
-        changeToCountStatement(sb);
-        List params = new ArrayList();
-        params.add(new Integer(type));
-        appendQualifiers(sb, qualifiers, params, null);
-        return loadNumber(sb.toString(), params).intValue();
     }
 
     /**

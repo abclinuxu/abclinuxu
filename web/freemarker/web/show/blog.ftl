@@ -92,7 +92,8 @@
             <li><a href="/blog/${BLOG.subType}/souhrn"><#if title!="UNDEF">${title}, </#if>struèný souhrn</a></li>
             <li><a href="/auto/blog/${BLOG.subType}.rss">RSS kanál</a></li>
             <li><a href="/blog">V¹echny blogy</a></li>
-	    <li><a href="/blog/souhrn">V¹echny blogy, struèný souhrn</a></li>
+	        <li><a href="/blog/souhrn">Struèný souhrn blogù</a></li>
+	        <li><a href="/blog/vyber">Výbìr z blogù</a></li>
         </ul>
     </div>
 

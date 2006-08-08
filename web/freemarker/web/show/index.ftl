@@ -168,7 +168,11 @@
         <div class="s_nad_h1"><div class="s_nad_pod_h1">
             <a class="info" href="#">?<span class="tooltip">Vlastní blog si po pøihlá¹ení
             mù¾ete zalo¾it v nastavení svého profilu</span></a>
-            <h1><a href="/blog">Blogy na AbcLinuxu</a>, <a href="/blog/souhrn">struènìj¹í souhrn</a></h1>
+            <h1>
+                <a href="/blog">Blogy na AbcLinuxu</a>,
+                <a href="/blog/souhrn">struènìj¹í souhrn</a>,
+                <a href="/blog/vyber">výbìr</a>
+            </h1>
         </div></div>
         <table width="99%">
             <tr>

@@ -5,18 +5,37 @@
   </div></div>
 
     <div class="s_sekce">
-        Pøehled zápisù ze v¹ech blogù na¹ich u¾ivatelù. Blog si mù¾e zalo¾it registrovaný u¾ivatel
-        ve svém profilu.
+        <#if DIGEST?exists>
+            Výbìr zápiskù, které se týkají Linuxu, Open Source èi IT. ®ádná politika.
+        <#else>
+            Pøehled zápisù ze v¹ech blogù na¹ich u¾ivatelù. Blog si mù¾e zalo¾it registrovaný u¾ivatel
+            ve svém profilu.
+        </#if>
         <ul>
-          <li>
-	    <#if SUMMARY?exists>
-	      <a href="/blog">Výpis s perexy</a>
-	    <#else>
-	      <a href="/blog/souhrn">Struènìj¹í souhrn</a>
-	    </#if>
-	  </li>
-	  <li><a href="/blogy">Seznam blogù</a></li>
-          <li><a href="/auto/blog.rss">RSS kanál</a></li>
+            <#if DIGEST?exists>
+                <li>
+                    <a href="/blog">V¹echny zápisky</a>
+                </li>
+            <#else>
+                <li>
+                    <#if SUMMARY?exists>
+                        <a href="/blog">Výpis s perexy</a>
+                    <#else>
+                        <a href="/blog/souhrn">Struènìj¹í souhrn</a>
+                    </#if>
+                </li>
+                <li>
+                    <a href="/blog/vyber">Výbìr z blogù</a>
+                </li>
+            </#if>
+            <li><a href="/blogy">Seznam blogù</a></li>
+            <li>
+                <#if DIGEST?exists>
+                    <a href="/auto/blogDigest.rss">RSS kanál</a>
+                <#else>
+                    <a href="/auto/blog.rss">RSS kanál</a>
+                </#if>
+            </li>
         </ul>
     </div>
 </#assign>
@@ -70,6 +89,8 @@
 <p>
     <#if SUMMARY?exists>
         <#assign url="/blog/souhrn">
+    <#elseif DIGEST?exists>
+        <#assign url="/blog/vyber">
     <#else>
         <#assign url="/blog/">
         <#if YEAR?exists><#assign url=url+YEAR+"/"></#if>
