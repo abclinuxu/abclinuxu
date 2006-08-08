@@ -20,6 +20,7 @@ package cz.abclinuxu.utils.email.forum;
 
 import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.extra.JobOfferManager;
 import cz.abclinuxu.data.Record;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.User;
@@ -45,6 +46,9 @@ public class CommentDecorator {
     public static final String VAR_RELATION_ID = "RELATION_ID";
     public static final String VAR_DISCUSSION_ID = "DISCUSSION_ID";
     public static final String VAR_THREAD_ID = "THREAD_ID";
+    public static final String VAR_JOB_OFFER = "JOB";
+
+    static int counter;
 
     /**
      * Creates environment for given Comment. This
@@ -102,6 +106,9 @@ public class CommentDecorator {
         env.put(EmailSender.KEY_SENT_DATE, dizComment.getCreated());
         env.put(EmailSender.KEY_MESSAGE_ID, ""+comment.discussionId+"."+comment.threadId+"@abclinuxu.cz");
         env.put(EmailSender.KEY_REFERENCES, ""+comment.discussionId+"."+parent+"@abclinuxu.cz");
+
+        JobOffer offer = JobOfferManager.getOffer(counter++);
+        env.put(VAR_JOB_OFFER, offer);
 
         return env;
     }
