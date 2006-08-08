@@ -32,6 +32,7 @@ import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AccessKeeper;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -269,7 +270,7 @@ public class EditPoll implements AbcAction {
         env.put(EditPoll.VAR_POLL, poll);
 
         if ( poll.isClosed() ) {
-            ServletUtils.addError(Constants.ERROR_GENERIC,"Litujeme, ale tato anketa je ji¾ uzavøena!",env,request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC,"Litujeme, ale tato anketa je ji¾ uzavøena.",env,request.getSession());
             urlUtils.redirect(response, url);
             return null;
         }
@@ -281,7 +282,7 @@ public class EditPoll implements AbcAction {
 
         String[] values = request.getParameterValues(PARAM_VOTE_ID);
         if ( values==null ) {
-            ServletUtils.addError(Constants.ERROR_GENERIC,"Nevybral jste ¾ádnou volbu!",env,request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC,"Nevybral jste ¾ádnou volbu.",env,request.getSession());
         } else {
             max = values.length;
             if ( ! poll.isMultiChoice() )
@@ -297,21 +298,22 @@ public class EditPoll implements AbcAction {
                     String tmp = values[i];
                     if (tmp==null || tmp.length()==0)
                         continue;
-                    int voteId = Integer.parseInt(tmp);
-                    if (voteId<choices.length)
+                    int voteId = Misc.parseInt(tmp, -1);
+                    if (voteId == -1)
+                        continue;
+                    if (voteId < choices.length)
                         votesFor.add(choices[voteId]);
                 }
 
-                synchronized (relation) {
+                if (votesFor.size() > 0)
                     persistance.incrementPollChoicesCounter(votesFor);
-                }
 
                 ServletUtils.addMessage("Vá¹ hlas do ankety byl pøijat.", env, request.getSession());
             } catch (AccessDeniedException e) {
                 if (e.isIpAddressBlocked())
                     ServletUtils.addError(Constants.ERROR_GENERIC, "Z této IP adresy se u¾ volilo. Zkuste to pozdìji.", env, request.getSession());
                 else
-                    ServletUtils.addError(Constants.ERROR_GENERIC, "U¾ jste jednou volil!", env, request.getSession());
+                    ServletUtils.addError(Constants.ERROR_GENERIC, "U¾ jste jednou volil.", env, request.getSession());
             } catch (Exception e) {
                 log.error("Vote bug: ", e);
                 ServletUtils.addError(Constants.ERROR_GENERIC, "Omlouváme se, ale nastala chyba.", env, request.getSession());
