@@ -40,7 +40,6 @@
        <@lib.showOption "roles", "move relation", "Smí pøesunout relaci", "checkbox" /><br>
        <@lib.showOption "roles", "derive content", "Smí vytvoøit podstránku dokumentu", "checkbox" /><br>
        <@lib.showOption "roles", "remove relation", "Smí smazat relaci a objekt", "checkbox" /><br>
-       <@lib.showOption "roles", "blog digest admin", "Administrátor blog digestu", "checkbox" /><br>
    </td>
   </tr>
   <tr>
