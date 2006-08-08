@@ -59,6 +59,8 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 import org.htmlparser.util.ParserException;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -301,7 +303,7 @@ public class EditUser implements AbcAction, Configurable {
         try {
             persistance.create(managed);
         } catch (DuplicateKeyException e) {
-            ServletUtils.addError(PARAM_LOGIN, "Pøihla¹ovací jméno nebo pøezdívka jsou ji¾ pou¾ívány!", env, null);
+            ServletUtils.addError(PARAM_LOGIN, "Pøihla¹ovací jméno nebo pøezdívka jsou ji¾ pou¾ívány.", env, null);
             return FMTemplateSelector.select("EditUser", "register", env, request);
         }
 
@@ -363,7 +365,7 @@ public class EditUser implements AbcAction, Configurable {
         try {
             persistance.update(managed);
         } catch ( DuplicateKeyException e ) {
-            ServletUtils.addError(PARAM_LOGIN, "Toto jméno je ji¾ pou¾íváno!", env, null);
+            ServletUtils.addError(PARAM_LOGIN, "Toto jméno je ji¾ pou¾íváno.", env, null);
             return FMTemplateSelector.select("EditUser","editBasic",env,request);
         }
 
@@ -1131,7 +1133,7 @@ public class EditUser implements AbcAction, Configurable {
      */
     private boolean setEmail(Map params, User user, Map env) {
         String email = (String) params.get(PARAM_EMAIL);
-        if ( email==null || email.length()<6 || email.indexOf('@')==-1 ) {
+        if ( !isEmailValid(email) ) {
             ServletUtils.addError(PARAM_EMAIL, "Neplatný email!", env, null);
             return false;
         }
@@ -1140,6 +1142,25 @@ public class EditUser implements AbcAction, Configurable {
         tagEmail.attribute("valid").setText("yes");
         return true;
     }
+
+    /**
+     * Validate email.
+     * @return false, if email isnt right. Expected format is: yourname@yourdomain.com!
+     */
+    private boolean isEmailValid(String email) {
+        if (email == null)
+            return false;
+
+        boolean result = true;
+        try {
+            InternetAddress emailAddr = new InternetAddress(email);
+            emailAddr.validate();
+        } catch (AddressException ex) {
+            result = false;
+        }
+        return result;
+    }
+
 
     /**
      * Updates sex from parameters. Changes are not synchronized with persistance.
