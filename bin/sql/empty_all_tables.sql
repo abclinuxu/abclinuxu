@@ -11,6 +11,7 @@ delete from pravo;
 delete from statistika;
 delete from relace;
 delete from server;
+delete from statistika;
 delete from uzivatel;
 delete from verze;
 delete from vlastnost;
