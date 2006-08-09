@@ -62,25 +62,18 @@ public class ViewSoftware implements AbcAction {
      * if set, it indicates to display parent in the relation of two categories
      */
     public static final String PARAM_PARENT = "parent";
-    public static final String PARAM_RELATION = "relationId";
-    public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_RELATION_ID = "rid";
-    /**
-     * n-th oldest object, where display from
-     */
+    /** n-th oldest object, where display from */
     public static final String PARAM_FROM = "from";
-    /**
-     * how many object to display
-     */
+    /** how many object to display */
     public static final String PARAM_COUNT = "count";
-
     public static final String PARAM_ACTION = "action";
-    public static final String PARAM_FILTER_UITYPE = "filterUIType";
-    public static final String PARAM_FILTER_LICENSES = "filterLicenses";
+    public static final String PARAM_FILTER_UITYPE = "ui";
+    public static final String PARAM_FILTER_LICENSES = "license";
 
     public static final String ACTION_FILTER = "filter";
 
-    public static final String VAR_FILTERS = "filters";
+    public static final String VAR_FILTERS = "FILTERS";
     public static final String VAR_PARENTS = "PARENTS";
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_ITEMS = "ITEMS";
@@ -108,10 +101,12 @@ public class ViewSoftware implements AbcAction {
 
         if (ACTION_FILTER.equals(params.get(PARAM_ACTION))) {
             Map filters = new HashMap();
-            if (null != params.get(PARAM_FILTER_UITYPE))
-                filters.put("uiType", Tools.asList(params.get(PARAM_FILTER_UITYPE)));
-            if (null != params.get(PARAM_FILTER_LICENSES))
-                filters.put("licenses", Tools.asList(params.get(PARAM_FILTER_LICENSES)));
+            Object filterValue = params.get(PARAM_FILTER_UITYPE);
+            if (filterValue != null)
+                filters.put(Constants.PROPERTY_USER_INTERFACE, Tools.asSet(filterValue));
+            filterValue = params.get(PARAM_FILTER_LICENSES);
+            if (filterValue != null)
+                filters.put(Constants.PROPERTY_LICENSE, Tools.asSet(filterValue));
 
             session.setAttribute(VAR_FILTERS, filters);
         }
@@ -143,6 +138,7 @@ public class ViewSoftware implements AbcAction {
         qualifiers.add(new CompareCondition(Field.UPPER, Operation.EQUAL, new Integer(relation.getId())));
         Qualifier[] qa = new Qualifier[qualifiers.size()];
 
+        // todo tohle jde prece porovnat bez SQL
         List categories = sqlTool.findCategoriesRelationsWithType(Category.SOFTWARE_SECTION, (Qualifier[]) qualifiers.toArray(qa));
         if (categories.size() > 0)
             env.put(VAR_CATEGORIES, Tools.syncList(categories));
@@ -152,17 +148,13 @@ public class ViewSoftware implements AbcAction {
         qualifiers.add(new LimitQualifier(from, count));
         qa = new Qualifier[qualifiers.size()];
 
-        Map filters = (Map) env.get("filters");
-        if (filters != null) {
-            List items = sqlTool.findItemRelationsWithTypeWithFilters(Item.SOFTWARE, (Qualifier[]) qualifiers.toArray(qa), filters);
-            if (items.size() > 0)
-                env.put(VAR_ITEMS, Tools.syncList(items));
-        }
+        Map filters = (Map) env.get(VAR_FILTERS);
+        List items = sqlTool.findItemRelationsWithTypeWithFilters(Item.SOFTWARE, (Qualifier[]) qualifiers.toArray(qa), filters);
+        if (items.size() > 0)
+            env.put(VAR_ITEMS, Tools.syncList(items));
 
         List parents = persistance.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
-
-
         env.put(VAR_CATEGORY, Tools.sync(relation.getChild()));
 
         return FMTemplateSelector.select("ViewCategory", "swsekce", env, request);
