@@ -1408,13 +1408,13 @@ public class Tools implements Configurable {
 
     /**
      * Returns obj as list. If obj is List, then it is casted
-     * to List. If it is collection, then new arraylist initialized
+     * to List. If it is collection, then new ArrayList initialized
      * with its entries is returned. If obj is null, empty list
      * is returned. In all other cases list with obj is returned.
      * Warning - returned list may be read-only.
      *
      * @param obj value that can be list
-     * @return obj casted to list or list containing obj
+     * @return obj casted to List or List containing obj
      */
     public static List asList(Object obj) {
         if (obj == null)
@@ -1424,6 +1424,26 @@ public class Tools implements Configurable {
         if (obj instanceof Collection)
             return new ArrayList((Collection) obj);
         return Collections.singletonList(obj);
+    }
+
+    /**
+     * Returns obj as set. If obj is Set, then it is casted
+     * to Set. If it is collection, then new HashSet initialized
+     * with its entries is returned. If obj is null, empty set
+     * is returned. In all other cases Set with obj is returned.
+     * Warning - returned list may be read-only.
+     *
+     * @param obj value that can be list
+     * @return obj casted to Set or Set containing obj
+     */
+    public static Set asSet(Object obj) {
+        if (obj == null)
+            return Collections.EMPTY_SET;
+        if (obj instanceof Set)
+            return (Set) obj;
+        if (obj instanceof Collection)
+            return new HashSet((Collection) obj);
+        return Collections.singleton(obj);
     }
 
     /**
