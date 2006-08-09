@@ -25,23 +25,27 @@
               <#if ERRORS.query?exists><div class="error">${ERRORS.query}</div></#if>
               <#if PARAMS.advancedMode?default("false")=="true">
                   <input type="hidden" name="advancedMode" value="true">
-                  <table border="0">
+                  <table border="0" width="100%">
                    <tr>
                     <td><label><input type="checkbox" name="type" value="clanek" <#if TYPES.article>checked</#if>>Èlánky</label></td>
                     <td><label><input type="checkbox" name="type" value="zpravicka" <#if TYPES.news>checked</#if>>Zprávièky</label></td>
-                    <td><label><input type="checkbox" name="type" value="otazka" <#if TYPES.question>checked</#if>>Otázky</label></td>
-                    <td><label><input type="checkbox" name="type" value="diskuse" <#if TYPES.discussion>checked</#if>>Diskuse</label></td>
                     <td><label><input type="checkbox" name="type" value="faq" <#if TYPES.faq>checked</#if>>FAQ</label></td>
-                    <td><label><input type="checkbox" name="type" value="blog" <#if TYPES.blog>checked</#if>>Blogy</label></td>
-                    <td><label><input type="checkbox" name="type" value="sekce" <#if TYPES.section>checked</#if>>Sekce</label></td>
+                    <td><label><input type="checkbox" name="type" value="pojem" <#if TYPES.dictionary>checked</#if>>Pojmy</label></td>
                    </tr>
                    <tr>
+                    <td><label><input type="checkbox" name="type" value="otazka" <#if TYPES.question>checked</#if>>Otázky</label></td>
+                    <td><label><input type="checkbox" name="type" value="diskuse" <#if TYPES.discussion>checked</#if>>Diskuse</label></td>
                     <td><label><input type="checkbox" name="type" value="hardware" <#if TYPES.hardware>checked</#if>>Hardware</label></td>
-                    <td><label><input type="checkbox" name="type" value="software" <#if TYPES.software>checked</#if>>Software</label></td>
                     <td><label><input type="checkbox" name="type" value="ovladac" <#if TYPES.driver>checked</#if>>Ovladaèe</label></td>
-                    <td><label><input type="checkbox" name="type" value="pojem" <#if TYPES.dictionary>checked</#if>>Pojmy</label></td>
+                   </tr>
+                   <tr>
+                    <td><label><input type="checkbox" name="type" value="sekce" <#if TYPES.section>checked</#if>>Sekce</label></td>
+                    <td><label><input type="checkbox" name="type" value="software" <#if TYPES.software>checked</#if>>Software</label></td>
+                    <td><label><input type="checkbox" name="type" value="blog" <#if TYPES.blog>checked</#if>>Blogy</label></td>
                     <td><label><input type="checkbox" name="type" value="anketa" <#if TYPES.poll>checked</#if>>Ankety</label></td>
-                    <td colspan="2"><button type="button" onclick="toggle(this)">V¹e/nic</button></td>
+                   </tr>
+                   <tr>
+                    <td colspan="4" align="left"><label><input type="checkbox" onclick="toggle(this)">Vyber v¹e/nic</label></td>
                    </tr>
                   </table>
               <#else>
