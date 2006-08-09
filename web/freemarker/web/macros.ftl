@@ -243,3 +243,9 @@
         ${caption}
     </label>
 </#macro>
+
+<#macro showOption2 (param value caption type values)>
+    <label>
+        <input type="${type}" name="${param}" value="${value}"<#if TOOL.isWithin(values, value)> checked</#if>> ${caption}
+    </label>
+</#macro>
