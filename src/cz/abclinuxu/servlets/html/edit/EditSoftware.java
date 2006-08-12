@@ -67,7 +67,6 @@ public class EditSoftware implements AbcAction {
     public static final String PARAM_USER_INTERFACE = "ui";
     public static final String PARAM_ALTERNATIVES = "alternative";
     public static final String PARAM_LICENSES = "license";
-    public static final String PARAM_VERSION = "version";
     public static final String PARAM_PREVIEW = "preview";
 
     public static final String VAR_RELATION = "RELATION";
@@ -143,7 +142,6 @@ public class EditSoftware implements AbcAction {
         boolean canContinue = true;
         canContinue &= setName(params, root, env);
         canContinue &= setDescription(params, root, env);
-        canContinue &= setVersion(params, root, env);
         canContinue &= setUserInterface(params, item);
         canContinue &= setApplicationAlternatives(params, item);
         canContinue &= setLicenses(params, item);
@@ -196,9 +194,6 @@ public class EditSoftware implements AbcAction {
         node = root.element("description");
         if (node != null)
             params.put(PARAM_DESCRIPTION, node.getText());
-        node = root.element("version");
-        if (node != null)
-            params.put(PARAM_VERSION, node.getText());
         node = root.selectSingleNode("/data/url[@useType='homepage']");
         if (node != null)
             params.put(PARAM_HOME_PAGE, node.getText());
@@ -231,7 +226,6 @@ public class EditSoftware implements AbcAction {
         boolean canContinue = true;
         canContinue &= setName(params, root, env);
         canContinue &= setDescription(params, root, env);
-        canContinue &= setVersion(params, root, env);
         canContinue &= setUserInterface(params, item);
         canContinue &= setApplicationAlternatives(params, item);
         canContinue &= setLicenses(params, item);
@@ -307,25 +301,6 @@ public class EditSoftware implements AbcAction {
             ServletUtils.addError(PARAM_DESCRIPTION, "Zadejte popis programu!", env, null);
             return false;
         }
-        return true;
-    }
-
-    /**
-     * Updates version from parameters. Changes are not synchronized with persistance.
-     * @param params map holding request's parameters
-     * @param root root element to be updated
-     * @param env
-     * @return false, if there is a major error.
-     */
-    private boolean setVersion(Map params, Element root, Map env) {
-        String tmp = (String) params.get(PARAM_VERSION);
-        if (Misc.empty(tmp)) {
-            ServletUtils.addError(PARAM_VERSION, "Zadejte prosím verzi softwaru.", env, null);
-            return false;
-        }
-
-        tmp = Misc.filterDangerousCharacters(tmp);
-        DocumentHelper.makeElement(root, "version").setText(tmp);
         return true;
     }
 

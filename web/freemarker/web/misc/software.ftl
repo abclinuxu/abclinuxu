@@ -7,17 +7,6 @@
 
     <table class="swdetail">
         <tr>
-            <td>Poslední verze:</td>
-            <td>
-                ${TOOL.xpath(software, "/data/version")}
-                <#local url = TOOL.xpath(software, "/data/url[@useType='download']")?default("UNDFEFINED")>
-                <#if url != "UNDFEFINED">
-                    (<a href="${TOOL.xpath(software, "/data/url[@useType='download']")}" rel="nofollow">stáhnout</a>)
-                </#if>
-            </td>
-        </tr>
-
-        <tr>
             <td>Prostøedí:</td>
             <td>
                 <#list software.getProperty("ui") as ui>
@@ -42,6 +31,13 @@
     	<#if url != "UNDFEFINED">
             <tr>
 	        	<td>Domovská stránka:</td>
+                <td><a href="${url}" rel="nofollow">${url}</a></td>
+            </tr>
+        </#if>
+        <#local url = TOOL.xpath(software, "/data/url[@useType='download']")?default("UNDFEFINED")>
+        <#if url != "UNDFEFINED">
+            <tr>
+	        	<td>Adresa ke sta¾ení:</td>
                 <td><a href="${url}" rel="nofollow">${url}</a></td>
             </tr>
         </#if>

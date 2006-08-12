@@ -45,17 +45,9 @@
         </tr>
 
         <tr>
-            <td class="required">Poslední verze</td>
-            <td>
-                <input type="text" name="version" value="${PARAMS.version?if_exists}" size="10" tabindex="2">
-                <div class="error">${ERRORS.version?if_exists}</div>
-            </td>
-        </tr>
-
-        <tr>
             <td class="required">Popis</td>
             <td>
-                <textarea name="description" cols="50" rows="11" tabindex="3" class="wide">${PARAMS.description?if_exists?html}</textarea>
+                <textarea name="description" cols="50" rows="11" tabindex="2" class="wide">${PARAMS.description?if_exists?html}</textarea>
                 <div class="error">${ERRORS.description?if_exists}</div>
             </td>
         </tr>
@@ -63,7 +55,7 @@
         <tr>
             <td>Adresa domovské stránky</td>
             <td>
-                <input type="text" name="homeUrl" value="${PARAMS.homeUrl?if_exists}" size="40" tabindex="4">
+                <input type="text" name="homeUrl" value="${PARAMS.homeUrl?if_exists}" size="40" tabindex="3">
                 <div class="error">${ERRORS.homeUrl?if_exists}</div>
             </td>
         </tr>
@@ -71,7 +63,7 @@
         <tr>
             <td>Adresa pro sta¾ení</td>
             <td>
-                <input type="text" name="downloadUrl" value="${PARAMS.downloadUrl?if_exists}" size="40" tabindex="5">
+                <input type="text" name="downloadUrl" value="${PARAMS.downloadUrl?if_exists}" size="40" tabindex="4">
                 <div class="error">${ERRORS.downloadUrl?if_exists}</div>
             </td>
         </tr>
@@ -105,42 +97,42 @@
             <td class="required">U¾ivatelské prostøedí</td>
             <td>
                 <div class="sw-strom" id="strom">
-		  <div>
-		    <@lib.showOption "ui", "xwindows", UI_PROPERTY["xwindows"], "checkbox" />
-		    <div>
-		      <@lib.showOption "ui", "qt", UI_PROPERTY["qt"], "checkbox", " onclick=\"startCheckParent(event);\"" />
-		      <div>
-			<@lib.showOption "ui", "kde", UI_PROPERTY["kde"], "checkbox", "onclick=\"startCheckParent(event);\"" />
-		      </div>
-		    </div>
-		    <div>
-		      <@lib.showOption "ui", "gtk", UI_PROPERTY["gtk"], "checkbox", " onclick=\"startCheckParent(event);\"" />
-		      <div>
-			<@lib.showOption "ui", "gnome", UI_PROPERTY["gnome"], "checkbox", " onclick=\"startCheckParent(event);\"" />
-		      </div>
-		    </div>
-		    <div>
-		      <@lib.showOption "ui", "motif", UI_PROPERTY["motif"], "checkbox", " onclick=\"startCheckParent(event);\"" />
-		    </div>
-		    <div>
-		      <@lib.showOption "ui", "java", UI_PROPERTY["java"], "checkbox", " onclick=\"startCheckParent(event);\"" />
-		    </div>
-		    <div>
-		      <@lib.showOption "ui", "tk", UI_PROPERTY["tk"], "checkbox", " onclick=\"startCheckParent(event);\"" />
-		    </div>
-		  </div>
-		  <div>
-		    <@lib.showOption "ui", "console", UI_PROPERTY["console"], "checkbox" />
-		    <div>
-		      <@lib.showOption "ui", "cli", UI_PROPERTY["cli"], "checkbox", " onclick=\"startCheckParent(event);\"" />
-		    </div>
-		    <div>
-		      <@lib.showOption "ui", "tui", UI_PROPERTY["tui"], "checkbox", " onclick=\"startCheckParent(event);\"" />
-		    </div>
-		    <div>
-		      <@lib.showOption "ui", "grconsole", UI_PROPERTY["grconsole"], "checkbox", "onclick=\"startCheckParent(event);\"" />
-		    </div>
-		  </div>
+                    <div>
+                        <@lib.showOption "ui", "xwindows", UI_PROPERTY["xwindows"], "checkbox" />
+                        <div>
+                            <@lib.showOption "ui", "qt", UI_PROPERTY["qt"], "checkbox", " onclick=\"startCheckParent(event);\"" />
+                            <div>
+                                <@lib.showOption "ui", "kde", UI_PROPERTY["kde"], "checkbox", "onclick=\"startCheckParent(event);\"" />
+                            </div>
+                        </div>
+                        <div>
+                            <@lib.showOption "ui", "gtk", UI_PROPERTY["gtk"], "checkbox", " onclick=\"startCheckParent(event);\"" />
+                            <div>
+                                <@lib.showOption "ui", "gnome", UI_PROPERTY["gnome"], "checkbox", " onclick=\"startCheckParent(event);\"" />
+                            </div>
+                        </div>
+                        <div>
+                            <@lib.showOption "ui", "motif", UI_PROPERTY["motif"], "checkbox", " onclick=\"startCheckParent(event);\"" />
+                        </div>
+                        <div>
+                            <@lib.showOption "ui", "java", UI_PROPERTY["java"], "checkbox", " onclick=\"startCheckParent(event);\"" />
+                        </div>
+                        <div>
+                            <@lib.showOption "ui", "tk", UI_PROPERTY["tk"], "checkbox", " onclick=\"startCheckParent(event);\"" />
+                        </div>
+                    </div>
+                    <div>
+                        <@lib.showOption "ui", "console", UI_PROPERTY["console"], "checkbox" />
+                        <div>
+                            <@lib.showOption "ui", "cli", UI_PROPERTY["cli"], "checkbox", " onclick=\"startCheckParent(event);\"" />
+                        </div>
+                        <div>
+                            <@lib.showOption "ui", "tui", UI_PROPERTY["tui"], "checkbox", " onclick=\"startCheckParent(event);\"" />
+                        </div>
+                        <div>
+                            <@lib.showOption "ui", "grconsole", UI_PROPERTY["grconsole"], "checkbox", "onclick=\"startCheckParent(event);\"" />
+                        </div>
+                    </div>
                 </div>
             </td>
         </tr>

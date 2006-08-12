@@ -40,22 +40,24 @@
 <div class="sw">
     <@swlib.showSoftware ITEM, true />
 
-    <#if FEED_LINKS?exists>
+    <#assign feedUrl = TOOL.xpath(ITEM, "/data/url[@useType='rss']")?default("UNDEFINED")>
+    <#if feedUrl!="UNDEFINED">
         <h3>
             Aktuality
-            <#assign feedUrl = TOOL.xpath(ITEM, "/data/url[@useType='rss']")?default("UNDEFINED")>
-            <#if feedUrl!="UNDEFINED">
-                <a href="${feedUrl}" rel="nofollow"><img src="/images/site2/feed16.png" width="16" height="16" border="0" alt="RSS URL"></a>
-            </#if>
+            <a href="${feedUrl}" rel="nofollow"><img src="/images/site2/feed16.png" width="16" height="16" border="0" alt="RSS URL"></a>
         </h3>
-        <ul>
-        <#list FEED_LINKS as link>
-            <li>
-                <a href="${link.child.url}" rel="nofollow">${link.child.text}</a>
-                (${DATE.show(link.child.updated,"CZ_FULL")})
-            </li>
-        </#list>
-        </ul>
+        <#if FEED_LINKS?exists>
+            <ul>
+            <#list FEED_LINKS as link>
+                <li>
+                    <a href="${link.child.url}" rel="nofollow">${link.child.text}</a>
+                    (${DATE.show(link.child.updated,"CZ_FULL")})
+                </li>
+            </#list>
+            </ul>
+        <#else>
+            <p>Zdroj zatím nebyl aktualizován.</p>
+        </#if>
     </#if>
 </div>
 
