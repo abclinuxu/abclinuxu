@@ -49,7 +49,7 @@ public class PathGeneratorImpl implements PathGenerator {
 
         StringBuffer sb = new StringBuffer("images/screenshots/");
         String id = String.valueOf(obj.getId());
-	    sb.append(id.charAt(0)).append('/').append(id.charAt(1)).append('/');
+	    sb.append(id.charAt(id.length()-1)).append('/').append(id.charAt(id.length()-2)).append('/');
 
         File dir = new File(AbcConfig.calculateDeployedPath(sb.toString()));
         if (!dir.exists())
