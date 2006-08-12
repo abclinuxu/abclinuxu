@@ -225,7 +225,7 @@ public class EditHardware implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
 
         Relation relation = (Relation) env.get(VAR_RELATION);
-        Item item = (Item) relation.getChild();
+        Item item = (Item) relation.getChild().clone();
         item.setOwner(user.getId());
         Element root = item.getData().getRootElement();
 
