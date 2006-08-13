@@ -24,6 +24,7 @@
                             <node name="AbcConfig">
                                 <map>
                                     <entry key="deploy.path" value="@DEPLOY_ABCLINUXU@"/>
+                                    <entry key="domain" value="@DOMAIN_NAME@"/>
                                     <entry key="viewuser.page.size" value="20"/>
                                     <entry key="section.article.count" value="25"/>
                                     <entry key="article.section.articles.count" value="5"/>
@@ -322,7 +323,7 @@
                     <node name="WhatHappened">
                         <map>
                             <entry key="title" value="Událo se v týdnu {0}/{1,number,#}"/>
-                            <entry key="perex" value="Ucelený pøehled èlánkù, zprávièek a diskusí za minulých 7 dní½."/>
+                            <entry key="perex" value="Ucelený pøehled èlánkù, zprávièek a diskusí za minulých 7 dní."/>
                             <entry key="author" value="5473"/>
                             <entry key="section" value="251"/>
                         </map>
@@ -432,7 +433,6 @@
                             <node name="URLMapper">
                                 <map>
                                     <entry key="config" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/url_mapping.xml"/>
-                                    <entry key="domain" value="@DOMAIN_NAME@"/>
                                 </map>
                             </node>
                             <node name="URLManager">

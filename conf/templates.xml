@@ -121,6 +121,18 @@
     </action>
   </servlet>
 
+  <servlet name="EditRelated">
+    <action name="manage" content="/misc/manage_related.ftl">
+        <var name="TITLE" value="Správa souvisejících dokumentu" />
+    </action>
+    <action name="edit" content="/edit/related.ftl">
+        <var name="TITLE" value="Úprava souvisejícíco dokumentu" />
+    </action>
+    <action name="remove" content="/remove/related.ftl">
+        <var name="TITLE" value="Smazání souvisejících dokumentù"/>
+    </action>
+  </servlet>
+
   <servlet name="EditFaq">
     <action name="add" content="/add/faq.ftl">
       <var name="TITLE" value="Vlo¾ èasto kladenou otázku s odpovìdí" />

@@ -22,6 +22,7 @@ import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
+import com.sun.syndication.io.ParsingFeedException;
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Link;
@@ -255,8 +256,10 @@ public class UpdateLinks extends TimerTask implements Configurable {
 
                 result.add(link);
             }
+        } catch (ParsingFeedException e) {
+            log.warn("Invalid content in feed "+definition.url+": "+e.getMessage());
         } catch (IOException e) {
-            log.error("IO problems for "+definition.url+": "+e.getMessage());
+            log.warn("IO problems for "+definition.url+": "+e.getMessage());
         }  catch (Exception e) {
             log.error("Cannot parse links from "+definition.url, e);
         }

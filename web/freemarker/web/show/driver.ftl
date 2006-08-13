@@ -11,7 +11,9 @@
         Tuto polo¾ku naposledy upravil <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
         (${DATE.show(ITEM.updated,"CZ_FULL")}).
         Pokud chcete doplnit, opravit nebo aktualizovat ovladaè,
-        <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">vlo¾te novou verzi</a>.
+        <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">vlo¾te novou verzi</a>
+        nebo <a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">upravte související dokumenty</a>.
+
         K dispozici je i <a href="/revize?rid=${RELATION.id}&amp;prefix=/ovladace">archiv zmìn</a>
         tohoto ovladaèe, tak¾e si mù¾ete prohlédnout, jakými zmìnami ovladaè pro¹el postupem èasu.
     </#if>
@@ -47,6 +49,8 @@
 <h3>Poznámka:</h3>
 
 <div>${TOOL.render(TOOL.element(ITEM.data,"data/note"),USER?if_exists)}</div>
+
+<@lib.showRelated ITEM/>
 
 <p><b>Nástroje:</b> <a href="${RELATION.url?default("/ovladace/show/"+RELATION.id)}?varianta=print<#if PARAMS.revize?exists>&amp;revize=${PARAMS.revize}</#if>">Tisk</a></p>
 

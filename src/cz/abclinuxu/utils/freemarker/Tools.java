@@ -306,6 +306,30 @@ public class Tools implements Configurable {
     }
 
     /**
+     * Finds related documents for given Item.
+     * @param item
+     * @return list with RelatedDocument instances, if there are any.
+     */
+    public List getRelatedDocuments(Item item) {
+        if (! item.isInitialized())
+            item = (Item) persistance.findById(item);
+
+        List elements = item.getData().selectNodes("/data/related/document");
+        if (elements.size() == 0)
+            return Collections.EMPTY_LIST;
+
+        List related = new ArrayList(elements.size());
+        for (Iterator iter = elements.iterator(); iter.hasNext();) {
+            Element element = (Element) iter.next();
+            RelatedDocument document = new RelatedDocument(element.elementText("url"), element.attributeValue("type"));
+            document.setTitle(element.elementText("title"));
+            document.setDescription(element.elementText("description"));
+            related.add(document);
+        }
+        return related;
+    }
+
+    /**
      * Generates list of Links to parents of this object.
      * @param parents list of relations.
      * @param o it shall be User or undefined value

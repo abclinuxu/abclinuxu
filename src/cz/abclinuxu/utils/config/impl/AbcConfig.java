@@ -40,6 +40,7 @@ public class AbcConfig implements Configurable {
     }
 
     public static final String PREF_DEPLOY_PATH = "deploy.path";
+    public static final String PREF_DOMAIN = "domain";
     public static final String PREF_VIEWUSER_PAGINGSIZE = "viewuser.page.size";
     public static final String PREF_SECTION_ARTICLES_COUNT = "section.article.count";
     public static final String PREF_ARTICLE_SECTION_ARTICLES_COUNT = "article.section.articles.count";
@@ -47,7 +48,7 @@ public class AbcConfig implements Configurable {
     public static final String PREF_FAQ_COUNT = "section.faq.count";
     public static final String PREF_WATCHED_DISCUSSION_LIMIT = "watched.discussions.limit";
 
-    static String deployPath;
+    static String deployPath, domain;
     static int viewUserPageSize, sectionArticleCount;
     static int articleSectionArticlesCount, searchResultsCount, faqSectionCount;
     static int maxWatchedDiscussions;
@@ -56,6 +57,7 @@ public class AbcConfig implements Configurable {
      * Callback used to configure your class from preferences.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
+        domain = prefs.get(PREF_DOMAIN, "abclinuxu.cz");
         deployPath = prefs.get(PREF_DEPLOY_PATH, null);
         if (! deployPath.endsWith(File.separator))
             deployPath = deployPath.concat(File.separator);
@@ -72,6 +74,13 @@ public class AbcConfig implements Configurable {
      */
     public static String getDeployPath() {
         return deployPath;
+    }
+
+    /**
+     * @return domain name served by this installation
+     */
+    public static String getDomain() {
+        return domain;
     }
 
     /**

@@ -45,8 +45,6 @@ import java.util.List;
 import java.util.ArrayList;
 
 import org.dom4j.Element;
-import org.dom4j.io.DOMWriter;
-import freemarker.ext.dom.NodeModel;
 
 /**
  * User: literakl
@@ -62,7 +60,6 @@ public class ViewFaq implements AbcAction {
     public static final String VAR_QUESTIONS = "QUESTIONS";
     public static final String VAR_ITEM = "ITEM";
     public static final String VAR_SECTION_SIZES = "SIZES";
-    public static final String VAR_FAQ_XML = "XML";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -137,7 +134,6 @@ public class ViewFaq implements AbcAction {
 
         Item item = (Item) relation.getChild();
         env.put(VAR_ITEM, item);
-        env.put(VAR_FAQ_XML, NodeModel.wrap((new DOMWriter().write(item.getData()))));
 
         String revision = (String) params.get(ShowRevisions.PARAM_REVISION);
         if (revision != null) {

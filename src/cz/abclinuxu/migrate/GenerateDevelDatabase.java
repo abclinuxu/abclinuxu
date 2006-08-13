@@ -26,6 +26,7 @@ import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.edit.*;
+import cz.abclinuxu.servlets.html.view.ShowObject;
 import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import org.dom4j.Element;
@@ -40,6 +41,7 @@ import java.util.*;
  */
 public class GenerateDevelDatabase {
     static User user, admin;
+    static int ridArticle, ridDriver, ridHardware, ridNews, ridQuestion;
 
     public static void main(String[] args) throws Exception {
         Persistance persistance = PersistanceFactory.getPersistance(PersistanceFactory.defaultDevelUrl);
@@ -50,11 +52,11 @@ public class GenerateDevelDatabase {
         generateNews(persistance);
         generateHardwareItems(persistance);
         generateDrivers();
-        generateFAQs(persistance);
         generateDiscussions(persistance);
         generateBlogs(persistance);
         generateDictionaryItems();
         generatePoll(persistance);
+        generateFAQs(persistance);
     }
 
     private static void generateHardwareItems(Persistance persistance) throws Exception {
@@ -74,6 +76,8 @@ public class GenerateDevelDatabase {
 
         EditHardware servlet = new EditHardware();
         servlet.actionAddStep2(null, null, map, false);
+        Relation created = (Relation) map.get(ShowObject.VAR_RELATION);
+        ridHardware = created.getId();
     }
 
     private static void generateDiscussions(Persistance persistance) throws Exception {
@@ -99,6 +103,8 @@ public class GenerateDevelDatabase {
         map.put(EditDiscussion.VAR_RELATION, relation);
 
         servlet.actionAddComment2(null, null, map, false);
+        Relation created = (Relation) map.get(ShowObject.VAR_RELATION);
+        ridQuestion = created.getId();
     }
 
     private static void generateFAQs(Persistance persistance) throws Exception {
@@ -110,13 +116,25 @@ public class GenerateDevelDatabase {
         map.put(EditFaq.VAR_RELATION, persistance.findById(new Relation(94480)));
         params.put(EditFaq.PARAM_TITLE, "Zapnutí DMA");
         params.put(EditFaq.PARAM_TEXT, "man hdparm");
-        params.put(EditFaq.PARAM_LINK_CAPTION + "1", "první odkaz");
-        params.put(EditFaq.PARAM_LINK_URL + "1", "/");
-        params.put(EditFaq.PARAM_LINK_CAPTION + "2", "druhý odkaz");
-        params.put(EditFaq.PARAM_LINK_URL + "2", "/faq");
 
         EditFaq servlet = new EditFaq();
         servlet.actionAddStep2(null, null, map, false);
+
+        EditRelated servlet2 = new EditRelated();
+        params.put(EditRelated.PARAM_URL, UrlUtils.PREFIX_CLANKY+"/"+ridArticle);
+        params.put(EditRelated.PARAM_TITLE, "první odkaz");
+        servlet2.actionAddStep2(null, params, false);
+
+        params.put(EditRelated.PARAM_URL, UrlUtils.PREFIX_DRIVERS+"/"+ridDriver);
+        servlet2.actionAddStep2(null, params, false);
+
+        params.put(EditRelated.PARAM_URL, UrlUtils.PREFIX_HARDWARE+"/"+ridHardware);
+        servlet2.actionAddStep2(null, params, false);
+
+        params.put(EditRelated.PARAM_URL, "http://www.linux.cz");
+        params.put(EditRelated.PARAM_TITLE, "oficialni stranky");
+        params.put(EditRelated.PARAM_DESCRIPTION, "ponekud chude, nemyslite?");
+        servlet2.actionAddStep2(null, params, false);
     }
 
     private static void generateBlogs(Persistance persistance) throws Exception {
@@ -164,6 +182,8 @@ public class GenerateDevelDatabase {
 
         EditDriver servlet = new EditDriver();
         servlet.actionAddStep2(null, null, map, false);
+        Relation created = (Relation) map.get(ShowObject.VAR_RELATION);
+        ridDriver = created.getId();
     }
 
     private static void generateNews(Persistance persistance) throws Exception {
@@ -179,16 +199,19 @@ public class GenerateDevelDatabase {
         EditNews servlet = new EditNews();
         servlet.actionAddStep2(null, null, map, false);
 
-        Relation relation = (Relation) map.get(EditNews.VAR_RELATION);
-        Item item = (Item) relation.getChild();
+        Relation created = (Relation) map.get(ShowObject.VAR_RELATION);
+        ridNews = created.getId();
+
+        Item item = (Item) created.getChild();
         Element element = (Element) item.getData().selectSingleNode("/data/title");
         String url = UrlUtils.PREFIX_NEWS + "/" + URLManager.enforceLastURLPart(element.getTextTrim());
         url = URLManager.protectFromDuplicates(url);
 
-        relation.setUrl(url);
-        relation.setParent(new Category(Constants.CAT_NEWS));
-        relation.setUpper(Constants.REL_NEWS);
-        persistance.update(relation);
+        created.setUrl(url);
+        created.setParent(new Category(Constants.CAT_NEWS));
+        created.setUpper(Constants.REL_NEWS);
+        persistance.update(created);
+
     }
 
     private static void generatePoll(Persistance persistance) throws Exception {
@@ -221,13 +244,16 @@ public class GenerateDevelDatabase {
         map.put(Constants.VAR_USER, admin);
         params.put(EditArticle.PARAM_TITLE, "Jaderné noviny 000");
         params.put(EditArticle.PARAM_PEREX, "Jádro portováno do toastovaèe!");
-        params.put(EditArticle.PARAM_CONTENT, "Slavný kernel hacker a fanou¹ek Linuxu JXP naportoval kernel " +
+        params.put(EditArticle.PARAM_CONTENT, "Slavný kernel hacker a fanou¹ek Linuxu JXD naportoval kernel " +
                 "na toastovaè. A¾ si pøí¹tì budete dìlat toasty, o optimální teplotu se bude starat Linuks.");
         params.put(EditArticle.PARAM_AUTHOR, Integer.toString(user.getId()));
         params.put(EditArticle.PARAM_PUBLISHED, Constants.isoFormat.format(new Date()));
 
         EditArticle editArticle = new EditArticle();
         editArticle.actionAddStep2(null, null, map, false);
+
+        Relation created = (Relation) map.get(ShowObject.VAR_RELATION);
+        ridArticle = created.getId();
 
         articles = (Relation) persistance.findById(new Relation(14358));
         map.put(EditArticle.VAR_RELATION, articles);

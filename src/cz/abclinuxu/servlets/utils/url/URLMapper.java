@@ -34,16 +34,20 @@ import javax.servlet.http.HttpServletResponse;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.html.view.ShowObject;
 import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistance.PersistanceFactory;
 import cz.abclinuxu.data.Relation;
 
 import java.util.prefs.Preferences;
 import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import java.io.IOException;
 
 /**
@@ -54,19 +58,19 @@ public final class URLMapper implements Configurable {
     static Logger log = Logger.getLogger(URLMapper.class);
 
     public static final String PREF_FILE = "config";
-    public static final String PREF_DOMAIN = "domain";
 
     private static URLMapper htmlVersion, wapVersion;
+    private static Pattern reTrailingRid;
     static {
         htmlVersion = new URLMapper();
         wapVersion = new URLMapper();
         ConfigurationManager.getConfigurator().configureAndRememberMe(htmlVersion);
+        reTrailingRid = Pattern.compile("/([0-9]+)$");
     }
 
     List actionMapping;
     List priorityMapping;
     List deprecatedMapping;
-    String domain;
     static AbcAction showObject;
 
     private URLMapper() {
@@ -124,36 +128,18 @@ public final class URLMapper implements Configurable {
      * @throws NotFoundException if there is no mapping for this URL
      */
     public AbcAction findAction(HttpServletRequest request, Map env) throws NotFoundException {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         PatternAction patternAction;
 
         String url = ServletUtils.combinePaths(request.getServletPath(), request.getPathInfo());
+        Matcher matcher = reTrailingRid.matcher(url);
+        boolean custom = ! matcher.find();
 
-        boolean custom = true;
-        int position = url.lastIndexOf('/');
-        // If URL ends with /[0-9]+ then it is not custom URL
-        if (position>=0 && (position+1)<url.length()) {
-            String lastPart = url.substring(position+1);
-            int length = lastPart.length();
-            char c;
-            boolean found = false;
-            for (int i=0; i<length; i++) {
-                c = lastPart.charAt(i);
-                if (c<'0' || c>'9') {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found)
-                custom = false;
-        }
-
-        // todo known custom URLs must be cached.
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
         if (custom) {
-            Relation relation = SQLTool.getInstance().findRelationByURL(url);
-            if (relation != null) {
+            Relation relation = loadCustomRelation(url);
+            if (relation != null)
                 params.put(ShowObject.PARAM_RELATION_SHORT, Integer.toString(relation.getId()));
-            } else
+            else
                 custom = false;
         }
 
@@ -176,6 +162,40 @@ public final class URLMapper implements Configurable {
             }
         }
         throw new NotFoundException("Nezname URL: "+url+" !");
+    }
+
+    /**
+     * Loads relation for given uri. The uri may either be custom (/clanky/gimp-v-prikladech)
+     * or constructed: ending with relation id (/clanky/12345).
+     * @param url normalized uri
+     * @return initialized relation or null
+     * @throws NotFoundException if the relation id points to nonexisting relation
+     */
+    public static Relation loadRelationFromUrl(String url) {
+        Matcher matcher = reTrailingRid.matcher(url);
+        if (matcher.find()) {
+            String found = matcher.group(1);
+            int rid = Misc.parseInt(found, -1);
+            return (Relation) PersistanceFactory.getPersistance().findById(new Relation(rid));
+        }
+        return loadCustomRelation(url);
+    }
+
+    /**
+     * Loads relation where url.equals(relation.getUrl)
+     * todo known custom URLs must be cached
+     * @param url normalized uri
+     * @return initialized relation or null
+     */
+    private static Relation loadCustomRelation(String url) {
+        SQLTool sqlTool = SQLTool.getInstance();
+        Relation relation = null;
+        if (url.startsWith(UrlUtils.PREFIX_DICTIONARY)) {
+            url = url.substring(UrlUtils.PREFIX_DICTIONARY.length() + 1);
+            relation = sqlTool.findDictionaryByURLName(url);
+        } else
+            relation = sqlTool.findRelationByURL(url);
+        return relation;
     }
 
     /**
@@ -203,14 +223,6 @@ public final class URLMapper implements Configurable {
             log.error("Config file preference is missing!");
         else
             initialize(file);
-        domain = prefs.get(PREF_DOMAIN, "abclinuxu.cz");
-    }
-
-    /**
-     * @return domain name handled by this instance.
-     */
-    public String getDomain() {
-        return domain;
     }
 
     /**

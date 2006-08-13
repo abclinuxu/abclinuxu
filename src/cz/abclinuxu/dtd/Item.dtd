@@ -149,9 +149,6 @@
 <!ELEMENT title (#PCDATA)> <!-- title of this reaction, usually question -->
 <!ELEMENT text (#PCDATA)> <!-- its text -->
 <!ATTLIST text format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
-<!ELEMENT links (link+)> <!-- contains links -->
-<!ELEMENT link (#PCDATA)> <!-- contains text of link -->
-<!ATTLIST link url (#PCDATA) #REQUIRED> <!-- URL of resource or article -->
 
 <!-- Item.id==Constants.ITEM_DYNAMIC_CONFIGURATION -->
 <!ELEMENT data (feeds?,blog_digest?)>
@@ -167,3 +164,10 @@
 <!ELEMENT images (image+)> <!-- container for screenshots and other images -->
 <!ELEMENT image (#PCDATA)> <!-- full path to the image -->
 <!ATTLIST image thumbnail (#NMTOKEN) #OPTIONAL> <!-- full path to the image's thumbnail -->
+
+<!ELEMENT related (document*)> <!-- container for related documents, it can be attached to FAQ, Software, Driver -->
+<!ELEMENT document (title, url, description?)> <!-- one related document -->
+<!ATTLIST document type (#NMTOKEN)> <!-- type of document, see Constants.java -->
+<!ELEMENT title (#PCDATA)> <!-- title for this document -->
+<!ELEMENT url (#PCDATA)> <!-- url to this document, it shall be local for documents stored in portal -->
+<!ELEMENT description (#PCDATA)> <!-- optional description of the document -->

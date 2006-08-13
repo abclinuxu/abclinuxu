@@ -45,16 +45,13 @@ import cz.abclinuxu.scheduler.VariableFetcher;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.dom4j.io.DOMWriter;
 import org.htmlparser.util.ParserException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
-import java.util.Iterator;
 import java.util.Date;
 
-import freemarker.ext.dom.NodeModel;
 
 /**
  * User: literakl
@@ -66,13 +63,10 @@ public class EditFaq implements AbcAction {
     public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_TITLE = "title";
     public static final String PARAM_TEXT = "text";
-    public static final String PARAM_LINK_CAPTION = "caption";
-    public static final String PARAM_LINK_URL = "link";
     public static final String PARAM_PREVIEW = "preview";
 
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_PREVIEW = "PREVIEW";
-    public static final String VAR_FAQ_XML = "XML";
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
@@ -147,14 +141,12 @@ public class EditFaq implements AbcAction {
         boolean canContinue = true;
         canContinue &= setQuestion(params, faq, root, env);
         canContinue &= setText(params, root, env);
-        canContinue &= setLinks(params, root, env);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)
                 params.remove(PARAM_PREVIEW);
             faq.setInitialized(true);
             env.put(VAR_PREVIEW, faq);
-            env.put(VAR_FAQ_XML, NodeModel.wrap((new DOMWriter().write(faq.getData()))));
             return FMTemplateSelector.select("EditFaq", "add", env, request);
         }
 
@@ -195,17 +187,6 @@ public class EditFaq implements AbcAction {
         params.put(PARAM_TITLE, element.getText());
         element = (Element) root.element("text");
         params.put(PARAM_TEXT, element.getText());
-        element = (Element) root.element("links");
-        if (element!=null) {
-            int i = 1;
-            Iterator iterator = element.elementIterator("link");
-            while (iterator.hasNext()) {
-                Element link = (Element) iterator.next();
-                params.put(PARAM_LINK_CAPTION+i, link.getText());
-                params.put(PARAM_LINK_URL+i, link.attributeValue("url"));
-                i++;
-            }
-        }
         return FMTemplateSelector.select("EditFaq", "edit", env, request);
     }
 
@@ -225,14 +206,12 @@ public class EditFaq implements AbcAction {
         boolean canContinue = true;
         canContinue &= setQuestion(params, faq, root, env);
         canContinue &= setText(params, root, env);
-        canContinue &= setLinks(params, root, env);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)
                 params.remove(PARAM_PREVIEW);
             else
                 env.put(VAR_PREVIEW, faq);
-            env.put(VAR_FAQ_XML, NodeModel.wrap((new DOMWriter().write(faq.getData()))));
             return FMTemplateSelector.select("EditFaq", "edit", env, request);
         }
 
@@ -336,44 +315,6 @@ public class EditFaq implements AbcAction {
             ServletUtils.addError(PARAM_TEXT, "Zadejte text odpovìdi!", env, null);
             return false;
         }
-        return true;
-    }
-
-    /**
-     * Updates links from parameters. Changes are not synchronized with persistance.
-     * @param params map holding request's parameters
-     * @param env environment
-     * @return false, if there is a major error.
-     */
-    private boolean setLinks(Map params, Element root, Map env) {
-        Element links = (Element) root.element("links");
-        if (links != null)
-            links.detach();
-
-        links = DocumentHelper.createElement("links");
-        String url, title;
-        boolean appendLinks = false;
-        for (int i=1; i<=10; i++) {
-            title = Misc.trimUndefined((String) params.get(PARAM_LINK_CAPTION+i));
-            url = Misc.trimUndefined((String) params.get(PARAM_LINK_URL+i));
-            if (title==null && url==null)
-                break;
-            if (title==null) {
-                ServletUtils.addError(PARAM_LINK_CAPTION+i, "Zadejte titulek odkazu.", env, null);
-                return false;
-            }
-            if (url==null) {
-                ServletUtils.addError(PARAM_LINK_CAPTION+i, "Zadejte adresu odkazu.", env, null);
-                return false;
-            }
-
-            appendLinks = true;
-            Element link = links.addElement("link");
-            link.setText(title);
-            link.addAttribute("url", url);
-        }
-        if (appendLinks)
-            root.add(links);
         return true;
     }
 }

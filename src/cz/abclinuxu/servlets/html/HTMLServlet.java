@@ -19,7 +19,6 @@
 package cz.abclinuxu.servlets.html;
 
 import cz.abclinuxu.servlets.Controller;
-import cz.abclinuxu.servlets.utils.url.URLMapper;
 import cz.abclinuxu.utils.freemarker.FMUtils;
 import freemarker.template.Template;
 import org.apache.log4j.Logger;
@@ -53,9 +52,7 @@ public class HTMLServlet extends Controller {
         try {
             Map env = new HashMap();
             performInit(request, response, env);
-
-            URLMapper urlMapper = URLMapper.getInstance(URLMapper.Version.HTML);
-            HTMLVersion.setLayout(request, urlMapper);
+            HTMLVersion.setLayout(request);
 
             String templateName = process(request, response, env);
             Template template = FMUtils.getConfiguration().getTemplate(templateName);

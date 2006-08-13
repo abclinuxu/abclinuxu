@@ -50,6 +50,10 @@
             <action>cz.abclinuxu.servlets.html.edit.EditDiscussion</action>
         </mapping>
         <mapping>
+            <pattern>^/EditRelated</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditRelated</action>
+        </mapping>
+        <mapping>
             <pattern>/rating</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditRating</action>
         </mapping>

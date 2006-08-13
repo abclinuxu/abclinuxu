@@ -12,6 +12,7 @@
                 </li>
             <#else>
                 <li><a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
+                <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
                 <li><a href="${URL.noPrefix("/inset/"+RELATION.id+"?action=addScreenshot")}">Pøidat obrázek</a></li>
                 <li><a href="/revize?rid=${RELATION.id}&amp;prefix=/software">Historie</a></li>
                 <li><a href="${RELATION.url?default("/software/show/"+RELATION.id)}?varianta=print">Tisk</a></li>
@@ -39,6 +40,8 @@
 
 <div class="sw">
     <@swlib.showSoftware ITEM, true />
+
+    <@lib.showRelated ITEM/>
 
     <#assign feedUrl = TOOL.xpath(ITEM, "/data/url[@useType='rss']")?default("UNDEFINED")>
     <#if feedUrl!="UNDEFINED">

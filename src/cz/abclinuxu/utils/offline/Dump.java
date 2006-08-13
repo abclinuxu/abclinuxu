@@ -198,7 +198,6 @@ public class Dump implements Configurable {
         }
         if ( item.getType()==Item.FAQ ) {
             env.put(VAR_ONLINE_URL, PORTAL_URL + relation.getUrl());
-            env.put(ViewFaq.VAR_FAQ_XML, NodeModel.wrap((new DOMWriter().write(item.getData()))));
             name = FMTemplateSelector.select("ViewFaq", "view", env, "offline");
             FMUtils.executeTemplate(name, env, file);
             return;

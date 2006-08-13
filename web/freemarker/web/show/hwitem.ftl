@@ -15,6 +15,7 @@
                 </li>
             <#else>
                 <li><a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
+                <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
                 <li><a href="/revize?rid=${RELATION.id}&amp;prefix=/hardware">Historie</a></li>
                 <li><a href="${RELATION.url?default("/hardware/show/"+RELATION.id)}?varianta=print">Tisk</a></li>
                 <li>
@@ -45,6 +46,8 @@
 <@hwlib.showHardware ITEM />
 
 </div>
+
+<@lib.showRelated ITEM/>
 
 <#include "../footer.ftl">
 

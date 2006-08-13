@@ -25,6 +25,7 @@ import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.TemplateSelector;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -56,7 +57,7 @@ public class HTMLVersion {
             URLMapper urlMapper = URLMapper.getInstance(URLMapper.Version.HTML);
             if ( urlMapper.redirectDeprecated(request, response) )
                 return;
-            setLayout(request, urlMapper);
+            setLayout(request);
 
             long start = System.currentTimeMillis();
 
@@ -86,9 +87,9 @@ public class HTMLVersion {
         }
     }
 
-    public static void setLayout(HttpServletRequest request, URLMapper urlMapper) {
+    public static void setLayout(HttpServletRequest request) {
         String serverName = request.getServerName();
-        int i = serverName.indexOf(urlMapper.getDomain());
+        int i = serverName.indexOf(AbcConfig.getDomain());
         if ( i>0 ) {
             String server = serverName.substring(0, i-1);
             if ( server.startsWith("www") || !FMTemplateSelector.layoutExists(server) )

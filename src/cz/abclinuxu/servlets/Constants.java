@@ -172,4 +172,20 @@ public interface Constants {
     String PROPERTY_ALTERNATIVE_SOFTWARE = "alternative";
     String PROPERTY_LICENSE = "license";
     String PROPERTY_BLOG_DIGEST = "digest";
+
+    // see EditRelated and Item.dtd
+    String RELATED_ARTICLE = "article";
+    String RELATED_CONTENT = "content";
+    String RELATED_DICTIONARY = "dictionary";
+    String RELATED_DISCUSSION = "discussion";
+    String RELATED_DRIVER = "driver";
+    String RELATED_EXTERNAL_DOCUMENT = "external";
+    String RELATED_FAQ = "faq";
+    String RELATED_HARDWARE = "hardware";
+    String RELATED_NEWS = "news";
+    String RELATED_OTHER = "other";
+    String RELATED_POLL = "poll";
+    String RELATED_SECTION = "section";
+    String RELATED_SOFTWARE = "software";
+    String RELATED_STORY = "story";
 }
