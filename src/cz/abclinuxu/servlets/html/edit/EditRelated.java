@@ -325,16 +325,18 @@ public class EditRelated implements AbcAction {
         title = Misc.filterDangerousCharacters(title);
 
         String desc = (String) params.get(PARAM_DESCRIPTION);
-        desc = Misc.filterDangerousCharacters(desc);
-        try {
-            SafeHTMLGuard.check(desc);
-        } catch (ParserException e) {
-            log.error("ParseException on '" + desc + "'", e);
-            ServletUtils.addError(PARAM_DESCRIPTION, e.getMessage(), env, null);
-            return null;
-        } catch (Exception e) {
-            ServletUtils.addError(PARAM_DESCRIPTION, e.getMessage(), env, null);
-            return null;
+        if (desc != null) {
+            desc = Misc.filterDangerousCharacters(desc);
+            try {
+                SafeHTMLGuard.check(desc);
+            } catch (ParserException e) {
+                log.error("ParseException on '" + desc + "'", e);
+                ServletUtils.addError(PARAM_DESCRIPTION, e.getMessage(), env, null);
+                return null;
+            } catch (Exception e) {
+                ServletUtils.addError(PARAM_DESCRIPTION, e.getMessage(), env, null);
+                return null;
+            }
         }
 
         String type = null;
