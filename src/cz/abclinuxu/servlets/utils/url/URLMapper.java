@@ -133,7 +133,7 @@ public final class URLMapper implements Configurable {
 
         String url = ServletUtils.combinePaths(request.getServletPath(), request.getPathInfo());
         Matcher matcher = reTrailingRid.matcher(url);
-        boolean custom = ! matcher.find();
+        boolean custom = ! (matcher.find() || url.startsWith(UrlUtils.PREFIX_DICTIONARY));
 
         if (custom) {
             Relation relation = loadCustomRelation(url);
@@ -190,7 +190,7 @@ public final class URLMapper implements Configurable {
     private static Relation loadCustomRelation(String url) {
         SQLTool sqlTool = SQLTool.getInstance();
         Relation relation = null;
-        if (url.startsWith(UrlUtils.PREFIX_DICTIONARY)) {
+        if (url.startsWith(UrlUtils.PREFIX_DICTIONARY) && url.length() > UrlUtils.PREFIX_DICTIONARY.length()) {
             url = url.substring(UrlUtils.PREFIX_DICTIONARY.length() + 1);
             relation = sqlTool.findDictionaryByURLName(url);
         } else
