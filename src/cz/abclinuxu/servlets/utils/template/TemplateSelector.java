@@ -183,8 +183,8 @@ public class TemplateSelector {
         try {
             if ( new RE(reLynx, RE.MATCH_CASEINDEPENDENT).match(browser) )
                 return BROWSER_LYNX;
-            if ( new RE(rePlucker, RE.MATCH_CASEINDEPENDENT).match(browser) )
-                return BROWSER_PLUCKER;
+//            if ( new RE(rePlucker, RE.MATCH_CASEINDEPENDENT).match(browser) )
+//                return BROWSER_PLUCKER;
         } catch (Exception e) {
             log.warn("Error on parsing User Agent '"+browser+"' ! "+e.getMessage());
         }
