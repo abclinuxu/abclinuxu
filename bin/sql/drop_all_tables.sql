@@ -11,6 +11,7 @@ drop table if exists pravo;
 drop table if exists statistika;
 drop table if exists relace;
 drop table if exists server;
+drop table if exists stara_adresa;
 drop table if exists statistika;
 drop table if exists uzivatel;
 drop table if exists verze;

@@ -5,11 +5,11 @@
 
 <form action="${URL.noPrefix("/EditRelation")}" method="POST">
     <p>
-        Chystáte se nastavit URL pro <a href="/hardware/show/${CURRENT.id}">${TOOL.childName(CURRENT)}</a>
+        Chystáte se nastavit URL pro <a href="${CURRENT.url?default('/hardware/show/'+CURRENT.id)}">${TOOL.childName(CURRENT)}</a>
     </p>
     <p>
         Zadejte lokální èást URL:
-        ${PARENT.url}/ <input type="text" name="url" size="30" value="${PARAMS.url?if_exists}">
+        ${PARENT.url}/ <input type="text" name="url" size="80" value="${PARAMS.url?if_exists}">
         <div class="error">${ERRORS.url?if_exists}</div>
     </p>
     <input type="submit" value="Dokonèi">

@@ -1,0 +1,52 @@
+Zpracovani pozadavku
+====================
+
+1) Controller podle subdomeny urci, zda pujde o WAP nebo normalni www
+verzi a zavola WapVerison nebo HTMLVersion.process()
+
+2) HTMLVersion ziska svoji instanci URLMapper
+
+3) Nejdrive se pokusi zjistit, zda jde o zastarale URL
+a pokud ano, vrati prohlizeci nove URL. (i)
+
+4) Urci se layout na zaklade subdomeny, napriklad pda.abclinuxu.cz
+
+5) Pak detekuje implementaci AbcAction, ktera je zodpovedna
+za zpracovani teto stranky (ii)
+
+6) Nasledne zavola metodu process() na teto implementaci
+
+7) Pokud metoda vratila null, zpracovani je ukonceno
+(typicke pro redirekty)
+
+8) Pokud vratila neco jineho, jde o jmeno freemarker sablony.
+Ta se stahne a zpracuje. Jeji vysledek se posle prohlizeci.
+
+Funkce tridy URLMapper
+======================
+
+Tato trida je zodpovedna za zpracovani URL. Jeji konfigurace je
+ulozena v url_mapping.xml. Obsahuje seznam mapovani pro obe
+varianty (wap, www) vcetne odkazu na zastarale URL.
+Kazde mapovani se sklada z definice regexpu a plne kvalifikovane
+tridy implementujici rozhrani AbcAction. Mapovani muze mit
+atribut priority, ktery udava, ze toto mapovani se bude evaluovat
+pres ostatnimi. Duvodem byva zabraneni kolizi mezi ruznymi
+mapovanimi.
+
+(i) Metoda redirectDeprecated() projde pro danou verzi
+vsechna mapovani zastaralych url a porovnava je s aktualnim
+URL. Pokud najde souhlas, provede substituci a vrati nove URL,
+na ktere ma byt prohlizec presmerovan.
+
+(ii) Metoda findAction() nejdrive zjistuje, zda URL muze
+byt textove (custom). V tom pripade se pokusi najit relaci
+s timto URL v databazi. Nasledne projde nejdrive prioritni
+mapovani a pak ostatni. Souhlasici mapovani definuje akci
+zodpovednou za zpracovani tohoto URL. Neni-li zadny nalez,
+zkusi se prohledat tabulka starych adres. Nevede-li to k uspechu,
+vyleti vyjimka NotFoundException.
+
+Metoda loadRelationFromUrl() slouzi pro hledani relace
+dle URL. Podporuje jak textova url, tak ciselna (skladajici
+se z prefixu a cisla relace, napriklad /clanky/1234).

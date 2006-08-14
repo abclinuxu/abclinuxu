@@ -61,7 +61,10 @@ public class HTMLVersion {
 
             long start = System.currentTimeMillis();
 
-            AbcAction action = urlMapper.findAction(request, env);
+            AbcAction action = urlMapper.findAction(request, response, env);
+            if (action == null)
+                return;
+
             String templateName = action.process(request, response, env);
             if ( Misc.empty(templateName) )
                 return;

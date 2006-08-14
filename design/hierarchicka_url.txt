@@ -19,10 +19,3 @@ pravidla:
     * Pokud system zmeni existujici URL, musi jej ulozit do tabulky
       presmerovani spolu s novym URL
 
-
-mista vyskytu:
-    * Relation.setURL()
-    * EditContent
-    * mozna TODO EditDictionary a ShowDictionary
-    * URLMapper.findAction()
-    * EditNews

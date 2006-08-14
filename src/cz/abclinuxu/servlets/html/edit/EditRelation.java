@@ -25,6 +25,7 @@ import cz.abclinuxu.servlets.html.select.SelectRelation;
 import cz.abclinuxu.servlets.html.select.SelectUser;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.url.URLManager;
+import cz.abclinuxu.servlets.utils.url.CustomURLCache;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
@@ -279,11 +280,6 @@ public class EditRelation implements AbcAction {
 
         Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_CURRENT);
-        if (relation.getUrl()!=null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "V tuto chvíli není mo¾né mìnit URL.", env, null);
-            return FMTemplateSelector.select("EditRelation", "setUrl", env, request);
-        }
-
         Relation upper = null;
         if (relation.getUpper()!=0)
             upper = (Relation) persistance.findById(new Relation(relation.getUpper()));
@@ -304,16 +300,14 @@ public class EditRelation implements AbcAction {
      * Sets new URL.
      */
     protected String actionSetUrlStep3(HttpServletRequest request, HttpServletResponse response, Map env) throws IOException {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        SQLTool sqlTool = SQLTool.getInstance();
         User user = (User) env.get(Constants.VAR_USER);
         if (!user.hasRole(Roles.ROOT))
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-        Persistance persistance = PersistanceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_CURRENT);
-        if (relation.getUrl()!=null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "V tuto chvíli není mo¾né mìnit URL.", env, null);
-            return actionSetUrlStep2(request, env);
-        }
+        String originalUrl = relation.getUrl();
 
         Relation upper = null;
         if (relation.getUpper() != 0)
@@ -347,6 +341,12 @@ public class EditRelation implements AbcAction {
 
         relation.setUrl(url);
         persistance.update(relation);
+
+        if (originalUrl != null) {
+            CustomURLCache.getInstance().remove(originalUrl);
+            sqlTool.insertOldAddress(originalUrl, null, new Integer(relation.getId()));
+            ServletUtils.addMessage("Adresa byla zmìnìna. Nyní zkontrolujte, zda není tøeba zmìnit i adresy podstránek.", env, request.getSession());
+        }
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, url);

@@ -127,7 +127,7 @@ public final class URLMapper implements Configurable {
      * @return AbcAction for this URL.
      * @throws NotFoundException if there is no mapping for this URL
      */
-    public AbcAction findAction(HttpServletRequest request, Map env) throws NotFoundException {
+    public AbcAction findAction(HttpServletRequest request, HttpServletResponse response, Map env) throws NotFoundException, IOException {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         PatternAction patternAction;
 
@@ -161,6 +161,23 @@ public final class URLMapper implements Configurable {
                 return patternAction.getAction();
             }
         }
+
+        String newUrl = null;
+        Object redirect = SQLTool.getInstance().findNewAddress(url);
+        if (redirect instanceof String)
+            newUrl = (String) redirect;
+        else if (redirect instanceof Relation) {
+            Relation relation = (Relation) redirect;
+            newUrl = relation.getUrl();
+            // fortunatelly URL does not become unset, so we can assume that there must be some URL
+        }
+
+        if (newUrl != null) {
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, newUrl);
+            return null;
+        }
+
         throw new NotFoundException("Nezname URL: "+url+" !");
     }
 
@@ -183,18 +200,25 @@ public final class URLMapper implements Configurable {
 
     /**
      * Loads relation where url.equals(relation.getUrl)
-     * todo known custom URLs must be cached
      * @param url normalized uri
      * @return initialized relation or null
      */
     private static Relation loadCustomRelation(String url) {
+        CustomURLCache urlCache = CustomURLCache.getInstance();
+        Relation relation = urlCache.get(url);
+        if (relation != null)
+            return relation;
+
         SQLTool sqlTool = SQLTool.getInstance();
-        Relation relation = null;
         if (url.startsWith(UrlUtils.PREFIX_DICTIONARY) && url.length() > UrlUtils.PREFIX_DICTIONARY.length()) {
             url = url.substring(UrlUtils.PREFIX_DICTIONARY.length() + 1);
             relation = sqlTool.findDictionaryByURLName(url);
         } else
             relation = sqlTool.findRelationByURL(url);
+
+        if (relation != null)
+            urlCache.put(relation);
+
         return relation;
     }
 

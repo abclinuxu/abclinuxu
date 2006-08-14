@@ -21,15 +21,15 @@ package cz.abclinuxu.servlets.utils.url;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.LRUMap;
+import cz.abclinuxu.data.Relation;
 
 import java.util.prefs.Preferences;
 import java.util.Map;
 import java.util.Collections;
-import java.util.HashMap;
 
 /**
- * Cache of custom URLs, that are known.
- * It maps URL to relation id.
+ * Cache of mapping custom URLs to relations.
  * User: literakl
  * Date: 17.4.2005
  */
@@ -46,7 +46,48 @@ public class CustomURLCache implements Configurable {
 
     private CustomURLCache() {
         ConfigurationManager.getConfigurator().configureMe(this);
-        cache = Collections.synchronizedMap(new HashMap());
+        cache = Collections.synchronizedMap(new LRUMap(size));
+    }
+
+    /**
+     * @return singleton of this class
+     */
+    public static CustomURLCache getInstance() {
+        return instance;
+    }
+
+    /**
+     * Stores relation with custom url into cache.
+     * @param relation
+     */
+    public void put(Relation relation) {
+        if (! relation.isInitialized())
+            return;
+        if (relation.getUrl() == null)
+            return;
+        cache.put(relation.getUrl(), relation.makeLightClone());
+    }
+
+    /**
+     * Finds relation by URL. If this method returns null, it does not mean that
+     * this URL is not mapped to any relation. It might be not cached yet.
+     * @param url URl starting with /
+     * @return unitialized relation or null
+     */
+    public Relation get(String url) {
+        Relation relation = (Relation) cache.get(url);
+        if (relation != null)
+            relation = (Relation) relation.makeLightClone();
+        return relation;
+    }
+
+    /**
+     * Removes relation with given custom url.
+     * @param url
+     * @return originally stored (uninitialized) relation or null
+     */
+    public Relation remove(String url) {
+        return (Relation) cache.remove(url);
     }
 
     /**
