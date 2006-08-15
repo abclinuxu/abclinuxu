@@ -308,6 +308,8 @@
                             <entry key="update.statistika" value="update statistika set pocet=pocet+? where typ=? and den=curdate()" />
                             <entry key="get.statistika" value="select * from statistika where "/>
                             <entry key="get.statistika.by.month" value="select typ,sum(pocet),date_format(den,&quot;%Y-%m&quot;) from statistika group by typ,3 order by 3 asc"/>
+                            <entry key="insert.stara_adresa" value="insert into stara_adresa values(?,?,?)" />
+                            <entry key="select.stara.adresa" value="select rid,nova from stara_adresa where puvodni=?" /> 
                         </map>
                     </node>
                 </node>
@@ -440,6 +442,11 @@
                                     <entry key="regexp.invalid.characters.relative.url" value="[^a-zA-Z0-9.]+"/>
                                     <entry key="regexp.invalid.characters.absolute.url" value="[^a-zA-Z0-9/.]+"/>
                                     <entry key="forbidden.extensions" value=".tgz,.tar.gz,.tar.bz2" />
+                                </map>
+                            </node>
+                            <node name="CustomURLCache">
+                                <map>
+                                    <entry key="size" value="1000"/>
                                 </map>
                             </node>
                         </node>
