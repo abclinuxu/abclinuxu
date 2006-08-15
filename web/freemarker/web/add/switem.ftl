@@ -102,7 +102,7 @@
                         <div>
                             <@lib.showOption "ui", "qt", UI_PROPERTY["qt"], "checkbox", " onclick=\"startCheckParent(event);\"" />
                             <div>
-                                <@lib.showOption "ui", "kde", UI_PROPERTY["kde"], "checkbox", "onclick=\"startCheckParent(event);\"" />
+                                <@lib.showOption "ui", "kde", UI_PROPERTY["kde"], "checkbox", " onclick=\"startCheckParent(event);\"" />
                             </div>
                         </div>
                         <div>
