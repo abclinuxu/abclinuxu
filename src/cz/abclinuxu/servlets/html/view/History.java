@@ -146,7 +146,7 @@ public class History implements AbcAction {
     	    User user = (User) env.get(Constants.VAR_USER);
             if (user == null)
                 return FMTemplateSelector.select("ViewUser", "login", env, request);
-            if (!user.hasRole(Roles.CATEGORY_ADMIN))
+            if (!user.hasRole(Roles.SOFTWARE_ADMIN))
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);

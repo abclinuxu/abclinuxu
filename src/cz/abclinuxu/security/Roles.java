@@ -59,4 +59,6 @@ public class Roles {
     public static final String ATTACHMENT_ADMIN = "attachment admin";
     /** user can choose stories to RSS digest */
     public static final String BLOG_DIGEST_ADMIN = "blog digest admin";
+    /** temporary role for Software */
+    public static final String SOFTWARE_ADMIN = "software admin";
 }

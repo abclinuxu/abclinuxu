@@ -40,6 +40,7 @@
        <@lib.showOption "roles", "move relation", "Smí pøesunout relaci", "checkbox" /><br>
        <@lib.showOption "roles", "derive content", "Smí vytvoøit podstránku dokumentu", "checkbox" /><br>
        <@lib.showOption "roles", "remove relation", "Smí smazat relaci a objekt", "checkbox" /><br>
+       <@lib.showOption "roles", "software admin", "Software admin", "checkbox" /><br>
    </td>
   </tr>
   <tr>

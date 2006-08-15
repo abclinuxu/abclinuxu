@@ -97,7 +97,7 @@ public class EditSoftware implements AbcAction {
         if (user == null)
             return FMTemplateSelector.select("ViewUser", "login", env, request);
         // temporary: check permissions TODO remove when released officially
-        if (!user.hasRole(Roles.CATEGORY_ADMIN))
+        if (!user.hasRole(Roles.SOFTWARE_ADMIN))
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if (action.equals(ACTION_ADD))

@@ -96,7 +96,7 @@ public class ViewSoftware implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         if (user == null)
             return FMTemplateSelector.select("ViewUser", "login", env, request);
-        if (!user.hasRole(Roles.CATEGORY_ADMIN))
+        if (!user.hasRole(Roles.SOFTWARE_ADMIN))
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if (ACTION_FILTER.equals(params.get(PARAM_ACTION))) {
