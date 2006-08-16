@@ -42,6 +42,7 @@ import cz.abclinuxu.servlets.html.view.ShowObject;
 import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.persistance.SQLTool;
 import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistance.Persistance;
 import cz.abclinuxu.data.Relation;
 
 import java.util.prefs.Preferences;
@@ -206,8 +207,10 @@ public final class URLMapper implements Configurable {
     private static Relation loadCustomRelation(String url) {
         CustomURLCache urlCache = CustomURLCache.getInstance();
         Relation relation = urlCache.get(url);
-        if (relation != null)
-            return relation;
+        if (relation != null) {
+            Persistance persistance = PersistanceFactory.getPersistance();
+            return (Relation) persistance.findById(relation);
+        }
 
         SQLTool sqlTool = SQLTool.getInstance();
         if (url.startsWith(UrlUtils.PREFIX_DICTIONARY) && url.length() > UrlUtils.PREFIX_DICTIONARY.length()) {
