@@ -151,9 +151,10 @@ CREATE TABLE vlastnost (
  typ_predka CHAR(1) NOT NULL,
  predek INT NOT NULL,
  typ VARCHAR(16) NOT NULL,
- hodnota VARCHAR(256) NOT NULL
-);
+ hodnota VARCHAR(255) NOT NULL
+) collate latin2_general_ci;
 ALTER TABLE vlastnost ADD INDEX in_predek (typ_predka,predek);
+ALTER TABLE vlastnost ADD INDEX in_typ (typ,hodnota);
 
 -- tabulka se ctennosti daneho objektu
 CREATE TABLE citac (
