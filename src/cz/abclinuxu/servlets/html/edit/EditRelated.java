@@ -92,13 +92,13 @@ public class EditRelated implements AbcAction {
             return FMTemplateSelector.select("ViewUser", "login", env, request);
 
         if (ACTION_ADD_STEP2.equals(action))
-            return actionAddStep2(request, env, true);
+            return actionAddStep2(request, response, env, true);
 
         if (ACTION_EDIT.equals(action))
             return actionEditStep1(request, env);
 
         if (ACTION_EDIT_STEP2.equals(action))
-            return actionEditStep2(request, env);
+            return actionEditStep2(request, response, env);
 
         if (ACTION_REMOVE.equals(action))
             return actionRemoveAttachmentStep1(request, env);
@@ -117,7 +117,7 @@ public class EditRelated implements AbcAction {
         return FMTemplateSelector.select("EditRelated", "manage", env, request);
     }
 
-    public String actionAddStep2(HttpServletRequest request, Map env, boolean redirect) throws Exception {
+    public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
@@ -136,7 +136,11 @@ public class EditRelated implements AbcAction {
         // commit new version
         Misc.commitRelation(item.getData().getRootElement(), relation, user);
 
-        return actionManageRelated(request, env);
+        if (redirect) {
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, "/EditRelated/" + relation.getId());
+        }
+        return null;
     }
 
     private String actionEditStep1(HttpServletRequest request, Map env) throws Exception {
@@ -166,7 +170,7 @@ public class EditRelated implements AbcAction {
         return FMTemplateSelector.select("EditRelated", "edit", env, request);
     }
 
-    private String actionEditStep2(HttpServletRequest request, Map env) throws Exception {
+    private String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistance persistance = PersistanceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
@@ -185,7 +189,9 @@ public class EditRelated implements AbcAction {
         // commit new version
         Misc.commitRelation(item.getData().getRootElement(), relation, user);
 
-        return actionManageRelated(request, env);
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/EditRelated/" + relation.getId());
+        return null;
     }
 
     private String actionRemoveAttachmentStep1(HttpServletRequest request, Map env) throws Exception {
@@ -247,7 +253,7 @@ public class EditRelated implements AbcAction {
         Misc.commitRelation(item.getData().getRootElement(), relation, user);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, urlUtils.getRelationUrl(relation, true));
+        urlUtils.redirect(response, "/EditRelated/"+relation.getId());
         return null;
     }
 

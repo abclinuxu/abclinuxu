@@ -123,18 +123,18 @@ public class GenerateDevelDatabase {
         EditRelated servlet2 = new EditRelated();
         params.put(EditRelated.PARAM_URL, UrlUtils.PREFIX_CLANKY+"/"+ridArticle);
         params.put(EditRelated.PARAM_TITLE, "první odkaz");
-        servlet2.actionAddStep2(null, params, false);
+        servlet2.actionAddStep2(null, null, params, false);
 
         params.put(EditRelated.PARAM_URL, UrlUtils.PREFIX_DRIVERS+"/"+ridDriver);
-        servlet2.actionAddStep2(null, params, false);
+        servlet2.actionAddStep2(null, null, params, false);
 
         params.put(EditRelated.PARAM_URL, UrlUtils.PREFIX_HARDWARE+"/"+ridHardware);
-        servlet2.actionAddStep2(null, params, false);
+        servlet2.actionAddStep2(null, null, params, false);
 
         params.put(EditRelated.PARAM_URL, "http://www.linux.cz");
         params.put(EditRelated.PARAM_TITLE, "oficialni stranky");
         params.put(EditRelated.PARAM_DESCRIPTION, "ponekud chude, nemyslite?");
-        servlet2.actionAddStep2(null, params, false);
+        servlet2.actionAddStep2(null, null, params, false);
     }
 
     private static void generateBlogs(Persistance persistance) throws Exception {
