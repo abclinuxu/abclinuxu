@@ -41,8 +41,6 @@
 <div class="sw">
     <@swlib.showSoftware ITEM, true />
 
-    <@lib.showRelated ITEM/>
-
     <#assign feedUrl = TOOL.xpath(ITEM, "/data/url[@useType='rss']")?default("UNDEFINED")>
     <#if feedUrl!="UNDEFINED">
         <h3>
@@ -62,6 +60,8 @@
             <p>Zdroj zatím nebyl aktualizován.</p>
         </#if>
     </#if>
+
+    <@lib.showRelated ITEM/>
 </div>
 
 <#include "../footer.ftl">

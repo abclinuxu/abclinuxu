@@ -38,7 +38,7 @@
         <#if url != "UNDFEFINED">
             <tr>
 	        	<td>Adresa ke sta¾ení:</td>
-                <td><a href="${url}" rel="nofollow">${url}</a></td>
+                <td><a href="${url}" rel="nofollow">${TOOL.limit(url,50,"..")}</a></td>
             </tr>
         </#if>
 
@@ -48,7 +48,7 @@
                 <td>Je alternativou k:</td>
                 <td>
                     <#list alternatives as alternative>
-                        <a href="">${alternative}</a><#if alternative_has_next>, </#if>
+                        <a href="/software/alternativy/${alternative?url}">${alternative}</a><#if alternative_has_next>, </#if>
                     </#list>
                 </td>
             </tr>

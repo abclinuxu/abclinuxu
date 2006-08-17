@@ -6,6 +6,7 @@
             <#if CATEGORY.isOpen()>
                 <li><a href="${URL.make("/edit/"+RELATION.id+"?action=add")}">Vlo¾it novou polo¾ku</a></li>
             </#if>
+            <li><a href="/software/alternativy">Alternativy k aplikacím</a></li>
             <#if USER?exists && USER.hasRole("category admin")>
                 <hr />
                 <li><a href="${URL.noPrefix("/EditCategory?action=add&amp;rid="+RELATION.id+"&amp;categoryId="+CATEGORY.id)}">mkdir</a>,
