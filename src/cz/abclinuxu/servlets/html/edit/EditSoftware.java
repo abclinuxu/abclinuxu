@@ -48,6 +48,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Iterator;
 import java.net.URL;
 import java.net.MalformedURLException;
 
@@ -143,7 +144,7 @@ public class EditSoftware implements AbcAction {
         canContinue &= setName(params, root, env);
         canContinue &= setDescription(params, root, env);
         canContinue &= setUserInterface(params, item);
-        canContinue &= setApplicationAlternatives(params, item);
+        canContinue &= setApplicationAlternatives(params, item, env);
         canContinue &= setLicenses(params, item);
         canContinue &= setUrl(params, PARAM_HOME_PAGE, root);
         canContinue &= setUrl(params, PARAM_DOWNLOAD_URL, root);
@@ -227,7 +228,7 @@ public class EditSoftware implements AbcAction {
         canContinue &= setName(params, root, env);
         canContinue &= setDescription(params, root, env);
         canContinue &= setUserInterface(params, item);
-        canContinue &= setApplicationAlternatives(params, item);
+        canContinue &= setApplicationAlternatives(params, item, env);
         canContinue &= setLicenses(params, item);
         canContinue &= setUrl(params, PARAM_HOME_PAGE, root);
         canContinue &= setUrl(params, PARAM_DOWNLOAD_URL, root);
@@ -324,12 +325,20 @@ public class EditSoftware implements AbcAction {
      * @param item item to be updated
      * @return false, if there is a major error.
      */
-    private boolean setApplicationAlternatives(Map params, Item item) {
+    private boolean setApplicationAlternatives(Map params, Item item, Map env) {
         List entries = Tools.asList(params.get(PARAM_ALTERNATIVES));
         if (entries.size() == 0)
             item.removeProperty(Constants.PROPERTY_ALTERNATIVE_SOFTWARE);
-        else
+        else {
+            for (Iterator iter = entries.iterator(); iter.hasNext();) {
+                String alternative = (String) iter.next();
+                if (alternative.indexOf("://") != -1) {
+                    ServletUtils.addError(PARAM_ALTERNATIVES, "Do alternativy vkládejte jméno aplikace, URL není povoleno.", env, null);
+                    return false;
+                }
+            }
             item.setProperty(Constants.PROPERTY_ALTERNATIVE_SOFTWARE, new HashSet(entries));
+        }
         return true;
     }
 

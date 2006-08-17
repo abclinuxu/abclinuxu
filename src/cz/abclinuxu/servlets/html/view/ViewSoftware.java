@@ -52,6 +52,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.net.URLDecoder;
 
 /**
  * User: literakl
@@ -82,10 +85,28 @@ public class ViewSoftware implements AbcAction {
     public static final String VAR_CATEGORIES = "CATEGORIES";
     public static final String VAR_LINKS = "FEED_LINKS";
     public static final String VAR_CHILDREN_MAP = "CHILDREN";
+    public static final String VAR_SOFTWARE_NAME = "SOFTWARE";
+    public static final String VAR_ALTERNATIVES = "ALTERNATIVES";
+
+    static Pattern reAlternatives;
+    static {
+        reAlternatives = Pattern.compile("/software/alternativy(/(.*))?");
+    }
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         HttpSession session = request.getSession();
+
+        String uri = (String) env.get(Constants.VAR_REQUEST_URI);
+        Matcher matcher = reAlternatives.matcher(uri);
+        if (matcher.find()) {
+            String name = matcher.group(2);
+            if (Misc.empty(name))
+                return processAlternatives(request, env);
+            else
+                return processAlternative(request, name, env);
+        }
+
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID, Relation.class, params, request);
         if (relation == null)
             throw new NotFoundException("Stránka nebyla nalezena.");
@@ -123,6 +144,27 @@ public class ViewSoftware implements AbcAction {
             return processItem(request, relation, env);
     }
 
+    private String processAlternatives(HttpServletRequest request, Map env) {
+        SQLTool sqlTool = SQLTool.getInstance();
+        List values = sqlTool.getPropertyValues(Constants.PROPERTY_ALTERNATIVE_SOFTWARE);
+        // todo Case insensitive comparator, mozna v jakarta commons
+        Collections.sort(values);
+        env.put(VAR_ALTERNATIVES, values);
+        return FMTemplateSelector.select("ViewSoftware", "alternatives", env, request);
+    }
+
+    private String processAlternative(HttpServletRequest request, String name, Map env) throws Exception {
+        SQLTool sqlTool = SQLTool.getInstance();
+        Map filters = new HashMap();
+        name = URLDecoder.decode(name, "ISO-8859-2");
+        filters.put(Constants.PROPERTY_ALTERNATIVE_SOFTWARE, Tools.asSet(name));
+        List items = sqlTool.findItemRelationsWithTypeWithFilters(Item.SOFTWARE, null, filters);
+        if (items.size() > 0)
+            env.put(VAR_ITEMS, Tools.syncList(items));
+        env.put(VAR_SOFTWARE_NAME, name);
+        return FMTemplateSelector.select("ViewSoftware", "alternative", env, request);
+    }
+
     /**
      * Processes section with software items.
      */
@@ -143,6 +185,7 @@ public class ViewSoftware implements AbcAction {
         if (categories.size() > 0)
             env.put(VAR_CATEGORIES, Tools.syncList(categories));
 
+        // todo proc sortovat podle datumu vytvoreni?
         qualifiers.add(Qualifier.SORT_BY_CREATED);
         qualifiers.add(Qualifier.ORDER_DESCENDING);
         qualifiers.add(new LimitQualifier(from, count));
@@ -157,7 +200,7 @@ public class ViewSoftware implements AbcAction {
         env.put(ShowObject.VAR_PARENTS, parents);
         env.put(VAR_CATEGORY, Tools.sync(relation.getChild()));
 
-        return FMTemplateSelector.select("ViewCategory", "swsekce", env, request);
+        return FMTemplateSelector.select("ViewSoftware", "swsekce", env, request);
     }
 
     /**
@@ -206,7 +249,7 @@ public class ViewSoftware implements AbcAction {
             }
         }
 
-        return FMTemplateSelector.select("ShowObject", "software", env, request);
+        return FMTemplateSelector.select("ViewSoftware", "software", env, request);
     }
 
     /**
