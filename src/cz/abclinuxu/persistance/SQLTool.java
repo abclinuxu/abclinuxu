@@ -92,6 +92,7 @@ public final class SQLTool implements Configurable {
     public static final String PREF_GET_STATISTICS_BY_MONTH = "get.statistika.by.month";
     public static final String PREF_INSERT_OLD_ADDRESS = "insert.stara_adresa";
     public static final String PREF_OLD_ADDRESS = "select.stara.adresa";
+    public static final String PREF_PROPERTY_VALUES = "get.property.values";
 
     private static SQLTool singleton;
 
@@ -117,7 +118,7 @@ public final class SQLTool implements Configurable {
     private String insertLastComment, getLastComment, getLastComments, deleteOldComments;
     private String insertUserAction, getUserAction, removeUserAction;
     private String incrementStatistics, addStatistics, getStatisticsByMonth, getStatistics;
-    private String insertOldAddress, getOldAddress;
+    private String insertOldAddress, getOldAddress, getPropertyValues;
 
     /**
      * Returns singleton of SQLTool.
@@ -1506,6 +1507,34 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Loads of values of certain property.
+     * @param type constant as defined in properties.txt
+     * @return List of Strings (no duplicates)
+     */
+    public List getPropertyValues(String type) {
+        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(getPropertyValues);
+            statement.setString(1, type);
+            resultSet = statement.executeQuery();
+
+            List result = new ArrayList();
+            while (resultSet.next()) {
+                result.add(resultSet.getString(1));
+            }
+            return result;
+        } catch (SQLException e) {
+            throw new PersistanceException("Chyba pøi hledání!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
      * Inserts deprecated URL into table of replacement. Either newUrl or
      * rid must be supplied.
      * @param oldUrl old URL that shall be sustained, it must start with /
@@ -1629,6 +1658,7 @@ public final class SQLTool implements Configurable {
         getStatisticsByMonth = getValue(PREF_GET_STATISTICS_BY_MONTH, prefs);
         insertOldAddress = getValue(PREF_INSERT_OLD_ADDRESS, prefs);
         getOldAddress = getValue(PREF_OLD_ADDRESS, prefs);
+        getPropertyValues = getValue(PREF_PROPERTY_VALUES, prefs);
     }
 
     /**

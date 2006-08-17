@@ -309,7 +309,8 @@
                             <entry key="get.statistika" value="select * from statistika where "/>
                             <entry key="get.statistika.by.month" value="select typ,sum(pocet),date_format(den,&quot;%Y-%m&quot;) from statistika group by typ,3 order by 3 asc"/>
                             <entry key="insert.stara_adresa" value="insert into stara_adresa values(?,?,?)" />
-                            <entry key="select.stara.adresa" value="select rid,nova from stara_adresa where puvodni=?" /> 
+                            <entry key="select.stara.adresa" value="select rid,nova from stara_adresa where puvodni=?" />
+                            <entry key="get.property.values" value="select distinct hodnota from vlastnost where typ=?" /> 
                         </map>
                     </node>
                 </node>

@@ -370,9 +370,6 @@
     <action name="hwsekce" content="/show/hwsekce.ftl">
       <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
     </action>
-    <action name="swsekce" content="/show/swsekce.ftl">
-      <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
-    </action>
     <action name="rubrika" content="/show/rubrika.ftl">
       <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy" />
     </action>
@@ -395,6 +392,21 @@
       <var name="TITLE" value='Seznam dokumentù' />
     </action>
   </servlet>
+
+    <servlet name="ViewSoftware">
+        <action name="swsekce" content="/show/swsekce.ftl">
+            <var name="TITLE" value='${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy"/>
+        </action>
+        <action name="software" content="/show/switem.ftl">
+            <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy"/>
+        </action>
+        <action name="alternatives" content="/show/sw_alternatives.ftl">
+            <var name="TITLE" value="Seznam alternativ pro aplikace z MS Windows"/>
+        </action>
+        <action name="alternative" content="/show/sw_alternative.ftl">
+            <var name="TITLE" value='Alternativy pro ${SOFTWARE}' type="Lazy"/>
+        </action>
+    </servlet>
 
   <servlet name="ViewContent">
     <action name="view" content="/show/content.ftl">
@@ -431,9 +443,6 @@
 
   <servlet name="ShowObject">
     <action name="hardware" content="/show/hwitem.ftl">
-      <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
-    </action>
-    <action name="software" content="/show/switem.ftl">
       <var name="TITLE" value='${TOOL.xpath(ITEM,"data/name")}' type="Lazy" />
     </action>
     <action name="discussion" content="/show/discussion.ftl">
