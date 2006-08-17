@@ -21,6 +21,7 @@ package cz.abclinuxu.utils;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.exceptions.InternalException;
+import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,6 +59,7 @@ public class PathGeneratorImpl implements PathGenerator {
         if (!dir.isDirectory())
             throw new IOException("Supposed path " + dir.getAbsolutePath() + " is not directory!");
 
+        prefix = DiacriticRemover.getInstance().removeDiacritics(prefix);
         File file = File.createTempFile(id + "-" + prefix + "-", suffix, dir);
         return file;
      }
