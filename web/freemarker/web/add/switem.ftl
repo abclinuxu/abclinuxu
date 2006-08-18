@@ -55,7 +55,7 @@
         <tr>
             <td>Adresa domovské stránky</td>
             <td>
-                <input type="text" name="homeUrl" value="${PARAMS.homeUrl?if_exists}" size="40" tabindex="3">
+                <input type="text" name="homeUrl" value="${PARAMS.homeUrl?if_exists}" size="60" tabindex="3">
                 <div class="error">${ERRORS.homeUrl?if_exists}</div>
             </td>
         </tr>
@@ -63,7 +63,7 @@
         <tr>
             <td>Adresa pro sta¾ení</td>
             <td>
-                <input type="text" name="downloadUrl" value="${PARAMS.downloadUrl?if_exists}" size="40" tabindex="4">
+                <input type="text" name="downloadUrl" value="${PARAMS.downloadUrl?if_exists}" size="60" tabindex="4">
                 <div class="error">${ERRORS.downloadUrl?if_exists}</div>
             </td>
         </tr>
@@ -71,7 +71,7 @@
         <tr>
             <td>Adresa RSS s novinkami</td>
             <td>
-                <input type="text" name="rssUrl" value="${PARAMS.rssUrl?if_exists}" size="40" tabindex="5">
+                <input type="text" name="rssUrl" value="${PARAMS.rssUrl?if_exists}" size="60" tabindex="5">
                 <div class="error">${ERRORS.rssUrl?if_exists}</div>
             </td>
         </tr>
@@ -161,6 +161,9 @@
                     <input type="submit" name="finish" value="Dokonèi">
                 <#else>
                     <input type="submit" name="preview" value="Náhled">
+                    <#if EDIT_MODE?if_exists>
+                        <input type="submit" name="finish" value="Dokonèi">
+                    </#if>
                 </#if>
             </td>
         </tr>
