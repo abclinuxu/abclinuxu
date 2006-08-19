@@ -8,6 +8,13 @@
             </#if>
             <li><a href="/software/alternativy">Alternativy k aplikacím</a></li>
             <li><a href="/History?type=software">Poslední upravené polo¾ky</a></li>
+            <li>
+                <form action="" method="get">
+                    <input type="text" name="name" size="20">
+                    <input type="hidden" name="action" value="search">
+                    <input type="submit" value="Hledej aplikaci">
+                </form>                
+            </li>
             <#if USER?exists && USER.hasRole("category admin")>
                 <hr />
                 <li><a href="${URL.noPrefix("/EditCategory?action=add&amp;rid="+RELATION.id+"&amp;categoryId="+CATEGORY.id)}">mkdir</a>,

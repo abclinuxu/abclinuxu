@@ -74,8 +74,10 @@ public class ViewSoftware implements AbcAction {
     public static final String PARAM_ACTION = "action";
     public static final String PARAM_FILTER_UITYPE = "ui";
     public static final String PARAM_FILTER_LICENSES = "license";
+    public static final String PARAM_NAME = "name";
 
     public static final String ACTION_FILTER = "filter";
+    public static final String ACTION_SEARCH = "search";
 
     public static final String VAR_FILTERS = "FILTERS";
     public static final String VAR_PARENTS = "PARENTS";
@@ -96,6 +98,7 @@ public class ViewSoftware implements AbcAction {
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
+        String action = (String) params.get(PARAM_ACTION);
         HttpSession session = request.getSession();
 
         String uri = (String) env.get(Constants.VAR_REQUEST_URI);
@@ -121,7 +124,7 @@ public class ViewSoftware implements AbcAction {
         if (!user.hasRole(Roles.SOFTWARE_ADMIN))
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-        if (ACTION_FILTER.equals(params.get(PARAM_ACTION))) {
+        if (ACTION_FILTER.equals(action)) {
             Map filters = new HashMap();
             Object filterValue = params.get(PARAM_FILTER_UITYPE);
             if (filterValue != null)
@@ -138,6 +141,9 @@ public class ViewSoftware implements AbcAction {
             env.put(VAR_FILTERS, filters);
         else
             env.put(VAR_FILTERS, Collections.EMPTY_MAP);
+
+        if (ACTION_SEARCH.equals(action))
+            return processSearch(request, env);
 
         if (relation.getChild() instanceof Category) {
             return processSection(request, relation, env);
@@ -197,6 +203,32 @@ public class ViewSoftware implements AbcAction {
         if (items.size() > 0)
             env.put(VAR_ITEMS, Tools.syncList(items));
 
+        List parents = persistance.findParents(relation);
+        env.put(ShowObject.VAR_PARENTS, parents);
+        env.put(VAR_CATEGORY, Tools.sync(relation.getChild()));
+
+        return FMTemplateSelector.select("ViewSoftware", "swsekce", env, request);
+    }
+
+    /**
+     * Processes search for given software
+     */
+    private String processSearch(HttpServletRequest request, Map env) throws Exception {
+        Persistance persistance = PersistanceFactory.getPersistance();
+        SQLTool sqlTool = SQLTool.getInstance();
+
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        String name = (String) params.get(PARAM_NAME);
+
+        List qualifiers = new ArrayList();
+        qualifiers.add(new CompareCondition(Field.DATA, Operation.LIKE, "%<name>%"+name+"%</name>%"));
+        Qualifier[] qa = new Qualifier[qualifiers.size()];
+
+        List items = sqlTool.findItemRelationsWithType(Item.SOFTWARE, (Qualifier[]) qualifiers.toArray(qa));
+        if (items.size() > 0)
+            env.put(VAR_ITEMS, Tools.syncList(items));
+
+        Relation relation = (Relation) env.get(VAR_RELATION);
         List parents = persistance.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
         env.put(VAR_CATEGORY, Tools.sync(relation.getChild()));

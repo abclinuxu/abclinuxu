@@ -345,7 +345,7 @@ public final class SQLTool implements Configurable {
                 params.add(new Integer(limitQualifier.getOffset()));
                 params.add(new Integer(limitQualifier.getCount()));
             } else if ( qualifier instanceof CompareCondition )
-                appendCompareCondition(sb, (CompareCondition) qualifier,  params);
+                appendCompareCondition(sb, (CompareCondition) qualifier,  params, tableNick);
         }
     }
 
@@ -457,7 +457,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer(relationsItemsByType);
         List params = new ArrayList();
         params.add(new Integer(type));
-        appendQualifiers(sb, qualifiers, params, null);
+        appendQualifiers(sb, qualifiers, params, "P");
         return loadRelations(sb.toString(), params);
     }
 
@@ -472,7 +472,7 @@ public final class SQLTool implements Configurable {
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(new Integer(type));
-        appendQualifiers(sb, qualifiers, params, null);
+        appendQualifiers(sb, qualifiers, params, "P");
         return loadNumber(sb.toString(), params).intValue();
     }
 
@@ -1677,10 +1677,15 @@ public final class SQLTool implements Configurable {
     /**
      * Append comparation condition to stringbuffer.
      */
-    private void appendCompareCondition(StringBuffer sb, CompareCondition condition, List params) {
+    private void appendCompareCondition(StringBuffer sb, CompareCondition condition, List params, String tableNick) {
         int where = sb.indexOf("where ") + "where ".length();
         if (where < sb.length())
             sb.append(" and "); // probably there was at least one condition after where
+
+        if (tableNick != null) {
+            sb.append(tableNick);
+            sb.append(".");
+        }
 
         Field field = condition.getField();
         if (field==Field.CREATED)
