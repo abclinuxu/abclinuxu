@@ -76,7 +76,7 @@
 
     <servlet-mapping>
         <servlet-name>redirect</servlet-name>
-        <url-pattern>/Redirect</url-pattern>
+        <url-pattern>/presmeruj</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

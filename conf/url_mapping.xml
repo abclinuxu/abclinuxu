@@ -202,11 +202,6 @@
     </format>
     <deprecated version="www">
         <mapping>
-            <pattern input="path">^/Index$</pattern>
-            <regexp>/Index</regexp>
-            <replacement>/</replacement>
-        </mapping>
-        <mapping>
             <pattern input="host">^@DOMAIN_NAME@</pattern>
             <regexp>://</regexp>
             <replacement>://www.</replacement>
