@@ -160,7 +160,8 @@ ALTER TABLE vlastnost ADD INDEX in_typ (typ,hodnota);
 CREATE TABLE citac (
  typ CHAR(1) NOT NULL,                 -- id tabulky predka
  cislo MEDIUMINT NOT NULL,             -- id predka
- soucet MEDIUMINT                      -- kolikrat byl precten
+ soucet MEDIUMINT,                     -- kolikrat byl precten
+ druh VARCHAR(15) NOT NULL DEFAULT 'read' -- druh citace 
 );
 ALTER TABLE citac ADD INDEX in_citac (typ,cislo);
 
