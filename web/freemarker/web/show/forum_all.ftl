@@ -161,12 +161,12 @@ dotaz, projdìte si fóra v pøede¹lých sekcích.
 <table border="0" cellspacing="6" class="siroka">
 <tr>
 <td><a href="/forum/dir/49651">SUSE</a></td>
-<td><a href="/forum/dir/49645">Mandrake, Mandriva</a></td>
+<td><a href="/forum/dir/49645">Mandriva</a></td>
 <td><a href="/forum/dir/49644">RedHat, Fedora</a></td>
 <td><a href="/forum/dir/50239">®ivé distribuce, Knoppix, SLAX</a></td>
 </tr>
 <tr>
-<td><a href="/forum/dir/49646">Debian</a></td>
+<td><a href="/forum/dir/49646">Debian, Ubuntu</a></td>
 <td><a href="/forum/dir/49647">Slackware</a></td>
 <td><a href="/forum/dir/49648">Gentoo</a></td>
 <td><a href="/forum/dir/49649">Ostatní</a></td>

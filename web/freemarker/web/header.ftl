@@ -246,7 +246,7 @@
                     <li><a href="javascript:addBookmark();">Pøidej mezi oblíbené</a></li>
                     <li><a href="javascript:setHomepage();">Nastav jako domácí stránku</a></li>
                     <li><a href="http://www.linux.cz" rel="nofollow">linux.cz</a></li>
-                    <li><a href="http://www.unixshop.cz">unixshop.cz</a></li>
+                    <li><a href="http://www.64bit.cz">64bit.cz</a></li>
                     <li><a href="http://www.pravednes.cz" rel="nofollow">pravednes.cz</a></li>
                 </ul>
             </div>
@@ -255,6 +255,7 @@
             <div class="s_sekce">
                 <ul>
 		    <li><a href="http://www.autoweb.cz" rel="nofollow">autoweb.cz</a></li>
+                    <li><a href="http://www.e-pocasi.cz/">e-pocasi.cz</a></li>
 		    <li><a href="http://shop.tricko-tricka.com">tricko-tricka.com</a></li>
                     <li><a href="http://www.krasnyusmev.cz">Bìlení zubù White Pearl</a></li>
                 </ul>

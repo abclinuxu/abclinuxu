@@ -31,14 +31,19 @@
     	<#if url != "UNDFEFINED">
             <tr>
 	        	<td>Domovská stránka:</td>
-                <td><a href="${url}" rel="nofollow">${url}</a></td>
+                <td>
+                    <a href="${"/presmeruj?class=P&amp;id="+software.id+"&amp;url="+url?url}" rel="nofollow">${url}</a>
+                </td>
             </tr>
         </#if>
         <#local url = TOOL.xpath(software, "/data/url[@useType='download']")?default("UNDFEFINED")>
         <#if url != "UNDFEFINED">
             <tr>
 	        	<td>Adresa ke sta¾ení:</td>
-                <td><a href="${url}" rel="nofollow">${TOOL.limit(url,50,"..")}</a></td>
+                <td>
+                    <a href="${"/presmeruj?class=P&amp;id="+software.id+"&amp;url="+url?url}"
+                       rel="nofollow">${TOOL.limit(url,50,"..")}</a>
+                </td>
             </tr>
         </#if>
 
@@ -51,6 +56,13 @@
                         <a href="/software/alternativy/${alternative?url}">${alternative}</a><#if alternative_has_next>, </#if>
                     </#list>
                 </td>
+            </tr>
+        </#if>
+        <#local visits = TOOL.getCounterValue(software,"visit")>
+        <#if (visits > 0)>
+            <tr>
+	        	<td>Poèet náv¹tìv:</td>
+                <td>${visits}</td>
             </tr>
         </#if>
 

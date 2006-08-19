@@ -14,7 +14,7 @@
  <p>${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}</p>
 </#if>
 
-<#global CITACE = TOOL.getRelationCountersValue(ARTICLES.data)/>
+<#global CITACE = TOOL.getRelationCountersValue(ARTICLES.data,"read")/>
  <#list ARTICLES.data as relation>
   <@lib.showArticle relation, "CZ_FULL" />
   <hr>

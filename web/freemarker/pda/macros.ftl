@@ -15,7 +15,7 @@
   <span class="uvod">
    ${DATE.show(clanek.created, "CZ_DM")}
    | <a href="/Profile/${autor.id}">${autor.name}</a>
-   | Pøeèteno: ${TOOL.getCounterValue(clanek)}x
+   | Pøeèteno: ${TOOL.getCounterValue(clanek,"read")}x
    <#if diz?exists>| <@showCommentsInListing diz, "CZ_DM", "/clanky" /></#if>
    <#if rating!="UNDEF">| Hodnocení:&nbsp;${rating.result?string["#0.00"]}</#if>
   </span>

@@ -147,7 +147,7 @@
         <p class="cl_inforadek">
     	    ${DATE.show(story.created, "CZ_SHORT")} |
             <#if (category!="UNDEF" && category?length > 1)>${category} |</#if>
-	        Pøeèteno: ${TOOL.getCounterValue(story)}x
+	        Pøeèteno: ${TOOL.getCounterValue(story,"read")}x
             <#if tmp.discussion?exists>| <@lib.showCommentsInListing TOOL.analyzeDiscussion(tmp.discussion[0]), "CZ_SHORT", "/blog" /></#if>
             <#if rating!="UNDEF">| Hodnocení:&nbsp;<span title="Hlasù: ${rating.count}">${rating.result?string["#0.00"]}</span></#if>
         </p>

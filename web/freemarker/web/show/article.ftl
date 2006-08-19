@@ -133,6 +133,8 @@ ${TOOL.render(TEXT,USER?if_exists)}
 </#if>
 <#flush>
 
+<#include "/include/sun-clanky.txt">
+
 <#if CHILDREN.discussion?exists>
     <h3>Komentáøe</h3>
     <@lib.showDiscussion CHILDREN.discussion[0]/>

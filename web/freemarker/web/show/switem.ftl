@@ -51,13 +51,14 @@
             <ul>
             <#list FEED_LINKS as link>
                 <li>
-                    <a href="${link.child.url}" rel="nofollow">${link.child.text}</a>
+                    <a href="${"/presmeruj?class=P&amp;id="+ITEM.id+"&amp;url="+link.child.url?url}"
+                        rel="nofollow">${link.child.text}</a>
                     (${DATE.show(link.child.updated,"CZ_FULL")})
                 </li>
             </#list>
             </ul>
         <#else>
-            <p>Zdroj zatím nebyl aktualizován.</p>
+            <p>Zdroj zatím nebyl naèten, je prázdný nebo obsahuje chybu.</p>
         </#if>
     </#if>
 

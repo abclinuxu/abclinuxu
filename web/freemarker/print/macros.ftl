@@ -22,7 +22,7 @@
     <p>${TOOL.xpath(clanek,"/data/perex")}</p>
     <p class="cl_inforadek">${DATE.show(clanek.created, dateFormat[0])} |
         <a href="/Profile/${autor.id}">${autor.name}</a> |
-        Pøeèteno: <#if ctennost?string!="UNDEF">${ctennost}<#else>${TOOL.getCounterValue(clanek)}</#if>x
+        Pøeèteno: <#if ctennost?string!="UNDEF">${ctennost}<#else>${TOOL.getCounterValue(clanek,"read")}</#if>x
         <#if diz?exists>
             | <a href="${diz.url?default("/clanky/show/"+diz.relationId)}">Komentáøù:&nbsp;${diz.responseCount}</a
             ><#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, dateFormat[1]?default(dateFormat[0]))}</#if>

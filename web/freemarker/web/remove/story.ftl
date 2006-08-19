@@ -18,7 +18,7 @@ v¹echny pøípadné komentáøe zápisu.
 <div style="padding-left: 30pt">
     <h2>${TOOL.xpath(STORY.child, "/data/name")}</h2>
     <p class="cl_inforadek">${DATE.show(STORY.child.created, "CZ_SHORT")} |
-        Pøeèteno: ${TOOL.getCounterValue(STORY.child)}x
+        Pøeèteno: ${TOOL.getCounterValue(STORY.child,"read")}x
         <#assign category = STORY.child.subType?default("UNDEF")>
         <#if category!="UNDEF"><#assign category=TOOL.xpath(BLOG, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
         <#if category!="UNDEF">| ${category}</#if>

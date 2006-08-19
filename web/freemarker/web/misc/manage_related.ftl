@@ -2,20 +2,26 @@
 
 <h1>Správa souvisejících dokumentù</h1>
 
+<p><b>${TOOL.childName(RELATION)}</b></p>
+
 <@lib.showMessages/>
 
 <form action="${URL.make("/EditRelated/"+RELATION.id)}" method="POST" name="form">
     <#assign related = TOOL.getRelatedDocuments(RELATION.child)>
+    <p>
     <#list related as link>
         <label>
             <input type="checkbox" name="document" value="${link.url?url}">
             <a href="${link.url}">${link.title}</a>
         </label>
-        <a href="${URL.make("/EditRelated/"+RELATION.id+"?action=edit&amp;document="+link.url?url)}">upravit</a>
-        <br>
+        <small>&nbsp;(<a href="${URL.make("/EditRelated/"+RELATION.id+"?action=edit&amp;document="+link.url?url)}">upravit</a>)</small>
+        <br />
     </#list>
-    <input type="hidden" name="action" value="remove">
-    <input type="submit" value="Smazat">
+    </p>
+    <p>
+      <input type="hidden" name="action" value="remove">
+      <input type="submit" value="Smazat za¹krtnuté">
+    </p>
 </form>
 
 <h3>Pøidání nového souvisejícího dokumentu</h3>

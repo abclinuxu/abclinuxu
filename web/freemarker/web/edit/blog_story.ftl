@@ -31,7 +31,7 @@ Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
  <div style="padding-left: 30pt">
     <h3>${TOOL.xpath(PREVIEW, "/data/name")}</h3>
     <p class="cl_inforadek">${DATE.show(PREVIEW.created, "CZ_SHORT")} |
-        Pøeèteno: ${TOOL.getCounterValue(PREVIEW)}x
+        Pøeèteno: ${TOOL.getCounterValue(PREVIEW,"read")}x
         <#if PREVIEW.subType?exists>| ${CATEGORIES[PREVIEW.subType]?if_exists}</#if>
     </p>
     ${TOOL.xpath(PREVIEW, "/data/perex")?if_exists}

@@ -99,7 +99,7 @@
 <@lib.showMessages/>
 
 <#assign ARTICLES=VARS.getFreshArticles(USER?if_exists)>
-<#global CITACE = TOOL.getRelationCountersValue(ARTICLES)/>
+<#global CITACE = TOOL.getRelationCountersValue(ARTICLES,"read")/>
 <#if (ARTICLES?size>0) >
     <#list ARTICLES as rel>
         <@lib.showArticle rel, "CZ_DM", "CZ_SHORT"/>
@@ -132,7 +132,7 @@
         <#list FORUM as diz>
             <tr>
                 <td class="td01">
-                    <a href="/forum/show/${diz.relationId}">${TOOL.limit(TOOL.xpath(diz.discussion,"data/title"),60," ..")}</a>
+                    <a href="/forum/show/${diz.relationId}">${TOOL.limit(TOOL.xpath(diz.discussion,"data/title"),60,"...")}</a>
                 </td>
                 <td class="td02">
                     <@lib.markNewCommentsQuestion diz/>

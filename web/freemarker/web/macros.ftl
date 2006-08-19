@@ -23,7 +23,7 @@
     <p class="cl_inforadek">
         ${DATE.show(clanek.created, dateFormat[0])} |
         <a href="/Profile/${autor.id}">${autor.name}</a> |
-        Pøeèteno: <#if ctennost?string!="UNDEF">${ctennost}<#else>${TOOL.getCounterValue(clanek)}</#if>x
+        Pøeèteno: <#if ctennost?string!="UNDEF">${ctennost}<#else>${TOOL.getCounterValue(clanek,"read")}</#if>x
         <#if diz?exists>| <@showCommentsInListing diz, dateFormat[1]?default(dateFormat[0]), "/clanky" /></#if>
         <#if rating!="UNDEF">| Hodnocení:&nbsp;<span title="Hlasù: ${rating.count}">${rating.result?string["#0.00"]}</span></#if>
     </p>

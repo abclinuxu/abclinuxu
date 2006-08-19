@@ -10,7 +10,7 @@
  <p class="cl_inforadek">
    ${DATE.show(clanek.created, "CZ_DMY")} |
    <a href="http://www.abclinuxu.cz/Profile/${autor.id}">${autor.name}</a> |
-   Pøeèteno: ${TOOL.getCounterValue(clanek)}x
+   Pøeèteno: ${TOOL.getCounterValue(clanek,"read")}x
   <#if diz?exists>
    | <a href="../../${DUMP.getFile(diz.relationId)}">Komentáøù:&nbsp;${diz.responseCount}</a>
   </#if>

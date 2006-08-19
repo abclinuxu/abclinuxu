@@ -143,7 +143,7 @@
 <h2>${TOOL.xpath(ITEM, "/data/name")}</h2>
 <p class="cl_inforadek">
     <#if ITEM.type==15>Odlo¾eno<#else>${DATE.show(ITEM.created, "CZ_SHORT")}</#if> |
-    Pøeèteno: ${TOOL.getCounterValue(ITEM)}x
+    Pøeèteno: ${TOOL.getCounterValue(ITEM,"read")}x
     <#if category!="UNDEF">| ${category}</#if>
     <#if (ITEM.type==12 && ITEM.created.time!=ITEM.updated.time)>
         | poslední úprava: ${DATE.show(ITEM.updated, "CZ_SHORT")}

@@ -7,19 +7,22 @@
                 <li><a href="${URL.make("/edit/"+RELATION.id+"?action=add")}">Vlo¾it novou polo¾ku</a></li>
             </#if>
             <li><a href="/software/alternativy">Alternativy k aplikacím</a></li>
+            <li><a href="/History?type=software">Poslední upravené polo¾ky</a></li>
             <#if USER?exists && USER.hasRole("category admin")>
                 <hr />
                 <li><a href="${URL.noPrefix("/EditCategory?action=add&amp;rid="+RELATION.id+"&amp;categoryId="+CATEGORY.id)}">mkdir</a>,
                     <a href="${URL.noPrefix("/EditCategory?action=edit&amp;rid="+RELATION.id+"&amp;categoryId="+CATEGORY.id)}">edit</a>,
                     <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix="+URL.prefix)}">rmdir</a>,
-                    <a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;url=/EditRelation&amp;action=add&amp;prefix="+URL.prefix)}">link</a></li>
+                    <a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;url=/EditRelation&amp;action=add&amp;prefix="+URL.prefix)}">link</a>
+                </li>
             </#if>
             <#if USER?exists && USER.hasRole("move relation")>
-                <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Pøesunout sekci</a></li>
-                <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=moveAll&amp;prefix="+URL.prefix)}">Pøesunout obsah</a></li>
-            </#if>
-            <#if USER?exists && USER.hasRole("root")>
-                <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=showACL")}">ACL</a></li>
+                <li>
+                    <a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Pøesunout sekci</a>
+                </li>
+                <li>
+                    <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=moveAll&amp;prefix="+URL.prefix)}">Pøesunout obsah</a>
+                </li>
             </#if>
         </ul>
     </div>
@@ -33,42 +36,40 @@
         <b>U¾ivatelské rozhraní:</b>
 
         <#assign uiType = FILTERS.ui?default("")>
-        <div class="sw-strom">
+        <div>
+            <@lib.showOption2 "ui", "xwindows", UI_PROPERTY["xwindows"], "checkbox", uiType />
             <div>
-                <@lib.showOption2 "ui", "xwindows", UI_PROPERTY["xwindows"], "checkbox", uiType />
+                <@lib.showOption2 "ui", "qt", UI_PROPERTY["qt"], "checkbox", uiType />
                 <div>
-                    <@lib.showOption2 "ui", "qt", UI_PROPERTY["qt"], "checkbox", uiType />
-                    <div>
-                        <@lib.showOption2 "ui", "kde", UI_PROPERTY["kde"], "checkbox", uiType />
-                    </div>
-                </div>
-                <div>
-                    <@lib.showOption2 "ui", "gtk", UI_PROPERTY["gtk"], "checkbox", uiType />
-                    <div>
-                        <@lib.showOption2 "ui", "gnome", UI_PROPERTY["gnome"], "checkbox", uiType />
-                    </div>
-                </div>
-                <div>
-                    <@lib.showOption2 "ui", "motif", UI_PROPERTY["motif"], "checkbox", uiType />
-                </div>
-                <div>
-                    <@lib.showOption2 "ui", "java", UI_PROPERTY["java"], "checkbox", uiType />
-                </div>
-                <div>
-                    <@lib.showOption2 "ui", "tk", UI_PROPERTY["tk"], "checkbox", uiType />
+                    <@lib.showOption2 "ui", "kde", UI_PROPERTY["kde"], "checkbox", uiType />
                 </div>
             </div>
             <div>
-                <@lib.showOption2 "ui", "console", UI_PROPERTY["console"], "checkbox", uiType />
+                <@lib.showOption2 "ui", "gtk", UI_PROPERTY["gtk"], "checkbox", uiType />
                 <div>
-                    <@lib.showOption2 "ui", "cli", UI_PROPERTY["cli"], "checkbox", uiType />
+                    <@lib.showOption2 "ui", "gnome", UI_PROPERTY["gnome"], "checkbox", uiType />
                 </div>
-                <div>
-                    <@lib.showOption2 "ui", "tui", UI_PROPERTY["tui"], "checkbox", uiType />
-                </div>
-                <div>
-                    <@lib.showOption2 "ui", "grconsole", UI_PROPERTY["grconsole"], "checkbox", uiType />
-                </div>
+            </div>
+            <div>
+                <@lib.showOption2 "ui", "motif", UI_PROPERTY["motif"], "checkbox", uiType />
+            </div>
+            <div>
+                <@lib.showOption2 "ui", "java", UI_PROPERTY["java"], "checkbox", uiType />
+            </div>
+            <div>
+                <@lib.showOption2 "ui", "tk", UI_PROPERTY["tk"], "checkbox", uiType />
+            </div>
+        </div>
+        <div>
+            <@lib.showOption2 "ui", "console", UI_PROPERTY["console"], "checkbox", uiType />
+            <div>
+                <@lib.showOption2 "ui", "cli", UI_PROPERTY["cli"], "checkbox", uiType />
+            </div>
+            <div>
+                <@lib.showOption2 "ui", "tui", UI_PROPERTY["tui"], "checkbox", uiType />
+            </div>
+            <div>
+                <@lib.showOption2 "ui", "grconsole", UI_PROPERTY["grconsole"], "checkbox", uiType />
             </div>
         </div>
 

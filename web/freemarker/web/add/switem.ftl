@@ -20,10 +20,10 @@
 
 <p>
    Zadejte prosím co nejpodrobnìj¹í informace o tomto softwaru. Povinné polo¾ky jsou
-   jméno<#if EDIT_MODE?if_exists> (ze kterého se vygeneruje URL)</#if>,
-   popis a poslední verze. První vìta popisu se zobrazí ve výpise této sekce, proto si na
-   jejím textu dejte zále¾et. Adresa RSS s aktualitami umo¾ní automatické stahování
-   novinek.
+   jméno<#if EDIT_MODE?if_exists> (ze kterého se vygeneruje URL)</#if> a popis.
+   První vìta popisu se zobrazí ve výpise této sekce, proto si na
+   jejím textu dejte zále¾et. Adresa pro sta¾ení by nemìla záviset na konkrétní verzi.
+   Adresa RSS s aktualitami umo¾ní automatické stahování novinek. 
 </p>
 
 <h2>Formátování</h2>
@@ -61,7 +61,7 @@
         </tr>
 
         <tr>
-            <td>Adresa pro sta¾ení</td>
+            <td>Adresa stránky pro sta¾ení</td>
             <td>
                 <input type="text" name="downloadUrl" value="${PARAMS.downloadUrl?if_exists}" size="60" tabindex="4">
                 <div class="error">${ERRORS.downloadUrl?if_exists}</div>
