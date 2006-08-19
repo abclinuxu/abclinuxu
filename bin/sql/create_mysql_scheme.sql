@@ -1,4 +1,4 @@
---CREATE DATABASE abc default character set latin2 collate latin2_bin; -- tenhle fungoval pro devel databazi
+--CREATE DATABASE abc default character set latin2 collate latin2_general_ci; -- tenhle fungoval pro devel databazi
 --CREATE DATABASE abc default character set utf8 collate utf8_bin;
 -- collate utf8_czech_ci nefunguje, nerozlisuje se mezi normalnimi a akcentovanymi znaky
 
@@ -17,7 +17,7 @@ CREATE TABLE uzivatel (
  heslo VARCHAR(12) NOT NULL,     	        -- nekryptovane heslo
  prezdivka VARCHAR(20) NULL UNIQUE,         -- prezdivka
  data TEXT                                  -- XML s nazvem, ikonou, poznamkou ...
-);
+) collate latin2_bin;
 ALTER TABLE uzivatel ADD INDEX in_nick (prezdivka);
 
 
@@ -161,7 +161,7 @@ CREATE TABLE citac (
  typ CHAR(1) NOT NULL,                 -- id tabulky predka
  cislo MEDIUMINT NOT NULL,             -- id predka
  soucet MEDIUMINT,                     -- kolikrat byl precten
- druh VARCHAR(15) NOT NULL DEFAULT 'read' -- druh citace 
+ druh VARCHAR(15) NOT NULL DEFAULT 'read' -- druh citace
 );
 ALTER TABLE citac ADD INDEX in_citac (typ,cislo);
 
