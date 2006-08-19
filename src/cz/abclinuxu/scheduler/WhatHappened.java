@@ -160,7 +160,7 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
             article.setAuthorId(author.getId());
             article.setPerex(Tools.xpath(item, "data/perex"));
             article.setComments(Tools.findComments(item).getResponseCount());
-            article.setReads(Tools.getCounterValue(item));
+            article.setReads(Tools.getCounterValue(item, Constants.COUNTER_READ));
             article.setUrl(relation.getUrl());
             articles.add(article);
         }

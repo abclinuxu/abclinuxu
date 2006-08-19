@@ -27,6 +27,7 @@ import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.ReadRecorder;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.persistance.extra.*;
 import cz.abclinuxu.persistance.SQLTool;
@@ -199,7 +200,7 @@ public class ViewBlog implements AbcAction, Configurable {
 
         User user = (User) env.get(Constants.VAR_USER);
         if (user==null || user.getId()!=story.getOwner())
-            persistance.incrementCounter(story);
+            ReadRecorder.log(story, Constants.COUNTER_READ, env);
 
         List parents = persistance.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
@@ -262,7 +263,7 @@ public class ViewBlog implements AbcAction, Configurable {
                     Relation relation = (Relation) iter.next();
                     Item story = (Item) relation.getChild();
                     if (Tools.xpath(story,"/data/perex")==null)
-                        persistance.incrementCounter(story);
+                        ReadRecorder.log(story, Constants.COUNTER_READ, env);
                 }
             }
         }
@@ -336,7 +337,7 @@ public class ViewBlog implements AbcAction, Configurable {
                 story = (Item) relation.getChild();
                 if (user == null || user.getId() != story.getOwner()) {
                     if (Tools.xpath(story, "/data/perex") == null)
-                        persistance.incrementCounter(story);
+                        ReadRecorder.log(story, Constants.COUNTER_READ, env);
                 }
             }
         }

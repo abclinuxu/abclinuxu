@@ -39,24 +39,8 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 
 /**
- * This class provides persistance backed up by MySQl database. You should consult
- * file SQL_def.sql for data scheme.
- * <p>Tree contains references of GenericObjects. Each supported class may contain any number
- * of children - other GenericObjects. Each object may be referenced as child of more objects
- * and they have equal rights for it. Tree uses its own id schema - which is made as union
- * of database table identifier and objects <code>id</code>.
- * <table border="1">
- * <tr><th>class</th><th>identifier</th></tr>
- * <tr><td>Poll</td><td>A</td></tr>
- * <tr><td>Data</td><td>O</td></tr>
- * <tr><td>Item</td><td>P</td></tr>
- * <tr><td>Record</td><td>Z</td></tr>
- * <tr><td>Category</td><td>K</td></tr>
- * <tr><td>Link</td><td>L</td></tr>
- * <tr><td>User</td><td>U</td></tr>
- * <tr><td>AccessRights</td><td>X</td></tr>
- * <tr><td>error</td><td>E</td></tr>
- * </table>
+ * This class provides persistance backed up by MySQL database. You should consult
+ * file create_mysql_scheme.sql for data scheme.
  */
 public class MySqlPersistance implements Persistance {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(MySqlPersistance.class);
@@ -608,17 +592,14 @@ public class MySqlPersistance implements Persistance {
         }
     }
 
-    /**
-     * todo move counter to SQLTools ?
-     */
-    public void incrementCounter(GenericObject obj) {
+    public void incrementCounter(GenericObject obj, String  type) {
         Connection con = null; PreparedStatement statement = null;
         try {
             con = getSQLConnection();
             List conditions = new ArrayList();
             StringBuffer sb = new StringBuffer();
 
-            appendIncrementUpdateParams(obj,sb,conditions);
+            appendIncrementUpdateParams(obj, sb, conditions, type);
             statement = con.prepareStatement(sb.toString());
             for ( int i=0; i<conditions.size(); i++ ) {
                 Object o = conditions.get(i);
@@ -628,7 +609,7 @@ public class MySqlPersistance implements Persistance {
 
             if ( result==0 ) {
                 sb.setLength(0); conditions.clear();
-                appendCounterInsertParams(obj,sb,conditions);
+                appendCounterInsertParams(obj, sb, conditions, type);
                 statement = con.prepareStatement(sb.toString());
                 for ( int i=0; i<conditions.size(); i++ ) {
                     Object o = conditions.get(i);
@@ -643,13 +624,14 @@ public class MySqlPersistance implements Persistance {
         }
     }
 
-    public int getCounterValue(GenericObject obj) {
+    public int getCounterValue(GenericObject obj, String type) {
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select soucet from citac where typ=? and cislo=?");
+            statement = con.prepareStatement("select soucet from citac where typ=? and cislo=? and druh=?");
             statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
             statement.setInt(2, obj.getId());
+            statement.setString(3, type);
 
             resultSet = statement.executeQuery();
             if ( !resultSet.next() )
@@ -663,19 +645,15 @@ public class MySqlPersistance implements Persistance {
         }
     }
 
-    /**
-     * Fetches counters for specified objects.
-     * @param objects list of GenericObjects
-     * @return map where key is GenericObject and value is Number with its counter.
-     * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
-     */
-    public Map getCountersValue(List objects) {
+    public Map getCountersValue(List objects, String  type) {
         Connection con = null; Statement statement = null; ResultSet resultSet = null;
         if (objects == null || objects.size() == 0)
             return Collections.EMPTY_MAP;
+        if (type.indexOf(';') != -1 || type.indexOf('\'') != -1)
+            throw new InvalidInputException("Type contains illegal characters: '"+type+"'!");
 
         Map map = new HashMap(objects.size() + 1, 1.0f);
-        StringBuffer sql = new StringBuffer("select soucet, typ, cislo from citac where ");
+        StringBuffer sql = new StringBuffer("select soucet, typ, cislo from citac where druh='"+type+"' and ");
         appendMatchAllObjectsCondition(sql, objects, "typ", "cislo");
         try {
             con = getSQLConnection();
@@ -683,14 +661,14 @@ public class MySqlPersistance implements Persistance {
             resultSet = statement.executeQuery(sql.toString());
             GenericObject obj;
             int value;
-            char type;
+            char objType;
             int id;
 
             while (resultSet.next()) {
                 value = resultSet.getInt(1);
-                type = resultSet.getString(2).charAt(0);
+                objType = resultSet.getString(2).charAt(0);
                 id = resultSet.getInt(3);
-                obj = PersistenceMapping.createGenericObject(type, id);
+                obj = PersistenceMapping.createGenericObject(objType, id);
                 map.put(obj, new Integer(value));
             }
 
@@ -703,14 +681,14 @@ public class MySqlPersistance implements Persistance {
         }
     }
 
-    public void removeCounter(GenericObject obj) {
+    public void removeCounter(GenericObject obj, String type) {
         Connection con = null; PreparedStatement statement = null;
         try {
             con = getSQLConnection();
             List conditions = new ArrayList();
             StringBuffer sb = new StringBuffer();
 
-            appendCounterDeleteParams(obj,sb,conditions);
+            appendCounterDeleteParams(obj, sb, conditions, type);
             statement = con.prepareStatement(sb.toString());
             for ( int i=0; i<conditions.size(); i++ ) {
                 Object o = conditions.get(i);
@@ -1001,7 +979,7 @@ public class MySqlPersistance implements Persistance {
                 conditions.add(tmp);
             }
 
-            tmp = user.getDataAsString();            
+            tmp = user.getDataAsString();
             if ((tmp != null && tmp.length() > 0)) {
                 if (addAnd) sb.append(" and "); else addAnd = true;
                 sb.append("data like ?");
@@ -1014,30 +992,33 @@ public class MySqlPersistance implements Persistance {
      * Appends UPDATE prepared statement to increment counter of this object to <code>sb</code> and parameter
      * to <code>conditions</code> for each asterisk in perpared statement.
      */
-    private void appendIncrementUpdateParams(GenericObject obj, StringBuffer sb, List conditions ) {
-        sb.append("update citac set soucet=soucet+1 where typ=? and cislo=?");
+    private void appendIncrementUpdateParams(GenericObject obj, StringBuffer sb, List conditions, String type) {
+        sb.append("update citac set soucet=soucet+1 where typ=? and cislo=? and druh=?");
         conditions.add(PersistenceMapping.getGenericObjectType(obj));
         conditions.add(new Integer(obj.getId()));
+        conditions.add(type);
     }
 
     /**
      * Appends INSERT prepared statement to increment counter of this object to <code>sb</code> and parameter
      * to <code>conditions</code> for each asterisk in perpared statement.
      */
-    private void appendCounterInsertParams(GenericObject obj, StringBuffer sb, List conditions ) {
-        sb.append("insert into citac values(?,?,1)");
+    private void appendCounterInsertParams(GenericObject obj, StringBuffer sb, List conditions, String type) {
+        sb.append("insert into citac values(?,?,1,?)");
         conditions.add(PersistenceMapping.getGenericObjectType(obj));
         conditions.add(new Integer(obj.getId()));
+        conditions.add(type);
     }
 
     /**
      * Appends DELETE prepared statement to remove counter for this object to <code>sb</code> and parameter
      * to <code>conditions</code> for each asterisk in perpared statement.
      */
-    private void appendCounterDeleteParams(GenericObject obj, StringBuffer sb, List conditions ) {
-        sb.append("delete from citac where typ=? and cislo=?");
+    private void appendCounterDeleteParams(GenericObject obj, StringBuffer sb, List conditions, String type ) {
+        sb.append("delete from citac where typ=? and cislo=? and type=?");
         conditions.add(PersistenceMapping.getGenericObjectType(obj));
         conditions.add(new Integer(obj.getId()));
+        conditions.add(type);
     }
 
     /**

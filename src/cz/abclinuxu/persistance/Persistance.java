@@ -140,10 +140,10 @@ public interface Persistance {
     public void remove(GenericObject obj);
 
     /**
-     * Increments counter for specified object.
+     * Increments given counter for specified object.
      * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
      */
-    public void incrementCounter(GenericObject obj);
+    public void incrementCounter(GenericObject obj, String type);
 
     /**
      * Increment counter for one or more PollChoices of the same Poll.
@@ -153,24 +153,24 @@ public interface Persistance {
     public void incrementPollChoicesCounter(List choices);
 
     /**
-     * @return Actual value of counter for specified object.
+     * @return value of given counter for specified object.
      * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
      */
-    public int getCounterValue(GenericObject obj);
+    public int getCounterValue(GenericObject obj, String type);
 
     /**
-     * Fetches counters for specified objects.
+     * Fetches given counters for specified objects.
      * @param objects list of GenericObjects
      * @return map where key is GenericObject and value is Number with its counter.
      * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
      */
-    public Map getCountersValue(List objects);
+    public Map getCountersValue(List objects, String type);
 
     /**
-     * Removes counter for specified object. To be used to clean up database after unit test.
+     * Removes given counter for specified object. To be used to clean up database after unit test.
      * @throws cz.abclinuxu.exceptions.PersistanceException When something goes wrong.
      */
-    public void removeCounter(GenericObject obj);
+    public void removeCounter(GenericObject obj, String type);
 
     /**
      * Sets cache.

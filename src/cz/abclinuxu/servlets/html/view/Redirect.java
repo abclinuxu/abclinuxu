@@ -18,48 +18,38 @@
  */
 package cz.abclinuxu.servlets.html.view;
 
-import cz.abclinuxu.data.Link;
+import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistance.PersistenceMapping;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.utils.Misc;
 
-import javax.servlet.http.*;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class Redirect extends HttpServlet {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(Redirect.class);
-    static org.apache.log4j.Logger logRedirect = org.apache.log4j.Logger.getLogger("redirect");
 
     /** contains id of link */
-    public static final String PARAM_LINK = "linkId";
+    public static final String PARAM_URL = "url";
+    public static final String PARAM_CLASS = "class";
+    public static final String PARAM_ID = "id";
 
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String linkId = request.getParameter(PARAM_LINK);
-        Link link = findLink(linkId);
-        String url = link.getUrl();
-        logRedirect.info(linkId);
+        String url = request.getParameter(PARAM_URL);
         response.sendRedirect(response.encodeRedirectURL(url));
-    }
 
-    /**
-     * finds link in database, or returns link to /
-     */
-    Link findLink(String linkId) {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        Link link = null;
+        String paramClass = request.getParameter(PARAM_CLASS);
+        if (Misc.empty(paramClass))
+            return;
+        int id = Misc.parseInt(request.getParameter(PARAM_ID), 0);
+        if (id == 0)
+            return;
 
-        if ( linkId!=null && linkId.length()>0 ) {
-            int id = Integer.parseInt(linkId);
-            try {
-                link = (Link) persistance.findById(new Link(id));
-                return link;
-            } catch (Exception e) {
-                log.debug("Cannot redirect to link "+linkId,e);
-            }
-        }
-
-        link = new Link();
-        link.setUrl("/");
-        return link;
+        GenericObject obj = PersistenceMapping.createGenericObject(paramClass.charAt(0), id);
+        PersistanceFactory.getPersistance().incrementCounter(obj, Constants.COUNTER_VISIT);
     }
 }

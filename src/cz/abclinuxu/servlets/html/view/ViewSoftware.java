@@ -39,6 +39,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.ReadRecorder;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.security.Roles;
@@ -223,6 +224,7 @@ public class ViewSoftware implements AbcAction {
 
         Tools.sync(item);
         env.put(VAR_ITEM, item);
+        ReadRecorder.log(item, Constants.COUNTER_READ, env);
 
         List parents = persistance.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);

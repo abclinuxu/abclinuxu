@@ -756,25 +756,20 @@ public class Tools implements Configurable {
     }
 
     /**
-     * Increments usage counter of GenericObject.
-     */
-    public void incrementCounter(GenericObject obj) {
-        persistance.incrementCounter(obj);
-    }
-
-    /**
+     * @param type type of counter to be fetched
      * @return counter value for selected GenericObject
      */
-    public static int getCounterValue(GenericObject obj) {
-        return persistance.getCounterValue(obj);
+    public static int getCounterValue(GenericObject obj, String type) {
+        return persistance.getCounterValue(obj, type);
     }
 
     /**
      * Fetches values of counter for children in list of relations.
      * @param relations initialized list of relations
+     * @param type type of counter to be fetched
      * @return map where key is GenericObject and value is Number with its counter.
      */
-    public static Map getRelationCountersValue(List relations) {
+    public static Map getRelationCountersValue(List relations, String type) {
         if (relations==null || relations.size()==0)
             return Collections.EMPTY_MAP;
         List list = new ArrayList(relations.size());
@@ -782,7 +777,7 @@ public class Tools implements Configurable {
             Relation relation = (Relation) iter.next();
             list.add(relation.getChild());
         }
-        return persistance.getCountersValue(list);
+        return persistance.getCountersValue(list, type);
     }
 
     /**

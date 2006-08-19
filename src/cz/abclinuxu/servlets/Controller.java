@@ -74,7 +74,9 @@ public class Controller extends HttpServlet implements Configurable {
             page = Constants.PAGE_WAP;
             WapVersion.process(request, response, env);
         } else {
-            page = detectHtmlPage((String)env.get(Constants.VAR_REQUEST_URI), (String)request.getHeader("user-agent"));
+            Boolean bot = (Boolean) env.get(Constants.VAR_BOT_DETECTED);
+            if (bot == null || ! bot.booleanValue()) // not interested in spiders and various bots
+                page = detectHtmlPage((String)env.get(Constants.VAR_REQUEST_URI));
             HTMLVersion.process(request, response, env);
         }
 
@@ -82,13 +84,7 @@ public class Controller extends HttpServlet implements Configurable {
             UpdateStatistics.getInstance().recordPageView(page);
     }
 
-    private String detectHtmlPage(String uri, String ua) {
-        if (ua != null && ua.length() > 3) {
-            RE regexp = new RE(reBots);
-            if (regexp.match(ua))
-                return null; // not interested in spiders and various bots
-        }
-
+    private String detectHtmlPage(String uri) {
         if (uri.equals("/"))
             return Constants.PAGE_INDEX;
         if (uri.startsWith(UrlUtils.PREFIX_FORUM))
@@ -127,6 +123,15 @@ public class Controller extends HttpServlet implements Configurable {
         String requestURI = request.getRequestURI();
         env.put(Constants.VAR_URL_UTILS, new UrlUtils(requestURI, response));
         env.put(Constants.VAR_REQUEST_URI, requestURI);
+
+        String ua = request.getHeader("user-agent");
+        env.put(Constants.VAR_USER_AGENT, ua);
+        if (ua != null && ua.length() > 3) {
+            RE regexp = new RE(reBots);
+            if (regexp.match(ua))
+                env.put(Constants.VAR_BOT_DETECTED, Boolean.TRUE);
+        }
+
         ServletUtils.setCurrentURL(ServletUtils.getURL(request));
         ServletUtils.handleMessages(request, env);
         ServletUtils.handleLogin(request, response, env);

@@ -135,6 +135,10 @@ public interface Constants {
     String VAR_UI_PROPERTY_VALUES = "UI_PROPERTY";
     /** holds Map where key is id of property value and value is its caption */
     String VAR_LICENSE_PROPERTY_VALUES = "LICENSE_PROPERTY";
+    /** name of user agent that wants to fetch the page */
+    String VAR_USER_AGENT = "UA";
+    /** boolean that indicates that user agent is some bot */
+    String VAR_BOT_DETECTED = "BOT_DETECTED";
 
     /** error, that is not related to specific form field */
     String ERROR_GENERIC = "generic";
@@ -188,4 +192,8 @@ public interface Constants {
     String RELATED_SECTION = "section";
     String RELATED_SOFTWARE = "software";
     String RELATED_STORY = "story";
+
+    // type of counter
+    String COUNTER_READ = "read";
+    String COUNTER_VISIT = "visit";
 }
