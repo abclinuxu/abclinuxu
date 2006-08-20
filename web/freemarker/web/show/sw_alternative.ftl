@@ -13,24 +13,9 @@
 <div class="sw">
 
 <#if ITEMS?exists>
-    <table class="sw-polozky">
-      <thead>
-        <tr>
-            <td class="td01">Jméno</td>
-            <td class="td04">Poslední úprava</td>
-        </tr>
-      </thead>
-      <tbody>
-        <#list SORT.byName(ITEMS) as polozka>
-            <tr>
-                <td class="td01">
-                    <a href="${URL.make(polozka.url?default("/show/"+polozka.id))}">${TOOL.childName(polozka)}</a>
-                </td>
-                <td class="td04">${DATE.show(polozka.child.updated,"CZ_FULL")}</td>
-            </tr>
-        </#list>
-      </tbody>
-    </table>
+    <#list SORT.byName(ITEMS) as software>
+        <@lib.showSoftwareInList software />
+    </#list>
 <#else>
     <p>
         Litujeme, ale pro tento software nejsou v systému definovány ¾ádné alternativy.

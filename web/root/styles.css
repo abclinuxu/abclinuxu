@@ -264,6 +264,11 @@ td.pad, code.kod, pre.kod {
 	background-color: #F0F0F0;
 }
 
+.cl_nadpis-link {
+	font-size:	small;
+	float:		right;
+}
+
 .cl_rating {
 	margin:		1em 5px 2em 5px;
 	border-top:	1px solid #27648D;
@@ -395,6 +400,9 @@ td.pad, code.kod, pre.kod {
 
 .sw-strom div { margin-left:	1em; }
 .sw-strom div.uroven-1 { margin-left:	0 }
+
+.swlist .jmeno { font-size: 120% }
+.swlist .zmeneno { }
 
 .ds_toolbox {
 	background:	#ececec;
@@ -763,7 +771,7 @@ a.info:hover span.tooltip {
 
 .textad {
 	border:		1px solid lightgray;
-	padding:	1em;
+	padding:	0.5em;
 	margin:		1em;
 	background:	#f6f6f6;
 	font-size:	small;

@@ -8,12 +8,13 @@
             </#if>
             <li><a href="/software/alternativy">Alternativy k aplikacím</a></li>
             <li><a href="/History?type=software">Poslední upravené polo¾ky</a></li>
+            <li><a href="/doc/portal/volne-aplikace">Nepopsaný software</a></li>
             <li>
                 <form action="" method="get">
                     <input type="text" name="name" size="20">
                     <input type="hidden" name="action" value="search">
                     <input type="submit" value="Hledej aplikaci">
-                </form>                
+                </form>
             </li>
             <#if USER?exists && USER.hasRole("category admin")>
                 <hr />
@@ -122,24 +123,9 @@
 </#if>
 
 <#if ITEMS?exists>
-    <table class="sw-polozky">
-      <thead>
-        <tr>
-            <td class="td01">Jméno</td>
-            <td class="td04">Poslední úprava</td>
-        </tr>
-      </thead>
-      <tbody>
-        <#list SORT.byName(ITEMS) as polozka>
-            <tr>
-                <td class="td01">
-                    <a href="${URL.make(polozka.url?default("/show/"+polozka.id))}">${TOOL.childName(polozka)}</a>
-                </td>
-                <td class="td04">${DATE.show(polozka.child.updated,"CZ_FULL")}</td>
-            </tr>
-        </#list>
-      </tbody>
-    </table>
+    <#list SORT.byName(ITEMS) as software>
+        <@lib.showSoftwareInList software />
+    </#list>
 </#if>
 
 </div>

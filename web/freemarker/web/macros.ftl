@@ -34,6 +34,18 @@
     <#lt><#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, dateFormat)}</#if>
 </#macro>
 
+<#macro showSoftwareInList(software)>
+    <#local item = software.child,visits = TOOL.getCounterValue(item,"visit"),reads = TOOL.getCounterValue(item,"read")>
+    <p class="swlist">
+        <span class="jmeno"><a href="${software.url}">${TOOL.childName(software)}</a></span>
+        <span class="intro">${TOOL.xpath(item,"/data/intro")}</span>
+        <br>
+        <span class="precteno">Pøeèteno: ${reads}x</span>
+        <span class="navstev">Náv¹tìv: ${visits}x</span>
+        <span class="zmeneno">Poslední úprava: ${DATE.show(item.updated,"CZ_FULL")}</span>
+    </p>
+</#macro>
+
 <#macro showNews(relation)>
  <#local
    ITEM=TOOL.sync(relation.child),
@@ -286,3 +298,4 @@
         <input type="${type}" name="${param}" value="${value}"<#if TOOL.isWithin(values, value)> checked</#if>> ${caption}
     </label>
 </#macro>
+
