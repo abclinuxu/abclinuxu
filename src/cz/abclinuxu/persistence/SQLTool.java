@@ -298,7 +298,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String)sql.get(RECORD_RELATIONS_BY_TYPE));
         List params = new ArrayList();
         params.add(new Integer(type));
-        appendQualifiers(sb,qualifiers,params, null);
+        appendQualifiers(sb,qualifiers,params, null, null);
         return loadRelations(sb.toString(),params);
     }
 
@@ -313,7 +313,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(RECORD_PARENT_RELATIONS_BY_TYPE));
         List params = new ArrayList();
         params.add(new Integer(type));
-        appendQualifiers(sb,qualifiers,params, null);
+        appendQualifiers(sb,qualifiers,params, null, null);
         return loadRelations(sb.toString(),params);
     }
 
@@ -331,7 +331,7 @@ public final class SQLTool implements Configurable {
         List params = new ArrayList();
         params.add(new Integer(type));
         params.add(new Integer(user));
-        appendQualifiers(sb,qualifiers,params, null);
+        appendQualifiers(sb,qualifiers,params, null, null);
         return loadRelations(sb.toString(),params);
     }
 
@@ -384,7 +384,9 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(ITEM_RELATIONS_BY_TYPE));
         List params = new ArrayList();
         params.add(new Integer(type));
-        appendQualifiers(sb, qualifiers, params, "P");
+        Map fieldMapping = new HashMap();
+        fieldMapping.put(Field.UPPER, "R");
+        appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
         return loadRelations(sb.toString(), params);
     }
 
@@ -399,7 +401,9 @@ public final class SQLTool implements Configurable {
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(new Integer(type));
-        appendQualifiers(sb, qualifiers, params, "P");
+        Map fieldMapping = new HashMap();
+        fieldMapping.put(Field.UPPER, "R");
+        appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
         return loadNumber(sb.toString(), params).intValue();
     }
 
@@ -417,7 +421,7 @@ public final class SQLTool implements Configurable {
         List params = new ArrayList();
         params.add(new Integer(type));
         appendFilterConditions(filters, sb, params);
-        appendQualifiers(sb, qualifiers, params, null);
+        appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
     }
 
@@ -436,7 +440,7 @@ public final class SQLTool implements Configurable {
         List params = new ArrayList();
         params.add(new Integer(type));
         appendFilterConditions(filters, sb, params);
-        appendQualifiers(sb, qualifiers, params, null);
+        appendQualifiers(sb, qualifiers, params, null, null);
         return loadNumber(sb.toString(), params).intValue();
     }
 
@@ -477,7 +481,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(CATEGORY_RELATIONS_BY_TYPE));
         List params = new ArrayList();
         params.add(new Integer(type));
-        appendQualifiers(sb, qualifiers, params, null);
+        appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
     }
 
@@ -492,7 +496,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(SECTION_RELATIONS_BY_TYPE));
         List params = new ArrayList();
         params.add(new Integer(type));
-        appendQualifiers(sb, qualifiers, params, null);
+        appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
     }
 
@@ -518,7 +522,7 @@ public final class SQLTool implements Configurable {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(DISCUSSION_RELATIONS));
         List params = new ArrayList();
-        appendQualifiers(sb, qualifiers, params, null);
+        appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
     }
 
@@ -544,7 +548,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(DISCUSSION_RELATIONS_IN_SECTION));
         List params = new ArrayList();
         params.add(new Integer(parent));
-        appendQualifiers(sb, qualifiers, params, null);
+        appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
     }
 
@@ -571,7 +575,9 @@ public final class SQLTool implements Configurable {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(ARTICLES_ON_INDEX_RELATIONS));
         List params = new ArrayList();
-        appendQualifiers(sb, qualifiers, params, "P");
+        Map fieldMapping = new HashMap();
+        fieldMapping.put(Field.UPPER, "R");
+        appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
         return loadRelations(sb.toString(), params);
     }
 
@@ -591,7 +597,9 @@ public final class SQLTool implements Configurable {
             params.add(new Integer(section));
             sb.append(" and K.cislo=?");
         }
-        appendQualifiers(sb, qualifiers, params, "P");
+        Map fieldMapping = new HashMap();
+        fieldMapping.put(Field.UPPER, "R");
+        appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
         return loadRelations(sb.toString(), params);
     }
 
@@ -624,7 +632,9 @@ public final class SQLTool implements Configurable {
         List params = new ArrayList();
         params.add(new java.sql.Date(from.getTime()));
         params.add(new java.sql.Date(until.getTime()));
-        appendQualifiers(sb, qualifiers, params, "P");
+        Map fieldMapping = new HashMap();
+        fieldMapping.put(Field.UPPER, "R");
+        appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
         return loadRelations(sb.toString(), params);
     }
 
@@ -652,7 +662,7 @@ public final class SQLTool implements Configurable {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(NEWS_RELATIONS));
         List params = new ArrayList();
-        appendQualifiers(sb, qualifiers, params, null);
+        appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
     }
 
@@ -680,7 +690,7 @@ public final class SQLTool implements Configurable {
         List params = new ArrayList();
         params.add(new java.sql.Date(from.getTime()));
         params.add(new java.sql.Date(until.getTime()));
-        appendQualifiers(sb, qualifiers, params, null);
+        appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
     }
 
@@ -709,7 +719,7 @@ public final class SQLTool implements Configurable {
         List params = new ArrayList();
         params.add(new Integer(userId));
         params.add(new Integer(type));
-        appendQualifiers(sb, qualifiers, params, null);
+        appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
     }
 
@@ -738,7 +748,9 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(ARTICLE_RELATIONS_BY_USER));
         List params = new ArrayList();
         params.add(new Integer(userId));
-        appendQualifiers(sb, qualifiers, params, "P");
+        Map fieldMapping = new HashMap();
+        fieldMapping.put(Field.UPPER, "R");
+        appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
         return loadRelations(sb.toString(), params);
     }
 
@@ -765,7 +777,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(NEWS_RELATIONS_BY_USER));
         List params = new ArrayList();
         params.add(new Integer(userId));
-        appendQualifiers(sb, qualifiers, params, null);
+        appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
     }
 
@@ -794,7 +806,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(QUESTION_RELATIONS_BY_USER));
         List params = new ArrayList();
         params.add(new Integer(userId));
-        appendQualifiers(sb, qualifiers, params, null);
+        appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
     }
 
@@ -822,7 +834,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(COMMENT_RELATIONS_BY_USER));
         List params = new ArrayList();
         params.add(new Integer(userId));
-        appendQualifiers(sb, qualifiers, params, null);
+        appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
     }
 
@@ -878,7 +890,7 @@ public final class SQLTool implements Configurable {
         if (qualifiers == null) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(STANDALONE_POLL_RELATIONS));
         List params = new ArrayList();
-        appendQualifiers(sb, qualifiers, params, null);
+        appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
     }
 
@@ -903,7 +915,7 @@ public final class SQLTool implements Configurable {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(USERS_WITH_WEEKLY_EMAIL));
         List params = new ArrayList();
-        appendQualifiers(sb, qualifiers, params, null);
+        appendQualifiers(sb, qualifiers, params, null, null);
         return loadUsers(sb.toString(), params);
     }
 
@@ -916,7 +928,7 @@ public final class SQLTool implements Configurable {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(USERS_WITH_FORUM_BY_EMAIL));
         List params = new ArrayList();
-        appendQualifiers(sb, qualifiers, params, null);
+        appendQualifiers(sb, qualifiers, params, null, null);
         return loadUsers(sb.toString(), params);
     }
 
@@ -929,7 +941,7 @@ public final class SQLTool implements Configurable {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(USERS_WITH_ROLES));
         List params = new ArrayList();
-        appendQualifiers(sb, qualifiers, params, null);
+        appendQualifiers(sb, qualifiers, params, null, null);
         return loadUsers(sb.toString(), params);
     }
 
@@ -944,7 +956,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(USERS_IN_GROUP));
         List params = new ArrayList();
         params.add(new Integer(group));
-        appendQualifiers(sb, qualifiers, params, null);
+        appendQualifiers(sb, qualifiers, params, null, null);
         return loadUsers(sb.toString(), params);
     }
 
@@ -1436,7 +1448,7 @@ public final class SQLTool implements Configurable {
         if (qualifiers == null) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(GET_STATISTICS));
         List params = new ArrayList();
-        appendQualifiers(sb, qualifiers, params, null);
+        appendQualifiers(sb, qualifiers, params, null, null);
         return loadObjects(sb.toString(), params);
     }
 
@@ -1609,33 +1621,39 @@ public final class SQLTool implements Configurable {
     }
 
     /**
-     * Appends qualifiers to StringBufefr holding SQL command.
-     * @param tableNick nick of table to distinguish columns. Default is null.
+     * Appends qualifiers to StringBufefr holding SQL command. DefaultTableNick is added
+     * before every column in custom conditions (in WHERE or ORDER BY clauses).
+     * if defaultTableNick cannot distinguish between two tables, fieldMapping can
+     * be used to assign exact tableNick to specific Field from qualifiers.
+     * @param defaultTableNick nick of table to distinguish columns. Default is null.
+     * @param fieldMapping key is PersistenceMapping.Table, value is tableNick to be used.
      */
-    private void appendQualifiers(StringBuffer sb, Qualifier[] qualifiers, List params, String tableNick) {
+    private void appendQualifiers(StringBuffer sb, Qualifier[] qualifiers, List params, String defaultTableNick, Map fieldMapping) {
         if (qualifiers == null || qualifiers.length == 0)
             return;
+        if (fieldMapping == null)
+            fieldMapping = Collections.EMPTY_MAP;
         Qualifier qualifier;
         for (int i = 0; i < qualifiers.length; i++) {
             qualifier = qualifiers[i];
             if (qualifier.equals(Qualifier.SORT_BY_CREATED)) {
                 sb.append(" order by ");
-                if (tableNick != null) {
-                    sb.append(tableNick);
+                if (defaultTableNick != null) {
+                    sb.append(defaultTableNick);
                     sb.append(".");
                 }
                 sb.append("vytvoreno");
             } else if (qualifier.equals(Qualifier.SORT_BY_UPDATED)) {
                 sb.append(" order by ");
-                if (tableNick != null) {
-                    sb.append(tableNick);
+                if (defaultTableNick != null) {
+                    sb.append(defaultTableNick);
                     sb.append(".");
                 }
                 sb.append("zmeneno");
             } else if (qualifier.equals(Qualifier.SORT_BY_ID)) {
                 sb.append(" order by ");
-                if (tableNick != null) {
-                    sb.append(tableNick);
+                if (defaultTableNick != null) {
+                    sb.append(defaultTableNick);
                     sb.append(".");
                 }
                 sb.append("cislo");
@@ -1649,7 +1667,7 @@ public final class SQLTool implements Configurable {
                 params.add(new Integer(limitQualifier.getOffset()));
                 params.add(new Integer(limitQualifier.getCount()));
             } else if (qualifier instanceof CompareCondition)
-                appendCompareCondition(sb, (CompareCondition) qualifier, params, tableNick);
+                appendCompareCondition(sb, (CompareCondition) qualifier, params, defaultTableNick, fieldMapping);
         }
     }
 
@@ -1666,17 +1684,21 @@ public final class SQLTool implements Configurable {
     /**
      * Append comparation condition to stringbuffer.
      */
-    private void appendCompareCondition(StringBuffer sb, CompareCondition condition, List params, String tableNick) {
+    private void appendCompareCondition(StringBuffer sb, CompareCondition condition, List params,
+                                        String defaultTableNick, Map fieldMapping) {
         int where = sb.indexOf("where ") + "where ".length();
         if (where < sb.length())
             sb.append(" and "); // probably there was at least one condition after where
 
+        Field field = condition.getField();
+        String tableNick = defaultTableNick;
+        if (fieldMapping.containsKey(field))
+            tableNick = (String) fieldMapping.get(field);
         if (tableNick != null) {
             sb.append(tableNick);
             sb.append(".");
         }
 
-        Field field = condition.getField();
         if (field==Field.CREATED)
             sb.append("vytvoreno");
         else if (field==Field.UPDATED)
