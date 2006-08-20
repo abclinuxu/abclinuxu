@@ -32,6 +32,9 @@ import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -49,6 +52,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Iterator;
+import java.util.prefs.Preferences;
 import java.net.URL;
 import java.net.MalformedURLException;
 
@@ -56,8 +60,14 @@ import java.net.MalformedURLException;
  * This class is responsible for adding and
  * editing of software items and records.
  */
-public class EditSoftware implements AbcAction {
+public class EditSoftware implements AbcAction, Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditSoftware.class);
+
+    public static final String PREF_MAX_INTRO_LENGTH = "max.intro.length";
+    static {
+        ConfigurationManager.getConfigurator().configureAndRememberMe(new EditSoftware());
+    }
+    static int maxIntroLength;
 
     public static final String PARAM_RELATION = "rid";
     public static final String PARAM_NAME = "name";
@@ -294,10 +304,21 @@ public class EditSoftware implements AbcAction {
                 ServletUtils.addError(PARAM_DESCRIPTION, e.getMessage(), env, null);
                 return false;
             }
+
             Element element = DocumentHelper.makeElement(root, "description");
             element.setText(tmp);
             Format format = FormatDetector.detect(tmp);
             element.addAttribute("format", Integer.toString(format.getId()));
+
+            String noHtml = Tools.removeTags(tmp);
+            int position = noHtml.indexOf(". ");
+            if (position == -1)
+                position = noHtml.indexOf(".");
+            if (position == -1)
+                position = noHtml.length() - 1;
+            String intro = noHtml.substring(0, position + 1);
+            intro = Tools.limit(intro, maxIntroLength, "..");
+            DocumentHelper.makeElement(root, "intro").setText(intro);
         } else {
             ServletUtils.addError(PARAM_DESCRIPTION, "Zadejte popis programu!", env, null);
             return false;
@@ -448,5 +469,9 @@ public class EditSoftware implements AbcAction {
                 element.detach();
         }
         return true;
+    }
+
+    public void configure(Preferences prefs) throws ConfigurationException {
+        maxIntroLength = prefs.getInt(PREF_MAX_INTRO_LENGTH, 100);
     }
 }

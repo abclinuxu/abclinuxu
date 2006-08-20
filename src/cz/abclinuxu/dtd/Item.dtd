@@ -17,11 +17,11 @@
 <!ATTLIST note format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 
 <!-- Item.SOFTWARE -->
-<!ELEMENT data (name, description, version, url+)>
+<!ELEMENT data (name, description, intro, url+)>
 <!ELEMENT name (#PCDATA)> <!-- maximum length is few words -->
 <!ELEMENT description (#PCDATA)> <!-- long description -->
 <!ATTLIST description format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
-<!ELEMENT version (#PCDATA)> <!-- string holding name/id of last version -->
+<!ELEMENT intro (#PCDATA)> <!-- string describing this software displayed at software listing, typically first sentence from description -->
 <!ELEMENT url (#PCDATA)> <!-- an url related to the software -->
 <!ATTLIST url useType (#NMTOKEN)> <!-- type of given url (homepage, download, rss) -->
 

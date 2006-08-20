@@ -519,6 +519,11 @@
                                     <entry key="categories" value="Návrh na anketu,Hlá¹ení chyby,Námìt na vylep¹ení,Problém s úètem"/>
                                 </map>
                             </node>
+                            <node name="EditSoftware">
+                                <map>
+                                    <entry key="max.intro.length" value="200"/>
+                                </map>
+                            </node>
                         </node>
                         <node name="view">
                             <map/>

@@ -28,7 +28,6 @@ import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.extra.CompareCondition;
 import cz.abclinuxu.persistence.extra.Field;
-import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.persistence.extra.Operation;
 import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.persistence.versioning.VersionedDocument;
@@ -40,7 +39,6 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.ReadRecorder;
-import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.security.Roles;
 import org.dom4j.Element;
@@ -177,31 +175,27 @@ public class ViewSoftware implements AbcAction {
      */
     private String processSection(HttpServletRequest request, Relation relation, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistance();
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
-
-        int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
-        int count = getPageSize(params);
 
         List qualifiers = new ArrayList();
         qualifiers.add(new CompareCondition(Field.UPPER, Operation.EQUAL, new Integer(relation.getId())));
         Qualifier[] qa = new Qualifier[qualifiers.size()];
 
-        // todo tohle jde prece porovnat bez SQL
+        // todo tohle jde prece porovnat bez SQL, leda by tam tech polozek bylo priserne moc
+        // to se neda vyloucit, pak je lepsi zakazat cteni potomku v Nursery
+        // do budoucna stejne chci zobrazovat cely strom, to budu muset cachovat nejak
         List categories = sqlTool.findCategoriesRelationsWithType(Category.SOFTWARE_SECTION, (Qualifier[]) qualifiers.toArray(qa));
         if (categories.size() > 0)
             env.put(VAR_CATEGORIES, Tools.syncList(categories));
 
-        // todo proc sortovat podle datumu vytvoreni?
-        qualifiers.add(Qualifier.SORT_BY_CREATED);
-        qualifiers.add(Qualifier.ORDER_DESCENDING);
-        qualifiers.add(new LimitQualifier(from, count));
-        qa = new Qualifier[qualifiers.size()];
+//        qualifiers.add(new LimitQualifier(from, count));
 
         Map filters = (Map) env.get(VAR_FILTERS);
         List items = sqlTool.findItemRelationsWithTypeWithFilters(Item.SOFTWARE, (Qualifier[]) qualifiers.toArray(qa), filters);
         if (items.size() > 0)
             env.put(VAR_ITEMS, Tools.syncList(items));
+
+        // todo nacist najednou pocty precteni / kliku, prozatim se to cte individualne, nutne pred releasem!
 
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
@@ -242,17 +236,8 @@ public class ViewSoftware implements AbcAction {
     private String processItem(HttpServletRequest request, Relation relation, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Item item = null;
-        Relation upper = null;
-
-        // todo ma tohle smysl? neni to jen slepe zkopirovano z ShowObject, kde byl vztah Item - Record?
-        if (relation.getChild() instanceof Item) {
-            item = (Item) relation.getChild();
-            upper = relation;
-        } else if (relation.getParent() instanceof Item) {
-            item = (Item) relation.getParent();
-            upper = new Relation(relation.getUpper());
-        }
+        Item item = (Item) relation.getChild();
+        Relation upper = relation;
 
         Tools.sync(item);
         env.put(VAR_ITEM, item);
@@ -284,21 +269,5 @@ public class ViewSoftware implements AbcAction {
         }
 
         return FMTemplateSelector.select("ViewSoftware", "software", env, request);
-    }
-
-    /**
-     * Gets page size for found questions. Parameters take precendence over user settings.
-     *
-     * @return page size for found documents.
-     */
-    private int getPageSize(Map params) {
-        int count = -1;
-        String str = (String) params.get(PARAM_COUNT);
-        if (str != null && str.length() > 0)
-            count = Misc.parseInt(str, -1);
-        if (count == -1)
-            return AbcConfig.getFaqSectionCount();
-        else
-            return Misc.limit(count, 5, 50);
     }
 }
