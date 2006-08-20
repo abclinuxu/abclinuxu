@@ -22,8 +22,8 @@ import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.exceptions.MissingArgumentException;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -130,7 +130,7 @@ public class EditSoftware implements AbcAction {
 
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation upper = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -158,7 +158,7 @@ public class EditSoftware implements AbcAction {
             return FMTemplateSelector.select("EditSoftware", "add", env, request);
         }
 
-        persistance.create(item);
+        persistence.create(item);
         Relation relation = new Relation(upper.getChild(), item, upper.getId());
 
         String name = root.elementTextTrim("name");
@@ -167,11 +167,11 @@ public class EditSoftware implements AbcAction {
         if (url != null)
             relation.setUrl(url);
 
-        persistance.create(relation);
+        persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
         setRssUrl(params, item, relation.getId());
-        persistance.update(item);
+        persistence.update(item);
 
         // commit new version
         Misc.commitRelation(document.getRootElement(), relation, user);
@@ -215,7 +215,7 @@ public class EditSoftware implements AbcAction {
 
     protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
         env.put(VAR_EDIT_MODE, Boolean.TRUE);
@@ -243,7 +243,7 @@ public class EditSoftware implements AbcAction {
         }
 
         setRssUrl(params, item, relation.getId());
-        persistance.update(item);
+        persistence.update(item);
 
         // commit new version
         Misc.commitRelation(root, relation, user);
@@ -256,7 +256,7 @@ public class EditSoftware implements AbcAction {
     /* ******** setters ********* */
 
     /**
-     * Updates name from parameters. Changes are not synchronized with persistance.
+     * Updates name from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root   root element of item to be updated
      * @param env    environment
@@ -275,7 +275,7 @@ public class EditSoftware implements AbcAction {
     }
 
     /**
-     * Updates description from parameters. Changes are not synchronized with persistance.
+     * Updates description from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root root element to be updated
      * @return false, if there is a major error.
@@ -306,7 +306,7 @@ public class EditSoftware implements AbcAction {
     }
 
     /**
-     * Updates user interface from parameters. Changes are not synchronized with persistance.
+     * Updates user interface from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item item to be updated
      * @return false, if there is a major error.
@@ -320,7 +320,7 @@ public class EditSoftware implements AbcAction {
     }
 
     /**
-     * Updates applications, which are replaced by this software, from parameters. Changes are not synchronized with persistance.
+     * Updates applications, which are replaced by this software, from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item item to be updated
      * @return false, if there is a major error.
@@ -343,7 +343,7 @@ public class EditSoftware implements AbcAction {
     }
 
     /**
-     * Updates license(s) from parameters. Changes are not synchronized with persistance.
+     * Updates license(s) from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item item to be updated
      * @return false, if there is a major error.
@@ -386,8 +386,8 @@ public class EditSoftware implements AbcAction {
      * @param relationId id of relation for this item
      */
     private void setRssUrl(Map params, Item item, int relationId) {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        Item dynamicConfig = (Item) persistance.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
+        Persistence persistence = PersistenceFactory.getPersistance();
+        Item dynamicConfig = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
         dynamicConfig = (Item) dynamicConfig.clone();
         Element configRoot = dynamicConfig.getData().getRootElement();
         Element configRss = (Element) configRoot.selectSingleNode("/data/feeds/feed[@relation='" + relationId + "']");
@@ -416,11 +416,11 @@ public class EditSoftware implements AbcAction {
                 rssElement.detach();
         }
 
-        persistance.update(dynamicConfig);
+        persistence.update(dynamicConfig);
     }
 
     /**
-     * Updates url associated to software from parameters. Changes are not synchronized with persistance.
+     * Updates url associated to software from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param paramName type of the url
      * @param root root element to be updated

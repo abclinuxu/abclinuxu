@@ -200,7 +200,7 @@
                         </map>
                     </node>
                 </node>
-                <node name="persistance">
+                <node name="persistence">
                     <map/>
                     <node name="cache">
                         <map/>
@@ -219,7 +219,7 @@
                         <map/>
                         <node name="VersioningFactory">
                             <map>
-                                <entry key="impl.class" value="cz.abclinuxu.persistance.versioning.MysqlVersioningProvider"/>
+                                <entry key="impl.class" value="cz.abclinuxu.persistence.versioning.MysqlVersioningProvider"/>
                             </map>
                         </node>
                         <node name="MysqlVersioningProvider">
@@ -243,14 +243,14 @@
                             </map>
                         </node>
                     </node>
-                    <node name="PersistanceFactory">
+                    <node name="PersistenceFactory">
                         <map>
                             <entry key="url.live" value="proxool.abc"/>
                             <entry key="url.direct" value="jdbc:mysql://@DB_HOST@/@DB_SCHEMA@?user=@DB_USER@&amp;password=@DB_PASSWORD@&amp;useUnicode=true"/>
                             <entry key="url.test" value="jdbc:mysql://@DB_HOST@/unit?user=@DB_USER@&amp;password=@DB_PASSWORD@&amp;useUnicode=true&amp;characterEncoding=ISO-8859-2"/>
                             <entry key="url.devel" value="jdbc:mysql://@DB_HOST@/devel?user=@DB_USER@&amp;password=@DB_PASSWORD@&amp;useUnicode=true"/>
                             <entry key="proxool" value="WEB-INF/conf/proxool.xml"/>
-                            <entry key="cache.class" value="cz.abclinuxu.persistance.cache.SynchronizedCache" />
+                            <entry key="cache.class" value="cz.abclinuxu.persistence.cache.SynchronizedCache" />
                         </map>
                     </node>
                     <node name="Nursery">
@@ -310,7 +310,7 @@
                             <entry key="get.statistika.by.month" value="select typ,sum(pocet),date_format(den,&quot;%Y-%m&quot;) from statistika group by typ,3 order by 3 asc"/>
                             <entry key="insert.stara_adresa" value="insert into stara_adresa values(?,?,?)" />
                             <entry key="select.stara.adresa" value="select rid,nova from stara_adresa where puvodni=?" />
-                            <entry key="get.property.values" value="select distinct hodnota from vlastnost where typ=?" /> 
+                            <entry key="get.property.values" value="select distinct hodnota from vlastnost where typ=?" />
                         </map>
                     </node>
                 </node>

@@ -19,8 +19,8 @@
 package cz.abclinuxu.servlets.html.view;
 
 import cz.abclinuxu.data.GenericObject;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.PersistenceMapping;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.PersistenceMapping;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.Misc;
 
@@ -50,6 +50,6 @@ public class Redirect extends HttpServlet {
             return;
 
         GenericObject obj = PersistenceMapping.createGenericObject(paramClass.charAt(0), id);
-        PersistanceFactory.getPersistance().incrementCounter(obj, Constants.COUNTER_VISIT);
+        PersistenceFactory.getPersistance().incrementCounter(obj, Constants.COUNTER_VISIT);
     }
 }

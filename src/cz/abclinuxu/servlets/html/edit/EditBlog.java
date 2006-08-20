@@ -38,13 +38,13 @@ import cz.abclinuxu.utils.parser.safehtml.BlogHTMLGuard;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.format.Format;
-import cz.abclinuxu.persistance.extra.CompareCondition;
-import cz.abclinuxu.persistance.extra.Field;
-import cz.abclinuxu.persistance.extra.Operation;
-import cz.abclinuxu.persistance.extra.Qualifier;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.extra.CompareCondition;
+import cz.abclinuxu.persistence.extra.Field;
+import cz.abclinuxu.persistence.extra.Operation;
+import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
@@ -143,7 +143,7 @@ public class EditBlog implements AbcAction, Configurable {
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         String action = (String) params.get(PARAM_ACTION);
 
         if ( ACTION_ADD_BLOG.equals(action) )
@@ -156,7 +156,7 @@ public class EditBlog implements AbcAction, Configurable {
         if ( relation==null )
             throw new MissingArgumentException("Chybí parametr relId!");
 
-        relation = (Relation) persistance.findById(relation);
+        relation = (Relation) persistence.findById(relation);
         Tools.sync(relation);
 
         Category blog = null;
@@ -168,12 +168,12 @@ public class EditBlog implements AbcAction, Configurable {
             Tools.sync(blog);
             blogRelation = relation;
             env.put(VAR_STORY, blogRelation);
-            relation = (Relation) persistance.findById(new Relation(blogRelation.getUpper()));
+            relation = (Relation) persistence.findById(new Relation(blogRelation.getUpper()));
         }
         env.put(VAR_BLOG, blog);
         env.put(VAR_BLOG_RELATION, relation);
 
-        List parents = persistance.findParents(relation);
+        List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
         // check permissions
@@ -268,7 +268,7 @@ public class EditBlog implements AbcAction, Configurable {
     protected String actionAddBlog(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         Element settings = (Element) user.getData().selectSingleNode("/data/settings");
         if ( settings.element("blog")!=null ) {
@@ -293,15 +293,15 @@ public class EditBlog implements AbcAction, Configurable {
         DocumentHelper.makeElement(root, "/custom/page_title").setText(blog.getSubType());
         DocumentHelper.makeElement(root, "/custom/title").setText(blog.getSubType());
         blog.setData(document);
-        persistance.create(blog);
+        persistence.create(blog);
 
         Relation relation = new Relation(new Category(Constants.CAT_BLOGS), blog, Constants.REL_BLOGS);
-        persistance.create(relation);
+        persistence.create(relation);
 
         Element element = DocumentHelper.makeElement(settings,"blog");
         element.setText(Integer.toString(blog.getId()));
         element.addAttribute("name", blog.getSubType());
-        persistance.update(user);
+        persistence.update(user);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/blog/"+blog.getSubType()+"/");
@@ -322,7 +322,7 @@ public class EditBlog implements AbcAction, Configurable {
     public String actionAddStoryStep2(HttpServletRequest request, HttpServletResponse response, Relation blogRelation, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         Category blog = (Category) blogRelation.getChild();
         Item story = new Item();
@@ -349,25 +349,25 @@ public class EditBlog implements AbcAction, Configurable {
         if (delayed)
             story.setType(Item.UNPUBLISHED_BLOG);
 
-        persistance.create(story);
+        persistence.create(story);
         Relation relation = new Relation(blog, story, blogRelation.getId());
-        persistance.create(relation);
+        persistence.create(relation);
 
         String watchDiscussion = (String) params.get(PARAM_WATCH_DISCUSSION);
         if ("yes".equals(watchDiscussion)) {
-            Relation dizRelation = EditDiscussion.createEmptyDiscussion(relation, user, persistance);
-            EditDiscussion.alterDiscussionMonitor((Item) dizRelation.getChild(), user, persistance);
+            Relation dizRelation = EditDiscussion.createEmptyDiscussion(relation, user, persistence);
+            EditDiscussion.alterDiscussionMonitor((Item) dizRelation.getChild(), user, persistence);
         }
 
         if (!delayed) {
             incrementArchiveRecord(blog.getData().getRootElement(), new Date());
-            persistance.update(blog);
+            persistence.update(blog);
             FeedGenerator.updateBlog(blog);
             VariableFetcher.getInstance().refreshStories();
         } else {
             Element unpublished = DocumentHelper.makeElement(blog.getData(), "/data/unpublished");
             unpublished.addElement("rid").setText(Integer.toString(relation.getId()));
-            persistance.update(blog);
+            persistence.update(blog);
         }
 
         if (redirect) {
@@ -411,7 +411,7 @@ public class EditBlog implements AbcAction, Configurable {
      */
     protected String actionEditStoryStep2(HttpServletRequest request, HttpServletResponse response, Category blog, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         storeCategories(blog, env);
 
         Relation relation = (Relation) env.get(VAR_STORY);
@@ -438,14 +438,14 @@ public class EditBlog implements AbcAction, Configurable {
             story.setCreated(new Date());
             published = true;
         }
-        persistance.update(story);
+        persistence.update(story);
 
         if (published) {
             incrementArchiveRecord(blog.getData().getRootElement(), new Date());
             Element unpublishedStory = (Element) blog.getData().selectSingleNode("/data/unpublished/rid[text()=\""+relation.getId()+"\"]");
             if (unpublishedStory!=null)
                 unpublishedStory.detach();
-            persistance.update(blog);
+            persistence.update(blog);
         }
 
         FeedGenerator.updateBlog(blog);
@@ -462,7 +462,7 @@ public class EditBlog implements AbcAction, Configurable {
      */
     private String actionToggleStoryDigest(HttpServletResponse response, Category blog, Map env) throws Exception {
         User user = (User) env.get(Constants.VAR_USER);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_STORY);
         Item story = (Item) relation.getChild();
 
@@ -476,7 +476,7 @@ public class EditBlog implements AbcAction, Configurable {
         }
 
         Date originalUpdated = story.getUpdated();
-        persistance.update(story);
+        persistence.update(story);
         SQLTool.getInstance().setUpdatedTimestamp(story, originalUpdated);
 
         FeedGenerator.updateBlogDigest();
@@ -509,9 +509,9 @@ public class EditBlog implements AbcAction, Configurable {
         Element element = (Element) user.getData().selectSingleNode("//settings/blog");
         element.addAttribute("name", blog.getSubType());
 
-        Persistance persistance = PersistanceFactory.getPersistance();
-        persistance.update(blog);
-        persistance.update(user);
+        Persistence persistence = PersistenceFactory.getPersistance();
+        persistence.update(blog);
+        persistence.update(user);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/blog/"+blog.getSubType()+"/");
@@ -545,15 +545,15 @@ public class EditBlog implements AbcAction, Configurable {
             return null;
         }
 
-        Persistance persistance = PersistanceFactory.getPersistance();
-        persistance.remove(story);
+        Persistence persistence = PersistenceFactory.getPersistance();
+        persistence.remove(story);
 
         Document document = blog.getData();
         decrementArchiveRecord(document.getRootElement(), ((Item)story.getChild()).getCreated());
         Element unpublishedStory = (Element) document.selectSingleNode("/data/unpublished/rid[text()=\"" + story.getId() + "\"]");
         if (unpublishedStory != null)
             unpublishedStory.detach();
-        persistance.update(blog);
+        persistence.update(blog);
 
         FeedGenerator.updateBlog(blog);
         VariableFetcher.getInstance().refreshStories();
@@ -588,7 +588,7 @@ public class EditBlog implements AbcAction, Configurable {
      */
     protected String actionEditCustomStep2(HttpServletRequest request, HttpServletResponse response, Category blog, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         Element root = blog.getData().getRootElement();
 
@@ -600,7 +600,7 @@ public class EditBlog implements AbcAction, Configurable {
         if ( !canContinue )
             return actionEditCustomStep1(request, blog, env);
 
-        persistance.update(blog);
+        persistence.update(blog);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/blog/"+blog.getSubType()+"/");
@@ -651,14 +651,14 @@ public class EditBlog implements AbcAction, Configurable {
     protected String actionAddCategoryStep2(HttpServletRequest request, HttpServletResponse response, Category blog, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_BLOG_RELATION);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         Element root = blog.getData().getRootElement();
         boolean canContinue = addCategory(params, root, env);
         if (!canContinue)
             return actionAddCategory(request, blog, env);
 
-        persistance.update(blog);
+        persistence.update(blog);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/blog/edit/"+relation.getId()+"?action=categories");
@@ -700,14 +700,14 @@ public class EditBlog implements AbcAction, Configurable {
     protected String actionEditCategoryStep2(HttpServletRequest request, HttpServletResponse response, Category blog, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_BLOG_RELATION);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         Element root = blog.getData().getRootElement();
         boolean canContinue = setCategory(params, root, env);
         if (!canContinue)
             return actionEditCategory(request, response, blog, env);
 
-        persistance.update(blog);
+        persistence.update(blog);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/blog/edit/" + relation.getId() + "?action=categories");
@@ -728,14 +728,14 @@ public class EditBlog implements AbcAction, Configurable {
     protected String actionAddLink(HttpServletRequest request, HttpServletResponse response, Category blog, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_BLOG_RELATION);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         Element root = blog.getData().getRootElement();
         boolean canContinue = addRecommendedLink(params, root, env);
         if (!canContinue)
             return actionShowLinks(request, blog, env);
 
-        persistance.update(blog);
+        persistence.update(blog);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/blog/edit/" + relation.getId() + "?action=links");
@@ -764,14 +764,14 @@ public class EditBlog implements AbcAction, Configurable {
     protected String actionEditLinkStep2(HttpServletRequest request, HttpServletResponse response, Category blog, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_BLOG_RELATION);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         Element root = blog.getData().getRootElement();
         boolean canContinue = setRecommendedLink(params, root, env);
         if (!canContinue)
             return actionEditLink(request, blog, env);
 
-        persistance.update(blog);
+        persistence.update(blog);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/blog/edit/" + relation.getId() + "?action=links");
@@ -800,14 +800,14 @@ public class EditBlog implements AbcAction, Configurable {
     protected String actionRemoveLinkStep2(HttpServletRequest request, HttpServletResponse response, Category blog, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_BLOG_RELATION);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         Element root = blog.getData().getRootElement();
         boolean canContinue = removeRecommendedLink(params, root, env);
         if (!canContinue)
             return actionRemoveLink(request, blog, env);
 
-        persistance.update(blog);
+        persistence.update(blog);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/blog/edit/" + relation.getId() + "?action=links");
@@ -820,7 +820,7 @@ public class EditBlog implements AbcAction, Configurable {
     protected String actionMoveLink(HttpServletRequest request, HttpServletResponse response, Category blog, boolean up, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_BLOG_RELATION);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         Element root = blog.getData().getRootElement();
         int position = Misc.parseInt((String) params.get(PARAM_POSITION), -1);
@@ -848,7 +848,7 @@ public class EditBlog implements AbcAction, Configurable {
             }
         }
 
-        persistance.update(blog);
+        persistence.update(blog);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/blog/edit/" + relation.getId() + "?action=links");
@@ -858,7 +858,7 @@ public class EditBlog implements AbcAction, Configurable {
     // setters
 
     /**
-     * Sets blog name. Changes are not synchronized with persistance.
+     * Sets blog name. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param category category to be updated
      * @return false, if there is a major error.
@@ -894,7 +894,7 @@ public class EditBlog implements AbcAction, Configurable {
 
     /**
      * Sets first categories. Overwrites existing categories, if they exist.
-     * Changes are not synchronized with persistance.
+     * Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root XML document
      * @return false, if there is a major error.
@@ -931,7 +931,7 @@ public class EditBlog implements AbcAction, Configurable {
     }
 
     /**
-     * Inserts new category to the list of categories. Changes are not synchronized with persistance.
+     * Inserts new category to the list of categories. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root XML document
      * @return false, if there is a major error.
@@ -963,7 +963,7 @@ public class EditBlog implements AbcAction, Configurable {
     }
 
     /**
-     * Sets new name for existing category. Changes are not synchronized with persistance.
+     * Sets new name for existing category. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root XML document
      * @return false, if there is a major error.
@@ -993,7 +993,7 @@ public class EditBlog implements AbcAction, Configurable {
     }
 
     /**
-     * Sets page title for blog. Changes are not synchronized with persistance.
+     * Sets page title for blog. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root XML document
      * @return false, if there is a major error.
@@ -1020,7 +1020,7 @@ public class EditBlog implements AbcAction, Configurable {
     }
 
     /**
-     * Sets title for blog. Changes are not synchronized with persistance.
+     * Sets title for blog. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root XML document
      * @return false, if there is a major error.
@@ -1047,7 +1047,7 @@ public class EditBlog implements AbcAction, Configurable {
     }
 
     /**
-     * Sets intro for blog. Changes are not synchronized with persistance.
+     * Sets intro for blog. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root XML document
      * @return false, if there is a major error.
@@ -1069,7 +1069,7 @@ public class EditBlog implements AbcAction, Configurable {
     }
 
     /**
-     * Adds another recommended link to blog. Changes are not synchronized with persistance.
+     * Adds another recommended link to blog. Changes are not synchronized with persistence.
      *
      * @param params map holding request's parameters
      * @param root   XML document
@@ -1101,7 +1101,7 @@ public class EditBlog implements AbcAction, Configurable {
     }
 
     /**
-     * Changes properties of existing recommended link. Changes are not synchronized with persistance.
+     * Changes properties of existing recommended link. Changes are not synchronized with persistence.
      *
      * @param params map holding request's parameters
      * @param root   XML document
@@ -1131,7 +1131,7 @@ public class EditBlog implements AbcAction, Configurable {
     }
 
     /**
-     * Removes existing recommended link from blog. Changes are not synchronized with persistance.
+     * Removes existing recommended link from blog. Changes are not synchronized with persistence.
      *
      * @param params map holding request's parameters
      * @param root   XML document
@@ -1171,7 +1171,7 @@ public class EditBlog implements AbcAction, Configurable {
     }
 
     /**
-     * Sets page size for blog archive. Changes are not synchronized with persistance.
+     * Sets page size for blog archive. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root XML document
      * @return false, if there is a major error.
@@ -1199,7 +1199,7 @@ public class EditBlog implements AbcAction, Configurable {
     }
 
     /**
-     * Sets title for story. Changes are not synchronized with persistance.
+     * Sets title for story. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root XML document
      * @return false, if there is a major error.
@@ -1230,7 +1230,7 @@ public class EditBlog implements AbcAction, Configurable {
     }
 
     /**
-     * Sets content for story. Changes are not synchronized with persistance.
+     * Sets content for story. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root XML document
      * @return false, if there is a major error.
@@ -1292,7 +1292,7 @@ public class EditBlog implements AbcAction, Configurable {
     }
 
     /**
-     * Sets category for story. Changes are not synchronized with persistance.
+     * Sets category for story. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param story story to be updated
      * @return false, if there is a major error.
@@ -1366,7 +1366,7 @@ public class EditBlog implements AbcAction, Configurable {
         if (children == null)
             return false;
 
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         for (Iterator iter = children.iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
             GenericObject child = (relation).getChild();
@@ -1374,7 +1374,7 @@ public class EditBlog implements AbcAction, Configurable {
                 continue;
             Item item = (Item) child;
             if (!item.isInitialized())
-                persistance.synchronize(item);
+                persistence.synchronize(item);
             if (item.getType() != Item.DISCUSSION)
                 continue;
 

@@ -20,11 +20,11 @@ package cz.abclinuxu.servlets.html.edit;
 
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Server;
-import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.exceptions.DuplicateKeyException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -173,7 +173,7 @@ public class EditUser implements AbcAction, Configurable {
         if ( managed==null )
             managed = user;
         else
-            managed = (User) PersistanceFactory.getPersistance().findById(managed);
+            managed = (User) PersistenceFactory.getPersistance().findById(managed);
         env.put(VAR_MANAGED, managed);
 
         // registration doesn't require user to be logged in
@@ -273,7 +273,7 @@ public class EditUser implements AbcAction, Configurable {
     protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = new User();
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         Document document = DocumentHelper.createDocument();
         DocumentHelper.makeElement(document, "/data/settings");
@@ -301,7 +301,7 @@ public class EditUser implements AbcAction, Configurable {
             return FMTemplateSelector.select("EditUser", "register", env, request);
 
         try {
-            persistance.create(managed);
+            persistence.create(managed);
         } catch (DuplicateKeyException e) {
             ServletUtils.addError(PARAM_LOGIN, "Pøihla¹ovací jméno nebo pøezdívka jsou ji¾ pou¾ívány.", env, null);
             return FMTemplateSelector.select("EditUser", "register", env, request);
@@ -345,7 +345,7 @@ public class EditUser implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
@@ -363,7 +363,7 @@ public class EditUser implements AbcAction, Configurable {
             return FMTemplateSelector.select("EditUser", "editBasic", env, request);
 
         try {
-            persistance.update(managed);
+            persistence.update(managed);
         } catch ( DuplicateKeyException e ) {
             ServletUtils.addError(PARAM_LOGIN, "Toto jméno je ji¾ pou¾íváno.", env, null);
             return FMTemplateSelector.select("EditUser","editBasic",env,request);
@@ -387,7 +387,7 @@ public class EditUser implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
@@ -401,7 +401,7 @@ public class EditUser implements AbcAction, Configurable {
         if ( ! canContinue )
             return FMTemplateSelector.select("EditUser", "changePassword", env, request);
 
-        persistance.update(managed);
+        persistence.update(managed);
 
         Cookie cookie = ServletUtils.getCookie(request, Constants.VAR_USER);
         if ( cookie!=null )
@@ -452,7 +452,7 @@ public class EditUser implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
@@ -470,7 +470,7 @@ public class EditUser implements AbcAction, Configurable {
         if ( !canContinue )
             return FMTemplateSelector.select("EditUser", "editPersonal", env, request);
 
-        persistance.update(managed);
+        persistence.update(managed);
 
         User sessionUser = (User) env.get(Constants.VAR_USER);
         if (managed.getId() == sessionUser.getId()) {
@@ -517,7 +517,7 @@ public class EditUser implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
@@ -535,7 +535,7 @@ public class EditUser implements AbcAction, Configurable {
         if ( !canContinue )
             return FMTemplateSelector.select("EditUser", "editProfile", env, request);
 
-        persistance.update(managed);
+        persistence.update(managed);
 
         User sessionUser = (User) env.get(Constants.VAR_USER);
         if (managed.getId() == sessionUser.getId()) {
@@ -632,7 +632,7 @@ public class EditUser implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
@@ -662,7 +662,7 @@ public class EditUser implements AbcAction, Configurable {
             return FMTemplateSelector.select("EditUser", "editSettings", env, request);
         }
 
-        persistance.update(managed);
+        persistence.update(managed);
 
         User sessionUser = (User) env.get(Constants.VAR_USER);
         if (managed.getId() == sessionUser.getId()) {
@@ -678,10 +678,10 @@ public class EditUser implements AbcAction, Configurable {
     private void setDefaultValuesForEditSettings(Map env) {
         List maintainedServers = UpdateLinks.getMaintainedServers();
         List servers = new ArrayList(maintainedServers.size());
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         for (Iterator iter = maintainedServers.iterator(); iter.hasNext();) {
             Integer id = (Integer) iter.next();
-            Server server = (Server) persistance.findById(new Server(id.intValue()));
+            Server server = (Server) persistence.findById(new Server(id.intValue()));
             servers.add(server);
         }
         env.put(VAR_SERVERS, servers);
@@ -716,8 +716,8 @@ public class EditUser implements AbcAction, Configurable {
             return null;
         }
 
-        Persistance persistance = PersistanceFactory.getPersistance();
-        persistance.update(managed);
+        Persistence persistence = PersistenceFactory.getPersistance();
+        persistence.update(managed);
 
         User sessionUser = (User) env.get(Constants.VAR_USER);
         if (managed.getId() == sessionUser.getId())
@@ -746,8 +746,8 @@ public class EditUser implements AbcAction, Configurable {
             return null;
         }
 
-        Persistance persistance = PersistanceFactory.getPersistance();
-        persistance.update(managed);
+        Persistence persistence = PersistenceFactory.getPersistance();
+        persistence.update(managed);
 
         User sessionUser = (User) env.get(Constants.VAR_USER);
         if (managed.getId() == sessionUser.getId())
@@ -786,7 +786,7 @@ public class EditUser implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
@@ -804,7 +804,7 @@ public class EditUser implements AbcAction, Configurable {
         if ( !canContinue )
             return FMTemplateSelector.select("EditUser", "editSubscription", env, request);
 
-        persistance.update(managed);
+        persistence.update(managed);
 
         User sessionUser = (User) env.get(Constants.VAR_USER);
         if (managed.getId() == sessionUser.getId()) {
@@ -824,7 +824,7 @@ public class EditUser implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         boolean canContinue = true;
         if ( !user.hasRole(Roles.USER_ADMIN) )
@@ -838,7 +838,7 @@ public class EditUser implements AbcAction, Configurable {
         if ( !canContinue )
             return FMTemplateSelector.select("EditUser", "uploadPhoto", env, request);
 
-        persistance.update(managed);
+        persistence.update(managed);
 
         User sessionUser = (User) env.get(Constants.VAR_USER);
         if (managed.getId() == sessionUser.getId()) {
@@ -887,7 +887,7 @@ public class EditUser implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         boolean canContinue = true;
         canContinue &= checkPassword(params, user, env);
@@ -896,7 +896,7 @@ public class EditUser implements AbcAction, Configurable {
         if ( !canContinue )
             return FMTemplateSelector.select("EditUser", "grantRoles", env, request);
 
-        persistance.update(managed);
+        persistence.update(managed);
 
         User sessionUser = (User) env.get(Constants.VAR_USER);
         if (managed.getId() == sessionUser.getId()) {
@@ -915,7 +915,7 @@ public class EditUser implements AbcAction, Configurable {
     protected String actionInvalidateEmail(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         StringBuffer sb = new StringBuffer();
         int count = 0;
 
@@ -931,10 +931,10 @@ public class EditUser implements AbcAction, Configurable {
 
             User managed = null;
             try {
-                managed = (User) persistance.findById(new User(id));
+                managed = (User) persistence.findById(new User(id));
                 Element tagEmail = DocumentHelper.makeElement(managed.getData(), "/data/communication/email");
                 tagEmail.attribute("valid").setText("no");
-                persistance.update(managed);
+                persistence.update(managed);
                 AdminLogger.logEvent(user, "zneplatnil email uzivateli "+managed.getName()+" - "+managed.getId());
                 count++;
             } catch (Exception e) {
@@ -956,7 +956,7 @@ public class EditUser implements AbcAction, Configurable {
     protected String actionAddToGroup(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User managed = (User) env.get(VAR_MANAGED);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         int group = Misc.parseInt((String) params.get(EditGroup.PARAM_GROUP), 0);
         if (group==0)
@@ -964,7 +964,7 @@ public class EditUser implements AbcAction, Configurable {
 
         Element system = (Element) managed.getData().selectSingleNode("/data/system");
         system.addElement("group").setText(new Integer(group).toString());
-        persistance.update(managed);
+        persistence.update(managed);
 
         User user = (User) env.get(Constants.VAR_USER);
         AdminLogger.logEvent(user,"vlozil uzivatele "+managed.getId()+" do skupiny "+group);
@@ -1027,7 +1027,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates password from parameters. Changes are not synchronized with persistance.
+     * Updates password from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @param env environment
@@ -1050,7 +1050,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates login from parameters. Changes are not synchronized with persistance.
+     * Updates login from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @param env environment
@@ -1075,7 +1075,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates name from parameters. Changes are not synchronized with persistance.
+     * Updates name from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @param env environment
@@ -1097,7 +1097,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates nick from parameters. Changes are not synchronized with persistance.
+     * Updates nick from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @param env environment
@@ -1125,7 +1125,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates email from parameters. Changes are not synchronized with persistance.
+     * Updates email from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @param env environment
@@ -1163,7 +1163,7 @@ public class EditUser implements AbcAction, Configurable {
 
 
     /**
-     * Updates sex from parameters. Changes are not synchronized with persistance.
+     * Updates sex from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @param env environment
@@ -1181,7 +1181,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates birth year from parameters. Changes are not synchronized with persistance.
+     * Updates birth year from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @param env environment
@@ -1206,7 +1206,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates city from parameters. Changes are not synchronized with persistance.
+     * Updates city from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @return false, if there is a major error.
@@ -1230,7 +1230,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates area from parameters. Changes are not synchronized with persistance.
+     * Updates area from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @return false, if there is a major error.
@@ -1254,7 +1254,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates country from parameters. Changes are not synchronized with persistance.
+     * Updates country from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @return false, if there is a major error.
@@ -1278,7 +1278,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates home page from parameters. Changes are not synchronized with persistance.
+     * Updates home page from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @param env environment
@@ -1307,7 +1307,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates linuxUserFromYear from parameters. Changes are not synchronized with persistance.
+     * Updates linuxUserFromYear from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @return false, if there is a major error.
@@ -1326,7 +1326,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates about from parameters. Changes are not synchronized with persistance.
+     * Updates about from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @return false, if there is a major error.
@@ -1353,7 +1353,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates distributions from parameters. Changes are not synchronized with persistance.
+     * Updates distributions from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @return false, if there is a major error.
@@ -1380,7 +1380,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates signature from parameters. Changes are not synchronized with persistance.
+     * Updates signature from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @return false, if there is a major error.
@@ -1409,7 +1409,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates URL with custom CSS from parameters. Changes are not synchronized with persistance.
+     * Updates URL with custom CSS from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user   user to be updated
      * @return false, if there is a major error.
@@ -1428,7 +1428,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates emoticons from parameters. Changes are not synchronized with persistance.
+     * Updates emoticons from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @return false, if there is a major error.
@@ -1442,7 +1442,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates signatures from parameters. Changes are not synchronized with persistance.
+     * Updates signatures from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @return false, if there is a major error.
@@ -1456,7 +1456,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates guidepost from parameters. Changes are not synchronized with persistance.
+     * Updates guidepost from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @return false, if there is a major error.
@@ -1470,7 +1470,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates login cookie validity from parameters. Changes are not synchronized with persistance.
+     * Updates login cookie validity from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @return false, if there is a major error.
@@ -1483,7 +1483,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates size limit of discussions on main page from parameters. Changes are not synchronized with persistance.
+     * Updates size limit of discussions on main page from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @return false, if there is a major error.
@@ -1495,7 +1495,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates size limit for news in the template from parameters. Changes are not synchronized with persistance.
+     * Updates size limit for news in the template from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @param env environment
@@ -1508,7 +1508,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates size limit for stories on index page from parameters. Changes are not synchronized with persistance.
+     * Updates size limit for stories on index page from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @param env environment
@@ -1521,7 +1521,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates page size for found objects from parameters. Changes are not synchronized with persistance.
+     * Updates page size for found objects from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @param env environment
@@ -1532,7 +1532,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Updates page size for forum from parameters. Changes are not synchronized with persistance.
+     * Updates page size for forum from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @param env environment
@@ -1543,7 +1543,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Adds a uid to users blacklist. Changes are not synchronized with persistance.
+     * Adds a uid to users blacklist. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @return false, if there is a major error.
@@ -1565,7 +1565,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Removes a uid from users blacklist. Changes are not synchronized with persistance.
+     * Removes a uid from users blacklist. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @return false, if there is a major error.
@@ -1594,7 +1594,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Subscribes user to weekly summary from parameters. Changes are not synchronized with persistance.
+     * Subscribes user to weekly summary from parameters. Changes are not synchronized with persistence.
      */
     private boolean setWeeklySummary(Map params, User user) {
         String subscription = (String) params.get(PARAM_SUBSCRIBE_WEEKLY);
@@ -1605,7 +1605,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Subscribes user to monthly summary from parameters. Changes are not synchronized with persistance.
+     * Subscribes user to monthly summary from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @return false, if there is a major error.
@@ -1619,7 +1619,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Subscribes user to email forum from parameters. Changes are not synchronized with persistance.
+     * Subscribes user to email forum from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @return false, if there is a major error.
@@ -1637,7 +1637,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Sets page flow for admin, when he move discussion from parameters. Changes are not synchronized with persistance.
+     * Sets page flow for admin, when he move discussion from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @return false, if there is a major error.
@@ -1653,7 +1653,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Sets user roles from parameters. Changes are not synchronized with persistance.
+     * Sets user roles from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @return false, if there is a major error.
@@ -1682,7 +1682,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Sets selected feeds from parameters. Changes are not synchronized with persistance.
+     * Sets selected feeds from parameters. Changes are not synchronized with persistence.
      * @return false, if there is a major error.
      */
     private boolean setFeeds(Map params, User user) {
@@ -1708,7 +1708,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Overrides number of links per feed.  Changes are not synchronized with persistance.
+     * Overrides number of links per feed.  Changes are not synchronized with persistence.
      * @return false, if there is a major error.
      */
     private boolean setFeedSize(Map params, User user, Map env) {
@@ -1721,7 +1721,7 @@ public class EditUser implements AbcAction, Configurable {
     }
 
     /**
-     * Uploads photo from parameters. Changes are not synchronized with persistance.
+     * Uploads photo from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param user user to be updated
      * @param env environment

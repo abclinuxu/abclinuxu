@@ -18,8 +18,8 @@
  */
 package cz.abclinuxu.migrate;
 
-import cz.abclinuxu.persistance.impl.MySqlPersistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.impl.MySqlPersistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -36,13 +36,13 @@ import org.apache.regexp.StringCharacterIterator;
 public class MakePathsRelative {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(MakePathsRelative.class);
     static RE reAbsoluteURL;
-    static MySqlPersistance persistance;
+    static MySqlPersistence persistance;
 
     static {
         try {
             reAbsoluteURL = new RE("(HREF|SRC)(=\")(http://(www.)?abclinuxu.cz)(/[^\"]+)", RE.MATCH_CASEINDEPENDENT);
 //            reAbsoluteURL = new RE("(HREF|SRC)(=\"http://(www.)?abclinuxu.cz)([^\"]+)(\")", RE.MATCH_CASEINDEPENDENT+RE.MATCH_SINGLELINE);
-            persistance = (MySqlPersistance) PersistanceFactory.getUncachedPersistance();
+            persistance = (MySqlPersistence) PersistenceFactory.getUncachedPersistance();
         } catch (RESyntaxException e) {
             log.error("regexp syntax troubles", e);
         }

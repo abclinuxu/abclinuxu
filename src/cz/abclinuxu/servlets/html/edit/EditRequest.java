@@ -26,8 +26,8 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.Comment;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
@@ -230,10 +230,10 @@ public class EditRequest implements AbcAction, Configurable {
 
         req.setData(document);
 
-        Persistance persistance = PersistanceFactory.getPersistance();
-        persistance.create(req);
+        Persistence persistence = PersistenceFactory.getPersistance();
+        persistence.create(req);
         Relation relation = new Relation(new Category(Constants.CAT_REQUESTS),req,Constants.REL_REQUESTS);
-        persistance.create(relation);
+        persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
         ServletUtils.addMessage("Vá¹ po¾adavek byl pøijat.",env,request.getSession());
@@ -242,11 +242,11 @@ public class EditRequest implements AbcAction, Configurable {
     }
 
     protected String actionDelete(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         Relation relation = (Relation) env.get(VAR_REQUEST_RELATION);
-        persistance.synchronize(relation);
-        persistance.remove(relation);
+        persistence.synchronize(relation);
+        persistence.remove(relation);
         relation.getParent().removeChildRelation(relation);
         ServletUtils.addMessage("Po¾adavek byl smazán.",env,request.getSession());
 
@@ -257,13 +257,13 @@ public class EditRequest implements AbcAction, Configurable {
 
     protected String actionDeliver(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         User user = (User) env.get(Constants.VAR_USER);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         Relation relation = (Relation) env.get(VAR_REQUEST_RELATION);
-        persistance.synchronize(relation);
+        persistence.synchronize(relation);
         Item req = (Item) relation.getChild();
-        persistance.synchronize(req);
-        persistance.remove(relation);
+        persistence.synchronize(req);
+        persistence.remove(relation);
         relation.getParent().removeChildRelation(relation);
 
         Map emailParams = new HashMap();
@@ -307,14 +307,14 @@ public class EditRequest implements AbcAction, Configurable {
      */
     private String actionCommentTools(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if (relation==null)
             throw new AbcException("Chybí èíslo relace! Prosím kontaktujte nás, a» mù¾eme problém vyøe¹it.");
 
-        relation = (Relation) persistance.findById(relation);
-        Item discussion = (Item) persistance.findById(relation.getChild());
-        Comment comment = EditDiscussion.getDiscussedComment(params, discussion, persistance);
+        relation = (Relation) persistence.findById(relation);
+        Item discussion = (Item) persistence.findById(relation.getChild());
+        Comment comment = EditDiscussion.getDiscussedComment(params, discussion, persistence);
 
         env.put(VAR_RELATION, relation);
         env.put(VAR_COMMENT, comment);
@@ -326,12 +326,12 @@ public class EditRequest implements AbcAction, Configurable {
      */
     private String actionSubmitComplaint(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
 
-        relation = (Relation) persistance.findById(relation);
-        Item discussion = (Item) persistance.findById(relation.getChild());
-        Comment comment = EditDiscussion.getDiscussedComment(params, discussion, persistance);
+        relation = (Relation) persistence.findById(relation);
+        Item discussion = (Item) persistence.findById(relation.getChild());
+        Comment comment = EditDiscussion.getDiscussedComment(params, discussion, persistence);
         String title = comment.getTitle();
         String action = "<a href=\"/forum/show/" + relation.getId() + "#"+comment.getId()+"\">" + title + "</a>";
 
@@ -345,8 +345,8 @@ public class EditRequest implements AbcAction, Configurable {
     }
 
     private String actionChooseForum(HttpServletRequest request, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        Category forum = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
+        Persistence persistence = PersistenceFactory.getPersistance();
+        Category forum = (Category) persistence.findById(new Category(Constants.CAT_FORUM));
         List content = Tools.syncList(forum.getChildren());
 
         Map forums = new LinkedHashMap();

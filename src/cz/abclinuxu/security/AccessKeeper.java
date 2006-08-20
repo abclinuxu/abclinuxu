@@ -23,7 +23,7 @@ import cz.abclinuxu.exceptions.AccessDeniedException;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
-import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 
 import javax.servlet.http.HttpServletRequest;

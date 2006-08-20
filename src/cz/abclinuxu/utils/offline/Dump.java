@@ -19,11 +19,11 @@
 package cz.abclinuxu.utils.offline;
 
 import cz.abclinuxu.data.*;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.cache.LRUCache;
-import cz.abclinuxu.persistance.extra.*;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.cache.LRUCache;
+import cz.abclinuxu.persistence.extra.*;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.view.ShowObject;
 import cz.abclinuxu.servlets.html.view.ViewCategory;
@@ -73,7 +73,7 @@ public class Dump implements Configurable {
     public static final String LOCAL_PATH = "../..";
     public static final String IMAGES_LOCAL_PATH = "../../..";
 
-    Persistance persistance;
+    Persistence persistence;
     SQLTool sqlTool;
     DecimalFormat df;
     Configuration config;
@@ -87,8 +87,8 @@ public class Dump implements Configurable {
 
     public Dump() throws Exception {
         ConfigurationManager.getConfigurator().configureMe(this);
-        persistance = PersistanceFactory.getPersistance();
-        persistance.setCache(new LRUCache(5000));
+        persistence = PersistenceFactory.getPersistance();
+        persistence.setCache(new LRUCache(5000));
         sqlTool = SQLTool.getInstance();
         String templateURI = AbcConfig.calculateDeployedPath("WEB-INF/conf/templates.xml");
         TemplateSelector.initialize(templateURI);
@@ -112,9 +112,9 @@ public class Dump implements Configurable {
         File dirRoot = new File("objects");
         dirRoot.mkdirs();
 
-        Relation hardware = (Relation) persistance.findById(new Relation(Constants.REL_HARDWARE));
-        Relation drivers = (Relation) persistance.findById(new Relation(Constants.REL_DRIVERS));
-        Relation articles = (Relation) persistance.findById(new Relation(Constants.REL_ARTICLES));
+        Relation hardware = (Relation) persistence.findById(new Relation(Constants.REL_HARDWARE));
+        Relation drivers = (Relation) persistence.findById(new Relation(Constants.REL_DRIVERS));
+        Relation articles = (Relation) persistence.findById(new Relation(Constants.REL_ARTICLES));
 //        Relation news = new Relation(Constants.REL_NEWS);
 
         long start = System.currentTimeMillis();
@@ -180,7 +180,7 @@ public class Dump implements Configurable {
         env.put(VAR_ONLINE_URL, PORTAL_URL+prefix+"/show/"+relation.getId());
 
         if (parents==null) {
-            parents = persistance.findParents(relation);
+            parents = persistence.findParents(relation);
         } else {
             parents = new ArrayList(parents);
             parents.add(relation);
@@ -233,7 +233,7 @@ public class Dump implements Configurable {
             else
                 return;
             if ( ! record.isInitialized() )
-                persistance.synchronize(record);
+                persistence.synchronize(record);
 
             if ( record.getType()== Record.HARDWARE )
                 name = FMTemplateSelector.select("ShowObject", "hardware", env, "offline");
@@ -285,7 +285,7 @@ public class Dump implements Configurable {
         env.put(ShowObject.VAR_RELATION,relation);
         env.put(VAR_ONLINE_URL, PORTAL_URL+prefix+"/dir/"+relation.getId());
 
-        List parents = persistance.findParents(relation);
+        List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS,parents);
 
         Tools.sync(category);
@@ -319,7 +319,7 @@ public class Dump implements Configurable {
             env.put(VAR_ONLINE_URL, PORTAL_URL + "/clanky/dir/" + sectionRelation.getId());
             env.put(ViewCategory.VAR_CATEGORY, sectionRelation.getChild());
 
-            List parents = persistance.findParents(sectionRelation);
+            List parents = persistence.findParents(sectionRelation);
             env.put(ShowObject.VAR_PARENTS, parents);
 
             int sectionId = sectionRelation.getChild().getId();
@@ -351,7 +351,7 @@ public class Dump implements Configurable {
      */
     void dumpAllNews(File currentDir, Relation news_section) throws Exception {
         int total = sqlTool.countNewsRelations(), i, count = PAGE_SIZE;
-        Relation relation, sectionNews = (Relation) persistance.findById(new Relation(Constants.REL_NEWS));
+        Relation relation, sectionNews = (Relation) persistence.findById(new Relation(Constants.REL_NEWS));
 
         for (i = 0; i < total;) {
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(i, count)};
@@ -425,7 +425,7 @@ public class Dump implements Configurable {
             env.put(VAR_ONLINE_URL, PORTAL_URL + "/forum/dir/" + relation.getId());
             env.put(ViewCategory.VAR_CATEGORY, relation.getChild());
 
-            List parents = persistance.findParents(relation);
+            List parents = persistence.findParents(relation);
             env.put(ShowObject.VAR_PARENTS, parents);
 
             total = sqlTool.countDiscussionRelationsWithParent(relation.getId());
@@ -462,7 +462,7 @@ public class Dump implements Configurable {
         env.put(ShowObject.VAR_RELATION, relation);
         env.put(VAR_ONLINE_URL, PORTAL_URL + "/diskuse.jsp");
 
-        List parents = persistance.findParents(relation);
+        List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
         Tools.sync(category);

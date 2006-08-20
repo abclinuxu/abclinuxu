@@ -20,8 +20,8 @@ package cz.abclinuxu.utils;
 
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 
 import java.util.Map;
 
@@ -38,7 +38,7 @@ public class ReadRecorder {
         if (bot != null && bot.booleanValue()) // not interested in spiders and various bots
             return;
 
-        Persistance persistance = PersistanceFactory.getPersistance();
-        persistance.incrementCounter(obj, type);
+        Persistence persistence = PersistenceFactory.getPersistance();
+        persistence.incrementCounter(obj, type);
     }
 }

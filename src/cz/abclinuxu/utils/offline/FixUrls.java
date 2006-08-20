@@ -18,9 +18,9 @@
  */
 package cz.abclinuxu.utils.offline;
 
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
@@ -75,7 +75,7 @@ public class FixUrls {
     RE reHref;
     Map textUrls = new HashMap(30000); // URL -> Integer (relationId)
     Map knownObjects = new HashMap(50000); // Integer (relationId) -> String
-    Persistance persistance;
+    Persistence persistence;
     Dump dump;
     final int DICTIONARY_PREFIX_LENGTH = UrlUtils.PREFIX_DICTIONARY.length()+1;
 
@@ -94,7 +94,7 @@ public class FixUrls {
 
     public FixUrls() throws Exception {
         dump = new Dump();
-        persistance = PersistanceFactory.getPersistance();
+        persistence = PersistenceFactory.getPersistance();
         reHref = new RE("(HREF|SRC)(=\")(/[^\"]+)(\")", RE.MATCH_CASEINDEPENDENT);
     }
 

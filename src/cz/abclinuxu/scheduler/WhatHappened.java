@@ -24,14 +24,14 @@ import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.view.Article;
 import cz.abclinuxu.data.view.DiscussionHeader;
 import cz.abclinuxu.data.view.News;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.extra.CompareCondition;
-import cz.abclinuxu.persistance.extra.Field;
-import cz.abclinuxu.persistance.extra.Operation;
-import cz.abclinuxu.persistance.extra.Qualifier;
-import cz.abclinuxu.persistance.extra.JobOfferManager;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.extra.CompareCondition;
+import cz.abclinuxu.persistence.extra.Field;
+import cz.abclinuxu.persistence.extra.Operation;
+import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.persistence.extra.JobOfferManager;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.edit.EditArticle;
@@ -93,10 +93,10 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
 
             Map params = new HashMap();
             map.put(Constants.VAR_PARAMS, params);
-            Persistance persistance = PersistanceFactory.getPersistance();
-            Relation articles = (Relation) persistance.findById(new Relation(Constants.REL_ARTICLEPOOL));
+            Persistence persistence = PersistenceFactory.getPersistance();
+            Relation articles = (Relation) persistence.findById(new Relation(Constants.REL_ARTICLEPOOL));
             map.put(EditArticle.VAR_RELATION, articles);
-            User articleAuthor = (User) persistance.findById(new User(author));
+            User articleAuthor = (User) persistence.findById(new User(author));
             map.put(Constants.VAR_USER, articleAuthor);
             params.put(EditArticle.PARAM_TITLE, map.get(VAR_TITLE));
             params.put(EditArticle.PARAM_AUTHOR, Integer.toString(author));
@@ -112,7 +112,7 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
             Relation relation = (Relation) map.get(EditArticle.VAR_RELATION);
             Item article = (Item) relation.getChild();
             article.getData().getRootElement().addAttribute(INDEXING_FORBIDDEN, "true");
-            persistance.update(article);
+            persistence.update(article);
             log.info("Weekly summary article finished");
         } catch (Exception e) {
             log.error("WhatHappened generation failed!", e);

@@ -19,7 +19,7 @@
 package cz.abclinuxu.data;
 
 import cz.abclinuxu.exceptions.InternalException;
-import cz.abclinuxu.persistance.Nursery;
+import cz.abclinuxu.persistence.Nursery;
 
 import java.util.List;
 

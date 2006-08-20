@@ -19,9 +19,9 @@
 package cz.abclinuxu.utils;
 
 import cz.abclinuxu.exceptions.InvalidInputException;
-import cz.abclinuxu.persistance.versioning.VersionInfo;
-import cz.abclinuxu.persistance.versioning.VersioningFactory;
-import cz.abclinuxu.persistance.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersionInfo;
+import cz.abclinuxu.persistence.versioning.VersioningFactory;
+import cz.abclinuxu.persistence.versioning.Versioning;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 

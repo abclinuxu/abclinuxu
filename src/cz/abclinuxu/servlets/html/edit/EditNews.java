@@ -25,8 +25,8 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.url.URLManager;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
@@ -154,7 +154,7 @@ public class EditNews implements AbcAction {
     }
 
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -176,10 +176,10 @@ public class EditNews implements AbcAction {
             return actionAddStep1(request,env);
         }
 
-        persistance.create(item);
+        persistence.create(item);
 
         Relation relation = new Relation(new Category(Constants.CAT_NEWS_POOL),item,Constants.REL_NEWS_POOL);
-        persistance.create(relation);
+        persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
         if (redirect) {
@@ -195,11 +195,11 @@ public class EditNews implements AbcAction {
      * Adds admini mailing list to session and redirects to send email screen.
      */
     private String actionSendEmail(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         HttpSession session = request.getSession();
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
-        User user = (User) persistance.findById(new User(item.getOwner()));
+        User user = (User) persistence.findById(new User(item.getOwner()));
 
         session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_TO, user.getEmail());
         session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_BCC, "admini@abclinuxu.cz"); // inform group of admins too
@@ -227,7 +227,7 @@ public class EditNews implements AbcAction {
     }
 
     protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
@@ -244,7 +244,7 @@ public class EditNews implements AbcAction {
             return FMTemplateSelector.select("EditNews", "edit", env, request);
         }
 
-        persistance.update(item);
+        persistence.update(item);
         User user = (User) env.get(Constants.VAR_USER);
         AdminLogger.logEvent(user, "  edit | news "+relation.getId());
 
@@ -258,7 +258,7 @@ public class EditNews implements AbcAction {
     }
 
     public String actionApprove(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         Relation relation = (Relation) env.get(VAR_RELATION);
         if (relation.getParent().getId() != Constants.CAT_NEWS_POOL) {
@@ -271,7 +271,7 @@ public class EditNews implements AbcAction {
         Element element = DocumentHelper.makeElement(item.getData(), "/data/approved_by");
         User user = (User) env.get(Constants.VAR_USER);
         element.setText(Integer.toString(user.getId()));
-        persistance.update(item);
+        persistence.update(item);
 
         element = (Element) item.getData().selectSingleNode("/data/title");
         String url = UrlUtils.PREFIX_NEWS + "/" + URLManager.enforceLastURLPart(element.getTextTrim());
@@ -281,7 +281,7 @@ public class EditNews implements AbcAction {
         relation.getParent().removeChildRelation(relation);
         relation.getParent().setId(Constants.CAT_NEWS);
         relation.setUpper(Constants.REL_NEWS);
-        persistance.update(relation);
+        persistence.update(relation);
         relation.getParent().addChildRelation(relation);
         AdminLogger.logEvent(user, "  approve | news " + relation.getId());
 
@@ -293,18 +293,18 @@ public class EditNews implements AbcAction {
     }
 
     protected String actionRemoveStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
         Item item = (Item) relation.getChild();
-        User author = (User) persistance.findById(new User(item.getOwner()));
+        User author = (User) persistence.findById(new User(item.getOwner()));
 
         Map map = new HashMap();
         map.put(VAR_RELATION, relation);
         map.put(VAR_AUTHOR, author);
         map.put(VAR_ADMIN, user);
-        map.put(EmailSender.KEY_FROM, user.getEmail()); 
+        map.put(EmailSender.KEY_FROM, user.getEmail());
 	map.put(EmailSender.KEY_CC, "admini@abclinuxu.cz"); // inform group of admins too
         map.put(EmailSender.KEY_TO, author.getEmail());
         map.put(EmailSender.KEY_SUBJECT, "zpravicka byla smazana");
@@ -316,7 +316,7 @@ public class EditNews implements AbcAction {
 
         EmailSender.sendEmail(map);
 
-        persistance.remove(relation);
+        persistence.remove(relation);
         relation.getParent().removeChildRelation(relation);
         AdminLogger.logEvent(user, "  remove | news " + relation.getId());
 
@@ -328,7 +328,7 @@ public class EditNews implements AbcAction {
     }
 
     protected String actionLock(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
 
@@ -336,7 +336,7 @@ public class EditNews implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         element.setText(new Integer(user.getId()).toString());
 
-        persistance.update(item);
+        persistence.update(item);
         AdminLogger.logEvent(user, "  lock | news "+relation.getId());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -346,13 +346,13 @@ public class EditNews implements AbcAction {
     }
 
     protected String actionUnlock(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
 
         Element element = (Element) item.getData().selectSingleNode("/data/locked_by");
         element.detach();
-        persistance.update(item);
+        persistence.update(item);
 
         User user = (User) env.get(Constants.VAR_USER);
         AdminLogger.logEvent(user, "  unlock | news "+relation.getId());
@@ -366,7 +366,7 @@ public class EditNews implements AbcAction {
     // setters
 
     /**
-     * Updates news' content from parameters. Changes are not synchronized with persistance.
+     * Updates news' content from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item news to be updated
      * @param env environment
@@ -397,7 +397,7 @@ public class EditNews implements AbcAction {
     }
 
     /**
-     * Updates news' content from parameters. Changes are not synchronized with persistance.
+     * Updates news' content from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item news to be updated
      * @return false, if there is a major error.
@@ -418,7 +418,7 @@ public class EditNews implements AbcAction {
     }
 
     /**
-     * Updates news' title from parameters. Changes are not synchronized with persistance.
+     * Updates news' title from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item news to be updated
      * @return false, if there is a major error.
@@ -437,7 +437,7 @@ public class EditNews implements AbcAction {
     }
 
     /**
-     * Updates news from parameters. Changes are not synchronized with persistance.
+     * Updates news from parameters. Changes are not synchronized with persistence.
      *
      * @param params map holding request's parameters
      * @param item   news to be updated

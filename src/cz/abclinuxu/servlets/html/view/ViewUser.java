@@ -23,8 +23,8 @@ import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.persistance.*;
-import cz.abclinuxu.persistance.extra.*;
+import cz.abclinuxu.persistence.*;
+import cz.abclinuxu.persistence.extra.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
@@ -65,7 +65,7 @@ public class ViewUser implements AbcAction {
      * @return name of template to be executed or null
      */
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String action = (String) params.get(PARAM_ACTION);
 
@@ -85,7 +85,7 @@ public class ViewUser implements AbcAction {
                 else
                     profile = user;
             } else
-                profile = (User) persistance.findById(profile);
+                profile = (User) persistence.findById(profile);
 
             env.put(VAR_PROFILE, profile);
             if (user==null || (user.getId()!=profile.getId() && !user.hasRole(Roles.USER_ADMIN)))
@@ -97,7 +97,7 @@ public class ViewUser implements AbcAction {
         if (profile == null)
             return ServletUtils.showErrorPage("Chybí parametr uid!", env, request);
 
-        profile = (User) persistance.findById(profile);
+        profile = (User) persistence.findById(profile);
         env.put(VAR_PROFILE, profile);
 
         if (ACTION_SHOW_MY_OBJECTS.equals(action))
@@ -116,13 +116,13 @@ public class ViewUser implements AbcAction {
      * shows profile for selected user
      */
     protected String handleProfile(HttpServletRequest request, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         User user = (User) env.get(VAR_PROFILE);
 
         Element settingsBlog = (Element) user.getData().selectSingleNode("/data/settings/blog");
         if (settingsBlog != null) {
             int id = Misc.parseInt(settingsBlog.getText(), 0);
-            Category blog = (Category) persistance.findById(new Category(id));
+            Category blog = (Category) persistence.findById(new Category(id));
             env.put(ViewBlog.VAR_BLOG, blog);
 
             Element element = (Element) blog.getData().selectSingleNode("//settings/page_size");

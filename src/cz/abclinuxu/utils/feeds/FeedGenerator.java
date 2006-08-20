@@ -26,10 +26,10 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.news.NewsCategories;
-import cz.abclinuxu.persistance.extra.*;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.extra.*;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.scheduler.VariableFetcher;
@@ -131,7 +131,7 @@ public class FeedGenerator implements Configurable {
      */
     public static void updateDrivers() {
         try {
-            Persistance persistance = PersistanceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistance();
 
             SyndFeed feed = new SyndFeedImpl();
             feed.setEncoding("UTF-8");
@@ -150,7 +150,7 @@ public class FeedGenerator implements Configurable {
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
                 Item item = (Item) found.getChild();
-                User author = (User) persistance.findById(new User(item.getOwner()));
+                User author = (User) persistence.findById(new User(item.getOwner()));
 
                 entry = new SyndEntryImpl();
                 entry.setLink("http://www.abclinuxu.cz" + found.getUrl());
@@ -175,7 +175,7 @@ public class FeedGenerator implements Configurable {
      */
     public static void updateHardware() {
         try {
-            Persistance persistance = PersistanceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistance();
 
             SyndFeed feed = new SyndFeedImpl();
             feed.setFeedType(TYPE_RSS_1_0);
@@ -194,7 +194,7 @@ public class FeedGenerator implements Configurable {
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
                 Item item = (Item) found.getChild();
-                User author = (User) persistance.findById(new User(item.getOwner()));
+                User author = (User) persistence.findById(new User(item.getOwner()));
 
                 entry = new SyndEntryImpl();
                 String url = found.getUrl();
@@ -292,10 +292,10 @@ public class FeedGenerator implements Configurable {
     public static void updateBlog(Category blog)  {
         try {
             SQLTool sqlTool = SQLTool.getInstance();
-            Persistance persistance = PersistanceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistance();
 
             if (blog!=null) {
-                User author = (User) persistance.findById(new User(blog.getOwner()));
+                User author = (User) persistence.findById(new User(blog.getOwner()));
                 SyndFeed feed = new SyndFeedImpl();
                 feed.setFeedType(TYPE_RSS_1_0);
                 feed.setEncoding("UTF-8");
@@ -349,8 +349,8 @@ public class FeedGenerator implements Configurable {
             Tools.syncList(blogs);
             for (Iterator iter = stories.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
-                blog = (Category) persistance.findById(found.getParent());
-                User author = (User) persistance.findById(new User(blog.getOwner()));
+                blog = (Category) persistence.findById(found.getParent());
+                User author = (User) persistence.findById(new User(blog.getOwner()));
                 entry = getStorySyndicate(blog, found, author);
                 entries.add(entry);
             }
@@ -371,7 +371,7 @@ public class FeedGenerator implements Configurable {
     public static void updateBlogDigest() {
         try {
             SQLTool sqlTool = SQLTool.getInstance();
-            Persistance persistance = PersistanceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistance();
 
             SyndFeed feed = new SyndFeedImpl();
             feed.setFeedType(TYPE_RSS_1_0);
@@ -398,8 +398,8 @@ public class FeedGenerator implements Configurable {
             Tools.syncList(blogs);
             for (Iterator iter = stories.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
-                Category blog = (Category) persistance.findById(found.getParent());
-                User author = (User) persistance.findById(new User(blog.getOwner()));
+                Category blog = (Category) persistence.findById(found.getParent());
+                User author = (User) persistence.findById(new User(blog.getOwner()));
                 entry = getStorySyndicate(blog, found, author);
                 entries.add(entry);
             }
@@ -419,7 +419,7 @@ public class FeedGenerator implements Configurable {
      */
     public static void updateNews() {
         try {
-            Persistance persistance = PersistanceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistance();
             String title;
 
             SyndFeed feed = new SyndFeedImpl();
@@ -440,7 +440,7 @@ public class FeedGenerator implements Configurable {
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
                 Item item = (Item) found.getChild();
-                User author = (User) persistance.findById(new User(item.getOwner()));
+                User author = (User) persistence.findById(new User(item.getOwner()));
 
                 String content = Tools.xpath(item, "data/content");
                 String withoutTags = Tools.removeTags(content);
@@ -478,7 +478,7 @@ public class FeedGenerator implements Configurable {
      */
     public static void updateFAQ() {
         try {
-            Persistance persistance = PersistanceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistance();
             String title, content, withoutTags;
 
             SyndFeed feed = new SyndFeedImpl();
@@ -499,7 +499,7 @@ public class FeedGenerator implements Configurable {
             for (Iterator iter = list.iterator(); iter.hasNext();) {
                 Relation found = (Relation) iter.next();
                 Item item = (Item) found.getChild();
-                User author = (User) persistance.findById(new User(item.getOwner()));
+                User author = (User) persistence.findById(new User(item.getOwner()));
                 content = Tools.xpath(item, "data/text");
                 withoutTags = Tools.removeTags(content);
 
@@ -653,12 +653,12 @@ public class FeedGenerator implements Configurable {
         if (Arrays.binarySearch(args, "polls")>=0)
             updatePolls();
         if (Arrays.binarySearch(args, "blogs")>=0) {
-            Persistance persistance = PersistanceFactory.getPersistance();
-            Relation top = (Relation) persistance.findById(new Relation(Constants.REL_BLOGS));
+            Persistence persistence = PersistenceFactory.getPersistance();
+            Relation top = (Relation) persistence.findById(new Relation(Constants.REL_BLOGS));
             List blogs = top.getChild().getChildren();
             for (Iterator iter = blogs.iterator(); iter.hasNext();) {
                 Relation relation = (Relation) iter.next();
-                Category blog = (Category) persistance.findById(relation.getChild());
+                Category blog = (Category) persistence.findById(relation.getChild());
                 updateBlog(blog);
             }
         }

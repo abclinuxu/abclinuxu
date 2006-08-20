@@ -29,10 +29,10 @@ import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.ReadRecorder;
 import cz.abclinuxu.utils.paging.Paging;
-import cz.abclinuxu.persistance.extra.*;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.extra.*;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.exceptions.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -89,7 +89,7 @@ public class ViewBlog implements AbcAction, Configurable {
     }
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
         Relation blogRelation = null;
         int year, month, day, rid;
@@ -149,8 +149,8 @@ public class ViewBlog implements AbcAction, Configurable {
         Category blog = null;
         if (rid != 0) {
             // ochrana pred hratky s URL
-            Relation relation = (Relation) persistance.findById(new Relation(rid));
-            blogRelation = (Relation) persistance.findById(new Relation(relation.getUpper()));
+            Relation relation = (Relation) persistence.findById(new Relation(rid));
+            blogRelation = (Relation) persistence.findById(new Relation(relation.getUpper()));
             blog = (Category) relation.getParent();
         } else {
             if (name != null) {
@@ -166,7 +166,7 @@ public class ViewBlog implements AbcAction, Configurable {
         }
 
         if (blogRelation!=null) {
-            blog = (Category) persistance.findById(blog);
+            blog = (Category) persistence.findById(blog);
             blogRelation.setChild(blog);
             env.put(VAR_BLOG_RELATION, blogRelation);
             env.put(VAR_BLOG, blog);
@@ -192,8 +192,8 @@ public class ViewBlog implements AbcAction, Configurable {
      * Displays one blogRelation content. Its stories may be limited to given year, month or day.
      */
     protected String processStory(int rid, HttpServletRequest request, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        Relation relation = (Relation) persistance.findById(new Relation(rid));
+        Persistence persistence = PersistenceFactory.getPersistance();
+        Relation relation = (Relation) persistence.findById(new Relation(rid));
         Tools.sync(relation);
         Item story = (Item) relation.getChild();
         env.put(VAR_STORY, relation);
@@ -202,7 +202,7 @@ public class ViewBlog implements AbcAction, Configurable {
         if (user==null || user.getId()!=story.getOwner())
             ReadRecorder.log(story, Constants.COUNTER_READ, env);
 
-        List parents = persistance.findParents(relation);
+        List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
         return FMTemplateSelector.select("ViewBlog", "story", env, request);
@@ -212,9 +212,9 @@ public class ViewBlog implements AbcAction, Configurable {
      * Displays one blogRelation content. Its stories may be limited to given year, month or day.
      */
     protected String processArchive(Category blog, HttpServletRequest request, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation blogRelation = (Relation) env.get(VAR_BLOG_RELATION);
-        List parents = persistance.findParents(blogRelation);
+        List parents = persistence.findParents(blogRelation);
         env.put(ShowObject.VAR_PARENTS, parents);
         return FMTemplateSelector.select("ViewBlog", "archive", env, request);
     }
@@ -225,7 +225,7 @@ public class ViewBlog implements AbcAction, Configurable {
     protected String processStories(Relation blogRelation, boolean summary, int year, int month, int day, HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         Category blog = (Category) env.get(VAR_BLOG);
         int count = 0;
@@ -268,7 +268,7 @@ public class ViewBlog implements AbcAction, Configurable {
             }
         }
 
-        List parents = persistance.findParents(blogRelation);
+        List parents = persistence.findParents(blogRelation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
         return FMTemplateSelector.select("ViewBlog", "blog", env, request);
@@ -280,7 +280,7 @@ public class ViewBlog implements AbcAction, Configurable {
     protected String processBlogSpace(HttpServletRequest request, boolean summary, boolean digest, int year, int month, int day, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
         Relation relation;
         Item story;
@@ -342,8 +342,8 @@ public class ViewBlog implements AbcAction, Configurable {
             }
         }
 
-        relation = (Relation) persistance.findById(new Relation(Constants.REL_BLOGS));
-        List parents = persistance.findParents(relation);
+        relation = (Relation) persistence.findById(new Relation(Constants.REL_BLOGS));
+        List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
         return FMTemplateSelector.select("ViewBlog", "blogspace", env, request);
@@ -355,7 +355,7 @@ public class ViewBlog implements AbcAction, Configurable {
      */
     protected String processBlogs(HttpServletRequest request, Map env) throws Exception {
         SQLTool sqlTool = SQLTool.getInstance();
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation;
         Category blog;
         User author;
@@ -384,7 +384,7 @@ public class ViewBlog implements AbcAction, Configurable {
                 if (j != -1)
                     author = (User) users.get(j);
                 else
-                    author = (User) persistance.findById(owner);
+                    author = (User) persistence.findById(owner);
             }
 
             int count = 0;

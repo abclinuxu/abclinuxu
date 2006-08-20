@@ -20,11 +20,11 @@ package cz.abclinuxu.migrate;
 
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.extra.LimitQualifier;
-import cz.abclinuxu.persistance.extra.Qualifier;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.extra.LimitQualifier;
+import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.servlets.html.edit.EditArticle;
 
 import java.util.Iterator;
@@ -34,7 +34,7 @@ import java.util.List;
  * Generates URL for articles, if it was not been set yet.
  */
 public class GenerateUrlForArticles {
-    static Persistance persistance = PersistanceFactory.getPersistance();
+    static Persistence persistence = PersistenceFactory.getPersistance();
     static SQLTool sqlTool = SQLTool.getInstance();
 
     public static void main(String[] args) {
@@ -61,12 +61,12 @@ public class GenerateUrlForArticles {
             if (relation.getUrl()!=null)
                 continue;
 
-            url = EditArticle.getUrl((Item) relation.getChild(), relation.getUpper(), persistance);
+            url = EditArticle.getUrl((Item) relation.getChild(), relation.getUpper(), persistence);
             if (url==null)
                 continue;
 
             relation.setUrl(url);
-            persistance.update(relation);
+            persistence.update(relation);
             count++;
         }
         return count;

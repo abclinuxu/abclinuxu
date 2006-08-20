@@ -28,7 +28,7 @@ import java.io.FilenameFilter;
 import java.util.*;
 
 import cz.abclinuxu.data.Item;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.PersistenceFactory;
 
 
 /**
@@ -48,7 +48,7 @@ public class AnalyzeSurveyXML {
             System.exit(1);
         }
         int id = Integer.parseInt(args[0]);
-        Item survey = (Item) PersistanceFactory.getPersistance().findById(new Item(id));
+        Item survey = (Item) PersistenceFactory.getPersistance().findById(new Item(id));
         if (survey.getType()!=Item.SURVEY) {
             System.err.println("Tato polozka neni anketou!");
             System.exit(1);
@@ -227,7 +227,7 @@ public class AnalyzeSurveyXML {
         public int compare(Object o1, Object o2) {
             if ( TOTAL.equals(o1) ) return -1;
             if ( TOTAL.equals(o2) ) return 1;
-            return ((String)o1).compareTo(o2);
+            return ((String)o1).compareTo((String) o2);
         }
     }
 

@@ -23,7 +23,7 @@ import org.apache.lucene.document.Field;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.data.GenericObject;
-import cz.abclinuxu.persistance.PersistenceMapping;
+import cz.abclinuxu.persistence.PersistenceMapping;
 
 import java.util.Date;
 

@@ -21,9 +21,9 @@ package cz.abclinuxu.servlets.html.view;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.persistance.*;
-import cz.abclinuxu.persistance.extra.LimitQualifier;
-import cz.abclinuxu.persistance.extra.Qualifier;
+import cz.abclinuxu.persistence.*;
+import cz.abclinuxu.persistence.extra.LimitQualifier;
+import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.utils.InstanceUtils;
@@ -57,7 +57,7 @@ public class ShowForum implements AbcAction {
     /** holds list of discussions */
     public static final String VAR_DISCUSSIONS = "DIZS";
 
-    static Persistance persistance = PersistanceFactory.getPersistance();
+    static Persistence persistence = PersistenceFactory.getPersistance();
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -69,7 +69,7 @@ public class ShowForum implements AbcAction {
         Tools.sync(relation);
         env.put(ShowObject.VAR_RELATION, relation);
         env.put(VAR_CATEGORY, relation.getChild());
-        List parents = persistance.findParents(relation);
+        List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);

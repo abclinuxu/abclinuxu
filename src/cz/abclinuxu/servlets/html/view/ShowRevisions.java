@@ -25,8 +25,8 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.exceptions.MissingArgumentException;
-import cz.abclinuxu.persistance.versioning.VersioningFactory;
-import cz.abclinuxu.persistance.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersioningFactory;
+import cz.abclinuxu.persistence.versioning.Versioning;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

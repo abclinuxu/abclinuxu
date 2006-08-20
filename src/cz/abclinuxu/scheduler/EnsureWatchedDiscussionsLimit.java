@@ -18,7 +18,7 @@
  */
 package cz.abclinuxu.scheduler;
 
-import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import org.apache.log4j.Logger;
 

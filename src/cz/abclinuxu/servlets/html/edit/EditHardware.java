@@ -24,7 +24,7 @@ import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
-import cz.abclinuxu.persistance.*;
+import cz.abclinuxu.persistence.*;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -129,7 +129,7 @@ public class EditHardware implements AbcAction {
 
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation upper = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -159,9 +159,9 @@ public class EditHardware implements AbcAction {
             return FMTemplateSelector.select("EditHardware", "add", env, request);
         }
 
-        persistance.create(item);
+        persistence.create(item);
         Relation relation = new Relation(upper.getChild(), item, upper.getId());
-        persistance.create(relation);
+        persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
         // commit new version
@@ -221,7 +221,7 @@ public class EditHardware implements AbcAction {
 
     protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
 
         Relation relation = (Relation) env.get(VAR_RELATION);
@@ -249,7 +249,7 @@ public class EditHardware implements AbcAction {
             return FMTemplateSelector.select("EditHardware", "edit", env, request);
         }
 
-        persistance.update(item);
+        persistence.update(item);
         FeedGenerator.updateHardware();
 
         // commit new version
@@ -277,14 +277,14 @@ public class EditHardware implements AbcAction {
      * Reverts current monitor state for the user on this driver.
      */
     protected String actionAlterMonitor(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_RELATION);
-        Item item = (Item) persistance.findById(relation.getChild());
+        Item item = (Item) persistence.findById(relation.getChild());
         User user = (User) env.get(Constants.VAR_USER);
 
         Date originalUpdated = item.getUpdated();
         MonitorTools.alterMonitor(item.getData().getRootElement(), user);
-        persistance.update(item);
+        persistence.update(item);
         SQLTool.getInstance().setUpdatedTimestamp(item, originalUpdated);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -298,7 +298,7 @@ public class EditHardware implements AbcAction {
     /* ******** setters ********* */
 
     /**
-     * Updates name from parameters. Changes are not synchronized with persistance.
+     * Updates name from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root root element of item to be updated
      * @param env environment
@@ -317,7 +317,7 @@ public class EditHardware implements AbcAction {
     }
 
     /**
-     * Updates driver from parameters. Changes are not synchronized with persistance.
+     * Updates driver from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root root element of record to be updated
      * @return false, if there is a major error.
@@ -335,7 +335,7 @@ public class EditHardware implements AbcAction {
     }
 
     /**
-     * Updates price from parameters. Changes are not synchronized with persistance.
+     * Updates price from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root root element of record to be updated
      * @return false, if there is a major error.
@@ -353,7 +353,7 @@ public class EditHardware implements AbcAction {
     }
 
     /**
-     * Updates outdated from parameters. Changes are not synchronized with persistance.
+     * Updates outdated from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root root element of record to be updated
      * @return false, if there is a major error.
@@ -371,7 +371,7 @@ public class EditHardware implements AbcAction {
     }
 
     /**
-     * Updates support from parameters. Changes are not synchronized with persistance.
+     * Updates support from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root root element of record to be updated
      * @return false, if there is a major error.
@@ -389,7 +389,7 @@ public class EditHardware implements AbcAction {
     }
 
     /**
-     * Updates driver url from parameters. Changes are not synchronized with persistance.
+     * Updates driver url from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root root element of record to be updated
      * @return false, if there is a major error.
@@ -413,7 +413,7 @@ public class EditHardware implements AbcAction {
     }
 
     /**
-     * Updates setup from parameters. Changes are not synchronized with persistance.
+     * Updates setup from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root root element of record to be updated
      * @return false, if there is a major error.
@@ -441,7 +441,7 @@ public class EditHardware implements AbcAction {
     }
 
     /**
-     * Updates parameters from parameters. Changes are not synchronized with persistance.
+     * Updates parameters from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root root element of record to be updated
      * @return false, if there is a major error.
@@ -469,7 +469,7 @@ public class EditHardware implements AbcAction {
     }
 
     /**
-     * Updates identification from parameters. Changes are not synchronized with persistance.
+     * Updates identification from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root root element of record to be updated
      * @return false, if there is a major error.
@@ -497,7 +497,7 @@ public class EditHardware implements AbcAction {
     }
 
     /**
-     * Updates note from parameters. Changes are not synchronized with persistance.
+     * Updates note from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root root element of record to be updated
      * @return false, if there is a major error.

@@ -22,10 +22,10 @@ import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.extra.Qualifier;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.search.CreateIndex;
 import cz.abclinuxu.scheduler.UpdateLinks;
@@ -52,7 +52,7 @@ public class Measure {
         Date d = null;
 
         // place initilizaton here
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         File file = CreateIndex.getLastRunFile();
         if (file.exists())
             d = new Date(file.lastModified());

@@ -22,11 +22,11 @@ import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.view.DiscussionHeader;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.extra.LimitQualifier;
-import cz.abclinuxu.persistance.extra.Qualifier;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.extra.LimitQualifier;
+import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.config.Configurable;
@@ -71,7 +71,7 @@ public class NewsCSV implements AbcAction, Configurable {
             return null;
         }
 
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         DateTool dateTool = new DateTool();
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, count)};
         List news = SQLTool.getInstance().findNewsRelations(qualifiers);
@@ -89,7 +89,7 @@ public class NewsCSV implements AbcAction, Configurable {
             writer.write("|");
             writer.write(NewsCategories.get(item.getSubType()).getName());
             writer.write("|");
-            User author = (User) persistance.findById(new User(item.getOwner()));
+            User author = (User) persistence.findById(new User(item.getOwner()));
             writer.write("<a href=\"http://www.abclinuxu.cz/Profile/"+author.getId()+"\">"+author.getName()+"</a>");
             writer.write("|");
             String text = Tools.xpath(item, "data/content");

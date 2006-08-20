@@ -18,9 +18,9 @@
  */
 package cz.abclinuxu.migrate;
 
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
@@ -40,16 +40,16 @@ public class AddBlogName {
 
     public static void main(String[] args) {
         SQLTool sqlTool = SQLTool.getInstance();
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         List blogs = sqlTool.findSectionRelationsWithType(Category.BLOG, null);
         for (Iterator iter = blogs.iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
-            Category blog = (Category) persistance.findById(relation.getChild());
-            User user = (User) persistance.findById(new User(blog.getOwner()));
+            Category blog = (Category) persistence.findById(relation.getChild());
+            User user = (User) persistence.findById(new User(blog.getOwner()));
             Element element = (Element) user.getData().selectSingleNode("//settings/blog");
             element.addAttribute("name", blog.getSubType());
-            persistance.update(user);
+            persistence.update(user);
             System.out.println("Nastaveno jmeno blogu uzivateli "+user.getName()+" na "+blog.getSubType());
         }
     }

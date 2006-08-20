@@ -18,8 +18,8 @@
  */
 package cz.abclinuxu.migrate;
 
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.GenericObject;
@@ -37,7 +37,7 @@ import org.dom4j.DocumentHelper;
 public class UpgradeHardwareCategories {
 
     public static void main(String[] args) {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = new Relation(Constants.REL_HARDWARE);
         Category category;
         GenericObject obj;
@@ -48,12 +48,12 @@ public class UpgradeHardwareCategories {
         stack.add(relation);
         while (stack.size() > 0) {
             relation = (Relation) stack.removeFirst();
-            relation = (Relation) persistance.findById(relation);
+            relation = (Relation) persistence.findById(relation);
             obj = relation.getChild();
             if ( ! (obj instanceof Category) )
                 continue;
 
-            category = (Category) persistance.findById(obj);
+            category = (Category) persistence.findById(obj);
             if (category.getType() == 0) {
                 category.setType(Category.HARDWARE_SECTION);
                 i++;
@@ -61,7 +61,7 @@ public class UpgradeHardwareCategories {
                 DocumentHelper.makeElement(category.getData(), "/data/writeable").setText("true");
                 j++;
             }
-            persistance.update(category);
+            persistence.update(category);
             stack.addAll(category.getChildren());
         }
         long end = System.currentTimeMillis();

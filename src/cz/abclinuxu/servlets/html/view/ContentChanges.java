@@ -30,8 +30,8 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.OpaqueComparator;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.exceptions.MissingArgumentException;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,7 +62,7 @@ public class ContentChanges implements AbcAction {
     public static final String VAR_ORDER_DESCENDING = "ORDER_DESC";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if (relation == null) {
@@ -87,7 +87,7 @@ public class ContentChanges implements AbcAction {
             Tools.syncList(children);
             stack.addAll(0, children);
 
-            result.add(createChangedContent(childRelation, persistance));
+            result.add(createChangedContent(childRelation, persistence));
         }
 
         String column = (String) params.get(PARAM_SORT_BY);
@@ -115,9 +115,9 @@ public class ContentChanges implements AbcAction {
      * @param relation initialized relation
      * @return ChangedContent
      */
-    private ChangedContent createChangedContent(Relation relation, Persistance persistance) {
+    private ChangedContent createChangedContent(Relation relation, Persistence persistence) {
         Item item = (Item) relation.getChild();
-        User user = (User) persistance.findById(new User(item.getOwner()));
+        User user = (User) persistence.findById(new User(item.getOwner()));
         String userName = user.getNick();
         if (userName==null)
             userName = user.getName();

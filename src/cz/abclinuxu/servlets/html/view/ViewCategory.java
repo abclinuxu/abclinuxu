@@ -20,11 +20,11 @@ package cz.abclinuxu.servlets.html.view;
 
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.ACL;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.extra.Qualifier;
-import cz.abclinuxu.persistance.extra.LimitQualifier;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.paging.Paging;
@@ -84,18 +84,18 @@ public class ViewCategory implements AbcAction {
     /** holds list of articles */
     public static final String VAR_ARTICLES = "ARTICLES";
 
-    static Persistance persistance = PersistanceFactory.getPersistance();
+    static Persistence persistence = PersistenceFactory.getPersistance();
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if (relation == null)
             throw new MissingArgumentException("Parametr relationId je prázdný!");
-        relation = (Relation) persistance.findById(relation);
+        relation = (Relation) persistence.findById(relation);
         env.put(ShowObject.VAR_RELATION,relation);
-        List parents = persistance.findParents(relation);
+        List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS,parents);
 
         // check ACL

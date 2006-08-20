@@ -23,8 +23,8 @@ import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.User;
@@ -124,7 +124,7 @@ public class EditAttachment implements AbcAction {
 
     protected String actionAddScreenshotStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
@@ -133,7 +133,7 @@ public class EditAttachment implements AbcAction {
         if (!canContinue)
             return FMTemplateSelector.select("EditAttachment", "addScreenshot", env, request);
 
-        persistance.update(item);
+        persistence.update(item);
 
         // commit new version
         Misc.commitRelation(item.getData().getRootElement(), relation, user);
@@ -169,7 +169,7 @@ public class EditAttachment implements AbcAction {
 
     private String actionRemoveAttachmentStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild().clone();
@@ -193,7 +193,7 @@ public class EditAttachment implements AbcAction {
             element.detach();
         }
 
-        persistance.update(item);
+        persistence.update(item);
 
         // commit new version
         Misc.commitRelation(item.getData().getRootElement(), relation, user);
@@ -204,7 +204,7 @@ public class EditAttachment implements AbcAction {
     }
 
     /**
-     * Uploads new screenshot and creates a thumbnail (if needed). Changes to Item are not synchronized with persistance.
+     * Uploads new screenshot and creates a thumbnail (if needed). Changes to Item are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item item to be updated
      * @param env environment

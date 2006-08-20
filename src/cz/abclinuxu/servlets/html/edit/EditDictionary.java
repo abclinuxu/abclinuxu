@@ -20,9 +20,9 @@ package cz.abclinuxu.servlets.html.edit;
 
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.exceptions.MissingArgumentException;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
@@ -74,7 +74,7 @@ public class EditDictionary implements AbcAction {
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
@@ -83,8 +83,8 @@ public class EditDictionary implements AbcAction {
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation!=null ) {
-            relation = (Relation) persistance.findById(relation);
-            persistance.synchronize(relation.getChild());
+            relation = (Relation) persistence.findById(relation);
+            persistence.synchronize(relation.getChild());
             env.put(VAR_RELATION,relation);
         }
 
@@ -108,7 +108,7 @@ public class EditDictionary implements AbcAction {
 
         if ( action.equals(ACTION_EDIT) || action.equals(ACTION_EDIT_STEP2) ) {
             Record record = (Record) InstanceUtils.instantiateParam(PARAM_RECORD_ID, Record.class, params, request);
-            persistance.synchronize(record);
+            persistence.synchronize(record);
             env.put(VAR_RECORD, record);
 
             if ( user.getId()!=record.getOwner() && !user.hasRole(Roles.DICTIONARY_ADMIN) )
@@ -128,7 +128,7 @@ public class EditDictionary implements AbcAction {
 
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
 
         Document documentItem = DocumentHelper.createDocument();
@@ -150,14 +150,14 @@ public class EditDictionary implements AbcAction {
         if (!canContinue || params.get(PARAM_PREVIEW)!=null)
             return FMTemplateSelector.select("Dictionary", "add_item", env, request);
 
-        persistance.create(item);
+        persistence.create(item);
         Relation relation = new Relation(new Category(Constants.CAT_DICTIONARY), item, Constants.REL_DICTIONARY);
-        persistance.create(relation);
+        persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
-        persistance.create(record);
+        persistence.create(record);
         Relation recordRelation = new Relation(item, record, relation.getId());
-        persistance.create(recordRelation);
+        persistence.create(recordRelation);
         recordRelation.getParent().addChildRelation(recordRelation);
 
         VariableFetcher.getInstance().refreshDictionary();
@@ -172,7 +172,7 @@ public class EditDictionary implements AbcAction {
 
     protected String actionAddRecord(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         User user = (User) env.get(Constants.VAR_USER);
         Relation upper = (Relation) env.get(VAR_RELATION), relation = null;
@@ -190,13 +190,13 @@ public class EditDictionary implements AbcAction {
         if ( !canContinue  || params.get(PARAM_PREVIEW)!=null )
             return FMTemplateSelector.select("Dictionary", "add_record", env, request);
 
-        persistance.create(record);
+        persistence.create(record);
         relation = new Relation(upper.getChild(), record, upper.getId());
-        persistance.create(relation);
+        persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
         // run monitor
-        Item item = (Item) persistance.findById(upper.getChild());
+        Item item = (Item) persistence.findById(upper.getChild());
         String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/slovnik/"+item.getSubType();
         MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.DICTIONARY, item, url);
         MonitorPool.scheduleMonitorAction(action);
@@ -226,7 +226,7 @@ public class EditDictionary implements AbcAction {
 
     protected String actionEdit2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -244,12 +244,12 @@ public class EditDictionary implements AbcAction {
             return FMTemplateSelector.select("Dictionary", "edit", env, request);
 
         Date updated = item.getUpdated();
-        persistance.update(item);
+        persistence.update(item);
         if (user.getId()!=item.getOwner() && user.getId()!=record.getOwner() )
             SQLTool.getInstance().setUpdatedTimestamp(item, updated);
 
         updated = record.getUpdated();
-        persistance.update(record);
+        persistence.update(record);
         if (user.getId()!=record.getOwner())
             SQLTool.getInstance().setUpdatedTimestamp(record, updated);
 
@@ -268,14 +268,14 @@ public class EditDictionary implements AbcAction {
      * Reverts current monitor state for the user on this driver.
      */
     protected String actionAlterMonitor(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_RELATION);
-        Item item = (Item) persistance.findById(relation.getChild());
+        Item item = (Item) persistence.findById(relation.getChild());
         User user = (User) env.get(Constants.VAR_USER);
 
         Date originalUpdated = item.getUpdated();
         MonitorTools.alterMonitor(item.getData().getRootElement(), user);
-        persistance.update(item);
+        persistence.update(item);
         SQLTool.getInstance().setUpdatedTimestamp(item, originalUpdated);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -286,7 +286,7 @@ public class EditDictionary implements AbcAction {
     /* ******** setters ********* */
 
     /**
-     * Updates name from parameters. Changes are not synchronized with persistance.
+     * Updates name from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root root element of item to be updated
      * @param env environment
@@ -306,7 +306,7 @@ public class EditDictionary implements AbcAction {
 
     /**
      * Updates name, which is used to identify this object in URL requests.
-     * Changes are not synchronized with persistance.
+     * Changes are not synchronized with persistence.
      * @param root root element of item to be updated
      * @param rid id of existing relation
      * @return false, if there is a major error.
@@ -330,7 +330,7 @@ public class EditDictionary implements AbcAction {
     }
 
     /**
-     * Updates explaination from parameters. Changes are not synchronized with persistance.
+     * Updates explaination from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root root element of record to be updated
      * @return false, if there is a major error.

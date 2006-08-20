@@ -22,9 +22,9 @@ import org.apache.log4j.Logger;
 
 import java.util.*;
 
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.data.User;
 
 /**
@@ -94,14 +94,14 @@ public final class SubscribedUsers {
      */
     private void init() {
         SQLTool sqlTool = SQLTool.getInstance();
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         User user;
 
         log.info("Loading list of users, that subscribed email gate to forum.");
         List subscribed = sqlTool.findUsersWithForumByEmail(null);
         for ( Iterator iter = subscribed.iterator(); iter.hasNext(); ) {
             Integer id = (Integer) iter.next();
-            user = (User) persistance.findById(new User(id.intValue()));
+            user = (User) persistence.findById(new User(id.intValue()));
             if (log.isDebugEnabled())
                 log.debug("Inserting user "+id+" "+user.getName());
             users.put(id, new Subscription(id, user.getEmail()));

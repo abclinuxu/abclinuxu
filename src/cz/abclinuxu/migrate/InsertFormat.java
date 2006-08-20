@@ -18,9 +18,9 @@
  */
 package cz.abclinuxu.migrate;
 
-import cz.abclinuxu.persistance.*;
-import cz.abclinuxu.persistance.impl.MySqlPersistance;
-import cz.abclinuxu.persistance.cache.EmptyCache;
+import cz.abclinuxu.persistence.*;
+import cz.abclinuxu.persistence.impl.MySqlPersistence;
+import cz.abclinuxu.persistence.cache.EmptyCache;
 import cz.abclinuxu.data.Record;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Category;
@@ -43,12 +43,12 @@ import org.dom4j.Element;
  */
 public class InsertFormat {
     private static final String FORMAT = "format";
-    static Persistance persistance;
+    static Persistence persistence;
     static SQLTool sqlTool;
     static int column = 0;
 
     public static void main(String[] args) throws Exception {
-        persistance = PersistanceFactory.getPersistance(EmptyCache.class);
+        persistence = PersistenceFactory.getPersistance(EmptyCache.class);
         sqlTool = SQLTool.getInstance();
 
         System.out.println("This utility must not be run, if portal is running!");
@@ -82,7 +82,7 @@ public class InsertFormat {
         List articles = getRecords(Record.ARTICLE);
         for ( Iterator iter = articles.iterator(); iter.hasNext(); ) {
             key = (Integer) iter.next();
-            article = (Record) persistance.findById(new Record(key.intValue()));
+            article = (Record) persistence.findById(new Record(key.intValue()));
             nodes = article.getData().selectNodes("/data/content");
             for ( Iterator iterIn = nodes.iterator(); iterIn.hasNext(); ) {
                 element = (Element) iterIn.next();
@@ -94,7 +94,7 @@ public class InsertFormat {
             }
             if (modified) {
                 Date lastModified = article.getUpdated();
-                persistance.update(article);
+                persistence.update(article);
                 sqlTool.setUpdatedTimestamp(article, lastModified);
             }
         }
@@ -115,7 +115,7 @@ public class InsertFormat {
         List questions = getItems(Item.DISCUSSION);
         for ( Iterator iter = questions.iterator(); iter.hasNext(); ) {
             key = (Integer) iter.next();
-            item = (Item) persistance.findById(new Item(key.intValue()));
+            item = (Item) persistence.findById(new Item(key.intValue()));
             element = (Element) item.getData().selectSingleNode("/data/text");
             if ( element!=null && element.attributeValue(FORMAT)==null ) {
                 hash();
@@ -125,7 +125,7 @@ public class InsertFormat {
             }
             if ( modified ) {
                 Date lastModified = item.getUpdated();
-                persistance.update(item);
+                persistence.update(item);
                 sqlTool.setUpdatedTimestamp(item, lastModified);
             }
         }
@@ -146,7 +146,7 @@ public class InsertFormat {
         List drivers = getItems(Item.DRIVER);
         for ( Iterator iter = drivers.iterator(); iter.hasNext(); ) {
             key = (Integer) iter.next();
-            item = (Item) persistance.findById(new Item(key.intValue()));
+            item = (Item) persistence.findById(new Item(key.intValue()));
             element = (Element) item.getData().selectSingleNode("/data/note");
             if ( element!=null && element.attributeValue(FORMAT)==null ) {
                 hash();
@@ -156,7 +156,7 @@ public class InsertFormat {
             }
             if ( modified ) {
                 Date lastModified = item.getUpdated();
-                persistance.update(item);
+                persistence.update(item);
                 sqlTool.setUpdatedTimestamp(item, lastModified);
             }
         }
@@ -176,7 +176,7 @@ public class InsertFormat {
         List news = getItems(Item.NEWS);
         for ( Iterator iter = news.iterator(); iter.hasNext(); ) {
             key = (Integer) iter.next();
-            item = (Item) persistance.findById(new Item(key.intValue()));
+            item = (Item) persistence.findById(new Item(key.intValue()));
             element = (Element) item.getData().selectSingleNode("/data/content");
             if ( element.attributeValue(FORMAT)==null ) {
                 hash();
@@ -185,7 +185,7 @@ public class InsertFormat {
             }
             if ( modified ) {
                 Date lastModified = item.getUpdated();
-                persistance.update(item);
+                persistence.update(item);
                 sqlTool.setUpdatedTimestamp(item, lastModified);
             }
         }
@@ -206,7 +206,7 @@ public class InsertFormat {
         List categories = getCategories();
         for ( Iterator iter = categories.iterator(); iter.hasNext(); ) {
             key = (Integer) iter.next();
-            category = (Category) persistance.findById(new Category(key.intValue()));
+            category = (Category) persistence.findById(new Category(key.intValue()));
             element = (Element) category.getData().selectSingleNode("/data/note");
             if ( element!=null && element.attributeValue(FORMAT)==null ) {
                 hash();
@@ -216,7 +216,7 @@ public class InsertFormat {
             }
             if ( modified ) {
                 Date lastModified = category.getUpdated();
-                persistance.update(category);
+                persistence.update(category);
                 sqlTool.setUpdatedTimestamp(category, lastModified);
             }
         }
@@ -237,7 +237,7 @@ public class InsertFormat {
         List records = getRecords(Record.HARDWARE);
         for ( Iterator iter = records.iterator(); iter.hasNext(); ) {
             key = (Integer) iter.next();
-            hardware = (Record) persistance.findById(new Record(key.intValue()));
+            hardware = (Record) persistence.findById(new Record(key.intValue()));
 
             element = (Element) hardware.getData().selectSingleNode("/data/setup");
             if ( element!=null && element.attributeValue(FORMAT)==null ) {
@@ -272,7 +272,7 @@ public class InsertFormat {
             }
             if ( modified ) {
                 Date lastModified = hardware.getUpdated();
-                persistance.update(hardware);
+                persistence.update(hardware);
                 sqlTool.setUpdatedTimestamp(hardware, lastModified);
             }
         }
@@ -293,7 +293,7 @@ public class InsertFormat {
         List records = getRecords(Record.SOFTWARE);
         for ( Iterator iter = records.iterator(); iter.hasNext(); ) {
             key = (Integer) iter.next();
-            software = (Record) persistance.findById(new Record(key.intValue()));
+            software = (Record) persistence.findById(new Record(key.intValue()));
 
             element = (Element) software.getData().selectSingleNode("/data/text");
             if ( element!=null && element.attributeValue(FORMAT)==null ) {
@@ -304,7 +304,7 @@ public class InsertFormat {
             }
             if ( modified ) {
                 Date lastModified = software.getUpdated();
-                persistance.update(software);
+                persistence.update(software);
                 sqlTool.setUpdatedTimestamp(software, lastModified);
             }
         }
@@ -325,7 +325,7 @@ public class InsertFormat {
         List records = getRecords(Record.DISCUSSION);
         for ( Iterator iter = records.iterator(); iter.hasNext(); ) {
             key = (Integer) iter.next();
-            comment = (Record) persistance.findById(new Record(key.intValue()));
+            comment = (Record) persistence.findById(new Record(key.intValue()));
             nodes = comment.getData().selectNodes("/data/comment");
             for ( Iterator iterIn = nodes.iterator(); iterIn.hasNext(); ) {
                 element = (Element) iterIn.next();
@@ -338,7 +338,7 @@ public class InsertFormat {
             }
             if ( modified ) {
                 Date lastModified = comment.getUpdated();
-                persistance.update(comment);
+                persistence.update(comment);
                 sqlTool.setUpdatedTimestamp(comment, lastModified);
             }
         }
@@ -367,7 +367,7 @@ public class InsertFormat {
         List list = new ArrayList(2000);
         int key;
 
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
         Connection con = persistance.getSQLConnection();
         Statement statement = con.createStatement();
         ResultSet rs = statement.executeQuery("select cislo from polozka where typ="+type);
@@ -383,7 +383,7 @@ public class InsertFormat {
         List list = new ArrayList(10000);
         int key;
 
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
         Connection con = persistance.getSQLConnection();
         Statement statement = con.createStatement();
         ResultSet rs = statement.executeQuery("select cislo from zaznam where typ="+type);
@@ -399,7 +399,7 @@ public class InsertFormat {
         List list = new ArrayList(500);
         int key;
 
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
         Connection con = persistance.getSQLConnection();
         Statement statement = con.createStatement();
         ResultSet rs = statement.executeQuery("select cislo from kategorie");

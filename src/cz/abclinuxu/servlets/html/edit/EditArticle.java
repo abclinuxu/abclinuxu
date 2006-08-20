@@ -20,9 +20,9 @@ package cz.abclinuxu.servlets.html.edit;
 
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.exceptions.MissingArgumentException;
-import cz.abclinuxu.exceptions.PersistanceException;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.exceptions.PersistenceException;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
@@ -104,7 +104,7 @@ public class EditArticle implements AbcAction {
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
@@ -112,8 +112,8 @@ public class EditArticle implements AbcAction {
         if ( relation==null )
             throw new MissingArgumentException("Chybí parametr relationId!");
 
-        persistance.synchronize(relation);
-        persistance.synchronize(relation.getChild());
+        persistence.synchronize(relation);
+        persistence.synchronize(relation.getChild());
         env.put(VAR_RELATION,relation);
 
         // check permissions
@@ -173,7 +173,7 @@ public class EditArticle implements AbcAction {
 
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation upper = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -211,19 +211,19 @@ public class EditArticle implements AbcAction {
         }
 
         try {
-            persistance.create(item);
+            persistence.create(item);
             Relation relation = new Relation(upper.getChild(),item,upper.getId());
             if (upper.getId() != Constants.REL_ARTICLEPOOL) {
-                String url = getUrl(item, upper.getId(), persistance);
+                String url = getUrl(item, upper.getId(), persistence);
                 if (url != null)
                     relation.setUrl(url);
             }
-            persistance.create(relation);
+            persistence.create(relation);
             relation.getParent().addChildRelation(relation);
 
-            persistance.create(record);
+            persistence.create(record);
             Relation recordRelation = new Relation(item,record,relation.getId());
-            persistance.create(recordRelation);
+            persistence.create(recordRelation);
             recordRelation.getParent().addChildRelation(recordRelation);
 
             VariableFetcher.getInstance().refreshArticles();
@@ -235,7 +235,7 @@ public class EditArticle implements AbcAction {
                 env.put(VAR_RELATION, relation);
             }
             return null;
-        } catch (PersistanceException e) {
+        } catch (PersistenceException e) {
             ServletUtils.addError(Constants.ERROR_GENERIC,e.getMessage(),env, null);
             return FMTemplateSelector.select("EditArticle", "edit", env, request);
         }
@@ -290,7 +290,7 @@ public class EditArticle implements AbcAction {
 
     protected String actionEditItem2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_RELATION);
 
         Item item = (Item) relation.getChild();
@@ -319,8 +319,8 @@ public class EditArticle implements AbcAction {
             return FMTemplateSelector.select("EditArticle","edit",env,request);
         }
 
-        persistance.update(item);
-        persistance.update(record);
+        persistence.update(item);
+        persistence.update(record);
 
         VariableFetcher.getInstance().refreshArticles();
 
@@ -341,7 +341,7 @@ public class EditArticle implements AbcAction {
         Element talk = (Element) document.selectSingleNode("/data/talk");
         if (talk == null) {
             talk = DocumentHelper.makeElement(document, "/data/talk");
-            PersistanceFactory.getPersistance().update(item);
+            PersistenceFactory.getPersistance().update(item);
         }
         env.put(VAR_TALK_XML, NodeModel.wrap((new DOMWriter().write(document))));
 
@@ -382,7 +382,7 @@ public class EditArticle implements AbcAction {
 
         boolean canContinue = setAddresses(params, item.getData(), env);
         if (canContinue)
-            PersistanceFactory.getPersistance().update(item);
+            PersistenceFactory.getPersistance().update(item);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/edit/" + relation.getId()+"?action=showTalk");
@@ -399,7 +399,7 @@ public class EditArticle implements AbcAction {
 
         boolean canContinue = addTalkQuestion(params, item.getData(), env);
         if (canContinue)
-            PersistanceFactory.getPersistance().update(item);
+            PersistenceFactory.getPersistance().update(item);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/edit/" + relation.getId()+"?action=showTalk");
@@ -419,7 +419,7 @@ public class EditArticle implements AbcAction {
             Element question = (Element) item.getData().selectSingleNode("/data/talk/question[@id="+id+"]");
             if (question!=null) {
                 question.detach();
-                PersistanceFactory.getPersistance().update(item);
+                PersistenceFactory.getPersistance().update(item);
             }
         }
 
@@ -545,16 +545,16 @@ public class EditArticle implements AbcAction {
 
         String renderedQuestion = FMUtils.executeTemplate("/include/misc/talk_question.ftl", renderEnv);
 
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         question.detach();
-        persistance.update(item);
+        persistence.update(item);
 
         Relation child = InstanceUtils.findFirstChildRecordOfType(item, Record.ARTICLE);
         Record record = (Record) child.getChild();
         Element article = (Element) record.getData().selectSingleNode("data/content");
         String content = article.getText().concat(renderedQuestion);
         article.setText(content);
-        persistance.update(record);
+        persistence.update(record);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/edit/" + relation.getId() + "?action=showTalk");
@@ -565,7 +565,7 @@ public class EditArticle implements AbcAction {
 
 
     /**
-     * Updates title from parameters. Changes are not synchronized with persistance.
+     * Updates title from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item article to be updated
      * @param env environment
@@ -583,7 +583,7 @@ public class EditArticle implements AbcAction {
     }
 
     /**
-     * Updates perex from parameters. Changes are not synchronized with persistance.
+     * Updates perex from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item article to be updated
      * @param env environment
@@ -601,7 +601,7 @@ public class EditArticle implements AbcAction {
     }
 
     /**
-     * Updates author from parameters. Changes are not synchronized with persistance.
+     * Updates author from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item article to be updated
      * @param env environment
@@ -622,12 +622,12 @@ public class EditArticle implements AbcAction {
      * Gets URL for specified article.
      * @param item article
      * @param upper id of upper relation (section)
-     * @param persistance
+     * @param persistence
      */
-    public static String getUrl(Item item, int upper, Persistance persistance) {
+    public static String getUrl(Item item, int upper, Persistence persistence) {
         if (upper == 0)
             return null;
-        Relation parentRelation = (Relation) persistance.findById(new Relation(upper));
+        Relation parentRelation = (Relation) persistence.findById(new Relation(upper));
         if (parentRelation.getUrl() == null)
             return null;
 
@@ -638,7 +638,7 @@ public class EditArticle implements AbcAction {
     }
 
     /**
-     * Updates editor . Changes are not synchronized with persistance.
+     * Updates editor . Changes are not synchronized with persistence.
      * @param item article to be updated.
      * @param env environment
      * @return false, if there is a major error.
@@ -651,7 +651,7 @@ public class EditArticle implements AbcAction {
     }
 
     /**
-     * Updates date of publishing from parameters. Changes are not synchronized with persistance.
+     * Updates date of publishing from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item article to be updated
      * @param env environment
@@ -672,7 +672,7 @@ public class EditArticle implements AbcAction {
     }
 
     /**
-     * Updates content of the article from parameters. Changes are not synchronized with persistance.
+     * Updates content of the article from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param record article record to be updated
      * @param env environment
@@ -720,7 +720,7 @@ public class EditArticle implements AbcAction {
     }
 
     /**
-     * Updates forbid_discussions from parameters. Changes are not synchronized with persistance.
+     * Updates forbid_discussions from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item article  to be updated
      * @return false, if there is a major error.
@@ -740,7 +740,7 @@ public class EditArticle implements AbcAction {
     }
 
     /**
-     * Updates forbid_rating from parameters. Changes are not synchronized with persistance.
+     * Updates forbid_rating from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item article  to be updated
      * @return false, if there is a major error.
@@ -760,7 +760,7 @@ public class EditArticle implements AbcAction {
     }
 
     /**
-     * Updates thumbnail from parameters. Changes are not synchronized with persistance.
+     * Updates thumbnail from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item article  to be updated
      * @return false, if there is a major error.
@@ -780,7 +780,7 @@ public class EditArticle implements AbcAction {
     }
 
     /**
-     * Updates not on index attribute from parameters. Changes are not synchronized with persistance.
+     * Updates not on index attribute from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item article  to be updated
      * @return false, if there is a major error.
@@ -796,7 +796,7 @@ public class EditArticle implements AbcAction {
 
     /**
      * Updates designated section from parameters.
-     * Changes are not synchronized with persistance.
+     * Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item   article  to be updated
      * @return false, if there is a major error.
@@ -811,7 +811,7 @@ public class EditArticle implements AbcAction {
     }
 
     /**
-     * Updates related articles from parameters. Changes are not synchronized with persistance.
+     * Updates related articles from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param record article's record to be updated
      * @param env environment
@@ -822,7 +822,7 @@ public class EditArticle implements AbcAction {
     }
 
     /**
-     * Updates resources from parameters. Changes are not synchronized with persistance.
+     * Updates resources from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param record article's record to be updated
      * @param env environment
@@ -833,7 +833,7 @@ public class EditArticle implements AbcAction {
     }
 
     /**
-     * Updates resources from parameters. Changes are not synchronized with persistance.
+     * Updates resources from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param record article's record to be updated
      * @param env environment
@@ -928,7 +928,7 @@ public class EditArticle implements AbcAction {
     }
 
     /**
-     * Updates talk addresses from parameters. Changes are not synchronized with persistance.
+     * Updates talk addresses from parameters. Changes are not synchronized with persistence.
      *
      * @param params map holding request's parameters
      * @param document article's record to be updated
@@ -966,7 +966,7 @@ public class EditArticle implements AbcAction {
     }
 
     /**
-     * Updates one question to talk from parameters. Changes are not synchronized with persistance.
+     * Updates one question to talk from parameters. Changes are not synchronized with persistence.
      *
      * @param params map holding request's parameters
      * @param document article's record to be updated
@@ -1006,8 +1006,8 @@ public class EditArticle implements AbcAction {
      * @return list of all section relations sorted by name.
      */
     private List getSections() {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        Category dir = (Category) persistance.findById(new Category(Constants.CAT_ARTICLES));
+        Persistence persistence = PersistenceFactory.getPersistance();
+        Category dir = (Category) persistence.findById(new Category(Constants.CAT_ARTICLES));
         List sections = Sorters2.byName(dir.getChildren());
         sections.remove(new Relation(4731));
         return sections;

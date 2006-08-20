@@ -18,8 +18,8 @@
  */
 package cz.abclinuxu.utils;
 
-import cz.abclinuxu.persistance.impl.MySqlPersistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.impl.MySqlPersistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.data.XMLHandler;
 
 import java.sql.Connection;
@@ -56,13 +56,13 @@ public class XPathQuery {
         ResultSetMetaData metaData;
         int columns, i;
 
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
         Connection con = persistance.getSQLConnection();
         Statement statement = con.createStatement();
         ResultSet resultSet = statement.executeQuery(sql);
         while (resultSet.next()) {
             tmp = resultSet.getString(1);
-            tmp = MySqlPersistance.insertEncoding(tmp);
+            tmp = MySqlPersistence.insertEncoding(tmp);
             doc = new XMLHandler(tmp).getData();
             nodes = doc.selectNodes(xpath);
             if (nodes.size()>0) {

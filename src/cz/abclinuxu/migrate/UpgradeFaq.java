@@ -18,10 +18,10 @@
  */
 package cz.abclinuxu.migrate;
 
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.cache.EmptyCache;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.cache.EmptyCache;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.servlets.html.edit.EditRelated;
 
@@ -37,7 +37,7 @@ import org.dom4j.Element;
  * Migrates related links to related documents.
  */
 public class UpgradeFaq {
-    static Persistance persistance = PersistanceFactory.getPersistance(EmptyCache.class);
+    static Persistence persistence = PersistenceFactory.getPersistance(EmptyCache.class);
     static SQLTool sqlTool = SQLTool.getInstance();
 
     public static void main(String[] args) {
@@ -73,7 +73,7 @@ public class UpgradeFaq {
                 EditRelated.insertDocument(params, root, params);
             }
             links.detach();
-            persistance.update(item);
+            persistence.update(item);
             sqlTool.setUpdatedTimestamp(item, updated);
         }
     }

@@ -29,9 +29,9 @@ import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
-import cz.abclinuxu.persistance.*;
-import cz.abclinuxu.persistance.extra.LimitQualifier;
-import cz.abclinuxu.persistance.extra.Qualifier;
+import cz.abclinuxu.persistence.*;
+import cz.abclinuxu.persistence.extra.LimitQualifier;
+import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.paging.Paging;
@@ -113,7 +113,7 @@ public class EditGroup implements AbcAction {
     protected String actionCreateGroup(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         Item group = new Item(0, Item.GROUP);
         group.setData(DocumentHelper.createDocument());
@@ -128,7 +128,7 @@ public class EditGroup implements AbcAction {
         group.setOwner(user.getId());
         group.setCreated(new Date());
 
-        persistance.create(group);
+        persistence.create(group);
         AdminLogger.logEvent(user, "vytvoril novou skupinu "+group.getId());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -141,12 +141,12 @@ public class EditGroup implements AbcAction {
      */
     protected String actionEditGroupStep1(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         Item group = (Item) InstanceUtils.instantiateParam(PARAM_GROUP, Item.class, params, request);
         if ( group==null )
             return ServletUtils.showErrorPage("Zadejte skupinu!", env, request);
-        persistance.synchronize(group);
+        persistence.synchronize(group);
 
         if ( group.getType()!=Item.GROUP )
             return ServletUtils.showErrorPage("Toto není skupina!", env, request);
@@ -163,12 +163,12 @@ public class EditGroup implements AbcAction {
     protected String actionEditGroupStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         Item group = (Item) InstanceUtils.instantiateParam(PARAM_GROUP, Item.class, params, request);
         if ( group==null )
             return ServletUtils.showErrorPage("Zadejte skupinu!", env, request);
-        persistance.synchronize(group);
+        persistence.synchronize(group);
 
         if ( group.getType()!=Item.GROUP )
             return ServletUtils.showErrorPage("Toto není skupina!", env, request);
@@ -180,7 +180,7 @@ public class EditGroup implements AbcAction {
         if ( !canContinue )
             return FMTemplateSelector.select("EditGroup", "create", env, request);
 
-        persistance.update(group);
+        persistence.update(group);
         AdminLogger.logEvent(user, "upravil skupinu "+group.getId());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -202,10 +202,10 @@ public class EditGroup implements AbcAction {
      */
     protected String actionShowUsers(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         Item group = (Item) InstanceUtils.instantiateParam(PARAM_GROUP, Item.class, params, request);
-        persistance.synchronize(group);
+        persistence.synchronize(group);
         if ( group.getType()!=Item.GROUP )
             return ServletUtils.showErrorPage("Toto není skupina!", env, request);
         env.put(VAR_GROUP,group);
@@ -217,7 +217,7 @@ public class EditGroup implements AbcAction {
         List users = new ArrayList(keys.size());
         for ( Iterator iter = keys.iterator(); iter.hasNext(); ) {
             Integer key = (Integer) iter.next();
-            users.add(persistance.findById(new User(key.intValue())));
+            users.add(persistence.findById(new User(key.intValue())));
         }
 
         int total = sqlTool.countUsersInGroup(group.getId());
@@ -233,7 +233,7 @@ public class EditGroup implements AbcAction {
     protected String actionRemoveMembers(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User admin = (User) env.get(Constants.VAR_USER);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         int group = Misc.parseInt((String) params.get(EditGroup.PARAM_GROUP), 0);
         if ( group==0 )
@@ -252,12 +252,12 @@ public class EditGroup implements AbcAction {
             id = Misc.parseInt((String) iter.next(),0);
             if (id==0)
                 continue;
-            User user = (User) persistance.findById(new User(id));
+            User user = (User) persistence.findById(new User(id));
             Element element = (Element) user.getData().selectSingleNode("/data/system/group[text()='"+group+"']");
             if (element==null)
                 continue;
             element.detach();
-            persistance.update(user);
+            persistence.update(user);
             AdminLogger.logEvent(admin, "vyradil uzivatele "+user.getId()+" ze skupiny "+group);
         }
 
@@ -271,7 +271,7 @@ public class EditGroup implements AbcAction {
     ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * Updates name of group from parameters. Changes are not synchronized with persistance.
+     * Updates name of group from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param group group to be updated
      * @param env environment
@@ -289,7 +289,7 @@ public class EditGroup implements AbcAction {
     }
 
     /**
-     * Updates description of group from parameters. Changes are not synchronized with persistance.
+     * Updates description of group from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param group group to be updated
      * @param env environment

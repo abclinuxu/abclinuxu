@@ -22,8 +22,8 @@ import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.edit.*;
 import cz.abclinuxu.servlets.html.view.ShowObject;
@@ -44,22 +44,22 @@ public class GenerateDevelDatabase {
     static int ridArticle, ridDriver, ridHardware, ridNews, ridQuestion;
 
     public static void main(String[] args) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance(PersistanceFactory.defaultDevelUrl);
-        admin = (User) persistance.findById(new User(1));
-        user = (User) persistance.findById(new User(2));
+        Persistence persistence = PersistenceFactory.getPersistance(PersistenceFactory.defaultDevelUrl);
+        admin = (User) persistence.findById(new User(1));
+        user = (User) persistence.findById(new User(2));
 
-        generateArticles(persistance);
-        generateNews(persistance);
-        generateHardwareItems(persistance);
+        generateArticles(persistence);
+        generateNews(persistence);
+        generateHardwareItems(persistence);
         generateDrivers();
-        generateDiscussions(persistance);
-        generateBlogs(persistance);
+        generateDiscussions(persistence);
+        generateBlogs(persistence);
         generateDictionaryItems();
-        generatePoll(persistance);
-        generateFAQs(persistance);
+        generatePoll(persistence);
+        generateFAQs(persistence);
     }
 
-    private static void generateHardwareItems(Persistance persistance) throws Exception {
+    private static void generateHardwareItems(Persistence persistence) throws Exception {
         Map map = new HashMap();
         Map params = new HashMap();
         map.put(Constants.VAR_PARAMS, params);
@@ -72,7 +72,7 @@ public class GenerateDevelDatabase {
         params.put(EditHardware.PARAM_TECHPARAM, "Kus drátu");
         params.put(EditHardware.PARAM_DRIVER, "kernel");
         params.put(EditHardware.PARAM_PRICE, "low");
-        map.put(EditHardware.VAR_RELATION, persistance.findById(new Relation(148)));
+        map.put(EditHardware.VAR_RELATION, persistence.findById(new Relation(148)));
 
         EditHardware servlet = new EditHardware();
         servlet.actionAddStep2(null, null, map, false);
@@ -80,7 +80,7 @@ public class GenerateDevelDatabase {
         ridHardware = created.getId();
     }
 
-    private static void generateDiscussions(Persistance persistance) throws Exception {
+    private static void generateDiscussions(Persistence persistence) throws Exception {
         Map map = new HashMap();
         Map params = new HashMap();
         map.put(Constants.VAR_PARAMS, params);
@@ -89,7 +89,7 @@ public class GenerateDevelDatabase {
         params.put(EditDiscussion.PARAM_TITLE, "Jak nainstalovat balíèek do Mandrivy");
         params.put(EditDiscussion.PARAM_TEXT, "Na¹el jsem balíèek RPM se super aplikací, jak jej mám nainstalovat?");
         params.put(EditDiscussion.PARAM_AUTHOR_ID, "2");
-        map.put(EditDiscussion.VAR_RELATION, persistance.findById(new Relation(49645)));
+        map.put(EditDiscussion.VAR_RELATION, persistence.findById(new Relation(49645)));
 
         EditDiscussion servlet = new EditDiscussion();
         servlet.actionAddQuestion2(null, null, map, false);
@@ -107,13 +107,13 @@ public class GenerateDevelDatabase {
         ridQuestion = created.getId();
     }
 
-    private static void generateFAQs(Persistance persistance) throws Exception {
+    private static void generateFAQs(Persistence persistence) throws Exception {
         Map map = new HashMap();
         Map params = new HashMap();
         map.put(Constants.VAR_PARAMS, params);
         map.put(Constants.VAR_USER, user);
 
-        map.put(EditFaq.VAR_RELATION, persistance.findById(new Relation(94480)));
+        map.put(EditFaq.VAR_RELATION, persistence.findById(new Relation(94480)));
         params.put(EditFaq.PARAM_TITLE, "Zapnutí DMA");
         params.put(EditFaq.PARAM_TEXT, "man hdparm");
 
@@ -137,14 +137,14 @@ public class GenerateDevelDatabase {
         servlet2.actionAddStep2(null, null, params, false);
     }
 
-    private static void generateBlogs(Persistance persistance) throws Exception {
+    private static void generateBlogs(Persistence persistence) throws Exception {
         Map map = new HashMap();
         Map params = new HashMap();
         map.put(Constants.VAR_PARAMS, params);
         map.put(Constants.VAR_USER, admin);
 
-        Relation blogRelation = (Relation) persistance.findById(new Relation(72131));
-        persistance.synchronize(blogRelation.getChild());
+        Relation blogRelation = (Relation) persistence.findById(new Relation(72131));
+        persistence.synchronize(blogRelation.getChild());
         params.put(EditBlog.PARAM_TITLE, "Blogosféra");
         params.put(EditBlog.PARAM_CONTENT, "Blogy jsou dobrý sluha, ale ¹patný pán.");
 
@@ -186,7 +186,7 @@ public class GenerateDevelDatabase {
         ridDriver = created.getId();
     }
 
-    private static void generateNews(Persistance persistance) throws Exception {
+    private static void generateNews(Persistence persistence) throws Exception {
         Map map = new HashMap();
         Map params = new HashMap();
         map.put(Constants.VAR_PARAMS, params);
@@ -210,17 +210,17 @@ public class GenerateDevelDatabase {
         created.setUrl(url);
         created.setParent(new Category(Constants.CAT_NEWS));
         created.setUpper(Constants.REL_NEWS);
-        persistance.update(created);
+        persistence.update(created);
 
     }
 
-    private static void generatePoll(Persistance persistance) throws Exception {
+    private static void generatePoll(Persistence persistence) throws Exception {
         Map map = new HashMap();
         Map params = new HashMap();
         map.put(Constants.VAR_PARAMS, params);
         map.put(Constants.VAR_USER, admin);
 
-        map.put(EditPoll.VAR_RELATION, persistance.findById(new Relation(Constants.REL_POLLS)));
+        map.put(EditPoll.VAR_RELATION, persistence.findById(new Relation(Constants.REL_POLLS)));
         params.put(EditPoll.PARAM_QUESTION, "Uvolnìní zdrojákù abíèka je");
         List choices = new ArrayList();
         choices.add("kravina");
@@ -233,13 +233,13 @@ public class GenerateDevelDatabase {
         servlet.actionAddStep2(null, null, map, false);
     }
 
-    private static void generateArticles(Persistance persistance) throws Exception {
+    private static void generateArticles(Persistence persistence) throws Exception {
         Map map = new HashMap();
         Map params = new HashMap();
         map.put(Constants.VAR_PARAMS, params);
         map.put(Constants.VAR_USER, admin);
 
-        Relation articles = (Relation) persistance.findById(new Relation(4));
+        Relation articles = (Relation) persistence.findById(new Relation(4));
         map.put(EditArticle.VAR_RELATION, articles);
         map.put(Constants.VAR_USER, admin);
         params.put(EditArticle.PARAM_TITLE, "Jaderné noviny 000");
@@ -255,7 +255,7 @@ public class GenerateDevelDatabase {
         Relation created = (Relation) map.get(ShowObject.VAR_RELATION);
         ridArticle = created.getId();
 
-        articles = (Relation) persistance.findById(new Relation(14358));
+        articles = (Relation) persistence.findById(new Relation(14358));
         map.put(EditArticle.VAR_RELATION, articles);
         params.put(EditArticle.PARAM_TITLE, "Developerská databáze abclinuxu");
         params.put(EditArticle.PARAM_PEREX, "Krátké info ohlednì databáze pro vývoj abíèka.");
@@ -267,7 +267,7 @@ public class GenerateDevelDatabase {
         editArticle.actionAddStep2(null, null, map, false);
 
         Relation article = (Relation) map.get(EditArticle.VAR_RELATION);
-        Relation dizRelation = EditDiscussion.createEmptyDiscussion(article, user, persistance);
+        Relation dizRelation = EditDiscussion.createEmptyDiscussion(article, user, persistence);
 
         params.clear();
         params.put(EditDiscussion.PARAM_DISCUSSION, Integer.toString(dizRelation.getChild().getId()));

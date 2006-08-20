@@ -18,8 +18,8 @@
  */
 package cz.abclinuxu.utils;
 
-import cz.abclinuxu.persistance.*;
-import cz.abclinuxu.persistance.cache.EmptyCache;
+import cz.abclinuxu.persistence.*;
+import cz.abclinuxu.persistence.cache.EmptyCache;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.servlets.Constants;
@@ -34,13 +34,13 @@ import java.util.*;
  * discussion administrators.
  */
 public class DumpCategoryTree {
-    Persistance persistance = PersistanceFactory.getPersistance(PersistanceFactory.defaultUrl,EmptyCache.class);
+    Persistence persistence = PersistenceFactory.getPersistance(PersistenceFactory.defaultUrl,EmptyCache.class);
     HashMap map = new HashMap(1000);
 
     public void dumpTree(File parent, Relation relation) throws Exception {
         Relation i = new Relation(relation.getId());
         map.put(i,i);
-        persistance.synchronize(relation);
+        persistence.synchronize(relation);
         if ( ! (relation.getChild() instanceof Category) )
             return;
 

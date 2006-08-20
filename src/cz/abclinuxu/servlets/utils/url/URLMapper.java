@@ -40,9 +40,9 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.html.view.ShowObject;
 import cz.abclinuxu.exceptions.NotFoundException;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.data.Relation;
 
 import java.util.prefs.Preferences;
@@ -194,7 +194,7 @@ public final class URLMapper implements Configurable {
         if (matcher.find()) {
             String found = matcher.group(1);
             int rid = Misc.parseInt(found, -1);
-            return (Relation) PersistanceFactory.getPersistance().findById(new Relation(rid));
+            return (Relation) PersistenceFactory.getPersistance().findById(new Relation(rid));
         }
         return loadCustomRelation(url);
     }
@@ -208,8 +208,8 @@ public final class URLMapper implements Configurable {
         CustomURLCache urlCache = CustomURLCache.getInstance();
         Relation relation = urlCache.get(url);
         if (relation != null) {
-            Persistance persistance = PersistanceFactory.getPersistance();
-            return (Relation) persistance.findById(relation);
+            Persistence persistence = PersistenceFactory.getPersistance();
+            return (Relation) persistence.findById(relation);
         }
 
         SQLTool sqlTool = SQLTool.getInstance();

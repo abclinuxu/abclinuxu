@@ -33,9 +33,9 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.data.User;
@@ -72,12 +72,12 @@ public class EditRating implements AbcAction, Configurable {
      */
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
 
         if ( relation!=null ) {
-            relation = (Relation) persistance.findById(relation);
-            persistance.synchronize(relation.getChild());
+            relation = (Relation) persistence.findById(relation);
+            persistence.synchronize(relation.getChild());
         } else
             throw new MissingArgumentException("Chybí parametr relationId!");
 
@@ -94,7 +94,7 @@ public class EditRating implements AbcAction, Configurable {
             boolean result = rate(user, relation.getId(), data.getRootElement(), params, env, request.getSession());
             if ( result ) {
                 ServletUtils.addError(Constants.ERROR_GENERIC, msgOK, env, null);
-                persistance.update(object);
+                persistence.update(object);
             }
         }
         SQLTool.getInstance().setUpdatedTimestamp(object, originalUpdated);
@@ -104,7 +104,7 @@ public class EditRating implements AbcAction, Configurable {
 
     /**
      * Adds user vote to rating of this object. This method
-     * doesn't care of either synchronization or persistance.
+     * doesn't care of either synchronization or persistence.
      * This shall be handled by caller.
      * @param object root element for the rated object.
      * @param params parameters

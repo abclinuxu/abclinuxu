@@ -20,8 +20,8 @@ package cz.abclinuxu.servlets.html.admin;
 
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.User;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.init.AbcInit;
@@ -89,7 +89,7 @@ public class AdminServlet implements AbcAction {
      * Clears all caches.
      */
     private String clearCache(HttpServletRequest request, Map env) throws Exception {
-        PersistanceFactory.getPersistance().clearCache();
+        PersistenceFactory.getPersistance().clearCache();
         TemplateSelector.initialize(null);
         ConfigurationManager.reconfigureAll();
         FMUtils.getConfiguration().clearTemplateCache();
@@ -119,9 +119,9 @@ public class AdminServlet implements AbcAction {
      * todo add other checks, e.g. jobs and threads
      */
     private String performCheck(HttpServletRequest request, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         try {
-            persistance.findById(new Category(Constants.CAT_HARDWARE));
+            persistence.findById(new Category(Constants.CAT_HARDWARE));
             env.put(VAR_DATABASE_STATE, Boolean.TRUE);
         } catch (Exception e) {
             env.put(VAR_DATABASE_STATE,Boolean.FALSE);

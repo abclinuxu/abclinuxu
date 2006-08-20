@@ -23,9 +23,9 @@ import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.exceptions.PersistanceException;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.exceptions.PersistenceException;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.utils.Misc;
@@ -71,32 +71,32 @@ public class SelectRelation implements AbcAction {
      * Called, when we shall descend to another relation
      */
     protected String actionNext(HttpServletRequest request, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         String manual = request.getParameter(PARAM_ENTERED);
         String tmp = request.getParameter(PARAM_CURRENT);
 
         if ( tmp!=null ) {
             try {
                 int currentId = Integer.parseInt( (Misc.empty(manual))? tmp:manual);
-                Relation current = (Relation) persistance.findById(new Relation(currentId));
+                Relation current = (Relation) persistence.findById(new Relation(currentId));
                 env.put(VAR_CURRENT,current);
                 return FMTemplateSelector.select("SelectRelation","step1",env,request);
             } catch (NumberFormatException e) {
                 ServletUtils.addError(PARAM_ENTERED,"Èíslo vìt¹í ne¾ nula!",env, null);
-            } catch (PersistanceException e) {
+            } catch (PersistenceException e) {
                 ServletUtils.addError(Constants.ERROR_GENERIC,"Nebyla zvolena platná relace!",env, null);
             }
         }
 
-        Category clanky = (Category) persistance.findById(new Category(Constants.CAT_ARTICLES));
+        Category clanky = (Category) persistence.findById(new Category(Constants.CAT_ARTICLES));
         List content = clanky.getChildren();
         env.put(VAR_CLANKY,content);
 
-        Category sw = (Category) persistance.findById(new Category(Constants.CAT_FORUM));
+        Category sw = (Category) persistence.findById(new Category(Constants.CAT_FORUM));
         content = sw.getChildren();
         env.put(VAR_FORUM,content);
 
-        Category hw386 = (Category) persistance.findById(new Category(Constants.CAT_386));
+        Category hw386 = (Category) persistence.findById(new Category(Constants.CAT_386));
         content = hw386.getChildren();
         env.put(VAR_386,content);
         return FMTemplateSelector.select("SelectRelation","step1",env,request);
@@ -124,7 +124,7 @@ public class SelectRelation implements AbcAction {
             }
         }
 
-        Relation current = (Relation) PersistanceFactory.getPersistance().findById(new Relation(result));
+        Relation current = (Relation) PersistenceFactory.getPersistance().findById(new Relation(result));
         env.put(VAR_CURRENT,current);
         return FMTemplateSelector.select("SelectRelation","step2",env,request);
     }

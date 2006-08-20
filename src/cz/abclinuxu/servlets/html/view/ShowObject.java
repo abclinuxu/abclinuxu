@@ -27,11 +27,11 @@ import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.data.view.ACL;
 import cz.abclinuxu.data.view.DiscussionRecord;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.versioning.VersioningFactory;
-import cz.abclinuxu.persistance.versioning.Versioning;
-import cz.abclinuxu.persistance.versioning.VersionedDocument;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.versioning.VersioningFactory;
+import cz.abclinuxu.persistence.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersionedDocument;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -80,10 +80,10 @@ public class ShowObject implements AbcAction {
     public static final String VAR_CHILDREN_MAP = "CHILDREN";
     public static final String VAR_THREAD = "THREAD";
 
-    Persistance persistance = PersistanceFactory.getPersistance();
+    Persistence persistence = PersistenceFactory.getPersistance();
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String action = (String) params.get(PARAM_ACTION);
 
@@ -93,7 +93,7 @@ public class ShowObject implements AbcAction {
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation==null )
             throw new MissingArgumentException("Parametr relationId je prázdný!");
-        relation = (Relation) persistance.findById(relation);
+        relation = (Relation) persistence.findById(relation);
         env.put(VAR_RELATION,relation);
 
         // check ACL
@@ -116,7 +116,7 @@ public class ShowObject implements AbcAction {
             }
         }
 
-        List parents = persistance.findParents(relation);
+        List parents = persistence.findParents(relation);
         env.put(VAR_PARENTS, parents);
 
         if (relation.getChild() instanceof Poll)
@@ -200,16 +200,16 @@ public class ShowObject implements AbcAction {
      */
     String processCensored(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         Item diz = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if (diz==null)
             throw new MissingArgumentException("Chybí parametr "+PARAM_DISCUSSION+"!");
-        diz = (Item) persistance.findById(diz);
+        diz = (Item) persistence.findById(diz);
 
         List children = diz.getChildren();
         Record record = (Record) ((Relation)children.get(0)).getChild();
-        persistance.synchronize(record);
+        persistence.synchronize(record);
 
         int id = Misc.parseInt((String) params.get(PARAM_THREAD), -1);
         if (id == -1)

@@ -18,8 +18,8 @@
  */
 package cz.abclinuxu.scheduler;
 
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
@@ -52,8 +52,8 @@ public class ArticlePoolMonitor extends TimerTask {
      */
     public void run() {
         try {
-            Persistance persistance = PersistanceFactory.getPersistance();
-            persistance.synchronize(pool);
+            Persistence persistence = PersistenceFactory.getPersistance();
+            persistence.synchronize(pool);
             Date now = new Date();
 
             List children = pool.getChildren();
@@ -61,7 +61,7 @@ public class ArticlePoolMonitor extends TimerTask {
                 Relation relation = (Relation) iter.next();
                 if ( relation.getChild() instanceof Item ) {
                     Item item = (Item) relation.getChild();
-                    persistance.synchronize(item);
+                    persistence.synchronize(item);
                     if ( item.getType()==Item.ARTICLE && now.after(item.getCreated()) ) {
                         Element element = (Element) item.getData().selectSingleNode("/data/section_rid");
                         if (element==null)
@@ -69,23 +69,23 @@ public class ArticlePoolMonitor extends TimerTask {
                         int section_rid = Misc.parseInt(element.getText(), 0);
                         if (section_rid==0)
                             continue;
-                        Relation section = (Relation) persistance.findById(new Relation(section_rid));
+                        Relation section = (Relation) persistence.findById(new Relation(section_rid));
 
                         element.detach();
-                        persistance.update(item);
+                        persistence.update(item);
 
                         if (relation.getUrl() == null) {
-                            String url = EditArticle.getUrl(item, section.getId(), persistance);
+                            String url = EditArticle.getUrl(item, section.getId(), persistence);
                             if (url != null) {
                                 relation.setUrl(url);
-                                persistance.update(relation);
+                                persistence.update(relation);
                             }
                         }
 
                         relation.getParent().removeChildRelation(relation);
                         relation.setParent(section.getChild());
                         relation.setUpper(section.getId());
-                        persistance.update(relation);
+                        persistence.update(relation);
                         relation.getParent().addChildRelation(relation);
 
                         VariableFetcher.getInstance().refreshArticles();

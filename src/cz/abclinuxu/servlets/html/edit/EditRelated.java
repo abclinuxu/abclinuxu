@@ -38,8 +38,8 @@ import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.exceptions.MissingArgumentException;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -110,16 +110,16 @@ public class EditRelated implements AbcAction {
     }
 
     private String actionManageRelated(HttpServletRequest request, Map env) {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_RELATION);
-        List parents = persistance.findParents(relation);
+        List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
         return FMTemplateSelector.select("EditRelated", "manage", env, request);
     }
 
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
 
         Relation relation = (Relation) env.get(VAR_RELATION);
@@ -131,7 +131,7 @@ public class EditRelated implements AbcAction {
             return actionManageRelated(request, env);
 
         item.setOwner(user.getId());
-        persistance.update(item);
+        persistence.update(item);
 
         // commit new version
         Misc.commitRelation(item.getData().getRootElement(), relation, user);
@@ -172,7 +172,7 @@ public class EditRelated implements AbcAction {
 
     private String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
 
         Relation relation = (Relation) env.get(VAR_RELATION);
@@ -184,7 +184,7 @@ public class EditRelated implements AbcAction {
             return FMTemplateSelector.select("EditRelated", "edit", env, request);
 
         item.setOwner(user.getId());
-        persistance.update(item);
+        persistence.update(item);
 
         // commit new version
         Misc.commitRelation(item.getData().getRootElement(), relation, user);
@@ -227,7 +227,7 @@ public class EditRelated implements AbcAction {
 
     private String actionRemoveAttachmentStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild().clone();
@@ -247,7 +247,7 @@ public class EditRelated implements AbcAction {
         }
 
         item.setOwner(user.getId());
-        persistance.update(item);
+        persistence.update(item);
 
         // commit new version
         Misc.commitRelation(item.getData().getRootElement(), relation, user);
@@ -260,7 +260,7 @@ public class EditRelated implements AbcAction {
     // setters
 
     /**
-     * Inserts new related document from parameters. Changes are not synchronized with persistance.
+     * Inserts new related document from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root root element to be updated
      * @param env environment
@@ -282,7 +282,7 @@ public class EditRelated implements AbcAction {
     }
 
     /**
-     * Updates existing related document from parameters. Changes are not synchronized with persistance.
+     * Updates existing related document from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root root element to be updated
      * @param env environment
@@ -361,7 +361,7 @@ public class EditRelated implements AbcAction {
         }
 
         if (type == null) {
-            Persistance persistance = PersistanceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistance();
             Relation relation = URLMapper.loadRelationFromUrl(url);
             if (relation == null) {
                 if (Misc.empty(title)) {
@@ -369,7 +369,7 @@ public class EditRelated implements AbcAction {
                     return null;
                 }
             } else {
-                GenericObject obj = persistance.findById(relation.getChild());
+                GenericObject obj = persistence.findById(relation.getChild());
                 if (obj instanceof Item) {
                     switch (((Item) obj).getType()) {
                         case Item.ARTICLE: type = Constants.RELATED_ARTICLE; break;

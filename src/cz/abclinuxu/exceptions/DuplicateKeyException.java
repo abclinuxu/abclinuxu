@@ -21,7 +21,7 @@ package cz.abclinuxu.exceptions;
 /**
  * Persistance subexception indicating, that key is already in use.
  */
-public class DuplicateKeyException extends PersistanceException {
+public class DuplicateKeyException extends PersistenceException {
     public DuplicateKeyException(String desc) {
         super(desc);
     }

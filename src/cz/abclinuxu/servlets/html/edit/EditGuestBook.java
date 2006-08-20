@@ -32,8 +32,8 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.parser.safehtml.NewsGuard;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.exceptions.MissingArgumentException;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
 
@@ -67,7 +67,7 @@ public class EditGuestBook implements AbcAction {
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         String action = (String) params.get(PARAM_ACTION);
 
         if (ACTION_ADD.equals(action) || action==null)
@@ -87,7 +87,7 @@ public class EditGuestBook implements AbcAction {
         if (relation == null)
             throw new MissingArgumentException("Chybí parametr rid!");
 
-        relation = (Relation) persistance.findById(relation);
+        relation = (Relation) persistence.findById(relation);
         Tools.sync(relation);
         env.put(VAR_RELATION, relation);
 
@@ -101,7 +101,7 @@ public class EditGuestBook implements AbcAction {
     }
 
     private String actionGuestBookEntry(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -120,9 +120,9 @@ public class EditGuestBook implements AbcAction {
         if (!canContinue)
             return FMTemplateSelector.select("EditGuestBook", "add", env, request);
 
-        persistance.create(item);
+        persistence.create(item);
         Relation relation = new Relation(new Category(Constants.CAT_GUESTBOOK), item, Constants.REL_GUESTBOOK);
-        persistance.create(relation);
+        persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -144,7 +144,7 @@ public class EditGuestBook implements AbcAction {
     }
 
     private String actionEditGuestBookEntryStep2(HttpServletRequest request, HttpServletResponse response, Relation relation, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -158,7 +158,7 @@ public class EditGuestBook implements AbcAction {
         if (!canContinue)
             return FMTemplateSelector.select("EditGuestBook", "edit", env, request);
 
-        persistance.update(item);
+        persistence.update(item);
         AdminLogger.logEvent(user, "edited guestbook entry "+relation.getId());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -169,7 +169,7 @@ public class EditGuestBook implements AbcAction {
     // setters
 
     /**
-     * Sets message of the guest book entry. Changes are not synchronized with persistance.
+     * Sets message of the guest book entry. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root   XML document
      * @return false, if there is a major error.
@@ -200,7 +200,7 @@ public class EditGuestBook implements AbcAction {
     }
 
     /**
-     * Sets name of guest book entry author. Changes are not synchronized with persistance.
+     * Sets name of guest book entry author. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param root   XML document
      * @return false, if there is a major error.

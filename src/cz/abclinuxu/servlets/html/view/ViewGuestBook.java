@@ -24,9 +24,9 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.extra.Qualifier;
-import cz.abclinuxu.persistance.extra.LimitQualifier;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.data.Item;
 
 import javax.servlet.http.HttpServletRequest;

@@ -21,11 +21,11 @@ package cz.abclinuxu.migrate;
 import cz.abclinuxu.data.Record;
 import cz.abclinuxu.data.view.DiscussionRecord;
 import cz.abclinuxu.data.view.RowComment;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.impl.MySqlPersistance;
-import cz.abclinuxu.persistance.cache.EmptyCache;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.impl.MySqlPersistence;
+import cz.abclinuxu.persistence.cache.EmptyCache;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.Misc;
 import org.dom4j.Attribute;
@@ -42,16 +42,16 @@ import java.sql.ResultSet;
 public class UpgradeDiscusssions2 {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(UpgradeDiscusssions2.class);
 
-    static Persistance persistance;
+    static Persistence persistence;
     static SQLTool sqlTool;
     static Connection con;
     static PreparedStatement updateUpper;
     static PreparedStatement selectRelations;
     static int counter = 0;
     static {
-        persistance = PersistanceFactory.getPersistance(EmptyCache.class);
+        persistence = PersistenceFactory.getPersistance(EmptyCache.class);
         sqlTool = SQLTool.getInstance();
-        con = ((MySqlPersistance) persistance).getSQLConnection();
+        con = ((MySqlPersistence) persistence).getSQLConnection();
     }
 
     public static void main(String[] args) throws Exception {
@@ -155,7 +155,7 @@ public class UpgradeDiscusssions2 {
 
             comments.clear();
             alone.clear();
-            persistance.update(record);
+            persistence.update(record);
             setUpper(record);
         } catch (Exception e) {
             System.err.println("Error upgrading record "+record.getId());

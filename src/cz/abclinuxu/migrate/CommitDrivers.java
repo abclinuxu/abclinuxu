@@ -18,12 +18,12 @@
  */
 package cz.abclinuxu.migrate;
 
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.impl.MySqlPersistance;
-import cz.abclinuxu.persistance.versioning.VersioningFactory;
-import cz.abclinuxu.persistance.versioning.Versioning;
-import cz.abclinuxu.persistance.versioning.VersionInfo;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.impl.MySqlPersistence;
+import cz.abclinuxu.persistence.versioning.VersioningFactory;
+import cz.abclinuxu.persistence.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersionInfo;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -43,7 +43,7 @@ public class CommitDrivers {
 
     public static void main(String[] args) {
         SQLTool sqlTool = SQLTool.getInstance();
-        MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
         Versioning versioning = VersioningFactory.getVersioning();
 
         Connection con = null;

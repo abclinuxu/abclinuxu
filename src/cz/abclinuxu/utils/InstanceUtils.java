@@ -22,8 +22,8 @@ import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Record;
 import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.AbcException;
 import cz.abclinuxu.servlets.html.view.ViewUser;
 import cz.abclinuxu.servlets.html.view.ShowObject;
@@ -120,12 +120,12 @@ public class InstanceUtils {
      * is initialized.
      */
     public static Relation findFirstChildRecordOfType(Item item, int recordType) {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Record record = null;
         for (Iterator iter = item.getChildren().iterator(); iter.hasNext();) {
             Relation rel = (Relation) iter.next();
             if ( rel.getChild() instanceof Record ) {
-                persistance.synchronize(rel.getChild());
+                persistence.synchronize(rel.getChild());
                 record = (Record) rel.getChild();
                 if ( record.getType()==recordType )
                     return rel;
@@ -140,12 +140,12 @@ public class InstanceUtils {
      * is initialized.
      */
     public static Relation findFirstChildItemOfType(GenericObject obj, int itemType) {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Item item = null;
         for (Iterator iter = obj.getChildren().iterator(); iter.hasNext();) {
             Relation rel = (Relation) iter.next();
             if ( rel.getChild() instanceof Item ) {
-                persistance.synchronize(rel.getChild());
+                persistence.synchronize(rel.getChild());
                 item = (Item) rel.getChild();
                 if ( item.getType()==itemType )
                     return rel;

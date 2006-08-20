@@ -21,9 +21,9 @@ package cz.abclinuxu.servlets.html.view;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.persistance.extra.Qualifier;
-import cz.abclinuxu.persistance.extra.LimitQualifier;
-import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.persistence.extra.LimitQualifier;
+import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.utils.freemarker.Tools;
 
 import javax.servlet.http.HttpServletRequest;

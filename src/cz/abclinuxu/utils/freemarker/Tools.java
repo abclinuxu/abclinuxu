@@ -19,12 +19,12 @@
 package cz.abclinuxu.utils.freemarker;
 
 import cz.abclinuxu.data.*;
-import cz.abclinuxu.exceptions.PersistanceException;
+import cz.abclinuxu.exceptions.PersistenceException;
 import cz.abclinuxu.exceptions.InvalidDataException;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.Nursery;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.Nursery;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.edit.EditRating;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
@@ -65,7 +65,7 @@ public class Tools implements Configurable {
     public static final String PREF_REPLACEMENT_VLNKA = "REPLACEMENT_VLNKA";
     public static final String PREF_REGEXP_AMPERSAND = "RE_AMPERSAND";
 
-    static Persistance persistance = PersistanceFactory.getPersistance();
+    static Persistence persistence = PersistenceFactory.getPersistance();
     static REProgram reRemoveTags, reVlnka, lineBreak;
     static Pattern reAmpersand;
     static String vlnkaReplacement;
@@ -98,13 +98,13 @@ public class Tools implements Configurable {
 
     /**
      * Returns text value of node selected by xpath expression for GenericObject.
-     * @throws cz.abclinuxu.exceptions.PersistanceException if object cannot be synchronized
+     * @throws cz.abclinuxu.exceptions.PersistenceException if object cannot be synchronized
      */
     public static String xpath(GenericObject obj, String xpath) {
         if ( obj==null || !(obj instanceof XMLContainer) )
             return null;
         if ( !obj.isInitialized() )
-            persistance.synchronize(obj);
+            persistence.synchronize(obj);
         Document doc = ((XMLContainer)obj).getData();
         if ( doc==null )
             return null;
@@ -173,7 +173,7 @@ public class Tools implements Configurable {
      * @return name of child
      */
     public static String childName(Number relationId) {
-        Relation relation = (Relation) PersistanceFactory.getPersistance().findById(new Relation(relationId.intValue()));
+        Relation relation = (Relation) PersistenceFactory.getPersistance().findById(new Relation(relationId.intValue()));
         return childName(relation);
     }
 
@@ -183,7 +183,7 @@ public class Tools implements Configurable {
      */
     public static String childName(String relationId) {
         int id = Integer.parseInt(relationId);
-        Relation relation = (Relation) PersistanceFactory.getPersistance().findById(new Relation(id));
+        Relation relation = (Relation) PersistenceFactory.getPersistance().findById(new Relation(id));
         return childName(relation);
     }
 
@@ -209,7 +209,7 @@ public class Tools implements Configurable {
      */
     public static String childName(GenericObject obj) {
         if ( ! obj.isInitialized() )
-            persistance.synchronize(obj);
+            persistence.synchronize(obj);
 
         if ( obj instanceof GenericDataObject ) {
             Document data = ((GenericDataObject)obj).getData();
@@ -312,7 +312,7 @@ public class Tools implements Configurable {
      */
     public List getRelatedDocuments(Item item) {
         if (! item.isInitialized())
-            item = (Item) persistance.findById(item);
+            item = (Item) persistence.findById(item);
 
         List elements = item.getData().selectNodes("/data/related/document");
         if (elements.size() == 0)
@@ -533,7 +533,7 @@ public class Tools implements Configurable {
         for (int i=0; i<size; i++) {
             TemplateNumberModel a = (TemplateNumberModel) seq.get(i);
             int id = a.getAsNumber().intValue();
-            Server server = (Server) persistance.findById(new Server(id));
+            Server server = (Server) persistence.findById(new Server(id));
             list.add(server);
         }
         return list;
@@ -663,16 +663,16 @@ public class Tools implements Configurable {
     }
 
     /**
-     * Synchronizes object with persistance if it is not initialized.
+     * Synchronizes object with persistence if it is not initialized.
      * For relation, its child is synchronized too.
      */
     public static GenericObject sync(GenericObject obj) {
         if ( ! obj.isInitialized() )
-            persistance.synchronize(obj);
+            persistence.synchronize(obj);
         if ( obj instanceof Relation ) {
             GenericObject child = ((Relation)obj).getChild();
             if ( ! child.isInitialized() )
-                persistance.synchronize(child);
+                persistence.synchronize(child);
         }
         return obj;
     }
@@ -680,7 +680,7 @@ public class Tools implements Configurable {
     /**
      * Synchronizes list of GenericObjects.
      */
-    public static List syncList(Collection collection) throws PersistanceException {
+    public static List syncList(Collection collection) throws PersistenceException {
         if (collection.size() == 0)
             return Collections.EMPTY_LIST;
 
@@ -690,7 +690,7 @@ public class Tools implements Configurable {
         else
             list = (List) collection;
 
-        persistance.synchronizeList(list);
+        persistence.synchronizeList(list);
         if (list.get(0) instanceof Relation) {
             List children = new ArrayList(list.size());
             for (Iterator iter = list.iterator(); iter.hasNext();) {
@@ -698,7 +698,7 @@ public class Tools implements Configurable {
                 if (obj instanceof Relation)
                     children.add(((Relation)obj).getChild());
             }
-            persistance.synchronizeList(children);
+            persistence.synchronizeList(children);
         }
         return list;
     }
@@ -724,7 +724,7 @@ public class Tools implements Configurable {
     public static User createUser(String id) {
         int i = Integer.parseInt(id);
         User user = new User(i);
-        return (User) persistance.findById(user);
+        return (User) persistence.findById(user);
     }
 
     /**
@@ -733,7 +733,7 @@ public class Tools implements Configurable {
      */
     public static User createUser(int id) {
         User user = new User(id);
-        return (User) persistance.findById(user);
+        return (User) persistence.findById(user);
     }
 
     /**
@@ -742,7 +742,7 @@ public class Tools implements Configurable {
      */
     public static Category createCategory(int id) {
         Category category = new Category(id);
-        return (Category) persistance.findById(category);
+        return (Category) persistence.findById(category);
     }
 
     /**
@@ -752,7 +752,7 @@ public class Tools implements Configurable {
     public static Category createCategory(String id) {
         int i = Integer.parseInt(id);
         Category category = new Category(i);
-        return (Category) persistance.findById(category);
+        return (Category) persistence.findById(category);
     }
 
     /**
@@ -760,7 +760,7 @@ public class Tools implements Configurable {
      * @return counter value for selected GenericObject
      */
     public static int getCounterValue(GenericObject obj, String type) {
-        return persistance.getCounterValue(obj, type);
+        return persistence.getCounterValue(obj, type);
     }
 
     /**
@@ -777,7 +777,7 @@ public class Tools implements Configurable {
             Relation relation = (Relation) iter.next();
             list.add(relation.getChild());
         }
-        return persistance.getCountersValue(list, type);
+        return persistence.getCountersValue(list, type);
     }
 
     /**
@@ -785,7 +785,7 @@ public class Tools implements Configurable {
      * one of Constants.TYPE_* strings. The key represents list of relations, where
      * children are same type.
      */
-    public static Map groupByType(List relations) throws PersistanceException {
+    public static Map groupByType(List relations) throws PersistenceException {
         return groupByType(relations, null);
     }
 
@@ -798,7 +798,7 @@ public class Tools implements Configurable {
      * class name (not FQCN).
      * @param classFilter comma separated list of classes, that may be included in the list
      */
-    public static Map groupByType(List relations, String classFilter) throws PersistanceException {
+    public static Map groupByType(List relations, String classFilter) throws PersistenceException {
         if (relations==null)
             return Collections.EMPTY_MAP;
         else
@@ -1089,7 +1089,7 @@ public class Tools implements Configurable {
         List records = (List) children.get(Constants.TYPE_RECORD);
         Record record = (Record) ((Relation) records.get(0)).getChild();
         if ( !record.isInitialized() )
-            persistance.synchronize(record);
+            persistence.synchronize(record);
 
         StringBuffer sb = new StringBuffer(5000);
         List nodes = record.getData().selectNodes("/data/content");
@@ -1126,9 +1126,9 @@ public class Tools implements Configurable {
      * @param rid relation id of this discussion
      * @param saveLast if true and maybeUser is instance of User, then latest comment id will be saved
      */
-    public Discussion createDiscussionTree(GenericObject obj, Object maybeUser, int rid, boolean saveLast) throws PersistanceException {
+    public Discussion createDiscussionTree(GenericObject obj, Object maybeUser, int rid, boolean saveLast) throws PersistenceException {
         if (!obj.isInitialized())
-            obj = persistance.findById(obj);
+            obj = persistence.findById(obj);
         if ( !InstanceUtils.checkType(obj, Item.class, Item.DISCUSSION) )
             throw new IllegalArgumentException("Not a discussion: "+obj);
 
@@ -1155,7 +1155,7 @@ public class Tools implements Configurable {
         Relation child = (Relation) item.getChildren().get(0);
         Record record = (Record) child.getChild();
         if (!record.isInitialized())
-            record = (Record) persistance.findById(record);
+            record = (Record) persistence.findById(record);
 
         DiscussionRecord dizRecord = (DiscussionRecord) record.getCustom();
         if (dizRecord.getThreads().size() == 0)
@@ -1239,7 +1239,7 @@ public class Tools implements Configurable {
         Node node = data.selectSingleNode("data/title");
         if (node==null) {
             GenericObject parent = relation.getParent();
-            if (!parent.isInitialized()) persistance.synchronize(parent);
+            if (!parent.isInitialized()) persistence.synchronize(parent);
             if (parent instanceof Item) {
                 item = (Item) parent;
                 data = item.getData();
@@ -1309,7 +1309,7 @@ public class Tools implements Configurable {
                 continue;
             Item item = (Item) child;
             if ( !item.isInitialized() )
-                persistance.synchronize(item);
+                persistence.synchronize(item);
             if ( item.getType()!=Item.DISCUSSION )
                 continue;
             return analyzeDiscussion(relation);

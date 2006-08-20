@@ -30,11 +30,11 @@ import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.InvalidDataException;
 import cz.abclinuxu.exceptions.NotFoundException;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.extra.Qualifier;
-import cz.abclinuxu.persistance.extra.LimitQualifier;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.security.Roles;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,7 +68,7 @@ public class ShowArticle implements AbcAction {
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID_SHORT, Relation.class, params, request);
         if ( relation==null ) {
@@ -78,7 +78,7 @@ public class ShowArticle implements AbcAction {
         Tools.sync(relation);
         env.put(VAR_RELATION, relation);
 
-        List parents = persistance.findParents(relation);
+        List parents = persistence.findParents(relation);
         env.put(VAR_PARENTS, parents);
         Item item = (Item) relation.getChild();
         Tools.sync(item);
@@ -90,7 +90,7 @@ public class ShowArticle implements AbcAction {
      * Shows the article.
      */
     static String show(Map env, Item item, HttpServletRequest request) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Record record = null;
 
         Map children = (Map) env.get(VAR_CHILDREN_MAP);

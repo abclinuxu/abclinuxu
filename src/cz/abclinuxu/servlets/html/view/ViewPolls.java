@@ -23,11 +23,11 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Poll;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.extra.Qualifier;
-import cz.abclinuxu.persistance.extra.LimitQualifier;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
@@ -70,8 +70,8 @@ public class ViewPolls implements AbcAction {
      * Displays selected poll.
      */
     public static String processPoll(Map env, Relation relation, HttpServletRequest request) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
-        Poll poll = (Poll) persistance.findById(relation.getChild());
+        Persistence persistence = PersistenceFactory.getPersistance();
+        Poll poll = (Poll) persistence.findById(relation.getChild());
         env.put(VAR_POLL, poll);
 
         Map children = Tools.groupByType(poll.getChildren());

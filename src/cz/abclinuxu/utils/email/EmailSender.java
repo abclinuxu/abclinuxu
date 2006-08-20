@@ -27,8 +27,8 @@ import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.data.User;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 import javax.mail.*;
@@ -171,7 +171,7 @@ public class EmailSender implements Configurable {
         if ( users.size()==0 )
             return 0;
 
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         String subject = (String) params.get(KEY_SUBJECT);
         Address sender = null;
         String senderName = (String) params.get(KEY_SENDER_NAME);
@@ -210,7 +210,7 @@ public class EmailSender implements Configurable {
             for ( Iterator iter = users.iterator(); iter.hasNext(); ) {
                 try {
                     user.setId(((Integer) iter.next()).intValue());
-                    user = (User) persistance.findById(user);
+                    user = (User) persistence.findById(user);
 
                     // check, that user has valid email
                     Element tagEmail = (Element) user.getData().selectSingleNode("/data/communication/email");

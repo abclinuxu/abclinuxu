@@ -27,8 +27,8 @@ import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AccessKeeper;
 import cz.abclinuxu.utils.InstanceUtils;
@@ -120,7 +120,7 @@ public class EditPoll implements AbcAction {
      */
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         boolean error = false;
 
         boolean multiChoice = false;
@@ -180,12 +180,12 @@ public class EditPoll implements AbcAction {
             pollChoices.add(choice);
         }
         poll.setChoices(pollChoices);
-        persistance.create(poll);
+        persistence.create(poll);
 
         Relation relation = new Relation(upperRelation.getChild(),poll,upperRelation.getId());
         if (url != null && url.length() > 0)
             relation.setUrl(url);
-        persistance.create(relation);
+        persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
         if (relation.getUpper()==Constants.REL_POLLS)
@@ -243,8 +243,8 @@ public class EditPoll implements AbcAction {
         }
 
         poll.setChoices(choicesList);
-        Persistance persistance = PersistanceFactory.getPersistance();
-        persistance.update(poll);
+        Persistence persistence = PersistenceFactory.getPersistance();
+        persistence.update(poll);
 
         if (relation.getUpper() == Constants.REL_POLLS)
             FeedGenerator.updatePolls();
@@ -259,14 +259,14 @@ public class EditPoll implements AbcAction {
      */
     protected String actionVote(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         User user = (User) env.get(Constants.VAR_USER);
         Relation relation = (Relation) env.get(VAR_RELATION);
         String url = (String) params.get(PARAM_URL);
         int max = 0;
 
-        Poll poll = (Poll) persistance.findById(relation.getChild());
+        Poll poll = (Poll) persistence.findById(relation.getChild());
         env.put(EditPoll.VAR_POLL, poll);
 
         if ( poll.isClosed() ) {
@@ -306,7 +306,7 @@ public class EditPoll implements AbcAction {
                 }
 
                 if (votesFor.size() > 0)
-                    persistance.incrementPollChoicesCounter(votesFor);
+                    persistence.incrementPollChoicesCounter(votesFor);
 
                 ServletUtils.addMessage("Vá¹ hlas do ankety byl pøijat.", env, request.getSession());
             } catch (AccessDeniedException e) {

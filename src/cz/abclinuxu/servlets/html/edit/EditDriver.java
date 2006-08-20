@@ -25,7 +25,7 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
-import cz.abclinuxu.persistance.*;
+import cz.abclinuxu.persistence.*;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
@@ -68,14 +68,14 @@ public class EditDriver implements AbcAction {
 
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation!=null ) {
-            persistance.synchronize(relation);
+            persistence.synchronize(relation);
             env.put(VAR_RELATION,relation);
         }
 
@@ -107,7 +107,7 @@ public class EditDriver implements AbcAction {
      */
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         Item driver = new Item(0, Item.DRIVER);
         Document document = DocumentHelper.createDocument();
@@ -130,10 +130,10 @@ public class EditDriver implements AbcAction {
         String url = UrlUtils.PREFIX_DRIVERS + "/" + URLManager.enforceLastURLPart(element.getTextTrim());
         url = URLManager.protectFromDuplicates(url);
 
-        persistance.create(driver);
+        persistence.create(driver);
         Relation relation = new Relation(new Category(Constants.CAT_DRIVERS), driver, Constants.REL_DRIVERS);
         relation.setUrl(url);
-        persistance.create(relation);
+        persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
         // commit new version
@@ -156,10 +156,10 @@ public class EditDriver implements AbcAction {
      * @return template to be rendered.
      */
     protected String actionEdit(HttpServletRequest request, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_RELATION);
-        Item driver = (Item) persistance.findById(relation.getChild());
+        Item driver = (Item) persistence.findById(relation.getChild());
 
         Document document = driver.getData();
         Node node = document.selectSingleNode("data/name");
@@ -180,9 +180,9 @@ public class EditDriver implements AbcAction {
      */
     protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_RELATION);
-        Item driver = (Item) persistance.findById(relation.getChild());
+        Item driver = (Item) persistence.findById(relation.getChild());
         Document document = driver.getData();
 
         boolean canContinue = true;
@@ -197,7 +197,7 @@ public class EditDriver implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         driver.setOwner(user.getId());
         driver.setCreated(new Date());
-        persistance.update(driver);
+        persistence.update(driver);
 
         // commit new version
         Misc.commitRelation(document.getRootElement(), relation, user);
@@ -223,14 +223,14 @@ public class EditDriver implements AbcAction {
      * Reverts current monitor state for the user on this driver.
      */
     protected String actionAlterMonitor(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_RELATION);
-        Item driver = (Item) persistance.findById(relation.getChild());
+        Item driver = (Item) persistence.findById(relation.getChild());
         User user = (User) env.get(Constants.VAR_USER);
 
         Date originalUpdated = driver.getUpdated();
         MonitorTools.alterMonitor(driver.getData().getRootElement(),user);
-        persistance.update(driver);
+        persistence.update(driver);
         SQLTool.getInstance().setUpdatedTimestamp(driver, originalUpdated);
 
         String url = relation.getUrl();
@@ -245,7 +245,7 @@ public class EditDriver implements AbcAction {
     /* ******* setters ********* */
 
     /**
-     * Updates name of driver from parameters. Changes are not synchronized with persistance.
+     * Updates name of driver from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param document Document of discussion to be updated
      * @param env environment
@@ -264,7 +264,7 @@ public class EditDriver implements AbcAction {
     }
 
     /**
-     * Updates driver's version from parameters. Changes are not synchronized with persistance.
+     * Updates driver's version from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param document Document of discussion to be updated
      * @param env environment
@@ -283,7 +283,7 @@ public class EditDriver implements AbcAction {
     }
 
     /**
-     * Updates driver's URL from parameters. Changes are not synchronized with persistance.
+     * Updates driver's URL from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param document Document of discussion to be updated
      * @param env environment
@@ -303,7 +303,7 @@ public class EditDriver implements AbcAction {
     }
 
     /**
-     * Updates driver's note from parameters. Changes are not synchronized with persistance.
+     * Updates driver's note from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param document Document of discussion to be updated
      * @param env environment

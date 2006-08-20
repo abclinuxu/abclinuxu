@@ -18,7 +18,7 @@
  */
 package cz.abclinuxu.utils.paging;
 
-import cz.abclinuxu.persistance.extra.Qualifier;
+import cz.abclinuxu.persistence.extra.Qualifier;
 
 import java.util.List;
 import java.util.Arrays;

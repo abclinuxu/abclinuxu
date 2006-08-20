@@ -22,8 +22,8 @@ import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Record;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.Misc;
@@ -70,9 +70,9 @@ public class ShowDocbook implements AbcAction {
 
     protected synchronized void printDocbook(Writer writer, Relation relation) throws Exception {
         this.writer = writer;
-        Persistance persistance = PersistanceFactory.getPersistance();
-        relation = (Relation) persistance.findById(relation);
-        Item article = (Item) persistance.findById(relation.getChild());
+        Persistence persistence = PersistenceFactory.getPersistance();
+        relation = (Relation) persistence.findById(relation);
+        Item article = (Item) persistence.findById(relation.getChild());
         Document doc = article.getData();
 
         print("<?xml version='1.0' encoding='ISO-8859-2'?>", 0, true);
@@ -82,7 +82,7 @@ public class ShowDocbook implements AbcAction {
 
         print("<articleinfo>", 0, true);
         print("<date>"+Constants.czDayMonthYear.format(article.getCreated())+"</date>", 1, true);
-        printAuthor(writer, doc, persistance);
+        printAuthor(writer, doc, persistence);
         print("</articleinfo>", 0, true);
 
         print("<para>", 0, true);
@@ -107,9 +107,9 @@ public class ShowDocbook implements AbcAction {
         print("</article>", 0, true);
     }
 
-    protected void printAuthor(Writer writer, Document document, Persistance persistance) {
+    protected void printAuthor(Writer writer, Document document, Persistence persistence) {
         String id = document.selectSingleNode("/data/author").getText();
-        User user = (User) persistance.findById(new User(Integer.parseInt(id)));
+        User user = (User) persistence.findById(new User(Integer.parseInt(id)));
         String name = user.getName();
         int space = name.indexOf(" ");
         print("<author>", 1, true);

@@ -19,9 +19,9 @@
 package cz.abclinuxu.migrate;
 
 import cz.abclinuxu.data.User;
-import cz.abclinuxu.persistance.cache.EmptyCache;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.cache.EmptyCache;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
@@ -45,18 +45,18 @@ public class UpgradeUser {
      * and migrates their data property to new XML.
      */
     public static void main(String[] args) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance(EmptyCache.class);
+        Persistence persistence = PersistenceFactory.getPersistance(EmptyCache.class);
 
         System.out.print("Starting to search for users ..");
-        List users = findExistingUsers(persistance);
+        List users = findExistingUsers(persistence);
         System.out.println(" done");
 
         System.out.print("Conversion of found users starts ..");
         List inform = new ArrayList(users.size());
         for (Iterator iterator = users.iterator(); iterator.hasNext();) {
             int key = ((Integer) iterator.next()).intValue();
-            User user = (User) persistance.findById(new User(key));
-            upgradeData(persistance,user,inform);
+            User user = (User) persistence.findById(new User(key));
+            upgradeData(persistence,user,inform);
         }
         System.out.println(" done");
 
@@ -72,12 +72,12 @@ public class UpgradeUser {
 
     /**
      * Finds all existing users in database.
-     * @param persistance persistance to be used
+     * @param persistence persistence to be used
      * @return List of Integers, which are ids of found users.
      */
-    static List findExistingUsers(Persistance persistance) {
+    static List findExistingUsers(Persistence persistence) {
         List list = new ArrayList(3100);
-        List result = persistance.findByCommand("select cislo from uzivatel");
+        List result = persistence.findByCommand("select cislo from uzivatel");
         for (Iterator iterator = result.iterator(); iterator.hasNext();) {
             Object[] objects = (Object[]) iterator.next();
             list.add(objects[0]);
@@ -87,11 +87,11 @@ public class UpgradeUser {
 
     /**
      * Constructs new XML data from existing data and updates database.
-     * @param persistance persistance to be used
+     * @param persistence persistence to be used
      * @param user user to be upgraded, must be already synchronized
      * @param inform list of Integers, which are ids of users, that shall receive information user
      */
-    static void upgradeData(Persistance persistance, User user, List inform) {
+    static void upgradeData(Persistence persistence, User user, List inform) {
         Document old = user.getData();
         Document document = DocumentHelper.createDocument();
 
@@ -123,7 +123,7 @@ public class UpgradeUser {
         DocumentHelper.makeElement(document, "/data/system");
 
         user.setData(document);
-        persistance.update(user);
+        persistence.update(user);
 
         if ( shallReceiveMail(old) )
             inform.add(new Integer(user.getId()));

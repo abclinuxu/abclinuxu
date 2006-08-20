@@ -18,14 +18,14 @@
  */
 package cz.abclinuxu.migrate;
 
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.impl.MySqlPersistance;
-import cz.abclinuxu.persistance.versioning.VersioningFactory;
-import cz.abclinuxu.persistance.versioning.Versioning;
-import cz.abclinuxu.persistance.versioning.VersionInfo;
-import cz.abclinuxu.persistance.extra.Qualifier;
-import cz.abclinuxu.persistance.extra.LimitQualifier;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.impl.MySqlPersistence;
+import cz.abclinuxu.persistence.versioning.VersioningFactory;
+import cz.abclinuxu.persistence.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersionInfo;
+import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Record;
@@ -35,7 +35,7 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.SimpleFormatRenderer;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.exceptions.PersistanceException;
+import cz.abclinuxu.exceptions.PersistenceException;
 
 import java.util.List;
 import java.util.Iterator;
@@ -55,7 +55,7 @@ import org.dom4j.Element;
  * @since 27.11.2005
  */
 public class UpgradeHardware {
-    MySqlPersistance persistance = (MySqlPersistance) PersistanceFactory.getPersistance();
+    MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
     Versioning versioning = VersioningFactory.getVersioning();
     SQLTool sqlTool = SQLTool.getInstance();
 
@@ -301,7 +301,7 @@ public class UpgradeHardware {
             statement.setString(3, versionInfo.getVersion());
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new PersistanceException("Chyba pri nastavovani!", e);
+            throw new PersistenceException("Chyba pri nastavovani!", e);
         } finally {
             persistance.releaseSQLResources(con, statement, null);
         }

@@ -18,9 +18,9 @@
  */
 package cz.abclinuxu.utils.email.forum;
 
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.extra.JobOfferManager;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.extra.JobOfferManager;
 import cz.abclinuxu.data.Record;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.User;
@@ -58,18 +58,18 @@ public class CommentDecorator {
      */
     public static Map getEnvironment(Comment comment) {
         HashMap env = new HashMap();
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         HtmlToTextFormatter formatter = new HtmlToTextFormatter();
         Element root;
         String authorName = null;
         cz.abclinuxu.data.view.Comment dizComment;
 
         if (comment.recordId == 0) {
-            Item item = (Item) persistance.findById(new Item(comment.discussionId));
+            Item item = (Item) persistence.findById(new Item(comment.discussionId));
             dizComment = new ItemComment(item);
             root = item.getData().getRootElement();
         } else {
-            Record record = (Record) persistance.findById(new Record(comment.recordId));
+            Record record = (Record) persistence.findById(new Record(comment.recordId));
             DiscussionRecord dizRecord = (DiscussionRecord) record.getCustom();
             dizComment = dizRecord.getComment(comment.threadId);
             root = (Element) dizComment.getData().getRootElement();
@@ -83,7 +83,7 @@ public class CommentDecorator {
 
         authorName = dizComment.getAnonymName();
         if (authorName == null) {
-            User user = (User) persistance.findById(new User(dizComment.getAuthor().intValue()));
+            User user = (User) persistence.findById(new User(dizComment.getAuthor().intValue()));
             authorName = user.getNick();
             if (authorName == null)
                 authorName = user.getName();

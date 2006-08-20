@@ -18,10 +18,10 @@
  */
 package cz.abclinuxu.migrate;
 
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.impl.MySqlPersistance;
-import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.impl.MySqlPersistence;
+import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Record;
@@ -45,9 +45,9 @@ import org.dom4j.Node;
 public class UpgradeDiscusssions {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(UpgradeDiscusssions.class);
 
-    static Persistance persistance;
+    static Persistence persistence;
     static {
-        persistance = PersistanceFactory.getPersistance();
+        persistence = PersistenceFactory.getPersistance();
     }
     static int counter = 0;
 
@@ -57,7 +57,7 @@ public class UpgradeDiscusssions {
         log.info(list.size()+ " discussions found.");
         for ( Iterator iter = list.iterator(); iter.hasNext(); ) {
             Integer key = (Integer) iter.next();
-            Item item = (Item) persistance.findById(new Item(key.intValue()));
+            Item item = (Item) persistence.findById(new Item(key.intValue()));
             if ( removeEmptyDiscussion(item) ) {
                 log.info("Removed empty discussion with id "+item.getId());
                 printHash();
@@ -70,7 +70,7 @@ public class UpgradeDiscusssions {
     }
 
     private static List getDiscussions() throws Exception {
-        MySqlPersistance mp = (MySqlPersistance) persistance;
+        MySqlPersistence mp = (MySqlPersistence) persistence;
         Connection con = null; Statement statement = null; ResultSet resultSet = null;
         List list = new ArrayList(6500);
         try {
@@ -95,7 +95,7 @@ public class UpgradeDiscusssions {
      */
     private static boolean removeEmptyDiscussion(Item item) throws Exception {
         if (item.getData().selectSingleNode("/data/title")==null && item.getChildren().size()==0) {
-            MySqlPersistance mp = (MySqlPersistance) persistance;
+            MySqlPersistence mp = (MySqlPersistence) persistence;
             mp.remove(item);
             Connection con = null; PreparedStatement statement = null;
             try {
@@ -160,16 +160,16 @@ public class UpgradeDiscusssions {
                 firstRecord = record;
                 isFirst = false;
             } else {
-                persistance.remove(child);
+                persistence.remove(child);
             }
         }
 
         if (firstRecord!=null) {
             firstRecord.setData(data.getDocument());
-            persistance.update(firstRecord);
+            persistence.update(firstRecord);
         }
         DocumentHelper.makeElement(item.getData(),"/data/comments").setText(""+comments);
-        persistance.update(item);
+        persistence.update(item);
         SQLTool.getInstance().setUpdatedTimestamp(item,lastResponse);
     }
 

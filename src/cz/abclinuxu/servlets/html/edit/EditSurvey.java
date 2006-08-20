@@ -23,9 +23,9 @@ import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.XMLHandler;
@@ -79,12 +79,12 @@ public class EditSurvey implements AbcAction {
         if ( ACTION_ADD_STEP2.equals(action) )
             return actionAddStep2(request, response, env);
 
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Item item = (Item) InstanceUtils.instantiateParam(PARAM_SURVEY, Item.class, params, request);
         if ( item==null )
             return ServletUtils.showErrorPage("Chybí parametr surveyId!",env,request);
 
-        persistance.synchronize(item);
+        persistence.synchronize(item);
         if ( item.getType()!=Item.SURVEY )
             return ServletUtils.showErrorPage("Tato polo¾ka není anketa!", env, request);
 
@@ -130,7 +130,7 @@ public class EditSurvey implements AbcAction {
         if ( !canContinue )
             return FMTemplateSelector.select("EditSurvey", "add", env, request);
 
-        PersistanceFactory.getPersistance().create(survey);
+        PersistenceFactory.getPersistance().create(survey);
         ServletUtils.addMessage("Anketa byla úspì¹nì vytvoøena s èíslem "+survey.getId(),env,request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -178,7 +178,7 @@ public class EditSurvey implements AbcAction {
         if ( !canContinue )
             return FMTemplateSelector.select("EditSurvey", "edit", env, request);
 
-        PersistanceFactory.getPersistance().update(survey);
+        PersistenceFactory.getPersistance().update(survey);
         ServletUtils.addMessage("Zmìny byly ulo¾eny.", env, request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -188,7 +188,7 @@ public class EditSurvey implements AbcAction {
     }
 
     /**
-     * Updates title from parameters. Changes are not synchronized with persistance.
+     * Updates title from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param survey survey to be updated
      * @return false, if there is a major error.
@@ -203,7 +203,7 @@ public class EditSurvey implements AbcAction {
     }
 
     /**
-     * Updates XML definition from parameters. Changes are not synchronized with persistance.
+     * Updates XML definition from parameters. Changes are not synchronized with persistence.
      * This method shall be called as first one.
      * @param params map holding request's parameters
      * @param survey survey to be updated
@@ -245,7 +245,7 @@ public class EditSurvey implements AbcAction {
     }
 
     /**
-     * Updates choices from parameters. Changes are not synchronized with persistance.
+     * Updates choices from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param survey survey to be updated
      * @return false, if there is a major error.

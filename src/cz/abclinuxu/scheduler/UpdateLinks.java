@@ -28,8 +28,8 @@ import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Link;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Server;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.config.Configurable;
@@ -98,16 +98,16 @@ public class UpdateLinks extends TimerTask implements Configurable {
     public void run() {
         if (log.isDebugEnabled()) log.debug("Starting task "+getJobName());
         try {
-            Persistance persistance = PersistanceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistance();
             ServerInfo definition;
             Server server;
             List servers = getMaintainedServers();
             for (Iterator iter = servers.iterator(); iter.hasNext();) {
                 Integer id = (Integer) iter.next();
                 definition = (ServerInfo) definitions.get(id);
-                server = (Server) persistance.findById(new Server(id.intValue()));
+                server = (Server) persistence.findById(new Server(id.intValue()));
                 try {
-                    synchronize(server, 0, definition, persistance);
+                    synchronize(server, 0, definition, persistence);
                 } catch (Exception e) {
                     log.warn("Cannot update links for server "+server+"!", e);
                 }
@@ -118,17 +118,17 @@ public class UpdateLinks extends TimerTask implements Configurable {
             Relation relation;
             Element feed;
             int rid = 0;
-            Item dynamicRss = (Item) persistance.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
+            Item dynamicRss = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
             Document doc = (Document) dynamicRss.getData().clone();
             for (Iterator iter = doc.selectNodes("//feeds/feed").iterator(); iter.hasNext();) {
                 feed = (Element) iter.next();
                 try {
                     rid = Misc.parseInt(feed.attributeValue("relation"), -1);
-                    relation = (Relation) persistance.findById(new Relation(rid));
-                    child = persistance.findById(relation.getChild());
+                    relation = (Relation) persistence.findById(new Relation(rid));
+                    child = persistence.findById(relation.getChild());
                     definition = new ServerInfo(feed.getText());
                     try {
-                        synchronize(child, relation.getId(), definition, persistance);
+                        synchronize(child, relation.getId(), definition, persistence);
                     } catch (Exception e) {
                         log.warn("Cannot update links for url " + definition.url + ", parent relation is "+rid+"!", e);
                     }
@@ -137,8 +137,8 @@ public class UpdateLinks extends TimerTask implements Configurable {
                 }
             }
 
-            if (remove.size() > 0) { // remove feeds for objects purged from persistance
-                dynamicRss = (Item) persistance.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
+            if (remove.size() > 0) { // remove feeds for objects purged from persistence
+                dynamicRss = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
                 dynamicRss = (Item) dynamicRss.clone();
                 doc = dynamicRss.getData();
                 for (Iterator iter = remove.iterator(); iter.hasNext();) {
@@ -147,7 +147,7 @@ public class UpdateLinks extends TimerTask implements Configurable {
                     if (feed != null)
                         feed.detach();
                 }
-                persistance.update(dynamicRss);
+                persistence.update(dynamicRss);
             }
 
             if (log.isDebugEnabled()) log.debug("Finishing task " + getJobName());
@@ -166,8 +166,8 @@ public class UpdateLinks extends TimerTask implements Configurable {
      * @param parentRelation if of parent relation or 0.
      * @param definition definition of the feed
      */
-    protected void synchronize(GenericObject parent, int parentRelation, ServerInfo definition, Persistance persistance) {
-        List storedLinks = getLinks(parent, persistance);
+    protected void synchronize(GenericObject parent, int parentRelation, ServerInfo definition, Persistence persistence) {
+        List storedLinks = getLinks(parent, persistence);
         List downloaded = parseRSS(definition);
         int updated = 0;
 
@@ -187,15 +187,15 @@ public class UpdateLinks extends TimerTask implements Configurable {
                 existingLink.setText(link.getText());
                 existingLink.setUrl(link.getUrl());
                 existingLink.setUpdated(link.getUpdated());
-                persistance.update(existingLink);
+                persistence.update(existingLink);
             } else {
                 link.setOwner(1);
                 link.setServer(parent.getId());
                 link.setFixed(false);
-                persistance.create(link);
+                persistence.create(link);
 
                 Relation relation = new Relation(parent, link, parentRelation);
-                persistance.create(relation);
+                persistence.create(relation);
                 parent.addChildRelation(relation);
             }
             updated++;
@@ -208,15 +208,15 @@ public class UpdateLinks extends TimerTask implements Configurable {
      * @param object initialized GenericObject
      * @return list of initialized Links
      */
-    private List getLinks(GenericObject object, Persistance persistance) {
+    private List getLinks(GenericObject object, Persistence persistence) {
         List result = new ArrayList(linksPerFeed);
         Relation relation;
         GenericObject obj;
         Link link;
         for (Iterator iter = object.getChildren().iterator(); iter.hasNext();) {
             relation =  (Relation) iter.next();
-            relation = (Relation) persistance.findById(relation);
-            obj = persistance.findById(relation.getChild());
+            relation = (Relation) persistence.findById(relation);
+            obj = persistence.findById(relation.getChild());
             if (! (obj instanceof Link))
                 continue;
 

@@ -23,8 +23,8 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.exceptions.InvalidDataException;
 import cz.abclinuxu.exceptions.AccessDeniedException;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -68,7 +68,7 @@ public class ShowSurvey implements AbcAction {
     public static final int SURVEY_PREFIX = 30000000;
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -80,7 +80,7 @@ public class ShowSurvey implements AbcAction {
             return null;
         }
 
-        persistance.synchronize(survey);
+        persistence.synchronize(survey);
         if ( survey.getType()!=Item.SURVEY ) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Tento objekt není anketa!", env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);

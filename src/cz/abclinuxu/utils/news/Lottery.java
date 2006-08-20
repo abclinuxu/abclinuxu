@@ -22,9 +22,9 @@ import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.User;
@@ -92,9 +92,9 @@ public class Lottery implements Configurable {
      */
     private void filterProhibited(List relations, List prohibited) {
         for ( Iterator iter = relations.iterator(); iter.hasNext(); ) {
-            Persistance persistance = PersistanceFactory.getPersistance();
+            Persistence persistence = PersistenceFactory.getPersistance();
             Relation relation = (Relation) iter.next();
-            Item news = (Item) persistance.findById(relation.getChild());
+            Item news = (Item) persistence.findById(relation.getChild());
             Integer owner = new Integer(news.getOwner());
             if (prohibited.contains(owner))
                 iter.remove();
@@ -106,11 +106,11 @@ public class Lottery implements Configurable {
      * id of the user and the value is list of relations, which he owns.
      */
     private Map groupNewsByUser(List relations) {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Map map = new HashMap(relations.size()+1,1.0f);
         for ( Iterator iter = relations.iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
-            Item news = (Item) persistance.findById(relation.getChild());
+            Item news = (Item) persistence.findById(relation.getChild());
             Integer owner = new Integer(news.getOwner());
             if (map.get(owner)!=null) {
                 ((List)map.get(owner)).add(relation);
@@ -127,12 +127,12 @@ public class Lottery implements Configurable {
      * Prints HTML table of news
      */
     private void printNewsByUser(Map grouped) {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         System.out.println("<table border=\"0\">");
         for ( Iterator iter = grouped.keySet().iterator(); iter.hasNext(); ) {
             Integer key = (Integer) iter.next();
             List list = (List) grouped.get(key);
-            User user = (User) persistance.findById(new User(key.intValue()));
+            User user = (User) persistence.findById(new User(key.intValue()));
 
             System.out.println("<tr>\n<td><a href=\"/Profile?uid="+key+"\">"+user.getName()+"</a></td>");
             System.out.println("<td>");
@@ -150,11 +150,11 @@ public class Lottery implements Configurable {
      * Randomly selects one news and prints the winner.
      */
     private void drawLotsOfNews(List listOfNews) {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         int i = new Random().nextInt(listOfNews.size());
         Relation relation = (Relation) listOfNews.get(i);
-        Item news = (Item) persistance.findById(relation.getChild());
-        User user = (User) persistance.findById(new User(news.getOwner()));
+        Item news = (Item) persistence.findById(relation.getChild());
+        User user = (User) persistence.findById(new User(news.getOwner()));
 
         String text = news.getData().selectSingleNode("//content").getText();
         System.out.println("Vítìznou zprávièkou se stává");

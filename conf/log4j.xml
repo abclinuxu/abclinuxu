@@ -68,7 +68,7 @@
 	  <priority value="info" />
 	</category>
 
-	<category name="cz.abclinuxu.persistance.SQLTool">
+	<category name="cz.abclinuxu.persistence.SQLTool">
 	  <priority value="warn" />
 	</category>
 

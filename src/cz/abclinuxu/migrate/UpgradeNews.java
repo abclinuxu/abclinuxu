@@ -18,10 +18,10 @@
  */
 package cz.abclinuxu.migrate;
 
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.cache.EmptyCache;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.cache.EmptyCache;
 import cz.abclinuxu.data.Item;
 
 import java.util.List;
@@ -36,7 +36,7 @@ import org.dom4j.Node;
  * (from performance reasons, it will enable filters on this parameter)
  */
 public class UpgradeNews {
-    static Persistance persistance = PersistanceFactory.getPersistance(EmptyCache.class);
+    static Persistence persistence = PersistenceFactory.getPersistance(EmptyCache.class);
     static SQLTool sqlTool = SQLTool.getInstance();
 
     public static void main(String[] args) {
@@ -70,7 +70,7 @@ public class UpgradeNews {
                 value = "ARTICLE";
             }
             item.setSubType(value);
-            persistance.update(item);
+            persistence.update(item);
             sqlTool.setUpdatedTimestamp(item, updated);
         }
     }

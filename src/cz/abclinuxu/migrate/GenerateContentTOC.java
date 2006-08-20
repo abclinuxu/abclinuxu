@@ -22,9 +22,9 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -51,13 +51,13 @@ public class GenerateContentTOC {
         if (rid==-1)
             exitWithHelp("Usage: GenerateContentTOC 1234\n where 1234 is relation id of toplevel document");
 
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         SQLTool sqlTool = SQLTool.getInstance();
 
-        Relation top = (Relation) persistance.findById(new Relation(rid));
+        Relation top = (Relation) persistence.findById(new Relation(rid));
         if (!(top.getChild() instanceof Item))
             exitWithHelp("Relation must point to content!");
-        Item item = (Item) persistance.findById(top.getChild());
+        Item item = (Item) persistence.findById(top.getChild());
         if (item.getType()!=Item.CONTENT)
             exitWithHelp("Relation must point to content!");
 
@@ -69,9 +69,9 @@ public class GenerateContentTOC {
 
         Item tocItem = new Item(0, Item.TOC);
         tocItem.setData("<data><name>Obsah</name></data>");
-        persistance.create(tocItem);
+        persistence.create(tocItem);
         Relation tocRelation = new Relation(top.getChild(), tocItem, top.getId());
-        persistance.create(tocRelation);
+        persistence.create(tocRelation);
         String tocId = Integer.toString(tocRelation.getId());
 
         Element parentElement, element;
@@ -90,7 +90,7 @@ public class GenerateContentTOC {
 
             DocumentHelper.makeElement(item.getData(), "//data/toc").setText(tocId);
             updated = item.getUpdated();
-            persistance.update(item);
+            persistence.update(item);
             sqlTool.setUpdatedTimestamp(item, updated);
 
             children = item.getChildren();
@@ -105,7 +105,7 @@ public class GenerateContentTOC {
             }
         }
 
-        persistance.update(tocItem);
+        persistence.update(tocItem);
     }
 
     static class StackItem {

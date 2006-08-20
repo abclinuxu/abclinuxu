@@ -18,9 +18,9 @@
  */
 package cz.abclinuxu.utils.search;
 
-import cz.abclinuxu.persistance.*;
-import cz.abclinuxu.persistance.cache.OnlyUserCache;
-import cz.abclinuxu.persistance.extra.*;
+import cz.abclinuxu.persistence.*;
+import cz.abclinuxu.persistence.cache.OnlyUserCache;
+import cz.abclinuxu.persistence.extra.*;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.DiscussionRecord;
 import cz.abclinuxu.data.view.Comment;
@@ -77,7 +77,7 @@ public class CreateIndex implements Configurable {
     static IndexWriter indexWriter;
     static String indexPath,lastRunFilename;
     static int mergeFactor, minMergeDocs, maxMergeDocs, maxFieldLength;
-    static Persistance persistance;
+    static Persistence persistence;
     static SQLTool sqlTool;
     static HashMap indexed = new HashMap(150000, 0.99f);
     static float boostHardware, boostArticle, boostNews, boostQuestion, boostDiscussion;
@@ -86,7 +86,7 @@ public class CreateIndex implements Configurable {
     static {
         Configurator configurator = ConfigurationManager.getConfigurator();
         configurator.configureMe(new CreateIndex());
-        persistance = PersistanceFactory.getPersistance(OnlyUserCache.class);
+        persistence = PersistenceFactory.getPersistance(OnlyUserCache.class);
         sqlTool = SQLTool.getInstance();
     }
 
@@ -95,11 +95,11 @@ public class CreateIndex implements Configurable {
         if ( args.length>0 ) PATH = args[0];
 
         try {
-            Relation articles = (Relation) persistance.findById(new Relation(Constants.REL_ARTICLES));
+            Relation articles = (Relation) persistence.findById(new Relation(Constants.REL_ARTICLES));
             Relation hardware = (Relation) Tools.sync(new Relation(Constants.REL_HARDWARE));
             Relation drivers = (Relation) Tools.sync(new Relation(Constants.REL_DRIVERS));
             Relation abc = (Relation) Tools.sync(new Relation(Constants.REL_ABC)); // neni cas to smazat?
-            Relation blogs = (Relation) persistance.findById(new Relation(Constants.REL_BLOGS));
+            Relation blogs = (Relation) persistence.findById(new Relation(Constants.REL_BLOGS));
             List forums = sqlTool.findSectionRelationsWithType(Category.FORUM,null);
 
             long start = System.currentTimeMillis();
@@ -546,7 +546,7 @@ public class CreateIndex implements Configurable {
 
         if ( discussion.getChildren().size()>0 ) {
             Record record = (Record) ((Relation) discussion.getChildren().get(0)).getChild();
-            record = (Record) persistance.findById(record);
+            record = (Record) persistence.findById(record);
             DiscussionRecord dizRecord = (DiscussionRecord) record.getCustom();
             LinkedList stack = new LinkedList(dizRecord.getThreads());
 
@@ -698,7 +698,7 @@ public class CreateIndex implements Configurable {
             Relation child = (Relation) iter.next();
 
             if ( child.getChild() instanceof Record ) {
-                Record record = (Record) persistance.findById(child.getChild());
+                Record record = (Record) persistence.findById(child.getChild());
                 if ( record.getType()==Record.ARTICLE ) {
                     List nodes = record.getData().selectNodes("/data/content");
                     if (nodes.size()==1) {
@@ -818,7 +818,7 @@ public class CreateIndex implements Configurable {
             Relation child = (Relation) iter.next();
 
             if ( child.getChild() instanceof Item ) {
-                Item item = (Item) persistance.findById(child.getChild());
+                Item item = (Item) persistence.findById(child.getChild());
                 if (item.getType() != Item.DISCUSSION)
                     continue;
 
@@ -871,7 +871,7 @@ public class CreateIndex implements Configurable {
 
         for (Iterator iter = dictionary.getChildren().iterator(); iter.hasNext();) {
             childRelation = (Relation) iter.next();
-            record = (Record) persistance.findById(childRelation.getChild());
+            record = (Record) persistence.findById(childRelation.getChild());
             s = Tools.xpath(record, "//description");
             sb.append(' ');
             sb.append(Tools.removeTags(s));
@@ -936,7 +936,7 @@ public class CreateIndex implements Configurable {
     private static void storeUser(int id, StringBuffer sb) {
         try {
             sb.append(" ");
-            User user = (User) persistance.findById(new User(id));
+            User user = (User) persistence.findById(new User(id));
             String nick = user.getNick();
             if (nick!=null) {
                 sb.append(nick);

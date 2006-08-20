@@ -23,17 +23,17 @@ import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.exceptions.NotFoundException;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.extra.CompareCondition;
-import cz.abclinuxu.persistance.extra.Field;
-import cz.abclinuxu.persistance.extra.LimitQualifier;
-import cz.abclinuxu.persistance.extra.Operation;
-import cz.abclinuxu.persistance.extra.Qualifier;
-import cz.abclinuxu.persistance.versioning.VersionedDocument;
-import cz.abclinuxu.persistance.versioning.Versioning;
-import cz.abclinuxu.persistance.versioning.VersioningFactory;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.extra.CompareCondition;
+import cz.abclinuxu.persistence.extra.Field;
+import cz.abclinuxu.persistence.extra.LimitQualifier;
+import cz.abclinuxu.persistence.extra.Operation;
+import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.persistence.versioning.VersionedDocument;
+import cz.abclinuxu.persistence.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
@@ -176,7 +176,7 @@ public class ViewSoftware implements AbcAction {
      * Processes section with software items.
      */
     private String processSection(HttpServletRequest request, Relation relation, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
 
@@ -203,7 +203,7 @@ public class ViewSoftware implements AbcAction {
         if (items.size() > 0)
             env.put(VAR_ITEMS, Tools.syncList(items));
 
-        List parents = persistance.findParents(relation);
+        List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
         env.put(VAR_CATEGORY, Tools.sync(relation.getChild()));
 
@@ -214,7 +214,7 @@ public class ViewSoftware implements AbcAction {
      * Processes search for given software
      */
     private String processSearch(HttpServletRequest request, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         SQLTool sqlTool = SQLTool.getInstance();
 
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -229,7 +229,7 @@ public class ViewSoftware implements AbcAction {
             env.put(VAR_ITEMS, Tools.syncList(items));
 
         Relation relation = (Relation) env.get(VAR_RELATION);
-        List parents = persistance.findParents(relation);
+        List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
         env.put(VAR_CATEGORY, Tools.sync(relation.getChild()));
 
@@ -240,7 +240,7 @@ public class ViewSoftware implements AbcAction {
      * Processes one software item.
      */
     private String processItem(HttpServletRequest request, Relation relation, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Item item = null;
         Relation upper = null;
@@ -258,7 +258,7 @@ public class ViewSoftware implements AbcAction {
         env.put(VAR_ITEM, item);
         ReadRecorder.log(item, Constants.COUNTER_READ, env);
 
-        List parents = persistance.findParents(relation);
+        List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
         Map children = Tools.groupByType(item.getChildren());

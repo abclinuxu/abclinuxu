@@ -20,8 +20,8 @@ package cz.abclinuxu.migrate;
 
 import cz.abclinuxu.data.Poll;
 import cz.abclinuxu.data.PollChoice;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.impl.MySqlPersistance;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.impl.MySqlPersistence;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -34,10 +34,10 @@ import java.util.List;
  * Date: 11.11.2005
  */
 public class UpgradePoll {
-    MySqlPersistance persistance;
+    MySqlPersistence persistance;
 
     public UpgradePoll() {
-        persistance = (MySqlPersistance) PersistanceFactory.getPersistance(PersistanceFactory.directUrl);
+        persistance = (MySqlPersistence) PersistenceFactory.getPersistance(PersistenceFactory.directUrl);
     }
 
     void run() throws Exception {

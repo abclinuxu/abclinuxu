@@ -20,12 +20,12 @@ package cz.abclinuxu.migrate;
 
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.cache.EmptyCache;
-import cz.abclinuxu.persistance.extra.LimitQualifier;
-import cz.abclinuxu.persistance.extra.Qualifier;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.cache.EmptyCache;
+import cz.abclinuxu.persistence.extra.LimitQualifier;
+import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -37,7 +37,7 @@ import java.util.List;
  * Generates URL for news, if it was not been set yet.
  */
 public class GenerateUrlForNews {
-    static Persistance persistance = PersistanceFactory.getPersistance(EmptyCache.class);
+    static Persistence persistence = PersistenceFactory.getPersistance(EmptyCache.class);
     static SQLTool sqlTool = SQLTool.getInstance();
 
     public static void main(String[] args) {
@@ -65,7 +65,7 @@ public class GenerateUrlForNews {
             if (relation.getUrl()!=null)
                 continue;
 
-            item = (Item) persistance.findById(relation.getChild());
+            item = (Item) persistence.findById(relation.getChild());
             String content = Tools.xpath(item, "data/content");
             String withoutTags = Tools.removeTags(content);
             title = Tools.limitWords(withoutTags, 6, "");
@@ -74,7 +74,7 @@ public class GenerateUrlForNews {
             url = URLManager.protectFromDuplicates(url);
 
             relation.setUrl(url);
-            persistance.update(relation);
+            persistence.update(relation);
             count++;
         }
         return count;

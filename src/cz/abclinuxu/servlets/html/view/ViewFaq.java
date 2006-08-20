@@ -29,13 +29,13 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.persistance.extra.*;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.versioning.Versioning;
-import cz.abclinuxu.persistance.versioning.VersioningFactory;
-import cz.abclinuxu.persistance.versioning.VersionedDocument;
+import cz.abclinuxu.persistence.extra.*;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersioningFactory;
+import cz.abclinuxu.persistence.versioning.VersionedDocument;
 import cz.abclinuxu.exceptions.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -92,7 +92,7 @@ public class ViewFaq implements AbcAction {
      * Processes section with FAQ.
      */
     private String processSection(HttpServletRequest request, Relation relation, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
 
@@ -115,7 +115,7 @@ public class ViewFaq implements AbcAction {
         Paging paging = new Paging(questions, from, count, total);
         env.put(VAR_QUESTIONS, paging);
 
-        List parents = persistance.findParents(relation);
+        List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
         return FMTemplateSelector.select("ViewFaq", "list", env, request);
@@ -126,10 +126,10 @@ public class ViewFaq implements AbcAction {
      * todo zobrazit odkazy na nekolik dalsich otazek
      */
     private String processQuestion(HttpServletRequest request, Relation relation, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
-        List parents = persistance.findParents(relation);
+        List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
         Item item = (Item) relation.getChild();

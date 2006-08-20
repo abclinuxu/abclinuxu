@@ -24,9 +24,9 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.url.URLManager;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -89,9 +89,9 @@ public class EditContent implements AbcAction {
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if (relation != null) {
-            Persistance persistance = PersistanceFactory.getPersistance();
-            relation = (Relation) persistance.findById(relation);
-            persistance.synchronize(relation.getChild());
+            Persistence persistence = PersistenceFactory.getPersistance();
+            relation = (Relation) persistence.findById(relation);
+            persistence.synchronize(relation.getChild());
             env.put(VAR_RELATION, relation);
         }
 
@@ -155,7 +155,7 @@ public class EditContent implements AbcAction {
 
     protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation parentRelation = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -182,9 +182,9 @@ public class EditContent implements AbcAction {
             return FMTemplateSelector.select("EditContent", "add", env, request);
         }
 
-        persistance.create(item);
+        persistence.create(item);
         relation.setChild(item);
-        persistance.create(relation);
+        persistence.create(relation);
 
         // commit new version
         Misc.commitRelation(document.getRootElement(), relation, user);
@@ -200,7 +200,7 @@ public class EditContent implements AbcAction {
 
     protected String actionAddDerivedPageStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation parentRelation = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -224,7 +224,7 @@ public class EditContent implements AbcAction {
                 Element element = (Element) parentItem.getData().selectSingleNode("/data/toc");
                 if (element!=null) {
                     int id = Misc.parseInt(element.getText(), -1);
-                    toc = (Item) persistance.findById(new Item(id));
+                    toc = (Item) persistence.findById(new Item(id));
                     DocumentHelper.makeElement(item.getData(), "/data/toc").setText(element.getText());
                 }
             }
@@ -243,9 +243,9 @@ public class EditContent implements AbcAction {
             return FMTemplateSelector.select("EditContent", "addDerived", env, request);
         }
 
-        persistance.create(item);
+        persistence.create(item);
         relation.setChild(item);
-        persistance.create(relation);
+        persistence.create(relation);
 
         // commit new version
         Misc.commitRelation(document.getRootElement(), relation, user);
@@ -254,7 +254,7 @@ public class EditContent implements AbcAction {
             Element element = (Element) toc.getData().selectSingleNode("//node[@rid="+parentRelation.getId()+"]");
             if (element!=null) {
                 element.addElement("node").addAttribute("rid", Integer.toString(relation.getId()));
-                persistance.update(toc);
+                persistence.update(toc);
             }
         }
 
@@ -280,7 +280,7 @@ public class EditContent implements AbcAction {
 
     protected String actionEditPublicContent2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
         Item item = (Item) relation.getChild();
@@ -299,8 +299,8 @@ public class EditContent implements AbcAction {
             return FMTemplateSelector.select("EditContent", "editPublic", env, request);
         }
 
-        persistance.update(item);
-        persistance.update(relation);
+        persistence.update(item);
+        persistence.update(relation);
 
         // commit new version
         Misc.commitRelation(item.getData().getRootElement(), relation, user);
@@ -337,7 +337,7 @@ public class EditContent implements AbcAction {
 
     protected String actionEditItem2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
         Item item = (Item) relation.getChild();
@@ -358,8 +358,8 @@ public class EditContent implements AbcAction {
             return FMTemplateSelector.select("EditContent", "edit", env, request);
         }
 
-        persistance.update(item);
-        persistance.update(relation);
+        persistence.update(item);
+        persistence.update(relation);
 
         // commit new version
         Misc.commitRelation(item.getData().getRootElement(), relation, user);
@@ -378,14 +378,14 @@ public class EditContent implements AbcAction {
      * Reverts current monitor state for the user on this document.
      */
     protected String actionAlterMonitor(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_RELATION);
-        Item content = (Item) persistance.findById(relation.getChild());
+        Item content = (Item) persistence.findById(relation.getChild());
         User user = (User) env.get(Constants.VAR_USER);
 
         Date originalUpdated = content.getUpdated();
         MonitorTools.alterMonitor(content.getData().getRootElement(), user);
-        persistance.update(content);
+        persistence.update(content);
         SQLTool.getInstance().setUpdatedTimestamp(content, originalUpdated);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -397,9 +397,9 @@ public class EditContent implements AbcAction {
      * Reverts public flag state for this document.
      */
     protected String actionAlterPublic(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_RELATION);
-        Item content = (Item) persistance.findById(relation.getChild());
+        Item content = (Item) persistence.findById(relation.getChild());
 
         String subType = content.getSubType();
         if (TYPE_PUBLIC_CONTENT.equals(subType))
@@ -407,7 +407,7 @@ public class EditContent implements AbcAction {
         else if (subType==null)
             content.setSubType(TYPE_PUBLIC_CONTENT);
 
-        persistance.update(content);
+        persistence.update(content);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());
@@ -418,7 +418,7 @@ public class EditContent implements AbcAction {
 
 
     /**
-     * Updates title from parameters. Changes are not synchronized with persistance.
+     * Updates title from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item article to be updated
      * @param env environment
@@ -437,7 +437,7 @@ public class EditContent implements AbcAction {
     }
 
     /**
-     * Updates content from parameters. Changes are not synchronized with persistance.
+     * Updates content from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item article  to be updated
      * @return false, if there is a major error.
@@ -483,7 +483,7 @@ public class EditContent implements AbcAction {
     }
 
     /**
-     * Updates url from parameters. Changes are not synchronized with persistance.
+     * Updates url from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param relation relation to be updated
      * @param env environment
@@ -526,7 +526,7 @@ public class EditContent implements AbcAction {
     }
 
     /**
-     * Updates title from parameters. Changes are not synchronized with persistance.
+     * Updates title from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item article to be updated
      * @return false, if there is a major error.

@@ -24,9 +24,9 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -120,12 +120,12 @@ public class EditFaq implements AbcAction {
      * Adds new FAQ entry to selected FAQ section.
      */
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
 
         Relation parentRelation = (Relation) env.get(VAR_RELATION);
-        Category section = (Category) persistance.findById(parentRelation.getChild());
+        Category section = (Category) persistence.findById(parentRelation.getChild());
         if (section.getType()!=Category.FAQ) {
             log.warn("Sekce " + section.getId() + " musí být typu FAQ - " + Category.FAQ);
             throw new InvalidInputException("Interní chyba - tato sekce není typu FAQ.");
@@ -150,13 +150,13 @@ public class EditFaq implements AbcAction {
             return FMTemplateSelector.select("EditFaq", "add", env, request);
         }
 
-        persistance.create(faq);
+        persistence.create(faq);
 
         String title = root.elementText("title");
         String url = parentRelation.getUrl() + "/" + URLManager.enforceLastURLPart(title);
         url = URLManager.protectFromDuplicates(url);
         relation.setUrl(url);
-        persistance.create(relation);
+        persistence.create(relation);
 
         // commit new version
         Misc.commitRelation(document.getRootElement(), relation, user);
@@ -194,7 +194,7 @@ public class EditFaq implements AbcAction {
      * Modifies existing FAQ entry to selected FAQ section.
      */
     protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -215,7 +215,7 @@ public class EditFaq implements AbcAction {
             return FMTemplateSelector.select("EditFaq", "edit", env, request);
         }
 
-        persistance.update(faq);
+        persistence.update(faq);
 
         // commit new version
         Misc.commitRelation(root, relation, user);
@@ -238,14 +238,14 @@ public class EditFaq implements AbcAction {
      * Reverts current monitor state for the user on this faq.
      */
     protected String actionAlterMonitor(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_RELATION);
-        Item faq = (Item) persistance.findById(relation.getChild());
+        Item faq = (Item) persistence.findById(relation.getChild());
         User user = (User) env.get(Constants.VAR_USER);
 
         Date originalUpdated = faq.getUpdated();
         MonitorTools.alterMonitor(faq.getData().getRootElement(), user);
-        persistance.update(faq);
+        persistence.update(faq);
         SQLTool.getInstance().setUpdatedTimestamp(faq, originalUpdated);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -257,7 +257,7 @@ public class EditFaq implements AbcAction {
     // setters
 
     /**
-     * Updates question from parameters. Changes are not synchronized with persistance.
+     * Updates question from parameters. Changes are not synchronized with persistence.
      *
      * @param params map holding request's parameters
      * @param root   root element of discussion to be updated
@@ -286,7 +286,7 @@ public class EditFaq implements AbcAction {
     }
 
     /**
-     * Updates text of faq from parameters. Changes are not synchronized with persistance.
+     * Updates text of faq from parameters. Changes are not synchronized with persistence.
      *
      * @param params map holding request's parameters
      * @param root   root element of discussion to be updated

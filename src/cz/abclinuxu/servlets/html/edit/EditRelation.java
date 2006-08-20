@@ -30,9 +30,9 @@ import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.ACL;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.utils.InstanceUtils;
@@ -103,7 +103,7 @@ public class EditRelation implements AbcAction {
     // todo tohle je hruza, vubec se v tom neda vyznat.
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         String action = (String) params.get(PARAM_ACTION);
         User user = (User) env.get(Constants.VAR_USER);
 
@@ -111,7 +111,7 @@ public class EditRelation implements AbcAction {
             return actionSetUrlStep1(request, env);
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
-        relation = (Relation) persistance.findById(relation);
+        relation = (Relation) persistence.findById(relation);
         env.put(VAR_CURRENT, relation);
 
         // check permissions
@@ -164,7 +164,7 @@ public class EditRelation implements AbcAction {
             return actionSetUrlStep3(request, response, env);
 
         GenericObject child = relation.getChild();
-        persistance.synchronize(child);
+        persistence.synchronize(child);
 
         if ( action.equals(ACTION_MOVE) ) {
             // check permissions
@@ -220,11 +220,11 @@ public class EditRelation implements AbcAction {
 
     protected String actionLinkStep1(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_SELECTED, Relation.class, params, request);
         if ( relation!=null ) {
-            relation = (Relation) persistance.findById(relation);
+            relation = (Relation) persistence.findById(relation);
             env.put(VAR_SELECTED,relation);
         }
         return FMTemplateSelector.select("EditRelation","add",env,request);
@@ -232,11 +232,11 @@ public class EditRelation implements AbcAction {
 
     protected String actionLinkStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         Relation parent = (Relation) env.get(VAR_CURRENT);
         Relation child = (Relation) InstanceUtils.instantiateParam(PARAM_SELECTED, Relation.class, params, request);
-        persistance.synchronize(child);
+        persistence.synchronize(child);
 
         Relation relation = new Relation();
         relation.setParent(parent.getChild());
@@ -251,7 +251,7 @@ public class EditRelation implements AbcAction {
             relation.setData(document);
         }
 
-        persistance.create(relation);
+        persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
         String prefix = (String)params.get(PARAM_PREFIX);
@@ -278,11 +278,11 @@ public class EditRelation implements AbcAction {
         if (!user.hasRole(Roles.ROOT))
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_CURRENT);
         Relation upper = null;
         if (relation.getUpper()!=0)
-            upper = (Relation) persistance.findById(new Relation(relation.getUpper()));
+            upper = (Relation) persistence.findById(new Relation(relation.getUpper()));
         else {
             upper = new Relation();
             upper.setUrl("");
@@ -300,7 +300,7 @@ public class EditRelation implements AbcAction {
      * Sets new URL.
      */
     protected String actionSetUrlStep3(HttpServletRequest request, HttpServletResponse response, Map env) throws IOException {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         SQLTool sqlTool = SQLTool.getInstance();
         User user = (User) env.get(Constants.VAR_USER);
         if (!user.hasRole(Roles.ROOT))
@@ -311,7 +311,7 @@ public class EditRelation implements AbcAction {
 
         Relation upper = null;
         if (relation.getUpper() != 0)
-            upper = (Relation) persistance.findById(new Relation(relation.getUpper()));
+            upper = (Relation) persistence.findById(new Relation(relation.getUpper()));
         else {
             upper = new Relation();
             upper.setUrl("");
@@ -340,7 +340,7 @@ public class EditRelation implements AbcAction {
         }
 
         relation.setUrl(url);
-        persistance.update(relation);
+        persistence.update(relation);
 
         if (originalUrl != null) {
             CustomURLCache.getInstance().remove(originalUrl);
@@ -357,25 +357,25 @@ public class EditRelation implements AbcAction {
      * todo call refreshXY on VariableFetcher
      */
     protected String actionRemove1(HttpServletRequest request, Map env) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_CURRENT);
 
-        Relation[] parents = persistance.findByExample(new Relation(null,relation.getChild(),0));
+        Relation[] parents = persistence.findByExample(new Relation(null,relation.getChild(),0));
         env.put(VAR_PARENTS,parents);
         return FMTemplateSelector.select("EditRelation","remove",env,request);
     }
 
     protected String actionRemove2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_CURRENT);
         User user = (User) env.get(Constants.VAR_USER);
 
-        persistance.synchronize(relation);
-        persistance.synchronize(relation.getChild());
+        persistence.synchronize(relation);
+        persistence.synchronize(relation.getChild());
 
         runMonitor(relation,user);
-        persistance.remove(relation);
+        persistence.remove(relation);
         relation.getParent().removeChildRelation(relation);
         AdminLogger.logEvent(user, "remove | relation "+relation.getId()+" | "+Tools.childName(relation));
 
@@ -397,18 +397,18 @@ public class EditRelation implements AbcAction {
      */
     protected String actionMove(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
 
         Relation relation = (Relation) env.get(VAR_CURRENT);
         int originalUpper = relation.getUpper();
         Relation destination = (Relation) InstanceUtils.instantiateParam(PARAM_SELECTED, Relation.class, params, request);
-        persistance.synchronize(destination);
+        persistence.synchronize(destination);
 
         relation.getParent().removeChildRelation(relation);
         relation.setParent(destination.getChild());
         relation.setUpper(destination.getId());
-        persistance.update(relation);
+        persistence.update(relation);
         relation.getParent().addChildRelation(relation);
 
         AdminLogger.logEvent(user, "  move | relation "+relation.getId()+" | from "+originalUpper+" | to "+destination.getId());
@@ -433,19 +433,19 @@ public class EditRelation implements AbcAction {
      */
     protected String actionMoveAll(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
         String type = (String) params.get(PARAM_TYPE);
 
         Relation relation = (Relation) env.get(VAR_CURRENT);
-        persistance.synchronize(relation.getChild());
+        persistence.synchronize(relation.getChild());
         Relation destination = (Relation) InstanceUtils.instantiateParam(PARAM_SELECTED, Relation.class, params, request);
-        persistance.synchronize(destination);
+        persistence.synchronize(destination);
 
         for ( Iterator iter = relation.getChild().getChildren().iterator(); iter.hasNext(); ) {
             Relation childRelation = (Relation) iter.next();
             GenericObject child = childRelation.getChild();
-            persistance.synchronize(child);
+            persistence.synchronize(child);
             boolean move = false;
             if (child instanceof Item) {
                 if (VALUE_ARTICLES.equals(type) && ((Item)child).getType()==Item.ARTICLE)
@@ -461,7 +461,7 @@ public class EditRelation implements AbcAction {
                 childRelation.getParent().removeChildRelation(childRelation);
                 childRelation.setParent(destination.getChild());
                 childRelation.setUpper(destination.getId());
-                persistance.update(childRelation);
+                persistence.update(childRelation);
                 childRelation.getParent().addChildRelation(childRelation);
 
                 AdminLogger.logEvent(user, "  move | relation "+childRelation.getId()+" | from "+relation.getId()+" | to "+destination.getId());
@@ -548,11 +548,11 @@ public class EditRelation implements AbcAction {
 
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_CURRENT);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         boolean canContinue = setACL(params,relation,env);
         if (canContinue) {
-            persistance.update(relation);
+            persistence.update(relation);
             AdminLogger.logEvent(user, "vytvoril nove ACL pro relaci "+relation.getId());
         }
 
@@ -569,7 +569,7 @@ public class EditRelation implements AbcAction {
 
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_CURRENT);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Document document = relation.getData();
 
         List acls = null;
@@ -588,7 +588,7 @@ public class EditRelation implements AbcAction {
             element.detach();
             AdminLogger.logEvent(user, "zrusil ACL "+id+" z relace "+relation.getId());
         }
-        persistance.update(relation);
+        persistence.update(relation);
 
         return actionShowACL(request, env);
     }
@@ -598,7 +598,7 @@ public class EditRelation implements AbcAction {
     ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * Creates ACL from parameters. Changes are not synchronized with persistance.
+     * Creates ACL from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param relation relation to be updated
      * @return false, if there is a major error.
@@ -649,7 +649,7 @@ public class EditRelation implements AbcAction {
      * Converts DOM4J Element to ACL.
      */
     public static ACL getACL(Element element) {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         int id = Misc.parseInt(element.attributeValue("id"),0);
         int gid = Misc.parseInt(element.attributeValue("gid"),0);
@@ -657,9 +657,9 @@ public class EditRelation implements AbcAction {
 
         ACL acl;
         if (uid!=0)
-            acl = new ACL(id,(User) persistance.findById(new User(uid)));
+            acl = new ACL(id,(User) persistence.findById(new User(uid)));
         else
-            acl = new ACL(id, (Item) persistance.findById(new Item(gid)));
+            acl = new ACL(id, (Item) persistence.findById(new Item(gid)));
 
         boolean value = "yes".equals(element.attributeValue("value"));
         acl.setRight(element.attributeValue("right"),value);

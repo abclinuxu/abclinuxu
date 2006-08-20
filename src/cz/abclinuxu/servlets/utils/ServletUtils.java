@@ -19,10 +19,10 @@
 package cz.abclinuxu.servlets.utils;
 
 import cz.abclinuxu.data.User;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.exceptions.PersistanceException;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.exceptions.PersistenceException;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.Misc;
@@ -191,7 +191,7 @@ public class ServletUtils implements Configurable {
             return;
         }
 
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         String login = (String) params.get(PARAM_LOG_USER);
         if ( ! Misc.empty(login) ) {
             Integer id = SQLTool.getInstance().getUserByLogin(login);
@@ -200,7 +200,7 @@ public class ServletUtils implements Configurable {
                 return;
             }
             user = new User(id.intValue());
-            user = (User) persistance.findById(user);
+            user = (User) persistence.findById(user);
 
             String password = (String) params.get(PARAM_LOG_PASSWORD);
             if ( !user.validatePassword(password) ) {
@@ -217,8 +217,8 @@ public class ServletUtils implements Configurable {
 
             LoginCookie loginCookie = new LoginCookie(cookie);
             try {
-                user = (User) persistance.findById(new User(loginCookie.id));
-            } catch (PersistanceException e) {
+                user = (User) persistence.findById(new User(loginCookie.id));
+            } catch (PersistenceException e) {
                 deleteCookie(cookie,response);
                 log.warn("Nalezena cookie s neznámým u¾ivatelem!");
                 addError(Constants.ERROR_GENERIC,"Nalezena cookie s neznámým u¾ivatelem!",env, null);
@@ -368,7 +368,7 @@ public class ServletUtils implements Configurable {
             now = Constants.isoFormat.format(new Date());
         }
         DocumentHelper.makeElement(user.getData(), "data/system/last_login_date").setText(now);
-        PersistanceFactory.getPersistance().update(user); // session bug here
+        PersistenceFactory.getPersistance().update(user); // session bug here
 
         int limit = AbcConfig.getMaxWatchedDiscussionLimit();
         List rows = SQLTool.getInstance().getLastSeenComments(user.getId(), limit);

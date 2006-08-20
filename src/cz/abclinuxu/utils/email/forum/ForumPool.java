@@ -18,8 +18,8 @@
  */
 package cz.abclinuxu.utils.email.forum;
 
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Category;
 
@@ -44,8 +44,8 @@ public class ForumPool {
     public static void submitComment(Relation relation, int discussionId, int recordId, int threadId) {
         if (! (relation.getParent() instanceof Category) )
             return;
-        Persistance persistance = PersistanceFactory.getPersistance();
-        Category parent = (Category) persistance.findById(relation.getParent());
+        Persistence persistence = PersistenceFactory.getPersistance();
+        Category parent = (Category) persistence.findById(relation.getParent());
         if (parent.getType()!=Category.FORUM)
             return;
         Comment comment = new Comment(relation.getId(), discussionId, recordId, threadId);

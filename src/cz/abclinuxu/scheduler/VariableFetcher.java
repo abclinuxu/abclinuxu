@@ -20,9 +20,9 @@ package cz.abclinuxu.scheduler;
 
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.persistance.*;
-import cz.abclinuxu.persistance.extra.LimitQualifier;
-import cz.abclinuxu.persistance.extra.Qualifier;
+import cz.abclinuxu.persistence.*;
+import cz.abclinuxu.persistence.extra.LimitQualifier;
+import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
@@ -231,7 +231,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         if (currentPoll == null)
             return null;
 
-        Relation relation = (Relation) PersistanceFactory.getPersistance().findById(currentPoll);
+        Relation relation = (Relation) PersistenceFactory.getPersistance().findById(currentPoll);
         Tools.sync(relation);
         return relation;
     }
@@ -434,10 +434,10 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     public void refreshSizes() {
         try {
-            Persistance persistance = PersistanceFactory.getPersistance();
-            Category requests = (Category) persistance.findById(new Category(Constants.CAT_REQUESTS));
+            Persistence persistence = PersistenceFactory.getPersistance();
+            Category requests = (Category) persistence.findById(new Category(Constants.CAT_REQUESTS));
             counter.put("REQUESTS", new Integer(requests.getChildren().size()));
-            Category news = (Category) persistance.findById(new Category(Constants.CAT_NEWS_POOL));
+            Category news = (Category) persistence.findById(new Category(Constants.CAT_NEWS_POOL));
             counter.put("WAITING_NEWS", new Integer(news.getChildren().size()));
         } catch (Exception e) {
             log.error("Selhalo nacitani velikosti", e);
@@ -445,7 +445,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     }
 
     private Map getSelectedFeeds(String servers, int size) {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         StringTokenizer stk = new StringTokenizer(servers, ",");
         String tmp;
         int id;
@@ -460,7 +460,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
                 continue;
             }
 
-            server = (Server) persistance.findById(new Server(id));
+            server = (Server) persistence.findById(new Server(id));
             links = (List) feedLinks.get(server);
             if (links == null) // unmaintained
                 continue;

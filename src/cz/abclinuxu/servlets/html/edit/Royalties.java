@@ -23,13 +23,13 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.SQLTool;
-import cz.abclinuxu.persistance.extra.CompareCondition;
-import cz.abclinuxu.persistance.extra.Field;
-import cz.abclinuxu.persistance.extra.Operation;
-import cz.abclinuxu.persistance.extra.Qualifier;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.extra.CompareCondition;
+import cz.abclinuxu.persistence.extra.Field;
+import cz.abclinuxu.persistence.extra.Operation;
+import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
@@ -99,9 +99,9 @@ public class Royalties implements AbcAction {
         if ( relation==null )
             throw new MissingArgumentException("Chybí parametr relationId!");
 
-        Persistance persistance = PersistanceFactory.getPersistance();
-        persistance.synchronize(relation);
-        persistance.synchronize(relation.getChild());
+        Persistence persistence = PersistenceFactory.getPersistance();
+        persistence.synchronize(relation);
+        persistence.synchronize(relation.getChild());
         env.put(VAR_RELATION, relation);
 
         if ( ACTION_ADD_ROYALTIES.equals(action) )
@@ -171,7 +171,7 @@ public class Royalties implements AbcAction {
 
     protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation upper = (Relation) env.get(VAR_RELATION);
 
         Item item = new Item(0, Item.ROYALTIES);
@@ -189,9 +189,9 @@ public class Royalties implements AbcAction {
         if ( !canContinue )
             return actionAddRoyaltiesStep1(request, env);
 
-        persistance.create(item);
+        persistence.create(item);
         Relation relation = new Relation(upper.getChild(), item, upper.getId());
-        persistance.create(relation);
+        persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
         User user = (User) env.get(Constants.VAR_USER);
@@ -222,7 +222,7 @@ public class Royalties implements AbcAction {
 
     protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
 
@@ -235,7 +235,7 @@ public class Royalties implements AbcAction {
 
         if ( !canContinue )
             return actionEditStep1(request, env);
-        persistance.update(item);
+        persistence.update(item);
 
         User user = (User) env.get(Constants.VAR_USER);
         AdminLogger.logEvent(user, "upravil honoráø "+relation.getId());
@@ -249,7 +249,7 @@ public class Royalties implements AbcAction {
 
 
     /**
-     * Updates author from parameters. Changes are not synchronized with persistance.
+     * Updates author from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item article to be updated
      * @param env environment
@@ -266,7 +266,7 @@ public class Royalties implements AbcAction {
     }
 
     /**
-     * Updates date of publishing from parameters. Changes are not synchronized with persistance.
+     * Updates date of publishing from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item article to be updated
      * @param env environment
@@ -284,7 +284,7 @@ public class Royalties implements AbcAction {
     }
 
     /**
-     * Updates date of paying royalties from parameters. Changes are not synchronized with persistance.
+     * Updates date of paying royalties from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item article to be updated
      * @param env environment
@@ -311,7 +311,7 @@ public class Royalties implements AbcAction {
     }
 
     /**
-     * Updates royalties amount from parameters. Changes are not synchronized with persistance.
+     * Updates royalties amount from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item article to be updated
      * @param env environment
@@ -328,7 +328,7 @@ public class Royalties implements AbcAction {
     }
 
     /**
-     * Updates royalties amount from parameters. Changes are not synchronized with persistance.
+     * Updates royalties amount from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item article to be updated
      * @return false, if there is a major error.

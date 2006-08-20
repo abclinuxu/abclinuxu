@@ -18,8 +18,8 @@
  */
 package cz.abclinuxu.utils.email.monitor;
 
-import cz.abclinuxu.persistance.PersistanceFactory;
-import cz.abclinuxu.persistance.Persistance;
+import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.config.Configurable;
@@ -67,8 +67,8 @@ public class DriverDecorator implements Decorator, Configurable {
 
         String name = (String) action.getProperty(PROPERTY_NAME);
         if ( name==null ) {
-            Persistance persistance = PersistanceFactory.getPersistance();
-            Item driver = (Item) persistance.findById(action.object);
+            Persistence persistence = PersistenceFactory.getPersistance();
+            Item driver = (Item) persistence.findById(action.object);
             name = driver.getData().selectSingleNode("/data/name").getText();
         }
         env.put(VAR_NAME, name);

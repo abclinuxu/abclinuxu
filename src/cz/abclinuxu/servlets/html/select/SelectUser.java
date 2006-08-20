@@ -28,8 +28,8 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.data.User;
-import cz.abclinuxu.persistance.Persistance;
-import cz.abclinuxu.persistance.PersistanceFactory;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -88,7 +88,7 @@ public class SelectUser implements AbcAction {
     }
 
     protected String actionShowFoundUsers(HttpServletRequest request, Map env, Map params) throws Exception {
-        Persistance persistance = PersistanceFactory.getPersistance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
         int pageSize = AbcConfig.getViewUserPageSize();
@@ -119,7 +119,7 @@ public class SelectUser implements AbcAction {
 
         List list = new ArrayList(1);
         list.add(searched);
-        List found = persistance.findByExample(list, null);
+        List found = persistence.findByExample(list, null);
 
         if ( found.size()==0 ) {
             ServletUtils.addMessage("Nenalezen ¾ádný u¾ivatel!", env, null);
@@ -131,7 +131,7 @@ public class SelectUser implements AbcAction {
         for ( Iterator iter = found.iterator(); iter.hasNext(); i++ ) {
             User user = (User) iter.next();
             if (i<from || i>=j) continue;
-            result.add(persistance.findById(user));
+            result.add(persistence.findById(user));
         }
         Paging paging = new Paging(result, from, pageSize, found.size());
         env.put(VAR_USERS, paging);
@@ -182,7 +182,7 @@ public class SelectUser implements AbcAction {
              return false;
          }
     	 user.setData("%<city>%"+city+"%</city>%");
-	     return true;                                                                                               
+	     return true;
      }
 
     /**
