@@ -32,7 +32,7 @@
    <#list map(key) as i>
     <#if i_index%5==0><tr></#if>
     <td>
-     <input type="radio" name="currentId" value="${i.id}">${TOOL.childName(i)}
+     <@lib.showOption "currentId", i.id?string, TOOL.childName(i), "radio"/><br>
     </td>
     <#if i_index%5==4></tr></#if>
    </#list>
@@ -49,20 +49,12 @@
   </p>
 
   <table border="0" cellpadding="5">
-   <tr><th colspan="5">Èlánky</th></tr>
-   <#list SORT.byName(CLANKY) as i>
-    <#if i_index%5==0><tr></#if>
-    <td>
-     <input type="radio" name="currentId" value="${i.id}">${TOOL.childName(i)}
-    </td>
-    <#if i_index%5==4></tr></#if>
-   </#list>
 
    <tr><th colspan="5">Diskuse</th></tr>
    <#list SORT.byName(FORUM) as i>
     <#if i_index%5==0><tr></#if>
     <td>
-     <input type="radio" name="currentId" value="${i.id}">${TOOL.childName(i)}
+     <@lib.showOption "currentId", i.id?string, TOOL.childName(i), "radio"/><br>
     </td>
     <#if i_index%5==4></tr></#if>
    </#list>
@@ -71,8 +63,25 @@
    <#list SORT.byName(H386) as i>
     <#if i_index%5==0><tr></#if>
     <td>
-     <input type="radio" name="currentId" value="${i.id}" <#if i_index==0>checked</#if> >
-     ${TOOL.childName(i)}
+     <@lib.showOption "currentId", i.id?string, TOOL.childName(i), "radio"/><br>
+    </td>
+    <#if i_index%5==4></tr></#if>
+   </#list>
+
+   <tr><th colspan="5">Software</th></tr>
+   <#list SORT.byName(SOFTWARE) as i>
+    <#if i_index%5==0><tr></#if>
+    <td>
+     <@lib.showOption "currentId", i.id?string, TOOL.childName(i), "radio"/><br>
+    </td>
+    <#if i_index%5==4></tr></#if>
+   </#list>
+
+   <tr><th colspan="5">Èlánky</th></tr>
+   <#list SORT.byName(CLANKY) as i>
+    <#if i_index%5==0><tr></#if>
+    <td>
+     <@lib.showOption "currentId", i.id?string, TOOL.childName(i), "radio"/><br>
     </td>
     <#if i_index%5==4></tr></#if>
    </#list>

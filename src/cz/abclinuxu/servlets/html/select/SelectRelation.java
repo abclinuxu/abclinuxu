@@ -51,6 +51,7 @@ public class SelectRelation implements AbcAction {
     public static final String VAR_FORUM = "FORUM";
     public static final String VAR_CLANKY = "CLANKY";
     public static final String VAR_386 = "H386";
+    public static final String VAR_SOFTWARE = "SOFTWARE";
     public static final String VAR_CURRENT = "CURRENT";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -92,13 +93,18 @@ public class SelectRelation implements AbcAction {
         List content = clanky.getChildren();
         env.put(VAR_CLANKY,content);
 
-        Category sw = (Category) persistence.findById(new Category(Constants.CAT_FORUM));
-        content = sw.getChildren();
+        Category forum = (Category) persistence.findById(new Category(Constants.CAT_FORUM));
+        content = forum.getChildren();
         env.put(VAR_FORUM,content);
 
         Category hw386 = (Category) persistence.findById(new Category(Constants.CAT_386));
         content = hw386.getChildren();
         env.put(VAR_386,content);
+
+        Category sw = (Category) persistence.findById(new Category(Constants.CAT_SOFTWARE));
+        content = sw.getChildren();
+        env.put(VAR_SOFTWARE, content);
+
         return FMTemplateSelector.select("SelectRelation","step1",env,request);
     }
 

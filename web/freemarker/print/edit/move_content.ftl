@@ -8,10 +8,10 @@ zvoleného typu bude pøesunut, napøíklad v¹echny diskuse.
 </p>
 
 <form action="${URL.noPrefix("/SelectRelation")}" method="POST">
- <input type="radio" name="type" value="discussions" checked tabindex="1"> Diskuse <br>
- <input type="radio" name="type" value="makes" tabindex="2"> Polo¾ky<br>
- <input type="radio" name="type" value="articles" tabindex="3"> Èlánky<br>
- <input type="radio" name="type" value="categories" tabindex="4"> Sekce<br>
+ <@lib.showOption "type", "discussions", "Diskuse", "radio"/><br>
+ <@lib.showOption "type", "makes", "Polo¾ky", "radio"/><br>
+ <@lib.showOption "type", "articles", "Èlánky", "radio"/><br>
+ <@lib.showOption "type", "categories", "Sekce", "radio"/><br>
 
  <input type="submit" value="Vyber cíl" tabindex="5">
 

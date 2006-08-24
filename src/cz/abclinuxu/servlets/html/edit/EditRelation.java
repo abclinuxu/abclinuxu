@@ -405,13 +405,19 @@ public class EditRelation implements AbcAction {
         Relation destination = (Relation) InstanceUtils.instantiateParam(PARAM_SELECTED, Relation.class, params, request);
         persistence.synchronize(destination);
 
+        String originalUrl = relation.getUrl();
+        if (originalUrl != null)
+            updateRelationUri(originalUrl, relation, destination, env, request);
+
         relation.getParent().removeChildRelation(relation);
         relation.setParent(destination.getChild());
         relation.setUpper(destination.getId());
         persistence.update(relation);
         relation.getParent().addChildRelation(relation);
 
-        AdminLogger.logEvent(user, "  move | relation "+relation.getId()+" | from "+originalUpper+" | to "+destination.getId());
+        String from = (originalUrl == null) ? Integer.toString(originalUpper) : originalUrl;
+        String to = (relation.getUrl() == null) ? Integer.toString(destination.getId()) : relation.getUrl();
+        AdminLogger.logEvent(user, "  move | relation "+relation.getId()+" | from "+from+" | to "+to);
 
         String url = null;
         String prefix = (String) params.get(PARAM_PREFIX);
@@ -425,6 +431,25 @@ public class EditRelation implements AbcAction {
         UrlUtils urlUtils = new UrlUtils("", response);
         urlUtils.redirect(response, url);
         return null;
+    }
+
+    private void updateRelationUri(String originalUrl, Relation relation, Relation destination, Map env, HttpServletRequest request) {
+        CustomURLCache.getInstance().remove(originalUrl);
+        SQLTool sqlTool = SQLTool.getInstance();
+        sqlTool.insertOldAddress(originalUrl, null, new Integer(relation.getId()));
+
+        String dirUri = destination.getUrl();
+        if (dirUri == null) {
+            relation.setUrl(null);
+            ServletUtils.addMessage("Cílová sekce nemá definovanou adresu, URL bylo zru¹eno.", env, request.getSession());
+        }
+
+        int position = originalUrl.lastIndexOf('/');
+        String localPart = originalUrl.substring(position + 1);
+        String url = URLManager.enforceLastURLPart(localPart);
+        url = dirUri + '/' + localPart;
+        url = URLManager.protectFromDuplicates(url);
+        relation.setUrl(url);
     }
 
     /**
@@ -448,23 +473,30 @@ public class EditRelation implements AbcAction {
             persistence.synchronize(child);
             boolean move = false;
             if (child instanceof Item) {
-                if (VALUE_ARTICLES.equals(type) && ((Item)child).getType()==Item.ARTICLE)
+                int itemType = ((Item)child).getType();
+                if (VALUE_ARTICLES.equals(type) && itemType==Item.ARTICLE)
                     move = true;
-                if (VALUE_DISCUSSIONS.equals(type) && ((Item)child).getType()==Item.DISCUSSION)
+                if (VALUE_DISCUSSIONS.equals(type) && (itemType==Item.DISCUSSION || itemType == Item.FAQ))
                     move = true;
-                if (VALUE_MAKES.equals(type) && ((Item)child).getType()==Item.HARDWARE)
+                if (VALUE_MAKES.equals(type) && (itemType==Item.HARDWARE || itemType==Item.SOFTWARE))
                     move = true;
             } else if ( VALUE_CATEGORIES.equals(type) && child instanceof Category)
                 move = true;
 
             if (move) {
+                String originalUrl = childRelation.getUrl();
+                if (originalUrl != null)
+                    updateRelationUri(originalUrl, childRelation, destination, env, request);
+
                 childRelation.getParent().removeChildRelation(childRelation);
                 childRelation.setParent(destination.getChild());
                 childRelation.setUpper(destination.getId());
                 persistence.update(childRelation);
                 childRelation.getParent().addChildRelation(childRelation);
 
-                AdminLogger.logEvent(user, "  move | relation "+childRelation.getId()+" | from "+relation.getId()+" | to "+destination.getId());
+                String from = (originalUrl == null) ? Integer.toString(relation.getId()) : originalUrl;
+                String to = (childRelation.getUrl() == null) ? Integer.toString(destination.getId()) : childRelation.getUrl();
+                AdminLogger.logEvent(user, "  move | relation " + relation.getId() + " | from " + from + " | to " + to);
             }
         }
 
