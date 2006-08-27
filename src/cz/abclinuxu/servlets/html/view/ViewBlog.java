@@ -153,7 +153,10 @@ public class ViewBlog implements AbcAction, Configurable {
             relation = new Relation(rid);
             Tools.sync(relation);
             GenericObject child = relation.getChild();
-            if (! (child instanceof Item) || ((Item)child).getType() != Item.BLOG)
+            if (! (child instanceof Item))
+                throw new InvalidInputException("Tato relace nepatøí blogu!");
+            int type = ((Item) child).getType();
+            if (type != Item.BLOG && type != Item.UNPUBLISHED_BLOG)
                 throw new InvalidInputException("Tato relace nepatøí blogu!");
 
             blog = (Category) relation.getParent();
