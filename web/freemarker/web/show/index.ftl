@@ -1,10 +1,4 @@
 <#assign plovouci_sloupec>
-    <div class="ps_nad_reklama">
-    reklama
-        <div class="ps_reklama">
-        <#include "/include/hucek.txt">
-        </div>
-    </div>
 
     <!-- ZAKLADY LINUXU -->
     <div class="s_nad_h1"><div class="s_nad_pod_h1">
