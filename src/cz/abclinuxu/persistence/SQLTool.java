@@ -1287,7 +1287,7 @@ public final class SQLTool implements Configurable {
         ResultSet resultSet = null;
         try {
             con = persistance.getSQLConnection();
-            statement = con.prepareStatement((String) sql.get(GET_LAST_COMMENT));
+            statement = con.prepareStatement((String) sql.get(GET_LAST_COMMENTS));
             statement.setInt(1, userId);
             statement.setInt(2, preserveCount);
             statement.setInt(3, 1);
