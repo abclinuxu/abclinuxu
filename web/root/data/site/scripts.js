@@ -116,6 +116,14 @@ function insertAtCursor(myField, prefix, postfix) {
 		}
 	}
 }
+
+function writeRemainingCharsCount(textarea) {
+    var regEx = new RegExp('<[^>]*>', 'g');
+    var strippedStr = new String(textarea.value);
+    strippedStr = strippedStr.replace(regEx, '');
+    document.getElementById('signatureTextCounter').innerHTML = '(zbývá '+Math.max(100-strippedStr.length, 0)+' znakù)';
+}
+
 // start method for checkParent
 function startCheckParent(event) {
     if (!event) {

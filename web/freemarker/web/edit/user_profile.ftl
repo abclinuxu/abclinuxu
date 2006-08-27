@@ -76,7 +76,9 @@ povídání.</p>
   <tr>
    <td width="60">Patièka</td>
    <td>
-    <textarea name="signature" rows="4" cols="54" tabindex="8">${PARAMS.signature?if_exists?html}</textarea>
+    <textarea name="signature" rows="4" cols="54" tabindex="8"
+    onkeyup="writeRemainingCharsCount(this);">${PARAMS.signature?if_exists?html}</textarea>
+    <div id="signatureTextCounter">&nbsp;</div>
     <div class="error">${ERRORS.signature?if_exists}</div>
    </td>
   </tr>
