@@ -70,7 +70,7 @@ zajímavostí ze svìta Linuxu i z na¹eho portálu.
   <tr>
    <td class="required" width="160">Zopakujte heslo</td>
    <td>
-    <input type="password" name="password2" size="16" tabindex="5">
+    <input type="password" name="password2" size="16"  maxlength="12"tabindex="5">
    </td>
   </tr>
   <tr>
