@@ -34,6 +34,7 @@ import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.exceptions.NotFoundException;
+import cz.abclinuxu.exceptions.InvalidInputException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -91,7 +92,7 @@ public class ViewBlog implements AbcAction, Configurable {
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
-        Relation blogRelation = null;
+        Relation blogRelation = null, relation = null;
         int year, month, day, rid;
         year = month = day = rid = 0;
         String name = null;
@@ -149,9 +150,13 @@ public class ViewBlog implements AbcAction, Configurable {
         Category blog = null;
         if (rid != 0) {
             // ochrana pred hratky s URL
-            Relation relation = (Relation) persistence.findById(new Relation(rid));
-            blogRelation = (Relation) persistence.findById(new Relation(relation.getUpper()));
+            relation = new Relation(rid);
+            Tools.sync(relation);
+            GenericObject child = relation.getChild();
+            if (! (child instanceof Item) || ((Item)child).getType() != Item.BLOG)
+                throw new InvalidInputException("Tato relace nepatøí blogu!");
             blog = (Category) relation.getParent();
+            blogRelation = (Relation) persistence.findById(new Relation(relation.getUpper()));
         } else {
             if (name != null) {
                 CompareCondition condition = new CompareCondition(Field.SUBTYPE, Operation.EQUAL, name);
@@ -178,8 +183,8 @@ public class ViewBlog implements AbcAction, Configurable {
             if (user != null && user.getId() == blog.getOwner())
                 fillUnpublishedStories(blog, env);
 
-            if (rid!=0)
-                return processStory(rid, request, env);
+            if (relation != null)
+                return processStory(relation, request, env);
             else if (archive)
                 return processArchive(blog, request, env);
             else
@@ -191,10 +196,8 @@ public class ViewBlog implements AbcAction, Configurable {
     /**
      * Displays one blogRelation content. Its stories may be limited to given year, month or day.
      */
-    protected String processStory(int rid, HttpServletRequest request, Map env) throws Exception {
+    protected String processStory(Relation relation, HttpServletRequest request, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistance();
-        Relation relation = (Relation) persistence.findById(new Relation(rid));
-        Tools.sync(relation);
         Item story = (Item) relation.getChild();
         env.put(VAR_STORY, relation);
 
