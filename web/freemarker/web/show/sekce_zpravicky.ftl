@@ -16,23 +16,28 @@
 <#macro showAdminNews(relation)>
  <#local
    ITEM=TOOL.sync(relation.child),
-   autor=TOOL.createUser(ITEM.owner)
+   autor=TOOL.createUser(ITEM.owner),
+   title=TOOL.xpath(ITEM, "/data/title")?default("Zprávièka")
  >
- <p>${DATE.show(ITEM.created,"CZ_FULL")}
- <a href="/Profile/${autor.id}">${autor.name}</a><br>
- ${TOOL.xpath(ITEM,"data/content")}<br>
- <a href="${URL.make("/edit?action=mail&amp;rid="+relation.id)}">Poslat email autorovi</a>
- <#if TOOL.xpath(ITEM, "//locked_by")?exists>
-   <#assign admin=TOOL.createUser(TOOL.xpath(ITEM, "//locked_by"))>
-   Uzamknul <a href="/Profile/${admin.id}">${admin.name}</a> -
-   <a href="${URL.make("/edit?action=unlock&amp;rid="+relation.id)}">odemknout</a>
- <#else>
-   <a href="${URL.make("/show/"+relation.id)}">Zobrazit</a>
-   <a href="${URL.make("/edit?action=edit&amp;rid="+relation.id)}">Upravit</a>
-   <a href="${URL.make("/edit?action=approve&amp;rid="+relation.id)}">Schválit</a>
-   <a href="${URL.make("/edit?action=remove&amp;rid="+relation.id)}">Smazat</a>
-   <a href="${URL.make("/edit?action=lock&amp;rid="+relation.id)}">Zamknout</a>
- </#if>
+ <h3>${title}</h3>
+ <p>
+    ${TOOL.xpath(ITEM,"data/content")}
+    <br>
+    ${DATE.show(ITEM.created,"CZ_FULL")}
+    <a href="/Profile/${autor.id}">${autor.name}</a>
+    <br> 
+    <a href="${URL.make("/edit?action=mail&amp;rid="+relation.id)}">Poslat email autorovi</a>
+    <#if TOOL.xpath(ITEM, "//locked_by")?exists>
+        <#assign admin=TOOL.createUser(TOOL.xpath(ITEM, "//locked_by"))>
+        Uzamknul <a href="/Profile/${admin.id}">${admin.name}</a> -
+        <a href="${URL.make("/edit?action=unlock&amp;rid="+relation.id)}">odemknout</a>
+    <#else>
+        <a href="${URL.make("/show/"+relation.id)}">Zobrazit</a>
+        <a href="${URL.make("/edit?action=edit&amp;rid="+relation.id)}">Upravit</a>
+        <a href="${URL.make("/edit?action=approve&amp;rid="+relation.id)}">Schválit</a>
+        <a href="${URL.make("/edit?action=remove&amp;rid="+relation.id)}">Smazat</a>
+        <a href="${URL.make("/edit?action=lock&amp;rid="+relation.id)}">Zamknout</a>
+    </#if>
  </p>
 </#macro>
 

@@ -36,14 +36,13 @@
 
 <#macro showSoftwareInList(software)>
     <#local item = software.child,visits = TOOL.getCounterValue(item,"visit"),reads = TOOL.getCounterValue(item,"read")>
-    <p class="swlist">
+    <div class="swlist">
         <span class="jmeno"><a href="${software.url}">${TOOL.childName(software)}</a></span>
         <span class="intro">${TOOL.xpath(item,"/data/intro")}</span>
-        <br>
-        <span class="precteno">Pøeèteno: ${reads}x</span>
-        <span class="navstev">Náv¹tìv: ${visits}x</span>
-        <span class="zmeneno">Poslední úprava: ${DATE.show(item.updated,"CZ_FULL")}</span>
-    </p>
+        <br />
+        <span class="meta">Pøeèteno: ${reads}x, Náv¹tìv: ${visits}x, Poslední úprava: ${DATE.show(item.updated,"CZ_FULL")}</span>
+        <hr />
+    </div>
 </#macro>
 
 <#macro showNews(relation)>
@@ -51,16 +50,19 @@
    ITEM=TOOL.sync(relation.child),
    autor=TOOL.createUser(ITEM.owner),
    diz=TOOL.findComments(ITEM),
-   url=relation.url?default("/zpravicky/show/"+relation.id)
+   url=relation.url?default("/zpravicky/show/"+relation.id),
+   title=TOOL.xpath(ITEM, "/data/title")?default("Zprávièka")
  >
- <p>${DATE.show(ITEM.created,"CZ_FULL")}
- <a href="/Profile/${autor.id}">${autor.name}</a><br>
- ${TOOL.xpath(ITEM,"data/content")}<br>
- <span style="font-size: smaller">
-  <a href="${url}">Link</a>
-  Komentáøe: ${diz.responseCount}<#if diz.responseCount gt 0><@markNewComments diz/>, poslední ${DATE.show(diz.updated, "CZ_FULL")}</#if>
- </span>
- </p>
+    <h3>${title}</h3>
+    <p>
+        ${TOOL.xpath(ITEM,"data/content")}<br>
+        <span style="font-size: smaller">
+        <a href="/Profile/${autor.id}">${autor.name}</a> |
+        <a href="${url}">Komentáøe: ${diz.responseCount}</a><#rt>
+        <#lt><#if diz.responseCount gt 0><@markNewComments diz/>, poslední ${DATE.show(diz.updated, "CZ_FULL")}</#if>
+        ${DATE.show(ITEM.created,"CZ_FULL")}
+        </span>
+    </p>
 </#macro>
 
 <#macro showTemplateNews(relation)>

@@ -16,16 +16,13 @@
 
 <h1>Zprávièky</h1>
 
-<p>Zprávièky mù¾ete èíst i pøes mobil: wap.abclinuxu.cz</p>
-
-<p><a href="${URL.make("/zpravicky/edit?action=add")}">Pøidat zprávièku</a></p>
-
 <#list NEWS as rel>
  <@lib.showNews rel /><hr />
 </#list>
 
 <p>
 <a href="/History?type=news&amp;from=${NEWS?size}&amp;count=15" title="Dal¹í">Star¹í zprávièky</a>
+<a href="${URL.make("/zpravicky/edit?action=add")}">Pøidat zprávièku</a>
 </p>
 
 <div align="center"><img src="/images/site/wap.gif" width="181" height="52" alt="wap.abclinuxu.cz"><br><br></div>
