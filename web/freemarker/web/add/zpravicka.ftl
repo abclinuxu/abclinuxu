@@ -28,14 +28,13 @@ s vysvìtlením. Teprve po schválení bude zprávièka zveøejnìna.</p>
 
 <#if PARAMS.preview?exists>
  <h2>Náhled</h2>
- <h3>${TOOL.xpath(RELATION.child,"/data/title")?if_exists}</h3>
  <@lib.showNews RELATION />
 </#if>
 
 <form action="${URL.make("/edit")}" method="POST" name="newsForm">
   <p>
    <span class="required">Titulek</span><br>
-   <input tabindex="1" type="text" name="title" size="40" maxlength="50" value="${PARAMS.title?if_exists}">
+   <input tabindex="1" type="text" name="title" size="40" maxlength="50" value="${PARAMS.title?if_exists?html}">
    <div class="error">${ERRORS.title?if_exists}</div>
    <span class="required">Obsah</span>
    <div class="form-edit">
