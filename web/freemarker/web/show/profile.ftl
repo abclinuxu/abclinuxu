@@ -69,6 +69,10 @@
   </ul>
 </#if>
 
+<#if TOOL.xpath(PROFILE,"/data/personal/signature")?exists>
+ <p>Patièka: ${TOOL.xpath(PROFILE,"/data/personal/signature")}</p>
+</#if>
+
 <#if BLOG?exists>
     Mùj blog: <a href="/blog/${BLOG.subType}">${TOOL.xpath(BLOG,"//custom/title")?default("blog")}</a>
     <ul>
