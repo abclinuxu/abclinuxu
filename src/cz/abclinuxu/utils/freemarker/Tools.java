@@ -280,6 +280,9 @@ public class Tools implements Configurable {
         if (relation.getId() == Constants.REL_BLOGS)
             return urlUtils.noPrefix("/blog");
 
+        if (relation.getId() == Constants.REL_NEWS)
+            return urlUtils.noPrefix("/zpravicky");
+
         GenericObject child = relation.getChild();
         if (child instanceof Category) {
             Category category = (Category) child;
