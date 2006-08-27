@@ -155,6 +155,7 @@ public class ViewBlog implements AbcAction, Configurable {
             GenericObject child = relation.getChild();
             if (! (child instanceof Item) || ((Item)child).getType() != Item.BLOG)
                 throw new InvalidInputException("Tato relace nepatøí blogu!");
+
             blog = (Category) relation.getParent();
             blogRelation = (Relation) persistence.findById(new Relation(relation.getUpper()));
         } else {
@@ -172,6 +173,9 @@ public class ViewBlog implements AbcAction, Configurable {
 
         if (blogRelation!=null) {
             blog = (Category) persistence.findById(blog);
+            if (blog.getType() != Category.BLOG)
+                throw new InvalidInputException("Tato relace nepatøí blogu!");
+
             blogRelation.setChild(blog);
             env.put(VAR_BLOG_RELATION, blogRelation);
             env.put(VAR_BLOG, blog);
