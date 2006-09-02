@@ -302,7 +302,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             refreshSizes();
             refreshStories();
             refreshFeedLinks();
-            log.debug("Cahovani hotovo.");
+            log.debug("Cachovani hotovo.");
         } catch (Throwable e) {
             log.error("Selhalo cachovani!", e);
         }
