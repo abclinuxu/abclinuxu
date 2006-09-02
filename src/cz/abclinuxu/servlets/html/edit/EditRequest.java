@@ -83,8 +83,11 @@ public class EditRequest implements AbcAction, Configurable {
     public static final String ACTION_RIGHT_FORUM = "rightForum";
 
     public static final String PREF_CATEGORIES = "categories";
+    public static final String PREF_RESPONSE_SUBJECT= "response.subject";
 
     public static String[] categories;
+    private String subjectForResponse;
+
     static {
         EditRequest action = new EditRequest();
         ConfigurationManager.getConfigurator().configureAndRememberMe(action);
@@ -287,14 +290,13 @@ public class EditRequest implements AbcAction, Configurable {
 
     protected String actionSendEmail(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         HttpSession session = request.getSession();
-        User user = (User) env.get(Constants.VAR_USER);
         Relation relation = (Relation) env.get(VAR_REQUEST_RELATION);
         Tools.sync(relation);
         Item req = (Item) relation.getChild();
 
         String email = req.getData().selectSingleNode("data/email").getText();
         session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_TO, email);
-        session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_BCC, user.getEmail());
+        session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_SUBJECT, subjectForResponse);
 
         String url = response.encodeRedirectURL("/Mail?url=/hardware/dir/"+Constants.REL_REQUESTS);
         response.sendRedirect(url);
@@ -410,6 +412,7 @@ public class EditRequest implements AbcAction, Configurable {
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {
+        subjectForResponse = prefs.get(PREF_RESPONSE_SUBJECT, "");
         String tmp = prefs.get(PREF_CATEGORIES,"");
         StringTokenizer stk = new StringTokenizer(tmp,",");
         categories = new String[stk.countTokens()];
