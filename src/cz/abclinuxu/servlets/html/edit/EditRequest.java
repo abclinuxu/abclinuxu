@@ -85,7 +85,7 @@ public class EditRequest implements AbcAction, Configurable {
     public static final String PREF_RESPONSE_SUBJECT= "response.subject";
 
     public static String[] categories;
-    private String subjectForResponse;
+    private static String subjectForResponse;
 
     static {
         EditRequest action = new EditRequest();
@@ -297,6 +297,7 @@ public class EditRequest implements AbcAction, Configurable {
         String email = req.getData().selectSingleNode("data/email").getText();
         session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_TO, email);
         session.setAttribute(SendEmail.PREFIX+EmailSender.KEY_SUBJECT, subjectForResponse);
+        session.setAttribute(SendEmail.PREFIX+SendEmail.PARAM_DISABLE_CODE, Boolean.TRUE);
 
         String url = response.encodeRedirectURL("/Mail?url=/hardware/dir/"+Constants.REL_REQUESTS);
         response.sendRedirect(url);

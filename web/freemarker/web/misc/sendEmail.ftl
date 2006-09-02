@@ -18,7 +18,7 @@ adresu.</p>
  <table class="siroka" border="0" cellpadding="5">
   <tr>
    <td class="required">Kontrolní kód</td>
-   <td><input type="text" name="KOD" size="30">
+   <td><input type="text" name="KOD" value="${PARAMS.KOD?if_exists}" size="4">
    <#if ERRORS.KOD?exists><span class="error">${ERRORS.KOD}</span></#if>
    </td>
   </tr>

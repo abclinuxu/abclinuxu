@@ -23,7 +23,6 @@ import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.Misc;
@@ -53,6 +52,7 @@ public class SendEmail implements AbcAction {
     public static final String PARAM_CC = "cc";
     public static final String PARAM_BCC = "bcc";
     public static final String PARAM_URL = "url";
+    public static final String PARAM_DISABLE_CODE = "disableCode";
 
     public static final String ACTION_SEND = "finish";
 
@@ -76,6 +76,10 @@ public class SendEmail implements AbcAction {
             params.put(PARAM_SENDER, user.getEmail());
         }
 
+        Integer kod = new Integer(new Random().nextInt(10000));
+        request.getSession().setAttribute(VAR_KOD, kod);
+        env.put(VAR_KOD, kod);
+
         HttpSession session = request.getSession();
         for ( Enumeration e = session.getAttributeNames(); e.hasMoreElements(); ) {
             String name = (String) e.nextElement();
@@ -84,17 +88,21 @@ public class SendEmail implements AbcAction {
                 if ( EmailSender.KEY_CC.equals(name2)) {
                     params.put(PARAM_CC, session.getAttribute(name));
                     session.removeAttribute(name);
-                }
-                else if ( EmailSender.KEY_BCC.equals(name2)) {
+
+                } else if ( EmailSender.KEY_BCC.equals(name2)) {
                     params.put(PARAM_BCC, session.getAttribute(name));
+                    session.removeAttribute(name);
+
+                } else if ( EmailSender.KEY_SUBJECT.equals(name2)) {
+                    params.put(PARAM_SUBJECT, session.getAttribute(name));
+                    session.removeAttribute(name);
+
+                } else if ( SendEmail.PARAM_DISABLE_CODE.equals(name2)) {
+                    params.put(VAR_KOD, kod);
                     session.removeAttribute(name);
                 }
             }
         }
-
-        Integer kod = new Integer(new Random().nextInt(10000));
-        request.getSession().setAttribute(VAR_KOD, kod);
-        env.put(VAR_KOD, kod);
 
         return FMTemplateSelector.select("SendEmail", "show", env, request);
     }
