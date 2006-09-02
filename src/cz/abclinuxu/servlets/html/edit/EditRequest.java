@@ -64,7 +64,6 @@ public class EditRequest implements AbcAction, Configurable {
     public static final String PARAM_RELATION_SHORT = "rid";
     public static final String PARAM_FORUM_ID = "forumId";
     public static final String PARAM_CATEGORY = "category";
-    public static final String PARAM_ANTISPAM = "antispam";
     public static final String PARAM_PREVIEW = "preview";
 
     public static final String VAR_REQUEST_RELATION = "REQUEST";
@@ -136,7 +135,7 @@ public class EditRequest implements AbcAction, Configurable {
     }
 
     protected String actionAdd(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        boolean saved = addRequest(request, null, true, env);
+        boolean saved = addRequest(request, response, null, true, env);
         if (!saved) {
             env.put(EditRequest.VAR_CATEGORIES, EditRequest.categories);
             return FMTemplateSelector.select("EditRequest", "view", env, request);
@@ -149,11 +148,12 @@ public class EditRequest implements AbcAction, Configurable {
 
     /**
      * Saves new request. The optional prefix will be prepended to the message.
+     * @param response
      * @param prefix optional text to be put before the message
      * @param messageRequired when true, message must be specified. If false, prefix must be set.
      * @return true, when request was successfully saved
      */
-    protected boolean addRequest(HttpServletRequest request, String prefix, boolean messageRequired, Map env) throws Exception {
+    protected boolean addRequest(HttpServletRequest request, HttpServletResponse response, String prefix, boolean messageRequired, Map env) throws Exception {
         User user = (User) env.get(Constants.VAR_USER);
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
@@ -164,7 +164,7 @@ public class EditRequest implements AbcAction, Configurable {
         String category = (String) params.get(PARAM_CATEGORY);
         boolean error = false;
 
-        if ( ! checkAntispam(params, env))
+        if ( ! EditDiscussion.checkSpambot(request, response, params, env, user))
             error = true;
 
         if ( author==null || author.length()==0 ) {
@@ -337,7 +337,7 @@ public class EditRequest implements AbcAction, Configurable {
         String title = comment.getTitle();
         String action = "<a href=\"/forum/show/" + relation.getId() + "#"+comment.getId()+"\">" + title + "</a>";
 
-        boolean saved = addRequest(request, action, false, env);
+        boolean saved = addRequest(request, response, action, false, env);
         if (!saved)
             return actionCommentTools(request, env);
 
@@ -388,27 +388,13 @@ public class EditRequest implements AbcAction, Configurable {
         String action = "Pøesunout diskusi <a href=\"/forum/show/"+relationId+"\">"+dizName+
                         "</a> do fora <a href=\"/forum/dir/"+forumId+"\">"+forumName+"</a> "+forumId;
 
-        boolean saved = addRequest(request, action, false, env);
+        boolean saved = addRequest(request, response, action, false, env);
         if (!saved)
             return actionChooseForum(request, env);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/hardware/show/" + Constants.REL_REQUESTS);
         return null;
-    }
-
-    /**
-     * Verifies that antispam field contains correct value. First implementation
-     * requires user to enter name of server.
-     * @return true if check was successfull.
-     */
-    private boolean checkAntispam(Map params, Map env) {
-        String value = (String) params.get(PARAM_ANTISPAM);
-        if ( value == null || value.indexOf("abclinuxu") == -1 ) {
-            ServletUtils.addError(PARAM_ANTISPAM, "Zadejte prosím jméno tohoto serveru.", env, null);
-            return false;
-        }
-        return true;
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {

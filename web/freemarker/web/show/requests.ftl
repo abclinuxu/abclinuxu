@@ -101,25 +101,28 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í, a proto bez odpovìdi
         </select>
     </td>
   </tr>
-  <tr>
-    <td class="required">Jméno tohoto serveru</td>
-    <td>
-        <input type="text" name="antispam" value="${antispam?if_exists}" size="20" tabindex="3">
-        (antispamová kontrola)
-        <div class="error">${ERRORS.antispam?if_exists}</div>
-    </td>
-  </tr>
+    <#if ! (USER?exists || USER_VERIFIED?if_exists)>
+        <tr>
+            <td class="required">Aktuální rok</td>
+            <td>
+                <input type="text" size="4" name="antispam" value="${PARAMS.antispam?if_exists?html}">
+                <a class="info" href="#">?<span class="tooltip">Vlo¾te aktuální rok. Jedná se o ochranu pøed spamboty.
+                Po úspì¹ném ovìøení se ulo¾í cookie (vèetnì va¹eho jména) a tato kontrola pøestane být provádìna.</span></a>
+                <span class="error">${ERRORS.antispam?if_exists}</span>
+            </td>
+        </tr>
+    </#if>
   <tr>
    <td colspan="2">
     <span class="required">Po¾adavek</span>
     <div class="error">${ERRORS.text?if_exists}</div>
-    <textarea name="text" cols="60" rows="15" tabindex="4">${PARAMS.text?if_exists?html}</textarea>
+    <textarea name="text" cols="60" rows="15">${PARAMS.text?if_exists?html}</textarea>
   </td>
   </tr>
   <tr>
    <td colspan="2">
-       <input type="submit" value="Odeslat" tabindex="5">
-       <input type="submit" name="preview" value="Náhled" tabindex="6">
+       <input type="submit" name="preview" value="Náhled">
+       <input type="submit" value="Odeslat">
    </td>
   </tr>
  </table>

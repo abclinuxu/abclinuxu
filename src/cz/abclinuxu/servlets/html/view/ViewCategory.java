@@ -34,6 +34,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.html.edit.EditRelation;
 import cz.abclinuxu.servlets.html.edit.EditRequest;
+import cz.abclinuxu.servlets.html.edit.EditDiscussion;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -127,6 +128,8 @@ public class ViewCategory implements AbcAction {
      */
     public static String processCategory(HttpServletRequest request, HttpServletResponse response, Map env, Relation relation) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User user = (User) env.get(Constants.VAR_USER);
+
         String tmp = (String) ((Map)env.get(Constants.VAR_PARAMS)).get(PARAM_PARENT);
         GenericObject obj;
         if ( Misc.same(tmp,"yes") )
@@ -161,6 +164,7 @@ public class ViewCategory implements AbcAction {
             case Constants.REL_NEWS_POOL:
                 return FMTemplateSelector.select("ViewCategory", "waiting_news", env, request);
             case Constants.REL_REQUESTS: {
+                EditDiscussion.detectSpambotCookie(request, env, user);
                 env.put(EditRequest.VAR_CATEGORIES, EditRequest.categories);
                 return FMTemplateSelector.select("EditRequest", "view", env, request);
             }

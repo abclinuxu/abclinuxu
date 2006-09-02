@@ -336,7 +336,7 @@ public class EditDiscussion implements AbcAction {
             env.put(VAR_PARENT_TITLE, getTitleFromParent(relation));
         }
 
-        detectSpambotCookie(request, params, env, user);
+        params.put(PARAM_AUTHOR, detectSpambotCookie(request, env, user));
         return FMTemplateSelector.select("EditDiscussion","reply",env,request);
     }
 
@@ -385,7 +385,6 @@ public class EditDiscussion implements AbcAction {
         }
 
         boolean canContinue = true;
-        detectSpambotCookie(request, params, env, user);
         canContinue &= setId(dizRecord, comment);
         canContinue &= setCreated(comment);
         canContinue &= setParent(params, comment);
@@ -1349,16 +1348,16 @@ public class EditDiscussion implements AbcAction {
     /**
      * This method detects if there is cookie COOKIE_USER_VERIFIED. In such case
      * the boolean VAR_USER_VERIFIED is set in environment and cookie value
-     * is set to PARAM_AUTHOR.
+     * is returned.
      */
-    static void detectSpambotCookie(HttpServletRequest request, Map params, Map env, User user) {
+    public static String detectSpambotCookie(HttpServletRequest request, Map env, User user) {
         if (request == null)
-            return;
+            return null;
         if (user != null)
-            return;
+            return null;
         Cookie[] cookies = request.getCookies();
         if (cookies == null || cookies.length == 0)
-            return;
+            return null;
         for (int i = 0; i < cookies.length; i++) {
             Cookie cookie = cookies[i];
             if (! COOKIE_USER_VERIFIED.equals(cookie.getName()))
@@ -1368,12 +1367,13 @@ public class EditDiscussion implements AbcAction {
             if (name != null && name.length() > 0) {
                 try {
                     name = URLDecoder.decode(name, "UTF-8");
+                    return name;
                 } catch (UnsupportedEncodingException e) {
                     log.warn(e.getMessage(), e);
                 }
-                params.put(PARAM_AUTHOR, name);
             }
         }
+        return null;
     }
 
     /**
@@ -1383,20 +1383,25 @@ public class EditDiscussion implements AbcAction {
      * performed for this user.
      * @return false if anti-spambot rules were not satisfied
      */
-    static boolean checkSpambot(HttpServletRequest request, HttpServletResponse response, Map params, Map env, User user) {
+    public static boolean checkSpambot(HttpServletRequest request, HttpServletResponse response, Map params, Map env, User user) {
         if (request == null || response == null)
             return true;
-        if (user != null || env.containsKey(VAR_USER_VERIFIED))
+        if (user != null)
             return true;
 
-        int year = Calendar.getInstance().get(Calendar.YEAR);
-        String s = (String) params.get(PARAM_ANTISPAM);
-        if (! String.valueOf(year).equals(s)) {
-            ServletUtils.addError(PARAM_ANTISPAM, "Zadejte prosím leto¹ní rok.", env, null);
-            return false;
+        String storedName = detectSpambotCookie(request, env, user);
+        boolean alreadyVerified = (env.containsKey(VAR_USER_VERIFIED));
+
+        if (! alreadyVerified) {
+            int year = Calendar.getInstance().get(Calendar.YEAR);
+            String s = (String) params.get(PARAM_ANTISPAM);
+            if (! String.valueOf(year).equals(s)) {
+                ServletUtils.addError(PARAM_ANTISPAM, "Zadejte prosím leto¹ní rok.", env, null);
+                return false;
+            }
+            env.put(VAR_USER_VERIFIED, Boolean.TRUE);
         }
 
-        env.put(VAR_USER_VERIFIED, Boolean.TRUE);
         String name = (String) params.get(PARAM_AUTHOR);
         if (name == null)
             name = "";
@@ -1406,6 +1411,12 @@ public class EditDiscussion implements AbcAction {
             } catch (UnsupportedEncodingException e) {
                 log.warn(e.getMessage(), e);
             }
+
+        // if user has been verified earlier and either he didn't enter any name or
+        // did not modified already stored name, do nothing
+        if (alreadyVerified && (name.length() == 0 || name.equals(storedName)))
+            return true;
+
         Cookie cookie = new Cookie(COOKIE_USER_VERIFIED, name);
         cookie.setPath("/");
         cookie.setMaxAge(5 * 365 * 24 * 3600);
