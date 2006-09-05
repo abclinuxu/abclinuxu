@@ -2098,7 +2098,7 @@ public class MySqlPersistence implements Persistence {
      * @param size number of question marks
      * @return string for ids in IN condition
      */
-    protected String getInCondition(int size) {
+    public static String getInCondition(int size) {
         StringBuffer sb = new StringBuffer();
         sb.append('(');
         for (int i = 0; i < size; i++) {

@@ -46,6 +46,7 @@ public interface Constants {
     int CAT_TIPS = 572;
     int CAT_DOCUMENTS = 587;
     int CAT_BLOGS = 589;
+    int CAT_FAQ = 758;
     int CAT_GUESTBOOK = 885;
 
     int ITEM_DIZ_TODO = 11606;

@@ -184,7 +184,7 @@ public class ViewSoftware implements AbcAction {
         // todo tohle jde prece porovnat bez SQL, leda by tam tech polozek bylo priserne moc
         // to se neda vyloucit, pak je lepsi zakazat cteni potomku v Nursery
         // do budoucna stejne chci zobrazovat cely strom, to budu muset cachovat nejak
-        List categories = sqlTool.findCategoriesRelationsWithType(Category.SOFTWARE_SECTION, (Qualifier[]) qualifiers.toArray(qa));
+        List categories = sqlTool.findCategoriesRelations((Qualifier[]) qualifiers.toArray(qa));
         if (categories.size() > 0)
             env.put(VAR_CATEGORIES, Tools.syncList(categories));
 

@@ -49,7 +49,7 @@ public final class SQLTool implements Configurable {
     public static final String RECORD_PARENT_RELATIONS_BY_TYPE = "relations.parent.record.by.type";
     public static final String ITEM_RELATIONS_BY_TYPE = "relations.item.by.type";
     public static final String ITEM_RELATIONS_BY_TYPE_WITH_FILTERS = "relations.item.by.type.with.filters";
-    public static final String CATEGORY_RELATIONS_BY_TYPE = "relations.categories.by.type";
+    public static final String CATEGORY_RELATIONS = "relations.categories";
     public static final String SECTION_RELATIONS_BY_TYPE = "relations.section.by.type";
     public static final String DISCUSSION_RELATIONS = "relations.discussion";
     public static final String DISCUSSION_RELATIONS_IN_SECTION = "relations.discussion.in.section";
@@ -73,7 +73,7 @@ public final class SQLTool implements Configurable {
     public static final String USERS_IN_GROUP = "users.in.group";
     public static final String ITEMS_WITH_TYPE = "items.with.type";
     public static final String RECORDS_WITH_TYPE = "records.with.type";
-    public static final String FAQ_SECTION_SIZE = "faq.section.size";
+    public static final String ITEMS_COUNT_IN_SECTION = "items.count.in.section";
     public static final String MAX_USER = "max.user";
     public static final String USER_BY_LOGIN = "user.by.login";
     public static final String COUNT_ARTICLES_BY_USER = "count.articles.by.user";
@@ -471,16 +471,15 @@ public final class SQLTool implements Configurable {
     }
 
     /**
-     * Finds relations, where child is category of specified type.
-     * Use Qualifiers to set additional parameters.
+     * Finds relations, where child is category. Unless you wish to receive all
+     * categories, you shall add additional criteria into qualifiers.
      * @return List of initialized relations
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List findCategoriesRelationsWithType(int type, Qualifier[] qualifiers) {
+    public List findCategoriesRelations(Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuffer sb = new StringBuffer((String) sql.get(CATEGORY_RELATIONS_BY_TYPE));
+        StringBuffer sb = new StringBuffer((String) sql.get(CATEGORY_RELATIONS));
         List params = new ArrayList();
-        params.add(new Integer(type));
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
     }
@@ -1373,26 +1372,36 @@ public final class SQLTool implements Configurable {
     }
 
     /**
-     * Finds all nonempty FAQ sections and returns number of their children.
-     *
-     * @return map where section relation id is key (string) and number of
-     *         children as value (integer).
+     * Finds all sections containing at least one Item and returns number of their Items.
+     * @param categories List of Integers containing id of categories to be examined
+     * @return map where section id is a key and number of children is a value
      */
-    public Map getFaqSectionsSize() {
+    public Map<Integer, Integer> getItemsCountInSections(List categories) {
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
         Connection con = null;
-        Statement statement = null;
+        PreparedStatement statement = null;
         try {
-            int rid, size;
-            Map result = new HashMap(30);
+            int id, size;
+            Map<Integer, Integer> result = new HashMap<Integer, Integer> (categories.size());
+
+            String query = (String) sql.get(ITEMS_COUNT_IN_SECTION);
+            int position = query.indexOf('?');
+            query = query.substring(0, position) + MySqlPersistence.getInCondition(categories.size())
+                    + query.substring(position + 1);
 
             con = persistance.getSQLConnection();
-            statement = con.createStatement();
-            ResultSet rs = statement.executeQuery((String) sql.get(FAQ_SECTION_SIZE));
+            statement = con.prepareStatement(query);
+            int i = 1;
+            for (Iterator iter = categories.iterator(); iter.hasNext();) {
+                id = ((Integer) iter.next()).intValue();
+                statement.setInt(i++, id);
+            }
+
+            ResultSet rs = statement.executeQuery();
             while (rs.next()) {
-                rid = rs.getInt(1);
+                id = rs.getInt(1);
                 size = rs.getInt(2);
-                result.put(Integer.toString(rid), new Integer(size));
+                result.put(id, size);
             }
 
             return result;
@@ -1564,7 +1573,7 @@ public final class SQLTool implements Configurable {
         store(RECORD_PARENT_RELATIONS_BY_TYPE, prefs);
         store(ITEM_RELATIONS_BY_TYPE, prefs);
         store(ITEM_RELATIONS_BY_TYPE_WITH_FILTERS, prefs);
-        store(CATEGORY_RELATIONS_BY_TYPE, prefs);
+        store(CATEGORY_RELATIONS, prefs);
         store(SECTION_RELATIONS_BY_TYPE, prefs);
         store(DISCUSSION_RELATIONS, prefs);
         store(DISCUSSION_RELATIONS_IN_SECTION, prefs);
@@ -1585,7 +1594,7 @@ public final class SQLTool implements Configurable {
         store(USERS_WITH_FORUM_BY_EMAIL, prefs);
         store(USERS_WITH_ROLES, prefs);
         store(USERS_IN_GROUP, prefs);
-        store(FAQ_SECTION_SIZE, prefs);
+        store(ITEMS_COUNT_IN_SECTION, prefs);
         store(MAX_USER, prefs);
         store(USER_BY_LOGIN, prefs);
         store(ITEMS_WITH_TYPE, prefs);
@@ -1715,6 +1724,14 @@ public final class SQLTool implements Configurable {
             sb.append("predchozi");
         else if (field==Field.DAY)
             sb.append("den");
+        else if (field==Field.PARENT_TYPE)
+            sb.append("typ_predka");
+        else if (field==Field.PARENT)
+            sb.append("predek");
+        else if (field==Field.CHILD_TYPE)
+            sb.append("typ_potomka");
+        else if (field==Field.CHILD)
+            sb.append("potomek");
         else if (field==Field.DATA)
             sb.append("data");
 

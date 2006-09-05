@@ -269,7 +269,7 @@
                             <entry key="relations.parent.record.by.type" value="select distinct R.predchozi from zaznam Z, relace R where typ=? and Z.cislo=R.potomek and typ_potomka='Z'"/>
                             <entry key="relations.item.by.type" value="select R.cislo from polozka P, relace R where typ=? and P.cislo=R.potomek and typ_potomka='P'"/>
 			                <entry key="relations.item.by.type.with.filters" value="select distinct R.cislo from polozka P, relace R, vlastnost V where P.typ=? and P.cislo=R.potomek and R.typ_potomka='P'"/>
-                            <entry key="relations.categories.by.type" value="select R.cislo from kategorie K, relace R where typ=? and K.cislo=R.potomek and typ_potomka='K'"/>
+                            <entry key="relations.categories" value="select R.cislo from kategorie K, relace R where K.cislo=R.potomek and typ_potomka='K'"/>
                             <entry key="relations.discussion" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek where R.typ_potomka='P' and R.typ_predka='K' and P.typ=3"/>
                             <entry key="relations.discussion.in.section" value="select R.cislo from relace R left join polozka P on P.cislo=R.potomek where R.predchozi=? and P.typ=3"/>
                             <entry key="relations.article" value="select R.cislo from polozka P, relace R, kategorie K where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and P.vytvoreno&lt;now()"/>
@@ -303,7 +303,7 @@
                             <entry key="insert.user.action" value="insert into akce values(?,?,?,NULL)" />
                             <entry key="get.user.action" value="select kdy from akce where kdo=? and relace=? and typ=?" />
                             <entry key="remove.user.action" value="delete from akce where kdo=? and relace=? and typ=?" />
-                            <entry key="faq.section.size" value="select R1.cislo, count(R2.cislo) from relace R1, relace R2 where R1.predchozi=81515 and R1.cislo=R2.predchozi group by R1.cislo" />
+                            <entry key="items.count.in.section" value="select R1.potomek, count(R2.cislo) from relace R1, relace R2 where R1.potomek in ? and R1.typ_potomka='K' and R1.cislo=R2.predchozi and R2.typ_potomka='P' group by R1.potomek" />
                             <entry key="insert.statistika" value="insert into statistika values(curdate(),?,?)" />
                             <entry key="update.statistika" value="update statistika set pocet=pocet+? where typ=? and den=curdate()" />
                             <entry key="get.statistika" value="select * from statistika where "/>
@@ -419,6 +419,7 @@
                             <entry key="feeds.for.template" value="7,16,21,18,19" />
                             <entry key="default.links.in.template" value="2"/>
                             <entry key="max.links.in.template" value="5"/>
+                            <entry key="section.cache.rebuild.frequency" value="10" />
                         </map>
                     </node>
                 </node>

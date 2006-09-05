@@ -82,9 +82,9 @@ public class ViewFaq implements AbcAction {
      * Processes start page with list of all FAQ sections.
      */
     private String processStart(HttpServletRequest request, Map env) throws Exception {
-        SQLTool sqlTool = SQLTool.getInstance();
-        Map sizes = sqlTool.getFaqSectionsSize();
-        env.put(VAR_SECTION_SIZES, sizes);
+        // todo use VariableFetcher cache
+//        Map sizes = sqlTool.getFaqSectionsSize();
+//        env.put(VAR_SECTION_SIZES, sizes);
         return FMTemplateSelector.select("ViewFaq", "start", env, request);
     }
 

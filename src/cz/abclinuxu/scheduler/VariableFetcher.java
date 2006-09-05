@@ -19,7 +19,9 @@
 package cz.abclinuxu.scheduler;
 
 import cz.abclinuxu.data.*;
+import cz.abclinuxu.data.view.SectionTreeCache;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.persistence.*;
 import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.persistence.extra.Qualifier;
@@ -67,22 +69,27 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public static final String PREF_MAX = "max.";
     public static final String PREF_INDEX_FEEDS = "feeds.for.index";
     public static final String PREF_TEMPLATE_FEEDS = "feeds.for.template";
+    public static final String PREF_SECTION_CACHE_FREQUENCY = "section.cache.rebuild.frequency";
 
     List freshHardware, freshDrivers, freshStories, freshArticles, freshNews;
     List freshQuestions, freshFaqs, freshDictionary;
     String indexFeeds, templateFeeds;
     Map defaultSizes, maxSizes, counter, feedLinks;
+    SectionTreeCache forumTree, faqTree, softwareTree;
     Relation currentPoll;
+    int sectionCacheFrequency;
 
-    long linksLastRun;
     SQLTool sqlTool;
+    int cycle;
 
     /**
      * Private constructor
      */
     private VariableFetcher() {
         sqlTool = SQLTool.getInstance();
-        linksLastRun = System.currentTimeMillis();
+        forumTree = new SectionTreeCache(UrlUtils.PREFIX_FORUM, Constants.CAT_FORUM);
+        faqTree = new SectionTreeCache(UrlUtils.PREFIX_FAQ, Constants.CAT_FAQ);
+        softwareTree = new SectionTreeCache(UrlUtils.PREFIX_SOFTWARE, Constants.CAT_SOFTWARE);
     }
 
     /**
@@ -237,6 +244,27 @@ public class VariableFetcher extends TimerTask implements Configurable {
     }
 
     /**
+     * @return cache of forum sections
+     */
+    public SectionTreeCache getForumTree() {
+        return forumTree;
+    }
+
+    /**
+     * @return cache of FAQ sections
+     */
+    public SectionTreeCache getFaqTree() {
+        return faqTree;
+    }
+
+    /**
+     * @return cache of Software sections
+     */
+    public SectionTreeCache getSoftwareTree() {
+        return softwareTree;
+    }
+
+    /**
      * Finds number of objects for given user. If o is not User or xpath is not set, then default value
      * will be returned. Otherwise user's preference will be returned (unless it is smaller than 0
      * or bigger than maximum for this object).
@@ -302,9 +330,28 @@ public class VariableFetcher extends TimerTask implements Configurable {
             refreshSizes();
             refreshStories();
             refreshFeedLinks();
+            refreshSectionCaches();
+
+            cycle++;
             log.debug("Cachovani hotovo.");
         } catch (Throwable e) {
             log.error("Selhalo cachovani!", e);
+        }
+    }
+
+    private void refreshSectionCaches() {
+        try {
+            if (cycle % sectionCacheFrequency == 0) {
+                faqTree.initialize();
+                forumTree.initialize();
+                softwareTree.initialize();
+            } else {
+                faqTree.refresh();
+                forumTree.refresh();
+                softwareTree.refresh();
+            }
+        } catch (Exception e) {
+            log.error("Selhalo nacitani section tree cache", e);
         }
     }
 
@@ -539,5 +586,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         defaultSizes.put(KEY_TEMPLATE_LINKS, new Integer(size));
         size = prefs.getInt(PREF_MAX + KEY_TEMPLATE_LINKS, 5);
         maxSizes.put(KEY_TEMPLATE_LINKS, new Integer(size));
+
+        sectionCacheFrequency = prefs.getInt(PREF_SECTION_CACHE_FREQUENCY, 6);
     }
 }

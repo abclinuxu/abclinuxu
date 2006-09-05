@@ -58,6 +58,10 @@ public class Field {
                                            PersistenceMapping.Table.RECORD, PersistenceMapping.Table.POLL,
                                            PersistenceMapping.Table.LINK});
     public static final Field UPPER = new Field("UPPER", new PersistenceMapping.Table[]{PersistenceMapping.Table.RELATION});
+    public static final Field PARENT_TYPE = new Field("PARENT_TYPE", new PersistenceMapping.Table[]{PersistenceMapping.Table.RELATION});
+    public static final Field PARENT = new Field("PARENT", new PersistenceMapping.Table[]{PersistenceMapping.Table.RELATION});
+    public static final Field CHILD_TYPE = new Field("CHILD_TYPE", new PersistenceMapping.Table[]{PersistenceMapping.Table.RELATION});
+    public static final Field CHILD = new Field("CHILD", new PersistenceMapping.Table[]{PersistenceMapping.Table.RELATION});
     public static final Field DAY = new Field("DAY", new PersistenceMapping.Table[]{PersistenceMapping.Table.STATISTICS});
 
     private final String myName; // for debug only
