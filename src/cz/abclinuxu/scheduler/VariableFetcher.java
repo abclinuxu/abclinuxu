@@ -345,11 +345,11 @@ public class VariableFetcher extends TimerTask implements Configurable {
                 faqTree.initialize();
                 forumTree.initialize();
                 softwareTree.initialize();
-            } else {
-                faqTree.refresh();
-                forumTree.refresh();
-                softwareTree.refresh();
             }
+
+            faqTree.refresh();
+            forumTree.refresh();
+            softwareTree.refresh();
         } catch (Exception e) {
             log.error("Selhalo nacitani section tree cache", e);
         }

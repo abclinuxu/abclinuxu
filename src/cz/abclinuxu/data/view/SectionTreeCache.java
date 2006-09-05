@@ -104,7 +104,6 @@ public class SectionTreeCache {
             }
 
             loadNames(directAccessMap);
-            refresh();
             setChildren(root.getChildren());
 
             log.debug("SectionTree cache (" + urlPrefix + ", " + id + ") initialization completed");
@@ -118,6 +117,7 @@ public class SectionTreeCache {
      */
     public void refresh() {
         try {
+            log.debug("SectionTree cache (" + urlPrefix + ", " + id + ") refresh started");
             SQLTool sqlTool = SQLTool.getInstance();
             Map<Integer, Integer> result = sqlTool.getItemsCountInSections(new ArrayList(mapById.keySet()));
             for (Iterator<Integer> iter = result.keySet().iterator(); iter.hasNext();) {
@@ -125,6 +125,7 @@ public class SectionTreeCache {
                 SectionNode section = mapById.get(id);
                 section.setItemsCount(result.get(id));
             }
+            log.debug("SectionTree cache (" + urlPrefix + ", " + id + ") refresh completed");
         } catch (Exception e) {
             log.error("SectionTree cache (" + urlPrefix + ", " + id + ") refresh failed", e);
         }
