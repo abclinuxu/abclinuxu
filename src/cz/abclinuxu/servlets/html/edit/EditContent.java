@@ -324,7 +324,8 @@ public class EditContent implements AbcAction {
         Element element = (Element) document.selectSingleNode("/data/name");
         params.put(PARAM_TITLE, element.getText());
         element = (Element) document.selectSingleNode("/data/content");
-        params.put(PARAM_CONTENT, element.getText());
+	if (element != null)
+            params.put(PARAM_CONTENT, element.getText());
         params.put(PARAM_EXECUTE_AS_TEMPLATE, element.attributeValue("execute"));
         element = (Element) document.selectSingleNode("/data/java_class");
         if (element!=null)
@@ -447,8 +448,6 @@ public class EditContent implements AbcAction {
         content = Misc.filterDangerousCharacters(content);
         String exec = (String) params.get(PARAM_EXECUTE_AS_TEMPLATE);
         Element element = (Element) item.getData().selectSingleNode("/data/content");
-        if ( element!=null )
-            element.detach();
 
         if ( content==null || content.length()==0 ) {
             ServletUtils.addError(PARAM_CONTENT, "Vyplòte obsah stránky!", env, null);
