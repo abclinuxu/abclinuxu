@@ -50,8 +50,7 @@
     <#assign story=relation.child, blog=relation.parent, author=TOOL.createUser(blog.owner),
              url=TOOL.getUrlForBlogStory(blog.subType, story.created, relation.id),
              title=TOOL.xpath(blog,"//custom/title")?default("blog"),
-             category = story.subType?default("UNDEF"), rating=TOOL.ratingFor(story.data,"story")?default("UNDEF"),
-             tmp=TOOL.groupByType(story.children)>
+             category = story.subType?default("UNDEF"), tmp=TOOL.groupByType(story.children)>
     <#if category!="UNDEF"><#assign category=TOOL.xpath(blog, "//category[@id='"+category+"']/@name")?default("UNDEF")></#if>
     <div class="cl">
         <#if SUMMARY?exists>
@@ -71,7 +70,7 @@
             <#if SUMMARY?exists><br /><#else> | </#if>
 	        Pøeèteno: ${TOOL.getCounterValue(story,"read")}x
             <#if tmp.discussion?exists>| <@lib.showCommentsInListing TOOL.analyzeDiscussion(tmp.discussion[0]), "CZ_SHORT", "/blog" /></#if>
-            <#if rating!="UNDEF">| Hodnocení:&nbsp;<span title="Hlasù: ${rating.count}">${rating.result?string["#0.00"]}</span></#if>
+            <@showShortRating relation, "| " />
         </p>
         <#if ! SUMMARY?exists>
             <#assign text = TOOL.xpath(story, "/data/perex")?default("UNDEF")>

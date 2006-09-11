@@ -267,6 +267,7 @@ td.pad, code.kod, pre.kod {
 .cl_nadpis-link {
 	font-size:	small;
 	float:		right;
+	margin-left:	1em;
 }
 
 .cl_rating {
@@ -277,6 +278,28 @@ td.pad, code.kod, pre.kod {
 	padding-left:	10px;
 }
 
+.cl_rating .rating_iframe { background-color: #F0F0F0; }
+
+.table_rating { }
+
+.table_rating .rating_iframe { }
+
+.stupnice {
+	width:	 95px;
+    background:	url('/images/site2/stupnice.gif') left no-repeat;
+    margin:	 0px 5px 10px 0px;
+	padding: 0px;
+}
+
+.stupnice img {
+    position:	relative;
+	border:		0px;
+    margin:	    1px 0px 5px 1px;
+    padding: 0px;
+}
+
+
+/* nasledujici classy kolem ratingu jiz nejsou pouzivany */
 .rating { background-color: #F0F0F0; }
 
 .hdn {
@@ -381,6 +404,8 @@ td.pad, code.kod, pre.kod {
 	cursor: pointer;
 }
 
+.ds_odsazeni { margin-left:	1em; }
+
 .hw table.hw-sekce tbody td, sw table.sw-sekce tbody td { width: 33%; padding: 0.1em; }
 .hw table.hw-sekce tbody td a,
     .hw table.hw-polozky tr a,
@@ -398,11 +423,27 @@ td.pad, code.kod, pre.kod {
 
 .sw .galerie a:hover, .sw h3 a:hover { background-color: white; }
 
-.sw-strom div { margin-left:	1em; }
-.sw-strom div.uroven-1 { margin-left:	0 }
+.hidden { display:  none; }
 
-.swlist .jmeno { font-size: 120% }
-.swlist .zmeneno { }
+.tree div { margin-left:	0.5em; }
+.tree div, div { margin-left:    0.5 em; }
+
+.filterHeader {
+    font-weight:	bold;
+    cursor:         pointer;
+}
+
+.swlist hr {
+	border-top:	1px solid lightgray;
+	margin-bottom:	0.2em;
+}
+.swlist .intro, .swlist .meta {
+	font-size:	small;
+	margin-left:	2em;
+}
+.swlist .meta {
+	color:		gray;
+}
 
 .ds_toolbox {
 	background:	#ececec;
@@ -836,6 +877,7 @@ table.hwdetail, table.swdetail {
 }
 
 .anketa-tr-dark { background: #e6e6e6; }
+
 
 /*************** SF lista *****************/
 .sflista {

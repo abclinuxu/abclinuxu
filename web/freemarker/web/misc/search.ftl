@@ -28,13 +28,12 @@
                   <table border="0" width="100%">
                    <tr>
                     <td><label><input type="checkbox" name="type" value="clanek" <#if TYPES.article>checked</#if>>Èlánky</label></td>
-                    <td><label><input type="checkbox" name="type" value="zpravicka" <#if TYPES.news>checked</#if>>Zprávièky</label></td>
-                    <td><label><input type="checkbox" name="type" value="faq" <#if TYPES.faq>checked</#if>>FAQ</label></td>
+                    <td><label><input type="checkbox" name="type" value="otazka" <#if TYPES.question>checked</#if>>Diskuzní fórum</label></td>    <td><label><input type="checkbox" name="type" value="faq" <#if TYPES.faq>checked</#if>>FAQ</label></td>
                     <td><label><input type="checkbox" name="type" value="pojem" <#if TYPES.dictionary>checked</#if>>Pojmy</label></td>
                    </tr>
                    <tr>
-                    <td><label><input type="checkbox" name="type" value="otazka" <#if TYPES.question>checked</#if>>Otázky</label></td>
-                    <td><label><input type="checkbox" name="type" value="diskuse" <#if TYPES.discussion>checked</#if>>Diskuse</label></td>
+                    <td><label><input type="checkbox" name="type" value="zpravicka" <#if TYPES.news>checked</#if>>Zprávièky</label></td>
+                    <td><label><input type="checkbox" name="type" value="diskuse" <#if TYPES.discussion>checked</#if>>Diskuze u obsahu</label></td>
                     <td><label><input type="checkbox" name="type" value="hardware" <#if TYPES.hardware>checked</#if>>Hardware</label></td>
                     <td><label><input type="checkbox" name="type" value="ovladac" <#if TYPES.driver>checked</#if>>Ovladaèe</label></td>
                    </tr>
@@ -73,8 +72,8 @@
 
 <#if RESULT?exists>
     <p class="search_results">
-        Nalezeno ${RESULT.total} objektù (milisekund: ${SEARCH_TIME})<#t>
-        <#if (RESULT.total > 0)>, zobrazuji${RESULT.thisPage.row}-${RESULT.thisPage.row+RESULT.thisPage.size}</#if>.
+        Nalezeno ${RESULT.total} objektù (milisekund: ${SEARCH_TIME})<#t><#if (RESULT.total > 0)>,
+        zobrazuji ${RESULT.thisPage.row} - ${RESULT.thisPage.row+RESULT.thisPage.size}</#if>.
         Poslední aktualizace ${DATE.show(UPDATED,"CZ_FULL")}.
     </p>
 

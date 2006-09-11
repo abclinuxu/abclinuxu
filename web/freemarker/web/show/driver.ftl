@@ -28,7 +28,7 @@
  <#else>
   <#assign monitorState="Zapni">
  </#if>
- <a href="${URL.make("/edit?action=monitor&amp;rid="+RELATION.id+"&amp;driverId="+ITEM.id)}">${monitorState}</a>
+ <a href="${URL.make("/monitor/"+RELATION.id+"?action=toggle")}">${monitorState}</a>
  (${TOOL.getMonitorCount(ITEM.data)})
 </p>
 <hr />

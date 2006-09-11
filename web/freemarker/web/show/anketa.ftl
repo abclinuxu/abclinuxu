@@ -34,26 +34,32 @@ Vytvoøeno: ${DATE.show(POLL.created, "CZ_FULL")}</p>
 <#if CHILDREN.discussion?exists>
     <#assign diz = TOOL.createDiscussionTree(CHILDREN.discussion[0].child,USER?if_exists,CHILDREN.discussion[0].id,true)>
     <#if diz.frozen>Diskuse byla administrátory uzamèena</#if>
-    <#if USER?exists && USER.hasRole("discussion admin")>
-        <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+diz.relationId+"&amp;dizId="+diz.id)}">
-        <#if diz.frozen>Rozmrazit<#else>Zmrazit</#if> diskusi</a>
-    </#if>
 
-    <p>
+<div class="ds_toolbox">
+     <b>Nástroje:</b>
+
     <#if diz.hasUnreadComments>
-        <a href="#${diz.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a>
+        <a href="#${diz.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a>, 
     </#if>
-
-    <a href="${URL.make("/EditDiscussion?action=add&amp;dizId="+diz.id+"&amp;threadId=0&amp;rid="+diz.relationId)}">
-    Vlo¾it dal¹í komentáø</a>
 
     <#if diz.monitored>
         <#assign monitorState="Pøestaò sledovat"><#else><#assign monitorState="Sleduj">
     </#if>
-    <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+CHILDREN.discussion[0].id)}"
+    <a href="${URL.make("/monitor/"+CHILDREN.discussion[0].id+"?action=toggle")}"
     title="AbcMonitor za¹le emailem zprávu, dojde-li v diskusi ke zmìnì">${monitorState}</a>
     <span title="Poèet lidí, kteøí sledují tuto diskusi">(${diz.monitorSize})</span>
-    </p>
+
+    <#if USER?exists && USER.hasRole("discussion admin")>
+     <br />
+     <b>Admin:</b>
+        <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+diz.relationId+"&amp;dizId="+diz.id)}">
+        <#if diz.frozen>Rozmrazit<#else>Zmrazit</#if> diskusi</a>
+    </#if>
+
+</div>
+
+    <p><a href="${URL.make("/EditDiscussion?action=add&amp;dizId="+diz.id+"&amp;threadId=0&amp;rid="+diz.relationId)}">
+    Vlo¾it dal¹í komentáø</a></p>
 
     <#list diz.threads as thread>
        <@lib.showThread thread, 0, diz, !diz.frozen />

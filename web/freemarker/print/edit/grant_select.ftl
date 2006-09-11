@@ -7,7 +7,7 @@
   <tr>
    <td class="required" width="100">»Ìslo uæivatele</td>
    <td>
-    <input type="text" name="uid" value="${PARAMS.uid?if_exists}" size="4" tabindex="1">
+    <input type="text" name="uid" value="${PARAMS.uid?if_exists}" size="6" tabindex="1">
     <div class="error">${ERRORS.uid?if_exists}</div>
    </td>
   </tr>

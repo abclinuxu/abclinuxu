@@ -13,6 +13,14 @@ function prepni_sloupec() {
     }
 }
 
+function prepni_plochu(idPlochy) {
+    if (document.getElementById(idPlochy).style.display == 'none') {
+        document.getElementById(idPlochy).style.display = 'block'
+    } else {
+        document.getElementById(idPlochy).style.display = 'none'
+    }
+}
+
 function schovej_vlakno(id) {
     if (document.getElementById('comment'+id).style.display == 'none') {
         document.getElementById('comment'+id).style.display = 'block'
@@ -37,7 +45,7 @@ function addSidebar() {
     if ((typeof window.sidebar == "object") && (typeof window.sidebar.addPanel == "function")) {
         window.sidebar.addPanel("www.abclinuxu.cz",'http://www.abclinuxu.cz/?varianta=sidebar',"");
     } else {
-        window.alert("Vá¹ prohlí¾eè nepodporuje tuto funkci. Zkuste Mozillu.");
+        window.alert("Vá¹ prohlí¾eè nepodporuje tuto funkci. Zkuste Mozilla Firefox.");
     }
 }
 
@@ -224,7 +232,7 @@ function nextCommentClick(event) {
 	if (!event) {
 		var event = window.event;
 	}
-  var target = (event.target) ? event.target : event.srcElement;
+    var target = (event.target) ? event.target : event.srcElement;
 	var nextId = window.dsUtils.nextComments[window.dsUtils.re_comment_id.exec(target.parentNode.id)[1]];
 	if (nextId != null) {
 		window.location = "#"+nextId;

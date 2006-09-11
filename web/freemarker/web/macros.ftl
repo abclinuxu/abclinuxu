@@ -12,9 +12,7 @@
         autor=TOOL.createUser(TOOL.xpath(clanek,"/data/author")?default("5473")),
         thumbnail=TOOL.xpath(clanek,"/data/thumbnail")?default("UNDEF"),
         tmp=TOOL.groupByType(clanek.children, "Item"),
-        rating=TOOL.ratingFor(clanek.data,"article")?default("UNDEF"),
-	    url=relation.url?default("/clanky/show/"+relation.id),
-	    ctennost=.globals["CITACE"]?if_exists(clanek)?default("UNDEF")
+	    url=relation.url?default("/clanky/show/"+relation.id)
     >
     <#if tmp.discussion?exists><#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
     <#if thumbnail!="UNDEF"><div class="cl_thumbnail">${thumbnail}</div></#if>
@@ -23,10 +21,15 @@
     <p class="cl_inforadek">
         ${DATE.show(clanek.created, dateFormat[0])} |
         <a href="/Profile/${autor.id}">${autor.name}</a> |
-        Pøeèteno: <#if ctennost?string!="UNDEF">${ctennost}<#else>${TOOL.getCounterValue(clanek,"read")}</#if>x
+        Pøeèteno: <@showCounter clanek, .globals["CITACE"]?if_exists, "read" />x
         <#if diz?exists>| <@showCommentsInListing diz, dateFormat[1]?default(dateFormat[0]), "/clanky" /></#if>
-        <#if rating!="UNDEF">| Hodnocení:&nbsp;<span title="Hlasù: ${rating.count}">${rating.result?string["#0.00"]}</span></#if>
+        <@showShortRating relation, "| " />
     </p>
+</#macro>
+
+<#macro showCounter(item, map, type)><#rt>
+    <#local value = map.get(item)?default("UNDEF")><#rt>
+    <#lt><#if value?string!="UNDEF">${value}<#else>${TOOL.getCounterValue(item, type)}</#if><#rt>
 </#macro>
 
 <#macro showCommentsInListing(diz dateFormat urlPrefix)>
@@ -34,15 +37,26 @@
     <#lt><#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, dateFormat)}</#if>
 </#macro>
 
-<#macro showSoftwareInList(software)>
-    <#local item = software.child,visits = TOOL.getCounterValue(item,"visit"),reads = TOOL.getCounterValue(item,"read")>
-    <div class="swlist">
-        <span class="jmeno"><a href="${software.url}">${TOOL.childName(software)}</a></span>
-        <span class="intro">${TOOL.xpath(item,"/data/intro")}</span>
-        <br />
-        <span class="meta">Pøeèteno: ${reads}x, Náv¹tìv: ${visits}x, Poslední úprava: ${DATE.show(item.updated,"CZ_FULL")}</span>
-        <hr />
-    </div>
+<#macro showSoftwareList(items)>
+    <#local visits = TOOL.getRelationCountersValue(items,"visit"), reads = TOOL.getRelationCountersValue(items,"read")>
+    <table class="swlisting">
+    <tr>
+        <th>Jméno</th>
+        <th>Hodnocení</th>
+        <th>Precteno</th>
+        <th>Navstíveno</th>
+        <th>Poslední úprava</th>
+    </tr>
+    <#list SORT.byName(items) as software>
+        <tr>
+            <td class="jmeno"><a href="${software.url}">${TOOL.childName(software)}</a></td>
+            <td><@showShortRating software, "", false /></td>
+            <td><@showCounter software.child, reads, "read" />x</td>
+            <td><@showCounter software.child, visits, "visit" />x</td>
+            <td>${DATE.show(software.child.updated, "SMART")}</td>
+        </tr>
+    </#list>
+    </table>
 </#macro>
 
 <#macro showNews(relation)>
@@ -58,9 +72,9 @@
         ${TOOL.xpath(ITEM,"data/content")}<br>
         <span style="font-size: smaller">
         <a href="/Profile/${autor.id}">${autor.name}</a> |
+	    ${DATE.show(ITEM.created,"CZ_FULL")} |
         <a href="${url}">Komentáøe: ${diz.responseCount}</a><#rt>
-        <#lt><#if diz.responseCount gt 0><@markNewComments diz/>, poslední ${DATE.show(diz.updated, "CZ_FULL")}</#if>
-        ${DATE.show(ITEM.created,"CZ_FULL")}
+        <#lt><#if diz.responseCount gt 0><@markNewComments diz/>, poslední ${DATE.show(diz.updated, "SMART")}</#if>
         </span>
     </p>
 </#macro>
@@ -73,7 +87,7 @@
     ${DATE.show(item.created,"CZ_SHORT")} | ${NEWS_CATEGORIES[item.subType].name}
     <p>${TOOL.xpath(item,"data/content")}</p>
     <a href="/Profile/${autor.id}">${TOOL.nonBreakingSpaces(autor.name)}</a>
-    | <a href="${url}" title="<#if diz.responseCount gt 0>poslední ${DATE.show(diz.updated, "CZ_FULL")}</#if>"
+    | <a href="${url}" title="<#if diz.responseCount gt 0>poslední ${DATE.show(diz.updated, "SMART")}</#if>"
     >(Komentáøù: ${diz.responseCount}<@lib.markNewComments diz/>)</a>
 </#macro>
 
@@ -101,7 +115,7 @@
 	<#assign blacklisted = diz.isBlacklisted(comment)>
 	<div class="ds_hlavicka<#if diz.isUnread(comment)>_novy</#if><#if blacklisted> ds_hlavicka_blacklisted</#if><#if who?exists && USER?exists && who.id == USER.id> ds_hlavicka_me</#if>">
   <a name="${comment.id}"></a>
-  ${DATE.show(comment.created,"CZ_FULL")}
+  ${DATE.show(comment.created,"SMART")}
   <#if comment.author?exists>
    <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
    <#local blog=TOOL.getUserBlogAnchor(who, "blog")?default("UNDEF")>
@@ -148,7 +162,7 @@
    <#if signature!="UNDEFINED"><div class="signature">${signature}</div></#if>
   </#if>
   <#local level2=level+1>
-  <div style="padding-left: 15pt">
+  <div class="ds_odsazeni">
    <#list comment.children?if_exists as child>
     <@showThread child, level2, diz, showControls, extra[0]?if_exists />
    </#list>
@@ -179,7 +193,7 @@
        <#if DIZ.hasUnreadComments>
          <a href="#${DIZ.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a>,
        </#if>
-         <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+DIZ.relationId)}">${monitorState}</a>
+         <a href="${URL.make("/monitor/"+DIZ.relationId+"?action=toggle")}">${monitorState}</a>
            <span title="Poèet lidí, kteøí sledují tuto diskusi">(${DIZ.monitorSize})</span>
            <a class="info" href="#">?<span class="tooltip">Za¹le ka¾dý nový komentáø emailem na va¹i adresu</span></a>,
          <a href="${URL.prefix}/show/${DIZ.relationId}?varianta=print">Tisk</a>
@@ -208,6 +222,42 @@
      <p><a href="${URL.make("/EditDiscussion?action=add&amp;threadId=0&amp;dizId="+DIZ.id+"&amp;rid="+DIZ.relationId)}">
      Zalo¾it nové vlákno</a></p>
     </#if>
+</#macro>
+
+<#macro showRating (relation heading=true boxCssClass="cl_rating")>
+    <#local rating=TOOL.ratingFor(relation.child.data)?default("UNDEF"), width = 0>
+    <#if rating!="UNDEF"><#local width = (rating.percent / 100) * 78 ></#if>
+    <div class="${boxCssClass}">
+        <#if heading>
+            <span class="nadpis">
+                Hodnocení:
+            </span>
+        </#if>
+        <#if rating!="UNDEF">
+            <span class="stupnice">
+                <img src="/images/site2/teplomerrtut.gif" alt="" height="5" width="${width?string["0"]}">
+            </span>
+            <span title="Poèet hlasù: ${rating.count}">${rating.percent}%</span>
+        <#else>
+            nehodnoceno
+        </#if>
+        <span class="hlasovani">
+            Hlasujte:
+            <#if USER?exists>
+                <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=3")}" target="rating">dobré</a>
+                <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=0")}" target="rating">¹patné</a>
+            <#else>
+                <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=3&amp;return=true")}" rel="nofollow">dobré</a>
+                <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=0&amp;return=true")}" rel="nofollow">¹patné</a>
+            </#if>
+        </span>
+        <iframe name="rating" width="300" frameborder="0" height="20" scrolling="no" class="rating_iframe"></iframe>
+    </div>
+</#macro>
+
+<#macro showShortRating (relation, separator, heading=true)>
+    <#local rating=TOOL.ratingFor(relation.child.data)?default("UNDEF")>
+    <#if rating!="UNDEF"><#if heading>${separator}Hodnocení:&nbsp;</#if><span title="Hlasù: ${rating.count}">${rating.percent}%</span></#if>
 </#macro>
 
 <#macro star value><#if (value>0.60)><img src="/images/site/star1.gif" alt="*"><#elseif (value<0.2)><img src="/images/site/star0.gif" alt="-"><#else><img src="/images/site/star5.gif" alt="+"></#if></#macro>

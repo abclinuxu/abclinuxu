@@ -18,10 +18,9 @@
             </li>
             <#if USER?exists && USER.hasRole("category admin")>
                 <hr />
-                <li><a href="${URL.noPrefix("/EditCategory?action=add&amp;rid="+RELATION.id+"&amp;categoryId="+CATEGORY.id)}">mkdir</a>,
+                <li>
                     <a href="${URL.noPrefix("/EditCategory?action=edit&amp;rid="+RELATION.id+"&amp;categoryId="+CATEGORY.id)}">edit</a>,
-                    <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix="+URL.prefix)}">rmdir</a>,
-                    <a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;url=/EditRelation&amp;action=add&amp;prefix="+URL.prefix)}">link</a>
+                    <a href="${URL.noPrefix("/EditCategory?action=add&amp;rid="+RELATION.id+"&amp;categoryId="+CATEGORY.id)}">mkdir</a>,
                 </li>
             </#if>
             <#if USER?exists && USER.hasRole("move relation")>
@@ -41,60 +40,59 @@
 
     <div class="s_sekce">
     <form action="${RELATION.url?default("/software/show/"+RELATION.id)}" method="GET">
-        <b>U¾ivatelské rozhraní:</b>
-
-        <#assign uiType = FILTERS.ui?default("")>
-        <div>
-            <@lib.showOption2 "ui", "xwindows", UI_PROPERTY["xwindows"], "checkbox", uiType />
+        <#assign userInterfaces = FILTERS.ui?default([])>
+        <div class="filterHeader" onclick="prepni_plochu('ui')">U¾ivatelské rozhraní (${userInterfaces?size})</div>
+        <div class="collapsible tree hidden" id="ui">
+            <@lib.showOption2 "ui", "xwindows", UI_PROPERTY["xwindows"], "checkbox", userInterfaces />
             <div>
-                <@lib.showOption2 "ui", "qt", UI_PROPERTY["qt"], "checkbox", uiType />
+                <@lib.showOption2 "ui", "qt", UI_PROPERTY["qt"], "checkbox", userInterfaces />
                 <div>
-                    <@lib.showOption2 "ui", "kde", UI_PROPERTY["kde"], "checkbox", uiType />
+                    <@lib.showOption2 "ui", "kde", UI_PROPERTY["kde"], "checkbox", userInterfaces />
                 </div>
             </div>
             <div>
-                <@lib.showOption2 "ui", "gtk", UI_PROPERTY["gtk"], "checkbox", uiType />
+                <@lib.showOption2 "ui", "gtk", UI_PROPERTY["gtk"], "checkbox", userInterfaces />
                 <div>
-                    <@lib.showOption2 "ui", "gnome", UI_PROPERTY["gnome"], "checkbox", uiType />
+                    <@lib.showOption2 "ui", "gnome", UI_PROPERTY["gnome"], "checkbox", userInterfaces />
                 </div>
             </div>
             <div>
-                <@lib.showOption2 "ui", "motif", UI_PROPERTY["motif"], "checkbox", uiType />
+                <@lib.showOption2 "ui", "motif", UI_PROPERTY["motif"], "checkbox", userInterfaces />
             </div>
             <div>
-                <@lib.showOption2 "ui", "java", UI_PROPERTY["java"], "checkbox", uiType />
+                <@lib.showOption2 "ui", "java", UI_PROPERTY["java"], "checkbox", userInterfaces />
             </div>
             <div>
-                <@lib.showOption2 "ui", "tk", UI_PROPERTY["tk"], "checkbox", uiType />
+                <@lib.showOption2 "ui", "tk", UI_PROPERTY["tk"], "checkbox", userInterfaces />
+            </div>
+
+            <@lib.showOption2 "ui", "console", UI_PROPERTY["console"], "checkbox", userInterfaces />
+            <div>
+                <@lib.showOption2 "ui", "cli", UI_PROPERTY["cli"], "checkbox", userInterfaces />
+            </div>
+            <div>
+                <@lib.showOption2 "ui", "tui", UI_PROPERTY["tui"], "checkbox", userInterfaces />
+            </div>
+            <div>
+                <@lib.showOption2 "ui", "grconsole", UI_PROPERTY["grconsole"], "checkbox", userInterfaces />
             </div>
         </div>
-        <div>
-            <@lib.showOption2 "ui", "console", UI_PROPERTY["console"], "checkbox", uiType />
-            <div>
-                <@lib.showOption2 "ui", "cli", UI_PROPERTY["cli"], "checkbox", uiType />
-            </div>
-            <div>
-                <@lib.showOption2 "ui", "tui", UI_PROPERTY["tui"], "checkbox", uiType />
-            </div>
-            <div>
-                <@lib.showOption2 "ui", "grconsole", UI_PROPERTY["grconsole"], "checkbox", uiType />
-            </div>
+
+        <#assign licenses = FILTERS.license?default([])>
+        <div class="filterHeader" onclick="prepni_plochu('license')">Licence (${licenses?size})</div>
+        <div class="collapsible hidden" id="license">
+            <@lib.showOption2 "license", "gpl", LICENSE_PROPERTY["gpl"], "checkbox", licenses /><br>
+            <@lib.showOption2 "license", "lgpl", LICENSE_PROPERTY["lgpl"], "checkbox", licenses /><br>
+            <@lib.showOption2 "license", "bsd", LICENSE_PROPERTY["bsd"], "checkbox", licenses /><br>
+            <@lib.showOption2 "license", "mpl", LICENSE_PROPERTY["mpl"], "checkbox", licenses /><br>
+            <@lib.showOption2 "license", "apl", LICENSE_PROPERTY["apl"], "checkbox", licenses /><br>
+            <@lib.showOption2 "license", "oss", LICENSE_PROPERTY["oss"], "checkbox", licenses /><br>
+            <@lib.showOption2 "license", "freeware", LICENSE_PROPERTY["freeware"], "checkbox", licenses /><br>
+            <@lib.showOption2 "license", "commercial", LICENSE_PROPERTY["commercial"], "checkbox", licenses /><br>
+            <@lib.showOption2 "license", "other", LICENSE_PROPERTY["other"], "checkbox", licenses /><br>
         </div>
 
-        <b>Licence:</b>
-
-        <#assign licenses = FILTERS.license?default("")><br>
-        <@lib.showOption2 "license", "gpl", LICENSE_PROPERTY["gpl"], "checkbox", licenses /><br>
-        <@lib.showOption2 "license", "lgpl", LICENSE_PROPERTY["lgpl"], "checkbox", licenses /><br>
-        <@lib.showOption2 "license", "bsd", LICENSE_PROPERTY["bsd"], "checkbox", licenses /><br>
-        <@lib.showOption2 "license", "mpl", LICENSE_PROPERTY["mpl"], "checkbox", licenses /><br>
-        <@lib.showOption2 "license", "apl", LICENSE_PROPERTY["apl"], "checkbox", licenses /><br>
-        <@lib.showOption2 "license", "oss", LICENSE_PROPERTY["oss"], "checkbox", licenses /><br>
-        <@lib.showOption2 "license", "freeware", LICENSE_PROPERTY["freeware"], "checkbox", licenses /><br>
-        <@lib.showOption2 "license", "commercial", LICENSE_PROPERTY["commercial"], "checkbox", licenses /><br>
-        <@lib.showOption2 "license", "other", LICENSE_PROPERTY["other"], "checkbox", licenses /><br>
-
-        <input type="submit" value="Potvrdit">
+        <input type="submit" value="Nastavit">
         <input type="hidden" name="action" value="filter">
 	</form>
     </div>
@@ -102,31 +100,31 @@
 
 <#include "../header.ftl">
 
-<div class="sw">
-
-<h1>${TOOL.xpath(CATEGORY.data,"/data/name")}</h1>
-
 <@lib.showMessages/>
 
-<#if TOOL.xpath(CATEGORY,"data/note")?exists>
- ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}
-</#if>
+<div class="sw">
+    <h1>Sekce ${TOOL.xpath(CATEGORY.data,"/data/name")}</h1>
 
-<#if CATEGORIES?exists>
-    <p><small><b>Sekce</b></small></p> <!-- *** DOCASNE *** -->
-      <ul>
-        <#list SORT.byName(CATEGORIES) as sekce>
-            <li><a href="${URL.make(sekce.url?default("/dir/"+sekce.id))}">${TOOL.childName(sekce)}</a></li>
+    <#if TOOL.xpath(CATEGORY,"data/note")?exists>
+        ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}
+    </#if>
+
+    <#if CATEGORIES?exists>
+        <table border="0">
+        <#list CATEGORIES as sekce>
+            <#if sekce_index % 3 = 0><tr><#assign open=true></#if>
+            <td>
+                <a href="${sekce.url}">${sekce.name}</a> (${sekce.size})
+            </td>
+            <#if sekce_index % 3 = 2></tr><#assign open=false></#if>
         </#list>
-      </ul>
+        <#if open?if_exists></tr></#if>
+        </table>
+    </#if>
 
-</#if>
-
-<#if ITEMS?exists>
-    <#list SORT.byName(ITEMS) as software>
-        <@lib.showSoftwareInList software />
-    </#list>
-</#if>
+    <#if ITEMS?exists>
+        <@lib.showSoftwareList ITEMS />
+    </#if>
 
 </div>
 

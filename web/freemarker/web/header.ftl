@@ -13,6 +13,7 @@
     <link rel="icon" href="/images/site2/favicon.png" type="image/png">
     <link rel="alternate" title="abclinuxu.cz: èlánky" href="http://www.abclinuxu.cz/auto/abc.rss" type="application/rss+xml">
     <link rel="alternate" title="abclinuxu.cz: blogy" href="http://www.abclinuxu.cz/auto/blog.rss" type="application/rss+xml">
+    <link rel="alternate" title="abclinuxu.cz: linuxové blogy" href="http://www.abclinuxu.cz/auto/blogDigest.rss" type="application/rss+xml">
     <link rel="alternate" title="abclinuxu.cz: zprávièky" href="http://www.abclinuxu.cz/auto/zpravicky.rss" type="application/rss+xml">
     <link rel="alternate" title="abclinuxu.cz: diskuse" href="http://www.abclinuxu.cz/auto/diskuse.rss" type="application/rss+xml">
     <link rel="alternate" title="abclinuxu.cz: ankety" href="http://www.abclinuxu.cz/auto/ankety.rss" type="application/rss+xml">

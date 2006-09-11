@@ -19,13 +19,19 @@
                 <li><a href="/revize?rid=${RELATION.id}&amp;prefix=/faq">Historie</a></li>
                 <li><a href="${RELATION.url}?varianta=print">Tisk otázky</a></li>
                 <li>
-                    <a href="${URL.make("/faq/edit?action=monitor&amp;rid="+RELATION.id)}">${monitorState}</a>
+                    <a href="${URL.make("/monitor/"+RELATION.id+"?action=toggle")}">${monitorState}</a>
                     <span title="Poèet lidí, kteøí sledují tuto otázku">(${TOOL.getMonitorCount(ITEM.data)})</span>
                     <a class="info" href="#">?<span class="tooltip">Za¹le upozornìní na vá¹ email pøi úpravì otázky</span></a>
                 </li>
                 <#if USER?exists && USER.hasRole("root")>
                     <li>
-                        <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix=/faq")}">Sma¾ otázku</a>
+                        <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix=/faq")}">Smazat otázku</a>
+                    </li>
+                </#if>
+                <#if USER?exists && USER.hasRole("move relation")>
+                    <li>
+                        <a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Pøesunout</a>
+			<a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;url=/EditRelation&amp;action=add&amp;prefix="+URL.prefix)}">Vytvoøit link</a>
                     </li>
                 </#if>
             </#if>

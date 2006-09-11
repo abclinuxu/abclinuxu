@@ -15,7 +15,7 @@
   <tr>
    <td width="90" class="required">Autor</td>
    <td>
-    <input type="text" name="uid" value="${PARAMS.uid?if_exists}" size=4 tabindex=2>
+    <input type="text" name="uid" value="${PARAMS.uid?if_exists}" size=6 tabindex=2>
     <div class="error">${ERRORS.uid?if_exists}</div>
    </td>
   </tr>

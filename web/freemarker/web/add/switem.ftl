@@ -47,7 +47,7 @@
         <tr>
             <td class="required">Popis</td>
             <td>
-                <textarea name="description" cols="50" rows="11" tabindex="2" class="wide">${PARAMS.description?if_exists?html}</textarea>
+                <textarea name="description" rows="11" tabindex="2" class="siroka">${PARAMS.description?if_exists?html}</textarea>
                 <div class="error">${ERRORS.description?if_exists}</div>
             </td>
         </tr>

@@ -13,9 +13,7 @@
 <div class="sw">
 
 <#if ITEMS?exists>
-    <#list SORT.byName(ITEMS) as software>
-        <@lib.showSoftwareInList software />
-    </#list>
+    <@lib.showSoftwareList ITEMS />
 <#else>
     <p>
         Litujeme, ale pro tento software nejsou v systému definovány ¾ádné alternativy.

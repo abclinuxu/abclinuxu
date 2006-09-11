@@ -197,9 +197,52 @@
     </#if>
 </#macro>
 
+<#macro showRelated (item)>
+    <#assign related = TOOL.getRelatedDocuments(item)>
+    <#if (related?size > 0)>
+        <div class="cl_perex">
+            <h3>Související dokumenty</h3>
+
+            <div class="s_sekce">
+                <dl>
+                <#list related as link>
+                    <dt>
+                        <a href="${link.url}">${link.title}</a>
+                        <#if link.type=='article'>(èlánek)
+                        <#elseif link.type=='content'>(dokument)
+                        <#elseif link.type=='dictionary'>(pojem)
+                        <#elseif link.type=='discussion'>(diskuse)
+                        <#elseif link.type=='driver'>(ovladaè)
+                        <#elseif link.type=='external'>(externí dokument)
+                        <#elseif link.type=='faq'>(FAQ)
+                        <#elseif link.type=='hardware'>(hardware)
+                        <#elseif link.type=='news'>(zprávièka)
+                        <#elseif link.type=='other'>(ostatní)
+                        <#elseif link.type=='poll'>(anketa)
+                        <#elseif link.type=='section'>(sekce)
+                        <#--<#elseif link.type=='software'>(software)-->
+                        <#elseif link.type=='story'>(blog)
+                        </#if>
+                    </dt>
+                    <#if link.description?exists>
+                        <dd>${link.description}</dd>
+                    </#if>
+                </#list>
+                </dl>
+            </div>
+        </div>
+    </#if>
+</#macro>
+
 <#macro showOption (param value caption type extra...)>
     <label>
         <input type="${type}" name="${param}" value="${value}"<#if TOOL.isWithin(PARAMS[param], value)> checked</#if>${extra[0]?if_exists}>
         ${caption}
+    </label>
+</#macro>
+
+<#macro showOption2 (param value caption type values)>
+    <label>
+        <input type="${type}" name="${param}" value="${value}"<#if TOOL.isWithin(values, value)> checked</#if>> ${caption}
     </label>
 </#macro>

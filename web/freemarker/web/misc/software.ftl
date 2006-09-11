@@ -32,7 +32,7 @@
             <tr>
 	        	<td>Domovská stránka:</td>
                 <td>
-                    <a href="${"/presmeruj?class=P&amp;id="+software.id+"&amp;url="+url?url}" rel="nofollow">${url}</a>
+                    <a href="${"/presmeruj?class=P&amp;id="+software.id+"&amp;url="+url?url}" rel="nofollow">${TOOL.limit(url,45,"..")}</a>
                 </td>
             </tr>
         </#if>
@@ -41,8 +41,7 @@
             <tr>
 	        	<td>Adresa ke sta¾ení:</td>
                 <td>
-                    <a href="${"/presmeruj?class=P&amp;id="+software.id+"&amp;url="+url?url}"
-                       rel="nofollow">${TOOL.limit(url,50,"..")}</a>
+		    <a href="${"/presmeruj?class=P&amp;id="+software.id+"&amp;url="+url?url}" rel="nofollow">${TOOL.limit(url,45,"..")}</a>
                 </td>
             </tr>
         </#if>
@@ -58,6 +57,14 @@
                 </td>
             </tr>
         </#if>
+
+        <tr>
+            <td>Hodnocení:</td>
+            <td>
+                <@lib.showRating RELATION, false, "table_rating"/>
+            </td>
+        </tr>
+
         <#local visits = TOOL.getCounterValue(software,"visit")>
         <#if (visits > 0)>
             <tr>

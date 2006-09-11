@@ -25,7 +25,7 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í, a proto bez odpovìdi
 
 <h2>Nevyøízené po¾adavky</h2>
 
-<#list CHILDREN as relation>
+<#list SORT.byDate(CHILDREN) as relation>
 
   <p><b>
     ${DATE.show(relation.child.created,"CZ_FULL")}

@@ -74,6 +74,10 @@ ${TOOL.render(TEXT,USER?if_exists)}
  </div>
 </#if>
 
+<#if forbidRating!="yes">
+    <@lib.showRating RELATION/>
+</#if>
+
 <div class="cl_perex">
   <#if RELATED?exists>
    <h3>Související èlánky</h3>
@@ -105,32 +109,6 @@ ${TOOL.render(TEXT,USER?if_exists)}
 <a href="/clanky/show/${RELATION.id}?varianta=print&amp;noDiz">Tisk bez diskuse</a>
 </p>
 
-<#if forbidRating!="yes">
-    <#assign rating=TOOL.ratingFor(ITEM.data,"article")?default("UNDEF")>
-     <div class="cl_rating">
-         <h3>Hodnocení&nbsp;&nbsp;<iframe name="rating" width="300" frameborder="0" height="20" scrolling="no" class="rating"></iframe></h3>
-         <div class="hdn">
-         <div class="text">Stav: <#if rating!="UNDEF">${rating.result?string["#0.00"]} <#else>bez hodnocení</#if></div>
-         <div class="tpm">
-            <img src="/images/site2/teplomerrtut.gif" alt="hodnoceni" height="5" width="<#if rating!="UNDEF">${3+(rating.result/3)*191} <#else>3</#if>" title="<#if rating!="UNDEF">${rating.result?string["#0.00"]}</#if>">
-            <#if USER?exists>
-                <div class="stup">
-                    <img id="spatny" src="/images/site2/palec_spatny.gif" alt="¹patné">
-                    <a class="s0" href="${URL.make("/rating/"+RELATION.id+"?action=rate&amp;rtype=article&amp;rvalue=0")}" target="rating" title="Va¹e hodnocení: 0">0</a>
-                    <a class="s1" href="${URL.make("/rating/"+RELATION.id+"?action=rate&amp;rtype=article&amp;rvalue=1")}" target="rating" title="Va¹e hodnocení: 1">1</a>
-                    <a class="s2" href="${URL.make("/rating/"+RELATION.id+"?action=rate&amp;rtype=article&amp;rvalue=2")}" target="rating" title="Va¹e hodnocení: 2">2</a>
-                    <a class="s3" href="${URL.make("/rating/"+RELATION.id+"?action=rate&amp;rtype=article&amp;rvalue=3")}" target="rating" title="Va¹e hodnocení: 3">3</a>
-                    <img id="dobry" src="/images/site2/palec_dobry.gif" alt="dobré">
-                </div>
-            </#if>
-         </div>
-         <#if rating!="UNDEF">
-            <div class="text">Poèet hlasù: ${rating.count}</div>
-         </#if>
-	 <br /><br /><br />
-         </div>
-     </div>
-</#if>
 <#flush>
 
 <#include "/include/sun-clanky.txt">

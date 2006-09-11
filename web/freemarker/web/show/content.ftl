@@ -12,7 +12,7 @@
         <#else>
             <li><a href="${RELATION.url}?varianta=print">Tisk</a></li>
             <li>
-                <a href="${URL.make("/editContent/"+RELATION.id+"?action=monitor")}">${monitorState}</a>
+                <a href="${URL.make("/monitor/"+RELATION.id+"?action=toggle")}">${monitorState}</a>
                 <span title="Poèet lidí, kteøí sledují tento dokument">(${TOOL.getMonitorCount(ITEM.data)})</span>
                 <a class="info" href="#">?<span class="tooltip">Za¹le upozornìní na vá¹ email pøi úpravì dokumentu</span></a>
             </li>
