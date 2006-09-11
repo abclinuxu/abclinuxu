@@ -75,7 +75,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     List freshQuestions, freshFaqs, freshDictionary;
     String indexFeeds, templateFeeds;
     Map defaultSizes, maxSizes, counter, feedLinks;
-    SectionTreeCache forumTree, faqTree, softwareTree;
+    SectionTreeCache forumTree, faqTree, softwareTree, articleTree;
     Relation currentPoll;
     int sectionCacheFrequency;
 
@@ -90,6 +90,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         forumTree = new SectionTreeCache(UrlUtils.PREFIX_FORUM, Constants.CAT_FORUM);
         faqTree = new SectionTreeCache(UrlUtils.PREFIX_FAQ, Constants.CAT_FAQ);
         softwareTree = new SectionTreeCache(UrlUtils.PREFIX_SOFTWARE, Constants.CAT_SOFTWARE);
+        articleTree = new SectionTreeCache(UrlUtils.PREFIX_CLANKY, Constants.CAT_ARTICLES);
     }
 
     /**
@@ -203,8 +204,8 @@ public class VariableFetcher extends TimerTask implements Configurable {
      * @return Map where key is initialized server and value is list of Links
      */
     public Map getFeeds(Object maybeUser, boolean index) {
-        String defaultServers = null;
-        int userLimit = 0;
+        String defaultServers;
+        int userLimit;
         if (index) {
             userLimit = getObjectCountForUser(maybeUser, KEY_INDEX_LINKS, "/data/settings/index_links");
             defaultServers = indexFeeds;
@@ -265,6 +266,13 @@ public class VariableFetcher extends TimerTask implements Configurable {
     }
 
     /**
+     * @return cache of Article sections
+     */
+    public SectionTreeCache getArticleTree() {
+        return articleTree;
+    }
+
+    /**
      * Finds number of objects for given user. If o is not User or xpath is not set, then default value
      * will be returned. Otherwise user's preference will be returned (unless it is smaller than 0
      * or bigger than maximum for this object).
@@ -276,19 +284,19 @@ public class VariableFetcher extends TimerTask implements Configurable {
     private int getObjectCountForUser(Object o, String key, String xpath) {
         Integer defaultNumber = (Integer) defaultSizes.get(key);
         if (o == null || xpath==null || !(o instanceof User))
-            return defaultNumber.intValue();
+            return defaultNumber;
 
         User user = (User) o;
-        Node node = ((User) user).getData().selectSingleNode(xpath);
+        Node node = user.getData().selectSingleNode(xpath);
         if (node == null)
-            return defaultNumber.intValue();
+            return defaultNumber;
 
-        int count = Misc.parseInt(node.getText(), defaultNumber.intValue());
+        int count = Misc.parseInt(node.getText(), defaultNumber);
         if (count<0)
-            return defaultNumber.intValue();
+            return defaultNumber;
 
         Integer maximum = (Integer) maxSizes.get(key);
-        count = Misc.limit(count, 0, maximum.intValue());
+        count = Misc.limit(count, 0, maximum);
         return count;
     }
 
@@ -345,11 +353,13 @@ public class VariableFetcher extends TimerTask implements Configurable {
                 faqTree.initialize();
                 forumTree.initialize();
                 softwareTree.initialize();
+                articleTree.initialize();
             }
 
             faqTree.refresh();
             forumTree.refresh();
             softwareTree.refresh();
+            articleTree.refresh();
         } catch (Exception e) {
             log.error("Selhalo nacitani section tree cache", e);
         }
@@ -358,9 +368,8 @@ public class VariableFetcher extends TimerTask implements Configurable {
     private void refreshFeedLinks() {
         try {
             Map feeds = UpdateLinks.getMaintainedFeeds();
-            List links;
-            for (Iterator iter = feeds.values().iterator(); iter.hasNext();) {
-                links = (List) iter.next();
+            for (Object o : feeds.values()) {
+                List links = (List) o;
                 Sorters2.byDate(links, Sorters2.DESCENDING);
             }
             feedLinks = feeds;
@@ -371,7 +380,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     public void refreshNews() {
         try {
-            int maximum = ((Integer)maxSizes.get(KEY_NEWS)).intValue();
+            int maximum = (Integer) maxSizes.get(KEY_NEWS);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
             List news = SQLTool.getInstance().findNewsRelations(qualifiers);
             Tools.syncList(news);
@@ -383,7 +392,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     public void refreshArticles() {
         try {
-            int maximum = ((Integer) maxSizes.get(KEY_ARTICLE)).intValue();
+            int maximum = (Integer) maxSizes.get(KEY_ARTICLE);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
             List articles = sqlTool.findIndexArticlesRelations(qualifiers);
             Tools.syncList(articles);
@@ -395,7 +404,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     public void refreshQuestions() {
         try {
-            int maximum = ((Integer) maxSizes.get(KEY_QUESTION)).intValue();
+            int maximum = (Integer) maxSizes.get(KEY_QUESTION);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
             List found = SQLTool.getInstance().findDiscussionRelations(qualifiers);
             Tools.syncList(found);
@@ -407,12 +416,12 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     public void refreshStories() {
         try {
-            int maximum = ((Integer) maxSizes.get(KEY_STORY)).intValue();
+            int maximum = (Integer) maxSizes.get(KEY_STORY);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
             List list = sqlTool.findItemRelationsWithType(Item.BLOG, qualifiers);
             List blogs = new ArrayList(list.size());
-            for (Iterator iter = list.iterator(); iter.hasNext();) {
-                Relation relation = (Relation) iter.next();
+            for (Object aList : list) {
+                Relation relation = (Relation) aList;
                 blogs.add(relation.getParent());
             }
             Tools.syncList(blogs); // parent on relation must be synchronized
@@ -425,7 +434,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     public void refreshHardware() {
         try {
-            int maximum = ((Integer) maxSizes.get(KEY_HARDWARE)).intValue();
+            int maximum = (Integer) maxSizes.get(KEY_HARDWARE);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
             List list = sqlTool.findItemRelationsWithType(Item.HARDWARE, qualifiers);
             Tools.syncList(list);
@@ -437,7 +446,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     public void refreshDrivers() {
         try {
-            int maximum = ((Integer) maxSizes.get(KEY_DRIVER)).intValue();
+            int maximum = (Integer) maxSizes.get(KEY_DRIVER);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
             List list = sqlTool.findItemRelationsWithType(Item.DRIVER, qualifiers);
             Tools.syncList(list);
@@ -449,7 +458,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     public void refreshDictionary() {
         try {
-            int maximum = ((Integer) maxSizes.get(KEY_QUESTION)).intValue();
+            int maximum = (Integer) maxSizes.get(KEY_QUESTION);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
             List data = sqlTool.findRecordParentRelationsWithType(Record.DICTIONARY, qualifiers);
             Tools.syncList(data);
@@ -461,7 +470,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     public void refreshFaq() {
         try {
-            int maximum = ((Integer) maxSizes.get(KEY_FAQ)).intValue();
+            int maximum = (Integer) maxSizes.get(KEY_FAQ);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
             List list = sqlTool.findItemRelationsWithType(Item.FAQ, qualifiers);
             Tools.syncList(list);
@@ -483,9 +492,9 @@ public class VariableFetcher extends TimerTask implements Configurable {
         try {
             Persistence persistence = PersistenceFactory.getPersistance();
             Category requests = (Category) persistence.findById(new Category(Constants.CAT_REQUESTS));
-            counter.put("REQUESTS", new Integer(requests.getChildren().size()));
+            counter.put("REQUESTS", requests.getChildren().size());
             Category news = (Category) persistence.findById(new Category(Constants.CAT_NEWS_POOL));
-            counter.put("WAITING_NEWS", new Integer(news.getChildren().size()));
+            counter.put("WAITING_NEWS", news.getChildren().size());
         } catch (Exception e) {
             log.error("Selhalo nacitani velikosti", e);
         }
@@ -529,63 +538,63 @@ public class VariableFetcher extends TimerTask implements Configurable {
         maxSizes = new HashMap(10, 1.0f);
 
         int size = prefs.getInt(PREF_DEFAULT + KEY_ARTICLE, 9);
-        defaultSizes.put(KEY_ARTICLE, new Integer(size));
+        defaultSizes.put(KEY_ARTICLE, size);
         size = prefs.getInt(PREF_MAX + KEY_ARTICLE, 20);
-        maxSizes.put(KEY_ARTICLE, new Integer(size));
+        maxSizes.put(KEY_ARTICLE, size);
         freshArticles = Collections.EMPTY_LIST;
 
         size = prefs.getInt(PREF_DEFAULT + KEY_DICTIONARY, 3);
-        defaultSizes.put(KEY_DICTIONARY, new Integer(size));
+        defaultSizes.put(KEY_DICTIONARY, size);
         size = prefs.getInt(PREF_MAX + KEY_DICTIONARY, 10);
-        maxSizes.put(KEY_DICTIONARY, new Integer(size));
+        maxSizes.put(KEY_DICTIONARY, size);
         freshDictionary = Collections.EMPTY_LIST;
 
         size = prefs.getInt(PREF_DEFAULT + KEY_DRIVER, 3);
-        defaultSizes.put(KEY_DRIVER, new Integer(size));
+        defaultSizes.put(KEY_DRIVER, size);
         size = prefs.getInt(PREF_MAX + KEY_DRIVER, 10);
-        maxSizes.put(KEY_DRIVER, new Integer(size));
+        maxSizes.put(KEY_DRIVER, size);
         freshDrivers = Collections.EMPTY_LIST;
 
         size = prefs.getInt(PREF_DEFAULT + KEY_FAQ, 3);
-        defaultSizes.put(KEY_FAQ, new Integer(size));
+        defaultSizes.put(KEY_FAQ, size);
         size = prefs.getInt(PREF_MAX + KEY_FAQ, 3);
-        maxSizes.put(KEY_FAQ, new Integer(size));
+        maxSizes.put(KEY_FAQ, size);
         freshFaqs = Collections.EMPTY_LIST;
 
         size = prefs.getInt(PREF_DEFAULT + KEY_HARDWARE, 3);
-        defaultSizes.put(KEY_HARDWARE, new Integer(size));
+        defaultSizes.put(KEY_HARDWARE, size);
         size = prefs.getInt(PREF_MAX + KEY_HARDWARE, 3);
-        maxSizes.put(KEY_HARDWARE, new Integer(size));
+        maxSizes.put(KEY_HARDWARE, size);
         freshHardware = Collections.EMPTY_LIST;
 
         size = prefs.getInt(PREF_DEFAULT + KEY_NEWS, 5);
-        defaultSizes.put(KEY_NEWS, new Integer(size));
+        defaultSizes.put(KEY_NEWS, size);
         size = prefs.getInt(PREF_MAX + KEY_NEWS, 5);
-        maxSizes.put(KEY_NEWS, new Integer(size));
+        maxSizes.put(KEY_NEWS, size);
         freshNews = Collections.EMPTY_LIST;
 
         size = prefs.getInt(PREF_DEFAULT + KEY_QUESTION, 20);
-        defaultSizes.put(KEY_QUESTION, new Integer(size));
+        defaultSizes.put(KEY_QUESTION, size);
         size = prefs.getInt(PREF_MAX + KEY_QUESTION, 20);
-        maxSizes.put(KEY_QUESTION, new Integer(size));
+        maxSizes.put(KEY_QUESTION, size);
         freshQuestions = Collections.EMPTY_LIST;
 
         size = prefs.getInt(PREF_DEFAULT + KEY_STORY, 5);
-        defaultSizes.put(KEY_STORY, new Integer(size));
+        defaultSizes.put(KEY_STORY, size);
         size = prefs.getInt(PREF_MAX + KEY_STORY, 5);
-        maxSizes.put(KEY_STORY, new Integer(size));
+        maxSizes.put(KEY_STORY, size);
         freshStories = Collections.EMPTY_LIST;
 
         indexFeeds = prefs.get(PREF_INDEX_FEEDS, "");
         templateFeeds = prefs.get(PREF_TEMPLATE_FEEDS, "");
         size = prefs.getInt(PREF_DEFAULT + KEY_INDEX_LINKS, 3);
-        defaultSizes.put(KEY_INDEX_LINKS, new Integer(size));
+        defaultSizes.put(KEY_INDEX_LINKS, size);
         size = prefs.getInt(PREF_MAX + KEY_INDEX_LINKS, 5);
-        maxSizes.put(KEY_INDEX_LINKS, new Integer(size));
+        maxSizes.put(KEY_INDEX_LINKS, size);
         size = prefs.getInt(PREF_DEFAULT + KEY_TEMPLATE_LINKS, 3);
-        defaultSizes.put(KEY_TEMPLATE_LINKS, new Integer(size));
+        defaultSizes.put(KEY_TEMPLATE_LINKS, size);
         size = prefs.getInt(PREF_MAX + KEY_TEMPLATE_LINKS, 5);
-        maxSizes.put(KEY_TEMPLATE_LINKS, new Integer(size));
+        maxSizes.put(KEY_TEMPLATE_LINKS, size);
 
         sectionCacheFrequency = prefs.getInt(PREF_SECTION_CACHE_FREQUENCY, 6);
     }
