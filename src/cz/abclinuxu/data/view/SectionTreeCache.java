@@ -134,6 +134,7 @@ public class SectionTreeCache {
     private void setChildren(List<SectionNode> children) {
         Map<Integer, SectionNode> mapById = new HashMap<Integer, SectionNode>(100);
         Map<Integer, SectionNode> mapByRelation = new HashMap<Integer, SectionNode>(100);
+        Collections.sort(children);
 
         List<SectionNode> stack = new ArrayList<SectionNode>();
         stack.addAll(children);
@@ -174,8 +175,8 @@ public class SectionTreeCache {
         Qualifier qualifierParent = new CompareCondition(Field.PARENT, Operation.EQUAL, id);
         SQLTool sqlTool = SQLTool.getInstance();
         List relations = sqlTool.findCategoriesRelations(new Qualifier[]{qualifierType, qualifierParent});
-        for (Iterator iter = relations.iterator(); iter.hasNext();) {
-            Relation child = (Relation) iter.next();
+        for (Object relation1 : relations) {
+            Relation child = (Relation) relation1;
             scanRelation(section, child, directAccessMap);
         }
     }
@@ -186,10 +187,8 @@ public class SectionTreeCache {
      */
     private void loadNames(Map<Integer, SectionNode> directAccessMap) {
         List categories = new ArrayList(directAccessMap.size());
-        for (Iterator<Integer> iter = directAccessMap.keySet().iterator(); iter.hasNext();) {
-            Integer id = iter.next();
+        for (Integer id : directAccessMap.keySet())
             categories.add(new Category(id));
-        }
 
         Tools.syncList(categories);
         Category category;
