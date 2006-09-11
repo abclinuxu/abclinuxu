@@ -38,11 +38,11 @@
     </value>
     <value>
         <id>cli</id>
-        <caption>Pøíkazové rozhraní (CLI)</caption>
+        <caption>Pøíkazové rozhraní</caption>
     </value>
     <value>
         <id>tui</id>
-        <caption>Textové rozhraní (TUI)</caption>
+        <caption>Textové rozhraní</caption>
     </value>
     <value>
         <id>grconsole</id>

@@ -53,9 +53,13 @@
             <pattern>^/EditRelated</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditRelated</action>
         </mapping>
-        <mapping>
+        <mapping priority="true">
             <pattern>/rating</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditRating</action>
+        </mapping>
+        <mapping priority="true">
+            <pattern>/monitor</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditMonitor</action>
         </mapping>
         <mapping>
             <pattern>^/inset</pattern>
