@@ -776,8 +776,8 @@ public class Tools implements Configurable {
         if (relations==null || relations.size()==0)
             return Collections.EMPTY_MAP;
         List list = new ArrayList(relations.size());
-        for (Iterator iter = relations.iterator(); iter.hasNext();) {
-            Relation relation = (Relation) iter.next();
+        for (Object relation1 : relations) {
+            Relation relation = (Relation) relation1;
             list.add(relation.getChild());
         }
         return persistence.getCountersValue(list, type);
@@ -1329,26 +1329,28 @@ public class Tools implements Configurable {
         return new ItemComment(item);
     }
 
+    public Map ratingFor(Branch object, String s) {
+        return ratingFor(object);
+    }
     /**
      * Finds rating of specified type for given object.
      * @param object object that might have rating
-     * @param type type of rating we are interested in
      * @return null, if such rating doesn't exist. Otherwise map will contain
      * keys "sum", "count" and "result".
      */
-    public Map ratingFor(Branch object, String type) {
-        Element rating = (Element) object.selectSingleNode("//rating[type/text()=\""+type+"\"]");
+    public Map ratingFor(Branch object) {
+        Element rating = (Element) object.selectSingleNode("//rating");
         if ( rating==null )
             return null;
 
         int sum = Misc.parseInt(rating.elementText("sum"), EditRating.VALUE_MIN);
         int count = Misc.parseInt(rating.elementText("count"), EditRating.VALUE_MIN);
-        float result = sum/(float)count;
+        float percent = (100 * sum) / (float)(count * EditRating.VALUE_MAX);
 
         Map map = new HashMap();
-        map.put("sum", new Integer(sum));
-        map.put("count", new Integer(count));
-        map.put("result", new Float(result));
+        map.put("sum", sum);
+        map.put("count", count);
+        map.put("percent", percent);
 
         return map;
     }

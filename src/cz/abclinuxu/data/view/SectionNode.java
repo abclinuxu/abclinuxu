@@ -124,6 +124,10 @@ public class SectionNode implements Comparable {
         children.add(node);
     }
 
+    public String toString() {
+        return name;
+    }
+
     public int compareTo(Object o) {
         if (! (o instanceof SectionNode))
             return 0;

@@ -42,7 +42,6 @@ import org.htmlparser.util.ParserException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
-import java.util.Date;
 
 /**
  * This class is responsible for adding and
@@ -87,7 +86,6 @@ public class EditHardware implements AbcAction {
     public static final String ACTION_ADD_STEP2 = "add2";
     public static final String ACTION_EDIT = "edit";
     public static final String ACTION_EDIT_STEP2 = "edit2";
-    public static final String ACTION_ALTER_MONITOR = "monitor";
 
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -120,9 +118,6 @@ public class EditHardware implements AbcAction {
 
         if ( action.equals(ACTION_EDIT_STEP2) )
             return actionEditStep2(request, response, env);
-
-        if ( ACTION_ALTER_MONITOR.equals(action) )
-            return actionAlterMonitor(request, response, env);
 
         throw new MissingArgumentException("Chybí parametr action!");
     }
@@ -173,7 +168,7 @@ public class EditHardware implements AbcAction {
 
         if (redirect) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, "/hardware/show/"+relation.getId());
+            urlUtils.redirect(response, urlUtils.getRelationUrl(relation, true));
         } else
             env.put(VAR_RELATION, relation);
         return null;
@@ -265,33 +260,8 @@ public class EditHardware implements AbcAction {
 
         VariableFetcher.getInstance().refreshHardware();
 
-        url = relation.getUrl();
-        if (url == null)
-            url = "/hardware/show/" + relation.getId();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/show/"+relation.getId());
-        return null;
-    }
-
-    /**
-     * Reverts current monitor state for the user on this driver.
-     */
-    protected String actionAlterMonitor(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
-        Relation relation = (Relation) env.get(VAR_RELATION);
-        Item item = (Item) persistence.findById(relation.getChild());
-        User user = (User) env.get(Constants.VAR_USER);
-
-        Date originalUpdated = item.getUpdated();
-        MonitorTools.alterMonitor(item.getData().getRootElement(), user);
-        persistence.update(item);
-        SQLTool.getInstance().setUpdatedTimestamp(item, originalUpdated);
-
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        String url = relation.getUrl();
-        if (url==null)
-            url = "/hardware/show/" + relation.getId();
-        urlUtils.redirect(response, url);
+        urlUtils.redirect(response, urlUtils.getRelationUrl(relation, true));
         return null;
     }
 

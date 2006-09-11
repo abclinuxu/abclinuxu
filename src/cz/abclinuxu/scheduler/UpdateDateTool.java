@@ -28,6 +28,6 @@ import java.util.TimerTask;
 public class UpdateDateTool extends TimerTask {
 
     public void run() {
-        DateTool.updateTodayTimes();
+        DateTool.calculateTodayTimes();
     }
 }

@@ -190,6 +190,8 @@ public class ShowObject implements AbcAction {
                 return ViewContent.show(request, env);
             case Item.TOC:
                 return ViewTOC.show(request, env);
+            case Item.DICTIONARY:
+                return ShowDictionary.showOne(env, item, request);
         }
 
         return null;

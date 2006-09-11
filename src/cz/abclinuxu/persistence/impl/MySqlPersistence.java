@@ -669,7 +669,14 @@ public class MySqlPersistence implements Persistence {
                 objType = resultSet.getString(2).charAt(0);
                 id = resultSet.getInt(3);
                 obj = PersistenceMapping.createGenericObject(objType, id);
-                map.put(obj, new Integer(value));
+                map.put(obj, value);
+            }
+
+            for (Object object1 : objects) {
+                GenericObject object = (GenericObject) object1;
+                if (map.get(object) != null)
+                    continue;
+                map.put(object, 0);
             }
 
             return map;

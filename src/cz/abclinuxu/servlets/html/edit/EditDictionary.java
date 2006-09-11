@@ -70,7 +70,6 @@ public class EditDictionary implements AbcAction {
     public static final String ACTION_ADD_RECORD_STEP2 = "addRecord2";
     public static final String ACTION_EDIT = "edit";
     public static final String ACTION_EDIT_STEP2 = "edit2";
-    public static final String ACTION_ALTER_MONITOR = "monitor";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -119,9 +118,6 @@ public class EditDictionary implements AbcAction {
             else
                 return actionEdit2(request, response, env);
         }
-
-        if ( ACTION_ALTER_MONITOR.equals(action) )
-            return actionAlterMonitor(request, response, env);
 
         throw new MissingArgumentException("Chybí parametr action!");
     }
@@ -260,25 +256,6 @@ public class EditDictionary implements AbcAction {
 
         VariableFetcher.getInstance().refreshDictionary();
 
-        urlUtils.redirect(response, "/slovnik/"+item.getSubType());
-        return null;
-    }
-
-    /**
-     * Reverts current monitor state for the user on this driver.
-     */
-    protected String actionAlterMonitor(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
-        Relation relation = (Relation) env.get(VAR_RELATION);
-        Item item = (Item) persistence.findById(relation.getChild());
-        User user = (User) env.get(Constants.VAR_USER);
-
-        Date originalUpdated = item.getUpdated();
-        MonitorTools.alterMonitor(item.getData().getRootElement(), user);
-        persistence.update(item);
-        SQLTool.getInstance().setUpdatedTimestamp(item, originalUpdated);
-
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/slovnik/"+item.getSubType());
         return null;
     }

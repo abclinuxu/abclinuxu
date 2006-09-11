@@ -22,6 +22,8 @@ import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.view.SectionTreeCache;
+import cz.abclinuxu.data.view.SectionNode;
 import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
@@ -41,6 +43,7 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.ReadRecorder;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.scheduler.VariableFetcher;
 import org.dom4j.Element;
 
 import javax.servlet.http.HttpServletRequest;
@@ -177,25 +180,26 @@ public class ViewSoftware implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistance();
         SQLTool sqlTool = SQLTool.getInstance();
 
+        SectionTreeCache softwareTree = VariableFetcher.getInstance().getSoftwareTree();
+        List categories = null;
+        if (relation.getId() == Constants.REL_SOFTWARE)
+            categories = softwareTree.getChildren();
+        else {
+            SectionNode sectionNode = softwareTree.getByRelation(relation.getId());
+            if (sectionNode != null)
+                categories = sectionNode.getChildren();
+        }
+        env.put(VAR_CATEGORIES, categories);
+
         List qualifiers = new ArrayList();
-        qualifiers.add(new CompareCondition(Field.UPPER, Operation.EQUAL, new Integer(relation.getId())));
+        qualifiers.add(new CompareCondition(Field.UPPER, Operation.EQUAL, relation.getId()));
         Qualifier[] qa = new Qualifier[qualifiers.size()];
-
-        // todo tohle jde prece porovnat bez SQL, leda by tam tech polozek bylo priserne moc
-        // to se neda vyloucit, pak je lepsi zakazat cteni potomku v Nursery
-        // do budoucna stejne chci zobrazovat cely strom, to budu muset cachovat nejak
-        List categories = sqlTool.findCategoriesRelations((Qualifier[]) qualifiers.toArray(qa));
-        if (categories.size() > 0)
-            env.put(VAR_CATEGORIES, Tools.syncList(categories));
-
 //        qualifiers.add(new LimitQualifier(from, count));
 
         Map filters = (Map) env.get(VAR_FILTERS);
         List items = sqlTool.findItemRelationsWithTypeWithFilters(Item.SOFTWARE, (Qualifier[]) qualifiers.toArray(qa), filters);
         if (items.size() > 0)
             env.put(VAR_ITEMS, Tools.syncList(items));
-
-        // todo nacist najednou pocty precteni / kliku, prozatim se to cte individualne, nutne pred releasem!
 
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);

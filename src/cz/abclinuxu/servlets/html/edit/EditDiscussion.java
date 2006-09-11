@@ -98,7 +98,6 @@ public class EditDiscussion implements AbcAction {
     public static final String ACTION_CENSORE_COMMENT_STEP2 = "censore2";
     public static final String ACTION_EDIT_COMMENT = "edit";
     public static final String ACTION_EDIT_COMMENT_STEP2 = "edit2";
-    public static final String ACTION_ALTER_MONITOR = "monitor";
     public static final String ACTION_REMOVE_COMMENT = "rm";
     public static final String ACTION_REMOVE_COMMENT_STEP2 = "rm2";
     public static final String ACTION_MOVE_COMMENT = "move";
@@ -148,8 +147,6 @@ public class EditDiscussion implements AbcAction {
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
 
-        if ( ACTION_ALTER_MONITOR.equals(action) )
-            return actionAlterMonitor(request, response, env);
         if ( ACTION_SOLVED.equals(action) )
             return actionSolved(request, response, env);
 
@@ -725,28 +722,6 @@ public class EditDiscussion implements AbcAction {
         url = mainRelation.getUrl();
         if (url == null)
             url = urlUtils.getPrefix() + "/show/" + mainRelation.getId();
-        urlUtils.redirect(response, url, false);
-        return null;
-    }
-
-    /**
-     * Reverts current monitor state for the user on this driver.
-     */
-    protected synchronized String actionAlterMonitor(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
-        Relation relation = (Relation) env.get(VAR_RELATION);
-        Item discussion = (Item) persistence.findById(relation.getChild()).clone();
-        User user = (User) env.get(Constants.VAR_USER);
-
-        alterDiscussionMonitor(discussion, user, persistence);
-
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        String url = (String) params.get(PARAM_URL);
-        if (url == null)
-            url = relation.getUrl();
-        if (url==null)
-            url = urlUtils.getPrefix() + "/show/"+relation.getId();
         urlUtils.redirect(response, url, false);
         return null;
     }

@@ -26,7 +26,6 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
-import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -43,7 +42,6 @@ import org.htmlparser.util.ParserException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
-import java.util.Date;
 
 /**
  * Used to add/edit static content
@@ -72,7 +70,6 @@ public class EditContent implements AbcAction {
     public static final String ACTION_EDIT_STEP2 = "edit2";
     public static final String ACTION_EDIT_PUBLIC_CONTENT = "editPublicContent";
     public static final String ACTION_EDIT_PUBLIC_CONTENT_STEP2 = "editPublicContent2";
-    public static final String ACTION_ALTER_MONITOR = "monitor";
     public static final String ACTION_ALTER_PUBLIC = "alterPublic";
 
     /** item subtype that means that content can be edited by any logged user */
@@ -94,9 +91,6 @@ public class EditContent implements AbcAction {
             persistence.synchronize(relation.getChild());
             env.put(VAR_RELATION, relation);
         }
-
-        if (ACTION_ALTER_MONITOR.equals(action))
-            return actionAlterMonitor(request, response, env);
 
         boolean manager = user.hasRole(Roles.CONTENT_ADMIN);
         boolean canDerive = user.hasRole(Roles.CAN_DERIVE_CONTENT);
@@ -324,15 +318,16 @@ public class EditContent implements AbcAction {
         Element element = (Element) document.selectSingleNode("/data/name");
         params.put(PARAM_TITLE, element.getText());
         element = (Element) document.selectSingleNode("/data/content");
-	if (element != null)
+    	if (element != null) {
             params.put(PARAM_CONTENT, element.getText());
-        params.put(PARAM_EXECUTE_AS_TEMPLATE, element.attributeValue("execute"));
+            params.put(PARAM_EXECUTE_AS_TEMPLATE, element.attributeValue("execute"));
+        }
         element = (Element) document.selectSingleNode("/data/java_class");
         if (element!=null)
             params.put(PARAM_CLASS, element.getText());
         params.put(PARAM_URL, relation.getUrl());
 
-        env.put(VAR_START_TIME, new Long(System.currentTimeMillis()));
+        env.put(VAR_START_TIME, System.currentTimeMillis());
         return FMTemplateSelector.select("EditContent", "edit", env, request);
     }
 
@@ -369,25 +364,6 @@ public class EditContent implements AbcAction {
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
         MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.CONTENT, item, absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
-
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, relation.getUrl());
-        return null;
-    }
-
-    /**
-     * Reverts current monitor state for the user on this document.
-     */
-    protected String actionAlterMonitor(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
-        Relation relation = (Relation) env.get(VAR_RELATION);
-        Item content = (Item) persistence.findById(relation.getChild());
-        User user = (User) env.get(Constants.VAR_USER);
-
-        Date originalUpdated = content.getUpdated();
-        MonitorTools.alterMonitor(content.getData().getRootElement(), user);
-        persistence.update(content);
-        SQLTool.getInstance().setUpdatedTimestamp(content, originalUpdated);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());
@@ -447,7 +423,6 @@ public class EditContent implements AbcAction {
         String content = (String) params.get(PARAM_CONTENT);
         content = Misc.filterDangerousCharacters(content);
         String exec = (String) params.get(PARAM_EXECUTE_AS_TEMPLATE);
-        Element element = (Element) item.getData().selectSingleNode("/data/content");
 
         if ( content==null || content.length()==0 ) {
             ServletUtils.addError(PARAM_CONTENT, "Vyplòte obsah stránky!", env, null);
@@ -465,9 +440,10 @@ public class EditContent implements AbcAction {
             return false;
         }
 
-        element = DocumentHelper.makeElement(item.getData(), "/data/content");
+        Element element = DocumentHelper.makeElement(item.getData(), "/data/content");
         element.setText(content);
-        if (!"yes".equals(exec)) exec = "no";
+        if (! "yes".equals(exec))
+            exec = "no";
         element.addAttribute("execute", exec);
         return true;
     }

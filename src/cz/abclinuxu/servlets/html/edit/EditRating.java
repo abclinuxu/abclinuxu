@@ -31,6 +31,8 @@ import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.persistence.Persistence;
@@ -50,11 +52,12 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class EditRating implements AbcAction, Configurable {
     public static final String PARAM_RELATION_SHORT = "rid";
-    public static final String PARAM_TYPE = "rtype";
     public static final String PARAM_VALUE = "rvalue";
+    public static final String PARAM_RETURN = "return";
 
+    // todo jina persistence. Nehodi se to mit v XML, ale v nejakem sloupecku ci tabulce
     public static final int VALUE_MIN = 0;
-    public static final int VALUE_MAX = 5;
+    public static final int VALUE_MAX = 3;
     public static final String USER_ACTION_RATING = "rating";
 
     public static final String PREF_MESSAGE_OK = "msg.ok";
@@ -83,8 +86,8 @@ public class EditRating implements AbcAction, Configurable {
 
         User user = (User) env.get(Constants.VAR_USER);
         if (user==null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, msgOK, env, null);
-            return "/print/misc/rating_result.ftl";
+            ServletUtils.addError(Constants.ERROR_GENERIC, msgNotLogged, env, null);
+            return FMTemplateSelector.select("ViewUser", "login", env, request);
         }
 
         GenericDataObject object = ((GenericDataObject)relation.getChild());
@@ -99,6 +102,11 @@ public class EditRating implements AbcAction, Configurable {
         }
         SQLTool.getInstance().setUpdatedTimestamp(object, originalUpdated);
 
+        if (params.containsKey(PARAM_RETURN)) {
+            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+            urlUtils.redirect(response, urlUtils.getRelationUrl(relation, true));
+            return null;
+        }
         return "/print/misc/rating_result.ftl";
     }
 
@@ -111,9 +119,8 @@ public class EditRating implements AbcAction, Configurable {
      * @return true if rating was successfull
      */
     public static boolean rate(User user, int relationId, Element object, Map params, Map env, HttpSession session) {
-        String type = (String) params.get(PARAM_TYPE);
         int value = Misc.parseInt((String) params.get(PARAM_VALUE), 0);
-        if (type==null || type.length()==0 || value<VALUE_MIN || value>VALUE_MAX) {
+        if (value != VALUE_MIN && value != VALUE_MAX) {
             ServletUtils.addError(Constants.ERROR_GENERIC, msgMissingData, env, session);
             return false;
         }
@@ -126,10 +133,9 @@ public class EditRating implements AbcAction, Configurable {
         sqlTool.insertUserAction(user.getId(), relationId, USER_ACTION_RATING);
 
         int sum = 0, count = 0;
-        Element rating = (Element) object.selectSingleNode("rating[type/text()=\""+type+"\"]");
+        Element rating = (Element) object.selectSingleNode("rating");
         if (rating==null) {
             rating = object.addElement("rating");
-            rating.addElement("type").setText(type);
             rating.addElement("sum");
             rating.addElement("count");
         } else {
@@ -146,5 +152,6 @@ public class EditRating implements AbcAction, Configurable {
         msgOK = prefs.get(PREF_MESSAGE_OK, "");
         msgMissingData = prefs.get(PREF_MESSAGE_MISSING_DATA, "");
         msgAlreadyRated = prefs.get(PREF_MESSAGE_ALREADY_RATED, "");
+        msgNotLogged = prefs.get(PREF_MESSAGE_NOT_LOGGED, "");
     }
 }

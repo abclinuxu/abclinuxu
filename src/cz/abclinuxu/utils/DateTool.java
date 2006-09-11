@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
  */
 public class DateTool implements Configurable {
     static Logger log = Logger.getLogger(DateTool.class);
-    static long yesterday, today, tommorow;
+    static long yesterday, today, tommorow, thisYear;
     static {
         calculateTodayTimes();
         ConfigurationManager.getConfigurator().configureAndRememberMe(new DateTool());
@@ -58,6 +58,8 @@ public class DateTool implements Configurable {
     public static final String ONLY_TIME = "TIME";
     /** Ctvrtek */
     public static final String CZ_ONLY_DAY = "CZ_DAY";
+    /** Intelligently it select best way according to distance from now */
+    public static final String CZ_SMART = "SMART";
 
     private static final int DAY_DURATION = 24*60*60*1000;
 
@@ -94,53 +96,70 @@ public class DateTool implements Configurable {
             }
         }
 
-        long ms = date.getTime();
-        boolean dayNotText = true;
-        if (specialCurrentDayHandling) {
-            dayNotText = ms<yesterday || ms > tommorow;
-        }
+        long timeToRender = date.getTime();
+        boolean notTodayOrYesterday = true;
+        if (specialCurrentDayHandling)
+            notTodayOrYesterday = timeToRender < yesterday || timeToRender > tommorow;
 
         if ( CZ_SHORT.equalsIgnoreCase(format) ) {
-            if (dayNotText) {
+            if (notTodayOrYesterday) {
                 synchronized (Constants.czShortFormat) {
                     return Constants.czShortFormat.format(date);
                 }
             } else {
                 synchronized (Constants.czTimeOnly) {
-                    return getCzDay(ms) + " " + Constants.czTimeOnly.format(date);
+                    return getCzDay(timeToRender) + " " + Constants.czTimeOnly.format(date);
+                }
+            }
+        }
+
+        if (CZ_SMART.equalsIgnoreCase(format)) {
+            if (notTodayOrYesterday) {
+                if (timeToRender < thisYear) {
+                    synchronized (Constants.czFormat) {
+                        return Constants.czFormat.format(date);
+                    }
+                } else {
+                    synchronized (Constants.czShortFormat) {
+                        return Constants.czShortFormat.format(date);
+                    }
+                }
+            } else {
+                synchronized (Constants.czTimeOnly) {
+                    return getCzDay(timeToRender) + " " + Constants.czTimeOnly.format(date);
                 }
             }
         }
 
         if ( CZ_FULL.equalsIgnoreCase(format) ) {
-            if (dayNotText) {
+            if (notTodayOrYesterday) {
                 synchronized (Constants.czFormat) {
                     return Constants.czFormat.format(date);
                 }
             } else {
                 synchronized (Constants.czTimeOnly) {
-                    return getCzDay(ms) + " " + Constants.czTimeOnly.format(date);
+                    return getCzDay(timeToRender) + " " + Constants.czTimeOnly.format(date);
                 }
             }
         }
 
         if ( CZ_DAY_MONTH_YEAR.equalsIgnoreCase(format) ) {
-            if (dayNotText) {
+            if (notTodayOrYesterday) {
                 synchronized (Constants.czDayMonthYear) {
                     return Constants.czDayMonthYear.format(date);
                 }
             } else {
-                return getCzDay(ms);
+                return getCzDay(timeToRender);
             }
         }
 
         if ( CZ_DAY_MONTH.equalsIgnoreCase(format) ) {
-            if (dayNotText) {
+            if (notTodayOrYesterday) {
                 synchronized (Constants.czDayMonth) {
                     return Constants.czDayMonth.format(date);
                 }
             } else {
-                return getCzDay(ms);
+                return getCzDay(timeToRender);
             }
         }
 
@@ -181,7 +200,7 @@ public class DateTool implements Configurable {
      * Parses string in ISO format and formats it according to selected format.
      */
     public String show(String date, String format) throws ParseException {
-        Date d = null;
+        Date d;
         synchronized(Constants.isoFormat) {
             d = Constants.isoFormat.parse(date);
         }
@@ -202,27 +221,9 @@ public class DateTool implements Configurable {
         today = calendar.getTime().getTime();
         tommorow = today + DAY_DURATION;
         yesterday = today - DAY_DURATION;
-    }
-
-    /**
-     * Updates cached values used to recognize today and yesterday.
-     * It must be called exactly once a day, it moves cached values
-     * one day in forward. It is very fast.
-     */
-    public static synchronized void updateTodayTimes() {
-        long now = System.currentTimeMillis();
-        if (now<tommorow) {
-            log.warn("updateTodayTimes() shall be called next day!");
-            return;
-        }
-        if (now>tommorow+DAY_DURATION) {
-            log.warn("updateTodayTimes() has not been called next day!");
-            calculateTodayTimes();
-            return;
-        }
-        yesterday = today;
-        today = tommorow;
-        tommorow = today + DAY_DURATION;
+        calendar.set(Calendar.DAY_OF_YEAR, 1);
+        calendar.set(Calendar.MONTH, 1);
+        thisYear = calendar.getTime().getTime();
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {

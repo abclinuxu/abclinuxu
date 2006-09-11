@@ -32,6 +32,10 @@ import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.email.monitor.MonitorAction;
+import cz.abclinuxu.utils.email.monitor.UserAction;
+import cz.abclinuxu.utils.email.monitor.ObjectType;
+import cz.abclinuxu.utils.email.monitor.MonitorPool;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.ConfigurationException;
@@ -257,6 +261,11 @@ public class EditSoftware implements AbcAction, Configurable {
 
         // commit new version
         Misc.commitRelation(root, relation, user);
+
+        // run monitor
+        String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
+        MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.ITEM, item, absoluteUrl);
+        MonitorPool.scheduleMonitorAction(action);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, urlUtils.getRelationUrl(relation, true));

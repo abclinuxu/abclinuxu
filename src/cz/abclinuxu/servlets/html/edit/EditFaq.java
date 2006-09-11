@@ -72,7 +72,6 @@ public class EditFaq implements AbcAction {
     public static final String ACTION_ADD_STEP2 = "add2";
     public static final String ACTION_EDIT = "edit";
     public static final String ACTION_EDIT_STEP2 = "edit2";
-    public static final String ACTION_ALTER_MONITOR = "monitor";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -102,9 +101,6 @@ public class EditFaq implements AbcAction {
 
         if (ACTION_EDIT_STEP2.equals(action))
             return actionEditStep2(request, response, env);
-
-        if (ACTION_ALTER_MONITOR.equals(action))
-            return actionAlterMonitor(request, response, env);
 
         throw new MissingArgumentException("Nepodporovaná hodnota parametru action!");
     }
@@ -228,25 +224,6 @@ public class EditFaq implements AbcAction {
         // refresh RSS
         FeedGenerator.updateFAQ();
         VariableFetcher.getInstance().refreshFaq();
-
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, relation.getUrl());
-        return null;
-    }
-
-    /**
-     * Reverts current monitor state for the user on this faq.
-     */
-    protected String actionAlterMonitor(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
-        Relation relation = (Relation) env.get(VAR_RELATION);
-        Item faq = (Item) persistence.findById(relation.getChild());
-        User user = (User) env.get(Constants.VAR_USER);
-
-        Date originalUpdated = faq.getUpdated();
-        MonitorTools.alterMonitor(faq.getData().getRootElement(), user);
-        persistence.update(faq);
-        SQLTool.getInstance().setUpdatedTimestamp(faq, originalUpdated);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());

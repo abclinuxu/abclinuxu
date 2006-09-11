@@ -64,7 +64,6 @@ public class EditDriver implements AbcAction {
     public static final String ACTION_ADD_STEP2 = "add2";
     public static final String ACTION_EDIT = "edit";
     public static final String ACTION_EDIT_STEP2 = "edit2";
-    public static final String ACTION_ALTER_MONITOR = "monitor";
 
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -82,9 +81,6 @@ public class EditDriver implements AbcAction {
         // check permissions
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
-
-        if ( ACTION_ALTER_MONITOR.equals(action) )
-            return actionAlterMonitor(request, response, env);
 
         if ( ACTION_ADD.equals(action) )
             return FMTemplateSelector.select("EditDriver", "add", env, request);
@@ -213,29 +209,6 @@ public class EditDriver implements AbcAction {
 
         FeedGenerator.updateDrivers();
         VariableFetcher.getInstance().refreshDrivers();
-
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, url);
-        return null;
-    }
-
-    /**
-     * Reverts current monitor state for the user on this driver.
-     */
-    protected String actionAlterMonitor(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
-        Relation relation = (Relation) env.get(VAR_RELATION);
-        Item driver = (Item) persistence.findById(relation.getChild());
-        User user = (User) env.get(Constants.VAR_USER);
-
-        Date originalUpdated = driver.getUpdated();
-        MonitorTools.alterMonitor(driver.getData().getRootElement(),user);
-        persistence.update(driver);
-        SQLTool.getInstance().setUpdatedTimestamp(driver, originalUpdated);
-
-        String url = relation.getUrl();
-        if (url == null)
-            url = UrlUtils.PREFIX_DRIVERS + "/show/" + relation.getId();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, url);
