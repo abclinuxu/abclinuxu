@@ -1,15 +1,16 @@
 function prepni_sloupec() {
     if (document.getElementById('ls').style.display == 'none') {
         document.getElementById('ls').style.display = 'block'
-        document.getElementById('ls_prepinac').style.width = '268px'
-        document.getElementById('ls_prepinac_img').src = '/images/site2/sipkaon-text.gif'
+        document.getElementById('ls_prepinac').innerHTML = '&#215;'
+        document.getElementById('ls_prepinac').title = 'Skrýt sloupec'
         document.getElementById('st').style.marginLeft = '270px';
     }
     else {
         document.getElementById('ls').style.display = 'none'
-        document.getElementById('ls_prepinac').style.width = '45px'
-        document.getElementById('ls_prepinac_img').src = '/images/site2/sipkaoff-text.gif'
+        document.getElementById('ls_prepinac').innerHTML = '&#43;'
+        document.getElementById('ls_prepinac').title = 'Ukázat sloupec'
         document.getElementById('st').style.marginLeft = '0px';
+        document.getElementById('st').style.borderLeft = 'none';
     }
 }
 
