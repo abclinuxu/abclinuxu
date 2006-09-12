@@ -72,7 +72,7 @@
         ${TOOL.xpath(ITEM,"data/content")}<br>
         <span style="font-size: smaller">
         <a href="/Profile/${autor.id}">${autor.name}</a> |
-	    ${DATE.show(ITEM.created,"CZ_FULL")} |
+	    ${DATE.show(ITEM.created,"SMART")} |
         <a href="${url}">Komentáøe: ${diz.responseCount}</a><#rt>
         <#lt><#if diz.responseCount gt 0><@markNewComments diz/>, poslední ${DATE.show(diz.updated, "SMART")}</#if>
         </span>
@@ -304,36 +304,33 @@
 <#macro showRelated (item)>
     <#assign related = TOOL.getRelatedDocuments(item)>
     <#if (related?size > 0)>
-        <div class="cl_perex">
+        <div class="cl_perex souvisejici">
             <h3>Související dokumenty</h3>
-
-            <div class="s_sekce">
-                <dl>
-                <#list related as link>
-                    <dt>
-                        <a href="${link.url}">${link.title}</a>
-                        <#if link.type=='article'>(èlánek)
-                        <#elseif link.type=='content'>(dokument)
-                        <#elseif link.type=='dictionary'>(pojem)
-                        <#elseif link.type=='discussion'>(diskuse)
-                        <#elseif link.type=='driver'>(ovladaè)
-                        <#elseif link.type=='external'>(externí dokument)
-                        <#elseif link.type=='faq'>(FAQ)
-                        <#elseif link.type=='hardware'>(hardware)
-                        <#elseif link.type=='news'>(zprávièka)
-                        <#elseif link.type=='other'>(ostatní)
-                        <#elseif link.type=='poll'>(anketa)
-                        <#elseif link.type=='section'>(sekce)
-                        <#--<#elseif link.type=='software'>(software)-->
-                        <#elseif link.type=='story'>(blog)
-                        </#if>
-                    </dt>
-                    <#if link.description?exists>
-                        <dd>${link.description}</dd>
+            <dl>
+            <#list related as link>
+                <dt>
+                    <a href="${link.url}">${link.title}</a>
+                    <#if link.type=='article'>(èlánek)
+                    <#elseif link.type=='content'>(dokument)
+                    <#elseif link.type=='dictionary'>(pojem)
+                    <#elseif link.type=='discussion'>(diskuse)
+                    <#elseif link.type=='driver'>(ovladaè)
+                    <#elseif link.type=='external'>(externí dokument)
+                    <#elseif link.type=='faq'>(FAQ)
+                    <#elseif link.type=='hardware'>(hardware)
+                    <#elseif link.type=='news'>(zprávièka)
+                    <#elseif link.type=='other'>(ostatní)
+                    <#elseif link.type=='poll'>(anketa)
+                    <#elseif link.type=='section'>(sekce)
+                    <#--<#elseif link.type=='software'>(software)-->
+                    <#elseif link.type=='story'>(blog)
                     </#if>
-                </#list>
-                </dl>
-            </div>
+                </dt>
+                <#if link.description?exists>
+                    <dd>${link.description}</dd>
+                </#if>
+            </#list>
+            </dl>
         </div>
     </#if>
 </#macro>

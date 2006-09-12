@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2">
     <title>${PARAMS.TITLE?default(TITLE?default('www.abclinuxu.cz'))}</title>
-    <meta name="design" content="Petr Soběslavský">
+    <meta name="design" content="Petr Soběslavský, Robert Krátký">
     <#if USER?exists><#assign css=TOOL.xpath(USER.data, "/data/settings/css")?default("UNDEF")></#if>
     <#if ! css?exists || css=="UNDEF"><#assign css="/styles.css"></#if>
     <link rel="stylesheet" type="text/css" href="${css}">
@@ -48,35 +48,28 @@
 </#if>
 </center>
 
-	<div class="za">
-		<a href="/" class="za_logo">
-		</a>
+<div id="zh-kont">
+  <div id="zh-text" class="zh-box">
+    <div id="zh-tema">
+      <img class="zh-iko" src="/images/site2/sflista/ab.gif">
+        Víte, že vzhled abclinuxu.cz můžete ovlivnit nastavením <a href="/doc/napoveda/alternativni-design">alternativního stylu</a>?
+    </div>
+    <div id="zh-ad">
+      <img class="zh-iko" src="/images/site2/sflista/64.gif">
+        <b>Reklama:</b> <a href="http://www.64bit.cz/sun-fire-x2100-s-opteronem-146/15/product.html">Sun Fire X2100 s Opteronem 146</a>, 19&nbsp;210,-&nbsp;Kč
+    </div>
+  </div>
+  <div id="zh-logo" class="zh-box"><a href="/"></a></div>
+  <div id="zh-hledani" class="zh-box">
+    <form action="/Search" method="get">
+      <input type="text" class="text" name="query">&nbsp;<input class="button" type="submit" value="Hledej">
+      <a href="/Search?advancedMode=true">Rozšířené hledání</a>
+    </form>
+  </div>
+</div>
+<div class="cistic"></div>
 
-		<div class="za_hledat">
-			<form action="/Search" method="get">
-				<a href="/Search?advancedMode=true">Rozšířené hledání</a> &nbsp;<input type="text"
-				class="text" name="query">&nbsp;<input class="button" type="submit" value="Hledej">
-			</form>
-		</div>
-
-		<div class="cistic">&nbsp;</div>
-
-		<div class="za_mn">
-			<a href="/diskuse.jsp" class="za_mn_odkaz">Diskuse</a><!--
-			--><a href="/faq" class="za_mn_odkaz">FAQ</a><!--
-			--><a href="/hardware" class="za_mn_odkaz">Hardware</a><!--
-			--><a href="/clanky" class="za_mn_odkaz">Články</a><!--
-			--><a href="/ucebnice" class="za_mn_odkaz">Učebnice</a><!--
-			--><a href="/blog" class="za_mn_odkaz">Blogy</a><!--
-			--><a href="/download/abicko.jsp" class="za_mn_odkaz">PDF</a><!--
-			--><a href="/slovnik" class="za_mn_odkaz">Slovník</a><!--
-			--><a href="/ankety" class="za_mn_odkaz">Ankety</a><!--
-			--><a href="/ovladace" class="za_mn_odkaz">Ovladače</a><!--
-			--><a href="/hosting" class="za_mn_odkaz">Hosting</a><!--
-			--><a href="http://www.praceabc.cz" class="za_mn_odkaz">Práce</a>
-		</div>
-
-	</div>
+<#include "/include/menu.txt">
 
 	<div class="obal">
 
@@ -104,14 +97,11 @@
         </div>
 	</div>
 
-	<div class="obal_ls">
-        <div class="ls_prepinac" id="ls_prepinac">
-            <img id="ls_prepinac_img" src="/images/site2/sipkaon-text.gif" width="42" height="12"
-	        title="Skrýt sloupec" alt="Skrýt sloupec" onclick="prepni_sloupec()" align="bottom">
-	    </div>
+	<div id="ls_prepinac" title="Skrýt sloupec" onclick="prepni_sloupec()">&#215;</div>
 
-        <div class="ls" id="ls"><div class="s">
-            <div class="ls_reklama"><div class="ad">
+	<div class="obal_ls" id="ls">
+	<div class="s">
+            <div class="ls_reklama">
                 <#if IS_INDEX?exists>
                     <#include "/include/impact-hp-vip.txt">
                 <#elseif URL.prefix=='/clanky'>
@@ -119,7 +109,7 @@
                 <#else>
                     <#include "/include/impact-oth-vip.txt">
                 </#if>
-            </div></div>
+            </div>
 
 	    <!-- Skoleni OKsystem -->
 
@@ -130,7 +120,10 @@
                 <#assign relAnketa = VARS.currentPoll, anketa = relAnketa.child, total = anketa.totalVoters,
                          url=relAnketa.url?default("/ankety/show/"+relAnketa.id)>
                 <#if anketa.multiChoice><#assign type = "checkbox"><#else><#assign type = "radio"></#if>
-                <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1><a href="/ankety">Anketa</a></h1></div></div>
+                <div class="s_nadpis">
+			<a class="s_nadpis-pravy-odkaz" href="/clanky/dir/3500?categoryPosition=0">navrhněte&nbsp;&raquo;</a>
+			<a href="/ankety">Anketa</a>
+		</div>
                 <div class="s_sekce">
                     <form action="${URL.noPrefix("/EditPoll/"+relAnketa.id)}" method="POST">
                     <div class="ank-otazka">${anketa.text}</div>
@@ -150,26 +143,23 @@
                     </form>
                 </div>
                 <#assign diz=TOOL.findComments(anketa)>
-                <div class="ls_zpr">&nbsp;<a href="${url}">Komentářů:</a>
+                <div>&nbsp;<a href="${url}">Komentářů:</a>
 		        ${diz.responseCount}<#if diz.responseCount gt 0><@lib.markNewComments diz/>, poslední
 		        ${DATE.show(diz.updated,"CZ_SHORT")}</#if>
-		        <br>&nbsp;<a href="/clanky/dir/3500?categoryPosition=0">Navrhněte novou anketu</a>
-		        </div>
+	        </div>
             </#if>
 
             <!-- ZPRÁVIČKY -->
             <#assign news=VARS.getFreshNews(USER?if_exists)>
-            <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1><a href="/zpravicky">Zprávičky</a></h1></div></div>
+            <div class="s_nadpis">
+		<a class="s_nadpis-pravy-odkaz" href="${URL.make("/zpravicky/edit?action=add")}">napište &raquo;</a>
+		<#if USER?exists && USER.hasRole("news admin")>
+		    <a class="s_nadpis-pravy-odkaz" href="${URL.make("/zpravicky/dir/37672")}" title="Počet čekajících zpráviček">(${VARS.counter.WAITING_NEWS})&nbsp;</a>
+		</#if>
+		<a href="/zpravicky">Zprávičky</a>
+	    </div>
             <div class="s_sekce">
 
-	        <div class="s_odkaz">
-                    <a href="/zpravicky">Centrum</a> |
-                    <a href="${URL.make("/zpravicky/edit?action=add")}">Napsat zprávičku</a>
-            	    <#if USER?exists && USER.hasRole("news admin")>
-                        | <a href="${URL.make("/zpravicky/dir/37672")}" title="Počet čekajících zpráviček">(${VARS.counter.WAITING_NEWS})</a>
-                    </#if>
-                </div>
-        		<hr>
                 <div class="ls_zpr">
                 <#list news as relation>
                     <#if relation_index==8>
@@ -190,10 +180,9 @@
             </div>
 
             <!-- prace.abclinuxu.cz -->
-            <div class="s_nad_h1"><div class="s_nad_pod_h1">
-                <h1><a href="http://www.praceabc.cz"
-               title="Spojujeme lidi s prací v IT.">Pracovní nabídky</a></h1>
-            </div></div>
+            <div class="s_nadpis">
+                <a href="http://www.praceabc.cz" title="Spojujeme lidi s prací v IT.">Pracovní nabídky</a>
+            </div>
 
             <div class="s_sekce">
                 <#include "/include/prace.txt">
@@ -203,7 +192,7 @@
                 <#assign FEEDS = VARS.getFeeds(USER?if_exists,false)>
                 <#if (FEEDS.size() > 0)>
                     <!-- ROZCESTNÍK -->
-                    <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Rozcestník</h1></div></div>
+                    <div class="s_nadpis">Rozcestník</div>
                     <div class="s_sekce">
                         <div class="rozc">
                             <#list FEEDS.keySet() as server>
@@ -220,7 +209,7 @@
             </#if>
 
             <!-- REDAKCE -->
-            <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Portál AbcLinuxu</h1></div></div>
+            <div class="s_nadpis">Portál AbcLinuxu</div>
             <div class="s_sekce">
                 <ul>
                     <li><a href="/doc/portal/rss-a-jine-pristupy">RSS a PDA</a></li>
@@ -237,10 +226,9 @@
                         <li><a href="/system/todo">TODO</a></li>
                     </#if>
                 </ul>
-
-
             </div>
-            <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Doporučujeme</h1></div></div>
+
+            <div class="s_nadpis">Doporučujeme</div>
             <div class="s_sekce">
                 <ul>
                     <li><a href="javascript:addSidebar();">Přidej sidebar</a></li>
@@ -252,7 +240,7 @@
                 </ul>
             </div>
 
-	    <div class="s_nad_h1"><div class="s_nad_pod_h1"><h1>Placené odkazy</h1></div></div>
+	    <div class="s_nadpis">Placené odkazy</div>
             <div class="s_sekce">
                 <ul>
 		    <li><a href="http://www.autoweb.cz" rel="nofollow">autoweb.cz</a></li>
@@ -262,7 +250,7 @@
                 </ul>
             </div>
 
-        </div></div> <!-- ls, s -->
+        </div> <!-- s -->
 	</div> <!-- obal_ls -->
 
     <#if plovouci_sloupec?exists>
@@ -272,9 +260,6 @@
              <div class="sw-sloupec">
         </#if>
         <div class="obal_ps">
-            <div class="ps_prepinac">
-            <!-- i kdyz to bude prazdne, tak to tu musi byt -->
-            </div>
             <div class="ps"><div class="s">
                ${plovouci_sloupec}
             </div></div> <!-- ps, s -->

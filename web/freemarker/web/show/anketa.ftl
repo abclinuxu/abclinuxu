@@ -1,8 +1,7 @@
 <#include "../header.ftl">
 
-<div slass="s">
-<div class="s_nad_h1"><div class="s_nad_pod_h1"><h1 class="st_nadpis">Anketa</h1></div></div>
-</div>
+<div class="s_nadpis">Anketa</div>
+
 <@lib.showMessages/>
 
 <#if USER?exists && USER.hasRole("poll admin")>
@@ -39,7 +38,7 @@ Vytvoøeno: ${DATE.show(POLL.created, "CZ_FULL")}</p>
      <b>Nástroje:</b>
 
     <#if diz.hasUnreadComments>
-        <a href="#${diz.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a>, 
+        <a href="#${diz.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a>,
     </#if>
 
     <#if diz.monitored>

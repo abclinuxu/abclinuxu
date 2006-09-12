@@ -41,7 +41,7 @@
 <#include "../header.ftl">
 <#import "../misc/hardware.ftl" as hwlib>
 
-<div class="hw"
+<div class="hw">
 
 <@hwlib.showHardware ITEM />
 

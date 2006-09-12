@@ -1,10 +1,10 @@
-<#assign plovouci_sloupec>
+ <#assign plovouci_sloupec>
 
     <!-- ZAKLADY LINUXU -->
-    <div class="s_nad_h1"><div class="s_nad_pod_h1">
+    <div class="s_nadpis">
         <a class="info" href="#">?<span class="tooltip">Co je to Linux a jak ho pou¾ít.</span></a>
-        <h1>Základy Linuxu</h1>
-    </div></div>
+        Základy Linuxu
+    </div>
     <div class="s_sekce">
         <ul>
             <li><a href="/ucebnice">Uèebnice Linuxu</a></li>
@@ -15,10 +15,10 @@
 
     <#assign HARDWARE = VARS.getFreshHardware(USER?if_exists)>
     <#if (HARDWARE?size>0) >
-        <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <div class="s_nadpis">
             <a class="info" href="#">?<span class="tooltip">Obrovská databáze znalostí o hardwaru, postupy zprovoznìní v GNU/Linuxu.</span></a>
-            <h1><a href="/hardware">Hardware</a></h1>
-        </div></div>
+            <a href="/hardware">Hardware</a>
+        </div>
         <div class="s_sekce">
             <ul>
             <#list HARDWARE as rel>
@@ -30,10 +30,10 @@
 
     <#assign DICTIONARY=VARS.getFreshDictionary(USER?if_exists)>
     <#if (DICTIONARY?size>0) >
-        <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <div class="s_nadpis">
             <a class="info" href="#">?<span class="tooltip">Jestli nevíte, co znamená nìkteré slovo, podívejte se do na¹eho slovníku.</span></a>
-            <h1><a href="/slovnik">Slovník</a></h1>
-        </div></div>
+            <a href="/slovnik">Slovník</a>
+        </div>
         <div class="s_sekce">
             <ul>
             <#list DICTIONARY as rel>
@@ -45,10 +45,10 @@
 
     <#assign FAQ = VARS.getFreshFaqs(USER?if_exists)>
     <#if (FAQ?size>0) >
-        <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <div class="s_nadpis">
             <a class="info" href="#">?<span class="tooltip">Odpovìdi na èasto kladené otázky.</span></a>
-            <h1><a href="/faq">FAQ</a></h1>
-        </div></div>
+            <a href="/faq">FAQ</a>
+        </div>
         <div class="s_sekce">
             <ul>
             <#list FAQ as rel>
@@ -64,10 +64,10 @@
 
     <#assign DRIVERS = VARS.getFreshDrivers(USER?if_exists)>
     <#if (DRIVERS?size>0) >
-        <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <div class="s_nadpis">
             <a class="info" href="#">?<span class="tooltip">Databáze ovladaèù pro vá¹ hardware.</span></a>
-            <h1><a href="/ovladace">Ovladaèe</a></h1>
-        </div></div>
+            <a href="/ovladace">Ovladaèe</a>
+        </div>
         <div class="s_sekce">
             <ul>
             <#list DRIVERS as rel>
@@ -77,10 +77,10 @@
         </div>
     </#if>
 
-    <div class="s_nad_h1"><div class="s_nad_pod_h1">
+    <div class="s_nadpis">
 	<a class="info" href="#">?<span class="tooltip">Odkazy na nejnovìj¹í linuxová jádra øad 2.2, 2.4 a 2.6.</span></a>
-        <h1>Aktuální jádra</h1>
-    </div></div>
+        Aktuální jádra
+    </div>
     <div class="s_sekce">
         <#include "/include/kernel.txt">
     </div>
@@ -156,40 +156,34 @@
 <#assign STORIES=VARS.getFreshStories(USER?if_exists)>
 <#assign STORIES=TOOL.filterRelationsOfBlockedUsers(STORIES,USER?if_exists)>
 <#if (STORIES?size>0) >
-    <#assign half = STORIES?size/2 >
-    <#if STORIES?size%2==1><#assign half=half+1></#if>
-    <div class="ramec-st">
-        <div class="s_nad_h1"><div class="s_nad_pod_h1">
-            <a class="info" href="#">?<span class="tooltip">Vlastní blog si po pøihlá¹ení
+  <#assign half = STORIES?size/2 >
+  <#if STORIES?size%2==1><#assign half=half+1></#if>
+    <div class="ramec">
+      <div class="s_nadpis">
+        <a class="info" href="#">?<span class="tooltip">Vlastní blog si po pøihlá¹ení
             mù¾ete zalo¾it v nastavení svého profilu</span></a>
-            <h1>
-                <a href="/blog">Blogy na AbcLinuxu</a>,
-                <a href="/blog/souhrn">struènìj¹í souhrn</a>,
-                <a href="/blog/vyber">výbìr</a>
-            </h1>
-        </div></div>
-        <table width="99%">
-            <tr>
-                <td valign="top">
-         <div class="s_sekce">
-          <ul>
-                    <#list STORIES[0..half-1] as relation>
-                        <li><@printStory relation /></li>
-                    </#list>
-          </ul>
-         </div>
-                </td>
-                <td valign="top">
-         <div class="s_sekce">
-          <ul>
-                <#list STORIES[half..] as relation>
-                        <li><@printStory relation /></li>
-                    </#list>
-          </ul>
-         </div>
-                </td>
-            </tr>
-        </table>
+        <a href="/blog">Blogy na AbcLinuxu</a>,
+        <a href="/blog/souhrn">struènìj¹í souhrn</a>,
+        <a href="/blog/vyber">výbìr</a>
+      </div>
+      <table class="siroka">
+        <tr>
+          <td>
+            <ul>
+              <#list STORIES[0..half-1] as relation>
+                <li><@printStory relation /></li>
+              </#list>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <#list STORIES[half..] as relation>
+                <li><@printStory relation /></li>
+              </#list>
+            </ul>
+          </td>
+        </tr>
+      </table>
     </div>
 </#if>
 
@@ -210,26 +204,24 @@
 
 <#assign FEEDS = VARS.getFeeds(USER?if_exists,true)>
 <#if (FEEDS.size() > 0)>
-    <div class="st_nad_rozc"><div class="st_rozc">
-        <h1 class="st_nadpis">Rozcestník</h1>
-        <div class="s"><div class="s_sekce"><div class="rozc">
-        <table>
-        <#list FEEDS.keySet() as server>
-            <#if server_index % 3 = 0><tr><#assign open=true></#if>
-            <td>
-            <a class="server" href="${server.url}" rel="nofollow">${server.name}</a>
-                <ul>
-                <#list FEEDS(server) as link>
-                    <li><a href="${link.url}" rel="nofollow">${link.text}</a></li>
-                </#list>
-                </ul>
-            </td>
-            <#if server_index % 3 = 2></tr><#assign open=false></#if>
-        </#list>
-        <#if open></tr></#if>
-        </table>
-        </div></div></div>
-    </div></div>
+  <h2>Rozcestník</h2>
+  <div class="rozc">
+    <table>
+      <#list FEEDS.keySet() as server>
+      <#if server_index % 3 = 0><tr><#assign open=true></#if>
+       <td>
+         <a class="server" href="${server.url}" rel="nofollow">${server.name}</a>
+         <ul>
+           <#list FEEDS(server) as link>
+             <li><a href="${link.url}" rel="nofollow">${link.text}</a></li>
+           </#list>
+         </ul>
+       </td>
+     <#if server_index % 3 = 2></tr><#assign open=false></#if>
+     </#list>
+     <#if open></tr></#if>
+    </table>
+  </div>
 </#if>
 
 <#include "../footer.ftl">

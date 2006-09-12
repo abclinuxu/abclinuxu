@@ -1,8 +1,8 @@
 <#assign plovouci_sloupec>
-  <div class="s_nad_h1"><div class="s_nad_pod_h1">
+  <div class="s_nadpis">
     <a class="info" href="#">?<span class="tooltip">Vlastní blog si po pøihlá¹ení mù¾ete zalo¾it v nastavení svého profilu.</span></a>
-    <h1><a href="/blog">Seznam v¹ech blogù</a></h1>
-  </div></div>
+    <a href="/blog">Seznam v¹ech blogù</a>
+  </div>
 
     <div class="s_sekce">
         <p>Chcete-li také psát svùj blog, pøihla¹te se a v nastavení
@@ -20,7 +20,7 @@
 
 <#list BLOGS as info>
     <#assign title=TOOL.xpath(info.blog,"//custom/title")?default("blog")>
-    <p><b><a href="/blog/${info.blog.subType}">${title}</a></b> | 
+    <p><b class="s_nadpis"><a href="/blog/${info.blog.subType}">${title}</a></b> | 
     <a href="/Profile/${info.author.id}">${info.author.nickname?default(info.author.name)}</a></p>
     <p class="cl_inforadek"> &nbsp; Zalo¾eno: ${DATE.show(info.blog.created,"CZ_FULL_TXT")} | Pøíspìvkù: ${info.stories}</p>
 </#list>

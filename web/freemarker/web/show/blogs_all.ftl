@@ -1,8 +1,8 @@
 <#assign plovouci_sloupec>
-  <div class="s_nad_h1"><div class="s_nad_pod_h1">
+  <div class="s_nadpis">
     <a class="info" href="#">?<span class="tooltip">Vlastní blog si po pøihlá¹ení mù¾ete zalo¾it v nastavení svého profilu.</span></a>
-    <h1><a href="/blog">Blogy na AbcLinuxu</a></h1>
-  </div></div>
+    <a href="/blog">Blogy na AbcLinuxu</a>
+  </div>
 
     <div class="s_sekce">
         <#if DIGEST?exists>
@@ -58,9 +58,9 @@
                 <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
             </h3>
         <#else>
-            <h1 class="st_nadpis">
+            <h2 class="st_nadpis">
                 <a href="${url}">${TOOL.xpath(story, "/data/name")}</a>
-            </h1>
+            </h2>
         </#if>
         <p class="cl_inforadek">
             ${DATE.show(story.created, "CZ_SHORT")} |

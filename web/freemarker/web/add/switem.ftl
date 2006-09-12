@@ -35,7 +35,7 @@
 </p>
 
 <form action="${URL.make("/edit")}" method="POST">
-    <table width="100%" border="0" cellpadding="5">
+    <table class="siroka" border="0" cellpadding="5">
         <tr>
             <td class="required">Jméno</td>
             <td>

@@ -34,9 +34,7 @@
         </ul>
     </div>
 
-    <div class="s_nad_h1"><div class="s_nad_pod_h1">
-        <h1>Filtr</h1>
-    </div></div>
+    <div class="s_nadpis">Filtr</div>
 
     <div class="s_sekce">
     <form action="${RELATION.url?default("/software/show/"+RELATION.id)}" method="GET">

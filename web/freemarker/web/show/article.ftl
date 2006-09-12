@@ -54,7 +54,9 @@ ${TOOL.render(TEXT,USER?if_exists)}
 
 <#if CHILDREN.poll?exists>
     <h3>Anketa</h3>
-    <@lib.showPoll CHILDREN.poll[0], RELATION.url?default("/clanky/show/"+RELATION.id) />
+    <div class="anketa">
+      <@lib.showPoll CHILDREN.poll[0], RELATION.url?default("/clanky/show/"+RELATION.id) />
+    </div>
 </#if>
 
 <#if PAGES?exists>
@@ -78,30 +80,24 @@ ${TOOL.render(TEXT,USER?if_exists)}
     <@lib.showRating RELATION/>
 </#if>
 
-<div class="cl_perex">
+<div class="cl_perex souvisejici">
   <#if RELATED?exists>
    <h3>Související èlánky</h3>
-   <div class="s_sekce">
     <#list RELATED as link>
      <a href="${link.url}">${link.title}</a> ${link.description?if_exists}<br>
     </#list>
-   </div>
   </#if>
   <#if RESOURCES?exists>
    <h3>Odkazy a zdroje</h3>
-   <div class="s_sekce">
     <#list RESOURCES as link>
      <a href="${link.url}" rel="nofollow">${link.title}</a> ${link.description?if_exists}<br>
     </#list>
-   </div>
   </#if>
   <#if SAME_SECTION_ARTICLES?exists>
    <h3>Dal¹í èlánky z této rubriky</h3>
-    <div class="s_sekce">
      <#list SAME_SECTION_ARTICLES as relation>
        <a href="${relation.url?default("/clanky/show/"+relation.id)}">${TOOL.xpath(relation.child,"data/name")}</a><br>
      </#list>
-    </div>
   </#if>
 </div>
 
@@ -117,7 +113,7 @@ ${TOOL.render(TEXT,USER?if_exists)}
     <h3>Komentáøe</h3>
     <@lib.showDiscussion CHILDREN.discussion[0]/>
 <#elseif forbidDiscussion!="yes">
-    <h1>Diskuse k tomuto èlánku</h1>
+    <h3>Diskuse k tomuto èlánku</h3>
     <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vlo¾it první komentáø</a>
 </#if>
 

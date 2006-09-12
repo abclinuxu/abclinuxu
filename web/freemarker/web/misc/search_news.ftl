@@ -16,7 +16,7 @@
     }
 </script>
 
-<h1 class="st_nadpis">Hledání</h1>
+<h1>Hledání</h1>
 
 <form action="/Search" method="GET">
   <p><input type="text" name="query" value="${QUERY?if_exists?html}" size="50" tabindex="1">
@@ -41,7 +41,7 @@
 <#if RESULT?exists>
 
     <p align="right">
-        Nalezeno ${RESULT.total} objektù, zobrazuji ${RESULT.thisPage.row}-${RESULT.thisPage.row+RESULT.thisPage.size}.
+        Nalezeno ${RESULT.total} objektù, zobrazuji ${RESULT.thisPage.row} - ${RESULT.thisPage.row+RESULT.thisPage.size}.
     </p>
 
     <#list RESULT.data as doc>

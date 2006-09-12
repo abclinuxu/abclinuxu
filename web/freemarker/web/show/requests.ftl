@@ -1,7 +1,7 @@
 <#include "../header.ftl">
 <@lib.showMessages/>
 
-<h1 class="st_nadpis">Administrativní po¾adavky</h1>
+<h1>Administrativní po¾adavky</h1>
 
 <p>Tato stránka slou¾í pro zadávání <b>administrativních</b> po¾adavkù
 na správce portálu www.abclinuxu.cz. Pokud potøebujete zalo¾it novou sekci,

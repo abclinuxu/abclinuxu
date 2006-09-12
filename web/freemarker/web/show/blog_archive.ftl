@@ -5,20 +5,17 @@
 
 <#assign plovouci_sloupec>
 
-    <div class="s_nad_h1"><div class="s_nad_pod_h1">
-        <h1><a href="/Profile/${owner.id}">${owner.nick?default(owner.name)}</a>
+    <div class="s_nadpis">
+	<a href="/Profile/${owner.id}">${owner.nick?default(owner.name)}</a>
 	<#if title!="UNDEF"> - <a href="/blog/${BLOG.subType}">${title}</a></#if>
-	</h1>
-    </div></div>
+    </div>
 
     <div class="s_sekce">
         <#if intro!="UNDEF">${intro}</#if>
     </div>
 
     <#if UNPUBLISHED_STORIES?exists>
-        <div class="s_nad_h1"><div class="s_nad_pod_h1">
-            <h1>Rozepsané zápisy</h1>
-        </div></div>
+        <div class="s_nadpis">Rozepsané zápisy</div>
 
         <div class="s_sekce">
             <ul>
@@ -32,9 +29,7 @@
         </div>
     </#if>
 
-    <div class="s_nad_h1"><div class="s_nad_pod_h1">
-        <h1>Aktuální zápisy</h1>
-    </div></div>
+    <div class="s_nadpis">Aktuální zápisy</div>
 
     <div class="s_sekce">
         <ul>
@@ -49,10 +44,10 @@
 
     <#assign links = BLOG_XML.data.custom.links.link>
     <#if links?size!=0>
-        <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <div class="s_nadpis">
             <a class="info" href="#">?<span class="tooltip">Seznam mých oblíbených stránek, které pravidelnì nav¹tìvuji.</span></a>
-            <h1>Oblíbené stránky</h1>
-        </div></div>
+            Oblíbené stránky
+        </div>
 
         <div class="s_sekce">
             <ul>
@@ -63,10 +58,10 @@
         </div>
     </#if>
 
-    <div class="s_nad_h1"><div class="s_nad_pod_h1">
+    <div class="s_nadpis">
         <a class="info" href="#">?<span class="tooltip">Pøístup na osobní hlavní stranu a na hlavní stranu v¹ech blogù.</span></a>
-        <h1>Navigace</h1>
-    </div></div>
+        Navigace
+    </div>
 
     <div class="s_sekce">
         <ul>
@@ -82,10 +77,10 @@
 
 
     <#if (USER?exists && USER.id==BLOG.owner) || (! USER?exists)>
-        <div class="s_nad_h1"><div class="s_nad_pod_h1">
+        <div class="s_nadpis">
             <a class="info" href="#">?<span class="tooltip">Tato sekce sdru¾uje akce pro majitele blogu.</span></a>
-            <h1>Nastavení</h1>
-        </div></div>
+            Nastavení
+        </div>
     </#if>
 
   <div class="s_sekce">

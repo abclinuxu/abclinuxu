@@ -1,6 +1,6 @@
 <#include "../header.ftl">
 
-<h1 class="st_nadpis">Diskusní fóra</h1>
+<h1>Diskusní fóra</h1>
 
 <p>Diskusní fóra slou¾í jako místo, kde mohou nováèci i zku¹ení
 u¾ivatelé Linuxu vzájemnì komunikovat a pomáhat si. Pro ka¾dou oblast
@@ -27,7 +27,7 @@ neptal. Prvním krokem polo¾ení dotazu je hledání v na¹í obrovské databázi.
 <a href="/blog/leos/2005/4/21/84459">Diskuse k reorganizaci fóra</a>
 </p>
 
-<h1 class="st_nadpis">Hardware</h1>
+<h1>Hardware</h1>
 
 <p>Sekce sdru¾ující diskusní fóra týkající se instalace, nastavení
 a pou¾ívání rozlièného hardwaru pod Linuxem.
@@ -66,7 +66,7 @@ a pou¾ívání rozlièného hardwaru pod Linuxem.
 </tr>
 </table>
 
-<h1 class="st_nadpis">Nastavení</h1>
+<h1>Nastavení</h1>
 
 <p>Diskusní fóra na téma nastavení Linuxu, jeho prostøedí, slu¾eb
 a pøipojení k síti èi Internetu.
@@ -94,7 +94,7 @@ a pøipojení k síti èi Internetu.
 <td></td>
 </table>
 
-<h1 class="st_nadpis">Aplikace</h1>
+<h1>Aplikace</h1>
 
 <p>Vìt¹ina va¹ich dotazù bude patøit do tìchto diskusních fór. Zabývají
 se rùznými aplikacemi. Ka¾dé fórum je urèeno pro jednu tøídu aplikací,
@@ -149,7 +149,7 @@ multimediálních programech.
 </tr>
 </table>
 
-<h1 class="st_nadpis">Distribuce</h1>
+<h1>Distribuce</h1>
 
 <p>Diskusní fóra vyhrazená pro speciality jednotlivých distribucí.
 95% dotazù patøí do sekce <i>Hardware</i>, <i>Nastavení</i> nebo
@@ -179,7 +179,7 @@ dotaz, projdìte si fóra v pøede¹lých sekcích.
 </tr>
 </table>
 
-<h1 class="st_nadpis">Ostatní</h1>
+<h1>Ostatní</h1>
 
 <p>Diskuse, které nejdou zaøadit jinam. Patøí zde i dotazy
 na komunitu Open Source, diskuse nad licencemi a také
