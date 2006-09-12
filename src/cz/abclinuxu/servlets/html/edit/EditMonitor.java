@@ -67,6 +67,7 @@ public class EditMonitor implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_RELATION);
         GenericDataObject content = (GenericDataObject) persistence.findById(relation.getChild());
+        boolean isSection = content instanceof Category;
         User user = (User) env.get(Constants.VAR_USER);
 
         Date originalUpdated = content.getUpdated();
@@ -75,7 +76,7 @@ public class EditMonitor implements AbcAction {
         SQLTool.getInstance().setUpdatedTimestamp(content, originalUpdated);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, urlUtils.getRelationUrl(relation, true));
+        urlUtils.redirect(response, urlUtils.getRelationUrl(relation, isSection));
         return null;
     }
 }
