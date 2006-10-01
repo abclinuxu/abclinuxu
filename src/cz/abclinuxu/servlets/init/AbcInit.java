@@ -383,22 +383,22 @@ public class AbcInit extends HttpServlet implements Configurable {
      * Callback used to configure your class from preferences.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
-        services.put(PREF_START_ABC_MONITOR, new Boolean(prefs.getBoolean(PREF_START_ABC_MONITOR, true)));
-        services.put(PREF_START_ARTICLE_POOL_MONITOR, new Boolean(prefs.getBoolean(PREF_START_ARTICLE_POOL_MONITOR, true)));
-        services.put(PREF_START_FORUM_MAIL_GATEWAY, new Boolean(prefs.getBoolean(PREF_START_FORUM_MAIL_GATEWAY, true)));
-        services.put(PREF_START_RSS_GENERATOR, new Boolean(prefs.getBoolean(PREF_START_RSS_GENERATOR, true)));
-        services.put(PREF_START_RSS_KERNEL, new Boolean(prefs.getBoolean(PREF_START_RSS_KERNEL, true)));
-        services.put(PREF_START_RSS_MONITOR, new Boolean(prefs.getBoolean(PREF_START_RSS_MONITOR, true)));
-        services.put(PREF_START_RSS_UNIXSHOP, new Boolean(prefs.getBoolean(PREF_START_RSS_UNIXSHOP, true)));
-        services.put(PREF_START_VARIABLE_FETCHER, new Boolean(prefs.getBoolean(PREF_START_VARIABLE_FETCHER, true)));
-        services.put(PREF_START_WEEKLY_EMAILS, new Boolean(prefs.getBoolean(PREF_START_WEEKLY_EMAILS, true)));
-        services.put(PREF_START_WEEKLY_SUMMARY, new Boolean(prefs.getBoolean(PREF_START_WEEKLY_SUMMARY, true)));
-        services.put(PREF_START_UPDATE_DATETOOL, new Boolean(prefs.getBoolean(PREF_START_UPDATE_DATETOOL, true)));
-        services.put(PREF_START_WATCHED_DISCUSSIONS_CLEANER, new Boolean(prefs.getBoolean(PREF_START_WATCHED_DISCUSSIONS_CLEANER, true)));
-        services.put(PREF_START_RSS_OKSYSTEM, new Boolean(prefs.getBoolean(PREF_START_RSS_OKSYSTEM, true)));
-        services.put(PREF_START_RSS_JOBPILOT, new Boolean(prefs.getBoolean(PREF_START_RSS_JOBPILOT, true)));
-        services.put(PREF_START_UPDATE_STATISTICS, new Boolean(prefs.getBoolean(PREF_START_UPDATE_STATISTICS, true)));
-        services.put(PREF_START_JOB_OFFER_MANAGER, new Boolean(prefs.getBoolean(PREF_START_JOB_OFFER_MANAGER, false)));
+        services.put(PREF_START_ABC_MONITOR, prefs.getBoolean(PREF_START_ABC_MONITOR, true));
+        services.put(PREF_START_ARTICLE_POOL_MONITOR, prefs.getBoolean(PREF_START_ARTICLE_POOL_MONITOR, true));
+        services.put(PREF_START_FORUM_MAIL_GATEWAY, prefs.getBoolean(PREF_START_FORUM_MAIL_GATEWAY, true));
+        services.put(PREF_START_RSS_GENERATOR, prefs.getBoolean(PREF_START_RSS_GENERATOR, true));
+        services.put(PREF_START_RSS_KERNEL, prefs.getBoolean(PREF_START_RSS_KERNEL, true));
+        services.put(PREF_START_RSS_MONITOR, prefs.getBoolean(PREF_START_RSS_MONITOR, true));
+        services.put(PREF_START_RSS_UNIXSHOP, prefs.getBoolean(PREF_START_RSS_UNIXSHOP, true));
+        services.put(PREF_START_VARIABLE_FETCHER, prefs.getBoolean(PREF_START_VARIABLE_FETCHER, true));
+        services.put(PREF_START_WEEKLY_EMAILS, prefs.getBoolean(PREF_START_WEEKLY_EMAILS, true));
+        services.put(PREF_START_WEEKLY_SUMMARY, prefs.getBoolean(PREF_START_WEEKLY_SUMMARY, true));
+        services.put(PREF_START_UPDATE_DATETOOL, prefs.getBoolean(PREF_START_UPDATE_DATETOOL, true));
+        services.put(PREF_START_WATCHED_DISCUSSIONS_CLEANER, prefs.getBoolean(PREF_START_WATCHED_DISCUSSIONS_CLEANER, true));
+        services.put(PREF_START_RSS_OKSYSTEM, prefs.getBoolean(PREF_START_RSS_OKSYSTEM, true));
+        services.put(PREF_START_RSS_JOBPILOT, prefs.getBoolean(PREF_START_RSS_JOBPILOT, true));
+        services.put(PREF_START_UPDATE_STATISTICS, prefs.getBoolean(PREF_START_UPDATE_STATISTICS, true));
+        services.put(PREF_START_JOB_OFFER_MANAGER, prefs.getBoolean(PREF_START_JOB_OFFER_MANAGER, false));
     }
 
     /**
@@ -406,8 +406,8 @@ public class AbcInit extends HttpServlet implements Configurable {
      */
     protected boolean isSet(String name) {
         Boolean aBoolean = (Boolean) services.get(name);
-        if (aBoolean!=null)
-            return aBoolean.booleanValue();
+        if (aBoolean != null)
+            return aBoolean;
         return false;
     }
 }
