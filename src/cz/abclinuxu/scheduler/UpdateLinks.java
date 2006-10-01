@@ -273,7 +273,7 @@ public class UpdateLinks extends TimerTask implements Configurable {
      * list and method returns true.
      */
     private boolean removeLink(List list, Link link) {
-        String tmp = null;
+        String tmp;
         for (Iterator iter = list.iterator(); iter.hasNext();) {
             tmp = ((Link) iter.next()).getText();
             if ( link.getText().equals(tmp) ) {

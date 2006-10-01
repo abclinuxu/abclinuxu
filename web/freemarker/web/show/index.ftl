@@ -1,18 +1,5 @@
  <#assign plovouci_sloupec>
 
-    <!-- ZAKLADY LINUXU -->
-    <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Co je to Linux a jak ho pou¾ít.</span></a>
-        Základy Linuxu
-    </div>
-    <div class="s_sekce">
-        <ul>
-            <li><a href="/ucebnice">Uèebnice Linuxu</a></li>
-            <li><a href="/clanky/ruzne/cim-v-linuxu-nahradit-aplikace-windows">Náhrady Windows aplikací</a></li>
-            <li><a href="/clanky/ruzne/abcserialy">Rozcestník na¹ich seriálù</a>
-        </ul>
-    </div>
-
     <#assign HARDWARE = VARS.getFreshHardware(USER?if_exists)>
     <#if (HARDWARE?size>0) >
         <div class="s_nadpis">
@@ -28,20 +15,7 @@
         </div>
     </#if>
 
-    <#assign DICTIONARY=VARS.getFreshDictionary(USER?if_exists)>
-    <#if (DICTIONARY?size>0) >
-        <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Jestli nevíte, co znamená nìkteré slovo, podívejte se do na¹eho slovníku.</span></a>
-            <a href="/slovnik">Slovník</a>
-        </div>
-        <div class="s_sekce">
-            <ul>
-            <#list DICTIONARY as rel>
-                <li><a href="/slovnik/${rel.child.subType}">${TOOL.xpath(rel.child,"data/name")}</a></li>
-            </#list>
-            </ul>
-        </div>
-    </#if>
+    <!-- tady byl Slovnik -->
 
     <#assign FAQ = VARS.getFreshFaqs(USER?if_exists)>
     <#if (FAQ?size>0) >
@@ -60,6 +34,7 @@
 
     <#include "/include/softronik.txt">
     <#include "/include/redhat.txt">
+    <#include "/include/datascript.txt">
     <#include "/include/jobpilot.txt">
 
     <#assign DRIVERS = VARS.getFreshDrivers(USER?if_exists)>
@@ -76,14 +51,6 @@
             </ul>
         </div>
     </#if>
-
-    <div class="s_nadpis">
-	<a class="info" href="#">?<span class="tooltip">Odkazy na nejnovìj¹í linuxová jádra øad 2.2, 2.4 a 2.6.</span></a>
-        Aktuální jádra
-    </div>
-    <div class="s_sekce">
-        <#include "/include/kernel.txt">
-    </div>
 </#assign>
 
 <#include "../header.ftl">

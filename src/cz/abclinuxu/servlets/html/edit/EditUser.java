@@ -681,7 +681,7 @@ public class EditUser implements AbcAction, Configurable {
         Persistence persistence = PersistenceFactory.getPersistance();
         for (Iterator iter = maintainedServers.iterator(); iter.hasNext();) {
             Integer id = (Integer) iter.next();
-            Server server = (Server) persistence.findById(new Server(id.intValue()));
+            Server server = (Server) persistence.findById(new Server(id));
             servers.add(server);
         }
         env.put(VAR_SERVERS, servers);

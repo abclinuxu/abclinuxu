@@ -81,9 +81,6 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
 <b>S</b> - diskusi sledujete monitorem.
 </p>
 
-<h3>Aktuální jádra</h3>
- <#include "/include/kernel.txt">
-
 <h2><a href="/blog">Blogy na AbcLinuxu</a></h2>
   <ul>
   <#assign STORIES=VARS.getFreshStories(USER?if_exists)>

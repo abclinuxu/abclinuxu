@@ -15,9 +15,4 @@
  <@lib.separator double=!rel_has_next />
 </#list>
 
-<h1>Aktuální jádra</h1>
-<p>
- <#include "/include/kernel.txt">
-</p>
-
 <#include "../footer.ftl">

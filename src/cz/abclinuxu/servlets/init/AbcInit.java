@@ -52,7 +52,6 @@ public class AbcInit extends HttpServlet implements Configurable {
 
     public static final String PREF_START_RSS_MONITOR = "start.rss.monitor";
     public static final String PREF_START_RSS_GENERATOR = "start.rss.generator";
-    public static final String PREF_START_RSS_KERNEL = "start.rss.kernel";
     public static final String PREF_START_RSS_UNIXSHOP = "start.rss.unixshop";
     public static final String PREF_START_RSS_OKSYSTEM = "start.rss.oksystem";
     public static final String PREF_START_RSS_JOBPILOT = "start.rss.jobpilot";
@@ -118,7 +117,6 @@ public class AbcInit extends HttpServlet implements Configurable {
         scheduler = new Timer(true);
         startFetchingVariables();
         startUpdateStatistics();
-        startKernelUpdate();
         startLinksUpdate();
         startUnixshopUpdate();
         startOKSystemUpdate();
@@ -147,18 +145,6 @@ public class AbcInit extends HttpServlet implements Configurable {
         }
         log.info("Scheduling RSS monitor");
         scheduler.schedule(UpdateLinks.getInstance(), 60 * 1000, 3 * 60 * 60 * 1000);
-    }
-
-    /**
-     * Update kernel versions each hour, starting after one minute
-     */
-    protected void startKernelUpdate() {
-        if ( !isSet(PREF_START_RSS_KERNEL) ) {
-            log.info("RSS kernel monitor configured not to run");
-            return;
-        }
-        log.info("Scheduling RSS kernel monitor");
-        scheduler.schedule(UpdateKernel.getInstance(), 60*1000, 60*60*1000);
     }
 
     /**
@@ -387,7 +373,6 @@ public class AbcInit extends HttpServlet implements Configurable {
         services.put(PREF_START_ARTICLE_POOL_MONITOR, prefs.getBoolean(PREF_START_ARTICLE_POOL_MONITOR, true));
         services.put(PREF_START_FORUM_MAIL_GATEWAY, prefs.getBoolean(PREF_START_FORUM_MAIL_GATEWAY, true));
         services.put(PREF_START_RSS_GENERATOR, prefs.getBoolean(PREF_START_RSS_GENERATOR, true));
-        services.put(PREF_START_RSS_KERNEL, prefs.getBoolean(PREF_START_RSS_KERNEL, true));
         services.put(PREF_START_RSS_MONITOR, prefs.getBoolean(PREF_START_RSS_MONITOR, true));
         services.put(PREF_START_RSS_UNIXSHOP, prefs.getBoolean(PREF_START_RSS_UNIXSHOP, true));
         services.put(PREF_START_VARIABLE_FETCHER, prefs.getBoolean(PREF_START_VARIABLE_FETCHER, true));
