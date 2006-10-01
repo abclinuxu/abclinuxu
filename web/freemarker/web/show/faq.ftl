@@ -19,7 +19,7 @@
                 <li><a href="/revize?rid=${RELATION.id}&amp;prefix=/faq">Historie</a></li>
                 <li><a href="${RELATION.url}?varianta=print">Tisk otázky</a></li>
                 <li>
-                    <a href="${URL.make("/monitor/"+RELATION.id+"?action=toggle")}">${monitorState}</a>
+                    <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle")}">${monitorState}</a>
                     <span title="Poèet lidí, kteøí sledují tuto otázku">(${TOOL.getMonitorCount(ITEM.data)})</span>
                     <a class="info" href="#">?<span class="tooltip">Za¹le upozornìní na vá¹ email pøi úpravì otázky</span></a>
                 </li>

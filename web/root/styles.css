@@ -328,7 +328,7 @@ td.pad, code.kod, pre.kod {
 	text-align:	right;
 }
 
-.cl_inforadek, .ank-vypis {
+.cl_inforadek, .ank-vypis, .treeview li span {
 	font-size:	80%;
 	color:		gray;
 }
@@ -359,80 +359,40 @@ td.pad, code.kod, pre.kod {
 	margin-left:	1em;
 }
 
-.cl_rating {
-	margin:		1em 5px 2em 5px;
-	border-top:	1px solid #27648D;
-	border-bottom:	1px solid silver;
-	background-color: #F0F0F0;
-	padding-left:	10px;
+.rating {
+background: #F0F0F0;
+float:right;
+margin: 0.5em;
+text-align:center;
+border:1px solid silver;
+font-size:90%;
 }
 
-.cl_rating .rating_iframe { background-color: #F0F0F0; }
+.swdetail .rating {float:left;}
 
-.table_rating { }
-
-.table_rating .rating_iframe { }
+.rating .rating_iframe {
+font-size:x-small;
+width:30ex;
+_width:40ex;
+}
 
 .stupnice {
-	width:	 95px;
-    background:	url('/images/site2/stupnice.gif') left no-repeat;
-    margin:	 0px 5px 10px 0px;
-	padding: 0px;
+background:white;
+width:	78px;
+height: 8px;
+border:1px solid gray;
+margin-left:25%;
+_margin-left:0;
 }
 
-.stupnice img {
-    position:	relative;
-	border:		0px;
-    margin:	    1px 0px 5px 1px;
-    padding: 0px;
+.rtut {
+height: 8px;
+background:#27648d;
 }
 
-
-/* nasledujici classy kolem ratingu jiz nejsou pouzivany */
-.rating { background-color: #F0F0F0; }
-
-.hdn {
-	margin-top:	10px;
+.hlasy {
+font-weight: bold;
 }
-
-.hdn .text {
-	float:		left;
-	margin-right:	10px;
-	margin-left:	10px;
-}
-
-.tpm {
-	width:		205px;
-	background:	url('/images/site2/teplomerstupnice.gif') left top no-repeat;
-	float:		left;
-	padding: 0px;
-}
-
-.tpm img {
-	position:	relative;
-	border:		0px;
-	margin:	5px 0 5px 4px;
-}
-
-.tpm .stup {
-	height:		2em;
-	position: relative;
-}
-
-.s0, .s1, .s2, .s3 {
-	position:	absolute;
-	top:		2px;
-	_top:   	0px;
-	padding: 	2px;
-}
-
-.stup #spatny, .stup #dobry { width:15px; height:18px }
-.stup #spatny { left: -25px }
-.s0 { left: 0px; }
-.s1 { left: 64px; }
-.s2 { left: 128px; }
-.s3 { left: 191px; }
-.stup #dobry { left: 181px }
 
 .uceb-nav {
 	text-align:	center;
@@ -449,20 +409,20 @@ td.pad, code.kod, pre.kod {
 	border-bottom:	1px solid #27648D;
 }
 
-.ds table, .hw table, .sw table {
+.ds table, .hw table, .sw table, .faq {
 	margin-top:	5px;
 	border-width:	0px;
 	table-layout:	auto;
 }
 
-.ds thead td, .hw thead td, .sw thead td {
+.ds thead td, .hw thead td, .sw thead td, .faq thead td {
 	font-weight:	bold;
 	border-bottom:	solid 1px silver;
 	font-size:	85%;
 	background-color: transparent;
 }
 
-.ds td.td01, .hw td.td01, .sw td.td01 {
+.ds td.td01, .hw td.td01, .sw td.td01, .faq td.td01 {
 	width:		650px;
 }
 
@@ -476,7 +436,15 @@ td.pad, code.kod, pre.kod {
 	text-align:	center;
 }
 
-.ds td.td04, .hw td.td04, .sw td.td04 {
+.ds td.td04, .hw td.td04, .faq td.td04 {
+	width:		230px;
+	text-align:	right;
+}
+.sw td.td04 {
+	width:		60px;
+	text-align:	center;
+}
+.sw td.td05 {
 	width:		230px;
 	text-align:	right;
 }
@@ -512,10 +480,13 @@ td.pad, code.kod, pre.kod {
 
 .sw .galerie a:hover, .sw h3 a:hover { background-color: white; }
 
+.sw-strom div { margin-left:	1em; }
+.sw-strom div.uroven-1 { margin-left:	0 }
+
 .hidden { display:  none; }
 
 .tree div { margin-left:	0.5em; }
-.tree div, div { margin-left:    0.5 em; }
+.tree div div { margin-left:    0.5em; }
 
 .filterHeader {
     font-weight:	bold;
@@ -526,11 +497,11 @@ td.pad, code.kod, pre.kod {
 	border-top:	1px solid lightgray;
 	margin-bottom:	0.2em;
 }
-.swlist .intro, .swlist .meta {
+.swlist .intro, .swlist .meta, .faq .meta {
 	font-size:	small;
 	margin-left:	2em;
 }
-.swlist .meta {
+.swlist .meta, .faq .meta {
 	color:		gray;
 }
 
@@ -650,7 +621,8 @@ a.info:hover span.tooltip {
 .st .rozc table,
 .souvisejici,
 .search_details,
-.lista#horni .lista-vpravo { font-size: 90%; }
+.lista#horni .lista-vpravo,
+.rating { font-size: 90%; }
 
 .s_sekce {
 	padding:	0 0.3em;
@@ -709,7 +681,10 @@ a.info:hover span.tooltip {
 a.info,
 .ramec li a,
 .sflista a,
-.cl_square a {text-decoration:none}
+.cl_square a,
+.rating a,
+.cl_perex a,
+.treeview a {text-decoration:none}
 
 .s li a:hover,
 .rozc li a:hover,
@@ -717,7 +692,10 @@ a.info,
 .hw td a:hover,
 .sw td a:hover,
 .textad a:hover,
-.ramec li a:hover {text-decoration:underline}
+.ramec li a:hover,
+.rating a:hover,
+.cl_perex a:hover,
+.treeview a:hover {text-decoration:underline}
 
 #ls_prepinac {
 	position:	absolute;
@@ -920,4 +898,34 @@ table.hwdetail, table.swdetail {
   color: #000;
   border-color: #909090 #FFFFFF #FFFFFF #909090;
   background-color: #F0F0F0;
+}
+
+/*     treemenu     */
+.treeview ul {
+margin: 0;
+padding: 0;
+}
+
+.treeview li {
+background: url("/images/site2/menu-link.gif") no-repeat left 0.4em;
+line-height:1.5em;
+padding-left: 18px;
+margin-left:10px;
+list-style-type: none;
+}
+
+.treeview li.submenu {
+padding-left:25px;
+margin-left:3px;
+background: url("/images/site2/menu-closed.gif") no-repeat left 0.3em;
+cursor: hand !important;
+cursor: pointer !important;
+}
+
+.treeview li.submenu ul {
+display: none;
+}
+
+.treeview .submenu ul li {
+cursor: default;
 }

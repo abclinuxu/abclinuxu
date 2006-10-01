@@ -20,7 +20,7 @@
 
 <#list BLOGS as info>
     <#assign title=TOOL.xpath(info.blog,"//custom/title")?default("blog")>
-    <p><b class="s_nadpis"><a href="/blog/${info.blog.subType}">${title}</a></b> | 
+    <p><b class="st_nadpis"><a href="/blog/${info.blog.subType}">${title}</a></b> | 
     <a href="/Profile/${info.author.id}">${info.author.nickname?default(info.author.name)}</a></p>
     <p class="cl_inforadek"> &nbsp; Zalo¾eno: ${DATE.show(info.blog.created,"CZ_FULL_TXT")} | Pøíspìvkù: ${info.stories}</p>
 </#list>

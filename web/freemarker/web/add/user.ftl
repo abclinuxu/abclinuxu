@@ -38,7 +38,7 @@ zajímavostí ze svìta Linuxu i z na¹eho portálu.
 </p>
 
 <form action="${URL.noPrefix("/EditUser")}" method="POST">
- <table width="100%" border=0 cellpadding=5>
+ <table class="siroka" border="0" cellpadding=5>
   <tr>
    <td class="required" width="60">Jméno</td>
    <td>
@@ -70,7 +70,7 @@ zajímavostí ze svìta Linuxu i z na¹eho portálu.
   <tr>
    <td class="required" width="160">Zopakujte heslo</td>
    <td>
-    <input type="password" name="password2" size="16"  maxlength="12"tabindex="5">
+    <input type="password" name="password2" size="16" tabindex="5">
    </td>
   </tr>
   <tr>

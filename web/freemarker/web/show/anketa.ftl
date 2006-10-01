@@ -38,13 +38,13 @@ Vytvoøeno: ${DATE.show(POLL.created, "CZ_FULL")}</p>
      <b>Nástroje:</b>
 
     <#if diz.hasUnreadComments>
-        <a href="#${diz.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a>,
+        <a href="#${diz.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a>, 
     </#if>
 
     <#if diz.monitored>
         <#assign monitorState="Pøestaò sledovat"><#else><#assign monitorState="Sleduj">
     </#if>
-    <a href="${URL.make("/monitor/"+CHILDREN.discussion[0].id+"?action=toggle")}"
+    <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+CHILDREN.discussion[0].id)}"
     title="AbcMonitor za¹le emailem zprávu, dojde-li v diskusi ke zmìnì">${monitorState}</a>
     <span title="Poèet lidí, kteøí sledují tuto diskusi">(${diz.monitorSize})</span>
 

@@ -511,7 +511,7 @@
                                 <map>
                                     <entry key="msg.ok" value="Va¹e hodnocení bylo pøijato."/>
                                     <entry key="msg.data.missing" value="Chyba v parametrech pro hlasování."/>
-                                    <entry key="msg.already.rated" value="Tento dokument jste ji¾ jednou hodnotili."/>
+                                    <entry key="msg.already.rated" value="Mù¾ete hodnotit jen jednou!"/>
                                     <entry key="msg.not.logged" value="Pro hodnocení je nutné se nejdøíve pøihlásit."/>
                                 </map>
                             </node>

@@ -20,6 +20,7 @@
     <link rel="bookmark" href="#obsah" title="Obsah stránky" type="text/html">
     <meta name="keywords" content="linux,abclinuxu,hardware,diskuse,nápovìda,rada,pomoc">
     <script type="text/javascript" src="/data/site/scripts.js"></script>
+    <script type="text/javascript" src="/data/site/treemenu.js"></script>
 </head>
 
 <body id="www-abclinuxu-cz">
@@ -52,7 +53,7 @@
   <div id="zh-text" class="zh-box">
     <div id="zh-tema">
       <img class="zh-iko" src="/images/site2/sflista/ab.gif">
-        Víte, ¾e vzhled abclinuxu.cz mù¾ete ovlivnit nastavením <a href="/doc/napoveda/alternativni-design">alternativního stylu</a>?
+        Víte, ¾e portál abclinuxu.cz obnovil sekci <a href="/software">Software</a>?
     </div>
     <div id="zh-ad">
       <img class="zh-iko" src="/images/site2/sflista/64.gif">
@@ -70,6 +71,7 @@
 <div class="cistic"></div>
 
 <#include "/include/menu.txt">
+
 
 	<div class="obal">
 
@@ -163,10 +165,11 @@
                 <div class="ls_zpr">
                 <#list news as relation>
                     <#if relation_index==8>
-                        <p align="center">
+                        <!--<p align="center">
                            <a href="/hosting"><img src="/images/bannery/abchosting.gif" alt="AbcHosting je tu pro vás"
                            border="0" width="251" height="60"></a>
-                        </p>
+                        </p>-->
+                        <#include "/include/rockforit.txt">
                     </#if>
                     <@lib.showTemplateNews relation/>
                     <hr>
@@ -179,9 +182,9 @@
                 </div>
             </div>
 
-            <!-- prace.abclinuxu.cz -->
+            <!-- abcprace.cz -->
             <div class="s_nadpis">
-                <a href="http://www.praceabc.cz" title="Spojujeme lidi s prací v IT.">Pracovní nabídky</a>
+                <a href="http://www.abcprace.cz" title="Spojujeme lidi s prací v IT.">Pracovní nabídky</a>
             </div>
 
             <div class="s_sekce">
@@ -243,10 +246,10 @@
 	    <div class="s_nadpis">Placené odkazy</div>
             <div class="s_sekce">
                 <ul>
-		    <li><a href="http://www.autoweb.cz" rel="nofollow">autoweb.cz</a></li>
                     <li><a href="http://www.e-pocasi.cz/">e-pocasi.cz</a></li>
 		    <li><a href="http://shop.tricko-tricka.com">tricko-tricka.com</a></li>
                     <li><a href="http://www.krasnyusmev.cz">Bìlení zubù White Pearl</a></li>
+                    <li><a href="http://www.kovart.cz/">Umìlecké kováøství</a></li>
                 </ul>
             </div>
 

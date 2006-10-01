@@ -1,8 +1,10 @@
 <#import "../macros.ftl" as lib>
 <#include "../header.ftl">
 
+<@lib.showParents/>
+
 <#if TOOL.xpath(CATEGORY,"data/note")?exists>
- <p>${TOOL.render(TOOL.xpath(CATEGORY,"data/note"),USER?if_exists)}</p>
+ <p class="note">${TOOL.render(TOOL.xpath(CATEGORY,"data/note"),USER?if_exists)}</p>
 </#if>
 
 <#if CHILDREN.article?exists>
@@ -14,8 +16,8 @@
 </#if>
 
 <#if CHILDREN.category?exists>
- <table class="siroka" border="0" cellpadding="2">
- <tr><td colspan="3"><strong>Sekce</strong></td></tr>
+ <table width="100%" border="0" cellpadding="2">
+ <tr><td colspan="3" class="cerna3"><strong>Sekce</strong></td></tr>
  <#list SORT.byName(CHILDREN.category) as sekce>
   <#if sekce_index%3==0><tr></#if>
   <td width="33%">
@@ -28,8 +30,8 @@
 </#if>
 
 <#if CHILDREN.make?exists>
- <table class="siroka" border="0" cellpadding="2">
- <tr><td colspan="3"><strong>Polo¾ky</strong></td></tr>
+ <table width="100%" border="0" cellpadding="2">
+ <tr><td colspan="3" class="cerna3"><strong>Polo¾ky</strong></td></tr>
  <#list SORT.byName(CHILDREN.make) as polozka>
   <#if polozka_index%3==0><tr></#if>
   <td width="33%">

@@ -21,7 +21,7 @@
     <p class="cl_inforadek">
         ${DATE.show(clanek.created, dateFormat[0])} |
         <a href="/Profile/${autor.id}">${autor.name}</a> |
-        Pøeèteno: <@showCounter clanek, .globals["CITACE"]?if_exists, "read" />x
+        Pøeèteno: <@showCounter clanek, .globals["CITACE"]?if_exists, "read" />&times;
         <#if diz?exists>| <@showCommentsInListing diz, dateFormat[1]?default(dateFormat[0]), "/clanky" /></#if>
         <@showShortRating relation, "| " />
     </p>
@@ -39,24 +39,42 @@
 
 <#macro showSoftwareList(items)>
     <#local visits = TOOL.getRelationCountersValue(items,"visit"), reads = TOOL.getRelationCountersValue(items,"read")>
-    <table class="swlisting">
-    <tr>
-        <th>Jméno</th>
-        <th>Hodnocení</th>
-        <th>Precteno</th>
-        <th>Navstíveno</th>
-        <th>Poslední úprava</th>
-    </tr>
-    <#list SORT.byName(items) as software>
+
+    <table class="sw-polozky">
+      <thead>
         <tr>
-            <td class="jmeno"><a href="${software.url}">${TOOL.childName(software)}</a></td>
-            <td><@showShortRating software, "", false /></td>
-            <td><@showCounter software.child, reads, "read" />x</td>
-            <td><@showCounter software.child, visits, "visit" />x</td>
-            <td>${DATE.show(software.child.updated, "SMART")}</td>
+            <td class="td01">Jméno</td>
+            <td class="td02">Hodnocení</td>
+            <!--<td class="td03">Pøeèteno</td>-->
+            <td class="td04">Nav¹tíveno</td>
+            <td class="td05">Poslední úprava</td>
         </tr>
-    </#list>
+      </thead>
+      <tbody>
+        <#list SORT.byName(ITEMS) as software>
+            <tr>
+                <td class="td01"><a href="${software.url}">${TOOL.childName(software)}</a></td>
+                <td class="td02"><@showShortRating software, "", false /></td>
+                <!--<td class="td03"><@showCounter software.child, reads, "read" />&times;</td>-->
+                <td class="td04"><@showCounter software.child, visits, "visit" />&times;</td>
+                <td class="td05">${DATE.show(software.child.updated, "SMART")}</td>
+            </tr>
+        </#list>
+      </tbody>
     </table>
+
+</#macro>
+
+<#macro listTree (objects firstLevel=true)>
+<#if (objects?size > 0)>
+ <ul<#if firstLevel> id="treemenu1" class="treeview"</#if>>
+  <#list objects as sekce>
+   <li><a href="${sekce.url}">${sekce.name}</a> <span>(${sekce.size})</span>
+   <@listTree sekce.children, false/>
+   </li>
+  </#list>
+ </ul>
+</#if>
 </#macro>
 
 <#macro showNews(relation)>
@@ -72,7 +90,7 @@
         ${TOOL.xpath(ITEM,"data/content")}<br>
         <span style="font-size: smaller">
         <a href="/Profile/${autor.id}">${autor.name}</a> |
-	    ${DATE.show(ITEM.created,"SMART")} |
+	${DATE.show(ITEM.created,"CZ_FULL")} |
         <a href="${url}">Komentáøe: ${diz.responseCount}</a><#rt>
         <#lt><#if diz.responseCount gt 0><@markNewComments diz/>, poslední ${DATE.show(diz.updated, "SMART")}</#if>
         </span>
@@ -84,11 +102,11 @@
     autor=TOOL.createUser(item.owner),
     diz=TOOL.findComments(item),
     url=relation.url?default("/zpravicky/show/"+relation.id)>
-    ${DATE.show(item.created,"CZ_SHORT")} | ${NEWS_CATEGORIES[item.subType].name}
+    <span>${DATE.show(item.created,"CZ_SHORT")} | ${NEWS_CATEGORIES[item.subType].name}</span>
     <p>${TOOL.xpath(item,"data/content")}</p>
-    <a href="/Profile/${autor.id}">${TOOL.nonBreakingSpaces(autor.name)}</a>
+    <span><a href="/Profile/${autor.id}">${TOOL.nonBreakingSpaces(autor.name)}</a>
     | <a href="${url}" title="<#if diz.responseCount gt 0>poslední ${DATE.show(diz.updated, "SMART")}</#if>"
-    >(Komentáøù: ${diz.responseCount}<@lib.markNewComments diz/>)</a>
+    >(Komentáøù: ${diz.responseCount}<@lib.markNewComments diz/>)</a></span>
 </#macro>
 
 <#macro markNewComments(discussion)><#t>
@@ -193,7 +211,7 @@
        <#if DIZ.hasUnreadComments>
          <a href="#${DIZ.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a>,
        </#if>
-         <a href="${URL.make("/monitor/"+DIZ.relationId+"?action=toggle")}">${monitorState}</a>
+         <a href="${URL.make("/EditMonitor/"+DIZ.relationId+"?action=toggle")}">${monitorState}</a>
            <span title="Poèet lidí, kteøí sledují tuto diskusi">(${DIZ.monitorSize})</span>
            <a class="info" href="#">?<span class="tooltip">Za¹le ka¾dý nový komentáø emailem na va¹i adresu</span></a>,
          <a href="${URL.prefix}/show/${DIZ.relationId}?varianta=print">Tisk</a>
@@ -224,40 +242,37 @@
     </#if>
 </#macro>
 
-<#macro showRating (relation heading=true boxCssClass="cl_rating")>
-    <#local rating=TOOL.ratingFor(relation.child.data)?default("UNDEF"), width = 0>
-    <#if rating!="UNDEF"><#local width = (rating.percent / 100) * 78 ></#if>
-    <div class="${boxCssClass}">
-        <#if heading>
-            <span class="nadpis">
-                Hodnocení:
-            </span>
-        </#if>
+<#macro showRating (relation heading=true boxCssClass="rating")>
+    <#local rating=TOOL.ratingFor(relation.child.data)?default("UNDEF")>
+    <div class="${boxCssClass}">
+      <#if heading><h3>Hodnocení:
         <#if rating!="UNDEF">
-            <span class="stupnice">
-                <img src="/images/site2/teplomerrtut.gif" alt="" height="5" width="${width?string["0"]}">
-            </span>
-            <span title="Poèet hlasù: ${rating.count}">${rating.percent}%</span>
-        <#else>
-            nehodnoceno
-        </#if>
-        <span class="hlasovani">
-            Hlasujte:
-            <#if USER?exists>
-                <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=3")}" target="rating">dobré</a>
-                <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=0")}" target="rating">¹patné</a>
-            <#else>
-                <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=3&amp;return=true")}" rel="nofollow">dobré</a>
-                <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=0&amp;return=true")}" rel="nofollow">¹patné</a>
-            </#if>
-        </span>
-        <iframe name="rating" width="300" frameborder="0" height="20" scrolling="no" class="rating_iframe"></iframe>
+          <span title="Hlasù: ${rating.count}">${rating.percent} %</span>
+        <#else>-
+        </#if></h3>
+      </#if>
+      <#if rating!="UNDEF">
+        <div class="stupnice">
+          <#local width = (rating.percent / 100) * 78>
+          <div class="rtut" style="width: ${width?string["0"]}px"></div>
+        </div>
+      <#else>zatím nehodnoceno
+      </#if>
+
+        <div class="hlasy">
+        <#if USER?exists>
+           <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=0")}" target="rating">¹patné</a> &bull; <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=3")}" target="rating">dobré</a>
+        <#else>
+           <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=0&amp;return=true")}" rel="nofollow">¹patné</a> &bull; <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=3&amp;return=true")}" rel="nofollow">dobré</a>
+        </#if>
+        </div>
+        <iframe name="rating" frameborder="0" height="20" scrolling="no" class="rating_iframe"></iframe>
     </div>
 </#macro>
 
 <#macro showShortRating (relation, separator, heading=true)>
     <#local rating=TOOL.ratingFor(relation.child.data)?default("UNDEF")>
-    <#if rating!="UNDEF"><#if heading>${separator}Hodnocení:&nbsp;</#if><span title="Hlasù: ${rating.count}">${rating.percent}%</span></#if>
+    <#if rating!="UNDEF"><#if heading>${separator}Hodnocení:&nbsp;</#if><span title="Hlasù: ${rating.count}">${rating.percent}&nbsp;%</span></#if>
 </#macro>
 
 <#macro star value><#if (value>0.60)><img src="/images/site/star1.gif" alt="*"><#elseif (value<0.2)><img src="/images/site/star0.gif" alt="-"><#else><img src="/images/site/star5.gif" alt="+"></#if></#macro>
@@ -287,7 +302,7 @@
         <#list anketa.choices as choice>
             <div class="ank-odpov">
               <#assign procento = TOOL.percent(choice.count,total)>
-              <label><input type="${type}" name="voteId" value="${choice.id}">${choice.text}</label>&nbsp;(<span title="${choice.count} hlasù">${procento}%</span>)<br>
+              <label><input type="${type}" name="voteId" value="${choice.id}">${choice.text}</label>&nbsp;(<span title="${choice.count} hlasù">${procento}&nbsp;%</span>)<br>
               <div class="ank-sloup-okraj" style="width: ${procento}px">
                 <div class="ank-sloup"></div>
               </div>
@@ -322,7 +337,7 @@
                     <#elseif link.type=='other'>(ostatní)
                     <#elseif link.type=='poll'>(anketa)
                     <#elseif link.type=='section'>(sekce)
-                    <#--<#elseif link.type=='software'>(software)-->
+                    <#elseif link.type=='software'>(software)
                     <#elseif link.type=='story'>(blog)
                     </#if>
                 </dt>

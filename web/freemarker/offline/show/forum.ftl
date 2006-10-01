@@ -1,9 +1,7 @@
 <#import "../macros.ftl" as lib>
 <#include "../header.ftl">
 
-<h1 align="center">Fórum ${TOOL.xpath(CATEGORY,"/data/name")}</h1>
-
-<@lib.showParents/>
+<h1>Fórum ${TOOL.xpath(CATEGORY,"/data/name")}</h1>
 
 <div class="ds">
     <table>
@@ -23,7 +21,7 @@
                 </td>
                 <td class="td02">
                     <#if TOOL.isQuestionSolved(diz.discussion.data)>
-                        <img src="../../images/site2/vyreseno.gif" alt="V" title="Diskuse byla podle ètenáøù vyøe¹ena">
+                        <img src="../../../images/site2/vyreseno.gif" alt="V" title="Diskuse byla podle ètenáøù vyøe¹ena">
                     </#if>
                 </td>
                 <td class="td03">${diz.responseCount}</td>

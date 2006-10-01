@@ -38,7 +38,7 @@ ${TOOL.xpath(ITEM,"/data/name")} <#if (NEXT?size>0)>-</#if>
  <#else>
   <#assign monitorState="Zapni">
  </#if>
- <a class="bez-slovniku" href="${URL.make("/monitor/"+RELATION.id+"?action=toggle")}">${monitorState}</a>
+ <a class="bez-slovniku" href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle")}">${monitorState}</a>
  (${TOOL.getMonitorCount(ITEM.data)})
 </p>
 

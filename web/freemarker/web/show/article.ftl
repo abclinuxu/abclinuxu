@@ -52,6 +52,10 @@ ${DATE.show(ITEM.created,"CZ_FULL")} | <a href="/Profile/${autor.id}">${autor.na
 
 ${TOOL.render(TEXT,USER?if_exists)}
 
+<#if forbidRating!="yes">
+    <@lib.showRating RELATION/>
+</#if>
+
 <#if CHILDREN.poll?exists>
     <h3>Anketa</h3>
     <div class="anketa">
@@ -74,10 +78,6 @@ ${TOOL.render(TEXT,USER?if_exists)}
    </ol>
   </div>
  </div>
-</#if>
-
-<#if forbidRating!="yes">
-    <@lib.showRating RELATION/>
 </#if>
 
 <div class="cl_perex souvisejici">

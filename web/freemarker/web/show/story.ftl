@@ -138,7 +138,7 @@
 <h2>${TOOL.xpath(ITEM, "/data/name")}</h2>
 <p class="cl_inforadek">
     <#if ITEM.type==15>Odlo¾eno<#else>${DATE.show(ITEM.created, "CZ_SHORT")}</#if> |
-    Pøeèteno: ${TOOL.getCounterValue(ITEM,"read")}x
+    Pøeèteno: ${TOOL.getCounterValue(ITEM,"read")}&times;
     <#if category!="UNDEF">| ${category}</#if>
     <#if (ITEM.type==12 && ITEM.created.time!=ITEM.updated.time)>
         | poslední úprava: ${DATE.show(ITEM.updated, "CZ_SHORT")}
@@ -149,6 +149,8 @@
 <#if text!="UNDEF">${text}</#if>
 ${TOOL.xpath(ITEM, "/data/content")}
 
+<@lib.showRating STORY/>
+
 <#if CHILDREN.poll?exists>
 <br />
     <h3>Anketa</h3>
@@ -156,8 +158,6 @@ ${TOOL.xpath(ITEM, "/data/content")}
         <@lib.showPoll CHILDREN.poll[0], story_url />
     </div>
 </#if>
-
-<@lib.showRating STORY/>
 
 <p><b>Nástroje</b>: <a href="${story_url}?varianta=print">Tisk</a></p>
 

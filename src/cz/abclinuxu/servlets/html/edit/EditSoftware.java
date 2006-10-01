@@ -67,11 +67,9 @@ public class EditSoftware implements AbcAction, Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditSoftware.class);
 
     public static final String PREF_MAX_INTRO_LENGTH = "max.intro.length";
-
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new EditSoftware());
     }
-
     static int maxIntroLength;
 
     public static final String PARAM_RELATION = "rid";
@@ -132,7 +130,7 @@ public class EditSoftware implements AbcAction, Configurable {
         Relation upper = (Relation) env.get(VAR_RELATION);
         if (upper.getUrl() == null) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Chyba - sekce nemá textové URL. Kontaktujte prosím administrátora.",
-                    env, request.getSession());
+                                  env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, urlUtils.getRelationUrl(upper, true));
         }
@@ -274,7 +272,6 @@ public class EditSoftware implements AbcAction, Configurable {
 
     /**
      * Updates name from parameters. Changes are not synchronized with persistence.
-     *
      * @param params map holding request's parameters
      * @param root   root element of item to be updated
      * @param env    environment
@@ -294,9 +291,8 @@ public class EditSoftware implements AbcAction, Configurable {
 
     /**
      * Updates description from parameters. Changes are not synchronized with persistence.
-     *
      * @param params map holding request's parameters
-     * @param root   root element to be updated
+     * @param root root element to be updated
      * @return false, if there is a major error.
      */
     private boolean setDescription(Map params, Element root, Map env) {
@@ -337,9 +333,8 @@ public class EditSoftware implements AbcAction, Configurable {
 
     /**
      * Updates user interface from parameters. Changes are not synchronized with persistence.
-     *
      * @param params map holding request's parameters
-     * @param item   item to be updated
+     * @param item item to be updated
      * @return false, if there is a major error.
      */
     private boolean setUserInterface(Map params, Item item) {
@@ -352,9 +347,8 @@ public class EditSoftware implements AbcAction, Configurable {
 
     /**
      * Updates applications, which are replaced by this software, from parameters. Changes are not synchronized with persistence.
-     *
      * @param params map holding request's parameters
-     * @param item   item to be updated
+     * @param item item to be updated
      * @return false, if there is a major error.
      */
     private boolean setApplicationAlternatives(Map params, Item item, Map env) {
@@ -376,9 +370,8 @@ public class EditSoftware implements AbcAction, Configurable {
 
     /**
      * Updates license(s) from parameters. Changes are not synchronized with persistence.
-     *
      * @param params map holding request's parameters
-     * @param item   item to be updated
+     * @param item item to be updated
      * @return false, if there is a major error.
      */
     private boolean setLicenses(Map params, Item item) {
@@ -392,7 +385,6 @@ public class EditSoftware implements AbcAction, Configurable {
 
     /**
      * Performs check, that RSS URL is valid.
-     *
      * @param params map holding request's parameters
      * @return false, if there is a major error
      */
@@ -415,9 +407,8 @@ public class EditSoftware implements AbcAction, Configurable {
      * item too, so RSS fetcher is aware of this URL and it can fetch its links.
      * The method must not be called in preview mode and the relationId must not be zero
      * (e.g. the item is already created).
-     *
-     * @param params     map holding request's parameters
-     * @param item       item to be updated
+     * @param params map holding request's parameters
+     * @param item item to be updated
      * @param relationId id of relation for this item
      */
     private void setRssUrl(Map params, Item item, int relationId) {
@@ -430,7 +421,7 @@ public class EditSoftware implements AbcAction, Configurable {
         Element rssElement = (Element) itemRoot.selectSingleNode("/data/url[@useType='rss']");
 
         String url = (String) params.get(PARAM_RSS_URL);
-        if (!Misc.empty(url)) {
+        if (! Misc.empty(url)) {
             if (configRss == null) {
                 Element configFeeds = DocumentHelper.makeElement(configRoot, "feeds");
                 configRss = configFeeds.addElement("feed");
@@ -456,10 +447,9 @@ public class EditSoftware implements AbcAction, Configurable {
 
     /**
      * Updates url associated to software from parameters. Changes are not synchronized with persistence.
-     *
-     * @param params    map holding request's parameters
+     * @param params map holding request's parameters
      * @param paramName type of the url
-     * @param root      root element to be updated
+     * @param root root element to be updated
      * @return false, if there is a major error.
      */
     private boolean setUrl(Map params, String paramName, Element root) {
@@ -471,7 +461,7 @@ public class EditSoftware implements AbcAction, Configurable {
         else
             return false;
 
-        Element element = (Element) root.selectSingleNode("url[@useType='" + type + "']");
+        Element element = (Element) root.selectSingleNode("url[@useType='"+type+"']");
         String tmp = (String) params.get(paramName);
         if (tmp != null && tmp.length() > 0) {
             if (element == null) {

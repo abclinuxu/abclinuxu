@@ -1,20 +1,16 @@
 <#import "../macros.ftl" as lib>
 <#include "../header.ftl">
 
-<@lib.showParents/>
-
-<h1 class="st_nadpis">Diskusní fóra</h1>
+<h1>Diskusní fóra</h1>
 
 <p>Diskusní fóra slou¾í jako místo, kde mohou nováèci i zku¹ení
 u¾ivatelé Linuxu vzájemnì komunikovat a pomáhat si. Pro ka¾dou oblast
-jsme vytvoøili jedno fórum, abyste snáze nalezli hledané informace.
-</p>
+jsme vytvoøili jedno fórum, abyste snáze nalezli hledané informace.</p>
 
-<h1 class="st_nadpis">Hardware</h1>
+<h1 id="diskuzni-fora-hardware">Hardware</h1>
 
 <p>Sekce sdru¾ující diskusní fóra týkající se instalace, nastavení
-a pou¾ívání rozlièného hardwaru pod Linuxem.
-</p>
+a pou¾ívání rozlièného hardwaru pod Linuxem.</p>
 
 <table border="0" cellspacing="6" class="siroka">
 <tr>
@@ -49,11 +45,10 @@ a pou¾ívání rozlièného hardwaru pod Linuxem.
 </tr>
 </table>
 
-<h1 class="st_nadpis">Nastavení</h1>
+<h1 id="diskuzni-fora-nastaveni">Nastavení</h1>
 
 <p>Diskusní fóra na téma nastavení Linuxu, jeho prostøedí, slu¾eb
-a pøipojení k síti èi Internetu.
-</p>
+a pøipojení k síti èi Internetu.</p>
 
 <table border="0" cellspacing="6" class="siroka">
 <tr>
@@ -77,15 +72,14 @@ a pøipojení k síti èi Internetu.
 <td></td>
 </table>
 
-<h1 class="st_nadpis">Aplikace</h1>
+<h1 id="diskuzni-fora-aplikace">Aplikace</h1>
 
 <p>Vìt¹ina va¹ich dotazù bude patøit do tìchto diskusních fór. Zabývají
 se rùznými aplikacemi. Ka¾dé fórum je urèeno pro jednu tøídu aplikací,
 v názvu pak má typického reprezentanta. Napøíklad do fóra
 <i>Prohlí¾eèe,&nbsp;Mozilla</i> patøí i dotazy na Operu èi Lynx, nebo ve fóru
 <i>Multimédia,&nbsp;MPlayer</i> hledejte diskuse i o Xine, XMMS a dal¹ích
-multimediálních programech.
-</p>
+multimediálních programech.</p>
 
 <table border="0" cellspacing="6" class="siroka">
 <tr>
@@ -132,14 +126,13 @@ multimediálních programech.
 </tr>
 </table>
 
-<h1 class="st_nadpis">Distribuce</h1>
+<h1 id="diskuzni-fora-distribuce">Distribuce</h1>
 
 <p>Diskusní fóra vyhrazená pro speciality jednotlivých distribucí.
 95% dotazù patøí do sekce <i>Hardware</i>, <i>Nastavení</i> nebo
 <i>Aplikace</i>. Zde pokládejte dotazy, jen pokud <b>opravdu</b>
 týkají dané distribuce a nikoliv i ostatních. Ne¾ zde polo¾íte
-dotaz, projdìte si fóra v pøede¹lých sekcích.
-</p>
+dotaz, projdìte si fóra v pøede¹lých sekcích.</p>
 
 <table border="0" cellspacing="6" class="siroka">
 <tr>
@@ -162,12 +155,11 @@ dotaz, projdìte si fóra v pøede¹lých sekcích.
 </tr>
 </table>
 
-<h1 class="st_nadpis">Ostatní</h1>
+<h1 id="diskuzni-fora-ostatni">Ostatní</h1>
 
 <p>Diskuse, které nejdou zaøadit jinam. Patøí zde i dotazy
 na komunitu Open Source, diskuse nad licencemi a také
-otázky ohlednì tohoto portálu a jeho slu¾eb.
-</p>
+otázky ohlednì tohoto portálu a jeho slu¾eb.</p>
 
 <table border="0" cellspacing="6" class="siroka">
 <tr>

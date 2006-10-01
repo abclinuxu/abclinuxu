@@ -13,7 +13,7 @@
    <#if DIZ.hasUnreadComments>
      <a href="#${DIZ.firstUnread}" title="Skoèit na první nepøeètený komentáø">První nepøeètený komentáø</a>,
    </#if>
-   <a href="${URL.make("/monitor/"+RELATION.id+"?action=toggle")}">${monitorState}</a>
+   <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle")}">${monitorState}</a>
       <span title="Poèet lidí, kteøí sledují tuto diskusi">(${DIZ.monitorSize})</span>
       <a class="info" href="#">?<span class="tooltip">Za¹le ka¾dý nový komentáø emailem na va¹i adresu</span></a>,
    <#if is_question>

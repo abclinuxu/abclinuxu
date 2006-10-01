@@ -42,7 +42,6 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.ReadRecorder;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import org.dom4j.Element;
 
@@ -117,13 +116,6 @@ public class ViewSoftware implements AbcAction {
             throw new NotFoundException("Stránka nebyla nalezena.");
         Tools.sync(relation);
         env.put(ShowObject.VAR_RELATION, relation);
-
-        // temporary: check permissions TODO remove when released officially
-        User user = (User) env.get(Constants.VAR_USER);
-        if (user == null)
-            return FMTemplateSelector.select("ViewUser", "login", env, request);
-        if (!user.hasRole(Roles.SOFTWARE_ADMIN))
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if (ACTION_FILTER.equals(action)) {
             Map filters = new HashMap();

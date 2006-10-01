@@ -1,7 +1,6 @@
 <div class="s_nadpis" style="background-color: #00A247">
 <a class="s_nadpis-pravy-odkaz" href="http://sf.impact.as/if/imred.php?aid=306&amp;lid=347&amp;redirurl=http://portal.oksystem.cz/" rel="nofollow">OKsystem</a>
-<a href="http://sf.impact.as/if/imred.php?aid=306&amp;lid=347&amp;redirurl=http://portal.oksystem.cz/" rel="nofollow">©kolení</a></h1>
-</div>
+<a href="http://sf.impact.as/if/imred.php?aid=306&amp;lid=347&amp;redirurl=http://portal.oksystem.cz/" rel="nofollow">©kolení</a></div>
 <script type="text/javascript">
 //<![CDATA[
 IM_spec_reklama = 306;

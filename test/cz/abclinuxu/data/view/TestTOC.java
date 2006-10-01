@@ -83,4 +83,8 @@ public class TestTOC extends TestCase {
         assertEquals(1, current.getRid());
         assertNull(current.getLeftChapter());
     }
+
+    public TestTOC(String string) {
+        super(string);
+    }
 }

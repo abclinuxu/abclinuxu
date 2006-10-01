@@ -2,10 +2,10 @@
 <#assign plovouci_sloupec>
     <div class="s_sekce">
         <ul>
-            <!-- <li><a href="/clanky/show/3500?text=sekce+${RELATION.id}">Po¾ádat o vytvoøení podsekce</a></li> -->
             <#if CATEGORY.isOpen()>
                 <li><a href="${URL.make("/edit/"+RELATION.id+"?action=add")}">Vlo¾it novou polo¾ku</a></li>
             </#if>
+            <li><a href="/clanky/show/3500?text=sekce+${RELATION.url}">Po¾ádat o vytvoøení podsekce</a></li>
             <li><a href="/software/alternativy">Alternativy k aplikacím</a></li>
             <li><a href="/History?type=software">Poslední upravené polo¾ky</a></li>
             <li><a href="/doc/portal/volne-aplikace">Nepopsaný software</a></li>
@@ -21,6 +21,7 @@
                 <li>
                     <a href="${URL.noPrefix("/EditCategory?action=edit&amp;rid="+RELATION.id+"&amp;categoryId="+CATEGORY.id)}">edit</a>,
                     <a href="${URL.noPrefix("/EditCategory?action=add&amp;rid="+RELATION.id+"&amp;categoryId="+CATEGORY.id)}">mkdir</a>,
+                    <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix="+URL.prefix)}">rmdir</a>
                 </li>
             </#if>
             <#if USER?exists && USER.hasRole("move relation")>
@@ -34,7 +35,10 @@
         </ul>
     </div>
 
-    <div class="s_nadpis">Filtr</div>
+    <div class="s_nadpis">
+      <a class="info" href="#">?<span class="tooltip">Kliknutím na kategorii (napø. <b><i>U¾ivatelské rozhraní</i></b>) rozbalíte seznam filtrù.</span></a>
+      Filtr
+    </div>
 
     <div class="s_sekce">
     <form action="${RELATION.url?default("/software/show/"+RELATION.id)}" method="GET">
@@ -98,31 +102,34 @@
 
 <#include "../header.ftl">
 
+<div class="sw">
+
+<h1>${TOOL.xpath(CATEGORY.data,"/data/name")}</h1>
+
 <@lib.showMessages/>
 
-<div class="sw">
-    <h1>Sekce ${TOOL.xpath(CATEGORY.data,"/data/name")}</h1>
+<#if TOOL.xpath(CATEGORY,"data/note")?exists>
+ ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}
+</#if>
 
-    <#if TOOL.xpath(CATEGORY,"data/note")?exists>
-        ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}
-    </#if>
+<#if (CATEGORIES?exists && CATEGORIES?size > 0)>
+    <p><small><b>Sekce</b></small></p>
+    <p>
+         <a href="javascript:ddtreemenu.flatten('treemenu1', 'expand')">V¹e rozbalit</a> | 
+	 <a href="javascript:ddtreemenu.flatten('treemenu1', 'contact')">V¹e sbalit</a>
+	<a class="info" href="#">?<span class="tooltip">Kliknutím na ikonku adresáøe rozbalíte podmenu. Kliknutím na název kategorie do ní rovnou vstoupíte.</span></a>
+    </p>
 
-    <#if CATEGORIES?exists>
-        <table border="0">
-        <#list CATEGORIES as sekce>
-            <#if sekce_index % 3 = 0><tr><#assign open=true></#if>
-            <td>
-                <a href="${sekce.url}">${sekce.name}</a> (${sekce.size})
-            </td>
-            <#if sekce_index % 3 = 2></tr><#assign open=false></#if>
-        </#list>
-        <#if open?if_exists></tr></#if>
-        </table>
-    </#if>
+    <@lib.listTree CATEGORIES />
 
-    <#if ITEMS?exists>
+    <script type="text/javascript">
+      ddtreemenu.createTree("treemenu1", true)
+    </script>
+</#if>
+
+<#if ITEMS?exists>
         <@lib.showSoftwareList ITEMS />
-    </#if>
+</#if>
 
 </div>
 

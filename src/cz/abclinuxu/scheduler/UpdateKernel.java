@@ -89,8 +89,8 @@ public class UpdateKernel extends TimerTask implements Configurable {
             reOld24pre = new RE(old24Pre);
             reOld22 = new RE(old22);
             reOld22pre = new RE(old22Pre);
-            reOld20 = new RE(old20);
-            reOld20pre = new RE(old20Pre);
+//            reOld20 = new RE(old20);
+//            reOld20pre = new RE(old20Pre);
             reAc = new RE(ac);
         } catch (RESyntaxException e) {
             log.error("Cannot compile regexp!",e);
@@ -124,9 +124,9 @@ public class UpdateKernel extends TimerTask implements Configurable {
         old22 = prefs.get(PREF_REGEXP_22, null);
         url22 = prefs.get(PREF_URL_22,null);
         old22Pre = prefs.get(PREF_REGEXP_22_PRE, null);
-        old20 = prefs.get(PREF_REGEXP_20, null);
-        url20 = prefs.get(PREF_URL_20,null);
-        old20Pre = prefs.get(PREF_REGEXP_20_PRE, null);
+//        old20 = prefs.get(PREF_REGEXP_20, null);
+//        url20 = prefs.get(PREF_URL_20,null);
+//        old20Pre = prefs.get(PREF_REGEXP_20_PRE, null);
         ac = prefs.get(PREF_REGEXP_AC, null);
         urlAC = prefs.get(PREF_URL_AC,null);
     }
@@ -175,14 +175,14 @@ public class UpdateKernel extends TimerTask implements Configurable {
                     old22Pre = reOld22pre.getParen(3);
                     continue;
                 }
-                if ( reOld20.match(line) ) {
-                    old20 = reOld20.getParen(3);
-                    continue;
-                }
-                if ( reOld20pre.match(line) ) {
-                    old20Pre = reOld20pre.getParen(3);
-                    continue;
-                }
+//                if ( reOld20.match(line) ) {
+//                    old20 = reOld20.getParen(3);
+//                    continue;
+//                }
+//                if ( reOld20pre.match(line) ) {
+//                    old20Pre = reOld20pre.getParen(3);
+//                    continue;
+//                }
                 if ( reAc.match(line) ) {
                     ac = reAc.getParen(3);
                     continue;
@@ -207,8 +207,8 @@ public class UpdateKernel extends TimerTask implements Configurable {
                 kernels.put("v24", new KernelTree(url24,old24,old24Pre));
             if ( url22!=null )
                 kernels.put("v22", new KernelTree(url22,old22,old22Pre));
-            if ( url20!=null )
-                kernels.put("v20", new KernelTree(url20,old20,old20Pre));
+//            if ( url20!=null )
+//                kernels.put("v20", new KernelTree(url20,old20,old20Pre));
             if ( urlAC!=null )
                 kernels.put("v26ac", new KernelTree(urlAC,ac));
 

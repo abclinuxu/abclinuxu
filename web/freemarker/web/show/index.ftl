@@ -162,7 +162,7 @@
       <div class="s_nadpis">
         <a class="info" href="#">?<span class="tooltip">Vlastní blog si po pøihlá¹ení
             mù¾ete zalo¾it v nastavení svého profilu</span></a>
-        <a href="/blog">Blogy na AbcLinuxu</a>,
+        <a href="/blog">Blogy na abclinuxu.cz</a>,
         <a href="/blog/souhrn">struènìj¹í souhrn</a>,
         <a href="/blog/vyber">výbìr</a>
       </div>

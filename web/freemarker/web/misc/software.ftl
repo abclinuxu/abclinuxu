@@ -33,6 +33,10 @@
 	        	<td>Domovská stránka:</td>
                 <td>
                     <a href="${"/presmeruj?class=P&amp;id="+software.id+"&amp;url="+url?url}" rel="nofollow">${TOOL.limit(url,45,"..")}</a>
+                    <#local visits = TOOL.getCounterValue(software,"visit")>
+                    <#if (visits > 0)>
+                      <span title="Poèet náv¹tìv domovské stránky">(${visits}&times;)</span>
+                    </#if>
                 </td>
             </tr>
         </#if>
@@ -59,19 +63,10 @@
         </#if>
 
         <tr>
-            <td>Hodnocení:</td>
-            <td>
-                <@lib.showRating RELATION, false, "table_rating"/>
+            <td colspan="2">
+                <@lib.showRating RELATION, true, "rating"/>
             </td>
         </tr>
-
-        <#local visits = TOOL.getCounterValue(software,"visit")>
-        <#if (visits > 0)>
-            <tr>
-	        	<td>Poèet náv¹tìv:</td>
-                <td>${visits}</td>
-            </tr>
-        </#if>
 
     </table>
 

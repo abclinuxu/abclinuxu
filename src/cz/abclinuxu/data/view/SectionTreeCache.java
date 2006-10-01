@@ -220,8 +220,8 @@ public class SectionTreeCache {
 
     public static void main(String[] args) {
         SectionTreeCache cache = new SectionTreeCache("/forum", Constants.CAT_FORUM);
-        cache.initialize();
-        cache.print();
+//        cache.initialize();
+//        cache.print();
         cache = new SectionTreeCache("/faq", Constants.CAT_FAQ);
         cache.initialize();
         cache.print();

@@ -58,7 +58,7 @@
             <action>cz.abclinuxu.servlets.html.edit.EditRating</action>
         </mapping>
         <mapping priority="true">
-            <pattern>/monitor</pattern>
+            <pattern>/EditMonitor</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditMonitor</action>
         </mapping>
         <mapping>

@@ -1,14 +1,31 @@
 <#import "../macros.ftl" as lib>
 <#include "../header.ftl">
 
-<ul>
-    <li><a href="${DUMP.getFile(HARDWARE)}">hardware</a></li>
-    <li><a href="${DUMP.getFile(DRIVERS)}">ovladaèe</a></li>
-    <li><a href="${DUMP.getFile(ARTICLES)}">èlánky</a></li>
-    <li><a href="${DUMP.getFile(NEWS)}">zprávièky</a></li>
-    <li><a href="${DUMP.getFile(FORUM)}">forum</a></li>
-    <li><a href="${DUMP.getFile(FAQ)}">faq</a></li>
-    <li><a href="${DUMP.getFile(DICTIONARY)}">slovnik</a></li>
-</ul>
+
+<h1 class="st_nadpis"><a href="r/e/000316.html">Hardware</a></h1>
+    <p>Pøehled hardwaru fungujícího pod Linuxem.</p>
+<hr />
+
+<h1 class="st_nadpis"><a href="t/g/000318.html">Ovladaèe</a></h1>
+    <p>Linuxové ovladaèe pro nejrùznìj¹í hardware.</p>
+<hr />
+
+<h1 class="st_nadpis"><a href="q/d/000315.html">Èlánky</a></h1>
+    <p>Recenze, návody, Jaderné noviny, ...</p>
+<hr />
+
+<h1 class="st_nadpis"><a href="n/v/003739.html">Diskuze</a></h1>
+    <p>Tisíce zodpovìzených dotazù z nejrozsáhlej¹ího linuxového diskuzního fóra v ÈR a SR.</p>
+<hr />
+
+<h1 class="st_nadpis"><a href="d/f/081515.html">FAQ</a></h1>
+    <p>Odpovìdi na èasto kladené dotazy.</p>
+<hr />
+
+<h1 class="st_nadpis"><a href="f/y/060058.html">Slovník</a></h1>
+    <p>Struèné definice linuxových, unixových a technických termínù.</p>
+<hr />
+
+&nbsp;
 
 <#include "../footer.ftl">

@@ -141,9 +141,9 @@
         <p class="cl_inforadek">
     	    ${DATE.show(story.created, "CZ_SHORT")} |
             <#if (category!="UNDEF" && category?length > 1)>${category} |</#if>
-	        Pøeèteno: ${TOOL.getCounterValue(story,"read")}x
+	        Pøeèteno: ${TOOL.getCounterValue(story,"read")}&times;
             <#if tmp.discussion?exists>| <@lib.showCommentsInListing TOOL.analyzeDiscussion(tmp.discussion[0]), "CZ_SHORT", "/blog" /></#if>
-            <@showShortRating story, "| " />
+            <@lib.showShortRating story, "| " />
         </p>
         <#if ! SUMMARY?exists>
             <#assign text = TOOL.xpath(story, "/data/perex")?default("UNDEF")>

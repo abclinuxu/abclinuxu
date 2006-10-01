@@ -23,22 +23,27 @@ kde jsou v¹echny otázky øazeny nezávisle na sekci podle datumu
 poslední zmìny.
 </p>
 
-<table border="0">
+<table class="faq">
+  <thead>
     <tr>
-        <th>Sekce</th>
-        <th>Poèet</th>
+        <td class="td01">Sekce</td>
+        <td class="td04">Poèet</td>
     </tr>
+  </thead>
+  <tbody>
     <#list VARS.faqTree.children as faq>
-        <tr>
-            <td>
-                <a href="${faq.url}">${faq.name}</a>
-                <#if faq.description?exists>
-                    <br>${faq.description}
-                </#if>
-            </td>
-            <td align="right">${faq.size}</td>
-        </tr>
+      <tr>
+        <td class="td01">
+          <a href="${faq.url}">${faq.name}</a>
+            <#if faq.description?exists>
+              <span class="meta"><br />
+              ${faq.description}</span>
+            </#if>
+        </td>
+        <td class="td04">${faq.size}</td>
+      </tr>
     </#list>
+  </tbody>
 </table>
 
 <#include "../footer.ftl">
