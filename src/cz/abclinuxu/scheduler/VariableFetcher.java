@@ -55,6 +55,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     }
 
     public static final String KEY_HARDWARE = "hardware";
+    public static final String KEY_SOFTWARE = "software";
     public static final String KEY_DRIVER = "driver";
     public static final String KEY_STORY = "story";
     public static final String KEY_NEWS = "news";
@@ -71,7 +72,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public static final String PREF_TEMPLATE_FEEDS = "feeds.for.template";
     public static final String PREF_SECTION_CACHE_FREQUENCY = "section.cache.rebuild.frequency";
 
-    List freshHardware, freshDrivers, freshStories, freshArticles, freshNews;
+    List freshHardware, freshSoftware, freshDrivers, freshStories, freshArticles, freshNews;
     List freshQuestions, freshFaqs, freshDictionary;
     String indexFeeds, templateFeeds;
     Map defaultSizes, maxSizes, counter, feedLinks;
@@ -129,8 +130,15 @@ public class VariableFetcher extends TimerTask implements Configurable {
      */
     public List getFreshHardware(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_HARDWARE, null);
-        List list = getSubList(freshHardware, userLimit);
-        return list;
+        return getSubList(freshHardware, userLimit);
+    }
+
+    /**
+     * List of the most fresh software relations according to user preference or system setting.
+     */
+    public List getFreshSoftware(Object user) {
+        int userLimit = getObjectCountForUser(user, KEY_SOFTWARE, null);
+        return getSubList(freshSoftware, userLimit);
     }
 
     /**
@@ -138,8 +146,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
      */
     public List getFreshDrivers(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_DRIVER, null);
-        List list = getSubList(freshDrivers, userLimit);
-        return list;
+        return getSubList(freshDrivers, userLimit);
     }
 
     /**
@@ -147,8 +154,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
      */
     public List getFreshStories(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_STORY, "/data/settings/index_stories");
-        List list = getSubList(freshStories, userLimit);
-        return list;
+        return getSubList(freshStories, userLimit);
     }
 
     /**
@@ -156,8 +162,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
      */
     public List getFreshArticles(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_ARTICLE, null);
-        List list = getSubList(freshArticles, userLimit);
-        return list;
+        return getSubList(freshArticles, userLimit);
     }
 
     /**
@@ -165,8 +170,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
      */
     public List getFreshQuestions(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_QUESTION, "/data/settings/index_discussions");
-        List list = getSubList(freshQuestions, userLimit);
-        return list;
+        return getSubList(freshQuestions, userLimit);
     }
 
     /**
@@ -174,8 +178,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
      */
     public List getFreshFaqs(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_FAQ, null);
-        List list = getSubList(freshFaqs, userLimit);
-        return list;
+        return getSubList(freshFaqs, userLimit);
     }
 
     /**
@@ -183,8 +186,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
      */
     public List getFreshDictionary(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_DICTIONARY, null);
-        List list = getSubList(freshDictionary, userLimit);
-        return list;
+        return getSubList(freshDictionary, userLimit);
     }
 
     /**
@@ -192,8 +194,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
      */
     public List getFreshNews(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_NEWS, "/data/settings/index_news");
-        List list = getSubList(freshNews, userLimit);
-        return list;
+        return getSubList(freshNews, userLimit);
     }
 
     /**
@@ -333,6 +334,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
             refreshDrivers();
             refreshFaq();
             refreshHardware();
+            refreshSoftware();
             refreshNews();
             refreshQuestions();
             refreshSizes();
@@ -441,6 +443,18 @@ public class VariableFetcher extends TimerTask implements Configurable {
             freshHardware = list;
         } catch (Exception e) {
             log.error("Selhalo nacitani hardwaru", e);
+        }
+    }
+
+    public void refreshSoftware() {
+        try {
+            int maximum = (Integer) maxSizes.get(KEY_SOFTWARE);
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
+            List list = sqlTool.findItemRelationsWithType(Item.SOFTWARE, qualifiers);
+            Tools.syncList(list);
+            freshSoftware = list;
+        } catch (Exception e) {
+            log.error("Selhalo nacitani softwaru", e);
         }
     }
 
@@ -566,6 +580,12 @@ public class VariableFetcher extends TimerTask implements Configurable {
         size = prefs.getInt(PREF_MAX + KEY_HARDWARE, 3);
         maxSizes.put(KEY_HARDWARE, size);
         freshHardware = Collections.EMPTY_LIST;
+
+        size = prefs.getInt(PREF_DEFAULT + KEY_SOFTWARE, 3);
+        defaultSizes.put(KEY_SOFTWARE, size);
+        size = prefs.getInt(PREF_MAX + KEY_SOFTWARE, 3);
+        maxSizes.put(KEY_SOFTWARE, size);
+        freshSoftware = Collections.EMPTY_LIST;
 
         size = prefs.getInt(PREF_DEFAULT + KEY_NEWS, 5);
         defaultSizes.put(KEY_NEWS, size);

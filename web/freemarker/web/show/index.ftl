@@ -1,5 +1,20 @@
  <#assign plovouci_sloupec>
 
+    <#assign SOFTWARE = VARS.getFreshSoftware(USER?if_exists)>
+    <#if (SOFTWARE?size>0) >
+        <div class="s_nadpis">
+            <a class="info" href="#">?<span class="tooltip">Katalog softwaru por Linux</span></a>
+            <a href="/software">Software</a>
+        </div>
+        <div class="s_sekce">
+            <ul>
+            <#list SOFTWARE as rel>
+                 <li><a href="${rel.url}">${TOOL.xpath(rel.child,"data/name")}</a></li>
+            </#list>
+            </ul>
+        </div>
+    </#if>
+
     <#assign HARDWARE = VARS.getFreshHardware(USER?if_exists)>
     <#if (HARDWARE?size>0) >
         <div class="s_nadpis">
@@ -14,8 +29,6 @@
             </ul>
         </div>
     </#if>
-
-    <!-- tady byl Slovnik -->
 
     <#assign FAQ = VARS.getFreshFaqs(USER?if_exists)>
     <#if (FAQ?size>0) >

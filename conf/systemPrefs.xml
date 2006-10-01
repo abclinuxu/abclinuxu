@@ -378,6 +378,8 @@
                         <map>
                             <entry key="default.hardware" value="3"/>
                             <entry key="max.hardware" value="10"/>
+                            <entry key="default.software" value="3"/>
+                            <entry key="max.software" value="10"/>
                             <entry key="default.driver" value="3"/>
                             <entry key="max.driver" value="10"/>
                             <entry key="default.story" value="14"/>
