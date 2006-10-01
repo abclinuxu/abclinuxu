@@ -158,7 +158,7 @@ public class AbcInit extends HttpServlet implements Configurable {
             return;
         }
         log.info("Scheduling RSS kernel monitor");
-        scheduler.schedule(UpdateKernel.getInstance(), 60*1000, 1*60*60*1000);
+        scheduler.schedule(UpdateKernel.getInstance(), 60*1000, 60*60*1000);
     }
 
     /**
@@ -182,7 +182,7 @@ public class AbcInit extends HttpServlet implements Configurable {
             return;
         }
         log.info("Scheduling RSS OKSystem monitor");
-        scheduler.schedule(new OKSystemFetcher(), 1*60*1000, 2*60*60*1000);
+        scheduler.schedule(new OKSystemFetcher(), 60*1000, 2*60*60*1000);
     }
 
     /**
@@ -206,7 +206,7 @@ public class AbcInit extends HttpServlet implements Configurable {
             return;
         }
         log.info("Scheduling RSS generator");
-        scheduler.schedule(new GenerateLinks(), 30*1000, 1*60*60*1000);
+        scheduler.schedule(new GenerateLinks(), 30*1000, 60*60*1000);
     }
 
     /**
@@ -258,7 +258,7 @@ public class AbcInit extends HttpServlet implements Configurable {
             return;
         }
         log.info("Scheduling ArticlePool monitor");
-        scheduler.schedule(new ArticlePoolMonitor(), 1*60*1000, 3*60*1000);
+        scheduler.schedule(new ArticlePoolMonitor(), 60*1000, 3*60*1000);
     }
 
     /**

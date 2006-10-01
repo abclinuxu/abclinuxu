@@ -40,6 +40,7 @@ import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 import org.apache.log4j.Logger;
@@ -120,7 +121,7 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
     }
 
     public static void main(String[] args) throws Exception {
-        FMTemplateSelector.initialize("/home/literakl/abc/deploy/WEB-INF/conf/templates.xml");
+        FMTemplateSelector.initialize(AbcConfig.getDeployPath() + "WEB-INF/conf/templates.xml");
         FMUtils.getConfiguration().setSharedVariable(Constants.VAR_DATE_TOOL, new DateTool());
         new WhatHappened().run();
     }
@@ -129,9 +130,9 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.WEEK_OF_YEAR, -1);
         env.put(PREF_PEREX, perex);
-        Integer week = new Integer(calendar.get(Calendar.WEEK_OF_YEAR));
-        Integer year = new Integer(calendar.get(Calendar.YEAR));
-        String computedTitle = MessageFormat.format(title, new Object[]{week,year});
+        Integer week = calendar.get(Calendar.WEEK_OF_YEAR);
+        Integer year = calendar.get(Calendar.YEAR);
+        String computedTitle = MessageFormat.format(title, week, year);
         env.put(VAR_TITLE, computedTitle);
         setData(env, calendar.getTime(), new Date());
     }

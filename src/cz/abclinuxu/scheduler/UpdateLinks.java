@@ -105,7 +105,7 @@ public class UpdateLinks extends TimerTask implements Configurable {
             for (Iterator iter = servers.iterator(); iter.hasNext();) {
                 Integer id = (Integer) iter.next();
                 definition = (ServerInfo) definitions.get(id);
-                server = (Server) persistence.findById(new Server(id.intValue()));
+                server = (Server) persistence.findById(new Server(id));
                 try {
                     synchronize(server, 0, definition, persistence);
                 } catch (Exception e) {
@@ -133,7 +133,7 @@ public class UpdateLinks extends TimerTask implements Configurable {
                         log.warn("Cannot update links for url " + definition.url + ", parent relation is "+rid+"!", e);
                     }
                 } catch (Exception e) {
-                    remove.add(new Integer(rid));
+                    remove.add(rid);
                 }
             }
 
@@ -303,7 +303,7 @@ public class UpdateLinks extends TimerTask implements Configurable {
         List servers = new ArrayList(definitions.size());
         for (Iterator iter = definitions.keySet().iterator(); iter.hasNext();) {
             Integer id = (Integer) iter.next();
-            servers.add(new Server(id.intValue()));
+            servers.add(new Server(id));
         }
         servers = Tools.syncList(servers);
 

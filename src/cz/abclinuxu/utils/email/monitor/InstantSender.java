@@ -80,7 +80,6 @@ public class InstantSender extends Thread implements Configurable {
                 List users = getRecepients(action);
                 if (users.size()>0)
                     EmailSender.sendEmailToUsers(env,users);
-                action = null;
             } catch (Exception e) {
                 log.error("Unknown exception!", e);
             }

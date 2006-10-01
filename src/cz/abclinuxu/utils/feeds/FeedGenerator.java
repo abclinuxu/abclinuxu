@@ -238,7 +238,7 @@ public class FeedGenerator implements Configurable {
             SyndContent description;
 
             Map defaultSizes = VariableFetcher.getInstance().getDefaultSizes();
-            int countArticles = ((Integer)defaultSizes.get(VariableFetcher.KEY_ARTICLE)).intValue();
+            int countArticles = (Integer) defaultSizes.get(VariableFetcher.KEY_ARTICLE);
             Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, countArticles)};
             List articles = sqlTool.findIndexArticlesRelations(qualifiers);
             Tools.syncList(articles);

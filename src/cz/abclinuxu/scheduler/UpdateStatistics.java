@@ -55,15 +55,15 @@ public final class UpdateStatistics extends TimerTask {
         synchronized(this) {
             Integer count = (Integer) entries.get(page);
             if (count == null)
-                count = new Integer(1);
+                count = 1;
             else
-                count = new Integer(count.intValue() + 1);
+                count = count + 1;
             entries.put(page, count);
         }
     }
 
     public void run() {
-        Map toBeSaved = null;
+        Map toBeSaved;
         synchronized(this) {
             toBeSaved = entries;
             entries = new HashMap(20, 0.95f);
@@ -74,7 +74,7 @@ public final class UpdateStatistics extends TimerTask {
             for (Iterator iter = toBeSaved.keySet().iterator(); iter.hasNext();) {
                 String page = (String) iter.next();
                 Integer count = (Integer) toBeSaved.get(page);
-                sqlTool.recordPageView(page, count.intValue());
+                sqlTool.recordPageView(page, count);
             }
         } catch (Throwable e) {
             log.error("Batch update of statistics failed", e);

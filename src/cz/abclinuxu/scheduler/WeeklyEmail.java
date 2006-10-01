@@ -74,8 +74,8 @@ public class WeeklyEmail extends TimerTask implements Configurable {
             params.put(EmailSender.KEY_TEMPLATE,template);
             params.put(Constants.VAR_TOOL,new Tools());
             params.put(Constants.VAR_DATE_TOOL,new DateTool());
-            params.put(VAR_WEEK,new Integer(week));
-            params.put(VAR_YEAR,new Integer(year));
+            params.put(VAR_WEEK, week);
+            params.put(VAR_YEAR, year);
 
             pushData(params);
 

@@ -247,7 +247,7 @@ public class ViewBlog implements AbcAction, Configurable {
         }
 
         List qualifiers = new ArrayList();
-        qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL,new Integer(blog.getOwner())));
+        qualifiers.add(new CompareCondition(Field.OWNER, Operation.EQUAL, blog.getOwner()));
         if (!summary)
             addTimeLimitsFQ(year, month, day, qualifiers);
 

@@ -49,7 +49,7 @@ public class EnsureWatchedDiscussionsLimit extends TimerTask {
      * Schedules check of limits for specified user.
      */
     public static void checkLimits(int userId) {
-        instance.users.add(new Integer(userId));
+        instance.users.add(userId);
     }
 
     public EnsureWatchedDiscussionsLimit() {
@@ -70,8 +70,8 @@ public class EnsureWatchedDiscussionsLimit extends TimerTask {
             for ( Iterator iter = usersToClean.iterator(); iter.hasNext(); ) {
                 Integer uid = (Integer) iter.next();
                 iter.remove();
-                int deleted = sqlTool.deleteOldComments(uid.intValue(), limit);
-                log.debug("User "+uid.intValue()+": deleted "+deleted+" watched discussions");
+                int deleted = sqlTool.deleteOldComments(uid, limit);
+                log.debug("User "+ uid +": deleted "+deleted+" watched discussions");
             }
             log.info("Cleaning watched discussions finished");
         } catch (Exception e) {
