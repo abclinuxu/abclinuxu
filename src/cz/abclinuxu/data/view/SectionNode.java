@@ -114,6 +114,22 @@ public class SectionNode implements Comparable {
     }
 
     /**
+     * @return number of levels in this tree. The leaf node returns 0.
+     */
+    public int getDepth() {
+        if (children.size() == 0)
+            return 0;
+        int depth = 0;
+        for (Iterator<SectionNode> iter = children.iterator(); iter.hasNext();) {
+            SectionNode node = iter.next();
+            int thisDepth = node.getDepth();
+            if (thisDepth > depth)
+                depth = thisDepth;
+        }
+        return depth + 1;
+    }
+
+    /**
      * @return List of subsections
      */
     public List<SectionNode> getChildren() {

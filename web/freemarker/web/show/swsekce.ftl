@@ -7,8 +7,6 @@
             </#if>
             <li><a href="/clanky/show/3500?text=sekce+${RELATION.url}">Po¾ádat o vytvoøení podsekce</a></li>
             <li><a href="/software/alternativy">Alternativy k aplikacím</a></li>
-            <li><a href="/History?type=software">Poslední upravené polo¾ky</a></li>
-            <li><a href="/doc/portal/volne-aplikace">Nepopsaný software</a></li>
             <li>
                 <form action="" method="get">
                     <input type="text" name="name" size="20">
@@ -114,11 +112,15 @@
 
 <#if (CATEGORIES?exists && CATEGORIES?size > 0)>
     <p><small><b>Sekce</b></small></p>
-    <p>
-         <a href="javascript:ddtreemenu.flatten('treemenu1', 'expand')">V¹e rozbalit</a> | 
-	 <a href="javascript:ddtreemenu.flatten('treemenu1', 'contact')">V¹e sbalit</a>
-	<a class="info" href="#">?<span class="tooltip">Kliknutím na ikonku adresáøe rozbalíte podmenu. Kliknutím na název kategorie do ní rovnou vstoupíte.</span></a>
-    </p>
+    <#if (DEPTH > 1)>
+        <p>
+            <a href="javascript:ddtreemenu.flatten('treemenu1', 'expand')">V¹e rozbalit</a> |
+            <a href="javascript:ddtreemenu.flatten('treemenu1', 'contact')">V¹e sbalit</a>
+            <a class="info" href="#">?<span class="tooltip">
+                Kliknutím na ikonku adresáøe rozbalíte podmenu. Kliknutím na název kategorie do ní rovnou vstoupíte.
+            </span></a>
+        </p>
+    </#if>
 
     <@lib.listTree CATEGORIES />
 

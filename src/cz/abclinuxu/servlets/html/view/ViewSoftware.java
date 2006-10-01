@@ -21,7 +21,6 @@ package cz.abclinuxu.servlets.html.view;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.view.SectionTreeCache;
 import cz.abclinuxu.data.view.SectionNode;
 import cz.abclinuxu.exceptions.NotFoundException;
@@ -88,6 +87,7 @@ public class ViewSoftware implements AbcAction {
     public static final String VAR_CATEGORIES = "CATEGORIES";
     public static final String VAR_LINKS = "FEED_LINKS";
     public static final String VAR_CHILDREN_MAP = "CHILDREN";
+    public static final String VAR_TREE_DEPTH = "DEPTH";
     public static final String VAR_SOFTWARE_NAME = "SOFTWARE";
     public static final String VAR_ALTERNATIVES = "ALTERNATIVES";
 
@@ -147,8 +147,7 @@ public class ViewSoftware implements AbcAction {
     private String processAlternatives(HttpServletRequest request, Map env) {
         SQLTool sqlTool = SQLTool.getInstance();
         List values = sqlTool.getPropertyValues(Constants.PROPERTY_ALTERNATIVE_SOFTWARE);
-        // todo Case insensitive comparator, mozna v jakarta commons
-        Collections.sort(values);
+        Collections.sort(values, String.CASE_INSENSITIVE_ORDER);
         env.put(VAR_ALTERNATIVES, values);
         return FMTemplateSelector.select("ViewSoftware", "alternatives", env, request);
     }
@@ -174,14 +173,19 @@ public class ViewSoftware implements AbcAction {
 
         SectionTreeCache softwareTree = VariableFetcher.getInstance().getSoftwareTree();
         List categories = null;
-        if (relation.getId() == Constants.REL_SOFTWARE)
+        int depth = 0;
+        if (relation.getId() == Constants.REL_SOFTWARE) {
             categories = softwareTree.getChildren();
-        else {
+            depth = 3;
+        } else {
             SectionNode sectionNode = softwareTree.getByRelation(relation.getId());
-            if (sectionNode != null)
+            if (sectionNode != null) {
                 categories = sectionNode.getChildren();
+                depth = sectionNode.getDepth();
+            }
         }
         env.put(VAR_CATEGORIES, categories);
+        env.put(VAR_TREE_DEPTH, depth);
 
         List qualifiers = new ArrayList();
         qualifiers.add(new CompareCondition(Field.UPPER, Operation.EQUAL, relation.getId()));
@@ -233,7 +237,6 @@ public class ViewSoftware implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Item item = (Item) relation.getChild();
-        Relation upper = relation;
 
         Tools.sync(item);
         env.put(VAR_ITEM, item);
@@ -244,7 +247,7 @@ public class ViewSoftware implements AbcAction {
 
         Map children = Tools.groupByType(item.getChildren());
         env.put(VAR_LINKS, children.get(Constants.TYPE_LINK));
-        Tools.sync(upper);
+        Tools.sync(relation);
 
         // todo tohle take proverit
         String revision = (String) params.get(ShowRevisions.PARAM_REVISION);
