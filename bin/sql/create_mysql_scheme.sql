@@ -225,3 +225,16 @@ CREATE TABLE stara_adresa (
  rid INT(5) NULL,                                -- id relace smerujici na tentyz objekt jako puvodni url
  nova VARCHAR(255) NULL                          -- pokud je rid NULL, pak nova adresa
 );
+
+-- tabulka nahrad URL
+CREATE TABLE stara_adresa (
+ puvodni VARCHAR(255) PRIMARY KEY,               -- puvodni URL, ktere jiz neni platne
+ rid INT(5) NULL,                                -- id relace smerujici na tentyz objekt jako puvodni url
+ nova VARCHAR(255) NULL                          -- pokud je rid NULL, pak nova adresa
+);
+
+-- seznam retezcu, ktere ctenari hledaji
+CREATE TABLE hledano (
+ retezec VARCHAR(255) PRIMARY KEY,               -- dotaz do fulltextoveho hledani
+ pocet INT(6) NULL                               -- kolikrat bylo hledano (bez kliku na dalsi stranky vysledku)
+);

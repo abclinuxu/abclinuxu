@@ -1,6 +1,7 @@
 drop table if exists akce;
 drop table if exists anketa2;
 drop table if exists citac;
+drop table if exists hledano;
 drop table if exists kategorie;
 drop table if exists komentar;
 drop table if exists objekt;
