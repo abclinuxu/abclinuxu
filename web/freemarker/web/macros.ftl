@@ -28,7 +28,7 @@
 </#macro>
 
 <#macro showCounter(item, map, type)><#rt>
-    <#local value = map.get(item)?default("UNDEF")><#rt>
+    <#if map.get?exists><#local value = map.get(item)?default("UNDEF")><#else><#local value = "UNDEF"></#if><#rt>
     <#lt><#if value?string!="UNDEF">${value}<#else>${TOOL.getCounterValue(item, type)}</#if><#rt>
 </#macro>
 
