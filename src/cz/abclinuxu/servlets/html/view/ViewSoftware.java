@@ -76,7 +76,6 @@ public class ViewSoftware implements AbcAction {
     public static final String PARAM_NAME = "name";
 
     public static final String ACTION_FILTER = "filter";
-    public static final String ACTION_SEARCH = "search";
 
     public static final String VAR_FILTERS = "FILTERS";
     public static final String VAR_PARENTS = "PARENTS";
@@ -134,9 +133,6 @@ public class ViewSoftware implements AbcAction {
             env.put(VAR_FILTERS, filters);
         else
             env.put(VAR_FILTERS, Collections.EMPTY_MAP);
-
-        if (ACTION_SEARCH.equals(action))
-            return processSearch(request, env);
 
         if (relation.getChild() instanceof Category) {
             return processSection(request, relation, env);
@@ -197,32 +193,6 @@ public class ViewSoftware implements AbcAction {
         if (items.size() > 0)
             env.put(VAR_ITEMS, Tools.syncList(items));
 
-        List parents = persistence.findParents(relation);
-        env.put(ShowObject.VAR_PARENTS, parents);
-        env.put(VAR_CATEGORY, Tools.sync(relation.getChild()));
-
-        return FMTemplateSelector.select("ViewSoftware", "swsekce", env, request);
-    }
-
-    /**
-     * Processes search for given software
-     */
-    private String processSearch(HttpServletRequest request, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
-        SQLTool sqlTool = SQLTool.getInstance();
-
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        String name = (String) params.get(PARAM_NAME);
-
-        List qualifiers = new ArrayList();
-        qualifiers.add(new CompareCondition(Field.DATA, Operation.LIKE, "%<name>%"+name+"%</name>%"));
-        Qualifier[] qa = new Qualifier[qualifiers.size()];
-
-        List items = sqlTool.findItemRelationsWithType(Item.SOFTWARE, (Qualifier[]) qualifiers.toArray(qa));
-        if (items.size() > 0)
-            env.put(VAR_ITEMS, Tools.syncList(items));
-
-        Relation relation = (Relation) env.get(VAR_RELATION);
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
         env.put(VAR_CATEGORY, Tools.sync(relation.getChild()));

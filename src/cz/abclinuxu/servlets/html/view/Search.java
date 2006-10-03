@@ -93,6 +93,10 @@ public class Search implements AbcAction {
 
     public static String performSearch(HttpServletRequest request, Map env) throws Exception {
         boolean initIndexReader = indexReader == null, lastRunFileMissing = false;
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        int from = getFrom(params);
+        int count = getPageSize(params, env);
+
         File file = CreateIndex.getLastRunFile();
         if (! file.exists()) {
             lastRunFileMissing = true;
@@ -105,7 +109,6 @@ public class Search implements AbcAction {
             env.put(VAR_UPDATED, lastUpdated);
         }
 
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Types types = new Types(params.get(PARAM_TYPE));
         env.put(VAR_TYPES, types);
         boolean onlyNews = types.size()==1 && types.isNews();
@@ -122,7 +125,8 @@ public class Search implements AbcAction {
         try {
             query = AbcQueryParser.parse(queryString, analyzer, types, newsCategoriesSet);
             query = AbcQueryParser.addParentToQuery((String)params.get(PARAM_PARENT), query);
-            searchLog.info(queryString);
+            if (from == 0) // user clicked on Next page of the result
+                searchLog.info(queryString);
         } catch (ParseException e) {
             ServletUtils.addError(PARAM_QUERY, "Hledaný øetìzec obsahuje chybu!", env, null);
             return choosePage(onlyNews, request, env, newsCategoriesSet);
@@ -141,8 +145,6 @@ public class Search implements AbcAction {
             SimpleHTMLFormatter formatter = new SimpleHTMLFormatter("<span class=\"highlight\">", "</span>");
             Highlighter highlighter = new Highlighter(formatter, new QueryScorer(query));
 
-            int from = getFrom(params);
-            int count = getPageSize(params, env);
             List list = new ArrayList(count);
             int total = hits.length();
             for ( int i = from, j = 0; i < total && j < count; i++, j++ ) {
@@ -154,11 +156,11 @@ public class Search implements AbcAction {
                 list.add(doc);
             }
 
-            env.put(VAR_SEARCH_TIME, new Long(end - start));
+            env.put(VAR_SEARCH_TIME, end - start);
 
             Paging paging = new Paging(list,from,count,total);
             env.put(VAR_RESULT,paging);
-            env.put(VAR_TOTAL,new Integer(total));
+            env.put(VAR_TOTAL, total);
         } catch (Exception e) {
             log.error("Cannot search '"+query+"'",e);
             if (lastRunFileMissing)
@@ -206,8 +208,7 @@ public class Search implements AbcAction {
             String param = (String) iter.next();
             if (!param.startsWith(PARAM_FROM)) continue;
             if (param.length()<6) continue;
-            int from = Misc.parseInt(param.substring(5), 0);
-            return from;
+            return Misc.parseInt(param.substring(5), 0);
         }
         return 0;
     }

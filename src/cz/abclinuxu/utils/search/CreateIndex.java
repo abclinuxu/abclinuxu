@@ -60,7 +60,8 @@ public class CreateIndex implements Configurable {
     public static final String PREF_MIN_MERGE_DOCS = "min.merge.docs";
     public static final String PREF_MAX_MERGE_DOCS = "max.merge.docs";
     public static final String PREF_MAX_FIELD_LENGTH = "max.field.length";
-    public static final String PREF_BOOST_HARDWARE = "boost.hardware";
+    public static final String PREF_BOOST_SOFTWARE = "boost.hardware";
+    public static final String PREF_BOOST_HARDWARE = "boost.software";
     public static final String PREF_BOOST_ARTICLE = "boost.article";
     public static final String PREF_BOOST_NEWS = "boost.news";
     public static final String PREF_BOOST_QUESTION = "boost.question";
@@ -80,7 +81,7 @@ public class CreateIndex implements Configurable {
     static Persistence persistence;
     static SQLTool sqlTool;
     static HashMap indexed = new HashMap(150000, 0.99f);
-    static float boostHardware, boostArticle, boostNews, boostQuestion, boostDiscussion;
+    static float boostHardware, boostSoftware, boostArticle, boostNews, boostQuestion, boostDiscussion;
     static float boostDriver, boostBlog, boostFaq, boostDictionary, boostSection, boostPoll;
 
     static {
@@ -97,6 +98,7 @@ public class CreateIndex implements Configurable {
         try {
             Relation articles = (Relation) persistence.findById(new Relation(Constants.REL_ARTICLES));
             Relation hardware = (Relation) Tools.sync(new Relation(Constants.REL_HARDWARE));
+            Relation software = (Relation) Tools.sync(new Relation(Constants.REL_SOFTWARE));
             Relation drivers = (Relation) Tools.sync(new Relation(Constants.REL_DRIVERS));
             Relation abc = (Relation) Tools.sync(new Relation(Constants.REL_ABC)); // neni cas to smazat?
             Relation blogs = (Relation) persistence.findById(new Relation(Constants.REL_BLOGS));
@@ -119,15 +121,16 @@ public class CreateIndex implements Configurable {
 
             try {
                 makeIndexOnArticles(articles.getChild().getChildren());
-                makeIndexOnNews();
-                makeIndexOnDictionary();
-                makeIndexOnFaq();
+//                makeIndexOnNews();
+//                makeIndexOnDictionary();
+//                makeIndexOnFaq();
                 makeIndexOnPolls();
-                makeIndexOnBlogs(blogs.getChild().getChildren());
-                makeIndexOnForums(forums, UrlUtils.PREFIX_FORUM);
-                makeIndexOn(hardware, UrlUtils.PREFIX_HARDWARE);
+//                makeIndexOnBlogs(blogs.getChild().getChildren());
+//                makeIndexOnForums(forums, UrlUtils.PREFIX_FORUM);
+//                makeIndexOn(hardware, UrlUtils.PREFIX_HARDWARE);
+                makeIndexOn(software, UrlUtils.PREFIX_SOFTWARE);
                 makeIndexOn(drivers, UrlUtils.PREFIX_DRIVERS);
-                makeIndexOn(abc, UrlUtils.PREFIX_CLANKY);
+//                makeIndexOn(abc, UrlUtils.PREFIX_CLANKY);
             } finally {
                 log.info("Starting to optimize the index");
                 indexWriter.optimize();
@@ -174,8 +177,9 @@ public class CreateIndex implements Configurable {
             url = relation.getUrl();
             if (url == null)
                 url = urlPrefix + "/show/" + relation.getId();
+
             if (child instanceof Category) {
-                doc = indexCategory(relation);
+                doc = indexCategory(relation, urlPrefix);
             } else if (child instanceof Item) {
                 item = (Item) child;
                 switch ( item.getType() ) {
@@ -183,6 +187,8 @@ public class CreateIndex implements Configurable {
                         doc = indexDiscussion(item); break;
                     case Item.HARDWARE:
                         doc = indexHardware(item); break;
+                    case Item.SOFTWARE:
+                        doc = indexSoftware(item); break;
                     case Item.DRIVER:
                         doc = indexDriver(item); break;
                 }
@@ -390,7 +396,7 @@ public class CreateIndex implements Configurable {
         MyDocument doc;
 
         List qualifiers = new ArrayList();
-        CompareCondition ownerCondition = new CompareCondition(Field.OWNER, Operation.EQUAL,new Integer(blog.getOwner()));
+        CompareCondition ownerCondition = new CompareCondition(Field.OWNER, Operation.EQUAL, blog.getOwner());
         qualifiers.add(ownerCondition);
         Qualifier[] qa = new Qualifier[qualifiers.size()];
         int total = sqlTool.countItemRelationsWithType(Item.BLOG, (Qualifier[]) qualifiers.toArray(qa));
@@ -490,7 +496,7 @@ public class CreateIndex implements Configurable {
     /**
      * Extracts data for indexing from category. Category must be synchronized.
      */
-    static MyDocument indexCategory(Relation relation) {
+    static MyDocument indexCategory(Relation relation, String urlPrefix) {
         Category category = (Category) relation.getChild();
         StringBuffer sb = new StringBuffer();
         String title;
@@ -511,10 +517,12 @@ public class CreateIndex implements Configurable {
         doc.setType(MyDocument.TYPE_CATEGORY);
         doc.setCreated(category.getCreated());
         doc.setUpdated(category.getUpdated());
+
         String url = relation.getUrl();
         if (url == null)
-            url = UrlUtils.PREFIX_HARDWARE+"/dir/"+relation.getId(); // TODO teoreticky by to nekdy mohlo vadit
+            url = urlPrefix+"/dir/"+relation.getId();
         doc.setURL(url);
+
         doc.setCid(category);
         doc.setBoost(boostSection);
         return doc;
@@ -572,7 +580,7 @@ public class CreateIndex implements Configurable {
                 } else {
                     Integer id = comment.getAuthor();
                     if (id != null)
-                        storeUser(id.intValue(), sb);
+                        storeUser(id, sb);
                 }
             }
         }
@@ -639,6 +647,37 @@ public class CreateIndex implements Configurable {
         doc.setType(MyDocument.TYPE_HARDWARE);
         doc.setCid(make);
         doc.setBoost(boostHardware);
+        return doc;
+    }
+
+
+    /**
+     * Extracts data for indexing from hardware. Item must be synchronized.
+     */
+    static MyDocument indexSoftware(Item make) {
+        Element data = make.getData().getRootElement();
+        String title;
+
+        Node node = data.element("name");
+        title = node.getText();
+        StringBuffer sb = new StringBuffer(title);
+        storeUser(make.getOwner(), sb);
+
+        node = data.element("description");
+        if (node != null) {
+            sb.append(" ");
+            sb.append(node.getText());
+        }
+        sb.append(" ");
+
+        String tmp = Tools.removeTags(sb.toString());
+        MyDocument doc = new MyDocument(tmp);
+        doc.setTitle(title);
+        doc.setCreated(make.getCreated());
+        doc.setUpdated(make.getUpdated());
+        doc.setType(MyDocument.TYPE_SOFTWARE);
+        doc.setCid(make);
+        doc.setBoost(boostSoftware);
         return doc;
     }
 
@@ -920,7 +959,7 @@ public class CreateIndex implements Configurable {
         if ( indexed.containsKey(child) )
             return true;
         else {
-            GenericObject key = (GenericObject) child.getClass().newInstance();
+            GenericObject key = child.getClass().newInstance();
             key.setId(child.getId());
             indexed.put(key, Boolean.TRUE);
             return false;
@@ -972,6 +1011,7 @@ public class CreateIndex implements Configurable {
         boostDriver = prefs.getFloat(PREF_BOOST_DRIVER, 1.0f);
         boostFaq = prefs.getFloat(PREF_BOOST_FAQ, 1.0f);
         boostHardware = prefs.getFloat(PREF_BOOST_HARDWARE, 1.0f);
+        boostSoftware = prefs.getFloat(PREF_BOOST_SOFTWARE, 1.0f);
         boostNews = prefs.getFloat(PREF_BOOST_NEWS, 1.0f);
         boostQuestion = prefs.getFloat(PREF_BOOST_QUESTION, 1.0f);
         boostSection = prefs.getFloat(PREF_BOOST_SECTION, 1.0f);

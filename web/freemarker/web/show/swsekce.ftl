@@ -7,13 +7,6 @@
             </#if>
             <li><a href="/clanky/show/3500?text=sekce+${RELATION.url}">Po¾ádat o vytvoøení podsekce</a></li>
             <li><a href="/software/alternativy">Alternativy k aplikacím</a></li>
-            <li>
-                <form action="" method="get">
-                    <input type="text" name="name" size="20">
-                    <input type="hidden" name="action" value="search">
-                    <input type="submit" value="Hledej aplikaci">
-                </form>
-            </li>
             <#if USER?exists && USER.hasRole("category admin")>
                 <hr />
                 <li>
@@ -111,7 +104,6 @@
 </#if>
 
 <#if (CATEGORIES?exists && CATEGORIES?size > 0)>
-    <p><small><b>Sekce</b></small></p>
     <#if (DEPTH > 1)>
         <p>
             <a href="javascript:ddtreemenu.flatten('treemenu1', 'expand')">V¹e rozbalit</a> |

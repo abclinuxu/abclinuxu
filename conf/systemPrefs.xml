@@ -51,6 +51,7 @@
                                 <!--entry key="max.merge.docs" value="10000" /-->
                                 <!--entry key="max.field.length" value="10000" /-->
                                 <entry key="boost.hardware" value="1.5" />
+                                <entry key="boost.software" value="1.5" />
                                 <entry key="boost.article" value="1.5" />
                                 <entry key="boost.news" value="1.0" />
                                 <entry key="boost.question" value="1.3" />
@@ -365,7 +366,7 @@
                             <entry key="feedUri13" value="http://www.czilla.cz/rss/rss.html"/>
                             <entry key="feedUri14" value="http://www.openoffice.cz/rss.xml"/>
                             <entry key="feedUri15" value="http://slashdot.org/index.rss"/>
-                            <entry key="feedUri16" value="http://www.lbw.cz/clanky.rdf"/>
+                            <entry key="feedUri16" value="http://www.itbiz.cz/?q=atom/feed"/>
                             <entry key="feedUri17" value="http://www.suseportal.cz/node/feed"/>
                             <entry key="feedUri18" value="http://www.chip.cz/texty/feed.rss"/>
                             <entry key="feedUri19" value="http://www.svethardware.cz/export.jsp?format=rss"/>
