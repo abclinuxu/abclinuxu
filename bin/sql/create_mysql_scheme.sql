@@ -236,5 +236,5 @@ CREATE TABLE stara_adresa (
 -- seznam retezcu, ktere ctenari hledaji
 CREATE TABLE hledano (
  retezec VARCHAR(255) PRIMARY KEY,               -- dotaz do fulltextoveho hledani
- pocet INT(6) NULL                               -- kolikrat bylo hledano (bez kliku na dalsi stranky vysledku)
+ pocet INT(6) NOT NULL DEFAULT 0                 -- kolikrat bylo hledano (bez kliku na dalsi stranky vysledku)
 );
