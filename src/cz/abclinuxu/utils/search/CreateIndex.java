@@ -121,16 +121,16 @@ public class CreateIndex implements Configurable {
 
             try {
                 makeIndexOnArticles(articles.getChild().getChildren());
-//                makeIndexOnNews();
-//                makeIndexOnDictionary();
-//                makeIndexOnFaq();
+                makeIndexOnNews();
+                makeIndexOnDictionary();
+                makeIndexOnFaq();
                 makeIndexOnPolls();
-//                makeIndexOnBlogs(blogs.getChild().getChildren());
-//                makeIndexOnForums(forums, UrlUtils.PREFIX_FORUM);
-//                makeIndexOn(hardware, UrlUtils.PREFIX_HARDWARE);
+                makeIndexOnBlogs(blogs.getChild().getChildren());
+                makeIndexOnForums(forums, UrlUtils.PREFIX_FORUM);
+                makeIndexOn(hardware, UrlUtils.PREFIX_HARDWARE);
                 makeIndexOn(software, UrlUtils.PREFIX_SOFTWARE);
                 makeIndexOn(drivers, UrlUtils.PREFIX_DRIVERS);
-//                makeIndexOn(abc, UrlUtils.PREFIX_CLANKY);
+                makeIndexOn(abc, UrlUtils.PREFIX_CLANKY);
             } finally {
                 log.info("Starting to optimize the index");
                 indexWriter.optimize();
