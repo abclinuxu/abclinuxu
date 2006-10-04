@@ -20,6 +20,7 @@ package cz.abclinuxu.utils.freemarker;
 
 import freemarker.template.*;
 import freemarker.ext.beans.BeansWrapper;
+import freemarker.cache.FileTemplateLoader;
 
 import java.io.*;
 import java.util.Map;
@@ -155,7 +156,9 @@ public class FMUtils implements Configurable {
 
         templatesDir = prefs.get(PREF_TEMPLATES_DIRECTORY, null);
         try {
-            config.setDirectoryForTemplateLoading(new File(templatesDir));
+            FileTemplateLoader fileTemplateLoader = new FileTemplateLoader(new File(templatesDir));
+            FallBackTemplateLoader loader = new FallBackTemplateLoader(fileTemplateLoader, "web");
+            config.setTemplateLoader(loader);
         } catch (IOException e) {
             throw new ConfigurationException("Cannot set Freemarker templates dir to "+templatesDir);
         }
