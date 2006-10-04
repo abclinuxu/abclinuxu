@@ -51,7 +51,7 @@
                                 <!--entry key="max.merge.docs" value="10000" /-->
                                 <!--entry key="max.field.length" value="10000" /-->
                                 <entry key="boost.hardware" value="1.5" />
-                                <entry key="boost.software" value="1.5" />
+                                <entry key="boost.software" value="1.9" />
                                 <entry key="boost.article" value="1.5" />
                                 <entry key="boost.news" value="1.0" />
                                 <entry key="boost.question" value="1.3" />
@@ -160,6 +160,7 @@
                                 <entry key="diskuse" value="auto/diskuse.rss"/>
                                 <entry key="ovladace" value="auto/ovladace.rss"/>
                                 <entry key="hardware" value="auto/hardware.rss"/>
+                                <entry key="software" value="auto/software.rss"/>
                                 <entry key="zpravicky" value="auto/zpravicky.rss"/>
                                 <entry key="faq" value="auto/faq.rss"/>
                                 <entry key="blog" value="auto/blog.rss"/>

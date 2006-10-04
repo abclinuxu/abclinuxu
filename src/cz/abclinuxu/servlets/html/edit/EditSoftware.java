@@ -32,6 +32,7 @@ import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.email.monitor.MonitorAction;
 import cz.abclinuxu.utils.email.monitor.UserAction;
 import cz.abclinuxu.utils.email.monitor.ObjectType;
@@ -186,6 +187,9 @@ public class EditSoftware implements AbcAction, Configurable {
         // commit new version
         Misc.commitRelation(document.getRootElement(), relation, user);
 
+        // refresh RSS
+        FeedGenerator.updateSoftware();
+
         if (redirect) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, urlUtils.getRelationUrl(relation, true));
@@ -262,6 +266,9 @@ public class EditSoftware implements AbcAction, Configurable {
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
         MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.ITEM, item, absoluteUrl);
         MonitorPool.scheduleMonitorAction(action);
+
+        // refresh RSS
+        FeedGenerator.updateSoftware();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, urlUtils.getRelationUrl(relation, true));

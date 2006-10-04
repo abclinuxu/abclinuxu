@@ -59,6 +59,7 @@ public class FeedGenerator implements Configurable {
     static final String PREF_ARTICLES = "clanky";
     static final String PREF_DRIVERS = "ovladace";
     static final String PREF_HARDWARE = "hardware";
+    static final String PREF_SOFTWARE = "software";
     static final String PREF_BLOG = "blog";
     static final String PREF_BLOGS = "blogs";
     static final String PREF_BLOG_DIGEST = "blog.digest";
@@ -69,7 +70,7 @@ public class FeedGenerator implements Configurable {
     static final String PREF_NEWS_WORD_LIMIT = "news.word.limit";
 
     static String fileDiscussions, fileArticles, fileDrivers, fileHardware, fileBlog, dirBlogs, fileBlogDigest;
-    static String fileNews, fileFaq, filePolls, fileTrafika;
+    static String fileNews, fileFaq, filePolls, fileTrafika, fileSoftware;
     static int feedLength = 10, highFrequencyFeedLength = 25, newsWordLimit;
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new FeedGenerator());
@@ -215,6 +216,61 @@ public class FeedGenerator implements Configurable {
             writer.close();
         } catch (Exception e) {
             log.error("Chyba pri generovani RSS pro hardware",e);
+        }
+    }
+
+    /**
+     * Generates RSS feed for software catalog
+     */
+    public static void updateSoftware() {
+        try {
+            Persistence persistence = PersistenceFactory.getPersistance();
+
+            SyndFeed feed = new SyndFeedImpl();
+            feed.setFeedType(TYPE_RSS_1_0);
+            feed.setEncoding("UTF-8");
+            feed.setTitle("abclinuxu - katalog softwaru");
+            feed.setLink("http://www.abclinuxu.cz/software");
+            feed.setUri("http://www.abclinuxu.cz/software");
+            feed.setDescription("Seznam èerstvých záznamù do softwarového katalogu na portálu www.abclinuxu.cz");
+            List entries = new ArrayList();
+            feed.setEntries(entries);
+            SyndEntry entry;
+            SyndContent description;
+            Node node;
+
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0,feedLength)};
+            List list = SQLTool.getInstance().findItemRelationsWithType(Item.SOFTWARE, qualifiers);
+            Tools.syncList(list);
+            for (Iterator iter = list.iterator(); iter.hasNext();) {
+                Relation found = (Relation) iter.next();
+                Item item = (Item) found.getChild();
+                User author = (User) persistence.findById(new User(item.getOwner()));
+
+                entry = new SyndEntryImpl();
+                String url = found.getUrl();
+                url = "http://www.abclinuxu.cz" + url;
+                entry.setLink(url);
+                entry.setTitle(Tools.xpath(item,"data/name"));
+                entry.setPublishedDate(item.getUpdated());
+                entry.setAuthor((author.getNick()!=null) ? author.getNick() : author.getName());
+                node = item.getData().selectSingleNode("/data/intro");
+                if (node != null) {
+                    description = new SyndContentImpl();
+                    description.setType("text/plain");
+                    description.setValue(node.getText());
+                    entry.setDescription(description);
+                }
+                entries.add(entry);
+            }
+
+            String path = AbcConfig.calculateDeployedPath(fileSoftware);
+            Writer writer = getWriter(path);
+            SyndFeedOutput output = new SyndFeedOutput();
+            output.output(feed, writer);
+            writer.close();
+        } catch (Exception e) {
+            log.error("Chyba pri generovani RSS pro software",e);
         }
     }
 
@@ -620,6 +676,7 @@ public class FeedGenerator implements Configurable {
         fileArticles = prefs.get(PREF_ARTICLES, null);
         fileDrivers = prefs.get(PREF_DRIVERS, null);
         fileHardware = prefs.get(PREF_HARDWARE, null);
+        fileSoftware = prefs.get(PREF_SOFTWARE, null);
         fileBlog = prefs.get(PREF_BLOG, null);
         fileBlogDigest = prefs.get(PREF_BLOG_DIGEST, null);
         dirBlogs = prefs.get(PREF_BLOGS, null);
@@ -632,12 +689,15 @@ public class FeedGenerator implements Configurable {
 
     public static void main(String[] args) {
         if (args==null || args.length==0) {
-            System.out.println("Enter one of hardware, articles, blog, blogs, drivers, news, faq, polls or forum as an argument!");
+            System.out.println("Enter one of hardware, software, articles, blog, blogs, drivers, news, faq, " +
+                               "polls or forum as an argument!");
             System.exit(1);
         }
         Arrays.sort(args);
         if (Arrays.binarySearch(args, "hardware")>=0)
             updateHardware();
+        if (Arrays.binarySearch(args, "software")>=0)
+            updateSoftware();
         if (Arrays.binarySearch(args, "articles")>=0)
             updateArticles();
         if (Arrays.binarySearch(args, "drivers")>=0)
