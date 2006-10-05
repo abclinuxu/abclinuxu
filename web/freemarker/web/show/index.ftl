@@ -3,7 +3,7 @@
     <#assign SOFTWARE = VARS.getFreshSoftware(USER?if_exists)>
     <#if (SOFTWARE?size>0) >
         <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Katalog softwaru por Linux</span></a>
+            <a class="info" href="#">?<span class="tooltip">Katalog softwaru pro GNU/Linux.</span></a>
             <a href="/software">Software</a>
         </div>
         <div class="s_sekce">

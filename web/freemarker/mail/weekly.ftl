@@ -21,10 +21,12 @@ Prehled clanku
 Reklama
 =======
 
-64bit.cz je internetovy obchod se servery a pracovnimi stanicemi Sun
-Microsystems. Objednavejte pohodlne servery a diskova pole rady 
-Sun Fire, Enterprise, StorEdge, Ultra a dalso s procesory SPARC nebo 
-AMD Opteron.
+HOT JOB ALERT!  The new Sun OEM Team in Prague is recruiting
+several Software Engineers (Platform Integration and Development).
+Learn more about this new opportunity here...
+
+http://www2.talents.cz/sunjobs2_detail.php?id=157
+
 
 Prehled zpravicek
 =================
