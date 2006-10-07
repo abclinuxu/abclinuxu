@@ -41,7 +41,7 @@ import java.util.*;
  */
 public class GenerateDevelDatabase {
     static User user, admin;
-    static int ridArticle, ridDriver, ridHardware, ridNews, ridQuestion;
+    static int ridArticle, ridDriver, ridHardware, ridSoftware, ridNews, ridQuestion;
 
     public static void main(String[] args) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistance(PersistenceFactory.defaultDevelUrl);
@@ -51,6 +51,7 @@ public class GenerateDevelDatabase {
         generateArticles(persistence);
         generateNews(persistence);
         generateHardwareItems(persistence);
+        generateSoftwareItems(persistence);
         generateDrivers();
         generateDiscussions(persistence);
         generateBlogs(persistence);
@@ -78,6 +79,28 @@ public class GenerateDevelDatabase {
         servlet.actionAddStep2(null, null, map, false);
         Relation created = (Relation) map.get(ShowObject.VAR_RELATION);
         ridHardware = created.getId();
+    }
+
+    private static void generateSoftwareItems(Persistence persistence) throws Exception {
+        Map map = new HashMap();
+        Map params = new HashMap();
+        map.put(Constants.VAR_PARAMS, params);
+        map.put(Constants.VAR_USER, user);
+
+        params.put(EditSoftware.PARAM_NAME, "GIMP");
+        params.put(EditSoftware.PARAM_DESCRIPTION, "GIMP je GNU editor obrazku");
+        params.put(EditSoftware.PARAM_ALTERNATIVES, "Photoshop");
+        params.put(EditSoftware.PARAM_DOWNLOAD_URL, "http://www.gimp.cz");
+        params.put(EditSoftware.PARAM_HOME_PAGE, "http://www.gimp.cz");
+        params.put(EditSoftware.PARAM_LICENSES, "gpl");
+        params.put(EditSoftware.PARAM_RSS_URL, "http://gimp.org/~planet/www.gimp.org/news/index.rss20");
+        params.put(EditSoftware.PARAM_USER_INTERFACE, Arrays.asList("xwindows", "gtk"));
+        map.put(EditSoftware.VAR_RELATION, persistence.findById(new Relation(134745)));
+
+        EditSoftware servlet = new EditSoftware();
+        servlet.actionAddStep2(null, null, map, false);
+        Relation created = (Relation) map.get(ShowObject.VAR_RELATION);
+        ridSoftware = created.getId();
     }
 
     private static void generateDiscussions(Persistence persistence) throws Exception {
@@ -119,22 +142,25 @@ public class GenerateDevelDatabase {
 
         EditFaq servlet = new EditFaq();
         servlet.actionAddStep2(null, null, map, false);
+        Relation relation = (Relation) map.get(EditFaq.VAR_RELATION);
 
         EditRelated servlet2 = new EditRelated();
+        params.put(EditRelated.VAR_RELATION, relation);
         params.put(EditRelated.PARAM_URL, UrlUtils.PREFIX_CLANKY+"/"+ridArticle);
         params.put(EditRelated.PARAM_TITLE, "první odkaz");
-        servlet2.actionAddStep2(null, null, params, false);
+        servlet2.actionAddStep2(null, null, map, false);
 
+        params.remove(EditRelated.PARAM_TITLE);
         params.put(EditRelated.PARAM_URL, UrlUtils.PREFIX_DRIVERS+"/"+ridDriver);
-        servlet2.actionAddStep2(null, null, params, false);
+        servlet2.actionAddStep2(null, null, map, false);
 
         params.put(EditRelated.PARAM_URL, UrlUtils.PREFIX_HARDWARE+"/"+ridHardware);
-        servlet2.actionAddStep2(null, null, params, false);
+        servlet2.actionAddStep2(null, null, map, false);
 
         params.put(EditRelated.PARAM_URL, "http://www.linux.cz");
         params.put(EditRelated.PARAM_TITLE, "oficialni stranky");
         params.put(EditRelated.PARAM_DESCRIPTION, "ponekud chude, nemyslite?");
-        servlet2.actionAddStep2(null, null, params, false);
+        servlet2.actionAddStep2(null, null, map, false);
     }
 
     private static void generateBlogs(Persistence persistence) throws Exception {

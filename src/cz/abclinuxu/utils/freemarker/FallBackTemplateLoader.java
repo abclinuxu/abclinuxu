@@ -23,7 +23,6 @@ import freemarker.cache.FileTemplateLoader;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.File;
 
 /**
  * TemplateLoader implementation that assumes some hierarchy structure

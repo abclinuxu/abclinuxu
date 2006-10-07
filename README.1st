@@ -3,7 +3,7 @@ Strucny navod
 
 1\ nainstalujte
 
-Sun JDK 1.4
+Sun JDK 1.5
 Jakarta ant 1.6
 Mysql 4.1 ci novejsi
 Jetty 4.1.20
@@ -14,7 +14,7 @@ mezi ostatnimi soubory ke stazeni.
 2\ nastavte si databazi
 
 $ mysql
-CREATE DATABASE devel default character set latin2 collate latin2_bin;
+CREATE DATABASE devel default character set latin2 collate latin2_general_ci;
 USE devel;
 GRANT ALL ON *.* TO 'you'@'localhost' IDENTIFIED BY 'password' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
@@ -22,27 +22,37 @@ FLUSH PRIVILEGES;
 $ bzcat devel_databaze.sql.bz2 | mysql -u you -p password devel
 
 Ujistete se, ze databaze je pristupna pres TCPIP, v defaultnim
-natsaveni je zakazano (skip networking v konfiguraci ci spoustecim
-skriptu, poidrobnosti v diskusich na abicku).
+nastaveni je zakazano (skip networking v konfiguraci ci spoustecim
+skriptu, podrobnosti v diskusich na abicku).
 
 3\ upravte si conf/conf_devel.properties
 
 Dulezite je mit spravne vsechny cesty,
 adresare by mely existovat. Take nastavte
 jmeno databaze, uzivatele a jeho heslo.
+Pod windows tento soubor zkopirujte o adresar
+vyse pod jmenem conf_deploy.properties
 
 4\ zkompilujte projekt
 
-spustte ant ve zdrojacich
+Spustte ant ve zdrojacich
+$ ant
 
 Pokud provedete pote nejake zmeny do conf_devel.properties,
 ant je neprevede do konfiguracnich souboru. Pak je lepsi
 bud smazat adresar $DEPLOY/WEB-INF nebo touchnout vsechny
 soubory v source/conf.
 
-5\ spustte jetty
+5\ nakonfigurujte jetty
+
+a) nastavte spravne promennou $JETTY_HOME v bin/jetty.sh
+
+b) nastavte spravne cestu k adresari deploy v etc/abc.xml
+uvnitr elementu addWebApplication
+
+6\ spustte jetty
 cd jetty-4.1/bin
-./jetty run
+./jetty.sh run
 
 6\ otevrete prohlizec
 
