@@ -180,7 +180,7 @@ public class EditCategory implements AbcAction {
         }
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, urlUtils.getRelationUrl(relation, true));
+        urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
         return null;
     }
 
@@ -265,7 +265,7 @@ public class EditCategory implements AbcAction {
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         if ( relation!=null )
-            urlUtils.redirect(response, urlUtils.getRelationUrl(relation, true));
+            urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
         else
             urlUtils.redirect(response, "/dir?categoryId="+category.getId());
         return null;

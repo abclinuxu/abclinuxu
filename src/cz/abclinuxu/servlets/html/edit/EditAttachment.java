@@ -139,7 +139,7 @@ public class EditAttachment implements AbcAction {
         Misc.commitRelation(item.getData().getRootElement(), relation, user);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, urlUtils.getRelationUrl(relation, true));
+        urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
         return null;
     }
 
@@ -199,7 +199,7 @@ public class EditAttachment implements AbcAction {
         Misc.commitRelation(item.getData().getRootElement(), relation, user);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, urlUtils.getRelationUrl(relation, true));
+        urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
         return null;
     }
 

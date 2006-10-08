@@ -57,7 +57,7 @@ public class EditMonitor implements AbcAction {
         SQLTool.getInstance().setUpdatedTimestamp(content, originalUpdated);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, urlUtils.getRelationUrl(relation, true));
+        urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
         return null;
     }
 }

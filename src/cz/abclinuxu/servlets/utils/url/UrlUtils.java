@@ -19,7 +19,10 @@
 package cz.abclinuxu.servlets.utils.url;
 
 import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.GenericObject;
+import cz.abclinuxu.data.Category;
 import cz.abclinuxu.AbcException;
+import cz.abclinuxu.utils.freemarker.Tools;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -80,13 +83,12 @@ public class UrlUtils {
      * @param prefix Prefix overiding default value or null
      */
     public String make(String url, String prefix) {
-        String out = null;
+        String out;
         if ( prefix==null ) prefix = this.prefix;
-        if ( getPrefix(url)!=PREFIX_NONE ) {
+        if (! PREFIX_NONE.equals(getPrefix(url)))
             out = url;
-        } else {
+        else
             out = prefix+url;
-        }
         return response.encodeURL(out);
     }
 
@@ -112,7 +114,7 @@ public class UrlUtils {
      */
     public String constructRedirectURL(String url) {
         String out = url;
-        if ( getPrefix(url)==PREFIX_NONE ) out = prefix+url;
+        if (PREFIX_NONE.equals(getPrefix(url))) out = prefix+url;
         return response.encodeRedirectURL(out);
     }
 
@@ -123,7 +125,7 @@ public class UrlUtils {
      */
     public String constructDispatchURL(String url) {
         String out = url;
-        if ( getPrefix(url)==PREFIX_NONE ) out = prefix+url;
+        if (PREFIX_NONE.equals(getPrefix(url))) out = prefix+url;
         return out;
     }
 
@@ -178,17 +180,18 @@ public class UrlUtils {
     /**
      * Creates url for relation. If relation url is set, it will be used, otherwise
      * it will be constructed from prefix and relation id.
-     * @param relation relation for which we need url
+     * @param relation relation for which we need url.
      * @param prefix url prefix, one of constants from this class
-     * @param section flag indicating whether relation holds section or other object
      * @return url to display this relation
      */
-    public static String getRelationUrl(Relation relation, String prefix, boolean section) {
+    public static String getRelationUrl(Relation relation, String prefix) {
         if (relation == null)
             throw new AbcException("©patný vstup: relace nesmí být prázdná!");
+        relation = (Relation) Tools.sync(relation);
         if (relation.getUrl() != null)
             return relation.getUrl();
-        if (section)
+        GenericObject child = relation.getChild();
+        if (child instanceof Category)
             return prefix + "/dir/" + relation.getId();
         else
             return prefix + "/show/" + relation.getId();
@@ -198,10 +201,9 @@ public class UrlUtils {
      * Creates url for relation. If relation url is set, it will be used, otherwise
      * it will be constructed from prefix and relation id.
      * @param relation relation for which we need url
-     * @param section flag indicating whether relation holds section or other object
      * @return url to display this relation
      */
-    public String getRelationUrl(Relation relation, boolean section) {
-        return getRelationUrl(relation, prefix, section);
+    public String getRelationUrl(Relation relation) {
+        return getRelationUrl(relation, prefix);
     }
 }

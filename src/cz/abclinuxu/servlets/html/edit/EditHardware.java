@@ -168,7 +168,7 @@ public class EditHardware implements AbcAction {
 
         if (redirect) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, urlUtils.getRelationUrl(relation, true));
+            urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
         } else
             env.put(VAR_RELATION, relation);
         return null;
@@ -261,7 +261,7 @@ public class EditHardware implements AbcAction {
         VariableFetcher.getInstance().refreshHardware();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, urlUtils.getRelationUrl(relation, true));
+        urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
         return null;
     }
 

@@ -133,7 +133,7 @@ public class EditSoftware implements AbcAction, Configurable {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Chyba - sekce nemá textové URL. Kontaktujte prosím administrátora.",
                                   env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, urlUtils.getRelationUrl(upper, true));
+            urlUtils.redirect(response, urlUtils.getRelationUrl(upper));
         }
 
         return FMTemplateSelector.select("EditSoftware", "add", env, request);
@@ -192,7 +192,7 @@ public class EditSoftware implements AbcAction, Configurable {
 
         if (redirect) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, urlUtils.getRelationUrl(relation, true));
+            urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
         } else
             env.put(VAR_RELATION, relation);
         return null;
@@ -271,7 +271,7 @@ public class EditSoftware implements AbcAction, Configurable {
         FeedGenerator.updateSoftware();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, urlUtils.getRelationUrl(relation, true));
+        urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
         return null;
     }
 

@@ -104,7 +104,7 @@ public class EditRating implements AbcAction, Configurable {
 
         if (params.containsKey(PARAM_RETURN)) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, urlUtils.getRelationUrl(relation, true));
+            urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
             return null;
         }
         return "/print/misc/rating_result.ftl";
