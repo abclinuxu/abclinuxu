@@ -59,8 +59,12 @@
             <ul>
             <#list FEED_LINKS as link>
                 <li>
-                    <a href="${"/presmeruj?class=P&amp;id="+ITEM.id+"&amp;url="+link.child.url?url}"
-                        rel="nofollow">${link.child.text}</a>
+                    <#if link.child.url?exists>
+                        <a href="${"/presmeruj?class=P&amp;id="+ITEM.id+"&amp;url="+link.child.url?url}"
+                            rel="nofollow">${link.child.text}</a>
+                    <#else>
+                        ${link.child.text}
+                    </#if>
                     (${DATE.show(link.child.updated,"CZ_FULL")})
                 </li>
             </#list>

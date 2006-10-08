@@ -122,7 +122,7 @@ public class ShowObject implements AbcAction {
         if (relation.getChild() instanceof Poll)
             return ViewPolls.processPoll(env, relation, request);
         else if ( (relation.getParent() instanceof Item) || ( relation.getChild() instanceof Item ) )
-            return processItem(env, relation, request, response);
+            return processItem(request, response, env, relation);
         else if ( relation.getParent() instanceof Category ) {
             if (relation.getId()==Constants.REL_POLLS)
                 return ViewPolls.processPolls(env, request);
@@ -136,7 +136,7 @@ public class ShowObject implements AbcAction {
      * Processes item - like article, discussion, driver etc.
      * @return template to be rendered
      */
-    String processItem(Map env, Relation relation, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public static String processItem(HttpServletRequest request, HttpServletResponse response, Map env, Relation relation) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Item item = null;
         Relation upper = null;
@@ -218,7 +218,7 @@ public class ShowObject implements AbcAction {
             throw new MissingArgumentException("Chybí parametr " + PARAM_THREAD + "!");
 
         DiscussionRecord dizRecord = (DiscussionRecord) record.getCustom();
-        Comment comment = (Comment) dizRecord.getComment(id);
+        Comment comment = dizRecord.getComment(id);
         env.put(VAR_THREAD, comment);
 
         return FMTemplateSelector.select("ShowObject", "censored", env, request);

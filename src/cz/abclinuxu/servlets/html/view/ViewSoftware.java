@@ -116,6 +116,16 @@ public class ViewSoftware implements AbcAction {
         Tools.sync(relation);
         env.put(ShowObject.VAR_RELATION, relation);
 
+        if (relation.getChild() instanceof Item) {
+            Item item = (Item) relation.getChild();
+            if (item.getType() != Item.SOFTWARE)
+                return ShowObject.processItem(request, response, env, relation);
+        } else if (relation.getChild() instanceof Category) {
+            Category category = (Category) relation.getChild();
+            if (category.getType() != Category.SOFTWARE_SECTION)
+                return ViewCategory.processCategory(request, response, env, relation);
+        }
+
         if (ACTION_FILTER.equals(action)) {
             Map filters = new HashMap();
             Object filterValue = params.get(PARAM_FILTER_UITYPE);
