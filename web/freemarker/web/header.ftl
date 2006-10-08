@@ -156,17 +156,16 @@
             <!-- ZPRÁVIÈKY -->
             <#assign news=VARS.getFreshNews(USER?if_exists)>
             <div class="s_nadpis">
-		<a class="s_nadpis-pravy-odkaz" href="${URL.make("/zpravicky/edit?action=add")}">napi¹te &raquo;</a>
-		<#if USER?exists && USER.hasRole("news admin")>
-		    <a class="s_nadpis-pravy-odkaz" href="${URL.make("/zpravicky/dir/37672")}" title="Poèet èekajících zprávièek">(${VARS.counter.WAITING_NEWS})&nbsp;</a>
-		</#if>
-		<a href="/zpravicky">Zprávièky</a>
-	    </div>
+                <a class="s_nadpis-pravy-odkaz" href="${URL.make("/zpravicky/edit?action=add")}">napi¹te &raquo;</a>
+                <#if USER?exists && USER.hasRole("news admin")>
+                    <a class="s_nadpis-pravy-odkaz" href="${URL.make("/zpravicky/dir/37672")}" title="Poèet èekajících zprávièek">(${VARS.counter.WAITING_NEWS})&nbsp;</a>
+                </#if>
+                <a href="/zpravicky">Zprávièky</a>
+            </div>
             <div class="s_sekce">
-
                 <div class="ls_zpr">
                 <#list news as relation>
-                    <#if relation_index==8>
+                    <#if relation_index==4>
                         <!--<p align="center">
                            <a href="/hosting"><img src="/images/bannery/abchosting.gif" alt="AbcHosting je tu pro vás"
                            border="0" width="251" height="60"></a>
@@ -249,7 +248,7 @@
             <div class="s_sekce">
                 <ul>
                     <li><a href="http://www.e-pocasi.cz/">e-pocasi.cz</a></li>
-		    <li><a href="http://shop.tricko-tricka.com">tricko-tricka.com</a></li>
+		            <li><a href="http://shop.tricko-tricka.com">tricko-tricka.com</a></li>
                     <li><a href="http://www.krasnyusmev.cz">Bìlení zubù White Pearl</a></li>
                     <li><a href="http://www.kovart.cz/">Umìlecké kováøství</a></li>
                 </ul>
