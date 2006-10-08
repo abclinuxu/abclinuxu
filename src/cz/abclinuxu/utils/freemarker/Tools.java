@@ -75,7 +75,7 @@ public class Tools implements Configurable {
         ConfigurationManager.getConfigurator().configureAndRememberMe(tools);
     }
 
-    private static final Integer MAX_SEEN_COMMENT_ID = new Integer(Integer.MAX_VALUE);
+    private static final Integer MAX_SEEN_COMMENT_ID = Integer.MAX_VALUE;
 
 
     public void configure(Preferences prefs) throws ConfigurationException {
@@ -373,7 +373,7 @@ public class Tools implements Configurable {
      */
     public Integer getMonitorCount(Document document) {
         Object value = document.selectObject("count(//monitor/id)");
-        return new Integer(((Double) value).intValue());
+        return ((Double) value).intValue();
     }
 
     /**
@@ -465,7 +465,7 @@ public class Tools implements Configurable {
         List blacklist = new ArrayList(nodes.size());
         for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
             String value = (String) iter.next();
-            blacklist.add(new User(new Integer(value).intValue()));
+            blacklist.add(new User(new Integer(value)));
         }
         return blacklist;
     }
@@ -687,7 +687,7 @@ public class Tools implements Configurable {
         if (collection.size() == 0)
             return Collections.EMPTY_LIST;
 
-        List list = null;
+        List list;
         if (! (collection instanceof List) )
             list = new ArrayList(collection);
         else
@@ -958,7 +958,7 @@ public class Tools implements Configurable {
             case 1: format = Format.HTML;
         }
 
-        if (format.equals(Format.SIMPLE))
+        if (Format.SIMPLE.equals(format))
             return SimpleFormatRenderer.getInstance().render(input,params);
         else
             return HTMLFormatRenderer.getInstance().render(input,params);
@@ -1146,7 +1146,7 @@ public class Tools implements Configurable {
         discussion.setRelationId(rid);
         discussion.setFrozen(document.selectSingleNode("/data/frozen") != null);
         Integer monitorCount = getMonitorCount(document);
-        discussion.setMonitorSize(monitorCount.intValue());
+        discussion.setMonitorSize(monitorCount);
         if (user != null) {
             String xpath = "//monitor/id[text()='"+user.getId()+"']";
             discussion.setMonitored(document.selectSingleNode(xpath) != null);
@@ -1218,7 +1218,7 @@ public class Tools implements Configurable {
         if (relation==null)
             return new DiscussionHeader(null);
 
-        if ( !InstanceUtils.checkType(relation.getChild(), Item.class, Item.DISCUSSION) ) {
+        if ( ! InstanceUtils.checkType(relation.getChild(), Item.class, Item.DISCUSSION) ) {
             log.error("Relation "+relation.getId()+" doesn't contain item!");
             return null;
         }
@@ -1240,9 +1240,10 @@ public class Tools implements Configurable {
             discussion.lastCommentId = discussion.responseCount;
 
         Node node = data.selectSingleNode("data/title");
-        if (node==null) {
+        if (node == null) {
             GenericObject parent = relation.getParent();
-            if (!parent.isInitialized()) persistence.synchronize(parent);
+            if (!parent.isInitialized())
+                persistence.synchronize(parent);
             if (parent instanceof Item) {
                 item = (Item) parent;
                 data = item.getData();
@@ -1260,6 +1261,7 @@ public class Tools implements Configurable {
         } else
             discussion.title = node.getText();
 
+        discussion.title = removeTags(discussion.title);
         return discussion;
     }
 
@@ -1293,7 +1295,7 @@ public class Tools implements Configurable {
         Integer lastSeen = ((User)maybeUser).getLastSeenComment(dizId);
         if (lastSeen == null)
             return false;
-        return lastSeen.intValue() < diz.getLastCommentId();
+        return lastSeen < diz.getLastCommentId();
     }
 
     /**

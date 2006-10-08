@@ -96,9 +96,9 @@ public class History implements AbcAction {
         count = Misc.limit(count, 1, 50);
         int uid = Misc.parseInt((String)params.get(PARAM_USER_SHORT),0);
 
-        List data = null;
-        int total = 0;
-        Paging found = null;
+        List data;
+        int total;
+        Paging found;
         Qualifier[] qualifiers;
 
         if ( VALUE_TYPE_ARTICLES.equalsIgnoreCase(type) ) {
@@ -142,7 +142,7 @@ public class History implements AbcAction {
         } else if ( VALUE_TYPE_SOFTWARE.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
             if (uid > 0) {
-                CompareCondition userEqualsCondition = new CompareCondition(Field.OWNER, Operation.EQUAL, new Integer(uid));
+                CompareCondition userEqualsCondition = new CompareCondition(Field.OWNER, Operation.EQUAL, uid);
                 total = sqlTool.countItemRelationsWithType(Item.SOFTWARE, new Qualifier[]{userEqualsCondition});
                 Qualifier[] tmp = new Qualifier[qualifiers.length + 1];
                 tmp[0] = userEqualsCondition;
