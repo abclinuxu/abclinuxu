@@ -40,6 +40,7 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.ReadRecorder;
+import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import org.dom4j.Element;
@@ -226,8 +227,11 @@ public class ViewSoftware implements AbcAction {
         env.put(ShowObject.VAR_PARENTS, parents);
 
         Map children = Tools.groupByType(item.getChildren());
-        env.put(VAR_LINKS, children.get(Constants.TYPE_LINK));
-        Tools.sync(relation);
+        List links = (List) children.get(Constants.TYPE_LINK);
+        if (links != null) {
+            Sorters2.byDate(links, Sorters2.DESCENDING);
+            env.put(VAR_LINKS, links);
+        }
 
         // todo tohle take proverit
         String revision = (String) params.get(ShowRevisions.PARAM_REVISION);
