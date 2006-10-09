@@ -352,7 +352,7 @@
 
 <#macro showOption (param value caption type extra...)>
     <label>
-        <input type="${type}" name="${param}" value="${value}"<#if TOOL.isWithin(PARAMS[param], value)> checked</#if>${extra[0]?if_exists}>
+        <input type="${type}" name="${param}" value="${value}"<#if TOOL.isWithin(PARAMS[param], value)> checked</#if>${" "+extra[0]?if_exists}>
         ${caption}
     </label>
 </#macro>

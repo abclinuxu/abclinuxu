@@ -159,6 +159,11 @@
 <!ELEMENT blog_digest (story+)> <!-- container for selected blog stories, that form special RSS -->
 <!ELEMENT story (#PCDATA)> <!-- integer, id of relation for selected high-quality story -->
 
+<!-- Item.BAZAAR -->
+<!ELEMENT data (title, text)>
+<!ELEMENT title (#PCDATA)> <!-- advertisement title -->
+<!ELEMENT text (#PCDATA)> <!-- content of the advertisement -->
+
 <!-- common -->
 <!ELEMENT inset (images*)> <!-- this element is child of data and it serves as container for various attachments -->
 <!ELEMENT images (image+)> <!-- container for screenshots and other images -->

@@ -25,6 +25,8 @@
        <@lib.showOption "roles", "root", "Root", "checkbox" /><br>
        <@lib.showOption "roles", "poll admin", "Administrátor anket", "checkbox" /><br>
        <@lib.showOption "roles", "survey admin", "Administrátor anket/prùzkumù", "checkbox" /><br>
+       <@lib.showOption "roles", "bazaar admin", "Administrátor bazaru", "checkbox" /><br>
+       <@lib.showOption "roles", "blog digest admin", "Administrátor blog digestu", "checkbox" /><br>
        <@lib.showOption "roles", "article admin", "Administrátor èlánkù", "checkbox" /><br>
        <@lib.showOption "roles", "discussion admin", "Administrátor diskusí", "checkbox" /><br>
        <@lib.showOption "roles", "content admin", "Administrátor dokumentù", "checkbox" /><br>
@@ -32,7 +34,7 @@
        <@lib.showOption "roles", "attachment admin", "Administrátor pøíloh", "checkbox" /><br>
        <@lib.showOption "roles", "category admin", "Administrátor sekcí", "checkbox" /><br>
        <@lib.showOption "roles", "dictionary admin", "Administrátor slovníku", "checkbox" /><br>
-       <@lib.showOption "roles", "blog digest admin", "Administrátor blog digestu", "checkbox" /><br>
+       <@lib.showOption "roles", "software admin", "Administrátor softwarového katalogu", "checkbox" /><br>
        <@lib.showOption "roles", "tip admin", "Administrátor tipù", "checkbox" /><br>
        <@lib.showOption "roles", "user admin", "Administrátor u¾ivatelù", "checkbox" /><br>
        <@lib.showOption "roles", "news admin", "Administrátor zprávièek", "checkbox" /><br>
@@ -40,7 +42,6 @@
        <@lib.showOption "roles", "move relation", "Smí pøesunout relaci", "checkbox" /><br>
        <@lib.showOption "roles", "derive content", "Smí vytvoøit podstránku dokumentu", "checkbox" /><br>
        <@lib.showOption "roles", "remove relation", "Smí smazat relaci a objekt", "checkbox" /><br>
-       <@lib.showOption "roles", "software admin", "Software admin", "checkbox" /><br>
    </td>
   </tr>
   <tr>

@@ -48,6 +48,7 @@ public interface Constants {
     int CAT_BLOGS = 589;
     int CAT_FAQ = 758;
     int CAT_GUESTBOOK = 885;
+    int CAT_BAZAAR = 1584;
 
     int ITEM_DIZ_TODO = 11606;
     /** item holding dynamic configuration */
@@ -79,6 +80,7 @@ public interface Constants {
     int REL_BLOGS = 69275;
     int REL_GUESTBOOK = 93214;
     int REL_FAQ = 81515;
+    int REL_BAZAAR = 152995;
 
     int GROUP_ADMINI = 11246;
     int GROUP_AUTORI = 11247;
@@ -146,20 +148,21 @@ public interface Constants {
 
     int USER_REDAKCE = 5473;
 
-    String PAGE_WAP = "wap";
-    String PAGE_INDEX = "homepage";
     String PAGE_ARTICLES = "clanky";
-    String PAGE_NEWS = "zpravicky";
-    String PAGE_FORUM = "forum";
+    String PAGE_BAZAAR = "bazar";
     String PAGE_BLOGS = "blogy";
+    String PAGE_DICTIONARY = "slovnik";
+    String PAGE_DRIVERS = "ovladace";
     String PAGE_FAQ = "faq";
+    String PAGE_FORUM = "forum";
     String PAGE_HARDWARE = "hardware";
+    String PAGE_HOSTING = "hosting";
+    String PAGE_INDEX = "homepage";
+    String PAGE_NEWS = "zpravicky";
+    String PAGE_POLLS = "ankety";
     String PAGE_SOFTWARE = "software";
     String PAGE_SCHOOLBOOK = "ucebnice";
-    String PAGE_DICTIONARY = "slovnik";
-    String PAGE_POLLS = "ankety";
-    String PAGE_DRIVERS = "ovladace";
-    String PAGE_HOSTING = "hosting";
+    String PAGE_WAP = "wap";
 
     SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     DateFormat isoFormatShort = new SimpleDateFormat("yyyy-MM-dd");
@@ -193,6 +196,11 @@ public interface Constants {
     String RELATED_SECTION = "section";
     String RELATED_SOFTWARE = "software";
     String RELATED_STORY = "story";
+
+    // see EditBazaar
+    String BAZAAR_BUY = "buy";
+    String BAZAAR_SELL = "sell";
+    String BAZAAR_GIVE = "give";
 
     // type of counter
     String COUNTER_READ = "read";

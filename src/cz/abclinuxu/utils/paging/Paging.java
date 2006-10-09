@@ -56,7 +56,7 @@ public final class Paging {
      */
     public Paging(List data, int row, int pageSize, int total) {
         currentPage = new Page(row, data.size());
-        this.total = new Integer(total);
+        this.total = total;
         this.pageSize = pageSize;
         this.data = data;
     }
@@ -71,7 +71,7 @@ public final class Paging {
      */
     public Paging(List data, int row, int pageSize, int total, Qualifier[] qualifiers) {
         currentPage = new Page(row, data.size());
-        this.total = new Integer(total);
+        this.total = total;
         this.pageSize = pageSize;
         this.data = data;
         if (qualifiers!=null)
@@ -88,7 +88,7 @@ public final class Paging {
      */
     public Paging(List data, int row, int pageSize, int total, List qualifiers) {
         currentPage = new Page(row, data.size());
-        this.total = new Integer(total);
+        this.total = total;
         this.pageSize = pageSize;
         this.data = data;
         this.qualifiers = qualifiers;
@@ -107,7 +107,7 @@ public final class Paging {
             return new Page(currentPage.row+pageSize,0);
         }
         int row = currentPage.row+pageSize;
-        if ( row<total.intValue() )
+        if ( row < total)
             return new Page(row,0);
         return null;
     }
@@ -160,10 +160,10 @@ public final class Paging {
     public Integer getPageCount() {
         if (total==null)
             return null;
-        int count = total.intValue() / pageSize;
-        if (total.intValue() % pageSize != 0)
+        int count = total / pageSize;
+        if (total % pageSize != 0)
             count++;
-        return new Integer(count);
+        return count;
     }
 
     /**
@@ -171,8 +171,7 @@ public final class Paging {
      */
     public Integer getPageIndex() {
         int row = currentPage.getRow();
-        int index = row / pageSize;
-        return new Integer(index);
+        return row / pageSize;
     }
 
     /**

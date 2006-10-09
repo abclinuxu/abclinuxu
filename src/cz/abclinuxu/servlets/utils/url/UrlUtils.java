@@ -37,31 +37,33 @@ import java.io.IOException;
  */
 public class UrlUtils {
 
-    public static final String PREFIX_HARDWARE = "/hardware";
-    public static final String PREFIX_SOFTWARE = "/software";
-    public static final String PREFIX_CLANKY = "/clanky";
-    public static final String PREFIX_DRIVERS = "/ovladace";
-    public static final String PREFIX_NEWS = "/zpravicky";
-    public static final String PREFIX_FORUM = "/forum";
-    public static final String PREFIX_DICTIONARY = "/slovnik";
-    public static final String PREFIX_POLLS = "/ankety";
-    public static final String PREFIX_FAQ = "/faq";
+    public static final String PREFIX_BAZAAR = "/bazar";
     public static final String PREFIX_BLOG = "/blog";
+    public static final String PREFIX_CLANKY = "/clanky";
+    public static final String PREFIX_DICTIONARY = "/slovnik";
+    public static final String PREFIX_DRIVERS = "/ovladace";
+    public static final String PREFIX_FAQ = "/faq";
+    public static final String PREFIX_FORUM = "/forum";
+    public static final String PREFIX_HARDWARE = "/hardware";
+    public static final String PREFIX_NEWS = "/zpravicky";
+    public static final String PREFIX_POLLS = "/ankety";
+    public static final String PREFIX_SOFTWARE = "/software";
     public static final String PREFIX_NONE = "";
 
     static List prefixes = null;
     static {
         prefixes = new ArrayList();
-        prefixes.add(PREFIX_NEWS);
-        prefixes.add(PREFIX_FORUM);
-        prefixes.add(PREFIX_HARDWARE);
+        prefixes.add(PREFIX_BAZAAR);
+        prefixes.add(PREFIX_BLOG);
         prefixes.add(PREFIX_CLANKY);
+        prefixes.add(PREFIX_DICTIONARY);
         prefixes.add(PREFIX_DRIVERS);
         prefixes.add(PREFIX_FAQ);
-        prefixes.add(PREFIX_DICTIONARY);
+        prefixes.add(PREFIX_FORUM);
+        prefixes.add(PREFIX_HARDWARE);
+        prefixes.add(PREFIX_NEWS);
         prefixes.add(PREFIX_POLLS);
         prefixes.add(PREFIX_SOFTWARE);
-        prefixes.add(PREFIX_BLOG);
     }
 
     /** default prefix to URL */

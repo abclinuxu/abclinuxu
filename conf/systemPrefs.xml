@@ -30,6 +30,7 @@
                                     <entry key="article.section.articles.count" value="5"/>
                                     <entry key="search.results.count" value="10"/>
                                     <entry key="section.faq.count" value="20"/>
+                                    <entry key="bazaar.page.size" value="20"/>
                                     <entry key="watched.discussions.limit" value="75"/>
                                 </map>
                             </node>

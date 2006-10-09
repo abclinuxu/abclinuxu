@@ -93,7 +93,7 @@ public class Controller extends HttpServlet implements Configurable {
             return Constants.PAGE_ARTICLES;
         if (uri.startsWith(UrlUtils.PREFIX_NEWS))
             return Constants.PAGE_NEWS;
-        if (uri.startsWith("/blog"))
+        if (uri.startsWith(UrlUtils.PREFIX_BLOG))
             return Constants.PAGE_BLOGS;
         if (uri.startsWith(UrlUtils.PREFIX_HARDWARE))
             return Constants.PAGE_HARDWARE;
@@ -107,6 +107,8 @@ public class Controller extends HttpServlet implements Configurable {
             return Constants.PAGE_POLLS;
         if (uri.startsWith(UrlUtils.PREFIX_SOFTWARE))
             return Constants.PAGE_SOFTWARE;
+        if (uri.startsWith(UrlUtils.PREFIX_BAZAAR))
+            return Constants.PAGE_BAZAAR;
         if (uri.startsWith("/ucebnice"))
             return Constants.PAGE_SCHOOLBOOK;
         if (uri.startsWith("/hosting"))

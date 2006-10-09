@@ -135,7 +135,7 @@ public class TemplateSelector {
         String attribValue = tag.attributeValue("value");
         String attribType = tag.attributeValue("type");
 
-        Object value = null;
+        Object value;
         if ( Misc.same(attribType,"Boolean") ) {
             value = Boolean.valueOf(attribValue);
         } else if ( Misc.same(attribType,"Lazy") ) {

@@ -142,6 +142,10 @@
             <action>cz.abclinuxu.servlets.html.edit.EditNews</action>
         </mapping>
         <mapping>
+            <pattern>^/bazar/edit</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditBazaar</action>
+        </mapping>
+        <mapping>
             <pattern>^/zmeny</pattern>
             <action>cz.abclinuxu.servlets.html.view.ContentChanges</action>
         </mapping>

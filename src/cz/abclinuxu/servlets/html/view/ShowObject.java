@@ -192,6 +192,8 @@ public class ShowObject implements AbcAction {
                 return ViewTOC.show(request, env);
             case Item.DICTIONARY:
                 return ShowDictionary.showOne(env, item, request);
+            case Item.BAZAAR:
+                return ViewBazaar.processAd(request, relation, env);
         }
 
         return null;

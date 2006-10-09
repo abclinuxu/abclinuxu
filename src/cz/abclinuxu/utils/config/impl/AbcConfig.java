@@ -44,12 +44,13 @@ public class AbcConfig implements Configurable {
     public static final String PREF_VIEWUSER_PAGINGSIZE = "viewuser.page.size";
     public static final String PREF_SECTION_ARTICLES_COUNT = "section.article.count";
     public static final String PREF_ARTICLE_SECTION_ARTICLES_COUNT = "article.section.articles.count";
+    public static final String PREF_BAZAAR_PAGE_SIZE = "bazaar.page.size";
     public static final String PREF_SEARCH_RESULTS_COUNT = "search.results.count";
     public static final String PREF_FAQ_COUNT = "section.faq.count";
     public static final String PREF_WATCHED_DISCUSSION_LIMIT = "watched.discussions.limit";
 
     static String deployPath, domain;
-    static int viewUserPageSize, sectionArticleCount;
+    static int viewUserPageSize, sectionArticleCount, bazaarPageSize;
     static int articleSectionArticlesCount, searchResultsCount, faqSectionCount;
     static int maxWatchedDiscussions;
 
@@ -66,6 +67,7 @@ public class AbcConfig implements Configurable {
         articleSectionArticlesCount = prefs.getInt(PREF_ARTICLE_SECTION_ARTICLES_COUNT, 5);
         searchResultsCount = prefs.getInt(PREF_SEARCH_RESULTS_COUNT, 10);
         faqSectionCount = prefs.getInt(PREF_FAQ_COUNT, 20);
+        bazaarPageSize = prefs.getInt(PREF_BAZAAR_PAGE_SIZE, 20);
         maxWatchedDiscussions = prefs.getInt(PREF_WATCHED_DISCUSSION_LIMIT, 50);
     }
 
@@ -108,6 +110,13 @@ public class AbcConfig implements Configurable {
      */
     public static int getFaqSectionCount() {
         return faqSectionCount;
+    }
+
+    /**
+     * @return default page size for advertisements count in bazaar
+     */
+    public static int getBazaarPageSize() {
+        return bazaarPageSize;
     }
 
     /**

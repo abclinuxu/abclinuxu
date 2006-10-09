@@ -168,6 +168,27 @@
     </action>
   </servlet>
 
+    <servlet name="ViewBazaar">
+        <action name="ad" content="/show/bazar_ad.ftl">
+            <var name="TITLE" value='${TOOL.xpath(ITEM, "/data/title")} - Bazar' type="Lazy"/>
+        </action>
+        <action name="bazaar" content="/show/bazar.ftl">
+            <var name="TITLE" value='Bazar'/>
+        </action>
+    </servlet>
+
+    <servlet name="EditBazaar">
+        <action name="add" content="/add/bazar_ad.ftl">
+            <var name="TITLE" value="Vlo¾ inzerát" />
+        </action>
+        <action name="edit" content="/add/bazar_ad.ftl">
+            <var name="TITLE" value="Uprav inzerát" />
+        </action>
+        <action name="remove" content="/remove/bazar_ad.ftl">
+            <var name="TITLE" value="Sma¾ inzerát" />
+        </action>
+    </servlet>
+
   <servlet name="EditRelation">
     <action name="add" template="print" content="/add/relation.ftl">
       <var name="TITLE" value="Vytvoø link" />

@@ -59,6 +59,8 @@ public class Item extends GenericDataObject {
     public static final int TOC = 16;
     /** software item **/
     public static final int SOFTWARE = 17;
+    /** advertisement in bazaar */
+    public static final int BAZAAR = 18;
 
     public Item() {
         super();
@@ -76,20 +78,29 @@ public class Item extends GenericDataObject {
     public String toString() {
         StringBuffer sb = new StringBuffer();
         switch ( type ) {
-            case 1: sb.append("Make");break;
-            case 2: sb.append("Article");break;
-            case 3: sb.append("Discussion");break;
-            case 4: sb.append("Request");break;
-            case 5: sb.append("Driver");break;
-            case 6: sb.append("Survey");break;
-            case 7: sb.append("News");break;
-            case 8: sb.append("Group");break;
+            case HARDWARE: sb.append("Hardware");break;
+            case ARTICLE: sb.append("Article");break;
+            case DISCUSSION: sb.append("Discussion");break;
+            case REQUEST: sb.append("Request");break;
+            case DRIVER: sb.append("Driver");break;
+            case SURVEY: sb.append("Survey");break;
+            case NEWS: sb.append("News");break;
+            case GROUP: sb.append("Group");break;
+            case ROYALTIES: sb.append("Royalties");break;
+            case DICTIONARY: sb.append("Dictionary");break;
+            case CONTENT: sb.append("Content");break;
+            case BLOG:
+            case UNPUBLISHED_BLOG: sb.append("Blog");break;
+            case FAQ: sb.append("FAQ");break;
+            case TOC: sb.append("TOC");break;
+            case SOFTWARE: sb.append("Software");break;
+            case BAZAAR: sb.append("Bazaar");break;
             default: sb.append("Unknown Item");
         }
-        sb.append(": id="+id);
-        if ( owner!=0 ) sb.append(",owner="+owner);
-        if ( subType!=null ) sb.append(",subtype="+subType);
-        if ( documentHandler!=null ) sb.append(",data="+getDataAsString());
+        sb.append(": id=").append(id);
+        if ( owner!=0 ) sb.append(",owner=").append(owner);
+        if ( subType!=null ) sb.append(",subtype=").append(subType);
+        if ( documentHandler!=null ) sb.append(",data=").append(getDataAsString());
         return sb.toString();
     }
 
@@ -98,8 +109,7 @@ public class Item extends GenericDataObject {
         if ( id!=((GenericObject)o).getId() ) return false;
         if ( type!=((GenericDataObject)o).type ) return false;
         if ( owner!=((GenericDataObject)o).owner ) return false;
-        if ( ! Misc.same(getDataAsString(),((GenericDataObject)o).getDataAsString()) ) return false;
-        return true;
+        return Misc.same(getDataAsString(), ((GenericDataObject) o).getDataAsString());
     }
 
     public int hashCode() {
