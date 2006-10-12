@@ -61,8 +61,8 @@
             <pattern>/EditMonitor</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditMonitor</action>
         </mapping>
-        <mapping>
-            <pattern>^/inset</pattern>
+        <mapping priority="true">
+            <pattern>/inset</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditAttachment</action>
         </mapping>
         <mapping>

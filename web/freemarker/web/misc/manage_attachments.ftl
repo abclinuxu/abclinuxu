@@ -4,7 +4,7 @@
 
 <@lib.showMessages/>
 
-<form action="${URL.noPrefix("/inset/"+RELATION.id)}" method="POST" name="form">
+<form action="${URL.make("/inset/"+RELATION.id)}" method="POST" name="form">
     <#list XML.data.inset.images.image as node>
         <label>
             <input type="checkbox" name="attachment" value="${node}">

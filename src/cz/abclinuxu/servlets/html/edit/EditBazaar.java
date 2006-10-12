@@ -65,6 +65,8 @@ public class EditBazaar implements AbcAction {
     public static final String PARAM_TITLE = "title";
     public static final String PARAM_TEXT = "text";
     public static final String PARAM_TYPE = "type";
+    public static final String PARAM_PRICE = "price";
+    public static final String PARAM_CONTACT = "contact";
     public static final String PARAM_PREVIEW = "preview";
 
     public static final String VAR_RELATION = "RELATION";
@@ -74,6 +76,8 @@ public class EditBazaar implements AbcAction {
     public static final String ACTION_ADD_STEP2 = "add2";
     public static final String ACTION_EDIT = "edit";
     public static final String ACTION_EDIT_STEP2 = "edit2";
+    public static final String ACTION_REMOVE = "rm";
+    public static final String ACTION_REMOVE_STEP2 = "rm2";
 
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -126,6 +130,8 @@ public class EditBazaar implements AbcAction {
         boolean canContinue = setTitle(params, document, env);
         canContinue &= setContent(params, document, env);
         canContinue &= setType(params, ad, env);
+        canContinue &= setPrice(params, document, env);
+        canContinue &= setContact(params, document, env);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)
@@ -171,9 +177,17 @@ public class EditBazaar implements AbcAction {
 
         Document document = ad.getData();
         Node node = document.selectSingleNode("data/title");
-        if (node != null) params.put(PARAM_TITLE, node.getText());
+        if (node != null)
+            params.put(PARAM_TITLE, node.getText());
         node = document.selectSingleNode("data/text");
-        if (node != null) params.put(PARAM_TEXT, node.getText());
+        if (node != null)
+            params.put(PARAM_TEXT, node.getText());
+        node = document.selectSingleNode("data/price");
+        if (node != null)
+            params.put(PARAM_PRICE, node.getText());
+        node = document.selectSingleNode("data/contact");
+        if (node != null)
+            params.put(PARAM_CONTACT, node.getText());
         params.put(PARAM_TYPE, ad.getSubType());
 
         return FMTemplateSelector.select("EditBazaar", "edit", env, request);
@@ -193,6 +207,8 @@ public class EditBazaar implements AbcAction {
         boolean canContinue = setTitle(params, document, env);
         canContinue &= setContent(params, document, env);
         canContinue &= setType(params, ad, env);
+        canContinue &= setPrice(params, document, env);
+        canContinue &= setContact(params, document, env);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)
@@ -282,6 +298,72 @@ public class EditBazaar implements AbcAction {
         } else {
             ServletUtils.addError(PARAM_TEXT, "Zadejte obsah inzerátu!", env, null);
             return false;
+        }
+        return true;
+    }
+
+    /**
+     * Updates advertisement's price from parameters. Changes are not synchronized with persistence.
+     * @param params   map holding request's parameters
+     * @param document Document to be updated
+     * @param env      environment
+     * @return false, if there is a major error.
+     */
+    private boolean setPrice(Map params, Document document, Map env) {
+        String tmp = (String) params.get(PARAM_PRICE);
+        tmp = Misc.filterDangerousCharacters(tmp);
+        if (tmp != null && tmp.length() > 0) {
+            try {
+                SafeHTMLGuard.check(tmp);
+            } catch (ParserException e) {
+                log.error("ParseException on '" + tmp + "'", e);
+                ServletUtils.addError(PARAM_PRICE, e.getMessage(), env, null);
+                return false;
+            } catch (Exception e) {
+                ServletUtils.addError(PARAM_PRICE, e.getMessage(), env, null);
+                return false;
+            }
+            Element element = DocumentHelper.makeElement(document, "data/price");
+            element.setText(tmp);
+            Format format = FormatDetector.detect(tmp);
+            element.addAttribute("format", Integer.toString(format.getId()));
+        } else {
+            Element element = (Element) document.selectSingleNode("/data/price");
+            if (element != null)
+                element.detach();
+        }
+        return true;
+    }
+
+    /**
+     * Updates advertisement's contact from parameters. Changes are not synchronized with persistence.
+     * @param params   map holding request's parameters
+     * @param document Document to be updated
+     * @param env      environment
+     * @return false, if there is a major error.
+     */
+    private boolean setContact(Map params, Document document, Map env) {
+        String tmp = (String) params.get(PARAM_CONTACT);
+        tmp = Misc.filterDangerousCharacters(tmp);
+        if (tmp != null && tmp.length() > 0) {
+            try {
+                SafeHTMLGuard.check(tmp);
+            } catch (ParserException e) {
+                log.error("ParseException on '" + tmp + "'", e);
+                ServletUtils.addError(PARAM_CONTACT, e.getMessage(), env, null);
+                return false;
+            } catch (Exception e) {
+                ServletUtils.addError(PARAM_CONTACT, e.getMessage(), env, null);
+                return false;
+            }
+            Element element = DocumentHelper.makeElement(document, "data/contact");
+            element.setText(tmp);
+            Format format = FormatDetector.detect(tmp);
+            element.addAttribute("format", Integer.toString(format.getId()));
+        } else {
+            Element element = (Element) document.selectSingleNode("/data/contact");
+            if (element != null)
+                element.detach();
         }
         return true;
     }

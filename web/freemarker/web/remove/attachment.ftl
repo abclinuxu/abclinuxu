@@ -4,7 +4,7 @@
 
 <@lib.showMessages/>
 
-<form action="${URL.noPrefix("/inset/"+RELATION.id)}" method="POST" name="form">
+<form action="${URL.make("/inset/"+RELATION.id)}" method="POST" name="form">
     <p>
         Prosím potvrïte, zda si opravdu pøejete smazat tyto pøílohy:
     </p>

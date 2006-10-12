@@ -15,6 +15,7 @@
         <th>Titulek</th>
         <th>Typ</th>
         <th>Vlo¾eno</th>
+        <th>Komentáøe</th>
     </tr>
     <#if ADS.total == 0>
         <tr>
@@ -22,20 +23,21 @@
         </tr>
     </#if>
     <#list ADS.data as ad>
+        <#assign tmp=TOOL.groupByType(ad.child.children, "Item")>
+        <#if tmp.discussion?exists><#assign diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
         <tr>
             <td>
                 <a href="/bazar/show/${ad.id}">${TOOL.xpath(ad.child, "/data/title")}</a>
             </td>
             <td>
-                <#if ad.child.subType=='buy'>
-                    prodej
-                <#elseif ad.child.subType=='sell'>
-                    koupì
-                <#else>
-                    darování
-                </#if>
+                <#if ad.child.subType=='sell'>prodej<#else>koupì</#if>
             </td>
             <td>${DATE.show(ad.child.created, "SMART")}</td>
+            <td>
+                <#if diz?exists>
+                    <@lib.showCommentsInListing diz, "SMART", "/bazar" />
+                </#if>
+            </td>
         </tr>
     </#list>
 </table>

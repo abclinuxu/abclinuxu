@@ -1,4 +1,5 @@
 <#include "../header.ftl">
+<#import "../misc/lib-bazar.ftl" as bazarlib>
 
 <@lib.showMessages/>
 
@@ -16,24 +17,21 @@
     </li>
     <li>
         Inzeráty musí být v souladu se zamìøením tohoto portálu. Vhodné inzeráty jsou
-        napøíklad prodej hardwaru, linuxového softwaru, odborné literatury, ply¹ových
-        tuèòákù apod.
+        napøíklad prodej hardwaru èi spotøební elektroniky, linuxového softwaru, odborné literatury,
+        ply¹ových tuèòákù apod.
     </li>
     <li>
         Je zakázáno vkládat inzerát se stejným èi podobným obsahem døíve ne¾ za celých
-        uplynulých 7 dní.
+        uplynulých 7 dní. Inzerát nesmí poru¹ovat místní zákony.
     </li>
     <li>
-        Inzerát nesmí poru¹ovat místní zákony.
+        Inzeráty budou po 30 dnech automaticky smazány. Pokud ale uspìjete døíve, sma¾te
+        prosím inzerát ruènì.
     </li>
     <li>
-        Ve výpise inzerátù se zobrazí titulek a typ (prodej, koupì, darování), proto
-        si na jeho obsahu dejte zále¾et. V pøípadì potøeby inzerát upravte.
-    </li>
-    <li>
-        Nezapomeòte do tìla inzerátu napsat, jakým zpùsobem vás mají zájemci kontaktovat.
-        Ve va¹em profilu je tlaèítko, pøes které vám mohou poslat email, tak¾e jej nemusíte
-        zveøejòovat a vystavovat se riziku spambotù.
+        Do titulku napi¹te, co prodáváte èi hledáte. Ètenáøi se pak budou lépe orientovat
+        ve výpise inzerátù. Do kontaktu napi¹te své telefonní èíslo, ICQ apod. Necháte-li
+        jej prázdný, systém automaticky nabídne emailový kontakt pøes formuláø ve va¹em profilu.
     </li>
 </ul>
 
@@ -41,10 +39,7 @@
 <#if PARAMS.preview?exists>
     <fieldset style="margin-top: 1em;">
         <legend>Náhled</legend>
-        <h2 style="margin-bottom: 1em;">${TOOL.xpath(PREVIEW, "/data/title")?if_exists}</h2>
-        <div>
-            ${TOOL.render(TOOL.xpath(PREVIEW.data,"/data/text")?if_exists, USER?if_exists)}
-        </div>
+        <@bazarlib.showBazaarAd PREVIEW, USER />
     </fieldset>
 </#if>
 
@@ -54,17 +49,30 @@
         <tr>
             <td class="required">Titulek</td>
             <td>
-                <input tabindex="1" type="text" name="title" size="80" value="${PARAMS.title?if_exists?html}">
+                <input tabindex="1" type="text" name="title" size="40" value="${PARAMS.title?if_exists?html}">
                 <div class="error">${ERRORS.title?if_exists}</div>
             </td>
         </tr>
         <tr>
             <td class="required">Typ inzerátu</td>
             <td>
-                <@lib.showOption "type", "buy", "Prodej", "radio", "tabindex='2'" />
-                <@lib.showOption "type", "give", "Darování", "radio", "tabindex='3'" />
-                <@lib.showOption "type", "sell", "Koupì", "radio", "tabindex='4'" />
+                <@lib.showOption "type", "sell", "Prodej", "radio", "tabindex='2'" />
+                <@lib.showOption "type", "buy", "Koupì", "radio", "tabindex='3'" />
                 <div class="error">${ERRORS.type?if_exists}</div>
+            </td>
+        </tr>
+        <tr>
+            <td>Cena</td>
+            <td>
+                <input tabindex="2" type="text" name="price" size="40" value="${PARAMS.price?if_exists?html}">
+                <div class="error">${ERRORS.price?if_exists}</div>
+            </td>
+        </tr>
+        <tr>
+            <td>Kontakt</td>
+            <td>
+                <input tabindex="3" type="text" name="contact" size="40" value="${PARAMS.contact?if_exists?html}">
+                <div class="error">${ERRORS.contact?if_exists}</div>
             </td>
         </tr>
         <tr>
@@ -78,14 +86,14 @@
                     <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="Vlo¾it znaèku formátovaného textu. Vhodné pro konfiguraèní soubory èi výpisy.">&lt;pre&gt;</a>
                     <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
                 </div>
-                <textarea tabindex="3" name="text" cols="80" rows="20">${PARAMS.text?if_exists?html}</textarea><br>
+                <textarea tabindex="4" name="text" cols="80" rows="20">${PARAMS.text?if_exists?html}</textarea><br>
                 <div class="error">${ERRORS.text?if_exists}</div>
             </td>
         </tr>
         <tr>
             <td colspan="2" align="center">
-                <input tabindex="4" type="submit" name="preview" value="Náhled">
-                <input tabindex="5" type="submit" name="submit" value="Dokonèi">
+                <input tabindex="5" type="submit" name="preview" value="Náhled">
+                <input tabindex="6" type="submit" name="submit" value="Dokonèi">
             </td>
         </tr>
     </table>

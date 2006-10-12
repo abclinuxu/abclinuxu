@@ -16,7 +16,7 @@
             <#else>
                 <li><a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
                 <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
-                <li><a href="${URL.noPrefix("/inset/"+RELATION.id+"?action=addScreenshot")}">Pøidat obrázek</a></li>
+                <li><a href="${URL.make("/inset/"+RELATION.id+"?action=addScreenshot")}">Pøidat obrázek</a></li>
                 <li><a href="/revize?rid=${RELATION.id}&amp;prefix=/software">Historie</a></li>
                 <li><a href="${RELATION.url?default("/software/show/"+RELATION.id)}?varianta=print">Tisk</a></li>
                 <li>
@@ -28,7 +28,7 @@
                     <input type="submit" class="button" value="Hledej">
                 </form>
                 <#if USER?exists && USER.hasRole("attachment admin")>
-                    <li><a href="${URL.noPrefix("/inset/"+RELATION.id+"?action=manage")}">Správa pøíloh</a></li>
+                    <li><a href="${URL.make("/inset/"+RELATION.id+"?action=manage")}">Správa pøíloh</a></li>
                 </#if>
                 <#if USER?exists && USER.hasRole("move relation")>
                     <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Pøesunout</a></li>

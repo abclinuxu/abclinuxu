@@ -163,6 +163,8 @@
 <!ELEMENT data (title, text)>
 <!ELEMENT title (#PCDATA)> <!-- advertisement title -->
 <!ELEMENT text (#PCDATA)> <!-- content of the advertisement -->
+<!ELEMENT price (#PCDATA)> <!-- requested price -->
+<!ELEMENT contact (#PCDATA)> <!-- contact for the person -->
 
 <!-- common -->
 <!ELEMENT inset (images*)> <!-- this element is child of data and it serves as container for various attachments -->
