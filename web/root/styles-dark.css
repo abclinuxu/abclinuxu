@@ -946,3 +946,17 @@ display: none;
 .treeview .submenu ul li {
 cursor: default;
 }
+
+/* Sun */
+.sun-box {
+background:	#5583a2 url('/images/bannery/sun-back.png') top repeat-x;
+color:		white;
+border:		1px solid #dedede;
+margin:		1em;
+font-size:	small;
+}
+.sun-box p {
+padding:	0.5em 0 0.5em 0.5em;
+}
+.sun-box a { color: white; }
+.sun-box a:hover { background: #e97d19; }

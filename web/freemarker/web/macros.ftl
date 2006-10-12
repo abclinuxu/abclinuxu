@@ -272,7 +272,7 @@
 
 <#macro showShortRating (relation, separator, heading=true)>
     <#local rating=TOOL.ratingFor(relation.child.data)?default("UNDEF")>
-    <#if rating!="UNDEF"><#if heading>${separator}Hodnocení:&nbsp;</#if><span title="Hlasù: ${rating.count}">${rating.percent}&nbsp;%</span></#if>
+    <#if rating!="UNDEF"><#if heading>${separator}Hodnocení:&nbsp;</#if>${rating.percent}&nbsp;%&nbsp;(${rating.count}&nbsp;hlasù)</#if>
 </#macro>
 
 <#macro star value><#if (value>0.60)><img src="/images/site/star1.gif" alt="*"><#elseif (value<0.2)><img src="/images/site/star0.gif" alt="-"><#else><img src="/images/site/star5.gif" alt="+"></#if></#macro>

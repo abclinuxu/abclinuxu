@@ -733,7 +733,7 @@ a.info,
 
 .ank td, .ank-odpov {
 	margin: 0 3px 0.3em 0;
-	border-top:1px solid lightgray; }
+	border-top:1px solid #d3d3d3; }
 
 .ank-otazka { margin-bottom:0.5em }
 
@@ -808,7 +808,7 @@ a.info,
 }
 
 .textad {
-	border:		1px solid lightgray;
+	border:		1px solid #d3d3d3;
 	padding:	0.5em;
 	margin:		1em;
 	background:	#f6f6f6;
@@ -929,3 +929,17 @@ display: none;
 .treeview .submenu ul li {
 cursor: default;
 }
+
+/* Sun */
+.sun-box {
+background:	#5583a2 url('/images/bannery/sun-back.png') top repeat-x;
+color:		white;
+border:		1px solid #d3d3d3;
+margin:		1em;
+font-size:	small;
+}
+.sun-box p {
+padding:	0.5em 0 0.5em 0.5em;
+}
+.sun-box a { color: white; }
+.sun-box a:hover { background: #e97d19; }
