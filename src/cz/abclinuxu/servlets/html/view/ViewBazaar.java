@@ -42,8 +42,10 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.User;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.ReadRecorder;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -126,6 +128,10 @@ public class ViewBazaar implements AbcAction {
         env.put(ShowObject.VAR_CHILDREN_MAP, children);
         env.put(ShowObject.VAR_ITEM, item);
         env.put(ShowObject.VAR_RELATION, relation);
+
+        User user = (User) env.get(Constants.VAR_USER);
+        if (user == null || user.getId() != item.getOwner())
+            ReadRecorder.log(item, Constants.COUNTER_READ, env);
         return FMTemplateSelector.select("ViewBazaar", "ad", env, request);
     }
 }

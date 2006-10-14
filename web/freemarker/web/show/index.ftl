@@ -204,4 +204,21 @@
   </div>
 </#if>
 
+<#--
+<#assign BAZAAR = VARS.getFreshBazaarAds(USER?if_exists)>
+<#if (BAZAAR?size>0) >
+    <div class="s_nadpis">
+        <a class="info" href="#">?<span class="tooltip">Inzeráty z AbcBazaru.</span></a>
+        <a href="/bazar">Bazar</a>
+    </div>
+    <div class="s_sekce">
+        <ul>
+        <#list BAZAAR as rel>
+             <li><a href="/bazar/show/${rel.id}">${TOOL.xpath(rel.child,"data/title")}</a></li>
+        </#list>
+        </ul>
+    </div>
+</#if>
+-->
+
 <#include "../footer.ftl">

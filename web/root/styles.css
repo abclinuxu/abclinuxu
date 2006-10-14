@@ -405,38 +405,38 @@ font-weight: bold;
 	border:		1px solid silver;
 }
 
-.ds, .hw, .sw {
+.ds, .hw, .sw, .bazar {
 	border-bottom:	1px solid #27648D;
 }
 
-.ds table, .hw table, .sw table, .faq {
+.ds table, .hw table, .sw table, .faq, .bazar table {
 	margin-top:	5px;
 	border-width:	0px;
 	table-layout:	auto;
 }
 
-.ds thead td, .hw thead td, .sw thead td, .faq thead td {
+.ds thead td, .hw thead td, .sw thead td, .faq thead td, .bazar thead tr {
 	font-weight:	bold;
 	border-bottom:	solid 1px silver;
 	font-size:	85%;
 	background-color: transparent;
 }
 
-.ds td.td01, .hw td.td01, .sw td.td01, .faq td.td01 {
+.ds td.td01, .hw td.td01, .sw td.td01, .faq td.td01, .bazar td.td01 {
 	width:		650px;
 }
 
-.ds td.td02, .hw td.td02, .sw td.td02 {
+.ds td.td02, .hw td.td02, .sw td.td02, .bazar td.td02 {
 	width:		60px;
 	text-align:	center;
 }
 
-.ds td.td03, .hw td.td03, .sw td.td03 {
+.ds td.td03, .hw td.td03, .sw td.td03, .bazar td.td03 {
 	width:		60px;
 	text-align:	center;
 }
 
-.ds td.td04, .hw td.td04, .faq td.td04 {
+.ds td.td04, .hw td.td04, .faq td.td04, .bazar td.td04 {
 	width:		230px;
 	text-align:	right;
 }
@@ -463,20 +463,22 @@ font-weight: bold;
 
 .ds_odsazeni { margin-left:	1em; }
 
-.hw table.hw-sekce tbody td, sw table.sw-sekce tbody td { width: 33%; padding: 0.1em; }
-.hw table.hw-sekce tbody td a,
+.hw table.hw-sekce tbody td { width: 33%; padding: 0.1em; }
+.ds tbody tr a,
+    .bazar table.bazar-polozky tr a,
+    .hw table.hw-sekce tbody td a,
     .hw table.hw-polozky tr a,
-    .sw table.sw-sekce tbody td a,
-    .sw table.sw-polozky tr a,
-    .ds tbody tr a { display: block; _width: 100%; }
+    .sw table.sw-polozky tr a { display: block; _width: 100%; }
 .ds tbody tr:hover,
+    .bazar table.bazar-polozky tbody tr:hover,
     .hw table.hw-polozky tbody tr:hover,
     .sw table.sw-polozky tbody tr:hover { background: #f3f3f3 }
 .ds tr:nth-child(even),
+    .bazar table.bazar-polozky tr:nth-child(even),
     .hw table.hw-polozky tr:nth-child(even),
     .sw table.sw-polozky tr:nth-child(even) { background: #f9f9f9 }
 
-.hw img.ikona, .sw img.ikona { margin-right: 0.3em; }
+.hw img.ikona { margin-right: 0.3em; }
 
 .sw .galerie a:hover, .sw h3 a:hover { background-color: white; }
 

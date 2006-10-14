@@ -63,6 +63,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public static final String KEY_QUESTION = "question";
     public static final String KEY_FAQ = "faq";
     public static final String KEY_DICTIONARY = "dictionary";
+    public static final String KEY_BAZAAR = "bazaar";
     public static final String KEY_INDEX_LINKS = "links.in.index";
     public static final String KEY_TEMPLATE_LINKS = "links.in.template";
 
@@ -73,7 +74,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public static final String PREF_SECTION_CACHE_FREQUENCY = "section.cache.rebuild.frequency";
 
     List freshHardware, freshSoftware, freshDrivers, freshStories, freshArticles, freshNews;
-    List freshQuestions, freshFaqs, freshDictionary;
+    List freshQuestions, freshFaqs, freshDictionary, freshBazaarAds;
     String indexFeeds, templateFeeds;
     Map defaultSizes, maxSizes, counter, feedLinks;
     SectionTreeCache forumTree, faqTree, softwareTree, articleTree;
@@ -187,6 +188,14 @@ public class VariableFetcher extends TimerTask implements Configurable {
     public List getFreshDictionary(Object user) {
         int userLimit = getObjectCountForUser(user, KEY_DICTIONARY, null);
         return getSubList(freshDictionary, userLimit);
+    }
+
+    /**
+     * List of the most fresh dictionary relations according to user preference or system setting.
+     */
+    public List getFreshBazaarAds(Object user) {
+        int userLimit = getObjectCountForUser(user, KEY_BAZAAR, null);
+        return getSubList(freshBazaarAds, userLimit);
     }
 
     /**
@@ -329,6 +338,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         log.debug("Zacina stahovani cachovanych promennych");
         try {
             refreshArticles();
+            refreshBazaar();
             refreshCurrentPoll();
             refreshDictionary();
             refreshDrivers();
@@ -494,6 +504,18 @@ public class VariableFetcher extends TimerTask implements Configurable {
         }
     }
 
+    public void refreshBazaar() {
+        try {
+            int maximum = (Integer) maxSizes.get(KEY_BAZAAR);
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, maximum)};
+            List list = sqlTool.findItemRelationsWithType(Item.BAZAAR, qualifiers);
+            Tools.syncList(list);
+            freshBazaarAds = list;
+        } catch (Exception e) {
+            log.error("Selhalo nacitani inzeratu z bazaru", e);
+        }
+    }
+
     public void refreshCurrentPoll() {
         try {
             currentPoll = sqlTool.findActivePoll();
@@ -604,6 +626,12 @@ public class VariableFetcher extends TimerTask implements Configurable {
         size = prefs.getInt(PREF_MAX + KEY_STORY, 5);
         maxSizes.put(KEY_STORY, size);
         freshStories = Collections.EMPTY_LIST;
+
+        size = prefs.getInt(PREF_DEFAULT + KEY_BAZAAR, 5);
+        defaultSizes.put(KEY_BAZAAR, size);
+        size = prefs.getInt(PREF_MAX + KEY_BAZAAR, 5);
+        maxSizes.put(KEY_BAZAAR, size);
+        freshBazaarAds = Collections.EMPTY_LIST;
 
         indexFeeds = prefs.get(PREF_INDEX_FEEDS, "");
         templateFeeds = prefs.get(PREF_TEMPLATE_FEEDS, "");

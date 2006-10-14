@@ -21,6 +21,7 @@
     <link rel="alternate" title="abclinuxu.cz: ankety" href="http://www.abclinuxu.cz/auto/ankety.rss" type="application/rss+xml">
     <link rel="bookmark" href="#obsah" title="Obsah stránky" type="text/html">
     <meta name="keywords" content="linux,abclinuxu,hardware,diskuse,nápovìda,rada,pomoc">
+    <script type="text/javascript" src="/data/site/impact.js"></script>
     <script type="text/javascript" src="/data/site/scripts.js"></script>
     <script type="text/javascript" src="/data/site/treemenu.js"></script>
 </head>
@@ -166,11 +167,10 @@
                 <div class="ls_zpr">
                 <#list news as relation>
                     <#if relation_index==4>
-                        <!--<p align="center">
+                        <p align="center">
                            <a href="/hosting"><img src="/images/bannery/abchosting.gif" alt="AbcHosting je tu pro vás"
                            border="0" width="251" height="60"></a>
-                        </p>-->
-                        <#include "/include/rockforit.txt">
+                        </p>
                     </#if>
                     <@lib.showTemplateNews relation/>
                     <hr>

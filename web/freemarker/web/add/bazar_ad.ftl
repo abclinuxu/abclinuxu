@@ -64,14 +64,14 @@
         <tr>
             <td>Cena</td>
             <td>
-                <input tabindex="2" type="text" name="price" size="40" value="${PARAMS.price?if_exists?html}">
+                <input tabindex="4" type="text" name="price" size="40" value="${PARAMS.price?if_exists?html}">
                 <div class="error">${ERRORS.price?if_exists}</div>
             </td>
         </tr>
         <tr>
             <td>Kontakt</td>
             <td>
-                <input tabindex="3" type="text" name="contact" size="40" value="${PARAMS.contact?if_exists?html}">
+                <input tabindex="5" type="text" name="contact" size="40" value="${PARAMS.contact?if_exists?html}">
                 <div class="error">${ERRORS.contact?if_exists}</div>
             </td>
         </tr>
@@ -86,14 +86,14 @@
                     <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="Vlo¾it znaèku formátovaného textu. Vhodné pro konfiguraèní soubory èi výpisy.">&lt;pre&gt;</a>
                     <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
                 </div>
-                <textarea tabindex="4" name="text" cols="80" rows="20">${PARAMS.text?if_exists?html}</textarea><br>
+                <textarea tabindex="6" name="text" cols="80" rows="20">${PARAMS.text?if_exists?html}</textarea><br>
                 <div class="error">${ERRORS.text?if_exists}</div>
             </td>
         </tr>
         <tr>
             <td colspan="2" align="center">
-                <input tabindex="5" type="submit" name="preview" value="Náhled">
-                <input tabindex="6" type="submit" name="submit" value="Dokonèi">
+                <input tabindex="7" type="submit" name="preview" value="Náhled">
+                <input tabindex="8" type="submit" name="submit" value="Dokonèi">
             </td>
         </tr>
     </table>

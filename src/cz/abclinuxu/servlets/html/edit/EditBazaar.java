@@ -31,17 +31,15 @@ import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
-import cz.abclinuxu.utils.email.monitor.MonitorAction;
-import cz.abclinuxu.utils.email.monitor.UserAction;
-import cz.abclinuxu.utils.email.monitor.ObjectType;
-import cz.abclinuxu.utils.email.monitor.MonitorPool;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.security.AdminLogger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -81,14 +79,13 @@ public class EditBazaar implements AbcAction {
 
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if (relation != null) {
-            persistence.synchronize(relation);
+            Tools.sync(relation);
             env.put(VAR_RELATION, relation);
         }
 
@@ -111,6 +108,12 @@ public class EditBazaar implements AbcAction {
 
         if (ACTION_EDIT_STEP2.equals(action))
             return actionEditStep2(request, response, env);
+
+        if (ACTION_REMOVE.equals(action))
+            return FMTemplateSelector.select("EditBazaar", "remove", env, request);
+
+        if (ACTION_REMOVE_STEP2.equals(action))
+            return actionRemoveStep2(request, response, env);
 
         throw new MissingArgumentException("Chybí parametr action!");
     }
@@ -153,8 +156,8 @@ public class EditBazaar implements AbcAction {
         // commit new version
         Misc.commitRelation(document.getRootElement(), relation, user);
 
-        FeedGenerator.updateDrivers(); // todo
-        VariableFetcher.getInstance().refreshDrivers(); // todo
+        FeedGenerator.updateBazaar();
+        VariableFetcher.getInstance().refreshBazaar();
 
         if (redirect) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -225,20 +228,30 @@ public class EditBazaar implements AbcAction {
         // commit new version
         Misc.commitRelation(document.getRootElement(), relation, user);
 
-        String url = relation.getUrl();
-        if (url == null)
-            url = UrlUtils.PREFIX_BAZAAR + "/show/" + relation.getId();
-
-        // run monitor
-        String absoluteUrl = "http://www.abclinuxu.cz" + url;
-        MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.BAZAAR, ad, absoluteUrl);
-        MonitorPool.scheduleMonitorAction(action);
-
-        FeedGenerator.updateDrivers(); // todo
-        VariableFetcher.getInstance().refreshDrivers(); // todo
+        FeedGenerator.updateBazaar();
+        VariableFetcher.getInstance().refreshBazaar();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
+        return null;
+    }
+
+    protected String actionRemoveStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistence persistence = PersistenceFactory.getPersistance();
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        User user = (User) env.get(Constants.VAR_USER);
+        Item item = (Item) relation.getChild();
+
+        persistence.remove(relation);
+        relation.getParent().removeChildRelation(relation);
+
+        if (item.getOwner() != user.getId())
+            AdminLogger.logEvent(user, "  remove | bazar " + relation.getId());
+
+        FeedGenerator.updateBazaar();
+        VariableFetcher.getInstance().refreshBazaar();
+
+        response.sendRedirect(response.encodeRedirectURL(UrlUtils.PREFIX_BAZAAR));
         return null;
     }
 

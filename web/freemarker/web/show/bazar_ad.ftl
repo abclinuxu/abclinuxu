@@ -6,7 +6,7 @@
         <#if USER.id==ITEM.owner || USER.hasRole("bazaar admin")>
             <li><a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Uprav inzerát</a></li>
             <li><a href="${URL.make("/inset/"+RELATION.id+"?action=addScreenshot")}">Pøidej obrázek</a></li>
-            <li><a href="${URL.make("/edit/"+RELATION.id+"?action=remove")}">Sma¾ inzerát</a></li>
+            <li><a href="${URL.make("/edit/"+RELATION.id+"?action=rm")}">Sma¾ inzerát</a></li>
             <#if USER.hasRole("attachment admin")>
                 <li><a href="${URL.make("/inset/"+RELATION.id+"?action=manage")}">Správa pøíloh</a></li>
             </#if>
@@ -22,6 +22,7 @@
 
 <@lib.showMessages/>
 
+<div class="bazar">
 <@bazarlib.showBazaarAd ITEM, who />
 
 <#assign images = TOOL.screenshotsFor(ITEM)>
@@ -38,6 +39,7 @@
         </#list>
     </p>
 </#if>
+</div> <!-- bazar -->
 
 <h3>Komentáøe</h3>
 <#if CHILDREN.discussion?exists>

@@ -67,10 +67,11 @@ public class FeedGenerator implements Configurable {
     static final String PREF_NEWS = "zpravicky";
     static final String PREF_POLLS = "ankety";
     static final String PREF_FAQ = "faq";
+    static final String PREF_BAZAAR = "bazaar";
     static final String PREF_NEWS_WORD_LIMIT = "news.word.limit";
 
     static String fileDiscussions, fileArticles, fileDrivers, fileHardware, fileBlog, dirBlogs, fileBlogDigest;
-    static String fileNews, fileFaq, filePolls, fileTrafika, fileSoftware;
+    static String fileNews, fileFaq, filePolls, fileTrafika, fileSoftware, fileBazaar;
     static int feedLength = 10, highFrequencyFeedLength = 25, newsWordLimit;
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new FeedGenerator());
@@ -154,7 +155,7 @@ public class FeedGenerator implements Configurable {
                 User author = (User) persistence.findById(new User(item.getOwner()));
 
                 entry = new SyndEntryImpl();
-                entry.setLink("http://www.abclinuxu.cz" + found.getUrl());
+                entry.setLink("http://"+AbcConfig.getHostname() + found.getUrl());
                 entry.setTitle(Tools.xpath(item, "data/name"));
                 entry.setPublishedDate(item.getUpdated());
                 entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
@@ -201,7 +202,7 @@ public class FeedGenerator implements Configurable {
                 String url = found.getUrl();
                 if (url==null)
                     url = "/hardware/show/" + found.getId();
-                url = "http://www.abclinuxu.cz" + url;
+                url = "http://"+AbcConfig.getHostname() + url;
                 entry.setLink(url);
                 entry.setTitle(Tools.xpath(item,"data/name"));
                 entry.setPublishedDate(item.getUpdated());
@@ -249,7 +250,7 @@ public class FeedGenerator implements Configurable {
 
                 entry = new SyndEntryImpl();
                 String url = found.getUrl();
-                url = "http://www.abclinuxu.cz" + url;
+                url = "http://"+AbcConfig.getHostname() + url;
                 entry.setLink(url);
                 entry.setTitle(Tools.xpath(item,"data/name"));
                 entry.setPublishedDate(item.getUpdated());
@@ -306,7 +307,7 @@ public class FeedGenerator implements Configurable {
                 User author = Tools.createUser(node.getText());
 
                 entry = new SyndEntryImpl();
-                entry.setLink("http://www.abclinuxu.cz" + found.getUrl());
+                entry.setLink("http://"+AbcConfig.getHostname() + found.getUrl());
                 entry.setTitle(Tools.xpath(item, "data/name"));
                 entry.setPublishedDate(item.getCreated());
                 entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
@@ -508,7 +509,7 @@ public class FeedGenerator implements Configurable {
                     title = NewsCategories.get(item.getSubType()).getName();
 
                 entry = new SyndEntryImpl();
-                entry.setLink("http://www.abclinuxu.cz" + found.getUrl());
+                entry.setLink("http://"+AbcConfig.getHostname() + found.getUrl());
                 entry.setTitle(title);
                 description = new SyndContentImpl();
                 description.setType("text/plain");
@@ -563,7 +564,7 @@ public class FeedGenerator implements Configurable {
                 title = element.getText();
 
                 entry = new SyndEntryImpl();
-                entry.setLink("http://www.abclinuxu.cz" + found.getUrl());
+                entry.setLink("http://"+AbcConfig.getHostname() + found.getUrl());
                 entry.setTitle(title);
                 description = new SyndContentImpl();
                 description.setType("text/plain");
@@ -611,7 +612,7 @@ public class FeedGenerator implements Configurable {
                 String url = relation.getUrl();
                 if (url==null)
                     url = UrlUtils.PREFIX_POLLS+"/show/"+relation.getId();
-                entry.setLink("http://www.abclinuxu.cz" + url);
+                entry.setLink("http://"+AbcConfig.getHostname() + url);
 
                 Poll poll = (Poll) relation.getChild();
                 title = Tools.removeTags(poll.getText());
@@ -630,6 +631,49 @@ public class FeedGenerator implements Configurable {
         }
     }
 
+    public static void updateBazaar() {
+        try {
+            SyndFeed feed = new SyndFeedImpl();
+            feed.setFeedType(TYPE_RSS_1_0);
+            feed.setEncoding("UTF-8");
+            feed.setTitle("abclinuxu - bazar");
+            feed.setLink("http://www.abclinuxu.cz/bazar");
+            feed.setUri("http://www.abclinuxu.cz/bazar");
+            feed.setDescription("Seznam inzerátù z bazaru na portálu www.abclinuxu.cz");
+            List entries = new ArrayList();
+            feed.setEntries(entries);
+
+            SyndEntry entry;
+            String title;
+
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
+            List list = SQLTool.getInstance().findItemRelationsWithType(Item.BAZAAR, qualifiers);
+            Tools.syncList(list);
+            for (Iterator iter = list.iterator(); iter.hasNext();) {
+                Relation relation = (Relation) iter.next();
+                entry = new SyndEntryImpl();
+                String url = relation.getUrl();
+                if (url == null)
+                    url = UrlUtils.PREFIX_BAZAAR + "/show/" + relation.getId();
+                entry.setLink("http://"+AbcConfig.getHostname() + url);
+
+                Item item = (Item) relation.getChild();
+                title = Tools.removeTags(Tools.childName(relation));
+                entry.setTitle(title);
+                entry.setPublishedDate(item.getCreated());
+                entries.add(entry);
+            }
+
+            String path = AbcConfig.calculateDeployedPath(fileBazaar);
+            Writer writer = getWriter(path);
+            SyndFeedOutput output = new SyndFeedOutput();
+            output.output(feed, writer);
+            writer.close();
+        } catch (Exception e) {
+            log.error("Chyba pri generovani RSS pro bazar", e);
+        }
+    }
+
     /**
      * Create SyndEntry from blog story.
      * @return SyndEntry with link to selected story.
@@ -643,7 +687,7 @@ public class FeedGenerator implements Configurable {
         entry = new SyndEntryImpl();
         String url = found.getUrl();
         if (url == null)
-            url = "http://www.abclinuxu.cz" + Tools.getUrlForBlogStory(blog.getSubType(), item.getUpdated(), found.getId());
+            url = "http://"+AbcConfig.getHostname() + Tools.getUrlForBlogStory(blog.getSubType(), item.getUpdated(), found.getId());
         entry.setLink(url);
         entry.setTitle(Tools.xpath(item, "data/name"));
         entry.setPublishedDate(item.getCreated());
@@ -684,6 +728,7 @@ public class FeedGenerator implements Configurable {
         fileNews = prefs.get(PREF_NEWS, null);
         fileFaq = prefs.get(PREF_FAQ, null);
         filePolls = prefs.get(PREF_POLLS, null);
+        fileBazaar = prefs.get(PREF_BAZAAR, null);
         newsWordLimit = prefs.getInt(PREF_NEWS_WORD_LIMIT, 10);
     }
 

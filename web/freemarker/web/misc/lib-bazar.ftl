@@ -20,15 +20,6 @@
             </tr>
         </#if>
         <tr>
-            <td>Vlo¾eno:</td>
-            <td>
-                ${DATE.show(AD.created,"SMART")}<#rt>
-                <#lt><#if AD.created.time != AD.updated.time><#rt>
-                    <#lt>, poslední úprava ${DATE.show(AD.updated,"SMART")}
-                </#if>
-            </td>
-        </tr>
-        <tr>
             <td>Autor:</td>
             <td>
                 <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
@@ -45,7 +36,7 @@
                         <form action="${URL.noPrefix("/Profile")}">
                             <input type="hidden" name="action" value="sendEmail">
                             <input type="hidden" name="uid" value="${who.id}">
-                            <input type="submit" value="Po¹lete mi email">
+                            <input type="submit" value="Po¹lete mi email" class="button">
                         </form>
                     <#else>
                         <p class="error">Administrátoøi oznaèili email u¾ivatele za neplatný!</p>
@@ -53,9 +44,24 @@
                 </#if>
             </td>
         </tr>
+        <tr>
+            <td>Vlo¾eno:</td>
+            <td>
+                ${DATE.show(AD.created,"SMART")}<#rt>
+                <#lt><#if AD.created.time != AD.updated.time><#rt>
+                    <#lt>, poslední úprava ${DATE.show(AD.updated,"SMART")}
+                </#if>
+            </td>
+        </tr>
+        <tr>
+            <td>Pøeèteno:</td>
+            <td>
+                <#local reads = TOOL.getCounterValue(AD,"read")>${reads}&times;
+            </td>
+        </tr>
     </table>
 
-    <div>
+    <div class="content" style="margin: 1em; padding: 1ex; border: ridge gray"> <!-- TODO: prevest do CSS -->
         ${TOOL.render(TOOL.xpath(AD.data,"/data/text"), USER?if_exists)}
     </div>
 </#macro>
