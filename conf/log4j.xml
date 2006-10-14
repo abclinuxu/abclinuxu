@@ -33,15 +33,6 @@
            </layout>
 	</appender>
 
-	<appender name="SEARCH" class="org.apache.log4j.DailyRollingFileAppender">
-           <param name="File" value="@DEPLOY_LOGS@/search.log" />
-           <param name="DatePattern" value="'.'yyyy-MM" />
-           <param name="Append" value="true" />
-           <layout class="org.apache.log4j.PatternLayout">
-             <param name="ConversionPattern" value="%d | %m%n"/>
-           </layout>
-	</appender>
-
 	<appender name="WAP" class="org.apache.log4j.DailyRollingFileAppender">
            <param name="File" value="@DEPLOY_LOGS@/wap.log" />
            <param name="DatePattern" value="'.'yyyy-MM" />
@@ -79,11 +70,6 @@
 	<category name="cz.abclinuxu.security" additivity="false">
 	  <priority value="info" />
       <appender-ref ref="ADMIN"/>
-	</category>
-
-	<category name="search" additivity="false">
-	  <priority value="info" />
-      <appender-ref ref="SEARCH"/>
 	</category>
 
 	<category name="wap" additivity="false">

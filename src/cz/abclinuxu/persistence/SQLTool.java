@@ -88,6 +88,9 @@ public final class SQLTool implements Configurable {
     public static final String REMOVE_USER_ACTION = "remove.user.action";
     public static final String INSERT_STATISTICS = "insert.statistika";
     public static final String INCREMENT_STATISTICS = "update.statistika";
+    public static final String INSERT_SEARCH_QUERY = "insert.search.query";
+    public static final String INCREMENT_SEARCH_QUERY = "update.search.query";
+    public static final String GET_SEARCH_QUERY = "get.search.query.for";
     public static final String GET_STATISTICS = "get.statistika";
     public static final String GET_STATISTICS_BY_MONTH = "get.statistika.by.month";
     public static final String INSERT_OLD_ADDRESS = "insert.stara_adresa";
@@ -1472,6 +1475,56 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Records the query. If it has not been recorded yet, this query is
+     * inserted, otherwise its counter is incremented.
+     * @param query normalized query string
+     */
+    public void recordSearchedQuery(String query) {
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        Connection con = null;
+        PreparedStatement statementUpdate = null, statementInsert = null;
+        try {
+            con = persistance.getSQLConnection();
+            statementUpdate = con.prepareStatement((String) sql.get(INCREMENT_SEARCH_QUERY));
+            statementUpdate.setString(1, query);
+            int updated = statementUpdate.executeUpdate();
+            if (updated != 0)
+                return;
+
+            statementInsert = con.prepareStatement((String) sql.get(INSERT_SEARCH_QUERY));
+            statementInsert.setString(1, query);
+            statementInsert.executeUpdate();
+        } catch (SQLException e) {
+            if (e.getErrorCode() == 1062) { // duplicate key error
+                try {
+                    statementUpdate.executeUpdate();
+                    return;
+                } catch (SQLException e1) {
+                    throw new PersistenceException("Chyba v SQL!", e);
+                }
+            }
+            throw new PersistenceException("Chyba v SQL!", e);
+        } finally {
+            persistance.releaseSQLResources(con, new Statement[]{statementInsert, statementUpdate}, null);
+        }
+    }
+
+    /**
+     * Loads search queries starting with value of query parameter. You should
+     * use qualifiers to limit results and define sort order.
+     * @param query normalized query
+     * @param qualifiers
+     * @return list of Object arrays (first is query, second is counter of its usage)
+     */
+    public List getSearchQueries(String query, Qualifier[] qualifiers) {
+        if (qualifiers == null) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer((String) sql.get(GET_SEARCH_QUERY));
+        List params = new ArrayList();
+        appendQualifiers(sb, qualifiers, params, null, null);
+        return loadObjects(sb.toString(), params);
+    }
+
+    /**
      * Loads of values of certain property.
      * @param type constant as defined in properties.txt
      * @return List of Strings (no duplicates)
@@ -1612,6 +1665,9 @@ public final class SQLTool implements Configurable {
         store(INSERT_STATISTICS, prefs);
         store(GET_STATISTICS, prefs);
         store(GET_STATISTICS_BY_MONTH, prefs);
+        store(INCREMENT_SEARCH_QUERY, prefs);
+        store(INSERT_SEARCH_QUERY, prefs);
+        store(GET_SEARCH_QUERY, prefs);
         store(INSERT_OLD_ADDRESS, prefs);
         store(OLD_ADDRESS, prefs);
         store(PROPERTY_VALUES, prefs);

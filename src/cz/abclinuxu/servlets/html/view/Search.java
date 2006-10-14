@@ -32,6 +32,7 @@ import cz.abclinuxu.utils.search.AbcCzechAnalyzer;
 import cz.abclinuxu.utils.search.AbcQueryParser;
 import cz.abclinuxu.utils.search.MyDocument;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.persistence.SQLTool;
 import org.apache.lucene.search.*;
 import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
@@ -54,7 +55,6 @@ import java.io.File;
  */
 public class Search implements AbcAction {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(Search.class);
-    static org.apache.log4j.Category searchLog = org.apache.log4j.Category.getInstance("search");
 
     /** contains relation, that match the expression */
     public static final String VAR_RESULT = "RESULT";
@@ -126,7 +126,7 @@ public class Search implements AbcAction {
             query = AbcQueryParser.parse(queryString, analyzer, types, newsCategoriesSet);
             query = AbcQueryParser.addParentToQuery((String)params.get(PARAM_PARENT), query);
             if (from == 0) // user clicked on Next page of the result
-                searchLog.info(queryString);
+                logSearch(queryString);
         } catch (ParseException e) {
             ServletUtils.addError(PARAM_QUERY, "Hledaný øetìzec obsahuje chybu!", env, null);
             return choosePage(onlyNews, request, env, newsCategoriesSet);
@@ -171,6 +171,15 @@ public class Search implements AbcAction {
         }
 
         return choosePage(onlyNews, request, env, newsCategoriesSet);
+    }
+
+    /**
+     * Logs the search query, so we can know the statistics.
+     * @param query non-normalized search query, it must not be null
+     */
+    public static void logSearch(String query) {
+        SQLTool sqlTool = SQLTool.getInstance();
+        sqlTool.recordSearchedQuery(query.toLowerCase());
     }
 
     private static String choosePage(boolean displayNews, HttpServletRequest request, Map env, NewsCategoriesSet newsCategories) throws Exception {

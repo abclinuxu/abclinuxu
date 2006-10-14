@@ -309,6 +309,9 @@
                             <entry key="get.user.action" value="select kdy from akce where kdo=? and relace=? and typ=?" />
                             <entry key="remove.user.action" value="delete from akce where kdo=? and relace=? and typ=?" />
                             <entry key="items.count.in.section" value="select R1.potomek, count(R2.cislo) from relace R1, relace R2 where R1.potomek in ? and R1.typ_potomka='K' and R1.cislo=R2.predchozi and R2.typ_potomka='P' group by R1.potomek" />
+                            <entry key="insert.search.query" value="insert into hledano values(?,1)" />
+                            <entry key="update.search.query" value="update hledano set pocet=pocet+1 where retezec=?" />
+                            <entry key="get.search.query.for" value="select * from hledano where retezec like concat(?,'%')" />
                             <entry key="insert.statistika" value="insert into statistika values(curdate(),?,?)" />
                             <entry key="update.statistika" value="update statistika set pocet=pocet+? where typ=? and den=curdate()" />
                             <entry key="get.statistika" value="select * from statistika where "/>
