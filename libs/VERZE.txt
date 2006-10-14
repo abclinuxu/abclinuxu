@@ -1,7 +1,7 @@
 freemarker		2.3.3		http://freemarker.org/
 log4j			1.2.7		http://jakarta.apache.org
 proxool			0.7.2		http://proxool.sf.net
-mysql-connector		3.0.16-ga	http://www.mysql.com
+mysql-connector		3.0.17-ga	http://www.mysql.com
 regexp			1.4-dev		http://jakarta.apache.org (27.2.2004 - cvs)
 commons-fileupload	1.0		http://jakarta.apache.org
 dom4j			1.6		http://dom4j.org/ (vyzaduje jaxen)
