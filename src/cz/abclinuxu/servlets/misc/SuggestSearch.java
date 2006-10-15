@@ -73,6 +73,8 @@ public class SuggestSearch extends HttpServlet implements Configurable {
             if (Misc.empty(query))
                 found = Collections.EMPTY_LIST;
             else {
+                query = new String(query.getBytes("ISO-8859-1"));
+
                 SQLTool sqlTool = SQLTool.getInstance();
                 Qualifier[] qualifiers = new Qualifier[]{new LimitQualifier(0, limit)};
                 found = sqlTool.getSearchQueries(query, qualifiers);
