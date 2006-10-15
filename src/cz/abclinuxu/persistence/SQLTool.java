@@ -1520,6 +1520,7 @@ public final class SQLTool implements Configurable {
         if (qualifiers == null) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(GET_SEARCH_QUERY));
         List params = new ArrayList();
+        params.add(query);
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadObjects(sb.toString(), params);
     }

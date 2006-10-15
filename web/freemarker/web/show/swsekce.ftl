@@ -1,4 +1,7 @@
 <#import "../macros.ftl" as lib>
+<#assign html_header>
+    <script type="text/javascript" src="/data/site/treemenu.js"></script>
+</#assign>
 <#assign plovouci_sloupec>
     <div class="s_sekce">
         <ul>

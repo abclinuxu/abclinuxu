@@ -945,3 +945,27 @@ padding:	0.5em 0 0.5em 0.5em;
 }
 .sun-box a { color: white; }
 .sun-box a:hover { background: #e97d19; }
+
+.SuggestFramework_List {
+	border: 1px solid #CCCCCC;
+	border-top: 0px;
+}
+
+.SuggestFramework_Heading {
+	padding: 0px 1px 0px 1px;
+	background-color: #CCCCCC;
+	color: #FFFFFF;
+	font-weight: bold;
+}
+
+.SuggestFramework_Highlighted {
+	padding: 0px 1px 0px 1px;
+	background-color: Highlight;
+	color: HighlightText;
+}
+
+.SuggestFramework_Normal {
+	padding: 0px 1px 0px 1px;
+	background-color: #FFFFFF;
+	color: #000000;
+}

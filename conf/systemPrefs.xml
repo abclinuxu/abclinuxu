@@ -311,7 +311,7 @@
                             <entry key="items.count.in.section" value="select R1.potomek, count(R2.cislo) from relace R1, relace R2 where R1.potomek in ? and R1.typ_potomka='K' and R1.cislo=R2.predchozi and R2.typ_potomka='P' group by R1.potomek" />
                             <entry key="insert.search.query" value="insert into hledano values(?,1)" />
                             <entry key="update.search.query" value="update hledano set pocet=pocet+1 where retezec=?" />
-                            <entry key="get.search.query.for" value="select * from hledano where retezec like concat(?,'%')" />
+                            <entry key="get.search.query.for" value="select * from hledano where retezec like concat(?,'%') order by pocet desc" />
                             <entry key="insert.statistika" value="insert into statistika values(curdate(),?,?)" />
                             <entry key="update.statistika" value="update statistika set pocet=pocet+? where typ=? and den=curdate()" />
                             <entry key="get.statistika" value="select * from statistika where "/>
@@ -478,6 +478,11 @@
                             <map>
                                 <entry key="content.for.www" value="/data/site/robots.txt"/>
                                 <entry key="content.for.other" value="/data/site/norobots.txt"/>
+                            </map>
+                        </node>
+                        <node name="SuggestSearch">
+                            <map>
+                                <entry key="results.limit" value="10"/>
                             </map>
                         </node>
                     </node>

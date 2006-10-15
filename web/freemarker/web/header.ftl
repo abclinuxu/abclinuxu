@@ -23,7 +23,9 @@
     <meta name="keywords" content="linux,abclinuxu,hardware,diskuse,nápovìda,rada,pomoc">
     <script type="text/javascript" src="/data/site/impact.js"></script>
     <script type="text/javascript" src="/data/site/scripts.js"></script>
-    <script type="text/javascript" src="/data/site/treemenu.js"></script>
+    <#if html_header?exists>
+        ${html_header}
+    </#if>
 </head>
 
 <body id="www-abclinuxu-cz">

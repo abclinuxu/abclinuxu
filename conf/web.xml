@@ -64,6 +64,12 @@
     </servlet>
 
     <servlet>
+        <servlet-name>SuggestSearch</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.misc.SuggestSearch</servlet-class>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+
+    <servlet>
         <servlet-name>ProxoolAdmin</servlet-name>
         <servlet-class>org.logicalcobwebs.proxool.admin.servlet.AdminServlet</servlet-class>
         <load-on-startup>3</load-on-startup>
@@ -87,6 +93,11 @@
     <servlet-mapping>
         <servlet-name>Robots</servlet-name>
         <url-pattern>/robots.txt</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SuggestSearch</servlet-name>
+        <url-pattern>/SuggestSearch</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
