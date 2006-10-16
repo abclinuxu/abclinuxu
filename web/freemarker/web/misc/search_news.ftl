@@ -45,12 +45,19 @@
     </p>
 
     <#list RESULT.data as doc>
-        <p>
-            <!--m--><a href="${doc.url}">${doc.title?default(doc.url)}</a><!--n--><!-- (${doc.typ})-->
+        <div class="search_result">
+            <!--m-->
+            <a href="${doc.url}" class="search_title">${doc.title?default(doc.url)}</a>
+            <!--n-->
             <#if doc.fragments?exists>
-                <br><span class="cl_inforadek">${doc.fragments}</span>
+                <p class="search_fragments">${doc.fragments}</p>
             </#if>
-        </p>
+            <p class="search_details">
+                Zprávièka,
+                vytvoøena: ${DATE.show(doc.datum_vytvoreni,"SMART")},
+                ${doc.velikost_obsahu} znakù
+            </p>
+        </div>
     </#list>
 
     <#if RESULT.prevPage?exists>

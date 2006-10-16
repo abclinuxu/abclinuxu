@@ -113,6 +113,8 @@ public class Controller extends HttpServlet implements Configurable {
             return Constants.PAGE_SCHOOLBOOK;
         if (uri.startsWith("/hosting"))
             return Constants.PAGE_HOSTING;
+        if (uri.startsWith("/Search"))
+            return Constants.PAGE_SEARCH;
         return null;
     }
 

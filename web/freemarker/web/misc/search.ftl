@@ -24,7 +24,7 @@
         <tr>
             <td>
               <!--input type="text" name="query" id="query" value="${QUERY?if_exists?html}" size="50" tabindex="1"
-                     action="/SuggestSearch" columns="2" delay="800" autocomplete="false" -->
+                     action="/SuggestSearch" columns="2" delay="800" autocomplete="false"-->
               <input type="text" name="query" value="${QUERY?if_exists?html}" size="50" tabindex="1">
               <input type="submit" value="Hledej" tabindex="2">
               <#if ERRORS.query?exists><div class="error">${ERRORS.query}</div></#if>
@@ -96,41 +96,41 @@
                 Sekce
             <#elseif doc.typ='hardware'>
                 Hardware,
-                poslední zmìna: ${DATE.show(doc.datum_zmeny,"CZ_DMY")},
+                poslední zmìna: ${DATE.show(doc.datum_zmeny,"SMART")},
                 ${doc.velikost_obsahu} znakù
             <#elseif doc.typ='diskuse' ||  doc.typ='otazka'>
                 Diskuse,
                 poèet reakcí: ${doc.odpovedi},
-                vytvoøena: ${DATE.show(doc.datum_vytvoreni,"CZ_DMY")},
-                poslední reakce: ${DATE.show(doc.datum_zmeny,"CZ_DMY")},
+                vytvoøena: ${DATE.show(doc.datum_vytvoreni,"SMART")},
+                poslední reakce: ${DATE.show(doc.datum_zmeny,"SMART")},
                 ${doc.velikost_obsahu} znakù
             <#elseif doc.typ='software'>
                 Software,
-                poslední zmìna: ${DATE.show(doc.datum_zmeny,"CZ_DMY")},
+                poslední zmìna: ${DATE.show(doc.datum_zmeny,"SMART")},
                 ${doc.velikost_obsahu} znakù
             <#elseif doc.typ='ovladac'>
                 Ovladaè,
-                poslední zmìna: ${DATE.show(doc.datum_zmeny,"CZ_DMY")},
+                poslední zmìna: ${DATE.show(doc.datum_zmeny,"SMART")},
                 ${doc.velikost_obsahu} znakù
             <#elseif doc.typ='faq'>
                 FAQ,
-                poslední zmìna: ${DATE.show(doc.datum_zmeny,"CZ_DMY")},
+                poslední zmìna: ${DATE.show(doc.datum_zmeny,"SMART")},
                 ${doc.velikost_obsahu} znakù
             <#elseif doc.typ='clanek'>
                 Èlánek,
-                vytvoøen: ${DATE.show(doc.datum_vytvoreni,"CZ_DMY")},
+                vytvoøen: ${DATE.show(doc.datum_vytvoreni,"SMART")},
                 ${doc.velikost_obsahu} znakù
             <#elseif doc.typ='zpravicka'>
                 Zprávièka,
-                vytvoøena: ${DATE.show(doc.datum_vytvoreni,"CZ_DMY")},
+                vytvoøena: ${DATE.show(doc.datum_vytvoreni,"SMART")},
                 ${doc.velikost_obsahu} znakù
             <#elseif doc.typ='pojem'>
                 Pojem,
-                poslední zmìna: ${DATE.show(doc.datum_zmeny,"CZ_DMY")},
+                poslední zmìna: ${DATE.show(doc.datum_zmeny,"SMART")},
                 ${doc.velikost_obsahu} znakù
             <#elseif doc.typ='blog'>
                 Blog,
-                vytvoøen: ${DATE.show(doc.datum_vytvoreni,"CZ_DMY")},
+                vytvoøen: ${DATE.show(doc.datum_vytvoreni,"SMART")},
                 ${doc.velikost_obsahu} znakù
             </#if>
             </p>
