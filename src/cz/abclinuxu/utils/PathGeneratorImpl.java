@@ -62,7 +62,7 @@ public class PathGeneratorImpl implements PathGenerator {
             prefix = DiacriticRemover.getInstance().removeDiacritics(prefix);
             prefix = prefix.toLowerCase();
             Matcher matcher = reInvalidChars.matcher(prefix);
-            prefix = matcher.replaceAll("");
+            prefix = matcher.replaceAll("-");
         }
         if (suffix == null || suffix.length() == 0)
             throw new IllegalArgumentException("File suffix must be specified!");
