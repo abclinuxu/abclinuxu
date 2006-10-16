@@ -25,12 +25,23 @@ import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import java.util.regex.Matcher;
 
 /**
  * Default implementation
  */
 public class PathGeneratorImpl implements PathGenerator {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(PathGeneratorImpl.class);
+    static Pattern reInvalidChars;
+    static {
+        try {
+            reInvalidChars = Pattern.compile("[^a-z0-9_-]");
+        } catch (PatternSyntaxException e) {
+            log.error("Regexp cannot be compiled!", e);
+        }
+    }
 
     /**
      * Creates complete path for specified attachment of given object.
@@ -47,6 +58,12 @@ public class PathGeneratorImpl implements PathGenerator {
             throw new InternalException("Not implemented");
         if (prefix == null)
             prefix = "";
+        else {
+            prefix = DiacriticRemover.getInstance().removeDiacritics(prefix);
+            prefix = prefix.toLowerCase();
+            Matcher matcher = reInvalidChars.matcher(prefix);
+            prefix = matcher.replaceAll("");
+        }
         if (suffix == null || suffix.length() == 0)
             throw new IllegalArgumentException("File suffix must be specified!");
 
@@ -61,7 +78,6 @@ public class PathGeneratorImpl implements PathGenerator {
         if (!dir.isDirectory())
             throw new IOException("Supposed path " + dir.getAbsolutePath() + " is not directory!");
 
-        prefix = DiacriticRemover.getInstance().removeDiacritics(prefix);
         String filePrefix = id + "-" + prefix + "-";
         File file = null;
         try {
