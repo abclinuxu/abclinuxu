@@ -21,11 +21,13 @@ Prehled clanku
 Reklama
 =======
 
-HOT JOB ALERT!  The new Sun OEM Team in Prague is recruiting
-several Software Engineers (Platform Integration and Development).
-Learn more about this new opportunity here...
+HOT JOB!  Do you have DEVELOPMENT and/or INTEGRATION
+experience with Telecom applications and application
+platforms? We are looking for Senior Design Support
+Engineers - Integrated Platform to join our team.
+Learn more...
 
-http://www2.talents.cz/sunjobs2_detail.php?id=157
+http://www.talents.cz/sunjobs2_detail.php?id=168
 
 
 Prehled zpravicek

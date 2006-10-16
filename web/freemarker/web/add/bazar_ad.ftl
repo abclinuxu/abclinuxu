@@ -4,7 +4,7 @@
 <@lib.showMessages/>
 
 <p>
-    Pro inzeráty platí následující pravidla, prosíme pøeètìte si je
+    Pro inzeráty platí následující pravidla. Prosíme, pøeètìte si je
     a øiïte se jimi. V krajním pøípadì mohou administrátoøi vá¹ inzerát
     smazat.
 </p>
@@ -17,20 +17,21 @@
     </li>
     <li>
         Inzeráty musí být v souladu se zamìøením tohoto portálu. Vhodné inzeráty jsou
-        napøíklad prodej hardwaru èi spotøební elektroniky, linuxového softwaru, odborné literatury,
+        napøíklad prodej <a href="/hardware">hardwaru</a> èi spotøební elektroniky,
+        <a href="/software">linuxového softwaru</a>, odborné literatury,
         ply¹ových tuèòákù apod.
     </li>
     <li>
         Je zakázáno vkládat inzerát se stejným èi podobným obsahem døíve ne¾ za celých
         uplynulých 7 dní. Inzerát nesmí poru¹ovat místní zákony.
     </li>
-    <li>
+    <!--<li>
         Inzeráty budou po 30 dnech automaticky smazány. Pokud ale uspìjete døíve, sma¾te
         prosím inzerát ruènì.
-    </li>
+    </li>-->
     <li>
-        Do titulku napi¹te, co prodáváte èi hledáte. Ètenáøi se pak budou lépe orientovat
-        ve výpise inzerátù. Do kontaktu napi¹te své telefonní èíslo, ICQ apod. Necháte-li
+        Do <b>titulku</b> napi¹te, co prodáváte èi hledáte. Ètenáøi se pak budou lépe orientovat
+        ve výpise inzerátù. Do <b>kontaktu</b> napi¹te své telefonní èíslo, Jabber, ICQ apod. Necháte-li
         jej prázdný, systém automaticky nabídne emailový kontakt pøes formuláø ve va¹em profilu.
     </li>
 </ul>

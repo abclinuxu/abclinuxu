@@ -11,7 +11,7 @@
     jeho miniatura.
 </p>
 
-<form action="${URL.noPrefix("/inset/"+RELATION.id)}" method="POST" enctype="multipart/form-data">
+<form action="${URL.make("/inset/"+RELATION.id)}" method="POST" enctype="multipart/form-data">
     <p>
         <span class="required">Jméno souboru</span><br/>
         <input type="file" name="screenshot" size="40" tabindex="1">

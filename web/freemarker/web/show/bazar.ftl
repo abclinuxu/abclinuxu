@@ -6,9 +6,10 @@
 
 <p>
     Bazar je bezplatná slu¾ba portálu www.abclinuxu.cz, která umo¾òuje ètenáøùm
-    prodat, darovat èi koupit hardware, spotøební elektroniku, software, odbornou literaturu
+    prodat, darovat èi koupit <a href="/hardware">hardware</a>, spotøební
+    elektroniku, <a href="/software">software</a>, odbornou literaturu
     nebo pøedmìty s FOSS tématikou (napøíklad ply¹oví tuèòáci, trièka). Bazar
-    není urèen pro výdìleènou èinnost, komerèní inzeráty (OSVÈ, firmy) jsou
+    není urèen pro výdìleènou èinnost; komerèní inzeráty (OSVÈ, firmy) jsou
     bez pøedchozího schválení provozovatelem zakázány.
 </p>
 
@@ -17,9 +18,9 @@
     <tr>
         <td class="td01">Titulek inzerátu</td>
         <td class="td02">Typ</td>
-        <td class="td03">Komentáøe</td>
-        <td class="td04">Vlo¾eno</td>
-        <td class="td05">Pøeèteno</td>
+        <td class="td03">Pøeèteno</td>
+        <td class="td04">Reakcí</td>
+        <td class="td05">Vlo¾eno</td>
     </tr>
   </thead>
   <tbody>
@@ -39,17 +40,18 @@
                 <#if ad.child.subType=='sell'>prodej<#else>koupì</#if>
             </td>
             <td class="td03">
+                <@lib.showCounter ad.child, reads, "read" />&times;
+            </td>
+            <td class="td04">
                 <#assign diz=TOOL.findComments(ad.child)>
                 ${diz.responseCount}<#if diz.responseCount gt 0><@lib.markNewComments diz/></#if>
             </td>
-            <td class="td04">${DATE.show(ad.child.created, "SMART")}</td>
-            <td class="td05">
-                <@lib.showCounter ad.child, reads, "read" />&times;
-            </td>
+            <td class="td05">${DATE.show(ad.child.created, "SMART")}</td>
         </tr>
     </#list>
   </tbody>
 </table>
+</div> <!-- bazar -->
 
 <ul>
     <li>
@@ -69,6 +71,5 @@
     </#if>
 </ul>
 
-</div> <!-- bazar -->
 
 <#include "../footer.ftl">

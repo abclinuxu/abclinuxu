@@ -88,7 +88,7 @@
             <@lib.showOption2 "license", "other", LICENSE_PROPERTY["other"], "checkbox", licenses /><br>
         </div>
 
-        <input type="submit" value="Nastavit">
+        <input type="submit" value="Nastavit" class="button">
         <input type="hidden" name="action" value="filter">
 	</form>
     </div>

@@ -409,13 +409,13 @@ font-weight: bold;
 	border-bottom:	1px solid #27648D;
 }
 
-.ds table, .hw table, .sw table, .faq, .bazar table {
+.ds table, .hw table, .sw table, .faq, .bazar-polozky {
 	margin-top:	5px;
 	border-width:	0px;
 	table-layout:	auto;
 }
 
-.ds thead td, .hw thead td, .sw thead td, .faq thead td, .bazar thead tr {
+.ds thead td, .hw thead td, .sw thead td, .faq thead td, .bazar thead td {
 	font-weight:	bold;
 	border-bottom:	solid 1px silver;
 	font-size:	85%;
@@ -436,15 +436,15 @@ font-weight: bold;
 	text-align:	center;
 }
 
-.ds td.td04, .hw td.td04, .faq td.td04, .bazar td.td04 {
+.ds td.td04, .hw td.td04, .faq td.td04 {
 	width:		230px;
 	text-align:	right;
 }
-.sw td.td04 {
+.sw td.td04, .bazar td.td04 {
 	width:		60px;
 	text-align:	center;
 }
-.sw td.td05 {
+.sw td.td05, .bazar td.td05 {
 	width:		230px;
 	text-align:	right;
 }
@@ -677,6 +677,7 @@ a.info:hover span.tooltip {
 .ds td a,
 .hw td a,
 .sw td a,
+.bazar td a,
 .s_nadpis a,
 .s_nadpis a:hover,
 .textad a,
@@ -693,6 +694,7 @@ a.info,
 .ds td a:hover,
 .hw td a:hover,
 .sw td a:hover,
+.bazar td a:hover,
 .textad a:hover,
 .ramec li a:hover,
 .rating a:hover,
@@ -841,9 +843,9 @@ a.info,
 .form-edit a#serif { font-family:serif }
 .form-edit a#mono { font-family:monospace }
 
-.dict-item, .questionToFaq {
+.dict-item, .questionToFaq, .bazar-ad {
 	background:	#ececec;
-	margin:		0.5em 0.5em 0 0;
+	margin:		0.5em;
 	padding:	0.5em;
 }
 
