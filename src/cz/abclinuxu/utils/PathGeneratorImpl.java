@@ -30,6 +30,8 @@ import java.io.IOException;
  * Default implementation
  */
 public class PathGeneratorImpl implements PathGenerator {
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(PathGeneratorImpl.class);
+
     /**
      * Creates complete path for specified attachment of given object.
      * @param obj object which will be associated with the file
@@ -60,7 +62,14 @@ public class PathGeneratorImpl implements PathGenerator {
             throw new IOException("Supposed path " + dir.getAbsolutePath() + " is not directory!");
 
         prefix = DiacriticRemover.getInstance().removeDiacritics(prefix);
-        File file = File.createTempFile(id + "-" + prefix + "-", suffix, dir);
+        String filePrefix = id + "-" + prefix + "-";
+        File file = null;
+        try {
+            file = File.createTempFile(filePrefix, suffix, dir);
+        } catch (IOException e) {
+            log.error("Failed to create unique file! Prefix: "+filePrefix+", suffix: "+suffix);
+            throw e;
+        }
         return file;
      }
 }
