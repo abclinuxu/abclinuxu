@@ -418,7 +418,7 @@
                     <map/>
                     <node name="Controller">
                         <map>
-                            <entry key="regexp.bots" value="bot|spider|crawl|blog|feed|rss|subscriber|liferea|slurp|archive|plucker" />
+                            <entry key="regexp.bots" value="bot|spider|crawl|blog|feed|rss|subscriber|liferea|slurp|archive|plucker|DigExt" />
                         </map>
                     </node>
                     <node name="utils">
