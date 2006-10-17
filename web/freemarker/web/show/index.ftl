@@ -182,6 +182,37 @@
     </span>
 </#macro>
 
+
+
+<#--
+<h2>Slu¾by</h2>
+
+<table class="boxy">
+  <tr>
+
+<#assign BAZAAR = VARS.getFreshBazaarAds(USER?if_exists)>
+<#if (BAZAAR?size>0) >
+   <td>
+    <div class="s_nadpis">
+        <a class="info" href="#">?<span class="tooltip">Inzeráty z AbcBazaru.</span></a>
+        <a href="/bazar">Bazar</a>
+    </div>
+    <div class="s_sekce">
+        <ul>
+        <#list BAZAAR as rel>
+             <li><a href="/bazar/show/${rel.id}">${TOOL.xpath(rel.child,"data/title")}</a></li>
+        </#list>
+        </ul>
+    </div>
+   </td>
+</#if>
+
+   <td></td>
+   <td></td>
+  </tr>
+</table>
+-->
+
 <#assign FEEDS = VARS.getFeeds(USER?if_exists,true)>
 <#if (FEEDS.size() > 0)>
   <h2>Rozcestník</h2>
@@ -203,22 +234,5 @@
     </table>
   </div>
 </#if>
-
-<#--
-<#assign BAZAAR = VARS.getFreshBazaarAds(USER?if_exists)>
-<#if (BAZAAR?size>0) >
-    <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Inzeráty z AbcBazaru.</span></a>
-        <a href="/bazar">Bazar</a>
-    </div>
-    <div class="s_sekce">
-        <ul>
-        <#list BAZAAR as rel>
-             <li><a href="/bazar/show/${rel.id}">${TOOL.xpath(rel.child,"data/title")}</a></li>
-        </#list>
-        </ul>
-    </div>
-</#if>
--->
 
 <#include "../footer.ftl">

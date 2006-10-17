@@ -602,6 +602,7 @@ a.info {
 a.info:hover {
 	background: 	#80bbca;
 	color: 		black;
+	z-index:	1;
 }
 
 .s_sekce a.info:hover { text-decoration: none; }
@@ -625,6 +626,7 @@ a.info:hover span.tooltip {
 }
 
 .s,
+.boxy,
 .ramec,
 .ramec ul,
 .ls_zpr span,
@@ -639,7 +641,7 @@ a.info:hover span.tooltip {
 	padding:	0 0.3em;
 }
 
-.s ul, .ramec ul, .rozc ul {
+.s ul, .ramec ul, .boxy ul, .rozc ul {
 	margin:		0;
 	padding-left:	1.3em;
 	color:		#80bbca;
@@ -651,7 +653,7 @@ a.info:hover span.tooltip {
 .ramec span { color: #dedede }
 .ramec {
 	border: 1px solid #4b4b4b;
-	margin: 5px 5px 0 0;
+	margin: 0 2px;
 	background: black;
 }
 .ramec td {
@@ -692,6 +694,7 @@ a.info:hover span.tooltip {
 .textad a,
 a.info,
 .ramec li a,
+.boxy li a,
 .sflista a,
 .cl_square a,
 .rating a,
@@ -706,6 +709,7 @@ a.info,
 .bazar td a:hover,
 .textad a:hover,
 .ramec li a:hover,
+.boxy li a:hover,
 .rating a:hover,
 .cl_perex a:hover,
 .treeview a:hover {text-decoration:underline}
@@ -769,18 +773,26 @@ a.info,
 	color:		#dedede;
 	border-bottom:	1px solid #80bbca;
 }
-.rozc ul { margin: 0.2em 0; }
+.rozc ul, .boxy ul { margin: 0.2em 0.1em; }
 
 .rozc a.server:hover { color: black }
 
 .hw-sloupec .obal_ps, .sw-sloupec .obal_ps { width: 200px; }
 
-.rozc td, .host .prehled td {
+.rozc td, .boxy td, .host .prehled td {
 	background:	black;
 	vertical-align: top;
 	padding:	0.2em;
 	border:		1px solid #4b4b4b;
 	width:		33%;
+}
+.boxy td {
+	padding: 0;
+	background: black;
+	border-color: #4b4b4b;
+}
+.boxy, .rozc table {
+	width: 100%;
 }
 
 .dl {
