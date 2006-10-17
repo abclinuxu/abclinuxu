@@ -136,7 +136,11 @@ public class ServletUtils implements Configurable {
                         } catch (UnsupportedEncodingException e) {log.error(e);}
                         list.add(value);
                     }
-                    map.put(name, list);
+
+                    if ( list.size() == 1)
+                        map.put(name, list.get(0));
+                    else
+                        map.put(name, list);
                 }
             }
         }
