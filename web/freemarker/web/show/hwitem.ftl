@@ -16,6 +16,7 @@
             <#else>
                 <li><a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
                 <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
+                <li><a href="${URL.make("/inset/"+RELATION.id+"?action=addScreenshot")}">Pøidej obrázek</a></li>
                 <li><a href="/revize?rid=${RELATION.id}&amp;prefix=/hardware">Historie</a></li>
                 <li><a href="${RELATION.url?default("/hardware/show/"+RELATION.id)}?varianta=print">Tisk</a></li>
                 <li>
@@ -26,12 +27,17 @@
                 <form action="/Search"><input type="text" class="text" name="query" value="${TOOL.xpath(ITEM,"/data/name")}">
                     <input type="submit" class="button" value="Hledej">
                 </form>
-                <#if USER?exists && USER.hasRole("move relation")>
-                    <hr />
-                    <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Pøesunout polo¾ku</a></li>
-                </#if>
-                <#if USER?exists && USER.hasRole("remove relation")>
-                    <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/hardware")}">Smazat</a></li>
+                <#if USER?exists>
+                    <#if USER.hasRole("move relation")>
+                        <hr />
+                        <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Pøesunout polo¾ku</a></li>
+                    </#if>
+                    <#if USER.hasRole("remove relation")>
+                        <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/hardware")}">Smazat</a></li>
+                    </#if>
+                    <#if USER.hasRole("attachment admin")>
+                        <li><a href="${URL.make("/inset/"+RELATION.id+"?action=manage")}">Správa pøíloh</a></li>
+                    </#if>
                 </#if>
             </#if>
         </ul>
@@ -48,6 +54,21 @@
 </div>
 
 <@lib.showRelated ITEM/>
+
+<#assign images = TOOL.screenshotsFor(ITEM)>
+<#if (images?size > 0)>
+    <h3>Obrázky</h3>
+
+    <p class="galerie">
+        <#list images as image>
+            <#if image.thumbnailPath?exists>
+                <a href="${image.path}"><img src="${image.thumbnailPath}" alt="Obrázek ${image_index}" border="0"></a>
+            <#else>
+                <img src="${image.path}" alt="Obrázek ${image_index}">
+            </#if>
+        </#list>
+    </p>
+</#if>
 
 <#include "../footer.ftl">
 
