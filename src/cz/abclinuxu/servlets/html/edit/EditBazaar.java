@@ -201,6 +201,7 @@ public class EditBazaar implements AbcAction {
      * @return page to be rendered
      */
     protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        User user = (User) env.get(Constants.VAR_USER);
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_RELATION);
@@ -221,8 +222,6 @@ public class EditBazaar implements AbcAction {
             return FMTemplateSelector.select("EditBazaar", "edit", env, request);
         }
 
-        User user = (User) env.get(Constants.VAR_USER);
-        ad.setOwner(user.getId());
         persistence.update(ad);
 
         // commit new version
