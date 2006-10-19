@@ -1359,7 +1359,7 @@ public class EditUser implements AbcAction, Configurable {
      * @return false, if there is a major error.
      */
     private boolean setDistributions(Map params, User user, Map env) {
-        List distros = (List) params.get(PARAM_DISTRIBUTION);
+        List distros = Tools.asList(params.get(PARAM_DISTRIBUTION));
         Element profile = DocumentHelper.makeElement(user.getData(), "/data/profile");
         Node node = profile.element("distributions");
         if ( node!=null )
