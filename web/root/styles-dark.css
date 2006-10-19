@@ -34,8 +34,8 @@ a:hover {
 	margin:		0 0.1em 0 0.2em;
 }
 
-.st .bez-slovniku a:after, .st a.bez-slovniku:after {
-	content:	"";
+.st .bez-slovniku a:after, .st a.bez-slovniku:after, .boxy a:after {
+	content:	none;
 	margin:		0;
 }
 
@@ -488,7 +488,7 @@ font-weight: bold;
 
 .hw img.ikona { margin-right: 0.3em; }
 
-.sw .galerie a:hover, .sw h3 a:hover { background-color: #202020; }
+.galerie a:hover, .sw h3 a:hover { background-color: #202020; }
 
 .sw-strom div { margin-left:	1em; }
 .sw-strom div.uroven-1 { margin-left:	0 }
@@ -586,7 +586,7 @@ a.s_nadpis-pravy-odkaz {
 }
 
 .s_nadpis a.info { float: right; }
-.ramec .s_nadpis { border-top: none; margin: 0 }
+.ramec .s_nadpis, .boxy .s_nadpis { border-top: none; margin: 0 }
 
 
 a.info {
@@ -793,6 +793,7 @@ a.info,
 }
 .boxy, .rozc table {
 	width: 100%;
+	_width: 99%;
 }
 
 .dl {

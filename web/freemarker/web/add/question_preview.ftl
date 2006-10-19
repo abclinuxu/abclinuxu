@@ -19,7 +19,7 @@ zvolte OK.</p>
 <h2>Zde mù¾ete provést své úpravy</h2>
 
 <form action="${URL.make("/EditDiscussion")}" method="POST" name="form">
- <table cellpadding="5">
+ <table class="siroka" cellpadding="5">
   <#if ! USER?exists>
    <tr>
     <td class="required">Login a heslo</td>
@@ -55,7 +55,7 @@ zvolte OK.</p>
 	<a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
     </div>
     <div class="error">${ERRORS.text?if_exists}</div>
-    <textarea tabindex="5" name="text" cols="60" rows="20">${PARAMS.text?if_exists?html}</textarea>
+    <textarea tabindex="5" name="text" class="siroka" rows="20">${PARAMS.text?if_exists?html}</textarea>
    </td>
   </tr>
   <tr>

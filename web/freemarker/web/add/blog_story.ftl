@@ -41,7 +41,7 @@ spokojeni. Najdete jej v pravém menu.
 <h2>Zde mù¾ete provést své úpravy</h2>
 
 <form action="${URL.make("/blog/edit/"+REL_BLOG.id)}" method="POST" name="form">
-<table cellpadding="5">
+<table class="siroka" cellpadding="5">
     <tr>
         <td>
             <span class="required">Titulek zápisu</span>
@@ -86,7 +86,7 @@ spokojeni. Najdete jej v pravém menu.
                 <a href="javascript:insertAtCursor(document.form.content, '&lt;break&gt;', '');" id="mono" title="Vlo¾it znaèku zlomu">&lt;break&gt;</a>
             </div>
             <div class="error">${ERRORS.content?if_exists}</div>
-            <textarea tabindex="2" name="content" cols="80" rows="30">${PARAMS.content?default("<p></p>")?html}</textarea>
+            <textarea tabindex="2" name="content" class="siroka" rows="30">${PARAMS.content?default("<p></p>")?html}</textarea>
         </td>
     </tr>
     <tr>

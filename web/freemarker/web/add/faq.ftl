@@ -19,9 +19,10 @@
     zabývající se touto tématikou nebo na diskusi ve fóru, kde byl problem
     (vy)øe¹en.
 </p>
+<br />
 
 <#if PARAMS.preview?exists>
-    <fieldset style="margin-top: 1em;">
+    <fieldset>
         <legend>Náhled</legend>
         <h1 style="margin-bottom: 1em;">${TOOL.xpath(PREVIEW, "/data/title")?if_exists}</h1>
         <div>
@@ -29,10 +30,10 @@
         </div>
     </fieldset>
 </#if>
-
+<br />
 
 <form action="${URL.make("/faq/edit")}" method="POST" name="form">
-    <table cellpadding="5" style="margin-top:1em">
+    <table cellpadding="5" class="siroka">
         <tr>
             <td class="required">Otázka</td>
             <td>
@@ -51,7 +52,7 @@
                     <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="Vlo¾it znaèku formátovaného textu. Vhodné pro konfiguraèní soubory èi výpisy.">&lt;pre&gt;</a>
                     <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
                 </div>
-                <textarea tabindex="2" name="text" cols="80" rows="20">${PARAMS.text?if_exists?html}</textarea><br>
+                <textarea tabindex="2" name="text" class="siroka" rows="20">${PARAMS.text?if_exists?html}</textarea><br>
                 <div class="error">${ERRORS.text?if_exists}</div>
             </td>
         </tr>

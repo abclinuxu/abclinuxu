@@ -86,7 +86,7 @@
         </#if>
     </div>
    <div class="error">${ERRORS.text?if_exists}</div>
-   <textarea tabindex="5" name="text" cols="70" rows="20">${PARAMS.text?if_exists?html}</textarea>
+   <textarea tabindex="5" name="text" class="siroka" rows="20">${PARAMS.text?if_exists?html}</textarea>
   </p>
   <p>
     <#if PREVIEW?exists>

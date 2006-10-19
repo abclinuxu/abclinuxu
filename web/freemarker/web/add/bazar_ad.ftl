@@ -35,18 +35,18 @@
         jej prázdný, systém automaticky nabídne emailový kontakt pøes formuláø ve va¹em profilu.
     </li>
 </ul>
-
+<br />
 
 <#if PARAMS.preview?exists>
-    <fieldset style="margin-top: 1em;">
+    <fieldset>
         <legend>Náhled</legend>
         <@bazarlib.showBazaarAd PREVIEW, USER />
     </fieldset>
 </#if>
-
+<br />
 
 <form action="${URL.make("/edit")}" method="POST" name="form">
-    <table cellpadding="5" style="margin-top:1em">
+    <table cellpadding="5" class="siroka">
         <tr>
             <td class="required">Titulek</td>
             <td>
@@ -77,7 +77,7 @@
             </td>
         </tr>
         <tr>
-            <td class="required">Obsah inzerát</td>
+            <td class="required">Obsah inzerátu</td>
             <td>
                 <div class="form-edit">
                     <a href="javascript:insertAtCursor(document.form.text, '<b>', '</b>');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
@@ -87,7 +87,7 @@
                     <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="Vlo¾it znaèku formátovaného textu. Vhodné pro konfiguraèní soubory èi výpisy.">&lt;pre&gt;</a>
                     <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
                 </div>
-                <textarea tabindex="6" name="text" cols="80" rows="20">${PARAMS.text?if_exists?html}</textarea><br>
+                <textarea tabindex="6" name="text" class="siroka" rows="20">${PARAMS.text?if_exists?html}</textarea><br>
                 <div class="error">${ERRORS.text?if_exists}</div>
             </td>
         </tr>

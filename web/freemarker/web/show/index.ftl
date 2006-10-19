@@ -183,35 +183,48 @@
 </#macro>
 
 
-
-<#--
 <h2>Slu¾by</h2>
 
 <table class="boxy">
   <tr>
-
-<#assign BAZAAR = VARS.getFreshBazaarAds(USER?if_exists)>
-<#if (BAZAAR?size>0) >
    <td>
-    <div class="s_nadpis">
+    <#assign BAZAAR = VARS.getFreshBazaarAds(USER?if_exists)>
+    <#if (BAZAAR?size>0) >
+      <div class="s_nadpis">
         <a class="info" href="#">?<span class="tooltip">Inzeráty z AbcBazaru.</span></a>
         <a href="/bazar">Bazar</a>
-    </div>
-    <div class="s_sekce">
+      </div>
+      <div class="s_sekce">
         <ul>
         <#list BAZAAR as rel>
              <li><a href="/bazar/show/${rel.id}">${TOOL.xpath(rel.child,"data/title")}</a></li>
         </#list>
         </ul>
-    </div>
+      </div>
+    </#if>
    </td>
-</#if>
 
-   <td></td>
+   <td>
+    <#assign DICTIONARY=VARS.getFreshDictionary(USER?if_exists)>
+    <#if (DICTIONARY?size>0) >
+      <div class="s_nadpis">
+        <a class="info" href="#">?<span class="tooltip">Výkladový slovník linuxových pojmù.</span></a>
+        <a href="/slovnik">Slovník</a>
+      </div>
+      <div class="s_sekce">
+        <ul>
+          <#list DICTIONARY as rel>
+            <li><a href="/slovnik/${rel.child.subType}">${TOOL.xpath(rel.child,"data/name")}</a></li>
+          </#list>
+        </ul>
+      </div>
+    </#if>
+   </td>
+
    <td></td>
   </tr>
 </table>
--->
+
 
 <#assign FEEDS = VARS.getFeeds(USER?if_exists,true)>
 <#if (FEEDS.size() > 0)>
