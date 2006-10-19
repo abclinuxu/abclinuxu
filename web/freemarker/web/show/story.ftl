@@ -106,18 +106,25 @@
   <div class="s_sekce">
     <ul>
     <#if USER?exists>
+        <#if USER.hasRole("blog digest admin")>
+            <#if (ITEM.getProperty("digest")?size > 0)><#assign digestMsg='Odstranit z digestu'><#else><#assign digestMsg='Pøidat do digestu'></#if>
+            <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=toggleDigest")}">${digestMsg}</a></li>
+        </#if>
         <#if USER.id==BLOG.owner || USER.hasRole("root")>
             <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=edit")}">Uprav zápis</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=remove")}">Sma¾ zápis</a></li>
         </#if>
-        <#if USER.hasRole("blog digest admin")>
-            <#if (ITEM.getProperty("digest")?size > 0)><#assign digestMsg='Odstranit z digestu'><#else><#assign digestMsg='Pøidat do digestu'></#if>
-            <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=toggleDigest")}">${digestMsg}</a></li>
+        <#if USER.hasRole("attachment admin")>
+            <li><a href="${URL.make("/inset/"+STORY.id+"?action=manage")}">Správa pøíloh</a></li>
         </#if>
         <#if USER.id==BLOG.owner>
             <#if !CHILDREN.poll?exists>
                 <li><a href="${URL.noPrefix("/EditPoll?action=add&amp;rid="+STORY.id)}">Vlo¾ anketu</a></li>
             </#if>
+            <li>
+                <a href="${URL.make("/inset/"+STORY.id+"?action=addScreenshot")}">Pøidej obrázek</a>
+                <hr>
+            </li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=add")}">Vlo¾ nový zápis</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=custom")}">Nastavit blog</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}">Pøejmenovat blog</a></li>
@@ -157,6 +164,21 @@ ${TOOL.xpath(ITEM, "/data/content")}
     <div class="anketa">
         <@lib.showPoll CHILDREN.poll[0], story_url />
     </div>
+</#if>
+
+<#assign images = TOOL.screenshotsFor(ITEM)>
+<#if (images?size > 0)>
+    <h3>Obrázky</h3>
+
+    <p class="galerie">
+        <#list images as image>
+            <#if image.thumbnailPath?exists>
+                <a href="${image.path}"><img src="${image.thumbnailPath}" alt="Obrázek ${image_index}" border="0"></a>
+            <#else>
+                <img src="${image.path}" alt="Obrázek ${image_index}">
+            </#if>
+        </#list>
+    </p>
 </#if>
 
 <p><b>Nástroje</b>: <a href="${story_url}?varianta=print">Tisk</a></p>

@@ -21,6 +21,7 @@ package cz.abclinuxu.servlets.utils.url;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.Category;
+import cz.abclinuxu.data.Item;
 import cz.abclinuxu.AbcException;
 import cz.abclinuxu.utils.freemarker.Tools;
 
@@ -195,8 +196,14 @@ public class UrlUtils {
         GenericObject child = relation.getChild();
         if (child instanceof Category)
             return prefix + "/dir/" + relation.getId();
-        else
+        if (! (child instanceof Item))
             return prefix + "/show/" + relation.getId();
+        Item item = (Item) child;
+        if (item.getType() == Item.BLOG)
+            return Tools.getUrlForBlogStory(relation);
+//        TODO if (item.getType() == Item.DRIVER)
+//            return
+        return prefix + "/show/" + relation.getId();
     }
 
     /**

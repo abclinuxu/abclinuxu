@@ -1388,6 +1388,18 @@ public class Tools implements Configurable {
     }
 
     /**
+     * Gets absolute URL for story.
+     * @param relation fully initialized relation (including child)
+     * @return URL
+     */
+    public static String getUrlForBlogStory(Relation relation) {
+        Category blog = (Category) relation.getParent();
+        blog = (Category) persistence.findById(blog);
+        Item story = (Item) relation.getChild();
+        return getUrlForBlogStory(blog.getSubType(), story.getCreated(), relation.getId());
+    }
+
+    /**
      * Gets absolute url for story.
      * @param blogName Name of blog.
      * @param date date when story was published
