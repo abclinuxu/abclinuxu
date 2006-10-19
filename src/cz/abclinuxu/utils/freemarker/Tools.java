@@ -1247,9 +1247,10 @@ public class Tools implements Configurable {
             if (parent instanceof Item) {
                 item = (Item) parent;
                 data = item.getData();
-                if (item.getType()==Item.ARTICLE || item.getType()==Item.BLOG)
+                int type = item.getType();
+                if (type==Item.ARTICLE || type==Item.BLOG)
                     node = data.selectSingleNode("data/name");
-                else if ( item.getType()==Item.NEWS ) {
+                else if ( type==Item.NEWS || type==Item.BAZAAR ) {
                     discussion.title = "Zprávièka";
                     node = data.selectSingleNode("data/title");
                 }
