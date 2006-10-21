@@ -77,7 +77,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     List freshQuestions, freshFaqs, freshDictionary, freshBazaarAds;
     String indexFeeds, templateFeeds;
     Map defaultSizes, maxSizes, counter, feedLinks;
-    SectionTreeCache forumTree, faqTree, softwareTree, articleTree;
+    SectionTreeCache forumTree, faqTree, softwareTree, hardwareTree, articleTree;
     Relation currentPoll;
     int sectionCacheFrequency;
 
@@ -92,6 +92,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
         forumTree = new SectionTreeCache(UrlUtils.PREFIX_FORUM, Constants.CAT_FORUM);
         faqTree = new SectionTreeCache(UrlUtils.PREFIX_FAQ, Constants.CAT_FAQ);
         softwareTree = new SectionTreeCache(UrlUtils.PREFIX_SOFTWARE, Constants.CAT_SOFTWARE);
+//        hardwareTree = new SectionTreeCache(UrlUtils.PREFIX_HARDWARE, Constants.CAT_HARDWARE);
         articleTree = new SectionTreeCache(UrlUtils.PREFIX_CLANKY, Constants.CAT_ARTICLES);
     }
 
@@ -276,6 +277,13 @@ public class VariableFetcher extends TimerTask implements Configurable {
     }
 
     /**
+     * @return cache of Hardware sections
+     */
+    public SectionTreeCache getHardwareTree() {
+        return hardwareTree;
+    }
+
+    /**
      * @return cache of Article sections
      */
     public SectionTreeCache getArticleTree() {
@@ -361,17 +369,25 @@ public class VariableFetcher extends TimerTask implements Configurable {
 
     private void refreshSectionCaches() {
         try {
+            long start = System.currentTimeMillis();
             if (cycle % sectionCacheFrequency == 0) {
                 faqTree.initialize();
                 forumTree.initialize();
                 softwareTree.initialize();
+//                hardwareTree.initialize();
                 articleTree.initialize();
             }
 
             faqTree.refresh();
             forumTree.refresh();
             softwareTree.refresh();
+//            hardwareTree.refresh();
             articleTree.refresh();
+
+            if (log.isDebugEnabled()) {
+                long end = System.currentTimeMillis();
+                log.debug("Refreshing section caches took "+(end-start)+" ms.");
+            }
         } catch (Exception e) {
             log.error("Selhalo nacitani section tree cache", e);
         }

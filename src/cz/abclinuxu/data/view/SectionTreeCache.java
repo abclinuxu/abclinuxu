@@ -219,14 +219,18 @@ public class SectionTreeCache {
     }
 
     public static void main(String[] args) {
-        SectionTreeCache cache = new SectionTreeCache("/forum", Constants.CAT_FORUM);
+//        SectionTreeCache cache = new SectionTreeCache("/forum", Constants.CAT_FORUM);
 //        cache.initialize();
 //        cache.print();
-        cache = new SectionTreeCache("/faq", Constants.CAT_FAQ);
+//        cache = new SectionTreeCache("/faq", Constants.CAT_FAQ);
+//        cache.initialize();
+//        cache.print();
+//        cache = new SectionTreeCache("/software", Constants.CAT_SOFTWARE);
+//        cache.initialize();
+//        cache.print();
+        SectionTreeCache cache = new SectionTreeCache("/hardware", Constants.CAT_HARDWARE);
         cache.initialize();
         cache.print();
-        cache = new SectionTreeCache("/software", Constants.CAT_SOFTWARE);
-        cache.initialize();
-        cache.print();
+        cache.refresh();
     }
 }

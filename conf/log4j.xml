@@ -63,8 +63,8 @@
 	  <priority value="warn" />
 	</category>
 
-	<category name="cz.abclinuxu.scheduler.OKSystemFetcher">
-	  <priority value="debug" />
+	<category name="cz.abclinuxu.scheduler.VariableFetcher">
+	  <priority value="info" />
 	</category>
 
 	<category name="cz.abclinuxu.security" additivity="false">
