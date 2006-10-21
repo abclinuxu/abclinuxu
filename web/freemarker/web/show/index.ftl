@@ -24,7 +24,7 @@
         <div class="s_sekce">
             <ul>
             <#list HARDWARE as rel>
-                 <li><a href="/hardware/show/${rel.id}">${TOOL.xpath(rel.child,"data/name")}</a></li>
+                 <li><a href="${rel.url?default("/hardware/show/"+rel.id)}">${TOOL.xpath(rel.child,"data/name")}</a></li>
             </#list>
             </ul>
         </div>

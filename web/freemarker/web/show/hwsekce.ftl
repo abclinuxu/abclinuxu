@@ -80,17 +80,17 @@
         <#list SORT.byName(map.make) as polozka>
             <tr>
                 <td class="td01">
-		    <a href="${URL.make(polozka.url?default("/show/"+polozka.id))}">${TOOL.childName(polozka)}</a>
-		</td>
+		            <a href="${URL.make(polozka.url?default("/show/"+polozka.id))}">${TOOL.childName(polozka)}</a>
+        		</td>
                 <td class="td02">
-		  <#assign support=TOOL.xpath(polozka.child,"/data/support")?default("UNDEFINED")>
+		            <#assign support=TOOL.xpath(polozka.child,"/data/support")?default("UNDEFINED")>
                     <#switch support>
                         <#case "complete">kompletní<#break>
                         <#case "partial">èásteèná<#break>
                         <#case "none">¾ádná<#break>
                         <#default>
                     </#switch>
-		  </td>
+		        </td>
                 <td class="td03"><#if TOOL.xpath(polozka.child,"/data/outdated")?exists>ano</#if></td>
                 <td class="td04">${DATE.show(polozka.child.updated,"CZ_FULL")}</td>
             </tr>

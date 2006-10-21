@@ -22,6 +22,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
+import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.persistence.*;
@@ -155,7 +156,13 @@ public class EditHardware implements AbcAction {
         }
 
         persistence.create(item);
+
         Relation relation = new Relation(upper.getChild(), item, upper.getId());
+        String name = root.elementTextTrim("name");
+        String url = upper.getUrl() + "/" + URLManager.enforceLastURLPart(name);
+        url = URLManager.protectFromDuplicates(url);
+        if (url != null)
+            relation.setUrl(url);
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
