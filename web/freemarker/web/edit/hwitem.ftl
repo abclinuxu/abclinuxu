@@ -144,10 +144,10 @@
             <td>
                 <#if PREVIEW?exists>
                     <input tabindex="12" type="submit" name="preview" value="Zopakuj náhled">
-                    <input tabindex="13" type="submit" name="finish" value="Dokonèi">
                 <#else>
                     <input tabindex="12" type="submit" name="preview" value="Náhled">
                 </#if>
+                <input tabindex="13" type="submit" name="finish" value="Dokonèi">
             </td>
         </tr>
     </table>
