@@ -1702,7 +1702,7 @@ public class MySqlPersistence implements Persistence {
             for (Iterator iter = servers.iterator(); iter.hasNext();) {
                 Server server = (Server) iter.next();
                 if (!rs.next() || rs.getInt(1) != server.getId())
-                    throw new NotFoundException("Odkaz " + server.getId() + " nebyl nalezen!");
+                    throw new NotFoundException("Server " + server.getId() + " nebyl nalezen!");
                 syncServerFromRS(server, rs);
                 cache.store(server);
             }
