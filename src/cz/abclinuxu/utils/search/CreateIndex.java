@@ -959,7 +959,7 @@ public class CreateIndex implements Configurable {
         if ( indexed.containsKey(child) )
             return true;
         else {
-            GenericObject key = child.getClass().newInstance();
+            GenericObject key = (GenericObject) child.getClass().newInstance();
             key.setId(child.getId());
             indexed.put(key, Boolean.TRUE);
             return false;
