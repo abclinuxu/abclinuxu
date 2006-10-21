@@ -59,14 +59,12 @@ public class Measure {
 
 
         long start = System.currentTimeMillis();
-        for (i=0; i<40000; i++) {
+        for (i=0; i<3200000; i++) {
             //place your code to measure here
-            file = CreateIndex.getLastRunFile();
-            if (file.exists())
-                d = new Date(file.lastModified());
+            l = System.currentTimeMillis();
         }
         long end = System.currentTimeMillis();
-        System.out.println(d);
+        System.out.println(l);
 
         // place clean up here
 
