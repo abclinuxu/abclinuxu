@@ -25,18 +25,14 @@ import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.FMUtils;
 import org.apache.log4j.Logger;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
 import java.util.prefs.Preferences;
@@ -57,24 +53,23 @@ public class JobPilotFetcher extends TimerTask implements Configurable {
     public void run() {
         log.debug("Fetching JobPilot RSS starts ..");
         try {
-            // pri pouziti SAXReader vyleti vyjimka, ze v prologu je pouzit znak 0xa0,
-            // ale pouze pri cteni z URI, ze stejneho souboru je to uz v poradku
-            URL url = new URL(uri);
-            InputStream is = url.openStream();
-            StringBuffer sb = new StringBuffer();
-            int c;
-            while ((c = is.read()) != -1)
-                sb.append((char)c);
-
-            Document document = DocumentHelper.parseText(sb.toString());
-            List nodes = document.getRootElement().elements("job");
             ArrayList result = new ArrayList();
-            for (Iterator iter = nodes.iterator(); iter.hasNext();) {
-                Element element = (Element) iter.next();
+            URL url = new URL(uri);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+            String line;
+            int position, count = 0;
+            while ((line = reader.readLine()) != null && (count < max)) {
+                position = line.indexOf('|');
+                if (position == -1) {
+                    log.warn("Syntax error in jobpilot feed! '"+line+"'");
+                    continue;
+                }
+
                 RssItem item = new RssItem();
-                item.setUrl(element.elementText("url"));
-                item.setTitle(element.elementText("title"));
+                item.setUrl(line.substring(position+1));
+                item.setTitle(line.substring(0, position));
                 result.add(item);
+                count++;
             }
 
             if (result.size() == 0) {

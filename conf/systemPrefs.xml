@@ -355,7 +355,7 @@
                     <node name="JobPilotFetcher">
                         <map>
                             <entry key="file" value="WEB-INF/freemarker/include/jobpilot.txt"/>
-                            <entry key="uri" value="http://www.jobpilot.cz/job_suche/search.phtml/czabclinuxu?employer=DHL+Information+Services+Europe+s.r.o."/>
+                            <entry key="uri" value="http://www.jobpilot.b26.cz/abclinux/vypis.txt"/>
                             <entry key="max" value="5" />
                         </map>
                     </node>
