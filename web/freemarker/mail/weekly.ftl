@@ -18,16 +18,37 @@ Prehled clanku
 
 </#list>
 
+
 Reklama
 =======
 
-HOT JOB!  Do you have DEVELOPMENT and/or INTEGRATION
-experience with Telecom applications and application
-platforms? We are looking for Senior Design Support
-Engineers - Integrated Platform to join our team.
-Learn more...
+Recruiting the best skills. IBM welcomes all talent.
 
-http://www.talents.cz/sunjobs2_detail.php?id=168
+IBM IT professionals working at the Integrated Delivery Center (IDC) Brno
+provide support to international clients in various business areas such
+banking, insurance, automotive, retail, telecommunications, public sector as
+well as small and medium enterprises.
+
+Joining the IT team in IDC Brno will give you an unique opportunity to
+enhance your IT professional career in all areas of IT infrastructure
+services (server management / operating systems, databases and application
+hosting/, managing corporate network infrastructure, PC/ Laptop end-user's
+support, qualified user help desk operations, etc.)
+
+For more details, please, visit our site:
+ibm.com/employment/cz/delivery_centre/index.html
+or email us: delivery_center@cz.ibm.com
+
+---------------------
+
+Programujte se Seznamem
+
+Presne jednadvacaty rijnovy den spustil internetovy portal Seznam.cz
+na svych strankach soutez pro talentovane programatory, kteri maji zajem
+zmerit sve odborne syly a take blize poznat zazemi nejnavstevovanejsiho
+ceskeho portalu.
+
+http://www.abclinuxu.cz/clanky/pr/programujte-se-seznamem
 
 
 Prehled zpravicek

@@ -37,7 +37,11 @@
                 <a href="/bazar/show/${ad.id}">${TOOL.xpath(ad.child, "/data/title")}</a>
             </td>
             <td class="td02">
-                <#if ad.child.subType=='sell'>prodej<#else>koupì</#if>
+                <#if ad.child.subType=='sell'>
+                    <span class="prodej">prodej</span>
+                <#else>
+                    <span class="koupe">koupì</span>
+                </#if>
             </td>
             <td class="td03">
                 <@lib.showCounter ad.child, reads, "read" />&times;

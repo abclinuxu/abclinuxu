@@ -18,7 +18,7 @@ zmìny zpìt.</p>
     </fieldset>
 </#if>
 
- <table width=100 border=0 cellpadding=5>
+ <table class="siroka" border="0" cellpadding="5">
   <tr>
    <td width="90" class="required">Titulek stránky</td>
    <td>
@@ -42,7 +42,7 @@ zmìny zpìt.</p>
         <a href="javascript:insertAtCursor(document.form.content, '&lt;code&gt;', '&lt;/code&gt;');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
     </div>
     <div class="error">${ERRORS.content?if_exists}</div>
-    <textarea name="content" cols="100" rows="30" tabindex="5">${PARAMS.content?if_exists?html}</textarea>
+    <textarea name="content" class="siroka" rows="30" tabindex="5">${PARAMS.content?if_exists?html}</textarea>
    </td>
   </tr>
   <tr>

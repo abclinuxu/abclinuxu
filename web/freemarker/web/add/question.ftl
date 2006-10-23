@@ -23,7 +23,7 @@ by vám mohli pomoci. Admini mohou ¹patnì formulovaný titulek upravit.</p>
 <li>Popi¹te vìtou, v èem pøesnì spoèívá vá¹ problém.</li>
 <li><b>Nepou¾ívejte</b> slova jako <i>help</i>, <i>pomoc</i>, <i>poraïte</i>, <i>prosím</i>,
     <i>zaèáteèník</i> èi <i>lama</i>.</li>
-<li>NEPI©TE VELKÝMI PÍSMENY, nepou¾ívejte vykøièníky, je to nezdvoøilé.</li>
+<li>NEPI©TE VELKÝMI PÍSMENY nebo <b>tuènì</b> a nepou¾ívejte vykøièníky - je to nezdvoøilé.</li>
 <li>Jeden otazník úplnì staèí. Opravdu.</li>
 </ul>
 

@@ -42,7 +42,7 @@ Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
 <h2>Zde mù¾ete provést své úpravy</h2>
 
 <form action="${URL.make("/blog/edit/"+STORY.id)}" method="POST" name="form">
-<table cellpadding="5">
+<table class="siroka" cellpadding="5">
     <tr>
         <td>
             <span class="required">Titulek zápisu</span>
@@ -75,7 +75,7 @@ Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
                 <a href="javascript:insertAtCursor(document.form.content, '<break>', '');" id="mono" title="Vlo¾it znaèku zlomu">&lt;break&gt;</a>
             </div>
             <div class="error">${ERRORS.content?if_exists}</div>
-            <textarea tabindex="2" name="content" cols="80" rows="30">${PARAMS.content?if_exists?html}</textarea>
+            <textarea tabindex="2" name="content" class="siroka" rows="30">${PARAMS.content?if_exists?html}</textarea>
         </td>
     </tr>
     <tr>

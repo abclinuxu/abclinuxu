@@ -4,13 +4,13 @@
 
 <p>Chystáte se upravit èasto kladenou otázku. Povolené jsou jen zmìny,
 které vylep¹ují kvalitu odpovìdi, formátování, pravopis, stylistiku
-a podobnì. Rozhodnì jsou zakázány dotazy, od toho je zde diskusní fórum.
+a podobnì. Rozhodnì jsou zakázány dotazy, od toho je zde <a href="/diskuse.jsp">diskusní fórum</a>.
 Va¹e zmìny budou ulo¾eny jako nová revize, tudí¾ je mo¾né je kdykoliv
-vrátit zpìt.
-</p>
+vrátit zpìt.</p>
+<br />
 
 <#if PARAMS.preview?exists>
-    <fieldset style="margin-top: 1em;">
+    <fieldset>
         <legend>Náhled</legend>
         <h1 style="margin-bottom: 1em;">${TOOL.xpath(PREVIEW, "/data/title")}</h1>
         <div>
@@ -18,10 +18,10 @@ vrátit zpìt.
         </div>
     </fieldset>
 </#if>
-
+<br />
 
 <form action="${URL.make("/faq/edit")}" method="POST" name="form">
-    <table cellpadding="5" style="margin-top:1em">
+    <table class="siroka" cellpadding="5">
         <tr>
             <td class="required">Otázka</td>
             <td>
@@ -40,7 +40,7 @@ vrátit zpìt.
                     <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="Vlo¾it znaèku formátovaného textu. Vhodné pro konfiguraèní soubory èi výpisy.">&lt;pre&gt;</a>
                     <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
                 </div>
-                <textarea tabindex="2" name="text" cols="80" rows="20">${PARAMS.text?if_exists?html}</textarea><br>
+                <textarea tabindex="2" name="text" class="siroka" rows="20">${PARAMS.text?if_exists?html}</textarea><br>
                 <div class="error">${ERRORS.text?if_exists}</div>
             </td>
         </tr>

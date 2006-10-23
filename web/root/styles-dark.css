@@ -503,6 +503,9 @@ font-weight: bold;
     cursor:         pointer;
 }
 
+.bazar .prodej { color: #90ee90; } /* lightgreen */
+.bazar .koupe { color: #ffc0cb; } /* pink */
+
 .swlist hr {
 	border-top:	1px solid #4b4b4b;
 	margin-bottom:	0.2em;

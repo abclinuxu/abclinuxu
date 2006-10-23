@@ -2,24 +2,22 @@
 
 <@lib.showMessages/>
 
-<h1 class="st_nadpis">Úvod</h1>
+<h1>Úprava ovladaèe</h1>
 
 <p>Sekce Ovladaèù slou¾í pro shroma¾ïování informací ohlednì ovladaèù,
 které nejsou standardní souèástí jádra. Jedná se buï o Open Source
 projekty vytváøené a udr¾ované komunitou, nebo o proprietární ovladaèe
-s uzavøeným kódem, vyvíjené obvykle výrobcem.
-</p>
+s uzavøeným kódem, vyvíjené obvykle výrobcem.</p>
 
 <p>Úprava polo¾ky ovladaèe je snadná a díky historii verzí i bezpeèná.
 Nejdøíve mù¾ete zmìnit název ovladaèe, je-li nevhodný. Pak zadejte aktuální
 verzi ovladaèe a pøípadnì upravte adresu, odkud je mo¾né stáhnout tento ovladaè.
 Do poznámky vlo¾te informace o novinkách této verze a jiných zmìnách.
 Nebojte se celou poznámku aktualizovat, pøedchozí text bude dostupný v historii
-ovladaèe.
-</p>
+ovladaèe.</p>
 
 <#if PARAMS.preview?exists>
- <h1 class="st_nadpis">Náhled pøíspìvku</h1>
+ <h2>Náhled pøíspìvku</h2>
 
  <table cellspacing=0 border=1 cellpadding=5 align="center">
   <tr>
@@ -40,7 +38,7 @@ ovladaèe.
  </table>
 </#if>
 
-<h1 class="st_nadpis">Zde zadejte své úpravy</h1>
+<h2>Zde zadejte své úpravy</h2>
 
 <form action="${URL.make("/edit")}" method="POST">
  <table cellpadding="0" border="0" style="margin-top: 1em;">

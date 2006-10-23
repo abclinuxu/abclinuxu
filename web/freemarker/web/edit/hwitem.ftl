@@ -34,7 +34,7 @@
 </p>
 
 <form action="${URL.make("/edit")}" method="POST">
-    <table width="100%" border="0" cellpadding="5">
+    <table class="siroka" border="0" cellpadding="5">
         <tr>
             <td class="required">Jméno</td>
             <td>
@@ -110,7 +110,7 @@
                     Zadejte jen skuteènì relevantní údaje, buïte struèní.
                     Doporuèujeme pou¾ívat znaèku <code>PRE</code>.
                 </div>
-                <textarea name="identification" cols="50" rows="4" tabindex="8" class="wide">${PARAMS.identification?if_exists?html}</textarea>
+                <textarea name="identification" class="siroka" rows="8" tabindex="8" class="wide">${PARAMS.identification?if_exists?html}</textarea>
                 <div class="error">${ERRORS.identification?if_exists}</div>
             </td>
         </tr>
@@ -118,7 +118,7 @@
         <tr>
             <td>Technické parametry</td>
             <td>
-                <textarea name="params" cols="50" rows="4" tabindex="9" class="wide">${PARAMS.params?if_exists?html}</textarea>
+                <textarea name="params" class="siroka" rows="8" tabindex="9" class="wide">${PARAMS.params?if_exists?html}</textarea>
                 <div class="error">${ERRORS.params?if_exists}</div>
             </td>
         </tr>
@@ -126,7 +126,7 @@
         <tr>
             <td>Postup zprovoznìní</td>
             <td>
-                <textarea name="setup" cols="50" rows="10" tabindex="10" class="wide">${PARAMS.setup?if_exists?html}</textarea>
+                <textarea name="setup" class="siroka" rows="10" tabindex="10" class="wide">${PARAMS.setup?if_exists?html}</textarea>
                 <div class="error">${ERRORS.setup?if_exists}</div>
             </td>
         </tr>
@@ -134,7 +134,7 @@
         <tr>
             <td>Poznámka</td>
             <td>
-                <textarea name="note" cols="50" rows="10" tabindex="11" class="wide">${PARAMS.note?if_exists?html}</textarea>
+                <textarea name="note" class="siroka" rows="10" tabindex="11" class="wide">${PARAMS.note?if_exists?html}</textarea>
                 <div class="error">${ERRORS.note?if_exists}</div>
             </td>
         </tr>
