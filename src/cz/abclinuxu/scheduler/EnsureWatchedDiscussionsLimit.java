@@ -58,6 +58,7 @@ public class EnsureWatchedDiscussionsLimit extends TimerTask {
 
     public void run() {
         try {
+            log.debug(getClass().getName() + " starts");
             SQLTool sqlTool = SQLTool.getInstance();
             Set usersToClean;
             synchronized(users) {
@@ -66,14 +67,14 @@ public class EnsureWatchedDiscussionsLimit extends TimerTask {
             }
 
             int limit = AbcConfig.getMaxWatchedDiscussionLimit();
-            log.info("Cleaning watched discussions for "+usersToClean.size()+" users.");
+            log.debug("Cleaning watched discussions for "+usersToClean.size()+" users.");
             for ( Iterator iter = usersToClean.iterator(); iter.hasNext(); ) {
                 Integer uid = (Integer) iter.next();
                 iter.remove();
                 int deleted = sqlTool.deleteOldComments(uid, limit);
                 log.debug("User "+ uid +": deleted "+deleted+" watched discussions");
             }
-            log.info("Cleaning watched discussions finished");
+            log.debug(getClass().getName() + " finished");
         } catch (Exception e) {
             log.error("Cannot delete old comments records", e);
         }

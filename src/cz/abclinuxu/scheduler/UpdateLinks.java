@@ -200,7 +200,8 @@ public class UpdateLinks extends TimerTask implements Configurable {
             }
             updated++;
         }
-        if ( log.isDebugEnabled() ) log.debug("Updated "+updated+" links for "+parent);
+        if ( log.isDebugEnabled() && updated > 0 )
+            log.debug("Updated "+updated+" links for "+parent.getClass()+", id="+parent.getId());
     }
 
     /**

@@ -52,6 +52,7 @@ public class ArticlePoolMonitor extends TimerTask {
      */
     public void run() {
         try {
+            log.debug(getClass().getName()+" starts");
             Persistence persistence = PersistenceFactory.getPersistance();
             persistence.synchronize(pool);
             Date now = new Date();
@@ -92,6 +93,7 @@ public class ArticlePoolMonitor extends TimerTask {
                     }
                 }
             }
+            log.debug(getClass().getName() + " finished");
         } catch (Exception e) {
             log.error("Cannot monitor article pool!", e);
         }

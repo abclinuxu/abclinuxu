@@ -22,9 +22,14 @@ import cz.abclinuxu.utils.feeds.FeedGenerator;
 
 import java.util.TimerTask;
 
+import org.apache.log4j.Logger;
+
 public class GenerateLinks extends TimerTask {
+    static Logger log = Logger.getLogger(GenerateLinks.class);
 
     public void run() {
+        log.debug(getClass().getName() + " starts");
         FeedGenerator.updateArticles();
+        log.debug(getClass().getName() + " finished");
     }
 }

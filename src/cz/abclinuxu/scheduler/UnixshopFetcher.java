@@ -48,6 +48,7 @@ public class UnixshopFetcher extends TimerTask implements Configurable {
 
     public void run() {
         try {
+            log.debug(getClass().getName() + " starts");
             URL url = new URL(uri);
             InputStream is = url.openStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -74,6 +75,7 @@ public class UnixshopFetcher extends TimerTask implements Configurable {
             env.put("ITEMS", list);
             String file = AbcConfig.calculateDeployedPath(fileName);
             FMUtils.executeTemplate("/include/misc/generate_unixshop.ftl", env, new File(file));
+            log.debug(getClass().getName() + " finished");
         } catch (Exception e) {
             log.error("Job failed", e);
         }

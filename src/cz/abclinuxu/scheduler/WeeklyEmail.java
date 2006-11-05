@@ -64,6 +64,7 @@ public class WeeklyEmail extends TimerTask implements Configurable {
 
     public void run() {
         try {
+            log.info("Time to send weekly emails. Let's find subscribed users first.");
             Calendar calendar = Calendar.getInstance();
             int week = calendar.get(Calendar.WEEK_OF_YEAR);
             int year = calendar.get(Calendar.YEAR);
@@ -79,7 +80,6 @@ public class WeeklyEmail extends TimerTask implements Configurable {
 
             pushData(params);
 
-            log.info("Time to send weekly emails. Let's find subscribed users first.");
             List users = SQLTool.getInstance().findUsersWithWeeklyEmail(null);
             log.info("Weekly emails have subscribed "+users.size()+" users.");
             int count = EmailSender.sendEmailToUsers(params,users);

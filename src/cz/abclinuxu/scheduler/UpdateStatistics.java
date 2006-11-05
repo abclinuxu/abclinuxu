@@ -40,7 +40,7 @@ public final class UpdateStatistics extends TimerTask {
         instance = new UpdateStatistics();
     }
 
-    Map entries;
+    Map<String, Integer> entries;
     boolean batchMode;
 
     /**
@@ -53,7 +53,7 @@ public final class UpdateStatistics extends TimerTask {
         }
 
         synchronized(this) {
-            Integer count = (Integer) entries.get(page);
+            Integer count = entries.get(page);
             if (count == null)
                 count = 1;
             else
@@ -63,19 +63,21 @@ public final class UpdateStatistics extends TimerTask {
     }
 
     public void run() {
-        Map toBeSaved;
-        synchronized(this) {
-            toBeSaved = entries;
-            entries = new HashMap(20, 0.95f);
-        }
-
         try {
+            log.debug(getClass().getName() + " starts");
+            Map toBeSaved;
+            synchronized (this) {
+                toBeSaved = entries;
+                entries = new HashMap<String, Integer>(20, 0.95f);
+            }
+
             SQLTool sqlTool = SQLTool.getInstance();
             for (Iterator iter = toBeSaved.keySet().iterator(); iter.hasNext();) {
                 String page = (String) iter.next();
                 Integer count = (Integer) toBeSaved.get(page);
                 sqlTool.recordPageView(page, count);
             }
+            log.debug(getClass().getName() + " finished");
         } catch (Throwable e) {
             log.error("Batch update of statistics failed", e);
         }
@@ -90,7 +92,7 @@ public final class UpdateStatistics extends TimerTask {
     }
 
     private UpdateStatistics() {
-        entries = new HashMap(20, 0.95f);
+        entries = new HashMap<String, Integer>(20, 0.95f);
     }
 
     public static UpdateStatistics getInstance() {

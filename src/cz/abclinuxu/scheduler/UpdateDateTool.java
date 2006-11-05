@@ -22,12 +22,17 @@ import cz.abclinuxu.utils.DateTool;
 
 import java.util.TimerTask;
 
+import org.apache.log4j.Logger;
+
 /**
  * At midninght recalculates times used in DateTool.
  */
 public class UpdateDateTool extends TimerTask {
+    static Logger log = Logger.getLogger(UpdateDateTool.class);
 
     public void run() {
+        log.debug(getClass().getName() + " starts");
         DateTool.calculateTodayTimes();
+        log.debug(getClass().getName() + " finished");
     }
 }
