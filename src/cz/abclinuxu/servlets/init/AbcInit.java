@@ -27,6 +27,7 @@ import cz.abclinuxu.utils.news.NewsCategories;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.utils.email.monitor.InstantSender;
@@ -355,6 +356,7 @@ public class AbcInit extends HttpServlet implements Configurable {
             cfg.setSharedVariable(Constants.VAR_DATE_TOOL,new DateTool());
             cfg.setSharedVariable(Constants.VAR_SORTER,new Sorters2());
             cfg.setSharedVariable(Constants.VAR_FETCHER, VariableFetcher.getInstance());
+            cfg.setSharedVariable(Constants.VAR_CONFIG, AbcConfig.getInstance());
             cfg.setSharedVariable(Constants.VAR_NEWS_CATEGORIES, NewsCategories.getInstance());
             cfg.setSharedVariable(Constants.VAR_UI_PROPERTY_VALUES, PropertySet.getPropertyValues(Constants.PROPERTY_USER_INTERFACE));
             cfg.setSharedVariable(Constants.VAR_LICENSE_PROPERTY_VALUES, PropertySet.getPropertyValues(Constants.PROPERTY_LICENSE));

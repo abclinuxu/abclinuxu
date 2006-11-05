@@ -146,6 +146,9 @@ public class EditBlog implements AbcAction, Configurable {
         Persistence persistence = PersistenceFactory.getPersistance();
         String action = (String) params.get(PARAM_ACTION);
 
+        if (ServletUtils.handleMaintainance(request, env))
+            response.sendRedirect(response.encodeRedirectURL("/"));
+
         if ( ACTION_ADD_BLOG.equals(action) )
             return FMTemplateSelector.select("EditBlog", "addBlog", env, request);
 

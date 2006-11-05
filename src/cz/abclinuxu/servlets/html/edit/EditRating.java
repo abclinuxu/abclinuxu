@@ -30,6 +30,7 @@ import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
@@ -77,6 +78,11 @@ public class EditRating implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
+
+        if (AbcConfig.isMaintainanceMode()) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Systém je v re¾imu údr¾by.", env, null);
+            return "/print/misc/rating_result.ftl";
+        }
 
         if ( relation!=null ) {
             relation = (Relation) persistence.findById(relation);

@@ -120,6 +120,9 @@ public class EditDiscussion implements AbcAction {
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         String action = (String) params.get(PARAM_ACTION);
 
+        if (ServletUtils.handleMaintainance(request, env))
+            response.sendRedirect(response.encodeRedirectURL("/"));
+
         if ( relation!=null ) {
             relation = (Relation) persistence.findById(relation);
             persistence.synchronize(relation.getChild());

@@ -107,6 +107,9 @@ public class EditRelation implements AbcAction {
         String action = (String) params.get(PARAM_ACTION);
         User user = (User) env.get(Constants.VAR_USER);
 
+        if (ServletUtils.handleMaintainance(request, env))
+            response.sendRedirect(response.encodeRedirectURL("/"));
+
         if (ACTION_SET_URL.equals(action))
             return actionSetUrlStep1(request, env);
 

@@ -67,6 +67,9 @@ public class EditSurvey implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
+        if (ServletUtils.handleMaintainance(request, env))
+            response.sendRedirect(response.encodeRedirectURL("/"));
+
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
         if ( !user.hasRole(Roles.SURVEY_ADMIN) )

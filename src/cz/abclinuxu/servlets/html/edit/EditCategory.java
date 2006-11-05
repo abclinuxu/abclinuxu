@@ -77,6 +77,9 @@ public class EditCategory implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
+        if (ServletUtils.handleMaintainance(request, env))
+            response.sendRedirect(response.encodeRedirectURL("/"));
+
         Category category = (Category) InstanceUtils.instantiateParam(PARAM_CATEGORY,Category.class,params, request);
         if ( category!=null ) {
             category = (Category) persistence.findById(category).clone();

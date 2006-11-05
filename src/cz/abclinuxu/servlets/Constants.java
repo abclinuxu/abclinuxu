@@ -142,6 +142,8 @@ public interface Constants {
     String VAR_USER_AGENT = "UA";
     /** boolean that indicates that user agent is some bot */
     String VAR_BOT_DETECTED = "BOT_DETECTED";
+    /** instance of system configuration class */
+    String VAR_CONFIG = "SYSTEM_CONFIG";
 
     /** error, that is not related to specific form field */
     String ERROR_GENERIC = "generic";

@@ -94,6 +94,9 @@ public class EditHardware implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
+        if (ServletUtils.handleMaintainance(request, env))
+            response.sendRedirect(response.encodeRedirectURL("/"));
+
         if ( action==null)
             throw new MissingArgumentException("Chybí parametr action!");
 

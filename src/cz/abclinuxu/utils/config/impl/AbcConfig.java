@@ -19,7 +19,6 @@
 package cz.abclinuxu.utils.config.impl;
 
 import cz.abclinuxu.utils.config.Configurable;
-import cz.abclinuxu.utils.config.Configurator;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.PathGeneratorImpl;
@@ -34,9 +33,10 @@ import java.io.File;
 public class AbcConfig implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(AbcConfig.class);
 
+    static AbcConfig instance;
     static {
-        Configurator configurator = ConfigurationManager.getConfigurator();
-        configurator.configureAndRememberMe(new AbcConfig());
+        instance = new AbcConfig();
+        ConfigurationManager.getConfigurator().configureAndRememberMe(instance);
     }
 
     public static final String PREF_DEPLOY_PATH = "deploy.path";
@@ -49,11 +49,13 @@ public class AbcConfig implements Configurable {
     public static final String PREF_SEARCH_RESULTS_COUNT = "search.results.count";
     public static final String PREF_FAQ_COUNT = "section.faq.count";
     public static final String PREF_WATCHED_DISCUSSION_LIMIT = "watched.discussions.limit";
+    public static final String PREF_MAINTAINANCE_MODE = "maintainance.mode";
 
     static String deployPath, domain, hostname;
     static int viewUserPageSize, sectionArticleCount, bazaarPageSize;
     static int articleSectionArticlesCount, searchResultsCount, faqSectionCount;
     static int maxWatchedDiscussions;
+    static boolean maintainanceMode;
 
     /**
      * Callback used to configure your class from preferences.
@@ -71,6 +73,14 @@ public class AbcConfig implements Configurable {
         faqSectionCount = prefs.getInt(PREF_FAQ_COUNT, 20);
         bazaarPageSize = prefs.getInt(PREF_BAZAAR_PAGE_SIZE, 20);
         maxWatchedDiscussions = prefs.getInt(PREF_WATCHED_DISCUSSION_LIMIT, 50);
+        maintainanceMode = prefs.getBoolean(PREF_MAINTAINANCE_MODE, false);
+    }
+
+    /**
+     * @return singleton of this class
+     */
+    public static AbcConfig getInstance() {
+        return instance;
     }
 
     /**
@@ -161,5 +171,20 @@ public class AbcConfig implements Configurable {
      */
     public static PathGenerator getPathGenerator() {
         return new PathGeneratorImpl();
+    }
+
+    /**
+     * @return true when portal is in maintainance mode and it shall be in read only mode
+     */
+    public static boolean isMaintainanceMode() {
+        return maintainanceMode;
+    }
+
+    /**
+     * Sets maintainance mode.
+     * @param maintainanceMode true if portal is in maintainance mode and only read-only operations are allowed
+     */
+    public static void setMaintainanceMode(boolean maintainanceMode) {
+        AbcConfig.maintainanceMode = maintainanceMode;
     }
 }

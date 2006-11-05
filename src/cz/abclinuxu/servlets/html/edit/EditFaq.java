@@ -78,6 +78,9 @@ public class EditFaq implements AbcAction {
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         String action = (String) params.get(PARAM_ACTION);
 
+        if (ServletUtils.handleMaintainance(request, env))
+            response.sendRedirect(response.encodeRedirectURL("/"));
+
         if (relation != null) {
             Tools.sync(relation);
             env.put(VAR_RELATION, relation);

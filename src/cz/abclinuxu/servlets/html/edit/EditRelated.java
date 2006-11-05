@@ -82,6 +82,9 @@ public class EditRelated implements AbcAction {
         if (relation == null)
             throw new MissingArgumentException("Chybí parametr rid!");
 
+        if (ServletUtils.handleMaintainance(request, env))
+            response.sendRedirect(response.encodeRedirectURL("/"));
+
         Tools.sync(relation);
         env.put(VAR_RELATION, relation);
         String action = (String) params.get(PARAM_ACTION);

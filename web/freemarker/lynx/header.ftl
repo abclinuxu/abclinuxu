@@ -32,3 +32,13 @@ ${DATE.show("CZ_FULL")}
 <hr width="100%">
 
 <!-- obsah zacina zde --><a name="obsah"></a>
+
+    <#if SYSTEM_CONFIG.isMaintainanceMode()>
+        <div style="color: red; border: medium solid red; margin: 30px; padding: 3ex">
+            <p style="font-size: xx-large; text-align: center">Re¾im údr¾by</p>
+            <p>
+                Právì provádíme údr¾bu portálu. Prohlí¾ení obsahu by mìlo nadále fungovat,
+                úpravy obsahu bohu¾el nejsou prozatím k dispozici. Dìkujeme za pochopení.
+            </p>
+        </div>
+    </#if>

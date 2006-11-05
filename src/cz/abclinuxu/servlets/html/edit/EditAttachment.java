@@ -83,6 +83,9 @@ public class EditAttachment implements AbcAction {
         if (relation == null)
             throw new MissingArgumentException("Chybí parametr relationId!");
 
+        if (ServletUtils.handleMaintainance(request, env))
+            response.sendRedirect(response.encodeRedirectURL("/"));
+
         Tools.sync(relation);
         env.put(VAR_RELATION, relation);
         GenericObject child = relation.getChild();

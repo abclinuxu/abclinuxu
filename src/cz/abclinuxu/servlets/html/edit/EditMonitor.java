@@ -4,6 +4,7 @@ import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
@@ -34,6 +35,9 @@ public class EditMonitor implements AbcAction {
             Tools.sync(relation);
             env.put(VAR_RELATION, relation);
         }
+
+        if (ServletUtils.handleMaintainance(request, env))
+            response.sendRedirect(response.encodeRedirectURL("/"));
 
         // check permissions
         User user = (User) env.get(Constants.VAR_USER);

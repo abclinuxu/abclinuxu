@@ -45,4 +45,13 @@ konfiguraèní soubory.
     <li><a href="${URL.noPrefix("/Admin?action=performCheck")}">Kontrola stavu portálu</a></li>
 </ul>
 
+<#if USER.hasRole("root")>
+    <p>
+        <a href="${URL.noPrefix("/Admin?action=switchMaintainance")}">
+            <#if SYSTEM_CONFIG.isMaintainanceMode()>Vypnout<#else>Zapnout</#if> re¾im údr¾by
+        </a> <br>
+        pou¾ívat jen v krajní nouzi! Re¾im údr¾by znamená, ¾e celé abíèko bude jen ke ètení.
+    </p>
+</#if>
+
 <#include "../footer.ftl">

@@ -367,12 +367,14 @@ public class ServletUtils implements Configurable {
      * @param response cookie will be placed here
      */
     private static void handleLoggedIn(User user, boolean cookieExists, HttpServletResponse response) {
-        String now;
-        synchronized (Constants.isoFormat) {
-            now = Constants.isoFormat.format(new Date());
+        if (! AbcConfig.isMaintainanceMode()) {
+            String now;
+            synchronized (Constants.isoFormat) {
+                now = Constants.isoFormat.format(new Date());
+            }
+            DocumentHelper.makeElement(user.getData(), "data/system/last_login_date").setText(now);
+            PersistenceFactory.getPersistance().update(user); // session bug here
         }
-        DocumentHelper.makeElement(user.getData(), "data/system/last_login_date").setText(now);
-        PersistenceFactory.getPersistance().update(user); // session bug here
 
         int limit = AbcConfig.getMaxWatchedDiscussionLimit();
         List rows = SQLTool.getInstance().getLastSeenComments(user.getId(), limit);
@@ -420,6 +422,18 @@ public class ServletUtils implements Configurable {
             return remoteAddress + "#" + header;
 
         return remoteAddress;
+    }
+
+    /**
+     * Handles maintainance mode.
+     * @return true if system is in maintainance and current operation must be aborted
+     */
+    public static boolean handleMaintainance(HttpServletRequest request, Map env) {
+        if (! AbcConfig.isMaintainanceMode())
+            return false;
+        addError(Constants.ERROR_GENERIC, "Litujeme, ale tuto operaci nemù¾eme právì provést. Systém je v re¾imu údr¾by.",
+                 env, request.getSession());
+        return true;
     }
 
     /**

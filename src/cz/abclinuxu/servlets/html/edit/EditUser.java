@@ -168,6 +168,9 @@ public class EditUser implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String action = (String) params.get(PARAM_ACTION);
 
+        if (ServletUtils.handleMaintainance(request, env))
+            response.sendRedirect(response.encodeRedirectURL("/"));
+
         User managed = (User) InstanceUtils.instantiateParam(PARAM_USER_SHORT, User.class, params, request);
         User user = (User) env.get(Constants.VAR_USER);
         if ( managed==null )

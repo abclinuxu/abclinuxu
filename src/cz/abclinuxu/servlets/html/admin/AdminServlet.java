@@ -30,11 +30,13 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.template.TemplateSelector;
 import cz.abclinuxu.utils.DateTool;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.utils.search.CreateIndex;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.security.AdminLogger;
+import cz.abclinuxu.security.Roles;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,6 +55,7 @@ public class AdminServlet implements AbcAction {
     public static final String ACTION_PERFORM_CHECK = "performCheck";
     public static final String ACTION_RECREATE_RSS = "refreshRss";
     public static final String ACTION_RESTART_TASKS = "restartTasks";
+    public static final String ACTION_SWITCH_MAINTAINANCE = "switchMaintainance";
 
     public static final String VAR_DATABASE_STATE = "DATABASE_VALID";
     public static final String VAR_FULLTEXT_STATE = "FULLTEXT_VALID";
@@ -82,6 +85,12 @@ public class AdminServlet implements AbcAction {
         if (action == null)
             return FMTemplateSelector.select("Admin", "show", env, request);
 
+        if (!user.hasRole(Roles.ROOT))
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
+        if (ACTION_SWITCH_MAINTAINANCE.equals(action))
+            return switchMaintainance(request, env);
+
         return null;
     }
 
@@ -103,13 +112,26 @@ public class AdminServlet implements AbcAction {
     }
 
     /**
-     * Restarts all tasks. USefull when some thread dies for some reason.
+     * Restarts all tasks. Usefull when some thread dies for some reason.
+     * todo finish. It does not work, implementation issues
      */
     private String restartTasks(HttpServletRequest request, Map env) throws Exception {
         AbcInit.getInstance().startTasks();
         ServletUtils.addMessage("Úlohy byly restartovány.",env,null);
         User user = (User) env.get(Constants.VAR_USER);
         AdminLogger.logEvent(user, "restartoval ulohy");
+        return FMTemplateSelector.select("Admin", "show", env, request);
+    }
+
+    /**
+     * Switches maintainance mode.
+     */
+    private String switchMaintainance(HttpServletRequest request, Map env) throws Exception {
+        boolean mode = AbcConfig.isMaintainanceMode();
+        AbcConfig.setMaintainanceMode(! mode);
+        ServletUtils.addMessage("Re¾im údr¾by " + ((mode) ? "vypnut" : "zapnut"),env,null);
+        User user = (User) env.get(Constants.VAR_USER);
+        AdminLogger.logEvent(user, ((mode) ? "vypnul" : "zapnul") + " re¾im údr¾by");
         return FMTemplateSelector.select("Admin", "show", env, request);
     }
 
@@ -147,12 +169,15 @@ public class AdminServlet implements AbcAction {
     private String refreshRss(HttpServletRequest request, Map env) throws Exception {
         FeedGenerator.updateArticles();
         FeedGenerator.updateBlog(null);
+        FeedGenerator.updateBlogDigest();
         FeedGenerator.updateDrivers();
         FeedGenerator.updateForum();
         FeedGenerator.updateHardware();
+        FeedGenerator.updateSoftware();
         FeedGenerator.updateNews();
         FeedGenerator.updateFAQ();
         FeedGenerator.updatePolls();
+        FeedGenerator.updateBazaar();
 
         User user = (User) env.get(Constants.VAR_USER);
         AdminLogger.logEvent(user, "pregeneroval rss");

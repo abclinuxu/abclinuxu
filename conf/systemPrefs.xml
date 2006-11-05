@@ -33,6 +33,7 @@
                                     <entry key="section.faq.count" value="20"/>
                                     <entry key="bazaar.page.size" value="40"/>
                                     <entry key="watched.discussions.limit" value="75"/>
+                                    <entry key="maintainance.mode" value="false"/>
                                 </map>
                             </node>
                         </node>

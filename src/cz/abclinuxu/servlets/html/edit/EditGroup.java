@@ -76,6 +76,9 @@ public class EditGroup implements AbcAction {
         String action = (String) params.get(PARAM_ACTION);
         User user = (User) env.get(Constants.VAR_USER);
 
+        if (ServletUtils.handleMaintainance(request, env))
+            response.sendRedirect(response.encodeRedirectURL("/"));
+
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
         if ( !user.hasRole(Roles.USER_ADMIN) )
