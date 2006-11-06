@@ -15,7 +15,7 @@ function prepni_sloupec() {
 }
 
 function prepni_plochu(idPlochy) {
-    if (document.getElementById(idPlochy).style.display == 'none') {
+    if (document.getElementById(idPlochy).style.display == 'none' || document.getElementById(idPlochy).style.display == '') {
         document.getElementById(idPlochy).style.display = 'block'
     } else {
         document.getElementById(idPlochy).style.display = 'none'
