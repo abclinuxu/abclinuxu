@@ -22,11 +22,12 @@ Prehled clanku
 Reklama
 =======
 
-HOT JOB ALERT! The new OEM Team in Prague is looking for an
-INTEGRATION Enthusiast with C/C++ and/or Java programming
-skills and knowledge of Unix/Linux. Learn more...
+HOT JOB ALERT!  If you have webpage programming or design
+experience and Oracle Configurator skills this is a good
+opportunity for you!  We are looking for a Business
+Integration Architect. Learn more about this position...
 
-http://www.talents.cz/sunjobs2_detail.php?id=157
+http://www.talents.cz/sunjobs2_detail.php?id=182
 
 
 Prehled zpravicek
