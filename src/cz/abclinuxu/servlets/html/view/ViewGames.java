@@ -18,35 +18,31 @@
  */
 package cz.abclinuxu.servlets.html.view;
 
-import cz.abclinuxu.servlets.AbcAction;
-import cz.abclinuxu.servlets.Constants;
-import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Category;
-import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Item;
-import cz.abclinuxu.utils.InstanceUtils;
-import cz.abclinuxu.utils.ReadRecorder;
-import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.exceptions.NotFoundException;
+import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.exceptions.InvalidInputException;
+import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
-import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.servlets.AbcAction;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.freemarker.Tools;
+import org.dom4j.Element;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
-
-import org.dom4j.Element;
 
 /**
  * Show games or play them.
@@ -110,9 +106,6 @@ public class ViewGames implements AbcAction {
         int position = Misc.parseInt((String) params.get(PARAM_POSITION), -1);
         if (position == -1) {
             position = 1;
-            User user = (User) env.get(Constants.VAR_USER);
-            if (user == null || !user.hasRole(Roles.GAMES_ADMIN))
-                ReadRecorder.log(game, Constants.COUNTER_PLAY, env);
         } else {
             String lastChoice = (String) params.get("q"+position);
             if (Misc.empty(lastChoice))
