@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.StringTokenizer;
 import java.util.Map;
+import java.util.Random;
 import java.io.File;
 
 /**
@@ -58,13 +59,14 @@ public class Measure {
             d = new Date(file.lastModified());
 
 
+        Random rand = new Random(System.currentTimeMillis());
         long start = System.currentTimeMillis();
-        for (i=0; i<3200000; i++) {
+        for (i=0; i<1900000; i++) {
             //place your code to measure here
-            l = System.currentTimeMillis();
+            rand = new Random(System.currentTimeMillis());
         }
         long end = System.currentTimeMillis();
-        System.out.println(l);
+        System.out.println(rand.nextInt());
 
         // place clean up here
 
