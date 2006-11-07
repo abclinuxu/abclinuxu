@@ -4,7 +4,11 @@
 
 <h1>Hry</h1>
 
-<p></p>
+<p>
+    Chcete se pobavit, zjistit úroveò svých znalostí èi si zábavnou formou
+    nauèit nìèemu novému? Zahrejte si na¹e hry. Nejde o ¾ádné ceny èi ¾ebøíèky,
+    jen o legraci.
+</p>
 
 <#if USER?exists && USER.hasRole("games admin")>
     <a href="/EditTrivia?action=add">Pøidat kvíz</a>
@@ -29,5 +33,10 @@
 
     <hr>
 </#list>
+
+<p>
+    Pokud jste nalezli chybu v kvízu, nebo vás napadly dal¹í otázky pro nìjaký kvíz,
+    vlo¾te prosím informace do <a href="http://bugzilla.abclinuxu.cz/show_bug.cgi?id=624">bugzilly</a>.
+</p>
 
 <#include "../footer.ftl">
