@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Random;
 
 import org.dom4j.Element;
 
@@ -160,7 +161,8 @@ public class ViewGames implements AbcAction {
             int id = Misc.parseInt(answear.attributeValue("id"), -1);
             answears.add(new TriviaChoice(answear.getText(), id));
         }
-        Collections.shuffle(answears);
+        Random rand = new Random(System.currentTimeMillis());
+        Collections.shuffle(answears, rand);
 
         env.put(VAR_CHOICES, answears);
         env.put(VAR_POSITION, position);
