@@ -49,6 +49,8 @@ public interface Constants {
     int CAT_FAQ = 758;
     int CAT_GUESTBOOK = 885;
     int CAT_BAZAAR = 1584;
+    int CAT_TRIVIA = 1605;
+    int CAT_HANGMAN = 1606;
 
     int ITEM_DIZ_TODO = 11606;
     /** item holding dynamic configuration */
@@ -81,6 +83,9 @@ public interface Constants {
     int REL_GUESTBOOK = 93214;
     int REL_FAQ = 81515;
     int REL_BAZAAR = 152995;
+    int REL_GAMES = 156665;
+    int REL_TRIVIA = 156666;
+    int REL_HANGMAN = 156667;
 
     int GROUP_ADMINI = 11246;
     int GROUP_AUTORI = 11247;
@@ -157,6 +162,7 @@ public interface Constants {
     String PAGE_DRIVERS = "ovladace";
     String PAGE_FAQ = "faq";
     String PAGE_FORUM = "forum";
+    String PAGE_GAMES = "hry";
     String PAGE_HARDWARE = "hardware";
     String PAGE_HOSTING = "hosting";
     String PAGE_INDEX = "homepage";
@@ -208,4 +214,5 @@ public interface Constants {
     // type of counter
     String COUNTER_READ = "read";
     String COUNTER_VISIT = "visit";
+    String COUNTER_PLAY = "play";
 }

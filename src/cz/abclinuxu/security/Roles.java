@@ -39,6 +39,8 @@ public class Roles {
     public static final String ARTICLE_ADMIN = "article admin";
     /** user can create, edit and delete surveys */
     public static final String SURVEY_ADMIN = "survey admin";
+    /** user can manage games (trivia, hangman) */
+    public static final String GAMES_ADMIN = "games admin";
     /** user can create, edit and delete polls */
     public static final String POLL_ADMIN = "poll admin";
     /** user can edit other users */

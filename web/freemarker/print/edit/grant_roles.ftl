@@ -30,6 +30,7 @@
        <@lib.showOption "roles", "article admin", "Administrátor èlánkù", "checkbox" /><br>
        <@lib.showOption "roles", "discussion admin", "Administrátor diskusí", "checkbox" /><br>
        <@lib.showOption "roles", "content admin", "Administrátor dokumentù", "checkbox" /><br>
+       <@lib.showOption "roles", "games admin", "Administrátor her", "checkbox" /><br>
        <@lib.showOption "roles", "requests admin", "Administrátor po¾adavkù", "checkbox" /><br>
        <@lib.showOption "roles", "attachment admin", "Administrátor pøíloh", "checkbox" /><br>
        <@lib.showOption "roles", "category admin", "Administrátor sekcí", "checkbox" /><br>

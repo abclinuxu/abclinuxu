@@ -90,7 +90,6 @@ public class ShowArticle implements AbcAction {
      * Shows the article.
      */
     static String show(Map env, Item item, HttpServletRequest request) throws Exception {
-        Persistence persistence = PersistenceFactory.getPersistance();
         Record record = null;
 
         Map children = (Map) env.get(VAR_CHILDREN_MAP);

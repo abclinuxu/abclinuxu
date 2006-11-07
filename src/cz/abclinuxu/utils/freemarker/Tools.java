@@ -188,6 +188,7 @@ public class Tools implements Configurable {
     }
 
     /**
+     * @param relation initialized relation
      * @return name of child in this relation.
      */
     public static String childName(Relation relation) {
@@ -205,6 +206,7 @@ public class Tools implements Configurable {
     }
 
     /**
+     * @param obj initialized generic object
      * @return name of child in this relation.
      */
     public static String childName(GenericObject obj) {
@@ -1335,20 +1337,31 @@ public class Tools implements Configurable {
     public Map ratingFor(Branch object, String s) {
         return ratingFor(object);
     }
+
     /**
      * Finds rating of specified type for given object.
      * @param object object that might have rating
-     * @return null, if such rating doesn't exist. Otherwise map will contain
-     * keys "sum", "count" and "result".
+     * @return null, if there is no such rating. Otherwise map with keys "sum", "count" and "percent".
      */
     public Map ratingFor(Branch object) {
-        Element rating = (Element) object.selectSingleNode("//rating");
-        if ( rating==null )
+        return calculatePercentage(object, "//rating", EditRating.VALUE_MAX);
+    }
+
+    /**
+     * Calculates percentage
+     * @param xmlNode XML
+     * @param xpath xpath to an element which contains elements sum and count
+     * @param divider (100 * sum) / (float)(count * divider)
+     * @return null, if there is no such rating. Otherwise map with keys "sum", "count" and "percent".
+     */
+    public Map calculatePercentage(Branch xmlNode, String xpath, int divider) {
+        Element container = (Element) xmlNode.selectSingleNode(xpath);
+        if ( container==null )
             return null;
 
-        int sum = Misc.parseInt(rating.elementText("sum"), EditRating.VALUE_MIN);
-        int count = Misc.parseInt(rating.elementText("count"), EditRating.VALUE_MIN);
-        float percent = (100 * sum) / (float)(count * EditRating.VALUE_MAX);
+        int sum = Misc.parseInt(container.elementText("sum"), EditRating.VALUE_MIN);
+        int count = Misc.parseInt(container.elementText("count"), EditRating.VALUE_MIN);
+        float percent = (100 * sum) / (float)(count * divider);
 
         Map map = new HashMap();
         map.put("sum", sum);

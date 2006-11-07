@@ -15,10 +15,10 @@
 </#if>
 
 <#global CITACE = TOOL.getRelationCountersValue(ARTICLES.data,"read")/>
- <#list ARTICLES.data as relation>
+<#list ARTICLES.data as relation>
   <@lib.showArticle relation, "CZ_FULL" />
   <hr>
- </#list>
+</#list>
 
  <p>
   <#if (ARTICLES.currentPage.row > 0) >

@@ -82,6 +82,10 @@
             <action>cz.abclinuxu.servlets.html.view.ViewBlog</action>
         </mapping>
         <mapping priority="true">
+            <pattern>^/hry</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ViewGames</action>
+        </mapping>
+        <mapping priority="true">
             <pattern>^/software/edit</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditSoftware</action>
         </mapping>
@@ -200,6 +204,10 @@
         <mapping>
             <pattern>/whatHappened</pattern>
             <action>cz.abclinuxu.scheduler.WhatHappened</action>
+        </mapping>
+        <mapping>
+            <pattern>/EditTrivia</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditTrivia</action>
         </mapping>
     </format>
     <format version="wap">

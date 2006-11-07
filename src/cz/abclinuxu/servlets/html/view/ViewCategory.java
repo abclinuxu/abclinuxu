@@ -229,8 +229,10 @@ public class ViewCategory implements AbcAction {
         List articles = sqlTool.findArticleRelations(qualifiers, section.getId());
         int total = sqlTool.countArticleRelations(section.getId());
         Tools.syncList(articles);
+        // todo - ma to smysl? Neni to duplikace predchoziho? Overit v debuggeru
         Tools.initializeChildren(articles);
 
+        // tohle je asi inicializace diskusi, kvuli poslednim komentarum k clanku
         List items = new ArrayList();
         for (Iterator iter = articles.iterator(); iter.hasNext();) {
             Relation relation1 = (Relation) iter.next();

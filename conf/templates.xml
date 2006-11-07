@@ -189,6 +189,27 @@
         </action>
     </servlet>
 
+    <servlet name="EditTrivia">
+        <action name="add" template="print" content="/add/trivia.ftl">
+            <var name="TITLE" value="Vlo¾ kvíz" />
+        </action>
+        <action name="edit" template="print" content="/add/trivia.ftl">
+            <var name="TITLE" value="Uprav kvíz" />
+        </action>
+    </servlet>
+
+    <servlet name="ViewGames">
+        <action name="list" content="/show/games.ftl">
+            <var name="TITLE" value="Hry" />
+        </action>
+        <action name="trivia_play" content="/show/play_trivia.ftl">
+            <var name="TITLE" value="Kvíz" />
+        </action>
+        <action name="trivia_results" content="/show/trivia_result.ftl">
+            <var name="TITLE" value="Výsledek kvízu" />
+        </action>
+    </servlet>
+
   <servlet name="EditRelation">
     <action name="add" template="print" content="/add/relation.ftl">
       <var name="TITLE" value="Vytvoø link" />

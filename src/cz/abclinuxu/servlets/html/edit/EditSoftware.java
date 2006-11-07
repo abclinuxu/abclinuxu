@@ -101,9 +101,6 @@ public class EditSoftware implements AbcAction, Configurable {
         if (ServletUtils.handleMaintainance(request, env))
             response.sendRedirect(response.encodeRedirectURL("/"));
 
-        if (action == null)
-            throw new MissingArgumentException("Chybí parametr action!");
-
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
         if (relation != null) {
             Tools.sync(relation);
@@ -115,16 +112,16 @@ public class EditSoftware implements AbcAction, Configurable {
         if (user == null)
             return FMTemplateSelector.select("ViewUser", "login", env, request);
 
-        if (action.equals(ACTION_ADD))
+        if (ACTION_ADD.equals(action))
             return actionAddStep1(request, response, env);
 
-        if (action.equals(ACTION_ADD_STEP2))
+        if (ACTION_ADD_STEP2.equals(action))
             return actionAddStep2(request, response, env, true);
 
-        if (action.equals(ACTION_EDIT))
+        if (ACTION_EDIT.equals(action))
             return actionEditStep1(request, env);
 
-        if (action.equals(ACTION_EDIT_STEP2))
+        if (ACTION_EDIT_STEP2.equals(action))
             return actionEditStep2(request, response, env);
 
         throw new MissingArgumentException("Chybí parametr action!");

@@ -56,7 +56,7 @@ public class EditRating implements AbcAction, Configurable {
     public static final String PARAM_VALUE = "rvalue";
     public static final String PARAM_RETURN = "return";
 
-    // todo jina persistence. Nehodi se to mit v XML, ale v nejakem sloupecku ci tabulce
+    // todo jina persistence. Nehodi se to mit v XML, ale v nejakem sloupecku ci tabulce, bug #623
     public static final int VALUE_MIN = 0;
     public static final int VALUE_MAX = 3;
     public static final String USER_ACTION_RATING = "rating";

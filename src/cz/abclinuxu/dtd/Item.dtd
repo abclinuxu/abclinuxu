@@ -139,11 +139,6 @@
 <!ATTLIST content format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 <!ELEMENT category (#NMTOKEN)> <!-- integer, if od the category. See blog/categories -->
 
-<!-- Item.GUEST_ENTRY -->
-<!ELEMENT data (author?, message)>
-<!ELEMENT author (#PCDATA)> <!-- user's name -->
-<!ELEMENT message (#PCDATA)> <!-- message -->
-
 <!-- Item.FAQ -->
 <!ELEMENT data (title,text,links?)>
 <!ELEMENT title (#PCDATA)> <!-- title of this reaction, usually question -->
@@ -166,7 +161,28 @@
 <!ELEMENT price (#PCDATA)> <!-- requested price -->
 <!ELEMENT contact (#PCDATA)> <!-- contact for the person -->
 
+<!-- Item.TRIVIA -->
+<!ELEMENT data (title, description, difficulty, stats, question+)>
+<!ELEMENT title (#PCDATA)> <!-- title of the trivia game -->
+<!ELEMENT description (#PCDATA)> <!-- description of the game -->
+<!ELEMENT difficulty (#PCDATA)> <!-- values: simple, normal, hard, guru -->
+<!ELEMENT question (content,answear+)> <!-- contact for the person -->
+<!ELEMENT content (#PCDATA)> <!-- text of the question -->
+<!ELEMENT answear (#PCDATA)> <!-- possible answear -->
+<!ATTLIST answear id (#NMTOKEN) #REQUIRED> <!-- random value, id of answear within one question -->
+<!ATTLIST answear correct (TRUE) #OPTIONAL> <!-- if set to true, then this answear is correct -->
+<!ELEMENT stats (sum, count)> <!-- statistics of the quiz -->
+<!ELEMENT sum (#PCDATA)> <!-- total sum of all play results -->
+<!ELEMENT count (#PCDATA)> <!-- count of all plays -->
+
+<!-- Item.HANGMAN -->
+<!ELEMENT data (title, desc, word)>
+<!ELEMENT title (#PCDATA)> <!-- title of the trivia game -->
+<!ELEMENT desc (#PCDATA)> <!-- description of the game -->
+<!ELEMENT word (#PCDATA)> <!-- word to be guessed -->
+
 <!-- common -->
+
 <!ELEMENT inset (images*)> <!-- this element is child of data and it serves as container for various attachments -->
 <!ELEMENT images (image+)> <!-- container for screenshots and other images -->
 <!ELEMENT image (#PCDATA)> <!-- full path to the image -->
@@ -178,3 +194,7 @@
 <!ELEMENT title (#PCDATA)> <!-- title for this document -->
 <!ELEMENT url (#PCDATA)> <!-- url to this document, it shall be local for documents stored in portal -->
 <!ELEMENT description (#PCDATA)> <!-- optional description of the document -->
+
+<!ELEMENT rating (sum, count)> <!-- rating of the object -->
+<!ELEMENT sum (#PCDATA)> <!-- total sum of all ratings -->
+<!ELEMENT count (#PCDATA)> <!-- count of all ratings -->

@@ -99,7 +99,7 @@
             <#if PARENTS?exists>
                 <#list TOOL.getParents(PARENTS,USER?if_exists,URL) as link>
                     <a href="${link.url}">${link.text}</a>
-            <#if link_has_next> - </#if>
+                    <#if link_has_next> - </#if>
                 </#list>
             </#if>&nbsp;
         </div>

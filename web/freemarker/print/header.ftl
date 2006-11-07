@@ -1,9 +1,10 @@
 <html>
 <head>
-<title>${TITLE}</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2">
-<link rel="StyleSheet" href="/styles.css" type="text/css">
-<script type="text/javascript" src="/data/site/scripts.js"></script>
+    <title>${TITLE}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2">
+    <#if ! css?exists || css=="UNDEF"><#assign css="/styles.css"></#if>
+    <link rel="stylesheet" type="text/css" href="${css}">
+    <script type="text/javascript" src="/data/site/scripts.js"></script>
 </head>
 <body style="background:#fff; margin:5px">
 <#import "macros.ftl" as lib>
