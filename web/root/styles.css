@@ -888,6 +888,17 @@ table.hwdetail, table.swdetail {
 
 .anketa-tr-dark { background: #e6e6e6; }
 
+.game-results {
+	display: block;
+	background: #d3d3d3;
+	margin-top: 1em;
+	padding: 0.1em;
+}
+.game-wrong {
+	font-weight: bold;
+	color: #8b0000; /* darkred */
+}
+
 /*************** SF lista *****************/
 .sflista {
   font-size: 11px;

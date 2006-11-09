@@ -5,8 +5,8 @@
 <h1>Hry</h1>
 
 <p>
-    Chcete se pobavit, zjistit úroveò svých znalostí èi si zábavnou formou
-    nauèit nìèemu novému? Zahrejte si na¹e hry. Nejde o ¾ádné ceny èi ¾ebøíèky,
+    Chcete se pobavit, zjistit úroveò svých znalostí èi se zábavnou formou
+    nauèit nìèemu novému? Zahrajte si na¹e hry. Nejde o ¾ádné ceny èi ¾ebøíèky,
     jen o legraci.
 </p>
 
@@ -27,16 +27,15 @@
             <a href="/EditTrivia/${relation.id}?action=edit">Upravit</a>
         </#if>
     </p>
-    <form action="${relation.url}" method="POST">
-        <input type="submit" value="Hrát">
-    </form>
-
+      <form action="${relation.url}" method="POST">
+        <input type="submit" value="Hrát" class="button">
+      </form>
     <hr>
 </#list>
 
 <p>
-    Pokud jste nalezli chybu v kvízu, nebo vás napadly dal¹í otázky pro nìjaký kvíz,
-    vlo¾te prosím informace do <a href="http://bugzilla.abclinuxu.cz/show_bug.cgi?id=624">bugzilly</a>.
+    Pokud jste nalezli chybu nebo vás napadly dal¹í otázky pro nìjaký kvíz,
+    vlo¾te prosím informace do <a rel="nofollow" href="http://bugzilla.abclinuxu.cz/show_bug.cgi?id=624">bugzilly</a>.
 </p>
 
 <#include "../footer.ftl">

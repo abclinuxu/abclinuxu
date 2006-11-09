@@ -7,7 +7,7 @@
 <p>
     <#if (SCORE == 0)>
         Ouvej, ani jedna správná odpovìï? Jak se vám to povedlo? Projdìte si správné
-        odpovìdi a u dal¹ího kvízu vybírejte odpovìdi náhodnì, hùøe u¾ skonèit nemù¾ete :-).
+        odpovìdi a u dal¹ího kvízu vybírejte odpovìdi náhodnì, hùøe u¾ skonèit nemù¾ete&nbsp;:-).
     <#elseif (SCORE < 4)>
         No, nic moc. Pozornì si prohlédnìte správné odpovìdi a zkuste jiný kvíz. Tøeba
         budete mít lep¹í mu¹ku.
@@ -16,7 +16,7 @@
         Prostor ke zlep¹ování zde je, jiný kvíz vám mù¾e vyjít lépe.
     <#elseif (SCORE == 9)>
         Výbornì, jediná chybièka vás dìlila od dokonalosti. Která otázka vás dostala?
-        U pøí¹tího kvízu u¾ tolik smùly mít nemusíte, vysnìná desítka na vás èeká ..
+        U pøí¹tího kvízu u¾ tolik smùly mít nemusíte, vysnìná desítka na vás èeká...
     <#else>
         Uctivost, va¹nosti. V¹e správnì, jste nejlep¹í. Aspoò v tomhle kvízu. Doká¾ete
         úspìch zopakovat i u dal¹ího kvízu?
@@ -36,22 +36,15 @@
     </tr>
 </table>
 
-<table border="0" cellspacing="10px">
-    <#list RESULTS as result>
-        <tr style="background-color: gray;" colspan="2">
-            <td colspan="2">${result_index+1}. ${result.question}</td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                Odpovìdìl jste <#if result.correct>správnì<#else>¹patnì</#if>: ${result.reply}
-                <#if (! result.correct)><br>Správná odpovìï je: ${result.correctAnswear}</#if>
-            </td>
-        </tr>
-    </#list>
-</table>
+<#list RESULTS as result>
+    <div class="game-results"><b>${result_index+1}.</b> ${result.question}</div>
+    <p><#if result.correct>
+          <span class="game-correct">Správná</span><#else>
+          <span class="game-wrong">©patná</span></#if> odpovìï: ${result.reply}
+    <#if (! result.correct)><br />Správná odpovìï je:
+          <span class="game-reply">${result.correctAnswear}</span></#if></p>
+</#list>
 
-<p>
-    <a href="/hry">Zpátky na hry</a>
-</p>
+<p><a href="/hry">Zpátky na hry</a></p>
 
 <#include "../footer.ftl">
