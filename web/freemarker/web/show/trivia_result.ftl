@@ -11,7 +11,7 @@
     <#elseif (SCORE < 4)>
         No, nic moc. Pozornì si prohlédnìte správné odpovìdi a zkuste jiný kvíz. Tøeba
         budete mít lep¹í mu¹ku.
-    <#elseif (SCORE < 8)>
+    <#elseif (SCORE <= 8)>
         Zlatý prùmìr, ale na pochvalu to není. Schválnì se podívejte na va¹e chyby.
         Prostor ke zlep¹ování zde je, jiný kvíz vám mù¾e vyjít lépe.
     <#elseif (SCORE == 9)>
