@@ -19,6 +19,7 @@
 package cz.abclinuxu.scheduler;
 
 import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.utils.config.impl.AbcConfig;
 
 import java.util.TimerTask;
 import java.util.Map;
@@ -65,6 +66,11 @@ public final class UpdateStatistics extends TimerTask {
     public void run() {
         try {
             log.debug(getClass().getName() + " starts");
+            if (AbcConfig.isMaintainanceMode()) {
+                log.debug(getClass().getName() + " finished");
+                return;
+            }
+
             Map toBeSaved;
             synchronized (this) {
                 toBeSaved = entries;

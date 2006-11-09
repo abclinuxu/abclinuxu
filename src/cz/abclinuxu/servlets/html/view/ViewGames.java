@@ -133,13 +133,15 @@ public class ViewGames implements AbcAction {
 
             // refresh object again, let's minimize concurrency issue probability
             // todo use SQL table from bug #623
-            game = (Item) persistence.findById(game).clone();
-            root = game.getData().getRootElement();
-            Element count = (Element) root.selectSingleNode("stats/count");
-            count.setText(Integer.toString(Misc.parseInt(count.getText(), 0) + 1));
-            Element sum = (Element) root.selectSingleNode("stats/sum");
-            sum.setText(Integer.toString(Misc.parseInt(sum.getText(), 0) + correctAnswears));
-            persistence.update(game);
+            if (! ServletUtils.handleMaintainance(request, env)) {
+                game = (Item) persistence.findById(game).clone();
+                root = game.getData().getRootElement();
+                Element count = (Element) root.selectSingleNode("stats/count");
+                count.setText(Integer.toString(Misc.parseInt(count.getText(), 0) + 1));
+                Element sum = (Element) root.selectSingleNode("stats/sum");
+                sum.setText(Integer.toString(Misc.parseInt(sum.getText(), 0) + correctAnswears));
+                persistence.update(game);
+            }
 
             env.put(VAR_SCORE, correctAnswears);
             env.put(VAR_RESULTS, results);
