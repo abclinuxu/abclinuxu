@@ -335,7 +335,7 @@ public class EditRelation implements AbcAction {
             return actionSetUrlStep2(request, env);
         }
 
-        url = URLManager.enforceLastURLPart(url);
+        url = URLManager.enforceRelativeURL(url);
         url = upper.getUrl() + '/' + url;
         if (URLManager.exists(url)) {
             ServletUtils.addError(PARAM_URL, "Toto URL ji¾ existuje!", env, null);
@@ -449,7 +449,7 @@ public class EditRelation implements AbcAction {
 
         int position = originalUrl.lastIndexOf('/');
         String localPart = originalUrl.substring(position + 1);
-        String url = URLManager.enforceLastURLPart(localPart);
+        String url = URLManager.enforceRelativeURL(localPart);
         url = dirUri + '/' + localPart;
         url = URLManager.protectFromDuplicates(url);
         relation.setUrl(url);

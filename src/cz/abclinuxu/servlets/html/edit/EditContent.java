@@ -456,7 +456,7 @@ public class EditContent implements AbcAction {
     private boolean setDerivedURL(Item item, Relation relation, Relation parentRelation) {
         Element element = (Element) item.getData().selectSingleNode("/data/name");
         String title = element.getTextTrim();
-        String url = parentRelation.getUrl() + "/" + URLManager.enforceLastURLPart(title);
+        String url = parentRelation.getUrl() + "/" + URLManager.enforceRelativeURL(title);
         url = URLManager.protectFromDuplicates(url);
         relation.setUrl(url);
         return true;

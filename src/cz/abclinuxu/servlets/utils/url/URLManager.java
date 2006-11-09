@@ -64,24 +64,13 @@ public class URLManager implements Configurable {
      * @return normalized URL that obeys all rules
      * @throws AbcException if URL is after conversions empty
      */
-    public static String enforceLastURLPart(String url) {
+    public static String enforceRelativeURL(String url) {
         if (url==null || url.length() == 0)
             throw new AbcException("URL nesmí být prázdné!");
         if (url.charAt(0)=='/')
             url = url.substring(1);
-        int length = url.length();
-        if (url.charAt(length-1)=='/')
-            url = url.substring(0, length-1);
-        if (url.length()==0)
-            throw new AbcException("Zvolte jiné URL, po odstranìní lomítek nic nezbylo!");
 
-        if (Character.isDigit(url.charAt(0)))
-            url = "-" + url;
-
-        String fixedURL = normalizeCharacters(url, false);
-        if (fixedURL.length() == 0)
-            throw new AbcException("Zvolte jiné URL bez speciálních znakù!");
-
+        String fixedURL = normalizeUrl(url);
         fixedURL = enforceValidExtension(fixedURL);
         return fixedURL;
     }
@@ -98,20 +87,18 @@ public class URLManager implements Configurable {
             throw new AbcException("URL nesmí být prázdné!");
         if (!url.startsWith("/"))
             throw new AbcException("Adresa stránky musí být absolutní!");
-        int length = url.length();
-        if (url.charAt(length - 1) == '/')
-            url = url.substring(0, length - 1);
-        if (url.length() == 0)
-            throw new AbcException("Zvolte jiné URL, po odstranìní lomítek nic nezbylo!");
 
+        String fixedURL = normalizeUrl(url);
+        fixedURL = enforceValidExtension(fixedURL);
+        return fixedURL;
+    }
+
+    private static String normalizeUrl(String url) {
         if (Character.isDigit(url.charAt(0)))
             url = "-" + url;
-
-        String fixedURL = normalizeCharacters(url, true);
+        String fixedURL = normalizeCharacters(url, false);
         if (fixedURL.length() == 0)
             throw new AbcException("Zvolte jiné URL bez speciálních znakù!");
-
-        fixedURL = enforceValidExtension(fixedURL);
         return fixedURL;
     }
 
@@ -136,20 +123,28 @@ public class URLManager implements Configurable {
     /**
      * Normalizes content of URL. For example it removes
      * diacritics, replaces invalid characters with dashes,
-     * removes traling dashes and converts to lowercase.
+     * removes traling dashes, slashes and dots and converts to lowercase.
      * @param url non-null string
      * @return normalized URL, it may have zero length.
      */
     private static String normalizeCharacters(String url, boolean absoluteURL) {
         String fixedURL = DiacriticRemover.getInstance().removeDiacritics(url);
-        fixedURL = new RE(rePlus, RE.REPLACE_ALL).subst(fixedURL, "p"); // convert c++ to cpp
+        fixedURL = new RE(rePlus, RE.REPLACE_ALL).subst(fixedURL, "plus"); // e.g. c++
         if (absoluteURL)
             fixedURL = new RE(reInvalidCharactersAbsolute, RE.REPLACE_ALL).subst(fixedURL, "-");
         else
             fixedURL = new RE(reInvalidCharactersRelative, RE.REPLACE_ALL).subst(fixedURL, "-");
         fixedURL = fixedURL.toLowerCase();
-        while (fixedURL.endsWith("-"))
-            fixedURL = fixedURL.substring(0, fixedURL.length() - 1);
+
+        int length = fixedURL.length();
+        char c = fixedURL.charAt(length-1);
+        while (length > 0 && (c == '-' || c == '.' || c == '/')) {
+            length--;
+            c = fixedURL.charAt(length-1);
+        }
+
+        if (fixedURL.length() > length)
+            fixedURL = fixedURL.substring(0, length);
         return fixedURL;
     }
 

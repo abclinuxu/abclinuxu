@@ -126,7 +126,7 @@ public class EditDriver implements AbcAction {
         driver.setCreated(new Date());
 
         Element element = (Element) driver.getData().selectSingleNode("/data/name");
-        String url = UrlUtils.PREFIX_DRIVERS + "/" + URLManager.enforceLastURLPart(element.getTextTrim());
+        String url = UrlUtils.PREFIX_DRIVERS + "/" + URLManager.enforceRelativeURL(element.getTextTrim());
         url = URLManager.protectFromDuplicates(url);
 
         persistence.create(driver);

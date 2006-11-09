@@ -635,7 +635,7 @@ public class EditArticle implements AbcAction {
             return null;
 
         String title = Tools.xpath(item, "data/name");
-        String url = parentRelation.getUrl() + "/" + URLManager.enforceLastURLPart(title);
+        String url = parentRelation.getUrl() + "/" + URLManager.enforceRelativeURL(title);
         url = URLManager.protectFromDuplicates(url);
         return url;
     }

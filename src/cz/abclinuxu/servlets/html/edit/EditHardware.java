@@ -162,7 +162,7 @@ public class EditHardware implements AbcAction {
 
         Relation relation = new Relation(upper.getChild(), item, upper.getId());
         String name = root.elementTextTrim("name");
-        String url = upper.getUrl() + "/" + URLManager.enforceLastURLPart(name);
+        String url = upper.getUrl() + "/" + URLManager.enforceRelativeURL(name);
         url = URLManager.protectFromDuplicates(url);
         if (url != null)
             relation.setUrl(url);

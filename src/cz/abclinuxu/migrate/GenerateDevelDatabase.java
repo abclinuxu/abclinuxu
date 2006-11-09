@@ -230,7 +230,7 @@ public class GenerateDevelDatabase {
 
         Item item = (Item) created.getChild();
         Element element = (Element) item.getData().selectSingleNode("/data/title");
-        String url = UrlUtils.PREFIX_NEWS + "/" + URLManager.enforceLastURLPart(element.getTextTrim());
+        String url = UrlUtils.PREFIX_NEWS + "/" + URLManager.enforceRelativeURL(element.getTextTrim());
         url = URLManager.protectFromDuplicates(url);
 
         created.setUrl(url);

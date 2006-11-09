@@ -104,7 +104,7 @@ public class GenerateUrlsForHardware {
             return false;
 
         String title = Tools.xpath(relation.getChild(), "data/name");
-        String url = parentRelation.getUrl() + "/" + URLManager.enforceLastURLPart(title);
+        String url = parentRelation.getUrl() + "/" + URLManager.enforceRelativeURL(title);
         url = URLManager.protectFromDuplicates(url);
         if (url != null) {
             relation.setUrl(url);

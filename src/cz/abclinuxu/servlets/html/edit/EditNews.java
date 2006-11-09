@@ -277,7 +277,7 @@ public class EditNews implements AbcAction {
         persistence.update(item);
 
         element = (Element) item.getData().selectSingleNode("/data/title");
-        String url = UrlUtils.PREFIX_NEWS + "/" + URLManager.enforceLastURLPart(element.getTextTrim());
+        String url = UrlUtils.PREFIX_NEWS + "/" + URLManager.enforceRelativeURL(element.getTextTrim());
         url = URLManager.protectFromDuplicates(url);
         relation.setUrl(url);
 

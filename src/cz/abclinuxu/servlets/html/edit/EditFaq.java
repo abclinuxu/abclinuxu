@@ -152,7 +152,7 @@ public class EditFaq implements AbcAction {
         persistence.create(faq);
 
         String title = root.elementText("title");
-        String url = parentRelation.getUrl() + "/" + URLManager.enforceLastURLPart(title);
+        String url = parentRelation.getUrl() + "/" + URLManager.enforceRelativeURL(title);
         url = URLManager.protectFromDuplicates(url);
         relation.setUrl(url);
         persistence.create(relation);

@@ -70,7 +70,7 @@ public class GenerateUrlForNews {
             String withoutTags = Tools.removeTags(content);
             title = Tools.limitWords(withoutTags, 6, "");
 
-            String url = UrlUtils.PREFIX_NEWS + "/" + URLManager.enforceLastURLPart(title);
+            String url = UrlUtils.PREFIX_NEWS + "/" + URLManager.enforceRelativeURL(title);
             url = URLManager.protectFromDuplicates(url);
 
             relation.setUrl(url);

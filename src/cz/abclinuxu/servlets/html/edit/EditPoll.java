@@ -155,7 +155,7 @@ public class EditPoll implements AbcAction {
         String url = (String) params.get(PARAM_URL);
         if (upperRelation.getId()==Constants.REL_POLLS && url!=null && url.length()>0) {
             try {
-                url = UrlUtils.PREFIX_POLLS + "/" + URLManager.enforceLastURLPart(url);
+                url = UrlUtils.PREFIX_POLLS + "/" + URLManager.enforceRelativeURL(url);
                 url = URLManager.protectFromDuplicates(url);
             } catch (AbcException e) {
                 ServletUtils.addError(PARAM_URL, e.getMessage(), env, null);

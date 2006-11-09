@@ -168,7 +168,7 @@ public class EditCategory implements AbcAction {
             if ( upperRelation!=null ) {
                 String upperUrl = upperRelation.getUrl();
                 if ( upperUrl!=null ) {
-                    String url = upperUrl + "/" + URLManager.enforceLastURLPart(name);
+                    String url = upperUrl + "/" + URLManager.enforceRelativeURL(name);
                     url = URLManager.protectFromDuplicates(url);
                     if (url!=null)
                         relation.setUrl(url);
