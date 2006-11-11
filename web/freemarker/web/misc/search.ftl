@@ -1,19 +1,4 @@
 <#assign html_header>
-    <script type="text/javascript" src="/data/site/SuggestFramework.js"></script>
-    <script type="text/javascript">window.onload = initializeSuggestFramework;</script>
-    <script language="javascript1.2" type="text/javascript">
-        stav = true;
-        function toggle(sender) {
-            stav = !stav;
-            if (sender.form.elements.length) {
-                for (var i = 0; i < sender.form.elements.length; i++) {
-                    if (sender.form.elements[i].type == 'checkbox') {
-                        sender.form.elements[i].checked = stav;
-                    }
-                }
-            }
-        }
-    </script>
 </#assign>
 <#include "../header.ftl">
 
@@ -23,8 +8,6 @@
     <table border="0" class="siroka">
         <tr>
             <td>
-              <!--input type="text" name="query" id="query" value="${QUERY?if_exists?html}" size="50" tabindex="1"
-                     action="/SuggestSearch" columns="2" delay="800" autocomplete="false"-->
               <input type="text" name="query" value="${QUERY?if_exists?html}" size="50" tabindex="1">
               <input type="submit" value="Hledej" tabindex="2">
               <#if ERRORS.query?exists><div class="error">${ERRORS.query}</div></#if>
