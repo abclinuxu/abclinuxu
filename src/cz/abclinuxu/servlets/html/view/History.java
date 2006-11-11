@@ -27,7 +27,6 @@ import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.extra.*;
-import cz.abclinuxu.data.Record;
 import cz.abclinuxu.data.Item;
 
 import javax.servlet.http.HttpServletRequest;
@@ -150,6 +149,7 @@ public class History implements AbcAction {
                 qualifiers = tmp;
             } else
                 total = sqlTool.countItemRelationsWithType(Item.SOFTWARE, new Qualifier[]{});
+
             data = sqlTool.findItemRelationsWithType(Item.SOFTWARE, qualifiers);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_SOFTWARE;
@@ -178,12 +178,16 @@ public class History implements AbcAction {
         } else if ( VALUE_TYPE_DICTIONARY.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
             if ( uid > 0 ) {
-                total = sqlTool.countRecordParentRelationsByUserAndType(uid, Record.DICTIONARY);
-                data = sqlTool.findRecordParentRelationsByUserAndType(uid, Record.DICTIONARY, qualifiers);
-            } else {
-                total = sqlTool.countRecordParentRelationsWithType(Record.DICTIONARY);
-                data = sqlTool.findRecordParentRelationsWithType(Record.DICTIONARY, qualifiers);
-            }
+                CompareCondition userEqualsCondition = new CompareCondition(Field.OWNER, Operation.EQUAL, uid);
+                Qualifier[] tmp = new Qualifier[qualifiers.length + 1];
+                tmp[0] = userEqualsCondition;
+                System.arraycopy(qualifiers, 0, tmp, 1, qualifiers.length);
+                qualifiers = tmp;
+                total = sqlTool.countItemRelationsWithType(Item.DICTIONARY, new Qualifier[]{userEqualsCondition});
+            } else
+                total = sqlTool.countItemRelationsWithType(Item.DICTIONARY, null);
+
+            data = sqlTool.findItemRelationsWithType(Item.DICTIONARY, qualifiers);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_DICTIONARY;
 

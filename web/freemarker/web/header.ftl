@@ -119,9 +119,9 @@
                 </#if>
             </div>
 
-	    <!-- Skoleni OKsystem -->
+	    <!-- Skoleni OKsystem, 10.11.2006 pozastaveno -->
 
-            <#include "/include/oksystem.txt">
+            <#--<#include "/include/oksystem.txt">-->
 
             <!-- ANKETA -->
             <#if VARS.currentPoll?exists>

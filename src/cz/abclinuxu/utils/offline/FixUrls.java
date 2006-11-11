@@ -24,7 +24,6 @@ import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
-import cz.abclinuxu.servlets.Constants;
 
 import java.util.*;
 import java.io.*;
@@ -223,21 +222,7 @@ public class FixUrls {
         Integer id = (Integer) textUrls.get(url);
         if (id!=null)
             return id;
-        if (url.startsWith(UrlUtils.PREFIX_DICTIONARY)) {
-            if (url.length()<=DICTIONARY_PREFIX_LENGTH) {
-                id = new Integer(Constants.REL_DICTIONARY);
-                textUrls.put(url, id);
-                return id;
-            }
 
-            String name = url.substring(DICTIONARY_PREFIX_LENGTH);
-            Relation relation = SQLTool.getInstance().findDictionaryByURLName(name);
-            if (relation != null) {
-                id = new Integer(relation.getId());
-                textUrls.put(url, id);
-                return id;
-            }
-        }
         Relation relation = SQLTool.getInstance().findRelationByURL(url);
         if (relation!=null) {
             id = new Integer(relation.getId());

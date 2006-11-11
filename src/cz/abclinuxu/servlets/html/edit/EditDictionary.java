@@ -23,7 +23,6 @@ import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
-import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -32,11 +31,14 @@ import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.feeds.FeedGenerator;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.email.monitor.*;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.scheduler.VariableFetcher;
+import cz.finesoft.socd.analyzer.DiacriticRemover;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -45,7 +47,6 @@ import org.htmlparser.util.ParserException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
 import java.util.Map;
 
 /**
@@ -66,14 +67,11 @@ public class EditDictionary implements AbcAction {
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
-    public static final String ACTION_ADD_RECORD = "addRecord";
-    public static final String ACTION_ADD_RECORD_STEP2 = "addRecord2";
     public static final String ACTION_EDIT = "edit";
     public static final String ACTION_EDIT_STEP2 = "edit2";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
 
@@ -85,8 +83,7 @@ public class EditDictionary implements AbcAction {
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation!=null ) {
-            relation = (Relation) persistence.findById(relation);
-            persistence.synchronize(relation.getChild());
+            Tools.sync(relation);
             env.put(VAR_RELATION,relation);
         }
 
@@ -95,32 +92,16 @@ public class EditDictionary implements AbcAction {
             return FMTemplateSelector.select("ViewUser", "login", env, request);
 
         if ( action.equals(ACTION_ADD) )
-            return FMTemplateSelector.select("Dictionary", "add_item", env, request);
+            return FMTemplateSelector.select("Dictionary", "add", env, request);
 
         if ( action.equals(ACTION_ADD_STEP2) )
             return actionAddStep2(request, response, env, true);
 
-        if ( action.equals(ACTION_ADD_RECORD) ) {
-            params.put(PARAM_ACTION, ACTION_ADD_RECORD_STEP2);
-            return FMTemplateSelector.select("Dictionary", "add_record", env, request);
-        }
+        if ( action.equals(ACTION_EDIT) )
+            return actionEdit(request, env);
 
-        if ( action.equals(ACTION_ADD_RECORD_STEP2) )
-            return actionAddRecord(request, response, env);
-
-        if ( action.equals(ACTION_EDIT) || action.equals(ACTION_EDIT_STEP2) ) {
-            Record record = (Record) InstanceUtils.instantiateParam(PARAM_RECORD_ID, Record.class, params, request);
-            persistence.synchronize(record);
-            env.put(VAR_RECORD, record);
-
-            if ( user.getId()!=record.getOwner() && !user.hasRole(Roles.DICTIONARY_ADMIN) )
-                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
-            if ( action.equals(ACTION_EDIT) )
-                return actionEdit(request, env);
-            else
-                return actionEdit2(request, response, env);
-        }
+        if ( action.equals(ACTION_EDIT_STEP2) )
+            return actionEdit2(request, response, env);
 
         throw new MissingArgumentException("Chybí parametr action!");
     }
@@ -131,78 +112,34 @@ public class EditDictionary implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
 
         Document documentItem = DocumentHelper.createDocument();
-        Element rootItem = documentItem.addElement("data");
+        Element root = documentItem.addElement("data");
         Item item = new Item(0, Item.DICTIONARY);
         item.setData(documentItem);
         item.setOwner(user.getId());
-
-        Document documentRecord = DocumentHelper.createDocument();
-        Element rootRecord = documentRecord.addElement("data");
-        Record record = new Record(0, Record.DICTIONARY);
-        record.setData(documentRecord);
-        record.setOwner(user.getId());
+        Relation relation = new Relation(new Category(Constants.CAT_DICTIONARY), item, Constants.REL_DICTIONARY);
 
         boolean canContinue = true;
-        canContinue &= setName(params, rootItem, env);
-        canContinue &= setURLName(item, 0, rootItem, env);
-        canContinue &= setDescription(params, rootRecord, env);
+        canContinue &= setName(params, item, root, env);
+        canContinue &= setDescription(params, root, env);
+        canContinue &= setURL(relation, root, env);
         if (!canContinue || params.get(PARAM_PREVIEW)!=null)
-            return FMTemplateSelector.select("Dictionary", "add_item", env, request);
+            return FMTemplateSelector.select("Dictionary", "add", env, request);
 
         persistence.create(item);
-        Relation relation = new Relation(new Category(Constants.CAT_DICTIONARY), item, Constants.REL_DICTIONARY);
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
-        persistence.create(record);
-        Relation recordRelation = new Relation(item, record, relation.getId());
-        persistence.create(recordRelation);
-        recordRelation.getParent().addChildRelation(recordRelation);
+        // commit new version
+        Misc.commitRelation(root, relation, user);
 
+        FeedGenerator.updateDictionary();
         VariableFetcher.getInstance().refreshDictionary();
 
         if (redirect) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, "/slovnik/"+item.getSubType());
+            urlUtils.redirect(response, relation.getUrl());
         } else
             env.put(VAR_RELATION, relation);
-        return null;
-    }
-
-    protected String actionAddRecord(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Persistence persistence = PersistenceFactory.getPersistance();
-        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        User user = (User) env.get(Constants.VAR_USER);
-        Relation upper = (Relation) env.get(VAR_RELATION), relation = null;
-        if (upper==null)
-            throw new MissingArgumentException("Chybí parametr rid!");
-
-        Document document = DocumentHelper.createDocument();
-        Element root = document.addElement("data");
-        Record record = new Record(0, Record.DICTIONARY);
-        record.setData(document);
-        record.setOwner(user.getId());
-
-        boolean canContinue = true;
-        canContinue &= setDescription(params, root, env);
-        if ( !canContinue  || params.get(PARAM_PREVIEW)!=null )
-            return FMTemplateSelector.select("Dictionary", "add_record", env, request);
-
-        persistence.create(record);
-        relation = new Relation(upper.getChild(), record, upper.getId());
-        persistence.create(relation);
-        relation.getParent().addChildRelation(relation);
-
-        // run monitor
-        Item item = (Item) persistence.findById(upper.getChild());
-        String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/slovnik/"+item.getSubType();
-        MonitorAction action = new MonitorAction(user, UserAction.ADD, ObjectType.DICTIONARY, item, url);
-        MonitorPool.scheduleMonitorAction(action);
-
-        VariableFetcher.getInstance().refreshDictionary();
-
-        urlUtils.redirect(response, "/slovnik/"+item.getSubType());
         return null;
     }
 
@@ -211,13 +148,10 @@ public class EditDictionary implements AbcAction {
         Relation relation = (Relation) env.get(VAR_RELATION);
 
         Item item = (Item) relation.getChild();
-        Document documentItem = item.getData();
-        Node node = documentItem.selectSingleNode("data/name");
+        Document document = item.getData();
+        Node node = document.selectSingleNode("data/name");
         params.put(PARAM_NAME, node.getText());
-
-        Record record = (Record) env.get(VAR_RECORD);
-        Document documentRecord = record.getData();
-        Node desc = documentRecord.selectSingleNode("data/description");
+        Node desc = document.selectSingleNode("data/description");
         params.put(PARAM_DESCRIPTION, desc.getText());
 
         return FMTemplateSelector.select("Dictionary","edit",env,request);
@@ -231,35 +165,29 @@ public class EditDictionary implements AbcAction {
 
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
-        Element rootItem = item.getData().getRootElement();
-        Record record = (Record) env.get(VAR_RECORD);
-        Element rootRecord = record.getData().getRootElement();
+        Element root = item.getData().getRootElement();
 
         boolean canContinue = true;
-        canContinue &= setName(params, rootItem, env);
-        canContinue &= setURLName(item, relation.getId(), rootItem, env);
-        canContinue &= setDescription(params, rootRecord, env);
+        canContinue &= setName(params, item, root, env);
+        canContinue &= setDescription(params, root, env);
         if ( !canContinue || params.get(PARAM_PREVIEW) != null)
             return FMTemplateSelector.select("Dictionary", "edit", env, request);
 
-        Date updated = item.getUpdated();
+        item.setOwner(user.getId());
         persistence.update(item);
-        if (user.getId()!=item.getOwner() && user.getId()!=record.getOwner() )
-            SQLTool.getInstance().setUpdatedTimestamp(item, updated);
 
-        updated = record.getUpdated();
-        persistence.update(record);
-        if (user.getId()!=record.getOwner())
-            SQLTool.getInstance().setUpdatedTimestamp(record, updated);
+        // commit new version
+        Misc.commitRelation(root, relation, user);
 
         // run monitor
-        String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/slovnik/"+item.getSubType();
+        String url = "http://www.abclinuxu.cz"+relation.getUrl();
         MonitorAction action = new MonitorAction(user, UserAction.EDIT, ObjectType.DICTIONARY, item, url);
         MonitorPool.scheduleMonitorAction(action);
 
+        FeedGenerator.updateDictionary();
         VariableFetcher.getInstance().refreshDictionary();
 
-        urlUtils.redirect(response, "/slovnik/"+item.getSubType());
+        urlUtils.redirect(response, relation.getUrl());
         return null;
     }
 
@@ -272,40 +200,50 @@ public class EditDictionary implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setName(Map params, Element root, Map env) {
-        String tmp = (String) params.get(PARAM_NAME);
-        tmp = Misc.filterDangerousCharacters(tmp);
-        if ( tmp!=null && tmp.length()>0 ) {
-            DocumentHelper.makeElement(root, "name").setText(tmp);
-            return true;
-        } else {
-            ServletUtils.addError(PARAM_NAME, "Zadejte jméno pojmu!", env, null);
+    private boolean setName(Map params, Item item, Element root, Map env) {
+        String name = (String) params.get(PARAM_NAME);
+        name = Misc.filterDangerousCharacters(name);
+        if ( name == null || name.length() == 0 ) {
+            ServletUtils.addError(PARAM_NAME, "Nezadali jste jméno pojmu.", env, null);
             return false;
         }
+
+        char first = Character.toLowerCase(name.charAt(0));
+        if (first < 'a' || first > 'z') {
+            ServletUtils.addError(PARAM_NAME, "Pojem musí zaèínat písmenem (a-z).", env, null);
+            return false;
+        }
+
+        DocumentHelper.makeElement(root, "name").setText(name);
+
+        String normalizedName = DiacriticRemover.getInstance().removeDiacritics(name);
+        normalizedName = normalizedName.toLowerCase();
+        item.setSubType(normalizedName); // used for SQL queries
+        return true;
     }
 
     /**
-     * Updates name, which is used to identify this object in URL requests.
+     * Updates URL, checks for duplicates.
      * Changes are not synchronized with persistence.
-     * @param root root element of item to be updated
-     * @param rid id of existing relation
+     * @param root root element of item
+     * @param relation relation
      * @return false, if there is a major error.
      */
-    private boolean setURLName(Item item, int rid,  Element root, Map env) {
+    private boolean setURL(Relation relation,  Element root, Map env) {
         String name = root.elementText("name");
         name = Misc.filterDangerousCharacters(name);
-        if (name==null) return false;
+        if (name == null)
+            return false;
 
-        String url = URLManager.enforceLastURLPart(name);
-        url = url.toLowerCase();
-
-        Relation relation = SQLTool.getInstance().findDictionaryByURLName(url);
-        if (relation!=null && rid!=relation.getId()) {
-            ServletUtils.addError(PARAM_NAME, "Tento pojem ji¾ byl <a href=\"/slovnik/"+url+"\">vysvìtlen</a>.", env, null);
+        String url = URLManager.enforceRelativeURL(name);
+        Relation relation2 = SQLTool.getInstance().findRelationByURL(url);
+        if (relation2 != null) {
+            ServletUtils.addError(PARAM_NAME, "Tento pojem ji¾ byl <a href=\"/slovnik/"+url+"\">vysvìtlen</a> " +
+                    "nebo do¹lo v dùsledku normalizace ke konfliktu URL (pak zvolte jiné jméno a kontaktuje adminy).", env, null);
             return false;
         }
 
-        item.setSubType(url);
+        relation.setUrl(UrlUtils.PREFIX_DICTIONARY + "/" + url);
         return true;
     }
 
@@ -319,7 +257,7 @@ public class EditDictionary implements AbcAction {
         String tmp = (String) params.get(PARAM_DESCRIPTION);
         tmp = Misc.filterDangerousCharacters(tmp);
         if ( tmp==null || tmp.length()==0 ) {
-            ServletUtils.addError(PARAM_DESCRIPTION, "Zadejte popis pojmu!", env, null);
+            ServletUtils.addError(PARAM_DESCRIPTION, "Nezadali jste popis tohoto pojmu.", env, null);
             return false;
         }
 

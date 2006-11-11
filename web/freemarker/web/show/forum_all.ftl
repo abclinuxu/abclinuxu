@@ -169,13 +169,13 @@ dotaz, projdìte si fóra v pøede¹lých sekcích.
 <td><a href="/forum/dir/49646">Debian, Ubuntu</a></td>
 <td><a href="/forum/dir/49647">Slackware</a></td>
 <td><a href="/forum/dir/49648">Gentoo</a></td>
-<td><a href="/forum/dir/49649">Ostatní</a></td>
+<td><a href="/forum/dir/157305">Arch</a></td>
 </tr>
 <tr>
+<td><a href="/forum/dir/49649">Ostatní</a></td>
 <td><a href="/forum/dir/49654">BSD a *nixy</a></td>
 <td><a href="/forum/dir/50236">Speciální</a></td>
 <td><a href="/forum/dir/50392">Obecné dotazy</a></td>
-<td></td>
 </tr>
 </table>
 

@@ -68,10 +68,11 @@ public class FeedGenerator implements Configurable {
     static final String PREF_POLLS = "ankety";
     static final String PREF_FAQ = "faq";
     static final String PREF_BAZAAR = "bazaar";
+    static final String PREF_DICTIONARY = "dictionary";
     static final String PREF_NEWS_WORD_LIMIT = "news.word.limit";
 
     static String fileDiscussions, fileArticles, fileDrivers, fileHardware, fileBlog, dirBlogs, fileBlogDigest;
-    static String fileNews, fileFaq, filePolls, fileTrafika, fileSoftware, fileBazaar;
+    static String fileNews, fileFaq, filePolls, fileTrafika, fileSoftware, fileBazaar, fileDictionary;
     static int feedLength = 10, highFrequencyFeedLength = 25, newsWordLimit;
     static {
         ConfigurationManager.getConfigurator().configureAndRememberMe(new FeedGenerator());
@@ -169,6 +170,50 @@ public class FeedGenerator implements Configurable {
             writer.close();
         } catch (Exception e) {
             log.error("Chyba pri generovani RSS pro ovladace", e);
+        }
+    }
+
+    /**
+     * Generates RSS feed for dictionary
+     */
+    public static void updateDictionary() {
+        try {
+            Persistence persistence = PersistenceFactory.getPersistance();
+
+            SyndFeed feed = new SyndFeedImpl();
+            feed.setEncoding("UTF-8");
+            feed.setFeedType(TYPE_RSS_1_0);
+            feed.setTitle("abclinuxu - výkladový slovník");
+            feed.setLink("http://www.abclinuxu.cz/slovnik");
+            feed.setUri("http://www.abclinuxu.cz/slovnik");
+            feed.setDescription("Výkladový slovník na portálu www.abclinuxu.cz");
+            List entries = new ArrayList();
+            feed.setEntries(entries);
+            SyndEntry entry;
+
+            Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, feedLength)};
+            List list = SQLTool.getInstance().findItemRelationsWithType(Item.DICTIONARY, qualifiers);
+            Tools.syncList(list);
+            for (Iterator iter = list.iterator(); iter.hasNext();) {
+                Relation found = (Relation) iter.next();
+                Item item = (Item) found.getChild();
+                User author = (User) persistence.findById(new User(item.getOwner()));
+
+                entry = new SyndEntryImpl();
+                entry.setLink("http://"+AbcConfig.getHostname() + found.getUrl());
+                entry.setTitle(Tools.xpath(item, "data/name"));
+                entry.setPublishedDate(item.getUpdated());
+                entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
+                entries.add(entry);
+            }
+
+            String path = AbcConfig.calculateDeployedPath(fileDictionary);
+            Writer writer = getWriter(path);
+            SyndFeedOutput output = new SyndFeedOutput();
+            output.output(feed, writer);
+            writer.close();
+        } catch (Exception e) {
+            log.error("Chyba pri generovani RSS pro slovnik", e);
         }
     }
 
@@ -729,35 +774,24 @@ public class FeedGenerator implements Configurable {
         fileFaq = prefs.get(PREF_FAQ, null);
         filePolls = prefs.get(PREF_POLLS, null);
         fileBazaar = prefs.get(PREF_BAZAAR, null);
+        fileDictionary = prefs.get(PREF_DICTIONARY, null);
         newsWordLimit = prefs.getInt(PREF_NEWS_WORD_LIMIT, 10);
     }
 
     public static void main(String[] args) {
         if (args==null || args.length==0) {
             System.out.println("Enter one of hardware, software, articles, blog, blogs, drivers, news, faq, " +
-                               "polls or forum as an argument!");
+                               "polls, bazaar, dictionary or forum as an argument!");
             System.exit(1);
         }
         Arrays.sort(args);
-        if (Arrays.binarySearch(args, "hardware")>=0)
-            updateHardware();
-        if (Arrays.binarySearch(args, "software")>=0)
-            updateSoftware();
         if (Arrays.binarySearch(args, "articles")>=0)
             updateArticles();
-        if (Arrays.binarySearch(args, "drivers")>=0)
-            updateDrivers();
-        if (Arrays.binarySearch(args, "forum")>=0)
-            updateForum();
-        if (Arrays.binarySearch(args, "blog")>=0)
+        if (Arrays.binarySearch(args, "blog") >= 0)
             updateBlog(null);
-        if (Arrays.binarySearch(args, "news")>=0)
-            updateNews();
-        if (Arrays.binarySearch(args, "faq")>=0)
-            updateFAQ();
-        if (Arrays.binarySearch(args, "polls")>=0)
-            updatePolls();
-        if (Arrays.binarySearch(args, "blogs")>=0) {
+        if (Arrays.binarySearch(args, "bazaar") >= 0)
+            updateBazaar();
+        if (Arrays.binarySearch(args, "blogs") >= 0) {
             Persistence persistence = PersistenceFactory.getPersistance();
             Relation top = (Relation) persistence.findById(new Relation(Constants.REL_BLOGS));
             List blogs = top.getChild().getChildren();
@@ -767,5 +801,21 @@ public class FeedGenerator implements Configurable {
                 updateBlog(blog);
             }
         }
+        if (Arrays.binarySearch(args, "dictionary") >= 0)
+            updateDictionary();
+        if (Arrays.binarySearch(args, "drivers")>=0)
+            updateDrivers();
+        if (Arrays.binarySearch(args, "faq") >= 0)
+            updateFAQ();
+        if (Arrays.binarySearch(args, "forum")>=0)
+            updateForum();
+        if (Arrays.binarySearch(args, "hardware") >= 0)
+            updateHardware();
+        if (Arrays.binarySearch(args, "news")>=0)
+            updateNews();
+        if (Arrays.binarySearch(args, "polls")>=0)
+            updatePolls();
+        if (Arrays.binarySearch(args, "software") >= 0)
+            updateSoftware();
     }
 }

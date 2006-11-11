@@ -1,47 +1,65 @@
+<#assign who=TOOL.createUser(ITEM.owner)>
+<#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")?exists>
+    <#assign monitorState="Pøestaò sledovat"><#else><#assign monitorState="Sleduj záznam">
+</#if>
+<#assign plovouci_sloupec>
+    <div class="s_sekce">
+        <ul>
+            <li>
+                <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a><br />
+                <span class="regular-color">(${DATE.show(ITEM.updated,"CZ_FULL")})</span>
+            </li>
+            <#if PARAMS.revize?exists>
+                <li>
+                    <a class="bez-slovniku" href="${RELATION.url}">Návrat na aktuální verzi</a>
+                </li>
+            <#else>
+                <li><a class="bez-slovniku" href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
+                <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
+                <li><a href="/revize?rid=${RELATION.id}&amp;prefix=/slovnik">Historie</a></li>
+                <li><a class="bez-slovniku" href="${RELATION.url}?varianta=print">Tisk</a></li>
+                <li>
+                    <a class="bez-slovniku" href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle")}">${monitorState}</a>
+                    <span title="Poèet lidí, kteøí sledují tento záznam">(${TOOL.getMonitorCount(ITEM.data)})</span>
+                    <a class="info" href="#">?<span class="tooltip">Za¹le upozornìní na vá¹ email pøi úpravì záznamu.</span></a>
+                </li>
+                <#if USER?exists>
+                    <#if USER.hasRole("root")>
+                        <li>
+                            <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=setURL2")}">Url</a>
+                        </li>
+                    </#if>
+                    <#if USER.hasRole("remove relation")>
+                        <li>
+                            <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/slovnik")}" title="Sma¾">Smazat</a>
+                        </li>
+                    </#if>
+                </#if>
+            </#if>
+        </ul>
+    </div>
+</#assign>
+
 <#include "../header.ftl">
 
 <h1>${TOOL.xpath(ITEM,"/data/name")}</h1>
 
-<#assign RECORDS = CHILDREN.record>
-<#list RECORDS as REL_RECORD>
 <div class="dict-item">
- <#assign RECORD = REL_RECORD.child, who=TOOL.createUser(RECORD.owner)>
-
-  ${TOOL.render(TOOL.element(RECORD.data,"/data/description"),USER?if_exists)}
-
- <p align="right">
-  <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>, ${DATE.show(RECORD.updated,"CZ_FULL")}<br>
-  <a class="bez-slovniku" href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id+"&amp;recordId="+RECORD.id)}">Upravit</a>
-  <#if USER?exists && USER.hasRole("remove relation")>
-   <#if RECORDS?size gt 1><#assign cislo=REL_RECORD.id><#else><#assign cislo=RELATION.id></#if>
-   <a href="${URL.noPrefix("/EditRelation?action=remove&amp;prefix=/slovnik&amp;rid="+cislo)}" title="Sma¾">Smazat</a>
-  </#if>
- </p>
+    ${TOOL.render(TOOL.xpath(ITEM,"/data/description"),USER?if_exists)}
 </div>
-</#list>
 
-<p>
- Pokud chcete doplnit èi zpøesnit popis tohoto pojmu, mù¾ete
- <a class="bez-slovniku" href="${URL.make("/edit?action=addRecord&amp;rid="+RELATION.id)}">pøidat</a>
- dal¹í záznam. Jste-li autorem popisu, pou¾ijte akci Upravit.
+<@lib.showRelated ITEM/>
+
+<p class="dalsi_pojmy">
+    Dal¹í pojmy:
+    <#list PREV?reverse as relation>
+        <a href="${relation.url}">${TOOL.xpath(relation.child,"/data/name")}</a> -
+    </#list>
+    ${TOOL.xpath(ITEM,"/data/name")} <#if (NEXT?size>0)>-</#if>
+    <#list NEXT?if_exists as relation>
+        <a href="${relation.url}">${TOOL.xpath(relation.child,"/data/name")}</a>
+        <#if relation_has_next> - </#if>
+    </#list>
 </p>
-
-<#list PREV?reverse as dict><a href="${dict.subType}">${TOOL.xpath(dict,"/data/name")}</a> - </#list>
-${TOOL.xpath(ITEM,"/data/name")} <#if (NEXT?size>0)>-</#if>
-<#list NEXT?if_exists as dict>
-<a href="${dict.subType}">${TOOL.xpath(dict,"/data/name")}</a> <#if dict_has_next> - </#if>
-</#list>
-
-<p class="monitor"><b>AbcMonitor</b> vám emailem za¹le upozornìní pøi zmìnì.
- <#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")?exists>
-  <#assign monitorState="Vypni">
- <#else>
-  <#assign monitorState="Zapni">
- </#if>
- <a class="bez-slovniku" href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle")}">${monitorState}</a>
- (${TOOL.getMonitorCount(ITEM.data)})
-</p>
-
-<p><b>Nástroje</b>: <a class="bez-slovniku" href="/slovnik/${ITEM.subType}?varianta=print">Tisk</a></p>
 
 <#include "../footer.ftl">

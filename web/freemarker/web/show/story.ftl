@@ -181,7 +181,7 @@ ${TOOL.xpath(ITEM, "/data/content")}
     </p>
 </#if>
 
-<p><b>Nástroje</b>: <a href="${story_url}?varianta=print">Tisk</a></p>
+<p><b>Nástroje</b>: <a rel="nofollow" href="${story_url}?varianta=print">Tisk</a></p>
 
 <#if (ITEM.type==12)>
     <h3>Komentáøe</h3>

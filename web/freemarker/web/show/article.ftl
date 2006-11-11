@@ -101,8 +101,8 @@ ${TOOL.render(TEXT,USER?if_exists)}
   </#if>
 </div>
 
-<p><b>Nástroje</b>: <a href="/clanky/show/${RELATION.id}?varianta=print">Tisk</a>,
-<a href="/clanky/show/${RELATION.id}?varianta=print&amp;noDiz">Tisk bez diskuse</a>
+<p><b>Nástroje</b>: <a rel="nofollow" href="/clanky/show/${RELATION.id}?varianta=print">Tisk</a>,
+<a rel="nofollow" href="/clanky/show/${RELATION.id}?varianta=print&amp;noDiz">Tisk bez diskuse</a>
 </p>
 
 <#flush>

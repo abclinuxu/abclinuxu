@@ -168,16 +168,17 @@ public class AdminServlet implements AbcAction {
      */
     private String refreshRss(HttpServletRequest request, Map env) throws Exception {
         FeedGenerator.updateArticles();
+        FeedGenerator.updateBazaar();
         FeedGenerator.updateBlog(null);
         FeedGenerator.updateBlogDigest();
+        FeedGenerator.updateDictionary();
         FeedGenerator.updateDrivers();
+        FeedGenerator.updateFAQ();
         FeedGenerator.updateForum();
         FeedGenerator.updateHardware();
-        FeedGenerator.updateSoftware();
         FeedGenerator.updateNews();
-        FeedGenerator.updateFAQ();
         FeedGenerator.updatePolls();
-        FeedGenerator.updateBazaar();
+        FeedGenerator.updateSoftware();
 
         User user = (User) env.get(Constants.VAR_USER);
         AdminLogger.logEvent(user, "pregeneroval rss");

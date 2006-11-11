@@ -101,11 +101,11 @@
             <pattern>^/faq</pattern>
             <action>cz.abclinuxu.servlets.html.view.ViewFaq</action>
         </mapping>
-        <mapping>
+        <mapping priority="true">
             <pattern>^/slovnik/edit</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditDictionary</action>
         </mapping>
-        <mapping>
+        <mapping priority="true">
             <pattern>^/slovnik</pattern>
             <action>cz.abclinuxu.servlets.html.view.ShowDictionary</action>
         </mapping>

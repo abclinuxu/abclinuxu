@@ -201,8 +201,6 @@ public class UrlUtils {
         Item item = (Item) child;
         if (item.getType() == Item.BLOG)
             return Tools.getUrlForBlogStory(relation);
-//        TODO if (item.getType() == Item.DRIVER)
-//            return
         return prefix + "/show/" + relation.getId();
     }
 

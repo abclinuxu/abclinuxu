@@ -606,16 +606,13 @@
 
   <servlet name="Dictionary">
     <action name="show" content="/show/dictionary.ftl">
-      <var name="TITLE" value='Pojem ${TOOL.xpath(ITEM,"data/name")}' type="Lazy"/>
+      <var name="TITLE" value='${ITEM.subType} - výkladový slovník' type="Lazy"/>
     </action>
     <action name="showList" content="/show/dictionary_all.ftl">
       <var name="TITLE" value="Výkladový slovník"/>
     </action>
-    <action name="add_item" content="/add/dictionary.ftl">
-      <var name="TITLE" value="Vlo¾it nový pojem"/>
-    </action>
-    <action name="add_record" content="/add/dictionary_record.ftl">
-      <var name="TITLE" value="Doplnit pojem"/>
+    <action name="add" content="/add/dictionary.ftl">
+      <var name="TITLE" value="Vysvìtlit nový pojem"/>
     </action>
     <action name="edit" content="/edit/dictionary.ftl">
       <var name="TITLE" value="Upravit pojem"/>

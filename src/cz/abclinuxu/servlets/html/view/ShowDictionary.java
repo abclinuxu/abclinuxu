@@ -19,123 +19,149 @@
 package cz.abclinuxu.servlets.html.view;
 
 import cz.abclinuxu.data.Item;
-import cz.abclinuxu.data.Record;
 import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.exceptions.InvalidDataException;
-import cz.abclinuxu.exceptions.NotFoundException;
+import cz.abclinuxu.persistence.Persistence;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.persistence.extra.CompareCondition;
+import cz.abclinuxu.persistence.extra.Field;
+import cz.abclinuxu.persistence.extra.Operation;
+import cz.abclinuxu.persistence.versioning.VersionedDocument;
+import cz.abclinuxu.persistence.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.edit.EditDictionary;
 import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Sorters2;
-import cz.abclinuxu.utils.config.Configurable;
-import cz.abclinuxu.utils.config.ConfigurationException;
-import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.paging.Paging;
-import org.apache.regexp.RE;
-import org.apache.regexp.RECompiler;
-import org.apache.regexp.REProgram;
+import org.dom4j.Document;
+import org.dom4j.Element;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
-import java.util.prefs.Preferences;
 
 /**
  * Displays dictionary
  */
-public class ShowDictionary implements AbcAction, Configurable {
+public class ShowDictionary implements AbcAction {
     public static final String PARAM_RELATION_ID_SHORT = "rid";
+    public static final String PARAM_PREFIX = "prefix";
 
     public static final String VAR_RELATION = "RELATION";
-    public static final String VAR_ITEM = "ITEM";
-    public static final String VAR_CHILDREN_MAP = "CHILDREN";
     public static final String VAR_FOUND = "FOUND";
+    public static final String VAR_CURRENT_PREFIX = "CURRENT_PREFIX";
+    public static final String VAR_ITEM = "ITEM";
     public static final String VAR_NEXT = "NEXT";
     public static final String VAR_PREVIOUS = "PREV";
 
-    public static final String PREF_REGEXP_NAME = "regexp.name";
-    public static final String PREF_MAX_ITEMS = "max.items";
-
-    static REProgram reName;
-    static int maxItems = 20;
-    static {
-        ConfigurationManager.getConfigurator().configureAndRememberMe(new ShowDictionary());
-    }
+    private final int PREFIX_LENGTH = UrlUtils.PREFIX_DICTIONARY.length() + 1;
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID_SHORT, Relation.class, params, request);
-        if ( relation==null ) {
+
+        if ( relation == null ) {
             String url = ServletUtils.combinePaths(request.getServletPath(), request.getPathInfo());
-            RE regexp = new RE(reName);
-            if ( regexp.match(url) ) {
-                String urlName = regexp.getParen(2);
-                relation = SQLTool.getInstance().findDictionaryByURLName(urlName);
-                if ( relation==null ) {
-                    params.put(EditDictionary.PARAM_NAME, urlName);
-                    ServletUtils.addMessage("Tento pojem nebyl je¹tì popsán. V tomto formuláøi jej mù¾ete vysvìtlit jako první.", env, null);
-                    return FMTemplateSelector.select("Dictionary", "add_item", env, request);
+            if (url.length() > PREFIX_LENGTH) {
+                // copied from URLMapper
+                String newUrl = null;
+                Object redirect = SQLTool.getInstance().findNewAddress(url);
+                if (redirect instanceof String)
+                    newUrl = (String) redirect;
+                else if (redirect instanceof Relation) {
+                    relation = (Relation) redirect;
+                    newUrl = relation.getUrl();
                 }
+
+                if (newUrl != null) {
+                    UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+                    urlUtils.redirect(response, newUrl);
+                    return null;
+                }
+
+                String name = url.substring(PREFIX_LENGTH);
+                params.put(EditDictionary.PARAM_NAME, name);
+                ServletUtils.addMessage("Tento pojem nebyl je¹tì popsán. V tomto formuláøi jej mù¾ete vysvìtlit jako první.", env, null);
+                return FMTemplateSelector.select("Dictionary", "add", env, request);
             }
         }
 
-        if (relation!=null) {
-            Tools.sync(relation);
-            env.put(VAR_RELATION, relation);
-            Item item = (Item) relation.getChild();
-            return showOne(env, item, request);
-        } else
-            return showMany(env, request);
+        Tools.sync(relation);
+        env.put(VAR_RELATION, relation);
+
+        List parents = persistence.findParents(relation);
+        env.put(ShowObject.VAR_PARENTS, parents);
+
+        if (relation.getId() == Constants.REL_DICTIONARY)
+            return processList(request, env);
+        else
+            return processDefinition(request, relation, env);
     }
 
     /**
-     * Shows single dictionary item identified by short name or relation id.
+     * Shows single dictionary definition.
      */
-    static String showOne(Map env, Item item, HttpServletRequest request) throws Exception {
-        Map children = Tools.groupByType(item.getChildren());
-        env.put(VAR_CHILDREN_MAP, children);
-        List list = (List) children.get(Constants.TYPE_RECORD);
-        if ( list==null || list.size()==0 )
-            throw new NotFoundException("Pojem "+item.getId()+" nemá obsah!");
-
-        Record record = (Record) ((Relation) list.get(0)).getChild();
-        if ( record.getType()!=Record.DICTIONARY )
-            throw new InvalidDataException("Záznam "+record.getId()+" není typu slovnik!");
-
+    static String processDefinition(HttpServletRequest request, Relation relation, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Item item = (Item) relation.getChild();
         env.put(VAR_ITEM, item);
+
+        String revision = (String) params.get(ShowRevisions.PARAM_REVISION);
+        if (revision != null) {
+            Versioning versioning = VersioningFactory.getVersioning();
+            VersionedDocument version = versioning.load(Integer.toString(relation.getId()), revision);
+            Document document = item.getData();
+            Element monitor = (Element) document.selectSingleNode("/data/monitor");
+            item.setData(version.getDocument());
+            item.setUpdated(version.getCommited());
+            item.setOwner(Integer.parseInt(version.getUser()));
+            if (monitor != null) {
+                monitor = monitor.createCopy();
+                Element element = (Element) document.selectSingleNode("/data/monitor");
+                if (element != null)
+                    element.detach();
+                document.getRootElement().add(monitor);
+            }
+        }
+
         SQLTool sqlTool = SQLTool.getInstance();
-        List siblings = sqlTool.getNeighbourDictionaryItems(item.getSubType(), true, 3);
-        env.put(VAR_PREVIOUS, siblings);
-        siblings = sqlTool.getNeighbourDictionaryItems(item.getSubType(), false, 3);
-        env.put(VAR_NEXT, siblings);
+        List siblings = sqlTool.getNeighbourDictionaryItemRelations(item.getSubType(), true, 3);
+        env.put(VAR_PREVIOUS, Tools.syncList(siblings));
+        siblings = sqlTool.getNeighbourDictionaryItemRelations(item.getSubType(), false, 3);
+        env.put(VAR_NEXT, Tools.syncList(siblings));
         return FMTemplateSelector.select("Dictionary", "show", env, request);
     }
 
     /**
-     * Shows page with list of latest dictionary items when no argument is given.
+     * Shows page with list of dictionary definitions.
      */
-    static String showMany(Map env, HttpServletRequest request) throws Exception {
+    static String processList(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
-        Qualifier[] qualifiers = new Qualifier[]{};
+
+        String prefix = (String) params.get(PARAM_PREFIX);
+        prefix = sqlTool.protectSQLParameter(prefix);
+        if (Misc.empty(prefix))
+            prefix = "a";
+
+        Qualifier[] qualifiers = new Qualifier[]{new CompareCondition(Field.SUBTYPE, Operation.LIKE, prefix + "%")};
         List data = sqlTool.findItemRelationsWithType(Item.DICTIONARY, qualifiers);
         Tools.syncList(data);
         Sorters2.byName(data);
 
         Paging found = new Paging(data, 0, data.size(), data.size(), qualifiers);
         env.put(VAR_FOUND, found);
+        env.put(VAR_CURRENT_PREFIX, prefix);
         return FMTemplateSelector.select("Dictionary", "showList", env, request);
-    }
-
-    public void configure(Preferences prefs) throws ConfigurationException {
-        String regexp = prefs.get(PREF_REGEXP_NAME, null);
-        reName = new RECompiler().compile(regexp);
-        maxItems = prefs.getInt(PREF_MAX_ITEMS, 30);
     }
 }

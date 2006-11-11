@@ -2,69 +2,71 @@
 
 <@lib.showMessages/>
 
-<h2>Úvod</h2>
+<h1>Úprava pojmu</h1>
 
-<p>Cílem této slu¾by je vytvoøit rozsáhlý výkladový slovník
-nejrùznìj¹ích pojmù týkajících se Linuxu èi Unixu.  Èím více
-pojmù bude kvalitnì pokrývat, tím snáze se nováèci zorientují
-v Linuxu a zvý¹í se ¹ance, ¾e nebudou klást otázky vyplývající
-z nepochopení základních principù tohoto operaèního systému.
+<p>
+    Zadejte jméno pojmu a jeho vysvìtlení. Pojem by mìl být buï linuxový nebo poèítaèový. Pokud je
+    potøeba, upravte jméno pojmu. Mìlo by být psáno malými písmeny, velká písmena pou¾ijte jen pro
+    ustálené zkratky (napøíklad SCSI). První znak jména pojmu musí být písmeno (a-z).
+    URL se pøi úpravì nemìní, pokud se vám nelíbí, kontaktujte administrátory.
 </p>
 
-<h2>Nový pojem</h2>
-
-<p>Ka¾dý pojem ve slovníku se skládá z názvu a popisu. Název
-odpovídá pojmu v prvním pádì jednotného èísla. Napøíklad
-souborový systém, kernel, speciální zaøízení èi symbolický odkaz.
-Popis pak obsahuje vysvìtlení tohoto pojmu. Pokud v popisu nepou¾ijete
-formatovací znaky nový øádek a odstavec, popis bude ulo¾en v takzvaném
-zjednodu¹eném formátu, kdy prázdný øádek bude nahrazen znaèkou
-pro nový odstavec.
+<p>
+    Pokud v popisu nepou¾ijete formatovací znaky &lt;br&gt; nebo &lt;p&gt;, systém automaticky
+    nahradí prázdné øádky znaèkou pro nový odstavec.
 </p>
 
 <#if PARAMS.preview?exists>
- <h1 class="st_nadpis">Náhled</h1>
- <table cellspacing="0" border="1" cellpadding="5" width="100%">
- <caption>${PARAMS.name?if_exists}</caption>
- <#if PARAMS.desc?exists>
-  <tr>
-    <td>
-    ${TOOL.render(PARAMS.desc,USER?if_exists)}
-    </td>
-  </tr>
- </#if>
- </table>
- <br><br>
+    <h2>Náhled</h2>
+
+    <fieldset>
+        <legend>Náhled</legend>
+        <h3>${PARAMS.name?if_exists}</h3>
+        <#if PARAMS.desc?exists>
+            <div class="dict-item">
+            ${TOOL.render(PARAMS.desc,USER?if_exists)}
+            </div>
+        </#if>
+    </fieldset>
 </#if>
 
-<form action="${URL.make("/edit")}" method="POST">
- <table cellpadding="0" border="0" width="100%">
-  <tr>
-   <td class="required">Pojem</td>
-   <td>
-    <input type="text" name="name" value="${PARAMS.name?if_exists}" size="30" maxlength="40" tabindex="1">
-    <div class="error">${ERRORS.name?if_exists}</div>
-   </td>
-  </tr>
-  <tr>
-   <td colspan="2" class="required">Popis</td>
-  </tr>
-  <tr>
-   <td colspan="2">
-    <textarea name="desc" cols="70" rows="20" tabindex="2">${PARAMS.desc?if_exists?html}</textarea>
-    <div class="error">${ERRORS.desc?if_exists}</div>
-   </td>
-  </tr>
-  <tr>
-   <td colspan="2">
-    <input type="submit" name="preview" value="Náhled">
-    <#if PARAMS.preview?exists><input type="submit" name="submit" value="Dokonèi"></#if>
-   </td>
-  </tr>
- </table>
- <input type="hidden" name="action" value="edit2">
- <input type="hidden" name="rid" value="${RELATION.id}">
- <input type="hidden" name="recordId" value="${RECORD.id}">
+<form action="${URL.make("/edit")}" method="POST" name="dictForm">
+    <table cellpadding="0" border="0" width="100%">
+        <tr>
+            <td class="required">Pojem</td>
+            <td>
+                <input tabindex="1" type="text" name="name" value="${PARAMS.name?if_exists}" size="30" maxlength="30" tabindex="1">
+                <div class="error">${ERRORS.name?if_exists}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="required">Popis</td>
+            <td>
+                <div class="form-edit">
+                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;b&gt;', '&lt;/b&gt;');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
+                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;i&gt;', '&lt;/i&gt;');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
+                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;a href=&quot;&quot;&gt;', '&lt;/a&gt;');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
+                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;p&gt;', '&lt;/p&gt;');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
+                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;pre&gt;', '&lt;/pre&gt;');" id="mono" title="Vlo¾it znaèku formátovaného textu. Vhodné pro konfiguraèní soubory èi výpisy.">&lt;pre&gt;</a>
+                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;code&gt;', '&lt;/code&gt;');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
+                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&amp;lt;', '');" id="mono" title="Vlo¾it písmeno &lt;">&lt;</a>
+                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&amp;gt;', '');" id="mono" title="Vlo¾it písmeno &gt;">&gt;</a>
+                </div>
+
+                <textarea tabindex="2" name="desc" class="siroka" rows="20" tabindex="2">${PARAMS.desc?if_exists?html}</textarea>
+                <div class="error">${ERRORS.desc?if_exists}</div>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <input tabindex="3" type="submit" name="preview" value="Náhled">
+                <input tabindex="4" type="submit" name="submit" value="Dokonèi">
+            </td>
+        </tr>
+    </table>
+    <input type="hidden" name="action" value="edit2">
+    <input type="hidden" name="rid" value="${RELATION.id}">
 </form>
 
 <#include "../footer.ftl">

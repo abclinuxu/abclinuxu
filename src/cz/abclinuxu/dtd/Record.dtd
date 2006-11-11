@@ -19,6 +19,3 @@
 
 <!-- Record.Discussion -->
 <!ELEMENT data EMPTY> <!-- container for comments -->
-
-<!-- Record.DICTIONARY -->
-<!ELEMENT description (#PCDATA)> <!-- explaination ->

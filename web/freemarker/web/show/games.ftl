@@ -17,7 +17,7 @@
 <#list TRIVIA_GAMES as relation>
     <#assign trivia=relation.child, dif=TOOL.xpath(trivia, "/data/difficulty"),
              stats=TOOL.calculatePercentage(trivia.data,"/data/stats",100)>
-    <h2>${TOOL.childName(relation)}</h2>
+    <h2 class="st_nadpis"><a href="${relation.url}">${TOOL.childName(relation)}</a></h2>
     <p>${TOOL.xpath(trivia, "/data/description")}</p>
     <p class="cl_inforadek">
         Úroveò: <#if dif=="simple">jednoduchá<#elseif dif=="normal">normální<#elseif dif=="hard">slo¾itá<#else>guru</#if>,
@@ -27,9 +27,9 @@
             <a href="/EditTrivia/${relation.id}?action=edit">Upravit</a>
         </#if>
     </p>
-      <form action="${relation.url}" method="POST">
+      <!--<form action="${relation.url}" method="POST">
         <input type="submit" value="Hrát" class="button">
-      </form>
+      </form>-->
     <hr>
 </#list>
 

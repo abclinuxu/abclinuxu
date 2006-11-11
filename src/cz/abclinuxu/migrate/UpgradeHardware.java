@@ -196,7 +196,7 @@ public class UpgradeHardware {
 
                 String userId = Integer.toString(record.getOwner());
                 versionInfo = versioning.commit(originalDoc.asXML(), path, userId);
-                fixVersionDate(versionInfo, path, record.getUpdated());
+                fixVersionDate(versionInfo, path, record.getUpdated(), persistance);
 
                 persistance.remove(child);
             }
@@ -230,7 +230,7 @@ public class UpgradeHardware {
 
         persistance.update(item);
         if (!merged) {
-            fixVersionDate(versionInfo, path, record.getUpdated());
+            fixVersionDate(versionInfo, path, record.getUpdated(), persistance);
             sqlTool.setUpdatedTimestamp(item, record.getUpdated());
         }
     }
@@ -289,11 +289,11 @@ public class UpgradeHardware {
      * @param path path identifier
      * @param modified time when version shall be created
      */
-    void fixVersionDate(VersionInfo versionInfo, String path, Date modified) {
+    public static void fixVersionDate(VersionInfo versionInfo, String path, Date modified, MySqlPersistence persistence) {
         Connection con = null;
         PreparedStatement statement = null;
         try {
-            con = persistance.getSQLConnection();
+            con = persistence.getSQLConnection();
             String sql = "update verze set kdy=? where cesta=? and verze=?";
             statement = con.prepareStatement(sql);
             statement.setTimestamp(1, new Timestamp(modified.getTime()));
@@ -303,7 +303,7 @@ public class UpgradeHardware {
         } catch (SQLException e) {
             throw new PersistenceException("Chyba pri nastavovani!", e);
         } finally {
-            persistance.releaseSQLResources(con, statement, null);
+            persistence.releaseSQLResources(con, statement, null);
         }
     }
 

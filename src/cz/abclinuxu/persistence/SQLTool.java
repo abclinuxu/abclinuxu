@@ -46,7 +46,6 @@ public final class SQLTool implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(SQLTool.class);
 
     public static final String RECORD_RELATIONS_BY_TYPE = "relations.record.by.type";
-    public static final String RECORD_PARENT_RELATIONS_BY_TYPE = "relations.parent.record.by.type";
     public static final String ITEM_RELATIONS_BY_TYPE = "relations.item.by.type";
     public static final String ITEM_RELATIONS_BY_TYPE_WITH_FILTERS = "relations.item.by.type.with.filters";
     public static final String CATEGORY_RELATIONS = "relations.categories";
@@ -77,7 +76,6 @@ public final class SQLTool implements Configurable {
     public static final String MAX_USER = "max.user";
     public static final String USER_BY_LOGIN = "user.by.login";
     public static final String COUNT_ARTICLES_BY_USER = "count.articles.by.user";
-    public static final String DICTIONARY_RELATION_BY_URL_NAME = "relation.dictionary.by.urlname";
     public static final String RELATION_BY_URL = "relation.by.url";
     public static final String INSERT_LAST_COMMENT = "insert.last.comment";
     public static final String GET_LAST_COMMENT = "get.last.comment";
@@ -290,6 +288,17 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Removes dangerous characters that may be used to escape current SQL command.
+     * @param param SQL command, null is accepted
+     * @return SQL-injection safe parameter
+     */
+    public String protectSQLParameter(String param) {
+        if (param == null || param.length() == 0)
+            return param;
+        return param.replace('\\', ' ');
+    }
+
+    /**
      * Finds relations, where child is record of specified type. Use Qualifiers
      * to set additional parameters.
      * @deprecated after removal of software and upgrade of hardware section nobody uses this method
@@ -306,39 +315,6 @@ public final class SQLTool implements Configurable {
     }
 
     /**
-     * Finds relations, where child is record of specified type. Parent relations (distinct) are returned.
-     * Use Qualifiers to set additional parameters.
-     * @return List of initialized relations
-     * @throws PersistenceException if there is an error with the underlying persistent storage.
-     */
-    public List findRecordParentRelationsWithType(int type, Qualifier[] qualifiers) {
-        if (qualifiers==null) qualifiers = new Qualifier[]{};
-        StringBuffer sb = new StringBuffer((String) sql.get(RECORD_PARENT_RELATIONS_BY_TYPE));
-        List params = new ArrayList();
-        params.add(new Integer(type));
-        appendQualifiers(sb,qualifiers,params, null, null);
-        return loadRelations(sb.toString(),params);
-    }
-
-    /**
-     * Finds relations, where child is record of specified type owned by given user.
-     * Parent relations (distinct) are returned.
-     * Use Qualifiers to set additional parameters.
-     * @return List of initialized relations
-     * @throws PersistenceException if there is an error with the underlying persistent storage.
-     */
-    public List findRecordParentRelationsByUserAndType(int user, int type, Qualifier[] qualifiers) {
-        if (qualifiers==null) qualifiers = new Qualifier[]{};
-        StringBuffer sb = new StringBuffer((String) sql.get(RECORD_PARENT_RELATIONS_BY_TYPE));
-        sb.append(" and pridal=?");
-        List params = new ArrayList();
-        params.add(new Integer(type));
-        params.add(new Integer(user));
-        appendQualifiers(sb,qualifiers,params, null, null);
-        return loadRelations(sb.toString(),params);
-    }
-
-    /**
      * Counts relations, where child is record of specified type.
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
@@ -347,32 +323,6 @@ public final class SQLTool implements Configurable {
         changeToCountStatement(sb);
         List params = new ArrayList();
         params.add(new Integer(type));
-        return loadNumber(sb.toString(),params).intValue();
-    }
-
-    /**
-     * Counts relations, where child is record of specified type. Operates on distinct set of parent.
-     * @throws PersistenceException if there is an error with the underlying persistent storage.
-     */
-    public int countRecordParentRelationsWithType(int type) {
-        StringBuffer sb = new StringBuffer((String) sql.get(RECORD_PARENT_RELATIONS_BY_TYPE));
-        changeToCountStatement(sb);
-        List params = new ArrayList();
-        params.add(new Integer(type));
-        return loadNumber(sb.toString(),params).intValue();
-    }
-
-    /**
-     * Counts relations, where child is record of specified type owned by given user. Operates on distinct set of parent.
-     * @throws PersistenceException if there is an error with the underlying persistent storage.
-     */
-    public int countRecordParentRelationsByUserAndType(int user, int type) {
-        StringBuffer sb = new StringBuffer((String) sql.get(RECORD_PARENT_RELATIONS_BY_TYPE));
-        sb.append(" and pridal=?");
-        changeToCountStatement(sb);
-        List params = new ArrayList();
-        params.add(new Integer(type));
-        params.add(new Integer(user));
         return loadNumber(sb.toString(),params).intValue();
     }
 
@@ -852,20 +802,6 @@ public final class SQLTool implements Configurable {
     }
 
     /**
-     * Finds dictionary item identified by urlName.
-     * @param urlName name to be used in URI
-     * @return relation of dictionary item or null
-     */
-    public Relation findDictionaryByURLName(String urlName) {
-        List params = new ArrayList();
-        params.add(urlName);
-        List result = loadRelations((String) sql.get(DICTIONARY_RELATION_BY_URL_NAME), params);
-        if (result.size()==0)
-            return null;
-        return (Relation) result.get(0);
-    }
-
-    /**
      * Finds relation identified by given url.
      * @param url URL identification of resource
      * @return found relation or null
@@ -1159,40 +1095,23 @@ public final class SQLTool implements Configurable {
     }
 
     /**
-     * Finds dictionary items that alphabetically neighbours selected one.
+     * Finds dictionary item relations that alphabetically neighbours selected one.
      * @param smaller whether the returned items shall be smaller or greater
-     * @return List of itialized Items, first item is closest to selected one.
+     * @return List of itialized Relations, first item is closest to selected one.
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List getNeighbourDictionaryItems(String urlName, boolean smaller, int count) {
-        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
-        Connection con = null;
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
-        try {
-            String itemsSql = (String) sql.get(ITEMS_WITH_TYPE);
-            con = persistance.getSQLConnection();
-            if (smaller)
-                statement = con.prepareStatement(itemsSql.concat("  and podtyp<? order by podtyp desc limit ?"));
-            else
-                statement = con.prepareStatement(itemsSql.concat("  and podtyp>? order by podtyp asc limit ?"));
-            statement.setInt(1, Item.DICTIONARY);
-            statement.setString(2, urlName);
-            statement.setInt(3, count);
+    public List getNeighbourDictionaryItemRelations(String urlName, boolean smaller, int count) {
+        StringBuffer sb = new StringBuffer((String) sql.get(ITEM_RELATIONS_BY_TYPE));
+        if (smaller)
+            sb.append("  and podtyp<? order by podtyp desc limit ?");
+        else
+            sb.append("  and podtyp>? order by podtyp asc limit ?");
 
-            resultSet = statement.executeQuery();
-            List result = new ArrayList(count);
-            while ( resultSet.next() ) {
-                int id = resultSet.getInt(1);
-                result.add(new Item(id));
-            }
-            persistance.synchronizeList(result);
-            return result;
-        } catch (SQLException e) {
-            throw new PersistenceException("Chyba pøi hledání!", e);
-        } finally {
-            persistance.releaseSQLResources(con, statement, resultSet);
-        }
+        List params = new ArrayList();
+        params.add(Item.DICTIONARY);
+        params.add(urlName);
+        params.add(count);
+        return loadRelations(sb.toString(), params);
     }
 
     /**
@@ -1624,7 +1543,6 @@ public final class SQLTool implements Configurable {
      */
     public void configure(Preferences prefs) throws ConfigurationException {
         store(RECORD_RELATIONS_BY_TYPE, prefs);
-        store(RECORD_PARENT_RELATIONS_BY_TYPE, prefs);
         store(ITEM_RELATIONS_BY_TYPE, prefs);
         store(ITEM_RELATIONS_BY_TYPE_WITH_FILTERS, prefs);
         store(CATEGORY_RELATIONS, prefs);
@@ -1641,7 +1559,6 @@ public final class SQLTool implements Configurable {
         store(ARTICLE_RELATIONS_BY_USER, prefs);
         store(QUESTION_RELATIONS_BY_USER, prefs);
         store(COMMENT_RELATIONS_BY_USER, prefs);
-        store(DICTIONARY_RELATION_BY_URL_NAME, prefs);
         store(STANDALONE_POLL_RELATIONS, prefs);
         store(RELATION_BY_URL, prefs);
         store(USERS_WITH_WEEKLY_EMAIL, prefs);

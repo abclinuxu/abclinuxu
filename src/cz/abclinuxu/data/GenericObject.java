@@ -76,7 +76,7 @@ public abstract class GenericObject implements Cloneable {
     /**
      * @return list of child Relations
      */
-    public List getChildren() {
+    public List<Relation> getChildren() {
         return Nursery.getInstance().getChildren(this);
     }
 

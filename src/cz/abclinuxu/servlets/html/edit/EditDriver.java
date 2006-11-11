@@ -195,7 +195,7 @@ public class EditDriver implements AbcAction {
 
         User user = (User) env.get(Constants.VAR_USER);
         driver.setOwner(user.getId());
-        driver.setCreated(new Date());
+        driver.setCreated(new Date()); // todo proc menime created?
         persistence.update(driver);
 
         // commit new version

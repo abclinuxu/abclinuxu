@@ -128,7 +128,7 @@ public class Nursery implements Configurable {
      * @return List of children
      * @throws cz.abclinuxu.exceptions.PersistenceException if there is database related error.
      */
-    public synchronized List getChildren(GenericObject object) {
+    public synchronized List<Relation> getChildren(GenericObject object) {
         return getChildrenInternal(object);
     }
 
@@ -157,9 +157,9 @@ public class Nursery implements Configurable {
         }
     }
 
-    protected List getChildrenInternal(GenericObject object) {
+    protected List<Relation> getChildrenInternal(GenericObject object) {
         if (isNotCached(object))
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
 
         List list = (List) cache.get(object);
         if (list==null) {
@@ -168,9 +168,9 @@ public class Nursery implements Configurable {
         }
 
         if (list.size()==0)
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
 
-        List copy = new ArrayList(list.size());
+        List<Relation> copy = new ArrayList<Relation>(list.size());
         for ( Iterator iter = list.iterator(); iter.hasNext(); )
             copy.add(cloneRelation((Relation) iter.next()));
 

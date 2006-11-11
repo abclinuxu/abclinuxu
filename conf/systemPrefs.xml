@@ -170,6 +170,7 @@
                                 <entry key="blog.digest" value="auto/blogDigest.rss"/>
                                 <entry key="ankety" value="auto/ankety.rss"/>
                                 <entry key="bazaar" value="auto/bazar.rss"/>
+                                <entry key="dictionary" value="auto/slovnik.rss"/>
                                 <entry key="blogs" value="auto/blog/"/>
                                 <entry key="trafika" value="auto/abc.dat"/>
                                 <entry key="anneca" value="auto/abc2.dat"/>
@@ -272,7 +273,6 @@
                     <node name="SQLTool">
                         <map>
                             <entry key="relations.record.by.type" value="select R.cislo from zaznam Z, relace R where typ=? and Z.cislo=R.potomek and typ_potomka='Z'"/>
-                            <entry key="relations.parent.record.by.type" value="select distinct R.predchozi from zaznam Z, relace R where typ=? and Z.cislo=R.potomek and typ_potomka='Z'"/>
                             <entry key="relations.item.by.type" value="select R.cislo from polozka P, relace R where typ=? and P.cislo=R.potomek and typ_potomka='P'"/>
 			                <entry key="relations.item.by.type.with.filters" value="select distinct R.cislo from polozka P, relace R, vlastnost V where P.typ=? and P.cislo=R.potomek and R.typ_potomka='P'"/>
                             <entry key="relations.categories" value="select R.cislo from kategorie K, relace R where K.cislo=R.potomek and typ_potomka='K'"/>
@@ -290,7 +290,6 @@
                             <entry key="relations.comment.by.user" value="select R.predchozi,max(vytvoreno) from relace R, komentar K where R.typ_potomka='Z' and R.potomek=K.zaznam and K.autor=? group by K.zaznam order by 2"/>
                             <entry key="count.relations.comment.by.user" value="select count(distinct R.predchozi) from relace R, komentar K where R.typ_predka='P' and R.typ_potomka='Z' and R.potomek=K.zaznam and K.autor=?"/>
                             <entry key="relations.section.by.type" value="select R.cislo from relace R left join kategorie K on (K.cislo=R.potomek) where typ_potomka='K' and K.typ=?"/>
-                            <entry key="relation.dictionary.by.urlname" value="select R.cislo from relace R, polozka P where R.typ_potomka='P' and R.potomek=P.cislo and P.typ=10 and P.podtyp=?"/>
                             <entry key="relations.standalone.polls" value="select R.cislo from relace R, anketa2 A where typ_potomka='A' and potomek=A.cislo and predchozi=250"/>
                             <entry key="relation.by.url" value="select cislo from relace where url=?"/>
                             <entry key="users.with.weekly.email" value="select cislo from uzivatel where data like '%&lt;communication>&lt;email valid=&quot;yes&quot;>&lt;weekly_summary>yes%'"/>
@@ -527,7 +526,6 @@
                             <map/>
                             <node name="ShowDictionary">
                                 <map>
-                                    <entry key="regexp.name" value="(^/slovnik/)([^?;]+)"/>
                                     <entry key="max.items" value="90"/>
                                 </map>
                             </node>

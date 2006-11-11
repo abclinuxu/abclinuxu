@@ -7,7 +7,7 @@ najdete na jeho <a href="/slovnik">stránce</a>.
 <ul>
  <#list FOUND.data as rel>
   <li>
-   <a href="/slovnik/${rel.child.subType}">${TOOL.xpath(rel.child,"data/name")}</a>
+   <a href="${rel.url}">${TOOL.xpath(rel.child,"data/name")}</a>
   </li>
  </#list>
 </ul>

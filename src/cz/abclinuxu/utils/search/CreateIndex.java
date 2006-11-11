@@ -905,23 +905,16 @@ public class CreateIndex implements Configurable {
         Item dictionary = (Item) relation.getChild();
         String title = Tools.xpath(dictionary, "/data/name"), s;
         StringBuffer sb = new StringBuffer(title);
-        Relation childRelation;
-        Record record;
-
-        for (Iterator iter = dictionary.getChildren().iterator(); iter.hasNext();) {
-            childRelation = (Relation) iter.next();
-            record = (Record) persistence.findById(childRelation.getChild());
-            s = Tools.xpath(record, "//description");
-            sb.append(' ');
-            sb.append(Tools.removeTags(s));
-        }
+        sb.append(' ');
+        s = Tools.xpath(dictionary, "/data/description");
+        sb.append(Tools.removeTags(s));
 
         MyDocument doc = new MyDocument(sb.toString());
         doc.setTitle(title);
         doc.setType(MyDocument.TYPE_DICTIONARY);
         doc.setCreated(dictionary.getCreated());
         doc.setUpdated(dictionary.getUpdated());
-        doc.setURL("/slovnik/"+dictionary.getSubType());
+        doc.setURL(relation.getUrl());
         doc.setCid(dictionary);
         doc.setBoost(boostDictionary);
 
