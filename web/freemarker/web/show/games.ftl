@@ -16,20 +16,19 @@
 
 <#list TRIVIA_GAMES as relation>
     <#assign trivia=relation.child, dif=TOOL.xpath(trivia, "/data/difficulty"),
-             stats=TOOL.calculatePercentage(trivia.data,"/data/stats",100)>
+             stats=TOOL.calculatePercentage(trivia.data,"/data/stats",100),
+             tmp=TOOL.groupByType(trivia.children, "Item"),diz=TOOL.analyzeDiscussion(tmp.discussion[0])>
     <h2 class="st_nadpis"><a href="${relation.url}">${TOOL.childName(relation)}</a></h2>
     <p>${TOOL.xpath(trivia, "/data/description")}</p>
     <p class="cl_inforadek">
-        Úroveò: <#if dif=="simple">jednoduchá<#elseif dif=="normal">normální<#elseif dif=="hard">slo¾itá<#else>guru</#if>,
-        hráno: ${stats.count}&times;,
-        prùmìrné skóre: ${stats.percent}
+        Úroveò: <#if dif=="simple">jednoduchá<#elseif dif=="normal">normální<#elseif dif=="hard">slo¾itá<#else>guru</#if> |
+        Hráno: ${stats.count}&times; |
+        Prùmìrné skóre: ${stats.percent} |
+        <@lib.showCommentsInListing diz, "SMART", "/hry" />
         <#if USER?exists && USER.hasRole("games admin")>
             <a href="/EditTrivia/${relation.id}?action=edit">Upravit</a>
         </#if>
     </p>
-      <!--<form action="${relation.url}" method="POST">
-        <input type="submit" value="Hrát" class="button">
-      </form>-->
     <hr>
 </#list>
 

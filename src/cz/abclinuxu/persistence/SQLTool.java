@@ -118,7 +118,7 @@ public final class SQLTool implements Configurable {
      * @return List of initialized relations.
      * @throws PersistenceException if something goes wrong.
      */
-    private List loadRelations(String sql, List params) throws PersistenceException {
+    private List<Relation>  loadRelations(String sql, List params) throws PersistenceException {
         if (log.isDebugEnabled())
             log.debug(sql);
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
@@ -133,7 +133,7 @@ public final class SQLTool implements Configurable {
                 statement.setObject(i++, iter.next());
 
             resultSet = statement.executeQuery();
-            List result = new ArrayList();
+            List<Relation>  result = new ArrayList<Relation>();
             while ( resultSet.next() ) {
                 int id = resultSet.getInt(1);
                 result.add(new Relation(id));
@@ -305,7 +305,7 @@ public final class SQLTool implements Configurable {
      * @return List of initialized relations
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List findRecordRelationsWithType(int type, Qualifier[] qualifiers) {
+    public List<Relation> findRecordRelationsWithType(int type, Qualifier[] qualifiers) {
         if (qualifiers==null) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String)sql.get(RECORD_RELATIONS_BY_TYPE));
         List params = new ArrayList();
@@ -332,7 +332,7 @@ public final class SQLTool implements Configurable {
      * @return List of initialized relations
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List findItemRelationsWithType(int type, Qualifier[] qualifiers) {
+    public List<Relation> findItemRelationsWithType(int type, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(ITEM_RELATIONS_BY_TYPE));
         List params = new ArrayList();
@@ -368,7 +368,7 @@ public final class SQLTool implements Configurable {
      * @return List of initialized relations
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List findItemRelationsWithTypeWithFilters(int type, Qualifier[] qualifiers, Map filters) {
+    public List<Relation> findItemRelationsWithTypeWithFilters(int type, Qualifier[] qualifiers, Map filters) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(ITEM_RELATIONS_BY_TYPE_WITH_FILTERS));
         List params = new ArrayList();
@@ -429,7 +429,7 @@ public final class SQLTool implements Configurable {
      * @return List of initialized relations
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List findCategoriesRelations(Qualifier[] qualifiers) {
+    public List<Relation> findCategoriesRelations(Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(CATEGORY_RELATIONS));
         List params = new ArrayList();
@@ -443,7 +443,7 @@ public final class SQLTool implements Configurable {
      * @return List of initialized relations
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List findSectionRelationsWithType(int type, Qualifier[] qualifiers) {
+    public List<Relation> findSectionRelationsWithType(int type, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(SECTION_RELATIONS_BY_TYPE));
         List params = new ArrayList();
@@ -470,7 +470,7 @@ public final class SQLTool implements Configurable {
      * @return List of initialized relations
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List findDiscussionRelations(Qualifier[] qualifiers) {
+    public List<Relation> findDiscussionRelations(Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(DISCUSSION_RELATIONS));
         List params = new ArrayList();
@@ -495,7 +495,7 @@ public final class SQLTool implements Configurable {
      * @return List of initialized relations
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List findDiscussionRelationsWithParent(int parent, Qualifier[] qualifiers) {
+    public List<Relation> findDiscussionRelationsWithParent(int parent, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(DISCUSSION_RELATIONS_IN_SECTION));
         List params = new ArrayList();
@@ -523,7 +523,7 @@ public final class SQLTool implements Configurable {
      * @return List of initialized relations
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List findIndexArticlesRelations(Qualifier[] qualifiers) {
+    public List<Relation> findIndexArticlesRelations(Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(ARTICLES_ON_INDEX_RELATIONS));
         List params = new ArrayList();
@@ -541,7 +541,7 @@ public final class SQLTool implements Configurable {
      * @return List of initialized relations
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List findArticleRelations(Qualifier[] qualifiers, int section) {
+    public List<Relation> findArticleRelations(Qualifier[] qualifiers, int section) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(ARTICLE_RELATIONS));
         List params = new ArrayList();
@@ -578,7 +578,7 @@ public final class SQLTool implements Configurable {
      * Use Qualifiers to set additional parameters.
      * @return List of initialized relations
      */
-    public List findArticleRelationsWithinPeriod(Date from, Date until, Qualifier[] qualifiers) throws PersistenceException {
+    public List<Relation> findArticleRelationsWithinPeriod(Date from, Date until, Qualifier[] qualifiers) throws PersistenceException {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(ARTICLE_RELATIONS_WITHIN_PERIOD));
         List params = new ArrayList();
@@ -610,7 +610,7 @@ public final class SQLTool implements Configurable {
      * @return List of initialized relations
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List findNewsRelations(Qualifier[] qualifiers) {
+    public List<Relation> findNewsRelations(Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(NEWS_RELATIONS));
         List params = new ArrayList();
@@ -636,7 +636,7 @@ public final class SQLTool implements Configurable {
      * Use Qualifiers to set additional parameters.
      * @return List of initialized relations
      */
-    public List findNewsRelationsWithinPeriod(Date from, Date until, Qualifier[] qualifiers) throws PersistenceException {
+    public List<Relation> findNewsRelationsWithinPeriod(Date from, Date until, Qualifier[] qualifiers) throws PersistenceException {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(NEWS_RELATIONS_WITHIN_PERIOD));
         List params = new ArrayList();
@@ -665,7 +665,7 @@ public final class SQLTool implements Configurable {
      * @return List of initialized relations
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List findRecordRelationsWithUserAndType(int userId, int type, Qualifier[] qualifiers) {
+    public List<Relation> findRecordRelationsWithUserAndType(int userId, int type, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(RECORD_RELATIONS_BY_USER_AND_TYPE));
         List params = new ArrayList();
@@ -695,7 +695,7 @@ public final class SQLTool implements Configurable {
      * @return List of initialized relations
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List findArticleRelationsByUser(int userId, Qualifier[] qualifiers) {
+    public List<Relation> findArticleRelationsByUser(int userId, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(ARTICLE_RELATIONS_BY_USER));
         List params = new ArrayList();
@@ -724,7 +724,7 @@ public final class SQLTool implements Configurable {
      * @return List of initialized relations
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List findNewsRelationsByUser(int userId, Qualifier[] qualifiers) {
+    public List<Relation> findNewsRelationsByUser(int userId, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(NEWS_RELATIONS_BY_USER));
         List params = new ArrayList();
@@ -753,7 +753,7 @@ public final class SQLTool implements Configurable {
      * @return List of initialized relations
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List findQuestionRelationsByUser(int userId, Qualifier[] qualifiers) {
+    public List<Relation> findQuestionRelationsByUser(int userId, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(QUESTION_RELATIONS_BY_USER));
         List params = new ArrayList();
@@ -781,7 +781,7 @@ public final class SQLTool implements Configurable {
      * @return List of initialized relations
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List findCommentRelationsByUser(int userId, Qualifier[] qualifiers) {
+    public List<Relation> findCommentRelationsByUser(int userId, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(COMMENT_RELATIONS_BY_USER));
         List params = new ArrayList();
@@ -824,7 +824,7 @@ public final class SQLTool implements Configurable {
      * @throws PersistenceException
      *          if there is an error with the underlying persistent storage.
      */
-    public List findStandalonePollRelations(Qualifier[] qualifiers) {
+    public List<Relation> findStandalonePollRelations(Qualifier[] qualifiers) {
         if (qualifiers == null) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(STANDALONE_POLL_RELATIONS));
         List params = new ArrayList();
@@ -1100,7 +1100,7 @@ public final class SQLTool implements Configurable {
      * @return List of itialized Relations, first item is closest to selected one.
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List getNeighbourDictionaryItemRelations(String urlName, boolean smaller, int count) {
+    public List<Relation> getNeighbourDictionaryItemRelations(String urlName, boolean smaller, int count) {
         StringBuffer sb = new StringBuffer((String) sql.get(ITEM_RELATIONS_BY_TYPE));
         if (smaller)
             sb.append("  and podtyp<? order by podtyp desc limit ?");

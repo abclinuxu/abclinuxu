@@ -152,6 +152,8 @@ public class EditTrivia implements AbcAction {
         // commit new version
         Misc.commitRelation(document.getRootElement(), relation, user);
 
+        EditDiscussion.createEmptyDiscussion(relation, user, persistence);
+
         if (redirect) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, upper.getUrl());

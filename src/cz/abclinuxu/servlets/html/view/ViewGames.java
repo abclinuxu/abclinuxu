@@ -77,8 +77,9 @@ public class ViewGames implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistance();
         SQLTool sqlTool = SQLTool.getInstance();
 
-        List trivias = sqlTool.findItemRelationsWithType(Item.TRIVIA, null);
+        List<Relation> trivias = sqlTool.findItemRelationsWithType(Item.TRIVIA, null);
         Tools.syncList(trivias);
+        Tools.initializeDiscussionsTo(trivias);
         env.put(VAR_TRIVIA_GAMES, trivias);
 
         Relation sectionGames = (Relation) persistence.findById(new Relation(Constants.REL_GAMES));
@@ -88,7 +89,7 @@ public class ViewGames implements AbcAction {
         return FMTemplateSelector.select("ViewGames", "list", env, request);
     }
 
-    private String playTriviaGame(HttpServletRequest request, Relation relation, Map env) throws Exception {
+    public static String playTriviaGame(HttpServletRequest request, Relation relation, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistance();
 

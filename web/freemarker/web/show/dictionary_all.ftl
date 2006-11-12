@@ -36,6 +36,7 @@
 </form>
 
 <p class="prefixes">
+    Filtr:
     <a href="/slovnik?prefix=a"<@highlight 'a'/>>a</a>
     <a href="/slovnik?prefix=b"<@highlight 'b'/>>b</a>
     <a href="/slovnik?prefix=c"<@highlight 'c'/>>c</a>

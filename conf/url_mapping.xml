@@ -82,6 +82,10 @@
             <action>cz.abclinuxu.servlets.html.view.ViewBlog</action>
         </mapping>
         <mapping priority="true">
+            <pattern>/diskuse$</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ShowObject</action>
+        </mapping>
+        <mapping priority="true">
             <pattern>^/hry</pattern>
             <action>cz.abclinuxu.servlets.html.view.ViewGames</action>
         </mapping>

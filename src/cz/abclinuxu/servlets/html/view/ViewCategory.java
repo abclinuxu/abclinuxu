@@ -234,28 +234,15 @@ public class ViewCategory implements AbcAction {
 
         SQLTool sqlTool = SQLTool.getInstance();
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
-        List articles = sqlTool.findArticleRelations(qualifiers, section.getId());
+        List<Relation> articles = sqlTool.findArticleRelations(qualifiers, section.getId());
         int total = sqlTool.countArticleRelations(section.getId());
         Tools.syncList(articles);
-        // todo - ma to smysl? Neni to duplikace predchoziho? Overit v debuggeru
-        Tools.initializeChildren(articles);
-
-        // tohle je asi inicializace diskusi, kvuli poslednim komentarum k clanku
-        List items = new ArrayList();
-        for (Iterator iter = articles.iterator(); iter.hasNext();) {
-            Relation relation1 = (Relation) iter.next();
-            List children = relation1.getChild().getChildren();
-            for (Iterator iterIn = children.iterator(); iterIn.hasNext();) {
-                Relation relation2 = (Relation) iterIn.next();
-                if (relation2.getChild() instanceof Item)
-                    items.add(relation2.getChild());
-            }
-        }
-        Tools.syncList(items);
+        Tools.initializeDiscussionsTo(articles);
 
         Paging paging = new Paging(articles, from, count, total);
         env.put(VAR_ARTICLES, paging);
 
         return FMTemplateSelector.select("ViewCategory", "rubrika", env, request);
     }
+
 }

@@ -1520,4 +1520,23 @@ public class Tools implements Configurable {
         }
         return result;
     }
+
+    /**
+     * Initializes discussions to list of relations to objects (articles, news ..)
+     * @param objects initialized relations
+     */
+    public static void initializeDiscussionsTo(List<Relation> objects) {
+        initializeChildren(objects);
+        List items = new ArrayList();
+        for (Iterator<Relation> iter = objects.iterator(); iter.hasNext();) {
+            Relation relation1 = iter.next();
+            List children = relation1.getChild().getChildren();
+            for (Iterator iterIn = children.iterator(); iterIn.hasNext();) {
+                Relation relation2 = (Relation) iterIn.next();
+                if (relation2.getChild() instanceof Item)
+                    items.add(relation2.getChild());
+            }
+        }
+        syncList(items);
+    }
 }
