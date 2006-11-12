@@ -1,4 +1,17 @@
 <#assign html_header>
+    <script language="javascript1.2" type="text/javascript">
+        stav = true;
+        function toggle(sender) {
+            stav = !stav;
+            if (sender.form.elements.length) {
+                for (var i = 0; i < sender.form.elements.length; i++) {
+                    if (sender.form.elements[i].type == 'checkbox') {
+                        sender.form.elements[i].checked = stav;
+                    }
+                }
+            }
+        }
+    </script>
 </#assign>
 <#include "../header.ftl">
 
