@@ -173,8 +173,18 @@ public class ViewCategory implements AbcAction {
             return FMTemplateSelector.select("ViewCategory", "sekce", env, request);
 
         int type = category.getType();
-        if (type == Category.SECTION)
-            return processArticleSection(request, env, relation);
+        switch (type) {
+            case Category.SECTION:
+                return processArticleSection(request, relation, env);
+            case Category.HARDWARE_SECTION:
+                return FMTemplateSelector.select("ViewCategory", "hwsekce", env, request);
+            case Category.FAQ:
+                return ViewFaq.processSection(request, relation, env);
+            case Category.FORUM:
+                return ShowForum.processSection(request, relation, env);
+            case Category.SOFTWARE_SECTION:
+                return ViewSoftware.processSection(request, relation, env);
+        }
 
         switch ( relation.getId() ) {
             case Constants.REL_DRIVERS:
@@ -195,8 +205,6 @@ public class ViewCategory implements AbcAction {
         if ( category.getId()==Constants.CAT_ARTICLES )
                 return FMTemplateSelector.select("ViewCategory","rubriky",env, request);
 
-        if (type == Category.HARDWARE_SECTION)
-            return FMTemplateSelector.select("ViewCategory", "hwsekce", env, request);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         tmp = urlUtils.getPrefix();
@@ -218,7 +226,7 @@ public class ViewCategory implements AbcAction {
         return FMTemplateSelector.select("ViewCategory","sekce",env, request);
     }
 
-    public static String processArticleSection(HttpServletRequest request, Map env, Relation relation) throws Exception {
+    public static String processArticleSection(HttpServletRequest request, Relation relation, Map env) throws Exception {
         Category section = (Category) relation.getChild();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);

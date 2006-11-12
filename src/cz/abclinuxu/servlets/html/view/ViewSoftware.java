@@ -120,7 +120,7 @@ public class ViewSoftware implements AbcAction {
         if (relation.getChild() instanceof Item) {
             Item item = (Item) relation.getChild();
             if (item.getType() != Item.SOFTWARE)
-                return ShowObject.processItem(request, response, env, relation);
+                return ShowObject.processItem(request, env, relation);
         } else if (relation.getChild() instanceof Category) {
             Category category = (Category) relation.getChild();
             if (category.getType() != Category.SOFTWARE_SECTION)
@@ -138,12 +138,6 @@ public class ViewSoftware implements AbcAction {
 
             session.setAttribute(VAR_FILTERS, filters);
         }
-
-        Map filters = (Map) session.getAttribute(VAR_FILTERS);
-        if (filters != null)
-            env.put(VAR_FILTERS, filters);
-        else
-            env.put(VAR_FILTERS, Collections.EMPTY_MAP);
 
         if (relation.getChild() instanceof Category) {
             return processSection(request, relation, env);
@@ -174,9 +168,14 @@ public class ViewSoftware implements AbcAction {
     /**
      * Processes section with software items.
      */
-    private String processSection(HttpServletRequest request, Relation relation, Map env) throws Exception {
+    public static String processSection(HttpServletRequest request, Relation relation, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistance();
         SQLTool sqlTool = SQLTool.getInstance();
+
+        Map filters = (Map) request.getSession().getAttribute(VAR_FILTERS);
+        if (filters == null)
+            filters = Collections.EMPTY_MAP;
+        env.put(VAR_FILTERS, filters);
 
         SectionTreeCache softwareTree = VariableFetcher.getInstance().getSoftwareTree();
         List categories = null;
@@ -199,7 +198,6 @@ public class ViewSoftware implements AbcAction {
         Qualifier[] qa = new Qualifier[qualifiers.size()];
 //        qualifiers.add(new LimitQualifier(from, count));
 
-        Map filters = (Map) env.get(VAR_FILTERS);
         List items = sqlTool.findItemRelationsWithTypeWithFilters(Item.SOFTWARE, (Qualifier[]) qualifiers.toArray(qa), filters);
         if (items.size() > 0)
             env.put(VAR_ITEMS, Tools.syncList(items));
@@ -214,7 +212,7 @@ public class ViewSoftware implements AbcAction {
     /**
      * Processes one software item.
      */
-    private String processItem(HttpServletRequest request, Relation relation, Map env) throws Exception {
+    public static String processItem(HttpServletRequest request, Relation relation, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Item item = (Item) relation.getChild();

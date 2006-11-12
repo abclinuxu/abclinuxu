@@ -72,6 +72,12 @@ public class ShowForum implements AbcAction {
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
+        return processSection(request, relation, env);
+    }
+
+    public static String processSection(HttpServletRequest request, Relation relation, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
         int count = getPageSize(params, env);
         count = Misc.limit(count, 1, 50);
@@ -92,7 +98,7 @@ public class ShowForum implements AbcAction {
      * Gets page size for found discussions. Paramaters take precendence over user settings.
      * @return page size for found documents.
      */
-    private int getPageSize(Map params, Map env) {
+    private static int getPageSize(Map params, Map env) {
         int count = -1;
         String str = (String) params.get(PARAM_COUNT);
         if ( str!=null && str.length()>0 )

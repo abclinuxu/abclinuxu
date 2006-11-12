@@ -191,11 +191,11 @@ public class ViewBlog implements AbcAction, Configurable {
                 fillUnpublishedStories(blog, env);
 
             if (relation != null)
-                return processStory(relation, request, env);
+                return processStory(request, relation, env);
             else if (archive)
-                return processArchive(blog, request, env);
+                return processArchive(request, blog, env);
             else
-                return processStories(blogRelation, summary, year, month, day, request, env);
+                return processStories(request, blogRelation, summary, year, month, day, env);
         } else
             return processBlogSpace(request, summary, digest, year, month, day, env);
     }
@@ -203,7 +203,7 @@ public class ViewBlog implements AbcAction, Configurable {
     /**
      * Displays one blogRelation content. Its stories may be limited to given year, month or day.
      */
-    protected String processStory(Relation relation, HttpServletRequest request, Map env) throws Exception {
+    public static String processStory(HttpServletRequest request, Relation relation, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistance();
         Item story = (Item) relation.getChild();
         env.put(VAR_STORY, relation);
@@ -221,7 +221,7 @@ public class ViewBlog implements AbcAction, Configurable {
     /**
      * Displays one blogRelation content. Its stories may be limited to given year, month or day.
      */
-    protected String processArchive(Category blog, HttpServletRequest request, Map env) throws Exception {
+    protected String processArchive(HttpServletRequest request, Category blog, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistance();
         Relation blogRelation = (Relation) env.get(VAR_BLOG_RELATION);
         List parents = persistence.findParents(blogRelation);
@@ -232,7 +232,7 @@ public class ViewBlog implements AbcAction, Configurable {
     /**
      * Displays one blogRelation content. Its stories may be limited to given year, month or day.
      */
-    protected String processStories(Relation blogRelation, boolean summary, int year, int month, int day, HttpServletRequest request, Map env) throws Exception {
+    protected String processStories(HttpServletRequest request, Relation blogRelation, boolean summary, int year, int month, int day, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
         Persistence persistence = PersistenceFactory.getPersistance();

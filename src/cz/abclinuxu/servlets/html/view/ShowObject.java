@@ -122,7 +122,7 @@ public class ShowObject implements AbcAction {
         if (relation.getChild() instanceof Poll)
             return ViewPolls.processPoll(env, relation, request);
         else if ( (relation.getParent() instanceof Item) || ( relation.getChild() instanceof Item ) )
-            return processItem(request, response, env, relation);
+            return processItem(request, env, relation);
         else if ( relation.getParent() instanceof Category ) {
             if (relation.getId()==Constants.REL_POLLS)
                 return ViewPolls.processPolls(env, request);
@@ -136,19 +136,10 @@ public class ShowObject implements AbcAction {
      * Processes item - like article, discussion, driver etc.
      * @return template to be rendered
      */
-    public static String processItem(HttpServletRequest request, HttpServletResponse response, Map env, Relation relation) throws Exception {
+    public static String processItem(HttpServletRequest request, Map env, Relation relation) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        Item item = null;
-        Relation upper = null;
-
-        if ( relation.getChild() instanceof Item ) {
-            item = (Item) relation.getChild();
-            upper = relation;
-        } else if ( relation.getParent() instanceof Item ) {
-            log.info("after hardware upgrade: "+relation); // todo dava to jeste vubec smysl po refactoringu hardwaru?
-            item = (Item) relation.getParent();
-            upper = new Relation(relation.getUpper());
-        }
+        Item item = (Item) relation.getChild();
+        Relation upper = relation;
 
         Tools.sync(item);
         env.put(VAR_ITEM, item);
@@ -186,14 +177,20 @@ public class ShowObject implements AbcAction {
                 return FMTemplateSelector.select("ShowObject", "hardware", env, request);
             case Item.DRIVER:
                 return FMTemplateSelector.select("ShowObject", "driver", env, request);
-            case Item.CONTENT:
-                return ViewContent.show(request, env);
-            case Item.TOC:
-                return ViewTOC.show(request, env);
             case Item.DICTIONARY:
                 return ShowDictionary.processDefinition(request, relation, env);
             case Item.BAZAAR:
                 return ViewBazaar.processAd(request, relation, env);
+            case Item.BLOG:
+                return ViewBlog.processStory(request, relation, env);
+            case Item.FAQ:
+                return ViewFaq.processQuestion(request, relation, env);
+            case Item.SOFTWARE:
+                return ViewSoftware.processItem(request, relation, env);
+            case Item.CONTENT:
+                return ViewContent.show(request, env);
+            case Item.TOC:
+                return ViewTOC.show(request, env);
         }
 
         return null;

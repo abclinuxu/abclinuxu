@@ -91,7 +91,7 @@ public class ViewFaq implements AbcAction {
     /**
      * Processes section with FAQ.
      */
-    private String processSection(HttpServletRequest request, Relation relation, Map env) throws Exception {
+    public static String processSection(HttpServletRequest request, Relation relation, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         SQLTool sqlTool = SQLTool.getInstance();
@@ -125,7 +125,7 @@ public class ViewFaq implements AbcAction {
      * Processes one frequently asked question.
      * todo zobrazit odkazy na nekolik dalsich otazek
      */
-    private String processQuestion(HttpServletRequest request, Relation relation, Map env) throws Exception {
+    public static String processQuestion(HttpServletRequest request, Relation relation, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
@@ -159,7 +159,7 @@ public class ViewFaq implements AbcAction {
      * Gets page size for found questions. Parameters take precendence over user settings.
      * @return page size for found documents.
      */
-    private int getPageSize(Map params) {
+    private static int getPageSize(Map params) {
         int count = -1;
         String str = (String) params.get(PARAM_COUNT);
         if (str != null && str.length() > 0)
