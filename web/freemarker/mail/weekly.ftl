@@ -22,12 +22,13 @@ Prehled clanku
 Reklama
 =======
 
-HOT JOB ALERT!  If you have webpage programming or design
-experience and Oracle Configurator skills this is a good
-opportunity for you!  We are looking for a Business
-Integration Architect. Learn more about this position...
+HOT NEW JOB! Do you have good C programming (using UNIX
+system calls and APIs) and shell (Bourne) skills?
+Experience with testing, basic UNIX administration and
+debugging? If so, we are looking for a UFS TEST
+DEVELOPMENT ENGINEER. Learn more...
 
-http://www.talents.cz/sunjobs2_detail.php?id=182
+http://www.talents.cz/sunjobs2_detail.php?id=195
 
 
 Prehled zpravicek

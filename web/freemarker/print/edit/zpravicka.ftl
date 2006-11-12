@@ -37,6 +37,9 @@ a vygeneruje se z nìj URL.</p>
   <tr>
    <td class="required">Obsah</td>
    <td>
+    <div class="form-edit">
+     <a href="javascript:insertAtCursor(document.newsForm.content, '&lt;a href=&quot;&quot;&gt;', '</a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
+    </div>
     <textarea name="content" cols="80" rows="15" tabindex="1">${PARAMS.content?if_exists?html}</textarea>
     <div class="error">${ERRORS.content?if_exists}</div>
    </td>

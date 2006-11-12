@@ -2,23 +2,23 @@
 
 <@lib.showMessages/>
 
-<h1>Úvod</h1>
+<h2>Úvod</h2>
 
 <p>Tato stránka je urèena výhradnì administrátorùm. Jejím úèelem
 není provádìt cenzuru (na to jsou jiné nástroje) nebo
 zasahovat do smyslu komentáøe, nýbr¾ opravovat chyby u¾ivatelù.
 Napøíklad ¹patnì zvolený titulek u dotazu, titulek poru¹ující
-zásady (psán velkými písmeny apod.), nevhodné HTML znaèky ..</p>
+zásady (psán velkými písmeny apod.), nevhodné HTML znaèky, ...</p>
 
 <#if PREVIEW?exists>
- <h1>Náhled pøíspìvku</h1>
+ <h2>Náhled pøíspìvku</h2>
  <@lib.showThread PREVIEW, 0, TOOL.createEmptyDiscussion(), false />
 </#if>
 
-<h1>Zde mù¾ete provést své úpravy</h1>
+<h2>Zde mù¾ete provést své úpravy</h2>
 
 <form action="${URL.make("/EditDiscussion")}" method="POST" name="form">
- <table cellpadding="5">
+ <table cellpadding="5" class="siroka">
   <tr>
    <td class="required">Titulek</td>
    <td>
@@ -53,7 +53,7 @@ zásady (psán velkými písmeny apod.), nevhodné HTML znaèky ..</p>
         <a href="javascript:insertAtCursor(document.form.text, '<a href=&quot;&quot;>', '</a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
         <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
     </div>
-    <textarea name="text" cols="60" rows="20">${PARAMS.text?if_exists?html}</textarea>
+    <textarea name="text" class="siroka" rows="20">${PARAMS.text?if_exists?html}</textarea>
     <div>Smíte pou¾ívat základní HTML znaèky. Pokud je nepou¾ijete,
     prázdné øádky budou nahrazeny novým odstavcem.</div>
     <div class="error">${ERRORS.text?if_exists}</div>
