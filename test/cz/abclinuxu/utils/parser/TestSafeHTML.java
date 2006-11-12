@@ -89,6 +89,17 @@ public class TestSafeHTML extends TestCase {
         }
     }
 
+    // bug #544
+    public void testForbiddenTag7() throws Exception {
+        try {
+            String s = "zde je <<form>";
+            SafeHTMLGuard.check(s);
+            fail("Shall have failed: "+s);
+        } catch (TagNotAllowedException e) {
+            //ok
+        }
+    }
+
     public void testAllowedNoAttributes1() throws Exception {
         String s = "zde je <p>";
         SafeHTMLGuard.check(s);
@@ -384,19 +395,81 @@ public class TestSafeHTML extends TestCase {
         }
     }
 
-    public void testLinkTag() throws Exception {
+    public void testAllowedClosedNoAttributes32() throws Exception {
+        try {
+            String s = "zde je <i>nejaky <i>link</i>";
+            SafeHTMLGuard.check(s);
+            fail("Shall have failed: "+s);
+        } catch (TagNotClosedException e) {
+            //ok
+        }
+    }
+
+    public void testAllowedClosedNoAttributes33() throws Exception {
+        String s = "zde je <i>nejaky <i>link</i>.</i>";
+        SafeHTMLGuard.check(s);
+    }
+
+    public void testAllowedClosedNoAttributes34() throws Exception {
+        try {
+            String s = "<p>Cháchá, to je slovo do pranice! \"Já jsem to napsal, proto¾e \"<b>voni takoví\n" +
+                    "jsou\" :-D </p>";
+            SafeHTMLGuard.check(s);
+            fail("Shall have failed: "+s);
+        } catch (CrossedTagException e) {
+            //ok
+        }
+    }
+
+    public void testLinkTag1() throws Exception {
         String s = "zde je <a href=\"/clanky/show/1234\">odkaz</a>";
         SafeHTMLGuard.check(s);
+    }
 
+    public void testLinkTag2() throws Exception {
+       try {
+            String s = "zde je <a href=\"\">odkaz</a>";
+            SafeHTMLGuard.check(s);
+            fail("Shall have failed: "+s);
+        } catch (AttributeValueNotAllowedException e) {
+            //ok
+        }
+    }
+
+    public void testLinkTag3() throws Exception {
         try {
-            s = "zde je <a href=\"/clanky/show/1234\" style=\"color:red\">odkaz</a>";
+            String s = "zde je <a href=\"javascript:location='http://images.ucomics.com/comics/ga/2006/ga06'+((new\n" +
+                    "Date()).getMonth()+1)+(new Date()).getDate()+'.gif'\">odkaz</a>";
+            SafeHTMLGuard.check(s);
+            fail("Shall have failed: "+s);
+        } catch (AttributeValueNotAllowedException e) {
+            //ok
+        }
+    }
+
+    public void testLinkTag4() throws Exception {
+        try {
+            String s = "zde je <img src=\"data:image/gif;base64,R0lGODdhMAAwAPAAAAAAAP///ywAAAAAMAAwAAAC8IyPqcvt3wCcDkiLc7C0qwyGHhSWpjQu5yqmCYsapyuvUUlvONmOZtfzgFzByTB10QgxOR0TqBQejhRNzOfkVJ+5YiUqrXF5Y5lKh/DeuNcP5yLWGsEbtLiOSpa/TPg7JpJHxyendzWTBfX0cxOnKPjgBzi4diinWGdkF8kjdfnycQZXZeYGejmJlZeGl9i2icVqaNVailT6F5iJ90m6mvuTS4OK05M0vDk0Q4XUtwvKOzrcd3iq9uisF81M1OIcR7lEewwcLp7tuNNkM3uNna3F2JQFo97Vriy/Xl4/f1cf5VWzXyym7PHhhx4dbgYKAAA7\">";
+            ContentGuard.check(s);
+            fail("Shall have failed: "+s);
+        } catch (AttributeValueNotAllowedException e) {
+            //ok
+        }
+    }
+
+    public void testLinkTag5() throws Exception {
+        try {
+            String s = "zde je <a href=\"/clanky/show/1234\" style=\"color:red\">odkaz</a>";
             SafeHTMLGuard.check(s);
             fail("Shall have failed: "+s);
         } catch (AttributeNotAllowedException e) {
             //ok
         }
+    }
+
+    public void testLinkTag6() throws Exception {
         try {
-            s = "zde je <a>";
+            String s = "zde je <a>";
             SafeHTMLGuard.check(s);
             fail("Shall have failed: "+s);
         } catch (TagNotClosedException e) {

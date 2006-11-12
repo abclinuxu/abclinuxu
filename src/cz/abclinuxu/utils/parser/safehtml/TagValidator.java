@@ -66,7 +66,7 @@ public class TagValidator {
                     lastTag = (CheckedTag) tagStack.remove(tagStack.size() - 1);
                 } while(!lastTag.mustBeClosed && !lastTag.name.equals(currentTagName));
 
-                if (checkedTag.mustBeClosed && !lastTag.name.equals(currentTagName))
+                if (!lastTag.name.equals(currentTagName))
                     throw new CrossedTagException("Znaèky " + lastTag.name + " a " + currentTagName + " jsou pøekøí¾eny!");
             } else
                 tagStack.add(checkedTag);
@@ -92,6 +92,15 @@ public class TagValidator {
                 }
                 if ( !found )
                     throw new AttributeNotAllowedException("Znaèka "+checkedTag.name+" nesmí obsahovat atribut "+name+"!");
+                if ("HREF".equals(name) || "SRC".equals(name)) {
+                    String value = attribute.getValue();
+                    if (value == null || value.length() == 0)
+                        throw new AttributeValueNotAllowedException("Atribut " + name + "znaèky " + checkedTag.name + "nesmí být prázdný!");
+                    if (value.indexOf("javascript:") != -1)
+                        throw new AttributeValueNotAllowedException("Atribut " + name + "znaèky " + checkedTag.name + "nesmí obsahovat javascript!");
+                    if (value.indexOf("data:") != -1)
+                        throw new AttributeValueNotAllowedException("Atribut " + name + "znaèky " + checkedTag.name + "nesmí obsahovat protokol data!");
+                }
             }
         }
 
