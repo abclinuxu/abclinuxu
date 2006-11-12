@@ -70,7 +70,7 @@ public class URLManager implements Configurable {
         if (url.charAt(0)=='/')
             url = url.substring(1);
 
-        String fixedURL = normalizeUrl(url);
+        String fixedURL = normalizeUrl(url, false);
         fixedURL = enforceValidExtension(fixedURL);
         return fixedURL;
     }
@@ -88,15 +88,15 @@ public class URLManager implements Configurable {
         if (!url.startsWith("/"))
             throw new AbcException("Adresa stránky musí být absolutní!");
 
-        String fixedURL = normalizeUrl(url);
+        String fixedURL = normalizeUrl(url, true);
         fixedURL = enforceValidExtension(fixedURL);
         return fixedURL;
     }
 
-    private static String normalizeUrl(String url) {
+    private static String normalizeUrl(String url, boolean absolute) {
         if (Character.isDigit(url.charAt(0)))
             url = "-" + url;
-        String fixedURL = normalizeCharacters(url, false);
+        String fixedURL = normalizeCharacters(url, absolute);
         if (fixedURL.length() == 0)
             throw new AbcException("Zvolte jiné URL bez speciálních znakù!");
         return fixedURL;
