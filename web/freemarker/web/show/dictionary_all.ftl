@@ -31,38 +31,38 @@
 
 <form action="/Search" method="GET">
     <input type="text" name="query" size="30" tabindex="1">
-    <input type="submit" value="Hledej ve slovníku" tabindex="2">
+    <input type="submit" value="Hledej ve slovníku" class="button" tabindex="2">
     <input type="hidden" name="type" value="pojem">
 </form>
 
-<p class="prefixes">
+<p class="dict-abc">
     Filtr:
-    <a href="/slovnik?prefix=a"<@highlight 'a'/>>a</a>
-    <a href="/slovnik?prefix=b"<@highlight 'b'/>>b</a>
-    <a href="/slovnik?prefix=c"<@highlight 'c'/>>c</a>
-    <a href="/slovnik?prefix=d"<@highlight 'd'/>>d</a>
-    <a href="/slovnik?prefix=e"<@highlight 'e'/>>e</a>
-    <a href="/slovnik?prefix=f"<@highlight 'f'/>>f</a>
-    <a href="/slovnik?prefix=g"<@highlight 'g'/>>g</a>
-    <a href="/slovnik?prefix=h"<@highlight 'h'/>>h</a>
-    <a href="/slovnik?prefix=i"<@highlight 'i'/>>i</a>
-    <a href="/slovnik?prefix=j"<@highlight 'j'/>>j</a>
-    <a href="/slovnik?prefix=k"<@highlight 'k'/>>k</a>
-    <a href="/slovnik?prefix=l"<@highlight 'l'/>>l</a>
-    <a href="/slovnik?prefix=m"<@highlight 'm'/>>m</a>
-    <a href="/slovnik?prefix=n"<@highlight 'n'/>>n</a>
-    <a href="/slovnik?prefix=o"<@highlight 'o'/>>o</a>
-    <a href="/slovnik?prefix=p"<@highlight 'p'/>>p</a>
-    <a href="/slovnik?prefix=q"<@highlight 'q'/>>q</a>
-    <a href="/slovnik?prefix=r"<@highlight 'r'/>>r</a>
-    <a href="/slovnik?prefix=s"<@highlight 's'/>>s</a>
-    <a href="/slovnik?prefix=t"<@highlight 't'/>>t</a>
-    <a href="/slovnik?prefix=u"<@highlight 'u'/>>u</a>
-    <a href="/slovnik?prefix=v"<@highlight 'v'/>>v</a>
-    <a href="/slovnik?prefix=w"<@highlight 'w'/>>w</a>
-    <a href="/slovnik?prefix=x"<@highlight 'x'/>>x</a>
-    <a href="/slovnik?prefix=y"<@highlight 'y'/>>y</a>
-    <a href="/slovnik?prefix=z"<@highlight 'z'/>>z</a>
+    <a href="/slovnik?prefix=a"<@highlight 'a'/>>A</a>
+    <a href="/slovnik?prefix=b"<@highlight 'b'/>>B</a>
+    <a href="/slovnik?prefix=c"<@highlight 'c'/>>C</a>
+    <a href="/slovnik?prefix=d"<@highlight 'd'/>>D</a>
+    <a href="/slovnik?prefix=e"<@highlight 'e'/>>E</a>
+    <a href="/slovnik?prefix=f"<@highlight 'f'/>>F</a>
+    <a href="/slovnik?prefix=g"<@highlight 'g'/>>G</a>
+    <a href="/slovnik?prefix=h"<@highlight 'h'/>>H</a>
+    <a href="/slovnik?prefix=i"<@highlight 'i'/>>I</a>
+    <a href="/slovnik?prefix=j"<@highlight 'j'/>>J</a>
+    <a href="/slovnik?prefix=k"<@highlight 'k'/>>K</a>
+    <a href="/slovnik?prefix=l"<@highlight 'l'/>>L</a>
+    <a href="/slovnik?prefix=m"<@highlight 'm'/>>M</a>
+    <a href="/slovnik?prefix=n"<@highlight 'n'/>>N</a>
+    <a href="/slovnik?prefix=o"<@highlight 'o'/>>O</a>
+    <a href="/slovnik?prefix=p"<@highlight 'p'/>>P</a>
+    <a href="/slovnik?prefix=q"<@highlight 'q'/>>Q</a>
+    <a href="/slovnik?prefix=r"<@highlight 'r'/>>R</a>
+    <a href="/slovnik?prefix=s"<@highlight 's'/>>S</a>
+    <a href="/slovnik?prefix=t"<@highlight 't'/>>T</a>
+    <a href="/slovnik?prefix=u"<@highlight 'u'/>>U</a>
+    <a href="/slovnik?prefix=v"<@highlight 'v'/>>V</a>
+    <a href="/slovnik?prefix=w"<@highlight 'w'/>>W</a>
+    <a href="/slovnik?prefix=x"<@highlight 'x'/>>X</a>
+    <a href="/slovnik?prefix=y"<@highlight 'y'/>>Y</a>
+    <a href="/slovnik?prefix=z"<@highlight 'z'/>>Z</a>
 </p>
 
 <table border="0" class="siroka bez-slovniku">

@@ -16,12 +16,10 @@
       (${COUNTS.question})</li>
       <li><a href="${URL.noPrefix("/History?type=comments&amp;uid="+PROFILE.id)}">komentáøe</a>
       (${COUNTS.comment})</li>
-      <li><a href="${URL.noPrefix("/History?type=dictionary&amp;uid="+PROFILE.id)}">pojmy ve slovníku</a>
-      (${COUNTS.dictionary})</li>
     </ul>
 </#if>
 
 <p>Tento seznam obsahuje jen ty objekty, které nemají sdílené vlastnictví (wiki).
-Proto se zde nezobrazují napøíklad záznamy o hardwaru, ovladaèe, FAQ èi uèebnice.</p>
+Proto se zde nezobrazují napøíklad záznamy o <a href="/hardware">hardwaru</a> a <a href="/software">softwaru</a>, <a href="/ovladace">ovladaèe</a>, <a href="/faq">FAQ</a>, <a href="/slovnik">slovník</a> èi <a href="/ucebnice">uèebnice</a>.</p>
 
 <#include "../footer.ftl">

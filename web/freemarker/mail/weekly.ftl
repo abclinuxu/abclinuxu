@@ -22,13 +22,14 @@ Prehled clanku
 Reklama
 =======
 
-HOT NEW JOB! Do you have good C programming (using UNIX
-system calls and APIs) and shell (Bourne) skills?
-Experience with testing, basic UNIX administration and
-debugging? If so, we are looking for a UFS TEST
-DEVELOPMENT ENGINEER. Learn more...
+HOT JOB! Do you know the UNIX environment, VERITAS
+and have experience in diagnosing and troubleshooting
+workstation systems? We are looking for TECHNICAL
+SUPPORT ENGINEERS to provide support to internal and
+external customers and identify and solve complex
+issues.  Learn more...
 
-http://www.talents.cz/sunjobs2_detail.php?id=195
+http://www.talents.cz/sunjobs2_detail.php?id=176
 
 
 Prehled zpravicek

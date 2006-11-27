@@ -859,6 +859,14 @@ a.info,
 .form-edit a#serif { font-family:serif }
 .form-edit a#mono { font-family:monospace }
 
+.dict-abc a {
+	padding: 0 5px;
+	text-decoration:none;
+	background: #e6e6e6;
+}
+.dict-abc a:hover {
+	background: #FFF8C3;
+}
 .dict-item, .questionToFaq, .bazar-ad {
 	background:	#ececec;
 	margin:		0.5em;
@@ -959,6 +967,20 @@ display: none;
 
 .treeview .submenu ul li {
 cursor: default;
+}
+
+.skoleni-img { float:right; margin:0.5em; }
+.skoleni table {
+width: 95%;
+border-bottom: 1px solid black;
+margin-bottom: 1.5em;
+font-size: smaller;
+}
+.skoleni table td {
+background: #e6e6e6;
+padding: 0.2em;
+vertical-align: top;
+width: 33%;
 }
 
 /* Sun */

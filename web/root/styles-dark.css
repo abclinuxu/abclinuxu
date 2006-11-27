@@ -879,6 +879,14 @@ a.info,
 .form-edit a#serif { font-family:serif }
 .form-edit a#mono { font-family:monospace }
 
+.dict-abc a {
+	padding: 0 5px;
+	text-decoration:none;
+	background: #494949;
+}
+.dict-abc a:hover {
+	background: #80bbca;
+}
 .dict-item, .questionToFaq, .bazar-ad {
 	background:	#494949;
 	margin:		0.5em;
@@ -978,6 +986,20 @@ display: none;
 
 .treeview .submenu ul li {
 cursor: default;
+}
+
+.skoleni-img { float:right; margin:0.5em; }
+.skoleni table {
+width: 95%;
+border-bottom: 1px solid silver;
+margin-bottom: 1.5em;
+font-size: smaller;
+}
+.skoleni table td {
+background: #494949;
+padding: 0.2em;
+vertical-align: top;
+width: 33%;
 }
 
 /* Sun */
