@@ -2,6 +2,10 @@
 
 <@lib.showMessages/>
 
+<#macro selected id><#t>
+    <#list PARAMS.authors?if_exists as author><#if id==author> selected</#if></#list><#t>
+</#macro>
+
 <form action="${URL.make("/edit")}" method="POST">
 
  <table width=100 border=0 cellpadding=5>
@@ -15,8 +19,15 @@
   <tr>
    <td width="90" class="required">Autor</td>
    <td>
-    <input type="text" name="uid" value="${PARAMS.uid?if_exists}" size=6 tabindex=2>
-    <div class="error">${ERRORS.uid?if_exists}</div>
+    <select name="authors" size="6" multiple tabindex=2>
+        <#list AUTHORS as relation>
+            <#assign author=relation.child>
+            <option value="${relation.id}"<@selected relation.id/>>
+                ${TOOL.childName(author)}
+            </option>
+        </#list>
+    </select>
+    <div class="error">${ERRORS.authors?if_exists}</div>
    </td>
   </tr>
   <tr>

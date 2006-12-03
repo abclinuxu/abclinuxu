@@ -45,6 +45,7 @@ public class AbcConfig implements Configurable {
     public static final String PREF_VIEWUSER_PAGINGSIZE = "viewuser.page.size";
     public static final String PREF_SECTION_ARTICLES_COUNT = "section.article.count";
     public static final String PREF_ARTICLE_SECTION_ARTICLES_COUNT = "article.section.articles.count";
+    public static final String PREF_AUTHOR_ARTICLES_PAGE_SIZE = "author.articles.page.size";
     public static final String PREF_BAZAAR_PAGE_SIZE = "bazaar.page.size";
     public static final String PREF_SEARCH_RESULTS_COUNT = "search.results.count";
     public static final String PREF_FAQ_COUNT = "section.faq.count";
@@ -53,7 +54,7 @@ public class AbcConfig implements Configurable {
 
     static String deployPath, domain, hostname;
     static int viewUserPageSize, sectionArticleCount, bazaarPageSize;
-    static int articleSectionArticlesCount, searchResultsCount, faqSectionCount;
+    static int articleSectionArticlesCount, authorArticlesPageSize, searchResultsCount, faqSectionCount;
     static int maxWatchedDiscussions;
     static boolean maintainanceMode;
 
@@ -69,6 +70,7 @@ public class AbcConfig implements Configurable {
         viewUserPageSize = prefs.getInt(PREF_VIEWUSER_PAGINGSIZE,20);
         sectionArticleCount = prefs.getInt(PREF_SECTION_ARTICLES_COUNT, 25);
         articleSectionArticlesCount = prefs.getInt(PREF_ARTICLE_SECTION_ARTICLES_COUNT, 5);
+        authorArticlesPageSize = prefs.getInt(PREF_AUTHOR_ARTICLES_PAGE_SIZE, 20);
         searchResultsCount = prefs.getInt(PREF_SEARCH_RESULTS_COUNT, 10);
         faqSectionCount = prefs.getInt(PREF_FAQ_COUNT, 20);
         bazaarPageSize = prefs.getInt(PREF_BAZAAR_PAGE_SIZE, 20);
@@ -150,6 +152,13 @@ public class AbcConfig implements Configurable {
      */
     public static int getArticleSectionArticlesCount() {
         return articleSectionArticlesCount;
+    }
+
+    /**
+     * @return number of articles displayed on single page of author
+     */
+    public static int getAuthorArticlesPageSize() {
+        return authorArticlesPageSize;
     }
 
     /**

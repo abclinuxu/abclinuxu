@@ -41,13 +41,14 @@ import java.util.*;
  */
 public class GenerateDevelDatabase {
     static User user, admin;
-    static int ridArticle, ridDriver, ridHardware, ridSoftware, ridNews, ridQuestion;
+    static int ridArticle, ridDriver, ridHardware, ridSoftware, ridNews, ridQuestion, author;
 
     public static void main(String[] args) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistance(PersistenceFactory.defaultDevelUrl);
         admin = (User) persistence.findById(new User(1));
         user = (User) persistence.findById(new User(2));
 
+        generateAuthors();
         generateArticles(persistence);
         generateNews(persistence);
         generateHardwareItems(persistence);
@@ -259,6 +260,21 @@ public class GenerateDevelDatabase {
         servlet.actionAddStep2(null, null, map, false);
     }
 
+    private static void generateAuthors() throws Exception {
+        Map map = new HashMap();
+        Map params = new HashMap();
+        map.put(Constants.VAR_PARAMS, params);
+        map.put(Constants.VAR_USER, admin);
+
+        params.put(EditAuthor.PARAM_SURNAME, "Franta");
+        params.put(EditAuthor.PARAM_NAME, "Omáèka");
+
+        EditAuthor servlet = new EditAuthor();
+        servlet.actionAddStep2(null, null, map, false);
+        Relation created = (Relation) map.get(ShowObject.VAR_RELATION);
+        author = created.getId();
+    }
+
     private static void generateArticles(Persistence persistence) throws Exception {
         Map map = new HashMap();
         Map params = new HashMap();
@@ -272,7 +288,7 @@ public class GenerateDevelDatabase {
         params.put(EditArticle.PARAM_PEREX, "Jádro portováno do toastovaèe!");
         params.put(EditArticle.PARAM_CONTENT, "Slavný kernel hacker a fanou¹ek Linuxu JXD naportoval kernel " +
                 "na toastovaè. A¾ si pøí¹tì budete dìlat toasty, o optimální teplotu se bude starat Linuks.");
-        params.put(EditArticle.PARAM_AUTHOR, Integer.toString(user.getId()));
+        params.put(EditArticle.PARAM_AUTHORS, Integer.toString(author));
         params.put(EditArticle.PARAM_PUBLISHED, Constants.isoFormat.format(new Date()));
 
         EditArticle editArticle = new EditArticle();
@@ -288,7 +304,7 @@ public class GenerateDevelDatabase {
         params.put(EditArticle.PARAM_CONTENT, "Databáze obsahuje dva u¾ivatele - admin a user, oba mají heslo changeit. " +
                 "Dále je zde pár reprezentantù v¹ech objektù, které se na abíèku vyskytují, abyste si mohli neru¹enì " +
                 "hrát a zkou¹et, jak co funguje.");
-        params.put(EditArticle.PARAM_AUTHOR, Integer.toString(admin.getId()));
+        params.put(EditArticle.PARAM_AUTHORS, Integer.toString(author));
         params.put(EditArticle.PARAM_PUBLISHED, Constants.isoFormat.format(new Date()));
         editArticle.actionAddStep2(null, null, map, false);
 

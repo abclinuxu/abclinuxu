@@ -102,13 +102,8 @@ public class History implements AbcAction {
 
         if ( VALUE_TYPE_ARTICLES.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, from, count);
-            if (uid > 0) {
-                total = sqlTool.countArticleRelationsByUser(uid);
-                data = sqlTool.findArticleRelationsByUser(uid, qualifiers);
-            } else {
-                total = sqlTool.countArticleRelations(0);
-                data = sqlTool.findArticleRelations(qualifiers, 0);
-            }
+            total = sqlTool.countArticleRelations(0);
+            data = sqlTool.findArticleRelations(qualifiers, 0);
             found = new Paging(data,from,count,total,qualifiers);
             type = VALUE_TYPE_ARTICLES;
 

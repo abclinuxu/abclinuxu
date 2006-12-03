@@ -158,7 +158,7 @@ public class ViewUser implements AbcAction {
 
         SQLTool sqlTool = SQLTool.getInstance();
         Map counts = new HashMap();
-        counts.put("article", new Integer(sqlTool.countArticleRelationsByUser(user.getId())));
+//        counts.put("article", new Integer(sqlTool.countArticleRelationsByUser(user.getId())));
         counts.put("news", new Integer(sqlTool.countNewsRelationsByUser(user.getId())));
         counts.put("question", new Integer(sqlTool.countQuestionRelationsByUser(user.getId())));
         counts.put("comment", new Integer(sqlTool.countCommentRelationsByUser(user.getId())));

@@ -1,6 +1,24 @@
 <?xml version="1.0" encoding="ISO-8859-2" ?>
 <config>
 
+  <servlet name="ViewAuthor">
+    <action name="author" content="/show/author.ftl">
+      <var name="TITLE" value='Autor ${TOOL.xpath(AUTHOR,"/data/firstname")?if_exists} ${TOOL.xpath(AUTHOR,"/data/surname")}'  type="Lazy"/>
+    </action>
+    <action name="authors_list" content="/show/sekce_autori.ftl">
+      <var name="TITLE" value="Seznam autorů" />
+    </action>
+  </servlet>
+
+  <servlet name="EditAuthor">
+    <action name="add" template="print" content="/add/author.ftl">
+      <var name="TITLE" value="Vložit autora" />
+    </action>
+    <action name="edit" template="print" content="/add/author.ftl">
+      <var name="TITLE" value="Upravit autora" />
+    </action>
+  </servlet>
+
   <servlet name="EditSoftware">
     <action name="add" content="/add/switem.ftl">
       <var name="TITLE" value="Vložit software" />

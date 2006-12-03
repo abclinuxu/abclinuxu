@@ -116,7 +116,7 @@
 <!-- Item.DICTIONARY -->
 <!ELEMENT data (name, description)>
 <!ELEMENT name (#PCDATA)> <!-- word to be explained -->
-<!ELEMENT description (#PCDATA)> <!-- explaination ->
+<!ELEMENT description (#PCDATA)> <!-- explanation ->
 
 <!-- Item.CONTENT -->
 <!ELEMENT data (name, content, class?, toc?)>
@@ -161,6 +161,18 @@
 <!ELEMENT text (#PCDATA)> <!-- content of the advertisement -->
 <!ELEMENT price (#PCDATA)> <!-- requested price -->
 <!ELEMENT contact (#PCDATA)> <!-- contact for the person -->
+
+<!-- Item.AUTHOR -->
+<!ELEMENT data (firstname?, surname, uid?, birthNumber?, nickname?, accountNumber?, email?, phone?, address?)>
+<!ELEMENT firstname (#PCDATA)> <!-- First name(s) of the author -->
+<!ELEMENT surname (#PCDATA)> <!-- Surname of the author -->
+<!ELEMENT nickname (#PCDATA)> <!-- Nickname of the author -->
+<!ELEMENT uid (#PCDATA)> <!-- integer, id of user, if the author has an account in portal -->
+<!ELEMENT birthNumber (#PCDATA)> <!-- authors birth number -->
+<!ELEMENT accountNumber (#PCDATA)> <!-- authors account number -->
+<!ELEMENT email (#PCDATA)> <!-- authors e-mail -->
+<!ELEMENT phone (#PCDATA)> <!-- authors phone number -->
+<!ELEMENT address (#PCDATA)> <!-- authors home address -->
 
 <!-- Item.TRIVIA -->
 <!ELEMENT data (title, description, difficulty, stats, question+)>

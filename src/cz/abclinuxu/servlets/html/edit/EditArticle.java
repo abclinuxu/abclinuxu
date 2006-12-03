@@ -23,6 +23,7 @@ import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.PersistenceException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
@@ -62,7 +63,7 @@ public class EditArticle implements AbcAction {
     public static final String PARAM_PEREX = "perex";
     public static final String PARAM_CONTENT = "content";
     public static final String PARAM_PUBLISHED = "published";
-    public static final String PARAM_AUTHOR = "uid";
+    public static final String PARAM_AUTHORS = "authors";
     public static final String PARAM_FORBID_DISCUSSIONS = "forbid_discussions";
     public static final String PARAM_FORBID_RATING = "forbid_rating";
     public static final String PARAM_RELATED_ARTICLES = "related";
@@ -78,6 +79,7 @@ public class EditArticle implements AbcAction {
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_TALK_XML = "XML";
     public static final String VAR_SECTIONS = "SECTIONS";
+    public static final String VAR_AUTHORS = "AUTHORS";
 
     public static final String ACTION_ADD_ITEM = "add";
     public static final String ACTION_ADD_ITEM_STEP2 = "add2";
@@ -170,6 +172,7 @@ public class EditArticle implements AbcAction {
             params.put(PARAM_PUBLISHED,Constants.isoFormat.format(new Date()));
         }
         List sections = getSections();
+        env.put(VAR_AUTHORS, getAuthorRelations());
         env.put(VAR_SECTIONS, sections);
         return FMTemplateSelector.select("EditArticle","add",env,request);
     }
@@ -194,7 +197,7 @@ public class EditArticle implements AbcAction {
 
         boolean canContinue = true;
         canContinue &= setTitle(params, item, env);
-        canContinue &= setAuthor(params, item, env, request);
+        canContinue &= setAuthors(params, item, env);
         canContinue &= setEditor(item, env);
         canContinue &= setPerex(params, item, env);
         canContinue &= setPublishDate(params, item, env);
@@ -210,6 +213,8 @@ public class EditArticle implements AbcAction {
         if ( !canContinue ) {
             List sections = getSections();
             env.put(VAR_SECTIONS, sections);
+            env.put(VAR_AUTHORS, getAuthorRelations());
+            params.put(PARAM_AUTHORS, Tools.asSet(params.get(PARAM_AUTHORS)));
             return FMTemplateSelector.select("EditArticle", "edit", env, request);
         }
 
@@ -260,8 +265,7 @@ public class EditArticle implements AbcAction {
         synchronized (Constants.isoFormat) {
             params.put(PARAM_PUBLISHED, Constants.isoFormat.format(item.getCreated()));
         }
-        node = document.selectSingleNode("/data/author");
-        params.put(PARAM_AUTHOR,node.getText());
+        params.put(PARAM_AUTHORS, item.getProperty(Constants.PROPERTY_AUTHOR));
         node = document.selectSingleNode("/data/forbid_discussions");
         if ( node!=null && "yes".equals(node.getText()) )
             params.put(PARAM_FORBID_DISCUSSIONS, node.getText());
@@ -287,6 +291,7 @@ public class EditArticle implements AbcAction {
         addArticleContent(document, params);
         addLinks(document, "/data/related/link", params, PARAM_RELATED_ARTICLES);
         addLinks(document, "/data/resources/link", params, PARAM_RESOURCES);
+        env.put(VAR_AUTHORS, getAuthorRelations());
 
         return FMTemplateSelector.select("EditArticle","edit",env,request);
     }
@@ -302,7 +307,7 @@ public class EditArticle implements AbcAction {
 
         boolean canContinue = true;
         canContinue &= setTitle(params, item, env);
-        canContinue &= setAuthor(params, item, env, request);
+        canContinue &= setAuthors(params, item, env);
         canContinue &= setEditor(item, env);
         canContinue &= setPerex(params, item, env);
         canContinue &= setPublishDate(params, item, env);
@@ -319,6 +324,8 @@ public class EditArticle implements AbcAction {
         if ( !canContinue ) {
             List sections = getSections();
             env.put(VAR_SECTIONS, sections);
+            env.put(VAR_AUTHORS, getAuthorRelations());
+            params.put(PARAM_AUTHORS, Tools.asSet(params.get(PARAM_AUTHORS)));
             return FMTemplateSelector.select("EditArticle","edit",env,request);
         }
 
@@ -568,6 +575,18 @@ public class EditArticle implements AbcAction {
 
 
     /**
+     * Finds relations to all authors.
+     * @return List of Authors
+     */
+    public List getAuthorRelations() {
+        SQLTool sqlTool = SQLTool.getInstance();
+        List authors = sqlTool.findItemRelationsWithType(Item.AUTHOR, null);
+        Tools.syncList(authors);
+        Sorters2.byXPath(authors, "/data/surname");
+        return (authors);
+    }
+
+    /**
      * Updates title from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item article to be updated
@@ -610,14 +629,13 @@ public class EditArticle implements AbcAction {
      * @param env environment
      * @return false, if there is a major error.
      */
-    private boolean setAuthor(Map params, Item item, Map env, HttpServletRequest request) {
-        User author = (User) InstanceUtils.instantiateParam(PARAM_AUTHOR, User.class, params, request);
-        if ( author==null ) {
-            ServletUtils.addError(PARAM_AUTHOR, "Vyberte autora!", env, null);
+    private boolean setAuthors(Map params, Item item, Map env) {
+        Set authors = Tools.asSet(params.get(PARAM_AUTHORS));
+        if (authors.size() == 0) {
+            ServletUtils.addError(PARAM_AUTHORS, "Vyberte autora!", env, null);
             return false;
         }
-        Element element = DocumentHelper.makeElement(item.getData(), "/data/author");
-        element.setText(String.valueOf(author.getId()));
+        item.setProperty(Constants.PROPERTY_AUTHOR, authors);
         return true;
     }
 

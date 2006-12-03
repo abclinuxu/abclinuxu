@@ -29,6 +29,7 @@
                                     <entry key="viewuser.page.size" value="20"/>
                                     <entry key="section.article.count" value="25"/>
                                     <entry key="article.section.articles.count" value="5"/>
+                                    <entry key="author.articles.page.size" value="15"/>
                                     <entry key="search.results.count" value="10"/>
                                     <entry key="section.faq.count" value="20"/>
                                     <entry key="bazaar.page.size" value="40"/>
@@ -281,7 +282,7 @@
                             <entry key="relations.article" value="select R.cislo from polozka P, relace R, kategorie K where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and P.vytvoreno&lt;now()"/>
                             <entry key="relations.article.on.index" value="select R.cislo from polozka P, relace R, kategorie K where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and (P.podtyp!='NOTONINDEX' or P.podtyp is null) and P.vytvoreno&lt;now()"/>
                             <entry key="relations.article.within.period" value="select R.cislo from polozka P, relace R, kategorie K where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and P.vytvoreno&gt;? and P.vytvoreno&lt;?"/>
-                            <entry key="relations.article.by.user" value="select R.cislo from polozka P, relace R, kategorie K where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=2 and R.typ_predka='K' and R.predek=K.cislo and K.typ=4 and P.data like concat('%&lt;author&gt;',?,'&lt;/author%') and P.vytvoreno&lt;now() group by potomek"/>
+                            <entry key="relations.article.by.author" value="select R.cislo from relace R, polozka P, vlastnost V where R.typ_potomka='P' and R.potomek=P.cislo and P.typ=2 and V.typ_predka='P' and P.cislo=V.predek and V.typ='author' and V.hodnota=? and P.vytvoreno&lt;now()"/>
                             <entry key="relations.news" value="select R.cislo from polozka P, relace R where R.predchozi=42932 and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek"/>
                             <entry key="relations.news.within.period" value="select R.cislo from polozka P, relace R where R.predchozi=42932 and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek and vytvoreno&gt;? and vytvoreno&lt;?"/>
                             <entry key="relations.news.by.user" value="select R.cislo from polozka P, relace R where P.pridal=? and R.typ_potomka='P' and P.typ=7 and P.cislo=R.potomek"/>
@@ -304,7 +305,8 @@
                             <entry key="delete.old.comments" value="delete from posledni_komentar where kdo=? and kdy&lt;=?" />
                             <entry key="items.with.type" value="select cislo from polozka where typ=?"/>
                             <entry key="records.with.type" value="select cislo from zaznam where typ=?"/>
-                            <entry key="count.articles.by.user" value="select count(*) from polozka where typ=2 and data like concat('%&lt;author&gt;',?,'&lt;/author%') and vytvoreno&lt;now()"/>
+                            <entry key="count.articles.by.author" value="select count(P.cislo) from polozka as P, vlastnost as V where P.typ=2 and P.cislo=V.predek and V.typ_predka='P' and V.typ='author' and V.hodnota=? and P.vytvoreno&lt;now()"/>
+                            <entry key="count.articles.by.authors" value="select V.hodnota, count(P.cislo) from polozka as P, vlastnost as V where P.typ=2 and P.cislo=V.predek and V.typ_predka='P' and V.typ='author' group by (V.hodnota)" />
                             <entry key="insert.user.action" value="insert into akce values(?,?,?,NULL)" />
                             <entry key="get.user.action" value="select kdy from akce where kdo=? and relace=? and typ=?" />
                             <entry key="remove.user.action" value="delete from akce where kdo=? and relace=? and typ=?" />
@@ -319,6 +321,7 @@
                             <entry key="insert.stara_adresa" value="insert into stara_adresa values(?,?,?)" />
                             <entry key="select.stara.adresa" value="select rid,nova from stara_adresa where puvodni=?" />
                             <entry key="get.property.values" value="select distinct hodnota from vlastnost where typ=?" />
+                            <entry key="relations.royalty" value="select R.cislo from polozka P, relace R, kategorie K where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=9 and R.typ_predka='P' and R.predek=K.cislo and K.typ=2"/>
                         </map>
                     </node>
                 </node>
@@ -335,7 +338,8 @@
                         <map>
                             <entry key="title" value="Událo se v týdnu {0}/{1,number,#}"/>
                             <entry key="perex" value="Ucelený pøehled èlánkù, zprávièek a diskusí za minulých 7 dní."/>
-                            <entry key="author" value="5473"/>
+			                <!-- TODO Po migracii clankov zmenit na prislusne id vygenerovaneho Authora, user=5473 -->
+                            <entry key="author" value="0"/>
                             <entry key="section" value="251"/>
                         </map>
                     </node>

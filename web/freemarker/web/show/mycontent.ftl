@@ -3,29 +3,6 @@
 
 <@lib.showMessages/>
 
-<#if ARTICLES?exists>
- <#if ARTICLES.currentPage.size gt 0>
-  <h1>Mé èlánky</h1>
-  <ol start="${ARTICLES.currentPage.row+1}">
-  <#list ARTICLES.data as a>
-   <li><a href="${URL.make("/clanky/ViewRelation?rid="+a.id)}">
-   ${TOOL.xpath(a.child,"/data/name")}</a>
-  </#list>
-  </ol>
-  Celkem ${ARTICLES.total} èlánkù.
-  <#if ARTICLES.prevPage?exists>
-    <a href="${URL.make("/Profile?action=showContent&amp;articles=yes&amp;uid="+PARAMS.uid+"&amp;from="+ARTICLES.prevPage.row)}">
-    Pøedchozích ${ARTICLES.pageSize}</a>.
-  </#if>
-  <#if ARTICLES.nextPage?exists>
-    <a href="${URL.make("/Profile?action=showContent&amp;articles=yes&amp;uid="+PARAMS.uid+"&amp;from="+ARTICLES.nextPage.row)}">
-    Následujících ${ARTICLES.pageSize}</a>.
-  </#if>
- <#else>
-  Nenapsal(a) jsem ¾ádné èlánky.
- </#if>
-</#if>
-
 <#if NEWS?exists>
  <#if NEWS.currentPage.size gt 0>
   <h1>Mé zprávièky</h1>

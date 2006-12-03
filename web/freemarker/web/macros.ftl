@@ -9,7 +9,7 @@
 
 <#macro showArticle(relation dateFormat...)>
     <#local clanek=relation.child,
-        autor=TOOL.createUser(TOOL.xpath(clanek,"/data/author")?default("5473")),
+        autors=TOOL.createAuthorsForArticle(clanek),
         thumbnail=TOOL.xpath(clanek,"/data/thumbnail")?default("UNDEF"),
         tmp=TOOL.groupByType(clanek.children, "Item"),
 	    url=relation.url?default("/clanky/show/"+relation.id)
@@ -20,7 +20,9 @@
     <p>${TOOL.xpath(clanek,"/data/perex")}</p>
     <p class="cl_inforadek">
         ${DATE.show(clanek.created, dateFormat[0])} |
-        <a href="/Profile/${autor.id}">${autor.name}</a> |
+        <#list autors as autor>
+            <a href="${autor.url}">${TOOL.childName(autor)}</a><#if autor_has_next>, </#if>
+        </#list> |
         Pøeèteno: <@showCounter clanek, .globals["CITACE"]?if_exists, "read" />&times;
         <#if diz?exists>| <@showCommentsInListing diz, dateFormat[1]?default(dateFormat[0]), "/clanky" /></#if>
         <@showShortRating relation, "| " />

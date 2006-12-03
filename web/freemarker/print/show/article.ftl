@@ -1,12 +1,15 @@
 <#include "../header.ftl">
 
-<#assign autor=TOOL.createUser(TOOL.xpath(ITEM,"/data/author"))>
+<#assign autors=TOOL.createAuthorsForArticle(RELATION.getChild())>
 <#assign forbidDiscussion=TOOL.xpath(ITEM, "//forbid_discussions")?default("UNDEF")>
 
 <h1>${TOOL.xpath(ITEM,"/data/name")}</h1>
 
 <div class="barva">
- ${DATE.show(ITEM.created,"CZ_FULL")} | <a href="/Profile/${autor.id}">${autor.name}</a>
+    ${DATE.show(ITEM.created,"CZ_FULL")} |
+    <#list autors as autor>
+        <a href="${autor.url}">${TOOL.childName(autor)}</a><#if autor_has_next>, </#if>
+    </#list>
 </div>
 
 <#if PARENTS?exists>

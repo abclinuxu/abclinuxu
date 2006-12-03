@@ -60,7 +60,6 @@ public final class SQLTool implements Configurable {
     // todo calculate it dynamically with findqualifier
     public static final String NEWS_RELATIONS_WITHIN_PERIOD = "relations.news.within.period";
     public static final String RECORD_RELATIONS_BY_USER_AND_TYPE = "relations.record.by.user.and.type";
-    public static final String ARTICLE_RELATIONS_BY_USER = "relations.article.by.user";
     public static final String NEWS_RELATIONS_BY_USER = "relations.news.by.user";
     public static final String QUESTION_RELATIONS_BY_USER = "relations.question.by.user";
     public static final String COMMENT_RELATIONS_BY_USER = "relations.comment.by.user";
@@ -75,7 +74,9 @@ public final class SQLTool implements Configurable {
     public static final String ITEMS_COUNT_IN_SECTION = "items.count.in.section";
     public static final String MAX_USER = "max.user";
     public static final String USER_BY_LOGIN = "user.by.login";
-    public static final String COUNT_ARTICLES_BY_USER = "count.articles.by.user";
+    public static final String ARTICLE_RELATIONS_BY_AUTHOR = "relations.article.by.author";
+    public static final String COUNT_ARTICLES_BY_AUTHOR = "count.articles.by.author";
+    public static final String COUNT_ARTICLES_BY_AUTHORS = "count.articles.by.authors";
     public static final String RELATION_BY_URL = "relation.by.url";
     public static final String INSERT_LAST_COMMENT = "insert.last.comment";
     public static final String GET_LAST_COMMENT = "get.last.comment";
@@ -94,6 +95,7 @@ public final class SQLTool implements Configurable {
     public static final String INSERT_OLD_ADDRESS = "insert.stara_adresa";
     public static final String OLD_ADDRESS = "select.stara.adresa";
     public static final String PROPERTY_VALUES = "get.property.values";
+    public static final String ROYALTY_RELATIONS = "relations.royalty";
 
     private static SQLTool singleton;
     static {
@@ -256,11 +258,11 @@ public final class SQLTool implements Configurable {
      * @return list of Object[].
      * @throws PersistenceException if something goes wrong.
      */
-    private List loadObjects(String sql, List params) {
+    private List<Object[]> loadObjects(String sql, List params) {
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
         Connection con = null;
         PreparedStatement statement = null;
-        List list = new LinkedList();
+        List<Object[]> list = new LinkedList<Object[]>();
         ResultSet resultSet = null;
         try {
             con = persistance.getSQLConnection();
@@ -689,17 +691,18 @@ public final class SQLTool implements Configurable {
     }
 
     /**
-     * Finds relations, where child is article submitted by user.
+     * Finds relations, where child is article submitted by given author.
      * Items with property created set to future and outside of typical columns are skipped.
      * Use Qualifiers to set additional parameters.
+     * @param authorId id of Item containing author
      * @return List of initialized relations
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List<Relation> findArticleRelationsByUser(int userId, Qualifier[] qualifiers) {
+    public List<Relation> findArticleRelationsByAuthor(int authorId, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
-        StringBuffer sb = new StringBuffer((String) sql.get(ARTICLE_RELATIONS_BY_USER));
+        StringBuffer sb = new StringBuffer((String) sql.get(ARTICLE_RELATIONS_BY_AUTHOR));
         List params = new ArrayList();
-        params.add(new Integer(userId));
+        params.add(authorId);
         Map fieldMapping = new HashMap();
         fieldMapping.put(Field.UPPER, "R");
         appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
@@ -707,15 +710,25 @@ public final class SQLTool implements Configurable {
     }
 
     /**
-     * Counts relations, where child is article submitted by user.
-     * Items with property created set to future and outside of typical columns are skipped.
+     * Counts relations, where child is article written by given author.
+     * @param authorId id of Item containing author
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public int countArticleRelationsByUser(int userId) {
-        StringBuffer sb = new StringBuffer((String) sql.get(COUNT_ARTICLES_BY_USER));
+    public int countArticleRelationsByAuthor(int authorId) {
+	    StringBuffer sb = new StringBuffer((String) sql.get(COUNT_ARTICLES_BY_AUTHOR));
         List params = new ArrayList();
-        params.add(new Integer(userId));
+        params.add(authorId);
         return loadNumber(sb.toString(), params).intValue();
+    }
+
+    /**
+     * Counts article relations by authors.
+     * @throws PersistenceException if there is an error with the underlying persistent storage.
+     * @return list of integer arrays, first item is author's relation id, second item is count of his articles
+     */
+    public List<Object[]> countArticleRelationsByAuthors() {
+	    StringBuffer sb = new StringBuffer((String) sql.get(COUNT_ARTICLES_BY_AUTHORS));
+        return loadObjects(sb.toString(), Collections.EMPTY_LIST);
     }
 
     /**
@@ -1556,7 +1569,6 @@ public final class SQLTool implements Configurable {
         store(NEWS_RELATIONS_WITHIN_PERIOD, prefs);
         store(NEWS_RELATIONS_BY_USER, prefs);
         store(RECORD_RELATIONS_BY_USER_AND_TYPE, prefs);
-        store(ARTICLE_RELATIONS_BY_USER, prefs);
         store(QUESTION_RELATIONS_BY_USER, prefs);
         store(COMMENT_RELATIONS_BY_USER, prefs);
         store(STANDALONE_POLL_RELATIONS, prefs);
@@ -1570,7 +1582,9 @@ public final class SQLTool implements Configurable {
         store(USER_BY_LOGIN, prefs);
         store(ITEMS_WITH_TYPE, prefs);
         store(RECORDS_WITH_TYPE, prefs);
-        store(COUNT_ARTICLES_BY_USER, prefs);
+        store(ARTICLE_RELATIONS_BY_AUTHOR, prefs);
+        store(COUNT_ARTICLES_BY_AUTHOR, prefs);
+        store(COUNT_ARTICLES_BY_AUTHORS, prefs);
         store(COUNT_DISCUSSIONS_BY_USER, prefs);
         store(INSERT_LAST_COMMENT, prefs);
         store(GET_LAST_COMMENT, prefs);
@@ -1589,6 +1603,7 @@ public final class SQLTool implements Configurable {
         store(INSERT_OLD_ADDRESS, prefs);
         store(OLD_ADDRESS, prefs);
         store(PROPERTY_VALUES, prefs);
+        store(ROYALTY_RELATIONS, prefs);
     }
 
     /**

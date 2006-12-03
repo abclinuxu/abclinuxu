@@ -179,16 +179,18 @@ public class ShowObject implements AbcAction {
                 return FMTemplateSelector.select("ShowObject", "driver", env, request);
             case Item.DICTIONARY:
                 return ShowDictionary.processDefinition(request, relation, env);
-            case Item.TRIVIA:
-                return ViewGames.playTriviaGame(request, relation, env);
-            case Item.BAZAAR:
-                return ViewBazaar.processAd(request, relation, env);
             case Item.BLOG:
                 return ViewBlog.processStory(request, relation, env);
             case Item.FAQ:
                 return ViewFaq.processQuestion(request, relation, env);
             case Item.SOFTWARE:
                 return ViewSoftware.processItem(request, relation, env);
+            case Item.AUTHOR:
+                return ViewAuthor.processAuthor(request, relation, env);
+            case Item.TRIVIA:
+                return ViewGames.playTriviaGame(request, relation, env);
+            case Item.BAZAAR:
+                return ViewBazaar.processAd(request, relation, env);
             case Item.CONTENT:
                 return ViewContent.show(request, env);
             case Item.TOC:

@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.text.Collator;
 
+import org.dom4j.Node;
+
 /**
  * This class provides several methods for sorting relations
  * based on some criteria and order. Refactoring of Sorters.
@@ -59,39 +61,59 @@ public class Sorters2 {
     }
 
     /**
+     * @return list of relations (where child is GenericDatObject) sorted
+     * in ascending order by specified xpath.
+     */
+    public static List byXPath(List relations, String  xpath) {
+        return byXPath(relations, xpath, ASCENDING);
+    }
+
+    /**
+     * @return list of relations (where child is GenericDatObject) sorted
+     * in given order by specified xpath.
+     */
+    public static List byXPath(List relations, String xpath, String order) {
+        Comparator comparator = new XPathComparator(xpath);
+        if ( order.equals(DESCENDING) )
+            comparator = new OpaqueComparator(comparator);
+        Collections.sort(relations, comparator);
+        return relations;
+    }
+
+    /**
      * @return list of GenericObjects sorted in ascending order by their date.
      */
-    public static List byDate(List relations) {
-        return byDate(relations,ASCENDING);
+    public static List byDate(List objects) {
+        return byDate(objects,ASCENDING);
     }
 
     /**
      * @return list of GenericObjects sorted by their date in specified order.
      */
-    public static List byDate(List relations, String order) {
+    public static List byDate(List objects, String order) {
         Comparator comparator = new DateComparator();
         if ( order.equals(DESCENDING) )
             comparator = new OpaqueComparator(comparator);
-        Collections.sort(relations,comparator);
-        return relations;
+        Collections.sort(objects,comparator);
+        return objects;
     }
 
     /**
      * @return list of GenericObjects sorted in ascending order by their id.
      */
-    public static List byId(List relations) {
-        return byId(relations,ASCENDING);
+    public static List byId(List objects) {
+        return byId(objects,ASCENDING);
     }
 
     /**
      * @return list of GenericObjects sorted by their id in specified order.
      */
-    public static List byId(List relations, String order) {
+    public static List byId(List objects, String order) {
         Comparator comparator = new IdComparator();
         if ( order.equals(DESCENDING) )
             comparator = new OpaqueComparator(comparator);
-        Collections.sort(relations,comparator);
-        return relations;
+        Collections.sort(objects,comparator);
+        return objects;
     }
 
     /**
@@ -168,4 +190,35 @@ public class Sorters2 {
         }
     }
 
+    /**
+     * This comparator sorts relations containg GenericDataObject by specified xpath.
+     */
+    static class XPathComparator implements Comparator {
+        String xpath;
+
+        public XPathComparator(String xpath) {
+            this.xpath = xpath;
+        }
+
+        public int compare(Object o1, Object o2) {
+            GenericDataObject i1 = (GenericDataObject) ((Relation) o1).getChild();
+            GenericDataObject i2 = (GenericDataObject) ((Relation) o2).getChild();
+
+            Node n1 = i1.getData().selectSingleNode(xpath);
+            Node n2 = i2.getData().selectSingleNode(xpath);
+
+            if (n1 == null) {
+                if (n2 == null)
+                    return 0;
+                else
+                    return -1;
+            }
+            if (n2 == null)
+                return 1;
+
+            String s1 = n1.getText();
+            String s2 = n2.getText();
+            return s1.compareTo(s2);
+        }
+    }
 }

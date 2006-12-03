@@ -47,10 +47,11 @@ verze 2.0
 <!ELEMENT blacklist (uid*)> <!-- Container of users in blacklist -->
 <!ELEMENT uid (#PCDATA)> <!-- ID of a user in blacklist -->
 
-<!ELEMENT system (registration_date?,last_login_date?,group?)>
+<!ELEMENT system (registration_date?,last_login_date?,group?, author_id?)>
 <!ELEMENT registration_date (#PCDATA)> <!-- ISO format, kdy se zaregistroval -->
 <!ELEMENT last_login_date (#PCDATA)> <!-- ISO format, kdy se naposledy prihlasil -->
 <!ELEMENT group (#PCDATA)> <!-- integer, id of group, to which user belongs -->
+<!ELEMENT author_id (#PCDATA)> <!-- integer, id of relation to author associated with this user  -->
 
 <!ELEMENT roles (role+)>
 <!ELEMENT role (#PCDATA)> <!-- id of role, see Roles.java -->

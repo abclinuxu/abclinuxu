@@ -25,7 +25,6 @@ import cz.abclinuxu.persistence.*;
 import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.User;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
@@ -36,8 +35,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.List;
-
-import org.dom4j.Node;
 
 /**
  * Used to display content of the selected discussion forum.
@@ -79,8 +76,7 @@ public class ShowForum implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
-        int count = getPageSize(params, env);
-        count = Misc.limit(count, 1, 50);
+        int count = Misc.getPageSize(40, 100, env, "/data/settings/forum_size");
 
         SQLTool sqlTool = SQLTool.getInstance();
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
@@ -92,28 +88,5 @@ public class ShowForum implements AbcAction {
         env.put(VAR_DISCUSSIONS,paging);
 
         return FMTemplateSelector.select("ShowForum","show",env,request);
-    }
-
-    /**
-     * Gets page size for found discussions. Paramaters take precendence over user settings.
-     * @return page size for found documents.
-     */
-    private static int getPageSize(Map params, Map env) {
-        int count = -1;
-        String str = (String) params.get(PARAM_COUNT);
-        if ( str!=null && str.length()>0 )
-            count = Misc.parseInt(str, -1);
-
-        User user = (User) env.get(Constants.VAR_USER);
-        if ( user!=null && count<0 ) {
-            Node node = user.getData().selectSingleNode("/data/settings/forum_size");
-            if ( node!=null )
-                count = Misc.parseInt(node.getText(), -1);
-        }
-
-        if ( count==-1 )
-            return 40;
-        else
-            return Misc.limit(count, 10, 100);
     }
 }

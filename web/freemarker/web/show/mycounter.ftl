@@ -8,8 +8,6 @@
     <p>Moje:</p>
 
     <ul>
-      <li><a href="${URL.noPrefix("/History?type=articles&amp;uid="+PROFILE.id)}">èlánky</a>
-      (${COUNTS.article})</li>
       <li><a href="${URL.noPrefix("/History?type=news&amp;uid="+PROFILE.id)}">zprávièky</a>
       (${COUNTS.news})</li>
       <li><a href="${URL.noPrefix("/History?type=questions&amp;uid="+PROFILE.id)}">otázky</a>
@@ -19,7 +17,11 @@
     </ul>
 </#if>
 
-<p>Tento seznam obsahuje jen ty objekty, které nemají sdílené vlastnictví (wiki).
-Proto se zde nezobrazují napøíklad záznamy o <a href="/hardware">hardwaru</a> a <a href="/software">softwaru</a>, <a href="/ovladace">ovladaèe</a>, <a href="/faq">FAQ</a>, <a href="/slovnik">slovník</a> èi <a href="/ucebnice">uèebnice</a>.</p>
+<p>
+    Tento seznam obsahuje jen ty objekty, které nemají sdílené vlastnictví (wiki). Proto se zde nezobrazují
+    napøíklad záznamy o <a href="/hardware">hardwaru</a> a <a href="/software">softwaru</a>,
+    <a href="/ovladace">ovladaèe</a>, <a href="/faq">FAQ</a>, <a href="/slovnik">slovníku</a> èi
+    <a href="/ucebnice">uèebnici</a>.
+</p>
 
 <#include "../footer.ftl">

@@ -1,13 +1,16 @@
 <#include "../header.ftl">
 
-<#assign autor=TOOL.createUser(TOOL.xpath(ITEM,"/data/author"))>
+<#assign autors=TOOL.createAuthorsForArticle(RELATION.getChild())>
 <#assign forbidRating=TOOL.xpath(ITEM, "//forbid_rating")?default("UNDEF")>
 <#assign forbidDiscussion=TOOL.xpath(ITEM, "//forbid_discussions")?default("UNDEF")>
 
 <h1>${TOOL.xpath(ITEM,"/data/name")}</h1>
 
 <p class="cl_inforadek">
-${DATE.show(ITEM.created,"CZ_FULL")} | <a href="/Profile/${autor.id}">${autor.name}</a>
+    ${DATE.show(ITEM.created,"CZ_FULL")} |
+    <#list autors as autor>
+        <a href="${autor.url}">${TOOL.childName(autor)}</a><#if autor_has_next>, </#if>
+    </#list>
 </p>
 
 <#if RELATION.upper==8082>

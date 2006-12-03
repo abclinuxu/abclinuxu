@@ -234,6 +234,15 @@ public class Tools implements Configurable {
                 return "Diskuse";
             if (type == Item.NEWS)
                 return "Zprávièka";
+            if (type == Item.AUTHOR) {
+                Element root = ((Item)obj).getData().getRootElement();
+                StringBuffer sb = new StringBuffer();
+                String name = root.elementTextTrim("firstname");
+                if (name != null)
+                    sb.append(name).append(' ');
+                sb.append(root.elementTextTrim("surname"));
+                return sb.toString();
+            }
         }
 
         if ( obj instanceof Link )
@@ -758,6 +767,25 @@ public class Tools implements Configurable {
         int i = Integer.parseInt(id);
         Category category = new Category(i);
         return (Category) persistence.findById(category);
+    }
+
+    /**
+     * This method instantiates relation and synchronizes it.
+     * @return synchronized relation
+     */
+    public static Relation createRelation(int id) {
+        Relation relation = new Relation(id);
+        return (Relation) persistence.findById(relation);
+    }
+
+    /**
+     * This method instantiates relation and synchronizes it.
+     * @return synchronized relation
+     */
+    public static Relation createRelation(String id) {
+        int i = Integer.parseInt(id);
+        Relation relation = new Relation(i);
+        return (Relation) persistence.findById(relation);
     }
 
     /**
@@ -1538,5 +1566,21 @@ public class Tools implements Configurable {
             }
         }
         syncList(items);
+    }
+
+    /**
+     * Finds relations to all authors of given <code>article</code>.
+     * @return List of Authors
+     */
+    public List createAuthorsForArticle(Item article) {
+        Set relationIds = article.getProperty(Constants.PROPERTY_AUTHOR);
+        List authors = new ArrayList(relationIds.size());
+        for (Iterator i = relationIds.iterator(); i.hasNext(); ) {
+            int rid = Integer.parseInt((String) i.next());
+            authors.add(new Relation(rid));
+        }
+        syncList(authors);
+
+        return authors;
     }
 }

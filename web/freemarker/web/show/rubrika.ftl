@@ -3,7 +3,7 @@
 <@lib.showMessages/>
 
 <#if USER?exists && USER.hasRole("article admin")>
- <a href="/SelectUser?sAction=form&amp;url=/clanky/edit/${RELATION.id}&amp;action=add">Pøidej èlánek</a>
+    <a href="/clanky/edit/${RELATION.id}?action=add">Pøidej èlánek</a>
 </#if>
 <#if USER?exists && USER.hasRole("category admin")>
  <a href="${URL.make("/EditCategory?action=edit&rid="+RELATION.id+"&categoryId="+CATEGORY.id)}">Uprav sekci</a>

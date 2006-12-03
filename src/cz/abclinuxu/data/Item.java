@@ -61,6 +61,8 @@ public class Item extends GenericDataObject {
     public static final int SOFTWARE = 17;
     /** advertisement in bazaar */
     public static final int BAZAAR = 18;
+    /** author of articles **/
+    public static final int AUTHOR = 19;
     /** simple trivia game */
     public static final int TRIVIA = 20;
     /** simple trivia game */
@@ -99,6 +101,7 @@ public class Item extends GenericDataObject {
             case TOC: sb.append("TOC");break;
             case SOFTWARE: sb.append("Software");break;
             case BAZAAR: sb.append("Bazaar");break;
+            case AUTHOR: sb.append("Author");break;
             default: sb.append("Unknown Item");
         }
         sb.append(": id=").append(id);

@@ -176,8 +176,10 @@ public class Royalties implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistance();
         Relation upper = (Relation) env.get(VAR_RELATION);
+        User user = (User) env.get(Constants.VAR_USER);
 
         Item item = new Item(0, Item.ROYALTIES);
+	    item.setOwner(user.getId());
         Document document = DocumentHelper.createDocument();
         document.addElement("data");
         item.setData(document);
@@ -197,7 +199,6 @@ public class Royalties implements AbcAction {
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
-        User user = (User) env.get(Constants.VAR_USER);
         AdminLogger.logEvent(user, "pøidal honoráø "+relation.getId());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -259,12 +260,17 @@ public class Royalties implements AbcAction {
      * @return false, if there is a major error.
      */
     private boolean setAuthor(Map params, Item item, Map env, HttpServletRequest request) {
-        User author = (User) InstanceUtils.instantiateParam(PARAM_AUTHOR, User.class, params, request);
-        if ( author==null ) {
+        Persistence persistence = PersistenceFactory.getPersistance();
+        Item author = (Item) InstanceUtils.instantiateParam(PARAM_AUTHOR, Item.class, params, request);
+        persistence.synchronize(author);
+
+        if ( author!=null && author.getType() == Item.AUTHOR) {
+            item.setOwner(author.getId());
+        } else {
             ServletUtils.addError(PARAM_AUTHOR, "Vyberte autora!", env, null);
             return false;
         }
-        item.setOwner(author.getId());
+
         return true;
     }
 

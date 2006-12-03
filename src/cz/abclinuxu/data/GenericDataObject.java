@@ -287,7 +287,7 @@ public abstract class GenericDataObject extends GenericObject implements XMLCont
             try {
                 Method m = custom.getClass().getDeclaredMethod("clone", null);
                 m.setAccessible(true);
-                clone.custom = m.invoke(custom, null);
+                clone.custom = m.invoke(custom, (Object[]) null);
             } catch (Exception e) {
                 clone.custom = custom;
                 log.error("Cannot clone "+custom+" in "+this, e);

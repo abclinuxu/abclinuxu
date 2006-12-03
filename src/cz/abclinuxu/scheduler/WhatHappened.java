@@ -100,7 +100,7 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
             User articleAuthor = (User) persistence.findById(new User(author));
             map.put(Constants.VAR_USER, articleAuthor);
             params.put(EditArticle.PARAM_TITLE, map.get(VAR_TITLE));
-            params.put(EditArticle.PARAM_AUTHOR, Integer.toString(author));
+            params.put(EditArticle.PARAM_AUTHORS, Integer.toString(author));
             params.put(EditArticle.PARAM_PEREX, map.get(PREF_PEREX));
             params.put(EditArticle.PARAM_DESIGNATED_SECTION, Integer.toString(sectionRid));
             synchronized (Constants.isoFormat) {

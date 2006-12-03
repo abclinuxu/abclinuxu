@@ -24,12 +24,15 @@ import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.persistence.versioning.Versioning;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.servlets.html.view.ShowForum;
 
 import java.util.*;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 
 import org.dom4j.Element;
+import org.dom4j.Node;
 
 /**
  * Miscallenous utilities.
@@ -200,5 +203,36 @@ public class Misc {
             return input;
 
         return input.replaceAll("[\\x00-\\x08\\x0B-\\x0C\\x0E-\\x1f]", "?");
+    }
+
+    /**
+     * Gets page size from parameters, user preferences or system settings.
+     * The paramaters take precendence over user settings.
+     * @param defaultSize system settings for page size
+     * @param maximum system limit, page size will not exceed this value
+     * @param env environment
+     * @param userPrefXPath xpath where user preferences are stored, it may be null
+     * @return page size to be used
+     */
+    public static int getPageSize(int defaultSize, int maximum, Map env, String userPrefXPath) {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        int count = -1;
+        String str = (String) params.get(ShowForum.PARAM_COUNT);
+        if ( str != null && str.length() > 0 )
+            count = parseInt(str, -1);
+
+        if (userPrefXPath != null && count < 0) {
+            User user = (User) env.get(Constants.VAR_USER);
+            if (user != null) {
+                Node node = user.getData().selectSingleNode(userPrefXPath);
+                if (node != null)
+                    count = parseInt(node.getText(), -1);
+            }
+        }
+
+        if ( count == -1 )
+            return defaultSize;
+        else
+            return limit(count, 10, maximum);
     }
 }

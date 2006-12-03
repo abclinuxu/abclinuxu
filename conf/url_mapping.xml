@@ -113,6 +113,14 @@
             <pattern>^/slovnik</pattern>
             <action>cz.abclinuxu.servlets.html.view.ShowDictionary</action>
         </mapping>
+        <mapping priority="true">
+            <pattern>^/autori/edit</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditAuthor</action>
+        </mapping>
+        <mapping priority="true">
+            <pattern>^/autori</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ViewAuthor</action>
+        </mapping>
         <mapping>
             <pattern>^/Survey</pattern>
             <action>cz.abclinuxu.servlets.html.view.ShowSurvey</action>
