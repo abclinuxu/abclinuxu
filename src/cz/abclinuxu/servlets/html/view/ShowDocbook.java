@@ -196,7 +196,7 @@ public class ShowDocbook implements AbcAction {
                 visitEmStart();
             else if ( "STRONG".equals(tagName) )
                 visitStrongStart();
-            else if ( "CODE".equals(tagName) )
+            else if ( "CODE".equals(tagName) || "TT".equals(tagName) )
                 visitCodeStart();
             else if ( "SUB".equals(tagName) )
                 visitSubStart();
@@ -260,7 +260,7 @@ public class ShowDocbook implements AbcAction {
                 visitEmEnd();
             else if ( "STRONG".equals(tagName) )
                 visitStrongEnd();
-            else if ( "CODE".equals(tagName) )
+            else if ("CODE".equals(tagName) || "TT".equals(tagName))
                 visitCodeEnd();
             else if ( "SUB".equals(tagName) )
                 visitSubEnd();
