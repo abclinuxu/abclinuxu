@@ -7,21 +7,21 @@
         <tr>
             <td class="required" width="60">Jméno</td>
             <td>
-                <input type="text" name="name" value="${PARAMS.name?if_exists}" size="24" tabindex="1">
+                <input type="text" name="name" value="${PARAMS.name?if_exists?html}" size="24" tabindex="1">
                 <div class="error">${ERRORS.name?if_exists}<div>
             </td>
         </tr>
         <tr>
             <td class="required" width="60">Pøíjmení</td>
             <td>
-            <input type="text" name="surname" value="${PARAMS.surname?if_exists}" size="24" tabindex="2">
+            <input type="text" name="surname" value="${PARAMS.surname?if_exists?html}" size="24" tabindex="2">
             <div class="error">${ERRORS.surname?if_exists}</div>
             </td>
         </tr>
         <tr>
             <td width="60">Pøezdívka</td>
             <td>
-            <input type="text" name="nickname" value="${PARAMS.nickname?if_exists}" size="24" tabindex="3">
+            <input type="text" name="nickname" value="${PARAMS.nickname?if_exists?html}" size="24" tabindex="3">
             <div class="error">${ERRORS.nickname?if_exists}</div>
             </td>
         </tr>
@@ -45,7 +45,7 @@
         <tr>
             <td width="60">Email</td>
             <td>
-            <input type="text" name="email" value="${PARAMS.email?if_exists}" size="24" tabindex="6">
+            <input type="text" name="email" value="${PARAMS.email?if_exists?html}" size="24" tabindex="6">
             <div class="error">${ERRORS.email?if_exists}</div>
             </td>
         </tr>
@@ -53,7 +53,7 @@
         <tr>
             <td width="60">Telefon</td>
             <td>
-            <input type="text" name="phone" value="${PARAMS.phone?if_exists}" size="24" tabindex="7">
+            <input type="text" name="phone" value="${PARAMS.phone?if_exists?html}" size="24" tabindex="7">
             <div class="error">${ERRORS.phone?if_exists}</div>
             </td>
         </tr>
@@ -61,7 +61,7 @@
         <tr>
             <td width="60">Adresa</td>
             <td>
-            <input type="text" name="address" value="${PARAMS.address?if_exists}" size="24" tabindex="8">
+            <input type="text" name="address" value="${PARAMS.address?if_exists?html}" size="24" tabindex="8">
             <div class="error">${ERRORS.address?if_exists}</div>
             </td>
         </tr>
