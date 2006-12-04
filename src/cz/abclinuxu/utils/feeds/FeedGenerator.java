@@ -26,6 +26,7 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.news.NewsCategories;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.persistence.extra.*;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.Persistence;
@@ -348,17 +349,20 @@ public class FeedGenerator implements Configurable {
                 Relation found = (Relation) iter.next();
                 Item item = (Item) found.getChild();
                 Document document = item.getData();
-                Node node = document.selectSingleNode("/data/author");
-                User author = Tools.createUser(node.getText());
+
+                Set authors = item.getProperty(Constants.PROPERTY_AUTHOR);
+                String firstId = (String) authors.iterator().next();
+                Relation authorRelation = (Relation) Tools.sync(new Relation(Misc.parseInt(firstId, 0)));
+                Item author = (Item) authorRelation.getChild();
 
                 entry = new SyndEntryImpl();
                 entry.setLink("http://"+AbcConfig.getHostname() + found.getUrl());
                 entry.setTitle(Tools.xpath(item, "data/name"));
                 entry.setPublishedDate(item.getCreated());
-                entry.setAuthor((author.getNick() != null) ? author.getNick() : author.getName());
+                entry.setAuthor(Tools.childName(author));
                 description = new SyndContentImpl();
                 description.setType("text/plain");
-                node = document.selectSingleNode("/data/perex");
+                Node node = document.selectSingleNode("/data/perex");
                 description.setValue(node.getText());
                 entry.setDescription(description);
                 entries.add(entry);
