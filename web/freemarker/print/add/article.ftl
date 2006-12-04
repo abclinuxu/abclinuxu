@@ -3,7 +3,7 @@
 <@lib.showMessages/>
 
 <#macro selected id><#t>
-    <#list PARAMS.authors?if_exists as author><#if id==author> selected</#if></#list><#t>
+    <#list PARAMS.authors?if_exists as author><#if id?string==author> selected</#if></#list><#t>
 </#macro>
 
 <form action="${URL.make("/edit")}" method="POST">
