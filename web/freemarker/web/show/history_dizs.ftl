@@ -17,7 +17,7 @@
  <#list TOOL.analyzeDiscussions(FOUND.data) as diz>
    <tr>
     <td class="td01">
-     <a href="/forum/show/${diz.relationId}">${TOOL.limit(diz.title,100," ..")}</a>
+     <a href="${diz.url?default("/forum/show/"+diz.relationId)}">${TOOL.limit(diz.title,100," ..")}</a>
     </td>
     <td class="td02">
        <@lib.markNewCommentsQuestion diz/>

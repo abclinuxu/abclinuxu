@@ -1280,7 +1280,7 @@ public class Tools implements Configurable {
                 int type = item.getType();
                 if (type==Item.ARTICLE || type==Item.BLOG)
                     node = data.selectSingleNode("data/name");
-                else if ( type==Item.NEWS || type==Item.BAZAAR ) {
+                else if ( type==Item.NEWS || type==Item.BAZAAR || type==Item.TRIVIA ) {
                     discussion.title = "Zprávièka";
                     node = data.selectSingleNode("data/title");
                 }

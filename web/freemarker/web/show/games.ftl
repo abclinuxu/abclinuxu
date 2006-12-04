@@ -33,8 +33,9 @@
 </#list>
 
 <p>
-    Pokud jste nalezli chybu nebo vás napadly dal¹í otázky pro nìjaký kvíz,
+    Pokud jste nalezli v nìkterém kvízu chybu nebo vás napadly dal¹í otázky pro nový kvíz,
     vlo¾te prosím informace do <a rel="nofollow" href="http://bugzilla.abclinuxu.cz/show_bug.cgi?id=624">bugzilly</a>.
+    V pøípadì zaslání kompletního kvízu a jeho pøijetím redakcí získáte finanèní odmìnu.
 </p>
 
 <#include "../footer.ftl">
