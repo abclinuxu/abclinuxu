@@ -338,8 +338,7 @@
                         <map>
                             <entry key="title" value="Událo se v týdnu {0}/{1,number,#}"/>
                             <entry key="perex" value="Ucelený pøehled èlánkù, zprávièek a diskusí za minulých 7 dní."/>
-			                <!-- TODO Po migracii clankov zmenit na prislusne id vygenerovaneho Authora, user=5473 -->
-                            <entry key="author" value="0"/>
+                            <entry key="author" value="160276"/>
                             <entry key="section" value="251"/>
                         </map>
                     </node>
