@@ -197,7 +197,14 @@
       <div class="s_sekce">
         <ul>
         <#list BAZAAR as rel>
-             <li><a href="/bazar/show/${rel.id}">${TOOL.xpath(rel.child,"data/title")}</a></li>
+             <li>
+                <a href="/bazar/show/${rel.id}">${TOOL.xpath(rel.child,"data/title")}</a>
+                <#if rel.child.subType=='sell'>
+                    <span class="prodej">(P)</span>
+                <#else>
+                    <span class="koupe">(K)</span>
+                </#if>
+             </li>
         </#list>
         </ul>
       </div>
