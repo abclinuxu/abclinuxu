@@ -109,9 +109,9 @@ public class EditDiscussion implements AbcAction {
     public static final String ACTION_THREAD_TO_DIZ_STEP2 = "toQuestion2";
     public static final String ACTION_SOLVED = "solved";
 
-    private static final String LOGIN_REQUIRED = "Litujeme, ale bez registrace je mo¾né komentovat jen otázky v diskusním fóru, " +
-                        "kde se øe¹í problémy. U ostatních diskusí (zprávièky, èlánky, blogy) je nutné se nejdøíve pøihlásit. " +
-                        "Toto opatøení jsme zavedli z dùvodu zvý¹ené aktivity spambotù a trollù.";
+//    private static final String LOGIN_REQUIRED = "Litujeme, ale bez registrace je mo¾né komentovat jen otázky v diskusním fóru, " +
+//                        "kde se øe¹í problémy. U ostatních diskusí (zprávièky, èlánky, blogy) je nutné se nejdøíve pøihlásit. " +
+//                        "Toto opatøení jsme zavedli z dùvodu zvý¹ené aktivity spambotù a trollù.";
 
 // prepsat a overit kazdou jednotlivou funkci
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -140,7 +140,7 @@ public class EditDiscussion implements AbcAction {
             return  actionAddComment2(request,response,env, true);
 
         if ( ACTION_ADD_QUESTION.equals(action) )
-            return FMTemplateSelector.select("EditDiscussion","ask",env,request);
+            return actionAddQuestion(request, env);
 
         if ( ACTION_ADD_QUESTION_STEP2.equals(action) )
             return actionAddQuestion2(request, response, env, true);
@@ -202,6 +202,7 @@ public class EditDiscussion implements AbcAction {
      */
     protected String actionAddDiscussion(HttpServletRequest request, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistance();
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
 
         Relation relation = (Relation) env.get(VAR_RELATION);
@@ -213,6 +214,7 @@ public class EditDiscussion implements AbcAction {
         env.put(VAR_PARENT_TITLE, getTitleFromParent(relation));
         env.put(VAR_RELATION,relChild);
         env.put(VAR_DISCUSSION,discussion);
+        params.put(PARAM_AUTHOR, detectSpambotCookie(request, env, user));
         return FMTemplateSelector.select("EditDiscussion","reply",env,request);
     }
 
@@ -248,6 +250,16 @@ public class EditDiscussion implements AbcAction {
     }
 
     /**
+     * Starts add question wizzard
+     */
+    protected String actionAddQuestion(HttpServletRequest request, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User user = (User) env.get(Constants.VAR_USER);
+        params.put(PARAM_AUTHOR, detectSpambotCookie(request, env, user));
+        return FMTemplateSelector.select("EditDiscussion", "ask", env, request);
+    }
+
+    /**
      * last step - either shows preview of question or saves new discussion
      */
     public String actionAddQuestion2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
@@ -269,6 +281,7 @@ public class EditDiscussion implements AbcAction {
         canContinue &= setText(params, root, env);
         canContinue &= setCommentAuthor(params, user, comment, root, env);
         canContinue &= setUserIPAddress(root, request);
+        canContinue &= checkSpambot(request, response, params, env, user);
 
         if ( !canContinue || params.get(PARAM_PREVIEW)!=null ) {
             comment.setCreated(new Date());
@@ -305,11 +318,6 @@ public class EditDiscussion implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
-
-        if ( user == null && ! isQuestionInForum(relation)) {
-            ServletUtils.addMessage(LOGIN_REQUIRED, env, null);
-            return FMTemplateSelector.select("ViewUser", "login", env, request);
-        }
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if ( discussion==null )
@@ -350,11 +358,6 @@ public class EditDiscussion implements AbcAction {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         Relation relation = (Relation) env.get(VAR_RELATION);
         User user = (User) env.get(Constants.VAR_USER);
-
-        if (user == null && !isQuestionInForum(relation)) {
-            ServletUtils.addMessage(LOGIN_REQUIRED, env, null);
-            return FMTemplateSelector.select("ViewUser", "login", env, request);
-        }
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if ( discussion==null )
@@ -1172,23 +1175,20 @@ public class EditDiscussion implements AbcAction {
         return true;
     }
 
-    /**
-     * Anonymous post allowance test. The method setForumQuestionFlag() must be called prior this method.
-     * @param user current user
-     * @param env  environment
-     * @param relation initialized discussion relation
-     * @return false, if user is not logged in and anonymous posts are prohibited
-     */
-    static boolean testAnonymCanPostComments(User user, Relation relation, Map env) {
-        if (user != null)
-            return true;
-
-        if (isQuestionInForum(relation))
-            return true;
-
-        ServletUtils.addError(ServletUtils.PARAM_LOG_USER, "Zadejte prosím své pøihla¹ovací údaje.", env, null);
-        return false;
-    }
+//    /**
+//     * Anonymous post allowance test. The method setForumQuestionFlag() must be called prior this method.
+//     * @return false, if user is not logged in and anonymous posts are prohibited
+//     */
+//    static boolean testAnonymCanPostComments(User user, Relation relation, Map env) {
+//        if (user != null)
+//            return true;
+//
+//        if (isQuestionInForum(relation))
+//            return true;
+//
+//        ServletUtils.addError(ServletUtils.PARAM_LOG_USER, "Zadejte prosím své pøihla¹ovací údaje.", env, null);
+//        return false;
+//    }
 
     /**
      * Sets client's IP address. Changes are not synchronized with persistence.
@@ -1312,16 +1312,12 @@ public class EditDiscussion implements AbcAction {
         return true;
     }
 
-    /**
-     * @param relation initialized discussion relation
-     * @return true if discussion is question in forum, false otherwise (discussion for article, news, story etc)
-     */
-    static boolean isQuestionInForum(Relation relation) {
-        return true;
+//    static boolean isQuestionInForum(Relation relation) {
+//        return true;
 //        Persistance persistence = PersistanceFactory.getPersistance();
 //        GenericObject parent = persistence.findById(relation.getParent());
 //        return (parent instanceof Category && ((Category)parent).getType()==Category.FORUM);
-    }
+//    }
 
     /**
      * This method detects if there is cookie COOKIE_USER_VERIFIED. In such case
