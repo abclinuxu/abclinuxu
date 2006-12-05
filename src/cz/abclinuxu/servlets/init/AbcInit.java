@@ -67,7 +67,7 @@ public class AbcInit extends HttpServlet implements Configurable {
     public static final String PREF_START_UPDATE_STATISTICS = "start.update.statistics";
     public static final String PREF_START_JOB_OFFER_MANAGER = "start.job.offer.manager";
 
-    Timer scheduler;
+    Timer scheduler, slowScheduler;
     VariableFetcher fetcher;
     private Map services = new HashMap(16, 1.0f);
     static AbcInit instance;
@@ -115,7 +115,8 @@ public class AbcInit extends HttpServlet implements Configurable {
             scheduler = null;
         }
         log.info("Startuji ulohy");
-        scheduler = new Timer(true);
+        scheduler = new Timer("scheduler", true);
+        slowScheduler = new Timer("slow scheduler", true);
         startFetchingVariables();
         startUpdateStatistics();
         startLinksUpdate();
@@ -137,7 +138,7 @@ public class AbcInit extends HttpServlet implements Configurable {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {}
 
     /**
-     * Update links each three hours.
+     * Update links each three hours. It may take even minutes or hours to complete.
      */
     protected void startLinksUpdate() {
         if ( !isSet(PREF_START_RSS_MONITOR) ) {
@@ -145,7 +146,7 @@ public class AbcInit extends HttpServlet implements Configurable {
             return;
         }
         log.info("Scheduling RSS monitor");
-        scheduler.schedule(UpdateLinks.getInstance(), 60 * 1000, 3 * 60 * 60 * 1000);
+        slowScheduler.schedule(UpdateLinks.getInstance(), 60 * 1000, 3 * 60 * 60 * 1000);
     }
 
     /**
@@ -157,7 +158,7 @@ public class AbcInit extends HttpServlet implements Configurable {
             return;
         }
         log.info("Scheduling RSS unixshop monitor");
-        scheduler.schedule(new UnixshopFetcher(), 2*60*1000, 2*60*60*1000);
+        slowScheduler.schedule(new UnixshopFetcher(), 2*60*1000, 2*60*60*1000);
     }
 
     /**
@@ -169,7 +170,7 @@ public class AbcInit extends HttpServlet implements Configurable {
             return;
         }
         log.info("Scheduling RSS OKSystem monitor");
-        scheduler.schedule(new OKSystemFetcher(), 60*1000, 2*60*60*1000);
+        slowScheduler.schedule(new OKSystemFetcher(), 60*1000, 2*60*60*1000);
     }
 
     /**
@@ -181,7 +182,7 @@ public class AbcInit extends HttpServlet implements Configurable {
             return;
         }
         log.info("Scheduling JobPilot RSS monitor");
-        scheduler.schedule(new JobPilotFetcher(), 3*60*1000, 2*60*60*1000);
+        slowScheduler.schedule(new JobPilotFetcher(), 3*60*1000, 2*60*60*1000);
     }
 
     /**
@@ -232,7 +233,7 @@ public class AbcInit extends HttpServlet implements Configurable {
             return;
         }
         log.info("Scheduling watched discussion cleaner");
-        scheduler.schedule(EnsureWatchedDiscussionsLimit.getInstance(), 2*60*1000, 6*60*60*1000);
+        slowScheduler.schedule(EnsureWatchedDiscussionsLimit.getInstance(), 2*60*1000, 6*60*60*1000);
     }
 
     /**
@@ -294,7 +295,7 @@ public class AbcInit extends HttpServlet implements Configurable {
     }
 
     /**
-     * Send weekly emails each saturday noon.
+     * Create weekly summary article.
      */
     private void startWeeklySummary() {
         if ( !isSet(PREF_START_WEEKLY_SUMMARY) ) {
