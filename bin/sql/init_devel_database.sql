@@ -14,8 +14,8 @@ insert into uzivatel values(2,'user','U¾ivatel','root@localhost','changeit','Min
 <settings><emoticons>no</emoticons></settings></data>');
 
 -- prenest vsechny sekce
-insert into devel.kategorie select * from abc.kategorie;
-insert into devel.relace select * from abc.relace where typ_potomka='K';
+insert into devel.kategorie select * from abc.kategorie where typ!=3;
+insert into devel.relace select R.* from abc.relace R, abc.kategorie K where typ_potomka='K' and potomek=K.cislo and typ!=3;
 -- prenest servery vcetne jejich odkazu
 insert into devel.server (cislo,jmeno,url) select cislo,jmeno,url from abc.server;
 update server set kontakt="";
