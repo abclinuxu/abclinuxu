@@ -232,7 +232,7 @@
                         </node>
                         <node name="MysqlVersioningProvider">
                             <map>
-                                <entry key="sql.find.latest.version" value="select max(verze) from verze where cesta=?"/>
+                                <entry key="sql.find.latest.version" value="select max(cast(verze as unsigned)) from verze where cesta=?"/>
                                 <entry key="sql.find.all.versions" value="select verze,kdo,kdy from verze where cesta=? order by kdy desc"/>
                                 <entry key="sql.insert.version" value="insert into verze (cesta,verze,kdo,kdy,obsah) values (?,?,?,?,?)"/>
                                 <entry key="sql.fetch.document" value="select verze,kdo,kdy,obsah from verze where cesta=? and verze=?"/>
