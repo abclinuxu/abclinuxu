@@ -185,6 +185,8 @@ public class EditNews implements AbcAction {
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
+        EditDiscussion.createEmptyDiscussion(relation, user, persistence);
+
         if (redirect) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, UrlUtils.PREFIX_NEWS + "/show/"+relation.getId());

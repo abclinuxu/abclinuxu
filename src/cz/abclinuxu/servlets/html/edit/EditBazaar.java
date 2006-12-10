@@ -159,6 +159,8 @@ public class EditBazaar implements AbcAction {
         // commit new version
         Misc.commitRelation(document.getRootElement(), relation, user);
 
+        EditDiscussion.createEmptyDiscussion(relation, user, persistence);
+
         FeedGenerator.updateBazaar();
         VariableFetcher.getInstance().refreshBazaar();
 

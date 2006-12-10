@@ -191,6 +191,8 @@ public class EditPoll implements AbcAction {
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
+        EditDiscussion.createEmptyDiscussion(relation, user, persistence);
+
         if (relation.getUpper()==Constants.REL_POLLS)
             FeedGenerator.updatePolls();
 

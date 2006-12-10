@@ -356,11 +356,11 @@ public class EditBlog implements AbcAction, Configurable {
         Relation relation = new Relation(blog, story, blogRelation.getId());
         persistence.create(relation);
 
+        Relation dizRelation = EditDiscussion.createEmptyDiscussion(relation, user, persistence);
+
         String watchDiscussion = (String) params.get(PARAM_WATCH_DISCUSSION);
-        if ("yes".equals(watchDiscussion)) {
-            Relation dizRelation = EditDiscussion.createEmptyDiscussion(relation, user, persistence);
+        if ("yes".equals(watchDiscussion))
             EditDiscussion.alterDiscussionMonitor((Item) dizRelation.getChild(), user, persistence);
-        }
 
         if (!delayed) {
             incrementArchiveRecord(blog.getData().getRootElement(), new Date());

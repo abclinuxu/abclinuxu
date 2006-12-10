@@ -234,6 +234,8 @@ public class EditArticle implements AbcAction {
             persistence.create(recordRelation);
             recordRelation.getParent().addChildRelation(recordRelation);
 
+            EditDiscussion.createEmptyDiscussion(relation, user, persistence);
+
             VariableFetcher.getInstance().refreshArticles();
 
             if (redirect) {
