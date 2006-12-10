@@ -53,6 +53,8 @@ import cz.abclinuxu.scheduler.VariableFetcher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.prefs.Preferences;
 
 import org.apache.regexp.RE;
@@ -128,7 +130,6 @@ public class EditBlog implements AbcAction, Configurable {
     public static final String VAR_IS_DELAYED = "DELAYED";
     public static final String VAR_RELATION = "RELATION";
 
-    public static final String BREAK_TAG = "<break>";
     public static final String PREF_RE_INVALID_BLOG_NAME = "regexp.invalid.blogname";
     public static final String PREF_MAX_STORY_TITLE_LENGTH = "max.story.title.length";
     public static final String PREF_MAX_STORY_WORD_COUNT = "max.story.word.count";
@@ -1246,15 +1247,15 @@ public class EditBlog implements AbcAction, Configurable {
             return false;
         }
 
+        Pattern breakTagPattern = Pattern.compile("\\<break[ ]*/?\\>", Pattern.CASE_INSENSITIVE);
         String stripped = null, perex = null;
-        int position = content.indexOf(BREAK_TAG);
-        if (position==-1)
-            stripped = Tools.removeTags(content);
-        else {
-            perex = content.substring(0, position);
-            content = content.substring(position+BREAK_TAG.length());
+        Matcher matcher = breakTagPattern.matcher(content);
+        if ( matcher.find() ) {
+            perex = content.substring(0, matcher.start());
+            content = content.substring(matcher.end());
             stripped = Tools.removeTags(perex);
-        }
+        } else
+            stripped = Tools.removeTags(content);
 
         StringTokenizer stk = new StringTokenizer(stripped, " \t\n\r\f,.");
         if (stk.countTokens()>maxStoryWordCount) {
@@ -1263,7 +1264,7 @@ public class EditBlog implements AbcAction, Configurable {
         }
 
         try {
-            if (perex!=null)
+            if (perex != null)
                 BlogHTMLGuard.check(perex);
             BlogHTMLGuard.check(content);
         } catch (ParserException e) {
@@ -1276,18 +1277,18 @@ public class EditBlog implements AbcAction, Configurable {
         }
 
         Element tagPerex = root.element("perex");
-        if (position!=-1) {
-            if (tagPerex==null)
+        if (perex != null) {
+            if (tagPerex == null)
                 tagPerex = root.addElement("perex");
             tagPerex.setText(perex);
             tagPerex.addAttribute("format", Integer.toString(Format.HTML.getId()));
         } else {
-            if (tagPerex!=null)
+            if (tagPerex != null)
                 tagPerex.detach();
         }
 
         Element tagContent = root.element("content");
-        if (tagContent==null)
+        if (tagContent == null)
             tagContent = root.addElement("content");
         tagContent.setText(content);
         tagContent.addAttribute("format", Integer.toString(Format.HTML.getId()));
