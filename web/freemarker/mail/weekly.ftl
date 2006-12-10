@@ -13,12 +13,10 @@ Prehled clanku
  <#lt> | Komentaru: ${clanek.comments}
 
  ${clanek.perex}
-
  http://www.abclinuxu.cz${clanek.url}
  ---------------------
 
 </#list>
-
 
 Reklama
 =======
