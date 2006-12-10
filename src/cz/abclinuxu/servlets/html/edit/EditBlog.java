@@ -136,6 +136,7 @@ public class EditBlog implements AbcAction, Configurable {
 
     static REProgram reBlogName;
     static int maxStoryTitleLength, maxStoryWordCount;
+    private final Pattern breakTagPattern = Pattern.compile("\\<break[ ]*/?\\>", Pattern.CASE_INSENSITIVE);
 
     static {
         EditBlog instance = new EditBlog();
@@ -1247,7 +1248,6 @@ public class EditBlog implements AbcAction, Configurable {
             return false;
         }
 
-        Pattern breakTagPattern = Pattern.compile("\\<break[ ]*/?\\>", Pattern.CASE_INSENSITIVE);
         String stripped = null, perex = null;
         Matcher matcher = breakTagPattern.matcher(content);
         if ( matcher.find() ) {
