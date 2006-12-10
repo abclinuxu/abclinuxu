@@ -23,6 +23,7 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.DateTool;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.format.HtmlToTextFormatter;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.persistence.*;
@@ -54,6 +55,7 @@ public class WeeklyEmail extends TimerTask implements Configurable {
     public static final String VAR_YEAR = "YEAR";
 
     String subject, sender, template;
+    private int count;
 
     /**
      * Default constructor.
@@ -82,7 +84,7 @@ public class WeeklyEmail extends TimerTask implements Configurable {
 
             List users = SQLTool.getInstance().findUsersWithWeeklyEmail(null);
             log.info("Weekly emails have subscribed "+users.size()+" users.");
-            int count = EmailSender.sendEmailToUsers(params,users);
+            count = EmailSender.sendEmailToUsers(params,users);
             log.info("Weekly email sucessfully sent to "+count+" addressses.");
         } catch (Exception e) {
             log.warn("Cannot sent weekly emails!",e);
@@ -115,8 +117,12 @@ public class WeeklyEmail extends TimerTask implements Configurable {
             item = (Item) relation.getChild();
             title = Tools.xpath(item, "data/name");
             Article article = new Article(title, item.getCreated(), relation.getUrl());
-            String tmp = Tools.xpath(item, "/data/author");
-            article.setAuthor(Tools.createUser(tmp).getName());
+            Set authors = item.getProperty(Constants.PROPERTY_AUTHOR);
+            for (Iterator iterIn = authors.iterator(); iterIn.hasNext();) {
+                int rid = Misc.parseInt((String) iterIn.next(), 0);
+                Relation author = (Relation) Tools.sync(new Relation(rid));
+                article.addAuthor(author);
+            }
             article.setPerex(Tools.xpath(item, "data/perex"));
             article.setComments(Tools.findComments(item).getResponseCount());
             articles.add(article);
@@ -161,7 +167,8 @@ public class WeeklyEmail extends TimerTask implements Configurable {
     public static void main(String[] args) {
         JobOfferManager jobs = new JobOfferManager();
         jobs.run();
-        WeeklyEmail weeklyEmail = new WeeklyEmail();
-        weeklyEmail.run();
+        WeeklyEmail instance = new WeeklyEmail();
+        instance.run();
+        System.out.println("Weekly email sucessfully sent to " + instance.count + " addressses.");
     }
 }

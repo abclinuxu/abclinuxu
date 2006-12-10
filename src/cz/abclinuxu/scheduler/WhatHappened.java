@@ -37,6 +37,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.edit.EditArticle;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.DateTool;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
@@ -78,6 +79,7 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
     static final String VAR_CONCEPTS = "CONCEPTS";
     static final String VAR_HARDWARE = "HARDWARE";
     static final String VAR_JOBS = "JOBS";
+    private Relation relation;
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         feedDataToMap(env);
@@ -97,7 +99,7 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
             Persistence persistence = PersistenceFactory.getPersistance();
             Relation articles = (Relation) persistence.findById(new Relation(Constants.REL_ARTICLEPOOL));
             map.put(EditArticle.VAR_RELATION, articles);
-            User articleAuthor = (User) persistence.findById(new User(author));
+            User articleAuthor = (User) persistence.findById(new User(1));
             map.put(Constants.VAR_USER, articleAuthor);
             params.put(EditArticle.PARAM_TITLE, map.get(VAR_TITLE));
             params.put(EditArticle.PARAM_AUTHORS, Integer.toString(author));
@@ -110,7 +112,7 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
 
             EditArticle editArticle = new EditArticle();
             editArticle.actionAddStep2(null, null, map, false);
-            Relation relation = (Relation) map.get(EditArticle.VAR_RELATION);
+            relation = (Relation) map.get(EditArticle.VAR_RELATION);
             Item article = (Item) relation.getChild();
             article.getData().getRootElement().addAttribute(INDEXING_FORBIDDEN, "true");
             persistence.update(article);
@@ -123,7 +125,10 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
     public static void main(String[] args) throws Exception {
         FMTemplateSelector.initialize(AbcConfig.getDeployPath() + "WEB-INF/conf/templates.xml");
         FMUtils.getConfiguration().setSharedVariable(Constants.VAR_DATE_TOOL, new DateTool());
-        new WhatHappened().run();
+        FMUtils.getConfiguration().setSharedVariable(Constants.VAR_TOOL, new Tools());
+        WhatHappened instance = new WhatHappened();
+        instance.run();
+        System.out.println("done, relation: "+instance.relation.getId());
     }
 
     public void feedDataToMap(Map env) {
@@ -153,12 +158,15 @@ public class WhatHappened extends TimerTask implements AbcAction, Configurable {
         for ( Iterator iter = relations.iterator(); iter.hasNext(); ) {
             Relation relation = (Relation) iter.next();
             item = (Item) relation.getChild();
-            String tmp = Tools.xpath(item, "/data/author");
             title = Tools.xpath(item, "data/name");
+
             Article article = new Article(title, item.getCreated(), relation.getUrl());
-            User author = Tools.createUser(tmp);
-            article.setAuthor(author.getName());
-            article.setAuthorId(author.getId());
+            Set authors = item.getProperty(Constants.PROPERTY_AUTHOR);
+            for (Iterator iterIn = authors.iterator(); iterIn.hasNext();) {
+                int rid = Misc.parseInt((String) iterIn.next(), 0);
+                Relation author = (Relation) Tools.sync(new Relation(rid));
+                article.addAuthor(author);
+            }
             article.setPerex(Tools.xpath(item, "data/perex"));
             article.setComments(Tools.findComments(item).getResponseCount());
             article.setReads(Tools.getCounterValue(item, Constants.COUNTER_READ));

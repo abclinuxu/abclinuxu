@@ -2,9 +2,14 @@
 
 <#list ARTICLES?if_exists as clanek>
  <h2><a href="${clanek.url}">${clanek.title}</a></h2>
- <p>${DATE.show(clanek.published, "CZ_FULL", false)} | <a href="/Profile/${clanek.authorId}">${clanek.author}</a><br>
- ${clanek.perex}<br>
- Pøeèteno: ${clanek.reads}x | Komentáøù: ${clanek.comments}
+ <p>
+    ${DATE.show(clanek.published, "CZ_FULL", false)} |
+    <#list clanek.authors as author>
+        <a href="${author.url}">${TOOL.childName(author)}</a><#if author_has_next>, </#if>
+    </#list>
+    <br>
+    ${clanek.perex}<br>
+    Pøeèteno: ${clanek.reads}x | Komentáøù: ${clanek.comments}
  </p>
 </#list>
 

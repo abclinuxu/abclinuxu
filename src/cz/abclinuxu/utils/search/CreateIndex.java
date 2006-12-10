@@ -716,7 +716,12 @@ public class CreateIndex implements Configurable {
         Item article = (Item) relation.getChild();
         StringBuffer sb = new StringBuffer();
         String title;
-        storeUser(article.getOwner(), sb);
+
+        Set authors = article.getProperty(Constants.PROPERTY_AUTHOR);
+        for (Iterator iter = authors.iterator(); iter.hasNext();) {
+            int rid = Misc.parseInt((String)iter.next(), 0);
+            storeAuthor(rid, sb);
+        }
 
         Element data = article.getData().getRootElement();
         if (data.attribute(WhatHappened.INDEXING_FORBIDDEN)!=null)
@@ -975,6 +980,24 @@ public class CreateIndex implements Configurable {
                 sb.append(" ");
             }
             sb.append(user.getName());
+            sb.append(" ");
+        } catch (NotFoundException e) {
+            // user could be deleted
+        }
+    }
+
+    /**
+     * Appends user information into stringbuffer. If there is no such user,
+     * error is ignored and this method does nothing.
+     * @param rid author relation id
+     * @param sb
+     */
+    private static void storeAuthor(int rid, StringBuffer sb) {
+        try {
+            sb.append(" ");
+            Relation relation = (Relation) persistence.findById(new Relation(rid));
+            Item author = (Item) persistence.findById(relation.getChild());
+            sb.append(Tools.childName(author));
             sb.append(" ");
         } catch (NotFoundException e) {
             // user could be deleted

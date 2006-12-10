@@ -18,15 +18,20 @@
  */
 package cz.abclinuxu.data.view;
 
+import cz.abclinuxu.data.Relation;
+
 import java.util.Date;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * Wrapper arround article.
  */
 public class Article {
-    private String title, perex, author, url;
+    private String title, perex, url;
+    private Set<Relation> authors = new HashSet<Relation>(2);
     private Date published;
-    private int relationId, comments, reads, authorId;
+    private int relationId, comments, reads;
 
     public Article(String title, Date published, String url) {
         this.title = title;
@@ -42,16 +47,8 @@ public class Article {
         this.perex = perex;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public int getAuthorId() {
-        return authorId;
-    }
-
-    public void setAuthorId(int authorId) {
-        this.authorId = authorId;
+    public void addAuthor(Relation author) {
+        this.authors.add(author);
     }
 
     public int getComments() {
@@ -82,8 +79,8 @@ public class Article {
         return perex;
     }
 
-    public String getAuthor() {
-        return author;
+    public Set<Relation> getAuthors() {
+        return authors;
     }
 
     public Date getPublished() {

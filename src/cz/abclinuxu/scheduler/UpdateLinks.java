@@ -90,6 +90,8 @@ public class UpdateLinks extends TimerTask implements Configurable {
      * constructor
      */
     private UpdateLinks() {
+        System.setProperty ("sun.net.client.defaultReadTimeout", "7000");
+        System.setProperty ("sun.net.client.defaultConnectTimeout", "7000");
     }
 
     /**

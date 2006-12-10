@@ -8,12 +8,13 @@ Prehled clanku
 
 <#list ARTICLES as clanek>
  ${clanek.title}
- ${DATE.show(clanek.published, "CZ_FULL")} | ${clanek.author} | Komentaru: ${clanek.comments}
+ ${DATE.show(clanek.published, "CZ_FULL")} | <#rt>
+ <#lt><#list clanek.authors as author><a href="${author.url}">${TOOL.childName(author)}</a><#if author_has_next>, </#if></#list><#rt>
+ <#lt> | Komentaru: ${clanek.comments}
 
  ${clanek.perex}
 
  http://www.abclinuxu.cz${clanek.url}
-
  ---------------------
 
 </#list>
@@ -22,14 +23,19 @@ Prehled clanku
 Reklama
 =======
 
-HOT JOB! Do you know the UNIX environment, VERITAS
-and have experience in diagnosing and troubleshooting
-workstation systems? We are looking for TECHNICAL
-SUPPORT ENGINEERS to provide support to internal and
-external customers and identify and solve complex
-issues.  Learn more...
+HOT JOB! Do you know the UNIX environment, VERITAS and have experience in
+diagnosing and troubleshooting workstation systems? We are looking for UNIX
+SUPPORT ENGINEERS to provide support to internal and external customers and
+identify and solve complex issues.  Learn more at
+http://www.talents.cz/sunjobs2_detail.php?id=205
 
-http://www.talents.cz/sunjobs2_detail.php?id=176
+
+CVO Technology Recruitment je ta spravna platforma pro rizeni Vasi dalsi
+profesni kariery! Pro vedouci mezinarodni i lokalni technologicke spolecnosti
+v regionu stredni a vychodni Evropy hledame technicke nadsence na specializovane
+IT pracovni pozice.
+
+Vice na www.cvotechnology.com.
 
 
 Prehled zpravicek
