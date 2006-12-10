@@ -9,7 +9,7 @@ Prehled clanku
 <#list ARTICLES as clanek>
  ${clanek.title}
  ${DATE.show(clanek.published, "CZ_FULL")} | <#rt>
- <#lt><#list clanek.authors as author><a href="${author.url}">${TOOL.childName(author)}</a><#if author_has_next>, </#if></#list><#rt>
+ <#lt><#list clanek.authors as author>${TOOL.childName(author)}<#if author_has_next>, </#if></#list><#rt>
  <#lt> | Komentaru: ${clanek.comments}
 
  ${clanek.perex}
