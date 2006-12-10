@@ -25,7 +25,7 @@ a vygeneruje se z nìj URL.</p>
     <h2>${TOOL.xpath(RELATION.child,"/data/title")?if_exists}</h2>
     <@lib.showNews RELATION />
 
-<form action="${URL.make("/edit")}" method="POST">
+<form action="${URL.make("/edit")}" method="POST" name="newsForm">
  <table cellpadding="5" border="0">
   <tr>
    <td class="required">Titulek</td>
