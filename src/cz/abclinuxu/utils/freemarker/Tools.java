@@ -774,8 +774,8 @@ public class Tools implements Configurable {
      * @return synchronized relation
      */
     public static Relation createRelation(int id) {
-        Relation relation = new Relation(id);
-        return (Relation) persistence.findById(relation);
+        Relation relation = (Relation) sync(new Relation(id));
+        return relation;
     }
 
     /**
@@ -784,8 +784,7 @@ public class Tools implements Configurable {
      */
     public static Relation createRelation(String id) {
         int i = Integer.parseInt(id);
-        Relation relation = new Relation(i);
-        return (Relation) persistence.findById(relation);
+        return createRelation(i);
     }
 
     /**
