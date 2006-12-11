@@ -28,8 +28,12 @@ public class GenerateLinks extends TimerTask {
     static Logger log = Logger.getLogger(GenerateLinks.class);
 
     public void run() {
-        log.debug(getClass().getName() + " starts");
+        log.debug(getJobName() + " starts");
         FeedGenerator.updateArticles();
-        log.debug(getClass().getName() + " finished");
+        log.debug(getJobName() + " finished");
+    }
+
+    private String getJobName() {
+        return "GenerateLinks";
     }
 }

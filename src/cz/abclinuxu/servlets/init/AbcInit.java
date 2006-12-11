@@ -57,7 +57,7 @@ public class AbcInit extends HttpServlet implements Configurable {
     public static final String PREF_START_RSS_OKSYSTEM = "start.rss.oksystem";
     public static final String PREF_START_RSS_JOBPILOT = "start.rss.jobpilot";
     public static final String PREF_START_VARIABLE_FETCHER = "start.variable.fetcher";
-    public static final String PREF_START_ARTICLE_POOL_MONITOR = "start.article.pool.monitor";
+    public static final String PREF_START_POOL_MONITOR = "start.pool.monitor";
     public static final String PREF_START_ABC_MONITOR = "start.abc.monitor";
     public static final String PREF_START_FORUM_MAIL_GATEWAY = "start.forum.mail.gateway";
     public static final String PREF_START_WEEKLY_EMAILS = "start.weekly.emails";
@@ -124,7 +124,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         startOKSystemUpdate();
         startJobPilotUpdate();
         startGenerateLinks();
-        startArticlePoolMonitor();
+        startPoolMonitor();
         startSendingWeeklyEmails();
         startWeeklySummary();
         startObjectMonitor();
@@ -237,16 +237,16 @@ public class AbcInit extends HttpServlet implements Configurable {
     }
 
     /**
-     * Monitors article pool and moves articles to new articles, when they are ready.
+     * Monitors article and news pools for objects to be published.
      * Start one minute later with period of 3 minutes.
      */
-    protected void startArticlePoolMonitor() {
-        if ( !isSet(PREF_START_ARTICLE_POOL_MONITOR) ) {
-            log.info("Article pool monitor configured not to run");
+    protected void startPoolMonitor() {
+        if ( !isSet(PREF_START_POOL_MONITOR) ) {
+            log.info("Pool monitor configured not to run");
             return;
         }
-        log.info("Scheduling ArticlePool monitor");
-        scheduler.schedule(new ArticlePoolMonitor(), 60*1000, 3*60*1000);
+        log.info("Scheduling Pool monitor");
+        scheduler.schedule(new PoolMonitor(), 60*1000, 3*60*1000);
     }
 
     /**
@@ -373,7 +373,7 @@ public class AbcInit extends HttpServlet implements Configurable {
      */
     public void configure(Preferences prefs) throws ConfigurationException {
         services.put(PREF_START_ABC_MONITOR, prefs.getBoolean(PREF_START_ABC_MONITOR, true));
-        services.put(PREF_START_ARTICLE_POOL_MONITOR, prefs.getBoolean(PREF_START_ARTICLE_POOL_MONITOR, true));
+        services.put(PREF_START_POOL_MONITOR, prefs.getBoolean(PREF_START_POOL_MONITOR, true));
         services.put(PREF_START_FORUM_MAIL_GATEWAY, prefs.getBoolean(PREF_START_FORUM_MAIL_GATEWAY, true));
         services.put(PREF_START_RSS_GENERATOR, prefs.getBoolean(PREF_START_RSS_GENERATOR, true));
         services.put(PREF_START_RSS_MONITOR, prefs.getBoolean(PREF_START_RSS_MONITOR, true));

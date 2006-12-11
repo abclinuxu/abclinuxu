@@ -17,26 +17,32 @@
  <#local
    ITEM=TOOL.sync(relation.child),
    autor=TOOL.createUser(ITEM.owner),
-   title=TOOL.xpath(ITEM, "/data/title")?default("Zprávièka")
+   title=TOOL.xpath(ITEM, "/data/title")?default("Zprávièka"),
+   locked = TOOL.xpath(ITEM, "//locked_by")?exists,
+   approved = TOOL.xpath(ITEM, "//approved_by")?exists
  >
  <h3>${title}</h3>
  <p>
     ${TOOL.xpath(ITEM,"data/content")}
     <br>
-    ${DATE.show(ITEM.created,"CZ_FULL")}
+    <#if approved><b></#if>${DATE.show(ITEM.created,"SMART")}<#if approved></b></#if> |
+    ${NEWS_CATEGORIES[ITEM.subType].name} |
     <a href="/Profile/${autor.id}">${autor.name}</a>
-    <br> 
+    <br>
     <a href="${URL.make("/edit?action=mail&amp;rid="+relation.id)}">Poslat email autorovi</a>
-    <#if TOOL.xpath(ITEM, "//locked_by")?exists>
+    <#if locked>
         <#assign admin=TOOL.createUser(TOOL.xpath(ITEM, "//locked_by"))>
         Uzamknul <a href="/Profile/${admin.id}">${admin.name}</a> -
         <a href="${URL.make("/edit?action=unlock&amp;rid="+relation.id)}">odemknout</a>
     <#else>
         <a href="${URL.make("/show/"+relation.id)}">Zobrazit</a>
         <a href="${URL.make("/edit?action=edit&amp;rid="+relation.id)}">Upravit</a>
-        <a href="${URL.make("/edit?action=approve&amp;rid="+relation.id)}">Schválit</a>
+        <#if ! approved>
+            <a href="${URL.make("/edit?action=approve&amp;rid="+relation.id)}">Schválit</a>
+            <a href="${URL.make("/edit?action=lock&amp;rid="+relation.id)}">Zamknout</a>
+        </#if>
+
         <a href="${URL.make("/edit?action=remove&amp;rid="+relation.id)}">Smazat</a>
-        <a href="${URL.make("/edit?action=lock&amp;rid="+relation.id)}">Zamknout</a>
     </#if>
  </p>
 </#macro>

@@ -257,8 +257,7 @@ public class EditNews implements AbcAction {
         VariableFetcher.getInstance().refreshNews();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        String url = (relation.getUrl()!=null)? relation.getUrl() : "/zpravicky/show/"+relation.getId();
-        urlUtils.redirect(response, url);
+        urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
         return null;
     }
 
@@ -266,15 +265,23 @@ public class EditNews implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistance();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         Relation relation = (Relation) env.get(VAR_RELATION);
+
         if (relation.getParent().getId() != Constants.CAT_NEWS_POOL) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Zprávièka ji¾ byla schválena!", env, request.getSession());
-            urlUtils.redirect(response, "/zpravicky/show/" + relation.getId());
+            urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
             return null;
         }
 
         Item item = (Item) relation.getChild();
-        Element element = DocumentHelper.makeElement(item.getData(), "/data/approved_by");
+        Element element = (Element) item.getData().selectSingleNode("/data/approved_by");
+        if (element != null) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Zprávièka ji¾ byla schválena a èeká na èas publikování.", env, request.getSession());
+            urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
+            return null;
+        }
+
         User user = (User) env.get(Constants.VAR_USER);
+        element = DocumentHelper.makeElement(item.getData(), "/data/approved_by");
         element.setText(Integer.toString(user.getId()));
         persistence.update(item);
 
@@ -282,16 +289,21 @@ public class EditNews implements AbcAction {
         String url = UrlUtils.PREFIX_NEWS + "/" + URLManager.enforceRelativeURL(element.getTextTrim());
         url = URLManager.protectFromDuplicates(url);
         relation.setUrl(url);
-
-        relation.getParent().removeChildRelation(relation);
-        relation.getParent().setId(Constants.CAT_NEWS);
-        relation.setUpper(Constants.REL_NEWS);
         persistence.update(relation);
-        relation.getParent().addChildRelation(relation);
+
         AdminLogger.logEvent(user, "  approve | news " + relation.getId());
 
-        FeedGenerator.updateNews();
-        VariableFetcher.getInstance().refreshNews();
+        if (item.getCreated().getTime() <= System.currentTimeMillis()) {
+            relation.getParent().removeChildRelation(relation);
+            relation.getParent().setId(Constants.CAT_NEWS);
+            relation.setUpper(Constants.REL_NEWS);
+            persistence.update(relation);
+            relation.getParent().addChildRelation(relation);
+
+            FeedGenerator.updateNews();
+            VariableFetcher.getInstance().refreshNews();
+        } else
+            ServletUtils.addMessage("Zprávièka èeká na èas publikování.", env, request.getSession());
 
         urlUtils.redirect(response, url);
         return null;
@@ -328,7 +340,7 @@ public class EditNews implements AbcAction {
         FeedGenerator.updateNews();
         VariableFetcher.getInstance().refreshNews();
 
-        response.sendRedirect(response.encodeRedirectURL("/"));
+        response.sendRedirect(response.encodeRedirectURL(UrlUtils.PREFIX_NEWS+"/dir/"+ Constants.CAT_NEWS_POOL));
         return null;
     }
 
@@ -345,8 +357,7 @@ public class EditNews implements AbcAction {
         AdminLogger.logEvent(user, "  lock | news "+relation.getId());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        String url = (relation.getUrl() != null) ? relation.getUrl() : "/zpravicky/show/" + relation.getId();
-        urlUtils.redirect(response, url);
+        urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
         return null;
     }
 
@@ -363,8 +374,7 @@ public class EditNews implements AbcAction {
         AdminLogger.logEvent(user, "  unlock | news "+relation.getId());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        String url = (relation.getUrl() != null) ? relation.getUrl() : "/zpravicky/show/" + relation.getId();
-        urlUtils.redirect(response, url);
+        urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
         return null;
     }
 

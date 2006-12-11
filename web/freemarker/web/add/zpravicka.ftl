@@ -32,39 +32,42 @@ s vysvìtlením. Teprve po schválení bude zprávièka zveøejnìna.</p>
 </#if>
 
 <form action="${URL.make("/edit")}" method="POST" name="newsForm">
-  <p>
-   <span class="required">Titulek</span><br>
-   <input tabindex="1" type="text" name="title" size="40" maxlength="50" value="${PARAMS.title?if_exists?html}">
-   <div class="error">${ERRORS.title?if_exists}</div>
-   <span class="required">Obsah</span>
-   <div class="form-edit">
-     <a href="javascript:insertAtCursor(document.newsForm.content, '&lt;a href=&quot;&quot;&gt;', '</a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
-   </div>
-   <textarea tabindex="2" name="content" cols="60" rows="10" tabindex="1">${PARAMS.content?if_exists?html}</textarea>
-   <div class="error">${ERRORS.content?if_exists}</div>
-  </p>
-  <#if USER?exists && USER.hasRole("news admin")>
-    Datum zveøejnìní: <input type="text" size="16" name="publish" value="${PARAMS.publish?if_exists}">
-    (zatím jen nastaví datum) Formát 2005-01-25 07:12
-    <div class="error">${ERRORS.publish?if_exists}</div>
-  </#if>
-  <h3>Kategorie</h3>
-   <#assign selected = PARAMS.category?default("RELEASE")>
-   <dl>
-   <#list CATEGORIES as category>
-    <dt>
-     <input type="radio" name="category" value="${category.key}"
-     <#if category.key=selected>checked</#if> >
-     <b>${category.name}</b>
-    </dt>
-    <dd>${category.desc}</dd>
-   </#list>
-   </dl>
-   <p>
-       <input tabindex="3" name="preview" type="submit" value="Náhled">
-       <input tabindex="4" type="submit" value="Dokonèi">
-       <input type="hidden" name="action" value="add2">
-   </p>
+    <p>
+        <span class="required">Titulek</span><br>
+        <input tabindex="1" type="text" name="title" size="40" maxlength="50" value="${PARAMS.title?if_exists?html}">
+        <div class="error">${ERRORS.title?if_exists}</div>
+
+        <span class="required">Obsah</span>
+        <div class="form-edit">
+            <a href="javascript:insertAtCursor(document.newsForm.content, '&lt;a href=&quot;&quot;&gt;', '</a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
+        </div>
+        <textarea tabindex="2" name="content" cols="60" rows="10" tabindex="1">${PARAMS.content?if_exists?html}</textarea>
+        <div class="error">${ERRORS.content?if_exists}</div>
+    </p>
+
+    <#if USER?exists && USER.hasRole("news admin")>
+        Datum zveøejnìní: <input type="text" size="16" name="publish" value="${PARAMS.publish?if_exists}">
+        Formát 2005-01-25 07:12
+        <div class="error">${ERRORS.publish?if_exists}</div>
+    </#if>
+
+    <h3>Kategorie</h3>
+    <#assign selected = PARAMS.category?default("RELEASE")>
+    <dl>
+        <#list CATEGORIES as category>
+            <dt>
+                <input type="radio" name="category" value="${category.key}"
+                <#if category.key=selected>checked</#if> >
+                <b>${category.name}</b>
+            </dt>
+            <dd>${category.desc}</dd>
+        </#list>
+    </dl>
+    <p>
+        <input tabindex="3" name="preview" type="submit" value="Náhled">
+        <input tabindex="4" type="submit" value="Dokonèi">
+        <input type="hidden" name="action" value="add2">
+    </p>
 </form>
 
 

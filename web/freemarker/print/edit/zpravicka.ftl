@@ -26,60 +26,59 @@ a vygeneruje se z nìj URL.</p>
     <@lib.showNews RELATION />
 
 <form action="${URL.make("/edit")}" method="POST" name="newsForm">
- <table cellpadding="5" border="0">
-  <tr>
-   <td class="required">Titulek</td>
-   <td>
-       <input type="text" name="title" size="40" maxlength="50" value="${PARAMS.title?if_exists}">
-       <div class="error">${ERRORS.title?if_exists}</div>
-   </td>
-  </tr>
-  <tr>
-   <td class="required">Obsah</td>
-   <td>
-    <div class="form-edit">
-     <a href="javascript:insertAtCursor(document.newsForm.content, '&lt;a href=&quot;&quot;&gt;', '</a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
-    </div>
-    <textarea name="content" cols="80" rows="15" tabindex="1">${PARAMS.content?if_exists?html}</textarea>
-    <div class="error">${ERRORS.content?if_exists}</div>
-   </td>
-  </tr>
-  <#if USER?exists && USER.hasRole("news admin")>
-    <tr>
-        <td>Datum zveøejnìní</td>
-        <td>
-            <input type="text" size="16" name="publish" value="${PARAMS.publish?if_exists}">
-            (zatím jen nastaví datum) Formát 2005-01-25 07:12
-            <div class="error">${ERRORS.publish?if_exists}</div>
-        </td>
-    </tr>
-  </#if>
-  <tr>
-   <td>Kategorie</td>
-   <td>
-   <#assign selected = PARAMS.category?if_exists>
-   <dl>
-   <#list CATEGORIES as category>
-    <dt>
-     <input type="radio" name="category" value="${category.key}"
-     <#if category.key=selected>checked</#if> >
-     <b>${category.name}</b>
-    </dt>
-    <dd>${category.desc}</dd>
-   </#list>
-   </dl>
-   </td>
-  </tr>
-  <tr>
-   <td>&nbsp;</td>
-   <td>
-    <input name="preview" type="submit" value="Náhled">
-    <input type="submit" value="Ulo¾it">
-   </td>
-  </tr>
- </table>
- <input type="hidden" name="action" value="edit2">
- <input type="hidden" name="rid" value="${RELATION.id}">
+    <table cellpadding="5" border="0">
+        <tr>
+            <td class="required">Titulek</td>
+            <td>
+                <input type="text" name="title" size="40" maxlength="50" value="${PARAMS.title?if_exists}">
+                <div class="error">${ERRORS.title?if_exists}</div>
+            </td>
+        </tr>
+        <tr>
+            <td class="required">Obsah</td>
+            <td>
+                <div class="form-edit">
+                    <a href="javascript:insertAtCursor(document.newsForm.content, '&lt;a href=&quot;&quot;&gt;', '</a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
+                </div>
+                <textarea name="content" cols="80" rows="15" tabindex="1">${PARAMS.content?if_exists?html}</textarea>
+                <div class="error">${ERRORS.content?if_exists}</div>
+            </td>
+        </tr>
+        <#if USER?exists && USER.hasRole("news admin")>
+            <tr>
+                <td>Datum zveøejnìní</td>
+                <td>
+                    <input type="text" size="16" name="publish" value="${PARAMS.publish?if_exists}">
+                    Formát 2005-01-25 07:12
+                    <div class="error">${ERRORS.publish?if_exists}</div>
+                </td>
+            </tr>
+        </#if>
+        <tr>
+            <td>Kategorie</td>
+            <td>
+                <#assign selected = PARAMS.category?if_exists>
+                <dl>
+                    <#list CATEGORIES as category>
+                        <dt>
+                            <input type="radio" name="category" value="${category.key}"<#if category.key=selected> checked</#if>>
+                            <b>${category.name}</b>
+                        </dt>
+                        <dd>${category.desc}</dd>
+                    </#list>
+                </dl>
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td>
+                <input name="preview" type="submit" value="Náhled">
+                <input type="submit" value="Ulo¾it">
+            </td>
+        </tr>
+    </table>
+    <input type="hidden" name="action" value="edit2">
+    <input type="hidden" name="rid" value="${RELATION.id}">
 </form>
 
 
