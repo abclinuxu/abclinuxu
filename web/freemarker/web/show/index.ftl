@@ -48,6 +48,7 @@
     <#include "/include/softronik.txt">
     <#include "/include/redhat.txt">
     <#include "/include/datascript.txt">
+    <#include "/include/monster.txt">
     <#include "/include/jobpilot.txt">
 
     <#assign DRIVERS = VARS.getFreshDrivers(USER?if_exists)>
