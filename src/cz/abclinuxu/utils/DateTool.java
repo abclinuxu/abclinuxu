@@ -22,6 +22,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.exceptions.InvalidInputException;
 
 import java.util.Date;
 import java.util.Calendar;
@@ -44,6 +45,8 @@ public class DateTool implements Configurable {
 
     /** 2003-01-01 16:00 */
     public static final String ISO_FORMAT = "ISO";
+    /** 2003-01-01 */
+    public static final String ISO_ONLY_DATE = "ISO_DMY";
     /** 1.1. 16:00 */
     public static final String CZ_SHORT = "CZ_SHORT";
     /** 1.1.2003 16:00 */
@@ -205,6 +208,73 @@ public class DateTool implements Configurable {
             d = Constants.isoFormat.parse(date);
         }
         return show(d,format);
+    }
+
+    /**
+     * Parses string in given format and formats it according to selected format.
+     * @param inputFormat identifier of format used in date
+     * @param outputFformat identifier of format used for output
+     */
+    public String show(String date, String inputFormat, String outputFformat) throws ParseException {
+        Date d = null;
+
+        if (ISO_FORMAT.equalsIgnoreCase(inputFormat)) {
+            synchronized (Constants.isoFormat) {
+                d = Constants.isoFormat.parse(date);
+            }
+        }
+
+        if (ISO_ONLY_DATE.equalsIgnoreCase(inputFormat)) {
+            synchronized (Constants.isoFormatShort) {
+                d = Constants.isoFormatShort.parse(date);
+            }
+        }
+
+        if (ONLY_TIME.equalsIgnoreCase(inputFormat)) {
+            synchronized (Constants.czTimeOnly) {
+                d = Constants.czTimeOnly.parse(date);
+            }
+        }
+
+        if (CZ_SHORT.equalsIgnoreCase(inputFormat)) {
+            synchronized (Constants.czShortFormat) {
+                d = Constants.czShortFormat.parse(date);
+            }
+        }
+
+        if (CZ_FULL.equalsIgnoreCase(inputFormat)) {
+            synchronized (Constants.czFormat) {
+                d = Constants.czFormat.parse(date);
+            }
+        }
+
+        if (CZ_DAY_MONTH_YEAR.equalsIgnoreCase(inputFormat)) {
+            synchronized (Constants.czDayMonthYear) {
+                d = Constants.czDayMonthYear.parse(date);
+            }
+        }
+
+        if (CZ_DAY_MONTH.equalsIgnoreCase(inputFormat)) {
+            synchronized (Constants.czDayMonth) {
+                d = Constants.czDayMonth.parse(date);
+            }
+        }
+
+        if (CZ_FULL_TEXT.equalsIgnoreCase(inputFormat)) {
+            synchronized (Constants.czFormatTxt) {
+                d = Constants.czFormatTxt.parse(date);
+            }
+        }
+
+        if (CZ_ONLY_DAY.equalsIgnoreCase(inputFormat)) {
+            synchronized (Constants.czDay) {
+                d = Constants.czDay.parse(date);
+            }
+        }
+
+        if (d == null)
+            throw new InvalidInputException("Input format '"+inputFormat+"' not recognized!");
+        return show(d, outputFformat);
     }
 
     /**

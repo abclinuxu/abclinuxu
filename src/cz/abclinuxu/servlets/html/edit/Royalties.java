@@ -46,6 +46,9 @@ import java.util.Map;
 import java.util.Date;
 import java.util.Calendar;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.ArrayList;
 import java.text.ParseException;
 
 import org.dom4j.DocumentHelper;
@@ -149,13 +152,35 @@ public class Royalties implements AbcAction {
         if (tmp==null)
             return actionReportStep1(request, env);
         Date until = Constants.isoFormatShort.parse(tmp);
+        int authorId = Misc.parseInt((String)params.get(PARAM_AUTHOR), 0);
 
+        Qualifier[] qualifiers = null;
         CompareCondition conditionFrom = new CompareCondition(Field.CREATED, Operation.GREATER_OR_EQUAL, since);
         CompareCondition conditionTo = new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, until);
-        Qualifier[] qualifiers = new Qualifier[]{conditionFrom, conditionTo, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING};
+        CompareCondition conditionWho = new CompareCondition(Field.SUBTYPE, Operation.EQUAL, authorId);
+        if (authorId != 0)
+            qualifiers = new Qualifier[]{conditionFrom, conditionTo, conditionWho, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING};
+        else
+            qualifiers = new Qualifier[]{conditionFrom, conditionTo, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING};
         List list = SQLTool.getInstance().findItemRelationsWithType(Item.ROYALTIES, qualifiers);
+        list = Tools.syncList(list);
 
-        env.put(VAR_RESULT, Tools.syncList(list));
+        Map byAuthor = new HashMap();
+        for (Iterator iter = list.iterator(); iter.hasNext();) {
+            Relation relation = (Relation) iter.next();
+            Item royalty = (Item) relation.getChild();
+            Relation author = Tools.createRelation(royalty.getSubType());
+
+            AuthorsRoyalties arList = (AuthorsRoyalties) byAuthor.get(author);
+            if (arList == null) {
+                arList = new AuthorsRoyalties(author);
+                byAuthor.put(author, arList);
+            }
+            arList.royalties.add(relation);
+            String count = royalty.getData().selectSingleNode("/data/amount").getText();
+            arList.sum += Misc.parseInt(count, 0);
+        }
+        env.put(VAR_RESULT, byAuthor.values());
         return FMTemplateSelector.select("Royalties", "report", env, request);
     }
 
@@ -260,12 +285,11 @@ public class Royalties implements AbcAction {
      * @return false, if there is a major error.
      */
     private boolean setAuthor(Map params, Item item, Map env, HttpServletRequest request) {
-        Persistence persistence = PersistenceFactory.getPersistance();
-        Item author = (Item) InstanceUtils.instantiateParam(PARAM_AUTHOR, Item.class, params, request);
-        persistence.synchronize(author);
+        Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_AUTHOR, Relation.class, params, request);
+        Tools.sync(relation);
 
-        if ( author!=null && author.getType() == Item.AUTHOR) {
-            item.setOwner(author.getId());
+        if ( relation != null && ((Item)relation.getChild()).getType() == Item.AUTHOR) {
+            item.setSubType(Integer.toString(relation.getId()));
         } else {
             ServletUtils.addError(PARAM_AUTHOR, "Vyberte autora!", env, null);
             return false;
@@ -350,5 +374,27 @@ public class Royalties implements AbcAction {
         element = DocumentHelper.makeElement(item.getData(), "/data/note");
         element.setText(tmp);
         return true;
+    }
+
+    public static class AuthorsRoyalties {
+        Relation author;
+        List royalties = new ArrayList();
+        int sum;
+
+        public AuthorsRoyalties(Relation author) {
+            this.author = author;
+        }
+
+        public Relation getAuthor() {
+            return author;
+        }
+
+        public List getRoyalties() {
+            return royalties;
+        }
+
+        public int getSum() {
+            return sum;
+        }
     }
 }
