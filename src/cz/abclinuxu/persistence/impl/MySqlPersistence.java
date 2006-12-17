@@ -735,10 +735,11 @@ public class MySqlPersistence implements Persistence {
      * Finds children of given GenericObject. Children are not initialized.
      * If there is no child for the obj, empty list is returned.
      * @throws cz.abclinuxu.exceptions.PersistenceException When something goes wrong.
+     * @return list of initialized Relations
      */
-    public List findChildren(GenericObject obj) {
+    public List<Relation> findChildren(GenericObject obj) {
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-        List children = new ArrayList();
+        List<Relation> children = new ArrayList<Relation>();
         Relation relation;
         try {
             con = getSQLConnection();
@@ -753,7 +754,11 @@ public class MySqlPersistence implements Persistence {
                 relation.setParent(obj);
                 children.add(relation);
             }
-            return (children.size()==0) ? Collections.EMPTY_LIST : children;
+
+            if (children.size() == 0)
+                return Collections.emptyList();
+            else
+                return children;
         } catch (SQLException e) {
             log.error("Selhalo hledání potomkù pro "+obj, e);
             throw new PersistenceException("Selhalo hledání potomkù pro " + obj);
@@ -766,19 +771,19 @@ public class MySqlPersistence implements Persistence {
      * Finds children for list of GenericObjects. Children are not initialized.
      * If there is no child for the obj, empty list is used.
      * @param objects list of GenericObject
-     * @return Map where GenericObject is key and List with uninitialized Relations is value.
+     * @return Map where GenericObject is key and List with initialized Relations is value.
      * @throws cz.abclinuxu.exceptions.PersistenceException When something goes wrong.
      */
-    public Map findChildren(List objects) {
+    public Map<GenericObject, List<Relation>> findChildren(List objects) {
         Connection con = null; Statement statement = null; ResultSet resultSet = null;
         if (objects==null || objects.size()==0)
-            return Collections.EMPTY_MAP;
+            return Collections.emptyMap();
 
-        Map map = new HashMap(objects.size()+1, 1.0f);
+        Map<GenericObject, List<Relation>> map = new HashMap<GenericObject, List<Relation>>(objects.size()+1, 1.0f);
         StringBuffer sql = new StringBuffer("select * from relace where ");
         appendMatchAllObjectsCondition(sql, objects, "typ_predka", "predek");
         Relation relation;
-        List list;
+        List<Relation> list;
         try {
             con = getSQLConnection();
             statement = con.createStatement();
@@ -787,9 +792,9 @@ public class MySqlPersistence implements Persistence {
             while ( resultSet.next() ) {
                 relation = new Relation(resultSet.getInt(1));
                 syncRelationFromRS(relation, resultSet);
-                list = (List) map.get(relation.getParent());
-                if (list==null) {
-                    list = new ArrayList();
+                list = (List<Relation>) map.get(relation.getParent());
+                if (list == null) {
+                    list = new ArrayList<Relation>();
                     map.put(relation.getParent(), list);
                 }
                 list.add(relation);

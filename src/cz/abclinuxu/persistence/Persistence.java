@@ -89,18 +89,19 @@ public interface Persistence {
      * Finds children of given GenericObject. Children are not initialized.
      * If there is no child for the obj, empty list is returned.
      * @throws cz.abclinuxu.exceptions.PersistenceException When something goes wrong.
+     * @return list of initialized Relations
      */
-    public List findChildren(GenericObject obj);
+    public List<Relation> findChildren(GenericObject obj);
 
     /**
      * Finds children for list of GenericObjects. Children are not initialized.
      * If there is no child for the obj, empty list is used.
      * @param objects list of GenericObject
-     * @return Map where GenericObject is key and List with uninitialized Relations is value.
+     * @return Map where GenericObject is key and List with initialized Relations is value.
      * @throws cz.abclinuxu.exceptions.PersistenceException
      *          When something goes wrong.
      */
-    public Map findChildren(List objects);
+    public Map<GenericObject, List <Relation>> findChildren(List objects);
 
     /**
      * Finds all parents of this Relation. First element is top level relation, the second is its child and the

@@ -1,36 +1,45 @@
 <#include "../header.ftl">
 
-<#assign title=TOOL.xpath(ITEM, "/data/title")?default("Zprávièka")>
+<@lib.showMessages/>
+
+<#assign title=TOOL.xpath(ITEM, "/data/title")?default("Zprávièka"), autor=TOOL.createUser(ITEM.owner),
+         locked = TOOL.xpath(ITEM, "//locked_by")?exists, approved = TOOL.xpath(ITEM, "//approved_by")?exists>
 <h1>${title}</h1>
 
 <p>
- <#assign autor=TOOL.createUser(ITEM.owner)>
- <b>Autor:</b> <a href="/Profile/${autor.id}">${autor.name}</a><br>
- <#if CATEGORY?exists>
-  <b>Kategorie:</b> ${CATEGORY.name}<br>
- </#if>
- <b>Datum:</b> ${DATE.show(ITEM.created,"CZ_FULL")}<br>
- <#if RELATION.upper=37672>
-  <b>Stav:</b> èeká na schválení
-  <#if USER?exists && USER.id=RELATION.child.owner>
-   - <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">Upravit</a>
-  </#if>
-  <br>
- </#if>
- <#if USER?exists && USER.hasRole("news admin")>
-  <#if TOOL.xpath(ITEM, "//locked_by")?exists>
-   <#assign admin=TOOL.createUser(TOOL.xpath(ITEM, "//locked_by"))>
-   Uzamknul <a href="/Profile/${admin.id}">${admin.name}</a> -
-   <a href="${URL.make("/edit?action=unlock&amp;rid="+RELATION.id)}">odemknout</a>
-  <#else>
-   <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">Upravit</a>
-   <#if RELATION.upper=37672><a href="${URL.make("/edit?action=approve&amp;rid="+RELATION.id)}">Schválit</a></#if>
-   <a href="${URL.make("/edit?action=remove&amp;rid="+RELATION.id)}">Smazat</a>
-   <a href="${URL.make("/edit?action=mail&amp;rid="+RELATION.id)}">Poslat email autorovi</a>
-   <a href="${URL.make("/edit?action=lock&amp;rid="+RELATION.id)}">Zamknout</a>
-  </#if>
-  <br>
- </#if>
+    <b>Autor:</b> <a href="/Profile/${autor.id}">${autor.name}</a><br>
+    <#if CATEGORY?exists>
+        <b>Kategorie:</b> ${CATEGORY.name}<br>
+    </#if>
+    <b>Datum:</b> ${DATE.show(ITEM.created,"SMART")}<br>
+    <#if RELATION.upper=37672>
+        <b>Stav:</b> èeká na
+        <#if approved>
+            èas publikování
+        <#else>
+            schválení
+        </#if>
+        <#if USER?exists && USER.id=RELATION.child.owner>
+        - <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">Upravit</a>
+        </#if>
+        <br>
+    </#if>
+    <#if USER?exists && USER.hasRole("news admin")>
+        <#if locked>
+            <#assign admin=TOOL.createUser(TOOL.xpath(ITEM, "//locked_by"))>
+                Uzamknul <a href="/Profile/${admin.id}">${admin.name}</a> -
+                <a href="${URL.make("/edit?action=unlock&amp;rid="+RELATION.id)}">odemknout</a>
+            <#else>
+                <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">Upravit</a>
+                <#if RELATION.upper=37672 && ! approved>
+                    <a href="${URL.make("/edit?action=approve&amp;rid="+RELATION.id)}">Schválit</a>
+                </#if>
+                <a href="${URL.make("/edit?action=remove&amp;rid="+RELATION.id)}">Smazat</a>
+                <a href="${URL.make("/edit?action=mail&amp;rid="+RELATION.id)}">Poslat email autorovi</a>
+                <a href="${URL.make("/edit?action=lock&amp;rid="+RELATION.id)}">Zamknout</a>
+        </#if>
+        <br>
+    </#if>
 </p>
 
 <p class="zpravicka">${TOOL.xpath(ITEM,"data/content")}</p>

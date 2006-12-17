@@ -291,7 +291,7 @@ public class EditNews implements AbcAction {
         relation.setUrl(url);
         persistence.update(relation);
 
-        AdminLogger.logEvent(user, "  approve | news " + relation.getId());
+        AdminLogger.logEvent(user, "  approve | news " + relation.getUrl());
 
         if (item.getCreated().getTime() <= System.currentTimeMillis()) {
             relation.getParent().removeChildRelation(relation);

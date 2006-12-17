@@ -104,8 +104,7 @@ public class PoolMonitor extends TimerTask {
                 Relation relation = (Relation) iter.next();
                 if ( ! (relation.getChild() instanceof Item) )
                     continue;
-                Item item = (Item) relation.getChild();
-                persistence.synchronize(item);
+                Item item = (Item) persistence.findById(relation.getChild());
                 if ( item.getType() != Item.NEWS)
                     continue;
                 Element element = (Element) item.getData().selectSingleNode("/data/approved_by");

@@ -46,7 +46,7 @@ public class Nursery implements Configurable {
         ConfigurationManager.getConfigurator().configureAndRememberMe(singleton);
     }
 
-    protected Map cache;
+    protected Map<GenericObject, List<Integer>> cache;
     protected Map noChildren;
     protected Persistence persistence;
 
@@ -72,19 +72,29 @@ public class Nursery implements Configurable {
      */
     public synchronized void addChild(Relation relation) {
         GenericObject parent = relation.getParent();
-        if (isNotCached(parent))
+        if (isChildrenLoadingForbidden(parent))
             return;
-        List list = (List) cache.get(parent);
-        if ( list==null )
-            list = getChildrenInternal(parent);
-        if (list.size()==0) { // Collections.EMPTY_LIST is read-only
-            list = new ArrayList(2);
+
+        List<Integer> list = (List<Integer>) cache.get(parent);
+        if ( list == null ) {
+            List<Relation> found = persistence.findChildren(parent);
+            storeChildren(parent, found);
+            if (found.size() != 0) {
+                list = new ArrayList<Integer>(found.size());
+                for (Iterator<Relation> iter = found.iterator(); iter.hasNext();)
+                    list.add(iter.next().getId());
+            }
+        }
+
+        if (list == null) {
+            list = new ArrayList<Integer>(2);
             cache.put(parent, list);
         }
-        if (list.contains(relation))
+
+        if (list.contains(relation.getId()))
             return;
-        Relation clone = cloneRelation(relation);
-        list.add(clone);
+        else
+            list.add(relation.getId());
     }
 
     /**
@@ -94,30 +104,19 @@ public class Nursery implements Configurable {
      */
     public synchronized void removeChild(Relation relation) {
         List list = (List) cache.get(relation.getParent());
-        if (list==null)
+        if (list == null)
             return;
-        list.remove(relation);
-//        boolean removed = list.remove(relation);
-//        if (!removed) // stane se pri asynchronnim pristupu. Proc to neni cele synchronizovane?
-//            log.warn("Failed to delete child relation "+relation);
+        list.remove(new Integer(relation.getId()));
     }
 
     /**
-     * Recursively removes object and its children from the cache.
+     * Removes object and its children from the cache. This method is not recursive
+     * but children of object's children will never be used again and they will be
+     * removed automatically soon.
      * @param obj object to be removed
      */
     public synchronized void removeParent(GenericObject obj) {
-        List stack = new ArrayList();
-        stack.add(obj);
-        do {
-            List list = (List) cache.remove(stack.remove(0));
-            if ( list==null )
-                continue;
-            for ( Iterator iter = list.iterator(); iter.hasNext(); ) {
-                Relation relation = (Relation) iter.next();
-                stack.add(relation.getChild());
-            }
-        } while (stack.size()>0);
+        cache.remove(obj);
     }
 
     /**
@@ -129,7 +128,32 @@ public class Nursery implements Configurable {
      * @throws cz.abclinuxu.exceptions.PersistenceException if there is database related error.
      */
     public synchronized List<Relation> getChildren(GenericObject object) {
-        return getChildrenInternal(object);
+        if (isChildrenLoadingForbidden(object))
+            return Collections.emptyList();
+
+        List<Integer> list = (List<Integer>) cache.get(object);
+        if (list != null) { // children of this object are already cached
+            if (list.size() == 0)
+                return Collections.emptyList();
+
+            List<Relation> copy = new ArrayList<Relation>(list.size());
+            for (Iterator<Integer> iter = list.iterator(); iter.hasNext();) {
+                copy.add(new Relation(iter.next()));
+            }
+            persistence.synchronizeList(copy);
+
+            return copy;
+        }
+
+        // children of this object must be seeked in persistence first
+        List<Relation> dbList = persistence.findChildren(object);
+        storeChildren(object, dbList);
+
+        List<Relation> copy = new ArrayList<Relation>(dbList.size());
+        for (Iterator iter = dbList.iterator(); iter.hasNext();)
+            copy.add(cloneRelation((Relation) iter.next()));
+
+        return copy;
     }
 
     /**
@@ -143,41 +167,33 @@ public class Nursery implements Configurable {
         List list;
         for (Iterator iter = objects.iterator(); iter.hasNext();) {
             object = (GenericObject) iter.next();
-            if (isNotCached(object))  // shall not be cached
+            if (isChildrenLoadingForbidden(object))  // shall not be cached
                 iter.remove();
             list = (List) cache.get(object); // is already cached
-            if (list!=null)
+            if (list != null)
                 iter.remove();
         }
 
-        Map fetchedChildren = persistence.findChildren(objects);
+        Map<GenericObject, List<Relation>> fetchedChildren = persistence.findChildren(objects);
         for (Iterator iter = fetchedChildren.keySet().iterator(); iter.hasNext();) {
             GenericObject obj = (GenericObject) iter.next();
-            cache.put(obj.makeLightClone(), fetchedChildren.get(obj));
+            storeChildren(obj, (List<Relation>) fetchedChildren.get(obj));
         }
     }
 
-    protected List<Relation> getChildrenInternal(GenericObject object) {
-        if (isNotCached(object))
-            return Collections.emptyList();
-
-        List list = (List) cache.get(object);
-        if (list==null) {
-            list = persistence.findChildren(object);
-            cache.put(object.makeLightClone(), list);
+    private void storeChildren(GenericObject object, List<Relation> list) {
+        List<Integer> ids = new ArrayList<Integer>();
+        for (Iterator<Relation> iter = list.iterator(); iter.hasNext();) {
+            Relation relation = iter.next();
+            ids.add(relation.getId());
         }
-
-        if (list.size()==0)
-            return Collections.emptyList();
-
-        List<Relation> copy = new ArrayList<Relation>(list.size());
-        for ( Iterator iter = list.iterator(); iter.hasNext(); )
-            copy.add(cloneRelation((Relation) iter.next()));
-
-        return copy;
+        cache.put(object.makeLightClone(), ids);
     }
 
-    protected boolean isNotCached(GenericObject object) {
+    /**
+     * @return true if object's children must not be loaded from database or stored in cache.
+     */
+    protected boolean isChildrenLoadingForbidden(GenericObject object) {
         if (object instanceof Category) {
             Category category = (Category) object;
             switch (category.getType()) {
@@ -213,7 +229,6 @@ public class Nursery implements Configurable {
     public synchronized void configure(Preferences prefs) throws ConfigurationException {
         int size = prefs.getInt(PREF_CACHE_SIZE, 100);
         log.info("Initializing with cache size "+size);
-//        cache = Collections.synchronizedMap(new LinkedHashMap(size, 1.0f, true));
         cache = new ChildrenCache(size, 1.0f, true);
 
         persistence = PersistenceFactory.getPersistance();
@@ -238,7 +253,7 @@ public class Nursery implements Configurable {
     /**
      * LRU Cache. Removes oldest entries.
      */
-    class ChildrenCache extends LinkedHashMap {
+    class ChildrenCache extends LinkedHashMap<GenericObject, List<Integer>> {
         int MAX_SIZE;
 
         public ChildrenCache(int initialCapacity, float loadFactor, boolean accessOrder) {
@@ -247,7 +262,7 @@ public class Nursery implements Configurable {
         }
 
         protected boolean removeEldestEntry(Map.Entry eldest) {
-            return size()>MAX_SIZE;
+            return size() > MAX_SIZE;
         }
     }
 }

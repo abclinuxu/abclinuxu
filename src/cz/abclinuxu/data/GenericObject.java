@@ -74,6 +74,8 @@ public abstract class GenericObject implements Cloneable {
     }
 
     /**
+     * Retrieves list of relations with children of this object. The relation is initialized,
+     * but its properties parent and child are not initialized.
      * @return list of child Relations
      */
     public List<Relation> getChildren() {
