@@ -110,7 +110,7 @@ ${TOOL.render(TEXT,USER?if_exists)}
 
 <#flush>
 
-<#include "/include/sun-clanky.txt">
+<#--<#include "/include/sun-clanky.txt">-->
 
 <#if CHILDREN.discussion?exists>
     <h3>Komentáøe</h3>

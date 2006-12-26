@@ -524,6 +524,11 @@
                                     <entry key="max.intro.length" value="200"/>
                                 </map>
                             </node>
+                            <node name="EditAdvertisement">
+                                <map>
+                                    <entry key="regexp.valid.identifier" value="[a-z0-9_-]+"/>
+                                </map>
+                            </node>
                         </node>
                         <node name="view">
                             <map/>

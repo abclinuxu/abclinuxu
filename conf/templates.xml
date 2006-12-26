@@ -636,4 +636,25 @@
       <var name="TITLE" value="Upravit pojem"/>
     </action>
   </servlet>
+
+    <servlet name="EditAdvertisement">
+        <action name="main" content="/misc/ads.ftl" template="print">
+            <var name="TITLE" value="Správa reklamních pozic"/>
+        </action>
+        <action name="addPosition" content="/add/adPosition.ftl" template="print">
+            <var name="TITLE" value="Vlo¾it reklamní pozici"/>
+        </action>
+        <action name="editPosition" content="/edit/adPosition.ftl" template="print">
+            <var name="TITLE" value="Upravit reklamní pozici"/>
+        </action>
+        <action name="showPosition" content="/show/adPosition.ftl" template="print">
+            <var name="TITLE" value="Reklamní pozice"/>
+        </action>
+        <action name="addCode" content="/add/adCode.ftl" template="print">
+            <var name="TITLE" value="Vlo¾it reklamní kód"/>
+        </action>
+        <action name="editCode" content="/edit/adCode.ftl" template="print">
+            <var name="TITLE" value="Upravit reklamní kód"/>
+        </action>
+    </servlet>
 </config>

@@ -65,4 +65,6 @@ public class Roles {
     public static final String SOFTWARE_ADMIN = "software admin";
     /** bazaar manager */
     public static final String BAZAAR_ADMIN = "bazaar admin";
+    /** advertisement manager */
+    public static final String ADVERTISEMENT_ADMIN = "advertisement admin";
 }

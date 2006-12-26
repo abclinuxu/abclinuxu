@@ -35,6 +35,7 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.format.*;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.InstanceUtils;
+import cz.abclinuxu.utils.Advertisement;
 import cz.abclinuxu.scheduler.EnsureWatchedDiscussionsLimit;
 import org.dom4j.Document;
 import org.dom4j.Node;
@@ -1132,6 +1133,22 @@ public class Tools implements Configurable {
                 sb.append(((Element) iter.next()).getText());
         }
         return sb.toString();
+    }
+
+    /**
+     * Finds advertisement for given position on specified uri. The user may eventually
+     * have paid not to see any advertisements. If the position is not defined, HTML comment
+     * with info is returned.
+     * @param position identifier of the position
+     * @param uri current uri, starting with slash
+     * @param maybeUser instance of User, if the visitor is logged into his user account
+     * @return advertisement or empty string
+     */
+    public static String getAdvertisement(String position, String uri, Object maybeUser) {
+        User user = null;
+        if (maybeUser instanceof User)
+            user = (User) maybeUser;
+        return Advertisement.getAdvertisement(position, uri, user);
     }
 
     /**

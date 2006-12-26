@@ -147,13 +147,20 @@
 <!ATTLIST text format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
 
 <!-- Item.id==Constants.ITEM_DYNAMIC_CONFIGURATION -->
-<!ELEMENT data (feeds?,blog_digest?)>
+<!ELEMENT data (feeds?,blog_digest?,advertisement?)>
 <!ELEMENT feeds (feed+)>
 <!ELEMENT feed (#PCDATA)> <!-- URL of feed. It must be RSS or Atom -->
 <!ATTLIST feed relation (#NMTOKEN) #REQUIRED> <!-- integer, id of parent relation, where to store links -->
 <!ATTLIST feed type (#NMTOKEN) #REQUIRED> <!-- alowed value is software -->
 <!ELEMENT blog_digest (story+)> <!-- container for selected blog stories, that form special RSS -->
 <!ELEMENT story (#PCDATA)> <!-- integer, id of relation for selected high-quality story -->
+<!ELEMENT advertisement (position*)> <!-- container for advertisement configuration -->
+<!ELEMENT position (name,description?,code+)> <!-- one ad position -->
+<!ATTLIST position id (#NMTOKEN) #REQUIRED> <!-- identifier of position, it is used in templates -->
+<!ATTLIST position active (yes,no) #REQUIRED> <!-- boolean, whether is this position active -->
+<!ELEMENT description (#PCDATA)> <!-- description of this position -->
+<!ELEMENT code (#PCDATA)> <!-- content of the advertisement, typically javascript code from some agency -->
+<!ATTLIST regexp CDATA #IMPLIED> <!-- default code does not have this attribute, all other codes must define it -->
 
 <!-- Item.BAZAAR -->
 <!ELEMENT data (title, text)>

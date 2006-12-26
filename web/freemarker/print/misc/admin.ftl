@@ -30,6 +30,7 @@ konfiguraèní soubory.
 <ul>
     <li><a href="${URL.noPrefix("/EditPoll?action=add&amp;rid=250")}">Vytvoø anketu</a></li>
     <li><a href="${URL.noPrefix("/EditRelation?action=setURL")}">Nastav URL relaci</a></li>
+    <li><a href="${URL.noPrefix("/EditAdvertisement")}">Správa reklamních pozic</a></li>
     <li><a href="${URL.noPrefix("/editContent/66948?action=add")}">Vytvoø dokument</a></li>
     <li><a href="${URL.noPrefix("/clanky/dir/66948")}">Listuj dokumenty</a></li>
     <li><a href="${URL.noPrefix("/EditSurvey?action=add")}">Vytvoø velkou anketu</a></li>

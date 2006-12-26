@@ -39,6 +39,7 @@
        <@lib.showOption "roles", "tip admin", "Administrátor tipù", "checkbox" /><br>
        <@lib.showOption "roles", "user admin", "Administrátor u¾ivatelù", "checkbox" /><br>
        <@lib.showOption "roles", "news admin", "Administrátor zprávièek", "checkbox" /><br>
+       <@lib.showOption "roles", "advertisement admin", "Administrátor reklamních pozic", "checkbox" /><br>
        <@lib.showOption "roles", "email invalidator", "Smí invalidovat emaily", "checkbox" /><br>
        <@lib.showOption "roles", "move relation", "Smí pøesunout relaci", "checkbox" /><br>
        <@lib.showOption "roles", "derive content", "Smí vytvoøit podstránku dokumentu", "checkbox" /><br>
