@@ -503,8 +503,8 @@ font-weight: bold;
     cursor:         pointer;
 }
 
-.bazar .prodej { color: #90ee90; } /* lightgreen */
-.bazar .koupe { color: #ffc0cb; } /* pink */
+.prodej { color: #90ee90; } /* lightgreen */
+.koupe { color: #ffc0cb; } /* pink */
 
 .swlist hr {
 	border-top:	1px solid #4b4b4b;
@@ -702,7 +702,8 @@ a.info,
 .cl_square a,
 .rating a,
 .cl_perex a,
-.treeview a {text-decoration:none}
+.treeview a,
+.cl-obsah a {text-decoration:none}
 
 .s li a:hover,
 .rozc li a:hover,
@@ -715,7 +716,8 @@ a.info,
 .boxy li a:hover,
 .rating a:hover,
 .cl_perex a:hover,
-.treeview a:hover {text-decoration:underline}
+.treeview a:hover,
+.cl-obsah a:hover {text-decoration:underline}
 
 #ls_prepinac {
 	position:	absolute;

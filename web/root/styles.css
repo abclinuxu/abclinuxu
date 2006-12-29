@@ -495,8 +495,8 @@ font-weight: bold;
     cursor:         pointer;
 }
 
-.bazar .prodej { color: #006400; } /* darkgreen */
-.bazar .koupe { color: #8b0000; } /* darkred */
+.prodej { color: #006400; } /* darkgreen */
+.koupe { color: #8b0000; } /* darkred */
 
 .swlist hr {
 	border-top:	1px solid lightgray;
@@ -693,7 +693,8 @@ a.info,
 .cl_square a,
 .rating a,
 .cl_perex a,
-.treeview a {text-decoration:none}
+.treeview a,
+.cl-obsah a {text-decoration:none}
 
 .s li a:hover,
 .rozc li a:hover,
@@ -706,7 +707,8 @@ a.info,
 .boxy li a:hover,
 .rating a:hover,
 .cl_perex a:hover,
-.treeview a:hover {text-decoration:underline}
+.treeview a:hover,
+.cl-obsah a:hover {text-decoration:underline}
 
 #ls_prepinac {
 	position:	absolute;

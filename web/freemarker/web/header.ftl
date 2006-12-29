@@ -7,6 +7,9 @@
     <#if USER?exists><#assign css=TOOL.xpath(USER.data, "/data/settings/css")?default("UNDEF")></#if>
     <#if ! css?exists || css=="UNDEF"><#assign css="/styles.css"></#if>
     <link rel="stylesheet" type="text/css" href="${css}">
+    <!--[if IE 7]>
+       <link href="/bugie.css" type="text/css" rel="stylesheet">
+    <![endif]-->
     <#if REQUEST_URI?starts_with("/hosting")>
        <link rel="stylesheet" type="text/css" href="/images/hosting/hosting.css">
     </#if>
@@ -21,7 +24,7 @@
     <link rel="alternate" title="abclinuxu.cz: software" href="http://www.abclinuxu.cz/auto/software.rss" type="application/rss+xml">
     <link rel="alternate" title="abclinuxu.cz: ankety" href="http://www.abclinuxu.cz/auto/ankety.rss" type="application/rss+xml">
     <link rel="bookmark" href="#obsah" title="Obsah stránky" type="text/html">
-    <meta name="keywords" content="linux,abclinuxu,hardware,diskuse,nápovìda,rada,pomoc">
+    <meta name="keywords" content="linux,abclinuxu,hardware,software,ovladaèe,diskuse,nápovìda,rada,pomoc">
     <script type="text/javascript" src="/data/site/impact.js"></script>
     <script type="text/javascript" src="/data/site/scripts.js"></script>
     <#if html_header?exists>
@@ -29,7 +32,7 @@
     </#if>
 </head>
 
-<body id="www-abclinuxu-cz">
+<body onload="document.getElementById('menu').style.display='block';window.setTimeout(new Function('document.getElementById(\'menu\').style.display=\'table\''), 10)" id="www-abclinuxu-cz">
 
 <#if IS_INDEX?exists>
 <#include "/include/netmonitor_hp.txt">
@@ -45,7 +48,9 @@
 <#import "macros.ftl" as lib>
 <#include "/include/lista.txt">
 
-<center>
+
+<#--<center>
+<@lib.advertisement id="banner_top" />
 <#if IS_INDEX?exists>
     <#include "/include/impact-hp-lb.txt">
 <#elseif URL.prefix=='/clanky'>
@@ -53,7 +58,7 @@
 <#else>
     <#include "/include/impact-oth-lb.txt">
 </#if>
-</center>
+</center>-->
 
 <div id="zh-kont">
   <div id="zh-text" class="zh-box">
@@ -62,8 +67,8 @@
         Víte, ¾e portál abclinuxu.cz obnovil sekci <a href="/software">Software</a>?
     </div>
     <div id="zh-ad">
-      <img class="zh-iko" src="/images/site2/sflista/64.gif">
-        <b>Reklama:</b> <a href="http://www.64bit.cz/red-hat-enterprise-linux-4-es-predplatne-1-rok-basic/187/product.html">Red Hat Enterprise Linux 4 ES</a> - pøedplatné 1&nbsp;rok BASIC 8&nbsp;119,-&nbsp;Kè
+      <img class="zh-iko" src="/images/site2/sflista/ah.gif">
+        <b>AbcHost.cz:</b> Akce pro servery <a title="AbcHost.cz: HP ProLiant" href="http://www.abchost.cz/servery-hp-proliant-bl10e-blade/104/category.html">HP&nbsp;ProLiant</a>: u&nbsp;objednávek do&nbsp;31.12. dostanete první mìsíc provozu zdarma!
     </div>
   </div>
   <div id="zh-logo" class="zh-box"><a href="/"></a></div>
