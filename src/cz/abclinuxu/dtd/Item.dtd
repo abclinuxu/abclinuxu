@@ -160,7 +160,8 @@
 <!ATTLIST position active (yes,no) #REQUIRED> <!-- boolean, whether is this position active -->
 <!ELEMENT description (#PCDATA)> <!-- description of this position -->
 <!ELEMENT code (#PCDATA)> <!-- content of the advertisement, typically javascript code from some agency -->
-<!ATTLIST regexp CDATA #IMPLIED> <!-- default code does not have this attribute, all other codes must define it -->
+<!ATTLIST code regexp CDATA #IMPLIED> <!-- default code does not have this attribute, all other codes must define it -->
+<!ATTLIST code description (#PCDATA)> <!-- description of this code -->
 
 <!-- Item.BAZAAR -->
 <!ELEMENT data (title, text)>

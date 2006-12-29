@@ -37,12 +37,14 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.Attribute;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.List;
 import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -60,9 +62,14 @@ public class EditAdvertisement implements AbcAction, Configurable {
     public static final String PARAM_NEW_IDENTIFIER = "newIdentifier";
     public static final String PARAM_DESCRIPTION = "desc";
     public static final String PARAM_MAIN_CODE = "main_code";
+    public static final String PARAM_CODE = "code";
+    public static final String PARAM_REGEXP = "regexp";
+    public static final String PARAM_INDEX = "index";
 
     public static final String VAR_POSITION = "POSITION";
     public static final String VAR_POSITIONS = "POSITIONS";
+    public static final String VAR_DEFAULT_CODE = "DEFAULT_CODE";
+    public static final String VAR_CODES = "CODES";
 
     public static final String ACTION_ADD_POSITION = "addPosition";
     public static final String ACTION_ADD_POSITION_STEP2 = "addPosition2";
@@ -76,7 +83,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
     public static final String ACTION_ADD_CODE = "addCode";
     public static final String ACTION_ADD_CODE_STEP2 = "addCode2";
     public static final String ACTION_EDIT_CODE = "editCode";
-    public static final String ACTION_EDIT_CODE_STEP2 = "editCode2";
+    public static final String ACTION_EDIT_CODE_STEP2 = "editCodeTwo";
     public static final String ACTION_REMOVE_CODE = "rmCode";
 
     static Pattern identifierPattern;
@@ -104,7 +111,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
             return actionAddStep2(request, response, env);
 
         if (ACTION_SHOW_POSITION.equals(action) || params.containsKey(ACTION_SHOW_POSITION))
-            return actionShowPosition(request, env);
+            return actionShowPosition(request, response, env);
 
         if (ACTION_EDIT_POSITION.equals(action) || params.containsKey(ACTION_EDIT_POSITION))
             return actionEditPositionStep1(request, response, env);
@@ -121,6 +128,22 @@ public class EditAdvertisement implements AbcAction, Configurable {
         if (ACTION_REMOVE_POSITION.equals(action) || params.containsKey(ACTION_REMOVE_POSITION))
             return actionRemovePosition(request, response, env);
 
+        if (ACTION_ADD_CODE.equals(action) || params.containsKey(ACTION_ADD_CODE))
+            return actionAddCodeStep1(request, env);
+
+        if (ACTION_ADD_CODE_STEP2.equals(action) || params.containsKey(ACTION_ADD_CODE_STEP2))
+            return actionAddCodeStep2(request, response, env);
+
+        for (Iterator iter = params.keySet().iterator(); iter.hasNext();) {
+            String param = (String) iter.next();
+            if (param.startsWith(ACTION_EDIT_CODE_STEP2))
+                return actionEditCodeStep2(request, response, env);
+            if (param.startsWith(ACTION_EDIT_CODE))
+                return actionEditCodeStep1(request, response, env);
+            if (param.startsWith(ACTION_REMOVE_CODE))
+                return actionRemoveCode(request, response, env);
+        }
+
         return actionShowMain(request, env);
     }
 
@@ -136,21 +159,32 @@ public class EditAdvertisement implements AbcAction, Configurable {
         return FMTemplateSelector.select("EditAdvertisement", "main", env, request);
     }
 
-    public String actionShowPosition(HttpServletRequest request, Map env) throws Exception {
+    public String actionShowPosition(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistance();
-        String id = (String) params.get(PARAM_IDENTIFIER);
-        if (Misc.empty(id)) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Chybí povinný parametr "+PARAM_IDENTIFIER, env, null);
-            return actionShowMain(request, env);
-        }
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
 
         Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
-        Element element = (Element) item.getData().selectSingleNode("//advertisement/position[@id='" + id + "']");
-        if (element == null)
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Pozice '" + id + "' nebyla nalezena!", env, null);
+        Element position = getPosition(params, item, request, env);
+        if (position == null) {
+            urlUtils.redirect(response, "/EditAdvertisement?action=list");
+            return null;
+        }
 
-        env.put(VAR_POSITION, element);
+        Element defaultCode = null;
+        List otherCodes = new ArrayList();
+        List codes = position.elements("code");
+        for (Iterator iter = codes.iterator(); iter.hasNext();) {
+            Element code = (Element) iter.next();
+            if (code.attribute("regexp") == null)
+                defaultCode = code;
+            else
+                otherCodes.add(code);
+        }
+
+        env.put(VAR_POSITION, position);
+        env.put(VAR_DEFAULT_CODE, defaultCode);
+        env.put(VAR_CODES, otherCodes);
         return FMTemplateSelector.select("EditAdvertisement", "showPosition", env, request);
     }
 
@@ -195,26 +229,16 @@ public class EditAdvertisement implements AbcAction, Configurable {
         Persistence persistence = PersistenceFactory.getPersistance();
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
 
-        String id = (String) params.get(PARAM_IDENTIFIER);
-        if (id == null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Nebyl definován povinný parametr id!", env, request.getSession());
-            urlUtils.redirect(response, "/EditAdvertisement");
-            return null;
-        }
-
         Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
-        Document document = item.getData();
-        Element adsRoot = document.getRootElement().element("advertisement");
-        Element position = (Element) adsRoot.selectSingleNode("position[@id='" + id + "']");
+        Element position = getPosition(params, item, request, env);
         if (position == null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Pozice " + id + " nebyla nalezena!", env, request.getSession());
-            urlUtils.redirect(response, "/EditAdvertisement");
+            urlUtils.redirect(response, "/EditAdvertisement?action=list");
             return null;
         }
 
         Element element = position.element("name");
         params.put(PARAM_NAME, element.getText());
-        params.put(PARAM_NEW_IDENTIFIER, id);
+        params.put(PARAM_NEW_IDENTIFIER, position.attributeValue("id"));
         element = position.element("description");
         if (element != null)
             params.put(PARAM_DESCRIPTION, element.getText());
@@ -231,22 +255,15 @@ public class EditAdvertisement implements AbcAction, Configurable {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         User user = (User) env.get(Constants.VAR_USER);
 
-        String id = (String) params.get(PARAM_IDENTIFIER);
-        if (id == null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Nebyl definován povinný parametr id!", env, request.getSession());
-            urlUtils.redirect(response, "/EditAdvertisement");
+        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
+        Element position = getPosition(params, item, request, env);
+        if (position == null) {
+            urlUtils.redirect(response, "/EditAdvertisement?action=list");
             return null;
         }
 
-        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION)).clone();
-        Document document = item.getData();
-        Element adsRoot = document.getRootElement().element("advertisement");
-        Element position = (Element) adsRoot.selectSingleNode("position[@id='" + id + "']");
-        if (position == null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Pozice " + id + " nebyla nalezena!", env, request.getSession());
-            urlUtils.redirect(response, "/EditAdvertisement");
-            return null;
-        }
+        String id = position.attributeValue("id");
+        Element adsRoot = item.getData().getRootElement().element("advertisement");
 
         boolean canContinue = true;
         canContinue &= setName(params, position, env);
@@ -328,7 +345,133 @@ public class EditAdvertisement implements AbcAction, Configurable {
         persistence.update(item);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/EditAdvertisement");
+        urlUtils.redirect(response, "/EditAdvertisement?action=list");
+        return null;
+    }
+
+    public String actionAddCodeStep1(HttpServletRequest request, Map env) throws Exception {
+        return FMTemplateSelector.select("EditAdvertisement", "addCode", env, request);
+    }
+
+    public String actionAddCodeStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistence persistence = PersistenceFactory.getPersistance();
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        User user = (User) env.get(Constants.VAR_USER);
+
+        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
+        Element position = getPosition(params, item, request, env);
+        if (position == null) {
+            urlUtils.redirect(response, "/EditAdvertisement?action=list");
+            return null;
+        }
+
+        boolean canContinue = true;
+        Element code = position.addElement("code");
+        canContinue &= setCodeRegexp(params, code, env);
+        canContinue &= setCodeDescription(params, code);
+        canContinue &= setCode(params, code);
+
+        if (!canContinue)
+            return FMTemplateSelector.select("EditAdvertisement", "addCode", env, request);
+
+        persistence.update(item);
+
+        String id = position.attributeValue("id");
+        AdminLogger.logEvent(user, "pridal reklamni kod k pozici " + id);
+
+        urlUtils.redirect(response, "/EditAdvertisement?action=" + ACTION_SHOW_POSITION + "&" + PARAM_IDENTIFIER + "=" + id);
+        return null;
+    }
+
+    public String actionEditCodeStep1(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistence persistence = PersistenceFactory.getPersistance();
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+
+        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
+        Element position = getPosition(params, item, request, env);
+        if (position == null) {
+            urlUtils.redirect(response, "/EditAdvertisement?action=list");
+            return null;
+        }
+        Element code = getCode(position, params, ACTION_EDIT_CODE, request, env);
+        if (code == null) {
+            urlUtils.redirect(response, "/EditAdvertisement?action=list");
+            return null;
+        }
+
+        params.put(PARAM_CODE, code.getText());
+        Attribute attribute = code.attribute("regexp");
+        if (attribute != null)
+            params.put(PARAM_REGEXP, attribute.getText());
+        attribute = code.attribute("description");
+        if (attribute != null)
+            params.put(PARAM_DESCRIPTION, attribute.getText());
+
+        return FMTemplateSelector.select("EditAdvertisement", "editCode", env, request);
+    }
+
+    public String actionEditCodeStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistence persistence = PersistenceFactory.getPersistance();
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        User user = (User) env.get(Constants.VAR_USER);
+
+        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
+        Element position = getPosition(params, item, request, env);
+        if (position == null) {
+            urlUtils.redirect(response, "/EditAdvertisement?action=list");
+            return null;
+        }
+        Element code = getCode(position, params, ACTION_EDIT_CODE_STEP2, request, env);
+        if (code == null) {
+            urlUtils.redirect(response, "/EditAdvertisement?action=list");
+            return null;
+        }
+
+        boolean canContinue = true;
+        canContinue &= setCodeRegexp(params, code, env);
+        canContinue &= setCodeDescription(params, code);
+        canContinue &= setCode(params, code);
+
+        if (!canContinue)
+            return FMTemplateSelector.select("EditAdvertisement", "editCode", env, request);
+
+        persistence.update(item);
+
+        String id = position.attributeValue("id");
+        AdminLogger.logEvent(user, "upravil reklamni kod k pozici " + id);
+
+        urlUtils.redirect(response, "/EditAdvertisement?action=" + ACTION_SHOW_POSITION + "&" + PARAM_IDENTIFIER + "=" + id);
+        return null;
+    }
+
+    public String actionRemoveCode(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Persistence persistence = PersistenceFactory.getPersistance();
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        User user = (User) env.get(Constants.VAR_USER);
+
+        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
+        Element position = getPosition(params, item, request, env);
+        if (position == null) {
+            urlUtils.redirect(response, "/EditAdvertisement?action=list");
+            return null;
+        }
+        Element code = getCode(position, params, ACTION_REMOVE_CODE, request, env);
+        if (code == null) {
+            urlUtils.redirect(response, "/EditAdvertisement?action=list");
+            return null;
+        }
+
+        code.detach();
+        persistence.update(item);
+
+        String id = position.attributeValue("id");
+        AdminLogger.logEvent(user, "upravil reklamni kod k pozici " + id);
+
+        urlUtils.redirect(response, "/EditAdvertisement?action=" + ACTION_SHOW_POSITION + "&" + PARAM_IDENTIFIER + "=" + id);
         return null;
     }
 
@@ -338,6 +481,62 @@ public class EditAdvertisement implements AbcAction, Configurable {
     }
 
     // setters
+
+    /**
+     * Finds position parameter and locates specified position in the configuration item.
+     * @return element position or null
+     */
+    private Element getPosition(Map params, Item item, HttpServletRequest request, Map env) {
+        String id = (String) params.get(PARAM_IDENTIFIER);
+        if (id == null) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Nebyl definován povinný parametr id!", env, request.getSession());
+            return null;
+        }
+
+        Document document = item.getData();
+        Element adsRoot = document.getRootElement().element("advertisement");
+        Element position = (Element) adsRoot.selectSingleNode("position[@id='" + id + "']");
+        if (position == null) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Pozice " + id + " nebyla nalezena!", env, request.getSession());
+            return null;
+        }
+        return position;
+    }
+
+    /**
+     * Finds non default code with index specified in params with certain prefix.
+     * @return code element or null, if not found.
+     */
+    public Element getCode(Element position, Map params, String prefix, HttpServletRequest request, Map env) {
+        int index = -1;
+        for (Iterator iter = params.keySet().iterator(); iter.hasNext();) {
+            String param = (String) iter.next();
+            if (param.startsWith(prefix)) {
+                String rest = param.substring(prefix.length());
+                index = Misc.parseInt(rest, -1);
+                break;
+            }
+        }
+        if (index == -1) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Kód nebyl nalezen!", env, request.getSession());
+            return null;
+        }
+
+        int i = 0;
+        params.put(PARAM_INDEX, index);
+        List codes = position.elements("code");
+        for (Iterator iter = codes.iterator(); iter.hasNext();) {
+            Element code = (Element) iter.next();
+            if (code.attribute("regexp") == null)
+                continue;
+            if (i == index)
+                return code;
+            i++;
+        }
+
+        ServletUtils.addError(Constants.ERROR_GENERIC, "Kód nebyl nalezen!", env, request.getSession());
+        return null;
+    }
 
     /**
      * Creates new position element. It verifies that valid identifier exists and that it does
@@ -389,7 +588,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
     }
 
     /**
-     * Updates position name from parameters. Changes are not synchronized with persistance.
+     * Updates position default code from parameters. Changes are not synchronized with persistance.
      * @param params map holding request's parameters
      * @param position position element to be updated
      * @return false, if there is a major error.
@@ -452,6 +651,71 @@ public class EditAdvertisement implements AbcAction, Configurable {
         }
 
         position.attribute("id").setText(id);
+        return true;
+    }
+
+    /**
+     * Updates code's regexp from parameters. Changes are not synchronized with persistance.
+     * @param params   map holding request's parameters
+     * @param code element to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setCodeRegexp(Map params, Element code, Map env) {
+        String regexp = (String) params.get(PARAM_REGEXP);
+        if (Misc.empty(regexp)) {
+            ServletUtils.addError(PARAM_REGEXP, "Zadejte regulární výraz.", env, null);
+            return false;
+        }
+
+        try {
+            Pattern.compile(regexp);
+        } catch (Exception e) {
+            ServletUtils.addError(PARAM_REGEXP, "Regulární výraz obsahuje chybu:"+e.getMessage(), env, null);
+            return false;
+        }
+
+        Attribute attribute = code.attribute("regexp");
+        if (attribute != null)
+            attribute.setValue(regexp);
+        else
+            code.addAttribute("regexp", regexp);
+        return true;
+    }
+
+    /**
+     * Updates code's description from parameters. Changes are not synchronized with persistance.
+     * @param params   map holding request's parameters
+     * @param code element to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setCodeDescription(Map params, Element code) {
+        String desc = (String) params.get(PARAM_DESCRIPTION);
+        Attribute attribute = code.attribute("description");
+        if (Misc.empty(desc)) {
+            if (attribute != null)
+                attribute.detach();
+        } else {
+            if (attribute != null)
+                attribute.setValue(desc);
+            else
+                code.addAttribute("description", desc);
+        }
+        return true;
+    }
+
+    /**
+     * Updates code's content from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param code element to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setCode(Map params, Element code) {
+        String s = (String) params.get(PARAM_CODE);
+        if (Misc.empty(s))
+            s = "<!-- empty -->";
+
+        code.setText(s);
         return true;
     }
 }

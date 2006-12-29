@@ -23,6 +23,8 @@
                 <tr>
                     <td>
                         <input type="checkbox" name="identifier" value="${id}">
+                    </td>
+                    <td>
                         <a href="${URL.noPrefix("/EditAdvertisement?action=showPosition&amp;identifier="+id)}">
                             ${TOOL.xpath(position, "name/text()")}
                         </a>
@@ -40,10 +42,10 @@
                 <td>
                     <!-- select none/all checkbox -->
                 </td>
-                <td>
+                <td colspan="2">
                     <input type="submit" name="activatePosition" value="Zapnout">
                     <input type="submit" name="deactivatePosition" value="Vypnout">
-                    <input type="submit" name="rmPosition" value="Smazat">
+                    <input type="submit" name="rmPosition" value="Smazat" onclick="return confirm('Opravdu chcete smazat zvolené pozice?')">
                     vybrané pozice
                 </td>
             </tr>
