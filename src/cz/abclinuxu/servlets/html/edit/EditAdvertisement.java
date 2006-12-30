@@ -262,7 +262,6 @@ public class EditAdvertisement implements AbcAction, Configurable {
             return null;
         }
 
-        String id = position.attributeValue("id");
         Element adsRoot = item.getData().getRootElement().element("advertisement");
 
         boolean canContinue = true;
@@ -276,6 +275,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
 
         persistence.update(item);
 
+        String id = position.attributeValue("id");
         AdminLogger.logEvent(user, "upravil reklamni pozici " + id);
 
         urlUtils.redirect(response, "/EditAdvertisement?action=" + ACTION_SHOW_POSITION+"&"+PARAM_IDENTIFIER+"=" + id);
@@ -645,7 +645,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
         }
 
         Element existingPosition = (Element) adsRoot.selectSingleNode("position[@id='" + id + "']");
-        if (! existingPosition.equals(position)) {
+        if (existingPosition != null && ! existingPosition.equals(position)) {
             ServletUtils.addError(PARAM_NEW_IDENTIFIER, "Tento identifikátor je ji¾ pou¾it pro pozici "+existingPosition.elementText("name")+".", env, null);
             return false;
         }
