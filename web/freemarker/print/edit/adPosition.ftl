@@ -15,32 +15,32 @@
 
 
 <form action="${URL.noPrefix("/EditAdvertisement")}" method="POST" name="form">
-    <table width=100 border=0 cellpadding=5>
+    <table class="siroka" border="0" cellpadding="5">
         <tr>
             <td width="90" class="required">Jméno</td>
             <td>
-                <input type="text" name="name" value="${PARAMS.name?if_exists?html}" size=60 tabindex=1>
+                <input type="text" name="name" value="${PARAMS.name?if_exists?html}" size="60" tabindex="1">
                 <div class="error">${ERRORS.name?if_exists}</div>
             </td>
         </tr>
         <tr>
             <td width="90" class="required">Identifikátor</td>
             <td>
-                <input type="text" name="newIdentifier" value="${PARAMS.newIdentifier?if_exists?html}" size=60 tabindex=2>
+                <input type="text" name="newIdentifier" value="${PARAMS.newIdentifier?if_exists?html}" size="60" tabindex="2">
                 <div class="error">${ERRORS.newIdentifier?if_exists}</div>
             </td>
         </tr>
         <tr>
             <td width="90">Popis</td>
             <td>
-                <textarea name="desc" rows="3" class="siroka" tabindex=3>${PARAMS.desc?if_exists?html}</textarea>
+                <textarea name="desc" rows="3" class="siroka" tabindex="3">${PARAMS.desc?if_exists?html}</textarea>
                 <div class="error">${ERRORS.desc?if_exists}</div>
             </td>
         </tr>
         <tr>
             <td width="90">Reklamní kód</td>
             <td>
-                <textarea name="main_code" rows="5" class="siroka" tabindex=4>${PARAMS.main_code?if_exists?html}</textarea>
+                <textarea name="main_code" rows="15" class="siroka" tabindex="4">${PARAMS.main_code?if_exists?html}</textarea>
                 <div class="error">${ERRORS.main_code?if_exists}</div>
             </td>
         </tr>

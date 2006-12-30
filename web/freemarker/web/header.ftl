@@ -34,6 +34,9 @@
 
 <body onload="document.getElementById('menu').style.display='block';window.setTimeout(new Function('document.getElementById(\'menu\').style.display=\'table\''), 10)" id="www-abclinuxu-cz">
 
+<#import "macros.ftl" as lib>
+<@lib.advertisement id="html_init" />
+
 <#if IS_INDEX?exists>
 <#include "/include/netmonitor_hp.txt">
 <#include "/include/impact-hp.txt">
@@ -45,7 +48,6 @@
 <#include "/include/impact-oth.txt">
 </#if>
 
-<#import "macros.ftl" as lib>
 <#include "/include/lista.txt">
 
 

@@ -20,25 +20,25 @@
 </p>
 
 <form action="${URL.noPrefix("/EditAdvertisement")}" method="POST" name="form">
-    <table width=100 border=0 cellpadding=5>
+    <table class="siroka" border="0" cellpadding="5">
         <tr>
             <td width="90" class="required">Regulární výraz</td>
             <td>
-                <input type="text" name="regexp" value="${PARAMS.regexp?if_exists?html}" size=60 tabindex=1>
+                <input type="text" name="regexp" value="${PARAMS.regexp?if_exists?html}" size="60" tabindex="1">
                 <div class="error">${ERRORS.regexp?if_exists}</div>
             </td>
         </tr>
         <tr>
             <td width="90">Popis</td>
             <td>
-                <textarea name="desc" rows="3" class="siroka" tabindex=2>${PARAMS.desc?if_exists?html}</textarea>
+                <textarea name="desc" rows="3" class="siroka" tabindex="2">${PARAMS.desc?if_exists?html}</textarea>
                 <div class="error">${ERRORS.desc?if_exists}</div>
             </td>
         </tr>
         <tr>
             <td width="90">Reklamní kód</td>
             <td>
-                <textarea name="code" rows="5" class="siroka" tabindex=3>${PARAMS.code?if_exists?html}</textarea>
+                <textarea name="code" rows="5" class="siroka" tabindex="3">${PARAMS.code?if_exists?html}</textarea>
                 <div class="error">${ERRORS.code?if_exists}</div>
             </td>
         </tr>

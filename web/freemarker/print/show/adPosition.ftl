@@ -7,13 +7,13 @@
 <#assign desc = TOOL.xpath(POSITION, "description/text()")?default("UNDEF"), id = TOOL.xpath(POSITION,"@id")>
 
 <form action="${URL.noPrefix("/EditAdvertisement")}" method="POST" name="form">
-    <table border="0">
+    <table class="siroka" border="0">
         <tr>
-            <td>Identifikátor:</td>
+            <td width="90">Identifikátor:</td>
             <td>${id}</td>
         </tr>
         <tr>
-            <td>Stav:</td>
+            <td width="90">Stav:</td>
             <td>
                 <#if TOOL.xpath(POSITION, "@active")=="yes">
                     <span class="ad_active">aktivní</span>
@@ -26,14 +26,14 @@
         </tr>
         <#if desc != "UNDEFINED">
             <tr>
-                <td>Popis:</td>
+                <td width="90">Popis:</td>
                 <td>${desc}</td>
             </tr>
         </#if>
         <tr>
-            <td>Defaultní kód:</td>
+            <td width="90">Defaultní kód:</td>
             <td>
-                <textarea disabled rows="5" class="siroka">${DEFAULT_CODE.getText()?html}</textarea>
+                <textarea disabled rows="7" class="siroka">${DEFAULT_CODE.getText()?html}</textarea>
             </td>
         </tr>
     </table>
@@ -48,21 +48,21 @@
         <#list CODES as code>
             <#assign desc = TOOL.xpath(code,"@description")?default("UNDEFINED")>
             <div style="border: solid 1px black">
-                <table border="0">
+                <table class="siroka" border="0">
                     <tr>
-                        <td>Regulární výraz:</td>
+                        <td width="90">Regulární výraz:</td>
                         <td>${TOOL.xpath(code,"@regexp")}</td>
                     </tr>
                     <#if desc != "UNDEFINED">
                         <tr>
-                            <td>Popis:</td>
+                            <td width="90">Popis:</td>
                             <td>${desc}</td>
                         </tr>
                     </#if>
                     <tr>
-                        <td>Reklamní kód:</td>
+                        <td width="90">Reklamní kód:</td>
                         <td>
-                            <textarea disabled rows="5" class="siroka">${code.getText()?html}</textarea>
+                            <textarea disabled rows="7" class="siroka">${code.getText()?html}</textarea>
                         </td>
                     </tr>
                 </table>
