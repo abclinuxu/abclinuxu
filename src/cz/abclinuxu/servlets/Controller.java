@@ -70,6 +70,12 @@ public class Controller extends HttpServlet implements Configurable {
         String page = null;
         String server = request.getServerName();
 
+        String ua = request.getHeader("user-agent");
+        if (ua != null && ua.indexOf("Maxthon") != -1) {
+            response.getWriter().write("Utocil na nas spambot kryjici se jako prohlizec maxthon. Zkuste jiny prohlizec");
+            return;
+        }
+
         if (server.startsWith(URLMapper.Version.WAP.toString())) {
             page = Constants.PAGE_WAP;
             WapVersion.process(request, response, env);
