@@ -125,19 +125,28 @@
         <servlet-name>default</servlet-name><url-pattern>/tmp/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>default</servlet-name><url-pattern>*.tar.bz2</url-pattern>
+        <servlet-name>default</servlet-name><url-pattern>*.bz2</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>default</servlet-name><url-pattern>*.tar.gz</url-pattern>
+        <servlet-name>default</servlet-name><url-pattern>*.gz</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>default</servlet-name><url-pattern>*.tgz</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name><url-pattern>*.zip</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>default</servlet-name><url-pattern>*.css</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>default</servlet-name><url-pattern>*.txt</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name><url-pattern>*.htm</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>default</servlet-name><url-pattern>*.html</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>default</servlet-name><url-pattern>*.ico</url-pattern>
