@@ -57,7 +57,7 @@
         <#list SORT.byName(map.category) as sekce>
             <#if sekce_index%3==0><tr></#if>
 	    <td>
-		<a href="${URL.make(sekce.url?default("/dir/"+sekce.id))}">
+		<a href="${sekce.url?default("/dir/"+sekce.id)}">
 		<#if TOOL.childIcon(sekce)?exists><img src="${TOOL.childIcon(sekce)}" class="ikona" alt="${TOOL.childName(sekce)}"></#if>${TOOL.childName(sekce)}</a>
 	    </td>
 	    <#if sekce_index%3==2></tr></#if>
@@ -80,7 +80,7 @@
         <#list SORT.byName(map.make) as polozka>
             <tr>
                 <td class="td01">
-		            <a href="${URL.make(polozka.url?default("/show/"+polozka.id))}">${TOOL.childName(polozka)}</a>
+		            <a href="${polozka.url?default("/show/"+polozka.id)}">${TOOL.childName(polozka)}</a>
         		</td>
                 <td class="td02">
 		            <#assign support=TOOL.xpath(polozka.child,"/data/support")?default("UNDEFINED")>
