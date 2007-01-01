@@ -222,6 +222,8 @@ public class EditCategory implements AbcAction {
             case Category.FAQ:
                 params.put(PARAM_TYPE, "faq");
                 break;
+            default:
+                params.put(PARAM_TYPE, "generic");
         }
 
         return FMTemplateSelector.select("EditCategory","edit",env,request);
@@ -289,17 +291,19 @@ public class EditCategory implements AbcAction {
             ServletUtils.addError(PARAM_TYPE, "Vyberte typ sekce!", env, null);
             return false;
         }
-        if ("software".equals(type))
+        if ("generic".equals(type))
+            category.setType(0);
+        else if ("software".equals(type))
             category.setType(Category.SOFTWARE_SECTION);
-        if ("hardware".equals(type))
+        else if ("hardware".equals(type))
             category.setType(Category.HARDWARE_SECTION);
-        if ("forum".equals(type))
+        else if ("forum".equals(type))
             category.setType(Category.FORUM);
-        if ("blog".equals(type))
+        else if ("blog".equals(type))
             category.setType(Category.BLOG);
-        if ("section".equals(type))
+        else if ("section".equals(type))
             category.setType(Category.SECTION);
-        if ("faq".equals(type))
+        else if ("faq".equals(type))
             category.setType(Category.FAQ);
 
         return true;

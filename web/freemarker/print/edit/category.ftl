@@ -16,7 +16,7 @@
         <td width="120" class="required">Typ</td>
         <td>
             <select name="type" tabindex="2">
-                <option value="nic"<#if ! PARAMS.type?exists> SELECTED</#if>>Sekce</option>
+                <option value="generic"<#if ! PARAMS.type?exists> SELECTED</#if>>Sekce</option>
                 <option value="software"<#if PARAMS.type?if_exists=="software"> SELECTED</#if>>Sekce Software</option>
                 <option value="hardware"<#if PARAMS.type?if_exists=="hardware"> SELECTED</#if>>Sekce Hardware</option>
                 <option value="faq"<#if PARAMS.type?if_exists=="faq"> SELECTED</#if>>Sekce FAQ</option>
