@@ -61,7 +61,10 @@ import java.util.zip.GZIPOutputStream;
 public class SiteMapGenerator implements Configurable {
     static org.apache.log4j.Category log = org.apache.log4j.Category.getInstance(SiteMapGenerator.class);
 
-    public static final String PREF_FILE = "file";
+    public static final String PREF_INDEX_FILE = "index.file";
+    public static final String PREF_MAIN_FILE = "file.main";
+    public static final String PREF_FORUM_FILE = "file.forum";
+
     public static final String ALWAYS = "always";
     public static final String HOURLY = "hourly";
     public static final String DAILY = "daily";
@@ -70,7 +73,7 @@ public class SiteMapGenerator implements Configurable {
     public static final String YEARLY = "yearly";
     public static final String NEVER = "never";
 
-    static String filename;
+    static String filenameIndex,filenameMain,filenameForum;
     static String server;
     static boolean debug;
     static Persistence persistence;
@@ -94,8 +97,19 @@ public class SiteMapGenerator implements Configurable {
         Relation faqs = (Relation) Tools.sync(new Relation(Constants.REL_FAQ));
         List<Relation> forums = sqlTool.findCategoryRelationsWithType(Category.FORUM, null);
 
-        File file = new File(filename);
+        // index of sitemaps
+        File file = new File(AbcConfig.getDeployPath() + File.separator + filenameIndex);
         FileOutputStream fos = new FileOutputStream(file);
+        fos.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".getBytes());
+        fos.write("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n".getBytes());
+        writeSitemap(filenameMain, fos);
+        writeSitemap(filenameForum, fos);
+        fos.write("</sitemapindex>".getBytes());
+        fos.close();
+
+        // main sitemap file
+        file = new File(AbcConfig.getDeployPath() + File.separator + filenameMain);
+        fos = new FileOutputStream(file);
         GZIPOutputStream stream = new GZIPOutputStream(fos);
         stream.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".getBytes());
         stream.write("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n".getBytes());
@@ -108,11 +122,6 @@ public class SiteMapGenerator implements Configurable {
         dumpUrlsFor(drivers, UrlUtils.PREFIX_DRIVERS, stream);
         dumpUrlsFor(faqs, UrlUtils.PREFIX_FAQ, stream);
         dumpFaqUrls(stream);
-        writeUrl(server + UrlUtils.PREFIX_FORUM, null, HOURLY, 0.8f, stream);
-        for (Relation relation: forums) {
-            dumpUrlsFor(relation, UrlUtils.PREFIX_FORUM, stream);
-            dumpDiscussionUrls(relation, stream);
-        }
         writeUrl(server + "/doc/portal/rss-a-jine-pristupy", null, DAILY, 0.8f, stream);
         writeUrl(server + "/hosting", null, DAILY, 0.8f, stream);
         writeUrl(server + "/skoleni", null, DAILY, 0.8f, stream);
@@ -130,9 +139,25 @@ public class SiteMapGenerator implements Configurable {
 
         stream.write("</urlset>".getBytes());
         stream.close();
+
+        // second sitemap file for discussion forum
+        file = new File(AbcConfig.getDeployPath() + File.separator + filenameForum);
+        fos = new FileOutputStream(file);
+        stream = new GZIPOutputStream(fos);
+        stream.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".getBytes());
+        stream.write("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n".getBytes());
+
+        writeUrl(server + UrlUtils.PREFIX_FORUM, null, HOURLY, 0.8f, stream);
+        for (Relation relation : forums) {
+            dumpUrlsFor(relation, UrlUtils.PREFIX_FORUM, stream);
+            dumpDiscussionUrls(relation, stream);
+        }
+
+        stream.write("</urlset>".getBytes());
+        stream.close();
+
         long end = System.currentTimeMillis();
-        String message = "Generating of " + count + " urls for sitemap took " + (end - start) / 1000 + " seconds," +
-                         " file size is " + file.length() + " bytes, maximum is 20 MB.";
+        String message = "Generating of " + count + " sitemaps urls took " + (end - start) / 1000 + " seconds";
         log.info(message);
         System.out.println(message);
     }
@@ -327,6 +352,19 @@ public class SiteMapGenerator implements Configurable {
         count++;
     }
 
+    private static void writeSitemap(String filename, OutputStream stream) throws IOException {
+        stream.write("<sitemap>".getBytes());
+        if (debug) stream.write('\n');
+
+        stream.write("<loc>".getBytes());
+        stream.write((server + "/" + filename).getBytes());
+        stream.write("</loc>".getBytes());
+        if (debug) stream.write('\n');
+
+        stream.write("</sitemap>".getBytes());
+        if (debug) stream.write('\n');
+    }
+
     /**
      * TODO XML encode &," a ', URL encode all other characters except a-Z, 0-9, colon, slash and dot.
      */
@@ -335,7 +373,9 @@ public class SiteMapGenerator implements Configurable {
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {
-        filename = prefs.get(PREF_FILE, null);
+        filenameIndex = prefs.get(PREF_INDEX_FILE, null);
+        filenameMain = prefs.get(PREF_MAIN_FILE, null);
+        filenameForum = prefs.get(PREF_FORUM_FILE, null);
         server = "http://" + AbcConfig.getHostname();
     }
 }
