@@ -10,7 +10,7 @@
 	</div> <!-- obal -->
 
 <!-- impact: reklamy -->
-<#include "/include/impact-konec.txt">
+<@lib.advertisement id="ad_end" />
 </body>
 
 </html>

@@ -44,8 +44,6 @@
         ulo¾it vzorovou odpovìï do <a href="/faq">Èasto kladených otázek (FAQ)</a>.
     </p>
 
-<#--<#include "/include/sun-fora.txt">-->
-
  <#if DIZ.size==0>
     <p>Na otázku zatím nikdo bohu¾el neodpovìdìl.</p>
  <#else>

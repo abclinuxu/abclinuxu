@@ -50,7 +50,7 @@
 
 <div class="cl_square">
  <a href="mailto:info@stickfish.cz">reklama</a><br>
- <#include "/include/impact-cl-sq.txt">
+ <@lib.advertisement id="square" />
 </div>
 
 ${TOOL.render(TEXT,USER?if_exists)}
@@ -109,8 +109,6 @@ ${TOOL.render(TEXT,USER?if_exists)}
 </p>
 
 <#flush>
-
-<#--<#include "/include/sun-clanky.txt">-->
 
 <#if CHILDREN.discussion?exists>
     <h3>Komentáøe</h3>

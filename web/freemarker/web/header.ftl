@@ -35,31 +35,13 @@
 <body onload="document.getElementById('menu').style.display='block';window.setTimeout(new Function('document.getElementById(\'menu\').style.display=\'table\''), 10)" id="www-abclinuxu-cz">
 
 <#import "macros.ftl" as lib>
-<@lib.advertisement id="html_init" />
-
-<#if IS_INDEX?exists>
-<#include "/include/netmonitor_hp.txt">
-<#include "/include/impact-hp.txt">
-<#elseif URL.prefix=='/clanky'>
-<#include "/include/netmonitor_ostatni.txt">
-<#include "/include/impact-cl.txt">
-<#else>
-<#include "/include/netmonitor_ostatni.txt">
-<#include "/include/impact-oth.txt">
-</#if>
+<@lib.advertisement id="netmonitor" />
+<@lib.advertisement id="ad_init" />
 
 <#include "/include/lista.txt">
 
-
 <#--<center>
-<@lib.advertisement id="banner_top" />
-<#if IS_INDEX?exists>
-    <#include "/include/impact-hp-lb.txt">
-<#elseif URL.prefix=='/clanky'>
-    <#include "/include/impact-cl-lb.txt">
-<#else>
-    <#include "/include/impact-oth-lb.txt">
-</#if>
+<@lib.advertisement id="leaderboard" />
 </center>-->
 
 <div id="zh-kont">
@@ -117,13 +99,7 @@
 	<div class="obal_ls" id="ls">
 	<div class="s">
             <div class="ls_reklama">
-                <#if IS_INDEX?exists>
-                    <#include "/include/impact-hp-vip.txt">
-                <#elseif URL.prefix=='/clanky'>
-                    <#include "/include/impact-cl-vip.txt">
-                <#else>
-                    <#include "/include/impact-oth-vip.txt">
-                </#if>
+		<@lib.advertisement id="vip" />
             </div>
 
 	    <!-- Skoleni OKsystem, 10.11.2006 pozastaveno -->
