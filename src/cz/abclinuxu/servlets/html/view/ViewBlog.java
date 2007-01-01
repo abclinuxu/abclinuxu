@@ -165,7 +165,7 @@ public class ViewBlog implements AbcAction, Configurable {
             if (name != null) {
                 CompareCondition condition = new CompareCondition(Field.SUBTYPE, Operation.EQUAL, name);
                 SQLTool sqlTool = SQLTool.getInstance();
-                List list = sqlTool.findSectionRelationsWithType(Category.BLOG, new Qualifier[]{condition});
+                List list = sqlTool.findCategoryRelationsWithType(Category.BLOG, new Qualifier[]{condition});
                 if (list.size() == 0)
                     throw new NotFoundException("Blog "+name+" nebyl nalezen!");
 
@@ -372,7 +372,7 @@ public class ViewBlog implements AbcAction, Configurable {
         Map map;
         List months;
 
-        List blogs = sqlTool.findSectionRelationsWithType(Category.BLOG, null);
+        List blogs = sqlTool.findCategoryRelationsWithType(Category.BLOG, null);
         Tools.syncList(blogs);
         List users = new ArrayList(blogs.size());
         for (Iterator iter = blogs.iterator(); iter.hasNext();) {

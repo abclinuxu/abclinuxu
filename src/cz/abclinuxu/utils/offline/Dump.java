@@ -405,7 +405,7 @@ public class Dump implements Configurable {
      * @throws Exception
      */
     void dumpForums(File currentDir) throws Exception {
-        List forums = sqlTool.findSectionRelationsWithType(Category.FORUM, null);
+        List forums = sqlTool.findCategoryRelationsWithType(Category.FORUM, null);
         Tools.syncList(forums);
 
         Relation forum = (Relation) Tools.sync(new Relation(Constants.REL_FORUM));

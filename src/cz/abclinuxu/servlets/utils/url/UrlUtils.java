@@ -192,13 +192,22 @@ public class UrlUtils {
         if (relation == null)
             throw new AbcException("©patný vstup: relace nesmí být prázdná!");
         relation = (Relation) Tools.sync(relation);
+
         if (relation.getUrl() != null)
             return relation.getUrl();
+
         GenericObject child = relation.getChild();
-        if (child instanceof Category)
-            return prefix + "/dir/" + relation.getId();
+        if (child instanceof Category) {
+            Category category = (Category) child;
+            if (category.getType() == Category.BLOG)
+                return UrlUtils.PREFIX_BLOG + "/" + category.getSubType();
+            else
+                return prefix + "/dir/" + relation.getId();
+        }
+
         if (! (child instanceof Item))
             return prefix + "/show/" + relation.getId();
+
         Item item = (Item) child;
         if (item.getType() == Item.BLOG)
             return Tools.getUrlForBlogStory(relation);

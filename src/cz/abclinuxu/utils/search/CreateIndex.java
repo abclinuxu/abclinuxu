@@ -102,7 +102,7 @@ public class CreateIndex implements Configurable {
             Relation drivers = (Relation) Tools.sync(new Relation(Constants.REL_DRIVERS));
             Relation abc = (Relation) Tools.sync(new Relation(Constants.REL_ABC)); // neni cas to smazat?
             Relation blogs = (Relation) persistence.findById(new Relation(Constants.REL_BLOGS));
-            List forums = sqlTool.findSectionRelationsWithType(Category.FORUM,null);
+            List forums = sqlTool.findCategoryRelationsWithType(Category.FORUM,null);
 
             long start = System.currentTimeMillis();
 

@@ -883,7 +883,7 @@ public class EditBlog implements AbcAction, Configurable {
 
         CompareCondition condition = new CompareCondition(Field.SUBTYPE, Operation.EQUAL, name);
         SQLTool sqlTool = SQLTool.getInstance();
-        List list = sqlTool.findSectionRelationsWithType(Category.BLOG, new Qualifier[]{condition});
+        List list = sqlTool.findCategoryRelationsWithType(Category.BLOG, new Qualifier[]{condition});
         if (list.size()>0) {
             Relation relation = (Relation) list.get(0);
             Category existing = (Category) relation.getChild();

@@ -445,7 +445,7 @@ public final class SQLTool implements Configurable {
      * @return List of initialized relations
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List<Relation> findSectionRelationsWithType(int type, Qualifier[] qualifiers) {
+    public List<Relation> findCategoryRelationsWithType(int type, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(SECTION_RELATIONS_BY_TYPE));
         List params = new ArrayList();
@@ -458,7 +458,7 @@ public final class SQLTool implements Configurable {
      * Counts relations, where child is a category of specified type.
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public int countFolderRelationsWithType(int type) {
+    public int countCategoryRelationsWithType(int type) {
         StringBuffer sb = new StringBuffer((String) sql.get(SECTION_RELATIONS_BY_TYPE));
         changeToCountStatement(sb);
         List params = new ArrayList();

@@ -207,6 +207,11 @@
                             <entry key="yesterday" value="vèera" />
                         </map>
                     </node>
+                    <node name="SiteMapGenerator">
+                        <map>
+                            <entry key="file" value="@DEPLOY_ABCLINUXU@/sitemap.xml.gz" />
+                        </map>
+                    </node>
                 </node>
                 <node name="persistence">
                     <map/>
