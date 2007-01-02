@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Set;
 import java.text.ParseException;
 
 import org.dom4j.DocumentHelper;
@@ -188,8 +189,11 @@ public class Royalties implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation upper = (Relation) env.get(VAR_RELATION);
         Item article = (Item) upper.getChild();
-        if ( params.get(PARAM_AUTHOR)==null )
-            params.put(PARAM_AUTHOR, article.getData().getRootElement().elementText("author"));
+        if ( params.get(PARAM_AUTHOR)==null ) {
+            Set authors = article.getProperty(Constants.PROPERTY_AUTHOR);
+            String firstAuthor = (String) authors.iterator().next();
+            params.put(PARAM_AUTHOR, firstAuthor);
+        }
         if ( params.get(PARAM_PUBLISHED)==null )
             params.put(PARAM_PUBLISHED, Constants.isoFormatShort.format(article.getCreated()));
         if ( params.get(PARAM_AMOUNT)==null )
@@ -237,7 +241,7 @@ public class Royalties implements AbcAction {
         Item item = (Item) relation.getChild();
         Element root = item.getData().getRootElement();
         if ( params.get(PARAM_AUTHOR)==null )
-            params.put(PARAM_AUTHOR, Integer.toString(item.getOwner()));
+            params.put(PARAM_AUTHOR, item.getSubType());
         if ( params.get(PARAM_PUBLISHED)==null )
             params.put(PARAM_PUBLISHED, Constants.isoFormatShort.format(item.getCreated()));
         if ( params.get(PARAM_AMOUNT)==null )
