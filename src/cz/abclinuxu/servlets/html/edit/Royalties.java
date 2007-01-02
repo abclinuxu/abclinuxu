@@ -157,7 +157,7 @@ public class Royalties implements AbcAction {
 
         Qualifier[] qualifiers = null;
         CompareCondition conditionFrom = new CompareCondition(Field.CREATED, Operation.GREATER_OR_EQUAL, since);
-        CompareCondition conditionTo = new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, until);
+        CompareCondition conditionTo = new CompareCondition(Field.CREATED, Operation.SMALLER, until);
         CompareCondition conditionWho = new CompareCondition(Field.SUBTYPE, Operation.EQUAL, authorId);
         if (authorId != 0)
             qualifiers = new Qualifier[]{conditionFrom, conditionTo, conditionWho, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING};
