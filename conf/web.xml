@@ -46,12 +46,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>dump</servlet-name>
-        <servlet-class>org.mortbay.servlet.Dump</servlet-class>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
-
-    <servlet>
         <servlet-name>redirect</servlet-name>
         <servlet-class>cz.abclinuxu.servlets.html.view.Redirect</servlet-class>
         <load-on-startup>3</load-on-startup>
