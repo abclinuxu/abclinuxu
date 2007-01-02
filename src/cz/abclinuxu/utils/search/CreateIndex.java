@@ -100,7 +100,6 @@ public class CreateIndex implements Configurable {
             Relation hardware = (Relation) Tools.sync(new Relation(Constants.REL_HARDWARE));
             Relation software = (Relation) Tools.sync(new Relation(Constants.REL_SOFTWARE));
             Relation drivers = (Relation) Tools.sync(new Relation(Constants.REL_DRIVERS));
-            Relation abc = (Relation) Tools.sync(new Relation(Constants.REL_ABC)); // neni cas to smazat?
             Relation blogs = (Relation) persistence.findById(new Relation(Constants.REL_BLOGS));
             List forums = sqlTool.findCategoryRelationsWithType(Category.FORUM,null);
 
@@ -121,21 +120,58 @@ public class CreateIndex implements Configurable {
 
             try {
                 makeIndexOnArticles(articles.getChild().getChildren());
-                makeIndexOnNews();
-                makeIndexOnDictionary();
-                makeIndexOnFaq();
-                makeIndexOnPolls();
-                makeIndexOnBlogs(blogs.getChild().getChildren());
-                makeIndexOnForums(forums, UrlUtils.PREFIX_FORUM);
-                makeIndexOn(hardware, UrlUtils.PREFIX_HARDWARE);
-                makeIndexOn(software, UrlUtils.PREFIX_SOFTWARE);
-                makeIndexOn(drivers, UrlUtils.PREFIX_DRIVERS);
-                makeIndexOn(abc, UrlUtils.PREFIX_CLANKY);
-            } finally {
-                log.info("Starting to optimize the index");
-                indexWriter.optimize();
-                indexWriter.close();
+            } catch (Exception e) {
+                log.error("Failed to index articles", e);
             }
+            try {
+                makeIndexOnNews();
+            } catch (Exception e) {
+                log.error("Failed to index news", e);
+            }
+            try {
+                makeIndexOnDictionary();
+            } catch (Exception e) {
+                log.error("Failed to index dictionary", e);
+            }
+            try {
+                makeIndexOnFaq();
+            } catch (Exception e) {
+                log.error("Failed to index FAQ", e);
+            }
+            try {
+                makeIndexOnPolls();
+            } catch (Exception e) {
+                log.error("Failed to index Polls", e);
+            }
+            try {
+                makeIndexOnBlogs(blogs.getChild().getChildren());
+            } catch (Exception e) {
+                log.error("Failed to index blogs", e);
+            }
+            try {
+                makeIndexOnForums(forums, UrlUtils.PREFIX_FORUM);
+            } catch (Exception e) {
+                log.error("Failed to index forums", e);
+            }
+            try {
+                makeIndexOn(hardware, UrlUtils.PREFIX_HARDWARE);
+            } catch (Exception e) {
+                log.error("Failed to index hardware", e);
+            }
+            try {
+                makeIndexOn(software, UrlUtils.PREFIX_SOFTWARE);
+            } catch (Exception e) {
+                log.error("Failed to index software", e);
+            }
+            try {
+                makeIndexOn(drivers, UrlUtils.PREFIX_DRIVERS);
+            } catch (Exception e) {
+                log.error("Failed to index drivers", e);
+            }
+
+            log.info("Starting to optimize the index");
+            indexWriter.optimize();
+            indexWriter.close();
             long end = System.currentTimeMillis();
 
             FileWriter fos = new FileWriter(new File(PATH, lastRunFilename));
