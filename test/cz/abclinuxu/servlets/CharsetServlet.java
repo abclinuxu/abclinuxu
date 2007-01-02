@@ -26,8 +26,22 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Locale;
 
+/**
+ * This class is dedicated to testing request encoding.
+ */
 public class CharsetServlet extends HttpServlet {
-
+/*
+web.xml
+    <servlet>
+        <servlet-name>charset</servlet-name>
+        <servlet-class>cz.abclinuxu.servlets.CharsetServlet</servlet-class>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>charset</servlet-name>
+        <url-pattern>/charset</url-pattern>
+    </servlet-mapping>
+*/
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String tmp = request.getParameter("note");
 //        String tmp = "køí¾áèek";
