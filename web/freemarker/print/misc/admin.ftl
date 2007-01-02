@@ -37,6 +37,13 @@ konfiguraèní soubory.
     <li><a href="${URL.noPrefix("/EditSurvey?action=list")}">Listuj velké ankety</a></li>
 </ul>
 
+<h3>Správa redakce</h3>
+
+<ul>
+    <li><a href="${URL.noPrefix("/clanky/dir/8082")}">èekající èlánky</a></li>
+    <li><a href="${URL.noPrefix("/clanky/honorare")}">honoráøe</a></li>
+    <li><a href="${URL.noPrefix("/autori")}">seznam autorù</a></li>
+</ul>
 
 <h3>Kontrola stavu a statistika</h3>
 
