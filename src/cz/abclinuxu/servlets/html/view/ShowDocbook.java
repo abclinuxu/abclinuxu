@@ -21,7 +21,6 @@ package cz.abclinuxu.servlets.html.view;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.data.Record;
 import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.data.User;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.servlets.AbcAction;
@@ -30,6 +29,7 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
 import org.dom4j.Document;
 import org.dom4j.Node;
+import org.dom4j.Element;
 import org.htmlparser.Parser;
 import org.htmlparser.StringNode;
 import org.htmlparser.lexer.Lexer;
@@ -46,6 +46,7 @@ import java.io.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Returns article in docbook format.
@@ -82,7 +83,7 @@ public class ShowDocbook implements AbcAction {
 
         print("<articleinfo>", 0, true);
         print("<date>"+Constants.czDayMonthYear.format(article.getCreated())+"</date>", 1, true);
-        printAuthor(writer, doc, persistence);
+        printAuthor(writer, article, persistence);
         print("</articleinfo>", 0, true);
 
         print("<para>", 0, true);
@@ -107,19 +108,21 @@ public class ShowDocbook implements AbcAction {
         print("</article>", 0, true);
     }
 
-    protected void printAuthor(Writer writer, Document document, Persistence persistence) {
-        String id = document.selectSingleNode("/data/author").getText();
-        User user = (User) persistence.findById(new User(Integer.parseInt(id)));
-        String name = user.getName();
-        int space = name.indexOf(" ");
-        print("<author>", 1, true);
-        if (space!=-1) {
-            print("<firstname>"+name.substring(0,space)+"</firstname>", 2, true);
-            print("<surname>"+name.substring(space+1)+"</surname>", 2, true);
-        } else {
-            print("<surname>"+name+"</surname>", 2, true);
+    protected void printAuthor(Writer writer, Item article, Persistence persistence) {
+        Set authors = article.getProperty(Constants.PROPERTY_AUTHOR);
+        for (Iterator iter = authors.iterator(); iter.hasNext();) {
+            int rid = Misc.parseInt((String) iter.next(), 0);
+            Relation relation = (Relation) persistence.findById(new Relation(rid));
+            Item author = (Item) persistence.findById(relation.getChild());
+            Element elementFirstname = (Element) author.getData().selectSingleNode("/data/firstname");
+            Element elementSurname = (Element) author.getData().selectSingleNode("/data/surname");
+
+            print("<author>", 1, true);
+            if (elementFirstname != null)
+                print("<firstname>" + elementFirstname.getText() + "</firstname>", 2, true);
+            print("<surname>" + elementSurname.getText() + "</surname>", 2, true);
+            print("</author>", 1, true);
         }
-        print("</author>", 1, true);
     }
 
     protected void println() {
