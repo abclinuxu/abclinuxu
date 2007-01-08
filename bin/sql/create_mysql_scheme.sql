@@ -26,7 +26,7 @@ CREATE TABLE kategorie (
  cislo INT AUTO_INCREMENT PRIMARY KEY,  -- jednoznacny identifikator
  typ SMALLINT,                          -- typ kategorie
  podtyp VARCHAR(30) NULL,               -- podtyp
- data TEXT NOT NULL,                    -- XML s nazvem, ikonou, poznamkou ...
+ data LONGTEXT NOT NULL,                    -- XML s nazvem, ikonou, poznamkou ...
  pridal INT(6) NOT NULL,                -- odkaz na uzivatele
  vytvoreno DATETIME,       -- cas vytvoreni
  zmeneno TIMESTAMP NOT NULL             -- cas posledni zmeny
@@ -41,7 +41,7 @@ CREATE TABLE polozka (
  cislo INT AUTO_INCREMENT PRIMARY KEY,  -- jednoznacny identifikator
  typ SMALLINT,                          -- typ polozky (druh, novinka, ..)
  podtyp VARCHAR(30) NULL,               -- podtyp
- data TEXT NOT NULL,                    -- XML s nazvem, ikonou, poznamkou ...
+ data LONGTEXT NOT NULL,                    -- XML s nazvem, ikonou, poznamkou ...
  pridal INT(6) NOT NULL,                -- odkaz na uzivatele
  vytvoreno DATETIME,       -- cas vytvoreni
  zmeneno TIMESTAMP NOT NULL             -- cas posledni zmeny
