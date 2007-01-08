@@ -59,12 +59,14 @@ public class Advertisement {
 
         Persistence persistence = PersistenceFactory.getPersistance();
         Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
-        Element element = (Element) item.getData().selectSingleNode("//advertisement/position[@id='" + id + "']");
-        if (element == null)
+        Element position = (Element) item.getData().selectSingleNode("//advertisement/position[@id='" + id + "']");
+        if (position == null)
             return "<!-- advertisement position '" + id + "' is not defined! -->";
+        if (position.attributeValue("active").equals("no"))
+            return "<!-- advertisement position " + id + " is not active -->";
 
         String defaultCode = null;
-        List codes = element.elements("code");
+        List codes = position.elements("code");
         for (Iterator iter = codes.iterator(); iter.hasNext();) {
             Element code = (Element) iter.next();
             String regexp = code.attributeValue("regexp");
