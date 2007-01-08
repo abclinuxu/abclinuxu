@@ -255,7 +255,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         User user = (User) env.get(Constants.VAR_USER);
 
-        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
+        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION)).clone();
         Element position = getPosition(params, item, request, env);
         if (position == null) {
             urlUtils.redirect(response, "/EditAdvertisement?action=list");
@@ -359,7 +359,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         User user = (User) env.get(Constants.VAR_USER);
 
-        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
+        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION)).clone();
         Element position = getPosition(params, item, request, env);
         if (position == null) {
             urlUtils.redirect(response, "/EditAdvertisement?action=list");
@@ -418,7 +418,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         User user = (User) env.get(Constants.VAR_USER);
 
-        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
+        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION)).clone();
         Element position = getPosition(params, item, request, env);
         if (position == null) {
             urlUtils.redirect(response, "/EditAdvertisement?action=list");
@@ -453,7 +453,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         User user = (User) env.get(Constants.VAR_USER);
 
-        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION));
+        Item item = (Item) persistence.findById(new Item(Constants.ITEM_DYNAMIC_CONFIGURATION)).clone();
         Element position = getPosition(params, item, request, env);
         if (position == null) {
             urlUtils.redirect(response, "/EditAdvertisement?action=list");
