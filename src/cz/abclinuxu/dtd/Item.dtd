@@ -26,11 +26,10 @@
 <!ATTLIST url useType (#NMTOKEN)> <!-- type of given url (homepage, download, rss) -->
 
 <!-- Item.ARTICLE -->
-<!ELEMENT data (name,icon?,perex,author,editor?,forbid_discussions?,forbid_rating?,thumbnail?,talk?)>
+<!ELEMENT data (name,icon?,perex,editor?,forbid_discussions?,forbid_rating?,thumbnail?,talk?)>
 <!ELEMENT name (#PCDATA)> <!-- title of the Article -->
 <!ELEMENT icon (#PCDATA)> <!-- absolute path including protocol, or relative path to icon directory -->
 <!ELEMENT perex (#PCDATA)> <!-- description of the article -->
-<!ELEMENT author (#PCDATA)> <!-- id of the author -->
 <!ELEMENT editor (#PCDATA)> <!-- who approved this article -->
 <!ELEMENT forbid_discussions (#PCDATA)> <!-- yes will prohibit discussions to this article -->
 <!ELEMENT forbid_rating (#PCDATA)> <!-- yes will prohibit rating of this article -->

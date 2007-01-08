@@ -30,6 +30,7 @@ public class EncodingFilter implements Filter {
 
     public void init(FilterConfig config) throws ServletException {
         encoding = config.getInitParameter("encoding");
+        System.setProperty("org.mortbay.util.URI.charset", "ISO-8859-2");
     }
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {

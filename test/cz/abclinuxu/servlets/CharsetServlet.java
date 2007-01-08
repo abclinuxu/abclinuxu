@@ -43,6 +43,7 @@ web.xml
     </servlet-mapping>
 */
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("ISO-8859-1");
         String tmp = request.getParameter("note");
 //        String tmp = "křížáček";
         String tmp2 = new String(tmp.getBytes(),"ISO-8859-2");
@@ -58,9 +59,14 @@ web.xml
         locale = request.getLocale();
         System.out.println("request locale = " + locale); // cs !!
 
+        response.setContentType("text/html; charset=ISO-8859-2");
         Writer w = response.getWriter();
-        w.write("<html><body>");
-        w.write(tmp);
+        w.write("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-2\"></head><body>");
+        w.write("parameter has value: "+tmp+"<br>");
+        w.write("<form action=\"\" method=post>");
+        w.write("<input type=\"text\" name=\"LOGIN\" size=\"8\">");
+        w.write("<input type=\"submit\">");
+        w.write("</form>");
         w.write("</body></html>");
     }
 
