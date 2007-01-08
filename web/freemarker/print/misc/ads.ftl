@@ -18,7 +18,13 @@
 <form action="${URL.noPrefix("/EditAdvertisement")}" method="POST" name="form">
     <#if POSITIONS?exists>
         <table border="0">
-            <#list POSITIONS as position>
+		<tr>
+			<td><b>&nbsp;</b></td>
+			<td><b>název</b></td>
+			<td><b>identifikátor</b></td>
+			<td><b>stav</b></td>
+		</tr>
+		<#list POSITIONS as position>
                 <#assign id = TOOL.xpath(position,"@id")>
                 <tr>
                     <td>
@@ -28,6 +34,9 @@
                         <a href="${URL.noPrefix("/EditAdvertisement?action=showPosition&amp;identifier="+id)}">
                             ${TOOL.xpath(position, "name/text()")}
                         </a>
+                    </td>
+                    <td>
+			 <code>${id}</code>
                     </td>
                     <td>
                         <#if TOOL.xpath(position, "@active")=="yes">

@@ -28,8 +28,10 @@
 <#if USER?exists && USER.hasRole("article admin")>
  <p>
   <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">Upravit</a>
-  <a href="${URL.make("/honorare/"+RELATION.id+"?action=add")}">Vlo¾it honoráø</a>
-  <#if CHILDREN.royalties?exists>
+  <#if !CHILDREN.royalties?exists>
+   <b><a href="${URL.make("/honorare/"+RELATION.id+"?action=add")}">Vlo¾it honoráø</a></b>
+  <#else>
+   <a href="${URL.make("/honorare/"+RELATION.id+"?action=add")}">Vlo¾it honoráø</a>
    <#list CHILDREN.royalties as honorar>
     <a href="${URL.make("/honorare/"+honorar.id+"?action=edit")}">Upravit honoráø</a>
    </#list>
@@ -48,10 +50,8 @@
  <div class="cl_perex">${TOOL.xpath(ITEM,"/data/perex")}</div>
 </#if>
 
-<div class="cl_square">
- <a href="mailto:info@stickfish.cz">reklama</a><br>
- <@lib.advertisement id="square" />
-</div>
+<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="arbo-sky" />
 
 ${TOOL.render(TEXT,USER?if_exists)}
 

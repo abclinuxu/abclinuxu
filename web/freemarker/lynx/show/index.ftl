@@ -1,6 +1,5 @@
 <#include "../header.ftl">
 
-<#include "/include/zprava.txt">
 <@lib.showMessages/>
 
 Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum</a>

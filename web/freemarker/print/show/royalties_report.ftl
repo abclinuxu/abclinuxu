@@ -2,14 +2,12 @@
 
 <@lib.showMessages/>
 
+<table style="font-size: small" cellspacing="0" border="1">
 <#list RESULT as found>
-    <h3><a href="${found.author.url}">${TOOL.childName(found.author)}</a></h3>
-    <table border="1" cellspacing="1" cellpadding="4">
         <tr>
-            <th>Honoráø</th>
-            <th>Vytvoøen</th>
-            <th>Èlánek</th>
-        </tr>
+           <td colspan="3" style="background:lightgray">
+	      <b><a href="${found.author.url}">${TOOL.childName(found.author)}</a><code>&#09;&#09;${found.sum}</b>&#09;${TOOL.xpath(found.author.child, "/data/accountNumber")?default("bankovní úèet není zadán")}</code>
+	   </td>
         <#list found.royalties as relation>
             <#assign honorar=relation.child, clanek=TOOL.sync(relation.parent),
                      relaceClanku = TOOL.createRelation(relation.upper)>
@@ -19,10 +17,7 @@
                 <td><a href="${relaceClanku.url}">${TOOL.xpath(clanek,"/data/name")}</a></td>
             </tr>
         </#list>
-        <tr>
-            <td><b>${found.sum}</b></td>
-            <td colspan="2">${TOOL.xpath(found.author.child, "/data/accountNumber")?default("bankovní úèet není zadán")}</td>
-        </tr>
-    </table>
 </#list>
+</table>
+
 <#include "../footer.ftl">

@@ -36,23 +36,22 @@
 
 <#import "macros.ftl" as lib>
 <@lib.advertisement id="netmonitor" />
-<@lib.advertisement id="ad_init" />
+<@lib.advertisement id="ad-init" />
 
 <#include "/include/lista.txt">
 
-<#--<center>
-<@lib.advertisement id="leaderboard" />
-</center>-->
+<center>
+<@lib.advertisement id="impact-lb" />
+<@lib.advertisement id="arbo-lb" />
+</center>
 
 <div id="zh-kont">
   <div id="zh-text" class="zh-box">
     <div id="zh-tema">
-      <img class="zh-iko" src="/images/site2/sflista/ab.gif">
-        Víte, ¾e portál abclinuxu.cz obnovil sekci <a href="/software">Software</a>?
+       <@lib.advertisement id="zahl-vlevo" />
     </div>
     <div id="zh-ad">
-      <img class="zh-iko" src="/images/site2/sflista/ah.gif">
-        <b>AbcHost.cz:</b> Akce pro servery <a title="AbcHost.cz: HP ProLiant" href="http://www.abchost.cz/servery-hp-proliant-bl10e-blade/104/category.html">HP&nbsp;ProLiant</a>: u&nbsp;objednávek do&nbsp;31.12. dostanete první mìsíc provozu zdarma!
+       <@lib.advertisement id="zahl-vpravo" />
     </div>
   </div>
   <div id="zh-logo" class="zh-box"><a href="/"></a></div>
@@ -102,9 +101,7 @@
 		<@lib.advertisement id="vip" />
             </div>
 
-	    <!-- Skoleni OKsystem, 10.11.2006 pozastaveno -->
-
-            <#--<#include "/include/oksystem.txt">-->
+            <@lib.advertisement id="vip-text" />
 
             <!-- ANKETA -->
             <#if VARS.currentPoll?exists>
@@ -149,14 +146,14 @@
                 </#if>
                 <a href="/zpravicky">Zprávièky</a>
             </div>
+
+            <center><@lib.advertisement id="arbo-hyper" /></center>
+
             <div class="s_sekce">
                 <div class="ls_zpr">
                 <#list news as relation>
                     <#if relation_index==4>
-                        <p align="center">
-                           <a href="/hosting"><img src="/images/bannery/abchosting.gif" alt="AbcHosting je tu pro vás"
-                           border="0" width="251" height="60"></a>
-                        </p>
+			<@lib.advertisement id="sl-mini" />
                     </#if>
                     <@lib.showTemplateNews relation/>
                     <hr>

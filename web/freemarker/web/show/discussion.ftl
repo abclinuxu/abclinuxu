@@ -6,6 +6,11 @@
 
 <#include "../header.ftl">
 
+<#--<@lib.advertisement id="arbo-sq" />
+<#if !is_question>
+ <@lib.advertisement id="arbo-sky" />
+</#if>-->
+
 <@lib.showMessages/>
 
 <div class="ds_toolbox">
@@ -43,6 +48,10 @@
         U¾ jste tuto otázku vidìli? Ptají se na ni ètenáøi èasto? Pak by asi bylo vhodné
         ulo¾it vzorovou odpovìï do <a href="/faq">Èasto kladených otázek (FAQ)</a>.
     </p>
+
+ <@lib.advertisement id="sun-box" />
+<#--<@lib.advertisement id="arbo-sky" />
+ <@lib.advertisement id="arbo-full" />-->
 
  <#if DIZ.size==0>
     <p>Na otázku zatím nikdo bohu¾el neodpovìdìl.</p>

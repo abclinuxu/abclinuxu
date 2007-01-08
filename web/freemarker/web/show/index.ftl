@@ -1,3 +1,5 @@
+<#import "../ads-macro.ftl" as lib>
+
  <#assign plovouci_sloupec>
 
     <#assign SOFTWARE = VARS.getFreshSoftware(USER?if_exists)>
@@ -30,27 +32,13 @@
         </div>
     </#if>
 
-    <#assign FAQ = VARS.getFreshFaqs(USER?if_exists)>
-    <#if (FAQ?size>0) >
-        <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Odpovìdi na èasto kladené otázky.</span></a>
-            <a href="/faq">FAQ</a>
-        </div>
-        <div class="s_sekce">
-            <ul>
-            <#list FAQ as rel>
-                 <li><a href="${rel.url}">${TOOL.xpath(rel.child,"data/title")}</a></li>
-            </#list>
-            </ul>
-        </div>
-    </#if>
+    <@lib.advertisement id="ps-boxik1" />
+    <@lib.advertisement id="ps-boxik2" />
+    <@lib.advertisement id="ps-boxik3" />
+    <@lib.advertisement id="ps-boxik4" />
+    <@lib.advertisement id="ps-boxik5" />
 
-    <#include "/include/softronik.txt">
-    <#include "/include/redhat.txt">
-    <#include "/include/datascript.txt">
-    <#include "/include/monster.txt">
-    <#include "/include/jobpilot.txt">
-
+    <#--
     <#assign DRIVERS = VARS.getFreshDrivers(USER?if_exists)>
     <#if (DRIVERS?size>0) >
         <div class="s_nadpis">
@@ -65,11 +53,15 @@
             </ul>
         </div>
     </#if>
+    -->
+
+    <#--<center><@lib.advertisement id="arbo-sq" /></center>-->
+
 </#assign>
 
 <#include "../header.ftl">
 
-<#include "/include/zprava.txt">
+<@lib.advertisement id="zprava-hp" />
 
 <@lib.showMessages/>
 
@@ -128,9 +120,14 @@
         </tbody>
         </table>
     </div>
+
+    <#--<div style="margin:0.5em 0 0 0; float:right">
+	<@lib.advertisement id="arbo-full" />
+    </div>-->
     <ul>
-        <li><a href="/diskuse.jsp">Polo¾it dotaz</a>
-        <li><a href="/History?type=discussions&amp;from=${FORUM?size}&amp;count=20">Star¹í dotazy</a>
+        <li><a href="/diskuse.jsp">Polo¾it dotaz</a></li>
+        <li><a href="/History?type=discussions&amp;from=${FORUM?size}&amp;count=20">Star¹í dotazy</a></li>
+	<li><a href="/faq">Èasté dotazy (FAQ)</a></li>
     </ul>
 </#if>
 
@@ -229,7 +226,22 @@
     </#if>
    </td>
 
-   <td></td>
+   <td>
+    <#assign FAQ = VARS.getFreshFaqs(USER?if_exists)>
+    <#if (FAQ?size>0) >
+        <div class="s_nadpis">
+            <a class="info" href="#">?<span class="tooltip">Odpovìdi na èasto kladené otázky.</span></a>
+            <a href="/faq">FAQ</a>
+        </div>
+        <div class="s_sekce">
+            <ul>
+            <#list FAQ as rel>
+                 <li><a href="${rel.url}">${TOOL.xpath(rel.child,"data/title")}</a></li>
+            </#list>
+            </ul>
+        </div>
+    </#if>
+   </td>
   </tr>
 </table>
 

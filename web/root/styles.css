@@ -321,7 +321,7 @@ td.pad, code.kod, pre.kod {
 	display:	block;
 	background-color: #F0F0F0;
 }
-.kod.rmargin { margin-right: 305px }
+.kod.rmargin { margin-right: 255px }
 
 .st_vpravo {
 	margin:		0.4em 1em 0 0;
@@ -990,14 +990,23 @@ width: 33%;
 background:	#5583a2 url('/images/bannery/sun-back.png') top repeat-x;
 color:		white;
 border:		1px solid #d3d3d3;
-margin:		1em;
+margin-bottom:	5px;
 font-size:	small;
 }
 .sun-box p {
-padding:	0.5em 0 0.5em 0.5em;
+padding:	0.3em 0 0.5em 0.5em;
 }
 .sun-box a { color: white; }
 .sun-box a:hover { background: #e97d19; }
+
+.arbo-sky, .arbo-sq {
+	border: 0px solid white;
+	border-width: 0 0 5px 5px;
+	float: right;
+}
+.arbo-sky {
+	clear: right;
+}
 
 .SuggestFramework_List {
 	border: 1px solid #CCCCCC;

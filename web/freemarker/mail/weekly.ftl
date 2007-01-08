@@ -18,6 +18,18 @@ Prehled clanku
 
 </#list>
 
+Reklama
+=======
+
+New SUN JOB opportunity!  We are looking for a strong
+analytical thinker interested in problem solving and
+with good knowledge of UNIX/LINUX and C/C++ as well
+as excellent coding, debugging and troubleshooting
+skills. Learn more...
+
+http://www.talents.cz/sunjobs2_detail.php?id=202
+
+
 Prehled zpravicek
 =================
 
