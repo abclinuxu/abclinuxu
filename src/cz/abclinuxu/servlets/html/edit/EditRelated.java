@@ -156,8 +156,8 @@ public class EditRelated implements AbcAction {
 
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
-        Element root = (Element) item.getData().getRootElement();
-        Element related = (Element) root.element("related");
+        Element root = item.getData().getRootElement();
+        Element related = root.element("related");
         String url = (String) params.get(PARAM_DOCUMENT);
         url = URLDecoder.decode(url, "ISO-8859-2");
         Element element = (Element) related.selectSingleNode("//document[url='" + url + "']");
@@ -209,8 +209,8 @@ public class EditRelated implements AbcAction {
 
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild();
-        Element root = (Element) item.getData().getRootElement();
-        Element related = (Element) root.element("related");
+        Element root = item.getData().getRootElement();
+        Element related = root.element("related");
         List list = (List) params.get(PARAM_DOCUMENT);
         List documents = new ArrayList();
         for (Iterator iter = list.iterator(); iter.hasNext();) {
@@ -235,8 +235,8 @@ public class EditRelated implements AbcAction {
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild().clone();
 
-        Element root = (Element) item.getData().getRootElement();
-        Element related = (Element) root.element("related");
+        Element root = item.getData().getRootElement();
+        Element related = root.element("related");
         List list = Tools.asList(params.get(PARAM_DOCUMENT));
         for (Iterator iter = list.iterator(); iter.hasNext();) {
             String url = (String) iter.next();
@@ -299,7 +299,7 @@ public class EditRelated implements AbcAction {
         String url = (String) params.get(PARAM_DOCUMENT);
         url = URLDecoder.decode(url, "ISO-8859-2");
 
-        Element related = (Element) root.element("related");
+        Element related = root.element("related");
         Element element = (Element) related.selectSingleNode("//document[url='" + url + "']");
         if (element == null) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Dokument '" + url + "' nebyl nalezen mezi daty!", env, null);
@@ -376,6 +376,8 @@ public class EditRelated implements AbcAction {
                 if (obj instanceof Item) {
                     switch (((Item) obj).getType()) {
                         case Item.ARTICLE: type = Constants.RELATED_ARTICLE; break;
+                        case Item.AUTHOR: type = Constants.RELATED_AUTHOR; break;
+                        case Item.BLOG: type = Constants.RELATED_STORY; break;
                         case Item.CONTENT: type = Constants.RELATED_CONTENT; break;
                         case Item.DICTIONARY: type = Constants.RELATED_DICTIONARY; break;
                         case Item.DISCUSSION: type = Constants.RELATED_DISCUSSION; break;
@@ -383,8 +385,8 @@ public class EditRelated implements AbcAction {
                         case Item.FAQ: type = Constants.RELATED_FAQ; break;
                         case Item.HARDWARE: type = Constants.RELATED_HARDWARE; break;
                         case Item.NEWS: type = Constants.RELATED_NEWS; break;
+                        case Item.SERIES: type = Constants.RELATED_SERIES; break;
                         case Item.SOFTWARE: type = Constants.RELATED_SOFTWARE; break;
-                        case Item.BLOG: type = Constants.RELATED_STORY;
                     }
                 } else if (obj instanceof Category)
                     type = Constants.RELATED_SECTION;

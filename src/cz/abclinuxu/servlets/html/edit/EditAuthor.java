@@ -36,7 +36,6 @@ import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
-import cz.abclinuxu.utils.freemarker.Tools;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -51,7 +50,7 @@ import java.util.Map;
  * editing of software items and records.
  */
 public class EditAuthor implements AbcAction {
-    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditSoftware.class);
+    static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(EditAuthor.class);
 
     public static final String PARAM_RELATION = "rid";
     public static final String PARAM_SURNAME = "surname";
@@ -75,6 +74,7 @@ public class EditAuthor implements AbcAction {
     public static final String ACTION_EDIT_STEP2 = "edit2";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistence persistence = PersistenceFactory.getPersistance();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
         String action = (String) params.get(PARAM_ACTION);
@@ -96,10 +96,12 @@ public class EditAuthor implements AbcAction {
             return actionAddStep2(request, response, env, true);
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
-        if (relation != null) {
-            Tools.sync(relation);
-            env.put(VAR_RELATION, relation);
-        }
+        if ( relation==null )
+            throw new MissingArgumentException("Chybí parametr relationId!");
+
+        persistence.synchronize(relation);
+        persistence.synchronize(relation.getChild());
+        env.put(VAR_RELATION,relation);
 
         if (action.equals(ACTION_EDIT))
             return actionEditStep1(request, env);
@@ -206,7 +208,6 @@ public class EditAuthor implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistance();
         SQLTool sqlTool = SQLTool.getInstance();
         Relation relation = (Relation) env.get(VAR_RELATION);
-        env.put(VAR_EDIT_MODE, Boolean.TRUE);
 
         Item item = (Item) relation.getChild().clone();
         Element root = item.getData().getRootElement();

@@ -26,14 +26,15 @@
 <!ATTLIST url useType (#NMTOKEN)> <!-- type of given url (homepage, download, rss) -->
 
 <!-- Item.ARTICLE -->
-<!ELEMENT data (name,icon?,perex,editor?,forbid_discussions?,forbid_rating?,thumbnail?,talk?)>
+<!ELEMENT data (name,icon?,perex,editor?,forbid_discussions?,forbid_rating?,thumbnail?,talk?,section_rid?,series_rid?)>
 <!ELEMENT name (#PCDATA)> <!-- title of the Article -->
 <!ELEMENT icon (#PCDATA)> <!-- absolute path including protocol, or relative path to icon directory -->
 <!ELEMENT perex (#PCDATA)> <!-- description of the article -->
 <!ELEMENT editor (#PCDATA)> <!-- who approved this article -->
 <!ELEMENT forbid_discussions (#PCDATA)> <!-- yes will prohibit discussions to this article -->
 <!ELEMENT forbid_rating (#PCDATA)> <!-- yes will prohibit rating of this article -->
-<!ELEMENT section_rid (#PCDATA)> <!-- ArticlePoolMonitor will move article to this section -->
+<!ELEMENT section_rid (#PCDATA)> <!-- relation id of destination section -->
+<!ELEMENT series_rid (#PCDATA)> <!-- relation id of associated articles series -->
 <!ELEMENT thumbnail (#PCDATA)> <!-- element with HTML definition for an icon in article listing -->
 <!ELEMENT talk (addresses?, question*)> <!-- container for talk -->
 <!ATTLIST talk lastid (#NMTOKEN) #REQUIRED> <!-- id of last added question -->
@@ -200,6 +201,14 @@
 <!ELEMENT title (#PCDATA)> <!-- title of the trivia game -->
 <!ELEMENT desc (#PCDATA)> <!-- description of the game -->
 <!ELEMENT word (#PCDATA)> <!-- word to be guessed -->
+
+<!-- Item.SERIES -->
+<!ELEMENT data (name, description?, icon?, article*)>
+<!ELEMENT name (#PCDATA)> <!-- title of article series -->
+<!ELEMENT description (#PCDATA)> <!-- description of the series -->
+<!ELEMENT icon (#PCDATA)> <!-- url to icon for this series -->
+<!ELEMENT article (#PCDATA)> <!-- id of relation for article associated with this series, articles are sorted by published date in ascending order -->
+<!ATTLIST article published (#NMTOKEN)> <!-- date in ISO format (YYYY-MM-DD), when this article was published -->
 
 <!-- common -->
 

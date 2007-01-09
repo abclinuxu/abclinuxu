@@ -67,6 +67,8 @@ public class Item extends GenericDataObject {
     public static final int TRIVIA = 20;
     /** simple trivia game */
     public static final int HANGMAN = 21;
+    /** article series */
+    public static final int SERIES = 22;
 
     public Item() {
         super();

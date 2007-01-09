@@ -16,8 +16,8 @@
 
 <#global CITACE = TOOL.getRelationCountersValue(ARTICLES.data,"read")/>
 <#list ARTICLES.data as relation>
-  <@lib.showArticle relation, "CZ_FULL" />
-  <hr>
+    <@lib.showArticle relation, "SMART_DMY" />
+    <hr>
 </#list>
 
  <p>

@@ -121,6 +121,14 @@
             <pattern>^/autori</pattern>
             <action>cz.abclinuxu.servlets.html.view.ViewAuthor</action>
         </mapping>
+        <mapping priority="true">
+            <pattern>^/serialy/edit</pattern>
+            <action>cz.abclinuxu.servlets.html.edit.EditSeries</action>
+        </mapping>
+        <mapping priority="true">
+            <pattern>^/serialy</pattern>
+            <action>cz.abclinuxu.servlets.html.view.ViewSeries</action>
+        </mapping>
         <mapping>
             <pattern>^/Survey</pattern>
             <action>cz.abclinuxu.servlets.html.view.ShowSurvey</action>

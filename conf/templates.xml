@@ -207,6 +207,30 @@
         </action>
     </servlet>
 
+    <servlet name="ViewSeries">
+        <action name="main" content="/show/series_list.ftl">
+            <var name="TITLE" value='Seriály'/>
+        </action>
+        <action name="series" content="/show/series.ftl">
+            <var name="TITLE" value='Seriál ${TOOL.xpath(ITEM, "/data/name")}' type="Lazy"/>
+        </action>
+    </servlet>
+
+    <servlet name="EditSeries">
+        <action name="add" template="print" content="/add/series.ftl">
+            <var name="TITLE" value="Vlo¾ seriál" />
+        </action>
+        <action name="edit" template="print" content="/add/series.ftl">
+            <var name="TITLE" value="Vlo¾ seriál" />
+        </action>
+        <action name="addArticle" template="print" content="/add/series_article.ftl">
+            <var name="TITLE" value="Vyber seriál" />
+        </action>
+        <action name="addArticlesUrls" template="print" content="/add/series_article_urls.ftl">
+            <var name="TITLE" value="Vlo¾ clánky do seriálu" />
+        </action>
+    </servlet>
+
     <servlet name="EditTrivia">
         <action name="add" template="print" content="/add/trivia.ftl">
             <var name="TITLE" value="Vlo¾ kvíz" />

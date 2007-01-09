@@ -95,6 +95,7 @@ public class ViewAuthor implements AbcAction {
         List articles = sqlTool.findArticleRelationsByAuthor(relation.getId(), qualifiers);
         int total = sqlTool.countArticleRelationsByAuthor(relation.getId());
         Tools.syncList(articles);
+        Tools.initializeDiscussionsTo(articles);
 
         Paging paging = new Paging(articles, from, count, total);
         env.put(VAR_ARTICLES, paging);

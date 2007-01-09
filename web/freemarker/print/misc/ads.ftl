@@ -18,13 +18,15 @@
 <form action="${URL.noPrefix("/EditAdvertisement")}" method="POST" name="form">
     <#if POSITIONS?exists>
         <table border="0">
-		<tr>
-			<td><b>&nbsp;</b></td>
-			<td><b>název</b></td>
-			<td><b>identifikátor</b></td>
-			<td><b>stav</b></td>
-		</tr>
-		<#list POSITIONS as position>
+            <thead>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>název</td>
+                    <td>identifikátor</td>
+                    <td>stav</td>
+                </tr>
+            </thead>
+            <#list POSITIONS as position>
                 <#assign id = TOOL.xpath(position,"@id")>
                 <tr>
                     <td>
@@ -36,7 +38,7 @@
                         </a>
                     </td>
                     <td>
-			 <code>${id}</code>
+			            <code>${id}</code>
                     </td>
                     <td>
                         <#if TOOL.xpath(position, "@active")=="yes">

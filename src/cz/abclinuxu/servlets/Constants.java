@@ -51,6 +51,7 @@ public interface Constants {
     int CAT_BAZAAR = 1584;
     int CAT_TRIVIA = 1605;
     int CAT_HANGMAN = 1606;
+    int CAT_SERIES = 1647;
 
     int ITEM_DIZ_TODO = 11606;
     /** item holding dynamic configuration */
@@ -86,6 +87,7 @@ public interface Constants {
     int REL_GAMES = 156665;
     int REL_TRIVIA = 156666;
     int REL_HANGMAN = 156667;
+    int REL_SERIES = 164193;
 
     int GROUP_ADMINI = 11246;
     int GROUP_AUTORI = 11247;
@@ -193,6 +195,7 @@ public interface Constants {
 
     // see EditRelated and Item.dtd
     String RELATED_ARTICLE = "article";
+    String RELATED_AUTHOR = "author";
     String RELATED_CONTENT = "content";
     String RELATED_DICTIONARY = "dictionary";
     String RELATED_DISCUSSION = "discussion";
@@ -204,6 +207,7 @@ public interface Constants {
     String RELATED_OTHER = "other";
     String RELATED_POLL = "poll";
     String RELATED_SECTION = "section";
+    String RELATED_SERIES = "series";
     String RELATED_SOFTWARE = "software";
     String RELATED_STORY = "story";
 

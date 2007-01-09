@@ -22,6 +22,7 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.*;
+import cz.abclinuxu.data.view.Series;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
@@ -65,24 +66,23 @@ public class ShowArticle implements AbcAction {
     public static final String VAR_RELATED_ARTICLES = "RELATED";
     public static final String VAR_RELATED_RESOURCES = "RESOURCES";
     public static final String VAR_ARTICLES_IN_SAME_SECTION = "SAME_SECTION_ARTICLES";
+    public static final String VAR_SERIES = "SERIES";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistance();
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID_SHORT, Relation.class, params, request);
-        if ( relation==null ) {
+        if ( relation==null )
             throw new MissingArgumentException("Parametr relationId je prázdný!");
-        }
 
         Tools.sync(relation);
         env.put(VAR_RELATION, relation);
 
         List parents = persistence.findParents(relation);
         env.put(VAR_PARENTS, parents);
-        Item item = (Item) relation.getChild();
-        Tools.sync(item);
 
+        Item item = (Item) relation.getChild();
         return show(env, item, request);
     }
 
@@ -90,41 +90,44 @@ public class ShowArticle implements AbcAction {
      * Shows the article.
      */
     static String show(Map env, Item item, HttpServletRequest request) throws Exception {
-        Record record = null;
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        SQLTool sqlTool = SQLTool.getInstance();
+        Persistence persistence = PersistenceFactory.getPersistance();
 
+        Relation articleRelation = (Relation) env.get(VAR_RELATION);
         Map children = (Map) env.get(VAR_CHILDREN_MAP);
         if (children==null) {
             children = Tools.groupByType(item.getChildren());
             env.put(VAR_CHILDREN_MAP, children);
         }
 
-        List list = (List) children.get(Constants.TYPE_RECORD);
-        if ( list==null || list.size()==0 )
+        List records = (List) children.get(Constants.TYPE_RECORD);
+        if ( records == null || records.size() == 0 )
             throw new NotFoundException("Èlánek "+item.getId()+" nemá obsah!");
-        record = (Record) ((Relation) list.get(0)).getChild();
-        if ( record.getType()!=Record.ARTICLE )
+
+        Record record = (Record) ((Relation) records.get(0)).getChild();
+        if ( record.getType() != Record.ARTICLE )
             throw new InvalidDataException("Záznam "+record.getId()+" není typu èlánek!");
 
-        Document document = record.getData();
-        List nodes = document.selectNodes("/data/content");
-        if ( nodes.size()==0 ) {
+        Document recordDocument = record.getData();
+        List nodes = recordDocument.selectNodes("/data/content");
+        if ( nodes.size() == 0 ) {
             throw new InvalidDataException("Záznam "+record.getId()+" má ¹patný obsah!");
-        } else if ( nodes.size()==1 ) {
+        } else if ( nodes.size() == 1 ) {
             env.put(VAR_ARTICLE_TEXT,((Node)nodes.get(0)).getText());
         } else {
-            Map params = (Map) env.get(Constants.VAR_PARAMS);
-            int page = Misc.parseInt((String) params.get(PARAM_PAGE),0);
-            env.put(VAR_PAGE, new Integer(page));
+            int page = Misc.parseInt((String) params.get(PARAM_PAGE), 0);
+            env.put(VAR_PAGE, page);
             env.put(VAR_ARTICLE_TEXT, ((Node) nodes.get(page)).getText());
 
             List pages = new ArrayList(nodes.size());
             for ( Iterator iter = nodes.iterator(); iter.hasNext(); )
                 pages.add(((Element)iter.next()).attributeValue("title"));
-            env.put(VAR_PAGES,pages);
+            env.put(VAR_PAGES, pages);
         }
 
-        nodes = document.selectNodes("/data/related/link");
-        if ( nodes!=null && nodes.size()>0 ) {
+        nodes = recordDocument.selectNodes("/data/related/link");
+        if ( nodes != null && nodes.size() > 0 ) {
             List articles = new ArrayList(nodes.size());
             for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
                 Element element = (Element) iter.next();
@@ -134,8 +137,8 @@ public class ShowArticle implements AbcAction {
             env.put(VAR_RELATED_ARTICLES,articles);
         }
 
-        nodes = document.selectNodes("/data/resources/link");
-        if ( nodes!=null && nodes.size()>0 ) {
+        nodes = recordDocument.selectNodes("/data/resources/link");
+        if ( nodes != null && nodes.size() > 0 ) {
             List resources = new ArrayList(nodes.size());
             for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
                 Element element = (Element) iter.next();
@@ -145,13 +148,60 @@ public class ShowArticle implements AbcAction {
             env.put(VAR_RELATED_RESOURCES,resources);
         }
 
+        // initialize series view
+        Element seriesElement = item.getData().getRootElement().element("series_rid");
+        if (seriesElement != null) {
+            int rid = Misc.parseInt(seriesElement.getText(), 0);
+            Relation seriesRelation = (Relation) persistence.findById(new Relation(rid));
+            Item seriesItem = (Item) persistence.findById(seriesRelation.getChild());
+            Element seriesRoot = seriesItem.getData().getRootElement();
+
+            List articleElements = seriesRoot.elements("article");
+            int total = articleElements.size();
+            Relation first, last, previous = null, next = null;
+
+            rid = Misc.parseInt(((Element) articleElements.get(0)).getText(), 0);
+            first = new Relation(rid);
+            rid = Misc.parseInt(((Element) articleElements.get(total - 1)).getText(), 0);
+            if (rid == first.getId())
+                last = first;
+            else
+                last = new Relation(rid);
+
+            String xpath = "/data/article[text()='" + articleRelation.getId() + "']/preceding-sibling::*[1]";
+            Element element = (Element) seriesRoot.selectSingleNode(xpath);
+            if (element != null && "article".equals(element.getName())) {
+                rid = Misc.parseInt(element.getText(), 0);
+                previous = new Relation(rid);
+            }
+
+            xpath = "/data/article[text()='" + articleRelation.getId() + "']/following::*[1]";
+            element = (Element) seriesRoot.selectSingleNode(xpath);
+            if (element != null && "article".equals(element.getName())) {
+                rid = Misc.parseInt(element.getText(), 0);
+                next = new Relation(rid);
+            }
+
+            List list = new ArrayList();
+            list.add(first);
+            if ( ! first.equals(last))
+                list.add(last);
+            if (previous != null)
+                list.add(previous);
+            if (next != null)
+                list.add(next);
+            Tools.syncList(list);
+
+            Series series = new Series(seriesRelation, first, last, previous, next, total);
+            env.put(VAR_SERIES, series);
+        }
+
         List parents = (List) env.get(VAR_PARENTS);
-        if (parents.size()>1) {
+        if ( parents.size() > 1 ) {
             Relation relation = (Relation) parents.get(parents.size() - 2);
             if (relation.getChild() instanceof Category) {
                 Category section = (Category) relation.getChild();
                 int max = AbcConfig.getArticleSectionArticlesCount();
-                SQLTool sqlTool = SQLTool.getInstance();
                 Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(0, max)};
                 List articles = sqlTool.findArticleRelations(qualifiers, section.getId());
                 Tools.syncList(articles);
@@ -160,7 +210,7 @@ public class ShowArticle implements AbcAction {
         }
 
         User user = (User) env.get(Constants.VAR_USER);
-        if ( user==null || !user.hasRole(Roles.ARTICLE_ADMIN) )
+        if ( user == null || ! user.hasRole(Roles.ARTICLE_ADMIN) )
             ReadRecorder.log(item, Constants.COUNTER_READ, env);
 
         return FMTemplateSelector.select("ShowObject", "article", env, request);

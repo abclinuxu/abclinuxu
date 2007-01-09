@@ -155,9 +155,9 @@ public class Link extends GenericObject {
     public String toString() {
         StringBuffer sb = new StringBuffer("Link: id=");
         sb.append(id);
-        if ( text!=null ) sb.append(",text="+text);
-        if ( url!=null ) sb.append(",url="+url);
-        if ( server!=0 ) sb.append(",server="+server);
+        if ( text!=null ) sb.append(",text=").append(text);
+        if ( url!=null ) sb.append(",url=").append(url);
+        if ( server!=0 ) sb.append(",server=").append(server);
         return sb.toString();
     }
 

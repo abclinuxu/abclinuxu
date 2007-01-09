@@ -38,9 +38,10 @@ import java.io.IOException;
  */
 public class UrlUtils {
 
+    public static final String PREFIX_AUTHORS = "/autori";
     public static final String PREFIX_BAZAAR = "/bazar";
     public static final String PREFIX_BLOG = "/blog";
-    public static final String PREFIX_CLANKY = "/clanky";
+    public static final String PREFIX_CLANKY = "/clanky"; // todo rename to PREFIX_ARTICLES
     public static final String PREFIX_DICTIONARY = "/slovnik";
     public static final String PREFIX_DRIVERS = "/ovladace";
     public static final String PREFIX_FAQ = "/faq";
@@ -48,13 +49,14 @@ public class UrlUtils {
     public static final String PREFIX_HARDWARE = "/hardware";
     public static final String PREFIX_NEWS = "/zpravicky";
     public static final String PREFIX_POLLS = "/ankety";
+    public static final String PREFIX_SERIES = "/serialy";
     public static final String PREFIX_SOFTWARE = "/software";
-    public static final String PREFIX_AUTHORS = "/autori";
     public static final String PREFIX_NONE = "";
 
     static List prefixes = null;
     static {
         prefixes = new ArrayList();
+        prefixes.add(PREFIX_AUTHORS);
         prefixes.add(PREFIX_BAZAAR);
         prefixes.add(PREFIX_BLOG);
         prefixes.add(PREFIX_CLANKY);
@@ -65,6 +67,7 @@ public class UrlUtils {
         prefixes.add(PREFIX_HARDWARE);
         prefixes.add(PREFIX_NEWS);
         prefixes.add(PREFIX_POLLS);
+        prefixes.add(PREFIX_SERIES);
         prefixes.add(PREFIX_SOFTWARE);
     }
 

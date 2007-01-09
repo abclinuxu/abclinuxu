@@ -368,6 +368,7 @@ public class EditRelation implements AbcAction {
         return FMTemplateSelector.select("EditRelation","remove",env,request);
     }
 
+    // todo remove relation shall have separate method in EditArticle, it shall remove link to the article from series too
     protected String actionRemove2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistance();

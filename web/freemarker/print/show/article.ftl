@@ -6,7 +6,7 @@
 <h1>${TOOL.xpath(ITEM,"/data/name")}</h1>
 
 <div class="barva">
-    ${DATE.show(ITEM.created,"CZ_FULL")} |
+    ${DATE.show(ITEM.created,"SMART_DMY")} |
     <#list autors as autor>
         <a href="${autor.url}">${TOOL.childName(autor)}</a><#if autor_has_next>, </#if>
     </#list>

@@ -61,8 +61,10 @@ public class DateTool implements Configurable {
     public static final String ONLY_TIME = "TIME";
     /** Ctvrtek */
     public static final String CZ_ONLY_DAY = "CZ_DAY";
-    /** Intelligently it select best way according to distance from now */
+    /** Selects best way according to distance from now */
     public static final String CZ_SMART = "SMART";
+    /** Selects best way according to distance from now, time is not included */
+    public static final String CZ_SMART_DAY_MONTH_YEAR = "SMART_DMY";
 
     private static final int DAY_DURATION = 24*60*60*1000;
 
@@ -130,6 +132,24 @@ public class DateTool implements Configurable {
             } else {
                 synchronized (Constants.czTimeOnly) {
                     return getCzDay(timeToRender) + " " + Constants.czTimeOnly.format(date);
+                }
+            }
+        }
+
+        if (CZ_SMART_DAY_MONTH_YEAR.equalsIgnoreCase(format)) {
+            if (notTodayOrYesterday) {
+                if (timeToRender < thisYear) {
+                    synchronized (Constants.czDayMonthYear) {
+                        return Constants.czDayMonthYear.format(date);
+                    }
+                } else {
+                    synchronized (Constants.czDayMonth) {
+                        return Constants.czShortFormat.format(date);
+                    }
+                }
+            } else {
+                synchronized (Constants.czTimeOnly) {
+                    return getCzDay(timeToRender);
                 }
             }
         }

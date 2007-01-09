@@ -28,8 +28,9 @@
                                     <entry key="hostname" value="@HOSTNAME@"/>
                                     <entry key="viewuser.page.size" value="20"/>
                                     <entry key="section.article.count" value="25"/>
+                                    <entry key="series.article.count" value="25"/>
                                     <entry key="article.section.articles.count" value="5"/>
-                                    <entry key="author.articles.page.size" value="15"/>
+                                    <entry key="author.articles.page.size" value="30"/>
                                     <entry key="search.results.count" value="10"/>
                                     <entry key="section.faq.count" value="20"/>
                                     <entry key="bazaar.page.size" value="40"/>
