@@ -11,7 +11,15 @@
 </#if>
 
 <#list SERIES as series>
-    <h3><a href="${series.url}">${TOOL.childName(series)}</a></h3>
+    <#assign desc = TOOL.xpath(series.child, "/data/description")?default("UNDEFINED"),
+             total = TOOL.xpathValue(series.child.data, "count(//article)")>
+    <h3>
+        <a href="${series.url}">${TOOL.childName(series)}</a>
+         (dílù: ${total})
+    </h3>
+    <#if desc != "UNDEFINED">
+        <div>${desc}</div>
+    </#if>
 </#list>
 
 

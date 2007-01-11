@@ -4,6 +4,15 @@
 
 <h1>Seriál ${TOOL.childName(RELATION)}</h1>
 
+<#assign desc = TOOL.xpath(RELATION.child, "/data/description")?default("UNDEFINED"),
+         icon = TOOL.xpath(RELATION.child, "/data/icon")?default("UNDEFINED")>
+<#if icon != "UNDEFINED">
+    <img src="${icon}" style="float: right" alt="">
+</#if>
+<#if desc != "UNDEFINED">
+    <div>${desc}</div>
+</#if>
+
 <#if USER?exists && USER.hasRole("article admin")>
     <p>
         <a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=edit")}">Uprav seriál</a>

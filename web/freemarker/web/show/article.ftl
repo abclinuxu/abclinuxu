@@ -90,7 +90,7 @@ ${TOOL.render(TEXT,USER?if_exists)}
 
 <#if SERIES?exists>
     <div>
-        <h3>Seriál <a href="${SERIES.series.url}">${TOOL.childName(SERIES.series)}</a> (dílu: ${SERIES.total})</h3>
+        <h3>Seriál <a href="${SERIES.series.url}">${TOOL.childName(SERIES.series)}</a> (dílù: ${SERIES.total})</h3>
         První díl: <a href="${SERIES.first.url}">${TOOL.childName(SERIES.first)}</a><#rt>
         <#lt><#if (SERIES.total > 1)>, poslední díl: <a href="${SERIES.last.url}">${TOOL.childName(SERIES.last)}</a></#if>.<br>
         <#if SERIES.previous?exists>Pøedchozí díl: <a href="${SERIES.previous.url}">${TOOL.childName(SERIES.previous)}</a><br></#if>
