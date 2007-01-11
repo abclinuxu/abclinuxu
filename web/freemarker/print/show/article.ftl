@@ -38,6 +38,16 @@
 
 ${TOOL.render(TOOL.getCompleteArticleText(ITEM),USER?if_exists)}
 
+<#if SERIES?exists>
+    <div>
+        <h3>Seriál <a href="${SERIES.series.url}">${TOOL.childName(SERIES.series)}</a> (dílu: ${SERIES.total})</h3>
+        První díl: <a href="${SERIES.first.url}">${TOOL.childName(SERIES.first)}</a><#rt>
+        <#lt><#if (SERIES.total > 1)>, poslední díl: <a href="${SERIES.last.url}">${TOOL.childName(SERIES.last)}</a></#if>.<br>
+        <#if SERIES.previous?exists>Pøedchozí díl: <a href="${SERIES.previous.url}">${TOOL.childName(SERIES.previous)}</a><br></#if>
+        <#if SERIES.next?exists>Následující díl: <a href="${SERIES.next.url}">${TOOL.childName(SERIES.next)}</a><br></#if>
+    </div>
+</#if>
+
 <div class="cl_perex">
   <#if RELATED?exists>
    <h3>Související èlánky</h3>
