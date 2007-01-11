@@ -356,9 +356,6 @@ public class EditRelation implements AbcAction {
         return null;
     }
 
-    /**
-     * todo call refreshXY on VariableFetcher
-     */
     protected String actionRemove1(HttpServletRequest request, Map env) throws Exception {
         Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_CURRENT);
@@ -368,20 +365,29 @@ public class EditRelation implements AbcAction {
         return FMTemplateSelector.select("EditRelation","remove",env,request);
     }
 
-    // todo remove relation shall have separate method in EditArticle, it shall remove link to the article from series too
+    // todo call refreshXY on VariableFetcher
     protected String actionRemove2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistance();
-        Relation relation = (Relation) env.get(VAR_CURRENT);
         User user = (User) env.get(Constants.VAR_USER);
 
-        persistence.synchronize(relation);
-        persistence.synchronize(relation.getChild());
+        Relation relation = (Relation) env.get(VAR_CURRENT);
+        GenericObject child = relation.getChild();
+        String objectName = Tools.childName(relation);
+
+        if (child instanceof Item) {
+            Item item = (Item) child;
+            switch (item.getType()) {
+                case Item.ARTICLE:
+                    removeArticleFromSeries(item, relation.getId());
+                    break;
+            }
+        }
 
         runMonitor(relation,user);
         persistence.remove(relation);
         relation.getParent().removeChildRelation(relation);
-        AdminLogger.logEvent(user, "remove | relation "+relation.getId()+" | "+Tools.childName(relation));
+        AdminLogger.logEvent(user, "remove | relation "+relation.getId()+" | "+objectName);
 
         String url = null;
         String prefix = (String) params.get(PARAM_PREFIX);
@@ -393,6 +399,30 @@ public class EditRelation implements AbcAction {
         UrlUtils urlUtils = new UrlUtils(prefix, response);
         urlUtils.redirect(response, url);
         return null;
+    }
+
+    /**
+     * Removes link to this article from the series (if set).
+     */
+    private void removeArticleFromSeries(Item article, int articleRelationId) {
+        Element element = article.getData().getRootElement().element("series_rid");
+        if (element == null)
+            return;
+
+        int seriesRid = Misc.parseInt(element.getText(), 0);
+        if (seriesRid == 0)
+            return;
+
+        Persistence persistence = PersistenceFactory.getPersistance();
+        Relation relation = (Relation) persistence.findById(new Relation(seriesRid));
+        Item series = (Item) persistence.findById(relation.getChild()).clone();
+
+        String xpath = "/data/article[text()='" + articleRelationId + "']";
+        element = (Element) series.getData().selectSingleNode(xpath);
+        if (element != null) {
+            element.detach();
+            persistence.update(series);
+        }
     }
 
     /**
