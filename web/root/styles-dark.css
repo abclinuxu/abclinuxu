@@ -62,7 +62,6 @@ td {
 
 .error {
 	color: RED;
-	font-size: 120%;
 }
 
 .message {
@@ -557,6 +556,8 @@ font-weight: bold;
 }
 
 .kt_citace { color:#ff8282 }
+
+.dn_logo { float:right;margin:0.5em }
 
 .s_odkaz {
 	text-align:	center;

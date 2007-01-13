@@ -39,9 +39,10 @@
             <#else>
                 <a href="${URL.noPrefix("/serialy/edit?action=addArticle&amp;articleRid="+RELATION.id)}">Pøiøadit k seriálu</a>
             </#if>
-        </#if>
-        <a href="${URL.make("/honorare/"+RELATION.id+"?action=add")}">Vlo¾it honoráø</a>
-        <#if CHILDREN.royalties?exists>
+        <#if !CHILDREN.royalties?exists>
+            <b><a class="error" href="${URL.make("/honorare/"+RELATION.id+"?action=add")}">Vlo¾it honoráø</a></b>
+        <#else>
+            <a href="${URL.make("/honorare/"+RELATION.id+"?action=add")}">Vlo¾it honoráø</a>
             <#list CHILDREN.royalties as honorar>
                 <a href="${URL.make("/honorare/"+honorar.id+"?action=edit")}">Upravit honoráø</a>
             </#list>
