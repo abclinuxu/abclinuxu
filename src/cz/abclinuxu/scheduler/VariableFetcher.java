@@ -545,8 +545,18 @@ public class VariableFetcher extends TimerTask implements Configurable {
             Persistence persistence = PersistenceFactory.getPersistance();
             Category requests = (Category) persistence.findById(new Category(Constants.CAT_REQUESTS));
             counter.put("REQUESTS", requests.getChildren().size());
+
+            int sleeping = 0, waiting = 0;
             Category news = (Category) persistence.findById(new Category(Constants.CAT_NEWS_POOL));
-            counter.put("WAITING_NEWS", news.getChildren().size());
+            for (Relation relation : news.getChildren()) {
+                Item item = (Item) persistence.findById(relation.getChild());
+                if (item.getData().selectSingleNode("/data/approved_by") == null)
+                    waiting++;
+                else
+                    sleeping++;
+            }
+            counter.put("WAITING_NEWS", waiting);
+            counter.put("SLEEPING_NEWS", sleeping);
         } catch (Exception e) {
             log.error("Selhalo nacitani velikosti", e);
         }

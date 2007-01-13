@@ -142,7 +142,7 @@
             <div class="s_nadpis">
                 <a class="s_nadpis-pravy-odkaz" href="${URL.make("/zpravicky/edit?action=add")}">napi¹te &raquo;</a>
                 <#if USER?exists && USER.hasRole("news admin")>
-                    <a class="s_nadpis-pravy-odkaz" href="${URL.make("/zpravicky/dir/37672")}" title="Poèet èekajících zprávièek">(${VARS.counter.WAITING_NEWS})&nbsp;</a>
+                    <a class="s_nadpis-pravy-odkaz" href="${URL.make("/zpravicky/dir/37672")}" title="Poèet neschválených a èekajících zprávièek">(${VARS.counter.WAITING_NEWS},${VARS.counter.SLEEPING_NEWS})&nbsp;</a>
                 </#if>
                 <a href="/zpravicky">Zprávièky</a>
             </div>
