@@ -1,8 +1,9 @@
 <#include "../header.ftl">
 
-<#assign autors=TOOL.createAuthorsForArticle(RELATION.getChild())>
-<#assign forbidRating=TOOL.xpath(ITEM, "//forbid_rating")?default("UNDEF")>
-<#assign forbidDiscussion=TOOL.xpath(ITEM, "//forbid_discussions")?default("UNDEF")>
+<#assign autors=TOOL.createAuthorsForArticle(RELATION.getChild()),
+         forbidRating=TOOL.xpath(ITEM, "//forbid_rating")?default("UNDEF"),
+         forbidDiscussion=TOOL.xpath(ITEM, "//forbid_discussions")?default("UNDEF"),
+         inPool=RELATION.upper==8082>
 
 <h1>${TOOL.xpath(ITEM,"/data/name")}</h1>
 
@@ -13,7 +14,7 @@
     </#list>
 </p>
 
-<#if RELATION.upper==8082>
+<#if inPool>
     <h2>Rubrika:
         <#assign section=TOOL.xpath(ITEM, "/data/section_rid")?default("UNDEFINED")>
         <#if section=="UNDEFINED">
@@ -29,9 +30,15 @@
     <p>
         <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">Upravit</a>
         <#if SERIES?exists>
-            <a href="${URL.noPrefix("/serialy/edit/"+SERIES.series.id+"?action=rmArticle&amp;articleRid="+RELATION.id)}">Vyøadit ze seriálu</a>
+            <#if ! inPool>
+                <a href="${URL.noPrefix("/serialy/edit/"+SERIES.series.id+"?action=rmArticle&amp;articleRid="+RELATION.id)}">Vyøadit ze seriálu</a>
+            </#if>
         <#else>
-            <a href="${URL.noPrefix("/serialy/edit?action=addArticle&amp;articleRid="+RELATION.id)}">Pøiøadit k seriálu</a>
+            <#if inPool>
+                <a href="${URL.noPrefix("/clanky/edit/"+RELATION.id+"?action=addSeries")}">Pøiøadit k seriálu</a>
+            <#else>
+                <a href="${URL.noPrefix("/serialy/edit?action=addArticle&amp;articleRid="+RELATION.id)}">Pøiøadit k seriálu</a>
+            </#if>
         </#if>
         <a href="${URL.make("/honorare/"+RELATION.id+"?action=add")}">Vlo¾it honoráø</a>
         <#if CHILDREN.royalties?exists>

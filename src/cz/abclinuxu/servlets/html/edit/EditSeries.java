@@ -266,29 +266,7 @@ public class EditSeries implements AbcAction {
             persistence.synchronize(articleRelation.getChild());
             Item articleItem = (Item) articleRelation.getChild().clone();
             Element articleRoot = articleItem.getData().getRootElement();
-
-            String published;
-            synchronized (Constants.isoFormatShort) {
-                published = Constants.isoFormatShort.format(articleItem.getCreated());
-            }
-
-            Element seriesArticle = DocumentHelper.createElement("article");
-            seriesArticle.setText(Integer.toString(articleRelation.getId()));
-            seriesArticle.addAttribute("published", published);
-
-            int position = articles.size();
-            while (position > 0) {
-                Element element = (Element) articles.get(position - 1);
-                if (published.compareTo(element.attributeValue("published")) > 0) // 2007-01-02 > 2006-12-24
-                    break;
-                position--;
-            }
-
-            if (position < articles.size())
-                articles.add(position, seriesArticle);
-            else
-                articles.add(seriesArticle);
-
+            addArticleToSeries(articleItem, articleRelation, articles);
             articleRoot.addElement("series_rid").setText(Integer.toString(seriesRelation.getId()));
             persistence.update(articleItem);
         }
@@ -300,6 +278,36 @@ public class EditSeries implements AbcAction {
             urlUtils.redirect(response, urlUtils.getRelationUrl(seriesRelation));
         }
         return null;
+    }
+
+    /**
+     * Adds element article to the list of article elements.
+     * @param articleItem
+     * @param articleRelation
+     * @param articles list of article elements
+     */
+    public static void addArticleToSeries(Item articleItem, Relation articleRelation, List articles) {
+        String published;
+        synchronized (Constants.isoFormatShort) {
+            published = Constants.isoFormatShort.format(articleItem.getCreated());
+        }
+
+        Element seriesArticle = DocumentHelper.createElement("article");
+        seriesArticle.setText(Integer.toString(articleRelation.getId()));
+        seriesArticle.addAttribute("published", published);
+
+        int position = articles.size();
+        while (position > 0) {
+            Element element = (Element) articles.get(position - 1);
+            if (published.compareTo(element.attributeValue("published")) > 0) // 2007-01-02 > 2006-12-24
+                break;
+            position--;
+        }
+
+        if (position < articles.size())
+            articles.add(position, seriesArticle);
+        else
+            articles.add(seriesArticle);
     }
 
     private String actionAttachArticlesUrlsStep1(HttpServletRequest request, Map env) {

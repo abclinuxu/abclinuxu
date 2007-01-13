@@ -75,11 +75,13 @@ public class EditArticle implements AbcAction {
     public static final String PARAM_QUESTION_ID = "id";
     public static final String PARAM_NOT_ON_INDEX = "notOnIndex";
     public static final String PARAM_DESIGNATED_SECTION = "section";
+    public static final String PARAM_SERIES = "series";
 
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_TALK_XML = "XML";
     public static final String VAR_SECTIONS = "SECTIONS";
     public static final String VAR_AUTHORS = "AUTHORS";
+    public static final String VAR_SERIES_LIST = "SERIES";
 
     public static final String ACTION_ADD_ITEM = "add";
     public static final String ACTION_ADD_ITEM_STEP2 = "add2";
@@ -94,6 +96,8 @@ public class EditArticle implements AbcAction {
     public static final String ACTION_SEND_QUESTION = "sendQuestion";
     public static final String ACTION_ADD_REPLY = "addReply";
     public static final String ACTION_SUBMIT_REPLY = "submitReply";
+    public static final String ACTION_ADD_SERIES = "addSeries";
+    public static final String ACTION_ADD_SERIES_STEP2 = "addSeries2";
 
     private static REProgram reBreak;
     static {
@@ -138,6 +142,12 @@ public class EditArticle implements AbcAction {
 
         if ( ACTION_EDIT_ITEM_STEP2.equals(action) )
             return actionEditItem2(request, response, env);
+
+        if (action.equals(ACTION_ADD_SERIES))
+            return actionAttachArticleStep1(request, env);
+
+        if (action.equals(ACTION_ADD_SERIES_STEP2))
+            return actionAttachArticleStep2(request, response, env);
 
         if (ACTION_SHOW_TALK.equals(action))
             return actionShowTalk(request, env);
@@ -240,7 +250,7 @@ public class EditArticle implements AbcAction {
 
             if (redirect) {
                 UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-                urlUtils.redirect(response, "/show/"+relation.getId());
+                urlUtils.redirect(response, UrlUtils.getRelationUrl(relation, UrlUtils.PREFIX_CLANKY));
             } else {
                 env.put(VAR_RELATION, relation);
             }
@@ -337,7 +347,7 @@ public class EditArticle implements AbcAction {
         VariableFetcher.getInstance().refreshArticles();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/show/"+relation.getId());
+        urlUtils.redirect(response, UrlUtils.getRelationUrl(relation, UrlUtils.PREFIX_CLANKY));
         return null;
     }
 
@@ -572,6 +582,36 @@ public class EditArticle implements AbcAction {
         urlUtils.redirect(response, "/edit/" + relation.getId() + "?action=showTalk");
         return null;
     }
+
+    private String actionAttachArticleStep1(HttpServletRequest request, Map env) {
+        Persistence persistence = PersistenceFactory.getPersistance();
+        Category category = (Category) persistence.findById(new Category(Constants.CAT_SERIES));
+        List<Relation> series = category.getChildren();
+        Sorters2.byName(series);
+        env.put(VAR_SERIES_LIST, series);
+        return FMTemplateSelector.select("EditArticle", "addSeries", env, request);
+    }
+
+    public String actionAttachArticleStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Persistence persistence = PersistenceFactory.getPersistance();
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item item = (Item) persistence.findById(relation.getChild()).clone();
+
+        int id = Misc.parseInt((String) params.get(PARAM_SERIES), -1);
+        if (id == -1) {
+            ServletUtils.addError(PARAM_SERIES, "Zadejte èíslo seriálu!", env, request.getSession());
+            return actionAttachArticleStep1(request,  env);
+        }
+
+        DocumentHelper.makeElement(item.getData(), "//data/series_rid").setText(Integer.toString(id));
+        persistence.update(item);
+
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, UrlUtils.getRelationUrl(relation, UrlUtils.PREFIX_CLANKY));
+        return null;
+    }
+
 
     // setters
 

@@ -25,6 +25,7 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.edit.EditArticle;
+import cz.abclinuxu.servlets.html.edit.EditSeries;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 
@@ -34,6 +35,7 @@ import java.util.Date;
 import java.util.TimerTask;
 
 import org.dom4j.Element;
+import org.dom4j.Document;
 
 /**
  * This class is responsible for monitoring of
@@ -70,12 +72,16 @@ public class PoolMonitor extends TimerTask {
                     continue;
 
                 if ( now.after(item.getCreated()) ) {
-                    Element element = (Element) item.getData().selectSingleNode("/data/section_rid");
+                    Document document = item.getData();
+                    // move article to selected article section
+                    Element element = (Element) document.selectSingleNode("/data/section_rid");
                     if (element == null)
                         continue;
                     int section_rid = Misc.parseInt(element.getText(), 0);
-                    if (section_rid == 0)
+                    if (section_rid == 0) {
+                        log.error("bug", new Exception());
                         continue;
+                    }
 
                     Relation section = (Relation) persistence.findById(new Relation(section_rid));
                     element.detach();
@@ -87,6 +93,22 @@ public class PoolMonitor extends TimerTask {
                             relation.setUrl(url);
                             persistence.update(relation);
                         }
+                    }
+
+                    // link article to article series, if it is set
+                    element = (Element) document.selectSingleNode("/data/series_rid");
+                    if (element != null) {
+                        int series_rid = Misc.parseInt(element.getText(), 0);
+                        if (series_rid == 0) {
+                            log.error("bug", new Exception());
+                            continue;
+                        }
+
+                        Relation seriesRelation = (Relation) persistence.findById(new Relation(series_rid));
+                        Item series = (Item) persistence.findById(seriesRelation.getChild());
+                        List articles = series.getData().getRootElement().elements("article");
+                        EditSeries.addArticleToSeries(item, relation, articles);
+                        persistence.update(series);
                     }
 
                     relation.getParent().removeChildRelation(relation);

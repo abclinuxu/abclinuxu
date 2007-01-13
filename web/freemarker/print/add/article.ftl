@@ -111,7 +111,7 @@
   </tr>
   <tr>
    <td width="90">&nbsp;</td>
-   <td><input type="submit" value="Pokraèuj" tabindex="8"></td>
+   <td><input type="submit" value="Dokonèi" tabindex="8"></td>
   </tr>
  </table>
 

@@ -44,6 +44,9 @@
         <action name="talkQuestion" template="print" content="/edit/talk_question.ftl">
             <var name="TITLE" value="Vlo¾ení odpovìdi k otázce"/>
         </action>
+        <action name="addSeries" template="print" content="/add/article_series.ftl">
+            <var name="TITLE" value="Vyber seriál"/>
+        </action>
     </servlet>
 
     <servlet name="EditContent">
