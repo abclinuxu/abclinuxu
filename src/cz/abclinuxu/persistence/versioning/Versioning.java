@@ -56,4 +56,11 @@ public interface Versioning {
      * version of specified document.
      */
     public List getHistory(String path);
+
+    /**
+     * Removes all information for given document from versioning repository.
+     * @param path unique identifier of the document
+     * @return true if there were some revisions for specified document
+     */
+    public boolean purge(String path);
 }

@@ -47,8 +47,9 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
     private static final String PREF_FIND_ALL_VERSIONS = "sql.find.all.versions";
     private static final String PREF_INSERT_VERSION = "sql.insert.version";
     private static final String PREF_FETCH_DOCUMENT = "sql.fetch.document";
+    private static final String PREF_PURGE_DOCUMENT = "sql.purge.document";
 
-    private String latestVersion, allVersions, insertVersion, fetchDocument;
+    private String latestVersion, allVersions, insertVersion, fetchDocument, purgeDocument;
 
     public MysqlVersioningProvider() {
         ConfigurationManager.getConfigurator().configureAndRememberMe(this);
@@ -175,6 +176,28 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
     }
 
     /**
+     * Removes all information for given document from versioning repository.
+     * @param path unique identifier of the document
+     * @return true if there were some revisions for specified document
+     */
+    public boolean purge(String path) {
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        Connection con = null;
+        PreparedStatement statement = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(purgeDocument);
+            statement.setString(1, path);
+            int matched = statement.executeUpdate();
+            return (matched > 0);
+        } catch (SQLException e) {
+            throw new PersistenceException("SQL error", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, null);
+        }
+    }
+
+    /**
      * Callback used to configure your class from preferences.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
@@ -182,6 +205,7 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
         allVersions = getValue(PREF_FIND_ALL_VERSIONS, prefs);
         fetchDocument = getValue(PREF_FETCH_DOCUMENT, prefs);
         insertVersion = getValue(PREF_INSERT_VERSION, prefs);
+        purgeDocument = getValue(PREF_PURGE_DOCUMENT, prefs);
     }
 
     /**

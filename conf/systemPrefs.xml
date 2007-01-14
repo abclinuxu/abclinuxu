@@ -244,6 +244,7 @@
                                 <entry key="sql.find.all.versions" value="select verze,kdo,kdy from verze where cesta=? order by kdy desc"/>
                                 <entry key="sql.insert.version" value="insert into verze (cesta,verze,kdo,kdy,obsah) values (?,?,?,?,?)"/>
                                 <entry key="sql.fetch.document" value="select verze,kdo,kdy,obsah from verze where cesta=? and verze=?"/>
+                                <entry key="sql.purge.document" value="delete from verze where cesta=?"/>
                             </map>
                         </node>
                     </node>

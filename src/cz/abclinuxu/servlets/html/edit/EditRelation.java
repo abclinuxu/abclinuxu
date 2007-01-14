@@ -421,6 +421,8 @@ public class EditRelation implements AbcAction {
             Element inset = (Element) item.getData().selectSingleNode("/data/inset");
             if (inset != null)
                 EditAttachment.removeAllAttachments(inset, env, user, request);
+
+            Misc.purgeRelationRevisions(relation);
         }
 
         runMonitor(relation,user);

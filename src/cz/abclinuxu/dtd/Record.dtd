@@ -9,13 +9,3 @@
 <!ELEMENT link (#PCDATA)> <!-- contains text of link -->
 <!ATTLIST link url (#PCDATA) #REQUIRED> <!-- URL of resource or article -->
 <!ATTLIST link description (#PCDATA) #OPTIONAL> <!-- contains description of resource or article, that shall not be linked -->
-
-<!-- Record.SOFTWARE -->
-<!ELEMENT data (text,url?,version?)>
-<!ELEMENT text (#PCDATA)> <!-- instructions -->
-<!ATTLIST text format (#NMTOKEN) #OPTIONAL> <!-- integer, format of the text -->
-<!ELEMENT url (#PCDATA)> <!-- URL, probably link to homepage of the software -->
-<!ELEMENT version (#PCDATA)> <!-- version of the software -->
-
-<!-- Record.Discussion -->
-<!ELEMENT data EMPTY> <!-- container for comments -->

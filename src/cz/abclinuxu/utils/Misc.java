@@ -22,6 +22,7 @@ import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.persistence.versioning.VersionInfo;
 import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.persistence.versioning.Versioning;
+import cz.abclinuxu.persistence.versioning.VersionNotFoundException;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.servlets.Constants;
@@ -55,6 +56,16 @@ public class Misc {
             monitor.detach();
         Versioning versioning = VersioningFactory.getVersioning();
         return versioning.commit(copy.asXML(), path, userId);
+    }
+
+    /**
+     * Purges all revisions of specified relation from version repository. This action cannot be undone!
+     * @param relation identifies data
+     */
+    public static void purgeRelationRevisions(Relation relation) {
+        String path = Integer.toString(relation.getId());
+        Versioning versioning = VersioningFactory.getVersioning();
+        versioning.purge(path);
     }
 
     /**
