@@ -39,6 +39,7 @@
             <#else>
                 <a href="${URL.noPrefix("/serialy/edit?action=addArticle&amp;articleRid="+RELATION.id)}">Pøiøadit k seriálu</a>
             </#if>
+        </#if>
         <#if !CHILDREN.royalties?exists>
             <b><a class="error" href="${URL.make("/honorare/"+RELATION.id+"?action=add")}">Vlo¾it honoráø</a></b>
         <#else>
@@ -97,13 +98,27 @@ ${TOOL.render(TEXT,USER?if_exists)}
 </#if>
 
 <#if SERIES?exists>
-    <div>
-        <h3>Seriál <a href="${SERIES.series.url}">${TOOL.childName(SERIES.series)}</a> (dílù: ${SERIES.total})</h3>
-        První díl: <a href="${SERIES.first.url}">${TOOL.childName(SERIES.first)}</a><#rt>
-        <#lt><#if (SERIES.total > 1)>, poslední díl: <a href="${SERIES.last.url}">${TOOL.childName(SERIES.last)}</a></#if>.<br>
-        <#if SERIES.previous?exists>Pøedchozí díl: <a href="${SERIES.previous.url}">${TOOL.childName(SERIES.previous)}</a><br></#if>
-        <#if SERIES.next?exists>Následující díl: <a href="${SERIES.next.url}">${TOOL.childName(SERIES.next)}</a><br></#if>
-    </div>
+ <table class="cl-serial">
+  <tr class="hlav">
+    <th colspan="2">Seriál <a href="${SERIES.series.url}">${TOOL.childName(SERIES.series)}</a> (dílù: ${SERIES.total})</th>
+  </tr>
+  <tr class="dil">
+    <td>první díl</td>
+    <td>poslední díl</td>
+  </tr>
+  <tr>
+    <td><a href="${SERIES.first.url}">${TOOL.childName(SERIES.first)}</a></td>
+    <td><#if (SERIES.total > 1)><a href="${SERIES.last.url}">${TOOL.childName(SERIES.last)}</a><#else>&bull;</#if></td>
+  </tr>
+  <tr class="dil">
+    <td>&laquo; pøedchozí díl</td>
+    <td>následující díl &raquo;</td>
+  </tr>
+  <tr>
+    <td><#if SERIES.previous?exists><a href="${SERIES.previous.url}">${TOOL.childName(SERIES.previous)}</a><#else>&bull;</#if></td>
+    <td><#if SERIES.next?exists><a href="${SERIES.next.url}">${TOOL.childName(SERIES.next)}</a><#else>&bull;</#if></td>
+  </tr>
+ </table>
 </#if>
 
 <div class="cl_perex souvisejici">

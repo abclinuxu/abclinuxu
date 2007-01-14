@@ -335,7 +335,7 @@ td.pad, code.kod, pre.kod {
 	text-align:	right;
 }
 
-.cl_inforadek, .ank-vypis, .treeview li span {
+.cl_inforadek, .ank-vypis, .serialy-vypis, .treeview li span {
 	font-size:	80%;
 	color:		#9a9a9a;
 }
@@ -365,6 +365,15 @@ td.pad, code.kod, pre.kod {
 	float:		right;
 	margin-left:	1em;
 }
+
+.cl-serial {
+	border-collapse:collapse;
+	border:		1px solid #4b4b4b;
+	text-align:	center;
+}
+.cl-serial tr.hlav { background: black; }
+.cl-serial tr.dil { background: #2e2e2e; }
+.cl-serial td { width: 50%; font-size: small; }
 
 .rating {
 background: #494949;
@@ -704,7 +713,8 @@ a.info,
 .rating a,
 .cl_perex a,
 .treeview a,
-.cl-obsah a {text-decoration:none}
+.cl-obsah a,
+.cl-serial a {text-decoration:none}
 
 .s li a:hover,
 .rozc li a:hover,
@@ -760,7 +770,7 @@ a.info,
 
 .ank-otazka { margin-bottom:0.5em }
 
-.ank-vypis { margin: 0 0 0.5em 3em; } /* + cl_inforadek */
+.ank-vypis, .serialy-vypis { margin: 0 0 0.5em 3em; } /* + cl_inforadek */
 
 .ls_zpr p {
 	margin:		0.5em 0.2em;

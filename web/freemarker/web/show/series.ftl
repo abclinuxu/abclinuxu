@@ -7,7 +7,7 @@
 <#assign desc = TOOL.xpath(RELATION.child, "/data/description")?default("UNDEFINED"),
          icon = TOOL.xpath(RELATION.child, "/data/icon")?default("UNDEFINED")>
 <#if icon != "UNDEFINED">
-    <img src="${icon}" style="float: right" alt="">
+    <img src="${icon}" style="float: right" alt="${TOOL.childName(RELATION)}">
 </#if>
 <#if desc != "UNDEFINED">
     <div>${desc}</div>

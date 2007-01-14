@@ -42,8 +42,21 @@ Prehled zpravicek
  http://www.abclinuxu.cz${news.url}
 
  ---------------------
-
 </#list>
+
+
+Reklama
+=======
+
+CVO Technology Recruitment je ta spravna platforma
+pro rizeni Vasi dalsi profesni kariery! Pro vedouci
+mezinarodni i lokalni technologicke spolecnosti
+v regionu stredni a vychodni Evropy hledame technicke
+nadsence na specializovane IT pracovni pozice.
+
+http://www.cvotechnology.com/JobSearch.aspx?Search=auto&CountryId=Czech%20Republic?utm_source=abcprace&utm_medium=banner&campaign=cvot
+
+
 <#if JOBS?size gt 0>
 Nove nabidky zamestnani
 =======================
