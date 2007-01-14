@@ -100,7 +100,6 @@ public class EditRelation implements AbcAction {
     public static final String ACTION_SET_URL_STEP3 = "setURL3";
 
 
-    // todo tohle je hruza, vubec se v tom neda vyznat.
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistance();
@@ -116,109 +115,156 @@ public class EditRelation implements AbcAction {
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         relation = (Relation) persistence.findById(relation);
         env.put(VAR_CURRENT, relation);
+        GenericObject child = relation.getChild();
+        persistence.synchronize(child);
 
         // check permissions
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
 
         if ( action.equals(ACTION_LINK) ) {
-            if ( !user.hasRole(Roles.CATEGORY_ADMIN) )
+            if ( !canCreateLink(user) )
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             return actionLinkStep1(request,env);
         }
 
         if ( action.equals(ACTION_LINK_STEP2) ) {
-            if ( !user.hasRole(Roles.CATEGORY_ADMIN) )
+            if ( !canCreateLink(user) )
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             return actionLinkStep2(request, response, env);
         }
 
         if ( action.equals(ACTION_MOVE_ALL) ) {
-            if ( !user.hasRole(Roles.CATEGORY_ADMIN) )
+            if ( !canMoveAll(user) )
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             return FMTemplateSelector.select("EditRelation", "moveAll", env, request);
         }
 
         if ( action.equals(ACTION_MOVE_ALL_STEP2) ) {
-            if ( !user.hasRole(Roles.CATEGORY_ADMIN) )
+            if ( !canMoveAll(user) )
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             return actionMoveAll(request, response, env);
         }
 
-        if ( action.equals(ACTION_SHOW_ACL) )
+        if ( action.equals(ACTION_SHOW_ACL) ) {
+            if (!canManageACL(user))
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             return actionShowACL(request,env);
+        }
 
-        if ( action.equals(ACTION_ADD_ACL) )
+        if ( action.equals(ACTION_ADD_ACL) ) {
+            if (!canManageACL(user))
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             return actionAddACLStep1(request,env);
+        }
 
-        if ( action.equals(ACTION_ADD_ACL_STEP2) )
+        if ( action.equals(ACTION_ADD_ACL_STEP2) ) {
+            if (!canManageACL(user))
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             return actionAddACLStep2(request,response,env);
+        }
 
-        if ( action.equals(ACTION_ADD_ACL_STEP3) )
+        if ( action.equals(ACTION_ADD_ACL_STEP3) ) {
+            if (!canManageACL(user))
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             return actionAddACLStep3(request,env);
+        }
 
-        if ( action.equals(ACTION_REMOVE_ACL) )
+        if ( action.equals(ACTION_REMOVE_ACL) ) {
+            if (!canManageACL(user))
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             return actionRemoveACL(request, env);
+        }
 
-        if ( action.equals(ACTION_SET_URL_STEP2) )
+        if ( action.equals(ACTION_SET_URL_STEP2) ) {
+            if (!canSetUrl(user))
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             return actionSetUrlStep2(request, env);
+        }
 
-        if ( action.equals(ACTION_SET_URL_STEP3) )
+        if ( action.equals(ACTION_SET_URL_STEP3) ) {
+            if (!canSetUrl(user))
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             return actionSetUrlStep3(request, response, env);
-
-        GenericObject child = relation.getChild();
-        persistence.synchronize(child);
+        }
 
         if ( action.equals(ACTION_MOVE) ) {
-            // check permissions
-            boolean canMove = false;
-            canMove |= user.hasRole(Roles.CAN_MOVE_RELATION);
-            if (child instanceof Category )
-                canMove |= user.hasRole(Roles.CATEGORY_ADMIN);
-            if (child instanceof Item ) {
-                switch ( ((Item)child).getType() ) {
-                    case Item.DISCUSSION:
-                        canMove |= user.hasRole(Roles.DISCUSSION_ADMIN); break;
-                    case Item.ARTICLE:
-                        canMove |= user.hasRole(Roles.ARTICLE_ADMIN); break;
-                }
-            }
-
-            if ( !canMove )
+            if ( !canMoveRelation(user, child) )
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
             return actionMove(request, response, env);
         }
 
-        // check permissions
-        boolean canRemove = false;
-        canRemove |= user.hasRole(Roles.CAN_REMOVE_RELATION);
-        if ( child instanceof Category )
-            canRemove |= user.hasRole(Roles.CATEGORY_ADMIN);
-        if ( child instanceof Item ) {
-            switch ( ((Item) child).getType() ) {
-                case Item.DISCUSSION:
-                    canRemove |= user.hasRole(Roles.DISCUSSION_ADMIN); break;
-                case Item.ARTICLE:
-                    canRemove |= user.hasRole(Roles.ARTICLE_ADMIN); break;
-                case Item.SURVEY:
-                    canRemove |= user.hasRole(Roles.SURVEY_ADMIN); break;
-            }
-        }
-        if ( child instanceof Poll )
-            canRemove |= user.hasRole(Roles.POLL_ADMIN);
-        // todo check ownership
-        if ( !canRemove )
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
         if ( action.equals(ACTION_REMOVE) ) {
+            if (!canRemoveRelation(user, child))
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             return actionRemove1(request, env);
+        }
 
-        } else if ( action.equals(ACTION_REMOVE_STEP2) ) {
+        if ( action.equals(ACTION_REMOVE_STEP2) ) {
+            if (!canRemoveRelation(user, child))
+                return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
             return actionRemove2(request, response, env);
         }
 
         throw new MissingArgumentException("Chybí parametr action!");
+    }
+
+    private boolean canMoveAll(User user) {
+        return user.hasRole(Roles.CATEGORY_ADMIN);
+    }
+
+    private boolean canMoveRelation(User user, GenericObject obj) {
+        boolean canMove = false;
+        canMove |= user.hasRole(Roles.CAN_MOVE_RELATION);
+        if (obj instanceof Category)
+            canMove |= user.hasRole(Roles.CATEGORY_ADMIN);
+        if (obj instanceof Item) {
+            switch (((Item) obj).getType()) {
+                case Item.DISCUSSION:
+                    canMove |= user.hasRole(Roles.DISCUSSION_ADMIN);
+                    break;
+                case Item.ARTICLE:
+                    canMove |= user.hasRole(Roles.ARTICLE_ADMIN);
+                    break;
+            }
+        }
+        return canMove;
+    }
+
+    private boolean canRemoveRelation(User user, GenericObject obj) {
+        boolean canRemove = false;
+        canRemove |= user.hasRole(Roles.CAN_REMOVE_RELATION);
+        if (obj instanceof Category)
+            canRemove |= user.hasRole(Roles.CATEGORY_ADMIN);
+        if (obj instanceof Item) {
+            switch (((Item) obj).getType()) {
+                case Item.DISCUSSION:
+                    canRemove |= user.hasRole(Roles.DISCUSSION_ADMIN);
+                    break;
+                case Item.ARTICLE:
+                    canRemove |= user.hasRole(Roles.ARTICLE_ADMIN);
+                    break;
+                case Item.SURVEY:
+                    canRemove |= user.hasRole(Roles.SURVEY_ADMIN);
+                    break;
+            }
+        }
+        if (obj instanceof Poll)
+            canRemove |= user.hasRole(Roles.POLL_ADMIN);
+        // todo check ownership
+        return canRemove;
+    }
+
+    private boolean canCreateLink(User user) {
+        return user.hasRole(Roles.CATEGORY_ADMIN);
+    }
+
+    private boolean canSetUrl(User user) {
+        return user.hasRole(Roles.ROOT);
+    }
+
+    private boolean canManageACL(User user) {
+        return user.hasRole(Roles.ROOT);
     }
 
     protected String actionLinkStep1(HttpServletRequest request, Map env) throws Exception {
@@ -267,9 +313,6 @@ public class EditRelation implements AbcAction {
      * Displays form to set new URL.
      */
     protected String actionSetUrlStep1(HttpServletRequest request, Map env) {
-        User user = (User) env.get(Constants.VAR_USER);
-        if (!user.hasRole(Roles.ROOT))
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
         return FMTemplateSelector.select("EditRelation", "setUrl", env, request);
     }
 
@@ -277,10 +320,6 @@ public class EditRelation implements AbcAction {
      * Shows the relation for which the user wishes to set new URL.
      */
     protected String actionSetUrlStep2(HttpServletRequest request, Map env) {
-        User user = (User) env.get(Constants.VAR_USER);
-        if (!user.hasRole(Roles.ROOT))
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
         Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) env.get(VAR_CURRENT);
         Relation upper = null;
@@ -305,9 +344,6 @@ public class EditRelation implements AbcAction {
     protected String actionSetUrlStep3(HttpServletRequest request, HttpServletResponse response, Map env) throws IOException {
         Persistence persistence = PersistenceFactory.getPersistance();
         SQLTool sqlTool = SQLTool.getInstance();
-        User user = (User) env.get(Constants.VAR_USER);
-        if (!user.hasRole(Roles.ROOT))
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         Relation relation = (Relation) env.get(VAR_CURRENT);
         String originalUrl = relation.getUrl();
@@ -365,7 +401,6 @@ public class EditRelation implements AbcAction {
         return FMTemplateSelector.select("EditRelation","remove",env,request);
     }
 
-    // todo call refreshXY on VariableFetcher
     protected String actionRemove2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistance();
@@ -382,6 +417,10 @@ public class EditRelation implements AbcAction {
                     removeArticleFromSeries(item, relation.getId());
                     break;
             }
+
+            Element inset = (Element) item.getData().selectSingleNode("/data/inset");
+            if (inset != null)
+                EditAttachment.removeAllAttachments(inset, env, user, request);
         }
 
         runMonitor(relation,user);
@@ -547,10 +586,6 @@ public class EditRelation implements AbcAction {
      * Shows ACL for given relation.
      */
     private String actionShowACL(HttpServletRequest request, Map env) throws Exception {
-        User user = (User) env.get(Constants.VAR_USER);
-        if ( !user.hasRole(Roles.ROOT) )
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
         Relation relation = (Relation) env.get(VAR_CURRENT);
         if (relation.getData()!=null) {
             List nodes = relation.getData().selectNodes("/data/acl");
@@ -571,10 +606,6 @@ public class EditRelation implements AbcAction {
      * Adds new ACL for given relation.
      */
     private String actionAddACLStep1(HttpServletRequest request, Map env) throws Exception {
-        User user = (User) env.get(Constants.VAR_USER);
-        if ( !user.hasRole(Roles.ROOT) )
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
         List items = SQLTool.getInstance().findItemsWithType(Item.GROUP, 0, EditGroup.DEFAULT_MAX_NUMBER_OF_GROUPS);
         env.put(VAR_GROUPS, items);
 
@@ -585,10 +616,6 @@ public class EditRelation implements AbcAction {
      * Adds new ACL for given relation.
      */
     private String actionAddACLStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        User user = (User) env.get(Constants.VAR_USER);
-        if ( !user.hasRole(Roles.ROOT) )
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String who = (String) params.remove(PARAM_ACL_WHO);
         if ( "user".equals(who) ) {
@@ -609,9 +636,6 @@ public class EditRelation implements AbcAction {
      */
     private String actionAddACLStep3(HttpServletRequest request, Map env) throws Exception {
         User user = (User) env.get(Constants.VAR_USER);
-        if ( !user.hasRole(Roles.ROOT) )
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_CURRENT);
         Persistence persistence = PersistenceFactory.getPersistance();
@@ -630,9 +654,6 @@ public class EditRelation implements AbcAction {
      */
     protected String actionRemoveACL(HttpServletRequest request, Map env) throws Exception {
         User user = (User) env.get(Constants.VAR_USER);
-        if ( !user.hasRole(Roles.ROOT) )
-            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
-
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) env.get(VAR_CURRENT);
         Persistence persistence = PersistenceFactory.getPersistance();

@@ -207,6 +207,30 @@ public class EditAttachment implements AbcAction {
     }
 
     /**
+     * Removes all attachments in element inset. Error messages are set, if there was an error
+     * removing some file.
+     */
+    public static void removeAllAttachments(Element inset, Map env, User user, HttpServletRequest request) {
+        if (inset == null)
+            return;
+        Element images = inset.element("images");
+        if (images == null)
+            return;
+
+        String path;
+        for (Iterator iter = images.elements("image").iterator(); iter.hasNext();) {
+            Element element = (Element) iter.next();
+            path = element.getText();
+            deleteAttachment(path, env, user, request);
+
+            path = element.attributeValue("thumbnail");
+            if (path != null)
+                deleteAttachment(path, env, user, request);
+            element.detach();
+        }
+    }
+
+    /**
      * Uploads new screenshot and creates a thumbnail (if needed). Changes to Item are not synchronized with persistence.
      * @param params map holding request's parameters
      * @param item item to be updated
@@ -266,14 +290,14 @@ public class EditAttachment implements AbcAction {
      * @param user user performing this operation
      * @param request
      */
-    private void deleteAttachment(String path, Map env, User user, HttpServletRequest request) {
+    private static void deleteAttachment(String path, Map env, User user, HttpServletRequest request) {
         File file = new File(AbcConfig.getDeployPath()+path);
         if (! file.exists()) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Nepodaøilo se smazat soubor "+path, env, request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Nepodaøilo se smazat soubor '"+path+"'!", env, request.getSession());
             return;
         }
         if (! file.delete()) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Nepodaøilo se smazat soubor " + path, env, request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Nepodaøilo se smazat soubor '" + path + "'!", env, request.getSession());
             log.warn("Nepodaøilo se smazat soubor "+file.getAbsolutePath());
             return;
         }
