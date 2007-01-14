@@ -542,13 +542,19 @@ public class EditBlog implements AbcAction, Configurable {
      * Final step of renaming blog.
      */
     protected String actionRemoveStoryStep2(HttpServletRequest request, HttpServletResponse response, Relation story, Category blog, Map env) throws Exception {
+        User user = (User) env.get(Constants.VAR_USER);
+        Item item = (Item) story.getChild();
+
         if (containsForeignComments((Item) story.getChild())) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Tento zápis není mo¾né smazat, nebo» obsahuje cizí komentáøe.", env, request.getSession());
-            Item item = (Item) story.getChild();
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(), item.getCreated(), story.getId()));
             return null;
         }
+
+        Element inset = (Element) item.getData().selectSingleNode("/data/inset");
+        if (inset != null)
+            EditAttachment.removeAllAttachments(inset, env, user, request);
 
         Persistence persistence = PersistenceFactory.getPersistance();
         persistence.remove(story);
