@@ -210,7 +210,7 @@
                     </node>
                     <node name="SiteMapGenerator">
                         <map>
-                            <entry key="index.file" value="sitemap.xml" />
+                            <entry key="index.file" value="sitemap.xml.gz" />
                             <entry key="file.main" value="sitemap-main.xml.gz" />
                             <entry key="file.forum" value="sitemap-forum.xml.gz" />
                         </map>

@@ -100,6 +100,7 @@ public class SiteMapGenerator implements Configurable {
         // index of sitemaps
         File file = new File(AbcConfig.getDeployPath() + File.separator + filenameIndex);
         FileOutputStream fos = new FileOutputStream(file);
+        GZIPOutputStream stream = new GZIPOutputStream(fos);
         fos.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".getBytes());
         fos.write("<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n".getBytes());
         writeSitemap(filenameMain, fos);
@@ -110,7 +111,7 @@ public class SiteMapGenerator implements Configurable {
         // main sitemap file
         file = new File(AbcConfig.getDeployPath() + File.separator + filenameMain);
         fos = new FileOutputStream(file);
-        GZIPOutputStream stream = new GZIPOutputStream(fos);
+        stream = new GZIPOutputStream(fos);
         stream.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".getBytes());
         stream.write("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n".getBytes());
 
