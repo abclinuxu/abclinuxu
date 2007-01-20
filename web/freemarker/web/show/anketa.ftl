@@ -10,6 +10,8 @@
  </p>
 </#if>
 
+<@lib.advertisement id="arbo-sq" />
+
 <p><b>${POLL.text}</b></p>
 
 <table class="ank" border="0" cellpadding="3">

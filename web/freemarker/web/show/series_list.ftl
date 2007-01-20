@@ -12,7 +12,7 @@
 <#list SERIES as series>
     <#assign desc = TOOL.xpath(series.child, "/data/description")?default("UNDEFINED"),
              total = TOOL.xpathValue(series.child.data, "count(//article)")>
-    <li><a href="${series.url}">${TOOL.childName(series)}</a> (dílù:&nbsp;${total})
+    <li><a href="${series.url}">${TOOL.childName(series)}</a> (${total})
     <#if desc != "UNDEFINED">
         <div class="serialy-vypis">${desc}</div>
     </#if></li>

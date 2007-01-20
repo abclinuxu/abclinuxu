@@ -367,6 +367,12 @@ td.pad, code.kod, pre.kod {
 .cl-serial tr.dil { background: #e9e9e9; }
 .cl-serial td { width: 50%; font-size: small; }
 
+.serial-nadpis {
+	background:	#ececec;
+	padding:	0.1em 0.5em 0.5em 0.5em;
+	margin-bottom:	0.5em;
+}
+
 .rating {
 background: #F0F0F0;
 float:right;

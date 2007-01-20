@@ -2,7 +2,8 @@
 
 <@lib.showMessages/>
 
-<h1>Seriál ${TOOL.childName(RELATION)}</h1>
+<div class="serial-nadpis">
+<h1>Seriál: ${TOOL.childName(RELATION)}</h1>
 
 <#assign desc = TOOL.xpath(RELATION.child, "/data/description")?default("UNDEFINED"),
          icon = TOOL.xpath(RELATION.child, "/data/icon")?default("UNDEFINED")>
@@ -10,8 +11,9 @@
     <img src="${icon}" style="float: right" alt="${TOOL.childName(RELATION)}">
 </#if>
 <#if desc != "UNDEFINED">
-    <div>${desc}</div>
+    <p>${desc}</p>
 </#if>
+</div>
 
 <#if USER?exists && USER.hasRole("article admin")>
     <p>

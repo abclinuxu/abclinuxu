@@ -2,6 +2,8 @@
 
 <@lib.showMessages/>
 
+<@lib.advertisement id="arbo-sq" />
+
 <h1>Archiv anket</h1>
 
 <ul>
