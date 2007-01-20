@@ -31,12 +31,21 @@
             </tr>
         </#if>
         <tr>
-            <td width="90">Defaultní kód:</td>
+            <td width="90">
+                Defaultní kód:
+                <#if TOOL.xpath(DEFAULT_CODE, "@dynamic")?if_exists=="yes">(dynamický)</#if>
+            </td>
             <td>
                 <textarea disabled rows="7" class="siroka">${DEFAULT_CODE.getText()?html}</textarea>
             </td>
         </tr>
     </table>
+
+    <br>
+    <input type="submit" name="editPosition" value="Upravit">
+    <input type="submit" name="addCode" value="Pøidat kód">
+    <input type="submit" name="rmPosition" value="Smazat" onclick="return confirm('Opravdu chcete smazat tuto pozici?')">
+    <input type="submit" name="nothing" value="Zpìt">
 
     <#if (CODES?size > 0)>
         <h2>Reklamní kódy pro urèité URL adresy</h2>
@@ -60,7 +69,10 @@
                         </tr>
                     </#if>
                     <tr>
-                        <td width="90">Reklamní kód:</td>
+                        <td width="90">
+                            Reklamní kód:
+                            <#if TOOL.xpath(code, "@dynamic")?if_exists=="yes">(dynamický)</#if>
+                        </td>
                         <td>
                             <textarea disabled rows="7" class="siroka">${code.getText()?html}</textarea>
                         </td>
@@ -71,12 +83,6 @@
             </div>
         </#list>
     </#if>
-
-    <br>
-    <input type="submit" name="editPosition" value="Upravit">
-    <input type="submit" name="addCode" value="Pøidat kód">
-    <input type="submit" name="rmPosition" value="Smazat" onclick="return confirm('Opravdu chcete smazat tuto pozici?')">
-    <input type="submit" name="nothing" value="Zpìt">
     <input type="hidden" name="identifier" value="${id}">
 </form>
 

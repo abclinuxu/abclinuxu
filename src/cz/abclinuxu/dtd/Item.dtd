@@ -162,6 +162,7 @@
 <!ELEMENT code (#PCDATA)> <!-- content of the advertisement, typically javascript code from some agency -->
 <!ATTLIST code regexp CDATA #IMPLIED> <!-- default code does not have this attribute, all other codes must define it -->
 <!ATTLIST code description (#PCDATA)> <!-- description of this code -->
+<!ATTLIST code dynamic (yes,no) #OPTIONAL)> <!-- boolean, determines whether this code must be preprocessed with freemarker, defaults to false -->
 
 <!-- Item.BAZAAR -->
 <!ELEMENT data (title, text)>

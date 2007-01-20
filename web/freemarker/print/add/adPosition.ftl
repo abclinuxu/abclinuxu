@@ -16,7 +16,9 @@
     Po vytvoøení nové pozice je nutné, aby programátor pøidal do patøièné
     ¹ablony zobrazení této reklamní pozice. To vy¾aduje identifikátor
     této pozice. Identifikátor se musí skládat jen z písmen anglické abecedy,
-    èíslic, pomlèky èi podtr¾ítka.
+    èíslic, pomlèky èi podtr¾ítka. Pøíznak dynamického kódu nastavte jen tehdy,
+    obsahuje-li reklamní kód programovací instrukce jazyku Freemarker a musí se
+    nejdøíve zpracovat.
 </p>
 
 
@@ -44,16 +46,22 @@
             </td>
         </tr>
         <tr>
+            <td width="90">Dynamický kód</td>
+            <td>
+                <input type="checkbox" name="dynamic"<#if PARAMS.dynamic?if_exists>checked</#if> tabindex="4">
+            </td>
+        </tr>
+        <tr>
             <td width="90">Reklamní kód</td>
             <td>
-                <textarea name="main_code" rows="15" class="siroka" tabindex="4">${PARAMS.main_code?if_exists?html}</textarea>
+                <textarea name="main_code" rows="15" class="siroka" tabindex="5">${PARAMS.main_code?if_exists?html}</textarea>
                 <div class="error">${ERRORS.main_code?if_exists}</div>
             </td>
         </tr>
         <tr>
             <td width="90">&nbsp;</td>
             <td>
-                <input tabindex="5" type="submit" name="finish" value="Dokonèi">
+                <input tabindex="6" type="submit" name="finish" value="Dokonèi">
             </td>
         </tr>
     </table>

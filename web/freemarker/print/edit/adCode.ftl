@@ -12,6 +12,11 @@
     pou¾ije se hlavní reklamní kód z pozice.
 </p>
 
+<p>
+    Pøíznak dynamického kódu nastavte jen tehdy, obsahuje-li reklamní kód
+    programovací instrukce jazyku Freemarker a musí se nejdøíve zpracovat.
+</p>
+
 <form action="${URL.noPrefix("/EditAdvertisement")}" method="POST" name="form">
     <table class="siroka" border="0" cellpadding="5">
         <tr>
@@ -29,16 +34,22 @@
             </td>
         </tr>
         <tr>
+            <td width="90">Dynamický kód</td>
+            <td>
+                <input type="checkbox" name="dynamic"<#if PARAMS.dynamic?if_exists>checked</#if> tabindex="3">
+            </td>
+        </tr>
+        <tr>
             <td width="90">Reklamní kód</td>
             <td>
-                <textarea name="code" rows="15" class="siroka" tabindex="3">${PARAMS.code?if_exists?html}</textarea>
+                <textarea name="code" rows="15" class="siroka" tabindex="4">${PARAMS.code?if_exists?html}</textarea>
                 <div class="error">${ERRORS.code?if_exists}</div>
             </td>
         </tr>
         <tr>
             <td width="90">&nbsp;</td>
             <td>
-                <input tabindex="4" type="submit" name="finish" value="Dokonèi">
+                <input tabindex="5" type="submit" name="finish" value="Dokonèi">
             </td>
         </tr>
     </table>

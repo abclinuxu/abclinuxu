@@ -64,6 +64,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
     public static final String PARAM_MAIN_CODE = "main_code";
     public static final String PARAM_CODE = "code";
     public static final String PARAM_REGEXP = "regexp";
+    public static final String PARAM_DYNAMIC = "dynamic";
     public static final String PARAM_INDEX = "index";
 
     public static final String VAR_POSITION = "POSITION";
@@ -243,8 +244,12 @@ public class EditAdvertisement implements AbcAction, Configurable {
         if (element != null)
             params.put(PARAM_DESCRIPTION, element.getText());
         element = (Element) position.selectSingleNode("code[string-length(@id)=0]");
-        if (element != null)
+        if (element != null) {
             params.put(PARAM_MAIN_CODE, element.getText());
+            Attribute attribute = element.attribute("dynamic");
+            if (attribute != null)
+                params.put(PARAM_DYNAMIC, Boolean.TRUE);
+        }
 
         return FMTemplateSelector.select("EditAdvertisement", "editPosition", env, request);
     }
@@ -369,6 +374,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
         boolean canContinue = true;
         Element code = position.addElement("code");
         canContinue &= setCodeRegexp(params, code, env);
+        canContinue &= setCodeDynamicFlag(params, code);
         canContinue &= setCodeDescription(params, code);
         canContinue &= setCode(params, code);
 
@@ -408,6 +414,9 @@ public class EditAdvertisement implements AbcAction, Configurable {
         attribute = code.attribute("description");
         if (attribute != null)
             params.put(PARAM_DESCRIPTION, attribute.getText());
+        attribute = code.attribute("dynamic");
+        if (attribute != null)
+            params.put(PARAM_DYNAMIC, Boolean.TRUE);
 
         return FMTemplateSelector.select("EditAdvertisement", "editCode", env, request);
     }
@@ -432,6 +441,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
 
         boolean canContinue = true;
         canContinue &= setCodeRegexp(params, code, env);
+        canContinue &= setCodeDynamicFlag(params, code);
         canContinue &= setCodeDescription(params, code);
         canContinue &= setCode(params, code);
 
@@ -602,6 +612,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
         if (element == null)
             element = position.addElement("code");
         element.setText(code);
+        setCodeDynamicFlag(params, element);
         return true;
     }
 
@@ -685,7 +696,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
 
     /**
      * Updates code's description from parameters. Changes are not synchronized with persistance.
-     * @param params   map holding request's parameters
+     * @param params map holding request's parameters
      * @param code element to be updated
      * @return false, if there is a major error.
      */
@@ -700,6 +711,25 @@ public class EditAdvertisement implements AbcAction, Configurable {
                 attribute.setValue(desc);
             else
                 code.addAttribute("description", desc);
+        }
+        return true;
+    }
+
+    /**
+     * Updates code's dynamic flag from parameters. Changes are not synchronized with persistance.
+     * @param params map holding request's parameters
+     * @param code element to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setCodeDynamicFlag(Map params, Element code) {
+        String flag = (String) params.get(PARAM_DYNAMIC);
+        Attribute attribute = code.attribute("dynamic");
+        if (Misc.empty(flag)) {
+            if (attribute != null)
+                attribute.detach();
+        } else {
+            if (attribute == null)
+                code.addAttribute("dynamic", "yes");
         }
         return true;
     }

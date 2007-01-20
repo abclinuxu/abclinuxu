@@ -23,6 +23,7 @@ import cz.abclinuxu.data.Item;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.utils.freemarker.FMUtils;
 import org.dom4j.Element;
 
 import java.util.Map;
@@ -65,23 +66,36 @@ public class Advertisement {
         if (position.attributeValue("active").equals("no"))
             return "<!-- advertisement position " + id + " is not active -->";
 
-        String defaultCode = null;
+        Element selected = null, defaultCode = null, code;
         List codes = position.elements("code");
         for (Iterator iter = codes.iterator(); iter.hasNext();) {
-            Element code = (Element) iter.next();
+            code = (Element) iter.next();
             String regexp = code.attributeValue("regexp");
             if (regexp == null) {
-                defaultCode = code.getText();
+                defaultCode = code;
                 continue;
             }
 
             Matcher matcher = getPattern(regexp).matcher(uri);
-            if (matcher.find())
-                return code.getText();
+            if (matcher.find()) {
+                selected = code;
+                break;
+            }
         }
-        if (defaultCode == null)
+        if (selected == null)
+            selected = defaultCode;
+        if (selected == null)
             return "<!-- error: no default code defined for position '" + id + "'! -->";
-        return defaultCode;
+
+        String content = selected.getText();
+        if ("yes".equals(selected.attributeValue("dynamic")))
+            try {
+                return FMUtils.executeCode(content, Collections.EMPTY_MAP);
+            } catch (Exception e) {
+                return "<!-- error: code defined for position '" + id + "' threw an error: " + e.getMessage() + "! -->";
+            }
+        else
+            return content;
     }
 
     /**

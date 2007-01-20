@@ -19,6 +19,11 @@
     pou¾ije se hlavní reklamní kód z pozice.
 </p>
 
+<p>
+    Pøíznak dynamického kódu nastavte jen tehdy, obsahuje-li reklamní kód
+    programovací instrukce jazyku Freemarker a musí se nejdøíve zpracovat.
+</p>
+
 <form action="${URL.noPrefix("/EditAdvertisement")}" method="POST" name="form">
     <table class="siroka" border="0" cellpadding="5">
         <tr>

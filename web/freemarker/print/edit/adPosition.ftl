@@ -10,7 +10,9 @@
     vysvìtlující úèel a umístìní této pozice a hlavní reklamní kód.
     Ten bude zobrazen v¾dy, nebude-li adresa aktuální stránky obslou¾ena jiným
     reklamním kódem. Reklamní kód je obvykle HMTL kód reklamní agentury, ale
-    mù¾e to být libovolný HTML kód vèetnì odkazù a obrázkù.
+    mù¾e to být libovolný HTML kód vèetnì odkazù a obrázkù. Pøíznak dynamického kódu
+    nastavte jen tehdy, obsahuje-li reklamní kód programovací instrukce jazyku Freemarker
+    a musí se nejdøíve zpracovat.
 </p>
 
 
@@ -38,9 +40,15 @@
             </td>
         </tr>
         <tr>
+            <td width="90">Dynamický kód</td>
+            <td>
+                <input type="checkbox" name="dynamic"<#if PARAMS.dynamic?if_exists>checked</#if> tabindex="4">
+            </td>
+        </tr>
+        <tr>
             <td width="90">Reklamní kód</td>
             <td>
-                <textarea name="main_code" rows="15" class="siroka" tabindex="4">${PARAMS.main_code?if_exists?html}</textarea>
+                <textarea name="main_code" rows="15" class="siroka" tabindex="5">${PARAMS.main_code?if_exists?html}</textarea>
                 <div class="error">${ERRORS.main_code?if_exists}</div>
             </td>
         </tr>

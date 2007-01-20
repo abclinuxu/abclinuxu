@@ -22,6 +22,7 @@
             </td>
         </tr>
 
+        <#if ! EDIT_MODE?if_exists>
         <tr>
             <td class="required" width="60">URL seriálu</td>
             <td>
@@ -29,6 +30,7 @@
                 <div class="error">${ERRORS.url?if_exists}</div>
             </td>
         </tr>
+        </#if>
 
         <tr>
             <td width="60">Popis</td>
