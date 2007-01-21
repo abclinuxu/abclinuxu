@@ -116,7 +116,7 @@
 <!-- Item.DICTIONARY -->
 <!ELEMENT data (name, description)>
 <!ELEMENT name (#PCDATA)> <!-- word to be explained -->
-<!ELEMENT description (#PCDATA)> <!-- explanation ->
+<!ELEMENT description (#PCDATA)> <!-- explanation -->
 
 <!-- Item.CONTENT -->
 <!ELEMENT data (name, content, class?, toc?)>
