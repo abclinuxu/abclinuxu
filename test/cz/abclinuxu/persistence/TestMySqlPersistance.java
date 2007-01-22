@@ -307,6 +307,76 @@ public class TestMySqlPersistance extends TestCase {
         persistence.remove(processors);
     }
 
+    public void testSyncList() throws Exception {
+        Item item1 = new Item(0, Item.ARTICLE);
+        item1.setData("<data>1</data>");
+        item1.addProperty("property", "1");
+        persistence.create(item1);
+        Item item2 = new Item(0, Item.AUTHOR);
+        item2.setData("<data>2</data>");
+        item2.addProperty("property", "2");
+        persistence.create(item2);
+        Item item3 = new Item(0, Item.BAZAAR);
+        item3.setData("<data>3</data>");
+        item3.addProperty("property", "3");
+        persistence.create(item3);
+        Item item4 = new Item(0, Item.BLOG);
+        item4.setData("<data>4</data>");
+        item4.addProperty("property", "4");
+        persistence.create(item4);
+
+        try {
+            Item cached1 = new Item(item1.getId());
+            Item cached2 = new Item(item2.getId());
+            Item cached3 = new Item(item3.getId());
+            Item cached4 = new Item(item4.getId());
+
+            List cachedList = new ArrayList();
+            cachedList.add(cached1);
+            cachedList.add(cached2);
+            cachedList.add(cached3);
+            cachedList.add(cached4);
+            persistence.synchronizeList(cachedList);
+
+            assertEquals(item1, cached1);
+            assertEquals(item2, cached2);
+            assertEquals(item3, cached3);
+            assertEquals(item4, cached4);
+            assertEquals(item1.getProperty("property"), cached1.getProperty("property"));
+            assertEquals(item2.getProperty("property"), cached2.getProperty("property"));
+            assertEquals(item3.getProperty("property"), cached3.getProperty("property"));
+            assertEquals(item4.getProperty("property"), cached4.getProperty("property"));
+
+            persistence.clearCache();
+
+            Item fetched1 = new Item(item1.getId());
+            Item fetched2 = new Item(item2.getId());
+            Item fetched3 = new Item(item3.getId());
+            Item fetched4 = new Item(item4.getId());
+
+            List fetchedList = new ArrayList();
+            fetchedList.add(fetched1);
+            fetchedList.add(fetched2);
+            fetchedList.add(fetched3);
+            fetchedList.add(fetched4);
+            persistence.synchronizeList(fetchedList);
+
+            assertEquals(item1, fetched1);
+            assertEquals(item2, fetched2);
+            assertEquals(item3, fetched3);
+            assertEquals(item4, fetched4);
+            assertEquals(item1.getProperty("property"), fetched1.getProperty("property"));
+            assertEquals(item2.getProperty("property"), fetched2.getProperty("property"));
+            assertEquals(item3.getProperty("property"), fetched3.getProperty("property"));
+            assertEquals(item4.getProperty("property"), fetched4.getProperty("property"));
+        } finally {
+            persistence.remove(item1);
+            persistence.remove(item2);
+            persistence.remove(item3);
+            persistence.remove(item4);
+        }
+    }
+
     /**
      * tests functionality of tree
      */

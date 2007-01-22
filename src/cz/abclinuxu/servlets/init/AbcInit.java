@@ -51,25 +51,30 @@ import java.util.prefs.Preferences;
 public class AbcInit extends HttpServlet implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(AbcInit.class);
 
-    public static final String PREF_START_RSS_MONITOR = "start.rss.monitor";
-    public static final String PREF_START_RSS_GENERATOR = "start.rss.generator";
-    public static final String PREF_START_RSS_UNIXSHOP = "start.rss.unixshop";
-    public static final String PREF_START_RSS_OKSYSTEM = "start.rss.oksystem";
-    public static final String PREF_START_RSS_JOBPILOT = "start.rss.jobpilot";
-    public static final String PREF_START_VARIABLE_FETCHER = "start.variable.fetcher";
-    public static final String PREF_START_POOL_MONITOR = "start.pool.monitor";
-    public static final String PREF_START_ABC_MONITOR = "start.abc.monitor";
-    public static final String PREF_START_FORUM_MAIL_GATEWAY = "start.forum.mail.gateway";
-    public static final String PREF_START_WEEKLY_EMAILS = "start.weekly.emails";
-    public static final String PREF_START_WEEKLY_SUMMARY = "start.weekly.summary";
-    public static final String PREF_START_UPDATE_DATETOOL = "start.datetool.service";
-    public static final String PREF_START_WATCHED_DISCUSSIONS_CLEANER = "start.watched.discussions.cleaner";
-    public static final String PREF_START_UPDATE_STATISTICS = "start.update.statistics";
-    public static final String PREF_START_JOB_OFFER_MANAGER = "start.job.offer.manager";
+    public static final String PREF_START = "start.";
+    public static final String PREF_PERIOD = ".period";
+    public static final String PREF_DELAY = ".delay";
+    public static final String PREF_RSS_MONITOR = "rss.monitor";
+    public static final String PREF_RSS_GENERATOR = "rss.generator";
+    public static final String PREF_RSS_UNIXSHOP = "rss.unixshop";
+    public static final String PREF_RSS_OKSYSTEM = "rss.oksystem";
+    public static final String PREF_RSS_JOBPILOT = "rss.jobpilot";
+    public static final String PREF_VARIABLE_FETCHER = "variable.fetcher";
+    public static final String PREF_POOL_MONITOR = "pool.monitor";
+    public static final String PREF_ABC_MONITOR = "abc.monitor";
+    public static final String PREF_FORUM_MAIL_GATEWAY = "forum.mail.gateway";
+    public static final String PREF_WEEKLY_EMAILS = "weekly.emails";
+    public static final String PREF_WEEKLY_SUMMARY = "weekly.summary";
+    public static final String PREF_UPDATE_DATETOOL = "datetool.service";
+    public static final String PREF_WATCHED_DISCUSSIONS_CLEANER = "watched.discussions.cleaner";
+    public static final String PREF_UPDATE_STATISTICS = "update.statistics";
+    public static final String PREF_JOB_OFFER_MANAGER = "job.offer.manager";
 
     Timer scheduler, slowScheduler;
     VariableFetcher fetcher;
-    private Map services = new HashMap(16, 1.0f);
+    private Map<String,Boolean> services = new HashMap<String, Boolean>(16, 1.0f);
+    private Map<String,Integer> delays = new HashMap<String, Integer>(16, 1.0f);
+    private Map<String, Integer> periods = new HashMap<String, Integer>(16, 1.0f);
     static AbcInit instance;
 
     public AbcInit() {
@@ -138,122 +143,153 @@ public class AbcInit extends HttpServlet implements Configurable {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {}
 
     /**
-     * Update links each three hours. It may take even minutes or hours to complete.
+     * Fetches RSS feeds. It may take even minutes or hours to complete.
      */
     protected void startLinksUpdate() {
-        if ( !isSet(PREF_START_RSS_MONITOR) ) {
+        if ( !isSet(PREF_RSS_MONITOR) ) {
             log.info("RSS monitor configured not to run");
             return;
         }
         log.info("Scheduling RSS monitor");
-        slowScheduler.schedule(UpdateLinks.getInstance(), 60 * 1000, 3 * 60 * 60 * 1000);
+        int delay = getDelay(PREF_RSS_MONITOR);
+        int period = getPeriod(PREF_RSS_MONITOR);
+        slowScheduler.schedule(UpdateLinks.getInstance(), delay, period);
     }
 
     /**
-     * Update unixshop RSS each two hours, starting after two minutes
+     * Update unixshop RSS feed.
      */
     protected void startUnixshopUpdate() {
-        if ( !isSet(PREF_START_RSS_UNIXSHOP) ) {
+        if ( !isSet(PREF_RSS_UNIXSHOP) ) {
             log.info("RSS Unixshop monitor configured not to run");
             return;
         }
         log.info("Scheduling RSS unixshop monitor");
-        slowScheduler.schedule(new UnixshopFetcher(), 2*60*1000, 2*60*60*1000);
+        int delay = getDelay(PREF_RSS_UNIXSHOP);
+        int period = getPeriod(PREF_RSS_UNIXSHOP);
+        slowScheduler.schedule(new UnixshopFetcher(), delay, period);
     }
 
     /**
-     * Update oksystem RSS each hour, starting after two minutes
+     * Update oksystem RSS.
      */
     protected void startOKSystemUpdate() {
-        if ( !isSet(PREF_START_RSS_OKSYSTEM) ) {
+        if ( !isSet(PREF_RSS_OKSYSTEM) ) {
             log.info("RSS OKSystem monitor configured not to run");
             return;
         }
         log.info("Scheduling RSS OKSystem monitor");
-        slowScheduler.schedule(new OKSystemFetcher(), 60*1000, 2*60*60*1000);
+        int delay = getDelay(PREF_RSS_OKSYSTEM);
+        int period = getPeriod(PREF_RSS_OKSYSTEM);
+        slowScheduler.schedule(new OKSystemFetcher(), delay, period);
     }
 
     /**
-     * Update JobPilot RSS each hour, starting after two minutes
+     * Update JobPilot RSS.
      */
     protected void startJobPilotUpdate() {
-        if ( !isSet(PREF_START_RSS_JOBPILOT) ) {
+        if ( !isSet(PREF_RSS_JOBPILOT) ) {
             log.info("JobPilot RSS monitor configured not to run");
             return;
         }
         log.info("Scheduling JobPilot RSS monitor");
-        slowScheduler.schedule(new JobPilotFetcher(), 3*60*1000, 2*60*60*1000);
+        int delay = getDelay(PREF_RSS_JOBPILOT);
+        int period = getPeriod(PREF_RSS_JOBPILOT);
+        slowScheduler.schedule(new JobPilotFetcher(), delay, period);
     }
 
     /**
-     * Generate file with newest links each hour, starting 30 seconds later
+     * Generate RSS files with newest links.
      */
     protected void startGenerateLinks() {
-        if ( !isSet(PREF_START_RSS_GENERATOR) ) {
+        if ( !isSet(PREF_RSS_GENERATOR) ) {
             log.info("RSS generator configured not to run");
             return;
         }
         log.info("Scheduling RSS generator");
-        scheduler.schedule(new GenerateLinks(), 30*1000, 60*60*1000);
+        int delay = getDelay(PREF_RSS_GENERATOR);
+        int period = getPeriod(PREF_RSS_GENERATOR);
+        scheduler.schedule(new GenerateLinks(), delay, period);
     }
 
     /**
-     * Fetches some context variables each 30 seconds, starting now.
+     * Fills the caches with prepared queries.
      * It must be called before Freemarker's init.
      */
     protected void startFetchingVariables() {
-        if ( !isSet(PREF_START_VARIABLE_FETCHER) ) {
+        if ( !isSet(PREF_VARIABLE_FETCHER) ) {
             log.info("Template variable fetcher configured not to run");
             return;
         }
         log.info("Scheduling template variables fetcher");
-        scheduler.schedule(fetcher, 0, 30*1000);
+        int delay = getDelay(PREF_VARIABLE_FETCHER);
+        int period = getPeriod(PREF_VARIABLE_FETCHER);
+        scheduler.schedule(fetcher, delay, period);
     }
 
     /**
-     * Fetches some context variables each minute, starting now.
+     * Stores statistics about individual services usage.
      */
     protected void startUpdateStatistics() {
-        if ( !isSet(PREF_START_UPDATE_STATISTICS) ) {
+        if ( !isSet(PREF_UPDATE_STATISTICS) ) {
             log.info("Batch update of statistics configured not to run");
             return;
         }
         log.info("Scheduling batch update of statistics");
         UpdateStatistics task = UpdateStatistics.getInstance();
-        scheduler.schedule(task, 0, 60*1000);
+        int delay = getDelay(PREF_UPDATE_STATISTICS);
+        int period = getPeriod(PREF_UPDATE_STATISTICS);
+        scheduler.schedule(task, delay, period);
         task.setBatchMode(true);
     }
 
     /**
-     * Cleaner starts after 5 minute from startup and repeats each six hours.
+     * Cleans info about watched discussions over the limit.
      */
     protected void startWatchedDiscussionsCleaner() {
-        if ( !isSet(PREF_START_WATCHED_DISCUSSIONS_CLEANER) ) {
+        if ( !isSet(PREF_WATCHED_DISCUSSIONS_CLEANER) ) {
             log.info("Watched discussion cleaner configured not to run");
             return;
         }
         log.info("Scheduling watched discussion cleaner");
-        slowScheduler.schedule(EnsureWatchedDiscussionsLimit.getInstance(), 2*60*1000, 6*60*60*1000);
+        int delay = getDelay(PREF_WATCHED_DISCUSSIONS_CLEANER);
+        int period = getPeriod(PREF_WATCHED_DISCUSSIONS_CLEANER);
+        slowScheduler.schedule(EnsureWatchedDiscussionsLimit.getInstance(), delay, period);
     }
 
     /**
      * Monitors article and news pools for objects to be published.
-     * Start one minute later with period of 3 minutes.
      */
     protected void startPoolMonitor() {
-        if ( !isSet(PREF_START_POOL_MONITOR) ) {
+        if ( !isSet(PREF_POOL_MONITOR) ) {
             log.info("Pool monitor configured not to run");
             return;
         }
         log.info("Scheduling Pool monitor");
-        scheduler.schedule(new PoolMonitor(), 60*1000, 3*60*1000);
+        int delay = getDelay(PREF_POOL_MONITOR);
+        int period = getPeriod(PREF_POOL_MONITOR);
+        scheduler.schedule(new PoolMonitor(), delay, period);
+    }
+
+    /**
+     * Fetch job offers from praceabc.cz.
+     */
+    private void startJobOfferUpdateService() {
+        if (!isSet(PREF_JOB_OFFER_MANAGER)) {
+            log.info("Job offers configured not to be fetched");
+            return;
+        }
+        log.info("Scheduling job offers update service");
+        int delay = getDelay(PREF_JOB_OFFER_MANAGER);
+        int period = getPeriod(PREF_JOB_OFFER_MANAGER);
+        scheduler.schedule(new JobOfferManager(), delay, period);
     }
 
     /**
      * Sends notifications, when monitored object is changed.
      */
     protected void startObjectMonitor() {
-        if ( !isSet(PREF_START_ABC_MONITOR) ) {
+        if ( !isSet(PREF_ABC_MONITOR) ) {
             log.info("Abc monitor configured not to run");
             return;
         }
@@ -265,7 +301,7 @@ public class AbcInit extends HttpServlet implements Configurable {
      * Sends notifications, when monitored object is changed.
      */
     protected void startForumSender() {
-        if ( !isSet(PREF_START_FORUM_MAIL_GATEWAY) ) {
+        if ( !isSet(PREF_FORUM_MAIL_GATEWAY) ) {
             log.info("Forum email gateway configured not to run");
             return;
         }
@@ -277,7 +313,7 @@ public class AbcInit extends HttpServlet implements Configurable {
      * Send weekly emails each saturday noon.
      */
     private void startSendingWeeklyEmails() {
-        if ( !isSet(PREF_START_WEEKLY_EMAILS) ) {
+        if ( !isSet(PREF_WEEKLY_EMAILS) ) {
             log.info("Weekly email sender configured not to run");
             return;
         }
@@ -298,7 +334,7 @@ public class AbcInit extends HttpServlet implements Configurable {
      * Create weekly summary article.
      */
     private void startWeeklySummary() {
-        if ( !isSet(PREF_START_WEEKLY_SUMMARY) ) {
+        if ( !isSet(PREF_WEEKLY_SUMMARY) ) {
             log.info("Weekly summary configured not to be generated");
             return;
         }
@@ -319,7 +355,7 @@ public class AbcInit extends HttpServlet implements Configurable {
      * Send weekly emails each saturday noon.
      */
     private void startDateToolUpdateService() {
-        if ( !isSet(PREF_START_UPDATE_DATETOOL) ) {
+        if ( !isSet(PREF_UPDATE_DATETOOL) ) {
             log.info("Weekly summary configured not to be generated");
             return;
         }
@@ -331,18 +367,6 @@ public class AbcInit extends HttpServlet implements Configurable {
         calendar.add(Calendar.DAY_OF_YEAR, 1);
 
         scheduler.scheduleAtFixedRate(new UpdateDateTool(), calendar.getTime(), 24*60*60*1000);
-    }
-
-    /**
-     * Fetch job offers from praceabc.cz each hour.
-     */
-    private void startJobOfferUpdateService() {
-        if ( !isSet(PREF_START_JOB_OFFER_MANAGER) ) {
-            log.info("Job offers configured not to be fetched");
-            return;
-        }
-        log.info("Scheduling job offers update service");
-        scheduler.schedule(new JobOfferManager(), 3 * 60 * 1000, 60 * 60 * 1000);
     }
 
     /**
@@ -372,30 +396,72 @@ public class AbcInit extends HttpServlet implements Configurable {
      * Callback used to configure your class from preferences.
      */
     public void configure(Preferences prefs) throws ConfigurationException {
-        services.put(PREF_START_ABC_MONITOR, prefs.getBoolean(PREF_START_ABC_MONITOR, true));
-        services.put(PREF_START_POOL_MONITOR, prefs.getBoolean(PREF_START_POOL_MONITOR, true));
-        services.put(PREF_START_FORUM_MAIL_GATEWAY, prefs.getBoolean(PREF_START_FORUM_MAIL_GATEWAY, true));
-        services.put(PREF_START_RSS_GENERATOR, prefs.getBoolean(PREF_START_RSS_GENERATOR, true));
-        services.put(PREF_START_RSS_MONITOR, prefs.getBoolean(PREF_START_RSS_MONITOR, true));
-        services.put(PREF_START_RSS_UNIXSHOP, prefs.getBoolean(PREF_START_RSS_UNIXSHOP, true));
-        services.put(PREF_START_VARIABLE_FETCHER, prefs.getBoolean(PREF_START_VARIABLE_FETCHER, true));
-        services.put(PREF_START_WEEKLY_EMAILS, prefs.getBoolean(PREF_START_WEEKLY_EMAILS, true));
-        services.put(PREF_START_WEEKLY_SUMMARY, prefs.getBoolean(PREF_START_WEEKLY_SUMMARY, true));
-        services.put(PREF_START_UPDATE_DATETOOL, prefs.getBoolean(PREF_START_UPDATE_DATETOOL, true));
-        services.put(PREF_START_WATCHED_DISCUSSIONS_CLEANER, prefs.getBoolean(PREF_START_WATCHED_DISCUSSIONS_CLEANER, true));
-        services.put(PREF_START_RSS_OKSYSTEM, prefs.getBoolean(PREF_START_RSS_OKSYSTEM, true));
-        services.put(PREF_START_RSS_JOBPILOT, prefs.getBoolean(PREF_START_RSS_JOBPILOT, true));
-        services.put(PREF_START_UPDATE_STATISTICS, prefs.getBoolean(PREF_START_UPDATE_STATISTICS, true));
-        services.put(PREF_START_JOB_OFFER_MANAGER, prefs.getBoolean(PREF_START_JOB_OFFER_MANAGER, false));
+        services.put(PREF_ABC_MONITOR, prefs.getBoolean(PREF_START + PREF_ABC_MONITOR, true));
+        services.put(PREF_POOL_MONITOR, prefs.getBoolean(PREF_START + PREF_POOL_MONITOR, true));
+        services.put(PREF_FORUM_MAIL_GATEWAY, prefs.getBoolean(PREF_START + PREF_FORUM_MAIL_GATEWAY, true));
+        services.put(PREF_RSS_GENERATOR, prefs.getBoolean(PREF_START + PREF_RSS_GENERATOR, true));
+        services.put(PREF_RSS_MONITOR, prefs.getBoolean(PREF_START + PREF_RSS_MONITOR, true));
+        services.put(PREF_RSS_UNIXSHOP, prefs.getBoolean(PREF_START + PREF_RSS_UNIXSHOP, true));
+        services.put(PREF_VARIABLE_FETCHER, prefs.getBoolean(PREF_START + PREF_VARIABLE_FETCHER, true));
+        services.put(PREF_WEEKLY_EMAILS, prefs.getBoolean(PREF_START + PREF_WEEKLY_EMAILS, true));
+        services.put(PREF_WEEKLY_SUMMARY, prefs.getBoolean(PREF_START + PREF_WEEKLY_SUMMARY, true));
+        services.put(PREF_UPDATE_DATETOOL, prefs.getBoolean(PREF_START + PREF_UPDATE_DATETOOL, true));
+        services.put(PREF_WATCHED_DISCUSSIONS_CLEANER, prefs.getBoolean(PREF_START + PREF_WATCHED_DISCUSSIONS_CLEANER, true));
+        services.put(PREF_RSS_OKSYSTEM, prefs.getBoolean(PREF_START + PREF_RSS_OKSYSTEM, true));
+        services.put(PREF_RSS_JOBPILOT, prefs.getBoolean(PREF_START + PREF_RSS_JOBPILOT, true));
+        services.put(PREF_UPDATE_STATISTICS, prefs.getBoolean(PREF_START + PREF_UPDATE_STATISTICS, true));
+        services.put(PREF_JOB_OFFER_MANAGER, prefs.getBoolean(PREF_START + PREF_JOB_OFFER_MANAGER, false));
+
+        delays.put(PREF_POOL_MONITOR, prefs.getInt(PREF_POOL_MONITOR + PREF_DELAY, 60));
+        delays.put(PREF_RSS_GENERATOR, prefs.getInt(PREF_RSS_GENERATOR + PREF_DELAY, 60));
+        delays.put(PREF_RSS_MONITOR, prefs.getInt(PREF_RSS_MONITOR + PREF_DELAY, 60));
+        delays.put(PREF_RSS_UNIXSHOP, prefs.getInt(PREF_RSS_UNIXSHOP + PREF_DELAY, 60));
+        delays.put(PREF_VARIABLE_FETCHER, prefs.getInt(PREF_VARIABLE_FETCHER + PREF_DELAY, 60));
+        delays.put(PREF_WATCHED_DISCUSSIONS_CLEANER, prefs.getInt(PREF_WATCHED_DISCUSSIONS_CLEANER + PREF_DELAY, 60));
+        delays.put(PREF_RSS_OKSYSTEM, prefs.getInt(PREF_RSS_OKSYSTEM + PREF_DELAY, 60));
+        delays.put(PREF_RSS_JOBPILOT, prefs.getInt(PREF_RSS_JOBPILOT + PREF_DELAY, 60));
+        delays.put(PREF_UPDATE_STATISTICS, prefs.getInt(PREF_UPDATE_STATISTICS + PREF_DELAY, 60));
+        delays.put(PREF_JOB_OFFER_MANAGER, prefs.getInt(PREF_JOB_OFFER_MANAGER + PREF_DELAY, 60));
+
+        periods.put(PREF_POOL_MONITOR, prefs.getInt(PREF_POOL_MONITOR + PREF_PERIOD, 60));
+        periods.put(PREF_RSS_GENERATOR, prefs.getInt(PREF_RSS_GENERATOR + PREF_PERIOD, 60));
+        periods.put(PREF_RSS_MONITOR, prefs.getInt(PREF_RSS_MONITOR + PREF_PERIOD, 60));
+        periods.put(PREF_RSS_UNIXSHOP, prefs.getInt(PREF_RSS_UNIXSHOP + PREF_PERIOD, 60));
+        periods.put(PREF_VARIABLE_FETCHER, prefs.getInt(PREF_VARIABLE_FETCHER + PREF_PERIOD, 60));
+        periods.put(PREF_WATCHED_DISCUSSIONS_CLEANER, prefs.getInt(PREF_WATCHED_DISCUSSIONS_CLEANER + PREF_PERIOD, 60));
+        periods.put(PREF_RSS_OKSYSTEM, prefs.getInt(PREF_RSS_OKSYSTEM + PREF_PERIOD, 60));
+        periods.put(PREF_RSS_JOBPILOT, prefs.getInt(PREF_RSS_JOBPILOT + PREF_PERIOD, 60));
+        periods.put(PREF_UPDATE_STATISTICS, prefs.getInt(PREF_UPDATE_STATISTICS + PREF_PERIOD, 60));
+        periods.put(PREF_JOB_OFFER_MANAGER, prefs.getInt(PREF_JOB_OFFER_MANAGER + PREF_PERIOD, 60));
     }
 
     /**
-     * Test, whether give service is set to true.
+     * Test, whether given service is set to true.
      */
     protected boolean isSet(String name) {
         Boolean aBoolean = (Boolean) services.get(name);
         if (aBoolean != null)
             return aBoolean;
         return false;
+    }
+
+    /**
+     * @return configuration for delay of given service
+     */
+    protected int getDelay(String name) {
+        Integer integer = (Integer) delays.get(name);
+        if (integer != null)
+            return integer * 1000;
+        return 60000;
+    }
+
+    /**
+     * @return configuration for repeat period of given service
+     */
+    protected int getPeriod(String name) {
+        Integer integer = (Integer) periods.get(name);
+        if (integer != null)
+            return integer * 1000;
+        return 600000;
     }
 }

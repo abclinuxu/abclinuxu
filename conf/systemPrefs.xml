@@ -479,20 +479,40 @@
                         <node name="AbcInit">
                             <map>
                                 <entry key="start.rss.monitor" value="@START.RSS.MONITOR@"/>
+                                <entry key="rss.monitor.delay" value="60"/>
+                                <entry key="rss.monitor.period" value="10800"/>
                                 <entry key="start.rss.generator" value="@START.RSS.GENERATOR@"/>
+                                <entry key="rss.generator.delay" value="30"/>
+                                <entry key="rss.generator.period" value="3600"/>
                                 <entry key="start.rss.unixshop" value="@START.RSS.UNIXSHOP@"/>
+                                <entry key="rss.unixshop.delay" value="120"/>
+                                <entry key="rss.unixshop.period" value="7200"/>
                                 <entry key="start.rss.oksystem" value="@START.RSS.OKSYSTEM@"/>
+                                <entry key="rss.oksystem.delay" value="60"/>
+                                <entry key="rss.oksystem.period" value="7200"/>
                                 <entry key="start.rss.jobpilot" value="@START.RSS.JOBPILOT@"/>
+                                <entry key="rss.jobpilot.delay" value="180"/>
+                                <entry key="rss.jobpilot.period" value="7200"/>
                                 <entry key="start.variable.fetcher" value="@START.VARIABLE.FETCHER@"/>
-                                <entry key="start.article.pool.monitor" value="@START.ARTICLE.POOL.MONITOR@"/>
+                                <entry key="variable.fetcher.delay" value="0"/>
+                                <entry key="variable.fetcher.period" value="@VARIABLE.FETCHER.PERIOD@"/>
+                                <entry key="start.article.pool.monitor" value="@START.POOL.MONITOR@"/>
+                                <entry key="article.pool.monitor.delay" value="60"/>
+                                <entry key="article.pool.monitor.period" value="180"/>
                                 <entry key="start.abc.monitor" value="@START.ABC.MONITOR@"/>
                                 <entry key="start.forum.mail.gateway" value="@START.FORUM.GATEWAY@"/>
                                 <entry key="start.weekly.emails" value="@START.WEEKLY.EMAILS@"/>
                                 <entry key="start.weekly.summary" value="@START.WEEKLY.SUMMARY@"/>
                                 <entry key="start.datetool.service" value="@START_UPDATE_DATETOOL@"/>
                                 <entry key="start.watched.discussions.cleaner" value="@START_DISCUSSION_CLEANER@"/>
+                                <entry key="watched.discussions.cleaner.type" value="120"/>
+                                <entry key="watched.discussions.cleaner.period" value="21600"/>
                                 <entry key="start.update.statistics" value="@START_UPDATE_STATISTICS@"/>
+                                <entry key="update.statistics.delay" value="0"/>
+                                <entry key="update.statistics.period" value="60"/>
                                 <entry key="start.job.offer.manager" value="@START.PRACE.MANAGER@"/>
+                                <entry key="job.offer.manager.delay" value="180"/>
+                                <entry key="job.offer.manager.period" value="3600"/>
                             </map>
                         </node>
                     </node>

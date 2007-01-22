@@ -21,9 +21,6 @@ package cz.abclinuxu.scheduler;
 import org.apache.log4j.Logger;
 
 import java.util.TimerTask;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Properties;
 import java.util.regex.Pattern;
 import java.util.prefs.Preferences;
@@ -110,9 +107,11 @@ public class InvalidateEmails extends TimerTask implements Configurable {
         user = prefs.get(PREF_USER, "");
         password = prefs.get(PREF_PASSWORD, "");
         debugSMTP = prefs.getBoolean(PREF_DEBUG_MAIL, false);
-        String re = prefs.get(PREF_REGEXP_RETRY, "");
-        reRetry = Pattern.compile(re);
-        re = prefs.get(PREF_REGEXP_VACATION, "");
-        reVacation = Pattern.compile(re);
+        String re = prefs.get(PREF_REGEXP_RETRY, null);
+        if (re != null)
+            reRetry = Pattern.compile(re);
+        re = prefs.get(PREF_REGEXP_VACATION, null);
+        if (re != null)
+            reVacation = Pattern.compile(re);
     }
 }

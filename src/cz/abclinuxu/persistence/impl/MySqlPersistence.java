@@ -548,16 +548,16 @@ public class MySqlPersistence implements Persistence {
                 syncRelations(relations);
             }
             if (items != null) {
-                Sorters2.byId(items);
+//                Sorters2.byId(items);
                 syncDataObjects(items);
             }
             if (categories != null) {
-                Sorters2.byId(categories);
+//                Sorters2.byId(categories);
                 syncDataObjects(categories);
             }
             if (records != null) {
-                Sorters2.byId(records);
-                syncDataObjects(records);
+//                Sorters2.byId(records);
+                syncDataObjects(records); // todo records do not have properties now
             }
             if (links != null) {
                 Sorters2.byId(links);
@@ -1197,55 +1197,41 @@ public class MySqlPersistence implements Persistence {
 
     /**
      * Synchronizes specified GenericDataObjects from database.
-     * It is assumed, that all objects are same. If not, wrong objects
-     * will be fetched. You've been warned.
-     * @param objs
+     * @param objs at least one generic object, all must be same class
      */
     protected void syncDataObjects(List objs) throws SQLException {
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
-        GenericDataObject obj, previous = null;
+        Map objects = new HashMap();
+        GenericDataObject obj;
         try {
             GenericDataObject representant = (GenericDataObject) objs.get(0);
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from " + getTable(representant) + " where cislo in " + getInCondition(objs.size()) + " order by cislo");
+            statement = con.prepareStatement("select * from " + getTable(representant) + " where cislo in " + getInCondition(objs.size()));
             int i = 1;
             for (Iterator iter = objs.iterator(); iter.hasNext();) {
                 obj = (GenericDataObject) iter.next();
-                if (!(obj.getClass().isInstance(representant)))
-                    throw new PersistenceException("Objects in List cannot be mixed!");
                 statement.setInt(i++, obj.getId());
+                objects.put(obj.getId(), obj);
             }
+
             rs = statement.executeQuery();
-
-            for (Iterator iter = objs.iterator(); iter.hasNext();) {
-                obj = (GenericDataObject) iter.next();
-                if (!rs.next()) {
-                    log.warn("Synchronizace: datova polo¾ka nebyla nalezena: "+obj);
-                    break;
-                }
-
-                if (rs.getInt(1) != obj.getId()) {
-                    while (previous.getId()==obj.getId()) {
-                        obj.synchronizeWith(previous);
-                        if (iter.hasNext())
-                            obj = (GenericDataObject) iter.next();
-                    }
-                }
-                if (rs.getInt(1) != obj.getId()) {
-                    log.warn("Synchronizace: datova polo¾ka nebyla nalezena: " + obj);
+            while (rs.next()) {
+                int id = rs.getInt(1);
+                obj = (GenericDataObject) objects.get(id);
+                if (obj == null) {
+                    log.warn("Datova polo¾ka nebyla nalezena: " + obj);
                     continue;
                 }
 
                 syncGenericDataObjectFromRS(obj, rs);
-                loadProperties(obj); // todo presunout mimo smycku, nacitat hromadne v jednom SQL dotazu
                 if (obj instanceof Record && ((Record) obj).getType() == Record.DISCUSSION)
                     loadComments((Record) obj);
 
                 cache.store(obj);
-                previous = obj;
             }
+            loadProperties(objects);
         } finally {
             releaseSQLResources(con, statement, rs);
         }
@@ -2018,6 +2004,40 @@ public class MySqlPersistence implements Persistence {
             while (resultSet.next()) {
                 String property = resultSet.getString(3);
                 String value = resultSet.getString(4);
+                obj.addProperty(property, value);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
+     * Loads properties for specified objects from database.
+     * @param objects map, where key is id (integer) and value is GenericDataObject with this id
+     */
+    protected void loadProperties(Map objects) throws SQLException {
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = getSQLConnection();
+            statement = con.prepareStatement("select * from vlastnost where typ_predka=? and predek in " + getInCondition(objects.size()));
+            statement.setString(1, "P");
+            int i = 2, id;
+            for (Iterator iter = objects.keySet().iterator(); iter.hasNext();) {
+                id = (Integer) iter.next();
+                statement.setInt(i++, id);
+            }
+
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String property = resultSet.getString(3);
+                String value = resultSet.getString(4);
+                id = resultSet.getInt(2);
+                GenericDataObject obj = (GenericDataObject) objects.get(id);
                 obj.addProperty(property, value);
             }
         } catch (SQLException e) {
