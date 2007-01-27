@@ -1,0 +1,20 @@
+<h2 id="formatovani">Nápovìda k formátování</h2>
+
+<p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html" rel="nofollow">znaèky</a>:
+A, ACRONYM, B, BR, BLOCKQUOTE, CITE, CODE, DIV, EM, I, HR, H1, H2, H3, LI,
+OL, P, PRE, STRONG, TT, UL, VAR.</p>
+
+<p>Nejrychlej¹í zpùsob formátování je rozdìlovat
+text do odstavcù. Systém detekuje prázdné øádky
+(dvakrát enter) a nahradí je HTML znaèkou odstavce.
+Pokud ale v textu pou¾ijete znaèku <tt>P</tt> èi <tt>BR</tt>,
+pak pøedpokládáme, ¾e o formátování se budete starat
+sami, a tato konverze nebude aktivována.</p>
+
+<p>Pokud neovládáte HTML, doporuèuji si pøeèíst
+<a href="http://www.kosek.cz/clanky/html/01.html" rel="nofollow">rychlokurz</a>.</p>
+
+<p>Text musí být HTML validní, proto znak men¹ítka èi vìt¹ítka zapisujte takto:
+<code>&lt;</code> jako <code>&amp;lt;</code> a <code>&gt;</code> jako <code>&amp;gt;</code>.
+Dal¹ím èastým problémem je, jak vlo¾it výpis logu èi konfiguraèní soubor. V tomto
+pøípadì vá¹ text vlo¾te mezi znaèky <code>PRE</code>, které zachovají formátování.</p>

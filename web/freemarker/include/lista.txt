@@ -1,0 +1,23 @@
+<div class="sflista">
+     <div class="ri">
+    	<a href="http://www.stickfish.cz" title="Guarantee business interface.">
+	<img src="/images/site2/sflista/sf.gif" alt="Guarantee business interface."> stickfish.cz</a>
+     </div>
+     <div class="le">
+        <a href="http://www.unixshop.cz" title="RISC bez rizika!">
+    	<img src="/images/site2/sflista/ux.gif" alt="RISC bez rizika!"/> unixshop</a>
+        <a href="http://www.lbw.cz" title="Enterprise Linux portál.">
+    	<img src="/images/site2/sflista/lb.gif" alt="Enterprise Linux portál."/> LinuxBizWorld</a>
+        <a href="http://www.abclinuxu.cz" title="Linux na støíbrném podnose.">
+	<img src="/images/site2/sflista/ab.gif" alt="Linux na støíbrném podnose."/> AbcLinuxu</a>
+        <a href="http://www.64bit.cz" title="Servery a pracovní stanice Sun.">
+	<img src="/images/site2/sflista/64.gif" alt="Servery a pracovní stanice Sun."/> 64bit</a>
+        <a href="http://www.praceabc.cz" title="Spojujeme lidi s prací v IT!">
+    	<img src="/images/site2/sflista/pr.gif" alt="Spojujeme lidi s prací v IT!"/> PráceAbc</a>
+        <a href="http://www.dfklub.cz" title="Klub nejen digitální fotografie.">
+	<img src="/images/site2/sflista/df.gif" alt="Klub nejen digitální fotografie."/> dFklub</a>
+        <a href="http://www.2cars.cz" title="Klasické vozy v moderním podání.">
+	<img src="/images/site2/sflista/bm.gif" alt="Klasické vozy v moderním podání."/> 2cars</a>
+     </div>
+    <div class="cistic"></div>
+</div>

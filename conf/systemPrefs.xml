@@ -376,6 +376,12 @@
                             <entry key="max" value="5" />
                         </map>
                     </node>
+                    <node name="AbcHostFetcher">
+                        <map>
+                            <entry key="uri" value="http://www.abchost.cz/data/abclinuxu.xml"/>
+                            <entry key="item" value="52001" />
+                        </map>
+                    </node>
                     <node name="InvalidateEmails">
                         <map>
                             <entry key="server.address" value="posta.move.cz"/>
@@ -489,9 +495,9 @@
                                 <entry key="start.rss.generator" value="@START.RSS.GENERATOR@"/>
                                 <entry key="rss.generator.delay" value="30"/>
                                 <entry key="rss.generator.period" value="3600"/>
-                                <entry key="start.rss.unixshop" value="@START.RSS.UNIXSHOP@"/>
-                                <entry key="rss.unixshop.delay" value="120"/>
-                                <entry key="rss.unixshop.period" value="7200"/>
+                                <entry key="start.abchost.fetcher" value="@START.ABCHOST.FETCHER"/>
+                                <entry key="abchost.fetcher.delay" value="45"/>
+                                <entry key="abchost.fetcher.period" value="1800"/>
                                 <entry key="start.rss.oksystem" value="@START.RSS.OKSYSTEM@"/>
                                 <entry key="rss.oksystem.delay" value="60"/>
                                 <entry key="rss.oksystem.period" value="7200"/>

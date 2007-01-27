@@ -20,6 +20,7 @@ package cz.abclinuxu.scheduler;
 
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.SectionTreeCache;
+import cz.abclinuxu.data.view.HostingServer;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.persistence.*;
@@ -80,6 +81,7 @@ public class VariableFetcher extends TimerTask implements Configurable {
     SectionTreeCache forumTree, faqTree, softwareTree, hardwareTree, articleTree;
     Relation currentPoll;
     int sectionCacheFrequency;
+    HostingServer hostingServer;
 
     SQLTool sqlTool;
     int cycle;
@@ -291,6 +293,13 @@ public class VariableFetcher extends TimerTask implements Configurable {
     }
 
     /**
+     * @return server from abchost offering, it may be null!
+     */
+    public HostingServer getHostingServer() {
+        return hostingServer;
+    }
+
+    /**
      * Finds number of objects for given user. If o is not User or xpath is not set, then default value
      * will be returned. Otherwise user's preference will be returned (unless it is smaller than 0
      * or bigger than maximum for this object).
@@ -365,6 +374,14 @@ public class VariableFetcher extends TimerTask implements Configurable {
         } catch (Throwable e) {
             log.error("Selhalo cachovani!", e);
         }
+    }
+
+    /**
+     * Sets hosting server.
+     * @param server server
+     */
+    public void setHostingServer(HostingServer server) {
+        hostingServer = server;
     }
 
     private void refreshSectionCaches() {
