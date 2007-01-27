@@ -56,7 +56,6 @@ public class AbcInit extends HttpServlet implements Configurable {
     public static final String PREF_DELAY = ".delay";
     public static final String PREF_RSS_MONITOR = "rss.monitor";
     public static final String PREF_RSS_GENERATOR = "rss.generator";
-    public static final String PREF_RSS_UNIXSHOP = "rss.unixshop";
     public static final String PREF_RSS_OKSYSTEM = "rss.oksystem";
     public static final String PREF_RSS_JOBPILOT = "rss.jobpilot";
     public static final String PREF_VARIABLE_FETCHER = "variable.fetcher";
@@ -125,7 +124,6 @@ public class AbcInit extends HttpServlet implements Configurable {
         startFetchingVariables();
         startUpdateStatistics();
         startLinksUpdate();
-        startUnixshopUpdate();
         startOKSystemUpdate();
         startJobPilotUpdate();
         startGenerateLinks();
@@ -154,20 +152,6 @@ public class AbcInit extends HttpServlet implements Configurable {
         int delay = getDelay(PREF_RSS_MONITOR);
         int period = getPeriod(PREF_RSS_MONITOR);
         slowScheduler.schedule(UpdateLinks.getInstance(), delay, period);
-    }
-
-    /**
-     * Update unixshop RSS feed.
-     */
-    protected void startUnixshopUpdate() {
-        if ( !isSet(PREF_RSS_UNIXSHOP) ) {
-            log.info("RSS Unixshop monitor configured not to run");
-            return;
-        }
-        log.info("Scheduling RSS unixshop monitor");
-        int delay = getDelay(PREF_RSS_UNIXSHOP);
-        int period = getPeriod(PREF_RSS_UNIXSHOP);
-        slowScheduler.schedule(new UnixshopFetcher(), delay, period);
     }
 
     /**
@@ -401,7 +385,6 @@ public class AbcInit extends HttpServlet implements Configurable {
         services.put(PREF_FORUM_MAIL_GATEWAY, prefs.getBoolean(PREF_START + PREF_FORUM_MAIL_GATEWAY, true));
         services.put(PREF_RSS_GENERATOR, prefs.getBoolean(PREF_START + PREF_RSS_GENERATOR, true));
         services.put(PREF_RSS_MONITOR, prefs.getBoolean(PREF_START + PREF_RSS_MONITOR, true));
-        services.put(PREF_RSS_UNIXSHOP, prefs.getBoolean(PREF_START + PREF_RSS_UNIXSHOP, true));
         services.put(PREF_VARIABLE_FETCHER, prefs.getBoolean(PREF_START + PREF_VARIABLE_FETCHER, true));
         services.put(PREF_WEEKLY_EMAILS, prefs.getBoolean(PREF_START + PREF_WEEKLY_EMAILS, true));
         services.put(PREF_WEEKLY_SUMMARY, prefs.getBoolean(PREF_START + PREF_WEEKLY_SUMMARY, true));
@@ -415,7 +398,6 @@ public class AbcInit extends HttpServlet implements Configurable {
         delays.put(PREF_POOL_MONITOR, prefs.getInt(PREF_POOL_MONITOR + PREF_DELAY, 60));
         delays.put(PREF_RSS_GENERATOR, prefs.getInt(PREF_RSS_GENERATOR + PREF_DELAY, 60));
         delays.put(PREF_RSS_MONITOR, prefs.getInt(PREF_RSS_MONITOR + PREF_DELAY, 60));
-        delays.put(PREF_RSS_UNIXSHOP, prefs.getInt(PREF_RSS_UNIXSHOP + PREF_DELAY, 60));
         delays.put(PREF_VARIABLE_FETCHER, prefs.getInt(PREF_VARIABLE_FETCHER + PREF_DELAY, 60));
         delays.put(PREF_WATCHED_DISCUSSIONS_CLEANER, prefs.getInt(PREF_WATCHED_DISCUSSIONS_CLEANER + PREF_DELAY, 60));
         delays.put(PREF_RSS_OKSYSTEM, prefs.getInt(PREF_RSS_OKSYSTEM + PREF_DELAY, 60));
@@ -426,7 +408,6 @@ public class AbcInit extends HttpServlet implements Configurable {
         periods.put(PREF_POOL_MONITOR, prefs.getInt(PREF_POOL_MONITOR + PREF_PERIOD, 60));
         periods.put(PREF_RSS_GENERATOR, prefs.getInt(PREF_RSS_GENERATOR + PREF_PERIOD, 60));
         periods.put(PREF_RSS_MONITOR, prefs.getInt(PREF_RSS_MONITOR + PREF_PERIOD, 60));
-        periods.put(PREF_RSS_UNIXSHOP, prefs.getInt(PREF_RSS_UNIXSHOP + PREF_PERIOD, 60));
         periods.put(PREF_VARIABLE_FETCHER, prefs.getInt(PREF_VARIABLE_FETCHER + PREF_PERIOD, 60));
         periods.put(PREF_WATCHED_DISCUSSIONS_CLEANER, prefs.getInt(PREF_WATCHED_DISCUSSIONS_CLEANER + PREF_PERIOD, 60));
         periods.put(PREF_RSS_OKSYSTEM, prefs.getInt(PREF_RSS_OKSYSTEM + PREF_PERIOD, 60));
