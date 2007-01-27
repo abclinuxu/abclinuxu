@@ -27,10 +27,13 @@ import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.view.*;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.format.HtmlToTextFormatter;
+import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.Configurable;
 import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.prefs.Preferences;
 import java.io.UnsupportedEncodingException;
 
 import org.dom4j.Element;
@@ -41,7 +44,9 @@ import javax.mail.internet.InternetAddress;
 /**
  * Loads a comment and creates environment from it.
  */
-public class CommentDecorator {
+public class CommentDecorator implements Configurable {
+    public static final String PREF_SENDER = "sender.address";
+
     public static final String VAR_CONTENT = "CONTENT";
     public static final String VAR_RELATION_ID = "RELATION_ID";
     public static final String VAR_DISCUSSION_ID = "DISCUSSION_ID";
@@ -49,6 +54,8 @@ public class CommentDecorator {
     public static final String VAR_JOB_OFFER = "JOB";
 
     static int counter;
+    static String sender;
+
 
     /**
      * Creates environment for given Comment. This
@@ -96,12 +103,11 @@ public class CommentDecorator {
         env.put(VAR_THREAD_ID, Integer.toString(comment.threadId));
         env.put(EmailSender.KEY_SUBJECT, dizComment.getTitle());
         try {
-            Address from = new InternetAddress("diskuse@abclinuxu.cz", authorName);
+            Address from = new InternetAddress(sender, authorName);
             env.put(EmailSender.KEY_FROM, from);
         } catch (UnsupportedEncodingException e) {
-            env.put(EmailSender.KEY_FROM, "diskuse@abclinuxu.cz");
+            env.put(EmailSender.KEY_FROM, sender);
         }
-        env.put(EmailSender.KEY_REPLYTO, "bounce@abclinuxu.cz");
         env.put(EmailSender.KEY_TEMPLATE, "/mail/forum/comment.ftl");
         env.put(EmailSender.KEY_SENT_DATE, dizComment.getCreated());
         env.put(EmailSender.KEY_MESSAGE_ID, ""+comment.discussionId+"."+comment.threadId+"@abclinuxu.cz");
@@ -111,5 +117,9 @@ public class CommentDecorator {
         env.put(VAR_JOB_OFFER, offer);
 
         return env;
+    }
+
+    public void configure(Preferences prefs) throws ConfigurationException {
+        sender = prefs.get(PREF_SENDER, null);
     }
 }

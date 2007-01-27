@@ -155,6 +155,11 @@
                                     <entry key="sleep" value="30"/>
                                 </map>
                             </node>
+                            <node name="CommentDecorator">
+                                <map>
+                                    <entry key="sender.address" value="robot@abclinuxu.cz"/>
+                                </map>
+                            </node>
                         </node>
                     </node>
                     <node name="feeds">
@@ -339,7 +344,7 @@
                     <node name="WeeklyEmail">
                         <map>
                             <entry key="subject" value="Tydenni souhrn clanku"/>
-                            <entry key="from" value="admin@abclinuxu.cz"/>
+                            <entry key="from" value="robot@abclinuxu.cz"/>
                             <entry key="template" value="/mail/weekly.ftl"/>
                         </map>
                     </node>
