@@ -29,6 +29,7 @@ import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.format.HtmlToTextFormatter;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 import java.util.Map;
@@ -55,6 +56,10 @@ public class CommentDecorator implements Configurable {
 
     static int counter;
     static String sender;
+
+    public CommentDecorator() {
+        ConfigurationManager.getConfigurator().configureAndRememberMe(this);
+    }
 
 
     /**
