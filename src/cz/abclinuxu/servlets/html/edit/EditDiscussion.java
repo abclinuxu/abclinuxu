@@ -526,12 +526,13 @@ public class EditDiscussion implements AbcAction {
         Record record = (Record) persistence.findById(relation.getChild());
         relation = (Relation) env.get(VAR_RELATION);
         DiscussionRecord dizRecord = (DiscussionRecord) record.getCustom();
-        Comment comment = dizRecord.getComment(id);
+        RowComment comment = (RowComment) dizRecord.getComment(id);
         if (comment != null) {
             Element root = comment.getData().getRootElement();
             Node node = root.selectSingleNode("censored");
             if (node!=null) {
                 node.detach();
+                comment.set_dirty(true);
                 AdminLogger.logEvent(user,"odstranena cenzura na vlakno "+id+" diskuse "+discussion.getId()+", relace "+relation.getId());
             } else {
                 String action = (String) params.get(PARAM_ACTION);
@@ -539,6 +540,7 @@ public class EditDiscussion implements AbcAction {
                     Element censored = root.addElement("censored");
                     censored.addAttribute("admin", Integer.toString(user.getId()));
                     censored.setText((String) params.get(PARAM_TEXT));
+                    comment.set_dirty(true);
 
                     // run monitor
                     String url = "http://www.abclinuxu.cz"+urlUtils.getPrefix()+"/show/"+relation.getId();
