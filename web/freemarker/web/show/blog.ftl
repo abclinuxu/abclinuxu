@@ -142,10 +142,10 @@
             </h2>
         </#if>
         <p class="cl_inforadek">
-    	    ${DATE.show(story.created, "CZ_SHORT")} |
+    	    ${DATE.show(story.created, "SMART")} |
             <#if (category!="UNDEF" && category?length > 1)>${category} |</#if>
 	        Pøeèteno: ${TOOL.getCounterValue(story,"read")}&times;
-            <#if tmp.discussion?exists>| <@lib.showCommentsInListing TOOL.analyzeDiscussion(tmp.discussion[0]), "CZ_SHORT", "/blog" /></#if>
+            <#if tmp.discussion?exists>| <@lib.showCommentsInListing TOOL.analyzeDiscussion(tmp.discussion[0]), "SMART_DMY", "/blog" /></#if>
             <@lib.showShortRating relation, "| " />
         </p>
         <#if ! SUMMARY?exists>
