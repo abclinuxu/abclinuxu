@@ -6,10 +6,10 @@
 
 <#include "../header.ftl">
 
-<#--<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="arbo-sq" />
 <#if !is_question>
  <@lib.advertisement id="arbo-sky" />
-</#if>-->
+</#if>
 
 <@lib.showMessages/>
 
@@ -50,8 +50,7 @@
     </p>
 
  <@lib.advertisement id="sun-box" />
-<#--<@lib.advertisement id="arbo-sky" />
- <@lib.advertisement id="arbo-full" />-->
+ <@lib.advertisement id="arbo-sky" />
 
  <#if DIZ.size==0>
     <p>Na otázku zatím nikdo bohu¾el neodpovìdìl.</p>
@@ -74,5 +73,7 @@
  <p><a href="${URL.make("/EditDiscussion?action=add&amp;threadId=0&amp;dizId="+ITEM.id+"&amp;rid="+RELATION.id)}">
  Zalo¾it nové vlákno</a></p>
 </#if>
+
+<@lib.advertisement id="arbo-full" />
 
 <#include "../footer.ftl">

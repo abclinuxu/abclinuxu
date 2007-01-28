@@ -55,6 +55,8 @@
 
 <@lib.showRelated ITEM/>
 
+<@lib.advertisement id="arbo-sq" />
+
 <#assign images = TOOL.screenshotsFor(ITEM)>
 <#if (images?size > 0)>
     <h3>Obrázky</h3>

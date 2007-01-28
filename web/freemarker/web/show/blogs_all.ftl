@@ -1,3 +1,5 @@
+<#import "../ads-macro.ftl" as lib>
+
 <#assign plovouci_sloupec>
   <div class="s_nadpis">
     <a class="info" href="#">?<span class="tooltip">Vlastní blog si po pøihlá¹ení mù¾ete zalo¾it v nastavení svého profilu.</span></a>
@@ -38,6 +40,9 @@
             </li>
         </ul>
     </div>
+    <hr id="arbo-sq-cara" />
+    <@lib.advertisement id="arbo-sq" />
+
 </#assign>
 
 <#include "../header.ftl">

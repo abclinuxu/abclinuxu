@@ -49,6 +49,8 @@
 <div class="sw">
     <@swlib.showSoftware ITEM, true />
 
+    <@lib.advertisement id="arbo-sq" />
+
     <#assign feedUrl = TOOL.xpath(ITEM, "/data/url[@useType='rss']")?default("UNDEFINED")>
     <#if feedUrl!="UNDEFINED">
         <h3>

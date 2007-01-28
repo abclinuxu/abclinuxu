@@ -1,5 +1,5 @@
 <#include "../header.ftl">
-<#include "/include/zprava.txt">
+<#--<#include "/include/zprava.txt">-->
 
 <h1>Aktuální èlánky</h1>
 <#assign ARTICLES=VARS.getFreshArticles(USER?if_exists)>

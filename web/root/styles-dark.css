@@ -535,6 +535,7 @@ font-weight: bold;
 .ds_toolbox {
 	background:	black;
 	border:		1px solid #4b4b4b;
+	border-width:	1px 0 1px 0;
 	padding:	0.5em;
 	font-size:	90%;
 	margin-top:	0.5em;
@@ -1036,9 +1037,9 @@ padding:	0.3em 0 0.5em 0.5em;
 .sun-box a:hover { background: #e97d19; }
 
 .arbo-sky, .arbo-sq {
-	border: 0px solid #202020;
-	border-width: 0 0 5px 5px;
+	padding: 0 0 4px 2px; /* protoze ma arbo transp. padding u banneru */
 	float: right;
+	background: #202020;
 }
 .arbo-sky {
 	clear: right;

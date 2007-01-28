@@ -4,6 +4,9 @@
 
 <#assign title=TOOL.xpath(ITEM, "/data/title")?default("Zprávièka"), autor=TOOL.createUser(ITEM.owner),
          locked = TOOL.xpath(ITEM, "//locked_by")?exists, approved = TOOL.xpath(ITEM, "//approved_by")?exists>
+
+<@lib.advertisement id="arbo-sq" />
+
 <h1>${title}</h1>
 
 <p>

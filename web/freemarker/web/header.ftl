@@ -38,10 +38,9 @@
 <@lib.advertisement id="netmonitor" />
 <@lib.advertisement id="ad-init" />
 
-<#include "/include/lista.txt">
+<@lib.advertisement id="sf-lista" />
 
 <center>
-<@lib.advertisement id="impact-lb" />
 <@lib.advertisement id="arbo-lb" />
 </center>
 
@@ -65,7 +64,6 @@
 <div class="cistic"></div>
 
 <#include "/include/menu.txt">
-
 
 	<div class="obal">
 
@@ -98,7 +96,7 @@
 	<div class="obal_ls" id="ls">
 	<div class="s">
             <div class="ls_reklama">
-		        <@lib.advertisement id="vip" />
+		<@lib.advertisement id="vip" />
             </div>
 
             <@lib.advertisement id="vip-text" />
@@ -109,9 +107,9 @@
                          url=relAnketa.url?default("/ankety/show/"+relAnketa.id)>
                 <#if anketa.multiChoice><#assign type = "checkbox"><#else><#assign type = "radio"></#if>
                 <div class="s_nadpis">
-                    <a class="s_nadpis-pravy-odkaz" href="/clanky/dir/3500?categoryPosition=0">navrhnìte&nbsp;&raquo;</a>
-                    <a href="/ankety">Anketa</a>
-		        </div>
+			<a class="s_nadpis-pravy-odkaz" href="/clanky/dir/3500?categoryPosition=0">navrhnìte&nbsp;&raquo;</a>
+			<a href="/ankety">Anketa</a>
+		</div>
                 <div class="s_sekce">
                     <form action="${URL.noPrefix("/EditPoll/"+relAnketa.id)}" method="POST">
                     <div class="ank-otazka">${anketa.text}</div>
@@ -132,9 +130,9 @@
                 </div>
                 <#assign diz=TOOL.findComments(anketa)>
                 <div>&nbsp;<a href="${url}">Komentáøù:</a>
-                    ${diz.responseCount}<#if diz.responseCount gt 0><@lib.markNewComments diz/>, poslední
-                    ${DATE.show(diz.updated,"CZ_SHORT")}</#if>
-	            </div>
+		        ${diz.responseCount}<#if diz.responseCount gt 0><@lib.markNewComments diz/>, poslední
+		        ${DATE.show(diz.updated,"CZ_SHORT")}</#if>
+	        </div>
             </#if>
 
             <!-- ZPRÁVIÈKY -->
@@ -153,7 +151,7 @@
                 <div class="ls_zpr">
                 <#list news as relation>
                     <#if relation_index==4>
-			            <@lib.advertisement id="sl-mini" />
+			<@lib.advertisement id="sl-mini" />
                     </#if>
                     <@lib.showTemplateNews relation/>
                     <hr>

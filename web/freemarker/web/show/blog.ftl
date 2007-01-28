@@ -115,6 +115,9 @@
     </#if>
     </ul>
   </div>
+  <hr id="arbo-sq-cara" />
+  <@lib.advertisement id="arbo-sq" />
+
 </#assign>
 
 <#include "../header.ftl">
