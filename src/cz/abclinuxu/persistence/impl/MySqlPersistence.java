@@ -1204,6 +1204,7 @@ public class MySqlPersistence implements Persistence {
         PreparedStatement statement = null;
         ResultSet rs = null;
         Map objects = new HashMap();
+        List found = new ArrayList();
         GenericDataObject obj;
         try {
             GenericDataObject representant = (GenericDataObject) objs.get(0);
@@ -1229,11 +1230,17 @@ public class MySqlPersistence implements Persistence {
                 if (obj instanceof Record && ((Record) obj).getType() == Record.DISCUSSION)
                     loadComments((Record) obj);
 
-                cache.store(obj);
+                found.add(obj);
             }
-            loadProperties(objects);
         } finally {
             releaseSQLResources(con, statement, rs);
+        }
+
+        loadProperties(objects);
+
+        for (Iterator iter = found.iterator(); iter.hasNext();) {
+            obj = (GenericDataObject) iter.next();
+            cache.store(obj);
         }
     }
 
