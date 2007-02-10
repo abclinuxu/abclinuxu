@@ -62,7 +62,7 @@
 
     <New id="abicko" class="org.mortbay.jetty.webapp.WebAppContext">
         <Set name="contextPath">/</Set>
-        <Set name="war">/home/literakl/abc/deploy</Set>
+        <Set name="war">@DEPLOY_ABCLINUXU@</Set>
         <Set name="extractWAR">true</Set>
         <Set name="defaultsDescriptor">
             <SystemProperty name="jetty.home" default="."/>/etc/webdefault.xml
@@ -83,7 +83,7 @@
                 <Arg>@DEPLOY_LOGS@/yyyy_mm_dd.request.log</Arg>
                 <Set name="retainDays">90</Set>
                 <Set name="append">true</Set>
-                <Set name="extended">false</Set>
+                <Set name="extended">true</Set>
                 <Set name="LogTimeZone">Europe/Prague</Set>
                 <!--Set name="buffered">false</Set--> <!-- jetty 4.1 performance tuning -->
                 <Set name="ignorePaths">
