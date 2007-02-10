@@ -6,9 +6,10 @@
 
 <#include "../header.ftl">
 
-<@lib.advertisement id="arbo-sq" />
+<#--<@lib.advertisement id="arbo-sq" />-->
 <#if !is_question>
  <@lib.advertisement id="arbo-sky" />
+ <@lib.advertisement id="gg-ds-half" />
 </#if>
 
 <@lib.showMessages/>
@@ -51,6 +52,7 @@
 
  <@lib.advertisement id="sun-box" />
  <@lib.advertisement id="arbo-sky" />
+ <@lib.advertisement id="gg-ds-full" />
 
  <#if DIZ.size==0>
     <p>Na otázku zatím nikdo bohu¾el neodpovìdìl.</p>

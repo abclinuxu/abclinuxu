@@ -32,8 +32,8 @@
         </div>
     </#if>
 
-    <hr id="arbo-sq-cara" />
-    <@lib.advertisement id="arbo-sq" />
+    <#--<hr id="arbo-sq-cara" />
+    <@lib.advertisement id="arbo-sq" />-->
 
     <@lib.advertisement id="ps-boxik1" />
     <@lib.advertisement id="ps-boxik2" />
@@ -124,9 +124,10 @@
         </table>
     </div>
 
-    <#--<div style="margin:0.5em 0 0 0; float:right">
-	<@lib.advertisement id="arbo-full" />
-    </div>-->
+    <div style="margin:0.5em 0 0 0; float:right">
+        <#--<@lib.advertisement id="arbo-full" />-->
+        <@lib.advertisement id="gg-hp-blogy" />
+    </div>
     <ul>
         <li><a href="/diskuse.jsp">Polo¾it dotaz</a></li>
         <li><a href="/History?type=discussions&amp;from=${FORUM?size}&amp;count=20">Star¹í dotazy</a></li>
@@ -222,7 +223,7 @@
       <div class="s_sekce">
         <ul>
           <#list DICTIONARY as rel>
-            <li><a href="/slovnik/${rel.child.subType}">${TOOL.xpath(rel.child,"data/name")}</a></li>
+            <li><a href="${rel.url}">${TOOL.xpath(rel.child,"data/name")}</a></li>
           </#list>
         </ul>
       </div>

@@ -1,3 +1,5 @@
+<#import "../ads-macro.ftl" as lib>
+
 <#assign who=TOOL.createUser(ITEM.owner)>
 <#assign plovouci_sloupec>
   <div class="s_sekce">
@@ -15,6 +17,8 @@
         <li><a href="${URL.noPrefix("/Profile?action=login&amp;url="+REQUEST_URI)}">Pøihlásit se</a></li>
     </#if>
     </ul>
+
+    <@lib.advertisement id="gg-bazar" />
   </div>
 </#assign>
 <#include "../header.ftl">

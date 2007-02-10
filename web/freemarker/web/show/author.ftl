@@ -17,7 +17,8 @@
 <#if uid != "UNDEFINED"><a href=/Profile/${uid}>Profil na abclinuxu</a></#if>
 
 <#if USER?exists && USER.hasRole("article admin")>
-    <a href="${URL.noPrefix("/autori/edit?rid="+RELATION.id+"&action=edit")}">Upravit</a>
+    <a href="${URL.noPrefix("/autori/edit?rid="+RELATION.id+"&amp;action=edit")}">Upravit</a>
+    <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix=/autori")}">Smazat</a>
     <a href="${URL.noPrefix("/clanky/honorare?authorId="+RELATION.id)}">Honoráøe</a>
     <table border="0">
         <#if TOOL.xpath(AUTHOR,"/data/birthNumber")?exists>

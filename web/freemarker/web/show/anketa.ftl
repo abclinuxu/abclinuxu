@@ -1,8 +1,8 @@
 <#include "../header.ftl">
 
-<div class="s_nadpis">Anketa</div>
-
 <@lib.showMessages/>
+
+<@lib.advertisement id="arbo-sq" />
 
 <#if USER?exists && USER.hasRole("poll admin")>
  <p>
@@ -10,7 +10,6 @@
  </p>
 </#if>
 
-<@lib.advertisement id="arbo-sq" />
 
 <p><b>${POLL.text}</b></p>
 

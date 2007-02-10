@@ -105,7 +105,7 @@
    <td>
     Pokud chcete, aby se ve výpise èlánkù zobrazovala ikonka, vlo¾te zde její HTML kód.
     Nedávejte zde formátování, to se øe¹í v ¹ablonì. Jen definici tagu IMG. <br>
-    <textarea name="thumbnail" cols="90" rows="1" tabindex="7">${PARAMS.thumbnail?if_exists}</textarea>
+    <textarea name="thumbnail" cols="90" rows="2" tabindex="7">${PARAMS.thumbnail?if_exists}</textarea>
     <div class="error">${ERRORS.thumbnail?if_exists}</div>
    </td>
   </tr>

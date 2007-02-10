@@ -55,7 +55,7 @@
       <tbody>
         <#list SORT.byName(ITEMS) as software>
             <tr>
-                <td class="td01"><a href="${software.url}">${TOOL.childName(software)}</a></td>
+                <td class="td01"><a href="${software.url}" title="${TOOL.childName(software)}">${TOOL.childName(software)}</a></td>
                 <td class="td02"><@showShortRating software, "", false /></td>
                 <!--<td class="td03"><@showCounter software.child, reads, "read" />&times;</td>-->
                 <td class="td04"><@showCounter software.child, visits, "visit" />&times;</td>
@@ -93,22 +93,22 @@
         <span style="font-size: smaller">
         <a href="/Profile/${autor.id}">${autor.name}</a> |
 	${DATE.show(ITEM.created,"CZ_FULL")} |
-        <a href="${url}">Komentáøe: ${diz.responseCount}</a><#rt>
+        <a href="${url}" title="${title}">Komentáøe: ${diz.responseCount}</a><#rt>
         <#lt><#if diz.responseCount gt 0><@markNewComments diz/>, poslední ${DATE.show(diz.updated, "SMART")}</#if>
         </span>
     </p>
 </#macro>
 
 <#macro showTemplateNews(relation)>
-    <#local item=TOOL.sync(relation.child),
+  <#local item=TOOL.sync(relation.child),
     autor=TOOL.createUser(item.owner),
     diz=TOOL.findComments(item),
     url=relation.url?default("/zpravicky/show/"+relation.id)>
     <span>${DATE.show(item.created,"CZ_SHORT")} | ${NEWS_CATEGORIES[item.subType].name}</span>
     <p>${TOOL.xpath(item,"data/content")}</p>
     <span><a href="/Profile/${autor.id}">${TOOL.nonBreakingSpaces(autor.name)}</a>
-    | <a href="${url}" title="<#if diz.responseCount gt 0>poslední ${DATE.show(diz.updated, "SMART")}</#if>"
-    >(Komentáøù: ${diz.responseCount}<@lib.markNewComments diz/>)</a></span>
+    | <a href="${url}" title="<#if diz.responseCount gt 0>poslední&nbsp;${DATE.show(diz.updated, "SMART")}</#if>"
+    >Komentáøù: ${diz.responseCount}<@lib.markNewComments diz/></a></span>
 </#macro>
 
 <#macro markNewComments(discussion)><#t>
@@ -263,7 +263,7 @@
 
         <div class="hlasy">
         <#if USER?exists>
-           <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=0")}" target="rating">¹patné</a> &bull; <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=3")}" target="rating">dobré</a>
+           <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=0")}" target="rating" rel="nofollow">¹patné</a> &bull; <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=3")}" target="rating" rel="nofollow">dobré</a>
         <#else>
            <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=0&amp;return=true")}" rel="nofollow">¹patné</a> &bull; <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=3&amp;return=true")}" rel="nofollow">dobré</a>
         </#if>

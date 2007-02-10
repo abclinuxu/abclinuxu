@@ -21,13 +21,14 @@ Prehled clanku
 Reklama
 =======
 
-New SUN JOB opportunity!  We are looking for a strong
-analytical thinker interested in problem solving and
-with good knowledge of UNIX/LINUX and C/C++ as well
-as excellent coding, debugging and troubleshooting
-skills. Learn more...
+Zveme Vas na workshop "JBoss sales day CZ", ktery Vas
+uvede do obchodnich i technickych zakladu produktu JBoss.
+Workshop se kona 27.2. od 10.00 hod v budove spolecnosti
+Servodata, Dolnomecholupska 12, Praha 10.
+Workshop je pro ucastniky zdarma.
 
-http://www.talents.cz/sunjobs2_detail.php?id=202
+Vice informaci o produktu a registraci naleznete na:
+http://www.studovna.servodata.cz/home.php3?lang=cz&id=62
 
 
 Prehled zpravicek

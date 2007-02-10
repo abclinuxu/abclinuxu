@@ -10,9 +10,6 @@
     <!--[if IE 7]>
        <link href="/bugie.css" type="text/css" rel="stylesheet">
     <![endif]-->
-    <#if REQUEST_URI?starts_with("/hosting")>
-       <link rel="stylesheet" type="text/css" href="/images/hosting/hosting.css">
-    </#if>
     <link rel="icon" href="/images/site2/favicon.png" type="image/png">
     <link rel="alternate" title="abclinuxu.cz: èlánky" href="http://www.abclinuxu.cz/auto/abc.rss" type="application/rss+xml">
     <link rel="alternate" title="abclinuxu.cz: blogy" href="http://www.abclinuxu.cz/auto/blog.rss" type="application/rss+xml">
@@ -129,7 +126,7 @@
                     </form>
                 </div>
                 <#assign diz=TOOL.findComments(anketa)>
-                <div>&nbsp;<a href="${url}">Komentáøù:</a>
+                <div>&nbsp;<a href="${url}" title="${anketa.text}">Komentáøù:</a>
 		        ${diz.responseCount}<#if diz.responseCount gt 0><@lib.markNewComments diz/>, poslední
 		        ${DATE.show(diz.updated,"CZ_SHORT")}</#if>
 	        </div>
@@ -142,7 +139,7 @@
                 <#if USER?exists && USER.hasRole("news admin")>
                     <a class="s_nadpis-pravy-odkaz" href="${URL.make("/zpravicky/dir/37672")}" title="Poèet neschválených a èekajících zprávièek">(${VARS.counter.WAITING_NEWS},${VARS.counter.SLEEPING_NEWS})&nbsp;</a>
                 </#if>
-                <a href="/zpravicky">Zprávièky</a>
+                <a href="/zpravicky" title="zprávièky">Zprávièky</a>
             </div>
 
             <center><@lib.advertisement id="arbo-hyper" /></center>
@@ -159,7 +156,7 @@
                 </div>
                 <div class="s_odkaz">
                     <a href="/zpravicky">Centrum</a> |
-                    <a href="${URL.make("/zpravicky/edit?action=add")}">Napsat</a> |
+                    <a href="${URL.make("/zpravicky/edit?action=add")}" rel="nofollow">Napsat</a> |
                     <a href="/History?type=news&amp;from=${news?size}&amp;count=15">Star¹í</a>
                 </div>
             </div>

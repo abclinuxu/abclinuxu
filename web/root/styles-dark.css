@@ -81,7 +81,7 @@ td {
 }
 
 .obal_ls, .le { float: left; }
-.obal_ps, .ri { float: right; }
+.obal_ps, .ri, .host .img-header { float: right; }
 
 #zh-hledani input.text, .s_sekce input.text {
 	border:		1px solid #4b4b4b;
@@ -328,7 +328,7 @@ td.pad, code.kod, pre.kod {
 	display:	block;
 	background:	#575757;
 }
-.kod.rmargin { margin-right: 255px }
+.kod.rmargin { margin-right: 260px }
 
 .st_vpravo {
 	margin:		0.4em 1em 0 0;
@@ -946,6 +946,17 @@ table.hwdetail, table.swdetail {
 	font-weight: bold;
 	color: #ffc0cb; /* pink */
 }
+
+.host { font-size: smaller }
+.host .prehled { font-size: small; clear: right; }
+.host .img-server { height: 90px }
+.host .img-server a:hover { background: transparent }
+.host .avail { color: #00FF00; font-weight: bold; } /* lime */
+.host .price { color: #DC143C; font-weight: bold; } /* crimson */
+.host .akce { color: #FF4500 } /* orangered */
+.host .novinka { color: #0000FF } /* blue */
+.host .kontakt span { margin: 0 0.2em 0 0.2em; }
+
 /*************** SF lista *****************/
 .sflista {
   font-size: 11px;

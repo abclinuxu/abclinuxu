@@ -49,6 +49,8 @@
 
 <div class="hw">
 
+<@lib.advertisement id="gg-hw-item" />
+
 <@hwlib.showHardware ITEM />
 
 </div>

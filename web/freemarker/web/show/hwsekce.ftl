@@ -27,6 +27,8 @@
 
 <div class="hw">
 
+<@lib.advertisement id="gg-hw-sekce" />
+
 <h1>${TOOL.xpath(CATEGORY,"/data/name")}</h1>
 
 <@lib.showMessages/>

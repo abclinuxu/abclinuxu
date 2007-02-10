@@ -98,8 +98,10 @@
     </#if>
     </ul>
   </div>
-</#assign>
 
+  <@lib.advertisement id="gg-sq-blog" />
+
+</#assign>
 
 <#include "../header.ftl">
 <@lib.showMessages/>
