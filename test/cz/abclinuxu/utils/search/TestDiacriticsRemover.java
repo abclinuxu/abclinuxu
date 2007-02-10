@@ -32,7 +32,7 @@ import java.io.StringReader;
  * Tests Lukas Zaplatal's filter for eastern european languages.
  */
 public class TestDiacriticsRemover extends TestCase {
-    String sentenceA = "ì¹èø¾ıáíéúù»óïòÌ©ÈØ®İÁÍÉÚÙ«ÓÏÒ";
+    String sentenceA = "Ä›Å¡ÄÅ™Å¾Ã½Ã¡Ã­Ã©ÃºÅ¯Å¥Ã³ÄÅˆÄšÅ ÄŒÅ˜Å½ÃÃÃÃ‰ÃšÅ®Å¤Ã“ÄÅ‡";
     String sentenceB = "escrzyaieuutodnESCRZYAIEUUTODN";
     DiacriticRemover remover = DiacriticRemover.getInstance();
 

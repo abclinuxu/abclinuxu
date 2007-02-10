@@ -2,9 +2,9 @@
 
 <@lib.showMessages/>
 
-<h1 class="st_nadpis">Pøístup odmítnut</h1>
+<h1 class="st_nadpis">PÅ™Ã­stup odmÃ­tnut</h1>
 
-<p>Pouze administrátor nebo vlastník tohoto
-objektu smí provést po¾adovanou akci!</p>
+<p>Pouze administrÃ¡tor nebo vlastnÃ­k tohoto
+objektu smÃ­ provÃ©st poÅ¾adovanou akci!</p>
 
 <#include "../footer.ftl">

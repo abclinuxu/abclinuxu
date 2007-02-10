@@ -2,18 +2,18 @@
 
 <@lib.showMessages/>
 
-<h1>Pøiøazení èlánku k seriálu</h1>
+<h1>PÅ™iÅ™azenÃ­ ÄlÃ¡nku k seriÃ¡lu</h1>
 
 <p>
-    V tomto formuláøi mù¾ete pøiøadit více èlánkù najednou k vybranému seriálu.
-    Staèí vlo¾it na samostatné øádky jednotlivé URL adresy èlánkù. URL musí bıt
-    buï absolutní vèetnì jména serveru nebo relativní zaèínající lomítkem.
+    V tomto formulÃ¡Å™i mÅ¯Å¾ete pÅ™iÅ™adit vÃ­ce ÄlÃ¡nkÅ¯ najednou k vybranÃ©mu seriÃ¡lu.
+    StaÄÃ­ vloÅ¾it na samostatnÃ© Å™Ã¡dky jednotlivÃ© URL adresy ÄlÃ¡nkÅ¯. URL musÃ­ bÃ½t
+    buÄ absolutnÃ­ vÄetnÄ› jmÃ©na serveru nebo relativnÃ­ zaÄÃ­najÃ­cÃ­ lomÃ­tkem.
 </p>
 
 <form action="${URL.noPrefix("/serialy/edit/"+RELATION.id)}" method="POST">
     <table width="100%" border=0 cellpadding=5>
         <tr>
-            <td class="required" width="60">Jméno</td>
+            <td class="required" width="60">JmÃ©no</td>
             <td>
                 <textarea name="url" class="siroka" rows="20" tabindex="1">${PARAMS.url?if_exists?html}</textarea>
                 <div class="error">${ERRORS.url?if_exists}<div>
@@ -22,7 +22,7 @@
 
         <tr>
             <td width="60">&nbsp;</td>
-            <td><input type="submit" value="Dokonèi" tabindex="2"></td>
+            <td><input type="submit" value="DokonÄi" tabindex="2"></td>
         </tr>
     </table>
     <input type="hidden" name="action" value="addArticlesUrls2">

@@ -88,7 +88,7 @@ public class EditGuestBook implements AbcAction {
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
         if (relation == null)
-            throw new MissingArgumentException("ChybÌ parametr rid!");
+            throw new MissingArgumentException("Chyb√≠ parametr rid!");
 
         relation = (Relation) persistence.findById(relation);
         Tools.sync(relation);
@@ -180,7 +180,7 @@ public class EditGuestBook implements AbcAction {
     boolean setMessage(Map params, Element root, Map env) {
         String content = (String) params.get(PARAM_MESSAGE);
         if (Misc.empty(content)) {
-            ServletUtils.addError(PARAM_MESSAGE, "ProsÌm zadejte v·π vzkaz.", env, null);
+            ServletUtils.addError(PARAM_MESSAGE, "Pros√≠m zadejte v√°≈° vzkaz.", env, null);
             return false;
         }
 
@@ -211,11 +211,11 @@ public class EditGuestBook implements AbcAction {
     boolean setAuthor(Map params, Element root, Map env) {
         String name = (String) params.get(PARAM_NAME);
         if (Misc.empty(name)) {
-            ServletUtils.addError(PARAM_NAME, "ProsÌm zadejte vaπe jmÈno.", env, null);
+            ServletUtils.addError(PARAM_NAME, "Pros√≠m zadejte va≈°e jm√©no.", env, null);
             return false;
         }
         if (name.indexOf('<')!=-1) {
-            ServletUtils.addError(PARAM_NAME, "JmÈno nesmÌ obsahovat HTML znaËky.", env, null);
+            ServletUtils.addError(PARAM_NAME, "Jm√©no nesm√≠ obsahovat HTML znaƒçky.", env, null);
             return false;
         }
 

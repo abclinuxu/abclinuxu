@@ -118,7 +118,7 @@ public class EditBazaar implements AbcAction {
         if (ACTION_REMOVE_STEP2.equals(action))
             return actionRemoveStep2(request, response, env);
 
-        throw new MissingArgumentException("Chybí parametr action!");
+        throw new MissingArgumentException("ChybÃ­ parametr action!");
     }
 
     /**
@@ -278,14 +278,14 @@ public class EditBazaar implements AbcAction {
         if (tmp != null && tmp.length() > 0) {
             if (tmp.indexOf("<") != -1) {
                 params.put(PARAM_TITLE, "");
-                ServletUtils.addError(PARAM_TITLE, "Pou¾ití HTML znaèek je zakázáno!", env, null);
+                ServletUtils.addError(PARAM_TITLE, "PouÅ¾itÃ­ HTML znaÄek je zakÃ¡zÃ¡no!", env, null);
                 return false;
             }
             if (tmp.indexOf('\n') != -1)
                 tmp = tmp.replace('\n', ' ');
             DocumentHelper.makeElement(document, "data/title").setText(tmp);
         } else {
-            ServletUtils.addError(PARAM_TITLE, "Zadejte titulek inzerátu!", env, null);
+            ServletUtils.addError(PARAM_TITLE, "Zadejte titulek inzerÃ¡tu!", env, null);
             return false;
         }
         return true;
@@ -317,7 +317,7 @@ public class EditBazaar implements AbcAction {
             Format format = FormatDetector.detect(tmp);
             element.addAttribute("format", Integer.toString(format.getId()));
         } else {
-            ServletUtils.addError(PARAM_TEXT, "Zadejte obsah inzerátu!", env, null);
+            ServletUtils.addError(PARAM_TEXT, "Zadejte obsah inzerÃ¡tu!", env, null);
             return false;
         }
         return true;
@@ -405,7 +405,7 @@ public class EditBazaar implements AbcAction {
         if (Constants.BAZAAR_SELL.equals(tmp))
             type = Constants.BAZAAR_SELL;
         if (type == null) {
-            ServletUtils.addError(PARAM_TYPE, "Vyberte typ inzerátu!", env, null);
+            ServletUtils.addError(PARAM_TYPE, "Vyberte typ inzerÃ¡tu!", env, null);
             return false;
         }
         ad.setSubType(type);

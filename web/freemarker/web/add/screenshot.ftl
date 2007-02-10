@@ -4,19 +4,19 @@
 <@lib.showMessages/>
 
 <p>
-    Na této stránce mù¾ete nahrát obrázek. Maximální velikost je omezena
-    na pùl megabajtu, podporovány jsou formáty JPG, PNG a GIF (pro obrázky
-    programù je nejvhodnìj¹í formát PNG). Pokud obrázek
-    pøesahuje ¹íøku èi délku 200 pixelù, bude zároveò vytvoøena a zobrazena
+    Na tÃ©to strÃ¡nce mÅ¯Å¾ete nahrÃ¡t obrÃ¡zek. MaximÃ¡lnÃ­ velikost je omezena
+    na pÅ¯l megabajtu, podporovÃ¡ny jsou formÃ¡ty JPG, PNG a GIF (pro obrÃ¡zky
+    programÅ¯ je nejvhodnÄ›jÅ¡Ã­ formÃ¡t PNG). Pokud obrÃ¡zek
+    pÅ™esahuje Å¡Ã­Å™ku Äi dÃ©lku 200 pixelÅ¯, bude zÃ¡roveÅˆ vytvoÅ™ena a zobrazena
     jeho miniatura.
 </p>
 
 <form action="${URL.make("/inset/"+RELATION.id)}" method="POST" enctype="multipart/form-data">
     <p>
-        <span class="required">Jméno souboru</span><br/>
+        <span class="required">JmÃ©no souboru</span><br/>
         <input type="file" name="screenshot" size="40" tabindex="1">
         <div class="error">${ERRORS.screenshot?if_exists}</div>
-        <input tabindex="2" type="submit" name="finish" value="Nahrát">
+        <input tabindex="2" type="submit" name="finish" value="NahrÃ¡t">
         <input type="hidden" name="action" value="addScreenshot2">
     </p>
 </form>

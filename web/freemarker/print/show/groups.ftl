@@ -2,15 +2,15 @@
 
 <@lib.showMessages/>
 
-<p>Skupina je logickı celek, ke kterému je mo¾no jednotnì pøistupovat
-na základì spoleèné charakteristiky jejich èlenù. Mohou existovat
-napøíklad skupiny admini, kam patøí lidé mající nìkterou administrátorskou
-roli, nebo skupina autoøi, kam patøí lidé pí¹ící èlánky. Èlenové tìchto
-skupin pak mohou mít napøíklad vìt¹í práva, ne¾ ostatní u¾ivatelé.
+<p>Skupina je logickÃ½ celek, ke kterÃ©mu je moÅ¾no jednotnÄ› pÅ™istupovat
+na zÃ¡kladÄ› spoleÄnÃ© charakteristiky jejich ÄlenÅ¯. Mohou existovat
+napÅ™Ã­klad skupiny admini, kam patÅ™Ã­ lidÃ© majÃ­cÃ­ nÄ›kterou administrÃ¡torskou
+roli, nebo skupina autoÅ™i, kam patÅ™Ã­ lidÃ© pÃ­Å¡Ã­cÃ­ ÄlÃ¡nky. ÄŒlenovÃ© tÄ›chto
+skupin pak mohou mÃ­t napÅ™Ã­klad vÄ›tÅ¡Ã­ prÃ¡va, neÅ¾ ostatnÃ­ uÅ¾ivatelÃ©.
 </p>
 
 <p>
-<a href="${URL.noPrefix("/Group?action=add")}">Vytvoøení nové skupiny</a>
+<a href="${URL.noPrefix("/Group?action=add")}">VytvoÅ™enÃ­ novÃ© skupiny</a>
 </p>
 
 <#list GROUPS as group>
@@ -18,8 +18,8 @@ skupin pak mohou mít napøíklad vìt¹í práva, ne¾ ostatní u¾ivatelé.
   <dt>${TOOL.xpath(group.data,"/data/name")}</dt>
   <dd>${TOOL.xpath(group.data,"/data/desc")}</dd>
   <dd>
-   <a href="${URL.noPrefix("/Group?action=edit&gid="+group.id)}">Úprava</a>
-   <a href="${URL.noPrefix("/Group?action=members&gid="+group.id)}">Èlenové</a>
+   <a href="${URL.noPrefix("/Group?action=edit&gid="+group.id)}">Ãšprava</a>
+   <a href="${URL.noPrefix("/Group?action=members&gid="+group.id)}">ÄŒlenovÃ©</a>
   </dd>
  </dl>
 </#list>

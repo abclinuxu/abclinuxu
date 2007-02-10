@@ -266,7 +266,7 @@ public class EmailSender implements Configurable {
         try {
             body = FMUtils.executeTemplate(template,params);
         } catch (Exception e) {
-            throw new NotFoundException("Nemohu zpracovat ¹ablonu "+template,e);
+            throw new NotFoundException("Nemohu zpracovat Å¡ablonu "+template,e);
         }
         if ( body!=null && body.length()>0 )
             return body;

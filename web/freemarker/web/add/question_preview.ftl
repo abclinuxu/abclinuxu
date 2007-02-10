@@ -2,23 +2,23 @@
 
 <@lib.showMessages/>
 
-<h1>Náhled dotazu</h1>
+<h1>NÃ¡hled dotazu</h1>
 
 <p>
-    Nyní si prohlédnìte vzhled va¹eho dotazu. Zkontrolujte
-    si pravopis, obsah i tón va¹eho textu. Uvìdomte si, ¾e
-    toto není placená technická podpora, ale dobrovolná
-    a neplacená práce ochotnıch lidí. Pokud se vám text nìjak nelíbí,
-    opravte jej a zvolte Náhled. Pokud jste s ním spokojeni,
+    NynÃ­ si prohlÃ©dnÄ›te vzhled vaÅ¡eho dotazu. Zkontrolujte
+    si pravopis, obsah i tÃ³n vaÅ¡eho textu. UvÄ›domte si, Å¾e
+    toto nenÃ­ placenÃ¡ technickÃ¡ podpora, ale dobrovolnÃ¡
+    a neplacenÃ¡ prÃ¡ce ochotnÃ½ch lidÃ­. Pokud se vÃ¡m text nÄ›jak nelÃ­bÃ­,
+    opravte jej a zvolte NÃ¡hled. Pokud jste s nÃ­m spokojeni,
     zvolte OK.
 </p>
 
 <#if PREVIEW?exists>
-    <h2>Náhled va¹eho dotazu</h2>
+    <h2>NÃ¡hled vaÅ¡eho dotazu</h2>
     <@lib.showThread PREVIEW, 0, TOOL.createEmptyDiscussion(), false />
 </#if>
 
-<h2>Zde mù¾ete provést své úpravy</h2>
+<h2>Zde mÅ¯Å¾ete provÃ©st svÃ© Ãºpravy</h2>
 
 <form action="${URL.make("/EditDiscussion")}" method="POST" name="form">
     <table class="siroka" cellpadding="5">
@@ -31,7 +31,7 @@
                 </td>
             </tr>
             <tr>
-                <td class="required">nebo va¹e jméno</td>
+                <td class="required">nebo vaÅ¡e jmÃ©no</td>
                 <td>
                     <input tabindex="3" type="text" size="30" name="author" value="${PARAMS.author?if_exists}">
                     <div class="error">${ERRORS.author?if_exists}</div>
@@ -39,11 +39,11 @@
             </tr>
             <#if ! USER_VERIFIED?if_exists>
                 <tr>
-                    <td class="required">Aktuální rok</td>
+                    <td class="required">AktuÃ¡lnÃ­ rok</td>
                     <td>
                         <input type="text" size="4" name="antispam" value="${PARAMS.antispam?if_exists?html}" tabindex="4">
-                        <a class="info" href="#">?<span class="tooltip">Vlo¾te aktuální rok. Jedná se o ochranu pøed spamboty.
-                        Po úspì¹ném ovìøení se ulo¾í cookie (vèetnì va¹eho jména) a tato kontrola pøestane bıt provádìna.</span></a>
+                        <a class="info" href="#">?<span class="tooltip">VloÅ¾te aktuÃ¡lnÃ­ rok. JednÃ¡ se o ochranu pÅ™ed spamboty.
+                        Po ÃºspÄ›Å¡nÃ©m ovÄ›Å™enÃ­ se uloÅ¾Ã­ cookie (vÄetnÄ› vaÅ¡eho jmÃ©na) a tato kontrola pÅ™estane bÃ½t provÃ¡dÄ›na.</span></a>
                         <div class="error">${ERRORS.antispam?if_exists}</div>
                     </td>
                 </tr>
@@ -60,12 +60,12 @@
             <td class="required">Dotaz</td>
             <td>
                 <div class="form-edit">
-                    <a href="javascript:insertAtCursor(document.form.text, '<b>', '</b>');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<i>', '</i>');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<a href=&quot;&quot;>', '</a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<p>', '</p>');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="Vlo¾it znaèku formátovaného textu. Vhodné pro konfiguraèní soubory èi vıpisy.">&lt;pre&gt;</a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<b>', '</b>');" id="serif" title="VloÅ¾it znaÄku tuÄnÄ›"><b>B</b></a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<i>', '</i>');" id="serif" title="VloÅ¾it znaÄku kurzÃ­va"><i>I</i></a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<a href=&quot;&quot;>', '</a>');" id="mono" title="VloÅ¾it znaÄku odkazu">&lt;a&gt;</a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<p>', '</p>');" id="mono" title="VloÅ¾it znaÄku odstavce">&lt;p&gt;</a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="VloÅ¾it znaÄku formÃ¡tovanÃ©ho textu. VhodnÃ© pro konfiguraÄnÃ­ soubory Äi vÃ½pisy.">&lt;pre&gt;</a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="VloÅ¾it znaÄku pro pÃ­smo s pevnou Å¡Ã­Å™kou">&lt;code&gt;</a>
                 </div>
                 <div class="error">${ERRORS.text?if_exists}</div>
                 <textarea tabindex="5" name="text" class="siroka" rows="20">${PARAMS.text?if_exists?html}</textarea>
@@ -74,8 +74,8 @@
         <tr>
             <td>&nbsp;</td>
             <td>
-                <input tabindex="6" type="submit" name="preview" value="Zopakuj náhled">
-                <input tabindex="7" type="submit" name="finish" value="Dokonèi">
+                <input tabindex="6" type="submit" name="preview" value="Zopakuj nÃ¡hled">
+                <input tabindex="7" type="submit" name="finish" value="DokonÄi">
             </td>
         </tr>
     </table>

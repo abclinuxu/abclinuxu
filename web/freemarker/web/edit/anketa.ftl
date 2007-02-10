@@ -1,10 +1,10 @@
 <#include "../header.ftl">
 
 <p>
-    Chystáte se upravit anketu. Mù¾ete mìnit texty otázky èi jednotlivıch
-    voleb. Mù¾ete dokonce i pøidat nové volby. Tento formuláø ale není urèen
-    pro mazání èi zmìnu poøadí voleb. Zmìna poètu hlasù je mo¾ná jen na úrovni
-    databáze.
+    ChystÃ¡te se upravit anketu. MÅ¯Å¾ete mÄ›nit texty otÃ¡zky Äi jednotlivÃ½ch
+    voleb. MÅ¯Å¾ete dokonce i pÅ™idat novÃ© volby. Tento formulÃ¡Å™ ale nenÃ­ urÄen
+    pro mazÃ¡nÃ­ Äi zmÄ›nu poÅ™adÃ­ voleb. ZmÄ›na poÄtu hlasÅ¯ je moÅ¾nÃ¡ jen na Ãºrovni
+    databÃ¡ze.
 </p>
 
 <@lib.showMessages/>
@@ -12,13 +12,13 @@
 <form action="${URL.make("/EditPoll")}" method="POST">
  <table width=100 border=0 cellpadding=5>
   <tr>
-   <td width="90" class="required">Otázka</td>
+   <td width="90" class="required">OtÃ¡zka</td>
    <td>
     <textarea name="question" cols="80" rows="3" tabindex="1">${POLL.text?html}</textarea>
    </td>
   </tr>
   <tr>
-   <td class="required">Více mo¾ností</td>
+   <td class="required">VÃ­ce moÅ¾nostÃ­</td>
    <td>
     <select name="multichoice" tabindex="2">
      <#assign multi=POLL.multiChoice>
@@ -28,7 +28,7 @@
    </td>
   </tr>
   <tr>
-   <td class="required">Uzavøená</td>
+   <td class="required">UzavÅ™enÃ¡</td>
    <td>
     <select name="closed" tabindex="3">
      <#assign closed=POLL.isClosed()>
@@ -55,7 +55,7 @@
   </#list>
   <tr>
    <td width="120">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi"></td>
+   <td><input type="submit" value="DokonÄi"></td>
   </tr>
  </table>
 

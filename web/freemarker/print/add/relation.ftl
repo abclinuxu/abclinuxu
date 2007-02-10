@@ -3,20 +3,20 @@
 <@lib.showMessages/>
 
 <p>
-Chystáte se nalinkovat ${TOOL.childName(SELECTED)}
+ChystÃ¡te se nalinkovat ${TOOL.childName(SELECTED)}
 do ${TOOL.childName(CURRENT)}.
 </p>
 <p>
-Pokud chcete zmìnit jméno relace, zde máte mo¾nost.
-Nechte tento formuláø prázdnı, pokud si pøejete ponechat
-pùvodní jméno.
+Pokud chcete zmÄ›nit jmÃ©no relace, zde mÃ¡te moÅ¾nost.
+Nechte tento formulÃ¡Å™ prÃ¡zdnÃ½, pokud si pÅ™ejete ponechat
+pÅ¯vodnÃ­ jmÃ©no.
 </p>
 
 <form action="${URL.noPrefix("/EditRelation")}" method="POST">
 
  <table width=100 border=0 cellpadding=5>
   <tr>
-   <td width="120">Nové jméno</td>
+   <td width="120">NovÃ© jmÃ©no</td>
    <td>
     <input type="text" name="name" value="${PARAMS.name?if_exists}" size="40" tabindex="1">
     <div class="error">${ERRORS.name?if_exists}</div>
@@ -24,7 +24,7 @@ pùvodní jméno.
   </tr>
   <tr>
    <td width="120">&nbsp;</td>
-   <td><input type="submit" VALUE="Dokonèi" tabindex="2"></td>
+   <td><input type="submit" VALUE="DokonÄi" tabindex="2"></td>
   </tr>
  </table>
 

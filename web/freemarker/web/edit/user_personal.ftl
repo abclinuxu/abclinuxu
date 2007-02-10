@@ -2,17 +2,17 @@
 
 <@lib.showMessages/>
 
-<p>Na této stránce si mù¾ete upravit své osobní údaje.
-V¹echny údaje jsou volitelné a nemusíte je vyplòovat.
-Tyto informace budou zveøejnìny ve va¹em profilu,
-podpis pak pod va¹imi pøíspìvky v diskusích.
-Do patièky mù¾ete vlo¾it napøíklad svùj oblíbenı citát,
-nebo obecnì vzkaz lidem, kteøí budou èíst èi odpovídat
-na vás pøíspìvek.
+<p>Na tÃ©to strÃ¡nce si mÅ¯Å¾ete upravit svÃ© osobnÃ­ Ãºdaje.
+VÅ¡echny Ãºdaje jsou volitelnÃ© a nemusÃ­te je vyplÅˆovat.
+Tyto informace budou zveÅ™ejnÄ›ny ve vaÅ¡em profilu,
+podpis pak pod vaÅ¡imi pÅ™Ã­spÄ›vky v diskusÃ­ch.
+Do patiÄky mÅ¯Å¾ete vloÅ¾it napÅ™Ã­klad svÅ¯j oblÃ­benÃ½ citÃ¡t,
+nebo obecnÄ› vzkaz lidem, kteÅ™Ã­ budou ÄÃ­st Äi odpovÃ­dat
+na vÃ¡s pÅ™Ã­spÄ›vek.
 </p>
 
 <p>
-Pro va¹i ochranu nejdøíve zadejte souèasné heslo.
+Pro vaÅ¡i ochranu nejdÅ™Ã­ve zadejte souÄasnÃ© heslo.
 </p>
 
 <form action="${URL.noPrefix("/EditUser")}" method="POST">
@@ -25,24 +25,24 @@ Pro va¹i ochranu nejdøíve zadejte souèasné heslo.
    </td>
   </tr>
   <tr>
-   <td class="required" width="60">Va¹e pohlaví</td>
+   <td class="required" width="60">VaÅ¡e pohlavÃ­</td>
    <td>
     <select name="sex" tabindex="2">
-     <option value="man" <#if PARAMS.sex=="man">SELECTED</#if>>mu¾</option>
-     <option value="woman"<#if PARAMS.sex=="woman">SELECTED</#if>>¾ena</option>
+     <option value="man" <#if PARAMS.sex=="man">SELECTED</#if>>muÅ¾</option>
+     <option value="woman"<#if PARAMS.sex=="woman">SELECTED</#if>>Å¾ena</option>
     </select>
     <div class="error">${ERRORS.sex?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td width="60">Rok narození</td>
+   <td width="60">Rok narozenÃ­</td>
    <td>
     <input type="text" name="birth" value="${PARAMS.birth?if_exists}" size="24" tabindex="3">
     <div class="error">${ERRORS.birth?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td width="60">Bydli¹tì</td>
+   <td width="60">BydliÅ¡tÄ›</td>
    <td>
     <input type="text" name="city" value="${PARAMS.city?if_exists}" size="24" tabindex="4">
    </td>
@@ -54,14 +54,14 @@ Pro va¹i ochranu nejdøíve zadejte souèasné heslo.
    </td>
   </tr>
   <tr>
-   <td width="60">Zemì</td>
+   <td width="60">ZemÄ›</td>
    <td>
     <input type="text" name="country" value="${PARAMS.country?if_exists}" size="24" tabindex="6">
    </td>
   </tr>
   <tr>
    <td width="60">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi" tabindex="7"></td>
+   <td><input type="submit" value="DokonÄi" tabindex="7"></td>
   </tr>
  </table>
  <input type="hidden" name="action" value="editPersonal2">

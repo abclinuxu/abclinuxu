@@ -9,7 +9,7 @@
     <img src="${icon}" style="float: right" alt="${TOOL.childName(RELATION)}">
 </#if>
 
-<h1>Seriál: ${TOOL.childName(RELATION)}</h1>
+<h1>SeriÃ¡l: ${TOOL.childName(RELATION)}</h1>
 
 <#if desc != "UNDEFINED">
     <p>${desc}</p>
@@ -18,9 +18,9 @@
 
 <#if USER?exists && USER.hasRole("article admin")>
     <p>
-        <a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=edit")}">Uprav seriál</a>
-        <a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=addArticlesUrls")}">Pøidej èlánky</a>
-        <a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=rm")}" onclick="return confirm('Opravdu chcete smazat tento seriál?')">Sma¾ seriál</a>
+        <a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=edit")}">Uprav seriÃ¡l</a>
+        <a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=addArticlesUrls")}">PÅ™idej ÄlÃ¡nky</a>
+        <a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=rm")}" onclick="return confirm('Opravdu chcete smazat tento seriÃ¡l?')">SmaÅ¾ seriÃ¡l</a>
     </p>
 </#if>
 
@@ -33,11 +33,11 @@
 <p>
     <#if (ARTICLES.currentPage.row > 0) >
         <#assign start=ARTICLES.currentPage.row-ARTICLES.pageSize><#if (start<0)><#assign start=0></#if>
-        <a href="${RELATION.url}?from=${start}">Novìj¹í èlánky</a>
+        <a href="${RELATION.url}?from=${start}">NovÄ›jÅ¡Ã­ ÄlÃ¡nky</a>
     </#if>
     <#assign start=ARTICLES.currentPage.row + ARTICLES.pageSize>
     <#if (start < ARTICLES.total) >
-        <a href="${RELATION.url}?from=${start}">Star¹í èlánky</a>
+        <a href="${RELATION.url}?from=${start}">StarÅ¡Ã­ ÄlÃ¡nky</a>
     </#if>
 </p>
 

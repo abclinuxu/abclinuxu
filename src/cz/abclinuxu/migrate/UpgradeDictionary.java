@@ -51,7 +51,7 @@ public class UpgradeDictionary {
     static DiacriticRemover instance = DiacriticRemover.getInstance();
 
     public static void main(String[] args) {
-//        System.out.println(UrlUtils.PREFIX_DICTIONARY + "/" + URLManager.enforceRelativeURL("køí¾enì¹"));
+//        System.out.println(UrlUtils.PREFIX_DICTIONARY + "/" + URLManager.enforceRelativeURL("kÅ™Ã­Å¾enÄ›Å¡"));
 //        if (true) return;
         long start = System.currentTimeMillis();
         List items = sqlTool.findItemRelationsWithType(Item.DICTIONARY, null);

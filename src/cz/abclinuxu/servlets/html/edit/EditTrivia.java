@@ -108,7 +108,7 @@ public class EditTrivia implements AbcAction {
         if (ACTION_EDIT_STEP2.equals(action))
             return actionEditStep2(request, response, env);
 
-        throw new MissingArgumentException("ChybÌ parametr action!");
+        throw new MissingArgumentException("Chyb√≠ parametr action!");
     }
 
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
@@ -249,7 +249,7 @@ public class EditTrivia implements AbcAction {
             DocumentHelper.makeElement(root, "title").setText(tmp);
             return true;
         } else {
-            ServletUtils.addError(PARAM_TITLE, "Zadejte n·zev kvÌzu!", env, null);
+            ServletUtils.addError(PARAM_TITLE, "Zadejte n√°zev kv√≠zu!", env, null);
             return false;
         }
     }
@@ -280,7 +280,7 @@ public class EditTrivia implements AbcAction {
             Format format = FormatDetector.detect(tmp);
             element.addAttribute("format", Integer.toString(format.getId()));
         } else {
-            ServletUtils.addError(PARAM_DESCRIPTION, "Zadejte popis kvÌzu!", env, null);
+            ServletUtils.addError(PARAM_DESCRIPTION, "Zadejte popis kv√≠zu!", env, null);
             return false;
         }
         return true;
@@ -299,7 +299,7 @@ public class EditTrivia implements AbcAction {
             DocumentHelper.makeElement(root, "difficulty").setText(tmp);
             return true;
         } else {
-            ServletUtils.addError(PARAM_DIFFICULTY, "Zadejte ˙roveÚ kvÌzu!", env, null);
+            ServletUtils.addError(PARAM_DIFFICULTY, "Zadejte √∫rove≈à kv√≠zu!", env, null);
             return false;
         }
     }
@@ -341,22 +341,22 @@ public class EditTrivia implements AbcAction {
             String prefix = "q" + (i + 1);
             String question = (String) params.get(prefix+PARAM_QUESTION);
             if (Misc.empty(question)) {
-                ServletUtils.addError(prefix + PARAM_QUESTION, "Zadejte text ot·zky!", env, null);
+                ServletUtils.addError(prefix + PARAM_QUESTION, "Zadejte text ot√°zky!", env, null);
                 return false;
             }
             String answear = (String) params.get(prefix+PARAM_CORRECT_ANSWEAR);
             if (Misc.empty(answear)) {
-                ServletUtils.addError(prefix + PARAM_CORRECT_ANSWEAR, "Zadejte odpovÏÔ!", env, null);
+                ServletUtils.addError(prefix + PARAM_CORRECT_ANSWEAR, "Zadejte odpovƒõƒè!", env, null);
                 return false;
             }
             String wrongAnswear1 = (String) params.get(prefix+PARAM_WRONG_ANSWEAR1);
             if (Misc.empty(wrongAnswear1)) {
-                ServletUtils.addError(prefix + PARAM_WRONG_ANSWEAR1, "Zadejte odpovÏÔ!", env, null);
+                ServletUtils.addError(prefix + PARAM_WRONG_ANSWEAR1, "Zadejte odpovƒõƒè!", env, null);
                 return false;
             }
             String wrongAnswear2 = (String) params.get(prefix+PARAM_WRONG_ANSWEAR2);
             if (Misc.empty(wrongAnswear2)) {
-                ServletUtils.addError(prefix + PARAM_WRONG_ANSWEAR2, "Zadejte odpovÏÔ!", env, null);
+                ServletUtils.addError(prefix + PARAM_WRONG_ANSWEAR2, "Zadejte odpovƒõƒè!", env, null);
                 return false;
             }
 

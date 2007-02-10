@@ -1,8 +1,8 @@
 <#include "../header.ftl">
 
-<h1 align="center">Fórum ${TOOL.xpath(CATEGORY,"/data/name")}</h1>
+<h1 align="center">FÃ³rum ${TOOL.xpath(CATEGORY,"/data/name")}</h1>
 
-<p>Toto diskusní fórum obsahuje celkem ${DIZS.total} diskusí.</p>
+<p>Toto diskusnÃ­ fÃ³rum obsahuje celkem ${DIZS.total} diskusÃ­.</p>
 
 <#if TOOL.xpath(CATEGORY,"data/note")?exists>
  ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}
@@ -18,8 +18,8 @@
            <tr>
                 <td class="td01">Dotaz</td>
                 <td class="td02">Stav</td>
-                <td class="td03">Reakcí</td>
-                <td class="td04">Poslední</td>
+                <td class="td03">ReakcÃ­</td>
+                <td class="td04">PoslednÃ­</td>
             </tr>
         </thead>
         <tbody>
@@ -31,10 +31,10 @@
     <td class="td02">
        <@lib.markNewCommentsQuestion diz/>
        <#if TOOL.xpath(diz.discussion,"/data/frozen")?exists>
-         <img src="/images/site2/zamceno.gif" alt="Z" title="Diskuse byla administrátory uzamèena">
+         <img src="/images/site2/zamceno.gif" alt="Z" title="Diskuse byla administrÃ¡tory uzamÄena">
        </#if>
        <#if TOOL.isQuestionSolved(diz.discussion.data)>
-         <img src="/images/site2/vyreseno.gif" alt="V" title="Diskuse byla podle ètenáøù vyøe¹ena">
+         <img src="/images/site2/vyreseno.gif" alt="V" title="Diskuse byla podle ÄtenÃ¡Å™Å¯ vyÅ™eÅ¡ena">
        </#if>
        <#if USER?exists && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"']")?exists>
          <img src="/images/site2/sledovano.gif" alt="S" title="Tuto diskusi sledujete monitorem">
@@ -54,18 +54,18 @@
   <li>
    <form action="/Search" method="POST">
     <input type="text" name="query" size="30" tabindex="1">
-    <input type="submit" value="Prohledej toto fórum" tabindex="2">
+    <input type="submit" value="Prohledej toto fÃ³rum" tabindex="2">
     <input type="hidden" name="parent" value="${RELATION.id}">
     <input type="hidden" name="type" value="diskuse">
    </form>
-  <li><a href="${URL.make("/forum/EditDiscussion?action=addQuez&amp;rid="+RELATION.id)}">Polo¾it nový dotaz</a>
+  <li><a href="${URL.make("/forum/EditDiscussion?action=addQuez&amp;rid="+RELATION.id)}">PoloÅ¾it novÃ½ dotaz</a>
   <#if (DIZS.currentPage.row > 0) >
    <#assign start=DIZS.currentPage.row-DIZS.pageSize><#if (start<0)><#assign start=0></#if>
-   <li><a href="/forum/dir/${RELATION.id}?from=${start}&amp;count=${DIZS.pageSize}">Novìj¹í dotazy</a>
+   <li><a href="/forum/dir/${RELATION.id}?from=${start}&amp;count=${DIZS.pageSize}">NovÄ›jÅ¡Ã­ dotazy</a>
   </#if>
   <#assign start=DIZS.currentPage.row + DIZS.pageSize>
   <#if (start < DIZS.total) >
-   <li><a href="/forum/dir/${RELATION.id}?from=${start}&amp;count=${DIZS.pageSize}">Star¹í dotazy</a>
+   <li><a href="/forum/dir/${RELATION.id}?from=${start}&amp;count=${DIZS.pageSize}">StarÅ¡Ã­ dotazy</a>
   </#if>
  </ul>
 

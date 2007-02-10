@@ -7,9 +7,9 @@
                 <td><b>Podpora:</b></td>
                 <td>
                     <#switch TOOL.xpath(hardware,"data/support")>
-                        <#case "complete">kompletní<#break>
-                        <#case "partial">èásteèná<#break>
-                        <#case "none">¾ádná<#break>
+                        <#case "complete">kompletnÃ­<#break>
+                        <#case "partial">ÄÃ¡steÄnÃ¡<#break>
+                        <#case "none">Å¾Ã¡dnÃ¡<#break>
                     </#switch>
                 </td>
             </tr>
@@ -17,13 +17,13 @@
 
         <#if TOOL.xpath(hardware,"/data/driver")?exists>
             <tr>
-                <td><b>Ovladaè:</b></td>
+                <td><b>OvladaÄ:</b></td>
                 <td>
                     <#switch TOOL.xpath(hardware,"data/driver")>
-                        <#case "kernel">v jádøe<#break>
+                        <#case "kernel">v jÃ¡dÅ™e<#break>
                         <#case "xfree">v X Window serveru<#break>
-                        <#case "maker">dodává vırobce<#break>
-                        <#case "other">dodává nìkdo jinı<#break>
+                        <#case "maker">dodÃ¡vÃ¡ vÃ½robce<#break>
+                        <#case "other">dodÃ¡vÃ¡ nÄ›kdo jinÃ½<#break>
                         <#case "none">neexistuje<#break>
                     </#switch>
                 </td>
@@ -33,7 +33,7 @@
         <#assign hwurl = TOOL.xpath(hardware,"data/driver_url")?default("UNDEFINED")>
         <#if (hwurl!="UNDEFINED")>
             <tr>
-                <td><b>Adresa ovladaèe:</b></td>
+                <td><b>Adresa ovladaÄe:</b></td>
                 <td>
                     <a href="${hwurl}" rel="nofollow">${TOOL.limit(hwurl,50,"..")}</a>
                 </td>
@@ -42,7 +42,7 @@
 
         <#if TOOL.xpath(hardware,"data/outdated")?exists>
             <tr>
-                <td><b>Zastaralı:</b></td>
+                <td><b>ZastaralÃ½:</b></td>
                 <td>ano</td>
             </tr>
         </#if>
@@ -52,11 +52,11 @@
                 <td><b>Cena:</b></td>
                 <td>
                     <#switch TOOL.xpath(hardware,"data/price")>
-                        <#case "verylow">velmi nízká<#break>
-                        <#case "low">nízká<#break>
-                        <#case "good">pøimìøená<#break>
-                        <#case "high">vysoká<#break>
-                        <#case "toohigh">pøemr¹tìná<#break>
+                        <#case "verylow">velmi nÃ­zkÃ¡<#break>
+                        <#case "low">nÃ­zkÃ¡<#break>
+                        <#case "good">pÅ™imÄ›Å™enÃ¡<#break>
+                        <#case "high">vysokÃ¡<#break>
+                        <#case "toohigh">pÅ™emrÅ¡tÄ›nÃ¡<#break>
                     </#switch>
                 </td>
             </tr>
@@ -64,7 +64,7 @@
     </table>
 
     <#if TOOL.xpath(hardware,"data/params")?exists>
-        <h2>Technické parametry</h2>
+        <h2>TechnickÃ© parametry</h2>
         <div>
             ${TOOL.render(TOOL.element(hardware.data,"data/params"),USER?if_exists)}
         </div>
@@ -78,14 +78,14 @@
     </#if>
 
     <#if TOOL.xpath(hardware,"data/setup")?exists>
-        <h2>Postup zprovoznìní pod Linuxem</h2>
+        <h2>Postup zprovoznÄ›nÃ­ pod Linuxem</h2>
         <div>
             ${TOOL.render(TOOL.element(hardware.data,"data/setup"),USER?if_exists)}
         </div>
     </#if>
 
     <#if TOOL.xpath(hardware,"data/note")?exists>
-        <h2>Poznámka</h2>
+        <h2>PoznÃ¡mka</h2>
         <div>
             ${TOOL.render(TOOL.element(hardware.data,"data/note"),USER?if_exists)}
         </div>

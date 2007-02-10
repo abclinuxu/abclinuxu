@@ -2,31 +2,31 @@
 
 <@lib.showMessages/>
 
-<p>Tento formuláø slou¾í pro zneplatnìní emailu u¾ivatelùm.
-Pokud se nám vrátí nìkterı email jako nedoruèitelnı,
-zde uveïte èíslo u¾ivatele. Jedno èíslo na jeden øádek.
-Po odeslání bude email tìchto u¾ivatelù oznaèen jako
-neplatnı a pøí¹tì jim nebude vygenerován ¾ádnı dal¹í
-email, dokud si sami nezmìní adresu.</p>
+<p>Tento formulÃ¡Å™ slouÅ¾Ã­ pro zneplatnÄ›nÃ­ emailu uÅ¾ivatelÅ¯m.
+Pokud se nÃ¡m vrÃ¡tÃ­ nÄ›kterÃ½ email jako nedoruÄitelnÃ½,
+zde uveÄte ÄÃ­slo uÅ¾ivatele. Jedno ÄÃ­slo na jeden Å™Ã¡dek.
+Po odeslÃ¡nÃ­ bude email tÄ›chto uÅ¾ivatelÅ¯ oznaÄen jako
+neplatnÃ½ a pÅ™Ã­Å¡tÄ› jim nebude vygenerovÃ¡n Å¾Ã¡dnÃ½ dalÅ¡Ã­
+email, dokud si sami nezmÄ›nÃ­ adresu.</p>
 
 <form action="${URL.make("/EditUser")}" method="POST">
 
  <table width=100 border=0 cellpadding=5>
   <tr>
-   <td width="120">Èísla u¾ivatelù</td>
+   <td width="120">ÄŒÃ­sla uÅ¾ivatelÅ¯</td>
    <td>
     <textarea name="users" cols="20" rows="6" tabindex="1">${PARAMS.users?if_exists}</textarea>
    </td>
   </tr>
   <tr>
    <td width="120">&nbsp;</td>
-   <td><input type="submit" value="Pokraèuj" tabindex="1"></td>
+   <td><input type="submit" value="PokraÄuj" tabindex="1"></td>
   </tr>
  </table>
 
  <input type="hidden" name="action" value="invalidateEmail2">
 </form>
 
-<a href="${URL.make("/SelectUser?sAction=form&amp;url=/EditUser&amp;action=invalidateEmail2")}">Najdi u¾ivatele</a>
+<a href="${URL.make("/SelectUser?sAction=form&amp;url=/EditUser&amp;action=invalidateEmail2")}">Najdi uÅ¾ivatele</a>
 
 <#include "../footer.ftl">

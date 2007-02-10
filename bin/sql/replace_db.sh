@@ -1,5 +1,5 @@
 #!/bin/sh
 
-mysql abc < empty_all_tables.sql
+mysql @DB_SCHEMA@ < empty_all_tables.sql
 
-bzcat $1 | mysql abc 
+bzcat $1 | mysql @DB_SCHEMA@

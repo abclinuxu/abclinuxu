@@ -2,36 +2,36 @@
 
 <@lib.showMessages/>
 
-<p>Na této stránce si mù¾ete zmìnit heslo.
-Pro va¹i ochranu nejdøíve zadejte souèasné
-heslo a pak dvakrát nové heslo. Heslo musí
-mít nejménì ètyøi znaky.</p>
+<p>Na tÃ©to strÃ¡nce si mÅ¯Å¾ete zmÄ›nit heslo.
+Pro vaÅ¡i ochranu nejdÅ™Ã­ve zadejte souÄasnÃ©
+heslo a pak dvakrÃ¡t novÃ© heslo. Heslo musÃ­
+mÃ­t nejmÃ©nÄ› ÄtyÅ™i znaky.</p>
 
 <form action="${URL.noPrefix("/EditUser")}" method="POST">
  <table width="100%" border=0 cellpadding=5>
   <tr>
-   <td class="required" width="160">Souèasné heslo</td>
+   <td class="required" width="160">SouÄasnÃ© heslo</td>
    <td>
     <input type="password" name="PASSWORD" size="16" tabindex="1">
     <div class="error">${ERRORS.PASSWORD?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td class="required" width="160">Nové heslo</td>
+   <td class="required" width="160">NovÃ© heslo</td>
    <td>
     <input type="password" name="password" size="16" maxlength="12" tabindex="2">
     <div class="error">${ERRORS.password?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td class="required" width="160">Zopakujte nové heslo</td>
+   <td class="required" width="160">Zopakujte novÃ© heslo</td>
    <td>
     <input type="password" name="password2" size="16" tabindex="3">
    </td>
   </tr>
   <tr>
    <td width="160">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi" tabindex="4"></td>
+   <td><input type="submit" value="DokonÄi" tabindex="4"></td>
   </tr>
  </table>
  <input type="hidden" name="action" value="changePassword2">

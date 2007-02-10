@@ -64,7 +64,7 @@ public class ViewGames implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
         if (relation == null)
-            throw new NotFoundException("Str·nka nebyla nalezena.");
+            throw new NotFoundException("Str√°nka nebyla nalezena.");
         Tools.sync(relation);
 
         if (relation.getChild() instanceof Category)
@@ -95,7 +95,7 @@ public class ViewGames implements AbcAction {
 
         Item game = (Item) relation.getChild();
         if (game.getType() != Item.TRIVIA)
-            throw new InvalidInputException("Tato relace nepat¯Ì kvÌzu!");
+            throw new InvalidInputException("Tato relace nepat≈ô√≠ kv√≠zu!");
         Element root = game.getData().getRootElement();
 
         Relation sectionGames = (Relation) persistence.findById(new Relation(Constants.REL_GAMES));
@@ -110,7 +110,7 @@ public class ViewGames implements AbcAction {
         } else {
             String lastChoice = (String) params.get("q"+position);
             if (Misc.empty(lastChoice))
-                ServletUtils.addError(Constants.ERROR_GENERIC, "ProsÌm, vyberte jednu z nabÌzen˝ch moænostÌ.", env, null);
+                ServletUtils.addError(Constants.ERROR_GENERIC, "Pros√≠m, vyberte jednu z nab√≠zen√Ωch mo≈ænost√≠.", env, null);
             else
                 position++;
         }

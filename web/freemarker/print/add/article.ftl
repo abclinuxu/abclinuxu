@@ -31,7 +31,7 @@
    </td>
   </tr>
   <tr>
-   <td width="90" class="required">Zveøejni dne</td>
+   <td width="90" class="required">ZveÅ™ejni dne</td>
    <td>
     <input type="text" name="published" value="${PARAMS.published?if_exists}" size=40 tabindex=3>
     <div class="error">${ERRORS.published?if_exists}</div>
@@ -57,24 +57,24 @@
    </td>
   </tr>
   <tr>
-   <td width="90" class="required">Obsah èlánku</td>
+   <td width="90" class="required">Obsah ÄlÃ¡nku</td>
    <td>
-    <p>Rozdìlit èlánek na více podstránek mù¾ete pomocí následující direktivy: <br>
-    <i>&lt;page title="Nastavení programu LILO"&gt;</i> <br>
-    Pokud pou¾ijete tuto funkci, pojmenujte i první stránku, text pøed první znaèkou bude ignorován!</p>
+    <p>RozdÄ›lit ÄlÃ¡nek na vÃ­ce podstrÃ¡nek mÅ¯Å¾ete pomocÃ­ nÃ¡sledujÃ­cÃ­ direktivy: <br>
+    <i>&lt;page title="NastavenÃ­ programu LILO"&gt;</i> <br>
+    Pokud pouÅ¾ijete tuto funkci, pojmenujte i prvnÃ­ strÃ¡nku, text pÅ™ed prvnÃ­ znaÄkou bude ignorovÃ¡n!</p>
 
-    <p>V¹echna URL na èlánky, obrázky a soubory z na¹eho serveru musí bıt relativní!</p>
+    <p>VÅ¡echna URL na ÄlÃ¡nky, obrÃ¡zky a soubory z naÅ¡eho serveru musÃ­ bÃ½t relativnÃ­!</p>
 
     <textarea name="content" cols="100" rows="45" tabindex="5">${PARAMS.content?if_exists?html}</textarea>
     <div class="error">${ERRORS.content?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td width="90">Související èlánky</td>
+   <td width="90">SouvisejÃ­cÃ­ ÄlÃ¡nky</td>
    <td>
-    Zde mù¾ete zadat související èlánky z na¹eho portálu. Na první øádek vlo¾te
-    relativní URL odkazu, na druhı jeho popis. Liché øádky jsou URL, sudé popisy. Popis mù¾e obsahovat
-    znak |, zbytek textu øádky bude slou¾it jako komentáø, nebude souèástí odkazu. <br>
+    Zde mÅ¯Å¾ete zadat souvisejÃ­cÃ­ ÄlÃ¡nky z naÅ¡eho portÃ¡lu. Na prvnÃ­ Å™Ã¡dek vloÅ¾te
+    relativnÃ­ URL odkazu, na druhÃ½ jeho popis. LichÃ© Å™Ã¡dky jsou URL, sudÃ© popisy. Popis mÅ¯Å¾e obsahovat
+    znak |, zbytek textu Å™Ã¡dky bude slouÅ¾it jako komentÃ¡Å™, nebude souÄÃ¡stÃ­ odkazu. <br>
     <textarea name="related" cols="80" rows="5" tabindex="6">${PARAMS.related?if_exists}</textarea>
     <div class="error">${ERRORS.related?if_exists}</div>
    </td>
@@ -82,9 +82,9 @@
   <tr>
    <td width="90">Zdroje a odkazy</td>
    <td>
-    Zde mù¾ete zadat odkazy a zdroje. Místní URL vkládejte jako relativní! Na první øádek vlo¾te
-    URL odkazu, na druhı jeho popis. Liché øádky jsou URL, sudé popisy. Popis mù¾e obsahovat
-    znak |, zbytek textu øádky bude slou¾it jako komentáø, nebude souèástí odkazu. <br>
+    Zde mÅ¯Å¾ete zadat odkazy a zdroje. MÃ­stnÃ­ URL vklÃ¡dejte jako relativnÃ­! Na prvnÃ­ Å™Ã¡dek vloÅ¾te
+    URL odkazu, na druhÃ½ jeho popis. LichÃ© Å™Ã¡dky jsou URL, sudÃ© popisy. Popis mÅ¯Å¾e obsahovat
+    znak |, zbytek textu Å™Ã¡dky bude slouÅ¾it jako komentÃ¡Å™, nebude souÄÃ¡stÃ­ odkazu. <br>
     <textarea name="resources" cols="80" rows="5" tabindex="7">${PARAMS.resources?if_exists}</textarea>
     <div class="error">${ERRORS.resources?if_exists}</div>
    </td>
@@ -93,25 +93,25 @@
    <td width="90">Volby</td>
    <td>
     <input type="checkbox" name="forbid_discussions" <#if PARAMS.forbid_discussions?exists>checked</#if> value="yes">
-    Zakázat diskuse
+    ZakÃ¡zat diskuse
     <input type="checkbox" name="forbid_rating" <#if PARAMS.forbid_rating?exists>checked</#if> value="yes">
-    Zakázat hodnocení
+    ZakÃ¡zat hodnocenÃ­
     <input type="checkbox" name="notOnIndex" <#if PARAMS.notOnIndex?exists>checked</#if> value="yes">
-    Nezobrazovat na hlavní stránce
+    Nezobrazovat na hlavnÃ­ strÃ¡nce
    </td>
   </tr>
   <tr>
    <td width="90">Ikonka</td>
    <td>
-    Pokud chcete, aby se ve vıpise èlánkù zobrazovala ikonka, vlo¾te zde její HTML kód.
-    Nedávejte zde formátování, to se øe¹í v ¹ablonì. Jen definici tagu IMG. <br>
+    Pokud chcete, aby se ve vÃ½pise ÄlÃ¡nkÅ¯ zobrazovala ikonka, vloÅ¾te zde jejÃ­ HTML kÃ³d.
+    NedÃ¡vejte zde formÃ¡tovÃ¡nÃ­, to se Å™eÅ¡Ã­ v Å¡ablonÄ›. Jen definici tagu IMG. <br>
     <textarea name="thumbnail" cols="90" rows="2" tabindex="7">${PARAMS.thumbnail?if_exists}</textarea>
     <div class="error">${ERRORS.thumbnail?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td width="90">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi" tabindex="8"></td>
+   <td><input type="submit" value="DokonÄi" tabindex="8"></td>
   </tr>
  </table>
 

@@ -1,7 +1,7 @@
 <#include "../header.ftl">
 
-<p>Více informací o vıkladovém slovníku portálu www.abclinuxu.cz
-najdete na jeho <a href="/slovnik">stránce</a>.
+<p>VÃ­ce informacÃ­ o vÃ½kladovÃ©m slovnÃ­ku portÃ¡lu www.abclinuxu.cz
+najdete na jeho <a href="/slovnik">strÃ¡nce</a>.
 </p>
 
 <ul>
@@ -15,16 +15,16 @@ najdete na jeho <a href="/slovnik">stránce</a>.
 <form action="/History">
 <table border="0"><tr>
 <th>Pozice</th>
-<th>Poèet</th>
-<th>Smìr</th>
+<th>PoÄet</th>
+<th>SmÄ›r</th>
 <td></td>
 </tr><tr>
 <td><input type="text" size="4" value="${FOUND.thisPage.row}" name="from" tabindex="1"></td>
 <td><input type="text" size="3" value="${FOUND.pageSize}" name="count" tabindex="2"></td>
 <td>
  <select name="orderDir" tabindex="4">
-  <option value="desc">sestupnì</option>
-  <option value="asc">vzestupnì</option>
+  <option value="desc">sestupnÄ›</option>
+  <option value="asc">vzestupnÄ›</option>
  </select>
 </td>
 <td><input type="submit" value="Zobrazit"></td>

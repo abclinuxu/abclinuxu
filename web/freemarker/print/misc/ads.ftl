@@ -2,17 +2,17 @@
 
 <@lib.showMessages/>
 
-<h1>Správa reklamních pozic</h1>
+<h1>SprÃ¡va reklamnÃ­ch pozic</h1>
 
 <p>
-    Nacházíte se na stránce, kde mù¾ete zakládat nové reklamní pozice,
-    zapínat èi vypínat jednotlivé existující pozice dle potøeby
-    nebo pøidávat k pozicím nové reklamní kódy. Reklamní pozice je pøesnì
-    definovanı prostor na stránkách, kde se má zobrazit reklama. Typickım
-    pøíkladem je napøíklad banner na vr¹ku stránky. Ke ka¾dé pozici je
-    tøeba nadefinovat jeden èi více reklamních kódu, které mají za úkol
-    zobrazit vlastní reklamu. V pøípadì více kódu pro jednu pozici
-    je tøeba kódy rozli¹it podle URL adresy.
+    NachÃ¡zÃ­te se na strÃ¡nce, kde mÅ¯Å¾ete zaklÃ¡dat novÃ© reklamnÃ­ pozice,
+    zapÃ­nat Äi vypÃ­nat jednotlivÃ© existujÃ­cÃ­ pozice dle potÅ™eby
+    nebo pÅ™idÃ¡vat k pozicÃ­m novÃ© reklamnÃ­ kÃ³dy. ReklamnÃ­ pozice je pÅ™esnÄ›
+    definovanÃ½ prostor na strÃ¡nkÃ¡ch, kde se mÃ¡ zobrazit reklama. TypickÃ½m
+    pÅ™Ã­kladem je napÅ™Ã­klad banner na vrÅ¡ku strÃ¡nky. Ke kaÅ¾dÃ© pozici je
+    tÅ™eba nadefinovat jeden Äi vÃ­ce reklamnÃ­ch kÃ³du, kterÃ© majÃ­ za Ãºkol
+    zobrazit vlastnÃ­ reklamu. V pÅ™Ã­padÄ› vÃ­ce kÃ³du pro jednu pozici
+    je tÅ™eba kÃ³dy rozliÅ¡it podle URL adresy.
 </p>
 
 <form action="${URL.noPrefix("/EditAdvertisement")}" method="POST" name="form">
@@ -21,8 +21,8 @@
             <thead>
                 <tr>
                     <td>&nbsp;</td>
-                    <td>název</td>
-                    <td>identifikátor</td>
+                    <td>nÃ¡zev</td>
+                    <td>identifikÃ¡tor</td>
                     <td>stav</td>
                 </tr>
             </thead>
@@ -42,9 +42,9 @@
                     </td>
                     <td>
                         <#if TOOL.xpath(position, "@active")=="yes">
-                            <span class="ad_active">aktivní</span>
+                            <span class="ad_active">aktivnÃ­</span>
                         <#else>
-                            <span class="ad_inactive">neaktivní</span>
+                            <span class="ad_inactive">neaktivnÃ­</span>
                         </#if>
                     </td>
                 </tr>
@@ -56,13 +56,13 @@
                 <td colspan="2">
                     <input type="submit" name="activatePosition" value="Zapnout">
                     <input type="submit" name="deactivatePosition" value="Vypnout">
-                    <input type="submit" name="rmPosition" value="Smazat" onclick="return confirm('Opravdu chcete smazat zvolené pozice?')">
-                    vybrané pozice
+                    <input type="submit" name="rmPosition" value="Smazat" onclick="return confirm('Opravdu chcete smazat zvolenÃ© pozice?')">
+                    vybranÃ© pozice
                 </td>
             </tr>
         </table>
     </#if>
-    <input type="submit" name="addPosition" value="Vlo¾it novou pozici">
+    <input type="submit" name="addPosition" value="VloÅ¾it novou pozici">
 </form>
 
 <#include "../footer.ftl">

@@ -11,7 +11,7 @@
 
 <#if XML.data.links[0]?exists>
 <div class="cl_perex">
-  <h3>Související odkazy</h3>
+  <h3>SouvisejÃ­cÃ­ odkazy</h3>
     <div class="s_sekce">
         <ul>
 	    <#list XML.data.links.link as link>

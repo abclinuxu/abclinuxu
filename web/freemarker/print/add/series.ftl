@@ -3,19 +3,19 @@
 <@lib.showMessages/>
 
 <h1>
-    <#if EDIT_MODE?if_exists>Úprava seriálu<#else>Vytvoøení seriálu</#if>
+    <#if EDIT_MODE?if_exists>Ãšprava seriÃ¡lu<#else>VytvoÅ™enÃ­ seriÃ¡lu</#if>
 </h1>
 
 <p>
-    Seriál má své jméno a adresu. Adresa musí zaèínat prefixem /serialy a bıt unikátní.
-    Dále je mo¾né vlo¾it popis, kterı se zobrazí jak na stránce seriálu, tak ve vıpise
-    v¹ech seriálù a zadat URL obrázku, kterı se zobrazí na stránce seriálu.
+    SeriÃ¡l mÃ¡ svÃ© jmÃ©no a adresu. Adresa musÃ­ zaÄÃ­nat prefixem /serialy a bÃ½t unikÃ¡tnÃ­.
+    DÃ¡le je moÅ¾nÃ© vloÅ¾it popis, kterÃ½ se zobrazÃ­ jak na strÃ¡nce seriÃ¡lu, tak ve vÃ½pise
+    vÅ¡ech seriÃ¡lÅ¯ a zadat URL obrÃ¡zku, kterÃ½ se zobrazÃ­ na strÃ¡nce seriÃ¡lu.
 </p>
 
 <form action="${URL.noPrefix("/serialy/edit")}" method="POST">
     <table width="100%" border=0 cellpadding=5>
         <tr>
-            <td class="required" width="60">Jméno</td>
+            <td class="required" width="60">JmÃ©no</td>
             <td>
                 <input type="text" name="name" value="${PARAMS.name?if_exists?html}" size="40" tabindex="1">
                 <div class="error">${ERRORS.name?if_exists}<div>
@@ -24,7 +24,7 @@
 
         <#if ! EDIT_MODE?if_exists>
         <tr>
-            <td class="required" width="60">URL seriálu</td>
+            <td class="required" width="60">URL seriÃ¡lu</td>
             <td>
                 <input type="text" name="url" value="${PARAMS.url?default("/serialy/")}" size="40" tabindex="2">
                 <div class="error">${ERRORS.url?if_exists}</div>
@@ -41,7 +41,7 @@
         </tr>
 
         <tr>
-            <td width="60">URL obrázku</td>
+            <td width="60">URL obrÃ¡zku</td>
             <td>
                 <input type="text" name="icon" value="${PARAMS.icon?if_exists}" size="40" tabindex="4">
                 <div class="error">${ERRORS.icon?if_exists}</div>
@@ -50,7 +50,7 @@
 
         <tr>
             <td width="60">&nbsp;</td>
-            <td><input type="submit" value="Dokonèi" tabindex="5"></td>
+            <td><input type="submit" value="DokonÄi" tabindex="5"></td>
         </tr>
     </table>
     <#if EDIT_MODE?if_exists>

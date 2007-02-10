@@ -2,11 +2,11 @@
 
 <@lib.showMessages/>
 
-<p>Opravdu si pøejete vytvoøit následující kategorii?</p>
+<p>Opravdu si pÅ™ejete vytvoÅ™it nÃ¡sledujÃ­cÃ­ kategorii?</p>
 
 <form action="${URL.make("/blog/edit/"+REL_BLOG.id)}" method="POST" name="form">
     <input type="text" name="category" value="${PARAMS.category?if_exists}" size="20">
-    <input type="submit" name="finish" value="Dokonèi">
+    <input type="submit" name="finish" value="DokonÄi">
     <div class="error">${ERRORS.category?if_exists}</div>
     <input type="hidden" name="action" value="addCategory2">
 </form>

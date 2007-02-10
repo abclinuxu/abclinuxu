@@ -148,7 +148,7 @@ public class UpgradeDiscusssions2 {
                     else {
                         comment.setParent(null);
                         diz.addThread(comment);
-                        System.out.println("Nenalezen pøedek pro komentáø " + comment.getRowId() + "!");
+                        System.out.println("Nenalezen pÅ™edek pro komentÃ¡Å™ " + comment.getRowId() + "!");
                     }
                 }
             }

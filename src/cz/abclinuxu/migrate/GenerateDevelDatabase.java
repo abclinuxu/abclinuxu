@@ -69,9 +69,9 @@ public class GenerateDevelDatabase {
 
         params.put(EditHardware.PARAM_NAME, "Askey");
         params.put(EditHardware.PARAM_SETUP, "Plug n' pray");
-        params.put(EditHardware.PARAM_NOTE, "Pozn·mka");
-        params.put(EditHardware.PARAM_IDENTIFICATION, "TÌ t· t· t· tÌ");
-        params.put(EditHardware.PARAM_TECHPARAM, "Kus dr·tu");
+        params.put(EditHardware.PARAM_NOTE, "Pozn√°mka");
+        params.put(EditHardware.PARAM_IDENTIFICATION, "T√≠ t√° t√° t√° t√≠");
+        params.put(EditHardware.PARAM_TECHPARAM, "Kus dr√°tu");
         params.put(EditHardware.PARAM_DRIVER, "kernel");
         params.put(EditHardware.PARAM_PRICE, "low");
         map.put(EditHardware.VAR_RELATION, persistence.findById(new Relation(148)));
@@ -110,8 +110,8 @@ public class GenerateDevelDatabase {
         map.put(Constants.VAR_PARAMS, params);
         map.put(Constants.VAR_URL_UTILS, new UrlUtils(UrlUtils.PREFIX_CLANKY, null));
 
-        params.put(EditDiscussion.PARAM_TITLE, "Jak nainstalovat balÌËek do Mandrivy");
-        params.put(EditDiscussion.PARAM_TEXT, "Naπel jsem balÌËek RPM se super aplikacÌ, jak jej m·m nainstalovat?");
+        params.put(EditDiscussion.PARAM_TITLE, "Jak nainstalovat bal√≠ƒçek do Mandrivy");
+        params.put(EditDiscussion.PARAM_TEXT, "Na≈°el jsem bal√≠ƒçek RPM se super aplikac√≠, jak jej m√°m nainstalovat?");
         params.put(EditDiscussion.PARAM_AUTHOR_ID, "2");
         map.put(EditDiscussion.VAR_RELATION, persistence.findById(new Relation(49645)));
 
@@ -138,7 +138,7 @@ public class GenerateDevelDatabase {
         map.put(Constants.VAR_USER, user);
 
         map.put(EditFaq.VAR_RELATION, persistence.findById(new Relation(94480)));
-        params.put(EditFaq.PARAM_TITLE, "ZapnutÌ DMA");
+        params.put(EditFaq.PARAM_TITLE, "Zapnut√≠ DMA");
         params.put(EditFaq.PARAM_TEXT, "man hdparm");
 
         EditFaq servlet = new EditFaq();
@@ -148,7 +148,7 @@ public class GenerateDevelDatabase {
         EditRelated servlet2 = new EditRelated();
         params.put(EditRelated.VAR_RELATION, relation);
         params.put(EditRelated.PARAM_URL, UrlUtils.PREFIX_CLANKY+"/"+ridArticle);
-        params.put(EditRelated.PARAM_TITLE, "prvnÌ odkaz");
+        params.put(EditRelated.PARAM_TITLE, "prvn√≠ odkaz");
         servlet2.actionAddStep2(null, null, map, false);
 
         params.remove(EditRelated.PARAM_TITLE);
@@ -172,14 +172,14 @@ public class GenerateDevelDatabase {
 
         Relation blogRelation = (Relation) persistence.findById(new Relation(72131));
         persistence.synchronize(blogRelation.getChild());
-        params.put(EditBlog.PARAM_TITLE, "BlogosfÈra");
-        params.put(EditBlog.PARAM_CONTENT, "Blogy jsou dobr˝ sluha, ale πpatn˝ p·n.");
+        params.put(EditBlog.PARAM_TITLE, "Blogosf√©ra");
+        params.put(EditBlog.PARAM_CONTENT, "Blogy jsou dobr√Ω sluha, ale ≈°patn√Ω p√°n.");
 
         EditBlog servlet = new EditBlog();
         servlet.actionAddStoryStep2(null, null, blogRelation, map, false);
 
-        params.put(EditBlog.PARAM_TITLE, "ÿeπenÌ z·kladnÌ ot·zky");
-        params.put(EditBlog.PARAM_CONTENT, "OdpovÏÔ znÌ<break>Blue screen of death. Reboot your computer please.");
+        params.put(EditBlog.PARAM_TITLE, "≈òe≈°en√≠ z√°kladn√≠ ot√°zky");
+        params.put(EditBlog.PARAM_CONTENT, "Odpovƒõƒè zn√≠<break>Blue screen of death. Reboot your computer please.");
         servlet.actionAddStoryStep2(null, null, blogRelation, map, false);
     }
 
@@ -190,7 +190,7 @@ public class GenerateDevelDatabase {
         map.put(Constants.VAR_USER, user);
 
         params.put(EditDictionary.PARAM_NAME, "GPL");
-        params.put(EditDictionary.PARAM_DESCRIPTION, "Svobodn· licence kter· zaruËuje vπem uæivatel˘m stejn· pr·va.");
+        params.put(EditDictionary.PARAM_DESCRIPTION, "Svobodn√° licence kter√° zaruƒçuje v≈°em u≈æivatel≈Øm stejn√° pr√°va.");
 
         EditDictionary servlet = new EditDictionary();
         servlet.actionAddStep2(null, null, map, false);
@@ -202,10 +202,10 @@ public class GenerateDevelDatabase {
         map.put(Constants.VAR_PARAMS, params);
         map.put(Constants.VAR_USER, user);
 
-        params.put(EditDriver.PARAM_NAME, "UrychlovaË");
+        params.put(EditDriver.PARAM_NAME, "Urychlovaƒç");
         params.put(EditDriver.PARAM_URL, "http://www.abclinuxu.cz");
         params.put(EditDriver.PARAM_VERSION, "0.99");
-        params.put(EditDriver.PARAM_NOTE, "ZmÏnÌ v·π poËÌtaË na namydlen˝ blesk.");
+        params.put(EditDriver.PARAM_NOTE, "Zmƒõn√≠ v√°≈° poƒç√≠taƒç na namydlen√Ω blesk.");
 
         EditDriver servlet = new EditDriver();
         servlet.actionAddStep2(null, null, map, false);
@@ -219,8 +219,8 @@ public class GenerateDevelDatabase {
         map.put(Constants.VAR_PARAMS, params);
         map.put(Constants.VAR_USER, user);
 
-        params.put(EditNews.PARAM_TITLE, "AbÌËko je Open Source!");
-        params.put(EditNews.PARAM_CONTENT, "Uvolnil jsem zdroj·ky AbÌËka komunitÏ. »as uk·æe, zda to byl dobr˝ krok.");
+        params.put(EditNews.PARAM_TITLE, "Ab√≠ƒçko je Open Source!");
+        params.put(EditNews.PARAM_CONTENT, "Uvolnil jsem zdroj√°ky Ab√≠ƒçka komunitƒõ. ƒåas uk√°≈æe, zda to byl dobr√Ω krok.");
         params.put(EditNews.PARAM_CATEGORY, "INFO");
 
         EditNews servlet = new EditNews();
@@ -248,10 +248,10 @@ public class GenerateDevelDatabase {
         map.put(Constants.VAR_USER, admin);
 
         map.put(EditPoll.VAR_RELATION, persistence.findById(new Relation(Constants.REL_POLLS)));
-        params.put(EditPoll.PARAM_QUESTION, "UvolnÏnÌ zdroj·k˘ abÌËka je");
+        params.put(EditPoll.PARAM_QUESTION, "Uvolnƒõn√≠ zdroj√°k≈Ø ab√≠ƒçka je");
         List choices = new ArrayList();
         choices.add("kravina");
-        choices.add("zajÌmavÈ");
+        choices.add("zaj√≠mav√©");
         choices.add("bomba");
         params.put(EditPoll.PARAM_CHOICES, choices);
         params.put(EditPoll.PARAM_URL, "uvolneni-zdrojaku-abicka");
@@ -267,7 +267,7 @@ public class GenerateDevelDatabase {
         map.put(Constants.VAR_USER, admin);
 
         params.put(EditAuthor.PARAM_SURNAME, "Franta");
-        params.put(EditAuthor.PARAM_NAME, "Om·Ëka");
+        params.put(EditAuthor.PARAM_NAME, "Om√°ƒçka");
 
         EditAuthor servlet = new EditAuthor();
         servlet.actionAddStep2(null, null, map, false);
@@ -284,10 +284,10 @@ public class GenerateDevelDatabase {
         Relation articles = (Relation) persistence.findById(new Relation(4));
         map.put(EditArticle.VAR_RELATION, articles);
         map.put(Constants.VAR_USER, admin);
-        params.put(EditArticle.PARAM_TITLE, "JadernÈ noviny 000");
-        params.put(EditArticle.PARAM_PEREX, "J·dro portov·no do toastovaËe!");
-        params.put(EditArticle.PARAM_CONTENT, "Slavn˝ kernel hacker a fanouπek Linuxu JXD naportoval kernel " +
-                "na toastovaË. Aæ si p¯ÌπtÏ budete dÏlat toasty, o optim·lnÌ teplotu se bude starat Linuks.");
+        params.put(EditArticle.PARAM_TITLE, "Jadern√© noviny 000");
+        params.put(EditArticle.PARAM_PEREX, "J√°dro portov√°no do toastovaƒçe!");
+        params.put(EditArticle.PARAM_CONTENT, "Slavn√Ω kernel hacker a fanou≈°ek Linuxu JXD naportoval kernel " +
+                "na toastovaƒç. A≈æ si p≈ô√≠≈°tƒõ budete dƒõlat toasty, o optim√°ln√≠ teplotu se bude starat Linuks.");
         params.put(EditArticle.PARAM_AUTHORS, Integer.toString(author));
         params.put(EditArticle.PARAM_PUBLISHED, Constants.isoFormat.format(new Date()));
 
@@ -299,11 +299,11 @@ public class GenerateDevelDatabase {
 
         articles = (Relation) persistence.findById(new Relation(14358));
         map.put(EditArticle.VAR_RELATION, articles);
-        params.put(EditArticle.PARAM_TITLE, "Developersk· datab·ze abclinuxu");
-        params.put(EditArticle.PARAM_PEREX, "Kr·tkÈ info ohlednÏ datab·ze pro v˝voj abÌËka.");
-        params.put(EditArticle.PARAM_CONTENT, "Datab·ze obsahuje dva uæivatele - admin a user, oba majÌ heslo changeit. " +
-                "D·le je zde p·r reprezentant˘ vπech objekt˘, kterÈ se na abÌËku vyskytujÌ, abyste si mohli neruπenÏ " +
-                "hr·t a zkouπet, jak co funguje.");
+        params.put(EditArticle.PARAM_TITLE, "Developersk√° datab√°ze abclinuxu");
+        params.put(EditArticle.PARAM_PEREX, "Kr√°tk√© info ohlednƒõ datab√°ze pro v√Ωvoj ab√≠ƒçka.");
+        params.put(EditArticle.PARAM_CONTENT, "Datab√°ze obsahuje dva u≈æivatele - admin a user, oba maj√≠ heslo changeit. " +
+                "D√°le je zde p√°r reprezentant≈Ø v≈°ech objekt≈Ø, kter√© se na ab√≠ƒçku vyskytuj√≠, abyste si mohli neru≈°enƒõ " +
+                "hr√°t a zkou≈°et, jak co funguje.");
         params.put(EditArticle.PARAM_AUTHORS, Integer.toString(author));
         params.put(EditArticle.PARAM_PUBLISHED, Constants.isoFormat.format(new Date()));
         editArticle.actionAddStep2(null, null, map, false);

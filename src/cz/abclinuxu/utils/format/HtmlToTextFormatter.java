@@ -58,7 +58,7 @@ public class HtmlToTextFormatter implements Configurable {
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes());
         Lexer lexer = null;
         try {
-            lexer = new Lexer(new Page(bais, "ISO-8859-2"));
+            lexer = new Lexer(new Page(bais, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
             throw new AbcException(e.getMessage(), e);
         }
@@ -114,7 +114,7 @@ public class HtmlToTextFormatter implements Configurable {
         HtmlToTextFormatter f = new HtmlToTextFormatter();
         String text1 = "<p>Server <a href=\"http://none.net\">None</a> nic neohlasil...<br/>"
                         + "Tym    padom pokracuje vo svojej <i>strategii</i> <a href=\"http://none.net/strategy\">prilakat uzivatelov ich netrpezlivostou</a></p>";
-        String text2 = "<i>St¯Ìbrn·</i>\n koËka\n <b>sk·kala</b>\n p¯es r˘æovÈho konÏ <u>u πiπatÈho</u> melounu.";
+        String text2 = "<i>St≈ô√≠brn√°</i>\n koƒçka\n <b>sk√°kala</b>\n p≈ôes r≈Ø≈æov√©ho konƒõ <u>u ≈°i≈°at√©ho</u> melounu.";
         System.out.println(f.format(text1));
         System.out.println(f.format(text2));
     }

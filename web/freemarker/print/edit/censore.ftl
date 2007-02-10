@@ -4,12 +4,12 @@
 
  <@lib.showThread THREAD, 0, TOOL.createEmptyDiscussion(), false />
 
-<p>Napi¹te zde dùvod, proè cenzurujete tento pøíspìvek.</p>
+<p>NapiÅ¡te zde dÅ¯vod, proÄ cenzurujete tento pÅ™Ã­spÄ›vek.</p>
 
 <form action="${URL.make("/EditDiscussion")}" method="POST">
  <table cellpadding="5">
   <tr>
-   <td class="required">Komentáø</td>
+   <td class="required">KomentÃ¡Å™</td>
    <td>
     <textarea name="text" cols="60" rows="5">${PARAMS.text?if_exists?html}</textarea>
    </td>
@@ -17,7 +17,7 @@
   <tr>
    <td>&nbsp;</td>
    <td>
-    <input type="submit" name="finish" value="Dokonèi">
+    <input type="submit" name="finish" value="DokonÄi">
    </td>
   </tr>
  </table>

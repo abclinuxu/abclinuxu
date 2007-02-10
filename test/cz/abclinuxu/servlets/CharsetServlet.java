@@ -45,7 +45,7 @@ web.xml
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("ISO-8859-1");
         String tmp = request.getParameter("note");
-//        String tmp = "k¯Ìæ·Ëek";
+//        String tmp = "k≈ô√≠≈æ√°ƒçek";
         String tmp2 = new String(tmp.getBytes(),"ISO-8859-2");
         String tmp3 = new String(tmp.getBytes(),"ISO-8859-1");
         String tmp4 = new String(tmp.getBytes(),"UTF-8");

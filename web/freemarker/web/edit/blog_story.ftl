@@ -2,36 +2,36 @@
 
 <@lib.showMessages/>
 
-<h2>Úvod</h2>
+<h2>Ãšvod</h2>
 
-<p>Tento formuláø slou¾í pro vkládání novıch zápisù do va¹eho blogu.
-Ka¾dı zápis musí mít titulek, kterı by mìl struènì a jasnì popisovat,
-o èem vá¹ zápis bude pojednávat. Titulek bude zobrazen i ve va¹em RSS.
-Text zápisu pi¹te ve validním HTML
+<p>Tento formulÃ¡Å™ slouÅ¾Ã­ pro vklÃ¡dÃ¡nÃ­ novÃ½ch zÃ¡pisÅ¯ do vaÅ¡eho blogu.
+KaÅ¾dÃ½ zÃ¡pis musÃ­ mÃ­t titulek, kterÃ½ by mÄ›l struÄnÄ› a jasnÄ› popisovat,
+o Äem vÃ¡Å¡ zÃ¡pis bude pojednÃ¡vat. Titulek bude zobrazen i ve vaÅ¡em RSS.
+Text zÃ¡pisu piÅ¡te ve validnÃ­m HTML
 (<a href="http://www.kosek.cz/clanky/html/01.html">rychlokurz</a>,
-<a href="http://www.jakpsatweb.cz/html/">pøíruèka</a>).
+<a href="http://www.jakpsatweb.cz/html/">pÅ™Ã­ruÄka</a>).
 </p>
 
-<p>Del¹í pøíspìvky lze rozdìlit na úvodní èást, která se zobrazí
-ve vıpisu a zbytek textu. Pøi zobrazení zápisu budou obì èásti automaticky
-spojeny do jednoho celku. Pro dìlení pou¾ijte speciální znaèku <code>&lt;break&gt;</code>.
-Dávejte si pozor na to, aby tato znaèka nebyla mezi párovımi HTML znaèkami.
-Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
+<p>DelÅ¡Ã­ pÅ™Ã­spÄ›vky lze rozdÄ›lit na ÃºvodnÃ­ ÄÃ¡st, kterÃ¡ se zobrazÃ­
+ve vÃ½pisu a zbytek textu. PÅ™i zobrazenÃ­ zÃ¡pisu budou obÄ› ÄÃ¡sti automaticky
+spojeny do jednoho celku. Pro dÄ›lenÃ­ pouÅ¾ijte speciÃ¡lnÃ­ znaÄku <code>&lt;break&gt;</code>.
+DÃ¡vejte si pozor na to, aby tato znaÄka nebyla mezi pÃ¡rovÃ½mi HTML znaÄkami.
+SystÃ©m zlom vyÅ¾aduje aÅ¾ od limitu stopadesÃ¡ti slov.
 </p>
 
 <#if DELAYED>
-    <p>Pokud nechcete pøíspìvek ihned publikovat, pou¾ijte tlaèítko
-    Ulo¾. Tlaèítko Publikuj okam¾itì pøíspìvek zveøejní.
+    <p>Pokud nechcete pÅ™Ã­spÄ›vek ihned publikovat, pouÅ¾ijte tlaÄÃ­tko
+    UloÅ¾. TlaÄÃ­tko Publikuj okamÅ¾itÄ› pÅ™Ã­spÄ›vek zveÅ™ejnÃ­.
     </p>
 </#if>
 
 <#if PREVIEW?exists>
- <h2>Náhled va¹eho zápisu</h2>
+ <h2>NÃ¡hled vaÅ¡eho zÃ¡pisu</h2>
 
  <div style="padding-left: 30pt">
     <h3>${TOOL.xpath(PREVIEW, "/data/name")}</h3>
     <p class="cl_inforadek">${DATE.show(PREVIEW.created, "CZ_SHORT")} |
-        Pøeèteno: ${TOOL.getCounterValue(PREVIEW,"read")}x
+        PÅ™eÄteno: ${TOOL.getCounterValue(PREVIEW,"read")}x
         <#if PREVIEW.subType?exists>| ${CATEGORIES[PREVIEW.subType]?if_exists}</#if>
     </p>
     ${TOOL.xpath(PREVIEW, "/data/perex")?if_exists}
@@ -39,22 +39,22 @@ Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
  </div>
 </#if>
 
-<h2>Zde mù¾ete provést své úpravy</h2>
+<h2>Zde mÅ¯Å¾ete provÃ©st svÃ© Ãºpravy</h2>
 
 <form action="${URL.make("/blog/edit/"+STORY.id)}" method="POST" name="form">
 <table class="siroka" cellpadding="5">
     <tr>
         <td>
-            <span class="required">Titulek zápisu</span>
-            <a class="info" href="#">?<span class="tooltip">Zde nastavíte titulek va¹eho zápisu. Je dùle¾itı pro RSS.</span></a>
+            <span class="required">Titulek zÃ¡pisu</span>
+            <a class="info" href="#">?<span class="tooltip">Zde nastavÃ­te titulek vaÅ¡eho zÃ¡pisu. Je dÅ¯leÅ¾itÃ½ pro RSS.</span></a>
             <input type="text" name="title" size="60" value="${PARAMS.title?if_exists?html}">
             <div class="error">${ERRORS.title?if_exists}</div>
         </td>
     </tr>
     <tr>
         <td>
-            Kategorie zápisu
-            <a class="info" href="#">?<span class="tooltip">Zde nastavíte kategorii va¹eho zápisu. Mù¾ete tak èlenit zápisy do rùznıch kategorií.</span></a>
+            Kategorie zÃ¡pisu
+            <a class="info" href="#">?<span class="tooltip">Zde nastavÃ­te kategorii vaÅ¡eho zÃ¡pisu. MÅ¯Å¾ete tak Älenit zÃ¡pisy do rÅ¯znÃ½ch kategoriÃ­.</span></a>
             <select name="cid">
                 <#list CATEGORIES?keys as category>
                     <option value="${category}"<#if category==PARAMS.cid?default("UNDEF")> selected</#if>>${CATEGORIES[category]}</option>
@@ -64,15 +64,15 @@ Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
     </tr>
     <tr>
         <td>
-            <p class="required">Obsah zápisu</p>
+            <p class="required">Obsah zÃ¡pisu</p>
             <div class="form-edit">
-                <a href="javascript:insertAtCursor(document.form.content, '<b>', '</b>');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
-                <a href="javascript:insertAtCursor(document.form.content, '<i>', '</i>');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
-                <a href="javascript:insertAtCursor(document.form.content, '<a href=&quot;&quot;>', '</a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
-                <a href="javascript:insertAtCursor(document.form.content, '<p>', '</p>');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
-                <a href="javascript:insertAtCursor(document.form.content, '<pre>', '</pre>');" id="mono" title="Vlo¾it formátovanı text. Vhodné pouze pro konfiguraèní soubory èi vıpisy.">&lt;pre&gt;</a>
-		        <a href="javascript:insertAtCursor(document.form.content, '<code>', '</code>');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
-                <a href="javascript:insertAtCursor(document.form.content, '<break>', '');" id="mono" title="Vlo¾it znaèku zlomu">&lt;break&gt;</a>
+                <a href="javascript:insertAtCursor(document.form.content, '<b>', '</b>');" id="serif" title="VloÅ¾it znaÄku tuÄnÄ›"><b>B</b></a>
+                <a href="javascript:insertAtCursor(document.form.content, '<i>', '</i>');" id="serif" title="VloÅ¾it znaÄku kurzÃ­va"><i>I</i></a>
+                <a href="javascript:insertAtCursor(document.form.content, '<a href=&quot;&quot;>', '</a>');" id="mono" title="VloÅ¾it znaÄku odkazu">&lt;a&gt;</a>
+                <a href="javascript:insertAtCursor(document.form.content, '<p>', '</p>');" id="mono" title="VloÅ¾it znaÄku odstavce">&lt;p&gt;</a>
+                <a href="javascript:insertAtCursor(document.form.content, '<pre>', '</pre>');" id="mono" title="VloÅ¾it formÃ¡tovanÃ½ text. VhodnÃ© pouze pro konfiguraÄnÃ­ soubory Äi vÃ½pisy.">&lt;pre&gt;</a>
+		        <a href="javascript:insertAtCursor(document.form.content, '<code>', '</code>');" id="mono" title="VloÅ¾it znaÄku pro pÃ­smo s pevnou Å¡Ã­Å™kou">&lt;code&gt;</a>
+                <a href="javascript:insertAtCursor(document.form.content, '<break>', '');" id="mono" title="VloÅ¾it znaÄku zlomu">&lt;break&gt;</a>
             </div>
             <div class="error">${ERRORS.content?if_exists}</div>
             <textarea tabindex="2" name="content" class="siroka" rows="30">${PARAMS.content?if_exists?html}</textarea>
@@ -80,12 +80,12 @@ Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
     </tr>
     <tr>
         <td>
-            <input type="submit" name="preview" value="Náhled">
+            <input type="submit" name="preview" value="NÃ¡hled">
             <#if DELAYED>
-                <input tabindex="3" type="submit" name="delay" value="Ulo¾">
+                <input tabindex="3" type="submit" name="delay" value="UloÅ¾">
                 <input tabindex="4" type="submit" name="finish" value="Publikuj">
             <#else>
-                <input tabindex="3" type="submit" name="finish" value="Dokonèi">
+                <input tabindex="3" type="submit" name="finish" value="DokonÄi">
             </#if>
         </td>
     </tr>

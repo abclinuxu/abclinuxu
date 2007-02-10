@@ -1,6 +1,5 @@
---CREATE DATABASE abc default character set latin2 collate latin2_general_ci; -- tenhle fungoval pro devel databazi
---CREATE DATABASE abc default character set utf8 collate utf8_bin;
--- collate utf8_czech_ci nefunguje, nerozlisuje se mezi normalnimi a akcentovanymi znaky
+--CREATE DATABASE abc default character set utf8 collate utf8_czech_ci; 
+-- utf8_czech_ci mozna nerozlisuje se mezi normalnimi a akcentovanymi znaky
 
 --USE abc;
 
@@ -17,7 +16,7 @@ CREATE TABLE uzivatel (
  heslo VARCHAR(12) NOT NULL,     	        -- nekryptovane heslo
  prezdivka VARCHAR(20) NULL UNIQUE,         -- prezdivka
  data TEXT                                  -- XML s nazvem, ikonou, poznamkou ...
-) collate latin2_bin;
+) collate utf8_bin;
 ALTER TABLE uzivatel ADD INDEX in_nick (prezdivka);
 
 
@@ -230,4 +229,4 @@ CREATE TABLE stara_adresa (
 CREATE TABLE hledano (
  retezec VARCHAR(255) PRIMARY KEY,               -- dotaz do fulltextoveho hledani
  pocet INT(6) NOT NULL DEFAULT 0                 -- kolikrat bylo hledano (bez kliku na dalsi stranky vysledku)
-);
+) collate utf8_bin;

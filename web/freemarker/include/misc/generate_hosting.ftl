@@ -1,34 +1,34 @@
 <div class="host">
     <div class="img-header">
-        <p>Pøipojení:<br /><img src="/images/hosting/gts.png" alt="gts" width="64" height="64"></p>
+        <p>PÅ™ipojenÃ­:<br /><img src="/images/hosting/gts.png" alt="gts" width="64" height="64"></p>
         <p>Switche:<br /><img src="/images/hosting/hp.gif" alt="hewlett-packard" width="80" height="64"></p>
         <p>Firewall:<br /><img src="/images/hosting/juniper.png" alt="juniper" width="143" height="40"></p>
     </div>
 
     <h1 class="st_nadpis">
         <img src="/images/site2/sflista/ah.gif" width="18" height="18" alt="abchost.cz logo" />
-        <a href="http://www.abchost.cz" title="dedikovanı hosting">
-        AbcHost.cz - dedikované stroje od profesionálù z abclinuxu.cz</a>
+        <a href="http://www.abchost.cz" title="dedikovanÃ½ hosting">
+        AbcHost.cz - dedikovanÃ© stroje od profesionÃ¡lÅ¯ z abclinuxu.cz</a>
     </h1>
 
     <h2 class="st_nadpis">
-        <a href="http://www.abchost.cz" title="dedikovanı hosting">AbcHost.cz</a> = <span style="color:red">SERVER</span> +
+        <a href="http://www.abchost.cz" title="dedikovanÃ½ hosting">AbcHost.cz</a> = <span style="color:red">SERVER</span> +
         <span style="color:blue">KONEKTIVITA</span> [+
-        <span style="color:green">VOLITELNÉ SLU®BY</span>]
+        <span style="color:green">VOLITELNÃ‰ SLUÅ½BY</span>]
     </h2>
 
     <ul>
-        <li>kvalitní 1U server v cenì, pøipraven k okam¾itému zapojení</li>
-        <li>jednoduchı a rychlı postup sepsání smlouvy</li>
-        <li>nainstalován Debian GNU/Linux (nebo Solaris), zákazník má k dispozici root úèet</li>
-        <li>vlastní IP adresa, neomezenı pøenos dat do NIX i zahranièí</li>
-        <li>zálohované napájení vysokokapacitním UPS a dieselagregátorem</li>
-        <li>volitelnì vedení sekundárního DNS a po¹tovního serveru</li>
-        <li>volitelnì <a href="/images/hosting/netscreen_juniper.pdf">firewall Netscreen</a> (PDF),
-        IP balancing, vzdálenı restart, zálohování èi console server ...</li>
-        <li>plnì zálohované pøipojení do peeringového centra NIX 2 x 2 Gbps</li>
-        <li>plnì zálohované pøipojení do zahranièí 2 x 2,5 Gbps, dva nezávislí Tier-1 poskytovatelé</li>
-        <li>moderní telehouse Nagano, Praha 3</li>
+        <li>kvalitnÃ­ 1U server v cenÄ›, pÅ™ipraven k okamÅ¾itÃ©mu zapojenÃ­</li>
+        <li>jednoduchÃ½ a rychlÃ½ postup sepsÃ¡nÃ­ smlouvy</li>
+        <li>nainstalovÃ¡n Debian GNU/Linux (nebo Solaris), zÃ¡kaznÃ­k mÃ¡ k dispozici root ÃºÄet</li>
+        <li>vlastnÃ­ IP adresa, neomezenÃ½ pÅ™enos dat do NIX i zahraniÄÃ­</li>
+        <li>zÃ¡lohovanÃ© napÃ¡jenÃ­ vysokokapacitnÃ­m UPS a dieselagregÃ¡torem</li>
+        <li>volitelnÄ› vedenÃ­ sekundÃ¡rnÃ­ho DNS a poÅ¡tovnÃ­ho serveru</li>
+        <li>volitelnÄ› <a href="/images/hosting/netscreen_juniper.pdf">firewall Netscreen</a> (PDF),
+        IP balancing, vzdÃ¡lenÃ½ restart, zÃ¡lohovÃ¡nÃ­ Äi console server ...</li>
+        <li>plnÄ› zÃ¡lohovanÃ© pÅ™ipojenÃ­ do peeringovÃ©ho centra NIX 2 x 2 Gbps</li>
+        <li>plnÄ› zÃ¡lohovanÃ© pÅ™ipojenÃ­ do zahraniÄÃ­ 2 x 2,5 Gbps, dva nezÃ¡vislÃ­ Tier-1 poskytovatelÃ©</li>
+        <li>modernÃ­ telehouse Nagano, Praha 3</li>
     </ul>
 
 <h2>Servery</h2>
@@ -44,7 +44,7 @@
                  <#if server.newArrival><span class="novinka">novinka!</span></#if>
                  <#if server.action><span class="akce">akce!</span></#if>
            </h4>
-           <p class="price">${server.price.price} Kè ${server.price.paymentPeriod}</p>
+           <p class="price">${server.price.price} KÄ ${server.price.paymentPeriod}</p>
            <div class="img-server">
                <a href="${server.url}"><img src="${server.imageUrl}" alt="${server.name}"></a>
            </div>
@@ -54,7 +54,7 @@
                <b>HD:</b> ${server.disc}<br />
                <b>LAN:</b> ${server.network}<br />
                <b>Konektivita:</b> ${server.bandwidth}<br />
-               <b>Pøenos:</b> ${server.transfers}
+               <b>PÅ™enos:</b> ${server.transfers}
            </p>
            <p class="avail">${server.availability}</p>
        </td>
@@ -62,7 +62,7 @@
   </#list>
 </table>
 
-<h2>Doplòkové slu¾by</h2>
+<h2>DoplÅˆkovÃ© sluÅ¾by</h2>
 
 <table>
     <#list SERVICES as service>
@@ -76,7 +76,7 @@
                 <p>${service.description}</p>
 -->
             </td>
-            <td class="price">${service.price.price} Kè mìsíènì</td>
+            <td class="price">${service.price.price} KÄ mÄ›sÃ­ÄnÄ›</td>
         </tr>
     </#list>
 </table>
@@ -90,6 +90,6 @@
 </p>
 
 <p style="font-size:85%;font-style: italic;">
-    Ceny jsou uvedeny bez DPH. Pronájem serveru je v cenì zvolené varianty.
+    Ceny jsou uvedeny bez DPH. PronÃ¡jem serveru je v cenÄ› zvolenÃ© varianty.
 </p>
 </div>

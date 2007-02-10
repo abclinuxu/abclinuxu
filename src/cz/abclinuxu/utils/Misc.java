@@ -98,7 +98,7 @@ public class Misc {
             last++;
         }
         if (last==0)
-            throw new InvalidInputException("Øetìzec '"+str+"' nemù¾e bıt pøeveden na èíslo!");
+            throw new InvalidInputException("Å˜etÄ›zec '"+str+"' nemÅ¯Å¾e bÃ½t pÅ™eveden na ÄÃ­slo!");
         if (str.length()!=last)
             str = str.substring(0,last);
         return Integer.parseInt(str);

@@ -28,15 +28,15 @@
                   <input type="hidden" name="advancedMode" value="true">
                   <table border="0" width="100%">
                    <tr>
-                    <td><label><input type="checkbox" name="type" value="clanek" <#if TYPES.article>checked</#if>>»l·nky</label></td>
-                    <td><label><input type="checkbox" name="type" value="otazka" <#if TYPES.question>checked</#if>>DiskuznÌ fÛrum</label></td>    <td><label><input type="checkbox" name="type" value="faq" <#if TYPES.faq>checked</#if>>FAQ</label></td>
+                    <td><label><input type="checkbox" name="type" value="clanek" <#if TYPES.article>checked</#if>>ƒål√°nky</label></td>
+                    <td><label><input type="checkbox" name="type" value="otazka" <#if TYPES.question>checked</#if>>Diskuzn√≠ f√≥rum</label></td>    <td><label><input type="checkbox" name="type" value="faq" <#if TYPES.faq>checked</#if>>FAQ</label></td>
                     <td><label><input type="checkbox" name="type" value="pojem" <#if TYPES.dictionary>checked</#if>>Pojmy</label></td>
                    </tr>
                    <tr>
-                    <td><label><input type="checkbox" name="type" value="zpravicka" <#if TYPES.news>checked</#if>>Zpr·viËky</label></td>
+                    <td><label><input type="checkbox" name="type" value="zpravicka" <#if TYPES.news>checked</#if>>Zpr√°viƒçky</label></td>
                     <td><label><input type="checkbox" name="type" value="diskuse" <#if TYPES.discussion>checked</#if>>Diskuze u obsahu</label></td>
                     <td><label><input type="checkbox" name="type" value="hardware" <#if TYPES.hardware>checked</#if>>Hardware</label></td>
-                    <td><label><input type="checkbox" name="type" value="ovladac" <#if TYPES.driver>checked</#if>>OvladaËe</label></td>
+                    <td><label><input type="checkbox" name="type" value="ovladac" <#if TYPES.driver>checked</#if>>Ovladaƒçe</label></td>
                    </tr>
                    <tr>
                     <td><label><input type="checkbox" name="type" value="sekce" <#if TYPES.section>checked</#if>>Sekce</label></td>
@@ -45,15 +45,15 @@
                     <td><label><input type="checkbox" name="type" value="anketa" <#if TYPES.poll>checked</#if>>Ankety</label></td>
                    </tr>
                    <tr>
-                    <td colspan="4" align="left"><label><input type="checkbox" onclick="toggle(this)">Vyber vπe/nic</label></td>
+                    <td colspan="4" align="left"><label><input type="checkbox" onclick="toggle(this)">Vyber v≈°e/nic</label></td>
                    </tr>
                   </table>
               <#else>
-                  <br><a href="/Search?advancedMode=true<#if PARAMS.query?exists>&amp;query=${PARAMS.query?url}</#if>">RozπÌ¯enÈ hled·nÌ</a>
+                  <br><a href="/Search?advancedMode=true<#if PARAMS.query?exists>&amp;query=${PARAMS.query?url}</#if>">Roz≈°√≠≈ôen√© hled√°n√≠</a>
               </#if>
             </td>
             <td align="right" valign="middle">
-                <a href="http://lucene.apache.org/java/docs/" title="Knihovna pro fulltextovÈ hled·nÌ"><img
+                <a href="http://lucene.apache.org/java/docs/" title="Knihovna pro fulltextov√© hled√°n√≠"><img
                 src="/images/site2/lucene.png" width="150" height="23" alt="Lucene" border="0"></a>
                 <script language="javascript1.2" type="text/javascript">
                     if ((typeof window.sidebar == "object") && (typeof window.sidebar.addPanel == "function")) {
@@ -61,10 +61,10 @@
                         moz_ico = "http://www.abclinuxu.cz/images/site/abclinuxu.png";
                         moz_tit = "Portal ABC Linuxu";
                         moz_cat = "Web";
-                        document.write("<br><img src=\"/images/site/mozilla.gif\" width=\"16\" height=\"16\"> <a href=\"javascript:window.sidebar.addSearchEngine(moz_src, moz_ico, moz_tit, moz_cat);\" title=\"P¯idat vyhled·vacÌ modul pro Mozillu\">Mozilla/Firefox</a>&nbsp;(<a href=\"http://www.czilla.cz/sidebars/search.html\" title=\"VÌce o vyhled·vacÌch modulech pro Mozillu\">?</a>)");
+                        document.write("<br><img src=\"/images/site/mozilla.gif\" width=\"16\" height=\"16\"> <a href=\"javascript:window.sidebar.addSearchEngine(moz_src, moz_ico, moz_tit, moz_cat);\" title=\"P≈ôidat vyhled√°vac√≠ modul pro Mozillu\">Mozilla/Firefox</a>&nbsp;(<a href=\"http://www.czilla.cz/sidebars/search.html\" title=\"V√≠ce o vyhled√°vac√≠ch modulech pro Mozillu\">?</a>)");
                     }
                 </script>
-                <br><a href="/doc/napoveda/hledani">N·povÏda k hled·nÌ</a>
+                <br><a href="/doc/napoveda/hledani">N√°povƒõda k hled√°n√≠</a>
             </td>
         </tr>
     </table>
@@ -73,16 +73,16 @@
 
 <#if RESULT?exists>
     <p class="search_results">
-        Nalezeno ${RESULT.total} objekt˘ (milisekund: ${SEARCH_TIME})<#t><#if (RESULT.total > 0)>,
+        Nalezeno ${RESULT.total} objekt≈Ø (milisekund: ${SEARCH_TIME})<#t><#if (RESULT.total > 0)>,
         zobrazuji ${RESULT.thisPage.row} - ${RESULT.thisPage.row+RESULT.thisPage.size}</#if>.
-        PoslednÌ aktualizace ${DATE.show(UPDATED,"CZ_FULL")}.
+        Posledn√≠ aktualizace ${DATE.show(UPDATED,"CZ_FULL")}.
     </p>
 
     <#list RESULT.data as doc>
         <div class="search_result">
             <!--m-->
             <a href="${doc.url}" class="search_title">${doc.title?default(doc.url)}</a>
-            <#if (doc.typ='otazka' && doc.vyreseno=="ano")> <span class="search_solved">(vy¯eπeno)</span></#if>
+            <#if (doc.typ='otazka' && doc.vyreseno=="ano")> <span class="search_solved">(vy≈ôe≈°eno)</span></#if>
             <!--n-->
             <#if doc.fragments?exists>
                 <p class="search_fragments">${doc.fragments}</p>
@@ -92,42 +92,42 @@
                 Sekce
             <#elseif doc.typ='hardware'>
                 Hardware,
-                poslednÌ zmÏna: ${DATE.show(doc.datum_zmeny,"SMART")},
-                ${doc.velikost_obsahu} znak˘
+                posledn√≠ zmƒõna: ${DATE.show(doc.datum_zmeny,"SMART")},
+                ${doc.velikost_obsahu} znak≈Ø
             <#elseif doc.typ='diskuse' ||  doc.typ='otazka'>
                 Diskuse,
-                poËet reakcÌ: ${doc.odpovedi},
-                vytvo¯ena: ${DATE.show(doc.datum_vytvoreni,"SMART")},
-                poslednÌ reakce: ${DATE.show(doc.datum_zmeny,"SMART")},
-                ${doc.velikost_obsahu} znak˘
+                poƒçet reakc√≠: ${doc.odpovedi},
+                vytvo≈ôena: ${DATE.show(doc.datum_vytvoreni,"SMART")},
+                posledn√≠ reakce: ${DATE.show(doc.datum_zmeny,"SMART")},
+                ${doc.velikost_obsahu} znak≈Ø
             <#elseif doc.typ='software'>
                 Software,
-                poslednÌ zmÏna: ${DATE.show(doc.datum_zmeny,"SMART")},
-                ${doc.velikost_obsahu} znak˘
+                posledn√≠ zmƒõna: ${DATE.show(doc.datum_zmeny,"SMART")},
+                ${doc.velikost_obsahu} znak≈Ø
             <#elseif doc.typ='ovladac'>
-                OvladaË,
-                poslednÌ zmÏna: ${DATE.show(doc.datum_zmeny,"SMART")},
-                ${doc.velikost_obsahu} znak˘
+                Ovladaƒç,
+                posledn√≠ zmƒõna: ${DATE.show(doc.datum_zmeny,"SMART")},
+                ${doc.velikost_obsahu} znak≈Ø
             <#elseif doc.typ='faq'>
                 FAQ,
-                poslednÌ zmÏna: ${DATE.show(doc.datum_zmeny,"SMART")},
-                ${doc.velikost_obsahu} znak˘
+                posledn√≠ zmƒõna: ${DATE.show(doc.datum_zmeny,"SMART")},
+                ${doc.velikost_obsahu} znak≈Ø
             <#elseif doc.typ='clanek'>
-                »l·nek,
-                vytvo¯en: ${DATE.show(doc.datum_vytvoreni,"SMART")},
-                ${doc.velikost_obsahu} znak˘
+                ƒål√°nek,
+                vytvo≈ôen: ${DATE.show(doc.datum_vytvoreni,"SMART")},
+                ${doc.velikost_obsahu} znak≈Ø
             <#elseif doc.typ='zpravicka'>
-                Zpr·viËka,
-                vytvo¯ena: ${DATE.show(doc.datum_vytvoreni,"SMART")},
-                ${doc.velikost_obsahu} znak˘
+                Zpr√°viƒçka,
+                vytvo≈ôena: ${DATE.show(doc.datum_vytvoreni,"SMART")},
+                ${doc.velikost_obsahu} znak≈Ø
             <#elseif doc.typ='pojem'>
                 Pojem,
-                poslednÌ zmÏna: ${DATE.show(doc.datum_zmeny,"SMART")},
-                ${doc.velikost_obsahu} znak˘
+                posledn√≠ zmƒõna: ${DATE.show(doc.datum_zmeny,"SMART")},
+                ${doc.velikost_obsahu} znak≈Ø
             <#elseif doc.typ='blog'>
                 Blog,
-                vytvo¯en: ${DATE.show(doc.datum_vytvoreni,"SMART")},
-                ${doc.velikost_obsahu} znak˘
+                vytvo≈ôen: ${DATE.show(doc.datum_vytvoreni,"SMART")},
+                ${doc.velikost_obsahu} znak≈Ø
             </#if>
             </p>
         </div>

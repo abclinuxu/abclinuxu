@@ -113,7 +113,7 @@ public class SelectUser implements AbcAction {
             return actionShowForm(request,env,params);
 
         if (searched.preciseEquals(new User())) {
-            ServletUtils.addError(Constants.ERROR_GENERIC,"Vyplòte alespoò jedno políèko!",env,null);
+            ServletUtils.addError(Constants.ERROR_GENERIC,"VyplÅˆte alespoÅˆ jedno polÃ­Äko!",env,null);
             return actionShowForm(request, env, params);
         }
 
@@ -122,7 +122,7 @@ public class SelectUser implements AbcAction {
         List found = persistence.findByExample(list, null);
 
         if ( found.size()==0 ) {
-            ServletUtils.addMessage("Nenalezen ¾ádný u¾ivatel!", env, null);
+            ServletUtils.addMessage("Nenalezen Å¾Ã¡dnÃ½ uÅ¾ivatel!", env, null);
             return actionShowForm(request, env, params);
         }
 
@@ -178,7 +178,7 @@ public class SelectUser implements AbcAction {
          if (city==null || city.length()==0)
              return true;
          if ( city.length()>0 && city.length()<3 ) {
-             ServletUtils.addError(PARAM_CITY, "Bydli¹tì musí obsahovat nejménì tøi písmena!", env, null);
+             ServletUtils.addError(PARAM_CITY, "BydliÅ¡tÄ› musÃ­ obsahovat nejmÃ©nÄ› tÅ™i pÃ­smena!", env, null);
              return false;
          }
     	 user.setData("%<city>%"+city+"%</city>%");
@@ -197,7 +197,7 @@ public class SelectUser implements AbcAction {
         if (name==null || name.length()==0)
             return true;
         if ( name.length()>0 && name.length()<3 ) {
-            ServletUtils.addError(PARAM_NAME, "Jméno musí obsahovat nejménì tøi písmena!", env, null);
+            ServletUtils.addError(PARAM_NAME, "JmÃ©no musÃ­ obsahovat nejmÃ©nÄ› tÅ™i pÃ­smena!", env, null);
             return false;
         }
         user.setName("%"+name+"%");
@@ -216,7 +216,7 @@ public class SelectUser implements AbcAction {
         if (login==null || login.length()==0)
             return true;
         if ( login.length()>0 && login.length()<3 ) {
-            ServletUtils.addError(PARAM_LOGIN, "Pøihla¹ovací jméno musí obsahovat nejménì tøi písmena!", env, null);
+            ServletUtils.addError(PARAM_LOGIN, "PÅ™ihlaÅ¡ovacÃ­ jmÃ©no musÃ­ obsahovat nejmÃ©nÄ› tÅ™i pÃ­smena!", env, null);
             return false;
         }
         user.setLogin("%"+login+"%");
@@ -235,7 +235,7 @@ public class SelectUser implements AbcAction {
         if (email==null || email.length()==0)
             return true;
         if ( email.length()>0 && (email.length()<3 || email.indexOf('@')==-1) ) {
-            ServletUtils.addError(PARAM_EMAIL, "Email musí obsahovat nejménì tøi písmena a zavináè!", env, null);
+            ServletUtils.addError(PARAM_EMAIL, "Email musÃ­ obsahovat nejmÃ©nÄ› tÅ™i pÃ­smena a zavinÃ¡Ä!", env, null);
             return false;
         }
         user.setEmail("%"+email+"%");
@@ -261,7 +261,7 @@ public class SelectUser implements AbcAction {
             user.setId(id);
             return true;
         } catch (NumberFormatException e) {
-            ServletUtils.addError(PARAM_USER, "Zadejte èíslo!", env, null);
+            ServletUtils.addError(PARAM_USER, "Zadejte ÄÃ­slo!", env, null);
             return false;
         }
     }

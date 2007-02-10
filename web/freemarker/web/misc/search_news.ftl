@@ -16,13 +16,13 @@
     }
 </script>
 
-<h1>Hled·nÌ</h1>
+<h1>Hled√°n√≠</h1>
 
 <form action="/Search" method="GET">
   <p><input type="text" name="query" value="${QUERY?if_exists?html}" size="50" tabindex="1">
   <input type="submit" value="Hledej" tabindex="2"></p>
 
-  <p><b>KlÌËov· slova:</b> AND + OR NOT - ( ) "fr·ze z vÌce slov"</p>
+  <p><b>Kl√≠ƒçov√° slova:</b> AND + OR NOT - ( ) "fr√°ze z v√≠ce slov"</p>
   <#if ERRORS.query?exists><div class="error">${ERRORS.query}</div></#if>
 
   <table>
@@ -33,7 +33,7 @@
      </td>
     <#if category_index%3==2></tr></#if>
    </#list>
-   <tr><td colspan="3"><button type="button" onclick="toggle(this)">Vπe/nic</button></td></tr>
+   <tr><td colspan="3"><button type="button" onclick="toggle(this)">V≈°e/nic</button></td></tr>
   </table>
  <input type="hidden" name="parent" value="42932">
  <input type="hidden" name="type" value="zpravicka">
@@ -41,7 +41,7 @@
 <#if RESULT?exists>
 
     <p align="right">
-        Nalezeno ${RESULT.total} objekt˘, zobrazuji ${RESULT.thisPage.row} - ${RESULT.thisPage.row+RESULT.thisPage.size}.
+        Nalezeno ${RESULT.total} objekt≈Ø, zobrazuji ${RESULT.thisPage.row} - ${RESULT.thisPage.row+RESULT.thisPage.size}.
     </p>
 
     <#list RESULT.data as doc>
@@ -53,9 +53,9 @@
                 <p class="search_fragments">${doc.fragments}</p>
             </#if>
             <p class="search_details">
-                Zpr·viËka,
-                vytvo¯ena: ${DATE.show(doc.datum_vytvoreni,"SMART")},
-                ${doc.velikost_obsahu} znak˘
+                Zpr√°viƒçka,
+                vytvo≈ôena: ${DATE.show(doc.datum_vytvoreni,"SMART")},
+                ${doc.velikost_obsahu} znak≈Ø
             </p>
         </div>
     </#list>

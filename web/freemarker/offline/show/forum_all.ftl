@@ -1,70 +1,70 @@
 <#import "../macros.ftl" as lib>
 <#include "../header.ftl">
 
-<h1>Diskusní fóra</h1>
+<h1>DiskusnÃ­ fÃ³ra</h1>
 
-<p>Diskusní fóra slou¾í jako místo, kde mohou nováèci i zku¹ení
-u¾ivatelé Linuxu vzájemnì komunikovat a pomáhat si. Pro ka¾dou oblast
-jsme vytvoøili jedno fórum, abyste snáze nalezli hledané informace.</p>
+<p>DiskusnÃ­ fÃ³ra slouÅ¾Ã­ jako mÃ­sto, kde mohou novÃ¡Äci i zkuÅ¡enÃ­
+uÅ¾ivatelÃ© Linuxu vzÃ¡jemnÄ› komunikovat a pomÃ¡hat si. Pro kaÅ¾dou oblast
+jsme vytvoÅ™ili jedno fÃ³rum, abyste snÃ¡ze nalezli hledanÃ© informace.</p>
 
 <h1 id="diskuzni-fora-hardware">Hardware</h1>
 
-<p>Sekce sdru¾ující diskusní fóra tıkající se instalace, nastavení
-a pou¾ívání rozlièného hardwaru pod Linuxem.</p>
+<p>Sekce sdruÅ¾ujÃ­cÃ­ diskusnÃ­ fÃ³ra tÃ½kajÃ­cÃ­ se instalace, nastavenÃ­
+a pouÅ¾Ã­vÃ¡nÃ­ rozliÄnÃ©ho hardwaru pod Linuxem.</p>
 
 <table border="0" cellspacing="6" class="siroka">
 <tr>
-<td><a href="../../${DUMP.getFile(49727)}">Základní desky</a></td>
-<td><a href="../../${DUMP.getFile(49726)}">Procesory, èipy</a></td>
-<td><a href="../../${DUMP.getFile(49773)}">Øadièe a adaptéry</a></td>
-<td><a href="../../${DUMP.getFile(49737)}">Zálo¾ní zdroje, UPS</a></td>
+<td><a href="../../${DUMP.getFile(49727)}">ZÃ¡kladnÃ­ desky</a></td>
+<td><a href="../../${DUMP.getFile(49726)}">Procesory, Äipy</a></td>
+<td><a href="../../${DUMP.getFile(49773)}">Å˜adiÄe a adaptÃ©ry</a></td>
+<td><a href="../../${DUMP.getFile(49737)}">ZÃ¡loÅ¾nÃ­ zdroje, UPS</a></td>
 </tr>
 <tr>
-<td><a href="../../${DUMP.getFile(49738)}">Grafické karty</a></td>
-<td><a href="../../${DUMP.getFile(51104)}">Zvukové karty</a></td>
-<td><a href="../../${DUMP.getFile(49730)}">Digitální foto, video</a></td>
-<td><a href="../../${DUMP.getFile(49739)}">TV, rádio, video karty</a></td>
+<td><a href="../../${DUMP.getFile(49738)}">GrafickÃ© karty</a></td>
+<td><a href="../../${DUMP.getFile(51104)}">ZvukovÃ© karty</a></td>
+<td><a href="../../${DUMP.getFile(49730)}">DigitÃ¡lnÃ­ foto, video</a></td>
+<td><a href="../../${DUMP.getFile(49739)}">TV, rÃ¡dio, video karty</a></td>
 </tr>
 <tr>
 <td><a href="../../${DUMP.getFile(49736)}">Bluetooth, IrDA</a></td>
-<td><a href="../../${DUMP.getFile(49735)}">Sí»ové komponenty</a></td>
+<td><a href="../../${DUMP.getFile(49735)}">SÃ­Å¥ovÃ© komponenty</a></td>
 <td><a href="../../${DUMP.getFile(49742)}">Modemy, ISDN, DSL</a></td>
 <td><a href="../../${DUMP.getFile(49729)}">Sestavy, notebooky, PDA</a></td>
 </tr>
 <tr>
-<td><a href="../../${DUMP.getFile(49741)}">Ukládání dat</a></td>
+<td><a href="../../${DUMP.getFile(49741)}">UklÃ¡dÃ¡nÃ­ dat</a></td>
 <td><a href="../../${DUMP.getFile(49774)}">CD a DVD mechaniky</a></td>
 <td><a href="../../${DUMP.getFile(49728)}">Monitory, LCD panely</a></td>
-<td><a href="../../${DUMP.getFile(49732)}">Klávesnice, my¹i, tablety</a></td>
+<td><a href="../../${DUMP.getFile(49732)}">KlÃ¡vesnice, myÅ¡i, tablety</a></td>
 </tr>
 <tr>
-<td><a href="../../${DUMP.getFile(49734)}">Tiskárny</a></td>
+<td><a href="../../${DUMP.getFile(49734)}">TiskÃ¡rny</a></td>
 <td><a href="../../${DUMP.getFile(49733)}">Scannery</a></td>
-<td><a href="../../${DUMP.getFile(51105)}">Ostatní hardware</a></td>
+<td><a href="../../${DUMP.getFile(51105)}">OstatnÃ­ hardware</a></td>
 <td></td>
 </tr>
 </table>
 
-<h1 id="diskuzni-fora-nastaveni">Nastavení</h1>
+<h1 id="diskuzni-fora-nastaveni">NastavenÃ­</h1>
 
-<p>Diskusní fóra na téma nastavení Linuxu, jeho prostøedí, slu¾eb
-a pøipojení k síti èi Internetu.</p>
+<p>DiskusnÃ­ fÃ³ra na tÃ©ma nastavenÃ­ Linuxu, jeho prostÅ™edÃ­, sluÅ¾eb
+a pÅ™ipojenÃ­ k sÃ­ti Äi Internetu.</p>
 
 <table border="0" cellspacing="6" class="siroka">
 <tr>
 <td><a href="../../${DUMP.getFile(50080)}">Boot, LILO, GRUB</a></td>
-<td><a href="../../${DUMP.getFile(51108)}">Oddíly, nastavení disku</a></td>
-<td><a href="../../${DUMP.getFile(51107)}">Správa napájení, APM</a></td>
+<td><a href="../../${DUMP.getFile(51108)}">OddÃ­ly, nastavenÃ­ disku</a></td>
+<td><a href="../../${DUMP.getFile(51107)}">SprÃ¡va napÃ¡jenÃ­, APM</a></td>
 </tr>
 <tr>
-<td><a href="../../${DUMP.getFile(50083)}">Grafické prostøedí</a></td>
-<td><a href="../../${DUMP.getFile(50085)}">Zemì, jazyk, klávesnice</a></td>
-<td><a href="../../${DUMP.getFile(50081)}">Jádro, moduly, ovladaèe</a></td>
+<td><a href="../../${DUMP.getFile(50083)}">GrafickÃ© prostÅ™edÃ­</a></td>
+<td><a href="../../${DUMP.getFile(50085)}">ZemÄ›, jazyk, klÃ¡vesnice</a></td>
+<td><a href="../../${DUMP.getFile(50081)}">JÃ¡dro, moduly, ovladaÄe</a></td>
 </tr>
 <tr>
-<td><a href="../../${DUMP.getFile(50084)}">Nastavení zvuku</a></td>
-<td><a href="../../${DUMP.getFile(50082)}">Pøipojení sítì, ethernet, wifi</a></td>
-<td><a href="../../${DUMP.getFile(51106)}">Zabezpeèení poèítaèe</a></td>
+<td><a href="../../${DUMP.getFile(50084)}">NastavenÃ­ zvuku</a></td>
+<td><a href="../../${DUMP.getFile(50082)}">PÅ™ipojenÃ­ sÃ­tÄ›, ethernet, wifi</a></td>
+<td><a href="../../${DUMP.getFile(51106)}">ZabezpeÄenÃ­ poÄÃ­taÄe</a></td>
 </tr>
 <tr>
 <td><a href="../../${DUMP.getFile(50235)}">Konzole, shell</a></td>
@@ -74,52 +74,52 @@ a pøipojení k síti èi Internetu.</p>
 
 <h1 id="diskuzni-fora-aplikace">Aplikace</h1>
 
-<p>Vìt¹ina va¹ich dotazù bude patøit do tìchto diskusních fór. Zabıvají
-se rùznımi aplikacemi. Ka¾dé fórum je urèeno pro jednu tøídu aplikací,
-v názvu pak má typického reprezentanta. Napøíklad do fóra
-<i>Prohlí¾eèe,&nbsp;Mozilla</i> patøí i dotazy na Operu èi Lynx, nebo ve fóru
-<i>Multimédia,&nbsp;MPlayer</i> hledejte diskuse i o Xine, XMMS a dal¹ích
-multimediálních programech.</p>
+<p>VÄ›tÅ¡ina vaÅ¡ich dotazÅ¯ bude patÅ™it do tÄ›chto diskusnÃ­ch fÃ³r. ZabÃ½vajÃ­
+se rÅ¯znÃ½mi aplikacemi. KaÅ¾dÃ© fÃ³rum je urÄeno pro jednu tÅ™Ã­du aplikacÃ­,
+v nÃ¡zvu pak mÃ¡ typickÃ©ho reprezentanta. NapÅ™Ã­klad do fÃ³ra
+<i>ProhlÃ­Å¾eÄe,&nbsp;Mozilla</i> patÅ™Ã­ i dotazy na Operu Äi Lynx, nebo ve fÃ³ru
+<i>MultimÃ©dia,&nbsp;MPlayer</i> hledejte diskuse i o Xine, XMMS a dalÅ¡Ã­ch
+multimediÃ¡lnÃ­ch programech.</p>
 
 <table border="0" cellspacing="6" class="siroka">
 <tr>
-<td><a href="../../${DUMP.getFile(51114)}">Vypalování</a></td>
-<td><a href="../../${DUMP.getFile(50088)}">Grafické editory</a></td>
-<td><a href="../../${DUMP.getFile(51101)}">Multimédia, MPlayer</a></td>
+<td><a href="../../${DUMP.getFile(51114)}">VypalovÃ¡nÃ­</a></td>
+<td><a href="../../${DUMP.getFile(50088)}">GrafickÃ© editory</a></td>
+<td><a href="../../${DUMP.getFile(51101)}">MultimÃ©dia, MPlayer</a></td>
 <td><a href="../../${DUMP.getFile(50086)}">Tvorba zvuku a videa</a></td>
 </tr>
 <tr>
-<td><a href="../../${DUMP.getFile(51121)}">Stahování dat</a></td>
+<td><a href="../../${DUMP.getFile(51121)}">StahovÃ¡nÃ­ dat</a></td>
 <td><a href="../../${DUMP.getFile(51120)}">ICQ, Jabber, atd.</a></td>
-<td><a href="../../${DUMP.getFile(51117)}">Prohlí¾eèe, Mozilla</a></td>
-<td><a href="../../${DUMP.getFile(51118)}">Ètení a zpracování po¹ty</a></td>
+<td><a href="../../${DUMP.getFile(51117)}">ProhlÃ­Å¾eÄe, Mozilla</a></td>
+<td><a href="../../${DUMP.getFile(51118)}">ÄŒtenÃ­ a zpracovÃ¡nÃ­ poÅ¡ty</a></td>
 </tr>
 <tr>
-<td><a href="../../${DUMP.getFile(51116)}">Hry a zábava</a></td>
+<td><a href="../../${DUMP.getFile(51116)}">Hry a zÃ¡bava</a></td>
 <td><a href="../../${DUMP.getFile(51115)}">KDE, Gnome, WM</a></td>
-<td><a href="../../${DUMP.getFile(51110)}">Emulátory, wine</a></td>
-<td><a href="../../${DUMP.getFile(50087)}">Kanceláøské programy</a></td>
+<td><a href="../../${DUMP.getFile(51110)}">EmulÃ¡tory, wine</a></td>
+<td><a href="../../${DUMP.getFile(50087)}">KancelÃ¡Å™skÃ© programy</a></td>
 </tr>
 <tr>
-<td><a href="../../${DUMP.getFile(50090)}">Úèetnictví, IS</a></td>
-<td><a href="../../${DUMP.getFile(51124)}">Nástroje, skripty</a></td>
-<td><a href="../../${DUMP.getFile(51113)}">Terminály, shelly</a></td>
-<td><a href="../../${DUMP.getFile(50089)}">Programování, build</a></td>
+<td><a href="../../${DUMP.getFile(50090)}">ÃšÄetnictvÃ­, IS</a></td>
+<td><a href="../../${DUMP.getFile(51124)}">NÃ¡stroje, skripty</a></td>
+<td><a href="../../${DUMP.getFile(51113)}">TerminÃ¡ly, shelly</a></td>
+<td><a href="../../${DUMP.getFile(50089)}">ProgramovÃ¡nÃ­, build</a></td>
 </tr>
 <tr>
-<td><a href="../../${DUMP.getFile(51111)}">Správa souborù</a></td>
-<td><a href="../../${DUMP.getFile(51122)}">Zálohování dat</a></td>
-<td><a href="../../${DUMP.getFile(51112)}">Správa softwaru</a></td>
-<td><a href="../../${DUMP.getFile(51123)}">Administrativní nástroje</a></td>
+<td><a href="../../${DUMP.getFile(51111)}">SprÃ¡va souborÅ¯</a></td>
+<td><a href="../../${DUMP.getFile(51122)}">ZÃ¡lohovÃ¡nÃ­ dat</a></td>
+<td><a href="../../${DUMP.getFile(51112)}">SprÃ¡va softwaru</a></td>
+<td><a href="../../${DUMP.getFile(51123)}">AdministrativnÃ­ nÃ¡stroje</a></td>
 </tr>
 <tr>
-<td><a href="../../${DUMP.getFile(52671)}">Databáze</a></td>
-<td><a href="../../${DUMP.getFile(52670)}">Souboroví démoni</a></td>
-<td><a href="../../${DUMP.getFile(52672)}">Internetoví démoni</a></td>
-<td><a href="../../${DUMP.getFile(51125)}">Ostatní démoni a slu¾by</a></td>
+<td><a href="../../${DUMP.getFile(52671)}">DatabÃ¡ze</a></td>
+<td><a href="../../${DUMP.getFile(52670)}">SouborovÃ­ dÃ©moni</a></td>
+<td><a href="../../${DUMP.getFile(52672)}">InternetovÃ­ dÃ©moni</a></td>
+<td><a href="../../${DUMP.getFile(51125)}">OstatnÃ­ dÃ©moni a sluÅ¾by</a></td>
 </tr>
 <tr>
-<td><a href="../../${DUMP.getFile(51127)}">Ostatní software</a></td>
+<td><a href="../../${DUMP.getFile(51127)}">OstatnÃ­ software</a></td>
 <td></td>
 <td></td>
 <td></td>
@@ -128,45 +128,45 @@ multimediálních programech.</p>
 
 <h1 id="diskuzni-fora-distribuce">Distribuce</h1>
 
-<p>Diskusní fóra vyhrazená pro speciality jednotlivıch distribucí.
-95% dotazù patøí do sekce <i>Hardware</i>, <i>Nastavení</i> nebo
-<i>Aplikace</i>. Zde pokládejte dotazy, jen pokud <b>opravdu</b>
-tıkají dané distribuce a nikoliv i ostatních. Ne¾ zde polo¾íte
-dotaz, projdìte si fóra v pøede¹lıch sekcích.</p>
+<p>DiskusnÃ­ fÃ³ra vyhrazenÃ¡ pro speciality jednotlivÃ½ch distribucÃ­.
+95% dotazÅ¯ patÅ™Ã­ do sekce <i>Hardware</i>, <i>NastavenÃ­</i> nebo
+<i>Aplikace</i>. Zde poklÃ¡dejte dotazy, jen pokud <b>opravdu</b>
+tÃ½kajÃ­ danÃ© distribuce a nikoliv i ostatnÃ­ch. NeÅ¾ zde poloÅ¾Ã­te
+dotaz, projdÄ›te si fÃ³ra v pÅ™edeÅ¡lÃ½ch sekcÃ­ch.</p>
 
 <table border="0" cellspacing="6" class="siroka">
 <tr>
 <td><a href="../../${DUMP.getFile(49651)}">SUSE</a></td>
 <td><a href="../../${DUMP.getFile(49645)}">Mandrake, Mandriva</a></td>
 <td><a href="../../${DUMP.getFile(49644)}">RedHat, Fedora</a></td>
-<td><a href="../../${DUMP.getFile(50239)}">®ivé distribuce, Knoppix, SLAX</a></td>
+<td><a href="../../${DUMP.getFile(50239)}">Å½ivÃ© distribuce, Knoppix, SLAX</a></td>
 </tr>
 <tr>
 <td><a href="../../${DUMP.getFile(49646)}">Debian</a></td>
 <td><a href="../../${DUMP.getFile(49647)}">Slackware</a></td>
 <td><a href="../../${DUMP.getFile(49648)}">Gentoo</a></td>
-<td><a href="../../${DUMP.getFile(49649)}">Ostatní</a></td>
+<td><a href="../../${DUMP.getFile(49649)}">OstatnÃ­</a></td>
 </tr>
 <tr>
 <td><a href="../../${DUMP.getFile(49654)}">BSD a *nixy</a></td>
-<td><a href="../../${DUMP.getFile(50236)}">Speciální</a></td>
-<td><a href="../../${DUMP.getFile(50392)}">Obecné dotazy</a></td>
+<td><a href="../../${DUMP.getFile(50236)}">SpeciÃ¡lnÃ­</a></td>
+<td><a href="../../${DUMP.getFile(50392)}">ObecnÃ© dotazy</a></td>
 <td></td>
 </tr>
 </table>
 
-<h1 id="diskuzni-fora-ostatni">Ostatní</h1>
+<h1 id="diskuzni-fora-ostatni">OstatnÃ­</h1>
 
-<p>Diskuse, které nejdou zaøadit jinam. Patøí zde i dotazy
-na komunitu Open Source, diskuse nad licencemi a také
-otázky ohlednì tohoto portálu a jeho slu¾eb.</p>
+<p>Diskuse, kterÃ© nejdou zaÅ™adit jinam. PatÅ™Ã­ zde i dotazy
+na komunitu Open Source, diskuse nad licencemi a takÃ©
+otÃ¡zky ohlednÄ› tohoto portÃ¡lu a jeho sluÅ¾eb.</p>
 
 <table border="0" cellspacing="6" class="siroka">
 <tr>
-<td><a href="../../${DUMP.getFile(49653)}">Portál AbcLinuxu</a></td>
-<td><a href="../../${DUMP.getFile(51458)}">Hnutí FSF, Open Source</a></td>
+<td><a href="../../${DUMP.getFile(49653)}">PortÃ¡l AbcLinuxu</a></td>
+<td><a href="../../${DUMP.getFile(51458)}">HnutÃ­ FSF, Open Source</a></td>
 <td><a href="../../${DUMP.getFile(51459)}">Komunita</a></td>
-<td><a href="../../${DUMP.getFile(51460)}">Nezaøaditelné</a></td>
+<td><a href="../../${DUMP.getFile(51460)}">NezaÅ™aditelnÃ©</a></td>
 </tr>
 </table>
 

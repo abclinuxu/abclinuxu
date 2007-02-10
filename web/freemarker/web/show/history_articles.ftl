@@ -16,20 +16,20 @@
 <form action="/History">
 <table border="0"><tr>
 <th>Pozice</th>
-<th>Poèet</th>
-<th>Tøídit podle</th>
-<th>Smìr</th>
+<th>PoÄet</th>
+<th>TÅ™Ã­dit podle</th>
+<th>SmÄ›r</th>
 <td></td>
 </tr><tr>
 <td><input type="text" size="4" value="${FOUND.thisPage.row}" name="from" tabindex="1"></td>
 <td><input type="text" size="3" value="${FOUND.pageSize}" name="count" tabindex="2"></td>
 <td>
- <select name="orderBy" tabindex="3"><option value="create">data publikování</option></select>
+ <select name="orderBy" tabindex="3"><option value="create">data publikovÃ¡nÃ­</option></select>
 </td>
 <td>
  <select name="orderDir" tabindex="4">
-  <option value="desc">sestupnì</option>
-  <option value="asc">vzestupnì</option>
+  <option value="desc">sestupnÄ›</option>
+  <option value="asc">vzestupnÄ›</option>
  </select>
 </td>
 <td><input type="submit" value="Zobrazit"></td>

@@ -2,16 +2,16 @@
 
 <@lib.showMessages/>
 
-<p>Chystáte se upravit èasto kladenou otázku. Povolené jsou jen zmìny,
-které vylep¹ují kvalitu odpovìdi, formátování, pravopis, stylistiku
-a podobnì. Rozhodnì jsou zakázány dotazy, od toho je zde <a href="/diskuse.jsp">diskusní fórum</a>.
-Va¹e zmìny budou ulo¾eny jako nová revize, tudí¾ je mo¾né je kdykoliv
-vrátit zpìt.</p>
+<p>ChystÃ¡te se upravit Äasto kladenou otÃ¡zku. PovolenÃ© jsou jen zmÄ›ny,
+kterÃ© vylepÅ¡ujÃ­ kvalitu odpovÄ›di, formÃ¡tovÃ¡nÃ­, pravopis, stylistiku
+a podobnÄ›. RozhodnÄ› jsou zakÃ¡zÃ¡ny dotazy, od toho je zde <a href="/diskuse.jsp">diskusnÃ­ fÃ³rum</a>.
+VaÅ¡e zmÄ›ny budou uloÅ¾eny jako novÃ¡ revize, tudÃ­Å¾ je moÅ¾nÃ© je kdykoliv
+vrÃ¡tit zpÄ›t.</p>
 <br />
 
 <#if PARAMS.preview?exists>
     <fieldset>
-        <legend>Náhled</legend>
+        <legend>NÃ¡hled</legend>
         <h1 style="margin-bottom: 1em;">${TOOL.xpath(PREVIEW, "/data/title")}</h1>
         <div>
             ${TOOL.render(TOOL.xpath(PREVIEW.data,"data/text"), USER?if_exists)}
@@ -23,22 +23,22 @@ vrátit zpìt.</p>
 <form action="${URL.make("/faq/edit")}" method="POST" name="form">
     <table class="siroka" cellpadding="5">
         <tr>
-            <td class="required">Otázka</td>
+            <td class="required">OtÃ¡zka</td>
             <td>
                 <input tabindex="1" type="text" name="title" size="80" value="${PARAMS.title?if_exists?html}">
                 <div class="error">${ERRORS.title?if_exists}</div>
             </td>
         </tr>
         <tr>
-            <td class="required">Odpovìï</td>
+            <td class="required">OdpovÄ›Ä</td>
             <td>
                 <div class="form-edit">
-                    <a href="javascript:insertAtCursor(document.form.text, '<b>', '</b>');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<i>', '</i>');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<a href=&quot;&quot;>', '</a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<p>', '</p>');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="Vlo¾it znaèku formátovaného textu. Vhodné pro konfiguraèní soubory èi vıpisy.">&lt;pre&gt;</a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<b>', '</b>');" id="serif" title="VloÅ¾it znaÄku tuÄnÄ›"><b>B</b></a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<i>', '</i>');" id="serif" title="VloÅ¾it znaÄku kurzÃ­va"><i>I</i></a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<a href=&quot;&quot;>', '</a>');" id="mono" title="VloÅ¾it znaÄku odkazu">&lt;a&gt;</a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<p>', '</p>');" id="mono" title="VloÅ¾it znaÄku odstavce">&lt;p&gt;</a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="VloÅ¾it znaÄku formÃ¡tovanÃ©ho textu. VhodnÃ© pro konfiguraÄnÃ­ soubory Äi vÃ½pisy.">&lt;pre&gt;</a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="VloÅ¾it znaÄku pro pÃ­smo s pevnou Å¡Ã­Å™kou">&lt;code&gt;</a>
                 </div>
                 <textarea tabindex="2" name="text" class="siroka" rows="20">${PARAMS.text?if_exists?html}</textarea><br>
                 <div class="error">${ERRORS.text?if_exists}</div>
@@ -46,8 +46,8 @@ vrátit zpìt.</p>
         </tr>
         <tr>
             <td colspan="2" align="center">
-                <input tabindex="3" type="submit" name="preview" value="Náhled">
-                <input tabindex="4" type="submit" name="submit" value="Dokonèi">
+                <input tabindex="3" type="submit" name="preview" value="NÃ¡hled">
+                <input tabindex="4" type="submit" name="submit" value="DokonÄi">
             </td>
         </tr>
     </table>

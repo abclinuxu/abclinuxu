@@ -1,7 +1,7 @@
 <#assign DIZ = TOOL.createDiscussionTree(ITEM,USER?if_exists,RELATION.id,true)>
 <#assign is_question=TOOL.xpath(ITEM,"data/title")?exists>
 <#if DIZ.monitored>
-    <#assign monitorState="Pøestaò sledovat"><#else><#assign monitorState="Sleduj">
+    <#assign monitorState="PÅ™estaÅˆ sledovat"><#else><#assign monitorState="Sleduj">
 </#if>
 
 <#include "../header.ftl">
@@ -15,25 +15,25 @@
 <@lib.showMessages/>
 
 <div class="ds_toolbox">
- <b>Nástroje:</b>
+ <b>NÃ¡stroje:</b>
    <#if DIZ.hasUnreadComments>
-     <a href="#${DIZ.firstUnread}" title="Skoèit na první nepøeètenı komentáø">První nepøeètenı komentáø</a>,
+     <a href="#${DIZ.firstUnread}" title="SkoÄit na prvnÃ­ nepÅ™eÄtenÃ½ komentÃ¡Å™">PrvnÃ­ nepÅ™eÄtenÃ½ komentÃ¡Å™</a>,
    </#if>
    <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle")}">${monitorState}</a>
-      <span title="Poèet lidí, kteøí sledují tuto diskusi">(${DIZ.monitorSize})</span>
-      <a class="info" href="#">?<span class="tooltip">Za¹le ka¾dı novı komentáø emailem na va¹i adresu</span></a>,
+      <span title="PoÄet lidÃ­, kteÅ™Ã­ sledujÃ­ tuto diskusi">(${DIZ.monitorSize})</span>
+      <a class="info" href="#">?<span class="tooltip">ZaÅ¡le kaÅ¾dÃ½ novÃ½ komentÃ¡Å™ emailem na vaÅ¡i adresu</span></a>,
    <#if is_question>
-     Otázka <a href="${URL.make("/EditDiscussion?action=solved&amp;rid="+RELATION.id+"&amp;solved=true")}">byla</a>
+     OtÃ¡zka <a href="${URL.make("/EditDiscussion?action=solved&amp;rid="+RELATION.id+"&amp;solved=true")}">byla</a>
         (${TOOL.xpath(ITEM,"//solved/@yes")?default("0")}) /
      <a href="${URL.make("/EditDiscussion?action=solved&amp;rid="+RELATION.id+"&amp;solved=false")}">nebyla</a>
-        (${TOOL.xpath(ITEM,"//solved/@no")?default("0")}) vyøe¹ena
-        <a class="info" href="#">?<span class="tooltip">Kliknutím na pøíslu¹nı odkaz zvolte, jestli otázka <i>byla</i> nebo <i>nebyla</i> vyøe¹ena.</span></a>,
+        (${TOOL.xpath(ITEM,"//solved/@no")?default("0")}) vyÅ™eÅ¡ena
+        <a class="info" href="#">?<span class="tooltip">KliknutÃ­m na pÅ™Ã­sluÅ¡nÃ½ odkaz zvolte, jestli otÃ¡zka <i>byla</i> nebo <i>nebyla</i> vyÅ™eÅ¡ena.</span></a>,
    </#if>
    <a href="${URL.prefix}/show/${DIZ.relationId}?varianta=print">Tisk</a>
    <#if USER?exists && (USER.hasRole("discussion admin") || USER.hasRole("move relation"))>
      <br />
      <b>Admin:</b>
-     <a href="/SelectRelation?prefix=/hardware&amp;url=/EditRelation&amp;action=move&amp;rid=${RELATION.id}">Pøesunout</a>,
+     <a href="/SelectRelation?prefix=/hardware&amp;url=/EditRelation&amp;action=move&amp;rid=${RELATION.id}">PÅ™esunout</a>,
    </#if>
    <#if USER?exists && USER.hasRole("discussion admin")>
      <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix="+URL.prefix)}">Smazat</a>,
@@ -42,12 +42,12 @@
 </div>
 
 <#if is_question>
- <h1>Otázka</h1>
+ <h1>OtÃ¡zka</h1>
  <@lib.showThread TOOL.createComment(ITEM), 0, DIZ, !DIZ.frozen />
 
     <p class="questionToFaq">
-        U¾ jste tuto otázku vidìli? Ptají se na ni ètenáøi èasto? Pak by asi bylo vhodné
-        ulo¾it vzorovou odpovìï do <a href="/faq">Èasto kladenıch otázek (FAQ)</a>.
+        UÅ¾ jste tuto otÃ¡zku vidÄ›li? PtajÃ­ se na ni ÄtenÃ¡Å™i Äasto? Pak by asi bylo vhodnÃ©
+        uloÅ¾it vzorovou odpovÄ›Ä do <a href="/faq">ÄŒasto kladenÃ½ch otÃ¡zek (FAQ)</a>.
     </p>
 
  <@lib.advertisement id="sun-box" />
@@ -55,17 +55,17 @@
  <@lib.advertisement id="gg-ds-full" />
 
  <#if DIZ.size==0>
-    <p>Na otázku zatím nikdo bohu¾el neodpovìdìl.</p>
+    <p>Na otÃ¡zku zatÃ­m nikdo bohuÅ¾el neodpovÄ›dÄ›l.</p>
  <#else>
-     <h2>Odpovìdi</h2>
+     <h2>OdpovÄ›di</h2>
  </#if>
 <#elseif !DIZ.frozen>
  <br />
  <a href="${URL.make("/EditDiscussion?action=add&amp;threadId=0&amp;dizId="+ITEM.id+"&amp;rid="+RELATION.id)}">
- Vlo¾it dal¹í komentáø</a>
+ VloÅ¾it dalÅ¡Ã­ komentÃ¡Å™</a>
 </#if>
 
-<#if DIZ.frozen><p class="error">Diskuse byla administrátory uzamèena</p></#if>
+<#if DIZ.frozen><p class="error">Diskuse byla administrÃ¡tory uzamÄena</p></#if>
 
 <#list DIZ.threads as thread>
    <@lib.showThread thread, 0, DIZ, !DIZ.frozen />
@@ -73,7 +73,7 @@
 
 <#if (!DIZ.frozen && DIZ.size>3)>
  <p><a href="${URL.make("/EditDiscussion?action=add&amp;threadId=0&amp;dizId="+ITEM.id+"&amp;rid="+RELATION.id)}">
- Zalo¾it nové vlákno</a></p>
+ ZaloÅ¾it novÃ© vlÃ¡kno</a></p>
 </#if>
 
 <@lib.advertisement id="arbo-full" />

@@ -10,9 +10,9 @@
  <p class="cl_inforadek">
    ${DATE.show(clanek.created, "CZ_DMY")} |
    <a href="http://www.abclinuxu.cz/Profile/${autor.id}">${autor.name}</a> |
-   Pøeèteno: ${TOOL.getCounterValue(clanek,"read")}x
+   PÅ™eÄteno: ${TOOL.getCounterValue(clanek,"read")}x
   <#if diz?exists>
-   | <a href="../../${DUMP.getFile(diz.relationId)}">Komentáøù:&nbsp;${diz.responseCount}</a>
+   | <a href="../../${DUMP.getFile(diz.relationId)}">KomentÃ¡Å™Å¯:&nbsp;${diz.responseCount}</a>
   </#if>
  </p>
 </#macro>
@@ -53,8 +53,8 @@
    ${TOOL.xpath(comment.data,"author")?if_exists}
   </#if><br>
   ${TOOL.xpath(comment.data,"title")?if_exists}<br>
-  <#if (comment.parent>0)><a href="#${comment.parent}" title="Skoèit na komentáø o jednu úroveò vı¹e">Vı¹e</a> |</#if>
-  <a onClick="schovej_vlakno(${comment.id})" id="a${comment.id}" title="Schová nebo rozbalí celé vlákno">Sbalit</a>
+  <#if (comment.parent>0)><a href="#${comment.parent}" title="SkoÄit na komentÃ¡Å™ o jednu ÃºroveÅˆ vÃ½Å¡e">VÃ½Å¡e</a> |</#if>
+  <a onClick="schovej_vlakno(${comment.id})" id="a${comment.id}" title="SchovÃ¡ nebo rozbalÃ­ celÃ© vlÃ¡kno">Sbalit</a>
  </div>
  <div id="div${comment.id}">
   <#if TOOL.xpath(comment.data,"censored")?exists>
@@ -75,7 +75,7 @@
 
 <#macro showCensored(comment dizId relId)>
     <p>
-        Ná¹ administrátor shledal tento pøíspìvek závadnım nebo nevyhovujícím zamìøení portálu.
+        NÃ¡Å¡ administrÃ¡tor shledal tento pÅ™Ã­spÄ›vek zÃ¡vadnÃ½m nebo nevyhovujÃ­cÃ­m zamÄ›Å™enÃ­ portÃ¡lu.
         <#assign message = TOOL.xpath(comment.data,"censored")?if_exists>
         <#if message?has_content><br>${message}</#if>
     </p>
@@ -83,15 +83,15 @@
 
 <#macro month (month)>
     <#if month=="1">leden
-    <#elseif month=="2">únor
-    <#elseif month=="3">bøezen
+    <#elseif month=="2">Ãºnor
+    <#elseif month=="3">bÅ™ezen
     <#elseif month=="4">duben
-    <#elseif month=="5">kvìten
-    <#elseif month=="6">èerven
-    <#elseif month=="7">èervenec
+    <#elseif month=="5">kvÄ›ten
+    <#elseif month=="6">Äerven
+    <#elseif month=="7">Äervenec
     <#elseif month=="8">srpen
-    <#elseif month=="9">záøí
-    <#elseif month=="10">øíjen
+    <#elseif month=="9">zÃ¡Å™Ã­
+    <#elseif month=="10">Å™Ã­jen
     <#elseif month=="11">listopad
     <#elseif month=="12">prosinec
     </#if>
@@ -99,7 +99,7 @@
 
 <#macro listPages (result, rid)>
     <p>
-        Stránky:
+        StrÃ¡nky:
         <#list 0..(result.pageCount-1) as page>
             <#if page!=result.pageIndex>
                 <a href="../../${DUMP.getFile(rid, page)}">${page+1}</a>

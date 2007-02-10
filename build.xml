@@ -1,100 +1,96 @@
 <project name="AbcLinuxu" default="deploy">
 
-  <property file="conf_deploy.properties" />
+    <property file="conf_deploy.properties"/>
 
-  <property name="src" location="src" />
-  <property name="javac.debug" value="on" />
-  <property name="javac.optimize" value="on" />
+    <property name="src" location="src"/>
+    <property name="javac.debug" value="on"/>
+    <property name="javac.optimize" value="on"/>
 
-  <path id="project.classpath">
-    <fileset dir="libs">
-      <include name="*.jar" />
-    </fileset>
-  </path>
+    <path id="project.classpath">
+        <fileset dir="libs">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
 
-
-  <target name="init">
-
-    <filter filtersfile="conf_deploy.properties"/>
-
-    <mkdir dir="${DEPLOY_ABCLINUXU}" />
-    <mkdir dir="${DEPLOY_ABCLINUXU}/WEB-INF/classes" />
-    <mkdir dir="${DEPLOY_LOGS}" />
-    <mkdir dir="${DEPLOY_BIN}" />
-    <tstamp />
-
-  </target>
+    <target name="init">
+        <filter filtersfile="conf_deploy.properties"/>
+        <mkdir dir="${DEPLOY_ABCLINUXU}"/>
+        <mkdir dir="${DEPLOY_ABCLINUXU}/WEB-INF/classes"/>
+        <mkdir dir="${DEPLOY_LOGS}"/>
+        <mkdir dir="${DEPLOY_BIN}"/>
+        <tstamp/>
+    </target>
 
 
-  <target name="clean">
-
-    <delete dir="${DEPLOY_ABCLINUXU}/WEB-INF/classes" />
-
-  </target>
+    <target name="clean">
+        <delete dir="${DEPLOY_ABCLINUXU}/WEB-INF/classes"/>
+    </target>
 
 
-  <target name="build" depends="init">
-
-    <javac srcdir="src" destdir="${DEPLOY_ABCLINUXU}/WEB-INF/classes" classpathref="project.classpath"
-              debug="${javac.debug}" optimize="${javac.optimize}" source="1.5"
-    />
-
-  </target>
+    <target name="build" depends="init">
+        <javac srcdir="src" destdir="${DEPLOY_ABCLINUXU}/WEB-INF/classes"
+            classpathref="project.classpath" debug="${javac.debug}"
+            optimize="${javac.optimize}" source="1.5" />
+    </target>
 
 
-  <target name="deploy" depends="build">
+    <target name="deploy" depends="build">
+        <copy todir="${JETTY_HOME}/etc" filtering="true">
+            <fileset dir="conf/jetty">
+                <include name="jetty.xml"/>
+            </fileset>
+        </copy>
 
-    <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF" filtering="true">
-      <fileset dir="conf">
-          <include name="web.xml" />
-      </fileset>
-    </copy>
+        <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF" filtering="true">
+            <fileset dir="conf">
+                <include name="web.xml"/>
+            </fileset>
+        </copy>
 
-    <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF/conf">
-      <fileset dir="conf">
-          <include name="templates.xml"/>
-          <include name="news_categories.xml"/>
-          <include name="UnicodeData.txt"/>
-          <include name="stop_words.txt"/>
-          <include name="property_set_ui.xml"/>
-          <include name="property_set_license.xml"/>
-      </fileset>
-    </copy>
+        <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF/conf">
+            <fileset dir="conf">
+                <include name="templates.xml"/>
+                <include name="news_categories.xml"/>
+                <include name="UnicodeData.txt"/>
+                <include name="stop_words.txt"/>
+                <include name="property_set_ui.xml"/>
+                <include name="property_set_license.xml"/>
+            </fileset>
+        </copy>
 
-    <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF/classes" filtering="true">
-      <fileset dir="conf">
-          <include name="log4j.xml"/>
-      </fileset>
-    </copy>
+        <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF/classes" filtering="true">
+            <fileset dir="conf">
+                <include name="log4j.xml"/>
+            </fileset>
+        </copy>
 
-    <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF/conf" filtering="true">
-      <fileset dir="conf">
-        <include name="systemPrefs.xml" />
-        <include name="proxool.xml" />
-        <include name="url_mapping.xml" />
-      </fileset>
-    </copy>
+        <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF/conf" filtering="true">
+            <fileset dir="conf">
+                <include name="systemPrefs.xml"/>
+                <include name="proxool.xml"/>
+                <include name="url_mapping.xml"/>
+            </fileset>
+        </copy>
 
-    <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF/lib">
-      <fileset dir="libs" includes="*.jar">
-        <exclude name="servlet.jar" />
-        <exclude name="crimson.jar" />
-        <exclude name="junit.jar" />
-      </fileset>
-    </copy>
+        <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF/lib">
+            <fileset dir="libs" includes="*.jar">
+                <exclude name="servlet.jar"/>
+                <exclude name="crimson.jar"/>
+                <exclude name="junit.jar"/>
+            </fileset>
+        </copy>
 
-    <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF/freemarker">
-      <fileset dir="web/freemarker" />
-    </copy>
+        <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF/freemarker">
+            <fileset dir="web/freemarker"/>
+        </copy>
 
-    <copy todir="${DEPLOY_ABCLINUXU}">
-      <fileset dir="web/root" />
-    </copy>
+        <copy todir="${DEPLOY_ABCLINUXU}">
+            <fileset dir="web/root"/>
+        </copy>
 
-    <copy todir="${DEPLOY_BIN}" filtering="true">
-      <fileset dir="bin" />
-    </copy>
-
-  </target>
+        <copy todir="${DEPLOY_BIN}" filtering="true">
+            <fileset dir="bin"/>
+        </copy>
+    </target>
 
 </project>

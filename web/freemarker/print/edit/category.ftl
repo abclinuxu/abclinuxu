@@ -6,7 +6,7 @@
 
  <table width="100" border="0" cellpadding="5">
   <tr>
-   <td width="120" class="required">JmÈno sekce</td>
+   <td width="120" class="required">Jm√©no sekce</td>
    <td>
     <input type="text" name="name" value="${PARAMS.name?if_exists}" size="40" tabindex="1">
     <div class="error">${ERRORS.name?if_exists}</div>
@@ -20,20 +20,20 @@
                 <option value="software"<#if PARAMS.type?if_exists=="software"> SELECTED</#if>>Sekce Software</option>
                 <option value="hardware"<#if PARAMS.type?if_exists=="hardware"> SELECTED</#if>>Sekce Hardware</option>
                 <option value="faq"<#if PARAMS.type?if_exists=="faq"> SELECTED</#if>>Sekce FAQ</option>
-                <option value="forum"<#if PARAMS.type?if_exists=="forum"> SELECTED</#if>>DiskusnÌ fÛrum</option>
-                <option value="section"<#if PARAMS.type?if_exists=="section"> SELECTED</#if>>Rubrika pro Ël·nky</option>
+                <option value="forum"<#if PARAMS.type?if_exists=="forum"> SELECTED</#if>>Diskusn√≠ f√≥rum</option>
+                <option value="section"<#if PARAMS.type?if_exists=="section"> SELECTED</#if>>Rubrika pro ƒçl√°nky</option>
                 <option value="blog"<#if PARAMS.type?if_exists=="blog"> SELECTED</#if>>Blog</option>
             </select>
         </td>
     </tr>
     <tr>
-        <td width="120">Otev¯en·</td>
+        <td width="120">Otev≈ôen√°</td>
         <td>
             <input type="checkbox" name="open" value="true"<#if PARAMS.open?default("false")=="true"> checked</#if> tabindex="3">
         </td>
     </tr>
   <tr>
-   <td width="120">Pozn·mka</td>
+   <td width="120">Pozn√°mka</td>
    <td>
     <textarea name="note" cols="80" rows="15" tabindex="4">${PARAMS.note?if_exists?html}</textarea>
     <div class="error">${ERRORS.note?if_exists}</div>
@@ -43,12 +43,12 @@
    <td class="required">Ikona</td>
    <td>
     <input type="text" name="icon" value="${PARAMS.icon?if_exists}" size="40" tabindex="4">
-    <input type="submit" name="iconChooser" value="VybÏr ikon">
+    <input type="submit" name="iconChooser" value="Vybƒõr ikon">
    </td>
   </tr>
   <tr>
    <td width="120">&nbsp;</td>
-   <td><input type="submit" VALUE="DokonËi" TABINDEX="6"></td>
+   <td><input type="submit" VALUE="Dokonƒçi" TABINDEX="6"></td>
   </tr>
  </table>
 

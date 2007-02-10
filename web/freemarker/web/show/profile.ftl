@@ -3,17 +3,17 @@
 <@lib.showMessages/>
 
 <#if ! USER?exists>
- <p>Pokud jste ${PROFILE.name}, <a href="${URL.noPrefix("/Profile?action=login")}">pøihla¹te se</a>
- a bude vám zobrazena va¹e domovská stránka.</p>
+ <p>Pokud jste ${PROFILE.name}, <a href="${URL.noPrefix("/Profile?action=login")}">pÅ™ihlaÅ¡te se</a>
+ a bude vÃ¡m zobrazena vaÅ¡e domovskÃ¡ strÃ¡nka.</p>
 
 <#elseif USER.id==PROFILE.id>
- <h2>Moje domovská stránka</h2>
+ <h2>Moje domovskÃ¡ strÃ¡nka</h2>
  <p>
-     Nacházíte se na své veøejné domovské stránce, která slou¾í pro va¹i prezentaci.
-     Tento text je zobrazen pouze vám.
+     NachÃ¡zÃ­te se na svÃ© veÅ™ejnÃ© domovskÃ© strÃ¡nce, kterÃ¡ slouÅ¾Ã­ pro vaÅ¡i prezentaci.
+     Tento text je zobrazen pouze vÃ¡m.
  </p>
  <p>
-     <a href="${URL.noPrefix("/Profile/"+PROFILE.id+"?action=myPage")}">Nastavení úètu</a>
+     <a href="${URL.noPrefix("/Profile/"+PROFILE.id+"?action=myPage")}">NastavenÃ­ ÃºÄtu</a>
  </p>
  <hr />
 <#elseif USER.hasRole("user admin")>
@@ -29,23 +29,23 @@
 
 <h1>${PROFILE.name}</h1>
 
-<#if PROFILE.nick?exists><p>Pøezdívka: ${PROFILE.nick}</p></#if>
+<#if PROFILE.nick?exists><p>PÅ™ezdÃ­vka: ${PROFILE.nick}</p></#if>
 
 <#if TOOL.xpath(PROFILE,"/data/profile/home_page")?exists>
-  <p>Moje domovská stránka: <a href="${TOOL.xpath(PROFILE,"/data/profile/home_page")}" rel="nofollow">
+  <p>Moje domovskÃ¡ strÃ¡nka: <a href="${TOOL.xpath(PROFILE,"/data/profile/home_page")}" rel="nofollow">
   ${TOOL.xpath(PROFILE,"/data/profile/home_page")}</a></p>
 </#if>
 
 <#if TOOL.xpath(PROFILE,"/data/profile/about_myself")?exists>
- <p>O mnì: ${TOOL.render(TOOL.element(PROFILE.data,"/data/profile/about_myself"),USER?if_exists)}</p>
+ <p>O mnÄ›: ${TOOL.render(TOOL.element(PROFILE.data,"/data/profile/about_myself"),USER?if_exists)}</p>
 </#if>
 
 <#if TOOL.xpath(PROFILE,"/data/personal/birth_year")?exists>
- <p>Rok narození: ${TOOL.xpath(PROFILE,"/data/personal/birth_year")}</p>
+ <p>Rok narozenÃ­: ${TOOL.xpath(PROFILE,"/data/personal/birth_year")}</p>
 </#if>
 
 <#if TOOL.xpath(PROFILE,"/data/personal/city")?exists>
- <p>Bydli¹tì: ${TOOL.xpath(PROFILE,"/data/personal/city")}</p>
+ <p>BydliÅ¡tÄ›: ${TOOL.xpath(PROFILE,"/data/personal/city")}</p>
 </#if>
 
 <#if TOOL.xpath(PROFILE,"/data/personal/area")?exists>
@@ -53,15 +53,15 @@
 </#if>
 
 <#if TOOL.xpath(PROFILE,"/data/personal/country")?exists>
- <p>Zemì: ${TOOL.xpath(PROFILE,"/data/personal/country")}</p>
+ <p>ZemÄ›: ${TOOL.xpath(PROFILE,"/data/personal/country")}</p>
 </#if>
 
 <#if TOOL.xpath(PROFILE,"/data/profile/linux_user_from_year")?exists>
- <p>Linux pou¾ívám od roku: ${TOOL.xpath(PROFILE,"/data/profile/linux_user_from_year")}</p>
+ <p>Linux pouÅ¾Ã­vÃ¡m od roku: ${TOOL.xpath(PROFILE,"/data/profile/linux_user_from_year")}</p>
 </#if>
 
 <#if TOOL.xpath(PROFILE,"/data/profile/distributions")?exists>
- <p>Pou¾ívám tyto distribuce:</p>
+ <p>PouÅ¾Ã­vÃ¡m tyto distribuce:</p>
   <ul>
    <#list TOOL.xpaths(PROFILE.data,"/data/profile/distributions/distribution") as dist>
     <li>${dist}</li>
@@ -70,11 +70,11 @@
 </#if>
 
 <#if TOOL.xpath(PROFILE,"/data/personal/signature")?exists>
- <p>Patièka: ${TOOL.xpath(PROFILE,"/data/personal/signature")}</p>
+ <p>PatiÄka: ${TOOL.xpath(PROFILE,"/data/personal/signature")}</p>
 </#if>
 
 <#if BLOG?exists>
-    Mùj blog: <a href="/blog/${BLOG.subType}">${TOOL.xpath(BLOG,"//custom/title")?default("blog")}</a>
+    MÅ¯j blog: <a href="/blog/${BLOG.subType}">${TOOL.xpath(BLOG,"//custom/title")?default("blog")}</a>
     <ul>
         <#list STORIES as relation>
             <#assign story=relation.child, url=TOOL.getUrlForBlogStory(BLOG.subType, story.created, relation.id)>
@@ -86,26 +86,26 @@
             </#if>
             <li>
                 <a href="${url}">${TOOL.xpath(story, "/data/name")}</a> | ${DATE.show(story.created, "CZ_DMY")}
-                | <span title="<#if diz.responseCount gt 0>poslední ${DATE.show(diz.updated, "CZ_SHORT")}</#if>">
-                    komentáøù: ${diz.responseCount}<@lib.markNewComments diz/>
+                | <span title="<#if diz.responseCount gt 0>poslednÃ­ ${DATE.show(diz.updated, "CZ_SHORT")}</#if>">
+                    komentÃ¡Å™Å¯: ${diz.responseCount}<@lib.markNewComments diz/>
                   </span>
             </li>
         </#list>
     </ul>
 </#if>
 
-<p><a href="/muj_obsah/${PROFILE.id}">Seznam pøíspìvkù na abclinuxu.cz</a><br>
-(èlánky, komentáøe, dotazy, zprávièky, softwarové záznamy a pojmy ve slovníku).</p>
+<p><a href="/muj_obsah/${PROFILE.id}">Seznam pÅ™Ã­spÄ›vkÅ¯ na abclinuxu.cz</a><br>
+(ÄlÃ¡nky, komentÃ¡Å™e, dotazy, zprÃ¡viÄky, softwarovÃ© zÃ¡znamy a pojmy ve slovnÃ­ku).</p>
 <br>
 
 <#if TOOL.xpath(PROFILE,"/data/communication/email[@valid='yes']")?exists>
  <form action="${URL.noPrefix("/Profile")}">
   <input type="hidden" name="action" value="sendEmail">
   <input type="hidden" name="uid" value="${PROFILE.id}">
-  <input type="submit" value="Po¹lete mi email">
+  <input type="submit" value="PoÅ¡lete mi email">
  </form>
 <#else>
- <p class="error">Administrátoøi oznaèili email u¾ivatele za neplatnı!</p>
+ <p class="error">AdministrÃ¡toÅ™i oznaÄili email uÅ¾ivatele za neplatnÃ½!</p>
 </#if>
 
 <#include "../footer.ftl">

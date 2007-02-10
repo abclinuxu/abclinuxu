@@ -104,7 +104,7 @@ public class Royalties implements AbcAction {
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation==null )
-            throw new MissingArgumentException("ChybÌ parametr relationId!");
+            throw new MissingArgumentException("Chyb√≠ parametr relationId!");
 
         Persistence persistence = PersistenceFactory.getPersistance();
         persistence.synchronize(relation);
@@ -123,7 +123,7 @@ public class Royalties implements AbcAction {
         if ( ACTION_EDIT_ROYALTIES_STEP2.equals(action) )
             return actionEditStep2(request, response, env);
 
-        throw new MissingArgumentException("ChybÌ parametr action!");
+        throw new MissingArgumentException("Chyb√≠ parametr action!");
     }
 
     private String actionReportStep1(HttpServletRequest request, Map env) throws Exception {
@@ -228,7 +228,7 @@ public class Royalties implements AbcAction {
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
-        AdminLogger.logEvent(user, "p¯idal honor·¯ "+relation.getId());
+        AdminLogger.logEvent(user, "p≈ôidal honor√°≈ô "+relation.getId());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/show/"+upper.getId());
@@ -271,7 +271,7 @@ public class Royalties implements AbcAction {
         persistence.update(item);
 
         User user = (User) env.get(Constants.VAR_USER);
-        AdminLogger.logEvent(user, "upravil honor·¯ "+relation.getId());
+        AdminLogger.logEvent(user, "upravil honor√°≈ô "+relation.getId());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/show/"+relation.getUpper());
@@ -314,7 +314,7 @@ public class Royalties implements AbcAction {
             Date publish = Constants.isoFormatShort.parse((String) params.get(PARAM_PUBLISHED));
             item.setCreated(publish);
         } catch (ParseException e) {
-            ServletUtils.addError(PARAM_PUBLISHED, "Spr·vn˝ form·t je 2002-02-10", env, null);
+            ServletUtils.addError(PARAM_PUBLISHED, "Spr√°vn√Ω form√°t je 2002-02-10", env, null);
             return false;
         }
         return true;
@@ -341,7 +341,7 @@ public class Royalties implements AbcAction {
             element = DocumentHelper.makeElement(item.getData(), "/data/paid");
             element.setText(Constants.isoFormatShort.format(date));
         } catch (ParseException e) {
-            ServletUtils.addError(PARAM_PAID, "Spr·vn˝ form·t je 2004-02-07", env, null);
+            ServletUtils.addError(PARAM_PAID, "Spr√°vn√Ω form√°t je 2004-02-07", env, null);
             return false;
         }
         return true;
@@ -357,7 +357,7 @@ public class Royalties implements AbcAction {
     private boolean setAmount(Map params, Item item, Map env) {
         int amount = Misc.parseInt((String) params.get(PARAM_AMOUNT), -1);
         if ( amount<0 ) {
-            ServletUtils.addError(PARAM_AMOUNT, "Honor·¯ musÌ b˝t celÈ nez·pornÈ ËÌslo!", env, null);
+            ServletUtils.addError(PARAM_AMOUNT, "Honor√°≈ô mus√≠ b√Ωt cel√© nez√°porn√© ƒç√≠slo!", env, null);
             return false;
         }
         DocumentHelper.makeElement(item.getData(), "/data/amount").setText(Integer.toString(amount));

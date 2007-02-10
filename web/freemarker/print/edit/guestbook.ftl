@@ -2,15 +2,15 @@
 
 <@lib.showMessages/>
 
-<h1>Kniha náv¹tìv</h1>
+<h1>Kniha nÃ¡vÅ¡tÄ›v</h1>
 
-<p>Mo¾nost editace existujícího vzkazu v knize náv¹tìv. Pou¾ívat
-jen ve vyjímeènıch pøípadech.
+<p>MoÅ¾nost editace existujÃ­cÃ­ho vzkazu v knize nÃ¡vÅ¡tÄ›v. PouÅ¾Ã­vat
+jen ve vyjÃ­meÄnÃ½ch pÅ™Ã­padech.
 </p>
 
 <form action="${URL.noPrefix("/kniha_navstev/edit/"+RELATION.id)}" method="POST">
   <p>
-   <span class="required">Jméno</span><br>
+   <span class="required">JmÃ©no</span><br>
    <input tabindex="1" type="text" name="name" size="40" value="${PARAMS.name?if_exists}">
    <div class="error">${ERRORS.name?if_exists}</div>
 
@@ -19,7 +19,7 @@ jen ve vyjímeènıch pøípadech.
    <div class="error">${ERRORS.message?if_exists}</div>
   </p>
    <p>
-       <input tabindex="3" type="submit" value="Dokonèi">
+       <input tabindex="3" type="submit" value="DokonÄi">
        <input type="hidden" name="action" value="edit2">
    </p>
 </form>

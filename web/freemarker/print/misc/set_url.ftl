@@ -4,9 +4,9 @@
 
 
 <form action="${URL.noPrefix("/EditRelation")}" method="POST">
-    <p>Zadejte èíslo relace, pro kterou chcete nastavit URL.</p>
+    <p>Zadejte ÄÃ­slo relace, pro kterou chcete nastavit URL.</p>
     <input type="text" name="rid" size="6" value="${PARAMS.rid?if_exists}">
-    <input type="submit" value="Naèti relaci">
+    <input type="submit" value="NaÄti relaci">
     <input type="hidden" name="action" value="setURL2">
 </form>
 

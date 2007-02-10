@@ -144,7 +144,7 @@ public final class SQLTool implements Configurable {
             persistance.synchronizeList(result);
             return result;
         } catch (SQLException e) {
-            throw new PersistenceException("Nemohu vykonat SQL p¯Ìkaz "+sql, e);
+            throw new PersistenceException("Nemohu vykonat SQL p≈ô√≠kaz "+sql, e);
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
@@ -177,7 +177,7 @@ public final class SQLTool implements Configurable {
             }
             return result;
         } catch (SQLException e) {
-            throw new PersistenceException("Nemohu vykonat SQL p¯Ìkaz "+sql, e);
+            throw new PersistenceException("Nemohu vykonat SQL p≈ô√≠kaz "+sql, e);
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
@@ -210,7 +210,7 @@ public final class SQLTool implements Configurable {
             i = resultSet.getInt(1);
             return new Integer(i);
         } catch (SQLException e) {
-            throw new PersistenceException("Nemohu vykonat SQL p¯Ìkaz "+sql, e);
+            throw new PersistenceException("Nemohu vykonat SQL p≈ô√≠kaz "+sql, e);
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
@@ -243,7 +243,7 @@ public final class SQLTool implements Configurable {
             Date date = resultSet.getTimestamp(1);
             return new Date(date.getTime());
         } catch (SQLException e) {
-            throw new PersistenceException("Nemohu vykonat SQL p¯Ìkaz "+sql, e);
+            throw new PersistenceException("Nemohu vykonat SQL p≈ô√≠kaz "+sql, e);
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
@@ -283,7 +283,7 @@ public final class SQLTool implements Configurable {
 
             return list;
         } catch (SQLException e) {
-            throw new PersistenceException("Nemohu vykonat SQL p¯Ìkaz " + sql, e);
+            throw new PersistenceException("Nemohu vykonat SQL p≈ô√≠kaz " + sql, e);
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
@@ -971,7 +971,7 @@ public final class SQLTool implements Configurable {
             Integer id = new Integer(resultSet.getInt(1));
             return id.intValue();
         } catch (SQLException e) {
-            throw new PersistenceException("Chyba p¯i hled·nÌ!", e);
+            throw new PersistenceException("Chyba p≈ôi hled√°n√≠!", e);
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
@@ -998,7 +998,7 @@ public final class SQLTool implements Configurable {
             statement.setInt(2, obj.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new PersistenceException("Chyba p¯i hled·nÌ!", e);
+            throw new PersistenceException("Chyba p≈ôi hled√°n√≠!", e);
         } finally {
             persistance.releaseSQLResources(con, statement, null);
         }
@@ -1033,7 +1033,7 @@ public final class SQLTool implements Configurable {
             persistance.synchronizeList(result);
             return result;
         } catch (SQLException e) {
-            throw new PersistenceException("Chyba p¯i hled·nÌ!", e);
+            throw new PersistenceException("Chyba p≈ôi hled√°n√≠!", e);
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
@@ -1068,7 +1068,7 @@ public final class SQLTool implements Configurable {
             persistance.synchronizeList(result);
             return result;
         } catch (SQLException e) {
-            throw new PersistenceException("Chyba p¯i hled·nÌ!", e);
+            throw new PersistenceException("Chyba p≈ôi hled√°n√≠!", e);
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
@@ -1101,7 +1101,7 @@ public final class SQLTool implements Configurable {
             persistance.synchronizeList(result);
             return result;
         } catch (SQLException e) {
-            throw new PersistenceException("Chyba p¯i hled·nÌ!", e);
+            throw new PersistenceException("Chyba p≈ôi hled√°n√≠!", e);
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
@@ -1479,7 +1479,7 @@ public final class SQLTool implements Configurable {
             }
             return result;
         } catch (SQLException e) {
-            throw new PersistenceException("Chyba p¯i hled·nÌ!", e);
+            throw new PersistenceException("Chyba p≈ôi hled√°n√≠!", e);
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
@@ -1508,7 +1508,7 @@ public final class SQLTool implements Configurable {
 
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new PersistenceException("Chyba p¯i ukl·d·nÌ starÈ adresy!", e);
+            throw new PersistenceException("Chyba p≈ôi ukl√°d√°n√≠ star√© adresy!", e);
         } finally {
             persistance.releaseSQLResources(con, statement, null);
         }
@@ -1539,7 +1539,7 @@ public final class SQLTool implements Configurable {
 
             return resultSet.getString(2);
         } catch (SQLException e) {
-            throw new PersistenceException("Chyba p¯i hled·nÌ!", e);
+            throw new PersistenceException("Chyba p≈ôi hled√°n√≠!", e);
         } finally {
             persistance.releaseSQLResources(con, statement, resultSet);
         }
@@ -1612,7 +1612,7 @@ public final class SQLTool implements Configurable {
     private void store(String name, Preferences prefs) {
         String command = prefs.get(name,null);
         if (command == null) {
-            log.fatal("Hodnota SQL p¯Ìkazu " + name + " nebyla nastavena!");
+            log.fatal("Hodnota SQL p≈ô√≠kazu " + name + " nebyla nastavena!");
             return;
         }
         sql.put(name, command);

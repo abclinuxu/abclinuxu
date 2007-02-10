@@ -5,13 +5,13 @@
 <form action="${URL.make("/EditPoll")}" method="POST">
  <table width=100 border=0 cellpadding=5>
   <tr>
-   <td width="90" class="required">Ot·zka</td>
+   <td width="90" class="required">Ot√°zka</td>
    <td>
     <textarea name="question" cols="80" rows="3" tabindex="1">${POLL.text?html}</textarea>
    </td>
   </tr>
   <tr>
-   <td class="required">VÌce moænostÌ</td>
+   <td class="required">V√≠ce mo≈ænost√≠</td>
    <td>
     <select name="multichoice" tabindex="2">
      <#assign multi=POLL.multiChoice>
@@ -21,7 +21,7 @@
    </td>
   </tr>
   <tr>
-   <td class="required">Uzav¯en·</td>
+   <td class="required">Uzav≈ôen√°</td>
    <td>
     <select name="closed" tabindex="3">
      <#assign closed=POLL.isClosed()>
@@ -41,7 +41,7 @@
   </#list>
   <tr>
    <td width="120">&nbsp;</td>
-   <td><input type="submit" value="DokonËi"></td>
+   <td><input type="submit" value="Dokonƒçi"></td>
   </tr>
  </table>
 

@@ -1,6 +1,6 @@
 <#assign who=TOOL.createUser(ITEM.owner)>
 <#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")?exists>
-    <#assign monitorState="Pøestaò sledovat"><#else><#assign monitorState="Sleduj záznam">
+    <#assign monitorState="PÅ™estaÅˆ sledovat"><#else><#assign monitorState="Sleduj zÃ¡znam">
 </#if>
 <#assign plovouci_sloupec>
     <div class="s_sekce">
@@ -11,17 +11,17 @@
             </li>
             <#if PARAMS.revize?exists>
                 <li>
-                    <a class="bez-slovniku" href="${RELATION.url}">Návrat na aktuální verzi</a>
+                    <a class="bez-slovniku" href="${RELATION.url}">NÃ¡vrat na aktuÃ¡lnÃ­ verzi</a>
                 </li>
             <#else>
                 <li><a class="bez-slovniku" href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
-                <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
+                <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">SouvisejÃ­cÃ­ dokumenty</a></li>
                 <li><a href="/revize?rid=${RELATION.id}&amp;prefix=/slovnik">Historie</a></li>
                 <li><a class="bez-slovniku" href="${RELATION.url}?varianta=print">Tisk</a></li>
                 <li>
                     <a class="bez-slovniku" href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle")}">${monitorState}</a>
-                    <span title="Poèet lidí, kteøí sledují tento záznam">(${TOOL.getMonitorCount(ITEM.data)})</span>
-                    <a class="info" href="#">?<span class="tooltip">Za¹le upozornìní na vá¹ email pøi úpravì záznamu.</span></a>
+                    <span title="PoÄet lidÃ­, kteÅ™Ã­ sledujÃ­ tento zÃ¡znam">(${TOOL.getMonitorCount(ITEM.data)})</span>
+                    <a class="info" href="#">?<span class="tooltip">ZaÅ¡le upozornÄ›nÃ­ na vÃ¡Å¡ email pÅ™i ÃºpravÄ› zÃ¡znamu.</span></a>
                 </li>
                 <#if USER?exists>
                     <#if USER.hasRole("root")>
@@ -31,7 +31,7 @@
                     </#if>
                     <#if USER.hasRole("remove relation")>
                         <li>
-                            <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/slovnik")}" title="Sma¾">Smazat</a>
+                            <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/slovnik")}" title="SmaÅ¾">Smazat</a>
                         </li>
                     </#if>
                 </#if>
@@ -51,7 +51,7 @@
 <@lib.showRelated ITEM/>
 
 <p class="dalsi_pojmy">
-    Dal¹í pojmy:
+    DalÅ¡Ã­ pojmy:
     <#list PREV?reverse as relation>
         <a href="${relation.url}">${TOOL.xpath(relation.child,"/data/name")}</a> -
     </#list>

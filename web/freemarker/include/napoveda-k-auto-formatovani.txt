@@ -1,20 +1,20 @@
-<h2 id="formatovani">Nápovìda k formátování</h2>
+<h2 id="formatovani">NÃ¡povÄ›da k formÃ¡tovÃ¡nÃ­</h2>
 
-<p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html" rel="nofollow">znaèky</a>:
+<p>PovolenÃ© HTML <a href="http://www.w3.org/TR/html4/index/elements.html" rel="nofollow">znaÄky</a>:
 A, ACRONYM, B, BR, BLOCKQUOTE, CITE, CODE, DIV, EM, I, HR, H1, H2, H3, LI,
 OL, P, PRE, STRONG, TT, UL, VAR.</p>
 
-<p>Nejrychlej¹í zpùsob formátování je rozdìlovat
-text do odstavcù. Systém detekuje prázdné øádky
-(dvakrát enter) a nahradí je HTML znaèkou odstavce.
-Pokud ale v textu pou¾ijete znaèku <tt>P</tt> èi <tt>BR</tt>,
-pak pøedpokládáme, ¾e o formátování se budete starat
-sami, a tato konverze nebude aktivována.</p>
+<p>NejrychlejÅ¡Ã­ zpÅ¯sob formÃ¡tovÃ¡nÃ­ je rozdÄ›lovat
+text do odstavcÅ¯. SystÃ©m detekuje prÃ¡zdnÃ© Å™Ã¡dky
+(dvakrÃ¡t enter) a nahradÃ­ je HTML znaÄkou odstavce.
+Pokud ale v textu pouÅ¾ijete znaÄku <tt>P</tt> Äi <tt>BR</tt>,
+pak pÅ™edpoklÃ¡dÃ¡me, Å¾e o formÃ¡tovÃ¡nÃ­ se budete starat
+sami, a tato konverze nebude aktivovÃ¡na.</p>
 
-<p>Pokud neovládáte HTML, doporuèuji si pøeèíst
+<p>Pokud neovlÃ¡dÃ¡te HTML, doporuÄuji si pÅ™eÄÃ­st
 <a href="http://www.kosek.cz/clanky/html/01.html" rel="nofollow">rychlokurz</a>.</p>
 
-<p>Text musí bıt HTML validní, proto znak men¹ítka èi vìt¹ítka zapisujte takto:
+<p>Text musÃ­ bÃ½t HTML validnÃ­, proto znak menÅ¡Ã­tka Äi vÄ›tÅ¡Ã­tka zapisujte takto:
 <code>&lt;</code> jako <code>&amp;lt;</code> a <code>&gt;</code> jako <code>&amp;gt;</code>.
-Dal¹ím èastım problémem je, jak vlo¾it vıpis logu èi konfiguraèní soubor. V tomto
-pøípadì vá¹ text vlo¾te mezi znaèky <code>PRE</code>, které zachovají formátování.</p>
+DalÅ¡Ã­m ÄastÃ½m problÃ©mem je, jak vloÅ¾it vÃ½pis logu Äi konfiguraÄnÃ­ soubor. V tomto
+pÅ™Ã­padÄ› vÃ¡Å¡ text vloÅ¾te mezi znaÄky <code>PRE</code>, kterÃ© zachovajÃ­ formÃ¡tovÃ¡nÃ­.</p>

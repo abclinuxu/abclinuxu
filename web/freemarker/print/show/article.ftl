@@ -22,12 +22,12 @@
 <#if USER?exists && USER.hasRole("article admin")>
  <p>
   <a href="${URL.make("/edit?action=edit&rid="+RELATION.id)}">Upravit</a>
-  <a href="${URL.noPrefix("/SelectRelation?prefix=/clanky&url=/EditRelation&action=move&rid="+RELATION.id)}">P¯esunout</a>
+  <a href="${URL.noPrefix("/SelectRelation?prefix=/clanky&url=/EditRelation&action=move&rid="+RELATION.id)}">P≈ôesunout</a>
   <a href="${URL.noPrefix("/EditRelation?action=remove&prefix=/clanky&rid="+RELATION.id)}">Smazat</a>
-  <a href="${URL.make("/honorare/"+RELATION.id+"?action=add")}">Vloæit honor·¯</a>
+  <a href="${URL.make("/honorare/"+RELATION.id+"?action=add")}">Vlo≈æit honor√°≈ô</a>
   <#if CHILDREN.royalties?exists>
    <#list CHILDREN.royalties as honorar>
-    <a href="${URL.make("/honorare/"+honorar.id+"?action=edit")}">Upravit honor·¯</a>
+    <a href="${URL.make("/honorare/"+honorar.id+"?action=edit")}">Upravit honor√°≈ô</a>
    </#list>
   </#if>
   <a href="${URL.make("/"+RELATION.id+".docb")}">Docbook</a>
@@ -40,17 +40,17 @@ ${TOOL.render(TOOL.getCompleteArticleText(ITEM),USER?if_exists)}
 
 <#if SERIES?exists>
     <div>
-        <h3>Seri·l <a href="${SERIES.series.url}">${TOOL.childName(SERIES.series)}</a> (dÌl˘: ${SERIES.total})</h3>
-        PrvnÌ dÌl: <a href="${SERIES.first.url}">${TOOL.childName(SERIES.first)}</a><#rt>
-        <#lt><#if (SERIES.total > 1)>, poslednÌ dÌl: <a href="${SERIES.last.url}">${TOOL.childName(SERIES.last)}</a></#if>.<br>
-        <#if SERIES.previous?exists>P¯edchozÌ dÌl: <a href="${SERIES.previous.url}">${TOOL.childName(SERIES.previous)}</a><br></#if>
-        <#if SERIES.next?exists>N·sledujÌcÌ dÌl: <a href="${SERIES.next.url}">${TOOL.childName(SERIES.next)}</a><br></#if>
+        <h3>Seri√°l <a href="${SERIES.series.url}">${TOOL.childName(SERIES.series)}</a> (d√≠l≈Ø: ${SERIES.total})</h3>
+        Prvn√≠ d√≠l: <a href="${SERIES.first.url}">${TOOL.childName(SERIES.first)}</a><#rt>
+        <#lt><#if (SERIES.total > 1)>, posledn√≠ d√≠l: <a href="${SERIES.last.url}">${TOOL.childName(SERIES.last)}</a></#if>.<br>
+        <#if SERIES.previous?exists>P≈ôedchoz√≠ d√≠l: <a href="${SERIES.previous.url}">${TOOL.childName(SERIES.previous)}</a><br></#if>
+        <#if SERIES.next?exists>N√°sleduj√≠c√≠ d√≠l: <a href="${SERIES.next.url}">${TOOL.childName(SERIES.next)}</a><br></#if>
     </div>
 </#if>
 
 <div class="cl_perex">
   <#if RELATED?exists>
-   <h3>SouvisejÌcÌ Ël·nky</h3>
+   <h3>Souvisej√≠c√≠ ƒçl√°nky</h3>
    <div class="s_sekce">
     <#list RELATED as link>
      <a href="${link.url}">${link.title}</a><br>
@@ -66,7 +66,7 @@ ${TOOL.render(TOOL.getCompleteArticleText(ITEM),USER?if_exists)}
    </div>
   </#if>
   <#if SAME_SECTION_ARTICLES?exists>
-   <h3>DalπÌ Ël·nky z tÈto rubriky</h3>
+   <h3>Dal≈°√≠ ƒçl√°nky z t√©to rubriky</h3>
     <div class="s_sekce">
      <#list SAME_SECTION_ARTICLES as relation>
        <a href="${relation.url?default("/clanky/show/"+relation.id)}">${TOOL.xpath(relation.child,"data/name")}</a><br>
@@ -79,7 +79,7 @@ ${TOOL.render(TOOL.getCompleteArticleText(ITEM),USER?if_exists)}
 
 <#if ! PARAMS.noDiz?exists>
  <#if CHILDREN.discussion?exists>
-  <h1>Diskuse k tomuto Ël·nku</h1>
+  <h1>Diskuse k tomuto ƒçl√°nku</h1>
    <#assign diz = TOOL.createDiscussionTree(CHILDREN.discussion[0].child,USER?if_exists,CHILDREN.discussion[0].id,true)>
     <#list diz.threads as thread>
        <@lib.showThread thread, 0, diz, !diz.frozen />

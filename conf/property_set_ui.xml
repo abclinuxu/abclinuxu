@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-2" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <set>
     <value>
         <id>xwindows</id>
@@ -38,14 +38,14 @@
     </value>
     <value>
         <id>cli</id>
-        <caption>Příkazové rozhraní</caption>
+        <caption>PĹĂ­kazovĂŠ rozhranĂ­</caption>
     </value>
     <value>
         <id>tui</id>
-        <caption>Textové rozhraní</caption>
+        <caption>TextovĂŠ rozhranĂ­</caption>
     </value>
     <value>
         <id>grconsole</id>
-        <caption>Grafické rozhraní</caption>
+        <caption>GrafickĂŠ rozhranĂ­</caption>
     </value>
 </set>

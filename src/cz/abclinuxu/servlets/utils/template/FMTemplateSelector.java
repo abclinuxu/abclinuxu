@@ -46,8 +46,8 @@ public class FMTemplateSelector extends TemplateSelector {
     public static String select(String servlet, String action, Map data, HttpServletRequest request) {
         ServletAction servletAction = (ServletAction) mappings.get(servlet + action);
         if ( servletAction==null ) {
-            log.warn("Neexistuje ¹ablona pro kombinaci "+servlet +","+ action);
-            throw new NotFoundException("Neexistuje ¹ablona pro kombinaci "+servlet +","+ action);
+            log.warn("Neexistuje Å¡ablona pro kombinaci "+servlet +","+ action);
+            throw new NotFoundException("Neexistuje Å¡ablona pro kombinaci "+servlet +","+ action);
         }
 
         String browser = findBrowser(request);
@@ -74,8 +74,8 @@ public class FMTemplateSelector extends TemplateSelector {
     public static String select(String servlet, String action, Map data, String template) {
         ServletAction servletAction = (ServletAction) mappings.get(servlet + action);
         if ( servletAction==null ) {
-            log.warn("Neexistuje ¹ablona pro kombinaci "+servlet+","+action);
-            throw new NotFoundException("Neexistuje ¹ablona pro kombinaci "+servlet +","+ action);
+            log.warn("Neexistuje Å¡ablona pro kombinaci "+servlet+","+action);
+            throw new NotFoundException("Neexistuje Å¡ablona pro kombinaci "+servlet +","+ action);
         }
 
         String page = servletAction.getContent();

@@ -683,7 +683,7 @@ public class Dump implements Configurable {
        smazat relaci http://www.abclinuxu.cz/clanky/dir/4731
        smazat prazdne FAQ sekce
        smazat clanky Udalo se ..
-       select R.cislo from relace R,polozka P where R.typ_potomka='P' and P.cislo=R.potomek and typ=2 and P.data like '%<name>Ud·lo%';
+       select R.cislo from relace R,polozka P where R.typ_potomka='P' and P.cislo=R.potomek and typ=2 and P.data like '%<name>Ud√°lo%';
        prevest URL na lokalni
        prevest textova URL na ciselna
        prevest ciselna URL na offline (ideal - jen kdyz se indexuji, jinak smerovat na internet)

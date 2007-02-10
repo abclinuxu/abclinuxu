@@ -180,7 +180,7 @@ public class AbcHostFetcher extends TimerTask implements Configurable {
     }
 
     /**
-     * Extracts first line from string like: 128 MB SDRAM 100 MHz&lt;br&gt;maxim·lne 1 GB
+     * Extracts first line from string like: 128 MB SDRAM 100 MHz&lt;br&gt;maxim√°lne 1 GB
      * @param s input
      * @return string up to first BR tag
      */

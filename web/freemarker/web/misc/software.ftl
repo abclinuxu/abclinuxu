@@ -7,7 +7,7 @@
 
     <table class="swdetail">
         <tr>
-            <td>Prost¯edÌ:</td>
+            <td>Prost≈ôed√≠:</td>
             <td>
                 <#list software.getProperty("ui") as ui>
                     ${UI_PROPERTY[ui]}<#if ui_has_next>, </#if>
@@ -30,12 +30,12 @@
         <#local url = TOOL.xpath(software, "/data/url[@useType='homepage']")?if_exists>
     	<#if url != "UNDFEFINED">
             <tr>
-	        	<td>Domovsk· str·nka:</td>
+	        	<td>Domovsk√° str√°nka:</td>
                 <td>
                     <a href="${"/presmeruj?class=P&amp;id="+software.id+"&amp;url="+url?url}" rel="nofollow">${TOOL.limit(url,45,"..")}</a>
                     <#local visits = TOOL.getCounterValue(software,"visit")>
                     <#if (visits > 0)>
-                      <span title="PoËet n·vπtÏv domovskÈ str·nky">(${visits}&times;)</span>
+                      <span title="Poƒçet n√°v≈°tƒõv domovsk√© str√°nky">(${visits}&times;)</span>
                     </#if>
                 </td>
             </tr>
@@ -43,7 +43,7 @@
         <#local url = TOOL.xpath(software, "/data/url[@useType='download']")?default("UNDFEFINED")>
         <#if url != "UNDFEFINED">
             <tr>
-	        	<td>Adresa ke staæenÌ:</td>
+	        	<td>Adresa ke sta≈æen√≠:</td>
                 <td>
 		    <a href="${"/presmeruj?class=P&amp;id="+software.id+"&amp;url="+url?url}" rel="nofollow">${TOOL.limit(url,45,"..")}</a>
                 </td>

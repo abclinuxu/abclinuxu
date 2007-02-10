@@ -267,7 +267,7 @@ public class EditUser implements AbcAction, Configurable {
         if ( action.equals(ACTION_ADD_GROUP_MEMBER) )
             return actionAddToGroup(request, response, env);
 
-        throw new MissingArgumentException("ChybÌ parametr action!");
+        throw new MissingArgumentException("Chyb√≠ parametr action!");
     }
 
     /**
@@ -306,7 +306,7 @@ public class EditUser implements AbcAction, Configurable {
         try {
             persistence.create(managed);
         } catch (DuplicateKeyException e) {
-            ServletUtils.addError(PARAM_LOGIN, "P¯ihlaπovacÌ jmÈno nebo p¯ezdÌvka jsou jiæ pouæÌv·ny.", env, null);
+            ServletUtils.addError(PARAM_LOGIN, "P≈ôihla≈°ovac√≠ jm√©no nebo p≈ôezd√≠vka jsou ji≈æ pou≈æ√≠v√°ny.", env, null);
             return FMTemplateSelector.select("EditUser", "register", env, request);
         }
 
@@ -368,7 +368,7 @@ public class EditUser implements AbcAction, Configurable {
         try {
             persistence.update(managed);
         } catch ( DuplicateKeyException e ) {
-            ServletUtils.addError(PARAM_LOGIN, "Toto jmÈno je jiæ pouæÌv·no.", env, null);
+            ServletUtils.addError(PARAM_LOGIN, "Toto jm√©no je ji≈æ pou≈æ√≠v√°no.", env, null);
             return FMTemplateSelector.select("EditUser","editBasic",env,request);
         }
 
@@ -377,7 +377,7 @@ public class EditUser implements AbcAction, Configurable {
             sessionUser.synchronizeWith(managed);
         }
 
-        ServletUtils.addMessage("ZmÏny byly uloæeny.",env, request.getSession());
+        ServletUtils.addMessage("Zmƒõny byly ulo≈æeny.",env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
         return null;
@@ -415,7 +415,7 @@ public class EditUser implements AbcAction, Configurable {
             sessionUser.synchronizeWith(managed);
         }
 
-        ServletUtils.addMessage("Heslo bylo zmÏnÏno.", env, request.getSession());
+        ServletUtils.addMessage("Heslo bylo zmƒõnƒõno.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
         return null;
@@ -480,7 +480,7 @@ public class EditUser implements AbcAction, Configurable {
             sessionUser.synchronizeWith(managed);
         }
 
-        ServletUtils.addMessage("ZmÏny byly uloæeny.", env, request.getSession());
+        ServletUtils.addMessage("Zmƒõny byly ulo≈æeny.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
         return null;
@@ -545,7 +545,7 @@ public class EditUser implements AbcAction, Configurable {
             sessionUser.synchronizeWith(managed);
         }
 
-        ServletUtils.addMessage("ZmÏny byly uloæeny.", env, request.getSession());
+        ServletUtils.addMessage("Zmƒõny byly ulo≈æeny.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
         return null;
@@ -672,7 +672,7 @@ public class EditUser implements AbcAction, Configurable {
             sessionUser.synchronizeWith(managed);
         }
 
-        ServletUtils.addMessage("ZmÏny byly uloæeny.", env, request.getSession());
+        ServletUtils.addMessage("Zmƒõny byly ulo≈æeny.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&userId="+managed.getId());
         return null;
@@ -726,7 +726,7 @@ public class EditUser implements AbcAction, Configurable {
         if (managed.getId() == sessionUser.getId())
             sessionUser.synchronizeWith(managed);
 
-    	ServletUtils.addMessage("Autor byl p¯id·n na seznam blokovan˝ch uæivatel˘.", env, request.getSession());
+    	ServletUtils.addMessage("Autor byl p≈ôid√°n na seznam blokovan√Ωch u≈æivatel≈Ø.", env, request.getSession());
         urlUtils.redirect(response, url);
         return null;
     }
@@ -756,7 +756,7 @@ public class EditUser implements AbcAction, Configurable {
         if (managed.getId() == sessionUser.getId())
             sessionUser.synchronizeWith(managed);
 
-        ServletUtils.addMessage("Autor byl odstranÏn ze seznamu blokovan˝ch uæivatel˘.", env, request.getSession());
+        ServletUtils.addMessage("Autor byl odstranƒõn ze seznamu blokovan√Ωch u≈æivatel≈Ø.", env, request.getSession());
         urlUtils.redirect(response, url);
         return null;
     }
@@ -814,7 +814,7 @@ public class EditUser implements AbcAction, Configurable {
             sessionUser.synchronizeWith(managed);
         }
 
-        ServletUtils.addMessage("ZmÏny byly uloæeny.", env, request.getSession());
+        ServletUtils.addMessage("Zmƒõny byly ulo≈æeny.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&userId="+managed.getId());
         return null;
@@ -848,7 +848,7 @@ public class EditUser implements AbcAction, Configurable {
             sessionUser.synchronizeWith(managed);
         }
 
-        ServletUtils.addMessage("ZmÏny byly uloæeny.", env, request.getSession());
+        ServletUtils.addMessage("Zmƒõny byly ulo≈æeny.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
         return null;
@@ -906,7 +906,7 @@ public class EditUser implements AbcAction, Configurable {
             sessionUser.synchronizeWith(managed);
         }
 
-        ServletUtils.addMessage("ZmÏny rolÌ uæivatele "+managed.getName()+" byly uloæeny.", env, request.getSession());
+        ServletUtils.addMessage("Zmƒõny rol√≠ u≈æivatele "+managed.getName()+" byly ulo≈æeny.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&userId="+managed.getId());
         return null;
@@ -941,13 +941,13 @@ public class EditUser implements AbcAction, Configurable {
                 AdminLogger.logEvent(user, "zneplatnil email uzivateli "+managed.getName()+" - "+managed.getId());
                 count++;
             } catch (Exception e) {
-                sb.append("Uæivatel "+id+" nebyl nalezen!<br>");
+                sb.append("U≈æivatel "+id+" nebyl nalezen!<br>");
             }
         }
 
         if ( sb.length()>0 )
             ServletUtils.addError(Constants.ERROR_GENERIC, sb.toString(), env, request.getSession());
-        ServletUtils.addMessage(count+" uæivatel˘m byl zneplatnÏn email.", env, request.getSession());
+        ServletUtils.addMessage(count+" u≈æivatel≈Øm byl zneplatnƒõn email.", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/Admin");
         return null;
@@ -963,7 +963,7 @@ public class EditUser implements AbcAction, Configurable {
 
         int group = Misc.parseInt((String) params.get(EditGroup.PARAM_GROUP), 0);
         if (group==0)
-            return ServletUtils.showErrorPage("ChybÌ ËÌslo skupiny!",env,request);
+            return ServletUtils.showErrorPage("Chyb√≠ ƒç√≠slo skupiny!",env,request);
 
         Element system = (Element) managed.getData().selectSingleNode("/data/system");
         system.addElement("group").setText(new Integer(group).toString());
@@ -1023,7 +1023,7 @@ public class EditUser implements AbcAction, Configurable {
             return false;
         }
         if ( ! user.validatePassword(password) ) {
-            ServletUtils.addError(ServletUtils.PARAM_LOG_PASSWORD, "Nespr·vnÈ heslo!", env, null);
+            ServletUtils.addError(ServletUtils.PARAM_LOG_PASSWORD, "Nespr√°vn√© heslo!", env, null);
             return false;
         }
         return true;
@@ -1041,11 +1041,11 @@ public class EditUser implements AbcAction, Configurable {
         String password2 = (String) params.get(PARAM_PASSWORD2);
 
         if ( password==null || password.length()<4 ) {
-            ServletUtils.addError(PARAM_PASSWORD, "Heslo je p¯Ìliπ kr·tkÈ!", env, null);
+            ServletUtils.addError(PARAM_PASSWORD, "Heslo je p≈ô√≠li≈° kr√°tk√©!", env, null);
             return false;
         }
         if ( !(password.equals(password2)) ) {
-            ServletUtils.addError(PARAM_PASSWORD, "Hesla se liπÌ!", env, null);
+            ServletUtils.addError(PARAM_PASSWORD, "Hesla se li≈°√≠!", env, null);
             return false;
         }
         user.setPassword(password);
@@ -1062,15 +1062,15 @@ public class EditUser implements AbcAction, Configurable {
     private boolean setLogin(Map params, User user, Map env) {
         String login = (String) params.get(PARAM_LOGIN);
         if ( login==null || login.length()<3 ) {
-            ServletUtils.addError(PARAM_LOGIN, "P¯ihlaπovacÌ jmÈno musÌ mÌt nejmÈnÏ t¯i znaky!", env, null);
+            ServletUtils.addError(PARAM_LOGIN, "P≈ôihla≈°ovac√≠ jm√©no mus√≠ m√≠t nejm√©nƒõ t≈ôi znaky!", env, null);
             return false;
         }
         if ( login.length()>16 ) {
-            ServletUtils.addError(PARAM_LOGIN, "P¯ihlaπovacÌ jmÈno nesmÌ mÌt vÌce neæ 16 znak˘!", env, null);
+            ServletUtils.addError(PARAM_LOGIN, "P≈ôihla≈°ovac√≠ jm√©no nesm√≠ m√≠t v√≠ce ne≈æ 16 znak≈Ø!", env, null);
             return false;
         }
         if ( new RE(reLoginInvalid).match(login) ) {
-            ServletUtils.addError(PARAM_LOGIN, "P¯ihlaπovacÌ jmÈno smÌ obsahovat pouze pÌsmena A aæ Z, ËÌslice, pomlËku, teËku a podtræÌtko!", env, null);
+            ServletUtils.addError(PARAM_LOGIN, "P≈ôihla≈°ovac√≠ jm√©no sm√≠ obsahovat pouze p√≠smena A a≈æ Z, ƒç√≠slice, pomlƒçku, teƒçku a podtr≈æ√≠tko!", env, null);
             return false;
         }
         user.setLogin(login);
@@ -1088,7 +1088,7 @@ public class EditUser implements AbcAction, Configurable {
         String name = (String) params.get(PARAM_NAME);
         name = Misc.filterDangerousCharacters(name);
         if ( name==null || name.length()<4 ) {
-            ServletUtils.addError(PARAM_NAME, "JmÈno je p¯Ìliπ kr·tkÈ!", env, null);
+            ServletUtils.addError(PARAM_NAME, "Jm√©no je p≈ô√≠li≈° kr√°tk√©!", env, null);
             return false;
         }
 
@@ -1116,7 +1116,7 @@ public class EditUser implements AbcAction, Configurable {
 
         nick = nick.trim();
         if (nick.length()>20 ) {
-            ServletUtils.addError(PARAM_NICK, "P¯ezdÌvka je p¯Ìliπ dlouh·!", env, null);
+            ServletUtils.addError(PARAM_NICK, "P≈ôezd√≠vka je p≈ô√≠li≈° dlouh√°!", env, null);
             return false;
         }
 
@@ -1137,7 +1137,7 @@ public class EditUser implements AbcAction, Configurable {
     private boolean setEmail(Map params, User user, Map env) {
         String email = (String) params.get(PARAM_EMAIL);
         if ( !isEmailValid(email) ) {
-            ServletUtils.addError(PARAM_EMAIL, "Neplatn˝ email!", env, null);
+            ServletUtils.addError(PARAM_EMAIL, "Neplatn√Ω email!", env, null);
             return false;
         }
         user.setEmail(email);
@@ -1175,7 +1175,7 @@ public class EditUser implements AbcAction, Configurable {
     private boolean setSex(Map params, User user, Map env) {
         String sex = (String) params.get(PARAM_SEX);
         if ( !("man".equals(sex) || "woman".equals(sex)) ) {
-            ServletUtils.addError(PARAM_SEX, "Zadejte svÈ pohlavÌ!", env, null);
+            ServletUtils.addError(PARAM_SEX, "Zadejte sv√© pohlav√≠!", env, null);
             return false;
         }
         Node node = DocumentHelper.makeElement(user.getData(),"/data/personal/sex");
@@ -1201,7 +1201,7 @@ public class EditUser implements AbcAction, Configurable {
         }
         int valid = Misc.parseInt(year, -1);
         if ( valid==-1 ) {
-            ServletUtils.addError(PARAM_BIRTH_YEAR, "Zadejte platn˝ rok!", env, null);
+            ServletUtils.addError(PARAM_BIRTH_YEAR, "Zadejte platn√Ω rok!", env, null);
             return false;
         }
         DocumentHelper.makeElement(personal, "birth_year").setText(year);
@@ -1298,7 +1298,7 @@ public class EditUser implements AbcAction, Configurable {
         }
 
         if ( ! page.startsWith("http://") ) {
-            ServletUtils.addError(PARAM_HOME_PAGE, "NeplatnÈ URL!", env, null);
+            ServletUtils.addError(PARAM_HOME_PAGE, "Neplatn√© URL!", env, null);
             return false;
         }
 
@@ -1400,7 +1400,7 @@ public class EditUser implements AbcAction, Configurable {
         }
 
         if (contentSize(signature)>100) {
-            ServletUtils.addError(PARAM_SIGNATURE, "Maxim·lnÌ dÈlka je 100 znak˘!", env, null);
+            ServletUtils.addError(PARAM_SIGNATURE, "Maxim√°ln√≠ d√©lka je 100 znak≈Ø!", env, null);
             return false;
         }
 
@@ -1554,7 +1554,7 @@ public class EditUser implements AbcAction, Configurable {
     private boolean addToBlacklist(Map params, User user, Map env) {
         String uid = (String) params.get(PARAM_BLACKLIST_USER);
         if ( uid==null ) {
-            ServletUtils.addError(PARAM_BLACKLIST_USER, "ChybÌ parametr "+PARAM_BLACKLIST_USER+"!", env, null);
+            ServletUtils.addError(PARAM_BLACKLIST_USER, "Chyb√≠ parametr "+PARAM_BLACKLIST_USER+"!", env, null);
             return false;
         }
 
@@ -1582,7 +1582,7 @@ public class EditUser implements AbcAction, Configurable {
             ids = (List) o;
 
         if ( ids==null || ids.size()==0 ) {
-            ServletUtils.addError(PARAM_BLACKLIST_USER, "Nevybral jste æ·dnÈho uæivatele!", env, null);
+            ServletUtils.addError(PARAM_BLACKLIST_USER, "Nevybral jste ≈æ√°dn√©ho u≈æivatele!", env, null);
             return false;
         }
 
@@ -1733,13 +1733,13 @@ public class EditUser implements AbcAction, Configurable {
     private boolean setPhoto(Map params, User user, Map env) {
         FileItem fileItem = (FileItem) params.get(PARAM_PHOTO);
         if ( fileItem==null ) {
-            ServletUtils.addError(PARAM_PHOTO, "Vyberte soubor s vaπÌ fotografiÌ!", env, null);
+            ServletUtils.addError(PARAM_PHOTO, "Vyberte soubor s va≈°√≠ fotografi√≠!", env, null);
             return false;
         }
 
         String suffix = getFileSuffix(fileItem.getName()).toLowerCase();
         if ( !(suffix.equals("jpg") || suffix.equals("jpeg") || suffix.equals("png") || suffix.equals("gif")) ) {
-            ServletUtils.addError(PARAM_PHOTO, "Soubor musÌ b˝t typu JPG, GIF nebo JPEG!", env, null);
+            ServletUtils.addError(PARAM_PHOTO, "Soubor mus√≠ b√Ωt typu JPG, GIF nebo JPEG!", env, null);
             return false;
         }
 
@@ -1748,7 +1748,7 @@ public class EditUser implements AbcAction, Configurable {
         try {
             fileItem.write(file);
         } catch (Exception e) {
-            ServletUtils.addError(PARAM_PHOTO, "Chyba p¯i z·pisu na disk!", env, null);
+            ServletUtils.addError(PARAM_PHOTO, "Chyba p≈ôi z√°pisu na disk!", env, null);
             log.error("Neni mozne ulozit fotografii "+file.getAbsolutePath()+" na disk!",e);
             return false;
         }
@@ -1778,7 +1778,7 @@ public class EditUser implements AbcAction, Configurable {
         } else {
             int tmp = Misc.parseInt(limit, min - 1);
             if (tmp < min || tmp > max) {
-                ServletUtils.addError(paramName, "Zadejte ËÌslo v rozsahu "+min+" - " + max + "!", env, null);
+                ServletUtils.addError(paramName, "Zadejte ƒç√≠slo v rozsahu "+min+" - " + max + "!", env, null);
                 return false;
             }
             Element element = DocumentHelper.makeElement(document, xpath);

@@ -4,15 +4,15 @@
 
 <#if PREVIEW?exists>
  <p>
-    Prohlédnìte si vzhled va¹eho komentáøe. Zkontrolujte
-    pravopis, obsah i tón va¹eho textu. Nìkdy to vá¾nì
-    chce chladnou hlavu. Opravte chyby a zvolte tlaèítko <code>Náhled</code>.
-    Pokud jste s pøíspìvkem spokojeni, stisknìte tlaèítko <code>Dokonèi</code>.
+    ProhlÃ©dnÄ›te si vzhled vaÅ¡eho komentÃ¡Å™e. Zkontrolujte
+    pravopis, obsah i tÃ³n vaÅ¡eho textu. NÄ›kdy to vÃ¡Å¾nÄ›
+    chce chladnou hlavu. Opravte chyby a zvolte tlaÄÃ­tko <code>NÃ¡hled</code>.
+    Pokud jste s pÅ™Ã­spÄ›vkem spokojeni, stisknÄ›te tlaÄÃ­tko <code>DokonÄi</code>.
  </p>
 </#if>
 
 <#if THREAD?exists>
- <h2>Pøíspìvek, na kterı reagujete</h2>
+ <h2>PÅ™Ã­spÄ›vek, na kterÃ½ reagujete</h2>
  <@lib.showThread THREAD, 0, TOOL.createEmptyDiscussion(), false />
 
  <script language="javascript1.2" type="text/javascript">
@@ -25,13 +25,13 @@
 </#if>
 
 <#if PREVIEW?exists>
- <h2>Náhled va¹eho pøíspìvku</h2>
+ <h2>NÃ¡hled vaÅ¡eho pÅ™Ã­spÄ›vku</h2>
  <div style="padding-left: 30pt">
   <@lib.showThread PREVIEW, 0, TOOL.createEmptyDiscussion(), false />
  </div>
 </#if>
 
-<h2>Vá¹ komentáø</h2>
+<h2>VÃ¡Å¡ komentÃ¡Å™</h2>
 
 <form action="${URL.make("/EditDiscussion")}" method="POST" name="replyForm">
   <#if ! USER?exists>
@@ -42,16 +42,16 @@
      <span class="error">${ERRORS.LOGIN?if_exists}</span>
    </p>
    <p>
-    <span class="required">nebo va¹e jméno</span>
+    <span class="required">nebo vaÅ¡e jmÃ©no</span>
         <input tabindex="3" type="text" size="30" name="author" value="${PARAMS.author?if_exists?html}">
     <span class="error">${ERRORS.author?if_exists}</span>
    </p>
    <#if ! USER_VERIFIED?if_exists>
        <p>
-           <span class="required">Zadejte aktuální rok</span>
+           <span class="required">Zadejte aktuÃ¡lnÃ­ rok</span>
            <input type="text" size="4" name="antispam" value="${PARAMS.antispam?if_exists?html}">
-           <a class="info" href="#">?<span class="tooltip">Vlo¾te aktuální rok. Jedná se o ochranu pøed spamboty.
-           Po úspì¹ném ovìøení se ulo¾í cookie (vèetnì va¹eho jména) a tato kontrola pøestane bıt provádìna.</span></a>
+           <a class="info" href="#">?<span class="tooltip">VloÅ¾te aktuÃ¡lnÃ­ rok. JednÃ¡ se o ochranu pÅ™ed spamboty.
+           Po ÃºspÄ›Å¡nÃ©m ovÄ›Å™enÃ­ se uloÅ¾Ã­ cookie (vÄetnÄ› vaÅ¡eho jmÃ©na) a tato kontrola pÅ™estane bÃ½t provÃ¡dÄ›na.</span></a>
            <span class="error">${ERRORS.antispam?if_exists}</span>
        </p>
    </#if>
@@ -71,18 +71,18 @@
    <div class="error">${ERRORS.title?if_exists}</div>
   </p>
   <p>
-    <span class="required">Vá¹ komentáø</span>
+    <span class="required">VÃ¡Å¡ komentÃ¡Å™</span>
     <div class="form-edit">
-        <a href="javascript:insertAtCursor(document.replyForm.text, '&lt;b&gt;', '&lt;/b&gt;');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
-        <a href="javascript:insertAtCursor(document.replyForm.text, '&lt;i&gt;', '&lt;/i&gt;');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
-        <a href="javascript:insertAtCursor(document.replyForm.text, '&lt;a href=&quot;&quot;&gt;', '&lt;/a&gt;');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
-        <a href="javascript:insertAtCursor(document.replyForm.text, '&lt;p&gt;', '&lt;/p&gt;');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
-        <a href="javascript:insertAtCursor(document.replyForm.text, '&lt;pre&gt;', '&lt;/pre&gt;');" id="mono" title="Vlo¾it znaèku formátovaného textu. Vhodné pro konfiguraèní soubory èi vıpisy.">&lt;pre&gt;</a>
-	    <a href="javascript:insertAtCursor(document.replyForm.text, '&lt;code&gt;', '&lt;/code&gt;');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
-	    <a href="javascript:insertAtCursor(document.replyForm.text, '&amp;lt;', '');" id="mono" title="Vlo¾it písmeno &lt;">&lt;</a>
-	    <a href="javascript:insertAtCursor(document.replyForm.text, '&amp;gt;', '');" id="mono" title="Vlo¾it písmeno &gt;">&gt;</a>
+        <a href="javascript:insertAtCursor(document.replyForm.text, '&lt;b&gt;', '&lt;/b&gt;');" id="serif" title="VloÅ¾it znaÄku tuÄnÄ›"><b>B</b></a>
+        <a href="javascript:insertAtCursor(document.replyForm.text, '&lt;i&gt;', '&lt;/i&gt;');" id="serif" title="VloÅ¾it znaÄku kurzÃ­va"><i>I</i></a>
+        <a href="javascript:insertAtCursor(document.replyForm.text, '&lt;a href=&quot;&quot;&gt;', '&lt;/a&gt;');" id="mono" title="VloÅ¾it znaÄku odkazu">&lt;a&gt;</a>
+        <a href="javascript:insertAtCursor(document.replyForm.text, '&lt;p&gt;', '&lt;/p&gt;');" id="mono" title="VloÅ¾it znaÄku odstavce">&lt;p&gt;</a>
+        <a href="javascript:insertAtCursor(document.replyForm.text, '&lt;pre&gt;', '&lt;/pre&gt;');" id="mono" title="VloÅ¾it znaÄku formÃ¡tovanÃ©ho textu. VhodnÃ© pro konfiguraÄnÃ­ soubory Äi vÃ½pisy.">&lt;pre&gt;</a>
+	    <a href="javascript:insertAtCursor(document.replyForm.text, '&lt;code&gt;', '&lt;/code&gt;');" id="mono" title="VloÅ¾it znaÄku pro pÃ­smo s pevnou Å¡Ã­Å™kou">&lt;code&gt;</a>
+	    <a href="javascript:insertAtCursor(document.replyForm.text, '&amp;lt;', '');" id="mono" title="VloÅ¾it pÃ­smeno &lt;">&lt;</a>
+	    <a href="javascript:insertAtCursor(document.replyForm.text, '&amp;gt;', '');" id="mono" title="VloÅ¾it pÃ­smeno &gt;">&gt;</a>
         <#if THREAD?exists>
-            <a href="javascript:cituj(document.replyForm.text);" id="mono" title="Vlo¾í komentovanı pøíspìvek jako citaci">Citace</a>
+            <a href="javascript:cituj(document.replyForm.text);" id="mono" title="VloÅ¾Ã­ komentovanÃ½ pÅ™Ã­spÄ›vek jako citaci">Citace</a>
         </#if>
     </div>
    <div class="error">${ERRORS.text?if_exists}</div>
@@ -90,10 +90,10 @@
   </p>
   <p>
     <#if PREVIEW?exists>
-     <input tabindex="6" type="submit" name="preview" value="Zopakuj náhled">
-     <input tabindex="7" type="submit" name="finish" value="Dokonèi">
+     <input tabindex="6" type="submit" name="preview" value="Zopakuj nÃ¡hled">
+     <input tabindex="7" type="submit" name="finish" value="DokonÄi">
     <#else>
-     <input tabindex="6" type="submit" name="preview" value="Náhled">
+     <input tabindex="6" type="submit" name="preview" value="NÃ¡hled">
     </#if>
   </p>
 

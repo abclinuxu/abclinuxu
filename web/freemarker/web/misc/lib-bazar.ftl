@@ -7,7 +7,7 @@
         <tr>
             <td><b>Typ:</b></td>
             <td>
-                <#if AD.subType=='sell'>prodej<#else>koupì</#if>
+                <#if AD.subType=='sell'>prodej<#else>koupÄ›</#if>
             </td>
         </tr>
         <#assign price = TOOL.xpath(AD.data, "/data/price")?default("UNDEFINED")>
@@ -37,25 +37,25 @@
                         <form action="${URL.noPrefix("/Profile")}">
                             <input type="hidden" name="action" value="sendEmail">
                             <input type="hidden" name="uid" value="${who.id}">
-                            <input type="submit" value="Po¹lete mi email" class="button">
+                            <input type="submit" value="PoÅ¡lete mi email" class="button">
                         </form>
                     <#else>
-                        <p class="error">Administrátoøi oznaèili email u¾ivatele za neplatnı!</p>
+                        <p class="error">AdministrÃ¡toÅ™i oznaÄili email uÅ¾ivatele za neplatnÃ½!</p>
                     </#if>
                 </#if>
             </td>
         </tr>
         <tr>
-            <td><b>Vlo¾eno:</b></td>
+            <td><b>VloÅ¾eno:</b></td>
             <td>
                 ${DATE.show(AD.created,"SMART")}<#rt>
                 <#lt><#if AD.created.time != AD.updated.time><#rt>
-                    <#lt>, poslední úprava ${DATE.show(AD.updated,"SMART")}
+                    <#lt>, poslednÃ­ Ãºprava ${DATE.show(AD.updated,"SMART")}
                 </#if>
             </td>
         </tr>
         <tr>
-            <td><b>Pøeèteno:</b></td>
+            <td><b>PÅ™eÄteno:</b></td>
             <td>
                 <#local reads = TOOL.getCounterValue(AD,"read")>${reads}&times;
             </td>

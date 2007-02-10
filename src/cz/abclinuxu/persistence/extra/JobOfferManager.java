@@ -47,7 +47,7 @@ public class JobOfferManager extends TimerTask implements Configurable {
         try {
             Class.forName("com.mysql.jdbc.Driver");
         } catch (Exception e) {
-            log.fatal("Nemohu vytvoøit instanci JDBC driveru, zkontroluj CLASSPATH!", e);
+            log.fatal("Nemohu vytvoÅ™it instanci JDBC driveru, zkontroluj CLASSPATH!", e);
         }
     }
 

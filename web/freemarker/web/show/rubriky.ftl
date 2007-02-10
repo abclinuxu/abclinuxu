@@ -5,11 +5,11 @@
 <#if USER?exists && USER.hasRole("category admin")>
  <p>
  <a href="${URL.make("/edit?action=add&rid="+RELATION.id)}"
- title="Vytvoø podkategorii"><img src="/images/actions/attach.png" ALT="Pøidej èlánek" class="ikona22"></a>
+ title="VytvoÅ™ podkategorii"><img src="/images/actions/attach.png" ALT="PÅ™idej ÄlÃ¡nek" class="ikona22"></a>
  <a href="${URL.make("/EditCategory?action=edit&rid="+RELATION.id+"&categoryId="+CATEGORY.id)}"
  title="Uprav kategorii"><img src="/images/actions/pencil.png" class="ikona22" ALT="Uprav sekci"></a>
  <a href="${URL.noPrefix("/EditRelation?action=remove&rid="+RELATION.id+"&prefix="+URL.prefix)}"
- title="Sma¾ kategorii"><img src="/images/actions/delete.png" ALT="Sma¾ sekci" class="ikona"></a>
+ title="SmaÅ¾ kategorii"><img src="/images/actions/delete.png" ALT="SmaÅ¾ sekci" class="ikona"></a>
  </p>
 </#if>
 

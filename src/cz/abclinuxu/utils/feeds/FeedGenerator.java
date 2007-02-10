@@ -87,10 +87,10 @@ public class FeedGenerator implements Configurable {
             SyndFeed feed = new SyndFeedImpl();
             feed.setFeedType(TYPE_RSS_1_0);
             feed.setEncoding("UTF-8");
-            feed.setTitle("abclinuxu - diskusní fórum");
+            feed.setTitle("abclinuxu - diskusnÃ­ fÃ³rum");
             feed.setLink("http://www.abclinuxu.cz/diskuse.jsp");
             feed.setUri("http://www.abclinuxu.cz/diskuse.jsp");
-            feed.setDescription("Seznam aktuálních diskusí na fóru portálu www.abclinuxu.cz");
+            feed.setDescription("Seznam aktuÃ¡lnÃ­ch diskusÃ­ na fÃ³ru portÃ¡lu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
 
@@ -107,7 +107,7 @@ public class FeedGenerator implements Configurable {
                 entry = new SyndEntryImpl();
                 entry.setLink("http://www.abclinuxu.cz/forum/show/" + diz.getRelationId());
                 title = Tools.xpath(diz.getDiscussion(), "data/title");
-                title = title.concat(", odpovìdí: " + diz.getResponseCount());
+                title = title.concat(", odpovÄ›dÃ­: " + diz.getResponseCount());
                 entry.setTitle(title);
                 entry.setPublishedDate(diz.getUpdated());
                 description = new SyndContentImpl();
@@ -140,10 +140,10 @@ public class FeedGenerator implements Configurable {
             SyndFeed feed = new SyndFeedImpl();
             feed.setEncoding("UTF-8");
             feed.setFeedType(TYPE_RSS_1_0);
-            feed.setTitle("abclinuxu - databáze ovladaèù");
+            feed.setTitle("abclinuxu - databÃ¡ze ovladaÄÅ¯");
             feed.setLink("http://www.abclinuxu.cz/ovladace");
             feed.setUri("http://www.abclinuxu.cz/ovladace");
-            feed.setDescription("Seznam èerstvıch záznamù do databáze linuxovıch ovladaèù na portálu www.abclinuxu.cz");
+            feed.setDescription("Seznam ÄerstvÃ½ch zÃ¡znamÅ¯ do databÃ¡ze linuxovÃ½ch ovladaÄÅ¯ na portÃ¡lu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
             SyndEntry entry;
@@ -184,10 +184,10 @@ public class FeedGenerator implements Configurable {
             SyndFeed feed = new SyndFeedImpl();
             feed.setEncoding("UTF-8");
             feed.setFeedType(TYPE_RSS_1_0);
-            feed.setTitle("abclinuxu - vıkladovı slovník");
+            feed.setTitle("abclinuxu - vÃ½kladovÃ½ slovnÃ­k");
             feed.setLink("http://www.abclinuxu.cz/slovnik");
             feed.setUri("http://www.abclinuxu.cz/slovnik");
-            feed.setDescription("Vıkladovı slovník na portálu www.abclinuxu.cz");
+            feed.setDescription("VÃ½kladovÃ½ slovnÃ­k na portÃ¡lu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
             SyndEntry entry;
@@ -228,10 +228,10 @@ public class FeedGenerator implements Configurable {
             SyndFeed feed = new SyndFeedImpl();
             feed.setFeedType(TYPE_RSS_1_0);
             feed.setEncoding("UTF-8");
-            feed.setTitle("abclinuxu - databáze hardwaru");
+            feed.setTitle("abclinuxu - databÃ¡ze hardwaru");
             feed.setLink("http://www.abclinuxu.cz/hardware");
             feed.setUri("http://www.abclinuxu.cz/hardware");
-            feed.setDescription("Seznam èerstvıch záznamù do databáze hardwarovıch poznatkù na portálu www.abclinuxu.cz");
+            feed.setDescription("Seznam ÄerstvÃ½ch zÃ¡znamÅ¯ do databÃ¡ze hardwarovÃ½ch poznatkÅ¯ na portÃ¡lu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
             SyndEntry entry;
@@ -279,7 +279,7 @@ public class FeedGenerator implements Configurable {
             feed.setTitle("abclinuxu - katalog softwaru");
             feed.setLink("http://www.abclinuxu.cz/software");
             feed.setUri("http://www.abclinuxu.cz/software");
-            feed.setDescription("Seznam èerstvıch záznamù do softwarového katalogu na portálu www.abclinuxu.cz");
+            feed.setDescription("Seznam ÄerstvÃ½ch zÃ¡znamÅ¯ do softwarovÃ©ho katalogu na portÃ¡lu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
             SyndEntry entry;
@@ -331,10 +331,10 @@ public class FeedGenerator implements Configurable {
             SyndFeed feed = new SyndFeedImpl();
             feed.setFeedType(TYPE_RSS_1_0);
             feed.setEncoding("UTF-8");
-            feed.setTitle("abclinuxu - aktuální èlánky");
+            feed.setTitle("abclinuxu - aktuÃ¡lnÃ­ ÄlÃ¡nky");
             feed.setLink("http://www.abclinuxu.cz/clanky");
             feed.setUri("http://www.abclinuxu.cz/clanky");
-            feed.setDescription("Seznam èerstvıch èlánkù na portálu www.abclinuxu.cz");
+            feed.setDescription("Seznam ÄerstvÃ½ch ÄlÃ¡nkÅ¯ na portÃ¡lu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
             SyndEntry entry;
@@ -408,7 +408,7 @@ public class FeedGenerator implements Configurable {
                 feed.setTitle(Tools.limit(Tools.xpath(blog, "//custom/title"), 40, "..."));
                 feed.setLink("http://www.abclinuxu.cz/blog/"+blog.getSubType()+"/");
                 feed.setUri("http://www.abclinuxu.cz/blog/"+blog.getSubType()+"/");
-                feed.setDescription("Seznam èerstvıch zápisù u¾ivatele "+author.getName());
+                feed.setDescription("Seznam ÄerstvÃ½ch zÃ¡pisÅ¯ uÅ¾ivatele "+author.getName());
                 List entries = new ArrayList();
                 feed.setEntries(entries);
                 SyndEntry entry;
@@ -439,7 +439,7 @@ public class FeedGenerator implements Configurable {
             feed.setTitle("abclinuxu - blogy");
             feed.setLink("http://www.abclinuxu.cz/blog/");
             feed.setUri("http://www.abclinuxu.cz/blog/");
-            feed.setDescription("Seznam èerstvıch zápisù u¾ivatelù www.abclinuxu.cz");
+            feed.setDescription("Seznam ÄerstvÃ½ch zÃ¡pisÅ¯ uÅ¾ivatelÅ¯ www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
             SyndEntry entry;
@@ -481,10 +481,10 @@ public class FeedGenerator implements Configurable {
 
             SyndFeed feed = new SyndFeedImpl();
             feed.setFeedType(TYPE_RSS_1_0);
-            feed.setTitle("abclinuxu - vıbìr z blogù");
+            feed.setTitle("abclinuxu - vÃ½bÄ›r z blogÅ¯");
             feed.setLink("http://www.abclinuxu.cz/blog/");
             feed.setUri("http://www.abclinuxu.cz/blog/");
-            feed.setDescription("Seznam peèlivì vybranıch zápisù u¾ivatelù www.abclinuxu.cz");
+            feed.setDescription("Seznam peÄlivÄ› vybranÃ½ch zÃ¡pisÅ¯ uÅ¾ivatelÅ¯ www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
             SyndEntry entry;
@@ -516,7 +516,7 @@ public class FeedGenerator implements Configurable {
             output.output(feed, writer);
             writer.close();
         } catch (Exception e) {
-            log.error("Chyba pøi generování RSS pro digest blogu", e);
+            log.error("Chyba pÅ™i generovÃ¡nÃ­ RSS pro digest blogu", e);
         }
     }
 
@@ -531,10 +531,10 @@ public class FeedGenerator implements Configurable {
             SyndFeed feed = new SyndFeedImpl();
             feed.setFeedType(TYPE_RSS_1_0);
             feed.setEncoding("UTF-8");
-            feed.setTitle("abclinuxu - èerstvé zprávièky");
+            feed.setTitle("abclinuxu - ÄerstvÃ© zprÃ¡viÄky");
             feed.setLink("http://www.abclinuxu.cz/zpravicky");
             feed.setUri("http://www.abclinuxu.cz/zpravicky");
-            feed.setDescription("Seznam èerstvıch zprávièek na portálu www.abclinuxu.cz");
+            feed.setDescription("Seznam ÄerstvÃ½ch zprÃ¡viÄek na portÃ¡lu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
             SyndEntry entry;
@@ -590,10 +590,10 @@ public class FeedGenerator implements Configurable {
             SyndFeed feed = new SyndFeedImpl();
             feed.setFeedType(TYPE_RSS_1_0);
             feed.setEncoding("UTF-8");
-            feed.setTitle("abclinuxu - èasto kladené otázky");
+            feed.setTitle("abclinuxu - Äasto kladenÃ© otÃ¡zky");
             feed.setLink("http://www.abclinuxu.cz/faq");
             feed.setUri("http://www.abclinuxu.cz/faq");
-            feed.setDescription("Seznam aktualizovanıch otázek s odpovìïmi na portálu www.abclinuxu.cz");
+            feed.setDescription("Seznam aktualizovanÃ½ch otÃ¡zek s odpovÄ›Ämi na portÃ¡lu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
             SyndEntry entry;
@@ -645,7 +645,7 @@ public class FeedGenerator implements Configurable {
             feed.setTitle("abclinuxu - ankety");
             feed.setLink("http://www.abclinuxu.cz/ankety");
             feed.setUri("http://www.abclinuxu.cz/ankety");
-            feed.setDescription("Seznam anket na portálu www.abclinuxu.cz");
+            feed.setDescription("Seznam anket na portÃ¡lu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
 
@@ -688,7 +688,7 @@ public class FeedGenerator implements Configurable {
             feed.setTitle("abclinuxu - bazar");
             feed.setLink("http://www.abclinuxu.cz/bazar");
             feed.setUri("http://www.abclinuxu.cz/bazar");
-            feed.setDescription("Seznam inzerátù z bazaru na portálu www.abclinuxu.cz");
+            feed.setDescription("Seznam inzerÃ¡tÅ¯ z bazaru na portÃ¡lu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);
 

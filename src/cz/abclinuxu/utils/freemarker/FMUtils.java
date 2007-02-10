@@ -142,8 +142,8 @@ public class FMUtils implements Configurable {
         config = new Configuration();
         config.setTemplateExceptionHandler(exceptionHandler);
         config.setTemplateUpdateDelay(prefs.getInt(PREF_TEMPLATE_UPDATE_INTERVAL, 5));
-        config.setDefaultEncoding("ISO-8859-2");
-        config.setOutputEncoding("ISO-8859-2");
+        config.setDefaultEncoding("UTF-8");
+        config.setOutputEncoding("UTF-8");
         config.setObjectWrapper(beansWrapper);
         config.setStrictSyntaxMode(true);
         config.setWhitespaceStripping(true);

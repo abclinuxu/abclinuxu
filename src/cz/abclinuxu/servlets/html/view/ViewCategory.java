@@ -111,7 +111,7 @@ public class ViewCategory implements AbcAction {
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if (relation == null)
-            throw new MissingArgumentException("Parametr relationId je prázdný!");
+            throw new MissingArgumentException("Parametr relationId je prÃ¡zdnÃ½!");
         relation = (Relation) persistence.findById(relation);
         env.put(ShowObject.VAR_RELATION,relation);
         List parents = persistence.findParents(relation);

@@ -2,13 +2,13 @@
 
 <@lib.showMessages/>
 
-<p>Tento formuláø slou¾í pro nahrání va¹í fotografie.
-Pro va¹i ochranu nejdøíve zadejte souèasné heslo.
-Pak vyberte soubor s va¹í fotografií. Soubor musí bıt
-typu PNG, GIF nebo JPEG. Pro fotografie je optimální
-JPEG, velikost souboru sni¾te vhodnou volbou komprese.
-Doporuèené rozmìry obrázku jsou 175 pixelù na ¹íøku
-a 200 pixelù na vı¹ku. Maximální velikost souboru je
+<p>Tento formulÃ¡Å™ slouÅ¾Ã­ pro nahrÃ¡nÃ­ vaÅ¡Ã­ fotografie.
+Pro vaÅ¡i ochranu nejdÅ™Ã­ve zadejte souÄasnÃ© heslo.
+Pak vyberte soubor s vaÅ¡Ã­ fotografiÃ­. Soubor musÃ­ bÃ½t
+typu PNG, GIF nebo JPEG. Pro fotografie je optimÃ¡lnÃ­
+JPEG, velikost souboru sniÅ¾te vhodnou volbou komprese.
+DoporuÄenÃ© rozmÄ›ry obrÃ¡zku jsou 175 pixelÅ¯ na Å¡Ã­Å™ku
+a 200 pixelÅ¯ na vÃ½Å¡ku. MaximÃ¡lnÃ­ velikost souboru je
 50&nbsp;kB.
 </p>
 
@@ -33,7 +33,7 @@ a 200 pixelù na vı¹ku. Maximální velikost souboru je
   </tr>
   <tr>
    <td width="120">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi" tabindex="3"></td>
+   <td><input type="submit" value="DokonÄi" tabindex="3"></td>
   </tr>
  </table>
 </form>

@@ -187,7 +187,7 @@ public class History implements AbcAction {
             type = VALUE_TYPE_DICTIONARY;
 
         } else
-            return ServletUtils.showErrorPage("Chybí parametr type!",env,request);
+            return ServletUtils.showErrorPage("ChybÃ­ parametr type!",env,request);
 
         Tools.syncList(found.getData());
 

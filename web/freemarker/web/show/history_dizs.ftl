@@ -9,8 +9,8 @@
            <tr>
                 <td class="td01">Titulek</td>
                 <td class="td02">Stav</td>
-                <td class="td03">Reakcí</td>
-                <td class="td04">Poslední</td>
+                <td class="td03">ReakcÃ­</td>
+                <td class="td04">PoslednÃ­</td>
             </tr>
         </thead>
         <tbody>
@@ -22,10 +22,10 @@
     <td class="td02">
        <@lib.markNewCommentsQuestion diz/>
        <#if TOOL.xpath(diz.discussion,"/data/frozen")?exists>
-         <img src="/images/site2/zamceno.gif" alt="Z" title="Diskuse byla administrátory uzamèena">
+         <img src="/images/site2/zamceno.gif" alt="Z" title="Diskuse byla administrÃ¡tory uzamÄena">
        </#if>
        <#if TOOL.isQuestionSolved(diz.discussion.data)>
-         <img src="/images/site2/vyreseno.gif" alt="V" title="Diskuse byla podle ètenáøù vyøe¹ena">
+         <img src="/images/site2/vyreseno.gif" alt="V" title="Diskuse byla podle ÄtenÃ¡Å™Å¯ vyÅ™eÅ¡ena">
        </#if>
        <#if USER?exists && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"']")?exists>
          <img src="/images/site2/sledovano.gif" alt="S" title="Tuto diskusi sledujete monitorem">
@@ -45,22 +45,22 @@
 <form action="/History">
 <table border="0"><tr>
 <th>Pozice</th>
-<th>Poèet</th>
-<th>Tøídit podle</th>
-<th>Smìr</th>
+<th>PoÄet</th>
+<th>TÅ™Ã­dit podle</th>
+<th>SmÄ›r</th>
 <td></td>
 </tr><tr>
 <td><input type="text" size="4" value="${FOUND.thisPage.row}" name="from" tabindex="1"></td>
 <td><input type="text" size="3" value="${FOUND.pageSize}" name="count" tabindex="2"></td>
 <td>
  <select name="orderBy" tabindex="3">
-  <option value="update">data <#if PARAMS.uid?exists>mého </#if>posledního komentáøe</option>
+  <option value="update">data <#if PARAMS.uid?exists>mÃ©ho </#if>poslednÃ­ho komentÃ¡Å™e</option>
  </select>
 </td>
 <td>
  <select name="orderDir" tabindex="4">
-  <option value="desc">sestupnì</option>
-  <option value="asc">vzestupnì</option>
+  <option value="desc">sestupnÄ›</option>
+  <option value="asc">vzestupnÄ›</option>
  </select>
 </td>
 <td><input type="submit" value="Zobrazit"></td>

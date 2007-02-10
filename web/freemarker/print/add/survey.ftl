@@ -2,53 +2,53 @@
 
 <@lib.showMessages/>
 
-<h1>Úvod</h1>
+<h1>Ãšvod</h1>
 
-<p>Ka¾dá anketa se skládá z HTML souborù obsahujících formuláøe
-a z XML, které je ulo¾eno v databázi jako polo¾ka typu 6. Tato polo¾ka
-urèuje poøadí volání jednotlivıch HTML souborù (nazıvanıch SCREEN)
-a ukládání vısledkù. Zároveò obsahuje pomocné údaje pro automatickou
-analızu vısledkù, zvlá¹tì pak jednotlivé VOLBY (radio buttony a check boxy).
+<p>KaÅ¾dÃ¡ anketa se sklÃ¡dÃ¡ z HTML souborÅ¯ obsahujÃ­cÃ­ch formulÃ¡Å™e
+a z XML, kterÃ© je uloÅ¾eno v databÃ¡zi jako poloÅ¾ka typu 6. Tato poloÅ¾ka
+urÄuje poÅ™adÃ­ volÃ¡nÃ­ jednotlivÃ½ch HTML souborÅ¯ (nazÃ½vanÃ½ch SCREEN)
+a uklÃ¡dÃ¡nÃ­ vÃ½sledkÅ¯. ZÃ¡roveÅˆ obsahuje pomocnÃ© Ãºdaje pro automatickou
+analÃ½zu vÃ½sledkÅ¯, zvlÃ¡Å¡tÄ› pak jednotlivÃ© VOLBY (radio buttony a check boxy).
 </p>
 
 <p>
-První screen musí mít ID nastaven na START. Ka¾dı screen musí obsahovat
-znaèku template, která obsahuje cestu k urèitému HTML souboru. Cesta
-musí zaèínat lomítkem a bıt relativní vùèi ¹ablonì (WEB-INF/freemarker/web).
-Své HTML soubory zkopírujte jak do této hlavní ¹ablony, tak i do ostatních
-(v souèasnosti WEB-INF/freemarker/lynx).
+PrvnÃ­ screen musÃ­ mÃ­t ID nastaven na START. KaÅ¾dÃ½ screen musÃ­ obsahovat
+znaÄku template, kterÃ¡ obsahuje cestu k urÄitÃ©mu HTML souboru. Cesta
+musÃ­ zaÄÃ­nat lomÃ­tkem a bÃ½t relativnÃ­ vÅ¯Äi Å¡ablonÄ› (WEB-INF/freemarker/web).
+SvÃ© HTML soubory zkopÃ­rujte jak do tÃ©to hlavnÃ­ Å¡ablony, tak i do ostatnÃ­ch
+(v souÄasnosti WEB-INF/freemarker/lynx).
 </p>
 
 <p>
-Pokud chcete v nìkterém kroku ulo¾it v¹echny údaje získané od u¾ivatele
-v pøedchozích screenech, vlo¾te do daného screenu znaèku dump. Ta zpùsobí,
-¾e se v¹echny údaje zapí¹í do XML souboru do daného adresáøe pod náhodnım
-jménem zaèínajícím na prefix a konèícím na suffix. Údaje budou zároveò vymazány
-z pamìti, tak¾e dal¹í dump je ji¾ nebude zapisovat. Takto mù¾ete napøíklad
-zajistit anonymní anketu - oddìlení osobních údajù od ostatních informací.
-Obvykle se tato znaèka pou¾ívá v posledním screenu, kterı ji¾ pochopitelnì
-neobsahuje formuláø, jen podìkování.
+Pokud chcete v nÄ›kterÃ©m kroku uloÅ¾it vÅ¡echny Ãºdaje zÃ­skanÃ© od uÅ¾ivatele
+v pÅ™edchozÃ­ch screenech, vloÅ¾te do danÃ©ho screenu znaÄku dump. Ta zpÅ¯sobÃ­,
+Å¾e se vÅ¡echny Ãºdaje zapÃ­Å¡Ã­ do XML souboru do danÃ©ho adresÃ¡Å™e pod nÃ¡hodnÃ½m
+jmÃ©nem zaÄÃ­najÃ­cÃ­m na prefix a konÄÃ­cÃ­m na suffix. Ãšdaje budou zÃ¡roveÅˆ vymazÃ¡ny
+z pamÄ›ti, takÅ¾e dalÅ¡Ã­ dump je jiÅ¾ nebude zapisovat. Takto mÅ¯Å¾ete napÅ™Ã­klad
+zajistit anonymnÃ­ anketu - oddÄ›lenÃ­ osobnÃ­ch ÃºdajÅ¯ od ostatnÃ­ch informacÃ­.
+Obvykle se tato znaÄka pouÅ¾Ã­vÃ¡ v poslednÃ­m screenu, kterÃ½ jiÅ¾ pochopitelnÄ›
+neobsahuje formulÃ¡Å™, jen podÄ›kovÃ¡nÃ­.
 </p>
 
 <p>
-HTML soubory musí obsahovat formuláø s pøesnì danımi informacemi, pokud
-nìkteré opomenete, anketa nebude fungovat správnì. Základní informací
-je nastavit správnì URL, kam bude formuláø zasílat údaje. Toto URL
-je /Survey. Kvùli lidem majícím zakázané cookies u anket s více screeny
-je vhodné pou¾ít URL rewriting. To získáte takto: ${URL.noPrefix("/Survey")},
-nicménì nebude fungovat, pokud první screen zaèleníte do èlánku. Tento
-fígl funguje pouze, pokud jej pou¾ijete v samostatném HTML souboru definovaném
-v znaèce template.
+HTML soubory musÃ­ obsahovat formulÃ¡Å™ s pÅ™esnÄ› danÃ½mi informacemi, pokud
+nÄ›kterÃ© opomenete, anketa nebude fungovat sprÃ¡vnÄ›. ZÃ¡kladnÃ­ informacÃ­
+je nastavit sprÃ¡vnÄ› URL, kam bude formulÃ¡Å™ zasÃ­lat Ãºdaje. Toto URL
+je /Survey. KvÅ¯li lidem majÃ­cÃ­m zakÃ¡zanÃ© cookies u anket s vÃ­ce screeny
+je vhodnÃ© pouÅ¾Ã­t URL rewriting. To zÃ­skÃ¡te takto: ${URL.noPrefix("/Survey")},
+nicmÃ©nÄ› nebude fungovat, pokud prvnÃ­ screen zaÄlenÃ­te do ÄlÃ¡nku. Tento
+fÃ­gl funguje pouze, pokud jej pouÅ¾ijete v samostatnÃ©m HTML souboru definovanÃ©m
+v znaÄce template.
 </p>
 
 <p>
-Formuláø musí dále obsahovat ètyøi skrytá vstupní políèka. První je
-surveyId, kterı obsahuje èíslo polo¾ky této ankety. Druhé políèko je
-SCREEN_CURRENT, co¾ je id aktuálního screenu. SCREEN_NEXT zase obsahuje
-èíslo následujícího screenu, kterı bude zobrazen na dal¹í stránce.
-SAVE_PARAMS musí obsahovat èárkou oddìlená jména v¹ech formuláøovıch
-políèek, které chcete ulo¾it. Pokud nìkteré políèko zde vynecháte,
-nebude ulo¾eno a jeho hodnota bude ztracena.
+FormulÃ¡Å™ musÃ­ dÃ¡le obsahovat ÄtyÅ™i skrytÃ¡ vstupnÃ­ polÃ­Äka. PrvnÃ­ je
+surveyId, kterÃ½ obsahuje ÄÃ­slo poloÅ¾ky tÃ©to ankety. DruhÃ© polÃ­Äko je
+SCREEN_CURRENT, coÅ¾ je id aktuÃ¡lnÃ­ho screenu. SCREEN_NEXT zase obsahuje
+ÄÃ­slo nÃ¡sledujÃ­cÃ­ho screenu, kterÃ½ bude zobrazen na dalÅ¡Ã­ strÃ¡nce.
+SAVE_PARAMS musÃ­ obsahovat ÄÃ¡rkou oddÄ›lenÃ¡ jmÃ©na vÅ¡ech formulÃ¡Å™ovÃ½ch
+polÃ­Äek, kterÃ© chcete uloÅ¾it. Pokud nÄ›kterÃ© polÃ­Äko zde vynechÃ¡te,
+nebude uloÅ¾eno a jeho hodnota bude ztracena.
 </p>
 
 <h1>Anketa</h1>
@@ -56,7 +56,7 @@ nebude ulo¾eno a jeho hodnota bude ztracena.
 <form action="${URL.make("/EditSurvey")}" method="POST">
  <table width="100%" border=0 cellpadding=5>
   <tr>
-   <td width="120">Jméno ankety</td>
+   <td width="120">JmÃ©no ankety</td>
    <td>
     <input type="text" name="title" value="${PARAMS.title?if_exists}" size="40" tabindex="1">
     <div class="error">${ERRORS.title?if_exists}</div>
@@ -65,8 +65,8 @@ nebude ulo¾eno a jeho hodnota bude ztracena.
   <tr>
    <td width="120" align="middle">Volby</td>
    <td>
-    <p>Zde napi¹te jména v¹ech radio buttonù a check boxù z formuláøù.<br>
-    Ka¾dé jméno dejte na samostatnı øádek.</p>
+    <p>Zde napiÅ¡te jmÃ©na vÅ¡ech radio buttonÅ¯ a check boxÅ¯ z formulÃ¡Å™Å¯.<br>
+    KaÅ¾dÃ© jmÃ©no dejte na samostatnÃ½ Å™Ã¡dek.</p>
     <textarea name="choices" cols="40" rows="4" tabindex="2">${PARAMS.choices?if_exists}</textarea>
     <div class="error">${ERRORS.choices?if_exists}</div>
    </td>
@@ -80,7 +80,7 @@ nebude ulo¾eno a jeho hodnota bude ztracena.
   </tr>
   <tr>
    <td width="120">&nbsp;</td>
-   <td><input type="submit" VALUE="Pokraèuj" tabindex="4"></td>
+   <td><input type="submit" VALUE="PokraÄuj" tabindex="4"></td>
   </tr>
  </table>
 

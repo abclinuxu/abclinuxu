@@ -3,23 +3,23 @@
 
 <#call showMessages>
 
-<p>Nalezeno ${USERS?size} u¾ivatelù.</p>
+<p>Nalezeno ${USERS?size} uÅ¾ivatelÅ¯.</p>
 
 <#if USERS?size gt 5>
-<p>Zobrazuji první pìt. Pokud mezi nimi chybíte, vra»te se na minulou
-stránku a zpøesnìte vıbìr.</p>
+<p>Zobrazuji prvnÃ­ pÄ›t. Pokud mezi nimi chybÃ­te, vraÅ¥te se na minulou
+strÃ¡nku a zpÅ™esnÄ›te vÃ½bÄ›r.</p>
 </#if>
 
-<p>Zvolte si svého u¾ivatele a stisknìte OK.
-Systém neprodlenì ode¹le va¹e heslo na registrovanou emailovou adresu.
-Pokud vám email nepøijde, pravdìpodobnì va¹e emailová adresa
-ji¾ není platná. V tomto pøípadì kontaktujte administrátora.</p>
+<p>Zvolte si svÃ©ho uÅ¾ivatele a stisknÄ›te OK.
+SystÃ©m neprodlenÄ› odeÅ¡le vaÅ¡e heslo na registrovanou emailovou adresu.
+Pokud vÃ¡m email nepÅ™ijde, pravdÄ›podobnÄ› vaÅ¡e emailovÃ¡ adresa
+jiÅ¾ nenÃ­ platnÃ¡. V tomto pÅ™Ã­padÄ› kontaktujte administrÃ¡tora.</p>
 
 <form action="${URL.noPrefix("/ForgottenPassword")}" method="POST">
  <table>
   <tr>
     <td>Login</td>
-    <td>Jméno u¾ivatele</td>
+    <td>JmÃ©no uÅ¾ivatele</td>
   </tr>
 <#list TOOL.sublist(USERS,0,5) as user>
   <tr>

@@ -80,7 +80,7 @@ public class EditRelated implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if (relation == null)
-            throw new MissingArgumentException("Chybí parametr rid!");
+            throw new MissingArgumentException("ChybÃ­ parametr rid!");
 
         if (ServletUtils.handleMaintainance(request, env))
             response.sendRedirect(response.encodeRedirectURL("/"));
@@ -150,7 +150,7 @@ public class EditRelated implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Object param = params.get(PARAM_DOCUMENT);
         if (param == null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Chybí adresa dokumentu.", env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC, "ChybÃ­ adresa dokumentu.", env, null);
             return actionManageRelated(request, env);
         }
 
@@ -159,7 +159,7 @@ public class EditRelated implements AbcAction {
         Element root = item.getData().getRootElement();
         Element related = root.element("related");
         String url = (String) params.get(PARAM_DOCUMENT);
-        url = URLDecoder.decode(url, "ISO-8859-2");
+        url = URLDecoder.decode(url, "UTF-8");
         Element element = (Element) related.selectSingleNode("//document[url='" + url + "']");
         if (element == null) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Dokument '" + url + "' nebyl nalezen mezi daty!", env, null);
@@ -201,7 +201,7 @@ public class EditRelated implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Object param = params.get(PARAM_DOCUMENT);
         if (param == null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Nevybrali jste ¾ádný dokument na smazání.", env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Nevybrali jste Å¾Ã¡dnÃ½ dokument na smazÃ¡nÃ­.", env, null);
             return actionManageRelated(request, env);
         }
         if (param instanceof String)
@@ -215,7 +215,7 @@ public class EditRelated implements AbcAction {
         List documents = new ArrayList();
         for (Iterator iter = list.iterator(); iter.hasNext();) {
             String url = (String) iter.next();
-            url = URLDecoder.decode(url, "ISO-8859-2");
+            url = URLDecoder.decode(url, "UTF-8");
             Element element = (Element) related.selectSingleNode("//document[url='" + url + "']");
             if (element != null) {
                 RelatedDocument document = new RelatedDocument(element.elementText("url"), element.attributeValue("type"));
@@ -240,7 +240,7 @@ public class EditRelated implements AbcAction {
         List list = Tools.asList(params.get(PARAM_DOCUMENT));
         for (Iterator iter = list.iterator(); iter.hasNext();) {
             String url = (String) iter.next();
-            url = URLDecoder.decode(url, "ISO-8859-2");
+            url = URLDecoder.decode(url, "UTF-8");
             Element element = (Element) related.selectSingleNode("//document[url='" + url + "']");
             if (element == null) {
                 ServletUtils.addError(Constants.ERROR_GENERIC, "Dokument '" + url + "' nebyl nalezen mezi daty!", env, null);
@@ -297,7 +297,7 @@ public class EditRelated implements AbcAction {
             return false;
 
         String url = (String) params.get(PARAM_DOCUMENT);
-        url = URLDecoder.decode(url, "ISO-8859-2");
+        url = URLDecoder.decode(url, "UTF-8");
 
         Element related = root.element("related");
         Element element = (Element) related.selectSingleNode("//document[url='" + url + "']");
@@ -358,7 +358,7 @@ public class EditRelated implements AbcAction {
         if (url.indexOf("://") != -1) {
             type = Constants.RELATED_EXTERNAL_DOCUMENT;
             if (Misc.empty(title)) {
-                ServletUtils.addError(PARAM_TITLE, "Zadejte jméno pro externí dokument.", env, null);
+                ServletUtils.addError(PARAM_TITLE, "Zadejte jmÃ©no pro externÃ­ dokument.", env, null);
                 return null;
             }
         }
@@ -368,7 +368,7 @@ public class EditRelated implements AbcAction {
             Relation relation = URLMapper.loadRelationFromUrl(url);
             if (relation == null) {
                 if (Misc.empty(title)) {
-                    ServletUtils.addError(PARAM_TITLE, "Zadejte jméno pro tento nepodporovaný dokument.", env, null);
+                    ServletUtils.addError(PARAM_TITLE, "Zadejte jmÃ©no pro tento nepodporovanÃ½ dokument.", env, null);
                     return null;
                 }
             } else {

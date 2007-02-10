@@ -2,32 +2,32 @@
 
 <@lib.showMessages/>
 
-<h1>Va¹e skóre je ${SCORE}</h1>
+<h1>VaÅ¡e skÃ³re je ${SCORE}</h1>
 
 <p>
     <#if (SCORE == 0)>
-        Ouvej, ani jedna správná odpovìï? Jak se vám to povedlo? Projdìte si správné
-        odpovìdi a u dal¹ího kvízu vybírejte odpovìdi náhodnì, hùøe u¾ skonèit nemù¾ete&nbsp;:-).
+        Ouvej, ani jedna sprÃ¡vnÃ¡ odpovÄ›Ä? Jak se vÃ¡m to povedlo? ProjdÄ›te si sprÃ¡vnÃ©
+        odpovÄ›di a u dalÅ¡Ã­ho kvÃ­zu vybÃ­rejte odpovÄ›di nÃ¡hodnÄ›, hÅ¯Å™e uÅ¾ skonÄit nemÅ¯Å¾ete&nbsp;:-).
     <#elseif (SCORE < 4)>
-        No, nic moc. Pozornì si prohlédnìte správné odpovìdi a zkuste jinı kvíz. Tøeba
-        budete mít lep¹í mu¹ku.
+        No, nic moc. PozornÄ› si prohlÃ©dnÄ›te sprÃ¡vnÃ© odpovÄ›di a zkuste jinÃ½ kvÃ­z. TÅ™eba
+        budete mÃ­t lepÅ¡Ã­ muÅ¡ku.
     <#elseif (SCORE <= 8)>
-        Zlatı prùmìr, ale na pochvalu to není. Schválnì se podívejte na va¹e chyby.
-        Prostor ke zlep¹ování zde je, jinı kvíz vám mù¾e vyjít lépe.
+        ZlatÃ½ prÅ¯mÄ›r, ale na pochvalu to nenÃ­. SchvÃ¡lnÄ› se podÃ­vejte na vaÅ¡e chyby.
+        Prostor ke zlepÅ¡ovÃ¡nÃ­ zde je, jinÃ½ kvÃ­z vÃ¡m mÅ¯Å¾e vyjÃ­t lÃ©pe.
     <#elseif (SCORE == 9)>
-        Vıbornì, jediná chybièka vás dìlila od dokonalosti. Která otázka vás dostala?
-        U pøí¹tího kvízu u¾ tolik smùly mít nemusíte, vysnìná desítka na vás èeká...
+        VÃ½bornÄ›, jedinÃ¡ chybiÄka vÃ¡s dÄ›lila od dokonalosti. KterÃ¡ otÃ¡zka vÃ¡s dostala?
+        U pÅ™Ã­Å¡tÃ­ho kvÃ­zu uÅ¾ tolik smÅ¯ly mÃ­t nemusÃ­te, vysnÄ›nÃ¡ desÃ­tka na vÃ¡s ÄekÃ¡...
     <#else>
-        Uctivost, va¹nosti. V¹e správnì, jste nejlep¹í. Aspoò v tomhle kvízu. Doká¾ete
-        úspìch zopakovat i u dal¹ího kvízu?
+        Uctivost, vaÅ¡nosti. VÅ¡e sprÃ¡vnÄ›, jste nejlepÅ¡Ã­. AspoÅˆ v tomhle kvÃ­zu. DokÃ¡Å¾ete
+        ÃºspÄ›ch zopakovat i u dalÅ¡Ã­ho kvÃ­zu?
     </#if>
 </p>
 
-<h2>Shrnutí kvízu</h2>
+<h2>ShrnutÃ­ kvÃ­zu</h2>
 
 <table border="0">
     <tr>
-        <td>Jméno:</td>
+        <td>JmÃ©no:</td>
         <td>${TOOL.childName(RELATION)}</td>
     </tr>
     <tr>
@@ -39,12 +39,12 @@
 <#list RESULTS as result>
     <div class="game-results"><b>${result_index+1}.</b> ${result.question}</div>
     <p><#if result.correct>
-          <span class="game-correct">Správná</span><#else>
-          <span class="game-wrong">©patná</span></#if> odpovìï: ${result.reply}
-    <#if (! result.correct)><br />Správná odpovìï je:
+          <span class="game-correct">SprÃ¡vnÃ¡</span><#else>
+          <span class="game-wrong">Å patnÃ¡</span></#if> odpovÄ›Ä: ${result.reply}
+    <#if (! result.correct)><br />SprÃ¡vnÃ¡ odpovÄ›Ä je:
           <span class="game-reply">${result.correctAnswear}</span></#if></p>
 </#list>
 
-<p><a href="/hry">Zpátky na hry</a></p>
+<p><a href="/hry">ZpÃ¡tky na hry</a></p>
 
 <#include "../footer.ftl">

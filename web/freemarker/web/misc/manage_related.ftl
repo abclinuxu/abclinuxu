@@ -1,6 +1,6 @@
 <#include "../header.ftl">
 
-<h1>Správa souvisejících dokumentù</h1>
+<h1>SprÃ¡va souvisejÃ­cÃ­ch dokumentÅ¯</h1>
 
 <p><b>${TOOL.childName(RELATION)}</b></p>
 
@@ -20,18 +20,18 @@
     </p>
     <p>
       <input type="hidden" name="action" value="remove">
-      <input type="submit" value="Smazat za¹krtnuté">
+      <input type="submit" value="Smazat zaÅ¡krtnutÃ©">
     </p>
 </form>
 
-<h3>Pøidání nového souvisejícího dokumentu</h3>
+<h3>PÅ™idÃ¡nÃ­ novÃ©ho souvisejÃ­cÃ­ho dokumentu</h3>
 
 <form action="${URL.make("/EditRelated/"+RELATION.id)}" method="POST" name="form">
     <p>
-        Zde mù¾ete pøidat novı související dokument. Povinnım políèkem je adresa dokumentu.
-        Políèko jméno musíte vyplnit pouze tehdy, vkládáte-li dokument, kterı se nenachází
-        na tomto portále, nebo kdy¾ chcete zmìnit jeho jméno. Popis nemusíte vùbec zadávat,
-        pou¾ívejte jej jen tehdy, urychlí-li to navigaci u¾ivatele.
+        Zde mÅ¯Å¾ete pÅ™idat novÃ½ souvisejÃ­cÃ­ dokument. PovinnÃ½m polÃ­Äkem je adresa dokumentu.
+        PolÃ­Äko jmÃ©no musÃ­te vyplnit pouze tehdy, vklÃ¡dÃ¡te-li dokument, kterÃ½ se nenachÃ¡zÃ­
+        na tomto portÃ¡le, nebo kdyÅ¾ chcete zmÄ›nit jeho jmÃ©no. Popis nemusÃ­te vÅ¯bec zadÃ¡vat,
+        pouÅ¾Ã­vejte jej jen tehdy, urychlÃ­-li to navigaci uÅ¾ivatele.
     </p>
     <table cellpadding="5" style="margin-top:1em">
         <tr>
@@ -42,7 +42,7 @@
             </td>
         </tr>
         <tr>
-            <td>Jméno</td>
+            <td>JmÃ©no</td>
             <td>
                 <input tabindex="2" type="text" name="title" size="40" value="${PARAMS.title?if_exists?html}">
                 <div class="error">${ERRORS.title?if_exists}</div>
@@ -57,7 +57,7 @@
         </tr>
         <tr>
             <td colspan="2" align="center">
-                <input tabindex="4" type="submit" name="submit" value="Pøidej">
+                <input tabindex="4" type="submit" name="submit" value="PÅ™idej">
             </td>
         </tr>
     </table>

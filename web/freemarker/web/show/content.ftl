@@ -1,5 +1,5 @@
 <#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")?exists>
-    <#assign monitorState="Pøestaò sledovat"><#else><#assign monitorState="Sleduj dokument">
+    <#assign monitorState="PÅ™estaÅˆ sledovat"><#else><#assign monitorState="Sleduj dokument">
 </#if>
 <#assign public=(ITEM.subType?if_exists=='public')>
 <#if public>
@@ -8,13 +8,13 @@
        <ul>
         <li><a href="/revize?rid=${RELATION.id}">Historie</a></li>
         <#if PARAMS.revize?exists>
-            <li><a href="${RELATION.url}">Návrat na aktuální verzi</a></li>
+            <li><a href="${RELATION.url}">NÃ¡vrat na aktuÃ¡lnÃ­ verzi</a></li>
         <#else>
             <li><a href="${RELATION.url}?varianta=print">Tisk</a></li>
             <li>
                 <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle")}">${monitorState}</a>
-                <span title="Poèet lidí, kteøí sledují tento dokument">(${TOOL.getMonitorCount(ITEM.data)})</span>
-                <a class="info" href="#">?<span class="tooltip">Za¹le upozornìní na vá¹ email pøi úpravì dokumentu</span></a>
+                <span title="PoÄet lidÃ­, kteÅ™Ã­ sledujÃ­ tento dokument">(${TOOL.getMonitorCount(ITEM.data)})</span>
+                <a class="info" href="#">?<span class="tooltip">ZaÅ¡le upozornÄ›nÃ­ na vÃ¡Å¡ email pÅ™i ÃºpravÄ› dokumentu</span></a>
             </li>
             <li><a href="${URL.make("/editContent/"+RELATION.id+"?action=editPublicContent")}">Uprav dokument</a></li>
             <li><a href="${URL.make("/zmeny/"+RELATION.id)}">Hierarchie</a></li>
@@ -27,13 +27,13 @@
 <#if USER?exists>
     <p>
         <#if USER.hasRole("content admin")>
-            <a href="${URL.make("/editContent/"+RELATION.id+"?action=edit")}">Uprav v¹e</a> &#8226;
+            <a href="${URL.make("/editContent/"+RELATION.id+"?action=edit")}">Uprav vÅ¡e</a> &#8226;
             <a href="${URL.make("/editContent/"+RELATION.id+"?action=alterPublic")}">
-                <#if public>Zru¹<#else>Nastav</#if> veøejnou editovatelnost</a> &#8226;
-            <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix=/doc")}">Sma¾</a>
+                <#if public>ZruÅ¡<#else>Nastav</#if> veÅ™ejnou editovatelnost</a> &#8226;
+            <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix=/doc")}">SmaÅ¾</a>
         </#if>
         <#if ((public && USER.hasRole("derive content")) || USER.hasRole("content admin"))>
-            &#8226; <a href="${URL.make("/editContent/"+RELATION.id+"?action=addDerivedPage")}">Vytvoø podstránku</a>
+            &#8226; <a href="${URL.make("/editContent/"+RELATION.id+"?action=addDerivedPage")}">VytvoÅ™ podstrÃ¡nku</a>
         </#if>
     </p>
 </#if>
@@ -44,9 +44,9 @@ ${TOOL.xpath(ITEM,"/data/content")}
     <div class="uceb-nav">
       <span>
         <#if TOC.left?exists>
-            <a href="${TOC.left.url}" title="${TOOL.childName(TOC.left)}">&#171; Pøedchozí</a>
+            <a href="${TOC.left.url}" title="${TOOL.childName(TOC.left)}">&#171; PÅ™edchozÃ­</a>
         <#else>
-            &#171; Pøedchozí
+            &#171; PÅ™edchozÃ­
         </#if>
         <#if TOC.up?exists>
             | <a href="${TOC.up.url}" title="${TOOL.childName(TOC.up)}">Nahoru</a> | 
@@ -55,9 +55,9 @@ ${TOOL.xpath(ITEM,"/data/content")}
         </#if>
         <a href="${TOC.relation.url}" title="Zobraz obsah">Obsah</a>
         <#if TOC.right?exists>
-            | <a href="${TOC.right.url}" title="${TOOL.childName(TOC.right)}">Dal¹í &#187;</a>
+            | <a href="${TOC.right.url}" title="${TOOL.childName(TOC.right)}">DalÅ¡Ã­ &#187;</a>
         <#else>
-            | Dal¹í &#187;
+            | DalÅ¡Ã­ &#187;
         </#if>
       </span>
     </div>

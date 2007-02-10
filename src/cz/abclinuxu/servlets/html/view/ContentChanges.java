@@ -66,7 +66,7 @@ public class ContentChanges implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if (relation == null) {
-            throw new MissingArgumentException("Parametr rid je prázdný!");
+            throw new MissingArgumentException("Parametr rid je prÃ¡zdnÃ½!");
         }
 
         Tools.sync(relation);

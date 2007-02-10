@@ -57,17 +57,17 @@ public class TagValidator {
             currentTagName = tag.getTagName();
             checkedTag = (CheckedTag) allowedTags.get(currentTagName);
             if (checkedTag==null)
-                throw new TagNotAllowedException("ZnaËka "+currentTagName+" nenÌ povolena!");
+                throw new TagNotAllowedException("Znaƒçka "+currentTagName+" nen√≠ povolena!");
 
             if (tag.isEndTag()) {
                 do {
                     if (tagStack.size() == 0)
-                        throw new TagNotClosedException("Nenalezena otevÌracÌ znaËka " + currentTagName + "! Nejsou znaËky p¯ek¯Ìæeny?");
+                        throw new TagNotClosedException("Nenalezena otev√≠rac√≠ znaƒçka " + currentTagName + "! Nejsou znaƒçky p≈ôek≈ô√≠≈æeny?");
                     lastTag = (CheckedTag) tagStack.remove(tagStack.size() - 1);
                 } while(!lastTag.mustBeClosed && !lastTag.name.equals(currentTagName));
 
                 if (!lastTag.name.equals(currentTagName))
-                    throw new CrossedTagException("ZnaËky " + lastTag.name + " a " + currentTagName + " jsou p¯ek¯Ìæeny!");
+                    throw new CrossedTagException("Znaƒçky " + lastTag.name + " a " + currentTagName + " jsou p≈ôek≈ô√≠≈æeny!");
             } else
                 tagStack.add(checkedTag);
 
@@ -75,7 +75,7 @@ public class TagValidator {
             removeTagAttribute(attributes);
 
             if ( checkedTag.attributes==null && attributes.size()>0 )
-                throw new AttributeNotAllowedException("ZnaËka "+checkedTag.name+" nesmÌ obsahovat æ·dnÈ atributy!");
+                throw new AttributeNotAllowedException("Znaƒçka "+checkedTag.name+" nesm√≠ obsahovat ≈æ√°dn√© atributy!");
 
             for ( Iterator iter = attributes.iterator(); iter.hasNext(); ) {
                 boolean found = false;
@@ -91,15 +91,15 @@ public class TagValidator {
                     }
                 }
                 if ( !found )
-                    throw new AttributeNotAllowedException("ZnaËka "+checkedTag.name+" nesmÌ obsahovat atribut "+name+"!");
+                    throw new AttributeNotAllowedException("Znaƒçka "+checkedTag.name+" nesm√≠ obsahovat atribut "+name+"!");
                 if ("HREF".equals(name) || "SRC".equals(name)) {
                     String value = attribute.getValue();
                     if (value == null || value.length() == 0)
-                        throw new AttributeValueNotAllowedException("Atribut " + name + "znaËky " + checkedTag.name + "nesmÌ b˝t pr·zdn˝!");
+                        throw new AttributeValueNotAllowedException("Atribut " + name + "znaƒçky " + checkedTag.name + "nesm√≠ b√Ωt pr√°zdn√Ω!");
                     if (value.indexOf("javascript:") != -1)
-                        throw new AttributeValueNotAllowedException("Atribut " + name + "znaËky " + checkedTag.name + "nesmÌ obsahovat javascript!");
+                        throw new AttributeValueNotAllowedException("Atribut " + name + "znaƒçky " + checkedTag.name + "nesm√≠ obsahovat javascript!");
                     if (value.indexOf("data:") != -1)
-                        throw new AttributeValueNotAllowedException("Atribut " + name + "znaËky " + checkedTag.name + "nesmÌ obsahovat protokol data!");
+                        throw new AttributeValueNotAllowedException("Atribut " + name + "znaƒçky " + checkedTag.name + "nesm√≠ obsahovat protokol data!");
                 }
             }
         }
@@ -107,7 +107,7 @@ public class TagValidator {
         for (Iterator iter = tagStack.iterator(); iter.hasNext();) {
             checkedTag = (CheckedTag) iter.next();
             if (checkedTag.mustBeClosed)
-                throw new TagNotClosedException("ZnaËka " + checkedTag.name + " musÌ b˝t uzav¯ena!");
+                throw new TagNotClosedException("Znaƒçka " + checkedTag.name + " mus√≠ b√Ωt uzav≈ôena!");
         }
     }
 

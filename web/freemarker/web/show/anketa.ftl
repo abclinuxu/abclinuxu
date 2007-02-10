@@ -28,26 +28,26 @@
  </#list>
 </table>
 
-<p>Celkem ${POLL.totalVoters} hlasù<br />
-Vytvoøeno: ${DATE.show(POLL.created, "CZ_FULL")}</p>
+<p>Celkem ${POLL.totalVoters} hlasÅ¯<br />
+VytvoÅ™eno: ${DATE.show(POLL.created, "CZ_FULL")}</p>
 
 <#if CHILDREN.discussion?exists>
     <#assign diz = TOOL.createDiscussionTree(CHILDREN.discussion[0].child,USER?if_exists,CHILDREN.discussion[0].id,true)>
-    <#if diz.frozen>Diskuse byla administrátory uzamèena</#if>
+    <#if diz.frozen>Diskuse byla administrÃ¡tory uzamÄena</#if>
 
 <div class="ds_toolbox">
-     <b>Nástroje:</b>
+     <b>NÃ¡stroje:</b>
 
     <#if diz.hasUnreadComments>
-        <a href="#${diz.firstUnread}" title="Skoèit na první nepøeètenı komentáø">První nepøeètenı komentáø</a>, 
+        <a href="#${diz.firstUnread}" title="SkoÄit na prvnÃ­ nepÅ™eÄtenÃ½ komentÃ¡Å™">PrvnÃ­ nepÅ™eÄtenÃ½ komentÃ¡Å™</a>, 
     </#if>
 
     <#if diz.monitored>
-        <#assign monitorState="Pøestaò sledovat"><#else><#assign monitorState="Sleduj">
+        <#assign monitorState="PÅ™estaÅˆ sledovat"><#else><#assign monitorState="Sleduj">
     </#if>
     <a href="${URL.make("/EditDiscussion?action=monitor&amp;rid="+CHILDREN.discussion[0].id)}"
-    title="AbcMonitor za¹le emailem zprávu, dojde-li v diskusi ke zmìnì">${monitorState}</a>
-    <span title="Poèet lidí, kteøí sledují tuto diskusi">(${diz.monitorSize})</span>
+    title="AbcMonitor zaÅ¡le emailem zprÃ¡vu, dojde-li v diskusi ke zmÄ›nÄ›">${monitorState}</a>
+    <span title="PoÄet lidÃ­, kteÅ™Ã­ sledujÃ­ tuto diskusi">(${diz.monitorSize})</span>
 
     <#if USER?exists && USER.hasRole("discussion admin")>
      <br />
@@ -59,13 +59,13 @@ Vytvoøeno: ${DATE.show(POLL.created, "CZ_FULL")}</p>
 </div>
 
     <p><a href="${URL.make("/EditDiscussion?action=add&amp;dizId="+diz.id+"&amp;threadId=0&amp;rid="+diz.relationId)}">
-    Vlo¾it dal¹í komentáø</a></p>
+    VloÅ¾it dalÅ¡Ã­ komentÃ¡Å™</a></p>
 
     <#list diz.threads as thread>
        <@lib.showThread thread, 0, diz, !diz.frozen />
     </#list>
 <#else>
-   <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vlo¾it první komentáø</a>
+   <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">VloÅ¾it prvnÃ­ komentÃ¡Å™</a>
 </#if>
 
 <#include "../footer.ftl">

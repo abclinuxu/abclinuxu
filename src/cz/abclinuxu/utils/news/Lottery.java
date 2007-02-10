@@ -157,10 +157,10 @@ public class Lottery implements Configurable {
         User user = (User) persistence.findById(new User(news.getOwner()));
 
         String text = news.getData().selectSingleNode("//content").getText();
-        System.out.println("Vítìznou zprávièkou se stává");
+        System.out.println("VÃ­tÄ›znou zprÃ¡viÄkou se stÃ¡vÃ¡");
         System.out.println("<a href=\"/Profile?uid="+user.getId()+"\">"+user.getName()+"</a>");
         System.out.println(text);
-        System.out.println("<a href=\"/news/ViewRelation?rid="+relation.getId()+"\">Ukázat</a>");
+        System.out.println("<a href=\"/news/ViewRelation?rid="+relation.getId()+"\">UkÃ¡zat</a>");
     }
 
     /**

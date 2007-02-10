@@ -5,11 +5,11 @@
  <a href="${URL.make("/EditCategory?action=edit&rid="+RELATION.id+"&categoryId="+CATEGORY.id)}"
  title="Uprav kategorii"><img src="/images/actions/pencil.png" class="ikona22" ALT="Uprav sekci"></a>
  <a href="${URL.noPrefix("/EditRelation?action=remove&rid="+RELATION.id+"&prefix="+URL.prefix)}"
- title="Smaæ kategorii"><img src="/images/actions/delete.png" ALT="Smaæ sekci" class="ikona"></a>
+ title="Sma≈æ kategorii"><img src="/images/actions/delete.png" ALT="Sma≈æ sekci" class="ikona"></a>
 </#if>
 <#if USER?exists && USER.hasRole("move relation")>
  <a href="/SelectRelation?url=/EditRelation&action=move&rid=${RELATION.id}&prefix=${URL.prefix}"
- title="P¯esunout"><img src="/images/actions/cut.png" ALT="P¯esunout" class="ikona"></a>
+ title="P≈ôesunout"><img src="/images/actions/cut.png" ALT="P≈ôesunout" class="ikona"></a>
  </p>
 </#if>
 
@@ -17,7 +17,7 @@
  <#local
    ITEM=TOOL.sync(relation.child),
    autor=TOOL.createUser(ITEM.owner),
-   title=TOOL.xpath(ITEM, "/data/title")?default("Zpr·viËka"),
+   title=TOOL.xpath(ITEM, "/data/title")?default("Zpr√°viƒçka"),
    locked = TOOL.xpath(ITEM, "//locked_by")?exists,
    approved = TOOL.xpath(ITEM, "//approved_by")?exists
  >
@@ -38,7 +38,7 @@
         <a href="${URL.make("/show/"+relation.id)}">Zobrazit</a>
         <a href="${URL.make("/edit?action=edit&amp;rid="+relation.id)}">Upravit</a>
         <#if ! approved>
-            <a href="${URL.make("/edit?action=approve&amp;rid="+relation.id)}">Schv·lit</a>
+            <a href="${URL.make("/edit?action=approve&amp;rid="+relation.id)}">Schv√°lit</a>
             <a href="${URL.make("/edit?action=lock&amp;rid="+relation.id)}">Zamknout</a>
         </#if>
 

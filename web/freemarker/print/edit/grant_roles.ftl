@@ -5,14 +5,14 @@
 <form action="${URL.noPrefix("/EditUser")}" method="POST">
  <table width="100%" border=0 cellpadding=5>
   <tr>
-   <td class="required" width="100">Vaπe heslo</td>
+   <td class="required" width="100">Va≈°e heslo</td>
    <td>
     <input type="password" name="PASSWORD" size="16" tabindex="1">
     <div class="error">${ERRORS.PASSWORD?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td class="required" width="100">Uæivatel</td>
+   <td class="required" width="100">U≈æivatel</td>
    <td>
     ${MANAGED.name}
     <div class="error">${ERRORS.uid?if_exists}</div>
@@ -23,32 +23,32 @@
    <td class="required" width="100">Jeho role</td>
    <td>
        <@lib.showOption "roles", "root", "Root", "checkbox" /><br>
-       <@lib.showOption "roles", "poll admin", "Administr·tor anket", "checkbox" /><br>
-       <@lib.showOption "roles", "survey admin", "Administr·tor anket/pr˘zkum˘", "checkbox" /><br>
-       <@lib.showOption "roles", "bazaar admin", "Administr·tor bazaru", "checkbox" /><br>
-       <@lib.showOption "roles", "blog digest admin", "Administr·tor blog digestu", "checkbox" /><br>
-       <@lib.showOption "roles", "article admin", "Administr·tor Ël·nk˘", "checkbox" /><br>
-       <@lib.showOption "roles", "discussion admin", "Administr·tor diskusÌ", "checkbox" /><br>
-       <@lib.showOption "roles", "content admin", "Administr·tor dokument˘", "checkbox" /><br>
-       <@lib.showOption "roles", "games admin", "Administr·tor her", "checkbox" /><br>
-       <@lib.showOption "roles", "requests admin", "Administr·tor poæadavk˘", "checkbox" /><br>
-       <@lib.showOption "roles", "attachment admin", "Administr·tor p¯Ìloh", "checkbox" /><br>
-       <@lib.showOption "roles", "category admin", "Administr·tor sekcÌ", "checkbox" /><br>
-       <@lib.showOption "roles", "dictionary admin", "Administr·tor slovnÌku", "checkbox" /><br>
-       <@lib.showOption "roles", "software admin", "Administr·tor softwarovÈho katalogu", "checkbox" /><br>
-       <@lib.showOption "roles", "tip admin", "Administr·tor tip˘", "checkbox" /><br>
-       <@lib.showOption "roles", "user admin", "Administr·tor uæivatel˘", "checkbox" /><br>
-       <@lib.showOption "roles", "news admin", "Administr·tor zpr·viËek", "checkbox" /><br>
-       <@lib.showOption "roles", "advertisement admin", "Administr·tor reklamnÌch pozic", "checkbox" /><br>
-       <@lib.showOption "roles", "email invalidator", "SmÌ invalidovat emaily", "checkbox" /><br>
-       <@lib.showOption "roles", "move relation", "SmÌ p¯esunout relaci", "checkbox" /><br>
-       <@lib.showOption "roles", "derive content", "SmÌ vytvo¯it podstr·nku dokumentu", "checkbox" /><br>
-       <@lib.showOption "roles", "remove relation", "SmÌ smazat relaci a objekt", "checkbox" /><br>
+       <@lib.showOption "roles", "poll admin", "Administr√°tor anket", "checkbox" /><br>
+       <@lib.showOption "roles", "survey admin", "Administr√°tor anket/pr≈Øzkum≈Ø", "checkbox" /><br>
+       <@lib.showOption "roles", "bazaar admin", "Administr√°tor bazaru", "checkbox" /><br>
+       <@lib.showOption "roles", "blog digest admin", "Administr√°tor blog digestu", "checkbox" /><br>
+       <@lib.showOption "roles", "article admin", "Administr√°tor ƒçl√°nk≈Ø", "checkbox" /><br>
+       <@lib.showOption "roles", "discussion admin", "Administr√°tor diskus√≠", "checkbox" /><br>
+       <@lib.showOption "roles", "content admin", "Administr√°tor dokument≈Ø", "checkbox" /><br>
+       <@lib.showOption "roles", "games admin", "Administr√°tor her", "checkbox" /><br>
+       <@lib.showOption "roles", "requests admin", "Administr√°tor po≈æadavk≈Ø", "checkbox" /><br>
+       <@lib.showOption "roles", "attachment admin", "Administr√°tor p≈ô√≠loh", "checkbox" /><br>
+       <@lib.showOption "roles", "category admin", "Administr√°tor sekc√≠", "checkbox" /><br>
+       <@lib.showOption "roles", "dictionary admin", "Administr√°tor slovn√≠ku", "checkbox" /><br>
+       <@lib.showOption "roles", "software admin", "Administr√°tor softwarov√©ho katalogu", "checkbox" /><br>
+       <@lib.showOption "roles", "tip admin", "Administr√°tor tip≈Ø", "checkbox" /><br>
+       <@lib.showOption "roles", "user admin", "Administr√°tor u≈æivatel≈Ø", "checkbox" /><br>
+       <@lib.showOption "roles", "news admin", "Administr√°tor zpr√°viƒçek", "checkbox" /><br>
+       <@lib.showOption "roles", "advertisement admin", "Administr√°tor reklamn√≠ch pozic", "checkbox" /><br>
+       <@lib.showOption "roles", "email invalidator", "Sm√≠ invalidovat emaily", "checkbox" /><br>
+       <@lib.showOption "roles", "move relation", "Sm√≠ p≈ôesunout relaci", "checkbox" /><br>
+       <@lib.showOption "roles", "derive content", "Sm√≠ vytvo≈ôit podstr√°nku dokumentu", "checkbox" /><br>
+       <@lib.showOption "roles", "remove relation", "Sm√≠ smazat relaci a objekt", "checkbox" /><br>
    </td>
   </tr>
   <tr>
    <td width="100">&nbsp;</td>
-   <td><input type="submit" value="DokonËi" tabindex="3"></td>
+   <td><input type="submit" value="Dokonƒçi" tabindex="3"></td>
   </tr>
  </table>
  <input type="hidden" name="uid" value="${PARAMS.uid}">

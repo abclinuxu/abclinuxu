@@ -154,10 +154,10 @@ public class ViewBlog implements AbcAction, Configurable {
             Tools.sync(relation);
             GenericObject child = relation.getChild();
             if (! (child instanceof Item))
-                throw new InvalidInputException("Tato relace nepatøí blogu!");
+                throw new InvalidInputException("Tato relace nepatÅ™Ã­ blogu!");
             int type = ((Item) child).getType();
             if (type != Item.BLOG && type != Item.UNPUBLISHED_BLOG)
-                throw new InvalidInputException("Tato relace nepatøí blogu!");
+                throw new InvalidInputException("Tato relace nepatÅ™Ã­ blogu!");
 
             blog = (Category) relation.getParent();
             blogRelation = (Relation) persistence.findById(new Relation(relation.getUpper()));
@@ -177,7 +177,7 @@ public class ViewBlog implements AbcAction, Configurable {
         if (blogRelation!=null) {
             blog = (Category) persistence.findById(blog);
             if (blog.getType() != Category.BLOG)
-                throw new InvalidInputException("Tato relace nepatøí blogu!");
+                throw new InvalidInputException("Tato relace nepatÅ™Ã­ blogu!");
 
             blogRelation.setChild(blog);
             env.put(VAR_BLOG_RELATION, blogRelation);
@@ -527,7 +527,7 @@ public class ViewBlog implements AbcAction, Configurable {
         // TODO k cemu tato hodnota je? Nevidim zadne pouziti
         urlSummary = prefs.get(PREF_URL_SUMMARY, null);
         if (urlSummary==null)
-            throw new ConfigurationException("Chybí nastavení "+PREF_URL_SUMMARY);
+            throw new ConfigurationException("ChybÃ­ nastavenÃ­ "+PREF_URL_SUMMARY);
 
         defaultPageSize = prefs.getInt(PREF_PAGE_SIZE, 10);
         summarySize = prefs.getInt(PREF_SUMMARY_SIZE, 20);

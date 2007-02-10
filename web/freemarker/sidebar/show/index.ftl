@@ -15,7 +15,7 @@
   ${DATE.show(ITEM.created,"CZ_SHORT")} | ${NEWS_CATEGORIES[ITEM.subType].name}<br />
   <div>${TOOL.xpath(ITEM,"data/content")}</div>
   <a href="${relation.url?default("/zpravicky/show/"+relation.id)}" target="_content"
-   >Komentáøù: ${diz.responseCount}</a>
+   >KomentÃ¡Å™Å¯: ${diz.responseCount}</a>
  </div>
 <hr />
 </#macro>
@@ -34,14 +34,14 @@
 </form>
 </div>
 
-<h3><a href="/clanky" target="_content">Èlánky</a></h3>
+<h3><a href="/clanky" target="_content">ÄŒlÃ¡nky</a></h3>
 
 <#assign ARTICLES=VARS.getFreshArticles("NONE")>
 <#list ARTICLES as rel>
  <@showArticle rel />
 </#list>
 
-<h3><a href="/zpravicky">Zprávièky</a></h3>
+<h3><a href="/zpravicky">ZprÃ¡viÄky</a></h3>
 
 <#assign NEWS=VARS.getFreshNews("NONE")>
 <#list NEWS as rel>

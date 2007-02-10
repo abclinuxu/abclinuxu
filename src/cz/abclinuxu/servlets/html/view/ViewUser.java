@@ -95,7 +95,7 @@ public class ViewUser implements AbcAction {
         }
 
         if (profile == null)
-            return ServletUtils.showErrorPage("ChybÌ parametr uid!", env, request);
+            return ServletUtils.showErrorPage("Chyb√≠ parametr uid!", env, request);
 
         profile = (User) persistence.findById(profile);
         env.put(VAR_PROFILE, profile);
@@ -230,7 +230,7 @@ public class ViewUser implements AbcAction {
         data.put(EmailSender.KEY_TEMPLATE, "/mail/password.ftl");
         EmailSender.sendEmail(data);
 
-        ServletUtils.addMessage("Heslo bylo odesl·no na adresu "+user.getEmail()+".", env, request.getSession());
+        ServletUtils.addMessage("Heslo bylo odesl√°no na adresu "+user.getEmail()+".", env, request.getSession());
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/");
         return null;

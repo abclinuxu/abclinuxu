@@ -149,7 +149,7 @@ public class EditContent implements AbcAction {
         if ( action.equals(ACTION_ALTER_PUBLIC) )
             return actionAlterPublic(request, response, env);
 
-        throw new MissingArgumentException("Chybí parametr action!");
+        throw new MissingArgumentException("ChybÃ­ parametr action!");
     }
 
     protected String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -410,7 +410,7 @@ public class EditContent implements AbcAction {
         String name = (String) params.get(PARAM_TITLE);
         name = Misc.filterDangerousCharacters(name);
         if ( name==null || name.length()==0 ) {
-            ServletUtils.addError(PARAM_TITLE, "Vyplòte titulek stránky!", env, null);
+            ServletUtils.addError(PARAM_TITLE, "VyplÅˆte titulek strÃ¡nky!", env, null);
             return false;
         }
         Element element = DocumentHelper.makeElement(item.getData(), "/data/name");
@@ -430,7 +430,7 @@ public class EditContent implements AbcAction {
         String exec = (String) params.get(PARAM_EXECUTE_AS_TEMPLATE);
 
         if ( content==null || content.length()==0 ) {
-            ServletUtils.addError(PARAM_CONTENT, "Vyplòte obsah stránky!", env, null);
+            ServletUtils.addError(PARAM_CONTENT, "VyplÅˆte obsah strÃ¡nky!", env, null);
             return false;
         }
 
@@ -480,7 +480,7 @@ public class EditContent implements AbcAction {
         relation.setUrl(url);
 
         if (!URLManager.isURLUnique(relation.getUrl(), relation.getId())) {
-            ServletUtils.addError(PARAM_URL, "Tato adresa je ji¾ pou¾ita!", env, null);
+            ServletUtils.addError(PARAM_URL, "Tato adresa je jiÅ¾ pouÅ¾ita!", env, null);
             return false;
         }
 
@@ -496,9 +496,9 @@ public class EditContent implements AbcAction {
         long startTime = Long.parseLong(s);
         long lastModified = item.getUpdated().getTime();
         if (lastModified>startTime) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Systém detekoval soubì¾nou editaci tohoto dokumentu. " +
-                    "Nìkdo upravil dokument poté, co jste jej zaèal(a) editovat. Není mo¾né pokraèovat. " +
-                    "Prosím vra»te se zpìt na dokument, znovu jej naètìte a pak teprve pokraèujte ve va¹ich úpravách.", env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC, "SystÃ©m detekoval soubÄ›Å¾nou editaci tohoto dokumentu. " +
+                    "NÄ›kdo upravil dokument potÃ©, co jste jej zaÄal(a) editovat. NenÃ­ moÅ¾nÃ© pokraÄovat. " +
+                    "ProsÃ­m vraÅ¥te se zpÄ›t na dokument, znovu jej naÄtÄ›te a pak teprve pokraÄujte ve vaÅ¡ich ÃºpravÃ¡ch.", env, null);
             return false;
         }
 

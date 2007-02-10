@@ -3,26 +3,26 @@
 <#assign who=TOOL.createUser(ITEM.owner)>
 <p>
     <#if PARAMS.revize?exists>
-        Právì si prohlí¾íte revizi èíslo ${PARAMS.revize}, kterou vytvoøil
+        PrÃ¡vÄ› si prohlÃ­Å¾Ã­te revizi ÄÃ­slo ${PARAMS.revize}, kterou vytvoÅ™il
         <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
         (${DATE.show(ITEM.updated,"CZ_FULL")}).
-        <a href="${RELATION.url?default("/ovladace/show/"+RELATION.id)}">Návrat na aktuální verzi</a>.
+        <a href="${RELATION.url?default("/ovladace/show/"+RELATION.id)}">NÃ¡vrat na aktuÃ¡lnÃ­ verzi</a>.
     <#else>
-        Tuto polo¾ku naposledy upravil <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
+        Tuto poloÅ¾ku naposledy upravil <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
         (${DATE.show(ITEM.updated,"CZ_FULL")}).
-        Pokud chcete doplnit, opravit nebo aktualizovat ovladaè,
-        <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">vlo¾te novou verzi</a>
-        nebo <a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">upravte související dokumenty</a>.
+        Pokud chcete doplnit, opravit nebo aktualizovat ovladaÄ,
+        <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">vloÅ¾te novou verzi</a>
+        nebo <a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">upravte souvisejÃ­cÃ­ dokumenty</a>.
 
-        K dispozici je i <a href="/revize?rid=${RELATION.id}&amp;prefix=/ovladace">archiv zmìn</a>
-        tohoto ovladaèe, tak¾e si mù¾ete prohlédnout, jakımi zmìnami ovladaè pro¹el postupem èasu.
+        K dispozici je i <a href="/revize?rid=${RELATION.id}&amp;prefix=/ovladace">archiv zmÄ›n</a>
+        tohoto ovladaÄe, takÅ¾e si mÅ¯Å¾ete prohlÃ©dnout, jakÃ½mi zmÄ›nami ovladaÄ proÅ¡el postupem Äasu.
     </#if>
 </p>
 <#if USER?exists && USER.hasRole("remove relation")>
   <a href="${URL.noPrefix("/EditRelation?action=remove&amp;prefix=/ovladace&amp;rid="+RELATION.id)}">Smazat</a>
 </#if>
 
-<p><b>AbcMonitor</b> vám emailem za¹le upozornìní pøi zmìnì.
+<p><b>AbcMonitor</b> vÃ¡m emailem zaÅ¡le upozornÄ›nÃ­ pÅ™i zmÄ›nÄ›.
  <#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")?exists>
   <#assign monitorState="Vypni">
  <#else>
@@ -46,12 +46,12 @@
   </tr>
 </table>
 
-<h3>Poznámka:</h3>
+<h3>PoznÃ¡mka:</h3>
 
 <div>${TOOL.render(TOOL.element(ITEM.data,"data/note"),USER?if_exists)}</div>
 
 <@lib.showRelated ITEM/>
 
-<p><b>Nástroje:</b> <a href="${RELATION.url?default("/ovladace/show/"+RELATION.id)}?varianta=print<#if PARAMS.revize?exists>&amp;revize=${PARAMS.revize}</#if>">Tisk</a></p>
+<p><b>NÃ¡stroje:</b> <a href="${RELATION.url?default("/ovladace/show/"+RELATION.id)}?varianta=print<#if PARAMS.revize?exists>&amp;revize=${PARAMS.revize}</#if>">Tisk</a></p>
 
 <#include "../footer.ftl">

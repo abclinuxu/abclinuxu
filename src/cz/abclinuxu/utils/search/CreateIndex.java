@@ -913,17 +913,17 @@ public class CreateIndex implements Configurable {
                 if (parent instanceof Item) {
                     Item parentItem = (Item) parent;
                     if (parentItem.getType() == Item.ARTICLE) {
-                        doc.setTitle("Diskuse k Ël·nku " + parentTitle);
+                        doc.setTitle("Diskuse k ƒçl√°nku " + parentTitle);
                         urlPrefix = UrlUtils.PREFIX_CLANKY;
                     } else if (parentItem.getType() == Item.BLOG) {
                         doc.setTitle("Diskuse k blogu " + parentTitle);
                         urlPrefix = UrlUtils.PREFIX_BLOG;
                     } else if (parentItem.getType() == Item.NEWS) {
-                        doc.setTitle("Diskuse k zpr·viËce " + parentTitle);
+                        doc.setTitle("Diskuse k zpr√°viƒçce " + parentTitle);
                         urlPrefix = UrlUtils.PREFIX_NEWS;
                     }
                 } else if (parent instanceof Poll) {
-                    doc.setTitle("Diskuse k anketÏ " + parentTitle);
+                    doc.setTitle("Diskuse k anketƒõ " + parentTitle);
                     urlPrefix = UrlUtils.PREFIX_POLLS;
                 }
 

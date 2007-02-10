@@ -6,7 +6,7 @@
     <#list SURVEYS as survey>
         <li>
             <a href="${URL.noPrefix("/EditSurvey?action=edit&amp;surveyId="+survey.id)}">
-                ${TOOL.xpath(survey.data, "/anketa/title")?default("Bezejmenná anketa")}
+                ${TOOL.xpath(survey.data, "/anketa/title")?default("BezejmennÃ¡ anketa")}
             </a>
         </li>
     </#list>

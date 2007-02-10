@@ -2,88 +2,88 @@
 
 <@lib.showMessages/>
 
-<h1>Pokládání dotazu</h1>
+<h1>PoklÃ¡dÃ¡nÃ­ dotazu</h1>
 
 <ul>
     <li>
-        Pøeètìte si èlánek <a href="/clanky/navody/jak-resit-problemy">Jak øe¹it problémy</a>.
+        PÅ™eÄtÄ›te si ÄlÃ¡nek <a href="/clanky/navody/jak-resit-problemy">Jak Å™eÅ¡it problÃ©my</a>.
     </li>
     <li>
-        Zkusili jste <a href="/Search" title="Vyhledávání">hledání</a>
-        a pro¹li jste si <a href="/faq" title="FAQ Linux">Èasto kladené otázky</a> (FAQ)?
+        Zkusili jste <a href="/Search" title="VyhledÃ¡vÃ¡nÃ­">hledÃ¡nÃ­</a>
+        a proÅ¡li jste si <a href="/faq" title="FAQ Linux">ÄŒasto kladenÃ© otÃ¡zky</a> (FAQ)?
     </li>
     <li>
-        Fórum slou¾í jen k øe¹ení problémù s Linuxem (pøípadnì Unixy), co tuto definici
-        nesplòuje (napøíklad oznámení), bude smazáno.
+        FÃ³rum slouÅ¾Ã­ jen k Å™eÅ¡enÃ­ problÃ©mÅ¯ s Linuxem (pÅ™Ã­padnÄ› Unixy), co tuto definici
+        nesplÅˆuje (napÅ™Ã­klad oznÃ¡menÃ­), bude smazÃ¡no.
     </li>
-    <li>Pokud máte problém s MS&nbsp;Windows a není zde pøíèinná souvislost
-        s Linuxem, obra»te se na Microsoft, tady odpovìï nedostanete.</li>
+    <li>Pokud mÃ¡te problÃ©m s MS&nbsp;Windows a nenÃ­ zde pÅ™Ã­ÄinnÃ¡ souvislost
+        s Linuxem, obraÅ¥te se na Microsoft, tady odpovÄ›Ä nedostanete.</li>
 </ul>
 
-<h2>Jak psát titulek</h2>
+<h2>Jak psÃ¡t titulek</h2>
 
-<p>Dobøe zvolenı titulek pøiláká pozornost ètenáøù, ¹patnı zaruèenì odradí zku¹ené u¾ivatele, kteøí
-by vám mohli pomoci. Admini mohou ¹patnì formulovanı titulek upravit.</p>
+<p>DobÅ™e zvolenÃ½ titulek pÅ™ilÃ¡kÃ¡ pozornost ÄtenÃ¡Å™Å¯, Å¡patnÃ½ zaruÄenÄ› odradÃ­ zkuÅ¡enÃ© uÅ¾ivatele, kteÅ™Ã­
+by vÃ¡m mohli pomoci. Admini mohou Å¡patnÄ› formulovanÃ½ titulek upravit.</p>
 
 <ul>
     <li>
-        Popi¹te vìtou, v èem pøesnì spoèívá vá¹ problém.
+        PopiÅ¡te vÄ›tou, v Äem pÅ™esnÄ› spoÄÃ­vÃ¡ vÃ¡Å¡ problÃ©m.
     </li>
     <li>
-        <b>Nepou¾ívejte</b> slova jako <i>help</i>, <i>pomoc</i>, <i>poraïte</i>, <i>prosím</i>,
-        <i>zaèáteèník</i> èi <i>lama</i>.
+        <b>NepouÅ¾Ã­vejte</b> slova jako <i>help</i>, <i>pomoc</i>, <i>poraÄte</i>, <i>prosÃ­m</i>,
+        <i>zaÄÃ¡teÄnÃ­k</i> Äi <i>lama</i>.
     </li>
     <li>
-        NEPI©TE VELKİMI PÍSMENY nebo <b>tuènì</b> a nepou¾ívejte vykøièníky - je to nezdvoøilé.
+        NEPIÅ TE VELKÃMI PÃSMENY nebo <b>tuÄnÄ›</b> a nepouÅ¾Ã­vejte vykÅ™iÄnÃ­ky - je to nezdvoÅ™ilÃ©.
     </li>
     <li>
-        Jeden otazník úplnì staèí. Opravdu.
+        Jeden otaznÃ­k ÃºplnÄ› staÄÃ­. Opravdu.
     </li>
 </ul>
 
-<h2>Jak popsat problém</h2>
+<h2>Jak popsat problÃ©m</h2>
 
 <ul>
     <li>
-        Sna¾te se uvést co nejvíce relevantních informací. Napøíklad:
+        SnaÅ¾te se uvÃ©st co nejvÃ­ce relevantnÃ­ch informacÃ­. NapÅ™Ã­klad:
             <ul>
                 <li>druh hardwaru</li>
                 <li>verze aplikace</li>
             </ul>
-        (Ostatní ètenáøi nemají køi¹»álovou kouli, aby to sami uhádli.)
+        (OstatnÃ­ ÄtenÃ¡Å™i nemajÃ­ kÅ™iÅ¡Å¥Ã¡lovou kouli, aby to sami uhÃ¡dli.)
     </li>
 
     <li>
-        Popi¹te postup, kterı nevede k cíli. Uveïte, jestli jste postupovali podle nìjakého návodu.
-        Pokud ano, vlo¾te na nìj odkaz.
+        PopiÅ¡te postup, kterÃ½ nevede k cÃ­li. UveÄte, jestli jste postupovali podle nÄ›jakÃ©ho nÃ¡vodu.
+        Pokud ano, vloÅ¾te na nÄ›j odkaz.
     </li>
 
     <li>
-        Èasto je dobré vlo¾it ukázku konfiguraèního souboru, vıpis
-        <code>dmesg</code> èi <code>lspci</code> (HTML znaèka <code>&lt;PRE&gt;</code>). Nicménì
-        vkládejte jen skuteènì zajímavé èásti související s problémem, maximálnì deset a¾
-        patnáct øádek.
+        ÄŒasto je dobrÃ© vloÅ¾it ukÃ¡zku konfiguraÄnÃ­ho souboru, vÃ½pis
+        <code>dmesg</code> Äi <code>lspci</code> (HTML znaÄka <code>&lt;PRE&gt;</code>). NicmÃ©nÄ›
+        vklÃ¡dejte jen skuteÄnÄ› zajÃ­mavÃ© ÄÃ¡sti souvisejÃ­cÃ­ s problÃ©mem, maximÃ¡lnÄ› deset aÅ¾
+        patnÃ¡ct Å™Ã¡dek.
     </li>
 
     <li>
-        Pokud pøijdete na øe¹ení sami, vlo¾te jej do diskuse. Pomù¾ete tak ostatním ètenáøùm.
+        Pokud pÅ™ijdete na Å™eÅ¡enÃ­ sami, vloÅ¾te jej do diskuse. PomÅ¯Å¾ete tak ostatnÃ­m ÄtenÃ¡Å™Å¯m.
     </li>
 </ul>
 
 <p>
-    <b>Do jednoho dotazu nevkládejte více problémù</b>. Diskusi pak není mo¾né vhodnì zaøadit do
-    pøíslu¹ného diskusního fóra a není mo¾né ji vısti¾nì pojmenovat. Pro u¾ivatele,
-    kterı by pozdìji hledal odpovìï na nìkterı z uvedenıch problémù, by bylo obtí¾né takovou
-    diskusi vyhledat. Dotazy obsahující více problémù mohou bıt administrátory uzamèeny, pøièem¾
-    tazatel bude po¾ádán, aby jednotlivé problémy popsal v samostatnıch diskusích.
+    <b>Do jednoho dotazu nevklÃ¡dejte vÃ­ce problÃ©mÅ¯</b>. Diskusi pak nenÃ­ moÅ¾nÃ© vhodnÄ› zaÅ™adit do
+    pÅ™Ã­sluÅ¡nÃ©ho diskusnÃ­ho fÃ³ra a nenÃ­ moÅ¾nÃ© ji vÃ½stiÅ¾nÄ› pojmenovat. Pro uÅ¾ivatele,
+    kterÃ½ by pozdÄ›ji hledal odpovÄ›Ä na nÄ›kterÃ½ z uvedenÃ½ch problÃ©mÅ¯, by bylo obtÃ­Å¾nÃ© takovou
+    diskusi vyhledat. Dotazy obsahujÃ­cÃ­ vÃ­ce problÃ©mÅ¯ mohou bÃ½t administrÃ¡tory uzamÄeny, pÅ™iÄemÅ¾
+    tazatel bude poÅ¾Ã¡dÃ¡n, aby jednotlivÃ© problÃ©my popsal v samostatnÃ½ch diskusÃ­ch.
 </p>
 
 <#if ! USER?exists>
- <h1 class="st_nadpis">Proè se pøihlásit</h1>
+ <h1 class="st_nadpis">ProÄ se pÅ™ihlÃ¡sit</h1>
 
- <p>Registrovaní ètenáøi si mohou nechat sledovat diskusi, tak¾e jim budou emailem posílány
- reakce ostatních ètenáøù. Zároveò si budete moci ve svém profilu snadno vyhledat
- tuto diskusi. Proto je vıhodné se pøihlásit. Nemáte-li u nás je¹tì úèet,
+ <p>RegistrovanÃ­ ÄtenÃ¡Å™i si mohou nechat sledovat diskusi, takÅ¾e jim budou emailem posÃ­lÃ¡ny
+ reakce ostatnÃ­ch ÄtenÃ¡Å™Å¯. ZÃ¡roveÅˆ si budete moci ve svÃ©m profilu snadno vyhledat
+ tuto diskusi. Proto je vÃ½hodnÃ© se pÅ™ihlÃ¡sit. NemÃ¡te-li u nÃ¡s jeÅ¡tÄ› ÃºÄet,
  <a href="${URL.noPrefix("/EditUser?action=add")}">zaregistrujte se</a>.
  </p>
 </#if>
@@ -99,18 +99,18 @@ by vám mohli pomoci. Admini mohou ¹patnì formulovanı titulek upravit.</p>
                 </td>
             </tr>
             <tr>
-                <td class="required">nebo va¹e jméno</td>
+                <td class="required">nebo vaÅ¡e jmÃ©no</td>
                 <td>
                     <input tabindex="3" type="text" size="30" name="author" value="${PARAMS.author?if_exists?html}">
                 </td>
             </tr>
             <#if ! USER_VERIFIED?if_exists>
                 <tr>
-                    <td class="required">Aktuální rok</td>
+                    <td class="required">AktuÃ¡lnÃ­ rok</td>
                     <td>
                         <input type="text" size="4" name="antispam" value="${PARAMS.antispam?if_exists?html}" tabindex="4">
-                        <a class="info" href="#">?<span class="tooltip">Vlo¾te aktuální rok. Jedná se o ochranu pøed spamboty.
-                        Po úspì¹ném ovìøení se ulo¾í cookie (vèetnì va¹eho jména) a tato kontrola pøestane bıt provádìna.</span></a>
+                        <a class="info" href="#">?<span class="tooltip">VloÅ¾te aktuÃ¡lnÃ­ rok. JednÃ¡ se o ochranu pÅ™ed spamboty.
+                        Po ÃºspÄ›Å¡nÃ©m ovÄ›Å™enÃ­ se uloÅ¾Ã­ cookie (vÄetnÄ› vaÅ¡eho jmÃ©na) a tato kontrola pÅ™estane bÃ½t provÃ¡dÄ›na.</span></a>
                     </td>
                 </tr>
             </#if>
@@ -125,19 +125,19 @@ by vám mohli pomoci. Admini mohou ¹patnì formulovanı titulek upravit.</p>
             <td class="required">Dotaz</td>
             <td>
                 <div class="form-edit">
-                    <a href="javascript:insertAtCursor(document.form.text, '<b>', '</b>');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<i>', '</i>');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<a href=&quot;&quot;>', '</a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<p>', '</p>');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="Vlo¾it znaèku formátovaného textu. Vhodné pro konfiguraèní soubory èi vıpisy.">&lt;pre&gt;</a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<b>', '</b>');" id="serif" title="VloÅ¾it znaÄku tuÄnÄ›"><b>B</b></a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<i>', '</i>');" id="serif" title="VloÅ¾it znaÄku kurzÃ­va"><i>I</i></a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<a href=&quot;&quot;>', '</a>');" id="mono" title="VloÅ¾it znaÄku odkazu">&lt;a&gt;</a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<p>', '</p>');" id="mono" title="VloÅ¾it znaÄku odstavce">&lt;p&gt;</a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="VloÅ¾it znaÄku formÃ¡tovanÃ©ho textu. VhodnÃ© pro konfiguraÄnÃ­ soubory Äi vÃ½pisy.">&lt;pre&gt;</a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="VloÅ¾it znaÄku pro pÃ­smo s pevnou Å¡Ã­Å™kou">&lt;code&gt;</a>
                 </div>
                 <textarea tabindex="5" name="text" class="siroka" rows="20"></textarea><br>
             </td>
         </tr>
         <tr>
             <td>&nbsp;</td>
-            <td><input tabindex="6" type="submit" name="preview" value="Náhled"></td>
+            <td><input tabindex="6" type="submit" name="preview" value="NÃ¡hled"></td>
         </tr>
     </table>
     <input type="hidden" name="action" value="addQuez2">

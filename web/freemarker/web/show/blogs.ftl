@@ -1,17 +1,17 @@
 <#assign plovouci_sloupec>
   <div class="s_nadpis">
-    <a class="info" href="#">?<span class="tooltip">Vlastní blog si po pøihlá¹ení mù¾ete zalo¾it v nastavení svého profilu.</span></a>
-    <a href="/blog">Seznam v¹ech blogù</a>
+    <a class="info" href="#">?<span class="tooltip">VlastnÃ­ blog si po pÅ™ihlÃ¡Å¡enÃ­ mÅ¯Å¾ete zaloÅ¾it v nastavenÃ­ svÃ©ho profilu.</span></a>
+    <a href="/blog">Seznam vÅ¡ech blogÅ¯</a>
   </div>
 
     <div class="s_sekce">
-        <p>Chcete-li také psát svùj blog, pøihla¹te se a v nastavení
-        si jej mù¾ete zalo¾it.</p>
-        <p>Více o této nové funkci se dozvíte z <a href="/blog/leos/2005/1/2/72133">oznámení</a>.</p>
+        <p>Chcete-li takÃ© psÃ¡t svÅ¯j blog, pÅ™ihlaÅ¡te se a v nastavenÃ­
+        si jej mÅ¯Å¾ete zaloÅ¾it.</p>
+        <p>VÃ­ce o tÃ©to novÃ© funkci se dozvÃ­te z <a href="/blog/leos/2005/1/2/72133">oznÃ¡menÃ­</a>.</p>
         <ul>
-          <li><a href="/blog">aktuální zápisy</a></li>
-	  <li><a href="/blog/souhrn">aktuální zápisy (struènìj¹í souhrn)</a></li>
-          <li><a href="/auto/blog.rss">RSS kanál</a></li>
+          <li><a href="/blog">aktuÃ¡lnÃ­ zÃ¡pisy</a></li>
+	  <li><a href="/blog/souhrn">aktuÃ¡lnÃ­ zÃ¡pisy (struÄnÄ›jÅ¡Ã­ souhrn)</a></li>
+          <li><a href="/auto/blog.rss">RSS kanÃ¡l</a></li>
         </ul>
     </div>
 </#assign>
@@ -22,7 +22,7 @@
     <#assign title=TOOL.xpath(info.blog,"//custom/title")?default("blog")>
     <p><b class="st_nadpis"><a href="/blog/${info.blog.subType}">${title}</a></b> | 
     <a href="/Profile/${info.author.id}">${info.author.nickname?default(info.author.name)}</a></p>
-    <p class="cl_inforadek"> &nbsp; Zalo¾eno: ${DATE.show(info.blog.created,"CZ_FULL_TXT")} | Pøíspìvkù: ${info.stories}</p>
+    <p class="cl_inforadek"> &nbsp; ZaloÅ¾eno: ${DATE.show(info.blog.created,"CZ_FULL_TXT")} | PÅ™Ã­spÄ›vkÅ¯: ${info.stories}</p>
 </#list>
 
 <#include "../footer.ftl">

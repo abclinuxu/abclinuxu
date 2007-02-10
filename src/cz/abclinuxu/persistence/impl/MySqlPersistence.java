@@ -53,13 +53,13 @@ public class MySqlPersistence implements Persistence {
         try {
             Class.forName("com.mysql.jdbc.Driver");
         } catch (Exception e) {
-            log.fatal("Nemohu vytvo¯it instanci JDBC driveru, zkontroluj CLASSPATH!",e);
+            log.fatal("Nemohu vytvo≈ôit instanci JDBC driveru, zkontroluj CLASSPATH!",e);
         }
     }
 
     public MySqlPersistence(String dbUrl) {
         if ( dbUrl==null )
-            throw new MissingArgumentException("NenÌ moænÈ inicializovat MySqlPersistenci pr·zdn˝m URL!");
+            throw new MissingArgumentException("Nen√≠ mo≈æn√© inicializovat MySqlPersistenci pr√°zdn√Ωm URL!");
         this.dbUrl = dbUrl;
     }
 
@@ -84,11 +84,11 @@ public class MySqlPersistence implements Persistence {
     public void create(GenericObject obj) {
         Connection con = null; PreparedStatement statement = null;
         if ( obj==null )
-            throw new NullPointerException("Nemohu  uloæit pr·zdn˝ objekt!");
+            throw new NullPointerException("Nemohu  ulo≈æit pr√°zdn√Ω objekt!");
 
         try {
             con = getSQLConnection();
-            if (log.isDebugEnabled()) log.debug("Chyst·m se uloæit "+obj);
+            if (log.isDebugEnabled()) log.debug("Chyst√°m se ulo≈æit "+obj);
             if ( obj instanceof Poll ) {
                 storePoll((Poll)obj);
             } else {
@@ -103,7 +103,7 @@ public class MySqlPersistence implements Persistence {
 
                 int result = statement.executeUpdate();
                 if ( result==0 )
-                    throw new PersistenceException("Nepoda¯ilo se vloæit "+obj+" do datab·ze!");
+                    throw new PersistenceException("Nepoda≈ôilo se vlo≈æit "+obj+" do datab√°ze!");
                 obj.setId(getAutoId(statement));
 
                 if (obj instanceof GenericDataObject)
@@ -124,12 +124,12 @@ public class MySqlPersistence implements Persistence {
                 }
             }
 
-            if ( log.isDebugEnabled() ) log.debug("Objekt ["+obj+"] uloæen");
+            if ( log.isDebugEnabled() ) log.debug("Objekt ["+obj+"] ulo≈æen");
         } catch ( SQLException e ) {
             if ( e.getErrorCode()==1062 ) {
-                throw new DuplicateKeyException("Duplik·tnÌ ˙daj!");
+                throw new DuplicateKeyException("Duplik√°tn√≠ √∫daj!");
             } else {
-                throw new PersistenceException("Nemohu uloæit "+obj,e);
+                throw new PersistenceException("Nemohu ulo≈æit "+obj,e);
             }
         } finally {
             releaseSQLResources(con,statement,null);
@@ -161,7 +161,7 @@ public class MySqlPersistence implements Persistence {
 
             int result = statement.executeUpdate();
             if (result == 0)
-                throw new PersistenceException("Nepoda¯ilo se vloæit " + comment + " do datab·ze!");
+                throw new PersistenceException("Nepoda≈ôilo se vlo≈æit " + comment + " do datab√°ze!");
             int autoId = getAutoId(statement);
             comment.setRowId(autoId);
         }
@@ -200,12 +200,12 @@ public class MySqlPersistence implements Persistence {
 
     public GenericObject findById(GenericObject obj) {
         if ( obj==null )
-            throw new NullPointerException("Nemohu hledat pr·zdn˝ objekt!");
+            throw new NullPointerException("Nemohu hledat pr√°zdn√Ω objekt!");
 
         GenericObject result = cache.load(obj);
         if ( result!=null && result.isInitialized() ) return result;
 
-        if ( log.isDebugEnabled() ) log.debug("Hled·m podle PK "+obj);
+        if ( log.isDebugEnabled() ) log.debug("Hled√°m podle PK "+obj);
         try {
             result = loadObject(obj);
             cache.store(result);
@@ -242,7 +242,7 @@ public class MySqlPersistence implements Persistence {
             }
             return found;
         } catch (SQLException e) {
-            throw new PersistenceException("Datab·zov· chyba!", e);
+            throw new PersistenceException("Datab√°zov√° chyba!", e);
         } finally {
             releaseSQLResources(con, statement, resultSet);
         }
@@ -270,7 +270,7 @@ public class MySqlPersistence implements Persistence {
                 try {
                     int index = Integer.parseInt(token);
                     if ( obj.getClass()!=kind ) {
-                        throw new InvalidDataException("R˘znÈ typy objekt˘!");
+                        throw new InvalidDataException("R≈Øzn√© typy objekt≈Ø!");
                     }
                     sb.append('(');
                     obj = (GenericObject) objects.get(index);
@@ -295,7 +295,7 @@ public class MySqlPersistence implements Persistence {
                     o.setId(resultSet.getInt(1));
                     result.add(o);
                 } catch (Exception e) {
-                    log.error("Nemohu vytvo¯it instanci "+kind,e);
+                    log.error("Nemohu vytvo≈ôit instanci "+kind,e);
                 }
             }
             return result;
@@ -304,7 +304,7 @@ public class MySqlPersistence implements Persistence {
             for (Iterator iter = objects.iterator(); iter.hasNext();) {
                 sb.append(iter.next().toString());
             }
-            throw new PersistenceException("Nemohu provÈst zadanÈ vyhled·v·nÌ!"+sb,e);
+            throw new PersistenceException("Nemohu prov√©st zadan√© vyhled√°v√°n√≠!"+sb,e);
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }
@@ -312,13 +312,13 @@ public class MySqlPersistence implements Persistence {
 
     public List findByCommand(String command) {
         if ( command==null || command.length()==0 )
-            throw new InvalidDataException("Nemohu hledat pr·zdn˝ objekt!");
+            throw new InvalidDataException("Nemohu hledat pr√°zdn√Ω objekt!");
 
         Connection con = null; Statement statement = null; ResultSet resultSet = null;
         List result = new ArrayList(5);
         try {
             con = getSQLConnection();
-            if (log.isDebugEnabled()) log.debug("Chyst·m se hledat podle "+command);
+            if (log.isDebugEnabled()) log.debug("Chyst√°m se hledat podle "+command);
 
             statement = con.createStatement();
             resultSet = statement.executeQuery(command);
@@ -333,7 +333,7 @@ public class MySqlPersistence implements Persistence {
                 result.add(objects);
             }
         } catch ( SQLException e ) {
-            throw new PersistenceException("Chyba p¯i hled·nÌ podle "+command+"!",e);
+            throw new PersistenceException("Chyba p≈ôi hled√°n√≠ podle "+command+"!",e);
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }
@@ -415,7 +415,7 @@ public class MySqlPersistence implements Persistence {
 
     public void remove(GenericObject obj) {
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
-        if ( log.isDebugEnabled() ) log.debug("Chyst·m se smazat "+obj);
+        if ( log.isDebugEnabled() ) log.debug("Chyst√°m se smazat "+obj);
 
         try {
             con = getSQLConnection();
@@ -618,7 +618,7 @@ public class MySqlPersistence implements Persistence {
                 statement.executeUpdate();
             }
         } catch ( SQLException e ) {
-            log.error("Nepoda¯ilo se zv˝πit ËÌtaË pro "+obj,e);
+            log.error("Nepoda≈ôilo se zv√Ω≈°it ƒç√≠taƒç pro "+obj,e);
         } finally {
             releaseSQLResources(con,statement,null);
         }
@@ -638,7 +638,7 @@ public class MySqlPersistence implements Persistence {
                 return 0;
             return resultSet.getInt(1);
         } catch ( SQLException e ) {
-            log.error("Nepoda¯ilo se zjistit hodnotu ËÌtaËe pro "+obj,e);
+            log.error("Nepoda≈ôilo se zjistit hodnotu ƒç√≠taƒçe pro "+obj,e);
             return 0;
         } finally {
             releaseSQLResources(con,statement,resultSet);
@@ -681,8 +681,8 @@ public class MySqlPersistence implements Persistence {
 
             return map;
         } catch (SQLException e) {
-            log.error("Selhalo hled·nÌ ËÌtaË˘ pro " + objects, e);
-            throw new PersistenceException("Selhalo hled·nÌ ËÌtaË˘!");
+            log.error("Selhalo hled√°n√≠ ƒç√≠taƒç≈Ø pro " + objects, e);
+            throw new PersistenceException("Selhalo hled√°n√≠ ƒç√≠taƒç≈Ø!");
         } finally {
             releaseSQLResources(con, statement, resultSet);
         }
@@ -703,7 +703,7 @@ public class MySqlPersistence implements Persistence {
             }
             statement.executeUpdate();
         } catch ( SQLException e ) {
-            log.error("Nepoda¯ilo se smazat ËÌtaË pro "+obj,e);
+            log.error("Nepoda≈ôilo se smazat ƒç√≠taƒç pro "+obj,e);
         } finally {
             releaseSQLResources(con,statement,null);
         }
@@ -760,8 +760,8 @@ public class MySqlPersistence implements Persistence {
             else
                 return children;
         } catch (SQLException e) {
-            log.error("Selhalo hled·nÌ potomk˘ pro "+obj, e);
-            throw new PersistenceException("Selhalo hled·nÌ potomk˘ pro " + obj);
+            log.error("Selhalo hled√°n√≠ potomk≈Ø pro "+obj, e);
+            throw new PersistenceException("Selhalo hled√°n√≠ potomk≈Ø pro " + obj);
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }
@@ -802,8 +802,8 @@ public class MySqlPersistence implements Persistence {
 
             return map;
         } catch (SQLException e) {
-            log.error("Selhalo hled·nÌ potomk˘ pro "+objects, e);
-            throw new PersistenceException("Selhalo hled·nÌ potomk˘!");
+            log.error("Selhalo hled√°n√≠ potomk≈Ø pro "+objects, e);
+            throw new PersistenceException("Selhalo hled√°n√≠ potomk≈Ø!");
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }
@@ -1059,7 +1059,7 @@ public class MySqlPersistence implements Persistence {
 
             PollChoice[] choices = poll.getChoices();
             if ( choices==null || choices.length<1 )
-                throw new InvalidDataException("Anketa musÌ mÌt nejmÈnÏ jednu volbu!");
+                throw new InvalidDataException("Anketa mus√≠ m√≠t nejm√©nƒõ jednu volbu!");
 
             Document document = DocumentHelper.createDocument();
             Element root = document.addElement("data");
@@ -1079,7 +1079,7 @@ public class MySqlPersistence implements Persistence {
 
             int result = statement.executeUpdate();
             if ( result==0 ) {
-                throw new PersistenceException("Nepoda¯ilo se vloæit anketu do datab·ze!");
+                throw new PersistenceException("Nepoda≈ôilo se vlo≈æit anketu do datab√°ze!");
             }
 
             if (poll.getId()==0)
@@ -1107,7 +1107,7 @@ public class MySqlPersistence implements Persistence {
 
             resultSet = statement.executeQuery();
             if ( !resultSet.next() ) {
-                throw new NotFoundException("Uæivatel "+obj.getId()+" nebyl nalezen!");
+                throw new NotFoundException("U≈æivatel "+obj.getId()+" nebyl nalezen!");
             }
 
             User user = new User(obj.getId());
@@ -1137,7 +1137,7 @@ public class MySqlPersistence implements Persistence {
             for (Iterator iter = users.iterator(); iter.hasNext();) {
                 User user = (User) iter.next();
                 if (!rs.next() || rs.getInt(1)!=user.getId())
-                    throw new NotFoundException("Uæivatel " + user.getId() + " nebyl nalezen!");
+                    throw new NotFoundException("U≈æivatel " + user.getId() + " nebyl nalezen!");
                 syncUserFromRS(user, rs);
                 cache.store(user);
             }
@@ -1173,7 +1173,7 @@ public class MySqlPersistence implements Persistence {
 
             resultSet = statement.executeQuery();
             if ( !resultSet.next() )
-                throw new NotFoundException("Poloæka "+obj.getId()+" nebyla nalezena!");
+                throw new NotFoundException("Polo≈æka "+obj.getId()+" nebyla nalezena!");
 
             GenericDataObject data;
             if (obj instanceof Category)
@@ -1222,7 +1222,7 @@ public class MySqlPersistence implements Persistence {
                 int id = rs.getInt(1);
                 obj = (GenericDataObject) objects.get(id);
                 if (obj == null) {
-                    log.warn("Datova poloæka nebyla nalezena: " + obj);
+                    log.warn("Datova polo≈æka nebyla nalezena: " + obj);
                     continue;
                 }
 
@@ -1309,7 +1309,7 @@ public class MySqlPersistence implements Persistence {
                         upper.addChild(current);
                     else {
                         diz.addThread(current);
-                        log.warn("Nenalezen p¯edek pro koment·¯ "+current.getRowId()+"!");
+                        log.warn("Nenalezen p≈ôedek pro koment√°≈ô "+current.getRowId()+"!");
                     }
                 }
             }
@@ -1600,7 +1600,7 @@ public class MySqlPersistence implements Persistence {
             poll.setChoices(choices);
         } catch (DocumentException e) {
             log.error(e.getMessage(), e);
-            throw new SQLException("Chyba p¯i ËtenÌ ankety!");
+            throw new SQLException("Chyba p≈ôi ƒçten√≠ ankety!");
         }
 
         poll.setMultiChoice(resultSet.getBoolean(2));
@@ -1649,7 +1649,7 @@ public class MySqlPersistence implements Persistence {
 
             cache.store(poll);
         } catch (SQLException e) {
-            log.error("Nepoda¯ilo se zv˝πit ËÌtaË pro " + firstChoice, e);
+            log.error("Nepoda≈ôilo se zv√Ω≈°it ƒç√≠taƒç pro " + firstChoice, e);
         } finally {
             releaseSQLResources(con, statement, null);
         }
@@ -1726,7 +1726,7 @@ public class MySqlPersistence implements Persistence {
     public void update(GenericDataObject obj) {
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         if ( obj==null )
-            throw new NullPointerException("Nemohu  uloæit pr·zdn˝ objekt!");
+            throw new NullPointerException("Nemohu  ulo≈æit pr√°zdn√Ω objekt!");
 
         try {
             con = getSQLConnection();
@@ -1742,7 +1742,7 @@ public class MySqlPersistence implements Persistence {
 
             int result = statement.executeUpdate();
             if ( result!=1 )
-                throw new PersistenceException("Nepoda¯ilo se uloæit zmÏny v "+obj.toString()+" do datab·ze!");
+                throw new PersistenceException("Nepoda≈ôilo se ulo≈æit zmƒõny v "+obj.toString()+" do datab√°ze!");
 
             if (obj instanceof Record && obj.getType() == Record.DISCUSSION)
                 updateComments((DiscussionRecord) obj.getCustom(), obj.getId(), con);
@@ -1752,7 +1752,7 @@ public class MySqlPersistence implements Persistence {
             obj.setUpdated(new java.util.Date());
             cache.store(obj);
         } catch (SQLException e) {
-            throw new PersistenceException("Nemohu uloæit zmÏny do datab·ze!",e);
+            throw new PersistenceException("Nemohu ulo≈æit zmƒõny do datab√°ze!",e);
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }
@@ -1821,7 +1821,7 @@ public class MySqlPersistence implements Persistence {
     public void update(Relation relation) {
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         if ( relation==null )
-            throw new NullPointerException("Nemohu  uloæit pr·zdn˝ objekt!");
+            throw new NullPointerException("Nemohu  ulo≈æit pr√°zdn√Ω objekt!");
 
         try {
             con = getSQLConnection();
@@ -1844,12 +1844,12 @@ public class MySqlPersistence implements Persistence {
 
             int result = statement.executeUpdate();
             if ( result!=1 ) {
-                throw new PersistenceException("Nepoda¯ilo se uloæit zmÏny v "+relation.toString()+" do datab·ze!");
+                throw new PersistenceException("Nepoda≈ôilo se ulo≈æit zmƒõny v "+relation.toString()+" do datab√°ze!");
             }
 
             cache.store(relation);
         } catch (SQLException e) {
-            throw new PersistenceException("Nemohu uloæit zmÏny do datab·ze!",e);
+            throw new PersistenceException("Nemohu ulo≈æit zmƒõny do datab√°ze!",e);
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }
@@ -1861,7 +1861,7 @@ public class MySqlPersistence implements Persistence {
     public void update(Data data) {
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         if ( data==null )
-            throw new NullPointerException("Nemohu  uloæit pr·zdn˝ objekt!");
+            throw new NullPointerException("Nemohu  ulo≈æit pr√°zdn√Ω objekt!");
 
         try {
             con = getSQLConnection();
@@ -1872,12 +1872,12 @@ public class MySqlPersistence implements Persistence {
 
             int result = statement.executeUpdate();
             if ( result!=1 ) {
-                throw new PersistenceException("Nepodarilo se ulozit zmeny v "+data.toString()+" do datab·ze!");
+                throw new PersistenceException("Nepodarilo se ulozit zmeny v "+data.toString()+" do datab√°ze!");
             }
 
             cache.store(data);
         } catch (SQLException e) {
-            throw new PersistenceException("Nemohu uloæit zmÏny do datab·ze!", e);
+            throw new PersistenceException("Nemohu ulo≈æit zmƒõny do datab√°ze!", e);
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }
@@ -1889,7 +1889,7 @@ public class MySqlPersistence implements Persistence {
     public void update(Link link) {
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         if ( link==null )
-            throw new NullPointerException("Nemohu  uloæit pr·zdn˝ objekt!");
+            throw new NullPointerException("Nemohu  ulo≈æit pr√°zdn√Ω objekt!");
 
         try {
             con = getSQLConnection();
@@ -1907,13 +1907,13 @@ public class MySqlPersistence implements Persistence {
 
             int result = statement.executeUpdate();
             if ( result!=1 ) {
-                throw new PersistenceException("Nepodarilo se uloæit zmÏny v "+link.toString()+" do datab·ze!");
+                throw new PersistenceException("Nepodarilo se ulo≈æit zmƒõny v "+link.toString()+" do datab√°ze!");
             }
 
             link.setUpdated(new java.util.Date());
             cache.store(link);
         } catch (SQLException e) {
-            throw new PersistenceException("Nemohu uloæit zmÏny v "+link.toString()+" do datab·ze!",e);
+            throw new PersistenceException("Nemohu ulo≈æit zmƒõny v "+link.toString()+" do datab√°ze!",e);
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }
@@ -1925,7 +1925,7 @@ public class MySqlPersistence implements Persistence {
     public void update(Poll poll) {
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         if ( poll==null )
-            throw new NullPointerException("Nemohu  uloæit pr·zdn˝ objekt!");
+            throw new NullPointerException("Nemohu  ulo≈æit pr√°zdn√Ω objekt!");
 
         try {
             con = getSQLConnection();
@@ -1948,11 +1948,11 @@ public class MySqlPersistence implements Persistence {
 
             int result = statement.executeUpdate();
             if ( result!=1 )
-                throw new PersistenceException("Nepodarilo se uloæit zmÏny v "+poll.toString()+" do datab·ze!");
+                throw new PersistenceException("Nepodarilo se ulo≈æit zmƒõny v "+poll.toString()+" do datab√°ze!");
 
             cache.store(poll);
         } catch (SQLException e) {
-            throw new PersistenceException("Nemohu uloæit zmÏny v "+poll.toString()+" do datab·ze!",e);
+            throw new PersistenceException("Nemohu ulo≈æit zmƒõny v "+poll.toString()+" do datab√°ze!",e);
         } finally {
             releaseSQLResources(con,statement,resultSet);
         }
@@ -1964,7 +1964,7 @@ public class MySqlPersistence implements Persistence {
     public void update(User user) {
         Connection con = null; PreparedStatement statement = null; ResultSet resultSet = null;
         if ( user==null )
-            throw new NullPointerException("Nemohu  uloæit pr·zdn˝ objekt!");
+            throw new NullPointerException("Nemohu  ulo≈æit pr√°zdn√Ω objekt!");
 
         try {
             con = getSQLConnection();
@@ -1979,15 +1979,15 @@ public class MySqlPersistence implements Persistence {
 
             int result = statement.executeUpdate();
             if ( result!=1 ) {
-                throw new PersistenceException("Nepodarilo se uloæit zmÏny v "+user.toString()+" do datab·ze!");
+                throw new PersistenceException("Nepodarilo se ulo≈æit zmƒõny v "+user.toString()+" do datab√°ze!");
             }
 
             cache.store(user);
         } catch (SQLException e) {
             if ( e.getErrorCode()==1062 ) {
-                throw new DuplicateKeyException("P¯ihlaπovacÌ jmÈno (login) nebo p¯ezdÌvka jsou jiæ pouæÌv·ny!");
+                throw new DuplicateKeyException("P≈ôihla≈°ovac√≠ jm√©no (login) nebo p≈ôezd√≠vka jsou ji≈æ pou≈æ√≠v√°ny!");
             } else {
-                throw new PersistenceException("Nemohu uloæit zmÏny do datab·ze!",e);
+                throw new PersistenceException("Nemohu ulo≈æit zmƒõny do datab√°ze!",e);
             }
         } finally {
             releaseSQLResources(con,statement,resultSet);
@@ -2262,6 +2262,6 @@ public class MySqlPersistence implements Persistence {
      */
     public static String insertEncoding(String xml) {
         if ( xml==null || xml.startsWith("<?xml") ) return xml;
-        return "<?xml version=\"1.0\" encoding=\"ISO-8859-2\" ?>\n"+xml;
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"+xml;
     }
 }

@@ -2,13 +2,13 @@
 
 <@lib.showMessages/>
 
-<p>Tento krok vy¾aduje, abyste se pøihlásil(a) na svùj u¾ivatelskı úèet.
-Pokud je¹tì ¾ádnı nemáte, mù¾ete si jej
-<a href="${URL.noPrefix("/EditUser?action=register")}">vytvoøit</a>.
-Zabere vám to jen okam¾ik a pøinese spoustu vıhod. Pokud u nás úèet
-ji¾ máte, ale nepamatujete si pøihla¹ovací údaje,
-<a href="${URL.noPrefix("/SelectUser?sAction=form&amp;action=forgottenPassword&amp;TITLE=Zaslání+zapomenutého+hesla&amp;url=/Profile")}">najdìte si jej</a>
-a my vám za¹leme heslo.
+<p>Tento krok vyÅ¾aduje, abyste se pÅ™ihlÃ¡sil(a) na svÅ¯j uÅ¾ivatelskÃ½ ÃºÄet.
+Pokud jeÅ¡tÄ› Å¾Ã¡dnÃ½ nemÃ¡te, mÅ¯Å¾ete si jej
+<a href="${URL.noPrefix("/EditUser?action=register")}">vytvoÅ™it</a>.
+Zabere vÃ¡m to jen okamÅ¾ik a pÅ™inese spoustu vÃ½hod. Pokud u nÃ¡s ÃºÄet
+jiÅ¾ mÃ¡te, ale nepamatujete si pÅ™ihlaÅ¡ovacÃ­ Ãºdaje,
+<a href="${URL.noPrefix("/SelectUser?sAction=form&amp;action=forgottenPassword&amp;TITLE=ZaslÃ¡nÃ­+zapomenutÃ©ho+hesla&amp;url=/Profile")}">najdÄ›te si jej</a>
+a my vÃ¡m zaÅ¡leme heslo.
 </p>
 
 <form action="${REQUEST_URI}" method="POST">

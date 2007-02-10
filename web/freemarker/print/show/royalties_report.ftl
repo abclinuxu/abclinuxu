@@ -6,7 +6,7 @@
 <#list RESULT as found>
         <tr>
            <td colspan="3" style="background:lightgray">
-	      <b><a href="${found.author.url}">${TOOL.childName(found.author)}</a><code>&#09;&#09;${found.sum}</b>&#09;${TOOL.xpath(found.author.child, "/data/accountNumber")?default("bankovní úèet není zadán")}</code>
+	      <b><a href="${found.author.url}">${TOOL.childName(found.author)}</a><code>&#09;&#09;${found.sum}</b>&#09;${TOOL.xpath(found.author.child, "/data/accountNumber")?default("bankovnÃ­ ÃºÄet nenÃ­ zadÃ¡n")}</code>
 	   </td>
         <#list found.royalties as relation>
             <#assign honorar=relation.child, clanek=TOOL.sync(relation.parent),

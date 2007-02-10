@@ -5,7 +5,7 @@
 <form action="${URL.noPrefix("/EditUser")}" method="POST">
  <table width="100%" border=0 cellpadding=5>
   <tr>
-   <td class="required" width="100">Èíslo u¾ivatele</td>
+   <td class="required" width="100">ÄŒÃ­slo uÅ¾ivatele</td>
    <td>
     <input type="text" name="uid" value="${PARAMS.uid?if_exists}" size="6" tabindex="1">
     <div class="error">${ERRORS.uid?if_exists}</div>
@@ -19,7 +19,7 @@
  <input type="hidden" name="action" value="grant2">
 </form>
 
-<p>U¾ivatelé s definovanımi rolemi:</p>
+<p>UÅ¾ivatelÃ© s definovanÃ½mi rolemi:</p>
 
 <ol>
  <#list USERS as id>

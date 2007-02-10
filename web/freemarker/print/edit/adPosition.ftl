@@ -2,31 +2,31 @@
 
 <@lib.showMessages/>
 
-<h1>Úprava reklamní pozice</h1>
+<h1>Ãšprava reklamnÃ­ pozice</h1>
 
 <p>
-    Tato stránka slou¾í pro úpravu existující reklamní pozice. Ka¾dá pozice
-    musí mít své jméno a unikátní identifikátor. Dále je mo¾né zadat popis
-    vysvìtlující úèel a umístìní této pozice a hlavní reklamní kód.
-    Ten bude zobrazen v¾dy, nebude-li adresa aktuální stránky obslou¾ena jinım
-    reklamním kódem. Reklamní kód je obvykle HMTL kód reklamní agentury, ale
-    mù¾e to bıt libovolnı HTML kód vèetnì odkazù a obrázkù. Pøíznak dynamického kódu
-    nastavte jen tehdy, obsahuje-li reklamní kód programovací instrukce jazyku Freemarker
-    a musí se nejdøíve zpracovat.
+    Tato strÃ¡nka slouÅ¾Ã­ pro Ãºpravu existujÃ­cÃ­ reklamnÃ­ pozice. KaÅ¾dÃ¡ pozice
+    musÃ­ mÃ­t svÃ© jmÃ©no a unikÃ¡tnÃ­ identifikÃ¡tor. DÃ¡le je moÅ¾nÃ© zadat popis
+    vysvÄ›tlujÃ­cÃ­ ÃºÄel a umÃ­stÄ›nÃ­ tÃ©to pozice a hlavnÃ­ reklamnÃ­ kÃ³d.
+    Ten bude zobrazen vÅ¾dy, nebude-li adresa aktuÃ¡lnÃ­ strÃ¡nky obslouÅ¾ena jinÃ½m
+    reklamnÃ­m kÃ³dem. ReklamnÃ­ kÃ³d je obvykle HMTL kÃ³d reklamnÃ­ agentury, ale
+    mÅ¯Å¾e to bÃ½t libovolnÃ½ HTML kÃ³d vÄetnÄ› odkazÅ¯ a obrÃ¡zkÅ¯. PÅ™Ã­znak dynamickÃ©ho kÃ³du
+    nastavte jen tehdy, obsahuje-li reklamnÃ­ kÃ³d programovacÃ­ instrukce jazyku Freemarker
+    a musÃ­ se nejdÅ™Ã­ve zpracovat.
 </p>
 
 
 <form action="${URL.noPrefix("/EditAdvertisement")}" method="POST" name="form">
     <table class="siroka" border="0" cellpadding="5">
         <tr>
-            <td width="90" class="required">Jméno</td>
+            <td width="90" class="required">JmÃ©no</td>
             <td>
                 <input type="text" name="name" value="${PARAMS.name?if_exists?html}" size="60" tabindex="1">
                 <div class="error">${ERRORS.name?if_exists}</div>
             </td>
         </tr>
         <tr>
-            <td width="90" class="required">Identifikátor</td>
+            <td width="90" class="required">IdentifikÃ¡tor</td>
             <td>
                 <input type="text" name="newIdentifier" value="${PARAMS.newIdentifier?if_exists?html}" size="60" tabindex="2">
                 <div class="error">${ERRORS.newIdentifier?if_exists}</div>
@@ -40,13 +40,13 @@
             </td>
         </tr>
         <tr>
-            <td width="90">Dynamickı kód</td>
+            <td width="90">DynamickÃ½ kÃ³d</td>
             <td>
                 <input type="checkbox" name="dynamic"<#if PARAMS.dynamic?if_exists>checked</#if> tabindex="4">
             </td>
         </tr>
         <tr>
-            <td width="90">Reklamní kód</td>
+            <td width="90">ReklamnÃ­ kÃ³d</td>
             <td>
                 <textarea name="main_code" rows="15" class="siroka" tabindex="5">${PARAMS.main_code?if_exists?html}</textarea>
                 <div class="error">${ERRORS.main_code?if_exists}</div>
@@ -55,7 +55,7 @@
         <tr>
             <td width="90">&nbsp;</td>
             <td>
-                <input tabindex="5" type="submit" name="finish" value="Dokonèi">
+                <input tabindex="5" type="submit" name="finish" value="DokonÄi">
             </td>
         </tr>
     </table>

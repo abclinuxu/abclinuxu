@@ -3,23 +3,23 @@
 
 <#call showMessages>
 
-<p>Zapomnìli jste své heslo? ®ádnı problém. Pomocí tohoto formuláøe
-najdete své konto. Pak jednodu¹ete svùj vıbìr potvrdíte a systém
-neprodlenì ode¹le va¹e heslo na registrovanou emailovou adresu.</p>
+<p>ZapomnÄ›li jste svÃ© heslo? Å½Ã¡dnÃ½ problÃ©m. PomocÃ­ tohoto formulÃ¡Å™e
+najdete svÃ© konto. Pak jednoduÅ¡ete svÅ¯j vÃ½bÄ›r potvrdÃ­te a systÃ©m
+neprodlenÄ› odeÅ¡le vaÅ¡e heslo na registrovanou emailovou adresu.</p>
 
-<p>Zadejte svùj login èi jméno. Staèí i jeho èást, nejménì v¹ak
-tøi znaky. Pro vìt¹í bezpeènost
-v¹ak bude vrácen seznam maximálnì pìti nalezenıch u¾ivatelù.</p>
+<p>Zadejte svÅ¯j login Äi jmÃ©no. StaÄÃ­ i jeho ÄÃ¡st, nejmÃ©nÄ› vÅ¡ak
+tÅ™i znaky. Pro vÄ›tÅ¡Ã­ bezpeÄnost
+vÅ¡ak bude vrÃ¡cen seznam maximÃ¡lnÄ› pÄ›ti nalezenÃ½ch uÅ¾ivatelÅ¯.</p>
 
 <form action="${URL.noPrefix("/ForgottenPassword")}" method="POST">
 <table cellpadding=5>
   <tr>
-    <td>Pøihla¹ovací jméno: </td>
+    <td>PÅ™ihlaÅ¡ovacÃ­ jmÃ©no: </td>
     <td><input type="text" name="login" value="${PARAMS.login?if_exists}" size=8 tabindex=1>
     <span class="error">${ERRORS?if_exists.login?if_exists}</span></td>
   </tr>
   <tr>
-    <td>Va¹e jméno: </td>
+    <td>VaÅ¡e jmÃ©no: </td>
     <td><input type="text" name="name" value="${PARAMS.name?if_exists}" size=16 tabindex=2>
     <span class="error">${ERRORS?if_exists.name?if_exists}</span></td>
   </tr>

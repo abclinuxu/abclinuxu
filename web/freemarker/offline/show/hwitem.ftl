@@ -5,7 +5,7 @@
 
 <#assign who=TOOL.createUser(ITEM.owner)>
 <p>
- Tuto polo¾ku vytvoøil <a href="http://www.abclinuxu.cz/Profile/${who.id}">${who.name}</a>
+ Tuto poloÅ¾ku vytvoÅ™il <a href="http://www.abclinuxu.cz/Profile/${who.id}">${who.name}</a>
  dne ${DATE.show(ITEM.created,"CZ_FULL")}.
 </p>
 
@@ -13,25 +13,25 @@
 <#list RECORDS as REL_RECORD>
  <#assign RECORD = REL_RECORD.child, who=TOOL.createUser(RECORD.owner)>
  <table cellspacing="0" border="1" cellpadding="5" width="100%">
-  <caption>Záznam èíslo ${REL_RECORD_index+1}</caption>
+  <caption>ZÃ¡znam ÄÃ­slo ${REL_RECORD_index+1}</caption>
   <tr>
-    <td colspan="2">Tento záznam pøidal <a href="http://www.abclinuxu.cz/Profile/${who.id}">${who.name}</a>
+    <td colspan="2">Tento zÃ¡znam pÅ™idal <a href="http://www.abclinuxu.cz/Profile/${who.id}">${who.name}</a>
      dne ${DATE.show(RECORD.created,"CZ_FULL")}.
      <#if RECORD.updated.after(RECORD.created)>
-      Poslední úprava probìhla dne ${DATE.show(RECORD.updated,"CZ_FULL")}.
+      PoslednÃ­ Ãºprava probÄ›hla dne ${DATE.show(RECORD.updated,"CZ_FULL")}.
      </#if>
     </td>
   </tr>
   <tr>
-    <td width="90">Ovladaè je dodáván</td>
+    <td width="90">OvladaÄ je dodÃ¡vÃ¡n</td>
     <td>
     <#switch TOOL.xpath(RECORD,"data/driver")?if_exists>
-     <#case "kernel">v jádøe<#break>
+     <#case "kernel">v jÃ¡dÅ™e<#break>
      <#case "xfree">v XFree86<#break>
-     <#case "maker">vırobcem<#break>
-     <#case "other">nìkım jinım<#break>
+     <#case "maker">vÃ½robcem<#break>
+     <#case "other">nÄ›kÃ½m jinÃ½m<#break>
      <#case "none">neexistuje<#break>
-     <#default>Netu¹ím
+     <#default>NetuÅ¡Ã­m
     </#switch>
     </td>
   </tr>
@@ -39,24 +39,24 @@
     <td width="90">Cena</td>
     <td>
     <#switch TOOL.xpath(RECORD,"data/price")?if_exists>
-     <#case "verylow">velmi nízká<#break>
-     <#case "low">nízká<#break>
-     <#case "good">pøimìøená<#break>
-     <#case "high">vysoká<#break>
-     <#case "toohigh">pøemr¹tìná<#break>
-     <#default>Nehodnotím
+     <#case "verylow">velmi nÃ­zkÃ¡<#break>
+     <#case "low">nÃ­zkÃ¡<#break>
+     <#case "good">pÅ™imÄ›Å™enÃ¡<#break>
+     <#case "high">vysokÃ¡<#break>
+     <#case "toohigh">pÅ™emrÅ¡tÄ›nÃ¡<#break>
+     <#default>NehodnotÃ­m
     </#switch>
     </td>
   </tr>
   <#if TOOL.xpath(RECORD,"data/setup")?exists>
    <tr>
-    <td width="90">Postup zprovoznìní pod Linuxem</td>
+    <td width="90">Postup zprovoznÄ›nÃ­ pod Linuxem</td>
     <td>${TOOL.render(TOOL.xpath(RECORD,"data/setup"),USER?if_exists)}</td>
    </tr>
   </#if>
   <#if TOOL.xpath(RECORD,"data/params")?exists>
    <tr>
-    <td width="90">Technické parametry</td>
+    <td width="90">TechnickÃ© parametry</td>
     <td>${TOOL.render(TOOL.xpath(RECORD,"data/params"),USER?if_exists)}</td>
    </tr>
   </#if>
@@ -68,7 +68,7 @@
   </#if>
   <#if TOOL.xpath(RECORD,"data/note")?exists>
    <tr>
-    <td width="90">Poznámka</td>
+    <td width="90">PoznÃ¡mka</td>
     <td>${TOOL.render(TOOL.xpath(RECORD,"data/note"),USER?if_exists)}</td>
    </tr>
   </#if>

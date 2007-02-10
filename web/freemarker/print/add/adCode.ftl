@@ -2,32 +2,32 @@
 
 <@lib.showMessages/>
 
-<h1>Vlo¾ení dal¹ího reklamního kódu</h1>
+<h1>VloÅ¾enÃ­ dalÅ¡Ã­ho reklamnÃ­ho kÃ³du</h1>
 
 <p>
-    Zde mù¾ete pøidat dal¹í reklamní kód k reklamní pozici.
-    Tato funkce je u¾iteèná tehdy, kdy¾ chcete pro urèitou pozici
-    zobrazovat rùzné reklamy v závislosti na aktuální URL adrese.
-    Napøíklad aby èlánky mìly svùj vlastní reklamní kód.
+    Zde mÅ¯Å¾ete pÅ™idat dalÅ¡Ã­ reklamnÃ­ kÃ³d k reklamnÃ­ pozici.
+    Tato funkce je uÅ¾iteÄnÃ¡ tehdy, kdyÅ¾ chcete pro urÄitou pozici
+    zobrazovat rÅ¯znÃ© reklamy v zÃ¡vislosti na aktuÃ¡lnÃ­ URL adrese.
+    NapÅ™Ã­klad aby ÄlÃ¡nky mÄ›ly svÅ¯j vlastnÃ­ reklamnÃ­ kÃ³d.
 </p>
 
 <p>
-    Regulární vıraz slou¾í pro urèení, zda aktuální URL adresa má
-    bıt obslou¾ena tímto kódem èi nikoliv. Obvykle postaèí napsat
-    zaèátek URL adresy (/clanky), pro slo¾itìj¹í konstrukce kontaktujte
-    programátory. Pokud se ¾ádnı kód nebude hodit k aktuální URL adrese,
-    pou¾ije se hlavní reklamní kód z pozice.
+    RegulÃ¡rnÃ­ vÃ½raz slouÅ¾Ã­ pro urÄenÃ­, zda aktuÃ¡lnÃ­ URL adresa mÃ¡
+    bÃ½t obslouÅ¾ena tÃ­mto kÃ³dem Äi nikoliv. Obvykle postaÄÃ­ napsat
+    zaÄÃ¡tek URL adresy (/clanky), pro sloÅ¾itÄ›jÅ¡Ã­ konstrukce kontaktujte
+    programÃ¡tory. Pokud se Å¾Ã¡dnÃ½ kÃ³d nebude hodit k aktuÃ¡lnÃ­ URL adrese,
+    pouÅ¾ije se hlavnÃ­ reklamnÃ­ kÃ³d z pozice.
 </p>
 
 <p>
-    Pøíznak dynamického kódu nastavte jen tehdy, obsahuje-li reklamní kód
-    programovací instrukce jazyku Freemarker a musí se nejdøíve zpracovat.
+    PÅ™Ã­znak dynamickÃ©ho kÃ³du nastavte jen tehdy, obsahuje-li reklamnÃ­ kÃ³d
+    programovacÃ­ instrukce jazyku Freemarker a musÃ­ se nejdÅ™Ã­ve zpracovat.
 </p>
 
 <form action="${URL.noPrefix("/EditAdvertisement")}" method="POST" name="form">
     <table class="siroka" border="0" cellpadding="5">
         <tr>
-            <td width="90" class="required">Regulární vıraz</td>
+            <td width="90" class="required">RegulÃ¡rnÃ­ vÃ½raz</td>
             <td>
                 <input type="text" name="regexp" value="${PARAMS.regexp?if_exists?html}" size="60" tabindex="1">
                 <div class="error">${ERRORS.regexp?if_exists}</div>
@@ -41,7 +41,7 @@
             </td>
         </tr>
         <tr>
-            <td width="90">Reklamní kód</td>
+            <td width="90">ReklamnÃ­ kÃ³d</td>
             <td>
                 <textarea name="code" rows="5" class="siroka" tabindex="3">${PARAMS.code?if_exists?html}</textarea>
                 <div class="error">${ERRORS.code?if_exists}</div>
@@ -50,7 +50,7 @@
         <tr>
             <td width="90">&nbsp;</td>
             <td>
-                <input tabindex="4" type="submit" name="finish" value="Dokonèi">
+                <input tabindex="4" type="submit" name="finish" value="DokonÄi">
             </td>
         </tr>
     </table>

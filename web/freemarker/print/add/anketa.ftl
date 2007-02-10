@@ -3,15 +3,15 @@
 <@lib.showMessages/>
 
 
-<p>Na této stránce mù¾ete vytvoøit novou anketu èi hodnocení.
-Jsou povoleny základní html znaèky ( novı øádek, odkaz ).
-Mù¾ete také povolit souèasné vybrání více mo¾ností.</p>
+<p>Na tÃ©to strÃ¡nce mÅ¯Å¾ete vytvoÅ™it novou anketu Äi hodnocenÃ­.
+Jsou povoleny zÃ¡kladnÃ­ html znaÄky ( novÃ½ Å™Ã¡dek, odkaz ).
+MÅ¯Å¾ete takÃ© povolit souÄasnÃ© vybrÃ¡nÃ­ vÃ­ce moÅ¾nostÃ­.</p>
 
 <form action="${URL.make("/EditPoll")}" method="POST">
  <#assign choices=PARAMS.choices?if_exists>
  <table width="100%" border=0 cellpadding=5>
   <tr>
-   <td width="90" class="required">Otázka</td>
+   <td width="90" class="required">OtÃ¡zka</td>
    <td>
     <textarea name="question" cols="80" rows="3" tabindex="1">${PARAMS.question?if_exists?html}</textarea>
     <div class="error">${ERRORS.question?if_exists}</div>
@@ -27,7 +27,7 @@ Mù¾ete také povolit souèasné vybrání více mo¾ností.</p>
       </tr>
   </#if>
   <tr>
-   <td class="required">Více mo¾ností</td>
+   <td class="required">VÃ­ce moÅ¾nostÃ­</td>
    <td>
     <select name="multichoice" tabindex="3">
      <#assign multi=PARAMS.multichoice?if_exists>
@@ -109,7 +109,7 @@ Mù¾ete také povolit souèasné vybrání více mo¾ností.</p>
   </tr>
   <tr>
    <td width="120">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi" tabindex="14"></td>
+   <td><input type="submit" value="DokonÄi" tabindex="14"></td>
   </tr>
  </table>
 

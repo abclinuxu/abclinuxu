@@ -412,7 +412,7 @@ public class TestSafeHTML extends TestCase {
 
     public void testAllowedClosedNoAttributes34() throws Exception {
         try {
-            String s = "<p>Ch·ch·, to je slovo do pranice! \"J· jsem to napsal, protoæe \"<b>voni takovÌ\n" +
+            String s = "<p>Ch√°ch√°, to je slovo do pranice! \"J√° jsem to napsal, proto≈æe \"<b>voni takov√≠\n" +
                     "jsou\" :-D </p>";
             SafeHTMLGuard.check(s);
             fail("Shall have failed: "+s);

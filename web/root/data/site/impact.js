@@ -6,24 +6,24 @@
 // http://www.impact.as/
 //
 var IM_VER = '0.75'; //January 2006
-var IM_STOP = false; //umoòuje vypnutí reklamy
+var IM_STOP = false; //umoÂÅˆuje vypnutÃ­ reklamy
 var IM_DEBUG = false;
-var IM_CONTEXT_AD = true; //umoòuje vypnutí/zapnutí kontextové reklamy
+var IM_CONTEXT_AD = true; //umoÂÅˆuje vypnutÃ­/zapnutÃ­ kontextovÃ© reklamy
 
-var IM_ERR_CONCAT = "\nV pøípadì problémù prosím kontaktujte admin@impact.as.";
-var IM_ERR_NOID = 'IM_Chyba: funkce IM_print() volá neexistující ID pozice.' + IM_ERR_CONCAT;
-var IM_ERR_IDPAGE = 'IM_Chyba: funkce IM_init() musí mít v parametru ID stránky. ' + IM_ERR_CONCAT;
+var IM_ERR_CONCAT = "\nV pÅ™Ã­padÄ› problÃ©mÅ¯ prosÃ­m kontaktujte admin@impact.as.";
+var IM_ERR_NOID = 'IM_Chyba: funkce IM_print() volÃ¡ neexistujÃ­cÃ­ ID pozice.' + IM_ERR_CONCAT;
+var IM_ERR_IDPAGE = 'IM_Chyba: funkce IM_init() musÃ­ mÃ­t v parametru ID strÃ¡nky. ' + IM_ERR_CONCAT;
 	
 var IM_PROT = "http://";
 var IM_URL = "sf.impact.as"
 var IM_SCRIPT = "/if/imshow.php"; 
 
 var IM_JSLoaded = false;
-var IM_preLoaded = false; //urèuje, jestli se kreativa natahuje pøed zobrazením
-var IM_adverLoaded = false; //urèuje, jestli se ze serveru naèetla reklama
+var IM_preLoaded = false; //urÄuje, jestli se kreativa natahuje pÅ™ed zobrazenÃ­m
+var IM_adverLoaded = false; //urÄuje, jestli se ze serveru naÄetla reklama
 IM_konfigurace = new Array();
 IM_poziceArr = new Array();
-IM_poziceCalledArr = new Array(); //seznam volanıch pozic ve funkci IM_pozice();
+IM_poziceCalledArr = new Array(); //seznam volanÃ½ch pozic ve funkci IM_pozice();
 IM_reklamyArr = new Array();
 IM_cileni = new Array();
 IM_stranka = null;
@@ -36,7 +36,7 @@ IM_advHTMLArr = new Array();
 //
 if (typeof(IMFV) == 'undefined'){
 	IMFV=0;
-	FLASH_MAX=15; // do které verze se mají provádìt testy
+	FLASH_MAX=15; // do kterÃ© verze se majÃ­ provÃ¡dÄ›t testy
 	plugin = (navigator.mimeTypes && navigator.mimeTypes["application/x-shockwave-flash"]) ? navigator.mimeTypes["application/x-shockwave-flash"].enabledPlugin : 0;
 	if ( plugin ) {
 		var words = navigator.plugins["Shockwave Flash"].description.split(" ");
@@ -60,13 +60,13 @@ if (typeof(IMFV) == 'undefined'){
 }
 
 //
-// Funkce, která naète kódy reklamy ze serveru.
+// Funkce, kterÃ¡ naÄte kÃ³dy reklamy ze serveru.
 //
 function IM_init(page){
 	
-	// pokud se jedná o volání funkce po naètení dat ze serveru (IF1 Float)
+	// pokud se jednÃ¡ o volÃ¡nÃ­ funkce po naÄtenÃ­ dat ze serveru (IF1 Float)
 	if(IM_adverLoaded){
-		// Pokud server poslal nìjakou hlášku, vypíše ji
+		// Pokud server poslal nÄ›jakou hlÃ¡Âšku, vypÃ­Âše ji
 		if(typeof(IM_checkMsg) != 'undefined') alert(IM_checkMsg);
 		if(IM_DEBUG) IM_poziceMissAlert(IM_poziceCheck());
 	}
@@ -74,18 +74,18 @@ function IM_init(page){
 	if(IM_STOP || IM_adverLoaded) return;
 	
 	//
-	// Ovìøení správnosti vstupù.
+	// OvÄ›Å™enÃ­ sprÃ¡vnosti vstupÅ¯.
 	//
 	if (typeof(page) != "number"){
 		if (IM_stranka) page = IM_stranka;
 	}
 	if (IM_DEBUG){
-		window.setTimeout('window.status = "Debug on! - reklamní systém Impact"',2000); //zobrazí upozornìní na debug mod
+		window.setTimeout('window.status = "Debug on! - reklamnÃ­ systÃ©m Impact"',2000); //zobrazÃ­ upozornÄ›nÃ­ na debug mod
 		if (typeof(page) != "number")	alert(IM_ERR_IDPAGE);
 	}
 
 	//
-	// Naètení informací z prohlíeèe uivatele.
+	// NaÄtenÃ­ informacÃ­ z prohlÃ­ÂeÄe uÂivatele.
 	//
 	IM_konfigurace['ver'] = IM_VER;
 	IM_konfigurace['ref'] = this.location.href;
@@ -122,7 +122,7 @@ function IM_init(page){
 }
 
 //
-// Funkce která naète kódy reklamy podle ID reklamy (není tøeba znát stránku).
+// Funkce kterÃ¡ naÄte kÃ³dy reklamy podle ID reklamy (nenÃ­ tÅ™eba znÃ¡t strÃ¡nku).
 //
 function IM_initRekl(){
 	IM_init(null);
@@ -138,13 +138,13 @@ function IM_preloadRekl(){
 }
 
 //
-// Funkce pøevádí promìnou variable do parametru GETu. Parametr variableName oznaèuje název.
+// Funkce pÅ™evÃ¡dÃ­ promÄ›nou variable do parametru GETu. Parametr variableName oznaÄuje nÃ¡zev.
 //
 function IM_toGET(variable, variableName){
 	if (typeof(variable) == "object"){			
 		var buff = "";
 		for(var i in variable){
-			if (i == 'copy') continue; //pravdìpodobnì BUG v JS, obèas i nabıva tuto hodnotu,  ikdy není definováno 
+			if (i == 'copy') continue; //pravdÄ›podobnÄ› BUG v JS, obÄas i nabÃ½va tuto hodnotu,  ikdyÂ nenÃ­ definovÃ¡no 
 			buff += ((buff == "")?"":"&") + variableName + IM_urlEncode("[" + i + "]") + 
 				"=" + IM_urlEncode(variable[i]);
 		}
@@ -157,7 +157,7 @@ function IM_toGET(variable, variableName){
 }
 
 //
-// Funkce zoborazí reklamy, je volána ve skritu vráceném ze serveru.
+// Funkce zoborazÃ­ reklamy, je volÃ¡na ve skritu vrÃ¡cenÃ©m ze serveru.
 //
 function IM_print(){
 	if(IM_preLoaded || IM_STOP) return;
@@ -179,7 +179,7 @@ function IM_print(){
 }
 
 //
-// Funkce umístí reklamu do stránky podle ID reklamy.
+// Funkce umÃ­stÃ­ reklamu do strÃ¡nky podle ID reklamy.
 //
 function IM_reklama(id, advHead, advFoot){
 	if(IM_STOP) return;
@@ -201,7 +201,7 @@ function IM_reklama(id, advHead, advFoot){
 }
 
 //
-// Funkce umístí reklamu do stránky podle ID pozice.
+// Funkce umÃ­stÃ­ reklamu do strÃ¡nky podle ID pozice.
 //
 function IM_pozice(id, posHead, posFoot){
 	IM_poziceCalledArr.push(id);
@@ -225,7 +225,7 @@ function IM_pozice(id, posHead, posFoot){
 
 
 //
-// Funkce ovìøí, jestli byly volány pro všechny pozice funkce IM_pozice(). Ty které nebyly, vráti v poli.
+// Funkce ovÄ›Å™Ã­, jestli byly volÃ¡ny pro vÂšechny pozice funkce IM_pozice(). Ty kterÃ© nebyly, vrÃ¡ti v poli.
 //
 function IM_poziceCheck(){
 	var missing = new Array();
@@ -249,7 +249,7 @@ function IM_poziceMissAlert(missing){
 		tmpStr +=  "\r\n" + missing[i];
 	}
 	if (tmpStr){
-		alert("Ovìøení korektního nasazení reklmaního systému Impact.\r\n\r\nPro následující pozice nebyla ve stránce volána fuknce IM_pozice():" + tmpStr);
+		alert("OvÄ›Å™enÃ­ korektnÃ­ho nasazenÃ­ reklmanÃ­ho systÃ©mu Impact.\r\n\r\nPro nÃ¡sledujÃ­cÃ­ pozice nebyla ve strÃ¡nce volÃ¡na fuknce IM_pozice():" + tmpStr);
 	}
 }
 
@@ -262,7 +262,7 @@ function IM_cookieTest(){
 }
 
 //
-// Funkce zjistí kódování stránky.
+// Funkce zjistÃ­ kÃ³dovÃ¡nÃ­ strÃ¡nky.
 //
 function IM_getCharset(){
 	var charsetRe = /charset=([a-zA-Z0-9\-]+)/i;
@@ -279,11 +279,11 @@ function IM_getCharset(){
 }
 
 //
-// Funkce pro pøevod znakové sady win1250 a iso-8859-2.
+// Funkce pro pÅ™evod znakovÃ© sady win1250 a iso-8859-2.
 //
 function IM_win2iso(str, fromCharset){
-	var conv1250 = "¼Šİ¾š";
-	var convISO = "¥©«İ®µ¹»¾";
+	var conv1250 = "ÅºÂŠÂÃÂÅ¾ÂšÂÂ";
+	var convISO = "Ä½Å Å¤ÃÅ½Ä¾Å¡Å¥Å¾";
 	var buffer = "";
 	
 	if (fromCharset == "iso"){
@@ -314,11 +314,11 @@ function IM_recoding(str){
 }
 
 //
-// Funkce zakóduje øetìzec do formátu, kterı není konfliktní pro pøenos v URL (GETu)
+// Funkce zakÃ³duje Å™etÄ›zec do formÃ¡tu, kterÃ½ nenÃ­ konfliktnÃ­ pro pÅ™enos v URL (GETu)
 //
 function IM_urlEncode(str){
 	str = escape(str);
-	// nahradi znaky *@+/ pøíslušnımi entitami
+	// nahradi znaky *@+/ pÅ™Ã­sluÂšnÃ½mi entitami
 	str = str.replace(/([*@+\/])/g, 
 		function (str, foundChar) {
 			switch (foundChar){
@@ -333,7 +333,7 @@ function IM_urlEncode(str){
 }
 
 //
-// Funkce se podívá do URL stránky a vyhledá všechny parametry, napø. 'impact', které vrátí jako pole
+// Funkce se podÃ­vÃ¡ do URL strÃ¡nky a vyhledÃ¡ vÂšechny parametry, napÅ™. 'impact', kterÃ© vrÃ¡tÃ­ jako pole
 //
 function IM_urlParams(param){
 	var url = top.location.href;
@@ -352,7 +352,7 @@ function IM_urlParams(param){
 }
 
 //
-// Funkce urèené pro integraci kontextové reklamy
+// Funkce urÄenÃ© pro integraci kontextovÃ© reklamy
 //
 function IM_context(server, url, css){
 	if (!IM_CONTEXT_AD) return false;
@@ -363,9 +363,9 @@ function IM_context(server, url, css){
 }
 
 //
-// Funkce slouící jako interface pro eTarget.
-// Parametr server nese ID serveru v Impactu, promìnná serverArr je pole
-// promìnnıch systému eTarget o struktuøe array(ID_serveru, ID_country).
+// Funkce slouÂÃ­cÃ­ jako interface pro eTarget.
+// Parametr server nese ID serveru v Impactu, promÄ›nnÃ¡ serverArr je pole
+// promÄ›nnÃ½ch systÃ©mu eTarget o struktuÅ™e array(ID_serveru, ID_country).
 //
 function IM_eTarget(server, url){
 	serverArr = IM_impact2eTarget(server);
@@ -374,8 +374,8 @@ function IM_eTarget(server, url){
 }
 
 //
-// Funkce slouící jako interface pro adFox.
-// Parametr server nese ID serveru v Impactu, promìnná servernt je ID v adFox.
+// Funkce slouÂÃ­cÃ­ jako interface pro adFox.
+// Parametr server nese ID serveru v Impactu, promÄ›nnÃ¡ servernt je ID v adFox.
 //
 function IM_adFox(server, url){
 	serverInt = IM_impact2adFox(server);
@@ -384,8 +384,8 @@ function IM_adFox(server, url){
 }
 
 //
-// Funkce pøevádí ID serveru na Impactu na ID serveru a ID zemì eTargetu.
-// Funkce je speciálnì pro instanci IM.
+// Funkce pÅ™evÃ¡dÃ­ ID serveru na Impactu na ID serveru a ID zemÄ› eTargetu.
+// Funkce je speciÃ¡lnÄ› pro instanci IM.
 //
 function IM_impact2eTarget(id){
 	idConverArr = new Array();
@@ -403,8 +403,8 @@ function IM_impact2eTarget(id){
 }
 
 //
-// Funkce pøevádí ID serveru na Impactu na ID serveru systému adFox.
-// Funkce je speciálnì pro instanci IM.
+// Funkce pÅ™evÃ¡dÃ­ ID serveru na Impactu na ID serveru systÃ©mu adFox.
+// Funkce je speciÃ¡lnÄ› pro instanci IM.
 //
 function IM_impact2adFox(id){
 	idConverArr = new Array();

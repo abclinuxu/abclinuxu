@@ -1,41 +1,41 @@
 <#include "../header.ftl">
 
-<p>Nacházíte se na stránce online rozhovoru. Je urèena pro
-redaktora, aby mohl rychle zadávat otázky a rozesílat je
-jednotlivım úèastníkùm. Kdy¾ pak pøijme odpovìdi, jednodu¹e
-je pøiøadí k otázce, provede korekturu a pøesune zodpovìzenou
-otázku do èlánku.
+<p>NachÃ¡zÃ­te se na strÃ¡nce online rozhovoru. Je urÄena pro
+redaktora, aby mohl rychle zadÃ¡vat otÃ¡zky a rozesÃ­lat je
+jednotlivÃ½m ÃºÄastnÃ­kÅ¯m. KdyÅ¾ pak pÅ™ijme odpovÄ›di, jednoduÅ¡e
+je pÅ™iÅ™adÃ­ k otÃ¡zce, provede korekturu a pÅ™esune zodpovÄ›zenou
+otÃ¡zku do ÄlÃ¡nku.
 </p>
 
 <p>
     <#if XML.data.talk.addresses.email?size gt 0>
-        Otázky budou zasílány na tyto adresy:
+        OtÃ¡zky budou zasÃ­lÃ¡ny na tyto adresy:
         <#list XML.data.talk.addresses.email as email>${email}<#if email_has_next>, </#if></#list>.
     <#else>
-        ®ádné emailové adresy nejsou zadány!
+        Å½Ã¡dnÃ© emailovÃ© adresy nejsou zadÃ¡ny!
     </#if>
-    <a href="${URL.make("/edit/"+RELATION.id+"?action=talkEmails")}">Uprav emailové adresy</a>
+    <a href="${URL.make("/edit/"+RELATION.id+"?action=talkEmails")}">Uprav emailovÃ© adresy</a>
 </p>
 
 <@lib.showMessages/>
 
-<h3>Nová otázka</h3>
+<h3>NovÃ¡ otÃ¡zka</h3>
 
 <form action="${URL.make("/edit/"+RELATION.id)}" method="POST">
-    Jméno tazatele: <input type="text" name="name" value="${PARAMS.name?if_exists}" size=40 tabindex=1><br>
-    Otázka<br>
+    JmÃ©no tazatele: <input type="text" name="name" value="${PARAMS.name?if_exists}" size=40 tabindex=1><br>
+    OtÃ¡zka<br>
     <textarea name="content" cols="80" rows="4" tabindex="2">${PARAMS.content?if_exists?html}</textarea>
     <div class="error">${ERRORS.name?if_exists}${ERRORS.content?if_exists}</div>
     <input type="hidden" name="action" value="addQuestion">
-    <input type="submit" value="Ulo¾" tabindex="3">
+    <input type="submit" value="UloÅ¾" tabindex="3">
 </form>
 
 <#list XML.data.talk.question?if_exists as question>
     <p>
-        <b>${question.@id}. otázka</b>, autor: ${question.@name}<br>
+        <b>${question.@id}. otÃ¡zka</b>, autor: ${question.@name}<br>
         ${question}<br>
         <a href="${URL.make("/edit/"+RELATION.id+"?action=sendQuestion&amp;id="+question.@id)}">Poslat emailem</a>
-        <a href="${URL.make("/edit/"+RELATION.id+"?action=addReply&amp;id="+question.@id)}">Pøidat odpovìï</a>
+        <a href="${URL.make("/edit/"+RELATION.id+"?action=addReply&amp;id="+question.@id)}">PÅ™idat odpovÄ›Ä</a>
         <a href="${URL.make("/edit/"+RELATION.id+"?action=removeQuestion&amp;id="+question.@id)}">Smazat</a>
     </p>
 </#list>

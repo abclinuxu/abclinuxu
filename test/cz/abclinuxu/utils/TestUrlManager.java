@@ -36,7 +36,7 @@ public class TestUrlManager extends TestCase {
         assertEquals("c", URLManager.enforceRelativeURL("c."));
         assertEquals("c", URLManager.enforceRelativeURL("c/"));
         assertEquals("c", URLManager.enforceRelativeURL("c=\\|,?%()*&$#@"));
-        assertEquals("krizala", URLManager.enforceRelativeURL("K�ͮALA"));
+        assertEquals("krizala", URLManager.enforceRelativeURL("KŘÍŽALA"));
     }
 
     public TestUrlManager(String s) {

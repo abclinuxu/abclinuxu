@@ -5,13 +5,13 @@
 <h1>Hry</h1>
 
 <p>
-    Chcete se pobavit, zjistit úroveò svıch znalostí èi se zábavnou formou
-    nauèit nìèemu novému? Zahrajte si na¹e hry. Nejde o ¾ádné ceny èi ¾ebøíèky,
+    Chcete se pobavit, zjistit ÃºroveÅˆ svÃ½ch znalostÃ­ Äi se zÃ¡bavnou formou
+    nauÄit nÄ›Äemu novÃ©mu? Zahrajte si naÅ¡e hry. Nejde o Å¾Ã¡dnÃ© ceny Äi Å¾ebÅ™Ã­Äky,
     jen o legraci.
 </p>
 
 <#if USER?exists && USER.hasRole("games admin")>
-    <a href="/EditTrivia?action=add">Pøidat kvíz</a>
+    <a href="/EditTrivia?action=add">PÅ™idat kvÃ­z</a>
 </#if>
 
 <#list TRIVIA_GAMES as relation>
@@ -21,9 +21,9 @@
     <h2 class="st_nadpis"><a href="${relation.url}">${TOOL.childName(relation)}</a></h2>
     <p>${TOOL.xpath(trivia, "/data/description")}</p>
     <p class="cl_inforadek">
-        Úroveò: <#if dif=="simple">jednoduchá<#elseif dif=="normal">normální<#elseif dif=="hard">slo¾itá<#else>guru</#if> |
-        Hráno: ${stats.count}&times; |
-        Prùmìrné skóre: ${stats.percent} |
+        ÃšroveÅˆ: <#if dif=="simple">jednoduchÃ¡<#elseif dif=="normal">normÃ¡lnÃ­<#elseif dif=="hard">sloÅ¾itÃ¡<#else>guru</#if> |
+        HrÃ¡no: ${stats.count}&times; |
+        PrÅ¯mÄ›rnÃ© skÃ³re: ${stats.percent} |
         <@lib.showCommentsInListing diz, "SMART", "/hry" />
         <#if USER?exists && USER.hasRole("games admin")>
             <a href="/EditTrivia/${relation.id}?action=edit">Upravit</a>
@@ -33,9 +33,9 @@
 </#list>
 
 <p>
-    Pokud jste nalezli v nìkterém kvízu chybu nebo vás napadly dal¹í otázky pro novı kvíz,
-    vlo¾te prosím informace do <a rel="nofollow" href="http://bugzilla.abclinuxu.cz/show_bug.cgi?id=624">bugzilly</a>.
-    V pøípadì zaslání kompletního kvízu a jeho pøijetím redakcí získáte finanèní odmìnu.
+    Pokud jste nalezli v nÄ›kterÃ©m kvÃ­zu chybu nebo vÃ¡s napadly dalÅ¡Ã­ otÃ¡zky pro novÃ½ kvÃ­z,
+    vloÅ¾te prosÃ­m informace do <a rel="nofollow" href="http://bugzilla.abclinuxu.cz/show_bug.cgi?id=624">bugzilly</a>.
+    V pÅ™Ã­padÄ› zaslÃ¡nÃ­ kompletnÃ­ho kvÃ­zu a jeho pÅ™ijetÃ­m redakcÃ­ zÃ­skÃ¡te finanÄnÃ­ odmÄ›nu.
 </p>
 
 <#include "../footer.ftl">

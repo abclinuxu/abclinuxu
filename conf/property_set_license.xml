@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-2" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <set>
     <value>
         <id>gpl</id>
@@ -22,7 +22,7 @@
     </value>
     <value>
         <id>oss</id>
-        <caption>OSS kompatibilní</caption>
+        <caption>OSS kompatibilnĂ­</caption>
     </value>
     <value>
         <id>freeware</id>
@@ -30,10 +30,10 @@
     </value>
     <value>
         <id>commercial</id>
-        <caption>Komerční</caption>
+        <caption>KomerÄnĂ­</caption>
     </value>
     <value>
         <id>other</id>
-        <caption>Jiná</caption>
+        <caption>JinĂĄ</caption>
     </value>
 </set>

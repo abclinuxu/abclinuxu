@@ -49,10 +49,10 @@ public class DOM4JSize {
     // <data><personal><sex>man</sex></personal>
     // <communication><email><newsletter>no</newsletter><weekly_summary>no</weekly_summary></email></communication>
     // <profile><photo>/images/faces/leos.jpeg</photo><home_page>http://www.penguin.cz/~literakl/index.html</home_page>
-    // <about_myself>Zakladatel portálu AbcLinuxu.Linux pou¾ívám od roku 1995, v roce 1999 jsem zalo¾il slu¾bu
-    // Linux Hardware na Penguinovi, tého¾ roku jsem zaèal publikovat linuxové èlánky pøevá¾nì v ComputerWorldu,
-    // LinuxWorldu a té¾ na Rootovi. Roku 2002 jsem naprogramoval a zalo¾il tento portál a posléze s partnery i firmu
-    // AbcLinuxu s.r.o., která zastøe¹uje provoz portálu a poskytuje øe¹ení a slu¾by zalo¾ené na Linuxu.</about_myself>
+    // <about_myself>Zakladatel portÃ¡lu AbcLinuxu.Linux pouÅ¾Ã­vÃ¡m od roku 1995, v roce 1999 jsem zaloÅ¾il sluÅ¾bu
+    // Linux Hardware na Penguinovi, tÃ©hoÅ¾ roku jsem zaÄal publikovat linuxovÃ© ÄlÃ¡nky pÅ™evÃ¡Å¾nÄ› v ComputerWorldu,
+    // LinuxWorldu a tÃ©Å¾ na Rootovi. Roku 2002 jsem naprogramoval a zaloÅ¾il tento portÃ¡l a poslÃ©ze s partnery i firmu
+    // AbcLinuxu s.r.o., kterÃ¡ zastÅ™eÅ¡uje provoz portÃ¡lu a poskytuje Å™eÅ¡enÃ­ a sluÅ¾by zaloÅ¾enÃ© na Linuxu.</about_myself>
     // </profile><settings><emoticons>yes</emoticons><login_cookie_validity>58035200</login_cookie_validity>
     // </settings><system><last_login_date>2003-07-12 21:432003-07-12 22:22</last_login_date></system></data>
     //

@@ -13,7 +13,7 @@
     </#list>
 </p>
     <input type="hidden" name="position" value="${POSITION}">
-    <input type="submit" value="<#if POSITION==10>V˝sledek<#elseif POSITION==9>PoslednÌ ot·zku<#else>DalπÌ ot·zku</#if>" class="button">
+    <input type="submit" value="<#if POSITION==10>V√Ωsledek<#elseif POSITION==9>Posledn√≠ ot√°zku<#else>Dal≈°√≠ ot√°zku</#if>" class="button">
     ${TOOL.saveParams(PARAMS, ["position","rid"])}
 </form>
 

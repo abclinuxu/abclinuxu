@@ -91,7 +91,7 @@ public class ShowDictionary implements AbcAction {
 
                 String name = url.substring(PREFIX_LENGTH);
                 params.put(EditDictionary.PARAM_NAME, name);
-                ServletUtils.addMessage("Tento pojem nebyl je¹tì popsán. V tomto formuláøi jej mù¾ete vysvìtlit jako první.", env, null);
+                ServletUtils.addMessage("Tento pojem nebyl jeÅ¡tÄ› popsÃ¡n. V tomto formulÃ¡Å™i jej mÅ¯Å¾ete vysvÄ›tlit jako prvnÃ­.", env, null);
                 return FMTemplateSelector.select("Dictionary", "add", env, request);
             }
         }

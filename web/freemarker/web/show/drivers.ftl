@@ -1,25 +1,25 @@
 <#include "../header.ftl">
 <@lib.showMessages/>
 
-<h1>Ovladaèe</h1>
+<h1>OvladaÄe</h1>
 
-<p>V této èásti si mù¾ete prohlí¾et nejaktuálnìj¹í verze rùznıch ovladaèù.
-Ovladaèe jsou setøízeny podle èasu vytvoøení èi poslední úpravy, nejnovìj¹ími
-zaèínaje.</p>
+<p>V tÃ©to ÄÃ¡sti si mÅ¯Å¾ete prohlÃ­Å¾et nejaktuÃ¡lnÄ›jÅ¡Ã­ verze rÅ¯znÃ½ch ovladaÄÅ¯.
+OvladaÄe jsou setÅ™Ã­zeny podle Äasu vytvoÅ™enÃ­ Äi poslednÃ­ Ãºpravy, nejnovÄ›jÅ¡Ã­mi
+zaÄÃ­naje.</p>
 
-<p>Polo¾ka ovladaèe slou¾í pro shroma¾ïování informací ohlednì ovladaèù,
-které nejsou standardní souèástí jádra. Typicky jde buï o Open Source
-projekty, v rámci kterıch se nad¹enci sna¾í vytvoøit podporu pro danı hardware
-(typicky ovladaèe scannerù), nebo vırobce odmítá uvolnit specifikace
-svıch produktù komunitì a místo toho vyrábí vlastní ovladaèe (napøíklad
+<p>PoloÅ¾ka ovladaÄe slouÅ¾Ã­ pro shromaÅ¾ÄovÃ¡nÃ­ informacÃ­ ohlednÄ› ovladaÄÅ¯,
+kterÃ© nejsou standardnÃ­ souÄÃ¡stÃ­ jÃ¡dra. Typicky jde buÄ o Open Source
+projekty, v rÃ¡mci kterÃ½ch se nadÅ¡enci snaÅ¾Ã­ vytvoÅ™it podporu pro danÃ½ hardware
+(typicky ovladaÄe scannerÅ¯), nebo vÃ½robce odmÃ­tÃ¡ uvolnit specifikace
+svÃ½ch produktÅ¯ komunitÄ› a mÃ­sto toho vyrÃ¡bÃ­ vlastnÃ­ ovladaÄe (napÅ™Ã­klad
 nVidia).
 </p>
 
-<p>Pokud chcete pøidat novı ovladaè, zkuste jej nejdøíve najít
-v této èásti. Pokud budete úspì¹ní, otevøete jej a zvolte odkaz
-<i>Vlo¾ novou verzi</i>. Pokud zde vá¹ ovladaè není uveden,
+<p>Pokud chcete pÅ™idat novÃ½ ovladaÄ, zkuste jej nejdÅ™Ã­ve najÃ­t
+v tÃ©to ÄÃ¡sti. Pokud budete ÃºspÄ›Å¡nÃ­, otevÅ™ete jej a zvolte odkaz
+<i>VloÅ¾ novou verzi</i>. Pokud zde vÃ¡Å¡ ovladaÄ nenÃ­ uveden,
 <a href="${URL.make("/edit?action=add")}">zde
-jej mù¾ete vytvoøit</a>.<p>
+jej mÅ¯Å¾ete vytvoÅ™it</a>.<p>
 
 <ol>
 <#list SORT.byDate(CHILDREN,"DESCENDING") as relation>

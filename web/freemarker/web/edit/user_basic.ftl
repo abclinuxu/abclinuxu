@@ -2,21 +2,21 @@
 
 <@lib.showMessages/>
 
-<p>Na této stránce si mù¾ete zmìnit své základní údaje.
-Pro va¹i ochranu nejdøíve zadejte souèasné heslo.</p>
+<p>Na tÃ©to strÃ¡nce si mÅ¯Å¾ete zmÄ›nit svÃ© zÃ¡kladnÃ­ Ãºdaje.
+Pro vaÅ¡i ochranu nejdÅ™Ã­ve zadejte souÄasnÃ© heslo.</p>
 
 <p>
-Pøihla¹ovací jméno (login) musí mít nejménì tøi znaky,
-maximálnì 16 znakù a to pouze písmena A a¾ Z, èíslice,
-pomlèku, teèku nebo podtr¾ítko.
-Login vás jednoznaènì identifikuje v systému,
-proto není mo¾né pou¾ívat hodnotu, které ji¾ pou¾il
-nìkdo pøed vámi.
+PÅ™ihlaÅ¡ovacÃ­ jmÃ©no (login) musÃ­ mÃ­t nejmÃ©nÄ› tÅ™i znaky,
+maximÃ¡lnÄ› 16 znakÅ¯ a to pouze pÃ­smena A aÅ¾ Z, ÄÃ­slice,
+pomlÄku, teÄku nebo podtrÅ¾Ã­tko.
+Login vÃ¡s jednoznaÄnÄ› identifikuje v systÃ©mu,
+proto nenÃ­ moÅ¾nÃ© pouÅ¾Ã­vat hodnotu, kterÃ© jiÅ¾ pouÅ¾il
+nÄ›kdo pÅ™ed vÃ¡mi.
 </p>
 
-<p>Va¹e jméno musí bıt nejménì pìt znakù dlouhé. Email musí bıt platnı.
-Nebojte se, budeme jej chránit pøed spammery a my vám budeme
-zasílat jen ty informace, které si sami objednáte.
+<p>VaÅ¡e jmÃ©no musÃ­ bÃ½t nejmÃ©nÄ› pÄ›t znakÅ¯ dlouhÃ©. Email musÃ­ bÃ½t platnÃ½.
+Nebojte se, budeme jej chrÃ¡nit pÅ™ed spammery a my vÃ¡m budeme
+zasÃ­lat jen ty informace, kterÃ© si sami objednÃ¡te.
 </p>
 
 <form action="${URL.noPrefix("/EditUser")}" method="POST">
@@ -29,7 +29,7 @@ zasílat jen ty informace, které si sami objednáte.
    </td>
   </tr>
   <tr>
-   <td class="required" width="60">Jméno</td>
+   <td class="required" width="60">JmÃ©no</td>
    <td>
     <input type="text" name="name" value="${PARAMS.name?if_exists}" size="24" tabindex="2">
     <div class="error">${ERRORS.name?if_exists}</div>
@@ -50,7 +50,7 @@ zasílat jen ty informace, které si sami objednáte.
    </td>
   </tr>
   <tr>
-   <td class="required" width="60">Pøezdívka</td>
+   <td class="required" width="60">PÅ™ezdÃ­vka</td>
    <td>
     <input type="text" name="nick" value="${PARAMS.nick?if_exists}" size="24" tabindex="5">
     <div class="error">${ERRORS.nick?if_exists}</div>
@@ -58,7 +58,7 @@ zasílat jen ty informace, které si sami objednáte.
   </tr>
   <tr>
    <td width="60">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi" tabindex="6"></td>
+   <td><input type="submit" value="DokonÄi" tabindex="6"></td>
   </tr>
  </table>
  <input type="hidden" name="action" value="editBasic2">

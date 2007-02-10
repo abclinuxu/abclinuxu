@@ -134,7 +134,7 @@ public class EditRequest implements AbcAction, Configurable {
         if ( action.equals(ACTION_DELIVER) )
             return actionDeliver(request, response, env);
 
-        throw new MissingArgumentException("Chybí parametr action!");
+        throw new MissingArgumentException("ChybÃ­ parametr action!");
     }
 
     protected String actionAdd(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -171,31 +171,31 @@ public class EditRequest implements AbcAction, Configurable {
             error = true;
 
         if ( author==null || author.length()==0 ) {
-            ServletUtils.addError(PARAM_AUTHOR,"Zadejte prosím své jméno.",env,null);
+            ServletUtils.addError(PARAM_AUTHOR,"Zadejte prosÃ­m svÃ© jmÃ©no.",env,null);
             error = true;
         }
 
         if ( email==null || email.length()==0 ) {
-            ServletUtils.addError(PARAM_EMAIL,"Zadejte, kam poslat vyrozumìní.",env,null);
+            ServletUtils.addError(PARAM_EMAIL,"Zadejte, kam poslat vyrozumÄ›nÃ­.",env,null);
             error = true;
         } else if ( email.length()<6 || email.indexOf('@')==-1 || email.indexOf('.')==-1 ) {
-            ServletUtils.addError(PARAM_EMAIL,"Neplatný email!.",env,null);
+            ServletUtils.addError(PARAM_EMAIL,"NeplatnÃ½ email!.",env,null);
             error = true;
         }
 
         if (messageRequired) {
             if (text == null || text.length() == 0) {
-                ServletUtils.addError(PARAM_TEXT, "Napi¹te text va¹eho vzkazu.", env, null);
+                ServletUtils.addError(PARAM_TEXT, "NapiÅ¡te text vaÅ¡eho vzkazu.", env, null);
                 error = true;
             }
         } else if (prefix==null || prefix.length()==0) {
             log.error("messageRequired == false && prefix == null");
-            ServletUtils.addError(PARAM_TEXT, "Interní chyba. Po¹lete prosím email na admin@abclinuxu.cz.", env, null);
+            ServletUtils.addError(PARAM_TEXT, "InternÃ­ chyba. PoÅ¡lete prosÃ­m email na admin@abclinuxu.cz.", env, null);
             error = true;
         }
 
         if (Misc.empty(category)) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Zvolte si kategorii va¹eho po¾adavku.", env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Zvolte si kategorii vaÅ¡eho poÅ¾adavku.", env, null);
             error = true;
         }
 
@@ -242,7 +242,7 @@ public class EditRequest implements AbcAction, Configurable {
         persistence.create(relation);
         relation.getParent().addChildRelation(relation);
 
-        ServletUtils.addMessage("Vá¹ po¾adavek byl pøijat.",env,request.getSession());
+        ServletUtils.addMessage("VÃ¡Å¡ poÅ¾adavek byl pÅ™ijat.",env,request.getSession());
         logRequests.info("Autor: "+author+"("+email+")\n"+text);
         return true;
     }
@@ -254,7 +254,7 @@ public class EditRequest implements AbcAction, Configurable {
         persistence.synchronize(relation);
         persistence.remove(relation);
         relation.getParent().removeChildRelation(relation);
-        ServletUtils.addMessage("Po¾adavek byl smazán.",env,request.getSession());
+        ServletUtils.addMessage("PoÅ¾adavek byl smazÃ¡n.",env,request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/hardware/show/"+Constants.REL_REQUESTS);
@@ -284,7 +284,7 @@ public class EditRequest implements AbcAction, Configurable {
         if ( !sent )
             ServletUtils.addError(Constants.ERROR_GENERIC, "Nemohu odeslat email!", env, request.getSession());
 
-        ServletUtils.addMessage("Po¾adavek byl vyøízen.",env,request.getSession());
+        ServletUtils.addMessage("PoÅ¾adavek byl vyÅ™Ã­zen.",env,request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/hardware/show/"+Constants.REL_REQUESTS);
@@ -316,7 +316,7 @@ public class EditRequest implements AbcAction, Configurable {
         Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if (relation==null)
-            throw new AbcException("Chybí èíslo relace! Prosím kontaktujte nás, a» mù¾eme problém vyøe¹it.");
+            throw new AbcException("ChybÃ­ ÄÃ­slo relace! ProsÃ­m kontaktujte nÃ¡s, aÅ¥ mÅ¯Å¾eme problÃ©m vyÅ™eÅ¡it.");
 
         relation = (Relation) persistence.findById(relation);
         Item discussion = (Item) persistence.findById(relation.getChild());
@@ -375,12 +375,12 @@ public class EditRequest implements AbcAction, Configurable {
         int relationId = Misc.parseInt((String) params.get(PARAM_RELATION_SHORT),0);
 
         if (forumId==0) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Vyberte prosím diskusní fórum.", env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Vyberte prosÃ­m diskusnÃ­ fÃ³rum.", env, null);
             return actionChooseForum(request, env);
         }
 
         if (relationId==0) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Parametr rid je prázdný! Napi¹te prosím hlá¹ení chyby.", env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Parametr rid je prÃ¡zdnÃ½! NapiÅ¡te prosÃ­m hlÃ¡Å¡enÃ­ chyby.", env, null);
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/hardware/show/"+Constants.REL_REQUESTS);
             return null;
@@ -388,8 +388,8 @@ public class EditRequest implements AbcAction, Configurable {
 
         String dizName = Tools.childName(new Integer(relationId));
         String forumName = Tools.childName(new Integer(forumId));
-        params.put(PARAM_CATEGORY, "Pøesun diskuse");
-        String action = "Pøesunout diskusi <a href=\"/forum/show/"+relationId+"\">"+dizName+
+        params.put(PARAM_CATEGORY, "PÅ™esun diskuse");
+        String action = "PÅ™esunout diskusi <a href=\"/forum/show/"+relationId+"\">"+dizName+
                         "</a> do fora <a href=\"/forum/dir/"+forumId+"\">"+forumName+"</a> "+forumId;
 
         boolean saved = addRequest(request, response, action, false, env);

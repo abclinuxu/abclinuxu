@@ -83,9 +83,9 @@ public class SelectRelation implements AbcAction {
                 env.put(VAR_CURRENT,current);
                 return FMTemplateSelector.select("SelectRelation","step1",env,request);
             } catch (NumberFormatException e) {
-                ServletUtils.addError(PARAM_ENTERED,"»Ìslo vÏtπÌ neæ nula!",env, null);
+                ServletUtils.addError(PARAM_ENTERED,"ƒå√≠slo vƒõt≈°√≠ ne≈æ nula!",env, null);
             } catch (PersistenceException e) {
-                ServletUtils.addError(Constants.ERROR_GENERIC,"Nebyla zvolena platn· relace!",env, null);
+                ServletUtils.addError(Constants.ERROR_GENERIC,"Nebyla zvolena platn√° relace!",env, null);
             }
         }
 
@@ -120,13 +120,13 @@ public class SelectRelation implements AbcAction {
             try {
                 result = Integer.parseInt(manual);
             } catch (NumberFormatException e) {
-                ServletUtils.addError(PARAM_ENTERED,"CÌslo vÏtπÌ neæ nula!",env, null);
+                ServletUtils.addError(PARAM_ENTERED,"C√≠slo vƒõt≈°√≠ ne≈æ nula!",env, null);
             }
         } else {
             try {
                 result = Integer.parseInt(tmp);
             } catch (NumberFormatException e) {
-                ServletUtils.addError(Constants.ERROR_GENERIC,"Nebyla zvolena platn· relace!",env, null);
+                ServletUtils.addError(Constants.ERROR_GENERIC,"Nebyla zvolena platn√° relace!",env, null);
             }
         }
 

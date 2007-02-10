@@ -1,9 +1,9 @@
 <#assign plovouci_sloupec>
     <div class="s_sekce">
         <ul>
-            <li><a href="/clanky/show/3500?text=sekce+${RELATION.id}">Po¾ádat o vytvoøení podsekce</a></li>
+            <li><a href="/clanky/show/3500?text=sekce+${RELATION.id}">PoÅ¾Ã¡dat o vytvoÅ™enÃ­ podsekce</a></li>
             <#if CATEGORY.isOpen()>
-                <li><a href="${URL.make("/edit/"+RELATION.id+"?action=add")}">Vlo¾it novou polo¾ku</a></li>
+                <li><a href="${URL.make("/edit/"+RELATION.id+"?action=add")}">VloÅ¾it novou poloÅ¾ku</a></li>
             </#if>
             <#if USER?exists && USER.hasRole("category admin")>
                 <hr />
@@ -13,8 +13,8 @@
                     <a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;url=/EditRelation&amp;action=add&amp;prefix="+URL.prefix)}">link</a></li>
             </#if>
             <#if USER?exists && USER.hasRole("move relation")>
-                <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Pøesunout sekci</a></li>
-                <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=moveAll&amp;prefix="+URL.prefix)}">Pøesunout obsah</a></li>
+                <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">PÅ™esunout sekci</a></li>
+                <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=moveAll&amp;prefix="+URL.prefix)}">PÅ™esunout obsah</a></li>
             </#if>
             <#if USER?exists && USER.hasRole("root")>
                 <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=showACL")}">ACL</a></li>
@@ -72,10 +72,10 @@
     <table class="hw-polozky">
       <thead>
         <tr>
-            <td class="td01">Jméno</td>
+            <td class="td01">JmÃ©no</td>
             <td class="td02">Podpora</td>
-            <td class="td03">Zastaralı</td>
-            <td class="td04">Poslední úprava</td>
+            <td class="td03">ZastaralÃ½</td>
+            <td class="td04">PoslednÃ­ Ãºprava</td>
         </tr>
       </thead>
       <tbody>
@@ -87,9 +87,9 @@
                 <td class="td02">
 		            <#assign support=TOOL.xpath(polozka.child,"/data/support")?default("UNDEFINED")>
                     <#switch support>
-                        <#case "complete">kompletní<#break>
-                        <#case "partial">èásteèná<#break>
-                        <#case "none">¾ádná<#break>
+                        <#case "complete">kompletnÃ­<#break>
+                        <#case "partial">ÄÃ¡steÄnÃ¡<#break>
+                        <#case "none">Å¾Ã¡dnÃ¡<#break>
                         <#default>
                     </#switch>
 		        </td>

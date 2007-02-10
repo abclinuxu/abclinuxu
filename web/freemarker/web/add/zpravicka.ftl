@@ -2,32 +2,32 @@
 
 <@lib.showMessages/>
 
-<h2>Co je to zprávièka?</h2>
+<h2>Co je to zprÃ¡viÄka?</h2>
 
-<p>Zprávièka je krátkı text, kterı upozoròuje na¹e ètenáøe
-na zajímavou informaci, stránky èi událost ve svìtì Linuxu,
-Open Source èi IT. Zprávièky o Microsoftu ma¾eme, stejnì
-jako dotazy, ¾ádosti o pomoc èi pøedem nedomluvené reklamy.
+<p>ZprÃ¡viÄka je krÃ¡tkÃ½ text, kterÃ½ upozorÅˆuje naÅ¡e ÄtenÃ¡Å™e
+na zajÃ­mavou informaci, strÃ¡nky Äi udÃ¡lost ve svÄ›tÄ› Linuxu,
+Open Source Äi IT. ZprÃ¡viÄky o Microsoftu maÅ¾eme, stejnÄ›
+jako dotazy, Å¾Ã¡dosti o pomoc Äi pÅ™edem nedomluvenÃ© reklamy.
 </p>
 
-<h2>Jak ji mám napsat?</h2>
+<h2>Jak ji mÃ¡m napsat?</h2>
 
-<p>Povolenımi HTML znaèkami jsou odkaz (A), URL musí bıt absolutní
-(zaèínat http://) a ACRONYM. Obsah v¾dy pi¹te s háèky a èárkami.
-Zprávièka by mìla mít alespoò dvì vìty a obsahovat takové podrobnosti,
-aby dávala smysl, ani¾ by èlovìk musel nav¹tívit zmínìná URL.
-Titulek by mìl krátce popsat hlavní téma zprávièky, bude pou¾it v RSS
-a vygeneruje se z nìj URL (ve vıpisu zprávièek v¹ak zobrazen nebude).</p>
+<p>PovolenÃ½mi HTML znaÄkami jsou odkaz (A), URL musÃ­ bÃ½t absolutnÃ­
+(zaÄÃ­nat http://) a ACRONYM. Obsah vÅ¾dy piÅ¡te s hÃ¡Äky a ÄÃ¡rkami.
+ZprÃ¡viÄka by mÄ›la mÃ­t alespoÅˆ dvÄ› vÄ›ty a obsahovat takovÃ© podrobnosti,
+aby dÃ¡vala smysl, aniÅ¾ by ÄlovÄ›k musel navÅ¡tÃ­vit zmÃ­nÄ›nÃ¡ URL.
+Titulek by mÄ›l krÃ¡tce popsat hlavnÃ­ tÃ©ma zprÃ¡viÄky, bude pouÅ¾it v RSS
+a vygeneruje se z nÄ›j URL (ve vÃ½pisu zprÃ¡viÄek vÅ¡ak zobrazen nebude).</p>
 
-<h2>A co dále?</h2>
+<h2>A co dÃ¡le?</h2>
 
-<p>Va¹e zprávièka bude èekat, ne¾ ji nìkterı správce schválí.
-Správce mù¾e upravit vá¹ text (napøíklad jej doplnit, opravit pøeklep, ...)
-nebo zmìnit kategorii. V pøípadì zamítnutí vám bude poslán email
-s vysvìtlením. Teprve po schválení bude zprávièka zveøejnìna.</p>
+<p>VaÅ¡e zprÃ¡viÄka bude Äekat, neÅ¾ ji nÄ›kterÃ½ sprÃ¡vce schvÃ¡lÃ­.
+SprÃ¡vce mÅ¯Å¾e upravit vÃ¡Å¡ text (napÅ™Ã­klad jej doplnit, opravit pÅ™eklep, ...)
+nebo zmÄ›nit kategorii. V pÅ™Ã­padÄ› zamÃ­tnutÃ­ vÃ¡m bude poslÃ¡n email
+s vysvÄ›tlenÃ­m. Teprve po schvÃ¡lenÃ­ bude zprÃ¡viÄka zveÅ™ejnÄ›na.</p>
 
 <#if PARAMS.preview?exists>
- <h2>Náhled</h2>
+ <h2>NÃ¡hled</h2>
  <@lib.showNews RELATION />
 </#if>
 
@@ -39,15 +39,15 @@ s vysvìtlením. Teprve po schválení bude zprávièka zveøejnìna.</p>
 
         <span class="required">Obsah</span>
         <div class="form-edit">
-            <a href="javascript:insertAtCursor(document.newsForm.content, '&lt;a href=&quot;&quot;&gt;', '</a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
+            <a href="javascript:insertAtCursor(document.newsForm.content, '&lt;a href=&quot;&quot;&gt;', '</a>');" id="mono" title="VloÅ¾it znaÄku odkazu">&lt;a&gt;</a>
         </div>
         <textarea tabindex="2" name="content" cols="60" rows="10" tabindex="1">${PARAMS.content?if_exists?html}</textarea>
         <div class="error">${ERRORS.content?if_exists}</div>
     </p>
 
     <#if USER?exists && USER.hasRole("news admin")>
-        Datum zveøejnìní: <input type="text" size="16" name="publish" value="${PARAMS.publish?if_exists}">
-        Formát 2005-01-25 07:12
+        Datum zveÅ™ejnÄ›nÃ­: <input type="text" size="16" name="publish" value="${PARAMS.publish?if_exists}">
+        FormÃ¡t 2005-01-25 07:12
         <div class="error">${ERRORS.publish?if_exists}</div>
     </#if>
 
@@ -64,8 +64,8 @@ s vysvìtlením. Teprve po schválení bude zprávièka zveøejnìna.</p>
         </#list>
     </dl>
     <p>
-        <input tabindex="3" name="preview" type="submit" value="Náhled">
-        <input tabindex="4" type="submit" value="Dokonèi">
+        <input tabindex="3" name="preview" type="submit" value="NÃ¡hled">
+        <input tabindex="4" type="submit" value="DokonÄi">
         <input type="hidden" name="action" value="add2">
     </p>
 </form>

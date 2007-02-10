@@ -4,40 +4,40 @@
 <@lib.showMessages/>
 
 <#if PREVIEW?exists>
- <h2>Náhled softwarového záznamu</h2>
+ <h2>NÃ¡hled softwarovÃ©ho zÃ¡znamu</h2>
  <p>
-    Prohlédnìte si vzhled va¹eho záznamu. Opravte chyby a zvolte tlaèítko <code>Náhled</code>.
-    Pokud jste s vısledkem spokojeni, stisknìte tlaèítko <code>Dokonèi</code>.
+    ProhlÃ©dnÄ›te si vzhled vaÅ¡eho zÃ¡znamu. Opravte chyby a zvolte tlaÄÃ­tko <code>NÃ¡hled</code>.
+    Pokud jste s vÃ½sledkem spokojeni, stisknÄ›te tlaÄÃ­tko <code>DokonÄi</code>.
  </p>
 
  <fieldset>
-     <legend>Náhled</legend>
+     <legend>NÃ¡hled</legend>
      <@swlib.showSoftware PREVIEW, false />
  </fieldset>
 </#if>
 
-<h2>Nápovìda</h2>
+<h2>NÃ¡povÄ›da</h2>
 
 <p>
-   Zadejte prosím co nejpodrobnìj¹í informace o tomto softwaru. Povinné polo¾ky jsou
-   jméno<#if EDIT_MODE?if_exists> (ze kterého se vygeneruje URL)</#if> a popis.
-   První vìta popisu se zobrazí ve vıpise této sekce, proto si na
-   jejím textu dejte zále¾et. Adresa pro sta¾ení by nemìla záviset na konkrétní verzi.
-   Adresa RSS s aktualitami umo¾ní automatické stahování novinek. 
+   Zadejte prosÃ­m co nejpodrobnÄ›jÅ¡Ã­ informace o tomto softwaru. PovinnÃ© poloÅ¾ky jsou
+   jmÃ©no<#if EDIT_MODE?if_exists> (ze kterÃ©ho se vygeneruje URL)</#if> a popis.
+   PrvnÃ­ vÄ›ta popisu se zobrazÃ­ ve vÃ½pise tÃ©to sekce, proto si na
+   jejÃ­m textu dejte zÃ¡leÅ¾et. Adresa pro staÅ¾enÃ­ by nemÄ›la zÃ¡viset na konkrÃ©tnÃ­ verzi.
+   Adresa RSS s aktualitami umoÅ¾nÃ­ automatickÃ© stahovÃ¡nÃ­ novinek. 
 </p>
 
-<h2>Formátování</h2>
+<h2>FormÃ¡tovÃ¡nÃ­</h2>
 
 <p>
-    Smíte pou¾ívat základní HTML znaèky. Pokud je nepou¾ijete,
-    prázdné øádky budou nahrazeny novım odstavcem. Více informací
-    <a href="#formatovani">najdete</a> pod formuláøem.
+    SmÃ­te pouÅ¾Ã­vat zÃ¡kladnÃ­ HTML znaÄky. Pokud je nepouÅ¾ijete,
+    prÃ¡zdnÃ© Å™Ã¡dky budou nahrazeny novÃ½m odstavcem. VÃ­ce informacÃ­
+    <a href="#formatovani">najdete</a> pod formulÃ¡Å™em.
 </p>
 
 <form action="${URL.make("/edit")}" method="POST">
     <table class="siroka" border="0" cellpadding="5">
         <tr>
-            <td class="required">Jméno</td>
+            <td class="required">JmÃ©no</td>
             <td>
                 <input type="text" name="name" value="${PARAMS.name?if_exists}" size="40" tabindex="1">
                 <div class="error">${ERRORS.name?if_exists}</div>
@@ -53,7 +53,7 @@
         </tr>
 
         <tr>
-            <td>Adresa domovské stránky</td>
+            <td>Adresa domovskÃ© strÃ¡nky</td>
             <td>
                 <input type="text" name="homeUrl" value="${PARAMS.homeUrl?if_exists}" size="60" tabindex="3">
                 <div class="error">${ERRORS.homeUrl?if_exists}</div>
@@ -61,7 +61,7 @@
         </tr>
 
         <tr>
-            <td>Adresa stránky pro sta¾ení</td>
+            <td>Adresa strÃ¡nky pro staÅ¾enÃ­</td>
             <td>
                 <input type="text" name="downloadUrl" value="${PARAMS.downloadUrl?if_exists}" size="60" tabindex="4">
                 <div class="error">${ERRORS.downloadUrl?if_exists}</div>
@@ -94,7 +94,7 @@
         </tr>
 
     	<tr>
-            <td class="required">U¾ivatelské prostøedí</td>
+            <td class="required">UÅ¾ivatelskÃ© prostÅ™edÃ­</td>
             <td>
                 <div class="sw-strom" id="strom">
                     <div>
@@ -157,12 +157,12 @@
             <td width="120">&nbsp;</td>
             <td>
                 <#if PREVIEW?exists>
-                    <input type="submit" name="preview" value="Zopakuj náhled">
-                    <input type="submit" name="finish" value="Dokonèi">
+                    <input type="submit" name="preview" value="Zopakuj nÃ¡hled">
+                    <input type="submit" name="finish" value="DokonÄi">
                 <#else>
-                    <input type="submit" name="preview" value="Náhled">
+                    <input type="submit" name="preview" value="NÃ¡hled">
                     <#if EDIT_MODE?if_exists>
-                        <input type="submit" name="finish" value="Dokonèi">
+                        <input type="submit" name="finish" value="DokonÄi">
                     </#if>
                 </#if>
             </td>

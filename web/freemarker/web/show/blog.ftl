@@ -15,7 +15,7 @@
     </div>
 
     <#if UNPUBLISHED_STORIES?exists>
-        <div class="s_nadpis">Rozepsané zápisy</div>
+        <div class="s_nadpis">RozepsanÃ© zÃ¡pisy</div>
 
         <div class="s_sekce">
             <ul>
@@ -29,7 +29,7 @@
         </div>
     </#if>
 
-    <div class="s_nadpis">Aktuální zápisy</div>
+    <div class="s_nadpis">AktuÃ¡lnÃ­ zÃ¡pisy</div>
 
     <div class="s_sekce">
         <ul>
@@ -43,8 +43,8 @@
     </div>
 
     <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Pøístup k archivovanım zápisùm za jednotlivé mìsíce.</span></a>
-        <a href="/blog/${BLOG.subType}/archiv">Archív</a>
+        <a class="info" href="#">?<span class="tooltip">PÅ™Ã­stup k archivovanÃ½m zÃ¡pisÅ¯m za jednotlivÃ© mÄ›sÃ­ce.</span></a>
+        <a href="/blog/${BLOG.subType}/archiv">ArchÃ­v</a>
     </div>
 
     <div class="s_sekce">
@@ -61,8 +61,8 @@
     <#assign links = BLOG_XML.data.custom.links.link>
     <#if links?size!=0>
         <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Seznam mıch oblíbenıch stránek, které pravidelnì nav¹tìvuji.</span></a>
-            Oblíbené stránky
+            <a class="info" href="#">?<span class="tooltip">Seznam mÃ½ch oblÃ­benÃ½ch strÃ¡nek, kterÃ© pravidelnÄ› navÅ¡tÄ›vuji.</span></a>
+            OblÃ­benÃ© strÃ¡nky
         </div>
 
         <div class="s_sekce">
@@ -75,28 +75,28 @@
     </#if>
 
     <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Pøístup na osobní hlavní stranu a na hlavní stranu v¹ech blogù.</span></a>
+        <a class="info" href="#">?<span class="tooltip">PÅ™Ã­stup na osobnÃ­ hlavnÃ­ stranu a na hlavnÃ­ stranu vÅ¡ech blogÅ¯.</span></a>
         Navigace
     </div>
 
     <div class="s_sekce">
         <ul>
             <#if title!="UNDEF">
-                <li><a href="/blog/${BLOG.subType}">${title}, hlavní strana</a></li>
+                <li><a href="/blog/${BLOG.subType}">${title}, hlavnÃ­ strana</a></li>
             </#if>
-            <li><a href="/blog/${BLOG.subType}/souhrn"><#if title!="UNDEF">${title}, </#if>struènı souhrn</a></li>
-            <li><a href="/auto/blog/${BLOG.subType}.rss">RSS kanál</a></li>
-            <li><a href="/blog">V¹echny blogy</a></li>
-	        <li><a href="/blog/souhrn">Struènı souhrn blogù</a></li>
-	        <li><a href="/blog/vyber">Vıbìr z blogù</a></li>
+            <li><a href="/blog/${BLOG.subType}/souhrn"><#if title!="UNDEF">${title}, </#if>struÄnÃ½ souhrn</a></li>
+            <li><a href="/auto/blog/${BLOG.subType}.rss">RSS kanÃ¡l</a></li>
+            <li><a href="/blog">VÅ¡echny blogy</a></li>
+	        <li><a href="/blog/souhrn">StruÄnÃ½ souhrn blogÅ¯</a></li>
+	        <li><a href="/blog/vyber">VÃ½bÄ›r z blogÅ¯</a></li>
         </ul>
     </div>
 
 
     <#if (USER?exists && USER.id==BLOG.owner) || (! USER?exists)>
         <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Tato sekce sdru¾uje akce pro majitele blogu.</span></a>
-            Nastavení
+            <a class="info" href="#">?<span class="tooltip">Tato sekce sdruÅ¾uje akce pro majitele blogu.</span></a>
+            NastavenÃ­
         </div>
     </#if>
 
@@ -104,14 +104,14 @@
     <ul>
     <#if USER?exists>
         <#if USER.id==BLOG.owner>
-            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=add")}">Vlo¾ novı zápis</a></li>
+            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=add")}">VloÅ¾ novÃ½ zÃ¡pis</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=custom")}">Nastavit blog</a></li>
-            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}">Pøejmenovat blog</a></li>
+            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}">PÅ™ejmenovat blog</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=categories")}">Upravit kategorie</a></li>
-            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=links")}">Upravit oblíbené stránky</a></li>
+            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=links")}">Upravit oblÃ­benÃ© strÃ¡nky</a></li>
         </#if>
     <#else>
-        <li><a href="${URL.noPrefix("/Profile?action=login&amp;url="+REQUEST_URI)}">Pøihlásit se</a></li>
+        <li><a href="${URL.noPrefix("/Profile?action=login&amp;url="+REQUEST_URI)}">PÅ™ihlÃ¡sit se</a></li>
     </#if>
     </ul>
   </div>
@@ -125,7 +125,7 @@
 <@lib.showMessages/>
 
 <#if STORIES.total==0>
-    <p>Va¹emu vıbìru neodpovídá ¾ádnı zápis.</p>
+    <p>VaÅ¡emu vÃ½bÄ›ru neodpovÃ­dÃ¡ Å¾Ã¡dnÃ½ zÃ¡pis.</p>
 </#if>
 
 <#list STORIES.data as relation>
@@ -145,7 +145,7 @@
         <p class="cl_inforadek">
     	    ${DATE.show(story.created, "SMART")} |
             <#if (category!="UNDEF" && category?length > 1)>${category} |</#if>
-	        Pøeèteno: ${TOOL.getCounterValue(story,"read")}&times;
+	        PÅ™eÄteno: ${TOOL.getCounterValue(story,"read")}&times;
             <#if tmp.discussion?exists>| <@lib.showCommentsInListing TOOL.analyzeDiscussion(tmp.discussion[0]), "SMART_DMY", "/blog" /></#if>
             <@lib.showShortRating relation, "| " />
         </p>
@@ -153,7 +153,7 @@
             <#assign text = TOOL.xpath(story, "/data/perex")?default("UNDEF")>
             <#if text!="UNDEF">
                 ${text}
-                <div class="signature"><a href="${url}">více...</a></div>
+                <div class="signature"><a href="${url}">vÃ­ce...</a></div>
             <#else>
                 ${TOOL.xpath(story, "/data/content")}
             </#if>
@@ -173,11 +173,11 @@
     </#if>
     <#if (STORIES.currentPage.row > 0) >
         <#assign start=STORIES.currentPage.row-STORIES.pageSize><#if (start<0)><#assign start=0></#if>
-        <a href="${url}?from=${start}">Novìj¹í zápisy</a>
+        <a href="${url}?from=${start}">NovÄ›jÅ¡Ã­ zÃ¡pisy</a>
     </#if>
     <#assign start=STORIES.currentPage.row + STORIES.pageSize>
     <#if (start < STORIES.total) >
-        <a href="${url}?from=${start}">Star¹í zápisy</a>
+        <a href="${url}?from=${start}">StarÅ¡Ã­ zÃ¡pisy</a>
     </#if>
 </p>
 

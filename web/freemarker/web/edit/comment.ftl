@@ -2,20 +2,20 @@
 
 <@lib.showMessages/>
 
-<h2>Úvod</h2>
+<h2>Ãšvod</h2>
 
-<p>Tato stránka je urèena vıhradnì administrátorùm. Jejím úèelem
-není provádìt cenzuru (na to jsou jiné nástroje) nebo
-zasahovat do smyslu komentáøe, nıbr¾ opravovat chyby u¾ivatelù.
-Napøíklad ¹patnì zvolenı titulek u dotazu, titulek poru¹ující
-zásady (psán velkımi písmeny apod.), nevhodné HTML znaèky, ...</p>
+<p>Tato strÃ¡nka je urÄena vÃ½hradnÄ› administrÃ¡torÅ¯m. JejÃ­m ÃºÄelem
+nenÃ­ provÃ¡dÄ›t cenzuru (na to jsou jinÃ© nÃ¡stroje) nebo
+zasahovat do smyslu komentÃ¡Å™e, nÃ½brÅ¾ opravovat chyby uÅ¾ivatelÅ¯.
+NapÅ™Ã­klad Å¡patnÄ› zvolenÃ½ titulek u dotazu, titulek poruÅ¡ujÃ­cÃ­
+zÃ¡sady (psÃ¡n velkÃ½mi pÃ­smeny apod.), nevhodnÃ© HTML znaÄky, ...</p>
 
 <#if PREVIEW?exists>
- <h2>Náhled pøíspìvku</h2>
+ <h2>NÃ¡hled pÅ™Ã­spÄ›vku</h2>
  <@lib.showThread PREVIEW, 0, TOOL.createEmptyDiscussion(), false />
 </#if>
 
-<h2>Zde mù¾ete provést své úpravy</h2>
+<h2>Zde mÅ¯Å¾ete provÃ©st svÃ© Ãºpravy</h2>
 
 <form action="${URL.make("/EditDiscussion")}" method="POST">
  <table cellpadding="5" class="siroka">
@@ -27,19 +27,19 @@ zásady (psán velkımi písmeny apod.), nevhodné HTML znaèky, ...</p>
    </td>
   </tr>
   <tr>
-   <td class="required">Komentáø</td>
+   <td class="required">KomentÃ¡Å™</td>
    <td>
     <textarea name="text" class="siroka" rows="20">${PARAMS.text?if_exists?html}</textarea>
-    <div>Smíte pou¾ívat základní HTML znaèky. Pokud je nepou¾ijete,
-    prázdné øádky budou nahrazeny novım odstavcem.</div>
+    <div>SmÃ­te pouÅ¾Ã­vat zÃ¡kladnÃ­ HTML znaÄky. Pokud je nepouÅ¾ijete,
+    prÃ¡zdnÃ© Å™Ã¡dky budou nahrazeny novÃ½m odstavcem.</div>
     <div class="error">${ERRORS.text?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td>&nbsp;</td>
    <td>
-    <input type="submit" name="preview" value="Zopakuj náhled">
-    <input type="submit" name="finish" value="Dokonèi">
+    <input type="submit" name="preview" value="Zopakuj nÃ¡hled">
+    <input type="submit" name="finish" value="DokonÄi">
    </td>
   </tr>
  </table>

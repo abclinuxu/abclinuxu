@@ -4,42 +4,42 @@
 <@lib.showMessages/>
 
 <p>
-    Pro inzeráty platí následující pravidla. Prosíme, pøeètìte si je
-    a øiïte se jimi. V krajním pøípadì mohou administrátoøi vá¹ inzerát
+    Pro inzerÃ¡ty platÃ­ nÃ¡sledujÃ­cÃ­ pravidla. ProsÃ­me, pÅ™eÄtÄ›te si je
+    a Å™iÄte se jimi. V krajnÃ­m pÅ™Ã­padÄ› mohou administrÃ¡toÅ™i vÃ¡Å¡ inzerÃ¡t
     smazat.
 </p>
 
 <ul>
     <li>
-        Inzeráty jsou bezplatnou slu¾bou ètenáøùm tohoto portálu. Vıdìleèná èinnost
-        není povolena. V pøípadì pochybností rozhoduje provozovatel. Pøípadné komerènì
-        ladìné inzeráty je nutné pøedjednat dopøedu s inzertním oddìlením provozovatele.
+        InzerÃ¡ty jsou bezplatnou sluÅ¾bou ÄtenÃ¡Å™Å¯m tohoto portÃ¡lu. VÃ½dÄ›leÄnÃ¡ Äinnost
+        nenÃ­ povolena. V pÅ™Ã­padÄ› pochybnostÃ­ rozhoduje provozovatel. PÅ™Ã­padnÃ© komerÄnÄ›
+        ladÄ›nÃ© inzerÃ¡ty je nutnÃ© pÅ™edjednat dopÅ™edu s inzertnÃ­m oddÄ›lenÃ­m provozovatele.
     </li>
     <li>
-        Inzeráty musí bıt v souladu se zamìøením tohoto portálu. Vhodné inzeráty jsou
-        napøíklad prodej <a href="/hardware">hardwaru</a> èi spotøební elektroniky,
-        <a href="/software">linuxového softwaru</a>, odborné literatury,
-        ply¹ovıch tuèòákù apod.
+        InzerÃ¡ty musÃ­ bÃ½t v souladu se zamÄ›Å™enÃ­m tohoto portÃ¡lu. VhodnÃ© inzerÃ¡ty jsou
+        napÅ™Ã­klad prodej <a href="/hardware">hardwaru</a> Äi spotÅ™ebnÃ­ elektroniky,
+        <a href="/software">linuxovÃ©ho softwaru</a>, odbornÃ© literatury,
+        plyÅ¡ovÃ½ch tuÄÅˆÃ¡kÅ¯ apod.
     </li>
     <li>
-        Je zakázáno vkládat inzerát se stejnım èi podobnım obsahem døíve ne¾ za celıch
-        uplynulıch 7 dní. Inzerát nesmí poru¹ovat místní zákony.
+        Je zakÃ¡zÃ¡no vklÃ¡dat inzerÃ¡t se stejnÃ½m Äi podobnÃ½m obsahem dÅ™Ã­ve neÅ¾ za celÃ½ch
+        uplynulÃ½ch 7 dnÃ­. InzerÃ¡t nesmÃ­ poruÅ¡ovat mÃ­stnÃ­ zÃ¡kony.
     </li>
     <!--<li>
-        Inzeráty budou po 30 dnech automaticky smazány. Pokud ale uspìjete døíve, sma¾te
-        prosím inzerát ruènì.
+        InzerÃ¡ty budou po 30 dnech automaticky smazÃ¡ny. Pokud ale uspÄ›jete dÅ™Ã­ve, smaÅ¾te
+        prosÃ­m inzerÃ¡t ruÄnÄ›.
     </li>-->
     <li>
-        Do <b>titulku</b> napi¹te, co prodáváte èi hledáte. Ètenáøi se pak budou lépe orientovat
-        ve vıpise inzerátù. Do <b>kontaktu</b> napi¹te své telefonní èíslo, Jabber, ICQ apod. Necháte-li
-        jej prázdnı, systém automaticky nabídne emailovı kontakt pøes formuláø ve va¹em profilu.
+        Do <b>titulku</b> napiÅ¡te, co prodÃ¡vÃ¡te Äi hledÃ¡te. ÄŒtenÃ¡Å™i se pak budou lÃ©pe orientovat
+        ve vÃ½pise inzerÃ¡tÅ¯. Do <b>kontaktu</b> napiÅ¡te svÃ© telefonnÃ­ ÄÃ­slo, Jabber, ICQ apod. NechÃ¡te-li
+        jej prÃ¡zdnÃ½, systÃ©m automaticky nabÃ­dne emailovÃ½ kontakt pÅ™es formulÃ¡Å™ ve vaÅ¡em profilu.
     </li>
 </ul>
 <br />
 
 <#if PARAMS.preview?exists>
     <fieldset>
-        <legend>Náhled</legend>
+        <legend>NÃ¡hled</legend>
         <@bazarlib.showBazaarAd PREVIEW, USER />
     </fieldset>
 </#if>
@@ -55,10 +55,10 @@
             </td>
         </tr>
         <tr>
-            <td class="required">Typ inzerátu</td>
+            <td class="required">Typ inzerÃ¡tu</td>
             <td>
                 <@lib.showOption "type", "sell", "Prodej", "radio", "tabindex='2'" />
-                <@lib.showOption "type", "buy", "Koupì", "radio", "tabindex='3'" />
+                <@lib.showOption "type", "buy", "KoupÄ›", "radio", "tabindex='3'" />
                 <div class="error">${ERRORS.type?if_exists}</div>
             </td>
         </tr>
@@ -77,15 +77,15 @@
             </td>
         </tr>
         <tr>
-            <td class="required">Obsah inzerátu</td>
+            <td class="required">Obsah inzerÃ¡tu</td>
             <td>
                 <div class="form-edit">
-                    <a href="javascript:insertAtCursor(document.form.text, '<b>', '</b>');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<i>', '</i>');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<a href=&quot;&quot;>', '</a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<p>', '</p>');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="Vlo¾it znaèku formátovaného textu. Vhodné pro konfiguraèní soubory èi vıpisy.">&lt;pre&gt;</a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<b>', '</b>');" id="serif" title="VloÅ¾it znaÄku tuÄnÄ›"><b>B</b></a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<i>', '</i>');" id="serif" title="VloÅ¾it znaÄku kurzÃ­va"><i>I</i></a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<a href=&quot;&quot;>', '</a>');" id="mono" title="VloÅ¾it znaÄku odkazu">&lt;a&gt;</a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<p>', '</p>');" id="mono" title="VloÅ¾it znaÄku odstavce">&lt;p&gt;</a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="VloÅ¾it znaÄku formÃ¡tovanÃ©ho textu. VhodnÃ© pro konfiguraÄnÃ­ soubory Äi vÃ½pisy.">&lt;pre&gt;</a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="VloÅ¾it znaÄku pro pÃ­smo s pevnou Å¡Ã­Å™kou">&lt;code&gt;</a>
                 </div>
                 <textarea tabindex="6" name="text" class="siroka" rows="20">${PARAMS.text?if_exists?html}</textarea><br>
                 <div class="error">${ERRORS.text?if_exists}</div>
@@ -93,8 +93,8 @@
         </tr>
         <tr>
             <td colspan="2" align="center">
-                <input tabindex="7" type="submit" name="preview" value="Náhled">
-                <input tabindex="8" type="submit" name="submit" value="Dokonèi">
+                <input tabindex="7" type="submit" name="preview" value="NÃ¡hled">
+                <input tabindex="8" type="submit" name="submit" value="DokonÄi">
             </td>
         </tr>
     </table>

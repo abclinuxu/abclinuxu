@@ -1,19 +1,19 @@
 <#include "../header.ftl">
 
-<h1>Seznam blokovanıch u¾ivatelù</h1>
+<h1>Seznam blokovanÃ½ch uÅ¾ivatelÅ¯</h1>
 
 <p>
-Mù¾e se stát, ¾e mezi ètenáøi se objeví troll, kterı
-jen urá¾í a provokuje. Pokud jej zaøadíte na tento seznam,
-texty jeho komentáøù i pøípadné reakce budou schovány.
-Mo¾nost si je pøeèíst zùstane zachována.
+MÅ¯Å¾e se stÃ¡t, Å¾e mezi ÄtenÃ¡Å™i se objevÃ­ troll, kterÃ½
+jen urÃ¡Å¾Ã­ a provokuje. Pokud jej zaÅ™adÃ­te na tento seznam,
+texty jeho komentÃ¡Å™Å¯ i pÅ™Ã­padnÃ© reakce budou schovÃ¡ny.
+MoÅ¾nost si je pÅ™eÄÃ­st zÅ¯stane zachovÃ¡na.
 </p>
 
 <@lib.showMessages/>
 
 <#assign blacklist=TOOL.getUsersBlacklist(MANAGED)>
 <#if (blacklist?size > 0)>
-    <p>Na va¹em seznamu jsou tito u¾ivatelé:</p>
+    <p>Na vaÅ¡em seznamu jsou tito uÅ¾ivatelÃ©:</p>
      <form action="${URL.noPrefix("/EditUser"+MANAGED.id+"?action=fromBlacklist")}" method="POST">
       <#list blacklist as who_>
        <#assign who = TOOL.createUser(who_.id)>
@@ -28,7 +28,7 @@ Mo¾nost si je pøeèíst zùstane zachována.
       </p>
      </form>
 <#else>
-    <p>Vá¹ seznam je prázdnı.</p>
+    <p>VÃ¡Å¡ seznam je prÃ¡zdnÃ½.</p>
 </#if>
 
 

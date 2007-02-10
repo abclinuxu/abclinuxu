@@ -3,7 +3,7 @@
 
 <@lib.showParents />
 
-<#assign title=TOOL.xpath(ITEM, "/data/title")?default("Zprávièka")>
+<#assign title=TOOL.xpath(ITEM, "/data/title")?default("ZprÃ¡viÄka")>
 <h1 class="st_nadpis">${title}</h1>
 
 <p>

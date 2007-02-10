@@ -1,10 +1,10 @@
 <html>
  <head>
   <title>${TITLE}</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="author" content="Leos Literak">
-  <meta name="keywords" content="linux,abclinuxu,hardware,USB,SCSI,modem,kernel,ovladač">
-  <link rel="bookmark" href="#obsah" title="Obsah stránky" type="text/html">
+  <meta name="keywords" content="linux,abclinuxu,hardware,USB,SCSI,modem,kernel,ovladaÄ">
+  <link rel="bookmark" href="#obsah" title="Obsah strĂĄnky" type="text/html">
  </head>
 <body>
 
@@ -13,19 +13,19 @@
 <p>
 ${DATE.show("CZ_FULL")}
  <#if USER?exists>
-  Uživatel: ${USER.name}
-  <a href="${URL.noPrefix("/Profile/"+USER.id)}">Můj profil</a>,
-  <a href="${URL.noPrefix("/Index?logout=true")}">Odhlášení</a>
+  UĹživatel: ${USER.name}
+  <a href="${URL.noPrefix("/Profile/"+USER.id)}">MĹŻj profil</a>,
+  <a href="${URL.noPrefix("/Index?logout=true")}">OdhlĂĄĹĄenĂ­</a>
  <#else>
-  <a href="${URL.noPrefix("/Profile?action=login")}">Přihlášení</a>,
+  <a href="${URL.noPrefix("/Profile?action=login")}">PĹihlĂĄĹĄenĂ­</a>,
   <a href="${URL.noPrefix("/EditUser?action=register")}">Registrace</a>
  </#if>
 
  <form action="/Search" method="post">
-  <b>Hledávání</b>
+  <b>HledĂĄvĂĄnĂ­</b>
   <input type="text" name="query" size="14">
   <input type="submit" value="Hledej">
-  <a href="/doc/napoveda/hledani">Nápověda</a>
+  <a href="/doc/napoveda/hledani">NĂĄpovÄda</a>
  </form>
 </p>
 
@@ -35,10 +35,10 @@ ${DATE.show("CZ_FULL")}
 
     <#if SYSTEM_CONFIG.isMaintainanceMode()>
         <div style="color: red; border: medium solid red; margin: 30px; padding: 3ex">
-            <p style="font-size: xx-large; text-align: center">Režim údržby</p>
+            <p style="font-size: xx-large; text-align: center">ReĹžim ĂşdrĹžby</p>
             <p>
-                Právě provádíme údržbu portálu. Prohlížení obsahu by mělo nadále fungovat,
-                úpravy obsahu bohužel nejsou prozatím k dispozici. Děkujeme za pochopení.
+                PrĂĄvÄ provĂĄdĂ­me ĂşdrĹžbu portĂĄlu. ProhlĂ­ĹženĂ­ obsahu by mÄlo nadĂĄle fungovat,
+                Ăşpravy obsahu bohuĹžel nejsou prozatĂ­m k dispozici. DÄkujeme za pochopenĂ­.
             </p>
         </div>
     </#if>

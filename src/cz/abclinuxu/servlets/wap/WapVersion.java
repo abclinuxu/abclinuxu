@@ -56,7 +56,7 @@ public class WapVersion {
             StringWriter tmpWriter = new StringWriter();
             template.process(env, tmpWriter);
 
-            response.setContentType("text/vnd.wap.wml; charset=ISO-8859-2");
+            response.setContentType("text/vnd.wap.wml; charset=UTF-8");
             Writer writer = response.getWriter();
             StringBuffer buffer = tmpWriter.getBuffer();
             int responseLength = buffer.length();

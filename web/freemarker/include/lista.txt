@@ -6,18 +6,18 @@
      <div class="le">
         <a href="http://www.unixshop.cz" title="RISC bez rizika!">
     	<img src="/images/site2/sflista/ux.gif" alt="RISC bez rizika!"/> unixshop</a>
-        <a href="http://www.lbw.cz" title="Enterprise Linux port·l.">
-    	<img src="/images/site2/sflista/lb.gif" alt="Enterprise Linux port·l."/> LinuxBizWorld</a>
-        <a href="http://www.abclinuxu.cz" title="Linux na st¯ÌbrnÈm podnose.">
-	<img src="/images/site2/sflista/ab.gif" alt="Linux na st¯ÌbrnÈm podnose."/> AbcLinuxu</a>
-        <a href="http://www.64bit.cz" title="Servery a pracovnÌ stanice Sun.">
-	<img src="/images/site2/sflista/64.gif" alt="Servery a pracovnÌ stanice Sun."/> 64bit</a>
-        <a href="http://www.praceabc.cz" title="Spojujeme lidi s pracÌ v IT!">
-    	<img src="/images/site2/sflista/pr.gif" alt="Spojujeme lidi s pracÌ v IT!"/> Pr·ceAbc</a>
-        <a href="http://www.dfklub.cz" title="Klub nejen digit·lnÌ fotografie.">
-	<img src="/images/site2/sflista/df.gif" alt="Klub nejen digit·lnÌ fotografie."/> dFklub</a>
-        <a href="http://www.2cars.cz" title="KlasickÈ vozy v modernÌm pod·nÌ.">
-	<img src="/images/site2/sflista/bm.gif" alt="KlasickÈ vozy v modernÌm pod·nÌ."/> 2cars</a>
+        <a href="http://www.lbw.cz" title="Enterprise Linux port√°l.">
+    	<img src="/images/site2/sflista/lb.gif" alt="Enterprise Linux port√°l."/> LinuxBizWorld</a>
+        <a href="http://www.abclinuxu.cz" title="Linux na st≈ô√≠brn√©m podnose.">
+	<img src="/images/site2/sflista/ab.gif" alt="Linux na st≈ô√≠brn√©m podnose."/> AbcLinuxu</a>
+        <a href="http://www.64bit.cz" title="Servery a pracovn√≠ stanice Sun.">
+	<img src="/images/site2/sflista/64.gif" alt="Servery a pracovn√≠ stanice Sun."/> 64bit</a>
+        <a href="http://www.praceabc.cz" title="Spojujeme lidi s prac√≠ v IT!">
+    	<img src="/images/site2/sflista/pr.gif" alt="Spojujeme lidi s prac√≠ v IT!"/> Pr√°ceAbc</a>
+        <a href="http://www.dfklub.cz" title="Klub nejen digit√°ln√≠ fotografie.">
+	<img src="/images/site2/sflista/df.gif" alt="Klub nejen digit√°ln√≠ fotografie."/> dFklub</a>
+        <a href="http://www.2cars.cz" title="Klasick√© vozy v modern√≠m pod√°n√≠.">
+	<img src="/images/site2/sflista/bm.gif" alt="Klasick√© vozy v modern√≠m pod√°n√≠."/> 2cars</a>
      </div>
     <div class="cistic"></div>
 </div>

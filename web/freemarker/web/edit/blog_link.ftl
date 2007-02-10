@@ -21,7 +21,7 @@
             </td>
         </tr>
         <tr>
-            <td><input type="submit" name="finish" value="Ulo¾it"></td>
+            <td><input type="submit" name="finish" value="UloÅ¾it"></td>
             <td></td>
         </tr>
     </table>

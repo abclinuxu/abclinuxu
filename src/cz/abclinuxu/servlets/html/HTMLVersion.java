@@ -70,7 +70,7 @@ public class HTMLVersion {
                 return;
 
             Template template = FMUtils.getConfiguration().getTemplate(templateName);
-            response.setContentType("text/html; charset=ISO-8859-2");
+            response.setContentType("text/html; charset=UTF-8");
             Writer writer = response.getWriter();
 
             response.setDateHeader("Last-Modified", new Date().getTime());
@@ -105,7 +105,7 @@ public class HTMLVersion {
      * Displays error page.
      */
     public static void error(HttpServletRequest request, HttpServletResponse response, Throwable e) throws IOException {
-        response.setContentType("text/html; charset=ISO-8859-2");
+        response.setContentType("text/html; charset=UTF-8");
         Writer writer = response.getWriter();
         String url = ServletUtils.getURL(request);
         Template template = null;

@@ -10,73 +10,73 @@
 <li><a href="/hardware">Hardware</a>
   <ul>
     <li><a href="/hardware/dir/153">Procesory</a></li>
-    <li><a href="/hardware/dir/88">Pøídavné karty</a></li>
-    <li><a href="/hardware/dir/143">Pøipojení na sí»</a></li>
-    <li><a href="/hardware/dir/151">Pøíslu¹enství</a></li>
+    <li><a href="/hardware/dir/88">PÅ™Ã­davnÃ© karty</a></li>
+    <li><a href="/hardware/dir/143">PÅ™ipojenÃ­ na sÃ­Å¥</a></li>
+    <li><a href="/hardware/dir/151">PÅ™Ã­sluÅ¡enstvÃ­</a></li>
     <li><a href="/hardware/dir/167">Sestavy</a></li>
-    <li><a href="/hardware/dir/187">Ukládání dat</a></li>
-    <li><a href="/hardware/dir/46">Vstupní zaøízení</a></li>
-    <li><a href="/hardware/dir/57">Vıstupní zaøízení</a></li>
-    <li><a href="/hardware/dir/220">Základní desky</a></li>
+    <li><a href="/hardware/dir/187">UklÃ¡dÃ¡nÃ­ dat</a></li>
+    <li><a href="/hardware/dir/46">VstupnÃ­ zaÅ™Ã­zenÃ­</a></li>
+    <li><a href="/hardware/dir/57">VÃ½stupnÃ­ zaÅ™Ã­zenÃ­</a></li>
+    <li><a href="/hardware/dir/220">ZÃ¡kladnÃ­ desky</a></li>
   </ul></li>
 <li><a href="/software">Software</a>
   <ul>
     <li><a href="/software/alternativy">Alternativy</a></li>
-    <li><a href="/software/bezpecnost">Bezpeènost</a></li>
+    <li><a href="/software/bezpecnost">BezpeÄnost</a></li>
     <li><a href="/software/grafika">Grafika</a></li>
     <li><a href="/software/hobby">Hobby</a></li>
     <li><a href="/software/hry">Hry</a></li>
     <li><a href="/software/internet">Internet</a></li>
-    <li><a href="/software/kancelar">Kanceláø</a></li>
-    <li><a href="/software/multimedia">Multimédia</a></li>
-    <li><a href="/software/nastroje">Nástroje</a></li>
-    <li><a href="/software/pracovni-prostredi">Pracovní prostøedí</a></li>
-    <li><a href="/software/programovani">Programování</a></li>
+    <li><a href="/software/kancelar">KancelÃ¡Å™</a></li>
+    <li><a href="/software/multimedia">MultimÃ©dia</a></li>
+    <li><a href="/software/nastroje">NÃ¡stroje</a></li>
+    <li><a href="/software/pracovni-prostredi">PracovnÃ­ prostÅ™edÃ­</a></li>
+    <li><a href="/software/programovani">ProgramovÃ¡nÃ­</a></li>
     <li><a href="/software/server">Server</a></li>
     <li><a href="/software/soubory">Soubory</a></li>
-    <li><a href="/software/system">Systém</a></li>
-    <li><a href="/software/vzdelavani">Vzdìlávání</a></li>
-    <li><a href="/software/veda">Vìda</a></li>
+    <li><a href="/software/system">SystÃ©m</a></li>
+    <li><a href="/software/vzdelavani">VzdÄ›lÃ¡vÃ¡nÃ­</a></li>
+    <li><a href="/software/veda">VÄ›da</a></li>
   </ul></li>
-<li><a href="/clanky">Èlánky</a>
+<li><a href="/clanky">ÄŒlÃ¡nky</a>
   <ul>
-    <li><a href="/clanky/bezpecnost">Bezpeènost</a></li>
+    <li><a href="/clanky/bezpecnost">BezpeÄnost</a></li>
     <li><a href="/clanky/hardware">Hardware</a></li>
-    <li><a href="/clanky/hry-a-zabava">Hry a zábava</a></li>
-    <li><a href="/clanky/jaderne-noviny">Jaderné noviny</a></li>
-    <li><a href="/clanky/dir/4731">Ke sta¾ení</a></li>
-    <li><a href="/clanky/multimedia">Multimédia</a></li>
-    <li><a href="/clanky/navody">Návody</a></li>
+    <li><a href="/clanky/hry-a-zabava">Hry a zÃ¡bava</a></li>
+    <li><a href="/clanky/jaderne-noviny">JadernÃ© noviny</a></li>
+    <li><a href="/clanky/dir/4731">Ke staÅ¾enÃ­</a></li>
+    <li><a href="/clanky/multimedia">MultimÃ©dia</a></li>
+    <li><a href="/clanky/navody">NÃ¡vody</a></li>
     <li><a href="/clanky/novinky">Novinky</a></li>
-    <li><a href="/clanky/programovani">Programování</a></li>
+    <li><a href="/clanky/programovani">ProgramovÃ¡nÃ­</a></li>
     <li><a href="/clanky/recenze">Recenze</a></li>
     <li><a href="/clanky/rozhovory">Rozhovory</a></li>
-    <li><a href="/clanky/ruzne">Rùzné</a></li>
-    <li><a href="/clanky/site">Sítì</a></li>
-    <li><a href="/clanky/system">Systém</a></li>
+    <li><a href="/clanky/ruzne">RÅ¯znÃ©</a></li>
+    <li><a href="/clanky/site">SÃ­tÄ›</a></li>
+    <li><a href="/clanky/system">SystÃ©m</a></li>
     <li><a href="/clanky/tipy">Tipy a triky</a></li>
-    <li><a href="/clanky/pr">Tiskové zprávy</a></li>
+    <li><a href="/clanky/pr">TiskovÃ© zprÃ¡vy</a></li>
   </ul></li>
-<li><a href="/ucebnice">Uèebnice</a>
+<li><a href="/ucebnice">UÄebnice</a>
   <ul>
-    <li><a href="/ucebnice/uvod">Úvod</a></li>
+    <li><a href="/ucebnice/uvod">Ãšvod</a></li>
     <li><a href="/ucebnice/historie">Historie</a></li>
-    <li><a href="/ucebnice/zaklady">Základy</a></li>
-    <li><a href="/ucebnice/prehled-prikazu">Pøehled pøíkazù</a></li>
+    <li><a href="/ucebnice/zaklady">ZÃ¡klady</a></li>
+    <li><a href="/ucebnice/prehled-prikazu">PÅ™ehled pÅ™Ã­kazÅ¯</a></li>
   </ul></li>
 <li><a href="/blog">Blogy</a>
   <ul>
-    <li><a href="/blog/vyber">Vıbìr (linuxové)</a></li>
-    <li><a href="/blog/souhrn">Struènı souhrn</a></li>
-    <li><a href="/blogy">Seznam blogù</a></li>
+    <li><a href="/blog/vyber">VÃ½bÄ›r (linuxovÃ©)</a></li>
+    <li><a href="/blog/souhrn">StruÄnÃ½ souhrn</a></li>
+    <li><a href="/blogy">Seznam blogÅ¯</a></li>
   </ul></li>
 <li><a href="/hry">Hry</a></li>
 <li><a href="/download/abicko.jsp">PDF</a></li>
-<li><a href="/slovnik">Slovník</a></li>
+<li><a href="/slovnik">SlovnÃ­k</a></li>
 <li><a href="/bazar">Bazar</a></li>
-<li><a href="/ovladace">Ovladaèe</a></li>
+<li><a href="/ovladace">OvladaÄe</a></li>
 <li><a href="/hosting">Hosting</a></li>
-<li><a href="http://www.abcprace.cz">Práce</a></li>
+<li><a href="http://www.abcprace.cz">PrÃ¡ce</a></li>
 </ul>
 
 </div>

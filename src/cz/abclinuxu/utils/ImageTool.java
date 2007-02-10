@@ -49,7 +49,7 @@ public class ImageTool {
 
         img = ImageIO.read(imagePath);
         if (img == null)
-            throw new AbcException("Nepodaøilo se naèíst obrázek ze souboru "+imagePath);
+            throw new AbcException("NepodaÅ™ilo se naÄÃ­st obrÃ¡zek ze souboru "+imagePath);
 
         if ((img2 = cutBottomIfNeeded(img, 200, 200)) != null) {
             img = img2;

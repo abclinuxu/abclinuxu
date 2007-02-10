@@ -100,7 +100,7 @@ public class Search implements AbcAction {
         File file = CreateIndex.getLastRunFile();
         if (! file.exists()) {
             lastRunFileMissing = true;
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Index je poruπen, vyhled·v·nÌ nemusÌ fungovat.", env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Index je poru≈°en, vyhled√°v√°n√≠ nemus√≠ fungovat.", env, null);
         } else {
             if (lastUpdated == null || lastUpdated.getTime() < file.lastModified()) {
                 lastUpdated = new Date(file.lastModified());
@@ -128,7 +128,7 @@ public class Search implements AbcAction {
             if (from == 0) // user clicked on Next page of the result
                 logSearch(queryString);
         } catch (ParseException e) {
-            ServletUtils.addError(PARAM_QUERY, "Hledan˝ ¯etÏzec obsahuje chybu!", env, null);
+            ServletUtils.addError(PARAM_QUERY, "Hledan√Ω ≈ôetƒõzec obsahuje chybu!", env, null);
             return choosePage(onlyNews, request, env, newsCategoriesSet);
         }
 
@@ -164,9 +164,9 @@ public class Search implements AbcAction {
         } catch (Exception e) {
             log.error("Cannot search '"+query+"'",e);
             if (lastRunFileMissing)
-                ServletUtils.addError(PARAM_QUERY,"Doπlo k chybÏ p¯i hled·nÌ. Kontaktujte prosÌm spr·vce.",env,null);
+                ServletUtils.addError(PARAM_QUERY,"Do≈°lo k chybƒõ p≈ôi hled√°n√≠. Kontaktujte pros√≠m spr√°vce.",env,null);
             else
-                ServletUtils.addError(PARAM_QUERY,"Nemohu provÈst danÈ hled·nÌ. Zkuste zadat jin˝ ¯etÏzec.",env,null);
+                ServletUtils.addError(PARAM_QUERY,"Nemohu prov√©st dan√© hled√°n√≠. Zkuste zadat jin√Ω ≈ôetƒõzec.",env,null);
             return choosePage(onlyNews, request, env, newsCategoriesSet);
         }
 

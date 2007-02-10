@@ -5,28 +5,28 @@
 <h1>Bazar</h1>
 
 <p>
-    Bazar je bezplatná slu¾ba portálu www.abclinuxu.cz, která umo¾òuje ètenáøùm
-    prodat, darovat èi koupit <a href="/hardware">hardware</a>, spotøební
+    Bazar je bezplatnÃ¡ sluÅ¾ba portÃ¡lu www.abclinuxu.cz, kterÃ¡ umoÅ¾Åˆuje ÄtenÃ¡Å™Å¯m
+    prodat, darovat Äi koupit <a href="/hardware">hardware</a>, spotÅ™ebnÃ­
     elektroniku, <a href="/software">software</a>, odbornou literaturu
-    nebo pøedmìty s FOSS tématikou (napøíklad ply¹oví tuèòáci, trièka). Bazar
-    není urèen pro vıdìleènou èinnost; komerèní inzeráty (OSVÈ, firmy) jsou
-    bez pøedchozího schválení provozovatelem zakázány.
+    nebo pÅ™edmÄ›ty s FOSS tÃ©matikou (napÅ™Ã­klad plyÅ¡ovÃ­ tuÄÅˆÃ¡ci, triÄka). Bazar
+    nenÃ­ urÄen pro vÃ½dÄ›leÄnou Äinnost; komerÄnÃ­ inzerÃ¡ty (OSVÄŒ, firmy) jsou
+    bez pÅ™edchozÃ­ho schvÃ¡lenÃ­ provozovatelem zakÃ¡zÃ¡ny.
 </p>
 
 <table class="bazar-polozky">
   <thead>
     <tr>
-        <td class="td01">Titulek inzerátu</td>
+        <td class="td01">Titulek inzerÃ¡tu</td>
         <td class="td02">Typ</td>
-        <td class="td03">Pøeèteno</td>
-        <td class="td04">Reakcí</td>
-        <td class="td05">Vlo¾eno</td>
+        <td class="td03">PÅ™eÄteno</td>
+        <td class="td04">ReakcÃ­</td>
+        <td class="td05">VloÅ¾eno</td>
     </tr>
   </thead>
   <tbody>
     <#if ADS.total == 0>
         <tr>
-            <td colspan="4" align="center">Nenalezeny ¾ádné inzeráty</td>
+            <td colspan="4" align="center">Nenalezeny Å¾Ã¡dnÃ© inzerÃ¡ty</td>
         </tr>
     <#else>
         <#assign reads=TOOL.getRelationCountersValue(ADS.data,"read")>
@@ -40,7 +40,7 @@
                 <#if ad.child.subType=='sell'>
                     <span class="prodej">prodej</span>
                 <#else>
-                    <span class="koupe">koupì</span>
+                    <span class="koupe">koupÄ›</span>
                 </#if>
             </td>
             <td class="td03">
@@ -59,18 +59,18 @@
 
 <ul>
     <li>
-        <a href="${URL.make("/bazar/edit/"+RELATION.id+"?action=add")}">Vlo¾it novı inzerát</a>
+        <a href="${URL.make("/bazar/edit/"+RELATION.id+"?action=add")}">VloÅ¾it novÃ½ inzerÃ¡t</a>
     </li>
     <#if (ADS.currentPage.row > 0) >
         <#assign start=ADS.currentPage.row-ADS.pageSize><#if (start<0)><#assign start=0></#if>
         <li>
-            <a href="/bazar?from=${start}&amp;count=${ADS.pageSize}">Novìj¹í inzeráty</a>
+            <a href="/bazar?from=${start}&amp;count=${ADS.pageSize}">NovÄ›jÅ¡Ã­ inzerÃ¡ty</a>
         </li>
     </#if>
     <#assign start=ADS.currentPage.row + ADS.pageSize>
     <#if (start < ADS.total) >
         <li>
-            <a href="/bazar?from=${start}&amp;count=${ADS.pageSize}">Star¹í inzeráty</a>
+            <a href="/bazar?from=${start}&amp;count=${ADS.pageSize}">StarÅ¡Ã­ inzerÃ¡ty</a>
         </li>
     </#if>
 </ul>

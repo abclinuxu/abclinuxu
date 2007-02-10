@@ -4,10 +4,10 @@
 
 <form action="${URL.make("/EditRelated/"+RELATION.id)}" method="POST" name="form">
     <p>
-        Zde mù¾ete upravit související dokument. Povinnım políèkem je adresa dokumentu.
-        Políèko jméno musíte vyplnit pouze tehdy, vkládáte-li dokument, kterı se nenachází
-        na tomto portále, nebo kdy¾ chcete zmìnit jeho jméno. Popis nemusíte vùbec zadávat,
-        pou¾ívejte jej jen tehdy, urychlí-li to navigaci u¾ivatele.
+        Zde mÅ¯Å¾ete upravit souvisejÃ­cÃ­ dokument. PovinnÃ½m polÃ­Äkem je adresa dokumentu.
+        PolÃ­Äko jmÃ©no musÃ­te vyplnit pouze tehdy, vklÃ¡dÃ¡te-li dokument, kterÃ½ se nenachÃ¡zÃ­
+        na tomto portÃ¡le, nebo kdyÅ¾ chcete zmÄ›nit jeho jmÃ©no. Popis nemusÃ­te vÅ¯bec zadÃ¡vat,
+        pouÅ¾Ã­vejte jej jen tehdy, urychlÃ­-li to navigaci uÅ¾ivatele.
     </p>
     <table cellpadding="5" style="margin-top:1em">
         <tr>
@@ -18,7 +18,7 @@
             </td>
         </tr>
         <tr>
-            <td>Jméno</td>
+            <td>JmÃ©no</td>
             <td>
                 <input tabindex="2" type="text" name="title" size="40" value="${PARAMS.title?if_exists?html}">
                 <div class="error">${ERRORS.title?if_exists}</div>
@@ -33,7 +33,7 @@
         </tr>
         <tr>
             <td colspan="2" align="center">
-                <input tabindex="4" type="submit" name="submit" value="Dokonèi">
+                <input tabindex="4" type="submit" name="submit" value="DokonÄi">
             </td>
         </tr>
     </table>

@@ -2,18 +2,18 @@
 
 <@lib.showMessages/>
 
-<p>Chystáte se pøesunout vlákno na jinou pozici ve stromì.
-Toto je velmi neobvyklı krok a dává smysl jen tehdy, kdy¾
-se chystáte diskusi rozdìlit. Zadejte prosím èíslo nového rodièe
-zvoleného vlákna. Pokud chcete vlákno pøesunout na nejvy¹¹í
-úroveò, místo èísla pøedka zadejte nulu. Dávejte pozor, aby
-ve stromì diskuse nevznikla smyèka - pokud komentáø pøesunete
-do nìkterého jeho potomka, vznikne velkı problém!</p>
+<p>ChystÃ¡te se pÅ™esunout vlÃ¡kno na jinou pozici ve stromÄ›.
+Toto je velmi neobvyklÃ½ krok a dÃ¡vÃ¡ smysl jen tehdy, kdyÅ¾
+se chystÃ¡te diskusi rozdÄ›lit. Zadejte prosÃ­m ÄÃ­slo novÃ©ho rodiÄe
+zvolenÃ©ho vlÃ¡kna. Pokud chcete vlÃ¡kno pÅ™esunout na nejvyÅ¡Å¡Ã­
+ÃºroveÅˆ, mÃ­sto ÄÃ­sla pÅ™edka zadejte nulu. DÃ¡vejte pozor, aby
+ve stromÄ› diskuse nevznikla smyÄka - pokud komentÃ¡Å™ pÅ™esunete
+do nÄ›kterÃ©ho jeho potomka, vznikne velkÃ½ problÃ©m!</p>
 
 <form action="${URL.make("/EditDiscussion")}" method="POST">
  <table cellpadding="5">
   <tr>
-   <td class="required">Pøedek</td>
+   <td class="required">PÅ™edek</td>
    <td>
      <input type="text" name="parentId" size="4" value="${PARAMS.parentId?if_exists}">
    </td>
@@ -21,7 +21,7 @@ do nìkterého jeho potomka, vznikne velkı problém!</p>
   <tr>
    <td>&nbsp;</td>
    <td>
-    <input type="submit" name="finish" value="Dokonèi">
+    <input type="submit" name="finish" value="DokonÄi">
    </td>
   </tr>
  </table>
@@ -38,7 +38,7 @@ do nìkterého jeho potomka, vznikne velkı problém!</p>
 
 <#macro showComment(comment) >
  <p class="diz_header">
-  Èíslo komentáøe: ${comment.id}<br>
+  ÄŒÃ­slo komentÃ¡Å™e: ${comment.id}<br>
   ${DATE.show(comment.created,"CZ_FULL")}
   <#if comment.author?exists>
    <#local who=TOOL.createUser(comment.author)>

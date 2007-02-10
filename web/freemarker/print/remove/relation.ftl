@@ -3,10 +3,10 @@
 <@lib.showMessages/>
 
 <p>
-Chyst·te se smazat objekt ${TOOL.childName(CURRENT)}.
+Chyst√°te se smazat objekt ${TOOL.childName(CURRENT)}.
 </p>
 
-<p>Vπechny relace pro tento objekt v systÈmu:</p>
+<p>V≈°echny relace pro tento objekt v syst√©mu:</p>
 
 <ul>
  <#list PARENTS as relation>
@@ -17,16 +17,16 @@ Chyst·te se smazat objekt ${TOOL.childName(CURRENT)}.
 </ul>
 
 <#if PARENTS?size gt 1>
- <p>Jelikoæ je tento objekt uloæen v systÈmu vÌcekr·t, pokud
- budete pokraËovat, zruπÌ se jen tato jeho vazba.</p>
+ <p>Jeliko≈æ je tento objekt ulo≈æen v syst√©mu v√≠cekr√°t, pokud
+ budete pokraƒçovat, zru≈°√≠ se jen tato jeho vazba.</p>
 <#else>
- <p>Pro tento objekt neexistuje æ·dn· dalπÌ
- vazba v systÈmu. Pokud budete pokraËovat, objekt
- bude nen·vratnÏ ztracen.</p>
+ <p>Pro tento objekt neexistuje ≈æ√°dn√° dal≈°√≠
+ vazba v syst√©mu. Pokud budete pokraƒçovat, objekt
+ bude nen√°vratnƒõ ztracen.</p>
 </#if>
 
 <form action="${URL.noPrefix("/EditRelation")}" method="POST">
- <input type="submit" VALUE="DokonËi" tabindex="1">
+ <input type="submit" VALUE="Dokonƒçi" tabindex="1">
  <input type="hidden" name="action" value="remove2">
  <input type="hidden" name="prefix" value="${PARAMS.prefix}">
  <input type="hidden" name="rid" value="${PARAMS.rid}">

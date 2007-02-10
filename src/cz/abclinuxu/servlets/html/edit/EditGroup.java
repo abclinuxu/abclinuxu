@@ -152,7 +152,7 @@ public class EditGroup implements AbcAction {
         persistence.synchronize(group);
 
         if ( group.getType()!=Item.GROUP )
-            return ServletUtils.showErrorPage("Toto nenÌ skupina!", env, request);
+            return ServletUtils.showErrorPage("Toto nen√≠ skupina!", env, request);
 
         params.put(PARAM_NAME, group.getData().selectSingleNode("/data/name").getText());
         params.put(PARAM_DESCRIPTION, group.getData().selectSingleNode("/data/desc").getText());
@@ -174,7 +174,7 @@ public class EditGroup implements AbcAction {
         persistence.synchronize(group);
 
         if ( group.getType()!=Item.GROUP )
-            return ServletUtils.showErrorPage("Toto nenÌ skupina!", env, request);
+            return ServletUtils.showErrorPage("Toto nen√≠ skupina!", env, request);
 
         boolean canContinue = true;
         canContinue &= setGroupName(params, group, env);
@@ -210,7 +210,7 @@ public class EditGroup implements AbcAction {
         Item group = (Item) InstanceUtils.instantiateParam(PARAM_GROUP, Item.class, params, request);
         persistence.synchronize(group);
         if ( group.getType()!=Item.GROUP )
-            return ServletUtils.showErrorPage("Toto nenÌ skupina!", env, request);
+            return ServletUtils.showErrorPage("Toto nen√≠ skupina!", env, request);
         env.put(VAR_GROUP,group);
 
         int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
@@ -240,7 +240,7 @@ public class EditGroup implements AbcAction {
 
         int group = Misc.parseInt((String) params.get(EditGroup.PARAM_GROUP), 0);
         if ( group==0 )
-            return ServletUtils.showErrorPage("ChybÌ ËÌslo skupiny!", env, request);
+            return ServletUtils.showErrorPage("Chyb√≠ ƒç√≠slo skupiny!", env, request);
 
         List users = null;
         Object tmp = params.get(ViewUser.PARAM_USER_SHORT);
@@ -283,7 +283,7 @@ public class EditGroup implements AbcAction {
     private boolean setGroupName(Map params, Item group, Map env) {
         String name = (String) params.get(PARAM_NAME);
         if ( name==null || name.trim().length()==0 ) {
-            ServletUtils.addError(PARAM_NAME, "Zadejte jmÈno skupiny!", env, null);
+            ServletUtils.addError(PARAM_NAME, "Zadejte jm√©no skupiny!", env, null);
             return false;
         }
         Node node = DocumentHelper.makeElement(group.getData(), "/data/name");

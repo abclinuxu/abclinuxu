@@ -1,63 +1,63 @@
-<?xml version="1.0" encoding="ISO-8859-2" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <categories>
     <category>
         <key>ARTICLE</key>
-        <name>Zajímavý článek</name>
-        <desc>Zprávička upozorňující na zajímavý článek.</desc>
+        <name>ZajĂ­mavĂ˝ ÄlĂĄnek</name>
+        <desc>ZprĂĄviÄka upozorĹujĂ­cĂ­ na zajĂ­mavĂ˝ ÄlĂĄnek.</desc>
     </category>
     <category>
         <key>RELEASE</key>
-        <name>Nová verze</name>
-        <desc>Upozornění na novou verzi softwaru, jádra či ovladače.</desc>
+        <name>NovĂĄ verze</name>
+        <desc>UpozornÄnĂ­ na novou verzi softwaru, jĂĄdra Äi ovladaÄe.</desc>
     </category>
     <category>
         <key>SFTW</key>
-        <name>Zajímavý software</name>
-        <desc>Informace o neznámém či zcela novém softwaru.</desc>
+        <name>ZajĂ­mavĂ˝ software</name>
+        <desc>Informace o neznĂĄmĂŠm Äi zcela novĂŠm softwaru.</desc>
     </category>
     <category>
         <key>PROJECT</key>
-        <name>Zajímavý projekt</name>
-        <desc>Zprávička informující o zajímavých stránkách.</desc>
+        <name>ZajĂ­mavĂ˝ projekt</name>
+        <desc>ZprĂĄviÄka informujĂ­cĂ­ o zajĂ­mavĂ˝ch strĂĄnkĂĄch.</desc>
     </category>
     <category>
         <key>ALERT</key>
-        <name>Bezpečnostní alerty</name>
-        <desc>Upozornění na bezpečnostní chybu.</desc>
+        <name>BezpeÄnostnĂ­ alerty</name>
+        <desc>UpozornÄnĂ­ na bezpeÄnostnĂ­ chybu.</desc>
     </category>
     <category>
         <key>FOSS</key>
         <name>Komunita</name>
-        <desc>Dění v komunitě kolem Linuxu, Open Source a Free Software.</desc>
+        <desc>DÄnĂ­ v komunitÄ kolem Linuxu, Open Source a Free Software.</desc>
     </category>
     <category>
         <key>DEPLOY</key>
-        <name>Nasazení Linuxu</name>
-        <desc>Zajímavá použití a nasazení Linuxu.</desc>
+        <name>NasazenĂ­ Linuxu</name>
+        <desc>ZajĂ­mavĂĄ pouĹžitĂ­ a nasazenĂ­ Linuxu.</desc>
     </category>
     <category>
         <key>FUN</key>
         <name>Humor</name>
-        <desc>Zábavná zprávička týkající se Linuxu či IT.</desc>
+        <desc>ZĂĄbavnĂĄ zprĂĄviÄka tĂ˝kajĂ­cĂ­ se Linuxu Äi IT.</desc>
     </category>
     <category>
         <key>IT</key>
         <name>IT novinky</name>
-        <desc>Ostatní události a zprávy ze světa výpočetní techniky.</desc>
+        <desc>OstatnĂ­ udĂĄlosti a zprĂĄvy ze svÄta vĂ˝poÄetnĂ­ techniky.</desc>
     </category>
     <category>
         <key>INVITE</key>
-        <name>Pozvánky</name>
-        <desc>Pozvánky na veletrhy, semináře a setkání.</desc>
+        <name>PozvĂĄnky</name>
+        <desc>PozvĂĄnky na veletrhy, seminĂĄĹe a setkĂĄnĂ­.</desc>
     </category>
     <category>
         <key>INFO</key>
-        <name>Upozornění</name>
-        <desc>Rozličná upozornění, například na upgrade portálu.</desc>
+        <name>UpozornÄnĂ­</name>
+        <desc>RozliÄnĂĄ upozornÄnĂ­, napĹĂ­klad na upgrade portĂĄlu.</desc>
     </category>
     <category>
         <key>ADVRT</key>
         <name>Komerce</name>
-        <desc>Informace komerčních firem.</desc>
+        <desc>Informace komerÄnĂ­ch firem.</desc>
     </category>
 </categories>

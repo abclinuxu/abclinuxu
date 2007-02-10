@@ -20,7 +20,7 @@
     <#assign HARDWARE = VARS.getFreshHardware(USER?if_exists)>
     <#if (HARDWARE?size>0) >
         <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Obrovská databáze znalostí o hardwaru, postupy zprovoznìní v GNU/Linuxu.</span></a>
+            <a class="info" href="#">?<span class="tooltip">ObrovskÃ¡ databÃ¡ze znalostÃ­ o hardwaru, postupy zprovoznÄ›nÃ­ v GNU/Linuxu.</span></a>
             <a href="/hardware">Hardware</a>
         </div>
         <div class="s_sekce">
@@ -45,8 +45,8 @@
     <#assign DRIVERS = VARS.getFreshDrivers(USER?if_exists)>
     <#if (DRIVERS?size>0) >
         <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Databáze ovladaèù pro vá¹ hardware.</span></a>
-            <a href="/ovladace">Ovladaèe</a>
+            <a class="info" href="#">?<span class="tooltip">DatabÃ¡ze ovladaÄÅ¯ pro vÃ¡Å¡ hardware.</span></a>
+            <a href="/ovladace">OvladaÄe</a>
         </div>
         <div class="s_sekce">
             <ul>
@@ -77,7 +77,7 @@
     </#list>
 
     <div class="st_vpravo">
-        <a href="/History?type=articles&amp;from=${ARTICLES?size}&amp;count=10">Star¹í èlánky</a>
+        <a href="/History?type=articles&amp;from=${ARTICLES?size}&amp;count=10">StarÅ¡Ã­ ÄlÃ¡nky</a>
     </div>
 </#if>
 
@@ -87,15 +87,15 @@
 <#if (FORUM?size > 0)>
     <#assign FORUM=TOOL.analyzeDiscussions(FORUM)>
     <div class="ds">
-        <h1 class="st_nadpis"><a href="/diskuse.jsp" title="Celé diskusní fórum">Diskusní fórum</a></h1>
+        <h1 class="st_nadpis"><a href="/diskuse.jsp" title="CelÃ© diskusnÃ­ fÃ³rum">DiskusnÃ­ fÃ³rum</a></h1>
 
         <table>
         <thead>
             <tr>
                 <td class="td01">Dotaz</td>
                 <td class="td02">Stav</td>
-                <td class="td03">Reakcí</td>
-                <td class="td04">Poslední</td>
+                <td class="td03">ReakcÃ­</td>
+                <td class="td04">PoslednÃ­</td>
             </tr>
         </thead>
         <tbody>
@@ -107,10 +107,10 @@
                 <td class="td02">
                     <@lib.markNewCommentsQuestion diz/>
                     <#if TOOL.xpath(diz.discussion,"/data/frozen")?exists>
-                        <img src="/images/site2/zamceno.gif" alt="Z" title="Diskuse byla administrátory uzamèena">
+                        <img src="/images/site2/zamceno.gif" alt="Z" title="Diskuse byla administrÃ¡tory uzamÄena">
                     </#if>
                     <#if TOOL.isQuestionSolved(diz.discussion.data)>
-                        <img src="/images/site2/vyreseno.gif" alt="V" title="Diskuse byla podle ètenáøù vyøe¹ena">
+                        <img src="/images/site2/vyreseno.gif" alt="V" title="Diskuse byla podle ÄtenÃ¡Å™Å¯ vyÅ™eÅ¡ena">
                     </#if>
                     <#if USER?exists && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"']")?exists>
                         <img src="/images/site2/sledovano.gif" alt="S" title="Tuto diskusi sledujete monitorem">
@@ -129,9 +129,9 @@
         <@lib.advertisement id="gg-hp-blogy" />
     </div>
     <ul>
-        <li><a href="/diskuse.jsp">Polo¾it dotaz</a></li>
-        <li><a href="/History?type=discussions&amp;from=${FORUM?size}&amp;count=20">Star¹í dotazy</a></li>
-	<li><a href="/faq">Èasté dotazy (FAQ)</a></li>
+        <li><a href="/diskuse.jsp">PoloÅ¾it dotaz</a></li>
+        <li><a href="/History?type=discussions&amp;from=${FORUM?size}&amp;count=20">StarÅ¡Ã­ dotazy</a></li>
+	<li><a href="/faq">ÄŒastÃ© dotazy (FAQ)</a></li>
     </ul>
 </#if>
 
@@ -142,11 +142,11 @@
   <#if STORIES?size%2==1><#assign half=half+1></#if>
     <div class="ramec">
       <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Vlastní blog si po pøihlá¹ení
-            mù¾ete zalo¾it v nastavení svého profilu</span></a>
+        <a class="info" href="#">?<span class="tooltip">VlastnÃ­ blog si po pÅ™ihlÃ¡Å¡enÃ­
+            mÅ¯Å¾ete zaloÅ¾it v nastavenÃ­ svÃ©ho profilu</span></a>
         <a href="/blog">Blogy na abclinuxu.cz</a>,
-        <a href="/blog/souhrn">struènìj¹í souhrn</a>,
-        <a href="/blog/vyber">vıbìr</a>
+        <a href="/blog/souhrn">struÄnÄ›jÅ¡Ã­ souhrn</a>,
+        <a href="/blog/vyber">vÃ½bÄ›r</a>
       </div>
       <table class="siroka">
         <tr>
@@ -179,13 +179,13 @@
         <#assign diz=TOOL.analyzeDiscussion("UNDEF")>
     </#if>
     <a href="${url}" title="${author.nick?default(author.name)?html}<#if title!="UNDEF">, ${title}</#if>">${TOOL.xpath(story, "/data/name")}</a>
-    <span title="Poèet&nbsp;komentáøù<#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if>">
+    <span title="PoÄet&nbsp;komentÃ¡Å™Å¯<#if diz.responseCount gt 0>, poslednÃ­&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if>">
         (${diz.responseCount}<@lib.markNewComments diz/>)
     </span>
 </#macro>
 
 
-<h2>Slu¾by</h2>
+<h2>SluÅ¾by</h2>
 
 <table class="boxy">
   <tr>
@@ -193,7 +193,7 @@
     <#assign BAZAAR = VARS.getFreshBazaarAds(USER?if_exists)>
     <#if (BAZAAR?size>0) >
       <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Inzeráty z AbcBazaru.</span></a>
+        <a class="info" href="#">?<span class="tooltip">InzerÃ¡ty z AbcBazaru.</span></a>
         <a href="/bazar">Bazar</a>
       </div>
       <div class="s_sekce">
@@ -217,8 +217,8 @@
     <#assign DICTIONARY=VARS.getFreshDictionary(USER?if_exists)>
     <#if (DICTIONARY?size>0) >
       <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Vıkladovı slovník linuxovıch pojmù.</span></a>
-        <a href="/slovnik">Slovník</a>
+        <a class="info" href="#">?<span class="tooltip">VÃ½kladovÃ½ slovnÃ­k linuxovÃ½ch pojmÅ¯.</span></a>
+        <a href="/slovnik">SlovnÃ­k</a>
       </div>
       <div class="s_sekce">
         <ul>
@@ -234,7 +234,7 @@
     <#assign FAQ = VARS.getFreshFaqs(USER?if_exists)>
     <#if (FAQ?size>0) >
         <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Odpovìdi na èasto kladené otázky.</span></a>
+            <a class="info" href="#">?<span class="tooltip">OdpovÄ›di na Äasto kladenÃ© otÃ¡zky.</span></a>
             <a href="/faq">FAQ</a>
         </div>
         <div class="s_sekce">
@@ -252,7 +252,7 @@
 
 <#assign FEEDS = VARS.getFeeds(USER?if_exists,true)>
 <#if (FEEDS.size() > 0)>
-  <h2>Rozcestník</h2>
+  <h2>RozcestnÃ­k</h2>
   <div class="rozc">
     <table>
       <#list FEEDS.keySet() as server>

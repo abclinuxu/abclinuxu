@@ -2,23 +2,23 @@
 
 <@lib.showMessages/>
 
-<p>Na této stránce mù¾ete vytvoøit nové pøístupové
-právo pro zvoleného u¾ivatele nebo skupinu. Nejdøíve
-urèíte typ práva a jeho hodnotu. Zároveò musíte urèit,
-zda se toto právo bude tıkat skupiny èi u¾ivatele.
-Pokud skupiny, vyberte ji ze seznamu, v pøípadì u¾ivatele
-budete pøeneseni na stránku, kde mù¾ete vyhledat u¾ivatele.
+<p>Na tÃ©to strÃ¡nce mÅ¯Å¾ete vytvoÅ™it novÃ© pÅ™Ã­stupovÃ©
+prÃ¡vo pro zvolenÃ©ho uÅ¾ivatele nebo skupinu. NejdÅ™Ã­ve
+urÄÃ­te typ prÃ¡va a jeho hodnotu. ZÃ¡roveÅˆ musÃ­te urÄit,
+zda se toto prÃ¡vo bude tÃ½kat skupiny Äi uÅ¾ivatele.
+Pokud skupiny, vyberte ji ze seznamu, v pÅ™Ã­padÄ› uÅ¾ivatele
+budete pÅ™eneseni na strÃ¡nku, kde mÅ¯Å¾ete vyhledat uÅ¾ivatele.
 </p>
 
 <form action="${URL.make("/EditRelation")}" method="POST">
  <table width=100 border=0 cellpadding=5>
   <tr>
-   <td width="90" class="required">Pøístupové právo</td>
+   <td width="90" class="required">PÅ™Ã­stupovÃ© prÃ¡vo</td>
    <td>
     <select name="right" tabindex="1">
-     <option value="read" selected>ke ètení</option>
-     <option value="save" selected>k zápisu</option>
-     <option value="delete" selected>k mazání</option>
+     <option value="read" selected>ke ÄtenÃ­</option>
+     <option value="save" selected>k zÃ¡pisu</option>
+     <option value="delete" selected>k mazÃ¡nÃ­</option>
     </select>
     <select name="value" tabindex="2">
      <option value="yes" selected>ano</option>
@@ -30,7 +30,7 @@ budete pøeneseni na stránku, kde mù¾ete vyhledat u¾ivatele.
    <td width="90" class="required">Pro</td>
    <td>
     <select name="who" tabindex="3">
-     <option value="user" selected>u¾ivatele</option>
+     <option value="user" selected>uÅ¾ivatele</option>
      <option value="group">skupinu</option>
     </select>
    </td>
@@ -45,7 +45,7 @@ budete pøeneseni na stránku, kde mù¾ete vyhledat u¾ivatele.
   </tr>
   <tr>
    <td width="120">&nbsp;</td>
-   <td><input type="submit" value="Pokraèuj" tabindex="4"></td>
+   <td><input type="submit" value="PokraÄuj" tabindex="4"></td>
   </tr>
  </table>
 

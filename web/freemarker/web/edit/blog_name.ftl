@@ -2,26 +2,26 @@
 
 <@lib.showMessages/>
 
-<h2>Úvod</h2>
+<h2>Ãšvod</h2>
 
-<p>Tato stránka slou¾í ke zmìnì jména blogu. Jedná se
-o docela delikátní operaci, zvlá¹tì pokud je vá¹ blog ji¾
-veøejnì znám. Tímto úkonem se toti¾ zmìní URL, pøes které
-je vá¹ blog pøístupnı. Odkazy, které mají va¹i ètenáøi
-èi známí ve svıch zálo¾kách, se tedy stanou neplatnımi.
-Pokud jste si skuteènì jisti, zmìnit jméno mù¾ete ní¾e.</p>
+<p>Tato strÃ¡nka slouÅ¾Ã­ ke zmÄ›nÄ› jmÃ©na blogu. JednÃ¡ se
+o docela delikÃ¡tnÃ­ operaci, zvlÃ¡Å¡tÄ› pokud je vÃ¡Å¡ blog jiÅ¾
+veÅ™ejnÄ› znÃ¡m. TÃ­mto Ãºkonem se totiÅ¾ zmÄ›nÃ­ URL, pÅ™es kterÃ©
+je vÃ¡Å¡ blog pÅ™Ã­stupnÃ½. Odkazy, kterÃ© majÃ­ vaÅ¡i ÄtenÃ¡Å™i
+Äi znÃ¡mÃ­ ve svÃ½ch zÃ¡loÅ¾kÃ¡ch, se tedy stanou neplatnÃ½mi.
+Pokud jste si skuteÄnÄ› jisti, zmÄ›nit jmÃ©no mÅ¯Å¾ete nÃ­Å¾e.</p>
 
-<p>Jméno mù¾e obsahovat jen písmena anglické abecedy, èíslice
-a podtr¾ítko (navíc první písmeno nesmí bıt èíslice). Na velikosti písmen
-nezále¾í. Napøíklad pojmenujete-li si blog snehulak, jeho
-adresa bude www.abclinuxu.cz/blog/snehulak. Jméno
-blogu mù¾ete pozdìji zmìnit, pøestane-li vám vyhovovat.</p>
+<p>JmÃ©no mÅ¯Å¾e obsahovat jen pÃ­smena anglickÃ© abecedy, ÄÃ­slice
+a podtrÅ¾Ã­tko (navÃ­c prvnÃ­ pÃ­smeno nesmÃ­ bÃ½t ÄÃ­slice). Na velikosti pÃ­smen
+nezÃ¡leÅ¾Ã­. NapÅ™Ã­klad pojmenujete-li si blog snehulak, jeho
+adresa bude www.abclinuxu.cz/blog/snehulak. JmÃ©no
+blogu mÅ¯Å¾ete pozdÄ›ji zmÄ›nit, pÅ™estane-li vÃ¡m vyhovovat.</p>
 
 <form action="${URL.make("/blog/edit/"+REL_BLOG.id)}" method="POST">
     <p>
-        <span class="required">Jméno</span>
+        <span class="required">JmÃ©no</span>
         <input type="text" name="blogName" size="40" maxlength="70" value="${PARAMS.blogName?if_exists?html}">
-        <input type="submit" name="finish" value="Dokonèi">
+        <input type="submit" name="finish" value="DokonÄi">
     </p>
     <div class="error">${ERRORS.blogName?if_exists}</div>
     <input type="hidden" name="action" value="rename2">

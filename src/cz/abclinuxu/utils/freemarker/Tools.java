@@ -234,7 +234,7 @@ public class Tools implements Configurable {
             if (type == Item.DISCUSSION)
                 return "Diskuse";
             if (type == Item.NEWS)
-                return "Zpr·viËka";
+                return "Zpr√°viƒçka";
             if (type == Item.AUTHOR) {
                 Element root = ((Item)obj).getData().getRootElement();
                 StringBuffer sb = new StringBuffer();
@@ -1127,7 +1127,7 @@ public class Tools implements Configurable {
         StringBuffer sb = new StringBuffer(5000);
         List nodes = record.getData().selectNodes("/data/content");
         if ( nodes.size()==0 )
-            throw new InvalidDataException("Z·znam "+record.getId()+" m· πpatn˝ obsah!");
+            throw new InvalidDataException("Z√°znam "+record.getId()+" m√° ≈°patn√Ω obsah!");
         else {
             for ( Iterator iter = nodes.iterator(); iter.hasNext(); )
                 sb.append(((Element) iter.next()).getText());
@@ -1297,7 +1297,7 @@ public class Tools implements Configurable {
                 if (type==Item.ARTICLE || type==Item.BLOG)
                     node = data.selectSingleNode("data/name");
                 else if ( type==Item.NEWS || type==Item.BAZAAR || type==Item.TRIVIA ) {
-                    discussion.title = "Zpr·viËka";
+                    discussion.title = "Zpr√°viƒçka";
                     node = data.selectSingleNode("data/title");
                 }
                 if (node != null)

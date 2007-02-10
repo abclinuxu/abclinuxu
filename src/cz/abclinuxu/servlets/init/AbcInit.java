@@ -102,7 +102,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         try {
             FMTemplateSelector.initialize(path+tmp);
         } catch (Exception e) {
-            log.fatal("Nemohu inicializovat systém ¹ablon!", e);
+            log.fatal("Nemohu inicializovat systÃ©m Å¡ablon!", e);
         }
 
         startTasks();

@@ -9,17 +9,17 @@
 <form action="${URL.noPrefix("/EditAdvertisement")}" method="POST" name="form">
     <table class="siroka" border="0">
         <tr>
-            <td width="90">Identifikátor:</td>
+            <td width="90">IdentifikÃ¡tor:</td>
             <td>${id}</td>
         </tr>
         <tr>
             <td width="90">Stav:</td>
             <td>
                 <#if TOOL.xpath(POSITION, "@active")=="yes">
-                    <span class="ad_active">aktivní</span>
+                    <span class="ad_active">aktivnÃ­</span>
                     <input type="submit" name="deactivatePosition" value="Vypnout">
                 <#else>
-                    <span class="ad_inactive">neaktivní</span>
+                    <span class="ad_inactive">neaktivnÃ­</span>
                     <input type="submit" name="activatePosition" value="Zapnout">
                 </#if>
             </td>
@@ -32,8 +32,8 @@
         </#if>
         <tr>
             <td width="90">
-                Defaultní kód:
-                <#if TOOL.xpath(DEFAULT_CODE, "@dynamic")?if_exists=="yes">(dynamickı)</#if>
+                DefaultnÃ­ kÃ³d:
+                <#if TOOL.xpath(DEFAULT_CODE, "@dynamic")?if_exists=="yes">(dynamickÃ½)</#if>
             </td>
             <td>
                 <textarea disabled rows="7" class="siroka">${DEFAULT_CODE.getText()?html}</textarea>
@@ -43,15 +43,15 @@
 
     <br>
     <input type="submit" name="editPosition" value="Upravit">
-    <input type="submit" name="addCode" value="Pøidat kód">
+    <input type="submit" name="addCode" value="PÅ™idat kÃ³d">
     <input type="submit" name="rmPosition" value="Smazat" onclick="return confirm('Opravdu chcete smazat tuto pozici?')">
-    <input type="submit" name="nothing" value="Zpìt">
+    <input type="submit" name="nothing" value="ZpÄ›t">
 
     <#if (CODES?size > 0)>
-        <h2>Reklamní kódy pro urèité URL adresy</h2>
+        <h2>ReklamnÃ­ kÃ³dy pro urÄitÃ© URL adresy</h2>
         <p>
-            Tyto kódy se porovnají s aktuální URL adresou v tomto poøadí, pøièem¾ první shoda
-            urèí kód, kterı bude pou¾it. Nebude-li nalezena ¾ádná shoda, pou¾ije se hlavní kód
+            Tyto kÃ³dy se porovnajÃ­ s aktuÃ¡lnÃ­ URL adresou v tomto poÅ™adÃ­, pÅ™iÄemÅ¾ prvnÃ­ shoda
+            urÄÃ­ kÃ³d, kterÃ½ bude pouÅ¾it. Nebude-li nalezena Å¾Ã¡dnÃ¡ shoda, pouÅ¾ije se hlavnÃ­ kÃ³d
             pozice.
         </p>
         <#list CODES as code>
@@ -59,7 +59,7 @@
             <div style="border: solid 1px black">
                 <table class="siroka" border="0">
                     <tr>
-                        <td width="90">Regulární vıraz:</td>
+                        <td width="90">RegulÃ¡rnÃ­ vÃ½raz:</td>
                         <td>${TOOL.xpath(code,"@regexp")}</td>
                     </tr>
                     <#if desc != "UNDEFINED">
@@ -70,8 +70,8 @@
                     </#if>
                     <tr>
                         <td width="90">
-                            Reklamní kód:
-                            <#if TOOL.xpath(code, "@dynamic")?if_exists=="yes">(dynamickı)</#if>
+                            ReklamnÃ­ kÃ³d:
+                            <#if TOOL.xpath(code, "@dynamic")?if_exists=="yes">(dynamickÃ½)</#if>
                         </td>
                         <td>
                             <textarea disabled rows="7" class="siroka">${code.getText()?html}</textarea>
@@ -79,7 +79,7 @@
                     </tr>
                 </table>
                 <input type="submit" name="editCode${code_index}" value="Upravit">
-                <input type="submit" name="rmCode${code_index}" value="Smazat" onclick="return confirm('Opravdu chcete smazat tento kód?')">
+                <input type="submit" name="rmCode${code_index}" value="Smazat" onclick="return confirm('Opravdu chcete smazat tento kÃ³d?')">
             </div>
         </#list>
     </#if>

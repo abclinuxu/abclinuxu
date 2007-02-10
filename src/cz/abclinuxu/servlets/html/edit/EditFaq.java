@@ -85,7 +85,7 @@ public class EditFaq implements AbcAction {
             Tools.sync(relation);
             env.put(VAR_RELATION, relation);
         } else if (!ACTION_ADD.equals(action))
-            throw new MissingArgumentException("Chybí parametr rid!");
+            throw new MissingArgumentException("ChybÃ­ parametr rid!");
 
 
         // check permissions
@@ -105,7 +105,7 @@ public class EditFaq implements AbcAction {
         if (ACTION_EDIT_STEP2.equals(action))
             return actionEditStep2(request, response, env);
 
-        throw new MissingArgumentException("Nepodporovaná hodnota parametru action!");
+        throw new MissingArgumentException("NepodporovanÃ¡ hodnota parametru action!");
     }
 
     /**
@@ -126,8 +126,8 @@ public class EditFaq implements AbcAction {
         Relation parentRelation = (Relation) env.get(VAR_RELATION);
         Category section = (Category) persistence.findById(parentRelation.getChild());
         if (section.getType()!=Category.FAQ) {
-            log.warn("Sekce " + section.getId() + " musí být typu FAQ - " + Category.FAQ);
-            throw new InvalidInputException("Interní chyba - tato sekce není typu FAQ.");
+            log.warn("Sekce " + section.getId() + " musÃ­ bÃ½t typu FAQ - " + Category.FAQ);
+            throw new InvalidInputException("InternÃ­ chyba - tato sekce nenÃ­ typu FAQ.");
         }
 
         Item faq = new Item(0, Item.FAQ);
@@ -250,7 +250,7 @@ public class EditFaq implements AbcAction {
         if (tmp != null && tmp.length() > 0) {
             if (tmp.indexOf("<") != -1) {
                 params.put(PARAM_TITLE, "");
-                ServletUtils.addError(PARAM_TITLE, "Pou¾ití HTML znaèek je zakázáno!", env, null);
+                ServletUtils.addError(PARAM_TITLE, "PouÅ¾itÃ­ HTML znaÄek je zakÃ¡zÃ¡no!", env, null);
                 return false;
             }
             if (tmp.indexOf('\n') != -1)
@@ -292,7 +292,7 @@ public class EditFaq implements AbcAction {
             Format format = FormatDetector.detect(tmp);
             element.addAttribute("format", Integer.toString(format.getId()));
         } else {
-            ServletUtils.addError(PARAM_TEXT, "Zadejte text odpovìdi!", env, null);
+            ServletUtils.addError(PARAM_TEXT, "Zadejte text odpovÄ›di!", env, null);
             return false;
         }
         return true;

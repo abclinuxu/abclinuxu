@@ -2,40 +2,40 @@
 
 <#assign plovouci_sloupec>
   <div class="s_nadpis">
-    <a class="info" href="#">?<span class="tooltip">Vlastní blog si po pøihlá¹ení mù¾ete zalo¾it v nastavení svého profilu.</span></a>
+    <a class="info" href="#">?<span class="tooltip">VlastnÃ­ blog si po pÅ™ihlÃ¡Å¡enÃ­ mÅ¯Å¾ete zaloÅ¾it v nastavenÃ­ svÃ©ho profilu.</span></a>
     <a href="/blog">Blogy na AbcLinuxu</a>
   </div>
 
     <div class="s_sekce">
         <#if DIGEST?exists>
-            Vıbìr zápiskù, které se tıkají Linuxu, Open Source èi IT. ®ádná politika.
+            VÃ½bÄ›r zÃ¡piskÅ¯, kterÃ© se tÃ½kajÃ­ Linuxu, Open Source Äi IT. Å½Ã¡dnÃ¡ politika.
         <#else>
-            Pøehled zápisù ze v¹ech blogù na¹ich u¾ivatelù. Blog si mù¾e zalo¾it registrovanı u¾ivatel
-            ve svém profilu.
+            PÅ™ehled zÃ¡pisÅ¯ ze vÅ¡ech blogÅ¯ naÅ¡ich uÅ¾ivatelÅ¯. Blog si mÅ¯Å¾e zaloÅ¾it registrovanÃ½ uÅ¾ivatel
+            ve svÃ©m profilu.
         </#if>
         <ul>
             <#if DIGEST?exists>
                 <li>
-                    <a href="/blog">V¹echny zápisky</a>
+                    <a href="/blog">VÅ¡echny zÃ¡pisky</a>
                 </li>
             <#else>
                 <li>
                     <#if SUMMARY?exists>
-                        <a href="/blog">Vıpis s perexy</a>
+                        <a href="/blog">VÃ½pis s perexy</a>
                     <#else>
-                        <a href="/blog/souhrn">Struènìj¹í souhrn</a>
+                        <a href="/blog/souhrn">StruÄnÄ›jÅ¡Ã­ souhrn</a>
                     </#if>
                 </li>
                 <li>
-                    <a href="/blog/vyber">Vıbìr z blogù</a>
+                    <a href="/blog/vyber">VÃ½bÄ›r z blogÅ¯</a>
                 </li>
             </#if>
-            <li><a href="/blogy">Seznam blogù</a></li>
+            <li><a href="/blogy">Seznam blogÅ¯</a></li>
             <li>
                 <#if DIGEST?exists>
-                    <a href="/auto/blogDigest.rss">RSS kanál</a>
+                    <a href="/auto/blogDigest.rss">RSS kanÃ¡l</a>
                 <#else>
-                    <a href="/auto/blog.rss">RSS kanál</a>
+                    <a href="/auto/blog.rss">RSS kanÃ¡l</a>
                 </#if>
             </li>
         </ul>
@@ -49,7 +49,7 @@
 <#include "../header.ftl">
 
 <#if STORIES.total==0>
-    <p>Va¹emu vıbìru neodpovídá ¾ádnı zápis.</p>
+    <p>VaÅ¡emu vÃ½bÄ›ru neodpovÃ­dÃ¡ Å¾Ã¡dnÃ½ zÃ¡pis.</p>
 </#if>
 
 <#list STORIES.data as relation>
@@ -74,7 +74,7 @@
     	    <a href="/Profile/${author.id}">${author.name}</a>
             <#if (category!="UNDEF" && category?length > 1)>| ${category}</#if>
             <#if SUMMARY?exists><br /><#else> | </#if>
-	        Pøeèteno: ${TOOL.getCounterValue(story,"read")}&times;
+	        PÅ™eÄteno: ${TOOL.getCounterValue(story,"read")}&times;
             <#if tmp.discussion?exists>| <@lib.showCommentsInListing TOOL.analyzeDiscussion(tmp.discussion[0]), "SMART_DMY", "/blog" /></#if>
             <@lib.showShortRating relation, "| " />
         </p>
@@ -82,7 +82,7 @@
             <#assign text = TOOL.xpath(story, "/data/perex")?default("UNDEF")>
             <#if text!="UNDEF">
                 ${text}
-                <div class="signature"><a href="${url}">více...</a></div>
+                <div class="signature"><a href="${url}">vÃ­ce...</a></div>
             <#else>
                 ${TOOL.xpath(story, "/data/content")}
             </#if>
@@ -104,11 +104,11 @@
     </#if>
     <#if (STORIES.currentPage.row > 0) >
         <#assign start=STORIES.currentPage.row-STORIES.pageSize><#if (start<0)><#assign start=0></#if>
-        <a href="${url}?from=${start}">Novìj¹í zápisy</a>
+        <a href="${url}?from=${start}">NovÄ›jÅ¡Ã­ zÃ¡pisy</a>
     </#if>
     <#assign start=STORIES.currentPage.row + STORIES.pageSize>
     <#if (start < STORIES.total) >
-        <a href="${url}?from=${start}">Star¹í zápisy</a>
+        <a href="${url}?from=${start}">StarÅ¡Ã­ zÃ¡pisy</a>
     </#if>
 </p>
 

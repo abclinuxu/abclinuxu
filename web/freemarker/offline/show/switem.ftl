@@ -5,14 +5,14 @@
 
 <#assign who=TOOL.createUser(ITEM.owner)>
 <p>
- Tuto polo¾ku vytvoøil <a href="http://www.abclinuxu.cz/Profile/${who.id}">${who.name}</a>
+ Tuto poloÅ¾ku vytvoÅ™il <a href="http://www.abclinuxu.cz/Profile/${who.id}">${who.name}</a>
  dne ${DATE.show(ITEM.created,"CZ_FULL")}.
 </p>
 
 <p>
- Máte-li doplòující informace, mù¾ete
- <a href="http://www.abclinuxu.cz/software/edit/${REL_ITEM.id}?action=addRecord">pøidat</a>
- dal¹í záznam.
+ MÃ¡te-li doplÅˆujÃ­cÃ­ informace, mÅ¯Å¾ete
+ <a href="http://www.abclinuxu.cz/software/edit/${REL_ITEM.id}?action=addRecord">pÅ™idat</a>
+ dalÅ¡Ã­ zÃ¡znam.
 </p>
 
 <#assign RECORDS = CHILDREN.record>
@@ -20,12 +20,12 @@
  <#assign RECORD = REL_RECORD.child>
  <#assign who=TOOL.createUser(RECORD.owner)>
  <table cellspacing="0" border="1" cellpadding="5" width="100%">
-  <caption>Záznam èíslo ${REL_RECORD_index+1}</caption>
+  <caption>ZÃ¡znam ÄÃ­slo ${REL_RECORD_index+1}</caption>
   <tr>
-    <td colspan="2">Tento záznam pøidal <a href="http://www.abclinuxu.cz/Profile/${who.id}">${who.name}</a>
+    <td colspan="2">Tento zÃ¡znam pÅ™idal <a href="http://www.abclinuxu.cz/Profile/${who.id}">${who.name}</a>
      dne ${DATE.show(RECORD.created,"CZ_FULL")}.
      <#if RECORD.updated.after(RECORD.created)>
-      Poslední úprava probìhla dne ${DATE.show(RECORD.updated,"CZ_FULL")}.
+      PoslednÃ­ Ãºprava probÄ›hla dne ${DATE.show(RECORD.updated,"CZ_FULL")}.
      </#if>
     </td>
   </tr>
@@ -37,12 +37,12 @@
   </#if>
   <#if TOOL.xpath(RECORD,"data/version")?exists>
    <tr>
-    <td width="90">Tento záznam se tıká verze</td>
+    <td width="90">Tento zÃ¡znam se tÃ½kÃ¡ verze</td>
     <td>${TOOL.xpath(RECORD,"data/version")}</a></td>
    </tr>
   </#if>
   <tr>
-   <td width="90">Návod èi poznámka</td>
+   <td width="90">NÃ¡vod Äi poznÃ¡mka</td>
    <td>${TOOL.render(TOOL.xpath(RECORD,"data/text"),USER?if_exists)}</a></td>
   </tr>
  </table>

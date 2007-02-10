@@ -2,21 +2,21 @@
 
 <#if PARAMS.TITLE?exists><h1 class="st_nadpis">${PARAMS.TITLE}</h1></#if>
 
-<p>Tento formuláø slou¾í pro hledání u¾ivatele portálu
-www.abclinuxu.cz. Existuje nìkolik mo¾ností, jak mù¾ete
-najít urèitého u¾ivatele. Mù¾ete zadat jeho</p>
+<p>Tento formulÃ¡Å™ slouÅ¾Ã­ pro hledÃ¡nÃ­ uÅ¾ivatele portÃ¡lu
+www.abclinuxu.cz. Existuje nÄ›kolik moÅ¾nostÃ­, jak mÅ¯Å¾ete
+najÃ­t urÄitÃ©ho uÅ¾ivatele. MÅ¯Å¾ete zadat jeho</p>
 
 <ul>
-<li>èíslo
-<li>pøihla¹ovací jméno (tøeba jen èást)
-<li>jméno u¾ivatele (tøeba jen èást)
-<li>email (tøeba jen èást)
-<li>bydli¹tì (tøeba jen èást)
+<li>ÄÃ­slo
+<li>pÅ™ihlaÅ¡ovacÃ­ jmÃ©no (tÅ™eba jen ÄÃ¡st)
+<li>jmÃ©no uÅ¾ivatele (tÅ™eba jen ÄÃ¡st)
+<li>email (tÅ™eba jen ÄÃ¡st)
+<li>bydliÅ¡tÄ› (tÅ™eba jen ÄÃ¡st)
 </ul>
 
-<p>V¾dy vyplòte alespoò jedno vstupní políèko, do nìho¾ napi¹te nejménì
-tøi písmena a ode¹lete formuláø. Na dal¹í stránce si budete moci vybrat
-z nalezenıch u¾ivatelù, se kterım budete moci pokraèovat v této akci.</p>
+<p>VÅ¾dy vyplÅˆte alespoÅˆ jedno vstupnÃ­ polÃ­Äko, do nÄ›hoÅ¾ napiÅ¡te nejmÃ©nÄ›
+tÅ™i pÃ­smena a odeÅ¡lete formulÃ¡Å™. Na dalÅ¡Ã­ strÃ¡nce si budete moci vybrat
+z nalezenÃ½ch uÅ¾ivatelÅ¯, se kterÃ½m budete moci pokraÄovat v tÃ©to akci.</p>
 
 <@lib.showMessages/>
 
@@ -24,35 +24,35 @@ z nalezenıch u¾ivatelù, se kterım budete moci pokraèovat v této akci.</p>
 
   <table border="0" cellpadding="5">
    <tr>
-    <td width="100">Èíslo u¾ivatele</td>
+    <td width="100">ÄŒÃ­slo uÅ¾ivatele</td>
     <td>
      <input type="text" name="uid" size="5" value="${PARAMS.uid?if_exists}">
      <div class="error">${ERRORS.uid?if_exists}</div>
     </td>
    </tr>
    <tr>
-    <td width="100">Pøihla¹ovací jméno</td>
+    <td width="100">PÅ™ihlaÅ¡ovacÃ­ jmÃ©no</td>
     <td>
      <input type="text" name="login" size="25" value="${PARAMS.login?if_exists}">
      <div class="error">${ERRORS.login?if_exists}</div>
     </td>
    </tr>
    <tr>
-    <td width="100">Jméno u¾ivatele</td>
+    <td width="100">JmÃ©no uÅ¾ivatele</td>
     <td>
      <input type="text" name="name" size="25" value="${PARAMS.name?if_exists}">
      <div class="error">${ERRORS.name?if_exists}</div>
     </td>
    </tr>
    <tr>
-    <td width="100">Email u¾ivatele</td>
+    <td width="100">Email uÅ¾ivatele</td>
     <td>
      <input type="text" name="email" size="25" value="${PARAMS.email?if_exists}">
      <div class="error">${ERRORS.email?if_exists}</div>
     </td>
    </tr>
     <tr>                                                                                                            
-    <td width="100">Bydli¹tì u¾ivatele</td>                                                                        
+    <td width="100">BydliÅ¡tÄ› uÅ¾ivatele</td>                                                                        
     <td>                                                                                                           
      <input type="text" name="city" size="25" value="${PARAMS.city?if_exists}">                                    
      <div class="error">${ERRORS.city?if_exists}</div>                                                             
@@ -61,7 +61,7 @@ z nalezenıch u¾ivatelù, se kterım budete moci pokraèovat v této akci.</p>
    <tr>
     <td width="100">&nbsp;</td>
     <td>
-     <input type="submit" value="Pokraèuj">
+     <input type="submit" value="PokraÄuj">
     </td>
    </tr>
   </table>

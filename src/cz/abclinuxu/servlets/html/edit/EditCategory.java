@@ -112,7 +112,7 @@ public class EditCategory implements AbcAction {
         if ( ACTION_EDIT2.equals(action) )
             return actionEditStep2(request, response, env);
 
-        throw new MissingArgumentException("Chybí parametr action!");
+        throw new MissingArgumentException("ChybÃ­ parametr action!");
     }
 
     // TODO prevest na settery, jako je to v ostatnich akcich
@@ -129,7 +129,7 @@ public class EditCategory implements AbcAction {
         String note = (String) params.get(PARAM_NOTE);
 
         if ( name==null || name.length()==0 ) {
-            ServletUtils.addError(PARAM_NAME,"Zadejte jméno sekce!",env, null);
+            ServletUtils.addError(PARAM_NAME,"Zadejte jmÃ©no sekce!",env, null);
             return FMTemplateSelector.select("EditCategory","add",env,request);
         }
 

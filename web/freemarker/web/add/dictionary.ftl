@@ -2,27 +2,27 @@
 
 <@lib.showMessages/>
 
-<h1>Novı pojem</h1>
+<h1>NovÃ½ pojem</h1>
 
 <p>
-    Napi¹te jméno pojmu a jeho vysvìtlení. Pojem by mìl bıt buï linuxovı nebo poèítaèovı.
-    Jméno pi¹te malımi písmeny, velká písmena pou¾ijte jen pro ustálené zkratky (napøíklad SCSI).
-    První znak jména pojmu musí bıt písmeno (a-z).
-    Ze jména se vygeneruje URL adresa (po normalizacích - odstranìní v¹ech znakù kromì písmen, èísel,
-    teèky a pomlèky, na konci i v¹ech teèek a pomlèek). Pokud se vám vısledné URL nelíbí, kontaktujte
-    administrátory.
+    NapiÅ¡te jmÃ©no pojmu a jeho vysvÄ›tlenÃ­. Pojem by mÄ›l bÃ½t buÄ linuxovÃ½ nebo poÄÃ­taÄovÃ½.
+    JmÃ©no piÅ¡te malÃ½mi pÃ­smeny, velkÃ¡ pÃ­smena pouÅ¾ijte jen pro ustÃ¡lenÃ© zkratky (napÅ™Ã­klad SCSI).
+    PrvnÃ­ znak jmÃ©na pojmu musÃ­ bÃ½t pÃ­smeno (a-z).
+    Ze jmÃ©na se vygeneruje URL adresa (po normalizacÃ­ch - odstranÄ›nÃ­ vÅ¡ech znakÅ¯ kromÄ› pÃ­smen, ÄÃ­sel,
+    teÄky a pomlÄky, na konci i vÅ¡ech teÄek a pomlÄek). Pokud se vÃ¡m vÃ½slednÃ© URL nelÃ­bÃ­, kontaktujte
+    administrÃ¡tory.
 </p>
 
 <p>
-    Pokud v popisu nepou¾ijete formatovací znaky &lt;br&gt; nebo &lt;p&gt;, systém automaticky
-    nahradí prázdné øádky znaèkou pro novı odstavec.
+    Pokud v popisu nepouÅ¾ijete formatovacÃ­ znaky &lt;br&gt; nebo &lt;p&gt;, systÃ©m automaticky
+    nahradÃ­ prÃ¡zdnÃ© Å™Ã¡dky znaÄkou pro novÃ½ odstavec.
 </p>
 
 <#if PARAMS.preview?exists>
-    <h2>Náhled</h2>
+    <h2>NÃ¡hled</h2>
 
     <fieldset>
-        <legend>Náhled</legend>
+        <legend>NÃ¡hled</legend>
         <h3>${PARAMS.name?if_exists}</h3>
         <#if PARAMS.desc?exists>
             <div class="dict-item">
@@ -45,14 +45,14 @@
             <td class="required">Popis</td>
             <td>
                 <div class="form-edit">
-                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;b&gt;', '&lt;/b&gt;');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
-                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;i&gt;', '&lt;/i&gt;');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
-                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;a href=&quot;&quot;&gt;', '&lt;/a&gt;');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
-                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;p&gt;', '&lt;/p&gt;');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
-                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;pre&gt;', '&lt;/pre&gt;');" id="mono" title="Vlo¾it znaèku formátovaného textu. Vhodné pro konfiguraèní soubory èi vıpisy.">&lt;pre&gt;</a>
-                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;code&gt;', '&lt;/code&gt;');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
-                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&amp;lt;', '');" id="mono" title="Vlo¾it písmeno &lt;">&lt;</a>
-                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&amp;gt;', '');" id="mono" title="Vlo¾it písmeno &gt;">&gt;</a>
+                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;b&gt;', '&lt;/b&gt;');" id="serif" title="VloÅ¾it znaÄku tuÄnÄ›"><b>B</b></a>
+                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;i&gt;', '&lt;/i&gt;');" id="serif" title="VloÅ¾it znaÄku kurzÃ­va"><i>I</i></a>
+                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;a href=&quot;&quot;&gt;', '&lt;/a&gt;');" id="mono" title="VloÅ¾it znaÄku odkazu">&lt;a&gt;</a>
+                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;p&gt;', '&lt;/p&gt;');" id="mono" title="VloÅ¾it znaÄku odstavce">&lt;p&gt;</a>
+                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;pre&gt;', '&lt;/pre&gt;');" id="mono" title="VloÅ¾it znaÄku formÃ¡tovanÃ©ho textu. VhodnÃ© pro konfiguraÄnÃ­ soubory Äi vÃ½pisy.">&lt;pre&gt;</a>
+                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&lt;code&gt;', '&lt;/code&gt;');" id="mono" title="VloÅ¾it znaÄku pro pÃ­smo s pevnou Å¡Ã­Å™kou">&lt;code&gt;</a>
+                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&amp;lt;', '');" id="mono" title="VloÅ¾it pÃ­smeno &lt;">&lt;</a>
+                    <a href="javascript:insertAtCursor(document.dictForm.desc, '&amp;gt;', '');" id="mono" title="VloÅ¾it pÃ­smeno &gt;">&gt;</a>
                 </div>
 
                 <textarea tabindex="2" name="desc" class="siroka" rows="20" tabindex="2">${PARAMS.desc?if_exists?html}</textarea>
@@ -62,8 +62,8 @@
         <tr>
             <td></td>
             <td>
-                <input tabindex="3" type="submit" name="preview" value="Náhled">
-                <#if PARAMS.preview?exists><input tabindex="4" type="submit" name="submit" value="Dokonèi"></#if>
+                <input tabindex="3" type="submit" name="preview" value="NÃ¡hled">
+                <#if PARAMS.preview?exists><input tabindex="4" type="submit" name="submit" value="DokonÄi"></#if>
             </td>
         </tr>
     </table>

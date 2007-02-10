@@ -2,56 +2,56 @@
 
 <@lib.showMessages/>
 
-<h1>Databáze ovladaèù</h1>
+<h1>DatabÃ¡ze ovladaÄÅ¯</h1>
 
-<p>Právì se chystáte vlo¾it do databáze novı ovladaè. Pokud jste si
-jisti, ¾e tento ovladaè v databázi chybí, pokraèujte
-a vyplòte tento formuláø. Pokud jste se ale nedívali, prosím
-vra»te se zpìt a zkontrolujte, zda jej nepøidal nìkdo pøed vámi.
-V tom pøípadì jej otevøete a pro aktualizaci zvolte odkaz <i>Vlo¾ novou verzi</i>.
+<p>PrÃ¡vÄ› se chystÃ¡te vloÅ¾it do databÃ¡ze novÃ½ ovladaÄ. Pokud jste si
+jisti, Å¾e tento ovladaÄ v databÃ¡zi chybÃ­, pokraÄujte
+a vyplÅˆte tento formulÃ¡Å™. Pokud jste se ale nedÃ­vali, prosÃ­m
+vraÅ¥te se zpÄ›t a zkontrolujte, zda jej nepÅ™idal nÄ›kdo pÅ™ed vÃ¡mi.
+V tom pÅ™Ã­padÄ› jej otevÅ™ete a pro aktualizaci zvolte odkaz <i>VloÅ¾ novou verzi</i>.
 </p>
 
-<p>Sekce Ovladaèù slou¾í pro shroma¾ïování informací ohlednì ovladaèù,
-které nejsou standardní souèástí jádra. Jedná se buï o Open Source
-projekty vytváøené a udr¾ované komunitou, nebo o proprietární ovladaèe
-s uzavøenım kódem, vyvíjené obvykle vırobcem.
+<p>Sekce OvladaÄÅ¯ slouÅ¾Ã­ pro shromaÅ¾ÄovÃ¡nÃ­ informacÃ­ ohlednÄ› ovladaÄÅ¯,
+kterÃ© nejsou standardnÃ­ souÄÃ¡stÃ­ jÃ¡dra. JednÃ¡ se buÄ o Open Source
+projekty vytvÃ¡Å™enÃ© a udrÅ¾ovanÃ© komunitou, nebo o proprietÃ¡rnÃ­ ovladaÄe
+s uzavÅ™enÃ½m kÃ³dem, vyvÃ­jenÃ© obvykle vÃ½robcem.
 </p>
 
-<p>Vytvoøení polo¾ky ovladaèe je snadné. Nejdøíve vyplòte jméno
-ovladaèe, pøípadnì hardwaru. Pak vlo¾te verzi ovladaèe a adresu,
-odkud je mo¾né jej stáhnout. Poslední polo¾kou je poznámka,
-kam patøí informace o schopnostech ovladaèe, èi zmìnách oproti minulé
+<p>VytvoÅ™enÃ­ poloÅ¾ky ovladaÄe je snadnÃ©. NejdÅ™Ã­ve vyplÅˆte jmÃ©no
+ovladaÄe, pÅ™Ã­padnÄ› hardwaru. Pak vloÅ¾te verzi ovladaÄe a adresu,
+odkud je moÅ¾nÃ© jej stÃ¡hnout. PoslednÃ­ poloÅ¾kou je poznÃ¡mka,
+kam patÅ™Ã­ informace o schopnostech ovladaÄe, Äi zmÄ›nÃ¡ch oproti minulÃ©
 verzi.
 </p>
 
 <#if PARAMS.preview?exists>
- <h2>Náhled pøíspìvku</h2>
+ <h2>NÃ¡hled pÅ™Ã­spÄ›vku</h2>
 
  <table cellspacing=0 border=1 cellpadding=5 align="center">
   <tr>
-    <td>Jméno ovladaèe</td><td>${PARAMS.name?if_exists}</td>
+    <td>JmÃ©no ovladaÄe</td><td>${PARAMS.name?if_exists}</td>
   </tr>
   <tr>
-    <td>Verze ovladaèe</td><td>${PARAMS.version?if_exists}</td>
+    <td>Verze ovladaÄe</td><td>${PARAMS.version?if_exists}</td>
   </tr>
   <tr>
-    <td>URL ovladaèe</td>
+    <td>URL ovladaÄe</td>
     <td>
       <a href="${PARAMS.url?if_exists}">${TOOL.limit(PARAMS.url?if_exists,50," ..")}</a>
     </td>
   </tr>
   <tr>
-    <td valign="top">Poznámka</td><td>${TOOL.render(PARAMS.note?if_exists,USER?if_exists)}</td>
+    <td valign="top">PoznÃ¡mka</td><td>${TOOL.render(PARAMS.note?if_exists,USER?if_exists)}</td>
   </tr>
  </table>
 </#if>
 
-<h2>Novı ovladaè</h2>
+<h2>NovÃ½ ovladaÄ</h2>
 
 <form action="${URL.make("/edit")}" method="POST">
  <table cellpadding="0" border="0" style="margin-top: 1em;">
   <tr>
-   <td class="required">Jméno</td>
+   <td class="required">JmÃ©no</td>
    <td>
     <input type="text" name="name" value="${PARAMS.name?if_exists}" size="30" maxlength="30" tabindex="1">
     <div class="error">${ERRORS.name?if_exists}</div>
@@ -72,7 +72,7 @@ verzi.
    </td>
   </tr>
   <tr>
-   <td colspan="2" class="required">Poznámka</td>
+   <td colspan="2" class="required">PoznÃ¡mka</td>
   </tr>
   <tr>
    <td colspan="2">
@@ -82,8 +82,8 @@ verzi.
   </tr>
   <tr>
    <td colspan="2" align="center">
-    <input type="submit" name="preview" value="Náhled">
-    <input type="submit" name="submit" value="Dokonèi">
+    <input type="submit" name="preview" value="NÃ¡hled">
+    <input type="submit" name="submit" value="DokonÄi">
    </td>
   </tr>
  </table>

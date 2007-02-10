@@ -99,7 +99,7 @@ public class XMLHandler implements Cloneable {
     private static String formatDocumentToString(Document document) {
         try {
             ByteArrayOutputStream os = new ByteArrayOutputStream();
-            OutputFormat format = new OutputFormat(null, false, "ISO-8859-2");
+            OutputFormat format = new OutputFormat(null, false, "UTF-8");
             format.setSuppressDeclaration(true);
             XMLWriter writer = new XMLWriter(os,format);
 
@@ -161,7 +161,7 @@ public class XMLHandler implements Cloneable {
 
     public String toString() {
         OutputFormat format = OutputFormat.createPrettyPrint();
-        format.setEncoding("ISO-8859-2");
+        format.setEncoding("UTF-8");
         format.setSuppressDeclaration(true);
 
         try {

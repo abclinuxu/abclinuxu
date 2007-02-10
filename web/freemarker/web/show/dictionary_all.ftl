@@ -1,37 +1,37 @@
 <#include "../header.ftl">
 
-<h1>Vıkladovı slovník</h1>
+<h1>VÃ½kladovÃ½ slovnÃ­k</h1>
 
 <p>
-    Vıkladovı slovník na¹eho portálu je projekt, jen¾ se sna¾í èeskım
-    a slovenskım u¾ivatelùm pøiblí¾it Linux. Málokterı nováèek se zaène
-    s tímto operaèním systémem seznamovat tak, ¾e si o nìm nejdøíve pøeète
-    <a href="/Search?query=recenze+kniha+cena&advancedMode=true&type=clanek">nìjakou knihu</a>
-    nebo <a href="/ucebnice">uèebnici</a>. Pokud nemá ¾ádné zku¹enosti
-    s jinımi operaèními systémy odvozenımi od Unixu, velmi rychle si pøipadá ztracenı,
-    proto¾e se v¹ude pou¾ívají pojmy a slova, která nechápe.
+    VÃ½kladovÃ½ slovnÃ­k naÅ¡eho portÃ¡lu je projekt, jenÅ¾ se snaÅ¾Ã­ ÄeskÃ½m
+    a slovenskÃ½m uÅ¾ivatelÅ¯m pÅ™iblÃ­Å¾it Linux. MÃ¡lokterÃ½ novÃ¡Äek se zaÄne
+    s tÃ­mto operaÄnÃ­m systÃ©mem seznamovat tak, Å¾e si o nÄ›m nejdÅ™Ã­ve pÅ™eÄte
+    <a href="/Search?query=recenze+kniha+cena&advancedMode=true&type=clanek">nÄ›jakou knihu</a>
+    nebo <a href="/ucebnice">uÄebnici</a>. Pokud nemÃ¡ Å¾Ã¡dnÃ© zkuÅ¡enosti
+    s jinÃ½mi operaÄnÃ­mi systÃ©my odvozenÃ½mi od Unixu, velmi rychle si pÅ™ipadÃ¡ ztracenÃ½,
+    protoÅ¾e se vÅ¡ude pouÅ¾Ã­vajÃ­ pojmy a slova, kterÃ¡ nechÃ¡pe.
 </p>
 
 <p>
-    Vıkladovı slovník je pokus, jak tento problém zmen¹it. Jak je na¹im dobrım zvykem,
-    jedná se o otevøenı komunitní projekt, do nìho¾ mù¾e pøispìt ka¾dı. Jeho cílem je popsat
-    v¹echny základní pojmy, které se v Linuxu bì¾nì objevují. Pokud se chcete zapojit
-    do tvorby této databáze, mù¾ete
-    <a class="bez-slovniku" href="${URL.make("/slovnik/edit?action=add")}">vysvìtlit
-    novı pojem</a>.
+    VÃ½kladovÃ½ slovnÃ­k je pokus, jak tento problÃ©m zmenÅ¡it. Jak je naÅ¡im dobrÃ½m zvykem,
+    jednÃ¡ se o otevÅ™enÃ½ komunitnÃ­ projekt, do nÄ›hoÅ¾ mÅ¯Å¾e pÅ™ispÄ›t kaÅ¾dÃ½. Jeho cÃ­lem je popsat
+    vÅ¡echny zÃ¡kladnÃ­ pojmy, kterÃ© se v Linuxu bÄ›Å¾nÄ› objevujÃ­. Pokud se chcete zapojit
+    do tvorby tÃ©to databÃ¡ze, mÅ¯Å¾ete
+    <a class="bez-slovniku" href="${URL.make("/slovnik/edit?action=add")}">vysvÄ›tlit
+    novÃ½ pojem</a>.
 </p>
 
 <p>
-    Pokud nenajdete nìkterı pojem v na¹em slovníku a rozumíte anglicky, zkuste
+    Pokud nenajdete nÄ›kterÃ½ pojem v naÅ¡em slovnÃ­ku a rozumÃ­te anglicky, zkuste
     <a href="http://en.wikipedia.org/wiki/Category:Computing">Wikipedii</a>
-    nebo <a href="http://www.acronymdictionary.co.uk">seznam akronymù</a>. K dispozici
-    existuje i <a href="http://www.ucc.ie/cgi-bin/acronym">hledání</a> akronymù.
+    nebo <a href="http://www.acronymdictionary.co.uk">seznam akronymÅ¯</a>. K dispozici
+    existuje i <a href="http://www.ucc.ie/cgi-bin/acronym">hledÃ¡nÃ­</a> akronymÅ¯.
 </p>
 
 
 <form action="/Search" method="GET">
     <input type="text" name="query" size="30" tabindex="1">
-    <input type="submit" value="Hledej ve slovníku" class="button" tabindex="2">
+    <input type="submit" value="Hledej ve slovnÃ­ku" class="button" tabindex="2">
     <input type="hidden" name="type" value="pojem">
 </form>
 

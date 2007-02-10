@@ -1,4 +1,4 @@
-<h2>Èlánky</h2>
+<h2>ÄŒlÃ¡nky</h2>
 
 <#list ARTICLES?if_exists as clanek>
  <h2><a href="${clanek.url}">${clanek.title}</a></h2>
@@ -9,25 +9,25 @@
     </#list>
     <br>
     ${clanek.perex}<br>
-    Pøeèteno: ${clanek.reads}x | Komentáøù: ${clanek.comments}
+    PÅ™eÄteno: ${clanek.reads}x | KomentÃ¡Å™Å¯: ${clanek.comments}
  </p>
 </#list>
 
-<h2>Zprávièky</h2>
+<h2>ZprÃ¡viÄky</h2>
 
 <#list NEWS?if_exists as news>
  <p>${DATE.show(news.published, "CZ_FULL", false)} | <a href="/Profile/${news.authorId}">${news.author}</a><br>
  ${news.content}<br>
- Komentáøù: ${news.comments} | <a href="${news.url}">Zobrazit</a>
+ KomentÃ¡Å™Å¯: ${news.comments} | <a href="${news.url}">Zobrazit</a>
  </p>
  <#if news_has_next><hr></#if>
 </#list>
 
-<h2>Otázky v diskusi</h2>
+<h2>OtÃ¡zky v diskusi</h2>
 
 <table>
 <tr>
-<th>Dotaz</th><th>Reakcí</th><th>Polo¾en</th>
+<th>Dotaz</th><th>ReakcÃ­</th><th>PoloÅ¾en</th>
 </tr>
 <#list QUESTIONS?if_exists as question>
  <tr>
@@ -38,10 +38,10 @@
 </#list>
 </table>
 
-<h2>Nabídky zamìstnání</h2>
+<h2>NabÃ­dky zamÄ›stnÃ¡nÃ­</h2>
 
 <p>
-    Nové IT a linuxové nabídky zamìstnání ze serveru <a href="http://wwww.praceabc.cz">www.praceabc.cz</a>.
+    NovÃ© IT a linuxovÃ© nabÃ­dky zamÄ›stnÃ¡nÃ­ ze serveru <a href="http://wwww.praceabc.cz">www.praceabc.cz</a>.
 </p>
 
 <#list JOBS?if_exists as job>

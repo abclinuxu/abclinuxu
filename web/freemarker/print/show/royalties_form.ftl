@@ -6,14 +6,14 @@
 
  <table width="100%" border=0 cellpadding=5>
   <tr>
-   <td width="200" class="required">Datum publikov·nÌ od</td>
+   <td width="200" class="required">Datum publikov√°n√≠ od</td>
    <td>
     <input type="text" name="since" value="${PARAMS.since?if_exists}" size=40 tabindex=1>
     <div class="error">${ERRORS.since?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td width="200" class="required">Datum publikov·nÌ do</td>
+   <td width="200" class="required">Datum publikov√°n√≠ do</td>
    <td>
     <input type="text" name="until" value="${PARAMS.until?if_exists}" size=40 tabindex=2>
     <div class="error">${ERRORS.until?if_exists}</div>

@@ -499,7 +499,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
     private Element getPosition(Map params, Item item, HttpServletRequest request, Map env) {
         String id = (String) params.get(PARAM_IDENTIFIER);
         if (id == null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Nebyl definov·n povinn˝ parametr id!", env, request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Nebyl definov√°n povinn√Ω parametr id!", env, request.getSession());
             return null;
         }
 
@@ -528,7 +528,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
             }
         }
         if (index == -1) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "KÛd nebyl nalezen!", env, request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC, "K√≥d nebyl nalezen!", env, request.getSession());
             return null;
         }
 
@@ -544,7 +544,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
             i++;
         }
 
-        ServletUtils.addError(Constants.ERROR_GENERIC, "KÛd nebyl nalezen!", env, request.getSession());
+        ServletUtils.addError(Constants.ERROR_GENERIC, "K√≥d nebyl nalezen!", env, request.getSession());
         return null;
     }
 
@@ -556,20 +556,20 @@ public class EditAdvertisement implements AbcAction, Configurable {
     private Element createNewPosition(Map params, Element root, Map env) {
         String id = (String) params.get(PARAM_IDENTIFIER);
         if (id == null) {
-            ServletUtils.addError(PARAM_IDENTIFIER, "Zadejte identifik·tor.", env, null);
+            ServletUtils.addError(PARAM_IDENTIFIER, "Zadejte identifik√°tor.", env, null);
             return null;
         }
 
         Matcher matcher = identifierPattern.matcher(id);
         if (! matcher.matches() ) {
-            ServletUtils.addError(PARAM_IDENTIFIER, "Neplatn˝ identifik·tor.", env, null);
+            ServletUtils.addError(PARAM_IDENTIFIER, "Neplatn√Ω identifik√°tor.", env, null);
             return null;
         }
 
         Element adsRoot = DocumentHelper.makeElement(root, "advertisement");
         Element position = (Element) adsRoot.selectSingleNode("position[@id='"+id+"']");
         if (position != null) {
-            ServletUtils.addError(PARAM_IDENTIFIER, "Tento identifik·tor je jiæ pouæit, zadejte jin˝.", env, null);
+            ServletUtils.addError(PARAM_IDENTIFIER, "Tento identifik√°tor je ji≈æ pou≈æit, zadejte jin√Ω.", env, null);
             return null;
         }
 
@@ -589,7 +589,7 @@ public class EditAdvertisement implements AbcAction, Configurable {
     private boolean setName(Map params, Element position, Map env) {
         String name = (String) params.get(PARAM_NAME);
         if (Misc.empty(name)) {
-            ServletUtils.addError(PARAM_NAME, "Zadejte jmÈno.", env, null);
+            ServletUtils.addError(PARAM_NAME, "Zadejte jm√©no.", env, null);
             return false;
         }
 
@@ -645,19 +645,19 @@ public class EditAdvertisement implements AbcAction, Configurable {
     private boolean setIdentifier(Map params, Element adsRoot, Element position, Map env) {
         String id = (String) params.get(PARAM_NEW_IDENTIFIER);
         if (id == null) {
-            ServletUtils.addError(PARAM_NEW_IDENTIFIER, "Zadejte identifik·tor.", env, null);
+            ServletUtils.addError(PARAM_NEW_IDENTIFIER, "Zadejte identifik√°tor.", env, null);
             return false;
         }
 
         Matcher matcher = identifierPattern.matcher(id);
         if (!matcher.matches()) {
-            ServletUtils.addError(PARAM_NEW_IDENTIFIER, "Neplatn˝ identifik·tor.", env, null);
+            ServletUtils.addError(PARAM_NEW_IDENTIFIER, "Neplatn√Ω identifik√°tor.", env, null);
             return false;
         }
 
         Element existingPosition = (Element) adsRoot.selectSingleNode("position[@id='" + id + "']");
         if (existingPosition != null && ! existingPosition.equals(position)) {
-            ServletUtils.addError(PARAM_NEW_IDENTIFIER, "Tento identifik·tor je jiæ pouæit pro pozici "+existingPosition.elementText("name")+".", env, null);
+            ServletUtils.addError(PARAM_NEW_IDENTIFIER, "Tento identifik√°tor je ji≈æ pou≈æit pro pozici "+existingPosition.elementText("name")+".", env, null);
             return false;
         }
 
@@ -675,14 +675,14 @@ public class EditAdvertisement implements AbcAction, Configurable {
     private boolean setCodeRegexp(Map params, Element code, Map env) {
         String regexp = (String) params.get(PARAM_REGEXP);
         if (Misc.empty(regexp)) {
-            ServletUtils.addError(PARAM_REGEXP, "Zadejte regul·rnÌ v˝raz.", env, null);
+            ServletUtils.addError(PARAM_REGEXP, "Zadejte regul√°rn√≠ v√Ωraz.", env, null);
             return false;
         }
 
         try {
             Pattern.compile(regexp);
         } catch (Exception e) {
-            ServletUtils.addError(PARAM_REGEXP, "Regul·rnÌ v˝raz obsahuje chybu:"+e.getMessage(), env, null);
+            ServletUtils.addError(PARAM_REGEXP, "Regul√°rn√≠ v√Ωraz obsahuje chybu:"+e.getMessage(), env, null);
             return false;
         }
 

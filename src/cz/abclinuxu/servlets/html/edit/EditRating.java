@@ -80,7 +80,7 @@ public class EditRating implements AbcAction, Configurable {
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
 
         if (AbcConfig.isMaintainanceMode()) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Systém je v re¾imu údr¾by.", env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC, "SystÃ©m je v reÅ¾imu ÃºdrÅ¾by.", env, null);
             return "/print/misc/rating_result.ftl";
         }
 
@@ -88,7 +88,7 @@ public class EditRating implements AbcAction, Configurable {
             relation = (Relation) persistence.findById(relation);
             persistence.synchronize(relation.getChild());
         } else
-            throw new MissingArgumentException("Chybí parametr relationId!");
+            throw new MissingArgumentException("ChybÃ­ parametr relationId!");
 
         User user = (User) env.get(Constants.VAR_USER);
         if (user==null) {

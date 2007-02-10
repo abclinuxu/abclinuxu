@@ -7,12 +7,12 @@
 <#assign is_question=TOOL.xpath(ITEM,"data/title")?exists>
 
 <#if is_question>
- <h1 class="st_nadpis">Otázka</h1>
+ <h1 class="st_nadpis">OtÃ¡zka</h1>
  <@lib.showThread TOOL.createComment(ITEM), 0, ITEM.id, RELATION.id, false />
  <#if DIZ?size==0>
-    <p>Na otázku zatím nikdo bohu¾el neodpovìdìl.</p>
+    <p>Na otÃ¡zku zatÃ­m nikdo bohuÅ¾el neodpovÄ›dÄ›l.</p>
  <#else>
-     <p><b>Odpovìdi</b></p>
+     <p><b>OdpovÄ›di</b></p>
  </#if>
 </#if>
 

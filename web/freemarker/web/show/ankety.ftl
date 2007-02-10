@@ -13,7 +13,7 @@
         ${relation.child.text}<br />
         <div class="ank-vypis">
 	    <a href="${relation.url?default("/ankety/show/"+relation.id)}">${DATE.show(poll.created, "CZ_DMY")}</a>
-            ${poll.totalVoters} hlasù, komentáøù: ${diz.responseCount}<#if (diz.responseCount > 0)>, poslední
+            ${poll.totalVoters} hlasÅ¯, komentÃ¡Å™Å¯: ${diz.responseCount}<#if (diz.responseCount > 0)>, poslednÃ­
 	    ${DATE.show(diz.updated, "CZ_FULL")}</#if>
 	</div>
     </li>

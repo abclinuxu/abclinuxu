@@ -107,7 +107,7 @@ public class AdminServlet implements AbcAction {
 
         User user = (User) env.get(Constants.VAR_USER);
         AdminLogger.logEvent(user, "promazal cache");
-        ServletUtils.addMessage("Cache byla promazána.",env,null);
+        ServletUtils.addMessage("Cache byla promazÃ¡na.",env,null);
         return FMTemplateSelector.select("Admin", "show", env, request);
     }
 
@@ -117,7 +117,7 @@ public class AdminServlet implements AbcAction {
      */
     private String restartTasks(HttpServletRequest request, Map env) throws Exception {
         AbcInit.getInstance().startTasks();
-        ServletUtils.addMessage("Úlohy byly restartovány.",env,null);
+        ServletUtils.addMessage("Ãšlohy byly restartovÃ¡ny.",env,null);
         User user = (User) env.get(Constants.VAR_USER);
         AdminLogger.logEvent(user, "restartoval ulohy");
         return FMTemplateSelector.select("Admin", "show", env, request);
@@ -129,9 +129,9 @@ public class AdminServlet implements AbcAction {
     private String switchMaintainance(HttpServletRequest request, Map env) throws Exception {
         boolean mode = AbcConfig.isMaintainanceMode();
         AbcConfig.setMaintainanceMode(! mode);
-        ServletUtils.addMessage("Re¾im údr¾by " + ((mode) ? "vypnut" : "zapnut"),env,null);
+        ServletUtils.addMessage("ReÅ¾im ÃºdrÅ¾by " + ((mode) ? "vypnut" : "zapnut"),env,null);
         User user = (User) env.get(Constants.VAR_USER);
-        AdminLogger.logEvent(user, ((mode) ? "vypnul" : "zapnul") + " re¾im údr¾by");
+        AdminLogger.logEvent(user, ((mode) ? "vypnul" : "zapnul") + " reÅ¾im ÃºdrÅ¾by");
         return FMTemplateSelector.select("Admin", "show", env, request);
     }
 

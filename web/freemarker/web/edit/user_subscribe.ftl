@@ -2,28 +2,28 @@
 
 <@lib.showMessages/>
 
-<p>Ná¹ portál pro vás pøipravil dvì atraktivní
-slu¾by. První z nich je Tıdenní souhrn a je
-urèen tìm, kteøí nemají èas dennì nás nav¹tìvovat,
-ale nechtìjí pøijít o ¾ádné na¹e èlánky èi zprávièky.
-Pokud si jej pøihlásíte, ka¾dı víkend vám za¹leme emailem seznam
-èlánkù a v¹echny zprávièky, které jsme danı tıden vydali.
+<p>NÃ¡Å¡ portÃ¡l pro vÃ¡s pÅ™ipravil dvÄ› atraktivnÃ­
+sluÅ¾by. PrvnÃ­ z nich je TÃ½dennÃ­ souhrn a je
+urÄen tÄ›m, kteÅ™Ã­ nemajÃ­ Äas dennÄ› nÃ¡s navÅ¡tÄ›vovat,
+ale nechtÄ›jÃ­ pÅ™ijÃ­t o Å¾Ã¡dnÃ© naÅ¡e ÄlÃ¡nky Äi zprÃ¡viÄky.
+Pokud si jej pÅ™ihlÃ¡sÃ­te, kaÅ¾dÃ½ vÃ­kend vÃ¡m zaÅ¡leme emailem seznam
+ÄlÃ¡nkÅ¯ a vÅ¡echny zprÃ¡viÄky, kterÃ© jsme danÃ½ tÃ½den vydali.
 </p>
 
-<p>Dal¹í slu¾bou je Zpravodaj portálu AbcLinuxu.cz.
-Pokud si jej pøihlásíte, zaèátkem ka¾dého mìsíce
-obdr¾íte email se spoustou zajímavostí ze svìta
-Linuxu i z na¹eho portálu.
+<p>DalÅ¡Ã­ sluÅ¾bou je Zpravodaj portÃ¡lu AbcLinuxu.cz.
+Pokud si jej pÅ™ihlÃ¡sÃ­te, zaÄÃ¡tkem kaÅ¾dÃ©ho mÄ›sÃ­ce
+obdrÅ¾Ã­te email se spoustou zajÃ­mavostÃ­ ze svÄ›ta
+Linuxu i z naÅ¡eho portÃ¡lu.
 </p>
 
-<p>Novinkou v testovacím re¾imu je emailové rozhraní
-k diskusnímu fóru. Pro ka¾dı novı pøíspìvek diskuse
-umístìné v nìkterém fóru se ode¹le v¹em pøihlá¹enım
-u¾ivatelùm email s jeho obsahem a adresou, na které je
-mo¾né odpovìdìt.
+<p>Novinkou v testovacÃ­m reÅ¾imu je emailovÃ© rozhranÃ­
+k diskusnÃ­mu fÃ³ru. Pro kaÅ¾dÃ½ novÃ½ pÅ™Ã­spÄ›vek diskuse
+umÃ­stÄ›nÃ© v nÄ›kterÃ©m fÃ³ru se odeÅ¡le vÅ¡em pÅ™ihlÃ¡Å¡enÃ½m
+uÅ¾ivatelÅ¯m email s jeho obsahem a adresou, na kterÃ© je
+moÅ¾nÃ© odpovÄ›dÄ›t.
 </p>
 
-<p>Pro va¹i ochranu nejdøíve zadejte souèasné heslo.
+<p>Pro vaÅ¡i ochranu nejdÅ™Ã­ve zadejte souÄasnÃ© heslo.
 </p>
 
 <form action="${URL.noPrefix("/EditUser")}" method="POST">
@@ -36,7 +36,7 @@ mo¾né odpovìdìt.
    </td>
   </tr>
   <tr>
-   <td width="60">Tıdenní souhrn</td>
+   <td width="60">TÃ½dennÃ­ souhrn</td>
    <td>
     <select name="weekly" tabindex="2">
      <#assign weekly=PARAMS.weekly?if_exists>
@@ -46,7 +46,7 @@ mo¾né odpovìdìt.
    </td>
   </tr>
   <tr>
-   <td width="60">Mìsíèní zpravodaj</td>
+   <td width="60">MÄ›sÃ­ÄnÃ­ zpravodaj</td>
    <td>
     <select name="monthly" tabindex="3">
      <#assign monthly=PARAMS.monthly?if_exists>
@@ -56,7 +56,7 @@ mo¾né odpovìdìt.
    </td>
   </tr>
   <tr>
-   <td width="60">Diskusní fórum</td>
+   <td width="60">DiskusnÃ­ fÃ³rum</td>
    <td>
     <select name="forum" tabindex="4">
      <#assign forum=PARAMS.forum?if_exists>
@@ -67,7 +67,7 @@ mo¾né odpovìdìt.
   </tr>
   <tr>
    <td width="60">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi" tabindex="5"></td>
+   <td><input type="submit" value="DokonÄi" tabindex="5"></td>
   </tr>
  </table>
  <input type="hidden" name="action" value="subscribe2">

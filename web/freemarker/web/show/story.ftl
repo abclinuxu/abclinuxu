@@ -20,7 +20,7 @@
     </div>
 
     <#if UNPUBLISHED_STORIES?exists>
-        <div class="s_nadpis">Rozepsané zápisy</div>
+        <div class="s_nadpis">RozepsanÃ© zÃ¡pisy</div>
 
         <div class="s_sekce">
             <ul>
@@ -34,7 +34,7 @@
         </div>
     </#if>
 
-    <div class="s_nadpis">Aktuální zápisy</div>
+    <div class="s_nadpis">AktuÃ¡lnÃ­ zÃ¡pisy</div>
 
     <div class="s_sekce">
         <ul>
@@ -48,8 +48,8 @@
     </div>
 
     <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Pøístup k archivovanım zápisùm za jednotlivé mìsíce.</span></a>
-            <a href="/blog/${BLOG.subType}/archiv">Archív</a>
+            <a class="info" href="#">?<span class="tooltip">PÅ™Ã­stup k archivovanÃ½m zÃ¡pisÅ¯m za jednotlivÃ© mÄ›sÃ­ce.</span></a>
+            <a href="/blog/${BLOG.subType}/archiv">ArchÃ­v</a>
     </div>
 
     <div class="s_sekce">
@@ -66,8 +66,8 @@
     <#assign links = BLOG_XML.data.custom.links.link>
     <#if links?size!=0>
         <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Seznam mıch oblíbenıch stránek, které pravidelnì nav¹tìvuji.</span></a>
-            Oblíbené stránky
+            <a class="info" href="#">?<span class="tooltip">Seznam mÃ½ch oblÃ­benÃ½ch strÃ¡nek, kterÃ© pravidelnÄ› navÅ¡tÄ›vuji.</span></a>
+            OblÃ­benÃ© strÃ¡nky
         </div>
 
         <div class="s_sekce">
@@ -80,26 +80,26 @@
     </#if>
 
     <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Pøístup na osobní hlavní stranu a na hlavní stranu v¹ech blogù.</span></a>
+        <a class="info" href="#">?<span class="tooltip">PÅ™Ã­stup na osobnÃ­ hlavnÃ­ stranu a na hlavnÃ­ stranu vÅ¡ech blogÅ¯.</span></a>
         Navigace
     </div>
 
     <div class="s_sekce">
         <ul>
             <#if title!="UNDEF">
-                <li><a href="/blog/${BLOG.subType}">${title}, hlavní strana</a></li>
+                <li><a href="/blog/${BLOG.subType}">${title}, hlavnÃ­ strana</a></li>
             </#if>
-            <li><a href="/blog/${BLOG.subType}/souhrn"><#if title!="UNDEF">${title}, </#if>struènı souhrn</a></li>
-            <li><a href="/auto/blog/${BLOG.subType}.rss">RSS kanál</a></li>
-            <li><a href="/blog">V¹echny blogy</a></li>
-	    <li><a href="/blog/souhrn">V¹echny blogy, struènı souhrn</a></li>
+            <li><a href="/blog/${BLOG.subType}/souhrn"><#if title!="UNDEF">${title}, </#if>struÄnÃ½ souhrn</a></li>
+            <li><a href="/auto/blog/${BLOG.subType}.rss">RSS kanÃ¡l</a></li>
+            <li><a href="/blog">VÅ¡echny blogy</a></li>
+	    <li><a href="/blog/souhrn">VÅ¡echny blogy, struÄnÃ½ souhrn</a></li>
         </ul>
     </div>
 
     <#if (USER?exists && (USER.id==BLOG.owner || USER.hasRole("root"))) || (! USER?exists)>
         <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Tato sekce sdru¾uje akce pro majitele blogu.</span></a>
-            Nastavení
+            <a class="info" href="#">?<span class="tooltip">Tato sekce sdruÅ¾uje akce pro majitele blogu.</span></a>
+            NastavenÃ­
         </div>
     </#if>
 
@@ -107,32 +107,32 @@
     <ul>
     <#if USER?exists>
         <#if USER.hasRole("blog digest admin")>
-            <#if (ITEM.getProperty("digest")?size > 0)><#assign digestMsg='Odstranit z digestu'><#else><#assign digestMsg='Pøidat do digestu'></#if>
+            <#if (ITEM.getProperty("digest")?size > 0)><#assign digestMsg='Odstranit z digestu'><#else><#assign digestMsg='PÅ™idat do digestu'></#if>
             <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=toggleDigest")}">${digestMsg}</a></li>
         </#if>
         <#if USER.id==BLOG.owner || USER.hasRole("root")>
-            <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=edit")}">Uprav zápis</a></li>
-            <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=remove")}">Sma¾ zápis</a></li>
+            <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=edit")}">Uprav zÃ¡pis</a></li>
+            <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=remove")}">SmaÅ¾ zÃ¡pis</a></li>
         </#if>
         <#if USER.hasRole("attachment admin")>
-            <li><a href="${URL.make("/inset/"+STORY.id+"?action=manage")}">Správa pøíloh</a></li>
+            <li><a href="${URL.make("/inset/"+STORY.id+"?action=manage")}">SprÃ¡va pÅ™Ã­loh</a></li>
         </#if>
         <#if USER.id==BLOG.owner>
             <#if !CHILDREN.poll?exists>
-                <li><a href="${URL.noPrefix("/EditPoll?action=add&amp;rid="+STORY.id)}">Vlo¾ anketu</a></li>
+                <li><a href="${URL.noPrefix("/EditPoll?action=add&amp;rid="+STORY.id)}">VloÅ¾ anketu</a></li>
             </#if>
             <li>
-                <a href="${URL.make("/inset/"+STORY.id+"?action=addScreenshot")}">Pøidej obrázek</a>
+                <a href="${URL.make("/inset/"+STORY.id+"?action=addScreenshot")}">PÅ™idej obrÃ¡zek</a>
                 <hr>
             </li>
-            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=add")}">Vlo¾ novı zápis</a></li>
+            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=add")}">VloÅ¾ novÃ½ zÃ¡pis</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=custom")}">Nastavit blog</a></li>
-            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}">Pøejmenovat blog</a></li>
+            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}">PÅ™ejmenovat blog</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=categories")}">Upravit kategorie</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=links")}">Upravit odkazy</a></li>
         </#if>
     <#else>
-        <li><a href="${URL.noPrefix("/Profile?action=login&amp;url="+REQUEST_URI)}">Pøihlásit se</a></li>
+        <li><a href="${URL.noPrefix("/Profile?action=login&amp;url="+REQUEST_URI)}">PÅ™ihlÃ¡sit se</a></li>
     </#if>
     </ul>
   </div>
@@ -148,11 +148,11 @@
 
 <h2>${TOOL.xpath(ITEM, "/data/name")}</h2>
 <p class="cl_inforadek">
-    <#if ITEM.type==15>Odlo¾eno<#else>${DATE.show(ITEM.created, "CZ_SHORT")}</#if> |
-    Pøeèteno: ${TOOL.getCounterValue(ITEM,"read")}&times;
+    <#if ITEM.type==15>OdloÅ¾eno<#else>${DATE.show(ITEM.created, "CZ_SHORT")}</#if> |
+    PÅ™eÄteno: ${TOOL.getCounterValue(ITEM,"read")}&times;
     <#if category!="UNDEF">| ${category}</#if>
     <#if (ITEM.type==12 && ITEM.created.time!=ITEM.updated.time)>
-        | poslední úprava: ${DATE.show(ITEM.updated, "CZ_SHORT")}
+        | poslednÃ­ Ãºprava: ${DATE.show(ITEM.updated, "CZ_SHORT")}
     </#if>
 </p>
 
@@ -172,27 +172,27 @@ ${TOOL.xpath(ITEM, "/data/content")}
 
 <#assign images = TOOL.screenshotsFor(ITEM)>
 <#if (images?size > 0)>
-    <h3>Obrázky</h3>
+    <h3>ObrÃ¡zky</h3>
 
     <p class="galerie">
         <#list images as image>
             <#if image.thumbnailPath?exists>
-                <a href="${image.path}"><img src="${image.thumbnailPath}" alt="Obrázek ${image_index}" border="0"></a>
+                <a href="${image.path}"><img src="${image.thumbnailPath}" alt="ObrÃ¡zek ${image_index}" border="0"></a>
             <#else>
-                <img src="${image.path}" alt="Obrázek ${image_index}">
+                <img src="${image.path}" alt="ObrÃ¡zek ${image_index}">
             </#if>
         </#list>
     </p>
 </#if>
 
-<p><b>Nástroje</b>: <a rel="nofollow" href="${story_url}?varianta=print">Tisk</a></p>
+<p><b>NÃ¡stroje</b>: <a rel="nofollow" href="${story_url}?varianta=print">Tisk</a></p>
 
 <#if (ITEM.type==12)>
-    <h3>Komentáøe</h3>
+    <h3>KomentÃ¡Å™e</h3>
     <#if CHILDREN.discussion?exists>
         <@lib.showDiscussion CHILDREN.discussion[0]/>
     <#else>
-       <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+STORY.id)}">Vlo¾it první komentáø</a>
+       <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+STORY.id)}">VloÅ¾it prvnÃ­ komentÃ¡Å™</a>
     </#if>
 </#if>
 

@@ -1,29 +1,29 @@
 <#include "../header.ftl">
 <@lib.showMessages/>
 
-<h1>Administrativní po¾adavky</h1>
+<h1>AdministrativnÃ­ poÅ¾adavky</h1>
 
-<p>Tato stránka slou¾í pro zadávání <b>administrativních</b> po¾adavkù
-na správce portálu www.abclinuxu.cz. Pokud potøebujete zalo¾it novou sekci,
-zapomnìli jste pøihla¹ovací údaje a podobnì, pou¾ijte tento formuláø.
-Pokud máte námìt na vylep¹ení, nebo jste na¹li chybu, pi¹te do
+<p>Tato strÃ¡nka slouÅ¾Ã­ pro zadÃ¡vÃ¡nÃ­ <b>administrativnÃ­ch</b> poÅ¾adavkÅ¯
+na sprÃ¡vce portÃ¡lu www.abclinuxu.cz. Pokud potÅ™ebujete zaloÅ¾it novou sekci,
+zapomnÄ›li jste pÅ™ihlaÅ¡ovacÃ­ Ãºdaje a podobnÄ›, pouÅ¾ijte tento formulÃ¡Å™.
+Pokud mÃ¡te nÃ¡mÄ›t na vylepÅ¡enÃ­, nebo jste naÅ¡li chybu, piÅ¡te do
 <a href="http://bugzilla.abclinuxu.cz">bugzilly</a>,
-u¹etøíte nám tak práci a budete mít pøehled o vyøízení va¹i ¾ádosti.</p>
+uÅ¡etÅ™Ã­te nÃ¡m tak prÃ¡ci a budete mÃ­t pÅ™ehled o vyÅ™Ã­zenÃ­ vaÅ¡i Å¾Ã¡dosti.</p>
 
-<p>Jedná-li se o námìt na novou anketu, pova¾ujte jeho smazání za jeho vyøízení.
-Neznamená to, ¾e bychom ho ignorovali, ale ¾e jsme ho zaøadili do seznamu
-dal¹ích námìtù. Ne v¹echny námìty se stanou anketami, proto¾e námìtù je prostì
-moc. Z va¹ich návrhù vybíráme ty nejzajímavìj¹í.</p>
+<p>JednÃ¡-li se o nÃ¡mÄ›t na novou anketu, povaÅ¾ujte jeho smazÃ¡nÃ­ za jeho vyÅ™Ã­zenÃ­.
+NeznamenÃ¡ to, Å¾e bychom ho ignorovali, ale Å¾e jsme ho zaÅ™adili do seznamu
+dalÅ¡Ã­ch nÃ¡mÄ›tÅ¯. Ne vÅ¡echny nÃ¡mÄ›ty se stanou anketami, protoÅ¾e nÃ¡mÄ›tÅ¯ je prostÄ›
+moc. Z vaÅ¡ich nÃ¡vrhÅ¯ vybÃ­rÃ¡me ty nejzajÃ­mavÄ›jÅ¡Ã­.</p>
 
-<p>Potøebujete-li poradit s Linuxem, zkuste si nejdøíve
-<a href="/Search">najít</a> odpovìï sami a nenajdete-li øe¹ení,
-po¾ádejte o pomoc v <a href="/diskuse.jsp">diskusním fóru</a>.
-Tento formuláø v¹ak pro tyto úèely neslou¾í, a proto bez odpovìdi
-<u>sma¾eme</u> jakékoliv po¾adavky, které nesouvisí s chodem portálu.</p>
+<p>PotÅ™ebujete-li poradit s Linuxem, zkuste si nejdÅ™Ã­ve
+<a href="/Search">najÃ­t</a> odpovÄ›Ä sami a nenajdete-li Å™eÅ¡enÃ­,
+poÅ¾Ã¡dejte o pomoc v <a href="/diskuse.jsp">diskusnÃ­m fÃ³ru</a>.
+Tento formulÃ¡Å™ vÅ¡ak pro tyto ÃºÄely neslouÅ¾Ã­, a proto bez odpovÄ›di
+<u>smaÅ¾eme</u> jakÃ©koliv poÅ¾adavky, kterÃ© nesouvisÃ­ s chodem portÃ¡lu.</p>
 
 <#if CHILDREN?exists && CHILDREN?size gt 0>
 
-<h2>Nevyøízené po¾adavky</h2>
+<h2>NevyÅ™Ã­zenÃ© poÅ¾adavky</h2>
 
 <#list SORT.byDate(CHILDREN) as relation>
 
@@ -37,9 +37,9 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í, a proto bez odpovìdi
     <#if USER?exists && USER.hasRole("requests admin")>
         <br />
         <a href="${URL.make("/EditRequest?action=email&requestId="+relation.id)}">Poslat email</a>,
-        <a href="${URL.make("/EditRequest?action=deliver&requestId="+relation.id)}">Vyøízeno</a>,
+        <a href="${URL.make("/EditRequest?action=deliver&requestId="+relation.id)}">VyÅ™Ã­zeno</a>,
         <a href="${URL.make("/EditRequest?action=delete&requestId="+relation.id)}">Smazat</a>,
-        <a href="${URL.make("/EditRequest?action=todo&requestId="+relation.id)}">Pøesunout do TODO</a>
+        <a href="${URL.make("/EditRequest?action=todo&requestId="+relation.id)}">PÅ™esunout do TODO</a>
     </#if>
   </p><hr />
 </#list>
@@ -48,7 +48,7 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í, a proto bez odpovìdi
 
 <#if PARAMS.preview?exists>
     <fieldset>
-        <legend>Náhled</legend>
+        <legend>NÃ¡hled</legend>
         <b>
             ${PARAMS.category}
             ${PARAMS.author}
@@ -58,12 +58,12 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í, a proto bez odpovìdi
     </fieldset>
 </#if>
 
-<p>Chyby prosím hlaste do <a href="http://bugzilla.abclinuxu.cz">bugzilly</a>.</p>
+<p>Chyby prosÃ­m hlaste do <a href="http://bugzilla.abclinuxu.cz">bugzilly</a>.</p>
 
 <form action="${URL.make("/EditRequest")}" method="POST">
  <table border=0 cellpadding=5 style="padding-top: 10px">
   <tr>
-   <td class="required">Va¹e jméno</td>
+   <td class="required">VaÅ¡e jmÃ©no</td>
    <#if PARAMS.author?exists>
     <#assign author=PARAMS.author>
    <#elseif USER?exists>
@@ -75,7 +75,7 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í, a proto bez odpovìdi
    </td>
   </tr>
   <tr>
-    <td class="required">Vá¹ email</td>
+    <td class="required">VÃ¡Å¡ email</td>
    <#if PARAMS.email?exists>
     <#assign email=PARAMS.email>
    <#elseif USER?exists>
@@ -87,12 +87,12 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í, a proto bez odpovìdi
    </td>
   </tr>
   <tr>
-    <td>Typ po¾adavku</td>
+    <td>Typ poÅ¾adavku</td>
     <td>
         <#if PARAMS.categoryPosition?exists>
             <#assign defaultCategory=CATEGORIES[PARAMS.categoryPosition?eval]>
         <#else>
-            <#assign defaultCategory="Hlá¹ení chyby">
+            <#assign defaultCategory="HlÃ¡Å¡enÃ­ chyby">
         </#if>
         <select name="category">
             <#list CATEGORIES as category>
@@ -103,25 +103,25 @@ Tento formuláø v¹ak pro tyto úèely neslou¾í, a proto bez odpovìdi
   </tr>
     <#if ! (USER?exists || USER_VERIFIED?if_exists)>
         <tr>
-            <td class="required">Aktuální rok</td>
+            <td class="required">AktuÃ¡lnÃ­ rok</td>
             <td>
                 <input type="text" size="4" name="antispam" value="${PARAMS.antispam?if_exists?html}">
-                <a class="info" href="#">?<span class="tooltip">Vlo¾te aktuální rok. Jedná se o ochranu pøed spamboty.
-                Po úspì¹ném ovìøení se ulo¾í cookie (vèetnì va¹eho jména) a tato kontrola pøestane bıt provádìna.</span></a>
+                <a class="info" href="#">?<span class="tooltip">VloÅ¾te aktuÃ¡lnÃ­ rok. JednÃ¡ se o ochranu pÅ™ed spamboty.
+                Po ÃºspÄ›Å¡nÃ©m ovÄ›Å™enÃ­ se uloÅ¾Ã­ cookie (vÄetnÄ› vaÅ¡eho jmÃ©na) a tato kontrola pÅ™estane bÃ½t provÃ¡dÄ›na.</span></a>
                 <span class="error">${ERRORS.antispam?if_exists}</span>
             </td>
         </tr>
     </#if>
   <tr>
    <td colspan="2">
-    <span class="required">Po¾adavek</span>
+    <span class="required">PoÅ¾adavek</span>
     <div class="error">${ERRORS.text?if_exists}</div>
     <textarea name="text" cols="60" rows="15">${PARAMS.text?if_exists?html}</textarea>
   </td>
   </tr>
   <tr>
    <td colspan="2">
-       <input type="submit" name="preview" value="Náhled">
+       <input type="submit" name="preview" value="NÃ¡hled">
        <input type="submit" value="Odeslat">
    </td>
   </tr>

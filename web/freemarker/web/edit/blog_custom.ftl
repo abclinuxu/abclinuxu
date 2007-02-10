@@ -2,23 +2,23 @@
 
 <@lib.showMessages/>
 
-<h2>Úvod</h2>
+<h2>Ãšvod</h2>
 
-<p>Tato stránka slou¾í k upravení vzhledu va¹eho blogu. Mù¾ete
-zde nastavit titulek celé stránky (hodnota znaèky HTML&gt;HEAD&gt;TITLE)
-titulek a popis blogu èi poèet zobrazovanıch zápisù na jedné stránce
-archivu. Titulek blogu není název blogu (pou¾ívanı v URL), ten
-nastavíte <a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}">zde</a>.</p>
+<p>Tato strÃ¡nka slouÅ¾Ã­ k upravenÃ­ vzhledu vaÅ¡eho blogu. MÅ¯Å¾ete
+zde nastavit titulek celÃ© strÃ¡nky (hodnota znaÄky HTML&gt;HEAD&gt;TITLE)
+titulek a popis blogu Äi poÄet zobrazovanÃ½ch zÃ¡pisÅ¯ na jednÃ© strÃ¡nce
+archivu. Titulek blogu nenÃ­ nÃ¡zev blogu (pouÅ¾Ã­vanÃ½ v URL), ten
+nastavÃ­te <a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}">zde</a>.</p>
 
-<p>Popis blogu mù¾ete vyu¾ít napøíklad ke krátké informaci o své osobì,
-pøidat obrázek, odkazy na své pøátelé nebo blogy, které ètete.
+<p>Popis blogu mÅ¯Å¾ete vyuÅ¾Ã­t napÅ™Ã­klad ke krÃ¡tkÃ© informaci o svÃ© osobÄ›,
+pÅ™idat obrÃ¡zek, odkazy na svÃ© pÅ™Ã¡telÃ© nebo blogy, kterÃ© Ätete.
 </p>
 
 <form action="${URL.make("/blog/edit/"+REL_BLOG.id)}" method="POST">
  <table cellpadding="5">
   <tr>
-   <td class="required">Titulek stránky
-       <a class="info" href="#">?<span class="tooltip">Zde nastavíte titulek celé stránky</span></a>
+   <td class="required">Titulek strÃ¡nky
+       <a class="info" href="#">?<span class="tooltip">Zde nastavÃ­te titulek celÃ© strÃ¡nky</span></a>
    </td>
    <td>
     <input type="text" name="htitle" size="40" maxlength="70" value="${PARAMS.htitle?if_exists?html}">
@@ -27,7 +27,7 @@ pøidat obrázek, odkazy na své pøátelé nebo blogy, které ètete.
   </tr>
   <tr>
    <td>Titulek blogu
-       <a class="info" href="#">?<span class="tooltip">Zde nastavíte titulek celé stránky</span></a>
+       <a class="info" href="#">?<span class="tooltip">Zde nastavÃ­te titulek celÃ© strÃ¡nky</span></a>
    </td>
    <td>
     <input type="text" name="title" size="40" maxlength="70" value="${PARAMS.title?if_exists?html}">
@@ -42,8 +42,8 @@ pøidat obrázek, odkazy na své pøátelé nebo blogy, které ètete.
    </td>
   </tr>
   <tr>
-   <td>Poèet zápisù
-       <a class="info" href="#">?<span class="tooltip">Zde nastavíte, kolik zápisù se má zobrazovat na stránce</span></a>
+   <td>PoÄet zÃ¡pisÅ¯
+       <a class="info" href="#">?<span class="tooltip">Zde nastavÃ­te, kolik zÃ¡pisÅ¯ se mÃ¡ zobrazovat na strÃ¡nce</span></a>
    </td>
    <td>
     <input type="text" name="pageSize" size="40" maxlength="70" value="${PARAMS.pageSize?if_exists}">
@@ -53,7 +53,7 @@ pøidat obrázek, odkazy na své pøátelé nebo blogy, které ètete.
   <tr>
    <td>&nbsp;</td>
    <td>
-    <input type="submit" name="finish" value="Dokonèi">
+    <input type="submit" name="finish" value="DokonÄi">
    </td>
   </tr>
  </table>

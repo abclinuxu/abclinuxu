@@ -4,13 +4,13 @@
 
 <h1>Historie</h1>
 
-<p>Nacházíte se na stránce obsahující historii objektu
-${TOOL.childName(RELATION)}. Pokud si chcete prohlédnout star¹í verzi, zvolte odkaz
-v prvním sloupeèku.
+<p>NachÃ¡zÃ­te se na strÃ¡nce obsahujÃ­cÃ­ historii objektu
+${TOOL.childName(RELATION)}. Pokud si chcete prohlÃ©dnout starÅ¡Ã­ verzi, zvolte odkaz
+v prvnÃ­m sloupeÄku.
 </p>
 
 <#if HISTORY?size==0>
-    <p class="error">Tento objekt nemá zaznamenanou ¾ádnou historii!</p>
+    <p class="error">Tento objekt nemÃ¡ zaznamenanou Å¾Ã¡dnou historii!</p>
 <#else>
     <br>
     <table border="1">

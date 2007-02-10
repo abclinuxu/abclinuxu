@@ -6,7 +6,7 @@
 </script>
 
 <div class="s_nadpis">
-    <a href="http://sf.impact.as/if/imred.php?aid=362&amp;lid=414">Pracovní nabídky DHL</a>
+    <a href="http://sf.impact.as/if/imred.php?aid=362&amp;lid=414">PracovnÃ­ nabÃ­dky DHL</a>
 </div>
 <div class="s_sekce">
     <ul>

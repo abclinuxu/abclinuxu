@@ -43,8 +43,8 @@ public class CzechTest extends TestCase {
 
     /** tests plain string operation */
     public void testString() throws Exception {
-        String zcaronString = "æ";
-        char zcaronChar = 'æ';
+        String zcaronString = "≈æ";
+        char zcaronChar = '≈æ';
         String tmp = "This includes " + zcaronString + " character.";
         String tmp2 = "This includes " + zcaronChar + " character.";
 
@@ -73,7 +73,7 @@ public class CzechTest extends TestCase {
     public void testMySQL() throws Exception {
 //        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/abc?user=literakl");
 //
-//        String testString = "æivoËiπn˝";
+//        String testString = "≈æivoƒçi≈°n√Ω";
 //        Statement statement = connection.createStatement();
 //        statement.executeUpdate("create temporary table test(str varchar(20), str2 text)");
 //
@@ -97,7 +97,7 @@ public class CzechTest extends TestCase {
 
     /** tests DOM4J manipulation */
     public void testDom4j() throws Exception {
-        String testString = "æivoËiπn˝";
+        String testString = "≈æivoƒçi≈°n√Ω";
 
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");

@@ -23,7 +23,7 @@
         <#list autors as autor>
             <a href="${autor.url}">${TOOL.childName(autor)}</a><#if autor_has_next>, </#if>
         </#list> |
-        Pøeèteno: <@showCounter clanek, .globals["CITACE"]?if_exists, "read" />&times;
+        PÅ™eÄteno: <@showCounter clanek, .globals["CITACE"]?if_exists, "read" />&times;
         <#if diz?exists>| <@showCommentsInListing diz, dateFormat[1]?default(dateFormat[0]), "/clanky" /></#if>
         <@showShortRating relation, "| " />
     </p>
@@ -35,8 +35,8 @@
 </#macro>
 
 <#macro showCommentsInListing(diz dateFormat urlPrefix)>
-    <a href="${diz.url?default(urlPrefix+"/show/"+diz.relationId)}">Komentáøù:&nbsp;${diz.responseCount}<@markNewComments diz/></a><#rt>
-    <#lt><#if diz.responseCount gt 0>, poslední&nbsp;${DATE.show(diz.updated, dateFormat)}</#if>
+    <a href="${diz.url?default(urlPrefix+"/show/"+diz.relationId)}">KomentÃ¡Å™Å¯:&nbsp;${diz.responseCount}<@markNewComments diz/></a><#rt>
+    <#lt><#if diz.responseCount gt 0>, poslednÃ­&nbsp;${DATE.show(diz.updated, dateFormat)}</#if>
 </#macro>
 
 <#macro showSoftwareList(items)>
@@ -45,11 +45,11 @@
     <table class="sw-polozky">
       <thead>
         <tr>
-            <td class="td01">Jméno</td>
-            <td class="td02">Hodnocení</td>
-            <!--<td class="td03">Pøeèteno</td>-->
-            <td class="td04">Nav¹tíveno</td>
-            <td class="td05">Poslední úprava</td>
+            <td class="td01">JmÃ©no</td>
+            <td class="td02">HodnocenÃ­</td>
+            <!--<td class="td03">PÅ™eÄteno</td>-->
+            <td class="td04">NavÅ¡tÃ­veno</td>
+            <td class="td05">PoslednÃ­ Ãºprava</td>
         </tr>
       </thead>
       <tbody>
@@ -85,7 +85,7 @@
    autor=TOOL.createUser(ITEM.owner),
    diz=TOOL.findComments(ITEM),
    url=relation.url?default("/zpravicky/show/"+relation.id),
-   title=TOOL.xpath(ITEM, "/data/title")?default("Zprávièka")
+   title=TOOL.xpath(ITEM, "/data/title")?default("ZprÃ¡viÄka")
  >
     <h3>${title}</h3>
     <p>
@@ -93,8 +93,8 @@
         <span style="font-size: smaller">
         <a href="/Profile/${autor.id}">${autor.name}</a> |
 	${DATE.show(ITEM.created,"CZ_FULL")} |
-        <a href="${url}" title="${title}">Komentáøe: ${diz.responseCount}</a><#rt>
-        <#lt><#if diz.responseCount gt 0><@markNewComments diz/>, poslední ${DATE.show(diz.updated, "SMART")}</#if>
+        <a href="${url}" title="${title}">KomentÃ¡Å™e: ${diz.responseCount}</a><#rt>
+        <#lt><#if diz.responseCount gt 0><@markNewComments diz/>, poslednÃ­ ${DATE.show(diz.updated, "SMART")}</#if>
         </span>
     </p>
 </#macro>
@@ -107,19 +107,19 @@
     <span>${DATE.show(item.created,"CZ_SHORT")} | ${NEWS_CATEGORIES[item.subType].name}</span>
     <p>${TOOL.xpath(item,"data/content")}</p>
     <span><a href="/Profile/${autor.id}">${TOOL.nonBreakingSpaces(autor.name)}</a>
-    | <a href="${url}" title="<#if diz.responseCount gt 0>poslední&nbsp;${DATE.show(diz.updated, "SMART")}</#if>"
-    >Komentáøù: ${diz.responseCount}<@lib.markNewComments diz/></a></span>
+    | <a href="${url}" title="<#if diz.responseCount gt 0>poslednÃ­&nbsp;${DATE.show(diz.updated, "SMART")}</#if>"
+    >KomentÃ¡Å™Å¯: ${diz.responseCount}<@lib.markNewComments diz/></a></span>
 </#macro>
 
 <#macro markNewComments(discussion)><#t>
 <#if TOOL.hasNewComments(USER?if_exists, discussion)><#t>
-    <span title="V diskusi jsou nové komentáøe" class="new_comment_mark">*</span><#t>
+    <span title="V diskusi jsou novÃ© komentÃ¡Å™e" class="new_comment_mark">*</span><#t>
 </#if><#t>
 </#macro>
 
 <#macro markNewCommentsQuestion(discussion)><#t>
 <#if TOOL.hasNewComments(USER?if_exists, discussion)><#t>
-    <span title="V diskusi jsou nové komentáøe" class="new_comment_state">*</span><#t>
+    <span title="V diskusi jsou novÃ© komentÃ¡Å™e" class="new_comment_state">*</span><#t>
 </#if><#t>
 </#macro>
 
@@ -146,26 +146,26 @@
   </#if><br>
   <#assign blacklisted = diz.isBlacklisted(comment)>
   <#if blacklisted>
-     <a onClick="schovej_vlakno(${comment.id})" id="comment${comment.id}_toggle2" class="ds_control_sbalit" title="Schová nebo rozbalí celé vlákno">Rozbalit</a>
+     <a onClick="schovej_vlakno(${comment.id})" id="comment${comment.id}_toggle2" class="ds_control_sbalit" title="SchovÃ¡ nebo rozbalÃ­ celÃ© vlÃ¡kno">Rozbalit</a>
 	 <#else>
-     <a onClick="schovej_vlakno(${comment.id})" id="comment${comment.id}_toggle2" class="ds_control_sbalit2" title="Schová nebo rozbalí celé vlákno">Rozbalit</a>
+     <a onClick="schovej_vlakno(${comment.id})" id="comment${comment.id}_toggle2" class="ds_control_sbalit2" title="SchovÃ¡ nebo rozbalÃ­ celÃ© vlÃ¡kno">Rozbalit</a>
   </#if>
   ${comment.title?if_exists}
   <#if showControls>
 	 <div id="comment${comment.id}_controls" <#if blacklisted>class="ds_controls_blacklisted"</#if>>
          <#assign nextUnread = diz.getNextUnread(comment)?default("UNDEF")>
-         <#if ! nextUnread?is_string><a href="#${nextUnread}" title="Skoèit na dal¹í nepøeètenı komentáø">Dal¹í</a> |</#if>
-         <a href="${URL.make("/EditDiscussion/"+diz.relationId+"?action=add&amp;dizId="+diz.id+"&amp;threadId="+comment.id+extra[0]?default(""))}">Odpovìdìt</a> |
-         <a href="${URL.make("/EditRequest/"+diz.relationId+"?action=comment&amp;threadId="+comment.id)}" title="®ádost o pøesun diskuse, stí¾nost na komentáø">Admin</a> |
-         <a href="#${comment.id}" title="Pøímá adresa na tento komentáø">Link</a> |
-         <#if (comment.parent?exists)><a href="#${comment.parent}" title="Odkaz na komentáø o jednu úroveò vı¹e">Vı¹e</a> |</#if>
+         <#if ! nextUnread?is_string><a href="#${nextUnread}" title="SkoÄit na dalÅ¡Ã­ nepÅ™eÄtenÃ½ komentÃ¡Å™">DalÅ¡Ã­</a> |</#if>
+         <a href="${URL.make("/EditDiscussion/"+diz.relationId+"?action=add&amp;dizId="+diz.id+"&amp;threadId="+comment.id+extra[0]?default(""))}">OdpovÄ›dÄ›t</a> |
+         <a href="${URL.make("/EditRequest/"+diz.relationId+"?action=comment&amp;threadId="+comment.id)}" title="Å½Ã¡dost o pÅ™esun diskuse, stÃ­Å¾nost na komentÃ¡Å™">Admin</a> |
+         <a href="#${comment.id}" title="PÅ™Ã­mÃ¡ adresa na tento komentÃ¡Å™">Link</a> |
+         <#if (comment.parent?exists)><a href="#${comment.parent}" title="Odkaz na komentÃ¡Å™ o jednu ÃºroveÅˆ vÃ½Å¡e">VÃ½Å¡e</a> |</#if>
          <#if comment.author?exists>
-             <#if blacklisted><#local action="fromBlacklist", title="Neblokovat", hint="Odstraní autora ze seznamu blokovanıch u¾ivatelù">
-             <#else><#local action="toBlacklist", title="Blokovat", hint="Pøidá autora na seznam blokovanıch u¾ivatelù"></#if>
+             <#if blacklisted><#local action="fromBlacklist", title="Neblokovat", hint="OdstranÃ­ autora ze seznamu blokovanÃ½ch uÅ¾ivatelÅ¯">
+             <#else><#local action="toBlacklist", title="Blokovat", hint="PÅ™idÃ¡ autora na seznam blokovanÃ½ch uÅ¾ivatelÅ¯"></#if>
              <#if USER?exists><#local myId=USER.id></#if>
              <a href="${URL.noPrefix("/EditUser/"+myId?if_exists+"?action="+action+"&amp;bUid="+who.id+"&amp;url="+URL.prefix+"/show/"+diz.relationId+"#"+comment.id)}" title="${hint}">${title}</a> |
          </#if>
-         <a onClick="schovej_vlakno(${comment.id})" id="comment${comment.id}_toggle1" title="Schová nebo rozbalí celé vlákno" class="ds_control_sbalit3"><#if ! blacklisted>Sbalit<#else>Rozbalit</#if></a>
+         <a onClick="schovej_vlakno(${comment.id})" id="comment${comment.id}_toggle1" title="SchovÃ¡ nebo rozbalÃ­ celÃ© vlÃ¡kno" class="ds_control_sbalit3"><#if ! blacklisted>Sbalit<#else>Rozbalit</#if></a>
      </div>
   <#elseif USER?exists && USER.hasRole("discussion admin")>
       <a href="${URL.make("/EditRequest/"+diz.relationId+"?action=comment&amp;threadId="+comment.id)}">Admin</a>
@@ -193,11 +193,11 @@
 <#macro showCensored(comment dizId relId)>
     <p class="cenzura">
         <#assign admin = TOOL.xpath(comment.data,"//censored/@admin")?default("5473")>
-        Ná¹ <a href="/Profile/${admin}">administrátor</a>
-        shledal tento pøíspìvek závadnım nebo nevyhovujícím zamìøení portálu.
+        NÃ¡Å¡ <a href="/Profile/${admin}">administrÃ¡tor</a>
+        shledal tento pÅ™Ã­spÄ›vek zÃ¡vadnÃ½m nebo nevyhovujÃ­cÃ­m zamÄ›Å™enÃ­ portÃ¡lu.
         <#assign message = TOOL.xpath(comment.data,"//censored")?default("")>
         <#if message?has_content><br>${message}</#if>
-        <br><a href="${URL.make("/show?action=censored&amp;dizId="+dizId+"&amp;threadId="+comment.id)}">Zobrazit</a> pøíspìvek
+        <br><a href="${URL.make("/show?action=censored&amp;dizId="+dizId+"&amp;threadId="+comment.id)}">Zobrazit</a> pÅ™Ã­spÄ›vek
     </p>
     <#if USER?exists && USER.hasRole("discussion admin")>
         <a href="${URL.make("/EditDiscussion?action=censore&amp;rid="+relId+"&amp;dizId="+dizId+"&amp;threadId="+comment.id)}">Odvolat cenzuru</a>
@@ -206,16 +206,16 @@
 
 <#macro showDiscussion(relation)>
     <#local DIZ = TOOL.createDiscussionTree(relation.child,USER?if_exists,relation.id,true)>
-    <#if DIZ.monitored><#local monitorState="Pøestaò sledovat"><#else><#assign monitorState="Sleduj"></#if>
+    <#if DIZ.monitored><#local monitorState="PÅ™estaÅˆ sledovat"><#else><#assign monitorState="Sleduj"></#if>
 
     <div class="ds_toolbox">
-     <b>Nástroje:</b>
+     <b>NÃ¡stroje:</b>
        <#if DIZ.hasUnreadComments>
-         <a href="#${DIZ.firstUnread}" title="Skoèit na první nepøeètenı komentáø">První nepøeètenı komentáø</a>,
+         <a href="#${DIZ.firstUnread}" title="SkoÄit na prvnÃ­ nepÅ™eÄtenÃ½ komentÃ¡Å™">PrvnÃ­ nepÅ™eÄtenÃ½ komentÃ¡Å™</a>,
        </#if>
          <a href="${URL.make("/EditMonitor/"+DIZ.relationId+"?action=toggle")}">${monitorState}</a>
-           <span title="Poèet lidí, kteøí sledují tuto diskusi">(${DIZ.monitorSize})</span>
-           <a class="info" href="#">?<span class="tooltip">Za¹le ka¾dı novı komentáø emailem na va¹i adresu</span></a>,
+           <span title="PoÄet lidÃ­, kteÅ™Ã­ sledujÃ­ tuto diskusi">(${DIZ.monitorSize})</span>
+           <a class="info" href="#">?<span class="tooltip">ZaÅ¡le kaÅ¾dÃ½ novÃ½ komentÃ¡Å™ emailem na vaÅ¡i adresu</span></a>,
          <a href="${URL.prefix}/show/${DIZ.relationId}?varianta=print">Tisk</a>
        <#if USER?exists && USER.hasRole("discussion admin")>
          <br />
@@ -227,10 +227,10 @@
 
     <p>
         <#if DIZ.frozen>
-            Diskuse byla administrátory uzamèena
+            Diskuse byla administrÃ¡tory uzamÄena
         <#else>
             <a href="${URL.make("/EditDiscussion?action=add&amp;dizId="+DIZ.id+"&amp;threadId=0&amp;rid="+DIZ.relationId)}">
-            Vlo¾it dal¹í komentáø</a>
+            VloÅ¾it dalÅ¡Ã­ komentÃ¡Å™</a>
         </#if>
     </p>
 
@@ -240,16 +240,16 @@
 
     <#if (!DIZ.frozen && DIZ.size>3)>
      <p><a href="${URL.make("/EditDiscussion?action=add&amp;threadId=0&amp;dizId="+DIZ.id+"&amp;rid="+DIZ.relationId)}">
-     Zalo¾it nové vlákno</a></p>
+     ZaloÅ¾it novÃ© vlÃ¡kno</a></p>
     </#if>
 </#macro>
 
 <#macro showRating (relation heading=true boxCssClass="rating")>
-    <#local rating=TOOL.ratingFor(relation.child.data)?default("UNDEF")>
-    <div class="${boxCssClass}">
-      <#if heading><h3>Hodnocení:
+Â  Â  <#local rating=TOOL.ratingFor(relation.child.data)?default("UNDEF")>
+Â  Â  <div class="${boxCssClass}">
+      <#if heading><h3>HodnocenÃ­:
         <#if rating!="UNDEF">
-          <span title="Hlasù: ${rating.count}">${rating.percent} %</span>
+          <span title="HlasÅ¯: ${rating.count}">${rating.percent} %</span>
         <#else>-
         </#if></h3>
       </#if>
@@ -258,15 +258,15 @@
           <#local width = (rating.percent / 100) * 78>
           <div class="rtut" style="width: ${width?string["0"]}px"></div>
         </div>
-      <#else>zatím nehodnoceno
+      <#else>zatÃ­m nehodnoceno
       </#if>
 
         <div class="hlasy">
-        <#if USER?exists>
-           <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=0")}" target="rating" rel="nofollow">¹patné</a> &bull; <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=3")}" target="rating" rel="nofollow">dobré</a>
-        <#else>
-           <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=0&amp;return=true")}" rel="nofollow">¹patné</a> &bull; <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=3&amp;return=true")}" rel="nofollow">dobré</a>
-        </#if>
+Â  Â  Â  Â  <#if USER?exists>
+           <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=0")}" target="rating" rel="nofollow">Å¡patnÃ©</a> &bull; <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=3")}" target="rating" rel="nofollow">dobrÃ©</a>
+Â  Â  Â  Â  <#else>
+           <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=0&amp;return=true")}" rel="nofollow">Å¡patnÃ©</a> &bull; <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=3&amp;return=true")}" rel="nofollow">dobrÃ©</a>
+Â  Â  Â  Â  </#if>
         </div>
         <iframe name="rating" frameborder="0" height="20" scrolling="no" class="rating_iframe"></iframe>
     </div>
@@ -274,22 +274,22 @@
 
 <#macro showShortRating (relation, separator, heading=true)>
     <#local rating=TOOL.ratingFor(relation.child.data)?default("UNDEF")>
-    <#if rating!="UNDEF"><#if heading>${separator}Hodnocení:&nbsp;</#if>${rating.percent}&nbsp;%&nbsp;(${rating.count}&nbsp;hlasù)</#if>
+    <#if rating!="UNDEF"><#if heading>${separator}HodnocenÃ­:&nbsp;</#if>${rating.percent}&nbsp;%&nbsp;(${rating.count}&nbsp;hlasÅ¯)</#if>
 </#macro>
 
 <#macro star value><#if (value>0.60)><img src="/images/site/star1.gif" alt="*"><#elseif (value<0.2)><img src="/images/site/star0.gif" alt="-"><#else><img src="/images/site/star5.gif" alt="+"></#if></#macro>
 
 <#macro month (month)>
     <#if month=="1">leden
-    <#elseif month=="2">únor
-    <#elseif month=="3">bøezen
+    <#elseif month=="2">Ãºnor
+    <#elseif month=="3">bÅ™ezen
     <#elseif month=="4">duben
-    <#elseif month=="5">kvìten
-    <#elseif month=="6">èerven
-    <#elseif month=="7">èervenec
+    <#elseif month=="5">kvÄ›ten
+    <#elseif month=="6">Äerven
+    <#elseif month=="7">Äervenec
     <#elseif month=="8">srpen
-    <#elseif month=="9">záøí
-    <#elseif month=="10">øíjen
+    <#elseif month=="9">zÃ¡Å™Ã­
+    <#elseif month=="10">Å™Ã­jen
     <#elseif month=="11">listopad
     <#elseif month=="12">prosinec
     </#if>
@@ -304,14 +304,14 @@
         <#list anketa.choices as choice>
             <div class="ank-odpov">
               <#assign procento = TOOL.percent(choice.count,total)>
-              <label><input type="${type}" name="voteId" value="${choice.id}">${choice.text}</label>&nbsp;(<span title="${choice.count} hlasù">${procento}&nbsp;%</span>)<br>
+              <label><input type="${type}" name="voteId" value="${choice.id}">${choice.text}</label>&nbsp;(<span title="${choice.count} hlasÅ¯">${procento}&nbsp;%</span>)<br>
               <div class="ank-sloup-okraj" style="width: ${procento}px">
                 <div class="ank-sloup"></div>
               </div>
             </div>
         </#list>
         <input name="submit" type="submit" class="button" value="Hlasuj" src="/images/site2/vote_btn.gif" alt="Hlasuj">
-        Celkem ${total} hlasù<br>
+        Celkem ${total} hlasÅ¯<br>
         <input type="hidden" name="url" value="${url}">
         <input type="hidden" name="action" value="vote">
         </form>
@@ -322,21 +322,21 @@
     <#assign related = TOOL.getRelatedDocuments(item)>
     <#if (related?size > 0)>
         <div class="cl_perex souvisejici">
-            <h3>Související dokumenty</h3>
+            <h3>SouvisejÃ­cÃ­ dokumenty</h3>
             <dl>
             <#list related as link>
                 <dt>
                     <a href="${link.url}">${link.title}</a>
-                    <#if link.type=='article'>(èlánek)
+                    <#if link.type=='article'>(ÄlÃ¡nek)
                     <#elseif link.type=='content'>(dokument)
                     <#elseif link.type=='dictionary'>(pojem)
                     <#elseif link.type=='discussion'>(diskuse)
-                    <#elseif link.type=='driver'>(ovladaè)
-                    <#elseif link.type=='external'>(externí dokument)
+                    <#elseif link.type=='driver'>(ovladaÄ)
+                    <#elseif link.type=='external'>(externÃ­ dokument)
                     <#elseif link.type=='faq'>(FAQ)
                     <#elseif link.type=='hardware'>(hardware)
-                    <#elseif link.type=='news'>(zprávièka)
-                    <#elseif link.type=='other'>(ostatní)
+                    <#elseif link.type=='news'>(zprÃ¡viÄka)
+                    <#elseif link.type=='other'>(ostatnÃ­)
                     <#elseif link.type=='poll'>(anketa)
                     <#elseif link.type=='section'>(sekce)
                     <#elseif link.type=='software'>(software)

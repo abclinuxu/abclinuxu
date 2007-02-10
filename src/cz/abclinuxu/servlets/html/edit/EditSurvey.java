@@ -85,11 +85,11 @@ public class EditSurvey implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistance();
         Item item = (Item) InstanceUtils.instantiateParam(PARAM_SURVEY, Item.class, params, request);
         if ( item==null )
-            return ServletUtils.showErrorPage("ChybÌ parametr surveyId!",env,request);
+            return ServletUtils.showErrorPage("Chyb√≠ parametr surveyId!",env,request);
 
         persistence.synchronize(item);
         if ( item.getType()!=Item.SURVEY )
-            return ServletUtils.showErrorPage("Tato poloæka nenÌ anketa!", env, request);
+            return ServletUtils.showErrorPage("Tato polo≈æka nen√≠ anketa!", env, request);
 
         if ( ACTION_EDIT.equals(action) )
             return actionEditStep1(request, item, env);
@@ -134,7 +134,7 @@ public class EditSurvey implements AbcAction {
             return FMTemplateSelector.select("EditSurvey", "add", env, request);
 
         PersistenceFactory.getPersistance().create(survey);
-        ServletUtils.addMessage("Anketa byla ˙spÏπnÏ vytvo¯ena s ËÌslem "+survey.getId(),env,request.getSession());
+        ServletUtils.addMessage("Anketa byla √∫spƒõ≈°nƒõ vytvo≈ôena s ƒç√≠slem "+survey.getId(),env,request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/EditSurvey/"+survey.getId()+"?action=edit");
@@ -182,7 +182,7 @@ public class EditSurvey implements AbcAction {
             return FMTemplateSelector.select("EditSurvey", "edit", env, request);
 
         PersistenceFactory.getPersistance().update(survey);
-        ServletUtils.addMessage("ZmÏny byly uloæeny.", env, request.getSession());
+        ServletUtils.addMessage("Zmƒõny byly ulo≈æeny.", env, request.getSession());
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/EditSurvey/"+survey.getId()+"?action=edit");
@@ -216,7 +216,7 @@ public class EditSurvey implements AbcAction {
     private boolean setDefinition(Map params, Item survey, Map env) {
         String definition = (String) params.get(PARAM_DEFINITION);
         if ( Misc.empty(definition) ) {
-            ServletUtils.addError(PARAM_DEFINITION, "Zadejte XML s definicÌ ankety!", env, null);
+            ServletUtils.addError(PARAM_DEFINITION, "Zadejte XML s definic√≠ ankety!", env, null);
             return false;
         }
 
@@ -225,7 +225,7 @@ public class EditSurvey implements AbcAction {
             Element data = (Element) newDoc.selectSingleNode("/anketa");
 
             if ( data==null ) {
-                ServletUtils.addError(PARAM_DEFINITION, "ChybÌ znaËka <anketa>!", env, null);
+                ServletUtils.addError(PARAM_DEFINITION, "Chyb√≠ znaƒçka <anketa>!", env, null);
                 return false;
             }
 
@@ -241,7 +241,7 @@ public class EditSurvey implements AbcAction {
             }
             survey.setData(newDoc);
         } catch (DocumentException e) {
-            ServletUtils.addError(PARAM_DEFINITION, "Zadejte validnÌ XML!"+e.getMessage(), env, null);
+            ServletUtils.addError(PARAM_DEFINITION, "Zadejte validn√≠ XML!"+e.getMessage(), env, null);
             return false;
         }
         return true;

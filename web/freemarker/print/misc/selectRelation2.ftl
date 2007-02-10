@@ -4,7 +4,7 @@
 
 <form action="${URL.noPrefix("/SelectRelation")}" method="POST">
  <p>
-  Pøejete si pokraèovat s relací ${TOOL.childName(CURRENT)}?
+  PÅ™ejete si pokraÄovat s relacÃ­ ${TOOL.childName(CURRENT)}?
   <input type="submit" name="finish" value="Ano">
  </p>
   <input type="hidden" NAME="currentId" VALUE="${CURRENT.id}">

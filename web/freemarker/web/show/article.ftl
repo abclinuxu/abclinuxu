@@ -18,7 +18,7 @@
     <h2>Rubrika:
         <#assign section=TOOL.xpath(ITEM, "/data/section_rid")?default("UNDEFINED")>
         <#if section=="UNDEFINED">
-            nezadána
+            nezadÃ¡na
         <#else>
             ${TOOL.childName(section)}
         </#if>
@@ -31,27 +31,27 @@
         <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">Upravit</a>
         <#if SERIES?exists>
             <#if ! inPool>
-                <a href="${URL.noPrefix("/serialy/edit/"+SERIES.series.id+"?action=rmArticle&amp;articleRid="+RELATION.id)}">Vyøadit ze seriálu</a>
+                <a href="${URL.noPrefix("/serialy/edit/"+SERIES.series.id+"?action=rmArticle&amp;articleRid="+RELATION.id)}">VyÅ™adit ze seriÃ¡lu</a>
             </#if>
         <#else>
             <#if inPool>
-                <a href="${URL.noPrefix("/clanky/edit/"+RELATION.id+"?action=addSeries")}">Pøiøadit k seriálu</a>
+                <a href="${URL.noPrefix("/clanky/edit/"+RELATION.id+"?action=addSeries")}">PÅ™iÅ™adit k seriÃ¡lu</a>
             <#else>
-                <a href="${URL.noPrefix("/serialy/edit?action=addArticle&amp;articleRid="+RELATION.id)}">Pøiøadit k seriálu</a>
+                <a href="${URL.noPrefix("/serialy/edit?action=addArticle&amp;articleRid="+RELATION.id)}">PÅ™iÅ™adit k seriÃ¡lu</a>
             </#if>
         </#if>
         <#if !CHILDREN.royalties?exists>
-            <b><a class="error" href="${URL.make("/honorare/"+RELATION.id+"?action=add")}">Vlo¾it honoráø</a></b>
+            <b><a class="error" href="${URL.make("/honorare/"+RELATION.id+"?action=add")}">VloÅ¾it honorÃ¡Å™</a></b>
         <#else>
-            <a href="${URL.make("/honorare/"+RELATION.id+"?action=add")}">Vlo¾it honoráø</a>
+            <a href="${URL.make("/honorare/"+RELATION.id+"?action=add")}">VloÅ¾it honorÃ¡Å™</a>
             <#list CHILDREN.royalties as honorar>
-                <a href="${URL.make("/honorare/"+honorar.id+"?action=edit")}">Upravit honoráø</a>
+                <a href="${URL.make("/honorare/"+honorar.id+"?action=edit")}">Upravit honorÃ¡Å™</a>
             </#list>
         </#if>
         <#if !CHILDREN.poll?exists>
-            <a href="${URL.noPrefix("/EditPoll?action=add&amp;rid="+RELATION.id)}">Vytvoø anketu</a>
+            <a href="${URL.noPrefix("/EditPoll?action=add&amp;rid="+RELATION.id)}">VytvoÅ™ anketu</a>
         </#if>
-        <a href="${URL.noPrefix("/SelectRelation?prefix=/clanky&amp;url=/EditRelation&action=move&amp;rid="+RELATION.id)}">Pøesunout</a>
+        <a href="${URL.noPrefix("/SelectRelation?prefix=/clanky&amp;url=/EditRelation&action=move&amp;rid="+RELATION.id)}">PÅ™esunout</a>
         <a href="${URL.noPrefix("/EditRelation?action=remove&amp;prefix=/clanky&amp;rid="+RELATION.id)}">Smazat</a>
         <a href="${URL.make("/"+RELATION.id+".docb")}">Docbook</a>
         <a href="${URL.make("/edit/"+RELATION.id+"?action=showTalk")}">Rozhovor</a>
@@ -80,7 +80,7 @@ ${TOOL.render(TEXT,USER?if_exists)}
 
 <#if PAGES?exists>
     <div class="cl_perex">
-        <h3>Jednotlivé podstránky èlánku</h3>
+        <h3>JednotlivÃ© podstrÃ¡nky ÄlÃ¡nku</h3>
         <div class="s_sekce">
             <ol>
                 <#list PAGES as page>
@@ -100,19 +100,19 @@ ${TOOL.render(TEXT,USER?if_exists)}
 <#if SERIES?exists>
  <table class="cl-serial">
   <tr class="hlav">
-    <th colspan="2">Seriál <a href="${SERIES.series.url}">${TOOL.childName(SERIES.series)}</a> (dílù: ${SERIES.total})</th>
+    <th colspan="2">SeriÃ¡l <a href="${SERIES.series.url}">${TOOL.childName(SERIES.series)}</a> (dÃ­lÅ¯: ${SERIES.total})</th>
   </tr>
   <tr class="dil">
-    <td>první díl</td>
-    <td>poslední díl</td>
+    <td>prvnÃ­ dÃ­l</td>
+    <td>poslednÃ­ dÃ­l</td>
   </tr>
   <tr>
     <td><a href="${SERIES.first.url}">${TOOL.childName(SERIES.first)}</a></td>
     <td><#if (SERIES.total > 1)><a href="${SERIES.last.url}">${TOOL.childName(SERIES.last)}</a><#else>&bull;</#if></td>
   </tr>
   <tr class="dil">
-    <td>&laquo; pøedchozí díl</td>
-    <td>následující díl &raquo;</td>
+    <td>&laquo; pÅ™edchozÃ­ dÃ­l</td>
+    <td>nÃ¡sledujÃ­cÃ­ dÃ­l &raquo;</td>
   </tr>
   <tr>
     <td><#if SERIES.previous?exists><a href="${SERIES.previous.url}">${TOOL.childName(SERIES.previous)}</a><#else>&bull;</#if></td>
@@ -123,7 +123,7 @@ ${TOOL.render(TEXT,USER?if_exists)}
 
 <div class="cl_perex souvisejici">
     <#if RELATED?exists>
-        <h3>Související èlánky</h3>
+        <h3>SouvisejÃ­cÃ­ ÄlÃ¡nky</h3>
         <#list RELATED as link>
             <a href="${link.url}">${link.title}</a> ${link.description?if_exists}<br>
         </#list>
@@ -135,14 +135,14 @@ ${TOOL.render(TEXT,USER?if_exists)}
         </#list>
     </#if>
     <#if SAME_SECTION_ARTICLES?exists>
-        <h3>Dal¹í èlánky z této rubriky</h3>
+        <h3>DalÅ¡Ã­ ÄlÃ¡nky z tÃ©to rubriky</h3>
         <#list SAME_SECTION_ARTICLES as relation>
             <a href="${relation.url?default("/clanky/show/"+relation.id)}">${TOOL.childName(relation)}</a><br>
         </#list>
     </#if>
 </div>
 
-<p><b>Nástroje</b>: <a rel="nofollow" href="/clanky/show/${RELATION.id}?varianta=print">Tisk</a>,
+<p><b>NÃ¡stroje</b>: <a rel="nofollow" href="/clanky/show/${RELATION.id}?varianta=print">Tisk</a>,
 <a rel="nofollow" href="/clanky/show/${RELATION.id}?varianta=print&amp;noDiz">Tisk bez diskuse</a>
 </p>
 
@@ -151,11 +151,11 @@ ${TOOL.render(TEXT,USER?if_exists)}
 <@lib.advertisement id="sun-box" />
 
 <#if CHILDREN.discussion?exists>
-    <h3>Komentáøe</h3>
+    <h3>KomentÃ¡Å™e</h3>
     <@lib.showDiscussion CHILDREN.discussion[0]/>
 <#elseif forbidDiscussion!="yes">
-    <h3>Diskuse k tomuto èlánku</h3>
-    <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vlo¾it první komentáø</a>
+    <h3>Diskuse k tomuto ÄlÃ¡nku</h3>
+    <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">VloÅ¾it prvnÃ­ komentÃ¡Å™</a>
 </#if>
 
 <#include "../footer.ftl">

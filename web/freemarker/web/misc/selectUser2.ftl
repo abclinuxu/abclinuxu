@@ -4,7 +4,7 @@
 
 <@lib.showMessages/>
 
-<p>Zadaným podmínkám vyhovuje celkem ${USERS.total} u¾ivatelù.</p>
+<p>ZadanÃ½m podmÃ­nkÃ¡m vyhovuje celkem ${USERS.total} uÅ¾ivatelÅ¯.</p>
 
 <form action="${URL.noPrefix("/SelectUser")}" method="POST">
  <ol start="${USERS.currentPage.row+1}">
@@ -15,12 +15,12 @@
    </li>
   </#list>
  </ol>
- <input type="submit" value="Pokraèuj">
+ <input type="submit" value="PokraÄuj">
  <#if USERS.prevPage?exists>
-  <input type="submit" name="previous" value="Pøedchozích ${USERS.pageSize} u¾ivatelù">
+  <input type="submit" name="previous" value="PÅ™edchozÃ­ch ${USERS.pageSize} uÅ¾ivatelÅ¯">
  </#if>
  <#if USERS.nextPage?exists>
-  <input type="submit" name="next" value="Následujících ${USERS.pageSize} u¾ivatelù">
+  <input type="submit" name="next" value="NÃ¡sledujÃ­cÃ­ch ${USERS.pageSize} uÅ¾ivatelÅ¯">
  </#if>
  ${SAVED_PARAMS?if_exists}
  <input type="hidden" name="from" value="${USERS.currentPage.row}">

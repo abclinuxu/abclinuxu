@@ -159,7 +159,7 @@ public class EditBlog implements AbcAction, Configurable {
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
         if ( relation==null )
-            throw new MissingArgumentException("ChybÌ parametr relId!");
+            throw new MissingArgumentException("Chyb√≠ parametr relId!");
 
         relation = (Relation) persistence.findById(relation);
         Tools.sync(relation);
@@ -264,7 +264,7 @@ public class EditBlog implements AbcAction, Configurable {
         if (ACTION_MOVE_LINK_DOWN.equals(action))
             return actionMoveLink(request, response, blog, false, env);
 
-        throw new MissingArgumentException("ChybÌ parametr action!");
+        throw new MissingArgumentException("Chyb√≠ parametr action!");
     }
 
     /**
@@ -277,7 +277,7 @@ public class EditBlog implements AbcAction, Configurable {
 
         Element settings = (Element) user.getData().selectSingleNode("/data/settings");
         if ( settings.element("blog")!=null ) {
-            ServletUtils.addError(Constants.ERROR_GENERIC,"Chyba: blog jiæ existuje!",env,request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC,"Chyba: blog ji≈æ existuje!",env,request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/Profile/"+user.getId()+"?action="+ViewUser.ACTION_SHOW_MY_PROFILE);
             return null;
@@ -528,7 +528,7 @@ public class EditBlog implements AbcAction, Configurable {
      */
     protected String actionRemoveStoryStep1(HttpServletRequest request, HttpServletResponse response, Relation story, Category blog, Map env) throws Exception {
         if (containsForeignComments((Item) story.getChild())) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Tento z·pis nenÌ moænÈ smazat, neboª obsahuje cizÌ koment·¯e.", env, request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Tento z√°pis nen√≠ mo≈æn√© smazat, nebo≈• obsahuje ciz√≠ koment√°≈ôe.", env, request.getSession());
             Item item = (Item) story.getChild();
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(), item.getCreated(), story.getId()));
@@ -546,7 +546,7 @@ public class EditBlog implements AbcAction, Configurable {
         Item item = (Item) story.getChild();
 
         if (containsForeignComments((Item) story.getChild())) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Tento z·pis nenÌ moænÈ smazat, neboª obsahuje cizÌ koment·¯e.", env, request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Tento z√°pis nen√≠ mo≈æn√© smazat, nebo≈• obsahuje ciz√≠ koment√°≈ôe.", env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, Tools.getUrlForBlogStory(blog.getSubType(), item.getCreated(), story.getId()));
             return null;
@@ -651,7 +651,7 @@ public class EditBlog implements AbcAction, Configurable {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String name = (String) params.get(PARAM_CATEGORY_NAME);
         if (Misc.empty(name))
-            ServletUtils.addError(PARAM_CATEGORY_NAME, "ProsÌm zadejte hodnotu.", env, null);
+            ServletUtils.addError(PARAM_CATEGORY_NAME, "Pros√≠m zadejte hodnotu.", env, null);
 
         return FMTemplateSelector.select("EditBlog", "add_category", env, request);
     }
@@ -685,7 +685,7 @@ public class EditBlog implements AbcAction, Configurable {
 
         int id = Misc.parseInt((String) params.get(PARAM_CATEGORY_ID), -1);
         if (id==-1) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "ChybÌ parametr s ËÌslem kategorie!", env, request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Chyb√≠ parametr s ƒç√≠slem kategorie!", env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/blog/edit/" + relation.getId() + "?action=categories");
             return null;
@@ -694,7 +694,7 @@ public class EditBlog implements AbcAction, Configurable {
         Document document = blog.getData();
         Element category = (Element) document.selectSingleNode("//categories/category[@id="+id+"]");
         if (category==null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Kategorie s ËÌslem "+id+" nebyla nalezena!", env, request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Kategorie s ƒç√≠slem "+id+" nebyla nalezena!", env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/blog/edit/" + relation.getId() + "?action=categories");
             return null;
@@ -836,14 +836,14 @@ public class EditBlog implements AbcAction, Configurable {
         Element root = blog.getData().getRootElement();
         int position = Misc.parseInt((String) params.get(PARAM_POSITION), -1);
         if (position == -1) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "ChybÌ parametr position!", env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Chyb√≠ parametr position!", env, null);
             return null;
         }
 
         Element linksElement = (Element) root.selectSingleNode("/data/custom/links");
         List links = linksElement.elements("link");
         if (links == null || links.size() == 0) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Oops, nem·te definov·ny æ·dnÈ linky!", env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Oops, nem√°te definov√°ny ≈æ√°dn√© linky!", env, null);
             return null;
         }
 
@@ -878,12 +878,12 @@ public class EditBlog implements AbcAction, Configurable {
         String name = (String) params.get(PARAM_BLOG_NAME);
         name = Misc.filterDangerousCharacters(name);
         if ( name==null || name.trim().length()<1) {
-            ServletUtils.addError(PARAM_BLOG_NAME, "Zadejte jmÈno blogu!", env, null);
+            ServletUtils.addError(PARAM_BLOG_NAME, "Zadejte jm√©no blogu!", env, null);
             return false;
         }
         name = name.trim();
         if (new RE(reBlogName).match(name)) {
-            ServletUtils.addError(PARAM_BLOG_NAME, "JmÈno blogu smÌ obsahovat jen znaky a-z, 0-9 a _!", env, null);
+            ServletUtils.addError(PARAM_BLOG_NAME, "Jm√©no blogu sm√≠ obsahovat jen znaky a-z, 0-9 a _!", env, null);
             return false;
         }
 
@@ -894,7 +894,7 @@ public class EditBlog implements AbcAction, Configurable {
             Relation relation = (Relation) list.get(0);
             Category existing = (Category) relation.getChild();
             if (existing.getId()!=category.getId()) {
-                ServletUtils.addError(PARAM_BLOG_NAME, "Zadejte jinÈ jmÈno blogu, toto se jiæ pouæÌv·!", env, null);
+                ServletUtils.addError(PARAM_BLOG_NAME, "Zadejte jin√© jm√©no blogu, toto se ji≈æ pou≈æ√≠v√°!", env, null);
                 return false;
             }
         }
@@ -951,7 +951,7 @@ public class EditBlog implements AbcAction, Configurable {
         String name = (String) params.get(PARAM_CATEGORY_NAME);
         name = Misc.filterDangerousCharacters(name);
         if (Misc.empty(name)) {
-            ServletUtils.addError(PARAM_CATEGORY_NAME, "ProsÌm zadejte hodnotu.", env, null);
+            ServletUtils.addError(PARAM_CATEGORY_NAME, "Pros√≠m zadejte hodnotu.", env, null);
             return false;
         }
 
@@ -983,19 +983,19 @@ public class EditBlog implements AbcAction, Configurable {
         String name = (String) params.get(PARAM_CATEGORY_NAME);
         name = Misc.filterDangerousCharacters(name);
         if (Misc.empty(name)) {
-            ServletUtils.addError(PARAM_CATEGORY_NAME, "ProsÌm zadejte hodnotu.", env, null);
+            ServletUtils.addError(PARAM_CATEGORY_NAME, "Pros√≠m zadejte hodnotu.", env, null);
             return false;
         }
 
         int id = Misc.parseInt((String) params.get(PARAM_CATEGORY_ID), -1);
         if (id == -1) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "ChybÌ parametr s ËÌslem kategorie!", env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Chyb√≠ parametr s ƒç√≠slem kategorie!", env, null);
             return false;
         }
 
         Element category = (Element) root.selectSingleNode("//categories/category[@id=" + id + "]");
         if (category == null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Kategorie s ËÌslem " + id + " nebyla nalezena!", env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Kategorie s ƒç√≠slem " + id + " nebyla nalezena!", env, null);
             return false;
         }
 
@@ -1018,12 +1018,12 @@ public class EditBlog implements AbcAction, Configurable {
         String s = (String) params.get(PARAM_PAGE_TITLE);
         s = Misc.filterDangerousCharacters(s);
         if (Misc.empty(s)) {
-            ServletUtils.addError(PARAM_PAGE_TITLE, "ProsÌm zadejte hodnotu.", env, null);
+            ServletUtils.addError(PARAM_PAGE_TITLE, "Pros√≠m zadejte hodnotu.", env, null);
             return false;
         }
         if ( s.indexOf("<")!=-1 ) {
             params.put(PARAM_PAGE_TITLE, "");
-            ServletUtils.addError(PARAM_PAGE_TITLE, "PouæitÌ HTML znaËek je v titulku zak·z·no!", env, null);
+            ServletUtils.addError(PARAM_PAGE_TITLE, "Pou≈æit√≠ HTML znaƒçek je v titulku zak√°z√°no!", env, null);
             return false;
         }
         title.setText(s);
@@ -1047,7 +1047,7 @@ public class EditBlog implements AbcAction, Configurable {
         } else {
             if ( s.indexOf("<")!=-1 ) {
                 params.put(PARAM_TITLE, "");
-                ServletUtils.addError(PARAM_TITLE, "PouæitÌ HTML znaËek je v titulku zak·z·no!", env, null);
+                ServletUtils.addError(PARAM_TITLE, "Pou≈æit√≠ HTML znaƒçek je v titulku zak√°z√°no!", env, null);
                 return false;
             }
             if (title==null)
@@ -1163,18 +1163,18 @@ public class EditBlog implements AbcAction, Configurable {
     Element getLinkAtPosition(Element root, Map params, Map env) {
         int position = Misc.parseInt((String) params.get(PARAM_POSITION), -1);
         if (position == -1) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "ChybÌ parametr position!", env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Chyb√≠ parametr position!", env, null);
             return null;
         }
 
         List links = root.selectNodes("/data/custom/links/link");
         if (links == null || links.size() == 0) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Oops, nem·te definov·ny æ·dnÈ linky!", env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Oops, nem√°te definov√°ny ≈æ√°dn√© linky!", env, null);
             return null;
         }
 
         if (position >= links.size()) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Oops, takov˝ link neexistuje!", env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Oops, takov√Ω link neexistuje!", env, null);
             return null;
         }
 
@@ -1197,12 +1197,12 @@ public class EditBlog implements AbcAction, Configurable {
             try {
                 int size = Integer.parseInt(s);
                 if (size<1) {
-                    ServletUtils.addError(PARAM_PAGE_SIZE, "ProsÌm zadejte ËÌslo vÏtπÌ neæ nula.", env, null);
+                    ServletUtils.addError(PARAM_PAGE_SIZE, "Pros√≠m zadejte ƒç√≠slo vƒõt≈°√≠ ne≈æ nula.", env, null);
                     return false;
                 }
                 pageSize.setText(Integer.toString(size));
             } catch (NumberFormatException e) {
-                ServletUtils.addError(PARAM_PAGE_SIZE, "ProsÌm zadejte celÈ ËÌslo.", env, null);
+                ServletUtils.addError(PARAM_PAGE_SIZE, "Pros√≠m zadejte cel√© ƒç√≠slo.", env, null);
                 return false;
             }
         }
@@ -1218,18 +1218,18 @@ public class EditBlog implements AbcAction, Configurable {
     boolean setStoryTitle(Map params, Element root, Map env) {
         String s = (String) params.get(PARAM_TITLE);
         if (Misc.empty(s)) {
-            ServletUtils.addError(PARAM_TITLE, "ProsÌm zadejte hodnotu.", env, null);
+            ServletUtils.addError(PARAM_TITLE, "Pros√≠m zadejte hodnotu.", env, null);
             return false;
         }
         s = s.trim();
         s = Misc.filterDangerousCharacters(s);
         if (s.length()>maxStoryTitleLength) {
-            ServletUtils.addError(PARAM_TITLE, "ProsÌm zadejte kratπÌ titulek. Maxim·lnÌ povolen· dÈlka je "+maxStoryTitleLength+".", env, null);
+            ServletUtils.addError(PARAM_TITLE, "Pros√≠m zadejte krat≈°√≠ titulek. Maxim√°ln√≠ povolen√° d√©lka je "+maxStoryTitleLength+".", env, null);
             return false;
         }
         if ( s.indexOf("<")!=-1 ) {
             params.put(PARAM_TITLE, "");
-            ServletUtils.addError(PARAM_TITLE, "PouæitÌ HTML znaËek je v titulku zak·z·no!", env, null);
+            ServletUtils.addError(PARAM_TITLE, "Pou≈æit√≠ HTML znaƒçek je v titulku zak√°z√°no!", env, null);
             return false;
         }
 
@@ -1250,7 +1250,7 @@ public class EditBlog implements AbcAction, Configurable {
         String content = (String) params.get(PARAM_CONTENT);
         content = Misc.filterDangerousCharacters(content);
         if (Misc.empty(content)) {
-            ServletUtils.addError(PARAM_CONTENT, "ProsÌm zadejte hodnotu.", env, null);
+            ServletUtils.addError(PARAM_CONTENT, "Pros√≠m zadejte hodnotu.", env, null);
             return false;
         }
 
@@ -1265,7 +1265,7 @@ public class EditBlog implements AbcAction, Configurable {
 
         StringTokenizer stk = new StringTokenizer(stripped, " \t\n\r\f,.");
         if (stk.countTokens()>maxStoryWordCount) {
-            ServletUtils.addError(PARAM_CONTENT, "V·π z·pis je p¯Ìliπ dlouh˝. RozdÏlte jej pomocÌ znaËky &lt;break&gt; tak, aby perex mÏl mÈnÏ neæ "+maxStoryWordCount+" slov.", env, null);
+            ServletUtils.addError(PARAM_CONTENT, "V√°≈° z√°pis je p≈ô√≠li≈° dlouh√Ω. Rozdƒõlte jej pomoc√≠ znaƒçky &lt;break&gt; tak, aby perex mƒõl m√©nƒõ ne≈æ "+maxStoryWordCount+" slov.", env, null);
             return false;
         }
 

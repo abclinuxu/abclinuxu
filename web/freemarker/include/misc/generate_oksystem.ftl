@@ -1,6 +1,6 @@
 <div class="s_nadpis" style="background-color: #00A247">
 <a class="s_nadpis-pravy-odkaz" href="http://sf.impact.as/if/imred.php?aid=306&amp;lid=347&amp;redirurl=http://portal.oksystem.cz/" rel="nofollow">OKsystem</a>
-<a href="http://sf.impact.as/if/imred.php?aid=306&amp;lid=347&amp;redirurl=http://portal.oksystem.cz/" rel="nofollow">©kolení</a></div>
+<a href="http://sf.impact.as/if/imred.php?aid=306&amp;lid=347&amp;redirurl=http://portal.oksystem.cz/" rel="nofollow">Å kolenÃ­</a></div>
 <script type="text/javascript">
 //<![CDATA[
 IM_spec_reklama = 306;
@@ -18,7 +18,7 @@ document.write('<img src="http://sf.impact.as/if/imcount.php?ad='+IM_spec_reklam
 	<INPUT TYPE="hidden" NAME="_dad" VALUE="portal">
 	<INPUT TYPE="hidden" NAME="_schema" VALUE="PORTAL">
 	<INPUT TYPE="text" NAME="p_mainsearch" VALUE="" class="text">
-	<INPUT TYPE="submit" VALUE="Najdi ¹kolení" class="button">
+	<INPUT TYPE="submit" VALUE="Najdi Å¡kolenÃ­" class="button">
     </FORM>
 </div>
 

@@ -1,7 +1,7 @@
 <html>
  <head>
   <title>${TITLE}</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="author" content="Leos Literak">
  </head>
 <body>
@@ -10,10 +10,10 @@
 
 <#if SYSTEM_CONFIG.isMaintainanceMode()>
     <div style="color: red; border: medium solid red; margin: 30px; padding: 3ex">
-        <p style="font-size: xx-large; text-align: center">Režim údržby</p>
+        <p style="font-size: xx-large; text-align: center">ReĹžim ĂşdrĹžby</p>
         <p>
-            Právě provádíme údržbu portálu. Prohlížení obsahu by mělo nadále fungovat,
-            úpravy obsahu bohužel nejsou prozatím k dispozici. Děkujeme za pochopení.
+            PrĂĄvÄ provĂĄdĂ­me ĂşdrĹžbu portĂĄlu. ProhlĂ­ĹženĂ­ obsahu by mÄlo nadĂĄle fungovat,
+            Ăşpravy obsahu bohuĹžel nejsou prozatĂ­m k dispozici. DÄkujeme za pochopenĂ­.
         </p>
     </div>
 </#if>

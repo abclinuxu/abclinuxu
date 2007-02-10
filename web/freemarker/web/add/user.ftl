@@ -3,44 +3,44 @@
 <@lib.showMessages/>
 
 <p>
-Dìkujeme vám, ¾e jste se rozhodli zaregistrovat
-se na na¹em portálu. Vìøíme, ¾e nabízené vıhody
-vyvá¾í pár minut strávenıch registrací. Jako
-malı bonus získáte vlastní domovskou stránku,
-na které mù¾ete prezentovat informace o své osobì.
-Zároveò v ní mù¾ete najít své diskuse, èlánky, zprávièky
-èi záznamy.
+DÄ›kujeme vÃ¡m, Å¾e jste se rozhodli zaregistrovat
+se na naÅ¡em portÃ¡lu. VÄ›Å™Ã­me, Å¾e nabÃ­zenÃ© vÃ½hody
+vyvÃ¡Å¾Ã­ pÃ¡r minut strÃ¡venÃ½ch registracÃ­. Jako
+malÃ½ bonus zÃ­skÃ¡te vlastnÃ­ domovskou strÃ¡nku,
+na kterÃ© mÅ¯Å¾ete prezentovat informace o svÃ© osobÄ›.
+ZÃ¡roveÅˆ v nÃ­ mÅ¯Å¾ete najÃ­t svÃ© diskuse, ÄlÃ¡nky, zprÃ¡viÄky
+Äi zÃ¡znamy.
 </p>
 
 <p>
-Pøihla¹ovací jméno (login) musí mít nejménì tøi znaky,
-maximálnì 16 znakù a to pouze písmena A a¾ Z, èíslice,
-pomlèku, teèku nebo podtr¾ítko.
-Login vás jednoznaènì identifikuje v systému,
-proto není mo¾né pou¾ívat hodnotu, které ji¾ pou¾il
-nìkdo pøed vámi.
+PÅ™ihlaÅ¡ovacÃ­ jmÃ©no (login) musÃ­ mÃ­t nejmÃ©nÄ› tÅ™i znaky,
+maximÃ¡lnÄ› 16 znakÅ¯ a to pouze pÃ­smena A aÅ¾ Z, ÄÃ­slice,
+pomlÄku, teÄku nebo podtrÅ¾Ã­tko.
+Login vÃ¡s jednoznaÄnÄ› identifikuje v systÃ©mu,
+proto nenÃ­ moÅ¾nÃ© pouÅ¾Ã­vat hodnotu, kterÃ© jiÅ¾ pouÅ¾il
+nÄ›kdo pÅ™ed vÃ¡mi.
 </p>
 
-<p>Va¹e jméno musí bıt nejménì pìt znakù dlouhé. Email musí bıt platnı.
-Nebojte se, budeme jej chránit pøed spammery a my vám budeme
-zasílat jen ty informace, které si sami objednáte.
-Po registraci vám za¹leme email s informacemi
-o va¹em úètì, kterı si peèlivì uschovejte.
+<p>VaÅ¡e jmÃ©no musÃ­ bÃ½t nejmÃ©nÄ› pÄ›t znakÅ¯ dlouhÃ©. Email musÃ­ bÃ½t platnÃ½.
+Nebojte se, budeme jej chrÃ¡nit pÅ™ed spammery a my vÃ¡m budeme
+zasÃ­lat jen ty informace, kterÃ© si sami objednÃ¡te.
+Po registraci vÃ¡m zaÅ¡leme email s informacemi
+o vaÅ¡em ÃºÄtÄ›, kterÃ½ si peÄlivÄ› uschovejte.
 </p>
 
-<p>Na této stránce si mù¾ete také objednat dvì atraktivní
-slu¾by. První z nich je tıdenní souhrn èlánkù a zprávièek a je
-urèen tìm, kteøí nemají èas dennì nás nav¹tìvovat. Pokud si jej
-pøihlásíte, ka¾dı víkend vám za¹leme emailem seznam
-novıch èlánkù a zprávièek. Druhou slu¾bou je Zpravodaj, kterı vychází
-zaèátkem ka¾dého mìsíce. Tento email obsahuje spoustu
-zajímavostí ze svìta Linuxu i z na¹eho portálu.
+<p>Na tÃ©to strÃ¡nce si mÅ¯Å¾ete takÃ© objednat dvÄ› atraktivnÃ­
+sluÅ¾by. PrvnÃ­ z nich je tÃ½dennÃ­ souhrn ÄlÃ¡nkÅ¯ a zprÃ¡viÄek a je
+urÄen tÄ›m, kteÅ™Ã­ nemajÃ­ Äas dennÄ› nÃ¡s navÅ¡tÄ›vovat. Pokud si jej
+pÅ™ihlÃ¡sÃ­te, kaÅ¾dÃ½ vÃ­kend vÃ¡m zaÅ¡leme emailem seznam
+novÃ½ch ÄlÃ¡nkÅ¯ a zprÃ¡viÄek. Druhou sluÅ¾bou je Zpravodaj, kterÃ½ vychÃ¡zÃ­
+zaÄÃ¡tkem kaÅ¾dÃ©ho mÄ›sÃ­ce. Tento email obsahuje spoustu
+zajÃ­mavostÃ­ ze svÄ›ta Linuxu i z naÅ¡eho portÃ¡lu.
 </p>
 
 <form action="${URL.noPrefix("/EditUser")}" method="POST">
  <table class="siroka" border="0" cellpadding=5>
   <tr>
-   <td class="required" width="60">Jméno</td>
+   <td class="required" width="60">JmÃ©no</td>
    <td>
     <input type="text" name="name" value="${PARAMS.name?if_exists}" size="16" tabindex="1">
     <div class="error">${ERRORS.name?if_exists}</div>
@@ -54,7 +54,7 @@ zajímavostí ze svìta Linuxu i z na¹eho portálu.
    </td>
   </tr>
   <tr>
-   <td class="required" width="60">Pøezdívka</td>
+   <td class="required" width="60">PÅ™ezdÃ­vka</td>
    <td>
     <input type="text" name="nick" value="${PARAMS.nick?if_exists}" size="24" tabindex="3">
     <div class="error">${ERRORS.nick?if_exists}</div>
@@ -81,18 +81,18 @@ zajímavostí ze svìta Linuxu i z na¹eho portálu.
    </td>
   </tr>
   <tr>
-   <td class="required" width="60">Va¹e pohlaví</td>
+   <td class="required" width="60">VaÅ¡e pohlavÃ­</td>
    <td>
     <select name="sex" tabindex="7">
      <#assign sex=PARAMS.sex?default("man")>
-     <option value="man" <#if sex=="man">SELECTED</#if>>mu¾</option>
-     <option value="woman"<#if sex=="woman">SELECTED</#if>>¾ena</option>
+     <option value="man" <#if sex=="man">SELECTED</#if>>muÅ¾</option>
+     <option value="woman"<#if sex=="woman">SELECTED</#if>>Å¾ena</option>
     </select>
     <div class="error">${ERRORS.sex?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td width="60">Tıdenní souhrn</td>
+   <td width="60">TÃ½dennÃ­ souhrn</td>
    <td>
     <select name="weekly" tabindex="8">
      <#assign weekly=PARAMS.weekly?default("no")>
@@ -102,7 +102,7 @@ zajímavostí ze svìta Linuxu i z na¹eho portálu.
    </td>
   </tr>
   <tr>
-   <td width="60">Mìsíèní zpravodaj</td>
+   <td width="60">MÄ›sÃ­ÄnÃ­ zpravodaj</td>
    <td>
     <select name="monthly" tabindex="9">
      <#assign monthly=PARAMS.monthly?default("no")>
@@ -113,7 +113,7 @@ zajímavostí ze svìta Linuxu i z na¹eho portálu.
   </tr>
   <tr>
    <td width="60">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi" tabindex="10"></td>
+   <td><input type="submit" value="DokonÄi" tabindex="10"></td>
   </tr>
  </table>
  <input type="hidden" name="action" value="register2">

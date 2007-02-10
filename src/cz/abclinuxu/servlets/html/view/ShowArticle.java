@@ -74,7 +74,7 @@ public class ShowArticle implements AbcAction {
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID_SHORT, Relation.class, params, request);
         if ( relation==null )
-            throw new MissingArgumentException("Parametr relationId je pr·zdn˝!");
+            throw new MissingArgumentException("Parametr relationId je pr√°zdn√Ω!");
 
         Tools.sync(relation);
         env.put(VAR_RELATION, relation);
@@ -103,16 +103,16 @@ public class ShowArticle implements AbcAction {
 
         List records = (List) children.get(Constants.TYPE_RECORD);
         if ( records == null || records.size() == 0 )
-            throw new NotFoundException("»l·nek "+item.getId()+" nem· obsah!");
+            throw new NotFoundException("ƒål√°nek "+item.getId()+" nem√° obsah!");
 
         Record record = (Record) ((Relation) records.get(0)).getChild();
         if ( record.getType() != Record.ARTICLE )
-            throw new InvalidDataException("Z·znam "+record.getId()+" nenÌ typu Ël·nek!");
+            throw new InvalidDataException("Z√°znam "+record.getId()+" nen√≠ typu ƒçl√°nek!");
 
         Document recordDocument = record.getData();
         List nodes = recordDocument.selectNodes("/data/content");
         if ( nodes.size() == 0 ) {
-            throw new InvalidDataException("Z·znam "+record.getId()+" m· πpatn˝ obsah!");
+            throw new InvalidDataException("Z√°znam "+record.getId()+" m√° ≈°patn√Ω obsah!");
         } else if ( nodes.size() == 1 ) {
             env.put(VAR_ARTICLE_TEXT,((Node)nodes.get(0)).getText());
         } else {

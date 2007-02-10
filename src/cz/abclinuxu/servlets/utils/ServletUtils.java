@@ -44,7 +44,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.UnsupportedEncodingException;
 import java.io.File;
 import java.util.*;
 import java.util.prefs.Preferences;
@@ -101,16 +100,14 @@ public class ServletUtils implements Configurable {
                 for ( Iterator iter = items.iterator(); iter.hasNext(); ) {
                     FileItem fileItem = (FileItem) iter.next();
                     if ( fileItem.isFormField() ) {
-                        try {
-                            String value = fileItem.getString("ISO-8859-1");
-                            map.put(fileItem.getFieldName(), value.trim());
-                        } catch (UnsupportedEncodingException e) {}
+                        String value = fileItem.getString();
+                        map.put(fileItem.getFieldName(), value.trim());
                     } else {
                         map.put(fileItem.getFieldName(), fileItem);
                     }
                 }
             } catch (FileUploadException e) {
-                throw new InvalidInputException("Chyba p¯i ËtenÌ dat. NenÌ zvolen˝ soubor p¯Ìliπ velk˝?");
+                throw new InvalidInputException("Chyba p≈ôi ƒçten√≠ dat. Nen√≠ zvolen√Ω soubor p≈ô√≠li≈° velk√Ω?");
             }
         } else {
             Enumeration names = request.getParameterNames();
@@ -120,9 +117,6 @@ public class ServletUtils implements Configurable {
 
                 if ( values.length==1 ) {
                     String value = values[0];
-                    try {
-                        value = new String(value.getBytes("ISO-8859-1"));
-                    } catch (UnsupportedEncodingException e) {log.error(e);}
                     map.put(name, value.trim());
 
                 } else {
@@ -131,9 +125,6 @@ public class ServletUtils implements Configurable {
                         String value = values[i].trim();
                         if ( value.length()==0 )
                             continue;
-                        try {
-                            value = new String(value.getBytes("ISO-8859-1"));
-                        } catch (UnsupportedEncodingException e) {log.error(e);}
                         list.add(value);
                     }
 
@@ -200,7 +191,7 @@ public class ServletUtils implements Configurable {
         if ( ! Misc.empty(login) ) {
             Integer id = SQLTool.getInstance().getUserByLogin(login);
             if ( id==null ) {
-                ServletUtils.addError(PARAM_LOG_USER,"P¯ihlaπovacÌ jmÈno nenalezeno!",env, null);
+                ServletUtils.addError(PARAM_LOG_USER,"P≈ôihla≈°ovac√≠ jm√©no nenalezeno!",env, null);
                 return;
             }
             user = new User(id.intValue());
@@ -208,7 +199,7 @@ public class ServletUtils implements Configurable {
 
             String password = (String) params.get(PARAM_LOG_PASSWORD);
             if ( !user.validatePassword(password) ) {
-                ServletUtils.addError(PARAM_LOG_PASSWORD,"©patnÈ heslo!",env, null);
+                ServletUtils.addError(PARAM_LOG_PASSWORD,"≈†patn√© heslo!",env, null);
                 return;
             }
 
@@ -224,15 +215,15 @@ public class ServletUtils implements Configurable {
                 user = (User) persistence.findById(new User(loginCookie.id));
             } catch (PersistenceException e) {
                 deleteCookie(cookie,response);
-                log.warn("Nalezena cookie s nezn·m˝m uæivatelem!");
-                addError(Constants.ERROR_GENERIC,"Nalezena cookie s nezn·m˝m uæivatelem!",env, null);
+                log.warn("Nalezena cookie s nezn√°m√Ωm u≈æivatelem!");
+                addError(Constants.ERROR_GENERIC,"Nalezena cookie s nezn√°m√Ωm u≈æivatelem!",env, null);
                 return;
             }
 
             if ( user.getPassword().hashCode()!=loginCookie.hash ) {
                 deleteCookie(cookie,response);
-                log.warn("Nalezena cookie se πpatn˝m heslem!");
-                addError(Constants.ERROR_GENERIC,"Nalezena cookie se πpatn˝m heslem!",env, null);
+                log.warn("Nalezena cookie se ≈°patn√Ωm heslem!");
+                addError(Constants.ERROR_GENERIC,"Nalezena cookie se ≈°patn√Ωm heslem!",env, null);
                 return;
             }
             handleLoggedIn(user, true, null);
@@ -431,7 +422,7 @@ public class ServletUtils implements Configurable {
     public static boolean handleMaintainance(HttpServletRequest request, Map env) {
         if (! AbcConfig.isMaintainanceMode())
             return false;
-        addError(Constants.ERROR_GENERIC, "Litujeme, ale tuto operaci nem˘æeme pr·vÏ provÈst. SystÈm je v reæimu ˙dræby.",
+        addError(Constants.ERROR_GENERIC, "Litujeme, ale tuto operaci nem≈Ø≈æeme pr√°vƒõ prov√©st. Syst√©m je v re≈æimu √∫dr≈æby.",
                  env, request.getSession());
         return true;
     }

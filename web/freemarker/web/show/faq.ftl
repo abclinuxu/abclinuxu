@@ -1,6 +1,6 @@
 <#assign who=TOOL.createUser(ITEM.owner)>
 <#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")?exists>
-    <#assign monitorState="Pøestaò sledovat"><#else><#assign monitorState="Sleduj otázku">
+    <#assign monitorState="PÅ™estaÅˆ sledovat"><#else><#assign monitorState="Sleduj otÃ¡zku">
 </#if>
 <#assign plovouci_sloupec>
     <div class="s_sekce">
@@ -11,27 +11,27 @@
             </li>
             <#if PARAMS.revize?exists>
                 <li>
-                    <a href="${RELATION.url}">Návrat na aktuální verzi</a>
+                    <a href="${RELATION.url}">NÃ¡vrat na aktuÃ¡lnÃ­ verzi</a>
                 </li>
             <#else>
                 <li><a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
-                <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
+                <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">SouvisejÃ­cÃ­ dokumenty</a></li>
                 <li><a href="/revize?rid=${RELATION.id}&amp;prefix=/faq">Historie</a></li>
-                <li><a href="${RELATION.url}?varianta=print">Tisk otázky</a></li>
+                <li><a href="${RELATION.url}?varianta=print">Tisk otÃ¡zky</a></li>
                 <li>
                     <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle")}">${monitorState}</a>
-                    <span title="Poèet lidí, kteøí sledují tuto otázku">(${TOOL.getMonitorCount(ITEM.data)})</span>
-                    <a class="info" href="#">?<span class="tooltip">Za¹le upozornìní na vá¹ email pøi úpravì otázky</span></a>
+                    <span title="PoÄet lidÃ­, kteÅ™Ã­ sledujÃ­ tuto otÃ¡zku">(${TOOL.getMonitorCount(ITEM.data)})</span>
+                    <a class="info" href="#">?<span class="tooltip">ZaÅ¡le upozornÄ›nÃ­ na vÃ¡Å¡ email pÅ™i ÃºpravÄ› otÃ¡zky</span></a>
                 </li>
                 <#if USER?exists && USER.hasRole("root")>
                     <li>
-                        <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix=/faq")}">Smazat otázku</a>
+                        <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix=/faq")}">Smazat otÃ¡zku</a>
                     </li>
                 </#if>
                 <#if USER?exists && USER.hasRole("move relation")>
                     <li>
-                        <a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Pøesunout</a>
-			<a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;url=/EditRelation&amp;action=add&amp;prefix="+URL.prefix)}">Vytvoøit link</a>
+                        <a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">PÅ™esunout</a>
+			<a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;url=/EditRelation&amp;action=add&amp;prefix="+URL.prefix)}">VytvoÅ™it link</a>
                     </li>
                 </#if>
             </#if>

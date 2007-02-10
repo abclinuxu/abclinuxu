@@ -109,9 +109,9 @@ public class EditDiscussion implements AbcAction {
     public static final String ACTION_THREAD_TO_DIZ_STEP2 = "toQuestion2";
     public static final String ACTION_SOLVED = "solved";
 
-//    private static final String LOGIN_REQUIRED = "Litujeme, ale bez registrace je moænÈ komentovat jen ot·zky v diskusnÌm fÛru, " +
-//                        "kde se ¯eπÌ problÈmy. U ostatnÌch diskusÌ (zpr·viËky, Ël·nky, blogy) je nutnÈ se nejd¯Ìve p¯ihl·sit. " +
-//                        "Toto opat¯enÌ jsme zavedli z d˘vodu zv˝πenÈ aktivity spambot˘ a troll˘.";
+//    private static final String LOGIN_REQUIRED = "Litujeme, ale bez registrace je mo≈æn√© komentovat jen ot√°zky v diskusn√≠m f√≥ru, " +
+//                        "kde se ≈ôe≈°√≠ probl√©my. U ostatn√≠ch diskus√≠ (zpr√°viƒçky, ƒçl√°nky, blogy) je nutn√© se nejd≈ô√≠ve p≈ôihl√°sit. " +
+//                        "Toto opat≈ôen√≠ jsme zavedli z d≈Øvodu zv√Ω≈°en√© aktivity spambot≈Ø a troll≈Ø.";
 
 // prepsat a overit kazdou jednotlivou funkci
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -128,7 +128,7 @@ public class EditDiscussion implements AbcAction {
             persistence.synchronize(relation.getChild());
             env.put(VAR_RELATION,relation);
         } else if ( ! ACTION_ADD_QUESTION.equals(action) )
-            throw new MissingArgumentException("ChybÌ parametr relationId!");
+            throw new MissingArgumentException("Chyb√≠ parametr relationId!");
 
         if ( ACTION_ADD_DISCUSSION.equals(action) )
             return actionAddDiscussion(request,env);
@@ -193,7 +193,7 @@ public class EditDiscussion implements AbcAction {
         if ( ACTION_THREAD_TO_DIZ_STEP2.equals(action) )
             return actionToNewDiscussion2(request, response, env);
 
-        throw new MissingArgumentException("ChybÌ parametr action!");
+        throw new MissingArgumentException("Chyb√≠ parametr action!");
     }
 
     /**
@@ -321,14 +321,14 @@ public class EditDiscussion implements AbcAction {
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if ( discussion==null )
-            throw new MissingArgumentException("ChybÌ parametr dizId!");
+            throw new MissingArgumentException("Chyb√≠ parametr dizId!");
         discussion = (Item) persistence.findById(discussion);
         env.put(VAR_DISCUSSION, discussion);
 
         String xpath = "/data/frozen";
         Element element = (Element) discussion.getData().selectSingleNode(xpath);
         if ( element!=null )
-            return ServletUtils.showErrorPage("Diskuse byla zmrazena - nenÌ moænÈ p¯idat dalπÌ koment·¯!", env, request);
+            return ServletUtils.showErrorPage("Diskuse byla zmrazena - nen√≠ mo≈æn√© p≈ôidat dal≈°√≠ koment√°≈ô!", env, request);
 
         // display discussed comment, only if it has title
         Comment parentThread = getDiscussedComment(params, discussion, persistence);
@@ -361,13 +361,13 @@ public class EditDiscussion implements AbcAction {
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if ( discussion==null )
-            throw new MissingArgumentException("ChybÌ parametr dizId!");
+            throw new MissingArgumentException("Chyb√≠ parametr dizId!");
         discussion = (Item) persistence.findById(discussion).clone();
 
         String xpath = "/data/frozen";
         Element element = (Element) discussion.getData().selectSingleNode(xpath);
         if ( element!=null )
-            return ServletUtils.showErrorPage("Diskuse byla zmrazena - nenÌ moænÈ p¯idat dalπÌ koment·¯!", env, request);
+            return ServletUtils.showErrorPage("Diskuse byla zmrazena - nen√≠ mo≈æn√© p≈ôidat dal≈°√≠ koment√°≈ô!", env, request);
 
         Record record = null;
         DiscussionRecord dizRecord = null;
@@ -490,7 +490,7 @@ public class EditDiscussion implements AbcAction {
             persistence.update(diz);
             SQLTool.getInstance().setUpdatedTimestamp(diz, updated);
         } else
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Tuto akci smÌte provÈst jen jednou.", env, request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Tuto akci sm√≠te prov√©st jen jednou.", env, request.getSession());
 
         String url = relation.getUrl();
         if (url == null)
@@ -510,14 +510,14 @@ public class EditDiscussion implements AbcAction {
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if ( discussion==null )
-            throw new MissingArgumentException("ChybÌ parametr dizId!");
+            throw new MissingArgumentException("Chyb√≠ parametr dizId!");
         discussion = (Item) persistence.findById(discussion).clone();
 
         Relation relation;
         int id = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
         List children = discussion.getChildren();
         if (id == 0 || children.size() == 0) {
-            ServletUtils.addError(Constants.ERROR_GENERIC,"Nejde cenzurovat ot·zku!",env,request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC,"Nejde cenzurovat ot√°zku!",env,request.getSession());
             relation = (Relation) env.get(VAR_RELATION);
             urlUtils.redirect(response, "/show/"+relation.getId());
         }
@@ -573,7 +573,7 @@ public class EditDiscussion implements AbcAction {
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if ( discussion==null )
-            throw new MissingArgumentException("ChybÌ parametr dizId!");
+            throw new MissingArgumentException("Chyb√≠ parametr dizId!");
         discussion = (Item) persistence.findById(discussion);
         Comment thread = getDiscussedComment(params, discussion, persistence);
 
@@ -599,7 +599,7 @@ public class EditDiscussion implements AbcAction {
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if ( discussion==null )
-            throw new MissingArgumentException("ChybÌ parametr dizId!");
+            throw new MissingArgumentException("Chyb√≠ parametr dizId!");
         discussion = (Item) persistence.findById(discussion).clone();
 
         Comment comment = null; Record record = null;
@@ -655,12 +655,12 @@ public class EditDiscussion implements AbcAction {
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if ( discussion==null )
-            throw new MissingArgumentException("ChybÌ parametr dizId!");
+            throw new MissingArgumentException("Chyb√≠ parametr dizId!");
         discussion = (Item) persistence.findById(discussion);
 
         int threadId = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
         if ( threadId==0 )
-            throw new MissingArgumentException("ChybÌ parametr threadId!");
+            throw new MissingArgumentException("Chyb√≠ parametr threadId!");
 
         Comment comment = getDiscussedComment(params, discussion, persistence);
         env.put(VAR_THREAD, comment);
@@ -680,11 +680,11 @@ public class EditDiscussion implements AbcAction {
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if ( discussion==null )
-            throw new MissingArgumentException("ChybÌ parametr dizId!");
+            throw new MissingArgumentException("Chyb√≠ parametr dizId!");
 
         int threadId = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
         if ( threadId==0 )
-            throw new MissingArgumentException("ChybÌ parametr threadId!");
+            throw new MissingArgumentException("Chyb√≠ parametr threadId!");
 
         discussion = (Item) persistence.findById(discussion).clone();
 
@@ -781,7 +781,7 @@ public class EditDiscussion implements AbcAction {
 
         Item discussion = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if ( discussion==null )
-            throw new MissingArgumentException("ChybÌ parametr dizId!");
+            throw new MissingArgumentException("Chyb√≠ parametr dizId!");
         discussion = (Item) persistence.findById(discussion);
         env.put(VAR_DISCUSSION, discussion);
 
@@ -797,12 +797,12 @@ public class EditDiscussion implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         int threadId = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
         if ( threadId==0 )
-            throw new MissingArgumentException("ChybÌ parametr threadId!");
+            throw new MissingArgumentException("Chyb√≠ parametr threadId!");
         int parentId = Misc.parseInt((String) params.get(PARAM_PARENT_THREAD), -1);
         if ( parentId==-1 )
-            throw new MissingArgumentException("ChybÌ parametr parentId!");
+            throw new MissingArgumentException("Chyb√≠ parametr parentId!");
         if ( parentId==threadId ) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "PokouπÌte se vytvo¯it smyËku ve stromÏ!", env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Pokou≈°√≠te se vytvo≈ôit smyƒçku ve stromƒõ!", env, null);
             return actionMoveThread(request, env);
         }
 
@@ -821,7 +821,7 @@ public class EditDiscussion implements AbcAction {
         if (parentId != 0) {
             Comment parentComment = dizRecord.getComment(parentId);
             if ( parentComment==null ) {
-                ServletUtils.addError(Constants.ERROR_GENERIC, "Takov˝ p¯edek neexistuje!", env, null);
+                ServletUtils.addError(Constants.ERROR_GENERIC, "Takov√Ω p≈ôedek neexistuje!", env, null);
                 return actionMoveThread(request, env);
             }
             comment.setParent(new Integer(parentComment.getId()));
@@ -854,7 +854,7 @@ public class EditDiscussion implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         int threadId = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
         if ( threadId==0 )
-            throw new MissingArgumentException("ChybÌ parametr threadId!");
+            throw new MissingArgumentException("Chyb√≠ parametr threadId!");
 
         Record record = (Record) ((Relation) discussion.getChildren().get(0)).getChild();
         record = (Record) persistence.findById(record).clone();
@@ -898,11 +898,11 @@ public class EditDiscussion implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         int threadId = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
         if ( threadId==0 )
-            throw new MissingArgumentException("ChybÌ parametr threadId!");
+            throw new MissingArgumentException("Chyb√≠ parametr threadId!");
 
         Comment comment = dizRecord.getComment(threadId);
         params.put(PARAM_TITLE, comment.getTitle());
-        params.put(PARAM_TEXT, "<a href=\"/"+urlUtils.getPrefix()+"/show/"+relation.getId()+"\">p˘vodnÌ diskuse</a>");
+        params.put(PARAM_TEXT, "<a href=\"/"+urlUtils.getPrefix()+"/show/"+relation.getId()+"\">p≈Øvodn√≠ diskuse</a>");
 
         return FMTemplateSelector.select("EditDiscussion", "toQuestion", env, request);
     }
@@ -919,7 +919,7 @@ public class EditDiscussion implements AbcAction {
         Relation currentDizRelation = (Relation) env.get(VAR_RELATION), newDizRelation;
         Item currentDiz = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if ( currentDiz==null )
-            throw new MissingArgumentException("ChybÌ parametr dizId!");
+            throw new MissingArgumentException("Chyb√≠ parametr dizId!");
         currentDiz = (Item) persistence.findById(currentDiz).clone();
         Element currentItemRoot = currentDiz.getData().getRootElement();
 
@@ -929,7 +929,7 @@ public class EditDiscussion implements AbcAction {
 
         int threadId = Misc.parseInt((String) params.get(PARAM_THREAD), 0);
         if (threadId == 0)
-            throw new MissingArgumentException("ChybÌ parametr threadId!");
+            throw new MissingArgumentException("Chyb√≠ parametr threadId!");
         RowComment originalComment = (RowComment) currentDizRecord.getComment(threadId);
         RowComment movedComment = (RowComment) originalComment.clone();
 
@@ -953,7 +953,7 @@ public class EditDiscussion implements AbcAction {
         String url = currentDizRelation.getUrl();
         if (url == null)
             url = urlUtils.getPrefix()+"/show/"+currentDizRelation.getId();
-        newParams.put(PARAM_TEXT, "<p class=\"threadMoved\">Diskuse vznikla z vl·kna <a href=\""+url+"\">tÈto</a> diskuse.</p>");
+        newParams.put(PARAM_TEXT, "<p class=\"threadMoved\">Diskuse vznikla z vl√°kna <a href=\""+url+"\">t√©to</a> diskuse.</p>");
         setTitle(newParams, newItemRoot, env);
         setTextNoHTMLCheck(newParams, newItemRoot, env);
         setCommentAuthor(newParams, user, topComment, newItemRoot, env);
@@ -1002,7 +1002,7 @@ public class EditDiscussion implements AbcAction {
 
         // v puvodni diskusi ponechat vysvetlujici text
         url = urlUtils.getPrefix()+"/show/"+newDizRelation.getId();
-        newParams.put(PARAM_TEXT, "<p class=\"threadMoved\">Vl·kno bylo p¯esunuto do <a href=\""+url+"\">samostatnÈ</a> diskuse.</p>");
+        newParams.put(PARAM_TEXT, "<p class=\"threadMoved\">Vl√°kno bylo p≈ôesunuto do <a href=\""+url+"\">samostatn√©</a> diskuse.</p>");
         setTextNoHTMLCheck(newParams, originalComment.getData().getRootElement(), env);
         originalComment.set_dirty(true);
         persistence.update(currentRecord);
@@ -1068,7 +1068,7 @@ public class EditDiscussion implements AbcAction {
         if ( tmp!=null && tmp.length()>0 ) {
             if ( tmp.indexOf("<")!=-1 ) {
                 params.put(PARAM_TITLE, "");
-                ServletUtils.addError(PARAM_TITLE, "PouæitÌ HTML znaËek je zak·z·no!", env, null);
+                ServletUtils.addError(PARAM_TITLE, "Pou≈æit√≠ HTML znaƒçek je zak√°z√°no!", env, null);
                 return false;
             }
             if (tmp.indexOf('\n')!=-1)
@@ -1108,7 +1108,7 @@ public class EditDiscussion implements AbcAction {
             Format format = FormatDetector.detect(tmp);
             element.addAttribute("format", Integer.toString(format.getId()));
         } else {
-            ServletUtils.addError(PARAM_TEXT, "Zadejte text vaπeho dotazu.", env, null);
+            ServletUtils.addError(PARAM_TEXT, "Zadejte text va≈°eho dotazu.", env, null);
             return false;
         }
         return true;
@@ -1130,7 +1130,7 @@ public class EditDiscussion implements AbcAction {
             Format format = FormatDetector.detect(tmp);
             element.addAttribute("format", Integer.toString(format.getId()));
         } else {
-            ServletUtils.addError(PARAM_TEXT, "Zadejte text vaπeho dotazu.", env, null);
+            ServletUtils.addError(PARAM_TEXT, "Zadejte text va≈°eho dotazu.", env, null);
             return false;
         }
         return true;
@@ -1164,13 +1164,13 @@ public class EditDiscussion implements AbcAction {
             if ( tmp!=null && tmp.length()>0 ) {
                 if (tmp.indexOf("<")!=-1) {
                     params.put(PARAM_AUTHOR,"");
-                    ServletUtils.addError(PARAM_AUTHOR, "PouæitÌ HTML znaËek je zak·z·no!", env, null);
+                    ServletUtils.addError(PARAM_AUTHOR, "Pou≈æit√≠ HTML znaƒçek je zak√°z√°no!", env, null);
                     return false;
                 }
                 tmp = Misc.filterDangerousCharacters(tmp);
                 DocumentHelper.makeElement(root, "author").setText(tmp);
             } else {
-                ServletUtils.addError(PARAM_AUTHOR, "Zadejte prosÌm svÈ jmÈno.", env, null);
+                ServletUtils.addError(PARAM_AUTHOR, "Zadejte pros√≠m sv√© jm√©no.", env, null);
                 return false;
             }
         }
@@ -1188,7 +1188,7 @@ public class EditDiscussion implements AbcAction {
 //        if (isQuestionInForum(relation))
 //            return true;
 //
-//        ServletUtils.addError(ServletUtils.PARAM_LOG_USER, "Zadejte prosÌm svÈ p¯ihlaπovacÌ ˙daje.", env, null);
+//        ServletUtils.addError(ServletUtils.PARAM_LOG_USER, "Zadejte pros√≠m sv√© p≈ôihla≈°ovac√≠ √∫daje.", env, null);
 //        return false;
 //    }
 
@@ -1372,7 +1372,7 @@ public class EditDiscussion implements AbcAction {
             int year = Calendar.getInstance().get(Calendar.YEAR);
             String s = (String) params.get(PARAM_ANTISPAM);
             if (! String.valueOf(year).equals(s)) {
-                ServletUtils.addError(PARAM_ANTISPAM, "Zadejte prosÌm letoπnÌ rok.", env, null);
+                ServletUtils.addError(PARAM_ANTISPAM, "Zadejte pros√≠m leto≈°n√≠ rok.", env, null);
                 return false;
             }
             env.put(VAR_USER_VERIFIED, Boolean.TRUE);

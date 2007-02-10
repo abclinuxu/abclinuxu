@@ -14,22 +14,22 @@
     }
 </script>
 
-<h1>Zprávièky</h1>
+<h1>ZprÃ¡viÄky</h1>
 
 <#list NEWS as rel>
  <@lib.showNews rel /><hr />
 </#list>
 
 <p>
-<a href="/History?type=news&amp;from=${NEWS?size}&amp;count=15" title="Dal¹í">Star¹í zprávièky</a>
-<a href="${URL.make("/zpravicky/edit?action=add")}">Pøidat zprávièku</a>
+<a href="/History?type=news&amp;from=${NEWS?size}&amp;count=15" title="DalÅ¡Ã­">StarÅ¡Ã­ zprÃ¡viÄky</a>
+<a href="${URL.make("/zpravicky/edit?action=add")}">PÅ™idat zprÃ¡viÄku</a>
 </p>
 
 <div align="center"><img src="/images/site/wap.gif" width="181" height="52" alt="wap.abclinuxu.cz"><br><br></div>
 
 <form action="/Search" method="POST">
  <input type="text" name="query" size="30" tabindex="1">
- <input type="submit" class="button" value="Prohledej zprávièky" tabindex="2">
+ <input type="submit" class="button" value="Prohledej zprÃ¡viÄky" tabindex="2">
 
   <table>
    <#list CATEGORIES as category>
@@ -42,7 +42,7 @@
      </td>
     <#if category_index%3==2></tr></#if>
    </#list>
-   <tr><td colspan="3"><button type="button" onclick="toggle(this)">V¹e/nic</button></td></tr>
+   <tr><td colspan="3"><button type="button" onclick="toggle(this)">VÅ¡e/nic</button></td></tr>
   </table>
 
  <input type="hidden" name="parent" value="42932">

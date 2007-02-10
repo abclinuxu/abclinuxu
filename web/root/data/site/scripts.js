@@ -2,13 +2,13 @@ function prepni_sloupec() {
     if (document.getElementById('ls').style.display == 'none') {
         document.getElementById('ls').style.display = 'block'
         document.getElementById('ls_prepinac').innerHTML = '&#215;'
-        document.getElementById('ls_prepinac').title = 'Skr˝t sloupec'
+        document.getElementById('ls_prepinac').title = 'Skr√Ωt sloupec'
         document.getElementById('st').style.marginLeft = '270px';
     }
     else {
         document.getElementById('ls').style.display = 'none'
         document.getElementById('ls_prepinac').innerHTML = '&#43;'
-        document.getElementById('ls_prepinac').title = 'Uk·zat sloupec'
+        document.getElementById('ls_prepinac').title = 'Uk√°zat sloupec'
         document.getElementById('st').style.marginLeft = '0px';
         document.getElementById('st').style.borderLeft = 'none';
     }
@@ -46,7 +46,7 @@ function addSidebar() {
     if ((typeof window.sidebar == "object") && (typeof window.sidebar.addPanel == "function")) {
         window.sidebar.addPanel("www.abclinuxu.cz",'http://www.abclinuxu.cz/?varianta=sidebar',"");
     } else {
-        window.alert("V·π prohlÌæeË nepodporuje tuto funkci. Zkuste Mozilla Firefox.");
+        window.alert("V√°≈° prohl√≠≈æeƒç nepodporuje tuto funkci. Zkuste Mozilla Firefox.");
     }
 }
 
@@ -56,7 +56,7 @@ function setHomepage() {
 		document.body.setHomePage("http://www.abclinuxu.cz/");
 	}
 	else {
-		window.alert("Pouæijte prosÌm nastavenÌ svÈho prohlÌæeËe.");
+		window.alert("Pou≈æijte pros√≠m nastaven√≠ sv√©ho prohl√≠≈æeƒçe.");
 	}
 }
 
@@ -65,7 +65,7 @@ function addBookmark() {
 		window.external.AddFavorite("http://www.abclinuxu.cz","AbcLinuxu.cz");
 	}
 	else {
-		window.alert("Pouæijte prosÌm kombinaci Ctrl-D.");
+		window.alert("Pou≈æijte pros√≠m kombinaci Ctrl-D.");
 	}
 }
 
@@ -130,7 +130,7 @@ function writeRemainingCharsCount(textarea) {
     var regEx = new RegExp('<[^>]*>', 'g');
     var strippedStr = new String(textarea.value);
     strippedStr = strippedStr.replace(regEx, '');
-    document.getElementById('signatureTextCounter').innerHTML = '(zb˝v· '+Math.max(100-strippedStr.length, 0)+' znak˘)';
+    document.getElementById('signatureTextCounter').innerHTML = '(zb√Ωv√° '+Math.max(100-strippedStr.length, 0)+' znak≈Ø)';
 }
 
 // start method for checkParent
@@ -175,7 +175,7 @@ function searchNextNewComment(stack) {
 		if (node.className.match(dsUtils.re_comment_novy)) {
 //			getFirstElementByName(getFirstElementByName(node,"DIV"), "A").onclick = nextCommentClick;
            var linkDalsi = getFirstElementByName(getFirstElementByName(node,"DIV"), "A");
-           if (linkDalsi.innerHTML == "DalπÌ") {
+           if (linkDalsi.innerHTML == "Dal≈°√≠") {
              linkDalsi.onclick = nextCommentClick;
            }
 			var name = getFirstElementByName(node, "A").name;
@@ -184,17 +184,17 @@ function searchNextNewComment(stack) {
 			}
 			last = node;
 		}
-		//ds_hlavicka -> n·sledujÌcÌ ds_text_user*
+		//ds_hlavicka -> n√°sleduj√≠c√≠ ds_text_user*
 		node = node.nextSibling;
 		while (node != null && (node.nodeType != Node.ELEMENT_NODE || (node.localName != "DIV" && node.nodeName != "DIV"))) {
 			node = node.nextSibling;
 		}
-		//vno¯enÈ divy - 1. bez t¯Ìdy je kontejner vno¯enÈ diskuze
+		//vno≈ôen√© divy - 1. bez t≈ô√≠dy je kontejner vno≈ôen√© diskuze
 		node = node.firstChild;
 		while (node != null && (node.nodeType != Node.ELEMENT_NODE || (node.localName != "DIV" && node.nodeName != "DIV") || node.className != "")) {
 				node = node.nextSibling;
 		}
-		//p¯idej od zadu koment·¯e do z·sobnÌku
+		//p≈ôidej od zadu koment√°≈ôe do z√°sobn√≠ku
 		if (node != null && node.hasChildNodes()) {
 			var child = node.lastChild;
 			while (child != null) {
@@ -207,7 +207,7 @@ function searchNextNewComment(stack) {
 	}
 	if (last != null && getFirstElementByName(last,"DIV") != null) {
 		var a = getFirstElementByName(getFirstElementByName(last,"DIV"), "A");
-		if (a.innerHTML == "DalπÌ") {
+		if (a.innerHTML == "Dal≈°√≠") {
 			a.style.display = "none";
 			a.nextSibling.nodeValue = "";
 			window.hiddenNext = a;

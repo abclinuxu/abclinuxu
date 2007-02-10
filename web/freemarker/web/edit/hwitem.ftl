@@ -4,10 +4,10 @@
 <@lib.showMessages/>
 
 <#if PREVIEW?exists>
- <h2>Náhled</h2>
+ <h2>NÃ¡hled</h2>
  <p>
-    Prohlédnìte si vzhled va¹eho záznamu. Opravte chyby a zvolte tlaèítko <code>Náhled</code>.
-    Pokud jste s vısledkem spokojeni, stisknìte tlaèítko <code>Dokonèi</code>.
+    ProhlÃ©dnÄ›te si vzhled vaÅ¡eho zÃ¡znamu. Opravte chyby a zvolte tlaÄÃ­tko <code>NÃ¡hled</code>.
+    Pokud jste s vÃ½sledkem spokojeni, stisknÄ›te tlaÄÃ­tko <code>DokonÄi</code>.
  </p>
 
  <div style="padding-left: 30pt">
@@ -15,28 +15,28 @@
  </div>
 </#if>
 
-<h2>Nápovìda</h2>
+<h2>NÃ¡povÄ›da</h2>
 
 <p>
-   Zadejte prosím podrobné informace o tomto druhu hardwaru, zda je vùbec podporován
-   a na jaké úrovni, kde je mo¾né najít ovladaè, jak jej detekuje Linux, technické
-   parametry, vá¹ názor na cenu a postup zprovoznìní. U nìj je vhodné psát postup,
-   kterı je nezávislı na distribuci, aby byl vá¹ záznam u¾iteènı i lidem, kteøí
+   Zadejte prosÃ­m podrobnÃ© informace o tomto druhu hardwaru, zda je vÅ¯bec podporovÃ¡n
+   a na jakÃ© Ãºrovni, kde je moÅ¾nÃ© najÃ­t ovladaÄ, jak jej detekuje Linux, technickÃ©
+   parametry, vÃ¡Å¡ nÃ¡zor na cenu a postup zprovoznÄ›nÃ­. U nÄ›j je vhodnÃ© psÃ¡t postup,
+   kterÃ½ je nezÃ¡vislÃ½ na distribuci, aby byl vÃ¡Å¡ zÃ¡znam uÅ¾iteÄnÃ½ i lidem, kteÅ™Ã­
    si zvolili jinou distribuci.
 </p>
 
-<h2>Formátování</h2>
+<h2>FormÃ¡tovÃ¡nÃ­</h2>
 
 <p>
-    Smíte pou¾ívat základní HTML znaèky. Pokud je nepou¾ijete,
-    prázdné øádky budou nahrazeny novım odstavcem. Více informací
-    <a href="#formatovani">najdete</a> pod formuláøem.
+    SmÃ­te pouÅ¾Ã­vat zÃ¡kladnÃ­ HTML znaÄky. Pokud je nepouÅ¾ijete,
+    prÃ¡zdnÃ© Å™Ã¡dky budou nahrazeny novÃ½m odstavcem. VÃ­ce informacÃ­
+    <a href="#formatovani">najdete</a> pod formulÃ¡Å™em.
 </p>
 
 <form action="${URL.make("/edit")}" method="POST">
     <table class="siroka" border="0" cellpadding="5">
         <tr>
-            <td class="required">Jméno</td>
+            <td class="required">JmÃ©no</td>
             <td>
                 <input type="text" name="name" value="${PARAMS.name?if_exists}" size="40" tabindex="1">
                 <div class="error">${ERRORS.name?if_exists}</div>
@@ -48,30 +48,30 @@
             <td>
                 <select name="support" tabindex="2">
                     <#assign support=PARAMS.support?if_exists>
-                    <option value="complete"<#if support=="complete"> SELECTED</#if>>kompletní</option>
-                    <option value="partial"<#if support=="partial"> SELECTED</#if>>èásteèná</option>
-                    <option value="none"<#if support=="none"> SELECTED</#if>>¾ádná</option>
+                    <option value="complete"<#if support=="complete"> SELECTED</#if>>kompletnÃ­</option>
+                    <option value="partial"<#if support=="partial"> SELECTED</#if>>ÄÃ¡steÄnÃ¡</option>
+                    <option value="none"<#if support=="none"> SELECTED</#if>>Å¾Ã¡dnÃ¡</option>
                 </select>
             </td>
         </tr>
 
         <tr>
-            <td class="required">Ovladaè je dodáván</td>
+            <td class="required">OvladaÄ je dodÃ¡vÃ¡n</td>
             <td>
                 <select name="driver" tabindex="3">
                     <#assign driver=PARAMS.driver?if_exists>
-                    <option value="kernel"<#if driver=="kernel"> SELECTED</#if>>v jádøe</option>
+                    <option value="kernel"<#if driver=="kernel"> SELECTED</#if>>v jÃ¡dÅ™e</option>
                     <option value="xfree"<#if driver=="xfree"> SELECTED</#if>>v XFree86</option>
-                    <option value="maker"<#if driver=="maker"> SELECTED</#if>>vırobcem</option>
-                    <option value="other"<#if driver=="other"> SELECTED</#if>>nìkım jinım</option>
+                    <option value="maker"<#if driver=="maker"> SELECTED</#if>>vÃ½robcem</option>
+                    <option value="other"<#if driver=="other"> SELECTED</#if>>nÄ›kÃ½m jinÃ½m</option>
                     <option value="none"<#if driver=="none"> SELECTED</#if>>neexistuje</option>
-                    <option>netu¹ím</option>
+                    <option>netuÅ¡Ã­m</option>
                 </select>
             </td>
         </tr>
 
         <tr>
-            <td>Adresa ovladaèe</td>
+            <td>Adresa ovladaÄe</td>
             <td>
                 <input type="text" name="driverUrl" value="${PARAMS.driverUrl?if_exists}" size="60" tabindex="4" class="wide">
                 <div class="error">${ERRORS.driverUrl?if_exists}</div>
@@ -83,18 +83,18 @@
             <td>
                 <select name="price" tabindex="5">
                     <#assign price=PARAMS.price?if_exists>
-                    <option value="verylow"<#if price=="verylow"> SELECTED</#if>>velmi nízká</option>
-                    <option value="low"<#if price=="low"> SELECTED</#if>>nízká</option>
-                    <option value="good"<#if price=="good"> SELECTED</#if>>pøimìøená</option>
-                    <option value="high"<#if price=="high"> SELECTED</#if>>vysoká</option>
-                    <option value="toohigh"<#if price=="toohigh"> SELECTED</#if>>pøemr¹tìná</option>
-                    <option>nehodnotím</option>
+                    <option value="verylow"<#if price=="verylow"> SELECTED</#if>>velmi nÃ­zkÃ¡</option>
+                    <option value="low"<#if price=="low"> SELECTED</#if>>nÃ­zkÃ¡</option>
+                    <option value="good"<#if price=="good"> SELECTED</#if>>pÅ™imÄ›Å™enÃ¡</option>
+                    <option value="high"<#if price=="high"> SELECTED</#if>>vysokÃ¡</option>
+                    <option value="toohigh"<#if price=="toohigh"> SELECTED</#if>>pÅ™emrÅ¡tÄ›nÃ¡</option>
+                    <option>nehodnotÃ­m</option>
                 </select>
             </td>
         </tr>
 
         <tr>
-            <td>Zastaralı</td>
+            <td>ZastaralÃ½</td>
             <td>
                 <input type="radio" name="outdated" value="yes"<#if PARAMS.outdated?if_exists=="yes"> checked</#if> tabindex="6"> ano
                 <input type="radio" name="outdated" value=""<#if (PARAMS.outdated?if_exists!="yes")> checked</#if> tabindex="7"> ne
@@ -105,10 +105,10 @@
             <td>Identifikace pod Linuxem</td>
             <td>
                 <div>
-                    Identifikaci zaøízení pod Linuxem se vìnuje
+                    Identifikaci zaÅ™Ã­zenÃ­ pod Linuxem se vÄ›nuje
                     <a href="/faq/hardware/jak-zjistim-co-mam-za-hardware">FAQ</a>.
-                    Zadejte jen skuteènì relevantní údaje, buïte struèní.
-                    Doporuèujeme pou¾ívat znaèku <code>PRE</code>.
+                    Zadejte jen skuteÄnÄ› relevantnÃ­ Ãºdaje, buÄte struÄnÃ­.
+                    DoporuÄujeme pouÅ¾Ã­vat znaÄku <code>PRE</code>.
                 </div>
                 <textarea name="identification" class="siroka" rows="8" tabindex="8" class="wide">${PARAMS.identification?if_exists?html}</textarea>
                 <div class="error">${ERRORS.identification?if_exists}</div>
@@ -116,7 +116,7 @@
         </tr>
 
         <tr>
-            <td>Technické parametry</td>
+            <td>TechnickÃ© parametry</td>
             <td>
                 <textarea name="params" class="siroka" rows="8" tabindex="9" class="wide">${PARAMS.params?if_exists?html}</textarea>
                 <div class="error">${ERRORS.params?if_exists}</div>
@@ -124,7 +124,7 @@
         </tr>
 
         <tr>
-            <td>Postup zprovoznìní</td>
+            <td>Postup zprovoznÄ›nÃ­</td>
             <td>
                 <textarea name="setup" class="siroka" rows="10" tabindex="10" class="wide">${PARAMS.setup?if_exists?html}</textarea>
                 <div class="error">${ERRORS.setup?if_exists}</div>
@@ -132,7 +132,7 @@
         </tr>
 
         <tr>
-            <td>Poznámka</td>
+            <td>PoznÃ¡mka</td>
             <td>
                 <textarea name="note" class="siroka" rows="10" tabindex="11" class="wide">${PARAMS.note?if_exists?html}</textarea>
                 <div class="error">${ERRORS.note?if_exists}</div>
@@ -143,11 +143,11 @@
             <td width="120">&nbsp;</td>
             <td>
                 <#if PREVIEW?exists>
-                    <input tabindex="12" type="submit" name="preview" value="Zopakuj náhled">
+                    <input tabindex="12" type="submit" name="preview" value="Zopakuj nÃ¡hled">
                 <#else>
-                    <input tabindex="12" type="submit" name="preview" value="Náhled">
+                    <input tabindex="12" type="submit" name="preview" value="NÃ¡hled">
                 </#if>
-                <input tabindex="13" type="submit" name="finish" value="Dokonèi">
+                <input tabindex="13" type="submit" name="finish" value="DokonÄi">
             </td>
         </tr>
     </table>

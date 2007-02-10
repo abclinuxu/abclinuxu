@@ -97,7 +97,7 @@ public class EditDriver implements AbcAction {
         if ( ACTION_EDIT_STEP2.equals(action) )
             return actionEditStep2(request, response, env);
 
-        throw new MissingArgumentException("ChybÌ parametr action!");
+        throw new MissingArgumentException("Chyb√≠ parametr action!");
     }
 
     /**
@@ -233,7 +233,7 @@ public class EditDriver implements AbcAction {
         if ( tmp!=null && tmp.length()>0 ) {
             DocumentHelper.makeElement(document, "data/name").setText(tmp);
         } else {
-            ServletUtils.addError(PARAM_NAME, "Zadejte n·zev ovladaËe!", env, null);
+            ServletUtils.addError(PARAM_NAME, "Zadejte n√°zev ovladaƒçe!", env, null);
             return false;
         }
         return true;
@@ -252,7 +252,7 @@ public class EditDriver implements AbcAction {
         if ( tmp!=null && tmp.length()>0 ) {
             DocumentHelper.makeElement(document, "data/version").setText(tmp);
         } else {
-            ServletUtils.addError(PARAM_VERSION, "Zadejte verzi ovladaËe!", env, null);
+            ServletUtils.addError(PARAM_VERSION, "Zadejte verzi ovladaƒçe!", env, null);
             return false;
         }
         return true;
@@ -268,10 +268,10 @@ public class EditDriver implements AbcAction {
     private boolean setURL(Map params, Document document, Map env) {
         String url = (String) params.get(PARAM_URL);
         if ( url==null || url.length()==0 ) {
-            ServletUtils.addError(PARAM_URL, "Zadejte adresu ovladaËe!", env, null);
+            ServletUtils.addError(PARAM_URL, "Zadejte adresu ovladaƒçe!", env, null);
             return false;
         } else if ( url.indexOf("://")==-1 || url.length()<12 ) {
-            ServletUtils.addError(PARAM_URL, "Neplatn· adresa ovladaËe!", env, null);
+            ServletUtils.addError(PARAM_URL, "Neplatn√° adresa ovladaƒçe!", env, null);
             return false;
         }
         DocumentHelper.makeElement(document, "data/url").setText(url);
@@ -304,7 +304,7 @@ public class EditDriver implements AbcAction {
             Format format = FormatDetector.detect(tmp);
             element.addAttribute("format", Integer.toString(format.getId()));
         } else {
-            ServletUtils.addError(PARAM_NOTE, "Zadejte pozn·mku!", env, null);
+            ServletUtils.addError(PARAM_NOTE, "Zadejte pozn√°mku!", env, null);
             return false;
         }
         return true;

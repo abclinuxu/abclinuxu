@@ -2,18 +2,18 @@
 
 <@lib.showMessages/>
 
-<p>Tato stránka slou¾í k pøesunutí obsahu objektu ${TOOL.childName(CURRENT)}
-do objektu, kterı si zvolíte na dal¹í stránce. Ve¹kerı obsah
-zvoleného typu bude pøesunut, napøíklad v¹echny diskuse.
+<p>Tato strÃ¡nka slouÅ¾Ã­ k pÅ™esunutÃ­ obsahu objektu ${TOOL.childName(CURRENT)}
+do objektu, kterÃ½ si zvolÃ­te na dalÅ¡Ã­ strÃ¡nce. VeÅ¡kerÃ½ obsah
+zvolenÃ©ho typu bude pÅ™esunut, napÅ™Ã­klad vÅ¡echny diskuse.
 </p>
 
 <form action="${URL.noPrefix("/SelectRelation")}" method="POST">
  <@lib.showOption "type", "discussions", "Diskuse", "radio"/><br>
- <@lib.showOption "type", "makes", "Polo¾ky", "radio"/><br>
- <@lib.showOption "type", "articles", "Èlánky", "radio"/><br>
+ <@lib.showOption "type", "makes", "PoloÅ¾ky", "radio"/><br>
+ <@lib.showOption "type", "articles", "ÄŒlÃ¡nky", "radio"/><br>
  <@lib.showOption "type", "categories", "Sekce", "radio"/><br>
 
- <input type="submit" value="Vyber cíl" tabindex="5">
+ <input type="submit" value="Vyber cÃ­l" tabindex="5">
 
  <input type="hidden" name="prefix" value="${PARAMS.prefix}">
  <input type="hidden" name="rid" value="${CURRENT.id}">

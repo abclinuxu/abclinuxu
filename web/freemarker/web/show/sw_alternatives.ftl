@@ -1,12 +1,12 @@
 <#include "../header.ftl">
 
-<h1>Softwarové alternativy</h1>
+<h1>SoftwarovÃ© alternativy</h1>
 
 <p>
-    Pokud pøecházíte z prostøedí Windows, urèitì vás zajímá,
-    jaké aplikace mù¾ete v Linuxu pou¾ít místo tìch, na které
-    jste zvyklí. Na této stránce najdete seznam aplikací
-    z Windows, ke kterım jsou pøiøazeny linuxové alternativy.
+    Pokud pÅ™echÃ¡zÃ­te z prostÅ™edÃ­ Windows, urÄitÄ› vÃ¡s zajÃ­mÃ¡,
+    jakÃ© aplikace mÅ¯Å¾ete v Linuxu pouÅ¾Ã­t mÃ­sto tÄ›ch, na kterÃ©
+    jste zvyklÃ­. Na tÃ©to strÃ¡nce najdete seznam aplikacÃ­
+    z Windows, ke kterÃ½m jsou pÅ™iÅ™azeny linuxovÃ© alternativy.
 </p>
 
 <ul>

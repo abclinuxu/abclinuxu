@@ -80,7 +80,7 @@ public class EditAuthor implements AbcAction {
         String action = (String) params.get(PARAM_ACTION);
 
         if (action == null)
-            throw new MissingArgumentException("Chybí parametr action!");
+            throw new MissingArgumentException("ChybĂ­ parametr action!");
 
         // check permissions
         if (user == null)
@@ -97,7 +97,7 @@ public class EditAuthor implements AbcAction {
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
         if ( relation==null )
-            throw new MissingArgumentException("Chybí parametr relationId!");
+            throw new MissingArgumentException("ChybĂ­ parametr relationId!");
 
         persistence.synchronize(relation);
         persistence.synchronize(relation.getChild());
@@ -109,7 +109,7 @@ public class EditAuthor implements AbcAction {
         if (action.equals(ACTION_EDIT_STEP2))
             return actionEditStep2(request, response, env);
 
-        throw new MissingArgumentException("Chybí parametr action!");
+        throw new MissingArgumentException("ChybĂ­ parametr action!");
     }
 
     public String actionAddStep1(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
@@ -297,7 +297,7 @@ public class EditAuthor implements AbcAction {
             DocumentHelper.makeElement(root, "surname").setText(tmp);
             return true;
         } else {
-            ServletUtils.addError(PARAM_SURNAME, "Zadejte příjmení!", env, null);
+            ServletUtils.addError(PARAM_SURNAME, "Zadejte pĹĂ­jmenĂ­!", env, null);
             return false;
         }
     }

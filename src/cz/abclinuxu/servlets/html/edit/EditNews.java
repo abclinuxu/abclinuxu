@@ -112,7 +112,7 @@ public class EditNews implements AbcAction {
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation==null )
-            throw new MissingArgumentException("ChybÌ parametr relationId!");
+            throw new MissingArgumentException("Chyb√≠ parametr relationId!");
         Tools.sync(relation);
         env.put(VAR_RELATION, relation);
 
@@ -148,7 +148,7 @@ public class EditNews implements AbcAction {
         if ( ACTION_UNLOCK.equals(action) )
             return actionUnlock(request, response, env);
 
-        throw new MissingArgumentException("ChybÌ parametr action!");
+        throw new MissingArgumentException("Chyb√≠ parametr action!");
     }
 
     private String actionAddStep1(HttpServletRequest request, Map env) throws Exception {
@@ -267,7 +267,7 @@ public class EditNews implements AbcAction {
         Relation relation = (Relation) env.get(VAR_RELATION);
 
         if (relation.getParent().getId() != Constants.CAT_NEWS_POOL) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Zpr·viËka jiæ byla schv·lena!", env, request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Zpr√°viƒçka ji≈æ byla schv√°lena!", env, request.getSession());
             urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
             return null;
         }
@@ -275,7 +275,7 @@ public class EditNews implements AbcAction {
         Item item = (Item) relation.getChild();
         Element element = (Element) item.getData().selectSingleNode("/data/approved_by");
         if (element != null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Zpr·viËka jiæ byla schv·lena a Ëek· na Ëas publikov·nÌ.", env, request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Zpr√°viƒçka ji≈æ byla schv√°lena a ƒçek√° na ƒças publikov√°n√≠.", env, request.getSession());
             urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
             return null;
         }
@@ -303,7 +303,7 @@ public class EditNews implements AbcAction {
             FeedGenerator.updateNews();
             VariableFetcher.getInstance().refreshNews();
         } else
-            ServletUtils.addMessage("Zpr·viËka Ëek· na Ëas publikov·nÌ.", env, request.getSession());
+            ServletUtils.addMessage("Zpr√°viƒçka ƒçek√° na ƒças publikov√°n√≠.", env, request.getSession());
 
         urlUtils.redirect(response, url);
         return null;
@@ -391,7 +391,7 @@ public class EditNews implements AbcAction {
         String text = (String) params.get(PARAM_CONTENT);
         text = Misc.filterDangerousCharacters(text);
         if ( text==null || text.trim().length()==0 ) {
-            ServletUtils.addError(PARAM_CONTENT, "VyplÚte obsah zpr·viËky", env, null);
+            ServletUtils.addError(PARAM_CONTENT, "Vypl≈àte obsah zpr√°viƒçky", env, null);
             return false;
         }
         try {
@@ -442,7 +442,7 @@ public class EditNews implements AbcAction {
         String text = (String) params.get(PARAM_TITLE);
         text = Misc.filterDangerousCharacters(text);
         if (text==null || text.length()==0) {
-            ServletUtils.addError(PARAM_TITLE, "Zadejte titulek zpr·viËky", env, null);
+            ServletUtils.addError(PARAM_TITLE, "Zadejte titulek zpr√°viƒçky", env, null);
             return false;
         }
 
@@ -470,7 +470,7 @@ public class EditNews implements AbcAction {
             item.setCreated(date);
             return true;
         } catch (ParseException e) {
-            ServletUtils.addError(PARAM_PUBLISH_DATE, "Chybn˝ form·t datumu!", env, null);
+            ServletUtils.addError(PARAM_PUBLISH_DATE, "Chybn√Ω form√°t datumu!", env, null);
             return false;
         }
     }

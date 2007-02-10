@@ -1,6 +1,6 @@
 <#include "../header.ftl">
 
-<h1>Pøehled mıch aktivit</h1>
+<h1>PÅ™ehled mÃ½ch aktivit</h1>
 
 <@lib.showMessages/>
 
@@ -8,20 +8,20 @@
     <p>Moje:</p>
 
     <ul>
-      <li><a href="${URL.noPrefix("/History?type=news&amp;uid="+PROFILE.id)}">zprávièky</a>
+      <li><a href="${URL.noPrefix("/History?type=news&amp;uid="+PROFILE.id)}">zprÃ¡viÄky</a>
       (${COUNTS.news})</li>
-      <li><a href="${URL.noPrefix("/History?type=questions&amp;uid="+PROFILE.id)}">otázky</a>
+      <li><a href="${URL.noPrefix("/History?type=questions&amp;uid="+PROFILE.id)}">otÃ¡zky</a>
       (${COUNTS.question})</li>
-      <li><a href="${URL.noPrefix("/History?type=comments&amp;uid="+PROFILE.id)}">komentáøe</a>
+      <li><a href="${URL.noPrefix("/History?type=comments&amp;uid="+PROFILE.id)}">komentÃ¡Å™e</a>
       (${COUNTS.comment})</li>
     </ul>
 </#if>
 
 <p>
-    Tento seznam obsahuje jen ty objekty, které nemají sdílené vlastnictví (wiki). Proto se zde nezobrazují
-    napøíklad záznamy o <a href="/hardware">hardwaru</a> a <a href="/software">softwaru</a>,
-    <a href="/ovladace">ovladaèe</a>, <a href="/faq">FAQ</a>, <a href="/slovnik">slovníku</a> èi
-    <a href="/ucebnice">uèebnici</a>.
+    Tento seznam obsahuje jen ty objekty, kterÃ© nemajÃ­ sdÃ­lenÃ© vlastnictvÃ­ (wiki). Proto se zde nezobrazujÃ­
+    napÅ™Ã­klad zÃ¡znamy o <a href="/hardware">hardwaru</a> a <a href="/software">softwaru</a>,
+    <a href="/ovladace">ovladaÄe</a>, <a href="/faq">FAQ</a>, <a href="/slovnik">slovnÃ­ku</a> Äi
+    <a href="/ucebnice">uÄebnici</a>.
 </p>
 
 <#include "../footer.ftl">

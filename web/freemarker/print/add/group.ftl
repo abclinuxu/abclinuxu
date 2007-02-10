@@ -5,7 +5,7 @@
 <form action="${URL.noPrefix("/Group")}" method="POST">
  <table width="100%" border=0 cellpadding=5>
   <tr>
-   <td width="120" class="required">Jméno skupiny</td>
+   <td width="120" class="required">JmÃ©no skupiny</td>
    <td>
     <input type="text" name="name" value="${PARAMS.name?if_exists}" size="20" tabindex="1">
     <div class="error">${ERRORS.name?if_exists}</div>
@@ -20,7 +20,7 @@
   </tr>
   <tr>
    <td width="120">&nbsp;</td>
-   <td><input type="submit" value="Pokraèuj" tabindex="3"></td>
+   <td><input type="submit" value="PokraÄuj" tabindex="3"></td>
   </tr>
  </table>
 

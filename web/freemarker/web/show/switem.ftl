@@ -1,6 +1,6 @@
 <#assign who=TOOL.createUser(ITEM.owner)>
 <#if USER?exists && TOOL.xpath(ITEM,"//monitor/id[text()='"+USER.id+"']")?exists>
-    <#assign monitorState="Pøestaò sledovat"><#else><#assign monitorState="Sleduj záznam">
+    <#assign monitorState="PÅ™estaÅˆ sledovat"><#else><#assign monitorState="Sleduj zÃ¡znam">
 </#if>
 <#assign plovouci_sloupec>
     <div class="s_sekce">
@@ -11,27 +11,27 @@
                 </li>
             <#if PARAMS.revize?exists>
                 <li>
-                    <a href="${RELATION.url?default("/hardware/show/"+RELATION.id)}">Návrat na aktuální verzi</a>
+                    <a href="${RELATION.url?default("/hardware/show/"+RELATION.id)}">NÃ¡vrat na aktuÃ¡lnÃ­ verzi</a>
                 </li>
             <#else>
                 <li><a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
-                <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
-                <li><a href="${URL.make("/inset/"+RELATION.id+"?action=addScreenshot")}">Pøidat obrázek</a></li>
+                <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">SouvisejÃ­cÃ­ dokumenty</a></li>
+                <li><a href="${URL.make("/inset/"+RELATION.id+"?action=addScreenshot")}">PÅ™idat obrÃ¡zek</a></li>
                 <li><a href="/revize?rid=${RELATION.id}&amp;prefix=/software">Historie</a></li>
                 <li><a href="${RELATION.url?default("/software/show/"+RELATION.id)}?varianta=print">Tisk</a></li>
                 <li>
                     <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle")}">${monitorState}</a>
-                    <span title="Poèet lidí, kteøí sledují tento záznam">(${TOOL.getMonitorCount(ITEM.data)})</span>
-                    <a class="info" href="#">?<span class="tooltip">Za¹le upozornìní na vá¹ email pøi úpravì záznamu.</span></a>
+                    <span title="PoÄet lidÃ­, kteÅ™Ã­ sledujÃ­ tento zÃ¡znam">(${TOOL.getMonitorCount(ITEM.data)})</span>
+                    <a class="info" href="#">?<span class="tooltip">ZaÅ¡le upozornÄ›nÃ­ na vÃ¡Å¡ email pÅ™i ÃºpravÄ› zÃ¡znamu.</span></a>
                 </li>
                 <form action="/Search"><input type="text" class="text" name="query" value="${TOOL.xpath(ITEM,"/data/name")}">
                     <input type="submit" class="button" value="Hledej">
                 </form>
                 <#if USER?exists && USER.hasRole("attachment admin")>
-                    <li><a href="${URL.make("/inset/"+RELATION.id+"?action=manage")}">Správa pøíloh</a></li>
+                    <li><a href="${URL.make("/inset/"+RELATION.id+"?action=manage")}">SprÃ¡va pÅ™Ã­loh</a></li>
                 </#if>
                 <#if USER?exists && USER.hasRole("move relation")>
-                    <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Pøesunout</a></li>
+                    <li><a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">PÅ™esunout</a></li>
                 </#if>
                 <#if USER?exists && USER.hasRole("remove relation")>
                     <li><a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=remove&amp;prefix=/software")}">Smazat</a></li>
@@ -72,7 +72,7 @@
             </#list>
             </ul>
         <#else>
-            <p>Zdroj zatím nebyl naèten, je prázdnı nebo obsahuje chybu.</p>
+            <p>Zdroj zatÃ­m nebyl naÄten, je prÃ¡zdnÃ½ nebo obsahuje chybu.</p>
         </#if>
     </#if>
 

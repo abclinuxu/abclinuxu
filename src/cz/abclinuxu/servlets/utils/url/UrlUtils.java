@@ -193,7 +193,7 @@ public class UrlUtils {
      */
     public static String getRelationUrl(Relation relation, String prefix) {
         if (relation == null)
-            throw new AbcException("©patný vstup: relace nesmí být prázdná!");
+            throw new AbcException("Å patnÃ½ vstup: relace nesmÃ­ bÃ½t prÃ¡zdnÃ¡!");
         relation = (Relation) Tools.sync(relation);
 
         if (relation.getUrl() != null)

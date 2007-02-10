@@ -50,7 +50,7 @@ public class TemplateEngineServlet extends HttpServlet {
      * request is processed here
      */
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html; charset=ISO-8859-2");
+        response.setContentType("text/html; charset=UTF-8");
         Writer writer = response.getWriter();
         HashMap root = new HashMap();
         String path = request.getRequestURI();
@@ -68,7 +68,7 @@ public class TemplateEngineServlet extends HttpServlet {
      */
     public void init() throws ServletException {
         config = FMUtils.getConfiguration();
-        config.setDefaultEncoding("iso-8859-2");
+        config.setDefaultEncoding("UTF-8");
 
         String path = getServletContext().getRealPath("/")+"/";
         String tmp = getInitParameter("FREEMARKER");

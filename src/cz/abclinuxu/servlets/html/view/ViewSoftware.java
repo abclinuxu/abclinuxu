@@ -113,7 +113,7 @@ public class ViewSoftware implements AbcAction {
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_ID, Relation.class, params, request);
         if (relation == null)
-            throw new NotFoundException("Stránka nebyla nalezena.");
+            throw new NotFoundException("StrÃ¡nka nebyla nalezena.");
         Tools.sync(relation);
         env.put(ShowObject.VAR_RELATION, relation);
 
@@ -156,7 +156,7 @@ public class ViewSoftware implements AbcAction {
     private String processAlternative(HttpServletRequest request, String name, Map env) throws Exception {
         SQLTool sqlTool = SQLTool.getInstance();
         Map filters = new HashMap();
-        name = URLDecoder.decode(name, "ISO-8859-2");
+        name = URLDecoder.decode(name, "UTF-8");
         filters.put(Constants.PROPERTY_ALTERNATIVE_SOFTWARE, Tools.asSet(name));
         List items = sqlTool.findItemRelationsWithTypeWithFilters(Item.SOFTWARE, null, filters);
         if (items.size() > 0)

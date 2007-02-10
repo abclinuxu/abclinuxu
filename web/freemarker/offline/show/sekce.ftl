@@ -31,7 +31,7 @@
 
 <#if CHILDREN.make?exists>
  <table width="100%" border="0" cellpadding="2">
- <tr><td colspan="3" class="cerna3"><strong>Poloæky</strong></td></tr>
+ <tr><td colspan="3" class="cerna3"><strong>Polo≈æky</strong></td></tr>
  <#list SORT.byName(CHILDREN.make) as polozka>
   <#if polozka_index%3==0><tr></#if>
   <td width="33%">

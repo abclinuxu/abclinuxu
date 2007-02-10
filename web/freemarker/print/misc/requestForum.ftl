@@ -2,9 +2,9 @@
 
 <@lib.showMessages/>
 
-<p>Nyní prosím vyberte vhodnìj¹í fórum pro tuto diskusi,
-Pak zadejte do formuláøe své jméno, emailovou adresu
-a pøípadnı vzkaz.
+<p>NynÃ­ prosÃ­m vyberte vhodnÄ›jÅ¡Ã­ fÃ³rum pro tuto diskusi,
+Pak zadejte do formulÃ¡Å™e svÃ© jmÃ©no, emailovou adresu
+a pÅ™Ã­padnÃ½ vzkaz.
 </p>
 
 <form action="${URL.make("/EditRequest")}" method="POST">
@@ -25,7 +25,7 @@ a pøípadnı vzkaz.
 
 <#if PARAMS.preview?exists>
     <fieldset>
-        <legend>Náhled</legend>
+        <legend>NÃ¡hled</legend>
         <b>
             ${PARAMS.category}
             ${PARAMS.author}
@@ -38,7 +38,7 @@ a pøípadnı vzkaz.
 
  <table border=0 cellpadding=5>
   <tr>
-   <td class="required">Va¹e jméno</td>
+   <td class="required">VaÅ¡e jmÃ©no</td>
    <#if PARAMS.author?exists><#assign author=PARAMS.author><#elseif USER?exists><#assign author=USER.name></#if>
    <td>
     <input type="text" name="author" value="${author?if_exists}" size="20" tabindex="1">
@@ -46,7 +46,7 @@ a pøípadnı vzkaz.
    </td>
   </tr>
   <tr>
-    <td class="required">Vá¹ email</td>
+    <td class="required">VÃ¡Å¡ email</td>
    <#if PARAMS.email?exists><#assign email=PARAMS.email><#elseif USER?exists><#assign email=USER.email></#if>
    <td>
     <input type="text" name="email" value="${email?if_exists}" size="20" tabindex="2">
@@ -63,7 +63,7 @@ a pøípadnı vzkaz.
   <tr>
    <td colspan="2" align="center">
        <input type="submit" value="OK" tabindex="4">
-       <input type="submit" name="preview" value="Náhled" tabindex="5">
+       <input type="submit" name="preview" value="NÃ¡hled" tabindex="5">
    </td>
   </tr>
  </table>

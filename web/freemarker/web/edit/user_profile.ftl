@@ -2,23 +2,23 @@
 
 <@lib.showMessages/>
 
-<p>Na této stránce si mù¾ete upravit svùj profil.
-Profil slou¾í jako va¹e veøejná domovská stránka,
-na které máte mo¾nost zveøejnit informace o své
-osobì. O tom, kdo jste, odkud jste, co máte rád,
-jaké je va¹e krédo. Fantazii se meze nekladou.
+<p>Na tÃ©to strÃ¡nce si mÅ¯Å¾ete upravit svÅ¯j profil.
+Profil slouÅ¾Ã­ jako vaÅ¡e veÅ™ejnÃ¡ domovskÃ¡ strÃ¡nka,
+na kterÃ© mÃ¡te moÅ¾nost zveÅ™ejnit informace o svÃ©
+osobÄ›. O tom, kdo jste, odkud jste, co mÃ¡te rÃ¡d,
+jakÃ© je vaÅ¡e krÃ©do. Fantazii se meze nekladou.
 </p>
 
 <p>
-Pro va¹i ochranu nejdøíve zadejte souèasné heslo.
-Pokud máte na internetu svou domovskou stránku,
-vyplòte její URL. Dal¹í polo¾kou je rok, kdy jste
-zaèal pou¾ívat Linux. Následuje mo¾nost ulo¾it
-a¾ pìt distribucí, které v souèasnosti pou¾íváte.
-Posledním políèkem je text <i>O&nbsp;mnì</i>. Do nìj
-mù¾ete napsat informace o sobì, které chcete sdìlit
-ètenáøùm. Mù¾e to bıt jen pár slov, ale i del¹í
-povídání.</p>
+Pro vaÅ¡i ochranu nejdÅ™Ã­ve zadejte souÄasnÃ© heslo.
+Pokud mÃ¡te na internetu svou domovskou strÃ¡nku,
+vyplÅˆte jejÃ­ URL. DalÅ¡Ã­ poloÅ¾kou je rok, kdy jste
+zaÄal pouÅ¾Ã­vat Linux. NÃ¡sleduje moÅ¾nost uloÅ¾it
+aÅ¾ pÄ›t distribucÃ­, kterÃ© v souÄasnosti pouÅ¾Ã­vÃ¡te.
+PoslednÃ­m polÃ­Äkem je text <i>O&nbsp;mnÄ›</i>. Do nÄ›j
+mÅ¯Å¾ete napsat informace o sobÄ›, kterÃ© chcete sdÄ›lit
+ÄtenÃ¡Å™Å¯m. MÅ¯Å¾e to bÃ½t jen pÃ¡r slov, ale i delÅ¡Ã­
+povÃ­dÃ¡nÃ­.</p>
 
 <form action="${URL.noPrefix("/EditUser")}" method="POST">
  <table width="100%" border=0 cellpadding=5>
@@ -30,20 +30,20 @@ povídání.</p>
    </td>
   </tr>
   <tr>
-   <td width="120">Domovská stránka</td>
+   <td width="120">DomovskÃ¡ strÃ¡nka</td>
    <td>
     <input type="text" name="www" value="${PARAMS.www?if_exists}" size="40" tabindex="2">
     <div class="error">${ERRORS.www?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td width="120">Linux pou¾ívám<br>od roku</td>
+   <td width="120">Linux pouÅ¾Ã­vÃ¡m<br>od roku</td>
    <td>
     <input type="text" name="linuxFrom" value="${PARAMS.linuxFrom?if_exists}" size="40" tabindex="2">
    </td>
   </tr>
   <tr>
-   <td width="120" valign="middle">Pou¾ívám tyto distribuce</td>
+   <td width="120" valign="middle">PouÅ¾Ã­vÃ¡m tyto distribuce</td>
    <td>
     <#assign distros=PARAMS.distribution?if_exists>
     <#if distros?size gte 1 >
@@ -74,7 +74,7 @@ povídání.</p>
    </td>
   </tr>
   <tr>
-   <td width="60">Patièka</td>
+   <td width="60">PatiÄka</td>
    <td>
     <textarea name="signature" rows="4" cols="54" tabindex="8"
     onkeyup="writeRemainingCharsCount(this);">${PARAMS.signature?if_exists?html}</textarea>
@@ -83,7 +83,7 @@ povídání.</p>
    </td>
   </tr>
   <tr>
-   <td colspan="2">O mnì</td>
+   <td colspan="2">O mnÄ›</td>
   </tr>
   <tr>
    <td colspan="2">
@@ -93,7 +93,7 @@ povídání.</p>
   </tr>
   <tr>
    <td width="120">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi" tabindex="10"></td>
+   <td><input type="submit" value="DokonÄi" tabindex="10"></td>
   </tr>
  </table>
  <input type="hidden" name="action" value="editProfile2">

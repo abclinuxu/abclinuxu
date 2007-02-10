@@ -2,20 +2,20 @@
 
 <@lib.showMessages/>
 
-<h2>Úvod</h2>
+<h2>Ãšvod</h2>
 
-<p>Tato stránka je urèena vıhradnì administrátorùm. Jejím úèelem
-není provádìt cenzuru (na to jsou jiné nástroje) nebo
-zasahovat do smyslu komentáøe, nıbr¾ opravovat chyby u¾ivatelù.
-Napøíklad ¹patnì zvolenı titulek u dotazu, titulek poru¹ující
-zásady (psán velkımi písmeny apod.), nevhodné HTML znaèky, ...</p>
+<p>Tato strÃ¡nka je urÄena vÃ½hradnÄ› administrÃ¡torÅ¯m. JejÃ­m ÃºÄelem
+nenÃ­ provÃ¡dÄ›t cenzuru (na to jsou jinÃ© nÃ¡stroje) nebo
+zasahovat do smyslu komentÃ¡Å™e, nÃ½brÅ¾ opravovat chyby uÅ¾ivatelÅ¯.
+NapÅ™Ã­klad Å¡patnÄ› zvolenÃ½ titulek u dotazu, titulek poruÅ¡ujÃ­cÃ­
+zÃ¡sady (psÃ¡n velkÃ½mi pÃ­smeny apod.), nevhodnÃ© HTML znaÄky, ...</p>
 
 <#if PREVIEW?exists>
- <h2>Náhled pøíspìvku</h2>
+ <h2>NÃ¡hled pÅ™Ã­spÄ›vku</h2>
  <@lib.showThread PREVIEW, 0, TOOL.createEmptyDiscussion(), false />
 </#if>
 
-<h2>Zde mù¾ete provést své úpravy</h2>
+<h2>Zde mÅ¯Å¾ete provÃ©st svÃ© Ãºpravy</h2>
 
 <form action="${URL.make("/EditDiscussion")}" method="POST" name="form">
  <table cellpadding="5" class="siroka">
@@ -30,7 +30,7 @@ zásady (psán velkımi písmeny apod.), nevhodné HTML znaèky, ...</p>
    <td>Autor (id)</td>
    <td>
     <input type="text" name="author_id" size="5" maxlength="5" value="${PARAMS.author_id?if_exists}">
-    <br>Jen ve vıjimeènıch pøípadech (slouèení dvou kont)!
+    <br>Jen ve vÃ½jimeÄnÃ½ch pÅ™Ã­padech (slouÄenÃ­ dvou kont)!
     <div class="error">${ERRORS.author_id?if_exists}</div>
    </td>
   </tr>
@@ -38,32 +38,32 @@ zásady (psán velkımi písmeny apod.), nevhodné HTML znaèky, ...</p>
    <td>Autor</td>
    <td>
     <input type="text" name="author" size="30" maxlength="50" value="${PARAMS.author?if_exists}">
-    <br>Jen ve vıjimeènıch pøípadech!
+    <br>Jen ve vÃ½jimeÄnÃ½ch pÅ™Ã­padech!
     <div class="error">${ERRORS.author?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td class="required">Komentáø</td>
+   <td class="required">KomentÃ¡Å™</td>
    <td>
     <div class="form-edit">
-        <a href="javascript:insertAtCursor(document.form.text, '<p>', '</p>');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
-        <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="Vlo¾it formátovanı text. Vhodné pouze pro konfiguraèní soubory èi vıpisy.">&lt;pre&gt;</a>
-        <a href="javascript:insertAtCursor(document.form.text, '<b>', '</b>');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
-        <a href="javascript:insertAtCursor(document.form.text, '<i>', '</i>');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
-        <a href="javascript:insertAtCursor(document.form.text, '<a href=&quot;&quot;>', '</a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
-        <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.text, '<p>', '</p>');" id="mono" title="VloÅ¾it znaÄku odstavce">&lt;p&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="VloÅ¾it formÃ¡tovanÃ½ text. VhodnÃ© pouze pro konfiguraÄnÃ­ soubory Äi vÃ½pisy.">&lt;pre&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.text, '<b>', '</b>');" id="serif" title="VloÅ¾it znaÄku tuÄnÄ›"><b>B</b></a>
+        <a href="javascript:insertAtCursor(document.form.text, '<i>', '</i>');" id="serif" title="VloÅ¾it znaÄku kurzÃ­va"><i>I</i></a>
+        <a href="javascript:insertAtCursor(document.form.text, '<a href=&quot;&quot;>', '</a>');" id="mono" title="VloÅ¾it znaÄku odkazu">&lt;a&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="VloÅ¾it znaÄku pro pÃ­smo s pevnou Å¡Ã­Å™kou">&lt;code&gt;</a>
     </div>
     <textarea name="text" class="siroka" rows="20">${PARAMS.text?if_exists?html}</textarea>
-    <div>Smíte pou¾ívat základní HTML znaèky. Pokud je nepou¾ijete,
-    prázdné øádky budou nahrazeny novım odstavcem.</div>
+    <div>SmÃ­te pouÅ¾Ã­vat zÃ¡kladnÃ­ HTML znaÄky. Pokud je nepouÅ¾ijete,
+    prÃ¡zdnÃ© Å™Ã¡dky budou nahrazeny novÃ½m odstavcem.</div>
     <div class="error">${ERRORS.text?if_exists}</div>
    </td>
   </tr>
   <tr>
    <td>&nbsp;</td>
    <td>
-    <input type="submit" name="preview" value="Zopakuj náhled">
-    <input type="submit" name="finish" value="Dokonèi">
+    <input type="submit" name="preview" value="Zopakuj nÃ¡hled">
+    <input type="submit" name="finish" value="DokonÄi">
    </td>
   </tr>
  </table>

@@ -2,10 +2,10 @@
 
 <@lib.showMessages/>
 
-<h1>Seznam seriálù</h1>
+<h1>Seznam seriÃ¡lÅ¯</h1>
 
 <#if USER?exists && USER.hasRole("article admin")>
-    <p><a href="${URL.make("/serialy/edit?action=add")}">Pøidej seriál</a></p>
+    <p><a href="${URL.make("/serialy/edit?action=add")}">PÅ™idej seriÃ¡l</a></p>
 </#if>
 
 <ul>

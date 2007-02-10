@@ -4,8 +4,8 @@
 
 <#if PARAMS.rid?exists><h1>Objekt: <i>${TOOL.childName(PARAMS.rid)}</i></h1></#if>
 
-<p>Zvolte si relaci. Pokud chcete zobrazit její obsah, kliknìte na tlaèítko
-<b>Naèti relaci</b>. V opaèném pøípadì zvolte tlaèítko <b>Pokraèuj</b>.
+<p>Zvolte si relaci. Pokud chcete zobrazit jejÃ­ obsah, kliknÄ›te na tlaÄÃ­tko
+<b>NaÄti relaci</b>. V opaÄnÃ©m pÅ™Ã­padÄ› zvolte tlaÄÃ­tko <b>PokraÄuj</b>.
 </p>
 
 <form action="${URL.noPrefix("/SelectRelation")}" method="POST">
@@ -13,8 +13,8 @@
  <#if CURRENT?exists>
 
   <p>
-   <input type="submit" name="continue" value="Naèti relaci"> &nbsp;
-   <input type="submit" name="confirm" value="Pokraèuj">
+   <input type="submit" name="continue" value="NaÄti relaci"> &nbsp;
+   <input type="submit" name="confirm" value="PokraÄuj">
   </p>
 
   <table border="0" cellpadding="5">
@@ -41,11 +41,11 @@
 
  <#else>
 
-  <p>Pokud znáte èíslo relace, vlo¾te jej zde:
+  <p>Pokud znÃ¡te ÄÃ­slo relace, vloÅ¾te jej zde:
    <input type="text" name="enteredId" size="6">
    <span class="error">${ERRORS?if_exists.enteredId?if_exists}</span>
-   <input type="submit" name="continue" value="Naèti relaci">
-   <input type="submit" name="confirm" value="Pokraèuj">
+   <input type="submit" name="continue" value="NaÄti relaci">
+   <input type="submit" name="confirm" value="PokraÄuj">
   </p>
 
   <table border="0" cellpadding="5">
@@ -77,7 +77,7 @@
     <#if i_index%5==4></tr></#if>
    </#list>
 
-   <tr><th colspan="5">Èlánky</th></tr>
+   <tr><th colspan="5">ÄŒlÃ¡nky</th></tr>
    <#list SORT.byName(CLANKY) as i>
     <#if i_index%5==0><tr></#if>
     <td>

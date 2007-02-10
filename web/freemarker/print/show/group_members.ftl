@@ -8,7 +8,7 @@
 
 <#if (MEMBERS.currentPage.size>0)>
 
- <h2>Seznam èlenù (${MEMBERS.total})</h2>
+ <h2>Seznam ÄlenÅ¯ (${MEMBERS.total})</h2>
 
  <form action="${URL.noPrefix("/Group")}" method="POST">
  <ol start="${MEMBERS.currentPage.row+1}">
@@ -19,25 +19,25 @@
    </li>
   </#list>
  </ol>
- <input type="submit" value="Odstraò zvolené èleny ze skupiny">
+ <input type="submit" value="OdstraÅˆ zvolenÃ© Äleny ze skupiny">
  <input type="hidden" name="gid" value="${GROUP.id}">
  <input type="hidden" name="action" value="removeMembers">
  </form>
 
  <#if MEMBERS.prevPage?exists>
   <a href="${URL.make("/Group?action=members&gid="+GROUP.id+"&from="+MEMBERS.prevPage.row)}">
-  Pøedchozích ${MEMBERS.pageSize}</a>.
+  PÅ™edchozÃ­ch ${MEMBERS.pageSize}</a>.
  </#if>
  <#if MEMBERS.nextPage?exists>
   <a href="${URL.make("/Group?action=members&gid="+GROUP.id+"&from="+MEMBERS.nextPage.row)}">
-  Následujících ${MEMBERS.pageSize}</a>.
+  NÃ¡sledujÃ­cÃ­ch ${MEMBERS.pageSize}</a>.
  </#if>
 
 </#if>
 
 <p>
-<a href="${URL.noPrefix("/SelectUser?sAction=form&url=/EditUser&action=addToGroup&gid="+GROUP.id)}">Pøidej
-dal¹ího èlena</a>
+<a href="${URL.noPrefix("/SelectUser?sAction=form&url=/EditUser&action=addToGroup&gid="+GROUP.id)}">PÅ™idej
+dalÅ¡Ã­ho Älena</a>
 </p>
 
 <#include "../footer.ftl">

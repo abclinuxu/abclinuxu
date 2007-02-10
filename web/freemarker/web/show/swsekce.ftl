@@ -6,10 +6,10 @@
     <div class="s_sekce">
         <ul>
             <#if CATEGORY.isOpen()>
-                <li><a href="${URL.make("/edit/"+RELATION.id+"?action=add")}">Vlo¾it novou polo¾ku</a></li>
+                <li><a href="${URL.make("/edit/"+RELATION.id+"?action=add")}">VloÅ¾it novou poloÅ¾ku</a></li>
             </#if>
-            <li><a href="/clanky/show/3500?text=sekce+${RELATION.url}">Po¾ádat o vytvoøení podsekce</a></li>
-            <li><a href="/software/alternativy">Alternativy k aplikacím</a></li>
+            <li><a href="/clanky/show/3500?text=sekce+${RELATION.url}">PoÅ¾Ã¡dat o vytvoÅ™enÃ­ podsekce</a></li>
+            <li><a href="/software/alternativy">Alternativy k aplikacÃ­m</a></li>
             <#if USER?exists && USER.hasRole("category admin")>
                 <hr />
                 <li>
@@ -20,24 +20,24 @@
             </#if>
             <#if USER?exists && USER.hasRole("move relation")>
                 <li>
-                    <a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Pøesunout sekci</a>
+                    <a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">PÅ™esunout sekci</a>
                 </li>
                 <li>
-                    <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=moveAll&amp;prefix="+URL.prefix)}">Pøesunout obsah</a>
+                    <a href="${URL.noPrefix("/EditRelation/"+RELATION.id+"?action=moveAll&amp;prefix="+URL.prefix)}">PÅ™esunout obsah</a>
                 </li>
             </#if>
         </ul>
     </div>
 
     <div class="s_nadpis">
-      <a class="info" href="#">?<span class="tooltip">Kliknutím na kategorii (napø. <b><i>U¾ivatelské rozhraní</i></b>) rozbalíte seznam filtrù.</span></a>
+      <a class="info" href="#">?<span class="tooltip">KliknutÃ­m na kategorii (napÅ™. <b><i>UÅ¾ivatelskÃ© rozhranÃ­</i></b>) rozbalÃ­te seznam filtrÅ¯.</span></a>
       Filtr
     </div>
 
     <div class="s_sekce">
     <form action="${RELATION.url?default("/software/show/"+RELATION.id)}" method="GET">
         <#assign userInterfaces = FILTERS.ui?default([])>
-        <div class="filterHeader" onclick="prepni_plochu('ui')">U¾ivatelské rozhraní (${userInterfaces?size})</div>
+        <div class="filterHeader" onclick="prepni_plochu('ui')">UÅ¾ivatelskÃ© rozhranÃ­ (${userInterfaces?size})</div>
         <div class="collapsible tree hidden" id="ui">
             <@lib.showOption2 "ui", "xwindows", UI_PROPERTY["xwindows"], "checkbox", userInterfaces />
             <div>
@@ -109,10 +109,10 @@
 <#if (CATEGORIES?exists && CATEGORIES?size > 0)>
     <#if (DEPTH > 1)>
         <p>
-            <a href="javascript:ddtreemenu.flatten('treemenu1', 'expand')">V¹e rozbalit</a> |
-            <a href="javascript:ddtreemenu.flatten('treemenu1', 'contact')">V¹e sbalit</a>
+            <a href="javascript:ddtreemenu.flatten('treemenu1', 'expand')">VÅ¡e rozbalit</a> |
+            <a href="javascript:ddtreemenu.flatten('treemenu1', 'contact')">VÅ¡e sbalit</a>
             <a class="info" href="#">?<span class="tooltip">
-                Kliknutím na ikonku adresáøe rozbalíte podmenu. Kliknutím na název kategorie do ní rovnou vstoupíte.
+                KliknutÃ­m na ikonku adresÃ¡Å™e rozbalÃ­te podmenu. KliknutÃ­m na nÃ¡zev kategorie do nÃ­ rovnou vstoupÃ­te.
             </span></a>
         </p>
     </#if>

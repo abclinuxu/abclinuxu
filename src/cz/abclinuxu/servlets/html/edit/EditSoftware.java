@@ -106,7 +106,7 @@ public class EditSoftware implements AbcAction, Configurable {
             Tools.sync(relation);
             env.put(VAR_RELATION, relation);
         } else
-            throw new MissingArgumentException("ChybÌ parametr relationId!");
+            throw new MissingArgumentException("Chyb√≠ parametr relationId!");
 
         // check permissions
         if (user == null)
@@ -124,13 +124,13 @@ public class EditSoftware implements AbcAction, Configurable {
         if (ACTION_EDIT_STEP2.equals(action))
             return actionEditStep2(request, response, env);
 
-        throw new MissingArgumentException("ChybÌ parametr action!");
+        throw new MissingArgumentException("Chyb√≠ parametr action!");
     }
 
     public String actionAddStep1(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Relation upper = (Relation) env.get(VAR_RELATION);
         if (upper.getUrl() == null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Chyba - sekce nem· textovÈ URL. Kontaktujte prosÌm administr·tora.",
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Chyba - sekce nem√° textov√© URL. Kontaktujte pros√≠m administr√°tora.",
                                   env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, urlUtils.getRelationUrl(upper));
@@ -291,7 +291,7 @@ public class EditSoftware implements AbcAction, Configurable {
             DocumentHelper.makeElement(root, "name").setText(tmp);
             return true;
         } else {
-            ServletUtils.addError(PARAM_NAME, "Zadejte n·zev programu!", env, null);
+            ServletUtils.addError(PARAM_NAME, "Zadejte n√°zev programu!", env, null);
             return false;
         }
     }
@@ -366,7 +366,7 @@ public class EditSoftware implements AbcAction, Configurable {
             for (Iterator iter = entries.iterator(); iter.hasNext();) {
                 String alternative = (String) iter.next();
                 if (alternative.indexOf("://") != -1) {
-                    ServletUtils.addError(PARAM_ALTERNATIVES, "Do alternativy vkl·dejte jmÈno aplikace, URL nenÌ povoleno.", env, null);
+                    ServletUtils.addError(PARAM_ALTERNATIVES, "Do alternativy vkl√°dejte jm√©no aplikace, URL nen√≠ povoleno.", env, null);
                     return false;
                 }
             }
@@ -404,7 +404,7 @@ public class EditSoftware implements AbcAction, Configurable {
             new URL(url);
             return true;
         } catch (MalformedURLException e) {
-            ServletUtils.addError(PARAM_RSS_URL, "Zadejte prosÌm platnÈ URL.", env, null);
+            ServletUtils.addError(PARAM_RSS_URL, "Zadejte pros√≠m platn√© URL.", env, null);
             return false;
         }
     }

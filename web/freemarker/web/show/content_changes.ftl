@@ -1,20 +1,20 @@
 <#include "../header.ftl">
 
-<h1>Pøehled stránek</h1>
+<h1>PÅ™ehled strÃ¡nek</h1>
 
-<p>Na této stránce najdete pøehlednı seznam dokumentù,
-jejich adres a datumu poslední úpravy. </p>
+<p>Na tÃ©to strÃ¡nce najdete pÅ™ehlednÃ½ seznam dokumentÅ¯,
+jejich adres a datumu poslednÃ­ Ãºpravy. </p>
 
 <#if ! DATA?has_content>
     <p>
-        Pod touto stránkou nejsou ¾ádné podstránky.
+        Pod touto strÃ¡nkou nejsou Å¾Ã¡dnÃ© podstrÃ¡nky.
     </p>
 <#else>
     <table width="100%">
         <tr>
             <th align="center"><a href="<@sortUrl column="url"/>">URL</a></th>
-            <th align="right"><a href="<@sortUrl column="date"/>">Poslední zmìna</a></th>
-            <th align="right"><a href="<@sortUrl column="size"/>">Znakù</a></th>
+            <th align="right"><a href="<@sortUrl column="date"/>">PoslednÃ­ zmÄ›na</a></th>
+            <th align="right"><a href="<@sortUrl column="size"/>">ZnakÅ¯</a></th>
             <th align="left"><a href="<@sortUrl column="user"/>">Autor</th>
         </tr>
         <#list DATA as content>

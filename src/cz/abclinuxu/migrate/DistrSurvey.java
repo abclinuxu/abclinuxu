@@ -36,7 +36,7 @@ public class DistrSurvey {
 
     static {
         format = OutputFormat.createPrettyPrint();
-        format.setEncoding("ISO-8859-2");
+        format.setEncoding("UTF-8");
         format.setSuppressDeclaration(true);
     }
 

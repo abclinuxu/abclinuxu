@@ -2,10 +2,10 @@
 
 <@lib.showMessages/>
 
-<p>Na této stánce si mù¾ete upravovat seznam va¹ich
-kategorií zápisù. Mù¾ete zde pøidat novou kategorii
-nebo pøejmenovat existující kategorii. Mazání prozatím
-není dostupné. <a href="/blog/${BLOG.subType}">Zpìt na vá¹ blog</a>.</p>
+<p>Na tÃ©to stÃ¡nce si mÅ¯Å¾ete upravovat seznam vaÅ¡ich
+kategoriÃ­ zÃ¡pisÅ¯. MÅ¯Å¾ete zde pÅ™idat novou kategorii
+nebo pÅ™ejmenovat existujÃ­cÃ­ kategorii. MazÃ¡nÃ­ prozatÃ­m
+nenÃ­ dostupnÃ©. <a href="/blog/${BLOG.subType}">ZpÄ›t na vÃ¡Å¡ blog</a>.</p>
 
 <h2>Kategorie</h2>
 
@@ -20,7 +20,7 @@ není dostupné. <a href="/blog/${BLOG.subType}">Zpìt na vá¹ blog</a>.</p>
     </#list>
     <tr>
         <td><input type="text" name="category" size="20"></td>
-        <td><input type="submit" name="finish" value="Vytvoøit"></td>
+        <td><input type="submit" name="finish" value="VytvoÅ™it"></td>
     </tr>
 </table>
 

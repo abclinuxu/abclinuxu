@@ -1,6 +1,6 @@
 <#include "../header.ftl">
 
-<h1>Spr·va p¯Ìloh</h1>
+<h1>Spr√°va p≈ô√≠loh</h1>
 
 <@lib.showMessages/>
 
@@ -8,7 +8,7 @@
     <#list XML.data.inset.images.image as node>
         <label>
             <input type="checkbox" name="attachment" value="${node}">
-            obr·zek
+            obr√°zek
         </label>
         <#if node.@thumbnail[0]?exists>
             <#assign imageSrc = node.@thumbnail>
@@ -16,7 +16,7 @@
             <#assign imageSrc = node>
         </#if>
         <a href="${node}"><img src="${imageSrc}" border="0"></a>
-        <#-- p¯Ìloha <a href="${node}">${node}</a> -->
+        <#-- p≈ô√≠loha <a href="${node}">${node}</a> -->
         <br>
     </#list>
     <input type="hidden" name="action" value="remove">

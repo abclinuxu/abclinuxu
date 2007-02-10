@@ -1,5 +1,5 @@
 <#include "../header.ftl">
-<card title="Zpr·viËky">
+<card title="Zpr√°viƒçky">
 <#list FOUND.data as relation>
  <#assign ITEM=TOOL.sync(relation.child)>
   <p>${DATE.show(ITEM.created,"CZ_SHORT")}<br/>
@@ -8,7 +8,7 @@
 </#list>
 <#if FOUND.nextPage?exists>
 <p>
- <anchor>DalπÌ<go href="/zpravicky" method="post"><postfield name="from" value="${FOUND.nextPage.row}"/></go></anchor>
+ <anchor>Dal≈°√≠<go href="/zpravicky" method="post"><postfield name="from" value="${FOUND.nextPage.row}"/></go></anchor>
 </p>
 </#if>
 </card>

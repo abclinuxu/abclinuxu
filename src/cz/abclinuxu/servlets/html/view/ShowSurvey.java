@@ -82,7 +82,7 @@ public class ShowSurvey implements AbcAction {
 
         persistence.synchronize(survey);
         if ( survey.getType()!=Item.SURVEY ) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Tento objekt není anketa!", env, request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Tento objekt nenÃ­ anketa!", env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/");
             return null;
@@ -97,7 +97,7 @@ public class ShowSurvey implements AbcAction {
 
         if ( screen==null ) {
             log.error("Survey "+survey.getId()+" does not define screen "+nextScreen+" (called from "+currentScreen+")!");
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Omlouváme se, ale v anketì nastala chyba.", env, request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC, "OmlouvÃ¡me se, ale v anketÄ› nastala chyba.", env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/");
             return null;
@@ -118,9 +118,9 @@ public class ShowSurvey implements AbcAction {
                 AccessKeeper.checkAccess(relation, user, "survey", request, response);
             } catch (AccessDeniedException e) {
                 if ( e.isIpAddressBlocked() )
-                    return ServletUtils.showErrorPage("Z této IP adresy se u¾ volilo. Zkuste to pozdìji.", env, request);
+                    return ServletUtils.showErrorPage("Z tÃ©to IP adresy se uÅ¾ volilo. Zkuste to pozdÄ›ji.", env, request);
                 else
-                    return ServletUtils.showErrorPage("U¾ jste jednou volil!", env, request);
+                    return ServletUtils.showErrorPage("UÅ¾ jste jednou volil!", env, request);
             }
 
         Element dump = screen.element("dump");
@@ -130,7 +130,7 @@ public class ShowSurvey implements AbcAction {
                 dump(data, dump);
             } catch (Exception e) {
                 log.error("Error in survey "+survey.getId(), e);
-                ServletUtils.addError(Constants.ERROR_GENERIC, "Omlouváme se, ale v anketì nastala chyba.", env, request.getSession());
+                ServletUtils.addError(Constants.ERROR_GENERIC, "OmlouvÃ¡me se, ale v anketÄ› nastala chyba.", env, request.getSession());
                 UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
                 urlUtils.redirect(response, "/");
                 return null;
@@ -141,7 +141,7 @@ public class ShowSurvey implements AbcAction {
         Element template = screen.element("template");
         if ( template==null || template.getTextTrim().length()==0 ) {
             log.error("Survey "+survey.getId()+" does not define template in screen "+nextScreen+"!");
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Omlouváme se, ale v anketì nastala chyba.", env, request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC, "OmlouvÃ¡me se, ale v anketÄ› nastala chyba.", env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/");
         }
@@ -197,7 +197,7 @@ public class ShowSurvey implements AbcAction {
     void dump(Document data, Element dump) throws Exception {
         StringWriter sWriter = new StringWriter();
         OutputFormat format = OutputFormat.createPrettyPrint();
-        format.setEncoding("ISO-8859-2");
+        format.setEncoding("UTF-8");
         XMLWriter xmlWriter = new XMLWriter(sWriter, format);
         xmlWriter.write(data);
         xmlWriter.flush();

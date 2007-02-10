@@ -66,7 +66,7 @@ public class URLManager implements Configurable {
      */
     public static String enforceRelativeURL(String url) {
         if (url==null || url.length() == 0)
-            throw new AbcException("URL nesmí být prázdné!");
+            throw new AbcException("URL nesmÃ­ bÃ½t prÃ¡zdnÃ©!");
         if (url.charAt(0)=='/')
             url = url.substring(1);
 
@@ -84,9 +84,9 @@ public class URLManager implements Configurable {
      */
     public static String enforceAbsoluteURL(String url) {
         if (url == null || url.length() == 0)
-            throw new AbcException("URL nesmí být prázdné!");
+            throw new AbcException("URL nesmÃ­ bÃ½t prÃ¡zdnÃ©!");
         if (!url.startsWith("/"))
-            throw new AbcException("Adresa stránky musí být absolutní!");
+            throw new AbcException("Adresa strÃ¡nky musÃ­ bÃ½t absolutnÃ­!");
 
         String fixedURL = normalizeUrl(url, true);
         fixedURL = enforceValidExtension(fixedURL);
@@ -98,7 +98,7 @@ public class URLManager implements Configurable {
             url = "-" + url;
         String fixedURL = normalizeCharacters(url, absolute);
         if (fixedURL.length() == 0)
-            throw new AbcException("Zvolte jiné URL bez speciálních znakù!");
+            throw new AbcException("Zvolte jinÃ© URL bez speciÃ¡lnÃ­ch znakÅ¯!");
         return fixedURL;
     }
 

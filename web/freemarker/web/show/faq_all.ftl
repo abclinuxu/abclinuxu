@@ -1,33 +1,33 @@
 <#include "../header.ftl">
 
-<h1>Èasto kladené otázky</h1>
+<h1>ÄŒasto kladenÃ© otÃ¡zky</h1>
 
-<p>Èasto kladené otázky (anglicky FAQ) jsou kolekcí pøedem
-zodpovìzenıch otázek, na které se ètenáøi èasto ptají
-v diskusním fóru. Pokud øe¹íte urèitı problém nebo se zaèínáte
-seznamovat s Linuxem, mìli byste zaèít na této stránce a prostudovat
-peèlivì jednotlivé otázky. Vıhodou oproti fóru je pøehlednost a
-(vìt¹inou i) úplnost odpovìdi. Jeliko¾ jde o spoleènou
-práci, kterıkoliv ètenáø smí vylep¹it èi upøesnit odpovìï,
-díky èemu¾ narùstá kvalita zodpovìzenıch otázek.
+<p>ÄŒasto kladenÃ© otÃ¡zky (anglicky FAQ) jsou kolekcÃ­ pÅ™edem
+zodpovÄ›zenÃ½ch otÃ¡zek, na kterÃ© se ÄtenÃ¡Å™i Äasto ptajÃ­
+v diskusnÃ­m fÃ³ru. Pokud Å™eÅ¡Ã­te urÄitÃ½ problÃ©m nebo se zaÄÃ­nÃ¡te
+seznamovat s Linuxem, mÄ›li byste zaÄÃ­t na tÃ©to strÃ¡nce a prostudovat
+peÄlivÄ› jednotlivÃ© otÃ¡zky. VÃ½hodou oproti fÃ³ru je pÅ™ehlednost a
+(vÄ›tÅ¡inou i) Ãºplnost odpovÄ›di. JelikoÅ¾ jde o spoleÄnou
+prÃ¡ci, kterÃ½koliv ÄtenÃ¡Å™ smÃ­ vylepÅ¡it Äi upÅ™esnit odpovÄ›Ä,
+dÃ­ky ÄemuÅ¾ narÅ¯stÃ¡ kvalita zodpovÄ›zenÃ½ch otÃ¡zek.
 </p>
 
 <h2>Sekce</h2>
 
-<p>Pro usnadnìní orientace jsou zodpovìzené otázky øazeny
-do sekcí, které pokrıvají jedno téma. Chcete-li pøidat novou
-zodpovìzenou otázku a cítíte-li, ¾e se nehodí do ¾ádné sekce,
-po¾ádejte administrátory o vytvoøení nové sekce. Netu¹íte-li,
-ve které sekci hledat, projdìte si <a href="/History?type=faq">historii</a>,
-kde jsou v¹echny otázky øazeny nezávisle na sekci podle datumu
-poslední zmìny.
+<p>Pro usnadnÄ›nÃ­ orientace jsou zodpovÄ›zenÃ© otÃ¡zky Å™azeny
+do sekcÃ­, kterÃ© pokrÃ½vajÃ­ jedno tÃ©ma. Chcete-li pÅ™idat novou
+zodpovÄ›zenou otÃ¡zku a cÃ­tÃ­te-li, Å¾e se nehodÃ­ do Å¾Ã¡dnÃ© sekce,
+poÅ¾Ã¡dejte administrÃ¡tory o vytvoÅ™enÃ­ novÃ© sekce. NetuÅ¡Ã­te-li,
+ve kterÃ© sekci hledat, projdÄ›te si <a href="/History?type=faq">historii</a>,
+kde jsou vÅ¡echny otÃ¡zky Å™azeny nezÃ¡visle na sekci podle datumu
+poslednÃ­ zmÄ›ny.
 </p>
 
 <table class="faq">
   <thead>
     <tr>
         <td class="td01">Sekce</td>
-        <td class="td04">Poèet</td>
+        <td class="td04">PoÄet</td>
     </tr>
   </thead>
   <tbody>

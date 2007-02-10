@@ -2,31 +2,31 @@
 
 <@lib.showMessages/>
 
-<p>Blogy jsou moderní formou vedení deníèku na internetu.
-Ve svém blogu mù¾ete psát rady a návody, nebo pokroky va¹eho
-Open Source projektu, komentovat dìní na linuxové scénì èi
-jako zaèáteèník popisovat své pokroky s Linuxem. Nicménì blogy
-jsou otevøené a pokud svımi pøíspìvky nebudete poru¹ovat zákony
-èi normy slu¹ného chování, mù¾ete psát na libovolné téma.
+<p>Blogy jsou modernÃ­ formou vedenÃ­ denÃ­Äku na internetu.
+Ve svÃ©m blogu mÅ¯Å¾ete psÃ¡t rady a nÃ¡vody, nebo pokroky vaÅ¡eho
+Open Source projektu, komentovat dÄ›nÃ­ na linuxovÃ© scÃ©nÄ› Äi
+jako zaÄÃ¡teÄnÃ­k popisovat svÃ© pokroky s Linuxem. NicmÃ©nÄ› blogy
+jsou otevÅ™enÃ© a pokud svÃ½mi pÅ™Ã­spÄ›vky nebudete poruÅ¡ovat zÃ¡kony
+Äi normy sluÅ¡nÃ©ho chovÃ¡nÃ­, mÅ¯Å¾ete psÃ¡t na libovolnÃ© tÃ©ma.
 </p>
 
-<p>Blogy na abclinuxu jsou slu¾bou jeho ètenáøùm. Pokud nejste
-ètenáø abclinuxu a s Linuxem nemáte nic spoleèného, jen hledáte
-prostor na publikování, radìji si zvolte jinı veøejnı blogovací
-systém.</p>
+<p>Blogy na abclinuxu jsou sluÅ¾bou jeho ÄtenÃ¡Å™Å¯m. Pokud nejste
+ÄtenÃ¡Å™ abclinuxu a s Linuxem nemÃ¡te nic spoleÄnÃ©ho, jen hledÃ¡te
+prostor na publikovÃ¡nÃ­, radÄ›ji si zvolte jinÃ½ veÅ™ejnÃ½ blogovacÃ­
+systÃ©m.</p>
 
-<p>Prvním krokem je zalo¾ení blogu. Musíte zvolit
-jméno blogu. Toto jméno bude pevnou a nedílnou
-souèástí URL va¹eho blogu, proto mù¾e obsahovat
-jen písmena anglické abecedy, èíslice a podtr¾ítko
-(navíc první písmeno nesmí bıt èíslice). Na velikosti písmen
-nezále¾í. Napøíklad pojmenujete-li si blog snehulak, jeho
+<p>PrvnÃ­m krokem je zaloÅ¾enÃ­ blogu. MusÃ­te zvolit
+jmÃ©no blogu. Toto jmÃ©no bude pevnou a nedÃ­lnou
+souÄÃ¡stÃ­ URL vaÅ¡eho blogu, proto mÅ¯Å¾e obsahovat
+jen pÃ­smena anglickÃ© abecedy, ÄÃ­slice a podtrÅ¾Ã­tko
+(navÃ­c prvnÃ­ pÃ­smeno nesmÃ­ bÃ½t ÄÃ­slice). Na velikosti pÃ­smen
+nezÃ¡leÅ¾Ã­. NapÅ™Ã­klad pojmenujete-li si blog snehulak, jeho
 adresa bude www.abclinuxu.cz/blog/snehulak. 
 </p>
 
-<p>Dále mù¾ete vytvoøit a¾ tøi kategorie,
-do kterıch budete zaøazovat své pøíspìvky. Napøíklad
-<i>Linux</i>, <i>©kola</i>, <i>Básnièky</i> èi <i>GNU</i>.
+<p>DÃ¡le mÅ¯Å¾ete vytvoÅ™it aÅ¾ tÅ™i kategorie,
+do kterÃ½ch budete zaÅ™azovat svÃ© pÅ™Ã­spÄ›vky. NapÅ™Ã­klad
+<i>Linux</i>, <i>Å kola</i>, <i>BÃ¡sniÄky</i> Äi <i>GNU</i>.
 </p>
 
 <br>
@@ -34,7 +34,7 @@ do kterıch budete zaøazovat své pøíspìvky. Napøíklad
 <form action="${URL.noPrefix("/blog/edit/"+USER.id)}" method="POST">
  <table border="0">
     <tr>
-        <td class="required">Jméno blogu</td>
+        <td class="required">JmÃ©no blogu</td>
         <td>
             <input type="text" name="blogName" value="${PARAMS.blogName?if_exists}" size="32" tabindex="1" class="pole">
             <div class="error">${ERRORS.blogName?if_exists}</div>
@@ -50,7 +50,7 @@ do kterıch budete zaøazovat své pøíspìvky. Napøíklad
     </tr>
     <tr>
         <td>&nbsp;</td>
-        <td><input type="submit" value="Dokonèi" tabindex="5" class="buton"></td>
+        <td><input type="submit" value="DokonÄi" tabindex="5" class="buton"></td>
     </tr>
  </table>
  <input type="hidden" name="action" value="addBlog2">

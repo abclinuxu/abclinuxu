@@ -81,7 +81,7 @@ public class SuggestSearch extends HttpServlet implements Configurable {
             }
 
             Template template = FMUtils.getConfiguration().getTemplate("/print/misc/suggest_search.ftl");
-            response.setContentType("text/html; charset=ISO-8859-2");
+            response.setContentType("text/html; charset=UTF-8");
             Writer writer = response.getWriter();
 
             response.setDateHeader("Last-Modified", new Date().getTime());

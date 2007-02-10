@@ -2,9 +2,9 @@
 
 <@lib.showMessages/>
 
-<h1>Nastavení va¹eho úètu</h1>
+<h1>NastavenÃ­ vaÅ¡eho ÃºÄtu</h1>
 
-<p>Pro va¹i ochranu nejdøíve zadejte va¹e heslo.</p>
+<p>Pro vaÅ¡i ochranu nejdÅ™Ã­ve zadejte vaÅ¡e heslo.</p>
 
 <form action="${URL.noPrefix("/EditUser")}" method="POST">
  <table width="100%" border=0 cellpadding=5>
@@ -17,18 +17,18 @@
   </tr>
 
   <tr>
-   <td class="required">Doba platnosti pøihla¹ovací cookie</td>
+   <td class="required">Doba platnosti pÅ™ihlaÅ¡ovacÃ­ cookie</td>
    <td>
     <select name="cookieValid" tabindex="2">
      <#assign cookieValid=PARAMS.cookieValid?default("16070400")>
-     <option value="0"<#if cookieValid=="0">SELECTED</#if>>nevytváøet</option>
+     <option value="0"<#if cookieValid=="0">SELECTED</#if>>nevytvÃ¡Å™et</option>
      <option value="-1" <#if cookieValid=="-1">SELECTED</#if>>tato session</option>
      <option value="3600"<#if cookieValid=="3600">SELECTED</#if>>hodina</option>
      <option value="86400"<#if cookieValid=="86400">SELECTED</#if>>den</option>
-     <option value="604800"<#if cookieValid=="604800">SELECTED</#if>>tıden</option>
-     <option value="2678400"<#if cookieValid=="2678400">SELECTED</#if>>mìsíc</option>
-     <option value="8035200"<#if cookieValid=="8035200">SELECTED</#if>>ètvrt roku</option>
-     <option value="16070400"<#if cookieValid=="16070400">SELECTED</#if>>pùl roku</option>
+     <option value="604800"<#if cookieValid=="604800">SELECTED</#if>>tÃ½den</option>
+     <option value="2678400"<#if cookieValid=="2678400">SELECTED</#if>>mÄ›sÃ­c</option>
+     <option value="8035200"<#if cookieValid=="8035200">SELECTED</#if>>Ätvrt roku</option>
+     <option value="16070400"<#if cookieValid=="16070400">SELECTED</#if>>pÅ¯l roku</option>
      <option value="32140800"<#if cookieValid=="32140800">SELECTED</#if>>rok</option>
      <option value="3214080000"<#if cookieValid=="3214080000">SELECTED</#if>>sto let</option>
     </select>
@@ -36,28 +36,28 @@
   </tr>
   <tr>
    <td colspan="2">
-    <p>Toto nastavení ovlivòuje vytváøení cookie pøi pøihlá¹ení. Standardnì se vytvoøí cookie
-    s platností pùl roku, která vás doká¾e automaticky pøihlásit bez nutnosti zadávat va¹e heslo.
-    Pokud v¹ak poèítaè sdílíte s více lidmi, napøíklad ve ¹kole èi internetové kavárnì, mù¾e bıt toto chování
-    pro vás nepraktické.</p>
+    <p>Toto nastavenÃ­ ovlivÅˆuje vytvÃ¡Å™enÃ­ cookie pÅ™i pÅ™ihlÃ¡Å¡enÃ­. StandardnÄ› se vytvoÅ™Ã­ cookie
+    s platnostÃ­ pÅ¯l roku, kterÃ¡ vÃ¡s dokÃ¡Å¾e automaticky pÅ™ihlÃ¡sit bez nutnosti zadÃ¡vat vaÅ¡e heslo.
+    Pokud vÅ¡ak poÄÃ­taÄ sdÃ­lÃ­te s vÃ­ce lidmi, napÅ™Ã­klad ve Å¡kole Äi internetovÃ© kavÃ¡rnÄ›, mÅ¯Å¾e bÃ½t toto chovÃ¡nÃ­
+    pro vÃ¡s nepraktickÃ©.</p>
 
-    <p>První volba je nevytváøet tuto cookie vùbec, tak¾e pøí¹tì se budete muset pøihlásit ruènì.
-    Druhá omezí platnost této cookie jen do vypnutí prohlí¾eèe (session), ostatní omezí její délku
+    <p>PrvnÃ­ volba je nevytvÃ¡Å™et tuto cookie vÅ¯bec, takÅ¾e pÅ™Ã­Å¡tÄ› se budete muset pÅ™ihlÃ¡sit ruÄnÄ›.
+    DruhÃ¡ omezÃ­ platnost tÃ©to cookie jen do vypnutÃ­ prohlÃ­Å¾eÄe (session), ostatnÃ­ omezÃ­ jejÃ­ dÃ©lku
     podle popisu.</p>
    </td>
   </tr>
 
   <tr>
-   <td class="required">Vlastní CSS</td>
+   <td class="required">VlastnÃ­ CSS</td>
    <td>
     <input type="text" name="css" size="40" value="${PARAMS.css?if_exists}" tabindex="3">
     <div class="error">${ERRORS.css?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td colspan="2">Zadejte URL souboru obsahující CSS definici vzhledu portálu. Bude pou¾ita místo
-   standardního vzhledu. Pro bílé písmo na èerném podkladu vlo¾te
-   <code>/styles-dark.css</code>. <a href="/doc/napoveda/alternativni-design">Nápovìda</a>.
+   <td colspan="2">Zadejte URL souboru obsahujÃ­cÃ­ CSS definici vzhledu portÃ¡lu. Bude pouÅ¾ita mÃ­sto
+   standardnÃ­ho vzhledu. Pro bÃ­lÃ© pÃ­smo na ÄernÃ©m podkladu vloÅ¾te
+   <code>/styles-dark.css</code>. <a href="/doc/napoveda/alternativni-design">NÃ¡povÄ›da</a>.
    </td>
   </tr>
 
@@ -72,8 +72,8 @@
    </td>
   </tr>
   <tr>
-   <td colspan="2">Urèuje, zda má systém pøi zobrazování textu nahrazovat emotikony
-   obrázky. Vypnutím získáte zanedbatelnı nárùst rychlosti.
+   <td colspan="2">UrÄuje, zda mÃ¡ systÃ©m pÅ™i zobrazovÃ¡nÃ­ textu nahrazovat emotikony
+   obrÃ¡zky. VypnutÃ­m zÃ­skÃ¡te zanedbatelnÃ½ nÃ¡rÅ¯st rychlosti.
    </td>
   </tr>
 
@@ -88,18 +88,18 @@
    </td>
   </tr>
   <tr>
-   <td colspan="2">Urèuje, zda má systém pøi zobrazování diskusních pøíspìvkù
-   zobrazovat signatury autorù pøíspìvkù.
+   <td colspan="2">UrÄuje, zda mÃ¡ systÃ©m pÅ™i zobrazovÃ¡nÃ­ diskusnÃ­ch pÅ™Ã­spÄ›vkÅ¯
+   zobrazovat signatury autorÅ¯ pÅ™Ã­spÄ›vkÅ¯.
    </td>
   </tr>
 
   <tr>
-   <td class="required">Poèet diskusí na úvodní stránce</td>
+   <td class="required">PoÄet diskusÃ­ na ÃºvodnÃ­ strÃ¡nce</td>
    <td>
     <select name="discussions" tabindex="6">
      <#assign discussions=PARAMS.discussions?default("20")>
      <option value="-2"<#if discussions=="-2">SELECTED</#if>>default</option>
-     <option value="0" <#if discussions=="0">SELECTED</#if>>¾ádné</option>
+     <option value="0" <#if discussions=="0">SELECTED</#if>>Å¾Ã¡dnÃ©</option>
      <option value="5"<#if discussions=="5">SELECTED</#if>>5</option>
      <option value="10"<#if discussions=="10">SELECTED</#if>>10</option>
      <option value="15"<#if discussions=="15">SELECTED</#if>>15</option>
@@ -112,63 +112,63 @@
    </td>
   </tr>
   <tr>
-   <td colspan="2">Zde máte mo¾nost ovlivnit poèet zobrazenıch diskusí
-   na úvodní stránce. Automaticky se zobrazí jen ${DEFAULT_DISCUSSIONS}
-   nejèerstvìj¹ích diskusí, na této stránce máte mo¾nost zvolit si vlastní poèet.
+   <td colspan="2">Zde mÃ¡te moÅ¾nost ovlivnit poÄet zobrazenÃ½ch diskusÃ­
+   na ÃºvodnÃ­ strÃ¡nce. Automaticky se zobrazÃ­ jen ${DEFAULT_DISCUSSIONS}
+   nejÄerstvÄ›jÅ¡Ã­ch diskusÃ­, na tÃ©to strÃ¡nce mÃ¡te moÅ¾nost zvolit si vlastnÃ­ poÄet.
    </td>
   </tr>
 
   <tr>
-   <td class="required">Poèet zprávièek</td>
+   <td class="required">PoÄet zprÃ¡viÄek</td>
    <td>
     <input type="text" name="news" value="${PARAMS.news?if_exists}" size="3" tabindex="7">
     <div class="error">${ERRORS.news?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td colspan="2">Podobnì mù¾ete také urèit poèet zprávièek, které se zobrazují. Tento poèet
-   je standardnì nastaven na ${DEFAULT_NEWS} a mù¾ete jej zde pøedefinovat.
+   <td colspan="2">PodobnÄ› mÅ¯Å¾ete takÃ© urÄit poÄet zprÃ¡viÄek, kterÃ© se zobrazujÃ­. Tento poÄet
+   je standardnÄ› nastaven na ${DEFAULT_NEWS} a mÅ¯Å¾ete jej zde pÅ™edefinovat.
    </td>
   </tr>
 
   <tr>
-   <td class="required">Poèet zápiskù</td>
+   <td class="required">PoÄet zÃ¡piskÅ¯</td>
    <td>
     <input type="text" name="stories" value="${PARAMS.stories?if_exists}" size="3" tabindex="8">
     <div class="error">${ERRORS.stories?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td colspan="2">Zde mù¾ete specifikovat poèet zápiskù z blogù, které se zobrazují na úvodní stránce.
-   Standardní poèet je nastaven na ${DEFAULT_STORIES} a mù¾ete jej zde pøedefinovat. Nastavením na nulu
-   zru¹íte jejich zobrazování.
+   <td colspan="2">Zde mÅ¯Å¾ete specifikovat poÄet zÃ¡piskÅ¯ z blogÅ¯, kterÃ© se zobrazujÃ­ na ÃºvodnÃ­ strÃ¡nce.
+   StandardnÃ­ poÄet je nastaven na ${DEFAULT_STORIES} a mÅ¯Å¾ete jej zde pÅ™edefinovat. NastavenÃ­m na nulu
+   zruÅ¡Ã­te jejich zobrazovÃ¡nÃ­.
    </td>
   </tr>
 
   <tr>
-   <td class="required">Velikost stránky pøi hledání</td>
+   <td class="required">Velikost strÃ¡nky pÅ™i hledÃ¡nÃ­</td>
    <td>
     <input type="text" name="search" value="${PARAMS.search?if_exists}" size="3" tabindex="9">
     <div class="error">${ERRORS.search?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td colspan="2">Poèet nalezenıch dokumentù na jedné stránce.</td>
+   <td colspan="2">PoÄet nalezenÃ½ch dokumentÅ¯ na jednÃ© strÃ¡nce.</td>
   </tr>
 
   <tr>
-   <td class="required">Velikost stránky diskusního fóra</td>
+   <td class="required">Velikost strÃ¡nky diskusnÃ­ho fÃ³ra</td>
    <td>
     <input type="text" name="forum" value="${PARAMS.forum?if_exists}" size="3" tabindex="10">
     <div class="error">${ERRORS.forum?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td colspan="2">Poèet diskusí na stránce diskusního fóra.</td>
+   <td colspan="2">PoÄet diskusÃ­ na strÃ¡nce diskusnÃ­ho fÃ³ra.</td>
   </tr>
 
   <tr>
-   <td class="required">Zobrazovat rozcestník</td>
+   <td class="required">Zobrazovat rozcestnÃ­k</td>
    <td>
     <select name="guidepost" tabindex="11">
      <#assign guidepost=PARAMS.guidepost?default("yes")>
@@ -178,7 +178,7 @@
    </td>
   </tr>
   <tr>
-   <td colspan="2">Urèuje, zda se má zobrazovat rozcestník.</td>
+   <td colspan="2">UrÄuje, zda se mÃ¡ zobrazovat rozcestnÃ­k.</td>
   </tr>
 
   <tr>
@@ -193,31 +193,31 @@
     </td>
   </tr>
   <tr>
-   <td colspan="2">Pokud jste nevypnuli rozcestník úplnì, tak zde si mù¾ete vybrat servery,
-   které se v nìm mají zobrazovat.</td>
+   <td colspan="2">Pokud jste nevypnuli rozcestnÃ­k ÃºplnÄ›, tak zde si mÅ¯Å¾ete vybrat servery,
+   kterÃ© se v nÄ›m majÃ­ zobrazovat.</td>
   </tr>
 
   <tr>
-   <td class="required">Poèet odkazù</td>
+   <td class="required">PoÄet odkazÅ¯</td>
    <td>
        <input type="text" name="indexFeedSize" value="${PARAMS.indexFeedSize?if_exists}" size="3">
        <span class="error">${ERRORS.indexFeedSize?if_exists}</span>
-       na hlavní stránce
+       na hlavnÃ­ strÃ¡nce
        <input type="text" name="feedSize" value="${PARAMS.feedSize?if_exists}" size="3">
        <span class="error">${ERRORS.feedSize?if_exists}</span>
-       mimo hlavní stránku
+       mimo hlavnÃ­ strÃ¡nku
    </td>
   </tr>
   <tr>
    <td colspan="2">
-    Poèet odkazù pro jeden server v rozcestníku na hlavní stránce a mimo ni.
-    Standardní poèet je nastaven na ${DEFAULT_TEMPLATE_LINKS} a ${DEFAULT_LINKS}.
+    PoÄet odkazÅ¯ pro jeden server v rozcestnÃ­ku na hlavnÃ­ strÃ¡nce a mimo ni.
+    StandardnÃ­ poÄet je nastaven na ${DEFAULT_TEMPLATE_LINKS} a ${DEFAULT_LINKS}.
    </td>
   </tr>
 
   <tr>
    <td>&nbsp;</td>
-   <td><input type="submit" value="Dokonèi"></td>
+   <td><input type="submit" value="DokonÄi"></td>
   </tr>
  </table>
  <input type="hidden" name="action" value="editSettings2">

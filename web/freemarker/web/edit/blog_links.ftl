@@ -2,11 +2,11 @@
 
 <@lib.showMessages/>
 
-<p>Na této stánce si mù¾ete upravit seznam va¹ich
-oblíbenıch odkazù. Oblíbené odkazy jsou blogy
-èi stránky, které pravidelnì sledujete a doporuèujete
-ètenáøùm va¹eho blogu. Zobrazí se v pravém sloupci.
-<a href="/blog/${BLOG.subType}">Zpìt na vá¹ blog</a>.</p>
+<p>Na tÃ©to stÃ¡nce si mÅ¯Å¾ete upravit seznam vaÅ¡ich
+oblÃ­benÃ½ch odkazÅ¯. OblÃ­benÃ© odkazy jsou blogy
+Äi strÃ¡nky, kterÃ© pravidelnÄ› sledujete a doporuÄujete
+ÄtenÃ¡Å™Å¯m vaÅ¡eho blogu. ZobrazÃ­ se v pravÃ©m sloupci.
+<a href="/blog/${BLOG.subType}">ZpÄ›t na vÃ¡Å¡ blog</a>.</p>
 
 <#assign LINKS = BLOG_XML.data.custom.links>
 <#if LINKS?size!=0>
@@ -23,7 +23,7 @@ oblíbenıch odkazù. Oblíbené odkazy jsou blogy
                         <a href="${URL.make("/blog/edit/"+REL_BLOG.id+"?position="+link_index+"&amp;action=mvLinkUp")}">nahoru</a>
                     </#if>
                     <#if link_has_next>
-                        <a href="${URL.make("/blog/edit/"+REL_BLOG.id+"?position="+link_index+"&amp;action=mvLinkDown")}">dolù</a>
+                        <a href="${URL.make("/blog/edit/"+REL_BLOG.id+"?position="+link_index+"&amp;action=mvLinkDown")}">dolÅ¯</a>
                     </#if>
                 </td>
             </tr>
@@ -33,7 +33,7 @@ oblíbenıch odkazù. Oblíbené odkazy jsou blogy
 </#if>
 
 <form action="${URL.make("/blog/edit/"+REL_BLOG.id)}" method="POST" name="form">
-<h3>Vlo¾it novı odkaz</h3>
+<h3>VloÅ¾it novÃ½ odkaz</h3>
 <table border="0">
     <tr>
         <td class="required">URL</td>
@@ -50,7 +50,7 @@ oblíbenıch odkazù. Oblíbené odkazy jsou blogy
         </td>
     </tr>
     <tr>
-        <td><input type="submit" name="finish" value="Vytvoøit"></td>
+        <td><input type="submit" name="finish" value="VytvoÅ™it"></td>
         <td></td>
     </tr>
 </table>

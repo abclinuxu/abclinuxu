@@ -2,13 +2,13 @@
 
 <@lib.showMessages/>
 
-<h1>Pøístupová práva k relaci</h1>
+<h1>PÅ™Ã­stupovÃ¡ prÃ¡va k relaci</h1>
 
-<p>Zde mù¾ete sledovat stav pøístupovıch práv k zvolené relaci
-a zároveò je rùznì modifikovat.</p>
+<p>Zde mÅ¯Å¾ete sledovat stav pÅ™Ã­stupovÃ½ch prÃ¡v k zvolenÃ© relaci
+a zÃ¡roveÅˆ je rÅ¯znÄ› modifikovat.</p>
 
 <p>
-<a href="${URL.make("/EditRelation?action=addACL&rid="+CURRENT.id)}">Vytvoø nové ACL</a>
+<a href="${URL.make("/EditRelation?action=addACL&rid="+CURRENT.id)}">VytvoÅ™ novÃ© ACL</a>
 </p>
 
 <#if ACL?exists>
@@ -22,7 +22,7 @@ a zároveò je rùznì modifikovat.</p>
  </#list>
 
  <br>
- <input type="submit" value="Odstraò zvolené ACL">
+ <input type="submit" value="OdstraÅˆ zvolenÃ© ACL">
  <input type="hidden" name="rid" value="${CURRENT.id}">
  <input type="hidden" name="action" value="removeACL">
  </form>

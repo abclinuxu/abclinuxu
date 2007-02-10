@@ -2,14 +2,14 @@
 
 <@lib.showMessages/>
 
-<p>Chystáte se smazat ní¾e zobrazenı komentáø. Jedná se o naprosto
-ojedinìlou akci, kterou byste mìl pou¾ívat jen ve vıjimeènıch pøípadech.
-V drtivé vìt¹inì pøípadù byste mìli pou¾ít cenzuru. Pou¾ít jej mù¾ete
-napøíklad na komentáøe nìjakého ¹ílence (je¹tírci, paranoici),
-zakázanou reklamu a spamy a podobnì.</p>
+<p>ChystÃ¡te se smazat nÃ­Å¾e zobrazenÃ½ komentÃ¡Å™. JednÃ¡ se o naprosto
+ojedinÄ›lou akci, kterou byste mÄ›l pouÅ¾Ã­vat jen ve vÃ½jimeÄnÃ½ch pÅ™Ã­padech.
+V drtivÃ© vÄ›tÅ¡inÄ› pÅ™Ã­padÅ¯ byste mÄ›li pouÅ¾Ã­t cenzuru. PouÅ¾Ã­t jej mÅ¯Å¾ete
+napÅ™Ã­klad na komentÃ¡Å™e nÄ›jakÃ©ho Å¡Ã­lence (jeÅ¡tÃ­rci, paranoici),
+zakÃ¡zanou reklamu a spamy a podobnÄ›.</p>
 
-<p>Tato funkce je rekurzivní! Sma¾e tedy kompletní vlákno
-vèetnì v¹ech potomkù!</p>
+<p>Tato funkce je rekurzivnÃ­! SmaÅ¾e tedy kompletnÃ­ vlÃ¡kno
+vÄetnÄ› vÅ¡ech potomkÅ¯!</p>
 
 <form action="${URL.make("/EditDiscussion")}" method="POST">
  <input type="submit" value="Smazat">
@@ -20,7 +20,7 @@ vèetnì v¹ech potomkù!</p>
 </form>
 
 <#if THREAD?exists>
- <h1>Náhled pøíspìvku</h1>
+ <h1>NÃ¡hled pÅ™Ã­spÄ›vku</h1>
  <@lib.showThread THREAD, 0, TOOL.createEmptyDiscussion(), false />
 </#if>
 

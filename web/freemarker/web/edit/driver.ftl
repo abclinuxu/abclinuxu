@@ -2,26 +2,26 @@
 
 <@lib.showMessages/>
 
-<h1>Úprava ovladaèe</h1>
+<h1>Ãšprava ovladaÄe</h1>
 
-<p>Sekce Ovladaèù slou¾í pro shroma¾ïování informací ohlednì ovladaèù,
-které nejsou standardní souèástí jádra. Jedná se buï o Open Source
-projekty vytváøené a udr¾ované komunitou, nebo o proprietární ovladaèe
-s uzavøenım kódem, vyvíjené obvykle vırobcem.</p>
+<p>Sekce OvladaÄÅ¯ slouÅ¾Ã­ pro shromaÅ¾ÄovÃ¡nÃ­ informacÃ­ ohlednÄ› ovladaÄÅ¯,
+kterÃ© nejsou standardnÃ­ souÄÃ¡stÃ­ jÃ¡dra. JednÃ¡ se buÄ o Open Source
+projekty vytvÃ¡Å™enÃ© a udrÅ¾ovanÃ© komunitou, nebo o proprietÃ¡rnÃ­ ovladaÄe
+s uzavÅ™enÃ½m kÃ³dem, vyvÃ­jenÃ© obvykle vÃ½robcem.</p>
 
-<p>Úprava polo¾ky ovladaèe je snadná a díky historii verzí i bezpeèná.
-Nejdøíve mù¾ete zmìnit název ovladaèe, je-li nevhodnı. Pak zadejte aktuální
-verzi ovladaèe a pøípadnì upravte adresu, odkud je mo¾né stáhnout tento ovladaè.
-Do poznámky vlo¾te informace o novinkách této verze a jinıch zmìnách.
-Nebojte se celou poznámku aktualizovat, pøedchozí text bude dostupnı v historii
-ovladaèe.</p>
+<p>Ãšprava poloÅ¾ky ovladaÄe je snadnÃ¡ a dÃ­ky historii verzÃ­ i bezpeÄnÃ¡.
+NejdÅ™Ã­ve mÅ¯Å¾ete zmÄ›nit nÃ¡zev ovladaÄe, je-li nevhodnÃ½. Pak zadejte aktuÃ¡lnÃ­
+verzi ovladaÄe a pÅ™Ã­padnÄ› upravte adresu, odkud je moÅ¾nÃ© stÃ¡hnout tento ovladaÄ.
+Do poznÃ¡mky vloÅ¾te informace o novinkÃ¡ch tÃ©to verze a jinÃ½ch zmÄ›nÃ¡ch.
+Nebojte se celou poznÃ¡mku aktualizovat, pÅ™edchozÃ­ text bude dostupnÃ½ v historii
+ovladaÄe.</p>
 
 <#if PARAMS.preview?exists>
- <h2>Náhled pøíspìvku</h2>
+ <h2>NÃ¡hled pÅ™Ã­spÄ›vku</h2>
 
  <table cellspacing=0 border=1 cellpadding=5 align="center">
   <tr>
-    <td>Jméno</td><td>${PARAMS.name?if_exists}</td>
+    <td>JmÃ©no</td><td>${PARAMS.name?if_exists}</td>
   </tr>
   <tr>
     <td>Verze</td><td>${PARAMS.version?if_exists}</td>
@@ -33,17 +33,17 @@ ovladaèe.</p>
     </td>
   </tr>
   <tr>
-    <td valign="top">Poznámka</td><td>${TOOL.render(PARAMS.note?if_exists,USER?if_exists)}</td>
+    <td valign="top">PoznÃ¡mka</td><td>${TOOL.render(PARAMS.note?if_exists,USER?if_exists)}</td>
   </tr>
  </table>
 </#if>
 
-<h2>Zde zadejte své úpravy</h2>
+<h2>Zde zadejte svÃ© Ãºpravy</h2>
 
 <form action="${URL.make("/edit")}" method="POST">
  <table cellpadding="0" border="0" style="margin-top: 1em;">
   <tr>
-   <td class="required">Jméno</td>
+   <td class="required">JmÃ©no</td>
    <td>
     <input type="text" name="name" value="${PARAMS.name?if_exists}" size="30" maxlength="30" tabindex="1">
     <div class="error">${ERRORS.name?if_exists}</div>
@@ -64,7 +64,7 @@ ovladaèe.</p>
    </td>
   </tr>
   <tr>
-   <td colspan="2" class="required">Poznámka</td>
+   <td colspan="2" class="required">PoznÃ¡mka</td>
   </tr>
   <tr>
    <td colspan="2">
@@ -74,8 +74,8 @@ ovladaèe.</p>
   </tr>
   <tr>
    <td colspan="2" align="center">
-    <input type="submit" name="preview" value="Náhled">
-    <input type="submit" name="submit" value="Dokonèi">
+    <input type="submit" name="preview" value="NÃ¡hled">
+    <input type="submit" name="submit" value="DokonÄi">
    </td>
   </tr>
  </table>

@@ -81,7 +81,7 @@ public class EditAttachment implements AbcAction {
         String action = (String) params.get(PARAM_ACTION);
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
         if (relation == null)
-            throw new MissingArgumentException("Chybí parametr relationId!");
+            throw new MissingArgumentException("ChybÃ­ parametr relationId!");
 
         if (ServletUtils.handleMaintainance(request, env))
             response.sendRedirect(response.encodeRedirectURL("/"));
@@ -91,7 +91,7 @@ public class EditAttachment implements AbcAction {
         GenericObject child = relation.getChild();
 
         if (action == null)
-            throw new MissingArgumentException("Chybí parametr action!");
+            throw new MissingArgumentException("ChybÃ­ parametr action!");
 
         // check permissions
         if (user == null)
@@ -161,7 +161,7 @@ public class EditAttachment implements AbcAction {
 
         Object param = params.get(PARAM_ATTACHMENT);
         if (param == null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Nevybrali jste ¾ádnou pøílohu na smazání.", env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Nevybrali jste Å¾Ã¡dnou pÅ™Ã­lohu na smazÃ¡nÃ­.", env, null);
             return FMTemplateSelector.select("EditAttachment", "manage", env, request);
         }
         if (param instanceof String)
@@ -184,7 +184,7 @@ public class EditAttachment implements AbcAction {
             String path = (String) iter.next();
             Element element = (Element) inset.selectSingleNode("//*[.='"+path+"']");
             if (element == null) {
-                ServletUtils.addError(Constants.ERROR_GENERIC, "Pøíloha '"+path+"' nebyla nalezena mezi daty!", env, null);
+                ServletUtils.addError(Constants.ERROR_GENERIC, "PÅ™Ã­loha '"+path+"' nebyla nalezena mezi daty!", env, null);
                 return actionManageAttachments(request, env);
             }
 
@@ -243,13 +243,13 @@ public class EditAttachment implements AbcAction {
         Element root = item.getData().getRootElement();
 
         if (fileItem == null) {
-            ServletUtils.addError(PARAM_SCREENSHOT, "Zadejte prosím cestu k souboru.", env, null);
+            ServletUtils.addError(PARAM_SCREENSHOT, "Zadejte prosÃ­m cestu k souboru.", env, null);
             return false;
         }
 
         String suffix = getFileSuffix(fileItem.getName()).toLowerCase();
         if (!(suffix.equals("jpg") || suffix.equals("jpeg") || suffix.equals("png") || suffix.equals("gif"))) {
-            ServletUtils.addError(PARAM_SCREENSHOT, "Soubor musí být typu PNG, GIF nebo JPEG.", env, null);
+            ServletUtils.addError(PARAM_SCREENSHOT, "Soubor musÃ­ bÃ½t typu PNG, GIF nebo JPEG.", env, null);
             return false;
         }
 
@@ -262,8 +262,8 @@ public class EditAttachment implements AbcAction {
         try {
             fileItem.write(imageFile);
         } catch (Exception e) {
-            ServletUtils.addError(PARAM_SCREENSHOT, "Chyba pøi zápisu na disk!", env, null);
-            log.error("Není mo¾né ulo¾it obrázek " + imageFile.getAbsolutePath() + " na disk!", e);
+            ServletUtils.addError(PARAM_SCREENSHOT, "Chyba pÅ™i zÃ¡pisu na disk!", env, null);
+            log.error("NenÃ­ moÅ¾nÃ© uloÅ¾it obrÃ¡zek " + imageFile.getAbsolutePath() + " na disk!", e);
             return false;
         }
 
@@ -293,12 +293,12 @@ public class EditAttachment implements AbcAction {
     private static void deleteAttachment(String path, Map env, User user, HttpServletRequest request) {
         File file = new File(AbcConfig.getDeployPath()+path);
         if (! file.exists()) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Nepodaøilo se smazat soubor '"+path+"'!", env, request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC, "NepodaÅ™ilo se smazat soubor '"+path+"'!", env, request.getSession());
             return;
         }
         if (! file.delete()) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Nepodaøilo se smazat soubor '" + path + "'!", env, request.getSession());
-            log.warn("Nepodaøilo se smazat soubor "+file.getAbsolutePath());
+            ServletUtils.addError(Constants.ERROR_GENERIC, "NepodaÅ™ilo se smazat soubor '" + path + "'!", env, request.getSession());
+            log.warn("NepodaÅ™ilo se smazat soubor "+file.getAbsolutePath());
             return;
         }
         AdminLogger.logEvent(user, "remove | attachment "+path);

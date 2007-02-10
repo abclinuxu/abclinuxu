@@ -60,7 +60,7 @@ public class ViewSeries implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
         if (relation == null)
-            throw new NotFoundException("Str·nka nebyla nalezena.");
+            throw new NotFoundException("Str√°nka nebyla nalezena.");
         Tools.sync(relation);
         env.put(VAR_RELATION, relation);
 

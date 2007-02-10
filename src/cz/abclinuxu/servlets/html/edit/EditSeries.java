@@ -79,7 +79,7 @@ public class EditSeries implements AbcAction {
         String action = (String) params.get(PARAM_ACTION);
 
         if (action == null)
-            throw new MissingArgumentException("ChybÌ parametr action!");
+            throw new MissingArgumentException("Chyb√≠ parametr action!");
 
         // check permissions
         if (user == null)
@@ -99,7 +99,7 @@ public class EditSeries implements AbcAction {
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
         if ( relation==null )
-            throw new MissingArgumentException("ChybÌ parametr relationId!");
+            throw new MissingArgumentException("Chyb√≠ parametr relationId!");
 
         persistence.synchronize(relation);
         persistence.synchronize(relation.getChild());
@@ -257,7 +257,7 @@ public class EditSeries implements AbcAction {
 
         List articleRelations = Tools.asList(params.get(PARAM_ARTICLE_RELATION));
         if ( articleRelations.size() == 0 )
-            throw new MissingArgumentException("ChybÌ parametr "+PARAM_ARTICLE_RELATION+"!");
+            throw new MissingArgumentException("Chyb√≠ parametr "+PARAM_ARTICLE_RELATION+"!");
 
         for (Iterator iter = articleRelations.iterator(); iter.hasNext();) {
             String ridString = (String) iter.next();
@@ -331,7 +331,7 @@ public class EditSeries implements AbcAction {
             }
 
             if (url.indexOf("://") != -1) {
-                ServletUtils.addError(PARAM_URL, "Nezn·me URL: "+url+". Zadejte buÔ relativnÌ URL nebo absolutnÌ URL pat¯ÌcÌ do serveru "+domain, env, null);
+                ServletUtils.addError(PARAM_URL, "Nezn√°me URL: "+url+". Zadejte buƒè relativn√≠ URL nebo absolutn√≠ URL pat≈ô√≠c√≠ do serveru "+domain, env, null);
                 return FMTemplateSelector.select("EditSeries", "addArticlesUrls", env, request);
             }
 
@@ -343,7 +343,7 @@ public class EditSeries implements AbcAction {
 
             GenericObject obj = persistence.findById(relation.getChild());
             if ( !(obj instanceof Item) || ((Item)obj).getType() != Item.ARTICLE) {
-                ServletUtils.addError(PARAM_URL, "URL "+url+" nepat¯Ì Ël·nku!", env, null);
+                ServletUtils.addError(PARAM_URL, "URL "+url+" nepat≈ô√≠ ƒçl√°nku!", env, null);
                 return FMTemplateSelector.select("EditSeries", "addArticlesUrls", env, request);
             }
 
@@ -351,7 +351,7 @@ public class EditSeries implements AbcAction {
         }
 
         if (articleRelations.size() == 0) {
-            ServletUtils.addError(PARAM_URL, "Zadejte URL adresu nejmÈnÏ jednoho Ël·nku!", env, null);
+            ServletUtils.addError(PARAM_URL, "Zadejte URL adresu nejm√©nƒõ jednoho ƒçl√°nku!", env, null);
             return FMTemplateSelector.select("EditSeries", "addArticlesUrls", env, request);
         }
 
@@ -369,7 +369,7 @@ public class EditSeries implements AbcAction {
 
         String ridString = (String) params.get(PARAM_ARTICLE_RELATION);
         if ( ridString == null )
-            throw new MissingArgumentException("ChybÌ parametr "+PARAM_ARTICLE_RELATION+"!");
+            throw new MissingArgumentException("Chyb√≠ parametr "+PARAM_ARTICLE_RELATION+"!");
 
         int articleRid = Misc.parseInt(ridString, 0);
         Relation articleRelation = (Relation) persistence.findById(new Relation(articleRid));
@@ -379,7 +379,7 @@ public class EditSeries implements AbcAction {
 
         Element articleElement = (Element) seriesRoot.selectObject("article[text()='"+articleRid+"']");
         if (articleElement == null)
-            throw new MissingArgumentException("Seri·l neobsahuje Ël·nek "+articleRid+"!");
+            throw new MissingArgumentException("Seri√°l neobsahuje ƒçl√°nek "+articleRid+"!");
 
         Element seriesElement = articleRoot.element("series_rid");
         seriesElement.detach();
@@ -410,7 +410,7 @@ public class EditSeries implements AbcAction {
             DocumentHelper.makeElement(root, "name").setText(tmp);
             return true;
         } else {
-            ServletUtils.addError(PARAM_NAME, "Zadejte jmÈno seri·lu!", env, null);
+            ServletUtils.addError(PARAM_NAME, "Zadejte jm√©no seri√°lu!", env, null);
             return false;
         }
     }
@@ -471,22 +471,22 @@ public class EditSeries implements AbcAction {
     private boolean setUrl(Map params, Relation relation, Map env) {
         String url = (String) params.get(PARAM_URL);
         if (url == null) {
-            ServletUtils.addError(PARAM_URL, "Zadejte URL seri·lu!", env, null);
+            ServletUtils.addError(PARAM_URL, "Zadejte URL seri√°lu!", env, null);
             return false;
         }
         if (! url.startsWith(UrlUtils.PREFIX_SERIES)) {
-            ServletUtils.addError(PARAM_URL, "URL seri·lu musÌ zaËÌnat prefixem "+UrlUtils.PREFIX_SERIES+"!", env, null);
+            ServletUtils.addError(PARAM_URL, "URL seri√°lu mus√≠ zaƒç√≠nat prefixem "+UrlUtils.PREFIX_SERIES+"!", env, null);
             return false;
         }
 
         url = URLManager.enforceAbsoluteURL(url);
         if (url.equals(UrlUtils.PREFIX_SERIES)) {
-            ServletUtils.addError(PARAM_URL, "Zadejte URL seri·lu!", env, null);
+            ServletUtils.addError(PARAM_URL, "Zadejte URL seri√°lu!", env, null);
             return false;
         }
 
         if (URLManager.exists(url)) {
-            ServletUtils.addError(PARAM_URL, "Zadejte unik·tnÌ URL seri·lu!", env, null);
+            ServletUtils.addError(PARAM_URL, "Zadejte unik√°tn√≠ URL seri√°lu!", env, null);
             return false;
         }
 

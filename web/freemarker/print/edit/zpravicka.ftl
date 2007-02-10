@@ -2,25 +2,25 @@
 
 <@lib.showMessages/>
 
-<h2>Co je to zprávièka?</h2>
+<h2>Co je to zprÃ¡viÄka?</h2>
 
-<p>Zprávièka je krátkı text, kterı upozoròuje na¹e ètenáøe
-na zajímavou informaci, stránky èi událost ve svìtì Linuxu,
-Open Source, hnutí Free Software èi obecnì IT. Zprávièky
-neslou¾í pro soukromou inzerci èi oznámení, firemní oznámení
-schvaluje i ma¾e pouze <a href="/Profile/1">Leo¹ Literák</a>.
+<p>ZprÃ¡viÄka je krÃ¡tkÃ½ text, kterÃ½ upozorÅˆuje naÅ¡e ÄtenÃ¡Å™e
+na zajÃ­mavou informaci, strÃ¡nky Äi udÃ¡lost ve svÄ›tÄ› Linuxu,
+Open Source, hnutÃ­ Free Software Äi obecnÄ› IT. ZprÃ¡viÄky
+neslouÅ¾Ã­ pro soukromou inzerci Äi oznÃ¡menÃ­, firemnÃ­ oznÃ¡menÃ­
+schvaluje i maÅ¾e pouze <a href="/Profile/1">LeoÅ¡ LiterÃ¡k</a>.
 </p>
 
-<h2>Jak ji mám napsat?</h2>
+<h2>Jak ji mÃ¡m napsat?</h2>
 
-<p>Zprávièka by mìla obsahovat pouze text bez formátování, z HTML znaèek
-je povolen jen odkaz a pøípadnì paragraf. Formátovací znaèky (font,
-italické èi tuèné písmo) a obrázky jsou zapovìzeny.
-Pokud u¾ivatel zvolil nevhodnou kategorii, vyberte jinou.
-Titulek by mìl krátce popsat hlavní téma zprávièky, bude pou¾ít v RSS
-a vygeneruje se z nìj URL.</p>
+<p>ZprÃ¡viÄka by mÄ›la obsahovat pouze text bez formÃ¡tovÃ¡nÃ­, z HTML znaÄek
+je povolen jen odkaz a pÅ™Ã­padnÄ› paragraf. FormÃ¡tovacÃ­ znaÄky (font,
+italickÃ© Äi tuÄnÃ© pÃ­smo) a obrÃ¡zky jsou zapovÄ›zeny.
+Pokud uÅ¾ivatel zvolil nevhodnou kategorii, vyberte jinou.
+Titulek by mÄ›l krÃ¡tce popsat hlavnÃ­ tÃ©ma zprÃ¡viÄky, bude pouÅ¾Ã­t v RSS
+a vygeneruje se z nÄ›j URL.</p>
 
-<h1>Náhled</h1>
+<h1>NÃ¡hled</h1>
 
     <h2>${TOOL.xpath(RELATION.child,"/data/title")?if_exists}</h2>
     <@lib.showNews RELATION />
@@ -38,7 +38,7 @@ a vygeneruje se z nìj URL.</p>
             <td class="required">Obsah</td>
             <td>
                 <div class="form-edit">
-                    <a href="javascript:insertAtCursor(document.newsForm.content, '&lt;a href=&quot;&quot;&gt;', '</a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
+                    <a href="javascript:insertAtCursor(document.newsForm.content, '&lt;a href=&quot;&quot;&gt;', '</a>');" id="mono" title="VloÅ¾it znaÄku odkazu">&lt;a&gt;</a>
                 </div>
                 <textarea name="content" cols="80" rows="15" tabindex="1">${PARAMS.content?if_exists?html}</textarea>
                 <div class="error">${ERRORS.content?if_exists}</div>
@@ -46,10 +46,10 @@ a vygeneruje se z nìj URL.</p>
         </tr>
         <#if USER?exists && USER.hasRole("news admin")>
             <tr>
-                <td>Datum zveøejnìní</td>
+                <td>Datum zveÅ™ejnÄ›nÃ­</td>
                 <td>
                     <input type="text" size="16" name="publish" value="${PARAMS.publish?if_exists}">
-                    Formát 2005-01-25 07:12
+                    FormÃ¡t 2005-01-25 07:12
                     <div class="error">${ERRORS.publish?if_exists}</div>
                 </td>
             </tr>
@@ -72,8 +72,8 @@ a vygeneruje se z nìj URL.</p>
         <tr>
             <td>&nbsp;</td>
             <td>
-                <input name="preview" type="submit" value="Náhled">
-                <input type="submit" value="Ulo¾it">
+                <input name="preview" type="submit" value="NÃ¡hled">
+                <input type="submit" value="UloÅ¾it">
             </td>
         </tr>
     </table>

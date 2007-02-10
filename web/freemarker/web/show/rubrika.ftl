@@ -3,11 +3,11 @@
 <@lib.showMessages/>
 
 <#if USER?exists && USER.hasRole("article admin")>
-    <a href="/clanky/edit/${RELATION.id}?action=add">Pøidej èlánek</a>
+    <a href="/clanky/edit/${RELATION.id}?action=add">PÅ™idej ÄlÃ¡nek</a>
 </#if>
 <#if USER?exists && USER.hasRole("category admin")>
  <a href="${URL.make("/EditCategory?action=edit&rid="+RELATION.id+"&categoryId="+CATEGORY.id)}">Uprav sekci</a>
- <a href="${URL.noPrefix("/EditRelation?action=remove&rid="+RELATION.id+"&prefix="+URL.prefix)}">Sma¾ sekci</a>
+ <a href="${URL.noPrefix("/EditRelation?action=remove&rid="+RELATION.id+"&prefix="+URL.prefix)}">SmaÅ¾ sekci</a>
 </#if>
 
 <#if TOOL.xpath(CATEGORY,"data/note")?exists>
@@ -23,11 +23,11 @@
  <p>
   <#if (ARTICLES.currentPage.row > 0) >
    <#assign start=ARTICLES.currentPage.row-ARTICLES.pageSize><#if (start<0)><#assign start=0></#if>
-   <a href="/clanky/dir/${RELATION.id}?from=${start}">Novìj¹í èlánky</a>
+   <a href="/clanky/dir/${RELATION.id}?from=${start}">NovÄ›jÅ¡Ã­ ÄlÃ¡nky</a>
   </#if>
   <#assign start=ARTICLES.currentPage.row + ARTICLES.pageSize>
   <#if (start < ARTICLES.total) >
-   <a href="/clanky/dir/${RELATION.id}?from=${start}">Star¹í èlánky</a>
+   <a href="/clanky/dir/${RELATION.id}?from=${start}">StarÅ¡Ã­ ÄlÃ¡nky</a>
   </#if>
  </p>
 

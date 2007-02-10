@@ -3,27 +3,27 @@
 <@lib.showMessages/>
 
 <p>
-    Chystáte se vlo¾it polo¾ku do databáze <b>zodpovìzenıch</b> otázek.
-    Pokud potøebujete poradit, jste na ¹patné stránce.
-    <a href="/Search">Prohledejte</a> nejdøíve na¹i rozsáhlou databázi,
-    a pokud odpovìï nenajdete, polo¾te svùj dotaz do <a href="/diskuse.jsp">diskusního fóra</a>.
-    Tento formuláø je urèen zku¹enìj¹ím u¾ivatelùm, kteøí se chtìjí
-    podìlit o øe¹ení otázky, která bıvá èasto kladena v diskusním
-    fóru.
+    ChystÃ¡te se vloÅ¾it poloÅ¾ku do databÃ¡ze <b>zodpovÄ›zenÃ½ch</b> otÃ¡zek.
+    Pokud potÅ™ebujete poradit, jste na Å¡patnÃ© strÃ¡nce.
+    <a href="/Search">Prohledejte</a> nejdÅ™Ã­ve naÅ¡i rozsÃ¡hlou databÃ¡zi,
+    a pokud odpovÄ›Ä nenajdete, poloÅ¾te svÅ¯j dotaz do <a href="/diskuse.jsp">diskusnÃ­ho fÃ³ra</a>.
+    Tento formulÃ¡Å™ je urÄen zkuÅ¡enÄ›jÅ¡Ã­m uÅ¾ivatelÅ¯m, kteÅ™Ã­ se chtÄ›jÃ­
+    podÄ›lit o Å™eÅ¡enÃ­ otÃ¡zky, kterÃ¡ bÃ½vÃ¡ Äasto kladena v diskusnÃ­m
+    fÃ³ru.
 </p>
 
 <p>
-    Vyplòte jednotlivé polo¾ky formuláøe. Do textu
-    odpovìdi zadejte co nejpodrobnìj¹í a nejpøesnìj¹í odpovìï. Do souvisejících
-    odkazù umístìte link na dokument s dal¹ími informacemi, napøíklad na èlánek
-    zabıvající se touto tématikou nebo na diskusi ve fóru, kde byl problem
-    (vy)øe¹en.
+    VyplÅˆte jednotlivÃ© poloÅ¾ky formulÃ¡Å™e. Do textu
+    odpovÄ›di zadejte co nejpodrobnÄ›jÅ¡Ã­ a nejpÅ™esnÄ›jÅ¡Ã­ odpovÄ›Ä. Do souvisejÃ­cÃ­ch
+    odkazÅ¯ umÃ­stÄ›te link na dokument s dalÅ¡Ã­mi informacemi, napÅ™Ã­klad na ÄlÃ¡nek
+    zabÃ½vajÃ­cÃ­ se touto tÃ©matikou nebo na diskusi ve fÃ³ru, kde byl problem
+    (vy)Å™eÅ¡en.
 </p>
 <br />
 
 <#if PARAMS.preview?exists>
     <fieldset>
-        <legend>Náhled</legend>
+        <legend>NÃ¡hled</legend>
         <h1 style="margin-bottom: 1em;">${TOOL.xpath(PREVIEW, "/data/title")?if_exists}</h1>
         <div>
             ${TOOL.render(TOOL.xpath(PREVIEW.data,"data/text")?if_exists, USER?if_exists)}
@@ -35,22 +35,22 @@
 <form action="${URL.make("/faq/edit")}" method="POST" name="form">
     <table cellpadding="5" class="siroka">
         <tr>
-            <td class="required">Otázka</td>
+            <td class="required">OtÃ¡zka</td>
             <td>
                 <input tabindex="1" type="text" name="title" size="80" value="${PARAMS.title?if_exists?html}">
                 <div class="error">${ERRORS.title?if_exists}</div>
             </td>
         </tr>
         <tr>
-            <td class="required">Odpovìï</td>
+            <td class="required">OdpovÄ›Ä</td>
             <td>
                 <div class="form-edit">
-                    <a href="javascript:insertAtCursor(document.form.text, '<b>', '</b>');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<i>', '</i>');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<a href=&quot;&quot;>', '</a>');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<p>', '</p>');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="Vlo¾it znaèku formátovaného textu. Vhodné pro konfiguraèní soubory èi vıpisy.">&lt;pre&gt;</a>
-                    <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<b>', '</b>');" id="serif" title="VloÅ¾it znaÄku tuÄnÄ›"><b>B</b></a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<i>', '</i>');" id="serif" title="VloÅ¾it znaÄku kurzÃ­va"><i>I</i></a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<a href=&quot;&quot;>', '</a>');" id="mono" title="VloÅ¾it znaÄku odkazu">&lt;a&gt;</a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<p>', '</p>');" id="mono" title="VloÅ¾it znaÄku odstavce">&lt;p&gt;</a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<pre>', '</pre>');" id="mono" title="VloÅ¾it znaÄku formÃ¡tovanÃ©ho textu. VhodnÃ© pro konfiguraÄnÃ­ soubory Äi vÃ½pisy.">&lt;pre&gt;</a>
+                    <a href="javascript:insertAtCursor(document.form.text, '<code>', '</code>');" id="mono" title="VloÅ¾it znaÄku pro pÃ­smo s pevnou Å¡Ã­Å™kou">&lt;code&gt;</a>
                 </div>
                 <textarea tabindex="2" name="text" class="siroka" rows="20">${PARAMS.text?if_exists?html}</textarea><br>
                 <div class="error">${ERRORS.text?if_exists}</div>
@@ -58,8 +58,8 @@
         </tr>
         <tr>
             <td colspan="2" align="center">
-                <input tabindex="3" type="submit" name="preview" value="Náhled">
-                <input tabindex="4" type="submit" name="submit" value="Dokonèi">
+                <input tabindex="3" type="submit" name="preview" value="NÃ¡hled">
+                <input tabindex="4" type="submit" name="submit" value="DokonÄi">
             </td>
         </tr>
     </table>

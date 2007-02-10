@@ -1,7 +1,7 @@
 <#include "../header.ftl">
 <#assign CATEGORY=RELATION.child>
 
-<h1>${TOOL.xpath(CATEGORY,"data/name")} - Ëasto kladenÈ ot·zky</h1>
+<h1>${TOOL.xpath(CATEGORY,"data/name")} - ƒçasto kladen√© ot√°zky</h1>
 
 <#if TOOL.xpath(CATEGORY,"data/note")?exists>
     ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}
@@ -9,7 +9,7 @@
 
 <#if QUESTIONS.total==0>
     <p>
-        V tÈto sekci nejsou zatÌm æ·dnÈ ot·zky.
+        V t√©to sekci nejsou zat√≠m ≈æ√°dn√© ot√°zky.
     </p>
 <#else>
     <ul>
@@ -20,12 +20,12 @@
 </#if>
 
 <p>
-<a href="${URL.make("/faq/edit?action=add&amp;rid="+RELATION.id)}">Vloæit novou zodpovÏzenou ot·zku</a>
+<a href="${URL.make("/faq/edit?action=add&amp;rid="+RELATION.id)}">Vlo≈æit novou zodpovƒõzenou ot√°zku</a>
 <#if QUESTIONS.prevPage?exists >
-    <br /><a href="${RELATION.url}?from=${QUESTIONS.prevPage.row}">NovÏjπÌ ot·zky</a>
+    <br /><a href="${RELATION.url}?from=${QUESTIONS.prevPage.row}">Novƒõj≈°√≠ ot√°zky</a>
 </#if>
 <#if nextPage?exists >
-    &nbsp;--&nbsp;<a href="${RELATION.url}?from=${QUESTIONS.nextPage.row}">StarπÌ ot·zky</a>
+    &nbsp;--&nbsp;<a href="${RELATION.url}?from=${QUESTIONS.nextPage.row}">Star≈°√≠ ot√°zky</a>
 </#if>
 </p>
 

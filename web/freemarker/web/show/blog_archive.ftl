@@ -15,7 +15,7 @@
     </div>
 
     <#if UNPUBLISHED_STORIES?exists>
-        <div class="s_nadpis">Rozepsané zápisy</div>
+        <div class="s_nadpis">RozepsanÃ© zÃ¡pisy</div>
 
         <div class="s_sekce">
             <ul>
@@ -29,7 +29,7 @@
         </div>
     </#if>
 
-    <div class="s_nadpis">Aktuální zápisy</div>
+    <div class="s_nadpis">AktuÃ¡lnÃ­ zÃ¡pisy</div>
 
     <div class="s_sekce">
         <ul>
@@ -45,8 +45,8 @@
     <#assign links = BLOG_XML.data.custom.links.link>
     <#if links?size!=0>
         <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Seznam mıch oblíbenıch stránek, které pravidelnì nav¹tìvuji.</span></a>
-            Oblíbené stránky
+            <a class="info" href="#">?<span class="tooltip">Seznam mÃ½ch oblÃ­benÃ½ch strÃ¡nek, kterÃ© pravidelnÄ› navÅ¡tÄ›vuji.</span></a>
+            OblÃ­benÃ© strÃ¡nky
         </div>
 
         <div class="s_sekce">
@@ -59,27 +59,27 @@
     </#if>
 
     <div class="s_nadpis">
-        <a class="info" href="#">?<span class="tooltip">Pøístup na osobní hlavní stranu a na hlavní stranu v¹ech blogù.</span></a>
+        <a class="info" href="#">?<span class="tooltip">PÅ™Ã­stup na osobnÃ­ hlavnÃ­ stranu a na hlavnÃ­ stranu vÅ¡ech blogÅ¯.</span></a>
         Navigace
     </div>
 
     <div class="s_sekce">
         <ul>
             <#if title!="UNDEF">
-                <li><a href="/blog/${BLOG.subType}">${title}, hlavní strana</a></li>
+                <li><a href="/blog/${BLOG.subType}">${title}, hlavnÃ­ strana</a></li>
             </#if>
-            <li><a href="/blog/${BLOG.subType}/souhrn"><#if title!="UNDEF">${title}, </#if>struènı souhrn</a></li>
-            <li><a href="/auto/blog/${BLOG.subType}.rss">RSS kanál</a></li>
-            <li><a href="/blog">V¹echny blogy</a></li>
-	    <li><a href="/blog/souhrn">V¹echny blogy, struènı souhrn</a></li>
+            <li><a href="/blog/${BLOG.subType}/souhrn"><#if title!="UNDEF">${title}, </#if>struÄnÃ½ souhrn</a></li>
+            <li><a href="/auto/blog/${BLOG.subType}.rss">RSS kanÃ¡l</a></li>
+            <li><a href="/blog">VÅ¡echny blogy</a></li>
+	    <li><a href="/blog/souhrn">VÅ¡echny blogy, struÄnÃ½ souhrn</a></li>
         </ul>
     </div>
 
 
     <#if (USER?exists && USER.id==BLOG.owner) || (! USER?exists)>
         <div class="s_nadpis">
-            <a class="info" href="#">?<span class="tooltip">Tato sekce sdru¾uje akce pro majitele blogu.</span></a>
-            Nastavení
+            <a class="info" href="#">?<span class="tooltip">Tato sekce sdruÅ¾uje akce pro majitele blogu.</span></a>
+            NastavenÃ­
         </div>
     </#if>
 
@@ -87,14 +87,14 @@
     <ul>
     <#if USER?exists>
         <#if USER.id==BLOG.owner>
-            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=add")}">Vlo¾ novı zápis</a></li>
+            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=add")}">VloÅ¾ novÃ½ zÃ¡pis</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=custom")}">Nastavit blog</a></li>
-            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}">Pøejmenovat blog</a></li>
+            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=rename")}">PÅ™ejmenovat blog</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=categories")}">Upravit kategorie</a></li>
-            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=links")}">Upravit oblíbené stránky</a></li>
+            <li><a href="${URL.noPrefix("/blog/edit/"+REL_BLOG.id+"?action=links")}">Upravit oblÃ­benÃ© strÃ¡nky</a></li>
         </#if>
     <#else>
-        <li><a href="${URL.noPrefix("/Profile?action=login&amp;url="+REQUEST_URI)}">Pøihlásit se</a></li>
+        <li><a href="${URL.noPrefix("/Profile?action=login&amp;url="+REQUEST_URI)}">PÅ™ihlÃ¡sit se</a></li>
     </#if>
     </ul>
   </div>

@@ -79,7 +79,7 @@ public class EditDictionary implements AbcAction {
             response.sendRedirect(response.encodeRedirectURL("/"));
 
         if ( action==null)
-            throw new MissingArgumentException("ChybÌ parametr action!");
+            throw new MissingArgumentException("Chyb√≠ parametr action!");
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation!=null ) {
@@ -103,7 +103,7 @@ public class EditDictionary implements AbcAction {
         if ( action.equals(ACTION_EDIT_STEP2) )
             return actionEdit2(request, response, env);
 
-        throw new MissingArgumentException("ChybÌ parametr action!");
+        throw new MissingArgumentException("Chyb√≠ parametr action!");
     }
 
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
@@ -204,13 +204,13 @@ public class EditDictionary implements AbcAction {
         String name = (String) params.get(PARAM_NAME);
         name = Misc.filterDangerousCharacters(name);
         if ( name == null || name.length() == 0 ) {
-            ServletUtils.addError(PARAM_NAME, "Nezadali jste jmÈno pojmu.", env, null);
+            ServletUtils.addError(PARAM_NAME, "Nezadali jste jm√©no pojmu.", env, null);
             return false;
         }
 
         char first = Character.toLowerCase(name.charAt(0));
         if (first < 'a' || first > 'z') {
-            ServletUtils.addError(PARAM_NAME, "Pojem musÌ zaËÌnat pÌsmenem (a-z).", env, null);
+            ServletUtils.addError(PARAM_NAME, "Pojem mus√≠ zaƒç√≠nat p√≠smenem (a-z).", env, null);
             return false;
         }
 
@@ -238,8 +238,8 @@ public class EditDictionary implements AbcAction {
         String url = URLManager.enforceRelativeURL(name);
         Relation relation2 = SQLTool.getInstance().findRelationByURL(url);
         if (relation2 != null) {
-            ServletUtils.addError(PARAM_NAME, "Tento pojem jiæ byl <a href=\"/slovnik/"+url+"\">vysvÏtlen</a> " +
-                    "nebo doπlo v d˘sledku normalizace ke konfliktu URL (pak zvolte jinÈ jmÈno a kontaktuje adminy).", env, null);
+            ServletUtils.addError(PARAM_NAME, "Tento pojem ji≈æ byl <a href=\"/slovnik/"+url+"\">vysvƒõtlen</a> " +
+                    "nebo do≈°lo v d≈Øsledku normalizace ke konfliktu URL (pak zvolte jin√© jm√©no a kontaktuje adminy).", env, null);
             return false;
         }
 

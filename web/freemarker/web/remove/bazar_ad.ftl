@@ -3,10 +3,10 @@
 
 <@lib.showMessages/>
 
-<h1>Smaz·nÌ inzer·tu</h1>
+<h1>Smaz√°n√≠ inzer√°tu</h1>
 
 <p>
-    Opravdu chcete smazat n·sledujÌcÌ inzer·t?
+    Opravdu chcete smazat n√°sleduj√≠c√≠ inzer√°t?
 </p>
 
 <form action="${URL.make("/edit")}" method="POST">
@@ -16,7 +16,7 @@
 </form>
 
 <fieldset style="margin-top: 1em;">
-    <legend>N·hled</legend>
+    <legend>N√°hled</legend>
     <@bazarlib.showBazaarAd RELATION.child, USER />
 </fieldset>
 

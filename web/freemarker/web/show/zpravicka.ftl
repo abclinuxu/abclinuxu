@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-<#assign title=TOOL.xpath(ITEM, "/data/title")?default("Zpr·viËka"), autor=TOOL.createUser(ITEM.owner),
+<#assign title=TOOL.xpath(ITEM, "/data/title")?default("Zpr√°viƒçka"), autor=TOOL.createUser(ITEM.owner),
          locked = TOOL.xpath(ITEM, "//locked_by")?exists, approved = TOOL.xpath(ITEM, "//approved_by")?exists>
 
 <@lib.advertisement id="arbo-sq" />
@@ -16,11 +16,11 @@
     </#if>
     <b>Datum:</b> ${DATE.show(ITEM.created,"SMART")}<br>
     <#if RELATION.upper=37672>
-        <b>Stav:</b> Ëek· na
+        <b>Stav:</b> ƒçek√° na
         <#if approved>
-            Ëas publikov·nÌ
+            ƒças publikov√°n√≠
         <#else>
-            schv·lenÌ
+            schv√°len√≠
         </#if>
         <#if USER?exists && USER.id=RELATION.child.owner>
         - <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">Upravit</a>
@@ -35,7 +35,7 @@
             <#else>
                 <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">Upravit</a>
                 <#if RELATION.upper=37672 && ! approved>
-                    <a href="${URL.make("/edit?action=approve&amp;rid="+RELATION.id)}">Schv·lit</a>
+                    <a href="${URL.make("/edit?action=approve&amp;rid="+RELATION.id)}">Schv√°lit</a>
                 </#if>
                 <a href="${URL.make("/edit?action=remove&amp;rid="+RELATION.id)}">Smazat</a>
                 <a href="${URL.make("/edit?action=mail&amp;rid="+RELATION.id)}">Poslat email autorovi</a>
@@ -47,13 +47,13 @@
 
 <p class="zpravicka">${TOOL.xpath(ITEM,"data/content")}</p>
 
-<p><b>N·stroje</b>: <a href="${RELATION.url?default("/zpravicky/show/"+RELATION.id)}?varianta=print">Tisk</a></p>
+<p><b>N√°stroje</b>: <a href="${RELATION.url?default("/zpravicky/show/"+RELATION.id)}?varianta=print">Tisk</a></p>
 
-<h3>Koment·¯e</h3>
+<h3>Koment√°≈ôe</h3>
 <#if CHILDREN.discussion?exists>
     <@lib.showDiscussion CHILDREN.discussion[0]/>
 <#else>
-   <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vloæit prvnÌ koment·¯</a>
+   <a href="${URL.make("/EditDiscussion?action=addDiz&amp;rid="+RELATION.id)}">Vlo≈æit prvn√≠ koment√°≈ô</a>
 </#if>
 
 <#include "../footer.ftl">

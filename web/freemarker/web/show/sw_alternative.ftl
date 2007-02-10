@@ -1,7 +1,7 @@
 <#assign plovouci_sloupec>
     <div class="s_sekce">
         <ul>
-            <li><a href="/software/alternativy">Alternativy k aplikacÌm</a></li>
+            <li><a href="/software/alternativy">Alternativy k aplikac√≠m</a></li>
         </ul>
     </div>
 </#assign>
@@ -16,7 +16,7 @@
     <@lib.showSoftwareList ITEMS />
 <#else>
     <p>
-        Litujeme, ale pro tento software nejsou v systÈmu definov·ny æ·dnÈ alternativy.
+        Litujeme, ale pro tento software nejsou v syst√©mu definov√°ny ≈æ√°dn√© alternativy.
     </p>
 </#if>
 

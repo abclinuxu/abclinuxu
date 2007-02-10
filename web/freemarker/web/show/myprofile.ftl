@@ -3,47 +3,47 @@
 <@lib.showMessages/>
 
 <#if PARAMS.registrace?exists>
- <h1>Pøivítání</h1>
+ <h1>PÅ™ivÃ­tÃ¡nÃ­</h1>
 
- <p> Dìkujeme vám za projevenou dùvìru. Vìøíme, ¾e budete spokojeni
- se v¹emi slu¾bami na¹eho portálu. Doporuèujeme vám projít si tuto
- stránku a nastavit si osobní údaje, pøizpùsobit si va¹i veøejnou
- osobní stránku podle svıch pøedstav a nakonfigurovat tento úèet.
- Pøihla¹ovací údaje jsme vám zaslali na va¹i emailovou adresu ${PROFILE.email}. </p>
+ <p> DÄ›kujeme vÃ¡m za projevenou dÅ¯vÄ›ru. VÄ›Å™Ã­me, Å¾e budete spokojeni
+ se vÅ¡emi sluÅ¾bami naÅ¡eho portÃ¡lu. DoporuÄujeme vÃ¡m projÃ­t si tuto
+ strÃ¡nku a nastavit si osobnÃ­ Ãºdaje, pÅ™izpÅ¯sobit si vaÅ¡i veÅ™ejnou
+ osobnÃ­ strÃ¡nku podle svÃ½ch pÅ™edstav a nakonfigurovat tento ÃºÄet.
+ PÅ™ihlaÅ¡ovacÃ­ Ãºdaje jsme vÃ¡m zaslali na vaÅ¡i emailovou adresu ${PROFILE.email}. </p>
 </#if>
 
-<h1>Nastavení mého úètu</h1>
+<h1>NastavenÃ­ mÃ©ho ÃºÄtu</h1>
 
-<p>Nacházíte se ve své soukromé stránce. Zde mù¾ete
-mìnit nastavení svého úètu, upravovat svùj profil
-èi pøihlásit se k zasílání informací. Z dùvodu va¹í
-ochrany budete pøi zmìnì údajù vyzvání k zadání hesla.
-Vá¹ profil, jak jej vidí ostatní náv¹tìvníci, zobrazíte
-na <a href="/Profile/${PROFILE.id}">této</a> stránce.</p>
+<p>NachÃ¡zÃ­te se ve svÃ© soukromÃ© strÃ¡nce. Zde mÅ¯Å¾ete
+mÄ›nit nastavenÃ­ svÃ©ho ÃºÄtu, upravovat svÅ¯j profil
+Äi pÅ™ihlÃ¡sit se k zasÃ­lÃ¡nÃ­ informacÃ­. Z dÅ¯vodu vaÅ¡Ã­
+ochrany budete pÅ™i zmÄ›nÄ› ÃºdajÅ¯ vyzvÃ¡nÃ­ k zadÃ¡nÃ­ hesla.
+VÃ¡Å¡ profil, jak jej vidÃ­ ostatnÃ­ nÃ¡vÅ¡tÄ›vnÃ­ci, zobrazÃ­te
+na <a href="/Profile/${PROFILE.id}">tÃ©to</a> strÃ¡nce.</p>
 
-<h2>Základní údaje</h2>
+<h2>ZÃ¡kladnÃ­ Ãºdaje</h2>
 
-<p>Na této stránce nastavíte va¹e jméno (${PROFILE.name}),
-pøihla¹ovací jméno (${PROFILE.login}),
-pøezdívku (${PROFILE.nick?default("není nastavena")}),
+<p>Na tÃ©to strÃ¡nce nastavÃ­te vaÅ¡e jmÃ©no (${PROFILE.name}),
+pÅ™ihlaÅ¡ovacÃ­ jmÃ©no (${PROFILE.login}),
+pÅ™ezdÃ­vku (${PROFILE.nick?default("nenÃ­ nastavena")}),
 email (${PROFILE.email}) a heslo.
 </p>
 
 <#if TOOL.xpath(PROFILE,"/data/communication/email[@valid='no']")?exists>
- <p class="error">Administrátoøi oznaèili vá¹ email za neplatnı!
- Stane se tak tehdy, pokud se nìkterı odeslanı email vrátí jako
- trvale nedoruèitelnı. Dokud si nezmìníte adresu, ¾ádnı dal¹í email vám
- nebude zaslán.</p>
+ <p class="error">AdministrÃ¡toÅ™i oznaÄili vÃ¡Å¡ email za neplatnÃ½!
+ Stane se tak tehdy, pokud se nÄ›kterÃ½ odeslanÃ½ email vrÃ¡tÃ­ jako
+ trvale nedoruÄitelnÃ½. Dokud si nezmÄ›nÃ­te adresu, Å¾Ã¡dnÃ½ dalÅ¡Ã­ email vÃ¡m
+ nebude zaslÃ¡n.</p>
 </#if>
 
 <ul>
     <li>
         <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editBasic")}">
-        zmìnit základní údaje</a>
+        zmÄ›nit zÃ¡kladnÃ­ Ãºdaje</a>
     </li>
     <li>
         <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=changePassword")}">
-        zmìnit heslo</a>
+        zmÄ›nit heslo</a>
     </li>
     <li>
         <a href="${URL.noPrefix("/Profile/"+PROFILE.id+"?action=forgottenPassword")}">
@@ -53,17 +53,17 @@ email (${PROFILE.email}) a heslo.
 
 <h2>Profil</h2>
 
-<p>Portál www.abclinuxu.cz vám umo¾òuje bohaté nastavení va¹í osobní stránky,
-která slou¾í pro va¹i prezentaci. Mù¾ete zadat ¹irokou paletu strukturovanıch
-informací, napøíklad bydli¹tì, rok narození, adresu va¹ich webovıch stránek,
-pou¾ívané distribuce, nebo jak dlouho pou¾íváte Linux. Dále si mù¾ete vytvoøit
-patièku zobrazovanou v diskusích u va¹ich pøíspìvkù, nahrát svou fotku
-èi upravit profil.</p>
+<p>PortÃ¡l www.abclinuxu.cz vÃ¡m umoÅ¾Åˆuje bohatÃ© nastavenÃ­ vaÅ¡Ã­ osobnÃ­ strÃ¡nky,
+kterÃ¡ slouÅ¾Ã­ pro vaÅ¡i prezentaci. MÅ¯Å¾ete zadat Å¡irokou paletu strukturovanÃ½ch
+informacÃ­, napÅ™Ã­klad bydliÅ¡tÄ›, rok narozenÃ­, adresu vaÅ¡ich webovÃ½ch strÃ¡nek,
+pouÅ¾Ã­vanÃ© distribuce, nebo jak dlouho pouÅ¾Ã­vÃ¡te Linux. DÃ¡le si mÅ¯Å¾ete vytvoÅ™it
+patiÄku zobrazovanou v diskusÃ­ch u vaÅ¡ich pÅ™Ã­spÄ›vkÅ¯, nahrÃ¡t svou fotku
+Äi upravit profil.</p>
 
 <ul>
     <li>
         <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editPersonal")}">
-        zmìnit osobní údaje</a>
+        zmÄ›nit osobnÃ­ Ãºdaje</a>
     </li>
     <li>
         <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editProfile")}">
@@ -71,33 +71,33 @@ patièku zobrazovanou v diskusích u va¹ich pøíspìvkù, nahrát svou fotku
     </li>
     <li>
         <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=uploadPhoto")}">
-        zmìnit fotku</a>
+        zmÄ›nit fotku</a>
     </li>
 </ul>
 
-<h2>Nastavení úètu</h2>
+<h2>NastavenÃ­ ÃºÄtu</h2>
 
-<p>V této èásti si mù¾ete zmìnit nastavení va¹eho úètu a pøizpùsobit si
-portál dle svıch pøedstav. Napøíklad mù¾ete zmìnit servery v rozcestníku,
-vybrat barevnı styl èi zakázat automatické pøihla¹ování.</p>
+<p>V tÃ©to ÄÃ¡sti si mÅ¯Å¾ete zmÄ›nit nastavenÃ­ vaÅ¡eho ÃºÄtu a pÅ™izpÅ¯sobit si
+portÃ¡l dle svÃ½ch pÅ™edstav. NapÅ™Ã­klad mÅ¯Å¾ete zmÄ›nit servery v rozcestnÃ­ku,
+vybrat barevnÃ½ styl Äi zakÃ¡zat automatickÃ© pÅ™ihlaÅ¡ovÃ¡nÃ­.</p>
 
 <ul>
     <li>
         <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editSettings")}">
-        zmìnit nastavení</a>
+        zmÄ›nit nastavenÃ­</a>
     </li>
     <li>
         <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=editBlacklist")}">
-        upravit seznam blokovanıch u¾ivatelù</a>
+        upravit seznam blokovanÃ½ch uÅ¾ivatelÅ¯</a>
     </li>
 </ul>
 
 <h2>Blog</h2>
 
-<p>Blog je moderní formou vedení deníèku na internetu. Je urèen u¾ivatelùm Linuxu,
-kteøí zde mohou psát napøíklad návody, zamy¹lení, fejetony i jiné texty. Pokud nemáte
-s Linuxem nic spoleèného a jen hledáte blogovací systém, radìji si zalo¾te deníèek
-nìkde jinde.</p>
+<p>Blog je modernÃ­ formou vedenÃ­ denÃ­Äku na internetu. Je urÄen uÅ¾ivatelÅ¯m Linuxu,
+kteÅ™Ã­ zde mohou psÃ¡t napÅ™Ã­klad nÃ¡vody, zamyÅ¡lenÃ­, fejetony i jinÃ© texty. Pokud nemÃ¡te
+s Linuxem nic spoleÄnÃ©ho a jen hledÃ¡te blogovacÃ­ systÃ©m, radÄ›ji si zaloÅ¾te denÃ­Äek
+nÄ›kde jinde.</p>
 
 <ul>
     <li>
@@ -105,26 +105,26 @@ nìkde jinde.</p>
             <#assign blog=TOOL.createCategory(TOOL.xpath(PROFILE, "//settings/blog"))>
             <a href="/blog/${blog.subType}">zobrazit blog</a>
         <#else>
-            <a href="${URL.noPrefix("/blog/edit/"+PROFILE.id+"?action=addBlog")}">vytvoøit blog</a>
+            <a href="${URL.noPrefix("/blog/edit/"+PROFILE.id+"?action=addBlog")}">vytvoÅ™it blog</a>
         </#if>
     </li>
 </ul>
 
-<h2>Zasílání informací</h2>
+<h2>ZasÃ­lÃ¡nÃ­ informacÃ­</h2>
 
-<p>Máte rádi ná¹ portál, ale nemáte èas nás nav¹tìvovat dennì? Nastavte
-si zasílání Mìsíèního zpravodaje a Tıdenní souhrn èlánkù. Dále zde mù¾ete
-zapnout zasílání dotazù a komentáøù z diskusního fóra, tak¾e vám ¾ádná odpovìï
-neuteèe.</p>
+<p>MÃ¡te rÃ¡di nÃ¡Å¡ portÃ¡l, ale nemÃ¡te Äas nÃ¡s navÅ¡tÄ›vovat dennÄ›? Nastavte
+si zasÃ­lÃ¡nÃ­ MÄ›sÃ­ÄnÃ­ho zpravodaje a TÃ½dennÃ­ souhrn ÄlÃ¡nkÅ¯. DÃ¡le zde mÅ¯Å¾ete
+zapnout zasÃ­lÃ¡nÃ­ dotazÅ¯ a komentÃ¡Å™Å¯ z diskusnÃ­ho fÃ³ra, takÅ¾e vÃ¡m Å¾Ã¡dnÃ¡ odpovÄ›Ä
+neuteÄe.</p>
 
 <ul><li>
 <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=subscribe")}">
-objednat/odhlásit</a>
+objednat/odhlÃ¡sit</a>
 </ul>
 
-<h2>Va¹e veøejná stránka</h2>
+<h2>VaÅ¡e veÅ™ejnÃ¡ strÃ¡nka</h2>
 
-<p><a href="${URL.noPrefix("/Profile/"+PROFILE.id)}">Zpátky</a>
-na svou veøejnou domovskou stránku</p>
+<p><a href="${URL.noPrefix("/Profile/"+PROFILE.id)}">ZpÃ¡tky</a>
+na svou veÅ™ejnou domovskou strÃ¡nku</p>
 
 <#include "../footer.ftl">

@@ -2,22 +2,22 @@
 
 <@lib.showMessages/>
 
-<h1>Kniha náv¹tìv</h1>
+<h1>Kniha nÃ¡vÅ¡tÄ›v</h1>
 
-<p>Tento formuláø slou¾í pro vkládání zápisù do knihy náv¹tìv.
-Zde mù¾ete psát své pocity èi vzkazy administrátorùm tohoto
-portálu. Pokud chcete nahlásit chybu, pøejdìte na
-<a href="${URL.noPrefix("/hardware/dir/3500")}">tuto</a> stránku.
+<p>Tento formulÃ¡Å™ slouÅ¾Ã­ pro vklÃ¡dÃ¡nÃ­ zÃ¡pisÅ¯ do knihy nÃ¡vÅ¡tÄ›v.
+Zde mÅ¯Å¾ete psÃ¡t svÃ© pocity Äi vzkazy administrÃ¡torÅ¯m tohoto
+portÃ¡lu. Pokud chcete nahlÃ¡sit chybu, pÅ™ejdÄ›te na
+<a href="${URL.noPrefix("/hardware/dir/3500")}">tuto</a> strÃ¡nku.
 </p>
 
-<p>Do formuláøe zadejte své jméno a vá¹ vzkaz. Ve vzkazu jsou
-zakázány v¹echny HTML znaèky kromì odkazu. Odstavce oddìlujte
-prázdnım øádkem.
+<p>Do formulÃ¡Å™e zadejte svÃ© jmÃ©no a vÃ¡Å¡ vzkaz. Ve vzkazu jsou
+zakÃ¡zÃ¡ny vÅ¡echny HTML znaÄky kromÄ› odkazu. Odstavce oddÄ›lujte
+prÃ¡zdnÃ½m Å™Ã¡dkem.
 </p>
 
 <form action="${URL.noPrefix("/kniha_navstev/edit")}" method="POST">
   <p>
-   <span class="required">Va¹e jméno</span><br>
+   <span class="required">VaÅ¡e jmÃ©no</span><br>
    <input tabindex="1" type="text" name="name" size="40" value="${PARAMS.name?if_exists}">
    <div class="error">${ERRORS.name?if_exists}</div>
 
@@ -26,7 +26,7 @@ prázdnım øádkem.
    <div class="error">${ERRORS.message?if_exists}</div>
   </p>
    <p>
-       <input tabindex="3" type="submit" value="Dokonèi">
+       <input tabindex="3" type="submit" value="DokonÄi">
        <input type="hidden" name="action" value="add2">
    </p>
 </form>

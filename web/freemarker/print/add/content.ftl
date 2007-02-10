@@ -4,34 +4,34 @@
 
 <form action="${URL.make("/editContent")}" method="POST" name="form">
 
-<h1>Vkládání dokumentu</h1>
+<h1>VklÃ¡dÃ¡nÃ­ dokumentu</h1>
 
-<p>Tento formuláø slou¾í pro vkládání obsahu. Obvykle jde jen
-o obyèejnı text, kterı má pevné, hezké URL. Napøíklad nápovìda,
-podmínky u¾ití èi reklama. Obsah ale mù¾e bıt i dynamickı,
-pak v¹ak potøebuje podporu programátora, kterı pøipraví data.</p>
+<p>Tento formulÃ¡Å™ slouÅ¾Ã­ pro vklÃ¡dÃ¡nÃ­ obsahu. Obvykle jde jen
+o obyÄejnÃ½ text, kterÃ½ mÃ¡ pevnÃ©, hezkÃ© URL. NapÅ™Ã­klad nÃ¡povÄ›da,
+podmÃ­nky uÅ¾itÃ­ Äi reklama. Obsah ale mÅ¯Å¾e bÃ½t i dynamickÃ½,
+pak vÅ¡ak potÅ™ebuje podporu programÃ¡tora, kterÃ½ pÅ™ipravÃ­ data.</p>
 
 <#if PREVIEW?exists>
     <fieldset>
-        <legend>Náhled</legend>
+        <legend>NÃ¡hled</legend>
         ${TOOL.xpath(PREVIEW,"/data/content")}
     </fieldset>
 </#if>
 
  <table width=100 border=0 cellpadding=5>
   <tr>
-   <td width="90" class="required">Titulek stránky</td>
+   <td width="90" class="required">Titulek strÃ¡nky</td>
    <td>
     <input type="text" name="title" value="${PARAMS.title?if_exists}" size=60 tabindex=1>
     <div class="error">${ERRORS.title?if_exists}</div>
    </td>
   </tr>
   <tr>
-   <td width="90" class="required">Adresa stránky</td>
+   <td width="90" class="required">Adresa strÃ¡nky</td>
    <td>
     <input type="text" name="url" value="${PARAMS.url?if_exists}" size=60 tabindex=2>
-    <p>Zadejte absolutní, ale lokální URL. Vìt¹ina obsahu by mìla
-    bıt dostupná pod adresáøem /doc/*</p>
+    <p>Zadejte absolutnÃ­, ale lokÃ¡lnÃ­ URL. VÄ›tÅ¡ina obsahu by mÄ›la
+    bÃ½t dostupnÃ¡ pod adresÃ¡Å™em /doc/*</p>
     <div class="error">${ERRORS.url?if_exists}</div>
    </td>
   </tr>
@@ -46,24 +46,24 @@ pak v¹ak potøebuje podporu programátora, kterı pøipraví data.</p>
    <td width="90" class="required">Zpracovat freemarkerem</td>
    <td>
     <input type="checkbox" name="forbid_discussions" <#if PARAMS.forbid_discussions?exists>checked</#if> value="yes">
-    <p>Pokud za¹krtnete tuto volbu, systém obsah èlánku zpracuje skrze
-    <a href="http://freemarker.sourceforge.net/">Freemarker</a>. U¾iteèné pro dynamickı obsah.</p>
+    <p>Pokud zaÅ¡krtnete tuto volbu, systÃ©m obsah ÄlÃ¡nku zpracuje skrze
+    <a href="http://freemarker.sourceforge.net/">Freemarker</a>. UÅ¾iteÄnÃ© pro dynamickÃ½ obsah.</p>
    </td>
   </tr>
   <tr>
-   <td width="90" class="required">Obsah stránky</td>
+   <td width="90" class="required">Obsah strÃ¡nky</td>
    <td>
-    <p>V¹echna URL na èlánky, obrázky a soubory z na¹eho serveru musí bıt relativní!</p>
+    <p>VÅ¡echna URL na ÄlÃ¡nky, obrÃ¡zky a soubory z naÅ¡eho serveru musÃ­ bÃ½t relativnÃ­!</p>
     <div class="form-edit">
-        <a href="javascript:insertAtCursor(document.form.content, '&lt;p&gt;', '&lt;/p&gt;');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
-        <a href="javascript:insertAtCursor(document.form.content, '&lt;h1&gt;', '&lt;/h1&gt;');" id="mono" title="Vlo¾it znaèku nadpisu">&lt;h1&gt;</a>
-        <a href="javascript:insertAtCursor(document.form.content, '&lt;h2&gt;', '&lt;/h2&gt;');" id="mono" title="Vlo¾it znaèku nadpisu">&lt;h2&gt;</a>
-        <a href="javascript:insertAtCursor(document.form.content, '&lt;h3&gt;', '&lt;/h3&gt;');" id="mono" title="Vlo¾it znaèku nadpisu">&lt;h3&gt;</a>
-        <a href="javascript:insertAtCursor(document.form.content, '&lt;b&gt;', '&lt;/b&gt;');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
-        <a href="javascript:insertAtCursor(document.form.content, '&lt;i&gt;', '&lt;/i&gt;');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
-        <a href="javascript:insertAtCursor(document.form.content, '&lt;a href=&quot;&quot;&gt;', '&lt;/a&gt;');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
-        <a href="javascript:insertAtCursor(document.form.content, '&lt;pre&gt;', '&lt;/pre&gt;');" id="mono" title="Vlo¾it formátovanı text. Vhodné pouze pro konfiguraèní soubory èi vıpisy.">&lt;pre&gt;</a>
-        <a href="javascript:insertAtCursor(document.form.content, '&lt;code&gt;', '&lt;/code&gt;');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.content, '&lt;p&gt;', '&lt;/p&gt;');" id="mono" title="VloÅ¾it znaÄku odstavce">&lt;p&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.content, '&lt;h1&gt;', '&lt;/h1&gt;');" id="mono" title="VloÅ¾it znaÄku nadpisu">&lt;h1&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.content, '&lt;h2&gt;', '&lt;/h2&gt;');" id="mono" title="VloÅ¾it znaÄku nadpisu">&lt;h2&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.content, '&lt;h3&gt;', '&lt;/h3&gt;');" id="mono" title="VloÅ¾it znaÄku nadpisu">&lt;h3&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.content, '&lt;b&gt;', '&lt;/b&gt;');" id="serif" title="VloÅ¾it znaÄku tuÄnÄ›"><b>B</b></a>
+        <a href="javascript:insertAtCursor(document.form.content, '&lt;i&gt;', '&lt;/i&gt;');" id="serif" title="VloÅ¾it znaÄku kurzÃ­va"><i>I</i></a>
+        <a href="javascript:insertAtCursor(document.form.content, '&lt;a href=&quot;&quot;&gt;', '&lt;/a&gt;');" id="mono" title="VloÅ¾it znaÄku odkazu">&lt;a&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.content, '&lt;pre&gt;', '&lt;/pre&gt;');" id="mono" title="VloÅ¾it formÃ¡tovanÃ½ text. VhodnÃ© pouze pro konfiguraÄnÃ­ soubory Äi vÃ½pisy.">&lt;pre&gt;</a>
+        <a href="javascript:insertAtCursor(document.form.content, '&lt;code&gt;', '&lt;/code&gt;');" id="mono" title="VloÅ¾it znaÄku pro pÃ­smo s pevnou Å¡Ã­Å™kou">&lt;code&gt;</a>
     </div>
     <textarea name="content" cols="100" rows="30" tabindex="5">${PARAMS.content?if_exists?html}</textarea>
     <div class="error">${ERRORS.content?if_exists}</div>
@@ -72,8 +72,8 @@ pak v¹ak potøebuje podporu programátora, kterı pøipraví data.</p>
   <tr>
    <td width="90">&nbsp;</td>
    <td>
-     <input tabindex="8" type="submit" name="preview" value="<#if PREVIEW?exists>Zopakuj náhled<#else>Náhled</#if>">
-     <input tabindex="9" type="submit" name="finish" value="Dokonèi">
+     <input tabindex="8" type="submit" name="preview" value="<#if PREVIEW?exists>Zopakuj nÃ¡hled<#else>NÃ¡hled</#if>">
+     <input tabindex="9" type="submit" name="finish" value="DokonÄi">
    </td>
   </tr>
  </table>
@@ -90,10 +90,10 @@ pak v¹ak potøebuje podporu programátora, kterı pøipraví data.</p>
  </#if>
 </form>
 
-<p>Povolené HTML <a href="http://www.w3.org/TR/html4/index/elements.html">znaèky</a>:
+<p>PovolenÃ© HTML <a href="http://www.w3.org/TR/html4/index/elements.html">znaÄky</a>:
  A,  B, BLOCKQUOTE, BR, CENTER, CITE, CODE, DD, DEL, DIV, DL, DT, EM, IMG, H1, H2, H3, H4, HR, I,
  INS, KBD, LI, OL, P, PRE, Q, SMALL, SPAN, STRONG, SUB, SUP, TABLE, TBODY, TD, TFOOT, TH, THEAD,
- TR, TT, U, UL, VAR. Znaèky P, PRE, DIV, SPAN, H1-H4 a A povolují atrubity ID a CLASS.
+ TR, TT, U, UL, VAR. ZnaÄky P, PRE, DIV, SPAN, H1-H4 a A povolujÃ­ atrubity ID a CLASS.
 </p>
 
 

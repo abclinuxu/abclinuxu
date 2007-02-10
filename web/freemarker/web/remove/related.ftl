@@ -1,12 +1,12 @@
 <#include "../header.ftl">
 
-<h1>Smazání souvisejících dokumentù</h1>
+<h1>SmazÃ¡nÃ­ souvisejÃ­cÃ­ch dokumentÅ¯</h1>
 
 <@lib.showMessages/>
 
 <form action="${URL.noPrefix("/EditRelated/"+RELATION.id)}" method="POST" name="form">
     <p>
-        Prosím potvrïte, zda si opravdu pøejete smazat tyto související dokumenty:
+        ProsÃ­m potvrÄte, zda si opravdu pÅ™ejete smazat tyto souvisejÃ­cÃ­ dokumenty:
     </p>
     <ul>
         <#list DOCUMENTS as document>
@@ -14,7 +14,7 @@
         </#list>
     </ul>
     <p>
-        <input type="submit" value="Dokonèi">
+        <input type="submit" value="DokonÄi">
     </p>
     ${TOOL.saveParams(PARAMS, ["rid","action"])}
     <input type="hidden" name="action" value="remove2">

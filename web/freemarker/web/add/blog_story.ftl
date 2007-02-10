@@ -2,35 +2,35 @@
 
 <@lib.showMessages/>
 
-<h1>Novı zápis do blogu</h1>
+<h1>NovÃ½ zÃ¡pis do blogu</h1>
 
-<p>Tento formuláø slou¾í pro vkládání novıch zápisù do va¹eho blogu.
-Ka¾dı zápis musí mít titulek, kterı by mìl struènì a jasnì popisovat,
-o èem vá¹ zápis bude pojednávat. Titulek bude zobrazen i ve va¹em RSS.
-Text zápisu pi¹te ve validním HTML
+<p>Tento formulÃ¡Å™ slouÅ¾Ã­ pro vklÃ¡dÃ¡nÃ­ novÃ½ch zÃ¡pisÅ¯ do vaÅ¡eho blogu.
+KaÅ¾dÃ½ zÃ¡pis musÃ­ mÃ­t titulek, kterÃ½ by mÄ›l struÄnÄ› a jasnÄ› popisovat,
+o Äem vÃ¡Å¡ zÃ¡pis bude pojednÃ¡vat. Titulek bude zobrazen i ve vaÅ¡em RSS.
+Text zÃ¡pisu piÅ¡te ve validnÃ­m HTML
 (<a href="http://www.kosek.cz/clanky/html/01.html">rychlokurz</a>,
-<a href="http://www.jakpsatweb.cz/html/">pøíruèka</a>).
+<a href="http://www.jakpsatweb.cz/html/">pÅ™Ã­ruÄka</a>).
 </p>
 
-<p>Del¹í pøíspìvky lze rozdìlit na úvodní èást, která se zobrazí
-ve vıpisu a zbytek textu. Pøi zobrazení zápisu budou obì èásti automaticky
-spojeny do jednoho celku. Pro dìlení pou¾ijte speciální znaèku <code>&lt;break&gt;</code>.
-Dávejte si pozor na to, aby tato znaèka nebyla mezi párovımi HTML znaèkami.
-Systém zlom vy¾aduje a¾ od limitu stopadesáti slov.
+<p>DelÅ¡Ã­ pÅ™Ã­spÄ›vky lze rozdÄ›lit na ÃºvodnÃ­ ÄÃ¡st, kterÃ¡ se zobrazÃ­
+ve vÃ½pisu a zbytek textu. PÅ™i zobrazenÃ­ zÃ¡pisu budou obÄ› ÄÃ¡sti automaticky
+spojeny do jednoho celku. Pro dÄ›lenÃ­ pouÅ¾ijte speciÃ¡lnÃ­ znaÄku <code>&lt;break&gt;</code>.
+DÃ¡vejte si pozor na to, aby tato znaÄka nebyla mezi pÃ¡rovÃ½mi HTML znaÄkami.
+SystÃ©m zlom vyÅ¾aduje aÅ¾ od limitu stopadesÃ¡ti slov.
 </p>
 
-<p>Pokud nechcete pøíspìvek ihned publikovat, pou¾ijte tlaèítko
-Odlo¾. Mù¾ete se k pøíspìvku kdykoliv vrátit a vydat jej, a¾ budete
-spokojeni. Najdete jej v pravém menu.
+<p>Pokud nechcete pÅ™Ã­spÄ›vek ihned publikovat, pouÅ¾ijte tlaÄÃ­tko
+OdloÅ¾. MÅ¯Å¾ete se k pÅ™Ã­spÄ›vku kdykoliv vrÃ¡tit a vydat jej, aÅ¾ budete
+spokojeni. Najdete jej v pravÃ©m menu.
 </p>
 
 <#if PREVIEW?exists>
- <h2>Náhled va¹eho zápisu</h2>
+ <h2>NÃ¡hled vaÅ¡eho zÃ¡pisu</h2>
 
  <div style="padding-left: 30pt">
     <h2>${TOOL.xpath(PREVIEW, "/data/name")?if_exists}</h2>
     <p class="cl_inforadek">${DATE.show(PREVIEW.created, "CZ_SHORT")} |
-        Pøeèteno: 0x
+        PÅ™eÄteno: 0x
         <#if PARAMS.cid?exists>| ${CATEGORIES[PARAMS.cid]?if_exists}</#if>
     </p>
     ${TOOL.xpath(PREVIEW, "/data/perex")?if_exists}
@@ -38,21 +38,21 @@ spokojeni. Najdete jej v pravém menu.
  </div>
 </#if>
 
-<h2>Zde mù¾ete provést své úpravy</h2>
+<h2>Zde mÅ¯Å¾ete provÃ©st svÃ© Ãºpravy</h2>
 
 <form action="${URL.make("/blog/edit/"+REL_BLOG.id)}" method="POST" name="form">
 <table class="siroka" cellpadding="5">
     <tr>
         <td>
-            <span class="required">Titulek zápisu</span>
+            <span class="required">Titulek zÃ¡pisu</span>
             <input tabindex="1" type="text" name="title" size="60" value="${PARAMS.title?if_exists?html}">&nbsp;
-	        <a class="info" href="#">?<span class="tooltip">Zde nastavíte titulek va¹eho zápisu. Je dùle¾itı pro RSS.</span></a>
+	        <a class="info" href="#">?<span class="tooltip">Zde nastavÃ­te titulek vaÅ¡eho zÃ¡pisu. Je dÅ¯leÅ¾itÃ½ pro RSS.</span></a>
             <div class="error">${ERRORS.title?if_exists}</div>
         </td>
     </tr>
     <tr>
         <td>
-            Kategorie zápisu:
+            Kategorie zÃ¡pisu:
             <#if (CATEGORIES?size>0)>
                 <select name="cid">
                     <#list CATEGORIES?keys as category>
@@ -60,30 +60,30 @@ spokojeni. Najdete jej v pravém menu.
                     </#list>
                 </select>&nbsp;
             <#else>
-                nemáte nastaveny ¾ádné kategorie
+                nemÃ¡te nastaveny Å¾Ã¡dnÃ© kategorie
             </#if>
-    	    <a class="info" href="#">?<span class="tooltip">Zde nastavíte kategorii va¹eho zápisu. Mù¾ete tak èlenit zápisy do rùznıch kategorií.</span></a>
+    	    <a class="info" href="#">?<span class="tooltip">Zde nastavÃ­te kategorii vaÅ¡eho zÃ¡pisu. MÅ¯Å¾ete tak Älenit zÃ¡pisy do rÅ¯znÃ½ch kategoriÃ­.</span></a>
         </td>
     </tr>
     <tr>
         <td>
-            <label>Aktivovat sledování diskuse
+            <label>Aktivovat sledovÃ¡nÃ­ diskuse
             <input type="checkbox" name="watchDiz" value="yes"<#if PARAMS.watchDiz?exists> checked</#if>></label>
-	        <a class="info" href="#">?<span class="tooltip">Zde mù¾ete aktivovat sledování diskuse
-		k tomuto zápisu. Komentáøe ètenáøù vám budou chodit emailem.</span></a>
+	        <a class="info" href="#">?<span class="tooltip">Zde mÅ¯Å¾ete aktivovat sledovÃ¡nÃ­ diskuse
+		k tomuto zÃ¡pisu. KomentÃ¡Å™e ÄtenÃ¡Å™Å¯ vÃ¡m budou chodit emailem.</span></a>
         </td>
     </tr>
     <tr>
         <td>
-            <span class="required">Obsah zápisu</span>
+            <span class="required">Obsah zÃ¡pisu</span>
             <div class="form-edit">
-                <a href="javascript:insertAtCursor(document.form.content, '&lt;b&gt;', '&lt;/b&gt;');" id="serif" title="Vlo¾it znaèku tuènì"><b>B</b></a>
-                <a href="javascript:insertAtCursor(document.form.content, '&lt;i&gt;', '&lt;/i&gt;');" id="serif" title="Vlo¾it znaèku kurzíva"><i>I</i></a>
-                <a href="javascript:insertAtCursor(document.form.content, '&lt;a href=&quot;&quot;&gt;', '&lt;/a&gt;');" id="mono" title="Vlo¾it znaèku odkazu">&lt;a&gt;</a>
-                <a href="javascript:insertAtCursor(document.form.content, '&lt;p&gt;', '&lt;/p&gt;');" id="mono" title="Vlo¾it znaèku odstavce">&lt;p&gt;</a>
-                <a href="javascript:insertAtCursor(document.form.content, '&lt;pre&gt;', '&lt;/pre&gt;');" id="mono" title="Vlo¾it formátovanı text. Vhodné pouze pro konfiguraèní soubory èi vıpisy.">&lt;pre&gt;</a>
-		        <a href="javascript:insertAtCursor(document.form.content, '&lt;code&gt;', '&lt;/code&gt;');" id="mono" title="Vlo¾it znaèku pro písmo s pevnou ¹íøkou">&lt;code&gt;</a>
-                <a href="javascript:insertAtCursor(document.form.content, '&lt;break&gt;', '');" id="mono" title="Vlo¾it znaèku zlomu">&lt;break&gt;</a>
+                <a href="javascript:insertAtCursor(document.form.content, '&lt;b&gt;', '&lt;/b&gt;');" id="serif" title="VloÅ¾it znaÄku tuÄnÄ›"><b>B</b></a>
+                <a href="javascript:insertAtCursor(document.form.content, '&lt;i&gt;', '&lt;/i&gt;');" id="serif" title="VloÅ¾it znaÄku kurzÃ­va"><i>I</i></a>
+                <a href="javascript:insertAtCursor(document.form.content, '&lt;a href=&quot;&quot;&gt;', '&lt;/a&gt;');" id="mono" title="VloÅ¾it znaÄku odkazu">&lt;a&gt;</a>
+                <a href="javascript:insertAtCursor(document.form.content, '&lt;p&gt;', '&lt;/p&gt;');" id="mono" title="VloÅ¾it znaÄku odstavce">&lt;p&gt;</a>
+                <a href="javascript:insertAtCursor(document.form.content, '&lt;pre&gt;', '&lt;/pre&gt;');" id="mono" title="VloÅ¾it formÃ¡tovanÃ½ text. VhodnÃ© pouze pro konfiguraÄnÃ­ soubory Äi vÃ½pisy.">&lt;pre&gt;</a>
+		        <a href="javascript:insertAtCursor(document.form.content, '&lt;code&gt;', '&lt;/code&gt;');" id="mono" title="VloÅ¾it znaÄku pro pÃ­smo s pevnou Å¡Ã­Å™kou">&lt;code&gt;</a>
+                <a href="javascript:insertAtCursor(document.form.content, '&lt;break&gt;', '');" id="mono" title="VloÅ¾it znaÄku zlomu">&lt;break&gt;</a>
             </div>
             <div class="error">${ERRORS.content?if_exists}</div>
             <textarea tabindex="2" name="content" class="siroka" rows="30">${PARAMS.content?default("<p></p>")?html}</textarea>
@@ -92,12 +92,12 @@ spokojeni. Najdete jej v pravém menu.
     <tr>
         <td>
             <#if PREVIEW?exists>
-                <input tabindex="3" type="submit" name="preview" value="Zopakuj náhled">
-                <input tabindex="4" type="submit" name="finish" value="Dokonèi">
-                <input tabindex="5" type="submit" name="delay" value="Odlo¾">
+                <input tabindex="3" type="submit" name="preview" value="Zopakuj nÃ¡hled">
+                <input tabindex="4" type="submit" name="finish" value="DokonÄi">
+                <input tabindex="5" type="submit" name="delay" value="OdloÅ¾">
             <#else>
-                <input tabindex="3" type="submit" name="preview" value="Náhled">
-                <input tabindex="4" type="submit" name="delay" value="Odlo¾">
+                <input tabindex="3" type="submit" name="preview" value="NÃ¡hled">
+                <input tabindex="4" type="submit" name="delay" value="OdloÅ¾">
             </#if>
         </td>
     </tr>

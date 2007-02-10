@@ -3,27 +3,27 @@
 
 
 <h1 class="st_nadpis"><a href="r/e/000316.html">Hardware</a></h1>
-    <p>Pøehled hardwaru fungujícího pod Linuxem.</p>
+    <p>PÅ™ehled hardwaru fungujÃ­cÃ­ho pod Linuxem.</p>
 <hr />
 
-<h1 class="st_nadpis"><a href="t/g/000318.html">Ovladaèe</a></h1>
-    <p>Linuxové ovladaèe pro nejrùznìj¹í hardware.</p>
+<h1 class="st_nadpis"><a href="t/g/000318.html">OvladaÄe</a></h1>
+    <p>LinuxovÃ© ovladaÄe pro nejrÅ¯znÄ›jÅ¡Ã­ hardware.</p>
 <hr />
 
-<h1 class="st_nadpis"><a href="q/d/000315.html">Èlánky</a></h1>
-    <p>Recenze, návody, Jaderné noviny, ...</p>
+<h1 class="st_nadpis"><a href="q/d/000315.html">ÄŒlÃ¡nky</a></h1>
+    <p>Recenze, nÃ¡vody, JadernÃ© noviny, ...</p>
 <hr />
 
 <h1 class="st_nadpis"><a href="n/v/003739.html">Diskuze</a></h1>
-    <p>Tisíce zodpovìzenıch dotazù z nejrozsáhlej¹ího linuxového diskuzního fóra v ÈR a SR.</p>
+    <p>TisÃ­ce zodpovÄ›zenÃ½ch dotazÅ¯ z nejrozsÃ¡hlejÅ¡Ã­ho linuxovÃ©ho diskuznÃ­ho fÃ³ra v ÄŒR a SR.</p>
 <hr />
 
 <h1 class="st_nadpis"><a href="d/f/081515.html">FAQ</a></h1>
-    <p>Odpovìdi na èasto kladené dotazy.</p>
+    <p>OdpovÄ›di na Äasto kladenÃ© dotazy.</p>
 <hr />
 
-<h1 class="st_nadpis"><a href="f/y/060058.html">Slovník</a></h1>
-    <p>Struèné definice linuxovıch, unixovıch a technickıch termínù.</p>
+<h1 class="st_nadpis"><a href="f/y/060058.html">SlovnÃ­k</a></h1>
+    <p>StruÄnÃ© definice linuxovÃ½ch, unixovÃ½ch a technickÃ½ch termÃ­nÅ¯.</p>
 <hr />
 
 &nbsp;

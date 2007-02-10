@@ -70,6 +70,6 @@ public class DumpCategoryTree {
         dumper.dumpTree(current, new Relation(Constants.REL_SOFTWARE));
         dumper.dumpTree(current, new Relation(Constants.REL_FORUM));
 
-        System.out.println("Strom uloæen do adres·¯e "+current.getAbsolutePath()+".");
+        System.out.println("Strom ulo≈æen do adres√°≈ôe "+current.getAbsolutePath()+".");
     }
 }

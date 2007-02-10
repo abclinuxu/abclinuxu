@@ -119,7 +119,7 @@ public class EditArticle implements AbcAction {
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation==null )
-            throw new MissingArgumentException("ChybÌ parametr relationId!");
+            throw new MissingArgumentException("Chyb√≠ parametr relationId!");
 
         persistence.synchronize(relation);
         persistence.synchronize(relation.getChild());
@@ -173,7 +173,7 @@ public class EditArticle implements AbcAction {
         if (ACTION_TALK_EMAILS_STEP2.equals(action))
             return actionSetTalkAddressesStep2(request, response, env);
 
-        throw new MissingArgumentException("ChybÌ parametr action!");
+        throw new MissingArgumentException("Chyb√≠ parametr action!");
     }
 
     private String actionAddStep1(HttpServletRequest request, Map env) throws Exception {
@@ -462,7 +462,7 @@ public class EditArticle implements AbcAction {
         Document document = item.getData();
         Element addresses = (Element) document.selectSingleNode("/data/talk/addresses");
         if (addresses==null || addresses.elements().size()==0) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Nejsou definov·ny æ·dnÈ emailovÈ adresy!", env, request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Nejsou definov√°ny ≈æ√°dn√© emailov√© adresy!", env, request.getSession());
             urlUtils.redirect(response, "/edit/" + relation.getId() + "?action=showTalk");
             return null;
         }
@@ -472,7 +472,7 @@ public class EditArticle implements AbcAction {
         if (id != -1) {
             question = (Element) document.selectSingleNode("/data/talk/question[@id=" + id + "]");
             if (question == null) {
-                ServletUtils.addError(Constants.ERROR_GENERIC, "Ot·zka "+id+" nebyla nalezena!", env, request.getSession());
+                ServletUtils.addError(Constants.ERROR_GENERIC, "Ot√°zka "+id+" nebyla nalezena!", env, request.getSession());
                 urlUtils.redirect(response, "/edit/" + relation.getId() + "?action=showTalk");
                 return null;
             }
@@ -503,7 +503,7 @@ public class EditArticle implements AbcAction {
 
         int id = Misc.parseInt((String) params.get(PARAM_QUESTION_ID), -1);
         if (id==-1) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "»Ìslo ot·zky "+id+" je neplatnÈ!", env, request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC, "ƒå√≠slo ot√°zky "+id+" je neplatn√©!", env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/edit/" + relation.getId() + "?action=showTalk");
             return null;
@@ -511,7 +511,7 @@ public class EditArticle implements AbcAction {
 
         Element question = (Element) item.getData().selectSingleNode("/data/talk/question[@id=" + id + "]");
         if (question==null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Ot·zka ËÌslo " + id + " neexistuje!", env, request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Ot√°zka ƒç√≠slo " + id + " neexistuje!", env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/edit/" + relation.getId() + "?action=showTalk");
             return null;
@@ -533,7 +533,7 @@ public class EditArticle implements AbcAction {
 
         int id = Misc.parseInt((String) params.get(PARAM_QUESTION_ID), -1);
         if (id == -1) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "»Ìslo ot·zky " + id + " je neplatnÈ!", env, request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC, "ƒå√≠slo ot√°zky " + id + " je neplatn√©!", env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/edit/" + relation.getId() + "?action=showTalk");
             return null;
@@ -541,7 +541,7 @@ public class EditArticle implements AbcAction {
 
         Element question = (Element) item.getData().selectSingleNode("/data/talk/question[@id=" + id + "]");
         if (question == null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Ot·zka ËÌslo " + id + " neexistuje!", env, request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Ot√°zka ƒç√≠slo " + id + " neexistuje!", env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/edit/" + relation.getId() + "?action=showTalk");
             return null;
@@ -600,7 +600,7 @@ public class EditArticle implements AbcAction {
 
         int id = Misc.parseInt((String) params.get(PARAM_SERIES), -1);
         if (id == -1) {
-            ServletUtils.addError(PARAM_SERIES, "Zadejte ËÌslo seri·lu!", env, request.getSession());
+            ServletUtils.addError(PARAM_SERIES, "Zadejte ƒç√≠slo seri√°lu!", env, request.getSession());
             return actionAttachArticleStep1(request,  env);
         }
 
@@ -638,7 +638,7 @@ public class EditArticle implements AbcAction {
     private boolean setTitle(Map params, Item item, Map env) {
         String name = (String) params.get(PARAM_TITLE);
         if ( name==null || name.length()==0 ) {
-            ServletUtils.addError(PARAM_TITLE, "VyplÚte titulek Ël·nku!", env, null);
+            ServletUtils.addError(PARAM_TITLE, "Vypl≈àte titulek ƒçl√°nku!", env, null);
             return false;
         }
         Element element = DocumentHelper.makeElement(item.getData(), "/data/name");
@@ -656,7 +656,7 @@ public class EditArticle implements AbcAction {
     private boolean setPerex(Map params, Item item, Map env) {
         String perex = (String) params.get(PARAM_PEREX);
         if ( perex==null || perex.length()==0 ) {
-            ServletUtils.addError(PARAM_PEREX, "VyplÚte popis Ël·nku!", env, null);
+            ServletUtils.addError(PARAM_PEREX, "Vypl≈àte popis ƒçl√°nku!", env, null);
             return false;
         }
         Element element = DocumentHelper.makeElement(item.getData(), "/data/perex");
@@ -728,7 +728,7 @@ public class EditArticle implements AbcAction {
             }
             item.setCreated(publish);
         } catch (ParseException e) {
-            ServletUtils.addError(PARAM_PUBLISHED, "Spr·vn˝ form·t je 2002-02-10 06:22", env, null);
+            ServletUtils.addError(PARAM_PUBLISHED, "Spr√°vn√Ω form√°t je 2002-02-10 06:22", env, null);
             return false;
         }
         return true;
@@ -744,7 +744,7 @@ public class EditArticle implements AbcAction {
     public static boolean setArticleContent(Map params, Record record, Map env) {
         String content = (String) params.get(PARAM_CONTENT);
         if ( content==null || content.length()==0 ) {
-            ServletUtils.addError(PARAM_CONTENT, "VyplÚte obsah Ël·nku!", env, null);
+            ServletUtils.addError(PARAM_CONTENT, "Vypl≈àte obsah ƒçl√°nku!", env, null);
             return false;
         }
 
@@ -921,7 +921,7 @@ public class EditArticle implements AbcAction {
             if ( url.length()==0 )
                 continue; // whitespaces on empty line
             if ( ! stk.hasMoreTokens() ) {
-                ServletUtils.addError(param, "ChybÌ titulek pro URL "+url+"!", env, null);
+                ServletUtils.addError(param, "Chyb√≠ titulek pro URL "+url+"!", env, null);
                 return false;
             }
 
@@ -1000,13 +1000,13 @@ public class EditArticle implements AbcAction {
     private boolean setAddresses(Map params, Document document, Map env) {
         String s = (String) params.get(PARAM_ADDRESSES);
         if (s==null || s.length()==0) {
-            ServletUtils.addError(PARAM_ADDRESSES, "Zadejte adresy ˙ËastnÌk˘ diskuse!", env, null);
+            ServletUtils.addError(PARAM_ADDRESSES, "Zadejte adresy √∫ƒçastn√≠k≈Ø diskuse!", env, null);
             return false;
         }
 
         String moderator = (String) params.get(PARAM_MODERATOR);
         if (moderator==null || moderator.length()==0) {
-            ServletUtils.addError(PARAM_MODERATOR, "Zadejte adresu moder·tora diskuse!", env, null);
+            ServletUtils.addError(PARAM_MODERATOR, "Zadejte adresu moder√°tora diskuse!", env, null);
             return false;
         }
 
@@ -1040,11 +1040,11 @@ public class EditArticle implements AbcAction {
         String content = (String) params.get(PARAM_CONTENT);
 
         if (name==null || name.length()==0) {
-            ServletUtils.addError(PARAM_NAME, "VyplÚte jmÈno tazatele!", env, null);
+            ServletUtils.addError(PARAM_NAME, "Vypl≈àte jm√©no tazatele!", env, null);
             return false;
         }
         if (content==null || content.length()==0) {
-            ServletUtils.addError(PARAM_CONTENT, "Zadejte ot·zku!", env, null);
+            ServletUtils.addError(PARAM_CONTENT, "Zadejte ot√°zku!", env, null);
             return false;
         }
 

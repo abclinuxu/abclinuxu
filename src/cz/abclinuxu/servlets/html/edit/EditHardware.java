@@ -98,14 +98,14 @@ public class EditHardware implements AbcAction {
             response.sendRedirect(response.encodeRedirectURL("/"));
 
         if ( action==null)
-            throw new MissingArgumentException("Chybí parametr action!");
+            throw new MissingArgumentException("ChybÃ­ parametr action!");
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
         if ( relation!=null ) {
             Tools.sync(relation);
             env.put(VAR_RELATION,relation);
         } else
-            throw new MissingArgumentException("Chybí parametr relationId!");
+            throw new MissingArgumentException("ChybÃ­ parametr relationId!");
 
         // check permissions
         if ( user==null )
@@ -123,7 +123,7 @@ public class EditHardware implements AbcAction {
         if ( action.equals(ACTION_EDIT_STEP2) )
             return actionEditStep2(request, response, env);
 
-        throw new MissingArgumentException("Chybí parametr action!");
+        throw new MissingArgumentException("ChybÃ­ parametr action!");
     }
 
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
@@ -291,7 +291,7 @@ public class EditHardware implements AbcAction {
             DocumentHelper.makeElement(root, "name").setText(tmp);
             return true;
         } else {
-            ServletUtils.addError(PARAM_NAME, "Zadejte název druhu!", env, null);
+            ServletUtils.addError(PARAM_NAME, "Zadejte nÃ¡zev druhu!", env, null);
             return false;
         }
     }
@@ -379,7 +379,7 @@ public class EditHardware implements AbcAction {
         tmp = Misc.filterDangerousCharacters(tmp);
         if (tmp != null && tmp.length() > 0) {
             if (tmp.indexOf('<')!=-1) {
-                ServletUtils.addError(PARAM_DRIVER_URL, "HTML znaèky nejsou povoleny v URL!" , env, null);
+                ServletUtils.addError(PARAM_DRIVER_URL, "HTML znaÄky nejsou povoleny v URL!" , env, null);
                 return false;
             }
             Element element = DocumentHelper.makeElement(root, "driver_url");

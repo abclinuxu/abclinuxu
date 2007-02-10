@@ -62,7 +62,7 @@ public class ShowDocbook implements AbcAction {
         String id = uri.substring(uri.lastIndexOf('/')+1,uri.lastIndexOf(".docb"));
         Relation relation = new Relation(Integer.parseInt(id));
 
-        response.setContentType("text/html; charset=ISO-8859-2");
+        response.setContentType("text/html; charset=UTF-8");
         PrintWriter writer = response.getWriter();
         printDocbook(writer, relation);
         writer.flush();
@@ -76,7 +76,7 @@ public class ShowDocbook implements AbcAction {
         Item article = (Item) persistence.findById(relation.getChild());
         Document doc = article.getData();
 
-        print("<?xml version='1.0' encoding='ISO-8859-2'?>", 0, true);
+        print("<?xml version='1.0' encoding='UTF-8'?>", 0, true);
         print("<!DOCTYPE article PUBLIC \"-//OASIS//DTD DocBook XML V4.1.2//EN\" \"http://www.oasis-open.org/docbook/xml/4.0/docbookx.dtd\">\n", 0, true);
         print("<article>", 0, true);
         print("<title>"+Tools.xpath(doc, "/data/name")+"</title>", 0, true);
@@ -99,8 +99,8 @@ public class ShowDocbook implements AbcAction {
         for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
             Node node = (Node) iter.next();
             ByteArrayInputStream bais = new ByteArrayInputStream(node.getText().getBytes());
-            Parser parser = new Parser(new Lexer(new Page(bais, "ISO-8859-2")));
-            parser.setEncoding("ISO-8859-2");
+            Parser parser = new Parser(new Lexer(new Page(bais, "UTF-8")));
+            parser.setEncoding("UTF-8");
             DocbookVisitor visitor = new DocbookVisitor();
             parser.visitAllNodesWith(visitor);
         }

@@ -2,7 +2,7 @@
 
 <@lib.showMessages/>
 
-Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum</a>
+Zkratka na <a href="#zpravicky">zprÃ¡viÄky</a>, <a href="#diskuse">diskusnÃ­ fÃ³rum</a>
 
 <#assign ARTICLES=VARS.getFreshArticles(USER?if_exists)>
 <#list ARTICLES as rel>
@@ -11,21 +11,21 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
 </#list>
 
 <p>
- <a href="/History?type=articles&from=${ARTICLES?size}&count=10" title="Dal¹í">Star¹í èlánky</a>
+ <a href="/History?type=articles&from=${ARTICLES?size}&count=10" title="DalÅ¡Ã­">StarÅ¡Ã­ ÄlÃ¡nky</a>
 </p>
 
 <#assign NEWS=VARS.getFreshNews(USER?if_exists)>
-<a name="zpravicky"><h2>Zprávièky</h2></a>
+<a name="zpravicky"><h2>ZprÃ¡viÄky</h2></a>
 <#list NEWS as rel>
  <@lib.showNews rel/>
  <#if rel_has_next><@lib.separator /></#if>
 </#list>
 <p>
- <a href="/History?type=news&from=${NEWS?size}&count=15" title="Dal¹í">Star¹í zprávièky</a>,
- <a href="${URL.make("/news/EditItem?action=add")}">Vytvoøit zprávièku</a>
+ <a href="/History?type=news&from=${NEWS?size}&count=15" title="DalÅ¡Ã­">StarÅ¡Ã­ zprÃ¡viÄky</a>,
+ <a href="${URL.make("/news/EditItem?action=add")}">VytvoÅ™it zprÃ¡viÄku</a>
 </p>
 
-<h3><a href="/ovladace">Ovladaèe</a></h3>
+<h3><a href="/ovladace">OvladaÄe</a></h3>
  <#assign DRIVERS = VARS.getFreshDrivers(USER?if_exists)>
 <ul>
  <#list DRIVERS as rel>
@@ -48,7 +48,7 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
 <#assign FORUM = VARS.getFreshQuestions(USER?if_exists)>
 <#if (FORUM?size > 0)>
     <#assign FORUM=TOOL.analyzeDiscussions(FORUM)>
-    <a name="diskuse"><h1>Diskusní fórum</h1></a>
+    <a name="diskuse"><h1>DiskusnÃ­ fÃ³rum</h1></a>
     <p>
         <#list FORUM as diz>
             <a href="/forum/show/${diz.relationId}">
@@ -69,14 +69,14 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
     </p>
 
     <ul>
-        <li><a href="/diskuse.jsp">Zobrazit diskusní fórum (polo¾it dotaz)</a></li>
-        <li><a href="/History?type=discussions&from=${FORUM?size}&count=20">Zobrazit star¹í dotazy</a></li>
+        <li><a href="/diskuse.jsp">Zobrazit diskusnÃ­ fÃ³rum (poloÅ¾it dotaz)</a></li>
+        <li><a href="/History?type=discussions&from=${FORUM?size}&count=20">Zobrazit starÅ¡Ã­ dotazy</a></li>
     </ul>
 </#if>
 
 <p>
-<b>Z</b> - diskuse byla zmra¾ena,
-<b>V</b> - diskuse byla vyøe¹ena,
+<b>Z</b> - diskuse byla zmraÅ¾ena,
+<b>V</b> - diskuse byla vyÅ™eÅ¡ena,
 <b>S</b> - diskusi sledujete monitorem.
 </p>
 
@@ -96,8 +96,8 @@ Zkratka na <a href="#zpravicky">zprávièky</a>, <a href="#diskuse">diskusní fórum
        <#assign diz=TOOL.analyzeDiscussion("UNDEF")>
      </#if>
      <a href="${url}">${TOOL.xpath(story, "/data/name")}<#if title!="UNDEF"> | ${title}</#if></a> |
-     Komentáøù:&nbsp;${diz.responseCount}
-     <#if diz.responseCount gt 0><@lib.markNewComments diz/>, poslední&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if>
+     KomentÃ¡Å™Å¯:&nbsp;${diz.responseCount}
+     <#if diz.responseCount gt 0><@lib.markNewComments diz/>, poslednÃ­&nbsp;${DATE.show(diz.updated, "CZ_SHORT")}</#if>
      </li>
   </#list>
   </ul>

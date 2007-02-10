@@ -122,11 +122,11 @@ public class SendEmail implements AbcAction {
             env.put(VAR_KOD, ulozenyKod);
             Integer nalezenyKod = Integer.valueOf(kod);
             if ( !nalezenyKod.equals(ulozenyKod) ) {
-                ServletUtils.addError(VAR_KOD, "VyplÚte spr·vn˝ kÛd!", env, null);
+                ServletUtils.addError(VAR_KOD, "Vypl≈àte spr√°vn√Ω k√≥d!", env, null);
                 chyba = true;
             }
         } catch (Exception e) {
-            ServletUtils.addError(VAR_KOD, "VyplÚte spr·vn˝ kÛd!", env, null);
+            ServletUtils.addError(VAR_KOD, "Vypl≈àte spr√°vn√Ω k√≥d!", env, null);
             chyba = true;
         }
         String from = (String) params.get(PARAM_SENDER);
@@ -146,12 +146,12 @@ public class SendEmail implements AbcAction {
         }
         String subject = (String) params.get(PARAM_SUBJECT);
         if ( subject==null || subject.length()==0 ) {
-            ServletUtils.addError(PARAM_SUBJECT, "Zadejte p¯edmÏt!", env, null);
+            ServletUtils.addError(PARAM_SUBJECT, "Zadejte p≈ôedmƒõt!", env, null);
             chyba = true;
         }
         String message = (String) params.get(PARAM_MESSAGE);
         if ( message==null || message.length()==0 ) {
-            ServletUtils.addError(PARAM_MESSAGE, "Zadejte zpr·vu!", env, null);
+            ServletUtils.addError(PARAM_MESSAGE, "Zadejte zpr√°vu!", env, null);
             chyba = true;
         }
         if ( chyba )
@@ -174,9 +174,9 @@ public class SendEmail implements AbcAction {
         }
 
         if ( EmailSender.sendEmail(data) )
-            ServletUtils.addMessage("Vaπe zpr·va byla odesl·na.", env, session);
+            ServletUtils.addMessage("Va≈°e zpr√°va byla odesl√°na.", env, session);
         else
-            ServletUtils.addMessage("Litujeme, ale doπlo k chybÏ p¯i odesÌl·nÌ vaπi zpr·vy.", env, session);
+            ServletUtils.addMessage("Litujeme, ale do≈°lo k chybƒõ p≈ôi odes√≠l√°n√≠ va≈°i zpr√°vy.", env, session);
 
         String url = (String) params.get(PARAM_URL);
         if (url==null || url.length()==0) url = "/";

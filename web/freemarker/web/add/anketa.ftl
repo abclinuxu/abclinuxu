@@ -3,17 +3,17 @@
 <@lib.showMessages/>
 
 <p>
-    Tato stránka je urèena pro vytváøení novıch anket. Zadejte
-    text otázky a nejménì jednu volbu. Z html znaèek jsou povoleny
-    jen novı øádek a odkaz. Dále mù¾ete urèit, zda jeden hlasující
-    mù¾e vybrat více voleb nebo si musí zvolit jednu jedinou.
+    Tato strÃ¡nka je urÄena pro vytvÃ¡Å™enÃ­ novÃ½ch anket. Zadejte
+    text otÃ¡zky a nejmÃ©nÄ› jednu volbu. Z html znaÄek jsou povoleny
+    jen novÃ½ Å™Ã¡dek a odkaz. DÃ¡le mÅ¯Å¾ete urÄit, zda jeden hlasujÃ­cÃ­
+    mÅ¯Å¾e vybrat vÃ­ce voleb nebo si musÃ­ zvolit jednu jedinou.
 </p>
 
 <form action="${URL.make("/EditPoll")}" method="POST">
  <#assign choices=PARAMS.choices?if_exists>
  <table width="100%" border=0 cellpadding=5>
   <tr>
-   <td width="90" class="required">Otázka</td>
+   <td width="90" class="required">OtÃ¡zka</td>
    <td>
     <textarea name="question" cols="80" rows="3" tabindex="1">${PARAMS.question?if_exists?html}</textarea>
     <div class="error">${ERRORS.question?if_exists}</div>
@@ -29,7 +29,7 @@
       </tr>
   </#if>
   <tr>
-   <td class="required">Více mo¾ností</td>
+   <td class="required">VÃ­ce moÅ¾nostÃ­</td>
    <td>
     <select name="multichoice" tabindex="3">
      <#assign multi=PARAMS.multichoice?if_exists>
@@ -111,7 +111,7 @@
   </tr>
   <tr>
    <td width="120">&nbsp;</td>
-   <td><input type="submit" value="Dokonèi" tabindex="14"></td>
+   <td><input type="submit" value="DokonÄi" tabindex="14"></td>
   </tr>
  </table>
 

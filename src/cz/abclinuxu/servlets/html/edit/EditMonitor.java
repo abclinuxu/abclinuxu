@@ -30,7 +30,7 @@ public class EditMonitor implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if (relation == null)
-            throw new MissingArgumentException("Chybí parametr rid!");
+            throw new MissingArgumentException("ChybÃ­ parametr rid!");
         else {
             Tools.sync(relation);
             env.put(VAR_RELATION, relation);

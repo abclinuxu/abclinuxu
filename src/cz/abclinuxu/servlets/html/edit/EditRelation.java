@@ -206,7 +206,7 @@ public class EditRelation implements AbcAction {
             return actionRemove2(request, response, env);
         }
 
-        throw new MissingArgumentException("Chybí parametr action!");
+        throw new MissingArgumentException("ChybÃ­ parametr action!");
     }
 
     private boolean canMoveAll(User user) {
@@ -330,7 +330,7 @@ public class EditRelation implements AbcAction {
             upper.setUrl("");
         }
         if (upper.getUrl() == null) {
-            ServletUtils.addError(Constants.ERROR_GENERIC, "Nadøazená relace ("+relation.getUpper()+") nemá definované URL!", env, null);
+            ServletUtils.addError(Constants.ERROR_GENERIC, "NadÅ™azenÃ¡ relace ("+relation.getUpper()+") nemÃ¡ definovanÃ© URL!", env, null);
             return FMTemplateSelector.select("EditRelation", "setUrl", env, request);
         }
         env.put(VAR_PARENT, upper);
@@ -367,14 +367,14 @@ public class EditRelation implements AbcAction {
             url = url.substring(0, url.length()-1);
 
         if (url.indexOf('/')!=-1) {
-            ServletUtils.addError(PARAM_URL, "Zadáváte jen poslední èást URL, lomítko je zakázáno!", env, null);
+            ServletUtils.addError(PARAM_URL, "ZadÃ¡vÃ¡te jen poslednÃ­ ÄÃ¡st URL, lomÃ­tko je zakÃ¡zÃ¡no!", env, null);
             return actionSetUrlStep2(request, env);
         }
 
         url = URLManager.enforceRelativeURL(url);
         url = upper.getUrl() + '/' + url;
         if (URLManager.exists(url)) {
-            ServletUtils.addError(PARAM_URL, "Toto URL ji¾ existuje!", env, null);
+            ServletUtils.addError(PARAM_URL, "Toto URL jiÅ¾ existuje!", env, null);
             return actionSetUrlStep2(request, env);
         }
 
@@ -384,7 +384,7 @@ public class EditRelation implements AbcAction {
         if (originalUrl != null) {
             CustomURLCache.getInstance().remove(originalUrl);
             sqlTool.insertOldAddress(originalUrl, null, new Integer(relation.getId()));
-            ServletUtils.addMessage("Adresa byla zmìnìna. Nyní zkontrolujte, zda není tøeba zmìnit i adresy podstránek.", env, request.getSession());
+            ServletUtils.addMessage("Adresa byla zmÄ›nÄ›na. NynÃ­ zkontrolujte, zda nenÃ­ tÅ™eba zmÄ›nit i adresy podstrÃ¡nek.", env, request.getSession());
         }
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -516,7 +516,7 @@ public class EditRelation implements AbcAction {
         String dirUri = destination.getUrl();
         if (dirUri == null) {
             relation.setUrl(null);
-            ServletUtils.addMessage("Cílová sekce nemá definovanou adresu, URL bylo zru¹eno.", env, request.getSession());
+            ServletUtils.addMessage("CÃ­lovÃ¡ sekce nemÃ¡ definovanou adresu, URL bylo zruÅ¡eno.", env, request.getSession());
         }
 
         int position = originalUrl.lastIndexOf('/');
@@ -727,7 +727,7 @@ public class EditRelation implements AbcAction {
         else if (gid>0)
             acl.addAttribute("gid", new Integer(gid).toString());
         else {
-            ServletUtils.addError(Constants.ERROR_GENERIC,"Musíte zadat èíslo skupiny nebo u¾ivatele!",env,null);
+            ServletUtils.addError(Constants.ERROR_GENERIC,"MusÃ­te zadat ÄÃ­slo skupiny nebo uÅ¾ivatele!",env,null);
             return false;
         }
 

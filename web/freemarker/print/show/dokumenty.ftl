@@ -4,7 +4,7 @@
 
 <@lib.showMessages/>
 
-<p><a href="${URL.noPrefix("/editContent/66948?action=add")}">Vytvoø dokument</a></p>
+<p><a href="${URL.noPrefix("/editContent/66948?action=add")}">VytvoÅ™ dokument</a></p>
 
 <#if TOOL.xpath(CATEGORY,"data/note")?exists>
  ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}

@@ -3,16 +3,16 @@
 
 <@lib.showParents/>
 
-<h1>Èasto kladené otázky</h1>
+<h1>ÄŒasto kladenÃ© otÃ¡zky</h1>
 
-<p>Èasto kladené otázky (anglicky FAQ) jsou kolekcí pøedem
-zodpovìzenıch otázek, na které se ètenáøi èasto ptají
-v diskusním fóru. Pokud øe¹íte urèitı problém nebo se zaèínáte
-seznamovat s Linuxem, mìli byste zaèít na této stránce a prostudovat
-peèlivì jednotlivé otázky. Vıhodou oproti fóru je pøehlednost a
-(vìt¹inou i) úplnost odpovìdi. Jeliko¾ jde o spoleènou
-práci, kterıkoliv ètenáø smí vylep¹it èi upøesnit odpovìï,
-díky èemu¾ narùstá kvalita zodpovìzenıch otázek.
+<p>ÄŒasto kladenÃ© otÃ¡zky (anglicky FAQ) jsou kolekcÃ­ pÅ™edem
+zodpovÄ›zenÃ½ch otÃ¡zek, na kterÃ© se ÄtenÃ¡Å™i Äasto ptajÃ­
+v diskusnÃ­m fÃ³ru. Pokud Å™eÅ¡Ã­te urÄitÃ½ problÃ©m nebo se zaÄÃ­nÃ¡te
+seznamovat s Linuxem, mÄ›li byste zaÄÃ­t na tÃ©to strÃ¡nce a prostudovat
+peÄlivÄ› jednotlivÃ© otÃ¡zky. VÃ½hodou oproti fÃ³ru je pÅ™ehlednost a
+(vÄ›tÅ¡inou i) Ãºplnost odpovÄ›di. JelikoÅ¾ jde o spoleÄnou
+prÃ¡ci, kterÃ½koliv ÄtenÃ¡Å™ smÃ­ vylepÅ¡it Äi upÅ™esnit odpovÄ›Ä,
+dÃ­ky ÄemuÅ¾ narÅ¯stÃ¡ kvalita zodpovÄ›zenÃ½ch otÃ¡zek.
 </p>
 
 <table border="0" class="siroka">
@@ -21,7 +21,7 @@ díky èemu¾ narùstá kvalita zodpovìzenıch otázek.
             <a href="../../${DUMP.getFile(94492)}">Boot</a>
         </td>
         <td>
-            <a href="../../${DUMP.getFile(94486)}">Digitální foto</a>
+            <a href="../../${DUMP.getFile(94486)}">DigitÃ¡lnÃ­ foto</a>
         </td>
         <td>
             <a href="../../${DUMP.getFile(94480)}">Disky</a>
@@ -43,32 +43,32 @@ díky èemu¾ narùstá kvalita zodpovìzenıch otázek.
             <a href="../../${DUMP.getFile(94493)}">Kernel</a>
         </td>
         <td>
-            <a href="../../${DUMP.getFile(94483)}">Klávesnice</a>
+            <a href="../../${DUMP.getFile(94483)}">KlÃ¡vesnice</a>
         </td>
         <td>
-            <a href="../../${DUMP.getFile(94494)}">Multimédia</a>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <a href="../../${DUMP.getFile(94484)}">My¹i</a>
-        </td>
-        <td>
-            <a href="../../${DUMP.getFile(94485)}">Ostatní hardware</a>
-        </td>
-        <td>
-            <a href="../../${DUMP.getFile(94490)}">Práva</a>
+            <a href="../../${DUMP.getFile(94494)}">MultimÃ©dia</a>
         </td>
     </tr>
     <tr>
         <td>
-            <a href="../../${DUMP.getFile(94479)}">Sítì</a>
+            <a href="../../${DUMP.getFile(94484)}">MyÅ¡i</a>
+        </td>
+        <td>
+            <a href="../../${DUMP.getFile(94485)}">OstatnÃ­ hardware</a>
+        </td>
+        <td>
+            <a href="../../${DUMP.getFile(94490)}">PrÃ¡va</a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <a href="../../${DUMP.getFile(94479)}">SÃ­tÄ›</a>
         </td>
         <td>
             <a href="../../${DUMP.getFile(95259)}">Skripty</a>
         </td>
         <td>
-            <a href="../../${DUMP.getFile(94481)}">Souborové systémy</a>
+            <a href="../../${DUMP.getFile(94481)}">SouborovÃ© systÃ©my</a>
         </td>
     </tr>
     <tr>
@@ -76,7 +76,7 @@ díky èemu¾ narùstá kvalita zodpovìzenıch otázek.
             <a href="../../${DUMP.getFile(94488)}">Tisk</a>
         </td>
         <td>
-            <a href="../../${DUMP.getFile(94491)}">Vypalování</a>
+            <a href="../../${DUMP.getFile(94491)}">VypalovÃ¡nÃ­</a>
         </td>
         <td>
             <a href="../../${DUMP.getFile(94495)}">Web</a>
@@ -84,7 +84,7 @@ díky èemu¾ narùstá kvalita zodpovìzenıch otázek.
     </tr>
     <tr>
         <td>
-            <a href="../../${DUMP.getFile(94482)}">Zálohování</a>
+            <a href="../../${DUMP.getFile(94482)}">ZÃ¡lohovÃ¡nÃ­</a>
         </td>
         <td colspan="2">
             <a href="../../${DUMP.getFile(94489)}">Zvuk</a>

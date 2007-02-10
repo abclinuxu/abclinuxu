@@ -23,7 +23,7 @@ Reklama
 
 Zveme Vas na workshop "JBoss sales day CZ", ktery Vas
 uvede do obchodnich i technickych zakladu produktu JBoss.
-Workshop se kona 27.2. od 10.00 hod v budove spolecnosti
+Workshop se kona 27.2. od 10.00 hod vÂ budove spolecnosti
 Servodata, Dolnomecholupska 12, Praha 10.
 Workshop je pro ucastniky zdarma.
 

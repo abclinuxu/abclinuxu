@@ -2,15 +2,15 @@
 
 <@lib.showMessages/>
 
-<h1>Autoøi</h1>
+<h1>AutoÅ™i</h1>
 <#if USER?exists && USER.hasRole("article admin")>
-    <a href="${URL.noPrefix("/autori/edit?action=add")}">Pøidat</a>
+    <a href="${URL.noPrefix("/autori/edit?action=add")}">PÅ™idat</a>
 </#if>
 
 <table>
     <tr>
-        <td>Jméno</td>
-        <td>Poèet èlánkù</td>
+        <td>JmÃ©no</td>
+        <td>PoÄet ÄlÃ¡nkÅ¯</td>
     </tr>
     <#list SORT.byName(AUTHORS) as author>
         <tr>

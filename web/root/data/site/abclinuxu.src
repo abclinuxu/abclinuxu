@@ -8,8 +8,8 @@
    method="GET"
    action="http://www.abclinuxu.cz/Search"
    searchForm="http://www.abclinuxu.cz/Search"
-   queryEncoding="iso-8859-2"
-   queryCharset="iso-8859-2"
+   queryEncoding="UTF-8"
+   queryCharset="UTF-8"
 >
 
 <input name="query" user>
@@ -17,7 +17,7 @@
 
 <interpret
    browserResultType="result"
-   charset="iso-8859-2"
+   charset="UTF-8"
    resultItemStart="<!--m-->"
    resultItemEnd="<!--n-->"
 >

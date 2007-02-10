@@ -3,18 +3,18 @@
 <@lib.showMessages/>
 
 <#if (ENTRIES.currentPage.row == 0) >
-    <h1>Kniha náv¹tìv</h1>
+    <h1>Kniha nÃ¡vÅ¡tÄ›v</h1>
 
-    <p>Kniha náv¹tìv je urèena náv¹tìvníkùm, kteøí chtìjí zanechat
-    vzkaz èi zprávu provozovatelùm a administrátorùm portálu. Jedná
-    se o obdobu náv¹tìvních knih, jaké vídáte na hradech a zámcích,
-    prostì napi¹te zde, jak se vám na na¹em portále líbilo èi nelíbilo.
-    Pro hlá¹ení chyb èi námìtù na vylep¹ení je urèena
-    <a href="${URL.noPrefix("/hardware/dir/3500")}">tato</a> stránka.
+    <p>Kniha nÃ¡vÅ¡tÄ›v je urÄena nÃ¡vÅ¡tÄ›vnÃ­kÅ¯m, kteÅ™Ã­ chtÄ›jÃ­ zanechat
+    vzkaz Äi zprÃ¡vu provozovatelÅ¯m a administrÃ¡torÅ¯m portÃ¡lu. JednÃ¡
+    se o obdobu nÃ¡vÅ¡tÄ›vnÃ­ch knih, jakÃ© vÃ­dÃ¡te na hradech a zÃ¡mcÃ­ch,
+    prostÄ› napiÅ¡te zde, jak se vÃ¡m na naÅ¡em portÃ¡le lÃ­bilo Äi nelÃ­bilo.
+    Pro hlÃ¡Å¡enÃ­ chyb Äi nÃ¡mÄ›tÅ¯ na vylepÅ¡enÃ­ je urÄena
+    <a href="${URL.noPrefix("/hardware/dir/3500")}">tato</a> strÃ¡nka.
     </p>
 
     <p>
-        <a href="${URL.noPrefix("/kniha_navstev/edit")}">Pøidat vzkaz</a>
+        <a href="${URL.noPrefix("/kniha_navstev/edit")}">PÅ™idat vzkaz</a>
     </p>
 </#if>
 
@@ -34,11 +34,11 @@
 <p>
   <#if (ENTRIES.currentPage.row > 0) >
    <#assign start=ENTRIES.currentPage.row-ENTRIES.pageSize><#if (start<0)><#assign start=0></#if>
-   <a href="/kniha_navstev?from=${start}&amp;count=${ENTRIES.pageSize}">Novìj¹í vzkazy</a>
+   <a href="/kniha_navstev?from=${start}&amp;count=${ENTRIES.pageSize}">NovÄ›jÅ¡Ã­ vzkazy</a>
   </#if>
   <#assign start=ENTRIES.currentPage.row + ENTRIES.pageSize>
   <#if (start < ENTRIES.total) >
-   <a href="/kniha_navstev?from=${start}&amp;count=${ENTRIES.pageSize}">Star¹í vzkazy</a>
+   <a href="/kniha_navstev?from=${start}&amp;count=${ENTRIES.pageSize}">StarÅ¡Ã­ vzkazy</a>
   </#if>
 </p>
 

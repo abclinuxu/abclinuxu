@@ -92,7 +92,7 @@ public class ShowObject implements AbcAction {
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation==null )
-            throw new MissingArgumentException("Parametr relationId je prázdný!");
+            throw new MissingArgumentException("Parametr relationId je prÃ¡zdnÃ½!");
         relation = (Relation) persistence.findById(relation);
         env.put(VAR_RELATION,relation);
 
@@ -209,7 +209,7 @@ public class ShowObject implements AbcAction {
 
         Item diz = (Item) InstanceUtils.instantiateParam(PARAM_DISCUSSION, Item.class, params, request);
         if (diz==null)
-            throw new MissingArgumentException("Chybí parametr "+PARAM_DISCUSSION+"!");
+            throw new MissingArgumentException("ChybÃ­ parametr "+PARAM_DISCUSSION+"!");
         diz = (Item) persistence.findById(diz);
 
         List children = diz.getChildren();
@@ -218,7 +218,7 @@ public class ShowObject implements AbcAction {
 
         int id = Misc.parseInt((String) params.get(PARAM_THREAD), -1);
         if (id == -1)
-            throw new MissingArgumentException("Chybí parametr " + PARAM_THREAD + "!");
+            throw new MissingArgumentException("ChybÃ­ parametr " + PARAM_THREAD + "!");
 
         DiscussionRecord dizRecord = (DiscussionRecord) record.getCustom();
         Comment comment = dizRecord.getComment(id);

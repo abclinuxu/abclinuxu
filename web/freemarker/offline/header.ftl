@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>${TITLE}</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <link rel="stylesheet" type="text/css" href="../../../styles.css">
   <script type="text/javascript" src="../../../scripts.js"></script>
 </head>

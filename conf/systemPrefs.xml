@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-2"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE preferences SYSTEM "http://java.sun.com/dtd/preferences.dtd">
 
 <preferences EXTERNAL_XML_VERSION="1.0">
@@ -210,7 +210,7 @@
                     <node name="DateTool">
                         <map>
                             <entry key="today" value="dnes" />
-                            <entry key="yesterday" value="včera" />
+                            <entry key="yesterday" value="vÄera" />
                         </map>
                     </node>
                     <node name="SiteMapGenerator">
@@ -269,7 +269,7 @@
                         <map>
                             <entry key="url.live" value="proxool.abc"/>
                             <entry key="url.direct" value="jdbc:mysql://@DB_HOST@/@DB_SCHEMA@?user=@DB_USER@&amp;password=@DB_PASSWORD@&amp;useUnicode=true"/>
-                            <entry key="url.test" value="jdbc:mysql://@DB_HOST@/unit?user=@DB_USER@&amp;password=@DB_PASSWORD@&amp;useUnicode=true&amp;characterEncoding=ISO-8859-2"/>
+                            <entry key="url.test" value="jdbc:mysql://@DB_HOST@/unit?user=@DB_USER@&amp;password=@DB_PASSWORD@&amp;useUnicode=true"/>
                             <entry key="url.devel" value="jdbc:mysql://@DB_HOST@/devel?user=@DB_USER@&amp;password=@DB_PASSWORD@&amp;useUnicode=true"/>
                             <entry key="proxool" value="WEB-INF/conf/proxool.xml"/>
                             <entry key="cache.class" value="cz.abclinuxu.persistence.cache.SynchronizedCache" />
@@ -350,8 +350,8 @@
                     </node>
                     <node name="WhatHappened">
                         <map>
-                            <entry key="title" value="Událo se v týdnu {0}/{1,number,#}"/>
-                            <entry key="perex" value="Ucelený přehled článků, zpráviček a diskusí za minulých 7 dní."/>
+                            <entry key="title" value="UdĂĄlo se v tĂ˝dnu {0}/{1,number,#}"/>
+                            <entry key="perex" value="UcelenĂ˝ pĹehled ÄlĂĄnkĹŻ, zprĂĄviÄek a diskusĂ­ za minulĂ˝ch 7 dnĂ­."/>
                             <entry key="author" value="160276"/>
                             <entry key="section" value="251"/>
                         </map>
@@ -559,15 +559,15 @@
                             </node>
                             <node name="EditRating">
                                 <map>
-                                    <entry key="msg.ok" value="Vaše hodnocení bylo přijato."/>
-                                    <entry key="msg.data.missing" value="Chyba v parametrech pro hlasování."/>
-                                    <entry key="msg.already.rated" value="Můžete hodnotit jen jednou!"/>
-                                    <entry key="msg.not.logged" value="Pro hodnocení je nutné se nejdříve přihlásit."/>
+                                    <entry key="msg.ok" value="VaĹĄe hodnocenĂ­ bylo pĹijato."/>
+                                    <entry key="msg.data.missing" value="Chyba v parametrech pro hlasovĂĄnĂ­."/>
+                                    <entry key="msg.already.rated" value="MĹŻĹžete hodnotit jen jednou!"/>
+                                    <entry key="msg.not.logged" value="Pro hodnocenĂ­ je nutnĂŠ se nejdĹĂ­ve pĹihlĂĄsit."/>
                                 </map>
                             </node>
                             <node name="EditRequest">
                                 <map>
-                                    <entry key="categories" value="Návrh na anketu,Hlášení chyby,Námět na vylepšení,Problém s účtem"/>
+                                    <entry key="categories" value="NĂĄvrh na anketu,HlĂĄĹĄenĂ­ chyby,NĂĄmÄt na vylepĹĄenĂ­,ProblĂŠm s ĂşÄtem"/>
                                     <entry key="response.subject" value="Re: pozadavek"/>
                                 </map>
                             </node>

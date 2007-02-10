@@ -77,7 +77,7 @@ public class EditPoll implements AbcAction {
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if (relation == null)
-            throw new MissingArgumentException("Chybí parametr rid!");
+            throw new MissingArgumentException("ChybÃ­ parametr rid!");
         Tools.sync(relation);
         env.put(VAR_RELATION, relation);
 
@@ -113,7 +113,7 @@ public class EditPoll implements AbcAction {
         if ( ACTION_EDIT2.equals(action) )
             return actionEditStep2(request, response, env);
 
-        throw new MissingArgumentException("Chybí parametr action!");
+        throw new MissingArgumentException("ChybÃ­ parametr action!");
     }
 
     // todo - kontrolovat validitu HTML
@@ -137,7 +137,7 @@ public class EditPoll implements AbcAction {
             multiChoice = true;
 
         if ( text==null || text.length()==0 ) {
-            ServletUtils.addError(PARAM_QUESTION,"Nezadal jste otázku!",env, null);
+            ServletUtils.addError(PARAM_QUESTION,"Nezadal jste otÃ¡zku!",env, null);
             error = true;
         }
 
@@ -148,7 +148,7 @@ public class EditPoll implements AbcAction {
         }
 
         if ( choices.size()<1 ) {
-            ServletUtils.addError(PARAM_CHOICES, "Vyplòte minimálnì jednu volbu!", env, null);
+            ServletUtils.addError(PARAM_CHOICES, "VyplÅˆte minimÃ¡lnÄ› jednu volbu!", env, null);
             error = true;
         }
 
@@ -275,19 +275,19 @@ public class EditPoll implements AbcAction {
         env.put(EditPoll.VAR_POLL, poll);
 
         if ( poll.isClosed() ) {
-            ServletUtils.addError(Constants.ERROR_GENERIC,"Litujeme, ale tato anketa je ji¾ uzavøena.",env,request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC,"Litujeme, ale tato anketa je jiÅ¾ uzavÅ™ena.",env,request.getSession());
             urlUtils.redirect(response, url);
             return null;
         }
 
         if ( url==null || url.length()==0 ) {
-            log.error("U ankety "+poll.getId()+" chybí parametr url!");
+            log.error("U ankety "+poll.getId()+" chybÃ­ parametr url!");
             url = "/";
         }
 
         String[] values = request.getParameterValues(PARAM_VOTE_ID);
         if ( values==null ) {
-            ServletUtils.addError(Constants.ERROR_GENERIC,"Nevybral jste ¾ádnou volbu.",env,request.getSession());
+            ServletUtils.addError(Constants.ERROR_GENERIC,"Nevybral jste Å¾Ã¡dnou volbu.",env,request.getSession());
         } else {
             max = values.length;
             if ( ! poll.isMultiChoice() )
@@ -313,15 +313,15 @@ public class EditPoll implements AbcAction {
                 if (votesFor.size() > 0)
                     persistence.incrementPollChoicesCounter(votesFor);
 
-                ServletUtils.addMessage("Vá¹ hlas do ankety byl pøijat.", env, request.getSession());
+                ServletUtils.addMessage("VÃ¡Å¡ hlas do ankety byl pÅ™ijat.", env, request.getSession());
             } catch (AccessDeniedException e) {
                 if (e.isIpAddressBlocked())
-                    ServletUtils.addError(Constants.ERROR_GENERIC, "Z této IP adresy se u¾ volilo. Zkuste to pozdìji.", env, request.getSession());
+                    ServletUtils.addError(Constants.ERROR_GENERIC, "Z tÃ©to IP adresy se uÅ¾ volilo. Zkuste to pozdÄ›ji.", env, request.getSession());
                 else
-                    ServletUtils.addError(Constants.ERROR_GENERIC, "U¾ jste jednou volil.", env, request.getSession());
+                    ServletUtils.addError(Constants.ERROR_GENERIC, "UÅ¾ jste jednou volil.", env, request.getSession());
             } catch (Exception e) {
                 log.error("Vote bug: ", e);
-                ServletUtils.addError(Constants.ERROR_GENERIC, "Omlouváme se, ale nastala chyba.", env, request.getSession());
+                ServletUtils.addError(Constants.ERROR_GENERIC, "OmlouvÃ¡me se, ale nastala chyba.", env, request.getSession());
             }
         }
 

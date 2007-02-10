@@ -1,42 +1,42 @@
 <#include "../header.ftl">
 
-<h1 class="st_nadpis">Úvod</h1>
+<h1 class="st_nadpis">Ãšvod</h1>
 
-<p>Tento pøíspìvek byl oznaèen na¹imi administrátory,
-nebo» dle jejich názoru nevyhovoval pravidlùm slu¹ného
-chování èi zákonùm této zemì.
+<p>Tento pÅ™Ã­spÄ›vek byl oznaÄen naÅ¡imi administrÃ¡tory,
+neboÅ¥ dle jejich nÃ¡zoru nevyhovoval pravidlÅ¯m sluÅ¡nÃ©ho
+chovÃ¡nÃ­ Äi zÃ¡konÅ¯m tÃ©to zemÄ›.
 </p>
 
-<h1 class="st_nadpis">Proè?</h1>
+<h1 class="st_nadpis">ProÄ?</h1>
 
-<p>Ná¹ portál patøí k posledním serverùm na svìtì, které si udr¾ují
-vysokı standard kvality diskusí. Komentáøe jsou k vìci, lidé se
-sna¾í druhım pomoci, nenadávají si. Schválnì srovnejte kvalitu
-na¹ich diskusí s konkurencí. Chceme tento standard uchovat, bohu¾el
-nìkteøí náv¹tìvníci se u nás zaèínají chovat tak, jak jsou zvyklí
-jinde. A to nehodláme tolerovat. Proto jsme zavedli cenzuru.
+<p>NÃ¡Å¡ portÃ¡l patÅ™Ã­ k poslednÃ­m serverÅ¯m na svÄ›tÄ›, kterÃ© si udrÅ¾ujÃ­
+vysokÃ½ standard kvality diskusÃ­. KomentÃ¡Å™e jsou k vÄ›ci, lidÃ© se
+snaÅ¾Ã­ druhÃ½m pomoci, nenadÃ¡vajÃ­ si. SchvÃ¡lnÄ› srovnejte kvalitu
+naÅ¡ich diskusÃ­ s konkurencÃ­. Chceme tento standard uchovat, bohuÅ¾el
+nÄ›kteÅ™Ã­ nÃ¡vÅ¡tÄ›vnÃ­ci se u nÃ¡s zaÄÃ­najÃ­ chovat tak, jak jsou zvyklÃ­
+jinde. A to nehodlÃ¡me tolerovat. Proto jsme zavedli cenzuru.
 </p>
 
-<h1 class="st_nadpis">K èemu je dobrá</h1>
+<h1 class="st_nadpis">K Äemu je dobrÃ¡</h1>
 
-<p>Cenzura je speciální nástroj na¹ich administrátorù k oznaèení
-nevhodnıch pøíspìvkù. Mohou jej pou¾ít tehdy, pokud narazí na
-komentáø obsahující vulgarismy, osobní urá¾ky èi osoèování nebo
-pokud obsah odporuje platnım zákonùm (napøíklad podpora takovıch
-zrùdností, jako je komunismus èi fa¹ismus, vızvy k nezákonnım
-akcím a podobnì).
+<p>Cenzura je speciÃ¡lnÃ­ nÃ¡stroj naÅ¡ich administrÃ¡torÅ¯ k oznaÄenÃ­
+nevhodnÃ½ch pÅ™Ã­spÄ›vkÅ¯. Mohou jej pouÅ¾Ã­t tehdy, pokud narazÃ­ na
+komentÃ¡Å™ obsahujÃ­cÃ­ vulgarismy, osobnÃ­ urÃ¡Å¾ky Äi osoÄovÃ¡nÃ­ nebo
+pokud obsah odporuje platnÃ½m zÃ¡konÅ¯m (napÅ™Ã­klad podpora takovÃ½ch
+zrÅ¯dnostÃ­, jako je komunismus Äi faÅ¡ismus, vÃ½zvy k nezÃ¡konnÃ½m
+akcÃ­m a podobnÄ›).
 </p>
 
 <h1 class="st_nadpis">Jak funguje</h1>
 
-<p>Text takto oznaèenıch pøíspìvkù není v diskusi zobrazen. Místo
-nìj je napsáno vysvìtlení a odkaz na tuto stránku, kde je zobrazen
-nezmìnìnı závadnı pøíspìvek. Takto se ka¾dı ná¹ ètenáø mù¾e sám rozhodnout,
-zda si jej pøeète (jde o explicitní akci) a zda mìl ná¹ administrátor
-pravdu, nebo byl pøíli¹ úzkostlivı.
+<p>Text takto oznaÄenÃ½ch pÅ™Ã­spÄ›vkÅ¯ nenÃ­ v diskusi zobrazen. MÃ­sto
+nÄ›j je napsÃ¡no vysvÄ›tlenÃ­ a odkaz na tuto strÃ¡nku, kde je zobrazen
+nezmÄ›nÄ›nÃ½ zÃ¡vadnÃ½ pÅ™Ã­spÄ›vek. Takto se kaÅ¾dÃ½ nÃ¡Å¡ ÄtenÃ¡Å™ mÅ¯Å¾e sÃ¡m rozhodnout,
+zda si jej pÅ™eÄte (jde o explicitnÃ­ akci) a zda mÄ›l nÃ¡Å¡ administrÃ¡tor
+pravdu, nebo byl pÅ™Ã­liÅ¡ ÃºzkostlivÃ½.
 </p>
 
-<h1 class="st_nadpis">Závadnı pøíspìvek</h1>
+<h1 class="st_nadpis">ZÃ¡vadnÃ½ pÅ™Ã­spÄ›vek</h1>
 
  <div class="ds_hlavicka">
 
