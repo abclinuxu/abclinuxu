@@ -198,7 +198,7 @@ public class EditSurvey implements AbcAction {
      */
     private boolean setTitle(Map params, Item survey, Map env) {
         String name = (String) params.get(PARAM_TITLE);
-        if ( !Misc.empty(name) ) {
+        if ( Misc.empty(name) ) {
             ServletUtils.addError(PARAM_TITLE, "Zadejte jméno ankety!", env, null);
             return false;
         }

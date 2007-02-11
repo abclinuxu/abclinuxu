@@ -43,7 +43,7 @@
         <li>
             <a href="${URL.noPrefix("/Admin?action=switchMaintainance")}">
                 <#if SYSTEM_CONFIG.isMaintainanceMode()>vypnout<#else>zapnout</#if> režim údržby
-            </a> <br>
+            </a> 
             používat jen v krajní nouzi! Celé abíčko bude jen ke čtení.
         </li>
     </#if>

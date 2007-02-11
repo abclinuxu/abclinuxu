@@ -206,7 +206,7 @@ public class ShowSurvey implements AbcAction {
         xmlWriter.flush();
 
         Element emailElement = dump.element("email");
-        if (emailElement!=null) {
+        if (emailElement != null) {
             Map params = new HashMap();
             // put addresses
             for (Iterator iter = emailElement.elementIterator(); iter.hasNext(); ) {
@@ -220,7 +220,7 @@ public class ShowSurvey implements AbcAction {
         }
 
         Element element = dump.element("dir");
-        if (element!=null) {
+        if (element != null) {
             if ( element==null || element.getTextTrim().length()==0 )
                 throw new InvalidDataException("No dir in survey!");
             String dir = element.getTextTrim();
@@ -232,10 +232,11 @@ public class ShowSurvey implements AbcAction {
 
             String suffix = null;
             element = dump.element("suffix");
-            if ( element!=null ) suffix = element.getTextTrim();
+            if ( element != null )
+                suffix = element.getTextTrim();
 
-            File directory = new File(FMUtils.getTemplatesDir(), "web/"+dir);
-            if ( !directory.exists() )
+            File directory = new File(FMUtils.getTemplatesDir(), "web/ankety/"+dir);
+            if ( ! directory.exists() )
                 directory.mkdirs();
 
             File file = File.createTempFile(prefix, suffix, directory);
