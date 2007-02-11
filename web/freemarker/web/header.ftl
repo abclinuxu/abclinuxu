@@ -104,9 +104,9 @@
                          url=relAnketa.url?default("/ankety/show/"+relAnketa.id)>
                 <#if anketa.multiChoice><#assign type = "checkbox"><#else><#assign type = "radio"></#if>
                 <div class="s_nadpis">
-			<a class="s_nadpis-pravy-odkaz" href="/clanky/dir/3500?categoryPosition=0">navrhněte&nbsp;&raquo;</a>
-			<a href="/ankety">Anketa</a>
-		</div>
+			        <a class="s_nadpis-pravy-odkaz" href="/clanky/dir/3500?categoryPosition=0">navrhněte&nbsp;&raquo;</a>
+			        <a href="/ankety">Anketa</a>
+		        </div>
                 <div class="s_sekce">
                     <form action="${URL.noPrefix("/EditPoll/"+relAnketa.id)}" method="POST">
                     <div class="ank-otazka">${anketa.text}</div>
@@ -148,7 +148,7 @@
                 <div class="ls_zpr">
                 <#list news as relation>
                     <#if relation_index==4>
-			<@lib.advertisement id="sl-mini" />
+			        <@lib.advertisement id="sl-mini" />
                     </#if>
                     <@lib.showTemplateNews relation/>
                     <hr>
@@ -205,7 +205,6 @@
                     <#if USER?exists && USER.isMemberOf(11246)>
                         <li><a href="/Admin">Administrace portálu</a></li>
                         <li><a href="/system">Sekce systém</a></li>
-                        <li><a href="/system/todo">TODO</a></li>
                     </#if>
                 </ul>
             </div>

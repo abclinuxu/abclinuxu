@@ -32,6 +32,7 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.security.AccessKeeper;
 import org.dom4j.Document;
@@ -73,7 +74,7 @@ public class ShowSurvey implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
 
         Item survey = (Item) InstanceUtils.instantiateParam(PARAM_SURVEY_ID, Item.class, params, request);
-        if ( survey==null ) {
+        if ( survey == null ) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Anketa nebyla nalezena!", env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/");
@@ -81,7 +82,7 @@ public class ShowSurvey implements AbcAction {
         }
 
         persistence.synchronize(survey);
-        if ( survey.getType()!=Item.SURVEY ) {
+        if ( survey.getType() != Item.SURVEY ) {
             ServletUtils.addError(Constants.ERROR_GENERIC, "Tento objekt není anketa!", env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/");
@@ -90,12 +91,13 @@ public class ShowSurvey implements AbcAction {
 
         String currentScreen = (String) params.get(PARAM_SCREEN_CURRENT);
         String nextScreen = (String) params.get(PARAM_SCREEN_NEXT);
-        if ( Misc.empty(nextScreen) ) nextScreen = START_ID;
+        if ( Misc.empty(nextScreen) )
+            nextScreen = START_ID;
 
         String xpath = "//screen[@id='"+nextScreen+"']";
         Element screen = (Element) survey.getData().selectSingleNode(xpath);
 
-        if ( screen==null ) {
+        if ( screen == null ) {
             log.error("Survey "+survey.getId()+" does not define screen "+nextScreen+" (called from "+currentScreen+")!");
             ServletUtils.addError(Constants.ERROR_GENERIC, "Omlouváme se, ale v anketě nastala chyba.", env, request.getSession());
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -103,28 +105,29 @@ public class ShowSurvey implements AbcAction {
             return null;
         }
 
-        if (screen.attributeValue("onlyUsers") != null) {
-            if (user == null)
-                return FMTemplateSelector.select("ViewUser", "login", env, request);
-        }
+        boolean mustBeLogged = screen.attributeValue("onlyUsers") != null;
+        boolean forbidDuplicates = screen.attributeValue("check") != null;
 
-        if (!Misc.empty(currentScreen))
+        if (mustBeLogged && user == null)
+                return FMTemplateSelector.select("ViewUser", "login", env, request);
+
+        if (! Misc.empty(currentScreen))
             saveParameters(request.getSession(), params, currentScreen);
 
-        if (screen.attributeValue("check")!=null)
+        if (forbidDuplicates)
             try {
                 Relation relation = new Relation(survey, survey, 0);
                 relation.setId(survey.getId()+SURVEY_PREFIX);
                 AccessKeeper.checkAccess(relation, user, "survey", request, response);
             } catch (AccessDeniedException e) {
-                if ( e.isIpAddressBlocked() )
+                if ( e.isIpAddressBlocked() && ! mustBeLogged)
                     return ServletUtils.showErrorPage("Z této IP adresy se už volilo. Zkuste to později.", env, request);
                 else
                     return ServletUtils.showErrorPage("Už jste jednou volil!", env, request);
             }
 
         Element dump = screen.element("dump");
-        if ( dump!=null ) {
+        if ( dump != null ) {
             Document data = (Document) request.getSession().getAttribute(ATTRIB_DATA);
             try {
                 dump(data, dump);
@@ -205,7 +208,7 @@ public class ShowSurvey implements AbcAction {
         Element emailElement = dump.element("email");
         if (emailElement!=null) {
             Map params = new HashMap();
-            // put addressees
+            // put addresses
             for (Iterator iter = emailElement.elementIterator(); iter.hasNext(); ) {
                 Element element = (Element) iter.next();
                 params.put(element.getName().toUpperCase(), element.getTextTrim());
@@ -231,7 +234,7 @@ public class ShowSurvey implements AbcAction {
             element = dump.element("suffix");
             if ( element!=null ) suffix = element.getTextTrim();
 
-            File directory = new File(dir);
+            File directory = new File(FMUtils.getTemplatesDir(), "web/"+dir);
             if ( !directory.exists() )
                 directory.mkdirs();
 

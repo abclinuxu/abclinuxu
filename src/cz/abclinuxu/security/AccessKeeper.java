@@ -96,7 +96,7 @@ public class AccessKeeper implements Configurable {
     public void checkAccessInternal(Relation relation, User user, String type, HttpServletRequest request, HttpServletResponse response) throws AccessDeniedException {
         String id = getSystemId(relation.getChild());
 
-        if (user!=null) {
+        if (user != null) {
             SQLTool sqlTool = SQLTool.getInstance();
             if (sqlTool.getUserAction(user.getId(), relation.getId(), type)!=null)
                 throw new AccessDeniedException("Object has been already used!", false);
@@ -104,11 +104,11 @@ public class AccessKeeper implements Configurable {
         }
 
         HttpSession session = request.getSession();
-        if ( session.getAttribute(id)!=null )
+        if ( session.getAttribute(id) != null )
             throw new AccessDeniedException("Object has been already used!", false);
 
         Cookie[] cookies = request.getCookies();
-        for ( int i = 0; cookies!=null && i<cookies.length; i++ ) {
+        for ( int i = 0; cookies != null && i < cookies.length; i++ ) {
             Cookie cookie = cookies[i];
             if ( cookie.getName().equals(id) )
                 throw new AccessDeniedException("Object has been already used!", false);
@@ -119,14 +119,14 @@ public class AccessKeeper implements Configurable {
         long now = System.currentTimeMillis();
 
         Map storedSessions = (Map) sessionsMap.get(id);
-        if (storedSessions!=null) {
+        if (storedSessions != null) {
             Session foundSession = (Session) storedSessions.get(remoteAddress);
-            if (foundSession!=null) {
+            if (foundSession != null) {
                 if ( compareUserAgents(browser, foundSession) ) {
-                    if ( now<(foundSession.accessed+sameUABlockPeriod) )
+                    if ( now < (foundSession.accessed+sameUABlockPeriod) )
                         throw new AccessDeniedException("Object has been already used!", true);
                 } else {
-                    if ( now<(foundSession.accessed+differentUABlockPeriod) )
+                    if ( now < (foundSession.accessed+differentUABlockPeriod) )
                         throw new AccessDeniedException("Object has been already used!", true);
                 }
             }
@@ -140,7 +140,7 @@ public class AccessKeeper implements Configurable {
         cookie.setMaxAge(1*30*24*3600); // one month
         response.addCookie(cookie);
 
-        if (storedSessions==null) {
+        if (storedSessions == null) {
             storedSessions = Collections.synchronizedMap(new HashMap());
             sessionsMap.put(id, storedSessions);
         }

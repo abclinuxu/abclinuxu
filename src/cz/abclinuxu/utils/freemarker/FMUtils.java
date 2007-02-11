@@ -111,6 +111,13 @@ public class FMUtils implements Configurable {
     }
 
     /**
+     * @return directory where the templates are stored
+     */
+    public static String getTemplatesDir() {
+        return templatesDir;
+    }
+
+    /**
      * @return Configuration used by this object.
      */
     public static Configuration getConfiguration() {

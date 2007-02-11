@@ -88,7 +88,7 @@ public class EditSurvey implements AbcAction {
             return ServletUtils.showErrorPage("Chybí parametr surveyId!",env,request);
 
         persistence.synchronize(item);
-        if ( item.getType()!=Item.SURVEY )
+        if ( item.getType() != Item.SURVEY )
             return ServletUtils.showErrorPage("Tato položka není anketa!", env, request);
 
         if ( ACTION_EDIT.equals(action) )
@@ -127,7 +127,7 @@ public class EditSurvey implements AbcAction {
 
         boolean canContinue = true;
         canContinue &= setDefinition(params, survey, env);
-        canContinue &= setTitle(params, survey);
+        canContinue &= setTitle(params, survey, env);
         canContinue &= setChoices(params, survey);
 
         if ( !canContinue )
@@ -147,13 +147,13 @@ public class EditSurvey implements AbcAction {
         Document document = (Document) survey.getData().clone();
 
         Node title = document.selectSingleNode("/anketa/title");
-        if ( title!=null ) {
+        if ( title != null ) {
             params.put(PARAM_TITLE,title.getText());
             title.detach();
         }
 
         Element choices = (Element) document.selectSingleNode("/anketa/choices");
-        if ( choices!=null ) {
+        if ( choices != null ) {
             StringBuffer sb = new StringBuffer();
             List nodes = choices.elements("choice");
             for ( Iterator iter = nodes.iterator(); iter.hasNext(); ) {
@@ -175,7 +175,7 @@ public class EditSurvey implements AbcAction {
         boolean canContinue = true;
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         canContinue &= setDefinition(params, survey, env);
-        canContinue &= setTitle(params, survey);
+        canContinue &= setTitle(params, survey, env);
         canContinue &= setChoices(params, survey);
 
         if ( !canContinue )
@@ -196,12 +196,15 @@ public class EditSurvey implements AbcAction {
      * @param survey survey to be updated
      * @return false, if there is a major error.
      */
-    private boolean setTitle(Map params, Item survey) {
+    private boolean setTitle(Map params, Item survey, Map env) {
         String name = (String) params.get(PARAM_TITLE);
         if ( !Misc.empty(name) ) {
-            Node node = DocumentHelper.makeElement(survey.getData(), "/anketa/title");
-            node.setText(name);
+            ServletUtils.addError(PARAM_TITLE, "Zadejte jméno ankety!", env, null);
+            return false;
         }
+
+        Node node = DocumentHelper.makeElement(survey.getData(), "/anketa/title");
+        node.setText(name);
         return true;
     }
 
@@ -224,18 +227,18 @@ public class EditSurvey implements AbcAction {
             Document newDoc = DocumentHelper.parseText(definition);
             Element data = (Element) newDoc.selectSingleNode("/anketa");
 
-            if ( data==null ) {
+            if ( data == null ) {
                 ServletUtils.addError(PARAM_DEFINITION, "Chybí značka <anketa>!", env, null);
                 return false;
             }
 
             Node title = survey.getData().selectSingleNode("/anketa/title");
             Node choices = survey.getData().selectSingleNode("/anketa/choices");
-            if ( title!=null ) {
+            if ( title != null ) {
                 title.detach();
                 data.add(title);
             }
-            if ( choices!=null ) {
+            if ( choices != null ) {
                 choices.detach();
                 data.add(choices);
             }
@@ -255,7 +258,7 @@ public class EditSurvey implements AbcAction {
      */
     private boolean setChoices(Map params, Item survey) {
         Element choices = (Element) survey.getData().selectSingleNode("/anketa/choices");
-        if ( choices!=null ) {
+        if ( choices != null ) {
             choices.detach();
             choices = null;
         }
