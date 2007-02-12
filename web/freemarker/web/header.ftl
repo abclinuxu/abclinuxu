@@ -4,9 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>${PARAMS.TITLE?default(TITLE?default('www.abclinuxu.cz'))}</title>
     <meta name="design" content="Petr Soběslavský, Robert Krátký">
-    <#if USER?exists><#assign css=TOOL.xpath(USER.data, "/data/settings/css")?default("UNDEF")></#if>
-    <#if ! css?exists || css=="UNDEF"><#assign css="/styles.css"></#if>
-    <link rel="stylesheet" type="text/css" href="${css}">
+    <link rel="stylesheet" type="text/css" href="${CSS_URI?if_exists}">
     <!--[if IE 7]>
        <link href="/bugie.css" type="text/css" rel="stylesheet">
     <![endif]-->
@@ -142,7 +140,7 @@
                 <a href="/zpravicky" title="zprávičky">Zprávičky</a>
             </div>
 
-            <center><@lib.advertisement id="arbo-hyper" /></center>
+            <@lib.advertisement id="arbo-hyper" />
 
             <div class="s_sekce">
                 <div class="ls_zpr">

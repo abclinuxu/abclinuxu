@@ -151,6 +151,8 @@ public interface Constants {
     String VAR_BOT_DETECTED = "BOT_DETECTED";
     /** instance of system configuration class */
     String VAR_CONFIG = "SYSTEM_CONFIG";
+    /** uri (either relative or absolute) to css file to be used */
+    String VAR_CSS_URI = "CSS_URI";
 
     /** error, that is not related to specific form field */
     String ERROR_GENERIC = "generic";

@@ -543,6 +543,11 @@
                     </node>
                     <node name="html">
                         <map/>
+                        <node name="HTMLVersion">
+                            <map>
+                                <entry key="default.css.uri" value="/styles.css" />
+                            </map>
+                        </node>
                         <node name="edit">
                             <map/>
                             <node name="EditUser">

@@ -26,16 +26,21 @@ import cz.abclinuxu.servlets.utils.template.TemplateSelector;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.freemarker.FMUtils;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.NotAuthorizedException;
 import cz.abclinuxu.exceptions.InvalidInputException;
+import cz.abclinuxu.data.User;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Date;
+import java.util.prefs.Preferences;
 import java.io.Writer;
 import java.io.IOException;
 
@@ -48,16 +53,20 @@ import org.apache.log4j.Logger;
 /**
  * This class renders HTML version of portal.
  */
-public class HTMLVersion {
+public class HTMLVersion implements Configurable {
     static Logger log = Logger.getLogger(HTMLVersion.class);
     static Logger logTemplate = Logger.getLogger("template");
+
+    public static final String PREF_DEFAULT_CSS_STYLE = "default.css.uri";
+
+    private static String defaultCss;
 
     public static void process(HttpServletRequest request, HttpServletResponse response, Map env) throws IOException {
         try {
             URLMapper urlMapper = URLMapper.getInstance(URLMapper.Version.HTML);
             if ( urlMapper.redirectDeprecated(request, response) )
                 return;
-            setLayout(request);
+            setLayout(request, env);
 
             long start = System.currentTimeMillis();
 
@@ -90,15 +99,26 @@ public class HTMLVersion {
         }
     }
 
-    public static void setLayout(HttpServletRequest request) {
+    /**
+     * Sets up css file and template variant to be used.
+     */ 
+    public static void setLayout(HttpServletRequest request, Map env) {
         String serverName = request.getServerName();
         int i = serverName.indexOf(AbcConfig.getDomain());
-        if ( i>0 ) {
-            String server = serverName.substring(0, i-1);
-            if ( server.startsWith("www") || !FMTemplateSelector.layoutExists(server) )
+        if ( i > 0 ) {
+            String server = serverName.substring(0, i - 1);
+            if ( server.startsWith("www") || ! FMTemplateSelector.layoutExists(server) )
                 return;
             request.setAttribute(TemplateSelector.PARAM_VARIANTA, server);
         }
+
+        User user = (User) env.get(Constants.VAR_USER);
+        String css = null;
+        if (user != null)
+            css = Tools.xpath(user.getData(), "/data/settings/css");
+        if (css == null)
+            css = defaultCss;
+        env.put(Constants.VAR_CSS_URI, css);
     }
 
     /**
@@ -139,5 +159,12 @@ public class HTMLVersion {
             log.error("Cannot display error screen!", e);
         }
         writer.flush();
+    }
+
+    /**
+     * Callback used to configure your class from preferences.
+     */
+    public void configure(Preferences prefs) throws ConfigurationException {
+        defaultCss = prefs.get(PREF_DEFAULT_CSS_STYLE, "/styles.css");
     }
 }
