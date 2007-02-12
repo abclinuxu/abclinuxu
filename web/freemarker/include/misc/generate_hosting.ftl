@@ -62,13 +62,12 @@
   </#list>
 </table>
 
-<h2>Doplňkové služby</h2>
-
-<table>
+<table class="prehled">
+  <tr><th align="left">Doplňkové služby</th><th>cena za měsíc</th></tr>
     <#list SERVICES as service>
         <tr>
             <td>
-                <b><a href="${service.url}" title="${service.name}">${service.name}</a></b>
+                <a href="${service.url}" title="${service.name}">${service.name}</a>
 <#--
                 <div class="nimg" style="float: right">
                     <a href="${service.url}"><img src="${service.imageUrl}" alt="photo of ${service.name}"></a>
@@ -76,7 +75,7 @@
                 <p>${service.description}</p>
 -->
             </td>
-            <td class="price">${service.price.price} Kč měsíčně</td>
+            <td class="price">${service.price.price} Kč</td>
         </tr>
     </#list>
 </table>

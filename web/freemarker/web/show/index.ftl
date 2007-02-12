@@ -32,8 +32,7 @@
         </div>
     </#if>
 
-    <#--<hr id="arbo-sq-cara" />
-    <@lib.advertisement id="arbo-sq" />-->
+    <#--<@lib.advertisement id="arbo-sq" />-->
 
     <@lib.advertisement id="ps-boxik1" />
     <@lib.advertisement id="ps-boxik2" />

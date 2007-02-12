@@ -115,8 +115,7 @@
     </#if>
     </ul>
   </div>
-  <#--<hr id="arbo-sq-cara" />
-  <@lib.advertisement id="arbo-sq" />-->
+  <#--<@lib.advertisement id="arbo-sq" />-->
   <@lib.advertisement id="gg-sq-blog" />
 
 </#assign>
