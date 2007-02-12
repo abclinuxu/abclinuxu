@@ -29,6 +29,7 @@ import java.util.*;
 
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.utils.freemarker.FMUtils;
 
 
 /**
@@ -82,7 +83,8 @@ public class AnalyzeSurveyXML {
     void processDump(Element dump, String id) throws Exception {
         String dir = dump.element("dir").getTextTrim();
         String prefix = dump.element("prefix").getTextTrim();
-        List files = getFiles(dir,prefix);
+        File directory = new File(FMUtils.getTemplatesDir(), "web/ankety/" + dir);
+        List files = getFiles(directory, prefix);
 
         data.clear();
         System.out.println("Processing dump of screen "+id+", "+files.size()+" files.");
@@ -98,9 +100,8 @@ public class AnalyzeSurveyXML {
     /**
      * @return list of files to be processed
      */
-    List getFiles(String dir, String prefix) {
+    List getFiles(File directory, String prefix) {
         FilenameFilter filter = new PrefixFileNameFilter(prefix);
-        File directory = new File(dir);
         File[] files = directory.listFiles(filter);
         List list = Arrays.asList(files);
         return list;
