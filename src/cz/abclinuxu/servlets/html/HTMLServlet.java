@@ -52,7 +52,7 @@ public class HTMLServlet extends Controller {
         try {
             Map env = new HashMap();
             performInit(request, response, env);
-            HTMLVersion.setLayout(request);
+            HTMLVersion.setLayout(request, env);
 
             String templateName = process(request, response, env);
             Template template = FMUtils.getConfiguration().getTemplate(templateName);
