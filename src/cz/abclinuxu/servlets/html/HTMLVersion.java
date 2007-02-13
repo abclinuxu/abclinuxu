@@ -28,6 +28,7 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.exceptions.NotFoundException;
@@ -60,6 +61,11 @@ public class HTMLVersion implements Configurable {
     public static final String PREF_DEFAULT_CSS_STYLE = "default.css.uri";
 
     private static String defaultCss;
+
+    static {
+        HTMLVersion instance = new HTMLVersion();
+        ConfigurationManager.getConfigurator().configureAndRememberMe(instance);
+    }
 
     public static void process(HttpServletRequest request, HttpServletResponse response, Map env) throws IOException {
         try {
@@ -101,8 +107,16 @@ public class HTMLVersion implements Configurable {
 
     /**
      * Sets up css file and template variant to be used.
-     */ 
+     */
     public static void setLayout(HttpServletRequest request, Map env) {
+        User user = (User) env.get(Constants.VAR_USER);
+        String css = null;
+        if (user != null)
+            css = Tools.xpath(user.getData(), "/data/settings/css");
+        if (css == null)
+            css = defaultCss;
+        env.put(Constants.VAR_CSS_URI, css);
+
         String serverName = request.getServerName();
         int i = serverName.indexOf(AbcConfig.getDomain());
         if ( i > 0 ) {
@@ -111,14 +125,6 @@ public class HTMLVersion implements Configurable {
                 return;
             request.setAttribute(TemplateSelector.PARAM_VARIANTA, server);
         }
-
-        User user = (User) env.get(Constants.VAR_USER);
-        String css = null;
-        if (user != null)
-            css = Tools.xpath(user.getData(), "/data/settings/css");
-        if (css == null)
-            css = defaultCss;
-        env.put(Constants.VAR_CSS_URI, css);
     }
 
     /**
