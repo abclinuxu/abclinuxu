@@ -460,7 +460,7 @@ public class Dump implements Configurable {
 
         Map env = new HashMap();
         env.put(ShowObject.VAR_RELATION, relation);
-        env.put(VAR_ONLINE_URL, PORTAL_URL + "/diskuse.jsp");
+        env.put(VAR_ONLINE_URL, PORTAL_URL + "/poradna");
 
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);

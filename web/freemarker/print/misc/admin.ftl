@@ -29,6 +29,14 @@
     <li><a href="${URL.noPrefix("/EditUser?action=grant")}">přiřaď roli</a></li>
     <li><a href="${URL.noPrefix("/EditUser?action=invalidateEmail")}">invaliduj emaily uživatelům</a></li>
     <li><a href="${URL.noPrefix("/Group?action=show")}">seznam skupin</a></li>
+    <li>
+        <form action="/Admin" method="get">
+            <input type="text" name="uid" size="5">
+            <input type="hidden" name="action" value="su">
+            <input type="submit" value="su">
+            (číslo uživatele)
+        </form>
+    </li>
 </ul>
 
 <h3>Stav portálu</h3>
@@ -43,7 +51,7 @@
         <li>
             <a href="${URL.noPrefix("/Admin?action=switchMaintainance")}">
                 <#if SYSTEM_CONFIG.isMaintainanceMode()>vypnout<#else>zapnout</#if> režim údržby
-            </a> 
+            </a>
             používat jen v krajní nouzi! Celé abíčko bude jen ke čtení.
         </li>
     </#if>

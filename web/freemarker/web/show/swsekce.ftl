@@ -117,7 +117,7 @@
         </p>
     </#if>
 
-    <@lib.listTree CATEGORIES />
+    <@lib.listTree CATEGORIES, "treemenu1" />
 
     <script type="text/javascript">
       ddtreemenu.createTree("treemenu1", true)
@@ -125,7 +125,7 @@
 </#if>
 
 <#if ITEMS?exists>
-        <@lib.showSoftwareList ITEMS />
+    <@lib.showSoftwareList ITEMS />
 </#if>
 
 </div>

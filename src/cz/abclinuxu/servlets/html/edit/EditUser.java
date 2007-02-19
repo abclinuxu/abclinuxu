@@ -941,7 +941,7 @@ public class EditUser implements AbcAction, Configurable {
                 AdminLogger.logEvent(user, "zneplatnil email uzivateli "+managed.getName()+" - "+managed.getId());
                 count++;
             } catch (Exception e) {
-                sb.append("Uživatel "+id+" nebyl nalezen!<br>");
+                sb.append("Uživatel ").append(id).append(" nebyl nalezen!<br>");
             }
         }
 
@@ -966,7 +966,7 @@ public class EditUser implements AbcAction, Configurable {
             return ServletUtils.showErrorPage("Chybí číslo skupiny!",env,request);
 
         Element system = (Element) managed.getData().selectSingleNode("/data/system");
-        system.addElement("group").setText(new Integer(group).toString());
+        system.addElement("group").setText(Integer.toString(group));
         persistence.update(managed);
 
         User user = (User) env.get(Constants.VAR_USER);
@@ -1392,15 +1392,15 @@ public class EditUser implements AbcAction, Configurable {
         String signature = (String) params.get(PARAM_SIGNATURE);
         signature = Misc.filterDangerousCharacters(signature);
         Element personal = DocumentHelper.makeElement(user.getData(), "/data/personal");
-        if ( signature==null || signature.length()==0 ) {
+        if ( signature == null || signature.length() == 0 ) {
             Node node = personal.element("signature");
             if ( node!=null )
                 personal.remove(node);
             return true;
         }
 
-        if (contentSize(signature)>100) {
-            ServletUtils.addError(PARAM_SIGNATURE, "Maximální délka je 100 znaků!", env, null);
+        if (contentSize(signature) > 120) {
+            ServletUtils.addError(PARAM_SIGNATURE, "Maximální délka je 120 znaků!", env, null);
             return false;
         }
 
@@ -1493,7 +1493,7 @@ public class EditUser implements AbcAction, Configurable {
      */
     private boolean setDiscussionsSizeLimit(Map params, User user, Map env) {
         Map maxSizes = VariableFetcher.getInstance().getMaxSizes();
-        int max = ((Integer) maxSizes.get(VariableFetcher.KEY_QUESTION)).intValue();
+        int max = (Integer) maxSizes.get(VariableFetcher.KEY_QUESTION);
         return setLimitedSize(params, PARAM_DISCUSSIONS_COUNT, user.getData(), "/data/settings/index_discussions", 0, max, env);
     }
 
@@ -1506,7 +1506,7 @@ public class EditUser implements AbcAction, Configurable {
      */
     private boolean setNewsSizeLimit(Map params, User user, Map env) {
         Map maxSizes = VariableFetcher.getInstance().getMaxSizes();
-        int max = ((Integer) maxSizes.get(VariableFetcher.KEY_NEWS)).intValue();
+        int max = (Integer) maxSizes.get(VariableFetcher.KEY_NEWS);
         return setLimitedSize(params, PARAM_NEWS_COUNT, user.getData(), "/data/settings/index_news", 0, max, env);
     }
 
@@ -1519,7 +1519,7 @@ public class EditUser implements AbcAction, Configurable {
      */
     private boolean setStoriesSizeLimit(Map params, User user, Map env) {
         Map maxSizes = VariableFetcher.getInstance().getMaxSizes();
-        int max = ((Integer) maxSizes.get(VariableFetcher.KEY_STORY)).intValue();
+        int max = (Integer) maxSizes.get(VariableFetcher.KEY_STORY);
         return setLimitedSize(params, PARAM_STORIES_COUNT, user.getData(), "/data/settings/index_stories", 0, max, env);
     }
 
@@ -1716,9 +1716,9 @@ public class EditUser implements AbcAction, Configurable {
      */
     private boolean setFeedSize(Map params, User user, Map env) {
         Map maxSizes = VariableFetcher.getInstance().getMaxSizes();
-        int max = ((Integer) maxSizes.get(VariableFetcher.KEY_INDEX_LINKS)).intValue();
+        int max = (Integer) maxSizes.get(VariableFetcher.KEY_INDEX_LINKS);
         boolean result = setLimitedSize(params, PARAM_INDEX_FEED_SIZE, user.getData(), "/data/settings/index_links", 1, max, env);
-        max = ((Integer) maxSizes.get(VariableFetcher.KEY_TEMPLATE_LINKS)).intValue();
+        max = (Integer) maxSizes.get(VariableFetcher.KEY_TEMPLATE_LINKS);
         result &= setLimitedSize(params, PARAM_TEMPLATE_FEED_SIZE, user.getData(), "/data/settings/template_links", 1, max, env);
         return result;
     }
@@ -1790,7 +1790,7 @@ public class EditUser implements AbcAction, Configurable {
     /**
      * Extracts text after last dot in string.
      * @param name
-     * @return
+     * @return text after last dot
      */
     private String getFileSuffix(String name) {
         if ( name==null )

@@ -29,6 +29,7 @@ import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.template.TemplateSelector;
 import cz.abclinuxu.utils.DateTool;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
@@ -40,6 +41,7 @@ import cz.abclinuxu.security.Roles;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
@@ -50,12 +52,14 @@ import java.util.Map;
  */
 public class AdminServlet implements AbcAction {
     public static final String PARAM_RELATION_SHORT = "rid";
+    public static final String PARAM_USER = "uid";
 
     public static final String ACTION_CLEAR_CACHE = "clearCache";
     public static final String ACTION_PERFORM_CHECK = "performCheck";
     public static final String ACTION_RECREATE_RSS = "refreshRss";
     public static final String ACTION_RESTART_TASKS = "restartTasks";
     public static final String ACTION_SWITCH_MAINTAINANCE = "switchMaintainance";
+    public static final String ACTION_SWITCH_USER = "su";
 
     public static final String VAR_DATABASE_STATE = "DATABASE_VALID";
     public static final String VAR_FULLTEXT_STATE = "FULLTEXT_VALID";
@@ -90,6 +94,9 @@ public class AdminServlet implements AbcAction {
 
         if (ACTION_SWITCH_MAINTAINANCE.equals(action))
             return switchMaintainance(request, env);
+
+        if (ACTION_SWITCH_USER.equals(action))
+            return switchUser(request, response, env);
 
         return null;
     }
@@ -135,6 +142,26 @@ public class AdminServlet implements AbcAction {
         return FMTemplateSelector.select("Admin", "show", env, request);
     }
 
+    private String switchUser(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        String s = (String) params.get(PARAM_USER);
+        if (Misc.empty(s)) {
+            ServletUtils.addError(Constants.ERROR_GENERIC, "Zadejte číslo uživatele", env, null);
+            return FMTemplateSelector.select("Admin", "show", env, request);
+        }
+
+        int uid = Integer.parseInt(s);
+        Persistence persistence = PersistenceFactory.getPersistance();
+        User user = (User) persistence.findById(new User(uid));
+
+        env.put(Constants.VAR_USER, user);
+        HttpSession session = request.getSession();
+        session.setAttribute(Constants.VAR_USER, user);
+
+        response.sendRedirect("/");
+        return null;
+    }
+
     /**
      * Utility method for monitoring health of portal. Used by Broadnet.
      * Content of page is defined in web/freemarker/print/misc/admin_check.ftl
@@ -158,7 +185,7 @@ public class AdminServlet implements AbcAction {
             if (lastModified.after(cal.getTime()))
                 ok = true;
         }
-        env.put(VAR_FULLTEXT_STATE, Boolean.valueOf(ok));
+        env.put(VAR_FULLTEXT_STATE, ok);
 
         return FMTemplateSelector.select("Admin", "check", env, request);
     }

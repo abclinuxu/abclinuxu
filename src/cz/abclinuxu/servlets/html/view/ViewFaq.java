@@ -24,6 +24,8 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.view.SectionTreeCache;
+import cz.abclinuxu.data.view.SectionNode;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.paging.Paging;
@@ -37,6 +39,7 @@ import cz.abclinuxu.persistence.versioning.Versioning;
 import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.persistence.versioning.VersionedDocument;
 import cz.abclinuxu.exceptions.NotFoundException;
+import cz.abclinuxu.scheduler.VariableFetcher;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -100,17 +103,26 @@ public class ViewFaq implements AbcAction {
         int count = getPageSize(params);
 
         List qualifiers = new ArrayList();
-        qualifiers.add(new CompareCondition(Field.UPPER, Operation.EQUAL, new Integer(relation.getId())));
-        Qualifier[] qa = new Qualifier[qualifiers.size()];
-        int total = sqlTool.countItemRelationsWithType(Item.FAQ, (Qualifier[]) qualifiers.toArray(qa));
-
+        qualifiers.add(new CompareCondition(Field.UPPER, Operation.EQUAL, relation.getId()));
+        qualifiers.add(new CompareCondition(Field.UPPER, Operation.EQUAL, relation.getId()));
         qualifiers.add(Qualifier.SORT_BY_CREATED);
         qualifiers.add(Qualifier.ORDER_DESCENDING);
         qualifiers.add(new LimitQualifier(from, count));
-        qa = new Qualifier[qualifiers.size()];
+        Qualifier[] qa = new Qualifier[qualifiers.size()];
 
         List questions = sqlTool.findItemRelationsWithType(Item.FAQ, (Qualifier[]) qualifiers.toArray(qa));
         Tools.syncList(questions);
+
+        SectionTreeCache faqTree = VariableFetcher.getInstance().getFaqTree();
+        SectionNode sectionNode = faqTree.getByRelation(relation.getId());
+        int total = -1;
+        if (sectionNode != null)
+            total = sectionNode.getSize();
+        if (total == -1) {
+            qualifiers.add(new CompareCondition(Field.UPPER, Operation.EQUAL, relation.getId()));
+            qa = new Qualifier[qualifiers.size()];
+            total = sqlTool.countItemRelationsWithType(Item.FAQ, (Qualifier[]) qualifiers.toArray(qa));
+        }
 
         Paging paging = new Paging(questions, from, count, total);
         env.put(VAR_QUESTIONS, paging);

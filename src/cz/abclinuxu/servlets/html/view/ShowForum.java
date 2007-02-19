@@ -25,16 +25,20 @@ import cz.abclinuxu.persistence.*;
 import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.data.view.SectionTreeCache;
+import cz.abclinuxu.data.view.SectionNode;
+import cz.abclinuxu.data.view.Forum;
+import cz.abclinuxu.data.view.DiscussionHeader;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.paging.Paging;
 import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.scheduler.VariableFetcher;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
-import java.util.List;
+import java.util.*;
 
 /**
  * Used to display content of the selected discussion forum.
@@ -53,6 +57,11 @@ public class ShowForum implements AbcAction {
     public static final String VAR_CATEGORY = "CATEGORY";
     /** holds list of discussions */
     public static final String VAR_DISCUSSIONS = "DIZS";
+    public static final String VAR_FORUM_APPLICATIONS = "APPS";
+    public static final String VAR_FORUM_DISTRIBUTIONS = "DISTROS";
+    public static final String VAR_FORUM_HARDWARE = "HARDWARE";
+    public static final String VAR_FORUM_SETTINGS = "SETTINGS";
+    public static final String VAR_FORUM_VARIOUS = "VARIOUS";
 
     static Persistence persistence = PersistenceFactory.getPersistance();
 
@@ -69,7 +78,64 @@ public class ShowForum implements AbcAction {
         List parents = persistence.findParents(relation);
         env.put(ShowObject.VAR_PARENTS, parents);
 
-        return processSection(request, relation, env);
+        if (relation.getId() == Constants.REL_FORUM)
+            return processMain(request, env);
+        else
+            return processSection(request, relation, env);
+    }
+
+    public static String processMain(HttpServletRequest request, Map env) throws Exception {
+        SectionTreeCache forumTree = VariableFetcher.getInstance().getForumTree();
+        SectionNode sectionApps = forumTree.getByRelation(Constants.REL_FORUM_APPLICATIONS);
+        SectionNode sectionDistros = forumTree.getByRelation(Constants.REL_FORUM_DISTRIBUTIONS);
+        SectionNode sectionHardware = forumTree.getByRelation(Constants.REL_FORUM_HARDWARE);
+        SectionNode sectionSettings = forumTree.getByRelation(Constants.REL_FORUM_SETTINGS);
+        SectionNode sectionVarious = forumTree.getByRelation(Constants.REL_FORUM_VARIOUS);
+
+        Map<Integer,Relation> lastQuestions = new HashMap();
+        List<Forum> forumApps = initForum(sectionApps, lastQuestions);
+        List<Forum> forumDistros = initForum(sectionDistros, lastQuestions);
+        List<Forum> forumHardware = initForum(sectionHardware, lastQuestions);
+        List<Forum> forumSettings = initForum(sectionSettings, lastQuestions);
+        List<Forum> forumVarious = initForum(sectionVarious, lastQuestions);
+
+        Tools.syncList(lastQuestions.values());
+        setLastQuestion(forumApps, lastQuestions);
+        setLastQuestion(forumDistros, lastQuestions);
+        setLastQuestion(forumHardware, lastQuestions);
+        setLastQuestion(forumSettings, lastQuestions);
+        setLastQuestion(forumVarious, lastQuestions);
+
+        env.put(VAR_FORUM_APPLICATIONS, forumApps);
+        env.put(VAR_FORUM_DISTRIBUTIONS, forumDistros);
+        env.put(VAR_FORUM_HARDWARE, forumHardware);
+        env.put(VAR_FORUM_SETTINGS, forumSettings);
+        env.put(VAR_FORUM_VARIOUS, forumVarious);
+        return FMTemplateSelector.select("ShowForum", "main", env, request);
+    }
+
+    private static List initForum(SectionNode section, Map<Integer,Relation> lastQuestions) {
+        List<Forum> list = new ArrayList(section.getSize());
+        for (SectionNode node : section.getChildren()) {
+            int lastId = node.getLastItem();
+            if (lastId > 0) {
+                Relation last = new Relation(lastId);
+                lastQuestions.put(lastId, last);
+            }
+            list.add(new Forum(node));
+        }
+
+        return list;
+    }
+
+    private static void setLastQuestion(List<Forum> forums, Map<Integer,Relation> lastQuestions) {
+        for (Forum forum : forums) {
+            Relation last = lastQuestions.get(forum.getSection().getLastItem());
+            if (last == null)
+                continue;
+            DiscussionHeader header = Tools.analyzeDiscussion(last);
+            forum.setDiscussion(header);
+        }
     }
 
     public static String processSection(HttpServletRequest request, Relation relation, Map env) throws Exception {
@@ -81,8 +147,15 @@ public class ShowForum implements AbcAction {
         SQLTool sqlTool = SQLTool.getInstance();
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
         List discussions = sqlTool.findDiscussionRelationsWithParent(relation.getId(),qualifiers);
-        int total = sqlTool.countDiscussionRelationsWithParent(relation.getId());
         Tools.syncList(discussions);
+
+        SectionTreeCache forumTree = VariableFetcher.getInstance().getForumTree();
+        SectionNode sectionNode = forumTree.getByRelation(relation.getId());
+        int total = -1;
+        if (sectionNode != null)
+            total = sectionNode.getSize();
+        if (total == -1)
+            total = sqlTool.countDiscussionRelationsWithParent(relation.getId());
 
         Paging paging = new Paging(discussions, from, count, total);
         env.put(VAR_DISCUSSIONS,paging);

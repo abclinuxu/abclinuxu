@@ -325,6 +325,7 @@
                             <entry key="get.user.action" value="select kdy from akce where kdo=? and relace=? and typ=?" />
                             <entry key="remove.user.action" value="delete from akce where kdo=? and relace=? and typ=?" />
                             <entry key="items.count.in.section" value="select R1.potomek, count(R2.cislo) from relace R1, relace R2 where R1.potomek in ? and R1.typ_potomka='K' and R1.cislo=R2.predchozi and R2.typ_potomka='P' group by R1.potomek" />
+                            <entry key="item.last.and.count.in.section" value="select R1.potomek, count(R2.cislo), (select R3.cislo from relace R3, polozka P where R3.typ_predka='K' and R3.predek=R1.potomek and R3.typ_potomka='P' and R3.potomek=P.cislo order by P.zmeneno desc limit 1) from relace R1, relace R2 where R1.potomek in ? and R1.typ_potomka='K' and R1.cislo=R2.predchozi and R2.typ_potomka='P' group by R1.potomek" />
                             <entry key="insert.search.query" value="insert into hledano values(?,1)" />
                             <entry key="update.search.query" value="update hledano set pocet=pocet+1 where retezec=?" />
                             <entry key="get.search.query.for" value="select * from hledano where retezec like concat(?,'%') order by pocet desc" />

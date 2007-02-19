@@ -11,67 +11,69 @@ ddtreemenu.closefolder="/images/site2/menu-closed.gif"
 ddtreemenu.openfolder="/images/site2/menu-open.gif"
 
 ddtreemenu.createTree=function(treeid, enablepersist, persistdays){
-var ultags=document.getElementById(treeid).getElementsByTagName("ul")
-if (typeof persisteduls[treeid]=="undefined")
-persisteduls[treeid]=(enablepersist==true && ddtreemenu.getCookie(treeid)!="")? ddtreemenu.getCookie(treeid).split(",") : ""
-for (var i=0; i<ultags.length; i++)
-ddtreemenu.buildSubTree(treeid, ultags[i], i)
-if (enablepersist==true){ //if enable persist feature
-var durationdays=(typeof persistdays=="undefined")? 1 : parseInt(persistdays)
-ddtreemenu.dotask(window, function(){ddtreemenu.rememberstate(treeid, durationdays)}, "unload") //save opened UL indexes on body unload
-}
+    var ultags=document.getElementById(treeid).getElementsByTagName("ul")
+    if (typeof persisteduls[treeid]=="undefined")
+        persisteduls[treeid]=(enablepersist==true && ddtreemenu.getCookie(treeid)!="")? ddtreemenu.getCookie(treeid).split(",") : ""
+    for (var i=0; i<ultags.length; i++) {
+        ddtreemenu.buildSubTree(treeid, ultags[i], i)
+    }
+    if (enablepersist==true){ //if enable persist feature
+        var durationdays=(typeof persistdays=="undefined")? 1 : parseInt(persistdays)
+        ddtreemenu.dotask(window, function(){ddtreemenu.rememberstate(treeid, durationdays)}, "unload") //save opened UL indexes on body unload
+    }
 }
 
 ddtreemenu.buildSubTree=function(treeid, ulelement, index){
-ulelement.parentNode.className="submenu"
-if (typeof persisteduls[treeid]=="object"){ //if cookie exists (persisteduls[treeid] is an array versus "" string)
-if (ddtreemenu.searcharray(persisteduls[treeid], index)){
-ulelement.setAttribute("rel", "open")
-ulelement.style.display="block"
-ulelement.parentNode.style.backgroundImage="url("+ddtreemenu.openfolder+")"
-}
-else
-ulelement.setAttribute("rel", "closed")
-} //end cookie persist code
-else if (ulelement.getAttribute("rel")==null || ulelement.getAttribute("rel")==false) //if no cookie and UL has NO rel attribute explicted added by user
-ulelement.setAttribute("rel", "closed")
-else if (ulelement.getAttribute("rel")=="open") //else if no cookie and this UL has an explicit rel value of "open"
-ddtreemenu.expandSubTree(treeid, ulelement) //expand this UL plus all parent ULs (so the most inner UL is revealed!)
-ulelement.parentNode.onclick=function(e){
-var submenu=this.getElementsByTagName("ul")[0]
-if (submenu.getAttribute("rel")=="closed"){
-submenu.style.display="block"
-submenu.setAttribute("rel", "open")
-ulelement.parentNode.style.backgroundImage="url("+ddtreemenu.openfolder+")"
-}
-else if (submenu.getAttribute("rel")=="open"){
-submenu.style.display="none"
-submenu.setAttribute("rel", "closed")
-ulelement.parentNode.style.backgroundImage="url("+ddtreemenu.closefolder+")"
-}
-ddtreemenu.preventpropagate(e)
-}
-ulelement.onclick=function(e){
-ddtreemenu.preventpropagate(e)
-}
-ulelement.parentNode.firstChild.onclick=function(e){
-ddtreemenu.preventpropagate(e)
-}
+    ulelement.parentNode.className="submenu"
+    if (typeof persisteduls[treeid]=="object"){ //if cookie exists (persisteduls[treeid] is an array versus "" string)
+        if (ddtreemenu.searcharray(persisteduls[treeid], index)){
+            ulelement.setAttribute("rel", "open")
+            ulelement.style.display="block"
+            ulelement.parentNode.style.backgroundImage="url("+ddtreemenu.openfolder+")"
+        } else
+            ulelement.setAttribute("rel", "closed")
+    } //end cookie persist code
+    else if (ulelement.getAttribute("rel")==null || ulelement.getAttribute("rel")==false) { //if no cookie and UL has NO rel attribute explicted added by user
+        ulelement.setAttribute("rel", "closed")
+    } else if (ulelement.getAttribute("rel")=="open") {//else if no cookie and this UL has an explicit rel value of "open"
+        ddtreemenu.expandSubTree(treeid, ulelement) //expand this UL plus all parent ULs (so the most inner UL is revealed!)
+    }
+
+    ulelement.parentNode.onclick=function(e){
+        var submenu=this.getElementsByTagName("ul")[0]
+        if (submenu.getAttribute("rel")=="closed"){
+            submenu.style.display="block"
+            submenu.setAttribute("rel", "open")
+            ulelement.parentNode.style.backgroundImage="url("+ddtreemenu.openfolder+")"
+        }
+        else if (submenu.getAttribute("rel")=="open"){
+            submenu.style.display="none"
+            submenu.setAttribute("rel", "closed")
+            ulelement.parentNode.style.backgroundImage="url("+ddtreemenu.closefolder+")"
+        }
+        ddtreemenu.preventpropagate(e)
+    }
+    ulelement.onclick=function(e){
+        ddtreemenu.preventpropagate(e)
+    }
+    ulelement.parentNode.firstChild.onclick=function(e){
+        ddtreemenu.preventpropagate(e)
+    }
 }
 
 ddtreemenu.expandSubTree=function(treeid, ulelement){ //expand a UL element and any of its parent ULs
-var rootnode=document.getElementById(treeid)
-var currentnode=ulelement
-currentnode.style.display="block"
-currentnode.parentNode.style.backgroundImage="url("+ddtreemenu.openfolder+")"
-while (currentnode!=rootnode){
-if (currentnode.tagName=="UL"){ //if parent node is a UL, expand it too
-currentnode.style.display="block"
-currentnode.setAttribute("rel", "open") //indicate it's open
-currentnode.parentNode.style.backgroundImage="url("+ddtreemenu.openfolder+")"
-}
-currentnode=currentnode.parentNode
-}
+    var rootnode=document.getElementById(treeid)
+    var currentnode=ulelement
+    currentnode.style.display="block"
+    currentnode.parentNode.style.backgroundImage="url("+ddtreemenu.openfolder+")"
+    while (currentnode!=rootnode){
+        if (currentnode.tagName=="UL"){ //if parent node is a UL, expand it too
+            currentnode.style.display="block"
+            currentnode.setAttribute("rel", "open") //indicate it's open
+            currentnode.parentNode.style.backgroundImage="url("+ddtreemenu.openfolder+")"
+        }
+        currentnode=currentnode.parentNode
+    }
 }
 
 ddtreemenu.flatten=function(treeid, action){ //expand or contract all UL elements

@@ -23,9 +23,11 @@ import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.User;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.edit.EditArticle;
 import cz.abclinuxu.servlets.html.edit.EditSeries;
+import cz.abclinuxu.servlets.html.edit.EditDiscussion;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.feeds.FeedGenerator;
 
@@ -116,6 +118,9 @@ public class PoolMonitor extends TimerTask {
                     relation.setUpper(section.getId());
                     persistence.update(relation);
                     relation.getParent().addChildRelation(relation);
+
+                    if (item.getData().selectSingleNode("/data/forbid_discussions") == null)
+                        EditDiscussion.createEmptyDiscussion(relation, new User(Constants.USER_REDAKCE), persistence);
 
                     articlesUpdated = true;
                 }

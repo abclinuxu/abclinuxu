@@ -67,12 +67,12 @@
 
 </#macro>
 
-<#macro listTree (objects firstLevel=true)>
+<#macro listTree (objects menuid firstLevel=true)>
 <#if (objects?size > 0)>
- <ul<#if firstLevel> id="treemenu1" class="treeview"</#if>>
+ <ul<#if firstLevel> id="${menuid}" class="treeview"</#if>>
   <#list objects as sekce>
    <li><a href="${sekce.url}">${sekce.name}</a> <span>(${sekce.size})</span>
-   <@listTree sekce.children, false/>
+   <@listTree sekce.children, menuid, false/>
    </li>
   </#list>
  </ul>
@@ -365,4 +365,17 @@
     </label>
 </#macro>
 
-<#macro advertisement (id)>${TOOL.getAdvertisement(id, REQUEST_URI, USER?if_exists)}</#macro>
+<#macro advertisement (id)>${TOOL.getAdvertisement(id, .vars)}</#macro>
+
+<#macro showDiscussionState diz>
+    <@markNewCommentsQuestion diz/>
+    <#if TOOL.xpath(diz.discussion,"/data/frozen")?exists>
+        <img src="/images/site2/zamceno.gif" alt="Z" title="Diskuse byla administrátory uzamčena">
+    </#if>
+    <#if TOOL.isQuestionSolved(diz.discussion.data)>
+        <img src="/images/site2/vyreseno.gif" alt="V" title="Diskuse byla podle čtenářů vyřešena">
+    </#if>
+    <#if USER?exists && TOOL.xpath(diz.discussion,"//monitor/id[text()='"+USER.id+"']")?exists>
+        <img src="/images/site2/sledovano.gif" alt="S" title="Tuto diskusi sledujete monitorem">
+    </#if>
+</#macro>

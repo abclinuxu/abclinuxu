@@ -53,14 +53,61 @@ public class SectionTreeCache {
     private List<SectionNode> children;
     Map<Integer, SectionNode> mapById, mapByRelation;
     private String urlPrefix;
-    private int id;
+    private int id, cacheSize = 100;
+    private float cacheFactor = 0.95f;
+    private boolean loadDescriptions = true, loadSizes = true, loadLastItem = false;
 
-    public SectionTreeCache(String urlPrefix, int relationId) {
+    /**
+     * Creates new tree cache for some category with given prefix for urls.
+     * @param urlPrefix prefix for relations with constructed urls
+     * @param id category id
+     */
+    public SectionTreeCache(String urlPrefix, int id) {
         this.urlPrefix = urlPrefix;
-        this.id = relationId;
+        this.id = id;
         children = new ArrayList<SectionNode>();
         mapById = Collections.emptyMap();
         mapByRelation = Collections.emptyMap();
+    }
+
+    /**
+     * Sets default size of caches
+     * @param cacheSize default value
+     */
+    public void setCacheSize(int cacheSize) {
+        this.cacheSize = cacheSize;
+    }
+
+    /**
+     * Sets default map load factor
+     * @param cacheFactor default value
+     */
+    public void setCacheFactor(float cacheFactor) {
+        this.cacheFactor = cacheFactor;
+    }
+
+    /**
+     * Whether category descriptions will be fetched for SectionNodes
+     * @param loadDescriptions true means to load descriptions
+     */
+    public void setLoadDescriptions(boolean loadDescriptions) {
+        this.loadDescriptions = loadDescriptions;
+    }
+
+    /**
+     * Whether number of child items shall be fetched for SectionNodes
+     * @param loadSizes true means to load sizes
+     */
+    public void setLoadSizes(boolean loadSizes) {
+        this.loadSizes = loadSizes;
+    }
+
+    /**
+     * Whether last child item shall be fetched for SectionNodes
+     * @param loadLastItem true means to load last item
+     */
+    public void setLoadLastItem(boolean loadLastItem) {
+        this.loadLastItem = loadLastItem;
     }
 
     /**
@@ -87,8 +134,7 @@ public class SectionTreeCache {
     }
 
     /**
-     * Loads complete section tree for relation identified by relationId
-     * and initializes its properties (like number of items).
+     * Loads complete section tree for relation identified by relationId.
      */
     public void initialize() {
         try {
@@ -96,7 +142,7 @@ public class SectionTreeCache {
             log.debug("SectionTree cache (" + urlPrefix + ", " + id + ") initialization started");
             Category category = (Category) persistence.findById(new Category(id));
 
-            Map<Integer, SectionNode> directAccessMap = new HashMap<Integer, SectionNode>(100);
+            Map<Integer, SectionNode> directAccessMap = new HashMap<Integer, SectionNode>(cacheSize, cacheFactor);
             SectionNode root = new SectionNode(null, category.getId(), 0);
             List subSections = Tools.syncList(category.getChildren());
             for (Iterator iter = subSections.iterator(); iter.hasNext();) {
@@ -119,11 +165,21 @@ public class SectionTreeCache {
         try {
             log.debug("SectionTree cache (" + urlPrefix + ", " + id + ") refresh started");
             SQLTool sqlTool = SQLTool.getInstance();
-            Map<Integer, Integer> result = sqlTool.getItemsCountInSections(new ArrayList(mapById.keySet()));
-            for (Iterator<Integer> iter = result.keySet().iterator(); iter.hasNext();) {
-                Integer id = iter.next();
-                SectionNode section = mapById.get(id);
-                section.setItemsCount(result.get(id));
+            if (loadSizes && ! loadLastItem) {
+                Map<Integer, Integer> result = sqlTool.getItemsCountInSections(new ArrayList(mapById.keySet()));
+                for (Integer id : result.keySet()) {
+                    SectionNode section = mapById.get(id);
+                    section.setItemsCount(result.get(id));
+                }
+            }
+            if (loadLastItem) {
+                Map<Integer, Integer[]> result = sqlTool.getLastItemAndItemsCountInSections(new ArrayList(mapById.keySet()));
+                for (Integer id : result.keySet()) {
+                    SectionNode section = mapById.get(id);
+                    Integer[] data = result.get(id);
+                    section.setItemsCount(data[0]);
+                    section.setLastItem(data[1]);
+                }
             }
             log.debug("SectionTree cache (" + urlPrefix + ", " + id + ") refresh completed");
         } catch (Exception e) {
@@ -132,19 +188,19 @@ public class SectionTreeCache {
     }
 
     private void setChildren(List<SectionNode> children) {
-        Map<Integer, SectionNode> mapById = new HashMap<Integer, SectionNode>(100);
-        Map<Integer, SectionNode> mapByRelation = new HashMap<Integer, SectionNode>(100);
+        Map<Integer, SectionNode> mapById = new HashMap<Integer, SectionNode>(cacheSize, cacheFactor);
+        Map<Integer, SectionNode> mapByRelation = new HashMap<Integer, SectionNode>(cacheSize, cacheFactor);
         Collections.sort(children);
 
         List<SectionNode> stack = new ArrayList<SectionNode>();
         stack.addAll(children);
-        SectionNode node;
+        SectionNode section;
         while (stack.size() > 0) {
-            node = stack.remove(0);
-            mapById.put(node.getId(), node);
-            mapByRelation.put(node.getRelationId(), node);
-            stack.addAll(node.getChildren());
-            Collections.sort(node.getChildren());
+            section = stack.remove(0);
+            mapById.put(section.getId(), section);
+            mapByRelation.put(section.getRelationId(), section);
+            stack.addAll(section.getChildren());
+            Collections.sort(section.getChildren());
         }
 
         this.children = children;
@@ -166,7 +222,11 @@ public class SectionTreeCache {
 
         Category category = (Category) relation.getChild();
         int id = category.getId();
-        SectionNode section = new SectionNode(url, id, relationId);
+        SectionNode section = directAccessMap.get(id);
+        if (section != null) // there are multiple relations to this category
+            return;
+
+        section = new SectionNode(url, id, relationId);
         parent.addSubsection(section);
         directAccessMap.put(id, section);
 
@@ -201,9 +261,11 @@ public class SectionTreeCache {
             document = category.getData();
             element = (Element) document.selectSingleNode("/data/name");
             section.setName(element.getText());
-            element = (Element) document.selectSingleNode("/data/note");
-            if (element != null)
-                section.setDescription(element.getText());
+            if (loadDescriptions) {
+                element = (Element) document.selectSingleNode("/data/note");
+                if (element != null)
+                    section.setDescription(element.getText());
+            }
         }
     }
 
@@ -213,24 +275,36 @@ public class SectionTreeCache {
         while (stack.size() > 0) {
             SectionNode node = (SectionNode) stack.remove(0);
             stack.addAll(0, node.getChildren());
-            System.out.println(node.getUrl()+" "+node.getName()+" "+node.getSize());
+            System.out.println(node.getUrl()+" "+node.getName()+", size="+node.getSize()+" , last="+node.getLastItem());
         }
         System.out.println("\n\n");
     }
 
     public static void main(String[] args) {
-//        SectionTreeCache cache = new SectionTreeCache("/forum", Constants.CAT_FORUM);
-//        cache.initialize();
+        SectionTreeCache cache;
+        cache = new SectionTreeCache("/forum", Constants.CAT_FORUM);
+        cache.initialize();
+        cache.setLoadLastItem(true);
+        long before = System.currentTimeMillis();
+        cache.refresh();
 //        cache.print();
 //        cache = new SectionTreeCache("/faq", Constants.CAT_FAQ);
 //        cache.initialize();
+//        cache.refresh();
 //        cache.print();
 //        cache = new SectionTreeCache("/software", Constants.CAT_SOFTWARE);
 //        cache.initialize();
+//        cache.refresh();
 //        cache.print();
-        SectionTreeCache cache = new SectionTreeCache("/hardware", Constants.CAT_HARDWARE);
-        cache.initialize();
+//        cache = new SectionTreeCache("/hardware", Constants.CAT_386);
+//        cache.initialize();
+//        cache.refresh();
+//        cache.print();
+//        cache = new SectionTreeCache("/clanky", Constants.CAT_ARTICLES);
+//        cache.initialize();
+//        cache.refresh();
+        long end = System.currentTimeMillis();
         cache.print();
-        cache.refresh();
+        System.out.println("total = " + (end-before));
     }
 }

@@ -178,7 +178,7 @@ public class ViewSoftware implements AbcAction {
         env.put(VAR_FILTERS, filters);
 
         SectionTreeCache softwareTree = VariableFetcher.getInstance().getSoftwareTree();
-        List categories = null;
+        List<SectionNode> categories = null;
         int depth = 0;
         if (relation.getId() == Constants.REL_SOFTWARE) {
             categories = softwareTree.getChildren();

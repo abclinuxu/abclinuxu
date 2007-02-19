@@ -88,8 +88,8 @@ public class FeedGenerator implements Configurable {
             feed.setFeedType(TYPE_RSS_1_0);
             feed.setEncoding("UTF-8");
             feed.setTitle("abclinuxu - diskusní fórum");
-            feed.setLink("http://www.abclinuxu.cz/diskuse.jsp");
-            feed.setUri("http://www.abclinuxu.cz/diskuse.jsp");
+            feed.setLink("http://www.abclinuxu.cz/poradna");
+            feed.setUri("http://www.abclinuxu.cz/poradna");
             feed.setDescription("Seznam aktuálních diskusí na fóru portálu www.abclinuxu.cz");
             List entries = new ArrayList();
             feed.setEntries(entries);

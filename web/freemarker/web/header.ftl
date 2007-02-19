@@ -188,31 +188,9 @@
                 </#if>
             </#if>
 
-            <!-- REDAKCE -->
-            <div class="s_nadpis">Portál AbcLinuxu</div>
-            <div class="s_sekce">
-                <ul>
-                    <li><a href="/doc/portal/rss-a-jine-pristupy">RSS a PDA</a></li>
-                    <li><a href="/clanky/show/44049">Tým kolem Abíčka</a></li>
-                    <li><a href="/clanky/novinky/pojdte-psat-pro-abclinuxu.cz">Jak se stát autorem</a></li>
-                    <li><a href="/projekty/zdrojaky">Jak pomoci vylepšit Abíčko</a></li>
-                    <li><a href="/doc/propagace">Jak pomoci s propagací Abíčka</a></li>
-                    <li><a href="http://bugzilla.abclinuxu.cz" rel="nofollow">Hlášení chyb a námětů</a></li>
-                    <li><a href="/hardware/dir/3500">Vzkazy správcům</a> (${VARS.counter.REQUESTS})</li>
-                    <li><a href="mailto:info@stickfish.cz">Inzerce</a></li>
-                    <#if USER?exists && USER.isMemberOf(11246)>
-                        <li><a href="/Admin">Administrace portálu</a></li>
-                        <li><a href="/system">Sekce systém</a></li>
-                    </#if>
-                </ul>
-            </div>
-
             <div class="s_nadpis">Doporučujeme</div>
             <div class="s_sekce">
                 <ul>
-                    <li><a href="javascript:addSidebar();">Přidej sidebar</a></li>
-                    <li><a href="javascript:addBookmark();">Přidej mezi oblíbené</a></li>
-                    <li><a href="javascript:setHomepage();">Nastav jako domácí stránku</a></li>
                     <li><a href="http://www.linux.cz" rel="nofollow">linux.cz</a></li>
                     <li><a href="http://www.64bit.cz">64bit.cz</a></li>
                     <li><a href="http://www.pravednes.cz" rel="nofollow">pravednes.cz</a></li>

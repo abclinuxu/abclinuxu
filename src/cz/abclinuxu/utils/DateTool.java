@@ -53,8 +53,10 @@ public class DateTool implements Configurable {
     public static final String CZ_FULL = "CZ_FULL";
     /** 1. leden 2003 16:00 */
     public static final String CZ_FULL_TEXT = "CZ_FULL_TXT";
+    /** 1. 1. 2003 */
+    public static final String CZ_DAY_MONTH_YEAR_SPACES = "CZ_DMY";
     /** 1.1.2003 */
-    public static final String CZ_DAY_MONTH_YEAR = "CZ_DMY";
+    public static final String CZ_DAY_MONTH_YEAR = "CZ_DMY2";
     /** 1.1. */
     public static final String CZ_DAY_MONTH = "CZ_DM";
     /** 16:00 */
@@ -139,8 +141,8 @@ public class DateTool implements Configurable {
         if (CZ_SMART_DAY_MONTH_YEAR.equalsIgnoreCase(format)) {
             if (notTodayOrYesterday) {
                 if (timeToRender < thisYear) {
-                    synchronized (Constants.czDayMonthYear) {
-                        return Constants.czDayMonthYear.format(date);
+                    synchronized (Constants.czDayMonthYearSpaces) {
+                        return Constants.czDayMonthYearSpaces.format(date);
                     }
                 } else {
                     synchronized (Constants.czDayMonth) {
@@ -163,6 +165,16 @@ public class DateTool implements Configurable {
                 synchronized (Constants.czTimeOnly) {
                     return getCzDay(timeToRender) + " " + Constants.czTimeOnly.format(date);
                 }
+            }
+        }
+
+        if ( CZ_DAY_MONTH_YEAR_SPACES.equalsIgnoreCase(format) ) {
+            if (notTodayOrYesterday) {
+                synchronized (Constants.czDayMonthYearSpaces) {
+                    return Constants.czDayMonthYearSpaces.format(date);
+                }
+            } else {
+                return getCzDay(timeToRender);
             }
         }
 
@@ -268,9 +280,9 @@ public class DateTool implements Configurable {
             }
         }
 
-        if (CZ_DAY_MONTH_YEAR.equalsIgnoreCase(inputFormat)) {
-            synchronized (Constants.czDayMonthYear) {
-                d = Constants.czDayMonthYear.parse(date);
+        if (CZ_DAY_MONTH_YEAR_SPACES.equalsIgnoreCase(inputFormat)) {
+            synchronized (Constants.czDayMonthYearSpaces) {
+                d = Constants.czDayMonthYearSpaces.parse(date);
             }
         }
 

@@ -194,7 +194,7 @@ public class ServletUtils implements Configurable {
                 ServletUtils.addError(PARAM_LOG_USER,"Přihlašovací jméno nenalezeno!",env, null);
                 return;
             }
-            user = new User(id.intValue());
+            user = new User(id);
             user = (User) persistence.findById(user);
 
             String password = (String) params.get(PARAM_LOG_PASSWORD);

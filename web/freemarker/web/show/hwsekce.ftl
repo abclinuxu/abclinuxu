@@ -22,6 +22,9 @@
         </ul>
     </div>
 </#assign>
+<#assign html_header>
+    <script type="text/javascript" src="/data/site/treemenu.js"></script>
+</#assign>
 
 <#include "../header.ftl">
 
@@ -37,35 +40,31 @@
  ${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}
 </#if>
 
-<#assign map=TOOL.groupByType(CHILDREN)>
+<#if (CATEGORIES?exists && CATEGORIES?size > 0)>
+    <#if (DEPTH > 1)>
+        <p>
+            <a href="javascript:ddtreemenu.flatten('treeMenuHw', 'expand')">Vše rozbalit</a> |
+            <a href="javascript:ddtreemenu.flatten('treeMenuHw', 'contact')">Vše sbalit</a>
+            <a class="info" href="#">?<span class="tooltip">
+                Kliknutím na ikonku adresáře rozbalíte podmenu. Kliknutím na název kategorie do ní rovnou vstoupíte.
+            </span></a>
+        </p>
+    </#if>
 
+    <@lib.listTree CATEGORIES, "treeMenuHw" />
 
+    <script type="text/javascript">
+      ddtreemenu.createTree("treeMenuHw", true)
+    </script>
+</#if>
+
+<#assign map=TOOL.groupByType(CHILDREN, "Item")>
 <#if map.article?exists>
     <#list SORT.byDate(map.article, "DESCENDING") as clanek>
         <@lib.showArticle clanek, "CZ_FULL" />
         <hr />
     </#list>
     <br />
-</#if>
-
-<#if map.category?exists>
-    <table class="hw-sekce">
-      <thead>
-        <tr>
-	  <td colspan="3">Sekce</td>
-	</tr>
-      </thead>
-      <tbody>
-        <#list SORT.byName(map.category) as sekce>
-            <#if sekce_index%3==0><tr></#if>
-	    <td>
-		<a href="${sekce.url?default("/dir/"+sekce.id)}">
-		<#if TOOL.childIcon(sekce)?exists><img src="${TOOL.childIcon(sekce)}" class="ikona" alt="${TOOL.childName(sekce)}"></#if>${TOOL.childName(sekce)}</a>
-	    </td>
-	    <#if sekce_index%3==2></tr></#if>
-	</#list>
-      </tbody>
-    </table>
 </#if>
 
 <#if map.make?exists>

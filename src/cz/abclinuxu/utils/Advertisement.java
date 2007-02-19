@@ -50,11 +50,12 @@ public class Advertisement {
      * have paid not to see any advertisements. If the position is not defined, HTML comment
      * with info is returned.
      * @param id identifier of the position
-     * @param uri  current uri, starting with slash
-     * @param user instance of User, if the visitor is logged into his user account
+     * @param env map with all request data model
      * @return advertisement or empty string
      */
-    public static String getAdvertisement(String id, String uri, User user) {
+    public static String getAdvertisement(String id, Map env) {
+        String uri = (String) env.get(Constants.VAR_REQUEST_URI);
+        User user = (User) env.get(Constants.VAR_USER);
         if (user != null && user.getId() == -1) // not implemented now
             return "";
 
@@ -90,7 +91,7 @@ public class Advertisement {
         String content = selected.getText();
         if ("yes".equals(selected.attributeValue("dynamic")))
             try {
-                return FMUtils.executeCode(content, Collections.EMPTY_MAP);
+                return FMUtils.executeCode(content, env);
             } catch (Exception e) {
                 return "<!-- error: code defined for position '" + id + "' threw an error: " + e.getMessage() + "! -->";
             }

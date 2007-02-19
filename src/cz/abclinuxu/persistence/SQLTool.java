@@ -72,6 +72,7 @@ public final class SQLTool implements Configurable {
     public static final String ITEMS_WITH_TYPE = "items.with.type";
     public static final String RECORDS_WITH_TYPE = "records.with.type";
     public static final String ITEMS_COUNT_IN_SECTION = "items.count.in.section";
+    public static final String LAST_ITEM_AND_COUNT_IN_SECTION = "item.last.and.count.in.section";
     public static final String MAX_USER = "max.user";
     public static final String USER_BY_LOGIN = "user.by.login";
     public static final String ARTICLE_RELATIONS_BY_AUTHOR = "relations.article.by.author";
@@ -173,7 +174,7 @@ public final class SQLTool implements Configurable {
             resultSet = statement.executeQuery();
             List result = new ArrayList();
             while ( resultSet.next() ) {
-                result.add(new Integer(resultSet.getInt(1)));
+                result.add(resultSet.getInt(1));
             }
             return result;
         } catch (SQLException e) {
@@ -208,7 +209,7 @@ public final class SQLTool implements Configurable {
                 return null;
 
             i = resultSet.getInt(1);
-            return new Integer(i);
+            return i;
         } catch (SQLException e) {
             throw new PersistenceException("Nemohu vykonat SQL příkaz "+sql, e);
         } finally {
@@ -311,7 +312,7 @@ public final class SQLTool implements Configurable {
         if (qualifiers==null) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String)sql.get(RECORD_RELATIONS_BY_TYPE));
         List params = new ArrayList();
-        params.add(new Integer(type));
+        params.add(type);
         appendQualifiers(sb,qualifiers,params, null, null);
         return loadRelations(sb.toString(),params);
     }
@@ -324,8 +325,8 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(RECORD_RELATIONS_BY_TYPE));
         changeToCountStatement(sb);
         List params = new ArrayList();
-        params.add(new Integer(type));
-        return loadNumber(sb.toString(),params).intValue();
+        params.add(type);
+        return loadNumber(sb.toString(),params);
     }
 
     /**
@@ -338,7 +339,7 @@ public final class SQLTool implements Configurable {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(ITEM_RELATIONS_BY_TYPE));
         List params = new ArrayList();
-        params.add(new Integer(type));
+        params.add(type);
         Map fieldMapping = new HashMap();
         fieldMapping.put(Field.UPPER, "R");
         appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
@@ -355,11 +356,11 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(ITEM_RELATIONS_BY_TYPE));
         changeToCountStatement(sb);
         List params = new ArrayList();
-        params.add(new Integer(type));
+        params.add(type);
         Map fieldMapping = new HashMap();
         fieldMapping.put(Field.UPPER, "R");
         appendQualifiers(sb, qualifiers, params, "P", fieldMapping);
-        return loadNumber(sb.toString(), params).intValue();
+        return loadNumber(sb.toString(), params);
     }
 
     /**
@@ -374,7 +375,7 @@ public final class SQLTool implements Configurable {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(ITEM_RELATIONS_BY_TYPE_WITH_FILTERS));
         List params = new ArrayList();
-        params.add(new Integer(type));
+        params.add(type);
         appendFilterConditions(filters, sb, params);
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
@@ -393,10 +394,10 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(ITEM_RELATIONS_BY_TYPE_WITH_FILTERS));
         changeToCountStatement(sb);
         List params = new ArrayList();
-        params.add(new Integer(type));
+        params.add(type);
         appendFilterConditions(filters, sb, params);
         appendQualifiers(sb, qualifiers, params, null, null);
-        return loadNumber(sb.toString(), params).intValue();
+        return loadNumber(sb.toString(), params);
     }
 
     private void appendFilterConditions(Map filters, StringBuffer sb, List params) {
@@ -449,7 +450,7 @@ public final class SQLTool implements Configurable {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(SECTION_RELATIONS_BY_TYPE));
         List params = new ArrayList();
-        params.add(new Integer(type));
+        params.add(type);
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
     }
@@ -462,8 +463,8 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(SECTION_RELATIONS_BY_TYPE));
         changeToCountStatement(sb);
         List params = new ArrayList();
-        params.add(new Integer(type));
-        return loadNumber(sb.toString(), params).intValue();
+        params.add(type);
+        return loadNumber(sb.toString(), params);
     }
 
     /**
@@ -488,7 +489,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(DISCUSSION_RELATIONS));
         changeToCountStatement(sb);
         List params = new ArrayList();
-        return loadNumber(sb.toString(), params).intValue();
+        return loadNumber(sb.toString(), params);
     }
 
     /**
@@ -501,7 +502,7 @@ public final class SQLTool implements Configurable {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(DISCUSSION_RELATIONS_IN_SECTION));
         List params = new ArrayList();
-        params.add(new Integer(parent));
+        params.add(parent);
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
     }
@@ -514,8 +515,8 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(DISCUSSION_RELATIONS_IN_SECTION));
         changeToCountStatement(sb);
         List params = new ArrayList();
-        params.add(new Integer(parent));
-        return loadNumber(sb.toString(), params).intValue();
+        params.add(parent);
+        return loadNumber(sb.toString(), params);
     }
 
     /**
@@ -548,7 +549,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(ARTICLE_RELATIONS));
         List params = new ArrayList();
         if (section>0) {
-            params.add(new Integer(section));
+            params.add(section);
             sb.append(" and K.cislo=?");
         }
         Map fieldMapping = new HashMap();
@@ -568,10 +569,10 @@ public final class SQLTool implements Configurable {
         changeToCountStatement(sb);
         List params = new ArrayList();
         if (section > 0) {
-            params.add(new Integer(section));
+            params.add(section);
             sb.append(" and K.cislo=?");
         }
-        return loadNumber(sb.toString(), params).intValue();
+        return loadNumber(sb.toString(), params);
     }
 
     /**
@@ -602,7 +603,7 @@ public final class SQLTool implements Configurable {
         List params = new ArrayList();
         params.add(new java.sql.Date(from.getTime()));
         params.add(new java.sql.Date(until.getTime()));
-        return loadNumber(sb.toString(), params).intValue();
+        return loadNumber(sb.toString(), params);
     }
 
     /**
@@ -629,7 +630,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(NEWS_RELATIONS));
         changeToCountStatement(sb);
         List params = new ArrayList();
-        return loadNumber(sb.toString(), params).intValue();
+        return loadNumber(sb.toString(), params);
     }
 
     /**
@@ -658,7 +659,7 @@ public final class SQLTool implements Configurable {
         List params = new ArrayList();
         params.add(new java.sql.Date(from.getTime()));
         params.add(new java.sql.Date(until.getTime()));
-        return loadNumber(sb.toString(), params).intValue();
+        return loadNumber(sb.toString(), params);
     }
 
     /**
@@ -671,8 +672,8 @@ public final class SQLTool implements Configurable {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(RECORD_RELATIONS_BY_USER_AND_TYPE));
         List params = new ArrayList();
-        params.add(new Integer(userId));
-        params.add(new Integer(type));
+        params.add(userId);
+        params.add(type);
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
     }
@@ -685,9 +686,9 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(RECORD_RELATIONS_BY_USER_AND_TYPE));
         changeToCountStatement(sb);
         List params = new ArrayList();
-        params.add(new Integer(userId));
-        params.add(new Integer(type));
-        return loadNumber(sb.toString(), params).intValue();
+        params.add(userId);
+        params.add(type);
+        return loadNumber(sb.toString(), params);
     }
 
     /**
@@ -718,7 +719,7 @@ public final class SQLTool implements Configurable {
 	    StringBuffer sb = new StringBuffer((String) sql.get(COUNT_ARTICLES_BY_AUTHOR));
         List params = new ArrayList();
         params.add(authorId);
-        return loadNumber(sb.toString(), params).intValue();
+        return loadNumber(sb.toString(), params);
     }
 
     /**
@@ -741,7 +742,7 @@ public final class SQLTool implements Configurable {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(NEWS_RELATIONS_BY_USER));
         List params = new ArrayList();
-        params.add(new Integer(userId));
+        params.add(userId);
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
     }
@@ -756,8 +757,8 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(NEWS_RELATIONS_BY_USER));
         changeToCountStatement(sb);
         List params = new ArrayList();
-        params.add(new Integer(userId));
-        return loadNumber(sb.toString(), params).intValue();
+        params.add(userId);
+        return loadNumber(sb.toString(), params);
     }
 
     /**
@@ -770,7 +771,7 @@ public final class SQLTool implements Configurable {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(QUESTION_RELATIONS_BY_USER));
         List params = new ArrayList();
-        params.add(new Integer(userId));
+        params.add(userId);
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
     }
@@ -783,8 +784,8 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(QUESTION_RELATIONS_BY_USER));
         changeToCountStatement(sb);
         List params = new ArrayList();
-        params.add(new Integer(userId));
-        return loadNumber(sb.toString(), params).intValue();
+        params.add(userId);
+        return loadNumber(sb.toString(), params);
     }
 
 
@@ -798,7 +799,7 @@ public final class SQLTool implements Configurable {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(COMMENT_RELATIONS_BY_USER));
         List params = new ArrayList();
-        params.add(new Integer(userId));
+        params.add(userId);
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadRelations(sb.toString(), params);
     }
@@ -810,8 +811,8 @@ public final class SQLTool implements Configurable {
     public int countCommentRelationsByUser(int userId) {
         StringBuffer sb = new StringBuffer((String) sql.get(COUNT_DISCUSSIONS_BY_USER));
         List params = new ArrayList();
-        params.add(new Integer(userId));
-        return loadNumber(sb.toString(), params).intValue();
+        params.add(userId);
+        return loadNumber(sb.toString(), params);
     }
 
     /**
@@ -854,7 +855,7 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(STANDALONE_POLL_RELATIONS));
         changeToCountStatement(sb);
         List params = new ArrayList();
-        return loadNumber(sb.toString(), params).intValue();
+        return loadNumber(sb.toString(), params);
     }
 
     /**
@@ -906,7 +907,7 @@ public final class SQLTool implements Configurable {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(USERS_IN_GROUP));
         List params = new ArrayList();
-        params.add(new Integer(group));
+        params.add(group);
         appendQualifiers(sb, qualifiers, params, null, null);
         return loadUsers(sb.toString(), params);
     }
@@ -919,8 +920,8 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(USERS_IN_GROUP));
         changeToCountStatement(sb);
         List params = new ArrayList();
-        params.add(new Integer(group));
-        return loadNumber(sb.toString(), params).intValue();
+        params.add(group);
+        return loadNumber(sb.toString(), params);
     }
 
     /**
@@ -968,8 +969,8 @@ public final class SQLTool implements Configurable {
             resultSet = statement.executeQuery((String) sql.get(MAX_USER));
             if ( !resultSet.next() )
                 return 0;
-            Integer id = new Integer(resultSet.getInt(1));
-            return id.intValue();
+            Integer id = resultSet.getInt(1);
+            return id;
         } catch (SQLException e) {
             throw new PersistenceException("Chyba při hledání!", e);
         } finally {
@@ -1136,8 +1137,8 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(ITEMS_WITH_TYPE));
         changeToCountStatement(sb);
         List params = new ArrayList();
-        params.add(new Integer(type));
-        return loadNumber(sb.toString(), params).intValue();
+        params.add(type);
+        return loadNumber(sb.toString(), params);
     }
 
     /**
@@ -1149,8 +1150,8 @@ public final class SQLTool implements Configurable {
         StringBuffer sb = new StringBuffer((String) sql.get(RECORDS_WITH_TYPE));
         changeToCountStatement(sb);
         List params = new ArrayList();
-        params.add(new Integer(type));
-        return loadNumber(sb.toString(), params).intValue();
+        params.add(type);
+        return loadNumber(sb.toString(), params);
     }
 
     /**
@@ -1162,8 +1163,8 @@ public final class SQLTool implements Configurable {
      */
     public Integer getLastSeenComment(int userId, int discussion) {
         List params = new ArrayList();
-        params.add(new Integer(userId));
-        params.add(new Integer(discussion));
+        params.add(userId);
+        params.add(discussion);
         return loadNumber((String) sql.get(GET_LAST_COMMENT), params);
     }
 
@@ -1175,9 +1176,9 @@ public final class SQLTool implements Configurable {
      */
     public List getLastSeenComments(int userId, int size) {
         List params = new ArrayList();
-        params.add(new Integer(userId));
-        params.add(new Integer(0));
-        params.add(new Integer(size));
+        params.add(userId);
+        params.add(0);
+        params.add(size);
         return loadObjects((String) sql.get(GET_LAST_COMMENTS), params);
     }
 
@@ -1276,8 +1277,8 @@ public final class SQLTool implements Configurable {
      */
     public Date getUserAction(int userId, int rid, String type) {
         List params = new ArrayList();
-        params.add(new Integer(userId));
-        params.add(new Integer(rid));
+        params.add(userId);
+        params.add(rid);
         params.add(type);
         return loadDate((String) sql.get(GET_USER_ACTION), params);
     }
@@ -1328,7 +1329,7 @@ public final class SQLTool implements Configurable {
             statement = con.prepareStatement(query);
             int i = 1;
             for (Iterator iter = categories.iterator(); iter.hasNext();) {
-                id = ((Integer) iter.next()).intValue();
+                id = (Integer) iter.next();
                 statement.setInt(i++, id);
             }
 
@@ -1337,6 +1338,49 @@ public final class SQLTool implements Configurable {
                 id = rs.getInt(1);
                 size = rs.getInt(2);
                 result.put(id, size);
+            }
+
+            return result;
+        } catch (SQLException e) {
+            throw new PersistenceException("Chyba v SQL!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, null);
+        }
+    }
+
+    /**
+     * Finds all sections containing at least one Item and returns number of their Items.
+     * @param categories List of Integers containing id of categories to be examined
+     * @return map where section id is a key and value is array of integers. The first element
+     * is count of items in specified section and the second is relation id of last item.
+     */
+    public Map<Integer, Integer[]> getLastItemAndItemsCountInSections(List categories) {
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        Connection con = null;
+        PreparedStatement statement = null;
+        try {
+            int id, size, last;
+            Map<Integer, Integer[]> result = new HashMap<Integer, Integer[]> (categories.size());
+
+            String query = (String) sql.get(LAST_ITEM_AND_COUNT_IN_SECTION);
+            int position = query.indexOf('?');
+            query = query.substring(0, position) + MySqlPersistence.getInCondition(categories.size())
+                    + query.substring(position + 1);
+
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement(query);
+            int i = 1;
+            for (Iterator iter = categories.iterator(); iter.hasNext();) {
+                id = (Integer) iter.next();
+                statement.setInt(i++, id);
+            }
+
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                id = rs.getInt(1);
+                size = rs.getInt(2);
+                last = rs.getInt(3);
+                result.put(id, new Integer[] {size, last});
             }
 
             return result;
@@ -1503,7 +1547,7 @@ public final class SQLTool implements Configurable {
             if (rid == null)
                 statement.setNull(2, Types.INTEGER);
             else
-                statement.setInt(2, rid.intValue());
+                statement.setInt(2, rid);
             statement.setString(3, newUrl);
 
             statement.executeUpdate();
@@ -1578,6 +1622,7 @@ public final class SQLTool implements Configurable {
         store(USERS_WITH_ROLES, prefs);
         store(USERS_IN_GROUP, prefs);
         store(ITEMS_COUNT_IN_SECTION, prefs);
+        store(LAST_ITEM_AND_COUNT_IN_SECTION, prefs);
         store(MAX_USER, prefs);
         store(USER_BY_LOGIN, prefs);
         store(ITEMS_WITH_TYPE, prefs);
@@ -1662,8 +1707,8 @@ public final class SQLTool implements Configurable {
             } else if (qualifier instanceof LimitQualifier) {
                 sb.append(" limit ?,?");
                 LimitQualifier limitQualifier = (LimitQualifier) qualifier;
-                params.add(new Integer(limitQualifier.getOffset()));
-                params.add(new Integer(limitQualifier.getCount()));
+                params.add(limitQualifier.getOffset());
+                params.add(limitQualifier.getCount());
             } else if (qualifier instanceof CompareCondition)
                 appendCompareCondition(sb, (CompareCondition) qualifier, params, defaultTableNick, fieldMapping);
         }

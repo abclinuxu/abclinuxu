@@ -34,6 +34,7 @@ public class SectionNode implements Comparable {
     private int id;
     private int relationId;
     private int itemsCount;
+    private int lastItem;
     private List<SectionNode> children;
 
     public SectionNode(String url, int id, int relationId) {
@@ -64,6 +65,10 @@ public class SectionNode implements Comparable {
 
     public void setItemsCount(int itemsCount) {
         this.itemsCount = itemsCount;
+    }
+
+    public void setLastItem(int lastItem) {
+        this.lastItem = lastItem;
     }
 
     /**
@@ -111,6 +116,13 @@ public class SectionNode implements Comparable {
             size += node.getSize();
         }
         return size;
+    }
+
+    /**
+     * @return relation id of last item
+     */
+    public int getLastItem() {
+        return lastItem;
     }
 
     /**

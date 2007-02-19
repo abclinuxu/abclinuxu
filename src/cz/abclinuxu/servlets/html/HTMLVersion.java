@@ -85,7 +85,10 @@ public class HTMLVersion implements Configurable {
                 return;
 
             Template template = FMUtils.getConfiguration().getTemplate(templateName);
-            response.setContentType("text/html; charset=UTF-8");
+            String contentType = (String) env.get(Constants.VAR_CONTENT_TYPE);
+            if (contentType == null)
+                contentType = "text/html; charset=UTF-8";
+            response.setContentType(contentType);
             Writer writer = response.getWriter();
 
             response.setDateHeader("Last-Modified", new Date().getTime());

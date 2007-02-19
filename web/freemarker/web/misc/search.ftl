@@ -29,7 +29,8 @@
                   <table border="0" width="100%">
                    <tr>
                     <td><label><input type="checkbox" name="type" value="clanek" <#if TYPES.article>checked</#if>>Články</label></td>
-                    <td><label><input type="checkbox" name="type" value="otazka" <#if TYPES.question>checked</#if>>Diskuzní fórum</label></td>    <td><label><input type="checkbox" name="type" value="faq" <#if TYPES.faq>checked</#if>>FAQ</label></td>
+                    <td><label><input type="checkbox" name="type" value="otazka" <#if TYPES.question>checked</#if>>Poradna</label></td>    
+                    <td><label><input type="checkbox" name="type" value="faq" <#if TYPES.faq>checked</#if>>FAQ</label></td>
                     <td><label><input type="checkbox" name="type" value="pojem" <#if TYPES.dictionary>checked</#if>>Pojmy</label></td>
                    </tr>
                    <tr>

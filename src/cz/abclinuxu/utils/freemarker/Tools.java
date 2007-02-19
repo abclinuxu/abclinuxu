@@ -286,9 +286,6 @@ public class Tools implements Configurable {
         if (relation.getUrl() != null)
             return urlUtils.noPrefix(relation.getUrl());
 
-        if (relation.getId() == Constants.REL_FORUM)
-            return urlUtils.noPrefix("/diskuse.jsp");
-
         if (relation.getId() == Constants.REL_BLOGS)
             return urlUtils.noPrefix("/blog");
 
@@ -1140,15 +1137,15 @@ public class Tools implements Configurable {
      * have paid not to see any advertisements. If the position is not defined, HTML comment
      * with info is returned.
      * @param position identifier of the position
-     * @param uri current uri, starting with slash
-     * @param maybeUser instance of User, if the visitor is logged into his user account
+     * @param vars freemarker environment
      * @return advertisement or empty string
      */
-    public static String getAdvertisement(String position, String uri, Object maybeUser) {
-        User user = null;
-        if (maybeUser instanceof User)
-            user = (User) maybeUser;
-        return Advertisement.getAdvertisement(position, uri, user);
+    public static String getAdvertisement(String position, freemarker.ext.beans.HashAdapter vars) {
+        Map env = new HashMap();
+        env.put(Constants.VAR_REQUEST_URI, vars.get(Constants.VAR_REQUEST_URI));
+        env.put(Constants.VAR_CSS_URI, vars.get(Constants.VAR_CSS_URI));
+        env.put(Constants.VAR_USER, vars.get(Constants.VAR_USER));
+        return Advertisement.getAdvertisement(position, env);
     }
 
     /**

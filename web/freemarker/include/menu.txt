@@ -5,23 +5,23 @@
 <div class="menu-kont">
 
 <ul class="menu" id="menu">
-<li><a href="/diskuse.jsp">Diskuse</a></li>
+<li><a href="/poradna">Poradna</a></li>
 <li><a href="/faq">FAQ</a></li>
 <li><a href="/hardware">Hardware</a>
   <ul>
-    <li><a href="/hardware/dir/153">Procesory</a></li>
-    <li><a href="/hardware/dir/88">Přídavné karty</a></li>
-    <li><a href="/hardware/dir/143">Připojení na síť</a></li>
-    <li><a href="/hardware/dir/151">Příslušenství</a></li>
-    <li><a href="/hardware/dir/167">Sestavy</a></li>
-    <li><a href="/hardware/dir/187">Ukládání dat</a></li>
-    <li><a href="/hardware/dir/46">Vstupní zařízení</a></li>
-    <li><a href="/hardware/dir/57">Výstupní zařízení</a></li>
-    <li><a href="/hardware/dir/220">Základní desky</a></li>
+    <li><a href="/hardware/procesory">Procesory</a></li>
+    <li><a href="/hardware/pridavne-karty">Přídavné karty</a></li>
+    <li><a href="/hardware/pripojeni-na-sit">Připojení na síť</a></li>
+    <li><a href="/hardware/prislusenstvi">Příslušenství</a></li>
+    <li><a href="/hardware/sestavy">Sestavy</a></li>
+    <li><a href="/hardware/ukladani-dat">Ukládání dat</a></li>
+    <li><a href="/hardware/vstupni-zarizeni">Vstupní zařízení</a></li>
+    <li><a href="/hardware/vystupni-zarizeni">Výstupní zařízení</a></li>
+    <li><a href="/hardware/zakladni-desky">Základní desky</a></li>
   </ul></li>
 <li><a href="/software">Software</a>
   <ul>
-    <li><a href="/software/alternativy">Alternativy</a></li>
+    <li><a href="/software/alternativy">Alternativy k aplikacím</a></li>
     <li><a href="/software/bezpecnost">Bezpečnost</a></li>
     <li><a href="/software/grafika">Grafika</a></li>
     <li><a href="/software/hobby">Hobby</a></li>
@@ -44,7 +44,6 @@
     <li><a href="/clanky/hardware">Hardware</a></li>
     <li><a href="/clanky/hry-a-zabava">Hry a zábava</a></li>
     <li><a href="/clanky/jaderne-noviny">Jaderné noviny</a></li>
-    <li><a href="/clanky/dir/4731">Ke stažení</a></li>
     <li><a href="/clanky/multimedia">Multimédia</a></li>
     <li><a href="/clanky/navody">Návody</a></li>
     <li><a href="/clanky/novinky">Novinky</a></li>
@@ -56,6 +55,9 @@
     <li><a href="/clanky/system">Systém</a></li>
     <li><a href="/clanky/tipy">Tipy a triky</a></li>
     <li><a href="/clanky/pr">Tiskové zprávy</a></li>
+    <li><hr/></li>
+    <li><a href="/serialy">Seriály</a></li>
+    <li><a href="/download/abicko.jsp">PDF</a></li>
   </ul></li>
 <li><a href="/ucebnice">Učebnice</a>
   <ul>
@@ -71,12 +73,29 @@
     <li><a href="/blogy">Seznam blogů</a></li>
   </ul></li>
 <li><a href="/hry">Hry</a></li>
-<li><a href="/download/abicko.jsp">PDF</a></li>
 <li><a href="/slovnik">Slovník</a></li>
 <li><a href="/bazar">Bazar</a></li>
 <li><a href="/ovladace">Ovladače</a></li>
 <li><a href="/hosting">Hosting</a></li>
 <li><a href="http://www.abcprace.cz">Práce</a></li>
+<li><a href="/">Portál</a>
+  <ul>
+    <#if USER?exists && USER.isMemberOf(11246)>
+        <li><a href="/Admin">Administrace portálu</a></li>
+        <li><a href="/system">Sekce Systém</a></li>
+    </#if>
+    <li><a href="/clanky/novinky/pojdte-psat-pro-abclinuxu.cz">Jak se stát autorem</a></li>
+    <li><a href="/clanky/show/44049">Náš tým</a></li>
+    <li><a href="/doc/propagace">Propagace</a></li>
+    <li><a href="mailto:info@stickfish.cz">Inzerce</a></li>
+    <li><a href="/doc/portal/rss-a-jine-pristupy">RSS a PDA</a></li>
+    <li><a href="http://bugzilla.abclinuxu.cz" rel="nofollow">Hlášení chyb a námětů</a></li>
+    <li><a href="/hardware/dir/3500">Vzkazy správcům (${VARS.counter.REQUESTS})</a></li>
+    <li><a href="/projekty/zdrojaky">Zdrojové kódy</a></li>
+    <li><a href="javascript:addSidebar();">Přidej sidebar</a></li>
+    <li><a href="javascript:addBookmark();">Přidej mezi oblíbené</a></li>
+    <li><a href="javascript:setHomepage();">Nastav jako domácí stránku</a></li>
+  </ul></li>
 </ul>
 
 </div>

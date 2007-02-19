@@ -20,11 +20,13 @@
 <h1>Seznam rubrik</h1>
 
 <ul>
- <#list SORT.byName(CHILDREN) as relation>
-  <li>
-   <a href="${relation.url?default("/clanky/dir/"+relation.id)}">${TOOL.childName(relation)}</a>
-  </li>
- </#list>
+    <#list SORT.byName(CHILDREN) as relation>
+        <li>
+            <a href="${relation.url?default("/clanky/dir/"+relation.id)}">${TOOL.childName(relation)}</a>
+            <#assign articles = (VARS.articleTree.getByRelation(relation.id).size)?default(0)>
+            <#if (articles > 0)>(${articles} článků)</#if>
+        </li>
+    </#list>
 </ul>
 
 <#include "../footer.ftl">

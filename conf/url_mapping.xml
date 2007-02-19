@@ -233,6 +233,10 @@
             <pattern>/EditTrivia</pattern>
             <action>cz.abclinuxu.servlets.html.edit.EditTrivia</action>
         </mapping>
+        <mapping>
+            <pattern>/newton</pattern>
+            <action>cz.abclinuxu.servlets.html.various.NewtonExport</action>
+        </mapping>
     </format>
     <format version="wap">
         <mapping>

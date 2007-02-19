@@ -64,11 +64,17 @@ public interface Constants {
     int REL_AUTHORS = 314;
     int REL_ARTICLES = 315;
     int REL_HARDWARE = 316;
+    int REL_HARDWARE_386 = 1;
     int REL_SOFTWARE = 317;
     int REL_DRIVERS = 318;
     int REL_LINKS =  319;
     int REL_REQUESTS =  3500;
     int REL_FORUM = 3739;
+    int REL_FORUM_APPLICATIONS = 49655;
+    int REL_FORUM_HARDWARE = 49488;
+    int REL_FORUM_SETTINGS = 49489;
+    int REL_FORUM_DISTRIBUTIONS = 49490;
+    int REL_FORUM_VARIOUS = 51457;
     int REL_ABC = 5187;
     int REL_KOMERCE = 7223;
     int REL_SYSTEM = 8000;
@@ -153,6 +159,8 @@ public interface Constants {
     String VAR_CONFIG = "SYSTEM_CONFIG";
     /** uri (either relative or absolute) to css file to be used */
     String VAR_CSS_URI = "CSS_URI";
+    /** way to override default text/html content type */
+    String VAR_CONTENT_TYPE = "Content-Type";
 
     /** error, that is not related to specific form field */
     String ERROR_GENERIC = "generic";
@@ -183,7 +191,8 @@ public interface Constants {
     DateFormat czFormat = new SimpleDateFormat("d.M.yyyy HH:mm");
     DateFormat czFormatTxt = new SimpleDateFormat("d. MMMMM yyyy HH:mm");
     DateFormat czShortFormat = new SimpleDateFormat("d.M. HH:mm");
-    DateFormat czDayMonthYear = new SimpleDateFormat("d. M. yyyy");
+    DateFormat czDayMonthYearSpaces = new SimpleDateFormat("d. M. yyyy");
+    DateFormat czDayMonthYear = new SimpleDateFormat("d.M.yyyy");
     DateFormat czDayMonth = new SimpleDateFormat("d.M.");
     DateFormat czTimeOnly = new SimpleDateFormat("HH:mm");
     DateFormat czDay = new SimpleDateFormat("EEEE");

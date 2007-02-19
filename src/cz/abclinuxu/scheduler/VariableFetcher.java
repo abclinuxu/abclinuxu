@@ -92,10 +92,21 @@ public class VariableFetcher extends TimerTask implements Configurable {
     private VariableFetcher() {
         sqlTool = SQLTool.getInstance();
         forumTree = new SectionTreeCache(UrlUtils.PREFIX_FORUM, Constants.CAT_FORUM);
+        forumTree.setCacheSize(90);
+        forumTree.setLoadLastItem(true);
         faqTree = new SectionTreeCache(UrlUtils.PREFIX_FAQ, Constants.CAT_FAQ);
+        faqTree.setCacheSize(30);
+        faqTree.setLoadLastItem(true);
         softwareTree = new SectionTreeCache(UrlUtils.PREFIX_SOFTWARE, Constants.CAT_SOFTWARE);
-//        hardwareTree = new SectionTreeCache(UrlUtils.PREFIX_HARDWARE, Constants.CAT_HARDWARE);
+        softwareTree.setLoadDescriptions(false);
+        softwareTree.setCacheSize(130);
+        hardwareTree = new SectionTreeCache(UrlUtils.PREFIX_HARDWARE, Constants.CAT_HARDWARE);
+        hardwareTree.setLoadDescriptions(false);
+        hardwareTree.setCacheSize(360);
         articleTree = new SectionTreeCache(UrlUtils.PREFIX_CLANKY, Constants.CAT_ARTICLES);
+        articleTree.setLoadDescriptions(false);
+        articleTree.setCacheSize(20);
+//        articleTree.setLoadLastItem(true); todo - konfigurace, zda posledni je zmeneno nebo vytvoreno
     }
 
     /**
@@ -391,14 +402,14 @@ public class VariableFetcher extends TimerTask implements Configurable {
                 faqTree.initialize();
                 forumTree.initialize();
                 softwareTree.initialize();
-//                hardwareTree.initialize();
+                hardwareTree.initialize();
                 articleTree.initialize();
             }
 
             faqTree.refresh();
             forumTree.refresh();
             softwareTree.refresh();
-//            hardwareTree.refresh();
+            hardwareTree.refresh();
             articleTree.refresh();
 
             if (log.isDebugEnabled()) {

@@ -244,7 +244,8 @@ public class EditArticle implements AbcAction {
             persistence.create(recordRelation);
             recordRelation.getParent().addChildRelation(recordRelation);
 
-            EditDiscussion.createEmptyDiscussion(relation, user, persistence);
+            if (upper.getId() != Constants.REL_ARTICLEPOOL && item.getData().selectSingleNode("/data/forbid_discussions") == null)
+                EditDiscussion.createEmptyDiscussion(relation, user, persistence);
 
             VariableFetcher.getInstance().refreshArticles();
 

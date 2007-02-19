@@ -38,6 +38,8 @@ package cz.abclinuxu.servlets.html.view;
 
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.ACL;
+import cz.abclinuxu.data.view.SectionTreeCache;
+import cz.abclinuxu.data.view.SectionNode;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
@@ -57,6 +59,7 @@ import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.scheduler.VariableFetcher;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -102,6 +105,8 @@ public class ViewCategory implements AbcAction {
     public static final String VAR_CHILDREN = "CHILDREN";
     /** holds list of articles */
     public static final String VAR_ARTICLES = "ARTICLES";
+    public static final String VAR_CATEGORIES = "CATEGORIES";
+    public static final String VAR_TREE_DEPTH = "DEPTH";
 
     static Persistence persistence = PersistenceFactory.getPersistance();
 
@@ -155,7 +160,7 @@ public class ViewCategory implements AbcAction {
         else
             obj = relation.getChild();
 
-        Category category = null;
+        Category category;
         if ( !(obj instanceof Category) ) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
             urlUtils.redirect(response, "/show/"+relation.getId());
@@ -177,7 +182,7 @@ public class ViewCategory implements AbcAction {
             case Category.SECTION:
                 return processArticleSection(request, relation, env);
             case Category.HARDWARE_SECTION:
-                return FMTemplateSelector.select("ViewCategory", "hwsekce", env, request);
+                return processHardwareSection(relation, env, request);
             case Category.FAQ:
                 return ViewFaq.processSection(request, relation, env);
             case Category.FORUM:
@@ -187,6 +192,8 @@ public class ViewCategory implements AbcAction {
         }
 
         switch ( relation.getId() ) {
+            case Constants.REL_FORUM:
+                return ShowForum.processMain(request, env);
             case Constants.REL_DRIVERS:
                 return FMTemplateSelector.select("ViewCategory", "drivers", env, request);
             case Constants.REL_NEWS_POOL:
@@ -226,6 +233,26 @@ public class ViewCategory implements AbcAction {
         return FMTemplateSelector.select("ViewCategory","sekce",env, request);
     }
 
+    private static String processHardwareSection(Relation relation, Map env, HttpServletRequest request) {
+        SectionTreeCache sectionCache = VariableFetcher.getInstance().getHardwareTree();
+        List<SectionNode> categories = null;
+        int depth = 0;
+        if (relation.getId() == Constants.REL_HARDWARE_386) {
+            categories = sectionCache.getChildren();
+            depth = 999;
+        } else {
+            SectionNode sectionNode = sectionCache.getByRelation(relation.getId());
+            if (sectionNode != null) {
+                categories = sectionNode.getChildren();
+                depth = sectionNode.getDepth();
+            }
+        }
+        env.put(VAR_CATEGORIES, categories);
+        env.put(VAR_TREE_DEPTH, depth);
+
+        return FMTemplateSelector.select("ViewCategory", "hwsekce", env, request);
+    }
+
     public static String processArticleSection(HttpServletRequest request, Relation relation, Map env) throws Exception {
         Category section = (Category) relation.getChild();
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -235,7 +262,15 @@ public class ViewCategory implements AbcAction {
         SQLTool sqlTool = SQLTool.getInstance();
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
         List<Relation> articles = sqlTool.findArticleRelations(qualifiers, section.getId());
-        int total = sqlTool.countArticleRelations(section.getId());
+
+        SectionTreeCache faqTree = VariableFetcher.getInstance().getArticleTree();
+        SectionNode sectionNode = faqTree.getByRelation(relation.getId());
+        int total = -1;
+        if (sectionNode != null)
+            total = sectionNode.getSize();
+        if (total == -1)
+            total = sqlTool.countArticleRelations(section.getId());
+
         Tools.syncList(articles);
         Tools.initializeDiscussionsTo(articles);
 

@@ -66,9 +66,9 @@ public class PageStatistics implements AbcAction {
         if (s == null) {
             calendar.add(Calendar.DAY_OF_YEAR, -90);
             startPeriod = calendar.getTime();
-            params.put(PARAM_PERIOD_START, dateTool.show(startPeriod, DateTool.CZ_DAY_MONTH_YEAR, false));
+            params.put(PARAM_PERIOD_START, dateTool.show(startPeriod, DateTool.CZ_DAY_MONTH_YEAR_SPACES, false));
         } else {
-            startPeriod = Constants.czDayMonthYear.parse(s);
+            startPeriod = Constants.czDayMonthYearSpaces.parse(s);
             calendar.setTime(startPeriod);
             calendar.add(Calendar.DAY_OF_YEAR, -1);
             startPeriod = calendar.getTime();
@@ -79,9 +79,9 @@ public class PageStatistics implements AbcAction {
             calendar.setTime(new Date());
             calendar.add(Calendar.DAY_OF_YEAR, 1);
             endPeriod = calendar.getTime();
-            params.put(PARAM_PERIOD_STOP, dateTool.show(endPeriod, DateTool.CZ_DAY_MONTH_YEAR, false));
+            params.put(PARAM_PERIOD_STOP, dateTool.show(endPeriod, DateTool.CZ_DAY_MONTH_YEAR_SPACES, false));
         } else {
-            endPeriod = Constants.czDayMonthYear.parse(s);
+            endPeriod = Constants.czDayMonthYearSpaces.parse(s);
             calendar.setTime(endPeriod);
             calendar.add(Calendar.DAY_OF_YEAR, 1);
             endPeriod = calendar.getTime();
@@ -90,9 +90,9 @@ public class PageStatistics implements AbcAction {
         s = (String) params.get(PARAM_DAY);
         if (s == null) {
             day = new Date();
-            params.put(PARAM_DAY, dateTool.show(day, DateTool.CZ_DAY_MONTH_YEAR, false));
+            params.put(PARAM_DAY, dateTool.show(day, DateTool.CZ_DAY_MONTH_YEAR_SPACES, false));
         } else
-            day = Constants.czDayMonthYear.parse(s);
+            day = Constants.czDayMonthYearSpaces.parse(s);
 
         List found = null;
         SQLTool sqlTool = SQLTool.getInstance();
