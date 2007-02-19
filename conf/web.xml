@@ -3,7 +3,7 @@
 <web-app>
     <display-name>portal AbcLinuxu.cz</display-name>
 
-    <filter>
+    <!--filter>
         <filter-name>Compress</filter-name>
         <filter-class>compressionFilters.CompressionFilter</filter-class>
         <init-param>
@@ -23,7 +23,7 @@
     <filter-mapping>
         <filter-name>Compress</filter-name>
         <servlet-name>Controller</servlet-name>
-    </filter-mapping>
+    </filter-mapping-->
 
     <servlet>
         <servlet-name>AbcInit</servlet-name>
