@@ -21,14 +21,20 @@ Prehled clanku
 Reklama
 =======
 
-Zveme Vas na workshop "JBoss sales day CZ", ktery Vas
-uvede do obchodnich i technickych zakladu produktu JBoss.
-Workshop se kona 27.2. od 10.00 hod v budove spolecnosti
-Servodata, Dolnomecholupska 12, Praha 10.
-Workshop je pro ucastniky zdarma.
+Kongres Bezpecnost siti, 1. 3. 2007
+Praha, Hotel Diplomat, Evropska 15
 
-Vice informaci o produktu a registraci naleznete na:
-http://www.studovna.servodata.cz/home.php3?lang=cz&id=62
+V ramci kongresu se budou konat tri soubezne konference:
+Network Security GigaCon, Firewall & VPN GigaCon a Secure Mail.
+Behem konference budete mit vyjimecnou prilezitost podivat
+se na nejnovejsi reseni z oblasti bezpecnosti siti, setkat
+se a promluvit s odborniky.
+
+Pro ucastniky je VSTUP ZDARMA, ale podminkou je registrace.
+Odkaz na registraci a vice info na:
+
+http://www.abclinuxu.cz/skoleni/kongres-bezpecnost-siti
+
 
 
 Prehled zpravicek

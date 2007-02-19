@@ -87,12 +87,11 @@
    url=relation.url?default("/zpravicky/show/"+relation.id),
    title=TOOL.xpath(ITEM, "/data/title")?default("Zprávička")
  >
-    <h3>${title}</h3>
+    <h3 class="st_nadpis"><a href="${url}" title="${title}">${title}</a></h3>
     <p>
         ${TOOL.xpath(ITEM,"data/content")}<br>
         <span style="font-size: smaller">
-        <a href="/Profile/${autor.id}">${autor.name}</a> |
-	${DATE.show(ITEM.created,"CZ_FULL")} |
+        <a href="/Profile/${autor.id}">${autor.name}</a> | ${DATE.show(ITEM.created,"CZ_FULL")} |
         <a href="${url}" title="${title}">Komentáře: ${diz.responseCount}</a><#rt>
         <#lt><#if diz.responseCount gt 0><@markNewComments diz/>, poslední ${DATE.show(diz.updated, "SMART")}</#if>
         </span>
@@ -211,12 +210,12 @@
     <div class="ds_toolbox">
      <b>Nástroje:</b>
        <#if DIZ.hasUnreadComments>
-         <a href="#${DIZ.firstUnread}" title="Skočit na první nepřečtený komentář">První nepřečtený komentář</a>,
+         <a href="#${DIZ.firstUnread}" title="Skočit na první nepřečtený komentář" rel="nofollow">První nepřečtený komentář</a>,
        </#if>
-         <a href="${URL.make("/EditMonitor/"+DIZ.relationId+"?action=toggle")}">${monitorState}</a>
+         <a href="${URL.make("/EditMonitor/"+DIZ.relationId+"?action=toggle")}" rel="nofollow">${monitorState}</a>
            <span title="Počet lidí, kteří sledují tuto diskusi">(${DIZ.monitorSize})</span>
            <a class="info" href="#">?<span class="tooltip">Zašle každý nový komentář emailem na vaši adresu</span></a>,
-         <a href="${URL.prefix}/show/${DIZ.relationId}?varianta=print">Tisk</a>
+         <a href="${URL.prefix}/show/${DIZ.relationId}?varianta=print" rel="nofollow">Tisk</a>
        <#if USER?exists && USER.hasRole("discussion admin")>
          <br />
          <b>Admin:</b>
@@ -229,7 +228,7 @@
         <#if DIZ.frozen>
             Diskuse byla administrátory uzamčena
         <#else>
-            <a href="${URL.make("/EditDiscussion?action=add&amp;dizId="+DIZ.id+"&amp;threadId=0&amp;rid="+DIZ.relationId)}">
+            <a href="${URL.make("/EditDiscussion?action=add&amp;dizId="+DIZ.id+"&amp;threadId=0&amp;rid="+DIZ.relationId)}" rel="nofollow">
             Vložit další komentář</a>
         </#if>
     </p>
@@ -239,7 +238,7 @@
     </#list>
 
     <#if (!DIZ.frozen && DIZ.size>3)>
-     <p><a href="${URL.make("/EditDiscussion?action=add&amp;threadId=0&amp;dizId="+DIZ.id+"&amp;rid="+DIZ.relationId)}">
+     <p><a href="${URL.make("/EditDiscussion?action=add&amp;threadId=0&amp;dizId="+DIZ.id+"&amp;rid="+DIZ.relationId)}" rel="nofollow">
      Založit nové vlákno</a></p>
     </#if>
 </#macro>

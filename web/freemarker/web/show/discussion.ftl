@@ -17,19 +17,19 @@
 <div class="ds_toolbox">
  <b>Nástroje:</b>
    <#if DIZ.hasUnreadComments>
-     <a href="#${DIZ.firstUnread}" title="Skočit na první nepřečtený komentář">První nepřečtený komentář</a>,
+     <a href="#${DIZ.firstUnread}" title="Skočit na první nepřečtený komentář" rel="nofollow">První nepřečtený komentář</a>,
    </#if>
-   <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle")}">${monitorState}</a>
+   <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle")}" rel="nofollow">${monitorState}</a>
       <span title="Počet lidí, kteří sledují tuto diskusi">(${DIZ.monitorSize})</span>
       <a class="info" href="#">?<span class="tooltip">Zašle každý nový komentář emailem na vaši adresu</span></a>,
    <#if is_question>
-     Otázka <a href="${URL.make("/EditDiscussion?action=solved&amp;rid="+RELATION.id+"&amp;solved=true")}">byla</a>
+     Otázka <a href="${URL.make("/EditDiscussion?action=solved&amp;rid="+RELATION.id+"&amp;solved=true")}" rel="nofollow">byla</a>
         (${TOOL.xpath(ITEM,"//solved/@yes")?default("0")}) /
-     <a href="${URL.make("/EditDiscussion?action=solved&amp;rid="+RELATION.id+"&amp;solved=false")}">nebyla</a>
+     <a href="${URL.make("/EditDiscussion?action=solved&amp;rid="+RELATION.id+"&amp;solved=false")}" rel="nofollow">nebyla</a>
         (${TOOL.xpath(ITEM,"//solved/@no")?default("0")}) vyřešena
         <a class="info" href="#">?<span class="tooltip">Kliknutím na příslušný odkaz zvolte, jestli otázka <i>byla</i> nebo <i>nebyla</i> vyřešena.</span></a>,
    </#if>
-   <a href="${URL.prefix}/show/${DIZ.relationId}?varianta=print">Tisk</a>
+   <a href="${URL.prefix}/show/${DIZ.relationId}?varianta=print" rel="nofollow">Tisk</a>
    <#if USER?exists && (USER.hasRole("discussion admin") || USER.hasRole("move relation"))>
      <br />
      <b>Admin:</b>
@@ -61,7 +61,7 @@
  </#if>
 <#elseif !DIZ.frozen>
  <br />
- <a href="${URL.make("/EditDiscussion?action=add&amp;threadId=0&amp;dizId="+ITEM.id+"&amp;rid="+RELATION.id)}">
+ <a href="${URL.make("/EditDiscussion?action=add&amp;threadId=0&amp;dizId="+ITEM.id+"&amp;rid="+RELATION.id)}" rel="nofollow">
  Vložit další komentář</a>
 </#if>
 
@@ -72,7 +72,7 @@
 </#list>
 
 <#if (!DIZ.frozen && DIZ.size>3)>
- <p><a href="${URL.make("/EditDiscussion?action=add&amp;threadId=0&amp;dizId="+ITEM.id+"&amp;rid="+RELATION.id)}">
+ <p><a href="${URL.make("/EditDiscussion?action=add&amp;threadId=0&amp;dizId="+ITEM.id+"&amp;rid="+RELATION.id)}" rel="nofollow">
  Založit nové vlákno</a></p>
 </#if>
 
