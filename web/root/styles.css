@@ -358,6 +358,8 @@ td.pad, code.kod, pre.kod {
 	margin-left:	1em;
 }
 
+.cl-obrazky { text-align: center; }
+
 .cl-serial {
 	border-collapse:collapse;
 	border:		1px solid gray;
@@ -419,14 +421,14 @@ font-weight: bold;
 	border:		1px solid silver;
 }
 
-.ds, .hw, .sw, .bazar {
-	border-bottom:	1px solid #27648D;
-}
-
-.ds table, .hw table, .sw table, .faq, .bazar-polozky {
+.ds, .hw table, .sw table, .faq, .bazar-polozky {
 	margin-top:	5px;
 	border-width:	0px;
 	table-layout:	auto;
+}
+
+.ds, .hw, .sw, .bazar {
+	border-bottom:	1px solid #27648D;
 }
 
 .ds thead td, .hw thead td, .sw thead td, .faq thead td, .bazar thead td {
@@ -436,21 +438,23 @@ font-weight: bold;
 	background-color: transparent;
 }
 
-.ds td.td01, .hw td.td01, .sw td.td01, .faq td.td01, .bazar td.td01 {
+.poradna td.td-forum { width: 400px; }
+
+.ds td.td-dotaz, .hw td.td01, .sw td.td01, .faq td.td01, .bazar td.td01 {
 	width:		650px;
 }
 
-.ds td.td02, .hw td.td02, .sw td.td02, .bazar td.td02 {
+.ds td.td-stav, .hw td.td02, .sw td.td02, .bazar td.td02 {
 	width:		60px;
 	text-align:	center;
 }
 
-.ds td.td03, .hw td.td03, .sw td.td03, .bazar td.td03 {
+.ds td.td-reakci, .hw td.td03, .sw td.td03, .bazar td.td03 {
 	width:		60px;
 	text-align:	center;
 }
 
-.ds td.td04, .hw td.td04, .faq td.td04 {
+.ds td.td-posl, .hw td.td04, .faq td.td04 {
 	width:		230px;
 	text-align:	right;
 }
@@ -639,10 +643,10 @@ a.info:hover span.tooltip {
 .s,
 .boxy,
 .ramec,
-.ramec ul,
 .ls_zpr span,
 .st .anketa,
 .st .rozc table,
+.poradna tbody td,
 .souvisejici,
 .search_details,
 .lista#horni .lista-vpravo,
@@ -744,11 +748,14 @@ a.info,
 	cursor:		pointer;
 }
 
-.ls_reklama {
-	margin:		0.4em 5px 0 7px;
-}
-.ls_reklama a:hover {
+.s_reklama a:hover {
 	background: transparent;
+}
+.vip-banner {
+	margin:		0.4em 0 0 10px;
+}
+.mini-banner, .gg {
+	margin:		0 0 0 7px;
 }
 
 .ank-sloup {
@@ -1021,9 +1028,7 @@ border:		1px solid #d3d3d3;
 margin-bottom:	5px;
 font-size:	small;
 }
-.sun-box p {
-padding:	0.3em 0 0.5em 0.5em;
-}
+.sun-box p { padding:	0.3em 0 0.5em 0.5em; }
 .sun-box a { color: white; }
 .sun-box a:hover { background: #e97d19; }
 

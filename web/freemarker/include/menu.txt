@@ -1,6 +1,6 @@
 <div id="menu-wrap">
 <b style="font-size:0px;display:block; background:transparent;">
- <b class="roh1"></b><b class="roh2"></b></b>
+ <b class="roh1"></b><b class="roh2"></b>
 </b>
 <div class="menu-kont">
 
@@ -54,8 +54,7 @@
     <li><a href="/clanky/site">Sítě</a></li>
     <li><a href="/clanky/system">Systém</a></li>
     <li><a href="/clanky/tipy">Tipy a triky</a></li>
-    <li><a href="/clanky/pr">Tiskové zprávy</a></li>
-    <li><hr/></li>
+    <li><a href="/clanky/pr" style="border-width:3px">Tiskové zprávy</a></li>
     <li><a href="/serialy">Seriály</a></li>
     <li><a href="/download/abicko.jsp">PDF</a></li>
   </ul></li>
@@ -76,8 +75,6 @@
 <li><a href="/slovnik">Slovník</a></li>
 <li><a href="/bazar">Bazar</a></li>
 <li><a href="/ovladace">Ovladače</a></li>
-<li><a href="/hosting">Hosting</a></li>
-<li><a href="http://www.abcprace.cz">Práce</a></li>
 <li><a href="/">Portál</a>
   <ul>
     <#if USER?exists && USER.isMemberOf(11246)>
@@ -96,6 +93,8 @@
     <li><a href="javascript:addBookmark();">Přidej mezi oblíbené</a></li>
     <li><a href="javascript:setHomepage();">Nastav jako domácí stránku</a></li>
   </ul></li>
+<li><a href="/hosting">Hosting</a></li>
+<li><a href="http://www.abcprace.cz">Práce</a></li>
 </ul>
 
 </div>

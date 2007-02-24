@@ -9,7 +9,6 @@
 <#--<@lib.advertisement id="arbo-sq" />-->
 <#if !is_question>
  <@lib.advertisement id="arbo-sky" />
- <@lib.advertisement id="gg-ds-half" />
 </#if>
 
 <@lib.showMessages/>
@@ -41,6 +40,10 @@
    </#if>
 </div>
 
+<#if !is_question>
+ <@lib.advertisement id="gg-ds-obsah" />
+</#if>
+
 <#if is_question>
  <h1>Otázka</h1>
  <@lib.showThread TOOL.createComment(ITEM), 0, DIZ, !DIZ.frozen />
@@ -52,7 +55,7 @@
 
  <@lib.advertisement id="sun-box" />
  <@lib.advertisement id="arbo-sky" />
- <@lib.advertisement id="gg-ds-full" />
+ <@lib.advertisement id="gg-ds-otazka" />
 
  <#if DIZ.size==0>
     <p>Na otázku zatím nikdo bohužel neodpověděl.</p>

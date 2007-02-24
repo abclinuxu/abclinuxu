@@ -1,9 +1,8 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd" >
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>${PARAMS.TITLE?default(TITLE?default('www.abclinuxu.cz'))}</title>
-    <meta name="design" content="Petr Soběslavský, Robert Krátký">
     <link rel="stylesheet" type="text/css" href="${CSS_URI?if_exists}">
     <!--[if IE 7]>
        <link href="/bugie.css" type="text/css" rel="stylesheet">
@@ -35,9 +34,7 @@
 
 <@lib.advertisement id="sf-lista" />
 
-<center>
 <@lib.advertisement id="arbo-lb" />
-</center>
 
 <div id="zh-kont">
   <div id="zh-text" class="zh-box">
@@ -51,19 +48,22 @@
   <div id="zh-logo" class="zh-box"><a href="/"></a></div>
   <div id="zh-hledani" class="zh-box">
     <form action="/Search" method="get">
-      <input type="text" class="text" name="query">&nbsp;<input class="button" type="submit" value="Hledej">
-      <a href="/Search?advancedMode=true">Rozšířené hledání</a>
+     <div>
+      <input type="text" class="text" name="query">
+      <input class="button" type="submit" value="Hledej">
+     </div>
     </form>
+    <a href="/Search?advancedMode=true">Rozšířené hledání</a>
   </div>
 </div>
 <div class="cistic"></div>
 
 <#include "/include/menu.txt">
 
-	<div class="obal">
+    <div class="obal">
 
-	<div class="hl">
-    	<div class="hl_vpravo">
+        <div class="hl">
+        <div class="hl_vpravo">
             <#if USER?exists>
                 <a href="${URL.noPrefix("/Profile/"+USER.id)}">${USER.name}</a> |
                 <#assign blogName = TOOL.xpath(USER,"/data/settings/blog/@name")?default("UNDEF")>
@@ -84,16 +84,13 @@
                 </#list>
             </#if>&nbsp;
         </div>
-	</div>
+        </div>
 
-	<div id="ls_prepinac" title="Skrýt sloupec" onclick="prepni_sloupec()">&#215;</div>
+        <div id="ls_prepinac" title="Skrýt sloupec" onclick="prepni_sloupec()">&#215;</div>
 
-	<div class="obal_ls" id="ls">
-	<div class="s">
-            <div class="ls_reklama">
-		<@lib.advertisement id="vip" />
-            </div>
-
+        <div class="obal_ls" id="ls">
+        <div class="s">
+            <@lib.advertisement id="vip" />
             <@lib.advertisement id="vip-text" />
 
             <!-- ANKETA -->
@@ -102,13 +99,13 @@
                          url=relAnketa.url?default("/ankety/show/"+relAnketa.id)>
                 <#if anketa.multiChoice><#assign type = "checkbox"><#else><#assign type = "radio"></#if>
                 <div class="s_nadpis">
-			        <a class="s_nadpis-pravy-odkaz" href="/clanky/dir/3500?categoryPosition=0">navrhněte&nbsp;&raquo;</a>
-			        <a href="/ankety">Anketa</a>
-		        </div>
+                   <a class="s_nadpis-pravy-odkaz" href="/clanky/dir/3500?categoryPosition=0">navrhněte&nbsp;&raquo;</a>
+                   <a href="/ankety">Anketa</a>
+                </div>
                 <div class="s_sekce">
                     <form action="${URL.noPrefix("/EditPoll/"+relAnketa.id)}" method="POST">
-                    <div class="ank-otazka">${anketa.text}</div>
-                    <#list anketa.choices as choice>
+                     <div class="ank-otazka">${anketa.text}</div>
+                     <#list anketa.choices as choice>
                         <div class="ank-odpov">
                           <#assign procento = TOOL.percent(choice.count,total)>
                           <label><input type="${type}" name="voteId" value="${choice.id}">${choice.text}</label>&nbsp;(<span title="${choice.count}">${procento}%</span>)<br>
@@ -116,11 +113,13 @@
                             <div class="ank-sloup"></div>
                           </div>
                         </div>
-                    </#list>
-                    <input name="submit" type="submit" class="button" value="Hlasuj" src="/images/site2/vote_btn.gif" alt="Hlasuj">
-                    &nbsp;Celkem ${total} hlasů<br>
-                    <input type="hidden" name="url" value="${url}">
-                    <input type="hidden" name="action" value="vote">
+                     </#list>
+                     <div>
+                      <input name="submit" type="submit" class="button" value="Hlasuj" alt="Hlasuj">
+                        Celkem ${total} hlasů
+                      <input type="hidden" name="url" value="${url}">
+                      <input type="hidden" name="action" value="vote">
+                     </div>
                     </form>
                 </div>
                 <#assign diz=TOOL.findComments(anketa)>
@@ -197,18 +196,10 @@
                 </ul>
             </div>
 
-	    <div class="s_nadpis">Placené odkazy</div>
-            <div class="s_sekce">
-                <ul>
-                    <li><a href="http://www.e-pocasi.cz/">e-pocasi.cz</a></li>
-		            <li><a href="http://shop.tricko-tricka.com">tricko-tricka.com</a></li>
-                    <li><a href="http://www.krasnyusmev.cz">Bělení zubů White Pearl</a></li>
-                    <li><a href="http://www.kovart.cz/">Umělecké kovářství</a></li>
-                </ul>
-            </div>
+            <@lib.advertisement id="sl-placene-odkazy" />
 
         </div> <!-- s -->
-	</div> <!-- obal_ls -->
+        </div> <!-- obal_ls -->
 
     <#if plovouci_sloupec?exists>
         <#if URL.prefix=='/hardware'>
