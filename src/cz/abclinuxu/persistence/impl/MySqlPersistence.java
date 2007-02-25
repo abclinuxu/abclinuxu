@@ -792,6 +792,8 @@ public class MySqlPersistence implements Persistence {
             while ( resultSet.next() ) {
                 relation = new Relation(resultSet.getInt(1));
                 syncRelationFromRS(relation, resultSet);
+                cache.store(relation);
+
                 list = (List<Relation>) map.get(relation.getParent());
                 if (list == null) {
                     list = new ArrayList<Relation>();
