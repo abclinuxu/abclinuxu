@@ -79,16 +79,12 @@ public class Nursery implements Configurable {
         if ( list == null ) {
             List<Relation> found = persistence.findChildren(parent);
             storeChildren(parent, found);
-            if (found.size() != 0) {
-                list = new ArrayList<Integer>(found.size());
-                for (Iterator<Relation> iter = found.iterator(); iter.hasNext();)
-                    list.add(iter.next().getId());
-            }
+            list = (List<Integer>) cache.get(parent);
         }
 
         if (list == null) {
             list = new ArrayList<Integer>(2);
-            cache.put(parent, list);
+            cache.put(parent.makeLightClone(), list);
         }
 
         if (list.contains(relation.getId()))
@@ -106,7 +102,7 @@ public class Nursery implements Configurable {
         List list = (List) cache.get(relation.getParent());
         if (list == null)
             return;
-        list.remove(new Integer(relation.getId()));
+        list.remove(relation.getId());
     }
 
     /**
@@ -137,9 +133,9 @@ public class Nursery implements Configurable {
                 return Collections.emptyList();
 
             List<Relation> copy = new ArrayList<Relation>(list.size());
-            for (Iterator<Integer> iter = list.iterator(); iter.hasNext();) {
+            for (Iterator<Integer> iter = list.iterator(); iter.hasNext();)
                 copy.add(new Relation(iter.next()));
-            }
+
             persistence.synchronizeList(copy);
 
             return copy;
@@ -181,8 +177,13 @@ public class Nursery implements Configurable {
         }
     }
 
+    /**
+     * Stores children of specified GenericObject into cache.
+     * @param object object
+     * @param list list of object's child relations
+     */
     private void storeChildren(GenericObject object, List<Relation> list) {
-        List<Integer> ids = new ArrayList<Integer>();
+        List<Integer> ids = new ArrayList<Integer>(list.size() + 1);
         for (Iterator<Relation> iter = list.iterator(); iter.hasNext();) {
             Relation relation = iter.next();
             ids.add(relation.getId());
