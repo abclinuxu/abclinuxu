@@ -999,7 +999,7 @@ public class EditUser implements AbcAction, Configurable {
                 ServletUtils.addError(paramName, e.getMessage(), env, null);
                 return false;
             } else {
-                ServletUtils.addError(paramName, e.getMessage(), env, null);
+                ServletUtils.addError(paramName, e1.getMessage(), env, null);
                 return false;
             }
         } catch (Exception e) {
