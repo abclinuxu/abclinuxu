@@ -25,6 +25,7 @@ import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.persistence.cache.ChildrenCache;
 
 import java.util.*;
 import java.util.prefs.Preferences;
@@ -37,8 +38,9 @@ import org.apache.log4j.Logger;
  */
 public class Nursery implements Configurable {
     static Logger log = Logger.getLogger(Nursery.class);
-    public static final String PREF_CACHE_SIZE = "cache.size";
-    public static final String PREF_NO_CHILDREN_FOR_SECTION = "no.children.for.section";
+
+    public static final String PREF_CACHE_CLASS = "cache.class";
+    public static final String PREF_IGNORE_SECTION = "ignore.section";
 
     protected static Nursery singleton;
     static {
@@ -46,7 +48,7 @@ public class Nursery implements Configurable {
         ConfigurationManager.getConfigurator().configureAndRememberMe(singleton);
     }
 
-    protected Map<GenericObject, List<Integer>> cache;
+    protected ChildrenCache cache;
     protected Map noChildren;
     protected Persistence persistence;
 
@@ -228,19 +230,25 @@ public class Nursery implements Configurable {
      * Callback used to configure your class from preferences.
      */
     public synchronized void configure(Preferences prefs) throws ConfigurationException {
-        int size = prefs.getInt(PREF_CACHE_SIZE, 100);
-        log.info("Initializing with cache size "+size);
-        cache = new ChildrenCache(size, 1.0f, true);
+        String className = prefs.get(PREF_CACHE_CLASS, null);
+        if (className == null)
+            throw new ConfigurationException("You must provide valid cache class name!");
+        try {
+            Class aClass = Class.forName(className);
+            cache = (ChildrenCache) aClass.newInstance();
+        } catch (Exception e) {
+            throw new ConfigurationException("Cannot instantiate cache " + className + "!", e);
+        }
 
         persistence = PersistenceFactory.getPersistance();
 
         // content of these sections shall not be loaded!
         noChildren = new HashMap();
         Category category = null;
-        String tmp = prefs.get(PREF_NO_CHILDREN_FOR_SECTION, "");
+        String tmp = prefs.get(PREF_IGNORE_SECTION, "");
         StringTokenizer stk = new StringTokenizer(tmp, ",");
         while ( stk.hasMoreTokens() ) {
-            String key = PREF_NO_CHILDREN_FOR_SECTION+"."+stk.nextToken();
+            String key = PREF_IGNORE_SECTION+"."+stk.nextToken();
             String values = prefs.get(key, "");
 
             StringTokenizer stk2 = new StringTokenizer(values, ",");
@@ -248,22 +256,6 @@ public class Nursery implements Configurable {
                 category = new Category(Misc.parseInt(stk2.nextToken(), 0));
                 noChildren.put(category, Boolean.TRUE);
             }
-        }
-    }
-
-    /**
-     * LRU Cache. Removes oldest entries.
-     */
-    class ChildrenCache extends LinkedHashMap<GenericObject, List<Integer>> {
-        int MAX_SIZE;
-
-        public ChildrenCache(int initialCapacity, float loadFactor, boolean accessOrder) {
-            super(initialCapacity, loadFactor, accessOrder);
-            MAX_SIZE = initialCapacity;
-        }
-
-        protected boolean removeEldestEntry(Map.Entry eldest) {
-            return size() > MAX_SIZE;
         }
     }
 }

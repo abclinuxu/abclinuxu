@@ -18,14 +18,11 @@
  */
 package cz.abclinuxu.persistence.cache;
 
-import cz.abclinuxu.persistence.lru.CacheLRU;
-import cz.abclinuxu.persistence.Cache;
-import cz.abclinuxu.persistence.Nursery;
 import cz.abclinuxu.data.GenericObject;
-import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.persistence.lru.CacheLRU;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.ConfigurationManager;
 
 import java.util.prefs.Preferences;
 
@@ -33,7 +30,7 @@ import java.util.prefs.Preferences;
  * This cache uses LRU policy. It is backed up
  * by CacheLRU from Jakarta's ORO project.
  */
-public class LRUCache implements Cache,Configurable {
+public class LRUCache extends AbstractCache implements Configurable {
     static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(LRUCache.class);
 
     /** preference key for default size of LRUCache */
@@ -51,7 +48,7 @@ public class LRUCache implements Cache,Configurable {
             ConfigurationManager.getConfigurator().configureAndRememberMe(this);
         } catch (ConfigurationException e) { log.error(e); }
         data = new CacheLRU(size);
-        log.info("Cache started with size "+size);
+        log.info("LRUCache started with size "+size);
     }
 
     /**
@@ -62,53 +59,16 @@ public class LRUCache implements Cache,Configurable {
         data = new CacheLRU(size);
     }
 
-    /**
-     * This method stores copy of object into cache, so it can be retrieved
-     * later without queueing database. If <code>obj</code> with same
-     * PK is already stored in the cache, it is replaced by new version.
-     */
-    public void store(GenericObject obj) {
-        try {
-            GenericObject key = (GenericObject) obj.getClass().newInstance();
-            key.synchronizeWith(obj);
-            if (key instanceof Relation) {
-                Relation rel = (Relation) key;
-                rel.setParent(rel.getParent().makeLightClone());
-                rel.setChild(rel.getChild().makeLightClone());
-            }
-            data.addElement(key, key);
-        } catch (Exception e) {
-            log.error("Cloning failed",e);
-        }
+    protected void storeObject(GenericObject obj) {
+        data.addElement(obj, obj);
     }
 
-    /**
-     * This method searches cache for specified object. If it is found, returns
-     * cached object, otherwise it returns null.
-     * @return cached object
-     */
-    public GenericObject load(GenericObject obj) {
-        GenericObject result = (GenericObject) data.getElement(obj);
-        if (result!=null && result instanceof Relation) {
-            Relation rel = (Relation) result.makeLightClone();
-            rel.synchronizeWith(result);
-            rel.setParent(rel.getParent().makeLightClone());
-            rel.setChild(rel.getChild().makeLightClone());
-            result = rel;
-        }
-        return result;
+    protected GenericObject loadObject(GenericObject obj) {
+        return (GenericObject) data.getElement(obj);
     }
 
-    /**
-     * If <code>obj</code> is deleted from persistant storage,
-     * it is wise to delete it from cache too. Otherwise inconsistency occurs.
-     */
-    public void remove(GenericObject obj) {
+    protected void removeObject(GenericObject obj) {
         data.removeElement(obj);
-        if (obj instanceof Relation)
-            Nursery.getInstance().removeChild((Relation) obj);
-        else
-            Nursery.getInstance().removeParent(obj);
     }
 
     /**

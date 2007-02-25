@@ -13,3 +13,10 @@ jdom			1.0		http://www.jdom.org
 lucene-highlighter	2004-08		http://www.lucenebook.com
 javamail		1.4		http://java.sun.com/products/javamail (vyzaduje jaf)
 jaf			1.1		http://java.sun.com/products/javabeans/jaf/
+commons-httpclient	3.0.1		http://jakarta.apache.org (vyzaduje commons codec,logging)
+commons-codec		1.3		http://jakarta.apache.org
+commons-logging		1.1		http://jakarta.apache.org
+commons-collections	3.1		http://jakarta.apache.org
+html-cleaner		1.12		http://htmlcleaner.sourceforge.net/
+whirlycache		1.0.1		https://whirlycache.dev.java.net/ (vyzaduje collections, logging, concurrent)
+concurrent		1.3.4		

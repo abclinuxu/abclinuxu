@@ -18,14 +18,11 @@
  */
 package cz.abclinuxu.persistence.cache;
 
-import cz.abclinuxu.persistence.Cache;
-import cz.abclinuxu.persistence.Nursery;
-import cz.abclinuxu.utils.config.Configurable;
-import cz.abclinuxu.utils.config.ConfigurationManager;
-import cz.abclinuxu.utils.config.ConfigurationException;
-import cz.abclinuxu.utils.LRUMap;
 import cz.abclinuxu.data.GenericObject;
-import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.utils.LRUMap;
+import cz.abclinuxu.utils.config.Configurable;
+import cz.abclinuxu.utils.config.ConfigurationException;
+import cz.abclinuxu.utils.config.ConfigurationManager;
 import org.apache.log4j.Logger;
 
 import java.util.Collections;
@@ -35,7 +32,7 @@ import java.util.prefs.Preferences;
 /**
  * Cache, that is synchronized and uses standard LinkedHashMap as its backend.
  */
-public class SynchronizedCache implements Cache, Configurable {
+public class SynchronizedCache extends AbstractCache implements Configurable {
     static Logger log = Logger.getLogger(SynchronizedCache.class);
 
     public static final String PREF_SIZE = "size";
@@ -51,66 +48,19 @@ public class SynchronizedCache implements Cache, Configurable {
             log.error(e);
         }
         data = createMap();
-        log.info("Cache started with size "+size);
+        log.info("SynchronizedCache started with size "+size);
     }
 
-    /**
-     * This method stores copy of object into cache, so it can be retrieved
-     * later without queueing database. If <code>obj</code> with same
-     * PK is already stored in the cache, it is replaced by new version.
-     */
-    public void store(GenericObject obj) {
-        try {
-            GenericObject key = (GenericObject) obj.getClass().newInstance();
-            key.synchronizeWith(obj);
-            if ( key instanceof Relation ) {
-                Relation rel = (Relation) key;
-                rel.setParent(rel.getParent().makeLightClone());
-                rel.setChild(rel.getChild().makeLightClone());
-            }
-            data.put(key, key);
-        } catch (Exception e) {
-            log.error("Cloning failed", e);
-        }
+    protected void storeObject(GenericObject obj) {
+        data.put(obj, obj);
     }
 
-    /**
-     * This method searches cache for specified object. If it is found, returns
-     * cached object, otherwise it returns null.
-     * @return cached object
-     */
-    public GenericObject load(GenericObject obj) {
-        GenericObject result = (GenericObject) data.get(obj);
-        if ( result==null )
-            return null;
-        if ( result instanceof Relation ) {
-            Relation rel = new Relation((Relation)result);
-            rel.setParent(rel.getParent().makeLightClone());
-            rel.setChild(rel.getChild().makeLightClone());
-            result = rel;
-        } else {
-            try {
-                GenericObject o = (GenericObject) result.getClass().newInstance();
-                o.synchronizeWith(result);
-                result = o;
-            } catch (Exception e) {
-                log.error("Cannot clone "+result, e);
-            }
-        }
-        return result;
+    protected GenericObject loadObject(GenericObject obj) {
+        return (GenericObject) data.get(obj);
     }
 
-    /**
-     * If <code>obj</code> is deleted from persistant storage,
-     * it is wise to delete it from cache too. Otherwise inconsistency occurs.
-     */
-    public void remove(GenericObject obj) {
+    protected void removeObject(GenericObject obj) {
         data.remove(obj);
-        // todo this shall be handled at application level. why it doesn't print anything to logs
-        if ( obj instanceof Relation )
-            Nursery.getInstance().removeChild((Relation) obj);
-        else
-            Nursery.getInstance().removeParent(obj);
     }
 
     /**

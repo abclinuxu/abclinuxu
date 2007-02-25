@@ -1,0 +1,21 @@
+<whirlycache>
+	<default-cache>transparent</default-cache>
+	<cache name="transparent">
+		<backend>com.whirlycott.cache.impl.ConcurrentHashMapImpl</backend>
+		<tuner-sleeptime>45</tuner-sleeptime>
+		<!-- evicts oldest items when pruning -->
+		<!-- <policy>com.whirlycott.cache.policy.FIFOMaintenancePolicy</policy> -->
+		<!-- evicts least recently used items when pruning -->
+		<!-- <policy>com.whirlycott.cache.policy.LRUMaintenancePolicy</policy> -->
+		<!-- evicts least frequently used items when pruning -->
+		<policy>com.whirlycott.cache.policy.LFUMaintenancePolicy</policy>
+		<maxsize>10000</maxsize>
+	</cache>
+	<cache name="nursery">
+		<backend>com.whirlycott.cache.impl.ConcurrentHashMapImpl</backend>
+		<tuner-sleeptime>90</tuner-sleeptime>
+		<policy>com.whirlycott.cache.policy.LRUMaintenancePolicy</policy>
+		<maxsize>1500</maxsize>
+	</cache>
+
+</whirlycache>

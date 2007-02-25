@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import cz.abclinuxu.data.*;
+import cz.abclinuxu.persistence.cache.TransparentCache;
 
 /**
  * This interface defines responsibility of any class, that provides persistence
@@ -176,7 +177,7 @@ public interface Persistence {
     /**
      * Sets cache.
      */
-    public void setCache(Cache cache);
+    public void setCache(TransparentCache cache);
 
     /**
      * Removes content of associated cache.

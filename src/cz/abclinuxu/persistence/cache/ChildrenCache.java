@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005 Leos Literak
+ *  Copyright (C) 2007 Leos Literak
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
@@ -20,23 +20,16 @@ package cz.abclinuxu.persistence.cache;
 
 import cz.abclinuxu.data.GenericObject;
 
+import java.util.List;
+
 /**
- * Version of cache, which does nothing.
+ * Cache to store GenericObjects child relations.
+ * @author literakl
+ * @since 25.2.2007
  */
-public class EmptyCache implements TransparentCache {
-    public EmptyCache() {
-    }
+public interface ChildrenCache {
 
-    public void store(GenericObject obj) {
-    }
-
-    public GenericObject load(GenericObject obj) {
-        return null;
-    }
-
-    public void remove(GenericObject obj) {
-    }
-
-    public void clear() {
-    }
+    List<Integer> get(GenericObject parent);
+    List<Integer> remove(GenericObject parent);
+    void put(GenericObject parent, List<Integer> childRelationIds);
 }

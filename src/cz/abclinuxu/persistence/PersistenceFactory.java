@@ -29,6 +29,7 @@ import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.persistence.impl.MySqlPersistence;
+import cz.abclinuxu.persistence.cache.TransparentCache;
 import cz.abclinuxu.exceptions.PersistenceException;
 
 /**
@@ -74,7 +75,7 @@ public class PersistenceFactory implements Configurable {
     public static Persistence getUncachedPersistance() {
         Persistence persistence = new MySqlPersistence(directUrl);
         try {
-            persistence.setCache((Cache) defaultCache.newInstance());
+            persistence.setCache((TransparentCache) defaultCache.newInstance());
         } catch (Exception e) {
             throw new PersistenceException("Cannot use Cache " + defaultCache.toString(), e);
         }
@@ -119,7 +120,7 @@ public class PersistenceFactory implements Configurable {
 
         persistence = new MySqlPersistence(url);
         try {
-            persistence.setCache((Cache) cache.newInstance());
+            persistence.setCache((TransparentCache) cache.newInstance());
         } catch (Exception e) {
             throw new PersistenceException("Cannot use Cache " + defaultCache.toString(), e);
         }

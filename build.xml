@@ -61,6 +61,7 @@
         <copy todir="${DEPLOY_ABCLINUXU}/WEB-INF/classes" filtering="true">
             <fileset dir="conf">
                 <include name="log4j.xml"/>
+                <include name="whirlycache.xml"/>
             </fileset>
         </copy>
 
@@ -77,6 +78,9 @@
                 <exclude name="servlet.jar"/>
                 <exclude name="crimson.jar"/>
                 <exclude name="junit.jar"/>
+                <exclude name="commons-httpclient.jar"/>
+                <exclude name="commons-codec.jar"/>
+                <exclude name="htmlcleaner.jar"/>
             </fileset>
         </copy>
 

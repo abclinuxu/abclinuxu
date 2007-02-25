@@ -223,6 +223,16 @@
                 </node>
                 <node name="persistence">
                     <map/>
+                    <node name="PersistenceFactory">
+                        <map>
+                            <entry key="url.live" value="proxool.abc"/>
+                            <entry key="url.direct" value="jdbc:mysql://@DB_HOST@/@DB_SCHEMA@?user=@DB_USER@&amp;password=@DB_PASSWORD@&amp;useUnicode=true"/>
+                            <entry key="url.test" value="jdbc:mysql://@DB_HOST@/unit?user=@DB_USER@&amp;password=@DB_PASSWORD@&amp;useUnicode=true"/>
+                            <entry key="url.devel" value="jdbc:mysql://@DB_HOST@/devel?user=@DB_USER@&amp;password=@DB_PASSWORD@&amp;useUnicode=true"/>
+                            <entry key="proxool" value="WEB-INF/conf/proxool.xml"/>
+                            <entry key="cache.class" value="cz.abclinuxu.persistence.cache.WhirlyTransparentCache"/>
+                        </map>
+                    </node>
                     <node name="cache">
                         <map/>
                         <node name="LRUCache">
@@ -236,54 +246,23 @@
                             </map>
                         </node>
                     </node>
-                    <node name="versioning">
-                        <map/>
-                        <node name="VersioningFactory">
-                            <map>
-                                <entry key="impl.class" value="cz.abclinuxu.persistence.versioning.MysqlVersioningProvider"/>
-                            </map>
-                        </node>
-                        <node name="MysqlVersioningProvider">
-                            <map>
-                                <entry key="sql.find.latest.version" value="select max(cast(verze as unsigned)) from verze where cesta=?"/>
-                                <entry key="sql.find.all.versions" value="select verze,kdo,kdy from verze where cesta=? order by kdy desc"/>
-                                <entry key="sql.insert.version" value="insert into verze (cesta,verze,kdo,kdy,obsah) values (?,?,?,?,?)"/>
-                                <entry key="sql.fetch.document" value="select verze,kdo,kdy,obsah from verze where cesta=? and verze=?"/>
-                                <entry key="sql.purge.document" value="delete from verze where cesta=?"/>
-                            </map>
-                        </node>
-                    </node>
-                    <node name="extra">
-                        <map/>
-                        <node name="JobOfferManager">
-                            <map>
-                                <entry key="jdbc.url" value="jdbc:mysql://@PRACE_DB_HOST@/@PRACE_DB_SCHEMA@?user=@PRACE_DB_USER@&amp;password=@PRACE_DB_PASSWORD@&amp;useUnicode=true"/>
-                                <entry key="sql.offers" value="select O.id,O.title,O.last_modify_date,O.it,O.linux,C.name as category,R.name as region,F.name as firma,T.name as typ
-                                                               from hr_offer as O, hr_category as C, hr_region as R, hr_company as F, hr_relation as T
-                                                               where C.id=O.idcategory and R.id=O.idregion and F.id=O.idcompany and T.id=O.idrelation
-                                                               and (it=1 or linux=1) order by last_modify_date desc limit 60"/>
-                            </map>
-                        </node>
-                    </node>
-                    <node name="PersistenceFactory">
-                        <map>
-                            <entry key="url.live" value="proxool.abc"/>
-                            <entry key="url.direct" value="jdbc:mysql://@DB_HOST@/@DB_SCHEMA@?user=@DB_USER@&amp;password=@DB_PASSWORD@&amp;useUnicode=true"/>
-                            <entry key="url.test" value="jdbc:mysql://@DB_HOST@/unit?user=@DB_USER@&amp;password=@DB_PASSWORD@&amp;useUnicode=true"/>
-                            <entry key="url.devel" value="jdbc:mysql://@DB_HOST@/devel?user=@DB_USER@&amp;password=@DB_PASSWORD@&amp;useUnicode=true"/>
-                            <entry key="proxool" value="WEB-INF/conf/proxool.xml"/>
-                            <entry key="cache.class" value="cz.abclinuxu.persistence.cache.SynchronizedCache" />
-                        </map>
-                    </node>
                     <node name="Nursery">
                         <map>
-                            <entry key="cache.size" value="750"/>
+                            <entry key="cache.class" value="cz.abclinuxu.persistence.cache.WhirlyChildrenCache"/>
 
-                            <entry key="no.children.for.section" value="A,B,C"/>
-                            <entry key="no.children.for.section.A" value="452"/><!-- zpravicky -->
-                            <entry key="no.children.for.section.B" value="569"/><!-- vykladovy slovnik -->
-                            <entry key="no.children.for.section.C" value="240"/><!-- ankety -->
+                            <entry key="ignore.section" value="A,B,C"/>
+                            <entry key="ignore.section.A" value="452"/><!-- zpravicky -->
+                            <entry key="ignore.section.B" value="569"/><!-- vykladovy slovnik -->
+                            <entry key="ignore.section.C" value="240"/><!-- ankety -->
                         </map>
+                    </node>
+                    <node name="impl">
+                        <map/>
+                        <node name="MapBackedNursery">
+                            <map>
+                                <entry key="size" value="1000"/>
+                            </map>
+                        </node>
                     </node>
                     <node name="SQLTool">
                         <map>
@@ -338,6 +317,35 @@
                             <entry key="get.property.values" value="select distinct hodnota from vlastnost where typ=?" />
                             <entry key="relations.royalty" value="select R.cislo from polozka P, relace R, kategorie K where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=9 and R.typ_predka='P' and R.predek=K.cislo and K.typ=2"/>
                         </map>
+                    </node>
+                    <node name="versioning">
+                        <map/>
+                        <node name="VersioningFactory">
+                            <map>
+                                <entry key="impl.class" value="cz.abclinuxu.persistence.versioning.MysqlVersioningProvider"/>
+                            </map>
+                        </node>
+                        <node name="MysqlVersioningProvider">
+                            <map>
+                                <entry key="sql.find.latest.version" value="select max(cast(verze as unsigned)) from verze where cesta=?"/>
+                                <entry key="sql.find.all.versions" value="select verze,kdo,kdy from verze where cesta=? order by kdy desc"/>
+                                <entry key="sql.insert.version" value="insert into verze (cesta,verze,kdo,kdy,obsah) values (?,?,?,?,?)"/>
+                                <entry key="sql.fetch.document" value="select verze,kdo,kdy,obsah from verze where cesta=? and verze=?"/>
+                                <entry key="sql.purge.document" value="delete from verze where cesta=?"/>
+                            </map>
+                        </node>
+                    </node>
+                    <node name="extra">
+                        <map/>
+                        <node name="JobOfferManager">
+                            <map>
+                                <entry key="jdbc.url" value="jdbc:mysql://@PRACE_DB_HOST@/@PRACE_DB_SCHEMA@?user=@PRACE_DB_USER@&amp;password=@PRACE_DB_PASSWORD@&amp;useUnicode=true"/>
+                                <entry key="sql.offers" value="select O.id,O.title,O.last_modify_date,O.it,O.linux,C.name as category,R.name as region,F.name as firma,T.name as typ
+                                from hr_offer as O, hr_category as C, hr_region as R, hr_company as F, hr_relation as T
+                                where C.id=O.idcategory and R.id=O.idregion and F.id=O.idcompany and T.id=O.idrelation
+                                and (it=1 or linux=1) order by last_modify_date desc limit 60"/>
+                            </map>
+                        </node>
                     </node>
                 </node>
                 <node name="scheduler">

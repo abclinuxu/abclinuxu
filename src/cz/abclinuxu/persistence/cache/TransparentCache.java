@@ -16,7 +16,7 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  */
-package cz.abclinuxu.persistence;
+package cz.abclinuxu.persistence.cache;
 
 import cz.abclinuxu.data.GenericObject;
 
@@ -40,7 +40,7 @@ import cz.abclinuxu.data.GenericObject;
  * object. The second best solution is to clone object and return the clone
  * instead of real object.
  */
-public interface Cache {
+public interface TransparentCache {
     /**
      * This method stores copy of object into cache, so it can be retrieved
      * later without queueing database. If <code>obj</code> with same

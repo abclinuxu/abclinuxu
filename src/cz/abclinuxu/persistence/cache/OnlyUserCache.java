@@ -18,18 +18,17 @@
  */
 package cz.abclinuxu.persistence.cache;
 
-import cz.abclinuxu.persistence.Cache;
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.utils.LRUMap;
 import org.apache.log4j.Logger;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * Unsynchronized cache, that stores only Users. For CreateIndex only.
  */
-public class OnlyUserCache implements Cache {
+public class OnlyUserCache implements TransparentCache {
     static Logger log = Logger.getLogger(OnlyUserCache.class);
     int size = 5000;
     Map data;
@@ -75,18 +74,5 @@ public class OnlyUserCache implements Cache {
         data.clear();
         data = null;
         data = createMap();
-    }
-
-    private class LRUMap extends LinkedHashMap {
-        int MAX_SIZE;
-
-        public LRUMap(int size) {
-            super(size, 1.0f, true);
-            MAX_SIZE = size;
-        }
-
-        protected boolean removeEldestEntry(Map.Entry eldest) {
-            return size()>MAX_SIZE;
-        }
     }
 }

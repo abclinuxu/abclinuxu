@@ -28,7 +28,7 @@ import cz.abclinuxu.exceptions.*;
 import cz.abclinuxu.AbcException;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.persistence.Persistence;
-import cz.abclinuxu.persistence.Cache;
+import cz.abclinuxu.persistence.cache.TransparentCache;
 import cz.abclinuxu.persistence.Nursery;
 import cz.abclinuxu.persistence.PersistenceMapping;
 import org.logicalcobwebs.proxool.ProxoolException;
@@ -47,7 +47,7 @@ public class MySqlPersistence implements Persistence {
 
     /** contains URL to database connection */
     String dbUrl = null;
-    Cache cache = null;
+    TransparentCache cache = null;
 
     static {
         try {
@@ -63,7 +63,7 @@ public class MySqlPersistence implements Persistence {
         this.dbUrl = dbUrl;
     }
 
-    public void setCache(Cache cache) {
+    public void setCache(TransparentCache cache) {
         this.cache = cache;
     }
 
