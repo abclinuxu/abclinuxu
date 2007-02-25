@@ -198,7 +198,7 @@ public class EditFaq implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
 
         Relation relation = (Relation) env.get(VAR_RELATION);
-        Item faq = (Item) relation.getChild();
+        Item faq = (Item) relation.getChild().clone();
         faq.setOwner(user.getId());
         Element root = faq.getData().getRootElement();
 
