@@ -45,7 +45,7 @@ povídání.</p>
   <tr>
    <td width="120" valign="middle">Používám tyto distribuce</td>
    <td>
-    <#assign distros=PARAMS.distribution?if_exists>
+    <#assign distros=TOOL.asList(PARAMS.distribution)>
     <#if distros?size gte 1 >
      <input type="text" name="distribution" value="${distros[0]}" size="40" tabindex="3"><br>
     <#else>
