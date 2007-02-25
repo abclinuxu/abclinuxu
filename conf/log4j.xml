@@ -72,6 +72,10 @@
       <appender-ref ref="ADMIN"/>
 	</category>
 
+	<category name="com.whirlycott" additivity="false">
+	  <priority value="warn" />
+	</category>
+
 	<category name="wap" additivity="false">
 	  <priority value="info" />
       <appender-ref ref="WAP"/>
