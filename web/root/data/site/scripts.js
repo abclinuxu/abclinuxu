@@ -130,7 +130,7 @@ function writeRemainingCharsCount(textarea) {
     var regEx = new RegExp('<[^>]*>', 'g');
     var strippedStr = new String(textarea.value);
     strippedStr = strippedStr.replace(regEx, '');
-    document.getElementById('signatureTextCounter').innerHTML = '(zbývá '+Math.max(100-strippedStr.length, 0)+' znaků)';
+    document.getElementById('signatureTextCounter').innerHTML = '(zbývá '+Math.max(120-strippedStr.length, 0)+' znaků)';
 }
 
 // start method for checkParent
