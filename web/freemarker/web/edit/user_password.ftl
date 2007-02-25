@@ -12,7 +12,7 @@ mít nejméně čtyři znaky.</p>
   <tr>
    <td class="required" width="160">Současné heslo</td>
    <td>
-    <input type="password" name="PASSWORD" size="16" tabindex="1">
+    <input type="password" name="PASSWORD" size="16" maxlength="12" tabindex="1">
     <div class="error">${ERRORS.PASSWORD?if_exists}</div>
    </td>
   </tr>
