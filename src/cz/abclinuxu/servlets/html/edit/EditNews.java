@@ -340,7 +340,7 @@ public class EditNews implements AbcAction {
         FeedGenerator.updateNews();
         VariableFetcher.getInstance().refreshNews();
 
-        response.sendRedirect(response.encodeRedirectURL(UrlUtils.PREFIX_NEWS+"/dir/"+ Constants.CAT_NEWS_POOL));
+        response.sendRedirect(response.encodeRedirectURL(UrlUtils.PREFIX_NEWS+"/dir/"+ Constants.REL_NEWS_POOL));
         return null;
     }
 
