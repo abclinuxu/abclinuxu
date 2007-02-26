@@ -101,7 +101,7 @@ public class Nursery implements Configurable {
      * @param relation relation to be removed.
      */
     public synchronized void removeChild(Relation relation) {
-        List list = (List) cache.get(relation.getParent());
+        List<Integer> list = cache.get(relation.getParent());
         if (list == null)
             return;
         list.remove(new Integer(relation.getId()));
@@ -162,12 +162,15 @@ public class Nursery implements Configurable {
     public synchronized void initChildren(List objects) {
         objects = new ArrayList(objects);
         GenericObject object;
-        List list;
+        List<Integer> list;
         for (Iterator iter = objects.iterator(); iter.hasNext();) {
             object = (GenericObject) iter.next();
-            if (isChildrenLoadingForbidden(object))  // shall not be cached
+            if (isChildrenLoadingForbidden(object)) { // shall not be cached
                 iter.remove();
-            list = (List) cache.get(object); // is already cached
+                continue;
+            }
+
+            list = cache.get(object); // is already cached
             if (list != null)
                 iter.remove();
         }
