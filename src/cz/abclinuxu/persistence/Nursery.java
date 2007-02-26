@@ -104,7 +104,7 @@ public class Nursery implements Configurable {
         List list = (List) cache.get(relation.getParent());
         if (list == null)
             return;
-        list.remove(relation.getId());
+        list.remove(new Integer(relation.getId()));
     }
 
     /**
