@@ -504,7 +504,7 @@
                                 <entry key="start.rss.generator" value="@START.RSS.GENERATOR@"/>
                                 <entry key="rss.generator.delay" value="30"/>
                                 <entry key="rss.generator.period" value="3600"/>
-                                <entry key="start.abchost.fetcher" value="@START.ABCHOST.FETCHER"/>
+                                <entry key="start.abchost.fetcher" value="@START.ABCHOST.FETCHER@"/>
                                 <entry key="abchost.fetcher.delay" value="45"/>
                                 <entry key="abchost.fetcher.period" value="1800"/>
                                 <entry key="start.rss.oksystem" value="@START.RSS.OKSYSTEM@"/>
