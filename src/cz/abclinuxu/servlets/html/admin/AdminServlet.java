@@ -47,6 +47,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
+import org.logicalcobwebs.proxool.ProxoolFacade;
+import org.logicalcobwebs.proxool.admin.SnapshotIF;
+
 /**
  * Various administrative tasks.
  */
@@ -63,6 +66,7 @@ public class AdminServlet implements AbcAction {
 
     public static final String VAR_DATABASE_STATE = "DATABASE_VALID";
     public static final String VAR_FULLTEXT_STATE = "FULLTEXT_VALID";
+    public static final String VAR_QUERIES = "QUERIES";
 
     public String process(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
@@ -186,6 +190,10 @@ public class AdminServlet implements AbcAction {
                 ok = true;
         }
         env.put(VAR_FULLTEXT_STATE, ok);
+
+        String alias = ProxoolFacade.getAliases()[0];
+        SnapshotIF snapshot = ProxoolFacade.getSnapshot(alias);
+        env.put(VAR_QUERIES, snapshot.getServedCount());
 
         return FMTemplateSelector.select("Admin", "check", env, request);
     }

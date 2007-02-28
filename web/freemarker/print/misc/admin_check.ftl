@@ -13,7 +13,8 @@
 <#else>
  <#assign FULLTEXT="porucha">
 </#if>
-Persistance:${PERSISTANCE}<br>
-Fulltext:${FULLTEXT}<br>
+Persistance: ${PERSISTANCE}<br>
+Fulltext: ${FULLTEXT}<br>
+SQL: ${QUERIES}<br>
 </body>
 </html>
