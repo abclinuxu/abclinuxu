@@ -1208,8 +1208,8 @@ public class MySqlPersistence implements Persistence {
         Map objects = new HashMap();
         List found = new ArrayList();
         GenericDataObject obj;
+        GenericDataObject representant = (GenericDataObject) objs.get(0);
         try {
-            GenericDataObject representant = (GenericDataObject) objs.get(0);
             con = getSQLConnection();
             statement = con.prepareStatement("select * from " + getTable(representant) + " where cislo in " + getInCondition(objs.size()));
             int i = 1;
@@ -1238,7 +1238,7 @@ public class MySqlPersistence implements Persistence {
             releaseSQLResources(con, statement, rs);
         }
 
-        loadProperties(objects);
+        loadProperties(objects, PersistenceMapping.getGenericObjectType(representant));
 
         for (Iterator iter = found.iterator(); iter.hasNext();) {
             obj = (GenericDataObject) iter.next();
@@ -2026,15 +2026,16 @@ public class MySqlPersistence implements Persistence {
     /**
      * Loads properties for specified objects from database.
      * @param objects map, where key is id (integer) and value is GenericDataObject with this id
+     * @param objectType
      */
-    protected void loadProperties(Map objects) throws SQLException {
+    protected void loadProperties(Map objects, String objectType) throws SQLException {
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         try {
             con = getSQLConnection();
             statement = con.prepareStatement("select * from vlastnost where typ_predka=? and predek in " + getInCondition(objects.size()));
-            statement.setString(1, "P");
+            statement.setString(1, objectType);
             int i = 2, id;
             for (Iterator iter = objects.keySet().iterator(); iter.hasNext();) {
                 id = (Integer) iter.next();
