@@ -13,33 +13,32 @@
         </New>
     </Set>
 
-    <!-- Use this connector for many frequently idle connections
-    and for threadless continuations. -->
-    <Call name="addConnector">
+    <!-- host shall be commented out if jetty shall listen on all network interfaces -->
+
+    <!--Call name="addConnector">
         <Arg>
             <New class="org.mortbay.jetty.nio.SelectChannelConnector">
                 <Set name="port">
                     <SystemProperty name="jetty.port" default="@JETTY_PORT@"/>
                 </Set>
-                <Set name="host">@JETTY_HOST@</Set> <!-- comment out if all IP addresses shall be served -->
+                <Set name="host">@JETTY_HOST@</Set>
                 <Set name="maxIdleTime">30000</Set>
                 <Set name="Acceptors">2</Set>
                 <Set name="confidentialPort">8443</Set>
             </New>
         </Arg>
-    </Call>
+    </Call-->
 
-    <!-- Use this connector if NIO is not available.
     <Call name="addConnector">
-    <Arg>
-    <New class="org.mortbay.jetty.bio.SocketConnector">
-    <Set name="port">8081</Set>
-    <Set name="maxIdleTime">50000</Set>
-    <Set name="lowResourceMaxIdleTime">1500</Set>
-    </New>
-    </Arg>
+        <Arg>
+            <New class="org.mortbay.jetty.bio.SocketConnector">
+                <Set name="port">@JETTY_PORT@</Set>
+                <Set name="host">@JETTY_HOST@</Set>
+                <Set name="maxIdleTime">50000</Set>
+                <Set name="lowResourceMaxIdleTime">1500</Set>
+            </New>
+        </Arg>
     </Call>
-    -->
 
     <!-- Set handler Collection Structure -->
     <Set name="handler">
