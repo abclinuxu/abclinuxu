@@ -856,8 +856,8 @@ a.info,
 
 .textad {
 	border:		1px solid #d3d3d3;
-	padding:	0.5em;
-	margin:		1em;
+	padding:	0.2em 0.5em 0.5em 0.5em;
+	margin:		0.5em;
 	background:	#f6f6f6;
 	font-size:	small;
 }

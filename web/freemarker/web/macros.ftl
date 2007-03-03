@@ -132,8 +132,7 @@
    <#local who=TOOL.createUser(comment.author)>
 	</#if>
 	<#assign blacklisted = diz.isBlacklisted(comment)>
-	<div class="ds_hlavicka<#if diz.isUnread(comment)>_novy</#if><#if blacklisted> ds_hlavicka_blacklisted</#if><#if who?exists && USER?exists && who.id == USER.id> ds_hlavicka_me</#if>">
-  <a name="${comment.id}"></a>
+	<div class="ds_hlavicka<#if diz.isUnread(comment)>_novy</#if><#if blacklisted> ds_hlavicka_blacklisted</#if><#if who?exists && USER?exists && who.id == USER.id> ds_hlavicka_me</#if>" id="${comment.id}">
   ${DATE.show(comment.created,"SMART")}
   <#if comment.author?exists>
    <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
@@ -151,7 +150,7 @@
   </#if>
   ${comment.title?if_exists}
   <#if showControls>
-	 <div id="comment${comment.id}_controls" <#if blacklisted>class="ds_controls_blacklisted"</#if>>
+	 <div id="comment${comment.id}_controls"<#if blacklisted> class="ds_controls_blacklisted"</#if>>
          <#assign nextUnread = diz.getNextUnread(comment)?default("UNDEF")>
          <#if ! nextUnread?is_string><a href="#${nextUnread}" title="Skočit na další nepřečtený komentář">Další</a> |</#if>
          <a href="${URL.make("/EditDiscussion/"+diz.relationId+"?action=add&amp;dizId="+diz.id+"&amp;threadId="+comment.id+extra[0]?default(""))}">Odpovědět</a> |
@@ -170,7 +169,7 @@
       <a href="${URL.make("/EditRequest/"+diz.relationId+"?action=comment&amp;threadId="+comment.id)}">Admin</a>
   </#if>
  </div>
- <div id="comment${comment.id}" <#if who?exists>class="ds_text_user${who.id}"</#if> <#if blacklisted?if_exists>style="display: none;"</#if>>
+ <div id="comment${comment.id}" <#if who?exists>class="ds_text_user${who.id}"</#if><#if blacklisted?if_exists> style="display: none;"</#if>>
   <#if TOOL.xpath(comment.data,"//censored")?exists>
      <@showCensored comment, diz.id, diz.relationId/>
   <#else>
