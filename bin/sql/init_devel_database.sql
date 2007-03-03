@@ -1,14 +1,14 @@
-SET CHARACTER SET latin2;
+SET CHARACTER SET utf8;
 
-insert into uzivatel values(1,'admin','Superuæivatel','root@localhost','changeit',NULL,
+insert into uzivatel values(1,'admin','Superu≈æivatel','root@localhost','changeit',NULL,
 '<data><personal><sex>man</sex></personal><system><group>11246</group></system><settings><emoticons>yes</emoticons>
 <blog name="leos">591</blog></settings><roles><role>root</role></roles></data>');
 
-insert into uzivatel values(2,'user','Uæivatel','root@localhost','changeit','Minime',
-'<data><personal><sex>man</sex><birth_year>1975</birth_year><city>MÏsto</city><country>St·t</country>
-<signature>PatiËky jsou nuda</signature></personal><communication><email valid="yes">
+insert into uzivatel values(2,'user','U≈æivatel','root@localhost','changeit','Minime',
+'<data><personal><sex>man</sex><birth_year>1975</birth_year><city>Mƒõsto</city><country>St√°t</country>
+<signature>Patiƒçky jsou nuda</signature></personal><communication><email valid="yes">
 <weekly_summary>yes</weekly_summary><newsletter>yes</newsletter><forum>no</forum></email></communication>
-<profile><home_page>http://www.abclinuxu.cz</home_page><about_myself format="1">J· jsem j·</about_myself>
+<profile><home_page>http://www.abclinuxu.cz</home_page><about_myself format="1">J√° jsem j√°</about_myself>
 <linux_user_from_year>1995</linux_user_from_year><distributions><distribution>Redhat</distribution>
 <distribution>Mandrake</distribution><distribution>Debian</distribution></distributions></profile>
 <settings><emoticons>no</emoticons></settings></data>');

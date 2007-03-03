@@ -1,15 +1,16 @@
 #!/bin/sh
 
 export LC_CTYPE=cs_Cz
-#export JAVA_HOME=/usr/local/java
+export JAVA_HOME=/usr/local/java
+export PATH=$PATH:$JAVA_HOME/bin
 
 LIBS=@SOURCE_DIR@/libs
 BUILD=@DEPLOY_ABCLINUXU@/WEB-INF/classes
 ARGS="-Xmx300m -Dlog4j.configuration=log4j.xml -Dabc.config=@DEPLOY_ABCLINUXU@/WEB-INF/conf/systemPrefs.xml"
 
 JARS=$LIBS/dom4j.jar:$LIBS/jaxen.jar:$LIBS/log4j.jar:$LIBS/mysql-connector.jar:$LIBS/proxool.jar
-JARS=$JARS:$LIBS/lucene.jar:$LIBS/regexp.jar:$LIBS/servlet.jar
-JARS=$JARS:$LIBS/activation.jar:$LIBS/mail.jar:$LIBS/commons-collections.jar
+JARS=$JARS:$LIBS/lucene.jar:$LIBS/regexp.jar:$LIBS/servlet.jar:$LIBS/whirlycache.jar:$LIBS/concurrent.jar
+JARS=$JARS:$LIBS/activation.jar:$LIBS/mail.jar:$LIBS/commons-collections.jar:$LIBS/commons-logging.jar
 export CLASSPATH=$CLASSPATH:$BUILD:$JARS
 
 INDEX_REAL=@DEPLOY_ABCLINUXU@/WEB-INF/index
