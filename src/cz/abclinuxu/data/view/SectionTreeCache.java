@@ -18,28 +18,27 @@
  */
 package cz.abclinuxu.data.view;
 
-import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.data.Category;
+import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.persistence.Persistence;
-import cz.abclinuxu.persistence.SQLTool;
+import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.PersistenceMapping;
+import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.extra.CompareCondition;
 import cz.abclinuxu.persistence.extra.Field;
 import cz.abclinuxu.persistence.extra.Operation;
 import cz.abclinuxu.persistence.extra.Qualifier;
-import cz.abclinuxu.data.Category;
-import cz.abclinuxu.data.Relation;
-import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.servlets.Constants;
+import cz.abclinuxu.utils.freemarker.Tools;
+import org.dom4j.Document;
+import org.dom4j.Element;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Collections;
-
-import org.dom4j.Element;
-import org.dom4j.Document;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Cache for some tree of sections. It may contain additional information
@@ -230,15 +229,21 @@ public class SectionTreeCache {
         parent.addSubsection(section);
         directAccessMap.put(id, section);
 
-        Qualifier qualifierType = new CompareCondition(Field.PARENT_TYPE, Operation.EQUAL,
-                                                       PersistenceMapping.getGenericObjectType(category));
+        Qualifier qualifierType = new CompareCondition(Field.PARENT_TYPE, Operation.EQUAL, PersistenceMapping.getGenericObjectType(category));
         Qualifier qualifierParent = new CompareCondition(Field.PARENT, Operation.EQUAL, id);
         SQLTool sqlTool = SQLTool.getInstance();
-        List relations = sqlTool.findCategoriesRelations(new Qualifier[]{qualifierType, qualifierParent});
-        for (Object relation1 : relations) {
-            Relation child = (Relation) relation1;
+        List<Relation> relations = sqlTool.findCategoriesRelations(new Qualifier[]{qualifierType, qualifierParent});
+        if (relations.size() == 0)
+            return;
+
+        // initialize persistance cache
+        List categories = new ArrayList(relations.size());
+        for (Relation childRelation : relations) 
+            categories.add(childRelation.getChild());
+        Tools.syncList(categories);
+
+        for (Relation child : relations)
             scanRelation(section, child, directAccessMap);
-        }
     }
 
     /**
