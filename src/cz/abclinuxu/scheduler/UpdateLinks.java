@@ -30,6 +30,7 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Server;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.Nursery;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.config.Configurable;
@@ -309,18 +310,23 @@ public class UpdateLinks extends TimerTask implements Configurable {
             servers.add(new Server(id));
         }
         servers = Tools.syncList(servers);
+        Nursery.getInstance().initChildren(servers);
 
         Map result = new HashMap(definitions.size() + 1, 1.0f);
+        List<Link> allLinks = new ArrayList<Link>(definitions.size() * 5);
         for (Iterator iter = servers.iterator(); iter.hasNext();) {
             Server server = (Server) iter.next();
-            List children = Tools.syncList(server.getChildren());
+            List children = server.getChildren();
             List links = new ArrayList(children.size());
             for (Iterator iter2 = children.iterator(); iter2.hasNext();) {
                 Relation relation = (Relation) iter2.next();
-                links.add(relation.getChild());
+                Link link = (Link) relation.getChild();
+                links.add(link);
+                allLinks.add(link);
             }
             result.put(server, links);
         }
+        Tools.syncList(allLinks);
         return result;
     }
 
