@@ -1784,6 +1784,8 @@ public final class SQLTool implements Configurable {
             sb.append("!=");
         else if (operation==Operation.LIKE)
             sb.append(" like ");
+        else if (operation==Operation.IN)
+            sb.append(" in ");
 
         sb.append("? ");
 
