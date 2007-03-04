@@ -65,11 +65,13 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.imageio.ImageIO;
 import java.io.File;
 import java.util.*;
 import java.util.prefs.Preferences;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.awt.image.BufferedImage;
 
 /**
  * Class for manipulation with User.
@@ -96,6 +98,7 @@ public class EditUser implements AbcAction, Configurable {
     public static final String PARAM_ABOUT_ME = "about";
     public static final String PARAM_EMOTICONS = "emoticons";
     public static final String PARAM_SIGNATURES = "signatures";
+    public static final String PARAM_AVATARS = "avatars";
     public static final String PARAM_SIGNATURE = "signature";
     public static final String PARAM_COOKIE_VALIDITY = "cookieValid";
     public static final String PARAM_DISCUSSIONS_COUNT = "discussions";
@@ -108,6 +111,8 @@ public class EditUser implements AbcAction, Configurable {
     public static final String PARAM_SUBSCRIBE_WEEKLY = "weekly";
     public static final String PARAM_SUBSCRIBE_FORUM = "forum";
     public static final String PARAM_PHOTO = "photo";
+    public static final String PARAM_AVATAR = "avatar";
+    public static final String PARAM_REMOVE_AVATAR = "remove_avatar";
     public static final String PARAM_RETURN_TO_FORUM = "moveback";
     public static final String PARAM_USER_ROLES = "roles";
     public static final String PARAM_USERS = "users";
@@ -139,6 +144,8 @@ public class EditUser implements AbcAction, Configurable {
     public static final String ACTION_EDIT_PROFILE_STEP2 = "editProfile2";
     public static final String ACTION_UPLOAD_PHOTO = "uploadPhoto";
     public static final String ACTION_UPLOAD_PHOTO_STEP2 = "uploadPhoto2";
+    public static final String ACTION_UPLOAD_AVATAR = "uploadAvatar";
+    public static final String ACTION_UPLOAD_AVATAR_STEP2 = "uploadAvatar2";
     public static final String ACTION_EDIT_SETTINGS = "editSettings";
     public static final String ACTION_EDIT_SETTINGS_STEP2 = "editSettings2";
     public static final String ACTION_EDIT_BLACKLIST = "editBlacklist";
@@ -241,6 +248,12 @@ public class EditUser implements AbcAction, Configurable {
 
         if ( action.equals(ACTION_UPLOAD_PHOTO_STEP2) )
             return actionUploadPhoto2(request, response, env);
+
+        if ( action.equals(ACTION_UPLOAD_AVATAR) )
+            return FMTemplateSelector.select("EditUser", "uploadAvatar", env, request);
+
+        if ( action.equals(ACTION_UPLOAD_AVATAR_STEP2) )
+            return actionUploadAvatar2(request, response, env);
 
         // these actions are restricted to admin only
 
@@ -569,6 +582,10 @@ public class EditUser implements AbcAction, Configurable {
         if ( node!=null )
             params.put(PARAM_SIGNATURES, node.getText());
 
+        node = document.selectSingleNode("/data/settings/avatars");
+        if ( node!=null )
+            params.put(PARAM_AVATARS, node.getText());
+
         node = document.selectSingleNode("/data/settings/guidepost");
         if ( node!=null )
             params.put(PARAM_GUIDEPOST, node.getText());
@@ -650,6 +667,7 @@ public class EditUser implements AbcAction, Configurable {
         canContinue &= setCookieValidity(params, managed);
         canContinue &= setEmoticons(params, managed);
         canContinue &= setSignatures(params, managed);
+        canContinue &= setAvatars(params, managed);
         canContinue &= setGuidepost(params, managed);
         canContinue &= setDiscussionsSizeLimit(params, managed, env);
         canContinue &= setNewsSizeLimit(params, managed, env);
@@ -830,7 +848,7 @@ public class EditUser implements AbcAction, Configurable {
         Persistence persistence = PersistenceFactory.getPersistance();
 
         boolean canContinue = true;
-        if ( !user.hasRole(Roles.USER_ADMIN) )
+        if ( ! user.hasRole(Roles.USER_ADMIN) )
             canContinue &= checkPassword(params, managed, env);
 
         if (!canContinue)
@@ -840,6 +858,40 @@ public class EditUser implements AbcAction, Configurable {
 
         if ( !canContinue )
             return FMTemplateSelector.select("EditUser", "uploadPhoto", env, request);
+
+        persistence.update(managed);
+
+        User sessionUser = (User) env.get(Constants.VAR_USER);
+        if (managed.getId() == sessionUser.getId()) {
+            sessionUser.synchronizeWith(managed);
+        }
+
+        ServletUtils.addMessage("Změny byly uloženy.", env, request.getSession());
+        UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+        urlUtils.redirect(response, "/Profile?action="+ViewUser.ACTION_SHOW_MY_PROFILE+"&uid="+managed.getId());
+        return null;
+    }
+
+    /**
+     * Uploads photo.
+     */
+    protected String actionUploadAvatar2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User managed = (User) env.get(VAR_MANAGED);
+        User user = (User) env.get(Constants.VAR_USER);
+        Persistence persistence = PersistenceFactory.getPersistance();
+
+        boolean canContinue = true;
+        if ( ! user.hasRole(Roles.USER_ADMIN) )
+            canContinue &= checkPassword(params, managed, env);
+
+        if ( ! canContinue)
+            return FMTemplateSelector.select("EditUser", "uploadAvatar", env, request);
+
+        canContinue &= setAvatar(params, managed, env);
+
+        if ( ! canContinue )
+            return FMTemplateSelector.select("EditUser", "uploadAvatar", env, request);
 
         persistence.update(managed);
 
@@ -1458,6 +1510,20 @@ public class EditUser implements AbcAction, Configurable {
         return true;
     }
 
+     /**
+     * Updates avatars from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setAvatars(Map params, User user) {
+        String avatars = (String) params.get(PARAM_AVATARS);
+        Element element = DocumentHelper.makeElement(user.getData(), "/data/settings/avatars");
+        String value = ("yes".equals(avatars))? "yes":"no";
+        element.setText(value);
+        return true;
+    }
+
     /**
      * Updates guidepost from parameters. Changes are not synchronized with persistence.
      * @param params map holding request's parameters
@@ -1754,6 +1820,62 @@ public class EditUser implements AbcAction, Configurable {
         }
 
         Element photo = DocumentHelper.makeElement(user.getData(), "/data/profile/photo");
+        photo.setText("/"+fileName);
+        return true;
+    }
+
+   /**
+     * Uploads photo from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param user user to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setAvatar(Map params, User user, Map env) {
+        if (params.containsKey(PARAM_REMOVE_AVATAR)) {
+            Node n = user.getData().selectSingleNode("/data/profile/avatar");
+            if (n != null) {
+                String localPath = AbcConfig.calculateDeployedPath(n.getText().substring(1));
+                new File(localPath).delete();
+                n.detach();
+            }
+            return true;
+        }
+
+        FileItem fileItem = (FileItem) params.get(PARAM_AVATAR);
+        if ( fileItem == null ) {
+            ServletUtils.addError(PARAM_AVATAR, "Vyberte soubor s avatarem!", env, null);
+            return false;
+        }
+
+        String suffix = getFileSuffix(fileItem.getName()).toLowerCase();
+        if ( ! (suffix.equals("jpg") || suffix.equals("jpeg") || suffix.equals("png") || suffix.equals("gif")) ) {
+            ServletUtils.addError(PARAM_AVATAR, "Soubor musí být typu JPG, GIF nebo JPEG!", env, null);
+            return false;
+        }
+
+        try {
+            BufferedImage img = ImageIO.read(fileItem.getInputStream());
+            if (img.getHeight() > 50 || img.getWidth() > 50) {
+                ServletUtils.addError(PARAM_AVATAR, "Avatar přesahuje povolené maximální rozměry!", env, null);
+                return false;
+            }
+        } catch(Exception e) {
+            ServletUtils.addError(PARAM_AVATAR, "Nelze načíst obrázek!", env, null);
+            return false;
+        }
+
+        String fileName = "images/avatars/" + user.getId() + "." + suffix;
+        File file = new File(AbcConfig.calculateDeployedPath(fileName));
+        try {
+            fileItem.write(file);
+        } catch (Exception e) {
+            ServletUtils.addError(PARAM_AVATAR, "Chyba při zápisu na disk!", env, null);
+            log.error("Není možné uložit avatar " + file.getAbsolutePath() + " na disk!",e);
+            return false;
+        }
+
+        Element photo = DocumentHelper.makeElement(user.getData(), "/data/profile/avatar");
         photo.setText("/"+fileName);
         return true;
     }

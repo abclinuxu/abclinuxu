@@ -88,15 +88,31 @@
    </td>
   </tr>
   <tr>
+  <tr>
    <td colspan="2">Určuje, zda má systém při zobrazování diskusních příspěvků
    zobrazovat signatury autorů příspěvků.
+   </td>
+  </tr>
+  <td class="required">Zobrazovat avatary</td>
+   <td>
+    <select name="avatars" tabindex="6">
+     <#assign avatars=PARAMS.avatars?default("yes")>
+     <option value="yes" <#if avatars=="yes">SELECTED</#if>>ano</option>
+     <option value="no"<#if avatars=="no">SELECTED</#if>>ne</option>
+    </select>
+   </td>
+  </tr>
+  <tr>
+  <tr>
+   <td colspan="2">Určuje, zda má systém při zobrazování diskusních příspěvků
+   zobrazovat avatary autorů příspěvků.
    </td>
   </tr>
 
   <tr>
    <td class="required">Počet diskusí na úvodní stránce</td>
    <td>
-    <select name="discussions" tabindex="6">
+    <select name="discussions" tabindex="7">
      <#assign discussions=PARAMS.discussions?default("20")>
      <option value="-2"<#if discussions=="-2">SELECTED</#if>>default</option>
      <option value="0" <#if discussions=="0">SELECTED</#if>>žádné</option>
@@ -121,7 +137,7 @@
   <tr>
    <td class="required">Počet zpráviček</td>
    <td>
-    <input type="text" name="news" value="${PARAMS.news?if_exists}" size="3" tabindex="7">
+    <input type="text" name="news" value="${PARAMS.news?if_exists}" size="3" tabindex="8">
     <div class="error">${ERRORS.news?if_exists}</div>
    </td>
   </tr>
@@ -134,7 +150,7 @@
   <tr>
    <td class="required">Počet zápisků</td>
    <td>
-    <input type="text" name="stories" value="${PARAMS.stories?if_exists}" size="3" tabindex="8">
+    <input type="text" name="stories" value="${PARAMS.stories?if_exists}" size="3" tabindex="9">
     <div class="error">${ERRORS.stories?if_exists}</div>
    </td>
   </tr>
@@ -148,7 +164,7 @@
   <tr>
    <td class="required">Velikost stránky při hledání</td>
    <td>
-    <input type="text" name="search" value="${PARAMS.search?if_exists}" size="3" tabindex="9">
+    <input type="text" name="search" value="${PARAMS.search?if_exists}" size="3" tabindex="10">
     <div class="error">${ERRORS.search?if_exists}</div>
    </td>
   </tr>
@@ -159,7 +175,7 @@
   <tr>
    <td class="required">Velikost stránky diskusního fóra</td>
    <td>
-    <input type="text" name="forum" value="${PARAMS.forum?if_exists}" size="3" tabindex="10">
+    <input type="text" name="forum" value="${PARAMS.forum?if_exists}" size="3" tabindex="11">
     <div class="error">${ERRORS.forum?if_exists}</div>
    </td>
   </tr>
@@ -170,7 +186,7 @@
   <tr>
    <td class="required">Zobrazovat rozcestník</td>
    <td>
-    <select name="guidepost" tabindex="11">
+    <select name="guidepost" tabindex="12">
      <#assign guidepost=PARAMS.guidepost?default("yes")>
      <option value="yes" <#if guidepost=="yes">SELECTED</#if>>ano</option>
      <option value="no"<#if guidepost=="no">SELECTED</#if>>ne</option>

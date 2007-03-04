@@ -60,11 +60,14 @@ public class LoadTest {
         Config config = articleSectionsConfig;
         List<String> urls = new ArrayList<String>(Arrays.asList(config.urls));
 
+        long sqlStart = getServedSqlQueries();
         long start = System.currentTimeMillis();
         crawl(urls, 0, config.depth);
         long end = System.currentTimeMillis();
+        long sqlEnd = getServedSqlQueries();
         System.out.println();
-        System.out.println("Test took " + (end - start)/1000 + " seconds, downloaded " + downloaded + " pages");
+        System.out.println("Test took " + (end - start)/1000 + " seconds, downloaded " + downloaded + " pages, " +
+            "performed " + (sqlEnd - sqlStart) + " SQL queries.");
     }
 
 /*
@@ -82,6 +85,7 @@ Test took 719 seconds, downloaded 762 pages
 aktualni implementace Nursery, size: 750 objektu, whirly cache
 Test took 684 seconds, downloaded 762 pages
 Test took 684 seconds, downloaded 762 pages
+Test took 136 seconds, downloaded 761 pages, performed 6023 SQL queries. (28.2.2007 - I don't understand this improvement)
 */
 
     static void crawl(List<String> pages, int currentDepth, int maximumDepth) throws Exception {
@@ -147,6 +151,17 @@ Test took 684 seconds, downloaded 762 pages
             method.releaseConnection();
         }
         return new String(responseBody);
+    }
+
+    static long getServedSqlQueries() throws IOException {
+        String content = readUrl(urlPrefix + "/Admin?action=performCheck");
+        int i = content.indexOf("SQL: ");
+        if (i == -1)
+            return 0;
+        int j = content.indexOf("<br>", i + 1);
+        if (j == -1)
+            return 0;
+        return Long.parseLong(content.substring(i + 5, j));
     }
 
     static class Config {

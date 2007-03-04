@@ -444,6 +444,30 @@ public class Tools implements Configurable {
     }
 
     /**
+     * Finds user's avatar and displays it, unless visitor forbids it.
+     * If user or visitor is registered, these objects will be instance of User
+     * class. If avatar is for any reason not available, null will be returned.
+     * @param user user, whose avatar shall be displayed. It must be initialized.
+     * @param visitor user, that is viewing this comment. It must be initialized, if passed.
+     * @return user's avatar url or null.
+     */
+    public String getUserAvatar(Object user, Object visitor) {
+        if (user==null || !(user instanceof User))
+            return null;
+        User userA = (User) user;
+        Element element = (Element) userA.getData().selectSingleNode("/data/profile/avatar");
+        if (element == null)
+            return null;
+        if (visitor != null && (visitor instanceof User)) {
+            User userVisitor = (User) visitor;
+            Element element2 = (Element) userVisitor.getData().selectSingleNode("//settings/avatars");
+            if (element2 != null && ! element2.getTextTrim().equalsIgnoreCase("yes"))
+                return null;
+        }
+        return element.getText();
+    }
+
+    /**
      * Creates anchor for the blog of specified user.
      * @param user existing user
      * @param defaultTitle if blog doesn't have set its name, this will be used as anchor text

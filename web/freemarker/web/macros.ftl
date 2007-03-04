@@ -128,11 +128,17 @@
 </#macro>
 
 <#macro showThread(comment level diz showControls extra...)>
-  <#if comment.author?exists>
-   <#local who=TOOL.createUser(comment.author)>
-	</#if>
-	<#assign blacklisted = diz.isBlacklisted(comment)>
+    <#if comment.author?exists>
+        <#local who=TOOL.createUser(comment.author)>
+    </#if>
+	<#local blacklisted = diz.isBlacklisted(comment)>
 	<div class="ds_hlavicka<#if diz.isUnread(comment)>_novy</#if><#if blacklisted> ds_hlavicka_blacklisted</#if><#if who?exists && USER?exists && who.id == USER.id> ds_hlavicka_me</#if>" id="${comment.id}">
+    <#if comment.author?exists && showControls>
+        <#assign avatar = TOOL.getUserAvatar(who?if_exists, USER?if_exists)?default("UNDEFINED")>
+        <#if avatar != "UNDEFINED">
+            <img src="${avatar}" id="comment${comment.id}_avatar" alt="avatar" class="ds_avatar <#if blacklisted>ds_controls_blacklisted</#if>" >
+        </#if>
+    </#if>
   ${DATE.show(comment.created,"SMART")}
   <#if comment.author?exists>
    <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
@@ -142,7 +148,6 @@
   <#else>
    ${comment.anonymName?if_exists}
   </#if><br>
-  <#assign blacklisted = diz.isBlacklisted(comment)>
   <#if blacklisted>
      <a onClick="schovej_vlakno(${comment.id})" id="comment${comment.id}_toggle2" class="ds_control_sbalit" title="Schová nebo rozbalí celé vlákno">Rozbalit</a>
 	 <#else>
@@ -168,6 +173,7 @@
   <#elseif USER?exists && USER.hasRole("discussion admin")>
       <a href="${URL.make("/EditRequest/"+diz.relationId+"?action=comment&amp;threadId="+comment.id)}">Admin</a>
   </#if>
+  <div style="clear: right"></div><!-- aby avatar nepresahoval -->
  </div>
  <div id="comment${comment.id}" <#if who?exists>class="ds_text_user${who.id}"</#if><#if blacklisted?if_exists> style="display: none;"</#if>>
   <#if TOOL.xpath(comment.data,"//censored")?exists>

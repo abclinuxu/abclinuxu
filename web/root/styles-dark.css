@@ -545,6 +545,10 @@ font-weight: bold;
 	margin-top:	0.5em;
 }
 
+.ds_avatar {
+	float: right;
+}
+
 .ds_hlavicka, .ds_hlavicka_novy {
 	margin-top:	10px;
 	background-color: #494949;

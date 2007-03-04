@@ -73,6 +73,10 @@ patičku zobrazovanou v diskusích u vašich příspěvků, nahrát svou fotku
         <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=uploadPhoto")}">
         změnit fotku</a>
     </li>
+    <li>
+        <a href="${URL.noPrefix("/EditUser/"+PROFILE.id+"?action=uploadAvatar")}">
+        změnit avatar</a>
+    </li>
 </ul>
 
 <h2>Nastavení účtu</h2>

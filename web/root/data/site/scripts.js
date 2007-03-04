@@ -27,19 +27,25 @@ function schovej_vlakno(id) {
         document.getElementById('comment'+id).style.display = 'block'
         document.getElementById('comment'+id+'_controls').style.display = 'block'
         document.getElementById('comment'+id+'_toggle1').innerHTML = 'Sbalit'
-				if (document.getElementById('comment'+id+'_toggle2')) {
-					document.getElementById('comment'+id+'_toggle2').style.display = 'none'
-				}
+        if(document.getElementById('comment'+id+'_avatar')) {
+            document.getElementById('comment'+id+'_avatar').style.display = 'block'
+        }
+        if (document.getElementById('comment'+id+'_toggle2')) {
+            document.getElementById('comment'+id+'_toggle2').style.display = 'none'
+        }
     }
     else {
         document.getElementById('comment'+id).style.display = 'none'
         document.getElementById('comment'+id+'_controls').style.display = 'none'
         document.getElementById('comment'+id+'_toggle1').innerHTML = 'Rozbalit'
-				if (document.getElementById('comment'+id+'_toggle2')) {
-					document.getElementById('comment'+id+'_toggle2').style.display = 'inline'
-				}
+        if (document.getElementById('comment'+id+'_avatar')) {
+            document.getElementById('comment'+id+'_avatar').style.display = 'none'
+        }
+        if (document.getElementById('comment'+id+'_toggle2')) {
+            document.getElementById('comment'+id+'_toggle2').style.display = 'inline'
+        }
     }
-		prepareCommentNext();
+    prepareCommentNext();
 }
 
 function addSidebar() {

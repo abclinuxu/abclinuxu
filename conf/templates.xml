@@ -310,6 +310,9 @@
         <action name="uploadPhoto" content="/edit/user_photo.ftl">
             <var name="TITLE" value="Nahrání fotografie" />
         </action>
+        <action name="uploadAvatar" content="/edit/user_avatar.ftl">
+            <var name="TITLE" value="Nahrání avataru" />
+        </action>
         <action name="editSubscription" content="/edit/user_subscribe.ftl">
             <var name="TITLE" value="Objednávka zasílání informací" />
         </action>
