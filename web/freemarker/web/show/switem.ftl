@@ -47,6 +47,9 @@
 <@lib.showMessages/>
 
 <div class="sw">
+
+    <@lib.advertisement id="gg-sw-item" />
+
     <@swlib.showSoftware ITEM, true />
 
     <#assign feedUrl = TOOL.xpath(ITEM, "/data/url[@useType='rss']")?default("UNDEFINED")>

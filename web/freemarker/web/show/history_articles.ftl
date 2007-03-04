@@ -2,6 +2,9 @@
 
 <#if TYPE=="articles">
  <#global CITACE = TOOL.getRelationCountersValue(FOUND.data,"read")/>
+
+ <@lib.advertisement id="gg-sky" />
+
  <#list FOUND.data as relation>
   <@lib.showArticle relation, "CZ_FULL" />
   <hr>

@@ -10,6 +10,8 @@
  <a href="${URL.noPrefix("/EditRelation?action=remove&rid="+RELATION.id+"&prefix="+URL.prefix)}">Smaž sekci</a>
 </#if>
 
+<@lib.advertisement id="gg-sky" />
+
 <#if TOOL.xpath(CATEGORY,"data/note")?exists>
  <p>${TOOL.render(TOOL.element(CATEGORY.data,"data/note"),USER?if_exists)}</p>
 </#if>
