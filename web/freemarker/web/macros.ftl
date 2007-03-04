@@ -133,65 +133,64 @@
     </#if>
 	<#local blacklisted = diz.isBlacklisted(comment)>
 	<div class="ds_hlavicka<#if diz.isUnread(comment)>_novy</#if><#if blacklisted> ds_hlavicka_blacklisted</#if><#if who?exists && USER?exists && who.id == USER.id> ds_hlavicka_me</#if>" id="${comment.id}">
-    <#if comment.author?exists && showControls>
-        <#assign avatar = TOOL.getUserAvatar(who?if_exists, USER?if_exists)?default("UNDEFINED")>
-        <#if avatar != "UNDEFINED">
-            <img src="${avatar}" id="comment${comment.id}_avatar" alt="avatar" class="ds_avatar <#if blacklisted>ds_controls_blacklisted</#if>" >
+        <#if comment.author?exists && showControls>
+            <#assign avatar = TOOL.getUserAvatar(who?if_exists, USER?if_exists)?default("UNDEFINED")>
+            <#if avatar != "UNDEFINED">
+                <img src="${avatar}" id="comment${comment.id}_avatar" alt="avatar" class="ds_avatar <#if blacklisted>ds_controls_blacklisted</#if>" >
+            </#if>
         </#if>
-    </#if>
-  ${DATE.show(comment.created,"SMART")}
-  <#if comment.author?exists>
-   <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
-   <#local blog=TOOL.getUserBlogAnchor(who, "blog")?default("UNDEF")>
-   <#if blog!="UNDEF">&nbsp;| blog: ${blog}</#if>
-   <#local city=TOOL.xpath(who,"//personal/city")?default("UNDEF")><#if city!="UNDEF"> | ${city}</#if>
-  <#else>
-   ${comment.anonymName?if_exists}
-  </#if><br>
-  <#if blacklisted>
-     <a onClick="schovej_vlakno(${comment.id})" id="comment${comment.id}_toggle2" class="ds_control_sbalit" title="Schová nebo rozbalí celé vlákno">Rozbalit</a>
-	 <#else>
-     <a onClick="schovej_vlakno(${comment.id})" id="comment${comment.id}_toggle2" class="ds_control_sbalit2" title="Schová nebo rozbalí celé vlákno">Rozbalit</a>
-  </#if>
-  ${comment.title?if_exists}
-  <#if showControls>
-	 <div id="comment${comment.id}_controls"<#if blacklisted> class="ds_controls_blacklisted"</#if>>
-         <#assign nextUnread = diz.getNextUnread(comment)?default("UNDEF")>
-         <#if ! nextUnread?is_string><a href="#${nextUnread}" title="Skočit na další nepřečtený komentář">Další</a> |</#if>
-         <a href="${URL.make("/EditDiscussion/"+diz.relationId+"?action=add&amp;dizId="+diz.id+"&amp;threadId="+comment.id+extra[0]?default(""))}">Odpovědět</a> |
-         <a href="${URL.make("/EditRequest/"+diz.relationId+"?action=comment&amp;threadId="+comment.id)}" title="Žádost o přesun diskuse, stížnost na komentář">Admin</a> |
-         <a href="#${comment.id}" title="Přímá adresa na tento komentář">Link</a> |
-         <#if (comment.parent?exists)><a href="#${comment.parent}" title="Odkaz na komentář o jednu úroveň výše">Výše</a> |</#if>
-         <#if comment.author?exists>
-             <#if blacklisted><#local action="fromBlacklist", title="Neblokovat", hint="Odstraní autora ze seznamu blokovaných uživatelů">
-             <#else><#local action="toBlacklist", title="Blokovat", hint="Přidá autora na seznam blokovaných uživatelů"></#if>
-             <#if USER?exists><#local myId=USER.id></#if>
-             <a href="${URL.noPrefix("/EditUser/"+myId?if_exists+"?action="+action+"&amp;bUid="+who.id+"&amp;url="+URL.prefix+"/show/"+diz.relationId+"#"+comment.id)}" title="${hint}">${title}</a> |
-         </#if>
-         <a onClick="schovej_vlakno(${comment.id})" id="comment${comment.id}_toggle1" title="Schová nebo rozbalí celé vlákno" class="ds_control_sbalit3"><#if ! blacklisted>Sbalit<#else>Rozbalit</#if></a>
-     </div>
-  <#elseif USER?exists && USER.hasRole("discussion admin")>
-      <a href="${URL.make("/EditRequest/"+diz.relationId+"?action=comment&amp;threadId="+comment.id)}">Admin</a>
-  </#if>
-  <div style="clear: right"></div><!-- aby avatar nepresahoval -->
- </div>
- <div id="comment${comment.id}" <#if who?exists>class="ds_text_user${who.id}"</#if><#if blacklisted?if_exists> style="display: none;"</#if>>
-  <#if TOOL.xpath(comment.data,"//censored")?exists>
-     <@showCensored comment, diz.id, diz.relationId/>
-  <#else>
-   <div class="ds_text">
-     ${TOOL.render(TOOL.element(comment.data,"//text"),USER?if_exists)}
-   </div>
-   <#assign signature = TOOL.getUserSignature(who?if_exists, USER?if_exists)?default("UNDEFINED")>
-   <#if signature!="UNDEFINED"><div class="signature">${signature}</div></#if>
-  </#if>
-  <#local level2=level+1>
-  <div class="ds_odsazeni">
-   <#list comment.children?if_exists as child>
-    <@showThread child, level2, diz, showControls, extra[0]?if_exists />
-   </#list>
-  </div>
- </div>
+        ${DATE.show(comment.created,"SMART")}
+        <#if comment.author?exists>
+            <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
+            <#local blog=TOOL.getUserBlogAnchor(who, "blog")?default("UNDEF")><#if blog!="UNDEF">&nbsp;| blog: ${blog}</#if>
+            <#local city=TOOL.xpath(who,"//personal/city")?default("UNDEF")><#if city!="UNDEF"> | ${city}</#if>
+        <#else>
+            ${comment.anonymName?if_exists}
+        </#if><br>
+        <#if blacklisted>
+            <a onClick="schovej_vlakno(${comment.id})" id="comment${comment.id}_toggle2" class="ds_control_sbalit" title="Schová nebo rozbalí celé vlákno">Rozbalit</a>
+        <#else>
+            <a onClick="schovej_vlakno(${comment.id})" id="comment${comment.id}_toggle2" class="ds_control_sbalit2" title="Schová nebo rozbalí celé vlákno">Rozbalit</a>
+        </#if>
+        ${comment.title?if_exists}
+        <#if showControls>
+            <div id="comment${comment.id}_controls"<#if blacklisted> class="ds_controls_blacklisted"</#if>>
+                <#local nextUnread = diz.getNextUnread(comment)?default("UNDEF")>
+                <#if ! nextUnread?is_string><a href="#${nextUnread}" title="Skočit na další nepřečtený komentář">Další</a> |</#if>
+                <a href="${URL.make("/EditDiscussion/"+diz.relationId+"?action=add&amp;dizId="+diz.id+"&amp;threadId="+comment.id+extra[0]?default(""))}">Odpovědět</a> |
+                <a href="${URL.make("/EditRequest/"+diz.relationId+"?action=comment&amp;threadId="+comment.id)}" title="Žádost o přesun diskuse, stížnost na komentář">Admin</a> |
+                <a href="#${comment.id}" title="Přímá adresa na tento komentář">Link</a> |
+                <#if (comment.parent?exists)><a href="#${comment.parent}" title="Odkaz na komentář o jednu úroveň výše">Výše</a> |</#if>
+                <#if comment.author?exists>
+                    <#if blacklisted><#local action="fromBlacklist", title="Neblokovat", hint="Odstraní autora ze seznamu blokovaných uživatelů">
+                    <#else><#local action="toBlacklist", title="Blokovat", hint="Přidá autora na seznam blokovaných uživatelů"></#if>
+                    <#if USER?exists><#local myId=USER.id></#if>
+                    <a href="${URL.noPrefix("/EditUser/"+myId?if_exists+"?action="+action+"&amp;bUid="+who.id+"&amp;url="+URL.prefix+"/show/"+diz.relationId+"#"+comment.id)}" title="${hint}">${title}</a> |
+                </#if>
+                <a onClick="schovej_vlakno(${comment.id})" id="comment${comment.id}_toggle1" title="Schová nebo rozbalí celé vlákno" class="ds_control_sbalit3"><#if ! blacklisted>Sbalit<#else>Rozbalit</#if></a>
+            </div>
+        <#elseif USER?exists && USER.hasRole("discussion admin")>
+            <a href="${URL.make("/EditRequest/"+diz.relationId+"?action=comment&amp;threadId="+comment.id)}">Admin</a>
+        </#if>
+        <div style="clear: right"></div><!-- aby avatar nepresahoval -->
+    </div>
+    <div id="comment${comment.id}" <#if who?exists>class="ds_text_user${who.id}"</#if><#if blacklisted?if_exists> style="display: none;"</#if>>
+        <#if TOOL.xpath(comment.data,"//censored")?exists>
+            <@showCensored comment, diz.id, diz.relationId/>
+        <#else>
+            <div class="ds_text">
+                ${TOOL.render(TOOL.element(comment.data,"//text"),USER?if_exists)}
+            </div>
+            <#assign signature = TOOL.getUserSignature(who?if_exists, USER?if_exists)?default("UNDEFINED")>
+            <#if signature!="UNDEFINED"><div class="signature">${signature}</div></#if>
+        </#if>
+        <#local level2=level+1>
+        <div class="ds_odsazeni">
+            <#list comment.children?if_exists as child>
+                <@showThread child, level2, diz, showControls, extra[0]?if_exists />
+            </#list>
+        </div>
+    </div>
 </#macro>
 
 <#macro showCensored(comment dizId relId)>
