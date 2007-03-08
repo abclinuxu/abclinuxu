@@ -1,4 +1,4 @@
 #!/bin/sh
 
-../runJava.sh cz.abclinuxu.utils.DumpCategoryTree
+../runJava.sh cz.abclinuxu.misc.DumpCategoryTree
 

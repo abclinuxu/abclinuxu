@@ -16,7 +16,7 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  */
-package cz.abclinuxu.utils;
+package cz.abclinuxu.misc;
 
 import cz.abclinuxu.persistence.*;
 import cz.abclinuxu.persistence.cache.EmptyCache;

@@ -2,4 +2,4 @@
 
 # usage: analyzeDiscussion number
 
-../runJava.sh cz.abclinuxu.utils.AnalyzeSurveyXML $1
+../runJava.sh cz.abclinuxu.misc.AnalyzeSurveyXML $1
