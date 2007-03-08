@@ -413,7 +413,7 @@
                             <entry key="feedUri5" value="http://www.penguin.cz/rss.php"/>
                             <entry key="feedUri7" value="http://www.abclinuxu.cz:9090/auto/abc.rss"/>
                             <entry key="feedUri9" value="http://www.linuxzone.cz/export/rssexport.phtml"/>
-                            <entry key="feedUri12" value="http://www.mandrivalinux.cz/modules/rss/rss.php"/>
+                            <entry key="feedUri12" value="http://www.mandrivalinux.cz/modules/rss/rss.php?module=marwel"/>
                             <entry key="feedUri13" value="http://www.czilla.cz/rss/rss.html"/>
                             <entry key="feedUri14" value="http://www.openoffice.cz/rss.xml"/>
                             <entry key="feedUri15" value="http://slashdot.org/index.rss"/>
