@@ -47,6 +47,9 @@
 
 <p class="zpravicka">${TOOL.xpath(ITEM,"data/content")}</p>
 
+<@lib.advertisement id="gg-zpravicka" />
+
+<br />
 <p><b>Nástroje</b>: <a href="${RELATION.url?default("/zpravicky/show/"+RELATION.id)}?varianta=print">Tisk</a></p>
 
 <h3>Komentáře</h3>

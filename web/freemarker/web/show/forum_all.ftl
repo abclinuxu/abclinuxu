@@ -87,11 +87,11 @@ otázky ohledně tohoto portálu a jeho služeb.
       <thead>
         <tr>
             <td class="td-forum">Fórum</td>
-            <td class="td-reakci">Dotazů</td>
-            <td class="td-dotaz">Poslední dotaz</td>
-            <td class="td-stav">Stav</td>
-            <td class="td-reakci">Reakcí</td>
-            <td class="td-posl">Poslední</td>
+            <td class="td-meta">Dotazů</td>
+            <td class="td-nazev">Poslední dotaz</td>
+            <td class="td-meta">Stav</td>
+            <td class="td-meta">Reakcí</td>
+            <td class="td-datum">Poslední</td>
         </tr>
       </thead>
       <tbody>
@@ -100,17 +100,17 @@ otázky ohledně tohoto portálu a jeho služeb.
                 <td>
                     <a href="${forum.url}" title="${forum.name}">${forum.name}</a>
                 </td>
-                <td class="td-reakci">${forum.size}</td>
+                <td class="td-meta">${forum.size}</td>
                 <#if forum.lastQuestion?exists>
                     <#assign diz = forum.lastQuestion>
                     <td>
                         <a href="/forum/show/${diz.relationId}">${TOOL.limit(diz.title,60," ..")}</a>
                     </td>
-                    <td class="td-stav">
+                    <td class="td-meta">
                         <@lib.showDiscussionState diz />
                     </td>
-                    <td class="td-reakci">${diz.responseCount}</td>
-                    <td class="td-posl">${DATE.show(diz.updated,"SMART")}</td>
+                    <td class="td-meta">${diz.responseCount}</td>
+                    <td class="td-datum">${DATE.show(diz.updated,"SMART")}</td>
                 <#else>
                     <td></td>
                     <td></td>

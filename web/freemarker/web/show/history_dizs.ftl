@@ -5,19 +5,17 @@
 <table class="ds">
  <thead>
    <tr>
-                <td class="td-dotaz">Dotaz</td>
-                <td class="td-stav">Stav</td>
-                <td class="td-reakci">Reakcí</td>
-                <td class="td-posl">Poslední</td>
+                <td class="td-nazev">Dotaz</td>
+                <td class="td-meta">Stav</td>
+                <td class="td-meta">Reakcí</td>
+                <td class="td-datum">Poslední</td>
    </tr>
  </thead>
  <tbody>
   <#list TOOL.analyzeDiscussions(FOUND.data) as diz>
    <tr>
-    <td class="td-dotaz">
-     <a href="${diz.url?default("/forum/show/"+diz.relationId)}">${TOOL.limit(diz.title,100," ..")}</a>
-    </td>
-    <td class="td-stav">
+    <td><a href="${diz.url?default("/forum/show/"+diz.relationId)}">${TOOL.limit(diz.title,100," ..")}</a></td>
+    <td class="td-meta">
        <@lib.markNewCommentsQuestion diz/>
        <#if TOOL.xpath(diz.discussion,"/data/frozen")?exists>
          <img src="/images/site2/zamceno.gif" alt="Z" title="Diskuse byla administrátory uzamčena">
@@ -29,8 +27,8 @@
          <img src="/images/site2/sledovano.gif" alt="S" title="Tuto diskusi sledujete monitorem">
        </#if>
     </td>
-    <td class="td-reakci">${diz.responseCount}</td>
-    <td class="td-posl">
+    <td class="td-meta">${diz.responseCount}</td>
+    <td class="td-datum">
       <#if byCreated>${DATE.show(diz.created,"CZ_FULL")}<#else>${DATE.show(diz.updated,"CZ_FULL")}</#if>
     </td>
    </tr>

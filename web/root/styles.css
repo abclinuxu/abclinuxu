@@ -421,17 +421,17 @@ font-weight: bold;
 	border:		1px solid silver;
 }
 
-.ds, .hw table, .sw table, .faq, .bazar-polozky {
+.ds, .hw table, .sw table, .faq, .bazar-polozky, .cl {
 	margin-top:	5px;
 	border-width:	0px;
 	table-layout:	auto;
 }
 
-.ds, .hw, .sw, .bazar {
+.ds, .hw, .sw, .bazar, .cl {
 	border-bottom:	1px solid #27648D;
 }
 
-.ds thead td, .hw thead td, .sw thead td, .faq thead td, .bazar thead td {
+.ds thead td, .hw thead td, .sw thead td, .faq thead td, .bazar thead td, .cl thead td {
 	font-weight:	bold;
 	border-bottom:	solid 1px silver;
 	font-size:	85%;
@@ -440,63 +440,38 @@ font-weight: bold;
 
 .poradna td.td-forum { width: 400px; }
 
-.ds td.td-dotaz, .hw td.td01, .sw td.td01, .faq td.td01, .bazar td.td01 {
+td.td-nazev {
 	width:		650px;
 }
 
-.ds td.td-stav, .hw td.td02, .sw td.td02, .bazar td.td02 {
+td.td-meta {
 	width:		60px;
 	text-align:	center;
 }
 
-.ds td.td-reakci, .hw td.td03, .sw td.td03, .bazar td.td03 {
-	width:		60px;
-	text-align:	center;
-}
-
-.ds td.td-posl, .hw td.td04, .faq td.td04 {
-	width:		230px;
-	text-align:	right;
-}
-.sw td.td04, .bazar td.td04 {
-	width:		60px;
-	text-align:	center;
-}
-.sw td.td05, .bazar td.td05 {
+td.td-datum {
 	width:		230px;
 	text-align:	right;
 }
 
-.ds_control_sbalit, .ds_control_sbalit2 {
-	float: right;
-}
-
-.ds_control_sbalit2 {
-	display: none;
-}
-
-.ds_control_sbalit, .ds_control_sbalit2, .ds_control_sbalit3 {
-	cursor: pointer;
-}
+.td-meta.td-right { text-align: right }
 
 .ds_odsazeni { margin-left:	1em; }
 
 .hw table.hw-sekce tbody td { width: 33%; padding: 0.1em; }
-.ds tbody tr a,
+.ds tbody tr a, .cl tbody tr a,
     .bazar table.bazar-polozky tr a,
     .hw table.hw-sekce tbody td a,
     .hw table.hw-polozky tr a,
     .sw table.sw-polozky tr a { display: block; _width: 100%; }
-.ds tbody tr:hover,
+.ds tbody tr:hover, .cl tbody tr:hover,
     .bazar table.bazar-polozky tbody tr:hover,
     .hw table.hw-polozky tbody tr:hover,
     .sw table.sw-polozky tbody tr:hover { background: #f3f3f3 }
-.ds tr:nth-child(even),
+.ds tr:nth-child(even), .cl tr:nth-child(even),
     .bazar table.bazar-polozky tr:nth-child(even),
     .hw table.hw-polozky tr:nth-child(even),
     .sw table.sw-polozky tr:nth-child(even) { background: #f9f9f9 }
-
-.hw img.ikona { margin-right: 0.3em; }
 
 .galerie a:hover, .sw h3 a:hover { background-color: white; }
 
@@ -537,9 +512,13 @@ font-weight: bold;
 	margin-top:	0.5em;
 }
 
-.ds_avatar {
-	float: right;
-}
+.ds_control_sbalit,
+.ds_control_sbalit2,
+.ds_avatar { float: right; }
+
+.ds_control_sbalit,
+.ds_control_sbalit2,
+.ds_control_sbalit3 { cursor: pointer; }
 
 .ds_hlavicka, .ds_hlavicka_novy {
 	margin-top:	10px;
@@ -547,16 +526,18 @@ font-weight: bold;
 	padding:	5px;
 	border-top:	1px solid #E0E0E0;
 	font-size:	90%;
+	height:		auto;
 }
 
-.ds_hlavicka_blacklisted
-{
+.ds_hlavicka_blacklisted {
 	font-size: 60%;
 	padding: 1px;
 	color: gray;
 }
 
-.ds_controls_blacklisted, .ds_telo_blacklisted { display: none; }
+.ds_controls_blacklisted,
+.ds_telo_blacklisted,
+.ds_control_sbalit2 { display: none; }
 .ds_hlavicka_me { background-color: #e6f3ff; }
 .ds_hlavicka_novy { background-color: #FFF8C3; }
 .ds_hlavicka_odkazy { color: #27648D; }
@@ -707,6 +688,7 @@ a.info:hover span.tooltip {
 .ds td a,
 .hw td a,
 .sw td a,
+.cl td a,
 .bazar td a,
 .s_nadpis a,
 .s_nadpis a:hover,
@@ -715,7 +697,6 @@ a.info,
 .ramec li a,
 .boxy li a,
 .sflista a,
-.cl_square a,
 .rating a,
 .cl_perex a,
 .treeview a,
@@ -727,6 +708,7 @@ a.info,
 .ds td a:hover,
 .hw td a:hover,
 .sw td a:hover,
+.cl td a:hover,
 .bazar td a:hover,
 .textad a:hover,
 .ramec li a:hover,

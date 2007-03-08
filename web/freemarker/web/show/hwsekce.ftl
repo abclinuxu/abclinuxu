@@ -71,19 +71,19 @@
     <table class="hw-polozky">
       <thead>
         <tr>
-            <td class="td01">Jméno</td>
-            <td class="td02">Podpora</td>
-            <td class="td03">Zastaralý</td>
-            <td class="td04">Poslední úprava</td>
+            <td class="td-nazev">Jméno</td>
+            <td class="td-meta">Podpora</td>
+            <td class="td-meta">Zastaralý</td>
+            <td class="td-datum">Poslední úprava</td>
         </tr>
       </thead>
       <tbody>
         <#list SORT.byName(map.make) as polozka>
             <tr>
-                <td class="td01">
+                <td>
 		            <a href="${polozka.url?default("/show/"+polozka.id)}">${TOOL.childName(polozka)}</a>
         		</td>
-                <td class="td02">
+                <td class="td-meta">
 		            <#assign support=TOOL.xpath(polozka.child,"/data/support")?default("UNDEFINED")>
                     <#switch support>
                         <#case "complete">kompletní<#break>
@@ -92,8 +92,8 @@
                         <#default>
                     </#switch>
 		        </td>
-                <td class="td03"><#if TOOL.xpath(polozka.child,"/data/outdated")?exists>ano</#if></td>
-                <td class="td04">${DATE.show(polozka.child.updated,"CZ_FULL")}</td>
+                <td class="td-meta"><#if TOOL.xpath(polozka.child,"/data/outdated")?exists>ano</#if></td>
+                <td class="td-datum">${DATE.show(polozka.child.updated,"CZ_FULL")}</td>
             </tr>
         </#list>
       </tbody>

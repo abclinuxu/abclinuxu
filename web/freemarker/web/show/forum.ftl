@@ -13,28 +13,24 @@
 <#if (DIZS.total > 0) >
 
 <table class="ds">
-     <thead>
-           <tr>
-                <td class="td-dotaz">Dotaz</td>
-                <td class="td-stav">Stav</td>
-                <td class="td-reakci">Reakcí</td>
-                <td class="td-posl">Poslední</td>
-            </tr>
-        </thead>
-        <tbody>
-	<#list TOOL.analyzeDiscussions(DIZS.data) as diz>
-   <tr>
-    <td class="td-dotaz">
-     <a href="/forum/show/${diz.relationId}">${TOOL.limit(diz.title,60," ..")}</a>
-    </td>
-    <td class="td-stav">
-        <@lib.showDiscussionState diz />
-    </td>
-    <td class="td-reakci">${diz.responseCount}</td>
-    <td class="td-posl">${DATE.show(diz.updated,"SMART")}</td>
-   </tr>
-        </#list>
-        </tbody>
+  <thead>
+    <tr>
+      <td class="td-nazev">Dotaz</td>
+      <td class="td-meta">Stav</td>
+      <td class="td-meta">Reakcí</td>
+      <td class="td-datum">Poslední</td>
+    </tr>
+  </thead>
+  <tbody>
+   <#list TOOL.analyzeDiscussions(DIZS.data) as diz>
+    <tr>
+      <td><a href="/forum/show/${diz.relationId}" title="${diz.title}">${TOOL.limit(diz.title,60," ..")}</a></td>
+      <td class="td-meta"><@lib.showDiscussionState diz /></td>
+      <td class="td-meta">${diz.responseCount}</td>
+      <td class="td-datum">${DATE.show(diz.updated,"SMART")}</td>
+    </tr>
+   </#list>
+  </tbody>
 </table>
 
 </#if>

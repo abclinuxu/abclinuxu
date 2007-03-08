@@ -26,21 +26,21 @@ poslední změny.
 <table class="faq">
   <thead>
     <tr>
-        <td class="td01">Sekce</td>
-        <td class="td04">Počet</td>
+        <td class="td-nazev">Sekce</td>
+        <td class="td-meta td-right">Počet</td>
     </tr>
   </thead>
   <tbody>
     <#list VARS.faqTree.children as faq>
       <tr>
-        <td class="td01">
+        <td class="td-nazev">
           <a href="${faq.url}">${faq.name}</a>
             <#if faq.description?exists>
               <span class="meta"><br />
               ${faq.description}</span>
             </#if>
         </td>
-        <td class="td04">${faq.size}</td>
+        <td class="td-meta td-right">${faq.size}</td>
       </tr>
     </#list>
   </tbody>

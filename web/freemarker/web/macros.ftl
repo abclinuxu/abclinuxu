@@ -12,7 +12,7 @@
         autors=TOOL.createAuthorsForArticle(clanek),
         thumbnail=TOOL.xpath(clanek,"/data/thumbnail")?default("UNDEF"),
         tmp=TOOL.groupByType(clanek.children, "Item"),
-	    url=relation.url?default("/clanky/show/"+relation.id)
+        url=relation.url?default("/clanky/show/"+relation.id)
     >
     <#if tmp.discussion?exists><#local diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
     <#if thumbnail!="UNDEF"><div class="cl_thumbnail">${thumbnail}</div></#if>
@@ -40,31 +40,29 @@
 </#macro>
 
 <#macro showSoftwareList(items)>
-    <#local visits = TOOL.getRelationCountersValue(items,"visit"), reads = TOOL.getRelationCountersValue(items,"read")>
-
-    <table class="sw-polozky">
-      <thead>
-        <tr>
-            <td class="td01">Jméno</td>
-            <td class="td02">Hodnocení</td>
-            <!--<td class="td03">Přečteno</td>-->
-            <td class="td04">Navštíveno</td>
-            <td class="td05">Poslední úprava</td>
-        </tr>
-      </thead>
-      <tbody>
-        <#list SORT.byName(ITEMS) as software>
-            <tr>
-                <td class="td01"><a href="${software.url}" title="${TOOL.childName(software)}">${TOOL.childName(software)}</a></td>
-                <td class="td02"><@showShortRating software, "", false /></td>
-                <!--<td class="td03"><@showCounter software.child, reads, "read" />&times;</td>-->
-                <td class="td04"><@showCounter software.child, visits, "visit" />&times;</td>
-                <td class="td05">${DATE.show(software.child.updated, "SMART")}</td>
-            </tr>
-        </#list>
-      </tbody>
-    </table>
-
+<#local visits = TOOL.getRelationCountersValue(items,"visit"), reads = TOOL.getRelationCountersValue(items,"read")>
+<table class="sw-polozky">
+  <thead>
+    <tr>
+      <td class="td-nazev">Jméno</td>
+      <td class="td-meta">Hodnocení</td>
+      <!--<td class="td03">Přečteno</td>-->
+      <td class="td-meta">Navštíveno</td>
+      <td class="td-datum">Poslední úprava</td>
+    </tr>
+  </thead>
+  <tbody>
+   <#list SORT.byName(ITEMS) as software>
+    <tr>
+      <td><a href="${software.url}" title="${TOOL.childName(software)}">${TOOL.childName(software)}</a></td>
+      <td class="td-meta"><@showShortRating software, "", false /></td>
+      <!--<td class="td03"><@showCounter software.child, reads, "read" />&times;</td>-->
+      <td class="td-meta"><@showCounter software.child, visits, "visit" />&times;</td>
+      <td class="td-datum">${DATE.show(software.child.updated, "SMART")}</td>
+    </tr>
+   </#list>
+  </tbody>
+</table>
 </#macro>
 
 <#macro listTree (objects menuid firstLevel=true)>
@@ -131,12 +129,12 @@
     <#if comment.author?exists>
         <#local who=TOOL.createUser(comment.author)>
     </#if>
-	<#local blacklisted = diz.isBlacklisted(comment)>
-	<div class="ds_hlavicka<#if diz.isUnread(comment)>_novy</#if><#if blacklisted> ds_hlavicka_blacklisted</#if><#if who?exists && USER?exists && who.id == USER.id> ds_hlavicka_me</#if>" id="${comment.id}">
+      <#local blacklisted = diz.isBlacklisted(comment)>
+      <div class="ds_hlavicka<#if diz.isUnread(comment)>_novy</#if><#if blacklisted> ds_hlavicka_blacklisted</#if><#if who?exists && USER?exists && who.id == USER.id> ds_hlavicka_me</#if>" id="${comment.id}">
         <#if comment.author?exists && showControls>
             <#assign avatar = TOOL.getUserAvatar(who?if_exists, USER?if_exists)?default("UNDEFINED")>
             <#if avatar != "UNDEFINED">
-                <img src="${avatar}" id="comment${comment.id}_avatar" alt="avatar" class="ds_avatar <#if blacklisted>ds_controls_blacklisted</#if>" >
+                <img src="${avatar}" id="comment${comment.id}_avatar" alt="avatar" class="ds_avatar <#if blacklisted>ds_controls_blacklisted</#if>">
             </#if>
         </#if>
         ${DATE.show(comment.created,"SMART")}
@@ -172,7 +170,6 @@
         <#elseif USER?exists && USER.hasRole("discussion admin")>
             <a href="${URL.make("/EditRequest/"+diz.relationId+"?action=comment&amp;threadId="+comment.id)}">Admin</a>
         </#if>
-        <div style="clear: right"></div><!-- aby avatar nepresahoval -->
     </div>
     <div id="comment${comment.id}" <#if who?exists>class="ds_text_user${who.id}"</#if><#if blacklisted?if_exists> style="display: none;"</#if>>
         <#if TOOL.xpath(comment.data,"//censored")?exists>

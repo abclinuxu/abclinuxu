@@ -98,7 +98,7 @@
 
 <div class="sw">
 
-<@lib.advertisement id="gg-sw-item" />
+<@lib.advertisement id="gg-sw-sekce" />
 
 <h1>${TOOL.xpath(CATEGORY.data,"/data/name")}</h1>
 

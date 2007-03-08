@@ -49,34 +49,36 @@
     </table>
 </#if>
 
-<table border="0">
+<table class="cl">
+  <thead>
     <tr>
-        <th align="left">Jméno</th>
-        <th>Datum vydání</th>
-        <th>Přečteno</th>
-        <th>Komentářů</th>
-        <th>Hodnocení</th>
-        <th>Hlasů</th>
+      <td class="td-nazev">Článek</td>
+      <td class="td-datum">Datum vydání</td>
+      <td class="td-meta">Přečteno</td>
+      <td class="td-meta">Komentářů</td>
+      <td class="td-meta">Hodnocení</td>
+      <td class="td-meta">Hlasů</td>
     </tr>
+  </thead>
+  <tbody>
     <#global CITACE = TOOL.getRelationCountersValue(ARTICLES.data,"read")/>
     <#list ARTICLES.data as relation>
-        <#assign clanek=relation.child, tmp=TOOL.groupByType(clanek.children, "Item"),
-    	         url=relation.url?default("/clanky/show/"+relation.id),
-    	         rating=TOOL.ratingFor(relation.child.data)?default("UNDEF")>
-        <#if tmp.discussion?exists><#assign diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
-        <tr>
-            <td>
-                <a href="${url}">${TOOL.xpath(clanek,"data/name")}</a>
-            </td>
-            <td align="right">${DATE.show(clanek.created, "SMART_DMY")}</td>
-            <td align="right"><@lib.showCounter clanek, .globals["CITACE"]?if_exists, "read" />&times;</td>
-            <td align="right">
-                <a href="${diz.url?default("/clanky/show/"+diz.relationId)}">${diz.responseCount}<@lib.markNewComments diz/></a>
-            </td>
-            <td align="center"><#if rating!="UNDEF">${rating.percent}%</#if></td>
-            <td align="right"><#if rating!="UNDEF">${rating.count}</#if></td>
-        </tr>
+      <#assign clanek=relation.child, tmp=TOOL.groupByType(clanek.children, "Item"),
+               url=relation.url?default("/clanky/show/"+relation.id),
+               rating=TOOL.ratingFor(relation.child.data)?default("UNDEF")>
+      <#if tmp.discussion?exists><#assign diz=TOOL.analyzeDiscussion(tmp.discussion[0])></#if>
+      <tr>
+        <td><a href="${url}">${TOOL.xpath(clanek,"data/name")}</a></td>
+        <td class="td-datum">${DATE.show(clanek.created, "SMART_DMY")}</td>
+        <td class="td-meta td-right"><@lib.showCounter clanek, .globals["CITACE"]?if_exists, "read" />&times;</td>
+        <td class="td-meta td-right">
+          <a href="${diz.url?default("/clanky/show/"+diz.relationId)}">${diz.responseCount}<@lib.markNewComments diz/></a>
+        </td>
+        <td class="td-meta"><#if rating!="UNDEF">${rating.percent} %</#if></td>
+        <td class="td-meta td-right"><#if rating!="UNDEF">${rating.count}</#if></td>
+      </tr>
     </#list>
+  </tbody>
 </table>
 
 <#if (ARTICLES.currentPage.row > 0) >

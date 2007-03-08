@@ -16,11 +16,11 @@
 <table class="bazar-polozky">
   <thead>
     <tr>
-        <td class="td01">Titulek inzerátu</td>
-        <td class="td02">Typ</td>
-        <td class="td03">Přečteno</td>
-        <td class="td04">Reakcí</td>
-        <td class="td05">Vloženo</td>
+        <td class="td-nazev">Titulek inzerátu</td>
+        <td class="td-meta">Typ</td>
+        <td class="td-meta">Přečteno</td>
+        <td class="td-meta">Reakcí</td>
+        <td class="td-datum">Vloženo</td>
     </tr>
   </thead>
   <tbody>
@@ -33,24 +33,24 @@
     </#if>
     <#list ADS.data as ad>
         <tr>
-            <td class="td01">
+            <td>
                 <a href="/bazar/show/${ad.id}">${TOOL.xpath(ad.child, "/data/title")}</a>
             </td>
-            <td class="td02">
+            <td class="td-meta">
                 <#if ad.child.subType=='sell'>
                     <span class="prodej">prodej</span>
                 <#else>
                     <span class="koupe">koupě</span>
                 </#if>
             </td>
-            <td class="td03">
+            <td class="td-meta">
                 <@lib.showCounter ad.child, reads, "read" />&times;
             </td>
-            <td class="td04">
+            <td class="td-meta">
                 <#assign diz=TOOL.findComments(ad.child)>
                 ${diz.responseCount}<#if diz.responseCount gt 0><@lib.markNewComments diz/></#if>
             </td>
-            <td class="td05">${DATE.show(ad.child.created, "SMART")}</td>
+            <td class="td-datum">${DATE.show(ad.child.created, "SMART")}</td>
         </tr>
     </#list>
   </tbody>
