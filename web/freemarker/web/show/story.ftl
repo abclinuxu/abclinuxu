@@ -114,7 +114,7 @@
             <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=edit")}">Uprav zápis</a></li>
             <li><a href="${URL.noPrefix("/blog/edit/"+STORY.id+"?action=remove")}">Smaž zápis</a></li>
         </#if>
-        <#if USER.hasRole("attachment admin")>
+        <#if USER.hasRole("attachment admin") || USER.id==BLOG.owner>
             <li><a href="${URL.make("/inset/"+STORY.id+"?action=manage")}">Správa příloh</a></li>
         </#if>
         <#if USER.id==BLOG.owner>
