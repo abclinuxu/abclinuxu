@@ -12,30 +12,39 @@ a 200 pixelů na výšku. Maximální velikost souboru je
 50&nbsp;kB.
 </p>
 
-<form action="${URL.noPrefix("/EditUser")}" method="POST"
- enctype="multipart/form-data">
- <input type="hidden" name="action" value="uploadPhoto2">
- <input type="hidden" name="uid" value="${MANAGED.id}">
- <table width="100%" border=0 cellpadding=5>
-  <tr>
-   <td class="required" width="120">Heslo</td>
-   <td>
-    <input type="password" name="PASSWORD" size="20" tabindex="1">
-    <div class="error">${ERRORS.PASSWORD?if_exists}</div>
-   </td>
-  </tr>
-  <tr>
-   <td width="120">Fotografie</td>
-   <td>
-    <input type="file" name="photo" size="20" tabindex="2">
-    <div class="error">${ERRORS.photo?if_exists}</div>
-   </td>
-  </tr>
-  <tr>
-   <td width="120">&nbsp;</td>
-   <td><input type="submit" value="Dokonči" tabindex="3"></td>
-  </tr>
- </table>
+<form action="${URL.noPrefix("/EditUser")}" method="POST" enctype="multipart/form-data">
+    <table width="100%" border=0 cellpadding=5>
+        <tr>
+            <td class="required" width="120">Heslo</td>
+            <td>
+                <input type="password" name="PASSWORD" size="20" tabindex="1">
+                <div class="error">${ERRORS.PASSWORD?if_exists}</div>
+            </td>
+        </tr>
+        <#assign photo = TOOL.xpath(MANAGED,"/data/profile/photo")?default("UNDEFINED")>
+        <#if photo != "UNDEFINED">
+            <tr>
+                <td>Současná fotografie</td>
+                <td>
+                    <img src="${photo}" alt="fotka">
+                    <input type="submit" name="remove_photo" value="Odstraň foto" tabindex="2">
+                </td>
+            </tr>
+        </#if>
+        <tr>
+            <td width="120">Fotografie</td>
+            <td>
+                <input type="file" name="photo" size="20" tabindex="2">
+                <div class="error">${ERRORS.photo?if_exists}</div>
+            </td>
+        </tr>
+        <tr>
+            <td width="120">&nbsp;</td>
+            <td><input type="submit" value="Dokonči" tabindex="3"></td>
+        </tr>
+    </table>
+    <input type="hidden" name="action" value="uploadPhoto2">
+    <input type="hidden" name="uid" value="${MANAGED.id}">
 </form>
 
 

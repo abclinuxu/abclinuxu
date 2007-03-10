@@ -66,12 +66,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import java.io.File;
 import java.util.*;
 import java.util.prefs.Preferences;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
-import java.awt.image.BufferedImage;
 
 /**
  * Class for manipulation with User.
@@ -113,6 +114,7 @@ public class EditUser implements AbcAction, Configurable {
     public static final String PARAM_PHOTO = "photo";
     public static final String PARAM_AVATAR = "avatar";
     public static final String PARAM_REMOVE_AVATAR = "remove_avatar";
+    public static final String PARAM_REMOVE_PHOTO = "remove_photo";
     public static final String PARAM_RETURN_TO_FORUM = "moveback";
     public static final String PARAM_USER_ROLES = "roles";
     public static final String PARAM_USERS = "users";
@@ -1797,6 +1799,16 @@ public class EditUser implements AbcAction, Configurable {
      * @return false, if there is a major error.
      */
     private boolean setPhoto(Map params, User user, Map env) {
+        if (params.containsKey(PARAM_REMOVE_PHOTO)) {
+            Node node = user.getData().selectSingleNode("/data/profile/photo");
+            if (node != null) {
+                String localPath = AbcConfig.calculateDeployedPath(node.getText().substring(1));
+                new File(localPath).delete();
+                node.detach();
+            }
+            return true;
+        }
+
         FileItem fileItem = (FileItem) params.get(PARAM_PHOTO);
         if ( fileItem==null ) {
             ServletUtils.addError(PARAM_PHOTO, "Vyberte soubor s vaší fotografií!", env, null);
@@ -1833,11 +1845,11 @@ public class EditUser implements AbcAction, Configurable {
      */
     private boolean setAvatar(Map params, User user, Map env) {
         if (params.containsKey(PARAM_REMOVE_AVATAR)) {
-            Node n = user.getData().selectSingleNode("/data/profile/avatar");
-            if (n != null) {
-                String localPath = AbcConfig.calculateDeployedPath(n.getText().substring(1));
+            Node node = user.getData().selectSingleNode("/data/profile/avatar");
+            if (node != null) {
+                String localPath = AbcConfig.calculateDeployedPath(node.getText().substring(1));
                 new File(localPath).delete();
-                n.detach();
+                node.detach();
             }
             return true;
         }
@@ -1855,8 +1867,15 @@ public class EditUser implements AbcAction, Configurable {
         }
 
         try {
-            BufferedImage img = ImageIO.read(fileItem.getInputStream());
-            if (img.getHeight() > 50 || img.getWidth() > 50) {
+            Iterator readers = ImageIO.getImageReadersBySuffix(suffix);
+            ImageReader reader = (ImageReader) readers.next();
+            ImageInputStream iis = ImageIO.createImageInputStream(fileItem.getInputStream());
+            reader.setInput(iis, false);
+            if (reader.getNumImages(true) > 1) {
+                ServletUtils.addError(PARAM_AVATAR, "Animované obrázky nejsou povoleny!", env, null);
+                return false;
+            }
+            if (reader.getHeight(0) > 50 || reader.getWidth(0) > 50) {
                 ServletUtils.addError(PARAM_AVATAR, "Avatar přesahuje povolené maximální rozměry!", env, null);
                 return false;
             }
