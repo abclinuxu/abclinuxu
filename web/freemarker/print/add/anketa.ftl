@@ -7,6 +7,13 @@
 Jsou povoleny základní html značky ( nový řádek, odkaz ).
 Můžete také povolit současné vybrání více možností.</p>
 
+<#if POLL?exists>
+    <fieldset>
+    <legend>Náhled</legend>
+        <@lib.showPoll POLL/>
+    </fieldset>
+</#if>
+
 <form action="${URL.make("/EditPoll")}" method="POST">
  <#assign choices=PARAMS.choices?if_exists>
  <table width="100%" border=0 cellpadding=5>
@@ -45,7 +52,7 @@ Můžete také povolit současné vybrání více možností.</p>
    </td>
   </tr>
   <tr>
-   <td>Volba 2</td>
+   <td class="required">Volba 2</td>
    <td>
     <input type="text" name="choices" size="60" maxlength="255" tabindex="5"
     value="<#if choices?size gt 1>${choices[1]}</#if>">
@@ -109,7 +116,10 @@ Můžete také povolit současné vybrání více možností.</p>
   </tr>
   <tr>
    <td width="120">&nbsp;</td>
-   <td><input type="submit" value="Dokonči" tabindex="14"></td>
+   <td>
+       <input type="submit" name="preview" value="Náhled" tabindex="14">
+       <input type="submit" value="Dokonči" tabindex="14">
+   </td>
   </tr>
  </table>
 

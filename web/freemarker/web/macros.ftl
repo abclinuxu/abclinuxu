@@ -310,7 +310,7 @@
               </div>
             </div>
         </#list>
-        <input name="submit" type="submit" class="button" value="Hlasuj" src="/images/site2/vote_btn.gif" alt="Hlasuj">
+        <input name="submit" type="submit" class="button" value="Hlasuj" src="/images/site2/vote_btn.gif" alt="Hlasuj"<#if relation.id == 0> DISABLED</#if>>
         Celkem ${total} hlasů<br>
         <input type="hidden" name="url" value="${url}">
         <input type="hidden" name="action" value="vote">

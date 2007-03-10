@@ -56,6 +56,7 @@ public class EditPoll implements AbcAction {
     public static final String PARAM_CHOICES = "choices";
     public static final String PARAM_URL = "url";
     public static final String PARAM_VOTE_ID = "voteId";
+    public static final String PARAM_PREVIEW = "preview";
 
     public static final String ACTION_ADD = "add";
     public static final String ACTION_ADD_STEP2 = "add2";
@@ -124,68 +125,43 @@ public class EditPoll implements AbcAction {
     public String actionAddStep2(HttpServletRequest request, HttpServletResponse response, Map env, boolean redirect) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistance();
-        boolean error = false;
-
-        boolean multiChoice = false;
         User user = (User) env.get(Constants.VAR_USER);
-        String text = (String) params.get(PARAM_QUESTION);
-        List choices = (List) params.get(PARAM_CHOICES);
         Relation upperRelation = (Relation) env.get(VAR_RELATION);
 
-        String tmp = (String) params.get(PARAM_MULTICHOICE);
-        if ( "yes".equals(tmp) )
-            multiChoice = true;
+        Poll poll = new Poll(0);
+        poll.setClosed(false);
+        poll.setOwner(user.getId());
 
-        if ( text==null || text.length()==0 ) {
-            ServletUtils.addError(PARAM_QUESTION,"Nezadal jste otázku!",env, null);
-            error = true;
-        }
-
-        for (Iterator iter = choices.iterator(); iter.hasNext();) {
-            String choice = (String) iter.next();
-            if ( choice==null || choice.length()==0 )
-                iter.remove();
-        }
-
-        if ( choices.size()<1 ) {
-            ServletUtils.addError(PARAM_CHOICES, "Vyplňte minimálně jednu volbu!", env, null);
-            error = true;
-        }
+        boolean canContinue = true;
+        canContinue &= setQuestion(params, poll, env);
+        canContinue &= setChoices(params, poll, env);
+        canContinue &= setMultichoice(params, poll);
 
         String url = (String) params.get(PARAM_URL);
-        if (upperRelation.getId()==Constants.REL_POLLS && url!=null && url.length()>0) {
+        if (upperRelation.getId() == Constants.REL_POLLS && url != null && url.length() > 0) {
             try {
                 url = UrlUtils.PREFIX_POLLS + "/" + URLManager.enforceRelativeURL(url);
                 url = URLManager.protectFromDuplicates(url);
             } catch (AbcException e) {
                 ServletUtils.addError(PARAM_URL, e.getMessage(), env, null);
-                error = true;
+                canContinue = false;
             }
-        } else if (upperRelation.getUrl()!=null) {
+        } else if (upperRelation.getUrl() != null) {
             url = upperRelation.getUrl() + "/anketa";
             url = URLManager.protectFromDuplicates(url);
         }
 
-        if ( error )
+        if ( ! canContinue  || params.get(PARAM_PREVIEW) != null ) {
+            if (! canContinue)
+                params.remove(PARAM_PREVIEW);
+            else
+                env.put(VAR_POLL, new Relation(upperRelation.getChild(), poll, upperRelation.getId()));
             return FMTemplateSelector.select("EditPoll","add",env,request);
-
-        Poll poll = new Poll(0);
-        poll.setText(text);
-        poll.setMultiChoice(multiChoice);
-        poll.setClosed(false);
-        poll.setOwner(user.getId());
-
-        int i = 0;
-        List pollChoices = new ArrayList(choices.size());
-        for (Iterator iter = choices.iterator(); iter.hasNext();) {
-            PollChoice choice = new PollChoice((String) iter.next());
-            choice.setId(i++);
-            pollChoices.add(choice);
         }
-        poll.setChoices(pollChoices);
+
         persistence.create(poll);
 
-        Relation relation = new Relation(upperRelation.getChild(),poll,upperRelation.getId());
+        Relation relation = new Relation(upperRelation.getChild(), poll, upperRelation.getId());
         if (url != null && url.length() > 0)
             relation.setUrl(url);
         persistence.create(relation);
@@ -193,16 +169,12 @@ public class EditPoll implements AbcAction {
 
         EditDiscussion.createEmptyDiscussion(relation, user, persistence);
 
-        if (relation.getUpper()==Constants.REL_POLLS)
+        if (relation.getUpper() == Constants.REL_POLLS)
             FeedGenerator.updatePolls();
 
         if (redirect) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            if (url==null)
-                url = UrlUtils.PREFIX_POLLS + "/show/" + relation.getId();
-            if (upperRelation.getId()!=Constants.REL_POLLS)
-                url = Tools.childUrl(upperRelation, (UrlUtils) env.get(Constants.VAR_URL_UTILS));
-            urlUtils.redirect(response, url);
+            urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
         } else {
             env.put(VAR_RELATION, relation);
         }
@@ -218,26 +190,23 @@ public class EditPoll implements AbcAction {
         Relation relation = (Relation) env.get(VAR_RELATION);
         Poll poll = (Poll) env.get(VAR_POLL);
 
-        String tmp = (String) params.get(PARAM_MULTICHOICE);
-        poll.setMultiChoice( "yes".equals(tmp) );
+        boolean canContinue = true;
+        canContinue &= setQuestion(params, poll, env);
+        canContinue &= setMultichoice(params, poll);
+        canContinue &= setClosed(params, poll);
 
-        tmp = (String) params.get(PARAM_CLOSED);
-        poll.setClosed( ("yes".equals(tmp)) );
-
-        tmp = (String) params.get(PARAM_QUESTION);
-        if ( tmp!=null && tmp.length()>0 ) {
-            poll.setText(tmp);
-        }
+        if (! canContinue)
+            return FMTemplateSelector.select("EditPoll", "edit", env, request);
 
         List choices = (List) params.get(PARAM_CHOICES);
         List choicesList = Arrays.asList(poll.getChoices());
-
-        for ( int i=0; i<10 && i<choices.size(); i++ ) {
-            tmp = (String) choices.get(i);
-            if ( tmp==null || tmp.length()==0 )
+        for ( int i = 0; i < 10 && i<choices.size(); i++ ) {
+            String tmp = (String) choices.get(i);
+            if (tmp == null || tmp.length() == 0)
                 continue;
+
             PollChoice choice = (PollChoice) choicesList.get(i);
-            if (choice==null) {
+            if (choice == null) {
                 choice = new PollChoice(tmp);
                 choice.setPoll(poll.getId());
                 choice.setId(i);
@@ -246,8 +215,8 @@ public class EditPoll implements AbcAction {
             else
                 choice.setText(tmp);
         }
-
         poll.setChoices(choicesList);
+
         Persistence persistence = PersistenceFactory.getPersistance();
         persistence.update(poll);
 
@@ -255,7 +224,7 @@ public class EditPoll implements AbcAction {
             FeedGenerator.updatePolls();
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-        urlUtils.redirect(response, "/show/"+relation.getId());
+        urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
         return null;
     }
 
@@ -327,5 +296,78 @@ public class EditPoll implements AbcAction {
 
         urlUtils.redirect(response, url);
         return null;
+    }
+
+
+    /* ******** setters ********* */
+
+    /**
+     * Updates multichoice flag from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param poll poll to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setMultichoice(Map params, Poll poll) {
+        String tmp = (String) params.get(PARAM_MULTICHOICE);
+        poll.setMultiChoice("yes".equals(tmp));
+        return true;
+    }
+
+    /**
+     * Updates closed flag from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param poll poll to be updated
+     * @return false, if there is a major error.
+     */
+    private boolean setClosed(Map params, Poll poll) {
+        String tmp = (String) params.get(PARAM_CLOSED);
+        poll.setClosed("yes".equals(tmp));
+        return true;
+    }
+
+    /**
+     * Updates question from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param poll poll to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setQuestion(Map params, Poll poll, Map env) {
+        String text = (String) params.get(PARAM_QUESTION);
+        if (text == null || text.length() == 0) {
+            ServletUtils.addError(PARAM_QUESTION, "Nezadal jste otázku!", env, null);
+            return false;
+        }
+        poll.setText(text);
+        return true;
+    }
+
+    /**
+     * Updates choices from parameters. Changes are not synchronized with persistence.
+     * @param params map holding request's parameters
+     * @param poll poll to be updated
+     * @param env environment
+     * @return false, if there is a major error.
+     */
+    private boolean setChoices(Map params, Poll poll, Map env) {
+        List pollChoices = new ArrayList();
+        List choices = Tools.asList(params.get(PARAM_CHOICES));
+        int i = 0;
+        for (Iterator iter = choices.iterator(); iter.hasNext();) {
+            String choice = (String) iter.next();
+            if (choice == null || choice.length() == 0)
+                continue;
+
+            PollChoice pollChoice = new PollChoice(choice);
+            pollChoice.setId(i++);
+            pollChoices.add(pollChoice);
+        }
+        poll.setChoices(pollChoices);
+
+        if (pollChoices.size() < 2) {
+            ServletUtils.addError(PARAM_CHOICES, "Vyplňte minimálně dvě volby!", env, null);
+            return false;
+        }
+        return true;
     }
 }
