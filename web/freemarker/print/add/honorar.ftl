@@ -1,3 +1,10 @@
+<#assign html_header>
+    <link rel="stylesheet" type="text/css" media="all" href="/data/site/calendar/calendar-system.css" />
+    <script type="text/javascript" src="/data/site/calendar/calendar.js"></script>
+    <script type="text/javascript" src="/data/site/calendar/calendar-en.js"></script>
+    <script type="text/javascript" src="/data/site/calendar/calendar-cs-utf8.js"></script>
+    <script type="text/javascript" src="/data/site/calendar/calendar-setup.js"></script>
+</#assign>
 <#include "../header.ftl">
 
 <@lib.showMessages/>
@@ -14,7 +21,8 @@
         <tr>
             <td width="90" class="required">Datum publikování</td>
             <td>
-                <input type="text" name="published" value="${PARAMS.published?if_exists}" size=40 tabindex=2>
+                <input type="text" name="published" id="datetime_input" value="${PARAMS.published?if_exists}" size=40 tabindex=2>
+                <input type="button" id="datetime_btn" value="..."><script type="text/javascript">cal_setupDate()</script>
                 <div class="error">${ERRORS.published?if_exists}</div>
             </td>
         </tr>

@@ -5,6 +5,9 @@
     <#if ! css?exists || css=="UNDEF"><#assign css="/styles.css"></#if>
     <link rel="stylesheet" type="text/css" href="${css}">
     <script type="text/javascript" src="/data/site/scripts.js"></script>
+    <#if html_header?exists>
+        ${html_header}
+    </#if>
 </head>
 <body style="background:#fff; margin:5px">
 <#import "macros.ftl" as lib>

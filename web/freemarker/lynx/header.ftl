@@ -6,6 +6,9 @@
   <meta name="keywords" content="linux,abclinuxu,hardware,USB,SCSI,modem,kernel,ovladač">
   <link rel="bookmark" href="#obsah" title="Obsah stránky" type="text/html">
     <script type="text/javascript" src="/data/site/scripts.js"></script>
+    <#if html_header?exists>
+        ${html_header}
+    </#if>
  </head>
 <body>
 
