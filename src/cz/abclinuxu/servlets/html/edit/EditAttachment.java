@@ -149,7 +149,8 @@ public class EditAttachment implements AbcAction {
         persistence.update(item);
 
         // commit new version
-        Misc.commitRelation(item.getData().getRootElement(), relation, user);
+        if (item.getType() != Item.BLOG)
+            Misc.commitRelation(item.getData().getRootElement(), relation, user);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
@@ -209,7 +210,8 @@ public class EditAttachment implements AbcAction {
         persistence.update(item);
 
         // commit new version
-        Misc.commitRelation(item.getData().getRootElement(), relation, user);
+        if (item.getType() != Item.BLOG)
+            Misc.commitRelation(item.getData().getRootElement(), relation, user);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, urlUtils.getRelationUrl(relation));
