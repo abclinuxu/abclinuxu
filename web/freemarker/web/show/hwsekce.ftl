@@ -103,5 +103,6 @@
 </div>
 
 <@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="hosting90" />
 
 <#include "../footer.ftl">

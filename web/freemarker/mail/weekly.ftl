@@ -18,24 +18,6 @@ Prehled clanku
 
 </#list>
 
-Reklama
-=======
-
-Kongres Bezpecnost siti, 1. 3. 2007
-Praha, Hotel Diplomat, Evropska 15
-
-V ramci kongresu se budou konat tri soubezne konference:
-Network Security GigaCon, Firewall & VPN GigaCon a Secure Mail.
-Behem konference budete mit vyjimecnou prilezitost podivat
-se na nejnovejsi reseni z oblasti bezpecnosti siti, setkat
-se a promluvit s odborniky.
-
-Pro ucastniky je VSTUP ZDARMA, ale podminkou je registrace.
-Odkaz na registraci a vice info na:
-
-http://www.abclinuxu.cz/skoleni/kongres-bezpecnost-siti
-
-
 
 Prehled zpravicek
 =================
@@ -50,18 +32,6 @@ Prehled zpravicek
 
  ---------------------
 </#list>
-
-
-Reklama
-=======
-
-CVO Technology Recruitment je ta spravna platforma
-pro rizeni Vasi dalsi profesni kariery! Pro vedouci
-mezinarodni i lokalni technologicke spolecnosti
-v regionu stredni a vychodni Evropy hledame technicke
-nadsence na specializovane IT pracovni pozice.
-
-http://www.cvotechnology.com/JobSearch.aspx?Search=auto&CountryId=Czech%20Republic?utm_source=abcprace&utm_medium=banner&campaign=cvot
 
 
 <#if JOBS?size gt 0>

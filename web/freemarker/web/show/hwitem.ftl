@@ -53,11 +53,7 @@
 
 <@hwlib.showHardware ITEM />
 
-</div>
-
 <@lib.showRelated ITEM/>
-
-<@lib.advertisement id="arbo-sq" />
 
 <#assign images = TOOL.screenshotsFor(ITEM)>
 <#if (images?size > 0)>
@@ -73,6 +69,10 @@
         </#list>
     </p>
 </#if>
+</div>
+
+<@lib.advertisement id="arbo-sq" />
+<@lib.advertisement id="hosting90" />
 
 <#include "../footer.ftl">
 

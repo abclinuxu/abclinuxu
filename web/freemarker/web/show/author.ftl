@@ -49,7 +49,7 @@
     </table>
 </#if>
 
-<table class="cl">
+<table class="autor">
   <thead>
     <tr>
       <td class="td-nazev">Článek</td>

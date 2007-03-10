@@ -421,17 +421,17 @@ font-weight: bold;
 	border:		1px solid silver;
 }
 
-.ds, .hw table, .sw table, .faq, .bazar-polozky, .cl {
+.ds, .hw table, .sw table, .faq, .bazar-polozky, .autor {
 	margin-top:	5px;
 	border-width:	0px;
 	table-layout:	auto;
 }
 
-.ds, .hw, .sw, .bazar, .cl {
+.ds, .hw, .sw, .bazar, .autor {
 	border-bottom:	1px solid #27648D;
 }
 
-.ds thead td, .hw thead td, .sw thead td, .faq thead td, .bazar thead td, .cl thead td {
+.ds thead td, .hw thead td, .sw thead td, .faq thead td, .bazar thead td, .autor thead td {
 	font-weight:	bold;
 	border-bottom:	solid 1px silver;
 	font-size:	85%;
@@ -459,16 +459,16 @@ td.td-datum {
 .ds_odsazeni { margin-left:	1em; }
 
 .hw table.hw-sekce tbody td { width: 33%; padding: 0.1em; }
-.ds tbody tr a, .cl tbody tr a,
+.ds tbody tr a, .autor tbody tr a,
     .bazar table.bazar-polozky tr a,
     .hw table.hw-sekce tbody td a,
     .hw table.hw-polozky tr a,
     .sw table.sw-polozky tr a { display: block; _width: 100%; }
-.ds tbody tr:hover, .cl tbody tr:hover,
+.ds tbody tr:hover, .autor tbody tr:hover,
     .bazar table.bazar-polozky tbody tr:hover,
     .hw table.hw-polozky tbody tr:hover,
     .sw table.sw-polozky tbody tr:hover { background: #f3f3f3 }
-.ds tr:nth-child(even), .cl tr:nth-child(even),
+.ds tr:nth-child(even), .autor tr:nth-child(even),
     .bazar table.bazar-polozky tr:nth-child(even),
     .hw table.hw-polozky tr:nth-child(even),
     .sw table.sw-polozky tr:nth-child(even) { background: #f9f9f9 }
@@ -688,7 +688,7 @@ a.info:hover span.tooltip {
 .ds td a,
 .hw td a,
 .sw td a,
-.cl td a,
+.autor td a,
 .bazar td a,
 .s_nadpis a,
 .s_nadpis a:hover,
@@ -708,7 +708,7 @@ a.info,
 .ds td a:hover,
 .hw td a:hover,
 .sw td a:hover,
-.cl td a:hover,
+.autor td a:hover,
 .bazar td a:hover,
 .textad a:hover,
 .ramec li a:hover,

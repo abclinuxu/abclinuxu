@@ -132,4 +132,6 @@
 
 </div>
 
+<@lib.advertisement id="hosting90" />
+
 <#include "../footer.ftl">
