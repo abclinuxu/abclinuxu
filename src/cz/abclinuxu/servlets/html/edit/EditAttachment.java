@@ -97,19 +97,29 @@ public class EditAttachment implements AbcAction {
         if (user == null)
             return FMTemplateSelector.select("ViewUser", "login", env, request);
 
+        boolean allowed = true;
+        if (child instanceof Item) {
+            Item item = (Item) child;
+            if (item.getType() == Item.BLOG && item.getOwner() != user.getId())
+                allowed = false;
+        }
+
+        if ( ! allowed)
+            return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+
         if (action.equals(ACTION_ADD_SCREENSHOT))
             return FMTemplateSelector.select("EditAttachment", "addScreenshot", env, request);
 
         if (action.equals(ACTION_ADD_SCREENSHOT_STEP2))
             return actionAddScreenshotStep2(request, response, env);
 
-        boolean allowed = false;
+        allowed = user.hasRole(Roles.ATTACHMENT_ADMIN);
         if (child instanceof Item) {
             Item item = (Item) child;
             if (item.getType() == Item.BLOG && item.getOwner()==user.getId())
                 allowed = true;
         }
-        allowed |= user.hasRole(Roles.ATTACHMENT_ADMIN);
+
         if (!allowed)
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
