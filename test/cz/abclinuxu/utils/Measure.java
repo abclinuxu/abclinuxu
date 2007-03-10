@@ -29,6 +29,7 @@ import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.search.CreateIndex;
 import cz.abclinuxu.scheduler.UpdateLinks;
+import cz.finesoft.socd.analyzer.DiacriticRemover;
 
 import java.util.List;
 import java.util.Iterator;
@@ -53,20 +54,17 @@ public class Measure {
         Date d = null;
 
         // place initilizaton here
-        Persistence persistence = PersistenceFactory.getPersistance();
-        File file = CreateIndex.getLastRunFile();
-        if (file.exists())
-            d = new Date(file.lastModified());
+        DiacriticRemover remover = DiacriticRemover.getInstance();
+        s = "ěščřžýáíéescrzyaie";
+        t = remover.removeDiacritics(s);
 
-
-        Random rand = new Random(System.currentTimeMillis());
         long start = System.currentTimeMillis();
-        for (i=0; i<1900000; i++) {
+        for (i=0; i<350000; i++) {
             //place your code to measure here
-            rand = new Random(System.currentTimeMillis());
+            t = remover.removeDiacritics(s);
         }
         long end = System.currentTimeMillis();
-        System.out.println(rand.nextInt());
+        System.out.println(t);
 
         // place clean up here
 
