@@ -553,6 +553,9 @@
         <action name="censored" content="/show/cenzura.ftl">
             <var name="TITLE" value="Nevhodný příspěvek"/>
         </action>
+        <action name="notfound" content="/show/notfound.ftl">
+            <var name="TITLE" value="Stránka nebyla nalezena"/>
+        </action>
     </servlet>
 
     <servlet name="ViewIndex">
