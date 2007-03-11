@@ -104,7 +104,7 @@ public class HTMLVersion implements Configurable {
 
             writer.flush();
         } catch (Exception e) {
-            error(request, response, e);
+            error(request, response, e, env);
         }
     }
 
@@ -133,7 +133,7 @@ public class HTMLVersion implements Configurable {
     /**
      * Displays error page.
      */
-    public static void error(HttpServletRequest request, HttpServletResponse response, Throwable e) throws IOException {
+    public static void error(HttpServletRequest request, HttpServletResponse response, Throwable e, Map env) throws IOException {
         response.setContentType("text/html; charset=UTF-8");
         Writer writer = response.getWriter();
         String url = ServletUtils.getURL(request);
@@ -141,9 +141,8 @@ public class HTMLVersion implements Configurable {
 
         Configuration config = FMUtils.getConfiguration();
         if ( e instanceof NotFoundException ) {
-//            log.error("Not found: "+url);
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            template = config.getTemplate("/errors/notfound.ftl");
+            template = config.getTemplate("/web/show/notfound.ftl");
         } else if ( e instanceof MissingArgumentException || e instanceof InvalidInputException) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             template = config.getTemplate("/errors/badinput.ftl");
@@ -159,11 +158,10 @@ public class HTMLVersion implements Configurable {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             template = config.getTemplate("/errors/generic.ftl");
         }
-        SimpleHash root = new SimpleHash();
-        root.put("EXCEPTION", e.toString());
-        root.put("EXCEPTION_MESSAGE", e.getMessage());
+        env.put("EXCEPTION", e.toString());
+        env.put("EXCEPTION_MESSAGE", e.getMessage());
         try {
-            template.process(root, writer);
+            template.process(env, writer);
         } catch (TemplateException e1) {
             log.error("Cannot display error screen!", e);
         }

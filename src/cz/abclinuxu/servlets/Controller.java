@@ -64,7 +64,7 @@ public class Controller extends HttpServlet implements Configurable {
         try {
             performInit(request, response, env);
         } catch (InvalidInputException e) {
-            HTMLVersion.error(request, response, e);
+            HTMLVersion.error(request, response, e, env);
             return;
         }
         String page = null;

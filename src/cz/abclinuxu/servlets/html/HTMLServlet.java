@@ -49,8 +49,8 @@ public class HTMLServlet extends Controller {
 
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Writer writer = null;
+        Map env = new HashMap();
         try {
-            Map env = new HashMap();
             performInit(request, response, env);
             HTMLVersion.setLayout(request, env);
 
@@ -69,7 +69,7 @@ public class HTMLServlet extends Controller {
         } catch (IOException e) {
             throw e;
         } catch (Exception e) {
-            HTMLVersion.error(request, response, e);
+            HTMLVersion.error(request, response, e, env);
         }
     }
 }
