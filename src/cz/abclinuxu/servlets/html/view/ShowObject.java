@@ -116,20 +116,23 @@ public class ShowObject implements AbcAction {
             }
         }
 
+        if (relation.getChild() instanceof Record)
+            relation = (Relation) persistence.findById(new Relation(relation.getUpper()));
+
         List parents = persistence.findParents(relation);
         env.put(VAR_PARENTS, parents);
 
         if (relation.getChild() instanceof Poll)
             return ViewPolls.processPoll(env, relation, request);
-        else if ( (relation.getParent() instanceof Item) || ( relation.getChild() instanceof Item ) )
+        if (relation.getChild() instanceof Item)
             return processItem(request, env, relation);
-        else if ( relation.getParent() instanceof Category ) {
+        if ( relation.getParent() instanceof Category ) {
             if (relation.getId()==Constants.REL_POLLS)
                 return ViewPolls.processPolls(env, request);
             else
                 return ViewCategory.processCategory(request,response,env,relation);
         }
-        return null; // todo log object
+        return FMTemplateSelector.select("ShowObject", "notfound", env, request);
     }
 
     /**
