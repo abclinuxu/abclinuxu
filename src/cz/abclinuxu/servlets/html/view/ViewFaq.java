@@ -103,8 +103,8 @@ public class ViewFaq implements AbcAction {
         int count = getPageSize(params);
 
         List qualifiers = new ArrayList();
-        qualifiers.add(new CompareCondition(Field.UPPER, Operation.EQUAL, relation.getId()));
-        qualifiers.add(new CompareCondition(Field.UPPER, Operation.EQUAL, relation.getId()));
+        CompareCondition conditionUpper = new CompareCondition(Field.UPPER, Operation.EQUAL, relation.getId());
+        qualifiers.add(conditionUpper);
         qualifiers.add(Qualifier.SORT_BY_CREATED);
         qualifiers.add(Qualifier.ORDER_DESCENDING);
         qualifiers.add(new LimitQualifier(from, count));
@@ -119,8 +119,7 @@ public class ViewFaq implements AbcAction {
         if (sectionNode != null)
             total = sectionNode.getSize();
         if (total == -1) {
-            qualifiers.add(new CompareCondition(Field.UPPER, Operation.EQUAL, relation.getId()));
-            qa = new Qualifier[qualifiers.size()];
+            qa = new Qualifier[] {conditionUpper};
             total = sqlTool.countItemRelationsWithType(Item.FAQ, (Qualifier[]) qualifiers.toArray(qa));
         }
 
