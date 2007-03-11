@@ -28,8 +28,8 @@ import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.view.ShowForum;
 
 import java.util.*;
-import java.text.SimpleDateFormat;
 import java.text.ParseException;
+import java.text.DateFormat;
 
 import org.dom4j.Element;
 import org.dom4j.Node;
@@ -107,7 +107,7 @@ public class Misc {
      * Parses date using given format. If it fails, it returns current date.
      * todo - use this method at all possible places.
      */
-    public static Date parseDate(String date, SimpleDateFormat format) {
+    public static Date parseDate(String date, DateFormat format) {
         try {
             synchronized (format) {
                 return format.parse(date);

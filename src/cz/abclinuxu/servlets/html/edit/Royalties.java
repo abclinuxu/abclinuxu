@@ -146,18 +146,19 @@ public class Royalties implements AbcAction {
     private String actionReportStep2(HttpServletRequest request, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         String tmp = (String) params.get(PARAM_SINCE);
-        if (tmp==null)
+        if (tmp == null)
             return actionReportStep1(request, env);
-        Date since = Constants.isoFormatShort.parse(tmp);
+        Date since = Misc.parseDate(tmp, Constants.isoFormatShort);
+
         tmp = (String) params.get(PARAM_UNTIL);
-        if (tmp==null)
+        if (tmp == null)
             return actionReportStep1(request, env);
-        Date until = Constants.isoFormatShort.parse(tmp);
+        Date until = Misc.parseDate(tmp, Constants.isoFormatShort);
         int authorId = Misc.parseInt((String)params.get(PARAM_AUTHOR), 0);
 
         Qualifier[] qualifiers = null;
         CompareCondition conditionFrom = new CompareCondition(Field.CREATED, Operation.GREATER_OR_EQUAL, since);
-        CompareCondition conditionTo = new CompareCondition(Field.CREATED, Operation.SMALLER, until);
+        CompareCondition conditionTo = new CompareCondition(Field.CREATED, Operation.SMALLER_OR_EQUAL, until);
         CompareCondition conditionWho = new CompareCondition(Field.SUBTYPE, Operation.EQUAL, authorId);
         if (authorId != 0)
             qualifiers = new Qualifier[]{conditionFrom, conditionTo, conditionWho, Qualifier.SORT_BY_CREATED, Qualifier.ORDER_ASCENDING};
