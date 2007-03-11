@@ -119,6 +119,23 @@ public class Misc {
     }
 
     /**
+     * Utility method to fetch string from parameters. It handles invalid situation when parameter
+     * is not string (typically Array).
+     * @param params params
+     * @param key key to be searched
+     * @return string or null, if key is not bound
+     * @throws InvalidInputException if value is not string
+     */
+    public static String getString(Map params, String key) throws InvalidInputException {
+        Object obj = params.get(key);
+        if (obj == null)
+            return null;
+        if (!(obj instanceof String))
+            throw new InvalidInputException("Byl očekáván paramater " + key + " typu string, místo toho přišel " + obj.getClass());
+        return (String) obj;
+    }
+
+    /**
      * Ensures, that integer fits into specified range.
      * @param x variable to be checked
      * @param min lower limit
@@ -139,7 +156,7 @@ public class Misc {
      */
     public static void storeToMap(Map map, String key, Object value) {
         List list = (List) map.get(key);
-        if ( list==null ) {
+        if (list == null) {
             list = new ArrayList(5);
             map.put(key,list);
         }

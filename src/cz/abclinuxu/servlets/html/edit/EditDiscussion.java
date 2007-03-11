@@ -118,7 +118,7 @@ public class EditDiscussion implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistance();
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
-        String action = (String) params.get(PARAM_ACTION);
+        String action = Misc.getString(params, PARAM_ACTION);
 
         if (ServletUtils.handleMaintainance(request, env))
             response.sendRedirect(response.encodeRedirectURL("/"));
@@ -1064,14 +1064,14 @@ public class EditDiscussion implements AbcAction {
      * @return false, if there is a major error.
      */
     static boolean setTitle(Map params, Element root, Map env) {
-        String tmp = (String) params.get(PARAM_TITLE);
-        if ( tmp!=null && tmp.length()>0 ) {
-            if ( tmp.indexOf("<")!=-1 ) {
+        String tmp = tmp = Misc.getString(params, PARAM_TITLE);
+        if ( tmp != null && tmp.length() > 0 ) {
+            if ( tmp.indexOf("<") != -1 ) {
                 params.put(PARAM_TITLE, "");
                 ServletUtils.addError(PARAM_TITLE, "Použití HTML značek je zakázáno!", env, null);
                 return false;
             }
-            if (tmp.indexOf('\n')!=-1)
+            if (tmp.indexOf('\n') != -1)
                 tmp = tmp.replace('\n', ' ');
             tmp = Misc.filterDangerousCharacters(tmp);
             DocumentHelper.makeElement(root,"title").setText(tmp);
@@ -1153,16 +1153,16 @@ public class EditDiscussion implements AbcAction {
         if ( user!=null ) {
             comment.setAuthor(new Integer(user.getId()));
         } else {
-            String tmp = (String) params.get(PARAM_AUTHOR_ID);
-            if ( tmp!=null && tmp.length()>0 ) {
+            String tmp = Misc.getString(params, PARAM_ACTION);
+            if ( tmp != null && tmp.length() > 0 ) {
                 Integer authorId = new Integer(tmp);
                 comment.setAuthor(authorId);
                 return true;
             }
 
-            tmp = (String) params.get(PARAM_AUTHOR);
-            if ( tmp!=null && tmp.length()>0 ) {
-                if (tmp.indexOf("<")!=-1) {
+            tmp = Misc.getString(params, PARAM_ACTION);
+            if ( tmp != null && tmp.length() > 0 ) {
+                if (tmp.indexOf("<") != -1) {
                     params.put(PARAM_AUTHOR,"");
                     ServletUtils.addError(PARAM_AUTHOR, "Použití HTML značek je zakázáno!", env, null);
                     return false;
