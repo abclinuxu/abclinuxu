@@ -160,7 +160,7 @@ public class EditRequest implements AbcAction, Configurable {
         User user = (User) env.get(Constants.VAR_USER);
         Map params = (Map) env.get(Constants.VAR_PARAMS);
 
-        String author = (String) params.get(PARAM_AUTHOR);
+        String author = Misc.getString(params, PARAM_AUTHOR);
         String email = (String) params.get(PARAM_EMAIL);
         String text = (String) params.get(PARAM_TEXT);
         text = Misc.filterDangerousCharacters(text);

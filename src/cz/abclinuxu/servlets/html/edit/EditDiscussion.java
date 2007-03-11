@@ -423,7 +423,7 @@ public class EditDiscussion implements AbcAction {
         }
 
         if (duplicate)
-            return ServletUtils.showErrorPage("Systém detekoval vícenásobné odeslání totožného komentáře.", env, request);  
+            return ServletUtils.showErrorPage("Systém detekoval vícenásobné odeslání totožného komentáře.", env, request);
 
         dizRecord.calculateCommentStatistics();
 
@@ -1160,14 +1160,14 @@ public class EditDiscussion implements AbcAction {
         if ( user!=null ) {
             comment.setAuthor(new Integer(user.getId()));
         } else {
-            String tmp = Misc.getString(params, PARAM_ACTION);
+            String tmp = Misc.getString(params, PARAM_AUTHOR_ID);
             if ( tmp != null && tmp.length() > 0 ) {
                 Integer authorId = new Integer(tmp);
                 comment.setAuthor(authorId);
                 return true;
             }
 
-            tmp = Misc.getString(params, PARAM_ACTION);
+            tmp = Misc.getString(params, PARAM_AUTHOR);
             if ( tmp != null && tmp.length() > 0 ) {
                 if (tmp.indexOf("<") != -1) {
                     params.put(PARAM_AUTHOR,"");
