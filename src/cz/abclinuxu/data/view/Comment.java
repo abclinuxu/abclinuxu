@@ -23,6 +23,7 @@ import java.util.*;
 import org.dom4j.Element;
 import org.dom4j.Document;
 import cz.abclinuxu.data.XMLHandler;
+import cz.abclinuxu.utils.Misc;
 
 /**
  * Comment is a holder of one reaction in discussion.
@@ -34,7 +35,7 @@ public abstract class Comment implements Cloneable, Comparable {
      * XML with data of this object
      */
     protected XMLHandler documentHandler;
-    List children;
+    List<Comment> children;
     int id;
     Integer parent;
 
@@ -123,12 +124,22 @@ public abstract class Comment implements Cloneable, Comparable {
     }
 
     /**
+     * @return text for this comment
+     */
+    public String getText() {
+        Element element = (Element) getData().selectSingleNode("/data/text");
+        if (element != null)
+            return element.getText();
+        return null;
+    }
+
+    /**
      * Appends reply to this comment.
      * @param comment comment to be added as child of this comment
      */
     public void addChild(Comment comment) {
         if (children == null)
-            children = new ArrayList();
+            children = new ArrayList<Comment>();
         children.add(comment);
     }
 
@@ -185,6 +196,20 @@ public abstract class Comment implements Cloneable, Comparable {
     }
 
     /**
+     * Attempts to find a comment with the same content in child comments
+     * @param c other comment
+     * @return existing comment, if found
+     */
+    public Comment findComment(Comment c) {
+        if (children == null)
+            return null;
+        for (Comment comment : children) {
+            if (comment.contentEquals(c))
+                return comment;        }
+        return null;
+    }
+
+    /**
      * Helper method that re-sorts direct child comments by their ids.
      */
     public void sortChildren() {
@@ -198,6 +223,16 @@ public abstract class Comment implements Cloneable, Comparable {
     public boolean equals(Object obj) {
         if ( !(obj instanceof Comment) ) return false;
         return getId() == ((Comment)obj).getId();
+    }
+
+    public boolean contentEquals(Comment c) {
+        if ( ! Misc.same(c.getAuthor(), getAuthor()))
+            return false;
+        if ( ! Misc.same(c.getAnonymName(), getAnonymName()))
+            return false;
+        if ( ! Misc.same(c.getTitle(), getTitle()))
+            return false;
+        return Misc.same(c.getText(), getText());
     }
 
     public int compareTo(Object o) {
@@ -214,10 +249,10 @@ public abstract class Comment implements Cloneable, Comparable {
             if (documentHandler != null)
                 clone.documentHandler = (XMLHandler) documentHandler.clone(true);
             if (clone.children != null) {
-                clone.children = new ArrayList(children.size());
+                clone.children = new ArrayList<Comment>(children.size());
                 for (Iterator iter = children.iterator(); iter.hasNext();) {
                     Comment comment = (Comment) iter.next();
-                    clone.children.add(comment.clone());
+                    clone.children.add((Comment) comment.clone());
                 }
             }
             return clone;

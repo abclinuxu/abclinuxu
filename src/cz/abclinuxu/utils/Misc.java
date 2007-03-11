@@ -22,7 +22,6 @@ import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.persistence.versioning.VersionInfo;
 import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.persistence.versioning.Versioning;
-import cz.abclinuxu.persistence.versioning.VersionNotFoundException;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.servlets.Constants;
@@ -194,11 +193,12 @@ public class Misc {
      * @return true, if both parameters are null or are equal.
      */
     public static boolean same(Object first, Object second) {
-        if ( first!=null ) {
-            if ( second==null ) return false;
+        if ( first != null ) {
+            if ( second == null )
+                return false;
             return first.equals(second);
         }
-        return second==null;
+        return second == null;
     }
 
     /**

@@ -139,6 +139,22 @@ public class DiscussionRecord implements Cloneable {
     }
 
     /**
+     * Attempts to find a comment with the same content in top level comments
+     * @param c other comment
+     * @return existing comment, if found
+     */
+    public Comment findComment(Comment c) {
+        if (threads == null)
+            return null;
+        for (Iterator iter = threads.iterator(); iter.hasNext();) {
+            Comment comment = (Comment) iter.next();
+            if (comment.contentEquals(c))
+                return comment;
+        }
+        return null;
+    }
+
+    /**
      * @return maximum id used in comments or zero, if there is no comment at all
      */
     public int getMaxCommentId() {

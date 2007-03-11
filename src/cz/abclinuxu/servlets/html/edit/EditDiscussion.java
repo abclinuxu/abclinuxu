@@ -412,12 +412,19 @@ public class EditDiscussion implements AbcAction {
         }
 
         // now it is safe to modify XML Document, because data were validated
-        if (comment.getParent() == null)
+        boolean duplicate = false;
+        if (comment.getParent() == null) {
+            duplicate = dizRecord.findComment(comment) != null;
             dizRecord.addThread(comment);
-        else {
+        } else {
             Comment parent = dizRecord.getComment(comment.getParent().intValue());
+            duplicate = parent.findComment(comment) != null;
             parent.addChild(comment);
         }
+
+        if (duplicate)
+            return ServletUtils.showErrorPage("Systém detekoval vícenásobné odeslání totožného komentáře.", env, request);  
+
         dizRecord.calculateCommentStatistics();
 
         if (record.getId() == 0) {
