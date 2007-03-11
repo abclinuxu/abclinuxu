@@ -143,6 +143,8 @@ public class EditBazaar implements AbcAction {
             if (!canContinue)
                 params.remove(PARAM_PREVIEW);
             ad.setInitialized(true);
+            ad.setCreated(new Date());
+            ad.setUpdated(new Date());
             env.put(VAR_PREVIEW, ad);
             return FMTemplateSelector.select("EditBazaar", "add", env, request);
         }
