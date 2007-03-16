@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd" >
-<html>
+<html lang="cs">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>${PARAMS.TITLE?default(TITLE?default('www.abclinuxu.cz'))}</title>
@@ -18,7 +18,8 @@
     <link rel="alternate" title="abclinuxu.cz: software" href="http://www.abclinuxu.cz/auto/software.rss" type="application/rss+xml">
     <link rel="alternate" title="abclinuxu.cz: ankety" href="http://www.abclinuxu.cz/auto/ankety.rss" type="application/rss+xml">
     <link rel="bookmark" href="#obsah" title="Obsah stránky" type="text/html">
-    <meta name="keywords" content="linux,abclinuxu,hardware,software,ovladače,diskuse,nápověda,rada,pomoc">
+    <meta name="keywords" lang="cs" content="linux,abclinuxu,hardware,software,ovladače,diskuse,nápověda,rada,pomoc">
+    <meta name="keywords" lang="en" content="linux,hardware,software,drivers,forum,help,faq,advice">
     <script type="text/javascript" src="/data/site/impact.js"></script>
     <script type="text/javascript" src="/data/site/scripts.js"></script>
     <#if html_header?exists>

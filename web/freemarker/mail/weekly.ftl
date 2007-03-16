@@ -19,6 +19,18 @@ Prehled clanku
 </#list>
 
 
+Reklama
+=======
+
+PERSONALNI INZERCE: Nase spolecnost pusobi v oblasti
+hostingu jiz nekolik let. Do naseho portfolia sluzeb
+patri i sprava vnitropodnikovych siti a vyvoj
+intranetovych systemu. Hledame proto noveho kolegu na
+pozici Administrator linuxovych serveru. Podrobnosti:
+
+http://www.abcprace.cz/hosting90-s-r-o-2/administrator-linuxovych-serveru
+
+
 Prehled zpravicek
 =================
 

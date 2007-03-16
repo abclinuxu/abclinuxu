@@ -32,8 +32,8 @@
         </div>
     </#if>
 
-    <#--<@lib.advertisement id="arbo-sq" />-->
-
+    <@lib.advertisement id="arbo-sq" />
+    <@lib.advertisement id="oksystem" />
     <@lib.advertisement id="ps-boxik1" />
     <@lib.advertisement id="ps-boxik2" />
     <@lib.advertisement id="ps-boxik3" />

@@ -14,11 +14,13 @@ document.write('<img src="http://sf.impact.as/if/imcount.php?ad='+IM_spec_reklam
     </#list>
     </ul>
     <FORM ACTION="http://portal.oksystem.cz/portal/page" METHOD="POST">
-	<INPUT TYPE="hidden" NAME="_pageid" VALUE="53,36308">
-	<INPUT TYPE="hidden" NAME="_dad" VALUE="portal">
-	<INPUT TYPE="hidden" NAME="_schema" VALUE="PORTAL">
-	<INPUT TYPE="text" NAME="p_mainsearch" VALUE="" class="text">
-	<INPUT TYPE="submit" VALUE="Najdi školení" class="button">
+      <div>
+        <INPUT TYPE="hidden" NAME="_pageid" VALUE="53,36308">
+        <INPUT TYPE="hidden" NAME="_dad" VALUE="portal">
+        <INPUT TYPE="hidden" NAME="_schema" VALUE="PORTAL">
+        <INPUT TYPE="text" NAME="p_mainsearch" VALUE="" class="text">
+        <INPUT TYPE="submit" VALUE="Najdi školení" class="button">
+      </div>
     </FORM>
 </div>
 

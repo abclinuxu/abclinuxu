@@ -6,7 +6,11 @@
 
 <#include "../header.ftl">
 
-<#--<@lib.advertisement id="arbo-sq" />-->
+<#if !is_question>
+ <@lib.advertisement id="gg-ds-obsah" />
+</#if>
+
+<@lib.advertisement id="arbo-sq" />
 <#if !is_question>
  <@lib.advertisement id="arbo-sky" />
 </#if>
@@ -39,10 +43,6 @@
      <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+RELATION.id+"&amp;dizId="+ITEM.id)}"><#if DIZ.frozen>Rozmrazit<#else>Zmrazit</#if></a>
    </#if>
 </div>
-
-<#if !is_question>
- <@lib.advertisement id="gg-ds-obsah" />
-</#if>
 
 <#if is_question>
  <h1>Otázka</h1>

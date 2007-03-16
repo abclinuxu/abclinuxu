@@ -49,8 +49,8 @@
 
 <@lib.advertisement id="gg-zpravicka" />
 
-<br />
-<p><b>Nástroje</b>: <a href="${RELATION.url?default("/zpravicky/show/"+RELATION.id)}?varianta=print">Tisk</a></p>
+<p><b>Nástroje</b>:
+<a href="${RELATION.url?default("/zpravicky/show/"+RELATION.id)}?varianta=print" rel="nofollow">Tisk</a></p>
 
 <h3>Komentáře</h3>
 <#if CHILDREN.discussion?exists>

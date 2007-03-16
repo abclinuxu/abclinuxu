@@ -1020,6 +1020,7 @@ color:		white;
 border:		1px solid #d3d3d3;
 margin-bottom:	5px;
 font-size:	small;
+clear:		right;
 }
 .sun-box p { padding:	0.3em 0 0.5em 0.5em; }
 .sun-box a { color: white; }
