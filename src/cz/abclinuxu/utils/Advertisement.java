@@ -27,10 +27,9 @@ import cz.abclinuxu.utils.freemarker.FMUtils;
 import org.dom4j.Element;
 
 import java.util.Map;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Iterator;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -42,7 +41,7 @@ import java.util.regex.Matcher;
 public class Advertisement {
     static Map<String, Pattern> regexps;
     static {
-        regexps = Collections.synchronizedMap(new HashMap<String, Pattern>());
+        regexps = new ConcurrentHashMap<String, Pattern>(50);
     }
 
     /**
