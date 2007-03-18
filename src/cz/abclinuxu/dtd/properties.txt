@@ -23,3 +23,11 @@ name: digest
 value: yes
 mapping: 1:1
 purpose: indicates that the story was selected to blog digest RSS
+
+ITEM.ARTICLE
+============
+
+name: author
+value: id of relation to article's author
+mapping: 1:n
+purpose: defines author(s) of that article
