@@ -194,6 +194,8 @@ public class ViewCategory implements AbcAction {
         switch ( relation.getId() ) {
             case Constants.REL_FORUM:
                 return ShowForum.processMain(request, env);
+            case Constants.REL_POLLS:
+                return ViewPolls.processPolls(env, request);
             case Constants.REL_DRIVERS:
                 return FMTemplateSelector.select("ViewCategory", "drivers", env, request);
             case Constants.REL_NEWS_POOL:
@@ -273,6 +275,7 @@ public class ViewCategory implements AbcAction {
 
         Tools.syncList(articles);
         Tools.initializeDiscussionsTo(articles);
+//        Tools.initializeAuthors(articles);
 
         Paging paging = new Paging(articles, from, count, total);
         env.put(VAR_ARTICLES, paging);

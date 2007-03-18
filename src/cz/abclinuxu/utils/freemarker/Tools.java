@@ -1606,6 +1606,23 @@ public class Tools implements Configurable {
     }
 
     /**
+     * Initializes author relations of list of articles
+     * @param articles initialized relations
+     */
+    public static void initializeAuthors(List<Relation> articles) {
+        Set authors = new HashSet(articles.size() + 3);
+        for (Relation relation : articles) {
+            Item article = (Item) relation.getChild();
+            Set relationIds = article.getProperty(Constants.PROPERTY_AUTHOR);
+            for (Iterator i = relationIds.iterator(); i.hasNext();) {
+                int rid = Integer.parseInt((String) i.next());
+                authors.add(new Relation(rid));
+            }
+        }
+        syncList(authors);
+    }
+
+    /**
      * Finds relations to all authors of given <code>article</code>.
      * @return List of Authors
      */

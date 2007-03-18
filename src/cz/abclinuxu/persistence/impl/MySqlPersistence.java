@@ -557,7 +557,7 @@ public class MySqlPersistence implements Persistence {
             }
             if (records != null) {
 //                Sorters2.byId(records);
-                syncDataObjects(records); // todo records do not have properties now
+                syncDataObjects(records);
             }
             if (links != null) {
                 Sorters2.byId(links);
