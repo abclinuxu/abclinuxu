@@ -31,3 +31,6 @@ name: author
 value: id of relation to article's author
 mapping: 1:n
 purpose: defines author(s) of that article
+
+Properties are stored in Constants.java, when you add new property, do not
+forget update PropertiesConfig.java

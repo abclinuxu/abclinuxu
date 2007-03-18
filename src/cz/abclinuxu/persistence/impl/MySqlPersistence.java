@@ -1206,7 +1206,7 @@ public class MySqlPersistence implements Persistence {
         PreparedStatement statement = null;
         ResultSet rs = null;
         Map objects = new HashMap();
-        List found = new ArrayList();
+        List found = new ArrayList(objs.size());
         GenericDataObject obj;
         GenericDataObject representant = (GenericDataObject) objs.get(0);
         try {
@@ -1224,6 +1224,7 @@ public class MySqlPersistence implements Persistence {
                 int id = rs.getInt(1);
                 obj = (GenericDataObject) objects.get(id);
                 if (obj == null) {
+                    // this cannot happen
                     log.warn("Datova položka nebyla nalezena: " + obj);
                     continue;
                 }
@@ -1233,6 +1234,8 @@ public class MySqlPersistence implements Persistence {
                     loadComments((Record) obj);
 
                 found.add(obj);
+                if ( ! PropertiesConfig.isSupported(obj))
+                    objects.remove(id);
             }
         } finally {
             releaseSQLResources(con, statement, rs);
@@ -2000,6 +2003,9 @@ public class MySqlPersistence implements Persistence {
      * Loads properties of <code>obj</code> from database.
      */
     protected void loadProperties(GenericDataObject obj) throws SQLException {
+        if ( ! PropertiesConfig.isSupported(obj))
+            return;
+
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -2029,6 +2035,9 @@ public class MySqlPersistence implements Persistence {
      * @param objectType
      */
     protected void loadProperties(Map objects, String objectType) throws SQLException {
+        if (objects.size() == 0)
+            return;
+
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
