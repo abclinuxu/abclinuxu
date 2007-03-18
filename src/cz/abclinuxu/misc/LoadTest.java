@@ -23,110 +23,119 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.htmlcleaner.HtmlCleaner;
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Iterator;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Downloads selected list of pages to configured depth and outputs
  * time spent by this test.
+ * // todo measure each execution time and perform analysis (min, max, avg, median)
  * @author literakl
  * @since 24.2.2007
  */
 public class LoadTest {
-    // load all articles sections, that have enough content to be paginated
-    static Config articleSectionsConfig = new Config(new String[]{"/clanky/bezpecnost", "/clanky/hardware", "/clanky/system",
-                                                            "/clanky/jaderne-noviny", "/clanky/multimedia", "/clanky/navody",
-                                                            "/clanky/novinky", "/clanky/programovani", "/clanky/recenze",
-                                                            "/clanky/rozhovory"}, 1);
-    static Config miniConfig = new Config(new String[]{"/clanky/bezpecnost"}, 1);
+    private static org.apache.log4j.Logger log = org.apache.log4j.Logger.getLogger(LoadTest.class);
 
-    static String urlPrefix = "http://localhost:8080";
-    static int downloaded;
+    // load all articles sections, that have enough content to be paginated
+    private static Config articleSectionsConfig = new Config(new String[]{"/clanky/bezpecnost", "/clanky/hardware",
+                        "/clanky/jaderne-noviny", "/clanky/multimedia", "/clanky/navody", "/clanky/novinky",
+                        "/clanky/programovani", "/clanky/recenze", "/clanky/rozhovory", "/clanky/system"}, 1);
+    private static Config richConfig = new Config(new String[]{"/clanky/bezpecnost", "/clanky/hardware",
+                        "/clanky/jaderne-noviny", "/clanky/multimedia", "/clanky/navody", "/clanky/novinky",
+                        "/clanky/programovani", "/clanky/recenze", "/clanky/rozhovory", "/clanky/system", "/faq/disky",
+                        "/faq/souborove-systemy", "/zpravicky", "/hardware/pridavne-karty", "/software/hry",
+                        "/blog", "/poradna", "/ankety", "/slovnik", "/ovladace", "/bazar", "/serialy"}, 1);
+    // load single article section with its content
+    private static Config miniConfig = new Config(new String[]{"/clanky/bezpecnost"}, 1);
+    private static final int THREADS = 5;
+    // number of milliseconds since last download, if exceeded, test is considered as finished
+    private static final long FINISH_INTERVAL = 500;
+    private static String urlPrefix = "http://localhost:8080";
+
+    private static AtomicInteger downloaded = new AtomicInteger(0);
+    private static ConcurrentLinkedQueue<Task> tasks;
 
     public static void main(String[] args) throws Exception {
-        // initialize
+        LogManager.getLogger("org.apache.commons.httpclient").setLevel(Level.OFF);
+        // initialize caches in server
         loadPage("/", false);
-        downloaded = 0;
 
-        Config config = articleSectionsConfig;
-        List<String> urls = new ArrayList<String>(Arrays.asList(config.urls));
+        Config config = richConfig;
+        tasks = new ConcurrentLinkedQueue<Task>();
+        for (int i = 0; i < config.urls.length; i++) {
+            String url = config.urls[i];
+            tasks.add(new Task(url, 0, config.depth));
+        }
 
+        ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(THREADS);
+        threadPool.prestartCoreThread();
         long sqlStart = getServedSqlQueries();
         long start = System.currentTimeMillis();
-        crawl(urls, 0, config.depth);
+        int emptyResults = 0;
+        while (true) {
+            Task task = tasks.poll();
+            if (task != null) {
+                threadPool.submit(new Fetcher(task));
+                emptyResults = 0;
+            } else {
+                if (threadPool.getActiveCount() > 0) {
+                    try { Thread.sleep(10); } catch (InterruptedException e) {}
+                    continue;
+                }
+                if (emptyResults > 3) {
+                    threadPool.shutdown();
+                    threadPool.awaitTermination(60, TimeUnit.SECONDS);
+                    break;
+                } else {
+                    emptyResults++;
+                    try { Thread.sleep(FINISH_INTERVAL); } catch (InterruptedException e) {}
+                }
+            }
+        }
+
         long end = System.currentTimeMillis();
         long sqlEnd = getServedSqlQueries();
         System.out.println();
-        System.out.println("Test took " + (end - start)/1000 + " seconds, downloaded " + downloaded + " pages, " +
-            "performed " + (sqlEnd - sqlStart) + " SQL queries.");
-    }
-
-/*
-aktualni implementace Nursery, size: 750 objektu
-Test took 705 seconds, downloaded 762 pages
-Test took 714 seconds, downloaded 762 pages
-aktualni implementace Nursery, size: 2500 objektu
-Test took 689 seconds, downloaded 762 pages
-Test took 681 seconds, downloaded 762 pages
-stara Nursery, size: 750 objektu
-Test took 727 seconds, downloaded 762 pages
-Test took 710 seconds, downloaded 762 pages
-stara Nursery, size: 2500 objektu
-Test took 719 seconds, downloaded 762 pages
-aktualni implementace Nursery, size: 750 objektu, whirly cache
-Test took 684 seconds, downloaded 762 pages
-Test took 684 seconds, downloaded 762 pages
-Test took 136 seconds, downloaded 761 pages, performed 6023 SQL queries. (28.2.2007 - I don't understand this improvement)
-*/
-
-    static void crawl(List<String> pages, int currentDepth, int maximumDepth) throws Exception {
-        List<String> next = new ArrayList<String>();
-        for (String s : pages) {
-            List<String> found = loadPage(s, maximumDepth > currentDepth);
-            next.addAll(found);
-        }
-        if (currentDepth < maximumDepth)
-            crawl(next, currentDepth + 1, maximumDepth);
+        System.out.println("Total time: " + (end - start)/1000 + " seconds, downloaded pages: " + downloaded.get()
+                           + ", SQL queries: " + (sqlEnd - sqlStart));
     }
 
     /**
      * Loads given page and returns all relative urls in the content area
      * @param url relative url
      * @return relative urls found in content area
-     * @throws Exception problem
+     * @throws IOException problem
      */
-    static List<String> loadPage(String url, boolean analyzePage) throws Exception {
-        List<String> childUrls = new ArrayList<String>();
+    static List<String> loadPage(String url, boolean analyzePage) throws IOException {
         String page = readUrl(urlPrefix + url);
-        downloaded++;
-        System.out.print("#");
-        if (downloaded % 60 == 0)
-            System.out.println();
         if (! analyzePage)
             return Collections.emptyList();
 
-        HtmlCleaner cleaner = new HtmlCleaner(page);
-        cleaner.clean();
-        String normalizedPage = cleaner.getCompactXmlAsString();
+        // clean html, parse XML, find links: 27,17,5,5 ms (best)
+        // clean html, parse XML, find links: 795,262,352,181 ms (worst)
+        // substring search: 0 - 1 ms (all)
+        int div = page.indexOf("id=\"st\"");
+        if (div == -1)
+            return Collections.emptyList();
 
-        Document document = DocumentHelper.parseText(normalizedPage);
-        List links = document.selectNodes("//div[@id='st']//a");
-        for (Iterator iter = links.iterator(); iter.hasNext();) {
-            Element element = (Element) iter.next();
-            String href = element.attributeValue("href");
-            if (href == null)
-                continue;
-            if (href.startsWith("/"))
-                childUrls.add(href);
+        List<String> childUrls = new ArrayList<String>();
+        int position = div + 6;
+        while ((position = page.indexOf("href=\"/", position)) != -1) {
+            int quote = page.indexOf('"', position + 6);
+            String href = page.substring(position + 6, quote);
+            position = quote + 1;
+            childUrls.add(href);
         }
 
         return childUrls;
@@ -145,7 +154,6 @@ Test took 136 seconds, downloaded 761 pages, performed 6023 SQL queries. (28.2.2
                 return null;
             }
 
-
             responseBody = method.getResponseBody();
         } finally {
             method.releaseConnection();
@@ -162,6 +170,45 @@ Test took 136 seconds, downloaded 761 pages, performed 6023 SQL queries. (28.2.2
         if (j == -1)
             return 0;
         return Long.parseLong(content.substring(i + 5, j));
+    }
+
+    static class Fetcher implements Runnable {
+        Task task;
+        public Fetcher(Task task) {
+            this.task = task;
+        }
+
+        public void run() {
+            try {
+                List<String> found = loadPage(task.url, task.targetDepth > task.currentDepth);
+                int current = downloaded.incrementAndGet();
+                System.out.print("#");
+                if (current % 60 == 0)
+                    System.out.println();
+
+                if (! found.isEmpty()) {
+                    List<Task> newTasks = new ArrayList<Task>(found.size());
+                    for (Iterator<String> iter = found.iterator(); iter.hasNext();) {
+                        String url = iter.next();
+                        newTasks.add(new Task(url, task.currentDepth + 1, task.targetDepth));
+                    }
+                    tasks.addAll(newTasks);
+                }
+            } catch (IOException e) {
+                log.warn("Failed to fetch " + task.url, e);
+            }
+        }
+    }
+
+    static class Task {
+        String url;
+        int currentDepth, targetDepth;
+
+        public Task(String url, int currentDepth, int targetDepth) {
+            this.url = url;
+            this.currentDepth = currentDepth;
+            this.targetDepth = targetDepth;
+        }
     }
 
     static class Config {
