@@ -21,6 +21,7 @@ package cz.abclinuxu.persistence;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.exceptions.PersistenceException;
 import cz.abclinuxu.persistence.extra.*;
@@ -35,6 +36,7 @@ import java.util.LinkedList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
@@ -1322,7 +1324,7 @@ public final class SQLTool implements Configurable {
 
             String query = (String) sql.get(ITEMS_COUNT_IN_SECTION);
             int position = query.indexOf('?');
-            query = query.substring(0, position) + MySqlPersistence.getInCondition(categories.size())
+            query = query.substring(0, position) + Misc.getInCondition(categories.size())
                     + query.substring(position + 1);
 
             con = persistance.getSQLConnection();
@@ -1364,7 +1366,7 @@ public final class SQLTool implements Configurable {
 
             String query = (String) sql.get(LAST_ITEM_AND_COUNT_IN_SECTION);
             int position = query.indexOf('?');
-            query = query.substring(0, position) + MySqlPersistence.getInCondition(categories.size())
+            query = query.substring(0, position) + Misc.getInCondition(categories.size())
                     + query.substring(position + 1);
 
             con = persistance.getSQLConnection();
@@ -1784,14 +1786,22 @@ public final class SQLTool implements Configurable {
             sb.append("!=");
         else if (operation==Operation.LIKE)
             sb.append(" like ");
-        else if (operation==Operation.IN)
-            sb.append(" in ");
-
-        sb.append("? ");
+        else if (operation instanceof OperationIn)
+            sb.append(" in " + Misc.getInCondition(((OperationIn)operation).getCount()));
 
         Object value = condition.getValue();
-        if (value instanceof Date)
-            value = new java.sql.Date(((Date)value).getTime());
-        params.add(value);
+        if (value instanceof Collection) {
+            for (Iterator iter = ((Collection) value).iterator(); iter.hasNext();) {
+                Object o = iter.next();
+                if (o instanceof Date)
+                    o = new java.sql.Date(((Date) o).getTime());
+                params.add(o);
+            }
+        } else {
+            sb.append("? ");
+            if (value instanceof Date)
+                value = new java.sql.Date(((Date)value).getTime());
+            params.add(value);
+        }
     }
 }

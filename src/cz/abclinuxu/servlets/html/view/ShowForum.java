@@ -92,7 +92,7 @@ public class ShowForum implements AbcAction {
         SectionNode sectionSettings = forumTree.getByRelation(Constants.REL_FORUM_SETTINGS);
         SectionNode sectionVarious = forumTree.getByRelation(Constants.REL_FORUM_VARIOUS);
 
-        Map<Integer,Relation> lastQuestions = new HashMap();
+        Map<Integer,Relation> lastQuestions = new HashMap<Integer, Relation>();
         List<Forum> forumApps = initForum(sectionApps, lastQuestions);
         List<Forum> forumDistros = initForum(sectionDistros, lastQuestions);
         List<Forum> forumHardware = initForum(sectionHardware, lastQuestions);
@@ -114,8 +114,8 @@ public class ShowForum implements AbcAction {
         return FMTemplateSelector.select("ShowForum", "main", env, request);
     }
 
-    private static List initForum(SectionNode section, Map<Integer,Relation> lastQuestions) {
-        List<Forum> list = new ArrayList(section.getSize());
+    private static List<Forum> initForum(SectionNode section, Map<Integer,Relation> lastQuestions) {
+        List<Forum> list = new ArrayList<Forum>(section.getSize());
         for (SectionNode node : section.getChildren()) {
             int lastId = node.getLastItem();
             if (lastId > 0) {

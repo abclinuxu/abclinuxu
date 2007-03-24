@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005 Leos Literak
+ *  Copyright (C) 2007 Leos Literak
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
@@ -19,24 +19,25 @@
 package cz.abclinuxu.persistence.extra;
 
 /**
- * Constants for operations.
+ * @author literakl
+ * @since 19.3.2007
  */
-public class Operation {
-    public static final Operation SMALLER = new Operation("SMALLER");
-    public static final Operation SMALLER_OR_EQUAL = new Operation("SMALLER_OR_EQUAL");
-    public static final Operation GREATER = new Operation("GREATER");
-    public static final Operation GREATER_OR_EQUAL = new Operation("GREATER_OR_EQUAL");
-    public static final Operation EQUAL = new Operation("EQUAL");
-    public static final Operation NOT_EQUAL = new Operation("NOT_EQUAL");
-    public static final Operation LIKE = new Operation("LIKE");
+public class OperationIn extends Operation {
+    private int count;
 
-    private final String myName; // for debug only
-
-    protected Operation(String name) {
-        myName = name;
+    /**
+     * Constructor
+     * @param count number of items in IN clause
+     */
+    public OperationIn(int count) {
+        super("IN");
+        this.count = count;
     }
 
-    public String toString() {
-        return myName;
+    /**
+     * @return
+     */
+    public int getCount() {
+        return count;
     }
 }

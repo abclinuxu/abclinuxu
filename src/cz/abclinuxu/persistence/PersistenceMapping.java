@@ -17,6 +17,14 @@ import cz.abclinuxu.exceptions.InvalidDataException;
  * persistence implementation, so it canbe used independantly.
  */
 public class PersistenceMapping {
+    public static final String TREE_ITEM = "P";
+    public static final String TREE_RECORD = "Z";
+    public static final String TREE_CATEGORY = "K";
+    public static final String TREE_POLL = "A";
+    public static final String TREE_SERVER = "S";
+    public static final String TREE_LINK = "L";
+    public static final String TREE_USER = "U";
+
     /** enumaration of available tables */
     public static class Table {
         public static final Table RELATION = new Table("RELATION");
@@ -78,19 +86,19 @@ public class PersistenceMapping {
      */
     public static String getGenericObjectType(GenericObject obj) {
         if (obj instanceof Record) {
-            return "Z";
+            return TREE_RECORD;
         } else if (obj instanceof Item) {
-            return "P";
+            return TREE_ITEM;
         } else if (obj instanceof Category) {
-            return "K";
+            return TREE_CATEGORY;
         } else if (obj instanceof User) {
-            return "U";
+            return TREE_USER;
         } else if (obj instanceof Link) {
-            return "L";
+            return TREE_LINK;
         } else if (obj instanceof Server) {
-            return "S";
+            return TREE_SERVER;
         } else if (obj instanceof Poll) {
-            return "A";
+            return TREE_POLL;
         } else if (obj instanceof Data) {
             return "O";
         }

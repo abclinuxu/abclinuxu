@@ -263,4 +263,19 @@ public class Misc {
         else
             return limit(count, 10, maximum);
     }
+
+    /**
+     * Creates string in format "(?,?,?)"
+     * @param size number of question marks
+     * @return string for ids in IN condition
+     */
+    public static String getInCondition(int size) {
+        StringBuffer sb = new StringBuffer();
+        sb.append('(');
+        for (int i = 0; i < size; i++) {
+            sb.append("?,");
+        }
+        sb.setCharAt(sb.length() - 1, ')');
+        return sb.toString();
+    }
 }

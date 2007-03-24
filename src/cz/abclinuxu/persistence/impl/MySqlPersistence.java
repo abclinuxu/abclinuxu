@@ -27,6 +27,7 @@ import cz.abclinuxu.data.view.DiscussionRecord;
 import cz.abclinuxu.exceptions.*;
 import cz.abclinuxu.AbcException;
 import cz.abclinuxu.utils.Sorters2;
+import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.cache.TransparentCache;
 import cz.abclinuxu.persistence.Nursery;
@@ -1128,7 +1129,7 @@ public class MySqlPersistence implements Persistence {
         Connection con = null; PreparedStatement statement = null; ResultSet rs = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from uzivatel where cislo in "+getInCondition(users.size()) + " order by cislo");
+            statement = con.prepareStatement("select * from uzivatel where cislo in "+Misc.getInCondition(users.size()) + " order by cislo");
             int i = 1;
             for (Iterator iter = users.iterator(); iter.hasNext();) {
                 User user = (User) iter.next();
@@ -1211,7 +1212,7 @@ public class MySqlPersistence implements Persistence {
         GenericDataObject representant = (GenericDataObject) objs.get(0);
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from " + getTable(representant) + " where cislo in " + getInCondition(objs.size()));
+            statement = con.prepareStatement("select * from " + getTable(representant) + " where cislo in " + Misc.getInCondition(objs.size()));
             int i = 1;
             for (Iterator iter = objs.iterator(); iter.hasNext();) {
                 obj = (GenericDataObject) iter.next();
@@ -1381,7 +1382,7 @@ public class MySqlPersistence implements Persistence {
         ResultSet rs = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from relace where cislo in " + getInCondition(relations.size())+" order by cislo");
+            statement = con.prepareStatement("select * from relace where cislo in " + Misc.getInCondition(relations.size())+" order by cislo");
             int i = 1;
             for (Iterator iter = relations.iterator(); iter.hasNext();) {
                 Relation relation = (Relation) iter.next();
@@ -1492,7 +1493,7 @@ public class MySqlPersistence implements Persistence {
         ResultSet rs = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from odkaz where cislo in " + getInCondition(links.size()) + " order by cislo");
+            statement = con.prepareStatement("select * from odkaz where cislo in " + Misc.getInCondition(links.size()) + " order by cislo");
             int i = 1;
             for (Iterator iter = links.iterator(); iter.hasNext();) {
                 Link link = (Link) iter.next();
@@ -1561,7 +1562,7 @@ public class MySqlPersistence implements Persistence {
         ResultSet rs = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from anketa2 where cislo in " + getInCondition(polls.size()) + " order by cislo");
+            statement = con.prepareStatement("select * from anketa2 where cislo in " + Misc.getInCondition(polls.size()) + " order by cislo");
             int i = 1;
             for (Iterator iter = polls.iterator(); iter.hasNext();) {
                 Poll poll = (Poll) iter.next();
@@ -1694,7 +1695,7 @@ public class MySqlPersistence implements Persistence {
         ResultSet rs = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from server where cislo in " + getInCondition(servers.size()) + " order by cislo");
+            statement = con.prepareStatement("select * from server where cislo in " + Misc.getInCondition(servers.size()) + " order by cislo");
             int i = 1;
             for (Iterator iter = servers.iterator(); iter.hasNext();) {
                 Server server = (Server) iter.next();
@@ -1772,7 +1773,7 @@ public class MySqlPersistence implements Persistence {
         try {
             List deleted = discussion.getDeletedComments();
             if (deleted.size() > 0) {
-                String sql = "delete from komentar where cislo in " + getInCondition(deleted.size());
+                String sql = "delete from komentar where cislo in " + Misc.getInCondition(deleted.size());
                 statement1 = con.prepareStatement(sql);
                 int i = 1;
                 for (Iterator iter = deleted.iterator(); iter.hasNext();) {
@@ -2043,7 +2044,7 @@ public class MySqlPersistence implements Persistence {
         ResultSet resultSet = null;
         try {
             con = getSQLConnection();
-            statement = con.prepareStatement("select * from vlastnost where typ_predka=? and predek in " + getInCondition(objects.size()));
+            statement = con.prepareStatement("select * from vlastnost where typ_predka=? and predek in " + Misc.getInCondition(objects.size()));
             statement.setString(1, objectType);
             int i = 2, id;
             for (Iterator iter = objects.keySet().iterator(); iter.hasNext();) {
@@ -2141,21 +2142,6 @@ public class MySqlPersistence implements Persistence {
         }
 
         sb.append(size);
-        return sb.toString();
-    }
-
-    /**
-     * Creates string in format "(?,?,?)"
-     * @param size number of question marks
-     * @return string for ids in IN condition
-     */
-    public static String getInCondition(int size) {
-        StringBuffer sb = new StringBuffer();
-        sb.append('(');
-        for (int i = 0; i < size; i++) {
-            sb.append("?,");
-        }
-        sb.setCharAt(sb.length() - 1, ')');
         return sb.toString();
     }
 

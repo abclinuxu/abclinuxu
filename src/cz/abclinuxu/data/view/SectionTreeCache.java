@@ -28,8 +28,10 @@ import cz.abclinuxu.persistence.extra.CompareCondition;
 import cz.abclinuxu.persistence.extra.Field;
 import cz.abclinuxu.persistence.extra.Operation;
 import cz.abclinuxu.persistence.extra.Qualifier;
+import cz.abclinuxu.persistence.extra.OperationIn;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.utils.freemarker.Tools;
+import cz.abclinuxu.utils.Misc;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
@@ -144,8 +146,18 @@ public class SectionTreeCache {
             Map<Integer, SectionNode> directAccessMap = new HashMap<Integer, SectionNode>(cacheSize, cacheFactor);
             SectionNode root = new SectionNode(null, category.getId(), 0);
             List subSections = Tools.syncList(category.getChildren());
+
+            List<Integer> categoryIds = new ArrayList<Integer>(subSections.size());
             for (Iterator iter = subSections.iterator(); iter.hasNext();) {
-                scanRelation(root, (Relation) iter.next(), directAccessMap);
+                Relation child = (Relation) iter.next();
+                categoryIds.add(child.getChild().getId());
+            }
+
+            Map<String, List<Relation>> grandChildren = loadGrandChildren(categoryIds);
+            for (Iterator iter = subSections.iterator(); iter.hasNext();) {
+                Relation child = (Relation) iter.next();
+                String  key = Integer.toString(child.getChild().getId());
+                scanRelation(root, child, grandChildren.get(key), directAccessMap);
             }
 
             loadNames(directAccessMap);
@@ -213,7 +225,8 @@ public class SectionTreeCache {
      * @param relation initialized relation containing Category as child
      * @param directAccessMap map of section id to SectionNode
      */
-    private void scanRelation(SectionNode parent, Relation relation, Map<Integer, SectionNode> directAccessMap) {
+    private void scanRelation(SectionNode parent, Relation relation, List<Relation> relations,
+                              Map<Integer, SectionNode> directAccessMap) {
         String url = relation.getUrl();
         int relationId = relation.getId();
         if (url == null)
@@ -229,21 +242,45 @@ public class SectionTreeCache {
         parent.addSubsection(section);
         directAccessMap.put(id, section);
 
-        Qualifier qualifierType = new CompareCondition(Field.PARENT_TYPE, Operation.EQUAL, PersistenceMapping.getGenericObjectType(category));
-        Qualifier qualifierParent = new CompareCondition(Field.PARENT, Operation.EQUAL, id);
-        SQLTool sqlTool = SQLTool.getInstance();
-        List<Relation> relations = sqlTool.findCategoriesRelations(new Qualifier[]{qualifierType, qualifierParent});
+        if (relations == null) {
+//            relations = loadChildren(category);
+            relations = Collections.emptyList();
+        }
         if (relations.size() == 0)
             return;
 
         // initialize persistance cache
         List categories = new ArrayList(relations.size());
-        for (Relation childRelation : relations) 
+        List<Integer> categoryIds = new ArrayList<Integer>(relations.size());
+        for (Relation childRelation : relations) {
             categories.add(childRelation.getChild());
+            categoryIds.add(childRelation.getChild().getId());
+        }
         Tools.syncList(categories);
 
-        for (Relation child : relations)
-            scanRelation(section, child, directAccessMap);
+        Map<String, List<Relation>> grandChildren = loadGrandChildren(categoryIds);
+        for (Relation child : relations) {
+            String key = Integer.toString(child.getChild().getId());
+            scanRelation(section, child, grandChildren.get(key), directAccessMap);
+        }
+    }
+
+//    private List<Relation> loadChildren(Category category) {
+//        Qualifier qualifierType = new CompareCondition(Field.PARENT_TYPE, Operation.EQUAL, PersistenceMapping.TREE_CATEGORY);
+//        Qualifier qualifierParent = new CompareCondition(Field.PARENT, Operation.EQUAL, category.getId());
+//        SQLTool sqlTool = SQLTool.getInstance();
+//        return sqlTool.findCategoriesRelations(new Qualifier[]{qualifierType, qualifierParent});
+//    }
+
+    private Map<String, List<Relation>> loadGrandChildren(List<Integer> categoryIds) {
+        Qualifier qualifierParent = new CompareCondition(Field.PARENT, new OperationIn(categoryIds.size()), categoryIds);
+        Qualifier qualifierType = new CompareCondition(Field.PARENT_TYPE, Operation.EQUAL, PersistenceMapping.TREE_CATEGORY);
+        SQLTool sqlTool = SQLTool.getInstance();
+        List<Relation> relations = sqlTool.findCategoriesRelations(new Qualifier[]{qualifierType, qualifierParent});
+        Map<String, List<Relation>> grandChildren = new HashMap<String, List<Relation>>();
+        for (Relation childRelation : relations)
+            Misc.storeToMap(grandChildren, Integer.toString(childRelation.getParent().getId()), childRelation);
+        return grandChildren;
     }
 
     /**
@@ -287,12 +324,12 @@ public class SectionTreeCache {
 
     public static void main(String[] args) {
         SectionTreeCache cache;
+        long before = System.currentTimeMillis();
         cache = new SectionTreeCache("/forum", Constants.CAT_FORUM);
         cache.initialize();
         cache.setLoadLastItem(true);
-        long before = System.currentTimeMillis();
         cache.refresh();
-//        cache.print();
+        cache.print();
 //        cache = new SectionTreeCache("/faq", Constants.CAT_FAQ);
 //        cache.initialize();
 //        cache.refresh();
