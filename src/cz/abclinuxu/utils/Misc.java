@@ -47,14 +47,12 @@ public class Misc {
      * @return VersionInfo
      */
     public static VersionInfo commitRelation(Element element, Relation relation, User user) {
-        String path = Integer.toString(relation.getId());
-        String userId = Integer.toString(user.getId());
         Element copy = element.createCopy();
         Element monitor = copy.element("monitor");
         if (monitor != null)
             monitor.detach();
         Versioning versioning = VersioningFactory.getVersioning();
-        return versioning.commit(copy.asXML(), path, userId);
+        return versioning.commit(copy.asXML(), relation.getId(), user.getId());
     }
 
     /**
@@ -62,9 +60,8 @@ public class Misc {
      * @param relation identifies data
      */
     public static void purgeRelationRevisions(Relation relation) {
-        String path = Integer.toString(relation.getId());
         Versioning versioning = VersioningFactory.getVersioning();
-        versioning.purge(path);
+        versioning.purge(relation.getId());
     }
 
     /**

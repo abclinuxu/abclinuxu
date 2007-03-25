@@ -1,4 +1,4 @@
---CREATE DATABASE abc default character set utf8 collate utf8_czech_ci; 
+--CREATE DATABASE abc default character set utf8 collate utf8_czech_ci;
 -- utf8_czech_ci mozna nerozlisuje se mezi normalnimi a akcentovanymi znaky
 
 --USE abc;
@@ -31,6 +31,7 @@ CREATE TABLE kategorie (
  zmeneno TIMESTAMP NOT NULL             -- cas posledni zmeny
 );
 ALTER TABLE kategorie ADD INDEX in_podtyp (podtyp);
+ALTER TABLE kategorie ADD INDEX in_typ (typ);
 
 
 -- obecna struktura pro ukladani polozek
@@ -198,13 +199,14 @@ ALTER TABLE akce ADD INDEX akce_index (kdo,relace);
 
 -- mala implementace RCS
 CREATE TABLE verze (
- cesta VARCHAR(255) NOT NULL,                    -- identifikator dokumentu
- verze VARCHAR(25) NOT NULL,                     -- verze dokumentu
- kdo VARCHAR(50) NOT NULL,                       -- identifikator uzivatele
+ relace INT NOT NULL,                            -- relace dokumentu
+ verze INT(4) NOT NULL,                          -- verze dokumentu
+ kdo INT(6) NOT NULL,                            -- identifikator uzivatele
  kdy DATETIME NOT NULL,                          -- cas pridani
- obsah TEXT NOT NULL                             -- obsah dokumentu
+ obsah TEXT NULL,                                -- obsah dokumentu
+ zmena TEXT NULL                                 -- diff oproti minule verzi
 );
-ALTER TABLE verze ADD UNIQUE INDEX verze_cesta_verze (cesta,verze);
+ALTER TABLE verze ADD UNIQUE INDEX in_relace_verze (relace,verze);
 
 CREATE TABLE komentar (
  cislo INT AUTO_INCREMENT PRIMARY KEY,     -- id tohoto radku; v podstate je zbytecny

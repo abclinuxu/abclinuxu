@@ -34,33 +34,33 @@ public interface Versioning {
     /**
      * Stores latest version of document into versioning repository.
      * @param document document to be stored
-     * @param path path that uniquely identifies the document. Maximum length is 255 characters.
-     * @param user identifier of the user who commited this version. Maximum length is 50 characters.
+     * @param relation relation id for this document
+     * @param user identifier of the user who commited this version
      * @return information about this version
      */
-    public VersionInfo commit(String document, String path, String user);
+    public VersionInfo commit(String document, int relation, int user);
 
     /**
      * Loads document identified by path in selected version.
-     * @param path unique identifier of the document
+     * @param relation relation id for this document
      * @param version version to be fetched
      * @return document with versioning metadata
      * @throws VersionNotFoundException Thrown when either document or specified version doesn't exist.
      */
-    public VersionedDocument load(String path, String version) throws VersionNotFoundException;
+    public VersionedDocument load(int relation, int version) throws VersionNotFoundException;
 
     /**
      * Loads versioning history for selected document in descending order.
-     * @param path unique identifier of the document
+     * @param relation relation id for this document
      * @return list of VersionInfo objects. When the list is empty, then there is no
      * version of specified document.
      */
-    public List getHistory(String path);
+    public List getHistory(int relation);
 
     /**
      * Removes all information for given document from versioning repository.
-     * @param path unique identifier of the document
+     * @param relation relation id for this document
      * @return true if there were some revisions for specified document
      */
-    public boolean purge(String path);
+    public boolean purge(int relation);
 }

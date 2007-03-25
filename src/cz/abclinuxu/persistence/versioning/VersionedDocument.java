@@ -27,10 +27,11 @@ import java.util.Date;
  * Date: 28.3.2005
  */
 public class VersionedDocument {
-    private String version;
-    private String user;
+    private int version;
+    private int user;
     private Date commited;
     private String document;
+    private String diff;
 
     /**
      * @return document
@@ -48,28 +49,43 @@ public class VersionedDocument {
     }
 
     /**
-     * @return version string
+     * @return diff against previous version
      */
-    public String getVersion() {
+    public String getDiff() {
+        return diff;
+    }
+
+    /**
+     * Sets diff against previous version
+     * @param diff
+     */
+    public void setDiff(String diff) {
+        this.diff = diff;
+    }
+
+    /**
+     * @return version
+     */
+    public int getVersion() {
         return version;
     }
 
     /**
-     * Sets version. Maximum length of version is 25.
+     * Sets version.
      * @param version
      */
-    public void setVersion(String version) {
+    public void setVersion(int version) {
         this.version = version;
     }
 
     /**
      * @return identificator of the user, who commited this version
      */
-    public String getUser() {
+    public int getUser() {
         return user;
     }
 
-    public void setUser(String user) {
+    public void setUser(int user) {
         this.user = user;
     }
 
@@ -90,20 +106,20 @@ public class VersionedDocument {
 
         final VersionedDocument versionedDocument = (VersionedDocument) o;
 
-//        if (!commited.equals(versionedDocument.commited)) return false;
-//        if (!document.equals(versionedDocument.document)) return false;
-        if (!user.equals(versionedDocument.user)) return false;
-        if (!version.equals(versionedDocument.version)) return false;
+        if (user != versionedDocument.user) return false;
+        if (version != versionedDocument.version) return false;
+        if (diff != null ? ! diff.equals(versionedDocument.diff) : versionedDocument.diff != null) return false;
+        if (document != null ? ! document.equals(versionedDocument.document) : versionedDocument.document != null) return false;
 
         return true;
     }
 
     public int hashCode() {
         int result;
-        result = version.hashCode();
-        result = 29 * result + user.hashCode();
-        result = 29 * result + commited.hashCode();
-        result = 29 * result + document.hashCode();
+        result = version;
+        result = 29 * result + user;
+        result = 29 * result + (document != null ? document.hashCode() : 0);
+        result = 29 * result + (diff != null ? diff.hashCode() : 0);
         return result;
     }
 }

@@ -146,14 +146,14 @@ public class ViewFaq implements AbcAction {
         Item item = (Item) relation.getChild();
         env.put(VAR_ITEM, item);
 
-        String revision = (String) params.get(ShowRevisions.PARAM_REVISION);
-        if (revision != null) {
+        int revision = Misc.parseInt((String) params.get(ShowRevisions.PARAM_REVISION), -1);
+        if (revision != -1) {
             Versioning versioning = VersioningFactory.getVersioning();
-            VersionedDocument version = versioning.load(Integer.toString(relation.getId()), revision);
+            VersionedDocument version = versioning.load(relation.getId(), revision);
             Element monitor = (Element) item.getData().selectSingleNode("/data/monitor");
             item.setData(version.getDocument());
             item.setUpdated(version.getCommited());
-            item.setOwner(Integer.parseInt(version.getUser()));
+            item.setOwner(version.getUser());
             if (monitor != null) {
                 monitor = monitor.createCopy();
                 Element element = (Element) item.getData().selectSingleNode("/data/monitor");

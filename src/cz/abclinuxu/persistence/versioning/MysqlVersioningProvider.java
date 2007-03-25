@@ -57,13 +57,12 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
 
     /**
      * Stores latest version of document into versioning repository.
-     *
      * @param document document to be stored
-     * @param path     path that uniquely identifies the document
+     * @param relation relation id for this document
      * @param user     identifier of the user who commited this version
      * @return information about this version
      */
-    public VersionInfo commit(String document, String path, String user) {
+    public VersionInfo commit(String document, int relation, int user) {
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
         Connection con = null;
         PreparedStatement statement = null;
@@ -73,23 +72,23 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
         try {
             con = persistance.getSQLConnection();
             statement = con.prepareStatement(latestVersion);
-            statement.setString(1, path);
+            statement.setInt(1, relation);
             resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 String s = resultSet.getString(1);
                 try {
                     lastVersion = Integer.parseInt(s);
                 } catch (NumberFormatException e) {
-                    log.warn("Document "+path+" contains wrong version: '"+s+"'.");
+                    log.warn("Document "+relation+" contains wrong version: '"+s+"'.");
                 }
             }
 
             statement.close();
             statement = con.prepareStatement(insertVersion);
-            statement.setString(1, path);
-            String version = Integer.toString(++lastVersion);
-            statement.setString(2, version);
-            statement.setString(3, user);
+            statement.setInt(1, relation);
+            int version = ++lastVersion;
+            statement.setInt(2, version);
+            statement.setInt(3, user);
             statement.setTimestamp(4, new Timestamp(commited.getTime()));
             statement.setString(5, document);
             statement.executeUpdate();
@@ -108,13 +107,12 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
 
     /**
      * Loads document identified by path in selected version.
-     *
-     * @param path    unique identifier of the document
-     * @param version version to be fetched
+     * @param relation relation id for this document
+     * @param version  version to be fetched
      * @return document with versioning metadata
      * @throws VersionNotFoundException Thrown when either document or specified version doesn't exist.
      */
-    public VersionedDocument load(String path, String version) throws VersionNotFoundException {
+    public VersionedDocument load(int relation, int version) throws VersionNotFoundException {
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
         Connection con = null;
         PreparedStatement statement = null;
@@ -122,17 +120,18 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
         try {
             con = persistance.getSQLConnection();
             statement = con.prepareStatement(fetchDocument);
-            statement.setString(1, path);
-            statement.setString(2, version);
+            statement.setInt(1, relation);
+            statement.setInt(2, version);
             resultSet = statement.executeQuery();
             if (!resultSet.next())
-                throw new VersionNotFoundException("Cannot find document '"+path+"' in version '"+version+"'!");
+                throw new VersionNotFoundException("Cannot find document '"+relation+"' in version '"+version+"'!");
 
             VersionedDocument doc = new VersionedDocument();
-            doc.setVersion(resultSet.getString(1));
-            doc.setUser(resultSet.getString(2));
+            doc.setVersion(resultSet.getInt(1));
+            doc.setUser(resultSet.getInt(2));
             doc.setCommited(new Date(resultSet.getTimestamp(3).getTime()));
             doc.setDocument(resultSet.getString(4));
+            doc.setDiff(resultSet.getString(5));
             return doc;
         } catch (SQLException e) {
             throw new PersistenceException("SQL error", e);
@@ -142,12 +141,12 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
     }
 
     /**
-     * Loads versioning history for selected document.
-     *
-     * @param path unique identifier of the document
-     * @return list of VersionInfo
+     * Loads versioning history for selected document in descending order.
+     * @param relation relation id for this document
+     * @return list of VersionInfo objects. When the list is empty, then there is no
+     *         version of specified document.
      */
-    public List getHistory(String path) {
+    public List getHistory(int relation) {
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
         Connection con = null;
         PreparedStatement statement = null;
@@ -155,14 +154,14 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
         try {
             con = persistance.getSQLConnection();
             statement = con.prepareStatement(allVersions);
-            statement.setString(1, path);
+            statement.setInt(1, relation);
             resultSet = statement.executeQuery();
 
             List history = new ArrayList();
             while (resultSet.next()) {
                 VersionInfo info = new VersionInfo();
-                info.setVersion(resultSet.getString(1));
-                info.setUser(resultSet.getString(2));
+                info.setVersion(resultSet.getInt(1));
+                info.setUser(resultSet.getInt(2));
                 info.setCommited(new Date(resultSet.getTimestamp(3).getTime()));
                 history.add(info);
             }
@@ -177,17 +176,17 @@ public class MysqlVersioningProvider implements Versioning, Configurable {
 
     /**
      * Removes all information for given document from versioning repository.
-     * @param path unique identifier of the document
+     * @param relation relation id for this document
      * @return true if there were some revisions for specified document
      */
-    public boolean purge(String path) {
+    public boolean purge(int relation) {
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
         Connection con = null;
         PreparedStatement statement = null;
         try {
             con = persistance.getSQLConnection();
             statement = con.prepareStatement(purgeDocument);
-            statement.setString(1, path);
+            statement.setInt(1, relation);
             int matched = statement.executeUpdate();
             return (matched > 0);
         } catch (SQLException e) {

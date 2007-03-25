@@ -60,7 +60,7 @@ public class ShowRevisions implements AbcAction {
         env.put(VAR_RELATION, relation);
 
         Versioning versioning = VersioningFactory.getVersioning();
-        List history = versioning.getHistory(Integer.toString(relation.getId()));
+        List history = versioning.getHistory(relation.getId());
         env.put(VAR_HISTORY, history);
 
         String url = relation.getUrl(), revisionParam = "?" + PARAM_REVISION + "=";

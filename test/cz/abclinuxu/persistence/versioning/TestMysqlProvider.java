@@ -40,43 +40,43 @@ public class TestMysqlProvider extends TestCase {
      */
     public void testIt() throws Exception {
         Random random = new Random(System.currentTimeMillis());
-        String identification = "a"+random.nextInt();
+        int relation = random.nextInt();
         Versioning api = new MysqlVersioningProvider();
 
         Document document = DocumentHelper.createDocument();
-        document.addElement(identification).setText("a");
+        document.addElement("a" + Integer.toString(relation)).setText("a");
 
-        VersionInfo info1 = api.commit(document.asXML(), identification, "user1");
-        assertEquals("user1", info1.getUser());
+        VersionInfo info1 = api.commit(document.asXML(), relation, 1);
+        assertEquals(1, info1.getUser());
 
-        VersionedDocument versionedDocument = api.load(identification, info1.getVersion());
+        VersionedDocument versionedDocument = api.load(relation, info1.getVersion());
         Document fetched = DocumentHelper.parseText(versionedDocument.getDocument());
         assertEquals("a", fetched.getRootElement().getText());
 
-        List versions = api.getHistory(identification);
+        List versions = api.getHistory(relation);
         assertEquals(1, versions.size());
         assertEquals(info1, versions.get(0));
 
         document.getRootElement().setText("aa");
-        VersionInfo info2 = api.commit(document.asXML(), identification, "user2");
-        assertEquals("user2", info2.getUser());
+        VersionInfo info2 = api.commit(document.asXML(), relation, 2);
+        assertEquals(2, info2.getUser());
 
-        versionedDocument = api.load(identification, info2.getVersion());
+        versionedDocument = api.load(relation, info2.getVersion());
         fetched = DocumentHelper.parseText(versionedDocument.getDocument());
         assertEquals("aa", fetched.getRootElement().getText());
 
-        List history = api.getHistory(identification);
+        List history = api.getHistory(relation);
         assertEquals(2, history.size());
 
         VersionInfo info1a = (VersionInfo) history.get(0);
         assertEquals(info1, info1a);
-        versionedDocument = api.load(identification, info1a.getVersion());
+        versionedDocument = api.load(relation, info1a.getVersion());
         fetched = DocumentHelper.parseText(versionedDocument.getDocument());
         assertEquals("a", fetched.getRootElement().getText());
 
         VersionInfo info2a = (VersionInfo) history.get(1);
         assertEquals(info2, info2a);
-        versionedDocument = api.load(identification, info2a.getVersion());
+        versionedDocument = api.load(relation, info2a.getVersion());
         fetched = DocumentHelper.parseText(versionedDocument.getDocument());
         assertEquals("aa", fetched.getRootElement().getText());
     }
