@@ -714,7 +714,8 @@ public class Tools implements Configurable {
     }
 
     /**
-     * Synchronizes list of GenericObjects.
+     * Synchronizes list of GenericObjects. The collection shall not contain duplicates,
+     * they will not be initialized.
      */
     public static List syncList(Collection collection) throws PersistenceException {
         if (collection.size() == 0)

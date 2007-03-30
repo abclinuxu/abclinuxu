@@ -486,17 +486,19 @@ public class MySqlPersistence implements Persistence {
         long start = System.currentTimeMillis();
         String type = null;
 
-        List relations = null;
-        List users = null;
-        List items = null;
-        List records = null;
-        List categories = null;
-        List links = null;
-        List servers = null;
-        List polls = null;
+        Set relations = null;
+        Set users = null;
+        Set items = null;
+        Set records = null;
+        Set categories = null;
+        Set links = null;
+        Set servers = null;
+        Set polls = null;
 
         for (Iterator iter = list.iterator(); iter.hasNext();) {
             GenericObject obj = (GenericObject) iter.next();
+            if (obj == null)
+                continue;
             if (obj.isInitialized())
                 continue;
 
@@ -507,35 +509,35 @@ public class MySqlPersistence implements Persistence {
             }
 
             if (obj instanceof Relation) {
-                if (relations==null) relations = new ArrayList(list.size());
+                if (relations==null) relations = new TreeSet(new Sorters2.IdComparator());
                 relations.add(obj);
                 type = "relation";
             } else if (obj instanceof Item) {
-                if (items == null) items = new ArrayList(list.size());
+                if (items == null) items = new TreeSet(new Sorters2.IdComparator());
                 items.add(obj);
                 type = "item";
             } else if (obj instanceof Category) {
-                if (categories == null) categories = new ArrayList(list.size());
+                if (categories == null) categories = new TreeSet(new Sorters2.IdComparator());
                 categories.add(obj);
                 type = "category";
             } else if (obj instanceof Record) {
-                if (records == null) records = new ArrayList(list.size());
+                if (records == null) records = new TreeSet(new Sorters2.IdComparator());
                 records.add(obj);
                 type = "record";
             } else if (obj instanceof Link) {
-                if (links == null) links = new ArrayList(list.size());
+                if (links == null) links = new TreeSet(new Sorters2.IdComparator());
                 links.add(obj);
                 type = "link";
             } else if (obj instanceof Server) {
-                if (servers == null) servers = new ArrayList(list.size());
+                if (servers == null) servers = new TreeSet(new Sorters2.IdComparator());
                 servers.add(obj);
                 type = "server";
             } else if (obj instanceof User) {
-                if (users == null) users = new ArrayList(list.size());
+                if (users == null) users = new TreeSet(new Sorters2.IdComparator());
                 users.add(obj);
                 type = "user";
             } else if (obj instanceof Poll) {
-                if (polls == null) polls = new ArrayList(list.size());
+                if (polls == null) polls = new TreeSet(new Sorters2.IdComparator());
                 polls.add(obj);
                 type = "poll";
             } else if (obj instanceof Data) {
@@ -546,38 +548,23 @@ public class MySqlPersistence implements Persistence {
 
         try {
             // loads them and merge fresh objects with objects from list, store them in cache
-            if (relations != null) {
-                Sorters2.byId(relations);
+            if (relations != null)
                 syncRelations(relations);
-            }
-            if (items != null) {
-//                Sorters2.byId(items);
+            if (items != null)
                 syncDataObjects(items);
-            }
-            if (categories != null) {
-//                Sorters2.byId(categories);
+            if (categories != null)
                 syncDataObjects(categories);
-            }
-            if (records != null) {
-//                Sorters2.byId(records);
+            if (records != null)
                 syncDataObjects(records);
-            }
-            if (links != null) {
-                Sorters2.byId(links);
+            if (links != null)
                 syncLinks(links);
-            }
-            if (servers != null) {
-                Sorters2.byId(servers);
+            if (servers != null)
                 syncServers(servers);
-            }
-            if (users != null) {
-                Sorters2.byId(users);
+            if (users != null)
                 syncUsers(users);
-            }
-            if (polls != null) {
-                Sorters2.byId(polls);
+            if (polls != null)
                 syncPolls(polls);
-            }
+
             if (log.isDebugEnabled()) {
                 long end = System.currentTimeMillis();
                 log.debug("syncList for " + list.size() + " " + type + "s took " + (end - start) + " ms");
@@ -1127,7 +1114,7 @@ public class MySqlPersistence implements Persistence {
      * Synchronizes specified users from database.
      * @param users
      */
-    protected void syncUsers(List users) throws SQLException {
+    protected void syncUsers(Collection users) throws SQLException {
         Connection con = null; PreparedStatement statement = null; ResultSet rs = null;
         User user;
         try {
@@ -1215,13 +1202,13 @@ public class MySqlPersistence implements Persistence {
      * Synchronizes specified GenericDataObjects from database.
      * @param objs at least one generic object, all must be same class
      */
-    protected void syncDataObjects(List objs) throws SQLException {
+    protected void syncDataObjects(Collection objs) throws SQLException {
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
         Map objects = new HashMap();
         GenericDataObject obj;
-        GenericDataObject representant = (GenericDataObject) objs.get(0);
+        GenericDataObject representant = (GenericDataObject) objs.iterator().next();
         try {
             con = getSQLConnection();
             statement = con.prepareStatement("select * from " + getTable(representant) + " where cislo in " + Misc.getInCondition(objs.size()));
@@ -1386,7 +1373,7 @@ public class MySqlPersistence implements Persistence {
      * Synchronizes specified relations from database.
      * @param relations
      */
-    protected void syncRelations(List relations) throws SQLException {
+    protected void syncRelations(Collection relations) throws SQLException {
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -1497,7 +1484,7 @@ public class MySqlPersistence implements Persistence {
      * Synchronizes specified Links from database.
      * @param links
      */
-    protected void syncLinks(List links) throws SQLException {
+    protected void syncLinks(Collection links) throws SQLException {
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -1566,7 +1553,7 @@ public class MySqlPersistence implements Persistence {
      * Synchronizes specified Polls from database.
      * @param polls
      */
-    protected void syncPolls(List polls) throws SQLException {
+    protected void syncPolls(Collection polls) throws SQLException {
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;
@@ -1699,7 +1686,7 @@ public class MySqlPersistence implements Persistence {
      * Synchronizes specified Servers from database.
      * @param servers
      */
-    protected void syncServers(List servers) throws SQLException {
+    protected void syncServers(Collection servers) throws SQLException {
         Connection con = null;
         PreparedStatement statement = null;
         ResultSet rs = null;

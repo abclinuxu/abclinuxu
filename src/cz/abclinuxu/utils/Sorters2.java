@@ -120,7 +120,7 @@ public class Sorters2 {
      * This comparator sorts relations by their name
      * in ascending order.
      */
-    static class NameComparator implements Comparator {
+    public static class NameComparator implements Comparator {
         Collator collator = Collator.getInstance();
 
         public int compare(Object o1, Object o2) {
@@ -146,7 +146,7 @@ public class Sorters2 {
      * modified property in ascending order. If GenericObject
      * is an relation, then its child is compared.
      */
-    static class DateComparator implements Comparator {
+    public static class DateComparator implements Comparator {
         public int compare(Object o1, Object o2) {
             Date d1 = getValue(o1);
             Date d2 = getValue(o2);
@@ -182,7 +182,7 @@ public class Sorters2 {
      * This comparator sorts GenericObjects by their id
      * in ascending order.
      */
-    static class IdComparator implements Comparator {
+    public static class IdComparator implements Comparator {
         public int compare(Object o1, Object o2) {
             int i = ((GenericObject) o1).getId();
             int j = ((GenericObject) o2).getId();
@@ -193,7 +193,7 @@ public class Sorters2 {
     /**
      * This comparator sorts relations containg GenericDataObject by specified xpath.
      */
-    static class XPathComparator implements Comparator {
+    public static class XPathComparator implements Comparator {
         String xpath;
 
         public XPathComparator(String xpath) {

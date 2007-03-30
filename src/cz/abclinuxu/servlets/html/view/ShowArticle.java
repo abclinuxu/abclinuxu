@@ -172,14 +172,20 @@ public class ShowArticle implements AbcAction {
             Element element = (Element) seriesRoot.selectSingleNode(xpath);
             if (element != null && "article".equals(element.getName())) {
                 rid = Misc.parseInt(element.getText(), 0);
-                previous = new Relation(rid);
+                if (rid == first.getId())
+                    previous = first;
+                else
+                    previous = new Relation(rid);
             }
 
             xpath = "/data/article[text()='" + articleRelation.getId() + "']/following::*[1]";
             element = (Element) seriesRoot.selectSingleNode(xpath);
             if (element != null && "article".equals(element.getName())) {
                 rid = Misc.parseInt(element.getText(), 0);
-                next = new Relation(rid);
+                if (rid == last.getId())
+                    next = last;
+                else
+                    next = new Relation(rid);
             }
 
             List list = new ArrayList();
