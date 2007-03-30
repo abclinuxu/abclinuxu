@@ -22,13 +22,18 @@ Prehled clanku
 Reklama
 =======
 
-PERSONALNI INZERCE: Nase spolecnost pusobi v oblasti
-hostingu jiz nekolik let. Do naseho portfolia sluzeb
-patri i sprava vnitropodnikovych siti a vyvoj
-intranetovych systemu. Hledame proto noveho kolegu na
-pozici Administrator linuxovych serveru. Podrobnosti:
+Zvysujici se pocet trestnych cinu spachanych prostrednictvim
+internetu nuti k vaznemu zamysleni nad bezpecnosti
+pocitacovych siti. Trh produktu a sluzeb souvisejicich
+s bezpecnosti je tak velky, ze je pro zakaznika narocne se
+rozhodnout. Jak se rozhodnout?
 
-http://www.abcprace.cz/hosting90-s-r-o-2/administrator-linuxovych-serveru
+Mate prilezitost zucastnit se prvniho Kongresu Bezpecnosti
+Siti v Ceske republice. Kongres bude se konat 11. dubna 2007
+v Hotelu Diplomat.
+
+Pro ucastniky je vstup ZDARMA! Staci se jen zaregistrovat
+na webove strance: www.kongresbezpecnosti.org
 
 
 Prehled zpravicek
@@ -44,6 +49,34 @@ Prehled zpravicek
 
  ---------------------
 </#list>
+
+
+Reklama
+=======
+
+Sun Microsystems opens another new team in Prague.
+The new group will be an extension of Sun's existing
+Web Engineering Team with a specific focus on ecommerce
+and backend system integration and web service development.
+
+Developers will be working with the Intershop Enfinity
+application suite and will be reshaping the way that Sun
+does over 2 billion annually in global web based commerce.
+Team members will collaborate with the Prague team (target:
+6 developers) as well as engineering staff located worldwide,
+including Germany, the UK, California and Colorado.
+
+Open positions:
+
+Software Engineering Manager - Webservices
+Java Team Leader - Webservices
+Application Engineer - Webservices
+Junior J2EE Software Engineer - Webservices
+Senior J2EE Software Engineer - Webservices
+
+If you are interested in the new positions please send
+your CV to Tomas Kolsky at t.kolsky@talents.cz, or visit
+www.talents.cz/sunjobs.
 
 
 <#if JOBS?size gt 0>

@@ -14,10 +14,10 @@
                     <a class="bez-slovniku" href="${RELATION.url}">Návrat na aktuální verzi</a>
                 </li>
             <#else>
-                <li><a class="bez-slovniku" href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
+                <li><a class="bez-slovniku" href="${URL.make("/edit/"+RELATION.id+"?action=edit")}" rel="nofollow">Upravit</a></li>
                 <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
-                <li><a href="/revize?rid=${RELATION.id}&amp;prefix=/slovnik">Historie</a></li>
-                <li><a class="bez-slovniku" href="${RELATION.url}?varianta=print">Tisk</a></li>
+                <li><a href="/revize?rid=${RELATION.id}&amp;prefix=/slovnik" rel="nofollow">Historie</a></li>
+                <li><a class="bez-slovniku" href="${RELATION.url}?varianta=print" rel="nofollow">Tisk</a></li>
                 <li>
                     <a class="bez-slovniku" href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle")}">${monitorState}</a>
                     <span title="Počet lidí, kteří sledují tento záznam">(${TOOL.getMonitorCount(ITEM.data)})</span>

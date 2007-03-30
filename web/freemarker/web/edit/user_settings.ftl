@@ -7,7 +7,7 @@
 <p>Pro vaši ochranu nejdříve zadejte vaše heslo.</p>
 
 <form action="${URL.noPrefix("/EditUser")}" method="POST">
- <table width="100%" border=0 cellpadding=5>
+ <table class="siroka">
   <tr>
    <td class="required">Heslo</td>
    <td>

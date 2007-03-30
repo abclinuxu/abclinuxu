@@ -1,6 +1,6 @@
 Vazeny uzivateli,
 
-Na portalu www.abclinuxu.cz jste registrovan s temito udaji:
+na portalu www.abclinuxu.cz jste registrovan s temito udaji:
 
 Jmeno a prijmeni:   ${USER.name}
 Emailova adresa:    ${USER.email}
@@ -15,17 +15,22 @@ http://www.abclinuxu.cz/Profile/${USER.id}?action=myPage .
 Pokud budete provadet jakekoliv zmeny, je treba se prihlasit.
 System vam v takovem pripade sam nabidne formular pro prihlaseni.
 Pokud zapomenete heslo, zvolte tlacitko "Zasli heslo emailem",
-ktere prikaze systemu odeslat heslo na registrovanou emailovou
+ktere systemu prikaze heslo odeslat na registrovanou emailovou
 adresu.
 
-Sluzby zdarma
+Sluzby zdarma:
  * Podrobne clanky a tutorialy
- * Rozsahle diskusni forum
+ * Rozsahle diskusni forum (Poradna)
  * Databaze hardwarovych rad
- * Prehledny aktualizovany seznam ovladacu
- * Slovnik linuxovych pojmu
+ * Katalog softwaru
+ * Aktualizovany seznam ovladacu
+ * Slovnik pojmu
+ * Odpovedi na casto kladene dotazy (FAQ)
+ * Ucebnice Linuxu
+ * Uzivatelske blogy
+ * Bazar pocitacovych veci
  * Rozcestnik linuxovych serveru
- * Aktualni verze jadra Linuxu
+ * Aktualni verze linuxoveho jadra
  * PDF casopis Abicko
 
 Verim, ze si nas portal oblibite a budete se na nej

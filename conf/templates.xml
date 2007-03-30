@@ -648,10 +648,10 @@
 
     <servlet name="ShowForum">
         <action name="main" content="/show/forum_all.ftl">
-            <var name="TITLE" value="Diskusní fóra" />
+            <var name="TITLE" value="Poradna" />
         </action>
         <action name="show" content="/show/forum.ftl">
-            <var name="TITLE" value='Diskusní fórum: ${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy"/>
+            <var name="TITLE" value='Poradna: ${TOOL.xpath(CATEGORY,"data/name")}' type="Lazy"/>
         </action>
     </servlet>
 

@@ -1,0 +1,59 @@
+#zh-text {
+	height: 1%;
+}
+
+.ank-odpov input { background-color: transparent }
+
+* html #zh-logo {
+	left: 200px; /* zh-hledat */
+}
+
+* html .menu {
+	display: inline-block;
+	width: 1px;
+	padding: 0 2px;
+}
+* html .menu li {
+	display: inline;
+}
+* html .menu a {
+	display: inline-block;
+	margin: 0 -2px;
+}
+
+.rating .rating_iframe {
+	width: 40ex;
+}
+
+.stupnice {
+	margin-left: 0px;
+}
+
+.ank-sloup {
+	font-size: 0px;
+}
+
+.boxy,.rozc table {
+	width: 99%;
+}
+
+.sflista img {
+	top: 0px;
+}
+
+.ds tbody tr a,
+.autor tbody tr a,
+.bazar table.bazar-polozky tr a,
+.hw table.hw-sekce tbody td a,
+.hw table.hw-polozky tr a,
+.sw table.sw-polozky tr a {
+	width: 100%;
+}
+
+.sflista a {
+	padding: 0px 2px 2px 2px;
+}
+
+
+
+

@@ -4,6 +4,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>${PARAMS.TITLE?default(TITLE?default('www.abclinuxu.cz'))}</title>
     <link rel="stylesheet" type="text/css" href="${CSS_URI?if_exists}">
+    <!--[if IE]>
+       <link href="/msie.css" type="text/css" rel="stylesheet">
+    <![endif]-->
     <!--[if IE 7]>
        <link href="/bugie.css" type="text/css" rel="stylesheet">
     <![endif]-->
