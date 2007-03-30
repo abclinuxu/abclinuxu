@@ -172,11 +172,10 @@
 <!ELEMENT contact (#PCDATA)> <!-- contact for the person -->
 
 <!-- Item.AUTHOR -->
-<!ELEMENT data (firstname?, surname, uid?, birthNumber?, nickname?, accountNumber?, email?, phone?, address?)>
+<!ELEMENT data (firstname?, surname, birthNumber?, nickname?, accountNumber?, email?, phone?, address?)>
 <!ELEMENT firstname (#PCDATA)> <!-- First name(s) of the author -->
 <!ELEMENT surname (#PCDATA)> <!-- Surname of the author -->
 <!ELEMENT nickname (#PCDATA)> <!-- Nickname of the author -->
-<!ELEMENT uid (#PCDATA)> <!-- integer, id of user, if the author has an account in portal -->
 <!ELEMENT birthNumber (#PCDATA)> <!-- authors birth number -->
 <!ELEMENT accountNumber (#PCDATA)> <!-- authors account number -->
 <!ELEMENT email (#PCDATA)> <!-- authors e-mail -->

@@ -47,7 +47,6 @@ import java.io.IOException;
 
 import freemarker.template.Template;
 import freemarker.template.Configuration;
-import freemarker.template.SimpleHash;
 import freemarker.template.TemplateException;
 import org.apache.log4j.Logger;
 

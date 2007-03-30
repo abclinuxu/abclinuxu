@@ -107,8 +107,10 @@ public class MySqlPersistence implements Persistence {
                     throw new PersistenceException("Nepodařilo se vložit "+obj+" do databáze!");
                 obj.setId(getAutoId(statement));
 
-                if (obj instanceof GenericDataObject)
-                    saveDataObjectsProperties((GenericDataObject) obj);
+                if (obj instanceof CommonObject) {
+                    CommonObject commonObj = (CommonObject) obj;
+                    saveCommonObjectProperties(commonObj, commonObj.getProperties(), false);
+                }
             }
             obj.setInitialized(true);
             cache.store(obj);
@@ -430,8 +432,8 @@ public class MySqlPersistence implements Persistence {
                 statement.executeUpdate();
 
                 // remove all properties from table vlastnost
-                if(obj instanceof GenericDataObject)
-                    deleteDataObjectsProperties((GenericDataObject) obj);
+                if(obj instanceof CommonObject)
+                    deleteCommonObjectProperties((CommonObject) obj, PersistenceMapping.getGenericObjectType(obj));
 
                 // remove comments, they are not referenced via relation table
                 if (obj instanceof Record) {
@@ -714,21 +716,20 @@ public class MySqlPersistence implements Persistence {
      * Loads object by PK from database.
      */
     private GenericObject loadObject(GenericObject obj) throws SQLException {
-        if (obj instanceof Relation) {
+        if (obj instanceof Relation)
             return loadRelation((Relation)obj);
-        } else if (obj instanceof GenericDataObject) {
+        if (obj instanceof GenericDataObject)
             return loadDataObject((GenericDataObject)obj);
-        } else if (obj instanceof User) {
+        if (obj instanceof User)
             return loadUser((User)obj);
-        } else if (obj instanceof Server) {
+        if (obj instanceof Server)
             return loadServer((Server)obj);
-        } else if (obj instanceof Link) {
+        if (obj instanceof Link)
             return loadLink((Link)obj);
-        } else if (obj instanceof Poll) {
+        if (obj instanceof Poll)
             return loadPoll((Poll)obj);
-        } else if (obj instanceof Data) {
+        if (obj instanceof Data)
             return loadData((Data)obj);
-        }
         return null;
     }
 
@@ -1115,6 +1116,7 @@ public class MySqlPersistence implements Persistence {
 
             User user = new User(obj.getId());
             syncUserFromRS(user, resultSet);
+            loadCommonObjectProperties(user);
             return user;
         } finally {
             releaseSQLResources(con,statement,resultSet);
@@ -1127,21 +1129,32 @@ public class MySqlPersistence implements Persistence {
      */
     protected void syncUsers(List users) throws SQLException {
         Connection con = null; PreparedStatement statement = null; ResultSet rs = null;
+        User user;
         try {
+            Map<Integer, User>  objects = new HashMap<Integer, User>();
             con = getSQLConnection();
             statement = con.prepareStatement("select * from uzivatel where cislo in "+Misc.getInCondition(users.size()) + " order by cislo");
             int i = 1;
             for (Iterator iter = users.iterator(); iter.hasNext();) {
-                User user = (User) iter.next();
+                user = (User) iter.next();
                 statement.setInt(i++, user.getId());
+                objects.put(user.getId(), user);
             }
             rs = statement.executeQuery();
 
             for (Iterator iter = users.iterator(); iter.hasNext();) {
-                User user = (User) iter.next();
-                if (!rs.next() || rs.getInt(1)!=user.getId())
+                user = (User) iter.next();
+                if (! rs.next() || rs.getInt(1) != user.getId())
                     throw new NotFoundException("Uživatel " + user.getId() + " nebyl nalezen!");
+
                 syncUserFromRS(user, rs);
+                if (! PropertiesConfig.isSupported(user))
+                    objects.remove(user);
+            }
+
+            loadCommonObjectsProperties(objects, PersistenceMapping.TREE_USER);
+            for (Iterator iter = objects.values().iterator(); iter.hasNext();) {
+                user = (User) iter.next();
                 cache.store(user);
             }
         } finally {
@@ -1190,7 +1203,7 @@ public class MySqlPersistence implements Persistence {
             if (data instanceof Record && ((Record) data).getType() == Record.DISCUSSION)
                 loadComments((Record)data);
 
-            loadProperties(data);
+            loadCommonObjectProperties(data);
 
             return data;
         } finally {
@@ -1207,7 +1220,6 @@ public class MySqlPersistence implements Persistence {
         PreparedStatement statement = null;
         ResultSet rs = null;
         Map objects = new HashMap();
-        List found = new ArrayList(objs.size());
         GenericDataObject obj;
         GenericDataObject representant = (GenericDataObject) objs.get(0);
         try {
@@ -1234,7 +1246,6 @@ public class MySqlPersistence implements Persistence {
                 if (obj instanceof Record && ((Record) obj).getType() == Record.DISCUSSION)
                     loadComments((Record) obj);
 
-                found.add(obj);
                 if ( ! PropertiesConfig.isSupported(obj))
                     objects.remove(id);
             }
@@ -1242,9 +1253,8 @@ public class MySqlPersistence implements Persistence {
             releaseSQLResources(con, statement, rs);
         }
 
-        loadProperties(objects, PersistenceMapping.getGenericObjectType(representant));
-
-        for (Iterator iter = found.iterator(); iter.hasNext();) {
+        loadCommonObjectsProperties(objects, PersistenceMapping.getGenericObjectType(representant));
+        for (Iterator iter = objects.values().iterator(); iter.hasNext();) {
             obj = (GenericDataObject) iter.next();
             cache.store(obj);
         }
@@ -1753,7 +1763,7 @@ public class MySqlPersistence implements Persistence {
             if (obj instanceof Record && obj.getType() == Record.DISCUSSION)
                 updateComments((DiscussionRecord) obj.getCustom(), obj.getId(), con);
 
-            saveDataObjectsProperties(obj);
+            saveCommonObjectProperties(obj, obj.getProperties(), true);
 
             obj.setUpdated(new java.util.Date());
             cache.store(obj);
@@ -1988,6 +1998,8 @@ public class MySqlPersistence implements Persistence {
                 throw new PersistenceException("Nepodarilo se uložit změny v "+user.toString()+" do databáze!");
             }
 
+            saveCommonObjectProperties(user, user.getProperties(), true);
+
             cache.store(user);
         } catch (SQLException e) {
             if ( e.getErrorCode()==1062 ) {
@@ -2003,7 +2015,7 @@ public class MySqlPersistence implements Persistence {
     /**
      * Loads properties of <code>obj</code> from database.
      */
-    protected void loadProperties(GenericDataObject obj) throws SQLException {
+    protected void loadCommonObjectProperties(CommonObject obj) throws SQLException {
         if ( ! PropertiesConfig.isSupported(obj))
             return;
 
@@ -2032,10 +2044,10 @@ public class MySqlPersistence implements Persistence {
 
     /**
      * Loads properties for specified objects from database.
-     * @param objects map, where key is id (integer) and value is GenericDataObject with this id
+     * @param objects map, where key is id (integer) and value is CommonObject with this id
      * @param objectType
      */
-    protected void loadProperties(Map objects, String objectType) throws SQLException {
+    protected void loadCommonObjectsProperties(Map objects, String objectType) throws SQLException {
         if (objects.size() == 0)
             return;
 
@@ -2057,7 +2069,7 @@ public class MySqlPersistence implements Persistence {
                 String property = resultSet.getString(3);
                 String value = resultSet.getString(4);
                 id = resultSet.getInt(2);
-                GenericDataObject obj = (GenericDataObject) objects.get(id);
+                CommonObject obj = (CommonObject) objects.get(id);
                 obj.addProperty(property, value);
             }
         } catch (SQLException e) {
@@ -2071,13 +2083,13 @@ public class MySqlPersistence implements Persistence {
     /**
      * Deletes all properties of <code>obj</code> from database.
      */
-    protected void deleteDataObjectsProperties(GenericDataObject obj) throws SQLException {
+    protected void deleteCommonObjectProperties(CommonObject obj, String objectType) throws SQLException {
         Connection con = null;
         PreparedStatement statement = null;
         try {
             con = getSQLConnection();
             statement = con.prepareStatement("delete from vlastnost where typ_predka=? and predek=?");
-            statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
+            statement.setString(1, objectType);
             statement.setInt(2, obj.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -2090,17 +2102,20 @@ public class MySqlPersistence implements Persistence {
 
     /**
      * Updates all properties of <code>obj</code> in database
+     * @param resetProperties if true, all object properties will be deleted from database first (to avoid duplicates)
      */
-    protected void saveDataObjectsProperties(GenericDataObject obj) throws SQLException {
+    public void saveCommonObjectProperties(CommonObject obj, Map properties, boolean resetProperties) throws SQLException {
         Connection con = null;
         PreparedStatement statement = null;
         log.debug("Saving properties for: " + obj.getId());
         try {
-            deleteDataObjectsProperties(obj);
+            String objectType = PersistenceMapping.getGenericObjectType(obj);
+            if (resetProperties)
+                deleteCommonObjectProperties(obj, objectType);
 
             con = getSQLConnection();
             statement = con.prepareStatement("insert into vlastnost values (?, ?, ?, ?)");
-            for (Iterator iter = obj.getProperties().entrySet().iterator(); iter.hasNext();) {
+            for (Iterator iter = properties.entrySet().iterator(); iter.hasNext();) {
                 Map.Entry entry = (Map.Entry) iter.next();
                 String key = (String) entry.getKey();
                 Set values = (Set) entry.getValue();
@@ -2109,7 +2124,7 @@ public class MySqlPersistence implements Persistence {
 
                 for (Iterator iterSet = values.iterator(); iterSet.hasNext();) {
                     String value = (String) iterSet.next();
-                    statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
+                    statement.setString(1, objectType);
                     statement.setInt(2, obj.getId());
                     statement.setString(3, key);
                     statement.setString(4, value);

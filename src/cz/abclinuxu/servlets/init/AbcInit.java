@@ -69,6 +69,7 @@ public class AbcInit extends HttpServlet implements Configurable {
     public static final String PREF_WATCHED_DISCUSSIONS_CLEANER = "watched.discussions.cleaner";
     public static final String PREF_UPDATE_STATISTICS = "update.statistics";
     public static final String PREF_JOB_OFFER_MANAGER = "job.offer.manager";
+    public static final String PREF_USER_SCORE_SETTER = "user.score.setter";
 
     Timer scheduler, slowScheduler;
     VariableFetcher fetcher;
@@ -134,6 +135,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         startWeeklySummary();
         startObjectMonitor();
         startForumSender();
+        startCalculateUserScoreService();
         startDateToolUpdateService();
         startJobOfferUpdateService();
         startWatchedDiscussionsCleaner();
@@ -352,11 +354,11 @@ public class AbcInit extends HttpServlet implements Configurable {
     }
 
     /**
-     * Send weekly emails each saturday noon.
+     * Calculate today/yesterday time at midnight
      */
     private void startDateToolUpdateService() {
         if ( !isSet(PREF_UPDATE_DATETOOL) ) {
-            log.info("Weekly summary configured not to be generated");
+            log.info("DateTool update service configured not to be generated");
             return;
         }
         log.info("Scheduling DateTool update service");
@@ -367,6 +369,24 @@ public class AbcInit extends HttpServlet implements Configurable {
         calendar.add(Calendar.DAY_OF_YEAR, 1);
 
         scheduler.scheduleAtFixedRate(new UpdateDateTool(), calendar.getTime(), 24*60*60*1000);
+    }
+
+    /**
+     * Calculate user score in early morning
+     */
+    private void startCalculateUserScoreService() {
+        if ( !isSet(PREF_USER_SCORE_SETTER) ) {
+            log.info("Update user score configured not to be calculated");
+            return;
+        }
+        log.info("Scheduling update user score service");
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 3);
+        calendar.set(Calendar.MINUTE, 11);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+
+        scheduler.scheduleAtFixedRate(new UpdateUserScore(), calendar.getTime(), 24*60*60*1000);
     }
 
     /**
@@ -411,6 +431,7 @@ public class AbcInit extends HttpServlet implements Configurable {
         services.put(PREF_RSS_JOBPILOT, prefs.getBoolean(PREF_START + PREF_RSS_JOBPILOT, true));
         services.put(PREF_UPDATE_STATISTICS, prefs.getBoolean(PREF_START + PREF_UPDATE_STATISTICS, true));
         services.put(PREF_JOB_OFFER_MANAGER, prefs.getBoolean(PREF_START + PREF_JOB_OFFER_MANAGER, false));
+        services.put(PREF_USER_SCORE_SETTER, prefs.getBoolean(PREF_START + PREF_USER_SCORE_SETTER, false));
 
         delays.put(PREF_POOL_MONITOR, prefs.getInt(PREF_POOL_MONITOR + PREF_DELAY, 60));
         delays.put(PREF_RSS_GENERATOR, prefs.getInt(PREF_RSS_GENERATOR + PREF_DELAY, 60));

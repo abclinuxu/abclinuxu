@@ -45,6 +45,7 @@ public class ViewUser implements AbcAction {
 
     public static final String VAR_PROFILE = "PROFILE";
     public static final String VAR_COUNTS = "COUNTS";
+    public static final String VAR_AUTHOR = "AUTHOR";
 
     public static final String PARAM_USER = "userId";
     public static final String PARAM_USER_SHORT = "uid";
@@ -154,16 +155,23 @@ public class ViewUser implements AbcAction {
      * shows numbers of objects
      */
     protected String handleMyObjects(HttpServletRequest request, Map env) throws Exception {
+        Persistence persistence = PersistenceFactory.getPersistance();
+        SQLTool sqlTool = SQLTool.getInstance();
         User user = (User) env.get(VAR_PROFILE);
 
-        SQLTool sqlTool = SQLTool.getInstance();
         Map counts = new HashMap();
-//        counts.put("article", new Integer(sqlTool.countArticleRelationsByUser(user.getId())));
-        counts.put("news", new Integer(sqlTool.countNewsRelationsByUser(user.getId())));
-        counts.put("question", new Integer(sqlTool.countQuestionRelationsByUser(user.getId())));
-        counts.put("comment", new Integer(sqlTool.countCommentRelationsByUser(user.getId())));
-        counts.put("hardware", new Integer(sqlTool.countRecordRelationsWithUserAndType(user.getId(), Record.HARDWARE)));
-        counts.put("dictionary", new Integer(sqlTool.countRecordRelationsWithUserAndType(user.getId(), Record.DICTIONARY)));
+        Set<String> property = Collections.singleton(Integer.toString(user.getId()));
+        Map<String, Set<String>> filters = Collections.singletonMap(Constants.PROPERTY_USER, property);
+        List<Relation> authors = sqlTool.findItemRelationsWithTypeWithFilters(Item.AUTHOR, null, filters);
+        if (authors.size() != 0) {
+            Relation author = (Relation) persistence.findById(authors.get(0));
+            counts.put("article", sqlTool.countArticleRelationsByAuthor(author.getId()));
+            env.put(VAR_AUTHOR, author);
+        }
+
+        counts.put("news", sqlTool.countNewsRelationsByUser(user.getId()));
+        counts.put("question", sqlTool.countQuestionRelationsByUser(user.getId()));
+        counts.put("comment", sqlTool.countCommentRelationsByUser(user.getId()));
         env.put(VAR_COUNTS, counts);
 
         return FMTemplateSelector.select("ViewUser","counter",env,request);

@@ -20,6 +20,7 @@ package cz.abclinuxu.persistence.impl;
 
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.data.Item;
+import cz.abclinuxu.data.User;
 
 /**
  * Helper that knows which objects can have properties.
@@ -36,12 +37,15 @@ public class PropertiesConfig {
      * @return true if properties are supported
      */
     public static boolean isSupported(GenericObject obj) {
+        if (obj instanceof User)
+            return true;
         if (! (obj instanceof Item))
             return false;
         if (! obj.isInitialized())
             return true;
         switch (((Item)obj).getType()) {
             case Item.ARTICLE:
+            case Item.AUTHOR:
             case Item.BLOG:
             case Item.SOFTWARE: return true;
         }

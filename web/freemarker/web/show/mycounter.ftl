@@ -8,12 +8,24 @@
     <p>Moje:</p>
 
     <ul>
-      <li><a href="${URL.noPrefix("/History?type=news&amp;uid="+PROFILE.id)}">zprávičky</a>
-      (${COUNTS.news})</li>
-      <li><a href="${URL.noPrefix("/History?type=questions&amp;uid="+PROFILE.id)}">otázky</a>
-      (${COUNTS.question})</li>
-      <li><a href="${URL.noPrefix("/History?type=comments&amp;uid="+PROFILE.id)}">komentáře</a>
-      (${COUNTS.comment})</li>
+        <#if AUTHOR?exists>
+            <li>
+                <a href="${AUTHOR.url}">články</a>
+                (${COUNTS.article})
+            </li>
+        </#if>
+        <li>
+            <a href="${URL.noPrefix("/History?type=news&amp;uid="+PROFILE.id)}">zprávičky</a>
+            (${COUNTS.news})
+        </li>
+        <li>
+            <a href="${URL.noPrefix("/History?type=questions&amp;uid="+PROFILE.id)}">dotazy v poradně</a>
+            (${COUNTS.question})
+        </li>
+        <li>
+            <a href="${URL.noPrefix("/History?type=comments&amp;uid="+PROFILE.id)}">komentáře</a>
+            (${COUNTS.comment})
+        </li>
     </ul>
 </#if>
 

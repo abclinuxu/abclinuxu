@@ -31,7 +31,7 @@ import cz.abclinuxu.utils.config.impl.AbcConfig;
 /**
  * Class containing basic user data
  */
-public class User extends GenericObject implements XMLContainer {
+public class User extends CommonObject {
     /** login name of the user */
     private String login;
     /** real name of the user */
@@ -42,8 +42,6 @@ public class User extends GenericObject implements XMLContainer {
     private String email;
     /** (noncrypted) password */
     private String password;
-    /** XML with data or this object */
-    private XMLHandler documentHandler;
 
     /** cache of granted user roles */
     private Map roles = null;
@@ -139,36 +137,6 @@ public class User extends GenericObject implements XMLContainer {
     }
 
     /**
-     * @return XML data of this object
-     */
-    public Document getData() {
-        return (documentHandler!=null)? documentHandler.getData():null;
-    }
-
-    /**
-     * @return XML data in String format
-     */
-    public String getDataAsString() {
-        return (documentHandler!=null)? documentHandler.getDataAsString():null;
-    }
-
-    /**
-     * sets XML data of this object
-     */
-    public void setData(Document data) {
-        roles = null;
-        documentHandler = new XMLHandler(data);
-    }
-
-    /**
-     * sets XML data of this object in String format
-     */
-    public void setData(String data) {
-        roles = null;
-        documentHandler = new XMLHandler(data);
-    }
-
-    /**
      * @return True, if user is an administrator
      */
     public boolean isAdmin() {
@@ -256,6 +224,22 @@ public class User extends GenericObject implements XMLContainer {
         if (lastSeenDiscussions == null)
             return null;
         return (Integer) lastSeenDiscussions.get(new Integer(discussion));
+    }
+
+    /**
+     * sets XML data of this object
+     */
+    public void setData(Document data) {
+        super.setData(data);
+        roles = null;
+    }
+
+    /**
+     * sets XML data of this object in String format
+     */
+    public void setData(String data) {
+        super.setData(data);
+        roles = null;
     }
 
     /**

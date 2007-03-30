@@ -92,7 +92,7 @@ public class ViewAuthor implements AbcAction {
 
         SQLTool sqlTool = SQLTool.getInstance();
         Qualifier[] qualifiers = new Qualifier[]{Qualifier.SORT_BY_CREATED, Qualifier.ORDER_DESCENDING, new LimitQualifier(from, count)};
-        List articles = sqlTool.findArticleRelationsByAuthor(relation.getId(), qualifiers);
+        List<Relation> articles = sqlTool.findArticleRelationsByAuthor(relation.getId(), qualifiers);
         int total = sqlTool.countArticleRelationsByAuthor(relation.getId());
         Tools.syncList(articles);
         Tools.initializeDiscussionsTo(articles);

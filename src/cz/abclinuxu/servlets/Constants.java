@@ -203,6 +203,8 @@ public interface Constants {
     String PROPERTY_LICENSE = "license";
     String PROPERTY_BLOG_DIGEST = "digest";
     String PROPERTY_AUTHOR = "author";
+    String PROPERTY_USER = "user";
+    String PROPERTY_SCORE = "score";
 
     // see EditRelated and Item.dtd
     String RELATED_ARTICLE = "article";

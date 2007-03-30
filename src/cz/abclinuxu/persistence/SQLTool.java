@@ -98,7 +98,12 @@ public final class SQLTool implements Configurable {
     public static final String INSERT_OLD_ADDRESS = "insert.stara_adresa";
     public static final String OLD_ADDRESS = "select.stara.adresa";
     public static final String PROPERTY_VALUES = "get.property.values";
+    public static final String DELETE_PROPERTY = "delete.property";
     public static final String ROYALTY_RELATIONS = "relations.royalty";
+    public static final String USERS_COUNT_FORUM_COMMENTS = "users.count.forum.comments";
+    public static final String USERS_COUNT_ARTICLES = "users.count.articles";
+    public static final String USERS_COUNT_WIKI_RECORDS = "users.count.wiki.records";
+    public static final String USERS_COUNT_NEWS = "users.count.news";
 
     private static SQLTool singleton;
     static {
@@ -373,7 +378,8 @@ public final class SQLTool implements Configurable {
      * @return List of initialized relations
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List<Relation> findItemRelationsWithTypeWithFilters(int type, Qualifier[] qualifiers, Map filters) {
+    public List<Relation> findItemRelationsWithTypeWithFilters(int type, Qualifier[] qualifiers,
+                                                               Map<String, Set<String>> filters) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(ITEM_RELATIONS_BY_TYPE_WITH_FILTERS));
         List params = new ArrayList();
@@ -391,7 +397,7 @@ public final class SQLTool implements Configurable {
      * @return number of matching relations
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public int countItemRelationsWithTypeWithFilters(int type, Qualifier[] qualifiers, Map filters) {
+    public int countItemRelationsWithTypeWithFilters(int type, Qualifier[] qualifiers, Map<String, Set<String>> filters) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(ITEM_RELATIONS_BY_TYPE_WITH_FILTERS));
         changeToCountStatement(sb);
@@ -402,7 +408,7 @@ public final class SQLTool implements Configurable {
         return loadNumber(sb.toString(), params);
     }
 
-    private void appendFilterConditions(Map filters, StringBuffer sb, List params) {
+    private void appendFilterConditions(Map<String, Set<String>> filters, StringBuffer sb, List params) {
         Iterator i = filters.entrySet().iterator();
         if (i.hasNext()) {
             sb.append(" and V.predek=P.cislo and V.typ_predka='P' and (");
@@ -937,6 +943,46 @@ public final class SQLTool implements Configurable {
         List params = new ArrayList();
         params.add(login);
         return loadNumber(sb.toString(), params);
+    }
+
+    /**
+     * Finds all users that commented some question in the forum and number of their comments there.
+     * @return list of integer arrays, first item is user id, second item is count of his comments
+     * @throws PersistenceException if there is an error with the underlying persistent storage.
+     */
+    public List<Object[]> countUsersCommentsInForum() {
+        StringBuffer sb = new StringBuffer((String) sql.get(USERS_COUNT_FORUM_COMMENTS));
+        return loadObjects(sb.toString(), Collections.EMPTY_LIST);
+    }
+
+    /**
+     * Finds all users that wrote some articles and number of their articles.
+     * @return list of arrays, first item is user id (String), second item is count of his articles (integer)
+     * @throws PersistenceException if there is an error with the underlying persistent storage.
+     */
+    public List<Object[]> countUsersArticles() {
+        StringBuffer sb = new StringBuffer((String) sql.get(USERS_COUNT_ARTICLES));
+        return loadObjects(sb.toString(), Collections.EMPTY_LIST);
+    }
+
+    /**
+     * Finds all users that updated some wiki record and number of their modified (distinct) wiki records.
+     * @return list of integer arrays, first item is user id, second item is count of his wiki records
+     * @throws PersistenceException if there is an error with the underlying persistent storage.
+     */
+    public List<Object[]> countUsersModifiedWikiRecords() {
+        StringBuffer sb = new StringBuffer((String) sql.get(USERS_COUNT_WIKI_RECORDS));
+        return loadObjects(sb.toString(), Collections.EMPTY_LIST);
+    }
+
+    /**
+     * Finds all users that wrote some news and number of their news.
+     * @return list of integer arrays, first item is user id, second item is count of news
+     * @throws PersistenceException if there is an error with the underlying persistent storage.
+     */
+    public List<Object[]> countUsersNews() {
+        StringBuffer sb = new StringBuffer((String) sql.get(USERS_COUNT_NEWS));
+        return loadObjects(sb.toString(), Collections.EMPTY_LIST);
     }
 
     /**
@@ -1532,6 +1578,33 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Sets (or updates) selected object properties.
+     * @param obj object which properties shall be updated
+     * @param type property to be updated in database (constant as defined in properties.txt)
+     * @param values property values to be updated
+     */
+    public void setProperty(CommonObject obj, String type, Set values) {
+        MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
+        Connection con = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            con = persistance.getSQLConnection();
+            statement = con.prepareStatement((String) sql.get(DELETE_PROPERTY));
+            statement.setString(1, PersistenceMapping.getGenericObjectType(obj));
+            statement.setInt(2, obj.getId());
+            statement.setString(3, type);
+            statement.executeUpdate();
+
+            persistance.saveCommonObjectProperties(obj, Collections.singletonMap(type, values), false);
+        } catch (SQLException e) {
+            throw new PersistenceException("Chyba při hledání!", e);
+        } finally {
+            persistance.releaseSQLResources(con, statement, resultSet);
+        }
+    }
+
+    /**
      * Inserts deprecated URL into table of replacement. Either newUrl or
      * rid must be supplied.
      * @param oldUrl old URL that shall be sustained, it must start with /
@@ -1650,7 +1723,12 @@ public final class SQLTool implements Configurable {
         store(INSERT_OLD_ADDRESS, prefs);
         store(OLD_ADDRESS, prefs);
         store(PROPERTY_VALUES, prefs);
+        store(DELETE_PROPERTY, prefs);
         store(ROYALTY_RELATIONS, prefs);
+        store(USERS_COUNT_FORUM_COMMENTS, prefs);
+        store(USERS_COUNT_ARTICLES, prefs);
+        store(USERS_COUNT_WIKI_RECORDS, prefs);
+        store(USERS_COUNT_NEWS, prefs);
     }
 
     /**

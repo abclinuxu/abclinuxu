@@ -315,7 +315,12 @@
                             <entry key="insert.stara_adresa" value="insert into stara_adresa values(?,?,?)" />
                             <entry key="select.stara.adresa" value="select rid,nova from stara_adresa where puvodni=?" />
                             <entry key="get.property.values" value="select distinct hodnota from vlastnost where typ=?" />
+                            <entry key="delete.property" value="delete from vlastnost where typ_predka=? and predek=? and typ=?"/>
                             <entry key="relations.royalty" value="select R.cislo from polozka P, relace R, kategorie K where R.typ_potomka='P' and P.cislo=R.potomek and P.typ=9 and R.typ_predka='P' and R.predek=K.cislo and K.typ=2"/>
+                            <entry key="users.count.forum.comments" value="select K.autor, count(distinct K.zaznam) from komentar K, relace R1, relace R2, kategorie F where R1.typ_potomka='Z' and R1.potomek=K.zaznam  and R1.predchozi=R2.cislo and R2.typ_predka='K' and  R2.predek=F.cislo and F.typ=2 group by K.autor" />
+                            <entry key="users.count.articles" value="select V2.hodnota, count(P.cislo) from polozka P, vlastnost V1, relace R, vlastnost V2 where P.typ=2 and V1.predek=P.cislo and V1.typ='author' and V1.hodnota=R.cislo and V2.typ_predka='P' and V2.predek=R.potomek and V2.typ='user' group by V2.hodnota" />
+                            <entry key="users.count.wiki.records" value="select kdo,count(distinct relace) from verze group by kdo" />
+                            <entry key="users.count.news" value="select pridal,count(*) from polozka where typ=7 group by pridal" />
                         </map>
                     </node>
                     <node name="versioning">
@@ -457,6 +462,14 @@
                             <entry key="section.cache.rebuild.frequency" value="10" />
                         </map>
                     </node>
+                    <node name="UpdateUserScore">
+                        <map>
+                            <entry key="ratio.article" value="10.0"/>
+                            <entry key="ratio.comment" value="1.0"/>
+                            <entry key="ratio.wiki" value="2.0"/>
+                            <entry key="ratio.news" value="3.0"/>
+                        </map>
+                    </node>
                 </node>
                 <node name="servlets">
                     <map/>
@@ -516,6 +529,7 @@
                                 <entry key="start.variable.fetcher" value="@START.VARIABLE.FETCHER@"/>
                                 <entry key="variable.fetcher.delay" value="0"/>
                                 <entry key="variable.fetcher.period" value="@VARIABLE.FETCHER.PERIOD@"/>
+                                <entry key="start.user.score.setter" value="@START.UPDATE.SCORE@"/>
                                 <entry key="start.article.pool.monitor" value="@START.POOL.MONITOR@"/>
                                 <entry key="article.pool.monitor.delay" value="60"/>
                                 <entry key="article.pool.monitor.period" value="180"/>

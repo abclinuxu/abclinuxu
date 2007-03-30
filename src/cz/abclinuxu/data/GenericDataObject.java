@@ -19,15 +19,12 @@
 package cz.abclinuxu.data;
 
 import org.apache.log4j.Logger;
-import org.dom4j.Document;
 
 import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Collections;
-import java.util.Set;
 import java.util.HashSet;
 import java.util.Collection;
 
@@ -35,7 +32,7 @@ import java.util.Collection;
  * This class serves as base class for Item, Category and Record,
  * which have very similar functionality and usage.
  */
-public abstract class GenericDataObject extends GenericObject implements XMLContainer {
+public abstract class GenericDataObject extends CommonObject {
     static Logger log = Logger.getLogger(GenericDataObject.class);
 
     /** identifier of owner of this object */
@@ -48,10 +45,7 @@ public abstract class GenericDataObject extends GenericObject implements XMLCont
     protected Date created;
     /** last update of this object */
     protected Date updated;
-    /** XML with data of this object */
-    protected XMLHandler documentHandler;
-    /** Properties of this object **/
-    protected Map properties;
+
     /**
      * Helper (non-persistant) String for findByExample(),
      * which works as argument to search in <code>data</code>.
@@ -65,70 +59,6 @@ public abstract class GenericDataObject extends GenericObject implements XMLCont
 
     public GenericDataObject(int id) {
         super(id);
-    }
-
-    /**
-     * Returns map where key is string identifier of the property
-     * and value is Set of its values.
-     * @return immutable map of all properties
-     */
-    public Map getProperties() {
-        if (properties == null)
-            return Collections.EMPTY_MAP;
-        return Collections.unmodifiableMap(properties);
-    }
-
-    /**
-     * Finds all string values associated with properties.
-     * The returned set is unmodifiable. This method never returns null.
-     * @return Set of String values associated with given property
-     */
-    public Set getProperty(String type) {
-        if (properties == null)
-            return Collections.EMPTY_SET;
-        Set result = (Set) properties.get(type);
-        if (result == null)
-            return Collections.EMPTY_SET;
-        else
-            return Collections.unmodifiableSet(result);
-    }
-
-    /**
-     * Adds specified binding to map of all properties
-     * @param property name of key
-     * @param value value to be bound to property
-     */
-    public void addProperty(String property, String value) {
-        if (properties == null)
-            properties = new HashMap();
-        Set set = (Set) properties.get(property);
-        if (set == null) {
-            set = new HashSet();
-            properties.put(property, set);
-        }
-        set.add(value);
-    }
-
-    /**
-     * Set specified binding to map of all properties. Previous bindings will be discarded.
-     * @param property name of key
-     * @param values values to be bound to property
-     */
-    public void setProperty(String property, Set values) {
-        if (properties == null)
-            properties = new HashMap();
-        properties.put(property, values);
-    }
-
-    /**
-     * Removes all bindings to specified property.
-     * @param property name of key
-     * @return Set of previous bindings or null, if there were no values associated with given property
-     */
-    public Set removeProperty(String property) {
-        if (properties == null)
-            return null;
-        return (Set) properties.remove(property);
     }
 
     /**
@@ -205,35 +135,6 @@ public abstract class GenericDataObject extends GenericObject implements XMLCont
     }
 
     /**
-     * @return XML data of this object
-     */
-    public Document getData() {
-        return (documentHandler!=null)? documentHandler.getData():null;
-    }
-
-    /**
-     * @return XML data in String format
-     */
-    public String getDataAsString() {
-        return (documentHandler!=null)? documentHandler.getDataAsString():null;
-    }
-
-    /**
-     * sets XML data of this object
-     */
-    public void setData(Document data) {
-        documentHandler = new XMLHandler(data);
-    }
-
-    /**
-     * sets XML data of this object in String format
-     */
-    public void setData(String data) {
-        documentHandler = new XMLHandler();
-        documentHandler.setData(data);
-    }
-
-    /**
      * @return some object associated with this instance
      */
     public Object getCustom() {
@@ -285,7 +186,7 @@ public abstract class GenericDataObject extends GenericObject implements XMLCont
 
         if (custom != null) {
             try {
-                Method m = custom.getClass().getDeclaredMethod("clone", null);
+                Method m = custom.getClass().getDeclaredMethod("clone", (Class[]) null);
                 m.setAccessible(true);
                 clone.custom = m.invoke(custom, (Object[]) null);
             } catch (Exception e) {

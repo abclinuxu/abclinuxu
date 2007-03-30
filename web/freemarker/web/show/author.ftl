@@ -5,7 +5,7 @@
 <#assign autor = RELATION.child, name = TOOL.xpath(autor, "/data/firstname")?default("UNDEFINED"),
          surname = TOOL.xpath(autor, "/data/surname")?default("UNDEFINED"),
          nickname = TOOL.xpath(autor, "/data/nickname")?default("UNDEFINED"),
-         uid = TOOL.xpath(autor, "/data/uid")?default("UNDEFINED")>
+         uid = autor.getIntProperty("user")?default(0)>
 
 <h1>
     Autor
@@ -14,7 +14,7 @@
     <#if nickname!="UNDEFINED">(${surname})</#if>
 </h1>
 
-<#if uid != "UNDEFINED"><a href=/Profile/${uid}>Profil na abclinuxu</a></#if>
+<#if uid != 0><a href=/Profile/${uid}>Profil autora na abclinuxu</a></#if>
 
 <#if USER?exists && USER.hasRole("article admin")>
     <a href="${URL.noPrefix("/autori/edit?rid="+RELATION.id+"&amp;action=edit")}">Upravit</a>
