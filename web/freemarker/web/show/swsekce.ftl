@@ -72,6 +72,7 @@
             <div>
                 <@lib.showOption2 "ui", "grconsole", UI_PROPERTY["grconsole"], "checkbox", userInterfaces />
             </div>
+            <@lib.showOption2 "ui", "web", UI_PROPERTY["web"], "checkbox", userInterfaces />
         </div>
 
         <#assign licenses = FILTERS.license?default([])>

@@ -23,7 +23,7 @@
    jméno<#if EDIT_MODE?if_exists> (ze kterého se vygeneruje URL)</#if> a popis.
    První věta popisu se zobrazí ve výpise této sekce, proto si na
    jejím textu dejte záležet. Adresa pro stažení by neměla záviset na konkrétní verzi.
-   Adresa RSS s aktualitami umožní automatické stahování novinek. 
+   Adresa RSS s aktualitami umožní automatické stahování novinek.
 </p>
 
 <h2>Formátování</h2>
@@ -132,6 +132,9 @@
                         <div>
                             <@lib.showOption "ui", "grconsole", UI_PROPERTY["grconsole"], "checkbox", "onclick=\"startCheckParent(event);\"" />
                         </div>
+                    </div>
+                    <div>
+                        <@lib.showOption "ui", "web", UI_PROPERTY["web"], "checkbox" />
                     </div>
                 </div>
             </td>

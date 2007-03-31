@@ -48,4 +48,8 @@
         <id>grconsole</id>
         <caption>Grafické rozhraní</caption>
     </value>
+    <value>
+        <id>web</id>
+        <caption>Webové rozhraní</caption>
+    </value>
 </set>
