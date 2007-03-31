@@ -67,6 +67,8 @@ public final class SQLTool implements Configurable {
     public static final String COMMENT_RELATIONS_BY_USER = "relations.comment.by.user";
     public static final String COUNT_DISCUSSIONS_BY_USER = "count.relations.comment.by.user";
     public static final String STANDALONE_POLL_RELATIONS = "relations.standalone.polls";
+    public static final String WIKI_RELATIONS_BY_USER = "relations.wiki.by.user";
+    public static final String COUNT_WIKI_RELATIONS_BY_USER = "count.relations.wiki.by.user";
     public static final String USERS_WITH_WEEKLY_EMAIL = "users.with.weekly.email";
     public static final String USERS_WITH_FORUM_BY_EMAIL = "users.with.forum.by.email";
     public static final String USERS_WITH_ROLES = "users.with.roles";
@@ -796,6 +798,29 @@ public final class SQLTool implements Configurable {
         return loadNumber(sb.toString(), params);
     }
 
+    /**
+     * Finds relations, where child is wiki item edited by user.
+     * Use Qualifiers to set additional parameters.
+     * @return List of initialized relations
+     * @throws PersistenceException if there is an error with the underlying persistent storage.
+     */
+    public List<Relation> findWikiRelationsByUser(int userId, Qualifier[] qualifiers) {
+        if ( qualifiers==null ) qualifiers = new Qualifier[]{};
+        StringBuffer sb = new StringBuffer((String) sql.get(WIKI_RELATIONS_BY_USER));
+        List params = new ArrayList();
+        params.add(userId);
+        appendQualifiers(sb, qualifiers, params, null, null);
+        return loadRelations(sb.toString(), params);
+    }
+
+    /**
+     * Counts relations, where child is wiki item edited by user.
+     * @throws PersistenceException if there is an error with the underlying persistent storage.
+     */
+    public int countWikiRelationsByUser(int userId) {
+        StringBuffer sb = new StringBuffer((String) sql.get(COUNT_WIKI_RELATIONS_BY_USER));
+        return loadNumber(sb.toString(), Collections.singletonList(userId));
+    }
 
     /**
      * Finds relations, where child is discussion item with comment from user.
@@ -1687,6 +1712,8 @@ public final class SQLTool implements Configurable {
         store(NEWS_RELATIONS, prefs);
         store(NEWS_RELATIONS_WITHIN_PERIOD, prefs);
         store(NEWS_RELATIONS_BY_USER, prefs);
+        store(WIKI_RELATIONS_BY_USER, prefs);
+        store(COUNT_WIKI_RELATIONS_BY_USER, prefs);
         store(RECORD_RELATIONS_BY_USER_AND_TYPE, prefs);
         store(QUESTION_RELATIONS_BY_USER, prefs);
         store(COMMENT_RELATIONS_BY_USER, prefs);
@@ -1773,6 +1800,13 @@ public final class SQLTool implements Configurable {
                     sb.append(".");
                 }
                 sb.append("zmeneno");
+            } else if (qualifier.equals(Qualifier.SORT_BY_WHEN)) {
+                sb.append(" order by ");
+                if (defaultTableNick != null) {
+                    sb.append(defaultTableNick);
+                    sb.append(".");
+                }
+                sb.append("kdy");
             } else if (qualifier.equals(Qualifier.SORT_BY_ID)) {
                 sb.append(" order by ");
                 if (defaultTableNick != null) {

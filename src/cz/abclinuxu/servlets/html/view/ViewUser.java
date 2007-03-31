@@ -172,6 +172,7 @@ public class ViewUser implements AbcAction {
         counts.put("news", sqlTool.countNewsRelationsByUser(user.getId()));
         counts.put("question", sqlTool.countQuestionRelationsByUser(user.getId()));
         counts.put("comment", sqlTool.countCommentRelationsByUser(user.getId()));
+        counts.put("wiki", sqlTool.countWikiRelationsByUser(user.getId()));
         env.put(VAR_COUNTS, counts);
 
         return FMTemplateSelector.select("ViewUser","counter",env,request);

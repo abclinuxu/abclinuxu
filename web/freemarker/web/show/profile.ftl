@@ -95,7 +95,7 @@
 </#if>
 
 <p><a href="/muj_obsah/${PROFILE.id}">Seznam příspěvků na abclinuxu.cz</a><br>
-(články, komentáře, dotazy, zprávičky, softwarové záznamy a pojmy ve slovníku).</p>
+(články, komentáře, dotazy, zprávičky, softwarové a hardwarové záznamy, pojmy ve slovníku a texty v učebnici)</p>
 <br>
 
 <#if TOOL.xpath(PROFILE,"/data/communication/email[@valid='yes']")?exists>

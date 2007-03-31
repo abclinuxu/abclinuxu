@@ -59,6 +59,7 @@ public class History implements AbcAction {
 
     public static final String VALUE_ORDER_BY_CREATED = "create";
     public static final String VALUE_ORDER_BY_UPDATED = "update";
+    public static final String VALUE_ORDER_BY_WHEN = "date";
     public static final String VALUE_ORDER_BY_ID = "id";
 
     public static final String VALUE_ORDER_DIR_ASC = "asc";
@@ -72,6 +73,7 @@ public class History implements AbcAction {
     public static final String VALUE_TYPE_QUESTIONS = "questions";
     public static final String VALUE_TYPE_COMMENTS = "comments";
     public static final String VALUE_TYPE_DICTIONARY = "dictionary";
+    public static final String VALUE_TYPE_WIKI = "wiki";
     public static final String VALUE_TYPE_FAQ = "faq";
 
     static final Qualifier[] QUALIFIERS_ARRAY = new Qualifier[]{};
@@ -132,6 +134,13 @@ public class History implements AbcAction {
             data = sqlTool.findItemRelationsWithType(Item.HARDWARE, qualifiers);
             found = new Paging(data, from, count, total, qualifiers);
             type = VALUE_TYPE_HARDWARE;
+
+        } else if ( VALUE_TYPE_WIKI.equalsIgnoreCase(type) ) {
+            qualifiers = getQualifiers(params, Qualifier.SORT_BY_WHEN, Qualifier.ORDER_DESCENDING, from, count);
+            total = sqlTool.countWikiRelationsByUser(uid);
+            data = sqlTool.findWikiRelationsByUser(uid, qualifiers);
+            found = new Paging(data, from, count, total, qualifiers);
+            type = VALUE_TYPE_WIKI;
 
         } else if ( VALUE_TYPE_SOFTWARE.equalsIgnoreCase(type) ) {
             qualifiers = getQualifiers(params, Qualifier.SORT_BY_UPDATED, Qualifier.ORDER_DESCENDING, from, count);
@@ -194,17 +203,21 @@ public class History implements AbcAction {
         StringBuffer sb = new StringBuffer("&amp;count=");
         sb.append(found.getPageSize());
         if (found.isQualifierSet(Qualifier.SORT_BY_CREATED.toString()))
-            sb.append("&amp;orderBy=create");
+            sb.append("&amp;" + PARAM_ORDER_BY + "=" + VALUE_ORDER_BY_CREATED);
         else if (found.isQualifierSet(Qualifier.SORT_BY_UPDATED.toString()))
-            sb.append("&amp;orderBy=update");
+            sb.append("&amp;" + PARAM_ORDER_BY + "=" + VALUE_ORDER_BY_UPDATED);
+        else if (found.isQualifierSet(Qualifier.SORT_BY_WHEN.toString()))
+            sb.append("&amp;" + PARAM_ORDER_BY + "=" + VALUE_ORDER_BY_WHEN);
         else if (found.isQualifierSet(Qualifier.SORT_BY_ID.toString()))
-            sb.append("&amp;orderBy=id");
+            sb.append("&amp;" + PARAM_ORDER_BY + "=" + VALUE_ORDER_BY_ID);
+
         if ( found.isQualifierSet(Qualifier.ORDER_DESCENDING.toString()) )
-            sb.append("&amp;orderDir=desc");
+            sb.append("&amp;" + PARAM_ORDER_DIR + "=" + VALUE_ORDER_DIR_DESC);
         else if ( found.isQualifierSet(Qualifier.ORDER_ASCENDING.toString()) )
-            sb.append("&amp;orderDir=asc");
-        if (uid>0) {
-            sb.append("&amp;uid=");
+            sb.append("&amp;" + PARAM_ORDER_DIR + "=" + VALUE_ORDER_DIR_ASC);
+
+        if (uid > 0) {
+            sb.append("&amp;" + PARAM_USER_SHORT + "=");
             sb.append(uid);
         }
 
@@ -226,11 +239,13 @@ public class History implements AbcAction {
      */
     public static Qualifier[] getQualifiers(Map params, Qualifier sortBy, Qualifier sortDir, int fromRow, int rowCount) {
         String sBy = (String) params.get(PARAM_ORDER_BY);
-        if (sBy!=null && sortBy != null) {
+        if (sBy != null && sortBy != null) {
             if (VALUE_ORDER_BY_CREATED.equals(sBy))
                 sortBy = Qualifier.SORT_BY_CREATED;
             else if (VALUE_ORDER_BY_UPDATED.equals(sBy))
                 sortBy = Qualifier.SORT_BY_UPDATED;
+            else if (VALUE_ORDER_BY_WHEN.equals(sBy))
+                sortBy = Qualifier.SORT_BY_WHEN;
             else if (VALUE_ORDER_BY_ID.equals(sBy))
                 sortBy = Qualifier.SORT_BY_ID;
         }
@@ -244,15 +259,15 @@ public class History implements AbcAction {
         }
 
         LimitQualifier limit = null;
-        if (rowCount>0)
+        if (rowCount > 0)
             limit = new LimitQualifier(fromRow,rowCount);
 
         List qualifiers = new ArrayList(3);
-        if (sortBy!=null)
+        if (sortBy != null)
             qualifiers.add(sortBy);
-        if (sortDir!=null)
+        if (sortDir != null)
             qualifiers.add(sortDir);
-        if (limit!=null)
+        if (limit != null)
             qualifiers.add(limit);
 
         return (Qualifier[]) qualifiers.toArray(QUALIFIERS_ARRAY);

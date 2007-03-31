@@ -638,6 +638,9 @@
         <action name="faq" content="/show/history_faq.ftl">
             <var name="TITLE" value="Historie často kladených otázek" />
         </action>
+        <action name="wiki" content="/show/history_wiki.ftl">
+            <var name="TITLE" value="Historie wiki záznamů" />
+        </action>
     </servlet>
 
     <servlet name="ServletUtils">
