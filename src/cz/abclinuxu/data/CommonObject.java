@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Collection;
 
 import cz.abclinuxu.utils.Misc;
 
@@ -170,5 +171,51 @@ public class CommonObject extends GenericObject implements XMLContainer {
         Map<String, Set<String>> originalProperties = properties;
         properties = null;
         return originalProperties;
+    }
+
+    /**
+     * Initialize this object with values from <code>obj</code>, if
+     * this.getClass().equals(obj.getClass()).
+     */
+    public void synchronizeWith(GenericObject obj) {
+        if (!(this.getClass().equals(obj.getClass()))) return;
+        if (obj == this) return;
+        super.synchronizeWith(obj);
+
+        CommonObject b = (CommonObject) obj;
+//        documentHandler = (XMLHandler) b.documentHandler.clone();
+        documentHandler = b.documentHandler;
+        properties = b.properties;
+    }
+
+    public Object clone() {
+        GenericDataObject clone = (GenericDataObject) super.clone();
+        if (documentHandler != null)
+            clone.documentHandler = (XMLHandler) documentHandler.clone(true);
+
+        if (properties != null) {
+            clone.properties = new HashMap<String, Set<String>>();
+            for (Map.Entry<String, Set<String>> entry : properties.entrySet()) {
+                clone.properties.put(entry.getKey(), new HashSet<String>((Collection) entry.getValue()));
+            }
+        }
+        return clone;
+    }
+
+    /**
+     * Compares content fields of this and that GenericObject. The argument
+     * must be instance of same class and have same content properties.
+     * @param obj compared class
+     * @return true if both instances have same content
+     */
+    public boolean contentEquals(GenericObject obj) {
+        if (obj == this)
+            return true;
+        if (! super.contentEquals(obj))
+            return false;
+        CommonObject p = (CommonObject) obj;
+        if (! Misc.same(getDataAsString(), p.getDataAsString()))
+            return false;
+        return Misc.same(properties, p.properties);
     }
 }

@@ -22,11 +22,8 @@ import org.apache.log4j.Logger;
 
 import java.lang.reflect.Method;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.HashSet;
-import java.util.Collection;
-import java.util.Set;
+
+import cz.abclinuxu.utils.Misc;
 
 /**
  * This class serves as base class for Item, Category and Record,
@@ -163,25 +160,13 @@ public abstract class GenericDataObject extends CommonObject {
         owner = b.owner;
         type = b.type;
         subType = b.subType;
-//        documentHandler = (XMLHandler) b.documentHandler.clone();
-        documentHandler = b.documentHandler;
         created = b.created;
         updated = b.updated;
-        properties = b.properties;
         custom = b.custom;
     }
 
     public Object clone() {
         GenericDataObject clone = (GenericDataObject) super.clone();
-        if (documentHandler != null)
-            clone.documentHandler = (XMLHandler) documentHandler.clone();
-
-        if (properties != null) {
-            clone.properties = new HashMap<String, Set<String>>();
-            for (Map.Entry<String, Set<String>> entry : properties.entrySet()) {
-                clone.properties.put(entry.getKey(), new HashSet<String>((Collection) entry.getValue()));
-            }
-        }
 
         if (custom != null) {
             try {
@@ -213,9 +198,36 @@ public abstract class GenericDataObject extends CommonObject {
     }
 
     public boolean preciseEquals(Object o) {
-        if ( !( o instanceof GenericDataObject) ) return false;
+        if ( !( o instanceof GenericDataObject) )
+            return false;
         GenericDataObject p = (GenericDataObject) o;
-        if ( id==p.id && owner==p.owner && getDataAsString().equals(p.getDataAsString()) ) return true;
-        return false;
+        if ( id != p.id )
+            return false;
+        if ( type != p.type )
+            return false;
+        if ( ! Misc.same(subType, p.subType) )
+            return false;
+        if ( ! Misc.same(getDataAsString(), p.getDataAsString()) )
+            return false;
+        return true;
+    }
+
+    /**
+     * Compares content fields of this and that GenericObject. The argument
+     * must be instance of same class and have same content properties.
+     * @param obj compared class
+     * @return true if both instances have same content
+     */
+    public boolean contentEquals(GenericObject obj) {
+        if (obj == this)
+            return true;
+        if (! super.contentEquals(obj))
+            return false;
+        GenericDataObject p = (GenericDataObject) obj;
+        if (type != p.type)
+            return false;
+        if (! Misc.same(subType, p.subType))
+            return false;
+        return Misc.same(custom, p.custom);
     }
 }

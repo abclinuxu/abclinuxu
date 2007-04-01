@@ -276,17 +276,20 @@ public class EditContent implements AbcAction {
     }
 
     protected String actionEditPublicContent2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistance();
-        Relation relation = (Relation) env.get(VAR_RELATION);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
-        Item item = (Item) relation.getChild();
+
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item item = (Item) relation.getChild().clone();
+        Item origItem = (Item) item.clone();
+        item.setOwner(user.getId());
 
         boolean canContinue = true;
         canContinue &= setTitle(params, item, env);
         canContinue &= setContent(params, item, env);
         canContinue &= checkStartTime(params, item, env);
-        item.setOwner(user.getId());
+        canContinue &= ServletUtils.checkNoChange(item, origItem, env);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)
@@ -335,11 +338,14 @@ public class EditContent implements AbcAction {
     }
 
     protected String actionEditItem2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistance();
-        Relation relation = (Relation) env.get(VAR_RELATION);
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
         User user = (User) env.get(Constants.VAR_USER);
-        Item item = (Item) relation.getChild();
+
+        Relation relation = (Relation) env.get(VAR_RELATION);
+        Item item = (Item) relation.getChild().clone();
+        Item origItem = (Item) item.clone();
+        item.setOwner(user.getId());
 
         boolean canContinue = true;
         canContinue &= setTitle(params, item, env);
@@ -347,7 +353,7 @@ public class EditContent implements AbcAction {
         canContinue &= setURL(params, relation, env);
         canContinue &= setClass(params, item);
         canContinue &= checkStartTime(params, item, env);
-        item.setOwner(user.getId());
+        canContinue &= ServletUtils.checkNoChange(item, origItem, env);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)

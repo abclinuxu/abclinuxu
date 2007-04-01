@@ -178,10 +178,14 @@ public class EditDriver implements AbcAction {
      * @return page to be rendered
      */
     protected String actionEditStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
-        Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistance();
+        Map params = (Map) env.get(Constants.VAR_PARAMS);
+        User user = (User) env.get(Constants.VAR_USER);
+
         Relation relation = (Relation) env.get(VAR_RELATION);
-        Item driver = (Item) persistence.findById(relation.getChild());
+        Item driver = (Item) persistence.findById(relation.getChild()).clone();
+        Item origItem = (Item) driver.clone();
+        driver.setOwner(user.getId());
         Document document = driver.getData();
 
         boolean canContinue = true;
@@ -189,12 +193,11 @@ public class EditDriver implements AbcAction {
         canContinue &= setVersion(params, document, env);
         canContinue &= setURL(params, document, env);
         canContinue &= setNote(params, document, env);
+        canContinue &= ServletUtils.checkNoChange(driver, origItem, env);
 
         if ( !canContinue || params.get(PARAM_PREVIEW)!=null )
             return FMTemplateSelector.select("EditDriver", "edit", env, request);
 
-        User user = (User) env.get(Constants.VAR_USER);
-        driver.setOwner(user.getId());
         driver.setCreated(new Date()); // todo proc menime created?
         persistence.update(driver);
 

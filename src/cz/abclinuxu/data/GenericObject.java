@@ -99,7 +99,7 @@ public abstract class GenericObject implements Cloneable {
      */
     public GenericObject makeLightClone() {
         try {
-            GenericObject o = (GenericObject) this.getClass().newInstance();
+            GenericObject o = (GenericObject) ((Class)this.getClass()).newInstance();
             o.setId(id);
             return o;
         } catch (Exception e) {
@@ -127,15 +127,6 @@ public abstract class GenericObject implements Cloneable {
         this.initialized = initialized;
     }
 
-    /**
-     * This is usual equals() implementation. It shall be used in unit tests, because it is
-     * more complete than equal. For equals, we just need to test class and PK equality, but
-     * that's not enough for unit test.
-     */
-    public boolean preciseEquals(Object obj) {
-        return super.equals(obj);
-    }
-
     public Object clone() {
         try {
             return super.clone();
@@ -149,8 +140,29 @@ public abstract class GenericObject implements Cloneable {
      * by HashMaps and Lists (especially in cache).
      */
     public boolean equals(Object obj) {
-        if ( !getClass().isInstance(obj) ) return false;
-        return id==((GenericObject)obj).getId();
+        if ( ! getClass().isInstance(obj) ) return false;
+        return id == ((GenericObject)obj).getId();
+    }
+
+    /**
+     * This is usual equals() implementation. It shall be used in unit tests, because it is
+     * more complete than equal. For equals, we just need to test class and PK equality, but
+     * that's not enough for unit test.
+     */
+    public boolean preciseEquals(Object obj) {
+        return super.equals(obj);
+    }
+
+    /**
+     * Compares content fields of this and that GenericObject. The argument
+     * must be instance of same class and have same content properties.
+     * @param obj compared class
+     * @return true if both instances have same content
+     */
+    public boolean contentEquals(GenericObject obj) {
+        if (! (this.getClass().equals(obj.getClass())))
+            return false;
+        return id == obj.getId();
     }
 
     public int hashCode() {

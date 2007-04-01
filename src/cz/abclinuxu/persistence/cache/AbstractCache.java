@@ -40,7 +40,7 @@ public abstract class AbstractCache implements TransparentCache {
 
     public void store(GenericObject obj) {
         try {
-            GenericObject cached = (GenericObject) obj.getClass().newInstance();
+            GenericObject cached = (GenericObject) ((Class)obj.getClass()).newInstance();
             cached.synchronizeWith(obj);
             if (cached instanceof Relation) {
                 Relation rel = (Relation) cached;
@@ -65,7 +65,7 @@ public abstract class AbstractCache implements TransparentCache {
             result = rel;
         } else {
             try {
-                GenericObject o = (GenericObject) result.getClass().newInstance();
+                GenericObject o = (GenericObject) ((Class)result.getClass()).newInstance();
                 o.synchronizeWith(result);
                 result = o;
             } catch (Exception e) {

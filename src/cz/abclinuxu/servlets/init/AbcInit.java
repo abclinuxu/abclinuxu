@@ -33,7 +33,7 @@ import cz.abclinuxu.utils.freemarker.FMUtils;
 import cz.abclinuxu.utils.email.monitor.InstantSender;
 import cz.abclinuxu.utils.email.forum.CommentSender;
 import cz.abclinuxu.persistence.extra.JobOfferManager;
-import cz.abclinuxu.data.PropertySet;
+import cz.abclinuxu.data.view.PropertySet;
 import freemarker.template.Configuration;
 
 import javax.servlet.ServletException;

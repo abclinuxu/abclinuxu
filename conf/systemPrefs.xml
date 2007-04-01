@@ -654,11 +654,14 @@
                 </node>
                 <node name="data">
                     <map/>
-                    <node name="PropertySet">
-                        <map>
-                            <entry key="ui.property.values.file" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/property_set_ui.xml"/>
-                            <entry key="license.property.values.file" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/property_set_license.xml"/>
-                        </map>
+                    <node name="view">
+                        <map/>
+                        <node name="PropertySet">
+                            <map>
+                                <entry key="ui.property.values.file" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/property_set_ui.xml"/>
+                                <entry key="license.property.values.file" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/property_set_license.xml"/>
+                            </map>
+                        </node>
                     </node>
                 </node>
             </node>

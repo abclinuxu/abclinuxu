@@ -103,6 +103,23 @@ public class PollChoice implements Cloneable {
         this.id = id;
     }
 
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PollChoice)) return false;
+
+        final PollChoice pollChoice = (PollChoice) o;
+
+        if (id != pollChoice.id) return false;
+        if (poll != pollChoice.poll) return false;
+        if (!text.equals(pollChoice.text)) return false;
+
+        return true;
+    }
+
+    public int hashCode() {
+        return id;
+    }
+
     public Object clone() {
         try {
             return super.clone();

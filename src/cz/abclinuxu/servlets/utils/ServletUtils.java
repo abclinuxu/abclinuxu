@@ -19,6 +19,7 @@
 package cz.abclinuxu.servlets.utils;
 
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.exceptions.PersistenceException;
 import cz.abclinuxu.persistence.PersistenceFactory;
@@ -413,6 +414,23 @@ public class ServletUtils implements Configurable {
             return remoteAddress + "#" + header;
 
         return remoteAddress;
+    }
+
+    /**
+     * Checks that both arguments have not identical content. If they do, error
+     * message is added and false is returned. The reason is to forbid to save
+     * form with no change at all (which would create dump revision and uselessly
+     * notify users watching this object).
+     * @param item item with user's changes
+     * @param origItem original item
+     * @param env environment
+     * @return true if both items do not have identical content
+     */
+    public static boolean checkNoChange(GenericObject item, GenericObject origItem, Map env) {
+        if (! item.contentEquals(origItem))
+            return true;
+        addError(Constants.ERROR_GENERIC, "Nenašli jsme žádnou změnu oproti minulé verzi. Opravdu chcete upravit tento objekt?", env, null);
+        return false;
     }
 
     /**

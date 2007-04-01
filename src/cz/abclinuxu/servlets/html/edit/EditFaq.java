@@ -26,7 +26,6 @@ import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
-import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -50,7 +49,6 @@ import org.htmlparser.util.ParserException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
-import java.util.Date;
 
 
 /**
@@ -199,12 +197,14 @@ public class EditFaq implements AbcAction {
 
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item faq = (Item) relation.getChild().clone();
+        Item origItem = (Item) faq.clone();
         faq.setOwner(user.getId());
         Element root = faq.getData().getRootElement();
 
         boolean canContinue = true;
         canContinue &= setQuestion(params, faq, root, env);
         canContinue &= setText(params, root, env);
+        canContinue &= ServletUtils.checkNoChange(faq, origItem, env);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)

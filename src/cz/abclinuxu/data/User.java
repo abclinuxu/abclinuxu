@@ -250,20 +250,13 @@ public class User extends CommonObject {
         if ( ! (obj instanceof User) ) return;
         if ( obj==this ) return;
         super.synchronizeWith(obj);
+
         User b = (User) obj;
-        documentHandler = b.documentHandler;
         name = b.getName();
         nick = b.getNick();
         login = b.getLogin();
         email = b.getEmail();
         password = b.getPassword();
-    }
-
-    public Object clone() {
-        User clone = (User) super.clone();
-        if (documentHandler != null)
-            clone.documentHandler = (XMLHandler) documentHandler.clone();
-        return clone;
     }
 
     public String toString() {
@@ -296,5 +289,26 @@ public class User extends CommonObject {
     public int hashCode() {
         String tmp = "User"+id;
         return tmp.hashCode();
+    }
+
+    /**
+     * Compares content fields of this and that GenericObject. The argument
+     * must be instance of same class and have same content properties.
+     * @param obj compared class
+     * @return true if both instances have same content
+     */
+    public boolean contentEquals(GenericObject obj) {
+        if (obj == this)
+            return true;
+        if (! super.contentEquals(obj))
+            return false;
+        User p = (User) obj;
+        if (! Misc.same(login, p.login))
+            return false;
+        if (! Misc.same(name, p.name))
+            return false;
+        if (! Misc.same(nick, p.nick))
+            return false;
+        return Misc.same(email, p.email);
     }
 }

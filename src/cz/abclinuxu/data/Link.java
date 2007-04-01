@@ -18,6 +18,8 @@
  */
 package cz.abclinuxu.data;
 
+import cz.abclinuxu.utils.Misc;
+
 import java.util.Date;
 
 /**
@@ -167,6 +169,28 @@ public class Link extends GenericObject {
         if ( id==p.id && text.equals(p.text) && url.equals(p.url) &&
              server==p.server && fixed==p.fixed && owner==p.owner ) return true;
         return false;
+    }
+
+    /**
+     * Compares content fields of this and that GenericObject. The argument
+     * must be instance of same class and have same content properties.
+     *
+     * @param obj compared class
+     * @return true if both instances have same content
+     */
+    public boolean contentEquals(GenericObject obj) {
+        if (obj == this)
+            return true;
+        if (! super.contentEquals(obj))
+            return false;
+        Link p = (Link) obj;
+        if (fixed != p.fixed)
+            return false;
+        if (! Misc.same(text, p.text))
+            return false;
+        if (! Misc.same(url, p.url))
+            return false;
+        return Misc.same(server, p.server);
     }
 
     public int hashCode() {

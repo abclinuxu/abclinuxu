@@ -235,6 +235,7 @@ public class EditSoftware implements AbcAction, Configurable {
         env.put(VAR_EDIT_MODE, Boolean.TRUE);
 
         Item item = (Item) relation.getChild().clone();
+        Item origItem = (Item) item.clone();
         item.setOwner(user.getId());
         Element root = item.getData().getRootElement();
 
@@ -247,6 +248,7 @@ public class EditSoftware implements AbcAction, Configurable {
         canContinue &= setUrl(params, PARAM_HOME_PAGE, root);
         canContinue &= setUrl(params, PARAM_DOWNLOAD_URL, root);
         canContinue &= checkRssUrl(params, env);
+        canContinue &= ServletUtils.checkNoChange(item, origItem, env);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)
@@ -348,7 +350,7 @@ public class EditSoftware implements AbcAction, Configurable {
         List entries = Tools.asList(params.get(PARAM_USER_INTERFACE));
         if (entries.size() == 0)
             item.removeProperty(Constants.PROPERTY_USER_INTERFACE);
-        item.setProperty(Constants.PROPERTY_USER_INTERFACE, new HashSet(entries));
+        item.setProperty(Constants.PROPERTY_USER_INTERFACE, new HashSet<String>(entries));
         return true;
     }
 
@@ -370,7 +372,7 @@ public class EditSoftware implements AbcAction, Configurable {
                     return false;
                 }
             }
-            item.setProperty(Constants.PROPERTY_ALTERNATIVE_SOFTWARE, new HashSet(entries));
+            item.setProperty(Constants.PROPERTY_ALTERNATIVE_SOFTWARE, new HashSet<String>(entries));
         }
         return true;
     }
@@ -386,7 +388,7 @@ public class EditSoftware implements AbcAction, Configurable {
         if (entries.size() == 0)
             item.removeProperty(Constants.PROPERTY_LICENSE);
         else
-            item.setProperty(Constants.PROPERTY_LICENSE, new HashSet(entries));
+            item.setProperty(Constants.PROPERTY_LICENSE, new HashSet<String>(entries));
         return true;
     }
 

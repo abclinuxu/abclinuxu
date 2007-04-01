@@ -218,6 +218,32 @@ public class Poll extends GenericObject implements Cloneable {
         return Misc.same(this.text, ((Poll) o).getText());
     }
 
+    /**
+     * Compares content fields of this and that GenericObject. The argument
+     * must be instance of same class and have same content properties.
+     * @param obj compared class
+     * @return true if both instances have same content
+     */
+    public boolean contentEquals(GenericObject obj) {
+        if (obj == this)
+            return true;
+        if (! super.contentEquals(obj))
+            return false;
+        Poll p = (Poll) obj;
+        if (closed != p.closed)
+            return false;
+        if (multiChoice != p.multiChoice)
+            return false;
+        if (choices.length != p.choices.length )
+            return false;
+        for (int i = 0; i < choices.length; i++) {
+            PollChoice choice = choices[i];
+            if ( ! Misc.same(choice, p.choices[i]))
+                return false;
+        }
+        return Misc.same(text, p.text);
+    }
+
     public int hashCode() {
         String tmp = "Poll"+id;
         return tmp.hashCode();

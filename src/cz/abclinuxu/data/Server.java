@@ -18,6 +18,8 @@
  */
 package cz.abclinuxu.data;
 
+import cz.abclinuxu.utils.Misc;
+
 /**
  * Contains information about server, from which we download
  * links to their resources
@@ -93,6 +95,23 @@ public class Server extends GenericObject {
         name = b.getName();
         url = b.getUrl();
         contact = b.getContact();
+    }
+
+    /**
+     * Compares content fields of this and that GenericObject. The argument
+     * must be instance of same class and have same content properties.
+     * @param obj compared class
+     * @return true if both instances have same content
+     */
+    public boolean contentEquals(GenericObject obj) {
+        if (obj == this)
+            return true;
+        if (! super.contentEquals(obj))
+            return false;
+        Server p = (Server) obj;
+        if (! Misc.same(name, p.name))
+            return false;
+        return Misc.same(url, p.url);
     }
 
     public int hashCode() {

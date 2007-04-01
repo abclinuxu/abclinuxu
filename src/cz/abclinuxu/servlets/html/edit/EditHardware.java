@@ -231,6 +231,7 @@ public class EditHardware implements AbcAction {
 
         Relation relation = (Relation) env.get(VAR_RELATION);
         Item item = (Item) relation.getChild().clone();
+        Item origItem = (Item) item.clone();
         item.setOwner(user.getId());
         Element root = item.getData().getRootElement();
 
@@ -245,6 +246,7 @@ public class EditHardware implements AbcAction {
         canContinue &= setIdentification(params, root, env);
         canContinue &= setSetup(params, root, env);
         canContinue &= setNote(params, root, env);
+        canContinue &= ServletUtils.checkNoChange(item, origItem, env);
 
         if (!canContinue || params.get(PARAM_PREVIEW) != null) {
             if (!canContinue)

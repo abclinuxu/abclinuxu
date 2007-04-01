@@ -20,6 +20,7 @@ package cz.abclinuxu.data;
 
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
+import cz.abclinuxu.utils.Misc;
 
 /**
  * This class contains one relation between two GenericObjects.
@@ -184,6 +185,25 @@ public final class Relation extends GenericObject implements XMLContainer {
         Relation o = (Relation) obj;
         if ( upper==o.getUpper() && parent==o.getParent() && child==o.getChild() ) return true;
         return false;
+    }
+
+    /**
+     * Compares content fields of this and that GenericObject. The argument
+     * must be instance of same class and have same content properties.
+     * @param obj compared class
+     * @return true if both instances have same content
+     */
+    public boolean contentEquals(GenericObject obj) {
+        if (obj == this)
+            return true;
+        if (! super.contentEquals(obj))
+            return false;
+        Relation p = (Relation) obj;
+        if (! Misc.same(url, p.url))
+            return false;
+        if (! Misc.same(child, p.child))
+            return false;
+        return Misc.same(parent, p.parent);
     }
 
     public int hashCode() {

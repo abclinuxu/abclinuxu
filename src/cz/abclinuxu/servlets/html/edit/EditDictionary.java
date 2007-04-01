@@ -164,16 +164,19 @@ public class EditDictionary implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
 
         Relation relation = (Relation) env.get(VAR_RELATION);
-        Item item = (Item) relation.getChild();
+        Item item = (Item) relation.getChild().clone();
+        Item origItem = (Item) item.clone();
+        item.setOwner(user.getId());
         Element root = item.getData().getRootElement();
 
         boolean canContinue = true;
         canContinue &= setName(params, item, root, env);
         canContinue &= setDescription(params, root, env);
+        canContinue &= ServletUtils.checkNoChange(item, origItem, env);
+
         if ( !canContinue || params.get(PARAM_PREVIEW) != null)
             return FMTemplateSelector.select("Dictionary", "edit", env, request);
 
-        item.setOwner(user.getId());
         persistence.update(item);
 
         // commit new version
