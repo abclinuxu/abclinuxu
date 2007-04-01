@@ -1550,18 +1550,17 @@ public class Tools implements Configurable {
      * with its entries is returned. If obj is null, empty set
      * is returned. In all other cases Set with obj is returned.
      * Warning - returned list may be read-only.
-     *
      * @param obj value that can be list
      * @return obj casted to Set or Set containing obj
      */
-    public static Set asSet(Object obj) {
+    public static Set<String> asSet(Object obj) {
         if (obj == null)
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         if (obj instanceof Set)
-            return (Set) obj;
+            return (Set<String>) obj;
         if (obj instanceof Collection)
-            return new HashSet((Collection) obj);
-        return Collections.singleton(obj);
+            return new HashSet<String>((Collection) obj);
+        return Collections.singleton((String)obj);
     }
 
     /**

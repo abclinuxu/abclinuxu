@@ -31,9 +31,6 @@ import cz.abclinuxu.persistence.extra.CompareCondition;
 import cz.abclinuxu.persistence.extra.Field;
 import cz.abclinuxu.persistence.extra.Operation;
 import cz.abclinuxu.persistence.extra.Qualifier;
-import cz.abclinuxu.persistence.versioning.VersionedDocument;
-import cz.abclinuxu.persistence.versioning.Versioning;
-import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
@@ -43,7 +40,6 @@ import cz.abclinuxu.utils.ReadRecorder;
 import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.scheduler.VariableFetcher;
-import org.dom4j.Element;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,6 +49,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.net.URLDecoder;
@@ -155,7 +152,7 @@ public class ViewSoftware implements AbcAction {
 
     private String processAlternative(HttpServletRequest request, String name, Map env) throws Exception {
         SQLTool sqlTool = SQLTool.getInstance();
-        Map filters = new HashMap();
+        Map<String, Set<String>> filters = new HashMap<String, Set<String>>();
         name = URLDecoder.decode(name, "UTF-8");
         filters.put(Constants.PROPERTY_ALTERNATIVE_SOFTWARE, Tools.asSet(name));
         List items = sqlTool.findItemRelationsWithTypeWithFilters(Item.SOFTWARE, null, filters);
@@ -172,9 +169,9 @@ public class ViewSoftware implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistance();
         SQLTool sqlTool = SQLTool.getInstance();
 
-        Map filters = (Map) request.getSession().getAttribute(VAR_FILTERS);
+        Map<String, Set<String>> filters = (Map<String, Set<String>>) request.getSession().getAttribute(VAR_FILTERS);
         if (filters == null)
-            filters = Collections.EMPTY_MAP;
+            filters = Collections.emptyMap();
         env.put(VAR_FILTERS, filters);
 
         SectionTreeCache softwareTree = VariableFetcher.getInstance().getSoftwareTree();
@@ -231,23 +228,9 @@ public class ViewSoftware implements AbcAction {
             env.put(VAR_LINKS, links);
         }
 
-        // todo tohle take proverit
         int revision = Misc.parseInt((String) params.get(ShowRevisions.PARAM_REVISION), -1);
-        if (revision != -1) {
-            Versioning versioning = VersioningFactory.getVersioning();
-            VersionedDocument version = versioning.load(relation.getId(), revision);
-            Element monitor = (Element) item.getData().selectSingleNode("/data/monitor");
-            item.setData(version.getDocument());
-            item.setUpdated(version.getCommited());
-            item.setOwner(version.getUser());
-            if (monitor != null) {
-                monitor = monitor.createCopy();
-                Element element = (Element) item.getData().selectSingleNode("/data/monitor");
-                if (element != null)
-                    element.detach();
-                item.getData().getRootElement().add(monitor);
-            }
-        }
+        if (revision != -1)
+            ShowRevisions.loadRevision(item, relation.getId(), revision);
 
         return FMTemplateSelector.select("ViewSoftware", "software", env, request);
     }

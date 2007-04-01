@@ -150,7 +150,7 @@ public class EditTrivia implements AbcAction {
         persistence.update(item);
 
         // commit new version
-        Misc.commitRelation(document.getRootElement(), relation, user);
+        Misc.commitRelation(item, relation, user);
 
         EditDiscussion.createEmptyDiscussion(relation, user, persistence);
 
@@ -226,7 +226,7 @@ public class EditTrivia implements AbcAction {
         persistence.update(item);
 
         // commit new version
-        Misc.commitRelation(root, relation, user);
+        Misc.commitRelation(item, relation, user);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, upper.getUrl());

@@ -27,9 +27,6 @@ import cz.abclinuxu.persistence.extra.Qualifier;
 import cz.abclinuxu.persistence.extra.CompareCondition;
 import cz.abclinuxu.persistence.extra.Field;
 import cz.abclinuxu.persistence.extra.Operation;
-import cz.abclinuxu.persistence.versioning.VersionedDocument;
-import cz.abclinuxu.persistence.versioning.Versioning;
-import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.edit.EditDictionary;
@@ -41,8 +38,6 @@ import cz.abclinuxu.utils.Sorters2;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.paging.Paging;
-import org.dom4j.Document;
-import org.dom4j.Element;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -117,22 +112,8 @@ public class ShowDictionary implements AbcAction {
         env.put(VAR_ITEM, item);
 
         int revision = Misc.parseInt((String) params.get(ShowRevisions.PARAM_REVISION), -1);
-        if (revision != -1) {
-            Versioning versioning = VersioningFactory.getVersioning();
-            VersionedDocument version = versioning.load(relation.getId(), revision);
-            Document document = item.getData();
-            Element monitor = (Element) document.selectSingleNode("/data/monitor");
-            item.setData(version.getDocument());
-            item.setUpdated(version.getCommited());
-            item.setOwner(version.getUser());
-            if (monitor != null) {
-                monitor = monitor.createCopy();
-                Element element = (Element) document.selectSingleNode("/data/monitor");
-                if (element != null)
-                    element.detach();
-                document.getRootElement().add(monitor);
-            }
-        }
+        if (revision != -1)
+            ShowRevisions.loadRevision(item, relation.getId(), revision);
 
         SQLTool sqlTool = SQLTool.getInstance();
         List siblings = sqlTool.getNeighbourDictionaryItemRelations(item.getSubType(), true, 3);

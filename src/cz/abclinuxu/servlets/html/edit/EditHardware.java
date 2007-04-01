@@ -170,7 +170,7 @@ public class EditHardware implements AbcAction {
         relation.getParent().addChildRelation(relation);
 
         // commit new version
-        Misc.commitRelation(document.getRootElement(), relation, user);
+        Misc.commitRelation(item, relation, user);
 
         // refresh RSS
         FeedGenerator.updateHardware();
@@ -258,7 +258,7 @@ public class EditHardware implements AbcAction {
         FeedGenerator.updateHardware();
 
         // commit new version
-        Misc.commitRelation(root, relation, user);
+        Misc.commitRelation(item, relation, user);
 
         // run monitor
         String url = relation.getUrl();

@@ -41,7 +41,7 @@ public class CommonObject extends GenericObject implements XMLContainer {
     /**
      * Properties of this object *
      */
-    protected Map properties;
+    protected Map<String, Set<String>> properties;
 
     public CommonObject() {
     }
@@ -83,9 +83,9 @@ public class CommonObject extends GenericObject implements XMLContainer {
      * and value is Set of its values.
      * @return immutable map of all properties
      */
-    public Map getProperties() {
+    public Map<String, Set<String>> getProperties() {
         if (properties == null)
-            return Collections.EMPTY_MAP;
+            return Collections.emptyMap();
         return Collections.unmodifiableMap(properties);
     }
 
@@ -94,12 +94,12 @@ public class CommonObject extends GenericObject implements XMLContainer {
      * The returned set is unmodifiable. This method never returns null.
      * @return Set of String values associated with given property
      */
-    public Set getProperty(String type) {
+    public Set<String> getProperty(String type) {
         if (properties == null)
-            return Collections.EMPTY_SET;
-        Set result = (Set) properties.get(type);
+            return Collections.emptySet();
+        Set<String> result = (Set<String>) properties.get(type);
         if (result == null)
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         else
             return Collections.unmodifiableSet(result);
     }
@@ -129,10 +129,10 @@ public class CommonObject extends GenericObject implements XMLContainer {
      */
     public void addProperty(String property, String value) {
         if (properties == null)
-            properties = new HashMap();
-        Set set = (Set) properties.get(property);
+            properties = new HashMap<String, Set<String>>();
+        Set<String> set = (Set<String>) properties.get(property);
         if (set == null) {
-            set = new HashSet();
+            set = new HashSet<String>();
             properties.put(property, set);
         }
         set.add(value);
@@ -143,9 +143,9 @@ public class CommonObject extends GenericObject implements XMLContainer {
      * @param property name of key
      * @param values   values to be bound to property
      */
-    public void setProperty(String property, Set values) {
+    public void setProperty(String property, Set<String> values) {
         if (properties == null)
-            properties = new HashMap();
+            properties = new HashMap<String, Set<String>>();
         properties.put(property, values);
     }
 
@@ -154,9 +154,21 @@ public class CommonObject extends GenericObject implements XMLContainer {
      * @param property name of key
      * @return Set of previous bindings or null, if there were no values associated with given property
      */
-    public Set removeProperty(String property) {
+    public Set<String> removeProperty(String property) {
         if (properties == null)
             return null;
-        return (Set) properties.remove(property);
+        return (Set<String>) properties.remove(property);
+    }
+
+    /**
+     * Removes all properties.
+     * @return original properties
+     */
+    public Map<String, Set<String>> clearProperties() {
+        if (properties == null)
+            return null;
+        Map<String, Set<String>> originalProperties = properties;
+        properties = null;
+        return originalProperties;
     }
 }

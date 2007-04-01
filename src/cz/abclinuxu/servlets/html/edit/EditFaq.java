@@ -158,7 +158,7 @@ public class EditFaq implements AbcAction {
         persistence.create(relation);
 
         // commit new version
-        Misc.commitRelation(document.getRootElement(), relation, user);
+        Misc.commitRelation(faq, relation, user);
 
         // refresh RSS
         FeedGenerator.updateFAQ();
@@ -217,7 +217,7 @@ public class EditFaq implements AbcAction {
         persistence.update(faq);
 
         // commit new version
-        Misc.commitRelation(root, relation, user);
+        Misc.commitRelation(faq, relation, user);
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();

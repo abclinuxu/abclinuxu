@@ -29,9 +29,6 @@ import cz.abclinuxu.data.view.ACL;
 import cz.abclinuxu.data.view.DiscussionRecord;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.Persistence;
-import cz.abclinuxu.persistence.versioning.VersioningFactory;
-import cz.abclinuxu.persistence.versioning.Versioning;
-import cz.abclinuxu.persistence.versioning.VersionedDocument;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -151,21 +148,8 @@ public class ShowObject implements AbcAction {
         Tools.sync(upper);
 
         int revision = Misc.parseInt((String) params.get(ShowRevisions.PARAM_REVISION), -1);
-        if (revision != -1) {
-            Versioning versioning = VersioningFactory.getVersioning();
-            VersionedDocument version = versioning.load(relation.getId(), revision);
-            Element monitor = (Element) item.getData().selectSingleNode("/data/monitor");
-            item.setData(version.getDocument());
-            item.setUpdated(version.getCommited());
-            item.setOwner(version.getUser());
-            if (monitor!=null) {
-                monitor = monitor.createCopy();
-                Element element = (Element) item.getData().selectSingleNode("/data/monitor");
-                if (element!=null)
-                    element.detach();
-                item.getData().getRootElement().add(monitor);
-            }
-        }
+        if (revision != -1)
+            ShowRevisions.loadRevision(item, relation.getId(), revision);
 
         switch (item.getType()) {
             case Item.ARTICLE:

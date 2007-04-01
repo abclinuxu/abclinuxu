@@ -185,7 +185,7 @@ public class EditSoftware implements AbcAction, Configurable {
         persistence.update(item);
 
         // commit new version
-        Misc.commitRelation(document.getRootElement(), relation, user);
+        Misc.commitRelation(item, relation, user);
 
         // refresh RSS
         FeedGenerator.updateSoftware();
@@ -260,7 +260,7 @@ public class EditSoftware implements AbcAction, Configurable {
         persistence.update(item);
 
         // commit new version
-        Misc.commitRelation(root, relation, user);
+        Misc.commitRelation(item, relation, user);
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();

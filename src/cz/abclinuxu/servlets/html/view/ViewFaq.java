@@ -35,9 +35,6 @@ import cz.abclinuxu.persistence.extra.*;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
-import cz.abclinuxu.persistence.versioning.Versioning;
-import cz.abclinuxu.persistence.versioning.VersioningFactory;
-import cz.abclinuxu.persistence.versioning.VersionedDocument;
 import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.scheduler.VariableFetcher;
 
@@ -46,8 +43,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
-
-import org.dom4j.Element;
 
 /**
  * User: literakl
@@ -147,21 +142,8 @@ public class ViewFaq implements AbcAction {
         env.put(VAR_ITEM, item);
 
         int revision = Misc.parseInt((String) params.get(ShowRevisions.PARAM_REVISION), -1);
-        if (revision != -1) {
-            Versioning versioning = VersioningFactory.getVersioning();
-            VersionedDocument version = versioning.load(relation.getId(), revision);
-            Element monitor = (Element) item.getData().selectSingleNode("/data/monitor");
-            item.setData(version.getDocument());
-            item.setUpdated(version.getCommited());
-            item.setOwner(version.getUser());
-            if (monitor != null) {
-                monitor = monitor.createCopy();
-                Element element = (Element) item.getData().selectSingleNode("/data/monitor");
-                if (element != null)
-                    element.detach();
-                item.getData().getRootElement().add(monitor);
-            }
-        }
+        if (revision != -1)
+            ShowRevisions.loadRevision(item, relation.getId(), revision);
 
         return FMTemplateSelector.select("ViewFaq", "view", env, request);
     }

@@ -137,7 +137,7 @@ public class EditRelated implements AbcAction {
         persistence.update(item);
 
         // commit new version
-        Misc.commitRelation(item.getData().getRootElement(), relation, user);
+        Misc.commitRelation(item, relation, user);
 
         if (redirect) {
             UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -190,7 +190,7 @@ public class EditRelated implements AbcAction {
         persistence.update(item);
 
         // commit new version
-        Misc.commitRelation(item.getData().getRootElement(), relation, user);
+        Misc.commitRelation(item, relation, user);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/EditRelated/" + relation.getId());
@@ -253,7 +253,7 @@ public class EditRelated implements AbcAction {
         persistence.update(item);
 
         // commit new version
-        Misc.commitRelation(item.getData().getRootElement(), relation, user);
+        Misc.commitRelation(item, relation, user);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, "/EditRelated/"+relation.getId());

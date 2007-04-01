@@ -26,7 +26,6 @@ import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
-import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.exceptions.MissingArgumentException;
@@ -43,7 +42,6 @@ import org.htmlparser.util.ParserException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
-import java.util.Date;
 
 /**
  * Used to add/edit static content
@@ -186,7 +184,7 @@ public class EditContent implements AbcAction {
         persistence.create(relation);
 
         // commit new version
-        Misc.commitRelation(document.getRootElement(), relation, user);
+        Misc.commitRelation(item, relation, user);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());
@@ -247,7 +245,7 @@ public class EditContent implements AbcAction {
         persistence.create(relation);
 
         // commit new version
-        Misc.commitRelation(document.getRootElement(), relation, user);
+        Misc.commitRelation(item, relation, user);
 
         if (toc!=null) {
             Element element = (Element) toc.getData().selectSingleNode("//node[@rid="+parentRelation.getId()+"]");
@@ -302,7 +300,7 @@ public class EditContent implements AbcAction {
         persistence.update(relation);
 
         // commit new version
-        Misc.commitRelation(item.getData().getRootElement(), relation, user);
+        Misc.commitRelation(item, relation, user);
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
@@ -363,7 +361,7 @@ public class EditContent implements AbcAction {
         persistence.update(relation);
 
         // commit new version
-        Misc.commitRelation(item.getData().getRootElement(), relation, user);
+        Misc.commitRelation(item, relation, user);
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();

@@ -24,6 +24,7 @@ import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.persistence.versioning.Versioning;
 import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.html.view.ShowForum;
 
@@ -33,6 +34,7 @@ import java.text.DateFormat;
 
 import org.dom4j.Element;
 import org.dom4j.Node;
+import org.dom4j.DocumentHelper;
 
 /**
  * Miscallenous utilities.
@@ -41,16 +43,32 @@ public class Misc {
 
     /**
      * Commits specified relation into version repository.
-     * @param element XML to be stored
+     * @param obj object to be stored as new revision in versioning
      * @param relation identifies data
      * @param user user who created this version
      * @return VersionInfo
      */
-    public static VersionInfo commitRelation(Element element, Relation relation, User user) {
-        Element copy = element.createCopy();
+    public static VersionInfo commitRelation(GenericDataObject obj, Relation relation, User user) {
+        Element copy = obj.getData().getRootElement().createCopy();
+
+        // we do not store monitor element in versioning
         Element monitor = copy.element("monitor");
         if (monitor != null)
             monitor.detach();
+
+        // we store properties in the revision
+        Map<String, Set<String>> properties = obj.getProperties();
+        if (properties != null) {
+            Element propertiesElement = DocumentHelper.makeElement(copy, "/versioning/properties");
+            for (String key : properties.keySet()) {
+                Element propertyElement = propertiesElement.addElement("property");
+                propertyElement.addElement("key").setText(key);
+                for (String value : properties.get(key)) {
+                    propertyElement.addElement("value").setText(value);
+                }
+            }
+        }
+
         Versioning versioning = VersioningFactory.getVersioning();
         return versioning.commit(copy.asXML(), relation.getId(), user.getId());
     }

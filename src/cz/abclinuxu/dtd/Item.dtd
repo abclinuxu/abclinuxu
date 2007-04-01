@@ -210,6 +210,13 @@
 <!ELEMENT article (#PCDATA)> <!-- id of relation for article associated with this series, articles are sorted by published date in ascending order -->
 <!ATTLIST article published (#NMTOKEN)> <!-- date in ISO format (YYYY-MM-DD), when this article was published -->
 
+<!--- revision stored in Versioning -->
+<!ELEMENT versioning (properties*)> <!-- optional element under root that contains versioning specific data -->
+<!ELEMENT properties (property*)> <!-- container for CommonObject properties -->
+<!ELEMENT property (key, value+)> <!-- property -->
+<!ELEMENT key (#PCDATA)> <!-- property key -->
+<!ELEMENT value (#PCDATA)> <!-- property value -->
+
 <!-- common -->
 
 <!ELEMENT inset (images*)> <!-- this element is child of data and it serves as container for various attachments -->

@@ -159,7 +159,7 @@ public class EditBazaar implements AbcAction {
         relation.getParent().addChildRelation(relation);
 
         // commit new version
-        Misc.commitRelation(document.getRootElement(), relation, user);
+        Misc.commitRelation(ad, relation, user);
 
         EditDiscussion.createEmptyDiscussion(relation, user, persistence);
 
@@ -232,7 +232,7 @@ public class EditBazaar implements AbcAction {
         persistence.update(ad);
 
         // commit new version
-        Misc.commitRelation(document.getRootElement(), relation, user);
+        Misc.commitRelation(ad, relation, user);
 
         FeedGenerator.updateBazaar();
         VariableFetcher.getInstance().refreshBazaar();

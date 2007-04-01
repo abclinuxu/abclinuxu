@@ -23,10 +23,10 @@ import org.apache.log4j.Logger;
 import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.HashSet;
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * This class serves as base class for Item, Category and Record,
@@ -177,10 +177,9 @@ public abstract class GenericDataObject extends CommonObject {
             clone.documentHandler = (XMLHandler) documentHandler.clone();
 
         if (properties != null) {
-            clone.properties = new HashMap();
-            for (Iterator iter = properties.entrySet().iterator(); iter.hasNext();) {
-                Map.Entry entry = (Map.Entry) iter.next();
-                clone.properties.put(entry.getKey(), new HashSet((Collection) entry.getValue()));
+            clone.properties = new HashMap<String, Set<String>>();
+            for (Map.Entry<String, Set<String>> entry : properties.entrySet()) {
+                clone.properties.put(entry.getKey(), new HashSet<String>((Collection) entry.getValue()));
             }
         }
 
