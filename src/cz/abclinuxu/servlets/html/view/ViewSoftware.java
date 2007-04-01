@@ -230,7 +230,7 @@ public class ViewSoftware implements AbcAction {
 
         int revision = Misc.parseInt((String) params.get(ShowRevisions.PARAM_REVISION), -1);
         if (revision != -1)
-            ShowRevisions.loadRevision(item, relation.getId(), revision);
+            Misc.loadRelationRevision(item, relation.getId(), revision);
 
         return FMTemplateSelector.select("ViewSoftware", "software", env, request);
     }

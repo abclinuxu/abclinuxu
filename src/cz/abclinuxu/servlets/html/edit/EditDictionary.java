@@ -130,7 +130,7 @@ public class EditDictionary implements AbcAction {
         relation.getParent().addChildRelation(relation);
 
         // commit new version
-        Misc.commitRelation(item, relation, user);
+        Misc.commitRelationRevision(item, relation.getId(), user);
 
         FeedGenerator.updateDictionary();
         VariableFetcher.getInstance().refreshDictionary();
@@ -177,7 +177,7 @@ public class EditDictionary implements AbcAction {
         persistence.update(item);
 
         // commit new version
-        Misc.commitRelation(item, relation, user);
+        Misc.commitRelationRevision(item, relation.getId(), user);
 
         // run monitor
         String url = "http://www.abclinuxu.cz"+relation.getUrl();

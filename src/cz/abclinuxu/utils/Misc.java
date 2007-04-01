@@ -22,7 +22,8 @@ import cz.abclinuxu.exceptions.InvalidInputException;
 import cz.abclinuxu.persistence.versioning.VersionInfo;
 import cz.abclinuxu.persistence.versioning.VersioningFactory;
 import cz.abclinuxu.persistence.versioning.Versioning;
-import cz.abclinuxu.data.Relation;
+import cz.abclinuxu.persistence.versioning.VersionNotFoundException;
+import cz.abclinuxu.persistence.versioning.VersionedDocument;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.servlets.Constants;
@@ -35,6 +36,7 @@ import java.text.DateFormat;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.DocumentHelper;
+import org.dom4j.Document;
 
 /**
  * Miscallenous utilities.
@@ -44,11 +46,11 @@ public class Misc {
     /**
      * Commits specified relation into version repository.
      * @param obj object to be stored as new revision in versioning
-     * @param relation identifies data
+     * @param relationId identifies data
      * @param user user who created this version
      * @return VersionInfo
      */
-    public static VersionInfo commitRelation(GenericDataObject obj, Relation relation, User user) {
+    public static VersionInfo commitRelationRevision(GenericDataObject obj, int relationId, User user) {
         Element copy = obj.getData().getRootElement().createCopy();
 
         // we do not store monitor element in versioning
@@ -70,16 +72,61 @@ public class Misc {
         }
 
         Versioning versioning = VersioningFactory.getVersioning();
-        return versioning.commit(copy.asXML(), relation.getId(), user.getId());
+        return versioning.commit(copy.asXML(), relationId, user.getId());
+    }
+
+    /**
+     * Loads specified revision of given relation into the item.
+     *
+     * @param item       GenericDataObject that shall be updated with data from given revision. It shall be already initialized.
+     * @param relationId id of relation where item is child
+     * @param revision   existing revision number
+     * @throws cz.abclinuxu.persistence.versioning.VersionNotFoundException
+     *          no such revision for given relation
+     */
+    public static void loadRelationRevision(GenericDataObject item, int relationId, int revision) throws VersionNotFoundException {
+        Versioning versioning = VersioningFactory.getVersioning();
+        VersionedDocument version = versioning.load(relationId, revision);
+        Document document = item.getData();
+        Element monitor = (Element) document.selectSingleNode("/data/monitor");
+        item.setData(version.getDocument());
+        document = item.getData();
+        item.setUpdated(version.getCommited());
+        item.setOwner(version.getUser());
+
+        // we do not store monitor element in versioning, let's use it from persistance
+        if (monitor != null) {
+            monitor = monitor.createCopy();
+            Element element = (Element) document.selectSingleNode("/data/monitor");
+            if (element != null)
+                element.detach();
+            document.getRootElement().add(monitor);
+        }
+
+        Element versioningData = (Element) document.selectSingleNode("/data/versioning");
+        if (versioningData != null) {
+            versioningData.detach();
+            item.clearProperties();
+
+            List list = versioningData.selectNodes("properties/property");
+            for (Iterator iter = list.iterator(); iter.hasNext();) {
+                Element propertyElement = (Element) iter.next();
+                String key = propertyElement.elementText("key");
+                for (Iterator iterIn = propertyElement.elements("value").iterator(); iterIn.hasNext();) {
+                    Element value = (Element) iterIn.next();
+                    item.addProperty(key, value.getText());
+                }
+            }
+        }
     }
 
     /**
      * Purges all revisions of specified relation from version repository. This action cannot be undone!
-     * @param relation identifies data
+     * @param relationId identifies data
      */
-    public static void purgeRelationRevisions(Relation relation) {
+    public static void purgeRelationRevisions(int relationId) {
         Versioning versioning = VersioningFactory.getVersioning();
-        versioning.purge(relation.getId());
+        versioning.purge(relationId);
     }
 
     /**

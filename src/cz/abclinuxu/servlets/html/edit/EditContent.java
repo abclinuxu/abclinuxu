@@ -184,7 +184,7 @@ public class EditContent implements AbcAction {
         persistence.create(relation);
 
         // commit new version
-        Misc.commitRelation(item, relation, user);
+        Misc.commitRelationRevision(item, relation.getId(), user);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, relation.getUrl());
@@ -245,7 +245,7 @@ public class EditContent implements AbcAction {
         persistence.create(relation);
 
         // commit new version
-        Misc.commitRelation(item, relation, user);
+        Misc.commitRelationRevision(item, relation.getId(), user);
 
         if (toc!=null) {
             Element element = (Element) toc.getData().selectSingleNode("//node[@rid="+parentRelation.getId()+"]");
@@ -300,7 +300,7 @@ public class EditContent implements AbcAction {
         persistence.update(relation);
 
         // commit new version
-        Misc.commitRelation(item, relation, user);
+        Misc.commitRelationRevision(item, relation.getId(), user);
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();
@@ -361,7 +361,7 @@ public class EditContent implements AbcAction {
         persistence.update(relation);
 
         // commit new version
-        Misc.commitRelation(item, relation, user);
+        Misc.commitRelationRevision(item, relation.getId(), user);
 
         // run monitor
         String absoluteUrl = "http://www.abclinuxu.cz" + relation.getUrl();

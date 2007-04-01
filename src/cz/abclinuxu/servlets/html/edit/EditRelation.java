@@ -422,7 +422,7 @@ public class EditRelation implements AbcAction {
             if (inset != null)
                 EditAttachment.removeAllAttachments(inset, env, user, request);
 
-            Misc.purgeRelationRevisions(relation);
+            Misc.purgeRelationRevisions(relation.getId());
         }
 
         runMonitor(relation,user);

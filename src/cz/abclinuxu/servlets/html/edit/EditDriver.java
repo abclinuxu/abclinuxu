@@ -136,7 +136,7 @@ public class EditDriver implements AbcAction {
         relation.getParent().addChildRelation(relation);
 
         // commit new version
-        Misc.commitRelation(driver, relation, user);
+        Misc.commitRelationRevision(driver, relation.getId(), user);
 
         FeedGenerator.updateDrivers();
         VariableFetcher.getInstance().refreshDrivers();
@@ -199,7 +199,7 @@ public class EditDriver implements AbcAction {
         persistence.update(driver);
 
         // commit new version
-        Misc.commitRelation(driver, relation, user);
+        Misc.commitRelationRevision(driver, relation.getId(), user);
 
         String url = relation.getUrl();
         if (url==null)
