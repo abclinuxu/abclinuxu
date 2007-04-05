@@ -183,6 +183,13 @@ public class Nursery implements Configurable {
     }
 
     /**
+     * Flushes the content of the cache.
+     */
+    public void clearCache() {
+        cache.clear();
+    }
+
+    /**
      * Stores children of specified GenericObject into cache.
      * @param object object
      * @param list list of object's child relations

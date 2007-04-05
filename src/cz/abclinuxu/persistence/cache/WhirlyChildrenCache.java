@@ -56,4 +56,8 @@ public class WhirlyChildrenCache implements ChildrenCache {
     public void put(GenericObject parent, List<Integer> childRelationIds) {
         cache.store(parent, childRelationIds);
     }
+
+    public void clear() {
+        cache.clear();
+    }
 }

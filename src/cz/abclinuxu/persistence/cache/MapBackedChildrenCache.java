@@ -64,6 +64,10 @@ public class MapBackedChildrenCache implements ChildrenCache, Configurable {
         map.put(parent, childRelationIds);
     }
 
+    public void clear() {
+        map.clear();
+    }
+
     /**
      * Callback used to configure your class from preferences.
      */

@@ -32,4 +32,5 @@ public interface ChildrenCache {
     List<Integer> get(GenericObject parent);
     List<Integer> remove(GenericObject parent);
     void put(GenericObject parent, List<Integer> childRelationIds);
+    void clear();
 }

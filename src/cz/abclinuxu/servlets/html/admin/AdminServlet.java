@@ -22,6 +22,7 @@ import cz.abclinuxu.data.Category;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.persistence.Nursery;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.init.AbcInit;
@@ -109,6 +110,7 @@ public class AdminServlet implements AbcAction {
      * Clears all caches.
      */
     private String clearCache(HttpServletRequest request, Map env) throws Exception {
+        Nursery.getInstance().clearCache();
         PersistenceFactory.getPersistance().clearCache();
         TemplateSelector.initialize(null);
         ConfigurationManager.reconfigureAll();
