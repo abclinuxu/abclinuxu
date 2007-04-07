@@ -5,7 +5,6 @@
 <#if ! USER?exists>
  <p>Pokud jste ${PROFILE.name}, <a href="${URL.noPrefix("/Profile?action=login")}">přihlašte se</a>
  a bude vám zobrazena vaše domovská stránka.</p>
-
 <#elseif USER.id==PROFILE.id>
  <h2>Moje domovská stránka</h2>
  <p>
@@ -20,44 +19,52 @@
  <a href="${URL.noPrefix("/Profile/"+PROFILE.id+"?action=myPage")}">Upravit</a>
 </#if>
 
-<#if TOOL.xpath(PROFILE,"/data/profile/photo")?exists>
- <#assign photo=TOOL.xpath(PROFILE,"/data/profile/photo")>
-<#else>
+<#assign photo = TOOL.xpath(PROFILE,"/data/profile/photo")?default("UNDEFINED")>
+<#if photo=="UNDEFINED">
  <#assign photo="/images/faces/default_"+TOOL.xpath(PROFILE,"/data/personal/sex")+".gif">
 </#if>
 <img src="${photo}" style="float: right; margin: 0.5em" alt="${PROFILE.name}">
 
 <h1>${PROFILE.name}</h1>
 
+<!-- sekce osobni udaje -->
+
 <#if PROFILE.nick?exists><p>Přezdívka: ${PROFILE.nick}</p></#if>
 
-<#if TOOL.xpath(PROFILE,"/data/profile/home_page")?exists>
-  <p>Moje domovská stránka: <a href="${TOOL.xpath(PROFILE,"/data/profile/home_page")}" rel="nofollow">
-  ${TOOL.xpath(PROFILE,"/data/profile/home_page")}</a></p>
+<#assign homePage = TOOL.xpath(PROFILE,"/data/profile/home_page")?default("UNDEFINED")>
+<#if homePage != "UNDEFINED">
+  <p>Moje domovská stránka: <a href="${homePage}" rel="nofollow">${homePage}</a></p>
 </#if>
 
 <#if TOOL.xpath(PROFILE,"/data/profile/about_myself")?exists>
  <p>O mně: ${TOOL.render(TOOL.element(PROFILE.data,"/data/profile/about_myself"),USER?if_exists)}</p>
 </#if>
 
-<#if TOOL.xpath(PROFILE,"/data/personal/birth_year")?exists>
- <p>Rok narození: ${TOOL.xpath(PROFILE,"/data/personal/birth_year")}</p>
+<#assign birth = TOOL.xpath(PROFILE,"/data/personal/birth_year")?default("UNDEFINED")>
+<#if birth != "UNDEFINED">
+ <p>Rok narození: ${birth}</p>
 </#if>
 
-<#if TOOL.xpath(PROFILE,"/data/personal/city")?exists>
- <p>Bydliště: ${TOOL.xpath(PROFILE,"/data/personal/city")}</p>
+<#assign city = TOOL.xpath(PROFILE,"/data/personal/city")?default("UNDEFINED")>
+<#if city != "UNDEFINED">
+ <p>Bydliště: ${city}</p>
 </#if>
 
-<#if TOOL.xpath(PROFILE,"/data/personal/area")?exists>
- <p>Kraj: ${TOOL.xpath(PROFILE,"/data/personal/area")}</p>
+<#assign area = TOOL.xpath(PROFILE,"/data/personal/area")?default("UNDEFINED")>
+<#if area != "UNDEFINED">
+ <p>Kraj: ${area}</p>
 </#if>
 
-<#if TOOL.xpath(PROFILE,"/data/personal/country")?exists>
- <p>Země: ${TOOL.xpath(PROFILE,"/data/personal/country")}</p>
+<#assign country = TOOL.xpath(PROFILE,"/data/personal/country")?default("UNDEFINED")>
+<#if country != "UNDEFINED">
+ <p>Země: ${country}</p>
 </#if>
 
-<#if TOOL.xpath(PROFILE,"/data/profile/linux_user_from_year")?exists>
- <p>Linux používám od roku: ${TOOL.xpath(PROFILE,"/data/profile/linux_user_from_year")}</p>
+<!-- sekce linux -->
+
+<#assign linuxUserFrom = TOOL.xpath(PROFILE,"/data/profile/linux_user_from_year")?default("UNDEFINED")>
+<#if linuxUserFrom != "UNDEFINED">
+ <p>Linux používám od roku: ${linuxUserFrom}</p>
 </#if>
 
 <#if TOOL.xpath(PROFILE,"/data/profile/distributions")?exists>
@@ -69,12 +76,32 @@
   </ul>
 </#if>
 
-<#if TOOL.xpath(PROFILE,"/data/personal/signature")?exists>
- <p>Patička: ${TOOL.xpath(PROFILE,"/data/personal/signature")}</p>
+<!-- sekce abclinuxu -->
+
+<#assign signature = TOOL.xpath(PROFILE,"/data/personal/signature")?default("UNDEFINED")>
+<#if signature != "UNDEFINED">
+ <p>Patička: ${signature}</p>
+</#if>
+
+<#assign registered = TOOL.xpath(PROFILE,"/data/system/registration_date")?default("UNDEFINED")>
+<p>
+    Datum registrace:
+    <#if registered != "UNDEFINED">
+        ${DATE.show(registered, "CZ_DMY")}
+    <#else>
+        starší než 12.7.2003
+    </#if>
+</p>
+
+<#assign score=PROFILE.getIntProperty("score")?default(-1)>
+<#if score != -1>
+    <p>
+        <a href="/faq/abclinuxu.cz/co-je-to-skore">Skóre</a>: ${score}
+    </p>
 </#if>
 
 <#if BLOG?exists>
-    Můj blog: <a href="/blog/${BLOG.subType}">${TOOL.xpath(BLOG,"//custom/title")?default("blog")}</a>
+    <p>Můj blog: <a href="/blog/${BLOG.subType}">${TOOL.xpath(BLOG,"//custom/title")?default("blog")}</a></p>
     <ul>
         <#list STORIES as relation>
             <#assign story=relation.child, url=TOOL.getUrlForBlogStory(BLOG.subType, story.created, relation.id)>
@@ -94,7 +121,7 @@
     </ul>
 </#if>
 
-<p><a href="/muj_obsah/${PROFILE.id}">Seznam příspěvků na abclinuxu.cz</a><br>
+<p><a href="/muj_obsah/${PROFILE.id}" rel="nofollow">Seznam příspěvků na abclinuxu.cz</a><br>
 (články, komentáře, dotazy, zprávičky, softwarové a hardwarové záznamy, pojmy ve slovníku a texty v učebnici)</p>
 <br>
 
