@@ -11,7 +11,7 @@ na 50&times;50 pixelů. Maximální velikost souboru je
 </p>
 
 <form action="${URL.noPrefix("/EditUser")}" method="POST" enctype="multipart/form-data">
-    <table width="100%" border=0 cellpadding=5>
+    <table class="siroka" border="0" cellpadding="5">
         <tr>
             <td class="required" width="120">Heslo</td>
             <td>

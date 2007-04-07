@@ -11,7 +11,7 @@
     Autor
     <#if name!="UNDEFINED">${name}</#if>
     <#if surname!="UNDEFINED">${surname}</#if>
-    <#if nickname!="UNDEFINED">(${surname})</#if>
+    <#if nickname!="UNDEFINED">(${nickname})</#if>
 </h1>
 
 <#if uid != 0><a href=/Profile/${uid}>Profil autora na abclinuxu</a></#if>
@@ -20,7 +20,7 @@
     <a href="${URL.noPrefix("/autori/edit?rid="+RELATION.id+"&amp;action=edit")}">Upravit</a>
     <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix=/autori")}">Smazat</a>
     <a href="${URL.noPrefix("/clanky/honorare?authorId="+RELATION.id)}">Honoráře</a>
-    <table border="0">
+    <table border="0" cellpadding="2" cellspacing="0">
         <#if TOOL.xpath(AUTHOR,"/data/birthNumber")?exists>
             <tr>
                 <td>Rodné číslo:</td><td>${TOOL.xpath(AUTHOR,"/data/birthNumber")}</td>

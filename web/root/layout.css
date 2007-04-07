@@ -856,7 +856,9 @@ table.swdetail {
 	clear: right;
 }
 
-.host .img-server { height: 90px }
+.host .img-header { float: right; }
+.host .img-server { height: 90px; }
+.host .prehled { clear: right; }
 .host .avail { font-weight: bold; }
 .host .price { font-weight: bold; }  /* crimson */
 .host .kontakt span { margin: 0 0.2em; }
