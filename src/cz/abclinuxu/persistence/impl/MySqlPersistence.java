@@ -1231,7 +1231,7 @@ public class MySqlPersistence implements Persistence {
 
                 syncGenericDataObjectFromRS(obj, rs);
                 if (obj instanceof Record && ((Record) obj).getType() == Record.DISCUSSION)
-                    loadComments((Record) obj);
+                    loadComments((Record) obj); // todo read it in single query
 
                 if ( ! PropertiesConfig.isSupported(obj))
                     objects.remove(id);
@@ -1241,7 +1241,7 @@ public class MySqlPersistence implements Persistence {
         }
 
         loadCommonObjectsProperties(objects, PersistenceMapping.getGenericObjectType(representant));
-        for (Iterator iter = objects.values().iterator(); iter.hasNext();) {
+        for (Iterator iter = objs.iterator(); iter.hasNext();) {
             obj = (GenericDataObject) iter.next();
             cache.store(obj);
         }
