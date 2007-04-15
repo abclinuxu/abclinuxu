@@ -6,13 +6,13 @@
    name="Portal ABC Linuxu"
    description="www.abclinuxu.cz - tady je tucnakum hej"
    method="GET"
-   action="http://www.abclinuxu.cz/Search"
-   searchForm="http://www.abclinuxu.cz/Search"
+   action="http://www.abclinuxu.cz/hledani"
+   searchForm="http://www.abclinuxu.cz/hledani"
    queryEncoding="UTF-8"
    queryCharset="UTF-8"
 >
 
-<input name="query" user>
+<input name="dotaz" user>
 <input name="sourceid" value="mozilla-search">
 
 <interpret

@@ -5,7 +5,7 @@
 <p>
     Chystáte se vložit položku do databáze <b>zodpovězených</b> otázek.
     Pokud potřebujete poradit, jste na špatné stránce.
-    <a href="/Search">Prohledejte</a> nejdříve naši rozsáhlou databázi,
+    <a href="/hledani">Prohledejte</a> nejdříve naši rozsáhlou databázi,
     a pokud odpověď nenajdete, položte svůj dotaz do <a href="/diskuse.jsp">diskusního fóra</a>.
     Tento formulář je určen zkušenějším uživatelům, kteří se chtějí
     podělit o řešení otázky, která bývá často kladena v diskusním

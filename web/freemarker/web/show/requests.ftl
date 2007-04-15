@@ -16,7 +16,7 @@ dalších námětů. Ne všechny náměty se stanou anketami, protože námětů
 moc. Z vašich návrhů vybíráme ty nejzajímavější.</p>
 
 <p>Potřebujete-li poradit s Linuxem, zkuste si nejdříve
-<a href="/Search">najít</a> odpověď sami a nenajdete-li řešení,
+<a href="/hledani">najít</a> odpověď sami a nenajdete-li řešení,
 požádejte o pomoc v <a href="/diskuse.jsp">diskusním fóru</a>.
 Tento formulář však pro tyto účely neslouží, a proto bez odpovědi
 <u>smažeme</u> jakékoliv požadavky, které nesouvisí s chodem portálu.</p>

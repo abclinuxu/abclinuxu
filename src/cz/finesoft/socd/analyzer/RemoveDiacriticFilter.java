@@ -28,7 +28,7 @@ public final class RemoveDiacriticFilter extends TokenFilter {
     private static DiacriticRemover dr = DiacriticRemover.getInstance();
 
     public RemoveDiacriticFilter(TokenStream in) {
-        input = in;
+        super(in);
     }
 
     public final Token next() throws java.io.IOException {

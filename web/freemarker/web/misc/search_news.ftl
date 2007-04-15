@@ -18,12 +18,14 @@
 
 <h1>Hledání</h1>
 
-<form action="/Search" method="GET">
-  <p><input type="text" name="query" value="${QUERY?if_exists?html}" size="50" tabindex="1">
-  <input type="submit" value="Hledej" tabindex="2"></p>
+<form action="/zpravicky/hledani" method="GET">
+  <p>
+      <input type="text" name="dotaz" value="${QUERY?if_exists?html}" size="50" tabindex="1">
+      <input type="submit" value="Hledej" tabindex="2">
+  </p>
 
   <p><b>Klíčová slova:</b> AND + OR NOT - ( ) "fráze z více slov"</p>
-  <#if ERRORS.query?exists><div class="error">${ERRORS.query}</div></#if>
+  <#if ERRORS.dotaz?exists><div class="error">${ERRORS.dotaz}</div></#if>
 
   <table>
    <#list CATEGORIES as category>
@@ -37,6 +39,7 @@
   </table>
  <input type="hidden" name="parent" value="42932">
  <input type="hidden" name="type" value="zpravicka">
+</form>
 
 <#if RESULT?exists>
 
@@ -47,14 +50,14 @@
     <#list RESULT.data as doc>
         <div class="search_result">
             <!--m-->
-            <a href="${doc.url}" class="search_title">${doc.title?default(doc.url)}</a>
+            <a href="${doc.url}" class="search_title">${doc.titulek?default(doc.url)}</a>
             <!--n-->
-            <#if doc.fragments?exists>
-                <p class="search_fragments">${doc.fragments}</p>
+            <#if doc.highlightedText?exists>
+                <p class="search_fragments">${doc.highlightedText}</p>
             </#if>
             <p class="search_details">
                 Zprávička,
-                vytvořena: ${DATE.show(doc.datum_vytvoreni,"SMART")},
+                vytvořena: ${DATE.show(doc.created,"SMART_DMY")},
                 ${doc.velikost_obsahu} znaků
             </p>
         </div>
@@ -77,7 +80,5 @@
     </#if>
 
 </#if>
-
-</form>
 
 <#include "../footer.ftl">

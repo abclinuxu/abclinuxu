@@ -51,13 +51,13 @@
   </div>
   <div id="zh-logo" class="zh-box"><a href="/"></a></div>
   <div id="zh-hledani" class="zh-box">
-    <form action="/Search" method="get">
+    <form action="/hledani" method="get">
      <div>
-      <input type="text" class="text" name="query">
+      <input type="text" class="text" name="dotaz">
       <input class="button" type="submit" value="Hledej">
      </div>
     </form>
-    <a href="/Search?advancedMode=true">Rozšířené hledání</a>
+    <a href="/hledani?advancedMode=true">Rozšířené hledání</a>
   </div>
 </div>
 <div class="cistic"></div>

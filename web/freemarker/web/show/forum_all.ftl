@@ -15,10 +15,10 @@ Teprve když neuspějete, položte nový dotaz.</p>
 
 <ul>
     <li>
-        <form action="/Search" method="get">
+        <form action="/hledani" method="get">
          <div>
-          <input type="text" class="text" name="query">
-          <input type="hidden" name="type" value="otazka">
+          <input type="text" class="text" name="dotaz">
+          <input type="hidden" name="typ" value="poradna">
           <input class="button" type="submit" value="prohledej poradnu">
          </div>
         </form>

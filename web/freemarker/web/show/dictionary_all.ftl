@@ -6,7 +6,7 @@
     Výkladový slovník našeho portálu je projekt, jenž se snaží českým
     a slovenským uživatelům přiblížit Linux. Málokterý nováček se začne
     s tímto operačním systémem seznamovat tak, že si o něm nejdříve přečte
-    <a href="/Search?query=recenze+kniha+cena&advancedMode=true&type=clanek">nějakou knihu</a>
+    <a href="/hledani?dotaz=recenze+kniha+cena&advancedMode=true&type=clanek">nějakou knihu</a>
     nebo <a href="/ucebnice">učebnici</a>. Pokud nemá žádné zkušenosti
     s jinými operačními systémy odvozenými od Unixu, velmi rychle si připadá ztracený,
     protože se všude používají pojmy a slova, která nechápe.
@@ -29,10 +29,10 @@
 </p>
 
 
-<form action="/Search" method="GET">
-    <input type="text" name="query" size="30" tabindex="1">
+<form action="/hledani" method="GET">
+    <input type="text" name="dotaz" size="30" tabindex="1">
+    <input type="hidden" name="typ" value="pojem">
     <input type="submit" value="Hledej ve slovníku" class="button" tabindex="2">
-    <input type="hidden" name="type" value="pojem">
 </form>
 
 <p class="dict-abc">

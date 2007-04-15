@@ -9,7 +9,7 @@
         Přečtěte si článek <a href="/clanky/navody/jak-resit-problemy">Jak řešit problémy</a>.
     </li>
     <li>
-        Zkusili jste <a href="/Search" title="Vyhledávání">hledání</a>
+        Zkusili jste <a href="/hledani" title="Vyhledávání">hledání</a>
         a prošli jste si <a href="/faq" title="FAQ Linux">Často kladené otázky</a> (FAQ)?
     </li>
     <li>

@@ -47,26 +47,35 @@
                                 <entry key="stop.words.file" value="@DEPLOY_ABCLINUXU@/WEB-INF/conf/stop_words.txt"/>
                             </map>
                         </node>
+                        <node name="AbcQueryParser">
+                            <map>
+                                <entry key="use.multifieldqueryparser" value="true" />
+                                <entry key="boost.title" value="1.0"/>
+                                <entry key="boost.content" value="1.0"/>
+                            </map>
+                        </node>
                         <node name="CreateIndex">
                             <map>
                                 <entry key="path" value="@DEPLOY_ABCLINUXU@/WEB-INF/index/"/>
                                 <entry key="last.run.file" value="last_run.txt"/>
+                                <entry key="indexing.page.size" value="50" />
                                 <entry key="merge.factor" value="100" />
-                                <entry key="min.merge.docs" value="10" />
                                 <!--entry key="max.merge.docs" value="10000" /-->
                                 <!--entry key="max.field.length" value="10000" /-->
-                                <entry key="boost.hardware" value="1.5" />
-                                <entry key="boost.software" value="1.9" />
                                 <entry key="boost.article" value="1.5" />
-                                <entry key="boost.news" value="1.0" />
-                                <entry key="boost.question" value="1.3" />
+                                <entry key="boost.bazaar" value="1.0"/>
+                                <entry key="boost.blog" value="0.5"/>
+                                <entry key="boost.dictionary" value="1.0"/>
                                 <entry key="boost.discussion" value="0.8" />
+                                <entry key="boost.document" value="1.9" />
                                 <entry key="boost.driver" value="1.0" />
-                                <entry key="boost.blog" value="0.5" />
                                 <entry key="boost.faq" value="1.5" />
-                                <entry key="boost.dictionary" value="1.0" />
-                                <entry key="boost.section" value="1.0" />
+                                <entry key="boost.hardware" value="1.5"/>
+                                <entry key="boost.news" value="1.0"/>
                                 <entry key="boost.poll" value="0.5" />
+                                <entry key="boost.question" value="1.3"/>
+                                <entry key="boost.section" value="1.0"/>
+                                <entry key="boost.software" value="1.9"/>
                             </map>
                         </node>
                     </node>

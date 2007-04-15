@@ -20,8 +20,8 @@ package cz.abclinuxu.utils.search;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.DateTools;
 import cz.abclinuxu.utils.freemarker.Tools;
-import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.data.GenericObject;
 import cz.abclinuxu.persistence.PersistenceMapping;
 
@@ -32,20 +32,21 @@ import java.util.Date;
  * You must set URL before you get Document.
  */
 public class MyDocument {
-    public static final String TYPE_CATEGORY = "sekce";
-    public static final String TYPE_HARDWARE = "hardware";
-    public static final String TYPE_SOFTWARE = "software";
-    public static final String TYPE_DISCUSSION = "diskuse";
-    // todo pouzit, asi
-    public static final String TYPE_QUESTION = "otazka";
-    public static final String TYPE_DRIVER = "ovladac";
     public static final String TYPE_ARTICLE = "clanek";
+    public static final String TYPE_BAZAAR = "bazar";
+    public static final String TYPE_BLOG = "blog";
+    public static final String TYPE_CATEGORY = "sekce";
+    public static final String TYPE_DICTIONARY = "pojem";
+    public static final String TYPE_DISCUSSION = "diskuse";
+    public static final String TYPE_DOCUMENT = "dokument";
+    public static final String TYPE_DRIVER = "ovladac";
+    public static final String TYPE_FAQ = "faq";
+    public static final String TYPE_HARDWARE = "hardware";
     public static final String TYPE_NEWS = "zpravicka";
     public static final String TYPE_POLL = "anketa";
-    public static final String TYPE_DICTIONARY = "pojem";
-    public static final String TYPE_FAQ = "faq";
-    public static final String TYPE_BLOG = "blog";
-    public static final int ALL_TYPES_COUNT = 9;
+    public static final String TYPE_QUESTION = "poradna";
+    public static final String TYPE_SOFTWARE = "software";
+    public static final int ALL_TYPES_COUNT = 14;
 
     /** Object's text to be tokenized and indexed. */
     public static final String CONTENT = "obsah";
@@ -54,9 +55,9 @@ public class MyDocument {
     /** URL, where to display the object. */
     public static final String VALUE_URL = "url";
     /** User friendly title. */
-    public static final String TITLE = "title";
+    public static final String TITLE = "titulek";
     /** Id of parent object. */
-    public static final String PARENT = "parent";
+    public static final String PARENT = "predek";
     /** class type and id of object, e.g. P12345 */
     public static final String CID = "cid";
     /** News category */
@@ -69,10 +70,6 @@ public class MyDocument {
     public static final String CREATED = "vytvoreno";
     /** time of last update of object */
     public static final String UPDATED = "zmeneno";
-    /** stored value in ISO format of time when object was created */
-    public static final String VALUE_CREATED = "datum_vytvoreni";
-    /** stored value in ISO format of time when object was modified last time */
-    public static final String VALUE_UPDATED = "datum_zmeny";
     /** stored value - number of characters of indexed content */
     public static final String VALUE_SIZE = "velikost_obsahu";
 
@@ -80,29 +77,36 @@ public class MyDocument {
 
     /**
      * Creates Documents and fills it with String to be indexed.
+     * @param title title of the document
+     * @param content content of the document
+     * @param concatenate whether to append title to content
      */
-    public MyDocument(String content) {
+    public MyDocument(String title, String content, boolean concatenate) {
         document = new Document();
-        document.add(Field.Text(CONTENT, content));
-        document.add(Field.UnIndexed(VALUE_SIZE, Integer.toString(content.length())));
+
+        if (title == null)
+            title = "";
+        else
+            title = Tools.removeTags(title);
+        Field field = new Field(TITLE, title, Field.Store.YES, Field.Index.TOKENIZED);
+        document.removeField(TITLE);
+        document.add(field);
+
+        if (content == null)
+            content = "";
+        if (concatenate)
+            content = title + " " + content;
+
+        content = Tools.removeTags(content);
+        document.add(new Field(CONTENT, content, Field.Store.YES, Field.Index.TOKENIZED));
+        document.add(new Field(VALUE_SIZE, Integer.toString(content.length()), Field.Store.YES, Field.Index.NO));
     }
 
     /**
      * Associates URL with Document.
      */
     public Field setURL(String url) {
-        Field field = Field.UnIndexed(VALUE_URL,url);
-        document.add(field);
-        return field;
-    }
-
-    /**
-     * Sets title for the Document.
-     */
-    public Field setTitle(String title) {
-        title = Tools.removeTags(title);
-        Field field = Field.Text(TITLE,title);
-        document.removeField(TITLE);
+        Field field = new Field(VALUE_URL, url, Field.Store.YES, Field.Index.NO);
         document.add(field);
         return field;
     }
@@ -111,7 +115,7 @@ public class MyDocument {
      * Sets type of the Document.
      */
     public Field setType(String type) {
-        Field field = Field.Keyword(TYPE,type);
+        Field field = new Field(TYPE, type, Field.Store.YES, Field.Index.UN_TOKENIZED);
         document.add(field);
         return field;
     }
@@ -120,7 +124,7 @@ public class MyDocument {
      * Sets id of parent object.
      */
     public Field setParent(int parent) {
-        Field field = Field.Keyword(PARENT, Integer.toString(parent));
+        Field field = new Field(PARENT, Integer.toString(parent), Field.Store.YES, Field.Index.UN_TOKENIZED);
         document.add(field);
         return field;
     }
@@ -129,7 +133,7 @@ public class MyDocument {
      * Sets class type and object id for fast retrieval of specific object from index
      */
     public Field setCid(String type, int id) {
-        Field field = Field.Keyword(CID, type + id);
+        Field field = new Field(CID, type + id, Field.Store.YES, Field.Index.UN_TOKENIZED);
         document.add(field);
         return field;
     }
@@ -140,7 +144,7 @@ public class MyDocument {
      */
     public Field setCid(GenericObject obj) {
         String type = PersistenceMapping.getGenericObjectType(obj);
-        Field field = Field.Keyword(CID, type + obj.getId());
+        Field field = new Field(CID, type + obj.getId(), Field.Store.YES, Field.Index.UN_TOKENIZED);
         document.add(field);
         return field;
     }
@@ -149,7 +153,7 @@ public class MyDocument {
      * Sets id of parent object.
      */
     public Field setNewsCategory(String category) {
-        Field field = Field.Keyword(NEWS_CATEGORY, category);
+        Field field = new Field(NEWS_CATEGORY, category, Field.Store.YES, Field.Index.UN_TOKENIZED);
         document.add(field);
         return field;
     }
@@ -158,7 +162,7 @@ public class MyDocument {
      * Sets whether the question was solved.
      */
     public Field setQuestionSolved(boolean solved) {
-        Field field = Field.Keyword(QUESTION_SOLVED, solved? "ano":"ne");
+        Field field = new Field(QUESTION_SOLVED, solved? "ano":"ne", Field.Store.YES, Field.Index.UN_TOKENIZED);
         document.add(field);
         return field;
     }
@@ -167,16 +171,14 @@ public class MyDocument {
      * Sets numkber of replies in discussion.
      */
     public Field setNumberOfReplies(int replies) {
-        Field field = Field.Keyword(NUMBER_OF_REPLIES, Integer.toString(replies));
-        document.add(field);
-        return field;
+        return setNumberOfReplies(Integer.toString(replies));
     }
 
     /**
      * Sets numkber of replies in discussion.
      */
     public Field setNumberOfReplies(String replies) {
-        Field field = Field.Keyword(NUMBER_OF_REPLIES, replies);
+        Field field = new Field(NUMBER_OF_REPLIES, replies, Field.Store.YES, Field.Index.UN_TOKENIZED);
         document.add(field);
         return field;
     }
@@ -185,10 +187,8 @@ public class MyDocument {
      * Sets time when object was created.
      */
     public Field setCreated(Date date) {
-        String s = Constants.isoFormat.format(date); // 2006-07-31 12:10
-        String t = Constants.isoSearchFormat.format(date); // 20060731
-        document.add(Field.UnIndexed(VALUE_CREATED, s));
-        Field field = Field.Keyword(CREATED, t);
+        String t = DateTools.dateToString(date, DateTools.Resolution.DAY); // 20060731
+        Field field = new Field(CREATED, t, Field.Store.YES, Field.Index.UN_TOKENIZED);
         document.add(field);
         return field;
     }
@@ -197,10 +197,8 @@ public class MyDocument {
      * Sets last time when object was updated.
      */
     public Field setUpdated(Date date) {
-        String s = Constants.isoFormat.format(date); // 2006-07-31 12:10
-        String t = Constants.isoSearchFormat.format(date); // 20060731
-        document.add(Field.UnIndexed(VALUE_UPDATED, s));
-        Field field = Field.Keyword(UPDATED, t);
+        String t = DateTools.dateToString(date, DateTools.Resolution.DAY); // 20060731
+        Field field = new Field(UPDATED, t, Field.Store.YES, Field.Index.UN_TOKENIZED);
         document.add(field);
         return field;
     }

@@ -37,11 +37,11 @@
 
  <ul>
   <li>
-   <form action="/Search" method="GET">
-    <input type="text" name="query" size="30" tabindex="1">
+   <form action="/hledani" method="GET">
+    <input type="text" name="dotaz" size="30" tabindex="1">
     <input type="submit" value="Prohledej toto fórum" tabindex="2">
     <input type="hidden" name="parent" value="${RELATION.id}">
-    <input type="hidden" name="type" value="otazka">
+    <input type="hidden" name="typ" value="poradna">
    </form>
   <li><a href="${URL.make("/forum/EditDiscussion?action=addQuez&amp;rid="+RELATION.id)}">Položit nový dotaz</a>
   <#if (DIZS.currentPage.row > 0) >

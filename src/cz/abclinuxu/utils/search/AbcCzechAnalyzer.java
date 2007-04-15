@@ -18,18 +18,22 @@
  */
 package cz.abclinuxu.utils.search;
 
-import org.apache.lucene.analysis.*;
-import org.apache.lucene.analysis.standard.StandardTokenizer;
-import org.apache.lucene.analysis.de.WordlistLoader;
 import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.ConfigurationManager;
 import cz.finesoft.socd.analyzer.RemoveDiacriticsReader;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.LowerCaseFilter;
+import org.apache.lucene.analysis.StopFilter;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.WordlistLoader;
+import org.apache.lucene.analysis.standard.StandardTokenizer;
 
-import java.util.prefs.Preferences;
-import java.util.Hashtable;
-import java.io.Reader;
+import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
+import java.util.HashSet;
+import java.util.prefs.Preferences;
 
 /**
  * Lucene Analyzer, that strips diacritics and uses LowerCaseFilter and custom StopFilter.
@@ -39,7 +43,7 @@ public class AbcCzechAnalyzer extends Analyzer implements Configurable {
 
     public static final String PREF_STOP_WORDS_FILE = "stop.words.file";
 
-    static Hashtable stopTable;
+    static HashSet stopTable;
 
     static {
         try {
@@ -60,10 +64,11 @@ public class AbcCzechAnalyzer extends Analyzer implements Configurable {
     }
 
     public void configure(Preferences prefs) throws ConfigurationException {
-        String file = prefs.get(PREF_STOP_WORDS_FILE,null);
-        log.info("Loading stop words from file '"+file+"'.");
+        String fileName = prefs.get(PREF_STOP_WORDS_FILE,null);
+        log.info("Loading stop words from file '"+fileName+"'.");
         try {
-	        stopTable = WordlistLoader.getWordtable(file);
+            File file = new File(fileName);
+	        stopTable = WordlistLoader.getWordSet(file);
         } catch (IOException e) {
             throw new ConfigurationException(e);
         }

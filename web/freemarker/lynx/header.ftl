@@ -25,9 +25,9 @@ ${DATE.show("CZ_FULL")}
   <a href="${URL.noPrefix("/EditUser?action=register")}">Registrace</a>
  </#if>
 
- <form action="/Search" method="post">
+ <form action="/hledani" method="post">
   <b>Hledávání</b>
-  <input type="text" name="query" size="14">
+  <input type="text" name="dotaz" size="14">
   <input type="submit" value="Hledej">
   <a href="/doc/napoveda/hledani">Nápověda</a>
  </form>

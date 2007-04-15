@@ -745,7 +745,7 @@ public class Tools implements Configurable {
      * Consequent genericObject.getChildren() runs much faster.
      * @param relations list of initialized relations
      */
-    public static void initializeChildren(List relations) {
+    public static void initializeChildren(List<Relation> relations) {
         List children = new ArrayList(relations.size());
         for (Iterator iter = relations.iterator(); iter.hasNext();) {
             Relation relation = (Relation) iter.next();
@@ -1620,6 +1620,59 @@ public class Tools implements Configurable {
             }
         }
         syncList(authors);
+    }
+
+    /**
+     * Initializes children for list of articles. It always loads authors and discussion headers.
+     * If articleContent is set to true, then article records are loaded too. If commentsContent
+     * is set to true, then even discussion records are loaded from the persistance.
+     * @param articles initialized relations
+     */
+    public static void initializeArticles(List<Relation> articles, boolean articleContent, boolean commentsContent) {
+        initializeChildren(articles);
+
+        Set<Relation> authors = new HashSet<Relation>(articles.size() + 3);
+        List<Relation> fetchRelations = new ArrayList<Relation>(articles.size() * 3);
+        List<Relation> discussionRelations = null;
+        if (commentsContent)
+            discussionRelations = new ArrayList<Relation>(articles.size());
+
+        for (Relation articleRelation : articles) {
+            List<Relation> children = articleRelation.getChild().getChildren();
+            for (Relation articleChild : children) {
+                if (articleChild.getChild() instanceof Item) { // fetch items, there will be discussion header
+                    fetchRelations.add(articleChild);
+                    if (commentsContent)
+                        discussionRelations.add(articleChild);
+                }
+                if (articleContent && articleChild.getChild() instanceof Record) // fetch article content
+                    fetchRelations.add(articleChild);
+            }
+
+            Item article = (Item) articleRelation.getChild();
+            Set<String> relationIds = article.getProperty(Constants.PROPERTY_AUTHOR);
+            for (String id : relationIds) {
+                int rid = Integer.parseInt(id);
+                authors.add(new Relation(rid));
+            }
+        }
+
+        fetchRelations.addAll(authors);
+        syncList(fetchRelations);
+
+        fetchRelations.clear();
+        if (commentsContent) {
+            initializeChildren(discussionRelations);
+            for (Relation dizRelation : discussionRelations) {
+                if ( ! (dizRelation.getChild() instanceof Item))
+                    continue;
+                Item item = (Item) dizRelation.getChild();
+                if (item.getType() != Item.DISCUSSION)
+                    continue;
+                fetchRelations.addAll(item.getChildren()); // fetch record relations with comments
+            }
+            syncList(fetchRelations);
+        }
     }
 
     /**

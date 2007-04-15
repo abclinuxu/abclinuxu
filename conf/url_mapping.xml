@@ -9,7 +9,7 @@
             <action>cz.abclinuxu.servlets.html.view.ShowObject</action>
         </mapping>
         <mapping>
-            <pattern>^/Search</pattern>
+            <pattern>^/hledani</pattern>
             <action>cz.abclinuxu.servlets.html.view.Search</action>
         </mapping>
         <mapping>
@@ -23,6 +23,10 @@
         <mapping>
             <pattern>^/zpravicky/csv</pattern>
             <action>cz.abclinuxu.servlets.html.various.NewsCSV</action>
+        </mapping>
+        <mapping>
+            <pattern>^/zpravicky/hledani</pattern>
+            <action>cz.abclinuxu.servlets.html.view.Search</action>
         </mapping>
         <mapping>
             <pattern>^/zpravicky[/]?$</pattern>

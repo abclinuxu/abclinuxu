@@ -21,8 +21,10 @@ package cz.abclinuxu.servlets.html.view;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.ServletUtils;
+import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.utils.Misc;
+import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.utils.news.NewsCategories;
 import cz.abclinuxu.utils.news.NewsCategory;
@@ -31,7 +33,7 @@ import cz.abclinuxu.utils.search.CreateIndex;
 import cz.abclinuxu.utils.search.AbcCzechAnalyzer;
 import cz.abclinuxu.utils.search.AbcQueryParser;
 import cz.abclinuxu.utils.search.MyDocument;
-import cz.abclinuxu.data.User;
+import cz.abclinuxu.data.view.SearchResult;
 import cz.abclinuxu.persistence.SQLTool;
 import org.apache.lucene.search.*;
 import org.apache.lucene.search.highlight.Highlighter;
@@ -39,16 +41,16 @@ import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.analysis.TokenStream;
-import org.dom4j.Node;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.io.StringReader;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * Performs search across the data.
@@ -69,11 +71,13 @@ public class Search implements AbcAction {
     /** number of milliseconds that shows how long search took */
     public static final String VAR_SEARCH_TIME = "SEARCH_TIME";
     public static final String VAR_NEWS_CATEGORIES = "CATEGORIES";
+    /** current url with all parameters except temporary or paging */
+    public static final String VAR_CURRENT_URL = "CURRENT_URL";
 
     /** expression to be searched */
-    public static final String PARAM_QUERY = "query";
+    public static final String PARAM_QUERY = "dotaz";
     /** type of object to search */
-    public static final String PARAM_TYPE = "type";
+    public static final String PARAM_TYPE = "typ";
     /** n-th oldest object, from where to display */
     public static final String PARAM_FROM = "from";
     /** how many objects to display */
@@ -94,8 +98,8 @@ public class Search implements AbcAction {
     public static String performSearch(HttpServletRequest request, Map env) throws Exception {
         boolean initIndexReader = indexReader == null, lastRunFileMissing = false;
         Map params = (Map) env.get(Constants.VAR_PARAMS);
-        int from = getFrom(params);
-        int count = getPageSize(params, env);
+        int from = Misc.parseInt((String) params.get(PARAM_FROM), 0);
+        int count = Misc.getPageSize(AbcConfig.getSearchResultsCount(), 100, env, "/data/settings/found_size");
 
         File file = CreateIndex.getLastRunFile();
         if (! file.exists()) {
@@ -111,12 +115,15 @@ public class Search implements AbcAction {
 
         Types types = new Types(params.get(PARAM_TYPE));
         env.put(VAR_TYPES, types);
-        boolean onlyNews = types.size()==1 && types.isNews();
+        String uri = (String) env.get(Constants.VAR_REQUEST_URI);
+        boolean onlyNews = uri.startsWith(UrlUtils.PREFIX_NEWS);
         NewsCategoriesSet newsCategoriesSet = getNewsCategories(params);
+        String baseUrl = getCurrentUrl(onlyNews, params);
+        env.put(VAR_CURRENT_URL, baseUrl);
 
         String queryString = (String) params.get(PARAM_QUERY);
         if ( queryString == null || queryString.length()==0 )
-            return choosePage(onlyNews, request, env, newsCategoriesSet);
+            return choosePage(onlyNews, newsCategoriesSet, request, env);
         env.put(VAR_QUERY,queryString);
 
         long start = System.currentTimeMillis(), end;
@@ -125,11 +132,11 @@ public class Search implements AbcAction {
         try {
             query = AbcQueryParser.parse(queryString, analyzer, types, newsCategoriesSet);
             query = AbcQueryParser.addParentToQuery((String)params.get(PARAM_PARENT), query);
-            if (from == 0) // user clicked on Next page of the result
+            if (params.get(PARAM_FROM) == null) // user is on the first page of the result
                 logSearch(queryString);
         } catch (ParseException e) {
             ServletUtils.addError(PARAM_QUERY, "Hledaný řetězec obsahuje chybu!", env, null);
-            return choosePage(onlyNews, request, env, newsCategoriesSet);
+            return choosePage(onlyNews, newsCategoriesSet, request, env);
         }
 
         try {
@@ -145,17 +152,22 @@ public class Search implements AbcAction {
             SimpleHTMLFormatter formatter = new SimpleHTMLFormatter("<span class=\"highlight\">", "</span>");
             Highlighter highlighter = new Highlighter(formatter, new QueryScorer(query));
 
-            List list = new ArrayList(count);
+            List<SearchResult> list = new ArrayList<SearchResult>(count);
             int total = hits.length();
+            SearchResult foundItem;
             for ( int i = from, j = 0; i < total && j < count; i++, j++ ) {
                 Document doc = hits.doc(i);
-                String text = hits.doc(i).get(MyDocument.CONTENT);
+                // todo bug #196
+                String text = doc.get(MyDocument.TITLE) + " " + doc.get(MyDocument.CONTENT);
                 TokenStream tokenStream = analyzer.tokenStream(MyDocument.CONTENT, new StringReader(text));
-                String result = highlighter.getBestFragments(tokenStream, text, 3, "...");
-                doc.add(Field.UnIndexed("fragments", result));
-                list.add(doc);
+                String fragment = highlighter.getBestFragments(tokenStream, text, 3, "...");
+
+                foundItem = new SearchResult(doc);
+                foundItem.setHighlightedText(fragment);
+                list.add(foundItem);
             }
 
+//            end = System.currentTimeMillis();
             env.put(VAR_SEARCH_TIME, end - start);
 
             Paging paging = new Paging(list,from,count,total);
@@ -167,10 +179,10 @@ public class Search implements AbcAction {
                 ServletUtils.addError(PARAM_QUERY,"Došlo k chybě při hledání. Kontaktujte prosím správce.",env,null);
             else
                 ServletUtils.addError(PARAM_QUERY,"Nemohu provést dané hledání. Zkuste zadat jiný řetězec.",env,null);
-            return choosePage(onlyNews, request, env, newsCategoriesSet);
+            return choosePage(onlyNews, newsCategoriesSet, request, env);
         }
 
-        return choosePage(onlyNews, request, env, newsCategoriesSet);
+        return choosePage(onlyNews, newsCategoriesSet, request, env);
     }
 
     /**
@@ -182,7 +194,44 @@ public class Search implements AbcAction {
         sqlTool.recordSearchedQuery(query.toLowerCase());
     }
 
-    private static String choosePage(boolean displayNews, HttpServletRequest request, Map env, NewsCategoriesSet newsCategories) throws Exception {
+    /**
+     * Creates current URL without information about current page.
+     * @param news whether the current url is serach news
+     * @param params
+     * @return absolute url (without host)
+     */
+    private static String getCurrentUrl(boolean news, Map params) {
+        StringBuffer sb = new StringBuffer();
+        if (news)
+            sb.append(UrlUtils.PREFIX_NEWS);
+        sb.append("/hledani");
+        boolean asterisk = true;
+        for (Iterator iter = params.keySet().iterator(); iter.hasNext();) {
+            String param = (String) iter.next();
+            if (PARAM_FROM.equals(param))
+                continue;
+
+            List values = Tools.asList(params.get(param));
+            for (Iterator iterValues = values.iterator(); iterValues.hasNext();) {
+                String value = (String) iterValues.next();
+                if (asterisk) {
+                    asterisk = false;
+                    sb.append('?');
+                } else
+                    sb.append('&');
+
+                try {
+                    value = URLEncoder.encode(value, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    log.warn(e, e);
+                }
+                sb.append(param).append('=').append(value);
+            }
+        }
+        return sb.toString();
+    }
+
+    private static String choosePage(boolean displayNews, NewsCategoriesSet newsCategories, HttpServletRequest request, Map env) throws Exception {
         if (displayNews) {
             env.put(VAR_NEWS_CATEGORIES, newsCategories);
             return FMTemplateSelector.select("Search", "news", env, request);
@@ -194,55 +243,12 @@ public class Search implements AbcAction {
      * Converts selected categories to list.
      */
     private static List getSelectedCategories(Map params) {
-        Object o = params.get(PARAM_CATEGORY);
-        if (o==null)
-            return Collections.EMPTY_LIST;
-        if (o instanceof List)
-            return (List) o;
-        List list = new ArrayList(1);
-        list.add(o);
-        return list;
+        return Tools.asList(params.get(PARAM_CATEGORY));
     }
 
     public static NewsCategoriesSet getNewsCategories(Map params) {
         List selected = getSelectedCategories(params);
         return new NewsCategoriesSet(selected);
-    }
-
-    /**
-     * Extracts value of FROM encoded in parameter name.
-     */
-    private static int getFrom(Map params) {
-        for ( Iterator iter = params.keySet().iterator(); iter.hasNext(); ) {
-            String param = (String) iter.next();
-            if (!param.startsWith(PARAM_FROM)) continue;
-            if (param.length()<6) continue;
-            return Misc.parseInt(param.substring(5), 0);
-        }
-        return 0;
-    }
-
-    /**
-     * Gets page size for found documents. Paramaters take precendence over user settings.
-     * @return page size for found documents.
-     */
-    private static int getPageSize(Map params, Map env) {
-        int count = -1;
-        String str = (String) params.get(PARAM_COUNT);
-        if (str!=null && str.length()>0)
-            count = Misc.parseInt(str, -1);
-
-        User user = (User) env.get(Constants.VAR_USER);
-        if (user!=null && count<0) {
-            Node node = user.getData().selectSingleNode("/data/settings/found_size");
-            if ( node!=null )
-                count = Misc.parseInt(node.getText(),-1);
-        }
-
-        if (count==-1)
-            return AbcConfig.getSearchResultsCount();
-        else
-            return Misc.limit(count, 5, 100);
     }
 
     public static class NewsCategoriesSet extends AbstractCollection {
@@ -312,16 +318,7 @@ public class Search implements AbcAction {
         Map map = new HashMap();
 
         public Types(Object param) {
-            if (param==null)
-                return;
-
-            List params;
-            if (param instanceof String) {
-                params = new ArrayList(1);
-                params.add(param);
-            } else
-                params = (List) param;
-
+            List params = Tools.asList(param);
             for ( Iterator iter = params.iterator(); iter.hasNext(); ) {
                 String s = (String) iter.next();
                 map.put(s, Boolean.TRUE);
@@ -336,10 +333,58 @@ public class Search implements AbcAction {
             return map.size()==MyDocument.ALL_TYPES_COUNT;
         }
 
+        public boolean isArticle() {
+            if (map.size() == 0)
+                return true;
+            return map.containsKey(MyDocument.TYPE_ARTICLE);
+        }
+
+        public boolean isBlog() {
+            if (map.size() == 0)
+                return true;
+            return map.containsKey(MyDocument.TYPE_BLOG);
+        }
+
+        public boolean isBazaar() {
+            if (map.size() == 0)
+                return true;
+            return map.containsKey(MyDocument.TYPE_BAZAAR);
+        }
+
         public boolean isSection() {
             if ( map.size()==0 )
                 return true;
             return map.containsKey(MyDocument.TYPE_CATEGORY);
+        }
+
+        public boolean isDictionary() {
+            if (map.size() == 0)
+                return true;
+            return map.containsKey(MyDocument.TYPE_DICTIONARY);
+        }
+
+        public boolean isDiscussion() {
+            if (map.size() == 0)
+                return true;
+            return map.containsKey(MyDocument.TYPE_DISCUSSION);
+        }
+
+        public boolean isDocument() {
+            if (map.size() == 0)
+                return true;
+            return map.containsKey(MyDocument.TYPE_DOCUMENT);
+        }
+
+        public boolean isDriver() {
+            if (map.size() == 0)
+                return true;
+            return map.containsKey(MyDocument.TYPE_DRIVER);
+        }
+
+        public boolean isFaq() {
+            if (map.size() == 0)
+                return true;
+            return map.containsKey(MyDocument.TYPE_FAQ);
         }
 
         public boolean isHardware() {
@@ -348,17 +393,16 @@ public class Search implements AbcAction {
             return map.containsKey(MyDocument.TYPE_HARDWARE);
         }
 
-        public boolean isSoftware() {
-            if ( map.size()==0 )
+        public boolean isNews() {
+            if (map.size() == 0)
                 return true;
-            return map.containsKey(MyDocument.TYPE_SOFTWARE);
+            return map.containsKey(MyDocument.TYPE_NEWS);
         }
 
-        // todo verifikovat zda to skutecne vyhledava jen v ovladacich
-        public boolean isDriver() {
-            if ( map.size()==0 )
+        public boolean isPoll() {
+            if (map.size() == 0)
                 return true;
-            return map.containsKey(MyDocument.TYPE_DRIVER);
+            return map.containsKey(MyDocument.TYPE_POLL);
         }
 
         public boolean isQuestion() {
@@ -367,47 +411,10 @@ public class Search implements AbcAction {
             return map.containsKey(MyDocument.TYPE_QUESTION);
         }
 
-        public boolean isDiscussion() {
-            if ( map.size()==0 )
+        public boolean isSoftware() {
+            if (map.size() == 0)
                 return true;
-            return map.containsKey(MyDocument.TYPE_DISCUSSION);
-        }
-
-        public boolean isArticle() {
-            if ( map.size()==0 )
-                return true;
-            return map.containsKey(MyDocument.TYPE_ARTICLE);
-        }
-
-        public boolean isNews() {
-            if ( map.size()==0 )
-                return true;
-            return map.containsKey(MyDocument.TYPE_NEWS);
-        }
-
-        public boolean isPoll() {
-            if ( map.size()==0 )
-                return true;
-            return map.containsKey(MyDocument.TYPE_POLL);
-        }
-
-        public boolean isBlog() {
-            if ( map.size()==0 )
-                return true;
-            return map.containsKey(MyDocument.TYPE_BLOG);
-        }
-
-        public boolean isFaq() {
-            if ( map.size()==0 )
-                return true;
-            return map.containsKey(MyDocument.TYPE_FAQ);
-        }
-
-        // todo verifikovat zda to skutecne vyhledava jen v pojmech
-        public boolean isDictionary() {
-            if ( map.size()==0 )
-                return true;
-            return map.containsKey(MyDocument.TYPE_DICTIONARY);
+            return map.containsKey(MyDocument.TYPE_SOFTWARE);
         }
 
         public Map getMap() {

@@ -17,40 +17,44 @@
 
 <@lib.showMessages/>
 
-<form action="/Search" method="GET">
+<form action="/hledani" method="GET">
     <table border="0" class="siroka">
         <tr>
             <td>
-              <input type="text" name="query" value="${QUERY?if_exists?html}" size="50" tabindex="1">
+              <input type="text" name="dotaz" value="${QUERY?if_exists?html}" size="50" tabindex="1">
               <input type="submit" value="Hledej" tabindex="2">
-              <#if ERRORS.query?exists><div class="error">${ERRORS.query}</div></#if>
+              <#if ERRORS.dotaz?exists><div class="error">${ERRORS.dotaz}</div></#if>
               <#if PARAMS.advancedMode?default("false")=="true">
                   <input type="hidden" name="advancedMode" value="true">
                   <table border="0" width="100%">
                    <tr>
-                    <td><label><input type="checkbox" name="type" value="clanek" <#if TYPES.article>checked</#if>>Články</label></td>
-                    <td><label><input type="checkbox" name="type" value="otazka" <#if TYPES.question>checked</#if>>Poradna</label></td>    
-                    <td><label><input type="checkbox" name="type" value="faq" <#if TYPES.faq>checked</#if>>FAQ</label></td>
-                    <td><label><input type="checkbox" name="type" value="pojem" <#if TYPES.dictionary>checked</#if>>Pojmy</label></td>
+                    <td><label><input type="checkbox" name="typ" value="clanek" <#if TYPES.article>checked</#if>>Články</label></td>
+                    <td><label><input type="checkbox" name="typ" value="poradna" <#if TYPES.question>checked</#if>>Poradna</label></td>
+                    <td><label><input type="checkbox" name="typ" value="faq" <#if TYPES.faq>checked</#if>>FAQ</label></td>
+                    <td><label><input type="checkbox" name="typ" value="pojem" <#if TYPES.dictionary>checked</#if>>Pojmy</label></td>
                    </tr>
                    <tr>
-                    <td><label><input type="checkbox" name="type" value="zpravicka" <#if TYPES.news>checked</#if>>Zprávičky</label></td>
-                    <td><label><input type="checkbox" name="type" value="diskuse" <#if TYPES.discussion>checked</#if>>Diskuze u obsahu</label></td>
-                    <td><label><input type="checkbox" name="type" value="hardware" <#if TYPES.hardware>checked</#if>>Hardware</label></td>
-                    <td><label><input type="checkbox" name="type" value="ovladac" <#if TYPES.driver>checked</#if>>Ovladače</label></td>
+                    <td><label><input type="checkbox" name="typ" value="zpravicka" <#if TYPES.news>checked</#if>>Zprávičky</label></td>
+                    <td><label><input type="checkbox" name="typ" value="diskuse" <#if TYPES.discussion>checked</#if>>Diskuse</label></td>
+                    <td><label><input type="checkbox" name="typ" value="hardware" <#if TYPES.hardware>checked</#if>>Hardware</label></td>
+                    <td><label><input type="checkbox" name="typ" value="ovladac" <#if TYPES.driver>checked</#if>>Ovladače</label></td>
                    </tr>
                    <tr>
-                    <td><label><input type="checkbox" name="type" value="sekce" <#if TYPES.section>checked</#if>>Sekce</label></td>
-                    <td><label><input type="checkbox" name="type" value="software" <#if TYPES.software>checked</#if>>Software</label></td>
-                    <td><label><input type="checkbox" name="type" value="blog" <#if TYPES.blog>checked</#if>>Blogy</label></td>
-                    <td><label><input type="checkbox" name="type" value="anketa" <#if TYPES.poll>checked</#if>>Ankety</label></td>
+                    <td><label><input type="checkbox" name="typ" value="sekce" <#if TYPES.section>checked</#if>>Sekce</label></td>
+                    <td><label><input type="checkbox" name="typ" value="software" <#if TYPES.software>checked</#if>>Software</label></td>
+                    <td><label><input type="checkbox" name="typ" value="blog" <#if TYPES.blog>checked</#if>>Blogy</label></td>
+                    <td><label><input type="checkbox" name="typ" value="anketa" <#if TYPES.poll>checked</#if>>Ankety</label></td>
+                   </tr>
+                   <tr>
+                    <td><label><input type="checkbox" name="typ" value="dokument" <#if TYPES.document>checked</#if>>Dokumenty</label></td>
+                    <td><label><input type="checkbox" name="typ" value="bazar" <#if TYPES.bazaar>checked</#if>>Bazar</label></td>
                    </tr>
                    <tr>
                     <td colspan="4" align="left"><label><input type="checkbox" onclick="toggle(this)">Vyber vše/nic</label></td>
                    </tr>
                   </table>
               <#else>
-                  <br><a href="/Search?advancedMode=true<#if PARAMS.query?exists>&amp;query=${PARAMS.query?url}</#if>">Rozšířené hledání</a>
+                  <br><a href="${CURRENT_URL}&advancedMode=true">Rozšířené hledání</a>
               </#if>
             </td>
             <td align="right" valign="middle">
@@ -70,7 +74,7 @@
         </tr>
     </table>
   <#if PARAMS.parent?exists><input type="hidden" name="parent" value="${PARAMS.parent}"></#if>
-
+</form>
 
 <#if RESULT?exists>
     <p class="search_results">
@@ -82,52 +86,62 @@
     <#list RESULT.data as doc>
         <div class="search_result">
             <!--m-->
-            <a href="${doc.url}" class="search_title">${doc.title?default(doc.url)}</a>
-            <#if (doc.typ='otazka' && doc.vyreseno=="ano")> <span class="search_solved">(vyřešeno)</span></#if>
+            <a href="${doc.url}" class="search_title">${doc.titulek?default(doc.url)}</a>
             <!--n-->
-            <#if doc.fragments?exists>
-                <p class="search_fragments">${doc.fragments}</p>
+            <#if doc.highlightedText?exists>
+                <p class="search_fragments">${doc.highlightedText}</p>
             </#if>
             <p class="search_details">
             <#if doc.typ='sekce'>
                 Sekce
             <#elseif doc.typ='hardware'>
                 Hardware,
-                poslední změna: ${DATE.show(doc.datum_zmeny,"SMART")},
+                poslední změna: ${DATE.show(doc.modified,"SMART_DMY")},
                 ${doc.velikost_obsahu} znaků
-            <#elseif doc.typ='diskuse' ||  doc.typ='otazka'>
+            <#elseif doc.typ='poradna'>
+                Dotaz v poradně,
+                <#if (doc.vyreseno=="ano")>vyřešen, </#if>
+                počet odpovědí: ${doc.odpovedi},
+                položen: ${DATE.show(doc.created,"SMART_DMY")},
+                poslední odpověď: ${DATE.show(doc.modified,"SMART_DMY")},
+                ${doc.velikost_obsahu} znaků
+            <#elseif doc.typ='diskuse'>
                 Diskuse,
                 počet reakcí: ${doc.odpovedi},
-                vytvořena: ${DATE.show(doc.datum_vytvoreni,"SMART")},
-                poslední reakce: ${DATE.show(doc.datum_zmeny,"SMART")},
+                vytvořena: ${DATE.show(doc.created,"SMART_DMY")},
+                poslední reakce: ${DATE.show(doc.modified,"SMART_DMY")},
                 ${doc.velikost_obsahu} znaků
             <#elseif doc.typ='software'>
                 Software,
-                poslední změna: ${DATE.show(doc.datum_zmeny,"SMART")},
+                poslední změna: ${DATE.show(doc.modified,"SMART_DMY")},
                 ${doc.velikost_obsahu} znaků
             <#elseif doc.typ='ovladac'>
                 Ovladač,
-                poslední změna: ${DATE.show(doc.datum_zmeny,"SMART")},
+                poslední změna: ${DATE.show(doc.modified,"SMART_DMY")},
                 ${doc.velikost_obsahu} znaků
             <#elseif doc.typ='faq'>
                 FAQ,
-                poslední změna: ${DATE.show(doc.datum_zmeny,"SMART")},
+                poslední změna: ${DATE.show(doc.modified,"SMART_DMY")},
                 ${doc.velikost_obsahu} znaků
             <#elseif doc.typ='clanek'>
                 Článek,
-                vytvořen: ${DATE.show(doc.datum_vytvoreni,"SMART")},
+                vytvořen: ${DATE.show(doc.created,"SMART_DMY")},
                 ${doc.velikost_obsahu} znaků
             <#elseif doc.typ='zpravicka'>
                 Zprávička,
-                vytvořena: ${DATE.show(doc.datum_vytvoreni,"SMART")},
+                vytvořena: ${DATE.show(doc.created,"SMART_DMY")},
                 ${doc.velikost_obsahu} znaků
             <#elseif doc.typ='pojem'>
                 Pojem,
-                poslední změna: ${DATE.show(doc.datum_zmeny,"SMART")},
+                poslední změna: ${DATE.show(doc.modified,"SMART_DMY")},
                 ${doc.velikost_obsahu} znaků
             <#elseif doc.typ='blog'>
                 Blog,
-                vytvořen: ${DATE.show(doc.datum_vytvoreni,"SMART")},
+                vytvořen: ${DATE.show(doc.created,"SMART_DMY")},
+                ${doc.velikost_obsahu} znaků
+            <#elseif doc.typ='bazar'>
+                Inzerát v bazaru,
+                vytvořen: ${DATE.show(doc.created,"SMART_DMY")},
                 ${doc.velikost_obsahu} znaků
             </#if>
             </p>
@@ -135,23 +149,19 @@
     </#list>
 
     <#if RESULT.prevPage?exists>
-        <input type="submit" name="from_0" value="0">
-        <input type="submit" name="from_${RESULT.prevPage.row}" value="&lt;&lt;">
+        <a href="${CURRENT_URL}&from=0">0</a>
+        <a href="${CURRENT_URL}&from=${RESULT.prevPage.row}">&lt;&lt;</a>
     <#else>
-        <button value="" disabled="disabled">0</button>
-        <button value="" disabled="disabled">&lt;&lt;</button>
+        0 &lt;&lt;
     </#if>
 
     <#if RESULT.nextPage?exists>
-        <input type="submit" name="from_${RESULT.nextPage.row?string["#"]}" value="&gt;&gt;">
-        <input type="submit" name="from_${(RESULT.total-RESULT.pageSize)?string["#"]}" value="${RESULT.total}">
+        <a href="${CURRENT_URL}&from=${RESULT.nextPage.row?string["#"]}">&gt;&gt;</a>
+        <a href="${CURRENT_URL}&from=${(RESULT.total-RESULT.pageSize)?string["#"]}">${RESULT.total}</a>
     <#else>
-        <button value="" disabled="disabled">&gt;&gt;</button>
-        <button value="" disabled="disabled">${RESULT.total}</button>
+        &gt;&gt; ${RESULT.total}
     </#if>
 
 </#if>
-
-</form>
 
 <#include "../footer.ftl">

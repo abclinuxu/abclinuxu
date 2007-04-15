@@ -29,8 +29,8 @@
 <br>
 
 <div>
-<form action="/Search" method="POST">
-<input type="text" name="query" size="12">&nbsp;<input type="submit" value="Hledej">
+<form action="/hledani" method="POST">
+<input type="text" name="dotaz" size="12">&nbsp;<input type="submit" value="Hledej">
 </form>
 </div>
 

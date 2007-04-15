@@ -27,8 +27,8 @@
 
 <div align="center"><img src="/images/site/wap.gif" width="181" height="52" alt="wap.abclinuxu.cz"><br><br></div>
 
-<form action="/Search" method="POST">
- <input type="text" name="query" size="30" tabindex="1">
+<form action="/zpravicky/hledani" method="POST">
+ <input type="text" name="dotaz" size="30" tabindex="1">
  <input type="submit" class="button" value="Prohledej zprávičky" tabindex="2">
 
   <table>
