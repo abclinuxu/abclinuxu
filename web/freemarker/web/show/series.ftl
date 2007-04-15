@@ -33,7 +33,7 @@
 <p>
     <#if (ARTICLES.currentPage.row > 0) >
         <#assign start=ARTICLES.currentPage.row-ARTICLES.pageSize><#if (start<0)><#assign start=0></#if>
-        <a href="${RELATION.url}?from=${start}">Novější články</a>
+        <a href="${RELATION.url}?from=${start}">Novější články</a> &#8226;
     </#if>
     <#assign start=ARTICLES.currentPage.row + ARTICLES.pageSize>
     <#if (start < ARTICLES.total) >

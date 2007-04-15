@@ -172,7 +172,7 @@
     </#if>
     <#if (STORIES.currentPage.row > 0) >
         <#assign start=STORIES.currentPage.row-STORIES.pageSize><#if (start<0)><#assign start=0></#if>
-        <a href="${url}?from=${start}">Novější zápisy</a>
+        <a href="${url}?from=${start}">Novější zápisy</a> &#8226;
     </#if>
     <#assign start=STORIES.currentPage.row + STORIES.pageSize>
     <#if (start < STORIES.total) >

@@ -140,8 +140,8 @@
         ${DATE.show(comment.created,"SMART")}
         <#if comment.author?exists>
             <a href="/Profile/${who.id}">${who.nick?default(who.name)}</a>
-            <#local score=who.getIntProperty("score")?default(-1)><#if score != -1>&nbsp;| skóre: ${score}</#if>
-            <#local blog=TOOL.getUserBlogAnchor(who, "blog")?default("UNDEF")><#if blog!="UNDEF">&nbsp;| blog: ${blog}</#if>
+            <#local score=who.getIntProperty("score")?default(-1)><#if score != -1> | skóre: ${score}</#if>
+            <#local blog=TOOL.getUserBlogAnchor(who, "blog")?default("UNDEF")><#if blog!="UNDEF"> | blog: ${blog}</#if>
             <#local city=TOOL.xpath(who,"//personal/city")?default("UNDEF")><#if city!="UNDEF"> | ${city}</#if>
         <#else>
             ${comment.anonymName?if_exists}

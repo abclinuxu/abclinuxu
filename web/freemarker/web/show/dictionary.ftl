@@ -62,4 +62,34 @@
     </#list>
 </p>
 
+<p class="dict-abc">
+    Filtr:
+    <a href="/slovnik?prefix=a">A</a>
+    <a href="/slovnik?prefix=b">B</a>
+    <a href="/slovnik?prefix=c">C</a>
+    <a href="/slovnik?prefix=d">D</a>
+    <a href="/slovnik?prefix=e">E</a>
+    <a href="/slovnik?prefix=f">F</a>
+    <a href="/slovnik?prefix=g">G</a>
+    <a href="/slovnik?prefix=h">H</a>
+    <a href="/slovnik?prefix=i">I</a>
+    <a href="/slovnik?prefix=j">J</a>
+    <a href="/slovnik?prefix=k">K</a>
+    <a href="/slovnik?prefix=l">L</a>
+    <a href="/slovnik?prefix=m">M</a>
+    <a href="/slovnik?prefix=n">N</a>
+    <a href="/slovnik?prefix=o">O</a>
+    <a href="/slovnik?prefix=p">P</a>
+    <a href="/slovnik?prefix=q">Q</a>
+    <a href="/slovnik?prefix=r">R</a>
+    <a href="/slovnik?prefix=s">S</a>
+    <a href="/slovnik?prefix=t">T</a>
+    <a href="/slovnik?prefix=u">U</a>
+    <a href="/slovnik?prefix=v">V</a>
+    <a href="/slovnik?prefix=w">W</a>
+    <a href="/slovnik?prefix=x">X</a>
+    <a href="/slovnik?prefix=y">Y</a>
+    <a href="/slovnik?prefix=z">Z</a>
+</p>
+
 <#include "../footer.ftl">

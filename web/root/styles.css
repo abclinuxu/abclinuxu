@@ -334,6 +334,14 @@ a.info:hover span.tooltip {
 .dict-abc a { background-color: #E6E6E6; }
 .dict-abc a:hover { background-color: #FFF8C3; }
 
+a.selected {
+	background-color: #FFF8C3;
+	color:#27648D;
+}
+a.selected:hover {
+	color: black;
+}
+
 .dict-item,
 .questionToFaq,
 .bazar-ad { background-color: #ECECEC; }

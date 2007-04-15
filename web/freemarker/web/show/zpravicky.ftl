@@ -21,7 +21,7 @@
 </#list>
 
 <p>
-<a href="/History?type=news&amp;from=${NEWS?size}&amp;count=15" title="Další">Starší zprávičky</a>
+<a href="/History?type=news&amp;from=${NEWS?size}&amp;count=15" title="Další">Starší zprávičky</a> &#8226;
 <a href="${URL.make("/zpravicky/edit?action=add")}">Přidat zprávičku</a>
 </p>
 

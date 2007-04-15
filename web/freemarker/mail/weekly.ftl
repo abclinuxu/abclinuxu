@@ -22,18 +22,18 @@ Prehled clanku
 Reklama
 =======
 
-Zvysujici se pocet trestnych cinu spachanych prostrednictvim
-internetu nuti k vaznemu zamysleni nad bezpecnosti
-pocitacovych siti. Trh produktu a sluzeb souvisejicich
-s bezpecnosti je tak velky, ze je pro zakaznika narocne se
-rozhodnout. Jak se rozhodnout?
+Stante se lektorem autorizovaneho skoliciho strediska
+OKsystem pro oblast SUSE Linux, posilite tak profesionalni
+tym odborniku, kteri se zabyvaji vedenim kurzu Novell SUSE
+Linux a technickou podporou OS a serverovych aplikaci SUSE
+Linux.
 
-Mate prilezitost zucastnit se prvniho Kongresu Bezpecnosti
-Siti v Ceske republice. Kongres bude se konat 11. dubna 2007
-v Hotelu Diplomat.
+Blizsi informace o nasi spolecnosti, otevrenych pozicich
+a nabidce zamestnaneckych benefitu vam radi poskytneme na
+tel. cisle: +420 244 021 129 nebo e-mailu:
+bernatik@oksystem.cz.
 
-Pro ucastniky je vstup ZDARMA! Staci se jen zaregistrovat
-na webove strance: www.kongresbezpecnosti.org
+http://www.abclinuxu.cz/clanky/pr/oksystem-posiluje-tym-lektoru-v-oblasti-suse-linux
 
 
 Prehled zpravicek
@@ -49,34 +49,6 @@ Prehled zpravicek
 
  ---------------------
 </#list>
-
-
-Reklama
-=======
-
-Sun Microsystems opens another new team in Prague.
-The new group will be an extension of Sun's existing
-Web Engineering Team with a specific focus on ecommerce
-and backend system integration and web service development.
-
-Developers will be working with the Intershop Enfinity
-application suite and will be reshaping the way that Sun
-does over 2 billion annually in global web based commerce.
-Team members will collaborate with the Prague team (target:
-6 developers) as well as engineering staff located worldwide,
-including Germany, the UK, California and Colorado.
-
-Open positions:
-
-Software Engineering Manager - Webservices
-Java Team Leader - Webservices
-Application Engineer - Webservices
-Junior J2EE Software Engineer - Webservices
-Senior J2EE Software Engineer - Webservices
-
-If you are interested in the new positions please send
-your CV to Tomas Kolsky at t.kolsky@talents.cz, or visit
-www.talents.cz/sunjobs.
 
 
 <#if JOBS?size gt 0>

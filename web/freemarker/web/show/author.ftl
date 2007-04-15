@@ -81,13 +81,15 @@
   </tbody>
 </table>
 
+<p>
 <#if (ARTICLES.currentPage.row > 0) >
 <#assign start=ARTICLES.currentPage.row-ARTICLES.pageSize><#if (start<0)><#assign start=0></#if>
-    <a href="${RELATION.url}?from=${start}&amp;count=${ARTICLES.pageSize}">Novější články</a>
+    <a href="${RELATION.url}?from=${start}&amp;count=${ARTICLES.pageSize}">Novější články</a> &#8226;
 </#if>
 <#assign start=ARTICLES.currentPage.row + ARTICLES.pageSize>
 <#if (start < ARTICLES.total) >
     <a href="${RELATION.url}?from=${start}&amp;count=${ARTICLES.pageSize}">Starší články</a>
 </#if>
+</p>
 
 <#include "../footer.ftl">
