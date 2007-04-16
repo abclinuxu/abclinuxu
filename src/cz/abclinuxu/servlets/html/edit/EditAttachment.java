@@ -149,7 +149,7 @@ public class EditAttachment implements AbcAction {
         persistence.update(item);
 
         // commit new version
-        if (item.getType() != Item.BLOG)
+        if (item.getType() != Item.BLOG && item.getType() != Item.UNPUBLISHED_BLOG)
             Misc.commitRelationRevision(item, relation.getId(), user);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
@@ -210,7 +210,7 @@ public class EditAttachment implements AbcAction {
         persistence.update(item);
 
         // commit new version
-        if (item.getType() != Item.BLOG)
+        if (item.getType() != Item.BLOG && item.getType() != Item.UNPUBLISHED_BLOG)
             Misc.commitRelationRevision(item, relation.getId(), user);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
