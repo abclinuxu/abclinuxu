@@ -150,14 +150,13 @@ public class Search implements AbcAction {
 
             // vytvoreni query a hledani trva do 10 ms, highlight trva 300 ms
             SimpleHTMLFormatter formatter = new SimpleHTMLFormatter("<span class=\"highlight\">", "</span>");
-            Highlighter highlighter = new Highlighter(formatter, new QueryScorer(query));
+            Highlighter highlighter = new Highlighter(formatter, new QueryScorer(query, MyDocument.CONTENT));
 
             List<SearchResult> list = new ArrayList<SearchResult>(count);
             int total = hits.length();
             SearchResult foundItem;
             for ( int i = from, j = 0; i < total && j < count; i++, j++ ) {
                 Document doc = hits.doc(i);
-                // todo bug #196
                 String text = doc.get(MyDocument.TITLE) + " " + doc.get(MyDocument.CONTENT);
                 TokenStream tokenStream = analyzer.tokenStream(MyDocument.CONTENT, new StringReader(text));
                 String fragment = highlighter.getBestFragments(tokenStream, text, 3, "...");
