@@ -37,10 +37,10 @@
      <br />
      <b>Admin:</b>
      <a href="/SelectRelation?prefix=/hardware&amp;url=/EditRelation&amp;action=move&amp;rid=${RELATION.id}">Přesunout</a>,
-   </#if>
-   <#if USER?exists && USER.hasRole("discussion admin")>
-     <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix="+URL.prefix)}">Smazat</a>,
-     <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+RELATION.id+"&amp;dizId="+ITEM.id)}"><#if DIZ.frozen>Rozmrazit<#else>Zmrazit</#if></a>
+     <#if USER.hasRole("discussion admin")>
+         <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix="+URL.prefix)}">Smazat</a>,
+         <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+RELATION.id+"&amp;dizId="+ITEM.id+TOOL.ticket(USER, false))}"><#if DIZ.frozen>Rozmrazit<#else>Zmrazit</#if></a>
+     </#if>
    </#if>
 </div>
 
