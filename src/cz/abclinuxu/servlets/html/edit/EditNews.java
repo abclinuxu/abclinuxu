@@ -136,7 +136,7 @@ public class EditNews implements AbcAction {
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if ( ACTION_APPROVE.equals(action) ) {
-            ActionProtector.ensureContract(request, EditNews.class, true, true, false, true);
+            ActionProtector.ensureContract(request, EditNews.class, true, false, false, true);
             return actionApprove(request, response, env);
         }
 
