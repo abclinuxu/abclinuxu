@@ -35,6 +35,7 @@ import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
+import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.Misc;
@@ -131,6 +132,7 @@ public class EditRelation implements AbcAction {
         if ( action.equals(ACTION_LINK_STEP2) ) {
             if ( !canCreateLink(user) )
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+            ActionProtector.ensureContract(request, EditRelation.class, true, true, true, false);
             return actionLinkStep2(request, response, env);
         }
 
@@ -143,6 +145,7 @@ public class EditRelation implements AbcAction {
         if ( action.equals(ACTION_MOVE_ALL_STEP2) ) {
             if ( !canMoveAll(user) )
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+            ActionProtector.ensureContract(request, EditRelation.class, true, false, false, true);
             return actionMoveAll(request, response, env);
         }
 
@@ -167,12 +170,14 @@ public class EditRelation implements AbcAction {
         if ( action.equals(ACTION_ADD_ACL_STEP3) ) {
             if (!canManageACL(user))
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+            ActionProtector.ensureContract(request, EditRelation.class, true, true, true, false);
             return actionAddACLStep3(request,env);
         }
 
         if ( action.equals(ACTION_REMOVE_ACL) ) {
             if (!canManageACL(user))
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+            ActionProtector.ensureContract(request, EditRelation.class, true, true, true, false);
             return actionRemoveACL(request, env);
         }
 
@@ -185,12 +190,14 @@ public class EditRelation implements AbcAction {
         if ( action.equals(ACTION_SET_URL_STEP3) ) {
             if (!canSetUrl(user))
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+            ActionProtector.ensureContract(request, EditRelation.class, true, true, true, false);
             return actionSetUrlStep3(request, response, env);
         }
 
         if ( action.equals(ACTION_MOVE) ) {
             if ( !canMoveRelation(user, child) )
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+            ActionProtector.ensureContract(request, EditRelation.class, true, false, false, true);
             return actionMove(request, response, env);
         }
 
@@ -203,6 +210,7 @@ public class EditRelation implements AbcAction {
         if ( action.equals(ACTION_REMOVE_STEP2) ) {
             if (!canRemoveRelation(user, child))
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+            ActionProtector.ensureContract(request, EditRelation.class, true, true, true, false);
             return actionRemove2(request, response, env);
         }
 
@@ -279,6 +287,7 @@ public class EditRelation implements AbcAction {
         return FMTemplateSelector.select("EditRelation","add",env,request);
     }
 
+    // todo k cemu tohle vlastne slouzi? Zkousel jsem linkovat FAQ do sekce a relace byla obracene, nez bych cekal
     protected String actionLinkStep2(HttpServletRequest request, HttpServletResponse response, Map env) throws Exception {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistance();
@@ -704,6 +713,7 @@ public class EditRelation implements AbcAction {
         Document document = relation.getData();
         if ( document==null ) {
             document = DocumentHelper.createDocument();
+            document.addElement("data");
             relation.setData(document);
         }
 

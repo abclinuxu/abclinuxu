@@ -7,9 +7,10 @@
 <@lib.showMessages/>
 
 <form action="${URL.make("/EditRelated/"+RELATION.id)}" method="POST" name="form">
-    <#assign related = TOOL.getRelatedDocuments(RELATION.child)>
+    <#assign related = TOOL.getRelatedDocuments(RELATION.child), empty = true>
     <p>
     <#list related as link>
+        <#assign empty = false>
         <label>
             <input type="checkbox" name="document" value="${link.url?url}">
             <a href="${link.url}">${link.title}</a>
@@ -20,7 +21,9 @@
     </p>
     <p>
       <input type="hidden" name="action" value="remove">
-      <input type="submit" value="Smazat zaškrtnuté">
+      <#if ! empty>
+          <input type="submit" value="Smazat zaškrtnuté">
+      </#if>
     </p>
 </form>
 

@@ -28,7 +28,7 @@
  <#else>
   <#assign monitorState="Zapni">
  </#if>
- <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle")}">${monitorState}</a>
+ <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}">${monitorState}</a>
  (${TOOL.getMonitorCount(ITEM.data)})
 </p>
 <hr />
@@ -52,6 +52,7 @@
 
 <@lib.showRelated ITEM/>
 
-<p><b>Nástroje:</b> <a href="${RELATION.url?default("/ovladace/show/"+RELATION.id)}?varianta=print<#if PARAMS.revize?exists>&amp;revize=${PARAMS.revize}</#if>">Tisk</a></p>
+<p><b>Nástroje:</b>
+<a href="${RELATION.url?default("/ovladace/show/"+RELATION.id)}?varianta=print<#if PARAMS.revize?exists>&amp;revize=${PARAMS.revize}</#if>" rel="nofollow">Tisk</a></p>
 
 <#include "../footer.ftl">

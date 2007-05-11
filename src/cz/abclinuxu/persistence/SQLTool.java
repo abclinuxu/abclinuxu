@@ -168,7 +168,7 @@ public final class SQLTool implements Configurable {
      * @return List of Integers.
      * @throws PersistenceException if something goes wrong.
      */
-    private List loadUsers(String sql, List params) throws PersistenceException {
+    private List<Integer> loadUsers(String sql, List params) throws PersistenceException {
         MySqlPersistence persistance = (MySqlPersistence) PersistenceFactory.getPersistance();
         Connection con = null;
         PreparedStatement statement = null;
@@ -181,7 +181,7 @@ public final class SQLTool implements Configurable {
                 statement.setObject(i++, iter.next());
 
             resultSet = statement.executeQuery();
-            List result = new ArrayList();
+            List<Integer> result = new ArrayList<Integer>();
             while ( resultSet.next() ) {
                 result.add(resultSet.getInt(1));
             }
@@ -892,11 +892,24 @@ public final class SQLTool implements Configurable {
     }
 
     /**
+     * Finds users, the condition or sort order must be specified in qualifiers.
+     * @return list of Integers of user ids.
+     */
+    public List<Integer> findUsers(Qualifier[] qualifiers) {
+        if ( qualifiers == null || qualifiers.length == 0)
+            throw new IllegalArgumentException("qualifiers is mandatory");
+        StringBuffer sb = new StringBuffer("select cislo from uzivatel ");
+        List params = new ArrayList();
+        appendQualifiers(sb, qualifiers, params, null, null);
+        return loadUsers(sb.toString(), params);
+    }
+
+    /**
      * Finds users, that have active email and have subscribed weekly email.
      * Use Qualifiers to set additional parameters.
      * @return list of Integers of user ids.
      */
-    public List findUsersWithWeeklyEmail(Qualifier[] qualifiers) {
+    public List<Integer> findUsersWithWeeklyEmail(Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(USERS_WITH_WEEKLY_EMAIL));
         List params = new ArrayList();
@@ -909,7 +922,7 @@ public final class SQLTool implements Configurable {
      * Use Qualifiers to set additional parameters.
      * @return list of Integers of user ids.
      */
-    public List findUsersWithForumByEmail(Qualifier[] qualifiers) {
+    public List<Integer> findUsersWithForumByEmail(Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(USERS_WITH_FORUM_BY_EMAIL));
         List params = new ArrayList();
@@ -922,7 +935,7 @@ public final class SQLTool implements Configurable {
      * Use Qualifiers to set additional parameters.
      * @return list of Integers of user ids.
      */
-    public List findUsersWithRoles(Qualifier[] qualifiers) {
+    public List<Integer> findUsersWithRoles(Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(USERS_WITH_ROLES));
         List params = new ArrayList();
@@ -936,7 +949,7 @@ public final class SQLTool implements Configurable {
      * @return list of Integers of user ids.
      * @throws PersistenceException if there is an error with the underlying persistent storage.
      */
-    public List findUsersInGroup(int group, Qualifier[] qualifiers) {
+    public List<Integer> findUsersInGroup(int group, Qualifier[] qualifiers) {
         if ( qualifiers==null ) qualifiers = new Qualifier[]{};
         StringBuffer sb = new StringBuffer((String) sql.get(USERS_IN_GROUP));
         List params = new ArrayList();
@@ -1771,11 +1784,12 @@ public final class SQLTool implements Configurable {
     }
 
     /**
-     * Appends qualifiers to StringBufefr holding SQL command. DefaultTableNick is added
+     * Appends qualifiers to StringBuffer holding SQL command. DefaultTableNick is added
      * before every column in custom conditions (in WHERE or ORDER BY clauses).
      * if defaultTableNick cannot distinguish between two tables, fieldMapping can
      * be used to assign exact tableNick to specific Field from qualifiers.
      * @param defaultTableNick nick of table to distinguish columns. Default is null.
+     * @param qualifiers list of query conditions and sort order and limit qualifiers. The order is important.
      * @param fieldMapping key is PersistenceMapping.Table, value is tableNick to be used.
      */
     private void appendQualifiers(StringBuffer sb, Qualifier[] qualifiers, List params, String defaultTableNick, Map fieldMapping) {
@@ -1823,8 +1837,11 @@ public final class SQLTool implements Configurable {
                 LimitQualifier limitQualifier = (LimitQualifier) qualifier;
                 params.add(limitQualifier.getOffset());
                 params.add(limitQualifier.getCount());
-            } else if (qualifier instanceof CompareCondition)
+            } else if (qualifier instanceof CompareCondition) {
+                if (sb.toString().toLowerCase().indexOf("where") == -1)
+                    sb.append(" where ");
                 appendCompareCondition(sb, (CompareCondition) qualifier, params, defaultTableNick, fieldMapping);
+            }
         }
     }
 

@@ -40,6 +40,7 @@ import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
+import cz.abclinuxu.security.ActionProtector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -94,20 +95,26 @@ public class EditRelated implements AbcAction {
         if (user == null)
             return FMTemplateSelector.select("ViewUser", "login", env, request);
 
-        if (ACTION_ADD_STEP2.equals(action))
+        if (ACTION_ADD_STEP2.equals(action)) {
+            ActionProtector.ensureContract(request, EditRelated.class, true, true, true, false);
             return actionAddStep2(request, response, env, true);
+        }
 
         if (ACTION_EDIT.equals(action))
             return actionEditStep1(request, env);
 
-        if (ACTION_EDIT_STEP2.equals(action))
+        if (ACTION_EDIT_STEP2.equals(action)) {
+            ActionProtector.ensureContract(request, EditRelated.class, true, true, true, false);
             return actionEditStep2(request, response, env);
+        }
 
         if (ACTION_REMOVE.equals(action))
             return actionRemoveAttachmentStep1(request, env);
 
-        if (ACTION_REMOVE_STEP2.equals(action))
+        if (ACTION_REMOVE_STEP2.equals(action)) {
+            ActionProtector.ensureContract(request, EditRelated.class, true, true, true, false);
             return actionRemoveAttachmentStep2(request, response, env);
+        }
 
         return actionManageRelated(request, env);
     }

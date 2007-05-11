@@ -35,6 +35,7 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
+import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
@@ -114,14 +115,18 @@ public class Royalties implements AbcAction {
         if ( ACTION_ADD_ROYALTIES.equals(action) )
             return actionAddRoyaltiesStep1(request, env);
 
-        if ( ACTION_ADD_ROYALTIES_STEP2.equals(action) )
+        if ( ACTION_ADD_ROYALTIES_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, Royalties.class, true, true, true, false);
             return actionAddStep2(request, response, env);
+        }
 
         if ( ACTION_EDIT_ROYALTIES.equals(action) )
             return actionEditStep1(request, env);
 
-        if ( ACTION_EDIT_ROYALTIES_STEP2.equals(action) )
+        if ( ACTION_EDIT_ROYALTIES_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, Royalties.class, true, true, true, false);
             return actionEditStep2(request, response, env);
+        }
 
         throw new MissingArgumentException("Chybí parametr action!");
     }

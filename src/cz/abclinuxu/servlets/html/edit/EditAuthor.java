@@ -28,6 +28,7 @@ import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -92,8 +93,10 @@ public class EditAuthor implements AbcAction {
         if (action.equals(ACTION_ADD))
             return actionAddStep1(request, response, env);
 
-        if (action.equals(ACTION_ADD_STEP2))
+        if (action.equals(ACTION_ADD_STEP2)) {
+            ActionProtector.ensureContract(request, EditAuthor.class, true, true, true, false);
             return actionAddStep2(request, response, env, true);
+        }
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
         if ( relation==null )
@@ -106,8 +109,10 @@ public class EditAuthor implements AbcAction {
         if (action.equals(ACTION_EDIT))
             return actionEditStep1(request, env);
 
-        if (action.equals(ACTION_EDIT_STEP2))
+        if (action.equals(ACTION_EDIT_STEP2)) {
+            ActionProtector.ensureContract(request, EditAuthor.class, true, true, true, false);
             return actionEditStep2(request, response, env);
+        }
 
         throw new MissingArgumentException("ChybĂ­ parametr action!");
     }

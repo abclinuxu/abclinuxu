@@ -48,6 +48,11 @@ value: integer value of users score
 mapping: 1:1
 purpose: describes user's contribution for the portal
 
+name: ticket
+value: random secret string consisting of a-zA-Z0-9
+mapping: 1:1
+purpose: value for ActionProtector that helps avoiding XSS attacks
+
 
 Properties are stored in Constants.java, when you add new property, do not
 forget update PropertiesConfig.java

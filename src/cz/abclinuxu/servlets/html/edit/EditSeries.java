@@ -28,6 +28,7 @@ import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.utils.Misc;
@@ -94,8 +95,10 @@ public class EditSeries implements AbcAction {
         if (action.equals(ACTION_ADD))
             return actionAddStep1(request, env);
 
-        if (action.equals(ACTION_ADD_STEP2))
+        if (action.equals(ACTION_ADD_STEP2)) {
+            ActionProtector.ensureContract(request, EditSeries.class, true, true, true, false);
             return actionAddStep2(request, response, env, true);
+        }
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
         if ( relation==null )
@@ -108,23 +111,33 @@ public class EditSeries implements AbcAction {
         if (action.equals(ACTION_EDIT))
             return actionEditStep1(request, env);
 
-        if (action.equals(ACTION_EDIT_STEP2))
+        if (action.equals(ACTION_EDIT_STEP2)) {
+            ActionProtector.ensureContract(request, EditSeries.class, true, true, true, false);
             return actionEditStep2(request, response, env);
+        }
 
-        if (action.equals(ACTION_REMOVE))
+        if (action.equals(ACTION_REMOVE)) {
+            ActionProtector.ensureContract(request, EditSeries.class, true, false, false, true);
             return actionRemove(response, env);
+        }
 
-        if (action.equals(ACTION_ADD_ARTICLE_STEP2))
+        if (action.equals(ACTION_ADD_ARTICLE_STEP2)) {
+            ActionProtector.ensureContract(request, EditSeries.class, true, true, true, false);
             return actionAttachArticleStep2(response, env, false);
+        }
 
         if (action.equals(ACTION_ADD_ARTICLES_URLS))
             return actionAttachArticlesUrlsStep1(request, env);
 
-        if (action.equals(ACTION_ADD_ARTICLES_URLS_STEP2))
+        if (action.equals(ACTION_ADD_ARTICLES_URLS_STEP2)) {
+            ActionProtector.ensureContract(request, EditSeries.class, true, true, true, false);
             return actionAttachArticlesUrlsStep2(request, response, env);
+        }
 
-        if (action.equals(ACTION_REMOVE_ARTICLE))
+        if (action.equals(ACTION_REMOVE_ARTICLE)) {
+            ActionProtector.ensureContract(request, EditSeries.class, true, false, false, true);
             return actionRemoveArticle(response, env);
+        }
 
         return null;
     }
@@ -231,6 +244,7 @@ public class EditSeries implements AbcAction {
         }
 
         persistence.remove(seriesRelation);
+        seriesRelation.getParent().removeChildRelation(seriesRelation);
 
         UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
         urlUtils.redirect(response, UrlUtils.PREFIX_SERIES);

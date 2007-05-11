@@ -23,6 +23,7 @@
   <input type="submit" name="next" value="Následujících ${USERS.pageSize} uživatelů">
  </#if>
  ${SAVED_PARAMS?if_exists}
+ <input type="hidden" NAME="ticket" VALUE="${USER.getSingleProperty('ticket')}">
  <input type="hidden" name="from" value="${USERS.currentPage.row}">
  <input type="hidden" name="sAction" value="redirect">
 </form>

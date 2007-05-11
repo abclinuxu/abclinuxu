@@ -33,6 +33,7 @@ import cz.abclinuxu.utils.config.Configurable;
 import cz.abclinuxu.utils.config.ConfigurationException;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.exceptions.InvalidInputException;
+import cz.abclinuxu.security.ActionProtector;
 import org.apache.log4j.Logger;
 import org.apache.commons.fileupload.DiskFileUpload;
 import org.apache.commons.fileupload.DefaultFileItemFactory;
@@ -48,6 +49,8 @@ import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.util.*;
 import java.util.prefs.Preferences;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 /**
  * Class to hold useful methods related to servlets
@@ -205,6 +208,7 @@ public class ServletUtils implements Configurable {
             }
 
             handleLoggedIn(user,false,response);
+            params.put(ActionProtector.PARAM_TICKET, user.getSingleProperty(Constants.PROPERTY_TICKET));
 
         } else {
             Cookie cookie = getCookie(request, Constants.VAR_USER);
@@ -332,6 +336,25 @@ public class ServletUtils implements Configurable {
             url.append(query);
         }
         return url.toString();
+    }
+
+    /**
+     * Tests whether the current method request is POST.
+     * @param request current HTTP request
+     * @return true when current request's method is POST
+     */
+    public static boolean isMethodPost(HttpServletRequest request) {
+        return "POST".equalsIgnoreCase(request.getMethod());
+    }
+
+    /**
+     * @return referer for this page
+     */
+    public static URL getReferer(HttpServletRequest request) throws MalformedURLException {
+        String referer = request.getHeader("Referer");
+        if (referer == null)
+            return null;
+        return new URL(referer);
     }
 
     /**

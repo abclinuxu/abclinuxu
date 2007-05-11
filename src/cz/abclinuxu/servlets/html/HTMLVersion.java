@@ -35,6 +35,7 @@ import cz.abclinuxu.exceptions.NotFoundException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.NotAuthorizedException;
 import cz.abclinuxu.exceptions.InvalidInputException;
+import cz.abclinuxu.exceptions.SecurityException;
 import cz.abclinuxu.data.User;
 
 import javax.servlet.http.HttpServletRequest;
@@ -145,9 +146,12 @@ public class HTMLVersion implements Configurable {
         } else if ( e instanceof MissingArgumentException || e instanceof InvalidInputException) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             template = config.getTemplate("/errors/badinput.ftl");
-        } else if ( e instanceof NotAuthorizedException ) {
+        } else if ( e instanceof NotAuthorizedException) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             template = config.getTemplate("/errors/denied.ftl");
+        } else if (e instanceof SecurityException) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            template = config.getTemplate("/errors/security.ftl");
         } else if ( e.getClass().getName().startsWith("freemarker") ) {
             log.error("Template error at "+url+", message: "+e.getMessage());
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

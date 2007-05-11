@@ -40,6 +40,7 @@ import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
+import cz.abclinuxu.security.ActionProtector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -99,8 +100,10 @@ public class EditBazaar implements AbcAction {
         if (ACTION_ADD.equals(action))
             return FMTemplateSelector.select("EditBazaar", "add", env, request);
 
-        if (ACTION_ADD_STEP2.equals(action))
+        if (ACTION_ADD_STEP2.equals(action)) {
+            ActionProtector.ensureContract(request, EditBazaar.class, true, true, true, false);
             return actionAddStep2(request, response, env, true);
+        }
 
         Item ad = (Item) relation.getChild();
         if (user.getId() != ad.getOwner() && !user.hasRole(Roles.BAZAAR_ADMIN))
@@ -109,14 +112,18 @@ public class EditBazaar implements AbcAction {
         if (ACTION_EDIT.equals(action))
             return actionEdit(request, env);
 
-        if (ACTION_EDIT_STEP2.equals(action))
+        if (ACTION_EDIT_STEP2.equals(action)) {
+            ActionProtector.ensureContract(request, EditBazaar.class, true, true, true, false);
             return actionEditStep2(request, response, env);
+        }
 
         if (ACTION_REMOVE.equals(action))
             return FMTemplateSelector.select("EditBazaar", "remove", env, request);
 
-        if (ACTION_REMOVE_STEP2.equals(action))
+        if (ACTION_REMOVE_STEP2.equals(action)) {
+            ActionProtector.ensureContract(request, EditBazaar.class, true, true, true, false);
             return actionRemoveStep2(request, response, env);
+        }
 
         throw new MissingArgumentException("Chybí parametr action!");
     }

@@ -6,8 +6,7 @@
     <body>
         <h1>Přístup odmítnut</h1>
 
-        <p>
-            Nemáte dostatečná práva pro tuto operaci.
-        </p>
+        <p>Akce nebyla zavolána korektním způsobem.</p>
+        <p class="error">${EXCEPTION_MESSAGE}</p>
     </body>
 </html>

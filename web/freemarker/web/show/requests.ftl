@@ -37,9 +37,8 @@ Tento formulář však pro tyto účely neslouží, a proto bez odpovědi
     <#if USER?exists && USER.hasRole("requests admin")>
         <br />
         <a href="${URL.make("/EditRequest?action=email&requestId="+relation.id)}">Poslat email</a>,
-        <a href="${URL.make("/EditRequest?action=deliver&requestId="+relation.id)}">Vyřízeno</a>,
-        <a href="${URL.make("/EditRequest?action=delete&requestId="+relation.id)}">Smazat</a>,
-        <a href="${URL.make("/EditRequest?action=todo&requestId="+relation.id)}">Přesunout do TODO</a>
+        <a href="${URL.make("/EditRequest?action=deliver&requestId="+relation.id+TOOL.ticket(USER, false))}">Vyřízeno</a>,
+        <a href="${URL.make("/EditRequest?action=delete&requestId="+relation.id+TOOL.ticket(USER, false))}">Smazat</a>
     </#if>
   </p><hr />
 </#list>

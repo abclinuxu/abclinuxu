@@ -126,18 +126,50 @@ public final class URLMapper implements Configurable {
     /**
      * Finds AbcAction for URL represented by this request.
      * @return AbcAction for this URL.
-     * @throws NotFoundException if there is no mapping for this URL
+     * @throws NotFoundException if there is no mapping for this URL and there is no URL to redirect to
      */
     public AbcAction findAction(HttpServletRequest request, HttpServletResponse response, Map env) throws NotFoundException, IOException {
+        String url = ServletUtils.combinePaths(request.getServletPath(), request.getPathInfo());
+        AbcAction action = findAction(url, env);
+
+        if (action == null) {
+            String newUrl = null;
+            Object redirect = SQLTool.getInstance().findNewAddress(url);
+            if (redirect instanceof String)
+                newUrl = (String) redirect;
+            else if (redirect instanceof Relation) {
+                Relation relation = (Relation) redirect;
+                newUrl = relation.getUrl();
+                // fortunatelly URL does not become unset, so we can assume that there must be some URL
+            }
+
+            if (newUrl != null) {
+                UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
+                urlUtils.redirect(response, newUrl);
+                return null;
+            }
+        }
+
+        if (action == null)
+            throw new NotFoundException("Neznamé URL: " + url + " !");
+
+        return action;
+    }
+
+    /**
+     * Finds AbcAction for specified URL
+     * @param relativeUrl url staring with slash 
+     * @return AbcAction for this URL or null if not found
+     */
+    public AbcAction findAction(String relativeUrl, Map env) {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         PatternAction patternAction;
 
-        String url = ServletUtils.combinePaths(request.getServletPath(), request.getPathInfo());
-        Matcher matcher = reTrailingRid.matcher(url);
+        Matcher matcher = reTrailingRid.matcher(relativeUrl);
         boolean custom = ! matcher.find();
 
         if (custom) {
-            Relation relation = loadCustomRelation(url);
+            Relation relation = loadCustomRelation(relativeUrl);
             if (relation != null)
                 params.put(ShowObject.PARAM_RELATION_SHORT, Integer.toString(relation.getId()));
             else
@@ -146,7 +178,7 @@ public final class URLMapper implements Configurable {
 
         for (Iterator iter = priorityMapping.iterator(); iter.hasNext();) {
             patternAction = (PatternAction) iter.next();
-            if (patternAction.getRe().match(url)) {
+            if (patternAction.getRe().match(relativeUrl)) {
                 setActionParams(patternAction, params);
                 return patternAction.getAction();
             }
@@ -157,29 +189,13 @@ public final class URLMapper implements Configurable {
 
         for ( Iterator iter = actionMapping.iterator(); iter.hasNext(); ) {
             patternAction = (PatternAction) iter.next();
-            if (patternAction.getRe().match(url)) {
+            if (patternAction.getRe().match(relativeUrl)) {
                 setActionParams(patternAction, params);
                 return patternAction.getAction();
             }
         }
 
-        String newUrl = null;
-        Object redirect = SQLTool.getInstance().findNewAddress(url);
-        if (redirect instanceof String)
-            newUrl = (String) redirect;
-        else if (redirect instanceof Relation) {
-            Relation relation = (Relation) redirect;
-            newUrl = relation.getUrl();
-            // fortunatelly URL does not become unset, so we can assume that there must be some URL
-        }
-
-        if (newUrl != null) {
-            UrlUtils urlUtils = (UrlUtils) env.get(Constants.VAR_URL_UTILS);
-            urlUtils.redirect(response, newUrl);
-            return null;
-        }
-
-        throw new NotFoundException("Nezname URL: "+url+" !");
+        return null;
     }
 
     /**

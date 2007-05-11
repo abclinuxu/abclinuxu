@@ -43,6 +43,7 @@ import cz.abclinuxu.data.Relation;
 import cz.abclinuxu.data.GenericDataObject;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.security.ActionProtector;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
@@ -95,6 +96,8 @@ public class EditRating implements AbcAction, Configurable {
             ServletUtils.addError(Constants.ERROR_GENERIC, msgNotLogged, env, null);
             return FMTemplateSelector.select("ViewUser", "login", env, request);
         }
+
+        ActionProtector.ensureContract(request, EditRating.class, false, false, false, true);
 
         GenericDataObject object = ((GenericDataObject)relation.getChild());
         Date originalUpdated = object.getUpdated();

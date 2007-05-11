@@ -1,10 +1,10 @@
 <#assign plovouci_sloupec>
     <div class="s_sekce">
         <ul>
-            <li><a href="/clanky/show/3500?text=sekce+${RELATION.id}">Požádat o vytvoření podsekce</a></li>
             <#if CATEGORY.isOpen()>
                 <li><a href="${URL.make("/edit/"+RELATION.id+"?action=add")}">Vložit novou položku</a></li>
             </#if>
+            <li><a href="/clanky/show/3500?text=sekce+${RELATION.id}">Požádat o vytvoření podsekce</a></li>
             <#if USER?exists && USER.hasRole("category admin")>
                 <hr />
                 <li><a href="${URL.make("/EditCategory?action=add&amp;rid="+RELATION.id+"&amp;categoryId="+CATEGORY.id)}">mkdir</a>,

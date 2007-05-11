@@ -31,7 +31,7 @@
         <a href="${URL.make("/edit?action=edit&amp;rid="+RELATION.id)}">Upravit</a>
         <#if SERIES?exists>
             <#if ! inPool>
-                <a href="${URL.noPrefix("/serialy/edit/"+SERIES.series.id+"?action=rmArticle&amp;articleRid="+RELATION.id)}">Vyřadit ze seriálu</a>
+                <a href="${URL.noPrefix("/serialy/edit/"+SERIES.series.id+"?action=rmArticle&amp;articleRid="+RELATION.id+TOOL.ticket(USER, false))}">Vyřadit ze seriálu</a>
             </#if>
         <#else>
             <#if inPool>

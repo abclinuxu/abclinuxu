@@ -20,10 +20,10 @@ oblíbených odkazů. Oblíbené odkazy jsou blogy
                     <a href="${URL.make("/blog/edit/"+REL_BLOG.id+"?position="+link_index+"&amp;action=editLink")}">upravit</a>
                     <a href="${URL.make("/blog/edit/"+REL_BLOG.id+"?position="+link_index+"&amp;action=rmLink")}">smazat</a>
                     <#if link_index!=0>
-                        <a href="${URL.make("/blog/edit/"+REL_BLOG.id+"?position="+link_index+"&amp;action=mvLinkUp")}">nahoru</a>
+                        <a href="${URL.make("/blog/edit/"+REL_BLOG.id+"?position="+link_index+"&amp;action=mvLinkUp"+TOOL.ticket(USER, false))}">nahoru</a>
                     </#if>
                     <#if link_has_next>
-                        <a href="${URL.make("/blog/edit/"+REL_BLOG.id+"?position="+link_index+"&amp;action=mvLinkDown")}">dolů</a>
+                        <a href="${URL.make("/blog/edit/"+REL_BLOG.id+"?position="+link_index+"&amp;action=mvLinkDown"+TOOL.ticket(USER, false))}">dolů</a>
                     </#if>
                 </td>
             </tr>

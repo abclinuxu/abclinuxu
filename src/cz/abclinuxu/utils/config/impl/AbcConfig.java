@@ -52,11 +52,12 @@ public class AbcConfig implements Configurable {
     public static final String PREF_FAQ_COUNT = "section.faq.count";
     public static final String PREF_WATCHED_DISCUSSION_LIMIT = "watched.discussions.limit";
     public static final String PREF_MAINTAINANCE_MODE = "maintainance.mode";
+    public static final String PREF_TICKET_LENGTH = "user.ticket.length";
 
     static String deployPath, domain, hostname;
     static int viewUserPageSize, sectionArticleCount, seriesArticleCount, bazaarPageSize;
     static int articleSectionArticlesCount, authorArticlesPageSize, searchResultsCount, faqSectionCount;
-    static int maxWatchedDiscussions;
+    static int maxWatchedDiscussions, ticketLength;
     static boolean maintainanceMode;
 
     /**
@@ -77,6 +78,7 @@ public class AbcConfig implements Configurable {
         faqSectionCount = prefs.getInt(PREF_FAQ_COUNT, 20);
         bazaarPageSize = prefs.getInt(PREF_BAZAAR_PAGE_SIZE, 20);
         maxWatchedDiscussions = prefs.getInt(PREF_WATCHED_DISCUSSION_LIMIT, 50);
+        ticketLength = prefs.getInt(PREF_TICKET_LENGTH, 10);
         maintainanceMode = prefs.getBoolean(PREF_MAINTAINANCE_MODE, false);
     }
 
@@ -182,6 +184,13 @@ public class AbcConfig implements Configurable {
      */
     public static int getMaxWatchedDiscussionLimit() {
         return maxWatchedDiscussions;
+    }
+
+    /**
+     * @return length of the ticket to be generated for the user
+     */
+    public static int getTicketLength() {
+        return ticketLength;
     }
 
     /**

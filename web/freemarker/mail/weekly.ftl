@@ -22,18 +22,19 @@ Prehled clanku
 Reklama
 =======
 
-Stante se lektorem autorizovaneho skoliciho strediska
-OKsystem pro oblast SUSE Linux, posilite tak profesionalni
-tym odborniku, kteri se zabyvaji vedenim kurzu Novell SUSE
-Linux a technickou podporou OS a serverovych aplikaci SUSE
-Linux.
+Systemy pro podniky GigaCon
+Datum: 20. 6. 2007
+Misto: Hotel Pyramida, Praha
+http://www.systemypropodniky.cz
 
-Blizsi informace o nasi spolecnosti, otevrenych pozicich
-a nabidce zamestnaneckych benefitu vam radi poskytneme na
-tel. cisle: +420 244 021 129 nebo e-mailu:
-bernatik@oksystem.cz.
+Hlavnim cilem konference je predstavit dostupne produkty
+pro efektivni a moderni spravovani firmy. Odborna konference,
+ktera ucastnikum z rad reditelu, majitelu firem, obchodnich
+a vyrobnich reditelu, ekonomu, IT specialistu ci pracovnikum
+z informacni, telekomunikacni, bankovni, financni nebo
+administracni oblasti nabidne uceleny pohled na vyuziti
+komplexnich informacnich systemu ve firme, ci organizaci.
 
-http://www.abclinuxu.cz/clanky/pr/oksystem-posiluje-tym-lektoru-v-oblasti-suse-linux
 
 
 Prehled zpravicek

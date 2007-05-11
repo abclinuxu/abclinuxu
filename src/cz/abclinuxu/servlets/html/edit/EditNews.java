@@ -34,6 +34,7 @@ import cz.abclinuxu.data.Category;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
+import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.utils.news.NewsCategories;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
@@ -107,8 +108,10 @@ public class EditNews implements AbcAction {
         if ( ACTION_ADD.equals(action) )
             return actionAddStep1(request, env);
 
-        if ( ACTION_ADD_STEP2.equals(action) )
+        if ( ACTION_ADD_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditNews.class, true, true, true, false);
             return actionAddStep2(request, response, env, true);
+        }
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION_SHORT, Relation.class, params, request);
         if ( relation==null )
@@ -123,30 +126,40 @@ public class EditNews implements AbcAction {
         if ( ACTION_EDIT.equals(action) )
             return actionEditStep1(request, env);
 
-        if ( ACTION_EDIT_STEP2.equals(action) )
+        if ( ACTION_EDIT_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditNews.class, true, true, true, false);
             return actionEditStep2(request, response, env);
+        }
 
         // check permissions
         if ( !user.hasRole(Roles.NEWS_ADMIN) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-        if ( ACTION_APPROVE.equals(action) )
+        if ( ACTION_APPROVE.equals(action) ) {
+            ActionProtector.ensureContract(request, EditNews.class, true, true, false, true);
             return actionApprove(request, response, env);
+        }
 
         if ( ACTION_REMOVE.equals(action) )
             return FMTemplateSelector.select("EditNews", "remove", env, request);
 
-        if ( ACTION_REMOVE_STEP2.equals(action) )
+        if ( ACTION_REMOVE_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditNews.class, true, true, true, false);
             return actionRemoveStep2(request, response, env);
+        }
 
         if ( ACTION_SEND_EMAIL.equals(action) )
             return actionSendEmail(request, response, env);
 
-        if ( ACTION_LOCK.equals(action) )
+        if ( ACTION_LOCK.equals(action) ) {
+            ActionProtector.ensureContract(request, EditNews.class, true, true, false, true);
             return actionLock(request, response, env);
+        }
 
-        if ( ACTION_UNLOCK.equals(action) )
+        if ( ACTION_UNLOCK.equals(action) ) {
+            ActionProtector.ensureContract(request, EditNews.class, true, true, false, true);
             return actionUnlock(request, response, env);
+        }
 
         throw new MissingArgumentException("Chybí parametr action!");
     }

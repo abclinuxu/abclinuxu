@@ -13,6 +13,7 @@ import cz.abclinuxu.utils.email.monitor.MonitorTools;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.exceptions.MissingArgumentException;
+import cz.abclinuxu.security.ActionProtector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,6 +44,8 @@ public class EditMonitor implements AbcAction {
         User user = (User) env.get(Constants.VAR_USER);
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
+
+        ActionProtector.ensureContract(request, EditMonitor.class, false, false, false, true);
         return actionAlterMonitor(request, response, env);
     }
 

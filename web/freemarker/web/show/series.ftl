@@ -20,7 +20,8 @@
     <p>
         <a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=edit")}">Uprav seriál</a>
         <a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=addArticlesUrls")}">Přidej články</a>
-        <a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=rm")}" onclick="return confirm('Opravdu chcete smazat tento seriál?')">Smaž seriál</a>
+        <a href="${URL.make("/serialy/edit/"+RELATION.id+"?action=rm"+TOOL.ticket(USER, false))}"
+           onclick="return confirm('Opravdu chcete smazat tento seriál?')">Smaž seriál</a>
     </p>
 </#if>
 

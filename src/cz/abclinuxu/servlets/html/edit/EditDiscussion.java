@@ -20,10 +20,10 @@ package cz.abclinuxu.servlets.html.edit;
 
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.AbcAction;
-import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.url.URLManager;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
+import cz.abclinuxu.servlets.utils.ServletUtils;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.data.view.RowComment;
@@ -45,6 +45,7 @@ import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.exceptions.PersistenceException;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
+import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.scheduler.VariableFetcher;
 
 import org.dom4j.*;
@@ -123,7 +124,7 @@ public class EditDiscussion implements AbcAction {
         if (ServletUtils.handleMaintainance(request, env))
             response.sendRedirect(response.encodeRedirectURL("/"));
 
-        if ( relation!=null ) {
+        if ( relation != null ) {
             relation = (Relation) persistence.findById(relation);
             persistence.synchronize(relation.getChild());
             env.put(VAR_RELATION,relation);
@@ -136,62 +137,82 @@ public class EditDiscussion implements AbcAction {
         if ( ACTION_ADD_COMMENT.equals(action) )
             return actionAddComment(request,env);
 
-        if ( ACTION_ADD_COMMENT_STEP2.equals(action) )
+        if ( ACTION_ADD_COMMENT_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditDiscussion.class, true, true, true, false);
             return  actionAddComment2(request,response,env, true);
+        }
 
         if ( ACTION_ADD_QUESTION.equals(action) )
             return actionAddQuestion(request, env);
 
-        if ( ACTION_ADD_QUESTION_STEP2.equals(action) )
+        if ( ACTION_ADD_QUESTION_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditDiscussion.class, true, true, true, false);
             return actionAddQuestion2(request, response, env, true);
+        }
 
         // check permissions
         User user = (User) env.get(Constants.VAR_USER);
         if ( user==null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
 
-        if ( ACTION_SOLVED.equals(action) )
+        if ( ACTION_SOLVED.equals(action) ) {
+            ActionProtector.ensureContract(request, EditDiscussion.class, true, false, false, true);
             return actionSolved(request, response, env);
+        }
 
         // check permissions
-        if ( !user.hasRole(Roles.DISCUSSION_ADMIN) )
+        if ( ! user.hasRole(Roles.DISCUSSION_ADMIN) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
         if ( ACTION_CENSORE_COMMENT.equals(action) )
             return actionCensore(request, response, env);
 
-        if ( ACTION_CENSORE_COMMENT_STEP2.equals(action) )
+        if ( ACTION_CENSORE_COMMENT_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditDiscussion.class, true, true, true, false);
             return actionCensore(request, response, env);
+        }
 
         if ( ACTION_EDIT_COMMENT.equals(action) )
             return actionEditComment(request, env);
 
-        if ( ACTION_EDIT_COMMENT_STEP2.equals(action) )
+        if ( ACTION_EDIT_COMMENT_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditDiscussion.class, true, true, true, false);
             return actionEditComment2(request, response, env);
+        }
 
         if ( ACTION_REMOVE_COMMENT.equals(action) )
             return actionRemoveComment(request, env);
 
-        if ( ACTION_REMOVE_COMMENT_STEP2.equals(action) )
+        if ( ACTION_REMOVE_COMMENT_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditDiscussion.class, true, true, true, false);
             return actionRemoveComment2(request, response, env);
+        }
 
         if ( ACTION_MOVE_COMMENT.equals(action) )
             return actionMoveThread(request, env);
 
-        if ( ACTION_MOVE_COMMENT_STEP2.equals(action) )
+        if ( ACTION_MOVE_COMMENT_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditDiscussion.class, true, true, true, false);
             return actionMoveThreadStep2(request, response, env);
+        }
 
-        if ( ACTION_FREEZE_DISCUSSION.equals(action) )
+        if ( ACTION_FREEZE_DISCUSSION.equals(action) ) {
+            ActionProtector.ensureContract(request, EditDiscussion.class, true, false, false, true);
             return actionAlterFreeze(request, response, env);
+        }
 
-        if ( ACTION_DECREASE_LEVEL.equals(action) )
+        if ( ACTION_DECREASE_LEVEL.equals(action) ) {
+            ActionProtector.ensureContract(request, EditDiscussion.class, true, false, false, true);
             return actionDecreaseThreadLevel(request, response, env);
+        }
 
         if ( ACTION_THREAD_TO_DIZ.equals(action) )
             return actionToNewDiscussion1(request, env);
 
-        if ( ACTION_THREAD_TO_DIZ_STEP2.equals(action) )
+        if ( ACTION_THREAD_TO_DIZ_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditDiscussion.class, true, true, true, false);
             return actionToNewDiscussion2(request, response, env);
+        }
 
         throw new MissingArgumentException("Chybí parametr action!");
     }
@@ -538,6 +559,7 @@ public class EditDiscussion implements AbcAction {
             Element root = comment.getData().getRootElement();
             Node node = root.selectSingleNode("censored");
             if (node!=null) {
+                ActionProtector.ensureContract(request, EditDiscussion.class, true, false, false, true);
                 node.detach();
                 comment.set_dirty(true);
                 AdminLogger.logEvent(user,"odstranena cenzura na vlakno "+id+" diskuse "+discussion.getId()+", relace "+relation.getId());

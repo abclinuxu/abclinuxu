@@ -39,6 +39,7 @@ import cz.abclinuxu.utils.search.CreateIndex;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.security.ActionProtector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -77,19 +78,25 @@ public class AdminServlet implements AbcAction {
             return performCheck(request, env);
 
         User user = (User) env.get(Constants.VAR_USER);
-        if ( user==null )
+        if ( user == null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
-        if ( !(user.isMemberOf(Constants.GROUP_ADMINI)) )
+        if ( ! user.isMemberOf(Constants.GROUP_ADMINI) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-        if (ACTION_RECREATE_RSS.equals(action))
+        if (ACTION_RECREATE_RSS.equals(action)) {
+            ActionProtector.ensureContract(request, AdminServlet.class, true, false, false, true);
             return refreshRss(request, env);
+        }
 
-        if (ACTION_CLEAR_CACHE.equals(action) )
+        if (ACTION_CLEAR_CACHE.equals(action) ) {
+            ActionProtector.ensureContract(request, AdminServlet.class, true, false, false, true);
             return clearCache(request,env);
+        }
 
-        if (ACTION_RESTART_TASKS.equals(action) )
+        if (ACTION_RESTART_TASKS.equals(action) ) {
+            ActionProtector.ensureContract(request, AdminServlet.class, true, false, false, true);
             return restartTasks(request,env);
+        }
 
         if (action == null)
             return FMTemplateSelector.select("Admin", "show", env, request);
@@ -97,11 +104,15 @@ public class AdminServlet implements AbcAction {
         if (!user.hasRole(Roles.ROOT))
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
 
-        if (ACTION_SWITCH_MAINTAINANCE.equals(action))
+        if (ACTION_SWITCH_MAINTAINANCE.equals(action)) {
+            ActionProtector.ensureContract(request, AdminServlet.class, true, false, false, true);
             return switchMaintainance(request, env);
+        }
 
-        if (ACTION_SWITCH_USER.equals(action))
+        if (ACTION_SWITCH_USER.equals(action)) {
+            ActionProtector.ensureContract(request, AdminServlet.class, true, true, true, false);
             return switchUser(request, response, env);
+        }
 
         return null;
     }

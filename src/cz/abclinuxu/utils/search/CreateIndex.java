@@ -101,7 +101,7 @@ public class CreateIndex implements Configurable {
         try {
             long start = System.currentTimeMillis();
 
-            indexWriter = new EmptyIndexWriter(PATH, new AbcCzechAnalyzer(), true);
+            indexWriter = new IndexWriter(PATH, new AbcCzechAnalyzer(), true);
             if (mergeFactor > 0)
                 indexWriter.setMergeFactor(mergeFactor);
             if (maxMergeDocs > 0)

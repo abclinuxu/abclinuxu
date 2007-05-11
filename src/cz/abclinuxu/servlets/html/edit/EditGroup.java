@@ -24,11 +24,11 @@ import cz.abclinuxu.servlets.html.view.ViewUser;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.ServletUtils;
-import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.data.User;
 import cz.abclinuxu.data.Item;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
+import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.persistence.*;
 import cz.abclinuxu.persistence.extra.LimitQualifier;
 import cz.abclinuxu.persistence.extra.Qualifier;
@@ -88,14 +88,18 @@ public class EditGroup implements AbcAction {
         if ( ACTION_CREATE_GROUP.equals(action) )
             return FMTemplateSelector.select("EditGroup", "create", env, request);
 
-        if ( ACTION_CREATE_GROUP_STEP2.equals(action) )
+        if ( ACTION_CREATE_GROUP_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditGroup.class, true, true, true, false);
             return actionCreateGroup(request, response, env);
+        }
 
         if ( ACTION_EDIT_GROUP.equals(action) )
             return actionEditGroupStep1(request, env);
 
-        if ( ACTION_EDIT_GROUP_STEP2.equals(action) )
+        if ( ACTION_EDIT_GROUP_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditGroup.class, true, true, true, false);
             return actionEditGroupStep2(request, response, env);
+        }
 
         if ( ACTION_SHOW.equals(action) )
             return actionShow(request, env);
@@ -103,8 +107,10 @@ public class EditGroup implements AbcAction {
         if ( ACTION_SHOW_USERS.equals(action) )
             return actionShowUsers(request, env);
 
-        if ( ACTION_REMOVE_GROUP_MEMBERS.equals(action) )
+        if ( ACTION_REMOVE_GROUP_MEMBERS.equals(action) ) {
+            ActionProtector.ensureContract(request, EditGroup.class, true, true, true, false);
             return actionRemoveMembers(request, response, env);
+        }
 
         return actionShow(request, env);
     }

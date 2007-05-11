@@ -44,6 +44,7 @@ import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
+import cz.abclinuxu.security.ActionProtector;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -115,14 +116,18 @@ public class EditSoftware implements AbcAction, Configurable {
         if (ACTION_ADD.equals(action))
             return actionAddStep1(request, response, env);
 
-        if (ACTION_ADD_STEP2.equals(action))
+        if (ACTION_ADD_STEP2.equals(action)) {
+            ActionProtector.ensureContract(request, EditSoftware.class, true, true, true, false);
             return actionAddStep2(request, response, env, true);
+        }
 
         if (ACTION_EDIT.equals(action))
             return actionEditStep1(request, env);
 
-        if (ACTION_EDIT_STEP2.equals(action))
+        if (ACTION_EDIT_STEP2.equals(action)) {
+            ActionProtector.ensureContract(request, EditSoftware.class, true, true, true, false);
             return actionEditStep2(request, response, env);
+        }
 
         throw new MissingArgumentException("Chybí parametr action!");
     }

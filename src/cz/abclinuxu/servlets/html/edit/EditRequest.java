@@ -29,6 +29,7 @@ import cz.abclinuxu.data.view.Comment;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.Sorters2;
@@ -104,20 +105,26 @@ public class EditRequest implements AbcAction, Configurable {
         if ( relation!=null )
             env.put(VAR_REQUEST_RELATION,relation);
 
-        if ( action==null || action.equals(ACTION_ADD) )
+        if ( action==null || action.equals(ACTION_ADD) ) {
+            ActionProtector.ensureContract(request, EditRequest.class, true, false, true, false);
             return actionAdd(request,response,env);
+        }
 
         if ( action.equals(ACTION_COMMENT) )
             return actionCommentTools(request, env);
 
-        if ( action.equals(ACTION_COMPLAINT) )
+        if ( action.equals(ACTION_COMPLAINT) ) {
+            ActionProtector.ensureContract(request, EditRequest.class, true, true, true, false);
             return actionSubmitComplaint(request,response,env);
+        }
 
         if ( action.equals(ACTION_CHOOSE_RIGHT_FORUM) )
             return actionChooseForum(request,env);
 
-        if ( action.equals(ACTION_RIGHT_FORUM) )
+        if ( action.equals(ACTION_RIGHT_FORUM) ) {
+            ActionProtector.ensureContract(request, EditRequest.class, true, true, true, false);
             return actionAskForumChange(request,response,env);
+        }
 
         // check permissions
         if ( user==null )
@@ -128,11 +135,15 @@ public class EditRequest implements AbcAction, Configurable {
         if ( action.equals(ACTION_MAIL) )
             return actionSendEmail(request, response, env);
 
-        if ( action.equals(ACTION_DELETE) )
+        if ( action.equals(ACTION_DELETE) ) {
+            ActionProtector.ensureContract(request, EditRequest.class, true, false, false, true);
             return actionDelete(request, response, env);
+        }
 
-        if ( action.equals(ACTION_DELIVER) )
+        if ( action.equals(ACTION_DELIVER) ) {
+            ActionProtector.ensureContract(request, EditRequest.class, true, false, false, true);
             return actionDeliver(request, response, env);
+        }
 
         throw new MissingArgumentException("Chybí parametr action!");
     }

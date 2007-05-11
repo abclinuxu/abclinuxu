@@ -16,18 +16,18 @@
 <#if USER?exists && USER.hasRole("discussion admin")>
     <fieldset>
         <legend>Nástroje pro adminy</legend>
+        <#assign author_ip = TOOL.xpath(COMMENT.data, "//author_ip")?default("UNDEFINED")>
+        <#if author_ip!="UNDEFINED">${author_ip}</#if>
         <a href="${URL.make("/EditDiscussion/"+relId+"?action=edit&dizId="+dizId+"&threadId="+COMMENT.id)}">Upravit</a>
         <#if (COMMENT.id>0)>
             <a href="${URL.make("/EditDiscussion/"+relId+"?action=rm&amp;dizId="+dizId+"&amp;threadId="+COMMENT.id)}">Smazat</a>
             <a href="${URL.make("/EditDiscussion/"+relId+"?action=censore&amp;dizId="+dizId+"&amp;threadId="+COMMENT.id)}">Cenzura</a>
             <a href="${URL.make("/EditDiscussion/"+relId+"?action=move&amp;dizId="+dizId+"&amp;threadId="+COMMENT.id)}">Přesunout</a>
             <#if (COMMENT.parent?exists)>
-                <a href="${URL.make("/EditDiscussion/"+relId+"?action=moveUp&amp;dizId="+dizId+"&amp;threadId="+COMMENT.id)}">Přesunout výše</a>
+                <a href="${URL.make("/EditDiscussion/"+relId+"?action=moveUp&amp;dizId="+dizId+"&amp;threadId="+COMMENT.id+TOOL.ticket(USER, false))}">Přesunout výše</a>
             </#if>
             <a href="${URL.make("/EditDiscussion/"+relId+"?action=toQuestion&amp;dizId="+dizId+"&amp;threadId="+COMMENT.id)}">Osamostatnit</a>
         </#if>
-        <#assign author_ip = TOOL.xpath(COMMENT.data, "//author_ip")?default("UNDEFINED")>
-        <#if author_ip!="UNDEFINED">${author_ip}</#if>
     </fieldset>
 </#if>
 

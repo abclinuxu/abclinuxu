@@ -38,6 +38,7 @@ import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.scheduler.VariableFetcher;
+import cz.abclinuxu.security.ActionProtector;
 import cz.finesoft.socd.analyzer.DiacriticRemover;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -94,14 +95,18 @@ public class EditDictionary implements AbcAction {
         if ( action.equals(ACTION_ADD) )
             return FMTemplateSelector.select("Dictionary", "add", env, request);
 
-        if ( action.equals(ACTION_ADD_STEP2) )
+        if ( action.equals(ACTION_ADD_STEP2) ) {
+            ActionProtector.ensureContract(request, EditDictionary.class, true, true, true, false);
             return actionAddStep2(request, response, env, true);
+        }
 
         if ( action.equals(ACTION_EDIT) )
             return actionEdit(request, env);
 
-        if ( action.equals(ACTION_EDIT_STEP2) )
+        if ( action.equals(ACTION_EDIT_STEP2) ) {
+            ActionProtector.ensureContract(request, EditDictionary.class, true, true, true, false);
             return actionEdit2(request, response, env);
+        }
 
         throw new MissingArgumentException("Chybí parametr action!");
     }

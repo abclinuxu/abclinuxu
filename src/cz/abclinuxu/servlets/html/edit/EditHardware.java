@@ -36,6 +36,7 @@ import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.scheduler.VariableFetcher;
+import cz.abclinuxu.security.ActionProtector;
 
 import org.dom4j.*;
 import org.htmlparser.util.ParserException;
@@ -114,14 +115,18 @@ public class EditHardware implements AbcAction {
         if ( action.equals(ACTION_ADD) )
             return FMTemplateSelector.select("EditHardware", "add", env, request);
 
-        if ( action.equals(ACTION_ADD_STEP2) )
+        if ( action.equals(ACTION_ADD_STEP2) ) {
+            ActionProtector.ensureContract(request, EditHardware.class, true, true, true, false);
             return actionAddStep2(request, response, env, true);
+        }
 
         if ( action.equals(ACTION_EDIT) )
             return actionEditStep1(request, env);
 
-        if ( action.equals(ACTION_EDIT_STEP2) )
+        if ( action.equals(ACTION_EDIT_STEP2) ) {
+            ActionProtector.ensureContract(request, EditHardware.class, true, true, true, false);
             return actionEditStep2(request, response, env);
+        }
 
         throw new MissingArgumentException("Chybí parametr action!");
     }

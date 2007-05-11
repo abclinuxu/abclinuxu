@@ -33,13 +33,13 @@
     <#if locked>
         <#assign admin=TOOL.createUser(TOOL.xpath(ITEM, "//locked_by"))>
         Uzamknul <a href="/Profile/${admin.id}">${admin.name}</a> -
-        <a href="${URL.make("/edit?action=unlock&amp;rid="+relation.id)}">odemknout</a>
+        <a href="${URL.make("/edit?action=unlock&amp;rid="+relation.id+TOOL.ticket(USER?if_exists, false))}">odemknout</a>
     <#else>
         <a href="${URL.make("/show/"+relation.id)}">Zobrazit</a>
         <a href="${URL.make("/edit?action=edit&amp;rid="+relation.id)}">Upravit</a>
         <#if ! approved>
-            <a href="${URL.make("/edit?action=approve&amp;rid="+relation.id)}">Schválit</a>
-            <a href="${URL.make("/edit?action=lock&amp;rid="+relation.id)}">Zamknout</a>
+            <a href="${URL.make("/edit?action=approve&amp;rid="+relation.id+TOOL.ticket(USER?if_exists, false))}">Schválit</a>
+            <a href="${URL.make("/edit?action=lock&amp;rid="+relation.id+TOOL.ticket(USER?if_exists, false))}">Zamknout</a>
         </#if>
 
         <a href="${URL.make("/edit?action=remove&amp;rid="+relation.id)}">Smazat</a>

@@ -47,6 +47,7 @@ import cz.abclinuxu.utils.email.EmailSender;
 import cz.abclinuxu.utils.email.forum.SubscribedUsers;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
+import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.scheduler.VariableFetcher;
 import cz.abclinuxu.scheduler.UpdateLinks;
 import org.apache.commons.fileupload.FileItem;
@@ -191,8 +192,10 @@ public class EditUser implements AbcAction, Configurable {
         // registration doesn't require user to be logged in
         if (  action==null || action.equals(ACTION_REGISTER) )
             return FMTemplateSelector.select("EditUser","register",env,request);
-        else if ( action.equals(ACTION_REGISTER_STEP2) )
+        else if ( action.equals(ACTION_REGISTER_STEP2) ) {
+            ActionProtector.ensureContract(request, EditUser.class, false, true, true, false);
             return actionAddStep2(request,response,env);
+        }
 
         // all other actions require user to be logged in and to have rights for this action
         if ( user==null )
@@ -203,59 +206,79 @@ public class EditUser implements AbcAction, Configurable {
         if ( action.equals(ACTION_EDIT_BASIC) )
             return actionEditBasic(request, env);
 
-        if ( action.equals(ACTION_EDIT_BASIC_STEP2) )
+        if ( action.equals(ACTION_EDIT_BASIC_STEP2) ) {
+            ActionProtector.ensureContract(request, EditUser.class, true, true, true, false);
             return actionEditBasic2(request, response, env);
+        }
 
         if ( action.equals(ACTION_CHANGE_PASSWORD) )
             return FMTemplateSelector.select("EditUser", "changePassword", env, request);
 
-        if ( action.equals(ACTION_CHANGE_PASSWORD_STEP2) )
+        if ( action.equals(ACTION_CHANGE_PASSWORD_STEP2) ) {
+            ActionProtector.ensureContract(request, EditUser.class, true, true, true, false);
             return actionPassword2(request, response, env);
+        }
 
         if ( action.equals(ACTION_EDIT_PERSONAL) )
             return actionEditPersonal(request, env);
 
-        if ( action.equals(ACTION_EDIT_PERSONAL_STEP2) )
+        if ( action.equals(ACTION_EDIT_PERSONAL_STEP2) ) {
+            ActionProtector.ensureContract(request, EditUser.class, true, true, true, false);
             return actionEditPersonal2(request, response, env);
+        }
 
         if ( action.equals(ACTION_EDIT_PROFILE) )
             return actionEditProfile(request, env);
 
-        if ( action.equals(ACTION_EDIT_PROFILE_STEP2) )
+        if ( action.equals(ACTION_EDIT_PROFILE_STEP2) ) {
+            ActionProtector.ensureContract(request, EditUser.class, true, true, true, false);
             return actionEditProfile2(request, response, env);
+        }
 
         if ( action.equals(ACTION_EDIT_SETTINGS) )
             return actionEditSettings(request, env);
 
-        if ( action.equals(ACTION_EDIT_SETTINGS_STEP2) )
+        if ( action.equals(ACTION_EDIT_SETTINGS_STEP2) ) {
+            ActionProtector.ensureContract(request, EditUser.class, true, true, true, false);
             return actionEditSettings2(request, response, env);
+        }
 
         if ( action.equals(ACTION_EDIT_BLACKLIST) )
             return actionEditBlacklist(request, env);
 
-        if ( action.equals(ACTION_ADD_TO_BLACKLIST) )
+        if ( action.equals(ACTION_ADD_TO_BLACKLIST) ) {
+            ActionProtector.ensureContract(request, EditUser.class, true, false, false, true);
             return actionAddToBlacklist(request, response, env);
+        }
 
-        if ( action.equals(ACTION_REMOVE_FROM_BLACKLIST) )
+        if ( action.equals(ACTION_REMOVE_FROM_BLACKLIST) ) {
+            ActionProtector.ensureContract(request, EditUser.class, true, false, false, true);
             return actionRemoveFromBlacklist(request, response, env);
+        }
 
         if ( action.equals(ACTION_EDIT_SUBSCRIPTION) )
             return actionEditSubscription(request, env);
 
-        if ( action.equals(ACTION_EDIT_SUBSCRIPTION_STEP2) )
+        if ( action.equals(ACTION_EDIT_SUBSCRIPTION_STEP2) ) {
+            ActionProtector.ensureContract(request, EditUser.class, true, true, true, false);
             return actionEditSubscription2(request, response, env);
+        }
 
         if ( action.equals(ACTION_UPLOAD_PHOTO) )
             return FMTemplateSelector.select("EditUser", "uploadPhoto", env, request);
 
-        if ( action.equals(ACTION_UPLOAD_PHOTO_STEP2) )
+        if ( action.equals(ACTION_UPLOAD_PHOTO_STEP2) ) {
+            ActionProtector.ensureContract(request, EditUser.class, true, true, true, false);
             return actionUploadPhoto2(request, response, env);
+        }
 
         if ( action.equals(ACTION_UPLOAD_AVATAR) )
             return FMTemplateSelector.select("EditUser", "uploadAvatar", env, request);
 
-        if ( action.equals(ACTION_UPLOAD_AVATAR_STEP2) )
+        if ( action.equals(ACTION_UPLOAD_AVATAR_STEP2) ) {
+            ActionProtector.ensureContract(request, EditUser.class, true, true, true, false);
             return actionUploadAvatar2(request, response, env);
+        }
 
         // these actions are restricted to admin only
 
@@ -263,8 +286,10 @@ public class EditUser implements AbcAction, Configurable {
             if ( action.equals(ACTION_INVALIDATE_EMAIL) )
                 return FMTemplateSelector.select("EditUser", "invalidateEmail", env, request);
 
-            if ( action.equals(ACTION_INVALIDATE_EMAIL2) )
+            if ( action.equals(ACTION_INVALIDATE_EMAIL2) ) {
+                ActionProtector.ensureContract(request, EditUser.class, true, true, true, false);
                 return actionInvalidateEmail(request, response, env);
+            }
         }
 
         if ( ! user.hasRole(Roles.USER_ADMIN) )
@@ -276,11 +301,15 @@ public class EditUser implements AbcAction, Configurable {
         if ( action.equals(ACTION_GRANT_ROLES_STEP2) )
             return actionGrant2(request, env);
 
-        if ( action.equals(ACTION_GRANT_ROLES_STEP3) )
+        if ( action.equals(ACTION_GRANT_ROLES_STEP3) ) {
+            ActionProtector.ensureContract(request, EditUser.class, true, true, true, false);
             return actionGrant3(request, response, env);
+        }
 
-        if ( action.equals(ACTION_ADD_GROUP_MEMBER) )
+        if ( action.equals(ACTION_ADD_GROUP_MEMBER) ) {
+            ActionProtector.ensureContract(request, EditUser.class, true, false, false, true);
             return actionAddToGroup(request, response, env);
+        }
 
         throw new MissingArgumentException("Chybí parametr action!");
     }
@@ -314,6 +343,7 @@ public class EditUser implements AbcAction, Configurable {
         canContinue &= setSex(params, managed, env);
         canContinue &= setWeeklySummary(params, managed);
         canContinue &= setMonthlySummary(params, managed);
+        managed.addProperty(Constants.PROPERTY_TICKET, generateTicket(managed.getId()));
 
         if ( !canContinue )
             return FMTemplateSelector.select("EditUser", "register", env, request);
@@ -1950,5 +1980,26 @@ public class EditUser implements AbcAction, Configurable {
     private int contentSize(String html) {
         String stripped = Tools.removeTags(html);
         return stripped.length();
+    }
+
+    /**
+     * @return random alphanumeric string of length defined in configuration
+     */
+    public static String generateTicket(int userId) {
+        StringBuffer sb = new StringBuffer();
+        Random rand = new Random(userId + System.currentTimeMillis());
+        int position, ticketLength = AbcConfig.getTicketLength();
+        char c;
+        for (int i = 0; i < ticketLength; i++ ) {
+            position = rand.nextInt(62);
+            if (position < 26)
+                c = (char)('A' + position);
+            else if (position < 52)
+                c = (char)('a' + (position - 26));
+            else
+                c = (char)('0' + (position - 52));
+            sb.append(c);
+        }
+        return sb.toString();
     }
 }

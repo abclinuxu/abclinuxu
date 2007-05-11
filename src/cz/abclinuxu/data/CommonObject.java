@@ -124,6 +124,21 @@ public class CommonObject extends GenericObject implements XMLContainer {
     }
 
     /**
+     * Finds first value for given property. If there is no such property,
+     * then null us returned. This is a helper to simplify work with properties.
+     * @param type property key
+     * @return first value fo the property or null
+     */
+    public String getSingleProperty(String type) {
+        if (properties == null)
+            return null;
+        Set set = (Set) properties.get(type);
+        if (set == null || set.size() == 0)
+            return null;
+        return (String) set.iterator().next();
+    }
+
+    /**
      * Adds specified binding to map of all properties
      * @param property name of key
      * @param value    value to be bound to property

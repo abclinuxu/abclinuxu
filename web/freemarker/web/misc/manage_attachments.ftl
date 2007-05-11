@@ -5,7 +5,9 @@
 <@lib.showMessages/>
 
 <form action="${URL.make("/inset/"+RELATION.id)}" method="POST" name="form">
+    <#assign empty = true>
     <#list XML.data.inset.images.image as node>
+        <#assign empty = false>
         <label>
             <input type="checkbox" name="attachment" value="${node}">
             obrázek
@@ -20,5 +22,9 @@
         <br>
     </#list>
     <input type="hidden" name="action" value="remove">
-    <input type="submit" value="Smazat">
+    <#if ! empty>
+        <input type="submit" value="Smazat">
+    <#else>
+        Není co spravovat - k dokumentu nebyly přidány žádné přílohy.
+    </#if>
 </form>

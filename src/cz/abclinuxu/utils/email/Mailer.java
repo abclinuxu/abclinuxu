@@ -45,8 +45,8 @@ public class Mailer implements Configurable {
     public static void main(String[] args) throws Exception {
         showHelp();
 
-        if (args.length!=4) {
-            System.out.println("Invalid number of parameters!\n");
+        if (args.length < 4) {
+            System.out.println("Invalid number of parameters (" + args.length + ")!");
             System.exit(1);
         }
 

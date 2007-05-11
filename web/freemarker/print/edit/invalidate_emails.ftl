@@ -27,6 +27,6 @@ email, dokud si sami nezmění adresu.</p>
  <input type="hidden" name="action" value="invalidateEmail2">
 </form>
 
-<a href="${URL.make("/SelectUser?sAction=form&amp;url=/EditUser&amp;action=invalidateEmail2")}">Najdi uživatele</a>
+<a href="${URL.make("/SelectUser?sAction=form&amp;url=/EditUser&amp;action=invalidateEmail2"+TOOL.ticket(USER, false))}">Najdi uživatele</a>
 
 <#include "../footer.ftl">

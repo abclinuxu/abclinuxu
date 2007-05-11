@@ -28,6 +28,7 @@ import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.data.*;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
@@ -109,6 +110,7 @@ public class EditContent implements AbcAction {
         }
 
         if (ACTION_ADD_DERIVED_PAGE_STEP2.equals(action)) {
+            ActionProtector.ensureContract(request, EditContent.class, true, true, true, false);
             if (manager || (publicContent && canDerive))
                 return actionAddDerivedPageStep2(request, response, env);
             else
@@ -123,6 +125,7 @@ public class EditContent implements AbcAction {
         }
 
         if (action.equals(ACTION_EDIT_PUBLIC_CONTENT_STEP2)) {
+            ActionProtector.ensureContract(request, EditContent.class, true, true, true, false);
             if (manager || publicContent)
                 return actionEditPublicContent2(request, response, env);
             else
@@ -135,17 +138,23 @@ public class EditContent implements AbcAction {
         if ( ACTION_ADD.equals(action) )
             return FMTemplateSelector.select("EditContent", "add", env, request);
 
-        if ( action.equals(ACTION_ADD_STEP2) )
+        if ( action.equals(ACTION_ADD_STEP2) ) {
+            ActionProtector.ensureContract(request, EditContent.class, true, true, true, false);
             return actionAddStep2(request, response, env);
+        }
 
         if ( action.equals(ACTION_EDIT) )
             return actionEditItem(request, env);
 
-        if ( action.equals(ACTION_EDIT_STEP2) )
+        if ( action.equals(ACTION_EDIT_STEP2) ) {
+            ActionProtector.ensureContract(request, EditContent.class, true, true, true, false);
             return actionEditItem2(request, response, env);
+        }
 
-        if ( action.equals(ACTION_ALTER_PUBLIC) )
+        if ( action.equals(ACTION_ALTER_PUBLIC) ) {
+            ActionProtector.ensureContract(request, EditContent.class, true, false, false, true);
             return actionAlterPublic(request, response, env);
+        }
 
         throw new MissingArgumentException("Chybí parametr action!");
     }
@@ -219,9 +228,10 @@ public class EditContent implements AbcAction {
                     item.setSubType(TYPE_PUBLIC_CONTENT);
 
                 Element element = (Element) parentItem.getData().selectSingleNode("/data/toc");
-                if (element!=null) {
+                if (element != null) {
                     int id = Misc.parseInt(element.getText(), -1);
-                    toc = (Item) persistence.findById(new Item(id));
+                    Relation tocRelation = (Relation) persistence.findById(new Relation(id));
+                    toc = (Item) persistence.findById(tocRelation.getChild());
                     DocumentHelper.makeElement(item.getData(), "/data/toc").setText(element.getText());
                 }
             }

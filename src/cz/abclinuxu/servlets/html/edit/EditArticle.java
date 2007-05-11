@@ -25,6 +25,7 @@ import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.SQLTool;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -134,44 +135,60 @@ public class EditArticle implements AbcAction {
         if ( ACTION_ADD_ITEM.equals(action) )
             return actionAddStep1(request, env);
 
-        if ( ACTION_ADD_ITEM_STEP2.equals(action) )
+        if ( ACTION_ADD_ITEM_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditArticle.class, true, true, true, false);
             return actionAddStep2(request, response, env, true);
+        }
 
         if ( ACTION_EDIT_ITEM.equals(action) )
             return actionEditItem(request, env);
 
-        if ( ACTION_EDIT_ITEM_STEP2.equals(action) )
+        if ( ACTION_EDIT_ITEM_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditArticle.class, true, true, true, false);
             return actionEditItem2(request, response, env);
+        }
 
         if (action.equals(ACTION_ADD_SERIES))
             return actionAttachArticleStep1(request, env);
 
-        if (action.equals(ACTION_ADD_SERIES_STEP2))
+        if (action.equals(ACTION_ADD_SERIES_STEP2)) {
+            ActionProtector.ensureContract(request, EditArticle.class, true, true, true, false);
             return actionAttachArticleStep2(request, response, env);
+        }
 
         if (ACTION_SHOW_TALK.equals(action))
             return actionShowTalk(request, env);
 
-        if (ACTION_ADD_QUESTION.equals(action))
+        if (ACTION_ADD_QUESTION.equals(action)) {
+            ActionProtector.ensureContract(request, EditArticle.class, true, true, false, true);
             return actionAddQuestion(request, response, env);
+        }
 
-        if (ACTION_SEND_QUESTION.equals(action))
+        if (ACTION_SEND_QUESTION.equals(action)) {
+            ActionProtector.ensureContract(request, EditArticle.class, true, true, false, true);
             return actionSendQuestion(request, response, env);
+        }
 
         if (ACTION_ADD_REPLY.equals(action))
             return actionAddReply(request, response, env);
 
-        if (ACTION_SUBMIT_REPLY.equals(action))
+        if (ACTION_SUBMIT_REPLY.equals(action)) {
+            ActionProtector.ensureContract(request, EditArticle.class, true, true, true, false);
             return actionSubmitReply(request, response, env);
+        }
 
-        if (ACTION_REMOVE_QUESTION.equals(action))
+        if (ACTION_REMOVE_QUESTION.equals(action)) {
+            ActionProtector.ensureContract(request, EditArticle.class, true, true, true, false);
             return actionRemoveQuestion(request, response, env);
+        }
 
         if (ACTION_TALK_EMAILS.equals(action))
             return actionSetTalkAddresses(request, env);
 
-        if (ACTION_TALK_EMAILS_STEP2.equals(action))
+        if (ACTION_TALK_EMAILS_STEP2.equals(action)) {
+            ActionProtector.ensureContract(request, EditArticle.class, true, true, true, false);
             return actionSetTalkAddressesStep2(request, response, env);
+        }
 
         throw new MissingArgumentException("Chybí parametr action!");
     }
@@ -673,7 +690,7 @@ public class EditArticle implements AbcAction {
      * @return false, if there is a major error.
      */
     private boolean setAuthors(Map params, Item item, Map env) {
-        Set authors = Tools.asSet(params.get(PARAM_AUTHORS));
+        Set<String> authors = Tools.asSet(params.get(PARAM_AUTHORS));
         if (authors.size() == 0) {
             ServletUtils.addError(PARAM_AUTHORS, "Vyberte autora!", env, null);
             return false;

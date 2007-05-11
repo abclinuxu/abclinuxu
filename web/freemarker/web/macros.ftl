@@ -164,7 +164,7 @@
                     <#if blacklisted><#local action="fromBlacklist", title="Neblokovat", hint="Odstraní autora ze seznamu blokovaných uživatelů">
                     <#else><#local action="toBlacklist", title="Blokovat", hint="Přidá autora na seznam blokovaných uživatelů"></#if>
                     <#if USER?exists><#local myId=USER.id></#if>
-                    <a href="${URL.noPrefix("/EditUser/"+myId?if_exists+"?action="+action+"&amp;bUid="+who.id+"&amp;url="+URL.prefix+"/show/"+diz.relationId+"#"+comment.id)}" title="${hint}">${title}</a> |
+                    <a href="${URL.noPrefix("/EditUser/"+myId?if_exists+"?action="+action+"&amp;bUid="+who.id+TOOL.ticket(USER?if_exists, false)+"&amp;url="+URL.prefix+"/show/"+diz.relationId+"#"+comment.id)}" title="${hint}">${title}</a> |
                 </#if>
                 <a onClick="schovej_vlakno(${comment.id})" id="comment${comment.id}_toggle1" title="Schová nebo rozbalí celé vlákno" class="ds_control_sbalit3"><#if ! blacklisted>Sbalit<#else>Rozbalit</#if></a>
             </div>
@@ -201,27 +201,26 @@
         <br><a href="${URL.make("/show?action=censored&amp;dizId="+dizId+"&amp;threadId="+comment.id)}">Zobrazit</a> příspěvek
     </p>
     <#if USER?exists && USER.hasRole("discussion admin")>
-        <a href="${URL.make("/EditDiscussion?action=censore&amp;rid="+relId+"&amp;dizId="+dizId+"&amp;threadId="+comment.id)}">Odvolat cenzuru</a>
+        <a href="${URL.make("/EditDiscussion?action=censore&amp;rid="+relId+"&amp;dizId="+dizId+"&amp;threadId="+comment.id+TOOL.ticket(USER?if_exists, false))}">Odvolat cenzuru</a>
     </#if>
 </#macro>
 
 <#macro showDiscussion(relation)>
     <#local DIZ = TOOL.createDiscussionTree(relation.child,USER?if_exists,relation.id,true)>
     <#if DIZ.monitored><#local monitorState="Přestaň sledovat"><#else><#assign monitorState="Sleduj"></#if>
-
     <div class="ds_toolbox">
      <b>Nástroje:</b>
        <#if DIZ.hasUnreadComments>
          <a href="#${DIZ.firstUnread}" title="Skočit na první nepřečtený komentář" rel="nofollow">První nepřečtený komentář</a>,
        </#if>
-         <a href="${URL.make("/EditMonitor/"+DIZ.relationId+"?action=toggle")}" rel="nofollow">${monitorState}</a>
+         <a href="${URL.make("/EditMonitor/"+DIZ.relationId+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}" rel="nofollow">${monitorState}</a>
            <span title="Počet lidí, kteří sledují tuto diskusi">(${DIZ.monitorSize})</span>
            <a class="info" href="#">?<span class="tooltip">Zašle každý nový komentář emailem na vaši adresu</span></a>,
          <a href="${URL.prefix}/show/${DIZ.relationId}?varianta=print" rel="nofollow">Tisk</a>
        <#if USER?exists && USER.hasRole("discussion admin")>
          <br />
          <b>Admin:</b>
-         <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+DIZ.relationId+"&amp;dizId="+DIZ.id)}">
+         <a href="${URL.make("/EditDiscussion?action=freeze&amp;rid="+DIZ.relationId+"&amp;dizId="+DIZ.id+TOOL.ticket(USER?if_exists, false))}">
             <#if DIZ.frozen>Rozmrazit<#else>Zmrazit</#if></a>
        </#if>
     </div>
@@ -231,7 +230,8 @@
             Diskuse byla administrátory uzamčena
         <#else>
             <a href="${URL.make("/EditDiscussion?action=add&amp;dizId="+DIZ.id+"&amp;threadId=0&amp;rid="+DIZ.relationId)}" rel="nofollow">
-            Vložit další komentář</a>
+                Vložit další komentář
+            </a>
         </#if>
     </p>
 
@@ -240,8 +240,11 @@
     </#list>
 
     <#if (!DIZ.frozen && DIZ.size>3)>
-     <p><a href="${URL.make("/EditDiscussion?action=add&amp;threadId=0&amp;dizId="+DIZ.id+"&amp;rid="+DIZ.relationId)}" rel="nofollow">
-     Založit nové vlákno</a></p>
+        <p>
+            <a href="${URL.make("/EditDiscussion?action=add&amp;threadId=0&amp;dizId="+DIZ.id+"&amp;rid="+DIZ.relationId)}" rel="nofollow">
+            Založit nové vlákno</a> &#8226;
+            <a href="#www-abclinuxu-cz">Nahoru</a>
+        </p>
     </#if>
 </#macro>
 
@@ -264,9 +267,13 @@
 
         <div class="hlasy">
         <#if USER?exists>
-           <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=0")}" target="rating" rel="nofollow">špatné</a> &bull; <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=3")}" target="rating" rel="nofollow">dobré</a>
+           <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=0"+TOOL.ticket(USER?if_exists, false))}" target="rating" rel="nofollow">špatné</a>
+           &bull;
+           <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=3"+TOOL.ticket(USER?if_exists, false))}" target="rating" rel="nofollow">dobré</a>
         <#else>
-           <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=0&amp;return=true")}" rel="nofollow">špatné</a> &bull; <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=3&amp;return=true")}" rel="nofollow">dobré</a>
+           <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=0&amp;return=true"+TOOL.ticket(USER?if_exists, false))}" rel="nofollow">špatné</a>
+           &bull;
+           <a href="${URL.make("/rating/"+relation.id+"?action=rate&amp;rvalue=3&amp;return=true"+TOOL.ticket(USER?if_exists, false))}" rel="nofollow">dobré</a>
         </#if>
         </div>
         <iframe name="rating" frameborder="0" height="20" scrolling="no" class="rating_iframe"></iframe>

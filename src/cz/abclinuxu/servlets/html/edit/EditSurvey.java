@@ -32,6 +32,7 @@ import cz.abclinuxu.data.XMLHandler;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.security.ActionProtector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -70,7 +71,7 @@ public class EditSurvey implements AbcAction {
         if (ServletUtils.handleMaintainance(request, env))
             response.sendRedirect(response.encodeRedirectURL("/"));
 
-        if ( user==null )
+        if ( user == null )
             return FMTemplateSelector.select("ViewUser", "login", env, request);
         if ( !user.hasRole(Roles.SURVEY_ADMIN) )
             return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
@@ -79,12 +80,14 @@ public class EditSurvey implements AbcAction {
             return actionList(request, env);
         if ( ACTION_ADD.equals(action) )
             return FMTemplateSelector.select("EditSurvey", "add", env, request);
-        if ( ACTION_ADD_STEP2.equals(action) )
+        if ( ACTION_ADD_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditSurvey.class, true, true, true, false);
             return actionAddStep2(request, response, env);
+        }
 
         Persistence persistence = PersistenceFactory.getPersistance();
         Item item = (Item) InstanceUtils.instantiateParam(PARAM_SURVEY, Item.class, params, request);
-        if ( item==null )
+        if ( item == null )
             return ServletUtils.showErrorPage("Chybí parametr surveyId!",env,request);
 
         persistence.synchronize(item);
@@ -93,8 +96,10 @@ public class EditSurvey implements AbcAction {
 
         if ( ACTION_EDIT.equals(action) )
             return actionEditStep1(request, item, env);
-        else if ( ACTION_EDIT2.equals(action) )
+        else if ( ACTION_EDIT2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditSurvey.class, true, true, true, false);
             return actionEditStep2(request, response, item, env);
+        }
 
         return FMTemplateSelector.select("EditSurvey", "add", env, request);
     }

@@ -148,8 +148,11 @@
             <div class="s_sekce">
                 <div class="ls_zpr">
                 <#list news as relation>
+                    <#if relation_index==2>
+                         <@lib.advertisement id="sl-box" />
+                    </#if>
                     <#if relation_index==4>
-			        <@lib.advertisement id="sl-mini" />
+                         <@lib.advertisement id="sl-mini" />
                     </#if>
                     <@lib.showTemplateNews relation/>
                     <hr>

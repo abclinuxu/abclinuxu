@@ -32,6 +32,7 @@ import cz.abclinuxu.exceptions.PersistenceException;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.format.Format;
 import cz.abclinuxu.utils.format.FormatDetector;
@@ -43,7 +44,6 @@ import org.dom4j.Node;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.RequestDispatcher;
 import java.util.Map;
 
 /**
@@ -58,9 +58,7 @@ public class EditCategory implements AbcAction {
     public static final String PARAM_NAME = "name";
     public static final String PARAM_OPEN = "open";
     public static final String PARAM_TYPE = "type";
-    public static final String PARAM_ICON = cz.abclinuxu.servlets.html.select.SelectIcon.PARAM_ICON;
     public static final String PARAM_NOTE = "note";
-    public static final String PARAM_CHOOSE_ICON = "iconChooser";
 
     public static final String VAR_RELATION = "RELATION";
     public static final String VAR_CATEGORY = "CATEGORY";
@@ -103,14 +101,18 @@ public class EditCategory implements AbcAction {
         if ( ACTION_ADD.equals(action) )
             return FMTemplateSelector.select("EditCategory", "add", env, request);
 
-        if ( ACTION_ADD_STEP2.equals(action) )
+        if ( ACTION_ADD_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditCategory.class, true, true, true, false);
             return actionAddStep2(request, response, env);
+        }
 
         if ( ACTION_EDIT.equals(action) )
             return actionEditStep1(request, env);
 
-        if ( ACTION_EDIT2.equals(action) )
+        if ( ACTION_EDIT2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditCategory.class, true, true, true, false);
             return actionEditStep2(request, response, env);
+        }
 
         throw new MissingArgumentException("Chybí parametr action!");
     }
@@ -125,7 +127,6 @@ public class EditCategory implements AbcAction {
         Persistence persistence = PersistenceFactory.getPersistance();
 
         String name = (String) params.get(PARAM_NAME);
-        String icon = (String) params.get(PARAM_ICON);
         String note = (String) params.get(PARAM_NOTE);
 
         if ( name==null || name.length()==0 ) {
@@ -140,7 +141,6 @@ public class EditCategory implements AbcAction {
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("data");
         root.addElement("name").addText(name);
-        if ( icon!=null && icon.length()>0 ) root.addElement("icon").addText(icon);
         if ( note!=null && note.length()>0 ) {
             Element element = root.addElement("note");
             element.addText(note);
@@ -196,8 +196,6 @@ public class EditCategory implements AbcAction {
         Document document = category.getData();
         Node node = document.selectSingleNode("data/name");
         if (node!=null) params.put(PARAM_NAME,node.getText());
-        node = document.selectSingleNode("data/icon");
-        if (node!=null) params.put(PARAM_ICON,node.getText());
         node = document.selectSingleNode("data/note");
         if (node!=null) params.put(PARAM_NOTE,node.getText());
         node = document.selectSingleNode("data/writeable");
@@ -236,23 +234,11 @@ public class EditCategory implements AbcAction {
         Map params = (Map) env.get(Constants.VAR_PARAMS);
         Persistence persistence = PersistenceFactory.getPersistance();
 
-        String tmp = (String) params.get(PARAM_CHOOSE_ICON);
-        if ( tmp!=null && tmp.length()>0 ) {
-            // it is not possible to use UrlUtils.dispatch(), because it would prepend prefix!
-            RequestDispatcher dispatcher = request.getRequestDispatcher("/SelectIcon");
-            dispatcher.forward(request,response);
-            return null;
-        }
-
         Relation relation = (Relation) env.get(VAR_RELATION);
         Category category = (Category) env.get(VAR_CATEGORY);
         Document document = category.getData();
         Element node = DocumentHelper.makeElement(document,"data/name");
-        tmp = (String) params.get(PARAM_NAME);
-        node.setText(tmp);
-
-        node = DocumentHelper.makeElement(document,"data/icon");
-        tmp = (String) params.get(PARAM_ICON);
+        String tmp = (String) params.get(PARAM_NAME);
         node.setText(tmp);
 
         node = DocumentHelper.makeElement(document,"data/note");

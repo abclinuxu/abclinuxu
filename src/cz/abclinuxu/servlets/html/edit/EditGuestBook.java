@@ -36,6 +36,7 @@ import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
+import cz.abclinuxu.security.ActionProtector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -76,8 +77,10 @@ public class EditGuestBook implements AbcAction {
         if (ACTION_ADD.equals(action) || action==null)
             return FMTemplateSelector.select("EditGuestBook", "add", env, request);
 
-        if (ACTION_ADD_STEP2.equals(action))
+        if (ACTION_ADD_STEP2.equals(action)) {
+            ActionProtector.ensureContract(request, EditGuestBook.class, false, true, true, false);
             return actionGuestBookEntry(request, response, env);
+        }
 
         // check permissions
         User user = (User) env.get(Constants.VAR_USER);
@@ -97,8 +100,10 @@ public class EditGuestBook implements AbcAction {
         if (ACTION_EDIT.equals(action))
             return actionEditGuestBookEntry(request, relation, env);
 
-        if (ACTION_EDIT_STEP2.equals(action))
+        if (ACTION_EDIT_STEP2.equals(action)) {
+            ActionProtector.ensureContract(request, EditGuestBook.class, true, true, true, false);
             return actionEditGuestBookEntryStep2(request, response, relation, env);
+        }
 
         return null;
     }

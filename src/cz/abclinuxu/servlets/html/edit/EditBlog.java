@@ -48,6 +48,7 @@ import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
+import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.scheduler.VariableFetcher;
 
 import javax.servlet.http.HttpServletRequest;
@@ -154,8 +155,10 @@ public class EditBlog implements AbcAction, Configurable {
         if ( ACTION_ADD_BLOG.equals(action) )
             return FMTemplateSelector.select("EditBlog", "addBlog", env, request);
 
-        if ( ACTION_ADD_BLOG_STEP2.equals(action) )
+        if ( ACTION_ADD_BLOG_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditBlog.class, true, true, true, false);
             return actionAddBlog(request, response, env);
+        }
 
         Relation relation = (Relation) InstanceUtils.instantiateParam(PARAM_RELATION, Relation.class, params, request);
         if ( relation==null )
@@ -189,6 +192,7 @@ public class EditBlog implements AbcAction, Configurable {
         if ( ACTION_TOGGLE_DIGEST.equals(action) ) {
             if ( ! user.hasRole(Roles.BLOG_DIGEST_ADMIN) )
                 return FMTemplateSelector.select("ViewUser", "forbidden", env, request);
+            ActionProtector.ensureContract(request, EditBlog.class, true, false, false, true);
             return actionToggleStoryDigest(response, blog, env);
         }
 
@@ -198,32 +202,42 @@ public class EditBlog implements AbcAction, Configurable {
         if ( ACTION_ADD_STORY.equals(action) )
             return actionAddStoryStep1(request, blog, env);
 
-        if ( ACTION_ADD_STORY_STEP2.equals(action) )
+        if ( ACTION_ADD_STORY_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditBlog.class, true, true, true, false);
             return actionAddStoryStep2(request, response, relation, env, true);
+        }
 
         if ( ACTION_EDIT_STORY.equals(action) )
             return actionEditStoryStep1(request, blog, env);
 
-        if ( ACTION_EDIT_STORY_STEP2.equals(action) )
+        if ( ACTION_EDIT_STORY_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditBlog.class, true, true, true, false);
             return actionEditStoryStep2(request, response, blog, env);
+        }
 
         if ( ACTION_REMOVE_STORY.equals(action) )
             return actionRemoveStoryStep1(request, response, blogRelation, blog, env);
 
-        if ( ACTION_REMOVE_STORY_STEP2.equals(action) )
+        if ( ACTION_REMOVE_STORY_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditBlog.class, true, true, true, false);
             return actionRemoveStoryStep2(request, response, blogRelation, blog, env);
+        }
 
         if ( ACTION_CUSTOMIZATION.equals(action) )
             return actionEditCustomStep1(request, blog, env);
 
-        if ( ACTION_CUSTOMIZATION_STEP2.equals(action) )
+        if ( ACTION_CUSTOMIZATION_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditBlog.class, true, true, true, false);
             return actionEditCustomStep2(request, response, blog, env);
+        }
 
         if ( ACTION_RENAME_BLOG.equals(action) )
             return actionRenameBlogStep1(request, blog, env);
 
-        if ( ACTION_RENAME_BLOG_STEP2.equals(action) )
+        if ( ACTION_RENAME_BLOG_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditBlog.class, true, true, true, false);
             return actionRenameBlogStep2(request, response, blog, env);
+        }
 
         if (ACTION_EDIT_CATEGORIES.equals(action))
             return actionShowCategories(request, blog, env);
@@ -231,38 +245,52 @@ public class EditBlog implements AbcAction, Configurable {
         if (ACTION_ADD_CATEGORY.equals(action))
             return actionAddCategory(request, blog, env);
 
-        if (ACTION_ADD_CATEGORY_STEP2.equals(action))
+        if (ACTION_ADD_CATEGORY_STEP2.equals(action)) {
+            ActionProtector.ensureContract(request, EditBlog.class, true, true, true, false);
             return actionAddCategoryStep2(request, response, blog, env);
+        }
 
         if (ACTION_EDIT_CATEGORY.equals(action))
             return actionEditCategory(request, response, blog, env);
 
-        if (ACTION_EDIT_CATEGORY_STEP2.equals(action))
+        if (ACTION_EDIT_CATEGORY_STEP2.equals(action)) {
+            ActionProtector.ensureContract(request, EditBlog.class, true, true, true, false);
             return actionEditCategoryStep2(request, response, blog, env);
+        }
 
         if (ACTION_EDIT_LINKS.equals(action))
             return actionShowLinks(request, blog, env);
 
-        if (ACTION_ADD_LINK.equals(action))
+        if (ACTION_ADD_LINK.equals(action)) {
+            ActionProtector.ensureContract(request, EditBlog.class, true, true, true, false);
             return actionAddLink(request, response, blog, env);
+        }
 
         if (ACTION_EDIT_LINK.equals(action))
             return actionEditLink(request, blog, env);
 
-        if (ACTION_EDIT_LINK_STEP2.equals(action))
+        if (ACTION_EDIT_LINK_STEP2.equals(action)) {
+            ActionProtector.ensureContract(request, EditBlog.class, true, true, true, false);
             return actionEditLinkStep2(request, response, blog, env);
+        }
 
         if (ACTION_REMOVE_LINK.equals(action))
             return actionRemoveLink(request, blog, env);
 
-        if (ACTION_REMOVE_LINK_STEP2.equals(action))
+        if (ACTION_REMOVE_LINK_STEP2.equals(action)) {
+            ActionProtector.ensureContract(request, EditBlog.class, true, true, true, false);
             return actionRemoveLinkStep2(request, response, blog, env);
+        }
 
-        if (ACTION_MOVE_LINK_UP.equals(action))
+        if (ACTION_MOVE_LINK_UP.equals(action)) {
+            ActionProtector.ensureContract(request, EditBlog.class, true, true, false, true);
             return actionMoveLink(request, response, blog, true, env);
+        }
 
-        if (ACTION_MOVE_LINK_DOWN.equals(action))
+        if (ACTION_MOVE_LINK_DOWN.equals(action)) {
+            ActionProtector.ensureContract(request, EditBlog.class, true, true, false, true);
             return actionMoveLink(request, response, blog, false, env);
+        }
 
         throw new MissingArgumentException("Chybí parametr action!");
     }

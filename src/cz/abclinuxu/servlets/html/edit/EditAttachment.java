@@ -38,6 +38,7 @@ import cz.abclinuxu.utils.config.impl.AbcConfig;
 import cz.abclinuxu.exceptions.MissingArgumentException;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AdminLogger;
+import cz.abclinuxu.security.ActionProtector;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -110,8 +111,10 @@ public class EditAttachment implements AbcAction {
         if (action.equals(ACTION_ADD_SCREENSHOT))
             return FMTemplateSelector.select("EditAttachment", "addScreenshot", env, request);
 
-        if (action.equals(ACTION_ADD_SCREENSHOT_STEP2))
+        if (action.equals(ACTION_ADD_SCREENSHOT_STEP2)) {
+            ActionProtector.ensureContract(request, EditAttachment.class, true, true, true, false);
             return actionAddScreenshotStep2(request, response, env);
+        }
 
         allowed = user.hasRole(Roles.ATTACHMENT_ADMIN);
         if (child instanceof Item) {
@@ -129,8 +132,10 @@ public class EditAttachment implements AbcAction {
         if (action.equals(ACTION_REMOVE))
             return actionRemoveAttachmentStep1(request, env);
 
-        if (action.equals(ACTION_REMOVE_STEP2))
+        if (action.equals(ACTION_REMOVE_STEP2)) {
+            ActionProtector.ensureContract(request, EditAttachment.class, true, true, true, false);
             return actionRemoveAttachmentStep2(request, response, env);
+        }
 
         return null;
     }

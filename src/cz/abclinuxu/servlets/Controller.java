@@ -61,6 +61,7 @@ public class Controller extends HttpServlet implements Configurable {
      */
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Map env = new HashMap();
+        request.setAttribute(Constants.VAR_ENVIRONMENT, env);
         try {
             performInit(request, response, env);
         } catch (InvalidInputException e) {

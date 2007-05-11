@@ -35,6 +35,7 @@ import cz.abclinuxu.utils.format.FormatDetector;
 import cz.abclinuxu.utils.parser.safehtml.SafeHTMLGuard;
 import cz.abclinuxu.utils.freemarker.Tools;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 
@@ -99,14 +100,18 @@ public class EditTrivia implements AbcAction {
         if (ACTION_ADD.equals(action))
             return FMTemplateSelector.select("EditTrivia", "add", env, request);
 
-        if (ACTION_ADD_STEP2.equals(action))
+        if (ACTION_ADD_STEP2.equals(action)) {
+            ActionProtector.ensureContract(request, EditTrivia.class, true, true, true, false);
             return actionAddStep2(request, response, env, true);
+        }
 
         if (ACTION_EDIT.equals(action))
             return actionEditStep1(request, env);
 
-        if (ACTION_EDIT_STEP2.equals(action))
+        if (ACTION_EDIT_STEP2.equals(action)) {
+            ActionProtector.ensureContract(request, EditTrivia.class, true, true, true, false);
             return actionEditStep2(request, response, env);
+        }
 
         throw new MissingArgumentException("Chybí parametr action!");
     }

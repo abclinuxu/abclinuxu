@@ -37,6 +37,7 @@ import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Advertisement;
 import cz.abclinuxu.scheduler.EnsureWatchedDiscussionsLimit;
+import cz.abclinuxu.security.ActionProtector;
 import org.dom4j.Document;
 import org.dom4j.Node;
 import org.dom4j.Element;
@@ -1133,6 +1134,24 @@ public class Tools implements Configurable {
         String out = sb.toString();
         Matcher matcher = reAmpersand.matcher(out);
         return matcher.replaceAll("&amp;");
+    }
+
+    /**
+     * Creates URI parameter with current user's ticket.
+     * @param aUser instance of User if user is logged in
+     * @param firstParam true if this shall be the first parameter in uri
+     * @return ticket uri parameter if user is logged in, empty string otherwise
+     */
+    public String ticket(Object aUser, boolean firstParam) {
+        if (aUser == null || ! (aUser instanceof User))
+            return "";
+
+        User user = (User) aUser;
+        String ticket = user.getSingleProperty(Constants.PROPERTY_TICKET);
+        if (ticket == null)
+            return "";
+
+        return ((firstParam) ? "?" : "&amp;") + ActionProtector.PARAM_TICKET + "=" + ticket;
     }
 
     /**

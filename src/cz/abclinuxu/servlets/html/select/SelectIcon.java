@@ -23,7 +23,6 @@ import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.utils.*;
 import cz.abclinuxu.servlets.utils.url.UrlUtils;
 import cz.abclinuxu.servlets.utils.template.FMTemplateSelector;
-import cz.abclinuxu.servlets.html.edit.EditCategory;
 import cz.abclinuxu.utils.config.impl.AbcConfig;
 
 import javax.servlet.http.HttpServletRequest;
@@ -129,7 +128,6 @@ public class SelectIcon implements AbcAction {
         map.remove(PARAM_DIR);
         map.remove(PARAM_URL);
         map.remove(PARAM_RELOAD);
-        map.remove(EditCategory.PARAM_CHOOSE_ICON);
         request.getSession().setAttribute(Constants.VAR_PARAMS,map);
 
         ((UrlUtils) env.get(Constants.VAR_URL_UTILS)).redirect(response, url);

@@ -12,7 +12,7 @@
         <#else>
             <li><a href="${RELATION.url}?varianta=print">Tisk</a></li>
             <li>
-                <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle")}">${monitorState}</a>
+                <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}">${monitorState}</a>
                 <span title="Počet lidí, kteří sledují tento dokument">(${TOOL.getMonitorCount(ITEM.data)})</span>
                 <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při úpravě dokumentu</span></a>
             </li>
@@ -28,7 +28,7 @@
     <p>
         <#if USER.hasRole("content admin")>
             <a href="${URL.make("/editContent/"+RELATION.id+"?action=edit")}">Uprav vše</a> &#8226;
-            <a href="${URL.make("/editContent/"+RELATION.id+"?action=alterPublic")}">
+            <a href="${URL.make("/editContent/"+RELATION.id+"?action=alterPublic"+TOOL.ticket(USER?if_exists, false))}">
                 <#if public>Zruš<#else>Nastav</#if> veřejnou editovatelnost</a> &#8226;
             <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix=/doc")}">Smaž</a>
         </#if>
@@ -49,7 +49,7 @@ ${TOOL.xpath(ITEM,"/data/content")}
             &#171; Předchozí
         </#if>
         <#if TOC.up?exists>
-            | <a href="${TOC.up.url}" title="${TOOL.childName(TOC.up)}">Nahoru</a> | 
+            | <a href="${TOC.up.url}" title="${TOOL.childName(TOC.up)}">Nahoru</a> |
         <#else>
             | Nahoru |
         </#if>

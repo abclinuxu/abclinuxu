@@ -16,10 +16,10 @@
             <#else>
                 <li><a href="${URL.make("/edit/"+RELATION.id+"?action=edit")}">Upravit</a></li>
                 <li><a href="${URL.noPrefix("/EditRelated/"+RELATION.id)}">Související dokumenty</a></li>
-                <li><a href="/revize?rid=${RELATION.id}&amp;prefix=/faq">Historie</a></li>
-                <li><a href="${RELATION.url}?varianta=print">Tisk otázky</a></li>
+                <li><a href="/revize?rid=${RELATION.id}&amp;prefix=/faq" rel="nofollow">Historie</a></li>
+                <li><a href="${RELATION.url}?varianta=print" rel="nofollow">Tisk otázky</a></li>
                 <li>
-                    <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle")}">${monitorState}</a>
+                    <a href="${URL.make("/EditMonitor/"+RELATION.id+"?action=toggle"+TOOL.ticket(USER?if_exists, false))}">${monitorState}</a>
                     <span title="Počet lidí, kteří sledují tuto otázku">(${TOOL.getMonitorCount(ITEM.data)})</span>
                     <a class="info" href="#">?<span class="tooltip">Zašle upozornění na váš email při úpravě otázky</span></a>
                 </li>
@@ -31,7 +31,7 @@
                 <#if USER?exists && USER.hasRole("move relation")>
                     <li>
                         <a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;prefix="+URL.prefix+"&amp;url=/EditRelation&amp;action=move")}">Přesunout</a>
-			<a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;url=/EditRelation&amp;action=add&amp;prefix="+URL.prefix)}">Vytvořit link</a>
+			            <a href="${URL.noPrefix("/SelectRelation?rid="+RELATION.id+"&amp;url=/EditRelation&amp;action=add&amp;prefix="+URL.prefix)}">Vytvořit link</a>
                     </li>
                 </#if>
             </#if>

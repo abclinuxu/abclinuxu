@@ -31,6 +31,7 @@ import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.security.Roles;
 import cz.abclinuxu.security.AccessKeeper;
+import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.utils.InstanceUtils;
 import cz.abclinuxu.utils.Misc;
 import cz.abclinuxu.utils.freemarker.Tools;
@@ -82,8 +83,10 @@ public class EditPoll implements AbcAction {
         Tools.sync(relation);
         env.put(VAR_RELATION, relation);
 
-        if ( ACTION_VOTE.equals(action) )
+        if ( ACTION_VOTE.equals(action) ) {
+            ActionProtector.ensureContract(request, EditPoll.class, false, false, false, true);
             return actionVote(request, response, env);
+        }
 
         // check permissions
         if ( user==null )
@@ -102,8 +105,10 @@ public class EditPoll implements AbcAction {
         if ( ACTION_ADD.equals(action) )
             return FMTemplateSelector.select("EditPoll", "add", env, request);
 
-        if ( ACTION_ADD_STEP2.equals(action) )
+        if ( ACTION_ADD_STEP2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditPoll.class, true, true, true, false);
             return actionAddStep2(request, response, env, true);
+        }
 
         Poll poll = (Poll) relation.getChild();
         env.put(EditPoll.VAR_POLL, poll);
@@ -111,8 +116,10 @@ public class EditPoll implements AbcAction {
         if ( ACTION_EDIT.equals(action) )
             return FMTemplateSelector.select("EditPoll", "edit", env, request);
 
-        if ( ACTION_EDIT2.equals(action) )
+        if ( ACTION_EDIT2.equals(action) ) {
+            ActionProtector.ensureContract(request, EditPoll.class, true, true, false, true);
             return actionEditStep2(request, response, env);
+        }
 
         throw new MissingArgumentException("Chybí parametr action!");
     }

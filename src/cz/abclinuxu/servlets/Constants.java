@@ -161,6 +161,8 @@ public interface Constants {
     String VAR_CSS_URI = "CSS_URI";
     /** way to override default text/html content type */
     String VAR_CONTENT_TYPE = "Content-Type";
+    /** environment map */
+    String VAR_ENVIRONMENT = "ENV";
 
     /** error, that is not related to specific form field */
     String ERROR_GENERIC = "generic";
@@ -205,6 +207,7 @@ public interface Constants {
     String PROPERTY_AUTHOR = "author";
     String PROPERTY_USER = "user";
     String PROPERTY_SCORE = "score";
+    String PROPERTY_TICKET = "ticket";
 
     // see EditRelated and Item.dtd
     String RELATED_ARTICLE = "article";

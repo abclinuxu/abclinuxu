@@ -24,6 +24,7 @@ import cz.abclinuxu.persistence.Persistence;
 import cz.abclinuxu.persistence.PersistenceFactory;
 import cz.abclinuxu.security.AdminLogger;
 import cz.abclinuxu.security.Roles;
+import cz.abclinuxu.security.ActionProtector;
 import cz.abclinuxu.servlets.AbcAction;
 import cz.abclinuxu.servlets.Constants;
 import cz.abclinuxu.servlets.utils.ServletUtils;
@@ -108,8 +109,10 @@ public class EditAdvertisement implements AbcAction, Configurable {
         if (ACTION_ADD_POSITION.equals(action) || params.containsKey(ACTION_ADD_POSITION))
             return actionAddStep1(request, env);
 
-        if (ACTION_ADD_POSITION_STEP2.equals(action) || params.containsKey(ACTION_ADD_POSITION_STEP2))
+        if (ACTION_ADD_POSITION_STEP2.equals(action) || params.containsKey(ACTION_ADD_POSITION_STEP2)) {
+            ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, true, false);
             return actionAddStep2(request, response, env);
+        }
 
         if (ACTION_SHOW_POSITION.equals(action) || params.containsKey(ACTION_SHOW_POSITION))
             return actionShowPosition(request, response, env);
@@ -117,32 +120,45 @@ public class EditAdvertisement implements AbcAction, Configurable {
         if (ACTION_EDIT_POSITION.equals(action) || params.containsKey(ACTION_EDIT_POSITION))
             return actionEditPositionStep1(request, response, env);
 
-        if (ACTION_EDIT_POSITION_STEP2.equals(action) || params.containsKey(ACTION_EDIT_POSITION_STEP2))
+        if (ACTION_EDIT_POSITION_STEP2.equals(action) || params.containsKey(ACTION_EDIT_POSITION_STEP2)) {
+            ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, true, false);
             return actionEditPositionStep2(request, response, env);
+        }
 
-        if (ACTION_ACTIVATE_POSITION.equals(action) || params.containsKey(ACTION_ACTIVATE_POSITION))
+        if (ACTION_ACTIVATE_POSITION.equals(action) || params.containsKey(ACTION_ACTIVATE_POSITION)) {
+            ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, true, false);
             return actionChangePositionState(request, response, true, env);
+        }
 
-        if (ACTION_DEACTIVATE_POSITION.equals(action) || params.containsKey(ACTION_DEACTIVATE_POSITION))
+        if (ACTION_DEACTIVATE_POSITION.equals(action) || params.containsKey(ACTION_DEACTIVATE_POSITION)) {
+            ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, true, false);
             return actionChangePositionState(request, response, false, env);
+        }
 
-        if (ACTION_REMOVE_POSITION.equals(action) || params.containsKey(ACTION_REMOVE_POSITION))
+        if (ACTION_REMOVE_POSITION.equals(action) || params.containsKey(ACTION_REMOVE_POSITION)) {
             return actionRemovePosition(request, response, env);
+        }
 
         if (ACTION_ADD_CODE.equals(action) || params.containsKey(ACTION_ADD_CODE))
             return actionAddCodeStep1(request, env);
 
-        if (ACTION_ADD_CODE_STEP2.equals(action) || params.containsKey(ACTION_ADD_CODE_STEP2))
+        if (ACTION_ADD_CODE_STEP2.equals(action) || params.containsKey(ACTION_ADD_CODE_STEP2)) {
+            ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, true, false);
             return actionAddCodeStep2(request, response, env);
+        }
 
         for (Iterator iter = params.keySet().iterator(); iter.hasNext();) {
             String param = (String) iter.next();
-            if (param.startsWith(ACTION_EDIT_CODE_STEP2))
+            if (param.startsWith(ACTION_EDIT_CODE_STEP2)) {
+                ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, true, false);
                 return actionEditCodeStep2(request, response, env);
+            }
             if (param.startsWith(ACTION_EDIT_CODE))
                 return actionEditCodeStep1(request, response, env);
-            if (param.startsWith(ACTION_REMOVE_CODE))
+            if (param.startsWith(ACTION_REMOVE_CODE)) {
+                ActionProtector.ensureContract(request, EditAdvertisement.class, true, true, true, false);
                 return actionRemoveCode(request, response, env);
+            }
         }
 
         return actionShowMain(request, env);

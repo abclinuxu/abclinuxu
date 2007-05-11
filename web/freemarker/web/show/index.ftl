@@ -39,6 +39,7 @@
     <@lib.advertisement id="ps-boxik3" />
     <@lib.advertisement id="ps-boxik4" />
     <@lib.advertisement id="ps-boxik5" />
+    <@lib.advertisement id="cvonline" />
 
     <#--
     <#assign DRIVERS = VARS.getFreshDrivers(USER?if_exists)>

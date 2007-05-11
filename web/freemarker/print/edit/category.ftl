@@ -29,7 +29,7 @@
     <tr>
         <td width="120">Otevřená</td>
         <td>
-            <input type="checkbox" name="open" value="true"<#if PARAMS.open?default("false")=="true"> checked</#if> tabindex="3">
+            <input type="checkbox" name="open" value="true"<#if PARAMS.open?default("true")=="true"> checked</#if> tabindex="3">
         </td>
     </tr>
   <tr>
@@ -37,13 +37,6 @@
    <td>
     <textarea name="note" cols="80" rows="15" tabindex="4">${PARAMS.note?if_exists?html}</textarea>
     <div class="error">${ERRORS.note?if_exists}</div>
-   </td>
-  </tr>
-  <tr>
-   <td class="required">Ikona</td>
-   <td>
-    <input type="text" name="icon" value="${PARAMS.icon?if_exists}" size="40" tabindex="4">
-    <input type="submit" name="iconChooser" value="Vyběr ikon">
    </td>
   </tr>
   <tr>

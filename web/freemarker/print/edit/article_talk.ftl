@@ -34,9 +34,9 @@ otázku do článku.
     <p>
         <b>${question.@id}. otázka</b>, autor: ${question.@name}<br>
         ${question}<br>
-        <a href="${URL.make("/edit/"+RELATION.id+"?action=sendQuestion&amp;id="+question.@id)}">Poslat emailem</a>
+        <a href="${URL.make("/edit/"+RELATION.id+"?action=sendQuestion&amp;id="+question.@id+TOOL.ticket(USER, false))}">Poslat emailem</a>
         <a href="${URL.make("/edit/"+RELATION.id+"?action=addReply&amp;id="+question.@id)}">Přidat odpověď</a>
-        <a href="${URL.make("/edit/"+RELATION.id+"?action=removeQuestion&amp;id="+question.@id)}">Smazat</a>
+        <a href="${URL.make("/edit/"+RELATION.id+"?action=removeQuestion&amp;id="+question.@id+TOOL.ticket(USER, false))}">Smazat</a>
     </p>
 </#list>
 
