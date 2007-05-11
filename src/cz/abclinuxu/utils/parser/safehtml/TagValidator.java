@@ -95,13 +95,13 @@ public class TagValidator {
                 if ("HREF".equals(name) || "SRC".equals(name)) {
                     String value = attribute.getValue().toLowerCase();
                     if (value == null || value.length() == 0)
-                        throw new AttributeValueNotAllowedException("Atribut " + name + "značky " + checkedTag.name + "nesmí být prázdný!");
+                        throw new AttributeValueNotAllowedException("Atribut " + name + " značky " + checkedTag.name + " nesmí být prázdný!");
                     if (value.indexOf("javascript:") != -1)
-                        throw new AttributeValueNotAllowedException("Atribut " + name + "značky " + checkedTag.name + "nesmí obsahovat javascript!");
+                        throw new AttributeValueNotAllowedException("Atribut " + name + " značky " + checkedTag.name + " nesmí obsahovat javascript!");
                     if (value.indexOf("%3cscript") != -1)
-                        throw new AttributeValueNotAllowedException("Atribut " + name + "značky " + checkedTag.name + "nesmí obsahovat javascript!");
+                        throw new AttributeValueNotAllowedException("Atribut " + name + " značky " + checkedTag.name + " nesmí obsahovat javascript!");
                     if (value.indexOf("data:") != -1)
-                        throw new AttributeValueNotAllowedException("Atribut " + name + "značky " + checkedTag.name + "nesmí obsahovat protokol data!");
+                        throw new AttributeValueNotAllowedException("Atribut " + name + " značky " + checkedTag.name + " nesmí obsahovat protokol data!");
                 }
             }
         }

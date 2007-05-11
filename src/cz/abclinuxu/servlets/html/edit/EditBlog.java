@@ -633,7 +633,7 @@ public class EditBlog implements AbcAction, Configurable {
 
         boolean canContinue = setPageTitle(params, root, env);
         canContinue &= setBlogTitle(params, root, env);
-        canContinue &= setBlogIntro(params, root);
+        canContinue &= setBlogIntro(params, root, env);
         canContinue &= setPageSize(params, root, env);
 
         if ( !canContinue )
@@ -1091,7 +1091,7 @@ public class EditBlog implements AbcAction, Configurable {
      * @param root XML document
      * @return false, if there is a major error.
      */
-    boolean setBlogIntro(Map params, Element root) {
+    boolean setBlogIntro(Map params, Element root, Map env) {
         Element custom = root.element("custom");
         Element intro = custom.element("intro");
         String s = (String) params.get(PARAM_INTRO);
@@ -1100,6 +1100,17 @@ public class EditBlog implements AbcAction, Configurable {
             if (intro!=null)
                 intro.detach();
         } else {
+            try {
+                BlogHTMLGuard.check(s);
+            } catch (ParserException e) {
+                log.error("ParseException on '" + s + "'", e);
+                ServletUtils.addError(PARAM_INTRO, e.getMessage(), env, null);
+                return false;
+            } catch (Exception e) {
+                ServletUtils.addError(PARAM_INTRO, e.getMessage(), env, null);
+                return false;
+            }
+
             if (intro==null)
                 intro = custom.addElement("intro");
             intro.setText(s);
