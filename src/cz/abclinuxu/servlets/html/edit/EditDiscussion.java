@@ -138,7 +138,7 @@ public class EditDiscussion implements AbcAction {
             return actionAddComment(request,env);
 
         if ( ACTION_ADD_COMMENT_STEP2.equals(action) ) {
-            ActionProtector.ensureContract(request, EditDiscussion.class, true, true, true, false);
+            ActionProtector.ensureContract(request, EditDiscussion.class, false, true, true, false);
             return  actionAddComment2(request,response,env, true);
         }
 
@@ -146,7 +146,7 @@ public class EditDiscussion implements AbcAction {
             return actionAddQuestion(request, env);
 
         if ( ACTION_ADD_QUESTION_STEP2.equals(action) ) {
-            ActionProtector.ensureContract(request, EditDiscussion.class, true, true, true, false);
+            ActionProtector.ensureContract(request, EditDiscussion.class, false, true, true, false);
             return actionAddQuestion2(request, response, env, true);
         }
 
