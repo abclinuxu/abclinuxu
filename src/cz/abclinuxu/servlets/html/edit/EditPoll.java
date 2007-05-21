@@ -117,7 +117,7 @@ public class EditPoll implements AbcAction {
             return FMTemplateSelector.select("EditPoll", "edit", env, request);
 
         if ( ACTION_EDIT2.equals(action) ) {
-            ActionProtector.ensureContract(request, EditPoll.class, true, true, false, true);
+            ActionProtector.ensureContract(request, EditPoll.class, true, true, true, false);
             return actionEditStep2(request, response, env);
         }
 
