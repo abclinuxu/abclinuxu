@@ -152,12 +152,12 @@ public class EditNews implements AbcAction {
             return actionSendEmail(request, response, env);
 
         if ( ACTION_LOCK.equals(action) ) {
-            ActionProtector.ensureContract(request, EditNews.class, true, true, false, true);
+            ActionProtector.ensureContract(request, EditNews.class, true, false, false, true);
             return actionLock(request, response, env);
         }
 
         if ( ACTION_UNLOCK.equals(action) ) {
-            ActionProtector.ensureContract(request, EditNews.class, true, true, false, true);
+            ActionProtector.ensureContract(request, EditNews.class, true, false, false, true);
             return actionUnlock(request, response, env);
         }
 
