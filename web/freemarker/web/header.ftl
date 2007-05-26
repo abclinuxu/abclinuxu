@@ -102,6 +102,7 @@
                 <#assign relAnketa = VARS.currentPoll, anketa = relAnketa.child, total = anketa.totalVoters,
                          url=relAnketa.url?default("/ankety/show/"+relAnketa.id)>
                 <#if anketa.multiChoice><#assign type = "checkbox"><#else><#assign type = "radio"></#if>
+
                 <div class="s_nadpis">
                    <a class="s_nadpis-pravy-odkaz" href="/clanky/dir/3500?categoryPosition=0">navrhněte&nbsp;&raquo;</a>
                    <a href="/ankety">Anketa</a>
@@ -128,9 +129,10 @@
                 </div>
                 <#assign diz=TOOL.findComments(anketa)>
                 <div>&nbsp;<a href="${url}" title="${anketa.text}">Komentářů:</a>
-		        ${diz.responseCount}<#if diz.responseCount gt 0><@lib.markNewComments diz/>, poslední
-		        ${DATE.show(diz.updated,"CZ_SHORT")}</#if>
-	        </div>
+                     ${diz.responseCount}<#if diz.responseCount gt 0><@lib.markNewComments diz/>, poslední
+                     ${DATE.show(diz.updated,"CZ_SHORT")}</#if>
+                  <@lib.advertisement id="anketa" />
+                </div>
             </#if>
 
             <!-- ZPRÁVIČKY -->

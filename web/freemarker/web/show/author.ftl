@@ -14,12 +14,14 @@
     <#if nickname!="UNDEFINED">(${nickname})</#if>
 </h1>
 
-<#if uid != 0><a href=/Profile/${uid}>Profil autora na abclinuxu</a></#if>
+<p><#if uid != 0><a href=/Profile/${uid} title="${name?default("")} ${surname?default("")}">Profil autora na abclinuxu</a></#if></p>
 
 <#if USER?exists && USER.hasRole("article admin")>
+    <p>
     <a href="${URL.noPrefix("/autori/edit?rid="+RELATION.id+"&amp;action=edit")}">Upravit</a>
     <a href="${URL.noPrefix("/EditRelation?action=remove&amp;rid="+RELATION.id+"&amp;prefix=/autori")}">Smazat</a>
     <a href="${URL.noPrefix("/clanky/honorare?authorId="+RELATION.id)}">Honoráře</a>
+    </p>
     <table border="0" cellpadding="2" cellspacing="0">
         <#if TOOL.xpath(AUTHOR,"/data/birthNumber")?exists>
             <tr>

@@ -110,7 +110,7 @@
                     Zadejte jen skutečně relevantní údaje, buďte struční.
                     Doporučujeme používat značku <code>PRE</code>.
                 </div>
-                <textarea name="identification" class="siroka" rows="8" tabindex="8" class="wide">${PARAMS.identification?if_exists?html}</textarea>
+                <textarea name="identification" class="siroka" rows="12" tabindex="8" class="wide">${PARAMS.identification?if_exists?html}</textarea>
                 <div class="error">${ERRORS.identification?if_exists}</div>
             </td>
         </tr>
@@ -118,7 +118,7 @@
         <tr>
             <td>Technické parametry</td>
             <td>
-                <textarea name="params" class="siroka" rows="8" tabindex="9" class="wide">${PARAMS.params?if_exists?html}</textarea>
+                <textarea name="params" class="siroka" rows="12" tabindex="9" class="wide">${PARAMS.params?if_exists?html}</textarea>
                 <div class="error">${ERRORS.params?if_exists}</div>
             </td>
         </tr>
@@ -126,7 +126,7 @@
         <tr>
             <td>Postup zprovoznění</td>
             <td>
-                <textarea name="setup" class="siroka" rows="10" tabindex="10" class="wide">${PARAMS.setup?if_exists?html}</textarea>
+                <textarea name="setup" class="siroka" rows="16" tabindex="10" class="wide">${PARAMS.setup?if_exists?html}</textarea>
                 <div class="error">${ERRORS.setup?if_exists}</div>
             </td>
         </tr>

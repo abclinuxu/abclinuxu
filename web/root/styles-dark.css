@@ -34,6 +34,7 @@ input, select, textarea, .button,
 #zh-hledani input.text:hover,
 #zh-hledani input.text:focus {
 	background-color: #BCBCBC;
+	color: black;
 }
 
 #zh-hledani input.text,

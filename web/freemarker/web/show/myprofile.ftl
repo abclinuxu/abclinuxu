@@ -12,12 +12,12 @@
  Přihlašovací údaje jsme vám zaslali na vaši emailovou adresu ${PROFILE.email}. </p>
 </#if>
 
-<h1>Nastavení mého účtu</h1>
+<h1>Nastavení účtu</h1>
 
 <p>Nacházíte se ve své soukromé stránce. Zde můžete
 měnit nastavení svého účtu, upravovat svůj profil
-či přihlásit se k zasílání informací. Z důvodu vaší
-ochrany budete při změně údajů vyzvání k zadání hesla.
+či se přihlásit k zasílání informací. Z důvodu vaší
+ochrany budete při změně údajů vyzváni k zadání hesla.
 Váš profil, jak jej vidí ostatní návštěvníci, zobrazíte
 na <a href="/Profile/${PROFILE.id}">této</a> stránce.</p>
 
@@ -53,7 +53,7 @@ email (${PROFILE.email}) a heslo.
 
 <h2>Profil</h2>
 
-<p>Portál www.abclinuxu.cz vám umožňuje bohaté nastavení vaší osobní stránky,
+<p>Portál www.abclinuxu.cz vám umožňuje bohaté nastavení osobní stránky,
 která slouží pro vaši prezentaci. Můžete zadat širokou paletu strukturovaných
 informací, například bydliště, rok narození, adresu vašich webových stránek,
 používané distribuce, nebo jak dlouho používáte Linux. Dále si můžete vytvořit
@@ -81,7 +81,7 @@ patičku zobrazovanou v diskusích u vašich příspěvků, nahrát svou fotku
 
 <h2>Nastavení účtu</h2>
 
-<p>V této části si můžete změnit nastavení vašeho účtu a přizpůsobit si
+<p>V této části si můžete změnit nastavení účtu a přizpůsobit si
 portál dle svých představ. Například můžete změnit servery v rozcestníku,
 vybrat barevný styl či zakázat automatické přihlašování.</p>
 
@@ -98,7 +98,7 @@ vybrat barevný styl či zakázat automatické přihlašování.</p>
 
 <h2>Blog</h2>
 
-<p>Blog je moderní formou vedení deníčku na internetu. Je určen uživatelům Linuxu,
+<p>Blog je moderní formou vedení deníčku na Internetu. Je určen uživatelům Linuxu,
 kteří zde mohou psát například návody, zamyšlení, fejetony i jiné texty. Pokud nemáte
 s Linuxem nic společného a jen hledáte blogovací systém, raději si založte deníček
 někde jinde.</p>
@@ -117,8 +117,8 @@ někde jinde.</p>
 <h2>Zasílání informací</h2>
 
 <p>Máte rádi náš portál, ale nemáte čas nás navštěvovat denně? Nastavte
-si zasílání Měsíčního zpravodaje a Týdenní souhrn článků. Dále zde můžete
-zapnout zasílání dotazů a komentářů z diskusního fóra, takže vám žádná odpověď
+si zasílání Měsíčního zpravodaje a Týdenního souhrnu článků. Dále zde můžete
+zapnout zasílání dotazů a komentářů z Poradny, takže vám žádná odpověď
 neuteče.</p>
 
 <ul><li>
@@ -129,6 +129,6 @@ objednat/odhlásit</a>
 <h2>Vaše veřejná stránka</h2>
 
 <p><a href="${URL.noPrefix("/Profile/"+PROFILE.id)}">Zpátky</a>
-na svou veřejnou domovskou stránku</p>
+na svou veřejnou domovskou stránku.</p>
 
 <#include "../footer.ftl">

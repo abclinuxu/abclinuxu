@@ -39,6 +39,7 @@ a:hover {
 
 input, select, textarea, .button {
 	background-color: #EEEEEE;
+	color: black;
 }
 
 #zh-hledani input.text,

@@ -13,7 +13,7 @@ a my vám zašleme heslo.
 
 <form action="${REQUEST_URI}" method="POST">
 
-<table border=0 cellpadding=5>
+<table border="0" cellpadding="5">
   <tr>
     <td>Login: </td>
     <td>
@@ -23,7 +23,7 @@ a my vám zašleme heslo.
   </tr>
   <tr>
     <td>Heslo:</td>
-    <td><input type="password" name="PASSWORD" size=8 tabindex=2>
+    <td><input type="password" name="PASSWORD" size="8" tabindex="2">
     <span class="error">${ERRORS.PASSWORD?if_exists}</span></td>
   </tr>
   <tr>

@@ -34,7 +34,7 @@
     <a href="#formatovani">najdete</a> pod formulářem.
 </p>
 
-<form action="${URL.make("/edit")}" method="POST">
+<form action="${URL.make("/edit")}" method="POST" name="softForm">
     <table class="siroka" border="0" cellpadding="5">
         <tr>
             <td class="required">Jméno</td>
@@ -47,6 +47,13 @@
         <tr>
             <td class="required">Popis</td>
             <td>
+                <div class="form-edit">
+                    <a href="javascript:insertAtCursor(document.softForm.description, '<b>', '</b>');" id="serif" title="Vložit značku tučně"><b>B</b></a>
+                    <a href="javascript:insertAtCursor(document.softForm.description, '<i>', '</i>');" id="serif" title="Vložit značku kurzíva"><i>I</i></a>
+                    <a href="javascript:insertAtCursor(document.softForm.description, '<a href=&quot;&quot;>', '</a>');" id="mono" title="Vložit značku odkazu">&lt;a&gt;</a>
+                    <a href="javascript:insertAtCursor(document.softForm.description, '<p>', '</p>');" id="mono" title="Vložit značku odstavce">&lt;p&gt;</a>
+                    <a href="javascript:insertAtCursor(document.softForm.description, '<code>', '</code>');" id="mono" title="Vložit značku pro písmo s pevnou šířkou">&lt;code&gt;</a>
+                </div>
                 <textarea name="description" rows="11" tabindex="2" class="siroka">${PARAMS.description?if_exists?html}</textarea>
                 <div class="error">${ERRORS.description?if_exists}</div>
             </td>

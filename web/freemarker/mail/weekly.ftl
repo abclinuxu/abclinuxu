@@ -22,18 +22,17 @@ Prehled clanku
 Reklama
 =======
 
-Systemy pro podniky GigaCon
-Datum: 20. 6. 2007
-Misto: Hotel Pyramida, Praha
-http://www.systemypropodniky.cz
+DataScript s.r.o. jako odborna vzdelavaci a treninkova
+spolecnost je certifikovanym Red Hat Training Partnerem.
+V ramci sve cinnosti poskytuje skoleni a certifikace
+pro dosazeni kvalifikaci Red Hat Certified Technician
+(RHCT) a Red Hat Certified Engineer (RHCE).
 
-Hlavnim cilem konference je predstavit dostupne produkty
-pro efektivni a moderni spravovani firmy. Odborna konference,
-ktera ucastnikum z rad reditelu, majitelu firem, obchodnich
-a vyrobnich reditelu, ekonomu, IT specialistu ci pracovnikum
-z informacni, telekomunikacni, bankovni, financni nebo
-administracni oblasti nabidne uceleny pohled na vyuziti
-komplexnich informacnich systemu ve firme, ci organizaci.
+Skoleni a certifikace Red Hat jsou dlouhodobe povazovana
+za jednoznacne nejlepsi a nejprinosnejsi pro praxi v cele
+oblasti Linuxu.
+
+http://www.abclinuxu.cz/skoleni/red-hat
 
 
 

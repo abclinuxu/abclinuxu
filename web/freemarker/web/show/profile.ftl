@@ -3,7 +3,7 @@
 <@lib.showMessages/>
 
 <#if ! USER?exists>
- <p>Pokud jste ${PROFILE.name}, <a href="${URL.noPrefix("/Profile?action=login")}">přihlašte se</a>
+ <p>Pokud jste ${PROFILE.name}, <a href="${URL.noPrefix("/Profile?action=login")}">přihlaste se</a>
  a bude vám zobrazena vaše domovská stránka.</p>
 <#elseif USER.id==PROFILE.id>
  <h2>Moje domovská stránka</h2>
@@ -89,7 +89,7 @@
     <#if registered != "UNDEFINED">
         ${DATE.show(registered, "CZ_DMY")}
     <#else>
-        starší než 12.7.2003
+        starší než 12. 7. 2003
     </#if>
 </p>
 
