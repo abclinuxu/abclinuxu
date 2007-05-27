@@ -6,15 +6,14 @@ Strucny navod
 Sun JDK 1.5
 Jakarta ant 1.6
 Mysql 4.1 ci novejsi
-Jetty 4.1.20
+Jetty 6.1.2 ci novejsi
 
-Ant a jetty najdete v orezane verzi 
-mezi ostatnimi soubory ke stazeni.
+Ant a jetty najdete v orezane verzi mezi ostatnimi soubory ke stazeni.
 
 2\ nastavte si databazi
 
 $ mysql
-CREATE DATABASE devel default character set latin2 collate latin2_general_ci;
+CREATE DATABASE devel default character set utf8 collate utf8_czech_ci;
 USE devel;
 GRANT ALL ON *.* TO 'you'@'localhost' IDENTIFIED BY 'password' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
@@ -51,7 +50,7 @@ b) nastavte spravne cestu k adresari deploy v etc/abc.xml
 uvnitr elementu addWebApplication
 
 6\ spustte jetty
-cd jetty-4.1/bin
+cd jetty/bin
 ./jetty.sh run
 
 6\ otevrete prohlizec
