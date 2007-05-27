@@ -34,6 +34,7 @@
 
 <#import "macros.ftl" as lib>
 <@lib.advertisement id="netmonitor" />
+
 <@lib.advertisement id="ad-init" />
 
 <@lib.advertisement id="sf-lista" />
