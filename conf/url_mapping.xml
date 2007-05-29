@@ -260,6 +260,11 @@
             <replacement>http://www.abclinuxu.cz/</replacement>
         </mapping>
         <mapping>
+            <pattern input="host">abclinuxu.sk</pattern>
+            <regexp>.*</regexp>
+            <replacement>http://www.abclinuxu.cz/</replacement>
+        </mapping>
+        <mapping>
             <pattern input="host">palirna</pattern>
             <regexp>.*</regexp>
             <replacement>http://www.abclinuxu.cz/</replacement>
