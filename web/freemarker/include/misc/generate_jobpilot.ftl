@@ -10,10 +10,8 @@
 </div>
 <div class="s_sekce">
     <ul>
-        <li><a href="http://sf.impact.as/if/imred.php?aid=362&amp;lid=414&amp;redirurl=http://www.jobpilot.cz/misc/adframe/czdhl/7d6/1c/1645988.htm" rel="nofollow">System Administrator</a></li>
-        <li><a href="http://sf.impact.as/if/imred.php?aid=362&amp;lid=414&amp;redirurl=http://www.jobpilot.cz/misc/adframe/czdhl/7d6/1c/1645996.htm" rel="nofollow">Operator</a></li>
-        <li><a href="http://sf.impact.as/if/imred.php?aid=362&amp;lid=414&amp;redirurl=http://www.jobpilot.cz/misc/adframe/czdhl/7d6/1c/1646006.htm" rel="nofollow">Security Analyst</a></li>
-        <li><a href="http://sf.impact.as/if/imred.php?aid=362&amp;lid=414&amp;redirurl=http://www.jobpilot.cz/misc/adframe/czdhl/7d6/23/1692165.htm" rel="nofollow">Application Support Analyst 1 (Business Intelligence)</a></li>
-        <li><a href="http://sf.impact.as/if/imred.php?aid=362&amp;lid=414&amp;redirurl=http://www.jobpilot.cz/misc/adframe/czdhl/7d6/20/1672904.htm" rel="nofollow">Application Support Analyst 2 (Logistic)</a></li>
+      <#list ITEMS as item>
+        <li><a href="http://sf.impact.as/if/imred.php?aid=362&amp;lid=414&amp;redirurl=${item.url}" rel="nofollow">${item.title}</a></li>
+      </#list>
     </ul>
 </div>
