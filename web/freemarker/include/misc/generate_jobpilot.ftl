@@ -9,9 +9,9 @@
     <a href="http://sf.impact.as/if/imred.php?aid=362&amp;lid=414">Pracovní nabídky DHL</a>
 </div>
 <div class="s_sekce">
-    <ul>
-      <#list ITEMS as item>
-        <li><a href="http://sf.impact.as/if/imred.php?aid=362&amp;lid=414&amp;redirurl=${item.url}" rel="nofollow">${item.title}</a></li>
-      </#list>
-    </ul>
+<ul>
+<#list ITEMS as item>
+<li><a href="http://sf.impact.as/if/imred.php?aid=362&amp;lid=414&amp;redirurl=${item.url}" rel="nofollow">${item.title}</a></li>
+</#list>
+</ul>
 </div>
