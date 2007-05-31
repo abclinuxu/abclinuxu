@@ -142,4 +142,9 @@
         <welcome-file>index.html</welcome-file>
         <welcome-file>index.htm</welcome-file>
     </welcome-file-list>
+
+    <mime-mapping>
+        <extension>rss</extension>
+        <mime-type>application/rss+xml</mime-type>
+    </mime-mapping>
 </web-app>
