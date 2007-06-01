@@ -63,7 +63,6 @@
 </#if>
 
 <@lib.advertisement id="arbo-sq" />
-<@lib.advertisement id="arbo-sky" />
 
 ${TOOL.render(TEXT,USER?if_exists)}
 

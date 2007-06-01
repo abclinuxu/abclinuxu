@@ -155,6 +155,7 @@
                          <@lib.advertisement id="sl-box" />
                     </#if>
                     <#if relation_index==4>
+                         <@lib.advertisement id="arbo-sky" />
                          <@lib.advertisement id="sl-mini" />
                     </#if>
                     <@lib.showTemplateNews relation/>

@@ -11,9 +11,6 @@
 </#if>
 
 <@lib.advertisement id="arbo-sq" />
-<#if !is_question>
- <@lib.advertisement id="arbo-sky" />
-</#if>
 
 <@lib.showMessages/>
 
