@@ -645,7 +645,7 @@
                             <map/>
                             <node name="NewsCSV">
                                 <map>
-                                    <entry key="allowed.ip.addresses" value="127.0.0.1,195.70.150.1,195.70.150.4,195.70.150.3,195.70.144.6"/>
+                                    <entry key="allowed.ip.addresses" value="127.0.0.1,195.70.150.1,195.70.150.4,195.70.150.3,195.70.150.5,195.70.144.6"/>
                                     <entry key="count" value="7"/>
                                 </map>
                             </node>
